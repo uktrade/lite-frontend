@@ -14,7 +14,7 @@ Application for handling exporter related activity in LITE.
 * Activate your Python virtual environment:
   * `cd venv`
   * `source bin/activate`
-  * frontend`cd ..`
+  * `cd ..`
 * Run `pip install -r requirements.txt`
 * Run the application: `python manage.py migrate && ./manage.py runserver`
 * Go to the index page (e.g. `http://localhost:9000`)
