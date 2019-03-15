@@ -25,4 +25,4 @@ Application for handling exporter related activity in LITE.
 
 **[lite-exporter-frontend](https://github.com/uktrade/lite-exporter-frontend)** - Application for handling exporter related activity in LITE.
 
-[lite-internal](https://github.com/uktrade/lite-internal-frontend) - Application for handling internal information in LITE.
+[lite-internal-frontend](https://github.com/uktrade/lite-internal-frontend) - Application for handling internal information in LITE.
