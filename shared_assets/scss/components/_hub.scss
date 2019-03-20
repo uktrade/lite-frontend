@@ -1,0 +1,21 @@
+.lite-hub-section {
+	margin-bottom: 60px;
+
+	&:last-of-type {
+		margin-bottom: 30px;
+	}
+
+	.govuk-heading-m {
+		margin: 0;
+		@include govuk-font($size: 14, $weight: bold);
+		margin-bottom: govuk-spacing(3);
+		color: govuk-colour("grey-1");
+		letter-spacing: 1px;
+		text-transform: uppercase;
+	}
+
+	.govuk-caption-m {
+		margin: govuk-spacing(3) 0 govuk-spacing(4);
+		display: none;
+	}
+}
