@@ -1,0 +1,23 @@
+{
+  "name": "lite-exporter-frontend",
+  "version": "1.0.0",
+  "description": "Application for handling exporter related activity in LITE.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uktrade/lite-exporter-frontend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/uktrade/lite-exporter-frontend/issues"
+  },
+  "homepage": "https://github.com/uktrade/lite-exporter-frontend#readme",
+  "dependencies": {
+    "govuk-frontend": "^2.9.0",
+    "lite-shared-assets": "^1.0.1"
+  }
+}
