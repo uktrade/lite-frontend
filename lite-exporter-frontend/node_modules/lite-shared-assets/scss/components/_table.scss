@@ -1,0 +1,72 @@
+.lite-table {
+	@include govuk-font($size: 19);
+	@include govuk-text-colour;
+	width: 100%;
+	@include govuk-responsive-margin(6, "bottom");
+	border-spacing: 0;
+	border-collapse: collapse;
+}
+
+.lite-table__header {
+	@include govuk-font($size: 14, $weight: bold);
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	color: govuk-colour("grey-1");
+}
+
+.lite-table__cell,
+.lite-table__header {
+	padding: govuk-spacing(2) govuk-spacing(4) govuk-spacing(2) 0;
+	border-bottom: 1px solid govuk-colour("grey-3");
+	text-align: left;
+	// GOV.UK Elements sets the font-size and line-height for all headers and cells
+	// in tables.
+	@include govuk-compatibility(govuk_elements) {
+		font-size: inherit;
+		line-height: inherit;
+	}
+	.govuk-link {
+		font-weight: bold;
+	}
+}
+
+.lite-table__cell--numeric {
+	@include govuk-font($size: false, $tabular: true);
+}
+
+.lite-table__cell--numeric,
+.lite-table__header--numeric {
+	text-align: right;
+}
+
+.lite-table__cell:last-child,
+.lite-table__header:last-child {
+	padding-right: 0;
+}
+
+.lite-table__caption {
+	@include govuk-typography-weight-bold;
+	display: table-caption;
+	text-align: left;
+}
+
+.lite-table__chevron {
+	cursor: pointer;
+	&:hover {
+		opacity: .7;
+	}
+	&:active {
+		opacity: .5;
+	}
+	&:after {
+		content: "";
+		display: inline-block;
+		width: 18px;
+		height: 10px;
+		margin-left: 2px;
+		background-image: url("/assets/images/chevron.svg");
+		background-size: 12px 6px;
+		background-position: 0 2px;
+		background-repeat: no-repeat;
+	}
+}

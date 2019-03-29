@@ -1,0 +1,47 @@
+// GOV.UK Design System
+@import "../../node_modules/govuk-frontend/all";
+
+// LITE Shared Assets
+@import "../../node_modules/lite-shared-assets/scss/all";
+
+// Local Assets
+// @import "components/all";
+// @import "core/all";
+
+main {
+	min-height: 60vh;
+}
+
+.no-borders {
+	margin: 0;
+
+	.section-header {
+		display: flex;
+		justify-content: center;
+		flex-direction: column;
+	}
+
+	.section:first-of-type {
+		margin-top: 0;
+		padding-top: 0;
+		border-top: none;
+
+		.section-header {
+			margin-top: 5px;
+			padding-top: 0;
+		}
+	}
+
+	.section:last-of-type {
+		border-bottom: none;
+	}
+}
+
+.lite-section-break {
+	margin: 0;
+	padding: 0;
+	height: 2px;
+	border: none;
+	background-color: transparent;
+	margin-bottom: govuk-spacing(6);
+}

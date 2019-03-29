@@ -1,0 +1,114 @@
+{% extends 'layouts/two_pane.html' %}
+
+{% load custom_tags %}
+
+{% block twoThirds %}
+
+	<!-- Error Summary -->
+	{% if errors %}
+		<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+			<h2 class="govuk-error-summary__title" id="error-summary-title">
+				There are errors on this page
+			</h2>
+			<div class="govuk-error-summary__body">
+				<ul class="govuk-list govuk-error-summary__list">
+					{% for key, value in errors.items %}
+						<li>
+							<a href="#{{ key }}">
+								{{ key|title }}:
+								{% for error in value %}
+									{{ error }}
+								{% endfor %}
+							</a>
+						</li>
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
+	{% endif %}
+
+	<!-- Page header and description -->
+	<h1 class="govuk-heading-l">{{ page.title }}</h1>
+	<div class="govuk-form-group">
+		<p class="govuk-caption-m">
+			{{ page.description }}
+		</p>
+	</div>
+
+	<!-- Questions -->
+	<form action="" method="post">
+		{% csrf_token %}
+
+		{% for question in page.questions %}
+			<div class="govuk-form-group
+						{% if errors|keyvalue:question.name %}
+								govuk-form-group--error
+						{% endif %}">
+				<label class="govuk-label" for="{{ question.name }}">
+					{{ question.title }}
+				</label>
+				<span class="govuk-hint" for="{{ question.name }}">
+					{{ question.description }}
+				</span>
+
+                <!-- Error -->
+				{% if errors %}
+					{% if errors|keyvalue:question.name %}
+						<span for="{{ question.name }}" class="govuk-error-message">
+							<span class="govuk-visually-hidden">Error:</span>
+							{% for error in errors|keyvalue:question.name %}
+								{{ error }}
+							{% endfor %}
+						</span>
+					{% endif %}
+				{% endif %}
+
+				<!-- Select component based on input_type -->
+				<div class="govuk-form-group">
+					{% if question.input_type.name == "INPUT" %}
+                    	{% include "new_application/components/input.html" with name=question.name value=data|keyvalue:question.name|default:'' error=errors|keyvalue:question.name %}
+					{% elif question.input_type.name == "TEXTAREA" %}
+                    	{% include "new_application/components/textarea.html" with name=question.name value=question.name %}
+					{% elif question.input_type.name == "NUMBER" %}
+                    	{% include "new_application/components/number.html" with name=question.name value=question.name %}
+					{% elif question.input_type.name == "RADIOBUTTONS" %}
+                    	{% include "new_application/components/radiobuttons.html" with name=question.name value=question.name data=question.data %}
+					{% elif question.input_type.name == "CHECKBOXES" %}
+                    	{% include "new_application/components/checkboxes.html" with name=question.name value=question.name data=question.data %}
+					{% elif question.input_type.name == "SELECT" %}
+                    	{% include "new_application/components/select.html" with name=question.name value=question.name data=question.data %}
+					{% elif question.input_type.name == "AUTOCOMPLETE" %}
+                    	{% include "new_application/components/autocomplete.html" with name=question.name value=question.name data=question.data %}
+					{% elif question.input_type.name == "FILE_UPLOAD" %}
+                    	{% include "new_application/components/file_upload.html" with name=question.name value=question.name %}
+					{% elif question.input_type.name == "MULTI_FILE_UPLOAD" %}
+                    	{% include "new_application/components/multi_file_upload.html" with name=question.name value=question.name %}
+					{% endif %}
+				</div>
+			</div>
+		{% endfor %}
+
+		<!-- Buttons -->
+		<div class="govuk-form-group">
+			<div class="buttons-row">
+				<button type="submit" class="govuk-button" name="button" action="submit">Save and continue</button>
+				{% if draft_id %}
+					<a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'new_application:overview' %}?id={{ draft_id }}">
+						Go to Overview
+					</a>
+				{% endif %}
+			</div>
+		</div>
+	</form>
+
+{% endblock %}
+{% block oneThird %}
+	<!--<aside class="lite-related-items" role="complementary">
+		<h2 class="govuk-heading-m" id="subsection-title">
+			Help
+		</h2>
+		<p class="govuk-body">
+			Don't know your control code? Use Codefinder to find it.
+		</p>
+	</aside>-->
+{% endblock %}

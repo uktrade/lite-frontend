@@ -1,0 +1,92 @@
+{% extends 'layouts/full_width.html' %}
+
+{% load humanize %}
+
+{% block body %}
+
+	<div class="app-bar">
+		<h1 class="govuk-heading-l">Applications</h1>
+		<div class="app-bar--right">
+			<a href="/new-application" class="govuk-button govuk-button--secondary" draggable="false" role="button">
+				Apply for a licence
+			</a>
+			<!--<div class="lite-search-wrapper">
+				<input type="search" name="search" class="govuk-input">
+				<div class="search-button">
+
+				</div>
+			</div>-->
+		</div>
+	</div>
+
+	{% if data.applications|length %}
+		<table class="lite-table">
+			<thead class="lite-table__head">
+				<tr class="lite-table__row">
+					<th class="lite-table__header" scope="col">
+						Reference
+					</th>
+					<!--<th class="lite-table__header" scope="col">Goods</th>
+					<th class="lite-table__header" scope="col">Destinations</th>-->
+					<th class="lite-table__header" scope="col">Last Updated</th>
+				</tr>
+			</thead>
+			<tbody class="lite-table__body">
+				{% for application in data.applications %}
+					<tr class="lite-table__row">
+						<td class="lite-table__cell">
+							{{ application.name|default:"Untitled" }}
+						</td>
+						<!--<td class="lite-table__cell">
+							<a class="hoverable-link tooltip">
+								<span class="tooltip-content" style="min-width: 150px;">
+									{% for good in application.goods %}
+										{{ good.name }}<br/>
+									{% endfor %}
+								</span>
+								{{ application.goods|length }} Good{{ application.goods|length|pluralize }}
+							</a>
+						</td>
+						<td class="lite-table__cell">
+							<a class="hoverable-link tooltip">
+								<span class="tooltip-content" style="min-width: 150px;">
+									{% for destination in application.destinations %}
+										{{ destination.name }}<br/>
+									{% endfor %}
+								</span>
+								{{ application.destinations|length }} Destination{{ application.destinations|length|pluralize }}
+							</a>
+						</td>-->
+						<td class="lite-table__cell">
+							<a class="hoverable-link tooltip">
+								<span class="tooltip-content" style="min-width: 150px;">
+									{{ application.last_modified_at }}
+								</span>
+								{{ application.last_modified_at|naturaltime }}
+							</a>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+		<!--<div class="lite-pagination">
+			<a href="#" class="lite-pagination--item lite-pagination--selected-item">
+				1
+			</a>
+			<a href="#" class="lite-pagination--item">
+				2
+			</a>
+			<a href="#" class="lite-pagination--item">
+				3
+			</a>
+			<a href="#" class="lite-pagination--item">
+				4
+			</a>
+		</div>-->
+
+	{% else %}
+		<p class="govuk-caption-l">You don't have any applications at the moment.</p>
+	{% endif %}
+
+{% endblock %}

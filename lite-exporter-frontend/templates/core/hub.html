@@ -1,0 +1,44 @@
+{% extends 'layouts/base.html' %}
+
+{% block back-button %}
+	<div class="govuk-breadcrumbs">
+		<ol class="govuk-breadcrumbs__list">
+			<li class="govuk-breadcrumbs__list-item">
+				<a class="govuk-breadcrumbs__link" href="#">Home</a>
+			</li>
+			<li class="govuk-breadcrumbs__list-item">
+				License controlled items and services
+			</li>
+		</ol>
+	</div>
+{% endblock %}
+
+{% block body %}
+    {% if applicationDeleted == "true" %}
+		<div class="information information-animated">
+			{% get_string 'APPLICATION_DELETED' %}
+		</div>
+	{% endif %}
+
+	<h1 class="govuk-heading-xl" style="margin-bottom: 25px;">
+        {{ title }}
+    </h1>
+	<span class="govuk-caption-l" style="margin-bottom: 45px;">
+        {% get_string 'EXPORTER_HUB_DESCRIPTION' %}
+    </span>
+
+	{% for section in sections %}
+		<section class="lite-hub-section">
+			<h3 class="govuk-heading-m">{{ section.title }}</h3>
+			<span class="govuk-caption-m">{{ section.description }}</span>
+			<div class="lite-tiles">
+				{% for tile in section.tiles %}
+					<a href="{{ tile.url }}" class="lite-tile">
+						<h4>{{ tile.title }}</h4>
+						<p>{{ tile.description }}</p>
+					</a>
+				{% endfor %}
+			</div>
+		</section>
+	{% endfor %}
+{% endblock %}

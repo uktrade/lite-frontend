@@ -1,0 +1,14 @@
+{% extends 'layouts/base.html' %}
+
+{% block body %}
+
+	<a href="/new-application/form/overview?id={{ id }}" class="govuk-back-link">Back to Overview</a>
+
+	<span class="govuk-caption-l">Application</span>
+	<h2 class="govuk-heading-l">{{ section.title }}</h2>
+
+	<a href="/new-application/form/people/new?id={{ id }}" role='button' draggable='false' class='govuk-button'>Add</a>
+
+	<p class="govuk-caption-m">You haven't added any ______ at the moment.</p>
+
+{% endblock %}

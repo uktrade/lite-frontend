@@ -1,0 +1,131 @@
+.buttons-row {
+	display: flex;
+
+	* {
+		margin: 0 govuk-spacing(4) 0 0!important;
+	}
+}
+/// Slightly darken a color
+/// @access public
+/// @param {Color} $color - color to shade
+/// @param {Number} $percentage - percentage of `$color` in returned color
+/// @return {Color}
+@function shade($color, $percentage) {
+	@return mix(govuk-colour("black"), $color, $percentage);
+}
+/// Slightly lighten a color
+/// @access public
+/// @param {Color} $color - color to tint
+/// @param {Number} $percentage - percentage of `$color` in returned color
+/// @return {Color}
+@function tint($color, $percentage) {
+	@return mix(govuk-colour("white"), $color, $percentage);
+}
+// Secondary button variables
+$govuk-secondary-button-colour: govuk-colour("grey-3");
+$govuk-secondary-button-hover-colour: shade($govuk-secondary-button-colour, 10%);
+$govuk-secondary-button-shadow-colour: shade($govuk-secondary-button-colour, 40%);
+$govuk-secondary-button-text-colour: govuk-colour("black"); // Secondary (alt) button variables
+$govuk-secondary-alt-button-colour: govuk-colour("white");
+$govuk-secondary-alt-button-border-colour: govuk-colour("grey-1");
+$govuk-secondary-alt-button-hover-colour: tint($govuk-secondary-alt-button-border-colour, 90%);
+$govuk-secondary-alt-button-shadow-colour: $govuk-secondary-alt-button-border-colour;
+$govuk-secondary-alt-button-text-colour: govuk-colour("black"); // Destructive button variables
+$govuk-destructive-button-colour: govuk-colour("red");
+$govuk-destructive-button-hover-colour: shade($govuk-destructive-button-colour, 20%);
+$govuk-destructive-button-shadow-colour: shade($govuk-destructive-button-colour, 60%);
+$govuk-destructive-button-text-colour: govuk-colour("white"); // Destructive (alt) button variables
+$govuk-destructive-alt-button-colour: govuk-colour("white");
+$govuk-destructive-alt-button-border-colour: govuk-colour("red");
+$govuk-destructive-alt-button-hover-colour: tint($govuk-destructive-alt-button-border-colour, 90%);
+$govuk-destructive-alt-button-shadow-colour: $govuk-destructive-alt-button-border-colour;
+$govuk-destructive-alt-button-text-colour: govuk-colour("red"); // Link button variables
+$govuk-link-button-colour: transparent;
+$govuk-link-button-hover-colour: govuk-colour("grey-3");
+$govuk-link-button-text-colour: govuk-colour("blue"); // Destructive link button variables
+$govuk-destructive-link-button-colour: transparent;
+$govuk-destructive-link-button-hover-colour: govuk-colour("grey-3");
+$govuk-destructive-link-button-text-colour: govuk-colour("red"); // Because the shadow (s0) is visually 'part of' the button, we need to reduce
+// the height of the button to compensate by adjusting its padding (s1) and
+// increase the bottom margin to include it (s2).
+$button-shadow-size: $govuk-border-width-form-element; // Begin adjustments for font baseline offset
+// These should be removed when the font is updated with the correct baseline
+// For the 1px addition please see https://github.com/alphagov/govuk-frontend/pull/365#discussion_r154349428
+$offset: 2;
+
+.govuk-button--secondary {
+	color: $govuk-secondary-button-text-colour!important;
+	background-color: $govuk-secondary-button-colour;
+	box-shadow: 0 $button-shadow-size 0 $govuk-secondary-button-shadow-colour;
+
+	&:focus,
+	&:hover {
+		background-color: $govuk-secondary-button-hover-colour;
+	}
+}
+
+.govuk-button--secondary-alt {
+	padding-bottom: 7px;
+	border: 2px solid $govuk-secondary-alt-button-border-colour;
+	border-bottom: 1px solid $govuk-secondary-alt-button-border-colour;
+	color: $govuk-secondary-alt-button-text-colour;
+	background-color: $govuk-secondary-alt-button-colour;
+	box-shadow: 0 $button-shadow-size 0 $govuk-secondary-alt-button-shadow-colour;
+
+	&:focus,
+	&:hover {
+		color: $govuk-secondary-alt-button-text-colour;
+		background-color: $govuk-secondary-alt-button-hover-colour;
+	}
+
+	&:focus {
+		border: 2px solid transparent;
+	}
+}
+
+.govuk-button--destructive {
+	color: $govuk-destructive-button-text-colour;
+	background-color: $govuk-destructive-button-colour;
+	box-shadow: 0 $button-shadow-size 0 $govuk-destructive-button-shadow-colour;
+
+	&:focus,
+	&:hover {
+		color: $govuk-destructive-button-text-colour;
+		background-color: $govuk-destructive-button-hover-colour;
+	}
+}
+
+.govuk-button--destructive-alt {
+	padding-bottom: 7px;
+	border: 2px solid $govuk-destructive-alt-button-border-colour;
+	border-bottom: 1px solid $govuk-destructive-alt-button-border-colour;
+	color: $govuk-destructive-alt-button-text-colour;
+	background-color: $govuk-destructive-alt-button-colour;
+	box-shadow: 0 $button-shadow-size 0 $govuk-destructive-alt-button-shadow-colour;
+
+	&:focus,
+	&:hover {
+		color: $govuk-destructive-alt-button-text-colour;
+		background-color: $govuk-destructive-alt-button-hover-colour;
+	}
+
+	&:focus {
+		border: 2px solid transparent;
+	}
+}
+
+.govuk-button--destructive-link {
+	border-top: 3px solid transparent;
+	border-bottom: 3px solid transparent;
+	color: $govuk-destructive-link-button-text-colour;
+	background-color: $govuk-destructive-link-button-colour;
+	box-shadow: none;
+
+	&:focus,
+	&:hover {
+		border-top: 3px solid $govuk-destructive-link-button-hover-colour;
+		border-bottom: 3px solid $govuk-destructive-link-button-hover-colour;
+		color: $govuk-destructive-link-button-text-colour;
+		background-color: $govuk-destructive-link-button-hover-colour;
+	}
+}

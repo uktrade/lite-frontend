@@ -1,0 +1,17 @@
+{% extends 'layouts/base.html' %}
+
+{% load humanize %}
+
+{% block body %}
+
+<h1 class="govuk-heading-l">{{ title }}</h1>
+
+<div class="lite-tabs--fade">
+	<div class="lite-tabs">
+		<a class="lite-tabs__tab selected">OGELs</a>
+		<a class="lite-tabs__tab">SIELs</a>
+		<a class="lite-tabs__tab">OIELs</a>
+	</div>
+</div>
+
+{% endblock %}

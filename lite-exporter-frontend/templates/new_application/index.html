@@ -1,0 +1,35 @@
+{% extends 'layouts/two_pane.html' %}
+
+{% block twoThirds %}
+	<h1 class="govuk-heading-xl">{{ title }}</h1>
+
+	<p class="govuk-body">Use this service to:</p>
+
+	<ul class="govuk-list govuk-list--bullet">
+        {% for item in service_uses %}
+            <li>{{ item }}</li>
+        {% endfor %}
+	</ul>
+
+	<p class="govuk-body">{% get_string 'LENGTH_OF_TIME_FOR_APPLICATION' %}</p>
+
+	<a href="{% url 'new_application:start' %}" role="button" draggable="false" class="govuk-button govuk-button--start govuk-!-margin-top-2 govuk-!-margin-bottom-8">
+		Start now
+	</a>
+{% endblock %}
+{% block oneThird %}
+	<aside class="lite-related-items" role="complementary">
+		<h2 class="govuk-heading-m" id="subsection-title">
+			Related Links
+		</h2>
+		<nav role="navigation" aria-labelledby="subsection-title">
+			<ul class="govuk-list govuk-!-font-size-16">
+				<li>
+					<a class="govuk-link" href="/applications">
+						View your Applications
+					</a>
+				</li>
+			</ul>
+		</nav>
+	</aside>
+{% endblock%}
