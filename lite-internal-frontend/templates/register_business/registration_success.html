@@ -1,0 +1,16 @@
+{% extends 'layouts/base.html' %}
+
+{% block body %}
+	<div class="govuk-panel govuk-panel--confirmation">
+		<h1 class="govuk-panel__title">
+			Registration complete
+		</h1>
+		<div class="govuk-panel__body">
+			<strong>{{ name }}</strong> successfully registered
+		</div>
+	</div>
+	<br/><br/>
+	<a href="/organisations" class="govuk-link">Go to your companies list</a>
+	<br/>
+	<a href="/" class="govuk-link">Go Home</a>
+{% endblock %}

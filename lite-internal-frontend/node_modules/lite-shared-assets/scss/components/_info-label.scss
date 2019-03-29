@@ -1,0 +1,37 @@
+.info-label {
+	@include govuk-font($size: 16, $weight: bold);
+	background-color: govuk-colour("grey-3");
+	box-sizing: border-box;
+	padding: govuk-spacing(2) govuk-spacing(2) 7px govuk-spacing(2);
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	line-height: 1.5;
+	position: absolute;
+	top: 50%;
+	right: 0;
+	width: 150px;
+	margin: 0;
+	text-align: center;
+	-webkit-transform: translate3d(0, -50%, 0);
+	transform: translate3d(0, -50%, 0);
+}
+
+.info-label--red {
+	background-color: govuk-colour("red");
+	color: govuk-colour("white");
+}
+
+.info-label--orange {
+	background-color: govuk-colour("orange");
+	color: govuk-colour("white");
+}
+
+.info-label--green {
+	background-color: govuk-colour("green");
+	color: govuk-colour("white");
+}
+
+.info-label--blue {
+	background-color: $govuk-brand-colour;
+	color: govuk-colour("white");
+}

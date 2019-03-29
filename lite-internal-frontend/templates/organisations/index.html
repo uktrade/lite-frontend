@@ -1,0 +1,68 @@
+{% extends 'layouts/full_width.html' %}
+
+{% load humanize %}
+
+{% block body %}
+
+	<div class="app-bar">
+		<h1 class="govuk-heading-l">Organisations</h1>
+		<div class="app-bar--right">
+			<a href="/register" class="govuk-button govuk-button--secondary" draggable="false" role="button">New Organisation</a>
+			<div class="lite-search-wrapper">
+				<input type="search" name="search" class="govuk-input">
+				<div class="search-button">
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	{% if data|length %}
+		<table class="lite-table">
+			<thead class="lite-table__head">
+				<tr class="lite-table__row">
+					<th class="lite-table__header" scope="col">Name</th>
+					<th class="lite-table__header" scope="col">EORI Number</th>
+					<th class="lite-table__header" scope="col">SIC Number</th>
+					<th class="lite-table__header" scope="col">VAT Number</th>
+					<th class="lite-table__header" scope="col">Address</th>
+				</tr>
+			</thead>
+			<tbody class="lite-table__body">
+				{% for organisation in data.organisations %}
+					<tr class="lite-table__row">
+						<td class="lite-table__cell">
+							<!--<a class="govuk-link" href="/organisation/{{ organisation.id }}">-->
+								{{ organisation.name|default:"Untitled" }}
+							<!--</a>-->
+						</td>
+						<td class="lite-table__cell">
+							<a class="hoverable-link tooltip">
+								{{ organisation.eori_number|default:"Untitled" }}
+							</a>
+						</td>
+						<td class="lite-table__cell">
+							<a class="hoverable-link tooltip">
+								{{ organisation.sic_number|default:"Untitled" }}
+							</a>
+						</td>
+						<td class="lite-table__cell">
+							<a class="hoverable-link tooltip">
+								{{ organisation.vat_number|default:"Untitled" }}
+							</a>
+						</td>
+						<td class="lite-table__cell">
+							<a class="hoverable-link tooltip">
+								{{ organisation.address|default:"Untitled" }}
+							</a>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		<p class="govuk-caption-l">There are no registered organisations at the moment.</p>
+	{% endif %}
+
+{% endblock %}

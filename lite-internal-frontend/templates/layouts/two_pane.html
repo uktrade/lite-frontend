@@ -1,0 +1,12 @@
+{% extends 'layouts/base.html' %}
+
+{% block body %}
+	<div class="govuk-grid-row">
+		<div class="govuk-grid-column-two-thirds">
+			{% block twoThirds %}{% endblock %}
+		</div>
+		<div class="govuk-grid-column-one-third">
+			{% block oneThird %}{% endblock %}
+		</div>
+	</div>
+{% endblock %}

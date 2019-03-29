@@ -1,0 +1,43 @@
+.section-container {
+	margin: govuk-spacing(6) 0;
+
+	.section {
+		position: relative;
+		border-top: 2px solid rgba(0, 0, 0, 0.1);
+
+		&:last-of-type {
+			border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+		}
+
+		* {
+			border: none;
+		}
+
+		a {
+			display: inline-block;
+		}
+
+		.section-header {
+			box-sizing: border-box;
+			padding: govuk-spacing(5) 0 govuk-spacing(4) 0;
+			min-height: 100px;
+
+			dt {
+				line-height: 2;
+			}
+
+			* {
+				margin: 0;
+				padding: 0;
+
+				&:first-child {
+					margin-bottom: 10px;
+				}
+
+				&:last-child {
+					margin-bottom: 0!important;
+				}
+			}
+		}
+	}
+}
