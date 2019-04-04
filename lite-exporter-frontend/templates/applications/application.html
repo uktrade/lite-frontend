@@ -21,9 +21,9 @@
 			<p class="govuk-label">
 				<a class="hoverable-link tooltip">
 					<span class="tooltip-content" style="min-width: 150px;">
-						{{ data.application.last_modified_at }}
+						{{ data.application.last_modified_at|str_date }}
 					</span>
-					{{ data.application.last_modified_at|naturaltime }}
+					{{ data.application.last_modified_at|str_date|naturaltime }}
 				</a>
 			</p>
 		</div>
@@ -71,14 +71,14 @@
 	<div class="section">
 		<div class="section-header">
 			<p class="govuk-heading-s">Draft</p>
-			<span class="govuk-caption-m">Created on {{ data.application.created_at }}</span>
+			<span class="govuk-caption-m">Created on {{ data.application.created_at|str_date }}</span>
 		</div>
 		<p class="info-label info-label--blue">Completed</p>
 	</div>
 	<div class="section">
 		<div class="section-header">
 			<p class="govuk-heading-s">Submitted</p>
-			<span class="govuk-caption-m">Submitted on {{ data.application.submitted_at }}</span>
+			<span class="govuk-caption-m">Submitted on {{ data.application.submitted_at|str_date }}</span>
 		</div>
 		<p class="info-label info-label--blue">Completed</p>
 	</div>

@@ -1,7 +1,5 @@
 from django.http import Http404
 
-import libraries.jsondate as json
-
 import requests
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
@@ -60,7 +58,7 @@ def form(request, pk):
             response = requests.post(env("LITE_API_URL") + '/drafts/',
                                      json=data)
 
-        response_data = json.loads(response.text)
+        response_data = response.json()
 
         # If there are errors returned from LITE API, return and show them
         if 'errors' in response_data:
@@ -100,7 +98,7 @@ def form(request, pk):
 
         if request.GET.get('id'):
             response = requests.get(env("LITE_API_URL") + '/drafts/' + request.GET.get('id'))
-            data = json.loads(response.text)['draft']
+            data = response.json()['draft']
 
         context = {
             'title': page.title,
@@ -114,7 +112,7 @@ def form(request, pk):
 def overview(request):
     draft_id = request.GET.get('id')
     response = requests.get(env("LITE_API_URL") + '/drafts/' + draft_id)
-    data = json.loads(response.text)
+    data = response.json()
 
     context = {
         'title': 'Overview',
@@ -129,7 +127,7 @@ def submit(request):
     draft_id = request.GET.get('id')
     response = requests.post(env("LITE_API_URL") + '/applications/',
                              data={'id': draft_id})
-    data = json.loads(response.text)
+    data = response.json()
 
     if 'errors' in data:
         raise Http404

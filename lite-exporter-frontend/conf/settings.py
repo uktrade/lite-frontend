@@ -133,6 +133,8 @@ SASS_PROCESSOR_INCLUDE_DIRS = (
     SASS_ROOT
 )
 
+SASS_OUTPUT_STYLE = 'compressed'
+
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',

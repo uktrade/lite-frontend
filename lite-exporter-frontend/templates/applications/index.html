@@ -60,9 +60,9 @@
 						<td class="lite-table__cell">
 							<a class="hoverable-link tooltip">
 								<span class="tooltip-content" style="min-width: 150px;">
-									{{ application.last_modified_at }}
+									{{ application.last_modified_at|str_date }}
 								</span>
-								{{ application.last_modified_at|naturaltime }}
+								{{ application.last_modified_at|str_date|naturaltime }}
 							</a>
 						</td>
 					</tr>

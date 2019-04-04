@@ -43,9 +43,9 @@
 						<td class="lite-table__cell">
 							<a class="hoverable-link tooltip">
 								<span class="tooltip-content" style="min-width: 150px;">
-									{{ draft.last_modified_at }}
+									{{ draft.last_modified_at|str_date }}
 								</span>
-								{{ draft.last_modified_at|naturaltime }}
+								{{ draft.last_modified_at|str_date|naturaltime }}
 							</a>
 						</td>
 						<!--<td class="lite-table__cell">

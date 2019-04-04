@@ -1,5 +1,3 @@
-import libraries.jsondate as json
-
 import requests
 from django.shortcuts import render
 
@@ -11,7 +9,7 @@ def index(request):
 
     context = {
         'title': 'Drafts',
-        'data': json.loads(response.text),
+        'data': response.json(),
         'applicationDeleted': request.GET.get('application_deleted')
     }
     return render(request, 'drafts/index.html', context)

@@ -54,7 +54,7 @@
 									Creation Date
 								</dt>
 								<dd class="govuk-summary-list__value">
-									{{ data.draft.created_at|naturaltime }}
+									{{ data.draft.created_at|str_date|naturaltime }}
 								</dd>
 							</div>
 						</dl>
