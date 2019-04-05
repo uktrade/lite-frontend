@@ -26,6 +26,17 @@
 	{% block head %}{% endblock %}
 </head>
 
+<style>
+	#user-menu {
+		grid-template-columns: auto auto auto auto auto;
+	}
+	#lite-menu {
+		width: 26px;
+		height: 26px;
+		background-image: url('/assets/images/menu.svg');
+	}
+</style>
+
 <body class="govuk-template__body ">
 
 	<script>
@@ -60,6 +71,10 @@
 			{% if user %}
 			<div id="user-menu">
 				<a>Log out</a>
+				<div class="divider"></div>
+				<a id="lite-menu">
+
+				</a>
 				<div class="divider"></div>
 				<a class="user-menu-profile">
 					<p>John</p>

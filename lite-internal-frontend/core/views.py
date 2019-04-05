@@ -1,23 +1,8 @@
-from django.shortcuts import render
-
-from django.urls import reverse_lazy
-
-from django.shortcuts import render
-from django.urls import reverse_lazy
-
-from core.helpers import Section, Tile
+from django.shortcuts import render, redirect
 
 
 def hub(request):
-    context = {
-        'title': 'Department of International Trade Hub',
-        'sections': [
-            Section("", "", [
-                Tile("Manage Organisations", "Manage Organisations ", "/organisations"),
-            ]),
-        ],
-    }
-    return render(request, 'core/hub.html', context)
+    return redirect('/cases/')
 
 
 def signin(request):

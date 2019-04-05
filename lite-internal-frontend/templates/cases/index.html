@@ -1,0 +1,64 @@
+{% extends 'layouts/full_width.html' %}
+
+{% load humanize %}
+
+{% block back-button %}{% endblock %}
+
+{% block body %}
+
+	<div class="govuk-form-group">
+		<a href="/organisations" class="govuk-link">Manage Organisations</a>
+	</div>
+
+	<form action="" method="get">
+		<select class="govuk-select" name="queue">
+			{% for queue in queues.queues %}
+				<option value="{{ queue.id }}" {% if queue.id == queue_id %}selected{% endif %}>{{ queue.name }}</option>
+			{% endfor %}
+		</select>
+		<button type="submit" class="govuk-button">Go to queue</button>
+	</form>
+
+	<div class="lite-tabs--fade">
+		<div class="lite-tabs">
+			<a class="lite-tabs__tab selected">Applications</a>
+			<a class="lite-tabs__tab">Queries</a>
+		</div>
+	</div>
+
+	{% if data.queue.cases|length %}
+		<table class="lite-table">
+			<thead class="lite-table__head">
+				<tr class="lite-table__row">
+					<th class="lite-table__header" scope="col">Reference Number</th>
+					<th class="lite-table__header" scope="col">Applicant</th>
+					<th class="lite-table__header" scope="col">Status</th>
+				</tr>
+			</thead>
+			<tbody class="lite-table__body">
+				{% for case in data.queue.cases %}
+					<tr class="lite-table__row">
+						<td class="lite-table__cell">
+							<a class="govuk-link">
+								{{ case.application.id|default:"Untitled" }}
+							</a>
+						</td>
+						<td class="lite-table__cell">
+							<a class="hoverable-link tooltip">
+								{{ case.application.name|default:"Untitled" }}
+							</a>
+						</td>
+						<td class="lite-table__cell">
+							<a class="hoverable-link tooltip">
+								{{ case.application.status|default:"Untitled" }}
+							</a>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		<p class="govuk-caption-l">There aren't any cases in this queue at the moment.</p>
+	{% endif %}
+
+{% endblock %}
