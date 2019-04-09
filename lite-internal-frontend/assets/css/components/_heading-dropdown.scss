@@ -1,0 +1,96 @@
+.lite-heading-dropdown {
+	position: relative;
+	display: none;
+	padding-right: 35px;
+	cursor: pointer;
+	-webkit-user-select: none;
+	user-select: none;
+	&:after {
+		content: "";
+		position: absolute;
+		top: 0;
+		bottom: 4px;
+		right: 0;
+		width: 25px;
+		background-image: url('/assets/images/dropdown.svg');
+		background-position: center;
+		background-repeat: no-repeat;
+		background-size: contain;
+	}
+	&:hover {
+		opacity: .7;
+	}
+	&:active {
+		opacity: .4;
+	}
+}
+
+.lite-heading-dropdown--flipped {
+	&:after {
+		transform: scaleY(-1);
+	}
+}
+
+.lite-dropdown--container {
+	position: relative;
+	z-index: 1;
+	display: none;
+}
+
+.lite-dropdown {
+	position: absolute;
+	top: -10px;
+	left: 0;
+	background: white;
+	width: 300px;
+	max-height: 50vh;
+	overflow-y: scroll;
+	box-shadow: 0 20px 20px rgba(0,0,0,0.15), 0 5px 5px rgba(0,0,0,0.15), 0 0 2px rgba(0,0,0,0.15);
+}
+
+.lite-dropdown--item {
+	position: relative;
+	display: block;
+	padding: 15px 20px;
+	@include govuk-font($size: 16);
+	text-decoration: none;
+	color: $govuk-brand-colour!important;
+	&:after {
+		content: "";
+		position: absolute;
+		left: 20px;
+		right: 0;
+		bottom: -1px;
+		height: 1px;
+		background-color: rgba(black, 0.1);
+		z-index: 1;
+	}
+	&:hover {
+		background-color: govuk-colour("grey-4");
+	}
+	&:active {
+		background-color: govuk-colour("grey-3");
+	}
+	&:last-of-type {
+		&:after {
+			height: 0;
+		}
+	}
+}
+
+.lite-dropdown--item--selected {
+	background: $govuk-brand-colour!important;
+	color: govuk-colour("white")!important;
+	&:after {
+		height: 0;
+	}
+}
+
+.js-enabled {
+	.lite-dropdown-select {
+		display: none;
+	}
+	.lite-heading-dropdown {
+		display: inline-block;
+	}
+}

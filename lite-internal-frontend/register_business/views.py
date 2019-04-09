@@ -1,5 +1,3 @@
-import json
-
 import requests
 from django.shortcuts import render
 
@@ -20,7 +18,7 @@ def register(request):
         response = requests.post(env("LITE_API_URL") + '/organisations/',
                                  json=data)
 
-        response_data = json.loads(response.text)
+        response_data = response.json()
 
         # If there are errors returned from LITE API, return and show them
         if 'errors' in response_data:

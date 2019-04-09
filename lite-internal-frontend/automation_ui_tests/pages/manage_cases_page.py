@@ -1,4 +1,6 @@
 from selenium.webdriver.support.ui import Select
+
+
 class ManageCasesPage():
 
     # called e time you create an object for this class
@@ -11,6 +13,9 @@ class ManageCasesPage():
     def select_from_queue_drop_down(self, value):
         select = Select(self.find_element_by_name('queue'))
         select.select_by_visible_text(value)
+
+    def click_go_to_queue_button(self):
+        self.driver.find_element_by_css_selector(self.go_to_queue_btn).click()
 
     def click_go_to_queue_button(self):
         self.driver.find_element_by_css_selector(self.go_to_queue_btn).click()

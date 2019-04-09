@@ -1,0 +1,53 @@
+{% extends 'layouts/base.html' %}
+
+{% load humanize %}
+
+{% block body %}
+
+	<h1 class="govuk-heading-l">{{ title }}</h1>
+
+	<div class="lite-information-board">
+		<div class="govuk-grid-row">
+			<div class="govuk-grid-column-one-third">
+				<p class="lite-heading-s">Created by</p>
+				<p class="govuk-label">John Smith</p>
+			</div>
+			<div class="govuk-grid-column-one-third">
+				<p class="lite-heading-s">Activity</p>
+				<p class="govuk-label">{{ data.case.application.activity }}</p>
+			</div>
+			<div class="govuk-grid-column-one-third">
+				<p class="lite-heading-s">Last Updated</p>
+				<p class="govuk-label">
+					<a class="hoverable-link tooltip">
+						<span class="tooltip-content" style="min-width: 150px;">
+							{{ data.case.application.last_modified_at|str_date }}
+						</span>
+						{{ data.case.application.last_modified_at|str_date|naturaltime }}
+					</a>
+				</p>
+			</div>
+		</div>
+		<div class="govuk-grid-row">
+			<div class="govuk-grid-column-one-third">
+				<p class="lite-heading-s">
+					Control Code
+				</p>
+				<p class="govuk-label">{{ data.case.application.control_code }}</p>
+			</div>
+			<div class="govuk-grid-column-one-third">
+				<p class="lite-heading-s">
+					Destination
+				</p>
+				<p class="govuk-label">{{ data.case.application.destination }}</p>
+			</div>
+			<div class="govuk-grid-column-one-third">
+				<p class="lite-heading-s">
+					Usage
+				</p>
+				<p class="govuk-label">{{ data.case.application.usage }}</p>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

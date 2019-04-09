@@ -1,19 +1,21 @@
-import unittest
 import os
+import unittest
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 import datetime
-from automation_ui_tests.pages.department_of_international_trade_hub_page import DepartmentOfInternationalTradeHub
 import logging
+from automation_ui_tests.pages.department_of_international_trade_hub_page import DepartmentOfInternationalTradeHub
+from .cfg.test_configuration import TestConfiguration
+config = TestConfiguration
+
 
 class RegisterBusinessTest(unittest.TestCase):
     @classmethod
     def setUp(cls):
         project_root = os.path.dirname(os.path.abspath(__file__))
         base_dir = os.path.dirname(project_root)
-        logging.info("dir:" + base_dir)
 
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument('--no-sandbox')
@@ -22,8 +24,7 @@ class RegisterBusinessTest(unittest.TestCase):
         cls.driver = webdriver.Chrome(chrome_options=chrome_options)
         cls.driver.implicitly_wait(10)
 
-        dit_hub_page = DepartmentOfInternationalTradeHub(cls)
-        cls.driver.get(dit_hub_page.url)
+        cls.driver.get(config.get_url())
 
     def test_register_a_business(self):
         driver = self.driver
@@ -63,7 +64,7 @@ class RegisterBusinessTest(unittest.TestCase):
 
         registration_complete_message = driver.find_element_by_tag_name("h1").text
         assert "Registration complete" == registration_complete_message
-        logging.info("Submitted")
+        logging.info("Application Submitted")
 
         dit_hub_page.go_to()
 
@@ -90,7 +91,7 @@ class RegisterBusinessTest(unittest.TestCase):
         title = driver.title
         assert "Organisations" in title
 
-        logging.info("Cancelled")
+        logging.info("Application Cancelled")
 
     def test_cannot_submit_without_required_fields(self):
         driver = self.driver
@@ -111,7 +112,7 @@ class RegisterBusinessTest(unittest.TestCase):
         title = driver.title
         assert "Overview" not in title
 
-        logging.info("Cancelled")
+        logging.info("Test Complete")
 
     @classmethod
     def tearDown(inst):

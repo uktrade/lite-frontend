@@ -3,14 +3,14 @@
 {% block body %}
 	<div class="govuk-panel govuk-panel--confirmation">
 		<h1 class="govuk-panel__title">
-			Registration complete
+			{% get_string 'register_business.registration_complete' %}
 		</h1>
 		<div class="govuk-panel__body">
-			<strong>{{ name }}</strong> successfully registered
+			<strong>{{ name }}</strong>{% get_string 'register_business.successfully_registered' %}
 		</div>
 	</div>
 	<br/><br/>
-	<a href="/organisations" class="govuk-link">Go to your companies list</a>
+	<a href="/organisations" class="govuk-link">{% get_string 'register_business.go_to_companies' %}</a>
 	<br/>
-	<a href="/" class="govuk-link">Go Home</a>
+	<a href="/" class="govuk-link">{% get_string 'register_business.go_home' %}</a>
 {% endblock %}

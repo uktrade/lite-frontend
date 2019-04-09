@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'sass_processor',
     'django.contrib.humanize',
     'register_business',
+    'core.apps.CoreConfig'
 ]
 
 MIDDLEWARE = [
@@ -85,6 +86,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'builtins': ['core.builtins.custom_tags'],
         },
     },
 ]

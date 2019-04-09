@@ -2,15 +2,13 @@ import requests
 
 from django.shortcuts import render
 
-import libraries.jsondate as jsondate
-
 from conf.settings import env
 
 
-def show_orgs(request):
+def organisations(request):
     response = requests.get(env("LITE_API_URL") + '/organisations')
     context = {
-        'data': jsondate.loads(response.text),
+        'data': response.json(),
         'title': 'Organisations',
     }
     return render(request, 'organisations/index.html', context)

@@ -4,7 +4,7 @@
 
 <head>
 	<meta charset="utf-8" />
-	<title>{{title}} - License controlled items and services</title>
+	<title>{{title}} - {% get_string 'common.service_name' %}</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 	<meta name="theme-color" content="#0b0c0c" />
 
@@ -27,9 +27,9 @@
 </head>
 
 <style>
-	#user-menu {
+	/*#user-menu {
 		grid-template-columns: auto auto auto auto auto;
-	}
+	}*/
 	#lite-menu {
 		width: 26px;
 		height: 26px;
@@ -71,10 +71,10 @@
 			{% if user %}
 			<div id="user-menu">
 				<a>Log out</a>
-				<div class="divider"></div>
+				<!--<div class="divider"></div>
 				<a id="lite-menu">
 
-				</a>
+				</a>-->
 				<div class="divider"></div>
 				<a class="user-menu-profile">
 					<p>John</p>

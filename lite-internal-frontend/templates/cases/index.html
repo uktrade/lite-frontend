@@ -7,22 +7,32 @@
 {% block body %}
 
 	<div class="govuk-form-group">
-		<a href="/organisations" class="govuk-link">Manage Organisations</a>
+		<a href="/organisations" class="govuk-link">{% get_string 'cases.manage_organisations' %}</a>
 	</div>
 
-	<form action="" method="get">
+	<form action="" method="get" class="lite-dropdown-select">
 		<select class="govuk-select" name="queue">
 			{% for queue in queues.queues %}
 				<option value="{{ queue.id }}" {% if queue.id == queue_id %}selected{% endif %}>{{ queue.name }}</option>
 			{% endfor %}
 		</select>
-		<button type="submit" class="govuk-button">Go to queue</button>
+		<button type="submit" class="govuk-button">{% get_string 'cases.go_to_queue' %}</button>
 	</form>
+
+	<h2 id="queue-title" class="govuk-heading-l lite-heading-dropdown" onclick="toggleDropdown()">{{ title }}</h2>
+
+	<div class="lite-dropdown--container" id="queues">
+		<div class="lite-dropdown">
+			{% for queue in queues.queues %}
+				<a href="/cases/?queue={{ queue.id }}" class="lite-dropdown--item {% if queue.id == queue_id %}lite-dropdown--item--selected{% endif %}">{{ queue.name }}</a>
+			{% endfor %}
+		</div>
+	</div>
 
 	<div class="lite-tabs--fade">
 		<div class="lite-tabs">
-			<a class="lite-tabs__tab selected">Applications</a>
-			<a class="lite-tabs__tab">Queries</a>
+			<a class="lite-tabs__tab selected">Cases</a>
+			<!--<a class="lite-tabs__tab">Queries</a>-->
 		</div>
 	</div>
 
@@ -39,26 +49,29 @@
 				{% for case in data.queue.cases %}
 					<tr class="lite-table__row">
 						<td class="lite-table__cell">
-							<a class="govuk-link">
+							<a class="govuk-link" href="/cases/{{ case.id }}">
 								{{ case.application.id|default:"Untitled" }}
 							</a>
 						</td>
 						<td class="lite-table__cell">
-							<a class="hoverable-link tooltip">
-								{{ case.application.name|default:"Untitled" }}
-							</a>
+							{{ case.application.user_id|default:"Untitled" }}
 						</td>
 						<td class="lite-table__cell">
-							<a class="hoverable-link tooltip">
-								{{ case.application.status|default:"Untitled" }}
-							</a>
+							{{ case.application.status|default:"Untitled" }}
 						</td>
 					</tr>
 				{% endfor %}
 			</tbody>
 		</table>
 	{% else %}
-		<p class="govuk-caption-l">There aren't any cases in this queue at the moment.</p>
+		<p class="govuk-caption-l">{% get_string 'cases.no_cases' %}</p>
 	{% endif %}
+
+	<script>
+		function toggleDropdown() {
+			$("#queues").toggle();
+			$("#queue-title").toggleClass("lite-heading-dropdown--flipped")
+		}
+	</script>
 
 {% endblock %}
