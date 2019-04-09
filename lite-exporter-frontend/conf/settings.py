@@ -12,11 +12,8 @@ if os.path.exists(ENV_FILE):
     Env.read_env(ENV_FILE)
 
 env = Env(
-    DEBUG=(bool, True),
-    ALLOWED_HOSTS=(str, ''),
+    DEBUG=(bool, False)
 )
-
-env.read_env()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
