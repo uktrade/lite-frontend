@@ -17,23 +17,13 @@ import environ
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Configuring environment
-root = environ.Path(__file__)
-env = environ.Env(DEBUG=(bool, False),)                             # set default values and casting
-environ.Env.read_env()                                              # reading .env file
+ENV_FILE = os.path.join(BASE_DIR, '.env')
+if os.path.exists(ENV_FILE):
+    Env.read_env(ENV_FILE)
 
-# ENV_FILE = os.path.join(BASE_DIR, '.env')
-# if os.path.exists(ENV_FILE):
-#     Env.read_env(ENV_FILE)
-
-# env = Env(
-#     DEBUG=(bool, True),
-#     ALLOWED_HOSTS=(str, ''),
-#     LITE_API_URL=(str, 'http://127.0.0.1:8000'),
-#     DATABASE_URL=(str, 'postgres://postgres:password@localhost:5432/postgres')
-# )
-
-# env.read_env()
+env = Env(
+    DEBUG=(bool, False)
+)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
@@ -187,4 +177,3 @@ else:
     DATABASES = {
         'default': env.db()
     }
-
