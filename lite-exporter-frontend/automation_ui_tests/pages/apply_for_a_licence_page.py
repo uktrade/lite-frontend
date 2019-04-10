@@ -33,7 +33,7 @@ class ApplyForALicencePage():
         self.driver.find_element_by_id(self.activity_input_id).clear()
         self.driver.find_element_by_id(self.activity_input_id).send_keys(activity)
 
-    def click_start_btn(self):
+    def click_start_now_btn(self):
         self.driver.find_element_by_css_selector("a[href*='/start']").click()
 
     def click_save_and_continue(self):
@@ -41,7 +41,7 @@ class ApplyForALicencePage():
 
     def click_delete_application(self):
         self.driver.find_element_by_css_selector(".cancel-link").click()
-        self.driver.implicitly_wait(30)
+        self.driver.implicitly_wait(10)
         self.driver.find_element_by_css_selector("#modal-contents a.govuk-button.govuk-button--destructive").click()
 
     def click_submit_application(self):

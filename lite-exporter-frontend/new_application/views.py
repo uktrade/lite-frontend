@@ -1,3 +1,4 @@
+import json
 from django.http import Http404
 
 import requests
@@ -111,8 +112,7 @@ def form(request, pk):
 
 def overview(request):
     draft_id = request.GET.get('id')
-    response = requests.get(env("LITE_API_URL") + '/drafts/' + draft_id)
-    data = response.json()
+    data = requests.get(env("LITE_API_URL") + '/drafts/' + draft_id).json()
 
     context = {
         'title': 'Overview',
@@ -125,9 +125,8 @@ def overview(request):
 
 def submit(request):
     draft_id = request.GET.get('id')
-    response = requests.post(env("LITE_API_URL") + '/applications/',
-                             data={'id': draft_id})
-    data = response.json()
+    data = requests.post(env("LITE_API_URL") + '/applications/',
+                         json={'id': draft_id}).json()
 
     if 'errors' in data:
         raise Http404

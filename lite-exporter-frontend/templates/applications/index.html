@@ -10,6 +10,7 @@
 			<a href="/new-application" class="govuk-button govuk-button--secondary" draggable="false" role="button">
 				Apply for a licence
 			</a>
+			<a href="." class="govuk-button govuk-button--secondary" draggable="false" role="button">Refresh</a>
 			<!--<div class="lite-search-wrapper">
 				<input type="search" name="search" class="govuk-input">
 				<div class="search-button">
@@ -29,6 +30,7 @@
 					<!--<th class="lite-table__header" scope="col">Goods</th>
 					<th class="lite-table__header" scope="col">Destinations</th>-->
 					<th class="lite-table__header" scope="col">Last Updated</th>
+					<th class="lite-table__header" scope="col">Status</th>
 				</tr>
 			</thead>
 			<tbody class="lite-table__body">
@@ -65,6 +67,7 @@
 								{{ application.last_modified_at|str_date|naturaltime }}
 							</a>
 						</td>
+						<td class="lite-table__cell">{{ application.status }}</td>
 					</tr>
 				{% endfor %}
 			</tbody>

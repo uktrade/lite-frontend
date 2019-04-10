@@ -6,10 +6,16 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from automation_ui_tests.pages.exporter_hub_page import ExporterHubPage
 from automation_ui_tests.pages.apply_for_a_licence_page import ApplyForALicencePage
+from automation_ui_tests.pages.applications_page import ApplicationsPage
+
 
 class DraftTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+
+        project_root = os.path.dirname(os.path.abspath(__file__))
+        base_dir = os.path.dirname(project_root)
+        print("dir:" + base_dir)
 
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument('--no-sandbox')
@@ -19,8 +25,8 @@ class DraftTest(unittest.TestCase):
         cls.driver.implicitly_wait(10)
 
         # navigate to the application home page
-        cls.driver.get("https://lite-exporter-frontend-uat.london.cloudapps.digital/")
-
+        exporter_hub = ExporterHubPage(cls)
+        cls.driver.get(exporter_hub.url)
 
     def test_start_draft_application(self):
         print("Test Started")
@@ -29,10 +35,11 @@ class DraftTest(unittest.TestCase):
         exporter_hub = ExporterHubPage(driver)
         apply_for_licence = ApplyForALicencePage(driver)
 
+        exporter_hub.go_to()
         exporter_hub.click_apply_for_a_licence()
         print("Clicked apply for a licence")
 
-        apply_for_licence.click_start_btn()
+        apply_for_licence.click_start_now_btn()
         print("Clicked start button")
 
         nowId = str(datetime.datetime.now())
@@ -60,7 +67,7 @@ class DraftTest(unittest.TestCase):
         print("On the application overview page")
 
         appId = self.driver.current_url[-36:]
-        self.driver.get("https://lite-exporter-frontend-uat.london.cloudapps.digital/")
+        exporter_hub.go_to()
         print("On Exporter Hub Page")
 
         # verify application is in drafts
@@ -79,6 +86,7 @@ class DraftTest(unittest.TestCase):
         print("application opened to application overview")
 
         apply_for_licence.click_delete_application()
+        assert 'Exporter Hub - LITE' in driver.title
 
         print("Test Complete")
 
@@ -89,10 +97,11 @@ class DraftTest(unittest.TestCase):
         exporter_hub = ExporterHubPage(driver)
         apply_for_licence = ApplyForALicencePage(driver)
 
+        exporter_hub.go_to()
         exporter_hub.click_apply_for_a_licence()
         print("Clicked apply for a licence")
 
-        apply_for_licence.click_start_btn()
+        apply_for_licence.click_start_now_btn()
         print("Clicked start button")
 
         nowId = str(datetime.datetime.now())
@@ -124,7 +133,7 @@ class DraftTest(unittest.TestCase):
         application_complete = self.driver.find_element_by_tag_name("h1").text
         assert "Application complete" in application_complete
 
-        self.driver.get("https://lite-exporter-frontend-uat.london.cloudapps.digital/")
+        exporter_hub.go_to()
         print("On Exporter Hub Page")
 
         # verify application is in drafts
@@ -133,6 +142,105 @@ class DraftTest(unittest.TestCase):
 
         self.assertTrue(self.is_element_present(By.XPATH,"//*[text()[contains(.,'" + nowId + "')]]"))
         print("application found in submitted applications list")
+
+        # Check application status is Submitted
+        status = driver.find_element_by_xpath("//*[text()[contains(.,'" + nowId + "')]]/following-sibling::td[last()]")
+        assert status.is_displayed()
+        assert status.text == "Submitted"
+        print("Test Complete")
+
+    def test_must_enter_fields_for_application(self):
+        print("Test Started")
+        driver = self.driver
+
+        assert 'Exporter Hub - LITE' in driver.title
+
+        exporter_hub = ExporterHubPage(driver)
+        apply_for_licence = ApplyForALicencePage(driver)
+        exporter_hub.click_apply_for_a_licence()
+        print("Clicked apply for a licence")
+        apply_for_licence.click_start_now_btn()
+        print("Clicked start button")
+
+        print("no name or reference entered")
+        print("clicked save and continue")
+        apply_for_licence.click_save_and_continue()
+
+        element = driver.find_element_by_css_selector('.govuk-error-summary')
+        assert element.is_displayed()
+        assert 'Name: This field may not be blank.' in element.text
+        print("Error displayed successfully")
+
+        apply_for_licence.enter_name_or_reference_for_application("a")
+        apply_for_licence.click_save_and_continue()
+
+        print("no control code entered")
+        print("clicked save and continue")
+        apply_for_licence.click_save_and_continue()
+
+        element = driver.find_element_by_css_selector('.govuk-error-summary')
+        assert element.is_displayed()
+        assert 'Control_Code: This field may not be blank.' in element.text
+        print("Error displayed successfully")
+
+        apply_for_licence.enter_control_code("b")
+        apply_for_licence.click_save_and_continue()
+
+        print("no Destination entered")
+        print("clicked save and continue")
+        apply_for_licence.click_save_and_continue()
+
+        element = driver.find_element_by_css_selector('.govuk-error-summary')
+        assert element.is_displayed()
+        assert 'Destination: This field may not be blank.' in element.text
+        print("Error displayed successfully")
+
+        apply_for_licence.enter_destination("c")
+        apply_for_licence.click_save_and_continue()
+
+        print("no Usage entered")
+        print("clicked save and continue")
+        apply_for_licence.click_save_and_continue()
+
+        element = driver.find_element_by_css_selector('.govuk-error-summary')
+        assert element.is_displayed()
+        assert 'Usage: This field may not be blank.' in element.text
+        print("Error displayed successfully")
+
+        apply_for_licence.enter_usage("d")
+        apply_for_licence.click_save_and_continue()
+
+        print("no Activity entered")
+        print("clicked save and continue")
+        apply_for_licence.click_save_and_continue()
+
+        element = driver.find_element_by_css_selector('.govuk-error-summary')
+        assert element.is_displayed()
+        assert 'Activity: This field may not be blank.' in element.text
+        print("Error displayed successfully")
+
+        apply_for_licence.enter_activity("e")
+        apply_for_licence.click_save_and_continue()
+        print("Error displayed successfully")
+        print("Test Complete")
+
+        apply_for_licence.click_delete_application()
+        assert 'Exporter Hub - LITE' in driver.title
+
+    def test_status_column_and_refresh_btn_on_applications(self):
+        print("Test Started")
+        driver = self.driver
+        exporter_hub = ExporterHubPage(driver)
+        applications = ApplicationsPage(driver)
+
+        exporter_hub.click_applications()
+        print("navigated to applications page")
+
+        self.assertTrue(driver.find_element_by_xpath("// th[text()[contains(., 'Status')]]").is_displayed())
+        print("Status column is displayed")
+
+        applications.click_refresh_btn()
+        print("clicked refresh button")
 
         print("Test Complete")
 
