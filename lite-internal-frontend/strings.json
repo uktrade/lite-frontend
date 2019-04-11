@@ -5,7 +5,10 @@
     "cases": {
         "go_to_queue": "Go to Queue",
         "manage_organisations": "Manage Organisations",
-        "no_cases": "There aren't any cases in this queue at the moment."
+        "no_cases": "There aren't any cases in this queue at the moment.",
+        "manage": {
+            "case_update_successful": "Case updated successfully"
+        }
     },
     "register_business": {
         "registration_complete": "Registration Complete",
