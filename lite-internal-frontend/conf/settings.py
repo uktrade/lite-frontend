@@ -12,7 +12,8 @@ if os.path.exists(ENV_FILE):
     Env.read_env(ENV_FILE)
 
 env = Env(
-    DEBUG=(bool, False)
+    ALLOWED_HOSTS=(str, ''),
+    DEBUG=(bool, False),
 )
 
 # Quick-start development settings - unsuitable for production
@@ -22,7 +23,7 @@ env = Env(
 SECRET_KEY = '=(kaa@ypr5v!x(s=9^f8)o!k#84f_1v@iz31+cq_)8--@kws4b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = json.loads(env('ALLOWED_HOSTS')) if env('ALLOWED_HOSTS') else []
 
@@ -72,18 +73,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'conf.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -160,10 +149,33 @@ if 'test' in sys.argv:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': 'mydatabase'
-        }
+            'NAME': 'mydatabase',
+        },
     }
 else:
     DATABASES = {
-        'default': env.db()
+        'default': env.db(),
     }
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'json': {
+            'class': 'pythonjsonlogger.jsonlogger.JsonFormatter',
+            'format': '(threadName)(name)(thread)(created)(process)(processName)(relativeCreated)(module)(funcName)(levelno)(msecs)(pathname)(lineno)(asctime)(message)(filename)(levelname)',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'json',
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+    }
+}
