@@ -2,6 +2,7 @@ from django import template
 from django.template.defaultfilters import stringfilter
 
 import datetime
+import stringcase
 
 from conf.constants import ISO8601_FMT
 from core import strings
@@ -26,3 +27,8 @@ def get_string(value):
 @stringfilter
 def str_date(value):
     return datetime.datetime.strptime(value, ISO8601_FMT)
+
+
+@register.filter()
+def sentence_case(value):
+    return stringcase.sentencecase(value)

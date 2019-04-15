@@ -1,14 +1,17 @@
 import os
 import unittest
+import sys, os
+sys.path.append(os.path.realpath(os.path.dirname(__file__)+"/.."))
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 import datetime
 import logging
-from automation_ui_tests.pages.department_of_international_trade_hub_page import DepartmentOfInternationalTradeHub
-from .cfg.test_configuration import TestConfiguration
-config = TestConfiguration
+from automation_ui_tests.pages.dit_hub_page import DepartmentOfInternationalTradeHub
+
+env = "staging"
+base_url = 'https://lite-internal-frontend-' + env + '.london.cloudapps.digital/'
 
 
 class RegisterBusinessTest(unittest.TestCase):
@@ -17,14 +20,21 @@ class RegisterBusinessTest(unittest.TestCase):
         project_root = os.path.dirname(os.path.abspath(__file__))
         base_dir = os.path.dirname(project_root)
 
-        chrome_options = webdriver.ChromeOptions()
-        chrome_options.add_argument('--no-sandbox')
-        chrome_options.add_argument('--headless')
-        chrome_options.add_argument('--disable-gpu')
-        cls.driver = webdriver.Chrome(chrome_options=chrome_options)
-        cls.driver.implicitly_wait(10)
+        if env != "":
+            chrome_driver_path = base_dir + "/drivers/chromedriver"
+            # create a new Chrome session
+            cls.driver = webdriver.Chrome(chrome_driver_path)
+            cls.driver.implicitly_wait(30)
+            cls.driver.maximize_window()
+        else:
+            chrome_options = webdriver.ChromeOptions()
+            chrome_options.add_argument('--no-sandbox')
+            chrome_options.add_argument('--headless')
+            chrome_options.add_argument('--disable-gpu')
+            cls.driver = webdriver.Chrome(options=chrome_options)
+            cls.driver.implicitly_wait(10)
 
-        cls.driver.get(config.get_url())
+        cls.driver.get(base_url)
 
     def test_register_a_business(self):
         driver = self.driver
@@ -63,16 +73,16 @@ class RegisterBusinessTest(unittest.TestCase):
         submit.click()
 
         registration_complete_message = driver.find_element_by_tag_name("h1").text
-        assert "Registration complete" == registration_complete_message
+        assert registration_complete_message == "Registration Complete"
         logging.info("Application Submitted")
 
-        dit_hub_page.go_to()
+        dit_hub_page.go_to(base_url)
 
         # verify application is in organisations list
         show_registered_organisations = driver.find_element_by_css_selector("a[href*='/organisations']")
         show_registered_organisations.click()
 
-        self.assertTrue(self.is_element_present(By.XPATH,"//*[text()[contains(.,'"+ nowId +"')]]"))
+        self.assertTrue(self.is_element_present(By.XPATH,"//*[text()[contains(.,'" + nowId + "')]]"))
 
     def test_cancel_register_a_business(self):
         driver = self.driver

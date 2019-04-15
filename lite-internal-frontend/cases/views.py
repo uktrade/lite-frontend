@@ -57,3 +57,28 @@ class ManageCase(TemplateView):
             return redirect('/cases/' + case_id + '/manage')
 
         return redirect('/cases/' + case_id)
+
+
+class DecideCase(TemplateView):
+
+    def get(self, request, pk):
+        response = requests.get(env("LITE_API_URL") + '/cases/' + str(pk) + '/').json()
+        context = {
+          'data': response,
+          'title': 'Manage ' + response.get('case').get('application').get('name'),
+        }
+        return render(request, 'cases/decide.html', context)
+
+    def post(self, request, pk):
+        applicant_case = requests.get(env("LITE_API_URL") + '/cases/' + str(pk) + '/').json()
+        case_id = applicant_case.get('case').get('id')
+        application_id = applicant_case.get('case').get('application').get('id')
+
+        # PUT form data
+        response = requests.put(env("LITE_API_URL") + '/applications/' + application_id + '/',
+                                json=request.POST).json()
+
+        if 'errors' in response:
+            return redirect('/cases/' + case_id + '/manage')
+
+        return redirect('/cases/' + case_id)

@@ -22,11 +22,11 @@
 				Case Status
 			</label>
 			<select id="status" class="govuk-select" name="status" id="status">
-				<option {% if data.case.application.status == "Submitted" %}selected{% endif %}>Submitted</option>
-				<option {% if data.case.application.status == "More information required" %}selected{% endif %}>More information required</option>
-				<option {% if data.case.application.status == "Under review" %}selected{% endif %}>Under review</option>
-				<option {% if data.case.application.status == "Resubmitted" %}selected{% endif %}>Resubmitted</option>
-				<option {% if data.case.application.status == "Withdrawn" %}selected{% endif %}>Withdrawn</option>
+				<option value="submitted" {% if data.case.application.status == "submitted" %}selected{% endif %}>Submitted</option>
+				<option value="more_information_required" {% if data.case.application.status == "more_information_required" %}selected{% endif %}>More information required</option>
+				<option value="under_review" {% if data.case.application.status == "under_review" %}selected{% endif %}>Under review</option>
+				<option value="resubmitted" {% if data.case.application.status == "resubmitted" %}selected{% endif %}>Resubmitted</option>
+				<option value="withdrawn" {% if data.case.application.status == "withdrawn" %}selected{% endif %}>Withdrawn</option>
 			</select>
 		</div>
 

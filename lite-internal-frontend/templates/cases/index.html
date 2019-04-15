@@ -57,7 +57,7 @@
 							{{ case.application.user_id|default:"Untitled" }}
 						</td>
 						<td class="lite-table__cell">
-							{{ case.application.status|default:"Untitled" }}
+							{{ case.application.status|default:"Untitled"|sentence_case }}
 						</td>
 					</tr>
 				{% endfor %}
