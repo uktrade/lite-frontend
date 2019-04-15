@@ -67,7 +67,7 @@
 								{{ application.last_modified_at|str_date|naturaltime }}
 							</a>
 						</td>
-						<td class="lite-table__cell">{{ application.status }}</td>
+						<td class="lite-table__cell">{{ application.status|sentence_case }}</td>
 					</tr>
 				{% endfor %}
 			</tbody>
