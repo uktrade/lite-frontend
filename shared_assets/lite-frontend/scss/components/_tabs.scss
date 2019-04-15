@@ -1,4 +1,4 @@
-.lite-tabs--fade {
+.lite-tabs--wrapper {
 	position: relative;
 	display: block;
 	--margin-right: 20px;
@@ -30,7 +30,7 @@
 .lite-tabs__tab {
 	display: inline-block;
 	@include govuk-font($size: 14, $weight: bold);
-	line-height: govuk-spacing(7)!important;
+	line-height: 40px;
 	margin-right: var(--margin-right);
 	margin-bottom: var(--margin-right);
 	border-bottom: 2px solid transparent;

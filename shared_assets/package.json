@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/uktrade/lite-shared-assets/issues"
   },
-  "homepage": "https://github.com/uktrade/lite-shared-assets#readme"
+  "homepage": "https://github.com/uktrade/lite-shared-assets#readme",
+  "dependencies": {
+    "govuk-frontend": "^2.10.0"
+  }
 }
