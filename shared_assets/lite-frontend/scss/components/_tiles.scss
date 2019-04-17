@@ -1,0 +1,62 @@
+$card-color: $govuk-brand-colour;
+$card-shadow: 4px;
+
+.lite-tiles {
+	display: grid;
+	@include govuk-media-query($from: mobile) {
+		grid-template-columns: 1fr!important;
+	}
+	@include govuk-media-query($from: tablet) {
+		grid-template-columns: 1fr 1fr!important;
+	}
+	@include govuk-media-query($from: desktop) {
+		grid-template-columns: 1fr 1fr 1fr!important;
+	}
+	width: 100%;
+	grid-gap: (govuk-spacing(3) + 4px) govuk-spacing(3);
+
+	.lite-tile {
+		background-color: $card-color;
+		padding: govuk-spacing(5) govuk-spacing(5) govuk-spacing(3);
+		box-sizing: border-box;
+		text-decoration: none;
+		box-shadow: 0 $card-shadow 0 darken($card-color, 10%);
+		@include govuk-media-query($from: tablet) {
+			min-height: 150px;
+		}
+		//display: flex;
+		//flex-direction: column;
+		//justify-content: center;
+		padding-right: 40px;
+
+		* {
+			@include govuk-font($size: 19, $weight: bold);
+			margin: 0;
+			padding: 0;
+			color: black;
+			color: white!important;
+			text-shadow: 0 1px 0 darken($card-color, 10%);
+		}
+
+		h4 {
+			margin-bottom: govuk-spacing(1);
+			color: $govuk-brand-colour;
+		}
+
+		p {
+			font-weight: normal;
+			line-height: 1.5;
+			color: lighten($card-color, 50%)!important;
+		}
+
+		&:hover {
+			background-color: darken($card-color, 3.5%);
+			box-shadow: 0 $card-shadow 0 darken($card-color, 14%);
+		}
+
+		&:active {
+			transform: translateY($card-shadow);
+			box-shadow: none;
+		}
+	}
+}

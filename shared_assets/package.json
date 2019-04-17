@@ -1,0 +1,22 @@
+{
+  "name": "lite-shared-assets",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uktrade/lite-shared-assets.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/uktrade/lite-shared-assets/issues"
+  },
+  "homepage": "https://github.com/uktrade/lite-shared-assets#readme",
+  "dependencies": {
+    "govuk-frontend": "^2.10.0"
+  }
+}

@@ -1,0 +1,20 @@
+.app-bar {
+	margin-bottom: govuk-spacing(6);
+	display: grid;
+	grid-template-columns: 1fr auto;
+
+	* {
+		margin-bottom: 0;
+		display: inline-block;
+		white-space: nowrap;
+	}
+}
+
+.app-bar--right {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	& > * {
+		margin-left: govuk-spacing(4);
+	}
+}
