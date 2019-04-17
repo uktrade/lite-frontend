@@ -9,17 +9,15 @@ Application for handling internal information in LITE.
   * `cd lite-internal-frontend`
 * Start a local Postgres: `docker run --name my-postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres`
 * Set up your local config file:
-  * `cp sample.env .env`
+  * `cp local.env .env`
   * If you're not running Postgres with the default options, edit the `DATABASE_URL` sections of the `.env` file
 * Ensure you have [node v10](https://nodejs.org/en/download/) installed
   * `node -v` to see version
 * Install dependencies
   * `npm install`
-* Create and activate your Python virtual environment:
-  * `python -m venv venv`
-  * `source venv/bin/activate`
-* Run `pip install -r requirements.txt`
-* Run the application: `./manage.py migrate && ./manage.py runserver 9000`
+* Setup Pipenv environment:
+  * `pipenv sync`
+* Run the application: `pipenv run ./manage.py migrate && pipenv run ./manage.py runserver 9000`
 * Go to the index page (e.g. `http://localhost:9000`)
 
 ## LITE Repositories
