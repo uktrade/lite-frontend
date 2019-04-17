@@ -12,7 +12,9 @@ if os.path.exists(ENV_FILE):
     Env.read_env(ENV_FILE)
 
 env = Env(
-    DEBUG=(bool, False)
+    ALLOWED_HOSTS=(str, ''),
+    DEBUG=(bool, False),
+    DEBUG_LEVEL=(str, 'INFO'),
 )
 
 # Quick-start development settings - unsuitable for production
@@ -26,9 +28,7 @@ DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = json.loads(env('ALLOWED_HOSTS')) if env('ALLOWED_HOSTS') else []
 
-
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -155,3 +155,26 @@ else:
     DATABASES = {
         'default': env.db()
     }
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'json': {
+            'class': 'pythonjsonlogger.jsonlogger.JsonFormatter',
+            'format': '(asctime)(levelname)(message)(filename)(lineno)(threadName)(name)(thread)(created)(process)(processName)(relativeCreated)(module)(funcName)(levelno)(msecs)(pathname)',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'json',
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['console'],
+            'level': env('DEBUG_LEVEL').upper(),
+        },
+    }
+}

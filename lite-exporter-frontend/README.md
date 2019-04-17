@@ -18,11 +18,9 @@ Application for handling exporter related activity in LITE.
   * `node -v` to see version
 * Install dependencies
   * `npm install`
-* Create and activate your Python virtual environment:
-  * `python -m venv venv`
-  * `source venv/bin/activate`
-* Run `pip install -r requirements.txt`
-* Run the application: `./manage.py migrate && ./manage.py runserver 9000`
+* Setup Pipenv environment:
+  * `pipenv sync`
+* Run the application: `pipenv run ./manage.py migrate && pipenv run ./manage.py runserver 9000`
 * Go to the index page (e.g. `http://localhost:9000`)
 
 ## LITE Repositories
