@@ -7,7 +7,7 @@
 				<a class="govuk-breadcrumbs__link" href="#">Home</a>
 			</li>
 			<li class="govuk-breadcrumbs__list-item">
-				License controlled items and services
+				{% get_string 'common.service_name' %}
 			</li>
 		</ol>
 	</div>
@@ -16,7 +16,7 @@
 {% block body %}
     {% if applicationDeleted == "true" %}
 		<div class="information information-animated">
-			{% get_string 'APPLICATION_DELETED' %}
+			{% get_string 'drafts.deleted' %}
 		</div>
 	{% endif %}
 
@@ -24,7 +24,7 @@
         {{ title }}
     </h1>
 	<span class="govuk-caption-l" style="margin-bottom: 45px;">
-        {% get_string 'EXPORTER_HUB_DESCRIPTION' %}
+        {% get_string 'hub.description' %}
     </span>
 
 	{% for section in sections %}

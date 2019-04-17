@@ -8,7 +8,10 @@
 		<h1 class="govuk-heading-l">Applications</h1>
 		<div class="app-bar--right">
 			<a href="/new-application" class="govuk-button govuk-button--secondary" draggable="false" role="button">
-				Apply for a licence
+				{% get_string 'licences.apply_for_a_licence' %}
+			</a>
+			<a href="." class="govuk-button govuk-button--secondary" draggable="false" role="button">
+				{% get_string 'licences.refresh' %}
 			</a>
 			<a href="." class="govuk-button govuk-button--secondary" draggable="false" role="button">Refresh</a>
 			<!--<div class="lite-search-wrapper">

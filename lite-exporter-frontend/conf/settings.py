@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'sass_processor',
     'django.contrib.humanize',
-    'new_application'
+    'new_application',
+    'core.apps.CoreConfig',
 ]
 
 MIDDLEWARE = [

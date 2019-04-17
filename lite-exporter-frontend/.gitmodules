@@ -1,0 +1,3 @@
+[submodule "lite-content"]
+	path = lite-content
+	url = git@github.com:uktrade/lite-content.git

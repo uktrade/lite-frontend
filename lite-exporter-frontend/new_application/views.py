@@ -12,8 +12,8 @@ from form import forms
 
 def index(request):
     context = {
-        'title': get_string('APPLY_FOR_A_LICENCE'),
-        'service_uses': get_string('LICENCE_USE_THIS_SERVICE_TO'),
+        'title': get_string('licences.apply_for_a_licence'),
+        'service_uses': get_string('licences.use_this_service_to'),
     }
     return render(request, 'new_application/index.html', context)
 
