@@ -11,10 +11,9 @@ Application for handling internal information in LITE.
 * Set up your local config file:
   * `cp local.env .env`
   * If you're not running Postgres with the default options, edit the `DATABASE_URL` sections of the `.env` file
-* Ensure you have [node v10](https://nodejs.org/en/download/) installed
-  * `node -v` to see version
-* Install dependencies
-  * `npm install`
+* Initialise submodules:
+  * `git submodule init`
+  * `git submodule update`
 * Setup Pipenv environment:
   * `pipenv sync`
 * Run the application: `pipenv run ./manage.py migrate && pipenv run ./manage.py runserver 9000`
