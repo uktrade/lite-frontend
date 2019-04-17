@@ -9,7 +9,10 @@
 
 		<div class="app-bar--right">
 			<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:manage' data.case.id %}">
-				Progress application
+				Progress Application
+			</a>
+			<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:decide' data.case.id %}">
+				Record Decision
 			</a>
 		</div>
 	</div>
@@ -20,7 +23,7 @@
 				<p class="lite-heading-s">
 					Status
 				</p>
-				<p class="govuk-label">{{ data.case.application.status }}</p>
+				<p class="govuk-label">{{ data.case.application.status | sentence_case}}</p>
 			</div>
 		</div>
 		<div class="govuk-grid-row">
