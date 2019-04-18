@@ -35,7 +35,7 @@ pipeline
                     {
                         // checking out repository
                         checkout([
-                                $class: 'GitSCM', branches: [[name: 'E2E-Test-Refactor']],
+                                $class: 'GitSCM', branches: [[name: 'Test-Refactor-E2E']],
                                 userRemoteConfigs: [[url: 'https://github.com/uktrade/lite-exporter-frontend.git']]
                         ])
 
