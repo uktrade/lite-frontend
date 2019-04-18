@@ -11,7 +11,7 @@ pipeline
                 choice(name: 'DRIVER', description: 'Choose browser', choices: 'chrome\nfirefox\nheadless')
 
                 // Define test path to run
-                string(name: 'TESTS_TO_RUN', defaultValue: 'tests/test_purchase_tickets.py', description: 'choose test to run')                // Define test path to run
+                string(name: 'TESTS_TO_RUN', defaultValue: 'tests/test_draft_and_submit.py', description: 'choose test to run')                // Define test path to run
 
                 // Define environment to run tests on
                 choice(name: 'ENVIRONMENT', description: 'choose what environment to run in', choices: 'dev\nstaging\nuat')
