@@ -22,7 +22,7 @@ def pytest_addoption(parser):
 def driver(request):
     browser = request.config.getoption("--driver")
     if browser == 'chrome':
-        browser = webdriver.Chrome(executable_path="/Users/wisdome@kainos.com/LITE/lite-exporter-frontend/ui_automation_tests/chromedriver")
+        browser = webdriver.Chrome()
         browser.get("about:blank")
         browser.implicitly_wait(10)
         return browser
