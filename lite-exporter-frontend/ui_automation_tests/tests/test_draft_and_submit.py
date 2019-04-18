@@ -11,23 +11,20 @@ import helpers.helpers as utils
 import pytest
 
 
-env = "uat"
-exporter_url = 'https://lite-exporter-frontend-' + env + '.london.cloudapps.digital/'
-
 @pytest.fixture(scope="function")
-def open_exporter_hub(driver):
+def open_exporter_hub(driver, url):
     # navigate to the application home page
-    driver.get(exporter_url)
+    driver.get(url)
     # driver.maximize_window()
     assert driver.title == "Exporter Hub - LITE"
 
 
-def test_start_draft_application(driver, open_exporter_hub):
+def test_start_draft_application(driver, open_exporter_hub, url):
     print("Test Started")
     exporter_hub = ExporterHubPage(driver)
     apply_for_licence = ApplyForALicencePage(driver)
 
-    exporter_hub.go_to()
+    exporter_hub.go_to(url)
     exporter_hub.click_apply_for_a_licence()
     print("Clicked apply for a licence")
 
@@ -59,7 +56,7 @@ def test_start_draft_application(driver, open_exporter_hub):
     print("On the application overview page")
 
     app_id = driver.current_url[-36:]
-    exporter_hub.go_to()
+    exporter_hub.go_to(url)
     print("On Exporter Hub Page")
 
     # verify application is in drafts
@@ -78,19 +75,17 @@ def test_start_draft_application(driver, open_exporter_hub):
     print("application opened to application overview")
 
     apply_for_licence.click_delete_application()
-    assert 'Exporter Hub - LITE' in driver.title
+    assert 'Exporter Hub - LITE' in driver.title, "Delete Application link on overview page failed to go to Exporter Hub page"
 
     print("Test Complete")
 
 
-def test_submit_application(self):
+def test_submit_application(driver, open_exporter_hub, url):
     print("Test Started")
-    driver = self.driver
-
     exporter_hub = ExporterHubPage(driver)
     apply_for_licence = ApplyForALicencePage(driver)
 
-    exporter_hub.go_to()
+    exporter_hub.go_to(url)
     exporter_hub.click_apply_for_a_licence()
     print("Clicked apply for a licence")
 
@@ -118,15 +113,15 @@ def test_submit_application(self):
     apply_for_licence.click_save_and_continue()
     print("Entered Activity and clicked save and continue")
 
-    assert "Overview" in self.driver.title
+    assert "Overview" in driver.title
     print("On the application overview page")
 
     apply_for_licence.click_submit_application()
 
-    application_complete = self.driver.find_element_by_tag_name("h1").text
+    application_complete = driver.find_element_by_tag_name("h1").text
     assert "Application complete" in application_complete
 
-    exporter_hub.go_to()
+    exporter_hub.go_to(url)
     print("On Exporter Hub Page")
 
     # verify application is in drafts
@@ -216,7 +211,7 @@ def test_must_enter_fields_for_application(driver, open_exporter_hub):
     print("Test Complete")
 
     apply_for_licence.click_delete_application()
-    assert 'Exporter Hub - LITE' in driver.title
+    assert 'Exporter Hub - LITE' in driver.title, "Delete Application link on overview page failed to go to Exporter Hub page"
 
 
 def test_status_column_and_refresh_btn_on_applications(driver, open_exporter_hub):
@@ -227,7 +222,7 @@ def test_status_column_and_refresh_btn_on_applications(driver, open_exporter_hub
     exporter_hub.click_applications()
     print("navigated to applications page")
 
-    driver.assertTrue(driver.find_element_by_xpath("// th[text()[contains(., 'Status')]]").is_displayed())
+    assert driver.find_element_by_xpath("// th[text()[contains(., 'Status')]]").is_displayed()
     print("Status column is displayed")
 
     applications.click_refresh_btn()
@@ -238,8 +233,3 @@ def test_status_column_and_refresh_btn_on_applications(driver, open_exporter_hub
 
 def test_teardown(driver):
     driver.quit()
-
-
-if __name__ == '__main__':
-    suite = unittest.TestLoader().loadTestsFromTestCase(DraftTest)
-    unittest.TextTestRunner(verbosity=2).run(suite)
