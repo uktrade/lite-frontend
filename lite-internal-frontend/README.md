@@ -19,6 +19,20 @@ Application for handling internal information in LITE.
 * Run the application: `pipenv run ./manage.py migrate && pipenv run ./manage.py runserver 9000`
 * Go to the index page (e.g. `http://localhost:9000`)
 
+## Running selenium tests
+
+* Setup chromedriver
+  * `` CHROME_DRIVER_VERSION=`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE` ``
+  * `CHROME_DRIVER_FILENAME='chromedriver_mac64.zip'`
+  * `curl -o ~/$CHROME_DRIVER_FILENAME http://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/$CHROME_DRIVER_FILENAME`
+  * `unzip ~/$CHROME_DRIVER_FILENAME -d ~/ && rm ~/$CHROME_DRIVER_FILENAME`
+  * `sudo mv -f ~/chromedriver /usr/local/bin/chromedriver`
+  * `sudo chown root:admin /usr/local/bin/chromedriver`
+  * `sudo chmod 0755 /usr/local/bin/chromedriver`
+* Setup dev pipenv environment:
+  * `pipenv sync -d`
+* Run `pipenv run python -m pytest`
+
 ## LITE Repositories
 
 [lite-api](https://github.com/uktrade/lite-api) - Service for handling backend calls in LITE.

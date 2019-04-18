@@ -9,7 +9,7 @@ class TestSample():
         project_root = os.path.dirname(os.path.abspath(__file__))
         base_dir = os.path.dirname(project_root)
         print("dir:" + base_dir)
-        chrome_driver_path = base_dir + "/drivers/chromedriver"
+        chrome_driver_path = "chromedriver"
 
         global driver
         self.driver = webdriver.Chrome(chrome_driver_path)

@@ -21,7 +21,7 @@ class RegisterBusinessTest(unittest.TestCase):
         base_dir = os.path.dirname(project_root)
 
         if env != "":
-            chrome_driver_path = base_dir + "/drivers/chromedriver"
+            chrome_driver_path = "chromedriver"
             # create a new Chrome session
             cls.driver = webdriver.Chrome(chrome_driver_path)
             cls.driver.implicitly_wait(30)

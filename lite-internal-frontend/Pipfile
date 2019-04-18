@@ -5,6 +5,8 @@ verify_ssl = true
 
 [dev-packages]
 libsass = "==0.18.0"
+pytest = "==4.4.0"
+selenium = "==3.141.0"
 
 [packages]
 Django = "==2.2"
@@ -20,3 +22,4 @@ stringcase = "==1.2.0"
 
 [requires]
 python_version = "3.7"
+
