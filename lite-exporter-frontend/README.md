@@ -2,6 +2,32 @@
 
 Application for handling exporter related activity in LITE.
 
+
+## Running the service with docker
+* Download the repository:
+  * `git clone https://github.com/uktrade/lite-api.git`
+  * `cd lite-api`
+* First time setup
+  * Set up your local config file:
+    * `cp local.env .env`
+  * Initialise submodules
+    * `git submodule init`
+    * `git submodule update`
+  * Ensure docker is running
+    * Build and start docker images:
+    * `docker-compose build` - build the container image
+    * `docker-compose up`  - to bring up the db and the api service to allow the migrate to succeed
+  * Run the migrations
+    * `./bin/migrate.sh` - Perform the Django migrations
+* Starting the service
+    * `docker-compose up`
+* Stopping the service
+    * `docker-compose stop`
+* Tear down the service
+    * `docker-compose down`
+* Go to the index page (e.g. `http://localhost:8110`)
+***
+
 ## Running the application
 
 * Download the repository:

@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  fedb:
+    image: "postgres"
+    environment:
+      - POSTGRES_PASSWORD=password
+    networks:
+      - lite-api_default
+  exporter-fe:
+    env_file:
+      - .env
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - ${PORT}:${PORT}
+    depends_on:
+      - fedb
+    expose:
+      - ${PORT}
+    networks:
+      - lite-api_default
+    command: pipenv run ./manage.py runserver 0.0.0.0:${PORT}
+
+networks:
+  lite-api_default:
+    external: true
