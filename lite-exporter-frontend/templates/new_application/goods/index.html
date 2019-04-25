@@ -1,0 +1,46 @@
+{% extends 'layouts/base.html' %}
+
+{% block back-button %}
+	<a href="{% url 'new_application:overview' %}?id={{ draft_id }}" class="govuk-back-link">Back to Overview</a>
+{% endblock%}
+
+{% block body %}
+
+	<span class="govuk-caption-m">{{ data.draft.name }}</span>
+	<div class="app-bar">
+		<h2 class="govuk-heading-l">{{ title }}</h2>
+		<div class="app-bar--right">
+			<a href="{% url 'new_application:preexisting_good' %}?id={{ draft_id }}" role='button' draggable='false' class='govuk-button'>Add from organisations goods</a>
+		</div>
+	</div>
+
+	{% if data.goods|length %}
+		<table class="lite-table">
+			<thead class="lite-table__head">
+				<tr class="lite-table__row">
+					<th class="lite-table__header" scope="col">Description</th>
+					<th class="lite-table__header" scope="col">Part Number</th>
+					<th class="lite-table__header" scope="col">Control Code</th>
+					<th class="lite-table__header" scope="col">Quantity</th>
+					<th class="lite-table__header" scope="col">Unit of Measurement</th>
+					<th class="lite-table__header" scope="col">Value</th>
+				</tr>
+			</thead>
+			<tbody class="lite-table__body">
+				{% for good in data.goods %}
+					<tr class="lite-table__row">
+						<td class="lite-table__cell">{{ good.good.description }}</td>
+						<td class="lite-table__cell" style="{% if not good.good.part_number %}opacity: 0.4;{% endif %}">{{ good.good.part_number|default:"N/A" }}</td>
+						<td class="lite-table__cell" style="{% if not good.good.control_code %}opacity: 0.4;{% endif %}">{{ good.good.control_code|default:"N/A" }}</td>
+						<td class="lite-table__cell" style="{% if not good.value %}opacity: 0.4;{% endif %}">{{ good.value|default:"N/A" }}</td>
+						<td class="lite-table__cell" style="{% if not good.unit %}opacity: 0.4;{% endif %}">{{ good.unit|default:"N/A" }}</td>
+						<td class="lite-table__cell" style="{% if not good.quantity %}opacity: 0.4;{% endif %}">{{ good.quantity|default:"N/A" }}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		<p class="govuk-caption-l">You don't have any goods at the moment.</p>
+	{% endif %}
+
+{% endblock %}

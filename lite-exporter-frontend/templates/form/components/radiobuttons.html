@@ -1,0 +1,10 @@
+<div class="govuk-radios {% if data|length == 2 %}govuk-radios--inline{% endif %}">
+	{% for item in data %}
+		<div class="govuk-radios__item">
+			<input {% if value == item.key %}checked{% endif %} class="govuk-radios__input" {% if item.show_pane %}show_pane="{{ item.show_pane }}"{% endif %} id="{{ name }}-{{ item.key }}" name="{{ name }}" type="radio" value="{{ item.key }}">
+			<label class="govuk-label govuk-radios__label" for="{{ name }}-{{ item.key }}">
+				{{ item.value }}
+			</label>
+		</div>
+	{% endfor %}
+</div>

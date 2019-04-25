@@ -1,24 +1,30 @@
-import requests
+from django.http import HttpResponse
 from django.shortcuts import render
 
-from conf.settings import env
+from applications.services import get_applications, get_application
 
 
 def index(request):
-    response = requests.get(env("LITE_API_URL") + '/applications/')
+    data, status_code = get_applications(request)
+
+    if status_code is not 200:
+        raise HttpResponse(status=status_code)
 
     context = {
-        'data': response.json(),
+        'data': data,
         'title': 'Applications',
     }
     return render(request, 'applications/index.html', context)
 
 
-def application(request, id):
-    response = requests.get(env("LITE_API_URL") + '/applications/' + str(id) + '/')
+def application(request, pk):
+    data, status_code = get_application(request, str(pk))
+
+    if status_code is not 200:
+        raise HttpResponse(status=status_code)
 
     context = {
-        'data': response.json(),
-        'title': response.json().get("application").get("name"),
+        'data': data,
+        'title': data.get("application").get("name"),
     }
     return render(request, 'applications/application.html', context)

@@ -57,24 +57,16 @@
 				</a>
 			</div>
 
-			{% if user %}
-			<div id="user-menu">
-				<a>Log out</a>
-				<div class="divider"></div>
-				<a class="user-menu-profile">
-					<p>John</p>
-					<div class="user-icon signed-in"></div>
-				</a>
-			</div>
-			{% else %}
-			<a href="/login" class="user-menu-profile" style="position: absolute;
-							top: 10px;
-							right: 0;">
-				<p>Login</p>
-				<div class="user-icon"></div>
-			</a>
+			{% if user.is_authenticated %}
+				<div id="user-menu">
+					<a href="/logout">Log out</a>
+					<div class="divider"></div>
+					<a class="user-menu-profile">
+						<p>{{ user.first_name }}</p>
+						<div class="user-icon signed-in"></div>
+					</a>
+				</div>
 			{% endif %}
-
 		</div>
 	</header>
 	{% endblock %}

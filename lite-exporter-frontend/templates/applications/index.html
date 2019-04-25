@@ -13,13 +13,6 @@
 			<a href="." class="govuk-button govuk-button--secondary" draggable="false" role="button">
 				{% get_string 'licences.refresh' %}
 			</a>
-			<a href="." class="govuk-button govuk-button--secondary" draggable="false" role="button">Refresh</a>
-			<!--<div class="lite-search-wrapper">
-				<input type="search" name="search" class="govuk-input">
-				<div class="search-button">
-
-				</div>
-			</div>-->
 		</div>
 	</div>
 
@@ -30,8 +23,8 @@
 					<th class="lite-table__header" scope="col">
 						Reference
 					</th>
-					<!--<th class="lite-table__header" scope="col">Goods</th>
-					<th class="lite-table__header" scope="col">Destinations</th>-->
+					<th class="lite-table__header" scope="col">Goods</th>
+					<!--<th class="lite-table__header" scope="col">Destinations</th>-->
 					<th class="lite-table__header" scope="col">Last Updated</th>
 					<th class="lite-table__header" scope="col">Status</th>
 				</tr>
@@ -42,17 +35,17 @@
 						<td class="lite-table__cell">
 							{{ application.name|default:"Untitled" }}
 						</td>
-						<!--<td class="lite-table__cell">
+						<td class="lite-table__cell">
 							<a class="hoverable-link tooltip">
 								<span class="tooltip-content" style="min-width: 150px;">
 									{% for good in application.goods %}
-										{{ good.name }}<br/>
+										{{ good.good.description }} - {{ good.quantity }} {{ good.unit }}<br/>
 									{% endfor %}
 								</span>
 								{{ application.goods|length }} Good{{ application.goods|length|pluralize }}
 							</a>
 						</td>
-						<td class="lite-table__cell">
+						<!--<td class="lite-table__cell">
 							<a class="hoverable-link tooltip">
 								<span class="tooltip-content" style="min-width: 150px;">
 									{% for destination in application.destinations %}

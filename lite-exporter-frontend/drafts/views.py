@@ -1,15 +1,20 @@
-import requests
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseServerError
 from django.shortcuts import render
 
-from conf.settings import env
+from drafts.services import get_drafts
 
 
+@login_required
 def index(request):
-    response = requests.get(env("LITE_API_URL") + '/drafts/')
+    data, status_code = get_drafts(request)
+
+    if status_code is not 200:
+        return HttpResponseServerError()
 
     context = {
         'title': 'Drafts',
-        'data': response.json(),
+        'data': data,
         'applicationDeleted': request.GET.get('application_deleted')
     }
     return render(request, 'drafts/index.html', context)

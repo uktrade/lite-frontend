@@ -1,0 +1,39 @@
+{% extends 'layouts/full_width.html' %}
+
+{% load humanize %}
+
+{% block body %}
+
+	<div class="app-bar">
+		<h1 class="govuk-heading-l">Goods</h1>
+		<div class="app-bar--right">
+			<a href="{% url 'goods:add' %}" class="govuk-button" draggable="false" role="button">
+				Add a good
+			</a>
+		</div>
+	</div>
+
+	{% if data.goods|length %}
+		<table class="lite-table">
+			<thead class="lite-table__head">
+				<tr class="lite-table__row">
+					<th class="lite-table__header" scope="col">Description</th>
+					<th class="lite-table__header" scope="col">Part Number</th>
+					<th class="lite-table__header" scope="col">Control Code</th>
+				</tr>
+			</thead>
+			<tbody class="lite-table__body">
+				{% for good in data.goods %}
+					<tr class="lite-table__row">
+						<td class="lite-table__cell">{{ good.description }}</td>
+						<td class="lite-table__cell" style="{% if not good.part_number %}opacity: 0.4;{% endif %}">{{ good.part_number|default:"N/A" }}</td>
+						<td class="lite-table__cell" style="{% if not good.control_code %}opacity: 0.4;{% endif %}">{{ good.control_code|default:"N/A" }}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		<p class="govuk-caption-l">You don't have any goods at the moment.</p>
+	{% endif %}
+
+{% endblock %}

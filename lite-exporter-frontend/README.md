@@ -33,7 +33,7 @@ Application for handling exporter related activity in LITE.
 * Download the repository:
   * `git clone https://github.com/uktrade/lite-exporter-frontend.git`
   * `cd lite-exporter-frontend`
-* Start a local Postgres: `docker run --name my-postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres`
+* Start a local Postgres: `docker run --name lite-frontend -e POSTGRES_PASSWORD=password -p 5430:5432 -d postgres`
 * Set up your local config file:
   * `cp sample.env .env`
   * If you're not running Postgres with the default options, edit the `DATABASE_URL` sections of the `.env` file

@@ -4,12 +4,10 @@ from . import views
 
 app_name = 'core'
 urlpatterns = [
-    # ex: /
-    path('', views.hub, name='hub'),
-	# ex: /signin
-	path('signin', views.signin, name='signin'),
+	# ex: /
+	path('', views.hub, name='hub'),
+	# ex: /login
+	path('login', views.login, name='login'),
 	# ex: /signout
-	path('signout', views.signout, name='signout'),
-	# ex: /placeholder
-	path('placeholder', views.placeholder, name='placeholder'),
+	path('logout', views.logout, name='logout'),
 ]

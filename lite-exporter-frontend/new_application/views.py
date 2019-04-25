@@ -1,13 +1,13 @@
-import json
 from django.http import Http404
-
-import requests
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
+from django.views.generic import TemplateView
 
-from conf.settings import env
 from core.builtins.custom_tags import get_string
-from form import forms
+from drafts.services import get_draft, post_drafts, put_draft, delete_draft, submit_draft, get_draft_goods, get_drafts, \
+    post_draft_preexisting_goods
+from goods.services import get_goods, get_good
+from new_application import forms
 
 
 def index(request):
@@ -41,37 +41,25 @@ def start(request):
 
 def form(request, pk):
     if request.method == 'POST':
-        data = {}
+        data = request.POST
 
-        # Add body fields to data
-        for key, value in request.POST.items():
-            if key != "button":
-                data[key] = value
-
-        # Set User ID
-        data['user_id'] = '12345'
-
-        # Post it to API
+        # Send data to API
         if request.GET.get('id'):
-            response = requests.put(env("LITE_API_URL") + '/drafts/' + request.GET.get('id') + '/',
-                                    json=data)
+            response, status_code = put_draft(request, request.GET.get('id'), data)
         else:
-            response = requests.post(env("LITE_API_URL") + '/drafts/',
-                                     json=data)
-
-        response_data = response.json()
+            response, status_code = post_drafts(request, data)
 
         # If there are errors returned from LITE API, return and show them
-        if 'errors' in response_data:
+        if 'errors' in response:
             page = get_form_by_id(pk)
             context = {
                 'title': page.title,
                 'page': page,
-                'errors': response_data['errors'],
+                'errors': response['errors'],
                 'data': data,
                 'draft_id': request.GET.get('id'),
             }
-            return render(request, 'new_application/form.html', context)
+            return render(request, 'form/form.html', context)
 
         # If a return query param is set, go there instead of the next form
         return_to = request.GET.get('return')
@@ -79,17 +67,11 @@ def form(request, pk):
         if return_to == 'overview':
             return redirect(reverse_lazy('new_application:overview') + '?id=' + request.GET.get('id'))
 
-        if return_to == 'goods':
-            return redirect(reverse_lazy('new_application:overview') + '?id=' + request.GET.get('id'))
-
-        if return_to == 'people':
-            return redirect(reverse_lazy('new_application:overview') + '?id=' + request.GET.get('id'))
-
         # Get the next form, if null go to overview
         next_form = get_next_form_after_id(pk)
         if next_form:
             return redirect(reverse_lazy('new_application:form',
-                                         kwargs={'pk': next_form.id}) + '?id=' + str(response_data['draft']['id']))
+                                         kwargs={'pk': next_form.id}) + '?id=' + str(response['draft']['id']))
         else:
             return redirect(reverse_lazy('new_application:overview') + '?id=' + request.GET.get('id'))
 
@@ -98,8 +80,8 @@ def form(request, pk):
         data = {}
 
         if request.GET.get('id'):
-            response = requests.get(env("LITE_API_URL") + '/drafts/' + request.GET.get('id'))
-            data = response.json()['draft']
+            data, status_code = get_draft(request, request.GET.get('id'))
+            data = data['draft']
 
         context = {
             'title': page.title,
@@ -107,12 +89,12 @@ def form(request, pk):
             'data': data,
             'draft_id': request.GET.get('id'),
         }
-        return render(request, 'new_application/form.html', context)
+        return render(request, 'form/form.html', context)
 
 
 def overview(request):
     draft_id = request.GET.get('id')
-    data = requests.get(env("LITE_API_URL") + '/drafts/' + draft_id).json()
+    data, status_code = get_draft(request, request.GET.get('id'))
 
     context = {
         'title': 'Overview',
@@ -124,16 +106,14 @@ def overview(request):
 
 
 def submit(request):
-    draft_id = request.GET.get('id')
-    data = requests.post(env("LITE_API_URL") + '/applications/',
-                         json={'id': draft_id}).json()
+    data, status_code = submit_draft(request, request.GET.get('id'))
 
-    if 'errors' in data:
+    if status_code is not 201:
         raise Http404
 
     context = {
         'title': 'Application Submitted',
-        'data': data
+        'data': data,
     }
     return render(request, 'new_application/application_success.html', context)
 
@@ -147,9 +127,72 @@ def cancel(request):
 
 
 def cancel_confirm(request):
-    requests.delete(env('LITE_API_URL') + '/drafts/' + request.GET.get('id'))
+    delete_draft(request, request.GET.get('id'))
 
     if request.GET.get('return') == 'drafts':
         return redirect('/drafts?application_deleted=true')
 
     return redirect('/?application_deleted=true')
+
+
+def goods(request):
+    draft_id = request.GET.get('id')
+    data, status_code = get_draft_goods(request, draft_id)
+
+    context = {
+        'title': 'Goods',
+        'draft_id': draft_id,
+        'data': data,
+    }
+    return render(request, 'new_application/goods/index.html', context)
+
+
+def add_preexisting(request):
+    draft_id = request.GET.get('id')
+    draft, status_code = get_draft(request, draft_id)
+    data, status_code = get_goods(request)
+
+    context = {
+        'title': 'Goods',
+        'draft_id': draft_id,
+        'data': data,
+        'draft': draft,
+    }
+    return render(request, 'new_application/goods/preexisting.html', context)
+
+
+class AddPreexistingGood(TemplateView):
+    def get(self, request, **kwargs):
+        good, status_code = get_good(request, str(kwargs['pk']))
+        good = good.get('good')
+
+        context = {
+            'title': 'Add a pre-existing good to your application',
+            'page': forms.preexisting_good_form(good.get('id'),
+                                                good.get('description'),
+                                                good.get('control_code'),
+                                                good.get('part_number')),
+        }
+        return render(request, 'form/form.html', context)
+
+    def post(self, request, **kwargs):
+        draft_id = request.GET.get('id')
+        data, status_code = post_draft_preexisting_goods(request, draft_id, request.POST)
+
+        if status_code != 201:
+            good, status_code = get_good(request, str(kwargs['pk']))
+            good = good.get('good')
+
+            context = {
+                'title': 'Add a pre-existing good to your application',
+                'page': forms.preexisting_good_form(good.get('id'),
+                                                    good.get('description'),
+                                                    good.get('control_code'),
+                                                    good.get('part_number')),
+                'body': request.POST,
+                'errors': data.get('errors'),
+            }
+            return render(request, 'form/form.html', context)
+
+        return redirect(reverse_lazy('new_application:goods') + '?id=' + draft_id)
+

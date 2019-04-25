@@ -1,0 +1,34 @@
+{% extends 'layouts/two_pane.html' %}
+
+{% block back-button %}{% endblock %}
+
+{% block twoThirds %}
+	<form method="post">
+		<div class="{% if error %}govuk-form-group--error{% endif %}">
+			<h2 class="govuk-heading-l">{{ title }}</h2>
+
+			{% csrf_token %}
+
+			{% if error %}
+				<span class="govuk-error-message">
+	   				<span class="govuk-visually-hidden">Error:</span> Enter a valid email/password combination
+	 			</span>
+			{% endif %}
+
+			<div class="govuk-form-group">
+				<label class="govuk-label" for="email">
+					Email
+				</label>
+				<input class="govuk-input govuk-input--width-20 {% if error %}govuk-input--error{% endif %}" id="email" name="email" type="email" value="{{ email }}">
+			</div>
+
+			<div class="govuk-form-group">
+				<label class="govuk-label" for="password">
+					Password
+				</label>
+				<input class="govuk-input govuk-input--width-20 {% if error %}govuk-input--error{% endif %}" id="password" name="password" type="password">
+			</div>
+		</div>
+		<button type="submit" class="govuk-button">Submit</button>
+	</form>
+{% endblock %}

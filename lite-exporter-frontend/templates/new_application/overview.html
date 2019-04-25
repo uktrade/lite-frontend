@@ -21,7 +21,6 @@
 		{% for section in sections %}
 			<div class="section">
 				<div class="section-header">
-					<!--<h4 href="/new-application/form/section/{{ section.id }}?id={{ draft_id }}" class="govuk-heading-s govuk-link">{{ section.title }}</h4>-->
 					{% if forloop.counter0 == 0 %}
 						<dl class="govuk-summary-list">
 							{% for form in section.forms %}
@@ -71,6 +70,12 @@
 				{% endif %}
 			</div>
 		{% endfor %}
+		<div class="section">
+			<div class="section-header">
+				<a href="goods?id={{ draft_id }}" class="govuk-heading-s govuk-link">Goods</a>
+				<p class="govuk-caption-m">View the goods associated with this application</p>
+			</div>
+		</div>
 	</div>
 
 	<form action="{% url 'new_application:submit' %}?id={{ draft_id }}" method="post">
