@@ -4,9 +4,9 @@ Application for handling exporter related activity in LITE.
 
 
 ## Running the service with docker
-* Download the repository:
-  * `git clone https://github.com/uktrade/lite-api.git`
-  * `cd lite-api`
+* Download the repository
+  * `git clone https://github.com/uktrade/lite-exporter-frontend.git`
+  * `cd lite-exporter-frontend`
 * First time setup
   * Set up your local config file:
     * `cp local.env .env`
