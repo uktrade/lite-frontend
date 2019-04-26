@@ -5,6 +5,8 @@ services:
     image: "postgres"
     environment:
       - POSTGRES_PASSWORD=password
+    ports:
+      - 5430:5432
     networks:
       - lite-api_default
   exporter-fe:
@@ -25,4 +27,4 @@ services:
 
 networks:
   lite-api_default:
-    external: true
+    external: false
