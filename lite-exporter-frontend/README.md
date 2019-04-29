@@ -45,6 +45,17 @@ Application for handling exporter related activity in LITE.
 * Run the application: `pipenv run ./manage.py migrate && pipenv run ./manage.py runserver 9000`
 * Go to the index page (e.g. `http://localhost:9000`)
 
+
+## Running selenium tests
+
+* Setup chromedriver
+  * Download chromedriver from http://chromedriver.chromium.org/ and install it  
+  * make sure it has execute permissions and is in PATH
+  
+* Setup dev pipenv environment:
+  * `pipenv sync -d`
+* Run `pipenv run python -m pytest`
+
 ## LITE Repositories
 
 [lite-api](https://github.com/uktrade/lite-api) - Service for handling backend calls in LITE.
