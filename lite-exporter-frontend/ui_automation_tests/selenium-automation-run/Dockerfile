@@ -1,8 +1,8 @@
 FROM exporter/selenium_base:latest
 
 # pip
-COPY ui_automation_tests/requirements_e2e.txt /tmp/requirements_e2e.txt
-RUN pip install -r /tmp/requirements_e2e.txt
+COPY ui_automation_tests/e2e.txt /tmp/e2e.txt
+RUN pip install -r /tmp/e2e.txt
 RUN easy_install -U setuptools
 RUN pip install pytest-dependency
 

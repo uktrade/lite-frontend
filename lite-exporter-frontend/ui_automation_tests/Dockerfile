@@ -7,8 +7,8 @@ RUN mkdir /code
 WORKDIR /code
 
 # install requirements
-COPY requirements_e2e.txt .
-RUN pip install -r requirements_e2e.txt
+COPY e2e.txt .
+RUN pip install -r e2e.txt
 
 # Set Dokcer entry
 RUN pwd

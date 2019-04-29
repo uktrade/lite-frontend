@@ -39,6 +39,9 @@ class ApplyForALicencePage():
     def click_save_and_continue(self):
         self.driver.find_element_by_css_selector("button[action*='submit']").click()
 
+    def click_go_to_overview(self):
+        self.driver.find_element_by_xpath("//a[text()[contains(.,'Overview')]]").click()
+
     def click_delete_application(self):
         self.driver.find_element_by_css_selector(".cancel-link").click()
         self.driver.implicitly_wait(10)
@@ -46,3 +49,24 @@ class ApplyForALicencePage():
 
     def click_submit_application(self):
         self.driver.find_element_by_css_selector("button[type*='submit']").click()
+
+    def click_goods_link(self):
+        self.driver.find_element_by_xpath("//a[text()='Goods']").click()
+
+    def click_add_from_organisations_goods(self):
+        self.driver.find_element_by_xpath("//*[text()[contains(.,'Add from organisations goods')]]").click()
+
+    def add_good_to_application(self, description):
+        self.driver.find_element_by_xpath("//*[text()[contains(.,'" + description + "')]]/following::td[last()]").click()
+
+    def enter_quantity(self, qty):
+        self.driver.find_element_by_id("quantity").clear()
+        self.driver.find_element_by_id("quantity").send_keys(qty)
+
+    def enter_value(self, value):
+        self.driver.find_element_by_id("value").clear()
+        self.driver.find_element_by_id("value").send_keys(value)
+
+    def enter_unit_of_measurement(self, unit):
+        self.driver.find_element_by_id("unit").clear()
+        self.driver.find_element_by_id("unit").send_keys(unit)

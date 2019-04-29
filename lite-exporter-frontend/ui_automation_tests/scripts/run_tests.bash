@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
 # Declaring pytest arguments
-export PYTEST_ARGUMENTS=${@:-tests/test_purchase_tickets.py}
+export PYTEST_ARGUMENTS=${@:-tests/test_login.py}
 
 # Set tag names to folders
-export AUTOMATION_IMAGE=internal/selenium-framework
-export PROJECT_IMAGE=internal/blazedemo-app-selenium
+export AUTOMATION_IMAGE=exporter/selenium-framework
+export PROJECT_IMAGE=exporter/ui_automation_tests
 
 export ALLURE_RESULTS_DIR=allure-results
 export PROJECT_DIR=ui_automation_tests
