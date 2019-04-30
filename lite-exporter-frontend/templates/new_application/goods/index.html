@@ -32,9 +32,9 @@
 						<td class="lite-table__cell">{{ good.good.description }}</td>
 						<td class="lite-table__cell" style="{% if not good.good.part_number %}opacity: 0.4;{% endif %}">{{ good.good.part_number|default:"N/A" }}</td>
 						<td class="lite-table__cell" style="{% if not good.good.control_code %}opacity: 0.4;{% endif %}">{{ good.good.control_code|default:"N/A" }}</td>
-						<td class="lite-table__cell" style="{% if not good.value %}opacity: 0.4;{% endif %}">{{ good.value|default:"N/A" }}</td>
-						<td class="lite-table__cell" style="{% if not good.unit %}opacity: 0.4;{% endif %}">{{ good.unit|default:"N/A" }}</td>
 						<td class="lite-table__cell" style="{% if not good.quantity %}opacity: 0.4;{% endif %}">{{ good.quantity|default:"N/A" }}</td>
+						<td class="lite-table__cell" style="{% if not good.unit %}opacity: 0.4;{% endif %}">{{ good.unit|default:"N/A" }}</td>
+						<td class="lite-table__cell" style="{% if not good.value %}opacity: 0.4;{% endif %}">{{ good.value|default:"N/A" }}</td>
 					</tr>
 				{% endfor %}
 			</tbody>
