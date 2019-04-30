@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/uktrade/lite-shared-assets#readme",
   "dependencies": {
-    "govuk-frontend": "^2.10.0"
+    "govuk-frontend": "^2.11.0"
   }
 }
