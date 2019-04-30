@@ -1,4 +1,4 @@
-.app-bar {
+.lite-app-bar {
 	margin-bottom: govuk-spacing(6);
 	display: grid;
 	grid-template-columns: 1fr auto;
@@ -10,7 +10,7 @@
 	}
 }
 
-.app-bar--right {
+.lite-app-bar--right {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
