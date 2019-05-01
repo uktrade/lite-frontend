@@ -16,6 +16,13 @@
 	text-align: center;
 }
 
+.lite-currency--error {
+	background-color: $govuk-error-colour;
+	color: govuk-colour("white");
+	border: 2px solid $govuk-error-colour;
+	font-weight: bold;
+}
+
 .lite-currency-input input {
 	padding-left: govuk-spacing(8) - 4px;
 }
