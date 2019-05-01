@@ -1,0 +1,25 @@
+.lite-currency-input {
+	position: relative;
+}
+
+.lite-currency-input__symbol {
+	@include govuk-font(19);
+	position: absolute;
+	left: 0;
+	top: 0;
+	padding: 8px 10px;
+	height: 40px;
+	box-sizing: border-box;
+	background-color: govuk-colour('grey-3');
+	border: 2px solid govuk-colour('black');
+	width: 40px;
+	text-align: center;
+}
+
+.lite-currency-input input {
+	padding-left: govuk-spacing(8) - 4px;
+}
+
+.lite-currency-input__input--right-aligned {
+	text-align: right;
+}
