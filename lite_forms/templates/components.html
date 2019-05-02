@@ -50,6 +50,8 @@
 			{% include "components/file_upload.html" with name=question.name value=question.name %}
 		{% elif question.input_type.name == "MULTI_FILE_UPLOAD" %}
 			{% include "components/multi_file_upload.html" with name=question.name value=question.name %}
+		{% elif question.input_type.name == "PASSWORD" %}
+	        {% include "components/password.html" with name=question.name value=data|keyvalue:question.name|default:'' error=errors|keyvalue:question.name %}
 		{% endif %}
 	</div>
 </div>

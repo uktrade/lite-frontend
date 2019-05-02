@@ -43,8 +43,11 @@
 			{% csrf_token %}
 
 			{% for question in page.questions %}
-				{% if question.html  %}
+				{% if question.input_type.name == "HTML"  %}
 					{{ question.html|safe }}
+				{% elif question.input_type.name == "HEADING" %}
+					<br/>
+					<h{{ question.heading_style.value }} class="govuk-heading-{{ question.heading_style.name|lower }}">{{ question.text }}</h{{ question.heading_style.value }}>
 				{% else %}
 					{% if question.input_type == "side_by_side" %}
 						<div class="lite-side-by-side-wrapper">

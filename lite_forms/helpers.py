@@ -1,15 +1,15 @@
-def get_form_by_id(id, sections):
-    for form in sections.forms:
-        if form.id == id:
+def get_form_by_pk(pk, section):
+    for form in section.forms:
+        if form.pk == pk:
             return form
     return
 
 
-def get_next_form_after_id(id, sections):
+def get_next_form_after_pk(pk, section):
     next_one = False
-    for form in sections.forms:
+    for form in section.forms:
         if next_one:
             return form
-        if form.id == id:
+        if str(form.pk) == str(pk):
             next_one = True
     return

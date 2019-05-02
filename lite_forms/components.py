@@ -15,12 +15,21 @@ class InputType(Enum):
     HIDDEN = 10
     PASSWORD = 11
     CURRENCY = 12
+    HEADING = 13
+    HTML = 14
 
 
 class ButtonStyle(Enum):
     DEFAULT = 'govuk-button'
     SECONDARY = 'govuk-button govuk-button--secondary'
     WARNING = 'govuk-button govuk-button--warning'
+
+
+class HeadingStyle(Enum):
+    XL = 1
+    L = 2
+    M = 3
+    S = 4
 
 
 class Button:
@@ -47,10 +56,11 @@ class Form:
                  buttons=None,
                  helpers=None,
                  javascript_imports=None):
-        self.id = uuid.uuid1()
+        self.pk = uuid.uuid1()
         self.title = title
         self.description = description
         self.questions = questions
+        self.questions.append(HiddenField(name='form_pk', value=self.pk))
         self.caption = caption
         self.helpers = helpers
         self.buttons = buttons
@@ -100,9 +110,17 @@ class HelpSection:
 class HTMLBlock:
     def __init__(self, html):
         self.html = html
+        self.input_type = InputType.HTML
 
 
 class SideBySideSection:
     def __init__(self, questions):
         self.input_type = 'side_by_side'
         self.questions = questions
+
+
+class Heading:
+    def __init__(self, text, heading_style):
+        self.text = text
+        self.heading_style = heading_style
+        self.input_type = InputType.HEADING
