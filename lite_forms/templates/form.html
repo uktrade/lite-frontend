@@ -49,11 +49,11 @@
 					{% if question.input_type == "side_by_side" %}
 						<div class="lite-side-by-side-wrapper">
 							{% for question in question.questions %}
-								{% include "form/components.html" with question=question errors=errors %}
+								{% include "components.html" with question=question errors=errors %}
 							{% endfor %}
 						</div>
 					{% else %}
-						{% include "form/components.html" with question=question errors=errors %}
+						{% include "components.html" with question=question errors=errors %}
 					{% endif %}
 			{% endif %}
 		{% endfor %}
