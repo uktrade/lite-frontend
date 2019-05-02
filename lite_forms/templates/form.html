@@ -61,12 +61,9 @@
 		<!-- Buttons -->
 		<div class="govuk-form-group">
 			<div class="buttons-row">
-				<button type="submit" class="govuk-button" action="submit">Save and continue</button>
-				{% if draft_id %}
-					<a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'new_application:overview' %}?id={{ draft_id }}">
-						Go to Overview
-					</a>
-				{% endif %}
+				{% for button in page.buttons %}
+					<button type="submit" class="{{ button.style.value }}" action="submit">{{ button.value }}</button>
+				{% endfor %}
 			</div>
 		</div>
 	</form>

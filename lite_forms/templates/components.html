@@ -4,6 +4,11 @@
 			{% endif %}">
 	<label class="govuk-label" for="{{ question.name }}">
 		{{ question.title }}
+		{% if question.optional %}
+			<p class="lite-form-optional">
+				Optional
+			</p>
+		{% endif %}
 	</label>
 	<span class="govuk-hint" for="{{ question.name }}">
 		{{ question.description|safe }}

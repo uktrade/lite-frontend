@@ -2,6 +2,34 @@ import uuid
 from enum import Enum
 
 
+class InputType(Enum):
+    INPUT = 1
+    TEXTAREA = 2
+    NUMBER = 3
+    SELECT = 4
+    RADIOBUTTONS = 5
+    CHECKBOXES = 6
+    FILE_UPLOAD = 7
+    MULTI_FILE_UPLOAD = 8
+    AUTOCOMPLETE = 9
+    HIDDEN = 10
+    PASSWORD = 11
+    CURRENCY = 12
+
+
+class ButtonStyle(Enum):
+    DEFAULT = 'govuk-button'
+    SECONDARY = 'govuk-button govuk-button--secondary'
+    WARNING = 'govuk-button govuk-button--warning'
+
+
+class Button:
+    def __init__(self, value, action, style=ButtonStyle.DEFAULT):
+        self.value = value
+        self.action = action
+        self.style = style
+
+
 class Section:
     def __init__(self, title, description, forms):
         self.id = uuid.uuid1()
@@ -11,23 +39,34 @@ class Section:
 
 
 class Form:
-    def __init__(self, title, description, questions, caption=None, helpers=None, javascript_imports=None):
+    def __init__(self,
+                 title,
+                 description,
+                 questions,
+                 caption=None,
+                 buttons=None,
+                 helpers=None,
+                 javascript_imports=None):
         self.id = uuid.uuid1()
         self.title = title
         self.description = description
         self.questions = questions
-        self.helpers = helpers
         self.caption = caption
+        self.helpers = helpers
+        self.buttons = buttons
+        if self.buttons is None:
+            self.buttons = [Button('Submit', 'submit')]
         self.javascript_imports = javascript_imports
 
 
 class Question:
-    def __init__(self, title, description, input_type, name, extras=None):
+    def __init__(self, title, description, input_type, name, optional=False, extras=None):
         self.id = uuid.uuid1()
         self.title = title
         self.description = description
         self.input_type = input_type
         self.name = name
+        self.optional = optional
         self.extras = extras
 
 
@@ -67,18 +106,3 @@ class SideBySideSection:
     def __init__(self, questions):
         self.input_type = 'side_by_side'
         self.questions = questions
-
-
-class InputType(Enum):
-    INPUT = 1
-    TEXTAREA = 2
-    NUMBER = 3
-    SELECT = 4
-    RADIOBUTTONS = 5
-    CHECKBOXES = 6
-    FILE_UPLOAD = 7
-    MULTI_FILE_UPLOAD = 8
-    AUTOCOMPLETE = 9
-    HIDDEN = 10
-    PASSWORD = 11
-    CURRENCY = 12
