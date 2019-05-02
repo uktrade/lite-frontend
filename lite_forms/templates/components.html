@@ -1,0 +1,50 @@
+<div id="pane_{{ question.name }}" class="govuk-form-group
+			{% if errors|keyvalue:question.name %}
+					govuk-form-group--error
+			{% endif %}">
+	<label class="govuk-label" for="{{ question.name }}">
+		{{ question.title }}
+	</label>
+	<span class="govuk-hint" for="{{ question.name }}">
+		{{ question.description|safe }}
+	</span>
+
+	<!-- Error -->
+	{% if errors %}
+		{% if errors|keyvalue:question.name %}
+			<span for="{{ question.name }}" class="govuk-error-message">
+				<span class="govuk-visually-hidden">Error:</span>
+				{% for error in errors|keyvalue:question.name %}
+					{{ error }}
+				{% endfor %}
+			</span>
+		{% endif %}
+	{% endif %}
+
+	<!-- Select component based on input_type -->
+	<div class="govuk-form-group">
+		{% if question.input_type.name == "HIDDEN" %}
+			<input type="hidden" name="{{ question.name }}" value="{{ question.value }}">
+		{% elif question.input_type.name == "INPUT" %}
+			{% include "form/components/input.html" with name=question.name value=data|keyvalue:question.name|default:'' error=errors|keyvalue:question.name %}
+		{% elif question.input_type.name == "CURRENCY" %}
+			{% include "form/components/currency.html" with name=question.name value=data|keyvalue:question.name|default:'' error=errors|keyvalue:question.name %}
+		{% elif question.input_type.name == "TEXTAREA" %}
+			{% include "form/components/textarea.html" with name=question.name extras=question.extras value=data|keyvalue:question.name|default:'' error=errors|keyvalue:question.name %}
+		{% elif question.input_type.name == "NUMBER" %}
+			{% include "form/components/number.html" with name=question.name value=question.name %}
+		{% elif question.input_type.name == "RADIOBUTTONS" %}
+			{% include "form/components/radiobuttons.html" with name=question.name value=data|keyvalue:question.name|default:'' data=question.data %}
+		{% elif question.input_type.name == "CHECKBOXES" %}
+			{% include "form/components/checkboxes.html" with name=question.name value=question.name data=question.data %}
+		{% elif question.input_type.name == "SELECT" %}
+			{% include "form/components/select.html" with name=question.name value=question.name data=question.data %}
+		{% elif question.input_type.name == "AUTOCOMPLETE" %}
+			{% include "form/components/autocomplete.html" with name=question.name value=question.name data=question.data %}
+		{% elif question.input_type.name == "FILE_UPLOAD" %}
+			{% include "form/components/file_upload.html" with name=question.name value=question.name %}
+		{% elif question.input_type.name == "MULTI_FILE_UPLOAD" %}
+			{% include "form/components/multi_file_upload.html" with name=question.name value=question.name %}
+		{% endif %}
+	</div>
+</div>
