@@ -19,6 +19,10 @@ def nest_data(sent_data):
     data = {}
 
     for q, v in sent_data.items():
+        if not q.contains('.'):
+            data[q] = v
+            continue
+
         nest_name = q.split('.')[0]
 
         if nest_name not in data:
