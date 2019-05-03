@@ -1,5 +1,5 @@
 <div id="pane_{{ question.name }}" class="govuk-form-group
-			{% if errors|key_value:question.name %}
+			{% if errors|key_value_split:question.name %}
 					govuk-form-group--error
 			{% endif %}">
 	<label class="govuk-label" for="{{ question.name }}">
