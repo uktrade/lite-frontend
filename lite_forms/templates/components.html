@@ -1,5 +1,5 @@
 <div id="pane_{{ question.name }}" class="govuk-form-group
-			{% if errors|keyvalue:question.name %}
+			{% if errors|key_value:question.name %}
 					govuk-form-group--error
 			{% endif %}">
 	<label class="govuk-label" for="{{ question.name }}">
@@ -16,10 +16,10 @@
 
 	<!-- Error -->
 	{% if errors %}
-		{% if errors|keyvalue:question.name %}
+		{% if errors|key_value_split:question.name %}
 			<span for="{{ question.name }}" class="govuk-error-message">
 				<span class="govuk-visually-hidden">Error:</span>
-				{% for error in errors|keyvalue:question.name %}
+				{% for error in errors|key_value_split:question.name %}
 					{{ error }}
 				{% endfor %}
 			</span>
@@ -31,15 +31,15 @@
 		{% if question.input_type.name == "HIDDEN" %}
 			<input type="hidden" name="{{ question.name }}" value="{{ question.value }}">
 		{% elif question.input_type.name == "INPUT" %}
-			{% include "components/input.html" with name=question.name value=data|keyvalue:question.name|default:'' error=errors|keyvalue:question.name %}
+			{% include "components/input.html" with name=question.name value=data|key_value:question.name|default:'' error=errors|key_value_split:question.name %}
 		{% elif question.input_type.name == "CURRENCY" %}
-			{% include "components/currency.html" with name=question.name value=data|keyvalue:question.name|default:'' error=errors|keyvalue:question.name %}
+			{% include "components/currency.html" with name=question.name value=data|key_value:question.name|default:'' error=errors|key_value_split:question.name %}
 		{% elif question.input_type.name == "TEXTAREA" %}
-			{% include "components/textarea.html" with name=question.name extras=question.extras value=data|keyvalue:question.name|default:'' error=errors|keyvalue:question.name %}
+			{% include "components/textarea.html" with name=question.name extras=question.extras value=data|key_value:question.name|default:'' error=errors|key_value_split:question.name %}
 		{% elif question.input_type.name == "NUMBER" %}
 			{% include "components/number.html" with name=question.name value=question.name %}
 		{% elif question.input_type.name == "RADIOBUTTONS" %}
-			{% include "components/radiobuttons.html" with name=question.name value=data|keyvalue:question.name|default:'' data=question.data %}
+			{% include "components/radiobuttons.html" with name=question.name value=data|key_value:question.name|default:'' data=question.data %}
 		{% elif question.input_type.name == "CHECKBOXES" %}
 			{% include "components/checkboxes.html" with name=question.name value=question.name data=question.data %}
 		{% elif question.input_type.name == "SELECT" %}
@@ -51,7 +51,7 @@
 		{% elif question.input_type.name == "MULTI_FILE_UPLOAD" %}
 			{% include "components/multi_file_upload.html" with name=question.name value=question.name %}
 		{% elif question.input_type.name == "PASSWORD" %}
-	        {% include "components/password.html" with name=question.name value=data|keyvalue:question.name|default:'' error=errors|keyvalue:question.name %}
+	        {% include "components/password.html" with name=question.name value=data|key_value:question.name|default:'' error=errors|key_value_split:question.name %}
 		{% endif %}
 	</div>
 </div>

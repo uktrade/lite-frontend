@@ -1,6 +1,6 @@
 def get_form_by_pk(pk, section):
     for form in section.forms:
-        if form.pk == pk:
+        if str(form.pk) == str(pk):
             return form
     return
 
@@ -19,7 +19,7 @@ def nest_data(sent_data):
     data = {}
 
     for q, v in sent_data.items():
-        if not q.contains('.'):
+        if '.' not in q:
             data[q] = v
             continue
 
