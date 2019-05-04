@@ -15,19 +15,19 @@ def get_next_form_after_pk(pk, section):
     return
 
 
+def create_keys(d, keys, value):
+    keys = keys.split(".")
+    for k in keys[:-1]:
+        if k not in d:
+            d[k] = {}
+        d = d[k]
+    d[keys[-1]] = value
+
+
 def nest_data(sent_data):
     data = {}
 
     for q, v in sent_data.items():
-        if '.' not in q:
-            data[q] = v
-            continue
-
-        nest_name = q.split('.')[0]
-
-        if nest_name not in data:
-            data[nest_name] = {}
-
-        data[nest_name][q.split('.')[1]] = v
+        create_keys(data, q, v)
 
     return data
