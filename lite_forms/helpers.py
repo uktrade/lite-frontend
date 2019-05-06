@@ -1,3 +1,6 @@
+from collections.abc import MutableMapping
+
+
 def get_form_by_pk(pk, section):
     for form in section.forms:
         if str(form.pk) == str(pk):
@@ -31,3 +34,25 @@ def nest_data(sent_data):
         create_keys(data, q, v)
 
     return data
+
+
+def flatten_data(d, parent_key='', sep='.'):
+    """
+    Flattens dictionaries eg
+    {'site': {
+            'name': 'SITE1'
+        }
+    }
+    becomes
+    {
+        'site.name': 'SITE1'
+    }
+    """
+    items = []
+    for k, v in d.items():
+        new_key = parent_key + sep + k if parent_key else k
+        if isinstance(v, MutableMapping):
+            items.extend(flatten_data(v, new_key, sep=sep).items())
+        else:
+            items.append((new_key, v))
+    return dict(items)
