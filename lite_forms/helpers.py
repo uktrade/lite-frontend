@@ -18,7 +18,7 @@ def get_next_form_after_pk(pk, section):
     return
 
 
-def create_keys(d, keys, value):
+def _create_keys(d, keys, value):
     keys = keys.split(".")
     for k in keys[:-1]:
         if k not in d:
@@ -28,10 +28,21 @@ def create_keys(d, keys, value):
 
 
 def nest_data(sent_data):
+    """
+    Nests strings into dictionaries eg
+    {
+        'site.name': 'SITE1'
+    }
+    becomes
+    {'site': {
+            'name': 'SITE1'
+        }
+    }
+    """
     data = {}
 
     for q, v in sent_data.items():
-        create_keys(data, q, v)
+        _create_keys(data, q, v)
 
     return data
 
