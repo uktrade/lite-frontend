@@ -7,7 +7,7 @@ verify_ssl = true
 libsass = "==0.18.0"
 selenium = "==3.141.0"
 pytest = "==4.4.0"
-allure-pytest = "*"
+allure-pytest = "==2.6.1"
 
 [packages]
 Django = "==2.2"
@@ -19,8 +19,7 @@ python-json-logger = "==0.1.11"
 requests = "==2.21.0"
 stringcase = "==1.2.0"
 psycopg2 = "==2.7.7"
-allure = "*"
-allure-pytest = "*"
+allure-pytest = "==2.6.1"
 
 [requires]
 python_version = "3.7"
