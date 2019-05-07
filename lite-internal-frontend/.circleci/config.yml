@@ -18,6 +18,8 @@ jobs:
 
     steps:
       - checkout
+      - run: git submodule sync
+      - run: git submodule update --init
 
       # Download and cache dependencies
       - restore_cache:  # ensure this step occurs *before* installing dependencies
