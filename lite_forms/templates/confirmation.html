@@ -1,0 +1,34 @@
+{% extends 'layouts/two_pane.html' %}
+
+{% block back-button %}{% endblock %}
+
+{% block twoThirds %}
+
+	<div class="govuk-panel govuk-panel--confirmation">
+		<h1 class="govuk-panel__title">
+			{{ title }}
+		</h1>
+		<div class="govuk-panel__body">
+			{{ secondary_title }}
+		</div>
+	</div>
+
+	<p class="govuk-body">{{ description }}</p>
+
+	{% if what_happens_next %}
+		<h2 class="govuk-heading-m">What happens next</h2>
+
+		{% for string in what_happens_next %}
+			<p class="govuk-body">
+				{{ string }}
+			</p>
+		{% endfor %}
+	{% endif %}
+
+	{% for key, value in links.items %}
+		<p class="govuk-body">
+			<a href="{{ value }}" class="govuk-link">{{ key }}</a>
+		</p>
+	{% endfor %}
+
+{% endblock %}
