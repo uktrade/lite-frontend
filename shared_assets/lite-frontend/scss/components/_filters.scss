@@ -1,0 +1,41 @@
+.lite-filters {
+	position: -webkit-sticky;
+	position: sticky;
+	top: govuk-spacing(6);
+}
+
+.lite-filter-box {
+	background-color: govuk-colour("grey-4");
+	border: 1px solid darken(govuk-colour("grey-4"), 2%);
+	padding: govuk-spacing(4);
+	margin-bottom: govuk-spacing(6);
+}
+
+.lite-filter-bar {
+	@include govuk-font($size: 19);
+	display: flex;
+	flex-wrap: wrap;
+	background-color: govuk-colour("grey-4");
+	border: 1px solid darken(govuk-colour("grey-4"), 2%);
+	padding: govuk-spacing(4);
+	margin-bottom: govuk-spacing(6);
+
+	* {
+		margin: 0 govuk-spacing(1) 0 0;
+		line-height: 30px!important;
+	}
+}
+
+.lite-filter-bar-item {
+	position: relative;
+	padding: 0 govuk-spacing(2);
+	z-index: 0;
+	display: flex;
+	margin-top: -2px;
+}
+
+.lite-filter-bar-item-remove {
+	@include govuk-font($size: 14, $weight: bold);
+	display: inline-block;
+	line-height: 1.25;
+}

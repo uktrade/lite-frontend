@@ -1,3 +1,7 @@
+:root {
+	--margin-right: 20px;
+}
+
 .lite-tabs--wrapper {
 	position: relative;
 	display: block;
@@ -27,12 +31,27 @@
 	-webkit-overflow-scrolling: touch;
 }
 
+.lite-tabs--fade {
+	position: relative;
+	display: block;
+	width: 100%;
+	&:after {
+		content: "";
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		width: 15px;
+		background: linear-gradient(90deg, rgba(white, 0%), white);
+	}
+}
+
 .lite-tabs__tab {
 	display: inline-block;
 	@include govuk-font($size: 14, $weight: bold);
-	line-height: 40px;
-	margin-right: var(--margin-right);
-	margin-bottom: var(--margin-right);
+	line-height: 40px!important;
+	margin-right: 25px;
+	margin-bottom: 30px;
 	border-bottom: 2px solid transparent;
 	color: govuk-colour("grey-1");
 	letter-spacing: 1px;
