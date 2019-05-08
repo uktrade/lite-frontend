@@ -9,6 +9,6 @@
 	accessibleAutocomplete.enhanceSelectElement({
 		defaultValue: '',
 		displayMenu: 'overlay',
-		selectElement: document.querySelector('#{{ name }}')
+		selectElement: document.querySelector('#{{ name|prefix_dots }}')
 	});
 </script>

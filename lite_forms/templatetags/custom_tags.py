@@ -9,10 +9,5 @@ def key_value(dictionary, key):
 
 
 @register.filter
-def key_value_split(dictionary, key):
-    if '.' in key:
-        split = key.split('.')
-        key = split[len(split) - 1]
-    if not dictionary:
-        return
-    return dictionary.get(key)
+def prefix_dots(text):
+    return text.replace('.', '\\\.')
