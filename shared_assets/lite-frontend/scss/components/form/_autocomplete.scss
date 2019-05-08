@@ -11,7 +11,9 @@
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 	margin-bottom: 0;
-	width: 100%
+	width: 100%;
+    @include govuk-font($size: 19);
+    max-width: 38ex + 3ex;
 }
 
 .autocomplete__input {
@@ -50,15 +52,13 @@
 
 .autocomplete__menu {
 	background-color: #fff;
-	//border: 2px solid #0b0c0c;
 	border-top: 0;
 	color: #34384b;
 	font-family: "nta";
 	margin: 0;
-	max-height: 342px;
 	overflow-x: hidden;
 	padding: 0;
-	width: 100%;
+	width: calc(100% - 11px);
 }
 
 .autocomplete__menu--visible {
