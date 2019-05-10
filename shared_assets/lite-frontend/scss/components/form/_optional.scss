@@ -1,24 +1,8 @@
 .lite-form-optional {
 	@include govuk-font($size: 19);
-	display: inline-block;
+	display: block;
 	position: relative;
-	margin-top: 0;
-	color: rgba(govuk-colour("black"), 0.75);
-	padding: 0 govuk-spacing(2);
-	margin-left: govuk-spacing(2);
-	text-shadow: 0 1px 0 govuk-colour("white");
-	margin-bottom: 0;
-	z-index: 0;
-	&:before {
-		content: "";
-		position: absolute;
-		top: -5px;
-		bottom: -1px;
-		left: 0;
-		right: 0;
-		background-color: govuk-colour("grey-3");
-		opacity: .5;
-		z-index: -1;
-		border-radius: 6px;
-	}
+	margin-top: govuk-spacing(2);
+	margin-bottom: govuk-spacing(2);
+	color: govuk-colour("grey-1");
 }
