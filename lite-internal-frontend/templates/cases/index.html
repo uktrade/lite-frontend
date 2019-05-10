@@ -6,10 +6,6 @@
 
 {% block body %}
 
-	<div class="govuk-form-group">
-		<a href="/organisations" class="govuk-link">{% get_string 'cases.manage_organisations' %}</a>
-	</div>
-
 	<form action="" method="get" class="lite-dropdown-select">
 		<select class="govuk-select" name="queue">
 			{% for queue in queues.queues %}

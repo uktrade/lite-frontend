@@ -32,3 +32,11 @@ def str_date(value):
 @register.filter()
 def sentence_case(value):
     return stringcase.sentencecase(value)
+
+
+@register.filter()
+def add_selected_class(key, url):
+	if key in url:
+		return 'lite-menu-item--selected'
+
+	return ''

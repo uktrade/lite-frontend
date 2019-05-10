@@ -2,23 +2,25 @@
 
 {% load humanize %}
 
+{% block back-button %}{% endblock %}
+
 {% block body %}
 
 	<div class="lite-app-bar">
 		<h1 class="govuk-heading-l">Organisations</h1>
 		<div class="lite-app-bar--right">
-			<a href="/register" class="govuk-button govuk-button--secondary" draggable="false" role="button">New Organisation</a>
-			<div class="lite-search-wrapper">
+			<a href="{% url 'register_business:register' %}" class="govuk-button govuk-button--secondary" draggable="false" role="button">New Organisation</a>
+			<!--<div class="lite-search-wrapper">
 				<input type="search" name="search" class="govuk-input">
 				<div class="search-button">
 
 				</div>
-			</div>
+			</div>-->
 		</div>
 	</div>
 
 
-	{% if data|length %}
+	{% if data.organisations|length %}
 		<table class="lite-table">
 			<thead class="lite-table__head">
 				<tr class="lite-table__row">
@@ -33,29 +35,22 @@
 				{% for organisation in data.organisations %}
 					<tr class="lite-table__row">
 						<td class="lite-table__cell">
-							<!--<a class="govuk-link" href="/organisation/{{ organisation.id }}">-->
-								{{ organisation.name|default:"Untitled" }}
-							<!--</a>-->
+							{{ organisation.name|default:"Untitled" }}
 						</td>
 						<td class="lite-table__cell">
-							<a class="hoverable-link tooltip">
-								{{ organisation.eori_number|default:"Untitled" }}
-							</a>
+							{{ organisation.eori_number|default:"Untitled" }}
 						</td>
 						<td class="lite-table__cell">
-							<a class="hoverable-link tooltip">
-								{{ organisation.sic_number|default:"Untitled" }}
-							</a>
+							{{ organisation.sic_number|default:"Untitled" }}
 						</td>
 						<td class="lite-table__cell">
-							<a class="hoverable-link tooltip">
-								{{ organisation.vat_number|default:"Untitled" }}
-							</a>
+							{{ organisation.vat_number|default:"Untitled" }}
 						</td>
 						<td class="lite-table__cell">
-							<a class="hoverable-link tooltip">
-								{{ organisation.address|default:"Untitled" }}
-							</a>
+							{{ organisation.primary_site.address.address_line_1 }}<br/>
+							{{ organisation.primary_site.address.postcode }}<br/>
+							{{ organisation.primary_site.address.city }}<br/>
+							{{ organisation.primary_site.address.country }}
 						</td>
 					</tr>
 				{% endfor %}

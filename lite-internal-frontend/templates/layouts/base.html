@@ -1,4 +1,4 @@
-{% load sass_tags static %}
+{% load sass_tags static svg %}
 <!DOCTYPE html>
 <html lang="en" class="govuk-template">
 
@@ -19,6 +19,12 @@
 
 	<link href="{% sass_src 'css/styles.scss' %}" rel="stylesheet" type="text/css" />
 
+	<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+	new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+	j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+	'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+	})(window,document,'script','dataLayer','{{ ENVIRONMENT_VARIABLES.GOOGLE_ANALYTICS_KEY }}');</script>
+
 	<meta property="og:image" content="/assets/images/govuk-opengraph-image.png">
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -26,18 +32,9 @@
 	{% block head %}{% endblock %}
 </head>
 
-<style>
-	/*#user-menu {
-		grid-template-columns: auto auto auto auto auto;
-	}*/
-	#lite-menu {
-		width: 26px;
-		height: 26px;
-		background-image: url('/assets/images/menu.svg');
-	}
-</style>
-
 <body class="govuk-template__body ">
+	<noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ ENVIRONMENT_VARIABLES.GOOGLE_ANALYTICS_KEY }}"
+	height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 	<script>
 		document.body.className = (
@@ -69,30 +66,34 @@
 			</div>
 
 			{% if user %}
-			<div id="user-menu">
-				<a>Log out</a>
-				<!--<div class="divider"></div>
-				<a id="lite-menu">
-
-				</a>-->
-				<div class="divider"></div>
-				<a class="user-menu-profile">
-					<p>John</p>
-					<div class="user-icon signed-in"></div>
-				</a>
-			</div>
-			{% else %}
-			<a href="/login" class="user-menu-profile" style="position: absolute;
-							top: 10px;
-							right: 0;">
-				<p>Login</p>
-				<div class="user-icon"></div>
-			</a>
+				<div id="user-menu">
+					<a>Log out</a>
+					<div class="divider"></div>
+					<div id="lite-menu-wrapper">
+						<a id="lite-menu-button" onclick="toggleLITEMenu();return false;" href="/menu/" title="Open Menu" accesskey="m"></a>
+						<div id="lite-menu">
+							{% for item in LITE_MENU %}
+								<a href="{{ item.url }}" class="lite-menu-item {{ item.url|add_selected_class:request.path }}">
+									<div class="icon">
+										{% svg item.icon %}
+									</div>
+									{{ item.title }}
+								</a>
+							{% endfor %}
+						</div>
+					</div>
+					<div class="divider"></div>
+					<a class="user-menu-profile">
+						<p>John</p>
+						<div class="user-icon signed-in"></div>
+					</a>
+				</div>
 			{% endif %}
-
 		</div>
 	</header>
 	{% endblock %}
+
+	<div id="lite-menu-background" onclick="toggleLITEMenu()"></div>
 
 	<div class="govuk-width-container">
 		<div class="govuk-phase-banner">
@@ -131,6 +132,13 @@
 
 	<script>
 		window.GOVUKFrontend.initAll()
+	</script>
+
+	<script type="text/javascript">
+		function toggleLITEMenu() {
+			$('#lite-menu-background').toggle();
+			$('#lite-menu').toggleClass('lite-menu--visible');
+		}
 	</script>
 
 </body>

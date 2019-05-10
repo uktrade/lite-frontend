@@ -1,0 +1,120 @@
+#user-menu {
+	grid-template-columns: auto auto auto auto auto;
+}
+
+#lite-menu-wrapper {
+	position: relative;
+	width: 26px;
+	height: 26px;
+	display: flex;
+}
+
+#lite-menu-button {
+	width: 100%;
+	height: 100%;
+	background-image: url('/assets/images/menu.svg');
+}
+
+#lite-menu-background {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: transparent;
+	display: none;
+	z-index: 10;
+}
+
+#lite-menu {
+	visibility: hidden;
+	position: absolute;
+	left: -157.5px;
+	top: 38px;
+	width: 335px;
+	background-color: white;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	box-shadow: 0 20px 20px rgba(0,0,0,0.15), 0 5px 5px rgba(0,0,0,0.15), 0 0 2px rgba(0,0,0,0.15);
+	box-sizing: border-box;
+	padding: 15px;
+	z-index: 100;
+	-webkit-user-select: none;
+	user-select: none;
+
+	opacity: 0;
+	transform-origin: 50% 0%;
+	transform: scale(0.8) translateY(-10px);
+	transition: 0.2s ease;
+
+	&:before {
+		content: "";
+		position: absolute;
+		top: -6px;
+		left: 163px;
+		width: 14px;
+		height: 6px;
+		background-image: url('/assets/images/lite_menu_chevron.svg');
+	}
+	* {
+		color: currentColor;
+		fill: currentColor;
+	}
+	a {
+		color: govuk-colour("grey-1");
+		width: 105px;
+		box-sizing: border-box;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-direction: column;
+		line-height: normal;
+		padding: 10px;
+		.icon {
+			width: 50px;
+			height: 40px;
+			border-radius: 100px;
+			color: inherit;
+			background-color: transparent;
+			margin-bottom: 10px;
+			margin-top: 5px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			img {
+				max-height: 40px;
+			}
+		}
+		&:hover {
+			background-color: govuk-colour("grey-4");
+			opacity: 1!important;
+		}
+		&:active {
+			background-color: govuk-colour("grey-3");
+			opacity: 1!important;
+		}
+	}
+	.lite-menu-item--selected {
+		background-color: $govuk-brand-colour;
+		color: govuk-colour("white");
+
+		.icon {
+			img {
+				filter: drop-shadow(0 5px 10px darken($govuk-brand-colour, 2%))
+			}
+		}
+
+		&:hover {
+			background-color: darken($govuk-brand-colour, 5%);
+		}
+		&:active {
+			background-color: darken($govuk-brand-colour, 10%);
+		}
+	}
+}
+
+.lite-menu--visible {
+	opacity: 1!important;
+	visibility: visible!important;
+	transform: scale(1) translateY(0)!important;
+}
