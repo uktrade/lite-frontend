@@ -1,5 +1,5 @@
 from conf.settings import env
-from core.form_components import Form, Question, InputType, ArrayQuestion, Option
+from libraries.forms.components import Form, Question, ArrayQuestion, Option, InputType
 
 form = Form(title='Add Good', description='', caption='', questions=[
     Question(title='Description of good',
@@ -20,8 +20,8 @@ form = Form(title='Add Good', description='', caption='', questions=[
                       Option(key='no',
                              value='No')
                   ]),
-    Question(title='Control Code',
-             description='If your good is controlled, enter its control code. For example, ML1a.',
+    Question(title='What\'s your good\'s control code?',
+             description='<noscript>If your good is controlled, enter its control code. </noscript>For example, ML1a.',
              input_type=InputType.INPUT,
              name='control_code'),
     ArrayQuestion(title='Is your good intended to be incorporated into an end product?',
@@ -37,5 +37,6 @@ form = Form(title='Add Good', description='', caption='', questions=[
     Question(title='Part Number',
              description='',
              input_type=InputType.INPUT,
-             name='part_number'),
+             name='part_number',
+             optional=True),
 ])

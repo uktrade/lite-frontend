@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'new_application',
     'core.apps.CoreConfig',
+    'libraries.forms',
 ]
 
 MIDDLEWARE = [
@@ -61,7 +62,8 @@ AUTH_USER_MODEL = "core.User"
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
+        'DIRS': [os.path.join(BASE_DIR, 'templates'),
+                 os.path.join(BASE_DIR, 'libraries')]
         ,
         'APP_DIRS': True,
         'OPTIONS': {
@@ -70,6 +72,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+				'conf.context_processors.export_vars',
             ],
             'builtins': ['core.builtins.custom_tags'],
         },

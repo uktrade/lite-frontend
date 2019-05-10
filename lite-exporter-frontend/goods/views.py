@@ -22,7 +22,7 @@ class AddGood(TemplateView):
             'title': 'Add Good',
             'page': forms.form,
         }
-        return render(request, 'form/form.html', context)
+        return render(request, 'form.html', context)
 
     def post(self, request, **kwargs):
         data, status_code = post_goods(request, request.POST)
@@ -34,6 +34,6 @@ class AddGood(TemplateView):
                 'data': request.POST,
                 'errors': data.get('errors')
             }
-            return render(request, 'form/form.html', context)
+            return render(request, 'form.html', context)
 
         return redirect('/goods/')

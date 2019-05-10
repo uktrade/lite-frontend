@@ -1,15 +1,18 @@
 // GOV.UK Design System
-@import "../../lite-shared-assets/node_modules/govuk-frontend/all";
-
-// LITE Shared Assets
-@import "../../lite-shared-assets/lite-frontend/scss/all";
-
-// Local Assets
+@import "../../lite-shared-assets/node_modules/govuk-frontend/all"; // LITE Shared Assets
+@import "../../lite-shared-assets/lite-frontend/scss/all"; // Local Assets
 // @import "components/all";
 // @import "core/all";
 
 main {
 	min-height: 60vh;
+}
+
+.lite-item {
+	background-color: govuk-colour("grey-4");
+	border: 1px solid darken(govuk-colour("grey-4"), 2%);
+	padding: govuk-spacing(4);
+	margin-bottom: govuk-spacing(6);
 }
 
 .no-borders {
@@ -44,4 +47,9 @@ main {
 	border: none;
 	background-color: transparent;
 	margin-bottom: govuk-spacing(6);
+}
+
+.lite-user-profile-container {
+    display: flex;
+    justify-content: space-between;
 }

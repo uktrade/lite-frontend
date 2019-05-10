@@ -1,6 +1,10 @@
+from selenium import webdriver
 from selenium.webdriver.common.by import By
 import helpers.helpers as utils
 import pytest
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.keys import Keys
+import time
 
 class ExporterHubPage():
 
@@ -13,6 +17,8 @@ class ExporterHubPage():
         self.applications_btn = "a[href*='/applications/']"
         self.my_goods_btn = "a[href*='/goods/']"
         self.add_a_good_btn = "a[href*='/goods/add/']"
+        self.users_btn = "a[href='/users/']"
+        self.sites_btn = "a[href='/sites/']"
 
     def go_to(self, url):
         self.driver.get(url)
@@ -36,6 +42,8 @@ class ExporterHubPage():
         password_tb.send_keys(password)
 
     def login(self, email, password):
+        if "logout" in self.driver.current_url:
+            self.driver.find_element_by_xpath("//a[text()[contains(.,'Log In')]]").click()
         self.enter_email(email)
         self.enter_password(password)
         self.click_submit()
@@ -84,3 +92,52 @@ class ExporterHubPage():
         assert goods_row.is_displayed()
         assert goods_row.find_element_by_xpath(".//following-sibling::td").text == part_number
         assert goods_row.find_element_by_xpath(".//following-sibling::td[2]").text == control_code
+
+    def click_users(self):
+        self.driver.find_element_by_css_selector(self.users_btn).click()
+
+    def click_add_a_user_btn(self):
+        self.driver.find_element_by_css_selector("a[href*='/users/add']").click()
+
+    def enter_first_name(self, first_name):
+        self.driver.find_element_by_id("first_name").clear()
+        self.driver.find_element_by_id("first_name").send_keys(first_name)
+
+    def enter_last_name(self, last_name):
+        self.driver.find_element_by_id("last_name").clear()
+        self.driver.find_element_by_id("last_name").send_keys(last_name)
+
+    def click_edit_for_user(self, user_name):
+        element = self.driver.find_element_by_xpath("//*[text()[contains(.,'" + user_name + "')]]/following-sibling::td[last()]/a")
+        actions = ActionChains(self.driver)
+        actions.move_to_element(element).perform()
+        time.sleep(1)
+        element.click()
+
+    def click_user_name_link(self, user_name):
+        element = self.driver.find_element_by_xpath("//*[text()[contains(.,'" + user_name + "')]]")
+        actions = ActionChains(self.driver)
+        actions.move_to_element(element).perform()
+        time.sleep(1)
+        element.click()
+
+    def click_deactivate_btn(self):
+        self.driver.find_element_by_xpath("//*[text()[contains(.,'Deactivate')]]").click()
+        self.driver.find_element_by_xpath("//*[text()[contains(.,'Deactivate User')]]").click()
+
+    def click_reactivate_btn(self):
+        self.driver.find_element_by_xpath("//*[text()[contains(.,'Reactivate')]]").click()
+        self.driver.find_element_by_xpath("//*[text()[contains(.,'Reactivate User')]]").click()
+
+    def logout(self):
+        self.driver.find_element_by_css_selector("a[href*='/logout']").click()
+        assert "logout" in self.driver.current_url
+
+    def click_user_profile(self):
+        self.driver.find_element_by_css_selector("a[href*='/users/profile/']").click()
+
+    def click_sites(self):
+        self.driver.find_element_by_css_selector(self.sites_btn).click()
+
+    def click_new_site(self):
+        self.driver.find_element_by_css_selector("a[href*='/sites/new/']").click()

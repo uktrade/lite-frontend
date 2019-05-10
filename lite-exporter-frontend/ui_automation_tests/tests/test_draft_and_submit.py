@@ -77,7 +77,8 @@ def test_start_draft_application(driver, open_exporter_hub, url):
     logging.info("application opened to application overview")
 
     apply_for_licence.click_delete_application()
-    assert 'Exporter Hub - LITE' in driver.title, "Delete Application link on overview page failed to go to Exporter Hub page"
+    assert 'Exporter Hub - LITE' in driver.title,\
+        "failed to go to Exporter Hub page after deleting application from application overview page"
 
     log.info("Test Complete")
 

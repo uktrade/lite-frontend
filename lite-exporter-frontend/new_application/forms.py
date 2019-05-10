@@ -1,4 +1,5 @@
-from core.form_components import Section, Form, Question, InputType, HTMLBlock, HiddenField
+from libraries.forms.components import Section, Form, Question, InputType, HTMLBlock, HiddenField, SideBySideSection, \
+    ArrayQuestion
 
 section1 = Section("Application Information", "", [
     Form("Enter a name or reference for your application", "This can make it easier to find in the future.", [
@@ -28,7 +29,7 @@ section1 = Section("Application Information", "", [
 ])
 
 
-def preexisting_good_form(id, description, control_code, part_number):
+def preexisting_good_form(id, description, control_code, part_number, units):
     return Form('Add a pre-existing good to your application', '', [
         HTMLBlock('<div class="govuk-inset-text">'
                   '<p><span style="opacity: 0.6;">Description:</span> ' + description + '</p>'
@@ -37,16 +38,21 @@ def preexisting_good_form(id, description, control_code, part_number):
                   '</div>'),
         HiddenField(name='good_id',
                     value=id),
-        Question(title='Quantity',
+        Question(title='What\'s the value of your goods?',
                  description='',
-                 input_type=InputType.INPUT,
-                 name='quantity'),
-        Question(title='Value',
-                 description='',
-                 input_type=InputType.INPUT,
+                 input_type=InputType.CURRENCY,
                  name='value'),
-        Question(title='Unit of Measurement',
-                 description='',
-                 input_type=InputType.INPUT,
-                 name='unit'),
+        SideBySideSection(questions=[
+            Question(title='Quantity',
+                     description='',
+                     input_type=InputType.INPUT,
+                     name='quantity'),
+            ArrayQuestion(title='Unit of Measurement',
+                          description='',
+                          input_type=InputType.SELECT,
+                          name='unit',
+                          data=units)
+        ]),
+    ], javascript_imports=[
+        '/assets/javascripts/specific/add_good.js'
     ])

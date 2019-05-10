@@ -24,27 +24,29 @@
 					{% if forloop.counter0 == 0 %}
 						<dl class="govuk-summary-list">
 							{% for form in section.forms %}
-								{% if form.questions|length == 1 %}
+								{% if form.questions|length == 2 %}
 									<div class="govuk-summary-list__row">
 										<dt class="govuk-summary-list__key">
 											{{ form.title }}
 										</dt>
 										<dd class="govuk-summary-list__value">
 											{{ data.draft|keyvalue:form.questions.0.name }}
-											<a href="/new-application/form/{{ form.id }}?id={{ draft_id }}&return=overview" class="govuk-link" style="float: right;">Edit</a>
+											<a href="/new-application/form/{{ form.pk }}?id={{ draft_id }}&return=overview" class="govuk-link" style="float: right;">Edit</a>
 										</dd>
 									</div>
 								{% else %}
 									{% for question in form.questions %}
-										<div class="govuk-summary-list__row">
+										{% if question.input_type.name != "HIDDEN" %}
+											<div class="govuk-summary-list__row">
 											<dt class="govuk-summary-list__key">
 												{{ question.title }}
 											</dt>
 											<dd class="govuk-summary-list__value">
 												{{ data.draft|keyvalue:question.name }}
-												<a href="/new-application/form/{{ form.id }}?id={{ draft_id }}&return=overview" class="govuk-link" style="float: right;">Edit</a>
+												<a href="/new-application/form/{{ form.pk }}?id={{ draft_id }}&return=overview" class="govuk-link" style="float: right;">Edit</a>
 											</dd>
-										</div>
+											</div>
+										{% endif %}
 									{% endfor %}
 								{% endif %}
 							{% endfor %}

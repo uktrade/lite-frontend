@@ -21,7 +21,9 @@ def hub(request):
             Section("Manage", "", [
                 Tile(get_string('drafts.title'), "", reverse_lazy('drafts:drafts')),
                 Tile(get_string('applications.title'), "", reverse_lazy('applications:applications')),
-                Tile('My Goods', "", reverse_lazy('goods:goods')),
+                Tile('Goods', "", reverse_lazy('goods:goods')),
+                Tile('Sites', "", reverse_lazy('sites:sites')),
+                Tile('Users', "", reverse_lazy('users:users')),
             ]),
         ],
         'applicationDeleted': request.GET.get('application_deleted'),
