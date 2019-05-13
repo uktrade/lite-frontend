@@ -5,6 +5,9 @@
 			<label class="govuk-label govuk-checkboxes__label" for="{{ item.key }}">
 				{{ item.value }}
 			</label>
+			<label class="govuk-hint govuk-checkboxes__hint" for="{{ item.key }}">
+				{{ item.description|linebreaksbr }}
+        	</label>
 		</div>
 	{% endfor %}
 </div>
