@@ -1,4 +1,9 @@
 $(".govuk-back-link").on("click", function() {
-	window.history.go(-1);
+	address = $(this).attr("href");
+	if (address != "#") {
+		window.location.href = address;
+	} else {
+		window.history.go(-1);
+	}
 	return false;
 });
