@@ -80,3 +80,11 @@ def success_page(request, title, secondary_title, description, what_happens_next
         'links': links,
     }
     return render(request, 'confirmation.html', context)
+
+
+def error_page(request, description, title='An error occurred'):
+    context = {
+        'title': title,
+        'description': description,
+    }
+    return render(request, 'error.html', context)
