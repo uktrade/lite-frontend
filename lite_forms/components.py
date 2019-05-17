@@ -97,11 +97,12 @@ class HiddenField:
 
 
 class Option:
-    def __init__(self, key, value, show_pane=None, sections=None):
+    def __init__(self, key, value, show_pane=None, sections=None, show_or=False):
         self.key = key
         self.value = value
         self.sections = sections
         self.show_pane = show_pane
+        self.show_or = show_or
 
 
 class HelpSection:
