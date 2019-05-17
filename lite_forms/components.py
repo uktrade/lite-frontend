@@ -17,6 +17,7 @@ class InputType(Enum):
     CURRENCY = 12
     HEADING = 13
     HTML = 14
+    DETAIL = 15
 
 
 class ButtonStyle(Enum):
@@ -87,6 +88,13 @@ class ArrayQuestion(Question):
     def __init__(self, title, description, input_type, name, data):
         super().__init__(title, description, input_type, name)
         self.data = data
+
+
+class DetailComponent:
+    def __init__(self, title, description):
+        self.title = title
+        self.description = description
+        self.input_type = InputType.DETAIL
 
 
 class HiddenField:
