@@ -5,6 +5,9 @@
 			<label class="govuk-label govuk-radios__label" for="{{ name }}-{{ item.key }}">
 				{{ item.value }}
 			</label>
+			<label class="govuk-hint govuk-radiobuttons__hint" for="{{ item.key }}">
+				{{ item.description|linebreaksbr }}
+        	</label>
 		</div>
 	{% endfor %}
 </div>
