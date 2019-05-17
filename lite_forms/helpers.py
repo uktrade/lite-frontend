@@ -20,13 +20,21 @@ def get_next_form_after_pk(pk, section):
     return
 
 
-def _create_keys(d, keys, value):
-    keys = keys.split(".")
-    for k in keys[:-1]:
-        if k not in d:
-            d[k] = {}
-        d = d[k]
-    d[keys[-1]] = value
+def remove_unused_errors(errors, form):
+    """
+    Compares a form's questions to errors and removes errors when their keys aren't in form
+    :param errors: ['errors'] children
+    :param form: Form object
+    :return: Array of cleaned errors
+    """
+    cleaned_errors = {}
+    for key, value in errors.items():
+        for question in form.questions:
+            if key == question.name:
+                cleaned_errors[key] = value
+                continue
+
+    return cleaned_errors
 
 
 def nest_data(sent_data):
@@ -41,6 +49,15 @@ def nest_data(sent_data):
         }
     }
     """
+
+    def _create_keys(d, keys, value):
+        keys = keys.split(".")
+        for k in keys[:-1]:
+            if k not in d:
+                d[k] = {}
+            d = d[k]
+        d[keys[-1]] = value
+
     data = {}
 
     for q, v in sent_data.items():
