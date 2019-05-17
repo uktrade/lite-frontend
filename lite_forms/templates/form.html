@@ -15,7 +15,6 @@
 					{% for key, value in errors.items %}
 						<li>
 							<a href="#{{ key }}">
-								{{ key|title }}:
 								{% for error in value %}
 									{{ error }}
 								{% endfor %}
