@@ -1,4 +1,4 @@
-<div class="govuk-radios {% if data|length == 2 %}govuk-radios--inline{% endif %}">
+<div class="govuk-radios {% if question.same_row %}govuk-radios--inline{% endif %}">
 	{% for item in data %}
 		{% if item.show_or %}
 			<div class="govuk-radios__divider">or</div>

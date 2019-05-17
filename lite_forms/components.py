@@ -85,8 +85,9 @@ class Question:
 
 
 class ArrayQuestion(Question):
-    def __init__(self, title, description, input_type, name, data):
+    def __init__(self, title, description, input_type, name, data, same_row=False):
         super().__init__(title, description, input_type, name)
+        self.same_row = same_row
         self.data = data
 
 
