@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from .components import Form, Question, InputType
+from .components import Form, Question, InputType, DetailComponent
 from .helpers import nest_data, flatten_data, remove_unused_errors
 
 
@@ -11,6 +11,7 @@ class FormTests(TestCase):
             Question('', '', InputType.INPUT, 'name'),
             Question('', '', InputType.INPUT, 'age'),
             Question('', '', InputType.INPUT, 'password'),
+            DetailComponent('', ''),
         ])
 
         errors = {

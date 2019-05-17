@@ -30,9 +30,10 @@ def remove_unused_errors(errors, form):
     cleaned_errors = {}
     for key, value in errors.items():
         for question in form.questions:
-            if key == question.name:
-                cleaned_errors[key] = value
-                continue
+            if hasattr(question, 'name'):
+                if key == question.name:
+                    cleaned_errors[key] = value
+                    continue
 
     return cleaned_errors
 
