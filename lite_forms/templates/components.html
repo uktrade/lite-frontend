@@ -41,7 +41,7 @@
 		{% elif question.input_type.name == "RADIOBUTTONS" %}
 			{% include "components/radiobuttons.html" with name=question.name value=data|key_value:question.name|default:'' data=question.data %}
 		{% elif question.input_type.name == "CHECKBOXES" %}
-			{% include "components/checkboxes.html" with name=question.name value=question.name data=question.data %}
+			{% include "components/checkboxes.html" with name=question.name value=data|key_value:question.name|default:'' data=question.data %}
 		{% elif question.input_type.name == "SELECT" %}
 			{% include "components/select.html" with name=question.name value=question.name data=question.data %}
 		{% elif question.input_type.name == "AUTOCOMPLETE" %}
