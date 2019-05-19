@@ -57,7 +57,8 @@ class Form:
                  prefix=None,
                  buttons=None,
                  helpers=None,
-                 javascript_imports=None):
+                 javascript_imports=None,
+                 default_button_name='Submit'):
         self.pk = uuid.uuid1()
         self.title = title
         self.description = description
@@ -67,7 +68,7 @@ class Form:
         self.helpers = helpers
         self.buttons = buttons
         if self.buttons is None:
-            self.buttons = [Button('Submit', 'submit')]
+            self.buttons = [Button(default_button_name, 'submit')]
         self.javascript_imports = javascript_imports
         self.prefix = prefix
 
