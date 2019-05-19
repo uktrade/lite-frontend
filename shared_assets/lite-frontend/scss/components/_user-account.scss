@@ -20,27 +20,7 @@ $subtle-header-color: rgba(255, 255, 255, 0.3);
 .user-menu-profile {
 	display: grid;
 	grid-template-columns: auto auto;
-	grid-gap: 15px;
-
-	.user-icon {
-		width: 26px;
-		height: 26px;
-		background: $subtle-header-color;
-		background-image: url("/assets/images/user.svg");
-		border-radius: 100%;
-		background-size: cover;
-		background-position: center;
-	}
-}
-
-.user-menu-profile {
-	&:hover {
-		opacity: 0.75;
-	}
-
-	&:active {
-		opacity: 0.5;
-	}
+	grid-gap: govuk-spacing(3);
 }
 
 #user-menu,
@@ -49,20 +29,42 @@ $subtle-header-color: rgba(255, 255, 255, 0.3);
 
 	* {
 		line-height: 26px;
-		color: white;
 		font-weight: 600;
 		text-decoration: none;
 		font-size: 14px;
 		margin: 0;
 	}
 
+
+	svg {
+		width: 26px;
+		height: 26px;
+		border-radius: 100%;
+		background-size: cover;
+		background-position: center;
+	}
+
 	a {
-		&:hover {
-			opacity: 0.75;
+	    @include govuk-link-common;
+		color: white;
+
+		svg {
+		    background: rgba(govuk-colour("white"), 0.4);
 		}
 
-		&:active {
-			opacity: 0.5;
+		path {
+		    fill: currentColor;
 		}
+
+		&:hover {
+			text-decoration: underline;
+		}
+
+		&:focus {
+            color: $govuk-focus-text-colour!important;
+		    svg {
+		        background: rgba($govuk-focus-text-colour, 0.4);
+		    }
+        }
 	}
 }
