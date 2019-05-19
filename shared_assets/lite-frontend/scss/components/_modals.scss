@@ -88,8 +88,7 @@
 }
 
 .modal-content {
-	& > *:last-child {
+	.govuk-button {
 		margin-bottom: 0!important;
-		padding-bottom: 0!important;
 	}
 }
