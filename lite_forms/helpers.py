@@ -1,7 +1,5 @@
 from collections.abc import MutableMapping
 
-from django.shortcuts import render
-
 
 def get_form_by_pk(pk, section):
     for form in section.forms:
@@ -45,7 +43,8 @@ def nest_data(sent_data):
         'site.name': 'SITE1'
     }
     becomes
-    {'site': {
+    {
+        'site': {
             'name': 'SITE1'
         }
     }
@@ -70,7 +69,8 @@ def nest_data(sent_data):
 def flatten_data(d, parent_key='', sep='.'):
     """
     Flattens dictionaries eg
-    {'site': {
+    {
+        'site': {
             'name': 'SITE1'
         }
     }
@@ -87,22 +87,3 @@ def flatten_data(d, parent_key='', sep='.'):
         else:
             items.append((new_key, v))
     return dict(items)
-
-
-def success_page(request, title, secondary_title, description, what_happens_next, links):
-    context = {
-        'title': title,
-        'secondary_title': secondary_title,
-        'description': description,
-        'what_happens_next': what_happens_next,
-        'links': links,
-    }
-    return render(request, 'confirmation.html', context)
-
-
-def error_page(request, description, title='An error occurred'):
-    context = {
-        'title': title,
-        'description': description,
-    }
-    return render(request, 'error.html', context)
