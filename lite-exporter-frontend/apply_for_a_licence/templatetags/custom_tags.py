@@ -1,13 +1,6 @@
 from django.template.defaulttags import register
 
 
-@register.filter(name='keyvalue')
-def keyvalue(dictionary, key):
-    if not dictionary:
-        return
-    return dictionary.get(key)
-
-
 @register.filter(name='pluralise_unit')
 def pluralise_unit(unit, value):
     is_singular = value == '1'

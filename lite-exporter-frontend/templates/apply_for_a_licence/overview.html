@@ -1,0 +1,147 @@
+{% extends 'layouts/two_pane.html' %}
+
+{% load humanize custom_tags %}
+
+{% block back-button %}{% endblock %}
+
+{% block twoThirds %}
+
+<style media="screen">
+	.govuk-table__row {
+			line-height: 30px;
+		}
+		.govuk-table__head, .govuk-table__body {
+			border-top: 1px solid rgb(230, 230, 230);
+		}
+		.govuk-table__header, .govuk-table__cell {
+			border-bottom: 1px solid rgb(230, 230, 230);
+		}
+	</style>
+
+{% if errors %}
+	<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+		<h2 class="govuk-error-summary__title" id="error-summary-title">
+			There are errors on this page
+		</h2>
+		<div class="govuk-error-summary__body">
+			<ul class="govuk-list govuk-error-summary__list">
+				{% for key, value in errors.items %}
+					<li>
+						<a href="#{{ key }}">
+							{{ value }}
+						</a>
+					</li>
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+{% endif %}
+
+<h2 class="govuk-heading-l">
+	Overview
+</h2>
+
+<div class="govuk-form-group">
+	<p class="govuk-caption-m">The following sections can be completed in any order.</p>
+</div>
+
+<table class="govuk-table">
+	<tbody class="govuk-table__body">
+		<tr class="govuk-table__row">
+			<th class="govuk-table__header" scope="row">Licence Type</th>
+			<td class="govuk-table__cell">{{ draft.licence_type }}</td>
+		</tr>
+		<tr class="govuk-table__row">
+			<th class="govuk-table__header" scope="row">Export Type</th>
+			<td class="govuk-table__cell">{{ draft.export_type }}</td>
+		</tr>
+		{% if draft.reference_number_on_information_form %}
+		<tr class="govuk-table__row">
+			<th class="govuk-table__header" scope="row">Reference Number</th>
+			<td class="govuk-table__cell">{{ draft.reference_number_on_information_form }}</td>
+		</tr>
+		{% endif %}
+		<tr class="govuk-table__row">
+			<th class="govuk-table__header" scope="row">Created at</th>
+			<td class="govuk-table__cell">{{ draft.created_at|str_date }}</td>
+		</tr>
+	</tbody>
+</table>
+
+<br />
+<br />
+
+<div {% if errors|key_value:'goods' %}class="govuk-form-group--error"{% endif %}>
+	<a id="goods" href="{% url 'apply_for_a_licence:goods' draft.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">Goods</a>
+	{% if errors|key_value:'goods' %}
+		<span class="govuk-error-message">
+			{{ errors|key_value:'goods' }}
+		</span>
+	{% endif %}
+	<p class="govuk-caption-m">Add a pre-existing good to your application</p>
+</div>
+
+<br />
+<br />
+
+<div {% if errors|key_value:'sites' %}class="govuk-form-group--error"{% endif %}>
+	<a id="sites" href="{% url 'apply_for_a_licence:sites' draft.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">Sites</a>
+	{% if errors|key_value:'sites' %}
+		<span class="govuk-error-message">
+			{{ errors|key_value:'sites' }}
+		</span>
+	{% endif %}
+	<p class="govuk-caption-m">Add sites to your application</p>
+</div>
+
+<!--<table class="govuk-table">
+		<thead class="govuk-table__head">
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header" scope="col">Date</th>
+				<th class="govuk-table__header" scope="col">Amount</th>
+			</tr>
+		</thead>
+		<tbody class="govuk-table__body">
+			<tr class="govuk-table__row">
+				<td class="govuk-table__cell">£109.80 per week</td>
+				<td class="govuk-table__cell">£4,282.20</td>
+			</tr>
+		</tbody>
+	</table>-->
+
+<br />
+<br />
+<br />
+<br />
+<br />
+
+<form method="post">
+	{% csrf_token %}
+	<button type="submit" class="govuk-button" name="button" data-prevent-double-click="true">Submit Application</button>
+</form>
+
+{% load static %}
+<script src="{% static 'javascripts/modal.js' %}"></script>
+<script src="{% static 'javascripts/specific/overview.js' %}"></script>
+
+{% endblock %}
+{% block oneThird %}
+<aside role="complementary">
+	<h2 class="govuk-heading-m" id="subsection-title">
+		Need to go?
+	</h2>
+	<p class="govuk-body">
+		You can find this application in your <a class="govuk-link" href="/drafts/">drafts</a>.
+	</p>
+</aside>
+<br>
+<br>
+<aside role="complementary">
+	<h2 class="govuk-heading-m" id="subsection-title">
+		Don't want to continue this application?
+	</h2>
+	<a href="{% url 'apply_for_a_licence:delete' draft.id %}" class="govuk-body govuk-link">
+		Delete Draft Application
+	</a>
+</aside>
+{% endblock %}

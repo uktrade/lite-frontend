@@ -18,16 +18,14 @@ log.addHandler(console)
 
 
 @pytest.fixture(scope="function")
-def open_exporter_hub(driver, url):
-    driver.get(url)
+def open_exporter_hub(driver, exporter_url):
+    driver.get(exporter_url)
     # driver.maximize_window()
     # assert driver.title == "Exporter Hub - LITE"
     log.info(driver.current_url)
 
-# LT-937
 
-
-def test_add_site(driver, open_exporter_hub, url):
+def test_add_site(driver, open_exporter_hub, exporter_url):
     time_id = datetime.datetime.now().strftime("%m%d%H%M")
 
     # logged in exporter hub as exporter
@@ -56,11 +54,11 @@ def test_add_site(driver, open_exporter_hub, url):
     assert utils.is_element_present(driver, By.XPATH, "//*[text()[contains(.,'New Site "+time_id+"')]]")
 
 
-def test_edit_site(driver, url):
+def test_edit_site(driver, exporter_url):
     exporter_hub = ExporterHubPage(driver)
     site_page = InternalHubPage(driver)
 
-    exporter_hub.go_to(url)
+    exporter_hub.go_to(exporter_url)
     if "login" in driver.current_url:
         log.info("logging in as test@mail.com")
         exporter_hub.login("test@mail.com", "password")

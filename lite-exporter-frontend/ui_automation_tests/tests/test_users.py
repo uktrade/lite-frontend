@@ -16,16 +16,14 @@ log.addHandler(console)
 
 
 @pytest.fixture(scope="function")
-def open_exporter_hub(driver, url):
-    driver.get(url)
+def open_exporter_hub(driver, exporter_url):
+    driver.get(exporter_url)
     # driver.maximize_window()
     # assert driver.title == "Exporter Hub - LITE"
     log.info(driver.current_url)
 
-# LT-937
 
-
-def test_add_users(driver, open_exporter_hub, url):
+def test_add_users(driver, open_exporter_hub, exporter_url):
     user_id = datetime.datetime.now().strftime("%m%d%H%M")
     first_name = "Test"
     last_name = "User" + user_id
@@ -61,9 +59,9 @@ def test_add_users(driver, open_exporter_hub, url):
                                     "//td[text()='" + email + "']/following-sibling::td[text()='active']")
 
 
-def test_edit_users(driver, url):
+def test_edit_users(driver, exporter_url):
     exporter_hub = ExporterHubPage(driver)
-    exporter_hub.go_to(url)
+    exporter_hub.go_to(exporter_url)
     if "login" in driver.current_url:
         log.info("logging in as test@mail.com")
         exporter_hub.login("test@mail.com", "password")
@@ -88,7 +86,7 @@ def test_edit_users(driver, url):
     assert utils.is_element_present(driver, By.XPATH, "//*[text()[contains(.,'user_2_edited')]]")
     assert utils.is_element_present(driver, By.XPATH, "//*[text()[contains(.,'testuser_2_edited@mail.com')]]")
 
-    exporter_hub.go_to(url)
+    exporter_hub.go_to(exporter_url)
     exporter_hub.click_users()
 
     assert utils.is_element_present(driver, By.XPATH, "//*[text()[contains(.,'Test_edited user_2_edited')]]")
@@ -107,9 +105,9 @@ def test_edit_users(driver, url):
     exporter_hub.click_submit()
 
 
-def test_deactivate_users(driver, url):
+def test_deactivate_users(driver, exporter_url):
     exporter_hub = ExporterHubPage(driver)
-    exporter_hub.go_to(url)
+    exporter_hub.go_to(exporter_url)
     if "login" in driver.current_url:
         log.info("logging in as test@mail.com")
         exporter_hub.login("test@mail.com", "password")
@@ -136,9 +134,9 @@ def test_deactivate_users(driver, url):
     assert "Enter a valid email/password" in driver.find_element_by_css_selector(".govuk-error-message").text
 
 
-def test_reactivate_users(driver, open_exporter_hub, url):
+def test_reactivate_users(driver, open_exporter_hub, exporter_url):
     exporter_hub = ExporterHubPage(driver)
-    exporter_hub.go_to(url)
+    exporter_hub.go_to(exporter_url)
     log.info("logging in as test@mail.com")
     if "login" in driver.current_url:
         log.info("logging in as test@mail.com")
@@ -166,15 +164,15 @@ def test_reactivate_users(driver, open_exporter_hub, url):
     assert driver.title == "Exporter Hub - LITE"
 
 
-def test_inability_to_deactivate_oneself(driver, url):
+def test_inability_to_deactivate_oneself(driver, exporter_url):
     exporter_hub = ExporterHubPage(driver)
-    exporter_hub.go_to(url)
+    exporter_hub.go_to(exporter_url)
     log.info("logging in as test@mail.com")
     if "login" in driver.current_url:
         log.info("logging in as test@mail.com")
         exporter_hub.login("test@mail.com", "password")
     else:
-        exporter_hub.go_to(url)
+        exporter_hub.go_to(exporter_url)
 
     exporter_hub.click_user_profile()
     assert "Test" in driver.find_element_by_tag_name("h1").text

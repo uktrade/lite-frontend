@@ -15,20 +15,21 @@ console = logging.StreamHandler()
 log.addHandler(console)
 
 @pytest.fixture(scope="function")
-def open_exporter_hub(driver, url):
+def open_exporter_hub(driver, exporter_url):
     # navigate to the application home page
-    driver.get(url)
+    driver.get(exporter_url)
     # driver.maximize_window()
     # assert driver.title == "Exporter Hub - LITE"
     log.info(driver.current_url)
 
 
-def test_start_draft_application(driver, open_exporter_hub, url):
+def test_start_draft_application(driver, open_exporter_hub, exporter_url):
     exporter_hub = ExporterHubPage(driver)
     apply_for_licence = ApplyForALicencePage(driver)
 
-    log.info("logging in as test@mail.com")
-    exporter_hub.login("test@mail.com", "password")
+    if "login" in driver.current_url:
+        log.info("logging in as test@mail.com")
+        exporter_hub.login("test@mail.com", "password")
 
     exporter_hub.click_apply_for_a_licence()
 
@@ -41,23 +42,33 @@ def test_start_draft_application(driver, open_exporter_hub, url):
     apply_for_licence.click_save_and_continue()
     logging.info("Entered name of application and clicked save and continue")
 
-    apply_for_licence.enter_destination("Cuba")
-    apply_for_licence.click_save_and_continue()
-    logging.info("Entered Destination and clicked save and continue")
+    apply_for_licence.click_export_licence("standard")
 
-    apply_for_licence.enter_usage("communication")
-    apply_for_licence.click_save_and_continue()
-    logging.info("Entered usage and clicked save and continue")
+    apply_for_licence.click_continue()
 
-    apply_for_licence.enter_activity("Proliferation")
-    apply_for_licence.click_save_and_continue()
-    logging.info("Entered Activity and clicked save and continue")
+    apply_for_licence.click_permanent_or_temporary_button("temporary")
+    apply_for_licence.click_continue()
 
-    assert "Overview" in driver.title
-    logging.info("On the application overview page")
+    apply_for_licence.click_export_licence_yes_or_no("yes")
+    apply_for_licence.type_into_reference_number("123456")
+    apply_for_licence.click_continue()
+    time_date_submitted = datetime.datetime.now().strftime("%I:%M%p").lstrip("0").replace(" 0", " ").lower() + datetime.datetime.now().strftime(" %d %b %Y")
+
+    assert apply_for_licence.get_text_of_application_headers(0) == "Licence Type"
+    assert apply_for_licence.get_text_of_application_headers(1) == "Export Type"
+    assert apply_for_licence.get_text_of_application_headers(2) == "Reference Number"
+    assert apply_for_licence.get_text_of_application_headers(3) == "Created at"
+    assert apply_for_licence.get_text_of_application_results(0) == "standard_licence"
+    assert apply_for_licence.get_text_of_application_results(1) == "temporary"
+    assert apply_for_licence.get_text_of_application_results(2) == "123456"
+    # assert apply_for_licence.get_text_of_application_results(3) == datetime.datetime.now().strftime("%b %d %Y, %H:%M%p")
+    assert time_date_submitted in apply_for_licence.get_text_of_application_results(3), "Created date is incorrect on draft overview"
+#    apply_for_licence.click_submit_application()
+
+  #  assert apply_for_licence.get_text_of_success_message() == "Application submitted"
 
     app_id = driver.current_url[-36:]
-    exporter_hub.go_to(url)
+    exporter_hub.go_to(exporter_url)
     logging.info("On Exporter Hub Page")
 
     # verify application is in drafts
@@ -72,7 +83,7 @@ def test_start_draft_application(driver, open_exporter_hub, url):
 
     assert "Overview" in driver.title
 
-    appName = driver.find_element_by_tag_name("h2").text
+    appName = driver.find_element_by_css_selector(".lite-persistent-notice .govuk-link").text
     assert "Test Application" in appName
     logging.info("application opened to application overview")
 
@@ -83,15 +94,19 @@ def test_start_draft_application(driver, open_exporter_hub, url):
     log.info("Test Complete")
 
 
-def test_submit_application(driver, open_exporter_hub, url):
+def test_submit_application(driver, open_exporter_hub, exporter_url):
     logging.info("Test Started")
     exporter_hub = ExporterHubPage(driver)
     apply_for_licence = ApplyForALicencePage(driver)
 
+    if "login" in driver.current_url:
+        log.info("logging in as test@mail.com")
+        exporter_hub.login("test@mail.com", "password")
+
     exporter_hub.click_apply_for_a_licence()
     logging.info("Clicked apply for a licence")
 
-    log.info("Starting application")
+    log.info("Starting draft application")
     apply_for_licence.click_start_now_btn()
     logging.info("Clicked start button")
 
@@ -100,29 +115,32 @@ def test_submit_application(driver, open_exporter_hub, url):
     apply_for_licence.click_save_and_continue()
     logging.info("Entered name of application and clicked save and continue")
 
-    apply_for_licence.enter_destination("Cuba")
-    apply_for_licence.click_save_and_continue()
-    logging.info("Entered Destination and clicked save and continue")
+    apply_for_licence.click_export_licence("standard")
 
-    apply_for_licence.enter_usage("communication")
-    apply_for_licence.click_save_and_continue()
-    logging.info("Entered usage and clicked save and continue")
+    apply_for_licence.click_continue()
 
-    apply_for_licence.enter_activity("Proliferation")
-    apply_for_licence.click_save_and_continue()
-    logging.info("Entered Activity and clicked save and continue")
+    apply_for_licence.click_permanent_or_temporary_button("temporary")
+    apply_for_licence.click_continue()
 
-    assert "Overview" in driver.title
-    logging.info("On the application overview page")
+    apply_for_licence.click_export_licence_yes_or_no("yes")
+    apply_for_licence.type_into_reference_number("123456")
+    apply_for_licence.click_continue()
+    time_date_submitted = datetime.datetime.now().strftime("%I:%M%p").lstrip("0").replace(" 0", " ").lower() + datetime.datetime.now().strftime(" %d %b %Y")
 
-    log.info("Submitting application...")
+    assert apply_for_licence.get_text_of_application_headers(0) == "Licence Type"
+    assert apply_for_licence.get_text_of_application_headers(1) == "Export Type"
+    assert apply_for_licence.get_text_of_application_headers(2) == "Reference Number"
+    assert apply_for_licence.get_text_of_application_headers(3) == "Created at"
+    assert apply_for_licence.get_text_of_application_results(0) == "standard_licence"
+    assert apply_for_licence.get_text_of_application_results(1) == "temporary"
+    assert apply_for_licence.get_text_of_application_results(2) == "123456"
+    # assert apply_for_licence.get_text_of_application_results(3) == datetime.datetime.now().strftime("%b %d %Y, %H:%M%p")
+    assert time_date_submitted in apply_for_licence.get_text_of_application_results(3)
     apply_for_licence.click_submit_application()
 
-    application_complete = driver.find_element_by_tag_name("h1").text
-    assert "Application complete" in application_complete
-    log.info("Application submitted")
+    assert apply_for_licence.get_text_of_success_message() == "Application submitted"
 
-    exporter_hub.go_to(url)
+    exporter_hub.go_to(exporter_url)
     logging.info("On Exporter Hub Page")
 
     exporter_hub.click_applications()
@@ -135,7 +153,7 @@ def test_submit_application(driver, open_exporter_hub, url):
     log.info("verifying application status is Submitted")
     status = driver.find_element_by_xpath("//*[text()[contains(.,'" + app_time_id + "')]]/following-sibling::td[last()]")
     assert status.is_displayed()
-    assert status.text == "Submitted"
+    assert status.text == "Submitted", "Expected Status of application is to be 'Submitted' but is not"
     logging.info("Test Complete")
 
 
@@ -143,6 +161,9 @@ def test_must_enter_fields_for_application(driver, open_exporter_hub):
     logging.info("Test Started")
     exporter_hub = ExporterHubPage(driver)
     apply_for_licence = ApplyForALicencePage(driver)
+    if "login" in driver.current_url:
+        log.info("logging in as test@mail.com")
+        exporter_hub.login("test@mail.com", "password")
 
     exporter_hub.click_apply_for_a_licence()
     logging.info("Clicked apply for a licence")
@@ -155,49 +176,50 @@ def test_must_enter_fields_for_application(driver, open_exporter_hub):
 
     element = driver.find_element_by_css_selector('.govuk-error-summary')
     assert element.is_displayed()
-    assert 'Name: This field may not be blank.' in element.text
+    assert 'There are errors on this page\nEnter a reference name for your application.' in element.text
     logging.info("Error displayed successfully")
 
     apply_for_licence.enter_name_or_reference_for_application("a")
     apply_for_licence.click_save_and_continue()
 
-    logging.info("no Destination entered")
-    logging.info("clicked save and continue")
-    apply_for_licence.click_save_and_continue()
+    logging.info("no type of license option entered")
+    logging.info("clicked  continue")
+    apply_for_licence.click_continue()
 
     element = driver.find_element_by_css_selector('.govuk-error-summary')
     assert element.is_displayed()
-    assert 'Destination: This field may not be blank.' in element.text
+    assert 'There are errors on this page\nSelect which type of licence you want to apply for.' in element.text
     logging.info("Error displayed successfully")
 
-    apply_for_licence.enter_destination("c")
-    apply_for_licence.click_save_and_continue()
+    apply_for_licence.click_export_licence("standard")
 
-    logging.info("no Usage entered")
-    logging.info("clicked save and continue")
-    apply_for_licence.click_save_and_continue()
+    apply_for_licence.click_continue()
+
+    logging.info("no temporary or permanent option selected entered")
+    logging.info("clicked  continue")
+    apply_for_licence.click_continue()
 
     element = driver.find_element_by_css_selector('.govuk-error-summary')
     assert element.is_displayed()
-    assert 'Usage: This field may not be blank.' in element.text
+    assert 'There are errors on this page\nSelect if you want to apply for a temporary or permanent licence.' in element.text
     logging.info("Error displayed successfully")
 
-    apply_for_licence.enter_usage("d")
-    apply_for_licence.click_save_and_continue()
+    apply_for_licence.click_permanent_or_temporary_button("temporary")
+    apply_for_licence.click_continue()
 
-    logging.info("no Activity entered")
-    logging.info("clicked save and continue")
-    apply_for_licence.click_save_and_continue()
+    logging.info("no permission of export license selected")
+    logging.info("clicked continue")
+    apply_for_licence.click_continue()
 
-    element = driver.find_element_by_css_selector('.govuk-error-summary')
+    element = driver.find_element_by_css_selector('.govuk-error-summary'), "Expected validation error for Have you " \
+                                                                           "been told that you need an export licence " \
+                                                                           "by an official? "
     assert element.is_displayed()
-    assert 'Activity: This field may not be blank.' in element.text
+    assert 'There are errors on this page\nSelect if you have permission.' in element.text
     logging.info("Error displayed successfully")
 
-    apply_for_licence.enter_activity("e")
-    apply_for_licence.click_save_and_continue()
-    logging.info("Error displayed successfully")
-    logging.info("Test Complete")
+    apply_for_licence.click_export_licence_yes_or_no("yes")
+    apply_for_licence.click_continue()
 
     apply_for_licence.click_delete_application()
     assert 'Exporter Hub - LITE' in driver.title, "Delete Application link on overview page failed to go to Exporter Hub page"
@@ -207,6 +229,9 @@ def test_status_column_and_refresh_btn_on_applications(driver, open_exporter_hub
     logging.info("Test Started")
     exporter_hub = ExporterHubPage(driver)
     applications = ApplicationsPage(driver)
+    if "login" in driver.current_url:
+        log.info("logging in as test@mail.com")
+        exporter_hub.login("test@mail.com", "password")
 
     exporter_hub.click_applications()
     logging.info("navigated to applications page")

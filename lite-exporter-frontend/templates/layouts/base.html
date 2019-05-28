@@ -1,4 +1,4 @@
-{% load sass_tags static %}
+{% load sass_tags static svg %}
 <!DOCTYPE html>
 <html lang="en" class="govuk-template">
 
@@ -66,12 +66,15 @@
 			</div>
 
 			{% if user.is_authenticated %}
-				<div id="user-menu">
-					<a href="/logout">Log out</a>
-					<div class="divider"></div>
-					<a href="/users/profile/" class="user-menu-profile">
-						<p>{{ user.first_name }}</p>
-						<div class="user-icon signed-in"></div>
+				<div id="lite-user-menu">
+					<a href="{% url 'core:logout' %}" class="lite-user-menu-button">Log out</a>
+					<div class="lite-user-menu-divider"></div>
+
+					<a class="lite-user-menu-button" href="{% url 'users:profile' %}">
+						{{ user.first_name }}
+						<div class="lite-user-menu-button--user">
+							{% svg 'user' %}
+						</div>
 					</a>
 				</div>
 			{% endif %}
@@ -80,18 +83,25 @@
 	{% endblock %}
 
 	<div class="govuk-width-container">
-		<div class="govuk-phase-banner">
-			<p class="govuk-phase-banner__content">
-				<strong class="govuk-tag govuk-phase-banner__content__tag ">
-					alpha
-				</strong>
-				<span class="govuk-phase-banner__text">
-					This is a new service – your <a class="govuk-link" href="{{ site.feedbackUrl }}">feedback</a> will help us to improve it.
-				</span>
-			</p>
-		</div>
+		{% if persistent_bar.text %}
+			<div class="lite-persistent-notice">
+				<p class="lite-persistent-notice--title">{{ persistent_bar.caption }}</p>
+				<a href="{{ persistent_bar.url }}" class="govuk-link">{{ persistent_bar.text }}</a>
+			</div>
+		{% else %}
+			<div class="govuk-phase-banner">
+				<p class="govuk-phase-banner__content">
+					<strong class="govuk-tag govuk-phase-banner__content__tag ">
+						alpha
+					</strong>
+					<span class="govuk-phase-banner__text">
+						This is a new service – your <a class="govuk-link" href="{{ site.feedbackUrl }}">feedback</a> will help us to improve it.
+					</span>
+				</p>
+			</div>
+		{% endif %}
 		{% block back-button %}
-			<a href="#" class="govuk-back-link">Back</a>
+			<a href="#" class="govuk-back-link {% if persistent_bar.text %}lite-persistent-bar--back{% endif %}">Back</a>
 		{% endblock %}
 		<main class="govuk-main-wrapper " id="main-content" role="main">
 			{% block body %}{% endblock %}

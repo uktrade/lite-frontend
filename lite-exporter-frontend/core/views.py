@@ -16,7 +16,7 @@ def hub(request):
         'title': get_string('hub.title'),
         'sections': [
             Section("", "", [
-                Tile(get_string('licences.apply_for_a_licence'), "", reverse_lazy('new_application:index')),
+                Tile(get_string('licences.apply_for_a_licence'), "", reverse_lazy('apply_for_a_licence:index')),
             ]),
             Section("Manage", "", [
                 Tile(get_string('drafts.title'), "", reverse_lazy('drafts:drafts')),

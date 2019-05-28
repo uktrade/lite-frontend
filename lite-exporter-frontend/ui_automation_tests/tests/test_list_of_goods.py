@@ -15,14 +15,14 @@ console = logging.StreamHandler()
 log.addHandler(console)
 
 @pytest.fixture(scope="function")
-def open_exporter_hub(driver, url):
+def open_exporter_hub(driver, exporter_url):
     # navigate to the application home page
-    driver.get(url)
+    driver.get(exporter_url)
     # driver.maximize_window()
     log.info(driver.current_url)
 
 
-def test_add_goods(driver, open_exporter_hub, url):
+def test_add_goods(driver, open_exporter_hub, exporter_url):
     exporter_hub = ExporterHubPage(driver)
     exporter_hub.login("test@mail.com", "password")
 
@@ -55,25 +55,16 @@ def test_add_goods_to_application(driver, open_exporter_hub):
         log.info("logging in as test@mail.com")
         exporter_hub.login("test@mail.com", "password")
 
+    log.info("Submitting application")
+    app_time_id = datetime.datetime.now().strftime("m%d%H%M%S")
+    app_name = str("Test Application " + app_time_id)
+
     exporter_hub.click_apply_for_a_licence()
-    log.info("Starting application")
     apply_for_licence.click_start_now_btn()
-    logging.info("Clicked start button")
-    time_id = datetime.datetime.now().strftime("%m%d%H%M")
-    apply_for_licence.enter_name_or_reference_for_application("Test Application " + time_id)
+    apply_for_licence.enter_application_details_new(name=app_name, licence_type="standard", temp_or_perm="temporary", need_licence="yes", ref_number="123456")
     apply_for_licence.click_save_and_continue()
-
-    goods.enter_destination("Cuba")
-    goods.click_save_and_continue()
-    logging.info("Entered Destination and clicked save and continue")
-
-    goods.enter_usage("communication")
-    goods.click_save_and_continue()
-    logging.info("Entered usage and clicked save and continue")
-
-    goods.enter_activity("Proliferation")
-    goods.click_save_and_continue()
-    logging.info("Entered Activity and clicked save and continue")
+    app_id = driver.current_url[-46:].replace('/overview/', '')
+    log.info("Application submitted")
 
     assert "Overview" in driver.title
 
@@ -85,8 +76,8 @@ def test_add_goods_to_application(driver, open_exporter_hub):
 
     element = driver.find_element_by_css_selector('.govuk-error-summary')
     assert element.is_displayed()
-    assert 'Value: A valid number is required.' in element.text
-    assert 'Quantity: A valid number is required.' in element.text
+    assert 'A valid number is required.' in element.text
+    assert 'A valid number is required.' in element.text
 
     apply_for_licence.enter_value("500")
     apply_for_licence.enter_quantity("1")
@@ -116,31 +107,23 @@ def test_add_goods_to_application(driver, open_exporter_hub):
 
 def test_search_for_goods_by_description(driver, open_exporter_hub):
     exporter_hub = ExporterHubPage(driver)
+    apply_for_licence = ApplyForALicencePage(driver)
     goods = ApplyForALicencePage(driver)
 
     if "login" in driver.current_url:
         log.info("logging in as test@mail.com")
         exporter_hub.login("test@mail.com", "password")
 
+    log.info("Submitting application")
+    app_time_id = datetime.datetime.now().strftime("m%d%H%M%S")
+    app_name = str("Test Application " + app_time_id)
+
     exporter_hub.click_apply_for_a_licence()
-    log.info("Starting application")
-    goods.click_start_now_btn()
-    logging.info("Clicked start button")
-    time_id = datetime.datetime.now().strftime("%m%d%H%M")
-    goods.enter_name_or_reference_for_application("Test Application " + time_id)
-    goods.click_save_and_continue()
-
-    goods.enter_destination("Cuba")
-    goods.click_save_and_continue()
-    logging.info("Entered Destination and clicked save and continue")
-
-    goods.enter_usage("communication")
-    goods.click_save_and_continue()
-    logging.info("Entered usage and clicked save and continue")
-
-    goods.enter_activity("Proliferation")
-    goods.click_save_and_continue()
-    logging.info("Entered Activity and clicked save and continue")
+    apply_for_licence.click_start_now_btn()
+    apply_for_licence.enter_application_details_new(name=app_name, licence_type="standard", temp_or_perm="temporary", need_licence="yes", ref_number="123456")
+    apply_for_licence.click_save_and_continue()
+    app_id = driver.current_url[-46:].replace('/overview/', '')
+    log.info("Application submitted")
 
     assert "Overview" in driver.title
 
@@ -157,32 +140,23 @@ def test_search_for_goods_by_description(driver, open_exporter_hub):
 
 def test_search_for_goods_by_part_number(driver, open_exporter_hub):
     exporter_hub = ExporterHubPage(driver)
+    apply_for_licence = ApplyForALicencePage(driver)
     goods = ApplyForALicencePage(driver)
 
     if "login" in driver.current_url:
         log.info("logging in as test@mail.com")
         exporter_hub.login("test@mail.com", "password")
 
+    log.info("Submitting application")
+    app_time_id = datetime.datetime.now().strftime("m%d%H%M%S")
+    app_name = str("Test Application " + app_time_id)
+
     exporter_hub.click_apply_for_a_licence()
-
-    log.info("Starting application")
-    goods.click_start_now_btn()
-    logging.info("Clicked start button")
-    time_id = datetime.datetime.now().strftime("%m%d%H%M")
-    goods.enter_name_or_reference_for_application("Test Application " + time_id)
-    goods.click_save_and_continue()
-
-    goods.enter_destination("Cuba")
-    goods.click_save_and_continue()
-    logging.info("Entered Destination and clicked save and continue")
-
-    goods.enter_usage("communication")
-    goods.click_save_and_continue()
-    logging.info("Entered usage and clicked save and continue")
-
-    goods.enter_activity("Proliferation")
-    goods.click_save_and_continue()
-    logging.info("Entered Activity and clicked save and continue")
+    apply_for_licence.click_start_now_btn()
+    apply_for_licence.enter_application_details_new(name=app_name, licence_type="standard", temp_or_perm="temporary", need_licence="yes", ref_number="123456")
+    apply_for_licence.click_save_and_continue()
+    app_id = driver.current_url[-46:].replace('/overview/', '')
+    log.info("Application submitted")
 
     assert "Overview" in driver.title
 
@@ -197,33 +171,25 @@ def test_search_for_goods_by_part_number(driver, open_exporter_hub):
     assert "G1-12" in goods[0].text
 
 
-def test_remove_filter(driver,open_exporter_hub):
+def test_remove_filter(driver, open_exporter_hub):
     exporter_hub = ExporterHubPage(driver)
+    apply_for_licence = ApplyForALicencePage(driver)
     goods = ApplyForALicencePage(driver)
 
     if "login" in driver.current_url:
         log.info("logging in as test@mail.com")
         exporter_hub.login("test@mail.com", "password")
 
+    log.info("Submitting application")
+    app_time_id = datetime.datetime.now().strftime("m%d%H%M%S")
+    app_name = str("Test Application " + app_time_id)
+
     exporter_hub.click_apply_for_a_licence()
-
-    log.info("Starting application")
-    goods.click_start_now_btn()
-    logging.info("Clicked start button")
-    time_id = datetime.datetime.now().strftime("%m%d%H%M")
-    goods.enter_name_or_reference_for_application("Test Application " + time_id)
-    goods.click_save_and_continue()
-    goods.enter_destination("Cuba")
-    goods.click_save_and_continue()
-    logging.info("Entered Destination and clicked save and continue")
-
-    goods.enter_usage("communication")
-    goods.click_save_and_continue()
-    logging.info("Entered usage and clicked save and continue")
-
-    goods.enter_activity("Proliferation")
-    goods.click_save_and_continue()
-    logging.info("Entered Activity and clicked save and continue")
+    apply_for_licence.click_start_now_btn()
+    apply_for_licence.enter_application_details_new(name=app_name, licence_type="standard", temp_or_perm="temporary", need_licence="yes", ref_number="123456")
+    apply_for_licence.click_save_and_continue()
+    app_id = driver.current_url[-46:].replace('/overview/', '')
+    log.info("Application submitted")
 
     assert "Overview" in driver.title
 

@@ -1,11 +1,38 @@
+// Set default page width
+$govuk-page-width: 1000px !default;
+
 // GOV.UK Design System
-@import "../../lite-shared-assets/node_modules/govuk-frontend/all"; // LITE Shared Assets
-@import "../../lite-shared-assets/lite-frontend/scss/all"; // Local Assets
-// @import "components/all";
-// @import "core/all";
+@import "../../lite-shared-assets/node_modules/govuk-frontend/all";
+
+// LITE Shared Assets
+@import "../../lite-shared-assets/lite-frontend/scss/all";
+
+// Local Assets
+@import "components/all";
 
 main {
 	min-height: 60vh;
+}
+
+.lite-overview-section-header {
+	display: inline-block;
+	@include govuk-font($size: 24, $weight: bold);
+	text-decoration: none;
+	margin-bottom: govuk-spacing(1);
+
+	&:after {
+		content: "_";
+		display: inline-block;
+		position: relative;
+		width: 10px;
+		background-image: url("/assets/images/overview_chevron.svg");
+		background-position: center;
+		background-size: contain;
+		background-repeat: no-repeat;
+		color: transparent;
+		margin-left: govuk-spacing(2);
+		transform: translateY(-2px);
+	}
 }
 
 .lite-item {
@@ -50,6 +77,6 @@ main {
 }
 
 .lite-user-profile-container {
-    display: flex;
-    justify-content: space-between;
+	display: flex;
+	justify-content: space-between;
 }

@@ -1,21 +1,5 @@
 {% extends 'layouts/base.html' %}
 
-{% block head %}
-	<style>
-		.govuk-width-container {
-			max-width: 1020px;
-			margin-left: max(30px, calc(15px + env(safe-area-inset-left)));
-			margin-right: max(30px, calc(15px + env(safe-area-inset-right)));
-		}
-		@media (min-width: 1080px) {
-			.govuk-width-container {
-				margin-left: auto;
-				margin-right: auto;
-			}
-		}
-	</style>
-{% endblock %}
-
 {% block body %}
 	<div class="govuk-grid-row">
 		<div class="govuk-grid-column-two-thirds">

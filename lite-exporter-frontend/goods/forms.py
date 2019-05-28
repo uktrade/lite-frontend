@@ -19,7 +19,8 @@ form = Form(title='Add Good', description='', caption='', questions=[
                              show_pane='pane_control_code'),
                       Option(key='no',
                              value='No')
-                  ]),
+                  ],
+                  same_row=True),
     Question(title='What\'s your good\'s control code?',
              description='<noscript>If your good is controlled, enter its control code. </noscript>For example, ML1a.',
              input_type=InputType.INPUT,
@@ -33,7 +34,8 @@ form = Form(title='Add Good', description='', caption='', questions=[
                              value='Yes'),
                       Option(key='no',
                              value='No')
-                  ]),
+                  ],
+                  same_row=True),
     Question(title='Part Number',
              description='',
              input_type=InputType.INPUT,

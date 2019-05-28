@@ -7,7 +7,7 @@
 	<div class="lite-app-bar">
 		<h1 class="govuk-heading-l">Applications</h1>
 		<div class="lite-app-bar--right">
-			<a href="/new-application" class="govuk-button govuk-button--secondary" draggable="false" role="button">
+			<a href="{% url 'apply_for_a_licence:index' %}" class="govuk-button govuk-button--secondary" draggable="false" role="button">
 				{% get_string 'licences.apply_for_a_licence' %}
 			</a>
 			<a href="." class="govuk-button govuk-button--secondary" draggable="false" role="button">
@@ -60,7 +60,7 @@
 								<span class="tooltip-content" style="min-width: 150px;">
 									{{ application.last_modified_at|str_date }}
 								</span>
-								{{ application.last_modified_at|str_date|naturaltime }}
+								{{ application.last_modified_at|str_date }}
 							</a>
 						</td>
 						<td class="lite-table__cell">{{ application.status|sentence_case }}</td>

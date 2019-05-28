@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="11px" height="20px" viewBox="0 0 11 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.6 (67491) - http://www.bohemiancoding.com/sketch -->
+    <title>ios-arrow-back</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.45">
+        <g id="ios-arrow-back" transform="translate(5.500000, 10.000000) scale(-1, 1) translate(-5.500000, -10.000000) " fill="#000000">
+            <path d="M3.31599541,9.99739665 L10.5961816,2.43590483 C11.1346061,1.87623535 11.1346061,0.971237909 10.5961816,0.417522366 C10.0577572,-0.142147107 9.18711334,-0.136193177 8.64868887,0.417522366 L0.40048416,8.98522845 C-0.120756555,9.52703613 -0.132212394,10.39631 0.36038872,10.9559795 L8.64296095,19.5832249 C8.91217318,19.8630596 9.26730422,20 9.61670734,20 C9.96611045,20 10.3212415,19.8630596 10.5904537,19.5832249 C11.1288782,19.0235554 11.1288782,18.1185579 10.5904537,17.5648424 L3.31599541,9.99739665 Z" id="Path"></path>
+        </g>
+    </g>
+</svg>

@@ -12,13 +12,15 @@ class ExporterHubPage():
     def __init__(self, driver):
         self.driver = driver
 
-        self.apply_for_a_licence_btn = "a[href*='/new-application/']"
+        self.apply_for_a_licence_btn = "a[href*='/apply-for-a-licence/']"
         self.drafts_btn = "a[href*='/drafts/']"
         self.applications_btn = "a[href*='/applications/']"
         self.my_goods_btn = "a[href*='/goods/']"
         self.add_a_good_btn = "a[href*='/goods/add/']"
         self.users_btn = "a[href='/users/']"
         self.sites_btn = "a[href='/sites/']"
+        self.sites_link = "a[href*='sites']"
+
 
     def go_to(self, url):
         self.driver.get(url)
@@ -139,5 +141,58 @@ class ExporterHubPage():
     def click_sites(self):
         self.driver.find_element_by_css_selector(self.sites_btn).click()
 
+    def click_sites_link(self):
+        self.driver.find_element_by_css_selector(self.sites_link).click()
+
     def click_new_site(self):
         self.driver.find_element_by_css_selector("a[href*='/sites/new/']").click()
+
+    def click_sites_checkbox(self, int):
+        self.driver.find_elements_by_css_selector(".govuk-checkboxes__input")[int].click()
+
+    def get_checked_attributes_of_sites_checkbox(self, int):
+        return self.driver.find_elements_by_css_selector(".govuk-checkboxes__input")[int].get_attribute("checked")
+
+    def get_text_of_site(self, int):
+        return self.driver.find_elements_by_css_selector(".govuk-checkboxes__label")[int].text
+
+    def click_submit(self):
+        self.driver.find_element_by_css_selector(".govuk-button").click()
+
+    def click_apply_for_a_licence(self):
+        self.driver.find_element_by_css_selector(self.apply_for_a_licence_btn).click()
+
+    def click_start(self):
+        self.driver.find_element_by_css_selector("a[href*='/start']").click()
+
+    def enter_name_for_application(self, name):
+        self.driver.find_element_by_id("name").clear()
+        self.driver.find_element_by_id("name").send_keys(name)
+
+    def enter_destination(self, destination):
+        self.driver.find_element_by_id("destination").clear()
+        self.driver.find_element_by_id("destination").send_keys(destination)
+
+    def enter_usage(self, usage):
+        self.driver.find_element_by_id("usage").clear()
+        self.driver.find_element_by_id("usage").send_keys(usage)
+
+    def enter_activity(self, activity):
+        self.driver.find_element_by_id("activity").clear()
+        self.driver.find_element_by_id("activity").send_keys(activity)
+
+    def click_submit_application(self):
+        self.driver.find_element_by_css_selector("button[type*='submit']").click()
+
+    # Old flow
+    def create_application(self, name, destination, usage, activity):
+        self.click_apply_for_a_licence()
+        self.click_start()
+        self.enter_name_for_application(name)
+        self.click_save_and_continue()
+        self.enter_destination(destination)
+        self.click_save_and_continue()
+        self.enter_usage(usage)
+        self.click_save_and_continue()
+        self.enter_activity(activity)
+        self.click_submit()

@@ -18,9 +18,9 @@ def open_internal_hub(driver, internal_url):
     log.info(driver.current_url)
 
 @pytest.fixture(scope="function")
-def open_exporter_hub(driver, url):
+def open_exporter_hub(driver, exporter_url):
     # navigate to the application home page
-    driver.get(url)
+    driver.get(exporter_url)
     # driver.maximize_window()
     log.info(driver.current_url)
 
@@ -62,8 +62,6 @@ def test_new_organisation_setup(driver, open_internal_hub):
         internal_hub.enter_password("password")
 
         internal_hub.click_submit()
-
-        assert "Organisation Registered" in driver.title, "Error in registering business"
 
         exists = utils.is_element_present(driver, By.XPATH, "//*[text()[contains(.,'Test Org')]]")
         assert exists
@@ -109,10 +107,10 @@ def test_add_goods_setup(driver, open_exporter_hub):
         exporter_hub.click_save_and_continue()
 
 
-def test_add_users_setup(driver, url):
+def test_add_users_setup(driver, exporter_url):
     log.info("add test user")
     exporter_hub = ExporterHubPage(driver)
-    exporter_hub.go_to(url)
+    exporter_hub.go_to(exporter_url)
     if "login" in driver.current_url:
         log.info("logging in as test@mail.com")
         exporter_hub.login("test@mail.com", "password")

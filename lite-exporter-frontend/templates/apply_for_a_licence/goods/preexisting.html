@@ -1,29 +1,12 @@
 {% extends 'layouts/full_width.html' %}
 
-{% block head %}
-	<style>
-		.govuk-width-container {
-			max-width: 1020px;
-			margin-left: max(30px, calc(15px + env(safe-area-inset-left)));
-			margin-right: max(30px, calc(15px + env(safe-area-inset-right)));
-		}
-		@media (min-width: 1080px) {
-			.govuk-width-container {
-				margin-left: auto;
-				margin-right: auto;
-			}
-		}
-	</style>
-{% endblock %}
-
 {% block back-button %}
-	<a href="{% url 'new_application:goods' %}?id={{ draft_id }}" class="govuk-back-link">Back to Goods</a>
+	<a href="{% url 'apply_for_a_licence:goods' draft_id %}" class="govuk-back-link lite-persistent-bar--back">Back to Goods</a>
 {% endblock%}
 
 {% block body %}
 
-<span class="govuk-caption-m">Add good to {{ draft.draft.name }}</span>
-<h2 class="govuk-heading-l">Organisation's Goods</h2>
+<h2 class="govuk-heading-l">Add from your organisation</h2>
 
 {% if description or part_number or data.goods|length %}
 	<div class="govuk-grid-row">
@@ -31,7 +14,6 @@
 			<div class="lite-filter-box">
 				<form method="get">
 					<h4 class="govuk-heading-s">Filter</h4>
-					<input type="hidden" name="id" value="{{ draft_id }}">
 					<div class="govuk-form-group">
 						<label class="govuk-label" for="description">
 							Description
@@ -55,7 +37,7 @@
 					<p>Showing goods where</p>
 					{% if description %}
 						<p>description contains</p>
-						<a href="{% url 'new_application:preexisting_good' %}?id={{ draft_id }}&part_number={{ part_number }}" class="govuk-button govuk-button--secondary lite-filter-bar-item">
+						<a href="{% url 'apply_for_a_licence:preexisting_good' draft_id %}?part_number={{ part_number }}" class="govuk-button govuk-button--secondary lite-filter-bar-item">
 							<div class="lite-filter-bar-item-remove">
 								✕
 							</div>
@@ -67,7 +49,7 @@
 					{% endif %}
 					{% if part_number %}
 						<p>part number contains</p>
-						<a href="{% url 'new_application:preexisting_good' %}?id={{ draft_id }}&description={{ description }}" class="govuk-button govuk-button--secondary lite-filter-bar-item">
+						<a href="{% url 'apply_for_a_licence:preexisting_good' draft_id %}?description={{ description }}" class="govuk-button govuk-button--secondary lite-filter-bar-item">
 							<div class="lite-filter-bar-item-remove">
 								✕
 							</div>
@@ -84,7 +66,7 @@
 						<span style="display: block;">   </span>
 						<span class="govuk-caption-m" style="display: inline-block; margin-right: 10px;">Control Code: </span><p class="govuk-label" style="display: inline-block; {% if not good.control_code %}opacity: 0.4;{% endif %}">{{ good.control_code|default:"N/A" }}</p>
 						<div style="display: flex; justify-content: flex-end;">
-							<a href="{% url 'new_application:add_preexisting_good' good.id %}?id={{ draft_id }}" class="govuk-button" role="button" draggable="false" style="margin-bottom: 0;">Add to application</a>
+							<a href="{% url 'apply_for_a_licence:add_preexisting_good' draft_id good.id %}" class="govuk-button" role="button" draggable="false" style="margin-bottom: 0;">Add to application</a>
 						</div>
 					</div>
 				{% endfor %}

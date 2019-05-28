@@ -15,9 +15,9 @@ console = logging.StreamHandler()
 log.addHandler(console)
 
 @pytest.fixture(scope="function")
-def open_exporter_hub(driver, url):
+def open_exporter_hub(driver, exporter_url):
     # navigate to the application home page
-    driver.get(url)
+    driver.get(exporter_url)
     # driver.maximize_window()
     assert driver.title == "Log In - LITE"
     log.info(driver.current_url)

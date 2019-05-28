@@ -7,7 +7,7 @@ class InternalHubPage():
     def __init__(self, driver):
         self.driver = driver
 
-        self.queue_drop_down = "a[href*='/new-application/']"
+        self.queue_drop_down = "a[href*='/apply_for_a_licence/']"
         self.go_to_queue_btn = "button.govuk-button"
 
     def select_from_queue_drop_down(self, value):
