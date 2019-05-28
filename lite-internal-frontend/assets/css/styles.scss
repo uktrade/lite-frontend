@@ -1,5 +1,7 @@
-// Set default page width
+// Set defaults
+$lite-transition-speed: .3s !default;
 $govuk-page-width: 1200px !default;
+$govuk-brand-colour: #28a197;
 
 // GOV.UK Design System
 @import "../../lite-shared-assets/node_modules/govuk-frontend/all";
@@ -9,3 +11,7 @@ $govuk-page-width: 1200px !default;
 
 // Local Assets
 @import "components/all";
+
+.govuk-tag {
+	background-color: $govuk-brand-colour;
+}

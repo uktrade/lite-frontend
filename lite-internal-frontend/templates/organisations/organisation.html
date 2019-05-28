@@ -1,0 +1,83 @@
+{% extends 'layouts/full_width.html' %}
+
+{% block body %}
+
+	<div class="lite-app-bar">
+		<h1 class="govuk-heading-l">{{ title }}</h1>
+	</div>
+
+	<div class="lite-information-board">
+		<div class="govuk-grid-row">
+			<div class="govuk-grid-column-one-third">
+				<p class="lite-heading-s">EORI Number</p>
+				<p class="govuk-label">{{ organisation.eori_number }}</p>
+			</div>
+			<div class="govuk-grid-column-one-third">
+				<p class="lite-heading-s">SIC Number</p>
+				<p class="govuk-label">{{ organisation.sic_number }}</p>
+			</div>
+			<div class="govuk-grid-column-one-third">
+				<p class="lite-heading-s">VAT Number</p>
+				<p class="govuk-label">{{ organisation.vat_number }}</p>
+			</div>
+			<div class="govuk-grid-column-one-third">
+				<p class="lite-heading-s">Registration Number</p>
+				<p class="govuk-label">{{ organisation.registration_number }}</p>
+			</div>
+			<div class="govuk-grid-column-one-third">
+				<p class="lite-heading-s">Address</p>
+				<p class="govuk-label">
+					{{ organisation.primary_site.address.address_line_1 }}<br/>
+					{% if organisation.site.address.address_line_2 %}
+						{{ organisation.site.address.address_line_2 }}<br/>
+					{% endif %}
+					{{ organisation.primary_site.address.city }}<br/>
+					{{ organisation.primary_site.address.postcode }}<br/>
+					{{ organisation.primary_site.address.country }}
+				</p>
+			</div>
+		</div>
+	</div>
+
+	<div class="lite-tabs--fade">
+		<div class="lite-tabs">
+			<!--<a class="lite-tabs__tab">Goods</a>
+			<a class="lite-tabs__tab">Destinations</a>-->
+			<a class="lite-tabs__tab selected" id="sites">Sites</a>
+		</div>
+	</div>
+
+	{% if sites|length %}
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header">
+						Name
+					</th>
+					<th class="govuk-table__header" scope="col">Address</th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__head">
+				{% for site in sites %}
+					<tr class="govuk-table__row" style="vertical-align: top;">
+						<td class="govuk-table__cell">
+							{{ site.name }}
+						</td>
+						<td class="govuk-table__cell">
+							{{ site.address.address_line_1 }}<br/>
+							{% if site.address.address_line_2 %}
+								{{ site.address.address_line_2 }}<br/>
+							{% endif %}
+							{{ site.address.city }}<br/>
+							{{ site.address.postcode }}<br/>
+							{{ site.address.country }}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		<span class="govuk-hint">This organisation doesn't have any sites.</span>
+	{% endif %}
+
+{% endblock %}

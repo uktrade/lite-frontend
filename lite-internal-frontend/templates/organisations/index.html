@@ -21,32 +21,32 @@
 
 
 	{% if data.organisations|length %}
-		<table class="lite-table">
-			<thead class="lite-table__head">
-				<tr class="lite-table__row">
-					<th class="lite-table__header" scope="col">Name</th>
-					<th class="lite-table__header" scope="col">EORI Number</th>
-					<th class="lite-table__header" scope="col">SIC Number</th>
-					<th class="lite-table__header" scope="col">VAT Number</th>
-					<th class="lite-table__header" scope="col">Address</th>
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="col">Name</th>
+					<th class="govuk-table__header" scope="col">EORI Number</th>
+					<th class="govuk-table__header" scope="col">SIC Number</th>
+					<th class="govuk-table__header" scope="col">VAT Number</th>
+					<th class="govuk-table__header" scope="col">Address</th>
 				</tr>
 			</thead>
-			<tbody class="lite-table__body">
+			<tbody class="govuk-table__body">
 				{% for organisation in data.organisations %}
-					<tr class="lite-table__row">
-						<td class="lite-table__cell">
-							{{ organisation.name|default:"Untitled" }}
+					<tr class="govuk-table__row" style="vertical-align: top;">
+						<td class="govuk-table__cell">
+							<a class="govuk-link" href="{% url 'organisations:organisation' organisation.id %}">{{ organisation.name|default:"Untitled" }}</a>
 						</td>
-						<td class="lite-table__cell">
+						<td class="govuk-table__cell">
 							{{ organisation.eori_number|default:"Untitled" }}
 						</td>
-						<td class="lite-table__cell">
+						<td class="govuk-table__cell">
 							{{ organisation.sic_number|default:"Untitled" }}
 						</td>
-						<td class="lite-table__cell">
+						<td class="govuk-table__cell">
 							{{ organisation.vat_number|default:"Untitled" }}
 						</td>
-						<td class="lite-table__cell">
+						<td class="govuk-table__cell">
 							{{ organisation.primary_site.address.address_line_1 }}<br/>
 							{{ organisation.primary_site.address.postcode }}<br/>
 							{{ organisation.primary_site.address.city }}<br/>

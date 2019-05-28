@@ -2,6 +2,7 @@ import json
 import os
 import sys
 
+from django.urls import reverse_lazy
 from environ import Env
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -42,7 +43,8 @@ INSTALLED_APPS = [
     'register_business',
     'core.apps.CoreConfig',
     'libraries.forms',
-	'svg',
+    'svg',
+    'authbroker_client',
 ]
 
 MIDDLEWARE = [
@@ -53,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'authbroker_client.middleware.ProtectAllViewsMiddleware',
 ]
 
 ROOT_URLCONF = 'conf.urls'
@@ -78,6 +81,22 @@ TEMPLATES = [
     },
 ]
 
+# Authbroker config
+AUTHBROKER_URL = env('AUTHBROKER_URL')
+AUTHBROKER_CLIENT_ID = env('AUTHBROKER_CLIENT_ID')
+AUTHBROKER_CLIENT_SECRET = env('AUTHBROKER_CLIENT_SECRET')
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'authbroker_client.backends.AuthbrokerBackend',
+]
+
+LOGIN_URL = reverse_lazy('authbroker_client:login')
+
+LOGIN_REDIRECT_URL = '/'
+
+AUTH_USER_MODEL = 'core.User'
+
 WSGI_APPLICATION = 'conf.wsgi.application'
 
 # Password validation
@@ -98,7 +117,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
@@ -112,7 +130,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
@@ -120,7 +137,7 @@ USE_TZ = True
 
 DATA_DIR = os.path.dirname(BASE_DIR)
 
-SVG_DIRS=[
+SVG_DIRS = [
     os.path.join(BASE_DIR, 'assets/images')
 ]
 

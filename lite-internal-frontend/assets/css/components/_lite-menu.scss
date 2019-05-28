@@ -1,4 +1,4 @@
-#user-menu {
+#lite-user-menu {
 	grid-template-columns: auto auto auto auto auto;
 }
 
@@ -7,12 +7,6 @@
 	width: 26px;
 	height: 26px;
 	display: flex;
-}
-
-#lite-menu-button {
-	width: 100%;
-	height: 100%;
-	background-image: url('/assets/images/menu.svg');
 }
 
 #lite-menu-background {
@@ -61,7 +55,10 @@
 		fill: currentColor;
 	}
 	a {
+		@include govuk-link-common;
+		@include govuk-font($size: 14, $weight: bold);
 		color: govuk-colour("grey-1");
+		text-decoration: none;
 		width: 105px;
 		box-sizing: border-box;
 		display: flex;
@@ -88,6 +85,7 @@
 		&:hover {
 			background-color: govuk-colour("grey-4");
 			opacity: 1!important;
+			text-decoration: underline;
 		}
 		&:active {
 			background-color: govuk-colour("grey-3");

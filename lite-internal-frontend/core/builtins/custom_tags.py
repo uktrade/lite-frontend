@@ -1,8 +1,9 @@
+import datetime
+
+import stringcase
 from django import template
 from django.template.defaultfilters import stringfilter
-
-import datetime
-import stringcase
+from django.templatetags.tz import do_timezone
 
 from conf.constants import ISO8601_FMT
 from core import strings
@@ -12,7 +13,6 @@ register = template.Library()
 
 @register.simple_tag
 def get_string(value):
-
     def get(d, keys):
         if "." in keys:
             key, rest = keys.split(".", 1)
@@ -26,7 +26,9 @@ def get_string(value):
 @register.filter
 @stringfilter
 def str_date(value):
-    return datetime.datetime.strptime(value, ISO8601_FMT)
+    return_value = do_timezone(datetime.datetime.strptime(value, ISO8601_FMT), 'Europe/London')
+    return return_value.strftime('%-I:%M') + return_value.strftime('%p').lower() + ' ' + return_value.strftime('%d %B '
+                                                                                                               '%Y')
 
 
 @register.filter()
@@ -36,7 +38,7 @@ def sentence_case(value):
 
 @register.filter()
 def add_selected_class(key, url):
-	if key in url:
-		return 'lite-menu-item--selected'
+    if key in url:
+        return 'lite-menu-item--selected'
 
-	return ''
+    return ''

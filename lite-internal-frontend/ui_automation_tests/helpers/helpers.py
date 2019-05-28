@@ -70,3 +70,8 @@ def type_text(driver, text, by_type, locator):
 def get_text(driver, by_type, locator):
     el = find_element(driver, by_type, locator)
     return el.text
+
+
+def repeat_to_length(string_to_expand, length):
+    return (string_to_expand * (int(length/len(string_to_expand))+1))[:length]
+

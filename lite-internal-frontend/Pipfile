@@ -7,6 +7,8 @@ verify_ssl = true
 libsass = "==0.18.0"
 pytest = "==4.4.0"
 selenium = "==3.141.0"
+allure-pytest = "==2.6.1"
+allure-python-commons = "==2.6.1"
 
 [packages]
 Django = "==2.2"
@@ -14,12 +16,13 @@ django-compressor = "==2.2"
 django-environ = "==0.4.5"
 django-sass-processor = "==0.7.2"
 libsass = "==0.18.0"
-psycopg2 = "==2.7.7"
-psycopg2-binary = "==2.7.7"
+psycopg2 = "==2.8.2"
 python-json-logger = "==0.1.11"
 requests = "==2.21.0"
 stringcase = "==1.2.0"
 django-inline-svg = "*"
+django-staff-sso-client = "*"
+requests-oauthlib = "*"
 
 [requires]
 python_version = "3.7"

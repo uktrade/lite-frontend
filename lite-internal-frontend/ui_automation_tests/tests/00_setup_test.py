@@ -4,18 +4,13 @@ from pages.register_a_business_page import RegisterABusinessPage
 from pages.dit_hub_page import DepartmentOfInternationalTradeHub
 from pages.organisations_page import OrganisationsPage
 import pytest
+import requests
+
 import logging
 
 log = logging.getLogger()
 console = logging.StreamHandler()
 log.addHandler(console)
-
-@pytest.fixture(scope="function")
-def open_internal_hub(driver, internal_url):
-    driver.get(internal_url)
-    # driver.maximize_window()
-    log.info(driver.current_url)
-
 
 def test_new_organisation_setup(driver, open_internal_hub):
     log.info("Setting up new organisation")
@@ -56,8 +51,6 @@ def test_new_organisation_setup(driver, open_internal_hub):
         register_a_business_page.enter_password("password")
 
         register_a_business_page.click_submit()
-
-        assert "Organisations" in driver.title, "Error in registering business"
 
         exists = utils.is_element_present(driver, By.XPATH, "//*[text()[contains(.,'Test Org')]]")
         assert exists

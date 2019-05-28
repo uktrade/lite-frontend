@@ -14,13 +14,6 @@ console = logging.StreamHandler()
 log.addHandler(console)
 
 
-@pytest.fixture(scope="function")
-def open_internal_hub(driver, internal_url):
-    driver.get(internal_url)
-    # driver.maximize_window()
-    log.info(driver.current_url)
-
-
 def test_register_a_business(driver, open_internal_hub, internal_url):
     dit_hub_page = DepartmentOfInternationalTradeHub(driver)
     register_a_business_page = RegisterABusinessPage(driver)
@@ -32,9 +25,9 @@ def test_register_a_business(driver, open_internal_hub, internal_url):
     logging.info("Registering a new business")
     organisations_page.click_new_organisation_btn()
 
-    time_id = datetime.datetime.now().strftime("%m%d%H%M")
+    time_id = datetime.datetime.now().strftime("%m%d%H%M%S")
 
-    register_a_business_page.enter_business_name("Test Business " + time_id)
+    register_a_business_page.enter_business_name("Test Business T" + time_id)
     register_a_business_page.enter_eori_number("GB987654312000")
     register_a_business_page.enter_sic_number("73200")
     register_a_business_page.enter_vat_number("123456789")
@@ -109,11 +102,14 @@ def test_cannot_submit_without_required_fields(driver, open_internal_hub):
     logging.info("clicked submit")
     register_a_business_page.click_save_and_continue()
 
-    assert driver.find_element_by_xpath("//a[text()[contains(.,'Name:')]]").is_displayed()
-    assert driver.find_element_by_xpath("//a[text()[contains(.,'Eori_Number:')]]").is_displayed()
-    assert driver.find_element_by_xpath("//a[text()[contains(.,'Sic_Number:')]]").is_displayed()
-    assert driver.find_element_by_xpath("//a[text()[contains(.,'Vat_Number:')]]").is_displayed()
-    assert driver.find_element_by_xpath("//a[text()[contains(.,'Registration_Number:')]]").is_displayed()
+    err_msg = driver.find_elements_by_xpath("//a[text()[contains(.,'This field may not be blank.')]]")
+    assert len(err_msg) == 5
+    assert err_msg[0].is_displayed()
+    assert err_msg[0].text == 'This field may not be blank.'
+    assert err_msg[1].text == 'This field may not be blank.'
+    assert err_msg[2].text == 'This field may not be blank.'
+    assert err_msg[3].text == 'This field may not be blank.'
+    assert err_msg[4].text == 'This field may not be blank.'
 
     time_id = datetime.datetime.now().strftime("%m%d%H%M")
     register_a_business_page.enter_business_name("Test Business " + time_id)
@@ -125,12 +121,15 @@ def test_cannot_submit_without_required_fields(driver, open_internal_hub):
     register_a_business_page.click_save_and_continue()
     register_a_business_page.click_save_and_continue()
 
-    assert driver.find_element_by_xpath("//a[text()[contains(.,'Site.Name:')]]").is_displayed()
-    assert driver.find_element_by_xpath("//a[text()[contains(.,'Site.Address.Address_Line_1:')]]").is_displayed()
-    assert driver.find_element_by_xpath("//a[text()[contains(.,'Site.Address.Postcode:')]]").is_displayed()
-    assert driver.find_element_by_xpath("//a[text()[contains(.,'Site.Address.City:')]]").is_displayed()
-    assert driver.find_element_by_xpath("//a[text()[contains(.,'Site.Address.Region:')]]").is_displayed()
-    assert driver.find_element_by_xpath("//a[text()[contains(.,'Site.Address.Country:')]]").is_displayed()
+    err_msg = driver.find_elements_by_xpath("//a[text()[contains(.,'This field may not be blank.')]]")
+    assert len(err_msg) == 6
+    assert err_msg[0].is_displayed()
+    assert err_msg[0].text == 'This field may not be blank.'
+    assert err_msg[1].text == 'This field may not be blank.'
+    assert err_msg[2].text == 'This field may not be blank.'
+    assert err_msg[3].text == 'This field may not be blank.'
+    assert err_msg[4].text == 'This field may not be blank.'
+    assert err_msg[5].text == 'This field may not be blank.'
 
     register_a_business_page.enter_site_name("Site 1")
     register_a_business_page.enter_address_line_1("123 Cobalt Street")
@@ -143,10 +142,14 @@ def test_cannot_submit_without_required_fields(driver, open_internal_hub):
     register_a_business_page.click_save_and_continue()
     register_a_business_page.click_submit()
 
-    assert driver.find_element_by_xpath("//a[text()[contains(.,'User.Email:')]]").is_displayed()
-    assert driver.find_element_by_xpath("//a[text()[contains(.,'User.First_Name:')]]").is_displayed()
-    assert driver.find_element_by_xpath("//a[text()[contains(.,'User.Last_Name:')]]").is_displayed()
-    assert driver.find_element_by_xpath("//a[text()[contains(.,'User.Password:')]]").is_displayed()
+    err_msg = driver.find_elements_by_xpath("//a[text()[contains(.,'This field may not be blank.')]]")
+    assert len(err_msg) == 4
+    assert err_msg[0].is_displayed()
+    assert err_msg[0].text == 'This field may not be blank.'
+    assert err_msg[1].text == 'This field may not be blank.'
+    assert err_msg[2].text == 'This field may not be blank.'
+    assert err_msg[3].text == 'This field may not be blank.'
+
     driver.find_element_by_id("error-summary-title").is_displayed()
 
     title = driver.title

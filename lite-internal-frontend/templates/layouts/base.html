@@ -66,11 +66,17 @@
 			</div>
 
 			{% if user %}
-				<div id="user-menu">
-					<a>Log out</a>
-					<div class="divider"></div>
+				<div id="lite-user-menu">
+					<a href="{% url 'authbroker:logout' %}" class="lite-user-menu-button">
+						Log out
+					</a>
+
+					<div class="lite-user-menu-divider"></div>
+
 					<div id="lite-menu-wrapper">
-						<a id="lite-menu-button" onclick="toggleLITEMenu();return false;" href="/menu/" title="Open Menu" accesskey="m"></a>
+						<a id="lite-user-menu-button" class="lite-user-menu-button" onclick="toggleLITEMenu();return false;" href="/menu/" title="Open Menu" accesskey="m">
+							{% svg 'menu' %}
+						</a>
 						<div id="lite-menu">
 							{% for item in LITE_MENU %}
 								<a href="{{ item.url }}" class="lite-menu-item {{ item.url|add_selected_class:request.path }}">
@@ -82,13 +88,18 @@
 							{% endfor %}
 						</div>
 					</div>
-					<div class="divider"></div>
-					<a class="user-menu-profile">
-						<p>John</p>
-						<div class="user-icon signed-in"></div>
+
+					<div class="lite-user-menu-divider"></div>
+
+					<a class="lite-user-menu-button" href="#">
+						{{ user.first_name }}
+						<div class="lite-user-menu-button--user">
+							{% svg 'user' %}
+						</div>
 					</a>
 				</div>
 			{% endif %}
+
 		</div>
 	</header>
 	{% endblock %}

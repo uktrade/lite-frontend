@@ -1,9 +1,12 @@
 import requests
 
+from cases.services import get_case, get_case_notes, post_case_notes
 from conf.settings import env
 
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
+
+from libraries.forms.helpers import error_page
 
 
 def index(request):
@@ -25,17 +28,34 @@ def index(request):
     return render(request, 'cases/index.html', context)
 
 
-def case(request, pk):
-    response = requests.get(env("LITE_API_URL") + '/cases/' + str(pk) + '/').json()
+class ViewCase(TemplateView):
+    def get(self, request, **kwargs):
+        case_id = str(kwargs['pk'])
+        case, status_code = get_case(request, case_id)
+        case_notes, status_code = get_case_notes(request, case_id)
 
-    context = {
-        'data': response,
-        'title': response.get('case').get('application').get('name'),
-    }
-    return render(request, 'cases/case.html', context)
+        context = {
+            'data': case,
+            'title': case.get('case').get('application').get('name'),
+            'case_notes': case_notes.get('case_notes'),
+        }
+        return render(request, 'cases/case/index.html', context)
+
+    def post(self, request, **kwargs):
+        case_id = str(kwargs['pk'])
+        response, status_code = post_case_notes(request, case_id, request.POST)
+
+        if status_code != 201:
+            error = response.get('errors').get('text')[0]
+            error = error.replace('This field', 'Case note')
+            error = error.replace('this field', 'the case note')
+            return error_page(request, error)
+
+        return redirect('/cases/' + case_id + '#case_notes')
 
 
 class ManageCase(TemplateView):
+
     def get(self, request, pk):
         response = requests.get(env("LITE_API_URL") + '/cases/' + str(pk) + '/').json()
         context = {
@@ -60,7 +80,6 @@ class ManageCase(TemplateView):
 
 
 class DecideCase(TemplateView):
-
     def get(self, request, pk):
         response = requests.get(env("LITE_API_URL") + '/cases/' + str(pk) + '/').json()
         context = {
