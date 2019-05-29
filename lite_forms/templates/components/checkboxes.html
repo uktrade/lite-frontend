@@ -1,4 +1,4 @@
-<div class="govuk-checkboxes">
+<div class="govuk-checkboxes {% if question.same_row %}lite-checkboxes--inline{% endif %}">
 	{% for item in data %}
 		<div class="govuk-checkboxes__item">
 			<input {% if value|key_in_array:item.key %}checked{% endif %} class="govuk-checkboxes__input" id="{{ item.key }}" name="{{ name }}" type="checkbox" value="{{ item.key }}">
