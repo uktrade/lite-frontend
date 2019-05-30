@@ -46,3 +46,14 @@ def get_draft_good(request, pk, good_pk):
 def post_draft_preexisting_goods(request, pk, json):
     data = post(request, DRAFTS_URL + pk + '/goods/', json)
     return data.json(), data.status_code
+
+
+# End Users
+def get_end_user(request, pk):
+    data = get(request, DRAFTS_URL + pk + '/goods/')
+    return data.json(), data.status_code
+
+
+def post_end_user(request, pk, json):
+    data = post(request, DRAFTS_URL + pk + '/end-user/', json)
+    return data.json(), data.status_code

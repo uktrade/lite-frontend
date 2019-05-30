@@ -8,14 +8,26 @@
 
 <style media="screen">
 	.govuk-table__row {
-			line-height: 30px;
-		}
-		.govuk-table__head, .govuk-table__body {
-			border-top: 1px solid rgb(230, 230, 230);
-		}
-		.govuk-table__header, .govuk-table__cell {
-			border-bottom: 1px solid rgb(230, 230, 230);
-		}
+		line-height: 35px;
+	}
+	.govuk-table__head, .govuk-table__body {
+		border-top: 1px solid rgb(230, 230, 230);
+	}
+	.govuk-table__header, .govuk-table__cell {
+		border-bottom: 1px solid rgb(230, 230, 230);
+	}
+	.govuk-table * {
+		vertical-align: top;
+	}
+	.lite-section {
+		border-top: 1px solid rgb(230, 230, 230);
+		border-bottom: 1px solid rgb(230, 230, 230);
+		border: none;
+		padding: 25px;
+		background-color: rgb(250, 250, 250);
+		border: 1px solid rgb(245, 245, 245);
+		box-sizing: border-box;
+	}
 	</style>
 
 {% if errors %}
@@ -45,87 +57,147 @@
 	<p class="govuk-caption-m">The following sections can be completed in any order.</p>
 </div>
 
-<table class="govuk-table">
-	<tbody class="govuk-table__body">
-		<tr class="govuk-table__row">
-			<th class="govuk-table__header" scope="row">Licence Type</th>
-			<td class="govuk-table__cell">{{ draft.licence_type }}</td>
-		</tr>
-		<tr class="govuk-table__row">
-			<th class="govuk-table__header" scope="row">Export Type</th>
-			<td class="govuk-table__cell">{{ draft.export_type }}</td>
-		</tr>
-		{% if draft.reference_number_on_information_form %}
-		<tr class="govuk-table__row">
-			<th class="govuk-table__header" scope="row">Reference Number</th>
-			<td class="govuk-table__cell">{{ draft.reference_number_on_information_form }}</td>
-		</tr>
-		{% endif %}
-		<tr class="govuk-table__row">
-			<th class="govuk-table__header" scope="row">Created at</th>
-			<td class="govuk-table__cell">{{ draft.created_at|str_date }}</td>
-		</tr>
-	</tbody>
-</table>
-
-<br />
-<br />
-
-<div {% if errors|key_value:'goods' %}class="govuk-form-group--error"{% endif %}>
-	<a id="goods" href="{% url 'apply_for_a_licence:goods' draft.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">Goods</a>
-	{% if errors|key_value:'goods' %}
-		<span class="govuk-error-message">
-			{{ errors|key_value:'goods' }}
-		</span>
-	{% endif %}
-	<p class="govuk-caption-m">Add a pre-existing good to your application</p>
+<div class="lite-section">
+	<table class="govuk-table">
+		<tbody class="govuk-table__body">
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header" scope="row">Licence Type</th>
+				<td class="govuk-table__cell">{{ draft.licence_type }}</td>
+			</tr>
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header" scope="row">Export Type</th>
+				<td class="govuk-table__cell">{{ draft.export_type }}</td>
+			</tr>
+			{% if draft.reference_number_on_information_form %}
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header" scope="row">Reference Number</th>
+				<td class="govuk-table__cell">{{ draft.reference_number_on_information_form }}</td>
+			</tr>
+			{% endif %}
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header" scope="row">Created at</th>
+				<td class="govuk-table__cell">{{ draft.created_at|str_date }}</td>
+			</tr>
+		</tbody>
+	</table>
 </div>
 
-<br />
-<br />
+<div class="lite-section {% if errors|key_value:'goods' %}govuk-form-group--error{% endif %}">
+	<div class="lite-section-header">
+		<a id="goods" href="{% url 'apply_for_a_licence:goods' draft.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
+			Goods
+		</a>
+		{% if goods|length %}
+			<div class="lite-info-label lite-info-label--blue">
+				Done
+			</div>
+		{% else %}
+			<div class="lite-info-label">
+				Not Started
+			</div>
+		{% endif %}
+	</div>
+	{% if errors|key_value:'goods' %}
+		<p class="govuk-error-message">
+			{{ errors|key_value:'goods' }}
+		</p>
+	{% endif %}
+	<p class="govuk-caption-m">Add goods to your application</p>
+</div>
 
-<div {% if errors|key_value:'sites' %}class="govuk-form-group--error"{% endif %}>
-	<a id="sites" href="{% url 'apply_for_a_licence:sites' draft.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">Sites</a>
+<div class="lite-section {% if errors|key_value:'sites' %}govuk-form-group--error{% endif %}">
+	<div class="lite-section-header">
+		<a id="sites" href="{% url 'apply_for_a_licence:sites' draft.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
+			Sites
+		</a>
+		{% if sites|length %}
+			<div class="lite-info-label lite-info-label--blue">
+				Done
+			</div>
+		{% else %}
+			<div class="lite-info-label">
+				Not Started
+			</div>
+		{% endif %}
+	</div>
 	{% if errors|key_value:'sites' %}
-		<span class="govuk-error-message">
+		<p class="govuk-error-message">
 			{{ errors|key_value:'sites' }}
-		</span>
+		</p>
 	{% endif %}
 	<p class="govuk-caption-m">Add sites to your application</p>
 </div>
 
-<!--<table class="govuk-table">
-		<thead class="govuk-table__head">
-			<tr class="govuk-table__row">
-				<th class="govuk-table__header" scope="col">Date</th>
-				<th class="govuk-table__header" scope="col">Amount</th>
-			</tr>
-		</thead>
-		<tbody class="govuk-table__body">
-			<tr class="govuk-table__row">
-				<td class="govuk-table__cell">£109.80 per week</td>
-				<td class="govuk-table__cell">£4,282.20</td>
-			</tr>
-		</tbody>
-	</table>-->
+<div class="lite-section {% if errors|key_value:'end_user' %}govuk-form-group--error{% endif %}">
+	<div class="lite-section-header">
+		<a id="end_users" href="{% url 'apply_for_a_licence:end_user' draft.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
+			End User
+		</a>
 
-<br />
-<br />
-<br />
-<br />
-<br />
+		{% if draft.end_user %}
+			<div class="lite-info-label lite-info-label--blue">
+				Done
+			</div>
+		{% else %}
+			<div class="lite-info-label">
+				Not Started
+			</div>
+		{% endif %}
+	</div>
+	{% if errors|key_value:'end_user' %}
+		<p class="govuk-error-message">
+			{{ errors|key_value:'end_user' }}
+		</p>
+	{% endif %}
+	{% if draft.end_user %}
+		<table class="govuk-table">
+			<tbody class="govuk-table__body">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="row">Type</th>
+					<td class="govuk-table__cell">{{ draft.end_user.type }}</td>
+				</tr>
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="row">Name</th>
+					<td class="govuk-table__cell">{{ draft.end_user.name }}</td>
+				</tr>
+				{% if draft.end_user.website %}
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="row">Website</th>
+					<td class="govuk-table__cell">{{ draft.end_user.website }}</td>
+				</tr>
+				{% endif %}
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="row">Address</th>
+					<td class="govuk-table__cell">{{ draft.end_user.address }}<br/>{{ draft.end_user.country }}</td>
+				</tr>
+			</tbody>
+		</table>
+	{% else %}
+		<p class="govuk-caption-m">Add an end user to your application</p>
+	{% endif %}
+</div>
 
+<div class="lite-submit-bar js-is-sticky">
+<a href="{% url 'apply_for_a_licence:delete' draft.id %}" class="cancel-link" style="float: right;">
+	Delete Application
+</a>
 <form method="post">
 	{% csrf_token %}
 	<button type="submit" class="govuk-button" name="button" data-prevent-double-click="true">Submit Application</button>
 </form>
+</div>
 
 {% load static %}
 <script src="{% static 'javascripts/modal.js' %}"></script>
 <script src="{% static 'javascripts/specific/overview.js' %}"></script>
+<script src="{% static 'javascripts/stickybits.min.js' %}"></script>
+
+<script type="text/javascript">
+	stickybits('.lite-submit-bar', {useStickyClasses: true, verticalPosition: 'bottom'});
+</script>
 
 {% endblock %}
-{% block oneThird %}
+{% block oneTahird %}
 <aside role="complementary">
 	<h2 class="govuk-heading-m" id="subsection-title">
 		Need to go?

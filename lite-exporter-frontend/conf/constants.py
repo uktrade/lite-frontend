@@ -10,3 +10,4 @@ USERS_URL = '/users/'
 # Static URLs
 STATIC_URL = '/static/'
 UNITS_URL = STATIC_URL + 'units/'
+COUNTRIES_URL = STATIC_URL + 'countries/'

@@ -4,8 +4,11 @@ from conf.settings import env
 
 
 def get(request, appended_address):
-    return requests.get(env("LITE_API_URL") + appended_address,
-                        headers={'USER-ID': str(request.user.id)})
+    if request:
+        return requests.get(env("LITE_API_URL") + appended_address,
+                            headers={'USER-ID': str(request.user.id)})
+
+    return requests.get(env("LITE_API_URL") + appended_address)
 
 
 def post(request, appended_address, json):
