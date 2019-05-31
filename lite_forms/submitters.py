@@ -12,7 +12,7 @@ def submit_single_form(request, form, post_to, pk=None):
         validated_data, status_code = post_to(request, data)
 
     if status_code != 201:
-        return form_page(request, form, errors=validated_data.get('errors'))
+        return form_page(request, form, data=data, errors=validated_data.get('errors')), None
 
     return None, validated_data
 
