@@ -1,23 +1,32 @@
-from libraries.forms.components import HiddenField
+from django.http import HttpRequest
+
+from libraries.forms.components import HiddenField, Form
 from libraries.forms.generators import form_page
 from libraries.forms.helpers import remove_unused_errors, nest_data, get_next_form_after_pk, get_form_by_pk
 
 
-def submit_single_form(request, form, post_to, pk=None):
+def submit_single_form(request: HttpRequest, form: Form, post_to, pk=None, override_data=None):
     data = request.POST.copy()
+
+    if override_data:
+        data = override_data
 
     if pk:
         validated_data, status_code = post_to(request, pk, data)
     else:
         validated_data, status_code = post_to(request, data)
 
+<<<<<<< HEAD
     if status_code != 201:
+=======
+    if 'errors' in validated_data:
+>>>>>>> 8f1cb5dc61c7fabf50ad85a43b4c4f4711686b21
         return form_page(request, form, data=data, errors=validated_data.get('errors')), None
 
     return None, validated_data
 
 
-def submit_paged_form(request, questions, post_to, pk=None):
+def submit_paged_form(request: HttpRequest, questions, post_to, pk=None):
     data = request.POST.copy()
 
     # Get the next form based off form_pk
