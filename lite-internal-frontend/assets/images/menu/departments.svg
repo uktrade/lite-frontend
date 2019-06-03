@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="38px" height="38px" viewBox="0 0 38 38" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M19,2 L36,12 L36,36 L22,36 L22,26 L16,26 L16,36 L2,36 L2,12 L19,2 Z M6,26 L6,32 L12,32 L12,26 L6,26 Z M26,26 L26,32 L32,32 L32,26 L26,26 Z M16,16 L16,22 L22,22 L22,16 L16,16 Z M26,16 L26,22 L32,22 L32,16 L26,16 Z M6,16 L6,22 L12,22 L12,16 L6,16 Z" id="Shape" fill="#000000"></path>
+        <rect id="Rectangle" fill="#000000" opacity="0.301106771" x="6" y="26" width="6" height="6"></rect>
+        <rect id="Rectangle" fill="#000000" opacity="0.301106771" x="26" y="26" width="6" height="6"></rect>
+        <rect id="Rectangle" fill="#000000" opacity="0.6" x="16" y="16" width="6" height="6"></rect>
+        <rect id="Rectangle" fill="#000000" opacity="0.6" x="6" y="16" width="6" height="6"></rect>
+        <rect id="Rectangle" fill="#000000" opacity="0.6" x="26" y="16" width="6" height="6"></rect>
+    </g>
+</svg>

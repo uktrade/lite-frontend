@@ -1,0 +1,43 @@
+{% extends 'layouts/full_width.html' %}
+
+{% load humanize %}
+
+{% block back-button %}{% endblock %}
+
+{% block body %}
+
+	<div class="lite-app-bar">
+		<h1 class="govuk-heading-l">Departments</h1>
+		<div class="lite-app-bar--right">
+			<a href="{% url 'departments:add' %}" class="govuk-button" draggable="false" role="button">
+				Add a department
+			</a>
+		</div>
+	</div>
+
+	{% if data.departments|length %}
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="col">Name</th>
+					<th class="govuk-table__header" scope="col"></th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				{% for department in data.departments %}
+					<tr class="govuk-table__row" style="vertical-align: top;">
+						<td class="govuk-table__cell">
+							{{ department.name|default:"Untitled" }}
+						</td>
+						<td class="govuk-table__cell">
+							<a href="{% url 'departments:edit' department.id %}" style="margin: 0;" class="govuk-link">Edit</a>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		<p class="govuk-caption-l">There are no registered departments at the moment.</p>
+	{% endif %}
+
+{% endblock %}
