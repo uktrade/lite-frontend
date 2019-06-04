@@ -16,11 +16,7 @@ def submit_single_form(request: HttpRequest, form: Form, post_to, pk=None, overr
     else:
         validated_data, status_code = post_to(request, data)
 
-<<<<<<< HEAD
-    if status_code != 201:
-=======
     if 'errors' in validated_data:
->>>>>>> 8f1cb5dc61c7fabf50ad85a43b4c4f4711686b21
         return form_page(request, form, data=data, errors=validated_data.get('errors')), None
 
     return None, validated_data
