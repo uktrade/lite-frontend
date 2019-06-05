@@ -51,10 +51,14 @@ Application for handling exporter related activity in LITE.
 * Setup chromedriver
   * Download chromedriver from http://chromedriver.chromium.org/ and install it  
   * make sure it has execute permissions and is in PATH
-  
+* or
+  * `brew cask install chromedriver`
+
 * Setup dev pipenv environment:
   * `pipenv sync -d`
 * Run `pipenv run python -m pytest`
+* You may need to make sure in pycharm, within Preferences -> Tools -> Python Integrated Tools -> Default Test Runner is pytest
+* You may need to change the run configuration for the tests too. Click on run, edit configurations and make sure the Python framework being used in the left hand pane is Python tests 
 
 ## LITE Repositories
 
