@@ -14,7 +14,7 @@ if os.path.exists(ENV_FILE):
 env = Env(
     ALLOWED_HOSTS=(str, ''),
     DEBUG=(bool, False),
-    DEBUG_LEVEL=(str, 'INFO'),
+    LOG_LEVEL=(str, 'INFO'),
 )
 
 # Quick-start development settings - unsuitable for production
@@ -183,7 +183,7 @@ LOGGING = {
     'loggers': {
         '': {
             'handlers': ['console'],
-            'level': env('DEBUG_LEVEL').upper(),
+            'level': env('LOG_LEVEL').upper(),
         },
     }
 }

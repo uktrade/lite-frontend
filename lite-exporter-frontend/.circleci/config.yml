@@ -1,0 +1,71 @@
+version: 2.1
+
+orbs:
+  jq: circleci/jq@1.8.0
+
+jobs:
+  build:
+    docker:
+      # specify the version you desire here
+      # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
+      - image: circleci/python:3.7
+
+    environment:
+      DEBUG: 'True'
+      PIPENV_VENV_IN_PROJECT: 'enabled'
+
+    working_directory: ~/lite-exporter-frontend
+
+    steps:
+      - jq/install
+
+      - checkout
+      - run:
+          name: Git submodule checkout
+          command: |
+            git submodule sync
+            git submodule update --init
+
+      - run:
+          name: repository vulnerability check
+          command: |
+            VULNERABILITY_COUNT=`curl -s -u "lite-cicircle:${CICIRCLE_PERSONAL_ACCESS_TOKEN}" \
+              -X POST -H "Content-Type: application/json" \
+              -H "Accept: application/vnd.github.vixen-preview+json" \
+              -d '{"query": "query { repository(owner:\"uktrade\" name:\"lite-exporter-frontend\") { vulnerabilityAlerts(first: 100) { totalCount } } }"}' \
+              https://api.github.com/graphql | jq ".data.repository.vulnerabilityAlerts.totalCount"`
+            if [ "$VULNERABILITY_COUNT" = "0" ]; then
+              echo "No vulnerabilities found"
+            elif [ "$VULNERABILITY_COUNT" = "null" ]; then
+              echo "Vulnerability check query returned unexpected JSON - bad credentials? Check JSON response for details"
+            else
+              echo "Vulnerabilities found: $VULNERABILITY_COUNT. Check GitHub security tab for details (only visible to admin users)"
+            fi
+            exit $VULNERABILITY_COUNT
+
+
+      - run:
+          name: setting environment file
+          command: cp local.env .env
+
+      # Download and cache dependencies
+      - restore_cache:  # ensure this step occurs *before* installing dependencies
+          key: dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+
+      - run:
+          name: install dependencies
+          command: pipenv sync --dev
+
+      - save_cache:
+          paths:
+            - ./venv
+          key: dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+
+      # run tests!
+      # this example uses Django's built-in test-runner
+      # other common Python testing frameworks include pytest and nose
+      # https://pytest.org
+      # https://nose.readthedocs.io
+      - run:
+          name: run tests
+          command: pipenv run ./manage.py test --parallel
