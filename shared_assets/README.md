@@ -1,5 +1,9 @@
 # lite-shared-assets
 
+# SCSS Components
+
+* I need to fill this in 🙂
+
 ## SVG Icons
 
 The LITE projects use SVGs for icons. This has several benefits:
