@@ -11,7 +11,7 @@ from pages.shared import Shared
 from pages.sites_page import SitesPage
 
 from pages.apply_for_a_licence_page import ApplyForALicencePage
-from tests.pages.add_end_user_pages import AddEndUserPages
+from ui_automation_tests.pages.add_end_user_pages import AddEndUserPages
 
 strict_gherkin = False
 
