@@ -23,9 +23,9 @@
 #lite-menu {
 	visibility: hidden;
 	position: absolute;
-	left: -157.5px;
+	left: -160px;
 	top: 38px;
-	width: 335px;
+	width: 345px;
 	background-color: white;
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
@@ -45,7 +45,7 @@
 		content: "";
 		position: absolute;
 		top: -6px;
-		left: 163px;
+		left: 165.5px;
 		width: 14px;
 		height: 6px;
 		background-image: url('/assets/images/lite_menu_chevron.svg');

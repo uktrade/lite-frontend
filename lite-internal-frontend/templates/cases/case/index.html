@@ -55,6 +55,22 @@
 	</div>
 </div>
 
+{% if data.case.application.application_denial_reason %}
+	<h3 class="govuk-heading-m">Denial Reasons</h3>
+	{% for reason in data.case.application.application_denial_reason %}
+		<p class="govuk-heading-s">This case was denied because</p>
+		{% for reason_id in reason.reasons %}
+			<p class="govuk-label">{{ reason_id.id }}</p>
+		{% endfor %}
+		{% if reason.reason_details %}
+			<br/>
+			<p class="govuk-heading-s">Further information</p>
+			<p class="govuk-label">{{ reason.reason_details }}</p>
+		{% endif %}
+	{% endfor %}
+	<br/><br/>
+{% endif %}
+
 <div class="lite-tabs--fade">
 	<div class="lite-tabs">
 		<!--<a class="lite-tabs__tab">Goods</a>

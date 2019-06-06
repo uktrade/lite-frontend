@@ -3,7 +3,8 @@ from django.urls import reverse
 from django.views.generic import TemplateView
 
 from libraries.forms.components import HiddenField
-from libraries.forms.helpers import get_next_form_after_pk, nest_data, get_form_by_pk, flatten_data, success_page
+from libraries.forms.generators import success_page
+from libraries.forms.helpers import get_next_form_after_pk, nest_data, get_form_by_pk, flatten_data
 from organisations.services import post_organisations
 from register_business import forms
 

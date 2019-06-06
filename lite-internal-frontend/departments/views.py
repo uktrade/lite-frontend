@@ -1,20 +1,11 @@
-from django.shortcuts import render
-
-from departments.services import get_departments, post_departments, get_department, update_department
+from departments.services import get_department, get_departments, \
+    post_departments, update_department
 from departments import forms
-from conf.settings import env
 
-from django.shortcuts import render, redirect
-from django.views.generic import TemplateView
-
-from libraries.forms.helpers import error_page
-
-from django.http import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
-# Create your views here.
 
 class DepartmentsList(TemplateView):
 
@@ -48,6 +39,7 @@ class AddDepartment(TemplateView):
             return render(request, 'form.html', context)
 
         return redirect(reverse_lazy('departments:departments'))
+
 
 class EditDepartment(TemplateView):
     def get(self, request, **kwargs):

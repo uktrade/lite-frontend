@@ -1,10 +1,12 @@
 .lite-heading-dropdown {
+    @include govuk-focusable-fill;
 	position: relative;
 	display: none;
 	padding-right: 35px;
 	cursor: pointer;
 	-webkit-user-select: none;
 	user-select: none;
+	text-decoration: none;
 	&:after {
 		content: "";
 		position: absolute;
@@ -18,10 +20,7 @@
 		background-size: contain;
 	}
 	&:hover {
-		opacity: .7;
-	}
-	&:active {
-		opacity: .4;
+		text-decoration: underline;
 	}
 }
 
@@ -49,6 +48,7 @@
 }
 
 .lite-dropdown--item {
+    @include govuk-focusable-fill;
 	position: relative;
 	display: block;
 	padding: 15px 20px;
@@ -67,9 +67,14 @@
 	}
 	&:hover {
 		background-color: govuk-colour("grey-4");
+		text-decoration: underline;
 	}
 	&:active {
 		background-color: govuk-colour("grey-3");
+	}
+	&:focus {
+		outline: none;
+		color: black!important;
 	}
 	&:last-of-type {
 		&:after {

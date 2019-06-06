@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="38px" height="32px" viewBox="0 0 38 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 52.6 (67491) - http://www.bohemiancoding.com/sketch -->
-    <title>businesses</title>
-    <desc>Created with Sketch.</desc>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
         <g id="businesses" fill="#000000">
             <path d="M18,14 L18,18 C18,18.5522847 18.4477153,19 19,19 C19.5522847,19 20,18.5522847 20,18 L20,14 L38,14 L38,29.4361148 C38,30.3276335 37.9071744,30.6509198 37.7328673,30.9768457 C37.5585602,31.3027716 37.3027716,31.5585602 36.9768457,31.7328673 C36.6509198,31.9071744 36.3276335,32 35.4361148,32 L2.5638852,32 C1.67236646,32 1.34908022,31.9071744 1.0231543,31.7328673 C0.697228371,31.5585602 0.441439796,31.3027716 0.267132704,30.9768457 C0.0928256111,30.6509198 1.09179557e-16,30.3276335 0,29.4361148 L0,14 L18,14 Z" id="Combined-Shape"></path>

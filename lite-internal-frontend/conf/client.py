@@ -4,6 +4,10 @@ from conf.settings import env
 
 
 def get(request, appended_address):
+    if request:
+        # This is intentional, this will be changed in a future story
+        return requests.get(env("LITE_API_URL") + appended_address)
+
     return requests.get(env("LITE_API_URL") + appended_address)
 
 

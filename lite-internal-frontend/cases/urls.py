@@ -6,10 +6,12 @@ app_name = 'cases'
 urlpatterns = [
     # ex: /
     path('', views.index, name='cases'),
-    # ex: /43a88949-5db9-4334-b0cc-044e91827451
+    # ex: /<uuid:pk>/
     path('<uuid:pk>/', views.ViewCase.as_view(), name='case'),
-    # ex: /43a88949-5db9-4334-b0cc-044e91827451/manage
-    path('<uuid:pk>/manage', views.ManageCase.as_view(), name='manage'),
-    # ex: /43a88949-5db9-4334-b0cc-044e91827451/decide
-    path('<uuid:pk>/decide', views.DecideCase.as_view(), name='decide')
+    # ex: /<uuid:pk>/manage
+    path('<uuid:pk>/manage/', views.ManageCase.as_view(), name='manage'),
+    # ex: /<uuid:pk>/decide
+    path('<uuid:pk>/decide/', views.DecideCase.as_view(), name='decide'),
+    # ex: /<uuid:pk>/deny/
+    path('<uuid:pk>/deny/', views.DenyCase.as_view(), name='deny')
 ]

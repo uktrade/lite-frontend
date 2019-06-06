@@ -1,12 +1,13 @@
 import requests
-
-from cases.services import get_case, get_case_notes, post_case_notes
-from conf.settings import env
-
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.views.generic import TemplateView
 
-from libraries.forms.helpers import error_page
+from cases.forms.denial_reasons import denial_reasons_form
+from cases.services import get_case, get_case_notes, post_case_notes, put_applications
+from conf.settings import env
+from libraries.forms.generators import error_page, form_page
+from libraries.forms.submitters import submit_single_form
 
 
 def index(request):
@@ -93,6 +94,9 @@ class DecideCase(TemplateView):
         case_id = applicant_case.get('case').get('id')
         application_id = applicant_case.get('case').get('application').get('id')
 
+        if request.POST['status'] == 'declined':
+            return redirect(reverse('cases:deny', kwargs={'pk': str(pk)}))
+
         # PUT form data
         response = requests.put(env("LITE_API_URL") + '/applications/' + application_id + '/',
                                 json=request.POST).json()
@@ -101,3 +105,33 @@ class DecideCase(TemplateView):
             return redirect('/cases/' + case_id + '/manage')
 
         return redirect('/cases/' + case_id)
+
+
+class DenyCase(TemplateView):
+    def get(self, request, **kwargs):
+        return form_page(request, denial_reasons_form())
+
+    def post(self, request, **kwargs):
+        case_id = str(kwargs['pk'])
+        case, status_code = get_case(request, case_id)
+
+        application_id = case['case']['application']['id']
+
+        data = {
+            'reasons': request.POST.getlist('reasons'),
+            'reason_details': request.POST['reason_details'],
+            'status': 'under_final_review',
+        }
+
+        response, data = submit_single_form(request,
+                                            denial_reasons_form(),
+                                            put_applications,
+                                            pk=application_id,
+                                            override_data=data)
+
+        if response:
+            return response
+
+        # If there is no response (no forms left to go through), go to the case page
+        return redirect(reverse('cases:case', kwargs={'pk': case_id}))
+
