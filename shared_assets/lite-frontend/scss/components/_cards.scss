@@ -1,0 +1,32 @@
+.lite-card {
+	position: relative;
+	background-color: govuk-colour("grey-4");
+	border: 1px solid darken(govuk-colour("grey-4"), 2%);
+	padding: govuk-spacing(4);
+	margin-bottom: govuk-spacing(6);
+	& > *:last-child {
+		margin-bottom: 0;
+	}
+}
+
+.lite-card-delete {
+	@include govuk-focusable-fill;
+	position: absolute;
+	top: govuk-spacing(4);
+	right: govuk-spacing(4);
+	border-bottom: 1px solid transparent;
+	color: govuk-colour("black");
+	svg {
+		width: 15px;
+		height: 15px;
+		* {
+			fill: currentColor;
+		}
+	}
+	&:hover {
+		border-bottom: 1px solid currentColor;
+	}
+	&:active {
+		opacity: .6;
+	}
+}
