@@ -43,9 +43,9 @@
 		{% elif question.input_type.name == "CHECKBOXES" %}
 			{% include "components/checkboxes.html" with name=question.name value=data|key_value:question.name|default:'' data=question.data %}
 		{% elif question.input_type.name == "SELECT" %}
-			{% include "components/select.html" with name=question.name value=question.name data=question.data %}
+			{% include "components/select.html" with name=question.name value=data|key_value:question.name|default:'' data=question.data %}
 		{% elif question.input_type.name == "AUTOCOMPLETE" %}
-			{% include "components/autocomplete.html" with name=question.name value=question.name data=question.data %}
+			{% include "components/autocomplete.html" with name=question.name value=data|key_value:question.name|default:'' data=question.data %}
 		{% elif question.input_type.name == "FILE_UPLOAD" %}
 			{% include "components/file_upload.html" with name=question.name value=question.name %}
 		{% elif question.input_type.name == "MULTI_FILE_UPLOAD" %}
