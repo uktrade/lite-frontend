@@ -1,6 +1,6 @@
 # lite-shared-assets
 
-# SCSS Components
+## SCSS Components
 
 * I need to fill this in 🙂
 
