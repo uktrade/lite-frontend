@@ -6,9 +6,27 @@ LITE Shared Assets contains the code and assets you need to start building a con
 
 Add the project as a submodule in your repository, then add an import in your main scss file like so: ```@import "../../lite-shared-assets/lite-frontend/scss/all";```
 
-## SCSS Components
+## Components
 
-* I need to fill this in 🙂
+### Buttons
+
+Icon Button
+
+### Modals
+
+Styling for modals
+
+### Search
+
+Search bar
+
+### Tabs
+
+Lightweight alternative to the GOV.UK Design System tab bar
+
+### User Account
+
+Styling for log out, divider and user account menu in the nav bar.
 
 ## SVG Icons
 
