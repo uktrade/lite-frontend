@@ -32,7 +32,9 @@ def test_add_users(driver, open_exporter_hub, exporter_url):
     # logged in exporter hub as exporter
     exporter_hub = ExporterHubPage(driver)
     log.info("logging in as test@mail.com")
-    exporter_hub.login("test@mail.com", "password")
+    if "login" in driver.current_url:
+        log.info("logging in as test@mail.com")
+        exporter_hub.login("test@mail.com", "password")
 
     # I want to add a user # I should have an option to manage users
     exporter_hub.click_users()

@@ -1,6 +1,10 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 
+import logging
+log = logging.getLogger()
+console = logging.StreamHandler()
+log.addHandler(console)
 
 class ApplyForALicencePage():
 
@@ -15,9 +19,8 @@ class ApplyForALicencePage():
         self.destination_input_id = "destination"
         self.usage_input_id = "usage"
         self.activity_input_id = "activity"
-        self.standard_licence_button = ".govuk-radios__label[for='licence_type-standard_licence']"
-        self.open_license_button = ".govuk-radios__label[for='licence_type-open_licence']"
-        self.submit_button = "button[action*='submit']"
+        self.standard_licence_button = "input#licence_type-standard_licence"
+        self.open_licence_button = "input#licence_type-open_licence"
         self.submit_button = "button[type*='submit']"
         self.export_button = "export_type-"
         self.export_licence_yes_or_no = "have_you_been_informed-"
@@ -25,6 +28,8 @@ class ApplyForALicencePage():
         self.licence_application_headers = ".govuk-table__header"
         self.success_message = ".govuk-panel__title"
         self.licence_application_values = ".govuk-table__cell"
+        self.start_now_btn = "a[href*='/start']"
+        self.application_is_submitted = '.govuk-panel__title'
 
     def enter_name_or_reference_for_application(self, name):
         self.driver.find_element_by_id(self.name_or_reference_input_id).clear()
@@ -47,7 +52,7 @@ class ApplyForALicencePage():
         self.driver.find_element_by_id(self.activity_input_id).send_keys(activity)
 
     def click_start_now_btn(self):
-        self.driver.find_element_by_css_selector("a[href*='/start']").click()
+        self.driver.find_element_by_css_selector(self.start_now_btn).click()
 
     def click_save_and_continue(self):
         self.driver.find_element_by_css_selector(self.submit_button).click()
@@ -62,7 +67,7 @@ class ApplyForALicencePage():
         self.driver.find_element_by_xpath("//a[text()[contains(.,'Overview')]]").click()
 
     def click_delete_application(self):
-        self.driver.find_element_by_css_selector("[href*='delete'].govuk-link").click()
+        self.driver.find_element_by_css_selector(".cancel-link").click()
         self.driver.implicitly_wait(10)
         self.driver.find_element_by_css_selector(".govuk-button--warning").click()
 
@@ -105,6 +110,24 @@ class ApplyForALicencePage():
     def click_filter_btn(self):
         self.driver.find_element_by_xpath("//button[text()[contains(.,'Filter')]]").click()
 
+    def click_export_licence(self, type):
+        logging.info(type)
+        if (type == "standard"):
+            return self.driver.find_element_by_css_selector(self.standard_licence_button).click()
+        elif (type == "open"):
+            return self.driver.find_element_by_css_selector(self.open_licence_button).click()
+
+    def click_permanent_or_temporary_button(self, string):
+        self.driver.find_element_by_id(self.export_button + string).click()
+
+    def click_export_licence_yes_or_no(self, string):
+        self.driver.find_element_by_id(self.export_licence_yes_or_no + string).click()
+
+    def get_text_of_application_headers(self, no):
+        return self.driver.find_elements_by_css_selector(self.licence_application_headers)[no].text
+
+    def get_text_of_application_results(self, no):
+        return self.driver.find_elements_by_css_selector(self.licence_application_values)[no].text
     def click_export_licence(self, string):
         if (string == "standard"):
             self.driver.find_element_by_css_selector(self.standard_licence_button).click()
@@ -138,3 +161,6 @@ class ApplyForALicencePage():
         self.click_continue()
         self.click_export_licence_yes_or_no(need_licence)
         self.type_into_reference_number(ref_number)
+
+    def application_submitted_text(self):
+        return self.driver.find_element_by_css_selector(self.application_is_submitted).text

@@ -91,7 +91,7 @@ class InternalHubPage():
         self.driver.find_element_by_id("user.password").send_keys(password)
 
     def click_manage_organisations_link(self):
-        self.driver.find_element_by_id("lite-menu-button").click()
+        self.driver.find_element_by_id("lite-user-menu-button").click()
         time.sleep(0.5)
         self.driver.find_element_by_css_selector("a[href*='/organisations/']").click()
 

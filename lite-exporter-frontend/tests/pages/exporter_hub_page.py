@@ -1,5 +1,4 @@
 from selenium import webdriver
-from selenium.webdriver.common.by import By
 import helpers.helpers as utils
 import pytest
 from selenium.webdriver.common.action_chains import ActionChains
@@ -20,6 +19,7 @@ class ExporterHubPage():
         self.users_btn = "a[href='/users/']"
         self.sites_btn = "a[href='/sites/']"
         self.sites_link = "a[href*='sites']"
+
 
 
     def go_to(self, url):
@@ -48,46 +48,18 @@ class ExporterHubPage():
             self.driver.find_element_by_xpath("//a[text()[contains(.,'Log In')]]").click()
         self.enter_email(email)
         self.enter_password(password)
-        self.click_submit()
+        self.driver.find_element_by_class_name("govuk-button").click()
+        time.sleep(1)
 
     def click_submit(self):
-        self.driver.find_element_by_css_selector(".govuk-button").click()
+        self.driver.find_element_by_class_name("govuk-button").click()
 
     def click_my_goods(self):
         self.driver.find_element_by_css_selector(self.my_goods_btn).click()
 
-    def click_add_a_good(self):
-        self.driver.find_element_by_css_selector(self.add_a_good_btn).click()
-
-    def enter_description_of_goods(self, description):
-        description_tb = self.driver.find_element_by_id("description")
-        description_tb.clear()
-        description_tb.send_keys(description)
-
-    def select_is_your_good_controlled(self, option):
-        if option == "Yes":
-            self.driver.find_element_by_id("is_good_controlled-yes").click()
-        else:
-            self.driver.find_element_by_id("is_good_controlled-no").click()
-
-    def enter_control_code(self, code):
-        control_code_tb = self.driver.find_element_by_id("control_code")
-        control_code_tb.clear()
-        control_code_tb.send_keys(code)
-
-    def select_is_your_good_intended_to_be_incorporated_into_an_end_product(self, option):
-        if option == "Yes":
-            self.driver.find_element_by_id("is_good_end_product-yes").click()
-        else:
-            self.driver.find_element_by_id("is_good_end_product-no").click()
-
-    def enter_part_number(self, part_number):
-        part_number_tb = self.driver.find_element_by_id("part_number")
-        part_number_tb.clear()
-        part_number_tb.send_keys(part_number)
 
     def click_save_and_continue(self):
-        self.driver.find_element_by_css_selector("button[action*='submit']").click()
+        self.driver.find_element_by_css_selector("button[type*='submit']").click()
 
     def verify_good_is_in_goods_list(self, description, part_number, control_code):
         goods_row = self.driver.find_element_by_xpath("//*[text()[contains(.,'" + description + "')]]")
@@ -141,26 +113,15 @@ class ExporterHubPage():
     def click_sites(self):
         self.driver.find_element_by_css_selector(self.sites_btn).click()
 
-    def click_sites_link(self):
-        self.driver.find_element_by_css_selector(self.sites_link).click()
 
     def click_new_site(self):
         self.driver.find_element_by_css_selector("a[href*='/sites/new/']").click()
-
-    def click_sites_checkbox(self, int):
-        self.driver.find_elements_by_css_selector(".govuk-checkboxes__input")[int].click()
-
-    def get_checked_attributes_of_sites_checkbox(self, int):
-        return self.driver.find_elements_by_css_selector(".govuk-checkboxes__input")[int].get_attribute("checked")
 
     def get_text_of_site(self, int):
         return self.driver.find_elements_by_css_selector(".govuk-checkboxes__label")[int].text
 
     def click_submit(self):
         self.driver.find_element_by_css_selector(".govuk-button").click()
-
-    def click_apply_for_a_licence(self):
-        self.driver.find_element_by_css_selector(self.apply_for_a_licence_btn).click()
 
     def click_start(self):
         self.driver.find_element_by_css_selector("a[href*='/start']").click()
@@ -181,8 +142,8 @@ class ExporterHubPage():
         self.driver.find_element_by_id("activity").clear()
         self.driver.find_element_by_id("activity").send_keys(activity)
 
-    def click_submit_application(self):
-        self.driver.find_element_by_css_selector("button[type*='submit']").click()
+    #def click_submit_application(self):
+     #   self.driver.find_element_by_css_selector("button[type*='submit']").click()
 
     # Old flow
     def create_application(self, name, destination, usage, activity):

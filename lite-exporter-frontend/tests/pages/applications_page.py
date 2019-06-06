@@ -1,6 +1,5 @@
 class ApplicationsPage():
-
-    # called e time you create an object for this class
+    # /applications
     def __init__(self, driver):
         self.driver = driver
 
