@@ -21,5 +21,8 @@ class Shared():
     def get_text_of_error_message_at_position_2(self):
         return self.driver.find_elements_by_css_selector(".govuk-error-message")[1].text
 
+    def get_text_of_error_message_at_position_3(self):
+        return self.driver.find_elements_by_css_selector(".govuk-error-message")[2].text
+
     def get_text_of_body(self):
         return self.driver.find_element_by_tag_name("body").text

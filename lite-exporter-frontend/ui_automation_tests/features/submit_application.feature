@@ -12,12 +12,6 @@ Feature: Licence
     When I select "permanent" option and continue
     When I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
     Then I see the application overview
-
-  Scenario: Delete application from draft
-    Given I go to exporter homepage
-    When I login to exporter homepage with username "test@mail.com" and "password"
-    When I click drafts
-    When I click the application
     When I delete the application
 
   Scenario: Submit application

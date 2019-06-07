@@ -64,6 +64,7 @@ def test_add_users(driver, open_exporter_hub, exporter_url):
 
 
 def test_edit_users(driver, exporter_url):
+    user_id = datetime.datetime.now().strftime("%d%m%H%M")
     exporter_hub = ExporterHubPage(driver)
     exporter_hub.go_to(exporter_url)
     if "login" in driver.current_url:
@@ -72,8 +73,8 @@ def test_edit_users(driver, exporter_url):
 
     full_name = "Test user_2"
     email = context.email_to_search
-    password = "1234"
-    email_edited = "testuser_2_edited@mail.com"
+    password = "password"
+    email_edited = "testuser_2_edited" + user_id+ "@mail.com"
     # Given I am a logged-in user # I want to deactivate users # When I choose the option to manage users
     exporter_hub.click_users()
 
@@ -88,23 +89,24 @@ def test_edit_users(driver, exporter_url):
     assert utils.is_element_present(driver, By.XPATH, "//*[text()[contains(.,'Test_edited user_2_edited')]]")
     assert utils.is_element_present(driver, By.XPATH, "//*[text()[contains(.,'Test_edited')]]")
     assert utils.is_element_present(driver, By.XPATH, "//*[text()[contains(.,'user_2_edited')]]")
-    assert utils.is_element_present(driver, By.XPATH, "//*[text()[contains(.,'testuser_2_edited@mail.com')]]")
+    assert utils.is_element_present(driver, By.XPATH, "//*[text()[contains(.,'" + email_edited + "')]]")
 
     exporter_hub.go_to(exporter_url)
     exporter_hub.click_users()
 
     assert utils.is_element_present(driver, By.XPATH, "//*[text()[contains(.,'Test_edited user_2_edited')]]")
-    assert utils.is_element_present(driver, By.XPATH, "//*[text()[contains(.,'testuser_2_edited1@mail.com')]]")
+    assert utils.is_element_present(driver, By.XPATH, "//*[text()[contains(.,'" + email_edited + "')]]")
 
     exporter_hub.logout()
-    exporter_hub.login(email_edited, password)
+    exporter_hub.login("test@mail.com", password)
 
     # cleanup
     exporter_hub.click_users()
     exporter_hub.click_edit_for_user(email_edited)
     exporter_hub.enter_email(email)
     exporter_hub.enter_first_name("Test")
-    exporter_hub.enter_last_name("user_2")
+    context.last_name = "user_2"+user_id
+    exporter_hub.enter_last_name(context.last_name)
     exporter_hub.click_submit()
 
 
@@ -115,25 +117,24 @@ def test_deactivate_users(driver, exporter_url):
         log.info("logging in as test@mail.com")
         exporter_hub.login("test@mail.com", "password")
 
-    full_name = "Test user_1"
-    email = "testuser_1@mail.com"
+    context.full_name = "Test "+ context.last_name
     password = "1234"
 
     # Given I am a logged-in user # I want to deactivate users # When I choose the option to manage users
     exporter_hub.click_users()
 
     # I should have the option to deactivate an active user # edit link, and link from user name
-    exporter_hub.click_user_name_link(full_name)
+    exporter_hub.click_user_name_link(context.full_name)
 
     # When I choose to deactivate an active user # Then I return to "Manage users"
     exporter_hub.click_deactivate_btn()
 
     # And I can see that the user is now deactivated
     assert utils.is_element_present(driver, By.XPATH,
-                                    "//td[text()='" + email + "']/following-sibling::td[text()='deactivated']")
+                                    "//td[text()='" + context.email_to_search + "']/following-sibling::td[text()='deactivated']")
     # Given I am a deactivated user # When I attempt to log in # And I cannot log in
     exporter_hub.logout()
-    exporter_hub.login(email, password)
+    exporter_hub.login(context.email_to_search, password)
     assert "Enter a valid email/password" in driver.find_element_by_css_selector(".govuk-error-message").text
 
 
@@ -145,7 +146,6 @@ def test_reactivate_users(driver, open_exporter_hub, exporter_url):
         log.info("logging in as test@mail.com")
         exporter_hub.login("test@mail.com", "password")
 
-    full_name = "Test user_1"
     email = "testuser_1@mail.com"
     password = "1234"
 
@@ -154,7 +154,7 @@ def test_reactivate_users(driver, open_exporter_hub, exporter_url):
     exporter_hub.click_users()
 
     # When I choose to activate a deactivated user # Then I am asked "Are you sure you want to re-activate"
-    exporter_hub.click_user_name_link(full_name)
+    exporter_hub.click_user_name_link(context.full_name)
     exporter_hub.click_reactivate_btn()
 
     assert utils.is_element_present(driver, By.XPATH,

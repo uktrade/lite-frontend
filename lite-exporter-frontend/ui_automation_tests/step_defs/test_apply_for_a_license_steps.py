@@ -102,6 +102,7 @@ def valid_quantity_value_error_message(driver):
 @when('I click on the goods link from overview')
 def click_goods_link_overview(driver):
     overview_page = ApplicationOverviewPage(driver)
+    driver.execute_script("document.getElementById('goods').scrollIntoView(true);")
     overview_page.click_goods_link()
 
 

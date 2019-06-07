@@ -35,8 +35,6 @@ Feature: Licence
     When I select "standard" application and continue
     When I select "permanent" option and continue
     When I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
-    #TODO Needs to be fixed due to new flow
-    When I click sites link from overview
     When I click continue
     Then I see select a site error message
 
@@ -56,18 +54,20 @@ Feature: Licence
     When I select "standard" application and continue
     When I select "permanent" option and continue
     When I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
-      #TODO Needs to be fixed due to new flow
-    When I click sites link
+    When I click on application locations link
+    When I select "organisation" for where my goods are located
     Then I see my new site at first position
     When I select the site at position "1"
     When I click continue
-    When I click sites link
+    When I click on application locations link
+    When I select "organisation" for where my goods are located
     Then the checkbox I have selected at position "1" is "checked"
     When I select the site at position "1"
     Then the checkbox I have selected at position "1" is "unchecked"
     When I select the site at position "2"
     Then the checkbox I have selected at position "2" is "checked"
     When I click continue
-    When I click sites link
+    When I click on application locations link
+    When I select "organisation" for where my goods are located
     Then the checkbox I have selected at position "1" is "unchecked"
     Then the checkbox I have selected at position "2" is "checked"

@@ -43,7 +43,7 @@ def good_is_no_longer_in_list(driver):
 
 @then('Rollback goods')
 def rollback_goods(driver):
-    if context.good_description in driver.find_element_by_css_selector(".lite-table__cell").text or context.edited_description in driver.find_element_by_css_selector(".lite-table__cell").text:
+    if context.good_description in driver.find_element_by_css_selector(".govuk-table__cell").text or context.edited_description in driver.find_element_by_css_selector(".govuk-table__cell").text:
         goods_list = GoodsList(driver)
         driver.find_element_by_css_selector("[href*='goods/delete/']").click()
         goods_list.click_on_delete_good_button()
