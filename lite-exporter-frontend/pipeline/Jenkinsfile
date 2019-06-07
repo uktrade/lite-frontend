@@ -42,10 +42,9 @@ pipeline
                                 userRemoteConfigs: [[url: 'https://github.com/uktrade/lite-exporter-frontend.git']]
                         ])
 
-                        // Create Allure report folders and grant relevant permissions
-                        sh "mkdir -p ./ui_automation_tests/allure-results"
-                        // sh "rm -rf ./ui_automation_tests/allure-results/*"
-                        // sh "chown jenkins:jenkins ./ui_automation_tests/allure-results"
+                        // re-create Allure report folder
+                        sh "rm -rf ui_automation_tests/allure-results"
+                        sh "mkdir -p ui_automation_tests/allure-results"
                     }
                 }
                 stage('Docker build')
