@@ -1,9 +1,10 @@
-from libraries.forms.components import Form, ArrayQuestion, InputType, DetailComponent, Question, Option, \
-    Section
+from libraries.forms.components import Form, ArrayQuestion, InputType, DetailComponent, Question, Option, Section
 
 initial_questions = Section('', '', [
     Form('Enter a reference name for this application',
-         'This can make it easier for you or your organisation to find in the future.', [
+         'This can make it easier for you or your organisation to find in the '
+         'future.',
+         [
              Question(title='',
                       description='',
                       input_type=InputType.INPUT,
@@ -43,21 +44,23 @@ initial_questions = Section('', '', [
                       ]),
     ], default_button_name='Continue'),
     Form('Have you been told that you need an export licence by an official?',
-         'This could be a letter or email from HMRC or another government department.', [
+         'This could be a letter or email from HMRC or another government department.',
+         [
              ArrayQuestion(title='',
                            description='',
                            input_type=InputType.RADIOBUTTONS,
                            name='have_you_been_informed',
                            data=[
-                               Option('yes', 'Yes', show_pane='pane_reference_number_on_information_form'),
+                               Option('yes', 'Yes',
+                                      show_pane='pane_reference_number_on_information_form'),
                                Option('no', 'No')
                            ],
                            same_row=True),
-             Question(title='What was the reference number if you were provided one?',
-                      description='This is the reference found on the letter or email to tell you to apply for an export licence.',
-                      input_type=InputType.INPUT,
-                      name='reference_number_on_information_form',
-                      optional=True),
+             Question(
+                 title='What was the reference number if you were provided one?',
+                 description='This is the reference found on the letter or email to tell you to apply for an export licence.',
+                 input_type=InputType.INPUT,
+                 name='reference_number_on_information_form',
+                 optional=True),
          ], default_button_name='Save and continue'),
 ])
-

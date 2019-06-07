@@ -1,0 +1,18 @@
+{% extends "layouts/two_pane.html" %}
+
+{% block body %}
+    <h2 class="govuk-heading-l">{{ title }}</h2>
+    <p class="govuk-caption-m">{{ description }}</p>
+    <div class="buttons-row">
+        <form method="post" style="display: inline;">
+            {% csrf_token %}
+            {% if flag == 'can_delete' %}
+                <button type="submit"
+                        class="govuk-button govuk-button--warning govuk-!-margin-right-2">Delete
+                </button>
+            {% endif %}
+        </form>
+        <a href="{% url 'goods:goods' %}" role="button" draggable="false" class="govuk-button
+			govuk-button--secondary">Cancel</a>
+    </div>
+{% endblock %}

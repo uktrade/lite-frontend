@@ -10,4 +10,8 @@ urlpatterns = [
     # path('<uuid:pk>', views.case, name='good'),
     # ex: /goods/add/
     path('add/', views.AddGood.as_view(), name='add'),
+    path('edit/<uuid:pk>/', views.EditGood.as_view(), name='edit'),
+    path('delete/<uuid:pk>/', views.DeleteGood.as_view(), name='delete'),
+    path('<uuid:pk>/delete', views.DeleteGood.as_view(),
+         name='confirm_delete'),
 ]

@@ -24,6 +24,7 @@
 					<th class="govuk-table__header" scope="col">Description</th>
 					<th class="govuk-table__header" scope="col">Part Number</th>
 					<th class="govuk-table__header" scope="col">Control Code</th>
+					<th class="govuk-table__header" scope="col"></th>
 				</tr>
 			</thead>
 			<tbody class="govuk-table__body">
@@ -32,6 +33,14 @@
 						<td class="govuk-table__cell">{{ good.description }}</td>
 						<td class="govuk-table__cell" style="{% if not good.part_number %}opacity: 0.4;{% endif %}">{{ good.part_number|default:"N/A" }}</td>
 						<td class="govuk-table__cell" style="{% if not good.control_code %}opacity: 0.4;{% endif %}">{{ good.control_code|default:"N/A" }}</td>
+                        <td class="govuk-table__cell">
+                            {% if good.status == 'draft' %}
+                                <a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:edit" pk=good.id %}">Edit</a> |
+                                <a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:delete" pk=good.id %}">Delete</a>
+                            {% else %}
+                                N/A: in application
+                            {% endif %}
+                        </td>
 					</tr>
 				{% endfor %}
 			</tbody>

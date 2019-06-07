@@ -16,11 +16,14 @@ def hub(request):
         'title': get_string('hub.title'),
         'sections': [
             Section("", "", [
-                Tile(get_string('licences.apply_for_a_licence'), "", reverse_lazy('apply_for_a_licence:index')),
+                Tile(get_string('licences.apply_for_a_licence'), "",
+                     reverse_lazy('apply_for_a_licence:index')),
             ]),
             Section("Manage", "", [
-                Tile(get_string('drafts.title'), "", reverse_lazy('drafts:drafts')),
-                Tile(get_string('applications.title'), "", reverse_lazy('applications:applications')),
+                Tile(get_string('drafts.title'), "",
+                     reverse_lazy('drafts:drafts')),
+                Tile(get_string('applications.title'), "",
+                     reverse_lazy('applications:applications')),
                 Tile('Goods', "", reverse_lazy('goods:goods')),
                 Tile('Sites', "", reverse_lazy('sites:sites')),
                 Tile('Users', "", reverse_lazy('users:users')),
@@ -57,10 +60,11 @@ def login(request):
 
         user_data = response.json().get('user')
 
-        user_object, created = User.objects.get_or_create(id=user_data.get('id'), defaults={
-            'email': user_data.get('email'),
-            'first_name': user_data.get('first_name'),
-            'last_name': user_data.get('last_name'),
+        user_object, created = User.objects.get_or_create(
+            id=user_data.get('id'), defaults={
+                'email': user_data.get('email'),
+                'first_name': user_data.get('first_name'),
+                'last_name': user_data.get('last_name'),
         })
 
         django_login(request, user=user_object)

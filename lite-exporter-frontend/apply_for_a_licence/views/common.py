@@ -74,11 +74,7 @@ class Overview(TemplateView):
                             secondary_title='',
                             description='',
                             what_happens_next=[],
-                            links={
-                                'Go to applications': reverse_lazy('applications:applications')
-                            })
-
-
+                            links={'Go to applications': reverse_lazy('applications:applications')})
 # Goods
 
 class DraftGoodsList(TemplateView):
