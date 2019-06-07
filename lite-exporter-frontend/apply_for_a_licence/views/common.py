@@ -4,22 +4,14 @@ from django.views.generic import TemplateView
 
 from apply_for_a_licence.forms import initial, goods
 from apply_for_a_licence.forms.end_user import new_end_user_form
-from apply_for_a_licence.forms.sites import sites_form
+from apply_for_a_licence.helpers import create_persistent_bar
 from core.builtins.custom_tags import get_string
-from core.services import get_units, post_sites_on_draft, get_sites_on_draft
+from core.services import get_units, get_sites_on_draft, get_external_locations_on_draft
 from drafts.services import post_drafts, get_draft, get_draft_goods, post_draft_preexisting_goods, submit_draft, \
     delete_draft, post_end_user
 from goods.services import get_goods, get_good
 from libraries.forms.generators import form_page, success_page
 from libraries.forms.submitters import submit_paged_form
-
-
-def create_persistent_bar(draft):
-    return {
-        'caption': 'Currently viewing:',
-        'text': draft.get('name'),
-        'url': reverse_lazy('apply_for_a_licence:overview', kwargs={'pk': draft.get('id')}),
-    }
 
 
 class StartApplication(TemplateView):
@@ -52,13 +44,14 @@ class Overview(TemplateView):
         data, status_code = get_draft(request, draft_id)
         sites, status_code = get_sites_on_draft(request, draft_id)
         goods, status_code = get_draft_goods(request, draft_id)
+        external_locations, status_code = get_external_locations_on_draft(request, draft_id)
 
         context = {
             'title': 'Draft Overview',
             'draft': data.get('draft'),
-            'persistent_bar': create_persistent_bar(data.get('draft')),
             'sites': sites['sites'],
             'goods': goods['goods'],
+            'external_locations': external_locations['external_locations'],
         }
         return render(request, 'apply_for_a_licence/overview.html', context)
 
@@ -72,7 +65,6 @@ class Overview(TemplateView):
             context = {
                 'title': 'Draft Overview',
                 'draft': draft.get('draft'),
-                'persistent_bar': create_persistent_bar(draft.get('draft')),
                 'errors': data.get('errors'),
             }
             return render(request, 'apply_for_a_licence/overview.html', context)
@@ -191,37 +183,6 @@ class DeleteApplication(TemplateView):
             return redirect(reverse_lazy('drafts:index') + '/?application_deleted=true')
 
         return redirect('/?application_deleted=true')
-
-
-# Sites
-
-
-class Sites(TemplateView):
-    def get(self, request, **kwargs):
-        draft_id = str(kwargs['pk'])
-        draft, status_code = get_draft(request, draft_id)
-        response, status_code = get_sites_on_draft(request, draft_id)
-
-        return form_page(request, sites_form(request), data=response, extra_data={
-            'persistent_bar': create_persistent_bar(draft.get('draft'))
-        })
-
-    def post(self, request, **kwargs):
-        draft_id = str(kwargs['pk'])
-        draft, status_code = get_draft(request, draft_id)
-
-        data = {
-            'sites': request.POST.getlist('sites')
-        }
-
-        response, status_code = post_sites_on_draft(request, draft_id, data)
-
-        if status_code != 201:
-            return form_page(request, sites_form(request), errors=response.get('errors'), extra_data={
-                'persistent_bar': create_persistent_bar(draft.get('draft'))
-            })
-
-        return redirect(reverse_lazy('apply_for_a_licence:overview', kwargs={'pk': draft_id}))
 
 
 # End User

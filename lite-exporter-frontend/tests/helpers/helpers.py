@@ -36,7 +36,7 @@ def save_screenshot(driver, name):
 
 
 def find_element(driver, by_type, locator):
-    delay = 5  # seconds
+    delay = 2  # seconds
     try:
         return WebDriverWait(driver, delay).until(EC.presence_of_element_located((by_type, locator)))
 

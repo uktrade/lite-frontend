@@ -6,6 +6,7 @@ DRAFTS_URL = '/drafts/'
 GOODS_URL = '/goods/'
 SITES_URL = '/organisations/sites/'
 USERS_URL = '/users/'
+EXTERNAL_LOCATIONS_URL = '/organisations/external_locations/'
 
 # Static URLs
 STATIC_URL = '/static/'

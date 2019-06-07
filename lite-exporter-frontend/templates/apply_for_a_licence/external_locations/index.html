@@ -1,0 +1,52 @@
+{% extends 'layouts/base.html' %}
+
+{% load humanize svg %}
+
+{% block back-button %}
+	<a href="{% url 'apply_for_a_licence:location' draft_id %}" class="govuk-back-link lite-persistent-bar--back">Back</a>
+{% endblock %}
+
+{% block body %}
+
+	<div class="lite-app-bar">
+		<h2 class="govuk-heading-l">{% get_string 'goods.location_lists.title' %}</h2>
+		{% if data.external_locations|length %}
+			<div class="lite-app-bar--right">
+				<p class="govuk-caption-l" style="margin: 0;">{{ data.external_locations|length }} location{{ data.external_locations|length|pluralize }}<span class="govuk-visually-hidden"> added</span></p>
+			</div>
+		{% endif %}
+	</div>
+
+	<div class="govuk-grid-row">
+		<div class="govuk-grid-column-one-third">
+			<a href="{% url 'apply_for_a_licence:add_external_location' draft_id %}" class="govuk-button govuk-button--icon" style="margin-bottom: 15px;">
+				{% svg 'new' %}
+				{% get_string 'goods.location_lists.add_address_button' %}
+			</a>
+			{% if org_external_locations.external_locations|length %}
+				<a href="{% url 'apply_for_a_licence:add_preexisting_external_location' draft_id %}" class="govuk-button govuk-button--icon">
+					{% svg 'search' %}
+					{% get_string 'goods.location_lists.find_address_button' %}
+				</a>
+			{% endif %}
+		</div>
+
+		<div class="govuk-grid-column-two-thirds">
+			{% if data.external_locations|length %}
+				{% for external_location in data.external_locations %}
+					<div class="lite-card">
+						<!--<a href="#" class="lite-card-delete">
+							{% svg 'close' %}
+							<span class="govuk-visually-hidden">Remove location</span>
+						</a>-->
+						<h4 class="govuk-heading-s" style="margin-bottom: 0;">{{ external_location.name }}</h4>
+						<p class="govuk-label">{{ external_location.address|linebreaksbr }}<br>{{ external_location.country }}</p>
+					</div>
+				{% endfor %}
+			{% else %}
+				<p class="govuk-caption-l" style="margin: 0;">You haven't added any locations to this application.</p>
+			{% endif %}
+		</div>
+	</div>
+
+{% endblock %}

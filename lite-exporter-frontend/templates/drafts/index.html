@@ -2,6 +2,10 @@
 
 {% load humanize %}
 
+{% block back-button %}
+	<a href="/" class="govuk-back-link">Back to Hub</a>
+{% endblock %}
+
 {% block body %}
 
 	{% if applicationDeleted == "true" %}
@@ -13,61 +17,49 @@
 	<h1 class="govuk-heading-l">{{ title }}</h1>
 
 	{% if data.drafts|length %}
-		<table class="lite-table">
-			<thead class="lite-table__head">
-				<tr class="lite-table__row">
-					<th class="lite-table__header">
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header">
 						Name
 					</th>
-					<th class="lite-table__header">
+					<th class="govuk-table__header">
 						Created On
 					</th>
-					<th class="lite-table__header">
+					<th class="govuk-table__header">
 						Goods
 					</th>
-					<th class="lite-table__header">
+					<th class="govuk-table__header">
 						Application Type
 					</th>
-					<th class="lite-table__header">
+					<th class="govuk-table__header">
 						Export Type
 					</th>
-					<th class="lite-table__header">
+					<th class="govuk-table__header">
 					</th>
 				</tr>
 			</thead>
-			<tbody class="lite-table__head">
+			<tbody class="govuk-table__head">
 				{% for draft in data.drafts %}
-					<tr class="lite-table__row">
-						<td class="lite-table__cell">
+					<tr class="govuk-table__row">
+						<td class="govuk-table__cell">
 							<a class="govuk-link" href="{% url 'apply_for_a_licence:overview' draft.id %}">
 								{{ draft.name }}
 							</a>
 						</td>
-						<td class="lite-table__cell">
-							<a class="hoverable-link tooltip">
-								<span class="tooltip-content" style="min-width: 150px;">
-									{{ draft.last_modified_at|str_date }}
-								</span>
-								{{ draft.last_modified_at|str_date }}
-							</a>
+						<td class="govuk-table__cell">
+							{{ draft.last_modified_at|str_date }}
 						</td>
-						<td class="lite-table__cell">
-							<a class="hoverable-link tooltip">
-								<span class="tooltip-content" style="min-width: 150px;">
-									{% for good in application.goods %}
-										{{ good.name }}<br/>
-									{% endfor %}
-								</span>
-								{{ application.goods|length }} Good{{ application.goods|length|pluralize }}
-							</a>
+						<td class="govuk-table__cell">
+							{{ draft.goods|length }} Good{{ draft.goods|length|pluralize }}
 						</td>
-						<td class="lite-table__cell">
+						<td class="govuk-table__cell">
 							{{ draft.licence_type }}
 						</td>
-						<td class="lite-table__cell">
+						<td class="govuk-table__cell">
 							{{ draft.export_type }}
 						</td>
-						<td class="lite-table__cell">
+						<td class="govuk-table__cell">
 							<a href="{% url 'apply_for_a_licence:delete' draft.id %}" style="margin: 0;" class="cancel-link">Delete</a>
 						</td>
 					</tr>
@@ -91,7 +83,7 @@
 		</div>-->
 
 	{% else %}
-		<p class="govuk-caption-l">You don't have any drafts at the moment.</p>
+		<p class="govuk-caption-l">{% get_string 'drafts.no_drafts' %}</p>
 	{% endif %}
 
 	{% load static %}

@@ -62,7 +62,7 @@ def i_delete_the_application(driver):
 
 @when('I click the application')
 def i_click_the_application(driver):
-    drafts_table = driver.find_element_by_class_name("lite-table")
+    drafts_table = driver.find_element_by_class_name("govuk-table")
     drafts_table.find_element_by_xpath(".//td/a[contains(@href,'" + context.app_id + "')]").click()
     assert "Overview" in driver.title
     appName = driver.find_element_by_css_selector(".lite-persistent-notice .govuk-link").text
@@ -76,18 +76,18 @@ def submit_the_application(driver):
     assert apply.get_text_of_success_message() == "Application submitted"
 
 
-@then('I see no sites attached error message')
+@then('I see no sites or external sites attached error message')
 def i_see_no_sites_attached_error(driver):
     shared = Shared(driver)
     assert "Cannot create an application with no goods attached" in shared.get_text_of_error_message()
-    assert "Cannot create an application with no sites attached" in shared.get_text_of_error_message_at_position_2()
+    assert "Cannot create an application with no sites or external sites attached" in shared.get_text_of_error_message_at_position_2()
 
 
 @when(parsers.parse('I click add to application for the good at position "{no}"'))
 def click_add_to_application_button(driver, no):
 
-    context.goods_name = driver.find_elements_by_css_selector('.lite-item .govuk-heading-s')[int(no)].text
-    context.part_number = driver.find_elements_by_css_selector('.lite-item .govuk-label')[int(no)].text
+    context.goods_name = driver.find_elements_by_css_selector('.lite-card .govuk-heading-s')[int(no)].text
+    context.part_number = driver.find_elements_by_css_selector('.lite-card .govuk-label')[int(no)].text
     driver.find_elements_by_css_selector('a.govuk-button')[int(no)].click()
 
 

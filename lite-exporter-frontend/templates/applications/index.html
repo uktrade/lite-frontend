@@ -2,6 +2,10 @@
 
 {% load humanize %}
 
+{% block back-button %}
+	<a href="/" class="govuk-back-link">Back to Hub</a>
+{% endblock %}
+
 {% block body %}
 
 	<div class="lite-app-bar">
@@ -17,35 +21,28 @@
 	</div>
 
 	{% if data.applications|length %}
-		<table class="lite-table">
-			<thead class="lite-table__head">
-				<tr class="lite-table__row">
-					<th class="lite-table__header" scope="col">
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="col">
 						Reference
 					</th>
-					<th class="lite-table__header" scope="col">Goods</th>
-					<!--<th class="lite-table__header" scope="col">Destinations</th>-->
-					<th class="lite-table__header" scope="col">Last Updated</th>
-					<th class="lite-table__header" scope="col">Status</th>
+					<th class="govuk-table__header" scope="col">Goods</th>
+					<!--<th class="govuk-table__header" scope="col">Destinations</th>-->
+					<th class="govuk-table__header" scope="col">Last Updated</th>
+					<th class="govuk-table__header" scope="col">Status</th>
 				</tr>
 			</thead>
-			<tbody class="lite-table__body">
+			<tbody class="govuk-table__body">
 				{% for application in data.applications %}
-					<tr class="lite-table__row">
-						<td class="lite-table__cell">
+					<tr class="govuk-table__row">
+						<td class="govuk-table__cell">
 							{{ application.name|default:"Untitled" }}
 						</td>
-						<td class="lite-table__cell">
-							<a class="hoverable-link tooltip">
-								<span class="tooltip-content" style="min-width: 150px;">
-									{% for good in application.goods %}
-										{{ good.good.description }} - {{ good.quantity }} {{ good.unit }}<br/>
-									{% endfor %}
-								</span>
-								{{ application.goods|length }} Good{{ application.goods|length|pluralize }}
-							</a>
+						<td class="govuk-table__cell">
+							{{ application.goods|length }} Good{{ application.goods|length|pluralize }}
 						</td>
-						<!--<td class="lite-table__cell">
+						<!--<td class="govuk-table__cell">
 							<a class="hoverable-link tooltip">
 								<span class="tooltip-content" style="min-width: 150px;">
 									{% for destination in application.destinations %}
@@ -55,15 +52,10 @@
 								{{ application.destinations|length }} Destination{{ application.destinations|length|pluralize }}
 							</a>
 						</td>-->
-						<td class="lite-table__cell">
-							<a class="hoverable-link tooltip">
-								<span class="tooltip-content" style="min-width: 150px;">
-									{{ application.last_modified_at|str_date }}
-								</span>
-								{{ application.last_modified_at|str_date }}
-							</a>
+						<td class="govuk-table__cell">
+							{{ application.last_modified_at|str_date }}
 						</td>
-						<td class="lite-table__cell">{{ application.status|sentence_case }}</td>
+						<td class="govuk-table__cell">{{ application.status|sentence_case }}</td>
 					</tr>
 				{% endfor %}
 			</tbody>
@@ -85,7 +77,7 @@
 		</div>-->
 
 	{% else %}
-		<p class="govuk-caption-l">You don't have any applications at the moment.</p>
+		<p class="govuk-caption-l">{% get_string 'applications.no_applications' %}</p>
 	{% endif %}
 
 {% endblock %}

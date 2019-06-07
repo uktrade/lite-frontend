@@ -8,7 +8,6 @@ log.addHandler(console)
 
 class ApplyForALicencePage():
 
-    # called e time you create an object for this class
     def __init__(self, driver):
         self.driver = driver
 
@@ -30,6 +29,7 @@ class ApplyForALicencePage():
         self.licence_application_values = ".govuk-table__cell"
         self.start_now_btn = "a[href*='/start']"
         self.application_is_submitted = '.govuk-panel__title'
+        self.delete_application_button = '.cancel-link' #css
 
     def enter_name_or_reference_for_application(self, name):
         self.driver.find_element_by_id(self.name_or_reference_input_id).clear()
@@ -67,7 +67,7 @@ class ApplyForALicencePage():
         self.driver.find_element_by_xpath("//a[text()[contains(.,'Overview')]]").click()
 
     def click_delete_application(self):
-        self.driver.find_element_by_css_selector(".cancel-link").click()
+        self.driver.find_element_by_css_selector(self.delete_application_button).click()
         self.driver.implicitly_wait(10)
         self.driver.find_element_by_css_selector(".govuk-button--warning").click()
 
@@ -81,8 +81,8 @@ class ApplyForALicencePage():
         self.driver.find_element_by_xpath("//*[text()[contains(.,'Add from organisations goods')]]").click()
 
     def add_good_to_application(self, des):
-        good = self.driver.find_element_by_xpath("//div[@class='lite-item']/h4[text()='" + des + "']")
-        # goods = self.driver.find_elements_by_xpath("//div[@class='lite-item']")
+        good = self.driver.find_element_by_xpath("//div[@class='lite-card']/h4[text()='" + des + "']")
+        # goods = self.driver.find_elements_by_xpath("//div[@class='lite-card']")
         # for good in goods:
         #     if good.find_element(By.TAG_NAME, "h4").text == des:
         good.find_element(By.XPATH, "./following::div[1]/a[text()='Add to application']").click()

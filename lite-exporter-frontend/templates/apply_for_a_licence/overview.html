@@ -49,6 +49,9 @@
 	</div>
 {% endif %}
 
+<span class="govuk-caption-l">
+	{{ draft.name }}
+</span>
 <h2 class="govuk-heading-l">
 	Overview
 </h2>
@@ -60,6 +63,11 @@
 <div class="lite-section">
 	<table class="govuk-table">
 		<tbody class="govuk-table__body">
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header" scope="row">Name</th>
+				<td class="govuk-table__cell">{{ draft.name }}</td>
+				<!--<td class="govuk-table__cell"><a href="#" class="govuk-link">Edit</a></td>-->
+			</tr>
 			<tr class="govuk-table__row">
 				<th class="govuk-table__header" scope="row">Licence Type</th>
 				<td class="govuk-table__cell">{{ draft.licence_type }}</td>
@@ -84,9 +92,11 @@
 
 <div class="lite-section {% if errors|key_value:'goods' %}govuk-form-group--error{% endif %}">
 	<div class="lite-section-header">
-		<a id="goods" href="{% url 'apply_for_a_licence:goods' draft.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
-			Goods
-		</a>
+		<div>
+			<a id="goods" href="{% url 'apply_for_a_licence:goods' draft.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
+				Goods
+			</a>
+		</div>
 		{% if goods|length %}
 			<div class="lite-info-label lite-info-label--blue">
 				Done
@@ -107,10 +117,12 @@
 
 <div class="lite-section {% if errors|key_value:'sites' %}govuk-form-group--error{% endif %}">
 	<div class="lite-section-header">
-		<a id="sites" href="{% url 'apply_for_a_licence:sites' draft.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
-			Sites
-		</a>
-		{% if sites|length %}
+		<div>
+			<a id="location" href="{% url 'apply_for_a_licence:location' draft.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
+				Location of goods
+			</a>
+		</div>
+		{% if sites or external_locations %}
 			<div class="lite-info-label lite-info-label--blue">
 				Done
 			</div>
@@ -120,19 +132,62 @@
 			</div>
 		{% endif %}
 	</div>
-	{% if errors|key_value:'sites' %}
+	{% if errors|key_value:'location' %}
 		<p class="govuk-error-message">
-			{{ errors|key_value:'sites' }}
+			{{ errors|key_value:'location' }}
 		</p>
 	{% endif %}
-	<p class="govuk-caption-m">Add sites to your application</p>
+
+	{% if sites %}
+		<table class="govuk-table">
+			<tbody class="govuk-table__body">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="row">Site</th>
+					<td class="govuk-table__header">Location</td>
+				</tr>
+				{% for site in sites %}
+					<tr class="govuk-table__row">
+						<td class="govuk-table__cell" scope="row">{{ site.name }}</td>
+						<td class="govuk-table__cell">
+							{{ site.address.address_line_1 }}<br/>
+							{% if site.address.address_line_2 %}
+								{{ site.address.address_line_2 }}<br/>
+							{% endif %}
+							{{ site.address.city }}<br/>
+							{{ site.address.postcode }}<br/>
+							{{ site.address.country }}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% elif external_locations %}
+		<table class="govuk-table">
+			<tbody class="govuk-table__body">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="row">Name</th>
+					<td class="govuk-table__header">Location</td>
+				</tr>
+				{% for external_location in external_locations %}
+					<tr class="govuk-table__row">
+						<td class="govuk-table__cell" scope="row">{{ external_location.name }}</td>
+						<td class="govuk-table__cell">{{ external_location.address|linebreaksbr }}<br>{{ external_location.country }}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		<p class="govuk-caption-m">Set where your goods are located</p>
+	{% endif %}
 </div>
 
 <div class="lite-section {% if errors|key_value:'end_user' %}govuk-form-group--error{% endif %}">
 	<div class="lite-section-header">
-		<a id="end_users" href="{% url 'apply_for_a_licence:end_user' draft.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
-			End User
-		</a>
+		<div>
+			<a id="end_users" href="{% url 'apply_for_a_licence:end_user' draft.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
+				End User
+			</a>
+		</div>
 
 		{% if draft.end_user %}
 			<div class="lite-info-label lite-info-label--blue">

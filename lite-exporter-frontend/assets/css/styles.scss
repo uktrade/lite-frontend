@@ -49,28 +49,11 @@ main {
 	@include govuk-font($size: 24, $weight: bold);
 	text-decoration: none;
 	margin-bottom: govuk-spacing(1);
-
-	&:after {
-		content: "_";
-		display: inline-block;
-		position: relative;
-		width: 10px;
-		background-image: url("/assets/images/overview_chevron.svg");
-		background-position: center;
-		background-size: contain;
-		background-repeat: no-repeat;
-		color: transparent;
-		margin-left: govuk-spacing(2);
-		transform: translateY(-2px);
+	&:hover {
+	    text-decoration: underline;
 	}
 }
 
-.lite-item {
-	background-color: govuk-colour("grey-4");
-	border: 1px solid darken(govuk-colour("grey-4"), 2%);
-	padding: govuk-spacing(4);
-	margin-bottom: govuk-spacing(6);
-}
 
 .no-borders {
 	margin: 0;

@@ -2,6 +2,10 @@
 
 {% load humanize %}
 
+{% block back-button %}
+	<a href="/" class="govuk-back-link">Back to Hub</a>
+{% endblock %}
+
 {% block body %}
 
 	{% if userDeactivated == "true" %}

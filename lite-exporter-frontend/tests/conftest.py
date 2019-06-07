@@ -6,15 +6,19 @@ import datetime
 from pages.application_overview_page import ApplicationOverviewPage
 from pytest_bdd import scenarios, given, when, then, parsers, scenarios
 from pages.exporter_hub_page import ExporterHubPage
+from pages.which_location_form_page import WhichLocationFormPage
 from pages.add_goods_page import AddGoodPage
 from pages.shared import Shared
 from pages.sites_page import SitesPage
 
 from pages.apply_for_a_licence_page import ApplyForALicencePage
-from ui_automation_tests.pages.add_end_user_pages import AddEndUserPages
+
+from tests.pages.add_end_user_pages import AddEndUserPages
+from tests.pages.add_new_external_location_form_page import AddNewExternalLocationFormPage
+from tests.pages.external_locations_page import ExternalLocationsPage
+from tests.pages.preexisting_locations_page import PreexistingLocationsPage
 
 strict_gherkin = False
-
 
 # Screenshot in case of any test failure
 def pytest_exception_interact(node, report):
@@ -31,15 +35,14 @@ def pytest_addoption(parser):
         env = "dev"
     print("touched: " + env)
     parser.addoption("--driver", action="store", default="chrome", help="Type in browser type")
-    parser.addoption("--exporter_url", action="store", default="https://lite-exporter-frontend-" + env + ".london.cloudapps.digital/", help="url")
-    # parser.addoption("--exporter_url", action="store", default="localhost:9000/", help="url")
-    parser.addoption("--internal_url", action="store", default="https://lite-internal-frontend-" + env + ".london.cloudapps.digital/", help="url")
-    # parser.addoption("--internal_url", action="store", default="localhost:8080/", help="url")
-    parser.addoption("--email", action="store", default="test@mail.com")
-    parser.addoption("--password", action="store", default="password")
-    parser.addoption("--first_name", action="store", default="Test")
-    parser.addoption("--last_name", action="store", default="User")
-
+    #parser.addoption("--exporter_url", action="store", default="https://lite-exporter-frontend-" + env + ".london.cloudapps.digital/", help="url")
+    parser.addoption("--exporter_url", action="store", default="localhost:9000/", help="url")
+    #parser.addoption("--internal_url", action="store", default="https://lite-internal-frontend-" + env + ".london.cloudapps.digital/", help="url")
+    parser.addoption("--internal_url", action="store", default="localhost:8080/", help="url")
+    parser.addoption("--email", action="store", default= "test@mail.com")
+    parser.addoption("--password", action="store", default= "password")
+    parser.addoption("--first_name", action="store", default= "Test")
+    parser.addoption("--last_name", action="store", default= "User")
 
 # Create driver fixture that initiates chrome
 @pytest.fixture(scope="session", autouse=True)
@@ -55,7 +58,6 @@ def driver(request):
         return browser
     else:
         print('only chrome is supported at the moment')
-
     def fin():
         driver.quit()
         request.addfinalizer(fin)
@@ -122,19 +124,10 @@ def login_to_exporter(driver, username, password):
     if "login" in driver.current_url:
         exporter_hub.login(username, password)
 
-
-@when(parsers.parse('I login to exporter homepage with context after edit'))
-def login_to_exporter(driver, password):
-    exporter_hub = ExporterHubPage(driver)
-    if "login" in driver.current_url:
-        exporter_hub.login(context.edited_email, password)
-
-
 # utils
 @then(parsers.parse('driver title equals "{expected_text}"'))
 def assert_title_text(driver, expected_text):
     assert driver.title == expected_text
-
 
 @pytest.fixture
 def context():
@@ -143,10 +136,10 @@ def context():
 
     return Context()
 
-
 @pytest.fixture
 def test_teardown(driver):
     driver.quit()
+
 
 
 # applying for licence
@@ -193,8 +186,7 @@ def enter_permanent_or_temporary(driver, permanent_or_temporary):
     apply.click_continue()
 
 
-@when(parsers.parse(
-    'I select "{yes_or_no}" for whether I have an export licence and "{reference}" if I have a reference and continue'))
+@when(parsers.parse('I select "{yes_or_no}" for whether I have an export licence and "{reference}" if I have a reference and continue'))
 def enter_export_licence(driver, yes_or_no, reference):
     apply = ApplyForALicencePage(driver)
     apply.click_export_licence_yes_or_no(yes_or_no)
@@ -203,10 +195,50 @@ def enter_export_licence(driver, yes_or_no, reference):
     apply.click_continue()
 
 
-@when('I click sites link')
-def i_click_sites_link(driver):
+@when('I click on application locations link')
+def i_click_application_locations_link(driver):
     app = ApplicationOverviewPage(driver)
-    app.click_sites_link()
+    app.click_application_locations_link()
+
+
+@when(parsers.parse('I select "{organisation_or_external}" for where my goods are located'))
+def choose_location_type(driver, organisation_or_external):
+    which_location_form = WhichLocationFormPage(driver)
+    which_location_form.click_on_organisation_or_external_radio_button(organisation_or_external)
+    which_location_form.click_continue()
+
+
+@when(parsers.parse('I fill in new external location form with name: "{name}", address: "{address}" and country: "{country}" and continue'))
+def add_new_external_location(driver, name, address, country):
+    add_new_external_location_form_page = AddNewExternalLocationFormPage(driver)
+    add_new_external_location_form_page.enter_external_location_name(name)
+    add_new_external_location_form_page.enter_external_location_address(address)
+    add_new_external_location_form_page.enter_external_location_country(country)
+    add_new_external_location_form_page.click_continue()
+
+
+@when(parsers.parse('I select the location at position "{position_number}" in external locations list and continue'))
+def assert_checkbox_at_position(driver, position_number):
+    preexisting_locations_page = PreexistingLocationsPage(driver)
+    preexisting_locations_page.click_external_locations_checkbox(int(position_number)-1)
+    preexisting_locations_page.click_continue()
+
+
+@then(parsers.parse('I see "{number_of_locations}" locations'))
+def i_see_a_number_of_locations(driver, number_of_locations):
+    assert len(driver.find_elements_by_css_selector('.lite-card')) == int(number_of_locations)
+
+
+@when('I click on add new address')
+def i_click_on_add_new_address(driver):
+    external_locations_page = ExternalLocationsPage(driver)
+    external_locations_page.click_add_new_address()
+
+
+@when('I click on preexisting locations')
+def i_click_add_preexisting_locations(driver):
+    external_locations_page = ExternalLocationsPage(driver)
+    external_locations_page.click_preexisting_locations()
 
 
 @when('I click continue')
@@ -224,7 +256,7 @@ def error_message_is(driver, expected_error):
 @when(parsers.parse('I select the site at position "{no}"'))
 def select_the_site_at_position(driver, no):
     sites = SitesPage(driver)
-    sites.click_sites_checkbox(int(no) - 1)
+    sites.click_sites_checkbox(int(no)-1)
 
 
 @when('I click on goods link')
@@ -233,14 +265,29 @@ def click_my_goods_link(driver):
     exporter_hub.click_my_goods()
 
 
+@when('I click on my registered sites')
+def click_my_registered_sites(driver):
+    which_location = WhichLocationFormPage(driver)
+    shared = Shared(driver)
+    which_location.click_on_my_sites_radio_button()
+    shared.click_continue()
+
+
+@when('I click on external locations')
+def click_external_locations(driver):
+    which_location = WhichLocationFormPage(driver)
+    shared = Shared(driver)
+    which_location.click_on_external_location_radio_button()
+    shared.click_continue()
+
+
 @when('I click the add from organisations goods button')
 def click_add_from_organisation_button(driver):
-    driver.find_element_by_css_selector('a.govuk-button[href*="add_preexisting"]').click()
+    driver.find_element_by_css_selector('a[href*="add-preexisting"]').click()
 
 
-@when(parsers.parse(
-    'I add a good with description "{description}" controlled "{controlled}" control code "{controlcode}" incorporated "{incorporated}" and part number "{part}"'))
-def add_new_good(driver, description, controlled, controlcode, incorporated, part):
+@when(parsers.parse('I add a good with description "{description}" controlled "{controlled}" control code "{controlcode}" incorporated "{incorporated}" and part number "{part}"'))
+def add_new_good(driver, description, controlled,  controlcode, incorporated, part):
     exporter_hub = ExporterHubPage(driver)
     add_goods_page = AddGoodPage(driver)
     good_description = description + str(random.randint(1, 1000))
@@ -269,8 +316,11 @@ def add_new_end_user(driver, type, name, website, address, country):
     add_end_user_pages.enter_country(country)
     add_end_user_pages.click_continue()
 
-
 @when('I click on end user')
 def i_click_on_end_user(driver):
     app = ApplicationOverviewPage(driver)
     app.click_end_user_link()
+
+@when('I click on application overview')
+def i_click_on_application_overview(driver):
+    driver.find_element_by_css_selector("a[href*='overview'").click()
