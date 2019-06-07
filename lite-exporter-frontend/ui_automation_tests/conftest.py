@@ -13,10 +13,10 @@ from pages.sites_page import SitesPage
 
 from pages.apply_for_a_licence_page import ApplyForALicencePage
 
-from tests.pages.add_end_user_pages import AddEndUserPages
-from tests.pages.add_new_external_location_form_page import AddNewExternalLocationFormPage
-from tests.pages.external_locations_page import ExternalLocationsPage
-from tests.pages.preexisting_locations_page import PreexistingLocationsPage
+from pages.add_end_user_pages import AddEndUserPages
+from pages.add_new_external_location_form_page import AddNewExternalLocationFormPage
+from pages.external_locations_page import ExternalLocationsPage
+from pages.preexisting_locations_page import PreexistingLocationsPage
 
 strict_gherkin = False
 
@@ -262,6 +262,13 @@ def select_the_site_at_position(driver, no):
 @when('I click on goods link')
 def click_my_goods_link(driver):
     exporter_hub = ExporterHubPage(driver)
+    exporter_hub.click_my_goods()
+
+
+@when('I click on goods tile')
+def click_my_goods_link(driver):
+    exporter_hub = ExporterHubPage(driver)
+    driver.execute_script("document.getElementById('goods').scrollIntoView(true);")
     exporter_hub.click_my_goods()
 
 

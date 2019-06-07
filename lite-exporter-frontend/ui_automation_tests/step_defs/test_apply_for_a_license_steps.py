@@ -28,15 +28,16 @@ def click_apply_licence(driver):
 def i_see_the_application_overview(driver):
     time_date_submitted = datetime.datetime.now().strftime("%I:%M%p").lstrip("0").replace(" 0", " ").lower() + datetime.datetime.now().strftime(" %d %B %Y")
     apply = ApplyForALicencePage(driver)
-    assert apply.get_text_of_application_headers(0) == "Licence Type"
-    assert apply.get_text_of_application_headers(1) == "Export Type"
-    assert apply.get_text_of_application_headers(2) == "Reference Number"
-    assert apply.get_text_of_application_headers(3) == "Created at"
-    assert apply.get_text_of_application_results(0) == context.type+"_licence"
-    assert apply.get_text_of_application_results(1) == context.perm_or_temp
-    assert apply.get_text_of_application_results(2) == context.ref
+    assert apply.get_text_of_application_headers(0) == "Name"
+    assert apply.get_text_of_application_headers(1) == "Licence Type"
+    assert apply.get_text_of_application_headers(2) == "Export Type"
+    assert apply.get_text_of_application_headers(3) == "Reference Number"
+    assert apply.get_text_of_application_headers(4) == "Created at"
+    assert apply.get_text_of_application_results(1) == context.type+"_licence"
+    assert apply.get_text_of_application_results(2) == context.perm_or_temp
+    assert apply.get_text_of_application_results(3) == context.ref
     # assert apply_for_licence.get_text_of_application_results(3) == datetime.datetime.now().strftime("%b %d %Y, %H:%M%p")
-    assert time_date_submitted in apply.get_text_of_application_results(3), "Created date is incorrect on draft overview"
+    assert time_date_submitted in apply.get_text_of_application_results(4), "Created date is incorrect on draft overview"
     app_id = driver.current_url[-36:]
     context.app_id = app_id
 

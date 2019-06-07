@@ -19,6 +19,7 @@ class ExporterHubPage():
         self.users_btn = "a[href='/users/']"
         self.sites_btn = "a[href='/sites/']"
         self.sites_link = "a[href*='sites']"
+        self.goods_tile = "a[href*='sites']"
 
 
 

@@ -14,7 +14,7 @@ Feature: Goods
     When I select "standard" application and continue
     When I select "permanent" option and continue
     When I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
-    When I click on goods link
+    When I click on goods tile
     When I click the add from organisations goods button
     When I filter by description and click filter
     Then I see my added Good by "description"
@@ -31,7 +31,7 @@ Feature: Goods
     When I select "standard" application and continue
     When I select "permanent" option and continue
     When I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
-    When I click on goods link
+    When I click on goods tile
     When I click the add from organisations goods button
     When I filter by part number and click filter
     Then I see my added Good by "part number"
@@ -48,7 +48,7 @@ Feature: Goods
     When I select "standard" application and continue
     When I select "permanent" option and continue
     When I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
-    When I click on goods link
+    When I click on goods tile
     When I click the add from organisations goods button
     When I filter by description and click filter
     When I filter by part number and click filter

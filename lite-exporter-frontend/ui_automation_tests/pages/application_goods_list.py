@@ -15,7 +15,7 @@ class ApplicationGoodsList():
         self.filter_description_search_box = 'description' #id
         self.filter_part_number_search_box = 'part_number' #id
         self.filter_button = '//button[text()[contains(.,"Filter")]]' #xpath
-        self.goods_items = '.lite-item' #css
+        self.goods_items = '.lite-card' #css
         self.filter_tags = ".lite-filter-bar a"
 
     def click_add_from_organisations_goods_button(self):

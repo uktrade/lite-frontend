@@ -3,6 +3,7 @@ from pages.site_list_overview_page import SitesListOverview
 from pages.new_site_page import NewSite
 from pages.sites_page import SitesPage
 from pages.shared import Shared
+from pages.hub_page import Hub
 import datetime
 import helpers.helpers as utils
 from selenium.webdriver.common.by import By
@@ -20,6 +21,19 @@ scenarios('../features/sites.feature', strict_gherkin=False)
 def click_new_site(driver):
     sites = SitesListOverview(driver)
     sites.click_new_sites_link()
+
+
+@when('I click sites link')
+def click_new_site(driver):
+    hub = Hub(driver)
+    hub.click_sites_link()
+
+
+@when('I click sites link from overview')
+def click_new_site(driver):
+    hub = Hub(driver)
+    driver.execute_script("document.getElementById('goods').scrollIntoView(true);")
+    hub.click_sites_link()
 
 
 @when(parsers.parse('I enter in text for new site "{edited}" {address}" "{postcode}" "{city}" "{region}" and "{country}"'))
