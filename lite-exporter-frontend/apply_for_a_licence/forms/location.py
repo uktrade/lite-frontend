@@ -12,18 +12,19 @@ which_location_form = Form(title=get_string('goods.location_questions.location.t
                            ],
                            default_button_name='Continue')
 
-new_location_form = Form(title='Add a new external location',
-                         description='',
-                         questions=[
-                             Question('Company name', '', InputType.INPUT, 'name'),
-                             Question('Address', '', InputType.TEXTAREA, 'address'),
-                             ArrayQuestion(title='Country',
-                                           description='',
-                                           input_type=InputType.AUTOCOMPLETE,
-                                           name='country',
-                                           data=get_countries(None, True)),
-                         ],
-                         default_button_name='Save and continue')
+def new_location_form():
+    return Form(title='Add a new external location',
+                description='',
+                questions=[
+                 Question('Company name', '', InputType.INPUT, 'name'),
+                 Question('Address', '', InputType.TEXTAREA, 'address'),
+                 ArrayQuestion(title='Country',
+                               description='',
+                               input_type=InputType.AUTOCOMPLETE,
+                               name='country',
+                               data=get_countries(None, True)),
+                ],
+                default_button_name='Save and continue')
 
 
 def external_locations_form(request):

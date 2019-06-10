@@ -105,13 +105,13 @@ class AddExternalLocation(TemplateView):
         draft, status_code = get_draft(request, draft_id)
         response, status_code = get_sites_on_draft(request, draft_id)
 
-        return form_page(request, new_location_form, data=response, extra_data={
+        return form_page(request, new_location_form(), data=response, extra_data={
             'persistent_bar': create_persistent_bar(draft.get('draft'))
         })
 
     def post(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
-        response, response_data = submit_single_form(request, new_location_form, post_external_locations)
+        response, response_data = submit_single_form(request, new_location_form(), post_external_locations)
 
         # If there are more forms to go through, continue
         if response:

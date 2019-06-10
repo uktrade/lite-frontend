@@ -189,13 +189,13 @@ class EndUser(TemplateView):
         draft_id = str(kwargs['pk'])
         draft, status_code = get_draft(request, draft_id)
 
-        return form_page(request, new_end_user_form.forms[0], extra_data={
+        return form_page(request, new_end_user_form().forms[0], extra_data={
             'persistent_bar': create_persistent_bar(draft.get('draft'))
         })
 
     def post(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
-        response, data = submit_paged_form(request, new_end_user_form, post_end_user, pk=draft_id)
+        response, data = submit_paged_form(request, new_end_user_form(), post_end_user, pk=draft_id)
 
         # If there are more forms to go through, continue
         if response:
