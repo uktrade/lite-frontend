@@ -59,8 +59,13 @@ class Form:
                  helpers=None,
                  javascript_imports=None,
                  default_button_name='Submit',
-                 pk=uuid.uuid1()):
-        self.pk = pk
+                 pk=None):
+
+        if not pk:
+            self.pk = uuid.uuid1()
+        else:
+            self.pk = pk
+
         self.title = title
         self.description = description
         self.questions = questions
