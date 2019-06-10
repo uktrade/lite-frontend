@@ -8,5 +8,5 @@ urlpatterns = [
     path('cases/', include('cases.urls')),
     path('organisations/', include('organisations.urls')),
     path('organisations/register/', include('register_business.urls')),
-	path('departments/', include('departments.urls')),
+	path('teams/', include('teams.urls')),
 ]

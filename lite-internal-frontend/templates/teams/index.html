@@ -7,15 +7,15 @@
 {% block body %}
 
 	<div class="lite-app-bar">
-		<h1 class="govuk-heading-l">Departments</h1>
+		<h1 class="govuk-heading-l">Teams</h1>
 		<div class="lite-app-bar--right">
-			<a href="{% url 'departments:add' %}" class="govuk-button" draggable="false" role="button">
-				Add a department
+			<a href="{% url 'teams:add' %}" class="govuk-button" draggable="false" role="button">
+				Add a team
 			</a>
 		</div>
 	</div>
 
-	{% if data.departments|length %}
+	{% if data.teams|length %}
 		<table class="govuk-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
@@ -24,20 +24,20 @@
 				</tr>
 			</thead>
 			<tbody class="govuk-table__body">
-				{% for department in data.departments %}
+				{% for team in data.teams %}
 					<tr class="govuk-table__row" style="vertical-align: top;">
 						<td class="govuk-table__cell">
-							{{ department.name|default:"Untitled" }}
+							{{ team.name|default:"Untitled" }}
 						</td>
 						<td class="govuk-table__cell">
-							<a href="{% url 'departments:edit' department.id %}" style="margin: 0;" class="govuk-link">Edit</a>
+							<a href="{% url 'teams:edit' team.id %}" style="margin: 0;" class="govuk-link">Edit</a>
 						</td>
 					</tr>
 				{% endfor %}
 			</tbody>
 		</table>
 	{% else %}
-		<p class="govuk-caption-l">There are no registered departments at the moment.</p>
+		<p class="govuk-caption-l">There are no registered teams at the moment.</p>
 	{% endif %}
 
 {% endblock %}

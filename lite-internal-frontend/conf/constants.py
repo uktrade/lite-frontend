@@ -11,5 +11,5 @@ SITES_URL = '/sites/'
 # Static URLs
 STATIC_URL = '/static/'
 DENIAL_REASONS_URL = STATIC_URL + 'denial-reasons/'
-DEPARTMENTS_URL = '/departments/'
+TEAMS_URL = '/teams/'
 

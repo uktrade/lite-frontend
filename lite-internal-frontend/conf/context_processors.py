@@ -19,9 +19,9 @@ def lite_menu(request):
 				'icon': 'menu/businesses'
 			},
 			{
-				'title': 'Departments',
-				'url': '/departments/',
-				'icon': 'menu/departments'
+				'title': 'Teams',
+				'url': '/teams/',
+				'icon': 'menu/teams'
 			}
 		]
 	}

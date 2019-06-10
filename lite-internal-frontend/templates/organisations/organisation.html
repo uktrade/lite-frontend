@@ -28,8 +28,8 @@
 				<p class="lite-heading-s">Address</p>
 				<p class="govuk-label">
 					{{ organisation.primary_site.address.address_line_1 }}<br/>
-					{% if organisation.site.address.address_line_2 %}
-						{{ organisation.site.address.address_line_2 }}<br/>
+					{% if organisation.primary_site.address.address_line_2 %}
+						{{ organisation.primary_site.address.address_line_2 }}<br/>
 					{% endif %}
 					{{ organisation.primary_site.address.city }}<br/>
 					{{ organisation.primary_site.address.postcode }}<br/>
