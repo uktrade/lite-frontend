@@ -58,8 +58,9 @@ class Form:
                  buttons=None,
                  helpers=None,
                  javascript_imports=None,
-                 default_button_name='Submit'):
-        self.pk = uuid.uuid1()
+                 default_button_name='Submit',
+                 pk=uuid.uuid1()):
+        self.pk = pk
         self.title = title
         self.description = description
         self.questions = questions
