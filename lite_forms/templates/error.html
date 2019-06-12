@@ -1,5 +1,11 @@
 {% extends 'layouts/two_pane.html' %}
 
+{% block back-button %}
+	{% if show_back_link %}
+		<a href="#" class="govuk-back-link">Back</a>
+	{% endif %}
+{% endblock %}
+
 {% block twoThirds %}
 
 	<h1 class="govuk-heading-xl">
@@ -8,8 +14,10 @@
 
 	<p class="govuk-body">{{ description }}</p>
 
-	<br/>
+	{% if show_back_link %}
+		<br/>
 
-	<p class="govuk-body">You can go back by clicking the back button at the top of the page.</p>
+		<p class="govuk-body">You can go back by clicking the back button at the top of the page.</p>
+	{% endif %}
 
 {% endblock %}

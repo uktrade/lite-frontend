@@ -32,12 +32,13 @@ def success_page(request, title, secondary_title, description, what_happens_next
     return render(request, 'confirmation.html', context)
 
 
-def error_page(request, description, title='An error occurred'):
+def error_page(request, description, title='An error occurred', show_back_link=True):
     """
     Returns a standard GOV.UK Design System styled error page.
     """
     context = {
         'title': title,
         'description': description,
+        'show_back_link': show_back_link,
     }
     return render(request, 'error.html', context)
