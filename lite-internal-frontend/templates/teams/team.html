@@ -1,0 +1,49 @@
+{% extends 'layouts/full_width.html' %}
+
+{% load humanize %}
+
+{% block back-button %}
+	<a href="/" class="govuk-back-link">Back</a>
+{% endblock %}
+
+	{% if userDeactivated == "true" %}
+		<div class="information information-animated">
+		</div>
+	{% endif %}
+
+{% block body %}
+
+	<div class="lite-app-bar">
+		<h1 class="govuk-heading-l">{{ title }}</h1>
+	</div>
+
+
+	{% if users|length %}
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="col">Name</th>
+					<th class="govuk-table__header" scope="col">Email</th>
+					<th class="govuk-table__header" scope="col">Status</th>
+                    <th class="govuk-table__header" scope="col"></th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				{% for user in users %}
+					<tr class="govuk-table__row">
+						<td class="govuk-table__cell">
+								{{ user.first_name }} {{ user.last_name }}
+						</td>
+						<td class="govuk-table__cell">{{ user.email }}</td>
+						<td class="govuk-table__cell">{{ user.status }}</td>
+						<td class="govuk-table__cell">
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		<p class="govuk-caption-l">You don't have any users at the moment.</p>
+	{% endif %}
+
+{% endblock %}

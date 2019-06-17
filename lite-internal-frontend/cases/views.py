@@ -5,6 +5,7 @@ from django.views.generic import TemplateView
 
 from cases.forms.denial_reasons import denial_reasons_form
 from cases.services import get_case, get_case_notes, post_case_notes, put_applications
+from conf import client
 from conf.settings import env
 from libraries.forms.generators import error_page, form_page
 from libraries.forms.submitters import submit_single_form
@@ -17,8 +18,8 @@ def index(request):
     if not queue_id:
         queue_id = '00000000-0000-0000-0000-000000000001'
 
-    queues = requests.get(env("LITE_API_URL") + '/queues/').json()
-    response = requests.get(env("LITE_API_URL") + '/queues/' + queue_id + '/').json()
+    queues = client.get(request, '/queues/').json()
+    response = client.get(request, '/queues/' + queue_id).json()
 
     context = {
         'queues': queues,

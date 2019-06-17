@@ -1,5 +1,5 @@
 from teams.services import get_team, get_teams, \
-    post_teams, update_team
+    post_teams, update_team, get_users_by_team
 from teams import forms
 
 from django.shortcuts import render, redirect
@@ -39,6 +39,18 @@ class AddTeam(TemplateView):
             return render(request, 'form.html', context)
 
         return redirect(reverse_lazy('teams:teams'))
+
+
+class TeamDetail(TemplateView):
+    def get(self, request, **kwargs):
+        data, status_code = get_team(request, str(kwargs['pk']))
+        title = data['team']['name']
+        data, status_code = get_users_by_team(request, str(kwargs['pk']))
+        context = {
+            'title': title,
+            'users': data['users'],
+        }
+        return render(request, 'teams/team.html', context)
 
 
 class EditTeam(TemplateView):

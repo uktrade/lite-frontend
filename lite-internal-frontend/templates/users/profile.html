@@ -1,0 +1,54 @@
+{% extends 'layouts/two_pane.html' %}
+
+{% load humanize custom_tags %}
+
+{% block back-button %}
+	<a href="#" class="govuk-back-link">Back</a>
+{% endblock %}
+
+{% block twoThirds %}
+
+	<h1 class="govuk-heading-xl">
+		{{ title }}
+	</h1>
+
+	<dl class="govuk-summary-list">
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				First Name
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ data.user.first_name }}
+			</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				Last Name
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ data.user.last_name }}
+			</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				Email
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ data.user.email }}
+			</dd>
+		</div>
+	</dl>
+
+	<div class="lite-user-profile-container">
+		<a href="{% url 'users:edit' data.user.id %}" type="submit" class="govuk-button govuk-button--secondary">Edit</a>
+
+		{% if request.user.id|stringformat:"s" != data.user.id|stringformat:"s" %}
+			{% if data.user.status == 'active' %}
+				<a href="{% url 'users:change_status' data.user.id 'deactivate' %}" role="button" draggable="false" class="govuk-button govuk-button--warning govuk-!-margin-right-2">Deactivate</a>
+			{% elif data.user.status == 'deactivated' %}
+				<a href="{% url 'users:change_status' data.user.id 'reactivate' %}" role="button" draggable="false" class="govuk-button govuk-!-margin-right-2">Reactivate</a>
+			{% endif %}
+		{% endif %}
+	</div>
+
+{% endblock %}

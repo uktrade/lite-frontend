@@ -12,6 +12,7 @@ log = logging.getLogger()
 console = logging.StreamHandler()
 log.addHandler(console)
 
+
 def test_new_organisation_setup(driver, open_internal_hub):
     log.info("Setting up new organisation")
     register_a_business_page = RegisterABusinessPage(driver)

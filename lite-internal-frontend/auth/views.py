@@ -1,16 +1,17 @@
-import requests
-from django.views.generic.base import RedirectView, View, TemplateView
-from django.shortcuts import redirect, render
-from django.http import HttpResponseBadRequest, HttpResponseServerError
+from authbroker_client.utils import get_client, AUTHORISATION_URL, TOKEN_URL, \
+    TOKEN_SESSION_KEY, get_profile
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
-
+from django.http import HttpResponseBadRequest, HttpResponseServerError
+from django.shortcuts import redirect
+from django.views.generic.base import RedirectView, View, TemplateView
 from raven.contrib.django.raven_compat.models import client
-from authbroker_client.utils import get_client, AUTHORISATION_URL, TOKEN_URL, \
-    TOKEN_SESSION_KEY
 
-from conf.client import get
+from auth.services import authenticate_gov_user
 from conf.settings import env
+from core.builtins.custom_tags import get_string
+from core.models import User
+from libraries.forms.generators import error_page
 
 
 class AuthView(RedirectView):
@@ -56,9 +57,19 @@ class AuthCallbackView(View):
         except BaseException:
             client.captureException()
 
+        profile = get_profile(get_client(self.request))
+
+        response, status_code = authenticate_gov_user(profile)
+        if status_code != 200:
+            return error_page(None,
+                              title=get_string('authentication.user_does_not_exist.title'),
+                              description=get_string('authentication.user_does_not_exist.description'),
+                              show_back_link=False)
+
         # create the user
         user = authenticate(request)
-
+        user.user_token = response['token']
+        user.save()
         if user is not None:
             login(request, user)
 
@@ -67,6 +78,7 @@ class AuthCallbackView(View):
 
 class AuthLogoutView(TemplateView):
     def get(self, request, **kwargs):
+        User.objects.get(id=request.user.id).delete()
         logout(request)
         return redirect(env("AUTHBROKER_URL") + '/logout/')
 
