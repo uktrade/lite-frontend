@@ -1,5 +1,5 @@
-<select id="{{ name }}" name="{{ name }}" class="govuk-select">
-	<option value="" disabled>Select</option>
+<select id="{{ name }}" name="{{ name }}" class="govuk-select" style="min-width: 300px;">
+	<option value="">Select</option>
 	{% for item in data %}
 		<option value="{{ item.key }}" {% if value == item.key %}selected{% endif %}>{{ item.value }}</option>
 	{% endfor %}
