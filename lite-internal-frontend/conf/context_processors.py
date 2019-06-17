@@ -26,7 +26,7 @@ def lite_menu(request):
 			{
 				'title': 'Users',
 				'url': '/users/',
-				'icon': 'menu/teams'
+				'icon': 'menu/users'
 			}
 		]
 	}

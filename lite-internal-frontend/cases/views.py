@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.views.generic import TemplateView
 
 from cases.forms.denial_reasons import denial_reasons_form
-from cases.services import get_case, get_case_notes, post_case_notes, put_applications
+from cases.services import get_case, get_case_notes, post_case_notes, put_applications, get_activity
 from conf import client
 from conf.settings import env
 from libraries.forms.generators import error_page, form_page
@@ -34,12 +34,12 @@ class ViewCase(TemplateView):
     def get(self, request, **kwargs):
         case_id = str(kwargs['pk'])
         case, status_code = get_case(request, case_id)
-        case_notes, status_code = get_case_notes(request, case_id)
+        activity, status_code = get_activity(request, case_id)
 
         context = {
             'data': case,
             'title': case.get('case').get('application').get('name'),
-            'case_notes': case_notes.get('case_notes'),
+            'activity': activity.get('activity'),
         }
         return render(request, 'cases/case/index.html', context)
 
@@ -50,32 +50,31 @@ class ViewCase(TemplateView):
         if status_code != 201:
             error = response.get('errors').get('text')[0]
             error = error.replace('This field', 'Case note')
-            error = error.replace('this field', 'the case note')
+            error = error.replace('this field', 'the case note') # TODO: Move to API
             return error_page(request, error)
 
         return redirect('/cases/' + case_id + '#case_notes')
 
 
 class ManageCase(TemplateView):
-
-    def get(self, request, pk):
-        response = requests.get(env("LITE_API_URL") + '/cases/' + str(pk) + '/').json()
+    def get(self, request, **kwargs):
+        case_id = str(kwargs['pk'])
+        case, status_code = get_case(request, case_id)
         context = {
-          'data': response,
-          'title': 'Manage ' + response.get('case').get('application').get('name'),
+          'data': case,
+          'title': 'Manage ' + case.get('case').get('application').get('name'),
         }
         return render(request, 'cases/manage.html', context)
 
-    def post(self, request, pk):
-        applicant_case = requests.get(env("LITE_API_URL") + '/cases/' + str(pk) + '/').json()
-        case_id = applicant_case.get('case').get('id')
-        application_id = applicant_case.get('case').get('application').get('id')
+    def post(self, request, **kwargs):
+        case_id = str(kwargs['pk'])
+        case, status_code = get_case(request, case_id)
+        application_id = case.get('case').get('application').get('id')
 
         # PUT form data
-        response = requests.put(env("LITE_API_URL") + '/applications/' + application_id + '/',
-                                json=request.POST).json()
+        data, status_code = put_applications(request, application_id, request.POST)
 
-        if 'errors' in response:
+        if 'errors' in data:
             return redirect('/cases/' + case_id + '/manage')
 
         return redirect('/cases/' + case_id)
@@ -135,4 +134,3 @@ class DenyCase(TemplateView):
 
         # If there is no response (no forms left to go through), go to the case page
         return redirect(reverse('cases:case', kwargs={'pk': case_id}))
-

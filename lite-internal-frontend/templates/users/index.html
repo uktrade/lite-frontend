@@ -37,9 +37,15 @@
             {% for user in data.gov_users %}
                 <tr class="govuk-table__row">
                     <td class="govuk-table__cell">
-                        <a href="{% url 'users:user' user.id %}" style="margin: 0;" class="govuk-link">
-                            {{ user.first_name }} {{ user.last_name }}
-                        </a>
+						{% if user.first_name %}
+							<a href="{% url 'users:user' user.id %}" style="margin: 0;" class="govuk-link">
+								{{ user.first_name }} {{ user.last_name }}
+							</a>
+						{% else %}
+							<strong class="govuk-tag govuk-phase-banner__content__tag ">
+								Pending
+							</strong>
+						{% endif %}
                     </td>
                     <td class="govuk-table__cell">{{ user.email }}</td>
                     <td class="govuk-table__cell">

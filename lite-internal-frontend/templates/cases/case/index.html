@@ -44,7 +44,7 @@
 			<p class="lite-heading-s">
 				Status
 			</p>
-			<p class="govuk-label">{{ data.case.application.status | sentence_case}}</p>
+			<p class="govuk-label">{{ data.case.application.status|sentence_case }}</p>
 		</div>
 		<div class="govuk-grid-column-one-third">
 			<p class="lite-heading-s">
@@ -75,10 +75,10 @@
 	<div class="lite-tabs">
 		<!--<a class="lite-tabs__tab">Goods</a>
 		<a class="lite-tabs__tab">Destinations</a>-->
-		<a class="lite-tabs__tab selected" id="case_notes">Case Notes</a>
+		<a class="lite-tabs__tab selected" id="activity">Activity</a>
 	</div>
 </div>
 
-{% include "cases/case/tabs/case_notes.html" %}
+{% include "cases/case/tabs/activity.html" %}
 
 {% endblock %}

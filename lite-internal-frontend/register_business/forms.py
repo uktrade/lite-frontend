@@ -1,5 +1,6 @@
+from core.services import get_countries
 from libraries.forms.components import Section, Form, Question, InputType, Button, HeadingStyle, Heading, \
-    HelpSection
+    HelpSection, ArrayQuestion
 
 register_business_forms = Section('', '', [
     Form(title='Register an organisation',
@@ -40,21 +41,16 @@ register_business_forms = Section('', '', [
                       description='',
                       input_type=InputType.INPUT,
                       name='site.name'),
-             Heading('Address', HeadingStyle.M),
-             Question(title='Address Line 1',
-                      description='',
+             Heading('Where is the organisation based?', HeadingStyle.M),
+             Question(title='Building and street',
+                      description='<span class="govuk-visually-hidden">line 1 of 2</span>',
                       input_type=InputType.INPUT,
                       name='site.address.address_line_1'),
-             Question(title='Address Line 2',
-                      description='',
+             Question(title='',
+                      description='<span class="govuk-visually-hidden">line 2 of 2</span>',
                       input_type=InputType.INPUT,
-                      name='site.address.address_line_2',
-                      optional=True),
-             Question(title='Postal Code',
-                      description='',
-                      input_type=InputType.INPUT,
-                      name='site.address.postcode'),
-             Question(title='City',
+                      name='site.address.address_line_2'),
+             Question(title='Town or city',
                       description='',
                       input_type=InputType.INPUT,
                       name='site.address.city'),
@@ -62,11 +58,17 @@ register_business_forms = Section('', '', [
                       description='',
                       input_type=InputType.INPUT,
                       name='site.address.region'),
-             Question(title='Country',
+             Question(title='Postal Code',
                       description='',
                       input_type=InputType.INPUT,
-                      name='site.address.country'),
-         ], buttons=[
+                      name='site.address.postcode'),
+             ArrayQuestion(title='Country',
+                           description='',
+                           input_type=InputType.AUTOCOMPLETE,
+                           name='site.address.country',
+                           data=get_countries(None, True)),
+         ]
+         , buttons=[
             Button('Save and continue', '')
         ],
          prefix='site'
