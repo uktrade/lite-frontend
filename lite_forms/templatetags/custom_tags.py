@@ -10,6 +10,11 @@ def key_value(dictionary, key):
 
 @register.filter
 def key_in_array(array, key):
+    if isinstance(array, list):
+        if key in array:
+            return True
+        return False
+
     for item in array:
         if item.get('id') == key:
             return True
