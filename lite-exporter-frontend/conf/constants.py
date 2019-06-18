@@ -1,4 +1,4 @@
-ISO8601_FMT = '%Y-%m-%dT%H:%M:%SZ'
+ISO8601_FMT = '%Y-%m-%dT%H:%M:%S.%fZ'
 
 # URLs
 APPLICATIONS_URL = '/applications/'
