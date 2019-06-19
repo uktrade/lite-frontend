@@ -2,7 +2,9 @@ from core.services import get_countries
 from libraries.forms.components import Section, Form, Question, InputType, Button, HeadingStyle, Heading, \
     HelpSection, ArrayQuestion
 
-register_business_forms = Section('', '', [
+
+def register_business_forms():
+    return Section('', '', [
     Form(title='Register an organisation',
          description='Part 1 of 3',
          questions=[
@@ -28,11 +30,12 @@ register_business_forms = Section('', '', [
                       input_type=InputType.INPUT,
                       name='registration_number'),
          ],
+         pk='1',
          buttons=[
              Button('Save and continue', '')
          ],
          prefix='organisation'
-         ),
+    ),
 
     Form(title='Create a default site for this organisation',
          description='Part 2 of 3',
@@ -67,12 +70,14 @@ register_business_forms = Section('', '', [
                            input_type=InputType.AUTOCOMPLETE,
                            name='site.address.country',
                            data=get_countries(None, True)),
-         ]
-         , buttons=[
+         ],
+         pk='2',
+         buttons=[
             Button('Save and continue', '')
-        ],
+         ],
          prefix='site'
-         ),
+    ),
+
     Form('Create an admin for this organisation', 'Part 3 of 3', [
         Question(title='Email Address',
                  description='',
@@ -90,11 +95,13 @@ register_business_forms = Section('', '', [
                  description='',
                  input_type=InputType.PASSWORD,
                  name='user.password'),
-    ], buttons=[
+    ],
+    pk='3',
+    buttons=[
         Button('Submit', '')
     ], helpers=[
         HelpSection('Help', 'This will be the default user for this organisation.')
     ],
          prefix='user'
-         ),
+    ),
 ])

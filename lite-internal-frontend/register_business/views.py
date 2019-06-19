@@ -11,18 +11,20 @@ from register_business import forms
 
 class RegisterBusiness(TemplateView):
     def get(self, request, **kwargs):
+        register_business_forms = forms.register_business_forms()
         context = {
-            'page': forms.register_business_forms.forms[0],
-            'title': forms.register_business_forms.forms[0].title,
+            'page': register_business_forms.forms[0],
+            'title': register_business_forms.forms[0].title,
         }
         return render(request, 'form.html', context)
 
     def post(self, request, **kwargs):
         data = request.POST.copy()
+        register_business_forms = forms.register_business_forms()
 
         # Get the next form based off form_pk
-        current_form = get_form_by_pk(data.get('form_pk'), forms.register_business_forms)
-        next_form = get_next_form_after_pk(data.get('form_pk'), forms.register_business_forms)
+        current_form = get_form_by_pk(data.get('form_pk'), register_business_forms)
+        next_form = get_next_form_after_pk(data.get('form_pk'), register_business_forms)
 
         # Remove form_pk and CSRF from POST data as the new form will replace them
         del data['form_pk']
