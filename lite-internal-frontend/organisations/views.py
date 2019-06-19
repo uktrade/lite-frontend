@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 
 from conf.settings import env
-from organisations.services import get_organisations, get_organisations_sites, get_organisation_detail
+from organisations.services import get_organisations, get_organisations_sites, get_organisation
 
 
 class OrganisationList(TemplateView):
