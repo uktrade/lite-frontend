@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  govfedb:
+    image: "postgres"
+    environment:
+      - POSTGRES_PASSWORD=password
+    ports:
+      - 5430:5432
+    networks:
+      - lite-api_default
+  govfe:
+    env_file:
+      - .env
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - ${PORT}:${PORT}
+    depends_on:
+      - govfedb
+    expose:
+      - ${PORT}
+    networks:
+      - lite-api_default
+    command: pipenv run ./manage.py runserver 0.0.0.0:${PORT}
+
+networks:
+  lite-api_default:
+    external: true
