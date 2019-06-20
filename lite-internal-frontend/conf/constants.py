@@ -9,10 +9,12 @@ ACTIVITY_URL = '/activity/'
 CASE_DENIAL_REASONS_URL = '/denial_reasons/'
 SITES_URL = '/sites/'
 TEAMS_URL = '/teams/'
+QUEUES_URL = '/queues/'
 AUTHENTICATION_URL = '/gov-users/authenticate/'
 USERS_URL = '/gov-users/'
 
 # Static URLs
 STATIC_URL = '/static/'
 DENIAL_REASONS_URL = STATIC_URL + 'denial-reasons/'
+
 COUNTRIES_URL = STATIC_URL + 'countries/'

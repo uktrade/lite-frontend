@@ -1,0 +1,51 @@
+{% extends 'layouts/full_width.html' %}
+
+{% load humanize %}
+
+{% block back-button %}{% endblock %}
+
+{% block body %}
+
+	<div class="lite-app-bar">
+		<h1 class="govuk-heading-l">{% get_string 'queues.queue_list.page_heading' %}</h1>
+		<div class="lite-app-bar--right">
+			<a href="{% url 'queues:add' %}" class="govuk-button" draggable="false" role="button">
+				Add a Queue
+			</a>
+		</div>
+	</div>
+
+	{% if data.queues|length %}
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="col">Name</th>
+					<th class="govuk-table__header" scope="col">Team</th>
+					<th class="govuk-table__header" scope="col">Actions</th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				{% for queue in data.queues %}
+					<tr class="govuk-table__row" style="vertical-align: top;">
+						<td class="govuk-table__cell">
+							{{ queue.name|default:"Untitled" }}
+						</td>
+						<td class="govuk-table__cell">
+							{{ queue.team_name|default:"Untitled" }}
+						</td>
+						<td class="govuk-table__cell">
+							{% if user_data.user.team == queue.team %}
+								<a href="{% url 'queues:edit' queue.id %}" style="margin: 0;" class="govuk-link">Edit</a>
+							{% else %}
+                                None
+                            {% endif %}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		<p class="govuk-caption-l">There are no registered queues at the moment.</p>
+	{% endif %}
+
+{% endblock %}

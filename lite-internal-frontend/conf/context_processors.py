@@ -6,7 +6,7 @@ def export_vars(request):
 
 
 def lite_menu(request):
-    return {
+	return {
 		'LITE_MENU': [
 			{
 				'title': 'Cases',
@@ -22,6 +22,12 @@ def lite_menu(request):
 				'title': 'Teams',
 				'url': '/teams/',
 				'icon': 'menu/teams'
+			},
+			{
+
+				'title': 'Queues',
+				'url': '/queues/',
+				'icon': 'menu/queues'
 			},
 			{
 				'title': 'Users',
