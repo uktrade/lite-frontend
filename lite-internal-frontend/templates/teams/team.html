@@ -17,6 +17,14 @@
 		<h1 class="govuk-heading-l">{{ title }}</h1>
 	</div>
 
+
+	<div class="lite-tabs--fade">
+		<div class="lite-tabs">
+			<a class="lite-tabs__tab selected">Users</a>
+<!--			<a class="lite-tabs__tab">Queues</a>-->
+		</div>
+	</div>
+
 	{% if users|length %}
 		<table class="govuk-table">
 			<thead class="govuk-table__head">
@@ -29,24 +37,25 @@
 			</thead>
 			<tbody class="govuk-table__body">
 				{% for user in users %}
-					<tr class="govuk-table__row">
-						<td class="govuk-table__cell">
-							{% if user.first_name %}
-								<a href="{% url 'users:user' user.id %}" style="margin: 0;" class="govuk-link">
-									{{ user.first_name }} {{ user.last_name }}
-								</a>
-							{% else %}
-								<strong class="govuk-tag govuk-phase-banner__content__tag ">
-									Pending
-								</strong>
-							{% endif %}
-						</td>
-						<td class="govuk-table__cell">{{ user.email }}</td>
-						<td class="govuk-table__cell">{{ user.status }}</td>
-						<td class="govuk-table__cell">
-						</td>
-					</tr>
-				{% endfor %}
+                <tr class="lite-table__row" {% if not user.first_name %}style="background-color: rgba(40, 161, 151, 0.025);"{% endif %}>
+                    <td class="lite-table__cell">
+						{% if user.first_name %}
+							<a href="{% url 'users:user' user.id %}" style="margin: 0;" class="govuk-link govuk-link--no-visited-state">
+								{{ user.first_name }} {{ user.last_name }}
+							</a>
+						{% else %}
+							<strong class="govuk-tag govuk-phase-banner__content__tag ">
+								Pending
+							</strong>
+						{% endif %}
+                    </td>
+                    <td class="lite-table__cell">{{ user.email }}</td>
+                    <td class="lite-table__cell">{{ user.status }}</td>
+                    <td class="lite-table__cell">
+                        <a href="{% url 'users:edit' user.id %}" style="margin: 0;" class="govuk-link govuk-link--no-visited-state">Edit</a>
+                    </td>
+                </tr>
+            {% endfor %}
 			</tbody>
 		</table>
 	{% else %}

@@ -1,5 +1,5 @@
 from conf.client import get
-from conf.constants import DENIAL_REASONS_URL, COUNTRIES_URL
+from conf.constants import DENIAL_REASONS_URL, COUNTRIES_URL, QUEUES_URL
 from libraries.forms.components import Option, ArrayQuestion, InputType
 
 
@@ -41,5 +41,29 @@ def get_countries(request, convert_to_options=False):
             )
 
         return converted_units
+
+    return data.json(), data.status_code
+
+
+# Queues
+
+
+def get_queue(request, pk):
+    data = get(request, QUEUES_URL + pk)
+    return data.json(), data.status_code
+
+
+def get_queues(request, convert_to_options=False):
+    data = get(request, QUEUES_URL)
+
+    if convert_to_options:
+        converted = []
+
+        for queue in data.json().get('queues'):
+            converted.append(
+                Option(queue.get('id'), queue.get('name'), description=queue.get('team').get('name'))
+            )
+
+        return converted
 
     return data.json(), data.status_code

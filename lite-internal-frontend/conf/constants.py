@@ -12,6 +12,7 @@ TEAMS_URL = '/teams/'
 QUEUES_URL = '/queues/'
 AUTHENTICATION_URL = '/gov-users/authenticate/'
 USERS_URL = '/gov-users/'
+QUEUES_URL = '/queues/'
 
 # Static URLs
 STATIC_URL = '/static/'

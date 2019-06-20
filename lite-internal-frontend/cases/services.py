@@ -7,6 +7,11 @@ def get_case(request, pk):
     return data.json(), data.status_code
 
 
+def put_case(request, pk, json):
+    data = put(request, CASE_URL + pk + '/', json)
+    return data.json(), data.status_code
+
+
 # Applications
 
 

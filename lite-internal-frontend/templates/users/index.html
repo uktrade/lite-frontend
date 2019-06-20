@@ -1,44 +1,40 @@
 {% extends 'layouts/full_width.html' %}
 
-{% load humanize %}
-
-{% block back-button %}
-	<a href="/" class="govuk-back-link">Back</a>
-{% endblock %}
+{% block back-button %}{% endblock %}
 
 {% block body %}
-
-	{% if userDeactivated == "true" %}
-		<div class="information information-animated">
-			{% get_string 'users.deleted' %}
-		</div>
-	{% endif %}
 
 	<div class="lite-app-bar">
 		<h1 class="govuk-heading-l">Users</h1>
 		<div class="lite-app-bar--right">
 			<a href="{% url 'users:add' %}" class="govuk-button" draggable="false" role="button">
-				Add a user
+				{% get_string 'users.invite' %}
 			</a>
 		</div>
 	</div>
 
-    <table class="govuk-table">
-        <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
-                <th class="govuk-table__header" scope="col">Name</th>
-                <th class="govuk-table__header" scope="col">Email</th>
-                <th class="govuk-table__header" scope="col">Team</th>
-                <th class="govuk-table__header" scope="col">Status</th>
-                <th class="govuk-table__header" scope="col"></th>
+	<p class="govuk-caption-m" style="max-width: 600px;">
+		{% get_string 'users.description' %}
+	</p>
+
+	<br>
+
+    <table class="lite-table">
+        <thead class="lite-table__head">
+            <tr class="lite-table__row">
+                <th class="lite-table__header" scope="col">Name</th>
+                <th class="lite-table__header" scope="col">Email</th>
+                <th class="lite-table__header" scope="col">Team</th>
+                <th class="lite-table__header" scope="col">Status</th>
+                <th class="lite-table__header" scope="col"></th>
             </tr>
         </thead>
-        <tbody class="govuk-table__body">
+        <tbody class="lite-table__body">
             {% for user in data.gov_users %}
-                <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">
+                <tr class="lite-table__row" {% if not user.first_name %}style="background-color: rgba(40, 161, 151, 0.025);"{% endif %}>
+                    <td class="lite-table__cell">
 						{% if user.first_name %}
-							<a href="{% url 'users:user' user.id %}" style="margin: 0;" class="govuk-link">
+							<a href="{% url 'users:user' user.id %}" style="margin: 0;" class="govuk-link govuk-link--no-visited-state">
 								{{ user.first_name }} {{ user.last_name }}
 							</a>
 						{% else %}
@@ -47,15 +43,15 @@
 							</strong>
 						{% endif %}
                     </td>
-                    <td class="govuk-table__cell">{{ user.email }}</td>
-                    <td class="govuk-table__cell">
-                        <a href="{% url 'teams:team' user.team %}" style="margin: 0;" class="govuk-link">
+                    <td class="lite-table__cell">{{ user.email }}</td>
+                    <td class="lite-table__cell">
+                        <a href="{% url 'teams:team' user.team %}" style="margin: 0;" class="govuk-link govuk-link--no-visited-state">
                             {{ user.team_name }}
                         </a>
                     </td>
-                    <td class="govuk-table__cell">{{ user.status }}</td>
-                    <td class="govuk-table__cell">
-                        <a href="{% url 'users:edit' user.id %}" style="margin: 0;" class="govuk-link">Edit</a>
+                    <td class="lite-table__cell">{{ user.status }}</td>
+                    <td class="lite-table__cell">
+                        <a href="{% url 'users:edit' user.id %}" style="margin: 0;" class="govuk-link govuk-link--no-visited-state">Edit</a>
                     </td>
                 </tr>
             {% endfor %}

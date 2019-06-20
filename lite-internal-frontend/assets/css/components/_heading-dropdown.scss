@@ -1,5 +1,5 @@
 .lite-heading-dropdown {
-    @include govuk-focusable-fill;
+	@include govuk-focusable-fill;
 	position: relative;
 	display: none;
 	padding-right: 35px;
@@ -7,6 +7,9 @@
 	-webkit-user-select: none;
 	user-select: none;
 	text-decoration: none;
+	-webkit-user-select: none;
+	user-select: none;
+
 	&:after {
 		content: "";
 		position: absolute;
@@ -14,26 +17,44 @@
 		bottom: 4px;
 		right: 0;
 		width: 25px;
-		background-image: url('/assets/images/dropdown.svg');
+		background-image: url("/assets/images/dropdown.svg");
 		background-position: center;
 		background-repeat: no-repeat;
 		background-size: contain;
+		transition: .2s ease;
 	}
+
 	&:hover {
 		text-decoration: underline;
 	}
 }
 
 .lite-heading-dropdown--flipped {
+	z-index: 15;
 	&:after {
-		transform: scaleY(-1);
+		transform: rotate(180deg);
 	}
+}
+
+.lite-dropdown-background {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: transparent;
+	display: none;
+	z-index: 10;
 }
 
 .lite-dropdown--container {
 	position: relative;
-	z-index: 1;
-	display: none;
+	z-index: 15;
+	opacity: 0;
+	transform-origin: 0 0;
+	transform: scale(0.8) translateY(-20px);
+	transition: 0.2s ease;
+	visibility: hidden;
 }
 
 .lite-dropdown {
@@ -47,14 +68,21 @@
 	box-shadow: 0 20px 20px rgba(0,0,0,0.15), 0 5px 5px rgba(0,0,0,0.15), 0 0 2px rgba(0,0,0,0.15);
 }
 
+.lite-dropdown--visible {
+	opacity: 1!important;
+	visibility: visible!important;
+	transform: scale(1) translateY(0)!important;
+}
+
 .lite-dropdown--item {
-    @include govuk-focusable-fill;
+	@include govuk-focusable-fill;
 	position: relative;
 	display: block;
 	padding: 15px 20px;
 	@include govuk-font($size: 16);
 	text-decoration: none;
 	color: $govuk-brand-colour!important;
+
 	&:after {
 		content: "";
 		position: absolute;
@@ -65,17 +93,21 @@
 		background-color: rgba(black, 0.1);
 		z-index: 1;
 	}
+
 	&:hover {
 		background-color: govuk-colour("grey-4");
 		text-decoration: underline;
 	}
+
 	&:active {
 		background-color: govuk-colour("grey-3");
 	}
+
 	&:focus {
 		outline: none;
 		color: black!important;
 	}
+
 	&:last-of-type {
 		&:after {
 			height: 0;
@@ -86,6 +118,7 @@
 .lite-dropdown--item--selected {
 	background: $govuk-brand-colour!important;
 	color: govuk-colour("white")!important;
+
 	&:after {
 		height: 0;
 	}
@@ -95,6 +128,7 @@
 	.lite-dropdown-select {
 		display: none;
 	}
+
 	.lite-heading-dropdown {
 		display: inline-block;
 	}

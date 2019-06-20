@@ -31,7 +31,7 @@
 							{{ queue.name|default:"Untitled" }}
 						</td>
 						<td class="govuk-table__cell">
-							{{ queue.team_name|default:"Untitled" }}
+							{{ queue.team.name|default:"Untitled" }}
 						</td>
 						<td class="govuk-table__cell">
 							{% if user_data.user.team == queue.team %}
