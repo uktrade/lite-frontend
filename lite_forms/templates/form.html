@@ -96,10 +96,6 @@
 		});
 	</script>
 
-	{% for url in page.javascript_imports %}
-		<script src="{{ url }}"></script>
-	{% endfor %}
-
 {% endblock %}
 {% block oneThird %}
 	{% for question in page.helpers %}
@@ -111,5 +107,9 @@
 				{{ question.description }}
 			</p>
 		</aside>
+	{% endfor %}
+
+	{% for url in page.javascript_imports %}
+		<script src="{{ url }}"></script>
 	{% endfor %}
 {% endblock %}

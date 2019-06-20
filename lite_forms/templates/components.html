@@ -32,6 +32,8 @@
 			<input type="hidden" name="{{ question.name }}" value="{{ question.value }}">
 		{% elif question.input_type.name == "INPUT" %}
 			{% include "components/input.html" with name=question.name value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
+		{% elif question.input_type.name == "FILTER" %}
+			{% include "components/filter.html" with placeholder=question.placeholder %}
 		{% elif question.input_type.name == "CURRENCY" %}
 			{% include "components/currency.html" with name=question.name value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
 		{% elif question.input_type.name == "TEXTAREA" %}

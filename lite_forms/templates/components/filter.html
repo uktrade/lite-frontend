@@ -1,0 +1,8 @@
+{% load svg %}
+
+<div class="lite-search-wrapper" style="max-width: 400px; display: none;">
+    <div class="lite-search-icon">
+        {% svg 'search' %}
+    </div>
+    <input type="search" name="search" class="govuk-input" name="filter-box" id="filter-box" placeholder="{{ placeholder }}" autocomplete="off" autocorrect="off">
+</div>

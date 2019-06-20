@@ -18,6 +18,7 @@ class InputType(Enum):
     HEADING = 13
     HTML = 14
     DETAIL = 15
+    FILTER = 16
 
 
 class ButtonStyle(Enum):
@@ -42,7 +43,6 @@ class Button:
 
 class Section:
     def __init__(self, title, description, forms):
-        self.id = uuid.uuid1()
         self.title = title
         self.description = description
         self.forms = forms
@@ -54,7 +54,6 @@ class Form:
                  description,
                  questions,
                  caption=None,
-                 prefix=None,
                  buttons=None,
                  helpers=None,
                  javascript_imports=None,
@@ -76,7 +75,6 @@ class Form:
         if self.buttons is None:
             self.buttons = [Button(default_button_name, 'submit')]
         self.javascript_imports = javascript_imports
-        self.prefix = prefix
 
 
 class Question:
@@ -145,3 +143,21 @@ class Heading:
         self.text = text
         self.heading_style = heading_style
         self.input_type = InputType.HEADING
+
+
+class Checkboxes:
+    def __init__(self, name, options, title='', description='', optional=False):
+        self.options = options
+        self.input_type = InputType.CHECKBOXES
+
+
+class Radiobuttons:
+    def __init__(self, name, options, title='', description='', optional=False):
+        self.options = options
+        self.input_type = InputType.RADIOBUTTONS
+
+
+class Filter:
+    def __init__(self, placeholder='Filter'):
+        self.placeholder = placeholder
+        self.input_type = InputType.FILTER
