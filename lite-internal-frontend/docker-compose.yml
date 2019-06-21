@@ -5,8 +5,12 @@ services:
     image: "postgres"
     environment:
       - POSTGRES_PASSWORD=password
+    command:
+      - "postgres"
+      - "-c"
+      - "port=5431"
     ports:
-      - 5430:5432
+      - 5431:5431
     networks:
       - lite-api_default
   govfe:
