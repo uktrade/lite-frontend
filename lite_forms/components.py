@@ -19,6 +19,7 @@ class InputType(Enum):
     HTML = 14
     DETAIL = 15
     FILTER = 16
+    QUANTITY = 17
 
 
 class ButtonStyle(Enum):
