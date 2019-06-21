@@ -18,7 +18,7 @@ def preexisting_good_form(id, description, control_code, part_number, units):
         SideBySideSection(questions=[
             Question(title='Quantity',
                      description='',
-                     input_type=InputType.INPUT,
+                     input_type=InputType.QUANTITY,
                      name='quantity'),
             ArrayQuestion(title='Unit of Measurement',
                           description='',
