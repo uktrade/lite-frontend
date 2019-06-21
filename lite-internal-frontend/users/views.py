@@ -66,7 +66,7 @@ class EditUser(TemplateView):
         if status_code != 200:
             return form_page(request, edit_user_form(teams), data=request.POST, errors=response.get('errors'))
 
-        return redirect(reverse_lazy('users:user', kwargs={'pk': str(kwargs['pk'])}))
+        return redirect(reverse_lazy('users:users'))
 
 
 class ChangeUserStatus(TemplateView):

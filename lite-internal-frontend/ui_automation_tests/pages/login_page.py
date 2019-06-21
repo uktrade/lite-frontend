@@ -1,9 +1,5 @@
-from selenium.webdriver.support.ui import Select
-
-
 class LoginPage():
 
-    # called e time you create an object for this class
     def __init__(self, driver):
         self.driver = driver
         self.login_field = driver.find_element_by_name("username")

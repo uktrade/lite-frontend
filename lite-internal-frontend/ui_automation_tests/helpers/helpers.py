@@ -1,11 +1,10 @@
 import allure
+import datetime
 import os
-import pytest
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver.common.by import By
 from datetime import date
 import logging
 
@@ -76,3 +75,15 @@ def get_text(driver, by_type, locator):
 def repeat_to_length(string_to_expand, length):
     return (string_to_expand * (int(length/len(string_to_expand))+1))[:length]
 
+
+def get_formatted_date_time_h_m_pm_d_m_y():
+    return datetime.datetime.now().strftime("%I:%M%p %d %B %Y").lstrip("0").replace(" 0", " ").replace("PM", "pm").replace(
+        "AM", "am")
+
+
+def get_unformatted_date_time():
+    return datetime.datetime.now()
+
+
+def get_formatted_date_time_m_d_h_s():
+    return datetime.datetime.now().strftime("%m%d%H%M%S")
