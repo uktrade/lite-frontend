@@ -82,7 +82,21 @@ class ManageCase(TemplateView):
 
 class DecideCase(TemplateView):
     def get(self, request, **kwargs):
-        return form_page(request, record_decision_form())
+        case_id = str(kwargs['pk'])
+        case, status_code = get_case(request, case_id)
+
+        if case['case']['application']['status'] == 'approved':
+            data = {
+                'status': case['case']['application']['status']
+            }
+        elif case['case']['application']['status'] == 'under_final_review':
+            data = {
+                'status': 'declined'
+            }
+        else:
+            data = {}
+
+        return form_page(request, record_decision_form(), data=data)
 
     def post(self, request, **kwargs):
         case_id = str(kwargs['pk'])
