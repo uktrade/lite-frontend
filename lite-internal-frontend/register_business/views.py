@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.views.generic import TemplateView
 
 from libraries.forms.components import HiddenField
-from libraries.forms.generators import success_page
+from libraries.forms.generators import success_page, form_page
 from libraries.forms.helpers import get_next_form_after_pk, nest_data, get_form_by_pk, flatten_data
 from organisations.services import post_organisations
 from register_business import forms
@@ -11,12 +11,7 @@ from register_business import forms
 
 class RegisterBusiness(TemplateView):
     def get(self, request, **kwargs):
-        register_business_forms = forms.register_business_forms()
-        context = {
-            'page': register_business_forms.forms[0],
-            'title': register_business_forms.forms[0].title,
-        }
-        return render(request, 'form.html', context)
+        return form_page(request, forms.register_business_forms().forms[0])
 
     def post(self, request, **kwargs):
         data = request.POST.copy()
@@ -41,6 +36,23 @@ class RegisterBusiness(TemplateView):
 
             # If there are errors in the validated data, take the user back
             if len(validated_data['errors']) is not 0:
+
+                # TODO: Clean up this code
+                # Add hidden fields to the current form
+                for key, value in data.items():
+                    exists = False
+
+                    for question in current_form.questions:
+                        if hasattr(question, 'name'):
+                            if question.name == key:
+                                exists = True
+                                continue
+
+                    if not exists:
+                        current_form.questions.append(
+                            HiddenField(key, value)
+                        )
+
                 context = {
                     'page': current_form,
                     'title': current_form.title,
