@@ -49,6 +49,12 @@ class Section:
         self.forms = forms
 
 
+class BackLink:
+    def __init__(self, text='Back', url='#'):
+        self.text = text
+        self.url = url
+
+
 class Form:
     def __init__(self,
                  title,
@@ -59,7 +65,8 @@ class Form:
                  helpers=None,
                  javascript_imports=None,
                  default_button_name='Submit',
-                 pk=None):
+                 pk=None,
+                 back_link=BackLink()):
 
         if not pk:
             self.pk = uuid.uuid1()
@@ -73,6 +80,7 @@ class Form:
         self.caption = caption
         self.helpers = helpers
         self.buttons = buttons
+        self.back_link = back_link
         if self.buttons is None:
             self.buttons = [Button(default_button_name, 'submit')]
         self.javascript_imports = javascript_imports
@@ -111,16 +119,6 @@ class HiddenField:
         self.input_type = InputType.HIDDEN
 
 
-class Option:
-    def __init__(self, key, value, description=None, show_pane=None, sections=None, show_or=False):
-        self.key = key
-        self.value = value
-        self.description = description
-        self.sections = sections
-        self.show_pane = show_pane
-        self.show_or = show_or
-
-
 class HelpSection:
     def __init__(self, title, description):
         self.title = title
@@ -139,26 +137,98 @@ class SideBySideSection:
         self.questions = questions
 
 
+class _Component:
+    """
+    Base component for LITE forms - only for internal use
+    """
+
+    def __init__(self,
+                 name: str,
+                 title: str = '',
+                 description: str = '',
+                 optional: bool = False,
+                 classes: [] = None):
+        self.name = name
+        self.title = title
+        self.description = description
+        self.optional = optional
+        self.classes = classes
+
+
+class Input(_Component):
+    def __init__(self,
+                 name: str,
+                 title: str = '',
+                 description: str = '',
+                 optional: bool = False,
+                 classes: [] = None):
+        super().__init__(name, title, description, optional, classes)
+        self.input_type = 'INPUT'
+
+
+class Checkboxes(_Component):
+    """
+    Displays checkboxes on the page
+    Add Option components to the options array to show checkboxes
+    Add optional classes such as 'lite-checkboxes--inline' or 'govuk-checkboxes--small'
+    """
+
+    def __init__(self,
+                 name: str,
+                 options: [],
+                 title: str = '',
+                 description: str = '',
+                 optional: bool = False,
+                 classes: [] = None):
+        super().__init__(name, title, description, optional, classes)
+        self.options = options
+        self.input_type = 'CHECKBOXES'
+
+
+class RadioButtons(_Component):
+    """
+    Displays radiobuttons on the page
+    Add Option components to the options array to show radiobuttons
+    Add optional classes such as 'lite-radiobuttons--inline' or 'govuk-radiobuttons--small'
+    """
+
+    def __init__(self,
+                 name: str,
+                 options: [],
+                 title: str = '',
+                 description: str = '',
+                 optional: bool = False,
+                 classes: [] = None):
+        super().__init__(name, title, description, optional, classes)
+        self.options = options
+        self.input_type = 'RADIOBUTTONS'
+
+
+class Option:
+    def __init__(self, key, value, description=None, show_pane=None, sections=None, show_or=False):
+        self.key = key
+        self.value = value
+        self.description = description
+        self.sections = sections
+        self.show_pane = show_pane
+        self.show_or = show_or
+
+
+class Filter:
+    """
+    Filters a list of checkboxes based on title and description
+    """
+
+    def __init__(self, placeholder: str = 'Filter'):
+        """
+        :type placeholder: Sets the placeholder text on the input field
+        """
+        self.placeholder = placeholder
+        self.input_type = InputType.FILTER
+
+
 class Heading:
     def __init__(self, text, heading_style):
         self.text = text
         self.heading_style = heading_style
         self.input_type = InputType.HEADING
-
-
-class Checkboxes:
-    def __init__(self, name, options, title='', description='', optional=False):
-        self.options = options
-        self.input_type = InputType.CHECKBOXES
-
-
-class Radiobuttons:
-    def __init__(self, name, options, title='', description='', optional=False):
-        self.options = options
-        self.input_type = InputType.RADIOBUTTONS
-
-
-class Filter:
-    def __init__(self, placeholder='Filter'):
-        self.placeholder = placeholder
-        self.input_type = InputType.FILTER

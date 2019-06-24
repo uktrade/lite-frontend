@@ -2,6 +2,10 @@
 
 {% load custom_tags %}
 
+{% block back-button %}
+	<a href="{{ page.back_link.url }}" class="govuk-back-link">{{ page.back_link.text }}</a>
+{% endblock %}
+
 {% block twoThirds %}
 
 	<!-- Error Summary -->

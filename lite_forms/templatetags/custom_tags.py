@@ -28,5 +28,18 @@ def key_in_array(array, key):
 
 
 @register.filter
+def id_in_array(array, key):
+    # If array is empty, return False
+    if not array:
+        return False
+
+    # If else, loop through
+    for item in array:
+        if item.get('id') == key:
+            return True
+    return False
+
+
+@register.filter
 def prefix_dots(text):
     return text.replace('.', '\\\.')
