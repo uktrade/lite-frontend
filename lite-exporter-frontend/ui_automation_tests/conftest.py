@@ -35,9 +35,9 @@ def pytest_addoption(parser):
         env = "dev"
     print("touched: " + env)
     parser.addoption("--driver", action="store", default="chrome", help="Type in browser type")
-    parser.addoption("--exporter_url", action="store", default="https://lite-exporter-frontend-" + env + ".london.cloudapps.digital/", help="url")
+    parser.addoption("--exporter_url", action="store", default="https://exporter.lite.service." + env + ".uktrade.io/", help="url")
     #parser.addoption("--exporter_url", action="store", default="localhost:9000/", help="url")
-    parser.addoption("--internal_url", action="store", default="https://lite-internal-frontend-" + env + ".london.cloudapps.digital/", help="url")
+    parser.addoption("--internal_url", action="store", default="https://internal.lite.service." + env + ".uktrade.io/", help="url")
     #parser.addoption("--internal_url", action="store", default="localhost:8080/", help="url")
     parser.addoption("--email", action="store", default= "test@mail.com")
     parser.addoption("--password", action="store", default= "password")
@@ -129,6 +129,7 @@ def login_to_exporter(driver, username, password):
 def assert_title_text(driver, expected_text):
     assert driver.title == expected_text
 
+
 @pytest.fixture
 def context():
     class Context(object):
@@ -136,10 +137,10 @@ def context():
 
     return Context()
 
+
 @pytest.fixture
 def test_teardown(driver):
     driver.quit()
-
 
 
 # applying for licence
@@ -310,6 +311,7 @@ def add_new_good(driver, description, controlled,  controlcode, incorporated, pa
     add_goods_page.enter_part_number(good_part)
     exporter_hub.click_save_and_continue()
 
+
 @when(parsers.parse('I add an end user of type: "{type}", name: "{name}", website: "{website}", address: "{address}" and country "{country}"'))
 def add_new_end_user(driver, type, name, website, address, country):
     add_end_user_pages = AddEndUserPages(driver)
@@ -323,10 +325,12 @@ def add_new_end_user(driver, type, name, website, address, country):
     add_end_user_pages.enter_country(country)
     add_end_user_pages.click_continue()
 
+
 @when('I click on end user')
 def i_click_on_end_user(driver):
     app = ApplicationOverviewPage(driver)
     app.click_end_user_link()
+
 
 @when('I click on application overview')
 def i_click_on_application_overview(driver):

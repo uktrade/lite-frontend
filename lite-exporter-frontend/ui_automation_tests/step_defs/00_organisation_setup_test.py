@@ -28,7 +28,7 @@ def register_organisation(driver):
         internal_hub.enter_zip_code("N23 6YL")
         internal_hub.enter_city("London")
         internal_hub.enter_state("London")
-        internal_hub.enter_country("United Kingdom")
+        internal_hub.enter_country("Ukraine")
 
         internal_hub.click_save_and_continue()
 
