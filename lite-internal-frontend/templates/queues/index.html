@@ -34,11 +34,11 @@
 							{{ queue.team.name|default:"Untitled" }}
 						</td>
 						<td class="govuk-table__cell">
-							{% if user_data.user.team == queue.team %}
-								<a href="{% url 'queues:edit' queue.id %}" style="margin: 0;" class="govuk-link">Edit</a>
+							{% if user_data.user.team == queue.team.id %}
+								<a href="{% url 'queues:edit' queue.id %}" style="margin: 0;" class="govuk-link govuk-link--no-visited-state">Edit</a>
 							{% else %}
-                                None
-                            {% endif %}
+                                				None
+                            				{% endif %}
 						</td>
 					</tr>
 				{% endfor %}
