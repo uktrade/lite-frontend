@@ -3,7 +3,7 @@
 {% load custom_tags %}
 
 {% block back-button %}
-	<a href="{{ page.back_link.url }}" class="govuk-back-link">{{ page.back_link.text }}</a>
+	<a href="{{ page.back_link.url }}" class="govuk-back-link {% if persistent_bar.text %}lite-persistent-bar--back{% endif %}">{{ page.back_link.text }}</a>
 {% endblock %}
 
 {% block twoThirds %}
