@@ -22,3 +22,6 @@ class HeaderPage():
 
     def click_user_profile(self):
         self.driver.find_element_by_css_selector(".lite-user-menu-button--user").click()
+
+    def click_flags(self):
+        self.driver.find_element_by_css_selector("a[href*='/flags/']").click()

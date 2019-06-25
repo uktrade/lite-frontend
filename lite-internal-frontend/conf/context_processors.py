@@ -33,6 +33,11 @@ def lite_menu(request):
 				'title': 'Users',
 				'url': '/users/',
 				'icon': 'menu/users'
+			},
+			{
+				'title': 'Flags',
+				'url': '/flags/',
+				'icon': 'menu/flags'
 			}
 		]
 	}

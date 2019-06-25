@@ -84,7 +84,7 @@ class ChangeUserStatus(TemplateView):
             description = get_string('update_user.status.reactivate_warning')
 
         context = {
-            'title': 'Are you sure you want to {} this user?'.format(status),
+            'title': 'Are you sure you want to {} this flag?'.format(status),
             'description': description,
             'user_id': str(kwargs['pk']),
             'status': status,

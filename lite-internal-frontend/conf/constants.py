@@ -13,6 +13,7 @@ QUEUES_URL = '/queues/'
 AUTHENTICATION_URL = '/gov-users/authenticate/'
 USERS_URL = '/gov-users/'
 QUEUES_URL = '/queues/'
+FLAGS_URL = '/flags/'
 
 # Static URLs
 STATIC_URL = '/static/'

@@ -1,8 +1,7 @@
-import datetime
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import Select
 import helpers.helpers as utils
 import pytest
+from conf.settings import env
 import logging
 log = logging.getLogger()
 console = logging.StreamHandler()
@@ -13,8 +12,8 @@ from pages.header_page import HeaderPage
 from pages.users_page import UsersPage
 
 
-sso_email="test-uat-user@digital.trade.gov.uk"
-sso_password="5cCIlffSrqszgOuw23VEOECnM"
+sso_email=env('TEST_SSO_EMAIL')
+sso_password=env('TEST_SSO_PASSWORD')
 
 
 @pytest.fixture(scope="function")

@@ -1,0 +1,43 @@
+{% extends 'layouts/two_pane.html' %}
+
+{% load humanize custom_tags %}
+
+{% block back-button %}
+	<a href="#" class="govuk-back-link">Back</a>
+{% endblock %}
+
+{% block twoThirds %}
+
+	<h1 class="govuk-heading-xl">
+		{{ title }}
+	</h1>
+
+	<dl class="govuk-summary-list">
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				Name
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ data.flag.name }}
+			</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				Team
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ data.flag.team_name }}
+			</dd>
+		</div>
+	</dl>
+
+	<div class="lite-user-profile-container">
+		<a href="{% url 'flags:edit' data.flag.id %}" style="margin: 0;" class="govuk-button govuk-button--secondary">Edit</a>
+		{% if data.flag.status == 'Active' %}
+			<a href="{% url 'flags:change_status' data.flag.id 'deactivate' %}" role="button" draggable="false" class="govuk-button govuk-button--warning govuk-!-margin-right-2">Deactivate</a>
+		{% elif data.flag.status == 'Deactivated' %}
+			<a href="{% url 'flags:change_status' data.flag.id 'reactivate' %}" role="button" draggable="false" class="govuk-button govuk-!-margin-right-2">Reactivate</a>
+		{% endif %}
+	</div>
+
+{% endblock %}
