@@ -1,12 +1,16 @@
 version: '3'
 
 services:
-  fedb:
+  exfedb:
     image: "postgres"
     environment:
       - POSTGRES_PASSWORD=password
+    command:
+      - "postgres"
+      - "-c"
+      - "port=5430"
     ports:
-      - 5430:5432
+      - 5430:5430
     networks:
       - lite-api_default
   exporter-fe:
@@ -18,7 +22,7 @@ services:
     ports:
       - ${PORT}:${PORT}
     depends_on:
-      - fedb
+      - exfedb
     expose:
       - ${PORT}
     networks:
