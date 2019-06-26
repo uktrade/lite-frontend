@@ -25,3 +25,6 @@ class HeaderPage():
 
     def click_flags(self):
         self.driver.find_element_by_css_selector("a[href*='/flags/']").click()
+
+    def click_queues(self):
+        self.driver.find_element_by_css_selector("a[href*='/queues/']").click()

@@ -1,4 +1,7 @@
-Feature: flags
+Feature:  I want to create and deactivate case flags
+  As a logged in government user
+  I want to create and deactivate case flags
+  So that I can make new flags where required and prevent flags which are no longer relevant from being assigned to cases
 
   Scenario: Create new flag
     Given I go to internal homepage
