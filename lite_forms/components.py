@@ -232,3 +232,25 @@ class Heading:
         self.text = text
         self.heading_style = heading_style
         self.input_type = InputType.HEADING
+
+
+class FileUpload(_Component):
+    def __init__(self,
+                 name: str,
+                 title: str = '',
+                 description: str = '',
+                 optional: bool = False,
+                 classes: [] = None):
+        super().__init__(name, title, description, optional, classes)
+        self.input_type = 'FileUpload'
+
+
+class MultiFileUpload(_Component):
+    def __init__(self,
+                 name: str,
+                 title: str = '',
+                 description: str = '',
+                 optional: bool = False,
+                 classes: [] = None):
+        super().__init__(name, title, description, optional, classes)
+        self.input_type = 'MultiFileUpload'
