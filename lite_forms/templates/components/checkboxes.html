@@ -1,7 +1,7 @@
 <div class="govuk-checkboxes {% for class in component.classes %}{{ class }} {% endfor %}">
 	{% for item in component.options %}
 		<div class="govuk-checkboxes__item">
-			<input {% if data|id_in_array:item.key %}checked{% endif %} class="govuk-checkboxes__input" id="{{ item.value }}" name="{{ component.name }}" type="checkbox" value="{{ item.key }}">
+			<input {% if data|key_in_array:item.key %}checked{% endif %} class="govuk-checkboxes__input" id="{{ item.value }}" name="{{ component.name }}" type="checkbox" value="{{ item.key }}">
 			<label class="govuk-label govuk-checkboxes__label" for="{{ item.value }}">
 				{{ item.value }}
 			</label>
