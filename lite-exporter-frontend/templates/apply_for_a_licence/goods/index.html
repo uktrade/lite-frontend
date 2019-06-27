@@ -11,12 +11,15 @@
 	<div class="lite-app-bar">
 		<h2 class="govuk-heading-l">{{ title }}</h2>
 		<div class="lite-app-bar--right">
-			<a href="{% url 'apply_for_a_licence:preexisting_good' draft_id %}" role='button' draggable='false' class='govuk-button'>Add from organisations goods</a>
+			{% block right_button %}
+                <a href="{% url 'apply_for_a_licence:preexisting_good' draft_id %}" role='button' draggable='false' class='govuk-button'>Add from organisations goods</a>
+            {% endblock %}
 		</div>
 	</div>
 
-	{% if data.goods|length %}
+	{% if data.goods %}
 		{% for good in data.goods %}
+            {% block good %}
 			<div class="lite-card">
 				<h4 class="govuk-heading-s" style="margin-bottom: 0;">{{ good.good.description }}</h4>
 				<span class="govuk-caption-m" style="display: inline-block; margin-right: 10px;">Part Number: </span><p class="govuk-label" style="display: inline-block; {% if not good.good.part_number %}opacity: 0.4;{% endif %}">{{ good.good.part_number|default:"N/A" }}</p>
@@ -27,9 +30,13 @@
 				<br/>
 				<span class="govuk-caption-m" style="display: inline-block; margin-right: 10px;">Monetary Value: </span><p class="govuk-label" style="display: inline-block;">£{{ good.value }}</p>
 			</div>
+            {% endblock %}
 		{% endfor %}
+	{% elif not data.goods and draft.draft.licence_type  == 'standard_licence' %}
+		<p class="govuk-caption-l">There are no goods to show. To add a good, use the Add from organisations goods button.</p>
 	{% else %}
-		<p class="govuk-caption-l">You don't have any goods at the moment.</p>
-	{% endif %}
+        <p class="govuk-caption-l">{% get_string 'good_types.overview_good_types.no_good_types' %}</p>
+    {% endif %}
+
 
 {% endblock %}

@@ -172,7 +172,7 @@ def enter_application_name(driver):
 @when(parsers.parse('I select "{type}" application and continue'))
 def enter_type_of_application(driver, type):
     context.type = type
-    # type needs to be standard or temporary
+    # type needs to be standard or open
     apply = ApplyForALicencePage(driver)
     apply.click_export_licence(type)
     apply.click_continue()
@@ -181,7 +181,7 @@ def enter_type_of_application(driver, type):
 @when(parsers.parse('I select "{permanent_or_temporary}" option and continue'))
 def enter_permanent_or_temporary(driver, permanent_or_temporary):
     context.perm_or_temp = permanent_or_temporary
-    # type needs to be standard or temporary
+    # type needs to be permanent or temporary
     apply = ApplyForALicencePage(driver)
     apply.click_permanent_or_temporary_button(permanent_or_temporary)
     apply.click_continue()
@@ -293,8 +293,13 @@ def click_external_locations(driver):
 def click_add_from_organisation_button(driver):
     driver.find_element_by_css_selector('a[href*="add-preexisting"]').click()
 
+@when('I click add a good button')
+def click_add_from_organisation_button(driver):
+    add_goods_page = AddGoodPage(driver)
+    add_goods_page.click_add_a_good()
 
-@when(parsers.parse('I add a good with description "{description}" controlled "{controlled}" control code "{controlcode}" incorporated "{incorporated}" and part number "{part}"'))
+
+@when(parsers.parse('I add a good or good type with description "{description}" controlled "{controlled}" control code "{controlcode}" incorporated "{incorporated}" and part number "{part}"'))
 def add_new_good(driver, description, controlled,  controlcode, incorporated, part):
     exporter_hub = ExporterHubPage(driver)
     add_goods_page = AddGoodPage(driver)
@@ -303,12 +308,12 @@ def add_new_good(driver, description, controlled,  controlcode, incorporated, pa
     context.good_description = good_description
     context.part = good_part
     context.controlcode = controlcode
-    add_goods_page.click_add_a_good()
     add_goods_page.enter_description_of_goods(good_description)
     add_goods_page.select_is_your_good_controlled(controlled)
     add_goods_page.enter_control_code(controlcode)
     add_goods_page.select_is_your_good_intended_to_be_incorporated_into_an_end_product(incorporated)
-    add_goods_page.enter_part_number(good_part)
+    if "empty" not in good_part:
+        add_goods_page.enter_part_number(good_part)
     exporter_hub.click_save_and_continue()
 
 

@@ -4,6 +4,7 @@ from pages.internal_hub_page import InternalHubPage
 import helpers.helpers as utils
 scenarios('../features/organisation_setup.feature')
 
+
 @when('I register a new organisation')
 def register_organisation(driver):
     internal_hub = InternalHubPage(driver)
@@ -38,6 +39,7 @@ def register_organisation(driver):
         internal_hub.enter_password("password")
 
         internal_hub.click_submit()
+
 
 @then('organisation is registered')
 def verify_registered_organisation(driver):

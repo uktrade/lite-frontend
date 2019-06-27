@@ -33,6 +33,19 @@ class AddGood(TemplateView):
         return redirect(reverse_lazy('goods:goods'))
 
 
+class DraftAddGood(TemplateView):
+    def get(self, request, **kwargs):
+        return form_page(request, forms.form)
+
+    def post(self, request, **kwargs):
+        data, status_code = post_goods(request, request.POST)
+
+        if status_code == 400:
+            return form_page(request, forms.form, request.POST, errors=data['errors'])
+
+        return redirect(reverse_lazy('apply_for_a_licence:overview'), kwargs['pk'])
+
+
 class EditGood(TemplateView):
     def get(self, request, **kwargs):
         data, status_code = get_good(request, str(kwargs['pk']))

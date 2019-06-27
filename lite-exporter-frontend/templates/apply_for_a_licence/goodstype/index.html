@@ -1,0 +1,14 @@
+{% extends "apply_for_a_licence/goods/index.html" %}
+{% block right_button %}<a href="{% url 'apply_for_a_licence:add_open_goods' draft_id %}?next=
+{% url 'apply_for_a_licence:open_goods' draft_id %}" role='button' draggable='false' class='govuk-button'>{% get_string 'good_types.overview_good_types.add_good_type_button' %}</a>{% endblock %}
+
+{% block good %}
+<div class="lite-card">
+    <h4 class="govuk-heading-s" style="margin-bottom: 0;">{{ good.description }}</h4>
+    <span class="govuk-caption-m" style="display: inline-block; margin-right: 10px;">Control list classification: </span>
+        <p class="govuk-label" style="display: inline-block;
+            {% if not good.good.control_code %}opacity: 0.4;
+            {% endif %}">{{ good.control_code|default:"N/A" }}</p>
+    <br/>
+    </div>
+{% endblock %}

@@ -8,7 +8,7 @@ from apply_for_a_licence.helpers import create_persistent_bar
 from core.builtins.custom_tags import get_string
 from core.services import get_units, get_sites_on_draft, get_external_locations_on_draft
 from drafts.services import post_drafts, get_draft, get_draft_goods, post_draft_preexisting_goods, submit_draft, \
-    delete_draft, post_end_user
+    delete_draft, post_end_user, get_draft_goods_type
 from goods.services import get_goods, get_good
 from libraries.forms.generators import form_page, success_page
 from libraries.forms.submitters import submit_paged_form
@@ -44,6 +44,7 @@ class Overview(TemplateView):
         data, status_code = get_draft(request, draft_id)
         sites, status_code = get_sites_on_draft(request, draft_id)
         goods, status_code = get_draft_goods(request, draft_id)
+        goodstypes, status_code = get_draft_goods_type(request, draft_id)
         external_locations, status_code = get_external_locations_on_draft(request, draft_id)
 
         context = {
@@ -51,6 +52,7 @@ class Overview(TemplateView):
             'draft': data.get('draft'),
             'sites': sites['sites'],
             'goods': goods['goods'],
+            'goodstypes': goodstypes['goods'],
             'external_locations': external_locations['external_locations'],
         }
         return render(request, 'apply_for_a_licence/overview.html', context)
@@ -109,6 +111,55 @@ class GoodsList(TemplateView):
             'draft': draft,
             'description': description,
             'part_number': part_number,
+            'persistent_bar': create_persistent_bar(draft.get('draft')),
+        }
+        return render(request, 'apply_for_a_licence/goods/preexisting.html', context)
+
+class DraftOpenGoodsList(TemplateView):
+    def get(self, request, **kwargs):
+        draft_id = str(kwargs['pk'])
+        draft, status_code = get_draft(request, draft_id)
+        data, status_code = get_draft_goods(request, draft_id)
+
+        context = {
+            'title': 'Application Goods',
+            'draft_id': draft_id,
+            'data': data,
+            'draft': draft,
+            'persistent_bar': create_persistent_bar(draft.get('draft')),
+        }
+        return render(request, 'apply_for_a_licence/goods/index.html', context)
+
+
+class DraftOpenGoodsTypeList(TemplateView):
+    def get(self, request, **kwargs):
+        draft_id = str(kwargs['pk'])
+        draft, status_code = get_draft(request, draft_id)
+        data, status_code = get_draft_goods_type(request, draft_id)
+
+        context = {
+            'title': get_string('good_types.overview_good_types.title'),
+            'draft_id': draft_id,
+            'data': data,
+            'draft': draft,
+            'persistent_bar': create_persistent_bar(draft.get('draft')),
+        }
+        return render(request, 'apply_for_a_licence/goodstype/index.html', context)
+
+
+class OpenGoodsList(TemplateView):
+    def get(self, request, **kwargs):
+        draft_id = str(kwargs['pk'])
+        draft, status_code = get_draft(request, draft_id)
+        description = request.GET.get('description', '')
+        data, status_code = get_goods(request, {'description': description})
+
+        context = {
+            'title': 'Goods',
+            'draft_id': draft_id,
+            'data': data,
+            'draft': draft,
+            'description': description,
             'persistent_bar': create_persistent_bar(draft.get('draft')),
         }
         return render(request, 'apply_for_a_licence/goods/preexisting.html', context)

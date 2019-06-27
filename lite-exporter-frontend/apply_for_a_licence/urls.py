@@ -1,6 +1,6 @@
 from django.urls import path
-
 from apply_for_a_licence.views import common, locations
+from goodstype import views as goodstypeviews
 
 app_name = 'apply_for_a_licence'
 
@@ -12,7 +12,10 @@ urlpatterns = [
     # ex: /<uuid:pk>/overview/
     path('<uuid:pk>/overview/', common.Overview.as_view(), name='overview'),
 
+    # ex: /<uuid:pk/open-goods/
+    path('<uuid:pk>/add/open-goods', goodstypeviews.DraftAddGoodsType.as_view(), name='add_open_goods'),
     # ex: /<uuid:pk>/goods/
+    path('<uuid:pk>/open-goods/', common.DraftOpenGoodsTypeList.as_view(), name='open_goods'),
     path('<uuid:pk>/goods/', common.DraftGoodsList.as_view(), name='goods'),
     # ex: /<uuid:pk>/goods/add-preexisting/
     path('<uuid:pk>/goods/add-preexisting/', common.GoodsList.as_view(), name='preexisting_good'),

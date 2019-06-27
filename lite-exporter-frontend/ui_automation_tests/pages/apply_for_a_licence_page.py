@@ -57,9 +57,6 @@ class ApplyForALicencePage():
     def click_save_and_continue(self):
         self.driver.find_element_by_css_selector(self.submit_button).click()
 
-    def click_submit_application(self):
-        self.driver.find_element_by_css_selector(self.submit_button).click()
-
     def click_continue(self):
         self.click_save_and_continue()
 
@@ -123,28 +120,11 @@ class ApplyForALicencePage():
     def click_export_licence_yes_or_no(self, string):
         self.driver.find_element_by_id(self.export_licence_yes_or_no + string).click()
 
-    def get_text_of_application_headers(self, no):
-        return self.driver.find_elements_by_css_selector(self.licence_application_headers)[no].text
-
     def get_text_of_application_results(self, no):
         return self.driver.find_elements_by_css_selector(self.licence_application_values)[no].text
-    def click_export_licence(self, string):
-        if (string == "standard"):
-            self.driver.find_element_by_css_selector(self.standard_licence_button).click()
-        elif (string == "open"):
-            self.driver.find_element_by_css_selector(self.open_license_button).click()
-
-    def click_permanent_or_temporary_button(self, string):
-        self.driver.find_element_by_id(self.export_button + string).click()
-
-    def click_export_licence_yes_or_no(self, string):
-        self.driver.find_element_by_id(self.export_licence_yes_or_no + string).click()
 
     def get_text_of_application_headers(self, no):
         return self.driver.find_elements_by_css_selector(self.licence_application_headers)[no].text
-
-    def get_text_of_application_results(self, no):
-        return self.driver.find_elements_by_css_selector(self.licence_application_values)[no].text
 
     def get_text_of_success_message(self):
         return self.driver.find_element_by_css_selector(self.success_message).text

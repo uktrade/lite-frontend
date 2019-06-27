@@ -1,6 +1,7 @@
 import datetime
 from pytest_bdd import scenarios, given, when, then, parsers, scenarios
 from pages.apply_for_a_licence_page import ApplyForALicencePage
+from pages.application_goods_type_list import ApplicationGoodsTypeList
 from pages.application_overview_page import ApplicationOverviewPage
 from pages.application_goods_list import ApplicationGoodsList
 import helpers.helpers as utils
@@ -84,12 +85,20 @@ def i_see_no_sites_attached_error(driver):
     assert "Cannot create an application with no sites or external sites attached" in shared.get_text_of_error_message_at_position_2()
 
 
+@then('I see good types error messages')
+def i_see_no_sites_attached_error(driver):
+    shared = Shared(driver)
+    assert "This field may not be blank." in shared.get_text_of_error_message()
+    assert "This field is required." in shared.get_text_of_error_message_at_position_2()
+    assert "This field is required." in shared.get_text_of_error_message_at_position_3()
+
+
 @when(parsers.parse('I click add to application for the good at position "{no}"'))
 def click_add_to_application_button(driver, no):
 
-    context.goods_name = driver.find_elements_by_css_selector('.lite-card .govuk-heading-s')[int(no)].text
-    context.part_number = driver.find_elements_by_css_selector('.lite-card .govuk-label')[int(no)].text
-    driver.find_elements_by_css_selector('a.govuk-button')[int(no)].click()
+    context.goods_name = driver.find_elements_by_css_selector('.lite-card .govuk-heading-s')[int(no)-1].text
+    context.part_number = driver.find_elements_by_css_selector('.lite-card .govuk-label')[int(no)-1].text
+    driver.find_elements_by_css_selector('a.govuk-button')[int(no)-1].click()
 
 
 @then('I see enter valid quantity and valid value error message')
@@ -121,7 +130,7 @@ def good_is_added(driver):
     unit = unit.lower()
     assert utils.is_element_present(driver, By.XPATH, "//*[text()='" + str(context.goods_name) + "']")
     assert utils.is_element_present(driver, By.XPATH, "//*[text()='" + str(context.quantity) + ".0 " + unit + "']")
-    assert utils.is_element_present(driver, By.XPATH, "//*[text()='£" + str(context.value) + ".00']")
+    assert utils.is_element_present(driver, By.XPATH, "//*[text()='£" + str(context.value) + "']")
 
 
 @when('I click overview')
@@ -162,3 +171,27 @@ def application_is_submitted(driver):
 @then('I see the homepage')
 def i_see_the_homepage(driver):
     assert 'Exporter Hub - LITE' in driver.title, "Delete Application link on overview page failed to go to Exporter Hub page"
+
+
+@when('I click Add goods type button')
+def click_goods_type_button(driver):
+    goods_type_page = ApplicationGoodsTypeList(driver)
+    goods_type_page.click_goods_type_button()
+
+
+@then(parsers.parse('I see my goods type added at position "{position}" with a description and a control code'))
+def i_see_the_goods_types_list(driver, position):
+    goods_type_page = ApplicationGoodsTypeList(driver)
+    good_type = goods_type_page.get_text_of_goods_type_info(int(position))
+    assert context.good_description in good_type
+    assert "Control Code: " + context.controlcode in good_type
+
+
+@then('I see my goods type added to the overview page with a description and a control code')
+def i_see_the_goods_types_list_overview(driver):
+    goods_type_page = ApplicationGoodsTypeList(driver)
+    good_type_table_overview = goods_type_page.get_text_of_goods_type_info_overview()
+    assert "Description" in good_type_table_overview
+    assert "Control Code" in good_type_table_overview
+    assert context.good_description in good_type_table_overview
+    assert context.controlcode in good_type_table_overview

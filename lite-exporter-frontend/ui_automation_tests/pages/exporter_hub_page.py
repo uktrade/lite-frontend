@@ -58,7 +58,6 @@ class ExporterHubPage():
     def click_my_goods(self):
         self.driver.find_element_by_css_selector(self.my_goods_btn).click()
 
-
     def click_save_and_continue(self):
         self.driver.find_element_by_css_selector("button[type*='submit']").click()
 

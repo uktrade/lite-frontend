@@ -1,6 +1,6 @@
-@exporter @licence @all @submit
-Feature: Licence
-  As a...
+  @exporter @licence @all @submit
+  Feature: Licence
+    As a...
 
   Scenario: Apply for a licence to draft
     Given I go to exporter homepage
