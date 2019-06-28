@@ -1,7 +1,10 @@
-@internal @set_up  @all @organisation
-Feature: Set up a organisation
-As a...
+@internal @setup @organisation
+Feature: I want to add a company to LITE
+As a logged in government user
+I want to add a new company to LITE
+So that the new company can make applications
 
+  @LT-934_set_up
   Scenario: Set up organisation
     Given I go to internal homepage
     When I go to organisations
@@ -11,6 +14,7 @@ As a...
     And I setup the admin user with email: "trinity@unicorns.com", first name: "Trinity", last name: "Fishburne", password: "12345678900"
     Then organisation is registered
 
+  @LT-934_test
   #These are identical but the reason they are both still there is because the first one is a setup task, so only runs if the email doesnt already exist, the second is to test the functionality so it will always run.
   Scenario: Test organisation
     Given I go to internal homepage
@@ -31,6 +35,7 @@ As a...
     And I click on my registered organisation
     Then my new site is displayed
 
+  @LT-934_error
   Scenario: Organisation registration validation
     Given I go to internal homepage
     When I go to organisations

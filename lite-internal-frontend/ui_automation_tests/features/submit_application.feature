@@ -1,7 +1,7 @@
 @exporter @all @setup
-Feature: Licence
-  As a...
+Feature: Set up application
 
+  @submit_app
   Scenario: Submit application
     Given I go to exporter homepage
     When I login to exporter homepage with username "trinity@unicorns.com" and "12345678900"

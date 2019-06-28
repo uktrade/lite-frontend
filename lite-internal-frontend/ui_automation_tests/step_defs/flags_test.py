@@ -85,6 +85,7 @@ def count_active_flags(driver):
     context.original_number_of_active_flags = number_of_active_flags
     context.original_number_of_deactivated_flags = number_of_deactivated_flags
 
+
 @when('I deactivate the first active flag')
 def deactivate_first_active_flag(driver):
     driver.find_element_by_css_selector("[href*='edit/deactivate/']").click()

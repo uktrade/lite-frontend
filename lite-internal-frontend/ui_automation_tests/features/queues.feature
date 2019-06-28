@@ -1,5 +1,4 @@
-@internal @queues @LT-919
-
+@internal @queues
 Feature: I want to define new work queues and the teams they belong to
   As a logged in government user
   I want to be able to define new work queues and the department they belong to

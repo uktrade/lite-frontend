@@ -1,6 +1,13 @@
-Feature: Manage cases
-  As a..
+@internal @manage_cases @setup
+Feature: I want to record the final decision overall on an application case
+  As a Licensing Unit Case Officer
+  I want to record the final decision overall on an application case
+  So that this can be communicated back to the party that raised the case
+  As a: logged in government user
+  I want to: update the status of an application case
+  So that: interested users can see the progress of the application case and whether it is complete
 
+  @LT-909_status
   Scenario: Change status to Under Review
     Given I go to internal homepage
     When I click on application previously created
@@ -14,6 +21,7 @@ Feature: Manage cases
     And I click applications
     Then the status has been changed in exporter
 
+  @LT-957_record
   Scenario: Record decision
     Given I go to internal homepage
     When I click on application previously created
@@ -37,6 +45,7 @@ Feature: Manage cases
     And I click continue
     Then I see application "denied"
 
+  @LT-957_optional
   Scenario: Record decision without optional text
     Given I go to internal homepage
     When I click on application previously created
@@ -47,6 +56,7 @@ Feature: Manage cases
     And I click continue
     Then I see application "denied"
 
+  @LT-957_multiple
   Scenario: Record decision with multiple decision
     Given I go to internal homepage
     When I click on application previously created
@@ -59,7 +69,8 @@ Feature: Manage cases
     And I click continue
     Then I see application "denied"
 
-    Scenario: Record decision validation
+  @LT-957_error
+  Scenario: Record decision validation
     Given I go to internal homepage
     When I click on application previously created
     And I click record decision
