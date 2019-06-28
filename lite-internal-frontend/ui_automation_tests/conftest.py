@@ -85,8 +85,8 @@ def invalid_username():
     return "invalid@mail.com"
 
 
-sso_email=env('TEST_SSO_EMAIL')
-sso_password=env('TEST_SSO_PASSWORD')
+sso_email = env('TEST_SSO_EMAIL')
+sso_password = env('TEST_SSO_PASSWORD')
 
 
 @pytest.fixture(scope="function")

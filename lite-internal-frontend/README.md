@@ -64,6 +64,8 @@ Note the migrations will need to be run again the next time the service is to be
 * You will need to change your .env file to include:
 `TEST_SSO_EMAIL="email here"`
 `TEST_SSO_PASSWORD="pw here"`
+`TEST_SSO_NAME="name here"`
+
 Ask someone on the team for valid credentials here.
 
 ## LITE Repositories
