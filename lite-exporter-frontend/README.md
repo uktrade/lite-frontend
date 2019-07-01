@@ -9,7 +9,7 @@ Application for handling exporter related activity in LITE.
   * `cd lite-exporter-frontend`
 * First time setup
   * Set up your local config file:
-    * `cp local.env .env`
+    * `cp docker.env .env`
   * Initialise submodules
     * `git submodule init`
     * `git submodule update`
