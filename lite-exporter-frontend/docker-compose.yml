@@ -31,4 +31,4 @@ services:
 
 networks:
   lite-api_default:
-    external: false
+    external: true
