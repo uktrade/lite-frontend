@@ -53,14 +53,11 @@ pipeline
                     {
                         script
                         {
-                            sh "sudo find . -name '*.pyc' -delete"
-                            // copying and building selenium base
-                            sh "cp ui_automation_tests/selenium-base-image/Dockerfile ."
-                            docker.build("exporter/selenium_base")
+                            // building selenium base
+                            docker.build("exporter/selenium_base", "-f ui_automation_tests/selenium-base-image/Dockerfile --network host ui_automation_tests/selenium-base-image")
 
-                            // copying and building selenium image
-                            sh "cp ui_automation_tests/selenium-automation-run/Dockerfile ."
-                            docker.build("exporter/selenium_image")
+                            // building selenium image
+                            test = docker.build("exporter/selenium_image", "-f ui_automation_tests/selenium-automation-run/Dockerfile --network host ui_automation_tests")
                         }
                     }
                 }
@@ -70,29 +67,13 @@ pipeline
                     {
                         script
                         {
-                            try
-                            {
-                                // creating timestamp
-                                def now = new Date()
-                                tstamp = now.format("yyyyMMdd-HH:mm:ss.SSSS", TimeZone.getTimeZone('UTC'))
+                            // creating timestamp
+                            def now = new Date()
+                            tstamp = now.format("yyyyMMdd-HH:mm:ss.SSSS", TimeZone.getTimeZone('UTC'))
 
-                                // running selenium tests using pytest via docker
-                                sh "docker run " +
-                                        "--privileged " +                               // The --privileged flag gives all capabilities to the container,
-                                        "--shm-size=1g " +                              // shared memory size is set to 1G to prevent chromedriver memory leak
-                                        "--rm " +                                       // remove container at the end of the session
-                                        "-e PYTHONPATH=/code/ui_automation_tests/ " +   // environment variable support
-                                        "-e ENVIRONMENT=${params.ENVIRONMENT} " +
-                                        "-w=/code " +                                   // setting working directory
-                                        "-v `pwd`/ui_automation_tests:/code " +         // mount git repository to the container
-                                        "exporter/selenium_image:latest " +             // the specific image that being used (latest image by default)
-                                        "-v " +                                         // verbose (for debugging purpose)
-                                        "-s " +
-                                        "${params.TESTS_TO_RUN}"
-                            }
-                            catch (error)
-                            {
-                                echo error.message
+                            // running selenium tests using pytest via docker
+                            test.inside("--network host --privileged --shm-size=1g -e PYTHONPATH=${env.WORKSPACE} -e ENVIRONMENT=${params.ENVIRONMENT} -w=${env.WORKSPACE}/ui_automation_test --entrypoint=''") {
+                                    sh "/docker-entry.sh ${params.TESTS_TO_RUN}"
                             }
                         }
                     }
@@ -107,6 +88,7 @@ pipeline
 
                     // Send Slack notification
                     sendSlackNotification()
+                    
                 }
             }
         }
