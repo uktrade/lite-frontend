@@ -55,10 +55,21 @@ def post_draft_preexisting_goods(request, pk, json):
 
 # End Users
 def get_end_user(request, pk):
-    data = get(request, DRAFTS_URL + pk + '/goods/')
+    data = get(request, DRAFTS_URL + pk + '/end-user/')
     return data.json(), data.status_code
 
 
 def post_end_user(request, pk, json):
     data = post(request, DRAFTS_URL + pk + '/end-user/', json)
+    return data.json(), data.status_code
+
+
+# Countries
+def get_draft_countries(request, pk):
+    data = get(request, DRAFTS_URL + pk + '/countries/')
+    return data.json(), data.status_code
+
+
+def post_draft_countries(request, pk, json):
+    data = post(request, DRAFTS_URL + pk + '/countries/', json)
     return data.json(), data.status_code

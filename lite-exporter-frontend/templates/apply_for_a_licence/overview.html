@@ -49,11 +49,8 @@
 	</div>
 {% endif %}
 
-<span class="govuk-caption-l">
-	{{ draft.name }}
-</span>
 <h2 class="govuk-heading-l">
-	Overview
+	{{ title }}
 </h2>
 
 <div class="govuk-form-group">
@@ -236,6 +233,47 @@
 	{% endif %}
 </div>
 
+{% if draft.licence_type == 'open_licence' %}
+<div class="lite-section {% if errors|key_value:'countries' %}govuk-form-group--error{% endif %}">
+	<div class="lite-section-header">
+		<div>
+			<a id="countries" href="{% url 'apply_for_a_licence:countries' draft.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
+				Where are your goods going?
+			</a>
+		</div>
+		{% if countries %}
+			<div class="lite-info-label lite-info-label--blue">
+				Done
+			</div>
+		{% else %}
+			<div class="lite-info-label">
+				Not Started
+			</div>
+		{% endif %}
+	</div>
+	{% if errors|key_value:'countries' %}
+		<p class="govuk-error-message">
+			{{ errors|key_value:'countries' }}
+		</p>
+	{% endif %}
+
+	<p class="govuk-caption-m">Select all the countries that your goods are going to</p>
+
+	<div style="display: none;">
+		<div id="countries-data">
+			{% for country in countries %}
+				<p class="govuk-label">{{ country.name }}</p>
+			{% endfor %}
+		</div>
+	</div>
+
+	{% if countries %}
+		<a href="#" class="govuk-link govuk-link--no-visited-state" onclick="return showCountries()">{{ countries|length }} Countries Selected</a>
+	{% endif %}
+</div>
+{% endif %}
+
+{% if draft.licence_type == 'standard_licence' %}
 <div class="lite-section {% if errors|key_value:'end_user' %}govuk-form-group--error{% endif %}">
 	<div class="lite-section-header">
 		<div>
@@ -286,9 +324,10 @@
 		<p class="govuk-caption-m">Add an end user to your application</p>
 	{% endif %}
 </div>
+{% endif %}
 
 <div class="lite-submit-bar js-is-sticky">
-<a href="{% url 'apply_for_a_licence:delete' draft.id %}" class="cancel-link" style="float: right;">
+<a href="{% url 'apply_for_a_licence:delete' draft.id %}" class="cancel-link" style="float: right;" onclick="return showCancelApplication()">
 	Delete
 </a>
 <form method="post">
@@ -296,6 +335,12 @@
 	<button type="submit" class="govuk-button" name="button" data-prevent-double-click="true">Submit application</button>
 </form>
 </div>
+
+<!-- Modals -->
+<div id="cancel-application" style="display: none;">
+	{% include "apply_for_a_licence/modals/cancel_application.html" %}
+</div>
+
 
 {% load static %}
 <script src="{% static 'javascripts/modal.js' %}"></script>
@@ -309,7 +354,7 @@
 {% endblock %}
 {% block oneTahird %}
 <aside role="complementary">
-	<h2 class="govuk-heading-m" id="subsection-title">
+	<h2 class="govuk-heading-m">
 		Need to go?
 	</h2>
 	<p class="govuk-body">
@@ -319,7 +364,7 @@
 <br>
 <br>
 <aside role="complementary">
-	<h2 class="govuk-heading-m" id="subsection-title">
+	<h2 class="govuk-heading-m">
 		Don't want to continue this application?
 	</h2>
 	<a href="{% url 'apply_for_a_licence:delete' draft.id %}" class="govuk-body govuk-link">

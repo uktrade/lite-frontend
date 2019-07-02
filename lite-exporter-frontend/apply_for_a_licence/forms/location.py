@@ -1,6 +1,6 @@
 from core.builtins.custom_tags import get_string
 from core.services import get_countries, get_external_locations
-from libraries.forms.components import Form, ArrayQuestion, InputType, Option, Question
+from libraries.forms.components import Form, ArrayQuestion, InputType, Option, Question, Checkboxes, Filter
 
 which_location_form = Form(title=get_string('goods.location_questions.location.title'),
                            description='You can only choose one type of location per application',
@@ -11,6 +11,7 @@ which_location_form = Form(title=get_string('goods.location_questions.location.t
                                ])
                            ],
                            default_button_name='Continue')
+
 
 def new_location_form():
     return Form(title='Add a new external location',
@@ -31,6 +32,8 @@ def external_locations_form(request):
     return Form(title='Where are your goods located?',
                 description='Select all external locations that apply.',
                 questions=[
-                    ArrayQuestion('', '', InputType.CHECKBOXES, 'external_locations', get_external_locations(request, True))
+                    Filter(),
+                    Checkboxes('external_locations', get_external_locations(request, True))
                 ],
+                javascript_imports=['/assets/javascripts/filter-checkbox-list.js'],
                 default_button_name='Save and continue')

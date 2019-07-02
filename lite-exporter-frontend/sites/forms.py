@@ -1,4 +1,5 @@
-from libraries.forms.components import Form, InputType, Question, HeadingStyle, Heading
+from core.services import get_countries
+from libraries.forms.components import Form, InputType, Question, HeadingStyle, Heading, ArrayQuestion
 
 new_site_form = Form(title='New Site', description='', caption='', questions=[
     Question(title='Name of site',
@@ -26,10 +27,11 @@ new_site_form = Form(title='New Site', description='', caption='', questions=[
              description='',
              input_type=InputType.INPUT,
              name='address.postcode'),
-    Question(title='Country',
-             description='',
-             input_type=InputType.INPUT,
-             name='address.country'),
+    ArrayQuestion(title='Country',
+                  description='',
+                  input_type=InputType.AUTOCOMPLETE,
+                  name='address.country',
+                  data=get_countries(None, True)),
 ])
 
 
@@ -59,8 +61,9 @@ edit_site_form = Form(title='Edit Site', description='', caption='', questions=[
              description='',
              input_type=InputType.INPUT,
              name='address.postcode'),
-    Question(title='Country',
-             description='',
-             input_type=InputType.INPUT,
-             name='address.country'),
+    ArrayQuestion(title='Country',
+                  description='',
+                  input_type=InputType.AUTOCOMPLETE,
+                  name='address.country',
+                  data=get_countries(None, True)),
 ])

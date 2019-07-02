@@ -77,6 +77,8 @@
 	</div>
 {% else %}
 	<p class="govuk-caption-l">Your organisation doesn't have any goods.</p>
+    <br>
+    <a href="{% url 'goods:add' %}" class="govuk-link">Add a good to my organisation</a>
 {% endif %}
 
 {% endblock %}

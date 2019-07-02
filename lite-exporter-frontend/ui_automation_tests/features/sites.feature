@@ -8,7 +8,7 @@ Feature: Licence
     When I login to exporter homepage with username "test@mail.com" and "password"
     And I click sites link
     And I click new site
-    And I enter in text for new site " " "address" "postcode" "city" "region" and "country"
+    And I enter in text for new site " " "address" "postcode" "city" "region" and "Ukraine"
     And I click continue
     Then I see sites list
 
@@ -18,7 +18,7 @@ Feature: Licence
     And I click sites link
     And I click last edit button
     And I clear the fields for the site
-    And I enter in text for new site "edited" "address edited" "pc edited" "city edited" "region edited" and "country edited"
+    And I enter in text for new site "edited" "address edited" "pc edited" "city edited" "region edited" and "Poland"
     And I click continue
     Then I see last site name as edited
     When I click last edit button
@@ -43,7 +43,7 @@ Feature: Licence
     When I login to exporter homepage with username "test@mail.com" and "password"
     And I click sites link
     And I click new site
-    And I enter in text for new site "changed" "address" "postcode" "city" "region" and "country"
+    And I enter in text for new site "changed" "address" "postcode" "city" "region" and "Ukraine"
     And I click continue
     Then I see sites list
     When I login to exporter homepage with username "test@mail.com" and "password"

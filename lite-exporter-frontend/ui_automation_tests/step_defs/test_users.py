@@ -43,7 +43,7 @@ def test_add_users(driver, open_exporter_hub, exporter_url):
 
     # When I choose the option to manage users # Then I should see the current user for my company
     assert utils.is_element_present(driver, By.XPATH,
-                                    "//td[text()='test@mail.com']/following-sibling::td[text()='active']")
+                                    "//td[text()='test@mail.com']/following-sibling::td[text()='Active']")
 
     # And I should have the ability to add a new user # And I can insert an name, last name email and password for user
     exporter_hub.click_add_a_user_btn()
@@ -60,7 +60,7 @@ def test_add_users(driver, open_exporter_hub, exporter_url):
         "Failed to return to Users list page after Adding user"
 
     assert utils.is_element_present(driver, By.XPATH,
-                                    "//td[text()='" + email + "']/following-sibling::td[text()='active']")
+                                    "//td[text()='" + email + "']/following-sibling::td[text()='Active']")
 
 
 def test_edit_users(driver, exporter_url):
@@ -131,7 +131,7 @@ def test_deactivate_users(driver, exporter_url):
 
     # And I can see that the user is now deactivated
     assert utils.is_element_present(driver, By.XPATH,
-                                    "//td[text()='" + context.email_to_search + "']/following-sibling::td[text()='deactivated']")
+                                    "//td[text()='" + context.email_to_search + "']/following-sibling::td[text()='Deactivated']")
     # Given I am a deactivated user # When I attempt to log in # And I cannot log in
     exporter_hub.logout()
     exporter_hub.login(context.email_to_search, password)
@@ -158,13 +158,13 @@ def test_reactivate_users(driver, open_exporter_hub, exporter_url):
     exporter_hub.click_reactivate_btn()
 
     assert utils.is_element_present(driver, By.XPATH,
-                                    "//td[text()='" + email + "']/following-sibling::td[text()='active']"),\
-        "user should status was expected to be active"
+                                    "//td[text()='" + email + "']/following-sibling::td[text()='Active']"),\
+        "user should status was expected to be Active"
 
     # Given I am a reactivated I can log in
     exporter_hub.logout()
     exporter_hub.login(email, password)
-    assert driver.title == "Exporter Hub - LITE"
+    assert driver.title == "Exporter hub - LITE"
 
 
 def test_inability_to_deactivate_oneself(driver, exporter_url):

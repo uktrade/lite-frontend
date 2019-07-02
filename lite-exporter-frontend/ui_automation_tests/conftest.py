@@ -1,24 +1,27 @@
-import pytest
-from selenium import webdriver
+import datetime
+import json
 import os
 import random
-import datetime
-from pages.application_overview_page import ApplicationOverviewPage
-from pytest_bdd import scenarios, given, when, then, parsers, scenarios
-from pages.exporter_hub_page import ExporterHubPage
-from pages.which_location_form_page import WhichLocationFormPage
-from pages.add_goods_page import AddGoodPage
-from pages.shared import Shared
-from pages.sites_page import SitesPage
 
-from pages.apply_for_a_licence_page import ApplyForALicencePage
-
+import pytest
 from pages.add_end_user_pages import AddEndUserPages
+from pages.add_goods_page import AddGoodPage
 from pages.add_new_external_location_form_page import AddNewExternalLocationFormPage
+from pages.application_overview_page import ApplicationOverviewPage
+from pages.apply_for_a_licence_page import ApplyForALicencePage
+from pages.exporter_hub_page import ExporterHubPage
 from pages.external_locations_page import ExternalLocationsPage
 from pages.preexisting_locations_page import PreexistingLocationsPage
+from pages.shared import Shared
+from pages.sites_page import SitesPage
+from pages.which_location_form_page import WhichLocationFormPage
+from pytest_bdd import given, when, then, parsers
+from selenium import webdriver
+
+from core import strings
 
 strict_gherkin = False
+
 
 # Screenshot in case of any test failure
 def pytest_exception_interact(node, report):
@@ -36,13 +39,18 @@ def pytest_addoption(parser):
     print("touched: " + env)
     parser.addoption("--driver", action="store", default="chrome", help="Type in browser type")
     parser.addoption("--exporter_url", action="store", default="https://exporter.lite.service." + env + ".uktrade.io/", help="url")
-    #parser.addoption("--exporter_url", action="store", default="localhost:9000/", help="url")
     parser.addoption("--internal_url", action="store", default="https://internal.lite.service." + env + ".uktrade.io/", help="url")
-    #parser.addoption("--internal_url", action="store", default="localhost:8080/", help="url")
+    #parser.addoption("--exporter_url", action="store", default="localhost:8300/", help="url")
+    #parser.addoption("--internal_url", action="store", default="localhost:8200/", help="url")
     parser.addoption("--email", action="store", default= "test@mail.com")
     parser.addoption("--password", action="store", default= "password")
     parser.addoption("--first_name", action="store", default= "Test")
     parser.addoption("--last_name", action="store", default= "User")
+
+    # Load in content strings
+    with open('../../lite-content/lite-exporter-frontend/strings.json') as json_file:
+        strings.constants = json.load(json_file)
+
 
 # Create driver fixture that initiates chrome
 @pytest.fixture(scope="session", autouse=True)
@@ -57,7 +65,8 @@ def driver(request):
         browser.implicitly_wait(10)
         return browser
     else:
-        print('only chrome is supported at the moment')
+        print('Only Chrome is supported at the moment')
+
     def fin():
         driver.quit()
         request.addfinalizer(fin)
@@ -293,6 +302,7 @@ def click_external_locations(driver):
 def click_add_from_organisation_button(driver):
     driver.find_element_by_css_selector('a[href*="add-preexisting"]').click()
 
+
 @when('I click add a good button')
 def click_add_from_organisation_button(driver):
     add_goods_page = AddGoodPage(driver)
@@ -300,7 +310,7 @@ def click_add_from_organisation_button(driver):
 
 
 @when(parsers.parse('I add a good or good type with description "{description}" controlled "{controlled}" control code "{controlcode}" incorporated "{incorporated}" and part number "{part}"'))
-def add_new_good(driver, description, controlled,  controlcode, incorporated, part):
+def add_new_good(driver, description, controlled, controlcode, incorporated, part):
     exporter_hub = ExporterHubPage(driver)
     add_goods_page = AddGoodPage(driver)
     good_description = description + str(random.randint(1, 1000))

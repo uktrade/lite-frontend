@@ -2,12 +2,13 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
+from apply_for_a_licence.forms.countries import countries_form
 from apply_for_a_licence.forms.location import which_location_form, new_location_form, external_locations_form
 from apply_for_a_licence.forms.sites import sites_form
 from apply_for_a_licence.helpers import create_persistent_bar
 from core.services import get_sites_on_draft, post_sites_on_draft, post_external_locations, \
     get_external_locations_on_draft, get_external_locations, post_external_locations_on_draft
-from drafts.services import get_draft, get_draft_goods
+from drafts.services import get_draft, get_draft_countries, post_draft_countries
 from libraries.forms.generators import form_page
 from libraries.forms.submitters import submit_single_form
 
@@ -87,7 +88,6 @@ class ExternalLocations(TemplateView):
         org_external_locations, status_code = get_external_locations(request)
         data, status_code = get_external_locations_on_draft(request, draft_id)
 
-
         context = {
             'title': 'External Locations',
             'org_external_locations': org_external_locations,
@@ -155,3 +155,32 @@ class AddExistingExternalLocation(TemplateView):
             })
 
         return redirect(reverse_lazy('apply_for_a_licence:external_locations', kwargs={'pk': draft_id}))
+
+
+# Countries
+
+
+class Countries(TemplateView):
+    def get(self, request, **kwargs):
+        draft_id = str(kwargs['pk'])
+        draft, status_code = get_draft(request, draft_id)
+        countries, status_code = get_draft_countries(request, draft_id)
+
+        return form_page(request, countries_form(draft_id), data=countries, extra_data={
+                'persistent_bar': create_persistent_bar(draft.get('draft'))
+            })
+
+    def post(self, request, **kwargs):
+        draft_id = str(kwargs['pk'])
+
+        data = {
+            'countries': request.POST.getlist('countries')
+        }
+
+        response, response_data = submit_single_form(request, countries_form(draft_id), post_draft_countries,
+                                                     pk=draft_id, override_data=data)
+
+        if response:
+            return response
+
+        return redirect(reverse_lazy('apply_for_a_licence:overview', kwargs={'pk': draft_id}))

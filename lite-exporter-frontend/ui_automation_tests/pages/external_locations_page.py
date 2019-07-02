@@ -1,4 +1,4 @@
-class ExternalLocationsPage():
+class ExternalLocationsPage:
 
     def __init__(self, driver):
         self.driver = driver

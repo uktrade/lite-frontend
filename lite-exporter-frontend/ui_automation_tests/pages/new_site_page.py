@@ -1,3 +1,6 @@
+from selenium.webdriver.common.keys import Keys
+
+
 class NewSite():
 
     def __init__(self, driver):
@@ -16,6 +19,8 @@ class NewSite():
         self.city.send_keys(city)
         self.region.send_keys(region)
         self.country.send_keys(country)
+        self.country.send_keys(Keys.RETURN)
+
 
     def clear_info_for_site(self):
         self.name.clear()

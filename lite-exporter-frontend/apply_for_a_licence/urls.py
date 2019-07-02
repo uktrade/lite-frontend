@@ -36,6 +36,8 @@ urlpatterns = [
     path('<uuid:pk>/location/external-locations/add/', locations.AddExternalLocation.as_view(), name='add_external_location'),
     # ex: /<uuid:pk>/location/external-locations/preexisting/
     path('<uuid:pk>/location/external-locations/preexisting/', locations.AddExistingExternalLocation.as_view(), name='add_preexisting_external_location'),
+    # ex: /<uuid:pk>/location/countries/
+    path('<uuid:pk>/location/countries/', locations.Countries.as_view(), name='countries'),
 
     # ex: /<uuid:pk>/end-user/
     path('<uuid:pk>/end-user/', common.EndUser.as_view(), name='end_user'),

@@ -14,7 +14,14 @@
 		</div>
 	{% endif %}
 
-	<h1 class="govuk-heading-l">{{ title }}</h1>
+	<div class="lite-app-bar">
+		<h1 class="govuk-heading-l">{{ title }}</h1>
+		<div class="lite-app-bar--right">
+			<a href="{% url 'apply_for_a_licence:index' %}" class="govuk-button" draggable="false" role="button">
+				{% get_string 'licences.apply_for_a_licence' %}
+			</a>
+		</div>
+	</div>
 
 	{% if data.drafts|length %}
 		<table class="govuk-table">

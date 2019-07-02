@@ -88,7 +88,7 @@ def last_site_name_edited(driver):
 @then(parsers.parse('the checkbox I have selected at position "{no}" is "{checked}"'))
 def assert_checkbox_at_position(driver, no, checked):
     sites_page = SitesPage(driver)
-    if checked== "checked":
+    if checked == "checked":
         assert sites_page.get_checked_attribute_of_sites_checkbox(int(no)-1) == "true"
-    elif checked== "unchecked":
+    elif checked == "unchecked":
         assert sites_page.get_checked_attribute_of_sites_checkbox(int(no)-1) is not "true"

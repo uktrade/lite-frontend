@@ -2,7 +2,7 @@ from conf.settings import env
 from libraries.forms.components import Form, Question, ArrayQuestion, Option, InputType
 
 form = Form(title='Add a description', description='', caption='', questions=[
-    Question(title='Give us a short description of your goods.',
+    Question(title='Give a short description of your goods.',
              description='',
              input_type=InputType.TEXTAREA,
              name='description',

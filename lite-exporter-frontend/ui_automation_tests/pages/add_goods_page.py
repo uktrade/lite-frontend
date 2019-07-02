@@ -1,9 +1,8 @@
-class AddGoodPage():
+class AddGoodPage:
 
     def __init__(self, driver):
         self.driver = driver
-        self.add_a_good_btn = "a[href*='/goods/add/']"
-
+        self.add_a_good_btn = "#add-a-good"
 
     def click_add_a_good(self):
         self.driver.find_element_by_css_selector(self.add_a_good_btn).click()

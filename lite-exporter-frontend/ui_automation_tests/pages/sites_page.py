@@ -1,9 +1,9 @@
-class SitesPage():
+class SitesPage:
 
     def __init__(self, driver):
         self.driver = driver
         self.sites_checkbox = ".govuk-checkboxes__input"
-        self.sites_label = ".govuk-checkboxes__input"
+        self.sites_label = ".govuk-checkboxes__label"
 
     def click_sites_checkbox(self, no):
         self.driver.find_elements_by_css_selector(self.sites_checkbox)[no].click()
