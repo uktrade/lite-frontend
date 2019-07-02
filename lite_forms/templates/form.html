@@ -61,7 +61,7 @@
 							{% endfor %}
 						</div>
 					{% elif question.input_type == "group" %}
-						<div>
+						<div id="pane-{{ question.name }}">
 							{% for question in question.questions %}
 								{% include "components.html" with question=question errors=errors %}
 							{% endfor %}
