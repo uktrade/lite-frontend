@@ -214,11 +214,19 @@ class Option:
         self.show_or = show_or
 
 
+class Group:
+    """
+    Groups components together inside of a div
+    """
+    def __init__(self, components):
+        self.input_type = 'group'
+        self.components = components
+
+
 class Filter:
     """
     Filters a list of checkboxes based on title and description
     """
-
     def __init__(self, placeholder: str = 'Filter'):
         """
         :type placeholder: Sets the placeholder text on the input field

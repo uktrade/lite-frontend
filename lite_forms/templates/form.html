@@ -60,6 +60,12 @@
 								{% include "components.html" with question=question errors=errors %}
 							{% endfor %}
 						</div>
+					{% elif question.input_type == "group" %}
+						<div>
+							{% for question in question.questions %}
+								{% include "components.html" with question=question errors=errors %}
+							{% endfor %}
+						</div>
 					{% else %}
 						{% include "components.html" with question=question errors=errors %}
 					{% endif %}
