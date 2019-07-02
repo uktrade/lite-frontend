@@ -16,6 +16,10 @@ def key_in_array(array, key):
 
     # If array is a list, check for the key
     if isinstance(array, list):
+        for item in array:
+            if item.get('id') == key:
+                return True
+
         if key in array:
             return True
         return False
