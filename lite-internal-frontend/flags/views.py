@@ -12,14 +12,14 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
-from users.services import get_user
+from users.services import get_gov_user
 
 
 class FlagsList(TemplateView):
 
     def get(self, request, **kwargs):
         data, status_code = get_flags(request)
-        user_data, status_code = get_user(request, str(request.user.user_token))
+        user_data, status_code = get_gov_user(request, str(request.user.user_token))
 
         try:
             status = kwargs['status']

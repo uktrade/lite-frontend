@@ -1,15 +1,9 @@
 // Set defaults
-$lite-transition-speed: .3s !default;
+$lite-transition-speed: 0.3s !default;
 $govuk-page-width: 1200px !default;
-$govuk-brand-colour: #28a197;
-
-// GOV.UK Design System
-@import "../../lite-shared-assets/node_modules/govuk-frontend/all";
-
-// LITE Shared Assets
-@import "../../lite-shared-assets/lite-frontend/scss/all";
-
-// Local Assets
+$govuk-brand-colour: #28a197; // GOV.UK Design System
+@import "../../lite-shared-assets/node_modules/govuk-frontend/all"; // LITE Shared Assets
+@import "../../lite-shared-assets/lite-frontend/scss/all"; // Local Assets
 @import "components/all";
 
 .govuk-tag {
@@ -17,13 +11,26 @@ $govuk-brand-colour: #28a197;
 }
 
 .lite-checkboxes--inline {
-    & > * {
-        display: inline-block;
-    }
+	& > * {
+		display: inline-block;
+	}
+
 	.govuk-checkboxes__label {
 		min-width: 50px;
 		text-align: center;
 		padding-left: 0;
 		padding-right: 15px;
 	}
+}
+
+.govuk-checkboxes__input:indeterminate + .govuk-checkboxes__label::after {
+	// Add indeterminate state as GOV.UK Frontend lacks it
+	transform: rotate(0);
+	width: 12px;
+	height: 3px!important;
+	top: 18px;
+	opacity: 1;
+	border: none;
+	background-color: currentColor;
+	height: 3px;
 }

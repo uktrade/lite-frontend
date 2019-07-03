@@ -9,25 +9,43 @@ from cases.services import get_case, post_case_notes, put_applications, get_acti
 from core.services import get_queue, get_queues
 from libraries.forms.generators import error_page, form_page
 from libraries.forms.submitters import submit_single_form
+from queues.services import get_queue_case_assignments
 
 
-def index(request):
-    queue_id = request.GET.get('queue')
+class Cases(TemplateView):
+    def get(self, request, **kwargs):
+        """
+        Show a list of cases
+        """
+        queue_id = request.GET.get('queue')
 
-    # If a queue id is not provided, use the default queue
-    if not queue_id:
-        queue_id = '00000000-0000-0000-0000-000000000001'
+        # If a queue id is not provided, use the default queue
+        if not queue_id:
+            queue_id = '00000000-0000-0000-0000-000000000001'
 
-    queues, status_code = get_queues(request)
-    queue, status_code = get_queue(request, queue_id)
+        queues, status_code = get_queues(request)
+        queue, status_code = get_queue(request, queue_id)
+        case_assignments, status_code = get_queue_case_assignments(request, queue_id)
 
-    context = {
-        'queues': queues,
-        'queue_id': queue_id,
-        'data': queue,
-        'title': queue.get('queue').get('name'),
-    }
-    return render(request, 'cases/index.html', context)
+        context = {
+            'queues': queues,
+            'queue_id': queue_id,
+            'data': queue,
+            'title': queue.get('queue').get('name'),
+            'case_assignments': case_assignments['case_assignments'],
+        }
+        return render(request, 'cases/index.html', context)
+
+    def post(self, request, **kwargs):
+        """
+        Assign users depending on what cases were selected
+        """
+        queue_id = request.GET.get('queue')
+
+        if not queue_id:
+            queue_id = '00000000-0000-0000-0000-000000000001'
+
+        return redirect(reverse('queues:case_assignments', kwargs={'pk': queue_id}) + '?cases=' + ','.join(request.POST.getlist('cases')))
 
 
 class ViewCase(TemplateView):
@@ -50,7 +68,7 @@ class ViewCase(TemplateView):
         if status_code != 201:
             error = response.get('errors').get('text')[0]
             error = error.replace('This field', 'Case note')
-            error = error.replace('this field', 'the case note') # TODO: Move to API
+            error = error.replace('this field', 'the case note')  # TODO: Move to API
             return error_page(request, error)
 
         return redirect('/cases/' + case_id + '#case_notes')
@@ -61,8 +79,8 @@ class ManageCase(TemplateView):
         case_id = str(kwargs['pk'])
         case, status_code = get_case(request, case_id)
         context = {
-          'data': case,
-          'title': 'Manage ' + case.get('case').get('application').get('name'),
+            'data': case,
+            'title': 'Manage ' + case.get('case').get('application').get('name'),
         }
         return render(request, 'cases/manage.html', context)
 

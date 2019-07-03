@@ -7,10 +7,3 @@ def hub(request):
 
 def menu(request):
     return render(request, 'core/menu.html', {'title': 'Menu'})
-
-
-def placeholder(request):
-    context = {
-        'title': 'Placeholder',
-    }
-    return render(request, 'core/placeholder.html', context)

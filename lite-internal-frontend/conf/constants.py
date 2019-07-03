@@ -11,8 +11,7 @@ SITES_URL = '/sites/'
 TEAMS_URL = '/teams/'
 QUEUES_URL = '/queues/'
 AUTHENTICATION_URL = '/gov-users/authenticate/'
-USERS_URL = '/gov-users/'
-QUEUES_URL = '/queues/'
+GOV_USERS_URL = '/gov-users/'
 FLAGS_URL = '/flags/'
 
 # Static URLs

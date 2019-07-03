@@ -6,14 +6,13 @@ from django.views.generic import TemplateView
 from core.builtins.custom_tags import get_string
 from libraries.forms.generators import form_page
 from teams.services import get_teams
-from users import forms
 from users.forms import add_user_form, edit_user_form
-from users.services import get_users, post_users, update_user, get_user
+from users.services import get_gov_users, post_gov_users, put_gov_user, get_gov_user
 
 
 class UsersList(TemplateView):
     def get(self, request, **kwargs):
-        data, status_code = get_users(request)
+        data, status_code = get_gov_users(request)
 
         context = {
             'data': data,
@@ -28,7 +27,7 @@ class AddUser(TemplateView):
         return form_page(request, add_user_form(teams))
 
     def post(self, request, **kwargs):
-        response, status_code = post_users(request, request.POST)
+        response, status_code = post_gov_users(request, request.POST)
         teams = get_teams(request, True)
         if status_code != 201:
             return form_page(request, add_user_form(teams), data=request.POST, errors=response.get('errors'))
@@ -38,7 +37,7 @@ class AddUser(TemplateView):
 
 class ViewUser(TemplateView):
     def get(self, request, **kwargs):
-        data, status_code = get_user(request, str(kwargs['pk']))
+        data, status_code = get_gov_user(request, str(kwargs['pk']))
         user = data.get('user')
 
         context = {
@@ -56,12 +55,12 @@ class ViewProfile(TemplateView):
 
 class EditUser(TemplateView):
     def get(self, request, **kwargs):
-        data, status_code = get_user(request, str(kwargs['pk']))
+        data, status_code = get_gov_user(request, str(kwargs['pk']))
         teams = get_teams(request, True)
         return form_page(request, edit_user_form(teams), data=data)
 
     def post(self, request, **kwargs):
-        response, status_code = update_user(request, str(kwargs['pk']), request.POST)
+        response, status_code = put_gov_user(request, str(kwargs['pk']), request.POST)
         teams = get_teams(request, True)
         if status_code != 200:
             return form_page(request, edit_user_form(teams), data=request.POST, errors=response.get('errors'))
@@ -97,6 +96,6 @@ class ChangeUserStatus(TemplateView):
         if status != 'deactivate' and status != 'reactivate':
             raise Http404
 
-        update_user(request, str(kwargs['pk']), json={'status': request.POST['status']})
+        put_gov_user(request, str(kwargs['pk']), json={'status': request.POST['status']})
 
         return redirect('/users/')

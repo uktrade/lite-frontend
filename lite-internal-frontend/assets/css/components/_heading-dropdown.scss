@@ -124,6 +124,10 @@
 	}
 }
 
+#select-all-checkbox, #select-all-checkbox + .govuk-checkboxes__label::before, #select-all-checkbox + .govuk-checkboxes__label::after {
+	display: none;
+}
+
 .js-enabled {
 	.lite-dropdown-select {
 		display: none;
@@ -131,5 +135,9 @@
 
 	.lite-heading-dropdown {
 		display: inline-block;
+	}
+
+	#select-all-checkbox, #select-all-checkbox + .govuk-checkboxes__label::before, #select-all-checkbox + .govuk-checkboxes__label::after {
+		display: block;
 	}
 }

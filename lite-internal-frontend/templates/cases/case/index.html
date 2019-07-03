@@ -4,21 +4,16 @@
 
 {% block body %}
 
-<div class="lite-app-bar">
-	<h1 class="govuk-heading-l">{{ title }}</h1>
-
-	<div class="lite-app-bar--right">
-		<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:move' data.case.id %}">
-			{% get_string 'cases.move_case' %}
-		</a>
-		<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:manage' data.case.id %}">
-			Progress Application
-		</a>
-		<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:decide' data.case.id %}">
-			Record Decision
-		</a>
-	</div>
-</div>
+<h1 class="govuk-heading-l">{{ title }}</h1>
+<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:move' data.case.id %}">
+	{% get_string 'cases.manage.move_case.button' %}
+</a>
+<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:manage' data.case.id %}">
+	Progress Application
+</a>
+<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:decide' data.case.id %}">
+	Record Decision
+</a>
 
 <div class="lite-information-board">
 	<div class="govuk-grid-row">

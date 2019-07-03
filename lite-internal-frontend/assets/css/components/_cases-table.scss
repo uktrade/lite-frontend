@@ -1,0 +1,42 @@
+.lite-cases-table {}
+@mixin table-display {
+	display: grid;
+	grid-template-columns: 30px 1fr 300px 200px;
+	grid-gap: govuk-spacing(3);
+}
+
+.lite-cases-table-header {
+	@include table-display;
+	border-bottom: 1px solid $govuk-border-colour;
+
+	* {
+		@include govuk-font($size: 14, $weight: bold);
+		margin-bottom: govuk-spacing(2);
+		color: govuk-colour("grey-1");
+		letter-spacing: 1px;
+		text-transform: uppercase;
+		line-height: 44px!important;
+		margin: 0;
+		padding: 0;
+	}
+}
+
+.lite-cases-table-row {
+	@include table-display;
+	transition: 0.3s ease;
+	padding: govuk-spacing(3) 0;
+	border-bottom: 1px solid $govuk-border-colour;
+	.govuk-checkboxes--small .govuk-checkboxes__label::before {
+		top: 0;
+	}
+	.govuk-checkboxes--small .govuk-checkboxes__label::after {
+		top: 7px;
+	}
+	* {
+		font-size: 18px;
+	}
+	.user {
+		white-space: normal;
+		word-wrap: break-word;
+	}
+}
