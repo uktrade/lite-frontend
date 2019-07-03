@@ -1,4 +1,4 @@
-@licence @submit
+@licence @submit @all
 Feature: I want to indicate the kind of licence I want
   As a logged in exporter
   I want to indicate the kind of licence I want

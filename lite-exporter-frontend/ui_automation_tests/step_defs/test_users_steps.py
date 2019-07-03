@@ -1,32 +1,19 @@
 import datetime
 import logging
-import pytest
 from conftest import context
+from pytest_bdd import scenarios, given, when, then, parsers
 from selenium.webdriver.common.by import By
 from pages.exporter_hub_page import ExporterHubPage
 import helpers.helpers as utils
+
 log = logging.getLogger()
 console = logging.StreamHandler()
 log.addHandler(console)
-
-""""
-EX - I want to manage users
-LT-937
-As a logged in exporter
-I want to manage users
-So that an application/query can be managed by only active members of staff and new members of staff can be added and their details can be kept up to date
-"""
+scenarios('../features/users.feature', strict_gherkin=False)
 
 
-@pytest.fixture(scope="function")
-def open_exporter_hub(driver, exporter_url):
-    driver.get(exporter_url)
-    # driver.maximize_window()
-    # assert driver.title == "Exporter Hub - LITE"
-    log.info(driver.current_url)
-
-
-def test_add_users(driver, open_exporter_hub, exporter_url):
+@when('I add user')
+def add_user(driver):
     user_id = datetime.datetime.now().strftime("%m%d%H%M")
     first_name = "Test"
     last_name = "User" + user_id
@@ -35,10 +22,6 @@ def test_add_users(driver, open_exporter_hub, exporter_url):
     context.email_to_search = email
     # logged in exporter hub as exporter
     exporter_hub = ExporterHubPage(driver)
-    log.info("logging in as test@mail.com")
-    if "login" in driver.current_url:
-        log.info("logging in as test@mail.com")
-        exporter_hub.login("test@mail.com", "password")
 
     # I want to add a user # I should have an option to manage users
     exporter_hub.click_users()
@@ -57,21 +40,21 @@ def test_add_users(driver, open_exporter_hub, exporter_url):
     # When I Save
     exporter_hub.click_save_and_continue()
 
+
+@then('user is added')
+def user_is_added(driver):
     # Then I return to "Manage users" # And I can see the original list of users
     assert driver.find_element_by_tag_name("h1").text == "Users", \
         "Failed to return to Users list page after Adding user"
 
     assert utils.is_element_present(driver, By.XPATH,
-                                    "//td[text()='" + email + "']/following-sibling::td[text()='Active']")
+                                    "//td[text()='" + context.email_to_search + "']/following-sibling::td[text()='Active']")
 
 
-def test_edit_users(driver, exporter_url):
+@when('I edit user then user is edited')
+def user_is_edited(driver, exporter_url):
     user_id = datetime.datetime.now().strftime("%d%m%H%M")
     exporter_hub = ExporterHubPage(driver)
-    exporter_hub.go_to(exporter_url)
-    if "login" in driver.current_url:
-        log.info("logging in as test@mail.com")
-        exporter_hub.login("test@mail.com", "password")
 
     full_name = "Test user_2"
     email = context.email_to_search
@@ -112,13 +95,9 @@ def test_edit_users(driver, exporter_url):
     exporter_hub.click_submit()
 
 
-def test_deactivate_users(driver, exporter_url):
+@when('I deactivate user then user is deactivated')
+def user_is_edited(driver, exporter_url):
     exporter_hub = ExporterHubPage(driver)
-    exporter_hub.go_to(exporter_url)
-    if "login" in driver.current_url:
-        log.info("logging in as test@mail.com")
-        exporter_hub.login("test@mail.com", "password")
-
     context.full_name = "Test "+ context.last_name
     password = "1234"
 
@@ -140,14 +119,33 @@ def test_deactivate_users(driver, exporter_url):
     assert "Enter a valid email/password" in driver.find_element_by_css_selector(".govuk-error-message").text
 
 
-def test_reactivate_users(driver, open_exporter_hub, exporter_url):
+@when('I deactivate user then user is deactivated')
+def user_deactivate(driver, exporter_url):
     exporter_hub = ExporterHubPage(driver)
-    exporter_hub.go_to(exporter_url)
-    log.info("logging in as test@mail.com")
-    if "login" in driver.current_url:
-        log.info("logging in as test@mail.com")
-        exporter_hub.login("test@mail.com", "password")
+    context.full_name = "Test "+ context.last_name
+    password = "1234"
 
+    # Given I am a logged-in user # I want to deactivate users # When I choose the option to manage users
+    exporter_hub.click_users()
+
+    # I should have the option to deactivate an active user # edit link, and link from user name
+    exporter_hub.click_user_name_link(context.full_name)
+
+    # When I choose to deactivate an active user # Then I return to "Manage users"
+    exporter_hub.click_deactivate_btn()
+
+    # And I can see that the user is now deactivated
+    assert utils.is_element_present(driver, By.XPATH,
+                                    "//td[text()='" + context.email_to_search + "']/following-sibling::td[text()='Deactivated']")
+    # Given I am a deactivated user # When I attempt to log in # And I cannot log in
+    exporter_hub.logout()
+    exporter_hub.login(context.email_to_search, password)
+    assert "Enter a valid email/password" in driver.find_element_by_css_selector(".govuk-error-message").text
+
+
+@when('I reactivate user then user is reactivated')
+def user_reactivate(driver, exporter_url):
+    exporter_hub = ExporterHubPage(driver)
     email = "testuser_1@mail.com"
     password = "1234"
 
@@ -169,21 +167,11 @@ def test_reactivate_users(driver, open_exporter_hub, exporter_url):
     assert driver.title == "Exporter hub - LITE"
 
 
-def test_inability_to_deactivate_oneself(driver, exporter_url):
+@when('I try to deactivate myself I cannot')
+def cant_deactivate_self(driver, exporter_url):
     exporter_hub = ExporterHubPage(driver)
-    exporter_hub.go_to(exporter_url)
-    log.info("logging in as test@mail.com")
-    if "login" in driver.current_url:
-        log.info("logging in as test@mail.com")
-        exporter_hub.login("test@mail.com", "password")
-    else:
-        exporter_hub.go_to(exporter_url)
-
     exporter_hub.click_user_profile()
     assert "Test" in driver.find_element_by_tag_name("h1").text
     deactivate = utils.is_element_present(driver, By.XPATH, "//*[text()[contains(.,'Deactivate')]]")
     assert not deactivate
 
-
-def test_teardown(driver):
-    driver.quit()

@@ -1,4 +1,4 @@
-@licence @sites
+@licence @sites @all
 Feature: I  want to add and rename my sites
   As a logged in exporter who is admin for their organisation
   I want to add and rename sites

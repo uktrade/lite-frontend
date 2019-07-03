@@ -1,4 +1,4 @@
-@login
+@login @all
 Feature: I want not be able to login to LITE within invalid credentials
   As a exporter
   I want to be able to login to LITE

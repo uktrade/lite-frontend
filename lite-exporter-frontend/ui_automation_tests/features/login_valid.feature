@@ -1,4 +1,4 @@
-@login
+@login @all
 Feature:  I want to be able to login to LITE and go to dashboard
   As a exporter
   I want to be able to login to LITE

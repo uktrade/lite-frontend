@@ -1,4 +1,4 @@
-@goods
+@goods @all
 Feature: I want to edit and remove goods on the goods list
     As a logged in exporter
     I want to add edit and remove goods on my goods list

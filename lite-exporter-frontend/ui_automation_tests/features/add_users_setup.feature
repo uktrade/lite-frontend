@@ -1,4 +1,4 @@
-@set_up @users
+@set_up @users @all
 Feature:  I want to manage users
   As a logged in exporter
   I want to manage users
