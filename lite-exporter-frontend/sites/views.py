@@ -21,7 +21,7 @@ class NewSite(TemplateView):
     def get(self, request, **kwargs):
         context = {
             'title': 'New Site',
-            'page': forms.new_site_form,
+            'page': forms.new_site_form(),
         }
         return render(request, 'form.html', context)
 
@@ -34,8 +34,8 @@ class NewSite(TemplateView):
 
         if 'errors' in validated_data:
             context = {
-                'page': forms.new_site_form,
-                'title': forms.new_site_form.title,
+                'page': forms.new_site_form(),
+                'title': forms.new_site_form().title,
                 'errors': validated_data['errors'],
                 'data': data,
             }
@@ -50,7 +50,7 @@ class EditSite(TemplateView):
 
         context = {
             'title': 'Edit Site',
-            'page': forms.edit_site_form,
+            'page': forms.edit_site_form(),
             'data': flatten_data(site.get('site')),
         }
         return render(request, 'form.html', context)
@@ -61,7 +61,7 @@ class EditSite(TemplateView):
         if 'errors' in validated_data:
             context = {
                 'title': 'Edit Site',
-                'page': forms.edit_site_form,
+                'page': forms.edit_site_form(),
                 'data': request.POST,
                 'errors': flatten_data(validated_data.get('errors')),
             }
