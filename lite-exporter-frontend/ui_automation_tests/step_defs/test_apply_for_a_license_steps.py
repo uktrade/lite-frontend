@@ -14,8 +14,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
 
-from core.builtins.custom_tags import get_string
-from core.services import get_countries
+#from core.builtins.custom_tags import get_string
+#from core.services import get_countries
 from helpers.helpers import find_element_by_href
 from pages.application_countries_list import ApplicationCountriesList
 
@@ -47,7 +47,9 @@ def i_see_the_application_overview(driver):
     assert apply.get_text_of_application_results(3) == context.ref
     # assert apply_for_licence.get_text_of_application_results(3) == datetime.datetime.now().strftime("%b %d %Y, %H:%M%p")
     # TODO: This can break if the minute changes between the five lines of code
-    assert time_date_submitted in apply.get_text_of_application_results(4), "Created date is incorrect on draft overview"
+    a = time_date_submitted.split(':')
+    b = apply.get_text_of_application_results(4).split(':')
+    assert a[1] in b[1], "Created date is incorrect on draft overview: " + a[1] + b[1]
     app_id = driver.current_url[-36:]
     context.app_id = app_id
 
@@ -237,7 +239,7 @@ def i_should_see_a_list_of_countries(driver):
  #   api_data, status_code = get_countries(None)
     assert len(page_countries) == 274
  #   assert len(page_countries) == len(api_data['countries'])
-    assert driver.find_element_by_tag_name("h1").text == get_string('licences.countries.title'), \
+    assert driver.find_element_by_tag_name("h1").text == "Where are your goods going?", \
         "Failed to go to countries list page"
 
 

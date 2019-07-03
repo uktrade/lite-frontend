@@ -18,7 +18,7 @@ from pages.which_location_form_page import WhichLocationFormPage
 from pytest_bdd import given, when, then, parsers
 from selenium import webdriver
 
-from core import strings
+#from core import strings
 
 strict_gherkin = False
 
@@ -48,8 +48,8 @@ def pytest_addoption(parser):
     parser.addoption("--last_name", action="store", default= "User")
 
     # Load in content strings
-    with open('../../lite-content/lite-exporter-frontend/strings.json') as json_file:
-        strings.constants = json.load(json_file)
+    #with open('../../lite-content/lite-exporter-frontend/strings.json') as json_file:
+     #   strings.constants = json.load(json_file)
 
 
 # Create driver fixture that initiates chrome

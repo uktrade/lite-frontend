@@ -69,7 +69,7 @@ pipeline
                         {
                             // creating timestamp
                             def now = new Date()
-                            tstamp = now.format("yyyyMMdd-HH:mm:ss.SSSS", TimeZone.getTimeZone('UTC'))
+                            tstamp = now.format("yyyyMMdd-HH:mm:ss.SSSS", TimeZone.getTimeZone('GMT'))
 
                             // running selenium tests using pytest via docker
                             test.inside("--network host --privileged --shm-size=1g -e PYTHONPATH=${env.WORKSPACE} -e ENVIRONMENT=${params.ENVIRONMENT} -w=${env.WORKSPACE}/ui_automation_test --entrypoint=''") {
