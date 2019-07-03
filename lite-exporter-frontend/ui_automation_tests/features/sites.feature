@@ -1,8 +1,10 @@
-@exporter @licence @all @sitesnew
-Feature: Licence
-  As a...
+@licence @sites
+Feature: I  want to add and rename my sites
+  As a logged in exporter who is admin for their organisation
+  I want to add and rename sites
+  So that an application can be made from one of those sites
 
-
+  @LT-933_add
   Scenario: Add a site
     Given I go to exporter homepage
     When I login to exporter homepage with username "test@mail.com" and "password"
@@ -12,6 +14,7 @@ Feature: Licence
     And I click continue
     Then I see sites list
 
+  @LT-933_edit
   Scenario: Edit a site
     Given I go to exporter homepage
     When I login to exporter homepage with username "test@mail.com" and "password"
@@ -25,7 +28,7 @@ Feature: Licence
     And I clear the fields for the site
     And I enter in text for new site " " "address" "postcode" "city" "region" and "country"
 
-
+  @LT-933_error
   Scenario: Test clicking continue when not adding a site
     Given I go to exporter homepage
     When I login to exporter homepage with username "test@mail.com" and "password"
@@ -38,6 +41,7 @@ Feature: Licence
     And I click continue
     Then I see select a site error message
 
+  @LT-933_change
   Scenario: Test changing sites
     Given I go to exporter homepage
     When I login to exporter homepage with username "test@mail.com" and "password"

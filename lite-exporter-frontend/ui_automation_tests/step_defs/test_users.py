@@ -1,19 +1,21 @@
-from selenium import webdriver
-import unittest
 import datetime
-import os
-from selenium.common.exceptions import NoSuchElementException
+import logging
+import pytest
+from conftest import context
 from selenium.webdriver.common.by import By
 from pages.exporter_hub_page import ExporterHubPage
-from pages.apply_for_a_licence_page import ApplyForALicencePage
-from pages.applications_page import ApplicationsPage
 import helpers.helpers as utils
-import pytest
-import logging
 log = logging.getLogger()
 console = logging.StreamHandler()
 log.addHandler(console)
-from conftest import context
+
+""""
+EX - I want to manage users
+LT-937
+As a logged in exporter
+I want to manage users
+So that an application/query can be managed by only active members of staff and new members of staff can be added and their details can be kept up to date
+"""
 
 
 @pytest.fixture(scope="function")

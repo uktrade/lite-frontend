@@ -1,7 +1,10 @@
-  @exporter @licence @all @goods @filter
-  Feature: Goods
-    As a...
+@licence @goods @filter
+Feature: I want to search for goods in my goods list to add to an in progress application
+  As a logged in exporter creating a new application
+  I want to search for goods in my goods list to add to an in progress application
+  So that I can quickly and easily complete my application for types of goods I have exported before
 
+  @LT-1159_desc
   Scenario: Search for goods by description
     Given I go to exporter homepage
     When I login to exporter homepage with username "test@mail.com" and "password"
@@ -20,6 +23,7 @@
     And I filter by description and click filter
     Then I see my added Good by "description"
 
+  @LT-1159_part
   Scenario: Search for goods by part number
     Given I go to exporter homepage
     When I login to exporter homepage with username "test@mail.com" and "password"
@@ -38,6 +42,7 @@
     And I filter by part number and click filter
     Then I see my added Good by "part number"
 
+  @LT-1159_remove
   Scenario: Remove filter
     Given I go to exporter homepage
     When I login to exporter homepage with username "test@mail.com" and "password"

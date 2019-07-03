@@ -1,7 +1,10 @@
-@exporter @licence @all @submit
-Feature: Licence
-  As a...
+@licence @submit
+Feature: I want to indicate the kind of licence I want
+  As a logged in exporter
+  I want to indicate the kind of licence I want
+  So that I am more likely to get the correct kind of licence or the kind of licence I would like
 
+  @LT-1091_draft
   Scenario: Apply for a licence to draft
     Given I go to exporter homepage
     When I login to exporter homepage with username "test@mail.com" and "password"
@@ -14,6 +17,7 @@ Feature: Licence
     Then I see the application overview
     When I delete the application
 
+  @LT-1091_standard
   Scenario: Submit standard application
     Given I go to exporter homepage
     When I login to exporter homepage with username "test@mail.com" and "password"
@@ -49,6 +53,7 @@ Feature: Licence
     And I click applications
     Then I see submitted application
 
+  @LT-1091_external
   Scenario: Submit application with external locations
     Given I go to exporter homepage
     When I login to exporter homepage with username "test@mail.com" and "password"
@@ -85,6 +90,7 @@ Feature: Licence
     And I click applications
     Then I see submitted application
 
+  @LT-1114
   Scenario: Submit open application
     Given I go to exporter homepage
     When I login to exporter homepage with username "test@mail.com" and "password"
@@ -134,6 +140,7 @@ Feature: Licence
     And I click applications
     Then I see submitted application
 
+  @LT-1092_search
   Scenario: Search for countries
     Given I go to exporter homepage
     When I login to exporter homepage with username "test@mail.com" and "password"
@@ -148,6 +155,7 @@ Feature: Licence
     And I search for country "Canada"
     Then only "Canada" is displayed in country list
 
+  @LT-1092_error
   Scenario: Error message when not adding countries
     Given I go to exporter homepage
     When I login to exporter homepage with username "test@mail.com" and "password"
@@ -165,6 +173,7 @@ Feature: Licence
     And I click continue
     Then error message is "You have to pick at least one country"
 
+  @LT-1091_no_site_selected
   Scenario: Error message when not adding goods and sites information for standard application
     Given I go to exporter homepage
     When I login to exporter homepage with username "test@mail.com" and "password"
@@ -177,6 +186,7 @@ Feature: Licence
     And I click continue
     Then I see no sites external sites or end user attached error message
 
+  @LT-1114_error
   Scenario: Error message when not adding goods and sites information for open application
     Given I go to exporter homepage
     When I login to exporter homepage with username "test@mail.com" and "password"
@@ -189,6 +199,7 @@ Feature: Licence
     And I click continue
     Then I see no sites good types or countries attached error message
 
+  @LT-1091_no_fields
   Scenario: Error messages when not adding fields to applications
     Given I go to exporter homepage
     When I login to exporter homepage with username "test@mail.com" and "password"
