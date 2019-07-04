@@ -42,7 +42,7 @@
 		</div>
 
 		<!-- Questions -->
-		<form method="post">
+		<form method="post" enctype="multipart/form-data">
 			{% csrf_token %}
 
 			{% for question in page.questions %}
