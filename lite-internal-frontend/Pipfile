@@ -12,7 +12,7 @@ allure-pytest = "==2.6.1"
 allure-python-commons = "==2.6.1"
 
 [packages]
-Django = "==2.2.2"
+Django = "==2.2.3"
 django-compressor = "==2.2"
 django-environ = "==0.4.5"
 django-sass-processor = "==0.7.2"
