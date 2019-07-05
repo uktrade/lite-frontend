@@ -1,0 +1,11 @@
+.lite-link--icon {
+	display: inline-block;
+	padding: 0;
+	line-height: 0!important;
+	* {
+		fill: currentColor;
+	}
+	&:active {
+		transform: translateY(1px);
+	}
+}

@@ -1,19 +1,23 @@
 .dropzone {
 	@include govuk-font($size: 19);
-	width: 100%;
-	min-height: 200px;
 	box-sizing: border-box;
-	border: $govuk-border-width-form-element dashed govuk-colour("grey-2");
-	padding: govuk-spacing(4);
 	color: govuk-colour("grey-1");
-	display: flex;
-	align-items: center;
-	justify-content: center;
 	flex-wrap: wrap;
 	transition: border .2s ease;
+}
 
-	input {
-		display: none;
+.js-enabled {
+	.dropzone {
+		width: 100%;
+		min-height: 200px;
+		border: $govuk-border-width-form-element dashed govuk-colour("grey-2");
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: govuk-spacing(4);
+		input {
+			display: none;
+		}
 	}
 }
 

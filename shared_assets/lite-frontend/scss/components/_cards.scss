@@ -30,3 +30,9 @@
 		opacity: .6;
 	}
 }
+
+.lite-card--download {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	grid-gap: govuk-spacing(6);
+}
