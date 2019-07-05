@@ -11,6 +11,7 @@ class ApplicationOverviewPage:
         self.show_countries_link = "[onclick*='showCountries']"
         self.modal_close = "modal-close-button" #id
         self.modal_content = ".modal-content" #css
+        self.gov_tables = ".govuk-table__body" #css
 
     def click_application_locations_link(self):
         self.driver.execute_script("document.getElementById('" + self.location_link + "').scrollIntoView(true);")
@@ -42,3 +43,6 @@ class ApplicationOverviewPage:
 
     def get_text_of_country_modal_content(self):
         return self.driver.find_element_by_css_selector(self.modal_content).text
+
+    def get_text_of_end_user_table(self):
+        return self.driver.find_elements_by_css_selector(self.gov_tables)[len(self.driver.find_elements_by_css_selector(self.gov_tables))-1].text

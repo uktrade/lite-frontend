@@ -47,7 +47,8 @@ Feature: I want to indicate the kind of licence I want
     When I click overview
     And I click on end user
     And I add an end user of type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
-    And I submit the application
+    Then I see end user on overview
+    When I submit the application
     Then application is submitted
     When I go to exporter homepage
     And I click applications
@@ -219,3 +220,45 @@ Feature: I want to indicate the kind of licence I want
     When I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
     And I delete the application
     Then I see the homepage
+
+  @LT-1091_external_validation
+  Scenario: Error messages with external empty validation
+    Given I go to exporter homepage
+    When I login to exporter homepage with username "test@mail.com" and "password"
+    And I click on apply for a license button
+    And I click on start button
+    And I enter in name for application and continue
+    And I select "standard" application and continue
+    And I select "permanent" option and continue
+    And I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
+    And I click on application locations link
+    And I select "external" for where my goods are located
+    And I click on add new address
+    And I fill in new external location form with name: " ", address: " " and country: " " and continue
+    Then error message is "This field may not be blank."
+
+  @LT-1091_end_user_validation
+  Scenario: Error messages with end user empty validation
+    Given I go to exporter homepage
+    When I login to exporter homepage with username "test@mail.com" and "password"
+    And I click on apply for a license button
+    And I click on start button
+    And I enter in name for application and continue
+    And I select "standard" application and continue
+    And I select "permanent" option and continue
+    And I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
+    And I click on end user
+    And I click continue
+    Then error message is "This field is required."
+    When I add end user of type: "commercial"
+    And I add end user of name: " "
+    Then error message is "This field may not be blank."
+    When I add end user of name: "Mr Smith"
+    When I add end user of website "www.afas.com"
+    Then error message is "Enter a valid URL."
+    When I add end user of website " "
+    When I add end user of address: " " and country " "
+    Then error message is "This field may not be blank."
+    When I add end user of address: "123 Home Street" and country "Ukraine"
+    # Todo following step commented out due to bug
+    # Then I see end user on overview

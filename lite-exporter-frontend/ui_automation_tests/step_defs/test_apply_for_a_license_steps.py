@@ -2,6 +2,7 @@ import datetime
 from pytest_bdd import scenarios, given, when, then, parsers, scenarios
 from pages.apply_for_a_licence_page import ApplyForALicencePage
 from pages.application_goods_type_list import ApplicationGoodsTypeList
+from pages.add_end_user_pages import AddEndUserPages
 from pages.application_overview_page import ApplicationOverviewPage
 from pages.application_goods_list import ApplicationGoodsList
 import helpers.helpers as utils
@@ -282,3 +283,74 @@ def search_country_result(driver, country):
 def selected_countries_in_modal(driver, country):
     assert country in ApplicationOverviewPage(driver).get_text_of_country_modal_content(), \
         "Country not added to modal"
+
+
+@when(parsers.parse('I add end user of type: "{type}"'))
+def add_new_end_user_type(driver, type):
+    add_end_user_pages = AddEndUserPages(driver)
+    add_end_user_pages.select_type(type)
+    context.type_end_user = type
+    add_end_user_pages.click_continue()
+
+
+@when(parsers.parse('I add end user of name: "{name}"'))
+def add_new_end_user_name(driver, name):
+    add_end_user_pages = AddEndUserPages(driver)
+    add_end_user_pages.enter_name(name)
+    context.name_end_user = name
+    add_end_user_pages.click_continue()
+
+
+@when(parsers.parse('I add end user of website "{website}"'))
+def add_new_end_user_website(driver, website):
+    add_end_user_pages = AddEndUserPages(driver)
+    add_end_user_pages.enter_website(website)
+    add_end_user_pages.click_continue()
+
+
+@when(parsers.parse('I add end user of address: "{address}" and country "{country}"'))
+def add_new_end_user_address(driver, address, country):
+    add_end_user_pages = AddEndUserPages(driver)
+    add_end_user_pages.enter_address(address)
+    context.address_end_user = address
+    add_end_user_pages.enter_country(country)
+    add_end_user_pages.click_continue()
+
+
+@when(parsers.parse('I add an end user of type: "{type}", name: "{name}", website: "{website}", address: "{address}" and country "{country}"'))
+def add_new_end_user(driver, type, name, website, address, country):
+    add_end_user_pages = AddEndUserPages(driver)
+    add_end_user_pages.select_type(type)
+    context.type_end_user = type
+    add_end_user_pages.click_continue()
+    add_end_user_pages.enter_name(name)
+    context.name_end_user = name
+    add_end_user_pages.click_continue()
+    add_end_user_pages.enter_website(website)
+    add_end_user_pages.click_continue()
+    add_end_user_pages.enter_address(address)
+    context.address_end_user = address
+    add_end_user_pages.enter_country(country)
+    add_end_user_pages.click_continue()
+
+
+@when('I click on end user')
+def i_click_on_end_user(driver):
+    app = ApplicationOverviewPage(driver)
+    app.click_end_user_link()
+
+
+@when('I click on application overview')
+def i_click_on_application_overview(driver):
+    driver.find_element_by_css_selector("a[href*='overview'").click()
+
+
+@then('I see end user on overview')
+def end_user_on_overview(driver):
+    app = ApplicationOverviewPage(driver)
+    assert "Type" in app.get_text_of_end_user_table()
+    assert "Name" in app.get_text_of_end_user_table()
+    assert "Address" in app.get_text_of_end_user_table()
+    assert context.type_end_user in app.get_text_of_end_user_table()
+    assert context.name_end_user in app.get_text_of_end_user_table()
+    assert context.address_end_user in app.get_text_of_end_user_table()
