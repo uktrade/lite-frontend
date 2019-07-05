@@ -13,7 +13,7 @@ if os.path.exists(ENV_FILE):
     Env.read_env(ENV_FILE)
 
 env = Env(
-    ALLOWED_HOSTS=(list, []),
+    ALLOWED_HOSTS=(str, ''),
     DEBUG=(bool, False),
     LOG_LEVEL=(str, 'INFO'),
 )
@@ -27,8 +27,7 @@ SECRET_KEY = '=(kaa@ypr5v!x(s=9^f8)o!k#84f_1v@iz31+cq_)8--@kws4b'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = env('ALLOWED_HOSTS')
-
+ALLOWED_HOSTS = json.loads(env('ALLOWED_HOSTS')) if env('ALLOWED_HOSTS') else []
 # Application definition
 
 INSTALLED_APPS = [
