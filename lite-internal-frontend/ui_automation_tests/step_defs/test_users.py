@@ -92,8 +92,8 @@ def test_invalid(driver, open_internal_hub):
     user_page.enter_email("")
     user_page.select_option_from_team_drop_down_by_visible_text("Select")
     exporter_hub.click_save_and_continue()
-    assert "This field may not be blank." in driver.find_element_by_css_selector(".govuk-error-message").text
-    assert "This field may not be null." in driver.find_elements_by_css_selector(".govuk-error-message")[1].text
+    assert "Enter an email address in the correct format, like name@example.com" in driver.find_element_by_css_selector(".govuk-error-message").text
+    assert "Select a team" in driver.find_elements_by_css_selector(".govuk-error-message")[1].text
 
 def test_teardown(driver):
     driver.quit()

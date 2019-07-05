@@ -76,10 +76,6 @@ class ManageCases():
                         assert record.get_text_of_denial_reasons_listed(i) == denial_reason_code
                         i += 1
 
-    @when('dates are in chronological order')
-    def select_status_save(driver):
-        application_page = ApplicationPage(driver)
-
     @when(parsers.parse('I select status "{status}" and save'))
     def select_status_save(driver, status):
         application_page = ApplicationPage(driver)
@@ -120,14 +116,15 @@ class ManageCases():
     def application_headers_and_info_are_correct(driver):
         assert driver.find_elements_by_css_selector(".lite-information-board .lite-heading-s")[0].text == "APPLICANT"
         assert driver.find_elements_by_css_selector(".lite-information-board .lite-heading-s")[1].text == "ACTIVITY"
-        assert driver.find_elements_by_css_selector(".lite-information-board .lite-heading-s")[2].text == "LAST UPDATED"
-        assert driver.find_elements_by_css_selector(".lite-information-board .lite-heading-s")[3].text == "STATUS"
-        assert driver.find_elements_by_css_selector(".lite-information-board .lite-heading-s")[4].text == "USAGE"
+        assert driver.find_elements_by_css_selector(".lite-information-board .lite-heading-s")[2].text == "CREATED AT"
+        assert driver.find_elements_by_css_selector(".lite-information-board .lite-heading-s")[3].text == "REFERENCE NUMBER"
+        assert driver.find_elements_by_css_selector(".lite-information-board .lite-heading-s")[4].text == "LICENCE TYPE"
+        assert driver.find_elements_by_css_selector(".lite-information-board .lite-heading-s")[5].text == "LAST UPDATED"
         #  this is hard coded from the organisation that is created as part of setup
         assert driver.find_elements_by_css_selector(".lite-information-board .govuk-label")[0].text == "Unicorns Ltd"
         assert driver.find_elements_by_css_selector(".lite-information-board .govuk-label")[1].text == "Trading" or driver.find_elements_by_css_selector(".lite-information-board .govuk-label")[1].text == "Brokering"
         #TODO commented out below line due to bug LT-1281
         #assert driver.find_elements_by_css_selector(".lite-information-board .govuk-label")[2].text == context.date_time_of_update
-        assert driver.find_elements_by_css_selector(".lite-information-board .govuk-label")[3].text == context.status
-        assert driver.find_elements_by_css_selector(".lite-information-board .govuk-label")[4].text == "None"
+        assert driver.find_elements_by_css_selector(".lite-information-board .govuk-label")[3].text == "None"
+        assert driver.find_elements_by_css_selector(".lite-information-board .govuk-label")[4].text == "Standard licence"
 

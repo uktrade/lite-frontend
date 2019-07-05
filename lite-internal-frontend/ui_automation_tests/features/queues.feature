@@ -32,4 +32,4 @@ Feature: I want to define new work queues and the teams they belong to
     When I go to queues
     And I click on add a queue
     And I enter in queue name " "
-    Then I see error message "This field may not be blank."
+    Then I see error message "Give the queue a valid name"

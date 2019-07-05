@@ -57,14 +57,14 @@ def add_existing_flag(driver):
 
 @when('I edit my flag')
 def edit_existing_flag(driver):
-    elements = driver.find_elements_by_css_selector(".govuk-table__cell")
+    elements = driver.find_elements_by_css_selector(".govuk-table__cell a")
     no =0
     while no<len(elements):
         if elements[no].text == context.flag_name:
             element_number = no
         no += 1
 
-    elements[element_number + 4].click()
+    elements[element_number + 2].click()
     flags_pages = FlagsPages(driver)
     context.flag_name = str(context.flag_name)[:12] + "edited"
     flags_pages.enter_flag_name(context.flag_name)

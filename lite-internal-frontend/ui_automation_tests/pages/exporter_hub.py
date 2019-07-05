@@ -349,3 +349,4 @@ class ExporterHub():
         self.driver.find_element_by_id(self.city).send_keys(city)
         self.driver.find_element_by_id(self.region).send_keys(region)
         self.driver.find_element_by_id(self.country).send_keys(country)
+        self.driver.find_element_by_id(self.country).send_keys(Keys.ENTER)

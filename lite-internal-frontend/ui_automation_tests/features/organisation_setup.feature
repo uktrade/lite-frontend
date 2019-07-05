@@ -28,7 +28,7 @@ So that the new company can make applications
     And I login to exporter homepage with username "TestBusinessForSites@mail.com" and "12345678900"
     And I click sites link
     And I click new site
-    And I enter in text for new site "Site 2" "address" "postcode" "city" "region" and "country"
+    And I enter in text for new site "Site 2" "address" "postcode" "city" "region" and "Ukraine"
     And I click continue
     And I go to the internal homepage
     And I go to organisations

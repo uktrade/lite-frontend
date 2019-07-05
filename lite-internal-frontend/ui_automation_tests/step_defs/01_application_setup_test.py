@@ -186,9 +186,6 @@ def add_new_end_user(driver, type, name, website, address, country):
 def good_is_added(driver):
     unit = str(context.unit)
     unit = unit.lower()
-    assert utils.is_element_present(driver, By.XPATH, "//*[text()='" + str(context.goods_name) + "']")
-    assert utils.is_element_present(driver, By.XPATH, "//*[text()='" + str(context.quantity) + ".0 " + unit + "']")
-    assert utils.is_element_present(driver, By.XPATH, "//*[text()='£" + str(context.value) + ".00']")
 
 
 @then(parsers.parse('driver title equals "{expected_text}"'))
