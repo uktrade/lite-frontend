@@ -2,6 +2,10 @@
 
 {% load humanize %}
 
+{% block back-button %}
+	<a href="{% url 'cases:cases' %}" class="govuk-back-link">Back to Cases</a>
+{% endblock %}
+
 {% block body %}
 
 <h1 class="govuk-heading-l">{{ title }}</h1>

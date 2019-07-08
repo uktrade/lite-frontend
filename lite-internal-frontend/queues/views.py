@@ -1,14 +1,13 @@
-from cases.forms.assign_users import assign_users_form
-from cases.services import get_case, put_case
-from libraries.forms.generators import error_page, form_page
-from queues.services import get_queue, get_queues, \
-    post_queues, put_queue, put_queue_case_assignments, get_queue_case_assignments
-from queues import forms
-
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView
 
+from cases.forms.assign_users import assign_users_form
+from libraries.forms.generators import error_page, form_page
+from queues import forms
+from queues.helpers import get_assigned_users_from_cases
+from queues.services import get_queue, get_queues, \
+    post_queues, put_queue, put_queue_case_assignments, get_queue_case_assignments
 from users.services import get_gov_user
 
 
@@ -95,10 +94,7 @@ class CaseAssignments(TemplateView):
             return error_page(request, 'Invalid case selection')
 
         # Get assigned users
-        assigned_users = []
-        for assignment in case_assignments['case_assignments']:
-            for user in assignment['users']:
-                assigned_users.append(user)
+        assigned_users = get_assigned_users_from_cases(case_ids, case_assignments['case_assignments'])
 
         return form_page(request,
                          assign_users_form(request,

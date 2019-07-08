@@ -86,21 +86,16 @@
 						</p>
 					</div>
 					<div>
-						{% for item in case_assignments %}
-							{% if item.case == case.id %}
-								{% for user in item.users %}
-									<p class="govuk-body user" style="margin-bottom: 6px;">
-										{% if user.first_name %}
-											{{ user.first_name }} {{ user.last_name }}
-										{% else %}
-											{{ user.email }}
-										{% endif %}
-									</p>
-								{% endfor %}
-								{% if item.users|length == 0 %}
-									<p class="govuk-body" style="margin-bottom: 0; opacity: .7;">No users assigned</p>
+						{% for user in case.assignments %}
+							<p class="govuk-body user" style="margin-bottom: 6px;">
+								{% if user.first_name %}
+									{{ user.first_name }} {{ user.last_name }}
+								{% else %}
+									{{ user.email }}
 								{% endif %}
-							{% endif %}
+							</p>
+						{% empty %}
+							<p class="govuk-body" style="margin-bottom: 0; opacity: .7;">No users assigned</p>
 						{% endfor %}
 					</div>
 					<p class="govuk-body">
