@@ -25,7 +25,7 @@ Application for handling exporter related activity in LITE.
     * `docker-compose stop`
 * Tear down the service
     * `docker-compose down`
-* Go to the index page (e.g. `http://localhost:8110`)
+* Go to the index page (e.g. `http://localhost:8300`)
 ***
 
 ## Running the application
