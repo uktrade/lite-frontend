@@ -33,7 +33,7 @@ def click_post_note(driver):
 def note_is_displayed(driver):
     application_page = ApplicationPage(driver)
     assert context.text in application_page.get_text_of_case_note(0)
-    assert context.date_time_of_post in application_page.get_text_of_case_note_date_time(0), "incorrect time of post on case note"
+    assert context.date_time_of_post.split(":")[1] in application_page.get_text_of_case_note_date_time(0).split(":")[1], "incorrect time of post on case note"
 
 
 @when('I click cancel button')

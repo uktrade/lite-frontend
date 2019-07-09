@@ -28,13 +28,7 @@ def click_on_add_queue(driver):
 
 @when('I edit the new queue')
 def click_on_edit_queue(driver):
-    elements = driver.find_elements_by_css_selector(".govuk-table__body .govuk-table__row")
-    no = 0
-    while no < len(elements):
-        if context.queue_name in elements[no].text:
-            driver.find_elements_by_css_selector(".govuk-table__cell a")[no].click()
-            break
-        no += 1
+    driver.find_element_by_xpath("//*[text()[contains(.,'" + context.queue_name + "')]]/following-sibling::td[last()]/a").click()
     context.queue_name = str(context.queue_name)[:12] + "edited"
     QueuesPages(driver).enter_queue_name(context.queue_name)
     Shared(driver).click_submit()
