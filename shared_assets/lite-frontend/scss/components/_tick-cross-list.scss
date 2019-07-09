@@ -1,0 +1,41 @@
+$govuk-button-colour: #00823b;
+
+.lite-tick-cross-list {
+	margin: 0;
+	list-style: none;
+	margin-block-start: 0;
+	padding: 0;
+	list-style-type: none;
+
+	li:last-of-type .lite-tick-cross {
+		margin-bottom: 0;
+	}
+}
+
+.lite-tick-cross {
+	display: block;
+	display: flex;
+	align-items: center;
+	margin-bottom: govuk-spacing(2);
+
+	svg {
+		height: 18px;
+		width: 18px;
+		margin-right: govuk-spacing(2);
+		margin-bottom: 4px;
+	}
+
+	&--tick {
+		svg * {
+			fill: $govuk-button-colour;
+		}
+	}
+
+	&--cross {
+		color: govuk-colour("grey-1");
+
+		svg * {
+			fill: govuk-colour("grey-1");
+		}
+	}
+}
