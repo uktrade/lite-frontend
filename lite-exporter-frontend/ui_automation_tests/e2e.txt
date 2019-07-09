@@ -3,3 +3,12 @@ allure-python-commons==2.6.1
 pytest==4.4.0
 pytest_bdd==3.1.0
 selenium==3.141.0
+Django==2.2.2
+django-compressor==2.2
+django-environ==0.4.5
+django-sass-processor==0.7.2
+libsass==0.18.0
+psycopg2==2.8.2
+python-json-logger==0.1.11
+requests==2.21.0
+stringcase==1.2.0

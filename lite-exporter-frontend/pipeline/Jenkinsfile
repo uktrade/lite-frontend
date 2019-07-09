@@ -72,7 +72,7 @@ pipeline
                             tstamp = now.format("yyyyMMdd-HH:mm:ss.SSSS", TimeZone.getTimeZone('GMT'))
 
                             // running selenium tests using pytest via docker
-                            test.inside("--network host --privileged --shm-size=1g -e PYTHONPATH=${env.WORKSPACE} -e ENVIRONMENT=${params.ENVIRONMENT} -w=${env.WORKSPACE}/ui_automation_test --entrypoint=''") {
+                            test.inside("--network host --privileged --shm-size=1g --env-file=${env.WORKSPACE}/docker.env -e PYTHONPATH=${env.WORKSPACE} -e ENVIRONMENT=${params.ENVIRONMENT} -w=${env.WORKSPACE}/ui_automation_test --entrypoint=''") {
                                     sh "/docker-entry.sh ${params.TESTS_TO_RUN}"
                             }
                         }
