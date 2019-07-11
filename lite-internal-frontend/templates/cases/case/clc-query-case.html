@@ -1,0 +1,68 @@
+{% extends 'layouts/full_width.html' %}
+
+{% load humanize %}
+
+{% block back-button %}
+	<a href="{% url 'cases:cases' %}" class="govuk-back-link">Back to Cases</a>
+{% endblock %}
+
+{% block body %}
+
+<h1 class="govuk-heading-l">CLC query</h1>
+<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:move' data.case.id %}">
+    {% get_string 'cases.manage.move_case.button' %}
+</a>
+<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:manage' data.case.id %}">
+    Change Status
+</a>
+
+<div class="lite-information-board">
+	<div class="govuk-grid-row">
+		<div class="govuk-grid-column-one-third">
+			<p class="lite-heading-s">Applicant</p>
+			<p class="govuk-label">
+				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisations:organisation' data.case.clc_query.good.organisation %}">
+					{{ data.case.clc_query.organisation_name }}
+				</a>
+			</p>
+		</div>
+		<div class="govuk-grid-column-one-third">
+			<p class="lite-heading-s">Last Updated</p>
+			<p class="govuk-label">
+
+			</p>
+		</div>
+        <div class="govuk-grid-column-one-third">
+			<p class="lite-heading-s">
+				Status
+			</p>
+			<p class="govuk-label">{{ data.case.clc_query.status|sentence_case }}</p>
+		</div>
+	</div>
+</div>
+
+<table class="lite-table">
+    <thead class="lite-table__head">
+        <tr class="lite-table__row">
+          <th class="lite-table__header" scope="col">Description</th>
+          <th class="lite-table__header" scope="col">Control List Classification</th>
+          <th class="lite-table__header" scope="col">Part Number</th>
+        </tr>
+    </thead>
+    <tbody class="lite-table__body">
+        <tr class="lite-table__row">
+          <td class="lite-table__cell">{{ data.case.clc_query.good.description }}</td>
+          <td class="lite-table__cell">{{ data.case.clc_query.good.control_code|default:'None' }}</td>
+          <td class="lite-table__cell">{{ data.case.clc_query.good.part_number|default:'None' }}</td>
+        </tr>
+    </tbody>
+</table>
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <p class="lite-heading-s">CLC query text</p>
+        <p class="govuk-label">
+            {{ data.case.clc_query.details }}
+        </p>
+    </div>
+</div>
+{% endblock %}

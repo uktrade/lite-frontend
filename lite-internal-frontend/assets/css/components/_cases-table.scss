@@ -1,7 +1,7 @@
 .lite-cases-table {}
 @mixin table-display {
 	display: grid;
-	grid-template-columns: 30px 1fr 300px 200px;
+	grid-template-columns: 30px 1fr 200px 200px 200px;
 	grid-gap: govuk-spacing(3);
 }
 

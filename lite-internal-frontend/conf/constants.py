@@ -14,6 +14,7 @@ QUEUES_URL = '/queues/'
 AUTHENTICATION_URL = '/gov-users/authenticate/'
 GOV_USERS_URL = '/gov-users/'
 FLAGS_URL = '/flags/'
+CLC_QUERIES_URL = '/clc_queries/'
 
 # Static URLs
 STATIC_URL = '/static/'

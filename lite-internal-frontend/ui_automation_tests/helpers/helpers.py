@@ -1,17 +1,20 @@
 import allure
-import datetime
 import os
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
-from datetime import date
+from datetime import date, datetime
 import logging
 
 d = date.fromordinal(730920)
 now = d.strftime("%d-%m-%Y")
 path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir))
 screen_dir = os.path.join(path, "screenshot", str(now))
+
+
+def get_current_date_time_string():
+    return datetime.now().strftime("%Y/%m/%d %H:%M:%S:%f")
 
 
 def screen_path():
@@ -26,6 +29,7 @@ def remove_special_characters(text):
     # text = text.translate(str.maketrans('', '', string.punctuation))
     text = text.translate(str.maketrans('', '', '\ / : * ? " < > |'))
     return text
+
 
 def save_screenshot(driver, name):
     logging.info("name: " + name)
@@ -77,15 +81,16 @@ def repeat_to_length(string_to_expand, length):
 
 
 def get_formatted_date_time_h_m_pm_d_m_y():
-    time = datetime.datetime.now().strftime("%I:%M%p %d %B %Y").replace("PM", "pm").replace(
+    time = datetime.now().strftime("%I:%M%p %d %B %Y").replace("PM", "pm").replace(
         "AM", "am")
     if time[0] == "0":
         time = time[1:]
     return time
 
+
 def get_unformatted_date_time():
-    return datetime.datetime.now()
+    return datetime.now()
 
 
 def get_formatted_date_time_m_d_h_s():
-    return datetime.datetime.now().strftime("%m%d%H%M%S")
+    return datetime.now().strftime("%m%d%H%M%S")

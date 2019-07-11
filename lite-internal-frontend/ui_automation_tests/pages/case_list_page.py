@@ -2,13 +2,13 @@ class CaseListPage():
 
     def __init__(self, driver):
         self.driver = driver
-        self.select_all_checkbox = "select-all-checkbox" #id
-        self.case_checkbox = ".govuk-checkboxes__input[value='" #css
-        self.checkbox_text = ".govuk-checkboxes" #css
-        self.assign_users_button = "assign-users-button" #id
-        self.assignee = "[style='margin-bottom: 6px;']" #css
-        self.no_assignee = "[style='margin-bottom: 0; opacity: .7;']" #css
-        self.filter_search_box = "filter-box" #id
+        self.select_all_checkbox = "select-all-checkbox"  # id
+        self.case_checkbox = ".govuk-checkboxes__input[value='"  # css
+        self.checkbox_text = ".govuk-checkboxes"  # css
+        self.assign_users_button = "assign-users-button"  # id
+        self.assignee = "[style='margin-bottom: 6px;']"  # css
+        self.no_assignee = "[style='margin-bottom: 0; opacity: .7;']"  # css
+        self.filter_search_box = "filter-box"  # id
 
     def click_on_case_checkbox(self, case_id):
         self.driver.find_element_by_css_selector(self.case_checkbox + case_id + "']").click()
@@ -30,3 +30,7 @@ class CaseListPage():
 
     def get_text_checkbox_elements(self):
         return self.driver.find_elements_by_css_selector(self.checkbox_text)
+
+    def assert_case_is_present(self, case_id):
+        case_row = self.driver.find_element_by_xpath("//*[text()[contains(.,'" + case_id + "')]]")
+        assert case_row.is_displayed()

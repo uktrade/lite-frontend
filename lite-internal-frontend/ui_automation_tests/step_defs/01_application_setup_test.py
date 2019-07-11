@@ -197,7 +197,7 @@ def assert_title_text(driver, expected_text):
 def application_is_submitted(driver):
     exporter = ExporterHub(driver)
     assert "Application submitted" in exporter.application_submitted_text()
-    #TODO find better way of getting ID.
+    # TODO find better way of getting ID.
     url = driver.current_url.replace('/overview/', '')
     context.app_id = url[-36:]
     log.info("Application submitted")

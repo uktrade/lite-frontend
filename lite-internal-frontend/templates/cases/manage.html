@@ -16,11 +16,16 @@
 
 	<form method="post">
 		{% csrf_token %}
-
 		<div class="govuk-form-group">
-			<label class="govuk-label" for="status">
-				Application Status
-			</label>
+            {% if title == 'Manage CLC query case' %}
+    			<label class="govuk-label" for="status">
+	    			CLC Query Status
+		    	</label>
+            {% else %}
+                <label class="govuk-label" for="status">
+	    			Application Status
+		    	</label>
+            {% endif %}
 			<select id="status" class="govuk-select" name="status" id="status">
 				<option value="submitted" {% if data.case.application.status == "submitted" %}selected{% endif %}>Submitted</option>
 				<option value="more_information_required" {% if data.case.application.status == "more_information_required" %}selected{% endif %}>More information required</option>

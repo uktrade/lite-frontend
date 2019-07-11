@@ -28,9 +28,10 @@ def pytest_addoption(parser):
                      default="https://exporter.lite.service." + env + ".uktrade.io/", help="url")
     parser.addoption("--internal_url", action="store",
                      default="https://internal.lite.service." + env + ".uktrade.io/", help="url")
-    # parser.addoption("--exporter_url", action="store", default="http://localhost:9000", help="url")
-    # parser.addoption("--internal_url", action="store", default="http://localhost:8080", help="url")
+    # parser.addoption("--exporter_url", action="store", default="http://localhost:8300", help="url")
+    # parser.addoption("--internal_url", action="store", default="http://localhost:8200", help="url")
     parser.addoption("--sso_sign_in_url", action="store", default="https://sso.trade.uat.uktrade.io/login/", help="url")
+
 
 # Create driver fixture that initiates chrome
 @pytest.fixture(scope="module", autouse=True)
@@ -46,6 +47,7 @@ def driver(request):
         return browser
     else:
         print('only chrome is supported at the moment')
+
     def fin():
         driver.quit()
         request.addfinalizer(fin)
@@ -77,7 +79,7 @@ def test_teardown(driver):
 
 @pytest.fixture(scope="module")
 def sso_sign_in_url(request):
-     return request.config.getoption("--sso_sign_in_url")
+    return request.config.getoption("--sso_sign_in_url")
 
 
 @pytest.fixture(scope="module")
@@ -158,4 +160,3 @@ def click_new_site(driver):
 @when('I click continue')
 def i_click_continue(driver):
     driver.find_element_by_css_selector("button[type*='submit']").click()
-
