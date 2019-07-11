@@ -17,8 +17,9 @@ from pages.which_location_form_page import WhichLocationFormPage
 from pytest_bdd import given, when, then, parsers
 from selenium import webdriver
 from conf.settings import env
+import helpers.helpers as utils
 
-#from core import strings
+# from core import strings
 
 strict_gherkin = False
 
@@ -40,16 +41,16 @@ def pytest_addoption(parser):
     parser.addoption("--driver", action="store", default="chrome", help="Type in browser type")
     parser.addoption("--exporter_url", action="store", default="https://exporter.lite.service." + env + ".uktrade.io/", help="url")
     parser.addoption("--internal_url", action="store", default="https://internal.lite.service." + env + ".uktrade.io/", help="url")
-    #parser.addoption("--exporter_url", action="store", default="localhost:8300/", help="url")
-    #parser.addoption("--internal_url", action="store", default="localhost:8200/", help="url")
-    parser.addoption("--email", action="store", default= "test@mail.com")
-    parser.addoption("--password", action="store", default= "password")
-    parser.addoption("--first_name", action="store", default= "Test")
-    parser.addoption("--last_name", action="store", default= "User")
+    # parser.addoption("--exporter_url", action="store", default="localhost:8300/", help="url")
+    # parser.addoption("--internal_url", action="store", default="localhost:8200/", help="url")
+    parser.addoption("--email", action="store", default="test@mail.com")
+    parser.addoption("--password", action="store", default="password")
+    parser.addoption("--first_name", action="store", default="Test")
+    parser.addoption("--last_name", action="store", default="User")
 
     # Load in content strings
-    #with open('../../lite-content/lite-exporter-frontend/strings.json') as json_file:
-     #   strings.constants = json.load(json_file)
+    # with open('../../lite-content/lite-exporter-frontend/strings.json') as json_file:
+    #     strings.constants = json.load(json_file)
 
 
 # Create driver fixture that initiates chrome
@@ -109,6 +110,7 @@ def last_name(request):
 
 sso_email = env('TEST_SSO_EMAIL')
 sso_password = env('TEST_SSO_PASSWORD')
+
 
 @given('I go to internal homepage')
 def go_to_internal_homepage(driver, internal_url, internal_login_url):
@@ -315,17 +317,22 @@ def click_add_from_organisation_button(driver):
 def add_new_good(driver, description, controlled, controlcode, incorporated, part):
     exporter_hub = ExporterHubPage(driver)
     add_goods_page = AddGoodPage(driver)
-    good_description = description + str(random.randint(1, 1000))
-    good_part = part + str(random.randint(1, 1000))
+    date_time = utils.get_current_date_time_string()
+    good_description = "%s %s" % (description, date_time)
+    good_part = "%s %s" % (part, date_time)
     context.good_description = good_description
     context.part = good_part
     context.controlcode = controlcode
     add_goods_page.enter_description_of_goods(good_description)
     add_goods_page.select_is_your_good_controlled(controlled)
-    add_goods_page.enter_control_code(controlcode)
     add_goods_page.select_is_your_good_intended_to_be_incorporated_into_an_end_product(incorporated)
     if "empty" not in good_part:
         add_goods_page.enter_part_number(good_part)
+    if controlled.lower() == 'unsure':
+        add_goods_page.enter_control_code_unsure(controlcode)
+        add_goods_page.enter_control_unsure_details(description + " unsure")
+        exporter_hub.click_save_and_continue()
+        add_goods_page.select_control_unsure_confirmation("yes")
+    else:
+        add_goods_page.enter_control_code(controlcode)
     exporter_hub.click_save_and_continue()
-
-

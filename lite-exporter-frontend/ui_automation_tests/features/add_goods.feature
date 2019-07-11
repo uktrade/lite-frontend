@@ -31,6 +31,15 @@ Feature: I want to edit and remove goods on the goods list
         When I delete my good
         Then my good is no longer in the goods list
 
+    @LT-1006_add_clc_query_good
+    Scenario: Add "I don't know" good
+        Given I go to exporter homepage
+        When I login to exporter homepage with username "test@mail.com" and "password"
+        And I click on goods link
+        When I click add a good button
+        And I add a good or good type with description "aa" controlled "Unsure" control code "1234" incorporated "Yes" and part number "321"
+        Then I see good in goods list
+
     @after
     Scenario: Rollback
         Given I go to exporter homepage
