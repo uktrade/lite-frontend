@@ -9,6 +9,10 @@
 		white-space: nowrap;
 	}
 
+	h1 {
+		display: block;
+	}
+
 	& > * {
 		margin-bottom: govuk-spacing(5);
 	}
@@ -17,7 +21,19 @@
 	}
 }
 
-.lite-app-bar--right {
+.lite-app-bar__content {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+
+	* {
+		display: block;
+		white-space: normal;
+		overflow: hidden;
+	}
+}
+
+.lite-app-bar__controls {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
