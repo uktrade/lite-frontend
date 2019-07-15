@@ -6,9 +6,6 @@ class InputType(Enum):
     INPUT = 1
     TEXTAREA = 2
     NUMBER = 3
-    SELECT = 4
-    RADIOBUTTONS = 5
-    CHECKBOXES = 6
     FILE_UPLOAD = 7
     MULTI_FILE_UPLOAD = 8
     AUTOCOMPLETE = 9
@@ -177,7 +174,7 @@ class Checkboxes(_Component):
                  name: str,
                  options: [],
                  title: str = '',
-                 description: str = '',
+                 description: str = 'Select all that apply.',
                  optional: bool = False,
                  classes: [] = None):
         super().__init__(name, title, description, optional, classes)
@@ -202,6 +199,19 @@ class RadioButtons(_Component):
         super().__init__(name, title, description, optional, classes)
         self.options = options
         self.input_type = 'RADIOBUTTONS'
+
+
+class Select(_Component):
+    def __init__(self,
+                 name: str,
+                 options: [],
+                 title: str = '',
+                 description: str = '',
+                 optional: bool = False,
+                 classes: [] = None):
+        super().__init__(name, title, description, optional, classes)
+        self.options = options
+        self.input_type = 'SELECT'
 
 
 class Option:
