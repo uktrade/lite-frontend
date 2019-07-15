@@ -1,3 +1,6 @@
+$highlight-background-colour: #fff2d3;
+$highlight-border-colour: #ffbf47;
+
 .lite-filters {
 	position: -webkit-sticky;
 	position: sticky;
@@ -65,4 +68,9 @@
 			opacity: 1;
 		}
 	}
+}
+
+.lite-filter-highlight {
+	background-color: $highlight-background-colour;
+	border-bottom: 3px solid $highlight-border-colour;
 }
