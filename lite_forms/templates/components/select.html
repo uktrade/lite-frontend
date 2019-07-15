@@ -1,4 +1,4 @@
-<select id="{{ name }}" name="{{ name }}" class="govuk-select" style="min-width: 300px;">
+<select id="{{ name }}" name="{{ name }}" class="govuk-select {% if error %}govuk-select--error{% endif %}" style="min-width: 300px;">
 	<option value="">Select</option>
 	{% for item in data %}
 		<option value="{{ item.key }}" {% if value == item.key %}selected{% endif %}>{{ item.value }}</option>
