@@ -40,8 +40,8 @@
 			{% include "components/textarea.html" with name=question.name extras=question.extras value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
 		{% elif question.input_type.name == "NUMBER" %}
 			{% include "components/number.html" with name=question.name value=question.name %}
-		{% elif question.input_type.name == "RADIOBUTTONS" %}
-			{% include "components/radiobuttons.html" with name=question.name value=data|key_value:question.name data=question.data question=question %}
+		{% elif question.input_type == "RADIOBUTTONS" %}
+			{% include "components/radiobuttons.html" with component=question data=data|key_value:question.name %}
 		{% elif question.input_type == "CHECKBOXES" %}
 			{% include "components/checkboxes.html" with component=question data=data|key_value:question.name %}
 		{% elif question.input_type == "SELECT" %}
