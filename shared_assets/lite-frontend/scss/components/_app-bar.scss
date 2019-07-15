@@ -1,12 +1,19 @@
 .lite-app-bar {
-	margin-bottom: govuk-spacing(6);
-	display: grid;
-	grid-template-columns: 1fr auto;
+	display: flex;
+	justify-content: space-between;
+	flex-wrap: wrap;
 
 	* {
 		margin-bottom: 0;
 		display: inline-block;
 		white-space: nowrap;
+	}
+
+	& > * {
+		margin-bottom: govuk-spacing(5);
+	}
+	@include govuk-media-query($until: tablet) {
+		display: block;
 	}
 }
 
@@ -14,7 +21,20 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
+
 	& > * {
 		margin-left: govuk-spacing(4);
+		display: block;
+
+		&:first-of-type {
+			margin-left: 0;
+		}
+		@include govuk-media-query($until: tablet) {
+			margin-left: 0;
+			margin-bottom: govuk-spacing(3);
+		}
+	}
+	@include govuk-media-query($until: tablet) {
+		display: block;
 	}
 }
