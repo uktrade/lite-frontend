@@ -23,15 +23,10 @@ def key_in_array(array, key):
             if item.get('id') == key:
                 return True
 
-        if key in array:
-            return True
-        return False
+        return key in array
 
-    # If else, loop through
-    for item in array:
-        if item.get('id') == key:
-            return True
-    return False
+    # If else, loop through and check ids
+    return key in [x.get('id') for x in array]
 
 
 @register.filter
