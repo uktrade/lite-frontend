@@ -174,7 +174,7 @@ class Checkboxes(_Component):
                  name: str,
                  options: [],
                  title: str = '',
-                 description: str = 'Select all that apply.',
+                 description: str = '',
                  optional: bool = False,
                  classes: [] = None):
         super().__init__(name, title, description, optional, classes)
