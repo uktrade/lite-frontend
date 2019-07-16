@@ -6,7 +6,7 @@ Feature: Set up application
     Given I go to exporter homepage
     When I login to exporter homepage with username "trinity@unicorns.com" and "12345678900"
     And I click on goods tile
-    And I add a good with description "Good T1" controlled "Yes" control code "1234" incorporated "Yes" and part number "321"
+    And I add a good with description "MPG 2.0" controlled "Yes" control code "1234" incorporated "Yes" and part number "321"
     And I go to exporter homepage
     And I click on apply for a license button
     And I click on start button

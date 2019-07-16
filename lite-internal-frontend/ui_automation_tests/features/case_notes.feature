@@ -8,7 +8,7 @@ So that I can record my findings and comments and others users can see these
 Scenario: Add a new valid case note
   Given I go to internal homepage
   When I click on application previously created
-  And I enter "text" for case note
+  And I enter "This application is potentially risky." for case note
   And I click post note
   Then note is displayed
 

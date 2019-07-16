@@ -9,7 +9,7 @@ Feature: I want to create roles
     Given I go to internal homepage
     When I go to users
     And I go to manage roles
-    And I add a new role called "role-t" with permission to "Make final decisions"
+    And I add a new role called "Supervisor" with permission to "Make final decisions"
     Then I see the role in the roles list
     When I add an existing role name
     Then I see error message "Enter a name which is not already in use by another role"
@@ -35,6 +35,6 @@ Feature: I want to create roles
     Given I go to internal homepage
     When I go to users
     And I go to manage roles
-    And I add a new role called "role-t" with permission to "Make final decisions"
+    And I add a new role called "Supervisor" with permission to "Make final decisions"
     And I edit my role
     Then I see the role in the roles list

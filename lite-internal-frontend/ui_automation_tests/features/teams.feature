@@ -8,7 +8,7 @@ Feature: I want to add departments
   Scenario: Add a department and then try to add same team name
     Given I go to internal homepage
     When I go to teams
-    And I add a team called "DIT"
+    And I add a team called "BlueOcean"
     Then I see the team in the team list
     When I add an existing team name
     Then I see error message "Enter a name which is not already in use by another team"
@@ -17,7 +17,7 @@ Feature: I want to add departments
   Scenario: Add a team and click on team name and add user to team and rollback
     Given I go to internal homepage
     When I go to teams
-    And I add a team called "DIT"
+    And I add a team called "BlueOcean"
     When I click on my team
     Then I see my teams user list with user "not added"
     When I go to users
@@ -46,6 +46,6 @@ Feature: I want to add departments
   Scenario: Edit a department
     Given I go to internal homepage
     When I go to teams
-    And I add a team called "Team to edit"
+    And I add a team called "EDitBlueOcean"
     And I edit my team
     Then I see the team in the team list

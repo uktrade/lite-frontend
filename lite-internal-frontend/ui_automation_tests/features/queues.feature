@@ -10,7 +10,7 @@ Feature: I want to define new work queues and the teams they belong to
     Given I go to internal homepage
     When I go to queues
     And I click on add a queue
-    And I enter in queue name "New Queue"
+    And I enter in queue name "Ready for Review"
     Then I see the new queue
     When I go to the internal homepage
     And I click on new queue in dropdown
@@ -20,7 +20,7 @@ Feature: I want to define new work queues and the teams they belong to
     Given I go to internal homepage
     When I go to queues
     And I click on add a queue
-    And I enter in queue name "To Edit"
+    And I enter in queue name "Ready for Edit"
     And I edit the new queue
     Then I see the new queue
     When I go to the internal homepage

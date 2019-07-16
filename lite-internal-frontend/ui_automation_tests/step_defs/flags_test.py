@@ -33,7 +33,7 @@ def add_a_flag(driver, flag_name, flag_level):
         context.flag_name = flag_name
     else:
         extra_string = str(utils.get_unformatted_date_time())
-        extra_string = extra_string[(len(extra_string))-14:]
+        extra_string = extra_string[(len(extra_string))-7:]
         context.flag_name = flag_name + extra_string
     flags_page.enter_flag_name(context.flag_name)
     flags_page.select_flag_level(flag_level)
