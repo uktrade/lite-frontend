@@ -25,9 +25,9 @@ def pytest_addoption(parser):
     print("touched: " + env)
     parser.addoption("--driver", action="store", default="chrome", help="Type in browser type")
     parser.addoption("--exporter_url", action="store",
-                     default="https://exporter.lite.service." + env + ".uktrade.io/", help="url")
+                      default="https://exporter.lite.service." + env + ".uktrade.io/", help="url")
     parser.addoption("--internal_url", action="store",
-                     default="https://internal.lite.service." + env + ".uktrade.io/", help="url")
+                      default="https://internal.lite.service." + env + ".uktrade.io/", help="url")
     # parser.addoption("--exporter_url", action="store", default="http://localhost:8300", help="url")
     # parser.addoption("--internal_url", action="store", default="http://localhost:8080", help="url")
     parser.addoption("--sso_sign_in_url", action="store", default="https://sso.trade.uat.uktrade.io/login/", help="url")
@@ -107,6 +107,15 @@ def when_go_to_internal_homepage(driver, internal_url):
 
 @given('I go to internal homepage')
 def go_to_internal_homepage(driver, internal_url, sso_sign_in_url):
+    driver.get(sso_sign_in_url)
+    driver.find_element_by_name("username").send_keys(sso_email)
+    driver.find_element_by_name("password").send_keys(sso_password)
+    driver.find_element_by_css_selector("[type='submit']").click()
+    driver.get(internal_url)
+
+
+@when('I go to internal homepage and sign in')
+def go_to_internal_homepage_sign_in(driver, internal_url, sso_sign_in_url):
     driver.get(sso_sign_in_url)
     driver.find_element_by_name("username").send_keys(sso_email)
     driver.find_element_by_name("password").send_keys(sso_password)
