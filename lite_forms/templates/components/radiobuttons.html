@@ -1,4 +1,4 @@
-<div class="govuk-radios {% if question.same_row %}govuk-radios--inline{% endif %}">
+<div class="govuk-radios {% for class in component.classes %}{{ class }} {% endfor %}">
 	{% for item in component.options %}
 		{% if item.show_or %}
 			<div class="govuk-radios__divider">or</div>
