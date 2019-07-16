@@ -6,7 +6,7 @@ from django.views.generic import TemplateView
 from core.builtins.custom_tags import get_string
 from libraries.forms.generators import form_page
 from teams.services import get_teams
-from users.forms import add_user_form, edit_user_form
+from users.forms.users import add_user_form, edit_user_form
 from users.services import get_gov_users, post_gov_users, put_gov_user, get_gov_user
 
 
@@ -23,14 +23,13 @@ class UsersList(TemplateView):
 
 class AddUser(TemplateView):
     def get(self, request, **kwargs):
-        teams = get_teams(request, True)
-        return form_page(request, add_user_form(teams))
+        return form_page(request, add_user_form(request))
 
     def post(self, request, **kwargs):
         response, status_code = post_gov_users(request, request.POST)
-        teams = get_teams(request, True)
+
         if status_code != 201:
-            return form_page(request, add_user_form(teams), data=request.POST, errors=response.get('errors'))
+            return form_page(request, add_user_form(request), data=request.POST, errors=response.get('errors'))
 
         return redirect(reverse_lazy('users:users'))
 
@@ -55,15 +54,14 @@ class ViewProfile(TemplateView):
 
 class EditUser(TemplateView):
     def get(self, request, **kwargs):
-        data, status_code = get_gov_user(request, str(kwargs['pk']))
-        teams = get_teams(request, True)
-        return form_page(request, edit_user_form(teams), data=data)
+        user, status_code = get_gov_user(request, str(kwargs['pk']))
+        return form_page(request, edit_user_form(request), data=user['user'])
 
     def post(self, request, **kwargs):
         response, status_code = put_gov_user(request, str(kwargs['pk']), request.POST)
-        teams = get_teams(request, True)
+
         if status_code != 200:
-            return form_page(request, edit_user_form(teams), data=request.POST, errors=response.get('errors'))
+            return form_page(request, edit_user_form(request), data=request.POST, errors=response.get('errors'))
 
         return redirect(reverse_lazy('users:users'))
 

@@ -1,8 +1,8 @@
-{% extends 'layouts/full_width.html' %}
+{% extends 'layouts/base.html' %}
 
 {% load humanize %}
 
-{% block back-button %}{% endblock %}
+{% block back-link %}{% endblock %}
 
 {% block body %}
 
@@ -82,14 +82,14 @@
 					</div>
 					<div>
                         {% if case.is_clc %}
-                                <a class="govuk-link govuk-!-font-size-19 govuk-link--no-visited-state govuk-!-font-weight-bold" href="{% url 'cases:case-clc-query' case.id %}">
+                                <a class="govuk-link govuk-!-font-size-19 govuk-link--no-visited-state govuk-!-font-weight-bold" href="{% url 'cases:case' case.id %}" style="text-decoration: none; margin-bottom: 5px!important; display: block;">
                                     {{ case.id }}
                                 </a>
                                 <p class="govuk-body" style="opacity: .7; margin: 0;">
                                     {{ case.clc_query.organisation_name }}
                                 </p>
                         {% elif not case.is_clc %}
-                            <a href="{% url 'cases:case' case.id %}" class="govuk-link govuk-!-font-size-19 govuk-link--no-visited-state govuk-!-font-weight-bold" href="#" style="text-decoration: none; margin-bottom: 5px!important; display: block;">
+                            <a href="{% url 'cases:case' case.id %}" class="govuk-link govuk-!-font-size-19 govuk-link--no-visited-state govuk-!-font-weight-bold" style="text-decoration: none; margin-bottom: 5px!important; display: block;">
                                 {{ case.application.id|default:"Untitled" }}
                             </a>
                             <p class="govuk-body" style="opacity: .7; margin: 0;">

@@ -13,11 +13,15 @@ TEAMS_URL = '/teams/'
 QUEUES_URL = '/queues/'
 AUTHENTICATION_URL = '/gov-users/authenticate/'
 GOV_USERS_URL = '/gov-users/'
+GOV_USERS_ROLES_URL = '/gov-users/roles/'
+GOV_USERS_PERMISSIONS_URL = '/gov-users/permissions/'
 FLAGS_URL = '/flags/'
 CLC_QUERIES_URL = '/clc_queries/'
 
 # Static URLs
 STATIC_URL = '/static/'
 DENIAL_REASONS_URL = STATIC_URL + 'denial-reasons/'
-
 COUNTRIES_URL = STATIC_URL + 'countries/'
+
+# Permissions
+MAKE_FINAL_DECISIONS = 'MAKE_FINAL_DECISIONS'

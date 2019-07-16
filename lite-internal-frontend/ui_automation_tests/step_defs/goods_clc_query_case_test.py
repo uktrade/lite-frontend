@@ -51,4 +51,4 @@ def assert_good_is_in_list(driver):
 @then('I see the clc-case previously created')
 def assert_case_is_present(driver):
     case_list_page = CaseListPage(driver)
-    case_list_page.assert_case_is_present(context.case_id)
+    assert case_list_page.assert_case_is_present(context.case_id)

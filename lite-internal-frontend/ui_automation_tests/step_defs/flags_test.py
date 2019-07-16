@@ -57,9 +57,9 @@ def add_existing_flag(driver):
 
 @when('I edit my flag')
 def edit_existing_flag(driver):
-    elements = driver.find_elements_by_css_selector(".govuk-table__cell a")
-    no =0
-    while no<len(elements):
+    elements = driver.find_elements_by_css_selector("td a")
+    no = 0
+    while no < len(elements):
         if elements[no].text == context.flag_name:
             element_number = no
         no += 1
@@ -73,15 +73,8 @@ def edit_existing_flag(driver):
 
 @when('I count the number of active flags')
 def count_active_flags(driver):
-    elements = driver.find_elements_by_css_selector(".govuk-table__cell")
-    number_of_active_flags = 0
-    number_of_deactivated_flags = 0
-    for element in elements:
-        if element.text == "Active":
-            number_of_active_flags += 1
-        elif element.text == "Deactivated":
-            number_of_deactivated_flags += 1
-
+    number_of_active_flags = len(driver.find_elements_by_xpath('//*[text()[contains(.,"Active")]]'))
+    number_of_deactivated_flags = len(driver.find_elements_by_xpath('//*[text()[contains(.,"Deactivated")]]'))
     context.original_number_of_active_flags = number_of_active_flags
     context.original_number_of_deactivated_flags = number_of_deactivated_flags
 
@@ -97,16 +90,16 @@ def click_include_deactivated(driver):
     driver.find_element_by_css_selector("[href*='flags/all/']").click()
 
 
+@when('I click include reactivated if displayed')
+def click_include_deactivated(driver):
+    if driver.find_element_by_css_selector("[href*='/flags/active/']").is_displayed():
+        driver.find_element_by_css_selector("[href*='/flags/active/']").click()
+
+
 @then('I see one less active flags')
 def i_see_one_less_active_flag(driver):
-    elements = driver.find_elements_by_css_selector(".govuk-table__cell")
-    number_of_active_flags = 0
-    number_of_deactivated_flags = 0
-    for element in elements:
-        if element.text == "Active":
-            number_of_active_flags += 1
-        elif element.text == "Deactivated":
-            number_of_deactivated_flags += 1
+    number_of_active_flags = len(driver.find_elements_by_xpath('//*[text()[contains(.,"Active")]]'))
+    number_of_deactivated_flags = len(driver.find_elements_by_xpath('//*[text()[contains(.,"Deactivated")]]'))
 
     assert context.original_number_of_active_flags - number_of_active_flags == 1
     assert context.original_number_of_deactivated_flags - number_of_deactivated_flags == -1
@@ -120,14 +113,8 @@ def reactivate_first_deactivated_flag(driver):
 
 @then('I see the original number of active flags')
 def i_see_the_original_number_of_active_flags(driver):
-    elements = driver.find_elements_by_css_selector(".govuk-table__cell")
-    number_of_active_flags = 0
-    number_of_deactivated_flags = 0
-    for element in elements:
-        if element.text == "Active":
-            number_of_active_flags += 1
-        elif element.text == "Deactivated":
-            number_of_deactivated_flags += 1
+    number_of_active_flags = len(driver.find_elements_by_xpath('//*[text()[contains(.,"Active")]]'))
+    number_of_deactivated_flags = len(driver.find_elements_by_xpath('//*[text()[contains(.,"Deactivated")]]'))
 
     assert context.original_number_of_active_flags == number_of_active_flags
     assert context.original_number_of_deactivated_flags == number_of_deactivated_flags

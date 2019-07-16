@@ -1,5 +1,8 @@
 # lite-internal-frontend
 
+[![CircleCI](https://circleci.com/gh/uktrade/lite-internal-frontend.svg?style=svg)](https://circleci.com/gh/uktrade/lite-internal-frontend)
+[![Maintainability](https://api.codeclimate.com/v1/badges/d981279d8fd1fdd2d96c/maintainability)](https://codeclimate.com/github/uktrade/lite-internal-frontend/maintainability)
+
 Application for handling internal information in LITE.
 
 ## Download and setup the project:
@@ -25,8 +28,8 @@ Here the migrations need to be run before the service is used for the fist time 
 
 
 ### Managing the service
-* `docker-compose up` : Starting the service 
-* `docker-compose stop` : Stopping the service 
+* `docker-compose up` : Starting the service
+* `docker-compose stop` : Stopping the service
 * `docker-compose down` : Tearing down the service, this clears the database.
 Note the migrations will need to be run again the next time the service is to be used
 

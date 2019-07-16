@@ -1,6 +1,7 @@
 from conf.client import get
 from conf.constants import DENIAL_REASONS_URL, COUNTRIES_URL, QUEUES_URL
 from libraries.forms.components import Option, Checkboxes
+from users.services import get_gov_user
 
 
 def get_denial_reasons(request):
@@ -23,7 +24,7 @@ def get_denial_reasons(request):
             options.append(Option(item, item))
 
         questions.append(
-            Checkboxes('reasons', options)
+            Checkboxes('reasons', options, description='')
         )
 
     return questions
@@ -67,3 +68,11 @@ def get_queues(request, convert_to_options=False):
         return converted
 
     return data.json(), data.status_code
+
+
+# Permissions
+
+
+def get_user_permissions(request):
+    user, status_code = get_gov_user(request, str(request.user.user_token))
+    return user['user']['role']['permissions']

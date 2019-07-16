@@ -2,22 +2,30 @@
 
 {% load humanize %}
 
-{% block back-button %}
+{% block back-link %}
 	<a href="{% url 'cases:cases' %}" class="govuk-back-link">Back to Cases</a>
 {% endblock %}
 
 {% block body %}
 
-<h1 class="govuk-heading-l">{{ title }}</h1>
-<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:move' data.case.id %}">
-	{% get_string 'cases.manage.move_case.button' %}
-</a>
-<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:manage' data.case.id %}">
-	Change Status
-</a>
-<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:decide' data.case.id %}">
-	Record Decision
-</a>
+<div class="lite-app-bar">
+	<div class="lite-app-bar__content">
+		<h1 class="govuk-heading-l">{{ title }}</h1>
+	</div>
+	<div class="lite-app-bar__controls">
+		<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:move' data.case.id %}">
+			{% get_string 'cases.manage.move_case.button' %}
+		</a>
+		<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:manage' data.case.id %}">
+			Change Status
+		</a>
+		{% if permissions|key_in_array:'MAKE_FINAL_DECISIONS' %}
+			<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:decide' data.case.id %}">
+				Record Decision
+			</a>
+		{% endif %}
+	</div>
+</div>
 
 <div class="lite-information-board">
 	<div class="govuk-grid-row">

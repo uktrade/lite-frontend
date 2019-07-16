@@ -117,7 +117,7 @@
 				</span>
 			</p>
 		</div>
-		{% block back-button %}
+		{% block back-link %}
 			<a href="#" class="govuk-back-link">Back</a>
 		{% endblock %}
 		<main class="govuk-main-wrapper " id="main-content" role="main">
@@ -139,7 +139,7 @@
 	{% endblock %}
 
 	<script src="{% static 'javascripts/all.js' %}"></script>
-	<script src="{% static 'javascripts/back-button.js' %}"></script>
+	<script src="{% static 'javascripts/back-link.js' %}"></script>
 
 	<script>
 		window.GOVUKFrontend.initAll()

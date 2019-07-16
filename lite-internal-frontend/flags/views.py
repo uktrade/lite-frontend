@@ -1,17 +1,12 @@
 from django.http import Http404
+from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
+from django.views.generic import TemplateView
 
 from core.builtins.custom_tags import get_string
 from flags.forms import add_flag_form, edit_flag_form
 from flags.services import get_flags, post_flags, get_flag, put_flag
 from libraries.forms.generators import form_page
-from queues.services import get_queue, get_queues, \
-    post_queues, put_queue
-from queues import forms
-
-from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
-from django.views.generic import TemplateView
-
 from users.services import get_gov_user
 
 

@@ -1,5 +1,6 @@
 import allure
 import os
+import time
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
@@ -94,3 +95,16 @@ def get_unformatted_date_time():
 
 def get_formatted_date_time_m_d_h_s():
     return datetime.now().strftime("%m%d%H%M%S")
+
+
+def highlight(element):
+    """Highlights (blinks) a Selenium Webdriver element"""
+    driver = element._parent
+
+    def apply_style(s):
+        driver.execute_script("arguments[0].setAttribute('style', arguments[1]);",
+                              element, s)
+    original_style = element.get_attribute('style')
+    apply_style("background: yellow; border: 2px solid red;")
+    time.sleep(.7)
+    apply_style(original_style)

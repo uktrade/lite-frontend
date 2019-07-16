@@ -6,11 +6,8 @@ app_name = 'cases'
 urlpatterns = [
     # ex: /cases/
     path('', views.Cases.as_view(), name='cases'),
-
     # ex: /cases/<uuid:pk>/
     path('<uuid:pk>/', views.ViewCase.as_view(), name='case'),
-    # ex: /cases/clc/<uuid:pk>/
-    path('clc-query/<uuid:pk>/', views.ViewCLCCase.as_view(), name='case-clc-query'),
     # ex: /cases/<uuid:pk>/manage
     path('<uuid:pk>/manage/', views.ManageCase.as_view(), name='manage'),
     # ex: /cases/<uuid:pk>/decide

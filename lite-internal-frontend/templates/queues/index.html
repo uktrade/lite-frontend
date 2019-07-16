@@ -1,8 +1,8 @@
-{% extends 'layouts/full_width.html' %}
+{% extends 'layouts/base.html' %}
 
 {% load humanize %}
 
-{% block back-button %}{% endblock %}
+{% block back-link %}{% endblock %}
 
 {% block body %}
 
@@ -34,7 +34,7 @@
 							{{ queue.team.name|default:"Untitled" }}
 						</td>
 						<td class="govuk-table__cell">
-							{% if user_data.user.team == queue.team.id %}
+							{% if user_data.user.team.id == queue.team.id %}
 								<a href="{% url 'queues:edit' queue.id %}" style="margin: 0;" class="govuk-link govuk-link--no-visited-state">Edit</a>
 							{% else %}
                                 				None

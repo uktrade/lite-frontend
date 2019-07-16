@@ -33,4 +33,4 @@ class CaseListPage():
 
     def assert_case_is_present(self, case_id):
         case_row = self.driver.find_element_by_xpath("//*[text()[contains(.,'" + case_id + "')]]")
-        assert case_row.is_displayed()
+        return case_row.is_displayed()
