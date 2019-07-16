@@ -3,3 +3,13 @@
 	align-items: center;
 	justify-content: center;
 }
+
+.lite-js-only {
+	visibility: collapse;
+}
+
+.js-enabled {
+	.lite-js-only {
+		visibility: visible;
+	}
+}
