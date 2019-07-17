@@ -8,12 +8,14 @@ from pages.add_goods_page import AddGoodPage
 from pages.add_new_external_location_form_page import AddNewExternalLocationFormPage
 from pages.application_overview_page import ApplicationOverviewPage
 from pages.apply_for_a_licence_page import ApplyForALicencePage
+from selenium.webdriver.common.by import By
 from pages.exporter_hub_page import ExporterHubPage
 from pages.external_locations_page import ExternalLocationsPage
 from pages.preexisting_locations_page import PreexistingLocationsPage
 from pages.shared import Shared
 from pages.sites_page import SitesPage
 from pages.which_location_form_page import WhichLocationFormPage
+from pages.internal_hub_page import InternalHubPage
 from pytest_bdd import given, when, then, parsers
 from selenium import webdriver
 from conf.settings import env
@@ -43,6 +45,7 @@ def pytest_addoption(parser):
     parser.addoption("--internal_url", action="store", default="https://internal.lite.service." + env + ".uktrade.io/", help="url")
     # parser.addoption("--exporter_url", action="store", default="localhost:8300/", help="url")
     # parser.addoption("--internal_url", action="store", default="localhost:8200/", help="url")
+    parser.addoption("--sso-url", action="store", default="https://sso.trade.uat.uktrade.io/login/", help="url")
     parser.addoption("--email", action="store", default="test@mail.com")
     parser.addoption("--password", action="store", default="password")
     parser.addoption("--first_name", action="store", default="Test")
@@ -55,6 +58,7 @@ def pytest_addoption(parser):
 
 # Create driver fixture that initiates chrome
 @pytest.fixture(scope="session", autouse=True)
+@pytest.mark.order(1)
 def driver(request):
     browser = request.config.getoption("--driver")
     if browser == 'chrome':
@@ -73,6 +77,7 @@ def driver(request):
         request.addfinalizer(fin)
 
 
+
 # Create url fixture
 @pytest.fixture(scope="module")
 def exporter_url(request):
@@ -85,8 +90,8 @@ def internal_url(request):
 
 
 @pytest.fixture(scope="module")
-def internal_login_url():
-    return "https://sso.trade.uat.uktrade.io/login/"
+def internal_login_url(request):
+    return request.config.getoption("--sso-url")
 
 
 @pytest.fixture(scope="module")
@@ -108,8 +113,52 @@ def first_name(request):
 def last_name(request):
     return request.config.getoption("--last_name")
 
+
 sso_email = env('TEST_SSO_EMAIL')
 sso_password = env('TEST_SSO_PASSWORD')
+
+
+@pytest.fixture(scope="session")
+def org_setup(driver, request):
+    driver.get(request.config.getoption("--sso-url"))
+    driver.find_element_by_name("username").send_keys(sso_email)
+    driver.find_element_by_name("password").send_keys(sso_password)
+    driver.find_element_by_css_selector("[type='submit']").click()
+    driver.get(request.config.getoption("--internal_url"))
+    internal_hub = InternalHubPage(driver)
+
+    internal_hub.click_manage_organisations_link()
+
+    exists = utils.is_element_present(driver, By.XPATH, "//*[text()[contains(.,'Test Org')]]")
+    if not exists:
+        # New Organisation
+        internal_hub.click_new_organisation()
+
+        internal_hub.enter_business_name("Test Org")
+        internal_hub.enter_eori_number("GB987654312000")
+        internal_hub.enter_sic_number("73200")
+        internal_hub.enter_vat_number("123456789")
+        internal_hub.enter_company_registration_number("000000011")
+        internal_hub.click_save_and_continue()
+
+        internal_hub.enter_site_name("Site 1")
+        internal_hub.enter_address_line_1("123 Cobalt Street")
+        internal_hub.enter_address_line_2("123 Cobalt Street")
+        internal_hub.enter_zip_code("N23 6YL")
+        internal_hub.enter_city("London")
+        internal_hub.enter_state("London")
+        internal_hub.enter_country("Ukraine")
+
+        internal_hub.click_save_and_continue()
+
+        internal_hub.enter_email("test@mail.com")
+        internal_hub.enter_first_name("Test")
+        internal_hub.enter_last_name("User1")
+        internal_hub.enter_password("password")
+
+        internal_hub.click_submit()
+        exists = utils.is_element_present(driver, By.XPATH, "//*[text()[contains(.,'Test Org')]]")
+        assert exists
 
 
 @given('I go to internal homepage')
@@ -132,8 +181,9 @@ def go_to_exporter_when(driver, exporter_url):
 
 
 @when(parsers.parse('I login to exporter homepage with username "{username}" and "{password}"'))
-def login_to_exporter(driver, username, password):
+def login_to_exporter(driver, username, password, exporter_url, org_setup):
     exporter_hub = ExporterHubPage(driver)
+    driver.get(exporter_url)
     if "login" in driver.current_url:
         exporter_hub.login(username, password)
 
