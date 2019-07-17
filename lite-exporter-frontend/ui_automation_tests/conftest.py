@@ -176,7 +176,7 @@ def enter_application_name(driver):
     apply = ApplyForALicencePage(driver)
     app_time_id = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     context.app_time_id = app_time_id
-    app_name = "Test Application " + app_time_id
+    app_name = "Request for Nimbus 2000" + app_time_id
     apply.enter_name_or_reference_for_application(app_name)
     context.app_id = app_name
     apply.click_save_and_continue()

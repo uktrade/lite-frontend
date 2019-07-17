@@ -40,7 +40,7 @@ def click_new_site(driver):
 def new_sites_info(driver, edited, address, postcode, city, region, country):
     new_site = NewSite(driver)
     time_id = datetime.datetime.now().strftime("%m%d%H%M")
-    new_site_name = "New Site " + edited + time_id
+    new_site_name = "Head office" + edited + time_id
     context.new_site_name = new_site_name
     new_site.enter_info_for_new_site(new_site_name, address, postcode, city, region, country)
 

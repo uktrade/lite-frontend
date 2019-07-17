@@ -10,7 +10,7 @@ Feature: I  want to add and rename my sites
     When I login to exporter homepage with username "test@mail.com" and "password"
     And I click sites link
     And I click new site
-    And I enter in text for new site " " "address" "postcode" "city" "region" and "Ukraine"
+    And I enter in text for new site " " "4 Privet Drive" "SU1 1BB" "Surrey" "Surrey" and "Ukraine"
     And I click continue
     Then I see sites list
 
@@ -21,12 +21,12 @@ Feature: I  want to add and rename my sites
     And I click sites link
     And I click last edit button
     And I clear the fields for the site
-    And I enter in text for new site "edited" "address edited" "pc edited" "city edited" "region edited" and "Poland"
+    And I enter in text for new site "edited" "4 Privet Drive" "SU1 1BB" "Surrey" "Surrey" and "Ukraine"
     And I click continue
     Then I see last site name as edited
     When I click last edit button
     And I clear the fields for the site
-    And I enter in text for new site " " "address" "postcode" "city" "region" and "country"
+    And I enter in text for new site " " "4 Privet Drive" "SU1 1BB" "Surrey" "Surrey" and "Ukraine"
 
   @LT-933_error
   Scenario: Test clicking continue when not adding a site
@@ -47,7 +47,7 @@ Feature: I  want to add and rename my sites
     When I login to exporter homepage with username "test@mail.com" and "password"
     And I click sites link
     And I click new site
-    And I enter in text for new site "changed" "address" "postcode" "city" "region" and "Ukraine"
+    And I enter in text for new site "changed" "4 Privet Drive" "SU1 1BB" "Surrey" "Surrey" and "Ukraine"
     And I click continue
     Then I see sites list
     When I login to exporter homepage with username "test@mail.com" and "password"

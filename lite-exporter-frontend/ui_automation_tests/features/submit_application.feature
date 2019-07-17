@@ -23,7 +23,7 @@ Feature: I want to indicate the kind of licence I want
     When I login to exporter homepage with username "test@mail.com" and "password"
     And I click on goods link
     When I click add a good button
-    And I add a good or good type with description "Good T1" controlled "Yes" control code "1234" incorporated "Yes" and part number "321"
+    And I add a good or good type with description "Colt 52" controlled "Yes" control code "1234" incorporated "Yes" and part number "321"
     And I go to exporter homepage
     And I click on apply for a license button
     And I click on start button
@@ -60,7 +60,7 @@ Feature: I want to indicate the kind of licence I want
     When I login to exporter homepage with username "test@mail.com" and "password"
     And I click on goods link
     And I click add a good button
-    And I add a good or good type with description "Good T1" controlled "Yes" control code "1234" incorporated "Yes" and part number "321"
+    And I add a good or good type with description "Chinook" controlled "Yes" control code "1234" incorporated "Yes" and part number "321"
     And I go to exporter homepage
     And I click on apply for a license button
     And I click on start button
@@ -71,9 +71,9 @@ Feature: I want to indicate the kind of licence I want
     And I click on application locations link
     And I select "external" for where my goods are located
     And I click on add new address
-    And I fill in new external location form with name: "location 1", address: "London" and country: "Ukraine" and continue
+    And I fill in new external location form with name: "32 Lime Street", address: "London" and country: "Ukraine" and continue
     And I click on add new address
-    And I fill in new external location form with name: "place", address: "Paris" and country: "Ukraine" and continue
+    And I fill in new external location form with name: "place", address: "1 Paris Road" and country: "Ukraine" and continue
     Then I see "2" locations
     When I click on preexisting locations
     And I select the location at position "2" in external locations list and continue
@@ -97,7 +97,7 @@ Feature: I want to indicate the kind of licence I want
     When I login to exporter homepage with username "test@mail.com" and "password"
     And I click on goods link
     And I click add a good button
-    And I add a good or good type with description "Good T1" controlled "Yes" control code "1234" incorporated "Yes" and part number "321"
+    And I add a good or good type with description "Bazooka" controlled "Yes" control code "1234" incorporated "Yes" and part number "321"
     And I go to exporter homepage
     And I click on apply for a license button
     And I click on start button
@@ -111,7 +111,7 @@ Feature: I want to indicate the kind of licence I want
     And I click continue
     And I click on the goods link from overview
     And I click Add goods type button
-    And I add a good or good type with description "Good Type T1" controlled "Yes" control code "1234" incorporated "Yes" and part number "empty"
+    And I add a good or good type with description "Sniper" controlled "Yes" control code "1234" incorporated "Yes" and part number "empty"
     Then I see my goods type added at position "1" with a description and a control code
     When I click overview
     Then I see my goods type added to the overview page with a description and a control code
@@ -119,7 +119,7 @@ Feature: I want to indicate the kind of licence I want
     And I click Add goods type button
     And I click continue
     Then I see good types error messages
-    When I add a good or good type with description "Good Type T2" controlled "Yes" control code "1234" incorporated "Yes" and part number "empty"
+    When I add a good or good type with description "M4" controlled "Yes" control code "1234" incorporated "Yes" and part number "empty"
     Then I see my goods type added at position "2" with a description and a control code
     When I click overview
     Then I see my goods type added to the overview page with a description and a control code
@@ -162,7 +162,7 @@ Feature: I want to indicate the kind of licence I want
     When I login to exporter homepage with username "test@mail.com" and "password"
     And I click on goods link
     And I click add a good button
-    And I add a good or good type with description "Good T1" controlled "Yes" control code "1234" incorporated "Yes" and part number "321"
+    And I add a good or good type with description "AK47" controlled "Yes" control code "1234" incorporated "Yes" and part number "321"
     And I go to exporter homepage
     And I click on apply for a license button
     And I click on start button
