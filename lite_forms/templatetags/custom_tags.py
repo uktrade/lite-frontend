@@ -19,6 +19,9 @@ def key_in_array(data, key):
             return True
         return False
 
+    if isinstance(data, bool):
+        return data
+
     # If data is a dict, check the id
     if isinstance(data, dict):
         return data['id'] == key
