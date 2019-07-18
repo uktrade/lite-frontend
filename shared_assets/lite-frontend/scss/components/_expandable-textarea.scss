@@ -24,19 +24,19 @@
 		border: $govuk-border-width-form-element solid $govuk-input-border-colour;
 		outline: 3px solid $govuk-focus-colour;
 	}
-
-
 }
 
 .lite-expandable-textarea--hidden {
 	& + #case_note-warning {
 		visibility: hidden;
 		opacity: 0;
+		margin-bottom: 0;
 	}
 }
 
 #case_note-warning {
-	transition: opacity .2s ease;
+	transition: opacity 0.2s ease, margin 0.2s ease;;
+	margin-bottom: govuk-spacing(7);
 }
 
 .lite-expandable-textarea--warning {
@@ -62,12 +62,15 @@
 		grid-template-columns: 1fr auto auto;
 		grid-gap: govuk-spacing(3);
 	}
+
 	* {
 		text-align: center;
 	}
+
 	.govuk-button {
 		transition: transform $lite-transition-speed ease;
 	}
+
 	.govuk-character-count__message {
 		line-height: 38px;
 	}
@@ -78,6 +81,7 @@
 	opacity: 0;
 	height: 0;
 	padding: 0 govuk-spacing(3);
+
 	.govuk-button {
 		transform: scaleY(0.5);
 	}
