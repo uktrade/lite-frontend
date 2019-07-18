@@ -3,7 +3,11 @@
 {% load custom_tags %}
 
 {% block back-link %}
-	<a href="{{ page.back_link.url }}" class="govuk-back-link {% if persistent_bar.text %}lite-persistent-bar--back{% endif %}">{{ page.back_link.text }}</a>
+	{% if page.back_link.url != '#' %}
+		<a href="{{ page.back_link.url }}" class="govuk-back-link {% if persistent_bar.text %}lite-persistent-bar--back{% endif %}">{{ page.back_link.text }}</a>
+	{% else %}
+		{{ block.super }}
+	{% endif %}
 {% endblock %}
 
 {% block twoThirds %}
