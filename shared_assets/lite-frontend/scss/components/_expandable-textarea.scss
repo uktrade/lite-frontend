@@ -34,7 +34,7 @@
 	}
 }
 
-#case_note-warning {
+.lite-expandable-textarea + #case_note-warning {
 	transition: opacity 0.2s ease, margin 0.2s ease;;
 	margin-bottom: govuk-spacing(7);
 }
