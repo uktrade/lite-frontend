@@ -24,6 +24,19 @@
 		border: $govuk-border-width-form-element solid $govuk-input-border-colour;
 		outline: 3px solid $govuk-focus-colour;
 	}
+
+
+}
+
+.lite-expandable-textarea--hidden {
+	& + #case_note-warning {
+		visibility: hidden;
+		opacity: 0;
+	}
+}
+
+#case_note-warning {
+	transition: opacity .2s ease;
 }
 
 .lite-expandable-textarea--warning {
