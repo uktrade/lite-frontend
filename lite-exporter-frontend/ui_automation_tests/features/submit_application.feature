@@ -5,7 +5,7 @@ Feature: I want to indicate the kind of licence I want
   So that I am more likely to get the correct kind of licence or the kind of licence I would like
 
   @LT-1091_draft
-  Scenario: Apply for a licence to draft
+  Scenario: Apply for a licence to draft and delete
     Given I go to exporter homepage
     When I login to exporter homepage with username "test@mail.com" and "password"
     And I click on apply for a license button

@@ -12,6 +12,27 @@ log.addHandler(console)
 scenarios('../features/users.feature', strict_gherkin=False)
 
 
+@when('I click on the users link')
+def click_users_link(driver):
+    exporter_hub = ExporterHubPage(driver)
+    exporter_hub.click_users()
+
+
+@then('I add a user')
+def add_user(driver):
+    exporter_hub = ExporterHubPage(driver)
+    exists = utils.is_element_present(driver, By.XPATH, "//td[text()[contains(.,'testuser_1@mail.com')]]")
+    if not exists:
+        for x in range(3):
+            i = str(x + 1)
+            exporter_hub.click_add_a_user_btn()
+            exporter_hub.enter_first_name("Test")
+            exporter_hub.enter_last_name("user_" + i)
+            exporter_hub.enter_email("testuser_" + i + "@mail.com")
+            exporter_hub.enter_password("1234")
+            exporter_hub.click_save_and_continue()
+
+
 @when('I add user')
 def add_user(driver):
     user_id = datetime.datetime.now().strftime("%m%d%H%M")
