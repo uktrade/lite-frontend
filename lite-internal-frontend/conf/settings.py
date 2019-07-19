@@ -184,6 +184,7 @@ STREAMING_CHUNK_SIZE = 8192
 S3_MIN_PART_SIZE = 5*1024*1024
 MAX_UPLOAD_SIZE = 100*1024*1024
 
+
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 

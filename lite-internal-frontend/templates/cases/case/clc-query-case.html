@@ -13,6 +13,9 @@
 		<h1 class="govuk-heading-l">{{ title }}</h1>
 	</div>
 	<div class="lite-app-bar__controls">
+		<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:documents' data.case.id %}">
+        	{% get_string 'cases.manage.documents.button' %}
+        </a>
 		<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:move' data.case.id %}">
 		    {% get_string 'cases.manage.move_case.button' %}
 		</a>
