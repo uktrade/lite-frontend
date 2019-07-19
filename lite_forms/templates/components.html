@@ -48,7 +48,7 @@
 			{% include "components/select.html" with component=question data=data|key_value:question.name error=errors|key_value:question.name %}
 		{% elif question.input_type.name == "AUTOCOMPLETE" %}
 			{% include "components/autocomplete.html" with name=question.name value=data|key_value:question.name|default:'' data=question.data %}
-		{% elif question.input_type.name == "FILE_UPLOAD" %}
+		{% elif question.input_type.name == "FILE_UPLOAD" %} 
 			{% include "components/file_upload.html" with name=question.name value=question.name %}
 		{% elif question.input_type == "MultiFileUpload" %}
 			{% include "components/multi_file_upload.html" with component=question data=data|key_value:question.name %}
