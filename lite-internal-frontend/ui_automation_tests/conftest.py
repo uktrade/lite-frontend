@@ -25,7 +25,8 @@ def pytest_addoption(parser):
     parser.addoption("--driver", action="store", default="chrome", help="Type in browser type")
     parser.addoption("--exporter_url", action="store",
                       default="https://exporter.lite.service." + env + ".uktrade.io/", help="url")
-    parser.addoption("--internal_url", action="store",)
+    parser.addoption("--internal_url", action="store",
+                     default="https://internal.lite.service." + env + ".uktrade.io/", help="url")
     # parser.addoption("--exporter_url", action="store", default="http://localhost:8300", help="url")
     # parser.addoption("--internal_url", action="store", default="http://localhost:8080", help="url")
     parser.addoption("--sso_sign_in_url", action="store", default="https://sso.trade.uat.uktrade.io/login/", help="url")
