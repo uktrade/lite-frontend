@@ -42,6 +42,7 @@ Note the migrations will need to be run again the next time the service is to be
 
 ## Running the application locally on your dev machine not using Docker
 * Start a local Postgres: `docker run --name my-postgres -e POSTGRES_PASSWORD=password -p 5431:5432 -d postgres`
+* Mock S3: `docker run -p 9090:9090 -p 9191:9191 -t adobe/s3mock`
 * `cp local.env .env` : Create a local environment configuration file, you will need to add tokens
   and keys the
 * Set up your local config file:

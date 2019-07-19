@@ -87,7 +87,8 @@ def deactivate_first_active_flag(driver):
 
 @when('I click include deactivated')
 def click_include_deactivated(driver):
-    driver.find_element_by_css_selector("[href*='flags/all/']").click()
+    if len(driver.find_elements_by_css_selector("[href*='flags/all/']")) == 1:
+        driver.find_element_by_css_selector("[href*='flags/all/']").click()
 
 
 @when('I click include reactivated if displayed')

@@ -1,4 +1,4 @@
-@exporter @all @setup
+@exporter @all @setup @document_upload
 Feature: Set up application
 
   @submit_app

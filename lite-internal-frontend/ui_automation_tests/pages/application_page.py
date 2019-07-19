@@ -13,6 +13,7 @@ class ApplicationPage():
         self.case_note_date_time = ".lite-activity-item .govuk-hint" #css
         self.case_note_character_warning = "case_note-warning" #id
         self.case_note_character_warning = "case_note-warning" #id
+        self.documents_btn = '.govuk-button[href*="documents"]' #css
         self.progress_app_btn = '.govuk-button[href*="manage"]'
         self.record_decision_btn = '.govuk-button[href*="decide"]' #css
         self.headers = self.driver.find_elements_by_css_selector(".lite-heading-s") #css
@@ -50,6 +51,9 @@ class ApplicationPage():
 
     def click_record_decision(self):
         self.driver.find_element_by_css_selector(self.record_decision_btn).click()
+
+    def click_documents_button(self):
+        self.driver.find_element_by_css_selector(self.documents_btn).click()
 
     def select_status(self, status):
         case_status_dropdown = Select(self.driver.find_element_by_id('status'))

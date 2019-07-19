@@ -1,4 +1,4 @@
-@internal @setup @organisation
+@internal @setup @organisation @document_upload
 Feature: I want to add a company to LITE
 As a logged in government user
 I want to add a new company to LITE

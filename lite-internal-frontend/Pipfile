@@ -25,6 +25,8 @@ stringcase = "==1.2.0"
 django-inline-svg = "*"
 django-staff-sso-client = "*"
 requests-oauthlib = "*"
+s3chunkuploader = "*"
+boto3 = ">=1.9"
 
 [requires]
 python_version = "3.7"
