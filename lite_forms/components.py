@@ -261,7 +261,7 @@ class FileUpload(_Component):
                  optional: bool = False,
                  classes: [] = None):
         super().__init__(name, title, description, optional, classes)
-        self.input_type = 'FileUpload'
+        self.input_type = 'FILE_UPLOAD'
 
 
 class MultiFileUpload(_Component):
