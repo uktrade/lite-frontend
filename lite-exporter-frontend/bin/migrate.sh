@@ -1,2 +1,2 @@
 #!/bin/bash
-docker-compose run exporter-fe pipenv run ./manage.py migrate
+docker-compose run exfe pipenv run ./manage.py migrate

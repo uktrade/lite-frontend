@@ -5,29 +5,26 @@ services:
     image: "postgres"
     environment:
       - POSTGRES_PASSWORD=password
-    command:
-      - "postgres"
-      - "-c"
-      - "port=5430"
     ports:
-      - 5430:5430
+      - 5430:5432
     networks:
       - lite-api_default
-  exporter-fe:
+
+  exfe:
     env_file:
       - .env
     build: .
     volumes:
       - .:/app
     ports:
-      - ${PORT}:${PORT}
+      - 9000:8080
     depends_on:
       - exfedb
     expose:
-      - ${PORT}
+      - 8080
     networks:
       - lite-api_default
-    command: pipenv run ./manage.py runserver 0.0.0.0:${PORT}
+    command: pipenv run ./manage.py runserver 0.0.0.0:8080
 
 networks:
   lite-api_default:
