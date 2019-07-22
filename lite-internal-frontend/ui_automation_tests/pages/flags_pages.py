@@ -7,6 +7,7 @@ class FlagsPages():
         self.driver = driver
         self.add_flag_text_field = "name" #id
         self.add_flag_button = ".govuk-button[href*='flags/add']" #css
+        self.flags_in_edit_box = "lite-flag" #class_name
 
     def enter_flag_name(self, text):
         self.driver.find_element_by_id(self.add_flag_text_field).clear()
@@ -18,3 +19,6 @@ class FlagsPages():
 
     def click_add_a_flag_button(self):
         self.driver.find_element_by_css_selector(self.add_flag_button).click()
+
+    def get_size_of_number_of_assigned_flags(self):
+        return len(self.driver.find_elements_by_class_name(self.flags_in_edit_box))

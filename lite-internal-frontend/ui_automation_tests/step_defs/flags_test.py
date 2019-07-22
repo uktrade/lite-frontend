@@ -15,31 +15,6 @@ console = logging.StreamHandler()
 log.addHandler(console)
 
 
-@when('I go to flags')
-def go_to_flags(driver):
-    header = HeaderPage(driver)
-
-    header.click_lite_menu()
-    header.click_flags()
-
-
-@when(parsers.parse('I add a flag called "{flag_name}" at level "{flag_level}"'))
-def add_a_flag(driver, flag_name, flag_level):
-    flags_page = FlagsPages(driver)
-    shared = Shared(driver)
-    utils.get_unformatted_date_time()
-    flags_page.click_add_a_flag_button()
-    if flag_name == " ":
-        context.flag_name = flag_name
-    else:
-        extra_string = str(utils.get_unformatted_date_time())
-        extra_string = extra_string[(len(extra_string))-7:]
-        context.flag_name = flag_name + extra_string
-    flags_page.enter_flag_name(context.flag_name)
-    flags_page.select_flag_level(flag_level)
-    shared.click_submit()
-
-
 @then('I see the flag in the flag list')
 def see_flag_in_list(driver):
     flag_name = driver.find_element_by_xpath("//*[text()[contains(.,'" + context.flag_name + "')]]")

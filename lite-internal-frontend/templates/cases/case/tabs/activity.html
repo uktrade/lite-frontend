@@ -118,8 +118,31 @@
 					<div class="lite-activity-item">
 						<p class="govuk-body" style="margin-bottom: 0;">
 							{% for key, value in item.data.items %}
-								{% if forloop.first %}<span class="user">{{ item.user.first_name }} {{ item.user.last_name }}</span> set{% endif %} the <span class="highlight">{{ key }}</span> to <span class="highlight">{{ value|sentence_case|lower }}</span>{% if not forloop.last %}{% ifequal forloop.revcounter 2 %} and {% else %}, {% endifequal %}{% else %}.{% endif %}
+								{% if forloop.first %}
+									<span class="user">{{ item.user.first_name }} {{ item.user.last_name }}</span> set the
+								{% endif %}
+								<span class="highlight">{{ key }}</span> to <span class="highlight">{{ value|sentence_case|lower }}</span>{% if not forloop.last %}{% ifequal forloop.revcounter 2 %} and {% else %}, {% endifequal %}{% else %}.{% endif %}
 							{% endfor %}
+						</p>
+						<p class="govuk-hint govuk-!-font-size-16" style="margin-top: 10px;">{{ item.date|str_date }}</p>
+					</div>
+				{% elif item.type == 'change_case_flags' %}
+					<div class="lite-activity-item">
+						<p class="govuk-body" style="margin-bottom: 0;">
+							<span class="user">{{ item.user.first_name }} {{ item.user.last_name }}</span>
+							{% if item.data.flags.removed|length > 0 %}
+								removed flags:
+								{% for flag in item.data.flags.removed %}
+									<span class="highlight">{{ flag|sentence_case|lower }}</span>
+                                    {% if not forloop.last %}, {% else %}{% if item.data.flags.added|length > 0 %} and {% else %}.{% endif %}{% endif %}
+								{% endfor %}
+							{% endif %}
+							{% if item.data.flags.added|length > 0 %}
+								added flags:
+								{% for flag in item.data.flags.added %}
+									<span class="highlight">{{ flag|sentence_case|lower }}</span>{% if not forloop.last %}, {% else %}.{% endif %}
+								{% endfor %}
+							{% endif %}	
 						</p>
 						<p class="govuk-hint govuk-!-font-size-16" style="margin-top: 10px;">{{ item.date|str_date }}</p>
 					</div>

@@ -12,7 +12,7 @@ LITECommon.Modal = {
 	showModal: function(title, content, hideCloseButton = false) {
 		// Generate modal container if it doesn't exist
 		if (!$("#modal-background").length) {
-			let closeText = "<a id='modal-close-button' class='govuk-link' href='#'>Close<span class='govuk-visually-hidden'> popover</span></a>";
+			let closeText = "<a id='modal-close-button' class='govuk-link govuk-link--no-visited-state' href='#'>Close<span class='govuk-visually-hidden'> popover</span></a>";
 
 			if (hideCloseButton) {
 				closeText = "";

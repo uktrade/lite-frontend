@@ -1,10 +1,10 @@
-from django.http import HttpResponse, StreamingHttpResponse
+from django.http import StreamingHttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
-from s3chunkuploader.file_handler import S3FileUploadHandler, s3_client, UploadFailed
+from s3chunkuploader.file_handler import S3FileUploadHandler, s3_client
 
 from cases.forms.attach_documents import attach_documents_form
 from cases.forms.denial_reasons import denial_reasons_form
@@ -12,13 +12,14 @@ from cases.forms.move_case import move_case_form
 from cases.forms.record_decision import record_decision_form
 from cases.services import post_case_documents, get_case_documents, get_case_document
 from conf import settings
-from conf.settings import env, AWS_STORAGE_BUCKET_NAME, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, \
-    S3_DOWNLOAD_LINK_EXPIRY_SECONDS
+from conf.settings import AWS_STORAGE_BUCKET_NAME
 from core.builtins.custom_tags import get_string
-from cases.services import get_case, post_case_notes, put_applications, get_activity, put_case, put_clc_queries
+from cases.services import get_case, post_case_notes, put_applications, get_activity, put_case, put_clc_queries, \
+    put_case_flags
 from conf.constants import DEFAULT_QUEUE_ID, MAKE_FINAL_DECISIONS
 from conf.decorators import has_permission
 from core.services import get_queue, get_queues, get_user_permissions
+from flags.services import get_flags_case_level_for_team
 from libraries.forms.generators import error_page, form_page
 from libraries.forms.submitters import submit_single_form
 from queues.helpers import add_assigned_users_to_cases
@@ -64,22 +65,21 @@ class ViewCase(TemplateView):
         permissions = get_user_permissions(request)
 
         if case['case']['is_clc']:
-            case_id = str(kwargs['pk'])
-            case, status_code = get_case(request, case_id)
-
             context = {
                 'title': 'Case',
                 'data': case,
+                'edit_case_flags': get_string('cases.case.edit_case_flags')
             }
             return render(request, 'cases/case/clc-query-case.html', context)
-
-        context = {
-            'data': case,
-            'title': case.get('case').get('application').get('name'),
-            'activity': activity.get('activity'),
-            'permissions': permissions,
-        }
-        return render(request, 'cases/case/application-case.html', context)
+        else:
+            context = {
+                'data': case,
+                'title': case.get('case').get('application').get('name'),
+                'activity': activity.get('activity'),
+                'permissions': permissions,
+                'edit_case_flags': get_string('cases.case.edit_case_flags')
+            }
+            return render(request, 'cases/case/application-case.html', context)
 
     def post(self, request, **kwargs):
         case_id = str(kwargs['pk'])
@@ -225,6 +225,35 @@ class MoveCase(TemplateView):
 
         if response:
             return response
+
+        return redirect(reverse('cases:case', kwargs={'pk': case_id}))
+
+
+class AssignFlags(TemplateView):
+    def get(self, request, **kwargs):
+        case_id = str(kwargs['pk'])
+        case_data, status_code = get_case(request, case_id)
+        case_level_team_flags_data, status_code = get_flags_case_level_for_team(request)
+        case_flags = case_data.get('case').get('flags')
+        case_level_team_flags = case_level_team_flags_data.get('flags')
+
+        for flag in case_level_team_flags:
+            for case_flag in case_flags:
+                flag['selected'] = flag['id'] == case_flag['id']
+                if flag['selected']:
+                    break
+
+        context = {
+            'caseId': case_id,
+            'case_level_team_flags': case_level_team_flags
+        }
+        return render(request, 'cases/case/flags.html', context)
+
+    def post(self, request, **kwargs):
+        case_id = str(kwargs['pk'])
+        flags = request.POST.getlist('flags[]')
+
+        response, status_code = put_case_flags(request, case_id, {'flags': flags})
 
         return redirect(reverse('cases:case', kwargs={'pk': case_id}))
 

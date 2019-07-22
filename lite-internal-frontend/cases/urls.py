@@ -22,4 +22,6 @@ urlpatterns = [
     path('<uuid:pk>/attach/', views.AttachDocuments.as_view(), name='attach_documents'),
     # ex: /<uuid:pk>/documents/<str:file_id>/
     path('<uuid:pk>/documents/<str:file_pk>/', views.Document.as_view(), name='document'),
+    # ex: /cases/<uuid:pk>/assign-flags/
+    path('<uuid:pk>/assign-flags/', views.AssignFlags.as_view(), name='assign_flags'),
 ]

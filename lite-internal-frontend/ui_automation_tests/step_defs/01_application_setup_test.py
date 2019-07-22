@@ -7,7 +7,7 @@ from conftest import context
 import helpers.helpers as utils
 from pages.exporter_hub import ExporterHub
 
-scenarios('../features/submit_application.feature', strict_gherkin=False)
+scenarios('../features/application_setup.feature', strict_gherkin=False)
 
 log = logging.getLogger()
 console = logging.StreamHandler()

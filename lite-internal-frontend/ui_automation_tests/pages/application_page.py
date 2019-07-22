@@ -6,20 +6,21 @@ class ApplicationPage():
 
     def __init__(self, driver):
         self.driver = driver
-        self.case_note_field = "case_note" #id
-        self.post_note_btn = "button-post-note" #id
-        self.cancel_note_btn = "case-note-cancel-button" #id
-        self.case_notes_text = ".lite-case-note" #css
-        self.case_note_date_time = ".lite-activity-item .govuk-hint" #css
-        self.case_note_character_warning = "case_note-warning" #id
-        self.case_note_character_warning = "case_note-warning" #id
-        self.documents_btn = '.govuk-button[href*="documents"]' #css
+        self.case_note_field = "case_note"  # id
+        self.post_note_btn = "button-post-note"  # id
+        self.cancel_note_btn = "case-note-cancel-button"  # id
+        self.case_notes_text = ".lite-case-note"  # css
+        self.case_note_date_time = ".lite-activity-item .govuk-hint"  # css
+        self.case_note_character_warning = "case_note-warning"  # id
+        self.case_note_character_warning = "case_note-warning"  # id
+        self.documents_btn = '.govuk-button[href*="documents"]'  # css
         self.progress_app_btn = '.govuk-button[href*="manage"]'
-        self.record_decision_btn = '.govuk-button[href*="decide"]' #css
-        self.headers = self.driver.find_elements_by_css_selector(".lite-heading-s") #css
+        self.record_decision_btn = '.govuk-button[href*="decide"]'  # css
+        self.headers = self.driver.find_elements_by_css_selector(".lite-heading-s")  # css
         self.activity_case_note_subject = self.driver.find_elements_by_css_selector(".lite-activity-item .govuk-body")
         self.activity_dates = ".lite-activity-item .govuk-hint"
         self.activity_user = ".user"
+        self.edit_case_flags = "a[href*='/assign-flags']"
 
     def enter_case_note(self, text):
         self.driver.find_element_by_id(self.case_note_field).send_keys(text)
@@ -71,3 +72,7 @@ class ApplicationPage():
 
     def get_text_of_activity_users(self, no):
         return self.driver.find_elements_by_css_selector(self.activity_user)[no].text
+
+    def click_edit_case_flags(self):
+        edit_cases_btn = self.driver.find_element_by_css_selector(self.edit_case_flags)
+        edit_cases_btn.click()

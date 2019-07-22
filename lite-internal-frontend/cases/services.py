@@ -1,5 +1,6 @@
 from conf.client import post, get, put, delete
-from conf.constants import CASE_URL, CASE_NOTES_URL, APPLICATIONS_URL, ACTIVITY_URL, CLC_QUERIES_URL, DOCUMENTS_URL
+from conf.constants import CASE_URL, CASE_NOTES_URL, APPLICATIONS_URL, ACTIVITY_URL, CLC_QUERIES_URL, DOCUMENTS_URL, \
+    CASE_FLAGS_URL
 
 
 def get_case(request, pk):
@@ -35,9 +36,17 @@ def post_case_notes(request, pk, json):
     return data.json(), data.status_code
 
 
+# Case Flags
+
+
+def put_case_flags(request, pk, flags):
+    data = put(request, CASE_URL + pk + CASE_FLAGS_URL, flags)
+    return data.json(), data.status_code
+
+
 # Activity
 def get_activity(request, pk):
-    data = get(request, CASE_URL + pk + ACTIVITY_URL + '?fields=status')
+    data = get(request, CASE_URL + pk + ACTIVITY_URL + '?fields=status,flags')
     return data.json(), data.status_code
 
 
