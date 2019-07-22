@@ -5,14 +5,13 @@ services:
     image: "postgres"
     environment:
       - POSTGRES_PASSWORD=password
-    command:
-      - "postgres"
-      - "-c"
-      - "port=5431"
+    expose:
+      - 5432
     ports:
-      - 5431:5431
+      - 5431:5432
     networks:
       - lite-api_default
+
   govfe:
     env_file:
       - .env
@@ -20,14 +19,14 @@ services:
     volumes:
       - .:/app
     ports:
-      - ${PORT}:${PORT}
+      - 8080:8080
     depends_on:
       - govfedb
     expose:
-      - ${PORT}
+      - 8080
     networks:
       - lite-api_default
-    command: pipenv run ./manage.py runserver 0.0.0.0:${PORT}
+    command: pipenv run ./manage.py runserver 0.0.0.0:8080
 
 networks:
   lite-api_default:
