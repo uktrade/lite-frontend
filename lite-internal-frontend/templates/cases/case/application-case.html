@@ -3,7 +3,7 @@
 {% load humanize %}
 
 {% block back-link %}
-	<a href="{% url 'cases:cases' %}" class="govuk-back-link">Back to Cases</a>
+	<a href="{% url 'cases:cases' %}" class="govuk-back-link">{% get_string 'cases.case.back_to_cases_link' %}</a>
 {% endblock %}
 
 {% block body %}
@@ -124,6 +124,88 @@
 		<a class="lite-tabs__tab selected" id="activity">Activity</a>
 	</div>
 </div> -->
+
+<h3 class="govuk-heading-m">{% get_string 'cases.case.goods_heading' %}</h3>
+<table class="lite-table">
+	<thead class="lite-table__head">
+		<tr class="lite-table__row">
+		  <th class="lite-table__header" scope="col">Description</th>
+		  <th class="lite-table__header" scope="col">Controlled?</th>
+		  <th class="lite-table__header" scope="col">Control Code</th>
+		  <th class="lite-table__header" scope="col">End Product?</th>
+		  <th class="lite-table__header" scope="col">Part Number</th>
+		</tr>
+	</thead>
+	<tbody class="lite-table__body">
+		{% for good in data.case.application.goods %}
+			<tr class="lite-table__row">
+			  <td class="lite-table__cell">{{ good.good.description }}</td>
+			  <td class="lite-table__cell">{{ good.good.is_good_controlled }}</td>
+			  <td class="lite-table__cell">{{ good.good.control_code|default:'None' }}</td>
+			  <td class="lite-table__cell">{{ good.good.is_good_end_product }}</td>
+			  <td class="lite-table__cell">{{ good.good.part_number|default:'None' }}</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>
+
+<br><br><br><br>
+
+<h3 class="govuk-heading-m">{% get_string 'cases.case.destination_heading' %}</h3>
+{% if data.case.application.destinations.type == 'end_user' %}
+	<p class="govuk-label">{{ data.case.application.destinations.data.name }}</p>
+	<p class="govuk-label">{{ data.case.application.destinations.data.type }}</p>
+	<p class="govuk-label">{{ data.case.application.destinations.data.address }}<br>{{ data.case.application.destinations.data.country }}</p>
+{% else %}
+	{% for country in data.case.application.destinations.data %}
+		<p class="govuk-label">
+			{{ country.name }}
+		</p>
+	{% endfor %}
+{% endif %}
+
+<br><br><br><br>
+
+<h3 class="govuk-heading-m">{% get_string 'cases.case.goods_location_heading' %}</h3>
+{% if data.case.application.goods_locations.type == 'external_locations' %}
+	<table class="lite-table">
+		<thead class="lite-table__head">
+			<tr class="lite-table__row">
+			  <th class="lite-table__header" scope="col">Name</th>
+			  <th class="lite-table__header" scope="col">Address</th>
+			  <th class="lite-table__header" scope="col">Country</th>
+			</tr>
+		</thead>
+		<tbody class="lite-table__body">
+			{% for country in data.case.application.goods_locations.data %}
+				<tr class="lite-table__row">
+				  <td class="lite-table__cell" scope="row">{{ country.name }}</td>
+				  <td class="lite-table__cell">{{ country.address }}</td>
+				  <td class="lite-table__cell">{{ country.country }}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% else %}
+	<table class="lite-table">
+		<thead class="lite-table__head">
+			<tr class="lite-table__row">
+			  <th class="lite-table__header" scope="col">Name</th>
+			  <th class="lite-table__header" scope="col">Address</th>
+			  <th class="lite-table__header" scope="col">Country</th>
+			</tr>
+		</thead>
+		<tbody class="lite-table__body">
+			{% for country in data.case.application.goods_locations.data %}
+				<tr class="lite-table__row">
+				  <td class="lite-table__cell" scope="row">{{ country.name }}</td>
+				  <td class="lite-table__cell">{{ country.address }}</td>
+				  <td class="lite-table__cell">{{ country.country }}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% endif %}
 
 {% include "cases/case/tabs/activity.html" %}
 

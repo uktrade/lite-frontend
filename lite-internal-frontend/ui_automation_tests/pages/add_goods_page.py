@@ -1,3 +1,4 @@
+import helpers.helpers as utils
 class AddGoodPage:
 
     def __init__(self, driver):
@@ -33,13 +34,7 @@ class AddGoodPage:
         self.driver.find_element_by_id("is_good_end_product-no").click()
 
     def assert_good_is_displayed_and_return_case_id(self, description):
-        description_xpath = self.description_xpath_prefix % description
-        clc_query_case_id_xpath = self.clc_query_case_id_xpath_prefix % description_xpath
-
-        goods_row = self.driver.find_element_by_xpath(description_xpath)
-        clc_query_case_id = self.driver.find_element_by_xpath(
-            clc_query_case_id_xpath).get_attribute(self.clc_query_case_id_attribute)
-
-        assert goods_row.is_displayed()
-
-        return clc_query_case_id
+        elements = self.driver.find_elements_by_css_selector(".govuk-table__row")
+        no = utils.get_element_index_by_text(elements, description)
+        assert elements[no].is_displayed()
+        return elements[no].find_element_by_css_selector('[data_good_clc_query_case_id]').get_attribute("data_good_clc_query_case_id")

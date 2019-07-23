@@ -1,157 +1,244 @@
-{% load humanize %}
+{% load humanize static %}
 
-<div class="govuk-grid-row">
-	<div class="govuk-grid-column-two-thirds">
+<h3 class="govuk-heading-m">Activity</h3>
 
-		<h3 class="govuk-heading-m">Goods</h3>
-		<table class="lite-table">
-			<thead class="lite-table__head">
-				<tr class="lite-table__row">
-				  <th class="lite-table__header" scope="col">Description</th>
-				  <th class="lite-table__header" scope="col">Controlled?</th>
-				  <th class="lite-table__header" scope="col">Control Code</th>
-				  <th class="lite-table__header" scope="col">End Product?</th>
-				  <th class="lite-table__header" scope="col">Part Number</th>
-				</tr>
-			</thead>
-			<tbody class="lite-table__body">
-				{% for good in data.case.application.goods %}
-					<tr class="lite-table__row">
-					  <td class="lite-table__cell">{{ good.good.description }}</td>
-					  <td class="lite-table__cell">{{ good.good.is_good_controlled }}</td>
-					  <td class="lite-table__cell">{{ good.good.control_code|default:'None' }}</td>
-					  <td class="lite-table__cell">{{ good.good.is_good_end_product }}</td>
-					  <td class="lite-table__cell">{{ good.good.part_number|default:'None' }}</td>
-					</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-
-		<br><br><br><br>
-
-		<h3 class="govuk-heading-m">Destinations</h3>
-		{% if data.case.application.destinations.type == 'end_user' %}
-			<p class="govuk-label">{{ data.case.application.destinations.data.name }}</p>
-			<p class="govuk-label">{{ data.case.application.destinations.data.type }}</p>
-			<p class="govuk-label">{{ data.case.application.destinations.data.address }}<br>{{ data.case.application.destinations.data.country }}</p>
-		{% else %}
-			{% for country in data.case.application.destinations.data %}
-				<p class="govuk-label">
-					{{ country.name }}
-				</p>
-			{% endfor %}
-		{% endif %}
-
-		<br><br><br><br>
-
-		<h3 class="govuk-heading-m">Goods Location</h3>
-		{% if data.case.application.goods_locations.type == 'external_locations' %}
-			<table class="lite-table">
-				<thead class="lite-table__head">
-					<tr class="lite-table__row">
-					  <th class="lite-table__header" scope="col">Name</th>
-					  <th class="lite-table__header" scope="col">Address</th>
-					  <th class="lite-table__header" scope="col">Country</th>
-					</tr>
-				</thead>
-				<tbody class="lite-table__body">
-					{% for country in data.case.application.goods_locations.data %}
-						<tr class="lite-table__row">
-						  <td class="lite-table__cell" scope="row">{{ country.name }}</td>
-						  <td class="lite-table__cell">{{ country.address }}</td>
-						  <td class="lite-table__cell">{{ country.country }}</td>
-						</tr>
-					{% endfor %}
-				</tbody>
-			</table>
-		{% else %}
-			<table class="lite-table">
-				<thead class="lite-table__head">
-					<tr class="lite-table__row">
-					  <th class="lite-table__header" scope="col">Name</th>
-					  <th class="lite-table__header" scope="col">Address</th>
-					  <th class="lite-table__header" scope="col">Country</th>
-					</tr>
-				</thead>
-				<tbody class="lite-table__body">
-					{% for country in data.case.application.goods_locations.data %}
-						<tr class="lite-table__row">
-						  <td class="lite-table__cell" scope="row">{{ country.name }}</td>
-						  <td class="lite-table__cell">{{ country.address }}</td>
-						  <td class="lite-table__cell">{{ country.country }}</td>
-						</tr>
-					{% endfor %}
-				</tbody>
-			</table>
-		{% endif %}
-
-		<form method="post">
-			{% csrf_token %}
-			<div class="lite-expandable-textarea lite-case-note-no-transition">
-				<textarea id="case_note" name="text" cols="80" class="govuk-textarea" placeholder="Add case note"></textarea>
-				<div class="lite-expandable-textarea-controls">
-					<a id="case-note-cancel-button" href="{% url 'cases:case' data.case.id %}" class="govuk-button govuk-button--secondary" type="button" draggable="false">
-						Cancel
-					</a>
-					<p id="case_note-warning" class="govuk-hint govuk-character-count__message" aria-live="polite">
-						You can enter up to 2200 characters
-					</p>
-					<button class="govuk-button" type="submit" id="button-post-note">
-						Post note
-					</button>
-				</div>
-			</div>
-		</form>
-		<div class="lite-case-notes">
-			{% for item in activity %}
-				{% if item.type == 'case_note' %}
-					<div class="lite-activity-item">
-						<p class="govuk-body" style="margin-bottom: 0;">
-							<span class="user">{{ item.user.first_name }} {{ item.user.last_name }}</span>{% get_string 'activity.added_a_case_note' %}
-						</p>
-						<div class="lite-case-note">
-							{{ item.data }}
-						</div>
-						<p class="govuk-hint govuk-!-font-size-16" style="margin-top: 10px;">{{ item.date|str_date }}</p>
-					</div>
-				{% elif item.type == 'change' %}
-					<div class="lite-activity-item">
-						<p class="govuk-body" style="margin-bottom: 0;">
-							{% for key, value in item.data.items %}
-								{% if forloop.first %}
-									<span class="user">{{ item.user.first_name }} {{ item.user.last_name }}</span> set the
-								{% endif %}
-								<span class="highlight">{{ key }}</span> to <span class="highlight">{{ value|sentence_case|lower }}</span>{% if not forloop.last %}{% ifequal forloop.revcounter 2 %} and {% else %}, {% endifequal %}{% else %}.{% endif %}
-							{% endfor %}
-						</p>
-						<p class="govuk-hint govuk-!-font-size-16" style="margin-top: 10px;">{{ item.date|str_date }}</p>
-					</div>
-				{% elif item.type == 'change_case_flags' %}
-					<div class="lite-activity-item">
-						<p class="govuk-body" style="margin-bottom: 0;">
-							<span class="user">{{ item.user.first_name }} {{ item.user.last_name }}</span>
-							{% if item.data.flags.removed|length > 0 %}
-								removed flags:
-								{% for flag in item.data.flags.removed %}
-									<span class="highlight">{{ flag|sentence_case|lower }}</span>
-                                    {% if not forloop.last %}, {% else %}{% if item.data.flags.added|length > 0 %} and {% else %}.{% endif %}{% endif %}
-								{% endfor %}
-							{% endif %}
-							{% if item.data.flags.added|length > 0 %}
-								added flags:
-								{% for flag in item.data.flags.added %}
-									<span class="highlight">{{ flag|sentence_case|lower }}</span>{% if not forloop.last %}, {% else %}.{% endif %}
-								{% endfor %}
-							{% endif %}	
-						</p>
-						<p class="govuk-hint govuk-!-font-size-16" style="margin-top: 10px;">{{ item.date|str_date }}</p>
-					</div>
-				{% endif %}
-			{% endfor %}
+<form method="post" onSubmit="return confirmVisible(event)">
+	{% csrf_token %}
+	<div class="lite-expandable-textarea lite-case-note-no-transition">
+		<textarea id="case_note" name="text" cols="80" class="govuk-textarea" placeholder="Add case note"></textarea>
+		<div class="lite-expandable-textarea-controls">
+<!--			<div class="govuk-checkboxes govuk-checkboxes&#45;&#45;small">-->
+<!--				<div class="govuk-checkboxes__item">-->
+<!--					<input class="govuk-checkboxes__input" type="checkbox" id="is_visible_to_exporter" name="is_visible_to_exporter" value="True">-->
+<!--					<label class="govuk-label govuk-checkboxes__label" for="is_visible_to_exporter">{% get_string 'cases.case.tabs.activity.make_visible_to_exporter' %}</label>-->
+<!--				</div>-->
+<!--			</div>-->
+			<a id="case-note-cancel-button" href="{% url 'cases:case' data.case.id %}" class="govuk-button govuk-button--secondary" type="button" draggable="false">
+				Cancel
+			</a>
+			<button class="govuk-button" type="submit" id="button-post-note">
+				Post note
+			</button>
 		</div>
+	</div>
+	<p id="case_note-warning" class="govuk-hint govuk-character-count__message" aria-live="polite">
+		{% get_string 'cases.case.tabs.activity.2200_character_limit' %}
+	</p>
+</form>
 
+<div class="lite-case-notes">
+	{% for item in activity %}
+		{% if item.type == 'case_note' %}
+			<div class="lite-activity-item">
+				<p class="govuk-body" style="margin-bottom: 0;">
+					<span class="user">{{ item.user.first_name }} {{ item.user.last_name }}</span>{% get_string 'activity.added_a_case_note' %}
+				</p>
+				<div class="lite-case-note {% if item.user.organisation %}lite-case-note--exporter{% endif %}">
+					{{ item.data }}
+				</div>
+				<p class="govuk-hint govuk-!-font-size-16" style="margin-top: 10px;">{{ item.date|str_date }}</p>
+			</div>
+		{% elif item.type == 'change' %}
+			<div class="lite-activity-item">
+				<p class="govuk-body" style="margin-bottom: 0;">
+					{% for key, value in item.data.items %}
+						{% if forloop.first %}
+							<span class="user">{{ item.user.first_name }} {{ item.user.last_name }}</span> set the
+						{% endif %}
+						<span class="highlight">{{ key }}</span> to <span class="highlight">{{ value|sentence_case|lower }}</span>{% if not forloop.last %}{% ifequal forloop.revcounter 2 %} and {% else %}, {% endifequal %}{% else %}.{% endif %}
+					{% endfor %}
+				</p>
+				<p class="govuk-hint govuk-!-font-size-16" style="margin-top: 10px;">{{ item.date|str_date }}</p>
+			</div>
+		{% elif item.type == 'change_case_flags' %}
+			<div class="lite-activity-item">
+				<p class="govuk-body" style="margin-bottom: 0;">
+					<span class="user">{{ item.user.first_name }} {{ item.user.last_name }}</span>
+					{% if item.data.flags.removed|length > 0 %}
+						removed flags:
+						{% for flag in item.data.flags.removed %}
+							<span class="highlight">{{ flag|sentence_case|lower }}</span>
+							{% if not forloop.last %}, {% else %}{% if item.data.flags.added|length > 0 %} and {% else %}.{% endif %}{% endif %}
+						{% endfor %}
+					{% endif %}
+					{% if item.data.flags.added|length > 0 %}
+						added flags:
+						{% for flag in item.data.flags.added %}
+							<span class="highlight">{{ flag|sentence_case|lower }}</span>{% if not forloop.last %}, {% else %}.{% endif %}
+						{% endfor %}
+					{% endif %}
+				</p>
+				<p class="govuk-hint govuk-!-font-size-16" style="margin-top: 10px;">{{ item.date|str_date }}</p>
+			</div>
+		{% endif %}
+	{% endfor %}
 </div>
+<!--		<h3 class="govuk-heading-m">Goods</h3>-->
+<!--		<table class="lite-table">-->
+<!--			<thead class="lite-table__head">-->
+<!--				<tr class="lite-table__row">-->
+<!--				  <th class="lite-table__header" scope="col">Description</th>-->
+<!--				  <th class="lite-table__header" scope="col">Controlled?</th>-->
+<!--				  <th class="lite-table__header" scope="col">Control Code</th>-->
+<!--				  <th class="lite-table__header" scope="col">End Product?</th>-->
+<!--				  <th class="lite-table__header" scope="col">Part Number</th>-->
+<!--				</tr>-->
+<!--			</thead>-->
+<!--			<tbody class="lite-table__body">-->
+<!--				{% for good in data.case.application.goods %}-->
+<!--					<tr class="lite-table__row">-->
+<!--					  <td class="lite-table__cell">{{ good.good.description }}</td>-->
+<!--					  <td class="lite-table__cell">{{ good.good.is_good_controlled }}</td>-->
+<!--					  <td class="lite-table__cell">{{ good.good.control_code|default:'None' }}</td>-->
+<!--					  <td class="lite-table__cell">{{ good.good.is_good_end_product }}</td>-->
+<!--					  <td class="lite-table__cell">{{ good.good.part_number|default:'None' }}</td>-->
+<!--					</tr>-->
+<!--				{% endfor %}-->
+<!--			</tbody>-->
+<!--		</table>-->
 
-{% load static %}
+<!--		<br><br><br><br>-->
+
+<!--		<h3 class="govuk-heading-m">Destinations</h3>-->
+<!--		{% if data.case.application.destinations.type == 'end_user' %}-->
+<!--			<p class="govuk-label">{{ data.case.application.destinations.data.name }}</p>-->
+<!--			<p class="govuk-label">{{ data.case.application.destinations.data.type }}</p>-->
+<!--			<p class="govuk-label">{{ data.case.application.destinations.data.address }}<br>{{ data.case.application.destinations.data.country }}</p>-->
+<!--		{% else %}-->
+<!--			{% for country in data.case.application.destinations.data %}-->
+<!--				<p class="govuk-label">-->
+<!--					{{ country.name }}-->
+<!--				</p>-->
+<!--			{% endfor %}-->
+<!--		{% endif %}-->
+
+<!--		<br><br><br><br>-->
+
+<!--		<h3 class="govuk-heading-m">Goods Location</h3>-->
+<!--		{% if data.case.application.goods_locations.type == 'external_locations' %}-->
+<!--			<table class="lite-table">-->
+<!--				<thead class="lite-table__head">-->
+<!--					<tr class="lite-table__row">-->
+<!--					  <th class="lite-table__header" scope="col">Name</th>-->
+<!--					  <th class="lite-table__header" scope="col">Address</th>-->
+<!--					  <th class="lite-table__header" scope="col">Country</th>-->
+<!--					</tr>-->
+<!--				</thead>-->
+<!--				<tbody class="lite-table__body">-->
+<!--					{% for country in data.case.application.goods_locations.data %}-->
+<!--						<tr class="lite-table__row">-->
+<!--						  <td class="lite-table__cell" scope="row">{{ country.name }}</td>-->
+<!--						  <td class="lite-table__cell">{{ country.address }}</td>-->
+<!--						  <td class="lite-table__cell">{{ country.country }}</td>-->
+<!--						</tr>-->
+<!--					{% endfor %}-->
+<!--				</tbody>-->
+<!--			</table>-->
+<!--		{% else %}-->
+<!--			<table class="lite-table">-->
+<!--				<thead class="lite-table__head">-->
+<!--					<tr class="lite-table__row">-->
+<!--					  <th class="lite-table__header" scope="col">Name</th>-->
+<!--					  <th class="lite-table__header" scope="col">Address</th>-->
+<!--					  <th class="lite-table__header" scope="col">Country</th>-->
+<!--					</tr>-->
+<!--				</thead>-->
+<!--				<tbody class="lite-table__body">-->
+<!--					{% for country in data.case.application.goods_locations.data %}-->
+<!--						<tr class="lite-table__row">-->
+<!--						  <td class="lite-table__cell" scope="row">{{ country.name }}</td>-->
+<!--						  <td class="lite-table__cell">{{ country.address }}</td>-->
+<!--						  <td class="lite-table__cell">{{ country.country }}</td>-->
+<!--						</tr>-->
+<!--					{% endfor %}-->
+<!--				</tbody>-->
+<!--			</table>-->
+<!--		{% endif %}-->
+
+<!--		<form method="post">-->
+<!--			{% csrf_token %}-->
+<!--			<div class="lite-expandable-textarea lite-case-note-no-transition">-->
+<!--				<textarea id="case_note" name="text" cols="80" class="govuk-textarea" placeholder="Add case note"></textarea>-->
+<!--				<div class="lite-expandable-textarea-controls">-->
+<!--					<a id="case-note-cancel-button" href="{% url 'cases:case' data.case.id %}" class="govuk-button govuk-button&#45;&#45;secondary" type="button" draggable="false">-->
+<!--						Cancel-->
+<!--					</a>-->
+<!--					<p id="case_note-warning" class="govuk-hint govuk-character-count__message" aria-live="polite">-->
+<!--						You can enter up to 2200 characters-->
+<!--					</p>-->
+<!--					<button class="govuk-button" type="submit" id="button-post-note">-->
+<!--						Post note-->
+<!--					</button>-->
+<!--				</div>-->
+<!--			</div>-->
+<!--		</form>-->
+<!--		<div class="lite-case-notes">-->
+<!--			{% for item in activity %}-->
+<!--				{% if item.type == 'case_note' %}-->
+<!--					<div class="lite-activity-item">-->
+<!--						<p class="govuk-body" style="margin-bottom: 0;">-->
+<!--							<span class="user">{{ item.user.first_name }} {{ item.user.last_name }}</span>{% get_string 'activity.added_a_case_note' %}-->
+<!--						</p>-->
+<!--						<div class="lite-case-note">-->
+<!--							{{ item.data }}-->
+<!--						</div>-->
+<!--						<p class="govuk-hint govuk-!-font-size-16" style="margin-top: 10px;">{{ item.date|str_date }}</p>-->
+<!--					</div>-->
+<!--				{% elif item.type == 'change' %}-->
+<!--					<div class="lite-activity-item">-->
+<!--						<p class="govuk-body" style="margin-bottom: 0;">-->
+<!--							{% for key, value in item.data.items %}-->
+<!--								{% if forloop.first %}-->
+<!--									<span class="user">{{ item.user.first_name }} {{ item.user.last_name }}</span> set the-->
+<!--								{% endif %}-->
+<!--								<span class="highlight">{{ key }}</span> to <span class="highlight">{{ value|sentence_case|lower }}</span>{% if not forloop.last %}{% ifequal forloop.revcounter 2 %} and {% else %}, {% endifequal %}{% else %}.{% endif %}-->
+<!--							{% endfor %}-->
+<!--						</p>-->
+<!--						<p class="govuk-hint govuk-!-font-size-16" style="margin-top: 10px;">{{ item.date|str_date }}</p>-->
+<!--					</div>-->
+<!--				{% elif item.type == 'change_case_flags' %}-->
+<!--					<div class="lite-activity-item">-->
+<!--						<p class="govuk-body" style="margin-bottom: 0;">-->
+<!--							<span class="user">{{ item.user.first_name }} {{ item.user.last_name }}</span>-->
+<!--							{% if item.data.flags.removed|length > 0 %}-->
+<!--								removed flags:-->
+<!--								{% for flag in item.data.flags.removed %}-->
+<!--									<span class="highlight">{{ flag|sentence_case|lower }}</span>-->
+<!--                                    {% if not forloop.last %}, {% else %}{% if item.data.flags.added|length > 0 %} and {% else %}.{% endif %}{% endif %}-->
+<!--								{% endfor %}-->
+<!--							{% endif %}-->
+<!--							{% if item.data.flags.added|length > 0 %}-->
+<!--								added flags:-->
+<!--								{% for flag in item.data.flags.added %}-->
+<!--									<span class="highlight">{{ flag|sentence_case|lower }}</span>{% if not forloop.last %}, {% else %}.{% endif %}-->
+<!--								{% endfor %}-->
+<!--							{% endif %}-->
+<!--						</p>-->
+<!--						<p class="govuk-hint govuk-!-font-size-16" style="margin-top: 10px;">{{ item.date|str_date }}</p>-->
+<!--					</div>-->
+<!--				{% endif %}-->
+<!--			{% endfor %}-->
+<!--		</div>-->
+<!--</div>-->
+
+<script>
+    function confirmVisible(event) {
+        let is_visible_to_exporter = document.getElementById('is_visible_to_exporter')
+        if (is_visible_to_exporter.checked) {
+            return confirm("This message will be visible to the exporter, are you sure you wish to continue?")
+        }
+        return true;
+    }
+</script>
+
 <script src="{% static 'javascripts/pluralize.js' %}"></script>
 <script src="{% static 'javascripts/specific/case_notes.js' %}"></script>
+<script>
+    function confirmVisible(event) {
+        let is_visible_for_exporter = document.getElementById('is_visible_for_exporter')
+        if (is_visible_for_exporter.checked) {
+            return confirm("This message will be visible to the exporter, are you sure you wish to continue?")
+        }
+        return true;
+    }
+</script>

@@ -1,8 +1,8 @@
 @internal @case_notes
 Feature: I want to add an internal note to a case and view notes
-As a logged in government user
-I want to add an internal note to a case and view existing notes
-So that I can record my findings and comments and others users can see these
+  As a logged in government user
+  I want to add an internal note to a case and view existing notes
+  So that I can record my findings and comments and others users can see these
 
 @LT-911_add
 Scenario: Add a new valid case note

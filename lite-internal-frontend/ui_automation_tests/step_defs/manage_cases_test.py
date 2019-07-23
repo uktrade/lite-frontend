@@ -113,9 +113,9 @@ class ManageCases():
 
     @then('the status has been changed in exporter')
     def i_click_applications(driver):
-        status = driver.find_element_by_xpath("//*[text()[contains(.,'" + context.app_time_id + "')]]/following-sibling::td[last()]")
-        assert status.is_displayed()
-        assert status.text == context.status
+        elements = driver.find_elements_by_css_selector('.govuk-table__row')
+        no = utils.get_element_index_by_text(elements, context.app_time_id)
+        assert context.status in elements[no].text
 
 
     @then('the application headers and information are correct')

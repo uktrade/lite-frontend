@@ -3,6 +3,7 @@ const VISIBLE_LENGTH = 1200;
 const MAX_LENGTH = 2200;
 
 $(".lite-expandable-textarea-controls").addClass("lite-expandable-textarea-controls--hidden");
+$(".lite-expandable-textarea").addClass("lite-expandable-textarea--hidden");
 $(".case_note-warning").addClass("govuk-hint--hidden");
 
 setTimeout(
@@ -13,8 +14,10 @@ setTimeout(
 $("#case_note").on('input propertychange paste', function() {
 	if ($(this).val() != '') {
 		$(".lite-expandable-textarea-controls").removeClass("lite-expandable-textarea-controls--hidden");
+		$(".lite-expandable-textarea").removeClass("lite-expandable-textarea--hidden");
 	} else {
 		$(".lite-expandable-textarea-controls").addClass("lite-expandable-textarea-controls--hidden");
+		$(".lite-expandable-textarea").addClass("lite-expandable-textarea--hidden");
 	}
 
 	if ($(this).val().length > VISIBLE_LENGTH) {

@@ -68,6 +68,8 @@ class ViewCase(TemplateView):
             context = {
                 'title': 'Case',
                 'data': case,
+                'activity': activity.get('activity'),
+                'permissions': permissions,
                 'edit_case_flags': get_string('cases.case.edit_case_flags')
             }
             return render(request, 'cases/case/clc-query-case.html', context)
@@ -86,12 +88,55 @@ class ViewCase(TemplateView):
         response, status_code = post_case_notes(request, case_id, request.POST)
 
         if status_code != 201:
-            error = response.get('errors').get('text')[0]
-            error = error.replace('This field', 'Case note')
-            error = error.replace('this field', 'the case note')  # TODO: Move to API
+
+            errors = response.get('errors')
+            if errors.get('text'):
+                error = errors.get('text')[0]
+                error = error.replace('This field', 'Case note')
+                error = error.replace('this field', 'the case note')  # TODO: Move to API
+
+            else:
+                error_list = []
+                for key in errors:
+                    error_list.append("{field}: {error}".format(field=key, error=errors[key][0]))
+                error = "\n".join(error_list)
             return error_page(request, error)
 
         return redirect(reverse('cases:case', kwargs={'pk': case_id}) + '#case_notes')
+
+
+class ViewCLCCase(TemplateView):
+    def get(self, request, **kwargs):
+        case_id = str(kwargs['pk'])
+        case, status_code = get_case(request, case_id)
+        activity, status_code = get_activity(request, case_id)
+
+        context = {
+            'data': case,
+            'activity': activity.get('activity'),
+        }
+        return render(request, 'cases/case/clc-query-case.html', context)
+
+    def post(self, request, **kwargs):
+        case_id = str(kwargs['pk'])
+        response, status_code = post_case_notes(request, case_id, request.POST)
+
+        if status_code != 201:
+
+            errors = response.get('errors')
+            if errors.get('text'):
+                error = errors.get('text')[0]
+                error = error.replace('This field', 'Case note')  # TODO: Move to API
+                error = error.replace('this field', 'the case note')  # TODO: Move to API
+
+            else:
+                error_list = []
+                for key in errors:
+                    error_list.append("{field}: {error}".format(field=key, error=errors[key][0]))
+                error = "\n".join(error_list)
+            return error_page(request, error)
+
+        return redirect('/cases/clc-query/' + case_id + '#case_notes')
 
 
 class ManageCase(TemplateView):

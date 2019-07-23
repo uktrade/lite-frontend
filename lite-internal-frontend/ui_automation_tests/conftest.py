@@ -19,17 +19,18 @@ def pytest_exception_interact(node, report):
         # utils.save_screenshot(node.funcargs.get("driver"), name)
 
 
-# Create driver and url command line addoption
+# Create driver and url command line adoption
 def pytest_addoption(parser):
     env = str(os.environ.get('ENVIRONMENT'))
     if env == 'None':
         env = "dev"
-    print("touched: " + env)
     parser.addoption("--driver", action="store", default="chrome", help="Type in browser type")
     parser.addoption("--exporter_url", action="store",
                      default="https://exporter.lite.service." + env + ".uktrade.io/", help="url")
     parser.addoption("--internal_url", action="store",
                      default="https://internal.lite.service." + env + ".uktrade.io/", help="url")
+    # parser.addoption("--exporter_url", action="store", default="http://localhost:9000", help="url")
+    # parser.addoption("--internal_url", action="store", default="http://localhost:8080", help="url")
     # parser.addoption("--exporter_url", action="store", default="http://localhost:8300", help="url")
     # parser.addoption("--internal_url", action="store", default="http://localhost:8200", help="url")
     parser.addoption("--sso_sign_in_url", action="store", default="https://sso.trade.uat.uktrade.io/login/", help="url")
@@ -200,4 +201,3 @@ def add_a_flag(driver, flag_name, flag_level):
     flags_page.enter_flag_name(context.flag_name)
     flags_page.select_flag_level(flag_level)
     shared.click_submit()
-
