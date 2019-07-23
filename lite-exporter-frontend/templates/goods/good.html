@@ -1,0 +1,17 @@
+{% extends 'layouts/base.html' %}
+
+{% load humanize static %}
+
+{% block body %}
+
+	<h2 class="govuk-heading-l">{{ title }}</h2>
+
+	<div class="lite-tabs--fade">
+		<div class="lite-tabs">
+			<a class="lite-tabs__tab selected">Notes</a>
+		</div>
+	</div>
+
+	{% include "applications/tabs/notes.html" %}
+
+{% endblock %}

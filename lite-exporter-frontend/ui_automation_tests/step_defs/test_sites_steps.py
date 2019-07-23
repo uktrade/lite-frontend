@@ -36,21 +36,22 @@ def click_new_site(driver):
     hub.click_sites_link()
 
 
-@when(parsers.parse('I enter in text for new site "{edited}" {address}" "{postcode}" "{city}" "{region}" and "{country}"'))
+@when(parsers.parse('I enter in text for new site "{edited}" {address}" "{postcode}" "{city}" '
+                    '"{region}" and "{country}"'))
 def new_sites_info(driver, edited, address, postcode, city, region, country):
     new_site = NewSite(driver)
-    time_id = datetime.datetime.now().strftime("%m%d%H%M")
-    new_site_name = "Head office" + edited + time_id
+    time_id = datetime.datetime.now().strftime('%m%d%H%M')
+    new_site_name = 'Head office' + edited + time_id
     context.new_site_name = new_site_name
     new_site.enter_info_for_new_site(new_site_name, address, postcode, city, region, country)
 
 
 @then('I see sites list')
 def i_see_sites_list(driver):
-    assert driver.find_element_by_tag_name("h1").text == "Sites", \
-        "Failed to return to Sites list page after Adding site"
+    assert driver.find_element_by_tag_name('h2').text == 'Sites', \
+        'Failed to return to Sites list page after Adding site'
 
-    assert utils.is_element_present(driver, By.XPATH, "//*[text()[contains(.,'"+context.new_site_name+"')]]")
+    assert utils.is_element_present(driver, By.XPATH, "//*[text()[contains(.,'" + context.new_site_name + "')]]")
 
 
 @when('I click last edit button')
@@ -68,9 +69,9 @@ def clear_site(driver):
 @then('I see select a site error message')
 def select_a_site_error(driver):
     shared = Shared(driver)
-    assert "Cannot create an application without an end user" in shared.get_text_of_error_message_at_position_3()
-    assert "Cannot create an application with no goods attached" in shared.get_text_of_error_message()
-    assert "Cannot create an application with no sites or external sites attached" in shared.get_text_of_error_message_at_position_2()
+    assert 'Cannot create an application without an end user' in shared.get_text_of_error_message(2)
+    assert 'Cannot create an application with no goods attached' in shared.get_text_of_error_message()
+    assert 'Cannot create an application with no sites or external sites attached' in shared.get_text_of_error_message(1)
 
 
 @then('I see my new site at first position')
@@ -82,13 +83,13 @@ def assert_site_is_added_to_list(driver):
 @then('I see last site name as edited')
 def last_site_name_edited(driver):
     site_list_overview_page = SitesListOverview(driver)
-    assert "edited" in site_list_overview_page.get_text_of_last_site_name()
+    assert 'edited' in site_list_overview_page.get_text_of_last_site_name()
 
 
 @then(parsers.parse('the checkbox I have selected at position "{no}" is "{checked}"'))
 def assert_checkbox_at_position(driver, no, checked):
     sites_page = SitesPage(driver)
-    if checked == "checked":
-        assert sites_page.get_checked_attribute_of_sites_checkbox(int(no)-1) == "true"
-    elif checked == "unchecked":
-        assert sites_page.get_checked_attribute_of_sites_checkbox(int(no)-1) is not "true"
+    if checked == 'checked':
+        assert sites_page.get_checked_attribute_of_sites_checkbox(int(no)-1) == 'true'
+    elif checked == 'unchecked':
+        assert sites_page.get_checked_attribute_of_sites_checkbox(int(no)-1) is not 'true'

@@ -2,12 +2,11 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
+from goods import forms
 from goods.forms import edit_form
+from goods.services import get_goods, post_goods, get_good, update_good, delete_good
 from libraries.forms.components import HiddenField
 from libraries.forms.generators import form_page
-
-from goods import forms
-from goods.services import get_goods, post_goods, get_good, update_good, delete_good
 
 
 class Goods(TemplateView):
@@ -19,6 +18,19 @@ class Goods(TemplateView):
             'title': 'Manage Goods',
         }
         return render(request, 'goods/index.html', context)
+
+
+class GoodsDetail(TemplateView):
+    def get(self, request, **kwargs):
+        good_id = kwargs['pk']
+        data, status_code = get_good(request, str(good_id))
+
+        context = {
+            'data': data,
+            'notes': data['good']['notes'],
+            'title': data['good']['description'],
+        }
+        return render(request, 'goods/good.html', context)
 
 
 class AddGood(TemplateView):

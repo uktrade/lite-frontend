@@ -82,8 +82,6 @@ class Overview(TemplateView):
 
 
 # Goods
-
-
 class DraftGoodsList(TemplateView):
     def get(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
@@ -91,7 +89,7 @@ class DraftGoodsList(TemplateView):
         data, status_code = get_draft_goods(request, draft_id)
 
         context = {
-            'title': 'Application Goods',
+            'title': get_string('applications.standard.goods.title'),
             'draft_id': draft_id,
             'data': data,
             'draft': draft,
@@ -104,13 +102,13 @@ class GoodsList(TemplateView):
     def get(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
         draft, status_code = get_draft(request, draft_id)
-        description = request.GET.get('description', '')
-        part_number = request.GET.get('part_number', '')
+        description = request.GET.get('description', '').strip()
+        part_number = request.GET.get('part_number', '').strip()
         data, status_code = get_goods(request, {'description': description,
                                                 'part_number': part_number})
 
         context = {
-            'title': 'Goods',
+            'title': get_string('goods.add_from_organisation.title'),
             'draft_id': draft_id,
             'data': data,
             'draft': draft,
@@ -119,6 +117,7 @@ class GoodsList(TemplateView):
             'persistent_bar': create_persistent_bar(draft.get('draft')),
         }
         return render(request, 'apply_for_a_licence/goods/preexisting.html', context)
+
 
 class DraftOpenGoodsList(TemplateView):
     def get(self, request, **kwargs):
@@ -214,8 +213,6 @@ class AddPreexistingGood(TemplateView):
 
 
 # Delete Application
-
-
 class DeleteApplication(TemplateView):
     def get(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
@@ -239,8 +236,6 @@ class DeleteApplication(TemplateView):
 
 
 # End User
-
-
 class EndUser(TemplateView):
     def get(self, request, **kwargs):
         draft_id = str(kwargs['pk'])

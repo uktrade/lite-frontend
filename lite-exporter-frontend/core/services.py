@@ -1,5 +1,6 @@
 from conf.client import get, post
-from conf.constants import UNITS_URL, DRAFTS_URL, COUNTRIES_URL, EXTERNAL_LOCATIONS_URL
+from conf.constants import UNITS_URL, DRAFTS_URL, COUNTRIES_URL, EXTERNAL_LOCATIONS_URL, NOTIFICATIONS_URL, \
+                            CLC_NOTIFICATIONS_URL
 from libraries.forms.components import Option
 
 
@@ -74,4 +75,20 @@ def post_external_locations_on_draft(request, pk, json):
 
 def post_external_locations(request, json):
     data = post(request, EXTERNAL_LOCATIONS_URL, json)
+    return data.json(), data.status_code
+
+
+def get_notifications(request, unviewed):
+    url = NOTIFICATIONS_URL
+    if unviewed:
+        url = '%s?unviewed=True' % url
+    data = get(request, url)
+    return data.json(), data.status_code
+
+
+def get_clc_notifications(request, unviewed):
+    url = CLC_NOTIFICATIONS_URL
+    if unviewed:
+        url = '%s?unviewed=True' % url
+    data = get(request, url)
     return data.json(), data.status_code

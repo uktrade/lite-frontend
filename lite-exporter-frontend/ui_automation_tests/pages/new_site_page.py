@@ -1,7 +1,7 @@
 from selenium.webdriver.common.keys import Keys
 
 
-class NewSite():
+class NewSite:
 
     def __init__(self, driver):
         self.driver = driver
@@ -20,7 +20,6 @@ class NewSite():
         self.region.send_keys(region)
         self.country.send_keys(country)
         self.country.send_keys(Keys.RETURN)
-
 
     def clear_info_for_site(self):
         self.name.clear()

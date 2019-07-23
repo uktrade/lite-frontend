@@ -1,13 +1,10 @@
-from selenium import webdriver
-import helpers.helpers as utils
-import pytest
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.keys import Keys
 import time
 
-class ExporterHubPage():
+from selenium.webdriver.common.action_chains import ActionChains
 
-    # called e time you create an object for this class
+
+class ExporterHubPage:
+
     def __init__(self, driver):
         self.driver = driver
 
@@ -20,8 +17,6 @@ class ExporterHubPage():
         self.sites_btn = "a[href='/sites/']"
         self.sites_link = "a[href*='sites']"
         self.goods_tile = "a[href*='sites']"
-
-
 
     def go_to(self, url):
         self.driver.get(url)
@@ -142,18 +137,18 @@ class ExporterHubPage():
         self.driver.find_element_by_id("activity").clear()
         self.driver.find_element_by_id("activity").send_keys(activity)
 
-    #def click_submit_application(self):
-     #   self.driver.find_element_by_css_selector("button[type*='submit']").click()
+    # def click_submit_application(self):
+    #   self.driver.find_element_by_css_selector("button[type*='submit']").click()
 
     # Old flow
-    def create_application(self, name, destination, usage, activity):
-        self.click_apply_for_a_licence()
-        self.click_start()
-        self.enter_name_for_application(name)
-        self.click_save_and_continue()
-        self.enter_destination(destination)
-        self.click_save_and_continue()
-        self.enter_usage(usage)
-        self.click_save_and_continue()
-        self.enter_activity(activity)
-        self.click_submit()
+    # def create_application(self, name, destination, usage, activity):
+    #     self.click_apply_for_a_licence()
+    #     self.click_start()
+    #     self.enter_name_for_application(name)
+    #     self.click_save_and_continue()
+    #     self.enter_destination(destination)
+    #     self.click_save_and_continue()
+    #     self.enter_usage(usage)
+    #     self.click_save_and_continue()
+    #     self.enter_activity(activity)
+    #     self.click_submit()

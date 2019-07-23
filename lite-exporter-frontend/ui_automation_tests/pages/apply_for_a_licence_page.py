@@ -1,5 +1,6 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
+import helpers.helpers as utils
 
 import logging
 log = logging.getLogger()
@@ -35,9 +36,9 @@ class ApplyForALicencePage:
         self.driver.find_element_by_id(self.name_or_reference_input_id).clear()
         self.driver.find_element_by_id(self.name_or_reference_input_id).send_keys(name)
 
-    def enter_control_code(self, controlCode):
+    def enter_control_code(self, control_code):
         self.driver.find_element_by_id(self.control_code_input_id).clear()
-        self.driver.find_element_by_id(self.control_code_input_id).send_keys(controlCode)
+        self.driver.find_element_by_id(self.control_code_input_id).send_keys(control_code)
 
     def enter_destination(self, destination):
         self.driver.find_element_by_id(self.destination_input_id).clear()
@@ -124,6 +125,7 @@ class ApplyForALicencePage:
         return self.driver.find_elements_by_css_selector(self.licence_application_values)[no].text
 
     def get_text_of_application_headers(self, no):
+        utils.highlight(self.driver.find_elements_by_css_selector(self.licence_application_headers)[no])
         return self.driver.find_elements_by_css_selector(self.licence_application_headers)[no].text
 
     def get_text_of_success_message(self):

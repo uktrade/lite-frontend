@@ -1,5 +1,5 @@
 from core.services import get_countries
-from libraries.forms.components import Form, Question, InputType, Section, ArrayQuestion, Option
+from libraries.forms.components import Form, Question, InputType, Section, ArrayQuestion, Option, RadioButtons
 
 
 def new_end_user_form():
@@ -7,16 +7,13 @@ def new_end_user_form():
         Form(title='Who will be the final recipient (end-user) of your goods?',
              description='',
              questions=[
-                 ArrayQuestion('',
-                               '',
-                               InputType.RADIOBUTTONS,
-                               'type',
-                               data=[
-                                   Option('government', 'A Government Organisation'),
-                                   Option('commercial', 'A Commercial Organisation'),
-                                   Option('individual', 'An Individual'),
-                                   Option('other', 'Other', show_or=True),
-                               ]),
+                 RadioButtons('type',
+                              options=[
+                                  Option('government', 'A Government Organisation'),
+                                  Option('commercial', 'A Commercial Organisation'),
+                                  Option('individual', 'An Individual'),
+                                  Option('other', 'Other', show_or=True),
+                              ]),
              ],
              pk='1',
              default_button_name='Continue'),

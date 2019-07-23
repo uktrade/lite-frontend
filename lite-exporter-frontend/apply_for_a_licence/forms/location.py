@@ -1,11 +1,12 @@
 from core.builtins.custom_tags import get_string
 from core.services import get_countries, get_external_locations
-from libraries.forms.components import Form, ArrayQuestion, InputType, Option, Question, Checkboxes, Filter
+from libraries.forms.components import Form, ArrayQuestion, InputType, Option, Question, Checkboxes, Filter, \
+    RadioButtons
 
 which_location_form = Form(title=get_string('goods.location_questions.location.title'),
                            description='You can only choose one type of location per application',
                            questions=[
-                               ArrayQuestion('', '', InputType.RADIOBUTTONS, 'organisation_or_external', [
+                               RadioButtons('organisation_or_external', [
                                    Option('organisation', get_string('goods.location_questions.location.my_sites')),
                                    Option('external', get_string('goods.location_questions.location.external_locations')),
                                ])

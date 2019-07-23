@@ -9,13 +9,15 @@
 {% block body %}
 
 	<div class="lite-app-bar">
-		<h1 class="govuk-heading-l">Applications</h1>
-		<div class="lite-app-bar--right">
-			<a href="{% url 'apply_for_a_licence:index' %}" class="govuk-button govuk-button--secondary" draggable="false" role="button">
-				{% get_string 'licences.apply_for_a_licence' %}
-			</a>
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">{{ title }}</h1>
+		</div>
+		<div class="lite-app-bar__controls">
 			<a href="." class="govuk-button govuk-button--secondary" draggable="false" role="button">
 				{% get_string 'licences.refresh' %}
+			</a>
+			<a href="{% url 'apply_for_a_licence:index' %}" class="govuk-button" draggable="false" role="button">
+				{% get_string 'licences.apply_for_a_licence' %}
 			</a>
 		</div>
 	</div>
@@ -29,7 +31,7 @@
 					</th>
 					<th class="govuk-table__header" scope="col">Goods</th>
 					<!--<th class="govuk-table__header" scope="col">Destinations</th>-->
-					<th class="govuk-table__header" scope="col">Last Updated</th>
+					<th class="govuk-table__header" scope="col">Last updated</th>
 					<th class="govuk-table__header" scope="col">Status</th>
 				</tr>
 			</thead>
@@ -37,7 +39,7 @@
 				{% for application in data.applications %}
 					<tr class="govuk-table__row">
 						<td class="govuk-table__cell">
-							{{ application.name|default:"Untitled" }}
+							<a href="{% url 'applications:application' application.id %}">{{ application.name|default:"Untitled" }}</a>
 						</td>
 						<td class="govuk-table__cell">
 							{{ application.goods|length }} Good{{ application.goods|length|pluralize }}

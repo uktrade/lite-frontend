@@ -11,7 +11,7 @@
 	<div class="lite-app-bar">
 		<h2 class="govuk-heading-l">{% get_string 'goods.location_lists.title' %}</h2>
 		{% if data.external_locations|length %}
-			<div class="lite-app-bar--right">
+			<div class="lite-app-bar__controls">
 				<p class="govuk-caption-l" style="margin: 0;">{{ data.external_locations|length }} location{{ data.external_locations|length|pluralize }}<span class="govuk-visually-hidden"> added</span></p>
 			</div>
 		{% endif %}

@@ -9,10 +9,12 @@
 {% block body %}
 
 	<div class="lite-app-bar">
-		<h1 class="govuk-heading-l">{{ title }}</h1>
-		<div class="lite-app-bar--right">
+		<div class="lite-app-bar__content">
+			<h2 class="govuk-heading-l">{{ title }}</h2>
+		</div>
+		<div class="lite-app-bar__controls">
 			<a href="{% url 'sites:new' %}" class="govuk-button" draggable="false" role="button">
-				New Site
+				Add a Site
 			</a>
 		</div>
 	</div>
@@ -25,7 +27,7 @@
 						Name
 					</th>
 					<th class="lite-table__header">
-						ID
+						Address
 					</th>
 					<th class="lite-table__header"></th>
 				</tr>
@@ -37,7 +39,13 @@
 							{{ site.name }}
 						</td>
 						<td class="lite-table__cell">
-							{{ site.id }}
+							{{ site.address.address_line_1 }}<br/>
+							{% if site.address.address_line_2 %}
+								{{ site.address.address_line_2 }}<br/>
+							{% endif %}
+							{{ site.address.city }}<br/>
+							{{ site.address.postcode }}<br/>
+							{{ site.address.country }}
 						</td>
 						<td class="lite-table__cell">
 							<a href="{% url 'sites:edit' site.id %}" class="govuk-link">Edit</a>

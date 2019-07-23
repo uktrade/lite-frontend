@@ -26,7 +26,7 @@ Feature: I  want to add and rename my sites
     Then I see last site name as edited
     When I click last edit button
     And I clear the fields for the site
-    And I enter in text for new site " " "4 Privet Drive" "SU1 1BB" "Surrey" "Surrey" and "Ukraine"
+    And I enter in text for new site "HQ 2" "4 Privet Drive" "SU1 1BB" "Surrey" "Surrey" and "Ukraine"
 
   @LT-933_error
   Scenario: Test clicking continue when not adding a site

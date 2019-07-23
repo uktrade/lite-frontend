@@ -7,7 +7,7 @@ urlpatterns = [
 	# ex: /
 	path('', views.hub, name='hub'),
 	# ex: /login
-	path('login', views.login, name='login'),
-	# ex: /signout
-	path('logout', views.logout, name='logout'),
+	path('login/', views.login, name='login'),
+	# ex: /logout
+	path('logout/', views.logout, name='logout'),
 ]

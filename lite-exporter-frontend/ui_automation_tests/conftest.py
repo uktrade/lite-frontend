@@ -39,7 +39,6 @@ def pytest_addoption(parser):
     env = str(os.environ.get('ENVIRONMENT'))
     if env == 'None':
         env = "dev"
-    print("touched: " + env)
     parser.addoption("--driver", action="store", default="chrome", help="Type in browser type")
     parser.addoption("--exporter_url", action="store", default="https://exporter.lite.service." + env + ".uktrade.io/", help="url")
     parser.addoption("--internal_url", action="store", default="https://internal.lite.service." + env + ".uktrade.io/", help="url")
@@ -75,7 +74,6 @@ def driver(request):
     def fin():
         driver.quit()
         request.addfinalizer(fin)
-
 
 
 # Create url fixture
@@ -323,6 +321,12 @@ def select_the_site_at_position(driver, no):
     sites.click_sites_checkbox(int(no)-1)
 
 
+@when('I click on applications')
+def click_my_application_link(driver):
+    exporter_hub = ExporterHubPage(driver)
+    exporter_hub.click_applications()
+
+
 @when('I click on goods link')
 def click_my_goods_link(driver):
     exporter_hub = ExporterHubPage(driver)
@@ -363,8 +367,8 @@ def click_add_from_organisation_button(driver):
     add_goods_page.click_add_a_good()
 
 
-@when(parsers.parse('I add a good or good type with description "{description}" controlled "{controlled}" control code "{controlcode}" incorporated "{incorporated}" and part number "{part}"'))
-def add_new_good(driver, description, controlled, controlcode, incorporated, part):
+@when(parsers.parse('I add a good or good type with description "{description}" controlled "{controlled}" control code "{control_code}" incorporated "{incorporated}" and part number "{part}"'))
+def add_new_good(driver, description, controlled, control_code, incorporated, part):
     exporter_hub = ExporterHubPage(driver)
     add_goods_page = AddGoodPage(driver)
     date_time = utils.get_current_date_time_string()
@@ -372,17 +376,17 @@ def add_new_good(driver, description, controlled, controlcode, incorporated, par
     good_part = "%s %s" % (part, date_time)
     context.good_description = good_description
     context.part = good_part
-    context.controlcode = controlcode
+    context.control_code = control_code
     add_goods_page.enter_description_of_goods(good_description)
     add_goods_page.select_is_your_good_controlled(controlled)
     add_goods_page.select_is_your_good_intended_to_be_incorporated_into_an_end_product(incorporated)
     if "empty" not in good_part:
         add_goods_page.enter_part_number(good_part)
     if controlled.lower() == 'unsure':
-        add_goods_page.enter_control_code_unsure(controlcode)
+        add_goods_page.enter_control_code_unsure(control_code)
         add_goods_page.enter_control_unsure_details(description + " unsure")
         exporter_hub.click_save_and_continue()
         add_goods_page.select_control_unsure_confirmation("yes")
     else:
-        add_goods_page.enter_control_code(controlcode)
+        add_goods_page.enter_control_code(control_code)
     exporter_hub.click_save_and_continue()

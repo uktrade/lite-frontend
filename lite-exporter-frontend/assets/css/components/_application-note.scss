@@ -1,0 +1,26 @@
+.lite-application-note {
+	background-color: govuk-colour("grey-4");
+	border: 2px solid darken(govuk-colour("grey-4"), 3%);
+	padding: govuk-spacing(4);
+	line-height: 1.5;
+	margin: 15px 0 20px 0;
+	word-break: break-all;
+	@extend %govuk-body-m;
+}
+
+.lite-application-note__tag--internal {
+	color: govuk-colour("turquoise");
+}
+
+.lite-application-note__tag--exporter {
+	color: $govuk-brand-colour;
+}
+
+.lite-application-note--internal {
+	background-color: rgba(govuk-colour("turquoise"), 0.1)!important;
+	border: 2px solid rgba(govuk-colour("turquoise"), 0.075)!important;
+}
+
+.lite-application-note--exporter {
+	// color: $govuk-brand-colour;
+}

@@ -15,8 +15,10 @@
 	{% endif %}
 
 	<div class="lite-app-bar">
-		<h1 class="govuk-heading-l">Users</h1>
-		<div class="lite-app-bar--right">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">Users</h1>
+		</div>
+		<div class="lite-app-bar__controls">
 			<a href="{% url 'users:add' %}" class="govuk-button" draggable="false" role="button">
 				Add a user
 			</a>

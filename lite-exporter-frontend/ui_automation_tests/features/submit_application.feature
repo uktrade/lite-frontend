@@ -17,7 +17,7 @@ Feature: I want to indicate the kind of licence I want
     Then I see the application overview
     When I delete the application
 
-  @LT-1091_standard
+  @LT-1091_standard @setup
   Scenario: Submit standard application
     Given I go to exporter homepage
     When I login to exporter homepage with username "test@mail.com" and "password"
