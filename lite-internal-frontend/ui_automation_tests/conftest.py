@@ -1,13 +1,16 @@
 import os
-import pytest
-from pytest_bdd import scenarios, given, when, then, parsers, scenarios
-from selenium import webdriver
+from pytest_bdd import given, when, then, parsers
+
+from fixtures.core import context, driver, sso_login_info, invalid_username
+from fixtures.urls import exporter_url, internal_url, sso_sign_in_url
+from fixtures.register_organisation import register_organisation
+from fixtures.apply_for_application import apply_for_standard_application, apply_for_clc_query
+
 import helpers.helpers as utils
-from conf.settings import env
-from pages.exporter_hub import ExporterHub
-from pages.header_page import HeaderPage
 from pages.flags_pages import FlagsPages
+from pages.header_page import HeaderPage
 from pages.shared import Shared
+from pages.exporter_hub import ExporterHub
 
 # Screenshot in case of any test failure
 
@@ -16,7 +19,7 @@ def pytest_exception_interact(node, report):
     if node and report.failed:
         class_name = node._nodeid.replace(".py::", "_class_")
         name = "{0}_{1}".format(class_name, exporter_url)
-        # utils.save_screenshot(node.funcargs.get("driver"), name)
+        #utils.save_screenshot(node.funcargs.get("driver"), name)
 
 
 # Create driver and url command line adoption
@@ -31,76 +34,12 @@ def pytest_addoption(parser):
                      default="https://internal.lite.service." + env + ".uktrade.io/", help="url")
     # parser.addoption("--exporter_url", action="store", default="http://localhost:9000", help="url")
     # parser.addoption("--internal_url", action="store", default="http://localhost:8080", help="url")
-    # parser.addoption("--exporter_url", action="store", default="http://localhost:8300", help="url")
-    # parser.addoption("--internal_url", action="store", default="http://localhost:8200", help="url")
     parser.addoption("--sso_sign_in_url", action="store", default="https://sso.trade.uat.uktrade.io/login/", help="url")
 
 
-# Create driver fixture that initiates chrome
-@pytest.fixture(scope="module", autouse=True)
-def driver(request):
-    browser = request.config.getoption("--driver")
-    if browser == 'chrome':
-        if str(os.environ.get('ENVIRONMENT')) == 'None':
-            browser = webdriver.Chrome("chromedriver")
-        else:
-            browser = webdriver.Chrome()
-        browser.get("about:blank")
-        browser.implicitly_wait(3)
-        return browser
-    else:
-        print('only chrome is supported at the moment')
-
-    def fin():
-        driver.quit()
-        request.addfinalizer(fin)
-
-
-@pytest.fixture
-def context():
-    class Context(object):
-        pass
-
-    return Context()
-
-
-# Create url fixture
-@pytest.fixture(scope="module")
-def exporter_url(request):
-    return request.config.getoption("--exporter_url")
-
-
-@pytest.fixture(scope="module")
-def internal_url(request):
-    return request.config.getoption("--internal_url")
-
-
-@pytest.fixture
-def test_teardown(driver):
-    driver.quit()
-
-
-@pytest.fixture(scope="module")
-def sso_sign_in_url(request):
-    return request.config.getoption("--sso_sign_in_url")
-
-
-@pytest.fixture(scope="module")
-def invalid_username():
-    return "invalid@mail.com"
-
-
-sso_email = env('TEST_SSO_EMAIL')
-sso_password = env('TEST_SSO_PASSWORD')
-
-
-@pytest.fixture(scope="function")
-def open_internal_hub(driver, internal_url, sso_sign_in_url):
-    driver.get(sso_sign_in_url)
-    driver.find_element_by_name("username").send_keys(sso_email)
-    driver.find_element_by_name("password").send_keys(sso_password)
-    driver.find_element_by_css_selector("[type='submit']").click()
-    driver.get(internal_url)
+@given('I go to exporter homepage')
+def go_to_exporter_given(driver, exporter_url):
+    driver.get(exporter_url)
 
 
 @when('I go to the internal homepage')
@@ -109,19 +48,19 @@ def when_go_to_internal_homepage(driver, internal_url):
 
 
 @given('I go to internal homepage')
-def go_to_internal_homepage(driver, internal_url, sso_sign_in_url):
+def go_to_internal_homepage(driver, internal_url, sso_sign_in_url, sso_login_info):
     driver.get(sso_sign_in_url)
-    driver.find_element_by_name("username").send_keys(sso_email)
-    driver.find_element_by_name("password").send_keys(sso_password)
+    driver.find_element_by_name("username").send_keys(sso_login_info['email'])
+    driver.find_element_by_name("password").send_keys(sso_login_info['password'])
     driver.find_element_by_css_selector("[type='submit']").click()
     driver.get(internal_url)
 
 
 @when('I go to internal homepage and sign in')
-def go_to_internal_homepage_sign_in(driver, internal_url, sso_sign_in_url):
+def go_to_internal_homepage_sign_in(driver, internal_url, sso_sign_in_url, sso_login_info):
     driver.get(sso_sign_in_url)
-    driver.find_element_by_name("username").send_keys(sso_email)
-    driver.find_element_by_name("password").send_keys(sso_password)
+    driver.find_element_by_name("username").send_keys(sso_login_info['email'])
+    driver.find_element_by_name("password").send_keys(sso_login_info['password'])
     driver.find_element_by_css_selector("[type='submit']").click()
     driver.get(internal_url)
 
@@ -132,7 +71,8 @@ def go_to_exporter_when(driver, exporter_url):
 
 
 @when(parsers.parse('I login to exporter homepage with username "{username}" and "{password}"'))
-def login_to_exporter(driver, username, password):
+def login_to_exporter(driver, exporter_url, username, password, register_organisation):
+    driver.get(exporter_url)
     if username == "TestBusinessForSites@mail.com":
         username = context.email
     exporter_hub = ExporterHub(driver)
@@ -140,14 +80,19 @@ def login_to_exporter(driver, username, password):
         exporter_hub.login(username, password)
 
 
+@when('I login to exporter homepage with previously created user')
+def login_to_exporter_context(driver, context, password):
+    username = context.email
+    password = context.password
+
+    exporter_hub = ExporterHub(driver)
+    if "login" in driver.current_url:
+        exporter_hub.login(username, password)
+
+
 @when('I click on application previously created')
-def click_on_created_application(driver):
-    driver.find_element_by_xpath("//*[text()[contains(.,'" + context.app_id + "')]]").click()
-
-
-@when('I click on an application previously created')
-def click_on_a_created_application(driver):
-    driver.find_element_by_css_selector(".lite-cases-table a[href*='/cases/']").click()
+def click_on_created_application(driver, apply_for_standard_application, context):
+    driver.find_element_by_css_selector('.lite-cases-table').find_element_by_xpath("//*[text()[contains(.,'" + context.app_id + "')]]").click()
 
 
 @when('I click submit button')
@@ -187,7 +132,7 @@ def go_to_flags(driver):
 
 
 @when(parsers.parse('I add a flag called "{flag_name}" at level "{flag_level}"'))
-def add_a_flag(driver, flag_name, flag_level):
+def add_a_flag(driver, flag_name, flag_level, context):
     flags_page = FlagsPages(driver)
     shared = Shared(driver)
     utils.get_unformatted_date_time()
@@ -201,3 +146,11 @@ def add_a_flag(driver, flag_name, flag_level):
     flags_page.enter_flag_name(context.flag_name)
     flags_page.select_flag_level(flag_level)
     shared.click_submit()
+
+
+@when('I go to users')
+def go_to_users(driver):
+    header = HeaderPage(driver)
+
+    header.open_users()
+

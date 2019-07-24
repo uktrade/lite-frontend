@@ -1,3 +1,6 @@
+import helpers.helpers as utils
+
+
 class HeaderPage():
 
     def __init__(self, driver):
@@ -5,7 +8,9 @@ class HeaderPage():
         self.menu_button = "lite-user-menu-button" #id
 
     def click_lite_menu(self):
+        utils.wait_until_page_is_loaded(self.driver)
         self.driver.find_element_by_id(self.menu_button).click()
+        utils.wait_until_menu_is_visible(self.driver)
 
     def click_organisations(self):
         self.driver.find_element_by_css_selector("a[href*='/organisations/']").click()

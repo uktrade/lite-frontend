@@ -1,6 +1,5 @@
 from pytest_bdd import scenarios, given, when, then, parsers, scenarios
 from selenium.webdriver.support.ui import Select
-from conftest import context
 import helpers.helpers as utils
 from pages.header_page import HeaderPage
 from pages.queues_pages import QueuesPages
@@ -27,7 +26,7 @@ def click_on_add_queue(driver):
 
 
 @when('I edit the new queue')
-def click_on_edit_queue(driver):
+def click_on_edit_queue(driver, context):
     driver.find_element_by_xpath("//*[text()[contains(.,'" + context.queue_name + "')]]/following-sibling::td[last()]/a").click()
     context.queue_name = str(context.queue_name)[:12] + "edited"
     QueuesPages(driver).enter_queue_name(context.queue_name)
@@ -35,7 +34,7 @@ def click_on_edit_queue(driver):
 
 
 @when(parsers.parse('I enter in queue name "{queue_name}"'))
-def add_a_queue(driver, queue_name):
+def add_a_queue(driver, queue_name, context):
     if queue_name == " ":
         context.queue_name = queue_name
     else:
@@ -47,12 +46,12 @@ def add_a_queue(driver, queue_name):
 
 
 @then('I see the new queue')
-def see_queue_in_queue_list(driver):
+def see_queue_in_queue_list(driver, context):
     assert context.queue_name in Shared(driver).get_text_of_body()
 
 
 @when('I click on new queue in dropdown')
-def new_queue_shown_in_dropdown(driver):
+def new_queue_shown_in_dropdown(driver, context):
     driver.find_element_by_id('queue-title').click()
     elements = driver.find_elements_by_css_selector('.lite-dropdown .lite-dropdown--item')
     for idx, element in enumerate(elements):

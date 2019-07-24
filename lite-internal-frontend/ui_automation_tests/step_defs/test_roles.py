@@ -1,5 +1,4 @@
 from pytest_bdd import scenarios, when, parsers, then
-from conftest import context
 from pages.users_page import UsersPage
 from pages.roles_pages import RolesPages
 from pages.shared import Shared
@@ -18,12 +17,6 @@ console = logging.StreamHandler()
 log.addHandler(console)
 
 
-@when('I go to users')
-def go_to_flags(driver):
-    header = HeaderPage(driver)
-
-    header.open_users()
-
 
 @when('I go to manage roles')
 def go_to_manage_roles(driver):
@@ -32,7 +25,7 @@ def go_to_manage_roles(driver):
     user_page.click_on_manage_roles()
 
 @when(parsers.parse('I add a new role called "{role_name}" with permission to "{permissions}"'))
-def add_a_role(driver, role_name, permissions):
+def add_a_role(driver, role_name, permissions, context):
     roles_page = RolesPages(driver)
     shared = Shared(driver)
     utils.get_unformatted_date_time()
@@ -51,13 +44,13 @@ def add_a_role(driver, role_name, permissions):
 
 
 @then('I see the role in the roles list')
-def see_role_in_list(driver):
+def see_role_in_list(driver, context):
     role_name = driver.find_element_by_xpath("//*[text()[contains(.,'" + context.role_name + "')]]")
     assert role_name.is_displayed()
 
 
 @when('I add an existing role name')
-def add_existing_flag(driver):
+def add_existing_flag(driver, context):
     roles_pages = RolesPages(driver)
     shared = Shared(driver)
     roles_pages.click_add_a_role_button()
@@ -66,7 +59,7 @@ def add_existing_flag(driver):
 
 
 @when('I edit my role')
-def edit_existing_role(driver):
+def edit_existing_role(driver, context):
     elements = driver.find_elements_by_css_selector(".lite-table__cell")
     no = 0
     while no < len(elements):

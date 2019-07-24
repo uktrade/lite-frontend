@@ -46,6 +46,6 @@ Feature: I want to add departments
   Scenario: Edit a department
     Given I go to internal homepage
     When I go to teams
-    And I add a team called "EDitBlueOcean"
+    And I add a team called "EditBlueOcean"
     And I edit my team
     Then I see the team in the team list

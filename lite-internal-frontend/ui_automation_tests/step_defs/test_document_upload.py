@@ -8,15 +8,18 @@ from ui_automation_tests.pages.documents_page import DocumentsPage
 
 scenarios('../features/document_upload.feature', strict_gherkin=False)
 
+
 @when('I click on the Documents button')
 def click_documents(driver):
     application_page = ApplicationPage(driver)
     application_page.click_documents_button()
 
+
 @when('I click on the Attach Document button')
 def click_attach_documents(driver):
     documents_page = DocumentsPage(driver)
     documents_page.click_attach_documents()
+
 
 @when(parsers.parse('I upload file "{filename}" with description "{description}"'))
 def upload_a_file(driver, filename, description):
@@ -29,6 +32,7 @@ def upload_a_file(driver, filename, description):
     attach_document_page.choose_file(file_to_upload_abs_path)
     attach_document_page.enter_description(description)
     attach_document_page.click_submit_btn()
+
 
 @then(parsers.parse('file "{filename}" with description "{description}" is on position "{position}"'))
 def check_file2_is_uploaded(driver, filename, description, position):

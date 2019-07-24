@@ -6,7 +6,6 @@ import logging
 log = logging.getLogger()
 console = logging.StreamHandler()
 log.addHandler(console)
-from conftest import context
 from pages.exporter_hub import ExporterHub
 from pages.header_page import HeaderPage
 from pages.users_page import UsersPage
@@ -18,14 +17,16 @@ sso_password=env('TEST_SSO_PASSWORD')
 
 @pytest.fixture(scope="function")
 def open_internal_hub(driver, internal_url, sso_sign_in_url):
-    driver.get(sso_sign_in_url)
-    driver.find_element_by_name("username").send_keys(sso_email)
-    driver.find_element_by_name("password").send_keys(sso_password)
-    driver.find_element_by_css_selector("[type='submit']").click()
     driver.get(internal_url)
+    if "login" in driver.current_url:
+        driver.get(sso_sign_in_url)
+        driver.find_element_by_name("username").send_keys(sso_email)
+        driver.find_element_by_name("password").send_keys(sso_password)
+        driver.find_element_by_css_selector("[type='submit']").click()
+        driver.get(internal_url)
 
 
-def test_manage_users(driver, open_internal_hub):
+def test_manage_users(driver, open_internal_hub, context):
     time = utils.get_formatted_date_time_m_d_h_s()
     email = time + "@mail.com"
     context.email_to_search = email

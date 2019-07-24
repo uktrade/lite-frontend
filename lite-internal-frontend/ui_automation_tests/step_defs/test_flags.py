@@ -1,5 +1,4 @@
 from pytest_bdd import scenarios, given, when, then, parsers, scenarios
-from conftest import context
 import helpers.helpers as utils
 from pages.header_page import HeaderPage
 from pages.shared import Shared
@@ -16,13 +15,13 @@ log.addHandler(console)
 
 
 @then('I see the flag in the flag list')
-def see_flag_in_list(driver):
+def see_flag_in_list(driver, context):
     flag_name = driver.find_element_by_xpath("//*[text()[contains(.,'" + context.flag_name + "')]]")
     assert flag_name.is_displayed()
 
 
 @when('I add an existing flag name')
-def add_existing_flag(driver):
+def add_existing_flag(driver, context):
     flags_pages = FlagsPages(driver)
     shared = Shared(driver)
     flags_pages.click_add_a_flag_button()
@@ -31,7 +30,7 @@ def add_existing_flag(driver):
 
 
 @when('I edit my flag')
-def edit_existing_flag(driver):
+def edit_existing_flag(driver, context):
     elements = driver.find_elements_by_css_selector("td a")
     no = 0
     while no < len(elements):
@@ -47,7 +46,7 @@ def edit_existing_flag(driver):
 
 
 @when('I count the number of active flags')
-def count_active_flags(driver):
+def count_active_flags(driver, context):
     number_of_active_flags = len(driver.find_elements_by_xpath('//*[text()[contains(.,"Active")]]'))
     number_of_deactivated_flags = len(driver.find_elements_by_xpath('//*[text()[contains(.,"Deactivated")]]'))
     context.original_number_of_active_flags = number_of_active_flags
@@ -73,7 +72,7 @@ def click_include_deactivated(driver):
 
 
 @then('I see one less active flags')
-def i_see_one_less_active_flag(driver):
+def i_see_one_less_active_flag(driver, context):
     number_of_active_flags = len(driver.find_elements_by_xpath('//*[text()[contains(.,"Active")]]'))
     number_of_deactivated_flags = len(driver.find_elements_by_xpath('//*[text()[contains(.,"Deactivated")]]'))
 
@@ -88,7 +87,7 @@ def reactivate_first_deactivated_flag(driver):
 
 
 @then('I see the original number of active flags')
-def i_see_the_original_number_of_active_flags(driver):
+def i_see_the_original_number_of_active_flags(driver, context):
     number_of_active_flags = len(driver.find_elements_by_xpath('//*[text()[contains(.,"Active")]]'))
     number_of_deactivated_flags = len(driver.find_elements_by_xpath('//*[text()[contains(.,"Deactivated")]]'))
 

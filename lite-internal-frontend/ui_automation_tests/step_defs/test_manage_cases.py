@@ -1,6 +1,5 @@
 import re
 from pytest_bdd import scenarios, given, when, then, parsers, scenarios
-from conftest import context
 from pages.application_page import ApplicationPage
 from pages.record_decision_page import RecordDecision
 from pages.shared import Shared
@@ -29,7 +28,7 @@ class ManageCases():
 
 
     @when('I click record decision')
-    def click_post_note(driver):
+    def click_post_note(driver, context):
         application_page = ApplicationPage(driver)
         application_page.click_record_decision()
         context.decision_array = []
@@ -44,20 +43,20 @@ class ManageCases():
             record.click_on_deny_licence()
 
     @when(parsers.parse('I type optional text "{optional_text}"'))
-    def type_optional_text(driver, optional_text):
+    def type_optional_text(driver, optional_text, context):
         record = RecordDecision(driver)
         record.enter_optional_text(optional_text)
         context.optional_text = optional_text
 
 
     @when(parsers.parse('I select decision "{number}"'))
-    def select_decision(driver, number):
+    def select_decision(driver, number, context):
         record = RecordDecision(driver)
         record.click_on_decision_number(number)
         context.decision_array.append(number)
 
     @then(parsers.parse('I see application "{grant_or_deny}"'))
-    def see_application_granted_or_denied(driver, grant_or_deny):
+    def see_application_granted_or_denied(driver, grant_or_deny, context):
         record = RecordDecision(driver)
         details = driver.find_elements_by_css_selector(".lite-heading-s")
         for header in details:
@@ -83,7 +82,7 @@ class ManageCases():
                         i += 1
 
     @when(parsers.parse('I select status "{status}" and save'))
-    def select_status_save(driver, status):
+    def select_status_save(driver, status, context):
         application_page = ApplicationPage(driver)
         application_page.select_status(status)
         context.status = status
@@ -91,7 +90,7 @@ class ManageCases():
         driver.find_element_by_xpath("//button[text()[contains(.,'Save')]]").click()
 
     @then('the status has been changed in the application')
-    def status_has_been_changed_in_header(driver):
+    def status_has_been_changed_in_header(driver, context):
         application_page = ApplicationPage(driver)
         for header in application_page.get_text_of_application_headings():
             if header.text == "STATUS":
@@ -112,14 +111,14 @@ class ManageCases():
 
 
     @then('the status has been changed in exporter')
-    def i_click_applications(driver):
-        elements = driver.find_elements_by_css_selector('.govuk-table__row')
+    def i_click_applications(driver, context):
+        elements = driver.find_elements_by_css_selector(".govuk-table__row")
         no = utils.get_element_index_by_text(elements, context.app_time_id)
         assert context.status in elements[no].text
 
 
     @then('the application headers and information are correct')
-    def application_headers_and_info_are_correct(driver):
+    def application_headers_and_info_are_correct(driver, context):
         assert driver.find_elements_by_css_selector(".lite-information-board .lite-heading-s")[0].text == "APPLICANT"
         assert driver.find_elements_by_css_selector(".lite-information-board .lite-heading-s")[1].text == "ACTIVITY"
         assert driver.find_elements_by_css_selector(".lite-information-board .lite-heading-s")[2].text == "CREATED AT"

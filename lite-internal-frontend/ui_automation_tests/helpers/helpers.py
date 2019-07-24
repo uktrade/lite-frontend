@@ -134,3 +134,18 @@ def get_element_index_by_text(elements, text: str):
         no += 1
 
     return element_number
+
+
+def wait_until_page_is_loaded(driver):
+    while True:
+        if driver.execute_script("return document.readyState") == "complete":
+            break
+
+
+def wait_until_menu_is_visible(driver):
+    while True:
+        try:
+            if driver.find_element_by_css_selector('.lite-menu--visible').is_displayed():
+                break
+        except Exception:
+            continue

@@ -1,5 +1,5 @@
 import random
-from pytest_bdd import scenarios, given, when, then, parsers, scenarios
+from pytest_bdd import given, when, then, scenarios
 from pages.login_page import LoginPage
 
 scenarios('../features/login.feature', strict_gherkin=False)

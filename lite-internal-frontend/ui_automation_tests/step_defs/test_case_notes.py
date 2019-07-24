@@ -1,6 +1,5 @@
 from pytest_bdd import scenarios, given, when, then, parsers, scenarios
 from pages.application_page import ApplicationPage
-from conftest import context
 import helpers.helpers as utils
 
 scenarios('../features/case_notes.feature', strict_gherkin=False)
@@ -12,7 +11,7 @@ log.addHandler(console)
 
 
 @when(parsers.parse('I enter "{text}" for case note'))
-def enter_case_note_text(driver, text):
+def enter_case_note_text(driver, text, context):
     application_page = ApplicationPage(driver)
     if text == 'the maximum limit with spaces':
         text = utils.repeat_to_length(" ", 2200)
@@ -23,14 +22,14 @@ def enter_case_note_text(driver, text):
 
 
 @when('I click post note')
-def click_post_note(driver):
+def click_post_note(driver, context):
     application_page = ApplicationPage(driver)
     application_page.click_post_note_btn()
     context.date_time_of_post = utils.get_formatted_date_time_h_m_pm_d_m_y()
 
 
 @then('note is displayed')
-def note_is_displayed(driver):
+def note_is_displayed(driver, context):
     application_page = ApplicationPage(driver)
     assert context.text in application_page.get_text_of_case_note(0)
     assert context.date_time_of_post.split(":")[1] in application_page.get_text_of_case_note_date_time(0).split(":")[1], "incorrect time of post on case note"
