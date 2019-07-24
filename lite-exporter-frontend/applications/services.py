@@ -7,7 +7,7 @@ def get_applications(request):
 
 
 def get_application(request, pk):
-    data = get(request, '/applications/' + pk + '/pk-user/')
+    data = get(request, '/applications/' + pk + '/user/')
     return data.json(), data.status_code
 
 

@@ -40,6 +40,8 @@
 			<br><br>
 		{% endfor %}
 	</div>
+{% else %}
+	<p class="govuk-caption-l">There aren't any notes on this application.</p>
 {% endif %}
 
 <script src="{% static 'javascripts/pluralize.js' %}"></script>

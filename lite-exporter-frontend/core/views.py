@@ -28,9 +28,9 @@ def hub(request):
             Section('Manage', '', [
                 Tile(get_string('drafts.title'), '',
                      reverse_lazy('drafts:drafts')),
-                Tile(get_string('applications.title'), '',
+                Tile(get_string('applications.title'), generate_notification_string(num_notifications),
                      reverse_lazy('applications:applications')),
-                Tile('Goods', '',
+                Tile('Goods', generate_notification_string(num_clc_notifications),
                      reverse_lazy('goods:goods')),
                 Tile('Sites', '', reverse_lazy('sites:sites')),
                 Tile('Users', '', reverse_lazy('users:users')),
