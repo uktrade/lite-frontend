@@ -25,9 +25,9 @@ Scenario: Add a case note with too many characters
   Given I go to internal homepage
   When I click on application previously created
   And I enter "the maximum limit" for case note
-  Then case note warning is "You have 0 characters remaining"
+  Then case note warning is "None"
   When I enter "T" for case note
-  Then case note warning is "You have 1 character too many"
+  Then case note warning is "disabled"
   And post note is disabled
 
 @LT-911_cancel
@@ -37,3 +37,26 @@ Scenario: Case note cancel button
   And I enter "Case note to cancel" for case note
   And I click cancel button
   Then entered text is no longer in case note field
+
+@LT-912_add_external
+Scenario: Add a new exporter visible case note
+  Given I go to internal homepage
+  When I click on application previously created
+  And I enter "This note is visible to exporters." for case note
+  And I click visible to exporters checkbox
+  And I click post note
+  And I click confirm on confirmation box
+  Then note is displayed
+
+
+# TODO: clc query notes not appearing on clc query page
+# TODO: uncomment this test when this is fixed
+#@LT-912_add_external_to_clc_query
+#Scenario: Add a new exporter visible case note to clc query
+#  Given I go to internal homepage
+#  When I click on clc query previously created
+#  And I enter "This clc query note is visible to exporters." for case note
+#  And I click visible to exporters checkbox
+#  And I click post note
+#  And I click confirm on confirmation box
+#  Then note is displayed for clc query

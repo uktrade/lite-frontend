@@ -41,7 +41,7 @@ def add_new_good(driver, description):
     exporter_hub.click_save_and_continue()
 
 
-@when('I see clc-good in goods list')
+@then('I see clc-good in goods list')
 def assert_good_is_in_list(driver):
     goods_list = AddGoodPage(driver)
     case_id = goods_list.assert_good_is_displayed_and_return_case_id(context.good_description)

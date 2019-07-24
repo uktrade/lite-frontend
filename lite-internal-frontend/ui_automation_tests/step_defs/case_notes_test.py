@@ -53,8 +53,10 @@ def maximum_error_message_is_displayed(driver):
 
 @then(parsers.parse('case note warning is "{text}"'))
 def n_characters_remaining(driver, text):
-    application_page = ApplicationPage(driver)
-    assert application_page.get_text_of_case_note_warning() == text
+    if text == "disabled":
+        assert "disabled" in driver.find_element_by_id("button-post-note").get_attribute("class"), "post note button is not disabled"
+    else:
+        assert "disabled" not in driver.find_element_by_id("button-post-note").get_attribute("class"), "post note button is disabled"
 
 
 @then('post note is disabled')
@@ -67,3 +69,15 @@ def post_note_is_disabled(driver):
 def entered_text_no_longer_in_case_field(driver):
     application_page = ApplicationPage(driver)
     assert "Case note to cancel" not in application_page.get_text_of_case_note_field()
+
+
+@when('I click visible to exporters checkbox')
+def click_visible_to_exporters_checkbox(driver):
+    application_page = ApplicationPage(driver)
+    application_page.click_visible_to_exporter_checkbox()
+
+
+@when("I click confirm on confirmation box")
+def click_confirm_on_confirmation_box(driver):
+    alert = driver.switch_to_alert()
+    alert.accept()

@@ -68,7 +68,7 @@ def click_include_deactivated(driver):
 
 @when('I click include reactivated if displayed')
 def click_include_deactivated(driver):
-    if driver.find_element_by_css_selector("[href*='/flags/active/']").is_displayed():
+    if len(driver.find_element_by_css_selector("[href*='/flags/active/']")) == 1:
         driver.find_element_by_css_selector("[href*='/flags/active/']").click()
 
 

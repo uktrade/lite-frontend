@@ -157,5 +157,3 @@ class ManageCases():
         roles_page.click_edit_for_default_role()
         roles_page.remove_all_permissions_from_default_role()
         shared.click_submit()
-
-
