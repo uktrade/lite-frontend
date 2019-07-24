@@ -25,11 +25,14 @@ class GoodsDetail(TemplateView):
         good_id = kwargs['pk']
         data, status_code = get_good(request, str(good_id))
 
+        visible_notes = filter(lambda note: note['is_visible_to_exporter'], data['good']['notes'])
+
         context = {
             'data': data,
-            'notes': data['good']['notes'],
+            'notes': visible_notes,
             'title': data['good']['description'],
         }
+
         return render(request, 'goods/good.html', context)
 
 
