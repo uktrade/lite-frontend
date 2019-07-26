@@ -42,7 +42,7 @@
 	<div class="lite-user-profile-container">
 		<a href="{% url 'users:edit' data.user.id %}" type="submit" class="govuk-button govuk-button--secondary">Edit</a>
 
-		{% if request.user.id|stringformat:"s" != data.user.id|stringformat:"s" %}
+		{% if request.user.lite_api_user_id|stringformat:"s" != data.user.id|stringformat:"s" %}
 			{% if data.user.status == 'Active' %}
 				<a href="{% url 'users:change_status' data.user.id 'deactivate' %}" role="button" draggable="false" class="govuk-button govuk-button--warning govuk-!-margin-right-2">Deactivate</a>
 			{% elif data.user.status == 'Deactivated' %}

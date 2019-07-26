@@ -10,7 +10,7 @@ from pages.exporter_hub_page import ExporterHubPage
 from pages.hub_page import Hub
 from pages.shared import Shared
 from pages.header import Header
-from conftest import context
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
@@ -31,13 +31,13 @@ log.addHandler(console)
 
 
 @when('I click on apply for a license button')
-def click_apply_licence(driver):
+def click_apply_licence(driver, add_a_good):
     exporter = ExporterHubPage(driver)
     exporter.click_apply_for_a_licence()
 
 
 @then('I see the application overview')
-def i_see_the_application_overview(driver):
+def i_see_the_application_overview(driver, context):
     time_date_submitted = datetime.datetime.now().strftime("%I:%M%p").lstrip("0").replace(" 0", " ").lower() + datetime.datetime.now().strftime(" %d %B %Y")
     apply = ApplyForALicencePage(driver)
 
@@ -84,7 +84,7 @@ def i_click_countries(driver):
 
 
 @when('I click the application')
-def i_click_the_application(driver):
+def i_click_the_application(driver, context):
     drafts_table = driver.find_element_by_class_name("govuk-table")
     drafts_table.find_element_by_xpath(".//td/a[contains(@href,'" + context.app_id + "')]").click()
     assert "Overview" in driver.title
@@ -93,7 +93,7 @@ def i_click_the_application(driver):
 
 
 @when('I submit the application')
-def submit_the_application(driver):
+def submit_the_application(driver, context):
     apply = ApplyForALicencePage(driver)
     apply.click_submit_application()
     assert apply.get_text_of_success_message() == "Application submitted"
@@ -125,7 +125,7 @@ def goods_type_errors(driver):
 
 
 @when(parsers.parse('I click add to application for the good at position "{no}"'))
-def click_add_to_application_button(driver, no):
+def click_add_to_application_button(driver, no, context):
     context.goods_name = driver.find_elements_by_css_selector('.lite-card .govuk-heading-s')[int(no)-1].text
     context.part_number = driver.find_elements_by_css_selector('.lite-card .govuk-label')[int(no)-1].text
     driver.find_elements_by_css_selector('a.govuk-button')[int(no)-1].click()
@@ -146,7 +146,7 @@ def click_goods_link_overview(driver):
 
 
 @when(parsers.parse('I add values to my good of "{value}" quantity "{quantity}" and unit of measurement "{unit}"'))
-def enter_values_for_good(driver, value, quantity, unit):
+def enter_values_for_good(driver, value, quantity, unit, context):
     context.quantity = quantity
     context.value = value
     context.unit = unit
@@ -155,7 +155,7 @@ def enter_values_for_good(driver, value, quantity, unit):
 
 
 @then('good is added to application')
-def good_is_added(driver):
+def good_is_added(driver, context):
     unit = str(context.unit)
     unit = unit.lower()
     assert utils.is_element_present(driver, By.XPATH, "//*[text()='" + str(context.goods_name) + "']")
@@ -180,7 +180,7 @@ def application_is_submitted(driver):
 
 
 @then('I see submitted application')
-def application_is_submitted(driver):
+def application_is_submitted(driver, context):
     assert utils.is_element_present(driver, By.XPATH, "//*[text()[contains(.,'" + context.app_time_id + "')]]")
     log.info("application found in submitted applications list")
 
@@ -213,7 +213,7 @@ def click_goods_type_button(driver):
 
 
 @then(parsers.parse('I see my goods type added at position "{position}" with a description and a control code'))
-def i_see_the_goods_types_list(driver, position):
+def i_see_the_goods_types_list(driver, position, context):
     goods_type_page = ApplicationGoodsTypeList(driver)
     good_type = goods_type_page.get_text_of_goods_type_info(int(position))
     assert context.good_description in good_type
@@ -221,7 +221,7 @@ def i_see_the_goods_types_list(driver, position):
 
 
 @then('I see my goods type added to the overview page with a description and a control code')
-def i_see_the_goods_types_list_overview(driver):
+def i_see_the_goods_types_list_overview(driver, context):
     goods_type_page = ApplicationGoodsTypeList(driver)
     good_type_table_overview = goods_type_page.get_text_of_goods_type_info_overview()
     assert "Description" in good_type_table_overview
@@ -289,7 +289,7 @@ def selected_countries_in_modal(driver, country):
 
 
 @when(parsers.parse('I add end user of type: "{type}"'))
-def add_new_end_user_type(driver, type):
+def add_new_end_user_type(driver, type, context):
     add_end_user_pages = AddEndUserPages(driver)
     add_end_user_pages.select_type(type)
     context.type_end_user = type
@@ -297,7 +297,7 @@ def add_new_end_user_type(driver, type):
 
 
 @when(parsers.parse('I add end user of name: "{name}"'))
-def add_new_end_user_name(driver, name):
+def add_new_end_user_name(driver, name, context):
     add_end_user_pages = AddEndUserPages(driver)
     add_end_user_pages.enter_name(name)
     context.name_end_user = name
@@ -312,7 +312,7 @@ def add_new_end_user_website(driver, website):
 
 
 @when(parsers.parse('I add end user of address: "{address}" and country "{country}"'))
-def add_new_end_user_address(driver, address, country):
+def add_new_end_user_address(driver, address, country, context):
     add_end_user_pages = AddEndUserPages(driver)
     add_end_user_pages.enter_address(address)
     context.address_end_user = address
@@ -321,7 +321,7 @@ def add_new_end_user_address(driver, address, country):
 
 
 @when(parsers.parse('I add an end user of type: "{type}", name: "{name}", website: "{website}", address: "{address}" and country "{country}"'))
-def add_new_end_user(driver, type, name, website, address, country):
+def add_new_end_user(driver, type, name, website, address, country, context):
     add_end_user_pages = AddEndUserPages(driver)
     add_end_user_pages.select_type(type)
     context.type_end_user = type
@@ -349,7 +349,7 @@ def i_click_on_application_overview(driver):
 
 
 @then('I see end user on overview')
-def end_user_on_overview(driver):
+def end_user_on_overview(driver, context):
     app = ApplicationOverviewPage(driver)
     assert "Type" in app.get_text_of_end_user_table()
     assert "Name" in app.get_text_of_end_user_table()

@@ -10,6 +10,7 @@ USERS_URL = '/users/'
 EXTERNAL_LOCATIONS_URL = '/organisations/external_locations/'
 NOTIFICATIONS_URL = '/users/notifications/'
 CLC_NOTIFICATIONS_URL = '/users/clc_notifications/'
+AUTHENTICATION_URL = '/users/authenticate/'
 
 
 # Static URLs

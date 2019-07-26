@@ -2,6 +2,7 @@ import json
 import os
 import sys
 
+from django.urls import reverse_lazy
 from environ import Env
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -42,6 +43,7 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
     'libraries.forms',
     'svg',
+    'authbroker_client',
 ]
 
 MIDDLEWARE = [
@@ -52,14 +54,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'authbroker_client.middleware.ProtectAllViewsMiddleware',
     'conf.middleware.ProtectAllViewsMiddleware',
 ]
 
 ROOT_URLCONF = 'conf.urls'
-
-LOGIN_URL = '/login'
-
-AUTH_USER_MODEL = "core.User"
 
 TEMPLATES = [
     {
@@ -80,6 +79,22 @@ TEMPLATES = [
         },
     },
 ]
+
+# Authbroker config
+AUTHBROKER_URL = env('AUTHBROKER_URL')
+AUTHBROKER_CLIENT_ID = env('AUTHBROKER_CLIENT_ID')
+AUTHBROKER_CLIENT_SECRET = env('AUTHBROKER_CLIENT_SECRET')
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'authbroker_client.backends.AuthbrokerBackend',
+]
+
+LOGIN_URL = reverse_lazy('authbroker_client:login')
+
+LOGIN_REDIRECT_URL = '/'
+
+AUTH_USER_MODEL = 'core.User'
 
 WSGI_APPLICATION = 'conf.wsgi.application'
 

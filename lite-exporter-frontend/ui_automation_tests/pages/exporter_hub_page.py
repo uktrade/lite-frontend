@@ -31,12 +31,17 @@ class ExporterHubPage:
         self.driver.find_element_by_css_selector(self.applications_btn).click()
 
     def enter_email(self, email):
-        email_tb = self.driver.find_element_by_id("email")
+        email_tb = self.driver.find_element_by_name("login")
+        email_tb.clear()
+        email_tb.send_keys(email)
+
+    def enter_add_user_email(self, email):
+        email_tb = self.driver.find_element_by_name("email")
         email_tb.clear()
         email_tb.send_keys(email)
 
     def enter_password(self, password):
-        password_tb = self.driver.find_element_by_id("password")
+        password_tb = self.driver.find_element_by_name("password")
         password_tb.send_keys(password)
 
     def login(self, email, password):
@@ -44,7 +49,7 @@ class ExporterHubPage:
             self.driver.find_element_by_xpath("//a[text()[contains(.,'Log In')]]").click()
         self.enter_email(email)
         self.enter_password(password)
-        self.driver.find_element_by_class_name("govuk-button").click()
+        self.driver.find_element_by_class_name("button").click()
         time.sleep(1)
 
     def click_submit(self):
@@ -99,15 +104,15 @@ class ExporterHubPage:
         self.driver.find_element_by_xpath("//*[text()[contains(.,'Reactivate User')]]").click()
 
     def logout(self):
-        self.driver.find_element_by_css_selector("a[href*='/logout']").click()
-        assert "logout" in self.driver.current_url
+        self.driver.get("https://great.uat.uktrade.io/sso/accounts/")
+        self.driver.find_element_by_id("header-sign-out-link").click()
+        self.driver.find_element_by_css_selector('.button').click()
 
     def click_user_profile(self):
         self.driver.find_element_by_css_selector("a[href*='/users/profile/']").click()
 
     def click_sites(self):
         self.driver.find_element_by_css_selector(self.sites_btn).click()
-
 
     def click_new_site(self):
         self.driver.find_element_by_css_selector("a[href*='/sites/new/']").click()
@@ -148,18 +153,3 @@ class ExporterHubPage:
         assert apps_button.is_displayed()
         assert 'new notification' not in apps_button.text
 
-    # def click_submit_application(self):
-    #    self.driver.find_element_by_css_selector("button[type*='submit']").click()
-
-    # Old flow
-    # def create_application(self, name, destination, usage, activity):
-    #     self.click_apply_for_a_licence()
-    #     self.click_start()
-    #     self.enter_name_for_application(name)
-    #     self.click_save_and_continue()
-    #     self.enter_destination(destination)
-    #     self.click_save_and_continue()
-    #     self.enter_usage(usage)
-    #     self.click_save_and_continue()
-    #     self.enter_activity(activity)
-    #     self.click_submit()

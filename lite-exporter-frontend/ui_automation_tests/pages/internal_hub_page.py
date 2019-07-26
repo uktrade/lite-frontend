@@ -90,9 +90,6 @@ class InternalHubPage():
     def enter_last_name(self, last_name):
         self.driver.find_element_by_id("user.last_name").send_keys(last_name)
 
-    def enter_password(self, password):
-        self.driver.find_element_by_id("user.password").send_keys(password)
-
     def click_manage_organisations_link(self):
         self.driver.find_element_by_id("lite-user-menu-button").click()
         time.sleep(0.5)

@@ -7,10 +7,9 @@ Feature: I want to add a note to an application and view notes
   @LT-1119_add
   Scenario: Add a new valid case note
     Given I go to exporter homepage
-    When I login to exporter homepage with username "test@mail.com" and "password"
-    And I click on applications
+    When I click on applications
     # TODO: Create an application before this step!
-    When I click on an application previously created
+    And I click on an application previously created
     And I enter "This is a note on my application!" for case note
     And I click post note
     Then note is displayed
@@ -18,9 +17,8 @@ Feature: I want to add a note to an application and view notes
   @LT-1119_max
   Scenario: Add a case note filled to max with space characters
     Given I go to exporter homepage
-    When I login to exporter homepage with username "test@mail.com" and "password"
-    And I click on applications
-    When I click on an application previously created
+    When I click on applications
+    And I click on an application previously created
     And I enter "the maximum limit with spaces" for case note
     And I click post note
     Then maximum case error is displayed
@@ -28,9 +26,8 @@ Feature: I want to add a note to an application and view notes
   @LT-1119_too_many
   Scenario: Add a case note with too many characters
     Given I go to exporter homepage
-    When I login to exporter homepage with username "test@mail.com" and "password"
-    And I click on applications
-    When I click on an application previously created
+    When I click on applications
+    And I click on an application previously created
     And I enter "the maximum limit" for case note
     Then case note warning is "You have 0 characters remaining"
     When I enter "T" for case note
@@ -40,9 +37,8 @@ Feature: I want to add a note to an application and view notes
   @LT-1119_cancel
   Scenario: Case note cancel button
     Given I go to exporter homepage
-    When I login to exporter homepage with username "test@mail.com" and "password"
-    And I click on applications
-    When I click on an application previously created
+    When I click on applications
+    And I click on an application previously created
     And I enter "Case note to cancel" for case note
     And I click cancel button
     Then entered text is no longer in case note field

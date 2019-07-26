@@ -56,7 +56,7 @@ class ViewUser(TemplateView):
 class ViewProfile(TemplateView):
     def get(self, request, **kwargs):
         user = request.user
-        return redirect(reverse_lazy('users:user', kwargs={'pk': user.id}))
+        return redirect(reverse_lazy('users:user', kwargs={'pk': user.lite_api_user_id}))
 
 
 class EditUser(TemplateView):

@@ -4,6 +4,7 @@ urlpatterns = [
     path('', include('core.urls')),
     path('applications/', include('applications.urls')),
     path('apply-for-a-licence/', include('apply_for_a_licence.urls')),
+    path('auth/', include('auth.urls', namespace='authbroker')),
     path('drafts/', include('drafts.urls')),
     path('goods/', include('goods.urls')),
     path('goodstype/', include('goodstype.urls')),

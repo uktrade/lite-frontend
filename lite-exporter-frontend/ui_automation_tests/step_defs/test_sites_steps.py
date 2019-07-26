@@ -7,7 +7,7 @@ from pages.hub_page import Hub
 import datetime
 import helpers.helpers as utils
 from selenium.webdriver.common.by import By
-from conftest import context
+
 
 import logging
 log = logging.getLogger()
@@ -38,7 +38,7 @@ def click_new_site(driver):
 
 @when(parsers.parse('I enter in text for new site "{edited}" {address}" "{postcode}" "{city}" '
                     '"{region}" and "{country}"'))
-def new_sites_info(driver, edited, address, postcode, city, region, country):
+def new_sites_info(driver, edited, address, postcode, city, region, country, context):
     new_site = NewSite(driver)
     time_id = datetime.datetime.now().strftime('%m%d%H%M')
     new_site_name = 'Head office' + edited + time_id
@@ -47,7 +47,7 @@ def new_sites_info(driver, edited, address, postcode, city, region, country):
 
 
 @then('I see sites list')
-def i_see_sites_list(driver):
+def i_see_sites_list(driver, context):
     assert driver.find_element_by_tag_name('h2').text == 'Sites', \
         'Failed to return to Sites list page after Adding site'
 
@@ -75,7 +75,7 @@ def select_a_site_error(driver):
 
 
 @then('I see my new site at first position')
-def assert_site_is_added_to_list(driver):
+def assert_site_is_added_to_list(driver, context):
     sites_page = SitesPage(driver)
     assert sites_page.get_text_of_site(sites_page.get_size_of_sites()-1) == context.new_site_name
 
