@@ -91,7 +91,7 @@
 
 					<div class="lite-user-menu-divider"></div>
 
-					<a class="lite-user-menu-button" href="{% url 'users:user' user.user_token %}">
+					<a class="lite-user-menu-button" href="{% url 'users:user' user.lite_api_user_id %}">
 						{{ user.first_name }}
 						<div class="lite-user-menu-button--user">
 							{% svg 'user' %}

@@ -69,6 +69,7 @@ class AuthCallbackView(View):
         # create the user
         user = authenticate(request)
         user.user_token = response['token']
+        user.lite_api_user_id = response['lite_api_user_id']
         user.save()
         if user is not None:
             login(request, user)

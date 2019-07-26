@@ -14,7 +14,7 @@ class FlagsList(TemplateView):
 
     def get(self, request, **kwargs):
         data, status_code = get_flags(request)
-        user_data, status_code = get_gov_user(request, str(request.user.user_token))
+        user_data, status_code = get_gov_user(request, str(request.user.lite_api_user_id))
 
         try:
             status = kwargs['status']

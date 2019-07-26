@@ -5,7 +5,6 @@ from django.views.generic import TemplateView
 
 from core.builtins.custom_tags import get_string
 from libraries.forms.generators import form_page
-from teams.services import get_teams
 from users.forms.users import add_user_form, edit_user_form
 from users.services import get_gov_users, post_gov_users, put_gov_user, get_gov_user
 

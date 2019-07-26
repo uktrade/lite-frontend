@@ -65,20 +65,18 @@ class ExporterHub():
         self.driver.find_element_by_css_selector(self.applications_btn).click()
 
     def enter_email(self, email):
-        email_tb = self.driver.find_element_by_id("email")
+        email_tb = self.driver.find_element_by_name("login")
         email_tb.clear()
         email_tb.send_keys(email)
 
     def enter_password(self, password):
-        password_tb = self.driver.find_element_by_id("password")
+        password_tb = self.driver.find_element_by_name("password")
         password_tb.send_keys(password)
 
     def login(self, email, password):
-        if "logout" in self.driver.current_url:
-            self.driver.find_element_by_xpath("//a[text()[contains(.,'Log In')]]").click()
         self.enter_email(email)
         self.enter_password(password)
-        self.driver.find_element_by_class_name("govuk-button").click()
+        self.driver.find_element_by_class_name("button").click()
         time.sleep(1)
 
     def click_submit(self):

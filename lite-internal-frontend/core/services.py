@@ -74,5 +74,5 @@ def get_queues(request, convert_to_options=False):
 
 
 def get_user_permissions(request):
-    user, status_code = get_gov_user(request, str(request.user.user_token))
+    user, status_code = get_gov_user(request, str(request.user.lite_api_user_id))
     return user['user']['role']['permissions']

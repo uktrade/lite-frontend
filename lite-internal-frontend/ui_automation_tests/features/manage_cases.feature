@@ -17,7 +17,6 @@ Feature: I want to record the final decision overall on an application case
     And the application headers and information are correct
     #TODO remove dependency here
     When I go to exporter homepage
-    And I login to exporter homepage with username "trinity@unicorns.com" and "12345678900"
     And I click applications
     Then the status has been changed in exporter
 

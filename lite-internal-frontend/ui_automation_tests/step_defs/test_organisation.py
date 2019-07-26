@@ -86,8 +86,8 @@ class OrganisationSteps():
             organisations_form_page.click_submit()
 
 
-    @when(parsers.parse('I setup the admin user with email: "{email}", first name: "{first_name}", last name: "{last_name}", password: "{password}"'))
-    def fill_out_admin_user_details(driver, email, first_name, last_name, password, context):
+    @when(parsers.parse('I setup the admin user with email: "{email}", first name: "{first_name}", last name: "{last_name}"'))
+    def fill_out_admin_user_details(driver, email, first_name, last_name, context):
         if not context.org_registered_status:
             organisations_form_page = OrganisationsFormPage(driver)
             if email == "trinity@unicorns.com" or email == " ":
@@ -95,11 +95,9 @@ class OrganisationSteps():
                 context.email = email
             else:
                 context.email = email+utils.get_formatted_date_time_m_d_h_s()
-                context.password = password
                 organisations_form_page.enter_email(context.email)
             organisations_form_page.enter_first_name(first_name)
             organisations_form_page.enter_last_name(last_name)
-            organisations_form_page.enter_password(password)
             organisations_form_page.click_submit()
 
 

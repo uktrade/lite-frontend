@@ -14,7 +14,7 @@ from users.services import get_gov_user
 class QueuesList(TemplateView):
     def get(self, request, **kwargs):
         data, status_code = get_queues(request)
-        user_data, status_code = get_gov_user(request, str(request.user.user_token))
+        user_data, status_code = get_gov_user(request, str(request.user.lite_api_user_id))
 
         context = {
             'data': data,
@@ -34,7 +34,7 @@ class AddQueue(TemplateView):
 
     def post(self, request, **kwargs):
         # including the user's team details in the post request
-        user_data, status_code = get_gov_user(request, str(request.user.user_token))
+        user_data, status_code = get_gov_user(request, str(request.user.lite_api_user_id))
         post_data = request.POST.copy()
         post_data['team'] = user_data['user']['team']['id']
         data, status_code = post_queues(request, post_data)
@@ -87,7 +87,7 @@ class CaseAssignments(TemplateView):
         case_assignments, status_code = get_queue_case_assignments(request, queue_id)
 
         case_ids = request.GET.get('cases').split(',')
-        user_data, status_code = get_gov_user(request, str(request.user.user_token))
+        user_data, status_code = get_gov_user(request, str(request.user.lite_api_user_id))
 
         # If no cases have been selected, return an error page
         if not request.GET.get('cases'):
@@ -111,7 +111,7 @@ class CaseAssignments(TemplateView):
         queue_id = str(kwargs['pk'])
         queue, status_code = get_queue(request, queue_id)
         case_ids = request.GET.get('cases').split(',')
-        user_data, status_code = get_gov_user(request, str(request.user.user_token))
+        user_data, status_code = get_gov_user(request, str(request.user.lite_api_user_id))
 
         data = {
             'case_assignments': []

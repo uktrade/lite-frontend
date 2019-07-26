@@ -1,5 +1,6 @@
 from pytest import fixture
 import helpers.helpers as utils
+from conf.settings import env
 from pages.header_page import HeaderPage
 from pages.organisations_page import OrganisationsPage
 from pages.organisations_form_page import OrganisationsFormPage
@@ -41,9 +42,8 @@ def register_organisation(driver, request, sso_login_info, context):
         organisations_form_page.enter_country("Ukraine")
         organisations_form_page.click_submit()
         organisations_form_page = OrganisationsFormPage(driver)
-        organisations_form_page.enter_email("trinity@unicorns.com")
-        context.email = "trinity@unicorns.com"
+        organisations_form_page.enter_email(env('TEST_EXPORTER_SSO_EMAIL'))
+        context.email = env('TEST_EXPORTER_SSO_EMAIL')
         organisations_form_page.enter_first_name("Trinity")
         organisations_form_page.enter_last_name("Fishburne")
-        organisations_form_page.enter_password("12345678900")
         organisations_form_page.click_submit()

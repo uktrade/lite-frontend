@@ -2,6 +2,7 @@ from pytest import fixture
 import datetime
 from pages.add_goods_page import AddGoodPage
 from pages.exporter_hub import ExporterHub
+from conf.settings import env
 import helpers.helpers as utils
 
 
@@ -10,7 +11,8 @@ def apply_for_standard_application(driver, request, context):
     exporter_hub = ExporterHub(driver)
     driver.get(request.config.getoption("--exporter_url"))
     if "login" in driver.current_url:
-        exporter_hub.login("trinity@unicorns.com", "12345678900")
+        exporter_hub.login(env('TEST_EXPORTER_SSO_EMAIL'),
+                           env('TEST_EXPORTER_SSO_PASSWORD'))
     exporter_hub = ExporterHub(driver)
     exporter_hub.click_goods_tile()
     exporter_hub.click_add_a_good()
@@ -71,7 +73,8 @@ def apply_for_clc_query(driver, request, context):
     exporter_hub = ExporterHub(driver)
     driver.get(request.config.getoption("--exporter_url"))
     if "login" in driver.current_url:
-        exporter_hub.login("trinity@unicorns.com", "12345678900")
+        exporter_hub.login(env('TEST_EXPORTER_SSO_EMAIL'),
+                           env('TEST_EXPORTER_SSO_PASSWORD'))
     exporter_hub.click_goods_button()
     add_goods_page = AddGoodPage(driver)
     add_goods_page.click_add_a_good()

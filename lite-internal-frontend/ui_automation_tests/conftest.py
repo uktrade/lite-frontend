@@ -1,7 +1,7 @@
 import os
 from pytest_bdd import given, when, then, parsers
 
-from fixtures.core import context, driver, sso_login_info, invalid_username
+from fixtures.core import context, driver, sso_login_info, invalid_username, exporter_sso_login_info
 from fixtures.urls import exporter_url, internal_url, sso_sign_in_url
 from fixtures.register_organisation import register_organisation
 from fixtures.apply_for_application import apply_for_standard_application, apply_for_clc_query
@@ -28,12 +28,8 @@ def pytest_addoption(parser):
     if env == 'None':
         env = "dev"
     parser.addoption("--driver", action="store", default="chrome", help="Type in browser type")
-    parser.addoption("--exporter_url", action="store",
-                     default="https://exporter.lite.service." + env + ".uktrade.io/", help="url")
-    parser.addoption("--internal_url", action="store",
-                     default="https://internal.lite.service." + env + ".uktrade.io/", help="url")
-    # parser.addoption("--exporter_url", action="store", default="http://localhost:9000", help="url")
-    # parser.addoption("--internal_url", action="store", default="http://localhost:8080", help="url")
+    parser.addoption("--exporter_url", action="store", default="http://localhost:9000", help="url")
+    parser.addoption("--internal_url", action="store", default="http://localhost:8080", help="url")
     parser.addoption("--sso_sign_in_url", action="store", default="https://sso.trade.uat.uktrade.io/login/", help="url")
 
 
@@ -70,24 +66,11 @@ def go_to_exporter_when(driver, exporter_url):
     driver.get(exporter_url)
 
 
-@when(parsers.parse('I login to exporter homepage with username "{username}" and "{password}"'))
-def login_to_exporter(driver, exporter_url, username, password, register_organisation):
+@when('I login to exporter homepage')
+def login_to_exporter(driver, exporter_url, exporter_sso_login_info, register_organisation):
     driver.get(exporter_url)
-    if username == "TestBusinessForSites@mail.com":
-        username = context.email
     exporter_hub = ExporterHub(driver)
-    if "login" in driver.current_url:
-        exporter_hub.login(username, password)
-
-
-@when('I login to exporter homepage with previously created user')
-def login_to_exporter_context(driver, context, password):
-    username = context.email
-    password = context.password
-
-    exporter_hub = ExporterHub(driver)
-    if "login" in driver.current_url:
-        exporter_hub.login(username, password)
+    exporter_hub.login(exporter_sso_login_info['email'], exporter_sso_login_info['password'])
 
 
 @when('I click on application previously created')
@@ -153,4 +136,3 @@ def go_to_users(driver):
     header = HeaderPage(driver)
 
     header.open_users()
-

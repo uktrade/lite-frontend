@@ -86,10 +86,6 @@ def register_business_forms():
                      description='',
                      input_type=InputType.INPUT,
                      name='user.last_name'),
-            Question(title='Password',
-                     description='',
-                     input_type=InputType.PASSWORD,
-                     name='user.password'),
         ],
              pk='3',
              buttons=[

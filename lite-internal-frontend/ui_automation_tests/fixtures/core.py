@@ -46,6 +46,14 @@ def sso_login_info(request):
     return {'email': sso_email, 'password': sso_password}
 
 
+@fixture(scope="session")
+def exporter_sso_login_info(request):
+    exporter_sso_email = env('TEST_EXPORTER_SSO_EMAIL')
+    exporter_sso_password = env('TEST_EXPORTER_SSO_PASSWORD')
+
+    return {'email': exporter_sso_email, 'password': exporter_sso_password}
+
+
 @fixture(scope="module")
 def invalid_username(request):
     return "invalid@mail.com"
