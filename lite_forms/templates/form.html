@@ -2,7 +2,7 @@
 
 {% load custom_tags %}
 
-{% block back-link %}
+{% block back_link %}
 	{% if page.back_link.url != '#' %}
 		<a href="{{ page.back_link.url }}" class="govuk-back-link {% if persistent_bar.text %}lite-persistent-bar--back{% endif %}">{{ page.back_link.text }}</a>
 	{% else %}
@@ -38,7 +38,7 @@
 	{% if page.caption %}
 		<span class="govuk-caption-l">{{ page.caption }}</span>
 	{% endif %}
-		<h1 class="govuk-heading-l">{{ page.title }}</h1>
+		<h2 class="govuk-heading-l">{{ page.title }}</h2>
 		<div class="govuk-form-group">
 			<p class="govuk-caption-m">
 				{{ page.description|linebreaksbr }}
