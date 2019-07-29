@@ -55,7 +55,7 @@
 		{% elif question.input_type.name == "PASSWORD" %}
 	        {% include "components/password.html" with name=question.name value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
 		{% elif question.input_type.name == "QUANTITY" %}
-			{% include "components/quantity.html" with name=question.name value=data|key_value:question.name|default:'' %}
+			{% include "components/quantity.html" with name=question.name value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
 		{% endif %}
 	</div>
 </div>
