@@ -1,7 +1,7 @@
 .dropzone {
 	@include govuk-font($size: 19);
 	box-sizing: border-box;
-	color: govuk-colour("grey-1");
+	color: govuk-colour("dark-grey");
 	flex-wrap: wrap;
 	transition: border .2s ease;
 }
@@ -10,7 +10,7 @@
 	.dropzone {
 		width: 100%;
 		min-height: 200px;
-		border: $govuk-border-width-form-element dashed govuk-colour("grey-2");
+		border: $govuk-border-width-form-element dashed govuk-colour("mid-grey");
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -39,7 +39,7 @@
 }
 
 .dropzone.dz-drag-hover {
-	border-color: govuk-colour("grey-1");
+	border-color: govuk-colour("dark-grey");
 }
 
 .dropzone .dz-message {

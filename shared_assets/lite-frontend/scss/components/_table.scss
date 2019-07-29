@@ -11,13 +11,13 @@
 	@include govuk-font($size: 14, $weight: bold);
 	letter-spacing: 1px;
 	text-transform: uppercase;
-	color: govuk-colour("grey-1");
+	color: govuk-colour("dark-grey");
 }
 
 .lite-table__cell,
 .lite-table__header {
 	padding: govuk-spacing(2) govuk-spacing(4) govuk-spacing(2) 0;
-	border-bottom: 1px solid govuk-colour("grey-3");
+	border-bottom: 1px solid govuk-colour("mid-grey");
 	text-align: left;
 	vertical-align: top;
 	// GOV.UK Elements sets the font-size and line-height for all headers and cells

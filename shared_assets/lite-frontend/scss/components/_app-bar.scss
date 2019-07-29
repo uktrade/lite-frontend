@@ -39,6 +39,10 @@
 }
 
 .lite-app-bar__controls {
+	display: flex;
+	align-items: flex-start;
+	justify-content: center;
+
 	& > * {
 		margin-left: govuk-spacing(4);
 		display: block;

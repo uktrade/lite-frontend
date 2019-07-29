@@ -1,7 +1,7 @@
 .lite-card {
 	position: relative;
-	background-color: govuk-colour("grey-4");
-	border-bottom: 2px solid darken(govuk-colour("grey-4"), 3%);
+	background-color: govuk-colour("light-grey");
+	border-bottom: 2px solid darken(govuk-colour("light-grey"), 3%);
 	padding: govuk-spacing(5);
 	margin-bottom: govuk-spacing(4);
 
@@ -17,7 +17,7 @@
 	justify-content: center;
 	background-color: transparent;
 	flex-direction: column;
-	border: $govuk-border-width-form-element dashed govuk-colour("grey-3");
+	border: $govuk-border-width-form-element dashed govuk-colour("mid-grey");
 
 	.govuk-warning-text__icon {
 		position: relative;
@@ -32,11 +32,16 @@
 		line-height: 40px;
 		margin: 10px 0 0 0;
 	}
+
+	.govuk-warning-text__icon {
+		background-color: govuk-colour("orange");
+		border: 3px solid govuk-colour("orange");
+	}
 }
 
 .lite-card--placeholder-fade {
 	position: relative;
-	border: $govuk-border-width-form-element dashed govuk-colour("grey-3");
+	border: $govuk-border-width-form-element dashed govuk-colour("mid-grey");
 	margin: 0;
 
 	&:after {
@@ -51,7 +56,7 @@
 }
 
 .lite-card-delete {
-	@include govuk-focusable-fill;
+	// @include govuk-focusable-fill;
 	position: absolute;
 	top: govuk-spacing(4);
 	right: govuk-spacing(4);

@@ -25,7 +25,7 @@ $card-shadow: 4px;
 			min-height: 150px;
 		}
 		padding-right: 40px;
-	    @include govuk-focusable;
+	    // @include govuk-focusable;
 
 		* {
 			@include govuk-font($size: 19, $weight: bold);

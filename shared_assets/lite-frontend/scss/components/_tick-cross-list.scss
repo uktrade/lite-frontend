@@ -32,10 +32,10 @@ $govuk-button-colour: #00823b;
 	}
 
 	&--cross {
-		color: govuk-colour("grey-1");
+		color: govuk-colour("dark-grey");
 
 		svg * {
-			fill: govuk-colour("grey-1");
+			fill: govuk-colour("dark-grey");
 		}
 	}
 }

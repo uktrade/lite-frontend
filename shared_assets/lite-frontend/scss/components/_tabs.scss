@@ -53,14 +53,14 @@
 	margin-right: 25px;
 	margin-bottom: 30px;
 	border-bottom: 2px solid transparent;
-	color: govuk-colour("grey-1");
+	color: govuk-colour("dark-grey");
 	letter-spacing: 1px;
 	text-transform: uppercase;
 	cursor: pointer;
 	white-space: nowrap;
 
 	&:hover {
-		border-bottom: 2px solid govuk-colour("grey-2");
+		border-bottom: 2px solid govuk-colour("mid-grey");
 	}
 }
 

@@ -8,8 +8,8 @@ $highlight-border-colour: #ffbf47;
 }
 
 .lite-filter-box {
-	background-color: govuk-colour("grey-4");
-	border: 1px solid darken(govuk-colour("grey-4"), 2%);
+	background-color: govuk-colour("light-grey");
+	border: 1px solid darken(govuk-colour("light-grey"), 2%);
 	padding: govuk-spacing(4);
 	margin-bottom: govuk-spacing(6);
 }
@@ -18,8 +18,8 @@ $highlight-border-colour: #ffbf47;
 	@include govuk-font($size: 19);
 	display: flex;
 	flex-wrap: wrap;
-	background-color: govuk-colour("grey-4");
-	border: 1px solid darken(govuk-colour("grey-4"), 2%);
+	background-color: govuk-colour("light-grey");
+	border: 1px solid darken(govuk-colour("light-grey"), 2%);
 	padding: govuk-spacing(4);
 	margin-bottom: govuk-spacing(6);
 
@@ -55,7 +55,7 @@ $highlight-border-colour: #ffbf47;
 		top: 0;
 		left: -15px;
 		bottom: 0;
-		color: govuk-colour("grey-2");
+		color: govuk-colour("mid-grey");
 		opacity: 0;
 		transition: .2s ease;
 		transform: scale(0.9);

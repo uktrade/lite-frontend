@@ -2,11 +2,11 @@
 	position: relative;
 	display: block;
 	margin-bottom: govuk-spacing(4);
-	border: $govuk-border-width-form-element solid govuk-colour('grey-3');
+	border: $govuk-border-width-form-element solid govuk-colour('mid-grey');
 	overflow: hidden;
 
 	&:hover {
-		border: $govuk-border-width-form-element solid govuk-colour('grey-2');
+		border: $govuk-border-width-form-element solid govuk-colour('mid-grey');
 	}
 
 	.govuk-textarea {
@@ -48,8 +48,8 @@
 	display: flex;
 	justify-content: flex-end;
 	padding: govuk-spacing(3);
-	background-color: govuk-colour("grey-4");
-	border-top: 2px solid govuk-colour("grey-3");
+	background-color: govuk-colour("light-grey");
+	border-top: 2px solid govuk-colour("mid-grey");
 	transition: $lite-transition-speed ease;
 	box-sizing: border-box;
 	height: 72px;
