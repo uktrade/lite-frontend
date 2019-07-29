@@ -7,7 +7,7 @@ def form_page(request, form, data=None, errors=None, extra_data=None):
     """
     context = {
         'page': form,
-        'title': form.title,
+        'title': form.title if errors is None else 'Error: ' + form.title,
         'data': data,
         'errors': errors,
     }
