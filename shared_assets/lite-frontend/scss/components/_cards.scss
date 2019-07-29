@@ -25,17 +25,18 @@
 
 	* {
 		margin: 0;
+		text-align: center;
 	}
 
 	.govuk-body {
 		font-weight: bold;
-		line-height: 40px;
-		margin: 10px 0 0 0;
+		margin: govuk-spacing(3) 0;
 	}
 
 	.govuk-warning-text__icon {
 		background-color: govuk-colour("orange");
 		border: 3px solid govuk-colour("orange");
+		margin-bottom: govuk-spacing(1);
 	}
 }
 
