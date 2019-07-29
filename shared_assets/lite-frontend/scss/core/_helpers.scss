@@ -13,3 +13,11 @@
 		visibility: visible;
 	}
 }
+
+.lite-horizontal-separator {
+	display: block;
+	height: 2px;
+	background: govuk-colour("grey-3");
+	margin: govuk-spacing(3) 0 govuk-spacing(7) 0;
+	border: none;
+}

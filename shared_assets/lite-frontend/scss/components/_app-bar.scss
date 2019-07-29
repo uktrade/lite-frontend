@@ -31,13 +31,14 @@
 		white-space: normal;
 		overflow: hidden;
 	}
+
+	.govuk-caption-m {
+		line-height: 1.66;
+		max-width: 650px;
+	}
 }
 
 .lite-app-bar__controls {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-
 	& > * {
 		margin-left: govuk-spacing(4);
 		display: block;

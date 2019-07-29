@@ -4,8 +4,49 @@
 	border-bottom: 2px solid darken(govuk-colour("grey-4"), 3%);
 	padding: govuk-spacing(5);
 	margin-bottom: govuk-spacing(4);
+
 	& > *:last-child {
 		margin-bottom: 0;
+	}
+}
+
+.lite-card--placeholder {
+	min-height: 140px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: transparent;
+	flex-direction: column;
+	border: $govuk-border-width-form-element dashed govuk-colour("grey-3");
+
+	.govuk-warning-text__icon {
+		position: relative;
+	}
+
+	* {
+		margin: 0;
+	}
+
+	.govuk-body {
+		font-weight: bold;
+		line-height: 40px;
+		margin: 10px 0 0 0;
+	}
+}
+
+.lite-card--placeholder-fade {
+	position: relative;
+	border: $govuk-border-width-form-element dashed govuk-colour("grey-3");
+	margin: 0;
+
+	&:after {
+		content: "";
+		position: absolute;
+		top: -$govuk-border-width-form-element;
+		left: -$govuk-border-width-form-element;
+		right: -$govuk-border-width-form-element;
+		bottom: -$govuk-border-width-form-element;
+		background: linear-gradient(rgba(white, 0%), white);
 	}
 }
 
@@ -16,18 +57,22 @@
 	right: govuk-spacing(4);
 	border-bottom: 1px solid transparent;
 	color: govuk-colour("black");
+
 	svg {
 		width: 15px;
 		height: 15px;
+
 		* {
 			fill: currentColor;
 		}
 	}
+
 	&:hover {
 		border-bottom: 1px solid currentColor;
 	}
+
 	&:active {
-		opacity: .6;
+		opacity: 0.6;
 	}
 }
 
