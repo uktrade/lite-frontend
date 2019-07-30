@@ -45,6 +45,23 @@ def submit_paged_form(request: HttpRequest, questions, post_to, pk=None):
 
         # If there are errors in the validated data, take the user back
         if len(validated_data['errors']) is not 0:
+
+            # TODO: Clean up this code
+            # Add hidden fields to the current form
+            for key, value in data.items():
+                exists = False
+
+                for question in current_form.questions:
+                    if hasattr(question, 'name'):
+                        if question.name == key:
+                            exists = True
+                            continue
+
+                if not exists:
+                    current_form.questions.append(
+                        HiddenField(key, value)
+                    )
+
             return form_page(request, current_form, data=data, errors=validated_data['errors']), validated_data
 
     # If there aren't any forms left to go through, return the data
