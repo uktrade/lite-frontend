@@ -9,7 +9,7 @@ from selenium.webdriver.common.by import By
 
 @fixture(scope="session")
 def register_organisation(driver, request, sso_login_info, context):
-    context.org_name = "Unicorns Ltd"
+    context.org_name = "Test Org"
     driver.get(request.config.getoption("--sso_sign_in_url"))
     driver.find_element_by_name("username").send_keys(sso_login_info['email'])
     driver.find_element_by_name("password").send_keys(sso_login_info['password'])

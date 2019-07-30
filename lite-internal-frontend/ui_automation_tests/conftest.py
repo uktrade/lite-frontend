@@ -11,8 +11,10 @@ from pages.flags_pages import FlagsPages
 from pages.header_page import HeaderPage
 from pages.shared import Shared
 from pages.exporter_hub import ExporterHub
+from pages.case_list_page import CaseListPage
 
 # Screenshot in case of any test failure
+
 
 
 def pytest_exception_interact(node, report):
@@ -74,8 +76,18 @@ def login_to_exporter(driver, exporter_url, exporter_sso_login_info, register_or
 
 
 @when('I click on application previously created')
-def click_on_created_application(driver, apply_for_standard_application, context):
+def click_on_created_application(driver, context):
     driver.find_element_by_css_selector('.lite-cases-table').find_element_by_xpath("//*[text()[contains(.,'" + context.app_id + "')]]").click()
+
+
+@given('I create application or application has been previously created')
+def create_app(driver, register_organisation, apply_for_standard_application):
+    pass
+
+
+@given('I create clc query or clc query has been previously created')
+def create_clc(driver, register_organisation, apply_for_clc_query):
+    pass
 
 
 @when('I click submit button')
@@ -87,7 +99,7 @@ def click_on_submit_button(driver):
 @then(parsers.parse('I see error message "{expected_error}"'))
 def error_message_shared(driver, expected_error):
     shared = Shared(driver)
-    assert expected_error in shared.get_text_of_error_message()
+    assert expected_error in shared.get_text_of_error_message(), "expected error message is not displayed"
 
 
 @when('I click sites link')
@@ -136,3 +148,16 @@ def go_to_users(driver):
     header = HeaderPage(driver)
 
     header.open_users()
+
+
+@then('I see the clc-case previously created')
+def assert_case_is_present(driver, register_organisation, apply_for_clc_query, context):
+    case_list_page = CaseListPage(driver)
+    assert case_list_page.assert_case_is_present(context.case_id), "clc case ID is not present on page"
+
+
+@when('I click on the clc-case previously created')
+def click_on_clc_case_previously_created(driver, context):
+    case_list_page = CaseListPage(driver)
+    assert case_list_page.assert_case_is_present(context.case_id)
+    driver.find_element_by_css_selector('.lite-cases-table').find_element_by_xpath("//*[text()[contains(.,'" + context.case_id + "')]]").click()

@@ -1,3 +1,5 @@
+import helpers.helpers as utils
+
 class CaseListPage():
 
     def __init__(self, driver):
@@ -32,5 +34,6 @@ class CaseListPage():
         return self.driver.find_elements_by_css_selector(self.checkbox_text)
 
     def assert_case_is_present(self, case_id):
-        case_row = self.driver.find_element_by_xpath("//*[text()[contains(.,'" + case_id + "')]]")
-        return case_row.is_displayed()
+        elements = self.driver.find_elements_by_css_selector('.lite-cases-table-row')
+        no = utils.get_element_index_by_partial_text(elements, case_id)
+        return elements[no].is_displayed()

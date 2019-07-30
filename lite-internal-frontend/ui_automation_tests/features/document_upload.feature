@@ -6,7 +6,8 @@ So that it is recorded against the case and available for other case workers to 
 
 @LT-945_upload
 Scenario: Upload a new document that doesn't contain a virus
-  Given I go to internal homepage
+  Given I create application or application has been previously created
+  And I go to internal homepage
   When I click on application previously created
   And I click on the Documents button
   And I click on the Attach Document button

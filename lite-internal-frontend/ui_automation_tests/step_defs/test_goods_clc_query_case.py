@@ -33,9 +33,3 @@ def add_new_good(driver, description, context):
     exporter_hub.click_save_and_continue()
     add_goods_page.select_control_unsure_confirmation()
     exporter_hub.click_save_and_continue()
-
-
-@then('I see the clc-case previously created')
-def assert_case_is_present(driver, register_organisation, apply_for_clc_query, context):
-    case_list_page = CaseListPage(driver)
-    assert case_list_page.assert_case_is_present(context.case_id)

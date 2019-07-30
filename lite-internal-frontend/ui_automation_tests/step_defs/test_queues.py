@@ -1,5 +1,4 @@
-from pytest_bdd import scenarios, given, when, then, parsers, scenarios
-from selenium.webdriver.support.ui import Select
+from pytest_bdd import when, then, parsers, scenarios
 import helpers.helpers as utils
 from pages.header_page import HeaderPage
 from pages.queues_pages import QueuesPages
@@ -50,6 +49,41 @@ def see_queue_in_queue_list(driver, context):
     assert context.queue_name in Shared(driver).get_text_of_body()
 
 
+@then('I see previously created application')
+def see_queue_in_queue_list(driver, context):
+    assert driver.find_element_by_css_selector('.lite-cases-table').find_element_by_xpath("//*[text()[contains(.,'" + context.app_id + "')]]").is_displayed()
+
+
+@then('I dont see previously created application')
+def dont_see_queue_in_queue_list(driver, context):
+    assert 'There are no new cases to show.' in driver.find_element_by_css_selector('.govuk-caption-l').text
+
+
+@when('I add case to new queue')
+def move_case_to_new_queue(driver, context):
+    driver.find_element_by_css_selector('.govuk-button[href*="move"]').click()
+    driver.find_element_by_id(context.queue_name).click()
+    driver.find_element_by_id("New Cases").click()
+    Shared(driver).click_submit()
+
+
+@when('I deselect all queues')
+def deselect_all_queues(driver, context):
+    driver.find_element_by_css_selector('.govuk-button[href*="move"]').click()
+    elements = driver.find_elements_by_css_selector('#checkbox-list .govuk-body')
+    for element in elements:
+        driver.find_element_by_id(element.text).click()
+    Shared(driver).click_submit()
+
+
+@when('I move case to new cases original queue and remove from new queue')
+def move_case_to_original_queue(driver, context):
+    driver.find_element_by_css_selector('.govuk-button[href*="move"]').click()
+    driver.find_element_by_id(context.queue_name).click()
+    driver.find_element_by_id("New Cases").click()
+    Shared(driver).click_submit()
+
+
 @when('I click on new queue in dropdown')
 def new_queue_shown_in_dropdown(driver, context):
     driver.find_element_by_id('queue-title').click()
@@ -58,5 +92,5 @@ def new_queue_shown_in_dropdown(driver, context):
         if element.text == context.queue_name:
             driver.execute_script("document.getElementsByClassName('lite-dropdown--item')[" + str(idx) + "].scrollIntoView(true);")
             element.click()
-        break
+            break
 

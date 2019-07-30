@@ -2,7 +2,7 @@ class DocumentsPage():
 
     def __init__(self, driver):
         self.driver = driver
-        self.attach_docs_btn = '.govuk-button[href*="attach"]' #css
+        self.attach_docs_btn = '.govuk-button[href*="cases"]' #css
         self.doc_description = '//div[@class="lite-card lite-card--download"]/div[1]/p[@class="govuk-body"]' # xpath
         self.doc_filename = '//div[@class="lite-card lite-card--download"]/div[1]/p[@class="govuk-body govuk-!-font-weight-bold"]' # xpath
 

@@ -37,6 +37,6 @@ class AddGoodPage:
 
     def assert_good_is_displayed_and_return_case_id(self, description):
         elements = self.driver.find_elements_by_css_selector(".govuk-table__row")
-        no = utils.get_element_index_by_text(elements, description)
+        no = utils.get_element_index_by_partial_text(elements, description)
         assert elements[no].is_displayed()
         return elements[no].find_element_by_css_selector('[data_good_clc_query_case_id]').get_attribute("data_good_clc_query_case_id")

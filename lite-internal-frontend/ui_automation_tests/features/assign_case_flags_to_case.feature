@@ -6,7 +6,8 @@ Feature: I want to add case-level flags to a case and view them
 
   @LT-949_add
   Scenario: Add flag to case
-    Given I go to internal homepage
+    Given I create application or application has been previously created
+    And I go to internal homepage
     When I go to flags
     And I add a flag called "Needs" at level "Case"
     When I go to the internal homepage

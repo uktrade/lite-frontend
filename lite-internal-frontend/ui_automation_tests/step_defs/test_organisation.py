@@ -37,7 +37,7 @@ class OrganisationSteps():
     @when('I choose to add a new organisation for setup')
     def i_choose_to_add_a_new_organisation_setup(driver, context):
         organisations_page = OrganisationsPage(driver)
-        exists = utils.is_element_present(driver, By.XPATH, "//*[text()[contains(.,'Unicorns Ltd')]]")
+        exists = utils.is_element_present(driver, By.XPATH, "//*[text()[contains(.,'Test Org')]]")
         if exists:
             context.org_registered_status = True
         else:
@@ -59,7 +59,7 @@ class OrganisationSteps():
     def fill_out_company_details_page_and_continue(driver, name, eori, sic, vat, registration, context):
         if not context.org_registered_status:
             organisations_form_page = OrganisationsFormPage(driver)
-            if name == "Unicorns Ltd" or name == " ":
+            if name == "Test Org" or name == " ":
                 organisations_form_page.enter_name(name)
                 context.org_name = name
             else:

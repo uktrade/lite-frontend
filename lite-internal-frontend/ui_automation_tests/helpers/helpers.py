@@ -136,10 +136,29 @@ def get_element_index_by_text(elements, text: str):
     return element_number
 
 
+def get_element_index_by_partial_text(elements, text: str):
+    """
+    Loops through the list of elements, checks if the text is equal to
+    text and returns the index of it if so
+    """
+    no = 0
+    element_number = -1
+    while no < len(elements):
+        if text in elements[no].text:
+            element_number = no
+            break
+        no += 1
+
+    return element_number
+
+
 def wait_until_page_is_loaded(driver):
-    while True:
+    time_no = 0
+    while time_no < 60:
         if driver.execute_script("return document.readyState") == "complete":
             break
+        time.sleep(1)
+        time_no += 1
 
 
 def wait_until_menu_is_visible(driver):
