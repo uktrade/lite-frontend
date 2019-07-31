@@ -3,7 +3,7 @@
 {% load custom_tags %}
 
 {% block back_link %}
-	{% if page.back_link.url != '#' %}
+	{% if page.back_link.url != '#' or page.back_link.text != 'Back' %}
 		<a href="{{ page.back_link.url }}" class="govuk-back-link {% if persistent_bar.text %}lite-persistent-bar--back{% endif %}">{{ page.back_link.text }}</a>
 	{% else %}
 		{{ block.super }}
