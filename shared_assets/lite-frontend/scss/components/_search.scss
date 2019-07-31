@@ -5,20 +5,15 @@
 	max-width: 450px;
 	height: 40px;
 
-	::placeholder {
-		padding-top: 2px;
-	}
-
 	input[type="search"] {
 		display: inline-block;
 		width: 100%;
-		border: 2px solid black;
+		border: 2px solid $govuk-input-border-colour;
 		-webkit-appearance: textfield;
 		-moz-appearance: textfield;
 		appearance: textfield;
 		padding: 0 5px;
 		padding-left: 25px;
-		padding-top: 2px;
 	}
 
 	.lite-search-icon {
@@ -32,6 +27,9 @@
 	    justify-content: center;
 	    svg {
 	        max-height: 16px;
+			* {
+				fill: $govuk-input-border-colour;
+			}
 	    }
 	}
 
