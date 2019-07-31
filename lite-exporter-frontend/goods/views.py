@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
+from core.services import get_clc_notifications
 from goods import forms
 from goods.forms import edit_form
 from goods.services import get_goods, post_goods, get_good, update_good, delete_good
@@ -12,10 +13,13 @@ from libraries.forms.generators import form_page
 class Goods(TemplateView):
     def get(self, request, **kwargs):
         data, status_code = get_goods(request)
+        notifications, _ = get_clc_notifications(request, unviewed=True)
+        notifications_ids_list = [x['clc_query'] for x in notifications['results']]
 
         context = {
             'data': data,
             'title': 'Manage Goods',
+            'notifications_ids_list': notifications_ids_list,
         }
         return render(request, 'goods/index.html', context)
 

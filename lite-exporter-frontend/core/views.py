@@ -12,7 +12,6 @@ def hub(request):
     response, _ = get_clc_notifications(request, unviewed=True)
     num_clc_notifications = response['count']
 
-
     context = {
         'title': get_string('hub.title'),
         'sections': [

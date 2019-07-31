@@ -14,3 +14,13 @@ def get_application(request, pk):
 def post_application_notes(request, pk, json):
     data = post(request, '/cases/' + pk + '/case_notes/', json)
     return data.json(), data.status_code
+
+
+def get_notification_viewset(request):
+    data = get(request, '/users/notifications/')
+    return data.json(), data.status_code
+
+
+def get_clc_notification_viewset(request):
+    data = get(request, '/users/clc_notification-list')
+    return data.json(), data.status_code

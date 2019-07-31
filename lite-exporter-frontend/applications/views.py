@@ -3,20 +3,23 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
-from applications.services import get_applications, get_application, post_application_notes
+from applications.services import get_applications, get_application, post_application_notes, get_notification_viewset
 from libraries.forms.generators import error_page
+
+from core.services import get_notifications
 
 
 class ApplicationsList(TemplateView):
     def get(self, request, **kwargs):
         data, status_code = get_applications(request)
-
-        if status_code is not 200:
-            raise HttpResponse(status=status_code)
+        notifications, _ = get_notifications(request, unviewed=True)
+        print(notifications['results'])
+        notifications_ids_list = [x['application'] for x in notifications['results']]
 
         context = {
             'data': data,
             'title': 'Applications',
+            'notifications': notifications_ids_list,
         }
         return render(request, 'applications/index.html', context)
 

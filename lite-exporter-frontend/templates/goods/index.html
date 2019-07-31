@@ -10,7 +10,7 @@
 
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
-			<h2 class="govuk-heading-l">Goods</h2>
+			<h2 class="govuk-heading-l">{{ title }}</h2>
 		</div>
 		<div class="lite-app-bar__controls">
 			<a href="{% url 'goods:add' %}" id="add-a-good" class="govuk-button" draggable="false" role="button">
@@ -26,6 +26,7 @@
 					<th class="govuk-table__header" scope="col">Description</th>
 					<th class="govuk-table__header" scope="col">Part number</th>
 					<th class="govuk-table__header" scope="col">Control code</th>
+					<th class="govuk-table__header" scope="col"></th>
 					<th class="govuk-table__header" scope="col"></th>
 				</tr>
 			</thead>
@@ -49,6 +50,11 @@
                                 <a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:delete" pk=good.id %}">Delete</a>
                             {% else %}
                                 N/A: In application
+                            {% endif %}
+                        </td>
+                        <td class="govuk-table__cell">
+                            {% if notifications_ids_list|key_in_array:good.clc_query_id %}
+                                New notification
                             {% endif %}
                         </td>
 					</tr>
