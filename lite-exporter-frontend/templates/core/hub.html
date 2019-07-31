@@ -1,6 +1,6 @@
 {% extends 'layouts/base.html' %}
 
-{% block back-button %}
+{% block back_link %}
 	<div class="govuk-breadcrumbs">
 		<ol class="govuk-breadcrumbs__list">
 			<li class="govuk-breadcrumbs__list-item">
@@ -20,12 +20,12 @@
 		</div>
 	{% endif %}
 
-	<h1 class="govuk-heading-xl" style="margin-bottom: 25px;">
+	<span class="govuk-caption-xl">
+		{{ organisation.name }}
+	</span>
+	<h1 class="govuk-heading-xl">
         {{ title }}
     </h1>
-	<span class="govuk-caption-l" style="margin-bottom: 45px;">
-        {% get_string 'hub.description' %}
-    </span>
 
 	{% for section in sections %}
 		<section class="lite-hub-section">
@@ -33,7 +33,7 @@
 			<span class="govuk-caption-m">{{ section.description }}</span>
 			<div class="lite-tiles">
 				{% for tile in section.tiles %}
-					<a href="{{ tile.url }}" class="lite-tile">
+					<a href="{{ tile.url }}" class="lite-tile" role="button" draggable="false">
 						<h4>{{ tile.title }}</h4>
 						<p>{{ tile.description }}</p>
 					</a>

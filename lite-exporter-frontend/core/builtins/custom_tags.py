@@ -1,4 +1,5 @@
 import datetime
+import json
 import re
 
 import stringcase
@@ -8,6 +9,7 @@ from django.templatetags.tz import do_timezone
 from django.utils.safestring import mark_safe
 
 from conf.constants import ISO8601_FMT
+from conf.settings import env
 from core import strings
 
 register = template.Library()
@@ -15,6 +17,16 @@ register = template.Library()
 
 @register.simple_tag
 def get_string(value):
+    """
+    Given a string, such as 'cases.manage.attach_documents' it will return the relevant value
+    from the strings.json file
+    """
+
+    # Pull the latest changes from strings.json for faster debugging
+    if env('DEBUG'):
+        with open('lite-content/lite-exporter-frontend/strings.json') as json_file:
+            strings.constants = json.load(json_file)
+
     def get(d, keys):
         if "." in keys:
             key, rest = keys.split(".", 1)

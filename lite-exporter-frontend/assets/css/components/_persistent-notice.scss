@@ -15,8 +15,8 @@
 		width: 100vw;
 		transform: translateX(-50vw);
 		z-index: -1;
-		background-color: govuk-colour("grey-4");
-		border-bottom: 1px solid darken(govuk-colour("grey-4"), 3%);
+		background-color: govuk-colour("light-grey");
+		border-bottom: 1px solid darken(govuk-colour("light-grey"), 3%);
 	}
 
 	&:after {

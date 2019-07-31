@@ -1,0 +1,49 @@
+{% extends 'layouts/two_pane.html' %}
+
+{% block back-link %}{% endblock %}
+
+{% block two_thirds %}
+
+<h1 class="govuk-heading-xl">You'll need to sign in to apply for an export licence</h1>
+
+<p class="govuk-body">You'll need a GREAT account in order to use this service. The organisation that you work for will also need to add in order for you to use this service.</p>
+
+<br><br>
+
+<a href="{{ tile.url }}" class="govuk-button great-button" role="button" draggable="false">
+	Sign in with
+	<?xml version="1.0" encoding="UTF-8"?>
+	<svg width="180px" height="50px" viewBox="0 0 180 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+		<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+			<g id="Group">
+				<polygon id="Path" fill="#E41F13" points="13.493 48.805 179.579 48.805 179.579 0.64 13.493 0.64"></polygon>
+				<path d="M42.359,29.518 L36.766,29.518 L36.766,23.041 L49.288,23.041 L49.288,28.628 C49.288,37.528 43.398,42.573 35.381,42.573 C26.324,42.573 20.236,35.649 20.236,24.722 C20.236,14.192 26.572,6.873 35.629,6.873 C42.706,6.873 46.466,10.184 48.743,15.526 L42.161,18.246 C40.874,15.673 39.291,13.745 35.529,13.745 C30.334,13.745 27.363,18.295 27.363,24.722 C27.363,31.102 30.381,35.797 35.578,35.797 C41.293,35.797 42.137,32.243 42.358,30.558 C42.398,30.122 42.425,29.889 42.422,29.518 L42.359,29.518 Z M88.36,42.031 L88.36,7.417 L112.412,7.417 L112.412,14.192 L95.286,14.192 L95.286,21.359 L108.13,21.359 L108.13,28.084 L95.286,28.084 L95.286,35.254 L112.412,35.254 L112.412,42.031 L88.36,42.031 Z M141.355,42.031 L148.977,42.031 L135.813,7.417 L129.083,7.417 L115.819,42.031 L123.24,42.031 L125.837,34.661 L138.759,34.661 C140.222,38.821 141.355,42.031 141.355,42.031 Z M128.147,28.084 C130.195,22.247 132.139,16.663 132.299,16.07 C132.459,16.663 134.402,22.247 136.449,28.084 L128.147,28.084 Z M162.884,14.239 L162.884,42.029 L155.957,42.029 L155.957,14.239 L146.009,14.239 L146.009,7.417 L172.835,7.417 L172.835,14.239 L162.884,14.239 Z M71.04,23.041 L61.983,23.041 L61.983,14.14 L71.04,14.14 C74.108,14.14 75.988,15.426 75.988,18.54 C75.988,21.558 74.258,23.04 71.04,23.04 L71.04,23.041 Z M83.117,18.393 C83.117,11.025 77.721,7.417 71.189,7.417 L55.055,7.417 L55.055,42.031 L61.983,42.031 L61.983,29.565 L68.963,29.565 L75.149,42.031 L83.117,42.031 L76.482,28.581 C80.89,26.851 83.117,23.585 83.117,18.393 Z" id="Shape" fill="#FFFFFF" fill-rule="nonzero"></path>
+				<g id="Clipped" transform="translate(0.000000, 0.377000)" fill="#FFFFFF">
+					<polygon id="Path" points="0 48.428 10.316 48.428 10.316 0.263 0 0.263"></polygon>
+				</g>
+				<g id="Clipped" transform="translate(0.000000, 0.377000)" fill="#1E1348" fill-rule="nonzero">
+					<path d="M0.374,0.264 L5.564,10.666 L5.564,0.264 L0.374,0.264 Z M4.96,20.383 L0,10.448 L0,20.383 L4.96,20.383 Z M4.89,28.41 L0,28.41 L0,38.21 L4.89,28.41 Z M5.564,48.427 L5.564,38.032 L0.378,48.427 L5.564,48.427 Z" id="Shape"></path>
+				</g>
+				<g id="Clipped" transform="translate(0.000000, 4.377000)" fill="#B00D23" fill-rule="nonzero">
+					<path d="M5.564,15.781 L5.564,12.045 L0,0.858 L0,4.595 L5.564,15.781 Z M5.564,32.178 L5.564,28.442 L0,39.63 L0,43.367 L5.564,32.178 Z" id="Shape"></path>
+				</g>
+				<g id="Clipped" transform="translate(0.000000, 0.377000)" fill="#B00D23">
+					<polygon id="Path" points="7.14 0.263 7.14 21.958 0 21.958 0 26.837 7.14 26.837 7.14 48.428 10.317 48.428 10.317 0.263"></polygon>
+				</g>
+			</g>
+		</g>
+	</svg>
+</a>
+
+<!-- <br><br>
+
+<a href="{{ tile.url }}" class="govuk-button great-button" role="button" draggable="false">
+	Sign in with <span style="font-weight: bold; margin-left: 5px;">GREAT</span>
+</a> -->
+
+<br><br>
+
+<h3 class="govuk-heading-m">Don't have a GREAT account?</h3>
+<a href="#" class="govuk-body govuk-link govuk-link--no-visited-state">Create a GREAT account</a>
+
+{% endblock %}

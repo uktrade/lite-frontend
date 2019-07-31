@@ -1,10 +1,10 @@
 {% extends 'layouts/two_pane.html' %}
 
-{% load humanize custom_tags %}
+{% load humanize custom_tags svg %}
 
-{% block back-button %}{% endblock %}
+{% block back_link %}{% endblock %}
 
-{% block twoThirds %}
+{% block two_thirds %}
 
 <style media="screen">
 	.govuk-table__row {
@@ -119,7 +119,7 @@
 		<table class="govuk-table">
 			<tbody class="govuk-table__body">
 				<tr class="govuk-table__row">
-					<th class="govuk-table__header" scope="row">Name</th>
+					<th class="govuk-table__header" scope="row">Description</th>
                     <th class="govuk-table__header" scope="row">Part Number</th>
                     <th class="govuk-table__header" scope="row">Qty</th>
 					<th class="govuk-table__header" scope="row">Unit</th>
@@ -127,7 +127,7 @@
 				</tr>
 				{% for good in goods %}
 					<tr class="govuk-table__row">
-						<td class="govuk-table__cell" scope="row">{{ good.good.name }}</td>
+						<td class="govuk-table__cell" scope="row">{{ good.good.description }}</td>
                         <td class="govuk-table__cell" scope="row">{{ good.good.part_number }}</td>
                         <td class="govuk-table__cell" scope="row">{{ good.quantity }}</td>
                         <td class="govuk-table__cell" scope="row">{{ good.unit }}</td>
@@ -326,10 +326,66 @@
 </div>
 {% endif %}
 
+{% if draft.licence_type == 'standard_licence' and ultimate_end_users_required %}
+<div class="lite-section {% if errors|key_value:'ultimate_end_users' %}govuk-form-group--error{% endif %}">
+	<div class="lite-section-header">
+		<div>
+			<a id="ultimate_end_users" href="{% url 'apply_for_a_licence:ultimate_end_users' draft.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
+				Ultimate End Users
+			</a>
+		</div>
+
+		{% if ultimate_end_users %}
+			<div class="lite-info-label lite-info-label--blue">
+				Done
+			</div>
+		{% else %}
+			<div class="lite-info-label">
+				Not Started
+			</div>
+		{% endif %}
+	</div>
+	{% if errors|key_value:'ultimate_end_users' %}
+		<p class="govuk-error-message">
+			{{ errors|key_value:'ultimate_end_users' }}
+		</p>
+	{% endif %}
+	{% if ultimate_end_users %}
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="col">Name</th>
+                    <th class="govuk-table__header" scope="col">Type</th>
+                    <th class="govuk-table__header" scope="col">Website</th>
+					<th class="govuk-table__header" scope="col">Address</th>
+					<th class="govuk-table__header" scope="col">Country</th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				{% for ultimate_end_user in ultimate_end_users %}
+					<tr class="govuk-table__row">
+						<td class="govuk-table__cell">{{ ultimate_end_user.name }}</td>
+                        <td class="govuk-table__cell">{{ ultimate_end_user.type }}</td>
+                        <td class="govuk-table__cell">{{ ultimate_end_user.website }}</td>
+						<td class="govuk-table__cell">{{ ultimate_end_user.address }}</td>
+						<td class="govuk-table__cell">{{ ultimate_end_user.country }}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		<p class="govuk-caption-m">Add ultimate end users to your application</p>
+	{% endif %}
+</div>
+{% endif %}
+
 <div class="lite-submit-bar js-is-sticky">
-<a href="{% url 'apply_for_a_licence:delete' draft.id %}" class="cancel-link" style="float: right;" onclick="return showCancelApplication()">
-	Delete
-</a>
+<div class="lite-vertical-align" style="display: inline-flex; float: right; height: 38px;">
+	<a href="{% url 'apply_for_a_licence:delete' draft.id %}" class="lite-cancel-link" style="margin: 0; float: right;" onclick="return showCancelApplication()">
+		{% svg 'close' %}
+		Delete draft
+	</a>
+</div>
 <form method="post">
 	{% csrf_token %}
 	<button type="submit" class="govuk-button" name="button" data-prevent-double-click="true">Submit application</button>

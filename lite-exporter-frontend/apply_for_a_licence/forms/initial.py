@@ -14,12 +14,12 @@ initial_questions = Section('', '', [
     Form('Which export licence do you want to apply for?', 'Select one of the options.', [
         RadioButtons(name='licence_type',
                      options=[
-                         Option(key='standard_licence', value='Standard Individual Export Licence (SIEL)',
-                                description='SIELs are specific to the company and the recipient (consignee). '
+                         Option(key='standard_licence', value='Standard Licence',
+                                description='Standard Licences are specific to the company and the recipient (consignee). '
                                             'They are for a set quantity and set value of goods. '
                                             'You will need to provide support documentation with your application.'),
-                         Option(key='open_licence', value='Open Individual Export Licence (OIEL)',
-                                description='OIELs cover long-term projects and repeat business. '
+                         Option(key='open_licence', value='Open Licence',
+                                description='Open Licences cover long-term projects and repeat business. '
                                             'This is company specific, with no set quantity or value of goods. '
                                             'You will receive compliance audits under this type of licence.'),
                      ]),

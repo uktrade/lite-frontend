@@ -3,8 +3,8 @@ class SitesListOverview():
     def __init__(self, driver):
         self.driver = driver
         self.new_sites_link = self.driver.find_element_by_css_selector(".govuk-button[href*='new']")
-        self.edit_buttons = self.driver.find_elements_by_css_selector(".lite-table__cell .govuk-link")
-        self.table_cells = self.driver.find_elements_by_css_selector(".lite-table__cell")
+        self.edit_buttons = self.driver.find_elements_by_css_selector(".govuk-table__cell .govuk-link")
+        self.table_cells = self.driver.find_elements_by_css_selector(".govuk-table__cell")
 
 
     def click_new_sites_link(self):

@@ -9,7 +9,7 @@ Feature: I want to search for goods in my goods list to add to an in progress ap
     Given I go to exporter homepage
     When I click on goods link
     And I click add a good button
-    When I add a good or good type with description "Nickel Cadmium" controlled "Yes" control code "1234" incorporated "Yes" and part number "321"
+    When I add a good or good type with description "Nickel Cadmium" controlled "Yes" control code "1234" incorporated "No" and part number "321"
     And I go to exporter homepage
     And I click on apply for a license button
     And I click on start button
@@ -27,7 +27,7 @@ Feature: I want to search for goods in my goods list to add to an in progress ap
     Given I go to exporter homepage
     When I click on goods link
     And I click add a good button
-    And I add a good or good type with description "Nickel Cadmium" controlled "Yes" control code "1234" incorporated "Yes" and part number "999"
+    And I add a good or good type with description "Nickel Cadmium" controlled "Yes" control code "1234" incorporated "No" and part number "999"
     And I go to exporter homepage
     And I click on apply for a license button
     And I click on start button
@@ -45,7 +45,7 @@ Feature: I want to search for goods in my goods list to add to an in progress ap
     Given I go to exporter homepage
     When I click on goods link
     And I click add a good button
-    And I add a good or good type with description "Nickel Cadmium" controlled "Yes" control code "1234" incorporated "Yes" and part number "999"
+    And I add a good or good type with description "Nickel Cadmium" controlled "Yes" control code "1234" incorporated "No" and part number "999"
     And I go to exporter homepage
     And I click on apply for a license button
     And I click on start button

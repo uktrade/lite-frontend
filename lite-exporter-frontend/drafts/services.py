@@ -64,6 +64,22 @@ def post_end_user(request, pk, json):
     return data.json(), data.status_code
 
 
+# Ultimate End Users
+def get_ultimate_end_users(request, pk):
+    data = get(request, DRAFTS_URL + pk + '/ultimate-end-users/')
+    return data.json(), data.status_code
+
+
+def post_ultimate_end_user(request, pk, json):
+    data = post(request, DRAFTS_URL + pk + '/ultimate-end-users/', json)
+    return data.json(), data.status_code
+
+
+def delete_ultimate_end_user(request, pk, ueu_pk):
+    data = delete(request, DRAFTS_URL + pk + '/ultimate-end-users/' + ueu_pk)
+    return data.json(), data.status_code
+
+
 # Countries
 def get_draft_countries(request, pk):
     data = get(request, DRAFTS_URL + pk + '/countries/')

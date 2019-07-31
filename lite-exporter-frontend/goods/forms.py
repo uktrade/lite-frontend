@@ -45,9 +45,9 @@ add_goods_questions = Form(title='Add Good', description='', caption='', questio
                  description='',
                  name='is_good_end_product',
                  options=[
-                     Option(key='yes',
-                            value='Yes'),
                      Option(key='no',
+                            value='Yes'),
+                     Option(key='yes',
                             value='No')
                  ],
                  classes=['govuk-radios--inline']),

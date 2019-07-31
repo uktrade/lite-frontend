@@ -26,6 +26,8 @@ LITECommon.Modal = {
 			this.container = $("#modal-contents");
 			this.backButton = $("#modal-back-button");
 			this.closeButton = $("#modal-close-button");
+
+			this.backButton.hide();
 		}
 
 		// Show modal

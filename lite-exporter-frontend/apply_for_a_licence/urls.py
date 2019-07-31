@@ -42,4 +42,13 @@ urlpatterns = [
 
     # ex: /<uuid:pk>/end-user/
     path('<uuid:pk>/end-user/', common.EndUser.as_view(), name='end_user'),
+
+    # ex: /<uuid:pk>/ultimate-end-users/
+    path('<uuid:pk>/ultimate-end-users/', common.UltimateEndUsers.as_view(), name='ultimate_end_users'),
+
+    # ex: /<uuid:pk>/ultimate-end-users/add
+    path('<uuid:pk>/ultimate-end-users/add', common.AddUltimateEndUser.as_view(), name='add_ultimate_end_user'),
+
+    # ex: /<uuid:pk>/ultimate-end-users/remove
+    path('<uuid:pk>/ultimate-end-users/<uuid:ueu_pk>/remove', common.RemoveUltimateEndUser.as_view(), name='remove_ultimate_end_user')
 ]

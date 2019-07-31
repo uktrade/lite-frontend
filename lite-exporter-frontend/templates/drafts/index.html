@@ -1,8 +1,8 @@
 {% extends 'layouts/full_width.html' %}
 
-{% load humanize %}
+{% load humanize svg %}
 
-{% block back-button %}
+{% block back_link %}
 	<a href="/" class="govuk-back-link">Back to Hub</a>
 {% endblock %}
 
@@ -39,9 +39,6 @@
 						Goods
 					</th>
 					<th class="govuk-table__header">
-						Application Type
-					</th>
-					<th class="govuk-table__header">
 						Export Type
 					</th>
 					<th class="govuk-table__header">
@@ -52,9 +49,12 @@
 				{% for draft in data.drafts %}
 					<tr class="govuk-table__row">
 						<td class="govuk-table__cell">
-							<a class="govuk-link" href="{% url 'apply_for_a_licence:overview' draft.id %}">
+							<a class="govuk-link govuk-link--no-visited-state" style="font-weight: bold;" href="{% url 'apply_for_a_licence:overview' draft.id %}">
 								{{ draft.name }}
 							</a>
+							<p class="govuk-!-font-size-16" style="opacity: 0.7; margin: 0; margin-top: 5px;">
+								{{ draft.licence_type|sentence_case }}
+							</p>
 						</td>
 						<td class="govuk-table__cell">
 							{{ draft.last_modified_at|str_date }}
@@ -63,13 +63,13 @@
 							{{ draft.goods|length }} Good{{ draft.goods|length|pluralize }}
 						</td>
 						<td class="govuk-table__cell">
-							{{ draft.licence_type }}
+							{{ draft.export_type|sentence_case }}
 						</td>
 						<td class="govuk-table__cell">
-							{{ draft.export_type }}
-						</td>
-						<td class="govuk-table__cell">
-							<a href="{% url 'apply_for_a_licence:delete' draft.id %}" style="margin: 0;" class="cancel-link">Delete</a>
+							<a href="{% url 'apply_for_a_licence:delete' draft.id %}" style="margin: 0;" class="lite-cancel-link">
+								{% svg 'close' %}
+								Delete
+							</a>
 						</td>
 					</tr>
 				{% endfor %}

@@ -1,0 +1,61 @@
+{% extends 'layouts/full_width.html' %}
+
+{% load humanize %}
+
+{% block back_link %}
+<a href="{% url 'apply_for_a_licence:overview' draft_id %}" class="govuk-back-link">Back to Application</a>
+{% endblock %}
+
+{% block body %}
+
+{% if userDeactivated == "true" %}
+<div class="information information-animated">
+	{% get_string 'users.deleted' %}
+</div>
+{% endif %}
+
+<div class="lite-app-bar">
+	<div class="lite-app-bar__content">
+		<h1 class="govuk-heading-l">Ultimate End Users</h1>
+		<p class="govuk-caption-m">The entity that uses the product or the higher level system into which the goods are installed or incorporated. The End User and Ultimate End User may be different entities.</p>
+	</div>
+	<div class="lite-app-bar__controls">
+		<a href="{% url 'apply_for_a_licence:add_ultimate_end_user' draft_id %}" class="govuk-button" draggable="false" role="button">
+			Add an ultimate end user
+		</a>
+	</div>
+</div>
+
+{% if ultimate_end_users|length %}
+<table class="govuk-table">
+	<thead class="govuk-table__head">
+		<tr class="govuk-table__row">
+			<th class="govuk-table__header" scope="col">Name</th>
+			<th class="govuk-table__header" scope="col">Type</th>
+			<th class="govuk-table__header" scope="col">Website</th>
+			<th class="govuk-table__header" scope="col">Address</th>
+			<th class="govuk-table__header" scope="col">Country</th>
+			<th class="govuk-table__header" scope="col"></th>
+		</tr>
+	</thead>
+	<tbody class="govuk-table__body">
+		{% for ultimate_end_user in ultimate_end_users %}
+		<tr class="govuk-table__row">
+			<td class="govuk-table__cell">{{ ultimate_end_user.name }}</td>
+			<td class="govuk-table__cell">{{ ultimate_end_user.type }}</td>
+			<td class="govuk-table__cell">{{ ultimate_end_user.website }}</td>
+			<td class="govuk-table__cell">{{ ultimate_end_user.address }}</td>
+			<td class="govuk-table__cell">{{ ultimate_end_user.country }}</td>
+			<td class="govuk-table__cell">
+				<a href="{% url 'apply_for_a_licence:remove_ultimate_end_user' draft_id ultimate_end_user.id %}" style="margin: 0;" class="govuk-link">Remove</a>
+			</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% else %}
+	<hr class="lite-horizontal-separator">
+	<p class="govuk-caption-l">You haven't added any ultimate end users to your application</p>
+{% endif %}
+
+{% endblock %}

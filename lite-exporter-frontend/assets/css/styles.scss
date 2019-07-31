@@ -1,11 +1,7 @@
-$lite-transition-speed: 0.3s !default;
-// Set default page width
-$govuk-page-width: 1000px !default;
-// GOV.UK Design System
-@import "../../lite-shared-assets/node_modules/govuk-frontend/all";
-// LITE Shared Assets
-@import "../../lite-shared-assets/lite-frontend/scss/all";
-// Local Assets
+$lite-transition-speed: 0.3s !default; // Set default page width
+$govuk-page-width: 1000px !default; // GOV.UK Design System
+@import "../shared/node_modules/govuk-frontend/govuk/all"; // LITE Shared Assets
+@import "../shared/lite-frontend/scss/all"; // Local Assets
 @import "components/all";
 
 main {
@@ -31,7 +27,33 @@ main {
 		border-bottom: 1px solid rgb(230, 230, 230);
 		mask-image: linear-gradient(90deg, rgba(0, 0, 0, 1.0), transparent);
 		-webkit-mask-image: -webkit-linear-gradient(left, transparent, black 5%, black 95%, transparent 100%);
-		transition: .2s ease;
+		transition: 0.2s ease;
+	}
+}
+
+.great-button {
+	background-color: lighten(#1e1348, 20%);
+	box-shadow: 0 2px 0 #1e1348;
+	padding: 10px 15px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: 600;
+
+	&:hover {
+		background-color: lighten(#1e1348, 7.5%);
+		box-shadow: 0 2px 0 darken(#1e1348, 5%);
+	}
+
+	&:active {
+		background-color: #1e1348;
+		box-shadow: 0 2px 0 darken(#1e1348, 10%);
+	}
+
+	svg {
+		width: auto;
+		max-height: 20px;
+		margin-left: govuk-spacing(2);
 	}
 }
 
@@ -50,11 +72,11 @@ main {
 	@include govuk-font($size: 24, $weight: bold);
 	text-decoration: none;
 	margin-bottom: govuk-spacing(1);
+
 	&:hover {
-	    text-decoration: underline;
+		text-decoration: underline;
 	}
 }
-
 
 .no-borders {
 	margin: 0;

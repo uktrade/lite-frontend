@@ -1,5 +1,5 @@
 import datetime
-from pytest_bdd import scenarios, given, when, then, parsers, scenarios
+from pytest_bdd import when, then, parsers, scenarios
 from pages.apply_for_a_licence_page import ApplyForALicencePage
 from pages.application_goods_type_list import ApplicationGoodsTypeList
 from pages.add_end_user_pages import AddEndUserPages
@@ -100,12 +100,18 @@ def submit_the_application(driver, context):
     context.time_date_submitted = datetime.datetime.now().strftime("%I:%M%p").lstrip("0").replace(" 0", " ").lower() + datetime.datetime.now().strftime(" %d %B %Y")
 
 
-@then('I see no sites external sites or end user attached error message')
+@then('I see no goods external sites or end user attached error message')
 def i_see_no_sites_attached_error(driver):
     shared = Shared(driver)
     assert "Cannot create an application with no goods attached" in shared.get_text_of_error_message()
     assert "Cannot create an application with no sites or external sites attached" in shared.get_text_of_error_message(1)
     assert "Cannot create an application without an end user" in shared.get_text_of_error_message(2)
+
+
+@then('I see no ultimate end user attached error message')
+def i_see_no_ultimate_end_user_attached_error(driver):
+    shared = Shared(driver)
+    assert "Cannot create an application with no ultimate end users set when there is a good which is to be incorporated into an end product" in shared.get_text_of_error_message(2)
 
 
 @then('I see no sites good types or countries attached error message')
@@ -134,8 +140,9 @@ def click_add_to_application_button(driver, no, context):
 @then('I see enter valid quantity and valid value error message')
 def valid_quantity_value_error_message(driver):
     shared = Shared(driver)
-    assert "Error:\nEnter a valid value" in shared.get_text_of_error_message()
-    assert "Error:\nEnter a valid quantity" in shared.get_text_of_error_message(1)
+    assert "A valid number is required." in shared.get_text_of_error_message()
+    assert "Enter a valid quantity" in shared.get_text_of_error_message(1)
+    assert "Select a unit" in shared.get_text_of_error_message(2)
 
 
 @when('I click on the goods link from overview')
@@ -243,7 +250,7 @@ def i_should_see_a_list_of_countries(driver):
  #   api_data, status_code = get_countries(None)
     assert len(page_countries) == 274
  #   assert len(page_countries) == len(api_data['countries'])
-    assert driver.find_element_by_tag_name("h1").text == "Where are your goods going?", \
+    assert driver.find_element_by_tag_name("h2").text == "Where are your goods going?", \
         "Failed to go to countries list page"
 
 
@@ -346,6 +353,43 @@ def i_click_on_end_user(driver):
 @when('I click on application overview')
 def i_click_on_application_overview(driver):
     driver.find_element_by_css_selector("a[href*='overview'").click()
+
+
+@when('I click on ultimate end users')
+def i_click_on_application_overview(driver, add_an_incorporated_good_to_application):
+    app = ApplicationOverviewPage(driver)
+    app.click_ultimate_end_user_link()
+
+
+@when('I click on back to overview')
+def i_go_to_the_overview(driver):
+    app = ApplicationOverviewPage(driver)
+    app.click_on_back_to_overview_text()
+
+@when('I add a non incorporated good to application')
+def add_a_non_incorporated_good(driver, add_a_non_incorporated_good_to_application):
+    pass
+
+@when('I remove an ultimate end user so there is one less and return to the overview')
+def i_remove_an_ultimate_end_user(driver):
+    no_of_ultimate_end_users = len(driver.find_elements_by_css_selector('.govuk-table__row'))
+    driver.find_element_by_link_text('Remove').click()
+    total = no_of_ultimate_end_users-len(driver.find_elements_by_css_selector('.govuk-table__row'))
+    assert total == 1, "total on the ultimate end users summary is incorrect after removing ultimate end user"
+    app = ApplicationOverviewPage(driver)
+    app.click_on_back_to_overview_text()
+
+
+@when('I click on ultimate end users add button')
+def i_click_on_ultimate_end_user(driver):
+    driver.find_element_by_css_selector(".govuk-button").click()
+
+
+@then('there is only one ultimate end user')
+def one_ultimate_end_user(driver):
+    elements = driver.find_elements_by_css_selector(".lite-section")
+    no = utils.get_element_index_by_partial_text(elements, "Ultimate End Users")
+    assert len(elements[no].find_elements_by_css_selector(".govuk-table__row")) == 2, "total on the application overview is incorrect after removing ultimate end user"
 
 
 @then('I see end user on overview')

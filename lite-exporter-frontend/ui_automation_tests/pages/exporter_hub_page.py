@@ -142,14 +142,8 @@ class ExporterHubPage:
         self.driver.find_element_by_id("activity").clear()
         self.driver.find_element_by_id("activity").send_keys(activity)
 
-    def check_for_notification(self):
-        apps_button = self.driver.find_element_by_css_selector(self.applications_btn)
-        assert apps_button.is_displayed()
-        notification_text = self.driver.find_element_by_xpath("//*[text()[contains(.,'new notification')]]")
-        assert notification_text is not None
-
-    def check_for_no_notification(self):
-        apps_button = self.driver.find_element_by_css_selector(self.applications_btn)
-        assert apps_button.is_displayed()
-        assert 'new notification' not in apps_button.text
+    def return_number_of_notifications(self):
+        text_of_new_notifications = self.driver.find_element_by_css_selector('.lite-tiles [href="/applications/"] p').text
+        total_of_notifications = int((text_of_new_notifications.split('have '))[1].split(' new')[0])
+        return total_of_notifications
 

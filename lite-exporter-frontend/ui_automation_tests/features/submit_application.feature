@@ -4,6 +4,7 @@ Feature: I want to indicate the kind of licence I want
   I want to indicate the kind of licence I want
   So that I am more likely to get the correct kind of licence or the kind of licence I would like
 
+
   @LT-1091_draft
   Scenario: Apply for a licence to draft and delete
     Given I go to exporter homepage
@@ -29,17 +30,9 @@ Feature: I want to indicate the kind of licence I want
     And I select "organisation" for where my goods are located
     And I select the site at position "1"
     And I click continue
-    And I click on the goods link from overview
-    And I click the add from organisations goods button
-    And I click add to application for the good at position "1"
-    #Commenting out following steps due to bug - LT-1287 - uncomment when this is fixed
-    # And I click continue
-    # Then I see enter valid quantity and valid value error message
-    And I add values to my good of "1" quantity "123" and unit of measurement "Metres"
-    And I click continue
+    And I add a non incorporated good to application
     Then good is added to application
-    When I click overview
-    And I click on end user
+    When I click on end user
     And I add an end user of type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     Then I see end user on overview
     When I submit the application
@@ -48,8 +41,24 @@ Feature: I want to indicate the kind of licence I want
     And I click applications
     Then I see submitted application
 
+  @LT-928_error_message
+  Scenario: Error message for empty quantities.
+    Given I go to exporter homepage
+    When I click on apply for a license button
+    And I click on start button
+    And I enter in name for application and continue
+    And I select "standard" application and continue
+    And I select "permanent" option and continue
+    And I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
+    And I click on the goods link from overview
+    And I click the add from organisations goods button
+    And I click add to application for the good at position "1"
+    And I click continue
+    Then I see enter valid quantity and valid value error message
+
+
   @LT-1091_external
-  Scenario: Submit application with external locations
+  Scenario: Submit standard application with external locations
     Given I go to exporter homepage
     When I click on apply for a license button
     And I click on start button
@@ -67,14 +76,9 @@ Feature: I want to indicate the kind of licence I want
     When I click on preexisting locations
     And I select the location at position "2" in external locations list and continue
     And I click on application overview
-    And I click on the goods link from overview
-    And I click the add from organisations goods button
-    And I click add to application for the good at position "1"
-    And I add values to my good of "1" quantity "123" and unit of measurement "Metres"
-    And I click continue
+    And I add a non incorporated good to application
     Then good is added to application
-    When I click overview
-    And I click on end user
+    When I click on end user
     And I add an end user of type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I submit the application
     And I click applications
@@ -85,7 +89,7 @@ Feature: I want to indicate the kind of licence I want
     Given I go to exporter homepage
     When I click on goods link
     And I click add a good button
-    And I add a good or good type with description "Bazooka" controlled "Yes" control code "1234" incorporated "Yes" and part number "321"
+    And I add a good or good type with description "Bazooka" controlled "Yes" control code "1234" incorporated "No" and part number "321"
     And I go to exporter homepage
     And I click on apply for a license button
     And I click on start button
@@ -99,7 +103,7 @@ Feature: I want to indicate the kind of licence I want
     And I click continue
     And I click on the goods link from overview
     And I click Add goods type button
-    And I add a good or good type with description "Sniper" controlled "Yes" control code "1234" incorporated "Yes" and part number "empty"
+    And I add a good or good type with description "Sniper" controlled "Yes" control code "1234" incorporated "No" and part number "empty"
     Then I see my goods type added at position "1" with a description and a control code
     When I click overview
     Then I see my goods type added to the overview page with a description and a control code
@@ -107,7 +111,7 @@ Feature: I want to indicate the kind of licence I want
     And I click Add goods type button
     And I click continue
     Then I see good types error messages
-    When I add a good or good type with description "M4" controlled "Yes" control code "1234" incorporated "Yes" and part number "empty"
+    When I add a good or good type with description "M4" controlled "Yes" control code "1234" incorporated "No" and part number "empty"
     Then I see my goods type added at position "2" with a description and a control code
     When I click overview
     Then I see my goods type added to the overview page with a description and a control code
@@ -148,7 +152,7 @@ Feature: I want to indicate the kind of licence I want
     Given I go to exporter homepage
     When I click on goods link
     And I click add a good button
-    And I add a good or good type with description "AK47" controlled "Yes" control code "1234" incorporated "Yes" and part number "321"
+    And I add a good or good type with description "AK47" controlled "Yes" control code "1234" incorporated "No" and part number "321"
     And I go to exporter homepage
     And I click on apply for a license button
     And I click on start button
@@ -159,18 +163,6 @@ Feature: I want to indicate the kind of licence I want
     And I click on countries
     And I click continue
     Then error message is "You have to pick at least one country"
-
-  @LT-1091_no_site_selected
-  Scenario: Error message when not adding goods and sites information for standard application
-    Given I go to exporter homepage
-    When I click on apply for a license button
-    And I click on start button
-    And I enter in name for application and continue
-    And I select "standard" application and continue
-    And I select "permanent" option and continue
-    And I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
-    And I click continue
-    Then I see no sites external sites or end user attached error message
 
   @LT-1114_error
   Scenario: Error message when not adding goods and sites information for open application
@@ -243,3 +235,57 @@ Feature: I want to indicate the kind of licence I want
     When I add end user of address: "123 Home Street" and country "Ukraine"
     # Todo following step commented out due to bug
     # Then I see end user on overview
+
+  @LT-1042_happy_path
+  Scenario: Apply for a licence with ultimate end users
+    Given I go to exporter homepage
+    When I click on apply for a license button
+    And I click on start button
+    And I enter in name for application and continue
+    And I select "standard" application and continue
+    And I select "permanent" option and continue
+    And I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
+    And I click on ultimate end users
+    And I click on ultimate end users add button
+    And I add an end user of type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
+    And I click on ultimate end users add button
+    And I add an end user of type: "commercial", name: "Mr Jones", website: " ", address: "London" and country "Ukraine"
+    And I remove an ultimate end user so there is one less and return to the overview
+    Then there is only one ultimate end user
+    When I click on application locations link
+    And I select "organisation" for where my goods are located
+    And I select the site at position "1"
+    And I click continue
+    And I click on end user
+    And I add an end user of type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
+    And I submit the application
+    Then application is submitted
+    When I go to exporter homepage
+    And I click applications
+    Then I see submitted application
+
+  @LT-1042_unhappy_path @LT-1091_no_site_selected
+  Scenario: Apply for a licence with ultimate end users error message
+    Given I go to exporter homepage
+    When I click on apply for a license button
+    And I click on start button
+    And I enter in name for application and continue
+    And I select "standard" application and continue
+    And I select "permanent" option and continue
+    And I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
+    And I click on ultimate end users
+    And I click on back to overview
+    And I click continue
+    Then I see no ultimate end user attached error message
+
+  @LT-1114_error_when_no_goods_or_sites
+  Scenario: Apply for a licence with goods and sites error message
+    Given I go to exporter homepage
+    When I click on apply for a license button
+    And I click on start button
+    And I enter in name for application and continue
+    And I select "standard" application and continue
+    And I select "permanent" option and continue
+    And I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
+    And I click continue
+    Then I see no goods external sites or end user attached error message

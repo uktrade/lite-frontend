@@ -142,3 +142,19 @@ def get_element_index_by_text(elements, text: str):
         no += 1
 
     return element_number
+
+
+def get_element_index_by_partial_text(elements, text: str):
+    """
+    Loops through the list of elements, checks if the text is equal to
+    text and returns the index of it if so
+    """
+    no = 0
+    element_number = -1
+    while no < len(elements):
+        if text in elements[no].text:
+            element_number = no
+            break
+        no += 1
+
+    return element_number

@@ -15,10 +15,11 @@ def application_exists_case_note_added(add_an_application, internal_case_note):
     assert True
 
 
-@when('I can see a notification')
-def notification_exists(driver):
+@then('I can see a notification')
+def notification_exists(driver, context):
     exporter_hub_page = ExporterHubPage(driver)
-    exporter_hub_page.check_for_notification()
+    context.number_of_notifications = exporter_hub_page.return_number_of_notifications()
+    assert "You have " in driver.find_element_by_css_selector('.lite-tiles [href="/applications/"] p').text
 
 
 @when('I click on my application')
@@ -36,6 +37,8 @@ def internal_note_visible(driver, context):
 
 
 @then('I cannot see a notification')
-def notification_does_not_exist(driver):
+def notification_does_not_exist(driver, context):
     exporter_hub_page = ExporterHubPage(driver)
-    exporter_hub_page.check_for_no_notification()
+    if context.number_of_notifications != 1:
+        number_of_notifications_after_acknowledgment = exporter_hub_page.return_number_of_notifications()
+        assert number_of_notifications_after_acknowledgment+1 == context.number_of_notifications

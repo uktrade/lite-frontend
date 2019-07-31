@@ -1,9 +1,9 @@
 from django.urls import path
 
-from . import views
+from core import views
 
 app_name = 'core'
 urlpatterns = [
 	# ex: /
-	path('', views.hub, name='hub'),
+	path('', views.Hub.as_view(), name='hub'),
 ]

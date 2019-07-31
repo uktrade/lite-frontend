@@ -30,5 +30,5 @@ def update_good(request, pk, json):
 
 
 def delete_good(request, pk):
-    data = delete(request, GOODS_URL + pk)
+    data = delete(request, GOODS_URL + pk, json={})
     return data.json(), data.status_code

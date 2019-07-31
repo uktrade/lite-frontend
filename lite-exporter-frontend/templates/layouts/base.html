@@ -10,12 +10,12 @@
 
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-	<link rel="shortcut icon" sizes="16x16 32x32 48x48" href="/assets/images/favicon.ico" type="image/x-icon" />
-	<link rel="mask-icon" href="/assets/images/govuk-mask-icon.svg" color="#0b0c0c">
-	<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/govuk-apple-touch-icon-180x180.png">
-	<link rel="apple-touch-icon" sizes="167x167" href="/assets/images/govuk-apple-touch-icon-167x167.png">
-	<link rel="apple-touch-icon" sizes="152x152" href="/assets/images/govuk-apple-touch-icon-152x152.png">
-	<link rel="apple-touch-icon" href="/assets/images/govuk-apple-touch-icon.png">
+	<link rel="shortcut icon" sizes="16x16 32x32 48x48" href="{% static 'images/favicon.ico' %}" type="image/x-icon" />
+	<link rel="mask-icon" href="{% static 'images/govuk-mask-icon.svg' %}" color="#0b0c0c">
+	<link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/govuk-apple-touch-icon.png-180x180.png' %}">
+	<link rel="apple-touch-icon" sizes="167x167" href="{% static 'images/govuk-apple-touch-icon.png-167x167.png' %}">
+	<link rel="apple-touch-icon" sizes="152x152" href="{% static 'images/govuk-apple-touch-icon.png-152x152.png' %}">
+	<link rel="apple-touch-icon" href="{% static 'images/govuk-apple-touch-icon.png' %}">
 
 	<link href="{% sass_src 'css/styles.scss' %}" rel="stylesheet" type="text/css" />
 
@@ -25,7 +25,7 @@
 	'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 	})(window,document,'script','dataLayer','{{ ENVIRONMENT_VARIABLES.GOOGLE_ANALYTICS_KEY }}');</script>
 
-	<meta property="og:image" content="/assets/images/govuk-opengraph-image.png">
+	<meta property="og:image" content="{% static 'images/govuk-opengraph-image.png' %}">
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
@@ -68,7 +68,7 @@
 			{% if user.is_authenticated %}
 				<div id="lite-user-menu">
 
-					<div class="lite-user-menu-divider"></div>
+					<div class="lite-user-menu-divider" style="opacity: 0;"></div>
 
 					<a class="lite-user-menu-button" href="{% url 'users:profile' %}">
 						{{ user.first_name }}
@@ -100,7 +100,7 @@
 				</p>
 			</div>
 		{% endif %}
-		{% block back-button %}
+		{% block back_link %}
 			<a href="#" class="govuk-back-link {% if persistent_bar.text %}lite-persistent-bar--back{% endif %}">Back</a>
 		{% endblock %}
 		<main class="govuk-main-wrapper " id="main-content" role="main">
@@ -130,8 +130,8 @@
 	</footer>
 	{% endblock %}
 
-	<script src="{% static 'javascripts/all.js' %}"></script>
-	<script src="{% static 'javascripts/back-button.js' %}"></script>
+	<script src="{% static 'all.js' %}"></script>
+	<script src="{% static 'javascripts/back-link.js' %}"></script>
 
 	<script>
 		window.GOVUKFrontend.initAll()

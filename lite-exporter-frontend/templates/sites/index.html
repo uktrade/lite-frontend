@@ -2,7 +2,7 @@
 
 {% load humanize %}
 
-{% block back-button %}
+{% block back_link %}
 	<a href="/" class="govuk-back-link">Back to Hub</a>
 {% endblock %}
 
@@ -11,34 +11,35 @@
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
 			<h2 class="govuk-heading-l">{{ title }}</h2>
+            <p class="govuk-caption-m">{% get_string 'sites.description' %}</p>
 		</div>
 		<div class="lite-app-bar__controls">
 			<a href="{% url 'sites:new' %}" class="govuk-button" draggable="false" role="button">
-				Add a Site
+				{% get_string 'sites.create' %}
 			</a>
 		</div>
 	</div>
 
 	{% if data.sites|length %}
-		<table class="lite-table">
-			<thead class="lite-table__head">
-				<tr class="lite-table__row">
-					<th class="lite-table__header">
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header">
 						Name
 					</th>
-					<th class="lite-table__header">
+					<th class="govuk-table__header">
 						Address
 					</th>
-					<th class="lite-table__header"></th>
+					<th class="govuk-table__header"></th>
 				</tr>
 			</thead>
-			<tbody class="lite-table__head">
+			<tbody class="govuk-table__head">
 				{% for site in data.sites %}
-					<tr class="lite-table__row">
-						<td class="lite-table__cell">
+					<tr class="govuk-table__row">
+						<td class="govuk-table__cell" style="vertical-align: top;">
 							{{ site.name }}
 						</td>
-						<td class="lite-table__cell">
+						<td class="govuk-table__cell" style="vertical-align: top;">
 							{{ site.address.address_line_1 }}<br/>
 							{% if site.address.address_line_2 %}
 								{{ site.address.address_line_2 }}<br/>
@@ -47,8 +48,8 @@
 							{{ site.address.postcode }}<br/>
 							{{ site.address.country }}
 						</td>
-						<td class="lite-table__cell">
-							<a href="{% url 'sites:edit' site.id %}" class="govuk-link">Edit</a>
+						<td class="govuk-table__cell" style="vertical-align: top;">
+							<a href="{% url 'sites:edit' site.id %}" class="govuk-link govuk-link--no-visited-state">Edit</a>
 						</td>
 					</tr>
 				{% endfor %}
