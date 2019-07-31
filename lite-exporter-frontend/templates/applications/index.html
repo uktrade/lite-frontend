@@ -59,7 +59,7 @@
 						</td>
 						<td class="govuk-table__cell">{{ application.status|sentence_case }}</td>
 						<td class="govuk-table__cell">
-                            {% if notifications|key_in_array:application.id %}
+                            {% if application.id in notifications %}
                                 New notification
                             {% endif %}
                         </td>

@@ -53,7 +53,7 @@
                             {% endif %}
                         </td>
                         <td class="govuk-table__cell">
-                            {% if notifications_ids_list|key_in_array:good.clc_query_id %}
+                            {% if good.clc_query_id in notifications_ids_list %}
                                 New notification
                             {% endif %}
                         </td>
