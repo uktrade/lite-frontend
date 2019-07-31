@@ -46,6 +46,7 @@ class ExporterHub():
         self.type_choices = "type-"
         self.location_link = "location"
         self.end_user_link = "end_users"
+        self.ultimate_end_users_link = "ultimate_end_users"
         self.new_sites_link = ".govuk-button[href*='new']"
         self.name = "name"
         self.address_line_1 = "address.address_line_1"
@@ -54,9 +55,6 @@ class ExporterHub():
         self.region = "address.region"
         self.country = "address.country"
 
-
-    def go_to(self, url):
-        self.driver.get(url)
 
     def click_apply_for_a_licence(self):
         self.driver.find_element_by_css_selector(self.apply_for_a_licence_btn).click()
@@ -275,9 +273,9 @@ class ExporterHub():
 
     def select_is_your_good_intended_to_be_incorporated_into_an_end_product(self, option):
         if option == "Yes":
-            self.driver.find_element_by_id("is_good_end_product-yes").click()
-        else:
             self.driver.find_element_by_id("is_good_end_product-no").click()
+        else:
+            self.driver.find_element_by_id("is_good_end_product-yes").click()
 
     def enter_part_number(self, part_number):
         part_number_tb = self.driver.find_element_by_id("part_number")
@@ -298,9 +296,6 @@ class ExporterHub():
 
     def click_sites_link(self):
         self.driver.find_element_by_css_selector(self.sites_link).click()
-
-    def get_checked_attribute_of_sites_checkbox(self, no):
-        return self.driver.find_elements_by_css_selector(self.sites_checkbox)[no].get_attribute("checked")
 
     def enter_end_user_name(self, name):
         name_tb = self.driver.find_element_by_id("name")
@@ -335,6 +330,14 @@ class ExporterHub():
 
     def click_end_user_link(self):
         element = self.driver.find_element_by_id(self.end_user_link)
+        self.driver.execute_script("arguments[0].click();", element)
+
+    def click_ultimate_end_user_link(self):
+        element = self.driver.find_element_by_id(self.ultimate_end_users_link)
+        self.driver.execute_script("arguments[0].click();", element)
+
+    def click_add_ultimate_end_user(self):
+        element = self.driver.find_element_by_css_selector("a[href*='add']")
         self.driver.execute_script("arguments[0].click();", element)
 
     def click_new_sites_link(self):

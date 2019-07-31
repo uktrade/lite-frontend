@@ -57,7 +57,7 @@
 	a {
 		@include govuk-link-common;
 		@include govuk-font($size: 14, $weight: bold);
-		color: govuk-colour("grey-1");
+		color: govuk-colour("dark-grey");
 		text-decoration: none;
 		width: 105px;
 		box-sizing: border-box;
@@ -83,12 +83,12 @@
 			}
 		}
 		&:hover {
-			background-color: govuk-colour("grey-4");
+			background-color: govuk-colour("light-grey");
 			opacity: 1!important;
 			text-decoration: underline;
 		}
 		&:active {
-			background-color: govuk-colour("grey-3");
+			background-color: govuk-colour("light-grey");
 			opacity: 1!important;
 		}
 	}

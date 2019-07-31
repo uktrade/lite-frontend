@@ -94,3 +94,10 @@ Feature: I want to record the final decision overall on an application case
     And I click continue
     Then I see error message "Select at least one denial reason"
     And I reset the permissions
+
+
+  @LT-1042_can_see_ultimate_end_users
+  Scenario: Gov user can see ultimate end users in the destinations section of the case
+    Given I go to internal homepage
+    When I click on application previously created with pre incorporated goods
+    Then I see an ultimate end user

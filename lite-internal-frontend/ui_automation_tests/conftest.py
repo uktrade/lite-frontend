@@ -4,7 +4,7 @@ from pytest_bdd import given, when, then, parsers
 from fixtures.core import context, driver, sso_login_info, invalid_username, exporter_sso_login_info
 from fixtures.urls import exporter_url, internal_url, sso_sign_in_url
 from fixtures.register_organisation import register_organisation
-from fixtures.apply_for_application import apply_for_standard_application, apply_for_clc_query
+from fixtures.apply_for_application import apply_for_standard_application, apply_for_clc_query, apply_for_standard_application_with_ueu
 
 import helpers.helpers as utils
 from pages.flags_pages import FlagsPages
@@ -30,8 +30,8 @@ def pytest_addoption(parser):
     if env == 'None':
         env = "dev"
     parser.addoption("--driver", action="store", default="chrome", help="Type in browser type")
-    parser.addoption("--exporter_url", action="store", default="http://localhost:9000", help="url")
-    parser.addoption("--internal_url", action="store", default="http://localhost:8080", help="url")
+    parser.addoption("--exporter_url", action="store", default="https://exporter.lite.service." + env + ".uktrade.io/", help="url")
+    parser.addoption("--internal_url", action="store", default="https://internal.lite.service." + env + ".uktrade.io/", help="url")
     parser.addoption("--sso_sign_in_url", action="store", default="https://sso.trade.uat.uktrade.io/login/", help="url")
 
 
@@ -72,11 +72,17 @@ def go_to_exporter_when(driver, exporter_url):
 def login_to_exporter(driver, exporter_url, exporter_sso_login_info, register_organisation):
     driver.get(exporter_url)
     exporter_hub = ExporterHub(driver)
-    exporter_hub.login(exporter_sso_login_info['email'], exporter_sso_login_info['password'])
+    if "login" in driver.current_url:
+        exporter_hub.login(exporter_sso_login_info['email'], exporter_sso_login_info['password'])
 
 
 @when('I click on application previously created')
 def click_on_created_application(driver, context):
+    driver.find_element_by_css_selector('.lite-cases-table').find_element_by_xpath("//*[text()[contains(.,'" + context.app_id + "')]]").click()
+
+
+@when('I click on application previously created with pre incorporated goods')
+def click_on_created_application_with_ueu(driver, apply_for_standard_application_with_ueu, context):
     driver.find_element_by_css_selector('.lite-cases-table').find_element_by_xpath("//*[text()[contains(.,'" + context.app_id + "')]]").click()
 
 
@@ -88,6 +94,7 @@ def create_app(driver, register_organisation, apply_for_standard_application):
 @given('I create clc query or clc query has been previously created')
 def create_clc(driver, register_organisation, apply_for_clc_query):
     pass
+
 
 
 @when('I click submit button')
@@ -117,6 +124,7 @@ def click_new_site(driver):
 @when('I click continue')
 def i_click_continue(driver):
     driver.find_element_by_css_selector("button[type*='submit']").click()
+
 
 @when('I go to flags')
 def go_to_flags(driver):

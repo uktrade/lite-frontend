@@ -1,5 +1,5 @@
 .lite-heading-dropdown {
-	@include govuk-focusable-fill;
+	// @include govuk-focusable-fill;
 	position: relative;
 	display: none;
 	padding-right: 35px;
@@ -75,7 +75,7 @@
 }
 
 .lite-dropdown--item {
-	@include govuk-focusable-fill;
+	// @include govuk-focusable-fill;
 	position: relative;
 	display: block;
 	padding: 15px 20px;
@@ -95,12 +95,12 @@
 	}
 
 	&:hover {
-		background-color: govuk-colour("grey-4");
+		background-color: govuk-colour("light-grey");
 		text-decoration: underline;
 	}
 
 	&:active {
-		background-color: govuk-colour("grey-3");
+		background-color: govuk-colour("light-grey");
 	}
 
 	&:focus {

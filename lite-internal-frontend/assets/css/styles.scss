@@ -2,8 +2,8 @@
 $lite-transition-speed: 0.3s !default;
 $govuk-page-width: 1200px !default;
 $govuk-brand-colour: #28a197; // GOV.UK Design System
-@import "../../lite-shared-assets/node_modules/govuk-frontend/all"; // LITE Shared Assets
-@import "../../lite-shared-assets/lite-frontend/scss/all"; // Local Assets
+@import "../shared/node_modules/govuk-frontend/govuk/all"; // LITE Shared Assets
+@import "../shared/lite-frontend/scss/all"; // Local Assets
 @import "components/all";
 
 .govuk-tag {
@@ -32,5 +32,4 @@ $govuk-brand-colour: #28a197; // GOV.UK Design System
 	opacity: 1;
 	border: none;
 	background-color: currentColor;
-	height: 3px;
 }

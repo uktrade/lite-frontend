@@ -2,8 +2,8 @@
 .lite-case-note {
 	position: relative;
 	padding: govuk-spacing(4) govuk-spacing(4) 15px;
-	background-color: govuk-colour("grey-4");
-	border: 2px solid darken(govuk-colour("grey-4"), 3%);
+	background-color: govuk-colour("light-grey");
+	border: 2px solid darken(govuk-colour("light-grey"), 3%);
 	line-height: 1.5;
 	margin: 15px 0 20px 0;
 	word-break: break-all;
@@ -16,7 +16,7 @@
 }
 
 .lite-case-flags {
-	border: 2px solid govuk-colour("grey-4");
+	border: 2px solid govuk-colour("light-grey");
 	display: flex;
 	align-items: center;
 	justify-content: flex-start;
@@ -27,9 +27,9 @@
 
 .lite-flag {
 	@include govuk-font($size: 16);
-	background: govuk-colour("grey-4");
+	background: govuk-colour("light-grey");
 	padding: govuk-spacing(2) govuk-spacing(3);
 	margin-left: govuk-spacing(2);
 	margin-right: govuk-spacing(2);
-	border-bottom: 2px solid darken(govuk-colour("grey-4"), 2%)
+	border-bottom: 2px solid darken(govuk-colour("light-grey"), 2%)
 }

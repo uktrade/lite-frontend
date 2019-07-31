@@ -153,9 +153,38 @@
 
 <h3 class="govuk-heading-m">{% get_string 'cases.case.destination_heading' %}</h3>
 {% if data.case.application.destinations.type == 'end_user' %}
-	<p class="govuk-label">{{ data.case.application.destinations.data.name }}</p>
-	<p class="govuk-label">{{ data.case.application.destinations.data.type }}</p>
-	<p class="govuk-label">{{ data.case.application.destinations.data.address }}<br>{{ data.case.application.destinations.data.country }}</p>
+    <table class="lite-table" id="destinations">
+	<thead class="lite-table__head">
+		<tr class="lite-table__row">
+		  <th class="lite-table__header" scope="col">Name</th>
+          <th class="lite-table__header" scope="col">Destination Type</th>
+		  <th class="lite-table__header" scope="col">Type</th>
+          <th class="lite-table__header" scope="col">Website</th>
+		  <th class="lite-table__header" scope="col">Address</th>
+		  <th class="lite-table__header" scope="col">Country</th>
+		</tr>
+	</thead>
+	<tbody class="lite-table__body">
+        <tr class="lite-table__row">
+          <td class="lite-table__cell">{{ data.case.application.destinations.data.name }}</td>
+          <td class="lite-table__cell">End User</td>
+          <td class="lite-table__cell">{{ data.case.application.destinations.data.type }}</td>
+          <td class="lite-table__cell">{{ data.case.application.destinations.data.website|default:'None' }}</td>
+          <td class="lite-table__cell">{{ data.case.application.destinations.data.address }}</td>
+          <td class="lite-table__cell">{{ data.case.application.destinations.data.country }}</td>
+        </tr>
+        {% for ultimate_end_user in data.case.application.ultimate_end_users.data %}
+            <tr>
+              <td class="lite-table__cell">{{ ultimate_end_user.name }}</td>
+              <td class="lite-table__cell">Ultimate End User</td>
+              <td class="lite-table__cell">{{ ultimate_end_user.type }}</td>
+              <td class="lite-table__cell">{{ ultimate_end_user.website|default:'None' }}</td>
+              <td class="lite-table__cell">{{ ultimate_end_user.address }}</td>
+              <td class="lite-table__cell">{{ ultimate_end_user.country }}</td>
+            </tr>
+        {% endfor %}
+	</tbody>
+</table>
 {% else %}
 	{% for country in data.case.application.destinations.data %}
 		<p class="govuk-label">
@@ -199,8 +228,16 @@
 			{% for country in data.case.application.goods_locations.data %}
 				<tr class="lite-table__row">
 				  <td class="lite-table__cell" scope="row">{{ country.name }}</td>
-				  <td class="lite-table__cell">{{ country.address }}</td>
-				  <td class="lite-table__cell">{{ country.country }}</td>
+				  <td class="lite-table__cell">
+                      {{ country.address.address_line_1 }}<br>
+                      {% if country.address.address_line_2 %}
+                        {{ country.address.address_line_2 }}<br>
+                      {% endif %}
+                      {{ country.address.postcode }}<br>
+                      {{ country.address.city }}<br>
+                      {{ country.address.region }}<br>
+                  </td>
+				  <td class="lite-table__cell">{{ country.address.country }}</td>
 				</tr>
 			{% endfor %}
 		</tbody>
