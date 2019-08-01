@@ -96,7 +96,6 @@ def create_clc(driver, register_organisation, apply_for_clc_query):
     pass
 
 
-
 @when('I click submit button')
 def click_on_submit_button(driver):
     shared = Shared(driver)
@@ -106,7 +105,7 @@ def click_on_submit_button(driver):
 @then(parsers.parse('I see error message "{expected_error}"'))
 def error_message_shared(driver, expected_error):
     shared = Shared(driver)
-    assert expected_error in shared.get_text_of_error_message(), "expected error message is not displayed"
+    assert expected_error in shared.get_text_of_error_message(0), "expected error message is not displayed"
 
 
 @when('I click sites link')

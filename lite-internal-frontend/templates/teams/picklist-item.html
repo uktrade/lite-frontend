@@ -1,0 +1,38 @@
+{% extends 'layouts/base.html' %}
+
+{% block back_link %}
+	<a href="{% url 'picklists:picklists' %}?type={{ picklist_item.type.key }}" class="govuk-back-link">Back to picklist</a>
+{% endblock %}
+
+{% block body %}
+
+<div class="lite-app-bar">
+	<div class="lite-app-bar__content">
+		<h2 class="govuk-heading-l">{{ picklist_item.name }}</h2>
+	</div>
+	<div class="lite-app-bar__controls">
+		<a href="{% url 'picklists:edit' picklist_item.id %}" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+			Edit item
+		</a>
+	</div>
+</div>
+
+<p class="govuk-body">
+	<span class="govuk-caption-m" style="display: inline;">Created by</span>
+	<a class="govuk-link govuk-link--no-visited-state" href="{% url 'teams:team' picklist_item.team %}">{{ picklist_item.team_name }}</a>
+	<span class="govuk-caption-m" style="display: inline; margin: 0 2px;">-</span>
+	<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type={{ picklist_item.type.key }}">{{ picklist_item.type.value }}</a>
+	<span class="govuk-caption-m" style="display: inline; margin: 0 2px;">-</span>
+	{{ picklist_item.status.value }}
+	<span class="govuk-caption-m" style="display: inline;">- Last updated</span>
+	<span class="govuk-visually-hidden"> on </span>
+	{{ picklist_item.last_modified_at|str_date }}
+</p>
+
+<br>
+
+<p class="govuk-body" style="line-height: 1.8; max-width: 700px; white-space: normal; word-wrap: break-word;">
+	{{ picklist_item.text }}
+</p>
+
+{% endblock %}

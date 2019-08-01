@@ -38,8 +38,11 @@ def get_gov_users(request, params=None, convert_to_options=False):
     return data.json(), data.status_code
 
 
-def get_gov_user(request, pk):
-    data = get(request, GOV_USERS_URL + pk)
+def get_gov_user(request, pk=None):
+    if pk:
+        data = get(request, GOV_USERS_URL + pk)
+    else:
+        data = get(request, GOV_USERS_URL + 'me/')
     return data.json(), data.status_code
 
 

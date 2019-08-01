@@ -18,13 +18,13 @@ LITECommon.Modal = {
 				closeText = "";
 			}
 
-			$("body").append("<div id='modal-background'><div id='modal'><div id='modal-aria-description' class='govuk-visually-hidden'>Press escape to close this popover</div><div id='modal-header'><a id='modal-back-button' class='govuk-link' href='#'>Back</a>" + closeText + "</div><div id='modal-contents'></div></div></div>")
+			$("body").append("<div id='modal-background'><div id='modal'><div id='modal-aria-description' class='govuk-visually-hidden'>Press escape to close this popover</div><div id='modal-header'><a id='modal-back_link' class='govuk-link' href='#'>Back</a>" + closeText + "</div><div id='modal-contents'></div></div></div>")
 
 			// Bind
 			this.modalBackground = $("#modal-background");
 			this.modal = $("#modal");
 			this.container = $("#modal-contents");
-			this.backButton = $("#modal-back-button");
+			this.backButton = $("#modal-back_link");
 			this.closeButton = $("#modal-close-button");
 		}
 

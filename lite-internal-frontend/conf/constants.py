@@ -20,6 +20,7 @@ GOV_USERS_PERMISSIONS_URL = '/gov-users/permissions/'
 FLAGS_URL = '/flags/'
 FLAGS_CASE_LEVEL_FOR_TEAM = '/flags/?level=Case&team=True'
 CLC_QUERIES_URL = '/clc_queries/'
+PICKLIST_URL = '/picklist/'
 
 # Static URLs
 STATIC_URL = '/static/'

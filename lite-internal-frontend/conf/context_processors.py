@@ -24,6 +24,11 @@ def lite_menu(request):
                 'icon': 'menu/teams'
             },
             {
+                'title': 'My Team',
+                'url': '/team',
+                'icon': 'menu/teams'
+            },
+            {
 
                 'title': 'Queues',
                 'url': '/queues/',

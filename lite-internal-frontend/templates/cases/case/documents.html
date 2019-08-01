@@ -2,7 +2,7 @@
 
 {% load svg %}
 
-{% block back-button %}
+{% block back_link %}
 	<a href="{% url 'cases:case' case.id %}" class="govuk-back-link">{% get_string 'cases.back_to_case' %}</a>
 {% endblock %}
 

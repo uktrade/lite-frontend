@@ -2,26 +2,18 @@
 
 {% load humanize %}
 
-{% block back_link %}
-	<a href="/" class="govuk-back-link">Back</a>
-{% endblock %}
-
-	{% if userDeactivated == "true" %}
-		<div class="information information-animated">
-		</div>
-	{% endif %}
+{% block back_link %}{% endblock %}
 
 {% block body %}
 
-	<div class="lite-app-bar">
-		<h1 class="govuk-heading-l">{{ title }}</h1>
-	</div>
+	<h2 class="govuk-heading-l">{{ team.name }}</h2>
 
-
-	<div class="lite-tabs--fade">
-		<div class="lite-tabs">
-			<a class="lite-tabs__tab selected">Users</a>
-<!--			<a class="lite-tabs__tab">Queues</a>-->
+	<div style="display: grid; grid-template-columns: 1fr auto; grid-gap: 30px;">
+		<div class="lite-tabs--fade">
+			<div class="lite-tabs">
+				<a href="{% url 'teams:team' %}" class="lite-tabs__tab selected">Users</a>
+				<a href="{% url 'picklists:picklists' %}" class="lite-tabs__tab">Picklists</a>
+			</div>
 		</div>
 	</div>
 

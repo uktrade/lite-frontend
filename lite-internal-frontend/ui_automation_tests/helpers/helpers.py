@@ -13,7 +13,6 @@ now = d.strftime("%d-%m-%Y")
 path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir))
 screen_dir = os.path.join(path, "screenshot", str(now))
 
-
 def get_current_date_time_string():
     return datetime.now().strftime("%Y/%m/%d %H:%M:%S:%f")
 

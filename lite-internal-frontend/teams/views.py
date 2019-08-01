@@ -6,11 +6,30 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
+from users.services import get_gov_user
+
+
+class Team(TemplateView):
+    def get(self, request, **kwargs):
+        """
+        View the user's team
+        """
+        user, status_code = get_gov_user(request)
+        team, status_code = get_team(request, user['user']['team']['id'])
+        users, status_code = get_users_by_team(request, team['team']['id'])
+
+        context = {
+            'team': team['team'],
+            'title': 'Users - ' + team['team']['name'],
+            'users': users['users'],
+        }
+        return render(request, 'teams/own_team.html', context)
+
 
 class TeamsList(TemplateView):
-
     def get(self, request, **kwargs):
         data, status_code = get_teams(request)
+
         context = {
             'data': data,
             'title': 'Teams',

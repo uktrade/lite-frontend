@@ -54,3 +54,19 @@ def add_selected_class(key, url):
         return 'lite-menu-item--selected'
 
     return ''
+
+
+@register.filter()
+def add_selected_class(key, url):
+    if key in url:
+        return 'lite-menu-item--selected'
+
+    return ''
+
+
+@register.filter()
+def add_subnav_selected_class(key, url):
+    if key in url:
+        return 'lite-subnav__link--selected'
+
+    return ''
