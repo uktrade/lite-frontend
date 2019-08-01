@@ -4,7 +4,7 @@ Feature: I want to edit and remove goods on the goods list
     I want to add edit and remove goods on my goods list
     So that I can ensure the correct goods are listed on my goods list
 
-    @LT-928_edit
+    @LT_928_edit
     Scenario: Edit and delete good
         Given I go to exporter homepage
         When I click on goods link
@@ -16,7 +16,7 @@ Feature: I want to edit and remove goods on the goods list
         When I delete my good
         Then my good is no longer in the goods list
 
-    @LT-1006_add_clc_query_good
+    @LT_1006_add_clc_query_good
     Scenario: Add "I don't know" good
         Given I go to exporter homepage
         When I click on goods link

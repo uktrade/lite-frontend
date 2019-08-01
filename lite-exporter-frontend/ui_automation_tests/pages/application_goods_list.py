@@ -7,7 +7,7 @@ class ApplicationGoodsList:
     def __init__(self, driver):
         self.driver = driver
         self.add_from_org_goods_button = 'a.govuk-button[href*="add_preexisting"]' #css
-        self.add_to_application = driver.find_elements_by_css_selector('a.govuk-button')
+        self.add_to_application = 'a.govuk-button'
         self.overview_link = '.govuk-back-link' #css
         self.quantity_field = 'quantity' #id
         self.unit_dropdown = 'unit' #id
@@ -22,7 +22,7 @@ class ApplicationGoodsList:
         return self.driver.find_element_by_css_selector(self.add_from_org_goods_button).click()
 
     def click_add_to_application(self, no):
-        return self.add_to_application[no-1].click()
+        return self.driver.find_elements_by_css_selector(self.add_to_application)[no-1].click()
 
     def add_values_to_good(self, value, quantity, unit):
         self.driver.find_element_by_id(self.value_field).send_keys(value)

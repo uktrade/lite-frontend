@@ -5,7 +5,7 @@ Feature: I want to indicate the kind of licence I want
   So that I am more likely to get the correct kind of licence or the kind of licence I would like
 
 
-  @LT-1091_draft
+  @LT_1091_draft
   Scenario: Apply for a licence to draft and delete
     Given I go to exporter homepage
     When I click on apply for a license button
@@ -17,7 +17,7 @@ Feature: I want to indicate the kind of licence I want
     Then I see the application overview
     When I delete the application
 
-  @LT-1091_standard @setup
+  @LT_1091_standard @setup
   Scenario: Submit standard application
     Given I go to exporter homepage
     When I click on apply for a license button
@@ -41,7 +41,7 @@ Feature: I want to indicate the kind of licence I want
     And I click applications
     Then I see submitted application
 
-  @LT-928_error_message
+  @LT_928_error_message
   Scenario: Error message for empty quantities.
     Given I go to exporter homepage
     When I click on apply for a license button
@@ -57,7 +57,7 @@ Feature: I want to indicate the kind of licence I want
     Then I see enter valid quantity and valid value error message
 
 
-  @LT-1091_external
+  @LT_1091_external
   Scenario: Submit standard application with external locations
     Given I go to exporter homepage
     When I click on apply for a license button
@@ -84,7 +84,7 @@ Feature: I want to indicate the kind of licence I want
     And I click applications
     Then I see submitted application
 
-  @LT-1114
+  @LT_1114
   Scenario: Submit open application
     Given I go to exporter homepage
     When I click on goods link
@@ -133,7 +133,7 @@ Feature: I want to indicate the kind of licence I want
     And I click applications
     Then I see submitted application
 
-  @LT-1092_search
+  @LT_1092_search
   Scenario: Search for countries
     Given I go to exporter homepage
     When I go to exporter homepage
@@ -147,7 +147,7 @@ Feature: I want to indicate the kind of licence I want
     And I search for country "Canada"
     Then only "Canada" is displayed in country list
 
-  @LT-1092_error
+  @LT_1092_error
   Scenario: Error message when not adding countries
     Given I go to exporter homepage
     When I click on goods link
@@ -164,7 +164,7 @@ Feature: I want to indicate the kind of licence I want
     And I click continue
     Then error message is "You have to pick at least one country"
 
-  @LT-1114_error
+  @LT_1114_error
   Scenario: Error message when not adding goods and sites information for open application
     Given I go to exporter homepage
     When I click on apply for a license button
@@ -176,7 +176,7 @@ Feature: I want to indicate the kind of licence I want
     And I click continue
     Then I see no sites good types or countries attached error message
 
-  @LT-1091_no_fields
+  @LT_1091_no_fields
   Scenario: Error messages when not adding fields to applications
     Given I go to exporter homepage
     When I click on apply for a license button
@@ -196,7 +196,7 @@ Feature: I want to indicate the kind of licence I want
     And I delete the application
     Then I see the homepage
 
-  @LT-1091_external_validation
+  @LT-_1091_external_validation
   Scenario: Error messages with external empty validation
     Given I go to exporter homepage
     When I click on apply for a license button
@@ -211,7 +211,7 @@ Feature: I want to indicate the kind of licence I want
     And I fill in new external location form with name: " ", address: " " and country: " " and continue
     Then error message is "This field may not be blank."
 
-  @LT-1091_end_user_validation
+  @LT_1091_end_user_validation
   Scenario: Error messages with end user empty validation
     Given I go to exporter homepage
     When I click on apply for a license button
@@ -236,7 +236,7 @@ Feature: I want to indicate the kind of licence I want
     # Todo following step commented out due to bug
     # Then I see end user on overview
 
-  @LT-1042_happy_path
+  @LT_1042_happy_path
   Scenario: Apply for a licence with ultimate end users
     Given I go to exporter homepage
     When I click on apply for a license button
@@ -264,7 +264,7 @@ Feature: I want to indicate the kind of licence I want
     And I click applications
     Then I see submitted application
 
-  @LT-1042_unhappy_path @LT-1091_no_site_selected
+  @LT_1042_unhappy_path
   Scenario: Apply for a licence with ultimate end users error message
     Given I go to exporter homepage
     When I click on apply for a license button
@@ -278,7 +278,7 @@ Feature: I want to indicate the kind of licence I want
     And I click continue
     Then I see no ultimate end user attached error message
 
-  @LT-1114_error_when_no_goods_or_sites
+  @LT_1114_error_when_no_goods_or_sites
   Scenario: Apply for a licence with goods and sites error message
     Given I go to exporter homepage
     When I click on apply for a license button

@@ -3,7 +3,7 @@ Feature: I want to see externally visible case notes
   As a logged in exporter
   I want to view externally added case notes added by an internal gov user
 
-  @LT-912-view
+  @LT_912-view
   Scenario: View a added internal case notes
     Given I go to exporter homepage
     When An application exists and a case note has been added via internal gov site

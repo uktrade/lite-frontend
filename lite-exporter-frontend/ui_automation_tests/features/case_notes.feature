@@ -4,7 +4,7 @@ Feature: I want to add a note to an application and view notes
   I want to add a note to an application and view existing notes
   So that I can record my findings and comments and others users can see these
 
-  @LT-1119_add
+  @LT_1119_add
   Scenario: Add a new valid case note
     Given I go to exporter homepage
     When I click on applications
@@ -14,7 +14,7 @@ Feature: I want to add a note to an application and view notes
     And I click post note
     Then note is displayed
 
-  @LT-1119_max
+  @LT_1119_max
   Scenario: Add a case note filled to max with space characters
     Given I go to exporter homepage
     When I click on applications
@@ -23,7 +23,7 @@ Feature: I want to add a note to an application and view notes
     And I click post note
     Then maximum case error is displayed
 
-  @LT-1119_too_many
+  @LT_1119_too_many
   Scenario: Add a case note with too many characters
     Given I go to exporter homepage
     When I click on applications
@@ -34,7 +34,7 @@ Feature: I want to add a note to an application and view notes
     Then case note warning is "You have 1 character too many"
     And post note is disabled
 
-  @LT-1119_cancel
+  @LT_1119_cancel
   Scenario: Case note cancel button
     Given I go to exporter homepage
     When I click on applications

@@ -4,7 +4,7 @@ Feature: I want to search for goods in my goods list to add to an in progress ap
   I want to search for goods in my goods list to add to an in progress application
   So that I can quickly and easily complete my application for types of goods I have exported before
 
-  @LT-1159_desc
+  @LT_1159_desc
   Scenario: Search for goods by description
     Given I go to exporter homepage
     When I click on goods link
@@ -22,7 +22,7 @@ Feature: I want to search for goods in my goods list to add to an in progress ap
     And I filter by description and click filter
     Then I see my added Good by "description"
 
-  @LT-1159_part
+  @LT_1159_part
   Scenario: Search for goods by part number
     Given I go to exporter homepage
     When I click on goods link
@@ -40,7 +40,7 @@ Feature: I want to search for goods in my goods list to add to an in progress ap
     And I filter by part number and click filter
     Then I see my added Good by "part number"
 
-  @LT-1159_remove
+  @LT_1159_remove
   Scenario: Remove filter
     Given I go to exporter homepage
     When I click on goods link

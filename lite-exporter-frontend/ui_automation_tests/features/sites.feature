@@ -4,7 +4,7 @@ Feature: I  want to add and rename my sites
   I want to add and rename sites
   So that an application can be made from one of those sites
 
-  @LT-933_add
+  @LT_933_add
   Scenario: Add a site
     Given I go to exporter homepage
     When I click sites link
@@ -13,7 +13,7 @@ Feature: I  want to add and rename my sites
     And I click continue
     Then I see sites list
 
-  @LT-933_edit
+  @LT_933_edit
   Scenario: Edit a site
     Given I go to exporter homepage
     When I click sites link
@@ -26,7 +26,7 @@ Feature: I  want to add and rename my sites
     And I clear the fields for the site
     And I enter in text for new site "HQ 2" "4 Privet Drive" "SU1 1BB" "Surrey" "Surrey" and "Ukraine"
 
-  @LT-933_error
+  @LT_933_error
   Scenario: Test clicking continue when not adding a site
     Given I go to exporter homepage
     When I click on apply for a license button
@@ -38,7 +38,7 @@ Feature: I  want to add and rename my sites
     And I click continue
     Then I see select a site error message
 
-  @LT-933_change
+  @LT_933_change
   Scenario: Test changing sites
     Given I go to exporter homepage
     When I click sites link
