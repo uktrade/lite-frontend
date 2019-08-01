@@ -80,7 +80,11 @@
 		<div class="govuk-form-group">
 			<div class="buttons-row">
 				{% for button in page.buttons %}
-					<button type="submit" class="{{ button.style.value }}" action="submit">{{ button.value }}</button>
+					{% if button.link %}
+						<a href="{{ button.link }}" role="button" draggable="false" data-module="govuk-button" class="{{ button.style.value }}" {% if button.float_right %}style="float: right;"{% endif %} action="submit">{{ button.value }}</a>
+					{% else %}
+						<button type="submit" class="{{ button.style.value }}" {% if button.float_right %}style="float: right;"{% endif %} action="submit">{{ button.value }}</button>
+					{% endif %}
 				{% endfor %}
 			</div>
 		</div>

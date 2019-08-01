@@ -33,10 +33,12 @@ class HeadingStyle(Enum):
 
 
 class Button:
-    def __init__(self, value, action, style=ButtonStyle.DEFAULT):
+    def __init__(self, value, action, style=ButtonStyle.DEFAULT, link=None, float_right=False):
         self.value = value
         self.action = action
         self.style = style
+        self.link = link
+        self.float_right = float_right
 
 
 class Section:
@@ -228,6 +230,7 @@ class Group:
     """
     Groups components together inside of a div
     """
+
     def __init__(self, name, components):
         self.input_type = 'group'
         self.name = name
@@ -238,6 +241,7 @@ class Filter:
     """
     Filters a list of checkboxes based on title and description
     """
+
     def __init__(self, placeholder: str = 'Filter'):
         """
         :type placeholder: Sets the placeholder text on the input field

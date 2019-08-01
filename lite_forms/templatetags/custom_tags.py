@@ -22,9 +22,14 @@ def key_in_array(data, key):
     if isinstance(data, bool):
         return data
 
+    print('banana poop')
+
     # If data is a dict, check the id
     if isinstance(data, dict):
-        return data['id'] == key
+        if 'id' in data:
+            return data['id'] == key
+        if 'key' in data:
+            return data['key'] == key
 
     # If data is a list, check for the key
     if isinstance(data, list):
