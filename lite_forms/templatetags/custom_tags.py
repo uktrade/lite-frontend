@@ -22,8 +22,6 @@ def key_in_array(data, key):
     if isinstance(data, bool):
         return data
 
-    print('banana poop')
-
     # If data is a dict, check the id
     if isinstance(data, dict):
         if 'id' in data:
