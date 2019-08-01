@@ -1,0 +1,46 @@
+.lite-subnav {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+
+	hr {
+		display: block;
+		height: 2px;
+		background-color: govuk-colour("mid-grey");
+		border: none;
+	}
+}
+
+.lite-subnav__link {
+	position: relative;
+	display: block;
+
+	& > a {
+		line-height: 45px;
+		text-decoration: none;
+
+		&:hover {
+			text-decoration: underline;
+			&:after {
+				background-color: govuk-colour("mid-grey");
+			}
+		}
+
+		&:after {
+			content: "";
+			position: absolute;
+			top: 8px;
+			left: -16px;
+			bottom: 8px;
+			width: 4px;
+		}
+	}
+}
+
+.lite-subnav__link--selected {
+	font-weight: bold;
+
+	& > a:after {
+		background-color: $govuk-link-colour!important;
+	}
+}
