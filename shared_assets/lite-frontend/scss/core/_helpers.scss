@@ -21,3 +21,13 @@
 	margin: govuk-spacing(3) 0 govuk-spacing(7) 0;
 	border: none;
 }
+
+.lite-buttons-row {
+	& > * {
+		margin-left: govuk-spacing(3);
+
+		&:first-child {
+			margin-left: 0!important;
+		}
+	}
+}
