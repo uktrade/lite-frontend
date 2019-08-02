@@ -5,11 +5,47 @@ from pages.exporter_hub import ExporterHub
 from conf.settings import env
 import helpers.helpers as utils
 
+from helpers.seed_data import SeedData
+from helpers.utils import Timer, get_or_create_attr
+
 
 @fixture(scope="session")
 def apply_for_standard_application(driver, request, context):
+    timer = Timer()
+    api = get_or_create_attr(context, 'api', lambda: SeedData(logging=True))
+
+    app_time_id = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    context.app_time_id = app_time_id
+
+    api.add_draft(
+        draft={
+            "name": "Test Application " + app_time_id,
+            "licence_type": "standard_licence",
+            "export_type": "permanent",
+            "have_you_been_informed": "yes",
+            "reference_number_on_information_form": "1234"}, 
+        good={
+            "good_id": "",
+            "quantity": 1234,
+            "unit": "MTR",
+            "value": 1},
+        enduser={
+            "name": "Mr Smith",
+            "address": "London",
+            "country": "UA",
+            "type": "government",
+            "website": "https://www.smith.com"
+        }
+    )
+    api.submit_application()
+    context.app_id = api.context['application_id']
+    timer.print_time('apply_for_standard_application')
+
+
+@fixture(scope="session")
+def apply_for_standard_application_old(driver, request, exporter_url, context):
     exporter_hub = ExporterHub(driver)
-    driver.get(request.config.getoption("--exporter_url"))
+    driver.get(exporter_url)
     if "login" in driver.current_url:
         exporter_hub.login(env('TEST_EXPORTER_SSO_EMAIL'),
                            env('TEST_EXPORTER_SSO_PASSWORD'))

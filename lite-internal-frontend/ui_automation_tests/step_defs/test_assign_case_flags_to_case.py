@@ -1,6 +1,6 @@
 import helpers.helpers as utils
 from pages.shared import Shared
-from pytest_bdd import given, when, then, scenarios
+from pytest_bdd import given, when, then, scenarios, parsers
 from pages.assign_flags_to_case import CaseFlagsPages
 from pages.flags_pages import FlagsPages
 from pages.application_page import ApplicationPage
@@ -42,10 +42,10 @@ def count_active_flags(driver, context):
     context.number_of_assigned_flags = number_of_assigned_flags
 
 
-@when('I assign flags to the case')
+@when('I select previously created flag')
 def assign_flags_to_case(driver, context):
     case_flags_pages = CaseFlagsPages(driver)
-    case_flags_pages.assign_flags(context)
+    case_flags_pages.select_flag(context, context.flag_name)
     shared = Shared(driver)
     shared.click_submit()
 
@@ -53,7 +53,7 @@ def assign_flags_to_case(driver, context):
 @when("I unassign flags from the case")
 def unassign_flags_from_case(driver, context):
     case_flags_pages = CaseFlagsPages(driver)
-    case_flags_pages.assign_flags(context)
+    case_flags_pages.select_flag(context, context.flag_name)
     shared = Shared(driver)
     shared.click_submit()
 
@@ -64,7 +64,23 @@ def assert_number_of_flags(driver, context):
     assert number_of_assigned_flags == context.number_of_assigned_flags, "number of assigned flags has changed"
 
 
-@then("Number of assigned flags has increased")
-def assert_number_of_flags_has_increased(driver, context):
+@then(parsers.parse("Number of assigned flags is '{flagcount}'"))
+def assert_number_of_flags_has_increased(driver, context, flagcount):
     number_of_assigned_flags = FlagsPages(driver).get_size_of_number_of_assigned_flags()
-    assert number_of_assigned_flags == context.number_of_assigned_flags + 1, "number of assigned flags has not increased"
+    assert str(number_of_assigned_flags) == flagcount, "number of assigned flags is not "+flagcount
+    
+    
+@then('The previously created flag is assigned to the case')
+def assert_flag_is_assigned(driver, context):
+    application_page = ApplicationPage(driver)
+    exists = application_page.is_flag_applied(context.flag_name)
+    assert exists is True
+
+
+@then('The previously created flag is not assigned to the case')
+def assert_flag_is_assigned(driver, context):
+    application_page = ApplicationPage(driver)
+    driver.timeout_off()
+    exists = application_page.is_flag_applied(context.flag_name)
+    driver.timeout_on()
+    assert exists is False

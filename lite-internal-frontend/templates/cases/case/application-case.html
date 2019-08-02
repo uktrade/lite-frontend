@@ -32,10 +32,10 @@
 
 <!-- # TODO: Create modal for clients with JS enabled -->
 <!-- <a href="{% url 'cases:assign_flags' data.case.id %}" class="govuk-link govuk-link--no-visited-state" onclick="return showFlagsModal();">Edit case flags</a> -->
-<a href="{% url 'cases:assign_flags' data.case.id %}" class="govuk-link govuk-link--no-visited-state">{{  edit_case_flags }}</a>
-<div class="lite-case-flags">
+<a href="{% url 'cases:assign_flags' data.case.id %}" id="application-edit-case-flags" class="govuk-link govuk-link--no-visited-state">{{  edit_case_flags }}</a>
+<div class="lite-case-flags" id="application-case-flags">
     {% for flag in data.case.flags %}
-        <div class="lite-flag">
+        <div class="lite-flag" id="{{ flag.name }}">
             {{ flag.name }}
         </div>
     {% endfor %}
