@@ -47,24 +47,3 @@
 	display: table-caption;
 	text-align: left;
 }
-
-.lite-table__chevron {
-	cursor: pointer;
-	&:hover {
-		opacity: .7;
-	}
-	&:active {
-		opacity: .5;
-	}
-	&:after {
-		content: "";
-		display: inline-block;
-		width: 18px;
-		height: 10px;
-		margin-left: 2px;
-		background-image: url("/assets/images/chevron.svg");
-		background-size: 12px 6px;
-		background-position: 0 2px;
-		background-repeat: no-repeat;
-	}
-}
