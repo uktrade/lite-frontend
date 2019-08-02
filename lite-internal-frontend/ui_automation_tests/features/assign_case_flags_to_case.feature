@@ -4,7 +4,7 @@ Feature: I want to add case-level flags to a case and view them
   I want to toggle one or more flags on and off a case to highlight key features
   So that all users viewing the case can quickly and easily see the aspects which might require more attention
 
-  @LT-949_add
+  @LT_949_add
   Scenario: Add flag to case
     Given I create application or application has been previously created
     And I go to internal homepage

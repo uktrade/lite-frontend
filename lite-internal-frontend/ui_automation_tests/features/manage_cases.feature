@@ -7,7 +7,7 @@ Feature: I want to record the final decision overall on an application case
   I want to: update the status of an application case
   So that: interested users can see the progress of the application case and whether it is complete
 
-  @LT-909_status
+  @LT_909_status
   Scenario: Change status to Under Review
     Given I create application or application has been previously created
     And I go to internal homepage
@@ -21,7 +21,7 @@ Feature: I want to record the final decision overall on an application case
     And I click applications
     Then the status has been changed in exporter
 
-  @LT-957_record
+  @LT_957_record
   Scenario: Record decision
     Given I create application or application has been previously created
     And I go to internal homepage
@@ -49,7 +49,7 @@ Feature: I want to record the final decision overall on an application case
     Then I see application "denied"
     And I reset the permissions
 
-  @LT-957_optional
+  @LT_957_optional
   Scenario: Record decision without optional text
     Given I create application or application has been previously created
     And I go to internal homepage
@@ -64,7 +64,7 @@ Feature: I want to record the final decision overall on an application case
     Then I see application "denied"
     And I reset the permissions
 
-  @LT-957_multiple
+  @LT_957_multiple
   Scenario: Record decision with multiple decision
     Given I create application or application has been previously created
     And I go to internal homepage
@@ -81,7 +81,7 @@ Feature: I want to record the final decision overall on an application case
     Then I see application "denied"
     And I reset the permissions
 
-  @LT-957_error
+  @LT_957_error
   Scenario: Record decision validation
     Given I create application or application has been previously created
     And I go to internal homepage
@@ -96,7 +96,7 @@ Feature: I want to record the final decision overall on an application case
     And I reset the permissions
 
 
-  @LT-1042_can_see_ultimate_end_users
+  @LT_1042_can_see_ultimate_end_users
   Scenario: Gov user can see ultimate end users in the destinations section of the case
     Given I go to internal homepage
     When I click on application previously created with pre incorporated goods

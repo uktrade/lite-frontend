@@ -5,7 +5,7 @@ Feature: I want to add a company to LITE
   So that the new company can make applications
 
 
-  @LT-934sites
+  @LT_934sites
   Scenario: Register site
     Given I go to exporter homepage
     When I login to exporter homepage
@@ -18,7 +18,7 @@ Feature: I want to add a company to LITE
     And I click on my registered organisation
     Then my new site is displayed
 
-  @LT-934_test
+  @LT_934_test
   Scenario: Test organisation
     Given I go to internal homepage
     When I go to organisations
@@ -28,7 +28,7 @@ Feature: I want to add a company to LITE
     And I setup the admin user with email: "TestBusinessForSites@mail.com", first name: "Trinity", last name: "Fishburne"
     Then organisation is registered
 
-  @LT-934_error
+  @LT_934_error
   Scenario: Organisation registration validation
     Given I go to internal homepage
     When I go to organisations

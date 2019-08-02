@@ -5,7 +5,7 @@ Feature: I want to define new work queues and the teams they belong to
   So that new government departments and teams within departments which require their own work queues can easily have one
 
 
-  @LT-919_add
+  @LT_919_add
   Scenario: Add and edit a new queue
     Given I go to internal homepage
     When I go to queues
@@ -15,7 +15,7 @@ Feature: I want to define new work queues and the teams they belong to
     When I go to the internal homepage
     And I click on new queue in dropdown
 
-  @LT-919_edit
+  @LT_919_edit
   Scenario: Edit a new queue
     Given I go to internal homepage
     When I go to queues
@@ -26,7 +26,7 @@ Feature: I want to define new work queues and the teams they belong to
     When I go to the internal homepage
     And I click on new queue in dropdown
 
-  @LT-919_empty_validation
+  @LT_919_empty_validation
   Scenario: Add empty queue
     Given I go to internal homepage
     When I go to queues
@@ -34,7 +34,7 @@ Feature: I want to define new work queues and the teams they belong to
     And I enter in queue name " "
     Then I see error message "Give the queue a valid name"
 
-  @LT-1125_move_cases
+  @LT_1125_move_cases
   Scenario: Move case to new queue and remove from new queue
     Given I create application or application has been previously created
     And I go to internal homepage
@@ -54,7 +54,7 @@ Feature: I want to define new work queues and the teams they belong to
     Then I dont see previously created application
 
 
-  @LT-1125_move_cases_clc_query
+  @LT_1125_move_cases_clc_query
   Scenario: Move CLC Query to different queue
     Given I create clc query or clc query has been previously created
     And I go to internal homepage
@@ -73,7 +73,7 @@ Feature: I want to define new work queues and the teams they belong to
     Then I dont see previously created application
 
 
-  @LT-1125_error
+  @LT_1125_error
   Scenario: Move cases error message when not selecting any queues
     Given I create application or application has been previously created
     And I go to internal homepage

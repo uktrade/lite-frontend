@@ -16,8 +16,8 @@ class ApplicationPage():
         self.documents_btn = '.govuk-button[href*="documents"]'  # css
         self.progress_app_btn = '.govuk-button[href*="manage"]'
         self.record_decision_btn = '.govuk-button[href*="decide"]'  # css
-        self.headers = self.driver.find_elements_by_css_selector(".lite-heading-s")  # css
-        self.activity_case_note_subject = self.driver.find_elements_by_css_selector(".lite-activity-item .govuk-body")
+        self.headers = ".lite-heading-s"  # css
+        self.activity_case_note_subject = ".lite-activity-item .govuk-body"
         self.activity_dates = ".lite-activity-item .govuk-hint"
         self.activity_user = ".user"
         self.is_visible_to_exporter_checkbox_id = 'is_visible_to_exporter'
@@ -66,10 +66,10 @@ class ApplicationPage():
         case_status_dropdown.select_by_visible_text(status)
 
     def get_text_of_application_headings(self):
-        return self.headers
+        return self.driver.find_elements_by_css_selector(self.headers)
 
     def get_text_of_case_note_subject(self, no):
-        return self.activity_case_note_subject[no].text
+        return self.driver.find_elements_by_css_selector(self.activity_case_note_subject)[no].text
 
     def get_text_of_activity_dates(self, no):
         return self.driver.find_elements_by_css_selector(self.activity_dates)[no].text
