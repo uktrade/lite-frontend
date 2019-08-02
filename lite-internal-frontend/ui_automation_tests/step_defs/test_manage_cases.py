@@ -20,19 +20,11 @@ class ManageCases():
     console = logging.StreamHandler()
     log.addHandler(console)
 
-
-    @when('I click progress application')
-    def click_post_note(driver):
-        application_page = ApplicationPage(driver)
-        application_page.click_progress_application()
-
-
     @when('I click record decision')
     def click_post_note(driver, context):
         application_page = ApplicationPage(driver)
         application_page.click_record_decision()
         context.decision_array = []
-
 
     @when(parsers.parse('I "{grant_or_deny}" application'))
     def grant_or_deny_decision(driver, grant_or_deny):
@@ -47,7 +39,6 @@ class ManageCases():
         record = RecordDecision(driver)
         record.enter_optional_text(optional_text)
         context.optional_text = optional_text
-
 
     @when(parsers.parse('I select decision "{number}"'))
     def select_decision(driver, number, context):
@@ -80,14 +71,6 @@ class ManageCases():
                     for denial_reason_code in context.decision_array:
                         assert record.get_text_of_denial_reasons_listed(i) == denial_reason_code
                         i += 1
-
-    @when(parsers.parse('I select status "{status}" and save'))
-    def select_status_save(driver, status, context):
-        application_page = ApplicationPage(driver)
-        application_page.select_status(status)
-        context.status = status
-        context.date_time_of_update = utils.get_formatted_date_time_h_m_pm_d_m_y()
-        driver.find_element_by_xpath("//button[text()[contains(.,'Save')]]").click()
 
     @then('the status has been changed in the application')
     def status_has_been_changed_in_header(driver, context):

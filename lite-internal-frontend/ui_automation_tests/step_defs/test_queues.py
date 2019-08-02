@@ -51,12 +51,17 @@ def see_queue_in_queue_list(driver, context):
 
 @then('I see previously created application')
 def see_queue_in_queue_list(driver, context):
-    assert driver.find_element_by_css_selector('.lite-cases-table').find_element_by_xpath("//*[text()[contains(.,'" + context.app_id + "')]]").is_displayed()
+    assert QueuesPages(driver).case_is_on_the_list(context.app_id)
+
+
+@then('There are no cases shown')
+def no_cases_shown(driver):
+    assert 'There are no new cases to show.' in QueuesPages(driver).get_caption_text()
 
 
 @then('I dont see previously created application')
 def dont_see_queue_in_queue_list(driver, context):
-    assert 'There are no new cases to show.' in driver.find_element_by_css_selector('.govuk-caption-l').text
+    assert not QueuesPages(driver).case_is_on_the_list(context.app_id)
 
 
 @when('I add case to new queue')
@@ -68,7 +73,7 @@ def move_case_to_new_queue(driver, context):
 
 
 @when('I deselect all queues')
-def deselect_all_queues(driver, context):
+def deselect_all_queues(driver):
     driver.find_element_by_css_selector('.govuk-button[href*="move"]').click()
     elements = driver.find_elements_by_css_selector('#checkbox-list .govuk-body')
     for element in elements:
@@ -94,3 +99,13 @@ def new_queue_shown_in_dropdown(driver, context):
             element.click()
             break
 
+
+@when(parsers.parse('I click on the "{queue_name}" queue in dropdown'))
+def system_queue_shown_in_dropdown(driver, queue_name):
+    driver.find_element_by_id('queue-title').click()
+    elements = driver.find_elements_by_css_selector('.lite-dropdown .lite-dropdown--item')
+    for idx, element in enumerate(elements):
+        if element.text == queue_name:
+            driver.execute_script("document.getElementsByClassName('lite-dropdown--item')[" + str(idx) + "].scrollIntoView(true);")
+            element.click()
+            break

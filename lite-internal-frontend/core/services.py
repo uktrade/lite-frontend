@@ -54,8 +54,8 @@ def get_queue(request, pk):
     return data.json(), data.status_code
 
 
-def get_queues(request, convert_to_options=False):
-    data = get(request, QUEUES_URL)
+def get_queues(request, convert_to_options=False, include_system_queues=False):
+    data = get(request, QUEUES_URL + "?include_system_queues=" + str(include_system_queues))
 
     if convert_to_options:
         converted = []
