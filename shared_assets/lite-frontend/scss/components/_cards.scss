@@ -57,7 +57,6 @@
 }
 
 .lite-card-delete {
-	// @include govuk-focusable-fill;
 	position: absolute;
 	top: govuk-spacing(4);
 	right: govuk-spacing(4);
@@ -79,6 +78,10 @@
 
 	&:active {
 		opacity: 0.6;
+	}
+
+	&:focus {
+		@include govuk-focused-text;
 	}
 }
 
