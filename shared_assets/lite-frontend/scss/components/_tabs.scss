@@ -58,13 +58,15 @@
 	text-transform: uppercase;
 	cursor: pointer;
 	white-space: nowrap;
+	text-decoration: none!important;
 
 	&:hover {
 		border-bottom: 2px solid govuk-colour("mid-grey");
 	}
 }
 
-.selected {
+// TODO: Remove .selected eventually
+.lite-tabs__tab--selected, .selected {
 	border-bottom: 2px solid $govuk-brand-colour!important;
 	color: govuk-colour("black");
 }

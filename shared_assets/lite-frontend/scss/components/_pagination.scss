@@ -1,30 +1,33 @@
-.lite-pagination {
+.lite-pagination__container {
 	display: flex;
 }
 
-.lite-pagination--item {
+.lite-pagination__item {
+	@include govuk-font($size: 19);
 	display: inline-block;
 	box-sizing: border-box;
-	@include govuk-font($size: 16, $weight: bold);
 	width: 40px;
 	height: 40px;
 	text-align: center;
 	color: $govuk-brand-colour;
 	text-decoration: none;
 	line-height: 40px!important;
-	&:first-of-type {
-		margin-left: - govuk-spacing(3);
-	}
-	&:hover {
-		opacity: .7;
-	}
-	&:active {
-		opacity: .4;
-	}
-}
+	cursor: pointer;
+	user-select: none;
 
-.lite-pagination--selected-item {
-	color: govuk-colour("dark-grey");
-	opacity: 1!important;
-	cursor: default;
+	&:hover {
+		background-color: govuk-colour("light-grey");
+	}
+
+	&:active {
+		background-color: govuk-colour("mid-grey");
+	}
+
+	&--selected {
+		font-weight: bold;
+		background-color: $govuk-brand-colour!important;
+		color: govuk-colour("white");
+		opacity: 1!important;
+		cursor: default;
+	}
 }
