@@ -1,4 +1,5 @@
-.lite-cases-table {}
+$lite-table-border: 2px solid darken(govuk-colour("light-grey"), 2%);
+
 @mixin table-display {
 	display: grid;
 	grid-template-columns: 30px 1fr 200px 200px 200px;
@@ -7,7 +8,7 @@
 
 .lite-cases-table-header {
 	@include table-display;
-	border-bottom: 1px solid $govuk-border-colour;
+	border-bottom: $lite-table-border;
 
 	* {
 		@include govuk-font($size: 14, $weight: bold);
@@ -15,9 +16,12 @@
 		color: govuk-colour("dark-grey");
 		letter-spacing: 1px;
 		text-transform: uppercase;
-		line-height: 44px!important;
 		margin: 0;
 		padding: 0;
+	}
+
+	.govuk-checkboxes {
+		margin-top: -4px;
 	}
 }
 
@@ -25,18 +29,95 @@
 	@include table-display;
 	transition: 0.3s ease;
 	padding: govuk-spacing(3) 0;
-	border-bottom: 1px solid $govuk-border-colour;
+	border-bottom: $lite-table-border;
+
 	.govuk-checkboxes--small .govuk-checkboxes__label::before {
 		top: 0;
 	}
+
 	.govuk-checkboxes--small .govuk-checkboxes__label::after {
 		top: 7px;
 	}
+
 	* {
 		font-size: 18px;
 	}
+
 	.govuk-body {
 		white-space: normal;
 		word-wrap: break-word;
+	}
+}
+
+.lite-cases-table__heading[href=""], .lite-cases-table__heading[href="#"] {
+	pointer-events: none;
+	border-color: transparent!important;
+}
+
+.lite-cases-table__heading {
+	display: inline-block!important;
+	text-decoration: none;
+	border-bottom: 2px solid transparent;
+	line-height: 30px!important;
+	margin-bottom: 8px;
+
+	&:hover {
+		border-bottom: 2px solid currentColor;
+
+		svg {
+			opacity: 1;
+		}
+	}
+
+	&:active {
+		color: govuk-colour("black");
+	}
+
+	&:focus {
+		@include govuk-focused-text;
+	}
+
+	svg {
+		color: inherit;
+		fill: currentColor;
+		max-width: 14px;
+		opacity: 0;
+
+		* {
+			fill: inherit;
+		}
+	}
+
+	&--active {
+		color: $govuk-brand-colour;
+
+		&:hover {
+			color: darken($govuk-brand-colour, 10%);
+		}
+
+		&:active {
+			color: darken($govuk-brand-colour, 20%);
+		}
+
+		svg {
+			opacity: 1;
+		}
+	}
+
+	&--active-desc {
+		color: $govuk-brand-colour;
+
+		&:hover {
+			color: darken($govuk-brand-colour, 10%);
+		}
+
+		&:active {
+			color: darken($govuk-brand-colour, 20%);
+		}
+
+		svg {
+			opacity: 1;
+			transform: scaleY(-1);
+		}
 	}
 }

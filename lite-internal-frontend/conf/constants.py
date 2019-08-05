@@ -28,6 +28,7 @@ PICKLIST_URL = '/picklist/'
 STATIC_URL = '/static/'
 DENIAL_REASONS_URL = STATIC_URL + 'denial-reasons/'
 COUNTRIES_URL = STATIC_URL + 'countries/'
+STATUSES_URL = STATIC_URL + 'statuses/'
 
 # Permissions
 MAKE_FINAL_DECISIONS = 'MAKE_FINAL_DECISIONS'

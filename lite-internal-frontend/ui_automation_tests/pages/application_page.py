@@ -1,35 +1,35 @@
 from selenium.webdriver.support.ui import Select
 import time
 
+from helpers.BasePage import BasePage
 
-class ApplicationPage():
 
-    def __init__(self, driver):
-        self.driver = driver
+class ApplicationPage(BasePage):
 
-        self.case_note_field = "case_note"  # id
-        self.post_note_btn = "button-post-note"  # id
-        self.cancel_note_btn = "case-note-cancel-button"  # id
-        self.case_notes_text = ".lite-case-note"  # css
-        self.case_note_date_time = ".lite-activity-item .govuk-hint"  # css
-        self.case_note_character_warning = "case_note-warning"  # id
-        self.documents_btn = '.govuk-button[href*="documents"]'  # css
-        self.progress_app_btn = '.govuk-button[href*="manage"]'
-        self.record_decision_btn = '.govuk-button[href*="decide"]'  # css
-        self.headers = ".lite-heading-s"  # css
-        self.activity_case_note_subject = ".lite-activity-item .govuk-body"
-        self.activity_dates = ".lite-activity-item .govuk-hint"
-        self.activity_user = ".user"
-        self.is_visible_to_exporter_checkbox_id = 'is_visible_to_exporter'
-        self.edit_case_flags = "a[href*='/assign-flags']"
-        self.view_advice = "a[href*='/advice-view/']"
-        self.case_flags = 'application-case-flags'
+    case_note_field = "case_note"  # id
+    post_note_btn = "button-post-note"  # id
+    cancel_note_btn = "case-note-cancel-button"  # id
+    case_notes_text = ".lite-case-note"  # css
+    case_note_date_time = ".lite-activity-item .govuk-hint"  # css
+    case_note_character_warning = "case_note-warning"  # id
+    documents_btn = '.govuk-button[href*="documents"]'  # css
+    progress_app_btn = '.govuk-button[href*="manage"]'
+    record_decision_btn = '.govuk-button[href*="decide"]'  # css
+    headers = ".lite-heading-s"  # css
+    activity_case_note_subject = ".lite-activity-item .govuk-body"
+    activity_dates = ".lite-activity-item .govuk-hint"
+    activity_user = ".user"
+    is_visible_to_exporter_checkbox_id = 'is_visible_to_exporter'
+    EDIT_CASE_FLAGS = 'application-edit-case-flags'  # ID
+    view_advice = "a[href*='/advice-view/']"
+    case_flags = 'application-case-flags'
 
     def click_visible_to_exporter_checkbox(self):
         self.driver.find_element_by_id(self.is_visible_to_exporter_checkbox_id).click()
 
     def enter_case_note(self, text):
-        self.driver.find_element_by_id(self.case_note_field).send_keys(text)
+        self.driver.execute_script(f'document.getElementById("{self.case_note_field}").value = "{text[:-1]}"')
+        self.driver.find_element_by_id(self.case_note_field).send_keys(text[-1:])
 
     def get_text_of_case_note_field(self):
         return self.driver.find_element_by_id(self.case_note_field).text
@@ -80,7 +80,7 @@ class ApplicationPage():
         return self.driver.find_elements_by_css_selector(self.activity_user)[no].text
 
     def click_edit_case_flags(self):
-        edit_cases_btn = self.driver.find_element_by_id(self.edit_case_flags)
+        edit_cases_btn = self.driver.find_element_by_id(self.EDIT_CASE_FLAGS)
         edit_cases_btn.click()
 
     def click_view_advice(self):

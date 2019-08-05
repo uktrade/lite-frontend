@@ -1,5 +1,4 @@
 .lite-heading-dropdown {
-	// @include govuk-focusable-fill;
 	position: relative;
 	display: none;
 	padding-right: 35px;
@@ -26,6 +25,10 @@
 
 	&:hover {
 		text-decoration: underline;
+	}
+
+	&:focus {
+		@include govuk-focused-text;
 	}
 }
 
@@ -75,7 +78,6 @@
 }
 
 .lite-dropdown--item {
-	// @include govuk-focusable-fill;
 	position: relative;
 	display: block;
 	padding: 15px 20px;
@@ -106,6 +108,7 @@
 	&:focus {
 		outline: none;
 		color: black!important;
+		@include govuk-focused-text;
 	}
 
 	&:last-of-type {

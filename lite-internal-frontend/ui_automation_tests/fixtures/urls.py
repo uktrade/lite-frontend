@@ -6,12 +6,12 @@ def exporter_url(request):
     return request.config.getoption("--exporter_url")
 
 
-@fixture(scope="module")
+@fixture(scope="session")
 def internal_url(request):
     return request.config.getoption("--internal_url")
 
 
-@fixture(scope="module")
+@fixture(scope="session")
 def sso_sign_in_url(request):
     return request.config.getoption("--sso_sign_in_url")
 

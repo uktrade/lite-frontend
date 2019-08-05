@@ -1,7 +1,7 @@
 from django.http import HttpRequest
 
 from core.builtins.custom_tags import get_string
-from core.services import get_queues
+from queues.services import get_queues
 from libraries.forms.components import Form, Filter, Checkboxes, BackLink
 
 

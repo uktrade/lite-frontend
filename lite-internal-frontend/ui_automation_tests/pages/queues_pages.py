@@ -4,7 +4,7 @@ class QueuesPages():
         self.driver = driver
         self.add_queue_text_field = "name" #id
         self.add_queue_button = ".govuk-button[href*='queues/add']" #css
-        self.caption_text = '.govuk-caption-l' #css
+        self.no_cases_text = '.lite-information-text__text' #css
 
     def enter_queue_name(self, text):
         self.driver.find_element_by_id(self.add_queue_text_field).clear()
@@ -14,10 +14,9 @@ class QueuesPages():
         self.driver.find_element_by_css_selector(self.add_queue_button).click()
 
     def case_is_on_the_list(self, app_id):
-        if self.driver.find_elements_by_link_text(app_id):
-            return True
-        else:
-            return False
+        no = len(self.driver.find_elements_by_link_text(app_id))
 
-    def get_caption_text(self):
-        return self.driver.find_element_by_css_selector(self.caption_text).text
+        return no
+
+    def get_no_cases_text(self):
+        return self.driver.find_element_by_css_selector(self.no_cases_text).text

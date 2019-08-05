@@ -4,12 +4,11 @@ from pages.add_goods_page import AddGoodPage
 from pages.exporter_hub import ExporterHub
 from conf.settings import env
 import helpers.helpers as utils
-
 from helpers.seed_data import SeedData
 from helpers.utils import Timer, get_or_create_attr
 
 
-@fixture(scope="session")
+@fixture(scope="module")
 def apply_for_standard_application(driver, request, context):
     timer = Timer()
     api = get_or_create_attr(context, 'api', lambda: SeedData(logging=True))
@@ -35,10 +34,18 @@ def apply_for_standard_application(driver, request, context):
             "country": "UA",
             "type": "government",
             "website": "https://www.smith.com"
+        },
+        ultimate_end_user={
+            "name": "Individual",
+            "address": "Bullring, Birmingham SW1A 0AA",
+            "country": "GB",
+            "type": "commercial",
+            "website": "https://www.anothergov.uk"
         }
     )
     api.submit_application()
     context.app_id = api.context['application_id']
+    context.case_id = api.context['case_id']
     timer.print_time('apply_for_standard_application')
 
 
@@ -189,9 +196,8 @@ def apply_for_standard_application_with_ueu(driver, request, context):
     driver.get(request.config.getoption("--internal_url"))
 
 
-
-@fixture(scope="session")
-def apply_for_clc_query(driver, request, context):
+@fixture(scope="module")
+def apply_for_clc_query_old(driver, request, context):
     exporter_hub = ExporterHub(driver)
     driver.get(request.config.getoption("--exporter_url"))
     if "login" in driver.current_url:
@@ -215,3 +221,10 @@ def apply_for_clc_query(driver, request, context):
     case_id = add_goods_page.assert_good_is_displayed_and_return_case_id(context.good_description)
     context.case_id = case_id
     driver.get(request.config.getoption("--internal_url"))
+
+
+@fixture(scope="module")
+def apply_for_clc_query(driver, request, context):
+    api = get_or_create_attr(context, 'api', lambda: SeedData(logging=True))
+    api.add_clc_query()
+    context.case_id = api.context['case_id']

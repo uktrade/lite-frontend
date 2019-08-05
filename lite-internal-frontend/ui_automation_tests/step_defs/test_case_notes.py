@@ -1,3 +1,4 @@
+import time
 from pytest_bdd import scenarios, given, when, then, parsers, scenarios
 from pages.application_page import ApplicationPage
 import helpers.helpers as utils
@@ -14,9 +15,9 @@ log.addHandler(console)
 def enter_case_note_text(driver, text, context):
     application_page = ApplicationPage(driver)
     if text == 'the maximum limit with spaces':
-        text = utils.repeat_to_length(" ", 2200)
+        text = ' ' * 2200
     elif text == 'the maximum limit':
-        text = utils.repeat_to_length("T", 2200)
+        text = 'T' * 2200
     context.text = text
     application_page.enter_case_note(text)
 
@@ -24,6 +25,7 @@ def enter_case_note_text(driver, text, context):
 @when('I click post note')
 def click_post_note(driver, context):
     application_page = ApplicationPage(driver)
+    time.sleep(1)
     application_page.click_post_note_btn()
     context.date_time_of_post = utils.get_formatted_date_time_h_m_pm_d_m_y()
 

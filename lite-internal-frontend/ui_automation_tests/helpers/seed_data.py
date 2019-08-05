@@ -72,15 +72,30 @@ class SeedData:
             "type": "government",
             "website": "https://www.gov.uk"
         },
+        "ultimate_end_user": {
+            "name": "Individual",
+            "address": "Bullring, Birmingham SW1A 0AA",
+            "country": "GB",
+            "type": "commercial",
+            "website": "https://www.anothergov.uk"
+        },
         "add_good": {
             "good_id": "",
             "quantity": 1234,
             "unit": "NAR",
             "value": 123.45
+        },
+        "clc_good": {
+            "description": "Targus",
+            "is_good_controlled": "unsure",
+            "control_code": "1234",
+            "is_good_end_product": True,
+            "part_number": "1234",
+            "validate_only": False,
+            "not_sure_details_details": "Kebabs"
         }
-
     }
-            
+
     def __init__(self, api_url, logging=True):
         self.base_url = api_url.rstrip('/')
         self.auth_gov_user()
@@ -88,7 +103,7 @@ class SeedData:
         self.auth_export_user()
         self.add_good()
         self.logging = logging
-        
+
     def log(self, text):
         if self.logging:
             print(text)
@@ -142,7 +157,14 @@ class SeedData:
         item = json.loads(response.text)['good']
         self.add_to_context('good_id', item['id'])
 
-    def add_draft(self, draft=None, good=None, enduser=None):
+    def add_clc_query(self):
+        self.log("Adding clc query: ...")
+        data = self.request_data['clc_good']
+        response = self.make_request("POST", url='/goods/', headers=self.export_headers, body=data)
+        item = json.loads(response.text)['good']
+        self.add_to_context('case_id', item['clc_query_case_id'])
+
+    def add_draft(self, draft=None, good=None, enduser=None, ultimate_end_user=None):
         self.log("Creating draft: ...")
         data = self.request_data['draft'] if draft is None else draft
         response = self.make_request("POST", url='/drafts/', headers=self.export_headers, body=data)
@@ -159,6 +181,10 @@ class SeedData:
         data = self.request_data['add_good'] if good is None else good
         data['good_id'] = self.context['good_id']
         self.make_request("POST", url='/drafts/' + draft_id + '/goods/', headers=self.export_headers, body=data)
+        self.log("Adding ultimate end user: ...")
+        data = self.request_data['ultimate_end_user'] if ultimate_end_user is None else ultimate_end_user
+        self.make_request("POST", url='/drafts/' + draft_id + '/ultimate-end-users/', headers=self.export_headers,
+                          body=data)
 
     def submit_application(self, draft_id=None):
         self.log("submitting application: ...")
@@ -167,6 +193,24 @@ class SeedData:
         response = self.make_request("POST", url='/applications/', headers=self.export_headers, body=data)
         item = json.loads(response.text)['application']
         self.add_to_context('application_id', item['id'])
+        self.add_to_context('case_id', item['case_id'])
+
+    def add_queue(self, queue_name):
+        self.log("adding queue: ...")
+        self.context['queue_name'] = queue_name
+        data = {'team': '00000000-0000-0000-0000-000000000001',
+                'name': queue_name
+                }
+        response = self.make_request("POST", url='/queues/', headers=self.gov_headers, body=data)
+        item = json.loads(response.text)['queue']
+        self.add_to_context('queue_id', item['id'])
+
+    def assign_case_to_queue(self, case_id=None, queue_id=None):
+        self.log("assigning case to queue: ...")
+        queue_id = self.context['queue_id'] if queue_id is None else queue_id
+        case_id = self.context['case_id'] if case_id is None else case_id
+        data = {'queues':  [queue_id]}
+        self.make_request("PUT", url='/cases/' + case_id + '/', headers=self.gov_headers, body=data)
 
     def make_request(self, method, url, headers=None, body=None):
         if headers is None:

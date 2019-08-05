@@ -68,7 +68,7 @@ def assert_number_of_flags(driver, context):
 def assert_number_of_flags_has_increased(driver, context, flagcount):
     number_of_assigned_flags = FlagsPages(driver).get_size_of_number_of_assigned_flags()
     assert str(number_of_assigned_flags) == flagcount, "number of assigned flags is not "+flagcount
-    
+
     
 @then('The previously created flag is assigned to the case')
 def assert_flag_is_assigned(driver, context):

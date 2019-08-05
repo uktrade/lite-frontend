@@ -64,3 +64,103 @@ $govuk-brand-colour: #28a197; // GOV.UK Design System
 .lite-tabs__tab {
 	text-decoration: none;
 }
+
+.lite-filter-bar--horizontal {
+	display: block;
+	position: relative;
+	z-index: 0;
+	margin-bottom: govuk-spacing(6);
+	padding: govuk-spacing(5) 0 (govuk-spacing(5) + 3px) 0;
+
+	&:before {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 50%;
+		bottom: 0;
+		width: 100vw;
+		transform: translateX(-50vw);
+		background-color: govuk-colour("light-grey");
+		border-width: 2px 0;
+		border-style: solid;
+		border-color: darken(govuk-colour("light-grey"), 2%);
+		z-index: -1;
+	}
+
+	.govuk-select {
+		display: block;
+		width: 100%;
+		border-radius: 0;
+		-webkit-appearance: none;
+		-webkit-border-radius: 0;
+		text-indent: 5px;
+	}
+
+	.govuk-label {
+		@include govuk-font($size: 14, $weight: bold);
+		display: block;
+		color: govuk-colour("dark-grey");
+		letter-spacing: 1px;
+		text-transform: uppercase;
+		margin-bottom: govuk-spacing(2);
+	}
+
+	.govuk-button--secondary {
+		background-color: white;
+
+		&:hover {
+			background-color: darken(govuk-colour("light-grey"), 5%);
+		}
+
+		&:active {
+			background-color: darken(govuk-colour("light-grey"), 10%);
+		}
+	}
+}
+
+.lite-hide-filters-link,
+.lite-show-filters-link {
+	display: inline-block;
+	margin-bottom: govuk-spacing(6);
+	text-decoration: none;
+	border-bottom: 1px solid transparent;
+	padding-bottom: 3px;
+
+	svg {
+		color: inherit;
+		max-width: 13px;
+		max-height: 13px;
+		margin-right: 3px;
+
+		* {
+			fill: currentColor;
+		}
+	}
+
+	&:hover {
+		border-color: currentColor;
+	}
+}
+
+.lite-hide-filters-link {
+	margin-bottom: govuk-spacing(3);
+}
+
+.lite-select-wrapper {
+	position: relative;
+
+	&:after {
+		content: "";
+		position: absolute;
+		right: govuk-spacing(2);
+		top: 0;
+		bottom: 14px;
+		display: inline-block;
+		width: 20px;
+		background-image: url("/assets/images/chevron.svg");
+		background-size: 20px 10px;
+		background-repeat: no-repeat;
+		transform: scaleY(-1);
+		pointer-events: none;
+	}
+}

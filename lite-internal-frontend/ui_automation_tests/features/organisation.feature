@@ -13,7 +13,7 @@ Feature: I want to add a company to LITE
     And I click new site
     And I enter in text for new site "London HQ" "address" "postcode" "city" "region" and "Ukraine"
     And I click continue
-    And I go to the internal homepage
+    And I go to internal homepage and sign in
     And I go to organisations
     And I click on my registered organisation
     Then my new site is displayed

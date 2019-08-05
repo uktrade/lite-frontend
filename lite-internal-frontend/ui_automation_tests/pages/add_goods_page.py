@@ -1,17 +1,16 @@
 import helpers.helpers as utils
+from helpers.BasePage import BasePage
 
 
-class AddGoodPage:
+class AddGoodPage(BasePage):
 
-    def __init__(self, driver):
-        self.driver = driver
-        self.add_a_good_btn = "#add-a-good"
-        self.goods_edit_link = "[href*='goods/edit']"
-        self.goods_delete_link = "[href*='goods/delete']"
-        self.goods_delete_button = ".govuk-button--warning"
-        self.description_xpath_prefix = "//*[text()[contains(.,'%s')]]"
-        self.clc_query_case_id_xpath_prefix = "%s/../*[@data_good_clc_query_case_id]"
-        self.clc_query_case_id_attribute = "data_good_clc_query_case_id"
+    add_a_good_btn = "#add-a-good"
+    goods_edit_link = "[href*='goods/edit']"
+    goods_delete_link = "[href*='goods/delete']"
+    goods_delete_button = ".govuk-button--warning"
+    description_xpath_prefix = "//*[text()[contains(.,'%s')]]"
+    clc_query_case_id_xpath_prefix = "%s/../*[@data_good_clc_query_case_id]"
+    clc_query_case_id_attribute = "data_good_clc_query_case_id"
 
     def click_add_a_good(self):
         self.driver.find_element_by_css_selector(self.add_a_good_btn).click()

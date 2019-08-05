@@ -1,6 +1,6 @@
 {% extends 'layouts/base.html' %}
 
-{% load humanize %}
+{% load humanize svg %}
 
 {% block back_link %}{% endblock %}
 
@@ -15,67 +15,120 @@
 	<button type="submit" class="govuk-button">{% get_string 'cases.go_to_queue' %}</button>
 </form>
 
-<form method="post">
+
+<div class="lite-app-bar">
+    <div>
+        <a id="queue-title" href="#" class="govuk-heading-l lite-heading-dropdown" onclick="toggleDropdown()">{{ title }}</a>
+    </div>
+    <div class="lite-app-bar--right">
+        <button id="assign-users-button" form="cases-form" type="submit" class="govuk-button govuk-button--secondary">Assign users</button>
+    </div>
+</div>
+<div class="lite-dropdown-background" onclick="toggleDropdown()"></div>
+<div class="lite-dropdown--container" id="queues">
+    <div class="lite-dropdown">
+        {% for queue in queues.queues %}
+            <a href="/cases/?queue={{ queue.id }}" class="lite-dropdown--item {% if queue.id == queue_id %}lite-dropdown--item--selected{% endif %}">{{ queue.name }}</a>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="lite-js-only">
+    <a href="#" onclick="toggleFilters()" id="show-filters-link" class="govuk-link govuk-link--no-visited-state lite-show-filters-link">
+		{% svg 'filter_show' %}
+		Show filters
+	</a>
+    <a href="#" onclick="toggleFilters()" id="hide-filters-link" class="govuk-link govuk-link--no-visited-state lite-hide-filters-link">
+		{% svg 'filter_hide' %}
+		Hide filters
+	</a>
+</div>
+
+<form id="filters" action="{% url 'cases:cases'%}" method="get">
+    <input hidden name="queue" value="{{ queue_id }}">
+
+    <div class="govuk-grid-row lite-filter-bar--horizontal">
+        <div class="govuk-grid-column-one-quarter">
+            <label class="govuk-label" for="case_type">
+                Filter by case type
+            </label>
+            <div class="lite-select-wrapper">
+                <select class="govuk-select" id="case_type" name="case_type">
+                    <option {% if case_type == None %}selected{% endif %} value="">Select</option>
+                    <option {% if case_type ==  "Licence application"|urlencode %}selected{% endif %} value={{ "Licence application"|urlencode }}>Licence application</option>
+                    <option {% if case_type == "CLC query"|urlencode %}selected{% endif %} value="{{ "CLC query"|urlencode }}">CLC query</option>
+                </select>
+            </div>
+        </div>
+        <div class="govuk-grid-column-one-quarter">
+            <label class="govuk-label" for="status">
+                Filter by case status
+            </label>
+            <div class="lite-select-wrapper">
+                <select class="govuk-select" id="status" name="status">
+                    <option {% if status == None %}selected{% endif %} value="">Select</option>
+                    {% for case_status in statuses.statuses %}
+				        <option value="{{ case_status.status }}" {% if case_status.status == status %}selected{% endif %}>{{ case_status.status|default:"Untitled"|sentence_case }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="govuk-grid-column-one-quarter">
+            <label class="govuk-label" for="filter" style="visibility: collapse;">
+                --
+            </label>
+            <div class="lite-buttons-row">
+                <button type="submit" form="filters" class="govuk-button" style="margin: 0;" id="button-apply-filters">
+                    Apply filters
+                </button>
+                <a href="{% url 'cases:cases' %}?queue={{ queue_id }}" class="govuk-button govuk-button--secondary" style="margin-bottom: 0;" id="button-clear-filters">
+                    Clear filters
+                </a>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+<form id="cases-form" method="post">
 
 	{% csrf_token %}
 
-	<div class="lite-app-bar">
-		<div>
-			<a id="queue-title" href="#" class="govuk-heading-l lite-heading-dropdown" onclick="toggleDropdown()">{{ title }}</a>
-		</div>
-		<div class="lite-app-bar--right">
-			<button id="assign-users-button" type="submit" class="govuk-button govuk-button--secondary">Assign users</button>
-		</div>
-	</div>
-	<div class="lite-dropdown-background" onclick="toggleDropdown()"></div>
-	<div class="lite-dropdown--container" id="queues">
-		<div class="lite-dropdown">
-			{% for queue in queues.queues %}
-				<a href="/cases/?queue={{ queue.id }}" class="lite-dropdown--item {% if queue.id == queue_id %}lite-dropdown--item--selected{% endif %}">{{ queue.name }}</a>
-			{% endfor %}
-		</div>
-	</div>
-
-  {% if data.queue.cases|length %}
+  	{% if data.queue.cases|length %}
 		<div class="lite-cases-table">
 			<div class="lite-cases-table-header" {% if is_system_queue %}style="grid-template-columns: 30px 1fr 200px 200px 200px 200px"{% endif %}>
-				<h4>
-					<div class="govuk-checkboxes govuk-checkboxes--small">
-						<div class="govuk-checkboxes__item">
-							<input id="select-all-checkbox" class="govuk-checkboxes__input" type="checkbox">
-							<label class="govuk-label govuk-checkboxes__label"></label>
-						</div>
+				<div class="govuk-checkboxes govuk-checkboxes--small">
+					<div class="govuk-checkboxes__item">
+						<input id="select-all-checkbox" class="govuk-checkboxes__input" type="checkbox">
+						<label class="govuk-label govuk-checkboxes__label"></label>
 					</div>
-				</h4>
-				<h4>
-					Case
-				</h4>
-				<h4>
-					Assignees
-				</h4>
-                <h4>
-					Case type
-				</h4>
+				</div>
+				<div>
+					<a href="#" class="lite-cases-table__heading">
+						Case
+					</a>
+				</div>
+				<div>
+					<a href="#" class="lite-cases-table__heading">
+						Assignees
+					</a>
+				</div>
+				<div>
+					<a href="#" class="lite-cases-table__heading">
+						Type
+					</a>
+				</div>
                 {% if is_system_queue %}
                     <h4>
                         Queues
                     </h4>
                 {% endif %}
-				<!-- <h4>
-					Goods
-				</h4>
-				<h4>
-					Destinations
-				</h4>
-				<h4>
-					Queue
-				</h4>
-				<h4>
-					Flags
-				</h4> -->
-				<h4>
-					Status
-				</h4>
+				<div>
+					<a href="{{ current_filter_url }}sort={{ 'status'|table_sort_text:sort }}" class="lite-cases-table__heading {{ 'status'|table_sort:sort }}">
+						Status
+						{% svg 'chevron' %}
+					</a>
+				</div>
 			</div>
 			{% for case in data.queue.cases %}
 				<div class="lite-cases-table-row" {% if is_system_queue %}style="grid-template-columns: 30px 1fr 200px 200px 200px 200px"{% endif %}>
@@ -87,16 +140,20 @@
 					</div>
 					<div>
                         {% if case.is_clc %}
-                                <a class="govuk-link govuk-!-font-size-19 govuk-link--no-visited-state govuk-!-font-weight-bold" href="{% url 'cases:case' case.id %}" style="text-decoration: none; margin-bottom: 5px!important; display: block;">
-                                    {{ case.id }}
-                                </a>
+                                <div>
+									<a class="govuk-link govuk-!-font-size-19 govuk-link--no-visited-state govuk-!-font-weight-bold" href="{% url 'cases:case' case.id %}" style="text-decoration: none; margin-bottom: 5px!important; display: inline-block;">
+	                                    {{ case.id }}
+	                                </a>
+                                </div>
                                 <p class="govuk-body" style="opacity: .7; margin: 0;">
                                     {{ case.clc_query.organisation_name }}
                                 </p>
                         {% elif not case.is_clc %}
-                            <a href="{% url 'cases:case' case.id %}" class="govuk-link govuk-!-font-size-19 govuk-link--no-visited-state govuk-!-font-weight-bold" style="text-decoration: none; margin-bottom: 5px!important; display: block;">
-                                {{ case.application.id|default:"Untitled" }}
-                            </a>
+							<div class="">
+								<a href="{% url 'cases:case' case.id %}" class="govuk-link govuk-!-font-size-19 govuk-link--no-visited-state govuk-!-font-weight-bold" style="text-decoration: none; margin-bottom: 5px!important; display: inline-block;">
+									{{ case.application.id|default:"Untitled" }}
+								</a>
+							</div>
                             <p class="govuk-body" style="opacity: .7; margin: 0;">
                                 {{ case.application.organisation.name }}
                             </p>
@@ -133,17 +190,36 @@
 				</div>
 			{% endfor %}
     </div>
-    
-
-
 
 	{% else %}
-		<p class="govuk-caption-l">{% get_string 'cases.no_cases' %}</p>
+		{% get_string 'cases.no_cases' as no_cases_text %}
+		{% include "includes/information-text.html" with text=no_cases_text %}
 	{% endif %}
 
 </form>
 
 <script>
+	$("#filters").hide();
+	$("#show-filters-link").show();
+	$("#hide-filters-link").hide();
+
+	{% if case_type or status %}
+		$("#filters").show();
+		$("#show-filters-link").hide();
+		$("#hide-filters-link").show();
+	{% endif %}
+
+	function toggleFilters() {
+		$("#filters").toggle();
+		if ($("#filters").is(':visible')) {
+			$("#show-filters-link").hide();
+			$("#hide-filters-link").show();
+		} else {
+			$("#show-filters-link").show();
+			$("#hide-filters-link").hide();
+		}
+	}
+
 	function toggleDropdown() {
 		$(".lite-dropdown-background").toggle();
 		$("#queues").toggleClass('lite-dropdown--visible');

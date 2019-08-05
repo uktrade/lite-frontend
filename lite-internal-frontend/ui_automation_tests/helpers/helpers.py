@@ -76,10 +76,6 @@ def get_text(driver, by_type, locator):
     return el.text
 
 
-def repeat_to_length(string_to_expand, length):
-    return (string_to_expand * (int(length/len(string_to_expand))+1))[:length]
-
-
 def get_formatted_date_time_h_m_pm_d_m_y():
     time = datetime.now().strftime("%I:%M%p %d %B %Y").replace("PM", "pm").replace(
         "AM", "am")

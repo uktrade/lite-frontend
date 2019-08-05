@@ -2,6 +2,7 @@ import time
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
+import helpers.helpers as utils
 
 
 class ExporterHub():
@@ -80,7 +81,7 @@ class ExporterHub():
     def click_submit(self):
         self.driver.find_element_by_class_name("govuk-button").click()
 
-    def click_goods_button(self):
+    def click_goods_button(self, ):
         self.driver.find_element_by_css_selector(self.my_goods_btn).click()
 
     def click_save_and_continue(self):
@@ -178,6 +179,7 @@ class ExporterHub():
         self.driver.find_element_by_css_selector(".govuk-button--warning").click()
 
     def click_goods_tile(self):
+        utils.wait_until_page_is_loaded(self.driver)
         element = self.driver.find_element_by_css_selector(self.goods_tile)
         self.driver.execute_script("arguments[0].click();", element)
 
@@ -253,6 +255,7 @@ class ExporterHub():
         self.driver.execute_script("arguments[0].click();", element)
 
     def click_add_a_good(self):
+        utils.wait_until_page_is_loaded(self.driver)
         self.driver.find_element_by_css_selector(self.add_a_good_btn).click()
 
     def enter_description_of_goods(self, description):

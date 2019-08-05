@@ -43,7 +43,9 @@ def select_team(driver):
 
 @when('I click edit for my user')
 def click_edit_for_my_user(driver):
-    driver.find_element_by_xpath("//td[text()='" + sso_email + "']/following-sibling::td[last()]/a").click()
+    user = driver.find_element_by_xpath("//td[text()='" + sso_email + "']/following-sibling::td[last()]/a")
+    driver.execute_script("arguments[0].scrollIntoView();", user)
+    user.click()
 
 
 @when(parsers.parse('I add a team called "{team_name}"'))

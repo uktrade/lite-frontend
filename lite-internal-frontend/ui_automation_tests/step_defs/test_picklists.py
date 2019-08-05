@@ -43,7 +43,7 @@ def go_to_picklist_list(driver, picklist_type, context):
 def add_to_picklist_item(driver, picklist_name, picklist_description, context):
     PicklistPages(driver).click_on_picklist_add_button()
     if picklist_description == "too many":
-        picklist_description = utils.repeat_to_length('a', 5001)
+        picklist_description = 'a' * 5001
         PicklistPages(driver).type_into_picklist_name(picklist_name)
         PicklistPages(driver).type_into_picklist_description(picklist_description)
     elif picklist_description == " ":

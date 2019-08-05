@@ -58,7 +58,6 @@ class ManageCases():
                 elif grant_or_deny == "denied":
                     assert status_detail == "Under final review"
                     try:
-                        context.optional_text
                         assert record.get_text_of_denial_reasons_headers(1) == "Further information"
                         assert record.get_text_of_denial_reasons_listed(6) == context.optional_text
                     except AttributeError:

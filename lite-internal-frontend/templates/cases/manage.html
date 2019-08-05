@@ -27,11 +27,9 @@
 		    	</label>
             {% endif %}
 			<select id="status" class="govuk-select" name="status" id="status">
-				<option value="submitted" {% if data.case.application.status == "submitted" %}selected{% endif %}>Submitted</option>
-				<option value="more_information_required" {% if data.case.application.status == "more_information_required" %}selected{% endif %}>More information required</option>
-				<option value="under_review" {% if data.case.application.status == "under_review" %}selected{% endif %}>Under review</option>
-				<option value="resubmitted" {% if data.case.application.status == "resubmitted" %}selected{% endif %}>Resubmitted</option>
-				<option value="withdrawn" {% if data.case.application.status == "withdrawn" %}selected{% endif %}>Withdrawn</option>
+                {% for status in statuses.statuses %}
+				    <option value="{{ status.status }}" {% if data.case.application.status == status.status or data.case.clc_query.status == status.status%}selected{% endif %}>{{ status.status|default:"Untitled"|sentence_case }}</option>
+                {% endfor %}
 			</select>
 		</div>
 
