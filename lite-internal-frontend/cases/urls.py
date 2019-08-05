@@ -24,4 +24,6 @@ urlpatterns = [
     path('<uuid:pk>/documents/<str:file_pk>/', views.Document.as_view(), name='document'),
     # ex: /cases/<uuid:pk>/assign-flags/
     path('<uuid:pk>/assign-flags/', views.AssignFlags.as_view(), name='assign_flags'),
+    # ex: /cases/<uuid:pk>/advice-view/
+    path('<uuid:pk>/advice-view/', views.ViewAdvice.as_view(), name='advice_view'),
 ]

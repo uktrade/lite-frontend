@@ -106,6 +106,23 @@ class ViewCase(TemplateView):
         return redirect(reverse('cases:case', kwargs={'pk': case_id}) + '#case_notes')
 
 
+class ViewAdvice(TemplateView):
+    def get(self, request, **kwargs):
+        case_id = str(kwargs['pk'])
+        case, status_code = get_case(request, case_id)
+        activity, status_code = get_activity(request, case_id)
+        permissions = get_user_permissions(request)
+
+        context = {
+            'data': case,
+            'title': case.get('case').get('application').get('name'),
+            'activity': activity.get('activity'),
+            'permissions': permissions,
+            'edit_case_flags': get_string('cases.case.edit_case_flags')
+        }
+        return render(request, 'cases/case/advice-view.html', context)
+
+
 class ViewCLCCase(TemplateView):
     def get(self, request, **kwargs):
         case_id = str(kwargs['pk'])

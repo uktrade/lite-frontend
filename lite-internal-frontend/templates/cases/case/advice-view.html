@@ -1,0 +1,135 @@
+{% extends 'layouts/base.html' %}
+
+{% load humanize %}
+
+{% block back-link %}
+<a href="{% url 'cases:cases' %}" class="govuk-back-link">{% get_string 'cases.case.back_to_cases_link' %}</a>
+{% endblock %}
+
+{% block body %}
+
+<h3 class="govuk-heading-m">{% get_string 'cases.case.destination_heading' %}</h3>
+<table class="lite-table" id="destinations">
+	<thead class="lite-table__head">
+		<tr class="lite-table__row">
+			<th class="lite-table__header govuk-checkboxes govuk-checkboxes--small" scope="col">
+				<div class="govuk-checkboxes govuk-checkboxes--small">
+					<div class="govuk-checkboxes__item">
+						<input id="select-all-checkbox" class="govuk-checkboxes__input" type="checkbox">
+						<label class="govuk-label govuk-checkboxes__label"></label>
+					</div>
+				</div>
+			</th>
+			<th class="lite-table__header" scope="col">Country</th>
+			<th class="lite-table__header" scope="col">Role</th>
+			<th class="lite-table__header" scope="col">Name</th>
+			<!-- <th class="lite-table__header" scope="col">Advice</th> -->
+			<th class="lite-table__header" scope="col"></th>
+			<th class="lite-table__header" scope="col">User</th>
+		</tr>
+	</thead>
+	<tbody class="lite-table__body">
+		<tr class="lite-table__row">
+			<td class="lite-table__cell">
+				<div class="govuk-checkboxes govuk-checkboxes--small">
+					<div class="govuk-checkboxes__item">
+						<input class="govuk-checkboxes__input" type="checkbox" name="cases" value="{{ case.id }}">
+						<label class="govuk-label govuk-checkboxes__label"></label>
+					</div>
+				</div>
+			</td>
+			<td class="lite-table__cell">{{ data.case.application.destinations.data.country }}</td>
+			<td class="lite-table__cell">End User</td>
+			<td class="lite-table__cell">{{ data.case.application.destinations.data.name }}</td>
+			<!-- <td class="lite-table__cell">Approve</td> -->
+			<!-- <td class="lite-table__cell"></td> -->
+			<td class="lite-table__cell">
+
+		</td>
+		<td class="lite-table__cell"></td>
+	</tr>
+	{% for ultimate_end_user in data.case.application.ultimate_end_users.data %}
+	<tr>
+		<td class="lite-table__cell">
+			<div class="govuk-checkboxes govuk-checkboxes--small">
+				<div class="govuk-checkboxes__item">
+					<input class="govuk-checkboxes__input" type="checkbox" name="cases" value="{{ case.id }}">
+					<label class="govuk-label govuk-checkboxes__label"></label>
+				</div>
+			</div>
+		</td>
+		<td class="lite-table__cell">{{ ultimate_end_user.country }}</td>
+		<td class="lite-table__cell">Ultimate End User</td>
+		<td class="lite-table__cell">{{ ultimate_end_user.name }}</td>
+		<!-- <td class="lite-table__cell">Proviso</td> -->
+		<!-- <td class="lite-table__cell"></td> -->
+		<td class="lite-table__cell"></td>
+		<!-- <td class="lite-table__cell">
+			<table>
+				<tr">
+				<td style="vertical-align: top">Proviso:</td>
+				<td>This is a paragraph of proviso text advising about something but nothing in particular and everything. If you know how to read or even read this filler text please enjoy it because it is not lipsum orem</td>
+			</tr>
+
+			<tr>
+				<td style="vertical-align: top">Note:</td>
+				<td>This is a paragraph of note text</td>
+			</tr>
+		</table>
+	</td> -->
+	<td class="lite-table__cell"></td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+<h3 class="govuk-heading-m">{% get_string 'cases.case.goods_heading' %}</h3>
+<table class="lite-table" id="goods">
+	<thead class="lite-table__head">
+		<tr class="lite-table__row">
+			<th class="lite-table__header" scope="col"></th>
+			<th class="lite-table__header" scope="col">Control List Entry</th>
+			<th class="lite-table__header" scope="col">ARS Description</th>
+			<th class="lite-table__header">Quantity/Value</th>
+			<!-- <th class="lite-table__header" scope="col">Advice</th> -->
+			<th class="lite-table__header" scope="col"></th>
+			<th class="lite-table__header" scope="col">User</th>
+		</tr>
+	</thead>
+	<tbody class="lite-table__body">
+		{% for good in data.case.application.goods %}
+		<tr class="lite-table__row">
+			<td class="lite-table__cell">
+				<div class="govuk-checkboxes govuk-checkboxes--small">
+					<div class="govuk-checkboxes__item">
+						<input class="govuk-checkboxes__input" type="checkbox" name="cases" value="{{ case.id }}">
+						<label class="govuk-label govuk-checkboxes__label"></label>
+					</div>
+				</div>
+			</td>
+			<td class="lite-table__cell">{{ good.good.control_code|default:'None' }}</td>
+			<td class="lite-table__cell">Annual report summary 17</td>
+			<td class="lite-table__cell">{{ good.quantity }} {{ good.unit }}/£{{ good.value }}</td>
+			<!-- <td class="lite-table__cell"></td> -->
+			<td class="lite-table__cell">
+				<!-- <table>
+					<tr>
+						<td style="vertical-align: top">Proviso:</td>
+						<td>This is a paragraph of proviso text advising about something but nothing in particular and everything. If you know how to read or even read this filler text please enjoy it because it is not lipsum orem</td>
+					</tr>
+
+					<tr>
+						<td style="vertical-align: top">Note:</td>
+						<td>This is a paragraph of note text</td>
+					</tr>
+				</table> -->
+			</td>
+			<td class="lite-table__cell"></td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+
+
+
+{% endblock %}
