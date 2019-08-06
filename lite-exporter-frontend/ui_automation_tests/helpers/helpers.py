@@ -40,7 +40,7 @@ def screen_path():
     global screen_dir
     if not os.path.exists(screen_dir):
         os.makedirs(screen_dir)
-        os.chmod(screen_dir, 0o755)
+        os.chmod(screen_dir, 0o644)
     return screen_dir
 
 
