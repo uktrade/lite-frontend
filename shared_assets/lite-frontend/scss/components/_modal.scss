@@ -24,6 +24,12 @@
 	@include govuk-font($size: 19);
 	background: govuk-colour("white");
 	box-shadow: 0 20px 20px rgba(0,0,0,0.15), 0 5px 5px rgba(0,0,0,0.15);
+
+	.govuk-heading-m, .govuk-body-m {
+		white-space: normal;
+		word-wrap: break-word;
+		overflow: hidden;
+	}
 }
 
 #modal-header {
@@ -58,6 +64,8 @@
 }
 
 #modal-back-link {
+	@extend .govuk-link;
+	@extend .govuk-link--no-visited-state;
 	position: relative;
 	float: left;
 	display: none;
@@ -77,14 +85,14 @@
 	}
 }
 
-#modal-close-button {
+#lite-modal-close-link {
 	float: right;
 	border-bottom: 1px solid currentColor;
 	text-decoration: none;
 }
 
-#modal-contents {
-	padding: 0 30px 30px;
+#lite-modal__contents {
+	padding: 0 govuk-spacing(6) govuk-spacing(6);
 }
 
 .modal-content {

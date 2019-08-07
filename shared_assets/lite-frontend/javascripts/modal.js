@@ -9,23 +9,23 @@ LITECommon.Modal = {
   	focusableElementsString: 'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, *[tabindex], *[contenteditable]',
 	previouslyFocusedElement: {},
 
-	showModal: function(title, content, hideCloseButton = false) {
+	showModal: function(title, content, hideCloseButton = false, backLinkText = true, options={}) {
 		// Generate modal container if it doesn't exist
 		if (!$("#modal-background").length) {
-			let closeText = "<a id='modal-close-button' class='govuk-link govuk-link--no-visited-state' href='#'>Close<span class='govuk-visually-hidden'> popover</span></a>";
+			let closeText = "<a id='lite-modal-close-link' class='govuk-link govuk-link--no-visited-state' href='#'>Close<span class='govuk-visually-hidden'> popover</span></a>";
 
 			if (hideCloseButton) {
 				closeText = "";
 			}
 
-			$("body").append("<div id='modal-background'><div id='modal'><div id='modal-aria-description' class='govuk-visually-hidden'>Press escape to close this popover</div><div id='modal-header'><a id='modal-back_link' class='govuk-link' href='#'>Back</a>" + closeText + "</div><div id='modal-contents'></div></div></div>")
+			$("body").append("<div id='modal-background'><div id='modal'><div id='modal-aria-description' class='govuk-visually-hidden'>Press escape to close this popover</div><div id='modal-header'><a id='modal-back-link' class='govuk-link' href='#'>Back</a>" + closeText + "</div><div id='lite-modal__contents'></div></div></div>")
 
 			// Bind
 			this.modalBackground = $("#modal-background");
 			this.modal = $("#modal");
-			this.container = $("#modal-contents");
-			this.backButton = $("#modal-back_link");
-			this.closeButton = $("#modal-close-button");
+			this.container = $("#lite-modal__contents");
+			this.backButton = $("#modal-back-link");
+			this.closeButton = $("#lite-modal-close-link");
 		}
 
 		// Show modal
@@ -34,7 +34,7 @@ LITECommon.Modal = {
 
 		// Hide existing modal content and show back button if necessary
 		if ($(".modal-content").length > 0) {
-			this.backButton.text("Back to " + $(".modal-content").last().children($("h2")).first().text());
+			this.backButton.text(backLinkText ? "Back" : "Back to " + $(".modal-content").last().children($("h2")).first().text());
 			$(".modal-content").hide();
 			this.backButton.show();
 		} else {
@@ -43,8 +43,13 @@ LITECommon.Modal = {
 			this.closeButton.focus();
 		}
 
+		// Set Options
+		if (options.maxWidth) {
+			this.modal.css({'max-width': options.maxWidth});
+		}
+
 		// Append
-		this.container.append("<div class='modal-content'>" + "<h2 class='govuk-heading-m'>" + title + "</h2>" + content + "</div>");
+		this.container.append("<div class='modal-content'>" + "<h3 class='govuk-heading-m'>" + title + "</h3>" + content + "</div>");
 
 		// Bind events
 		LITECommon.Modal.bindEvents();
