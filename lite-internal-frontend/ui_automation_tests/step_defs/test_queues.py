@@ -57,9 +57,12 @@ def see_queue_in_queue_list(driver, context):
 
 @then('I dont see previously created application')
 def dont_see_queue_in_queue_list(driver, context):
-    driver.timeout_off()
-    assert context.app_id not in driver.find_element_by_css_selector('.lite-cases-table').text
-    driver.timeout_on()
+    driver.set_timeout_to(0)
+    if len(driver.find_elements_by_css_selector('.lite-information-text__text')) == 1:
+        assert True
+    else:
+        assert context.app_id not in driver.find_element_by_css_selector('.lite-cases-table').text
+    driver.set_timeout_to_10_seconds()
 
 
 @when('I add case to new queue')
@@ -86,7 +89,6 @@ def move_case_to_original_queue(driver, context):
     driver.find_element_by_id(context.queue_name).click()
     driver.find_element_by_id("New Cases").click()
     Shared(driver).click_submit()
-
 
 
 @when(parsers.parse('I click on the "{queue_name}" queue in dropdown'))

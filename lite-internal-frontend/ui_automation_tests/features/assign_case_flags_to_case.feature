@@ -10,8 +10,7 @@ Feature: I want to add case-level flags to a case and view them
     And I go to internal homepage
     When I go to flags
     And I add a flag called "Needs" at level "Case"
-    And I go to the internal homepage
-    And I click on application previously created
+    And I go to application previously created
     And I click edit flags link
     And I select previously created flag
     Then The previously created flag is assigned to the case

@@ -47,8 +47,9 @@ def edit_existing_flag(driver, context):
 
 @when('I count the number of active flags')
 def count_active_flags(driver, context):
-    number_of_active_flags = len(driver.find_elements_by_xpath('//*[text()[contains(.,"Active")]]'))
-    number_of_deactivated_flags = len(driver.find_elements_by_xpath('//*[text()[contains(.,"Deactivated")]]'))
+    table = driver.find_element_by_css_selector(".lite-table__body").text
+    number_of_active_flags = table.count('Active')
+    number_of_deactivated_flags = table.count('Deactivated')
     context.original_number_of_active_flags = number_of_active_flags
     context.original_number_of_deactivated_flags = number_of_deactivated_flags
 
@@ -61,20 +62,25 @@ def deactivate_first_active_flag(driver):
 
 @when('I click include deactivated')
 def click_include_deactivated(driver):
+    driver.set_timeout_to(0)
     if len(driver.find_elements_by_css_selector("[href*='flags/all/']")) == 1:
         driver.find_element_by_css_selector("[href*='flags/all/']").click()
+    driver.set_timeout_to_10_seconds()
 
 
 @when('I click include reactivated if displayed')
 def click_include_deactivated(driver):
+    driver.set_timeout_to(0)
     if len(driver.find_element_by_css_selector("[href*='/flags/active/']")) == 1:
         driver.find_element_by_css_selector("[href*='/flags/active/']").click()
+    driver.set_timeout_to_10_seconds()
 
 
 @then('I see one less active flags')
 def i_see_one_less_active_flag(driver, context):
-    number_of_active_flags = len(driver.find_elements_by_xpath('//*[text()[contains(.,"Active")]]'))
-    number_of_deactivated_flags = len(driver.find_elements_by_xpath('//*[text()[contains(.,"Deactivated")]]'))
+    table = driver.find_element_by_css_selector(".lite-table__body").text
+    number_of_active_flags = table.count('Active')
+    number_of_deactivated_flags = table.count('Deactivated')
 
     assert context.original_number_of_active_flags - number_of_active_flags == 1
     assert context.original_number_of_deactivated_flags - number_of_deactivated_flags == -1
@@ -88,8 +94,9 @@ def reactivate_first_deactivated_flag(driver):
 
 @then('I see the original number of active flags')
 def i_see_the_original_number_of_active_flags(driver, context):
-    number_of_active_flags = len(driver.find_elements_by_xpath('//*[text()[contains(.,"Active")]]'))
-    number_of_deactivated_flags = len(driver.find_elements_by_xpath('//*[text()[contains(.,"Deactivated")]]'))
+    table = driver.find_element_by_css_selector(".lite-table__body").text
+    number_of_active_flags = table.count('Active')
+    number_of_deactivated_flags = table.count('Deactivated')
 
     assert context.original_number_of_active_flags == number_of_active_flags
     assert context.original_number_of_deactivated_flags == number_of_deactivated_flags

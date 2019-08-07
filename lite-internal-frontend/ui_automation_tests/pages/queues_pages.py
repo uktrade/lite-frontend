@@ -14,7 +14,9 @@ class QueuesPages():
         self.driver.find_element_by_css_selector(self.add_queue_button).click()
 
     def case_is_on_the_list(self, app_id):
+        self.driver.set_timeout_to(0)
         no = len(self.driver.find_elements_by_link_text(app_id))
+        self.driver.set_timeout_to_10_seconds()
 
         return no
 

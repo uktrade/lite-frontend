@@ -25,7 +25,7 @@ Feature: I want to filter and sort cases on a queue
     Then "1" cases are shown
     When I click clear filters
     Then "2" cases are shown
-    When I click on application previously created
+    When I go to application previously created
     And I click progress application
     And I select status "Under review" and save
     And I go to the internal homepage

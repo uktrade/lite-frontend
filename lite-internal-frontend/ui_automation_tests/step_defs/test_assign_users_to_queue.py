@@ -12,7 +12,7 @@ log.addHandler(console)
 
 
 @when('I select the checkbox for previously created case to be assigned')
-def click_checkbox_for_application(driver, internal_url, register_organisation, apply_for_standard_application, context):
+def click_checkbox_for_application(driver, internal_url, apply_for_standard_application, context):
     driver.get(internal_url)
     href = driver.find_element_by_xpath("//*[text()[contains(.,'" + context.app_id + "')]]").get_attribute('href')
     context.case_id_split_by_slash = href.split('/')[4]

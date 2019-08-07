@@ -205,12 +205,27 @@ class SeedData:
         item = json.loads(response.text)['queue']
         self.add_to_context('queue_id', item['id'])
 
+    def get_queues(self):
+        self.log("getting queues: ...")
+        response = self.make_request("GET", url='/queues/', headers=self.gov_headers)
+        queues = json.loads(response.text)['queues']
+        return queues
+
     def assign_case_to_queue(self, case_id=None, queue_id=None):
         self.log("assigning case to queue: ...")
         queue_id = self.context['queue_id'] if queue_id is None else queue_id
         case_id = self.context['case_id'] if case_id is None else case_id
         data = {'queues':  [queue_id]}
         self.make_request("PUT", url='/cases/' + case_id + '/', headers=self.gov_headers, body=data)
+
+    def assign_test_cases_to_bin(self, bin_queue_id, new_cases_queue_id):
+        self.log("assigning cases to bin: ...")
+        response = self.make_request("GET", url='/queues/' + new_cases_queue_id + '/', headers=self.gov_headers)
+        queue = json.loads(response.text)['queue']
+        cases = queue['cases']
+        for case in cases:
+            data = {'queues':  [bin_queue_id]}
+            self.make_request("PUT", url='/cases/' + case['id'] + '/', headers=self.gov_headers, body=data)
 
     def make_request(self, method, url, headers=None, body=None):
         if headers is None:

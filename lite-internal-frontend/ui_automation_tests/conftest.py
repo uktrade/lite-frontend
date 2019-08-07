@@ -2,17 +2,17 @@ import datetime
 import os
 from pytest_bdd import given, when, then, parsers
 
-from fixtures.core import context, driver, sso_login_info, invalid_username, exporter_sso_login_info
-from fixtures.urls import exporter_url, internal_url, sso_sign_in_url, api_url
-from fixtures.register_organisation import register_organisation
-from fixtures.apply_for_application import apply_for_standard_application, apply_for_clc_query, apply_for_standard_application_with_ueu
+from fixtures.core import context, driver, sso_login_info, invalid_username, new_cases_queue_id
+from fixtures.urls import internal_url, sso_sign_in_url, api_url
+from fixtures.apply_for_application import apply_for_standard_application, apply_for_clc_query
 from fixtures.sign_in_to_sso import sign_in_to_internal_sso
 
 import helpers.helpers as utils
+from helpers.seed_data import SeedData
+from helpers.utils import get_or_create_attr
 from pages.flags_pages import FlagsPages
 from pages.header_page import HeaderPage
 from pages.shared import Shared
-from pages.exporter_hub import ExporterHub
 from pages.case_list_page import CaseListPage
 from pages.application_page import ApplicationPage
 from pages.queues_pages import QueuesPages
@@ -23,8 +23,7 @@ from pages.queues_pages import QueuesPages
 def pytest_exception_interact(node, report):
     if node and report.failed:
         class_name = node._nodeid.replace(".py::", "_class_")
-        name = "{0}_{1}".format(class_name, exporter_url)
-        # utils.save_screenshot(node.funcargs.get("driver"), name)
+        # utils.save_screenshot(node.funcargs.get("driver"), class_name)
 
 
 # Create driver and url command line adoption
@@ -37,18 +36,11 @@ def pytest_addoption(parser):
     parser.addoption("--sso_sign_in_url", action="store", default="https://sso.trade.uat.uktrade.io/login/", help="url")
     
     if env == 'local':
-        parser.addoption("--exporter_url", action="store", default="http://localhost:9000", help="url")
         parser.addoption("--internal_url", action="store", default="http://localhost:8080", help="url")
         parser.addoption("--lite_api_url", action="store", default="http://localhost:8100", help="url")
     else:
-        parser.addoption("--exporter_url", action="store", default="https://exporter.lite.service." + env + ".uktrade.io/", help="url")
         parser.addoption("--internal_url", action="store", default="https://internal.lite.service." + env + ".uktrade.io/", help="url")
         parser.addoption("--lite_api_url", action="store", default="https://lite-api-" + env + ".london.cloudapps.digital/", help="url")
-
-
-@given('I go to exporter homepage')
-def go_to_exporter_given(driver, exporter_url):
-    driver.get(exporter_url)
 
 
 @when('I go to the internal homepage')
@@ -57,8 +49,13 @@ def when_go_to_internal_homepage(driver, internal_url):
 
 
 @given('I go to internal homepage')
-def go_to_internal_homepage(driver, internal_url, sso_sign_in_url, sso_login_info, sign_in_to_internal_sso):
+def go_to_internal_homepage(driver, internal_url, sign_in_to_internal_sso):
     driver.get(internal_url)
+
+
+@given('I sign in to SSO or am signed into SSO')
+def sign_into_sso(driver, sign_in_to_internal_sso):
+    pass
 
 
 @when('I go to internal homepage and sign in')
@@ -70,41 +67,23 @@ def go_to_internal_homepage_sign_in(driver, internal_url, sso_sign_in_url, sso_l
     driver.get(internal_url)
 
 
-@when('I go to exporter homepage')
-def go_to_exporter_when(driver, exporter_url):
-    driver.get(exporter_url)
-
-
-@when('I login to exporter homepage')
-def login_to_exporter(driver, exporter_url, exporter_sso_login_info, register_organisation):
-    driver.get(exporter_url)
-    exporter_hub = ExporterHub(driver)
-    if "login" in driver.current_url:
-        exporter_hub.login(exporter_sso_login_info['email'], exporter_sso_login_info['password'])
-
-
-@when('I click on application previously created')
-def click_on_created_application(driver, context):
-    driver.find_element_by_link_text(context.app_id).click()
-
-
-@when('I click on application previously created with pre incorporated goods')
-def click_on_created_application_with_ueu(driver, apply_for_standard_application_with_ueu, context):
-    driver.find_element_by_css_selector('.lite-cases-table').find_element_by_xpath("//*[text()[contains(.,'" + context.app_id + "')]]").click()
+@when('I go to application previously created')
+def click_on_created_application(driver, context, internal_url):
+    driver.get(internal_url.rstrip('/') + '/cases/' + context.case_id)
 
 
 @given('I create application or application has been previously created')
-def create_app(driver, register_organisation, apply_for_standard_application):
+def create_app(driver, apply_for_standard_application):
     pass
 
 
 @when('I create application or application has been previously created')
-def create_app_when(driver, register_organisation, apply_for_standard_application):
+def create_app_when(driver, apply_for_standard_application):
     pass
 
 
 @given('I create clc query or clc query has been previously created')
-def create_clc(driver, register_organisation, apply_for_clc_query):
+def create_clc(driver, apply_for_clc_query):
     pass
 
 
@@ -114,22 +93,15 @@ def click_on_submit_button(driver):
     shared.click_submit()
 
 
+@when('I refresh the page')
+def I_refresh_the_page(driver):
+    driver.refresh()
+
+
 @then(parsers.parse('I see error message "{expected_error}"'))
 def error_message_shared(driver, expected_error):
     shared = Shared(driver)
     assert expected_error in shared.get_text_of_error_message(0), "expected error message is not displayed"
-
-
-@when('I click sites link')
-def i_click_sites_link(driver):
-    exporter = ExporterHub(driver)
-    exporter.click_sites_link()
-
-
-@when('I click new site')
-def click_new_site(driver):
-    exporter = ExporterHub(driver)
-    exporter.click_new_sites_link()
 
 
 @when('I click continue')
@@ -170,7 +142,7 @@ def go_to_users(driver):
 
 
 @then('I see the clc-case previously created')
-def assert_case_is_present(driver, register_organisation, apply_for_clc_query, context):
+def assert_case_is_present(driver, apply_for_clc_query, context):
     case_list_page = CaseListPage(driver)
     assert case_list_page.assert_case_is_present(context.case_id), "clc case ID is not present on page"
 
@@ -184,7 +156,7 @@ def create_clc_query(driver, apply_for_clc_query, context):
 def click_on_clc_case_previously_created(driver, context):
     case_list_page = CaseListPage(driver)
     assert case_list_page.assert_case_is_present(context.case_id)
-    driver.find_element_by_css_selector('.lite-cases-table').find_element_by_xpath("//*[text()[contains(.,'" + context.case_id + "')]]").click()
+    case_list_page.click_on_href_within_cases_table(context.case_id)
 
 
 @when('I click progress application')
@@ -199,7 +171,7 @@ def select_status_save(driver, status, context):
     application_page.select_status(status)
     context.status = status
     context.date_time_of_update = utils.get_formatted_date_time_h_m_pm_d_m_y()
-    driver.find_element_by_xpath("//button[text()[contains(.,'Save')]]").click()
+    driver.find_element_by_css_selector(".govuk-button").click()
 
 
 @when('I click on new queue in dropdown')

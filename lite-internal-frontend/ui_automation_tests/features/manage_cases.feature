@@ -10,8 +10,8 @@ Feature: I want to record the final decision overall on an application case
   @LT_909_status
   Scenario: Change status to Under Review
     Given I create application or application has been previously created
-    And I go to internal homepage
-    When I click on application previously created
+    And I sign in to SSO or am signed into SSO
+    When I go to application previously created
     And I click progress application
     And I select status "Under review" and save
     Then the status has been changed in the application
@@ -22,8 +22,7 @@ Feature: I want to record the final decision overall on an application case
     Given I create application or application has been previously created
     And I go to internal homepage
     When I give myself the required permissions for "Make final decisions"
-    And I go to the internal homepage
-    And I click on application previously created
+    And I go to application previously created
     And I click record decision
     And I "grant" application
     And I click continue
@@ -50,8 +49,7 @@ Feature: I want to record the final decision overall on an application case
     Given I create application or application has been previously created
     And I go to internal homepage
     When I give myself the required permissions for "Make final decisions"
-    And I go to the internal homepage
-    And I click on application previously created
+    And I go to application previously created
     And I click record decision
     And I "deny" application
     And I click continue
@@ -65,8 +63,7 @@ Feature: I want to record the final decision overall on an application case
     Given I create application or application has been previously created
     And I go to internal homepage
     When I give myself the required permissions for "Make final decisions"
-    And I go to the internal homepage
-    And I click on application previously created
+    And I go to application previously created
     And I click record decision
     And I "deny" application
     And I click continue
@@ -82,8 +79,7 @@ Feature: I want to record the final decision overall on an application case
     Given I create application or application has been previously created
     And I go to internal homepage
     When I give myself the required permissions for "Make final decisions"
-    And I go to the internal homepage
-    And I click on application previously created
+    And I go to application previously created
     And I click record decision
     And I "deny" application
     And I click continue
@@ -94,13 +90,14 @@ Feature: I want to record the final decision overall on an application case
 
   @LT_1042_can_see_ultimate_end_users
   Scenario: Gov user can see ultimate end users in the destinations section of the case
-    Given I go to internal homepage
-    When I click on application previously created with pre incorporated goods
+    Given I create application or application has been previously created
+    And I sign in to SSO or am signed into SSO
+    When I go to application previously created
     Then I see an ultimate end user
 
   @LT-956_can_see_advice_view
   Scenario: Gov user can see advice view page
     Given I create application or application has been previously created
-    And I go to internal homepage
-    When I click on application previously created
+    And I sign in to SSO or am signed into SSO
+    When I go to application previously created
     And I click on view advice

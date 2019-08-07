@@ -4,20 +4,6 @@ Feature: I want to add a company to LITE
   I want to add a new company to LITE
   So that the new company can make applications
 
-
-  @LT_934sites
-  Scenario: Register site
-    Given I go to exporter homepage
-    When I login to exporter homepage
-    And I click sites link
-    And I click new site
-    And I enter in text for new site "London HQ" "address" "postcode" "city" "region" and "Ukraine"
-    And I click continue
-    And I go to internal homepage and sign in
-    And I go to organisations
-    And I click on my registered organisation
-    Then my new site is displayed
-
   @LT_934_test
   Scenario: Test organisation
     Given I go to internal homepage

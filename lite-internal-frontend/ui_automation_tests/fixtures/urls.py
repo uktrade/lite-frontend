@@ -2,11 +2,6 @@ from pytest import fixture
 
 
 @fixture(scope="session")
-def exporter_url(request):
-    return request.config.getoption("--exporter_url")
-
-
-@fixture(scope="session")
 def internal_url(request):
     return request.config.getoption("--internal_url")
 

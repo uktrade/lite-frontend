@@ -1,8 +1,6 @@
-from datetime import datetime
 from pages.header_page import HeaderPage
 from pages.organisations_form_page import OrganisationsFormPage
 from pages.organisations_page import OrganisationsPage
-from pages.exporter_hub import ExporterHub
 from pytest_bdd import scenarios, when, then, parsers
 from selenium.webdriver.common.by import By
 import helpers.helpers as utils
@@ -100,11 +98,3 @@ class OrganisationSteps():
             organisations_form_page.enter_last_name(last_name)
             organisations_form_page.click_submit()
 
-
-    @when(parsers.parse('I enter in text for new site "{edited}" {address}" "{postcode}" "{city}" "{region}" and "{country}"'))
-    def new_sites_info(driver, edited, address, postcode, city, region, country, context):
-        exporter = ExporterHub(driver)
-        time_id = datetime.now().strftime("%m%d%H%M")
-        new_site_name = "New Site " + edited + time_id
-        context.new_site_name = new_site_name
-        exporter.enter_info_for_new_site(new_site_name, address, postcode, city, region, country)

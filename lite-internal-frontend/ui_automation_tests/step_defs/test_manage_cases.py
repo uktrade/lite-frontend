@@ -3,7 +3,6 @@ from pytest_bdd import scenarios, given, when, then, parsers, scenarios
 from pages.application_page import ApplicationPage
 from pages.record_decision_page import RecordDecision
 from pages.shared import Shared
-from pages.exporter_hub import ExporterHub
 import helpers.helpers as utils
 
 from ui_automation_tests.pages.roles_pages import RolesPages
@@ -83,20 +82,6 @@ class ManageCases():
         is_date_in_format = re.search("([0-9]{1,2}):([0-9]{2})(am|pm) ([0-9][0-9]) (January|February|March|April|May|June|July|August|September|October|November|December) ([0-9]{4,})", application_page.get_text_of_activity_dates(0))
         assert is_date_in_format, "date is not displayed after status change"
         assert application_page.get_text_of_activity_users(0) == "first-name last-name", "user who has made the status change has not been displayed correctly"
-
-
-    #TODO exporter dependency
-    @when('I click applications')
-    def i_click_applications(driver):
-        exporter = ExporterHub(driver)
-        exporter.click_applications()
-
-
-    @then('the status has been changed in exporter')
-    def i_click_applications(driver, context):
-        elements = driver.find_elements_by_css_selector(".govuk-table__row")
-        no = utils.get_element_index_by_text(elements, context.app_time_id)
-        assert context.status in elements[no].text
 
 
     @then('the application headers and information are correct')
