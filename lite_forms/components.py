@@ -146,12 +146,14 @@ class _Component:
                  title: str = '',
                  description: str = '',
                  optional: bool = False,
-                 classes: [] = None):
+                 classes: [] = None,
+                 extras=None):
         self.name = name
         self.title = title
         self.description = description
         self.optional = optional
         self.classes = classes
+        self.extras = extras
 
 
 class Input(_Component):
@@ -277,3 +279,15 @@ class MultiFileUpload(_Component):
                  classes: [] = None):
         super().__init__(name, title, description, optional, classes)
         self.input_type = 'MultiFileUpload'
+
+
+class TextArea(_Component):
+    def __init__(self,
+                 name: str,
+                 title: str = '',
+                 description: str = '',
+                 optional: bool = False,
+                 classes: [] = None,
+                 extras: [] = None):
+        super().__init__(name, title, description, optional, classes, extras)
+        self.input_type = 'TextArea'
