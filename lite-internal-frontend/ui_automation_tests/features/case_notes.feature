@@ -62,3 +62,4 @@ Feature: I want to add an internal note to a case and view notes
     And I click visible to exporters checkbox
     And I click post note
     And I click confirm on confirmation box
+    Then note is displayed

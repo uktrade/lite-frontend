@@ -16,8 +16,7 @@ log.addHandler(console)
 
 @then('I see the flag in the flag list')
 def see_flag_in_list(driver, context):
-    flag_name = driver.find_element_by_xpath("//*[text()[contains(.,'" + context.flag_name + "')]]")
-    assert flag_name.is_displayed()
+    assert context.flag_name in Shared(driver).get_text_of_table()
 
 
 @when('I add an existing flag name')
@@ -31,56 +30,50 @@ def add_existing_flag(driver, context):
 
 @when('I edit my flag')
 def edit_existing_flag(driver, context):
-    elements = driver.find_elements_by_css_selector("td a")
-    no = 0
-    while no < len(elements):
-        if elements[no].text == context.flag_name:
-            element_number = no
-        no += 1
-
+    elements = Shared(driver).get_links_in_cells_in_table()
+    element_number = utils.get_element_index_by_text(elements, context.flag_name)
     elements[element_number + 2].click()
     flags_pages = FlagsPages(driver)
-    context.flag_name = str(context.flag_name)[:12] + "edited"
+    context.flag_name = str(context.flag_name)[:13] + " edited"
     flags_pages.enter_flag_name(context.flag_name)
-    driver.find_element_by_css_selector("[type*='submit']").click()
+    Shared(driver).click_submit()
 
 
 @when('I count the number of active flags')
 def count_active_flags(driver, context):
-    table = driver.find_element_by_css_selector(".lite-table__body").text
-    number_of_active_flags = table.count('Active')
-    number_of_deactivated_flags = table.count('Deactivated')
-    context.original_number_of_active_flags = number_of_active_flags
-    context.original_number_of_deactivated_flags = number_of_deactivated_flags
+    context.original_number_of_active_flags = FlagsPages(driver).get_size_of_active_flags()
+    context.original_number_of_deactivated_flags = FlagsPages(driver).get_size_of_inactive_flags()
 
 
 @when('I deactivate the first active flag')
 def deactivate_first_active_flag(driver):
-    driver.find_element_by_css_selector("[href*='edit/deactivate/']").click()
+    FlagsPages(driver).click_on_deactivate_flag()
     Shared(driver).click_submit()
 
 
 @when('I click include deactivated')
 def click_include_deactivated(driver):
+    flags = FlagsPages(driver)
     driver.set_timeout_to(0)
-    if len(driver.find_elements_by_css_selector("[href*='flags/all/']")) == 1:
-        driver.find_element_by_css_selector("[href*='flags/all/']").click()
+    if flags.is_include_deactivated_button_displayed():
+        flags.click_include_deactivated_flags()
     driver.set_timeout_to_10_seconds()
 
 
 @when('I click include reactivated if displayed')
-def click_include_deactivated(driver):
+def click_include_reactivated(driver):
+    flags = FlagsPages(driver)
     driver.set_timeout_to(0)
-    if len(driver.find_element_by_css_selector("[href*='/flags/active/']")) == 1:
-        driver.find_element_by_css_selector("[href*='/flags/active/']").click()
+    if flags.is_include_reactivated_button_displayed():
+        flags.click_include_reactivated_flags()
     driver.set_timeout_to_10_seconds()
 
 
 @then('I see one less active flags')
 def i_see_one_less_active_flag(driver, context):
-    table = driver.find_element_by_css_selector(".lite-table__body").text
-    number_of_active_flags = table.count('Active')
-    number_of_deactivated_flags = table.count('Deactivated')
+    flags = FlagsPages(driver)
+    number_of_active_flags = flags.get_size_of_active_flags()
+    number_of_deactivated_flags = flags.get_size_of_inactive_flags()
 
     assert context.original_number_of_active_flags - number_of_active_flags == 1
     assert context.original_number_of_deactivated_flags - number_of_deactivated_flags == -1
@@ -88,15 +81,36 @@ def i_see_one_less_active_flag(driver, context):
 
 @when('I reactivate the first deactivated flag')
 def reactivate_first_deactivated_flag(driver):
-    driver.find_element_by_css_selector("[href*='edit/reactivate/']").click()
+    FlagsPages(driver).click_on_reactivate_flag()
     Shared(driver).click_submit()
 
 
 @then('I see the original number of active flags')
 def i_see_the_original_number_of_active_flags(driver, context):
-    table = driver.find_element_by_css_selector(".lite-table__body").text
-    number_of_active_flags = table.count('Active')
-    number_of_deactivated_flags = table.count('Deactivated')
+    flags = FlagsPages(driver)
+    number_of_active_flags = flags.get_size_of_active_flags()
+    number_of_deactivated_flags = flags.get_size_of_inactive_flags()
 
     assert context.original_number_of_active_flags == number_of_active_flags
     assert context.original_number_of_deactivated_flags == number_of_deactivated_flags
+
+
+@when('I go to flags via menu')
+def go_to_flags_menu(driver):
+    header = HeaderPage(driver)
+    header.click_lite_menu()
+    header.click_flags()
+
+
+@when(parsers.parse('I add a flag called "{flag_name}" at level "{flag_level}"'))
+def add_a_flag(driver, flag_name, flag_level, context):
+    flags_page = FlagsPages(driver)
+    flags_page.click_add_a_flag_button()
+    flags_page.enter_flag_name(flag_name)
+    flags_page.select_flag_level(flag_level)
+    Shared(driver).click_submit()
+
+
+@when('I add a flag called UAE at level Case')
+def add_a_uae_flag(driver, context, add_uae_flag):
+    pass

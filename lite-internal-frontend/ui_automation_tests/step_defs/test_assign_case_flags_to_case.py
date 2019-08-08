@@ -84,3 +84,8 @@ def assert_flag_is_assigned(driver, context):
     exists = application_page.is_flag_applied(context.flag_name)
     driver.set_timeout_to_10_seconds()
     assert exists is False
+
+
+@when('I add a flag called UAE at level Case')
+def add_a_flag(driver, context, add_uae_flag):
+    pass

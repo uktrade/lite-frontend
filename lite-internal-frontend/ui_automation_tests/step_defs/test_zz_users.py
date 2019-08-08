@@ -73,8 +73,10 @@ def test_manage_users(driver, open_internal_hub, context):
 def test_inability_to_deactivate_oneself(driver, open_internal_hub):
     header = HeaderPage(driver)
     header.click_user_profile()
+    driver.set_timeout_to(0)
     deactivate = utils.is_element_present(driver, By.XPATH, "//*[text()[contains(.,'Deactivate')]]")
     assert not deactivate
+    driver.set_timeout_to_10_seconds()
 
 
 def test_invalid(driver, open_internal_hub):

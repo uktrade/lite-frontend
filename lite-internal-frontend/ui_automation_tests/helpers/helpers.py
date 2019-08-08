@@ -2,6 +2,7 @@ import allure
 import os
 import time
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
@@ -92,6 +93,10 @@ def get_formatted_date_time_m_d_h_s():
     return datetime.now().strftime("%m%d%H%M%S")
 
 
+def get_formatted_date_time_d_h_m_s():
+    return datetime.now().strftime(" %d%H%M%S")
+
+
 def highlight(element):
     """Highlights (blinks) a Selenium Webdriver element"""
     driver = element._parent
@@ -163,3 +168,8 @@ def wait_until_menu_is_visible(driver):
                 break
         except Exception:
             continue
+
+
+def select_visible_text_from_dropdown(element, text):
+    select = Select(element)
+    select.select_by_visible_text(text)

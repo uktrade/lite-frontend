@@ -1,5 +1,5 @@
 import logging
-from pytest_bdd import when, then, parsers, scenarios
+from pytest_bdd import when, then, parsers, scenarios, given
 from conf.settings import env
 import helpers.helpers as utils
 from pages.header_page import HeaderPage
@@ -16,12 +16,16 @@ sso_name = env('TEST_SSO_NAME')
 scenarios('../features/teams.feature', strict_gherkin=False)
 
 
-@when('I go to teams')
-def go_to_teams(driver):
+@when('I go to teams via menu')
+def go_to_teams_via_menu(driver):
     header = HeaderPage(driver)
-
     header.click_lite_menu()
     header.click_teams()
+
+
+@given('I go to teams')
+def go_to_teams(driver, sign_in_to_internal_sso, internal_url):
+    driver.get(internal_url.rstrip('/') + '/teams/')
 
 
 @when('I click on my team')
@@ -48,17 +52,18 @@ def click_edit_for_my_user(driver):
     user.click()
 
 
+@when(parsers.parse('I add a team called BlueOcean'))
+def add_a_team_blue_ocean(driver, add_a_team, context):
+    pass
+
+
 @when(parsers.parse('I add a team called "{team_name}"'))
 def add_a_team(driver, team_name, context):
     teams_pages = TeamsPages(driver)
     shared = Shared(driver)
     utils.get_unformatted_date_time()
     teams_pages.click_add_a_team_button()
-    if team_name == " ":
-        context.team_name = team_name
-    else:
-        context.team_name = team_name + str(utils.get_unformatted_date_time())
-    teams_pages.enter_team_name(context.team_name)
+    teams_pages.enter_team_name(team_name)
     shared.click_submit()
 
 

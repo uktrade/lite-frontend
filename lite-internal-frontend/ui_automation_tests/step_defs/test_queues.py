@@ -1,6 +1,8 @@
-from pytest_bdd import when, then, parsers, scenarios
-import selenium.common.exceptions
+from pytest import fixture
+from pytest_bdd import given, when, then, parsers, scenarios
 import helpers.helpers as utils
+from pages.application_page import ApplicationPage
+from pages.case_list_page import CaseListPage
 from pages.header_page import HeaderPage
 from pages.queues_pages import QueuesPages
 from pages.shared import Shared
@@ -14,35 +16,37 @@ console = logging.StreamHandler()
 log.addHandler(console)
 
 
-@when('I go to queues')
-def go_to_queues(driver):
+@given('I go to queues')
+def go_to_queues(driver, sign_in_to_internal_sso, internal_url):
+    driver.get(internal_url.rstrip('/') + '/queues/')
+
+
+@when('I go to queues via menu')
+def go_to_queues_via_menu(driver):
     HeaderPage(driver).click_lite_menu()
     HeaderPage(driver).click_queues()
 
 
-@when('I click on add a queue')
-def click_on_add_queue(driver):
-    QueuesPages(driver).click_add_a_queue_button()
-
-
 @when('I edit the new queue')
 def click_on_edit_queue(driver, context):
-    driver.find_element_by_xpath("//*[text()[contains(.,'" + context.queue_name + "')]]/following-sibling::td[last()]/a").click()
+    queues = QueuesPages(driver)
+    no = utils.get_element_index_by_partial_text(queues.get_table_rows(), context.queue_name)
+    queues.click_queue_edit_button(no)
     context.queue_name = str(context.queue_name)[:12] + "edited"
     QueuesPages(driver).enter_queue_name(context.queue_name)
     Shared(driver).click_submit()
 
 
 @when(parsers.parse('I enter in queue name "{queue_name}"'))
-def add_a_queue(driver, queue_name, context):
-    if queue_name == " ":
-        context.queue_name = queue_name
-    else:
-        extra_string = str(utils.get_unformatted_date_time())
-        extra_string = extra_string[(len(extra_string))-14:]
-        context.queue_name = queue_name + extra_string
-    QueuesPages(driver).enter_queue_name(context.queue_name)
+def add_a_queue(driver, queue_name):
+    QueuesPages(driver).click_add_a_queue_button()
+    QueuesPages(driver).enter_queue_name(queue_name)
     Shared(driver).click_submit()
+
+
+@when('I enter in queue name Review')
+def add_a_queue(driver, context, add_queue):
+    pass
 
 
 @then('I see the new queue')
@@ -52,7 +56,7 @@ def see_queue_in_queue_list(driver, context):
 
 @then('I see previously created application')
 def see_queue_in_queue_list(driver, context):
-    assert QueuesPages(driver).case_is_on_the_list(context.app_id) == 1
+    assert QueuesPages(driver).is_case_on_the_list(context.app_id) == 1, "previously created application is not displayed " + context.app_id
 
 
 @then('I dont see previously created application')
@@ -67,36 +71,27 @@ def dont_see_queue_in_queue_list(driver, context):
 
 @when('I add case to new queue')
 def move_case_to_new_queue(driver, context):
-    driver.find_element_by_css_selector('.govuk-button[href*="move"]').click()
+    ApplicationPage(driver).click_move_case_button()
     driver.find_element_by_id(context.queue_name).click()
-    driver.find_element_by_id("New Cases").click()
+    QueuesPages(driver).click_on_new_cases_queue()
     Shared(driver).click_submit()
 
 
 @when('I deselect all queues')
 def deselect_all_queues(driver):
-    driver.find_element_by_css_selector('.govuk-button[href*="move"]').click()
-    elements = driver.find_elements_by_css_selector('.govuk-checkboxes__input')
-    for element in elements:
-        if element.is_selected():
-            element.click()
+    ApplicationPage(driver).click_move_case_button()
+    QueuesPages(driver).deselect_all_queues()
     Shared(driver).click_submit()
 
 
 @when('I move case to new cases original queue and remove from new queue')
 def move_case_to_original_queue(driver, context):
-    driver.find_element_by_css_selector('.govuk-button[href*="move"]').click()
+    ApplicationPage(driver).click_move_case_button()
     driver.find_element_by_id(context.queue_name).click()
-    driver.find_element_by_id("New Cases").click()
+    QueuesPages(driver).click_on_new_cases_queue()
     Shared(driver).click_submit()
 
 
 @when(parsers.parse('I click on the "{queue_name}" queue in dropdown'))
 def system_queue_shown_in_dropdown(driver, queue_name):
-    driver.find_element_by_id('queue-title').click()
-    elements = driver.find_elements_by_css_selector('.lite-dropdown .lite-dropdown--item')
-    for idx, element in enumerate(elements):
-        if element.text == queue_name:
-            driver.execute_script("document.getElementsByClassName('lite-dropdown--item')[" + str(idx) + "].scrollIntoView(true);")
-            element.click()
-            break
+    CaseListPage(driver).click_on_queue_name(queue_name)

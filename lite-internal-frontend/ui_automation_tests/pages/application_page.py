@@ -23,8 +23,10 @@ class ApplicationPage(BasePage):
     EDIT_CASE_FLAGS = 'application-edit-case-flags'  # ID
     view_advice = "a[href*='/advice-view/']"
     case_flags = 'application-case-flags'
+    move_case_button = '.govuk-button[href*="move"]' # CSS
 
     def click_visible_to_exporter_checkbox(self):
+        time.sleep(.5)
         self.driver.find_element_by_id(self.is_visible_to_exporter_checkbox_id).click()
 
     def enter_case_note(self, text):
@@ -38,6 +40,7 @@ class ApplicationPage(BasePage):
         self.driver.find_element_by_id(self.post_note_btn).click()
 
     def click_cancel_btn(self):
+        time.sleep(.5)
         self.driver.find_element_by_id(self.cancel_note_btn).click()
 
     def get_text_of_case_note(self, no):
@@ -64,7 +67,6 @@ class ApplicationPage(BasePage):
 
     def select_status(self, status):
         case_status_dropdown = Select(self.driver.find_element_by_id('status'))
-        time.sleep(1)
         case_status_dropdown.select_by_visible_text(status)
 
     def get_text_of_application_headings(self):
@@ -90,3 +92,6 @@ class ApplicationPage(BasePage):
         case_flags = self.driver.find_element_by_id(self.case_flags)
         count = len(case_flags.find_elements_by_id(flag_id))
         return count == 1
+
+    def click_move_case_button(self):
+        self.driver.find_element_by_css_selector(self.move_case_button).click()
