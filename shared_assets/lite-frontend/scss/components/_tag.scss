@@ -1,0 +1,38 @@
+.lite-tag {
+	@include govuk-font($size: 16, $weight: bold);
+	background-color: govuk-colour("mid-grey");
+	color: govuk-colour("white");
+	box-sizing: border-box;
+	padding: govuk-spacing(2) govuk-spacing(2) 7px;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	right: 0;
+	width: 150px;
+	line-height: 35px;
+	margin: 0;
+	margin-bottom: govuk-spacing(6);
+	text-align: center;
+
+	&--small {
+		@include govuk-font($size: 14, $weight: bold);
+		width: 130px;
+		line-height: 28px;
+		margin-bottom: govuk-spacing(3);
+	}
+
+	&--green {
+		background-color: govuk-colour("green");
+	}
+
+	&--orange {
+		background-color: govuk-colour("orange");
+	}
+
+	&--red {
+		background-color: govuk-colour("red");
+	}
+
+	&--blue {
+		background-color: govuk-colour("blue");
+	}
+}
