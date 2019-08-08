@@ -1,11 +1,14 @@
-$govuk-button-colour: #00823b;
-
 .lite-tick-cross-list {
 	margin: 0;
 	list-style: none;
 	margin-block-start: 0;
 	padding: 0;
 	list-style-type: none;
+
+	li {
+      @include govuk-text-colour;
+      @include govuk-font($size: 19);
+	}
 
 	li:last-of-type .lite-tick-cross {
 		margin-bottom: 0;
@@ -22,12 +25,12 @@ $govuk-button-colour: #00823b;
 		height: 18px;
 		width: 18px;
 		margin-right: govuk-spacing(2);
-		margin-bottom: 4px;
+		margin-bottom: 2px;
 	}
 
 	&--tick {
 		svg * {
-			fill: $govuk-button-colour;
+			fill: govuk-colour("green");
 		}
 	}
 

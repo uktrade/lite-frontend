@@ -11,7 +11,6 @@
 .lite-user-menu-button {
 	@include govuk-link-common;
 	@include govuk-font($size: 14, $weight: bold);
-    // @include govuk-focusable-fill;
 	color: white;
 	display: flex;
 	align-items: center;

@@ -1,0 +1,26 @@
+.lite-information-text {
+	$size: 36px;
+	$color: govuk-colour("black");
+	display: flex;
+
+	&__icon {
+		@include govuk-font($size: 24);
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		background: $color;
+		color: govuk-colour("white");
+		width: $size;
+		height: $size;
+		margin-right: govuk-spacing(3);
+		user-select: none;
+	}
+
+	&__text {
+		@include govuk-font($size: 19);
+		display: inline-block;
+		line-height: $size!important;
+		margin: 0;
+		color: $color;
+	}
+}
