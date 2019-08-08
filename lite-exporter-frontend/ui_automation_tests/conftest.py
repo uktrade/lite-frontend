@@ -2,19 +2,17 @@ import datetime
 import os
 
 import pytest
-from fixtures.core import context, driver, sso_login_info, invalid_username, exporter_sso_login_info
+from fixtures.core import context, driver, invalid_username, exporter_sso_login_info
 from fixtures.register_organisation import register_organisation
 from fixtures.add_goods import add_a_good, add_an_incorporated_good_to_application, add_a_non_incorporated_good_to_application
 from fixtures.add_an_application import add_an_application
+from fixtures.sso_sign_in import sso_sign_in
 from fixtures.internal_case_note import internal_case_note
-from fixtures.urls import exporter_url, internal_url, sso_sign_in_url
+from fixtures.urls import exporter_url, api_url
 
-from pages.add_end_user_pages import AddEndUserPages
 from pages.add_goods_page import AddGoodPage
 from pages.add_new_external_location_form_page import AddNewExternalLocationFormPage
-from pages.application_goods_list import ApplicationGoodsList
 from pages.application_overview_page import ApplicationOverviewPage
-from pages.application_page import ApplicationPage
 from pages.apply_for_a_licence_page import ApplyForALicencePage
 from pages.exporter_hub_page import ExporterHubPage
 from pages.external_locations_page import ExternalLocationsPage
@@ -23,16 +21,11 @@ from pages.shared import Shared
 from pages.sites_page import SitesPage
 from pages.which_location_form_page import WhichLocationFormPage
 from pytest_bdd import given, when, then, parsers
-from conf.settings import env
 import helpers.helpers as utils
 
 # from core import strings
 
 strict_gherkin = False
-
-
-sso_email = env('TEST_SSO_EMAIL')
-sso_password = env('TEST_SSO_PASSWORD')
 
 # Screenshot in case of any test failure
 def pytest_exception_interact(node, report):
@@ -48,19 +41,21 @@ def pytest_addoption(parser):
     if env == 'None':
         env = "dev"
     parser.addoption("--driver", action="store", default="chrome", help="Type in browser type")
-    parser.addoption("--exporter_url", action="store", default="https://exporter.lite.service." + env + ".uktrade.io/", help="url")
-    parser.addoption("--internal_url", action="store", default="https://internal.lite.service." + env + ".uktrade.io/", help="url")
+    if env == 'local':
+        parser.addoption("--exporter_url", action="store", default="http://localhost:9000", help="url")
+        parser.addoption("--lite_api_url", action="store", default="http://localhost:8100", help="url")
+    else:
+        parser.addoption("--exporter_url", action="store", default="https://exporter.lite.service." + env + ".uktrade.io/", help="url")
+        parser.addoption("--lite_api_url", action="store", default="https://lite-api-" + env + ".london.cloudapps.digital/", help="url")
     parser.addoption("--sso_sign_in_url", action="store", default="https://sso.trade.uat.uktrade.io/login/", help="url")
     parser.addoption("--sso-url", action="store", default="https://sso.trade.uat.uktrade.io/login/", help="url")
     parser.addoption("--email", action="store", default="test@mail.com")
     parser.addoption("--password", action="store", default="password")
     parser.addoption("--first_name", action="store", default="Test")
     parser.addoption("--last_name", action="store", default="User")
-
     # Load in content strings
     # with open('../../lite-content/lite-exporter-frontend/strings.json') as json_file:
     #     strings.constants = json.load(json_file)
-
 
 
 @pytest.fixture(scope="module")
@@ -83,39 +78,14 @@ def last_name(request):
     return request.config.getoption("--last_name")
 
 
-@given('I go to internal homepage')
-def go_to_internal_homepage(driver, internal_url, sso_sign_in_url):
-    driver.get(sso_sign_in_url)
-    driver.find_element_by_name("username").send_keys(sso_email)
-    driver.find_element_by_name("password").send_keys(sso_password)
-    driver.find_element_by_css_selector("[type='submit']").click()
-    driver.get(internal_url)
-
-
-@when('I go to internal homepage')
-def go_to_internal_homepage(driver, internal_url, sso_sign_in_url):
-    driver.get(sso_sign_in_url)
-    driver.find_element_by_name("username").send_keys(sso_email)
-    driver.find_element_by_name("password").send_keys(sso_password)
-    driver.find_element_by_css_selector("[type='submit']").click()
-    driver.get(internal_url)
-
-
 @given('I go to exporter homepage')
-def go_to_exporter(driver, request, exporter_sso_login_info, register_organisation):
-    driver.get(request.config.getoption("--exporter_url"))
-    exporter_hub = ExporterHubPage(driver)
-    if "login" in driver.current_url:
-        exporter_hub.login(exporter_sso_login_info['email'], exporter_sso_login_info['password'])
+def go_to_exporter(driver, sso_sign_in, exporter_url, register_organisation):
+    driver.get(exporter_url)
 
 
 @when('I go to exporter homepage')
-def go_to_exporter_when(driver, request):
-    driver.get(request.config.getoption("--exporter_url"))
-    exporter_hub = ExporterHubPage(driver)
-    if "login" in driver.current_url:
-        exporter_hub.login(exporter_sso_login_info['email'], exporter_sso_login_info['password'])
-
+def go_to_exporter_when(driver, exporter_url):
+    driver.get(exporter_url)
 
 # utils
 @then(parsers.parse('driver title equals "{expected_text}"'))
@@ -143,7 +113,7 @@ def enter_application_name(driver, context):
     apply = ApplyForALicencePage(driver)
     app_time_id = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     context.app_time_id = app_time_id
-    app_name = "Request for Nimbus 2000" + app_time_id
+    app_name = "Request for Nimbus 2000 " + app_time_id
     apply.enter_name_or_reference_for_application(app_name)
     context.app_id = app_name
     apply.click_save_and_continue()

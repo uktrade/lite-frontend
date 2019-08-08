@@ -8,7 +8,6 @@ Feature: I want to add a note to an application and view notes
   Scenario: Add a new valid case note
     Given I go to exporter homepage
     When I click on applications
-    # TODO: Create an application before this step!
     And I click on an application previously created
     And I enter "This is a note on my application!" for case note
     And I click post note

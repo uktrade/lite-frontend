@@ -7,7 +7,8 @@ scenarios('../features/case_notes.feature', strict_gherkin=False)
 
 
 @when('I click on an application previously created')
-def click_on_an_application(driver):
+def click_on_an_application(driver, add_an_application):
+    driver.refresh()
     driver.find_element_by_css_selector('a[href*="/applications/"]').click()
 
 

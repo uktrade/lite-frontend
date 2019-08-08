@@ -2,17 +2,12 @@ from pytest_bdd import scenarios, given, when, then
 from ui_automation_tests.pages.exporter_hub_page import ExporterHubPage
 from ui_automation_tests.helpers import helpers
 
-import helpers.helpers as utils
-from selenium.webdriver.common.by import By
-
 scenarios('../features/notifications.feature', strict_gherkin=False)
 
 
-@when('An application exists and a case note has been added via internal gov site')
+@given('An application exists and a case note has been added via internal gov site')
 def application_exists_case_note_added(add_an_application, internal_case_note):
-
-    # all work done by fixtures
-    assert True
+    pass
 
 
 @then('I can see a notification')
@@ -33,7 +28,7 @@ def click_on_application(driver, context):
 
 @then('I can see the internally added note')
 def internal_note_visible(driver, context):
-    assert utils.is_element_present(driver, By.XPATH, "//*[text()[contains(.,'" + context.text + "')]]")
+    assert context.text in driver.find_element_by_css_selector('.lite-case-notes').text
 
 
 @then('I cannot see a notification')
