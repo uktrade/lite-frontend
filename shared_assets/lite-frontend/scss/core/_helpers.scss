@@ -31,3 +31,11 @@
 		}
 	}
 }
+
+.lite-mobile-only {
+	display: none;
+
+	@include govuk-media-query($until: tablet) {
+		display: block;
+	}
+}
