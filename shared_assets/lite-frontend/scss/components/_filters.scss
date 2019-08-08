@@ -12,6 +12,18 @@ $highlight-border-colour: #ffbf47;
 	border: 1px solid darken(govuk-colour("light-grey"), 2%);
 	padding: govuk-spacing(4);
 	margin-bottom: govuk-spacing(6);
+
+	.govuk-button--secondary {
+		background-color: white;
+
+		&:hover {
+			background-color: darken(govuk-colour("light-grey"), 5%);
+		}
+
+		&:active {
+			background-color: darken(govuk-colour("light-grey"), 10%);
+		}
+	}
 }
 
 .lite-filter-bar {
