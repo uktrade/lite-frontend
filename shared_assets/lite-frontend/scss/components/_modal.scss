@@ -1,23 +1,27 @@
-.has-modal {
+.lite-has-modal {
 	position: relative;
 	overflow: hidden;
 }
 
-#modal-background {
+#lite-modal-background {
 	position: fixed;
 	top: 0;
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background: rgba(0, 0, 0, 0.65);
+	background: rgba(0, 0, 0, 0.7);
 	z-index: 999;
 	display: none;
 	padding: govuk-spacing(6);
 	overflow-y: scroll;
 	-webkit-overflow-scrolling: touch;
+
+	@include govuk-media-query($until: tablet) {
+		padding: 0;
+	}
 }
 
-#modal {
+#lite-modal {
 	margin: 6vh auto;
 	width: 600px;
 	max-width: 100%;
@@ -30,9 +34,14 @@
 		word-wrap: break-word;
 		overflow: hidden;
 	}
+
+	@include govuk-media-query($until: tablet) {
+		width: 100%!important;
+		max-width: 100%!important;
+	}
 }
 
-#modal-header {
+#lite-modal-header {
 	padding: govuk-spacing(6);
 	margin-bottom: govuk-spacing(2);
 }
@@ -63,7 +72,7 @@
 	}
 }
 
-#modal-back-link {
+#lite-modal-back-link {
 	@extend .govuk-link;
 	@extend .govuk-link--no-visited-state;
 	position: relative;
@@ -95,7 +104,7 @@
 	padding: 0 govuk-spacing(6) govuk-spacing(6);
 }
 
-.modal-content {
+.lite-modal-content {
 	.govuk-button {
 		margin-bottom: 0!important;
 	}

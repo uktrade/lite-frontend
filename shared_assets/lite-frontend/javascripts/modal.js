@@ -11,31 +11,31 @@ LITECommon.Modal = {
 
 	showModal: function(title, content, hideCloseButton = false, backLinkText = true, options={}) {
 		// Generate modal container if it doesn't exist
-		if (!$("#modal-background").length) {
+		if (!$("#lite-modal-background").length) {
 			let closeText = "<a id='lite-modal-close-link' class='govuk-link govuk-link--no-visited-state' href='#'>Close<span class='govuk-visually-hidden'> popover</span></a>";
 
 			if (hideCloseButton) {
 				closeText = "";
 			}
 
-			$("body").append("<div id='modal-background'><div id='modal'><div id='modal-aria-description' class='govuk-visually-hidden'>Press escape to close this popover</div><div id='modal-header'><a id='modal-back-link' class='govuk-link' href='#'>Back</a>" + closeText + "</div><div id='lite-modal__contents'></div></div></div>")
+			$("body").append("<div id='lite-modal-background'><div id='lite-modal'><div id='modal-aria-description' class='govuk-visually-hidden'>Press escape to close this popover</div><div id='lite-modal-header'><a id='lite-modal-back-link' class='govuk-link' href='#'>Back</a>" + closeText + "</div><div id='lite-modal__contents'></div></div></div>")
 
 			// Bind
-			this.modalBackground = $("#modal-background");
-			this.modal = $("#modal");
+			this.modalBackground = $("#lite-modal-background");
+			this.modal = $("#lite-modal");
 			this.container = $("#lite-modal__contents");
-			this.backButton = $("#modal-back-link");
+			this.backButton = $("#lite-modal-back-link");
 			this.closeButton = $("#lite-modal-close-link");
 		}
 
 		// Show modal
 		this.modalBackground.show();
-		$("html, body").addClass("has-modal");
+		$("html, body").addClass("lite-has-modal");
 
 		// Hide existing modal content and show back button if necessary
-		if ($(".modal-content").length > 0) {
+		if ($(".lite-modal-content").length > 0) {
 			this.backButton.text(backLinkText ? "Back" : "Back to " + $(".modal-content").last().children($("h2")).first().text());
-			$(".modal-content").hide();
+			$(".lite-modal-content").hide();
 			this.backButton.show();
 		} else {
 			// Focus on close button if new modal
@@ -45,31 +45,31 @@ LITECommon.Modal = {
 
 		// Set Options
 		if (options.maxWidth) {
-			this.modal.css({'max-width': options.maxWidth});
+			this.modal.css({'max-width': options.maxWidth, 'width': '100%'});
 		}
 
 		// Append
-		this.container.append("<div class='modal-content'>" + "<h3 class='govuk-heading-m'>" + title + "</h3>" + content + "</div>");
+		this.container.append("<div class='lite-modal-content'>" + "<h3 class='govuk-heading-m'>" + title + "</h3>" + content + "</div>");
 
 		// Bind events
 		LITECommon.Modal.bindEvents();
 	},
 
 	closeTopModal: function() {
-		$(".modal-content").last().remove();
-		$(".modal-content").last().show();
+		$(".lite-modal-content").last().remove();
+		$(".lite-modal-content").last().show();
 
-		if ($(".modal-content").length == 1) {
+		if ($(".lite-modal-content").length == 1) {
 			this.backButton.hide();
 		} else {
 			// Get element before last element
-			this.backButton.text("Back to " + $(".modal-content").eq(-2).children($("h2")).first().text());
+			this.backButton.text("Back to " + $(".lite-modal-content").eq(-2).children($("h2")).first().text());
 		}
 	},
 
 	closeAllModals: function() {
 		this.modalBackground.remove();
-		$("html, body").removeClass("has-modal");
+		$("html, body").removeClass("lite-has-modal");
 		this.previouslyFocusedElement.focus();
 	},
 
@@ -149,7 +149,7 @@ LITECommon.Modal = {
 	getFocusableElements: function() {
 		"use strict";
 
-		return $('#modal').find('*').filter(LITECommon.Modal.focusableElementsString).filter(':visible');
+		return $('#lite-modal').find('*').filter(LITECommon.Modal.focusableElementsString).filter(':visible');
 	},
 
 	/**
