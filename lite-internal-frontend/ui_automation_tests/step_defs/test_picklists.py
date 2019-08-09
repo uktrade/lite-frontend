@@ -61,14 +61,14 @@ def add_to_picklist_item(driver, picklist_name, picklist_description, context):
 @then('I see my new picklist item in the list')
 def see_new_picklist(driver, context):
     picklist_column = PicklistPages(driver).get_text_of_picklist_list()
-    assert context.picklist_name in picklist_column
-    assert context.picklist_description in picklist_column
+    assert context.picklist_name in picklist_column, "picklist name is not in column"
+    assert context.picklist_description in picklist_column, "picklist description is not in column"
 
 
 @then('I see picklist error messages')
-def I_see_picklist_error_messages(driver, context):
-    assert "Picklist item name may not be blank" in Shared(driver).get_text_of_error_message(0)
-    assert "Picklist item text may not be blank" in Shared(driver).get_text_of_error_message(1)
+def i_see_picklist_error_messages(driver, context):
+    assert "Picklist item name may not be blank" in Shared(driver).get_text_of_error_message(0), "picklist error message is not displayed"
+    assert "Picklist item text may not be blank" in Shared(driver).get_text_of_error_message(1), "picklist error message is not displayed"
 
 
 @when('I click on my picklist item')
@@ -89,11 +89,11 @@ def edit_picklist_item(driver, context, picklist_name, picklist_description):
 
 
 @then(parsers.parse('I see my picklist page with status as "{status}"'))
-def I_see_my_picklist_page(driver, context, status):
+def i_see_my_picklist_page(driver, context, status):
     body = PicklistPages(driver).get_text_of_picklist_page_body()
-    assert context.picklist_name in body
-    assert context.picklist_description in body
-    assert "Created by" in body
-    assert status in body
-    assert "Last updated" in body
-    assert context.picklist_type.lower().replace("_", " ") in body.lower().replace("_", " ")
+    assert context.picklist_name in body, "picklist name is not displayed"
+    assert context.picklist_description in body,  "picklist description is not displayed"
+    assert "Created by" in body, "created by is not displayed"
+    assert status in body, "status is not displayed"
+    assert "Last updated" in body, "last updated is not displayed"
+    assert context.picklist_type.lower().replace("_", " ") in body.lower().replace("_", " "), "picklist type is not displayed"

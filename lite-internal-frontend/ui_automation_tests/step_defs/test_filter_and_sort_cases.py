@@ -1,8 +1,8 @@
 from pytest_bdd import given, when, then, parsers, scenarios
-from selenium.webdriver.support.ui import Select
 from helpers.helpers import get_formatted_date_time_m_d_h_s
 from helpers.seed_data import SeedData
 from helpers.utils import get_or_create_attr
+from pages.shared import Shared
 
 from ui_automation_tests.pages.case_list_page import CaseListPage
 
@@ -24,20 +24,18 @@ def assign_case_to_queue(context, api_url):
 
 @then(parsers.parse('"{number}" cases are shown'))
 def num_cases_appear(driver, context, number):
-    assert int(number) == len(driver.find_elements_by_css_selector('.lite-cases-table .lite-cases-table-row'))
+    assert int(number) == Shared(driver).get_number_of_rows_in_lite_table(), "incorrect number of cases are shown"
 
 
 @when(parsers.parse('filter status has been changed to "{status}"'))
 def filter_status_change(driver, context, status):
-    select = Select(driver.find_element_by_id('status'))
-    select.select_by_visible_text(status)
+    CaseListPage(driver).select_filter_status_from_dropdown(status)
     CaseListPage(driver).click_apply_filters_button()
 
 
 @when(parsers.parse('filter case type has been changed to "{case_type}"'))
 def filter_status_change(driver, context, case_type):
-    select = Select(driver.find_element_by_id('case_type'))
-    select.select_by_visible_text(case_type)
+    CaseListPage(driver).select_filter_case_type_from_dropdown(case_type)
     CaseListPage(driver).click_apply_filters_button()
 
 
@@ -62,16 +60,17 @@ def i_sort_cases_by(driver, context, sort_type):
 
 
 @then(parsers.parse('the case at index "{index}" has the status of "{status}"'))
-def the_cases_are_in_order_of(driver, context, index, status):
-    row = driver.find_elements_by_css_selector('.lite-cases-table-row')[int(index)]
-    assert status in row.text
+def the_cases_are_in_order_of(driver, index, status):
+    assert status in Shared(driver).get_lite_row_text_by_index(index), status + " is not in the correct order"
 
 
 @then('the filters are shown')
 def the_filters_are_shown(driver, context):
-    assert CaseListPage(driver).is_filters_visible()
+    assert CaseListPage(driver).is_filters_visible(), "filters are not shown"
 
 
 @then('the filters are hidden')
 def the_filters_are_hidden(driver, context):
-    assert not CaseListPage(driver).is_filters_visible()
+    driver.set_timeout_to(0)
+    assert not CaseListPage(driver).is_filters_visible(), "filters are shown"
+    driver.set_timeout_to_10_seconds()

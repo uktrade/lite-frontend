@@ -8,10 +8,10 @@ Feature: I want to assign one or more specific users to a case in a work queue
   Scenario: Add user to case
     Given I go to internal homepage
     When I select the checkbox for previously created case to be assigned
-    And I select user to assign "first-name last-name"
+    And I select user to assign SSO users name
     Then user is assignee on case list
     When I select the checkbox for previously created case to be assigned
-    And I select user to assign "first-name last-name"
+    And I select user to assign SSO users name
     Then user is not assignee on case list
 
   @LT_947_select_all
@@ -26,5 +26,5 @@ Feature: I want to assign one or more specific users to a case in a work queue
   Scenario: Filter by user
     Given I go to internal homepage
     When I select the checkbox for previously created case to be assigned
-    And I search for "first-name last-name" to assign
-    Then only "first-name last-name" is displayed in user list for assign cases
+    And I search for SSO users name to assign
+    Then only SSO users name is displayed in user list for assign cases

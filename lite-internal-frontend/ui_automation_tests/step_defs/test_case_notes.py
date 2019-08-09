@@ -1,5 +1,5 @@
 import time
-from pytest_bdd import scenarios, given, when, then, parsers, scenarios
+from pytest_bdd import when, then, parsers, scenarios
 from pages.application_page import ApplicationPage
 import helpers.helpers as utils
 
@@ -54,22 +54,23 @@ def maximum_error_message_is_displayed(driver):
 
 @then(parsers.parse('case note warning is "{text}"'))
 def n_characters_remaining(driver, text):
+    application_page = ApplicationPage(driver)
     if text == "disabled":
-        assert "disabled" in driver.find_element_by_id("button-post-note").get_attribute("class"), "post note button is not disabled"
+        assert "disabled" in application_page.get_class_name_of_post_note(), "post note button is not disabled"
     else:
-        assert "disabled" not in driver.find_element_by_id("button-post-note").get_attribute("class"), "post note button is disabled"
+        assert "disabled" not in application_page.get_class_name_of_post_note(), "post note button is disabled"
 
 
 @then('post note is disabled')
 def post_note_is_disabled(driver):
     application_page = ApplicationPage(driver)
-    assert application_page.get_disabled_attribute_of_post_note() == "true"
+    assert application_page.get_disabled_attribute_of_post_note() == "true", "post note is not disabled but should be"
 
 
 @then('entered text is no longer in case note field')
-def entered_text_no_longer_in_case_field(driver):
+def entered_text_no_longer_in_case_field(driver, context):
     application_page = ApplicationPage(driver)
-    assert "Case note to cancel" not in application_page.get_text_of_case_note_field()
+    assert context.text not in application_page.get_text_of_case_note_field(), "cancel button hasnt cleared text"
 
 
 @when('I click visible to exporters checkbox')

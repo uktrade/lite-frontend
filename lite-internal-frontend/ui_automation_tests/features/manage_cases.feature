@@ -37,6 +37,7 @@ Feature: I want to record the final decision overall on an application case
     And I type optional text "Reason denied due to bad information"
     And I click continue
     Then I see application "denied"
+    And I see denied reason
     When I click record decision
     And I click continue
     And I select decision "2b"

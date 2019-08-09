@@ -61,6 +61,12 @@ def sso_login_info(request):
     return {'email': sso_email, 'password': sso_password}
 
 
+@fixture(scope="session")
+def sso_users_name():
+    sso_name = env('TEST_SSO_NAME')
+    return sso_name
+
+
 @fixture(scope="module")
 def invalid_username(request):
     return "invalid@mail.com"

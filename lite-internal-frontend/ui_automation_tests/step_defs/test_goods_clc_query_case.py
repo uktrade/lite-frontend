@@ -1,7 +1,5 @@
-from pytest_bdd import scenarios, given, when, then, parsers
+from pytest_bdd import scenarios, when
 from pages.add_goods_page import AddGoodPage
-from pages.case_list_page import CaseListPage
-import helpers.helpers as utils
 
 scenarios('../features/add_goods.feature', strict_gherkin=False)
 

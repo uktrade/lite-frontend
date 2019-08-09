@@ -7,11 +7,13 @@ class SeedData:
     base_url = ''
     gov_user_email = env('TEST_SSO_EMAIL')
     exporter_user_email = env('TEST_EXPORTER_SSO_EMAIL')
+    gov_user_first_name = env('TEST_SSO_NAME').split(' ')[0]
+    gov_user_last_name = env('TEST_SSO_NAME').split(' ')[1]
 
     gov_user_request_data = {
         "email": gov_user_email,
-        "first_name": "ecju",
-        "last_name": "user"}
+        "first_name": gov_user_first_name,
+        "last_name": gov_user_last_name}
     gov_headers = {'content-type': 'application/json'}
     export_headers = {'content-type': 'application/json'}
     context = {}
@@ -52,8 +54,8 @@ class SeedData:
         },
         "gov_user": {
             "email": gov_user_email,
-            "first_name": "ecju",
-            "last_name": "user"},
+            "first_name": gov_user_first_name,
+            "last_name": gov_user_last_name},
         "export_user": {
             "email": exporter_user_email,
             "password": "password"
@@ -130,6 +132,9 @@ class SeedData:
             organisation = self.add_org()
         org_id = organisation['id']
         self.add_to_context('org_id', org_id)
+        self.add_to_context('org_name', self.org_name)
+        self.add_to_context('first_name', self.gov_user_first_name)
+        self.add_to_context('last_name', self.gov_user_last_name)
         self.add_to_context('primary_site_id', self.get_org_primary_site_id(org_id))
 
     def add_org(self):

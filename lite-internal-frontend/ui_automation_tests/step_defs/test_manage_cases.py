@@ -1,5 +1,4 @@
-import re
-from pytest_bdd import scenarios, given, when, then, parsers, scenarios
+from pytest_bdd import when, then, parsers, scenarios
 from pages.application_page import ApplicationPage
 from pages.record_decision_page import RecordDecision
 from pages.shared import Shared
@@ -21,8 +20,7 @@ class ManageCases():
 
     @when('I click record decision')
     def click_post_note(driver, context):
-        application_page = ApplicationPage(driver)
-        application_page.click_record_decision()
+        ApplicationPage(driver).click_record_decision()
         context.decision_array = []
 
     @when(parsers.parse('I "{grant_or_deny}" application'))
@@ -45,88 +43,71 @@ class ManageCases():
         record.click_on_decision_number(number)
         context.decision_array.append(number)
 
+    @then('I see denied reason')
+    def denied_reason(driver, context):
+        body = Shared(driver).get_text_of_body()
+        assert "Further information" in body
+        assert context.optional_text in body
+
     @then(parsers.parse('I see application "{grant_or_deny}"'))
     def see_application_granted_or_denied(driver, grant_or_deny, context):
-        record = RecordDecision(driver)
-        details = driver.find_elements_by_css_selector(".lite-heading-s")
-        for header in details:
-            if header.text == "STATUS":
-                status_detail = header.find_element_by_xpath("./following-sibling::p").text
-                if grant_or_deny == "granted":
-                    assert status_detail == "Approved"
-                elif grant_or_deny == "denied":
-                    assert status_detail == "Under final review"
-                    try:
-                        assert record.get_text_of_denial_reasons_headers(1) == "Further information"
-                        assert record.get_text_of_denial_reasons_listed(6) == context.optional_text
-                    except AttributeError:
-                        pass
-                    except IndexError:
-                        pass
-                    assert record.get_text_of_denial_reasons_headers(0) == "This case was denied because"
-                    # TODO ask dev to put a selector in here
-                    i = 5
-                    for denial_reason_code in context.decision_array:
-                        assert record.get_text_of_denial_reasons_listed(i) == denial_reason_code
-                        i += 1
+        application_page = ApplicationPage(driver)
+        if grant_or_deny == "granted":
+            assert "set the status to approved" in application_page.get_text_of_audit_trail_item(0), "status has not been shown as approved in audit trail"
+        elif grant_or_deny == "denied":
+            assert "set the status to under final review" in application_page.get_text_of_audit_trail_item(0), "status has not been shown as under review in audit trail"
+            body = Shared(driver).get_text_of_body()
+            assert "This case was denied because" in body
+            for denial_reason_code in context.decision_array:
+                assert denial_reason_code in body
+
+
 
     @then('the status has been changed in the application')
-    def status_has_been_changed_in_header(driver, context):
+    def status_has_been_changed_in_header(driver, context, sso_users_name):
         application_page = ApplicationPage(driver)
-        for header in application_page.get_text_of_application_headings():
-            if header.text == "STATUS":
-                status_detail = header.find_element_by_xpath("./following-sibling::p").text
-                assert status_detail == context.status, "status has not been updated"
-        # this also tests that the activities are in reverse chronological order as it is expecting the status change to be first.
-        assert context.status.lower() in application_page.get_text_of_case_note_subject(0)
-        is_date_in_format = re.search("([0-9]{1,2}):([0-9]{2})(am|pm) ([0-9][0-9]) (January|February|March|April|May|June|July|August|September|October|November|December) ([0-9]{4,})", application_page.get_text_of_activity_dates(0))
-        assert is_date_in_format, "date is not displayed after status change"
-        assert application_page.get_text_of_activity_users(0) == "first-name last-name", "user who has made the status change has not been displayed correctly"
+        assert "set the status to " + context.status.lower() in application_page.get_text_of_audit_trail_item(0), "status has not been shown as approved in audit trail"
 
+        assert utils.search_for_correct_date_regex_in_element(application_page.get_text_of_activity_dates(0)), "date is not displayed after status change"
+        assert application_page.get_text_of_activity_users(0) == sso_users_name, "user who has made the status change has not been displayed correctly"
 
     @then('the application headers and information are correct')
-    def application_headers_and_info_are_correct(driver, context):
-        assert driver.find_elements_by_css_selector(".lite-information-board .lite-heading-s")[0].text == "APPLICANT"
-        assert driver.find_elements_by_css_selector(".lite-information-board .lite-heading-s")[1].text == "ACTIVITY"
-        assert driver.find_elements_by_css_selector(".lite-information-board .lite-heading-s")[2].text == "CREATED AT"
-        assert driver.find_elements_by_css_selector(".lite-information-board .lite-heading-s")[3].text == "REFERENCE NUMBER"
-        assert driver.find_elements_by_css_selector(".lite-information-board .lite-heading-s")[4].text == "LICENCE TYPE"
-        assert driver.find_elements_by_css_selector(".lite-information-board .lite-heading-s")[5].text == "LAST UPDATED"
-        #  this is hard coded from the organisation that is created as part of setup
-        assert driver.find_elements_by_css_selector(".lite-information-board .govuk-label")[0].text == "Test Org"
-        assert driver.find_elements_by_css_selector(".lite-information-board .govuk-label")[1].text == "Trading" or driver.find_elements_by_css_selector(".lite-information-board .govuk-label")[1].text == "Brokering"
-        #TODO commented out below line due to bug LT-1281
-        #assert driver.find_elements_by_css_selector(".lite-information-board .govuk-label")[2].text == context.date_time_of_update
-        assert driver.find_elements_by_css_selector(".lite-information-board .govuk-label")[3].text == "None"
-        assert driver.find_elements_by_css_selector(".lite-information-board .govuk-label")[4].text == "Standard licence"
+    def application_headers_and_info_are_correct(driver, api_url, context):
+        application_page = ApplicationPage(driver)
+        application_summary = application_page.get_text_of_application_summary_board()
+        assert "APPLICANT" in application_summary
+        assert "ACTIVITY" in application_summary
+        assert "CREATED AT" in application_summary
+        assert "REFERENCE NUMBER" in application_summary
+        assert "LICENCE TYPE" in application_summary
+        assert "LAST UPDATED" in application_summary
+        assert context.org_name in application_summary
+        assert "Trading" in application_summary or "Brokering" in application_summary
+        assert context.date_time_of_update.split(':')[1] in application_summary
+        assert "None" in application_summary
+        assert "Standard licence" in application_summary
 
     @when(parsers.parse('I give myself the required permissions for "{permission}"'))
     def get_required_permissions(driver, permission):
         roles_page = RolesPages(driver)
-        user_page = UsersPage(driver)
-        header = HeaderPage(driver)
-        shared = Shared(driver)
-        header.open_users()
-        user_page.click_on_manage_roles()
+        HeaderPage(driver).open_users()
+        UsersPage(driver).click_on_manage_roles()
         roles_page.click_edit_for_default_role()
         roles_page.edit_default_role_to_have_permission(permission)
-        shared.click_submit()
+        Shared(driver).click_submit()
 
     @then("I reset the permissions")
     def reset_permissions(driver):
         roles_page = RolesPages(driver)
-        user_page = UsersPage(driver)
-        header = HeaderPage(driver)
-        shared = Shared(driver)
-        header.open_users()
-        user_page.click_on_manage_roles()
+        HeaderPage(driver).open_users()
+        UsersPage(driver).click_on_manage_roles()
         roles_page.click_edit_for_default_role()
         roles_page.remove_all_permissions_from_default_role()
-        shared.click_submit()
+        Shared(driver).click_submit()
 
     @then('I see an ultimate end user')
     def i_see_ultimate_end_user_on_page(driver, context):
-        destinations_table = driver.find_element_by_id("destinations").text
+        destinations_table = ApplicationPage(driver).get_text_of_destinations_table()
         destinations_table_lower = destinations_table.lower()
         assert "name" in destinations_table_lower
         assert "destination type" in destinations_table_lower

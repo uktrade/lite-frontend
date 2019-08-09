@@ -20,6 +20,7 @@ class UsersPage:
         self.email = "email"
         self.team = "team"
         self.role = "role"
+        self.edit_buttons_in_table = '.lite-table__cell a[href*="edit"]'
 
     def click_save_and_continue(self):
         self.driver.find_element_by_css_selector(self.submit_button).click()
@@ -83,3 +84,6 @@ class UsersPage:
 
     def click_on_manage_roles(self):
         self.driver.find_element_by_id(self.manage_roles_button).click()
+
+    def click_edit_button_by_index(self, no):
+        self.driver.find_elements_by_css_selector(self.edit_buttons_in_table)[no].click()

@@ -24,6 +24,10 @@ class ApplicationPage(BasePage):
     view_advice = "a[href*='/advice-view/']"
     case_flags = 'application-case-flags'
     move_case_button = '.govuk-button[href*="move"]' # CSS
+    status = 'status'  # ID
+    audit_trail_item = '.lite-case-notes .lite-activity-item'  # CSS
+    application_summary_board = '.lite-information-board'  # CSS
+    destinations_table = 'destinations'  # ID
 
     def click_visible_to_exporter_checkbox(self):
         time.sleep(.5)
@@ -56,6 +60,9 @@ class ApplicationPage(BasePage):
     def get_disabled_attribute_of_post_note(self):
         return self.driver.find_element_by_id(self.post_note_btn).get_attribute("disabled")
 
+    def get_class_name_of_post_note(self):
+        return self.driver.find_element_by_id(self.post_note_btn).get_attribute("class")
+
     def click_progress_application(self):
         self.driver.find_element_by_css_selector(self.progress_app_btn).click()
 
@@ -66,11 +73,8 @@ class ApplicationPage(BasePage):
         self.driver.find_element_by_css_selector(self.documents_btn).click()
 
     def select_status(self, status):
-        case_status_dropdown = Select(self.driver.find_element_by_id('status'))
+        case_status_dropdown = Select(self.driver.find_element_by_id(self.status))
         case_status_dropdown.select_by_visible_text(status)
-
-    def get_text_of_application_headings(self):
-        return self.driver.find_elements_by_css_selector(self.headers)
 
     def get_text_of_case_note_subject(self, no):
         return self.driver.find_elements_by_css_selector(self.activity_case_note_subject)[no].text
@@ -95,3 +99,12 @@ class ApplicationPage(BasePage):
 
     def click_move_case_button(self):
         self.driver.find_element_by_css_selector(self.move_case_button).click()
+
+    def get_text_of_audit_trail_item(self, no):
+        return self.driver.find_elements_by_css_selector(self.audit_trail_item)[no].text
+
+    def get_text_of_application_summary_board(self):
+        return self.driver.find_element_by_css_selector(self.application_summary_board).text
+
+    def get_text_of_destinations_table(self):
+        return self.driver.find_element_by_id(self.destinations_table).text

@@ -20,6 +20,8 @@ class CaseListPage(BasePage):
     LINK_SHOW_FILTERS = 'show-filters-link'  # ID
     LINK_HIDE_FILTERS = 'hide-filters-link'  # ID
     FILTER_BAR = 'lite-filter-bar--horizontal'  # Class
+    STATUS_DROPDOWN = 'status'  # ID
+    CASE_TYPE_DROPDOWN = 'case_type'  # ID
 
     # Deprecated
     FILTER_SEARCH_BOX = "filter-box"  # ID
@@ -88,3 +90,8 @@ class CaseListPage(BasePage):
                 element.click()
                 break
 
+    def select_filter_status_from_dropdown(self, status):
+        utils.select_visible_text_from_dropdown(self.driver.find_element_by_id(self.STATUS_DROPDOWN), status)
+
+    def select_filter_case_type_from_dropdown(self, status):
+        utils.select_visible_text_from_dropdown(self.driver.find_element_by_id(self.CASE_TYPE_DROPDOWN), status)

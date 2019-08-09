@@ -1,4 +1,3 @@
-from pytest import fixture
 from pytest_bdd import given, when, then, parsers, scenarios
 import helpers.helpers as utils
 from pages.application_page import ApplicationPage

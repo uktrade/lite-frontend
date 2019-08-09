@@ -3,7 +3,7 @@ import os
 from pytest import fixture
 from pytest_bdd import given, when, then, parsers
 
-from fixtures.core import context, driver, sso_login_info, invalid_username, new_cases_queue_id
+from fixtures.core import context, driver, sso_login_info, invalid_username, new_cases_queue_id, sso_users_name
 from fixtures.urls import internal_url, sso_sign_in_url, api_url
 from fixtures.apply_for_application import apply_for_standard_application, apply_for_clc_query
 from fixtures.sign_in_to_sso import sign_in_to_internal_sso
@@ -60,15 +60,6 @@ def sign_into_sso(driver, sign_in_to_internal_sso):
     pass
 
 
-@when('I go to internal homepage and sign in')
-def go_to_internal_homepage_sign_in(driver, internal_url, sso_sign_in_url, sso_login_info):
-    driver.get(sso_sign_in_url)
-    driver.find_element_by_name("username").send_keys(sso_login_info['email'])
-    driver.find_element_by_name("password").send_keys(sso_login_info['password'])
-    driver.find_element_by_css_selector("[type='submit']").click()
-    driver.get(internal_url)
-
-
 @when('I go to application previously created')
 def click_on_created_application(driver, context, internal_url):
     driver.get(internal_url.rstrip('/') + '/cases/' + context.case_id)
@@ -87,11 +78,6 @@ def create_app_when(driver, apply_for_standard_application):
 @given('I create clc query or clc query has been previously created')
 def create_clc(driver, apply_for_clc_query):
     pass
-
-
-@when('I refresh the page')
-def i_refresh_the_page(driver):
-    driver.refresh()
 
 
 @then(parsers.parse('I see error message "{expected_error}"'))
@@ -146,7 +132,7 @@ def select_status_save(driver, status, context):
     application_page.select_status(status)
     context.status = status
     context.date_time_of_update = utils.get_formatted_date_time_h_m_pm_d_m_y()
-    driver.find_element_by_css_selector(".govuk-button").click()
+    Shared(driver).click_submit()
 
 
 @when('I click on new queue in dropdown')
