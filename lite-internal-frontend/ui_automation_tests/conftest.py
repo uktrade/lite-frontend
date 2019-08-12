@@ -1,4 +1,6 @@
 import os
+import allure
+from allure_commons.types import AttachmentType
 
 from pytest import fixture
 from pytest_bdd import given, when, then, parsers
@@ -22,13 +24,6 @@ from pages.queues_pages import QueuesPages
 # Screenshot in case of any test failure
 
 
-def pytest_exception_interact(node, report):
-    if node and report.failed:
-        class_name = node._nodeid.replace(".py::", "_class_")
-        # utils.save_screenshot(node.funcargs.get("driver"), class_name)
-
-
-# Create driver and url command line adoption
 def pytest_addoption(parser):
     env = str(os.environ.get('ENVIRONMENT'))
     if env == 'None':
@@ -36,13 +31,22 @@ def pytest_addoption(parser):
 
     parser.addoption("--driver", action="store", default="chrome", help="Type in browser type")
     parser.addoption("--sso_sign_in_url", action="store", default="https://sso.trade.uat.uktrade.io/login/", help="url")
-    
+
     if env == 'local':
         parser.addoption("--internal_url", action="store", default="http://localhost:8080", help="url")
         parser.addoption("--lite_api_url", action="store", default="http://localhost:8100", help="url")
     else:
         parser.addoption("--internal_url", action="store", default="https://internal.lite.service." + env + ".uktrade.io/", help="url")
         parser.addoption("--lite_api_url", action="store", default="https://lite-api-" + env + ".london.cloudapps.digital/", help="url")
+
+
+# Create driver and url command line adoption
+def pytest_exception_interact(node, report):
+    if node and report.failed:
+        class_name = node._nodeid.replace(".py::", "_class_")
+        name = "{0}_{1}".format(class_name, "error")
+        print(name)
+        utils.save_screenshot(node.funcargs.get("driver"), name)
 
 
 @when('I go to the internal homepage')
