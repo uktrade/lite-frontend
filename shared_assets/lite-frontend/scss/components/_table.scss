@@ -26,6 +26,19 @@
 		font-size: inherit;
 		line-height: inherit;
 	}
+
+	.govuk-checkboxes__label {
+		padding: 0!important;
+		padding-top: 2px!important;
+
+		&:before {
+			top: 0;
+		}
+
+		&:after {
+			top: 7px;
+		}
+	}
 }
 
 .lite-table__cell--numeric {
