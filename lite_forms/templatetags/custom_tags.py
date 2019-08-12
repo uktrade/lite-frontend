@@ -15,7 +15,7 @@ def key_in_array(data, key):
         return False
 
     if isinstance(data, str):
-        if data == key:
+        if key == data:
             return True
         return False
 
@@ -31,17 +31,18 @@ def key_in_array(data, key):
 
     # If data is a list, check for the key
     if isinstance(data, list):
+        if key in data:
+            return True
+
         for item in data:
             if isinstance(item, str):
-                return item == key
+                if item == key:
+                    return True
+            else:
+                if item.get('id') == key:
+                    return True
 
-            if item.get('id') == key:
-                return True
-
-        return key in data
-
-    # If else, loop through and check ids
-    return key in [x.get('id') for x in data]
+    return False
 
 
 @register.filter
