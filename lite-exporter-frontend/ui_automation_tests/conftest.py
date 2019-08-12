@@ -1,5 +1,7 @@
 import datetime
 import os
+import allure
+from allure_commons.types import AttachmentType
 
 import pytest
 from fixtures.core import context, driver, invalid_username, exporter_sso_login_info
@@ -27,15 +29,6 @@ import helpers.helpers as utils
 
 strict_gherkin = False
 
-# Screenshot in case of any test failure
-def pytest_exception_interact(node, report):
-    if node and report.failed:
-        class_name = node._nodeid.replace(".py::", "_class_")
-        name = "{0}_{1}".format(class_name, exporter_url)
-        # utils.save_screenshot(node.funcargs.get("driver"), name)
-
-
-# Create driver and url command line addoption
 def pytest_addoption(parser):
     env = str(os.environ.get('ENVIRONMENT'))
     if env == 'None':
@@ -56,6 +49,14 @@ def pytest_addoption(parser):
     # Load in content strings
     # with open('../../lite-content/lite-exporter-frontend/strings.json') as json_file:
     #     strings.constants = json.load(json_file)
+
+
+def pytest_exception_interact(node, report):
+    if node and report.failed:
+        class_name = node._nodeid.replace(".py::", "_class_")
+        name = "{0}_{1}".format(class_name, "error")
+        print(name)
+        utils.save_screenshot(node.funcargs.get("driver"), name)
 
 
 @pytest.fixture(scope="module")
