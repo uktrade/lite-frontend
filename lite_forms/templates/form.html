@@ -46,7 +46,7 @@
 		</div>
 
 		<!-- Questions -->
-		<form method="post" enctype="multipart/form-data">
+		<form {% if page.post_url %}action="{{ page.post_url }}"{% endif %} method="post" enctype="multipart/form-data">
 			{% csrf_token %}
 
 			{% for question in page.questions %}

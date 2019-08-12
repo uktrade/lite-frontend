@@ -65,7 +65,8 @@ class Form:
                  javascript_imports=None,
                  default_button_name='Submit',
                  pk=None,
-                 back_link=BackLink()):
+                 back_link=BackLink(),
+                 post_url=None):
 
         if not pk:
             self.pk = uuid.uuid1()
@@ -83,6 +84,7 @@ class Form:
         if self.buttons is None:
             self.buttons = [Button(default_button_name, 'submit')]
         self.javascript_imports = javascript_imports
+        self.post_url = post_url
 
 
 class Question:
