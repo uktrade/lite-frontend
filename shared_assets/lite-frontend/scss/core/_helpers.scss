@@ -30,6 +30,12 @@
 			margin-left: 0!important;
 		}
 	}
+
+	@include govuk-media-query($until: tablet) {
+		* {
+			margin-left: 0!important;
+		}
+	}
 }
 
 .lite-mobile-only {
