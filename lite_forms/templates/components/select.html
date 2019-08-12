@@ -1,5 +1,5 @@
 <select id="{{ component.name }}" name="{{ component.name }}" class="govuk-select {% if error %}govuk-select--error{% endif %}" style="min-width: 300px;">
-	<option value="blank">Select</option>
+	{% if component.include_default_select %}<option value="blank">Select</option>{% endif %}
 	{% for item in component.options %}
 		<option value="{{ item.key }}" {% if data|key_in_array:item.key %}selected{% endif %}>{{ item.value }}</option>
 	{% endfor %}

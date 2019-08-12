@@ -214,10 +214,12 @@ class Select(_Component):
                  title: str = '',
                  description: str = '',
                  optional: bool = False,
-                 classes: [] = None):
+                 classes: [] = None,
+                 include_default_select: bool = True):
         super().__init__(name, title, description, optional, classes)
         self.options = options
         self.input_type = 'SELECT'
+        self.include_default_select = include_default_select
 
 
 class Option:
