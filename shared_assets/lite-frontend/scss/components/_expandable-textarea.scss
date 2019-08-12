@@ -2,11 +2,11 @@
 	position: relative;
 	display: block;
 	margin-bottom: govuk-spacing(4);
-	border: $govuk-border-width-form-element solid govuk-colour('mid-grey');
+	border: $govuk-border-width-form-element solid $govuk-input-border-colour;
 	overflow: hidden;
 
 	&:hover {
-		border: $govuk-border-width-form-element solid govuk-colour('mid-grey');
+		border: $govuk-border-width-form-element solid $govuk-input-border-colour;
 	}
 
 	.govuk-textarea {
@@ -14,6 +14,8 @@
 		margin-bottom: 0;
 		border: none;
 		min-height: 120px;
+		outline: 0;
+		box-shadow: none;
 
 		&:focus {
 			outline: none;
@@ -21,8 +23,19 @@
 	}
 
 	&:focus-within {
-		border: $govuk-border-width-form-element solid $govuk-input-border-colour;
-		outline: 3px solid $govuk-focus-colour;
+		outline: $govuk-focus-width solid $govuk-focus-colour;
+		outline-offset: 0;
+
+		&:after {
+			content: "";
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			border: 2px solid $govuk-input-border-colour;
+			pointer-events: none;
+		}
 	}
 }
 
@@ -52,11 +65,8 @@
 	border-top: 2px solid govuk-colour("mid-grey");
 	transition: $lite-transition-speed ease;
 	box-sizing: border-box;
-	height: 72px;
+	height: 74px;
 
-	& > * {
-		margin: 0 0 2px;
-	}
 	@include govuk-media-query($from: tablet) {
 		display: grid;
 		grid-template-columns: 1fr auto auto;

@@ -13,3 +13,15 @@
 		}
 	}
 }
+
+.govuk-button--secondary-white {
+	background-color: white;
+
+	&:hover {
+		background-color: darken(govuk-colour("light-grey"), 5%);
+	}
+
+	&:active {
+		background-color: darken(govuk-colour("light-grey"), 10%);
+	}
+}
