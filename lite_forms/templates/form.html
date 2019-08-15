@@ -93,17 +93,16 @@
 	<script type="text/javascript">
 		function showHidePanels() {
 			$('input:radio').each(function () {
-				var $this = $(this);
-				var show_pane = $('show_pane');
-				show_pane.addClass('govuk-inset-text');
-
-				if (show_pane) {
-					if ($this.is(':checked')) {
-						$('#' + show_pane).show()
-					} else {
-						$('#' + show_pane).hide()
-					}
-				}
+                var $this = $(this)
+                var show_pane = $this.attr('show_pane')
+                $('#' + show_pane).addClass('govuk-inset-text')
+                if (show_pane) {
+                    if ($this.is(':checked')) {
+                        $('#' + show_pane).show()
+                    } else {
+                        $('#' + show_pane).hide()
+                    }
+                }
 			});
 		}
 
