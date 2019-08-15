@@ -1,7 +1,8 @@
 from django.urls import reverse_lazy
 
 from core.builtins.custom_tags import get_string
-from libraries.forms.components import Question, Form, InputType, Option, Select, BackLink, Button, ButtonStyle
+from libraries.forms.components import Question, Form, InputType, Option, Select, BackLink, Button, ButtonStyle, \
+    TextArea
 
 _name = Question(title='Name',
                  description='',
@@ -17,9 +18,8 @@ _picklist_type = Select(name='type',
                                  Option('footnotes', 'Footnotes')],
                         title='Type')
 
-_text = Question(title='Add text for picklist item',
+_text = TextArea(title='Add text for picklist item',
                  description='',
-                 input_type=InputType.TEXTAREA,
                  name='text',
                  extras={
                      'max_length': 5000,

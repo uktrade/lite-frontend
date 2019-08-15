@@ -65,13 +65,37 @@ def dont_see_queue_in_queue_list(driver, context):
         assert True
     else:
         assert context.app_id not in driver.find_element_by_css_selector('.lite-cases-table').text
+        assert context.case_id not in driver.find_element_by_css_selector('.lite-cases-table').text
     driver.set_timeout_to_10_seconds()
 
 
-@when('I add case to new queue')
+@then('I dont see previously created clc query')
+def dont_see_queue_in_queue_list(driver, context):
+    driver.set_timeout_to(0)
+    if len(driver.find_elements_by_css_selector('.lite-information-text__text')) == 1:
+        assert True
+    else:
+        assert context.case_id not in driver.find_element_by_css_selector('.lite-cases-table').text
+    driver.set_timeout_to_10_seconds()
+
+
+@when('I add case to newly created queue')
 def move_case_to_new_queue(driver, context):
     ApplicationPage(driver).click_move_case_button()
     driver.find_element_by_id(context.queue_name).click()
+    Shared(driver).click_submit()
+
+
+@then(parsers.parse('I see "{num}" queue checkboxes selected'))
+def see_number_of_checkboxes_selected(driver, context, num):
+    ApplicationPage(driver).click_move_case_button()
+    assert QueuesPages(driver).get_size_of_selected_queues() == int(num)
+    Shared(driver).click_back_link()
+
+
+@when('I remove case from new cases queue')
+def move_case_to_new_queue(driver, context):
+    ApplicationPage(driver).click_move_case_button()
     QueuesPages(driver).click_on_new_cases_queue()
     Shared(driver).click_submit()
 

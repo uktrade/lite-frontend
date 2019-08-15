@@ -26,15 +26,27 @@ Feature: I want to define new work queues and the teams they belong to
     And I go to queues
     When I enter in queue name Review
     And I go to application previously created
-    And I add case to new queue
-    And I go to the internal homepage
+    And I add case to newly created queue
+    And I remove case from new cases queue
+    Then I see "1" queue checkboxes selected
+    When I go to the internal homepage
     And I click on new queue in dropdown
     Then I see previously created application
     When I go to application previously created
     And I move case to new cases original queue and remove from new queue
-    And I go to the internal homepage
+    Then I see "1" queue checkboxes selected
+    When I go to the internal homepage
     And I click on new queue in dropdown
     Then there are no cases shown
+
+  @LT_1125_move_cases_multiple_queues
+  Scenario: Move case to multiple queues
+    Given I create application or application has been previously created
+    And I go to queues
+    When I enter in queue name Review
+    And I go to application previously created
+    And I add case to newly created queue
+    Then I see "2" queue checkboxes selected
 
   @LT_1125_error
   Scenario: Move cases error message when not selecting any queues
@@ -86,14 +98,15 @@ Feature: I want to define new work queues and the teams they belong to
     And I go to queues
     When I enter in queue name Review
     And I go to application previously created
-    And I add case to new queue
+    And I add case to newly created queue
+    And I remove case from new cases queue
     And I go to the internal homepage
     And I click on new queue in dropdown
     And I click on the clc-case previously created
     And I move case to new cases original queue and remove from new queue
     And I go to the internal homepage
     And I click on new queue in dropdown
-    Then there are no cases shown
+    Then I dont see previously created clc query
 
   @LT_919_edit
   Scenario: Edit a new queue

@@ -16,6 +16,9 @@
 		<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:documents' data.case.id %}">
         	{% get_string 'cases.manage.documents.button' %}
         </a>
+        <a role="button" draggable="false" class="govuk-button" href="{% url 'cases:ecju_queries' data.case.id %}">
+            {% get_string 'cases.ecju_queries.title' %}
+		</a>
 		<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:move' data.case.id %}">
 		    {% get_string 'cases.manage.move_case.button' %}
 		</a>

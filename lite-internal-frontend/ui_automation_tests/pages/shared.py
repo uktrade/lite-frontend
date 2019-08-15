@@ -9,6 +9,7 @@ class Shared(BasePage):
     lite_table_body = '.lite-table__body'  # CSS
     lite_table_row = '.lite-table__body .lite-table__row'  # CSS
     lite_table_cell = '.lite-table__body .lite-table__cell'  # CSS
+    lite_table_cell_no_body = '.lite-table__cell'  # CSS
     govuk_table_body = '.govuk-table__body'  # CSS
     govuk_caption = '.govuk-caption-l'  # CSS
     selected_tab = '.lite-tabs__tab.selected'  # CSS
@@ -18,9 +19,13 @@ class Shared(BasePage):
     h1 = 'h1'  # CSS
     links_in_gov_table = '.govuk-table__cell a'  # CSS
     govuk_panel_body = '.govuk-panel__body'  # CSS
+    back_link = '.govuk-back-link'  # CSS
 
     def click_submit(self):
         self.driver.find_element_by_css_selector(self.submit_button).click()
+
+    def click_back(self):
+        self.driver.find_element_by_css_selector(self.back_link).click()
 
     def get_text_of_error_message(self, no):
         return self.driver.find_elements_by_css_selector(self.error_message)[no].text
@@ -61,8 +66,14 @@ class Shared(BasePage):
     def get_cells_in_lite_table(self):
         return self.driver.find_elements_by_css_selector(self.lite_table_cell)
 
+    def get_cells_in_lite_table_no_body(self):
+        return self.driver.find_elements_by_css_selector(self.lite_table_cell_no_body)
+
     def get_rows_in_lite_table(self):
         return self.driver.find_elements_by_css_selector(self.lite_table_row)
 
     def get_links_in_gov_table(self):
         return self.driver.find_elements_by_css_selector(self.links_in_gov_table)
+
+    def click_back_link(self):
+        return self.driver.find_element_by_css_selector(self.back_link).click()

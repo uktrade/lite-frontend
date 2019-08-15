@@ -12,9 +12,9 @@ from fixtures.sign_in_to_sso import sign_in_to_internal_sso
 from fixtures.add_a_flag import add_uae_flag
 from fixtures.add_queue import add_queue
 from fixtures.add_a_team import add_a_team
+from fixtures.add_a_picklist import add_an_ecju_query_picklist
 
 import helpers.helpers as utils
-from pages.flags_pages import FlagsPages
 from pages.header_page import HeaderPage
 from pages.shared import Shared
 from pages.case_list_page import CaseListPage
@@ -93,6 +93,11 @@ def error_message_shared(driver, expected_error):
 @when('I click continue')
 def i_click_continue(driver):
     Shared(driver).click_submit()
+
+
+@when('I click back')
+def i_click_back(driver):
+    Shared(driver).click_back()
 
 
 @given('I go to flags')

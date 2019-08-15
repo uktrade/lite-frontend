@@ -41,3 +41,11 @@ class QueuesPages():
         for element in elements:
             if element.is_selected():
                 element.click()
+
+    def get_size_of_selected_queues(self):
+        no = 0
+        elements = self.driver.find_elements_by_css_selector(self.queue_checkboxes)
+        for element in elements:
+            if element.is_selected():
+                no += 1
+        return no

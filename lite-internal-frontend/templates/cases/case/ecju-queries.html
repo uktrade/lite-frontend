@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% extends 'layouts/base.html' %}
+
+{% load svg %}
+
+{% block back_link %}
+	<a href="{% url 'cases:case' case_id %}" class="govuk-back-link">{% get_string 'cases.back_to_case' %}</a>
+{% endblock %}
+
+
+{% block body %}
+
+<div class="lite-app-bar">
+	<h1 class="govuk-heading-l">{% get_string 'cases.ecju_queries.title' %}</h1>
+	<div class="lite-app-bar--right">
+		<a role="button" draggable="false" class="govuk-button {% if documents %}govuk-button--secondary{% endif %}" href="{% url 'cases:ecju_queries_add' case_id %}">
+			{% get_string 'cases.ecju_queries.add_query.add_button_label' %}
+		</a>
+	</div>
+</div>
+
+{% if ecju_queries %}
+    <div class="lite-table">
+	{% for query in ecju_queries %}
+        <div class="lite-table-row">
+            <div class="lite-table__cell">
+                {{ query.question }}
+            </div>
+        </div>
+	{% endfor %}
+    </div>
+{% else %}
+	<p class="govuk-caption-l">{% get_string 'cases.ecju_queries.case_has_no_queries' %}</p>
+{% endif %}
+
+{% endblock %}
+</title>
+</head>
+<body>
+
+</body>
+</html>

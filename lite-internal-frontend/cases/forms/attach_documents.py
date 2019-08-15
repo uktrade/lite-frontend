@@ -1,5 +1,5 @@
 from core.builtins.custom_tags import get_string
-from libraries.forms.components import Form, FileUpload, BackLink, Question, InputType
+from libraries.forms.components import Form, FileUpload, BackLink, Question, InputType, TextArea
 
 
 def attach_documents_form(case_url):
@@ -7,9 +7,8 @@ def attach_documents_form(case_url):
                 get_string('cases.manage.documents.attach_documents.description'),
                 [
                     FileUpload('documents'),
-                    Question(title=get_string('cases.manage.documents.attach_documents.description_field_title'),
+                    TextArea(title=get_string('cases.manage.documents.attach_documents.description_field_title'),
                              description=get_string('cases.manage.documents.attach_documents.description_field_details'),
-                             input_type=InputType.TEXTAREA,
                              name='description',
                              extras={
                                  'max_length': 280,
