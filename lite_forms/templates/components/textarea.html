@@ -3,7 +3,12 @@
 		  id="{{ name }}"
 		  name="{{ name }}"
 		  rows="10"
-		  cols="40">{{ value }}</textarea>
+		  cols="40"
+          {% if extras.max_length %}
+              maxlength="{{ extras.max_length }}"
+          {% endif %}
+          {{ value }}>
+    </textarea>
 	{% if extras.max_length %}
 		<span id="{{ name }}-info" class="govuk-hint govuk-character-count__message" aria-live="polite" style="margin-top: -10px;">
 			You can enter up to {{ extras.max_length }} characters
