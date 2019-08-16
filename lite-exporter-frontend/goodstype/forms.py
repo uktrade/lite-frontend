@@ -1,9 +1,8 @@
-from libraries.forms.components import Form, Question, Option, InputType, RadioButtons
+from libraries.forms.components import Form, Question, Option, InputType, RadioButtons, TextArea
 
 form = Form(title='Add a description', description='', caption='', questions=[
-    Question(title='Give a short description of your goods.',
+    TextArea(title='Give a short description of your goods.',
              description='',
-             input_type=InputType.TEXTAREA,
              name='description',
              extras={
                  'max_length': 280,

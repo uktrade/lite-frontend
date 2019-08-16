@@ -5,14 +5,14 @@ class ApplicationOverviewPage:
         self.location_link = "location"
         self.countries_link = "countries"
         self.goods_link = "goods"
-        self.end_user_link = "end_users" #id
-        self.ultimate_end_user_link = "ultimate_end_users" #id
+        self.end_user_link = "end_users"   # ID
+        self.ultimate_end_user_link = "ultimate_end_users"   # ID
         self.sites_link = "a[href*='sites']"
         self.goods_link = "goods"
         self.show_countries_link = "[onclick*='showCountries']"
-        self.modal_close = "modal-close-button" #id
-        self.modal_content = ".modal-content" #css
-        self.gov_tables = ".govuk-table__body" #css
+        self.modal_close = "modal-close-button"   # ID
+        self.modal_content = ".modal-content"   # CSS
+        self.gov_tables = ".govuk-table__body"   # CSS
         self.back_to_overview_text = "Back to Application" #link text
 
     def click_application_locations_link(self):

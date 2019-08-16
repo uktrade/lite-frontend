@@ -6,16 +6,16 @@ class ApplicationGoodsList:
 
     def __init__(self, driver):
         self.driver = driver
-        self.add_from_org_goods_button = 'a.govuk-button[href*="add_preexisting"]' #css
+        self.add_from_org_goods_button = 'a.govuk-button[href*="add_preexisting"]'   # CSS
         self.add_to_application = 'a.govuk-button'
-        self.overview_link = '.govuk-back-link' #css
-        self.quantity_field = 'quantity' #id
-        self.unit_dropdown = 'unit' #id
-        self.value_field = 'value' #id
-        self.filter_description_search_box = 'description' #id
-        self.filter_part_number_search_box = 'part_number' #id
+        self.overview_link = '.govuk-back-link'   # CSS
+        self.quantity_field = 'quantity'   # ID
+        self.unit_dropdown = 'unit'   # ID
+        self.value_field = 'value'   # ID
+        self.filter_description_search_box = 'description'   # ID
+        self.filter_part_number_search_box = 'part_number'   # ID
         self.filter_button = '//button[text()[contains(.,"Filter")]]' #xpath
-        self.goods_items = '.lite-card' #css
+        self.goods_items = '.lite-card'   # CSS
         self.filter_tags = ".lite-filter-bar a"
 
     def click_add_from_organisations_goods_button(self):

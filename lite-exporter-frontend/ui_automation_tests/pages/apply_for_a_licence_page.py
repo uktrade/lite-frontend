@@ -30,7 +30,7 @@ class ApplyForALicencePage:
         self.licence_application_values = ".govuk-table__cell"
         self.start_now_btn = "a[href*='/start']"
         self.application_is_submitted = '.govuk-panel__title'
-        self.delete_application_button = '.lite-cancel-link' #css
+        self.delete_application_button = '.govuk-link[href*="/delete"]'   # CSS
 
     def enter_name_or_reference_for_application(self, name):
         self.driver.find_element_by_id(self.name_or_reference_input_id).clear()

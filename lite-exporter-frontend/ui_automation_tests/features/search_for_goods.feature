@@ -10,6 +10,7 @@ Feature: I want to search for goods in my goods list to add to an in progress ap
     When I click on goods link
     And I click add a good button
     When I add a good or good type with description "Nickel Cadmium" controlled "Yes" control code "1234" incorporated "No" and part number "321"
+    And I upload file "file_for_doc_upload_test_1.txt" with description "Doesnt matter really"
     And I go to exporter homepage
     And I click on apply for a license button
     And I click on start button
@@ -28,6 +29,7 @@ Feature: I want to search for goods in my goods list to add to an in progress ap
     When I click on goods link
     And I click add a good button
     And I add a good or good type with description "Nickel Cadmium" controlled "Yes" control code "1234" incorporated "No" and part number "999"
+    And I upload file "file_for_doc_upload_test_1.txt" with description "Doesnt matter really"
     And I go to exporter homepage
     And I click on apply for a license button
     And I click on start button
@@ -46,6 +48,7 @@ Feature: I want to search for goods in my goods list to add to an in progress ap
     When I click on goods link
     And I click add a good button
     And I add a good or good type with description "Nickel Cadmium" controlled "Yes" control code "1234" incorporated "No" and part number "999"
+    And I upload file "file_for_doc_upload_test_1.txt" with description "Doesnt matter really"
     And I go to exporter homepage
     And I click on apply for a license button
     And I click on start button

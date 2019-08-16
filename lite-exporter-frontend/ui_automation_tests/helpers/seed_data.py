@@ -1,4 +1,6 @@
 import json
+import os
+
 import requests
 from conf.settings import env
 
@@ -46,7 +48,6 @@ class SeedData:
             "is_good_end_product": True,
             "part_number": "1234",
             "validate_only": False,
-            "not_sure_details_details": ""
         },
         "gov_user": {
             "email": "test-uat-user@digital.trade.gov.uk",
@@ -95,8 +96,13 @@ class SeedData:
         "case_note": {
             'text': case_note_text,
             'is_visible_to_exporter': True
-        }
-
+        },
+        "document": [{
+            'name': 'document 1',
+            's3_key': env('TEST_S3_KEY'),
+            'size': 0,
+            'description': 'document for test setup'
+        }]
     }
 
     def __init__(self, api_url, logging=True):
@@ -143,6 +149,12 @@ class SeedData:
         response = self.make_request("POST", url='/goods/', headers=self.export_headers, body=data)
         item = json.loads(response.text)['good']
         self.add_to_context('good_id', item['id'])
+        self.add_document(item['id'])
+
+    def add_document(self, good_id):
+        data = self.request_data['document']
+        response = self.make_request("POST", url='/goods/' + good_id + '/documents/', headers=self.export_headers, body=data)
+        print(response)
 
     def add_org(self):
         self.log("Creating org: ...")
@@ -200,13 +212,14 @@ class SeedData:
         self.add_to_context('application_id', item['id'])
         self.add_to_context('case_id', item['case_id'])
 
-    def make_request(self, method, url, headers=None, body=None):
+    def make_request(self, method, url, headers=None, body=None, files=None):
         if headers is None:
             headers = self.gov_headers
         if body:
             response = requests.request(method, self.base_url + url,
                                         data=json.dumps(body),
-                                        headers=headers)
+                                        headers=headers,
+                                        files=files)
         else:
             response = requests.request(method, self.base_url + url, headers=headers)
         if not response.ok:

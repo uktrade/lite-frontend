@@ -1,5 +1,5 @@
 from core.services import get_countries
-from libraries.forms.components import Form, Question, InputType, Section, ArrayQuestion, Option, RadioButtons
+from libraries.forms.components import Form, Question, InputType, Section, ArrayQuestion, Option, RadioButtons, TextArea
 
 
 def new_ultimate_end_user_form():
@@ -34,7 +34,7 @@ def new_ultimate_end_user_form():
         Form(title='Where\'s the recipient based?',
              description='',
              questions=[
-                 Question('Address', '', InputType.TEXTAREA, 'address'),
+                 TextArea('address', 'Address'),
                  ArrayQuestion(title='Country',
                                description='',
                                input_type=InputType.AUTOCOMPLETE,

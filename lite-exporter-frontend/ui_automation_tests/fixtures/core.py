@@ -59,5 +59,11 @@ def exporter_sso_login_info(request):
 
 
 @fixture(scope="session")
+def s3_key(request):
+    s3_key = env('TEST_S3_KEY')
+    return s3_key
+
+
+@fixture(scope="session")
 def invalid_username(request):
     return "invalid@mail.com"

@@ -6,15 +6,15 @@ class ApplicationPage():
 
     def __init__(self, driver):
         self.driver = driver
-        self.case_note_field = "case_note" #id
-        self.post_note_btn = "button-post-note" #id
-        self.cancel_note_btn = "case-note-cancel-button" #id
-        self.case_notes_text = ".lite-case-note" #css
-        self.case_note_date_time = ".lite-activity-item .govuk-hint" #css
-        self.case_note_character_warning = "case_note-warning" #id
+        self.case_note_field = "case_note"   # ID
+        self.post_note_btn = "button-post-note"   # ID
+        self.cancel_note_btn = "case-note-cancel-button"   # ID
+        self.case_notes_text = ".lite-case-note"   # CSS
+        self.case_note_date_time = ".lite-activity-item .govuk-hint"   # CSS
+        self.case_note_character_warning = "case_note-warning"   # ID
         self.progress_app_btn = '.govuk-button[href*="manage"]'
-        self.record_decision_btn = '.govuk-button[href*="decide"]' #css
-        self.headers = self.driver.find_elements_by_css_selector(".lite-heading-s") #css
+        self.record_decision_btn = '.govuk-button[href*="decide"]'   # CSS
+        self.headers = self.driver.find_elements_by_css_selector(".lite-heading-s")   # CSS
         self.activity_case_note_subject = self.driver.find_elements_by_css_selector(".lite-activity-item .govuk-body")
         self.activity_dates = ".lite-activity-item .govuk-hint"
         self.activity_user = ".user"

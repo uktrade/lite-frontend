@@ -2,16 +2,16 @@ class Hub():
 
     def __init__(self, driver):
         self.driver = driver
-        self.drafts_btn = "a[href*='/drafts/']" #css
-        self.sites_btn = "[href*='/sites/']" #css
-        self.application_btn = "a[href*='/applications/']"  #css
-        self.add_user_button = "a[href*='/users/add']"  #css
-        self.users_button = "a[href='/users/']"    #css
-        self.first_name_field = "first_name"    #id
-        self.last_name_field = "last_name"  #id
-        self.last_name_field = "last_name"  #id
-        self.email_field = "email"  #id
-        self.password_field = "password"  #id
+        self.drafts_btn = "a[href*='/drafts/']"   # CSS
+        self.sites_btn = "[href*='/sites/']"   # CSS
+        self.application_btn = "a[href*='/applications/']"    # CSS
+        self.add_user_button = "a[href*='/users/add']"    # CSS
+        self.users_button = "a[href='/users/']"      # CSS
+        self.first_name_field = "first_name"      # ID
+        self.last_name_field = "last_name"    # ID
+        self.last_name_field = "last_name"    # ID
+        self.email_field = "email"    # ID
+        self.password_field = "password"    # ID
 
     def click_drafts(self):
         self.driver.find_element_by_css_selector(self.drafts_btn).click()

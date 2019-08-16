@@ -17,6 +17,14 @@ class GoodsList:
         assert part_number in goods_row
         assert control_code in goods_row
 
+    def assert_clc_goods_are_displayed_of_good_name (self, description, part_number, control_code):
+        goods_row = self.driver.find_element_by_css_selector('table').text
+
+        assert description in goods_row
+        assert part_number in goods_row
+        assert control_code in goods_row
+        assert 'N/A: In CLC query' in goods_row
+
     def click_on_goods_edit_link(self, number):
         self.driver.find_elements_by_css_selector(self.EDIT_LINK)[number].click()
 

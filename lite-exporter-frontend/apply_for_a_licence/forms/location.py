@@ -1,7 +1,7 @@
 from core.builtins.custom_tags import get_string
 from core.services import get_countries, get_external_locations
 from libraries.forms.components import Form, ArrayQuestion, InputType, Option, Question, Checkboxes, Filter, \
-    RadioButtons
+    RadioButtons, TextArea
 
 which_location_form = Form(title=get_string('goods.location_questions.location.title'),
                            description='You can only choose one type of location per application',
@@ -19,7 +19,7 @@ def new_location_form():
                 description='',
                 questions=[
                  Question('Company name', '', InputType.INPUT, 'name'),
-                 Question('Address', '', InputType.TEXTAREA, 'address'),
+                 TextArea('address', 'Address'),
                  ArrayQuestion(title='Country',
                                description='',
                                input_type=InputType.AUTOCOMPLETE,

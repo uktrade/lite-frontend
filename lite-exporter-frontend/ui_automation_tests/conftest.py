@@ -4,9 +4,9 @@ import allure
 from allure_commons.types import AttachmentType
 
 import pytest
-from fixtures.core import context, driver, invalid_username, exporter_sso_login_info
+from fixtures.core import context, driver, invalid_username, exporter_sso_login_info, s3_key
 from fixtures.register_organisation import register_organisation
-from fixtures.add_goods import add_a_good, add_an_incorporated_good_to_application, add_a_non_incorporated_good_to_application
+from fixtures.add_goods import add_a_good, add_an_incorporated_good_to_application, add_a_non_incorporated_good_to_application, create_non_incorporated_good
 from fixtures.add_an_application import add_an_application
 from fixtures.sso_sign_in import sso_sign_in
 from fixtures.internal_case_note import internal_case_note
@@ -16,6 +16,7 @@ from pages.add_goods_page import AddGoodPage
 from pages.add_new_external_location_form_page import AddNewExternalLocationFormPage
 from pages.application_overview_page import ApplicationOverviewPage
 from pages.apply_for_a_licence_page import ApplyForALicencePage
+from pages.attach_document_page import AttachDocumentPage
 from pages.exporter_hub_page import ExporterHubPage
 from pages.external_locations_page import ExternalLocationsPage
 from pages.preexisting_locations_page import PreexistingLocationsPage
@@ -29,13 +30,14 @@ import helpers.helpers as utils
 
 strict_gherkin = False
 
+
 def pytest_addoption(parser):
     env = str(os.environ.get('ENVIRONMENT'))
     if env == 'None':
         env = "dev"
     parser.addoption("--driver", action="store", default="chrome", help="Type in browser type")
     if env == 'local':
-        parser.addoption("--exporter_url", action="store", default="http://localhost:9000", help="url")
+        parser.addoption("--exporter_url", action="store", default="http://localhost:8300", help="url")
         parser.addoption("--lite_api_url", action="store", default="http://localhost:8100", help="url")
     else:
         parser.addoption("--exporter_url", action="store", default="https://exporter.lite.service." + env + ".uktrade.io/", help="url")
@@ -259,6 +261,7 @@ def click_add_from_organisation_button(driver):
 
 @when(parsers.parse('I add a good or good type with description "{description}" controlled "{controlled}" control code "{control_code}" incorporated "{incorporated}" and part number "{part}"'))
 def add_new_good(driver, description, controlled, control_code, incorporated, part, context):
+    good_part_needed = True
     exporter_hub = ExporterHubPage(driver)
     add_goods_page = AddGoodPage(driver)
     date_time = utils.get_current_date_time_string()
@@ -270,15 +273,39 @@ def add_new_good(driver, description, controlled, control_code, incorporated, pa
     add_goods_page.enter_description_of_goods(good_description)
     add_goods_page.select_is_your_good_controlled(controlled)
     add_goods_page.select_is_your_good_intended_to_be_incorporated_into_an_end_product(incorporated)
-    if "empty" not in good_part:
+    if "not needed" in good_part:
+        good_part_needed = False
+    elif "empty" not in good_part:
         add_goods_page.enter_part_number(good_part)
     if controlled.lower() == 'unsure':
-        add_goods_page.enter_control_code_unsure(control_code)
-        add_goods_page.enter_control_unsure_details(description + " unsure")
         exporter_hub.click_save_and_continue()
-        add_goods_page.select_control_unsure_confirmation("yes")
     else:
         add_goods_page.enter_control_code(control_code)
+        exporter_hub.click_save_and_continue()
+    if good_part_needed:
+        context.good_id_from_url = driver.current_url.split('/goods/')[1].split('/')[0]
+
+
+@when(parsers.parse('I upload file "{filename}" with description "{description}"'))
+def upload_a_file(driver, filename, description):
+    attach_document_page = AttachDocumentPage(driver)
+
+    # Path gymnastics to get the absolute path for $PWD/../resources/(file_to_upload_x) that works everywhere
+    file_to_upload_abs_path = \
+        os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, 'resources', filename))
+    if 'ui_automation_tests' not in file_to_upload_abs_path:
+        file_to_upload_abs_path = \
+            os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, 'ui_automation_tests/resources', filename))
+
+    attach_document_page.choose_file(file_to_upload_abs_path)
+    attach_document_page.enter_description(description)
+    Shared(driver).click_continue()
+
+
+@when(parsers.parse('I raise a clc query control code "{control_code}" description "{description}"'))
+def raise_clc_query(driver, control_code, description):
+    raise_clc_query_page = AddGoodPage(driver)
+    raise_clc_query_page.enter_control_code_unsure(control_code)
+    raise_clc_query_page.enter_control_unsure_details(description)
+    exporter_hub = ExporterHubPage(driver)
     exporter_hub.click_save_and_continue()
-
-

@@ -1,17 +1,89 @@
 {% extends 'layouts/base.html' %}
 
+{% load svg %}
+
 {% load humanize static %}
 
-{% block body %}
+{% block back_link %}
+	<a href="/goods/" class="govuk-back-link">Back to Goods</a>
+{% endblock %}
 
+{% block body %}
 	<h2 class="govuk-heading-l">{{ title }}</h2>
 
-	<div class="lite-tabs--fade">
-		<div class="lite-tabs">
-			<a class="lite-tabs__tab selected">Notes</a>
-		</div>
-	</div>
+    <div class="lite-information-board">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-third">
+                <p class="lite-heading-s">Description</p>
+                <p class="govuk-label">{{ data.good.description }}</p>
+            </div>
+            <div class="govuk-grid-column-one-third">
+                <p class="lite-heading-s">Part Number</p>
+                <p class="govuk-label">
+                    {{ data.good.part_number|default:'N/A' }}
+                </p>
+            </div>
+            <div class="govuk-grid-column-one-third">
+                <p class="lite-heading-s">Control Code</p>
+                <p class="govuk-label">
+                    {{ data.good.control_code|default:'N/A' }}
+                </p>
+            </div>
+        </div>
+    </div>
 
-	{% include "applications/tabs/notes.html" %}
+    <div class="lite-app-bar">
+        <h3 class="govuk-heading-l">Documents</h3>
+        {% if data.good.status != 'submitted' %}
+            <div class="lite-app-bar--right">
+                <a role="button" draggable="false" class="govuk-button" href="{% url 'goods:attach_documents' data.good.id %}">
+                    {% get_string 'goods.documents.attach_documents.button' %}
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+
+    {% if documents %}
+        <p class="govuk-caption-m">{% get_string 'goods.documents.description' %}</p>
+        {% for document in documents %}
+            <div class="lite-card lite-card--download">
+                <div>
+                    <p class="govuk-body govuk-!-font-weight-bold" style="margin-bottom: 10px;">{{ document.name }}</p>
+                    <p class="govuk-body" style="margin-bottom: 10px">{{ document.description|slice:"0:40" }} {% if document.description|length > 40 %}...{% endif %}</p>
+                    <p class="govuk-caption-m" style="margin: 0;">Uploaded by {{ document.user.first_name }} {{ document.user.last_name }} at {{ document.created_at|str_date }}</p>
+                </div>
+                <div class="lite-vertical-align">
+                    {% if document.safe == True %}
+                        <a class="govuk-link lite-link--icon govuk-link--no-visited-state" href="{% url 'goods:document' pk=data.good.id file_pk=document.id %}">
+                            <span class="govuk-visually-hidden">{% get_string 'goods.documents.download_document' %}</span>
+                            Download
+                        </a>
+                        {% if data.good.status != 'submitted' %}
+                            <a href="{% url 'goods:delete_document' data.good.id document.id %}" style="margin: 0; margin-left: 20px;" class="govuk-link">
+                                Delete
+                            </a>
+                        {% endif %}
+                    {% elif document.safe == False %}
+                        <p class="govuk-label" style="margin: 0;color:red;">{% get_string 'goods.documents.virus_infected' %}</p>
+                    {% else %}
+                        <p class="govuk-label" style="margin: 0;">{% get_string 'goods.documents.processing' %}</p>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="govuk-caption-l">{% get_string 'goods.documents.good_has_no_documents' %}</p>
+    {% endif %}
+
+    {% if data.good.clc_query_id %}
+        <div class="lite-tabs--fade">
+            <div class="lite-tabs">
+                <a class="lite-tabs__tab selected">Notes</a>
+            </div>
+        </div>
+
+        {% include "applications/tabs/notes.html" %}
+    {% endif %}
 
 {% endblock %}

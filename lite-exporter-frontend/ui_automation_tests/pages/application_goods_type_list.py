@@ -4,7 +4,7 @@ class ApplicationGoodsTypeList():
         self.driver = driver
         self.add_goods_type_button = ".govuk-button"
         self.goods_type_info = ".lite-card"
-        self.goods_type_table_overview = "good_types_table_overview" #id
+        self.goods_type_table_overview = "good_types_table_overview"   # ID
 
     def click_goods_type_button(self):
         self.driver.find_element_by_css_selector(self.add_goods_type_button).click()

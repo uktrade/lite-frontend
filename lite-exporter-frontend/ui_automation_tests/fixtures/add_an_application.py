@@ -4,7 +4,7 @@ from helpers.seed_data import SeedData
 from helpers.utils import Timer, get_or_create_attr
 
 
-@fixture(scope="session")
+@fixture(scope="module")
 def add_an_application(driver, request, api_url, exporter_url, context):
     timer = Timer()
     api = get_or_create_attr(context, 'api', lambda: SeedData(api_url=api_url, logging=True))

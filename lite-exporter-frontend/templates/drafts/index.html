@@ -66,8 +66,7 @@
 							{{ draft.export_type|sentence_case }}
 						</td>
 						<td class="govuk-table__cell">
-							<a href="{% url 'apply_for_a_licence:delete' draft.id %}" style="margin: 0;" class="lite-cancel-link">
-								{% svg 'close' %}
+							<a href="{% url 'apply_for_a_licence:delete' draft.id %}" style="margin: 0;" class="govuk-link">
 								Delete
 							</a>
 						</td>

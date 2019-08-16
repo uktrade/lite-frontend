@@ -8,7 +8,7 @@
 
 <h2 class="govuk-heading-l">{{ title }}</h2>
 
-{% if description or part_number or data.goods|length %}
+{% if description or part_number or data %}
 	<div class="govuk-grid-row">
 		<div class="govuk-grid-column-one-third lite-filters">
 			<div class="lite-filter-box">
@@ -58,8 +58,8 @@
 					{% endif %}
 				</div>
 			{% endif %}
-			{% if data.goods|length %}
-				{% for good in data.goods %}
+			{% if data %}
+				{% for good in data %}
 					<div class="lite-card">
 						<h4 class="govuk-heading-s" style="margin-bottom: 0;">{{ good.description|highlight_text:description }}</h4>
 						<span class="govuk-caption-m" style="display: inline-block; margin-right: 10px;">Part Number: </span><p class="govuk-label" style="display: inline-block; {% if not good.part_number %}opacity: 0.4;{% endif %}">{{ good.part_number|highlight_text:part_number|default:"N/A" }}</p>
@@ -76,7 +76,7 @@
 		</div>
 	</div>
 {% else %}
-	<p class="govuk-caption-l">Your organisation doesn't have any goods.</p>
+	<p class="govuk-caption-l">Your organisation doesn't have any goods which are available to be used on an application.</p>
     <br>
     <a href="{% url 'goods:add' %}" class="govuk-link">Add a good to my organisation</a>
 {% endif %}

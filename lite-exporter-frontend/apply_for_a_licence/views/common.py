@@ -135,10 +135,15 @@ class GoodsList(TemplateView):
         data, status_code = get_goods(request, {'description': description,
                                                 'part_number': part_number})
 
+        filtered_data = []
+        for good in data['goods']:
+            if good['documents'] and not good['is_good_controlled'] == 'unsure':
+                filtered_data.append(good)
+
         context = {
             'title': get_string('goods.add_from_organisation.title'),
             'draft_id': draft_id,
-            'data': data,
+            'data': filtered_data,
             'draft': draft,
             'description': description,
             'part_number': part_number,

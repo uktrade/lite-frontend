@@ -87,11 +87,7 @@ Feature: I want to indicate the kind of licence I want
   @LT_1114
   Scenario: Submit open application
     Given I go to exporter homepage
-    When I click on goods link
-    And I click add a good button
-    And I add a good or good type with description "Bazooka" controlled "Yes" control code "1234" incorporated "No" and part number "321"
-    And I go to exporter homepage
-    And I click on apply for a license button
+    When I click on apply for a license button
     And I click on start button
     And I enter in name for application and continue
     And I select "open" application and continue
@@ -103,7 +99,7 @@ Feature: I want to indicate the kind of licence I want
     And I click continue
     And I click on the goods link from overview
     And I click Add goods type button
-    And I add a good or good type with description "Sniper" controlled "Yes" control code "1234" incorporated "No" and part number "empty"
+    And I add a good or good type with description "Sniper" controlled "Yes" control code "1234" incorporated "Yes" and part number "not needed"
     Then I see my goods type added at position "1" with a description and a control code
     When I click overview
     Then I see my goods type added to the overview page with a description and a control code
@@ -111,7 +107,7 @@ Feature: I want to indicate the kind of licence I want
     And I click Add goods type button
     And I click continue
     Then I see good types error messages
-    When I add a good or good type with description "M4" controlled "Yes" control code "1234" incorporated "No" and part number "empty"
+    When I add a good or good type with description "M4" controlled "Yes" control code "1234" incorporated "Yes" and part number "not needed"
     Then I see my goods type added at position "2" with a description and a control code
     When I click overview
     Then I see my goods type added to the overview page with a description and a control code
