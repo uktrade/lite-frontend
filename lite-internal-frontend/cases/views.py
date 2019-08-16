@@ -12,9 +12,10 @@ from cases.forms.create_ecju_query import create_ecju_query_write_or_edit_form, 
 from cases.forms.denial_reasons import denial_reasons_form
 from cases.forms.move_case import move_case_form
 from cases.forms.record_decision import record_decision_form
+from cases.services import post_case_documents, get_case_documents, get_case_document, get_document
 from cases.services import get_case, post_case_notes, put_applications, get_activity, put_case, put_clc_queries, \
     put_case_flags, get_ecju_queries, post_ecju_query
-from cases.services import post_case_documents, get_case_documents, get_case_document
+
 from conf import settings
 from conf.constants import DEFAULT_QUEUE_ID, MAKE_FINAL_DECISIONS, OPEN_CASES_SYSTEM_QUEUE_ID, ALL_CASES_SYSTEM_QUEUE_ID
 from conf.decorators import has_permission
@@ -446,12 +447,12 @@ class Documents(TemplateView):
         """
         case_id = str(kwargs['pk'])
         case, status_code = get_case(request, case_id)
-        documents, status_code = get_case_documents(request, case_id)
+        case_documents, status_code = get_case_documents(request, case_id)
 
         context = {
             'title': get_string('cases.manage.documents.title'),
             'case': case['case'],
-            'documents': documents['documents'],
+            'case_documents': case_documents['documents'],
         }
         return render(request, 'cases/case/documents.html', context)
 
@@ -498,8 +499,7 @@ class Document(TemplateView):
         case_id = str(kwargs['pk'])
         file_pk = str(kwargs['file_pk'])
 
-        get_case(request, case_id)
-        document, status_code = get_case_document(request, case_id, file_pk)
+        document, status_code = get_document(request, file_pk)
         original_file_name = document['document']['name']
 
         # Stream file
@@ -508,7 +508,8 @@ class Document(TemplateView):
                 yield chunk
 
         s3 = s3_client()
-        s3_response = s3.get_object(Bucket=AWS_STORAGE_BUCKET_NAME, Key=file_pk)
+        s3_key = document['document']['s3_key']
+        s3_response = s3.get_object(Bucket=AWS_STORAGE_BUCKET_NAME, Key=s3_key)
         _kwargs = {}
         if s3_response.get('ContentType'):
             _kwargs['content_type'] = s3_response['ContentType']

@@ -18,9 +18,9 @@
 	</div>
 </div>
 
-{% if documents %}
+{% if case_documents %}
 	<p class="govuk-caption-m">{% get_string 'cases.manage.documents.description' %}</p>
-	{% for document in documents %}
+	{% for document in case_documents %}
 		<div class="lite-card lite-card--download">
 			<div>
 				<p class="govuk-body govuk-!-font-weight-bold" style="margin-bottom: 10px;">{{ document.name }}</p>

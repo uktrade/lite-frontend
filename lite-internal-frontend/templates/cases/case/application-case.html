@@ -6,6 +6,8 @@
 	<a href="{% url 'cases:cases' %}" class="govuk-back-link">{% get_string 'cases.case.back_to_cases_link' %}</a>
 {% endblock %}
 
+{% load svg %}
+
 {% block body %}
 
 <div class="lite-app-bar">
@@ -140,6 +142,7 @@
 		  <th class="lite-table__header" scope="col">Control Code</th>
 		  <th class="lite-table__header" scope="col">End Product?</th>
 		  <th class="lite-table__header" scope="col">Part Number</th>
+          <th class="lite-table__header" scope="col">Documents</th>
 		</tr>
 	</thead>
 	<tbody class="lite-table__body">
@@ -150,7 +153,16 @@
 			  <td class="lite-table__cell">{{ good.good.control_code|default:'None' }}</td>
 			  <td class="lite-table__cell">{{ good.good.is_good_end_product }}</td>
 			  <td class="lite-table__cell">{{ good.good.part_number|default:'None' }}</td>
-			</tr>
+              <td class="lite-table__cell">
+                {% for document in good.good.documents %}
+                    {% if document.safe == True %}
+                        <a class="govuk-link lite-link--icon govuk-link--no-visited-state" href="{% url 'cases:document' data.case.id document.id %}">
+                            <span class="govuk-visually-hidden">{% get_string 'cases.manage.documents.download_document' %}</span>
+                            {{ document.name }}<br>
+                        </a>
+                    {% endif %}
+                 {% endfor %}
+               </td>
 		{% endfor %}
 	</tbody>
 </table>
