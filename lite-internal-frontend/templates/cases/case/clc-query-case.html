@@ -5,7 +5,7 @@
 {% load svg %}
 
 {% block back_link %}
-	<a href="{% url 'cases:cases' %}" class="govuk-back-link">Back to Cases</a>
+	<a href="{% url 'cases:cases' %}" class="govuk-back-link">{% get_string 'cases.case.back_to_cases_link' %}</a>
 {% endblock %}
 
 {% block body %}
@@ -15,43 +15,31 @@
 		<h1 class="govuk-heading-l">{{ title }}</h1>
 	</div>
 	<div class="lite-app-bar__controls">
-		<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:documents' data.case.id %}">
+		<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:documents' case.id %}">
         	{% get_string 'cases.manage.documents.button' %}
         </a>
-        <a role="button" draggable="false" class="govuk-button" href="{% url 'cases:ecju_queries' data.case.id %}">
+        <a role="button" draggable="false" class="govuk-button" href="{% url 'cases:ecju_queries' case.id %}">
             {% get_string 'cases.ecju_queries.title' %}
 		</a>
-		<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:move' data.case.id %}">
+		<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:move' case.id %}">
 		    {% get_string 'cases.manage.move_case.button' %}
 		</a>
-		<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:manage' data.case.id %}">
+		<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:manage' case.id %}">
 		    Change Status
 		</a>
 	</div>
 </div>
 
-<!-- # TODO: Create modal for clients with JS enabled -->
-<!-- <a href="{% url 'cases:assign_flags' data.case.id %}" class="govuk-link govuk-link--no-visited-state" onclick="return showFlagsModal();">Edit case flags</a> -->
-<a href="{% url 'cases:assign_flags' data.case.id %}" class="govuk-link govuk-link--no-visited-state">{{  edit_case_flags }}</a>
-<div class="lite-case-flags">
-    {% for flag in data.case.flags %}
-        <div class="lite-flag">
-            {{ flag.name }}
-        </div>
-    {% endfor %}
-</div>
-
-<div id="flags-modal" style="display: none;">
-	{% include "cases/case/flags.html" %}
-</div>
+<!-- Case flags -->
+{% include 'cases/case/views/case-flags.html' %}
 
 <div class="lite-information-board">
 	<div class="govuk-grid-row">
 		<div class="govuk-grid-column-one-third">
 			<p class="lite-heading-s">Applicant</p>
 			<p class="govuk-label">
-				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisations:organisation' data.case.clc_query.good.organisation %}">
-					{{ data.case.clc_query.organisation_name }}
+				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisations:organisation' case.clc_query.good.organisation %}">
+					{{ case.clc_query.organisation_name }}
 				</a>
 			</p>
 		</div>

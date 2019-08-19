@@ -9,7 +9,7 @@
 		bottom: - govuk-spacing(2);
 		left: 9px;
 		width: 2px;
-		background-color: govuk-colour("light-grey");
+		background-color: govuk-colour("mid-grey");
 	}
 
 	&:after {
@@ -20,7 +20,7 @@
 		width: 16px;
 		height: 16px;
 		background-color: govuk-colour("white");
-		border: 2px solid govuk-colour("light-grey");
+		border: 2px solid govuk-colour("mid-grey");
 		border-radius: 100%;
 	}
 

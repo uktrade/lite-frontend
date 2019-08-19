@@ -1,0 +1,57 @@
+<h3 class="govuk-heading-m">Goods</h3>
+<table class="lite-table" id="goods">
+	<thead class="lite-table__head">
+		<tr class="lite-table__row">
+			<!-- <th class="lite-table__header" scope="col">
+				<div class="govuk-checkboxes govuk-checkboxes--small">
+					<div class="govuk-checkboxes__item">
+						<input class="govuk-checkboxes__input" type="checkbox" value="{{ case.id }}">
+						<label class="govuk-label govuk-checkboxes__label"></label>
+					</div>
+				</div>
+			</th> -->
+			<th class="lite-table__header" scope="col">Control List Entry</th>
+			<th class="lite-table__header" scope="col">Description</th>
+			<th class="lite-table__header">Quantity/Value</th>
+			<th class="lite-table__header">Documents</th>
+			{% if show_advice %}
+				<th class="lite-table__header" style="width: 350px;">Advice</th>
+			{% endif %}
+		</tr>
+	</thead>
+	<tbody class="lite-table__body">
+		{% for good in case.application.goods %}
+			<tr class="lite-table__row">
+				<td class="lite-table__cell">
+					<div class="govuk-checkboxes govuk-checkboxes--small">
+						{% if show_checkboxes %}<div class="govuk-checkboxes__item">{% endif %}
+							<input class="govuk-checkboxes__input" type="checkbox" name="goods" value="{{ good.good.id }}" id="{{ good.good.id }}">
+							<label class="govuk-label {% if show_checkboxes %}govuk-checkboxes__label{% endif %}" for="{{ good.good.id }}">{{ good.good.control_code|default:'N/A' }}</label>
+						{% if show_checkboxes %}</div>{% endif %}
+					</div>
+				</td>
+				<td class="lite-table__cell">{{ good.good.description }}</td>
+				<td class="lite-table__cell">{{ good.quantity }} {{ good.unit }}/£{{ good.value }}</td>
+				<td class="lite-table__cell">
+				  {% for document in good.good.documents %}
+					  {% if document.safe == True %}
+						  <a class="govuk-link lite-link--icon govuk-link--no-visited-state" href="{% url 'cases:document' data.case.id document.id %}">
+							  <span class="govuk-visually-hidden">{% get_string 'cases.manage.documents.download_document' %}</span>
+							  {{ document.name }}<br>
+						  </a>
+					  {% endif %}
+				   {% endfor %}
+				 </td>
+				{% if show_advice %}
+					<td class="lite-table__cell">
+						{% for advice in all_advice %}
+							{% if advice.good == good.good.id %}
+								{% include 'cases/case/views/table-advice.html' %}
+							{% endif %}
+						{% endfor %}
+					</td>
+				{% endif %}
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>

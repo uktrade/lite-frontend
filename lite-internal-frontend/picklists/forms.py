@@ -10,12 +10,12 @@ _name = Question(title='Name',
                  name='name')
 
 _picklist_type = Select(name='type',
-                        options=[Option('proviso', 'Provisos'),
-                                 Option('ecju_query', 'ECJU queries'),
+                        options=[Option('proviso', 'Proviso'),
+                                 Option('ecju_query', 'ECJU Query'),
                                  Option('letter_paragraph', 'Letter Paragraph'),
                                  Option('annual_report_summary', 'Annual Report Summary'),
-                                 Option('standard_advice', 'Standard advice'),
-                                 Option('footnotes', 'Footnotes')],
+                                 Option('standard_advice', 'Standard Advice'),
+                                 Option('footnotes', 'Footnote')],
                         title='Type')
 
 _text = TextArea(title='Add text for picklist item',
@@ -36,7 +36,8 @@ def add_picklist_item_form():
                     _picklist_type,
                     _text,
                 ],
-                back_link=_back_link)
+                back_link=_back_link,
+                default_button_name='Save')
 
 
 def edit_picklist_item_form(picklist_item):
@@ -69,7 +70,7 @@ def edit_picklist_item_form(picklist_item):
                                    reverse_lazy('picklists:picklist_item',
                                                 kwargs={'pk': picklist_item['picklist_item']['id']})),
                 buttons=[
-                    Button('Save and continue', 'submit', ButtonStyle.DEFAULT),
+                    Button('Save', 'submit', ButtonStyle.DEFAULT),
                     button,
                 ])
 

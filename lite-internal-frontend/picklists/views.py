@@ -17,20 +17,22 @@ class Picklists(TemplateView):
         """
         Return a list of picklists and show all the relevant items
         """
-
         # Ensure that the page has a type
         picklist_type = request.GET.get('type')
         if not picklist_type:
             return redirect(reverse_lazy('picklists:picklists') + '?type=proviso')
-
         user, status_code = get_gov_user(request)
         team, status_code = get_team(request, user['user']['team']['id'])
-        picklist_items, status_code = get_picklists(request, picklist_type)
+        picklist_items, status_code = get_picklists(request, picklist_type, True)
+
+        active_picklist_items = [x for x in picklist_items['picklist_items'] if x['status']['key'] == 'active']
+        deactivated_picklist_items = [x for x in picklist_items['picklist_items'] if x['status']['key'] != 'active']
 
         context = {
             'title': 'Picklists - ' + team['team']['name'],
             'team': team['team'],
-            'picklist_items': picklist_items['picklist_items'],
+            'active_picklist_items': active_picklist_items,
+            'deactivated_picklist_items': deactivated_picklist_items,
             'type': picklist_type,
         }
         return render(request, 'teams/picklist.html', context)

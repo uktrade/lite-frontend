@@ -15,19 +15,22 @@
 				<a href="{% url 'picklists:picklists' %}" class="lite-tabs__tab">Picklists</a>
 			</div>
 		</div>
+		<a id="button-invite-user" href="{% url 'users:add' %}" class="govuk-button" draggable="false" role="button">
+			{% get_string 'users.invite' %}
+		</a>
 	</div>
 
 	{% if users|length %}
-		<table class="govuk-table">
-			<thead class="govuk-table__head">
-				<tr class="govuk-table__row">
-					<th class="govuk-table__header" scope="col">Name</th>
-					<th class="govuk-table__header" scope="col">Email</th>
-					<th class="govuk-table__header" scope="col">Status</th>
-                    <th class="govuk-table__header" scope="col"></th>
+		<table class="lite-table">
+			<thead class="lite-table__head">
+				<tr class="lite-table__row">
+					<th class="lite-table__header" scope="col">Name</th>
+					<th class="lite-table__header" scope="col">Email</th>
+					<th class="lite-table__header" scope="col">Status</th>
+                    <th class="lite-table__header" scope="col"></th>
 				</tr>
 			</thead>
-			<tbody class="govuk-table__body">
+			<tbody class="lite-table__body">
 				{% for user in users %}
                 <tr class="lite-table__row" {% if not user.first_name %}style="background-color: rgba(40, 161, 151, 0.025);"{% endif %}>
                     <td class="lite-table__cell">

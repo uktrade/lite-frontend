@@ -14,22 +14,3 @@
 		border: 2px solid rgba(govuk-colour("blue"), 0.15);
 	}
 }
-
-.lite-case-flags {
-	border: 2px solid govuk-colour("light-grey");
-	display: flex;
-	align-items: center;
-	justify-content: flex-start;
-	flex-wrap: wrap;
-	padding: govuk-spacing(4);
-	margin-bottom: govuk-spacing(6);
-}
-
-.lite-flag {
-	@include govuk-font($size: 16);
-	background: govuk-colour("light-grey");
-	padding: govuk-spacing(2) govuk-spacing(3);
-	margin-left: govuk-spacing(2);
-	margin-right: govuk-spacing(2);
-	border-bottom: 2px solid darken(govuk-colour("light-grey"), 2%)
-}

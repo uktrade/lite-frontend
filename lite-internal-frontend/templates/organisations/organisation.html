@@ -48,22 +48,22 @@
 	</div>
 
 	{% if sites|length %}
-		<table class="govuk-table">
-			<thead class="govuk-table__head">
-				<tr class="govuk-table__row">
-					<th class="govuk-table__header">
+		<table class="lite-table">
+			<thead class="lite-table__head">
+				<tr class="lite-table__row">
+					<th class="lite-table__header">
 						Name
 					</th>
-					<th class="govuk-table__header" scope="col">Address</th>
+					<th class="lite-table__header" scope="col">Address</th>
 				</tr>
 			</thead>
-			<tbody class="govuk-table__head">
+			<tbody class="lite-table__head">
 				{% for site in sites %}
-					<tr class="govuk-table__row" style="vertical-align: top;">
-						<td class="govuk-table__cell">
+					<tr class="lite-table__row" style="vertical-align: top;">
+						<td class="lite-table__cell">
 							{{ site.name }}
 						</td>
-						<td class="govuk-table__cell">
+						<td class="lite-table__cell">
 							{{ site.address.address_line_1 }}<br/>
 							{% if site.address.address_line_2 %}
 								{{ site.address.address_line_2 }}<br/>

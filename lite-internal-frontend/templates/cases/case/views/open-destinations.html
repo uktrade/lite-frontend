@@ -1,0 +1,50 @@
+<h3 class="govuk-heading-m">Destinations</h3>
+{% if show_advice %}
+	<table class="lite-table" id="countries">
+		<thead class="lite-table__head">
+			<tr class="lite-table__row">
+				<th class="lite-table__header" scope="col">Country</th>
+				<th class="lite-table__header" style="width: 350px;">Advice</th>
+			</tr>
+		</thead>
+		<tbody class="lite-table__body">
+			{% for country in case.application.destinations.data %}
+				<tr class="lite-table__row">
+					<td class="lite-table__cell">
+						<div class="govuk-checkboxes govuk-checkboxes--small">
+							<div class="govuk-checkboxes__item">
+								<input class="govuk-checkboxes__input" type="checkbox" name="countries" id="{{ country.id }}" value="{{ country.id }}">
+								<label class="govuk-label govuk-checkboxes__label" for="{{ country.id }}">
+									<input class="govuk-checkboxes__input" type="checkbox" name="countries" value="{{ country.id }}" id="{{ country.id }}">
+									<label class="govuk-label govuk-checkboxes__label" for="{{ country.id }}">{{ country.name }} <span class="app-country-tag">{{ country.id }}</span>
+								</label>
+							</div>
+						</div>
+					</td>
+					<td class="lite-table__cell">
+						{% for advice in all_advice %}
+							{% if advice.country == country.id %}
+								{% include 'cases/case/views/table-advice.html' %}
+							{% endif %}
+						{% endfor %}
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% else %}
+	<div class="app-wrappable-list">
+		{% for country_group in case.application.destinations.data|group_list:4 %}
+			<div class="app-wrappable-list__group govuk-checkboxes govuk-checkboxes--small">
+				{% for country in country_group %}
+					<div class="app-wrappable-list__item">
+						{% if show_checkboxes %}<div class="govuk-checkboxes__item">
+							<input class="govuk-checkboxes__input" type="checkbox" name="countries" value="{{ country.id }}" id="{{ country.id }}"> {% endif %}
+							<label class="govuk-label {% if show_checkboxes %}govuk-checkboxes__label{% endif %}" for="{{ country.id }}">{{ country.name }} <span class="app-country-tag">{{ country.id }}</span></label>
+						{% if show_checkboxes %}</div>{% endif %}
+					</div>
+				{% endfor %}
+			</div>
+		{% endfor %}
+	</div>
+{% endif %}

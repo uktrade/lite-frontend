@@ -12,7 +12,7 @@ from fixtures.sign_in_to_sso import sign_in_to_internal_sso
 from fixtures.add_a_flag import add_uae_flag
 from fixtures.add_queue import add_queue
 from fixtures.add_a_team import add_a_team
-from fixtures.add_a_picklist import add_an_ecju_query_picklist
+from fixtures.add_a_picklist import add_an_ecju_query_picklist, add_a_proviso_picklist, add_a_standard_advice_picklist
 
 import helpers.helpers as utils
 from pages.header_page import HeaderPage
@@ -152,5 +152,3 @@ def new_queue_shown_in_dropdown(driver, context):
 @then('there are no cases shown')
 def no_cases_shown(driver):
     assert 'There are no new cases to show.' in QueuesPages(driver).get_no_cases_text(), "There are cases shown in the newly created queue."
-
-

@@ -19,7 +19,8 @@ def add_role(request: HttpRequest):
                        title='What permissions should this role have?',
                        description='Select all permissions that apply.'),
         ],
-                back_link=BackLink('Back to Roles', reverse_lazy('users:roles')))
+                back_link=BackLink('Back to Roles', reverse_lazy('users:roles')),
+                default_button_name='Create')
 
 
 def edit_role(request: HttpRequest):
@@ -35,4 +36,5 @@ def edit_role(request: HttpRequest):
                        title='What permissions should this role have?',
                        description='Select all permissions that apply.'),
         ],
-                back_link=BackLink('Back to Roles', reverse_lazy('users:roles')))
+                back_link=BackLink('Back to Roles', reverse_lazy('users:roles')),
+                default_button_name='Save')

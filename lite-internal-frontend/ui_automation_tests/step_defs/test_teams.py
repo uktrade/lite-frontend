@@ -71,7 +71,7 @@ def add_existing_team(driver, context):
 def edit_existing_team(driver, context):
     teams_pages = TeamsPages(driver)
     shared = Shared(driver)
-    elements = shared.get_links_in_gov_table()
+    elements = shared.get_links_in_lite_table()
     no = utils.get_element_index_by_text(elements, context.team_name)
     elements[no+1].click()
     context.team_name = context.team_name + "edited"
@@ -81,7 +81,7 @@ def edit_existing_team(driver, context):
 
 @then('I see the team in the team list')
 def see_team_in_list(driver, context):
-    assert context.team_name in Shared(driver).get_text_of_table_body()
+    assert context.team_name in Shared(driver).get_text_of_lite_table_body()
 
 
 @then(parsers.parse('I see my teams user list with user "{added_not_added}"'))
@@ -89,7 +89,7 @@ def see_team_user_added(driver, added_not_added, context, sso_login_info, sso_us
     assert Shared(driver).get_text_of_h1() == context.team_name , "User is not on teams user list"
     assert Shared(driver).get_text_of_selected_tab() == "USERS" , "Users tab isn't shown"
     if added_not_added == "added":
-        table = Shared(driver).get_text_of_table_body()
+        table = Shared(driver).get_text_of_lite_table_body()
         assert sso_users_name in table, "User is not displayed in team list"
         assert sso_login_info['email'] in table, "User is not displayed in team list"
         assert "Active" in table, "User is not displayed in team list"

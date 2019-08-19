@@ -56,6 +56,17 @@ class SeedData:
             "text": "Why did the chicken cross the road?",
             "type": "ecju_query"
         },
+        "proviso_picklist": {
+            "name": "Misc",
+            "text": "My proviso advice would be this.",
+            "proviso": "My proviso would be this.",
+            "type": "proviso"
+        },
+        "standard_advice_picklist": {
+            "name": "More advice",
+            "text": "My standard advice would be this.",
+            "type": "standard_advice"
+        },
         "gov_user": {
             "email": gov_user_email,
             "first_name": gov_user_first_name,
@@ -155,6 +166,18 @@ class SeedData:
     def add_ecju_query_picklist(self):
         self.log("Creating ECJU Query picklist item ...")
         data = self.request_data['ecju_query_picklist']
+        response = self.make_request("POST", url='/picklist/', body=data)
+        return json.loads(response.text)['picklist_item']
+
+    def add_proviso_picklist(self):
+        self.log("Creating proviso picklist item ...")
+        data = self.request_data['proviso_picklist']
+        response = self.make_request("POST", url='/picklist/', body=data)
+        return json.loads(response.text)['picklist_item']
+
+    def add_standard_advice_picklist(self):
+        self.log("Creating standard advice picklist item ...")
+        data = self.request_data['standard_advice_picklist']
         response = self.make_request("POST", url='/picklist/', body=data)
         return json.loads(response.text)['picklist_item']
 

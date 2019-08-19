@@ -5,6 +5,7 @@ import stringcase
 from django import template
 from django.template.defaultfilters import stringfilter
 from django.templatetags.tz import do_timezone
+from django.utils.safestring import mark_safe
 
 from conf.constants import ISO8601_FMT
 from conf.settings import env
@@ -86,3 +87,20 @@ def add_subnav_selected_class(key, url):
         return 'lite-subnav__link--selected'
 
     return ''
+
+
+@register.filter()
+def group_list(items, split):
+    """
+    Groups items in a list based on a specified size
+    """
+    return [items[x:x+split] for x in range(0, len(items), split)]
+
+
+@register.filter
+@mark_safe
+def pretty_json(value):
+    """
+    Pretty print JSON - for development purposes only.
+    """
+    return '<pre>' + json.dumps(value, indent=4) + '</pre>'

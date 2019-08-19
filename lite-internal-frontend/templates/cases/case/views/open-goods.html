@@ -1,0 +1,36 @@
+<h3 class="govuk-heading-m">Goods</h3>
+<table class="lite-table" id="goods">
+	<thead class="lite-table__head">
+		<tr class="lite-table__row">
+			<th class="lite-table__header" scope="col">Description</th>
+			<th class="lite-table__header" scope="col">Control List Entry</th>
+			<th class="lite-table__header">Is Good controlled</th>
+			{% if show_advice %}
+				<th class="lite-table__header" style="width: 350px;">Advice</th>
+			{% endif %}
+		</tr>
+	</thead>
+	<tbody class="lite-table__body govuk-checkboxes govuk-checkboxes--small">
+		{% for good in case.application.goods_types %}
+			<tr class="lite-table__row">
+				<td class="lite-table__cell">
+					{% if show_checkboxes %}<div class="govuk-checkboxes__item">
+						<input class="govuk-checkboxes__input" type="checkbox" name="goods_types" value="{{ good.id }}" id="{{ good.id }}"> {% endif %}
+						<label class="govuk-label {% if show_checkboxes %}govuk-checkboxes__label{% endif %}" for="{{ good.id }}">{{ good.description }}</label>
+					{% if show_checkboxes %}</div>{% endif %}
+				</td>
+				<td class="lite-table__cell">{{ good.control_code|default:'None' }}</td>
+				<td class="lite-table__cell">{{ good.is_good_controlled }}</td>
+				{% if show_advice %}
+					<td class="lite-table__cell">
+						{% for advice in all_advice %}
+							{% if advice.goods_type == good.id %}
+								{% include 'cases/case/views/table-advice.html' %}
+							{% endif %}
+						{% endfor %}
+					</td>
+				{% endif %}
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>

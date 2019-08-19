@@ -42,6 +42,7 @@ class ManageCases():
         record = RecordDecision(driver)
         record.click_on_decision_number(number)
         context.decision_array.append(number)
+        context.advice_data.append(number)
 
     @then('I see denied reason')
     def denied_reason(driver, context):
@@ -85,7 +86,7 @@ class ManageCases():
         assert "Trading" in application_summary or "Brokering" in application_summary
         assert context.date_time_of_update.split(':')[1] in application_summary
         assert "None" in application_summary
-        assert "Standard licence" in application_summary
+        assert "Standard Licence" in application_summary
 
     @when(parsers.parse('I give myself the required permissions for "{permission}"'))
     def get_required_permissions(driver, permission):
@@ -107,22 +108,14 @@ class ManageCases():
 
     @then('I see an ultimate end user')
     def i_see_ultimate_end_user_on_page(driver, context):
-        destinations_table = ApplicationPage(driver).get_text_of_destinations_table()
+        destinations_table = ApplicationPage(driver).get_text_of_ueu_table()
         destinations_table_lower = destinations_table.lower()
         assert "name" in destinations_table_lower
-        assert "destination type" in destinations_table_lower
         assert "type" in destinations_table_lower
         assert "website" in destinations_table_lower
         assert "address" in destinations_table_lower
-        assert "country" in destinations_table_lower
-        assert "Ultimate End User" in destinations_table
         assert context.ueu_type in destinations_table
         assert context.ueu_name in destinations_table
         assert context.ueu_website in destinations_table
         assert context.ueu_address in destinations_table
         assert context.ueu_country[0] in destinations_table
-
-    @when('I click on view advice')
-    def i_click_on_view_advice(driver, context):
-        application_page = ApplicationPage(driver)
-        application_page.click_view_advice()

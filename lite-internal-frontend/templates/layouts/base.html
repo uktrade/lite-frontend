@@ -139,11 +139,14 @@
 	{% endblock %}
 
 	<script src="{% static 'all.js' %}"></script>
+	<script src="{% static 'javascripts/helpers.js' %}"></script>
 	<script src="{% static 'javascripts/back-link.js' %}"></script>
 
 	<script>
 		window.GOVUKFrontend.initAll()
 	</script>
+
+	{% block javascript %}{% endblock %}
 
 	<script type="text/javascript">
 		function toggleLITEMenu() {

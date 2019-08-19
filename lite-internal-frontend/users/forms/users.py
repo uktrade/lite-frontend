@@ -40,4 +40,5 @@ def edit_user_form(request):
                            options=get_roles(request, True),
                            title='What role should this user have?'),
                 ],
-                back_link=BackLink('Back to Users', reverse_lazy('users:users')))
+                back_link=BackLink('Back to Users', reverse_lazy('users:users')),
+                default_button_name='Save')

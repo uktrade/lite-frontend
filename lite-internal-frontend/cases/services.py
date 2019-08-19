@@ -1,6 +1,7 @@
+from cases.helpers import clean_advice
 from conf.client import post, get, put, delete
 from conf.constants import CASE_URL, CASE_NOTES_URL, APPLICATIONS_URL, ACTIVITY_URL, CLC_QUERIES_URL, DOCUMENTS_URL, \
-    CASE_FLAGS_URL, ECJU_QUERIES_URL
+    CASE_FLAGS_URL, ADVICE_URL, ECJU_QUERIES_URL
 
 
 def get_case(request, pk):
@@ -9,19 +10,19 @@ def get_case(request, pk):
 
 
 def put_case(request, pk, json):
-    data = put(request, CASE_URL + pk + '/', json)
+    data = put(request, CASE_URL + pk, json)
     return data.json(), data.status_code
 
 
 # Applications
 def put_applications(request, pk, json):
-    data = put(request, APPLICATIONS_URL + pk + '/', json)
+    data = put(request, APPLICATIONS_URL + pk, json)
     return data.json(), data.status_code
 
 
 # CLC Queries
 def put_clc_queries(request, pk, json):
-    data = put(request, CLC_QUERIES_URL + pk + '/', json)
+    data = put(request, CLC_QUERIES_URL + pk, json)
     return data.json(), data.status_code
 
 
@@ -69,7 +70,79 @@ def delete_case_document(request, pk, s3_key):
     return data.json(), data.status_code
 
 
+# Advice
+def get_case_advice(request, case_pk):
+    data = get(request, CASE_URL + case_pk + ADVICE_URL)
+    return data.json(), data.status_code
 
+
+def return_non_empty(data):
+    for item in data:
+        if item:
+            return item
+
+
+def post_case_advice(request, case_pk, json):
+    json = clean_advice(json)
+
+    # Split the json data into multiple
+    base_data = {
+        'type': json['type'],
+        'text': json['advice'],
+        'note': json['note']
+    }
+
+    if json.get('type') == 'refuse':
+        base_data['denial_reasons'] = json['denial_reasons']
+
+    if json.get('type') == 'proviso':
+        base_data['proviso'] = json['proviso']
+
+    new_data = []
+
+    if json.get('end_user'):
+        data = base_data.copy()
+        data['end_user'] = json.get('end_user')
+        new_data.append(
+            data
+        )
+
+    if json.get('ultimate_end_users'):
+        for item in json.get('ultimate_end_users', []):
+            data = base_data.copy()
+            data['ultimate_end_user'] = item
+            new_data.append(
+                data
+            )
+
+    if json.get('countries'):
+        for item in json.get('countries', []):
+            data = base_data.copy()
+            data['country'] = item
+            new_data.append(
+                data
+            )
+
+    if json.get('goods'):
+        for item in json.get('goods', []):
+            data = base_data.copy()
+            data['good'] = item
+            new_data.append(
+                data
+            )
+
+    if json.get('goods_types'):
+        for item in json.get('goods_types', []):
+            data = base_data.copy()
+            data['goods_type'] = item
+            new_data.append(
+                data
+            )
+
+    data = post(request, CASE_URL + case_pk + ADVICE_URL, new_data)
+    return data.json(), data.status_code
+
+	
 def get_document(request, pk):
     data = get(request, DOCUMENTS_URL + pk)
     return data.json(), data.status_code

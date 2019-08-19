@@ -13,7 +13,7 @@
 							<label class="govuk-label govuk-checkboxes__label" for="is_visible_to_exporter">Make visible to exporter</label>
 						</div>
 					</div>
-			<a id="case-note-cancel-button" href="{% url 'cases:case' data.case.id %}" class="govuk-button govuk-button--secondary" type="button" draggable="false">
+			<a id="case-note-cancel-button" href="{% url 'cases:case' case.id %}" class="govuk-button govuk-button--secondary govuk-button--secondary-white" type="button" draggable="false">
 				Cancel
 			</a>
 			<button class="govuk-button" type="submit" id="button-post-note">
@@ -58,9 +58,11 @@
 					{% if item.data.flags.removed|length > 0 %}
 						removed flags:
 						{% for flag in item.data.flags.removed %}
-							<span class="highlight">{{ flag|sentence_case|lower }}</span>
-							{% if not forloop.last %}, {% else %}{% if item.data.flags.added|length > 0 %} and {% else %}.{% endif %}{% endif %}
+							<span class="highlight">{{ flag|sentence_case|lower }}</span>{% if not forloop.last %}, {% else %}{% if item.flags.added|length > 0 %} and {% else %}{% if item.data.flags.removed|length > 0 and item.data.flags.added|length > 0 %},{% else %}.{% endif %}{% endif %}{% endif %}
 						{% endfor %}
+					{% endif %}
+					{% if item.data.flags.removed|length > 0 and item.data.flags.added|length > 0 %}
+						and
 					{% endif %}
 					{% if item.data.flags.added|length > 0 %}
 						added flags:

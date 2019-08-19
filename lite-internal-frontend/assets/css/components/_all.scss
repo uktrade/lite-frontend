@@ -1,9 +1,14 @@
 @import "activity";
+@import "advice";
 @import "case-note";
 @import "case-flag";
 @import "cases-table";
+@import "country-tag";
+@import "flags";
 @import "heading-dropdown";
 @import "lite-menu";
+@import "more-actions";
+@import "picklists";
 
 .lite-block {
 	position: relative;
@@ -92,14 +97,5 @@
 		filter: brightness(0.9);
 		transform: translateY(2px);
 		border-bottom: 0px solid transparent;
-	}
-}
-
-.lite-information-board--new {
-	padding: 30px 0;
-
-	&:before {
-		border-top-width: 2px;
-		border-bottom-width: 2px;
 	}
 }

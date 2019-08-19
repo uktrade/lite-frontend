@@ -21,7 +21,11 @@ def post(request, appended_address, json):
                          json=json)
 
 
-def put(request, appended_address, json):
+def put(request, appended_address: str, json):
+    # PUT requires a trailing slash
+    if not appended_address.endswith('/'):
+        appended_address += '/'
+
     return requests.put(env("LITE_API_URL") + appended_address,
                         json=json,
                         headers={'GOV-USER-TOKEN': str(request.user.user_token)})

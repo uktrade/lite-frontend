@@ -1,0 +1,198 @@
+{% extends 'layouts/two_pane.html' %}
+
+{% load static humanize svg %}
+
+{% block two_thirds %}
+
+<h2 class="govuk-heading-l">Give advice</h2>
+<!--<div class="govuk-form-group">-->
+<!--	<p class="govuk-caption-m">-->
+<!--		This is a placeholder description-->
+<!--	</p>-->
+<!--</div>-->
+
+{% if errors %}
+	<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+		<h2 class="govuk-error-summary__title" id="error-summary-title">
+			There is a problem
+		</h2>
+		<div class="govuk-error-summary__body">
+			<ul class="govuk-list govuk-error-summary__list">
+				{% for key, value in errors.items %}
+					<li>
+						<a href="#{{ key }}">
+							{% for error in value %}
+								{{ error }}
+							{% endfor %}
+						</a>
+					</li>
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+{% endif %}
+
+<form action="{% url 'cases:give_advice_detail' case.id type %}" method="post">
+
+	{% csrf_token %}
+
+	<input type="hidden" name="type" value="{{ type }}">
+	<input type="hidden" name="goods" value="{{ goods }}">
+	<input type="hidden" name="goods_types" value="{{ goods_types }}">
+	<input type="hidden" name="countries" value="{{ countries }}">
+	<input type="hidden" name="end_user" value="{{ end_user }}">
+	<input type="hidden" name="ultimate_end_users" value="{{ ultimate_end_users }}">
+
+	{% if type == 'proviso' %}
+		<div class="govuk-form-group {% if errors|key_value:'proviso' %}govuk-form-group--error{% endif %}">
+			<div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="5000">
+				<div class="govuk-form-group">
+					<div class="app-picklist-picker-heading__container">
+						<label class="govuk-label" for="proviso">
+							Proviso
+						</label>
+						<a id="link-import-proviso" onclick="return showProvisoModal();" href="#" class="govuk-label lite-js-only govuk-link govuk-link--no-visited-state app-picklist-picker-heading__link">
+							{% svg 'new' %}
+							Import proviso from picklists
+						</a>
+					</div>
+	<!--				<span class="govuk-hint" for="{{ question.name }}">-->
+	<!--					This is a really long description-->
+	<!--				</span>-->
+					{% if errors|key_value:'proviso' %}
+						<span class="govuk-error-message">
+							<span class="govuk-visually-hidden">Error:</span> {{ errors|key_value:'proviso'|first }}
+						</span>
+					{% endif %}
+					<textarea class="govuk-textarea govuk-js-character-count " id="proviso" name="proviso" rows="5" aria-describedby="proviso-info proviso-hint">{{ data.proviso }}</textarea>
+				</div>
+
+				<span id="proviso-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
+					You can enter up to 5000 characters
+				</span>
+			</div>
+		</div>
+	{% endif %}
+
+	{% if type == 'refuse' %}
+		<div class="govuk-form-group {% if errors|key_value:'denial_reasons' %}govuk-form-group--error{% endif %}">
+			<label class="govuk-label">
+				Denial Reasons
+			</label>
+<!--				<span class="govuk-hint" for="{{ question.name }}">-->
+<!--					This is a really long description-->
+<!--				</span>-->
+			{% if errors|key_value:'denial_reasons' %}
+				<span class="govuk-error-message">
+					<span class="govuk-visually-hidden">Error:</span> {{ errors|key_value:'denial_reasons'|first }}
+				</span>
+			{% endif %}
+			<div class="govuk-checkboxes">
+				{% for denial_reason_key, denial_reason_values in static_denial_reasons.items %}
+					<div class="govuk-form-group lite-checkboxes--inline">
+						{% for denial_reason in denial_reason_values %}
+							<div class="govuk-checkboxes__item">
+								<input class="govuk-checkboxes__input" {% if denial_reason in data.denial_reasons %}checked{% endif %} id="{{ denial_reason }}" name="denial_reasons" type="checkbox" value="{{ denial_reason }}">
+								<label class="govuk-label govuk-checkboxes__label" for="{{ denial_reason }}">
+									{{ denial_reason }}
+								</label>
+							</div>
+						{% endfor %}
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+	{% endif %}
+
+	<div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="5000">
+		<div class="govuk-form-group {% if errors|key_value:'text' %}govuk-form-group--error{% endif %}">
+			<div class="app-picklist-picker-heading__container">
+				<label class="govuk-label" for="advice">
+					Why do you advise this?
+				</label>
+				<a id="link-import-advice" onclick="return showAdviceModal();" href="#" class="govuk-label lite-js-only govuk-link govuk-link--no-visited-state app-picklist-picker-heading__link">
+					{% svg 'new' %}
+					Import advice from picklists
+				</a>
+			</div>
+			{% if errors|key_value:'text' %}
+				<span class="govuk-error-message">
+					<span class="govuk-visually-hidden">Error:</span> {{ errors|key_value:'text'|first }}
+				</span>
+			{% endif %}
+<!--			<span class="govuk-hint" for="{{ question.name }}">-->
+<!--				This is a really long description-->
+<!--			</span>-->
+			<textarea class="govuk-textarea govuk-js-character-count " id="advice" name="advice" rows="5" aria-describedby="advice-info advice-hint">{{ data.advice }}</textarea>
+		</div>
+
+		<span id="advice-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
+			You can enter up to 5000 characters
+		</span>
+	</div>
+
+	<div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="200">
+		<div class="govuk-form-group {% if errors|key_value:'note' %}govuk-form-group--error{% endif %}">
+			<label class="govuk-label" for="{{ question.name }}">
+				Is there anything else you want to say to the applicant?
+			</label>
+			{% if errors|key_value:'note' %}
+				<span class="govuk-error-message">
+					<span class="govuk-visually-hidden">Error:</span> {{ errors|key_value:'note'|first }}
+				</span>
+			{% endif %}
+<!--			<span class="govuk-hint" for="{{ question.name }}">-->
+<!--				This is a really long description-->
+<!--			</span>-->
+			<textarea class="govuk-textarea govuk-js-character-count " id="textarea-note" name="note" rows="5" aria-describedby="textarea-note-info textarea-note-hint">{{ data.note }}</textarea>
+		</div>
+
+		<span id="textarea-note-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
+			You can enter up to 200 characters
+		</span>
+	</div>
+
+	<button type="submit" class="govuk-button" data-module="govuk-button">
+		Submit advice
+	</button>
+
+</form>
+
+<div id="modal-proviso-picker" style="display: none;">
+	{% if proviso_picklist %}
+		<div id="picklist-proviso" class="app-picklist-picker__container">
+			{% for item in proviso_picklist %}
+				<a onclick="return showPreviewModal(this, 'proviso')" data-title="{{ item.name }}" data-text="{{ item.text }}" data-last-updated="{{ item.last_modified_at|str_date }}" class="app-picklist-picker__item">
+					<h4 class="govuk-heading-s">{{ item.name }}</h4>
+					<p class="govuk-caption-m">
+						{{ item.text|slice:":100" }}
+					</p>
+				</a>
+			{% endfor %}
+		</div>
+	{% else %}
+		{% include "includes/information-text.html" with text="There aren't any items in this picklist" %}
+	{% endif %}
+</div>
+
+<div id="modal-advice-picker" style="display: none;">
+	{% if advice_picklist %}
+		<div id="picklist-advice" class="app-picklist-picker__container">
+			{% for item in advice_picklist %}
+				<a onclick="return showPreviewModal(this, 'advice')" data-title="{{ item.name }}" data-text="{{ item.text }}" data-last-updated="{{ item.last_modified_at|str_date }}" class="app-picklist-picker__item">
+					<h4 class="govuk-heading-s">{{ item.name }}</h4>
+					<p class="govuk-caption-m">
+						{{ item.text|slice:":100" }}
+					</p>
+				</a>
+			{% endfor %}
+		</div>
+	{% else %}
+		{% include "includes/information-text.html" with text="There aren't any items in this picklist" %}
+	{% endif %}
+</div>
+
+<script src="{% static 'javascripts/modal.js' %}"></script>
+<script src="{% static 'javascripts/give-advice.js' %}"></script>
+
+{% endblock %}

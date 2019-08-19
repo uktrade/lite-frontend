@@ -4,8 +4,11 @@ from libraries.forms.components import Option, Checkboxes
 from users.services import get_gov_user
 
 
-def get_denial_reasons(request):
-    data = get(request, DENIAL_REASONS_URL).json()
+def get_denial_reasons(request, convert_to_options=True):
+    data = get(request, DENIAL_REASONS_URL)
+    status_code = data.status_code
+    data = data.json()
+
     converted = {}
 
     for denial_reason in data.get('denial_reasons'):
@@ -16,18 +19,21 @@ def get_denial_reasons(request):
 
         converted[item_id[0]].append(item_id)
 
-    questions = []
-    for key, value in converted.items():
-        options = []
+    if convert_to_options:
+        questions = []
+        for key, value in converted.items():
+            options = []
 
-        for item in value:
-            options.append(Option(item, item))
+            for item in value:
+                options.append(Option(item, item))
 
-        questions.append(
-            Checkboxes('reasons', options, description='')
-        )
+            questions.append(
+                Checkboxes('reasons', options, description='')
+            )
 
-    return questions
+        return questions
+    else:
+        return converted, status_code
 
 
 def get_countries(request, convert_to_options=False):

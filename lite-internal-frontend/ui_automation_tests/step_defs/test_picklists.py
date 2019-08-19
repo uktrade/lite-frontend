@@ -67,8 +67,8 @@ def see_new_picklist(driver, context):
 
 @then('I see picklist error messages')
 def i_see_picklist_error_messages(driver, context):
-    assert "Picklist item name may not be blank" in Shared(driver).get_text_of_error_message(0), "picklist error message is not displayed"
-    assert "Picklist item text may not be blank" in Shared(driver).get_text_of_error_message(1), "picklist error message is not displayed"
+    assert "Enter a name that best describes this template" in Shared(driver).get_text_of_error_message(0), "picklist error message is not displayed"
+    assert "Enter some text to use as a template" in Shared(driver).get_text_of_error_message(1), "picklist error message is not displayed"
 
 
 @when('I click on my picklist item')
@@ -94,6 +94,11 @@ def i_see_my_picklist_page(driver, context, status):
     assert context.picklist_name in body, "picklist name is not displayed"
     assert context.picklist_description in body,  "picklist description is not displayed"
     assert "Created by" in body, "created by is not displayed"
-    assert status in body, "status is not displayed"
+    if status == "Deactivated":
+        assert driver.find_element_by_css_selector('.lite-tag').is_displayed()
+    elif status == "Active":
+        driver.set_timeout_to(0)
+        assert len(driver.find_elements_by_css_selector('.lite-tag')) == 0
+        driver.set_timeout_to_10_seconds()
     assert "Last updated" in body, "last updated is not displayed"
     assert context.picklist_type.lower().replace("_", " ") in body.lower().replace("_", " "), "picklist type is not displayed"

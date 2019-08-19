@@ -2,11 +2,8 @@ from conf.client import get, post, put
 from conf.constants import PICKLIST_URL
 
 
-def get_picklists(request, picklist_type, picklist_status=None):
-    if (picklist_status):
-        data = get(request, PICKLIST_URL + '?type=' + picklist_type + '&status=' + picklist_status)
-    else:
-        data = get(request, PICKLIST_URL + '?type=' + picklist_type)
+def get_picklists(request, picklist_type, show_deactivated=False):
+    data = get(request, PICKLIST_URL + '?type=' + picklist_type + '&show_deactivated=' + str(show_deactivated))
     return data.json(), data.status_code
 
 

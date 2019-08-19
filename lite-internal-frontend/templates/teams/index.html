@@ -16,22 +16,22 @@
 	</div>
 
 	{% if data.teams|length %}
-		<table class="govuk-table">
-			<thead class="govuk-table__head">
-				<tr class="govuk-table__row">
-					<th class="govuk-table__header" scope="col">Name</th>
-					<th class="govuk-table__header" scope="col"></th>
+		<table class="lite-table">
+			<thead class="lite-table__head">
+				<tr class="lite-table__row">
+					<th class="lite-table__header" scope="col">Name</th>
+					<th class="lite-table__header" scope="col"></th>
 				</tr>
 			</thead>
-			<tbody class="govuk-table__body">
+			<tbody class="lite-table__body">
 				{% for team in data.teams %}
-					<tr class="govuk-table__row" style="vertical-align: top;">
-						<td class="govuk-table__cell">
+					<tr class="lite-table__row" style="vertical-align: top;">
+						<td class="lite-table__cell">
 							<a href="{% url 'teams:team' team.id %}" style="margin: 0;" class="govuk-link">
 								{{ team.name|default:"Untitled" }}
 							</a>
 						</td>
-						<td class="govuk-table__cell">
+						<td class="lite-table__cell">
 							<a href="{% url 'teams:edit' team.id %}" style="margin: 0;" class="govuk-link">Edit</a>
 						</td>
 					</tr>

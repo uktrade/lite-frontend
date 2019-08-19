@@ -29,7 +29,7 @@ def go_to_queues_via_menu(driver):
 @when('I edit the new queue')
 def click_on_edit_queue(driver, context):
     queues = QueuesPages(driver)
-    no = utils.get_element_index_by_partial_text(queues.get_table_rows(), context.queue_name)
+    no = utils.get_element_index_by_partial_text(Shared(driver).get_rows_in_lite_table(), context.queue_name)
     queues.click_queue_edit_button(no)
     context.queue_name = str(context.queue_name)[:12] + "edited"
     QueuesPages(driver).enter_queue_name(context.queue_name)

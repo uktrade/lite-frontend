@@ -25,7 +25,8 @@ def add_flag_form():
                     _name,
                     _level,
                 ],
-                back_link=_back_link)
+                back_link=_back_link,
+                default_button_name='Create')
 
 
 def edit_flag_form():
@@ -35,4 +36,5 @@ def edit_flag_form():
                     _name,
                     _level,
                 ],
-                back_link=_back_link)
+                back_link=_back_link,
+                default_button_name='Save')

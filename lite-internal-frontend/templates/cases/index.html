@@ -55,8 +55,8 @@
             <div class="lite-select-wrapper">
                 <select class="govuk-select" id="case_type" name="case_type">
                     <option {% if case_type == None %}selected{% endif %} value="">Select</option>
-                    <option {% if case_type ==  "Licence application"|urlencode %}selected{% endif %} value={{ "Licence application"|urlencode }}>Licence application</option>
-                    <option {% if case_type == "CLC query"|urlencode %}selected{% endif %} value="{{ "CLC query"|urlencode }}">CLC query</option>
+                    <option {% if case_type ==  "application" %}selected{% endif %} value="application">Licence application</option>
+                    <option {% if case_type == "clc_query" %}selected{% endif %} value="clc_query">CLC query</option>
                 </select>
             </div>
         </div>
@@ -73,7 +73,7 @@
                 </select>
             </div>
         </div>
-        <div class="govuk-grid-column-one-quarter">
+        <div class="govuk-grid-column-one-half">
             <label class="govuk-label" for="filter" style="visibility: collapse;">
                 --
             </label>
@@ -139,7 +139,7 @@
 						</div>
 					</div>
 					<div>
-                        {% if case.is_clc %}
+                        {% if case.type.key == 'clc_query' %}
                                 <div>
 									<a class="govuk-link govuk-!-font-size-19 govuk-link--no-visited-state govuk-!-font-weight-bold" href="{% url 'cases:case' case.id %}" style="text-decoration: none; margin-bottom: 5px!important; display: inline-block;">
 	                                    {{ case.id }}
@@ -148,7 +148,7 @@
                                 <p class="govuk-body" style="opacity: .7; margin: 0;">
                                     {{ case.clc_query.organisation_name }}
                                 </p>
-                        {% elif not case.is_clc %}
+                        {% else %}
 							<div class="">
 								<a href="{% url 'cases:case' case.id %}" class="govuk-link govuk-!-font-size-19 govuk-link--no-visited-state govuk-!-font-weight-bold" style="text-decoration: none; margin-bottom: 5px!important; display: inline-block;">
 									{{ case.application.id|default:"Untitled" }}
@@ -173,7 +173,7 @@
 						{% endfor %}
 					</div>
                     <p class="govuk-body">
-                        {{ case.case_type.name }}
+                        {{ case.type.value }}
                     </p>
                     {% if is_system_queue %}
                         <p class="govuk-body">
@@ -181,7 +181,7 @@
                         </p>
                     {% endif %}
                     <p class="govuk-body">
-                        {% if case.is_clc %}
+                        {% if case.type.key == 'clc_query' %}
                             {{ case.clc_query.status|default:"Untitled"|sentence_case }}
                         {% else %}
                             {{ case.application.status|default:"Untitled"|sentence_case }}

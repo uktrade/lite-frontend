@@ -43,16 +43,25 @@
 	</div>
 	<div class="govuk-grid-column-three-quarters">
 		<div style="margin: auto; max-width: 700px;">
-			{% for item in picklist_items %}
-				<h4 class="govuk-heading-s"><a href="{% url 'picklists:picklist_item' item.id %}" class="govuk-link govuk-link--no-visited-state">{{ item.name }}</a></h4>
-				<div class="lite-picklist-item__text">
-					<p class="govuk-body">
-						{{ item.text }}
-					</p>
+			{% if active_picklist_items or deactivated_picklist_items %}
+				<div>
+					{% for picklist_item in active_picklist_items %}
+						{% include 'includes/picklist-item.html' %}
+					{% endfor %}
 				</div>
-			{% empty %}
-				<p class="govuk-caption-l" style="margin-top: 10px;">There aren't any items in this picklist.</p>
-			{% endfor %}
+				{% if deactivated_picklist_items %}
+					<div>
+						<h4 class="govuk-heading-s" style="{% if active_picklist_items %}margin-top: 60px;{% endif %} margin-bottom: 15px;">Deactivated</h4>
+						<hr class="lite-horizontal-separator" style="margin-top: 0;">
+						{% for picklist_item in deactivated_picklist_items %}
+							{% include 'includes/picklist-item.html' %}
+						{% endfor %}
+					</div>
+				{% endif %}
+			{% else %}
+				<p class="govuk-caption-l" style="margin-top: 10px;"></p>
+				{% include "includes/information-text.html" with text="There aren't any items in this picklist" %}
+			{% endif %}
 		</div>
 	</div>
 </div>

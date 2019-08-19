@@ -81,25 +81,24 @@ class ViewCase(TemplateView):
     def get(self, request, **kwargs):
         case_id = str(kwargs['pk'])
         case, status_code = get_case(request, case_id)
+        case = case['case']
         activity, status_code = get_activity(request, case_id)
         permissions = get_user_permissions(request)
 
-        if case['case']['is_clc']:
+        if case['type']['key'] == 'clc_query':
             context = {
                 'title': 'Case',
-                'data': case,
+                'case': case,
                 'activity': activity.get('activity'),
                 'permissions': permissions,
-                'edit_case_flags': get_string('cases.case.edit_case_flags')
             }
             return render(request, 'cases/case/clc-query-case.html', context)
         else:
             context = {
-                'data': case,
-                'title': case.get('case').get('application').get('name'),
+                'case': case,
+                'title': case.get('application').get('name'),
                 'activity': activity.get('activity'),
                 'permissions': permissions,
-                'edit_case_flags': get_string('cases.case.edit_case_flags')
             }
             return render(request, 'cases/case/application-case.html', context)
 
@@ -159,7 +158,7 @@ class CreateEcjuQuery(TemplateView):
 
     def get(self, request, **kwargs):
         case_id = str(kwargs['pk'])
-        picklists, status = get_picklists(request, picklist_type='ecju_query', picklist_status='active')
+        picklists, status = get_picklists(request, 'ecju_query', False)
         picklists = picklists.get('picklist_items')
         picklist_choices = [Option(self.NEW_QUESTION_DDL_ID, 'Write a new question')] +\
                            [Option(picklist.get('id'), picklist.get('name')) for picklist in picklists]
@@ -281,26 +280,25 @@ class ManageCase(TemplateView):
         case, status_code = get_case(request, case_id)
         statuses, status_code = get_statuses(request)
 
-        if not case['case']['is_clc']:
+        if case['case']['type']['key'] == 'application':
             title = 'Manage ' + case.get('case').get('application').get('name')
         else:
             title = 'Manage CLC query case'
+
         context = {
             'data': case,
             'title': title,
             'statuses': statuses
         }
-
         return render(request, 'cases/manage.html', context)
 
     def post(self, request, **kwargs):
         case_id = str(kwargs['pk'])
         case, status_code = get_case(request, case_id)
 
-        if not case['case']['is_clc']:
+        if case['case']['type']['key'] == 'application':
             application_id = case.get('case').get('application').get('id')
             data, status_code = put_applications(request, application_id, request.POST)
-
         else:
             clc_query_id = case['case']['clc_query']['id']
             data, status_code = put_clc_queries(request, clc_query_id, request.POST)

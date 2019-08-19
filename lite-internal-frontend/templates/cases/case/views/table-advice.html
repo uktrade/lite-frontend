@@ -1,0 +1,27 @@
+<div class="app-advice">
+	<div class="app-advice__user">
+		<p class="govuk-body-s">
+			{{ advice.type.value }} advice by <a class="govuk-link govuk-link--no-visited-state" href="{% url 'users:user' advice.user.id %}">
+				{{ advice.user.first_name }} {{ advice.user.last_name }}</a>:
+		</p>
+	</div>
+	<div class="app-advice__details">
+		{% if advice.type.key == 'proviso' %}
+			<p class="govuk-heading-s">Proviso</p>
+			<p class="govuk-body-s">{{ advice.proviso|default:'N/A' }}</p>
+		{% endif %}
+
+		{% if advice.type.key == 'refuse' %}
+			<p class="govuk-heading-s">Denial Reasons</p>
+			{% for denial_reason in advice.denial_reasons %}
+				<p class="govuk-body-s">{{ denial_reason }}</p>
+			{% endfor %}
+		{% endif %}
+
+		<p class="govuk-heading-s">Advice</p>
+		<p class="govuk-body-s">{{ advice.text|default:'N/A' }}</p>
+
+		<p class="govuk-heading-s">Note</p>
+		<p class="govuk-body-s" style="margin-bottom: 0;">{{ advice.note|default:'N/A' }}</p>
+	</div>
+</div>

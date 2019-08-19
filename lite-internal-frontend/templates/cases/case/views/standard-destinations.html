@@ -1,0 +1,99 @@
+{% with end_user=case.application.destinations.data %}
+	<h3 class="govuk-heading-m">End User</h3>
+	<table class="lite-table" id="end-user">
+		<thead class="lite-table__head">
+			<tr class="lite-table__row">
+				<th class="lite-table__header" scope="col">Name</th>
+				<th class="lite-table__header" scope="col">Type</th>
+				<th class="lite-table__header" scope="col">Address</th>
+				<th class="lite-table__header" scope="col">Website</th>
+				{% if show_advice %}
+					<th class="lite-table__header" style="width: 350px;">Advice</th>
+				{% endif %}
+			</tr>
+		</thead>
+		<tbody class="lite-table__body">
+			<tr class="lite-table__row">
+				<td class="lite-table__cell">
+					<div class="govuk-checkboxes govuk-checkboxes--small">
+						{% if show_checkboxes %}<div class="govuk-checkboxes__item">{% endif %}
+							<input class="govuk-checkboxes__input" type="checkbox" name="end_user" id="{{ end_user.id }}" value="{{ end_user.id }}">
+							<label class="govuk-label {% if show_checkboxes %}govuk-checkboxes__label{% endif %}" for="{{ end_user.id }}">{{ end_user.name }}</label>
+						{% if show_checkboxes %}</div>{% endif %}
+					</div>
+				</td>
+				<td class="lite-table__cell">
+					{{ end_user.type }}
+				</td>
+				<td class="lite-table__cell">
+					{{ end_user.address }}
+					{{ end_user.country }}
+				</td>
+				<td class="lite-table__cell">
+					{{ end_user.website|default:'Not set' }}
+				</td>
+				{% if show_advice %}
+					<td class="lite-table__cell">
+						{% for advice in all_advice %}
+							{% if advice.end_user == end_user.id %}
+								{% include 'cases/case/views/table-advice.html' %}
+							{% endif %}
+						{% endfor %}
+					</td>
+				{% endif %}
+			</tr>
+		</tbody>
+	</table>
+{% endwith %}
+
+{% with end_users=case.application.ultimate_end_users %}
+	{% if end_users %}
+		<h3 class="govuk-heading-m">Ultimate End Users</h3>
+		<table class="lite-table" id="ultimate-end-users">
+			<thead class="lite-table__head">
+				<tr class="lite-table__row">
+					<th class="lite-table__header" scope="col">Name</th>
+					<th class="lite-table__header" scope="col">Type</th>
+					<th class="lite-table__header" scope="col">Address</th>
+					<th class="lite-table__header" scope="col">Website</th>
+					{% if show_advice %}
+						<th class="lite-table__header" style="width: 350px;">Advice</th>
+					{% endif %}
+				</tr>
+			</thead>
+			<tbody class="lite-table__body">
+				{% for end_user in end_users %}
+					<tr class="lite-table__row">
+						<td class="lite-table__cell">
+							<div class="govuk-checkboxes govuk-checkboxes--small">
+								{% if show_checkboxes %}<div class="govuk-checkboxes__item">{% endif %}
+									<input class="govuk-checkboxes__input" type="checkbox" name="ultimate_end_users" id="ultimate_{{ end_user.id}}" value="{{ end_user.id }}">
+									<label class="govuk-label {% if show_checkboxes %}govuk-checkboxes__label{% endif %}" for="ultimate_{{ end_user.id}}">{{ end_user.name }}</label>
+								{% if show_checkboxes %}</div>{% endif %}
+							</div>
+						</td>
+						<td class="lite-table__cell">
+							{{ end_user.type }}
+						</td>
+						<td class="lite-table__cell">
+							{{ end_user.address }}
+							{{ end_user.country }}
+						</td>
+						<td class="lite-table__cell">
+							{{ end_user.website|default:'Not set' }}
+						</td>
+						{% if show_advice %}
+							<td class="lite-table__cell">
+								{% for advice in all_advice %}
+									{% if advice.ultimate_end_user == end_user.id %}
+										{% include 'cases/case/views/table-advice.html' %}
+									{% endif %}
+								{% endfor %}
+							</td>
+						{% endif %}
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% endif %}
+{% endwith %}

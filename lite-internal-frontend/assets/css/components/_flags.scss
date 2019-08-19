@@ -1,0 +1,29 @@
+.app-flags {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	flex-wrap: wrap;
+	margin-bottom: govuk-spacing(6);
+}
+
+.app-flag {
+	@include govuk-font($size: 16);
+
+	position: relative;
+	background: govuk-colour("light-grey");
+	padding: govuk-spacing(2) govuk-spacing(3);
+	margin-right: govuk-spacing(4);
+	border-left: 3px solid govuk-colour("mid-grey");
+
+	&:after {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		border: 2px solid govuk-colour("black");
+		border-left-width: 0px;
+		opacity: .02;
+	}
+}

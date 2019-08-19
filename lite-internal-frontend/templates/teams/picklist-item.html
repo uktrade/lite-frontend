@@ -17,13 +17,15 @@
 	</div>
 </div>
 
+{% if picklist_item.status.key == 'deactivated' %}
+	<p class="lite-tag lite-tag--small" style="margin-bottom: 30px;">Deactivated</p>
+{% endif %}
+
 <p class="govuk-body">
 	<span class="govuk-caption-m" style="display: inline;">Created by</span>
 	<a class="govuk-link govuk-link--no-visited-state" href="{% url 'teams:team' picklist_item.team %}">{{ picklist_item.team_name }}</a>
 	<span class="govuk-caption-m" style="display: inline; margin: 0 2px;">-</span>
 	<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type={{ picklist_item.type.key }}">{{ picklist_item.type.value }}</a>
-	<span class="govuk-caption-m" style="display: inline; margin: 0 2px;">-</span>
-	{{ picklist_item.status.value }}
 	<span class="govuk-caption-m" style="display: inline;">- Last updated</span>
 	<span class="govuk-visually-hidden"> on </span>
 	{{ picklist_item.last_modified_at|str_date }}
@@ -32,7 +34,7 @@
 <br>
 
 <p class="govuk-body" style="line-height: 1.8; max-width: 700px; white-space: normal; word-wrap: break-word;">
-	{{ picklist_item.text }}
+	{{ picklist_item.text|linebreaksbr }}
 </p>
 
 {% endblock %}

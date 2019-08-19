@@ -57,7 +57,7 @@
 									<a href="{% url 'flags:flag' flag.id %}" style="margin: 0; font-weight: bold; text-decoration: none;" class="govuk-link govuk-link--no-visited-state">
 										{{ flag.name|default:"Untitled" }}
 									</a>
-									<p style="margin: 0; opacity: 0.7;">{{ flag.team_name|default:"Untitled" }}</p>
+									<p style="margin: 0; opacity: 0.7;">{{ flag.team.name }}</p>
 								</td>
 		                        <td class="lite-table__cell">
 		                            {{ flag.level }}
@@ -66,13 +66,13 @@
 		                            {{ flag.status }}
 		                        </td>
 								<td class="lite-table__cell">
-									{% if user_data.user.team.id == flag.team %}
+									{% if user_data.user.team.id == flag.team.id %}
 										{% if flag.status == 'Active' %}
-											<a href="{% url 'flags:change_status' flag.id 'deactivate' %}" role="button" draggable="false" class="govuk-link govuk-!-margin-right-2">Deactivate</a>
+											<a href="{% url 'flags:change_status' flag.id 'deactivate' %}" role="button" draggable="false" class="govuk-link govuk-link--no-visited-state govuk-!-margin-right-2">Deactivate</a>
 										{% elif flag.status == 'Deactivated' %}
-											<a href="{% url 'flags:change_status' flag.id 'reactivate' %}" role="button" draggable="false" class="govuk-link govuk-!-margin-right-2">Reactivate</a>
+											<a href="{% url 'flags:change_status' flag.id 'reactivate' %}" role="button" draggable="false" class="govuk-link govuk-link--no-visited-state govuk-!-margin-right-2">Reactivate</a>
 										{% endif %}
-										<a href="{% url 'flags:edit' flag.id %}" style="margin: 10;" class="govuk-link">Edit</a>
+										<a href="{% url 'flags:edit' flag.id %}" style="margin: 10;" class="govuk-link govuk-link--no-visited-state">Edit</a>
 									{% else %}
 		                                None
 		                            {% endif %}
