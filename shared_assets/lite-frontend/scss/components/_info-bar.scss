@@ -1,0 +1,31 @@
+.lite-info-bar {
+	@include govuk-font($size: 19, $weight: bold);
+
+	box-sizing: border-box;
+	padding: govuk-spacing(4);
+	margin-top: - govuk-spacing(4);
+	margin-bottom: govuk-spacing(6);
+
+	background: govuk-colour("light-grey");
+	color: govuk-colour("dark-grey");
+
+	&--info {
+		background: $govuk-brand-colour;
+		color: govuk-colour("white");
+	}
+
+	&--success {
+		background: govuk-colour("green");
+		color: govuk-colour("white");
+	}
+
+	&--warning {
+		background: govuk-colour("orange");
+		color: govuk-colour("white");
+	}
+
+	&--error {
+		background: govuk-colour("red");
+		color: govuk-colour("white");
+	}
+}
