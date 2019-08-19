@@ -12,7 +12,7 @@ def advice_recommendation_form(case_id):
                         Option('proviso', 'Add a proviso'),
                         Option('refuse', 'Refuse the licence'),
                         Option('no_licence_required', 'Tell the applicant they do not need a licence'),
-                        Option('not_applicable', 'Ask the applicant a question', show_or=True),
+                        Option('not_applicable', 'Not applicable', show_or=True),
                     ]),
                 ],
                 default_button_name='Continue',
