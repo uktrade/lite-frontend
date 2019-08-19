@@ -6,26 +6,114 @@
 	margin-top: - govuk-spacing(4);
 	margin-bottom: govuk-spacing(6);
 
-	background: govuk-colour("light-grey");
-	color: govuk-colour("dark-grey");
+	background: $govuk-brand-colour;
+	color: govuk-colour("white");
 
-	&--info {
-		background: $govuk-brand-colour;
-		color: govuk-colour("white");
+	line-height: 30px!important;
+
+	padding-left: 30px + govuk-spacing(4) + govuk-spacing(4);
+
+	&::before {
+		content: "i";
+		position: absolute;
+		left: govuk-spacing(4);
+		width: 30px;
+		height: 30px;
+		background: govuk-colour("white");
+		color: $govuk-brand-colour;
+		margin-right: 20px;
+		border-radius: 100%;
+		text-align: center;
+		font-size: 23px;
+		padding-left: 1px;
+		padding-top: 1px;
 	}
 
 	&--success {
 		background: govuk-colour("green");
 		color: govuk-colour("white");
+
+		&::before {
+			content: "";
+		}
+
+		&::after {
+		  content: "";
+
+		  position: absolute;
+		  top: 30px;
+		  left: 27px;
+		  width: 13px;
+		  height: 4px;
+
+		  -webkit-transform: rotate(-45deg);
+
+			  -ms-transform: rotate(-45deg);
+
+				  transform: rotate(-45deg);
+		  border: solid;
+		  border-width: 0 0 4px 4px;
+		  // Fix bug in IE11 caused by transform rotate (-45deg).
+		  // See: alphagov/govuk_elements/issues/518
+		  border-top-color: transparent;
+
+		  border-color: govuk-colour("green");
+		}
 	}
 
 	&--warning {
 		background: govuk-colour("orange");
 		color: govuk-colour("white");
+
+		&::before {
+			content: "!";
+			color: govuk-colour("orange");
+		}
 	}
 
 	&--error {
 		background: govuk-colour("red");
 		color: govuk-colour("white");
+
+		&::before {
+			content: "!";
+			color: govuk-colour("red");
+		}
+	}
+
+	animation-name: lite-info-bar-animation;
+	animation-duration: 0.3s;
+	animation-fill-mode: both;
+	transform-origin: 50% 0;
+}
+
+@keyframes lite-info-bar-animation {
+	0% {
+		opacity: 0;
+		transform: scaleY(0);
+		margin-bottom: 0;
+	}
+
+	100% {
+		opacity: 1;
+		transform: scaleY(1);
+		margin-bottom: govuk-spacing(7);
+	}
+}
+
+.lite-info-bar__close_link {
+	@include govuk-link-common;
+
+	float: right;
+	text-decoration: none;
+	color: currentColor;
+	border-bottom: 2px solid transparent;
+
+	&:hover {
+		border-bottom: 2px solid currentColor;
+	}
+
+	&:active {
+		opacity: .5;
 	}
 }
