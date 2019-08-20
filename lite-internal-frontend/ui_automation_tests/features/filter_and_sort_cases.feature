@@ -35,6 +35,14 @@ Feature: I want to filter and sort cases on a queue
     Then the case at index "0" has the status of "Submitted"
     And the case at index "1" has the status of "Under review"
 
+  @LT_914_sort_all_cases
+  Scenario: Sort all cases
+    Given I create application or application has been previously created
+    And I go to internal homepage
+    When I click on the "All cases" queue in dropdown
+    And I sort cases by "STATUS"
+    Then the case at index "0" has the status of "Submitted"
+
   @LT_914_filter_and_sort
   Scenario: I can show and hide filters
     Given I go to internal homepage

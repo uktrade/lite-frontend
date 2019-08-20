@@ -152,3 +152,8 @@ def new_queue_shown_in_dropdown(driver, context):
 @then('there are no cases shown')
 def no_cases_shown(driver):
     assert 'There are no new cases to show.' in QueuesPages(driver).get_no_cases_text(), "There are cases shown in the newly created queue."
+
+
+@when(parsers.parse('I click on the "{queue_name}" queue in dropdown'))
+def system_queue_shown_in_dropdown(driver, queue_name):
+    CaseListPage(driver).click_on_queue_name(queue_name)
