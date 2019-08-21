@@ -63,6 +63,14 @@
 	&:hover {
 		border-bottom: 2px solid govuk-colour("mid-grey");
 	}
+
+	.lite-notification-bubble {
+		@include govuk-font($size: 14, $weight: bold);
+		margin-left: govuk-spacing(1) / 2;
+		padding: 0 6px 0 7px;
+		line-height: 18px!important;
+		border-bottom-width: 0;
+	}
 }
 
 // TODO: Remove .selected eventually
