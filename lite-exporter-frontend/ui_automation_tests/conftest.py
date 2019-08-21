@@ -1,9 +1,9 @@
 import datetime
 import os
-import allure
-from allure_commons.types import AttachmentType
-
 import pytest
+from pytest_bdd import given, when, then, parsers
+from selenium.webdriver.common.by import By
+
 from fixtures.core import context, driver, invalid_username, exporter_sso_login_info, s3_key
 from fixtures.register_organisation import register_organisation
 from fixtures.add_goods import add_a_good, add_an_incorporated_good_to_application, add_a_non_incorporated_good_to_application, create_non_incorporated_good
@@ -12,6 +12,7 @@ from fixtures.sso_sign_in import sso_sign_in
 from fixtures.internal_case_note import internal_case_note
 from fixtures.urls import exporter_url, api_url
 
+import helpers.helpers as utils
 from pages.add_goods_page import AddGoodPage
 from pages.add_new_external_location_form_page import AddNewExternalLocationFormPage
 from pages.application_overview_page import ApplicationOverviewPage
@@ -19,12 +20,11 @@ from pages.apply_for_a_licence_page import ApplyForALicencePage
 from pages.attach_document_page import AttachDocumentPage
 from pages.exporter_hub_page import ExporterHubPage
 from pages.external_locations_page import ExternalLocationsPage
+from pages.hub_page import Hub
 from pages.preexisting_locations_page import PreexistingLocationsPage
 from pages.shared import Shared
 from pages.sites_page import SitesPage
 from pages.which_location_form_page import WhichLocationFormPage
-from pytest_bdd import given, when, then, parsers
-import helpers.helpers as utils
 
 # from core import strings
 
@@ -37,13 +37,12 @@ def pytest_addoption(parser):
         env = "dev"
     parser.addoption("--driver", action="store", default="chrome", help="Type in browser type")
     if env == 'local':
-        parser.addoption("--exporter_url", action="store", default="http://localhost:8300", help="url")
+        parser.addoption("--exporter_url", action="store", default="http://localhost:9000", help="url")
         parser.addoption("--lite_api_url", action="store", default="http://localhost:8100", help="url")
     else:
         parser.addoption("--exporter_url", action="store", default="https://exporter.lite.service." + env + ".uktrade.io/", help="url")
         parser.addoption("--lite_api_url", action="store", default="https://lite-api-" + env + ".london.cloudapps.digital/", help="url")
     parser.addoption("--sso_sign_in_url", action="store", default="https://sso.trade.uat.uktrade.io/login/", help="url")
-    parser.addoption("--sso-url", action="store", default="https://sso.trade.uat.uktrade.io/login/", help="url")
     parser.addoption("--email", action="store", default="test@mail.com")
     parser.addoption("--password", action="store", default="password")
     parser.addoption("--first_name", action="store", default="Test")
@@ -90,14 +89,6 @@ def go_to_exporter(driver, sso_sign_in, exporter_url, register_organisation):
 def go_to_exporter_when(driver, exporter_url):
     driver.get(exporter_url)
 
-# utils
-@then(parsers.parse('driver title equals "{expected_text}"'))
-def assert_title_text(driver, expected_text):
-    assert driver.title == expected_text
-
-
-# applying for licence
-
 
 @when('I click on apply for a license button')
 def click_apply_licence(driver):
@@ -118,7 +109,7 @@ def enter_application_name(driver, context):
     context.app_time_id = app_time_id
     app_name = "Request for Nimbus 2000 " + app_time_id
     apply.enter_name_or_reference_for_application(app_name)
-    context.app_id = app_name
+    context.app_name = app_name
     apply.click_save_and_continue()
 
 
@@ -232,22 +223,6 @@ def click_my_goods_link(driver):
     exporter_hub.click_my_goods()
 
 
-@when('I click on my registered sites')
-def click_my_registered_sites(driver):
-    which_location = WhichLocationFormPage(driver)
-    shared = Shared(driver)
-    which_location.click_on_my_sites_radio_button()
-    shared.click_continue()
-
-
-@when('I click on external locations')
-def click_external_locations(driver):
-    which_location = WhichLocationFormPage(driver)
-    shared = Shared(driver)
-    which_location.click_on_external_location_radio_button()
-    shared.click_continue()
-
-
 @when('I click the add from organisations goods button')
 def click_add_from_organisation_button(driver):
     driver.find_element_by_css_selector('a[href*="add-preexisting"]').click()
@@ -309,3 +284,76 @@ def raise_clc_query(driver, control_code, description):
     raise_clc_query_page.enter_control_unsure_details(description)
     exporter_hub = ExporterHubPage(driver)
     exporter_hub.click_save_and_continue()
+
+
+@when('I click on the goods link from overview')
+def click_goods_link_overview(driver):
+    overview_page = ApplicationOverviewPage(driver)
+    driver.execute_script("document.getElementById('goods').scrollIntoView(true);")
+    overview_page.click_goods_link()
+
+
+@then('application is submitted')
+def application_is_submitted(driver):
+    apply = ApplyForALicencePage(driver)
+    assert "Application submitted" in apply.application_submitted_text()
+
+
+@then('I see submitted application')
+def application_is_submitted(driver, context):
+    assert utils.is_element_present(driver, By.XPATH, "//*[text()[contains(.,'" + context.app_time_id + "')]]")
+
+    elements = driver.find_elements_by_css_selector('tr')
+    element_number = utils.get_element_index_by_text(elements, context.app_time_id)
+    element_row = elements[element_number].text
+    assert "Submitted" in element_row
+    assert context.time_date_submitted.split(":")[1] in element_row
+    assert "0 Goods" or "1 Good" or "2 Goods" in element_row
+    assert driver.find_element_by_xpath("// th[text()[contains(., 'Status')]]").is_displayed()
+    assert driver.find_element_by_xpath("// th[text()[contains(., 'Last updated')]]").is_displayed()
+    assert driver.find_element_by_xpath("// th[text()[contains(., 'Goods')]]").is_displayed()
+    assert driver.find_element_by_xpath("// th[text()[contains(., 'Reference')]]").is_displayed()
+
+
+@then('I see the application overview')
+def i_see_the_application_overview(driver, context):
+    time_date_submitted = datetime.datetime.now().strftime("%I:%M%p").lstrip("0").replace(" 0", " ").lower() + datetime.datetime.now().strftime(" %d %B %Y")
+    apply = ApplyForALicencePage(driver)
+
+    element = driver.find_element_by_css_selector(".govuk-table").text
+
+    assert "Name" in element
+    assert "Licence type" in element
+    assert "Export type" in element
+    assert "Reference Number" in element
+    assert "Created at" in element
+    assert context.type + "_licence" in element
+    assert context.perm_or_temp in element
+    assert context.ref in element
+
+    # This can break if the minute changes between the five lines of code
+    assert datetime.datetime.now().strftime("%M%p %d %B %Y").lower() in element.lower()
+
+    app_id = driver.current_url[-36:]
+    context.app_id = app_id
+
+
+@when('I click applications')
+def i_click_applications(driver):
+    hub_page = Hub(driver)
+    hub_page.click_applications()
+
+
+@when('I delete the application')
+def i_delete_the_application(driver):
+    apply = ApplyForALicencePage(driver)
+    apply.click_delete_application()
+    assert 'Exporter hub - LITE' in driver.title, "failed to go to Exporter Hub page after deleting application from application overview page"
+
+
+@when('I submit the application')
+def submit_the_application(driver, context):
+    apply = ApplyForALicencePage(driver)
+    apply.click_submit_application()
+    assert apply.get_text_of_success_message() == "Application submitted"
+    context.time_date_submitted = datetime.datetime.now().strftime("%I:%M%p").lstrip("0").replace(" 0", " ").lower() + datetime.datetime.now().strftime(" %d %B %Y")

@@ -16,10 +16,11 @@ def add_an_application(driver, request, api_url, exporter_url, context):
     context.ueu_website = "https://www.anothergov.uk"
     context.ueu_address = "Bullring, Birmingham SW1A 0AA"
     context.ueu_country = ["GB", "United Kingdom"]
+    app_name = "Test Application" + app_time_id
 
     api.add_draft(
         draft={
-            "name": "Test Application " + app_time_id,
+            "name": app_name,
             "licence_type": "standard_licence",
             "export_type": "permanent",
             "have_you_been_informed": "yes",
@@ -46,5 +47,6 @@ def add_an_application(driver, request, api_url, exporter_url, context):
     )
     api.submit_application()
     context.app_id = api.context['application_id']
+    context.app_name = app_name
     context.case_id = api.context['case_id']
     timer.print_time('apply_for_standard_application')

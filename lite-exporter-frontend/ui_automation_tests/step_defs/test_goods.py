@@ -5,7 +5,7 @@ from pages.goods_list import GoodsList
 from pages.exporter_hub_page import ExporterHubPage
 from pages.add_goods_page import AddGoodPage
 
-scenarios('../features/add_clc_good.feature', strict_gherkin=False)
+scenarios('../features/clc_queries_and_goods.feature', strict_gherkin=False)
 
 
 @then('I see good in goods list')

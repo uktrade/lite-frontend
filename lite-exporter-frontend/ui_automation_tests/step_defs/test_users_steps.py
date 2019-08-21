@@ -1,7 +1,7 @@
 import datetime
 import logging
 
-from pytest_bdd import scenarios, given, when, then, parsers
+from pytest_bdd import scenarios, when, then
 from selenium.webdriver.common.by import By
 
 from conf.settings import env
