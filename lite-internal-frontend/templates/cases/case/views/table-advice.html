@@ -2,7 +2,7 @@
 	<div class="app-advice__user">
 		<p class="govuk-body-s">
 			{{ advice.type.value }} advice by <a class="govuk-link govuk-link--no-visited-state" href="{% url 'users:user' advice.user.id %}">
-				{{ advice.user.first_name }} {{ advice.user.last_name }}</a>:
+				{{ advice.user.first_name }} {{ advice.user.last_name }} </a> at {{ advice.created_at|str_date }}:
 		</p>
 	</div>
 	<div class="app-advice__details">

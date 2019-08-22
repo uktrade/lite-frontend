@@ -50,6 +50,14 @@ def write_note_text_field(driver, text, context):
     context.advice_data.append(text)
 
 
+@then('I see the fields pre-populated with the proviso and advice picklist items')
+def i_see_fields_prepopulated(driver, context):
+    advice = driver.find_element_by_id('advice').text
+    proviso = driver.find_element_by_id('proviso').text
+    assert advice == context.standard_advice_query_picklist_question_text
+    assert proviso == context.proviso_picklist_question_text
+
+
 @when(parsers.parse("I import text from the '{option}' picklist"))
 def import_text_advice(driver, option, context):
     GiveAdvicePages(driver).click_on_import_advice_link(option)

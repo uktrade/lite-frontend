@@ -11,7 +11,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I create a standard advice picklist
     And I sign in to SSO or am signed into SSO
     When I go to application previously created
-    And  I click on view advice
+    And I click on view advice
     And I select all items in the advice view
     And I choose to 'approve' the licence
     And I import text from the 'advice' picklist
@@ -27,7 +27,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I create a standard advice picklist
     And I sign in to SSO or am signed into SSO
     When I go to application previously created
-    And  I click on view advice
+    And I click on view advice
     And I select all items in the advice view
     And I choose to 'proviso' the licence
     And I import text from the 'proviso' picklist
@@ -44,7 +44,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I create a standard advice picklist
     And I sign in to SSO or am signed into SSO
     When I go to application previously created
-    And  I click on view advice
+    And I click on view advice
     And I select all items in the advice view
     And I choose to 'refuse' the licence
     And I select decision "1a"
@@ -54,3 +54,21 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I click continue
     Then I see my advice has been posted successfully
     And I see added advice in the same amount of places
+
+  @LT_1378_pre_populate
+  Scenario: See that advice pre-populates
+    Given I create application or application has been previously created
+    And I create a proviso picklist
+    And I create a standard advice picklist
+    And I sign in to SSO or am signed into SSO
+    When I go to application previously created
+    And I click on view advice
+    And I select all items in the advice view
+    And I choose to 'proviso' the licence
+    And I import text from the 'proviso' picklist
+    And I import text from the 'advice' picklist
+    And I write 'We will get back to you in three weeks' in the note text field
+    And I click continue
+    And I select all items in the advice view
+    And I choose to 'proviso' the licence
+    Then I see the fields pre-populated with the proviso and advice picklist items
