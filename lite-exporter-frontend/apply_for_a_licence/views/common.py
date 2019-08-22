@@ -132,8 +132,10 @@ class GoodsList(TemplateView):
         draft, status_code = get_draft(request, draft_id)
         description = request.GET.get('description', '').strip()
         part_number = request.GET.get('part_number', '').strip()
+        control_rating = request.GET.get('control_rating', '').strip()
         data, status_code = get_goods(request, {'description': description,
-                                                'part_number': part_number})
+                                                'part_number': part_number,
+                                                'control_rating': control_rating})
 
         filtered_data = []
         for good in data['goods']:
@@ -147,6 +149,7 @@ class GoodsList(TemplateView):
             'draft': draft,
             'description': description,
             'part_number': part_number,
+            'control_code': control_rating,
             'persistent_bar': create_persistent_bar(draft.get('draft')),
         }
         return render(request, 'apply_for_a_licence/goods/preexisting.html', context)

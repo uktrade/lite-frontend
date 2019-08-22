@@ -25,8 +25,8 @@ add_goods_questions = Form(title='Add Good', description='', caption='', questio
                             value='I don\'t know')
                  ],
                  classes=['govuk-radios--inline']),
-    Question(title='What\'s your good\'s control code?',
-             description='<noscript>If your good is controlled, enter its control code. </noscript>For example, ML1a.',
+    Question(title='What\'s your good\'s control rating?',
+             description='<noscript>If your good is controlled, enter its control rating. </noscript>For example, ML1a.',
              input_type=InputType.INPUT,
              name='control_code'),
     RadioButtons(title='Is your good intended to be incorporated into an end product?',
@@ -52,8 +52,8 @@ def are_you_sure(good_id):
                 description=get_string('clc.clc_form.description'),
                 questions=[
                     Question(
-                        title='What do you think is your good\'s control code?',
-                        description='<noscript>If your good is controlled, enter its control code. </noscript>For example, ML1a.',
+                        title='What do you think is your good\'s control rating?',
+                        description='<noscript>If your good is controlled, enter its control rating. </noscript>For example, ML1a.',
                         input_type=InputType.INPUT,
                         optional=True,
                         name='not_sure_details_control_code'),
@@ -87,8 +87,8 @@ edit_form = Form(title='Edit Good', description='', caption='', questions=[
                             value='I don\'t know')
                  ],
                  classes=['govuk-radios--inline']),
-    Question(title='What\'s your good\'s control code?',
-             description='<noscript>If your good is controlled, enter its control code. </noscript>For example, ML1a.',
+    Question(title='What\'s your good\'s control rating?',
+             description='<noscript>If your good is controlled, enter its control rating. </noscript>For example, ML1a.',
              input_type=InputType.INPUT,
              name='control_code'),
     RadioButtons(title='Is your good intended to be incorporated into an end product?',
