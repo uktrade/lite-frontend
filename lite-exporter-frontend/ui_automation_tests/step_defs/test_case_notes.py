@@ -16,9 +16,11 @@ def click_on_an_application(driver, add_an_application):
 def enter_case_note_text(driver, text, context):
     application_page = SubmittedApplicationsPages(driver)
     if text == 'the maximum limit with spaces':
-        text = utils.repeat_to_length(' ', 2200)
+        text = ' ' * 2200
     elif text == 'the maximum limit':
-        text = utils.repeat_to_length('T', 2200)
+        text = 'T' * 2200
+    elif text == 'the maximum limit plus 1':
+        text = 'T' * 2201
     context.text = text
     application_page.enter_case_note(text)
 

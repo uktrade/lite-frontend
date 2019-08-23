@@ -13,15 +13,18 @@ class SubmittedApplicationsPages:
         self.case_note_character_warning = "case_note-warning"  # id
 
     def enter_case_note(self, text):
-        self.driver.find_element_by_id(self.case_note_field).send_keys(text)
+        self.driver.execute_script(f'document.getElementById("{self.case_note_field}").value = "{text[:-1]}"')
+        self.driver.find_element_by_id(self.case_note_field).send_keys(text[-1:])
 
     def get_text_of_case_note_field(self):
         return self.driver.find_element_by_id(self.case_note_field).text
 
     def click_post_note_btn(self):
+        time.sleep(.5)
         self.driver.find_element_by_id(self.post_note_btn).click()
 
     def click_cancel_btn(self):
+        time.sleep(.5)
         self.driver.find_element_by_id(self.cancel_note_btn).click()
 
     def get_text_of_case_note(self, no):

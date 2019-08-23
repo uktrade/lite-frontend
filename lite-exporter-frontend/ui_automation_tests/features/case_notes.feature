@@ -29,7 +29,7 @@ Feature: I want to add a note to an application and view notes
     And I click on an application previously created
     And I enter "the maximum limit" for case note
     Then case note warning is "You have 0 characters remaining"
-    When I enter "T" for case note
+    When I enter "the maximum limit plus 1" for case note
     Then case note warning is "You have 1 character too many"
     And post note is disabled
 
