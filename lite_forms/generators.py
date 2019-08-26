@@ -46,7 +46,7 @@ def error_page(request, description, title='An error occurred', show_back_link=T
     return render(request, 'error.html', context)
 
 
-def confirm_form(title, confirmation_name, back_url, back_link_text, hidden_field,
+def confirm_form(title, confirmation_name, back_url, back_link_text, hidden_field=None,
                       description='', yes_label='Yes', no_label='No', submit_button_text='Submit'):
     inputs = [RadioButtons(title='', name=confirmation_name, description='',
                            options=[Option(key='yes', value=yes_label), Option(key='no', value=no_label)])]
