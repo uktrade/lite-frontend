@@ -28,6 +28,8 @@
 
 	<!-- Select component based on input_type -->
 	<div class="govuk-form-group">
-		{{ question.input_type }}
+        {% with template_name=question.input_type|stringformat:"s"|add:".html" %}
+        {% include "components/"|add:template_name %}
+        {% endwith %}
 	</div>
 </div>
