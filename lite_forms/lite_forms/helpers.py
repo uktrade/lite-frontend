@@ -1,16 +1,16 @@
 from collections.abc import MutableMapping
 
 
-def get_form_by_pk(pk, section):
-    for form in section.forms:
+def get_form_by_pk(pk, form_group):
+    for form in form_group:
         if str(form.pk) == str(pk):
             return form
     return
 
 
-def get_next_form_after_pk(pk, section):
+def get_next_form_after_pk(pk, form_group):
     next_one = False
-    for form in section.forms:
+    for form in form_group:
         if next_one:
             return form
         if str(form.pk) == str(pk):
