@@ -1,0 +1,24 @@
+version: 2.1
+
+orbs:
+  jq: circleci/jq@1.8.0
+
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.7
+      
+    environment:
+      DEBUG: 'True'
+
+    working_directory: ~/lite-forms
+
+    steps:
+      - jq/install
+
+      - checkout
+      
+      # Run tests
+      - run:
+          name: Run Unit Tests
+          command: python -m test
