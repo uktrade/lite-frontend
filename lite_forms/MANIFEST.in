@@ -1,0 +1,4 @@
+include LICENSE
+include README.rst
+recursive-include lite_forms/templates *
+recursive-include lite_forms/templatetags *
