@@ -52,13 +52,12 @@
 			{% csrf_token %}
 
 			{% for question in page.questions %}
-				{% if question.input_type.name == "HTML"  %}
+				{% if question.input_type == "html_block"  %}
 					{{ question.html|safe }}
-				{% elif question.input_type.name == "DETAIL"  %}
+				{% elif question.input_type == "detail"  %}
 					{% include "components/details.html" with title=question.title description=question.description %}
-				{% elif question.input_type.name == "HEADING" %}
-					<br/>
-					<h{{ question.heading_style.value }} class="govuk-heading-{{ question.heading_style.name|lower }}">{{ question.text }}</h{{ question.heading_style.value }}>
+				{% elif question.input_type == "heading" %}
+					{% include "components/heading.html" with text=question.text %}
 				{% else %}
 					{% if question.input_type == "side_by_side" %}
 						<div class="lite-side-by-side-wrapper">
