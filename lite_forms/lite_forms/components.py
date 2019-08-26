@@ -3,6 +3,25 @@ import uuid
 from lite_forms.styles import ButtonStyle
 
 
+class _Component:
+    """
+    Base component for LITE forms - only for internal use
+    """
+    def __init__(self,
+                 name: str,
+                 title: str = '',
+                 description: str = '',
+                 optional: bool = False,
+                 classes: [] = None,
+                 extras=None):
+        self.name = name
+        self.title = title
+        self.description = description
+        self.optional = optional
+        self.classes = classes
+        self.extras = extras
+
+
 class Button:
     def __init__(self, value, action, style=ButtonStyle.DEFAULT, link=None, float_right=False):
         self.value = value
@@ -93,26 +112,6 @@ class SideBySideSection:
     def __init__(self, questions):
         self.input_type = 'side_by_side'
         self.questions = questions
-
-
-class _Component:
-    """
-    Base component for LITE forms - only for internal use
-    """
-
-    def __init__(self,
-                 name: str,
-                 title: str = '',
-                 description: str = '',
-                 optional: bool = False,
-                 classes: [] = None,
-                 extras=None):
-        self.name = name
-        self.title = title
-        self.description = description
-        self.optional = optional
-        self.classes = classes
-        self.extras = extras
 
 
 class TextInput(_Component):
