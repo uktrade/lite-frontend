@@ -40,29 +40,15 @@ def submit_paged_form(request: HttpRequest, questions, post_to, pk=None):
     else:
         validated_data, status_code = post_to(request, nested_data)
 
-    if 'errors' in validated_data:
-        validated_data['errors'] = remove_unused_errors(validated_data['errors'], current_form)
+    # If the API returns errors, add the existing questions to the reloaded form
+    if remove_unused_errors(validated_data.get('errors'), current_form):
+        errors = validated_data.get('errors')
 
-        # If there are errors in the validated data, take the user back
-        if len(validated_data['errors']) != 0:
+        for question in current_form.questions:
+            if hasattr(question, 'name') and errors.get(question.name):
+                current_form.questions.append(HiddenField(question.name, errors.get(question.name)))
 
-            # TODO: Clean up this code
-            # Add hidden fields to the current form
-            for key, value in data.items():
-                exists = False
-
-                for question in current_form.questions:
-                    if hasattr(question, 'name'):
-                        if question.name == key:
-                            exists = True
-                            continue
-
-                if not exists:
-                    current_form.questions.append(
-                        HiddenField(key, value)
-                    )
-
-            return form_page(request, current_form, data=data, errors=validated_data['errors']), validated_data
+        return form_page(request, current_form, data=data, errors=validated_data['errors']), validated_data
 
     # If there aren't any forms left to go through, return the data
     if next_form is None:
@@ -70,9 +56,7 @@ def submit_paged_form(request: HttpRequest, questions, post_to, pk=None):
 
     # Add existing post data to new form as hidden fields
     for key, value in data.items():
-        next_form.questions.append(
-            HiddenField(key, value)
-        )
+        next_form.questions.append(HiddenField(key, value))
 
     # Go to the next page
     return form_page(request, next_form), validated_data

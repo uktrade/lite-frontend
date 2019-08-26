@@ -27,6 +27,9 @@ def remove_unused_errors(errors, form):
     """
     cleaned_errors = {}
 
+    if not errors:
+        return {}
+
     for question in form.questions:
         if hasattr(question, 'name') and errors.get(question.name):
             cleaned_errors[question.name] = errors.get(question.name)
