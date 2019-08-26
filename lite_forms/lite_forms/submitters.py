@@ -44,7 +44,7 @@ def submit_paged_form(request: HttpRequest, questions, post_to, pk=None):
         validated_data['errors'] = remove_unused_errors(validated_data['errors'], current_form)
 
         # If there are errors in the validated data, take the user back
-        if len(validated_data['errors']) is not 0:
+        if len(validated_data['errors']) != 0:
 
             # TODO: Clean up this code
             # Add hidden fields to the current form
