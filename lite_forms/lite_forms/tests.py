@@ -1,7 +1,7 @@
 from unittest import TestCase
 
-from .components import Form, Question, InputType, DetailComponent
-from .helpers import nest_data, flatten_data, remove_unused_errors
+from lite_forms.components import Form, Question, InputType, DetailComponent
+from lite_forms.helpers import nest_data, flatten_data, remove_unused_errors
 
 
 class FormTests(TestCase):
