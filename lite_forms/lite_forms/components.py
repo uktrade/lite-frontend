@@ -70,18 +70,6 @@ class Form:
         self.post_url = post_url
 
 
-class Question:
-    def __init__(self, title, description, input_type, name, optional=False, prefix=None, extras=None):
-        self.id = uuid.uuid1()
-        self.title = title
-        self.description = description
-        self.input_type = input_type
-        self.name = name
-        self.optional = optional
-        self.prefix = prefix
-        self.extras = extras
-
-
 class DetailComponent:
     def __init__(self, title, description):
         self.title = title

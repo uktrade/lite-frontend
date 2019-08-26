@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from libraries.forms.components import Option, RadioButtons, HiddenField, Form, BackLink
+from lite_forms.components import RadioButtons, Option, HiddenField, Form, BackLink
 
 
 def form_page(request, form, data=None, errors=None, extra_data=None):
@@ -47,7 +47,7 @@ def error_page(request, description, title='An error occurred', show_back_link=T
 
 
 def confirm_form(title, confirmation_name, back_url, back_link_text, hidden_field=None,
-                      description='', yes_label='Yes', no_label='No', submit_button_text='Submit'):
+                 description='', yes_label='Yes', no_label='No', submit_button_text='Submit'):
     inputs = [RadioButtons(title='', name=confirmation_name, description='',
                            options=[Option(key='yes', value=yes_label), Option(key='no', value=no_label)])]
     if hidden_field is not None:
