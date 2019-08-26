@@ -20,18 +20,16 @@ def get_next_form_after_pk(pk, form_group):
 
 def remove_unused_errors(errors, form):
     """
-    Compares a form's questions to errors and removes errors when their keys aren't in form
+    Removes all errors that don't belong to a form's fields
     :param errors: ['errors'] children
     :param form: Form object
     :return: Array of cleaned errors
     """
     cleaned_errors = {}
-    for key, value in errors.items():
-        for question in form.questions:
-            if hasattr(question, 'name'):
-                if key == question.name:
-                    cleaned_errors[key] = value
-                    continue
+
+    for question in form.questions:
+        if hasattr(question, 'name') and errors.get(question.name):
+            cleaned_errors[question.name] = errors.get(question.name)
 
     return cleaned_errors
 
