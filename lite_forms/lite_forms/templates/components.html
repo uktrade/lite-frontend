@@ -28,34 +28,6 @@
 
 	<!-- Select component based on input_type -->
 	<div class="govuk-form-group">
-		{% if question.input_type.name == "HIDDEN" %}
-			<input type="hidden" name="{{ question.name }}" value="{{ question.value }}">
-		{% elif question.input_type.name == "INPUT" %}
-			{% include "components/input.html" with name=question.name value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
-		{% elif question.input_type.name == "FILTER" %}
-			{% include "components/filter.html" with placeholder=question.placeholder %}
-		{% elif question.input_type.name == "CURRENCY" %}
-			{% include "components/currency.html" with name=question.name value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
-		{% elif question.input_type == "TextArea" %}
-			{% include "components/textarea.html" with name=question.name extras=question.extras value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
-		{% elif question.input_type.name == "NUMBER" %}
-			{% include "components/number.html" with name=question.name value=question.name %}
-		{% elif question.input_type == "RADIOBUTTONS" %}
-			{% include "components/radiobuttons.html" with component=question data=data|key_value:question.name %}
-		{% elif question.input_type == "CHECKBOXES" %}
-			{% include "components/checkboxes.html" with component=question data=data|key_value:question.name %}
-		{% elif question.input_type == "SELECT" %}
-			{% include "components/select.html" with component=question data=data|key_value:question.name error=errors|key_value:question.name %}
-		{% elif question.input_type.name == "AUTOCOMPLETE" %}
-			{% include "components/autocomplete.html" with name=question.name value=data|key_value:question.name|default:'' data=question.data %}
-		{% elif question.input_type == "FILE_UPLOAD" %}
-			{% include "components/file_upload.html" with name=question.name value=question.name %}
-		{% elif question.input_type == "MultiFileUpload" %}
-			{% include "components/multi_file_upload.html" with component=question data=data|key_value:question.name %}
-		{% elif question.input_type.name == "PASSWORD" %}
-	        {% include "components/password.html" with name=question.name value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
-		{% elif question.input_type.name == "QUANTITY" %}
-			{% include "components/quantity.html" with name=question.name value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
-		{% endif %}
+		{{ question.input_type }}
 	</div>
 </div>

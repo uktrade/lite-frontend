@@ -1,8 +1,8 @@
 from django.http import HttpRequest
 
-from libraries.forms.components import HiddenField, Form
-from libraries.forms.generators import form_page
-from libraries.forms.helpers import remove_unused_errors, nest_data, get_next_form_after_pk, get_form_by_pk
+from lite_forms.components import HiddenField, Form
+from lite_forms.generators import form_page
+from lite_forms.helpers import remove_unused_errors, nest_data, get_next_form_after_pk, get_form_by_pk
 
 
 def submit_single_form(request: HttpRequest, form: Form, post_to, pk=None, override_data=None):
