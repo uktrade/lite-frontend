@@ -5,7 +5,7 @@ class ButtonStyle:
 
 
 class HeadingStyle:
-    XL = 1
-    L = 2
-    M = 3
-    S = 4
+    XL = 'XL'
+    L = 'L'
+    M = 'M'
+    S = 'S'
