@@ -1,5 +1,3 @@
-import uuid
-
 from lite_forms.styles import ButtonStyle
 
 
