@@ -38,6 +38,11 @@ class BackLink:
 
 
 class FormGroup:
+    """
+    Container for multiple forms
+    Automatically adds IDs to all forms to make it
+    easier to reference them
+    """
     def __init__(self, forms: list):
         self.forms = forms
 
