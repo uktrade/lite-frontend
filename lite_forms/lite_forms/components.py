@@ -37,6 +37,16 @@ class BackLink:
         self.url = url
 
 
+class FormGroup:
+    def __init__(self, forms: list):
+        self.forms = forms
+
+        index = 0
+        for form in forms:
+            form.pk = index
+            index += 1
+
+
 class Form:
     def __init__(self,
                  title=None,
