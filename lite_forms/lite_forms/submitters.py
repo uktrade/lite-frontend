@@ -1,6 +1,6 @@
 from django.http import HttpRequest
 
-from lite_forms.components import HiddenField, Form
+from lite_forms.components import HiddenField, Form, FormGroup
 from lite_forms.generators import form_page
 from lite_forms.helpers import remove_unused_errors, nest_data, get_next_form_after_pk, get_form_by_pk
 
@@ -22,12 +22,12 @@ def submit_single_form(request: HttpRequest, form: Form, post_to, pk=None, overr
     return None, validated_data
 
 
-def submit_paged_form(request: HttpRequest, questions, post_to, pk=None):
+def submit_paged_form(request: HttpRequest, form_group: FormGroup, post_to, pk=None):
     data = request.POST.copy()
 
     # Get the next form based off form_pk
-    current_form = get_form_by_pk(data.get('form_pk'), questions)
-    next_form = get_next_form_after_pk(data.get('form_pk'), questions)
+    current_form = get_form_by_pk(data.get('form_pk'), form_group)
+    next_form = get_next_form_after_pk(data.get('form_pk'), form_group)
 
     # Remove form_pk and CSRF from POST data as the new form will replace them
     del data['form_pk']

@@ -1,16 +1,18 @@
 from collections.abc import MutableMapping
 
+from lite_forms.components import FormGroup
 
-def get_form_by_pk(pk, form_group):
-    for form in form_group:
+
+def get_form_by_pk(pk, form_group: FormGroup):
+    for form in form_group.forms:
         if str(form.pk) == str(pk):
             return form
     return
 
 
-def get_next_form_after_pk(pk, form_group):
+def get_next_form_after_pk(pk, form_group: FormGroup):
     next_one = False
-    for form in form_group:
+    for form in form_group.forms:
         if next_one:
             return form
         if str(form.pk) == str(pk):
