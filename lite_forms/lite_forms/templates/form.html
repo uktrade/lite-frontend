@@ -41,11 +41,13 @@
 		<span class="govuk-caption-l">{{ page.caption }}</span>
 	{% endif %}
 		<h2 class="govuk-heading-l">{{ page.title }}</h2>
-		<div class="govuk-form-group">
-			<p class="govuk-caption-m">
-				{{ page.description|linebreaksbr }}
-			</p>
-		</div>
+		{% if page.description %}
+            <div class="govuk-form-group">
+                <p class="govuk-caption-m">
+                    {{ page.description|linebreaksbr }}
+                </p>
+            </div>
+        {% endif %}
 
 		<!-- Questions -->
 		<form {% if page.post_url %}action="{{ page.post_url }}"{% endif %} method="post" enctype="multipart/form-data">
