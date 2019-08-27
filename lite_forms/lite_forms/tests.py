@@ -1,15 +1,15 @@
 from unittest import TestCase
 
-from lite_forms.components import Form, DetailComponent, TextInput
+from lite_forms.components import Form, DetailComponent, TextInput, FormGroup
 from lite_forms.helpers import nest_data, flatten_data, remove_unused_errors, get_form_by_pk
 
 
 class FormTests(TestCase):
 
     def test_get_form_by_pk(self):
-        forms = [Form(pk=123, questions=[]), Form(questions=[]), Form(questions=[])]
+        forms = FormGroup([Form(questions=[]), Form(questions=[]), Form(questions=[])])
 
-        self.assertEqual(str(get_form_by_pk('123', forms).pk), '123')
+        self.assertEqual(get_form_by_pk(1, forms).pk, 1)
 
     def test_remove_unused_errors(self):
         form = Form(questions=[
