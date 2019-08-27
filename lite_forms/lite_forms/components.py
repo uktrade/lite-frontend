@@ -44,6 +44,7 @@ class FormGroup:
         index = 0
         for form in forms:
             form.pk = index
+            form.questions.append(HiddenField(name='form_pk', value=form.pk))
             index += 1
 
 
@@ -57,19 +58,12 @@ class Form:
                  helpers=None,
                  javascript_imports=None,
                  default_button_name='Submit',
-                 pk=None,
                  back_link=BackLink(),
                  post_url=None):
-
-        if not pk:
-            self.pk = uuid.uuid1()
-        else:
-            self.pk = pk
 
         self.title = title
         self.description = description
         self.questions = questions
-        self.questions.append(HiddenField(name='form_pk', value=self.pk))
         self.caption = caption
         self.helpers = helpers
         self.buttons = buttons
