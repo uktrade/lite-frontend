@@ -2,8 +2,8 @@ import os
 from setuptools import find_packages, setup
 
 
-with open(os.path.join(os.path.dirname(__file__), 'README.md')) as readme:
-    README = readme.read()
+with open(os.path.join(os.path.dirname(__file__), 'README.md'), encoding='utf-8') as readme:
+    long_description = readme.read()
 
 # allow setup.py to be run from any path
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
@@ -15,7 +15,8 @@ setup(
     include_package_data=True,
     license='MIT',
     description='Forms builder used for LITE',
-    long_description=README,
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     url='https://github.com/uktrade/lite-forms',
     author='Jan Faracik',
     author_email='',
