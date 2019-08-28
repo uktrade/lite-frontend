@@ -10,7 +10,6 @@ def key_value(dictionary, key):
 
 @register.filter
 def key_in_array(data, key):
-    # If data is empty, return False
     if not data:
         return False
 

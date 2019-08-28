@@ -1,16 +1,18 @@
 from collections.abc import MutableMapping
 
+from lite_forms.components import FormGroup
 
-def get_form_by_pk(pk, section):
-    for form in section.forms:
+
+def get_form_by_pk(pk, form_group: FormGroup):
+    for form in form_group.forms:
         if str(form.pk) == str(pk):
             return form
     return
 
 
-def get_next_form_after_pk(pk, section):
+def get_next_form_after_pk(pk, form_group: FormGroup):
     next_one = False
-    for form in section.forms:
+    for form in form_group.forms:
         if next_one:
             return form
         if str(form.pk) == str(pk):
@@ -20,18 +22,19 @@ def get_next_form_after_pk(pk, section):
 
 def remove_unused_errors(errors, form):
     """
-    Compares a form's questions to errors and removes errors when their keys aren't in form
+    Removes all errors that don't belong to a form's fields
     :param errors: ['errors'] children
     :param form: Form object
     :return: Array of cleaned errors
     """
     cleaned_errors = {}
-    for key, value in errors.items():
-        for question in form.questions:
-            if hasattr(question, 'name'):
-                if key == question.name:
-                    cleaned_errors[key] = value
-                    continue
+
+    if not errors:
+        return {}
+
+    for question in form.questions:
+        if hasattr(question, 'name') and errors.get(question.name):
+            cleaned_errors[question.name] = errors.get(question.name)
 
     return cleaned_errors
 

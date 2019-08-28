@@ -41,24 +41,25 @@
 		<span class="govuk-caption-l">{{ page.caption }}</span>
 	{% endif %}
 		<h2 class="govuk-heading-l">{{ page.title }}</h2>
-		<div class="govuk-form-group">
-			<p class="govuk-caption-m">
-				{{ page.description|linebreaksbr }}
-			</p>
-		</div>
+		{% if page.description %}
+            <div class="govuk-form-group">
+                <p class="govuk-caption-m">
+                    {{ page.description|linebreaksbr }}
+                </p>
+            </div>
+        {% endif %}
 
 		<!-- Questions -->
 		<form {% if page.post_url %}action="{{ page.post_url }}"{% endif %} method="post" enctype="multipart/form-data">
 			{% csrf_token %}
 
 			{% for question in page.questions %}
-				{% if question.input_type.name == "HTML"  %}
+				{% if question.input_type == "html_block"  %}
 					{{ question.html|safe }}
-				{% elif question.input_type.name == "DETAIL"  %}
+				{% elif question.input_type == "detail"  %}
 					{% include "components/details.html" with title=question.title description=question.description %}
-				{% elif question.input_type.name == "HEADING" %}
-					<br/>
-					<h{{ question.heading_style.value }} class="govuk-heading-{{ question.heading_style.name|lower }}">{{ question.text }}</h{{ question.heading_style.value }}>
+				{% elif question.input_type == "heading" %}
+					{% include "components/heading.html" with text=question.text %}
 				{% else %}
 					{% if question.input_type == "side_by_side" %}
 						<div class="lite-side-by-side-wrapper">
@@ -85,7 +86,7 @@
 					{% if button.link %}
 						<a href="{{ button.link }}" role="button" draggable="false" data-module="govuk-button" class="{{ button.style.value }}" {% if button.float_right %}style="float: right;"{% endif %}>{{ button.value }}</a>
 					{% else %}
-						<button type="submit" class="{{ button.style.value }}" {% if button.float_right %}style="float: right;"{% endif %} action="submit">{{ button.value }}</button>
+						<button type="submit" class="{{ button.style }}" {% if button.float_right %}style="float: right;"{% endif %} action="submit">{{ button.value }}</button>
 					{% endif %}
 				{% endfor %}
 			</div>
