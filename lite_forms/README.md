@@ -38,7 +38,7 @@ Form(title='Register an organisation',
 
 ## Installing
 
-```pipenv install -e git+https://github.com/uktrade/lite-forms#egg=lite-forms```
+```pipenv install lite-forms```
 
 ## Requirements
 
