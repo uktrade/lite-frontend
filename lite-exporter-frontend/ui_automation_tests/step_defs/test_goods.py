@@ -4,24 +4,26 @@ from pages.attach_document_page import AttachDocumentPage
 from pages.goods_list import GoodsList
 from pages.exporter_hub_page import ExporterHubPage
 from pages.add_goods_page import AddGoodPage
+from pages.shared import Shared
 
 scenarios('../features/clc_queries_and_goods.feature', strict_gherkin=False)
 
 
 @then('I see good in goods list')
 def assert_good_is_in_list(driver, context, exporter_url):
-    driver.get(exporter_url.rstrip('/') + '/goods/')
     goods_list = GoodsList(driver)
-    goods_list.assert_goods_are_displayed_of_good_name(context.good_description,
+    driver.get(exporter_url.rstrip('/') + '/goods/')
+    goods_list.assert_goods_are_displayed_of_good_name(driver,
+                                                       context.good_description,
                                                        context.part,
                                                        context.control_code)
 
 
 @then('I see the clc query in goods list')
 def assert_clc_is_in_list(driver, context, exporter_url):
-    driver.get(exporter_url.rstrip('/') + '/goods/')
     goods_list = GoodsList(driver)
-    goods_list.assert_clc_goods_are_displayed_of_good_name(context.good_description,
+    goods_list.assert_clc_goods_are_displayed_of_good_name(driver,
+                                                           context.good_description,
                                                            context.part,
                                                            context.control_code)
 
@@ -40,14 +42,11 @@ def edit_good(driver, description, controlled,  control_code, incorporated, part
 
 @then('I see my edited good in the goods list')
 def see_my_edited_good_in_list(driver, context):
-    assert context.edited_description in driver.find_element_by_tag_name('body').text
+    assert context.edited_description in Shared(driver).get_text_of_gov_table()
 
 
 @when('I delete my good')
 def delete_my_good_in_list(driver, context):
-    """
-    Delete the recently edited good
-    """
     goods_list = GoodsList(driver)
 
     driver.find_element_by_id('delete-' + str(context.good_id_from_url)).click()
@@ -56,9 +55,6 @@ def delete_my_good_in_list(driver, context):
 
 @then('my good is no longer in the goods list')
 def good_is_no_longer_in_list(driver, context):
-    """
-    Assert that the edited good is no longer in the goods list
-    """
     assert len(driver.find_elements_by_id('delete-' + context.good_id_from_url)) == 0
 
 

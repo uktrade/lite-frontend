@@ -18,12 +18,8 @@ class ApplicationGoodsList:
         self.filter_button = '//button[text()[contains(.,"Filter")]]' #xpath
         self.goods_items = '.lite-card'   # CSS
         self.filter_tags = ".lite-filter-bar a"
-
-    def click_add_from_organisations_goods_button(self):
-        return self.driver.find_element_by_css_selector(self.add_from_org_goods_button).click()
-
-    def click_add_to_application(self, no):
-        return self.driver.find_elements_by_css_selector(self.add_to_application)[no-1].click()
+        self.card_heading = ".lite-card .govuk-heading-s"
+        self.card_label = ".lite-card .govuk-label"
 
     def add_values_to_good(self, value, quantity, unit):
         self.driver.find_element_by_id(self.value_field).send_keys(value)
@@ -58,3 +54,9 @@ class ApplicationGoodsList:
     def remove_filters(self):
         for tag in range(len(self.driver.find_elements_by_css_selector(self.filter_tags))):
             self.driver.find_elements_by_css_selector(self.filter_tags)[tag-1].click()
+
+    def get_text_of_gov_heading_within_card(self, num):
+        return self.driver.find_elements_by_css_selector(self.card_heading)[num].text
+
+    def get_text_of_part_number(self, num):
+        return self.driver.find_elements_by_css_selector(self.card_label)[num].text

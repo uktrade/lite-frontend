@@ -1,4 +1,6 @@
-from pytest_bdd import when, then, parsers, scenarios
+from pytest_bdd import when, then, parsers, scenarios, given
+
+from pages.shared import Shared
 from pages.submitted_applications_page import SubmittedApplicationsPages
 
 import helpers.helpers as utils
@@ -6,10 +8,14 @@ import helpers.helpers as utils
 scenarios('../features/case_notes.feature', strict_gherkin=False)
 
 
-@when('I click on an application previously created')
-def click_on_an_application(driver, add_an_application):
-    driver.refresh()
-    driver.find_element_by_css_selector('a[href*="/applications/"]').click()
+@given('an application exists')
+def application_exists_case_note_added(add_an_application):
+    pass
+
+
+@when('I click on application previously created')
+def click_on_an_application(driver, context):
+    driver.find_element_by_link_text(context.app_name).click()
 
 
 @when(parsers.parse('I enter "{text}" for case note'))
@@ -30,13 +36,13 @@ def click_post_note(driver, context):
     application_page = SubmittedApplicationsPages(driver)
     application_page.click_post_note_btn()
     context.date_time_of_post = utils.get_formatted_date_time_h_m_pm_d_m_y()
-#
-#
+
+
 @then('note is displayed')
 def note_is_displayed(driver, context):
     application_page = SubmittedApplicationsPages(driver)
     assert context.text in application_page.get_text_of_case_note(0)
-    assert context.date_time_of_post.split(':')[1] in application_page.get_text_of_case_note_date_time(0).split(':')[1], 'incorrect time of post on case note'
+    assert utils.split_and_replace_date_time(context.date_time_of_post) in utils.split_and_replace_date_time(application_page.get_text_of_case_note_date_time(0)), 'incorrect time of post on case note'
 
 
 @when('I click cancel button')
@@ -47,11 +53,10 @@ def i_click_cancel_button(driver):
 
 @then('maximum case error is displayed')
 def maximum_error_message_is_displayed(driver):
-    error_message = driver.find_element_by_css_selector('h1').text
-    error_body = driver.find_elements_by_css_selector('.govuk-body')
-    assert error_message == 'An error occurred', 'should not be able to post an empty case note with space characters'
-    assert error_body[0].text == 'Case note may not be blank.', 'should not be able to post an empty case note with space characters'
-    assert error_body[1].text == 'You can go back by clicking the back button at the top of the page.', 'should not be able to post an empty case note with space characters'
+    body = Shared(driver).get_text_of_gov_grid_row()
+    assert Shared(driver).get_text_of_h1() == 'An error occurred', 'should not be able to post an empty case note with space characters'
+    assert 'Case note may not be blank.' in body, 'should not be able to post an empty case note with space characters'
+    assert 'You can go back by clicking the back button at the top of the page.' in body,  'should not be able to post an empty case note with space characters'
 
 
 @then(parsers.parse('case note warning is "{text}"'))

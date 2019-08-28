@@ -56,8 +56,10 @@ def pytest_exception_interact(node, report):
     if node and report.failed:
         class_name = node._nodeid.replace(".py::", "_class_")
         name = "{0}_{1}".format(class_name, "error")
-        print(name)
-        utils.save_screenshot(node.funcargs.get("driver"), name)
+        try:
+            utils.save_screenshot(node.funcargs.get("driver"), name)
+        except Exception:
+            pass
 
 
 @pytest.fixture(scope="module")

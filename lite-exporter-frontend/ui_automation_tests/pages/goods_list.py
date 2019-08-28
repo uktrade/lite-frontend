@@ -1,3 +1,6 @@
+from pages.shared import Shared
+
+
 class GoodsList:
 
     # Selector for the edit/delete goods link in the table
@@ -10,15 +13,15 @@ class GoodsList:
     def __init__(self, driver):
         self.driver = driver
 
-    def assert_goods_are_displayed_of_good_name(self, description, part_number, control_code):
-        goods_row = self.driver.find_element_by_css_selector('table').text
+    def assert_goods_are_displayed_of_good_name(self, driver, description, part_number, control_code):
+        goods_row = Shared(driver).get_text_of_gov_table()
 
         assert description in goods_row
         assert part_number in goods_row
         assert control_code in goods_row
 
-    def assert_clc_goods_are_displayed_of_good_name (self, description, part_number, control_code):
-        goods_row = self.driver.find_element_by_css_selector('table').text
+    def assert_clc_goods_are_displayed_of_good_name (self, driver, description, part_number, control_code):
+        goods_row = Shared(driver).get_text_of_gov_table()
 
         assert description in goods_row
         assert part_number in goods_row

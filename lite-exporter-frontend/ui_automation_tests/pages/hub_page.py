@@ -2,16 +2,17 @@ class Hub():
 
     def __init__(self, driver):
         self.driver = driver
-        self.drafts_btn = "a[href*='/drafts/']"   # CSS
-        self.sites_btn = "[href*='/sites/']"   # CSS
-        self.application_btn = "a[href*='/applications/']"    # CSS
-        self.add_user_button = "a[href*='/users/add']"    # CSS
-        self.users_button = "a[href='/users/']"      # CSS
-        self.first_name_field = "first_name"      # ID
-        self.last_name_field = "last_name"    # ID
-        self.last_name_field = "last_name"    # ID
-        self.email_field = "email"    # ID
-        self.password_field = "password"    # ID
+        self.drafts_btn = "a[href*='/drafts/']"  # CSS
+        self.sites_btn = "[href*='/sites/']"  # CSS
+        self.application_btn = "a[href*='/applications/']"  # CSS
+        self.add_user_button = "a[href*='/users/add']"  # CSS
+        self.users_button = "a[href='/users/']"  # CSS
+        self.first_name_field = "first_name"  # ID
+        self.last_name_field = "last_name"  # ID
+        self.last_name_field = "last_name"  # ID
+        self.email_field = "email"  # ID
+        self.password_field = "password"  # ID
+        self.applications_tile = '.lite-tiles [href="/applications/"] p'  # ID
 
     def click_drafts(self):
         self.driver.find_element_by_css_selector(self.drafts_btn).click()
@@ -43,3 +44,13 @@ class Hub():
 
     def click_sites_link(self):
         self.driver.find_element_by_css_selector(self.sites_btn).click()
+
+    def get_text_of_application_tile(self):
+        return self.driver.find_element_by_css_selector(self.applications_tile).text
+
+    def return_number_of_notifications(self):
+        text_of_new_notifications = self.driver.find_element_by_css_selector(
+            self.applications_tile).text
+        total_of_notifications = int((text_of_new_notifications.split('have '))[1].split(' new')[0])
+        return total_of_notifications
+

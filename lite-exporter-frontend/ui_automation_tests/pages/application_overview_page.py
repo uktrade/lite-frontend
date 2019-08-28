@@ -12,6 +12,7 @@ class ApplicationOverviewPage:
         self.show_countries_link = "[onclick*='showCountries']"
         self.modal_close = "modal-close-button"   # ID
         self.modal_content = ".modal-content"   # CSS
+        self.lite_section = ".lite-section"   # CSS
         self.gov_tables = ".govuk-table__body"   # CSS
         self.back_to_overview_text = "Back to Application" #link text
 
@@ -55,3 +56,6 @@ class ApplicationOverviewPage:
 
     def get_text_of_end_user_table(self):
         return self.driver.find_elements_by_css_selector(self.gov_tables)[len(self.driver.find_elements_by_css_selector(self.gov_tables))-1].text
+
+    def get_text_of_good(self, no):
+        return self.driver.find_elements_by_css_selector(self.lite_section)[no].text

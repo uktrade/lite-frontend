@@ -160,3 +160,7 @@ def get_element_index_by_partial_text(elements, text: str):
         no += 1
 
     return element_number
+
+
+def split_and_replace_date_time(date):
+    return date.split(':')[1].replace('am', '').replace('pm', '')

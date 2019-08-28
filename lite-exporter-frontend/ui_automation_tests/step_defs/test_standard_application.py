@@ -1,4 +1,3 @@
-import datetime
 from pytest_bdd import scenarios, when, then, parsers
 from selenium.webdriver.common.by import By
 
@@ -6,24 +5,27 @@ import helpers.helpers as utils
 from pages.add_end_user_pages import AddEndUserPages
 from pages.application_overview_page import ApplicationOverviewPage
 from pages.shared import Shared
+from pages.application_goods_list import ApplicationGoodsList
+from pages.ultimate_end_users_list_page import UltimateEndUsersListPage
 
 scenarios('../features/submit_standard_application.feature', strict_gherkin=False)
 
 
 @when('I click on application overview')
 def i_click_on_application_overview(driver):
-    driver.find_element_by_css_selector("a[href*='overview'").click()
+    Shared(driver).click_on_application_name()
 
 
 @then('good is added to application')
 def good_is_added(driver, context):
-    assert utils.is_element_present(driver, By.XPATH, "//*[text()='" + str(context.goods_name) + "']")
+    good = ApplicationOverviewPage(driver).get_text_of_good(1)
+    assert context.goods_name in good
     # TODO put this back when bug is fixed - showing mtr instead of metres
-    #assert utils.is_element_present(driver, By.XPATH, "//*[text()='" + str(context.quantity) + ".0 " + unit + "']")
+    # assert str(context.quantity) + ".0 " + context.unit in good
     if "." not in context.value:
-        assert utils.is_element_present(driver, By.XPATH, "//*[text()='£" + str(context.value) + ".00']")
+        assert '£' + str(context.value) + '.00' in good
     else:
-        assert utils.is_element_present(driver, By.XPATH, "//*[text()='£" + str(context.value) + "']")
+        assert '£' + str(context.value) in good
 
 
 @then('I see the homepage')
@@ -45,7 +47,7 @@ def i_go_to_the_overview(driver):
 
 @when('I click on ultimate end users add button')
 def i_click_on_ultimate_end_user(driver):
-    driver.find_element_by_css_selector(".govuk-button").click()
+    UltimateEndUsersListPage(driver).click_on_add_ultimate_end_user()
 
 
 @when(parsers.parse('I add end user of type: "{type}"'))
@@ -82,9 +84,9 @@ def add_new_end_user_address(driver, address, country, context):
 
 @when('I remove an ultimate end user so there is one less and return to the overview')
 def i_remove_an_ultimate_end_user(driver):
-    no_of_ultimate_end_users = len(driver.find_elements_by_css_selector('.govuk-table__row'))
+    no_of_ultimate_end_users = Shared(driver).get_size_of_table_rows()
     driver.find_element_by_link_text('Remove').click()
-    total = no_of_ultimate_end_users-len(driver.find_elements_by_css_selector('.govuk-table__row'))
+    total = no_of_ultimate_end_users - Shared(driver).get_size_of_table_rows()
     assert total == 1, "total on the ultimate end users summary is incorrect after removing ultimate end user"
     app = ApplicationOverviewPage(driver)
     app.click_on_back_to_overview_text()
@@ -92,7 +94,7 @@ def i_remove_an_ultimate_end_user(driver):
 
 @then('there is only one ultimate end user')
 def one_ultimate_end_user(driver):
-    elements = driver.find_elements_by_css_selector(".lite-section")
+    elements = Shared(driver).get_lite_sections()
     no = utils.get_element_index_by_partial_text(elements, "Ultimate End Users")
     assert len(elements[no].find_elements_by_css_selector(".govuk-table__row")) == 2, "total on the application overview is incorrect after removing ultimate end user"
 
@@ -132,9 +134,10 @@ def valid_quantity_value_error_message(driver):
 
 @when(parsers.parse('I click add to application for the good at position "{no}"'))
 def click_add_to_application_button(driver, no, context):
-    context.goods_name = driver.find_elements_by_css_selector('.lite-card .govuk-heading-s')[int(no)-1].text
-    context.part_number = driver.find_elements_by_css_selector('.lite-card .govuk-label')[int(no)-1].text
-    driver.find_elements_by_css_selector('a.govuk-button')[int(no)-1].click()
+    num = int(no) - 1
+    context.goods_name = ApplicationGoodsList(driver).get_text_of_gov_heading_within_card(num)
+    context.part_number = ApplicationGoodsList(driver).get_text_of_part_number(num)
+    driver.find_elements_by_css_selector('a.govuk-button')[num].click()
 
 
 @when(parsers.parse(

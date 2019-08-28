@@ -48,10 +48,9 @@ def new_sites_info(driver, edited, address, postcode, city, region, country, con
 
 @then('I see sites list')
 def i_see_sites_list(driver, context):
-    assert driver.find_element_by_tag_name('h2').text == 'Sites', \
+    assert Shared(driver).get_text_of_h2() == 'Sites', \
         'Failed to return to Sites list page after Adding site'
-
-    assert utils.is_element_present(driver, By.XPATH, "//*[text()[contains(.,'" + context.new_site_name + "')]]")
+    assert context.new_site_name in Shared(driver).get_text_of_gov_table()
 
 
 @when('I click last edit button')

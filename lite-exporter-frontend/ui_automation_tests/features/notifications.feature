@@ -4,9 +4,9 @@ Feature: I want to see externally visible case notes
   I want to view externally added case notes added by an internal gov user
 
   @LT_912_view
-  Scenario: View a added internal case notes
+  Scenario: View an added internal case notes
     Given I go to exporter homepage
-    And An application exists and a case note has been added via internal gov site
+    And an application exists and a case note has been added via internal gov site
     When I go to exporter homepage
     Then I can see a notification in application tile
     When I click on applications

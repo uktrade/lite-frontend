@@ -13,7 +13,7 @@ def filter_by_part_no(driver, context):
 @when('I filter by description and click filter')
 def filter_by_description(driver, context):
     application_goods_list = ApplicationGoodsList(driver)
-    application_goods_list.type_into_filter_description_search_box_and_filter(context.good_description)\
+    application_goods_list.type_into_filter_description_search_box_and_filter(context.good_description)
 
 
 @when('I filter by control rating and click filter')
