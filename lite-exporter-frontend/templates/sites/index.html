@@ -8,10 +8,14 @@
 
 {% block body %}
 
-	<div class="lite-app-bar">
-		<div class="lite-app-bar__content">
-			<h2 class="govuk-heading-l">{{ title }}</h2>
-            <p class="govuk-caption-m">{% get_string 'sites.description' %}</p>
+	<h2 class="govuk-heading-l">{{ organisation.name }}</h2>
+
+	<div style="display: grid; grid-template-columns: 1fr auto; grid-gap: 30px;">
+		<div class="lite-tabs--fade">
+			<div class="lite-tabs">
+				<a href="{% url 'users:users' %}" class="lite-tabs__tab">Members</a>
+				<a href="{% url 'sites:sites' %}" class="lite-tabs__tab selected">Sites</a>
+			</div>
 		</div>
 		<div class="lite-app-bar__controls">
 			<a href="{% url 'sites:new' %}" class="govuk-button" draggable="false" role="button">
@@ -20,43 +24,39 @@
 		</div>
 	</div>
 
-	{% if data.sites|length %}
-		<table class="govuk-table">
-			<thead class="govuk-table__head">
+	<table class="govuk-table">
+		<thead class="govuk-table__head">
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header">
+					Name
+				</th>
+				<th class="govuk-table__header">
+					Address
+				</th>
+				<th class="govuk-table__header"></th>
+			</tr>
+		</thead>
+		<tbody class="govuk-table__head">
+			{% for site in sites %}
 				<tr class="govuk-table__row">
-					<th class="govuk-table__header">
-						Name
-					</th>
-					<th class="govuk-table__header">
-						Address
-					</th>
-					<th class="govuk-table__header"></th>
+					<td class="govuk-table__cell" style="vertical-align: top;">
+						{{ site.name }}
+					</td>
+					<td class="govuk-table__cell" style="vertical-align: top;">
+						{{ site.address.address_line_1 }}<br/>
+						{% if site.address.address_line_2 %}
+							{{ site.address.address_line_2 }}<br/>
+						{% endif %}
+						{{ site.address.city }}<br/>
+						{{ site.address.postcode }}<br/>
+						{{ site.address.country.name }}
+					</td>
+					<td class="govuk-table__cell" style="vertical-align: top;">
+						<a href="{% url 'sites:edit' site.id %}" class="govuk-link govuk-link--no-visited-state">Edit</a>
+					</td>
 				</tr>
-			</thead>
-			<tbody class="govuk-table__head">
-				{% for site in data.sites %}
-					<tr class="govuk-table__row">
-						<td class="govuk-table__cell" style="vertical-align: top;">
-							{{ site.name }}
-						</td>
-						<td class="govuk-table__cell" style="vertical-align: top;">
-							{{ site.address.address_line_1 }}<br/>
-							{% if site.address.address_line_2 %}
-								{{ site.address.address_line_2 }}<br/>
-							{% endif %}
-							{{ site.address.city }}<br/>
-							{{ site.address.postcode }}<br/>
-							{{ site.address.country }}
-						</td>
-						<td class="govuk-table__cell" style="vertical-align: top;">
-							<a href="{% url 'sites:edit' site.id %}" class="govuk-link govuk-link--no-visited-state">Edit</a>
-						</td>
-					</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-	{% else %}
-		<p class="govuk-caption-l">Your organisation doesn't have any sites.</p>
-	{% endif %}
+			{% endfor %}
+		</tbody>
+	</table>
 
 {% endblock %}

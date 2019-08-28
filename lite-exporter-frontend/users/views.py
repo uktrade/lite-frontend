@@ -3,17 +3,20 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
+from core.services import get_organisation_users, get_organisation
 from users import forms
-from users.services import get_users, post_users, update_user, get_user
+from users.services import post_users, update_user, get_user
 
 
 class Users(TemplateView):
     def get(self, request, **kwargs):
-        data, status_code = get_users(request)
+        users, status_code = get_organisation_users(request, str(request.user.organisation))
+        organisation, _ = get_organisation(request, str(request.user.organisation))
 
         context = {
-            'data': data,
-            'title': 'Users',
+            'title': 'Users - ' + organisation['name'],
+            'users': users['users'],
+            'organisation': organisation,
         }
         return render(request, 'users/index.html', context)
 

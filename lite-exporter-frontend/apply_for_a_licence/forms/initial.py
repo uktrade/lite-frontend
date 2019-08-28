@@ -1,15 +1,11 @@
-from libraries.forms.components import Form, InputType, DetailComponent, Question, Option, Section, \
-    RadioButtons
+from lite_forms.components import RadioButtons, Form, DetailComponent, TextInput, Option, FormGroup
 
-initial_questions = Section('', '', [
+initial_questions = FormGroup([
     Form('Enter a reference name for this application',
          'This can make it easier for you or your organisation to find in the '
          'future.',
          [
-             Question(title='',
-                      description='',
-                      input_type=InputType.INPUT,
-                      name='name'),
+             TextInput(name='name'),
          ], default_button_name='Continue'),
     Form('Which export licence do you want to apply for?', 'Select one of the options.', [
         RadioButtons(name='licence_type',
@@ -24,7 +20,7 @@ initial_questions = Section('', '', [
                                             'You will receive compliance audits under this type of licence.'),
                      ]),
         DetailComponent('Help with choosing a licence', 'If you\'re unsure about which licence to select, '
-                                                        'then read the guidance on GOV.UK about licences for '
+                                                        'then read the guidance on GOV.UK for '
                                                         '<a class="govuk-link" target="_blank"'
                                                         'href="https://www.gov.uk/starting-to-export/licences">'
                                                         'exporting and doing business abroad<span '
@@ -49,10 +45,9 @@ initial_questions = Section('', '', [
                               Option('no', 'No')
                           ],
                           classes=['govuk-radios--inline']),
-             Question(
+             TextInput(
                  title='What was the reference number if you were provided one?',
                  description='This is the reference found on the letter or email to tell you to apply for an export licence.',
-                 input_type=InputType.INPUT,
                  name='reference_number_on_information_form',
                  optional=True),
          ], default_button_name='Save and continue'),

@@ -10,12 +10,12 @@
 	<div class="govuk-grid-row">
 		<div class="govuk-grid-column-one-third">
 			<p class="lite-heading-s">Licence Type</p>
-			<p class="govuk-label">{{ data.application.licence_type|sentence_case }}</p>
+			<p class="govuk-label">{{ data.application.licence_type.value }}</p>
 		</div>
 		<div class="govuk-grid-column-one-third">
 			<p class="lite-heading-s">Export Type</p>
 			<p class="govuk-label">
-				{{ data.application.export_type|sentence_case }}
+				{{ data.application.export_type.value }}
 			</p>
 		</div>
 		<div class="govuk-grid-column-one-third">

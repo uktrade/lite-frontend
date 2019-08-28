@@ -53,7 +53,7 @@
 								{{ draft.name }}
 							</a>
 							<p class="govuk-!-font-size-16" style="opacity: 0.7; margin: 0; margin-top: 5px;">
-								{{ draft.licence_type|sentence_case }}
+								{{ draft.licence_type.value }}
 							</p>
 						</td>
 						<td class="govuk-table__cell">
@@ -63,7 +63,7 @@
 							{{ draft.goods|length }} Good{{ draft.goods|length|pluralize }}
 						</td>
 						<td class="govuk-table__cell">
-							{{ draft.export_type|sentence_case }}
+							{{ draft.export_type.value }}
 						</td>
 						<td class="govuk-table__cell">
 							<a href="{% url 'apply_for_a_licence:delete' draft.id %}" style="margin: 0;" class="govuk-link">

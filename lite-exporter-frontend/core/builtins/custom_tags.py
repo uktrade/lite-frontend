@@ -2,7 +2,6 @@ import datetime
 import json
 import re
 
-import stringcase
 from django import template
 from django.template.defaultfilters import stringfilter
 from django.templatetags.tz import do_timezone
@@ -16,7 +15,7 @@ register = template.Library()
 
 
 @register.simple_tag
-def get_string(value):
+def get_string(value, *args, **kwargs):
     """
     Given a string, such as 'cases.manage.attach_documents' it will return the relevant value
     from the strings.json file
@@ -34,7 +33,12 @@ def get_string(value):
         else:
             return d[keys]
 
-    return get(strings.constants, value)
+    return_value = get(strings.constants, value)
+
+    if isinstance(return_value, list):
+        return return_value
+
+    return get(strings.constants, value).format(*args, **kwargs)
 
 
 @register.filter
@@ -45,8 +49,18 @@ def str_date(value):
 
 
 @register.filter
-def sentence_case(value):
-    return stringcase.sentencecase(value)
+@stringfilter
+def units_pluralise(unit: str, quantity: str):
+    """
+    Pluralise goods measurements units
+    """
+    if unit.endswith('(s)'):
+        unit = unit[:-3]
+
+        if not quantity == '1':
+            unit = unit + 's'
+
+    return unit
 
 
 @register.filter

@@ -14,46 +14,47 @@
 		</div>
 	{% endif %}
 
-	<div class="lite-app-bar">
-		<div class="lite-app-bar__content">
-			<h1 class="govuk-heading-l">Users</h1>
+	<h2 class="govuk-heading-l">{{ organisation.name }}</h2>
+
+	<div style="display: grid; grid-template-columns: 1fr auto; grid-gap: 30px;">
+		<div class="lite-tabs--fade">
+			<div class="lite-tabs">
+				<a href="{% url 'users:users' %}" class="lite-tabs__tab selected">Members</a>
+				<a href="{% url 'sites:sites' %}" class="lite-tabs__tab">Sites</a>
+			</div>
 		</div>
 		<div class="lite-app-bar__controls">
 			<a href="{% url 'users:add' %}" class="govuk-button" draggable="false" role="button">
-				Add a user
+				Add a member
 			</a>
 		</div>
 	</div>
 
-	{% if data.users|length %}
-		<table class="govuk-table">
-			<thead class="govuk-table__head">
+	<table class="govuk-table">
+		<thead class="govuk-table__head">
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header" scope="col">Name</th>
+				<th class="govuk-table__header" scope="col">Email</th>
+				<th class="govuk-table__header" scope="col">Status</th>
+                <th class="govuk-table__header" scope="col"></th>
+			</tr>
+		</thead>
+		<tbody class="govuk-table__body">
+			{% for user in users %}
 				<tr class="govuk-table__row">
-					<th class="govuk-table__header" scope="col">Name</th>
-					<th class="govuk-table__header" scope="col">Email</th>
-					<th class="govuk-table__header" scope="col">Status</th>
-                    <th class="govuk-table__header" scope="col"></th>
+					<td class="govuk-table__header">
+						<a href="{% url 'users:user' user.id %}" style="margin: 0;" class="govuk-link govuk-link--no-visited-state">
+							{{ user.first_name }} {{ user.last_name }}
+						</a>
+					</td>
+					<td class="govuk-table__cell">{{ user.email }}</td>
+					<td class="govuk-table__cell">{{ user.status }}</td>
+					<td class="govuk-table__cell">
+						<a href="{% url 'users:edit' user.id %}" style="margin: 0;" class="govuk-link govuk-link--no-visited-state">Edit</a>
+					</td>
 				</tr>
-			</thead>
-			<tbody class="govuk-table__body">
-				{% for user in data.users %}
-					<tr class="govuk-table__row">
-						<td class="govuk-table__cell">
-							<a href="{% url 'users:user' user.id %}" style="margin: 0;" class="govuk-link">
-								{{ user.first_name }} {{ user.last_name }}
-							</a>
-						</td>
-						<td class="govuk-table__cell">{{ user.email }}</td>
-						<td class="govuk-table__cell">{{ user.status }}</td>
-						<td class="govuk-table__cell">
-							<a href="{% url 'users:edit' user.id %}" style="margin: 0;" class="govuk-link">Edit</a>
-						</td>
-					</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-	{% else %}
-		<p class="govuk-caption-l">You don't have any users at the moment.</p>
-	{% endif %}
+			{% endfor %}
+		</tbody>
+	</table>
 
 {% endblock %}

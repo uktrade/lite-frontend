@@ -19,7 +19,6 @@ class NewSite:
         self.city.send_keys(city)
         self.region.send_keys(region)
         self.country.send_keys(country)
-        self.country.send_keys(Keys.RETURN)
 
     def clear_info_for_site(self):
         self.name.clear()
@@ -27,5 +26,4 @@ class NewSite:
         self.postcode.clear()
         self.city.clear()
         self.region.clear()
-        self.country.clear()
 

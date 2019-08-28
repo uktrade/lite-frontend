@@ -1,4 +1,4 @@
-@licence @submit @all
+@licence @submit @all @standard
 Feature: I want to indicate the standard licence I want
   As a logged in exporter
   I want to indicate the kind of licence I want
@@ -6,7 +6,7 @@ Feature: I want to indicate the standard licence I want
 
   @LT_1091_draft
   Scenario: Apply for a licence to draft and delete
-    Given I go to exporter homepage
+    Given I go to exporter homepage and choose Test Org
     When I click on apply for a license button
     And I click on start button
     And I enter in name for application and continue
@@ -18,7 +18,7 @@ Feature: I want to indicate the standard licence I want
 
   @LT_1091_standard @setup
   Scenario: Submit standard application
-    Given I go to exporter homepage
+    Given I go to exporter homepage and choose Test Org
     When I click on apply for a license button
     And I click on start button
     And I enter in name for application and continue
@@ -42,7 +42,7 @@ Feature: I want to indicate the standard licence I want
 
   @LT_1091_external
   Scenario: Submit standard application with external locations
-    Given I go to exporter homepage
+    Given I go to exporter homepage and choose Test Org
     When I click on apply for a license button
     And I click on start button
     And I enter in name for application and continue
@@ -69,7 +69,7 @@ Feature: I want to indicate the standard licence I want
 
   @LT_1042_happy_path
   Scenario: Apply for a licence with ultimate end users
-    Given I go to exporter homepage
+    Given I go to exporter homepage and choose Test Org
     When I click on apply for a license button
     And I click on start button
     And I enter in name for application and continue
@@ -97,7 +97,7 @@ Feature: I want to indicate the standard licence I want
 
   @LT_1091_no_fields
   Scenario: Error messages when not adding fields to applications
-    Given I go to exporter homepage
+    Given I go to exporter homepage and choose Test Org
     When I click on apply for a license button
     And I click on start button
     And I click continue
@@ -115,9 +115,9 @@ Feature: I want to indicate the standard licence I want
     And I delete the application
     Then I see the homepage
 
-  @LT-_1091_external_validation
+  @LT_1091_external_validation
   Scenario: Error messages with external empty validation
-    Given I go to exporter homepage
+    Given I go to exporter homepage and choose Test Org
     When I click on apply for a license button
     And I click on start button
     And I enter in name for application and continue
@@ -132,7 +132,7 @@ Feature: I want to indicate the standard licence I want
 
   @LT_1091_end_user_validation
   Scenario: Error messages with end user empty validation
-    Given I go to exporter homepage
+    Given I go to exporter homepage and choose Test Org
     When I click on apply for a license button
     And I click on start button
     And I enter in name for application and continue
@@ -157,7 +157,7 @@ Feature: I want to indicate the standard licence I want
 
   @LT_1042_unhappy_path
   Scenario: Apply for a licence with ultimate end users error message
-    Given I go to exporter homepage
+    Given I go to exporter homepage and choose Test Org
     When I click on apply for a license button
     And I click on start button
     And I enter in name for application and continue
@@ -171,7 +171,7 @@ Feature: I want to indicate the standard licence I want
 
   @LT_1114_error_when_no_goods_or_sites
   Scenario: Apply for a licence with goods and sites error message
-    Given I go to exporter homepage
+    Given I go to exporter homepage and choose Test Org
     When I click on apply for a license button
     And I click on start button
     And I enter in name for application and continue
@@ -183,7 +183,7 @@ Feature: I want to indicate the standard licence I want
 
   @LT_928_error_message
   Scenario: Error message for empty quantities.
-    Given I go to exporter homepage
+    Given I go to exporter homepage and choose Test Org
     When I click on apply for a license button
     And I click on start button
     And I enter in name for application and continue

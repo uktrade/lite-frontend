@@ -48,10 +48,7 @@ def new_sites_info(driver, edited, address, postcode, city, region, country, con
 
 @then('I see sites list')
 def i_see_sites_list(driver, context):
-    assert Shared(driver).get_text_of_h2() == 'Sites', \
-        'Failed to return to Sites list page after Adding site'
-    assert context.new_site_name in Shared(driver).get_text_of_gov_table()
-
+    assert context.new_site_name in Shared(driver).get_text_of_gov_table(), 'Failed to return to Sites list page after Adding site'
 
 @when('I click last edit button')
 def click_new_site(driver):

@@ -1,5 +1,4 @@
 from pytest_bdd import scenarios, when, then, parsers
-from selenium.webdriver.common.by import By
 
 import helpers.helpers as utils
 from pages.add_end_user_pages import AddEndUserPages

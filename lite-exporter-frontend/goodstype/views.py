@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
+from lite_forms.generators import form_page
 
 from goodstype import forms
 from goodstype.services import post_goods_type, get_goods_type
-from libraries.forms.generators import form_page
 
 
 class GoodsType(TemplateView):

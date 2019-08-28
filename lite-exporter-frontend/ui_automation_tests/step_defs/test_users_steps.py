@@ -1,23 +1,17 @@
 import datetime
 import logging
-
 from pytest_bdd import scenarios, when, then
 from selenium.webdriver.common.by import By
 
 from conf.settings import env
 from pages.exporter_hub_page import ExporterHubPage
 import helpers.helpers as utils
+from pages.shared import Shared
 
 log = logging.getLogger()
 console = logging.StreamHandler()
 log.addHandler(console)
 scenarios('../features/users.feature', strict_gherkin=False)
-
-
-@when('I click on the users link')
-def click_users_link(driver):
-    exporter_hub = ExporterHubPage(driver)
-    exporter_hub.click_users()
 
 
 @when('I add the second test user')
@@ -75,11 +69,24 @@ def add_user(driver, context, exporter_sso_login_info):
     exporter_hub.click_save_and_continue()
 
 
+@when('I add self')
+def add_self(driver, exporter_sso_login_info):
+    exporter_hub = ExporterHubPage(driver)
+
+    # I want to add a user # I should have an option to manage users
+    exporter_hub.click_users()
+    exporter_hub.click_add_a_user_btn()
+    exporter_hub.enter_first_name('first_name')
+    exporter_hub.enter_last_name('last_name')
+    exporter_hub.enter_add_user_email(exporter_sso_login_info["email"])
+
+    # When I Save
+    exporter_hub.click_save_and_continue()
+
+
 @then('user is added')
 def user_is_added(driver, context):
     # Then I return to "Manage users" # And I can see the original list of users
-    assert driver.find_element_by_tag_name("h1").text == "Users", \
-        "Failed to return to Users list page after Adding user"
     elements = driver.find_elements_by_css_selector(".govuk-table__row")
     no = utils.get_element_index_by_text(elements, context.email_to_search)
     assert 'Active' in elements[no].text
@@ -90,7 +97,6 @@ def user_is_edited(driver, exporter_url, context, exporter_sso_login_info):
     user_id = datetime.datetime.now().strftime("%d%m%H%M")
     exporter_hub = ExporterHubPage(driver)
 
-    full_name = "Test user_2"
     email = context.email_to_search
 
     email_edited = "testuser_2_edited" + user_id+ "@mail.com"
@@ -98,7 +104,9 @@ def user_is_edited(driver, exporter_url, context, exporter_sso_login_info):
     exporter_hub.click_users()
 
     # I should have the option to deactivate an active user # edit link, and link from user name
-    exporter_hub.click_edit_for_user(email)
+    elements = Shared(driver).get_table_rows()
+    no = utils.get_element_index_by_partial_text(Shared(driver).get_table_rows(), email)
+    elements[no].find_element_by_link_text('Edit').click()
     exporter_hub.enter_add_user_email(email_edited)
     exporter_hub.enter_first_name("Test_edited")
     exporter_hub.enter_last_name("user_2_edited")

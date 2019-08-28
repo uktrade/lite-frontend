@@ -1,8 +1,8 @@
 from django.urls import reverse
+from lite_forms.components import Form, TextArea, RadioButtons, Option, BackLink, FileUpload, TextInput
 
 from conf.settings import env
 from core.builtins.custom_tags import get_string
-from libraries.forms.components import Form, Question, Option, InputType, Group, RadioButtons, FileUpload, BackLink, TextArea
 
 add_goods_questions = Form(title='Add Good', description='', caption='', questions=[
     TextArea(title='Description of good',
@@ -25,10 +25,9 @@ add_goods_questions = Form(title='Add Good', description='', caption='', questio
                             value='I don\'t know')
                  ],
                  classes=['govuk-radios--inline']),
-    Question(title='What\'s your good\'s control rating?',
-             description='<noscript>If your good is controlled, enter its control rating. </noscript>For example, ML1a.',
-             input_type=InputType.INPUT,
-             name='control_code'),
+    TextInput(title='What\'s your good\'s control rating?',
+              description='<noscript>If your good is controlled, enter its control rating. </noscript>For example, ML1a.',
+              name='control_code'),
     RadioButtons(title='Is your good intended to be incorporated into an end product?',
                  description='',
                  name='is_good_end_product',
@@ -39,11 +38,9 @@ add_goods_questions = Form(title='Add Good', description='', caption='', questio
                             value='No')
                  ],
                  classes=['govuk-radios--inline']),
-    Question(title='Part Number',
-             description='',
-             input_type=InputType.INPUT,
-             name='part_number',
-             optional=True),
+    TextInput(title='Part Number',
+              name='part_number',
+              optional=True),
 ])
 
 
@@ -51,10 +48,9 @@ def are_you_sure(good_id):
     return Form(title=get_string('clc.clc_form.title'),
                 description=get_string('clc.clc_form.description'),
                 questions=[
-                    Question(
+                    TextInput(
                         title='What do you think is your good\'s control rating?',
                         description='<noscript>If your good is controlled, enter its control rating. </noscript>For example, ML1a.',
-                        input_type=InputType.INPUT,
                         optional=True,
                         name='not_sure_details_control_code'),
                     TextArea(
@@ -66,7 +62,8 @@ def are_you_sure(good_id):
                                                            kwargs={'pk': good_id}))
                 )
 
-edit_form = Form(title='Edit Good', description='', caption='', questions=[
+
+edit_form = Form(title='Edit Good', questions=[
     TextArea(title='Description of good',
              description='This can make it easier to find your good later',
              name='description',
@@ -87,10 +84,9 @@ edit_form = Form(title='Edit Good', description='', caption='', questions=[
                             value='I don\'t know')
                  ],
                  classes=['govuk-radios--inline']),
-    Question(title='What\'s your good\'s control rating?',
-             description='<noscript>If your good is controlled, enter its control rating. </noscript>For example, ML1a.',
-             input_type=InputType.INPUT,
-             name='control_code'),
+    TextInput(title='What\'s your good\'s control rating?',
+              description='<noscript>If your good is controlled, enter its control rating. </noscript>For example, ML1a.',
+              name='control_code'),
     RadioButtons(title='Is your good intended to be incorporated into an end product?',
                  description='',
                  name='is_good_end_product',
@@ -101,11 +97,9 @@ edit_form = Form(title='Edit Good', description='', caption='', questions=[
                             value='No')
                  ],
                  classes=['govuk-radios--inline']),
-    Question(title='Part Number',
-             description='',
-             input_type=InputType.INPUT,
-             name='part_number',
-             optional=True),
+    TextInput(title='Part Number',
+              name='part_number',
+              optional=True),
 ])
 
 
@@ -115,7 +109,7 @@ def attach_documents_form(case_url):
                 [
                     FileUpload('documents'),
                     TextArea(title=get_string('goods.documents.attach_documents.description_field_title'),
-                             description=get_string('goods.documents.attach_documents.description_field_details'),
+                             optional=True,
                              name='description',
                              extras={
                                  'max_length': 280,

@@ -1,12 +1,10 @@
 import allure
 import os
-import time
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
 from datetime import datetime
-import logging
 import time
 
 now = datetime.now().isoformat()
@@ -164,3 +162,7 @@ def get_element_index_by_partial_text(elements, text: str):
 
 def split_and_replace_date_time(date):
     return date.split(':')[1].replace('am', '').replace('pm', '')
+
+
+def replace_pm_am_datetime(date):
+    return date.replace('am', '').replace('pm', '')

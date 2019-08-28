@@ -2,7 +2,6 @@ import time
 
 from selenium.webdriver.common.action_chains import ActionChains
 
-
 class ExporterHubPage:
 
     def __init__(self, driver):
@@ -80,13 +79,6 @@ class ExporterHubPage:
     def enter_last_name(self, last_name):
         self.driver.find_element_by_id("last_name").clear()
         self.driver.find_element_by_id("last_name").send_keys(last_name)
-
-    def click_edit_for_user(self, user_name):
-        element = self.driver.find_element_by_xpath("//*[text()[contains(.,'" + user_name + "')]]/following-sibling::td[last()]/a")
-        actions = ActionChains(self.driver)
-        actions.move_to_element(element).perform()
-        time.sleep(1)
-        element.click()
 
     def click_user_name_link(self, user_name):
         element = self.driver.find_element_by_xpath("//*[text()[contains(.,'" + user_name + "')]]")

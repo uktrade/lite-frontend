@@ -39,11 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'sass_processor',
     'django.contrib.humanize',
-    'apply_for_a_licence',
     'core.apps.CoreConfig',
-    'libraries.forms',
     'svg',
     'authbroker_client',
+    'lite_forms'
 ]
 
 MIDDLEWARE = [
@@ -64,9 +63,7 @@ ROOT_URLCONF = 'conf.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates'),
-                 os.path.join(BASE_DIR, 'libraries')]
-        ,
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

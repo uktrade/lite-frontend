@@ -20,7 +20,6 @@ class AddNewExternalLocationFormPage:
 
     def enter_external_location_country(self, country):
         country_tb = self.driver.find_element_by_id("country")
-        country_tb.clear()
         country_tb.send_keys(country)
         self.driver.find_element_by_id("country").send_keys(Keys.RETURN)
 

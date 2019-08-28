@@ -2,6 +2,7 @@ class Hub():
 
     def __init__(self, driver):
         self.driver = driver
+        self.switch_link = "switch-link"  # ID
         self.drafts_btn = "a[href*='/drafts/']"  # CSS
         self.sites_btn = "[href*='/sites/']"  # CSS
         self.application_btn = "a[href*='/applications/']"  # CSS
@@ -45,6 +46,9 @@ class Hub():
     def click_sites_link(self):
         self.driver.find_element_by_css_selector(self.sites_btn).click()
 
+    def click_switch_link(self):
+        self.driver.find_element_by_id(self.switch_link).click()
+
     def get_text_of_application_tile(self):
         return self.driver.find_element_by_css_selector(self.applications_tile).text
 
@@ -53,4 +57,3 @@ class Hub():
             self.applications_tile).text
         total_of_notifications = int((text_of_new_notifications.split('have '))[1].split(' new')[0])
         return total_of_notifications
-

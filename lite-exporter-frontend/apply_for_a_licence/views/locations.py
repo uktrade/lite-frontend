@@ -1,6 +1,8 @@
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
+from lite_forms.generators import form_page
+from lite_forms.submitters import submit_single_form
 
 from apply_for_a_licence.forms.countries import countries_form
 from apply_for_a_licence.forms.location import which_location_form, new_location_form, external_locations_form
@@ -9,8 +11,6 @@ from apply_for_a_licence.helpers import create_persistent_bar
 from core.services import get_sites_on_draft, post_sites_on_draft, post_external_locations, \
     get_external_locations_on_draft, get_external_locations, post_external_locations_on_draft
 from drafts.services import get_draft, get_draft_countries, post_draft_countries
-from libraries.forms.generators import form_page
-from libraries.forms.submitters import submit_single_form
 
 
 class Location(TemplateView):
@@ -85,7 +85,7 @@ class ExternalLocations(TemplateView):
     def get(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
         draft, status_code = get_draft(request, draft_id)
-        org_external_locations, status_code = get_external_locations(request)
+        org_external_locations, status_code = get_external_locations(request, request.user.organisation)
         data, status_code = get_external_locations_on_draft(request, draft_id)
 
         context = {
@@ -111,7 +111,8 @@ class AddExternalLocation(TemplateView):
 
     def post(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
-        response, response_data = submit_single_form(request, new_location_form(), post_external_locations)
+        response, response_data = submit_single_form(request, new_location_form(), post_external_locations,
+                                                     pk=str(request.user.organisation))
 
         # If there are more forms to go through, continue
         if response:

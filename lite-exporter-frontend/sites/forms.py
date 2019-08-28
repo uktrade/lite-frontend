@@ -1,81 +1,30 @@
 from django.urls import reverse_lazy
+from lite_forms.common import address_questions
+from lite_forms.components import Heading, BackLink, Form, TextInput
+from lite_forms.styles import HeadingStyle
 
 from core.builtins.custom_tags import get_string
 from core.services import get_countries
-from libraries.forms.components import Form, InputType, Question, HeadingStyle, Heading, ArrayQuestion, BackLink
 
 
 def new_site_form():
     return Form(title=get_string('sites.create'),
                 description='',
                 questions=[
-                    Question(title='Name of site',
-                             description='',
-                             input_type=InputType.INPUT,
-                             name='name'),
+                    TextInput(title='Name of site',
+                              name='name'),
                     Heading('Where is the site based?', HeadingStyle.M),
-                    Question(title='Building and street',
-                             description='<span class="govuk-visually-hidden">line 1 of 2</span>',
-                             input_type=InputType.INPUT,
-                             name='address.address_line_1'),
-                    Question(title='',
-                             description='<span class="govuk-visually-hidden">line 2 of 2</span>',
-                             input_type=InputType.INPUT,
-                             name='address.address_line_2'),
-                    Question(title='Town or city',
-                             description='',
-                             input_type=InputType.INPUT,
-                             name='address.city'),
-                    Question(title='County/State',
-                             description='',
-                             input_type=InputType.INPUT,
-                             name='address.region'),
-                    Question(title='Postal Code',
-                             description='',
-                             input_type=InputType.INPUT,
-                             name='address.postcode'),
-                    ArrayQuestion(title='Country',
-                                  description='',
-                                  input_type=InputType.AUTOCOMPLETE,
-                                  name='address.country',
-                                  data=get_countries(None, True)),
+                    *address_questions(get_countries(None, True)),
                 ],
                 back_link=BackLink('Back to Sites', reverse_lazy('sites:sites')))
 
 
 def edit_site_form(title):
     return Form(title=title,
-                description='',
                 questions=[
-                    Question(title='Name of site',
-                             description='',
-                             input_type=InputType.INPUT,
-                             name='name'),
+                    TextInput(title='Name of site',
+                              name='name'),
                     Heading('Where is the site based?', HeadingStyle.M),
-                    Question(title='Building and street',
-                             description='<span class="govuk-visually-hidden">line 1 of 2</span>',
-                             input_type=InputType.INPUT,
-                             name='address.address_line_1'),
-                    Question(title='',
-                             description='<span class="govuk-visually-hidden">line 2 of 2</span>',
-                             input_type=InputType.INPUT,
-                             name='address.address_line_2'),
-                    Question(title='Town or city',
-                             description='',
-                             input_type=InputType.INPUT,
-                             name='address.city'),
-                    Question(title='County/State',
-                             description='',
-                             input_type=InputType.INPUT,
-                             name='address.region'),
-                    Question(title='Postal Code',
-                             description='',
-                             input_type=InputType.INPUT,
-                             name='address.postcode'),
-                    ArrayQuestion(title='Country',
-                                  description='',
-                                  input_type=InputType.AUTOCOMPLETE,
-                                  name='address.country',
-                                  data=get_countries(None, True)),
+                    *address_questions(get_countries(None, True)),
                 ],
                 back_link=BackLink('Back to Sites', reverse_lazy('sites:sites')))

@@ -6,7 +6,7 @@ Feature: I want to search for goods in my goods list to add to an in progress ap
 
   @LT_1159_desc
   Scenario: Search for goods by description
-    Given I go to exporter homepage
+    Given I go to exporter homepage and choose Test Org
     When I click on goods link
     And I click add a good button
     When I add a good or good type with description "Nickel Cadmium" controlled "Yes" control code "1234" incorporated "No" and part number "321"
@@ -25,7 +25,7 @@ Feature: I want to search for goods in my goods list to add to an in progress ap
 
   @LT_1159_part
   Scenario: Search for goods by part number
-    Given I go to exporter homepage
+    Given I go to exporter homepage and choose Test Org
     When I click on goods link
     And I click add a good button
     And I add a good or good type with description "Nickel Cadmium" controlled "Yes" control code "1234" incorporated "No" and part number "999"
@@ -44,7 +44,7 @@ Feature: I want to search for goods in my goods list to add to an in progress ap
 
   @LT_1206_filter_control_rating
   Scenario: Search for goods by control rating
-    Given I go to exporter homepage
+    Given I go to exporter homepage and choose Test Org
     When I click on goods link
     And I click add a good button
     And I add a good or good type with description "Nickel Cadmium" controlled "Yes" control code "1234" incorporated "No" and part number "999"
@@ -63,7 +63,7 @@ Feature: I want to search for goods in my goods list to add to an in progress ap
 
   @LT_1159_remove
   Scenario: Remove filter
-    Given I go to exporter homepage
+    Given I go to exporter homepage and choose Test Org
     When I click on goods link
     And I click add a good button
     And I add a good or good type with description "Nickel Cadmium" controlled "Yes" control code "1234" incorporated "No" and part number "999"

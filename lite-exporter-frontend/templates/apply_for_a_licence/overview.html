@@ -67,11 +67,11 @@
 			</tr>
 			<tr class="govuk-table__row">
 				<th class="govuk-table__header" scope="row">Licence type</th>
-				<td class="govuk-table__cell">{{ draft.licence_type }}</td>
+				<td class="govuk-table__cell">{{ draft.licence_type.value }}</td>
 			</tr>
 			<tr class="govuk-table__row">
 				<th class="govuk-table__header" scope="row">Export type</th>
-				<td class="govuk-table__cell">{{ draft.export_type }}</td>
+				<td class="govuk-table__cell">{{ draft.export_type.value }}</td>
 			</tr>
 			{% if draft.reference_number_on_information_form %}
 			<tr class="govuk-table__row">
@@ -90,7 +90,7 @@
 <div class="lite-section {% if errors|key_value:'goods' %}govuk-form-group--error{% endif %}">
 	<div class="lite-section-header">
 		<div>
-            {% if draft.licence_type == 'open_licence' %}
+            {% if draft.licence_type.key == 'open_licence' %}
                 <a id="goods" href="{% url 'apply_for_a_licence:open_goods' draft.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
                 {% get_string 'good_types.overview.title' %}
                 </a>
@@ -101,11 +101,11 @@
             {% endif %}
 		</div>
 		{% if goods|length or goodstypes|length %}
-			<div class="lite-info-label lite-info-label--blue">
+			<div class="lite-tag lite-tag--small lite-tag--blue">
 				Done
 			</div>
 		{% else %}
-			<div class="lite-info-label">
+			<div class="lite-tag lite-tag--small">
 				Not Started
 			</div>
 		{% endif %}
@@ -115,7 +115,7 @@
 			{{ errors|key_value:'goods' }}
 		</p>
 	{% endif %}
-    {% if draft.licence_type == 'standard_licence' and goods %}
+    {% if draft.licence_type.key == 'standard_licence' and goods %}
 		<table class="govuk-table">
 			<tbody class="govuk-table__body">
 				<tr class="govuk-table__row">
@@ -130,17 +130,17 @@
 						<td class="govuk-table__cell" scope="row">{{ good.good.description }}</td>
                         <td class="govuk-table__cell" scope="row">{{ good.good.part_number }}</td>
                         <td class="govuk-table__cell" scope="row">{{ good.quantity }}</td>
-                        <td class="govuk-table__cell" scope="row">{{ good.unit }}</td>
+                        <td class="govuk-table__cell" scope="row">{{ good.unit.value }}</td>
                         <td class="govuk-table__cell" scope="row">£{{ good.value }}</td>
 					</tr>
 				{% endfor %}
 			</tbody>
 		</table>
-    {% elif draft.licence_type == 'standard_licence' and not goods %}
+    {% elif draft.licence_type.key == 'standard_licence' and not goods %}
 		<p class="govuk-caption-m">Add goods to your application</p>
 	{% endif %}
 
-	{% if draft.licence_type == 'open_licence' and goodstypes %}
+	{% if draft.licence_type.key == 'open_licence' and goodstypes %}
 		<table id="good_types_table_overview" class="govuk-table">
 			<tbody class="govuk-table__body">
 				<tr class="govuk-table__row">
@@ -160,7 +160,7 @@
 				{% endfor %}
 			</tbody>
 		</table>
-    {% elif draft.licence_type == 'open_licence' and not goodstypes %}
+    {% elif draft.licence_type.key == 'open_licence' and not goodstypes %}
 		<p class="govuk-caption-m">{% get_string 'good_types.overview.no_good_types' %}</p>
     {% endif %}
 
@@ -175,11 +175,11 @@
 			</a>
 		</div>
 		{% if sites or external_locations %}
-			<div class="lite-info-label lite-info-label--blue">
+			<div class="lite-tag lite-tag--small lite-tag--blue">
 				Done
 			</div>
 		{% else %}
-			<div class="lite-info-label">
+			<div class="lite-tag lite-tag--small">
 				Not Started
 			</div>
 		{% endif %}
@@ -207,7 +207,7 @@
 							{% endif %}
 							{{ site.address.city }}<br/>
 							{{ site.address.postcode }}<br/>
-							{{ site.address.country }}
+							{{ site.address.country.name }}
 						</td>
 					</tr>
 				{% endfor %}
@@ -233,7 +233,7 @@
 	{% endif %}
 </div>
 
-{% if draft.licence_type == 'open_licence' %}
+{% if draft.licence_type.key == 'open_licence' %}
 <div class="lite-section {% if errors|key_value:'countries' %}govuk-form-group--error{% endif %}">
 	<div class="lite-section-header">
 		<div>
@@ -242,11 +242,11 @@
 			</a>
 		</div>
 		{% if countries %}
-			<div class="lite-info-label lite-info-label--blue">
+			<div class="lite-tag lite-tag--small lite-tag--blue">
 				Done
 			</div>
 		{% else %}
-			<div class="lite-info-label">
+			<div class="lite-tag lite-tag--small">
 				Not Started
 			</div>
 		{% endif %}
@@ -273,7 +273,7 @@
 </div>
 {% endif %}
 
-{% if draft.licence_type == 'standard_licence' %}
+{% if draft.licence_type.key == 'standard_licence' %}
 <div class="lite-section {% if errors|key_value:'end_user' %}govuk-form-group--error{% endif %}">
 	<div class="lite-section-header">
 		<div>
@@ -283,11 +283,11 @@
 		</div>
 
 		{% if draft.end_user %}
-			<div class="lite-info-label lite-info-label--blue">
+			<div class="lite-tag lite-tag--small lite-tag--blue">
 				Done
 			</div>
 		{% else %}
-			<div class="lite-info-label">
+			<div class="lite-tag lite-tag--small">
 				Not Started
 			</div>
 		{% endif %}
@@ -326,7 +326,7 @@
 </div>
 {% endif %}
 
-{% if draft.licence_type == 'standard_licence' and ultimate_end_users_required %}
+{% if draft.licence_type.key == 'standard_licence' and ultimate_end_users_required %}
 <div class="lite-section {% if errors|key_value:'ultimate_end_users' %}govuk-form-group--error{% endif %}">
 	<div class="lite-section-header">
 		<div>
@@ -336,11 +336,11 @@
 		</div>
 
 		{% if ultimate_end_users %}
-			<div class="lite-info-label lite-info-label--blue">
+			<div class="lite-tag lite-tag--small lite-tag--blue">
 				Done
 			</div>
 		{% else %}
-			<div class="lite-info-label">
+			<div class="lite-tag lite-tag--small">
 				Not Started
 			</div>
 		{% endif %}

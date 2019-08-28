@@ -4,6 +4,3 @@
 [submodule "assets/shared"]
 	path = assets/shared
 	url = git@github.com:uktrade/lite-shared-assets.git
-[submodule "libraries/forms"]
-	path = libraries/forms
-	url = git@github.com:uktrade/lite-forms.git

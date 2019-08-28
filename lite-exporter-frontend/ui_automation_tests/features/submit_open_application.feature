@@ -6,7 +6,7 @@ Feature: I want to indicate the open licence I want
 
   @LT_1091_draft
   Scenario: Apply for a licence to draft and delete
-    Given I go to exporter homepage
+    Given I go to exporter homepage and choose Test Org
     When I click on apply for a license button
     And I click on start button
     And I enter in name for application and continue
@@ -18,7 +18,7 @@ Feature: I want to indicate the open licence I want
 
   @LT_1114
   Scenario: Submit open application
-    Given I go to exporter homepage
+    Given I go to exporter homepage and choose Test Org
     When I click on apply for a license button
     And I click on start button
     And I enter in name for application and continue
@@ -63,7 +63,7 @@ Feature: I want to indicate the open licence I want
 
   @LT_1092_search
   Scenario: Search for countries
-    Given I go to exporter homepage
+    Given I go to exporter homepage and choose Test Org
     When I go to exporter homepage
     And I click on apply for a license button
     And I click on start button
@@ -77,7 +77,7 @@ Feature: I want to indicate the open licence I want
 
   @LT_1092_error
   Scenario: Error message when not adding countries
-    Given I go to exporter homepage
+    Given I go to exporter homepage and choose Test Org
     When I click on goods link
     And I click add a good button
     And I add a good or good type with description "AK47" controlled "Yes" control code "1234" incorporated "No" and part number "321"
@@ -94,7 +94,7 @@ Feature: I want to indicate the open licence I want
 
   @LT_1114_error
   Scenario: Error message when not adding goods and sites information for open application
-    Given I go to exporter homepage
+    Given I go to exporter homepage and choose Test Org
     When I click on apply for a license button
     And I click on start button
     And I enter in name for application and continue

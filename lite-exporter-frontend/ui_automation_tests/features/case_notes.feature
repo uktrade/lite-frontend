@@ -6,7 +6,7 @@ Feature: I want to add a note to an application and view notes
 
   @LT_1119_add
   Scenario: Add a new valid case note
-    Given I go to exporter homepage
+    Given I go to exporter homepage and choose Test Org
     And an application exists
     When I click on applications
     And I click on application previously created
@@ -16,7 +16,7 @@ Feature: I want to add a note to an application and view notes
 
   @LT_1119_max
   Scenario: Add a case note filled to max with space characters
-    Given I go to exporter homepage
+    Given I go to exporter homepage and choose Test Org
     And an application exists
     When I click on applications
     And I click on application previously created
@@ -26,7 +26,7 @@ Feature: I want to add a note to an application and view notes
 
   @LT_1119_too_many
   Scenario: Add a case note with too many characters
-    Given I go to exporter homepage
+    Given I go to exporter homepage and choose Test Org
     And an application exists
     When I click on applications
     And I click on application previously created
@@ -38,7 +38,7 @@ Feature: I want to add a note to an application and view notes
 
   @LT_1119_cancel
   Scenario: Case note cancel button
-    Given I go to exporter homepage
+    Given I go to exporter homepage and choose Test Org
     And an application exists
     When I click on applications
     And I click on application previously created

@@ -4,7 +4,7 @@
 
 <head>
 	<meta charset="utf-8" />
-	<title>{{ title }} - {% get_string 'common.service_name' %}</title>
+	<title>{{ title }} - {% get_string 'common.service_name' %} - GOV.UK</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 	<meta name="theme-color" content="#0b0c0c" />
 
@@ -65,19 +65,19 @@
 				</a>
 			</div>
 
-			{% if user.is_authenticated %}
-				<div id="lite-user-menu">
+            {% if user.is_authenticated %}
+                <div id="lite-user-menu">
+                    <a href="{% url 'authbroker_client:logout' %}" class="lite-user-menu-button">Log out</a>
+                    <div class="lite-user-menu-divider"></div>
 
-					<div class="lite-user-menu-divider" style="opacity: 0;"></div>
-
-					<a class="lite-user-menu-button" href="{% url 'users:profile' %}">
-						{{ user.first_name }}
-						<div class="lite-user-menu-button--user">
-							{% svg 'user' %}
-						</div>
-					</a>
-				</div>
-			{% endif %}
+                    <a class="lite-user-menu-button" href="{% url 'users:profile' %}">
+                        {{ user.first_name }}
+                        <div class="lite-user-menu-button--user">
+                            {% svg 'user' %}
+                        </div>
+                    </a>
+                </div>
+            {% endif %}
 		</div>
 	</header>
 	{% endblock %}

@@ -45,6 +45,7 @@ class User(AbstractUser):
     last_name = models.CharField(max_length=150, blank=True, default=None, null=True)
     user_token = models.TextField(default=None, blank=True, null=True)
     lite_api_user_id = models.TextField(default=None, blank=True, null=True)
+    organisation = models.UUIDField(default=uuid.uuid4)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

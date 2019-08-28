@@ -1,17 +1,16 @@
-from authbroker_client.utils import get_client, AUTHORISATION_URL, TOKEN_URL, \
-    TOKEN_SESSION_KEY, get_profile
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseBadRequest, HttpResponseServerError
 from django.shortcuts import redirect
 from django.views.generic.base import RedirectView, View, TemplateView
+from lite_forms.generators import error_page
 from raven.contrib.django.raven_compat.models import client
 
 from auth.services import authenticate_exporter_user
-from conf.settings import env
+from authbroker_client.utils import get_client, AUTHORISATION_URL, TOKEN_URL, \
+    TOKEN_SESSION_KEY, get_profile
 from core.builtins.custom_tags import get_string
-from core.models import User
-from libraries.forms.generators import error_page
+from users.services import get_user
 
 
 class AuthView(RedirectView):
@@ -71,23 +70,34 @@ class AuthCallbackView(View):
                               description=get_string('authentication.user_does_not_exist.description'),
                               show_back_link=False)
 
-        # create the user
+        # Create the user in the session
         user = authenticate(request)
         user.user_token = response['token']
         user.first_name = response['first_name']
         user.last_name = response['last_name']
         user.lite_api_user_id = response['lite_api_user_id']
         user.save()
+
         if user is not None:
             login(request, user)
+
+            user_dict, _ = get_user(request)
+
+            if len(user_dict['user']['organisations']) == 0:
+                return error_page(request, 'You don\'t belong to any organisations', show_back_link=False)
+            elif len(user_dict['user']['organisations']) > 1:
+                return redirect('core:pick_organisation')
+            else:
+                user.organisation = user_dict['user']['organisations'][0]['id']
+                user.save()
 
         return redirect(getattr(settings, 'LOGIN_REDIRECT_URL', '/'))
 
 
 class AuthLogoutView(TemplateView):
     def get(self, request, **kwargs):
-        User.objects.get(id=request.user.id).delete()
+        request.user.delete()
         logout(request)
-        return redirect(env("AUTHBROKER_URL") + '/logout/')
+        return redirect('/')
 
 

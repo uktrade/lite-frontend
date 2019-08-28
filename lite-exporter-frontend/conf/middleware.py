@@ -1,9 +1,9 @@
 from django.shortcuts import redirect
 from django.urls import resolve
+from lite_forms.generators import error_page
 from s3chunkuploader.file_handler import UploadFailed
 
 from core.builtins.custom_tags import get_string
-from libraries.forms.generators import error_page
 
 
 class ProtectAllViewsMiddleware:

@@ -5,7 +5,7 @@ from pytest_bdd import given, when, then, parsers
 from selenium.webdriver.common.by import By
 
 from fixtures.core import context, driver, invalid_username, exporter_sso_login_info, s3_key
-from fixtures.register_organisation import register_organisation
+from fixtures.register_organisation import register_organisation, register_organisation_for_switching_organisation
 from fixtures.add_goods import add_a_good, add_an_incorporated_good_to_application, add_a_non_incorporated_good_to_application, create_non_incorporated_good
 from fixtures.add_an_application import add_an_application
 from fixtures.sso_sign_in import sso_sign_in
@@ -82,9 +82,15 @@ def last_name(request):
     return request.config.getoption("--last_name")
 
 
-@given('I go to exporter homepage')
-def go_to_exporter(driver, sso_sign_in, exporter_url, register_organisation):
-    driver.get(exporter_url)
+@given('I go to exporter homepage and choose Test Org')
+def go_to_exporter(driver, register_organisation, sso_sign_in, exporter_url, context):
+    if 'pick-organisation' in driver.current_url:
+        Shared(driver).click_on_radio_buttons(0)
+        Shared(driver).click_continue()
+    elif Shared(driver).get_text_of_heading() != context.org_name:
+        Hub(driver).click_switch_link()
+        Shared(driver).click_on_radio_buttons(0)
+        Shared(driver).click_continue()
 
 
 @when('I go to exporter homepage')
@@ -94,14 +100,12 @@ def go_to_exporter_when(driver, exporter_url):
 
 @when('I click on apply for a license button')
 def click_apply_licence(driver):
-    exporter = ExporterHubPage(driver)
-    exporter.click_apply_for_a_licence()
+    ExporterHubPage(driver).click_apply_for_a_licence()
 
 
 @when('I click on start button')
 def click_start_button(driver):
-    apply = ApplyForALicencePage(driver)
-    apply.click_start_now_btn()
+    ApplyForALicencePage(driver).click_start_now_btn()
 
 
 @when('I enter in name for application and continue')
@@ -309,7 +313,7 @@ def application_is_submitted(driver, context):
     element_number = utils.get_element_index_by_text(elements, context.app_time_id)
     element_row = elements[element_number].text
     assert "Submitted" in element_row
-    assert context.time_date_submitted.split(":")[1] in element_row
+    assert utils.split_and_replace_date_time(context.time_date_submitted) in utils.replace_pm_am_datetime(element_row)
     assert "0 Goods" or "1 Good" or "2 Goods" in element_row
     assert driver.find_element_by_xpath("// th[text()[contains(., 'Status')]]").is_displayed()
     assert driver.find_element_by_xpath("// th[text()[contains(., 'Last updated')]]").is_displayed()
@@ -319,22 +323,18 @@ def application_is_submitted(driver, context):
 
 @then('I see the application overview')
 def i_see_the_application_overview(driver, context):
-    time_date_submitted = datetime.datetime.now().strftime("%I:%M%p").lstrip("0").replace(" 0", " ").lower() + datetime.datetime.now().strftime(" %d %B %Y")
-    apply = ApplyForALicencePage(driver)
-
     element = driver.find_element_by_css_selector(".govuk-table").text
-
     assert "Name" in element
     assert "Licence type" in element
     assert "Export type" in element
     assert "Reference Number" in element
     assert "Created at" in element
-    assert context.type + "_licence" in element
-    assert context.perm_or_temp in element
+    assert context.type.capitalize() + " Licence" in element
+    assert context.perm_or_temp.capitalize() in element
     assert context.ref in element
 
     # This can break if the minute changes between the five lines of code
-    assert datetime.datetime.now().strftime("%M%p %d %B %Y").lower() in element.lower()
+    assert utils.replace_pm_am_datetime(datetime.datetime.now().strftime("%M%p %d %B %Y").lower()) in utils.replace_pm_am_datetime(element.lower())
 
     app_id = driver.current_url[-36:]
     context.app_id = app_id
@@ -359,3 +359,9 @@ def submit_the_application(driver, context):
     apply.click_submit_application()
     assert apply.get_text_of_success_message() == "Application submitted"
     context.time_date_submitted = datetime.datetime.now().strftime("%I:%M%p").lstrip("0").replace(" 0", " ").lower() + datetime.datetime.now().strftime(" %d %B %Y")
+
+
+@when('I click on the manage my organisation link')
+def click_users_link(driver):
+    exporter_hub = ExporterHubPage(driver)
+    exporter_hub.click_users()

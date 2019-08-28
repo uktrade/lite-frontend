@@ -1,10 +1,11 @@
+from lite_forms.components import Option
+
 from conf.client import get, post, put
-from conf.constants import SITES_URL
-from libraries.forms.components import Option
+from conf.constants import SITES_URL, ORGANISATIONS_URL
 
 
-def get_sites(request, formatted=False):
-    data = get(request, SITES_URL)
+def get_sites(request, organisation_id, formatted=False):
+    data = get(request, ORGANISATIONS_URL + str(organisation_id) + SITES_URL)
 
     if formatted:
         sites_options = []
@@ -27,16 +28,16 @@ def get_sites(request, formatted=False):
     return data.json(), data.status_code
 
 
-def get_site(request, pk):
-    data = get(request, SITES_URL + pk)
+def get_site(request, organisation_id, pk):
+    data = get(request, ORGANISATIONS_URL + organisation_id + SITES_URL + pk)
     return data.json(), data.status_code
 
 
-def put_site(request, pk, json):
-    data = put(request, SITES_URL + pk + '/', json=json)
+def put_site(request, organisation_id, pk, json):
+    data = put(request, ORGANISATIONS_URL + organisation_id + SITES_URL + pk + '/', json=json)
     return data.json(), data.status_code
 
 
-def post_sites(request, json):
-    data = post(request, SITES_URL, json)
+def post_sites(request, organisation_id, json):
+    data = post(request, ORGANISATIONS_URL + organisation_id + SITES_URL, json)
     return data.json(), data.status_code

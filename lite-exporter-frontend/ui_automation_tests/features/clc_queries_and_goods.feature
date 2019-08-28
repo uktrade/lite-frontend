@@ -6,7 +6,7 @@ Feature: I want to edit and remove goods on the goods list
 
     @LT_928_edit
     Scenario: Edit and delete good
-        Given I go to exporter homepage
+        Given I go to exporter homepage and choose Test Org
         When I click on goods link
         And I click add a good button
         And I add a good or good type with description "123 pistol" controlled "Yes" control code "1234" incorporated "No" and part number "321"
@@ -18,7 +18,7 @@ Feature: I want to edit and remove goods on the goods list
 
     @LT_1006_add_clc_query_good
     Scenario: Add "I don't know" good
-        Given I go to exporter homepage
+        Given I go to exporter homepage and choose Test Org
         When I click on goods link
         And I click add a good button
         And I add a good or good type with description "Hand pistol" controlled "Unsure" control code " " incorporated "No" and part number "321"
@@ -28,7 +28,7 @@ Feature: I want to edit and remove goods on the goods list
 
     @LT_1142_add_a_document
     Scenario: Add a document
-        Given I go to exporter homepage
+        Given I go to exporter homepage and choose Test Org
         When I click on goods link
         And I add a good and attach a document
         Then I see the document has been attached

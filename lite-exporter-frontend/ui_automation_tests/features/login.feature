@@ -6,5 +6,5 @@ Feature:  I want to be able to login to LITE and go to dashboard
 
   @LT_1134_valid
   Scenario: Login with valid credentials
-    Given I go to exporter homepage
-    Then page title equals "Exporter hub - LITE"
+    Given I go to exporter homepage and choose Test Org
+    Then page title equals "Exporter hub - LITE - GOV.UK"
