@@ -144,6 +144,7 @@ class SeedData:
         response = self.make_request("POST", url='/users/authenticate/', body=data)
         self.add_to_context('export_user_token', json.loads(response.text)['token'])
         self.export_headers['exporter-user-token'] = self.context['export_user_token']
+        self.export_headers['organisation-id'] = self.context['org_id']
 
     def setup_org(self):
         organisation = self.find_org_by_name()
