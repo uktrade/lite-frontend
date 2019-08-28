@@ -41,14 +41,16 @@ def submit_paged_form(request: HttpRequest, form_group: FormGroup, post_to, pk=N
         validated_data, status_code = post_to(request, nested_data)
 
     # If the API returns errors, add the existing questions to the reloaded form
-    if remove_unused_errors(validated_data.get('errors'), current_form):
-        errors = validated_data.get('errors')
-
+    errors = remove_unused_errors(validated_data.get('errors'), current_form)
+    if errors:
+        questions_to_add = []
         for question in current_form.questions:
             if hasattr(question, 'name') and errors.get(question.name):
-                current_form.questions.append(HiddenField(question.name, errors.get(question.name)))
+                questions_to_add.append(HiddenField(question.name, errors.get(question.name)))
 
-        return form_page(request, current_form, data=data, errors=validated_data['errors']), validated_data
+        current_form.questions.append(questions_to_add)
+
+        return form_page(request, current_form, data=data, errors=errors), validated_data
 
     # If there aren't any forms left to go through, return the data
     if next_form is None:
