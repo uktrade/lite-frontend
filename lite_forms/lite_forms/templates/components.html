@@ -34,7 +34,7 @@
 			{% include "components/text_input.html" with name=question.name value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
 		{% elif question.input_type == "filter" %}
 			{% include "components/filter.html" with placeholder=question.placeholder %}
-		{% elif question.input_type == "currency" %}
+		{% elif question.input_type == "currency_input" %}
 			{% include "components/currency.html" with name=question.name value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
 		{% elif question.input_type == "textarea" %}
 			{% include "components/textarea.html" with name=question.name extras=question.extras value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
@@ -52,7 +52,7 @@
 			{% include "components/file_upload.html" with name=question.name value=question.name %}
 		{% elif question.input_type == "multi_file_upload" %}
 			{% include "components/multi_file_upload.html" with component=question data=data|key_value:question.name %}
-		{% elif question.input_type == "password" %}
+		{% elif question.input_type == "password_input" %}
 	        {% include "components/password.html" with name=question.name value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
 		{% elif question.input_type == "quantity_input" %}
 			{% include "components/quantity.html" with name=question.name value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}

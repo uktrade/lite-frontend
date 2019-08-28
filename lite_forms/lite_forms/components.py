@@ -120,6 +120,50 @@ class TextInput(_Component):
         self.input_type = 'text_input'
 
 
+class NumberInput(_Component):
+    def __init__(self,
+                 name: str,
+                 title: str = '',
+                 description: str = '',
+                 optional: bool = False,
+                 classes: [] = None):
+        super().__init__(name, title, description, optional, classes)
+        self.input_type = 'number_input'
+
+
+class QuantityInput(_Component):
+    def __init__(self,
+                 name: str,
+                 title: str = '',
+                 description: str = '',
+                 optional: bool = False,
+                 classes: [] = None):
+        super().__init__(name, title, description, optional, classes)
+        self.input_type = 'quantity_input'
+
+
+class PasswordInput(_Component):
+    def __init__(self,
+                 name: str,
+                 title: str = '',
+                 description: str = '',
+                 optional: bool = False,
+                 classes: [] = None):
+        super().__init__(name, title, description, optional, classes)
+        self.input_type = 'password_input'
+
+
+class CurrencyInput(_Component):
+    def __init__(self,
+                 name: str,
+                 title: str = '',
+                 description: str = '',
+                 optional: bool = False,
+                 classes: [] = None):
+        super().__init__(name, title, description, optional, classes)
+        self.input_type = 'currency_input'
+
+
 class Checkboxes(_Component):
     """
     Displays checkboxes on the page
