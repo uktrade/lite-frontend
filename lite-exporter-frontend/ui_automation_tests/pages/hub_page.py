@@ -55,5 +55,8 @@ class Hub():
     def return_number_of_notifications(self):
         text_of_new_notifications = self.driver.find_element_by_css_selector(
             self.applications_tile).text
-        total_of_notifications = int((text_of_new_notifications.split('have '))[1].split(' new')[0])
+        if 'You have' in text_of_new_notifications:
+            total_of_notifications = int((text_of_new_notifications.split('have '))[1].split(' new')[0])
+        else:
+            total_of_notifications = 0
         return total_of_notifications

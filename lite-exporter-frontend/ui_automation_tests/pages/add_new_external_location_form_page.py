@@ -21,7 +21,6 @@ class AddNewExternalLocationFormPage:
     def enter_external_location_country(self, country):
         country_tb = self.driver.find_element_by_id("country")
         country_tb.send_keys(country)
-        self.driver.find_element_by_id("country").send_keys(Keys.RETURN)
 
     def click_save_and_continue(self):
         self.driver.find_element_by_css_selector(self.submit_button).click()
