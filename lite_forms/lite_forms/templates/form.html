@@ -84,7 +84,7 @@
 			<div class="lite-buttons-row">
 				{% for button in page.buttons %}
 					{% if button.link %}
-						<a href="{{ button.link }}" role="button" draggable="false" data-module="govuk-button" class="{{ button.style.value }}" {% if button.float_right %}style="float: right;"{% endif %}>{{ button.value }}</a>
+						<a href="{{ button.link }}" role="button" draggable="false" data-module="govuk-button" class="{{ button.style }}" {% if button.float_right %}style="float: right;"{% endif %}>{{ button.value }}</a>
 					{% else %}
 						<button type="submit" class="{{ button.style }}" {% if button.float_right %}style="float: right;"{% endif %} action="submit">{{ button.value }}</button>
 					{% endif %}
