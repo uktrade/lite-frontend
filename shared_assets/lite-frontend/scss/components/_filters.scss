@@ -1,5 +1,5 @@
-$highlight-background-colour: #fff2d3;
-$highlight-border-colour: #ffbf47;
+$highlight-background-colour: #FFF2D3;
+$highlight-border-colour: #FFBF47;
 
 .lite-filters {
 	position: -webkit-sticky;
@@ -14,7 +14,7 @@ $highlight-border-colour: #ffbf47;
 	margin-bottom: govuk-spacing(6);
 
 	.govuk-button--secondary {
-		background-color: white;
+		background-color: govuk-colour("white");
 
 		&:hover {
 			background-color: darken(govuk-colour("light-grey"), 5%);

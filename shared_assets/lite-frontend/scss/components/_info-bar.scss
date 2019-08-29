@@ -1,16 +1,12 @@
 .lite-info-bar {
 	@include govuk-font($size: 19, $weight: bold);
-
 	box-sizing: border-box;
 	padding: govuk-spacing(4);
 	margin-top: - govuk-spacing(4);
 	margin-bottom: govuk-spacing(6);
-
 	background: $govuk-brand-colour;
 	color: govuk-colour("white");
-
 	line-height: 30px!important;
-
 	padding-left: 30px + govuk-spacing(4) + govuk-spacing(4);
 
 	&::before {
@@ -38,26 +34,21 @@
 		}
 
 		&::after {
-		  content: "";
-
-		  position: absolute;
-		  top: 30px;
-		  left: 27px;
-		  width: 13px;
-		  height: 4px;
-
-		  -webkit-transform: rotate(-45deg);
-
-			  -ms-transform: rotate(-45deg);
-
-				  transform: rotate(-45deg);
-		  border: solid;
-		  border-width: 0 0 4px 4px;
-		  // Fix bug in IE11 caused by transform rotate (-45deg).
-		  // See: alphagov/govuk_elements/issues/518
-		  border-top-color: transparent;
-
-		  border-color: govuk-colour("green");
+			content: "";
+			position: absolute;
+			top: 30px;
+			left: 27px;
+			width: 13px;
+			height: 4px;
+			-webkit-transform: rotate(-45deg);
+			-ms-transform: rotate(-45deg);
+			transform: rotate(-45deg);
+			border: solid;
+			border-width: 0 0 4px 4px;
+			// Fix bug in IE11 caused by transform rotate (-45deg).
+			// See: alphagov/govuk_elements/issues/518
+			border-top-color: transparent;
+			border-color: govuk-colour("green");
 		}
 	}
 
@@ -80,13 +71,11 @@
 			color: govuk-colour("red");
 		}
 	}
-
 	animation-name: lite-info-bar-animation;
 	animation-duration: 0.3s;
 	animation-fill-mode: both;
 	transform-origin: 50% 0;
 }
-
 @keyframes lite-info-bar-animation {
 	0% {
 		opacity: 0;
@@ -103,7 +92,6 @@
 
 .lite-info-bar__close_link {
 	@include govuk-link-common;
-
 	float: right;
 	text-decoration: none;
 	color: currentColor;
@@ -114,6 +102,6 @@
 	}
 
 	&:active {
-		opacity: .5;
+		opacity: 0.5;
 	}
 }

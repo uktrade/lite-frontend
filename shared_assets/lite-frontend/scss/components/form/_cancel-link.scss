@@ -1,8 +1,9 @@
 .lite-cancel-link {
-	position: relative;
 	@include govuk-typography-responsive($size: 16);
 	@include govuk-link-common;
 	@include govuk-link-style-text;
+
+	position: relative;
 	margin-top: govuk-spacing(3);
 	margin-bottom: govuk-spacing(3);
 	text-decoration: none;

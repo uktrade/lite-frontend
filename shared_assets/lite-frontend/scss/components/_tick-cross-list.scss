@@ -6,8 +6,8 @@
 	list-style-type: none;
 
 	li {
-      @include govuk-text-colour;
-      @include govuk-font($size: 19);
+		@include govuk-text-colour;
+		@include govuk-font($size: 19);
 	}
 
 	li:last-of-type .lite-tick-cross {

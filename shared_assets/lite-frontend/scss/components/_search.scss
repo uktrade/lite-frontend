@@ -12,8 +12,7 @@
 		-webkit-appearance: textfield;
 		-moz-appearance: textfield;
 		appearance: textfield;
-		padding: 0 5px;
-		padding-left: 25px;
+		padding: 0 5px 0 25px;
 	}
 
 	.lite-search-icon {
@@ -21,16 +20,18 @@
 		top: 0;
 		left: 0;
 		bottom: 0;
-	    width: 40px;
-	    display: flex;
-	    align-items: center;
-	    justify-content: center;
-	    svg {
-	        max-height: 16px;
+		width: 40px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		svg {
+			max-height: 16px;
+
 			* {
 				fill: $govuk-input-border-colour;
 			}
-	    }
+		}
 	}
 
 	.lite-search-button {
