@@ -11,7 +11,7 @@
     text-overflow: ellipsis;
 }
 
-@mixin fill-pseudo($truncation-boundary) {
+@mixin fill-pseudo() {
 	content: "";
 	position: absolute;
 	top: 0;
