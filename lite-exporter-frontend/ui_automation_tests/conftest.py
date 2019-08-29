@@ -6,7 +6,7 @@ from selenium.webdriver.common.by import By
 
 from fixtures.core import context, driver, invalid_username, exporter_sso_login_info, s3_key
 from fixtures.register_organisation import register_organisation, register_organisation_for_switching_organisation
-from fixtures.add_goods import add_a_good, add_an_incorporated_good_to_application, add_a_non_incorporated_good_to_application, create_non_incorporated_good
+from fixtures.add_goods import add_an_incorporated_good_to_application, add_a_non_incorporated_good_to_application, create_non_incorporated_good
 from fixtures.add_an_application import add_an_application
 from fixtures.sso_sign_in import sso_sign_in
 from fixtures.internal_case_note import internal_case_note
