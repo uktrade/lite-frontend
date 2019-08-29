@@ -5,18 +5,16 @@
 	max-width: 450px;
 	height: 40px;
 
-	input[type="search"] {
+	input[type='search'] {
+		@import appearance('textfield');
 		display: inline-block;
 		width: 100%;
 		border: 2px solid $govuk-input-border-colour;
-		-webkit-appearance: textfield;
-		-moz-appearance: textfield;
-		appearance: textfield;
-		padding: 0 5px 0 25px;
+		padding: 0 5px 0 36px;
 	}
 
-	input[type="search"]::-webkit-search-decoration {
-	    -webkit-appearance: none;
+	input[type='search']::-webkit-search-decoration {
+		-webkit-appearance: none;
 	}
 
 	.lite-search-icon {
