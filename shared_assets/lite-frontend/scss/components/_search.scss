@@ -6,7 +6,7 @@
 	height: 40px;
 
 	input[type='search'] {
-		@import x-appearance(textfield);
+		@include appearance(textfield);
 		display: inline-block;
 		width: 100%;
 		border: 2px solid $govuk-input-border-colour;

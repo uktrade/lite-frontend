@@ -1,4 +1,4 @@
-@mixin x-appearance($appearance) {
+@mixin appearance($appearance) {
 	-webkit-appearance: $appearance;
 	-moz-appearance: $appearance;
 	appearance: $appearance;
