@@ -27,7 +27,7 @@
 		outline-offset: 0;
 
 		&:after {
-			@include "fill-pseudo";
+			@include fill-pseudo();
 			border: 2px solid $govuk-input-border-colour;
 			pointer-events: none;
 		}
