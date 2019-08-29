@@ -1,8 +1,9 @@
 import json
 
+from lite_forms.components import Option
+
 from conf.client import get, post, put
 from conf.constants import QUEUES_URL
-from libraries.forms.components import Option
 
 
 def get_queues(request, convert_to_options=False, include_system_queues=False):

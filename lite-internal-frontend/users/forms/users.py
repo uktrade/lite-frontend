@@ -1,19 +1,16 @@
 from django.urls import reverse_lazy
+from lite_forms.components import Form, Select, TextInput, BackLink
 
 from core.builtins.custom_tags import get_string
-from libraries.forms.components import Question, Form, InputType, Select, BackLink
 from teams.services import get_teams
 from users.services import get_roles
 
 
 def add_user_form(request):
     return Form(title=get_string('users.invite'),
-                description='',
                 questions=[
-                    Question(title='What\'s the user\'s email?',
-                             description='',
-                             input_type=InputType.INPUT,
-                             name='email'),
+                    TextInput(title='What\'s the user\'s email?',
+                              name='email'),
                     Select(name='team',
                            title='What team will the user belong to?',
                            options=get_teams(request, True)),
@@ -29,10 +26,8 @@ def edit_user_form(request):
                 description='',
                 caption='',
                 questions=[
-                    Question(title='Email',
-                             description='',
-                             input_type=InputType.INPUT,
-                             name='email'),
+                    TextInput(title='Email',
+                              name='email'),
                     Select(name='team',
                            title='What team will the user belong to?',
                            options=get_teams(request, True)),

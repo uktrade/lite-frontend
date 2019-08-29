@@ -46,9 +46,7 @@ class OrganisationsFormPage():
 
     def enter_country(self, text):
         country_tb = self.driver.find_element_by_id("site.address.country")
-        country_tb.clear()
         country_tb.send_keys(text)
-        self.driver.find_element_by_id("site.address.country").send_keys(Keys.RETURN)
 
     def enter_email(self, text):
         self.driver.find_element_by_id("user.email").send_keys(text)

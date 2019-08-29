@@ -2,9 +2,9 @@ from django.http import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
+from lite_forms.generators import form_page
 
 from core.builtins.custom_tags import get_string
-from libraries.forms.generators import form_page
 from users.forms.users import add_user_form, edit_user_form
 from users.services import get_gov_users, post_gov_users, put_gov_user, get_gov_user
 

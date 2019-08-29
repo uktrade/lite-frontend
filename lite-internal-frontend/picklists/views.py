@@ -2,8 +2,8 @@ from django.http import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
+from lite_forms.generators import form_page
 
-from libraries.forms.generators import form_page
 from picklists.forms import add_picklist_item_form, edit_picklist_item_form, deactivate_picklist_item, \
     reactivate_picklist_item
 from picklists.services import get_picklists, get_picklist_item, post_picklist_item, put_picklist_item

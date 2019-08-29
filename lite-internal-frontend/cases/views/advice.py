@@ -3,12 +3,12 @@ from django.http import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
+from lite_forms.generators import error_page, form_page
 
 from cases.forms.advice import advice_recommendation_form
 from cases.helpers import clean_advice, check_matching_advice, add_hidden_advice_data
 from cases.services import get_case, post_case_advice, get_case_advice
 from core.services import get_denial_reasons
-from libraries.forms.generators import form_page, error_page
 from picklists.services import get_picklists
 
 

@@ -1,5 +1,6 @@
+from lite_forms.components import Form, TextArea, FileUpload, BackLink
+
 from core.builtins.custom_tags import get_string
-from libraries.forms.components import Form, FileUpload, BackLink, Question, InputType, TextArea
 
 
 def attach_documents_form(case_url):

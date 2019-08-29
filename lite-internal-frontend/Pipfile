@@ -27,6 +27,7 @@ django-staff-sso-client = "*"
 requests-oauthlib = "*"
 s3chunkuploader = "*"
 boto3 = ">=1.9"
+lite-forms = "*"
 
 [requires]
 python_version = "3.7"

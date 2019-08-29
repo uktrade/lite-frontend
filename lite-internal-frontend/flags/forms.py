@@ -1,11 +1,9 @@
 from django.urls import reverse_lazy
+from lite_forms.components import TextInput, Select, Option, BackLink, Form
 
 from core.builtins.custom_tags import get_string
-from libraries.forms.components import Question, Form, InputType, Option, Select, BackLink
 
-_name = Question(title='Name',
-                 description='',
-                 input_type=InputType.INPUT,
+_name = TextInput(title='Name',
                  name='name')
 
 _level = Select(name='level',

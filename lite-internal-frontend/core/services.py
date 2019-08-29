@@ -1,6 +1,7 @@
+from lite_forms.components import Option, Checkboxes
+
 from conf.client import get
 from conf.constants import DENIAL_REASONS_URL, COUNTRIES_URL, STATUSES_URL
-from libraries.forms.components import Option, Checkboxes
 from users.services import get_gov_user
 
 

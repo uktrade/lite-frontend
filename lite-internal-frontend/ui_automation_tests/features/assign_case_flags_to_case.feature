@@ -13,6 +13,3 @@ Feature: I want to add case-level flags to a case and view them
     And I click edit flags link
     And I select previously created flag
     Then The previously created flag is assigned to the case
-    When I click edit flags link
-    And I select previously created flag
-    Then The previously created flag is not assigned to the case

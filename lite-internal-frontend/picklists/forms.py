@@ -1,13 +1,11 @@
 from django.urls import reverse_lazy
+from lite_forms.components import TextInput, Select, Option, TextArea, BackLink, Form, Button
+from lite_forms.styles import ButtonStyle
 
 from core.builtins.custom_tags import get_string
-from libraries.forms.components import Question, Form, InputType, Option, Select, BackLink, Button, ButtonStyle, \
-    TextArea
 
-_name = Question(title='Name',
-                 description='',
-                 input_type=InputType.INPUT,
-                 name='name')
+_name = TextInput(title='Name',
+                  name='name')
 
 _picklist_type = Select(name='type',
                         options=[Option('proviso', 'Proviso'),
@@ -41,18 +39,18 @@ def add_picklist_item_form():
 
 
 def edit_picklist_item_form(picklist_item):
-    deactivate_button = Button('Deactivate',
-                               '',
-                               ButtonStyle.WARNING,
-                               reverse_lazy('picklists:deactivate',
-                                            kwargs={'pk': picklist_item['picklist_item']['id']}),
-                               True)
-    activate_button = Button('Reactivate',
-                             '',
-                             ButtonStyle.SECONDARY,
-                             reverse_lazy('picklists:reactivate',
-                                          kwargs={'pk': picklist_item['picklist_item']['id']}),
-                             True)
+    deactivate_button = Button(value='Deactivate',
+                               action='',
+                               style=ButtonStyle.WARNING,
+                               link=reverse_lazy('picklists:deactivate',
+                                                 kwargs={'pk': picklist_item['picklist_item']['id']}),
+                               float_right=True)
+    activate_button = Button(value='Reactivate',
+                             action='',
+                             style=ButtonStyle.SECONDARY,
+                             link=reverse_lazy('picklists:reactivate',
+                                               kwargs={'pk': picklist_item['picklist_item']['id']}),
+                             float_right=True)
 
     if picklist_item['picklist_item']['status']['key'] == 'deactivated':
         button = activate_button

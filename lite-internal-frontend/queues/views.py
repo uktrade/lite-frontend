@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView
+from lite_forms.generators import form_page, error_page
 
 from cases.forms.assign_users import assign_users_form
-from libraries.forms.generators import error_page, form_page
 from queues import forms
 from queues.helpers import get_assigned_users_from_cases
 from queues.services import get_queue, get_queues, \

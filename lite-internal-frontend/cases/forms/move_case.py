@@ -1,8 +1,8 @@
 from django.http import HttpRequest
+from lite_forms.components import Form, Checkboxes, Filter, BackLink
 
 from core.builtins.custom_tags import get_string
 from queues.services import get_queues
-from libraries.forms.components import Form, Filter, Checkboxes, BackLink
 
 
 def move_case_form(request: HttpRequest, case_url: str):

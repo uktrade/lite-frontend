@@ -4,6 +4,9 @@ from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
+from lite_forms.components import Option, HiddenField
+from lite_forms.generators import error_page, form_page
+from lite_forms.submitters import submit_single_form
 from s3chunkuploader.file_handler import S3FileUploadHandler, s3_client
 
 from cases.forms.attach_documents import attach_documents_form
@@ -23,9 +26,6 @@ from conf.settings import AWS_STORAGE_BUCKET_NAME
 from core.builtins.custom_tags import get_string
 from core.services import get_user_permissions, get_statuses
 from flags.services import get_flags_case_level_for_team
-from libraries.forms.components import Option, HiddenField
-from libraries.forms.generators import error_page, form_page
-from libraries.forms.submitters import submit_single_form
 from picklists.services import get_picklists, get_picklist_item
 from queues.helpers import add_assigned_users_to_cases
 from queues.services import get_queue_case_assignments, get_queue, get_queues
@@ -118,7 +118,7 @@ class ViewCase(TemplateView):
                 error_list = []
                 for key in errors:
                     error_list.append("{field}: {error}".format(field=key, error=errors[key][0]))
-                error = "\n".join(error_list)
+                error = '\n'.join(error_list)
             return error_page(request, error)
 
         return redirect(reverse('cases:case', kwargs={'pk': case_id}) + '#case_notes')

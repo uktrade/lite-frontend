@@ -1,4 +1,4 @@
-from libraries.forms.components import HiddenField
+from lite_forms.components import HiddenField
 
 
 def clean_advice(json):

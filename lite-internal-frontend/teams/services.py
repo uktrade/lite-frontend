@@ -1,6 +1,7 @@
+from lite_forms.components import Option
+
 from conf.client import get, post, put
 from conf.constants import TEAMS_URL
-from libraries.forms.components import Option
 
 
 def get_teams(request, converted_to_options=False):

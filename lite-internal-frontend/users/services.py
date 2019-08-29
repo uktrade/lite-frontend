@@ -1,8 +1,9 @@
 from urllib.parse import urlencode
 
+from lite_forms.components import Option
+
 from conf.client import get, post, put
 from conf.constants import GOV_USERS_URL, GOV_USERS_ROLES_URL, GOV_USERS_PERMISSIONS_URL
-from libraries.forms.components import Option
 
 
 def get_gov_users(request, params=None, convert_to_options=False):
