@@ -9,6 +9,7 @@ from raven.contrib.django.raven_compat.models import client
 from auth.services import authenticate_exporter_user
 from authbroker_client.utils import get_client, AUTHORISATION_URL, TOKEN_URL, \
     TOKEN_SESSION_KEY, get_profile
+from conf.settings import LOGOUT_URL
 from core.builtins.custom_tags import get_string
 from users.services import get_user
 
@@ -76,6 +77,7 @@ class AuthCallbackView(View):
         user.first_name = response['first_name']
         user.last_name = response['last_name']
         user.lite_api_user_id = response['lite_api_user_id']
+        user.organisation = None
         user.save()
 
         if user is not None:
@@ -85,11 +87,11 @@ class AuthCallbackView(View):
 
             if len(user_dict['user']['organisations']) == 0:
                 return error_page(request, 'You don\'t belong to any organisations', show_back_link=False)
-            elif len(user_dict['user']['organisations']) > 1:
-                return redirect('core:pick_organisation')
-            else:
+            elif len(user_dict['user']['organisations']) == 1:
                 user.organisation = user_dict['user']['organisations'][0]['id']
                 user.save()
+            elif len(user_dict['user']['organisations']) > 1:
+                return redirect('core:pick_organisation')
 
         return redirect(getattr(settings, 'LOGIN_REDIRECT_URL', '/'))
 
@@ -98,6 +100,6 @@ class AuthLogoutView(TemplateView):
     def get(self, request, **kwargs):
         request.user.delete()
         logout(request)
-        return redirect('/')
+        return redirect(LOGOUT_URL + 'https://' + request.get_host())
 
 

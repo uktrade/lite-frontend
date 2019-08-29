@@ -12,22 +12,25 @@ class ProtectAllViewsMiddleware:
 
     def __call__(self, request):
 
+        response = self.get_response(request)
+
+        if resolve(request.path).url_name == 'logout' and request.user.is_authenticated:
+            return response
+
         if resolve(request.path).app_name != 'authbroker_client' and not request.user.is_authenticated:
             return redirect('authbroker:login')
 
-        if not isinstance(request.user, AnonymousUser):
+        if resolve(request.path).url_name != 'pick_organisation' and not isinstance(request.user, AnonymousUser):
             if not request.user.organisation:
-                user_dict = get_user(request)
+                user_dict, _ = get_user(request)
 
                 if len(user_dict['user']['organisations']) == 0:
                     return error_page(request, 'You don\'t belong to any organisations', show_back_link=False)
-                elif len(user_dict['user']['organisations']) > 1:
-                    return redirect('core:pick_organisation')
-                else:
+                elif len(user_dict['user']['organisations']) == 1:
                     user = request.user
                     user.organisation = user_dict['user']['organisations'][0]['id']
                     user.save()
-
-        response = self.get_response(request)
+                elif len(user_dict['user']['organisations']) > 1:
+                    return redirect('core:pick_organisation')
 
         return response

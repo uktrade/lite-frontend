@@ -15,9 +15,6 @@ class Hub(TemplateView):
     def get(self, request, **kwargs):
         user, _ = get_user(request)
 
-        if not request.user.organisation:
-            return redirect('core:pick_organisation')
-
         response, _ = get_notifications(request, unviewed=True)
         num_notifications = response['count']
         response, _ = get_clc_notifications(request, unviewed=True)
