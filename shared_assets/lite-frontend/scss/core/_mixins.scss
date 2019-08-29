@@ -3,3 +3,19 @@
 	-moz-appearance: $appearance;
 	appearance: $appearance;
 }
+
+@mixin truncate($truncation-boundary) {
+    max-width: $truncation-boundary;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@mixin fill-pseudo($truncation-boundary) {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
