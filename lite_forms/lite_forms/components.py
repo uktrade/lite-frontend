@@ -54,7 +54,7 @@ class FormGroup:
 
 
 class Label:
-    def __init(self, text):
+    def __init__(self, text: str):
         self.text = text
 
 
