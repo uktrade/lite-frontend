@@ -91,6 +91,12 @@
 				{% endfor %}
 			</div>
 		</div>
+
+        <!-- Footer Label -->
+        {% if footer_label %}
+            <p class="govuk-body">{{ footer_label|safe }}</p>
+        {% endif %}
+
 	</form>
 
 	<script type="text/javascript">

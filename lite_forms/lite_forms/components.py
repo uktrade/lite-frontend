@@ -5,6 +5,7 @@ class _Component:
     """
     Base component for LITE forms - only for internal use
     """
+
     def __init__(self,
                  name: str,
                  title: str = '',
@@ -41,6 +42,7 @@ class FormGroup:
     Automatically adds IDs to all forms to make it
     easier to reference them
     """
+
     def __init__(self, forms: list):
         self.forms = forms
 
@@ -51,6 +53,11 @@ class FormGroup:
             index += 1
 
 
+class Label:
+    def __init(self, text):
+        self.text = text
+
+
 class Form:
     def __init__(self,
                  title=None,
@@ -59,16 +66,17 @@ class Form:
                  caption=None,
                  buttons=None,
                  helpers=None,
+                 footer_label: Label = None,
                  javascript_imports=None,
                  default_button_name='Submit',
                  back_link=BackLink(),
                  post_url=None):
-
         self.title = title
         self.description = description
         self.questions = questions
         self.caption = caption
         self.helpers = helpers
+        self.footer_label = footer_label
         self.buttons = buttons
         self.back_link = back_link
         if self.buttons is None:
@@ -231,6 +239,7 @@ class Group:
     """
     Groups components together inside of a div
     """
+
     def __init__(self, name, components):
         self.input_type = 'group'
         self.name = name
@@ -241,6 +250,7 @@ class Filter:
     """
     Filters a list of checkboxes based on title and description
     """
+
     def __init__(self, placeholder: str = 'Filter'):
         """
         :type placeholder: Sets the placeholder text on the input field
