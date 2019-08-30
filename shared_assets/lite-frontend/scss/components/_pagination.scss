@@ -1,19 +1,24 @@
 .lite-pagination__container {
 	display: flex;
+	flex-wrap: wrap;
 }
 
 .lite-pagination__item {
-	@include govuk-font($size: 19);
+	@include govuk-font($size: 16, $weight: bold);
+	position: relative;
 	display: inline-block;
 	box-sizing: border-box;
-	width: 40px;
+	min-width: 40px;
 	height: 40px;
 	text-align: center;
-	color: $govuk-brand-colour;
+	color: $govuk-link-colour;
 	text-decoration: none;
 	line-height: 40px!important;
 	cursor: pointer;
 	user-select: none;
+	margin-right: govuk-spacing(1);
+	padding: 0 govuk-spacing(3);
+	opacity: .8;
 
 	&:hover {
 		background-color: govuk-colour("light-grey");
@@ -24,10 +29,13 @@
 	}
 
 	&--selected {
-		font-weight: bold;
-		background-color: $govuk-brand-colour!important;
-		color: govuk-colour("white");
-		opacity: 1!important;
-		cursor: default;
+		opacity: 1;
+
+		&::after {
+			@include fill-pseudo();
+			left: 10px;
+			right: 10px;
+			border-bottom: 2px solid $govuk-link-colour;
+		}
 	}
 }
