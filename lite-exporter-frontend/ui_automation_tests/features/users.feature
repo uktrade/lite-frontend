@@ -11,10 +11,12 @@ Feature: I want to manage users
     Then I add a user
 
   @add_user
-  Scenario: Add user
+  Scenario: Add user deactivate user reactivate user
     Given I go to exporter homepage and choose Test Org
     When I add user
     Then user is added
+    When I deactivate user then user is deactivated
+    And I reactivate user then user is reactivated
 
   @cant_add_self
   Scenario: Cant add own user
@@ -26,14 +28,6 @@ Feature: I want to manage users
   Scenario: Edit user
     Given I go to exporter homepage and choose Test Org
     When I edit user then user is edited
-
-#  @deactivate
-#  Scenario: Deactivate user
-#    Given I go to exporter homepage and choose Test Org
-#    When I add the second test user
-#    And I deactivate user then user is deactivated
-#    And I go to exporter homepage
-#    And I reactivate user then user is reactivated
 
   @reactivate_oneself
   Scenario: Reactivate oneself

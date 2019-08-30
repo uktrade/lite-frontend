@@ -81,19 +81,15 @@ class ExporterHubPage:
         self.driver.find_element_by_id("last_name").send_keys(last_name)
 
     def click_user_name_link(self, user_name):
-        element = self.driver.find_element_by_xpath("//*[text()[contains(.,'" + user_name + "')]]")
-        actions = ActionChains(self.driver)
-        actions.move_to_element(element).perform()
-        time.sleep(1)
-        element.click()
+        self.driver.find_element_by_link_text(user_name).click()
 
     def click_deactivate_btn(self):
-        self.driver.find_element_by_xpath("//*[text()[contains(.,'Deactivate')]]").click()
-        self.driver.find_element_by_xpath("//*[text()[contains(.,'Deactivate User')]]").click()
+        self.driver.find_element_by_id("btn-deactivate").click()
+        self.driver.find_element_by_id("deactivate-confirm").click()
 
     def click_reactivate_btn(self):
-        self.driver.find_element_by_xpath("//*[text()[contains(.,'Reactivate')]]").click()
-        self.driver.find_element_by_xpath("//*[text()[contains(.,'Reactivate User')]]").click()
+        self.driver.find_element_by_id("btn-reactivate").click()
+        self.driver.find_element_by_id("reactivate-confirm").click()
 
     def logout(self):
         self.driver.get("https://great.uat.uktrade.io/sso/accounts/")

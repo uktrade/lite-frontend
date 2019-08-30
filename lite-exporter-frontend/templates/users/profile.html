@@ -18,7 +18,7 @@
 				First Name
 			</dt>
 			<dd class="govuk-summary-list__value">
-				{{ data.user.first_name }}
+				{{ user.first_name }}
 			</dd>
 		</div>
 		<div class="govuk-summary-list__row">
@@ -26,7 +26,7 @@
 				Last Name
 			</dt>
 			<dd class="govuk-summary-list__value">
-				{{ data.user.last_name }}
+				{{ user.last_name }}
 			</dd>
 		</div>
 		<div class="govuk-summary-list__row">
@@ -34,19 +34,19 @@
 				Email
 			</dt>
 			<dd class="govuk-summary-list__value">
-				{{ data.user.email }}
+				{{ user.email }}
 			</dd>
 		</div>
 	</dl>
 
 	<div class="lite-user-profile-container">
-		<a href="{% url 'users:edit' data.user.id %}" type="submit" class="govuk-button govuk-button--secondary">Edit</a>
+		<a href="{% url 'users:edit' user.id %}" type="submit" class="govuk-button govuk-button--secondary">Edit</a>
 
-		{% if request.user.lite_api_user_id|stringformat:"s" != data.user.id|stringformat:"s" %}
-			{% if data.user.status == 'Active' %}
-				<a href="{% url 'users:change_status' data.user.id 'deactivate' %}" role="button" draggable="false" class="govuk-button govuk-button--warning govuk-!-margin-right-2">Deactivate</a>
-			{% elif data.user.status == 'Deactivated' %}
-				<a href="{% url 'users:change_status' data.user.id 'reactivate' %}" role="button" draggable="false" class="govuk-button govuk-!-margin-right-2">Reactivate</a>
+		{% if request.user.lite_api_user_id|stringformat:"s" != user.id|stringformat:"s" %}
+			{% if user.status == 'Active' %}
+				<a href="{% url 'users:change_status' user.id 'deactivate' %}" role="button" draggable="false" class="govuk-button govuk-button--warning govuk-!-margin-right-2" id="btn-deactivate">Deactivate</a>
+			{% elif user.status == 'Deactivated' %}
+				<a href="{% url 'users:change_status' user.id 'reactivate' %}" role="button" draggable="false" class="govuk-button govuk-!-margin-right-2" id="btn-reactivate">Reactivate</a>
 			{% endif %}
 		{% endif %}
 	</div>

@@ -1,6 +1,6 @@
 from lite_forms.components import Option
 
-from conf.client import get, post
+from conf.client import get, post, put
 from conf.constants import UNITS_URL, DRAFTS_URL, COUNTRIES_URL, EXTERNAL_LOCATIONS_URL, NOTIFICATIONS_URL, \
     CLC_NOTIFICATIONS_URL, ORGANISATIONS_URL
 
@@ -102,4 +102,14 @@ def get_organisation(request, pk):
 
 def get_organisation_users(request, pk):
     data = get(request, ORGANISATIONS_URL + pk + '/users/')
+    return data.json(), data.status_code
+
+
+def get_organisation_user(request, pk, user_pk):
+    data = get(request, ORGANISATIONS_URL + pk + '/users/' + user_pk)
+    return data.json()
+
+
+def put_organisation_user(request, pk, user_pk, json):
+    data = put(request, ORGANISATIONS_URL + pk + '/users/' + user_pk, json)
     return data.json(), data.status_code

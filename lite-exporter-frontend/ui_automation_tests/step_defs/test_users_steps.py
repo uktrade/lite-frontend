@@ -14,19 +14,6 @@ log.addHandler(console)
 scenarios('../features/users.feature', strict_gherkin=False)
 
 
-@when('I add the second test user')
-def add_second_test_user(driver):
-    exporter_hub = ExporterHubPage(driver)
-    exporter_hub.click_users()
-    exists = 'Testy McTestFace' in driver.find_element_by_css_selector('.govuk-table').text
-    if not exists:
-        exporter_hub.click_add_a_user_btn()
-        exporter_hub.enter_first_name("Testy")
-        exporter_hub.enter_last_name("McTestFace")
-        exporter_hub.enter_add_user_email(env('TEST_EXPORTER_SSO_EMAIL2'))
-        exporter_hub.click_save_and_continue()
-
-
 @then('I add a user')
 def add_user(driver):
     exporter_hub = ExporterHubPage(driver)
@@ -46,9 +33,9 @@ def add_user(driver, context, exporter_sso_login_info):
     user_id = datetime.datetime.now().strftime("%H%M%S")
     first_name = "Test"
     last_name = "User" + user_id
-    full_name = first_name + last_name
-    context.added_user_name = full_name
-    email = full_name.lower() + "@mail.com"
+    email_first_part = first_name + last_name
+    context.added_user_name = first_name + " " + last_name
+    email = email_first_part.lower() + "@mail.com"
     context.email_to_search = email
     # logged in exporter hub as exporter
     exporter_hub = ExporterHubPage(driver)
@@ -129,54 +116,27 @@ def user_is_edited(driver, exporter_url, context, exporter_sso_login_info):
 def user_is_deactivated(driver, exporter_url, context, request):
     exporter_hub = ExporterHubPage(driver)
 
+    exporter_hub.click_user_name_link(context.added_user_name)
 
-    # Given I am a logged-in user # I want to deactivate users # When I choose the option to manage users
-
-    # I should have the option to deactivate an active user # edit link, and link from user name
-    exporter_hub.click_user_name_link("Testy McTestFace")
-
-    # When I choose to deactivate an active user # Then I return to "Manage users"
     exporter_hub.click_deactivate_btn()
 
     # And I can see that the user is now deactivated
     elements = driver.find_elements_by_css_selector(".govuk-table__row")
     # When I choose the option to manage users # Then I should see the current user for my company
-    no = utils.get_element_index_by_text(elements, 'Testy McTestFace')
+    no = utils.get_element_index_by_partial_text(elements, context.added_user_name)
     assert 'Deactivated' in elements[no].text, \
         "user should status was expected to be Deactivated"
-
-    # Given I am a deactivated user # When I attempt to log in # And I cannot log in
-    exporter_hub.logout()
-    driver.find_element_by_id('header-sign-in-link').click()
-    exporter_hub.login(env('TEST_EXPORTER_SSO_EMAIL2'), env('TEST_EXPORTER_SSO_PASSWORD2'))
-    driver.get(request.config.getoption("--exporter_url"))
-
-
-    assert driver.find_element_by_css_selector('.govuk-heading-xl').text == 'User not found'
-
-    driver.get("https://great.uat.uktrade.io/sso/accounts/")
-    driver.find_element_by_id("header-sign-out-link").click()
-    driver.find_element_by_css_selector('.button').click()
-
-    exporter_hub.login(env('TEST_EXPORTER_SSO_EMAIL'), env('TEST_EXPORTER_SSO_PASSWORD'))
-    driver.get(request.config.getoption("--exporter_url"))
 
 
 @when('I reactivate user then user is reactivated')
 def user_reactivate(driver, exporter_url, context):
     exporter_hub = ExporterHubPage(driver)
-    email = "testuser_1@mail.com"
 
-    # As a logged in user # I want to reactivate users who have previously been deactivated
-    # So that returned users can perform actions in the system
-    exporter_hub.click_users()
-
-    # When I choose to activate a deactivated user # Then I am asked "Are you sure you want to re-activate"
-    exporter_hub.click_user_name_link('Testy McTestFace')
+    exporter_hub.click_user_name_link(context.added_user_name)
     exporter_hub.click_reactivate_btn()
     elements = driver.find_elements_by_css_selector(".govuk-table__row")
     # When I choose the option to manage users # Then I should see the current user for my company
-    no = utils.get_element_index_by_text(elements, 'Testy McTestFace')
+    no = utils.get_element_index_by_partial_text(elements, context.added_user_name)
     assert 'Active' in elements[no].text, \
         "user should status was expected to be Active"
 

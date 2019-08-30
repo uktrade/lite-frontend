@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
-from core.services import get_organisation_users, get_organisation
+from core.services import get_organisation_users, get_organisation, get_organisation_user, put_organisation_user
 from users import forms
 from users.services import post_users, update_user, get_user
 
@@ -46,11 +46,10 @@ class AddUser(TemplateView):
 
 class ViewUser(TemplateView):
     def get(self, request, **kwargs):
-        data, status_code = get_user(request, str(kwargs['pk']))
-        user = data.get('user')
+        user = get_organisation_user(request, str(request.user.organisation), str(kwargs['pk']))['user']
 
         context = {
-            'data': data,
+            'user': user,
             'title': user.get('first_name') + ' ' + user.get('last_name')
         }
         return render(request, 'users/profile.html', context)
@@ -116,6 +115,6 @@ class ChangeUserStatus(TemplateView):
         if status != 'deactivate' and status != 'reactivate':
             raise Http404
 
-        update_user(request, str(kwargs['pk']), json={'status': request.POST['status']})
+        put_organisation_user(request, str(request.user.organisation), str(kwargs['pk']), request.POST)
 
         return redirect('/users/')
