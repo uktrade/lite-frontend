@@ -55,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'authbroker_client.middleware.ProtectAllViewsMiddleware',
+    'conf.middleware.LoggingMiddleware',
     'conf.middleware.UploadFailedMiddleware',
 ]
 

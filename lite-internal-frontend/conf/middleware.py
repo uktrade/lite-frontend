@@ -33,3 +33,25 @@ class UploadFailedMiddleware:
             return None
 
         return error_page(request, get_string('cases.manage.documents.attach_documents.file_too_large'))
+
+
+class LoggingMiddleware:
+    def __init__(self, get_response=None):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        start = time.time()
+        request.correlation = uuid.uuid4().hex
+        data = {
+            "message": "liteolog internal",
+            "corrID": request.correlation,
+            "type": "http request",
+            "method": request.method,
+            "url": request.path,
+        }
+        # logging.info(data)
+        response = self.get_response(request)
+        data['type'] = "http response"
+        data['elapsed_time'] = time.time() - start
+        logging.info(data)
+        return response
