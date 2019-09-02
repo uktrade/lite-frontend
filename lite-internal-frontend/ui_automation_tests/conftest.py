@@ -35,9 +35,16 @@ def pytest_addoption(parser):
     if env == 'local':
         parser.addoption("--internal_url", action="store", default="http://localhost:8080", help="url")
         parser.addoption("--lite_api_url", action="store", default="http://localhost:8100", help="url")
+    elif env == 'dev2':
+        parser.addoption("--internal_url", action="store",
+                         default="https://internal2.lite.service.dev.uktrade.io/", help="url")
+        parser.addoption("--lite_api_url", action="store",
+                         default="https://lite-api2-dev.london.cloudapps.digital/", help="url")
     else:
-        parser.addoption("--internal_url", action="store", default="https://internal.lite.service." + env + ".uktrade.io/", help="url")
-        parser.addoption("--lite_api_url", action="store", default="https://lite-api-" + env + ".london.cloudapps.digital/", help="url")
+        parser.addoption("--internal_url", action="store",
+                         default="https://internal.lite.service." + env + ".uktrade.io/", help="url")
+        parser.addoption("--lite_api_url", action="store",
+                         default="https://lite-api-" + env + ".london.cloudapps.digital/", help="url")
 
 
 # Create driver and url command line adoption
