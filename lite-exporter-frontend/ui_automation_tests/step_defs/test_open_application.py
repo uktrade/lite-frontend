@@ -14,17 +14,16 @@ scenarios('../features/submit_open_application.feature', strict_gherkin=False)
 @then('I see no sites good types or countries attached error message')
 def i_see_open_licence_error(driver):
     shared = Shared(driver)
-    assert "Cannot create an application with no good descriptions attached" in shared.get_text_of_error_message()
-    assert "Cannot create an application with no sites or external sites attached" in shared.get_text_of_error_message(1)
-    assert "Cannot create an application without countries being set" in shared.get_text_of_error_message(2)
+    assert "Cannot create an application with no good descriptions attached" in shared.get_text_of_error_messages()
+    assert "Cannot create an application with no sites or external sites attached" in shared.get_text_of_error_messages()
+    assert "Cannot create an application without countries being set" in shared.get_text_of_error_messages()
 
 
 @then('I see good types error messages')
 def goods_type_errors(driver):
     shared = Shared(driver)
-    assert "This field may not be blank." in shared.get_text_of_error_message()
-    assert "This field is required." in shared.get_text_of_error_message(1)
-    assert "This field is required." in shared.get_text_of_error_message(2)
+    assert "This field may not be blank." in shared.get_text_of_error_messages()
+    assert "This field is required." in shared.get_text_of_error_messages()
 
 
 @when('I click overview')

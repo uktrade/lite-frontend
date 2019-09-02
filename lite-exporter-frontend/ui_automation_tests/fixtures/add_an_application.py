@@ -18,7 +18,7 @@ def add_an_application(driver, request, api_url, exporter_url, context):
     context.ueu_country = ["GB", "United Kingdom"]
     app_name = "Test Application" + app_time_id
 
-    api.add_draft(
+    draft_id = api.add_draft(
         draft={
             "name": app_name,
             "licence_type": "standard_licence",
@@ -45,6 +45,8 @@ def add_an_application(driver, request, api_url, exporter_url, context):
             "website": context.ueu_website
         }
     )
+    document_is_processed = api.ensure_end_user_document_is_processed(draft_id)
+    assert document_is_processed, "Document wasn't successfully processed"
     api.submit_application()
     context.app_id = api.context['application_id']
     context.app_name = app_name

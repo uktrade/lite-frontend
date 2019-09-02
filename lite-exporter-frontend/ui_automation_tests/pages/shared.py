@@ -5,6 +5,8 @@ class Shared:
         self.heading = ".govuk-heading-xl"  # CSS
         self.radio_buttons = ".govuk-radios__input"  # CSS
         self.submit_button = "button[type*='submit']"
+        self.back_link = ".govuk-back-link"
+        self.error_messages = ".govuk-error-summary__body"
         self.error_message = ".govuk-error-message"
         self.gov_body = ".govuk-body"
         self.gov_grid_row = ".govuk-grid-row"
@@ -16,14 +18,17 @@ class Shared:
         self.h1 = "h1"
         self.lite_section = ".lite-section"
 
-    def get_text_of_error_message(self, position=0):
-        return self.driver.find_elements_by_css_selector(self.error_message)[position].text
+    def get_text_of_error_messages(self):
+        return self.driver.find_element_by_css_selector(self.error_messages).text
 
     def click_continue(self):
         self.driver.find_element_by_css_selector(self.submit_button).click()
 
+    def click_back_link(self):
+        self.driver.find_element_by_css_selector(self.back_link).click()
+
     def is_error_message_displayed(self):
-        return self.driver.find_element_by_css_selector(self.error_message).is_displayed()
+        return self.driver.find_element_by_css_selector(self.error_messages).is_displayed()
 
     def get_text_of_body(self):
         return self.driver.find_element_by_tag_name("body").text

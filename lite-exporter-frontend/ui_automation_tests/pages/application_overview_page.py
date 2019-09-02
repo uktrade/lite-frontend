@@ -1,3 +1,6 @@
+from ui_automation_tests.helpers.helpers import scroll_to_bottom_of_page
+
+
 class ApplicationOverviewPage:
 
     def __init__(self, driver):
@@ -15,6 +18,11 @@ class ApplicationOverviewPage:
         self.lite_section = ".lite-section"   # CSS
         self.gov_tables = ".govuk-table__body"   # CSS
         self.back_to_overview_text = "Back to Application" #link text
+        self.submit_application_button = "button[type*='submit']" # CSS
+        self.attach_end_user_document_link = "attach_doc" # ID
+        self.download_end_user_document = "end_user_document_download" # ID
+        self.delete_end_user_document = "end_user_document_delete" # ID
+        self.end_user_document_state = "end_user_document_state" # ID
 
     def click_application_locations_link(self):
         self.driver.execute_script("document.getElementById('" + self.location_link + "').scrollIntoView(true);")
@@ -43,6 +51,7 @@ class ApplicationOverviewPage:
         return self.driver.find_element_by_css_selector(self.show_countries_link).text
 
     def click_on_countries_selected(self):
+        scroll_to_bottom_of_page(self.driver)
         self.driver.find_element_by_css_selector(self.show_countries_link).click()
 
     def click_on_modal_close(self):
@@ -59,3 +68,6 @@ class ApplicationOverviewPage:
 
     def get_text_of_good(self, no):
         return self.driver.find_elements_by_css_selector(self.lite_section)[no].text
+
+    def get_end_user_document_state_text(self):
+        return self.driver.find_element_by_id(self.end_user_document_state).text

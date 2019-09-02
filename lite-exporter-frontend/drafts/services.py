@@ -1,5 +1,5 @@
 from conf.client import get, post, put, delete
-from conf.constants import APPLICATIONS_URL, DRAFTS_URL
+from conf.constants import APPLICATIONS_URL, DRAFTS_URL, END_USER_DOCUMENT_URL
 
 
 def get_drafts(request):
@@ -89,3 +89,19 @@ def get_draft_countries(request, pk):
 def post_draft_countries(request, pk, json):
     data = post(request, DRAFTS_URL + pk + '/countries/', json)
     return data.json(), data.status_code
+
+
+# Documents
+def get_end_user_document(request, pk):
+    data = get(request, DRAFTS_URL + pk + END_USER_DOCUMENT_URL)
+    return data.json(), data.status_code
+
+
+def post_end_user_document(request, pk, json):
+    data = post(request, DRAFTS_URL + pk + END_USER_DOCUMENT_URL, json)
+    return data.json(), data.status_code
+
+
+def delete_end_user_document(request, pk):
+    data = delete(request, DRAFTS_URL + pk + END_USER_DOCUMENT_URL)
+    return data.status_code

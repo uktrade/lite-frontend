@@ -6,13 +6,13 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from lite_forms.components import HiddenField
 from lite_forms.generators import error_page, form_page
-from s3chunkuploader.file_handler import S3FileUploadHandler, s3_client
+from s3chunkuploader.file_handler import S3FileUploadHandler
 
+from apply_for_a_licence.services import add_document_data
+from apply_for_a_licence.services import download_document_from_s3
 from applications.services import get_application_ecju_queries, get_application_case_notes, post_application_case_notes, \
     get_ecju_query, put_ecju_query
-from conf import settings
-from conf.settings import AWS_STORAGE_BUCKET_NAME
-from core.services import get_clc_notifications, get_notifications
+from core.services import get_clc_notifications
 from goods import forms
 from goods.forms import edit_form, attach_documents_form, respond_to_query_form, ecju_query_respond_confirmation_form
 from goods.services import get_goods, post_goods, get_good, update_good, delete_good, get_good_documents, get_good_document, delete_good_document, post_good_documents, raise_clc_query
@@ -231,7 +231,10 @@ class AttachDocuments(TemplateView):
         good_id = str(kwargs['pk'])
         good, status_code = get_good(request, good_id)
 
-        data, error = self.add_document_data(request)
+        data, error = add_document_data(request)
+        if 'description' not in data:
+            data['description'] = ''
+        data = [data]
 
         if error:
             return error_page(None, error)
@@ -247,31 +250,6 @@ class AttachDocuments(TemplateView):
 
         return redirect(reverse('goods:good', kwargs={'pk': good_id}))
 
-    @staticmethod
-    def add_document_data(request):
-        data = []
-        files = request.FILES.getlist("file")
-        if len(files) is 0:
-            return None, 'No files attached'
-
-        if len(files) is not 1:
-            return None, 'Multiple files attached'
-
-        file = files[0]
-        try:
-            original_name = file.original_name
-        except Exception:
-            original_name = file.name
-
-        data.append({
-            'name': original_name,
-            's3_key': file.name,
-            'size': int(file.size / 1024) if file.size else 0,  # in kilobytes
-            'description': request.POST['description'],
-        })
-
-        return data, None
-
 
 class Document(TemplateView):
     def get(self, request, **kwargs):
@@ -280,21 +258,7 @@ class Document(TemplateView):
 
         get_good(request, good_id)
         document, status_code = get_good_document(request, good_id, file_pk)
-        original_file_name = document['document']['name']
-
-        # Stream file
-        def generate_file(result):
-            for chunk in iter(lambda: result['Body'].read(settings.STREAMING_CHUNK_SIZE), b''):
-                yield chunk
-
-        s3 = s3_client()
-        s3_response = s3.get_object(Bucket=AWS_STORAGE_BUCKET_NAME, Key=document['document']['s3_key'])
-        _kwargs = {}
-        if s3_response.get('ContentType'):
-            _kwargs['content_type'] = s3_response['ContentType']
-        response = StreamingHttpResponse(generate_file(s3_response), **_kwargs)
-        response['Content-Disposition'] = f'attachment; filename="{original_file_name}"'
-        return response
+        return download_document_from_s3(document['document']['s3_key'], document['document']['name'])
 
 
 class DeleteDocument(TemplateView):

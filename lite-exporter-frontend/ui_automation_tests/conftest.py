@@ -205,7 +205,7 @@ def i_click_continue(driver):
 def error_message_is(driver, expected_error):
     shared = Shared(driver)
     assert shared.is_error_message_displayed()
-    assert expected_error in shared.get_text_of_error_message()
+    assert expected_error in shared.get_text_of_error_messages()
 
 
 @when(parsers.parse('I select the site at position "{no}"'))
@@ -271,18 +271,30 @@ def add_new_good(driver, description, controlled, control_code, incorporated, pa
         context.good_id_from_url = driver.current_url.split('/goods/')[1].split('/')[0]
 
 
-@when(parsers.parse('I upload file "{filename}" with description "{description}"'))
-def upload_a_file(driver, filename, description):
-    attach_document_page = AttachDocumentPage(driver)
-
+def get_file_upload_path(filename):
     # Path gymnastics to get the absolute path for $PWD/../resources/(file_to_upload_x) that works everywhere
     file_to_upload_abs_path = \
         os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, 'resources', filename))
     if 'ui_automation_tests' not in file_to_upload_abs_path:
         file_to_upload_abs_path = \
-            os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, 'ui_automation_tests/resources', filename))
+            os.path.abspath(
+                os.path.join(os.path.dirname(__file__), os.pardir, 'ui_automation_tests/resources', filename))
+    return file_to_upload_abs_path
 
-    attach_document_page.choose_file(file_to_upload_abs_path)
+
+@when(parsers.parse('I upload a file "{filename}"'))
+def upload_a_file(driver, filename):
+    attach_document_page = AttachDocumentPage(driver)
+    file_path = get_file_upload_path(filename)
+    attach_document_page.choose_file(file_path)
+    Shared(driver).click_continue()
+
+
+@when(parsers.parse('I upload file "{filename}" with description "{description}"'))
+def upload_a_file_with_description(driver, filename, description):
+    attach_document_page = AttachDocumentPage(driver)
+    file_path = get_file_upload_path(filename)
+    attach_document_page.choose_file(file_path)
     attach_document_page.enter_description(description)
     Shared(driver).click_continue()
 

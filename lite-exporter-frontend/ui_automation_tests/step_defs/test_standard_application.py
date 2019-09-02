@@ -1,3 +1,5 @@
+import time
+
 from pytest_bdd import scenarios, when, then, parsers
 
 import helpers.helpers as utils
@@ -98,18 +100,18 @@ def one_ultimate_end_user(driver):
     assert len(elements[no].find_elements_by_css_selector(".govuk-table__row")) == 2, "total on the application overview is incorrect after removing ultimate end user"
 
 
-@then('I see no goods external sites or end user attached error message')
+@then("I see no goods and external sites error message")
 def i_see_no_sites_attached_error(driver):
     shared = Shared(driver)
-    assert "Cannot create an application with no goods attached" in shared.get_text_of_error_message()
-    assert "Cannot create an application with no sites or external sites attached" in shared.get_text_of_error_message(1)
-    assert "Cannot create an application without an end user" in shared.get_text_of_error_message(2)
+    assert "Cannot create an application with no goods attached" in shared.get_text_of_error_messages()
+    assert "Cannot create an application with no sites or external sites attached" in shared.get_text_of_error_messages()
 
 
 @then('I see no ultimate end user attached error message')
 def i_see_no_ultimate_end_user_attached_error(driver):
     shared = Shared(driver)
-    assert "Cannot create an application with no ultimate end users set when there is a good which is to be incorporated into an end product" in shared.get_text_of_error_message(2)
+    assert "Cannot create an application with no ultimate end users set when " \
+           "there is a good which is to be incorporated into an end product" in shared.get_text_of_error_messages()
 
 
 @then('I see end user on overview')
@@ -126,9 +128,9 @@ def end_user_on_overview(driver, context):
 @then('I see enter valid quantity and valid value error message')
 def valid_quantity_value_error_message(driver):
     shared = Shared(driver)
-    assert "A valid number is required." in shared.get_text_of_error_message()
-    assert "Enter a valid quantity" in shared.get_text_of_error_message(1)
-    assert "Select a unit" in shared.get_text_of_error_message(2)
+    assert "A valid number is required." in shared.get_text_of_error_messages()
+    assert "Enter a valid quantity" in shared.get_text_of_error_messages()
+    assert "Select a unit" in shared.get_text_of_error_messages()
 
 
 @when(parsers.parse('I click add to application for the good at position "{no}"'))
@@ -166,3 +168,20 @@ def i_click_on_end_user(driver):
 @when('I add a non incorporated good to application')
 def add_a_non_incorporated_good(driver, add_a_non_incorporated_good_to_application):
     pass
+
+
+@when("I wait for the end user document to be processed")
+def i_wait_for_end_user_document_to_be_processed(driver):
+    app = ApplicationOverviewPage(driver)
+    # Constants for total time to retry function and intervals between attempts
+    timeout_limit = 20
+    function_retry_interval = 1
+
+    time_no = 0
+    while time_no < timeout_limit:
+        if "Download" in app.get_end_user_document_state_text():
+            return True
+        time.sleep(function_retry_interval)
+        time_no += function_retry_interval
+        driver.refresh()
+    return False

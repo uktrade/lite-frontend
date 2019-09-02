@@ -29,7 +29,6 @@ Feature: I  want to add and rename my sites
     And I enter in text for new site "HQ 2" "4 Privet Drive" "SU1 1BB" "Surrey" "Surrey" and "Ukraine"
     And I click continue
 
-
   @LT_933_error
   Scenario: Test clicking continue when not adding a site
     Given I go to exporter homepage and choose Test Org

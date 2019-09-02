@@ -13,12 +13,12 @@ class NewSite:
         self.country = driver.find_element_by_id("address.country")
 
     def enter_info_for_new_site(self, name, address, postcode, city, region, country):
+        self.country.send_keys(country)
         self.name.send_keys(name)
         self.address_line_1.send_keys(address)
         self.postcode.send_keys(postcode)
         self.city.send_keys(city)
         self.region.send_keys(region)
-        self.country.send_keys(country)
 
     def clear_info_for_site(self):
         self.name.clear()
@@ -26,4 +26,3 @@ class NewSite:
         self.postcode.clear()
         self.city.clear()
         self.region.clear()
-

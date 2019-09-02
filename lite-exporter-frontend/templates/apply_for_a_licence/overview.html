@@ -318,6 +318,32 @@
 					<th class="govuk-table__header" scope="row">Address</th>
 					<td class="govuk-table__cell">{{ draft.end_user.address }}<br/>{{ draft.end_user.country }}</td>
 				</tr>
+                {% if draft.licence_type.key == "standard_licence" %}
+                    {% if end_user_document %}
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header" scope="row">Document</th>
+                            <td class="govuk-table__cell" id="end_user_document_state">
+                                {%  if end_user_document.safe == True %}
+                                    <a href="{% url 'apply_for_a_licence:download_document' pk=draft.id %}" id="end_user_document_download">
+                                        {% get_string 'end_user.documents.download_document' %}
+                                    </a>
+                                    <br/>
+                                    <a href="{% url 'apply_for_a_licence:delete_document' pk=draft.id %}" id="end_user_document_delete">
+                                        {% get_string 'end_user.documents.delete_document' %}
+                                    </a>
+                                {%  else %}
+                                    {% get_string 'end_user.documents.processing' %}
+                                {% endif %}
+
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header" scope="row">Document</th>
+                            <td class="govuk-table__cell"><a id="attach_doc" href="{% url 'apply_for_a_licence:end_user_attach_document' draft.id %}">Attach</a></td>
+                        </tr>
+                    {% endif %}
+                {% endif %}
 			</tbody>
 		</table>
 	{% else %}

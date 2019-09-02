@@ -1,15 +1,12 @@
-from pytest_bdd import scenarios, given, when, then, parsers
+from pytest_bdd import scenarios, when, then, parsers
 from pages.site_list_overview_page import SitesListOverview
 from pages.new_site_page import NewSite
 from pages.sites_page import SitesPage
-from pages.shared import Shared
 from pages.hub_page import Hub
 import datetime
-import helpers.helpers as utils
-from selenium.webdriver.common.by import By
-
-
 import logging
+from ui_automation_tests.pages.shared import Shared
+
 log = logging.getLogger()
 console = logging.StreamHandler()
 log.addHandler(console)
@@ -36,7 +33,7 @@ def click_new_site(driver):
     hub.click_sites_link()
 
 
-@when(parsers.parse('I enter in text for new site "{edited}" {address}" "{postcode}" "{city}" '
+@when(parsers.parse('I enter in text for new site "{edited}" "{address}" "{postcode}" "{city}" '
                     '"{region}" and "{country}"'))
 def new_sites_info(driver, edited, address, postcode, city, region, country, context):
     new_site = NewSite(driver)
@@ -50,6 +47,15 @@ def new_sites_info(driver, edited, address, postcode, city, region, country, con
 def i_see_sites_list(driver, context):
     assert context.new_site_name in Shared(driver).get_text_of_gov_table(), 'Failed to return to Sites list page after Adding site'
 
+
+@then('I see select a site error message')
+def select_a_site_error(driver):
+    shared = Shared(driver)
+    assert 'Cannot create an application without an end user' in shared.get_text_of_error_messages()
+    assert 'Cannot create an application with no goods attached' in shared.get_text_of_error_messages()
+    assert 'Cannot create an application with no sites or external sites attached' in shared.get_text_of_error_messages()
+
+
 @when('I click last edit button')
 def click_new_site(driver):
     site_list_overview_page = SitesListOverview(driver)
@@ -60,14 +66,6 @@ def click_new_site(driver):
 def clear_site(driver):
     new_site = NewSite(driver)
     new_site.clear_info_for_site()
-
-
-@then('I see select a site error message')
-def select_a_site_error(driver):
-    shared = Shared(driver)
-    assert 'Cannot create an application without an end user' in shared.get_text_of_error_message(2)
-    assert 'Cannot create an application with no goods attached' in shared.get_text_of_error_message()
-    assert 'Cannot create an application with no sites or external sites attached' in shared.get_text_of_error_message(1)
 
 
 @then('I see my new site at first position')

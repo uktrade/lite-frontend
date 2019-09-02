@@ -7,6 +7,7 @@ DRAFTS_URL = '/drafts/'
 GOODS_URL = '/goods/'
 CLCS_URL = APPLICATIONS_URL + 'clcs/'
 DOCUMENTS_URL = '/documents/'
+END_USER_DOCUMENT_URL = '/end-user/document/'
 GOODSTYPE_URL = '/goodstype/'
 USERS_URL = '/users/'
 ORGANISATIONS_URL = '/organisations/'
@@ -22,3 +23,8 @@ ECJU_QUERIES_URL = '/ecju-queries/'
 STATIC_URL = '/static/'
 UNITS_URL = STATIC_URL + 'units/'
 COUNTRIES_URL = STATIC_URL + 'countries/'
+
+
+# Applications constants
+STANDARD_LICENCE = 'standard_licence'
+OPEN_LICENCE = 'open_licence'

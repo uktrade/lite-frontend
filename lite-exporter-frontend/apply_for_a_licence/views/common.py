@@ -1,7 +1,13 @@
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
-from lite_forms.generators import form_page, success_page
+from s3chunkuploader.file_handler import S3FileUploadHandler
+
+from apply_for_a_licence.forms.end_user import attach_document_form, \
+    delete_document_confirmation_form
+from lite_forms.generators import form_page, success_page, error_page
 from lite_forms.submitters import submit_paged_form
 
 from apply_for_a_licence.forms import initial, goods
@@ -12,8 +18,12 @@ from core.builtins.custom_tags import get_string
 from core.services import get_units, get_sites_on_draft, get_external_locations_on_draft
 from drafts.services import post_drafts, get_draft, get_draft_goods, post_draft_preexisting_goods, submit_draft, \
     delete_draft, post_end_user, get_draft_countries, get_draft_goods_type, get_ultimate_end_users, \
-    post_ultimate_end_user, delete_ultimate_end_user
+    post_ultimate_end_user, delete_ultimate_end_user, get_end_user_document, post_end_user_document, \
+    delete_end_user_document
 from goods.services import get_goods, get_good
+from apply_for_a_licence.services import add_document_data
+from conf.constants import STANDARD_LICENCE, OPEN_LICENCE
+from apply_for_a_licence.services import download_document_from_s3
 
 
 class StartApplication(TemplateView):
@@ -51,6 +61,12 @@ class Overview(TemplateView):
         goodstypes, status_code = get_draft_goods_type(request, draft_id)
         external_locations, status_code = get_external_locations_on_draft(request, draft_id)
         ultimate_end_users, status_code = get_ultimate_end_users(request, draft_id)
+        end_user = data.get('draft').get('end_user')
+        if end_user:
+            end_user_document, status_code = get_end_user_document(request, draft_id)
+            end_user_document = end_user_document.get('document')
+        else:
+            end_user_document = None
 
         for good in goods['goods']:
             if not good['good']['is_good_end_product']:
@@ -66,6 +82,7 @@ class Overview(TemplateView):
             'external_locations': external_locations['external_locations'],
             'ultimate_end_users': ultimate_end_users['ultimate_end_users'],
             'ultimate_end_users_required': ultimate_end_users_required,
+            'end_user_document': end_user_document,
         }
         return render(request, 'apply_for_a_licence/overview.html', context)
 
@@ -289,8 +306,12 @@ class EndUser(TemplateView):
         if response:
             return response
 
-        # If there is no response (no forms left to go through), go to the overview page
-        return redirect(reverse_lazy('apply_for_a_licence:overview', kwargs={'pk': draft_id}))
+        draft, status_code = get_draft(request, draft_id)
+
+        if draft.get('draft').get('licence_type').get('key') == STANDARD_LICENCE:
+            return redirect(reverse_lazy('apply_for_a_licence:end_user_attach_document', kwargs={'pk': draft_id}))
+        else:
+            return redirect(reverse_lazy('apply_for_a_licence:overview', kwargs={'pk': draft_id}))
 
 
 class UltimateEndUsers(TemplateView):
@@ -346,3 +367,74 @@ class RemoveUltimateEndUser(TemplateView):
         }
 
         return render(request, 'apply_for_a_licence/ultimate_end_users/index.html', context)
+
+
+@method_decorator(csrf_exempt, 'dispatch')
+class AttachDocuments(TemplateView):
+    def get(self, request, **kwargs):
+        draft_id = str(kwargs['pk'])
+        draft, status_code = get_draft(request, draft_id)
+        if status_code == 200:
+            if draft.get('draft').get('licence_type').get('key') == STANDARD_LICENCE:
+                form = attach_document_form(reverse('apply_for_a_licence:overview', kwargs={'pk': draft_id}))
+
+                return form_page(request, form, extra_data={'draft_id': draft_id})
+            else:
+                return redirect(reverse_lazy('apply_for_a_licence:overview', kwargs={'pk': draft_id}))
+        else:
+            return error_page(None, 'Cannot find draft')
+
+    @csrf_exempt
+    def post(self, request, **kwargs):
+        self.request.upload_handlers.insert(0, S3FileUploadHandler(request))
+
+        draft_id = str(kwargs['pk'])
+        data, error = add_document_data(request)
+
+        if error:
+            return error_page(None, get_string('end_user.documents.attach_documents.upload_error'))
+
+        # Send LITE API the file information
+        end_user_document, status_code = post_end_user_document(request, draft_id, data)
+
+        if status_code != 201:
+            return error_page(None, get_string('end_user.documents.attach_documents.upload_error'))
+
+        return redirect(reverse('apply_for_a_licence:overview', kwargs={'pk': draft_id}))
+
+
+class DownloadDocument(TemplateView):
+    def get(self, request, **kwargs):
+        draft_id = str(kwargs['pk'])
+
+        documents, status_code = get_end_user_document(request, draft_id)
+
+        document = documents['document']
+
+        if document['safe']:
+            return download_document_from_s3(document['s3_key'], document['name'])
+        else:
+            return error_page(None, get_string('end_user.documents.attach_documents.download_error'))
+
+
+class DeleteDocument(TemplateView):
+    def get(self, request, **kwargs):
+        draft_id = str(kwargs['pk'])
+        form = delete_document_confirmation_form(
+            overview_url=reverse('apply_for_a_licence:overview', kwargs={'pk': draft_id})
+        )
+
+        return form_page(request, form)
+
+    def post(self, request, **kwargs):
+        draft_id = str(kwargs['pk'])
+        option = request.POST.get('delete_document_confirmation')
+        if option is None:
+            return redirect(reverse('apply_for_a_licence:delete_document', kwargs={'pk': draft_id}))
+        elif option == 'yes':
+            status_code = delete_end_user_document(request, draft_id)
+            if status_code is not 204:
+                return error_page(None, get_string('end_user.documents.attach_documents.delete_error'))
+
+        return redirect(reverse('apply_for_a_licence:overview', kwargs={'pk': draft_id}))
+
