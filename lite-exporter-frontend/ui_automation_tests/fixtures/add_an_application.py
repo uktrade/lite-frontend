@@ -49,4 +49,5 @@ def add_an_application(driver, request, api_url, exporter_url, context):
     context.app_id = api.context['application_id']
     context.app_name = app_name
     context.case_id = api.context['case_id']
+    api.add_ecju_query(context.case_id)
     timer.print_time('apply_for_standard_application')

@@ -1,17 +1,20 @@
-from django.http import StreamingHttpResponse
+from django.http import StreamingHttpResponse, Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
+from lite_forms.components import HiddenField
 from lite_forms.generators import error_page, form_page
 from s3chunkuploader.file_handler import S3FileUploadHandler, s3_client
 
+from applications.services import get_application_ecju_queries, get_application_case_notes, post_application_case_notes, \
+    get_ecju_query, put_ecju_query
 from conf import settings
 from conf.settings import AWS_STORAGE_BUCKET_NAME
-from core.services import get_clc_notifications
+from core.services import get_clc_notifications, get_notifications
 from goods import forms
-from goods.forms import edit_form, attach_documents_form
+from goods.forms import edit_form, attach_documents_form, respond_to_query_form, ecju_query_respond_confirmation_form
 from goods.services import get_goods, post_goods, get_good, update_good, delete_good, get_good_documents, get_good_document, delete_good_document, post_good_documents, raise_clc_query
 
 
@@ -29,31 +32,101 @@ class Goods(TemplateView):
         return render(request, 'goods/index.html', context)
 
 
+class GoodsDetailEmpty(TemplateView):
+    def get(self, request, **kwargs):
+        good_id = str(kwargs['pk'])
+        return redirect(reverse_lazy('goods:good-detail', kwargs={'pk': good_id,
+                                                           'type': 'case-notes'}))
+
+
 class GoodsDetail(TemplateView):
+
+    good_id = None
+    good = None
+    view_type = None
+    notifications = None
+
+    def dispatch(self, request, *args, **kwargs):
+        self.good_id = str(kwargs['pk'])
+        self.notifications, _ = get_clc_notifications(request, unviewed=True)
+        good, status_code = get_good(request, self.good_id)
+        self.good = good['good']
+        self.view_type = kwargs['type']
+
+        if self.view_type != 'case-notes' and self.view_type != 'ecju-queries':
+            return Http404
+
+        return super(GoodsDetail, self).dispatch(request, *args, **kwargs)
+
     def get(self, request, **kwargs):
         good_id = kwargs['pk']
         data, status_code = get_good(request, str(good_id))
         documents, status_code = get_good_documents(request, str(good_id))
 
-        if data['good'].get('clc_query_id') != 'None':
-            if data['good']['notes'] is not None:
-                visible_notes = filter(lambda note: note['is_visible_to_exporter'], data['good']['notes'])
+        if data['good']['clc_query_id'] != None:
+            clc_query_id = data['good']['clc_query_id']
+            case_id = data['good']['clc_query_case_id']
+            case_note_notifications = len([x for x in self.notifications['results']
+                                           if x['clc_query'] == clc_query_id and x['case_note']])
+            ecju_query_notifications = len([x for x in self.notifications['results']
+                                            if x['clc_query'] == clc_query_id and x['ecju_query']])
 
-                context = {
-                    'data': data,
-                    'documents': documents['documents'],
-                    'notes': visible_notes,
-                    'title': data['good']['description'],
-                }
+            context = {
+                'data': data,
+                'documents': documents['documents'],
+                'title': data['good']['description'],
+                'type': self.view_type,
+            }
 
-                return render(request, 'goods/good.html', context)
+            if case_note_notifications > 0:
+                context['case_note_notifications'] = case_note_notifications
+
+            if ecju_query_notifications > 0:
+                context['ecju_query_notifications'] = ecju_query_notifications
+
+            if self.view_type == 'case-notes':
+                case_notes = get_application_case_notes(request, case_id)['case_notes']
+                context['notes'] = filter(lambda note: note['is_visible_to_exporter'], case_notes)
+
+            if self.view_type == 'ecju-queries':
+                context['open_queries'], context['closed_queries'] = get_application_ecju_queries(request, case_id)
+
+            return render(request, 'goods/good.html', context)
 
         context = {
             'data': data,
             'documents': documents['documents'],
             'title': data['good']['description'],
         }
+
         return render(request, 'goods/good.html', context)
+
+    def post(self, request, **kwargs):
+        if self.view_type != 'case-notes':
+            return Http404
+
+
+        good_id = kwargs['pk']
+        data, status_code = get_good(request, str(good_id))
+
+        response, status_code = post_application_case_notes(request, data['good']['clc_query_case_id'], request.POST)
+
+        if 'errors' in response:
+            errors = response.get('errors')
+            if errors.get('text'):
+                error = errors.get('text')[0]
+                error = error.replace('This field', 'Case note')
+                error = error.replace('this field', 'the case note')  # TODO: Move to API
+
+            else:
+                error_list = []
+                for key in errors:
+                    error_list.append("{field}: {error}".format(field=key, error=errors[key][0]))
+                error = "\n".join(error_list)
+            return error_page(request, error)
+
+        return redirect(reverse_lazy('goods:good-detail', kwargs={'pk': good_id,
+                                                           'type': 'case-notes'}))
 
 
 class AddGood(TemplateView):
@@ -145,7 +218,7 @@ class DeleteGood(TemplateView):
 class AttachDocuments(TemplateView):
     def get(self, request, **kwargs):
         good_id = str(kwargs['pk'])
-        get_good(request, good_id)
+        # get_good(request, good_id)
 
         form = attach_documents_form(reverse('goods:good', kwargs={'pk': good_id}))
 
@@ -259,3 +332,73 @@ class DeleteDocument(TemplateView):
             'page': 'goods/modals/delete_document.html',
         }
         return redirect(reverse('goods:good', kwargs={'pk': good_id}))
+
+
+class RespondToQuery(TemplateView):
+    def get(self, request, **kwargs):
+        '''
+        Will get a text area form for the user to respond to the ecju_query
+        '''
+        good_id = str(kwargs['pk'])
+        good, _ = get_good(request, good_id)
+        clc_query_case_id = good['good']['clc_query_case_id']
+        ecju_query = get_ecju_query(request, clc_query_case_id, str(kwargs['query_pk']))
+
+        # If an ecju query is already responded to, prevent a second response
+        if ecju_query['response']:
+            raise Http404
+
+        return form_page(request, respond_to_query_form(good_id, ecju_query))
+
+    def post(self, request, **kwargs):
+        '''
+        will determine what form the user is on:
+        if the user is on the input form will then will determine if data is valid, and move user to confirmation form
+        else will allow the user to confirm they wish to respond and post data if accepted.
+        '''
+        good_id = str(kwargs['pk'])
+        form_name = request.POST.get('form_name')
+        good, _ = get_good(request, good_id)
+        clc_query_case_id = good['good']['clc_query_case_id']
+        ecju_query_id = str(kwargs['query_pk'])
+
+        ecju_query = get_ecju_query(request, clc_query_case_id, ecju_query_id)
+
+        if form_name == 'respond_to_query':
+            # Post the form data to API for validation only
+            data = {'response': request.POST.get('response'), 'validate_only': True}
+            response, status_code = put_ecju_query(request, clc_query_case_id, ecju_query_id, data)
+
+            if status_code != 200:
+                errors = response.get('errors')
+                errors = {error: message for error, message in errors.items()}
+                form = respond_to_query_form(clc_query_case_id, ecju_query)
+                data = {'response': request.POST.get('response')}
+                return form_page(request, form, data=data, errors=errors)
+            else:
+                form = ecju_query_respond_confirmation_form(reverse_lazy('goods:respond_to_query',
+                                                                         kwargs={'pk': good_id, 'query_pk': ecju_query_id}))
+                form.questions.append(HiddenField('response', request.POST.get('response')))
+                return form_page(request, form)
+        elif form_name == 'ecju_query_response_confirmation':
+            if request.POST.get('confirm_response') == 'yes':
+                data, status_code = put_ecju_query(request, clc_query_case_id, ecju_query_id,
+                                                   request.POST)
+                if 'errors' in data:
+                    return form_page(request, respond_to_query_form(good_id, ecju_query), data=request.POST,
+                                     errors=data['errors'])
+
+                return redirect(reverse_lazy('goods:good-detail', kwargs={'pk': good_id,
+                                                                          'type': 'ecju-queries'}))
+
+            elif request.POST.get('confirm_response') == 'no':
+                return form_page(request, respond_to_query_form(clc_query_case_id, ecju_query), data=request.POST)
+            else:
+                error = {'required': ['This field is required']}
+                form = ecju_query_respond_confirmation_form(reverse_lazy('goods:respond_to_query',
+                                                                         kwargs={'pk': good_id, 'query_pk': ecju_query_id}))
+                form.questions.append(HiddenField('response', request.POST.get('response')))
+                return form_page(request, form, errors=error)
+        else:
+            # Submitted data does not contain an expected form field - return an error
+            return error_page(None, 'We had an issue creating your response. Try again later.')

@@ -1,6 +1,6 @@
 {% load humanize static %}
 
-{% url 'applications:case_notes' data.application.id as post_url %}
+{% url 'goods:good-detail' data.good.id 'case-notes' as post_url %}
 
 {% if post_url %}
 
@@ -12,7 +12,7 @@
 				<p id="case_note-warning" class="govuk-hint govuk-character-count__message" aria-live="polite" style="text-align: left; margin: 2px 0 0 0;">
 					You can enter up to 2200 characters
 				</p>
-				<a id="case-note-cancel-button" href="{% url 'applications:application' data.application.id %}" class="govuk-button govuk-button--secondary" type="button" draggable="false">
+				<a id="case-note-cancel-button" href="{{ post_url }}" class="govuk-button govuk-button--secondary" type="button" draggable="false">
 					Cancel
 				</a>
 				<button class="govuk-button" type="submit" id="button-post-note">
@@ -41,7 +41,13 @@
 		{% endfor %}
 	</div>
 {% else %}
-	<p class="govuk-caption-l">There aren't any notes on this application.</p>
+    <div class="lite-information-text">
+        <span class="lite-information-text__icon" aria-hidden="true">!</span>
+        <p class="lite-information-text__text">
+            <span class="govuk-visually-hidden">Information</span>
+            There haven't been any notes on this application.
+        </p>
+    </div>
 {% endif %}
 
 <script src="{% static 'javascripts/pluralize.js' %}"></script>
