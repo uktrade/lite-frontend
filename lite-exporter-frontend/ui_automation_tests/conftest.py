@@ -39,6 +39,9 @@ def pytest_addoption(parser):
     if env == 'local':
         parser.addoption("--exporter_url", action="store", default="http://localhost:9000", help="url")
         parser.addoption("--lite_api_url", action="store", default="http://localhost:8100", help="url")
+    elif env == 'dev2':
+        parser.addoption("--exporter_url", action="store", default="https://exporter2.lite.service.dev.uktrade.io/", help="url")
+        parser.addoption("--lite_api_url", action="store", default="https://lite-api2-dev.london.cloudapps.digital/", help="url")
     else:
         parser.addoption("--exporter_url", action="store", default="https://exporter.lite.service." + env + ".uktrade.io/", help="url")
         parser.addoption("--lite_api_url", action="store", default="https://lite-api-" + env + ".london.cloudapps.digital/", help="url")
