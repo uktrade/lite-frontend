@@ -4,6 +4,11 @@
 	appearance: $appearance;
 }
 
+@mixin user-select($user-select) {
+	-webkit-user-select: $user-select;
+	user-select: $user-select;
+}
+
 @mixin truncate($truncation-boundary) {
     max-width: $truncation-boundary;
     white-space: nowrap;
@@ -11,11 +16,11 @@
     text-overflow: ellipsis;
 }
 
-@mixin fill-pseudo() {
+@mixin fill-pseudo($all: 0px) {
 	content: "";
 	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
+	top: $all;
+	left: $all;
+	right: $all;
+	bottom: $all;
 }
