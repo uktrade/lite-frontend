@@ -1,15 +1,25 @@
-<div class="govuk-checkboxes {% for class in component.classes %}{{ class }} {% endfor %}">
-	{% for item in component.options %}
-		<div class="govuk-checkboxes__item">
-			<input {% if data|key_in_array:item.key %}checked{% endif %} class="govuk-checkboxes__input" id="{{ item.value }}" name="{{ component.name }}" type="checkbox" value="{{ item.key }}">
-			<label class="govuk-label govuk-checkboxes__label" for="{{ item.value }}">
-				{{ item.value }}
-			</label>
-			{% if item.description %}
-				<label class="govuk-hint govuk-checkboxes__hint" for="{{ item.value }}">
-					{{ item.description|linebreaksbr }}
-        		</label>
-			{% endif %}
-		</div>
-	{% endfor %}
-</div>
+{% if component.options %}
+    <div class="govuk-checkboxes {% for class in component.classes %}{{ class }} {% endfor %}">
+        {% for item in component.options %}
+            <div class="govuk-checkboxes__item">
+                <input {% if data|key_in_array:item.key %}checked{% endif %} class="govuk-checkboxes__input" id="{{ item.value }}" name="{{ component.name }}" type="checkbox" value="{{ item.key }}">
+                <label class="govuk-label govuk-checkboxes__label" for="{{ item.value }}">
+                    {{ item.value }}
+                </label>
+                {% if item.description %}
+                    <label class="govuk-hint govuk-checkboxes__hint" for="{{ item.value }}">
+                        {{ item.description|linebreaksbr }}
+                    </label>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="lite-information-text">
+        <span class="lite-information-text__icon" aria-hidden="true">!</span>
+        <p class="lite-information-text__text">
+            <span class="govuk-visually-hidden">Information</span>
+            {{ component.empty_notice }}
+        </p>
+    </div>
+{% endif %}

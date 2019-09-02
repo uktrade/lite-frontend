@@ -43,13 +43,15 @@ class FormGroup:
     easier to reference them
     """
 
-    def __init__(self, forms: list):
+    def __init__(self, forms: list, show_progress_indicators=False):
         self.forms = forms
 
         index = 0
         for form in forms:
             form.pk = index
             form.questions.append(HiddenField(name='form_pk', value=form.pk))
+            if show_progress_indicators:
+                form.caption = f'Part {index + 1} of {len(forms)}'
             index += 1
 
 
@@ -185,9 +187,11 @@ class Checkboxes(_Component):
                  title: str = '',
                  description: str = '',
                  optional: bool = False,
-                 classes: [] = None):
+                 classes: [] = None,
+                 empty_notice: str = 'No items'):
         super().__init__(name, title, description, optional, classes)
         self.options = options
+        self.empty_notice = empty_notice
         self.input_type = 'checkboxes'
 
 
@@ -204,9 +208,11 @@ class RadioButtons(_Component):
                  title: str = '',
                  description: str = '',
                  optional: bool = False,
-                 classes: [] = None):
+                 classes: [] = None,
+                 empty_notice: str = 'No items'):
         super().__init__(name, title, description, optional, classes)
         self.options = options
+        self.empty_notice = empty_notice
         self.input_type = 'radiobuttons'
 
 
