@@ -4,6 +4,7 @@ from helpers.seed_data import SeedData
 from helpers.utils import get_or_create_attr
 from pages.shared import Shared
 
+from ui_automation_tests.helpers.helpers import wait_until_page_is_loaded
 from ui_automation_tests.pages.case_list_page import CaseListPage
 
 scenarios('../features/filter_and_sort_cases.feature', strict_gherkin=False)
@@ -56,6 +57,7 @@ def i_hide_filters(driver, context):
 
 @when(parsers.parse('I sort cases by "{sort_type}"'))
 def i_sort_cases_by(driver, context, sort_type):
+    wait_until_page_is_loaded(driver)
     driver.find_element_by_link_text(sort_type).click()
 
 

@@ -31,6 +31,8 @@ class ApplicationPage(BasePage):
     ueu_table = 'ultimate-end-users'  # ID
     give_advice_button = 'button-give-advice'  # ID
     checkbox = '[type="checkbox"]'  # CSS
+    download_good_document = 'good_document'  # ID
+    download_end_user_document = 'end_user_document'  # ID
 
     def click_visible_to_exporter_checkbox(self):
         time.sleep(.5)
@@ -122,3 +124,9 @@ class ApplicationPage(BasePage):
             num += 1
         self.driver.find_element_by_id(self.give_advice_button).click()
         return num
+
+    def good_document_link_is_enabled(self):
+        return self.driver.find_element_by_id(self.download_good_document).is_enabled()
+
+    def end_user_document_link_is_enabled(self):
+        return self.driver.find_element_by_id(self.download_end_user_document).is_enabled()

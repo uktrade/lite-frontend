@@ -61,9 +61,7 @@ def see_queue_in_queue_list(driver, context):
 @then('I dont see previously created application')
 def dont_see_queue_in_queue_list(driver, context):
     driver.set_timeout_to(0)
-    if len(driver.find_elements_by_css_selector('.lite-information-text__text')) == 1:
-        assert True
-    else:
+    if len(driver.find_elements_by_css_selector('.lite-information-text__text')) != 1:
         assert context.app_id not in driver.find_element_by_css_selector('.lite-cases-table').text
         assert context.case_id not in driver.find_element_by_css_selector('.lite-cases-table').text
     driver.set_timeout_to_10_seconds()

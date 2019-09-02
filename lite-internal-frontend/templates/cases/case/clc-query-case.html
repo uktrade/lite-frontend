@@ -83,9 +83,9 @@
     </div>
 </div>
 
-{% if data.case.clc_query.good.documents %}
+{% if case.clc_query.good.documents %}
 	<p class="govuk-caption-m">{% get_string 'cases.manage.documents.description' %}</p>
-	{% for document in data.case.clc_query.good.documents %}
+	{% for document in case.clc_query.good.documents %}
 		<div class="lite-card lite-card--download">
 			<div>
 				<p class="govuk-body govuk-!-font-weight-bold" style="margin-bottom: 10px;">{{ document.name }}</p>
@@ -94,7 +94,7 @@
 			</div>
 			<div class="lite-vertical-align">
 				{% if document.safe == True %}
-					<a class="govuk-link lite-link--icon govuk-link--no-visited-state" href="{% url 'cases:document' data.case.id document.id %}">
+					<a class="govuk-link lite-link--icon govuk-link--no-visited-state" href="{% url 'cases:document' case.id document.id %}">
 						<span class="govuk-visually-hidden">{% get_string 'cases.manage.documents.download_document' %}</span>
 						Download
 				</a>

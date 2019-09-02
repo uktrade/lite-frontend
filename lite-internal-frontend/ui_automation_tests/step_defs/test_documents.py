@@ -6,7 +6,7 @@ from ui_automation_tests.pages.application_page import ApplicationPage
 from ui_automation_tests.pages.attach_document_page import AttachDocumentPage
 from ui_automation_tests.pages.documents_page import DocumentsPage
 
-scenarios('../features/document_upload.feature', strict_gherkin=False)
+scenarios('../features/documents.feature', strict_gherkin=False)
 
 
 @when('I click on the Documents button')
@@ -39,3 +39,13 @@ def check_file2_is_uploaded(driver, filename, description, position):
     documents_page = DocumentsPage(driver)
     assert documents_page.get_document_filename_at_position(int(position)) == filename, filename + " is not uploaded"
     assert documents_page.get_document_description_at_position(int(position)) == description, description + " is not uploaded"
+
+
+@then("I can click on the good document download link")
+def can_click_on_the_good_document_download_link(driver):
+    assert ApplicationPage(driver).good_document_link_is_enabled()
+
+
+@then("I can click on the end user document download link")
+def can_click_on_the_end_user_document_download_link(driver):
+    assert ApplicationPage(driver).end_user_document_link_is_enabled()

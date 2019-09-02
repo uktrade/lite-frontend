@@ -16,6 +16,7 @@ import logging
 now = datetime.now().isoformat()
 path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir))
 screen_dir = os.path.join(path, "screenshot", str(now))
+timeout_limit = 20
 
 
 def get_current_date_time_string():
@@ -157,7 +158,7 @@ def get_element_index_by_partial_text(elements, text: str):
 
 def wait_until_page_is_loaded(driver):
     time_no = 0
-    while time_no < 60:
+    while time_no < timeout_limit:
         if driver.execute_script("return document.readyState") == "complete":
             break
         time.sleep(1)
