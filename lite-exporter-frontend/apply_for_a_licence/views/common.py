@@ -1,3 +1,5 @@
+import logging
+
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
@@ -387,7 +389,7 @@ class AttachDocuments(TemplateView):
     @csrf_exempt
     def post(self, request, **kwargs):
         self.request.upload_handlers.insert(0, S3FileUploadHandler(request))
-
+        logging.info(self.request)
         draft_id = str(kwargs['pk'])
         data, error = add_document_data(request)
 
