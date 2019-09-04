@@ -1,6 +1,6 @@
 from django.urls import path
 
-from cases.views import main, advice
+from cases.views import main, advice, goods, flags
 
 app_name = 'cases'
 urlpatterns = [
@@ -22,9 +22,10 @@ urlpatterns = [
     path('<uuid:pk>/attach/', main.AttachDocuments.as_view(), name='attach_documents'),
     # ex: /<uuid:pk>/documents/<str:file_id>/
     path('<uuid:pk>/documents/<str:file_pk>/', main.Document.as_view(), name='document'),
+    # ex: /<uuid:pk>/goods/<str:good_pk>/
+    path('<uuid:pk>/goods/<str:good_pk>/', goods.Good.as_view(), name='good'),
     # ex: /cases/<uuid:pk>/assign-flags/
-    path('<uuid:pk>/assign-flags/', main.AssignFlags.as_view(), name='assign_flags'),
-
+    path('<uuid:pk>/assign-flags/', flags.AssignFlags.as_view(), name='assign_flags'),
     # ex: /cases/<uuid:pk>/advice-view/
     path('<uuid:pk>/advice-view/', advice.ViewAdvice.as_view(), name='advice_view'),
     # ex: /cases/<uuid:pk>/advice-view/give-advice/

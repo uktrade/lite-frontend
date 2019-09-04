@@ -1,5 +1,5 @@
 from lite_forms.common import address_questions
-from lite_forms.components import Form, TextInput, Button, Heading, HelpSection, FormGroup
+from lite_forms.components import Form, TextInput, Heading, HelpSection, FormGroup
 from lite_forms.styles import HeadingStyle
 
 from core.services import get_countries
@@ -8,7 +8,6 @@ from core.services import get_countries
 def register_business_forms():
     return FormGroup([
         Form(title='Register an organisation',
-             description='Part 1 of 3',
              questions=[
                  TextInput(title='What\'s the organisation\'s name?',
                            name='name'),
@@ -25,32 +24,28 @@ def register_business_forms():
                            description='8 numbers, or 2 letters followed by 6 numbers.',
                            name='registration_number'),
              ],
-             buttons=[
-                 Button('Save and continue', '')
-             ],
+             default_button_name='Continue'
              ),
         Form(title='Create a default site for this organisation',
-             description='Part 2 of 3',
              questions=[
                  TextInput(title='Name of site',
                            name='site.name'),
                  Heading('Where is the organisation based?', HeadingStyle.M),
                  *address_questions(get_countries(None, True), 'site.address.'),
              ],
-             buttons=[
-                 Button('Save and continue', '')
+             default_button_name='Continue'),
+        Form(title='Create an admin for this organisation',
+             questions=[
+                 TextInput(title='Email Address',
+                           name='user.email'),
+                 TextInput(title='First name',
+                           name='user.first_name'),
+                 TextInput(title='Last name',
+                           name='user.last_name'),
+             ],
+             default_button_name='Submit',
+             helpers=[
+                 HelpSection('Help', 'This will be the default user for this organisation.')
              ]),
-        Form('Create an admin for this organisation', 'Part 3 of 3', [
-            TextInput(title='Email Address',
-                      name='user.email'),
-            TextInput(title='First name',
-                      name='user.first_name'),
-            TextInput(title='Last name',
-                      name='user.last_name'),
-        ],
-             buttons=[
-                 Button('Submit', '')
-             ], helpers=[
-                HelpSection('Help', 'This will be the default user for this organisation.')
-            ]),
-    ])
+    ],
+        show_progress_indicators=True,)

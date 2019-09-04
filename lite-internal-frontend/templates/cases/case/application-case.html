@@ -3,7 +3,9 @@
 {% load humanize static %}
 
 {% block back_link %}
-	<a href="{% url 'cases:cases' %}" class="govuk-back-link">{% get_string 'cases.case.back_to_cases_link' %}</a>
+	<a href="{% url 'cases:cases' %}?queue={{ queue.queue.id }}" class="govuk-back-link">
+		Back to {{ queue.queue.name }}
+	</a>
 {% endblock %}
 
 {% load svg %}
@@ -63,12 +65,18 @@
 {% endif %}
 
 <!-- Goods -->
-{% if case.application.licence_type.key == 'open_licence' %}
-	{% include 'cases/case/views/open-goods.html' %}
-{% endif %}
-{% if case.application.licence_type.key == 'standard_licence' %}
-	{% include 'cases/case/views/standard-goods.html' %}
-{% endif %}
+<form action="{% url 'cases:assign_flags' case.id %}" method="get">
+    <input type="hidden" name="level" value="goods"/>
+    <button id="button-edit-goods-flags" value="goods" class="govuk-button" data-module="govuk-button">
+        Edit goods flags
+    </button>
+    {% if case.application.licence_type.key == 'open_licence' %}
+        {% include 'cases/case/views/open-goods.html' with show_checkboxes=True %}
+    {% endif %}
+    {% if case.application.licence_type.key == 'standard_licence' %}
+        {% include 'cases/case/views/standard-goods.html' with show_checkboxes=True %}
+    {% endif %}
+</form>
 
 <!-- Destinations/End-User -->
 {% if case.application.licence_type.key == 'open_licence' %}
@@ -84,4 +92,5 @@
 
 {% block javascript %}
 	<!-- <script src="{% static 'javascripts/more-actions.js' %}"></script> -->
+	<script src="{% static 'javascripts/edit-good-flags.js' %}"></script>
 {% endblock %}

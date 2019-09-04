@@ -6,29 +6,30 @@
 
 {% block body %}
 
-<form method="get" class="lite-dropdown-select">
-	<select class="govuk-select" name="queue">
-		{% for queue in queues.queues %}
-			<option value="{{ queue.id }}" {% if queue.id == queue_id %}selected{% endif %}>{{ queue.name }}</option>
-		{% endfor %}
-	</select>
-	<button type="submit" class="govuk-button">{% get_string 'cases.go_to_queue' %}</button>
-</form>
-
-
 <div class="lite-app-bar">
     <div>
-        <a id="queue-title" href="#" class="govuk-heading-l lite-heading-dropdown" onclick="toggleDropdown()">{{ title }}</a>
+		<form method="get" class="app-dropdown__select">
+			<select class="govuk-select" name="queue">
+				{% for queue in queues %}
+					<option value="{{ queue.id }}" {% if queue.id == current_queue.id %}selected{% endif %}>{{ queue.name }}</option>
+				{% endfor %}
+			</select>
+			<button type="submit" class="govuk-button">{% get_string 'cases.go_to_queue' %}</button>
+		</form>
+        <a id="queue-title" href="#" class="govuk-heading-l app-dropdown__heading" onclick="toggleDropdown()">{{ title }}</a>
     </div>
-    <div class="lite-app-bar--right">
+    <div class="lite-app-bar__controls">
         <button id="assign-users-button" form="cases-form" type="submit" class="govuk-button govuk-button--secondary">Assign users</button>
     </div>
 </div>
-<div class="lite-dropdown-background" onclick="toggleDropdown()"></div>
-<div class="lite-dropdown--container" id="queues">
-    <div class="lite-dropdown">
-        {% for queue in queues.queues %}
-            <a href="/cases/?queue={{ queue.id }}" class="lite-dropdown--item {% if queue.id == queue_id %}lite-dropdown--item--selected{% endif %}">{{ queue.name }}</a>
+<div class="app-dropdown__background" onclick="toggleDropdown()"></div>
+<div class="app-dropdown__container" id="queues">
+    <div class="app-dropdown__list">
+        {% for queue in queues %}
+            <a href="/cases/?queue={{ queue.id }}" class="app-dropdown__item {% if queue.id == current_queue.id %}app-dropdown__item--selected{% endif %}">
+				{{ queue.name }}
+                <span class="app-dropdown__item__count">{{ queue.cases_count }}</span>
+            </a>
         {% endfor %}
     </div>
 </div>
@@ -45,7 +46,7 @@
 </div>
 
 <form id="filters" action="{% url 'cases:cases'%}" method="get">
-    <input hidden name="queue" value="{{ queue_id }}">
+    <input hidden name="queue" value="{{ current_queue.id }}">
 
     <div class="govuk-grid-row lite-filter-bar--horizontal">
         <div class="govuk-grid-column-one-quarter">
@@ -54,9 +55,9 @@
             </label>
             <div class="lite-select-wrapper">
                 <select class="govuk-select" id="case_type" name="case_type">
-                    <option {% if case_type == None %}selected{% endif %} value="">Select</option>
-                    <option {% if case_type ==  "application" %}selected{% endif %} value="application">Licence application</option>
-                    <option {% if case_type == "clc_query" %}selected{% endif %} value="clc_query">CLC query</option>
+                    <option {% if params.case_type == None %}selected{% endif %} value="">Select</option>
+                    <option {% if params.case_type == "application" %}selected{% endif %} value="application">Licence application</option>
+                    <option {% if params.case_type == "clc_query" %}selected{% endif %} value="clc_query">CLC query</option>
                 </select>
             </div>
         </div>
@@ -66,9 +67,9 @@
             </label>
             <div class="lite-select-wrapper">
                 <select class="govuk-select" id="status" name="status">
-                    <option {% if status == None %}selected{% endif %} value="">Select</option>
+                    <option {% if params.status == None %}selected{% endif %} value="">Select</option>
                     {% for case_status in statuses.statuses %}
-				        <option value="{{ case_status.status }}" {% if case_status.status == status %}selected{% endif %}>{{ case_status.status|default:"Untitled"|sentence_case }}</option>
+				        <option value="{{ case_status.status }}" {% if case_status.status == params.status %}selected{% endif %}>{{ case_status.status|default:"Untitled"|sentence_case }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -81,7 +82,7 @@
                 <button type="submit" form="filters" class="govuk-button" style="margin: 0;" id="button-apply-filters">
                     Apply filters
                 </button>
-                <a href="{% url 'cases:cases' %}?queue={{ queue_id }}" class="govuk-button govuk-button--secondary" style="margin-bottom: 0;" id="button-clear-filters">
+                <a href="{% url 'cases:cases' %}?queue={{ current_queue.id }}" class="govuk-button govuk-button--secondary" style="margin-bottom: 0;" id="button-clear-filters">
                     Clear filters
                 </a>
             </div>
@@ -94,9 +95,9 @@
 
 	{% csrf_token %}
 
-  	{% if data.queue.cases|length %}
+  	{% if cases.results|length %}
 		<div class="lite-cases-table">
-			<div class="lite-cases-table-header" {% if is_system_queue %}style="grid-template-columns: 30px 1fr 200px 200px 200px 200px"{% endif %}>
+			<div class="lite-cases-table-header" {% if current_queue.is_system_queue %}style="grid-template-columns: 30px 1fr 200px 200px 200px 200px"{% endif %}>
 				<div class="govuk-checkboxes govuk-checkboxes--small">
 					<div class="govuk-checkboxes__item">
 						<input id="select-all-checkbox" class="govuk-checkboxes__input" type="checkbox">
@@ -118,79 +119,91 @@
 						Type
 					</a>
 				</div>
-                {% if is_system_queue %}
-                    <h4>
-                        Queues
-                    </h4>
+                {% if current_queue.is_system_queue %}
+                    <div>
+						<a href="#" class="lite-cases-table__heading">
+                        	Queues
+						</a>
+                    </div>
                 {% endif %}
 				<div>
-					<a href="{{ current_filter_url }}sort={{ 'status'|table_sort_text:sort }}" class="lite-cases-table__heading {{ 'status'|table_sort:sort }}">
+					<a href="{% url 'cases:cases' %}?{{ params_str }}&sort={{ 'status'|table_sort_text:params }}" class="lite-cases-table__heading {{ 'status'|table_sort:params }}">
 						Status
 						{% svg 'chevron' %}
 					</a>
 				</div>
 			</div>
-			{% for case in data.queue.cases %}
-				<div class="lite-cases-table-row" {% if is_system_queue %}style="grid-template-columns: 30px 1fr 200px 200px 200px 200px"{% endif %}>
+			{% for case in cases.results %}
+				<div class="lite-cases-table-row" {% if current_queue.is_system_queue %}style="grid-template-columns: 30px 1fr 200px 200px 200px 200px"{% endif %}>
 					<div class="govuk-checkboxes govuk-checkboxes--small">
 						<div class="govuk-checkboxes__item">
 							<input class="govuk-checkboxes__input" type="checkbox" name="cases" value="{{ case.id }}">
 							<label class="govuk-label govuk-checkboxes__label"></label>
 						</div>
 					</div>
-					<div>
-                        {% if case.type.key == 'clc_query' %}
-                                <div>
-									<a class="govuk-link govuk-!-font-size-19 govuk-link--no-visited-state govuk-!-font-weight-bold" href="{% url 'cases:case' case.id %}" style="text-decoration: none; margin-bottom: 5px!important; display: inline-block;">
-	                                    {{ case.id }}
-	                                </a>
-                                </div>
-                                <p class="govuk-body" style="opacity: .7; margin: 0;">
-                                    {{ case.clc_query.organisation_name }}
-                                </p>
-                        {% else %}
-							<div class="">
-								<a href="{% url 'cases:case' case.id %}" class="govuk-link govuk-!-font-size-19 govuk-link--no-visited-state govuk-!-font-weight-bold" style="text-decoration: none; margin-bottom: 5px!important; display: inline-block;">
-									{{ case.application.id|default:"Untitled" }}
-								</a>
-							</div>
+                <div>
+                    {% if case.type.key == 'clc_query' %}
+                            <div>
+                                <a class="govuk-link govuk-!-font-size-19 govuk-link--no-visited-state govuk-!-font-weight-bold" href="{% url 'cases:case' case.id %}?return_to={{ current_queue.id }}" style="text-decoration: none; margin-bottom: 5px!important; display: inline-block;">
+                                    {{ case.id }}
+                                </a>
+                            </div>
                             <p class="govuk-body" style="opacity: .7; margin: 0;">
-                                {{ case.application.organisation.name }}
+                                {{ case.organisation }}
                             </p>
-                        {% endif %}
-					</div>
-					<div>
-						{% for user in case.assignments %}
-							<p class="govuk-body user" style="margin-bottom: 6px;">
-								{% if user.first_name %}
-									{{ user.first_name }} {{ user.last_name }}
-								{% else %}
-									{{ user.email }}
-								{% endif %}
-							</p>
-						{% empty %}
-							<p class="govuk-body" style="margin-bottom: 0; opacity: .7;">No users assigned</p>
-						{% endfor %}
-					</div>
-                    <p class="govuk-body">
-                        {{ case.type.value }}
-                    </p>
-                    {% if is_system_queue %}
-                        <p class="govuk-body">
-                            {{ case.queue_names|join:', '  }}
+                    {% else %}
+                        <div class="">
+                            <a href="{% url 'cases:case' case.id %}?return_to={{ current_queue.id }}" class="govuk-link govuk-!-font-size-19 govuk-link--no-visited-state govuk-!-font-weight-bold" style="text-decoration: none; margin-bottom: 5px!important; display: inline-block;">
+                                {{ case.id|default:"Untitled" }}
+                            </a>
+                        </div>
+                        <p class="govuk-body" style="opacity: .7; margin: 0;">
+                            {{ case.organisation }}
                         </p>
                     {% endif %}
+                </div>
+                <div>
+                    {% for user in case.users %}
+                        <p class="govuk-body user" style="margin-bottom: 6px;">
+                            {% if user.first_name %}
+                                {{ user.first_name }} {{ user.last_name }}
+                            {% else %}
+                                {{ user.email }}
+                            {% endif %}
+                        </p>
+                    {% empty %}
+                        <p class="govuk-body" style="margin-bottom: 0; opacity: .7;">No users assigned</p>
+                    {% endfor %}
+                </div>
+                <p class="govuk-body">
+                    {{ case.type }}
+                </p>
+                {% if current_queue.is_system_queue %}
                     <p class="govuk-body">
-                        {% if case.type.key == 'clc_query' %}
-                            {{ case.clc_query.status|default:"Untitled"|sentence_case }}
-                        {% else %}
-                            {{ case.application.status|default:"Untitled"|sentence_case }}
-                        {% endif %}
+                        {{ case.queue_names|join:', '  }}
                     </p>
-				</div>
+                {% endif %}
+                <p class="govuk-body">
+                    {% if case.type.key == 'clc_query' %}
+                        {{ case.status|default:"Untitled"|sentence_case }}
+                    {% else %}
+                        {{ case.status|default:"Untitled"|sentence_case }}
+                    {% endif %}
+                </p>
+                </div>
 			{% endfor %}
-    </div>
+        </div>
+        {% if cases.total_pages > 1 %}
+            <br>
 
+            <div class="lite-pagination__container ">
+                {% for i in cases.total_pages|times %}
+                    <a href="{% url 'cases:cases' %}?{{ params_str }}&page={{ i }}" class="lite-pagination__item {% if page == i %}lite-pagination__item--selected{% endif %}" id="page-{{ i }}">
+                        {{ i }}
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
 	{% else %}
 		{% get_string 'cases.no_cases' as no_cases_text %}
 		{% include "includes/information-text.html" with text=no_cases_text %}
@@ -203,7 +216,7 @@
 	$("#show-filters-link").show();
 	$("#hide-filters-link").hide();
 
-	{% if case_type or status %}
+	{% if params.case_type or params.status %}
 		$("#filters").show();
 		$("#show-filters-link").hide();
 		$("#hide-filters-link").show();
@@ -221,9 +234,9 @@
 	}
 
 	function toggleDropdown() {
-		$(".lite-dropdown-background").toggle();
-		$("#queues").toggleClass('lite-dropdown--visible');
-		$("#queue-title").toggleClass("lite-heading-dropdown--flipped");
+		$(".app-dropdown-background").toggle();
+		$("#queues").toggleClass('app-dropdown__container--visible');
+		$("#queue-title").toggleClass("app-dropdown__heading--flipped");
 	}
 
 	function setAssignUsersAbility() {

@@ -1,12 +1,2 @@
-class Section:
-    def __init__(self, title, description, tiles):
-        self.title = title
-        self.description = description
-        self.tiles = tiles
-
-
-class Tile:
-    def __init__(self, title, description, url):
-        self.title = title
-        self.description = description
-        self.url = url
+def convert_dict_to_query_params(dictionary):
+    return '&'.join(([key + '=' + str(value) for (key, value) in dictionary.items()]))

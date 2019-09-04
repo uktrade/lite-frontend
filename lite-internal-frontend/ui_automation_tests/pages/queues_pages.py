@@ -20,7 +20,13 @@ class QueuesPages():
     def is_case_on_the_list(self, app_id):
         self.driver.set_timeout_to(0)
         no = len(self.driver.find_elements_by_link_text(app_id))
-        self.driver.set_timeout_to_10_seconds()
+        url = self.driver.current_url
+        page_number = 1
+        while no == 0:
+            page_number += 1
+            next_page = url + '&page=' + str(page_number)
+            self.driver.get(next_page)
+            no = len(self.driver.find_elements_by_link_text(app_id))
 
         return no
 

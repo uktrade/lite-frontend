@@ -24,11 +24,12 @@ from conf.constants import DEFAULT_QUEUE_ID, MAKE_FINAL_DECISIONS, OPEN_CASES_SY
 from conf.decorators import has_permission
 from conf.settings import AWS_STORAGE_BUCKET_NAME
 from core.builtins.custom_tags import get_string
+from core.helpers import convert_dict_to_query_params
 from core.services import get_user_permissions, get_statuses
 from flags.services import get_flags_case_level_for_team
 from picklists.services import get_picklists, get_picklist_item
 from queues.helpers import add_assigned_users_to_cases
-from queues.services import get_queue_case_assignments, get_queue, get_queues
+from queues.services import get_queue_case_assignments, get_queue, get_queues, get_queue_cases
 
 
 class Cases(TemplateView):
@@ -43,28 +44,27 @@ class Cases(TemplateView):
         queue_id = request.GET.get('queue', DEFAULT_QUEUE_ID)
         queues, status_code = get_queues(request, include_system_queues=True)
         queue, status_code = get_queue(request, queue_id, case_type, status, sort)
-        case_assignments, status_code = get_queue_case_assignments(request, queue_id)
 
-        # Add assigned users to each case
-        queue['queue']['cases'] = add_assigned_users_to_cases(queue['queue']['cases'],
-                                                              case_assignments['case_assignments'])
-
-        # Get current query parameters to inject into template for sorting with filters
-        current_filter_url = request.GET.urlencode().split('&')
+        # Page parameters
+        params = {'queue': queue_id, 'page': int(request.GET.get('page', 1))}
         if sort:
-            current_filter_url.remove('sort=' + sort)
+            params['sort'] = sort
+        if status:
+            params['status'] = status
+        if case_type:
+            params['case_type'] = case_type
+
+        cases = get_queue_cases(request, queue_id, convert_dict_to_query_params(params))
 
         context = {
-            'queues': queues,
-            'queue_id': queue_id,
-            'data': queue,
-            'title': queue.get('queue').get('name'),
-            'sort': sort,
-            'case_type': case_type,
-            'status': status,
+            'title': queue['queue'].get('name'),
+            'queues': queues['queues'],
+            'current_queue': queue['queue'],
+            'cases': cases,
+            'page': params.pop('page'),
             'statuses': statuses,
-            'current_filter_url': '?' + '&'.join(current_filter_url) + '&' if len(current_filter_url) > 0 else '?',
-            'is_system_queue': queue_id == ALL_CASES_SYSTEM_QUEUE_ID or queue_id == OPEN_CASES_SYSTEM_QUEUE_ID,
+            'params': params,
+            'params_str': convert_dict_to_query_params(params)
         }
         return render(request, 'cases/index.html', context)
 
@@ -80,6 +80,8 @@ class Cases(TemplateView):
 class ViewCase(TemplateView):
     def get(self, request, **kwargs):
         case_id = str(kwargs['pk'])
+        queue_id = request.GET.get('return_to', DEFAULT_QUEUE_ID)
+        queue, status_code = get_queue(request, queue_id)
         case, status_code = get_case(request, case_id)
         case = case['case']
         activity, status_code = get_activity(request, case_id)
@@ -89,8 +91,11 @@ class ViewCase(TemplateView):
             context = {
                 'title': 'Case',
                 'case': case,
+                'good': case['clc_query']['good'],
+                'case_id': case_id,
                 'activity': activity.get('activity'),
                 'permissions': permissions,
+                'queue': queue,
             }
             return render(request, 'cases/case/clc-query-case.html', context)
         else:
@@ -99,6 +104,7 @@ class ViewCase(TemplateView):
                 'title': case.get('application').get('name'),
                 'activity': activity.get('activity'),
                 'permissions': permissions,
+                'queue': queue,
             }
             return render(request, 'cases/case/application-case.html', context)
 
@@ -160,7 +166,7 @@ class CreateEcjuQuery(TemplateView):
         case_id = str(kwargs['pk'])
         picklists, status = get_picklists(request, 'ecju_query', False)
         picklists = picklists.get('picklist_items')
-        picklist_choices = [Option(self.NEW_QUESTION_DDL_ID, 'Write a new question')] +\
+        picklist_choices = [Option(self.NEW_QUESTION_DDL_ID, 'Write a new question')] + \
                            [Option(picklist.get('id'), picklist.get('name')) for picklist in picklists]
         form = choose_ecju_query_type_form(
             reverse('cases:ecju_queries', kwargs={'pk': case_id}),
@@ -238,40 +244,6 @@ class CreateEcjuQuery(TemplateView):
         form = create_ecju_query_write_or_edit_form(reverse('cases:ecju_queries_add', kwargs={'pk': case_id}))
         data = {'question': request.POST.get('question')}
         return form_page(request, form, data=data, errors=errors)
-
-
-class ViewCLCCase(TemplateView):
-    def get(self, request, **kwargs):
-        case_id = str(kwargs['pk'])
-        case, status_code = get_case(request, case_id)
-        activity, status_code = get_activity(request, case_id)
-
-        context = {
-            'data': case,
-            'activity': activity.get('activity'),
-        }
-        return render(request, 'cases/case/clc-query-case.html', context)
-
-    def post(self, request, **kwargs):
-        case_id = str(kwargs['pk'])
-        response, status_code = post_case_notes(request, case_id, request.POST)
-
-        if status_code != 201:
-
-            errors = response.get('errors')
-            if errors.get('text'):
-                error = errors.get('text')[0]
-                error = error.replace('This field', 'Case note')  # TODO: Move to API
-                error = error.replace('this field', 'the case note')  # TODO: Move to API
-
-            else:
-                error_list = []
-                for key in errors:
-                    error_list.append("{field}: {error}".format(field=key, error=errors[key][0]))
-                error = "\n".join(error_list)
-            return error_page(request, error)
-
-        return redirect('/cases/clc-query/' + case_id + '#case_notes')
 
 
 class ManageCase(TemplateView):
@@ -424,10 +396,10 @@ class AssignFlags(TemplateView):
                     break
 
         context = {
-            'caseId': case_id,
+            'case': case_data,
             'case_level_team_flags': case_level_team_flags
         }
-        return render(request, 'cases/case/flags.html', context)
+        return render(request, 'cases/case/case_flags.html', context)
 
     def post(self, request, **kwargs):
         case_id = str(kwargs['pk'])

@@ -1,7 +1,11 @@
 // Set defaults
 $lite-transition-speed: 0.3s !default;
 $govuk-page-width: 1200px !default;
-$govuk-brand-colour: #28a197; // GOV.UK Design System
+$govuk-brand-colour: #28A197; // GOV.UK Design System
+$govuk-link-colour: $govuk-brand-colour;
+$govuk-link-hover-colour: darken($govuk-brand-colour, 10%);
+$govuk-link-active-colour: darken($govuk-brand-colour, 20%);
+
 @import "../shared/node_modules/govuk-frontend/govuk/all"; // LITE Shared Assets
 @import "../shared/lite-frontend/scss/all"; // Local Assets
 @import "components/all";

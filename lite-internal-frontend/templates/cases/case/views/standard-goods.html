@@ -10,10 +10,11 @@
 					</div>
 				</div>
 			</th> -->
-			<th class="lite-table__header" scope="col">Control List Entry</th>
+            <th class="lite-table__header" scope="col">Control List Entry</th>
 			<th class="lite-table__header" scope="col">Description</th>
-			<th class="lite-table__header">Quantity/Value</th>
-			<th class="lite-table__header">Document</th>
+            <th class="lite-table__header">Quantity/Value</th>
+			<th class="lite-table__header">Documents</th>
+            <th class="lite-table__header">Flags</th>
 			{% if show_advice %}
 				<th class="lite-table__header" style="width: 350px;">Advice</th>
 			{% endif %}
@@ -22,7 +23,7 @@
 	<tbody class="lite-table__body">
 		{% for good in case.application.goods %}
 			<tr class="lite-table__row">
-				<td class="lite-table__cell">
+                <td class="lite-table__cell">
 					<div class="govuk-checkboxes govuk-checkboxes--small">
 						{% if show_checkboxes %}<div class="govuk-checkboxes__item">{% endif %}
 							<input class="govuk-checkboxes__input" type="checkbox" name="goods" value="{{ good.good.id }}" id="{{ good.good.id }}">
@@ -30,7 +31,11 @@
 						{% if show_checkboxes %}</div>{% endif %}
 					</div>
 				</td>
-				<td class="lite-table__cell">{{ good.good.description }}</td>
+                <td class="lite-table__cell">
+                    <a class="govuk-link lite-link--icon govuk-link--no-visited-state" href="{% url 'cases:good' case.id good.good.id %}">
+                          {{ good.good.description }}
+                      </a>
+                </td>
 				<td class="lite-table__cell">{{ good.quantity }} {{ good.unit.value }}/£{{ good.value }}</td>
 				<td class="lite-table__cell">
 				  {% for document in good.good.documents %}
@@ -41,7 +46,13 @@
 						  </a>
 					  {% endif %}
 				   {% endfor %}
-				 </td>
+                <td class="lite-table__cell">
+                    {% if good.good.flags %}
+                        {% for flag in good.good.flags %}
+                            {{ flag.name }}<br>
+                        {% endfor %}
+                    {% endif %}
+                </td>
 				{% if show_advice %}
 					<td class="lite-table__cell">
 						{% for advice in all_advice %}

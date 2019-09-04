@@ -13,3 +13,14 @@ Feature: I want to add case-level flags to a case and view them
     And I click edit flags link
     And I select previously created flag
     Then The previously created flag is assigned to the case
+
+
+  @LT_1185_add
+  Scenario: Add flag to good
+    Given I create application or application has been previously created
+    And I go to flags
+    When I add a flag called Suspicious at level Good
+    And I go to application previously created
+    And I click edit goods flags link
+    And I select previously created flag
+    Then the previously created goods flag is assigned to the case

@@ -9,7 +9,7 @@ from fixtures.core import context, driver, sso_login_info, invalid_username, new
 from fixtures.urls import internal_url, sso_sign_in_url, api_url
 from fixtures.apply_for_application import apply_for_standard_application, apply_for_clc_query
 from fixtures.sign_in_to_sso import sign_in_to_internal_sso
-from fixtures.add_a_flag import add_uae_flag
+from fixtures.add_a_flag import add_uae_flag, add_suspicious_flag
 from fixtures.add_queue import add_queue
 from fixtures.add_a_team import add_a_team
 from fixtures.add_a_picklist import add_an_ecju_query_picklist, add_a_proviso_picklist, add_a_standard_advice_picklist
@@ -33,7 +33,7 @@ def pytest_addoption(parser):
     parser.addoption("--sso_sign_in_url", action="store", default="https://sso.trade.uat.uktrade.io/login/", help="url")
 
     if env == 'local':
-        parser.addoption("--internal_url", action="store", default="http://localhost:8080", help="url")
+        parser.addoption("--internal_url", action="store", default="http://localhost:8200", help="url")
         parser.addoption("--lite_api_url", action="store", default="http://localhost:8100", help="url")
     elif env == 'dev2':
         parser.addoption("--internal_url", action="store",

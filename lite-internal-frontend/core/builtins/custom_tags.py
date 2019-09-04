@@ -59,26 +59,30 @@ def add_selected_class(key, url):
 
 @register.filter()
 def table_sort(key, actual_sort):
+    actual_sort = actual_sort.get('sort')
+
     if not actual_sort:
         return ''
 
-    if key + '-asc' in actual_sort:
+    if actual_sort == key:
         return 'lite-cases-table__heading--active'
 
-    if key + '-desc' in actual_sort:
+    if '-' + key in actual_sort:
         return 'lite-cases-table__heading--active-desc'
 
 
 @register.filter()
 def table_sort_text(key, actual_sort):
+    actual_sort = actual_sort.get('sort')
+
     if not actual_sort:
-        return key + '-asc'
+        return key
 
-    if key + '-asc' in actual_sort:
-        return key + '-desc'
-
-    if key + '-desc' in actual_sort:
+    if '-' + key in actual_sort:
         return ''
+
+    if key in actual_sort:
+        return '-' + key
 
 
 @register.filter()
@@ -104,3 +108,8 @@ def pretty_json(value):
     Pretty print JSON - for development purposes only.
     """
     return '<pre>' + json.dumps(value, indent=4) + '</pre>'
+
+
+@register.filter(name='times')
+def times(number):
+    return [x+1 for x in range(number)]

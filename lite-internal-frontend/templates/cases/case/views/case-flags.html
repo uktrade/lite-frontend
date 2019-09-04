@@ -10,18 +10,18 @@
 	    {% endfor %}
 	</div>
 	<div class="govuk-form-group">
-		<a href="{% url 'cases:assign_flags' case.id %}" id="application-edit-case-flags" class="govuk-link govuk-link--no-visited-state">
+		<a href="{% url 'cases:assign_flags' case.id %}?level=cases&cases={{ case.id }}" id="application-edit-case-flags" class="govuk-link govuk-link--no-visited-state">
 			{% get_string 'cases.case.edit_case_flags' %}
 		</a>
 	</div>
 {% else %}
 	<div class="govuk-form-group">
-		<a href="{% url 'cases:assign_flags' case.id %}" id="application-edit-case-flags" class="govuk-link govuk-link--no-visited-state">
+		<a href="{% url 'cases:assign_flags' case.id %}?level=cases&cases={{ case.id }}" id="application-edit-case-flags" class="govuk-link govuk-link--no-visited-state">
 			Set case flags
 		</a>
 	</div>
 {% endif %}
 
 <div id="flags-modal" style="display: none;">
-	{% include "cases/case/flags.html" %}
+	{% include "cases/case/case_flags.html" %}
 </div>

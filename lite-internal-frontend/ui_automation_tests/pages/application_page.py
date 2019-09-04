@@ -21,7 +21,9 @@ class ApplicationPage(BasePage):
     activity_dates = ".lite-activity-item .govuk-hint"
     activity_user = ".user"
     is_visible_to_exporter_checkbox_id = 'is_visible_to_exporter'
-    EDIT_CASE_FLAGS = 'application-edit-case-flags'  # ID
+    edit_case_flags = 'application-edit-case-flags'  # ID
+    edit_goods_flags = 'button-edit-goods-flags'  # ID
+    checkbox_input = ".govuk-checkboxes__input"
     view_advice = "a[href*='/advice-view/']"
     case_flags = 'application-case-flags'
     move_case_button = '.govuk-button[href*="move"]' # CSS
@@ -94,8 +96,16 @@ class ApplicationPage(BasePage):
         return self.driver.find_elements_by_css_selector(self.activity_user)[no].text
 
     def click_edit_case_flags(self):
-        edit_cases_btn = self.driver.find_element_by_id(self.EDIT_CASE_FLAGS)
+        edit_cases_btn = self.driver.find_element_by_id(self.edit_case_flags)
         edit_cases_btn.click()
+
+    def click_edit_good_flags(self):
+        edit_goods_btn = self.driver.find_element_by_id(self.edit_goods_flags)
+        edit_goods_btn.click()
+
+    def select_a_good(self):
+        element = self.driver.find_element_by_css_selector(self.checkbox_input)
+        self.driver.execute_script("arguments[0].click();", element)
 
     def click_view_advice(self):
         self.driver.find_element_by_css_selector(self.view_advice).click()
@@ -103,6 +113,9 @@ class ApplicationPage(BasePage):
     def is_flag_applied(self, flag_id):
         count = len(self.driver.find_elements_by_id(flag_id))
         return count == 1
+
+    def is_good_flag_applied(self, flag_name):
+        return flag_name in self.driver.find_element_by_id("goods").text
 
     def click_move_case_button(self):
         self.driver.find_element_by_css_selector(self.move_case_button).click()

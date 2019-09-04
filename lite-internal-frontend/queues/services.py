@@ -49,6 +49,11 @@ def get_queue(request, pk, case_type=None, status=None, sort=None):
     return data.json(), data.status_code
 
 
+def get_queue_cases(request, pk, params):
+    data = get(request, QUEUES_URL + pk + '/cases/' + '?' + params)
+    return data.json()
+
+
 def put_queue(request, pk, json):
     data = put(request, QUEUES_URL + pk + '/', json)
     return data.json(), data.status_code

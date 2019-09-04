@@ -58,7 +58,7 @@
 					{% if item.data.flags.removed|length > 0 %}
 						removed flags:
 						{% for flag in item.data.flags.removed %}
-							<span class="highlight">{{ flag|sentence_case|lower }}</span>{% if not forloop.last %}, {% else %}{% if item.flags.added|length > 0 %} and {% else %}{% if item.data.flags.removed|length > 0 and item.data.flags.added|length > 0 %},{% else %}.{% endif %}{% endif %}{% endif %}
+							<span class="highlight">{{ flag }}</span>{% if not forloop.last %}, {% else %}{% if item.flags.added|length > 0 %} and {% else %}{% if item.data.flags.removed|length > 0 and item.data.flags.added|length > 0 %},{% else %}.{% endif %}{% endif %}{% endif %}
 						{% endfor %}
 					{% endif %}
 					{% if item.data.flags.removed|length > 0 and item.data.flags.added|length > 0 %}
@@ -67,9 +67,42 @@
 					{% if item.data.flags.added|length > 0 %}
 						added flags:
 						{% for flag in item.data.flags.added %}
-							<span class="highlight">{{ flag|sentence_case|lower }}</span>{% if not forloop.last %}, {% else %}.{% endif %}
+							<span class="highlight">{{ flag }}</span>{% if not forloop.last %}, {% else %}.{% endif %}
 						{% endfor %}
 					{% endif %}
+                    <br>
+                    {% if item.data.flags.note|length %}
+                        Note:
+                        {{ item.data.flags.note }}
+                    {% endif %}
+				</p>
+				<p class="govuk-hint govuk-!-font-size-16" style="margin-top: 10px;">{{ item.date|str_date }}</p>
+			</div>
+        {% elif item.type == 'change_good_flags' %}
+			<div class="lite-activity-item">
+				<p class="govuk-body" style="margin-bottom: 0;">
+					<span class="user">{{ item.user.first_name }} {{ item.user.last_name }}</span>
+                    for good: <span class="highlight">{{ item.data.good }}</span>,
+					{% if item.data.flags.removed|length > 0 %}
+						removed flags:
+						{% for flag in item.data.flags.removed %}
+							<span class="highlight">{{ flag }}</span>{% if not forloop.last %}, {% else %}{% if item.flags.added|length > 0 %} and {% else %}{% if item.data.flags.removed|length > 0 and item.data.flags.added|length > 0 %},{% else %}.{% endif %}{% endif %}{% endif %}
+						{% endfor %}
+					{% endif %}
+					{% if item.data.flags.removed|length > 0 and item.data.flags.added|length > 0 %}
+						and
+					{% endif %}
+					{% if item.data.flags.added|length > 0 %}
+						added flags:
+						{% for flag in item.data.flags.added %}
+							<span class="highlight">{{ flag }}</span>{% if not forloop.last %}, {% else %}.{% endif %}
+						{% endfor %}
+					{% endif %}
+                    <br>
+                    {% if item.data.flags.note|length %}
+                        Note:
+                        {{ item.data.flags.note }}
+                    {% endif %}
 				</p>
 				<p class="govuk-hint govuk-!-font-size-16" style="margin-top: 10px;">{{ item.date|str_date }}</p>
 			</div>

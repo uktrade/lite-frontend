@@ -5,7 +5,9 @@
 {% load svg %}
 
 {% block back_link %}
-	<a href="{% url 'cases:cases' %}" class="govuk-back-link">{% get_string 'cases.case.back_to_cases_link' %}</a>
+	<a href="{% url 'cases:cases' %}?queue={{ queue.queue.id }}" class="govuk-back-link">
+		Back to {{ queue.queue.name }}
+	</a>
 {% endblock %}
 
 {% block body %}
@@ -44,16 +46,16 @@
 			</p>
 		</div>
 		<div class="govuk-grid-column-one-third">
-			<p class="lite-heading-s">Last Updated</p>
+			<p class="lite-heading-s">Submitted up</p>
 			<p class="govuk-label">
-
+                {{ case.clc_query.submitted_at|str_date }}
 			</p>
 		</div>
         <div class="govuk-grid-column-one-third">
 			<p class="lite-heading-s">
 				Status
 			</p>
-			<p class="govuk-label">{{ data.case.clc_query.status|sentence_case }}</p>
+			<p class="govuk-label">{{ case.clc_query.status|sentence_case }}</p>
 		</div>
 	</div>
 </div>
@@ -64,16 +66,35 @@
           <th class="lite-table__header" scope="col">Description</th>
           <th class="lite-table__header" scope="col">Control List Classification</th>
           <th class="lite-table__header" scope="col">Part Number</th>
+          <th class="lite-table__header" scope="col">Documents</th>
         </tr>
     </thead>
     <tbody class="lite-table__body">
         <tr class="lite-table__row">
-          <td class="lite-table__cell">{{ data.case.clc_query.good.description }}</td>
-          <td class="lite-table__cell">{{ data.case.clc_query.good.control_code|default:'None' }}</td>
-          <td class="lite-table__cell">{{ data.case.clc_query.good.part_number|default:'None' }}</td>
+          <td class="lite-table__cell">{{ good.description|default:'None' }}</td>
+          <td class="lite-table__cell">{{ good.control_code|default:'None' }}</td>
+          <td class="lite-table__cell">{{ good.part_number|default:'None' }}</td>
+          <td class="lite-table__cell">
+            {% for document in good.documents %}
+              {% if document.safe == True %}
+                  <a class="govuk-link lite-link--icon govuk-link--no-visited-state" href="{% url 'cases:document' case.id document.id %}">
+                      <span class="govuk-visually-hidden">{% get_string 'cases.manage.documents.download_document' %}</span>
+                      {{ document.name }}<br>
+                  </a>
+              {% endif %}
+           {% endfor %}
+          </td>
         </tr>
     </tbody>
 </table>
+
+<div class="lite-app-bar">
+    <h3 class="govuk-heading-m">Flags</h3>
+</div>
+
+<!-- Goods flags -->
+{% include 'cases/case/views/goods-flags.html' with origin='case' %}
+
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
         <p class="lite-heading-s">CLC query text</p>

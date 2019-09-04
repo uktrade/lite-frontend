@@ -47,6 +47,10 @@ $lite-table-border: 2px solid darken(govuk-colour("light-grey"), 2%);
 		white-space: normal;
 		word-wrap: break-word;
 	}
+
+	&:last-of-type {
+		border-bottom: none;
+	}
 }
 
 .lite-cases-table__heading[href=""], .lite-cases-table__heading[href="#"] {
@@ -89,14 +93,14 @@ $lite-table-border: 2px solid darken(govuk-colour("light-grey"), 2%);
 	}
 
 	&--active {
-		color: $govuk-brand-colour;
+		color: $govuk-link-colour;
 
 		&:hover {
-			color: darken($govuk-brand-colour, 10%);
+			color: darken($govuk-link-colour, 10%);
 		}
 
 		&:active {
-			color: darken($govuk-brand-colour, 20%);
+			color: darken($govuk-link-colour, 20%);
 		}
 
 		svg {
@@ -105,14 +109,14 @@ $lite-table-border: 2px solid darken(govuk-colour("light-grey"), 2%);
 	}
 
 	&--active-desc {
-		color: $govuk-brand-colour;
+		color: $govuk-link-colour;
 
 		&:hover {
-			color: darken($govuk-brand-colour, 10%);
+			color: darken($govuk-link-colour, 10%);
 		}
 
 		&:active {
-			color: darken($govuk-brand-colour, 20%);
+			color: darken($govuk-link-colour, 20%);
 		}
 
 		svg {

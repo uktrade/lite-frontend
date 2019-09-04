@@ -5,6 +5,7 @@
 			<th class="lite-table__header" scope="col">Description</th>
 			<th class="lite-table__header" scope="col">Control List Entry</th>
 			<th class="lite-table__header">Is Good controlled</th>
+			<th class="lite-table__header">Flags</th>
 			{% if show_advice %}
 				<th class="lite-table__header" style="width: 350px;">Advice</th>
 			{% endif %}
@@ -15,12 +16,19 @@
 			<tr class="lite-table__row">
 				<td class="lite-table__cell">
 					{% if show_checkboxes %}<div class="govuk-checkboxes__item">
-						<input class="govuk-checkboxes__input" type="checkbox" name="goods_types" value="{{ good.id }}" id="{{ good.id }}"> {% endif %}
+						<input class="govuk-checkboxes__input" type="checkbox" name="goods" value="{{ good.id }}" id="{{ good.id }}"> {% endif %}
 						<label class="govuk-label {% if show_checkboxes %}govuk-checkboxes__label{% endif %}" for="{{ good.id }}">{{ good.description }}</label>
 					{% if show_checkboxes %}</div>{% endif %}
 				</td>
 				<td class="lite-table__cell">{{ good.control_code|default:'None' }}</td>
 				<td class="lite-table__cell">{{ good.is_good_controlled }}</td>
+                <td class="lite-table__cell">
+                    {% if good.flags %}
+                        {% for flag in good.flags %}
+                            {{ flag.name }}<br>
+                        {% endfor %}
+                    {% endif %}
+                </td>
 				{% if show_advice %}
 					<td class="lite-table__cell">
 						{% for advice in all_advice %}

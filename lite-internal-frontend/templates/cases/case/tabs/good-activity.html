@@ -1,0 +1,43 @@
+{% load static %}
+
+<h3 class="govuk-heading-m">Activity</h3>
+<div class="lite-case-notes">
+	{% for item in activity %}
+		{% if item.type == 'change_good_flags' %}
+			<div class="lite-activity-item">
+				<p class="govuk-body" style="margin-bottom: 0;">
+					<span class="user">{{ item.user.first_name }} {{ item.user.last_name }}</span>
+					{% if item.data.flags.removed|length > 0 %}
+						removed flags:
+						{% for flag in item.data.flags.removed %}
+							<span class="highlight">{{ flag }}</span>{% if not forloop.last %}, {% else %}{% if item.flags.added|length > 0 %} and {% else %}{% if item.data.flags.removed|length > 0 and item.data.flags.added|length > 0 %},{% else %}.{% endif %}{% endif %}{% endif %}
+						{% endfor %}
+					{% endif %}
+					{% if item.data.flags.removed|length > 0 and item.data.flags.added|length > 0 %}
+						and
+					{% endif %}
+					{% if item.data.flags.added|length > 0 %}
+						added flags:
+						{% for flag in item.data.flags.added %}
+							<span class="highlight">{{ flag }}</span>{% if not forloop.last %}, {% else %}.{% endif %}
+						{% endfor %}
+					{% endif %}
+                    <br>
+                    {% if item.data.flags.note|length %}
+                        Note:
+                        {{ item.data.flags.note }}
+                    {% endif %}
+				</p>
+				<p class="govuk-hint govuk-!-font-size-16" style="margin-top: 10px;">{{ item.date|str_date }}</p>
+			</div>
+        {% elif item.type == 'ecju_query' %}
+			<div class="lite-activity-item">
+				<p class="govuk-body" style="margin-bottom: 0;">
+					<span class="user">{{ item.user.first_name }} {{ item.user.last_name }}</span>{% get_string 'activity.added_an_ecju_query' %}
+                    <span class="highlight">{{ item.data|slice:"0:40" }}{% if item.data|length > 40 %}...{% endif %}</span>
+				</p>
+				<p class="govuk-hint govuk-!-font-size-16" style="margin-top: 10px;">{{ item.date|str_date }}</p>
+			</div>
+		{% endif %}
+	{% endfor %}
+</div>

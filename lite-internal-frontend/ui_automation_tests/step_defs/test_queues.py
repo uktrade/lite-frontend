@@ -55,7 +55,7 @@ def see_queue_in_queue_list(driver, context):
 
 @then('I see previously created application')
 def see_queue_in_queue_list(driver, context):
-    assert QueuesPages(driver).is_case_on_the_list(context.app_id) == 1, "previously created application is not displayed " + context.app_id
+    assert QueuesPages(driver).is_case_on_the_list(context.case_id) == 1, "previously created application is not displayed " + context.case_id
 
 
 @then('I dont see previously created application')
