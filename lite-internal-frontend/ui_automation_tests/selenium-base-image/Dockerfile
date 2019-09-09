@@ -1,7 +1,7 @@
 FROM python:3.7-stretch
 
 RUN apt-get update && apt-get install -yq \
-    firefox-esr=60.6.1esr-1~deb9u1 \
+    firefox-esr \
     chromium=70.0.3538.110-1~deb9u1 \
     git-core=1:2.11.0-3+deb9u4 \
     xvfb=2:1.19.2-1+deb9u5 \
