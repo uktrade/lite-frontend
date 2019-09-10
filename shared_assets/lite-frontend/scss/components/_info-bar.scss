@@ -9,6 +9,11 @@
 	line-height: 30px!important;
 	padding-left: 30px + govuk-spacing(4) + govuk-spacing(4);
 
+	animation-name: lite-info-bar-animation;
+	animation-duration: 0.3s;
+	animation-fill-mode: both;
+	transform-origin: 50% 0;
+
 	&::before {
 		content: "i";
 		position: absolute;
@@ -71,10 +76,13 @@
 			color: govuk-colour("red");
 		}
 	}
-	animation-name: lite-info-bar-animation;
-	animation-duration: 0.3s;
-	animation-fill-mode: both;
-	transform-origin: 50% 0;
+
+	&--no-animation {
+		animation-duration: 0s;
+		opacity: 1;
+		transform: scaleY(1);
+		margin-bottom: govuk-spacing(7);
+	}
 }
 @keyframes lite-info-bar-animation {
 	0% {
