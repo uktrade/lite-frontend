@@ -58,8 +58,7 @@
 	}
 }
 
-// TODO: Remove .selected eventually
-.lite-tabs__tab--selected, .selected {
+.lite-tabs__tab--selected {
 	border-bottom: 2px solid $govuk-brand-colour!important;
 	color: govuk-colour("black");
 }
