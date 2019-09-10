@@ -15,9 +15,8 @@ Feature: I want to manage users
     Given I go to exporter homepage and choose Test Org
     When I add user
     Then user is added
-    # Commenting this out due to bug. Please uncomment when the deactivating user bug is fixed.
-    # When I deactivate user then user is deactivated
-    # And I reactivate user then user is reactivated
+    When I deactivate user then user is deactivated
+    And I reactivate user then user is reactivated
 
   @cant_add_self
   Scenario: Cant add own user

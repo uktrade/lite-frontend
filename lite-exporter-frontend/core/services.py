@@ -111,5 +111,5 @@ def get_organisation_user(request, pk, user_pk):
 
 
 def put_organisation_user(request, pk, user_pk, json):
-    data = put(request, ORGANISATIONS_URL + pk + '/users/' + user_pk, json)
+    data = put(request, ORGANISATIONS_URL + pk + '/users/' + user_pk + '/', json)
     return data.json(), data.status_code
