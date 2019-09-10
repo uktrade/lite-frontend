@@ -2,7 +2,7 @@
 	--margin-right: 20px;
 }
 
-.lite-tabs--wrapper {
+.lite-tabs__container {
 	position: relative;
 	display: block;
 	--margin-right: 20px;
@@ -29,21 +29,6 @@
 	white-space: nowrap;
 	overscroll-behavior: contain;
 	-webkit-overflow-scrolling: touch;
-}
-
-.lite-tabs--fade {
-	position: relative;
-	display: block;
-	width: 100%;
-	&:after {
-		content: "";
-		position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		width: 15px;
-		background: linear-gradient(90deg, rgba(white, 0%), white);
-	}
 }
 
 .lite-tabs__tab {
