@@ -34,7 +34,7 @@ def edit_existing_flag(driver, context):
     element_number = utils.get_element_index_by_text(elements, context.flag_name)
     elements[element_number + 2].click()
     flags_pages = FlagsPages(driver)
-    context.flag_name = str(context.flag_name)[:13] + " edited"
+    context.flag_name = str(context.flag_name)[:18] + " 1"
     flags_pages.enter_flag_name(context.flag_name)
     Shared(driver).click_submit()
 

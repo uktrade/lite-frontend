@@ -3,6 +3,8 @@ import datetime
 from helpers.seed_data import SeedData
 from helpers.utils import Timer, get_or_create_attr
 
+from helpers.wait import wait_for_ultimate_end_user_document, wait_for_end_user_document
+
 
 @fixture(scope="module")
 def apply_for_standard_application(driver, request, api_url, context):
@@ -17,7 +19,7 @@ def apply_for_standard_application(driver, request, api_url, context):
     context.ueu_address = "Bullring, Birmingham SW1A 0AA"
     context.ueu_country = ["GB", "United Kingdom"]
 
-    draft_id = api.add_draft(
+    draft_id, ultimate_end_user_id = api.add_draft(
         draft={
             "name": "Test Application " + app_time_id,
             "licence_type": "standard_licence",
@@ -44,8 +46,11 @@ def apply_for_standard_application(driver, request, api_url, context):
             "website": context.ueu_website
         }
     )
-    document_is_processed = api.ensure_end_user_document_is_processed(draft_id)
+    document_is_processed = wait_for_end_user_document(api=api, draft_id=draft_id)
     assert document_is_processed, "Document wasn't successfully processed"
+    ultimate_end_user_document_is_processed = wait_for_ultimate_end_user_document(
+        api=api, draft_id=draft_id, ultimate_end_user_id=ultimate_end_user_id)
+    assert ultimate_end_user_document_is_processed, "Ultimate end user document wasn't successfully processed"
     api.submit_application()
     context.app_id = api.context['application_id']
     context.case_id = api.context['case_id']
