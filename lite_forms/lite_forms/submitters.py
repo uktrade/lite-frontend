@@ -1,3 +1,5 @@
+import copy
+
 from django.http import HttpRequest
 
 from lite_forms.components import HiddenField, Form, FormGroup
@@ -26,15 +28,14 @@ def submit_paged_form(request: HttpRequest, form_group: FormGroup, post_to, pk=N
     data = request.POST.copy()
 
     # Get the next form based off form_pk
-    current_form = get_form_by_pk(data.get('form_pk'), form_group)
-    next_form = get_next_form_after_pk(data.get('form_pk'), form_group)
+    current_form = copy.deepcopy(get_form_by_pk(data.get('form_pk'), form_group))
+    next_form = copy.deepcopy(get_next_form_after_pk(data.get('form_pk'), form_group))
 
     # Remove form_pk and CSRF from POST data as the new form will replace them
     del data['form_pk']
     del data['csrfmiddlewaretoken']
 
     # Post the data to the validator and check for errors
-    nested_data = nest_data(data)
     nested_data = nest_data(data)
     if pk:
         validated_data, status_code = post_to(request, pk, nested_data)
