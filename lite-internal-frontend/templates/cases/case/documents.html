@@ -29,7 +29,7 @@
 			</div>
 			<div class="lite-vertical-align">
 				{% if document.safe == True %}
-					<a class="govuk-link lite-link--icon govuk-link--no-visited-state" href="{% url 'cases:document' case.id document.s3_key %}">
+					<a class="govuk-link lite-link--icon govuk-link--no-visited-state" href="{% url 'cases:document' case.id document.metadata_id %}">
 						<span class="govuk-visually-hidden">{% get_string 'cases.manage.documents.download_document' %}</span>
 						{% svg 'download' %}
 				</a>
