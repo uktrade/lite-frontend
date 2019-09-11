@@ -293,9 +293,9 @@
 		{% endif %}
 	</div>
 	{% if errors|key_value:'end_user' %}
-		<p class="govuk-error-message">
-			{{ errors|key_value:'end_user' }}
-		</p>
+		<p class="govuk-error-message">{{ errors|key_value:'end_user' }}</p>
+    {% elif errors|key_value:'end_user_document'%}
+        <p class="govuk-error-message">{{ errors|key_value:'end_user_document' }}</p>
 	{% endif %}
 	{% if draft.end_user %}
 		<table class="govuk-table">
@@ -324,11 +324,11 @@
                             <th class="govuk-table__header" scope="row">Document</th>
                             <td class="govuk-table__cell" id="end_user_document_state">
                                 {%  if end_user_document.safe == True %}
-                                    <a href="{% url 'apply_for_a_licence:download_document' pk=draft.id %}" id="end_user_document_download">
+                                    <a href="{% url 'apply_for_a_licence:download_document' pk=draft.id %}" id="end_user_document_download" class='govuk-link govuk-link--no-visited-state'>
                                         {% get_string 'end_user.documents.download_document' %}
                                     </a>
                                     <br/>
-                                    <a href="{% url 'apply_for_a_licence:delete_document' pk=draft.id %}" id="end_user_document_delete">
+                                    <a href="{% url 'apply_for_a_licence:delete_document' pk=draft.id %}" id="end_user_document_delete" class='govuk-link govuk-link--no-visited-state'>
                                         {% get_string 'end_user.documents.delete_document' %}
                                     </a>
                                 {%  else %}
@@ -340,7 +340,7 @@
                     {% else %}
                         <tr class="govuk-table__row">
                             <th class="govuk-table__header" scope="row">Document</th>
-                            <td class="govuk-table__cell"><a id="attach_doc" href="{% url 'apply_for_a_licence:end_user_attach_document' draft.id %}">Attach</a></td>
+                            <td class="govuk-table__cell"><a id="attach_doc" href="{% url 'apply_for_a_licence:end_user_attach_document' draft.id %}" class='govuk-link govuk-link--no-visited-state'>Attach</a></td>
                         </tr>
                     {% endif %}
                 {% endif %}
@@ -372,9 +372,9 @@
 		{% endif %}
 	</div>
 	{% if errors|key_value:'ultimate_end_users' %}
-		<p class="govuk-error-message">
-			{{ errors|key_value:'ultimate_end_users' }}
-		</p>
+		<p class="govuk-error-message">{{ errors|key_value:'ultimate_end_users' }}</p>
+    {% elif errors|key_value:'ultimate_end_user_documents'%}
+        <p class="govuk-error-message">{{ errors|key_value:'ultimate_end_user_documents' }}</p>
 	{% endif %}
 	{% if ultimate_end_users %}
 		<table class="govuk-table">

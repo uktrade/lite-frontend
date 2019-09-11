@@ -51,10 +51,16 @@ urlpatterns = [
 
     # ex: /<uuid:pk>/ultimate-end-users/
     path('<uuid:pk>/ultimate-end-users/', common.UltimateEndUsers.as_view(), name='ultimate_end_users'),
+    # ex: /apply_for_a_licence/<uuid:pk>/ultimate-end-user/attach-document
+    path('<uuid:pk>/ultimate-end-user/<uuid:eu_pk>/documents/attach', common.AttachDocuments.as_view(), name='ultimate_end_user_attach_document'),
+    # ex: /apply_for_a_licence//<uuid:pk>/ultimate-end-user/download-document/ - Get documents
+    path('<uuid:pk>/ultimate-end-user/<uuid:eu_pk>/documents/download', common.DownloadDocument.as_view(), name='ultimate_end_user_download_document'),
+    # ex: /apply_for_a_licence/<uuid:pk>/ultimate-end-user/download-document/ - Delete a document
+    path('<uuid:pk>/ultimate-end-user/<uuid:eu_pk>/documents/delete', common.DeleteDocument.as_view(), name="ultimate_end_user_delete_document"),
 
     # ex: /<uuid:pk>/ultimate-end-users/add
     path('<uuid:pk>/ultimate-end-users/add', common.AddUltimateEndUser.as_view(), name='add_ultimate_end_user'),
 
     # ex: /<uuid:pk>/ultimate-end-users/remove
-    path('<uuid:pk>/ultimate-end-users/<uuid:ueu_pk>/remove', common.RemoveUltimateEndUser.as_view(), name='remove_ultimate_end_user')
+    path('<uuid:pk>/ultimate-end-users/<uuid:eu_pk>/remove', common.RemoveUltimateEndUser.as_view(), name='remove_ultimate_end_user')
 ]

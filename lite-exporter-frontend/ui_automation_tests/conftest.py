@@ -381,3 +381,13 @@ def submit_the_application(driver, context):
 def click_users_link(driver):
     exporter_hub = ExporterHubPage(driver)
     exporter_hub.click_users()
+
+
+@when('I create a standard application')
+def create_standard_application(driver, context):
+    click_apply_licence(driver)
+    click_start_button(driver)
+    enter_application_name(driver, context)
+    enter_type_of_application(driver, 'standard', context)
+    enter_permanent_or_temporary(driver, 'permanent', context)
+    enter_export_licence(driver, 'yes', '123456', context)

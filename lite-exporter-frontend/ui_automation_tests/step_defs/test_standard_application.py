@@ -8,6 +8,7 @@ from pages.application_overview_page import ApplicationOverviewPage
 from pages.shared import Shared
 from pages.application_goods_list import ApplicationGoodsList
 from pages.ultimate_end_users_list_page import UltimateEndUsersListPage
+from helpers.wait import wait_for_download_button
 
 scenarios('../features/submit_standard_application.feature', strict_gherkin=False)
 
@@ -86,7 +87,7 @@ def add_new_end_user_address(driver, address, country, context):
 @when('I remove an ultimate end user so there is one less and return to the overview')
 def i_remove_an_ultimate_end_user(driver):
     no_of_ultimate_end_users = Shared(driver).get_size_of_table_rows()
-    driver.find_element_by_link_text('Remove').click()
+    driver.find_element_by_link_text('Delete end user').click()
     total = no_of_ultimate_end_users - Shared(driver).get_size_of_table_rows()
     assert total == 1, "total on the ultimate end users summary is incorrect after removing ultimate end user"
     app = ApplicationOverviewPage(driver)
@@ -185,3 +186,34 @@ def i_wait_for_end_user_document_to_be_processed(driver):
         time_no += function_retry_interval
         driver.refresh()
     return False
+
+
+@then(parsers.parse('"{button}" link is present'))
+def download_and_delete_is_links_are_present(driver, button):
+    shared = Shared(driver)
+    latest_ueu_links = [link.text for link in shared.get_links_of_table_row(-1)]
+    assert button in latest_ueu_links
+
+
+@when("I click on attach a document")
+def click_attach_a_document(driver):
+    UltimateEndUsersListPage(driver).click_on_attach_ultimate_end_user_document(-1)
+
+
+@when("I click back link")
+def click_back_link(driver):
+    Shared(driver).click_back_link()
+
+
+@when('I delete the ultimate end user document')
+def delete_ultimate_end_user_document(driver):
+    ultimate_end_user = UltimateEndUsersListPage(driver)
+    ultimate_end_user.click_on_delete_ultimate_end_user_document(-1)
+    ultimate_end_user.accept_delete_ultimate_end_user_document_confirm()
+    shared = Shared(driver)
+    shared.click_continue()
+
+
+@then("Wait for download link")
+def wait_for_download_link(driver):
+    assert wait_for_download_button(driver)

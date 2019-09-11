@@ -1,4 +1,4 @@
-from django.http import StreamingHttpResponse, Http404
+from django.http import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator

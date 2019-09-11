@@ -19,12 +19,7 @@ Feature: I want to indicate the standard licence I want
   @LT_1091_standard @setup
   Scenario: Submit standard application
     Given I go to exporter homepage and choose Test Org
-    When I click on apply for a license button
-    And I click on start button
-    And I enter in name for application and continue
-    And I select "standard" application and continue
-    And I select "permanent" option and continue
-    And I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
+    When I create a standard application
     And I click on application locations link
     And I select "organisation" for where my goods are located
     And I select the site at position "1"
@@ -46,12 +41,7 @@ Feature: I want to indicate the standard licence I want
   @LT_1091_external
   Scenario: Submit standard application with external locations
     Given I go to exporter homepage and choose Test Org
-    When I click on apply for a license button
-    And I click on start button
-    And I enter in name for application and continue
-    And I select "standard" application and continue
-    And I select "permanent" option and continue
-    And I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
+    When I create a standard application
     And I click on application locations link
     And I select "external" for where my goods are located
     And I click on add new address
@@ -75,17 +65,14 @@ Feature: I want to indicate the standard licence I want
   @LT_1042_happy_path
   Scenario: Apply for a licence with ultimate end users
     Given I go to exporter homepage and choose Test Org
-    When I click on apply for a license button
-    And I click on start button
-    And I enter in name for application and continue
-    And I select "standard" application and continue
-    And I select "permanent" option and continue
-    And I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
+    When I create a standard application
     And I click on ultimate end users
     And I click on ultimate end users add button
     And I add an end user of type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
+    And I upload a file "file_for_doc_upload_test_1.txt"
     And I click on ultimate end users add button
     And I add an end user of type: "commercial", name: "Mr Jones", website: " ", address: "London" and country "Ukraine"
+    And I upload a file "file_for_doc_upload_test_1.txt"
     And I remove an ultimate end user so there is one less and return to the overview
     Then there is only one ultimate end user
     When I click on application locations link
@@ -125,12 +112,7 @@ Feature: I want to indicate the standard licence I want
   @LT_1091_external_validation
   Scenario: Error messages with external empty validation
     Given I go to exporter homepage and choose Test Org
-    When I click on apply for a license button
-    And I click on start button
-    And I enter in name for application and continue
-    And I select "standard" application and continue
-    And I select "permanent" option and continue
-    And I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
+    When I create a standard application
     And I click on application locations link
     And I select "external" for where my goods are located
     And I click on add new address
@@ -140,12 +122,7 @@ Feature: I want to indicate the standard licence I want
   @LT_1091_end_user_validation
   Scenario: Error messages with end user empty validation
     Given I go to exporter homepage and choose Test Org
-    When I click on apply for a license button
-    And I click on start button
-    And I enter in name for application and continue
-    And I select "standard" application and continue
-    And I select "permanent" option and continue
-    And I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
+    When I create a standard application
     And I click on end user
     And I click continue
     Then error message is "This field is required."
@@ -165,12 +142,7 @@ Feature: I want to indicate the standard licence I want
   @LT_1042_unhappy_path
   Scenario: Apply for a licence with ultimate end users error message
     Given I go to exporter homepage and choose Test Org
-    When I click on apply for a license button
-    And I click on start button
-    And I enter in name for application and continue
-    And I select "standard" application and continue
-    And I select "permanent" option and continue
-    And I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
+    When I create a standard application
     And I click on end user
     And I add an end user of type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
@@ -182,12 +154,7 @@ Feature: I want to indicate the standard licence I want
   @LT_1114_error_when_no_goods_or_sites
   Scenario: Apply for a licence with goods and sites error message
     Given I go to exporter homepage and choose Test Org
-    When I click on apply for a license button
-    And I click on start button
-    And I enter in name for application and continue
-    And I select "standard" application and continue
-    And I select "permanent" option and continue
-    And I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
+    When I create a standard application
     And I click on end user
     And I add an end user of type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
@@ -197,14 +164,25 @@ Feature: I want to indicate the standard licence I want
   @LT_928_error_message
   Scenario: Error message for empty quantities.
     Given I go to exporter homepage and choose Test Org
-    When I click on apply for a license button
-    And I click on start button
-    And I enter in name for application and continue
-    And I select "standard" application and continue
-    And I select "permanent" option and continue
-    And I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
+    When I create a standard application
     And I click on the goods link from overview
     And I click the add from organisations goods button
     And I click add to application for the good at position "1"
     And I click continue
     Then I see enter valid quantity and valid value error message
+
+  @LT_1445_ultimate_end_user_upload_download_delete
+  Scenario: Add an Ultimate end user document and can download and delete
+    Given I go to exporter homepage and choose Test Org
+    When I create a standard application
+    And I click on ultimate end users
+    And I click on ultimate end users add button
+    And I add an end user of type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
+    And I click back link
+    Then "Attach" link is present
+    When I click on attach a document
+    And I upload a file "file_for_doc_upload_test_1.txt"
+    Then Wait for download link
+    And "Delete" link is present
+    When I delete the ultimate end user document
+    Then "Attach" link is present

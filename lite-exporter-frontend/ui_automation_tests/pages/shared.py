@@ -51,11 +51,14 @@ class Shared:
     def get_text_of_gov_grid_row(self):
         return self.driver.find_element_by_css_selector(self.gov_grid_row).text
 
-    def get_text_of_gov_table(self):
-        return self.driver.find_element_by_css_selector(self.gov_table).text
-
     def get_gov_table_cell_links(self):
         return self.driver.find_elements_by_css_selector(self.gov_table_cell_links)
+
+    def get_table_row(self, no):
+        return self.driver.find_elements_by_css_selector(self.gov_table_row)[no]
+
+    def get_links_of_table_row(self, no):
+        return self.get_table_row(no).find_elements_by_css_selector(self.gov_table_cell_links)
 
     def get_text_of_h2(self):
         return self.driver.find_element_by_tag_name(self.h2).text

@@ -41,22 +41,22 @@ def new_end_user_forms():
     ])
 
 
-def attach_document_form(draft_url):
-    return Form(get_string('end_user.documents.attach_documents.title'),
+def attach_document_form(draft_url, title, back_text, return_later_text):
+    return Form(title,
                 get_string('end_user.documents.attach_documents.description'),
                 [FileUpload('documents')],
-                back_link=BackLink(get_string('end_user.documents.attach_documents.back_to_application_overview'),
+                back_link=BackLink(back_text,
                                    draft_url),
                 footer_label=Label('Or <a href="'
                                    + draft_url
                                    + '" class="govuk-link govuk-link--no-visited-state">'
-                                   + get_string('end_user.documents.save_end_user')
+                                   + return_later_text
                                    + '</a> ' + get_string('end_user.documents.attach_later')))
 
 
-def delete_document_confirmation_form(overview_url):
+def delete_document_confirmation_form(overview_url, back_link_text):
     return confirm_form(title='Are you sure you want to delete this document?',
                         confirmation_name='delete_document_confirmation',
-                        back_link_text=get_string('end_user.documents.attach_documents.back_to_application_overview'),
+                        back_link_text=back_link_text,
                         back_url=overview_url
                         )
