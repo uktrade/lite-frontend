@@ -1,6 +1,11 @@
 <div id="pane_{{ question.name }}" class="govuk-form-group
 			{% if errors|key_value:question.name %}
 					govuk-form-group--error
+			{% endif %}
+			{% if question.input_type == 'date' %}
+					{% if question.prefix|add:'day' in errors or question.prefix|add:'month' in errors or question.prefix|add:'year' in errors %}
+						govuk-form-group--error
+					{% endif %}
 			{% endif %}">
 	<label class="govuk-label" for="{{ question.name }}">
 		{{ question.title }}
@@ -56,6 +61,8 @@
 	        {% include "components/password.html" with name=question.name value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
 		{% elif question.input_type == "quantity_input" %}
 			{% include "components/quantity.html" with name=question.name value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
+		{% elif question.input_type == "date" %}
+			{% include "components/date.html" with component=question errors=errors %}
 		{% endif %}
 	</div>
 </div>

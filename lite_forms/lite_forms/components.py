@@ -304,3 +304,20 @@ class TextArea(_Component):
                  extras: [] = None):
         super().__init__(name, title, description, optional, classes, extras)
         self.input_type = 'textarea'
+
+
+class DateInput:
+    def __init__(self,
+                 prefix: str,
+                 title: str = '',
+                 description: str = '',
+                 optional: bool = False,
+                 classes: [] = None,
+                 extras: [] = None):
+        self.prefix = prefix
+        self.title = title
+        self.description = description
+        self.optional = optional
+        self.classes = classes
+        self.extras = extras
+        self.input_type = 'date'

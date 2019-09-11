@@ -1,0 +1,28 @@
+<div class="govuk-form-group">
+    <div class="govuk-date-input">
+        <div class="govuk-date-input__item">
+            <div class="govuk-form-group">
+                <label class="govuk-label govuk-date-input__label" for="{{ component.prefix }}day">
+                    Day
+                </label>
+                <input class="govuk-input govuk-date-input__input govuk-input--width-2 {% if component.prefix|add:'day' in errors %}govuk-input--error{% endif %}" id="{{ component.prefix }}day" name="{{ component.prefix }}day" type="number" pattern="[0-9]*">
+            </div>
+        </div>
+        <div class="govuk-date-input__item">
+            <div class="govuk-form-group">
+                <label class="govuk-label govuk-date-input__label" for="{{ component.prefix }}month">
+                    Month
+                </label>
+                <input class="govuk-input govuk-date-input__input govuk-input--width-2 {% if component.prefix|add:'month' in errors %}govuk-input--error{% endif %}" id="{{ component.prefix }}month" name="{{ component.prefix }}month" type="number" pattern="[0-9]*">
+            </div>
+        </div>
+        <div class="govuk-date-input__item">
+            <div class="govuk-form-group">
+                <label class="govuk-label govuk-date-input__label" for="{{ component.prefix }}year">
+                    Year
+                </label>
+                <input class="govuk-input govuk-date-input__input govuk-input--width-4 {% if component.prefix|add:'year' in errors %}govuk-input--error{% endif %}" id="{{ component.prefix }}year" name="{{ component.prefix }}year" type="number" pattern="[0-9]*">
+            </div>
+        </div>
+    </div>
+</div>
