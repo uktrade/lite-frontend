@@ -59,7 +59,8 @@ Feature: I  want to add and rename my sites
     And I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
     And I click on application locations link
     And I select "organisation" for where my goods are located
-    Then I see my new site at first position
+#    Disabled step because site ordering seems not to be fixed (LT-1518)
+#    Then I see my new site at first position
     When I select the site at position "1"
     And I click continue
     And I click on application locations link
