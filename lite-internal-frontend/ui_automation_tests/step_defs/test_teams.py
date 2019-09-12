@@ -58,15 +58,6 @@ def add_a_team(driver, team_name, context):
     shared.click_submit()
 
 
-@when('I add an existing team name')
-def add_existing_team(driver, context):
-    teams_pages = TeamsPages(driver)
-    shared = Shared(driver)
-    teams_pages.click_add_a_team_button()
-    teams_pages.enter_team_name(context.team_name)
-    shared.click_submit()
-
-
 @when('I edit my team')
 def edit_existing_team(driver, context):
     teams_pages = TeamsPages(driver)

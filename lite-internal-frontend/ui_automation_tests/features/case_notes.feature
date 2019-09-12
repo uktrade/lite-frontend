@@ -13,15 +13,6 @@ Feature: I want to add an internal note to a case and view notes
     And I click post note
     Then note is displayed
 
-  @LT_911_max
-  Scenario: Add a case note filled to max with space characters
-    Given I create application or application has been previously created
-    And I sign in to SSO or am signed into SSO
-    When I go to application previously created
-    And I enter "the maximum limit with spaces" for case note
-    And I click post note
-    Then maximum case error is displayed
-
   @LT_911_too_many
   Scenario: Add a case note with too many characters
     Given I create application or application has been previously created
@@ -48,17 +39,6 @@ Feature: I want to add an internal note to a case and view notes
     And I sign in to SSO or am signed into SSO
     When I go to application previously created
     And I enter "This note is visible to exporters." for case note
-    And I click visible to exporters checkbox
-    And I click post note
-    And I click confirm on confirmation box
-    Then note is displayed
-
-  @LT_912_add_external_to_clc_query
-  Scenario: Add a new exporter visible case note to clc query
-    Given I create clc query or clc query has been previously created
-    And I sign in to SSO or am signed into SSO
-    When I go to application previously created
-    And I enter "This clc query note is visible to exporters." for case note
     And I click visible to exporters checkbox
     And I click post note
     And I click confirm on confirmation box

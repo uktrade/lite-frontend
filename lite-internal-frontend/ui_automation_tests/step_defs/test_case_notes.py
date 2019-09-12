@@ -43,15 +43,6 @@ def i_click_cancel_button(driver):
     application_page.click_cancel_btn()
 
 
-@then('maximum case error is displayed')
-def maximum_error_message_is_displayed(driver):
-    error_message = driver.find_element_by_css_selector("h1").text
-    error_body = driver.find_elements_by_css_selector(".govuk-body")
-    assert error_message == "An error occurred", "should not be able to post an empty case note with space characters"
-    assert error_body[0].text == "Case note may not be blank.", "should not be able to post an empty case note with space characters"
-    assert error_body[1].text == "You can go back by clicking the back button at the top of the page.", "should not be able to post an empty case note with space characters"
-
-
 @then(parsers.parse('case note warning is "{text}"'))
 def n_characters_remaining(driver, text):
     application_page = ApplicationPage(driver)

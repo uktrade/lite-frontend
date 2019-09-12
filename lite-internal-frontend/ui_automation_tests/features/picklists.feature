@@ -18,15 +18,6 @@ Feature: I want standard picklists
     When I edit my picklist to "edit" and "edit"
     Then I see my picklist page with status as "Active"
 
-  @LT_1077_empty
-  Scenario: Add an empty picklist item
-    Given I go to internal homepage
-    When I go to My Team
-    And I go to picklists tab
-    And I go to "footnotes" picklist
-    And I add a new picklist item with " " and " "
-    Then I see picklist error messages
-
   @LT_1077_deactivate
   Scenario: Deactivate and reactivate a picklist item
     Given I go to internal homepage
@@ -35,10 +26,7 @@ Feature: I want standard picklists
     And I go to "annual_report_summary" picklist
     And I add a new picklist item with "name" and "description"
     And I click on my picklist item
-#  Commented out due to deactivate button not showing properly.  Uncomment when this is fixed:
-#
-#    And I deactivate my picklist
-#    Then I see my picklist page with status as "Deactivated"
-#    When I reactivate my picklist
-#    Then I see my picklist page with status as "Active"
-
+    And I deactivate my picklist
+    Then I see my picklist page with status as "Deactivated"
+    When I reactivate my picklist
+    Then I see my picklist page with status as "Active"

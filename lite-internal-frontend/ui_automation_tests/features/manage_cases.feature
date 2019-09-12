@@ -75,24 +75,12 @@ Feature: I want to record the final decision overall on an application case
     Then I see application "denied"
     And I reset the permissions
 
-  @LT_957_error
-  Scenario: Record decision validation
-    Given I create application or application has been previously created
-    And I go to internal homepage
-    When I give myself the required permissions for "Make final decisions"
-    And I go to application previously created
-    And I click record decision
-    And I "deny" application
-    And I click continue
-    And I click continue
-    Then I see error message "Select at least one denial reason"
-    And I reset the permissions
-
   @LT_1042_can_see_ultimate_end_users
   Scenario: Gov user can see ultimate end users in the destinations section of the case
     Given I create application or application has been previously created
     And I sign in to SSO or am signed into SSO
     When I go to application previously created
+    # TODO improve this to test the whole case page.
     Then I see an ultimate end user
 
   @LT_909_clc_status

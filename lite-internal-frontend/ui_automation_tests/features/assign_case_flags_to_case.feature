@@ -14,7 +14,6 @@ Feature: I want to add case-level flags to a case and view them
     And I select previously created flag
     Then The previously created flag is assigned to the case
 
-
   @LT_1185_add
   Scenario: Add flag to good
     Given I create application or application has been previously created
