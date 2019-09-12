@@ -29,18 +29,6 @@ Feature: I  want to add and rename my sites
     And I enter in text for new site "HQ 2" "4 Privet Drive" "SU1 1BB" "Surrey" "Surrey" and "Ukraine"
     And I click continue
 
-  @LT_933_error
-  Scenario: Test clicking continue when not adding a site
-    Given I go to exporter homepage and choose Test Org
-    When I click on apply for a license button
-    And I click on start button
-    And I enter in name for application and continue
-    And I select "standard" application and continue
-    And I select "permanent" option and continue
-    And I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
-    And I click continue
-    Then I see select a site error message
-
   @LT_933_change
   Scenario: Test changing sites
     Given I go to exporter homepage and choose Test Org

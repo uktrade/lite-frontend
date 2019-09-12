@@ -74,32 +74,3 @@ Feature: I want to indicate the open licence I want
     And I click on countries
     And I search for country "Canada"
     Then only "Canada" is displayed in country list
-
-  @LT_1092_error
-  Scenario: Error message when not adding countries
-    Given I go to exporter homepage and choose Test Org
-    When I click on goods link
-    And I click add a good button
-    And I add a good or good type with description "AK47" controlled "Yes" control code "1234" incorporated "No" and part number "321"
-    And I go to exporter homepage
-    And I click on apply for a license button
-    And I click on start button
-    And I enter in name for application and continue
-    And I select "open" application and continue
-    And I select "permanent" option and continue
-    And I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
-    And I click on countries
-    And I click continue
-    Then error message is "You have to pick at least one country"
-
-  @LT_1114_error
-  Scenario: Error message when not adding goods and sites information for open application
-    Given I go to exporter homepage and choose Test Org
-    When I click on apply for a license button
-    And I click on start button
-    And I enter in name for application and continue
-    And I select "open" application and continue
-    And I select "permanent" option and continue
-    And I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
-    And I click continue
-    Then I see no sites good types or countries attached error message

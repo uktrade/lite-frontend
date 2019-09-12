@@ -14,16 +14,6 @@ Feature: I want to add a note to an application and view notes
     And I click post note
     Then note is displayed
 
-  @LT_1119_max
-  Scenario: Add a case note filled to max with space characters
-    Given I go to exporter homepage and choose Test Org
-    And an application exists
-    When I click on applications
-    And I click on application previously created
-    And I enter "the maximum limit with spaces" for case note
-    And I click post note
-    Then maximum case error is displayed
-
   @LT_1119_too_many
   Scenario: Add a case note with too many characters
     Given I go to exporter homepage and choose Test Org

@@ -4,7 +4,7 @@ I want to see when there are ECJU queries (RFIs) relating to my applications, qu
 So that I can quickly identify where action is required by me and respond to any queries
 
   @LT_996_application
-  Scenario: view and respond to a ecju_query in an application
+  Scenario: view and respond to a ecju query in an application
     Given I go to exporter homepage and choose Test Org
     When I go to the recently created application
     And I select to view ecju queries
@@ -18,7 +18,7 @@ So that I can quickly identify where action is required by me and respond to any
     Then I see my ecju query is closed
 
   @LT_996_clc
-   Scenario: view and respond to a ecju_query in an goods
+   Scenario: view and respond to a ecju query in a good
     Given I go to exporter homepage and choose Test Org
     When I click on an CLC query previously created
     And I select to view ecju queries
