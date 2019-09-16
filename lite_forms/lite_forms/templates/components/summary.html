@@ -1,0 +1,15 @@
+<dl class="govuk-summary-list {% for class in component.classes %}{{ class }} {% endfor %}">
+    {% for key, value in component.values.items %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                {{ key }}
+            </dt>
+            <dd class="govuk-summary-list__value">
+                {{ value }}
+            </dd>
+        </div>
+    {% endfor %}
+</dl>
+{% if 'govuk-summary-list--no-border' in component.classes %}
+    <hr class="lite-horizontal-separator">
+{% endif %}

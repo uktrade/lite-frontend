@@ -321,3 +321,14 @@ class DateInput:
         self.classes = classes
         self.extras = extras
         self.input_type = 'date'
+
+
+class Summary:
+    def __init__(self,
+                 values: dict = None,
+                 classes: [] = None,
+                 extras: [] = None):
+        self.values = values
+        self.classes = classes
+        self.extras = extras
+        self.input_type = 'summary'
