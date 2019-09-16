@@ -9,11 +9,11 @@ def get_application(request, pk):
 
 def get_applications(request):
     data = get(request, APPLICATIONS_URL)
-    return data.json(), data.status_code
+    return data.json()['applications']
 
 
 # Case related
-def get_application_case_notes(request, pk):
+def get_case_notes(request, pk):
     data = get(request, CASES_URL + pk + CASE_NOTES_URL)
     return data.json()
 

@@ -1,18 +1,22 @@
-from lite_forms.components import Form, RadioButtons, Option, TextArea, Select, Filter, Checkboxes, TextInput
+from django.urls import reverse
+from lite_forms.components import Form, RadioButtons, Option, TextArea, Select, Filter, Checkboxes, TextInput, BackLink
 
 from core.builtins.custom_tags import get_string
 from core.services import get_countries, get_external_locations
 
-which_location_form = Form(title=get_string('goods.location_questions.location.title'),
-                           description='You can only choose one type of location per application',
-                           questions=[
-                               RadioButtons('organisation_or_external', [
-                                   Option('organisation', get_string('goods.location_questions.location.my_sites')),
-                                   Option('external',
-                                          get_string('goods.location_questions.location.external_locations')),
-                               ])
-                           ],
-                           default_button_name='Continue')
+
+def which_location_form(draft_id):
+    return Form(title=get_string('goods.location_questions.location.title'),
+                description='You can only choose one type of location per application',
+                questions=[
+                    RadioButtons('organisation_or_external', [
+                        Option('organisation', get_string('goods.location_questions.location.my_sites')),
+                        Option('external', get_string('goods.location_questions.location.external_locations')),
+                    ])
+                ],
+                default_button_name='Continue',
+                back_link=BackLink('Back to Overview', reverse('apply_for_a_licence:overview',
+                                                               kwargs={'pk': draft_id})))
 
 
 def new_location_form():

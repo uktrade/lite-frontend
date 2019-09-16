@@ -31,12 +31,11 @@
     {% endif %}
 
 	{% for section in sections %}
-		<section class="lite-hub-section">
+		<section class="govuk-form-group">
 			<h3 class="govuk-heading-m">{{ section.title }}</h3>
-			<span class="govuk-caption-m">{{ section.description }}</span>
-			<div class="lite-tiles">
+			<div class="app-tiles">
 				{% for tile in section.tiles %}
-					<a href="{{ tile.url }}" class="lite-tile" role="button" draggable="false">
+					<a href="{{ tile.url }}" class="app-tile" role="button" draggable="false">
 						<h4>{{ tile.title }}</h4>
 						<p>{{ tile.description }}</p>
 					</a>

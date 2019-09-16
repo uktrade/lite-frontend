@@ -30,7 +30,7 @@ def click_on_application(driver, context):
 def notification_on_application_list(driver, context):
     elements = driver.find_elements_by_css_selector(".govuk-table__row")
     no = helpers.get_element_index_by_partial_text(elements, context.app_name)
-    assert "New notification" in elements[no].text
+    assert elements[no].find_element_by_css_selector(Shared(driver).notification).is_displayed()
 
 
 @then('I can see the internally added note')

@@ -5,17 +5,19 @@ from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
-from s3chunkuploader.file_handler import S3FileUploadHandler
-
-from apply_for_a_licence.forms.end_user import attach_document_form, \
-    delete_document_confirmation_form
 from lite_forms.generators import form_page, success_page, error_page
 from lite_forms.submitters import submit_paged_form
+from s3chunkuploader.file_handler import S3FileUploadHandler
 
-from apply_for_a_licence.forms import initial, goods
+from apply_for_a_licence.forms import goods
+from apply_for_a_licence.forms.end_user import attach_document_form, \
+    delete_document_confirmation_form
 from apply_for_a_licence.forms.end_user import new_end_user_forms
+from apply_for_a_licence.forms.initial import initial_questions
 from apply_for_a_licence.forms.ultimate_end_user import new_ultimate_end_user_form
-from apply_for_a_licence.helpers import create_persistent_bar
+from apply_for_a_licence.services import add_document_data
+from apply_for_a_licence.services import download_document_from_s3
+from conf.constants import STANDARD_LICENCE
 from core.builtins.custom_tags import get_string
 from core.services import get_units, get_sites_on_draft, get_external_locations_on_draft
 from drafts.services import post_drafts, get_draft, get_draft_goods, post_draft_preexisting_goods, submit_draft, \
@@ -24,9 +26,6 @@ from drafts.services import post_drafts, get_draft, get_draft_goods, post_draft_
     delete_end_user_document, post_ultimate_end_user_document, post_end_user_document, get_ultimate_end_user_document, \
     delete_ultimate_end_user_document
 from goods.services import get_goods, get_good
-from apply_for_a_licence.services import add_document_data
-from conf.constants import STANDARD_LICENCE
-from apply_for_a_licence.services import download_document_from_s3
 
 
 class StartApplication(TemplateView):
@@ -39,11 +38,13 @@ class StartApplication(TemplateView):
 
 
 class InitialQuestions(TemplateView):
+    forms = initial_questions()
+
     def get(self, request, **kwargs):
-        return form_page(request, initial.initial_questions.forms[0])
+        return form_page(request, self.forms.forms[0])
 
     def post(self, request, **kwargs):
-        response, data = submit_paged_form(request, initial.initial_questions, post_drafts)
+        response, data = submit_paged_form(request, self.forms, post_drafts)
 
         # If there are more forms to go through, continue
         if response:
@@ -141,7 +142,6 @@ class DraftGoodsList(TemplateView):
             'draft_id': draft_id,
             'data': data,
             'draft': draft,
-            'persistent_bar': create_persistent_bar(draft.get('draft')),
         }
         return render(request, 'apply_for_a_licence/goods/index.html', context)
 
@@ -153,12 +153,12 @@ class GoodsList(TemplateView):
         description = request.GET.get('description', '').strip()
         part_number = request.GET.get('part_number', '').strip()
         control_rating = request.GET.get('control_rating', '').strip()
-        data, status_code = get_goods(request, {'description': description,
-                                                'part_number': part_number,
-                                                'control_rating': control_rating})
+        goods = get_goods(request, {'description': description,
+                                    'part_number': part_number,
+                                    'control_rating': control_rating})
 
         filtered_data = []
-        for good in data['goods']:
+        for good in goods:
             if good['documents'] and not good['is_good_controlled'] == 'unsure':
                 filtered_data.append(good)
 
@@ -170,7 +170,6 @@ class GoodsList(TemplateView):
             'description': description,
             'part_number': part_number,
             'control_code': control_rating,
-            'persistent_bar': create_persistent_bar(draft.get('draft')),
         }
         return render(request, 'apply_for_a_licence/goods/preexisting.html', context)
 
@@ -186,7 +185,6 @@ class DraftOpenGoodsList(TemplateView):
             'draft_id': draft_id,
             'data': data,
             'draft': draft,
-            'persistent_bar': create_persistent_bar(draft.get('draft')),
         }
         return render(request, 'apply_for_a_licence/goods/index.html', context)
 
@@ -202,7 +200,6 @@ class DraftOpenGoodsTypeList(TemplateView):
             'draft_id': draft_id,
             'data': data,
             'draft': draft,
-            'persistent_bar': create_persistent_bar(draft.get('draft')),
         }
         return render(request, 'apply_for_a_licence/goodstype/index.html', context)
 
@@ -212,7 +209,7 @@ class OpenGoodsList(TemplateView):
         draft_id = str(kwargs['pk'])
         draft, status_code = get_draft(request, draft_id)
         description = request.GET.get('description', '')
-        data, status_code = get_goods(request, {'description': description})
+        data = get_goods(request, {'description': description})
 
         context = {
             'title': 'Goods',
@@ -220,46 +217,25 @@ class OpenGoodsList(TemplateView):
             'data': data,
             'draft': draft,
             'description': description,
-            'persistent_bar': create_persistent_bar(draft.get('draft')),
         }
         return render(request, 'apply_for_a_licence/goods/preexisting.html', context)
 
 
 class AddPreexistingGood(TemplateView):
     def get(self, request, **kwargs):
-        draft_id = str(kwargs['pk'])
-        draft, status_code = get_draft(request, draft_id)
-        good, status_code = get_good(request, str(kwargs['good_pk']))
-        good = good.get('good')
-
-        context = {
-            'title': 'Add a pre-existing good to your application',
-            'page': goods.preexisting_good_form(good.get('id'),
-                                                good.get('description'),
-                                                good.get('control_code'),
-                                                good.get('part_number'),
-                                                get_units(request)),
-            'persistent_bar': create_persistent_bar(draft.get('draft')),
-        }
-        return render(request, 'form.html', context)
+        good = get_good(request, str(kwargs['good_pk']))
+        return form_page(request, goods.preexisting_good_form(good, get_units(request)))
 
     def post(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
-        draft, status_code = get_draft(request, draft_id)
         data, status_code = post_draft_preexisting_goods(request, draft_id, request.POST)
 
         if status_code != 201:
-            good, status_code = get_good(request, str(kwargs['good_pk']))
-            good = good.get('good')
+            good = get_good(request, str(kwargs['good_pk']))
 
             context = {
                 'title': 'Add a pre-existing good to your application',
-                'page': goods.preexisting_good_form(good.get('id'),
-                                                    good.get('description'),
-                                                    good.get('control_code'),
-                                                    good.get('part_number'),
-                                                    get_units(request)),
-                'persistent_bar': create_persistent_bar(draft.get('draft')),
+                'page': goods.preexisting_good_form(good, get_units(request)),
                 'data': request.POST,
                 'errors': data.get('errors'),
             }
@@ -276,7 +252,6 @@ class DeleteApplication(TemplateView):
         context = {
             'title': 'Are you sure you want to delete this application?',
             'draft': draft.get('draft'),
-            'persistent_bar': create_persistent_bar(draft.get('draft')),
             'page': 'apply_for_a_licence/modals/cancel_application.html',
         }
         return render(request, 'core/static.html', context)
@@ -297,9 +272,7 @@ class EndUser(TemplateView):
         draft_id = str(kwargs['pk'])
         draft, status_code = get_draft(request, draft_id)
 
-        return form_page(request, new_end_user_forms().forms[0], extra_data={
-            'persistent_bar': create_persistent_bar(draft.get('draft'))
-        })
+        return form_page(request, new_end_user_forms().forms[0])
 
     def post(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
@@ -345,9 +318,7 @@ class AddUltimateEndUser(TemplateView):
     def get(self, request, **kwargs):
         draft, status_code = get_draft(request, self.draft_id)
 
-        return form_page(request, self.form.forms[0], extra_data={
-            'persistent_bar': create_persistent_bar(draft.get('draft'))
-        })
+        return form_page(request, self.form.forms[0])
 
     def post(self, request, **kwargs):
         response, data = submit_paged_form(request, self.form, post_ultimate_end_user, pk=self.draft_id)
@@ -473,4 +444,3 @@ class DeleteDocument(TemplateView):
             return redirect(reverse('apply_for_a_licence:ultimate_end_users', kwargs={'pk': str(kwargs['pk'])}))
         else:
             return redirect(reverse('apply_for_a_licence:overview', kwargs={'pk': draft_id}))
-

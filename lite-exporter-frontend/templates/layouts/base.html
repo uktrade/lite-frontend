@@ -83,25 +83,18 @@
 	{% endblock %}
 
 	<div class="govuk-width-container">
-		{% if persistent_bar.text %}
-			<div class="lite-persistent-notice">
-				<p class="lite-persistent-notice--title">{{ persistent_bar.caption }}</p>
-				<a href="{{ persistent_bar.url }}" class="govuk-link">{{ persistent_bar.text }}</a>
-			</div>
-		{% else %}
-			<div class="govuk-phase-banner">
-				<p class="govuk-phase-banner__content">
-					<strong class="govuk-tag govuk-phase-banner__content__tag ">
-						alpha
-					</strong>
-					<span class="govuk-phase-banner__text">
-						This is a new service – your <a class="govuk-link" href="{{ ENVIRONMENT_VARIABLES.FEEDBACK_URL }}">feedback</a> will help us to improve it.
-					</span>
-				</p>
-			</div>
-		{% endif %}
+		<div class="govuk-phase-banner">
+			<p class="govuk-phase-banner__content">
+				<strong class="govuk-tag govuk-phase-banner__content__tag ">
+					alpha
+				</strong>
+				<span class="govuk-phase-banner__text">
+					This is a new service – your <a class="govuk-link" href="{{ ENVIRONMENT_VARIABLES.FEEDBACK_URL }}">feedback</a> will help us to improve it.
+				</span>
+			</p>
+		</div>
 		{% block back_link %}
-			<a href="#" class="govuk-back-link {% if persistent_bar.text %}lite-persistent-bar--back{% endif %}">Back</a>
+			<a href="#" class="govuk-back-link">Back</a>
 		{% endblock %}
 		<main class="govuk-main-wrapper " id="main-content" role="main">
 			{% block body %}{% endblock %}

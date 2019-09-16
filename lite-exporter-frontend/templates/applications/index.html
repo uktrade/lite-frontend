@@ -21,68 +21,36 @@
 		</div>
 	</div>
 
-	{% if data.applications|length %}
+	{% if applications|length %}
 		<table class="govuk-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" scope="col">
 						Reference
 					</th>
-					<th class="govuk-table__header" scope="col">Goods</th>
-					<!--<th class="govuk-table__header" scope="col">Destinations</th>-->
 					<th class="govuk-table__header" scope="col">Last updated</th>
 					<th class="govuk-table__header" scope="col">Status</th>
-					<th class="govuk-table__header" scope="col"></th>
 				</tr>
 			</thead>
 			<tbody class="govuk-table__body">
-				{% for application in data.applications %}
+				{% for application in applications %}
 					<tr class="govuk-table__row">
 						<td class="govuk-table__cell">
-							<a class="govuk-link" href="{% url 'applications:application' application.id %}">{{ application.name|default:"Untitled" }}</a>
-						</td>
-						<td class="govuk-table__cell">
-							{{ application.goods|length }} Good{{ application.goods|length|pluralize }}
-						</td>
-						<!--<td class="govuk-table__cell">
-							<a class="hoverable-link tooltip">
-								<span class="tooltip-content" style="min-width: 150px;">
-									{% for destination in application.destinations %}
-										{{ destination.name }}<br/>
-									{% endfor %}
-								</span>
-								{{ application.destinations|length }} Destination{{ application.destinations|length|pluralize }}
+							<a class="govuk-link govuk-link--no-visited-state app-icon-label" href="{% url 'applications:application' application.id %}">
+								<p>{{ application.name }}</p>
+								{% if application.id in notifications %}
+									<span class="app-icon-label__notification">{{ notifications|key_value:application.id }} <span class="govuk-visually-hidden"> notifications</span></span>
+								{% endif %}
 							</a>
-						</td>-->
+						</td>
 						<td class="govuk-table__cell">
 							{{ application.last_modified_at|str_date }}
 						</td>
 						<td class="govuk-table__cell">{{ application.status|title }}</td>
-						<td class="govuk-table__cell">
-                            {% if application.id in notifications %}
-                                New notification
-                            {% endif %}
-                        </td>
 					</tr>
 				{% endfor %}
 			</tbody>
 		</table>
-
-		<!--<div class="lite-pagination">
-			<a href="#" class="lite-pagination--item lite-pagination--selected-item">
-				1
-			</a>
-			<a href="#" class="lite-pagination--item">
-				2
-			</a>
-			<a href="#" class="lite-pagination--item">
-				3
-			</a>
-			<a href="#" class="lite-pagination--item">
-				4
-			</a>
-		</div>-->
-
 	{% else %}
 		<p class="govuk-caption-l">{% get_string 'applications.no_applications' %}</p>
 	{% endif %}

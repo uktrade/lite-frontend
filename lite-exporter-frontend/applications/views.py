@@ -1,26 +1,26 @@
 from django.http import Http404
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 from lite_forms.components import HiddenField
 from lite_forms.generators import error_page, form_page
 
 from applications.forms import respond_to_query_form, ecju_query_respond_confirmation_form
-from applications.services import get_applications, get_application, get_application_case_notes, \
+from applications.services import get_applications, get_application, get_case_notes, \
     get_application_ecju_queries, get_ecju_query, put_ecju_query, post_application_case_notes
+from core.helpers import group_notifications
 from core.services import get_notifications
 
 
 class ApplicationsList(TemplateView):
     def get(self, request, **kwargs):
-        data, status_code = get_applications(request)
-        notifications, _ = get_notifications(request, unviewed=True)
-        notifications_ids_list = [x['application'] for x in notifications['results']]
+        applications = get_applications(request)
+        notifications = get_notifications(request, unviewed=True)
 
         context = {
-            'data': data,
             'title': 'Applications',
-            'notifications': notifications_ids_list,
+            'applications': applications,
+            'notifications': group_notifications(notifications),
         }
         return render(request, 'applications/index.html', context)
 
@@ -33,7 +33,6 @@ class ApplicationDetailEmpty(TemplateView):
 
 
 class ApplicationDetail(TemplateView):
-
     application_id = None
     application = None
     case_id = None
@@ -53,26 +52,22 @@ class ApplicationDetail(TemplateView):
 
     def get(self, request, **kwargs):
         # add application number to next query
-        notifications, _ = get_notifications(request, unviewed=True)
-        case_note_notifications = len([x for x in notifications['results'] if x['application'] == self.application_id
-                                                                           and x['case_note']])
-        ecju_query_notifications = len([x for x in notifications['results'] if x['application'] == self.application_id
-                                                                           and x['ecju_query']])
+        notifications = get_notifications(request, unviewed=True)
+        case_note_notifications = len([x for x in notifications if x['parent'] == self.application_id
+                                       and x['object'] == 'case_note'])
+        ecju_query_notifications = len([x for x in notifications if x['parent'] == self.application_id
+                                        and x['object_type'] == 'ecju_query'])
 
         context = {
             'application': self.application,
             'title': self.application['name'],
             'type': self.view_type,
+            'case_note_notifications': case_note_notifications,
+            'ecju_query_notifications': ecju_query_notifications,
         }
 
-        if case_note_notifications > 0:
-            context['case_note_notifications'] = case_note_notifications
-
-        if ecju_query_notifications > 0:
-            context['ecju_query_notifications'] = ecju_query_notifications
-
         if self.view_type == 'case-notes':
-            context['notes'] = get_application_case_notes(request, self.case_id)['case_notes']
+            context['notes'] = get_case_notes(request, self.case_id)['case_notes']
 
         if self.view_type == 'ecju-queries':
             context['open_queries'], context['closed_queries'] = get_application_ecju_queries(request, self.case_id)
@@ -104,9 +99,9 @@ class ApplicationDetail(TemplateView):
 
 class RespondToQuery(TemplateView):
     def get(self, request, **kwargs):
-        '''
+        """
         Will get a text area form for the user to respond to the ecju_query
-        '''
+        """
         application_id = str(kwargs['pk'])
         ecju_query = get_ecju_query(request, str(kwargs['pk']), str(kwargs['query_pk']))
 
@@ -116,11 +111,11 @@ class RespondToQuery(TemplateView):
         return form_page(request, respond_to_query_form(application_id, ecju_query))
 
     def post(self, request, **kwargs):
-        '''
+        """
         will determine what form the user is on:
         if the user is on the input form will then will determine if data is valid, and move user to confirmation form
         else will allow the user to confirm they wish to respond and post data if accepted.
-        '''
+        """
         form_name = request.POST.get('form_name')
         application_id = str(kwargs['pk'])
         ecju_query_id = str(kwargs['query_pk'])
@@ -140,7 +135,8 @@ class RespondToQuery(TemplateView):
                 return form_page(request, form, data=data, errors=errors)
             else:
                 form = ecju_query_respond_confirmation_form(reverse_lazy('applications:respond_to_query',
-                                                                         kwargs={'pk': application_id, 'query_pk': ecju_query_id}))
+                                                                         kwargs={'pk': application_id,
+                                                                                 'query_pk': ecju_query_id}))
                 form.questions.append(HiddenField('response', request.POST.get('response')))
                 return form_page(request, form)
         elif form_name == 'ecju_query_response_confirmation':
@@ -159,7 +155,8 @@ class RespondToQuery(TemplateView):
             else:
                 error = {'required': ['This field is required']}
                 form = ecju_query_respond_confirmation_form(reverse_lazy('applications:respond_to_query',
-                                                                         kwargs={'pk': application_id, 'query_pk': ecju_query_id}))
+                                                                         kwargs={'pk': application_id,
+                                                                                 'query_pk': ecju_query_id}))
                 form.questions.append(HiddenField('response', request.POST.get('response')))
                 return form_page(request, form, errors=error)
         else:

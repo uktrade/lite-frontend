@@ -74,10 +74,10 @@
 				<td class="govuk-table__cell">{{ draft.export_type.value }}</td>
 			</tr>
 			{% if draft.reference_number_on_information_form %}
-			<tr class="govuk-table__row">
-				<th class="govuk-table__header" scope="row">Reference Number</th>
-				<td class="govuk-table__cell">{{ draft.reference_number_on_information_form }}</td>
-			</tr>
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="row">Reference Number</th>
+					<td class="govuk-table__cell">{{ draft.reference_number_on_information_form }}</td>
+				</tr>
 			{% endif %}
 			<tr class="govuk-table__row">
 				<th class="govuk-table__header" scope="row">Created at</th>
@@ -302,7 +302,7 @@
 			<tbody class="govuk-table__body">
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" scope="row">Type</th>
-					<td class="govuk-table__cell">{{ draft.end_user.type }}</td>
+					<td class="govuk-table__cell">{{ draft.end_user.type.value }}</td>
 				</tr>
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" scope="row">Name</th>
@@ -316,7 +316,7 @@
 				{% endif %}
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" scope="row">Address</th>
-					<td class="govuk-table__cell">{{ draft.end_user.address }}<br/>{{ draft.end_user.country }}</td>
+					<td class="govuk-table__cell">{{ draft.end_user.address }}<br/>{{ draft.end_user.country.name }}</td>
 				</tr>
                 {% if draft.licence_type.key == "standard_licence" %}
                     {% if end_user_document %}
@@ -413,7 +413,7 @@
 </div>
 <form method="post">
 	{% csrf_token %}
-	<button type="submit" class="govuk-button" name="button" data-prevent-double-click="true">Submit application</button>
+	<button type="submit" class="govuk-button" name="button" data-prevent-double-click="true" style="margin-bottom: 0;">Submit application</button>
 </form>
 </div>
 

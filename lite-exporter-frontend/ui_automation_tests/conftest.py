@@ -228,9 +228,15 @@ def click_my_goods_link(driver):
 
 @when('I click on goods tile')
 def click_my_goods_link(driver):
-    exporter_hub = ExporterHubPage(driver)
+    exporter_hub = ApplicationOverviewPage(driver)
     driver.execute_script("document.getElementById('goods').scrollIntoView(true);")
-    exporter_hub.click_my_goods()
+    exporter_hub.click_goods_link()
+
+
+@when('I click on end user advisories')
+def click_my_end_user_advisory_link(driver):
+    exporter_hub = ExporterHubPage(driver)
+    exporter_hub.click_end_user_advisories()
 
 
 @when('I click the add from organisations goods button')
@@ -333,7 +339,6 @@ def application_is_submitted(driver, context):
     assert "0 Goods" or "1 Good" or "2 Goods" in element_row
     assert driver.find_element_by_xpath("// th[text()[contains(., 'Status')]]").is_displayed()
     assert driver.find_element_by_xpath("// th[text()[contains(., 'Last updated')]]").is_displayed()
-    assert driver.find_element_by_xpath("// th[text()[contains(., 'Goods')]]").is_displayed()
     assert driver.find_element_by_xpath("// th[text()[contains(., 'Reference')]]").is_displayed()
 
 

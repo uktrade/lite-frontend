@@ -13,7 +13,7 @@ class Hub():
         self.last_name_field = "last_name"  # ID
         self.email_field = "email"  # ID
         self.password_field = "password"  # ID
-        self.applications_tile = '.lite-tiles [href="/applications/"] p'  # ID
+        self.applications_tile = '.app-tiles [href="/applications/"] p'  # ID
 
     def click_drafts(self):
         self.driver.find_element_by_css_selector(self.drafts_btn).click()

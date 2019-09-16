@@ -43,7 +43,7 @@ Feature: I want to search for goods in my goods list to add to an in progress ap
     Then I see my added Good by "part number"
 
   @LT_1206_filter_control_rating
-  Scenario: Search for goods by control rating
+  Scenario: Search for goods by control list entry
     Given I go to exporter homepage and choose Test Org
     When I click on goods link
     And I click add a good button
@@ -58,8 +58,8 @@ Feature: I want to search for goods in my goods list to add to an in progress ap
     And I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
     And I click on goods tile
     And I click the add from organisations goods button
-    And I filter by control rating and click filter
-    Then I see my added Good by "control rating"
+    And I filter by control list entry and click filter
+    Then I see my added Good by "control list entry"
 
   @LT_1159_remove
   Scenario: Remove filter

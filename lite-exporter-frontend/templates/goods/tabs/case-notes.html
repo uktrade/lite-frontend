@@ -1,6 +1,6 @@
 {% load humanize static %}
 
-{% url 'goods:good-detail' data.good.id 'case-notes' as post_url %}
+{% url 'goods:good_detail' good.id 'case-notes' as post_url %}
 
 {% if post_url %}
 
@@ -12,7 +12,7 @@
 				<p id="case_note-warning" class="govuk-hint govuk-character-count__message" aria-live="polite" style="text-align: left; margin: 2px 0 0 0;">
 					You can enter up to 2200 characters
 				</p>
-				<a id="case-note-cancel-button" href="{{ post_url }}" class="govuk-button govuk-button--secondary" type="button" draggable="false">
+				<a id="case-note-cancel-button" href="{{ post_url }}" class="govuk-button govuk-button--secondary govuk-button--secondary-white" type="button" draggable="false">
 					Cancel
 				</a>
 				<button class="govuk-button" type="submit" id="button-post-note">
@@ -30,7 +30,7 @@
 	<div class="lite-case-notes">
 		{% for item in notes %}
 			<p class="govuk-body" style="margin-bottom: 0;">
-				{% if item.user.team %}<span style="font-weight: 600;">{{item.user.team.name}}</span>{% else %}<a href="{% url 'users:user' item.user.id %}" class="govuk-link govuk-link--no-visited-state govuk-!-font-weight-bold">{{ item.user.first_name }} {{ item.user.last_name }}</a>
+				{% if item.user.team %}<span style="font-weight: 600;">{{ item.user.team.name }}</span>{% else %}<a href="{% url 'users:user' item.user.id %}" class="govuk-link govuk-link--no-visited-state govuk-!-font-weight-bold">{{ item.user.first_name }} {{ item.user.last_name }}</a>
 				{% endif %} added a note:
 			</p>
 			<div class="lite-application-note lite-application-note{% if item.user.team %}--internal{% else %}--exporter{% endif %}">

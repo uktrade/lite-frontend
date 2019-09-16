@@ -16,6 +16,7 @@ class ExporterHubPage:
         self.sites_btn = "a[href='/sites/']"
         self.sites_link = "a[href*='sites']"
         self.goods_tile = "a[href*='sites']"
+        self.end_user_advisory_tile = "a[href*='/end-users/']"
 
     def go_to(self, url):
         self.driver.get(url)
@@ -28,6 +29,9 @@ class ExporterHubPage:
 
     def click_applications(self):
         self.driver.find_element_by_css_selector(self.applications_btn).click()
+
+    def click_end_user_advisories(self):
+        self.driver.find_element_by_css_selector(self.end_user_advisory_tile).click()
 
     def enter_email(self, email):
         email_tb = self.driver.find_element_by_name("login")

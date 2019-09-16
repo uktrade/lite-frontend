@@ -7,7 +7,7 @@ from lite_forms.generators import form_page
 from core.builtins.custom_tags import get_string
 from core.forms import select_your_organisation_form
 from core.helpers import Section, Tile, generate_notification_string
-from core.services import get_notifications, get_clc_notifications, get_organisation
+from core.services import get_notifications, get_organisation
 from users.services import get_user
 
 
@@ -15,32 +15,32 @@ class Hub(TemplateView):
     def get(self, request, **kwargs):
         user, _ = get_user(request)
 
-        response, _ = get_notifications(request, unviewed=True)
-        num_notifications = response['count']
-        response, _ = get_clc_notifications(request, unviewed=True)
-        num_clc_notifications = response['count']
+        notifications = get_notifications(request, unviewed=True)
         organisation, _ = get_organisation(request, str(request.user.organisation))
 
         context = {
             'title': get_string('hub.title'),
             'organisation': organisation,
             'sections': [
-                Section('', '', [
+                Section('', [
                     Tile(get_string('licences.apply_for_a_licence'), '',
                          reverse_lazy('apply_for_a_licence:index')),
                 ]),
-                Section('Manage', '', [
+                Section('Manage', [
                     Tile(get_string('drafts.title'), '',
                          reverse_lazy('drafts:drafts')),
-                    Tile(get_string('applications.title'), generate_notification_string(num_notifications),
+                    Tile(get_string('applications.title'), generate_notification_string(notifications, 'application'),
                          reverse_lazy('applications:applications')),
-                    Tile('Goods', generate_notification_string(num_clc_notifications),
+                    Tile('Goods', generate_notification_string(notifications, 'control_list_classification_query'),
                          reverse_lazy('goods:goods')),
+                    Tile('End User Advisories', '',
+                         reverse_lazy('end_users:end_users')),
                     Tile('Manage my organisation', '', reverse_lazy('users:users')),
                 ]),
             ],
             'application_deleted': request.GET.get('application_deleted'),
-            'user_data': user['user']
+            'user_data': user['user'],
+            'notifications': notifications
         }
 
         return render(request, 'core/hub.html', context)

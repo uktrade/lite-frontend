@@ -29,7 +29,7 @@
 
 <div class="lite-tabs--fade">
 	<div class="lite-tabs">
-		<a href="{% url 'applications:application-detail' application.id 'case-notes' %}" class="lite-tabs__tab {% if type == 'case-notes' %}selected{% endif %}" id="case-notes-tab">
+		<a href="{% url 'applications:application-detail' application.id 'case-notes' %}" class="lite-tabs__tab {% if type == 'case-notes' %}lite-tabs__tab--selected{% endif %}" id="case-notes-tab">
 			Notes
             {% if case_note_notifications %}
                 <div class="lite-notification-bubble">
@@ -37,7 +37,7 @@
                 </div>
             {% endif %}
 		</a>
-		<a href="{% url 'applications:application-detail' application.id 'ecju-queries' %}" class="lite-tabs__tab {% if type == 'ecju-queries' %}selected{% endif %}" id="ecju-queries-tab">
+		<a href="{% url 'applications:application-detail' application.id 'ecju-queries' %}" class="lite-tabs__tab {% if type == 'ecju-queries' %}lite-tabs__tab--selected{% endif %}" id="ecju-queries-tab">
 			ECJU Queries
 			{% if ecju_query_notifications %}
 				<div class="lite-notification-bubble">

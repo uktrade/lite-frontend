@@ -10,7 +10,7 @@
                 <p class="app-ecju-query__date">
                     <span class="govuk-visually-hidden">Created at </span>{{ ecju_query.created_at|str_date }}
                 </p>
-                <a class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:respond_to_query' data.good.id ecju_query.id %}">Respond to query</a>
+                <a class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:respond_to_query' good.id ecju_query.id %}">Respond to query</a>
             </div>
         </div>
         <hr class="lite-horizontal-separator">

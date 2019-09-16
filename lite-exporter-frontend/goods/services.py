@@ -1,7 +1,7 @@
 from urllib.parse import urlencode
 
 from conf.client import get, post, put, delete
-from conf.constants import GOODS_URL, DOCUMENTS_URL, CLCS_URL
+from conf.constants import GOODS_URL, DOCUMENTS_URL, CONTROL_LIST_CLASSIFICATIONS_URL
 
 
 def get_goods(request, params=None):
@@ -11,12 +11,12 @@ def get_goods(request, params=None):
     else:
         data = get(request, GOODS_URL)
 
-    return data.json(), data.status_code
+    return data.json()['goods']
 
 
 def get_good(request, pk):
     data = get(request, GOODS_URL + pk)
-    return data.json(), data.status_code
+    return data.json()['good']
 
 
 def post_goods(request, json):
@@ -34,20 +34,25 @@ def delete_good(request, pk):
     return data.json(), data.status_code
 
 
+def get_clc_query(request, pk):
+    data = get(request, CONTROL_LIST_CLASSIFICATIONS_URL + pk)
+    return data.json()['control_list_classification_query']
+
+
 def raise_clc_query(request, json):
-    data = post(request, CLCS_URL, json)
+    data = post(request, CONTROL_LIST_CLASSIFICATIONS_URL, json)
     return data.json(), data.status_code
 
 
 # Documents
 def get_good_document(request, pk, doc_pk):
     data = get(request, GOODS_URL + pk + DOCUMENTS_URL + doc_pk)
-    return data.json(), data.status_code
+    return data.json()['document']
 
 
 def get_good_documents(request, pk):
     data = get(request, GOODS_URL + pk + DOCUMENTS_URL)
-    return data.json(), data.status_code
+    return data.json()['documents']
 
 
 def post_good_documents(request, pk, json):

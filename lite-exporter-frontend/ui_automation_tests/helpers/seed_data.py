@@ -223,7 +223,7 @@ class SeedData:
         data = {'good_id': self.context['clc_good_id'],
                 'not_sure_details_control_code': 'a',
                 'not_sure_details_details': 'b'}
-        response = self.make_request('POST', url='/applications/clcs/', headers=self.export_headers, body=data)
+        response = self.make_request('POST', url='/queries/control-list-classifications/', headers=self.export_headers, body=data)
         response_data = json.loads(response.text)
         self.add_ecju_query(response_data['case_id'])
 

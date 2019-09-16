@@ -6,10 +6,11 @@ verify_ssl = true
 [dev-packages]
 libsass = "==0.18.0"
 selenium = "==3.141.0"
-pytest = "==4.4.1"
+pytest = "==5.1.2"
 pytest_bdd = "==3.1.0"
 allure-pytest = "==2.6.1"
 pytest-html = "*"
+prospector = "==1.1.6.2"
 
 [packages]
 Django = "==2.2.4"

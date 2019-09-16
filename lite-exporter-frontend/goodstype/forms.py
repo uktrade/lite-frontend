@@ -17,8 +17,8 @@ form = Form(title='Add a description', questions=[
                             value='No')
                  ],
                  classes=['govuk-radios--inline']),
-    TextInput(title='What\'s your good\'s control list classification?',
-              description='<noscript>If your good is controlled, enter its control list classification. </noscript>For example, ML1a.',
+    TextInput(title='What\'s your good\'s control list entry?',
+              description='<noscript>If your good is controlled, enter its control list entry. </noscript>For example, ML1a.',
               name='control_code'),
     RadioButtons(title='Is your good intended to be incorporated into an end product?',
                  description='',

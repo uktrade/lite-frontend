@@ -45,7 +45,7 @@ jobs:
 
 
       - run:
-          name: setting environment file
+          name: Create environment file
           command: cp local.env .env
 
       # Download and cache dependencies
@@ -53,7 +53,7 @@ jobs:
           key: dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
 
       - run:
-          name: install dependencies
+          name: Install dependencies
           command: pipenv sync --dev
 
       - save_cache:
@@ -61,11 +61,10 @@ jobs:
             - ./venv
           key: dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
 
-      # run tests!
-      # this example uses Django's built-in test-runner
-      # other common Python testing frameworks include pytest and nose
-      # https://pytest.org
-      # https://nose.readthedocs.io
       - run:
-          name: run tests
+          name: Run tests
           command: pipenv run ./manage.py test --parallel
+
+      # - run:
+      #     name: Run linting
+      #     command: pipenv run prospector

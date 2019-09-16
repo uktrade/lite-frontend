@@ -2,7 +2,7 @@ from lite_forms.components import Option
 
 from conf.client import get, post, put
 from conf.constants import UNITS_URL, DRAFTS_URL, COUNTRIES_URL, EXTERNAL_LOCATIONS_URL, NOTIFICATIONS_URL, \
-    CLC_NOTIFICATIONS_URL, ORGANISATIONS_URL
+    CLC_NOTIFICATIONS_URL, ORGANISATIONS_URL, CASES_URL
 
 
 def get_units(request):
@@ -83,15 +83,7 @@ def get_notifications(request, unviewed):
     if unviewed:
         url = '%s?unviewed=True' % url
     data = get(request, url)
-    return data.json(), data.status_code
-
-
-def get_clc_notifications(request, unviewed):
-    url = CLC_NOTIFICATIONS_URL
-    if unviewed:
-        url = '%s?unviewed=True' % url
-    data = get(request, url)
-    return data.json(), data.status_code
+    return data.json()['results']
 
 
 # Organisation
@@ -113,3 +105,9 @@ def get_organisation_user(request, pk, user_pk):
 def put_organisation_user(request, pk, user_pk, json):
     data = put(request, ORGANISATIONS_URL + pk + '/users/' + user_pk + '/', json)
     return data.json(), data.status_code
+
+
+# Cases
+def get_case(request, pk):
+    data = get(request, CASES_URL + pk)
+    return data.json()['case']

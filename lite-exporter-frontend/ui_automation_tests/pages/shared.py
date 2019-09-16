@@ -17,6 +17,7 @@ class Shared:
         self.h2 = "h2"
         self.h1 = "h1"
         self.lite_section = ".lite-section"
+        self.notification = ".app-icon-label__notification"  # CSS
 
     def get_text_of_error_messages(self):
         return self.driver.find_element_by_css_selector(self.error_messages).text
@@ -74,3 +75,4 @@ class Shared:
 
     def click_on_application_name(self):
         return self.driver.find_element_by_css_selector(self.application_name).click()
+
