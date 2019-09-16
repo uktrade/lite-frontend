@@ -1,4 +1,4 @@
-from django.http import StreamingHttpResponse
+from django.http import StreamingHttpResponse, Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
@@ -15,21 +15,19 @@ from cases.forms.create_ecju_query import create_ecju_query_write_or_edit_form, 
 from cases.forms.denial_reasons import denial_reasons_form
 from cases.forms.move_case import move_case_form
 from cases.forms.record_decision import record_decision_form
-from cases.services import post_case_documents, get_case_documents, get_case_document, get_document
-from cases.services import get_case, post_case_notes, put_applications, get_activity, put_case, put_clc_queries, \
-    put_case_flags, get_ecju_queries, post_ecju_query
-
+from cases.services import get_case, post_case_notes, put_applications, get_activity, put_case, \
+    put_control_list_classification_query, \
+    get_ecju_queries, post_ecju_query
+from cases.services import post_case_documents, get_case_documents, get_document
 from conf import settings
-from conf.constants import DEFAULT_QUEUE_ID, MAKE_FINAL_DECISIONS, OPEN_CASES_SYSTEM_QUEUE_ID, ALL_CASES_SYSTEM_QUEUE_ID
+from conf.constants import DEFAULT_QUEUE_ID, MAKE_FINAL_DECISIONS
 from conf.decorators import has_permission
 from conf.settings import AWS_STORAGE_BUCKET_NAME
 from core.builtins.custom_tags import get_string
 from core.helpers import convert_dict_to_query_params
 from core.services import get_user_permissions, get_statuses
-from flags.services import get_flags_case_level_for_team
 from picklists.services import get_picklists, get_picklist_item
-from queues.helpers import add_assigned_users_to_cases
-from queues.services import get_queue_case_assignments, get_queue, get_queues, get_queue_cases
+from queues.services import get_queue, get_queues, get_queue_cases
 
 
 class Cases(TemplateView):
@@ -82,30 +80,25 @@ class ViewCase(TemplateView):
         case_id = str(kwargs['pk'])
         queue_id = request.GET.get('return_to', DEFAULT_QUEUE_ID)
         queue, status_code = get_queue(request, queue_id)
-        case, status_code = get_case(request, case_id)
-        case = case['case']
-        activity, status_code = get_activity(request, case_id)
+        case = get_case(request, case_id)
+        activity = get_activity(request, case_id)
         permissions = get_user_permissions(request)
 
-        if case['type']['key'] == 'clc_query':
-            context = {
-                'title': 'Case',
-                'case': case,
-                'good': case['clc_query']['good'],
-                'case_id': case_id,
-                'activity': activity.get('activity'),
-                'permissions': permissions,
-                'queue': queue,
-            }
-            return render(request, 'cases/case/clc-query-case.html', context)
-        else:
-            context = {
-                'case': case,
-                'title': case.get('application').get('name'),
-                'activity': activity.get('activity'),
-                'permissions': permissions,
-                'queue': queue,
-            }
+        context = {
+            'title': 'Case',
+            'case': case,
+            'queue': queue,
+            'activity': activity,
+            'permissions': permissions,
+        }
+
+        if case['type']['key'] == 'end_user_advisory_query':
+            return render(request, 'cases/case/queries/end_user_advisory.html', context)
+        elif case['type']['key'] == 'clc_query':
+            context['good'] = case['query']['good']
+            return render(request, 'cases/case/queries/clc-query-case.html', context)
+        elif case['type']['key'] == 'application':
+            context['title'] = case.get('application').get('name')
             return render(request, 'cases/case/application-case.html', context)
 
     def post(self, request, **kwargs):
@@ -133,13 +126,13 @@ class ViewCase(TemplateView):
 class ViewAdvice(TemplateView):
     def get(self, request, **kwargs):
         case_id = str(kwargs['pk'])
-        case, status_code = get_case(request, case_id)
+        case = get_case(request, case_id)
         activity, status_code = get_activity(request, case_id)
         permissions = get_user_permissions(request)
 
         context = {
             'data': case,
-            'title': case.get('case').get('application').get('name'),
+            'title': case.get('application').get('name'),
             'activity': activity.get('activity'),
             'permissions': permissions,
             'edit_case_flags': get_string('cases.case.edit_case_flags')
@@ -164,7 +157,7 @@ class CreateEcjuQuery(TemplateView):
 
     def get(self, request, **kwargs):
         case_id = str(kwargs['pk'])
-        picklists, status = get_picklists(request, 'ecju_query', False)
+        picklists = get_picklists(request, 'ecju_query', False)
         picklists = picklists.get('picklist_items')
         picklist_choices = [Option(self.NEW_QUESTION_DDL_ID, 'Write a new question')] + \
                            [Option(picklist.get('id'), picklist.get('name')) for picklist in picklists]
@@ -196,7 +189,7 @@ class CreateEcjuQuery(TemplateView):
         picklist_selection = request.POST.get('picklist')
 
         if picklist_selection != self.NEW_QUESTION_DDL_ID:
-            picklist_item_text = get_picklist_item(request, picklist_selection)[0]['picklist_item']['text']
+            picklist_item_text = get_picklist_item(request, picklist_selection)['text']
         else:
             picklist_item_text = ''
 
@@ -249,34 +242,30 @@ class CreateEcjuQuery(TemplateView):
 class ManageCase(TemplateView):
     def get(self, request, **kwargs):
         case_id = str(kwargs['pk'])
-        case, status_code = get_case(request, case_id)
+        case = get_case(request, case_id)
         statuses, status_code = get_statuses(request)
 
-        if case['case']['type']['key'] == 'application':
-            title = 'Manage ' + case.get('case').get('application').get('name')
+        if case['type']['key'] == 'application':
+            title = 'Manage ' + case.get('application').get('name')
         else:
             title = 'Manage CLC query case'
 
         context = {
-            'data': case,
+            'case': case,
             'title': title,
             'statuses': statuses
         }
-        return render(request, 'cases/manage.html', context)
+        return render(request, 'cases/case/change-status.html', context)
 
     def post(self, request, **kwargs):
         case_id = str(kwargs['pk'])
-        case, status_code = get_case(request, case_id)
+        case = get_case(request, case_id)
 
-        if case['case']['type']['key'] == 'application':
-            application_id = case.get('case').get('application').get('id')
+        if case['type']['key'] == 'application':
+            application_id = case.get('application').get('id')
             data, status_code = put_applications(request, application_id, request.POST)
         else:
-            clc_query_id = case['case']['clc_query']['id']
-            data, status_code = put_clc_queries(request, clc_query_id, request.POST)
-
-        if 'errors' in data:
-            return redirect('/cases/' + case_id + '/manage')
+            raise Http404
 
         return redirect(reverse('cases:case', kwargs={'pk': case_id}))
 
@@ -285,13 +274,13 @@ class DecideCase(TemplateView):
     @has_permission(MAKE_FINAL_DECISIONS)
     def get(self, request, **kwargs):
         case_id = str(kwargs['pk'])
-        case, status_code = get_case(request, case_id)
+        case = get_case(request, case_id)
 
-        if case['case']['application']['status'] == 'approved':
+        if case['application']['status'] == 'approved':
             data = {
-                'status': case['case']['application']['status']
+                'status': case['application']['status']
             }
-        elif case['case']['application']['status'] == 'under_final_review':
+        elif case['application']['status'] == 'under_final_review':
             data = {
                 'status': 'declined'
             }
@@ -303,10 +292,10 @@ class DecideCase(TemplateView):
     @has_permission(MAKE_FINAL_DECISIONS)
     def post(self, request, **kwargs):
         case_id = str(kwargs['pk'])
-        case, status_code = get_case(request, case_id)
+        case = get_case(request, case_id)
 
-        case_id = case.get('case').get('id')
-        application_id = case.get('case').get('application').get('id')
+        case_id = case.get('id')
+        application_id = case.get('application').get('id')
 
         if not request.POST.get('status'):
             return form_page(request, record_decision_form(), errors={
@@ -330,9 +319,9 @@ class DenyCase(TemplateView):
     @has_permission(MAKE_FINAL_DECISIONS)
     def post(self, request, **kwargs):
         case_id = str(kwargs['pk'])
-        case, status_code = get_case(request, case_id)
+        case = get_case(request, case_id)
 
-        application_id = case['case']['application']['id']
+        application_id = case['application']['id']
 
         data = {
             'reasons': request.POST.getlist('reasons'),
@@ -356,11 +345,11 @@ class DenyCase(TemplateView):
 class MoveCase(TemplateView):
     def get(self, request, **kwargs):
         case_id = str(kwargs['pk'])
-        case, status_code = get_case(request, case_id)
+        case = get_case(request, case_id)
 
         return form_page(request,
                          move_case_form(request, reverse('cases:case', kwargs={'pk': case_id})),
-                         data=case['case'])
+                         data=case)
 
     def post(self, request, **kwargs):
         case_id = str(kwargs['pk'])
@@ -381,47 +370,18 @@ class MoveCase(TemplateView):
         return redirect(reverse('cases:case', kwargs={'pk': case_id}))
 
 
-class AssignFlags(TemplateView):
-    def get(self, request, **kwargs):
-        case_id = str(kwargs['pk'])
-        case_data, status_code = get_case(request, case_id)
-        case_level_team_flags_data, status_code = get_flags_case_level_for_team(request)
-        case_flags = case_data.get('case').get('flags')
-        case_level_team_flags = case_level_team_flags_data.get('flags')
-
-        for flag in case_level_team_flags:
-            for case_flag in case_flags:
-                flag['selected'] = flag['id'] == case_flag['id']
-                if flag['selected']:
-                    break
-
-        context = {
-            'case': case_data,
-            'case_level_team_flags': case_level_team_flags
-        }
-        return render(request, 'cases/case/case_flags.html', context)
-
-    def post(self, request, **kwargs):
-        case_id = str(kwargs['pk'])
-        flags = request.POST.getlist('flags[]')
-
-        response, status_code = put_case_flags(request, case_id, {'flags': flags})
-
-        return redirect(reverse('cases:case', kwargs={'pk': case_id}))
-
-
 class Documents(TemplateView):
     def get(self, request, **kwargs):
         """
         List all documents belonging to a case
         """
         case_id = str(kwargs['pk'])
-        case, status_code = get_case(request, case_id)
+        case = get_case(request, case_id)
         case_documents, status_code = get_case_documents(request, case_id)
 
         context = {
             'title': get_string('cases.manage.documents.title'),
-            'case': case['case'],
+            'case': case,
             'case_documents': case_documents['documents'],
         }
         return render(request, 'cases/case/documents.html', context)
@@ -493,14 +453,14 @@ class Document(TemplateView):
 #         case_id = str(kwargs['pk'])
 #         file_pk = str(kwargs['file_pk'])
 #
-#         case, status_code = get_case(request, case_id)
+#         case = get_case(request, case_id)
 #         document, status_code = get_case_document(request, case_id, file_pk)
 #         original_file_name = document['document']['name']
 #
 #         context = {
 #             'title': 'Are you sure you want to delete this file?',
 #             'description': original_file_name,
-#             'case': case['case'],
+#             'case': case,
 #             'document': document['document'],
 #             'page': 'cases/case/modals/delete_document.html',
 #         }
@@ -510,7 +470,7 @@ class Document(TemplateView):
 #         case_id = str(kwargs['pk'])
 #         file_pk = str(kwargs['file_pk'])
 #
-#         case, status_code = get_case(request, case_id)
+#         case = get_case(request, case_id)
 #
 #         # Delete the file on the API
 #         delete_case_document(request, case_id, file_pk)
@@ -520,7 +480,7 @@ class Document(TemplateView):
 #         context = {
 #             'title': 'Are you sure you want to delete this file?',
 #             'description': original_file_name,
-#             'case': case['case'],
+#             'case': case,
 #             'document': document['document'],
 #             'page': 'cases/case/modals/delete_document.html',
 #         }

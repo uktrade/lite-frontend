@@ -6,20 +6,24 @@
 			right: 0;
 			z-index: 2;
 			background: white;
-			box-shadow: 0 20px 30px rgba(0,0,0,0.15), 0 5px 10px rgba(0,0,0,0.15), 0 0 2px rgba(0,0,0,0.15);
+			box-shadow: $lite-drop-shadow;
 
 			a {
-				@include govuk-font($size: 19);
+				@include govuk-font($size: 16, $weight: bold);
 				display: block;
 				width: 260px;
-				padding: govuk-spacing(2) govuk-spacing(3);
+				padding: govuk-spacing(3) govuk-spacing(4);
 				border-bottom: 2px solid darken(govuk-colour("light-grey"), 3%);
 				color: $govuk-link-colour;
 				text-decoration: none;
 
 				&:hover {
 					background-color: govuk-colour("light-grey");
-					text-decoration: underline;
+				}
+
+				&:active {
+					background-color: $govuk-link-colour;
+					color: govuk-colour("white");
 				}
 
 				&:last-of-type {
@@ -39,7 +43,7 @@
 			@include govuk-shape-arrow($direction: down, $base: 10px, $height: 6px, $display: inline-block);
 
 			content: "";
-			background: govuk-colour("white");
+			background: currentColor;
 			margin-left: 8px;
 			transform: translateY(-2px);
 		}

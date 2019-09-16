@@ -12,7 +12,7 @@ from fixtures.sign_in_to_sso import sign_in_to_internal_sso
 from fixtures.add_a_flag import add_uae_flag, add_suspicious_flag
 from fixtures.add_queue import add_queue
 from fixtures.add_a_team import add_a_team
-from fixtures.add_a_picklist import add_an_ecju_query_picklist, add_a_proviso_picklist, add_a_standard_advice_picklist
+from fixtures.add_a_picklist import add_an_ecju_query_picklist, add_a_proviso_picklist, add_a_standard_advice_picklist, add_a_report_summary_picklist
 
 import helpers.helpers as utils
 from pages.header_page import HeaderPage
@@ -78,13 +78,13 @@ def click_on_created_application(driver, context, internal_url):
     driver.get(internal_url.rstrip('/') + '/cases/' + context.case_id)
 
 
+@when('I go to clc query previously created')
+def click_on_created_application(driver, context, internal_url):
+    driver.get(internal_url.rstrip('/') + '/cases/' + context.clc_case_id)
+
+
 @given('I create application or application has been previously created')
 def create_app(driver, apply_for_standard_application):
-    pass
-
-
-@when('I create application or application has been previously created')
-def create_app_when(driver, apply_for_standard_application):
     pass
 
 
@@ -123,7 +123,7 @@ def go_to_users(driver):
 @then('I see the clc-case previously created')
 def assert_case_is_present(driver, apply_for_clc_query, context):
     case_list_page = CaseListPage(driver)
-    assert case_list_page.assert_case_is_present(context.case_id), "clc case ID is not present on page"
+    assert case_list_page.assert_case_is_present(context.clc_case_id), "clc case ID is not present on page"
 
 
 @when('I create a clc_query')
@@ -166,3 +166,31 @@ def no_cases_shown(driver):
 @when(parsers.parse('I click on the "{queue_name}" queue in dropdown'))
 def system_queue_shown_in_dropdown(driver, queue_name):
     CaseListPage(driver).click_on_queue_name(queue_name)
+
+
+@when(parsers.parse('I click on the added queue in dropdown'))
+def system_queue_shown_in_dropdown(driver, context):
+    CaseListPage(driver).click_on_queue_name(context.queue_name)
+
+
+@when('I enter in queue name Review')
+def add_a_queue(driver, context, add_queue):
+    pass
+
+
+@when('I go to queues via menu')
+def go_to_queues_via_menu(driver):
+    HeaderPage(driver).click_lite_menu()
+    HeaderPage(driver).click_queues()
+
+
+@given('I go to queues')
+def go_to_queues(driver, sign_in_to_internal_sso, internal_url):
+    driver.get(internal_url.rstrip('/') + '/queues/')
+
+
+@when('I add case to newly created queue')
+def move_case_to_new_queue(driver, context):
+    ApplicationPage(driver).click_move_case_button()
+    driver.find_element_by_id(context.queue_name).click()
+    Shared(driver).click_submit()

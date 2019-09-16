@@ -3,16 +3,12 @@
 {% load humanize %}
 
 {% block back_link %}
-	<a href="{% url 'cases:case' data.case.id %}" class="govuk-back-link">Back</a>
+	<a href="{% url 'cases:case' case.id %}" class="govuk-back-link">Back</a>
 {% endblock %}
 
 {% block body %}
 
-	<!--<div class="information information-animated">
-		{% get_string 'cases.manage.case_update_successful' %}
-	</div>-->
-
-	<h1 class="govuk-heading-l">{{ title }}</h1>
+	<h2 class="govuk-heading-l">{{ title }}</h2>
 
 	<form method="post">
 		{% csrf_token %}

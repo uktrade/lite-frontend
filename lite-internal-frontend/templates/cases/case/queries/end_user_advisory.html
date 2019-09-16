@@ -1,0 +1,99 @@
+{% extends 'layouts/base.html' %}
+
+{% load static %}
+
+{% block back_link %}
+	<a href="{% url 'cases:cases' %}?queue={{ queue.queue.id }}" class="govuk-back-link">
+		Back to {{ queue.queue.name }}
+	</a>
+{% endblock %}
+
+{% block body %}
+
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<p class="govuk-caption-m" style="margin: 0;">{{ case.type.value }} by <a class="govuk-link govuk-link--no-visited-state" style="display: inline-block;" href="{% url 'organisations:organisation' case.query.organisation.id %}">{{ case.query.organisation.name }}</a></p>
+			<h2 class="govuk-heading-l app-reference-code">{{ case.query.id|reference_code }}</h2>
+		</div>
+		<div class="lite-app-bar__controls">
+			<div class="app-more-actions__container">
+				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:move' case.id %}">
+					{% get_string 'cases.manage.move_case.button' %}
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<!-- Case flags -->
+	{% include 'cases/case/views/case-flags.html' %}
+
+	<br><br>
+
+	<h3 class="govuk-heading-m">End User Details</h3>
+	<div class="govuk-!-width-two-thirds">
+		<dl class="govuk-summary-list">
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					Name
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ case.query.end_user.name }}
+				</dd>
+			</div>
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					Type
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ case.query.end_user.type.value }}
+				</dd>
+			</div>
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					Address
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ case.query.end_user.address }}<br>{{ case.query.end_user.country.name }}
+				</dd>
+			</div>
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					Website
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{% if case.query.end_user.website %}
+						<a class="govuk-link" href="{{ case.query.end_user.website }}">{{ case.query.end_user.website }}</a>
+					{% else %}
+						N/A
+					{% endif %}
+				</dd>
+			</div>
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					Reasoning behind query
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ case.query.reasoning|default:'N/A' }}
+				</dd>
+			</div>
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					Notes about end user
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ case.query.note|default:'N/A' }}
+				</dd>
+			</div>
+		</dl>
+
+		<br><br>
+
+		{% include "cases/case/views/activity.html" %}
+
+	</div>
+
+{% endblock %}
+
+{% block javascript %}
+	<script src="{% static 'javascripts/more-actions.js' %}"></script>
+{% endblock %}

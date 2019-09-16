@@ -14,7 +14,9 @@
 
 <div class="lite-app-bar">
 	<div class="lite-app-bar__content">
-		<h1 class="govuk-heading-l">{{ title }}</h1>
+		<p class="govuk-caption-m" style="margin: 0;">{{ case.application.licence_type.value }}</p>
+		<h2 class="govuk-heading-l">{{ title }}</h2>
+		<p class="govuk-caption-m">Application by <a class="govuk-link govuk-link--no-visited-state" style="display: inline-block;" href="{% url 'organisations:organisation' case.application.organisation.id %}">{{ case.application.organisation.name }}</a></p>
 	</div>
 	<div class="lite-app-bar__controls">
 		<div class="app-more-actions__container">
@@ -86,11 +88,11 @@
 	{% include 'cases/case/views/standard-destinations.html' %}
 {% endif %}
 
-{% include "cases/case/tabs/activity.html" %}
+{% include "cases/case/views/activity.html" %}
 
 {% endblock %}
 
 {% block javascript %}
-	<!-- <script src="{% static 'javascripts/more-actions.js' %}"></script> -->
+	<script src="{% static 'javascripts/more-actions.js' %}"></script>
 	<script src="{% static 'javascripts/edit-good-flags.js' %}"></script>
 {% endblock %}

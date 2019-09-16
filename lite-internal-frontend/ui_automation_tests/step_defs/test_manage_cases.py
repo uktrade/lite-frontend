@@ -10,7 +10,7 @@ from pages.header_page import HeaderPage
 from ui_automation_tests.pages.users_page import UsersPage
 
 
-class ManageCases():
+class ManageCases:
     scenarios('../features/manage_cases.feature', strict_gherkin=False)
 
     import logging
@@ -24,12 +24,13 @@ class ManageCases():
         context.decision_array = []
 
     @when(parsers.parse('I "{grant_or_deny}" application'))
-    def grant_or_deny_decision(driver, grant_or_deny):
+    def grant_or_deny_decision(driver, grant_or_deny, context):
         record = RecordDecision(driver)
         if grant_or_deny == "grant":
             record.click_on_grant_licence()
         elif grant_or_deny == "deny":
             record.click_on_deny_licence()
+            context.advice_data = []
 
     @when(parsers.parse('I type optional text "{optional_text}"'))
     def type_optional_text(driver, optional_text, context):
@@ -54,9 +55,9 @@ class ManageCases():
     def see_application_granted_or_denied(driver, grant_or_deny, context):
         application_page = ApplicationPage(driver)
         if grant_or_deny == "granted":
-            assert "set the status to approved" in application_page.get_text_of_audit_trail_item(0), "status has not been shown as approved in audit trail"
+            assert "updated the status to approved" in application_page.get_text_of_audit_trail_item(0), "status has not been shown as approved in audit trail"
         elif grant_or_deny == "denied":
-            assert "set the status to under final review" in application_page.get_text_of_audit_trail_item(0), "status has not been shown as under review in audit trail"
+            assert "updated the status to under_final_review" in application_page.get_text_of_audit_trail_item(0), "status has not been shown as under review in audit trail"
             body = Shared(driver).get_text_of_body()
             assert "This case was denied because" in body
             for denial_reason_code in context.decision_array:
@@ -67,7 +68,11 @@ class ManageCases():
     @then('the status has been changed in the application')
     def status_has_been_changed_in_header(driver, context, sso_users_name):
         application_page = ApplicationPage(driver)
-        assert "set the status to " + context.status.lower() in application_page.get_text_of_audit_trail_item(0), "status has not been shown as approved in audit trail"
+        if context.status.lower() == "under review":
+            assert "updated the status to " + "under_review" in application_page.get_text_of_audit_trail_item(
+                0), "status has not been shown as approved in audit trail"
+        else:
+            assert "updated the status to " + context.status.lower() in application_page.get_text_of_audit_trail_item(0), "status has not been shown as approved in audit trail"
 
         assert utils.search_for_correct_date_regex_in_element(application_page.get_text_of_activity_dates(0)), "date is not displayed after status change"
         assert application_page.get_text_of_activity_users(0) == sso_users_name, "user who has made the status change has not been displayed correctly"
@@ -114,8 +119,7 @@ class ManageCases():
         assert "type" in destinations_table_lower
         assert "website" in destinations_table_lower
         assert "address" in destinations_table_lower
-        assert context.ueu_type in destinations_table
-        assert context.ueu_name in destinations_table
-        assert context.ueu_website in destinations_table
-        assert context.ueu_address in destinations_table
-        assert context.ueu_country[0] in destinations_table
+        assert context.ueu_type.lower() in destinations_table.lower()
+        assert context.ueu_name.lower() in destinations_table.lower()
+        assert context.ueu_website.lower() in destinations_table.lower()
+        assert context.ueu_address.lower() in destinations_table.lower()

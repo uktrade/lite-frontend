@@ -3,7 +3,7 @@ from helpers.BasePage import BasePage
 
 class Shared(BasePage):
 
-    submit_button = '[type*="submit"]'  # CSS
+    submit_button = '.govuk-button[type*="submit"]'  # CSS
     error_message = '.govuk-error-message'  # CSS
     lite_table = '.lite-table'  # CSS
     lite_table_body = '.lite-table__body'  # CSS

@@ -1,16 +1,16 @@
-{% if good.flags %}
-    <div class="app-flags" id="application-good-flags">
-        {% for flag in good.flags %}
-            <div class="app-flag" id="{{ flag.name }}">
-                {{ flag.name }}
-            </div>
-        {% endfor %}
-    </div>
-    <div class="govuk-form-group">
-        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:assign_flags' case_id %}?level=goods&goods={{ good.id }}&origin={{ origin }}">Edit goods flags</a>
-    </div>
-{% else %}
-    <div class="govuk-form-group">
-        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:assign_flags' case_id %}?level=goods&goods={{ good.id }}&origin={{ origin }}">Set goods flags</a>
-    </div>
-{% endif %}
+<div class="app-flags">
+	{% for flag in good.flags %}
+		<div class="app-flag" id="{{ flag.name }}">
+			{{ flag.name }}
+		</div>
+	{% endfor %}
+	{% if not hide_creation_link %}
+		<a class="app-flag app-flag--action" href="{% url 'cases:assign_flags' case.id %}?level=goods&items={{ good.id }}&origin={{ origin }}">
+			{% if good.flags %}
+				Edit good flags
+			{% else %}
+				Set a flag on this good
+			{% endif %}
+		</a>
+	{% endif %}
+</div>

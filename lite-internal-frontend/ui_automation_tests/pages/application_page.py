@@ -6,29 +6,30 @@ from helpers.BasePage import BasePage
 
 class ApplicationPage(BasePage):
 
+    actions_dropdown = ".app-more-actions__button"  # CSS
     case_note_field = "case_note"  # id
     post_note_btn = "button-post-note"  # id
     cancel_note_btn = "case-note-cancel-button"  # id
-    case_notes_text = ".lite-case-note"  # css
-    case_note_date_time = ".lite-activity-item .govuk-hint"  # css
+    case_notes_text = ".app-activity__additional-text"  # css
+    case_note_date_time = ".app-activity__item .govuk-hint"  # css
     case_note_character_warning = "case_note-warning"  # id
-    documents_btn = '.govuk-button[href*="documents"]'  # css
-    ecju_queries_btn = '.govuk-button[href*="ecju-queries"]'  # css
-    progress_app_btn = '.govuk-button[href*="manage"]'
-    record_decision_btn = '.govuk-button[href*="decide"]'  # css
+    documents_btn = '[href*="documents"]'  # css
+    ecju_queries_btn = '[href*="ecju-queries"]'  # css
+    progress_app_btn = '[href*="manage"]'
+    record_decision_btn = '[href*="decide"]'  # css
     headers = ".lite-heading-s"  # css
     activity_case_note_subject = ".lite-activity-item .govuk-body"
-    activity_dates = ".lite-activity-item .govuk-hint"
+    activity_dates = ".app-activity__item .govuk-hint"
     activity_user = ".user"
     is_visible_to_exporter_checkbox_id = 'is_visible_to_exporter'
     edit_case_flags = 'application-edit-case-flags'  # ID
     edit_goods_flags = 'button-edit-goods-flags'  # ID
     checkbox_input = ".govuk-checkboxes__input"
-    view_advice = "a[href*='/advice-view/']"
+    view_advice = "[href*='/advice-view/']"
     case_flags = 'application-case-flags'
-    move_case_button = '.govuk-button[href*="move"]' # CSS
+    move_case_button = '[href*="move"]' # CSS
     status = 'status'  # ID
-    audit_trail_item = '.lite-case-notes .lite-activity-item'  # CSS
+    audit_trail_item = '.app-activity__item'  # CSS
     application_summary_board = '.lite-information-board'  # CSS
     ueu_table = 'ultimate-end-users'  # ID
     give_advice_button = 'button-give-advice'  # ID
@@ -71,15 +72,19 @@ class ApplicationPage(BasePage):
         return self.driver.find_element_by_id(self.post_note_btn).get_attribute("class")
 
     def click_progress_application(self):
+        self.driver.find_element_by_css_selector(self.actions_dropdown).click()
         self.driver.find_element_by_css_selector(self.progress_app_btn).click()
 
     def click_record_decision(self):
+        self.driver.find_element_by_css_selector(self.actions_dropdown).click()
         self.driver.find_element_by_css_selector(self.record_decision_btn).click()
 
     def click_documents_button(self):
+        self.driver.find_element_by_css_selector(self.actions_dropdown).click()
         self.driver.find_element_by_css_selector(self.documents_btn).click()
 
     def click_ecju_queries_button(self):
+        self.driver.find_element_by_css_selector(self.actions_dropdown).click()
         self.driver.find_element_by_css_selector(self.ecju_queries_btn).click()
 
     def select_status(self, status):
@@ -108,6 +113,7 @@ class ApplicationPage(BasePage):
         self.driver.execute_script("arguments[0].click();", element)
 
     def click_view_advice(self):
+        self.driver.find_element_by_css_selector(self.actions_dropdown).click()
         self.driver.find_element_by_css_selector(self.view_advice).click()
 
     def is_flag_applied(self, flag_id):
@@ -118,6 +124,7 @@ class ApplicationPage(BasePage):
         return flag_name in self.driver.find_element_by_id("goods").text
 
     def click_move_case_button(self):
+        self.driver.find_element_by_css_selector(self.actions_dropdown).click()
         self.driver.find_element_by_css_selector(self.move_case_button).click()
 
     def get_text_of_audit_trail_item(self, no):

@@ -10,7 +10,7 @@
 	<div class="lite-tabs--fade">
 		<div class="lite-tabs">
 			<a href="{% url 'teams:team' %}" class="lite-tabs__tab">Users</a>
-			<a href="{% url 'picklists:picklists' %}" class="lite-tabs__tab selected">Picklists</a>
+			<a href="{% url 'picklists:picklists' %}" class="lite-tabs__tab lite-tabs__tab--selected">Picklists</a>
 		</div>
 	</div>
 	<a href="{% url 'picklists:add' %}?type={{ type }}" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
@@ -30,8 +30,8 @@
 			<li class="lite-subnav__link {{ 'letter_paragraph'|add_subnav_selected_class:request.get_full_path }}">
 				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=letter_paragraph">Letter Paragraphs</a>
 			</li>
-			<li class="lite-subnav__link {{ 'annual_report_summary'|add_subnav_selected_class:request.get_full_path }}">
-				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=annual_report_summary">Annual Report Summary</a>
+			<li class="lite-subnav__link {{ 'report_summary'|add_subnav_selected_class:request.get_full_path }}">
+				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=report_summary">Report Summaries</a>
 			</li>
 			<li class="lite-subnav__link {{ 'standard_advice'|add_subnav_selected_class:request.get_full_path }}">
 				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=standard_advice">Standard Advice</a>

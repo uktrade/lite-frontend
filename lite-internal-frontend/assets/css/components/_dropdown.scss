@@ -15,6 +15,7 @@
 	cursor: pointer;
 	text-decoration: none;
 	padding-right: 35px;
+	margin-bottom: govuk-spacing(6)!important;
 
 	&:after {
 		content: "";

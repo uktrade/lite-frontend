@@ -7,7 +7,9 @@
 				<th class="lite-table__header" scope="col">Type</th>
 				<th class="lite-table__header" scope="col">Address</th>
 				<th class="lite-table__header" scope="col">Website</th>
-				<th class="lite-table__header" scope="col">Document</th>
+               	{% if end_user.document.safe == True %}
+					<th class="lite-table__header" scope="col">Document</th>
+				{% endif %}
 				{% if show_advice %}
 					<th class="lite-table__header" style="width: 350px;">Advice</th>
 				{% endif %}
@@ -24,11 +26,10 @@
 					</div>
 				</td>
 				<td class="lite-table__cell">
-					{{ end_user.type }}
+					{{ end_user.type.value }}
 				</td>
 				<td class="lite-table__cell">
-					{{ end_user.address }}
-					{{ end_user.country }}
+					{{ end_user.address }}, {{ end_user.country.name }}
 				</td>
 				<td class="lite-table__cell">
 					{{ end_user.website|default:'Not set' }}
@@ -83,11 +84,10 @@
 							</div>
 						</td>
 						<td class="lite-table__cell">
-							{{ end_user.type }}
+							{{ end_user.type.value }}
 						</td>
 						<td class="lite-table__cell">
-							{{ end_user.address }}
-							{{ end_user.country }}
+							{{ end_user.address }}, {{ end_user.country.name }}
 						</td>
 						<td class="lite-table__cell">
 							{{ end_user.website|default:'Not set' }}

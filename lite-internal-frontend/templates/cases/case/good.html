@@ -41,22 +41,18 @@
         <h3 class="govuk-heading-m">Documents</h3>
     </div>
 
-
-        {% for document in good.documents %}
-            <div class="lite-card lite-card--download">
-                <div>
-                    <p class="govuk-body govuk-!-font-weight-bold" style="margin-bottom: 10px;">{{ document.name }}</p>
-                    <p class="govuk-body" style="margin-bottom: 10px">{{ document.description|slice:"0:40" }} {% if document.description|length > 40 %}...{% endif %}</p>
-                </div>
-                <div class="lite-vertical-align">
-                        <a class="govuk-link lite-link--icon govuk-link--no-visited-state" href="{% url 'cases:document' case_id document.id %}">
-                            Download
-                        </a>
-                </div>
+    {% for document in good.documents %}
+        <div class="lite-card lite-card--download">
+            <div>
+                <p class="govuk-body govuk-!-font-weight-bold" style="margin-bottom: 10px;">{{ document.name }}</p>
+                <p class="govuk-body" style="margin-bottom: 10px">{{ document.description|slice:"0:40" }} {% if document.description|length > 40 %}...{% endif %}</p>
             </div>
-        {% endfor %}
-
-
-{% include "cases/case/tabs/good-activity.html" %}
+            <div class="lite-vertical-align">
+                    <a class="govuk-link lite-link--icon govuk-link--no-visited-state" href="{% url 'cases:document' case_id document.id %}">
+                        Download
+                    </a>
+            </div>
+        </div>
+    {% endfor %}
 
 {% endblock %}

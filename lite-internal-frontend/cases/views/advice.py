@@ -19,8 +19,8 @@ class ViewAdvice(TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         self.case_id = str(kwargs['pk'])
-        case, _ = get_case(request, self.case_id)
-        self.case = case['case']
+        case = get_case(request, self.case_id)
+        self.case = case
         self.form = advice_recommendation_form(self.case_id)
 
         return super(ViewAdvice, self).dispatch(request, *args, **kwargs)
@@ -61,8 +61,8 @@ class GiveAdvice(TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         self.case_id = str(kwargs['pk'])
-        case, _ = get_case(request, self.case_id)
-        self.case = case['case']
+        case = get_case(request, self.case_id)
+        self.case = case
         self.form = advice_recommendation_form(self.case_id)
 
         return super(GiveAdvice, self).dispatch(request, *args, **kwargs)
@@ -83,8 +83,8 @@ class GiveAdvice(TemplateView):
             return form_page(request, self.form, errors={'type': ['Select a decision']})
 
         # Render the advice detail page
-        proviso_picklist_items, status_code = get_picklists(request, 'proviso')
-        advice_picklist_items, status_code = get_picklists(request, 'standard_advice')
+        proviso_picklist_items = get_picklists(request, 'proviso')
+        advice_picklist_items = get_picklists(request, 'standard_advice')
         static_denial_reasons, status_code = get_denial_reasons(request, False)
 
         self.form = 'cases/case/give-advice.html'
@@ -114,8 +114,8 @@ class GiveAdviceDetail(TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         self.case_id = str(kwargs['pk'])
-        case, _ = get_case(request, self.case_id)
-        self.case = case['case']
+        case = get_case(request, self.case_id)
+        self.case = case
 
         # If the advice type is not valid, raise a 404
         advice_type = kwargs['type']
@@ -129,8 +129,8 @@ class GiveAdviceDetail(TemplateView):
         response, status_code = post_case_advice(request, self.case_id, data)
 
         if 'errors' in response:
-            proviso_picklist_items, status_code = get_picklists(request, 'proviso')
-            advice_picklist_items, status_code = get_picklists(request, 'standard_advice')
+            proviso_picklist_items = get_picklists(request, 'proviso')
+            advice_picklist_items = get_picklists(request, 'standard_advice')
             static_denial_reasons, status_code = get_denial_reasons(request, False)
 
             data = clean_advice(data)

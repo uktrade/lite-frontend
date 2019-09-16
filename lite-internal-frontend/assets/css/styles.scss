@@ -10,6 +10,88 @@ $govuk-link-active-colour: darken($govuk-brand-colour, 20%);
 @import "../shared/lite-frontend/scss/all"; // Local Assets
 @import "components/all";
 
+.app-panel {
+	background-color: govuk-colour("light-grey");
+	padding: govuk-spacing(6);
+	margin-bottom: govuk-spacing(6);
+
+	&--info {
+		border-left: 5px solid $govuk-brand-colour;
+	}
+
+	hr {
+		@extend .lite-horizontal-separator;
+		background-color: govuk-colour("black");
+		opacity: .05;
+	}
+
+	.govuk-body-m:last-of-type {
+		margin-bottom: 0;
+		padding-bottom: 0;
+	}
+}
+
+.test {
+	position: relative;
+	background: govuk-colour("light-grey");
+	padding: govuk-spacing(4);
+	max-height: 285px;
+	overflow-y: scroll;
+	margin-top: govuk-spacing(3);
+	margin-bottom: govuk-spacing(6);
+	box-shadow: 0 0 0 2px rgba(govuk-colour("black"), 0.1);
+
+	.govuk-radios__item {
+		margin-bottom: govuk-spacing(4);
+
+		&:last-of-type {
+			margin-bottom: 0;
+		}
+	}
+
+	.govuk-radios__label::before {
+		background: white;
+	}
+}
+
+.govuk-summary-list__key {
+	border-bottom: 2px solid darken(govuk-colour("light-grey"), 2%);
+}
+
+.govuk-summary-list__value {
+	border-bottom: 2px solid darken(govuk-colour("light-grey"), 2%);
+}
+
+.app-inset-text {
+	border-left: govuk-spacing(1) solid govuk-colour("mid-grey");
+	padding: govuk-spacing(3) govuk-spacing(5);
+}
+
+.app-summary-list {
+	margin-bottom: govuk-spacing(6);
+
+	&__item {
+		margin-bottom: govuk-spacing(6);
+
+		&:last-of-type {
+			margin-bottom: 0;
+		}
+
+		p {
+			margin: 0;
+		}
+
+		.govuk-caption-m {
+			margin-bottom: 10px;
+		}
+	}
+}
+
+.app-reference-code {
+	position: relative;
+	letter-spacing: 2px;
+}
+
 .app-wrappable-list {
 	display: flex;
 	flex-wrap: wrap;

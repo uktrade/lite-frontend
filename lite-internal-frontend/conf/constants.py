@@ -25,10 +25,9 @@ GOV_USERS_ROLES_URL = '/gov-users/roles/'
 GOV_USERS_PERMISSIONS_URL = '/gov-users/permissions/'
 FLAGS_URL = '/flags/'
 ASSIGN_FLAGS_URL = FLAGS_URL + 'assign/'
-GOODS_FLAGS_URL = 'flags/'
 FLAGS_CASE_LEVEL_FOR_TEAM = '/flags/?level=Case&team=True'
 FLAGS_GOOD_LEVEL_FOR_TEAM = '/flags/?level=Good&team=True'
-CLC_QUERIES_URL = '/clc-queries/'
+CLC_QUERIES_URL = '/queries/control-list-classifications/'
 PICKLIST_URL = '/picklist/'
 
 # Static URLs

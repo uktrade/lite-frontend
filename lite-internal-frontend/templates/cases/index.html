@@ -7,19 +7,19 @@
 {% block body %}
 
 <div class="lite-app-bar">
-    <div>
-		<form method="get" class="app-dropdown__select">
-			<select class="govuk-select" name="queue">
-				{% for queue in queues %}
-					<option value="{{ queue.id }}" {% if queue.id == current_queue.id %}selected{% endif %}>{{ queue.name }}</option>
-				{% endfor %}
-			</select>
-			<button type="submit" class="govuk-button">{% get_string 'cases.go_to_queue' %}</button>
-		</form>
-        <a id="queue-title" href="#" class="govuk-heading-l app-dropdown__heading" onclick="toggleDropdown()">{{ title }}</a>
-    </div>
+	<form method="get" class="app-dropdown__select">
+		<select class="govuk-select" name="queue">
+			{% for queue in queues %}
+				<option value="{{ queue.id }}" {% if queue.id == current_queue.id %}selected{% endif %}>{{ queue.name }}</option>
+			{% endfor %}
+		</select>
+		<button type="submit" class="govuk-button">{% get_string 'cases.go_to_queue' %}</button>
+	</form>
+    <a id="queue-title" href="#" class="govuk-heading-l app-dropdown__heading" onclick="toggleDropdown()">{{ title }}</a>
     <div class="lite-app-bar__controls">
-        <button id="assign-users-button" form="cases-form" type="submit" class="govuk-button govuk-button--secondary">Assign users</button>
+		{% if not current_queue.is_system_queue %}
+        	<button id="assign-users-button" form="cases-form" type="submit" class="govuk-button govuk-button--secondary">Assign users</button>
+		{% endif %}
     </div>
 </div>
 <div class="app-dropdown__background" onclick="toggleDropdown()"></div>
@@ -57,7 +57,8 @@
                 <select class="govuk-select" id="case_type" name="case_type">
                     <option {% if params.case_type == None %}selected{% endif %} value="">Select</option>
                     <option {% if params.case_type == "application" %}selected{% endif %} value="application">Licence application</option>
-                    <option {% if params.case_type == "clc_query" %}selected{% endif %} value="clc_query">CLC query</option>
+					<option {% if params.case_type == "clc_query" %}selected{% endif %} value="clc_query">CLC Query</option>
+                    <option {% if params.case_type == "end_user_advisory_query" %}selected{% endif %} value="end_user_advisory_query">End User Advisory Query</option>
                 </select>
             </div>
         </div>
@@ -142,25 +143,22 @@
 						</div>
 					</div>
                 <div>
-                    {% if case.type.key == 'clc_query' %}
-                            <div>
-                                <a class="govuk-link govuk-!-font-size-19 govuk-link--no-visited-state govuk-!-font-weight-bold" href="{% url 'cases:case' case.id %}?return_to={{ current_queue.id }}" style="text-decoration: none; margin-bottom: 5px!important; display: inline-block;">
-                                    {{ case.id }}
-                                </a>
-                            </div>
-                            <p class="govuk-body" style="opacity: .7; margin: 0;">
-                                {{ case.organisation }}
-                            </p>
-                    {% else %}
-                        <div class="">
-                            <a href="{% url 'cases:case' case.id %}?return_to={{ current_queue.id }}" class="govuk-link govuk-!-font-size-19 govuk-link--no-visited-state govuk-!-font-weight-bold" style="text-decoration: none; margin-bottom: 5px!important; display: inline-block;">
-                                {{ case.id|default:"Untitled" }}
+                    {% if 'query' in case.type.key %}
+                        <div>
+                            <a class="govuk-link govuk-!-font-size-19 govuk-link--no-visited-state govuk-!-font-weight-bold" href="{% url 'cases:case' case.id %}?return_to={{ current_queue.id }}" style="text-decoration: none; margin-bottom: 5px!important; display: inline-block;">
+                                {{ case.query.id|reference_code }}
                             </a>
                         </div>
-                        <p class="govuk-body" style="opacity: .7; margin: 0;">
-                            {{ case.organisation }}
-                        </p>
+                    {% else %}
+                        <div>
+                            <a href="{% url 'cases:case' case.id %}?return_to={{ current_queue.id }}" class="govuk-link govuk-!-font-size-19 govuk-link--no-visited-state govuk-!-font-weight-bold" style="text-decoration: none; margin-bottom: 5px!important; display: inline-block;">
+                                {{ case.id }}
+                            </a>
+                        </div>
                     {% endif %}
+                    <p class="govuk-body" style="opacity: .7; margin: 0;">
+                        {{ case.organisation }}
+                    </p>
                 </div>
                 <div>
                     {% for user in case.users %}
@@ -176,7 +174,7 @@
                     {% endfor %}
                 </div>
                 <p class="govuk-body">
-                    {{ case.type }}
+                    {{ case.type.value }}
                 </p>
                 {% if current_queue.is_system_queue %}
                     <p class="govuk-body">
@@ -207,6 +205,10 @@
 	{% else %}
 		{% get_string 'cases.no_cases' as no_cases_text %}
 		{% include "includes/information-text.html" with text=no_cases_text %}
+		<br><br>
+		{% if params.case_type or params.status %}
+			<a href="{% url 'cases:cases' %}?queue={{ current_queue.id }}" class="govuk-link govuk-link--no-visited-state govuk-body">Clear filters</a>
+		{% endif %}
 	{% endif %}
 
 </form>

@@ -69,6 +69,11 @@ class SeedData:
             "text": "My standard advice would be this.",
             "type": "standard_advice"
         },
+        "report_picklist": {
+            "name": "More advice",
+            "text": "My standard advice would be this.",
+            "type": "report_summary"
+        },
         "gov_user": {
             "email": gov_user_email,
             "first_name": gov_user_first_name,
@@ -184,6 +189,12 @@ class SeedData:
         response = self.make_request("POST", url='/picklist/', body=data)
         return json.loads(response.text)['picklist_item']
 
+    def add_report_summary_picklist(self):
+        self.log("Creating standard advice picklist item ...")
+        data = self.request_data['report_picklist']
+        response = self.make_request("POST", url='/picklist/', body=data)
+        return json.loads(response.text)['picklist_item']
+
     def find_org_by_name(self):
         response = self.make_request("GET", url='/organisations/')
         organisations = json.loads(response.text)['organisations']
@@ -214,7 +225,7 @@ class SeedData:
             'not_sure_details_control_code': 'ML17',
             'good_id': item['id']
         }
-        response = self.make_request("POST", url='/applications/clcs/', headers=self.export_headers, body=data)
+        response = self.make_request("POST", url='/queries/control-list-classifications/', headers=self.export_headers, body=data)
         self.add_to_context('case_id', json.loads(response.text)['case_id'])
 
     def add_good_document(self, good_id):

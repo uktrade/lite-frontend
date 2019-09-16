@@ -1,27 +1,14 @@
-<!-- # TODO: Create modal for clients with JS enabled -->
-<!-- <a href="{% url 'cases:assign_flags' case.id %}" class="govuk-link govuk-link--no-visited-state" onclick="return showFlagsModal();">Edit case flags</a> -->
-
-{% if case.flags %}
-	<div class="app-flags" id="application-case-flags">
-	    {% for flag in case.flags %}
-	        <div class="app-flag" id="{{ flag.name }}">
-	            {{ flag.name }}
-	        </div>
-	    {% endfor %}
-	</div>
-	<div class="govuk-form-group">
-		<a href="{% url 'cases:assign_flags' case.id %}?level=cases&cases={{ case.id }}" id="application-edit-case-flags" class="govuk-link govuk-link--no-visited-state">
+<div class="app-flags" id="application-case-flags">
+    {% for flag in case.flags %}
+        <div class="app-flag" id="{{ flag.name }}">
+            {{ flag.name }}
+        </div>
+    {% endfor %}
+	<a href="{% url 'cases:assign_flags' case.id %}?level=cases&items={{ case.id }}" id="application-edit-case-flags" class="app-flag app-flag--action">
+		{% if case.flags %}
 			{% get_string 'cases.case.edit_case_flags' %}
-		</a>
-	</div>
-{% else %}
-	<div class="govuk-form-group">
-		<a href="{% url 'cases:assign_flags' case.id %}?level=cases&cases={{ case.id }}" id="application-edit-case-flags" class="govuk-link govuk-link--no-visited-state">
+		{% else %}
 			Set case flags
-		</a>
-	</div>
-{% endif %}
-
-<div id="flags-modal" style="display: none;">
-	{% include "cases/case/case_flags.html" %}
+		{% endif %}
+	</a>
 </div>

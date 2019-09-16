@@ -82,12 +82,4 @@ Feature: I want to record the final decision overall on an application case
     When I go to application previously created
     # TODO improve this to test the whole case page.
     Then I see an ultimate end user
-
-  @LT_909_clc_status
-  Scenario: Change CLC query status to Under Review
-    Given I create clc query or clc query has been previously created
-    And I sign in to SSO or am signed into SSO
-    When I go to application previously created
-    And I click progress application
-    And I select status "Under review" and save
-    Then the status has been changed in the application
+    

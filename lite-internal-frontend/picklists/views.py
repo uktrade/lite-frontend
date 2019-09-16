@@ -23,7 +23,7 @@ class Picklists(TemplateView):
             return redirect(reverse_lazy('picklists:picklists') + '?type=proviso')
         user, status_code = get_gov_user(request)
         team, status_code = get_team(request, user['user']['team']['id'])
-        picklist_items, status_code = get_picklists(request, picklist_type, True)
+        picklist_items = get_picklists(request, picklist_type, True)
 
         active_picklist_items = [x for x in picklist_items['picklist_items'] if x['status']['key'] == 'active']
         deactivated_picklist_items = [x for x in picklist_items['picklist_items'] if x['status']['key'] != 'active']
@@ -61,11 +61,11 @@ class AddPicklistItem(TemplateView):
 
 class ViewPicklistItem(TemplateView):
     def get(self, request, **kwargs):
-        picklist_item, status_code = get_picklist_item(request, str(kwargs['pk']))
+        picklist_item = get_picklist_item(request, str(kwargs['pk']))
 
         context = {
-            'title': picklist_item['picklist_item']['name'],
-            'picklist_item': picklist_item['picklist_item'],
+            'title': picklist_item['name'],
+            'picklist_item': picklist_item,
         }
         return render(request, 'teams/picklist-item.html', context)
 
@@ -77,13 +77,13 @@ class EditPicklistItem(TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         self.picklist_item_id = str(kwargs['pk'])
-        self.picklist_item, status_code = get_picklist_item(request, self.picklist_item_id)
+        self.picklist_item = get_picklist_item(request, self.picklist_item_id)
         self.form = edit_picklist_item_form(self.picklist_item)
 
         return super(EditPicklistItem, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, **kwargs):
-        return form_page(request, self.form, data=self.picklist_item['picklist_item'])
+        return form_page(request, self.form, data=self.picklist_item)
 
     def post(self, request, **kwargs):
         response, status_code = put_picklist_item(request, self.picklist_item_id, request.POST)
@@ -91,7 +91,7 @@ class EditPicklistItem(TemplateView):
         if status_code != 200:
             return form_page(request, self.form, data=request.POST, errors=response.get('errors'))
 
-        return redirect(reverse_lazy('picklists:picklist_item', kwargs={'pk': response['picklist_item']['id']}))
+        return redirect(reverse_lazy('picklists:picklist_item', kwargs={'pk': response['id']}))
 
 
 class DeactivatePicklistItem(TemplateView):
@@ -101,13 +101,13 @@ class DeactivatePicklistItem(TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         self.picklist_item_id = str(kwargs['pk'])
-        self.picklist_item, status_code = get_picklist_item(request, self.picklist_item_id)
+        self.picklist_item = get_picklist_item(request, self.picklist_item_id)
         self.form = deactivate_picklist_item(self.picklist_item)
 
         return super(DeactivatePicklistItem, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, **kwargs):
-        if self.picklist_item['picklist_item']['status']['key'] == 'deactivated':
+        if self.picklist_item['status']['key'] == 'deactivated':
             raise Http404
 
         return form_page(request, self.form)
@@ -118,7 +118,7 @@ class DeactivatePicklistItem(TemplateView):
         }
 
         put_picklist_item(request, self.picklist_item_id, data)
-        return redirect(reverse_lazy('picklists:picklist_item', kwargs={'pk': self.picklist_item['picklist_item']['id']}))
+        return redirect(reverse_lazy('picklists:picklist_item', kwargs={'pk': self.picklist_item['id']}))
 
 
 class ReactivatePicklistItem(TemplateView):
@@ -128,13 +128,13 @@ class ReactivatePicklistItem(TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         self.picklist_item_id = str(kwargs['pk'])
-        self.picklist_item, status_code = get_picklist_item(request, self.picklist_item_id)
+        self.picklist_item = get_picklist_item(request, self.picklist_item_id)
         self.form = reactivate_picklist_item(self.picklist_item)
 
         return super(ReactivatePicklistItem, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, **kwargs):
-        if self.picklist_item['picklist_item']['status']['key'] != 'deactivated':
+        if self.picklist_item['status']['key'] != 'deactivated':
             raise Http404
 
         return form_page(request, self.form)
@@ -145,4 +145,4 @@ class ReactivatePicklistItem(TemplateView):
         }
 
         put_picklist_item(request, self.picklist_item_id, data)
-        return redirect(reverse_lazy('picklists:picklist_item', kwargs={'pk': self.picklist_item['picklist_item']['id']}))
+        return redirect(reverse_lazy('picklists:picklist_item', kwargs={'pk': self.picklist_item['id']}))

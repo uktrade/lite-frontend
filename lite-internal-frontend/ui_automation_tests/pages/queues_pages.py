@@ -5,7 +5,6 @@ class QueuesPages():
         self.add_queue_text_field = "name"  # ID
         self.add_queue_button = ".govuk-button[href*='queues/add']"  # CSS
         self.no_cases_text = '.lite-information-text__text'  # CSS
-        self.new_cases_queue = "New Cases"  # ID
         self.queue_checkboxes = ".govuk-checkboxes .govuk-checkboxes__input"  # CSS
         self.table_rows = ".lite-table__body .lite-table__row"  # CSS
         self.queues_edit_link = '.govuk-link[href*="queues"]'
@@ -35,9 +34,6 @@ class QueuesPages():
 
     def click_queue_edit_button(self, num):
         self.driver.find_elements_by_css_selector(self.table_rows)[num].find_element_by_css_selector(self.queues_edit_link).click()
-
-    def click_on_new_cases_queue(self):
-        self.driver.find_element_by_id(self.new_cases_queue).click()
 
     def deselect_all_queues(self):
         elements = self.driver.find_elements_by_css_selector(self.queue_checkboxes)

@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.contrib import messages
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import TemplateView
 from lite_forms.components import HiddenField
@@ -63,14 +64,8 @@ class RegisterBusiness(TemplateView):
 
         # If there aren't any forms left to go through, submit all the data and go to a success page
         if next_form is None:
-            return success_page(request,
-                                title='Organisation Registered',
-                                secondary_title=nested_data.get('name') + ' registered successfully',
-                                description='',
-                                what_happens_next=[],
-                                links={
-                                    'Go to organisations': reverse('organisations:organisations')
-                                })
+            messages.success(request, 'The organisation was created successfully')
+            return redirect('organisations:organisations')
 
         # Add existing post data to new form as hidden fields
         for key, value in data.items():

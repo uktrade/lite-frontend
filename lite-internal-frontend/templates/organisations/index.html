@@ -6,19 +6,16 @@
 
 {% block body %}
 
+	{% include 'includes/messages.html' %}
+
 	<div class="lite-app-bar">
 		<h1 class="govuk-heading-l">Organisations</h1>
 		<div class="lite-app-bar--right">
-			<a href="{% url 'register_business:register' %}" class="govuk-button govuk-button--secondary" draggable="false" role="button">New Organisation</a>
-			<!--<div class="lite-search-wrapper">
-				<input type="search" name="search" class="govuk-input">
-				<div class="search-button">
-
-				</div>
-			</div>-->
+			<a href="{% url 'register_business:register' %}" class="govuk-button" draggable="false" role="button">
+				Add an Organisation
+			</a>
 		</div>
 	</div>
-
 
 	{% if data.organisations|length %}
 		<table class="lite-table">

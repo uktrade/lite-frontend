@@ -1,0 +1,171 @@
+{% extends 'layouts/base.html' %}
+
+{% load static %}
+
+{% block back_link %}
+	<a href="{% url 'cases:cases' %}?queue={{ queue.queue.id }}" class="govuk-back-link">
+		Back to {{ queue.queue.name }}
+	</a>
+{% endblock %}
+
+{% block body %}
+
+	{% if case.query.good.status.key == 'verified' %}
+		<div class="lite-info-bar lite-info-bar--no-animation {% if message.tags %}lite-info-bar--{{ message.tags }}{% endif %}">
+			This case is closed
+		</div>
+	{% endif %}
+
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<p class="govuk-caption-m" style="margin: 0;">{{ case.type.value }} by <a class="govuk-link govuk-link--no-visited-state" style="display: inline-block;" href="{% url 'organisations:organisation' case.query.organisation.id %}">{{ case.query.organisation.name }}</a></p>
+			<h2 class="govuk-heading-l app-reference-code">{{ case.query.id|reference_code }}</h2>
+		</div>
+		<div class="lite-app-bar__controls">
+			{% if case.query.good.status.key != 'verified' %}
+				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:respond_to_clc_query' case.id %}">
+					Respond to query
+				</a>
+			{% endif %}
+			<div class="app-more-actions__container {% if case.query.good.status != 'final' %}app-more-actions__container--secondary{% endif %}">
+				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:move' case.id %}">
+					{% get_string 'cases.manage.move_case.button' %}
+				</a>
+				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:documents' case.id %}">
+					{% get_string 'cases.manage.documents.button' %}
+				</a>
+				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:ecju_queries' case.id %}">
+					{% get_string 'cases.ecju_queries.title' %}
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<!-- Case flags -->
+	{% include 'cases/case/views/case-flags.html' %}
+
+	<br><br>
+
+	{% if case.query.good.status.key == 'verified' %}
+		<div class="govuk-!-width-two-thirds">
+			<div class="app-panel app-panel--info">
+				<h3 class="govuk-heading-m">Outcome</h3>
+
+				<hr>
+
+				<h4 class="govuk-heading-s">Is the good controlled?</h4>
+				<p class="govuk-body-m">{{ good.is_good_controlled|friendly_boolean }}</p>
+
+				<h4 class="govuk-heading-s">What's the good's actual control list entry?</h4>
+				<p class="govuk-body-m">{{ good.control_code|default:'N/A' }}</p>
+
+				<h4 class="govuk-heading-s">Report Summary</h4>
+				<p class="govuk-body-m">{{ case.query.report_summary }}</p>
+
+				<h4 class="govuk-heading-s">Why was this outcome chosen?</h4>
+				<p class="govuk-body-m">{{ case.query.comment }}</p>
+			</div>
+		</div>
+
+		<br><br>
+	{% endif %}
+
+	<h3 class="govuk-heading-m">Good Details</h3>
+	<div class="govuk-!-width-two-thirds">
+		<dl class="govuk-summary-list">
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					Description
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ good.description }}
+				</dd>
+			</div>
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					Controlled
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ good.is_good_controlled|friendly_boolean }}
+				</dd>
+			</div>
+			{% if good.is_good_controlled == 'True' %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					Control list entry
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ good.control_code|default:"N/A" }}
+				</dd>
+			</div>
+			{% endif %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					Part Number
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ good.part_number|default:'N/A' }}
+				</dd>
+			</div>
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					Flags
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{% include 'cases/case/views/goods-flags.html' with origin='case' %}
+				</dd>
+			</div>
+		</dl>
+
+		<!-- Query Details -->
+		{% if data.case.query.details %}
+			<div class="govuk-grid-row">
+				<div class="govuk-grid-column-full">
+					<p class="lite-heading-s">CLC query text</p>
+					<p class="govuk-label">
+						{{ data.case.query.details }}
+					</p>
+				</div>
+			</div>
+		{% endif %}
+
+		<br><br>
+
+		<h3 class="govuk-heading-m">Documents</h3>
+		{% if case.query.good.documents %}
+			<dl class="govuk-summary-list">
+				{% for document in case.query.good.documents %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							{{ document.name }}
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{% if document.safe == True %}
+								<a class="govuk-link lite-link--icon govuk-link--no-visited-state" href="{% url 'cases:document' case.id document.id %}">
+									Download
+								</a>
+							{% elif document.safe == False %}
+								{% get_string 'cases.manage.documents.virus_infected' %}
+							{% else %}
+								{% get_string 'cases.manage.documents.processing' %}
+							{% endif %}
+						</dd>
+					</div>
+				{% endfor %}
+			</dl>
+		{% else %}
+			{% include "includes/information-text.html" with text='This good has no documents attached' %}
+			<br><br>
+		{% endif %}
+
+		<br><br>
+
+		{% include "cases/case/views/activity.html" %}
+
+	</div>
+
+{% endblock %}
+
+{% block javascript %}
+	<script src="{% static 'javascripts/more-actions.js' %}"></script>
+{% endblock %}

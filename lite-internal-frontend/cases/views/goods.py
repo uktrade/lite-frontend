@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
 
-from cases.services import get_good, get_good_activity
+from cases.services import get_good
 
 
 class Good(TemplateView):
@@ -9,12 +9,9 @@ class Good(TemplateView):
         case_id = str(kwargs['pk'])
         good_pk = str(kwargs['good_pk'])
         good, status_code = get_good(request, good_pk)
-        activity, status_code = get_good_activity(request, good_pk)
 
         context = {
             'case_id': case_id,
-            'good': good['good'],
-            'activity': activity['activity']
+            'good': good['good']
         }
-
         return render(request, 'cases/case/good.html', context)

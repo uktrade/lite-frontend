@@ -13,7 +13,6 @@ log.addHandler(console)
 
 @when('I select the checkbox for previously created case to be assigned')
 def click_checkbox_for_application(driver, internal_url, apply_for_standard_application, context):
-    driver.get(internal_url)
     CaseListPage(driver).click_on_case_checkbox(context.case_id)
     CaseListPage(driver).click_on_assign_users_button()
 

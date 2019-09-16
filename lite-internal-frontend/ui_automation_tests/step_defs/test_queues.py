@@ -15,24 +15,13 @@ console = logging.StreamHandler()
 log.addHandler(console)
 
 
-@given('I go to queues')
-def go_to_queues(driver, sign_in_to_internal_sso, internal_url):
-    driver.get(internal_url.rstrip('/') + '/queues/')
-
-
-@when('I go to queues via menu')
-def go_to_queues_via_menu(driver):
-    HeaderPage(driver).click_lite_menu()
-    HeaderPage(driver).click_queues()
-
-
 @when('I edit the new queue')
 def click_on_edit_queue(driver, context):
     queues = QueuesPages(driver)
     no = utils.get_element_index_by_partial_text(Shared(driver).get_rows_in_lite_table(), context.queue_name)
     queues.click_queue_edit_button(no)
-    context.queue_name = str(context.queue_name)[:12] + "edited"
-    QueuesPages(driver).enter_queue_name(context.queue_name)
+    context.edited_queue_name = str(context.queue_name)[:12] + "edited"
+    QueuesPages(driver).enter_queue_name(context.edited_queue_name)
     Shared(driver).click_submit()
 
 
@@ -43,14 +32,14 @@ def add_a_queue(driver, queue_name):
     Shared(driver).click_submit()
 
 
-@when('I enter in queue name Review')
-def add_a_queue(driver, context, add_queue):
-    pass
-
-
 @then('I see the new queue')
 def see_queue_in_queue_list(driver, context):
     assert context.queue_name in Shared(driver).get_text_of_body()
+
+
+@then('I see the edited queue')
+def see_edited_queue_in_queue_list(driver, context):
+    assert context.edited_queue_name in Shared(driver).get_text_of_body()
 
 
 @then('I see previously created application')
@@ -77,25 +66,11 @@ def dont_see_queue_in_queue_list(driver, context):
     driver.set_timeout_to_10_seconds()
 
 
-@when('I add case to newly created queue')
-def move_case_to_new_queue(driver, context):
-    ApplicationPage(driver).click_move_case_button()
-    driver.find_element_by_id(context.queue_name).click()
-    Shared(driver).click_submit()
-
-
 @then(parsers.parse('I see "{num}" queue checkboxes selected'))
 def see_number_of_checkboxes_selected(driver, context, num):
     ApplicationPage(driver).click_move_case_button()
     assert QueuesPages(driver).get_size_of_selected_queues() == int(num)
     Shared(driver).click_back_link()
-
-
-@when('I remove case from new cases queue')
-def move_case_to_new_queue(driver, context):
-    ApplicationPage(driver).click_move_case_button()
-    QueuesPages(driver).click_on_new_cases_queue()
-    Shared(driver).click_submit()
 
 
 @when('I deselect all queues')

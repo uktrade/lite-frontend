@@ -15,3 +15,8 @@ def add_a_proviso_picklist(driver, api_url):
 @fixture(scope="session")
 def add_a_standard_advice_picklist(driver, api_url):
     return SeedData(api_url=api_url, logging=True).add_standard_advice_picklist()
+
+
+@fixture(scope="session")
+def add_a_report_summary_picklist(driver, api_url):
+    return SeedData(api_url=api_url, logging=True).add_report_summary_picklist()

@@ -61,4 +61,4 @@ def apply_for_standard_application(driver, request, api_url, context):
 def apply_for_clc_query(driver, request, api_url, context):
     api = get_or_create_attr(context, 'api', lambda: SeedData(api_url=api_url, logging=True))
     api.add_clc_query()
-    context.case_id = api.context['case_id']
+    context.clc_case_id = api.context['case_id']

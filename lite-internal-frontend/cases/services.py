@@ -6,7 +6,7 @@ from conf.constants import CASE_URL, CASE_NOTES_URL, APPLICATIONS_URL, ACTIVITY_
 
 def get_case(request, pk):
     data = get(request, CASE_URL + pk)
-    return data.json(), data.status_code
+    return data.json()['case']
 
 
 def put_case(request, pk, json):
@@ -21,7 +21,7 @@ def put_applications(request, pk, json):
 
 
 # CLC Queries
-def put_clc_queries(request, pk, json):
+def put_control_list_classification_query(request, pk, json):
     data = put(request, CLC_QUERIES_URL + pk, json)
     return data.json(), data.status_code
 
@@ -46,7 +46,7 @@ def put_case_flags(request, pk, flags):
 # Activity
 def get_activity(request, pk):
     data = get(request, CASE_URL + pk + ACTIVITY_URL + '?fields=status,flags')
-    return data.json(), data.status_code
+    return data.json()['activity']
 
 
 # Case Documents
@@ -166,11 +166,6 @@ def get_good(request, pk):
 
 def get_goods_type(request, pk):
     data = get(request, GOODS_TYPE_URL + pk)
-    return data.json(), data.status_code
-
-
-def get_good_activity(request, pk):
-    data = get(request, GOOD_URL + pk + ACTIVITY_URL)
     return data.json(), data.status_code
 
 
