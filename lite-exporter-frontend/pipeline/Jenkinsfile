@@ -1,145 +1,254 @@
 pipeline
-        {
-          agent {
-             node {
-                label env.CI_SLAVE
-             }
-          }
-            parameters
-            {
-                // Define DRIVER parameter for running the test
-                choice(name: 'DRIVER', description: 'Choose browser', choices: 'chrome\nfirefox\nheadless')
+{
 
-                // Define test path to run
-                string(name: 'TESTS_TO_RUN', defaultValue: '', description: 'choose test to run e.g. LT_928_edit')
-
-                // Define environment to run tests on
-                choice(name: 'ENVIRONMENT', description: 'choose what environment to run in', choices: 'dev\ndev2\nstaging\nuat')
-
-                //Define branch to run
-                string(name: 'BRANCH', defaultValue: 'master', description: 'choose branch to run against')
-            }
-
-            options
-            {
-                // keep last 100 builds
-                buildDiscarder(logRotator(numToKeepStr: '10'))
-
-                // add timestamp
-                timestamps()
-            }
-
-            // agent any // run the pipeline on any available node
-            stages
-            {
-                stage('SCM: code update')
-                {
-                    steps
-                    {
-                        // checking out repository
-                        checkout([
-                                $class: 'GitSCM', branches: [[name: "${params.BRANCH}"]],
-                                userRemoteConfigs: [[url: 'https://github.com/uktrade/lite-exporter-frontend.git']]
-                        ])
-
-                        // re-create Allure report folder
-                        sh "rm -rf ui_automation_tests/allure-results"
-                        sh "mkdir -p ui_automation_tests/allure-results"
-                    }
-                }
-                stage('Docker build')
-                {
-                    steps
-                    {
-                        script
-                        {
-                            // building selenium base
-                            docker.build("exporter/selenium_base", "-f ui_automation_tests/selenium-base-image/Dockerfile --network host ui_automation_tests/selenium-base-image")
-
-                            // building selenium image
-                            test = docker.build("exporter/selenium_image", "-f ui_automation_tests/selenium-automation-run/Dockerfile --network host ui_automation_tests")
-                        }
-                    }
-                }
-                stage('Run test')
-                {
-                    steps
-                    {
-                        script
-                        {
-                            // creating timestamp
-                            def now = new Date()
-                            tstamp = now.format("yyyyMMdd-HH:mm:ss.SSSS", TimeZone.getTimeZone('GMT'))
-
-                            // running selenium tests using pytest via docker
-                            test.inside("--network host --privileged --shm-size=1g --env-file=${env.WORKSPACE}/docker.env -e PYTHONPATH=${env.WORKSPACE} -e ENVIRONMENT=${params.ENVIRONMENT} -w=${env.WORKSPACE}/ui_automation_test --entrypoint=''") {
-                                    sh "/docker-entry.sh ${params.TESTS_TO_RUN}"
-                            }
-                        }
-                    }
-                }
-            }
-            post
-            {
-                always
-                {
-                    // Generate Allure Report
-                    generateAllureReport()
-
-                    // Send Slack notification
-                    sendSlackNotification()
-                    
-                }
-            }
-        }
-
-// Generate Allure report function
-def generateAllureReport()
-    {
-        try
-        {
-            allure([
-                    commandline      : '2.5.0',
-                    includeProperties: false,
-                    jdk              : '',
-                    properties       : [[key: 'allure.tests.management.pattern', value: 'http://tms.company.com/%s']],
-                    reportBuildPolicy: 'ALWAYS',
-                    results          : [[path: 'ui_automation_tests/allure-results']]
-            ])
-        }
-        catch (error)
-        {
-            error.message
-        }
+  agent {
+    kubernetes {
+      defaultContainer 'jnlp'
+      yaml """
+        apiVersion: v1
+        kind: Pod
+        metadata:
+          labels:
+            job: ${env.JOB_NAME}
+            job_id: ${env.BUILD_NUMBER}
+        spec:
+          nodeSelector:
+            role: worker
+          containers:
+          - name: builder
+            image: gcr.io/kaniko-project/executor:debug
+            imagePullPolicy: Always
+            command:
+            - cat
+            tty: true
+            volumeMounts:
+            - name: jenkins-docker-cfg
+              mountPath: /kaniko/.docker
+          volumes:
+          - name: jenkins-docker-cfg
+            configMap:
+              name: docker-config
+              items:
+              - key: config.json
+                path: config.json
+      """
     }
+  }
 
-// Send Slack notification function
-def sendSlackNotification()
+  parameters
+  {
+    // Define DRIVER parameter for running the test
+    choice(name: 'DRIVER', description: 'Choose browser', choices: 'chrome\nfirefox\nheadless')
+
+    // Define test path to run
+    string(name: 'TESTS_TO_RUN', defaultValue: '', description: 'choose test to run e.g. LT_928_edit')
+
+    // Define environment to run tests on
+    choice(name: 'ENVIRONMENT', description: 'choose what environment to run in', choices: 'staging\ndev\nuat')
+
+    //Define branch to run
+    string(name: 'BRANCH', defaultValue: 'master', description: 'choose branch to run against')
+  }
+
+  options
+  {
+    // keep last 100 builds
+    buildDiscarder(logRotator(numToKeepStr: '10'))
+
+    // add timestamp
+    timestamps()
+    ansiColor('xterm')
+  }
+
+  // agent any // run the pipeline on any available node
+  stages
+  {
+    stage('Docker build')
     {
-        // build status of null means successful
-        buildStatus =  currentBuild.result
+      steps
+      {
+        checkout([
+          $class: 'GitSCM', branches: [[name: "${env.GIT_BRANCH}"]],
+          userRemoteConfigs: [[url: 'https://github.com/uktrade/lite-exporter-frontend.git']]
+        ])
 
-        // Default values
-        def subject = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
-        def summary = "${subject} (${env.BUILD_URL})"
-
-        // Set notification color based on build status
-        if (buildStatus == 'STARTED') {
-            color = 'YELLOW'
-            colorCode = '#FFFF00'
-
-        } else if (buildStatus == 'SUCCESS') {
-            color = 'GREEN'
-            colorCode = '#00FF00'
-
-        } else {
-            color = 'RED'
-            colorCode = '#FF0000'
+        // building selenium image
+        container(name: 'builder', shell: '/busybox/sh') {
+          withEnv(['PATH+EXTRA=/busybox:/kaniko']) {
+            timestamps {
+              sh """
+                #!/busybox/sh
+                /kaniko/executor --cache=true --dockerfile ${env.WORKSPACE}/ui_automation_tests/selenium-automation-run/Dockerfile -c ${env.WORKSPACE}/ui_automation_tests --destination=registry.ci.uktrade.io/lite/selenium_export_frontend
+              """
+            }
+          }
+        }
+      }
+    }
+    stage('Run test')
+    {
+      steps
+      {
+        script
+        {
+          // creating timestamp
+          def now = new Date()
+          tstamp = now.format("yyyyMMdd-HH:mm:ss.SSSS", TimeZone.getTimeZone('GMT'))
         }
 
-        // Set slack channel
-        channel = "lite-builds"
+        // running selenium tests using pytest via docker
+        podTemplate(yaml:"""
+          apiVersion: v1
+          kind: Pod
+          metadata:
+            labels:
+              job: ${env.JOB_NAME}
+              job_id: ${env.BUILD_NUMBER}
+          spec:
+            nodeSelector:
+              role: worker
+            containers:
+            - name: selenium-export-frontend
+              image: registry.ci.uktrade.io/lite/selenium_export_frontend
+              imagePullPolicy: Always
+              command:
+              - cat
+              tty: true
+              env:
+              - name: DRIVER
+                value: "${params.DRIVER}"
+              - name: PYTHONPATH
+                value: "${env.WORKSPACE}"
+              - name: ENVIRONMENT
+                value: "${params.ENVIRONMENT}"
+              - name: DEBUG
+                value: "True"
+              - name: PORT
+                value: "8300"
+              - name: ALLOWED_HOSTS
+                value: '["*"]'
+              - name: LITE_API_URL
+                value: "http://api:8100"
+              - name: DATABASE_URL
+                value: "postgres://postgres:password@exfedb:5432/postgres"
+              - name: PERMISSIONS_FINDER_URL
+                value: ""
+              - name: GOOGLE_ANALYTICS_KEY
+                value: ""
+              - name: PYTHONUNBUFFERED
+                value: "1"
+              - name: TEST_EXPORTER_SSO_EMAIL
+                value: "${params.TEST_EXPORTER_SSO_EMAIL}"
+              - name: TEST_EXPORTER_SSO_EMAIL2
+                value: "${params.TEST_EXPORTER_SSO_EMAIL2}"
+              - name: TEST_EXPORTER_SSO_PASSWORD
+                value: "${params.TEST_EXPORTER_SSO_PASSWORD}"
+              - name: TEST_EXPORTER_SSO_PASSWORD2
+                value: "${params.TEST_EXPORTER_SSO_PASSWORD2}"
+              - name: AUTHBROKER_CLIENT_ID
+                value: ""
+              - name: AUTHBROKER_CLIENT_SECRET
+                value: ""
+              - name: AUTHBROKER_URL
+                value: ""
+              - name: TEST_TYPE_HEADLESS
+                value: "${params.TEST_TYPE_HEADLESS}"
+              - name: TEST_S3_KEY
+                value: "${params.TEST_S3_KEY}"
+              - name: AWS_ACCESS_KEY_ID
+                value: "${params.AWS_ACCESS_KEY_ID}"
+              - name: AWS_SECRET_ACCESS_KEY
+                value: "${params.AWS_SECRET_ACCESS_KEY}"
+              - name: AWS_STORAGE_BUCKET_NAME
+                value: "${params.AWS_STORAGE_BUCKET_NAME}"
+              - name: AWS_REGION
+                value: "${params.AWS_REGION}"
+        """) {
+          node(POD_LABEL) {
+            container(name: 'selenium-export-frontend', shell: '/bin/bash') {
+              checkout([
+                $class: 'GitSCM', branches: [[name: "${params.BRANCH}"]],
+                userRemoteConfigs: [[url: 'https://github.com/uktrade/lite-exporter-frontend.git']]
+              ])
+              script {
+                timestamps {
+                  try {
+                    sh "cd ${env.WORKSPACE} && /docker-entry.sh ${params.TESTS_TO_RUN}"
+                  } catch (error) {
+                    archiveArtifacts artifacts: "ui_automation_tests/allure-results/**.*"
+                    error error.message
+                  }
+                }
+              }
+            }
+            archiveArtifacts artifacts: "ui_automation_tests/allure-results/**.*"
+          }
+        }
+      }
+    }
+  }
+  post
+  {
+    always
+    {
+      script {
+        unarchive mapping: ['ui_automation_tests/allure-results/**.*': '.']
+      }
+      // Generate Allure Report
+      generateAllureReport()
+      // Send Slack notification
+      sendSlackNotification()
+    }
+  }
+}
 
-        // Send notifications
-        slackSend (color: colorCode, message: summary, channel: "#${channel}" )
+  // Generate Allure report function
+  def generateAllureReport()
+  {
+    try
+    {
+      allure([
+        commandline      : '2.5.0',
+        includeProperties: false,
+        jdk              : '',
+        properties       : [[key: 'allure.tests.management.pattern', value: 'http://tms.company.com/%s']],
+        reportBuildPolicy: 'ALWAYS',
+        results          : [[path: 'ui_automation_tests/allure-results']]
+        ])
+    }
+    catch (error)
+    {
+      error.message
+    }
+  }
+
+    // Send Slack notification function
+    def sendSlackNotification()
+    {
+      // build status of null means successful
+      buildStatus =  currentBuild.result
+
+      // Default values
+      def subject = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
+      def summary = "${subject} (${env.BUILD_URL})"
+
+      // Set notification color based on build status
+      if (buildStatus == 'STARTED') {
+        color = 'YELLOW'
+        colorCode = '#FFFF00'
+
+      } else if (buildStatus == 'SUCCESS') {
+        color = 'GREEN'
+        colorCode = '#00FF00'
+
+      } else {
+        color = 'RED'
+        colorCode = '#FF0000'
+      }
+
+      // Set slack channel
+      channel = "lite-builds"
+
+      // Send notifications
+      slackSend (color: colorCode, message: summary, channel: "#${channel}" )
     }
