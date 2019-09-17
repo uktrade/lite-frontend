@@ -9,7 +9,7 @@ class OrganisationList(TemplateView):
     Show all organisations.
     """
     def get(self, request, **kwargs):
-        data, status_code = get_organisations(request)
+        data, _ = get_organisations(request)
         context = {
             'data': data,
             'title': 'Organisations',
@@ -23,8 +23,8 @@ class OrganisationDetail(TemplateView):
     """
     def get(self, request, **kwargs):
         organisation_pk = str(kwargs['pk'])
-        data, status_code = get_organisation(request, organisation_pk)
-        sites, status_code = get_organisations_sites(request, organisation_pk)
+        data, _ = get_organisation(request, organisation_pk)
+        sites, _ = get_organisations_sites(request, organisation_pk)
 
         context = {
             'organisation': data['organisation'],

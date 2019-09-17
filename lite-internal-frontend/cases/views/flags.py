@@ -74,7 +74,7 @@ class AssignFlags(TemplateView):
         return form_page(request, self.form, data=self.selected_flags)
 
     def post(self, request, **kwargs):
-        response, status_code = put_flag_assignments(request,
+        response, _ = put_flag_assignments(request,
                                                      {
                                                          'level': self.level,
                                                          'objects': self.objects,

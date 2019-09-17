@@ -1,9 +1,8 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from django.urls import reverse
 from django.views.generic import TemplateView
 from lite_forms.components import HiddenField
-from lite_forms.generators import form_page, success_page
+from lite_forms.generators import form_page
 from lite_forms.helpers import get_form_by_pk, get_next_form_after_pk, nest_data, flatten_data
 
 from organisations.services import post_organisations
@@ -28,7 +27,7 @@ class RegisterBusiness(TemplateView):
 
         # Post the data to the validator and check for errors
         nested_data = nest_data(data)
-        validated_data, status_code = post_organisations(request, nested_data)
+        validated_data, _ = post_organisations(request, nested_data)
 
         if 'errors' in validated_data:
             for key, value in validated_data.get('errors').copy().items():

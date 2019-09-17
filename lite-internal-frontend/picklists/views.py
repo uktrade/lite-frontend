@@ -21,8 +21,8 @@ class Picklists(TemplateView):
         picklist_type = request.GET.get('type')
         if not picklist_type:
             return redirect(reverse_lazy('picklists:picklists') + '?type=proviso')
-        user, status_code = get_gov_user(request)
-        team, status_code = get_team(request, user['user']['team']['id'])
+        user, _ = get_gov_user(request)
+        team, _ = get_team(request, user['user']['team']['id'])
         picklist_items = get_picklists(request, picklist_type, True)
 
         active_picklist_items = [x for x in picklist_items['picklist_items'] if x['status']['key'] == 'active']

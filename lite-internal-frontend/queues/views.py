@@ -13,8 +13,8 @@ from users.services import get_gov_user
 
 class QueuesList(TemplateView):
     def get(self, request, **kwargs):
-        data, status_code = get_queues(request)
-        user_data, status_code = get_gov_user(request, str(request.user.lite_api_user_id))
+        data, _ = get_queues(request)
+        user_data, _ = get_gov_user(request, str(request.user.lite_api_user_id))
 
         context = {
             'data': data,
@@ -54,7 +54,7 @@ class AddQueue(TemplateView):
 class EditQueue(TemplateView):
     def get(self, request, **kwargs):
         queue_id = str(kwargs['pk'])
-        data, status_code = get_queue(request, queue_id)
+        data, _ = get_queue(request, queue_id)
         context = {
             'data': data.get('queue'),
             'title': 'Edit Queue',
@@ -83,11 +83,11 @@ class CaseAssignments(TemplateView):
         """
 
         queue_id = str(kwargs['pk'])
-        queue, status_code = get_queue(request, queue_id)
-        case_assignments, status_code = get_queue_case_assignments(request, queue_id)
+        queue, _ = get_queue(request, queue_id)
+        case_assignments, _ = get_queue_case_assignments(request, queue_id)
 
         case_ids = request.GET.get('cases').split(',')
-        user_data, status_code = get_gov_user(request, str(request.user.lite_api_user_id))
+        user_data, _ = get_gov_user(request, str(request.user.lite_api_user_id))
 
         # If no cases have been selected, return an error page
         if not request.GET.get('cases'):
@@ -109,9 +109,9 @@ class CaseAssignments(TemplateView):
         """
 
         queue_id = str(kwargs['pk'])
-        queue, status_code = get_queue(request, queue_id)
+        queue, _ = get_queue(request, queue_id)
         case_ids = request.GET.get('cases').split(',')
-        user_data, status_code = get_gov_user(request, str(request.user.lite_api_user_id))
+        user_data, _ = get_gov_user(request, str(request.user.lite_api_user_id))
 
         data = {
             'case_assignments': []
@@ -126,7 +126,7 @@ class CaseAssignments(TemplateView):
                 }
             )
 
-        response, status_code = put_queue_case_assignments(request, queue_id, data)
+        response, _ = put_queue_case_assignments(request, queue_id, data)
 
         if 'errors' in response:
             return form_page(request, assign_users_form(request,

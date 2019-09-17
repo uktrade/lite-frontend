@@ -22,7 +22,7 @@ def get_denial_reasons(request, convert_to_options=True):
 
     if convert_to_options:
         questions = []
-        for key, value in converted.items():
+        for _, value in converted.items():
             options = []
 
             for item in value:
@@ -64,5 +64,5 @@ def get_statuses(request):
 
 
 def get_user_permissions(request):
-    user, status_code = get_gov_user(request, str(request.user.lite_api_user_id))
+    user, _ = get_gov_user(request, str(request.user.lite_api_user_id))
     return user['user']['role']['permissions']

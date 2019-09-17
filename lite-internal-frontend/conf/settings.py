@@ -22,7 +22,7 @@ env = Env(
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '=(kaa@ypr5v!x(s=9^f8)o!k#84f_1v@iz31+cq_)8--@kws4b'
+SECRET_KEY = '=(kaa@ypr5v!x(s=9^f8)o!k#84f_1v@iz31+cq_)8--@kws4b' # noqa
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
@@ -210,7 +210,7 @@ LOGGING = {
     'formatters': {
         'json': {
             'class': 'pythonjsonlogger.jsonlogger.JsonFormatter',
-            'format': '(asctime)(levelname)(message)(filename)(lineno)(threadName)(name)(thread)(created)(process)(processName)(relativeCreated)(module)(funcName)(levelno)(msecs)(pathname)',
+            'format': '(asctime)(levelname)(message)(filename)(lineno)(threadName)(name)(thread)(created)(process)(processName)(relativeCreated)(module)(funcName)(levelno)(msecs)(pathname)', # noqa
         },
     },
     'handlers': {

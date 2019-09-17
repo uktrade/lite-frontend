@@ -11,7 +11,7 @@ from users.services import get_gov_users, post_gov_users, put_gov_user, get_gov_
 
 class UsersList(TemplateView):
     def get(self, request, **kwargs):
-        data, status_code = get_gov_users(request)
+        data, _ = get_gov_users(request)
 
         context = {
             'data': data,
@@ -35,7 +35,7 @@ class AddUser(TemplateView):
 
 class ViewUser(TemplateView):
     def get(self, request, **kwargs):
-        data, status_code = get_gov_user(request, str(kwargs['pk']))
+        data, _ = get_gov_user(request, str(kwargs['pk']))
         user = data.get('user')
 
         context = {
@@ -53,7 +53,7 @@ class ViewProfile(TemplateView):
 
 class EditUser(TemplateView):
     def get(self, request, **kwargs):
-        user, status_code = get_gov_user(request, str(kwargs['pk']))
+        user, _ = get_gov_user(request, str(kwargs['pk']))
         return form_page(request, edit_user_form(request), data=user['user'])
 
     def post(self, request, **kwargs):

@@ -11,8 +11,8 @@ from users.services import get_roles, get_permissions, get_role, put_role, post_
 
 class Roles(TemplateView):
     def get(self, request, **kwargs):
-        roles, status_code = get_roles(request)
-        all_permissions, status_code = get_permissions(request)
+        roles, _ = get_roles(request)
+        all_permissions, _ = get_permissions(request)
 
         context = {
             'all_permissions': all_permissions['permissions'],
@@ -47,7 +47,7 @@ class AddRole(TemplateView):
 class EditRole(TemplateView):
     def get(self, request, **kwargs):
         role_id = kwargs['pk']
-        role, status_code = get_role(request, role_id)
+        role, _ = get_role(request, role_id)
 
         return form_page(request, edit_role(request), data=role['role'])
 

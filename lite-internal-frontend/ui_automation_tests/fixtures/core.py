@@ -7,7 +7,8 @@ from pytest import fixture
 from helpers.seed_data import SeedData
 from helpers.utils import get_or_create_attr
 
-# set_timeouts are for elements that dont exist that dont need a 10 second timeout to return that they dont exist. so wait 0 seconds to return that the element doesnt exist rather than 10.
+# set_timeouts are for elements that dont exist that dont need a 10 second timeout to return that they dont exist.
+# so wait 0 seconds to return that the element doesnt exist rather than 10.
 
 def set_timeout_to(self, time=0):
     self.implicitly_wait(time)

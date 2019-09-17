@@ -13,8 +13,8 @@ from users.services import get_gov_user
 class FlagsList(TemplateView):
 
     def get(self, request, **kwargs):
-        data, status_code = get_flags(request)
-        user_data, status_code = get_gov_user(request, str(request.user.lite_api_user_id))
+        data, _ = get_flags(request)
+        user_data, _ = get_gov_user(request, str(request.user.lite_api_user_id))
 
         try:
             status = kwargs['status']
@@ -54,7 +54,7 @@ class AddFlag(TemplateView):
 
 class EditFlag(TemplateView):
     def get(self, request, **kwargs):
-        data, status_code = get_flag(request, str(kwargs['pk']))
+        data, _ = get_flag(request, str(kwargs['pk']))
         return form_page(request, edit_flag_form(), data=data['flag'])
 
     def post(self, request, **kwargs):
@@ -67,7 +67,7 @@ class EditFlag(TemplateView):
 
 class ViewFlag(TemplateView):
     def get(self, request, **kwargs):
-        data, status_code = get_flag(request, str(kwargs['pk']))
+        data, _ = get_flag(request, str(kwargs['pk']))
 
         context = {
             'data': data,

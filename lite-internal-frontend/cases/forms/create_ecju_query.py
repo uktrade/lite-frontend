@@ -1,5 +1,3 @@
-from lite_forms.components import Form, Select, HiddenField, BackLink, TextArea, RadioButtons, Option
-
 from core.builtins.custom_tags import get_string
 from lite_forms.components import Form, BackLink, Select, TextArea, HiddenField
 from lite_forms.generators import confirm_form
