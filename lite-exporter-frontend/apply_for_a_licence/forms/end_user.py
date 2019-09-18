@@ -1,17 +1,16 @@
-from django.urls import reverse_lazy
-
 from core.builtins.custom_tags import get_string
-from lite_forms.components import RadioButtons, Form, Option, TextArea, Select, TextInput, FormGroup, FileUpload, \
+from lite_forms.components import RadioButtons, Form, Option, TextArea, TextInput, FormGroup, FileUpload, \
     BackLink, Label
 from lite_forms.generators import confirm_form
+from lite_forms.common import country_question
 from core.services import get_countries
 
 
-def new_end_user_forms():
-    return FormGroup([
-        Form(title='Who will be the final recipient (end-user) of your goods?',
+def third_parties_standard_form(opening_title=None):
+    return [
+        Form(title=opening_title,
              questions=[
-                 RadioButtons('type',
+                 RadioButtons('sub_type',
                               options=[
                                   Option('government', 'A Government Organisation'),
                                   Option('commercial', 'A Commercial Organisation'),
@@ -33,12 +32,15 @@ def new_end_user_forms():
         Form(title='Where\'s the final recipient based?',
              questions=[
                  TextArea('address', 'Address'),
-                 Select(title='Country',
-                        name='country',
-                        options=get_countries(None, True)),
+                 country_question(countries=get_countries(None, True),
+                                  prefix='')
              ],
              default_button_name='Save and continue')
-    ])
+    ]
+
+
+def new_end_user_forms():
+    return FormGroup(third_parties_standard_form('Who will be the final recipient (end-user) of your goods?'))
 
 
 def attach_document_form(draft_url, title, back_text, return_later_text):
@@ -60,3 +62,7 @@ def delete_document_confirmation_form(overview_url, back_link_text):
                         back_link_text=back_link_text,
                         back_url=overview_url
                         )
+
+
+def new_consignee_forms():
+    return FormGroup(third_parties_standard_form('Who will be the consignee of your goods?'))

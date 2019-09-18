@@ -1,7 +1,6 @@
 from pytest import fixture
 import datetime
 
-from helpers.wait import wait_for_end_user_document, wait_for_ultimate_end_user_document
 from helpers.seed_data import SeedData
 from helpers.utils import Timer, get_or_create_attr
 
@@ -13,14 +12,9 @@ def add_an_application(driver, request, api_url, exporter_url, context):
 
     app_time_id = datetime.datetime.now().strftime(" %d%H%M%S")
     context.app_time_id = app_time_id
-    context.ueu_type = "commercial"
-    context.ueu_name = "Individual"
-    context.ueu_website = "https://www.anothergov.uk"
-    context.ueu_address = "Bullring, Birmingham SW1A 0AA"
-    context.ueu_country = ["GB", "United Kingdom"]
     app_name = "Test Application" + app_time_id
 
-    draft_id, ultimate_end_user_id = api.add_draft(
+    api.add_draft(
         draft={
             "name": app_name,
             "licence_type": "standard_licence",
@@ -36,22 +30,24 @@ def add_an_application(driver, request, api_url, exporter_url, context):
             "name": "Mr Smith",
             "address": "London",
             "country": "UA",
-            "type": "government",
+            "sub_type": "government",
             "website": "https://www.smith.com"
         },
         ultimate_end_user={
-            "name": context.ueu_name,
-            "address": context.ueu_address,
-            "country": context.ueu_country[0],
-            "type": context.ueu_type,
-            "website": context.ueu_website
+            "name": "Individual",
+            "address": "Bullring, Birmingham SW1A 0AA",
+            "country": "GB",
+            "sub_type": "commercial",
+            "website": "https://www.anothergov.uk"
+        },
+        consignee={
+             'name': 'Government',
+             'address': 'Westminster, London SW1A 0BB',
+             'country': 'GB',
+             'sub_type': 'government',
+             'website': 'https://www.gov.uk'
         }
     )
-    document_is_processed = wait_for_end_user_document(api=api, draft_id=draft_id)
-    assert document_is_processed, "Document wasn't successfully processed"
-    ultimate_end_user_document_is_processed = wait_for_ultimate_end_user_document(
-        api=api, draft_id=draft_id, ultimate_end_user_id=ultimate_end_user_id)
-    assert ultimate_end_user_document_is_processed, "Ultimate end user document wasn't successfully processed"
     api.submit_application()
     context.app_id = api.context['application_id']
     context.app_name = app_name

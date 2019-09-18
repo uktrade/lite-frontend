@@ -1,7 +1,6 @@
-import logging
-
 from conf.client import get, post, put, delete
-from conf.constants import APPLICATIONS_URL, DRAFTS_URL, END_USER_DOCUMENT_URL, ULTIMATE_END_USER_URL, DOCUMENT_URL
+from conf.constants import APPLICATIONS_URL, DRAFTS_URL, END_USER_DOCUMENT_URL, ULTIMATE_END_USER_URL, DOCUMENT_URL, \
+    CONSIGNEE_URL, THIRD_PARTIES_URL, CONSIGNEE_DOCUMENT_URL
 
 
 def get_drafts(request):
@@ -116,4 +115,58 @@ def post_ultimate_end_user_document(request, pk, ueu_pk, json):
 
 def delete_ultimate_end_user_document(request, pk, ueu_pk):
     data = delete(request, DRAFTS_URL + pk + ULTIMATE_END_USER_URL + ueu_pk + DOCUMENT_URL)
+    return data.status_code
+
+
+# Third parties
+def get_third_parties(request, pk):
+    data = get(request, DRAFTS_URL + pk + THIRD_PARTIES_URL)
+    return data.json(), data.status_code
+
+
+def post_third_party(request, pk, json):
+    data = post(request, DRAFTS_URL + pk + THIRD_PARTIES_URL, json)
+    return data.json(), data.status_code
+
+
+def delete_third_party(request, pk, tp_pk):
+    data = delete(request, DRAFTS_URL + pk + THIRD_PARTIES_URL + tp_pk)
+    return data.status_code
+
+
+# Consignee
+def post_consignee(request, pk, json):
+    data = post(request, DRAFTS_URL + pk + CONSIGNEE_URL, json)
+    return data.json(), data.status_code
+
+
+# Consignee Documents
+def get_consignee_document(request, pk):
+    data = get(request, DRAFTS_URL + pk + CONSIGNEE_DOCUMENT_URL)
+    return data.json(), data.status_code
+
+
+def post_consignee_document(request, pk, json):
+    data = post(request, DRAFTS_URL + pk + CONSIGNEE_DOCUMENT_URL, json)
+    return data.json(), data.status_code
+
+
+def delete_consignee_document(request, pk):
+    data = delete(request, DRAFTS_URL + pk + CONSIGNEE_DOCUMENT_URL)
+    return data.status_code
+
+
+# Third party Documents
+def get_third_party_document(request, pk, tp_pk):
+    data = get(request, DRAFTS_URL + pk + THIRD_PARTIES_URL + tp_pk + DOCUMENT_URL)
+    return data.json(), data.status_code
+
+
+def post_third_party_document(request, pk, tp_pk, json):
+    data = post(request, DRAFTS_URL + pk + THIRD_PARTIES_URL + tp_pk + DOCUMENT_URL, json)
+    return data.json(), data.status_code
+
+
+def delete_third_party_document(request, pk, tp_pk):
+    data = delete(request, DRAFTS_URL + pk + THIRD_PARTIES_URL + tp_pk + DOCUMENT_URL)
     return data.status_code

@@ -166,3 +166,7 @@ def split_and_replace_date_time(date):
 
 def replace_pm_am_datetime(date):
     return date.replace('am', '').replace('pm', '')
+
+
+def scroll_to_element_by_id(driver, id):
+    driver.execute_script("document.getElementById('" + id + "').scrollIntoView(true);")

@@ -18,12 +18,12 @@ def wait_for_function(func, **kwargs):
     return False
 
 
-def wait_for_end_user_document(api, draft_id):
-    return wait_for_function(api.check_end_user_document_is_processed, draft_id=draft_id)
+def wait_for_document(func, draft_id):
+    return wait_for_function(func, draft_id=draft_id)
 
 
-def wait_for_ultimate_end_user_document(api, draft_id, ultimate_end_user_id):
-    return wait_for_function(api.check_ultimate_end_user_document_is_processed, draft_id=draft_id,
+def wait_for_ultimate_end_user_document(func, draft_id, ultimate_end_user_id):
+    return wait_for_function(func, draft_id=draft_id,
                              ultimate_end_user_id=ultimate_end_user_id)
 
 
@@ -31,8 +31,17 @@ def download_link_is_present(driver):
     driver.refresh()
     shared = Shared(driver)
     latest_ueu_links = [link.text for link in shared.get_links_of_table_row(-1)]
-    return "Download" in latest_ueu_links
+    return 'Download' in latest_ueu_links
+
+
+def element_is_present(driver, id):
+    driver.refresh()
+    return bool(driver.find_elements_by_id(id))
 
 
 def wait_for_download_button(driver):
     return wait_for_function(download_link_is_present, driver=driver)
+
+
+def wait_for_element(driver, id):
+    return wait_for_function(element_is_present, driver=driver, id=id)

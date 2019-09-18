@@ -48,6 +48,11 @@ def str_date(value):
     return return_value.strftime('%-I:%M') + return_value.strftime('%p').lower() + ' ' + return_value.strftime('%d %B %Y')
 
 
+@register.filter()
+def strip_underscores(value):
+    value = value[0:1].upper() + value[1:]
+    return value.replace('_', ' ')
+
 @register.filter
 @stringfilter
 def units_pluralise(unit: str, quantity: str):

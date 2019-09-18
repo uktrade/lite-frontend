@@ -7,7 +7,7 @@ class AddEndUserAdvisoryPages:
         self.driver = driver
         self.add_new_address_button = 'a[href*="add"]'
         self.submit_button = "button[type*='submit']"
-        self.type_choices = "type-"
+        self.type_choices = "sub_type-"
         self.back_to_overview_text = "Back to Application"  # link text
 
     def enter_name(self, name, prefix=""):

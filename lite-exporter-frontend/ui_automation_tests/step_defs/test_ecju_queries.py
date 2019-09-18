@@ -2,7 +2,6 @@ from pytest_bdd import when, then, given, parsers, scenarios
 
 from pages.application_page import ApplicationPage
 from pages.exporter_hub_page import ExporterHubPage
-from pages.goods_list import GoodsList
 from pages.respond_to_ecju_query_page import RespondToEcjuQueryPage
 from pages.shared import Shared
 

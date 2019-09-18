@@ -23,7 +23,7 @@ from goods.services import get_goods, post_goods, get_good, update_good, delete_
 
 class Goods(TemplateView):
     def get(self, request, **kwargs):
-        goods = get_goods(request)
+        goods, status_code = get_goods(request)
         notifications = get_notifications(request, unviewed=True)
 
         context = {
@@ -47,7 +47,7 @@ class GoodsDetail(TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         self.good_id = str(kwargs['pk'])
-        self.good = get_good(request, self.good_id)
+        self.good = get_good(request, self.good_id)[0]
         self.view_type = kwargs['type']
 
         if self.view_type != 'case-notes' and self.view_type != 'ecju-queries':
@@ -87,7 +87,7 @@ class GoodsDetail(TemplateView):
             return Http404
 
         good_id = kwargs['pk']
-        data = get_good(request, str(good_id))
+        data, status_code = get_good(request, str(good_id))
 
         response, status_code = post_application_case_notes(request, data['case_id'], request.POST)
 
@@ -169,7 +169,7 @@ class EditGood(TemplateView):
         return super(EditGood, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, **kwargs):
-        data = get_good(request, self.good_id)
+        data, status_code = get_good(request, self.good_id)
         return form_page(request, self.form, data)
 
     def post(self, request, **kwargs):
@@ -183,7 +183,7 @@ class EditGood(TemplateView):
 
 class DeleteGood(TemplateView):
     def get(self, request, **kwargs):
-        data = get_good(request, str(kwargs['pk']))
+        data, status_code = get_good(request, str(kwargs['pk']))
         return form_page(request, delete_good_form(data))
 
     def post(self, request, **kwargs):
@@ -206,7 +206,7 @@ class AttachDocuments(TemplateView):
         self.request.upload_handlers.insert(0, S3FileUploadHandler(request))
 
         good_id = str(kwargs['pk'])
-        good = get_good(request, good_id)
+        good, status_code = get_good(request, good_id)
 
         data, error = add_document_data(request)
         if 'description' not in data:
@@ -233,7 +233,6 @@ class Document(TemplateView):
         good_id = str(kwargs['pk'])
         file_pk = str(kwargs['file_pk'])
 
-        get_good(request, good_id)
         document = get_good_document(request, good_id, file_pk)
         return download_document_from_s3(document['s3_key'], document['name'])
 
@@ -243,7 +242,7 @@ class DeleteDocument(TemplateView):
         good_id = str(kwargs['pk'])
         file_pk = str(kwargs['file_pk'])
 
-        good = get_good(request, good_id)
+        good, status_code = get_good(request, good_id)
         document = get_good_document(request, good_id, file_pk)
         original_file_name = document['name']
 
@@ -260,7 +259,7 @@ class DeleteDocument(TemplateView):
         good_id = str(kwargs['pk'])
         file_pk = str(kwargs['file_pk'])
 
-        good = get_good(request, good_id)
+        good, status_code = get_good(request, good_id)
         document = get_good_document(request, good_id, file_pk)
         # Delete the file on the API
         delete_good_document(request, good_id, file_pk)
@@ -281,7 +280,7 @@ class RespondToQuery(TemplateView):
         Will get a text area form for the user to respond to the ecju_query
         '''
         good_id = str(kwargs['pk'])
-        good = get_good(request, good_id)
+        good, status_code = get_good(request, good_id)
         clc_query_case_id = good['case_id']
         ecju_query = get_ecju_query(request, clc_query_case_id, str(kwargs['query_pk']))
 
@@ -299,7 +298,7 @@ class RespondToQuery(TemplateView):
         '''
         good_id = str(kwargs['pk'])
         form_name = request.POST.get('form_name')
-        good = get_good(request, good_id)
+        good, status_code = get_good(request, good_id)
         clc_query_case_id = good['case_id']
         ecju_query_id = str(kwargs['query_pk'])
 

@@ -9,7 +9,9 @@ class ApplicationOverviewPage:
         self.countries_link = "countries"
         self.goods_link = "goods"
         self.end_user_link = "end_users"   # ID
+        self.consignees_link = "consignees"
         self.ultimate_end_user_link = "ultimate_end_users"   # ID
+        self.third_parties = "third_parties"  # ID
         self.sites_link = "a[href*='sites']"
         self.goods_link = "goods"
         self.show_countries_link = "[onclick*='showCountries']"
@@ -23,6 +25,10 @@ class ApplicationOverviewPage:
         self.download_end_user_document = "end_user_document_download" # ID
         self.delete_end_user_document = "end_user_document_delete" # ID
         self.end_user_document_state = "end_user_document_state" # ID
+        self.attach_end_user_document = "end_user_attach_doc"  # ID
+        self.attach_consignee_document = "consignee_attach_doc"  # ID
+        self.download_consignee_document = "consignee_document_download"  # ID
+        self.delete_consignee_document = "consignee_document_delete"  # ID
 
     def click_application_locations_link(self):
         self.driver.execute_script("document.getElementById('" + self.location_link + "').scrollIntoView(true);")
@@ -36,12 +42,13 @@ class ApplicationOverviewPage:
         self.driver.find_element_by_css_selector(self.sites_link).click()
 
     def click_end_user_link(self):
-        element = self.driver.find_element_by_id(self.end_user_link)
-        self.driver.execute_script("arguments[0].click();", element)
+        self.driver.find_element_by_id(self.end_user_link).click()
 
     def click_ultimate_end_user_link(self):
-        element = self.driver.find_element_by_id(self.ultimate_end_user_link)
-        self.driver.execute_script("arguments[0].click();", element)
+        self.driver.find_element_by_id(self.ultimate_end_user_link).click()
+
+    def click_consignee_link(self):
+        self.driver.find_element_by_id(self.consignees_link).click()
 
     def click_countries_link(self):
         self.driver.execute_script("document.getElementById('" + self.countries_link + "').scrollIntoView(true);")
@@ -71,3 +78,24 @@ class ApplicationOverviewPage:
 
     def get_end_user_document_state_text(self):
         return self.driver.find_element_by_id(self.end_user_document_state).text
+
+    def click_attach_end_user_document(self):
+        self.driver.find_element_by_id(self.attach_end_user_document).click()
+
+    def click_attach_consignee_document(self):
+        self.driver.find_element_by_id(self.attach_consignee_document).click()
+
+    def click_delete_end_user_document(self):
+        self.driver.find_element_by_id(self.delete_end_user_document).click()
+
+    def attach_end_user_document_is_present(self):
+        return self.driver.find_elements_by_id(self.attach_end_user_document)
+
+    def click_delete_consignee_document(self):
+        self.driver.find_element_by_id(self.delete_consignee_document).click()
+
+    def attach_consignee_document_is_present(self):
+        return self.driver.find_elements_by_id(self.attach_consignee_document)
+
+    def click_third_parties(self):
+        self.driver.find_element_by_id(self.third_parties).click()

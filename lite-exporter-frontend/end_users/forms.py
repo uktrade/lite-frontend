@@ -9,7 +9,7 @@ def apply_for_an_end_user_advisory_form():
         Form(title='Check if someone is eligible to import your goods',
              questions=[
                  RadioButtons(title='How would you describe this end user?',
-                              name='end_user.type',
+                              name='end_user.sub_type',
                               options=[
                                   Option('government', 'A Government Organisation'),
                                   Option('commercial', 'A Commercial Organisation'),

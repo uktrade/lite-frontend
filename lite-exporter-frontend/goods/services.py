@@ -11,12 +11,12 @@ def get_goods(request, params=None):
     else:
         data = get(request, GOODS_URL)
 
-    return data.json()['goods']
+    return data.json()['goods'], data.status_code
 
 
 def get_good(request, pk):
     data = get(request, GOODS_URL + pk)
-    return data.json()['good']
+    return data.json()['good'], data.status_code
 
 
 def post_goods(request, json):

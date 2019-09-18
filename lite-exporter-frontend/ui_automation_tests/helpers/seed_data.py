@@ -3,6 +3,7 @@ import json
 import requests
 
 from conf.settings import env
+from helpers.wait import wait_for_ultimate_end_user_document, wait_for_document
 
 
 class SeedData:
@@ -119,15 +120,22 @@ class SeedData:
             'name': 'Government',
             'address': 'Westminster, London SW1A 0AA',
             'country': 'Ukraine',
-            'type': 'government',
+            'sub_type': 'government',
             'website': 'https://www.gov.uk'
         },
         'ultimate_end_user': {
             'name': 'Individual',
             'address': 'Bullring, Birmingham SW1A 0AA',
             'country': 'GB',
-            'type': 'commercial',
+            'sub_type': 'commercial',
             'website': 'https://www.anothergov.uk'
+        },
+        'consignee': {
+            'name': 'Government',
+            'address': 'Westminster, London SW1A 0BB',
+            'country': 'GB',
+            'sub_type': 'government',
+            'website': 'https://www.gov.uk'
         },
         'add_good': {
             'good_id': '',
@@ -148,10 +156,10 @@ class SeedData:
             'text': case_note_text,
             'is_visible_to_exporter': True
         },
-        "ecju_query": {
+        'ecju_query': {
             'question': ecju_query_text
         },
-        "document": {
+        'document': {
             'name': 'document 1',
             's3_key': env('TEST_S3_KEY'),
             'size': 0,
@@ -286,17 +294,32 @@ class SeedData:
         data = [self.request_data['document']]
         self.make_request("POST", url='/goods/' + good_id + '/documents/', headers=self.export_headers, body=data)
 
-    def add_end_user_document(self, draft_id):
+    def add_document(self, url):
         data = self.request_data['document']
-        self.make_request("POST", url='/drafts/' + draft_id + '/end-user/document/', headers=self.export_headers,
-                          body=data)
+        self.make_request("POST", url=url, headers=self.export_headers, body=data)
+
+    def add_end_user_document(self, draft_id):
+        self.add_document('/drafts/' + draft_id + '/end-user/document/')
 
     def add_ultimate_end_user_document(self, draft_id, ultimate_end_user_id):
-        data = self.request_data['document']
-        self.make_request("POST", url='/drafts/' + draft_id + '/ultimate-end-user/' + ultimate_end_user_id +
-                                      '/document/', headers=self.export_headers, body=data)
+        self.add_document('/drafts/' + draft_id + '/ultimate-end-user/' + ultimate_end_user_id + '/document/')
 
-    def add_draft(self, draft=None, good=None, enduser=None, ultimate_end_user=None):
+    def add_consignee_document(self, draft_id):
+        self.add_document('/drafts/' + draft_id + '/consignee/document/')
+
+    def check_documents(self, draft_id, ultimate_end_user_id):
+        end_user_document_is_processed = wait_for_document(
+            func=self.check_end_user_document_is_processed, draft_id=draft_id)
+        assert end_user_document_is_processed, "End user document wasn't successfully processed"
+        consignee_document_is_processed = wait_for_document(
+            func=self.check_consignee_document_is_processed, draft_id=draft_id)
+        assert consignee_document_is_processed, "Consignee document wasn't successfully processed"
+        ultimate_end_user_document_is_processed = wait_for_ultimate_end_user_document(
+            func=self.check_ultimate_end_user_document_is_processed, draft_id=draft_id,
+            ultimate_end_user_id=ultimate_end_user_id)
+        assert ultimate_end_user_document_is_processed, "Ultimate end user document wasn't successfully processed"
+
+    def add_draft(self, draft=None, good=None, enduser=None, ultimate_end_user=None, consignee=None):
         self.log('Creating draft: ...')
         data = self.request_data['draft'] if draft is None else draft
         response = self.make_request('POST', url='/drafts/', headers=self.export_headers, body=data)
@@ -318,9 +341,13 @@ class SeedData:
         data = self.request_data['ultimate_end_user'] if ultimate_end_user is None else ultimate_end_user
         ultimate_end_user_post = self.make_request('POST', url='/drafts/' + draft_id + '/ultimate-end-users/',
                                               headers=self.export_headers, body=data)
-        ultimate_end_user_id = json.loads(ultimate_end_user_post.text)['end_user']['id']
+        ultimate_end_user_id = json.loads(ultimate_end_user_post.text)['ultimate_end_user']['id']
         self.add_ultimate_end_user_document(draft_id, ultimate_end_user_id)
-        return draft_id, ultimate_end_user_id
+        consignee_data = self.request_data['consignee'] if consignee is None else consignee
+        self.make_request('POST', url='/drafts/' + draft_id + '/consignee/', headers=self.export_headers,
+                          body=consignee_data)
+        self.add_consignee_document(draft_id)
+        self.check_documents(draft_id=draft_id, ultimate_end_user_id=ultimate_end_user_id)
 
     def submit_application(self, draft_id=None):
         self.log('submitting application: ...')
@@ -331,14 +358,18 @@ class SeedData:
         self.add_to_context('application_id', item['id'])
         self.add_to_context('case_id', item['case_id'])
 
-    def check_end_user_document_is_processed(self, draft_id):
-        data = self.make_request("GET", url='/drafts/' + draft_id + '/end-user/document/', headers=self.export_headers)
+    def check_document(self, url):
+        data = self.make_request("GET", url=url, headers=self.export_headers)
         return json.loads(data.text)['document']['safe']
 
+    def check_end_user_document_is_processed(self, draft_id):
+        return self.check_document('/drafts/' + draft_id + '/end-user/document/')
+
+    def check_consignee_document_is_processed(self, draft_id):
+        return self.check_document('/drafts/' + draft_id + '/consignee/document/')
+
     def check_ultimate_end_user_document_is_processed(self, draft_id, ultimate_end_user_id):
-        data = self.make_request("GET", url='/drafts/' + draft_id + '/ultimate-end-user/'
-                                            + ultimate_end_user_id + '/document/', headers=self.export_headers)
-        return json.loads(data.text)['document']['safe']
+        return self.check_document('/drafts/' + draft_id + '/ultimate-end-user/' + ultimate_end_user_id + '/document/')
 
     def make_request(self, method, url, headers=None, body=None, files=None):
         if headers is None:
