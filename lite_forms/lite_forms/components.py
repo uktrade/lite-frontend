@@ -58,6 +58,7 @@ class FormGroup:
 class Label:
     def __init__(self, text: str):
         self.text = text
+        self.input_type = 'label'
 
 
 class Form:

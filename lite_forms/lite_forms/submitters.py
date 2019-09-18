@@ -24,8 +24,11 @@ def submit_single_form(request: HttpRequest, form: Form, post_to, pk=None, overr
     return None, validated_data
 
 
-def submit_paged_form(request: HttpRequest, form_group: FormGroup, post_to, pk=None):
+def submit_paged_form(request: HttpRequest, form_group: FormGroup, post_to, pk=None, inject_data=None):
     data = request.POST.copy()
+
+    if inject_data:
+        data = dict(list(inject_data.items()) + list(data.items()))
 
     # Get the next form based off form_pk
     current_form = copy.deepcopy(get_form_by_pk(data.get('form_pk'), form_group))
@@ -73,4 +76,4 @@ def submit_paged_form(request: HttpRequest, form_group: FormGroup, post_to, pk=N
         next_form.questions.insert(0, HiddenField(key, value))
 
     # Go to the next page
-    return form_page(request, next_form), validated_data
+    return form_page(request, next_form, data=data), validated_data
