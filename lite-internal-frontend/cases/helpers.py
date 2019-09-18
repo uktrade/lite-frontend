@@ -13,12 +13,18 @@ def clean_advice(json):
     json['goods_types'] = _clean_dict_item(json['goods_types'])
     json['countries'] = _clean_dict_item(json['countries'])
     json['ultimate_end_users'] = _clean_dict_item(json['ultimate_end_users'])
+    json['third_parties'] = _clean_dict_item(json['third_parties'])
     json['denial_reasons'] = json.getlist('denial_reasons')
 
     if json.get('end_user'):
         json['end_user'] = json['end_user']
     else:
         json['end_user'] = ''
+
+    if json.get('consignee'):
+        json['consignee'] = json['consignee']
+    else:
+        json['consignee'] = ''
 
     return json
 
@@ -28,7 +34,9 @@ def add_hidden_advice_data(questions_list, data):
     questions_list.append(HiddenField('goods_types', data.getlist('goods_types')))
     questions_list.append(HiddenField('countries', data.getlist('countries')))
     questions_list.append(HiddenField('end_user', data.get('end_user', '')))
+    questions_list.append(HiddenField('consignee', data.get('consignee', '')))
     questions_list.append(HiddenField('ultimate_end_users', data.getlist('ultimate_end_users')))
+    questions_list.append(HiddenField('third_parties', data.getlist('third_parties')))
     return questions_list
 
 
@@ -42,6 +50,8 @@ def check_matching_advice(user_id, advice, goods_or_destinations):
         if str(item.get('good')) in goods_or_destinations \
                 or str(item.get('end_user')) in goods_or_destinations \
                 or str(item.get('ultimate_end_user')) in goods_or_destinations \
+                or str(item.get('third_party')) in goods_or_destinations \
+                or str(item.get('consignee')) in goods_or_destinations \
                 or str(item.get('goods_type')) in goods_or_destinations \
                 or str(item.get('country')) in goods_or_destinations:
             return True

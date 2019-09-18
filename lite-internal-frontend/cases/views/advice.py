@@ -102,6 +102,8 @@ class GiveAdvice(TemplateView):
             'countries': selected_advice_data.get('countries'),
             'end_user': selected_advice_data.get('end_user'),
             'ultimate_end_users': selected_advice_data.get('ultimate_end_users'),
+            'third_parties': selected_advice_data.get('third_parties'),
+            'consignee': selected_advice_data.get('consignee'),
             'data': pre_data,
         }
         return render(request, self.form, context)
@@ -148,6 +150,8 @@ class GiveAdviceDetail(TemplateView):
                 'countries': data.get('countries'),
                 'end_user': data.get('end_user'),
                 'ultimate_end_users': data.get('ultimate_end_users'),
+                'third_parties': data.get('third_parties'),
+                'consignee': data.get('consignee'),
                 'errors': response['errors'][0],
                 'data': data,
             }

@@ -16,10 +16,10 @@ def wait_for_function(func, **kwargs):
     return False
 
 
-def wait_for_end_user_document(api, draft_id):
-    return wait_for_function(api.check_end_user_document_is_processed, draft_id=draft_id)
+def wait_for_document(func, draft_id):
+    return wait_for_function(func, draft_id=draft_id)
 
 
-def wait_for_ultimate_end_user_document(api, draft_id, ultimate_end_user_id):
-    return wait_for_function(api.check_ultimate_end_user_document_is_processed, draft_id=draft_id,
+def wait_for_ultimate_end_user_document(func, draft_id, ultimate_end_user_id):
+    return wait_for_function(func, draft_id=draft_id,
                              ultimate_end_user_id=ultimate_end_user_id)

@@ -32,6 +32,8 @@ class ApplicationPage(BasePage):
     audit_trail_item = '.app-activity__item'  # CSS
     application_summary_board = '.lite-information-board'  # CSS
     ueu_table = 'ultimate-end-users'  # ID
+    consignee_table = 'consignee'  # ID
+    third_parties_table = 'third-parties'  # ID
     give_advice_button = 'button-give-advice'  # ID
     checkbox = '[type="checkbox"]'  # CSS
     download_good_document = 'good_document'  # ID
@@ -135,6 +137,12 @@ class ApplicationPage(BasePage):
 
     def get_text_of_ueu_table(self):
         return self.driver.find_element_by_id(self.ueu_table).text
+
+    def get_text_of_consignee_table(self):
+        return self.driver.find_element_by_id(self.consignee_table).text
+
+    def get_text_of_third_parties_table(self):
+        return self.driver.find_element_by_id(self.third_parties_table).text
 
     def click_on_all_checkboxes(self):
         elements = self.driver.find_elements_by_css_selector(self.checkbox)

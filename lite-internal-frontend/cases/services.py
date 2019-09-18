@@ -115,6 +115,21 @@ def post_case_advice(request, case_pk, json):
                 data
             )
 
+    if json.get('consignee'):
+        data = base_data.copy()
+        data['consignee'] = json.get('consignee')
+        new_data.append(
+            data
+        )
+
+    if json.get('third_parties'):
+        for item in json.get('third_parties', []):
+            data = base_data.copy()
+            data['third_party'] = item
+            new_data.append(
+                data
+            )
+
     if json.get('countries'):
         for item in json.get('countries', []):
             data = base_data.copy()

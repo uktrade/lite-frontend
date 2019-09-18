@@ -36,7 +36,9 @@
 	<input type="hidden" name="goods_types" value="{{ goods_types }}">
 	<input type="hidden" name="countries" value="{{ countries }}">
 	<input type="hidden" name="end_user" value="{{ end_user }}">
+	<input type="hidden" name="consignee" value="{{ consignee }}">
 	<input type="hidden" name="ultimate_end_users" value="{{ ultimate_end_users }}">
+	<input type="hidden" name="third_parties" value="{{ third_parties }}">
 
 	{% if type == 'proviso' %}
 		<div class="govuk-form-group {% if errors|key_value:'proviso' %}govuk-form-group--error{% endif %}">
