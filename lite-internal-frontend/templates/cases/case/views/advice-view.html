@@ -1,0 +1,17 @@
+<div class="govuk-form-group">
+    <!-- Goods -->
+    {% if case.application.licence_type.key == 'open_licence' %}
+        {% include 'cases/case/views/open-goods.html' %}
+    {% endif %}
+    {% if case.application.licence_type.key == 'standard_licence' %}
+        {% include 'cases/case/views/standard-goods.html' %}
+    {% endif %}
+
+    <!-- Destinations/End User + Ultimate End Users -->
+    {% if case.application.licence_type.key == 'open_licence' %}
+        {% include 'cases/case/views/open-destinations.html' %}
+    {% endif %}
+    {% if case.application.licence_type.key == 'standard_licence' %}
+        {% include 'cases/case/views/standard-destinations.html' %}
+    {% endif %}
+</div>

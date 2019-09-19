@@ -25,7 +25,7 @@ class ApplicationPage(BasePage):
     edit_case_flags = 'application-edit-case-flags'  # ID
     edit_goods_flags = 'button-edit-goods-flags'  # ID
     checkbox_input = ".govuk-checkboxes__input"
-    view_advice = "[href*='/advice-view/']"
+    view_advice = 'a[href*="/user-advice-view/"]'
     case_flags = 'application-case-flags'
     move_case_button = '[href*="move"]' # CSS
     status = 'status'  # ID

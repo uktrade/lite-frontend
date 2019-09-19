@@ -8,6 +8,11 @@ class GiveAdvicePages(BasePage):
     picklist_item_text = '.app-picklist-picker__item p'  # CSS
     additional_notes = 'textarea-note'  # ID
     back_to_advice = 'Go back to the advice screen'  # link text
+    user_advice = 'user_advice'
+    team_advice = 'team_advice'
+    final_advice = 'final_advice'
+    combine_advice_button = 'combine_advice_button'
+    finalise_button = 'finalise_button'
 
     def click_on_advice_option(self, option):
         self.driver.find_element_by_id(self.advice_checkbox_option + option).click()
@@ -27,3 +32,15 @@ class GiveAdvicePages(BasePage):
 
     def click_go_back_to_advice_screen(self):
         self.driver.find_element_by_link_text(self.back_to_advice).click()
+
+    def go_to_team_advice(self):
+        self.driver.find_element_by_id(self.team_advice).click()
+
+    def go_to_final_advice(self):
+        self.driver.find_element_by_id(self.final_advice).click()
+
+    def combine_advice(self):
+        self.driver.find_element_by_id(self.combine_advice_button).click()
+
+    def finalise(self):
+        self.driver.find_element_by_id(self.finalise_button).click()

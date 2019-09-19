@@ -12,15 +12,12 @@ from s3chunkuploader.file_handler import S3FileUploadHandler, s3_client
 from cases.forms.attach_documents import attach_documents_form
 from cases.forms.create_ecju_query import create_ecju_query_write_or_edit_form, choose_ecju_query_type_form, \
     create_ecju_create_confirmation_form
-from cases.forms.denial_reasons import denial_reasons_form
 from cases.forms.move_case import move_case_form
-from cases.forms.record_decision import record_decision_form
 from cases.services import get_case, post_case_notes, put_applications, get_activity, put_case, \
     get_ecju_queries, post_ecju_query
 from cases.services import post_case_documents, get_case_documents, get_document
 from conf import settings
-from conf.constants import DEFAULT_QUEUE_ID, MAKE_FINAL_DECISIONS
-from conf.decorators import has_permission
+from conf.constants import DEFAULT_QUEUE_ID
 from conf.settings import AWS_STORAGE_BUCKET_NAME
 from core.builtins.custom_tags import get_string
 from core.helpers import convert_dict_to_query_params
@@ -136,7 +133,7 @@ class ViewAdvice(TemplateView):
             'permissions': permissions,
             'edit_case_flags': get_string('cases.case.edit_case_flags')
         }
-        return render(request, 'cases/case/advice-view.html', context)
+        return render(request, 'cases/case/user-advice-view.html', context)
 
 
 class ViewEcjuQueries(TemplateView):
@@ -244,15 +241,19 @@ class ManageCase(TemplateView):
         case = get_case(request, case_id)
         statuses, _ = get_statuses(request)
 
+        reduced_statuses = {}
+        reduced_statuses['statuses'] = [x for x in statuses['statuses'] if x['status'] != 'finalised']
+
         if case['type']['key'] == 'application':
             title = 'Manage ' + case.get('application').get('name')
+
         else:
             title = 'Manage CLC query case'
 
         context = {
             'case': case,
             'title': title,
-            'statuses': statuses
+            'statuses': reduced_statuses
         }
         return render(request, 'cases/case/change-status.html', context)
 
@@ -262,82 +263,11 @@ class ManageCase(TemplateView):
 
         if case['type']['key'] == 'application':
             application_id = case.get('application').get('id')
-            _, _ = put_applications(request, application_id, request.POST)
+            put_applications(request, application_id, request.POST)
+
         else:
             raise Http404
 
-        return redirect(reverse('cases:case', kwargs={'pk': case_id}))
-
-
-class DecideCase(TemplateView):
-    @has_permission(MAKE_FINAL_DECISIONS)
-    def get(self, request, **kwargs):
-        case_id = str(kwargs['pk'])
-        case = get_case(request, case_id)
-
-        if case['application']['status'] == 'approved':
-            data = {
-                'status': case['application']['status']
-            }
-        elif case['application']['status'] == 'under_final_review':
-            data = {
-                'status': 'declined'
-            }
-        else:
-            data = {}
-
-        return form_page(request, record_decision_form(), data=data)
-
-    @has_permission(MAKE_FINAL_DECISIONS)
-    def post(self, request, **kwargs):
-        case_id = str(kwargs['pk'])
-        case = get_case(request, case_id)
-
-        case_id = case.get('id')
-        application_id = case.get('application').get('id')
-
-        if not request.POST.get('status'):
-            return form_page(request, record_decision_form(), errors={
-                'status': ['Select an option']
-            })
-
-        if request.POST.get('status') == 'declined':
-            return redirect(reverse('cases:deny', kwargs={'pk': case_id}))
-
-        # PUT form data
-        put_applications(request, application_id, request.POST)
-
-        return redirect(reverse('cases:case', kwargs={'pk': case_id}))
-
-
-class DenyCase(TemplateView):
-    @has_permission(MAKE_FINAL_DECISIONS)
-    def get(self, request, **kwargs):
-        return form_page(request, denial_reasons_form())
-
-    @has_permission(MAKE_FINAL_DECISIONS)
-    def post(self, request, **kwargs):
-        case_id = str(kwargs['pk'])
-        case = get_case(request, case_id)
-
-        application_id = case['application']['id']
-
-        data = {
-            'reasons': request.POST.getlist('reasons'),
-            'reason_details': request.POST['reason_details'],
-            'status': 'under_final_review',
-        }
-
-        response, data = submit_single_form(request,
-                                            denial_reasons_form(),
-                                            put_applications,
-                                            pk=application_id,
-                                            override_data=data)
-
-        if response:
-            return response
-
-        # If there is no response (no forms left to go through), go to the case page
         return redirect(reverse('cases:case', kwargs={'pk': case_id}))
 
 

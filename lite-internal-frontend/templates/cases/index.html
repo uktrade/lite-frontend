@@ -34,6 +34,8 @@
     </div>
 </div>
 
+
+
 <div class="lite-js-only">
     <a href="#" onclick="toggleFilters()" id="show-filters-link" class="govuk-link govuk-link--no-visited-state lite-show-filters-link">
 		{% svg 'filter_show' %}
@@ -161,14 +163,23 @@
                     </p>
                 </div>
                 <div>
-                    {% for user in case.users %}
-                        <p class="govuk-body user" style="margin-bottom: 6px;">
-                            {% if user.first_name %}
-                                {{ user.first_name }} {{ user.last_name }}
-                            {% else %}
-                                {{ user.email }}
+                    {% for queue in case.users %}
+                        {% if current_queue.is_system_queue and queue.users|length %}
+                            <p class="govuk-body" style="margin-bottom: 0; opacity: .7;">{{ queue.queue }}</p>
+                        {% endif %}
+                        {% for user in queue.users %}
+                            <p class="govuk-body user" style="margin-bottom: 6px;">
+                                {% if user.first_name %}
+                                    {{ user.first_name }} {{ user.last_name }}
+                                {% else %}
+                                    {{ user.email }}
+                                {% endif %}
+                            </p>
+                        {% empty %}
+                            {% if not current_queue.is_system_queue %}
+                                <p class="govuk-body" style="margin-bottom: 0; opacity: .7;">No users assigned</p>
                             {% endif %}
-                        </p>
+                        {% endfor %}
                     {% empty %}
                         <p class="govuk-body" style="margin-bottom: 0; opacity: .7;">No users assigned</p>
                     {% endfor %}

@@ -25,6 +25,11 @@ class RolesPages():
         if not self.driver.find_element_by_id(permission).is_selected():
             self.select_permissions(permission)
 
+    def edit_default_role_to_have_all_permissions(self):
+        elements = self.driver.find_elements_by_css_selector(".govuk-checkboxes__input")
+        for element in elements:
+            if not element.is_selected():
+                element.click()
 
     def remove_all_permissions_from_default_role(self):
         elements = self.driver.find_elements_by_css_selector(".govuk-checkboxes__input")

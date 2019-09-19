@@ -1,163 +1,224 @@
-from django.contrib import messages
-from django.http import Http404
-from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
+from django.shortcuts import redirect
+from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
-from lite_forms.generators import error_page, form_page
+from lite_forms.generators import form_page
 
-from cases.forms.advice import advice_recommendation_form
-from cases.helpers import clean_advice, check_matching_advice, add_hidden_advice_data
-from cases.services import get_case, post_case_advice, get_case_advice
-from core.services import get_denial_reasons
-from picklists.services import get_picklists
+from cases.forms.finalise_case import approve_licence_form, refuse_licence_form
+from cases.services import post_user_case_advice, get_user_case_advice, get_team_case_advice, \
+    get_final_case_advice, coalesce_user_advice, coalesce_team_advice, post_team_case_advice, \
+    post_final_case_advice, clear_team_advice, clear_final_advice, get_case, put_applications
+from cases.views_helpers import get_case_advice, render_form_page, post_advice, post_advice_details, \
+    give_advice_detail_dispatch, give_advice_dispatch
 
 
-class ViewAdvice(TemplateView):
-    case_id = None
+class ViewUserAdvice(TemplateView):
+    """
+    view advice at a user level and select advice to edit
+    """
     case = None
     form = None
 
     def dispatch(self, request, *args, **kwargs):
-        self.case_id = str(kwargs['pk'])
-        case = get_case(request, self.case_id)
-        self.case = case
-        self.form = advice_recommendation_form(self.case_id)
-
-        return super(ViewAdvice, self).dispatch(request, *args, **kwargs)
+        self.case, self.form = give_advice_dispatch('user', request, **kwargs)
+        return super(ViewUserAdvice, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, **kwargs):
         """
         Show all advice given for a case
         """
-        advice, _ = get_case_advice(request, self.case_id)
-
-        context = {
-            'case': self.case,
-            'title': self.case.get('application').get('name'),
-            'all_advice': advice['advice'],
-        }
-        return render(request, 'cases/case/advice-view.html', context)
+        return get_case_advice(get_user_case_advice, request, self.case, 'user')
 
     def post(self, request, **kwargs):
-
-        advice, _ = get_case_advice(request, self.case_id)
-        selected_advice_data = request.POST
-        pre_data = check_matching_advice(request.user.lite_api_user_id, advice['advice'], selected_advice_data)
-
-        # Validate at least one checkbox is checked
-        if not len(selected_advice_data) > 0:
-            return error_page(request, 'Select at least one good or destination to give advice on')
-
-        # Add data to the form as hidden fields
-        self.form.questions = add_hidden_advice_data(self.form.questions, selected_advice_data)
-
-        return form_page(request, self.form, data=pre_data)
+        return render_form_page(get_user_case_advice, request, self.case, self.form)
 
 
-class GiveAdvice(TemplateView):
-    case_id = None
+class GiveUserAdvice(TemplateView):
+    """
+    Select the type of advice
+    """
     case = None
     form = None
 
     def dispatch(self, request, *args, **kwargs):
-        self.case_id = str(kwargs['pk'])
-        case = get_case(request, self.case_id)
-        self.case = case
-        self.form = advice_recommendation_form(self.case_id)
-
-        return super(GiveAdvice, self).dispatch(request, *args, **kwargs)
+        self.case, self.form = give_advice_dispatch('user', request, **kwargs)
+        return super(GiveUserAdvice, self).dispatch(request, *args, **kwargs)
 
     def post(self, request, **kwargs):
-        selected_advice_data = request.POST
-        advice, _ = get_case_advice(request, self.case_id)
-        pre_data = check_matching_advice(request.user.lite_api_user_id, advice['advice'], selected_advice_data)
-
-        if pre_data and not str(selected_advice_data['type']) in str(pre_data['type']):
-            pre_data = None
-
-        # Validate at least one radiobutton is selected
-        if not selected_advice_data.get('type'):
-            # Add data to the error form as hidden fields
-            self.form.questions = add_hidden_advice_data(self.form.questions, selected_advice_data)
-
-            return form_page(request, self.form, errors={'type': ['Select a decision']})
-
-        # Render the advice detail page
-        proviso_picklist_items = get_picklists(request, 'proviso')
-        advice_picklist_items = get_picklists(request, 'standard_advice')
-        static_denial_reasons, _ = get_denial_reasons(request, False)
-
-        self.form = 'cases/case/give-advice.html'
-
-        context = {
-            'case': self.case,
-            'title': 'Give advice',
-            'type': selected_advice_data.get('type'),
-            'proviso_picklist': proviso_picklist_items['picklist_items'],
-            'advice_picklist': advice_picklist_items['picklist_items'],
-            'static_denial_reasons': static_denial_reasons,
-            # Add previous data
-            'goods': selected_advice_data.get('goods'),
-            'goods_types': selected_advice_data.get('goods_types'),
-            'countries': selected_advice_data.get('countries'),
-            'end_user': selected_advice_data.get('end_user'),
-            'ultimate_end_users': selected_advice_data.get('ultimate_end_users'),
-            'third_parties': selected_advice_data.get('third_parties'),
-            'consignee': selected_advice_data.get('consignee'),
-            'data': pre_data,
-        }
-        return render(request, self.form, context)
+        return post_advice(get_user_case_advice, request, self.case, self.form, 'user')
 
 
-class GiveAdviceDetail(TemplateView):
-    case_id = None
+class GiveUserAdviceDetail(TemplateView):
+    """
+    Give details on the selection and send the data to the API
+    """
     case = None
     form = 'cases/case/give-advice.html'
 
     def dispatch(self, request, *args, **kwargs):
-        self.case_id = str(kwargs['pk'])
-        case = get_case(request, self.case_id)
-        self.case = case
-
-        # If the advice type is not valid, raise a 404
-        advice_type = kwargs['type']
-        if advice_type not in ['approve', 'proviso', 'refuse', 'no_licence_required', 'not_applicable']:
-            raise Http404
-
-        return super(GiveAdviceDetail, self).dispatch(request, *args, **kwargs)
+        self.case = give_advice_detail_dispatch(request, **kwargs)
+        return super(GiveUserAdviceDetail, self).dispatch(request, *args, **kwargs)
 
     def post(self, request, **kwargs):
-        data = request.POST
-        response, _ = post_case_advice(request, self.case_id, data)
+        return post_advice_details(post_user_case_advice, request, self.case, self.form, 'user')
 
-        if 'errors' in response:
-            proviso_picklist_items = get_picklists(request, 'proviso')
-            advice_picklist_items = get_picklists(request, 'standard_advice')
-            static_denial_reasons, _ = get_denial_reasons(request, False)
 
-            data = clean_advice(data)
+class CoalesceUserAdvice(TemplateView):
+    """
+    Group all of a user's team's user level advice in a team advie for the user's team
+    """
+    def get(self, request, **kwargs):
+        case_id = str(kwargs['pk'])
+        coalesce_user_advice(request, case_id)
+        return redirect(reverse('cases:team_advice_view', kwargs={'pk': case_id}))
 
-            context = {
-                'case': self.case,
-                'title': 'Error: Give advice',
-                'type': data.get('type'),
-                'proviso_picklist': proviso_picklist_items['picklist_items'],
-                'advice_picklist': advice_picklist_items['picklist_items'],
-                'static_denial_reasons': static_denial_reasons,
-                # Add previous data
-                'goods': data.get('goods'),
-                'goods_types': data.get('goods_types'),
-                'countries': data.get('countries'),
-                'end_user': data.get('end_user'),
-                'ultimate_end_users': data.get('ultimate_end_users'),
-                'third_parties': data.get('third_parties'),
-                'consignee': data.get('consignee'),
-                'errors': response['errors'][0],
-                'data': data,
-            }
-            return render(request, self.form, context)
 
-        # Add success message
-        messages.success(request, 'Your advice has been posted successfully')
+class ViewTeamAdvice(TemplateView):
+    """
+    View the user's team's team level advice or another team's, edit and clear the user's team's team level advice
+    """
+    case = None
+    form = None
+    team = None
 
-        return redirect(reverse_lazy('cases:advice_view', kwargs={'pk': self.case_id}))
+    def dispatch(self, request, *args, **kwargs):
+        self.case, self.form, self.team = give_advice_dispatch('team', request, **kwargs)
+        return super(ViewTeamAdvice, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request, **kwargs):
+        """
+        Show all team advice given for a case
+        """
+        return get_case_advice(get_team_case_advice, request, self.case, 'team', self.team)
+
+    def post(self, request, **kwargs):
+        if request.POST.get('action') == 'delete':
+            clear_team_advice(request, self.case.get('id'))
+
+            return redirect(reverse('cases:team_advice_view', kwargs={'pk': self.case.get('id')}))
+
+        elif request.POST.get('action') == 'team':
+            return get_case_advice(get_team_case_advice, request, self.case, 'team', {'id': request.POST.get('team')})
+
+        return render_form_page(get_team_case_advice, request, self.case, self.form, self.team)
+
+
+class GiveTeamAdvice(TemplateView):
+    """
+    Select the type of advice
+    """
+    case = None
+    form = None
+    team = None
+
+    def dispatch(self, request, *args, **kwargs):
+        self.case, self.form, self.team = give_advice_dispatch('team', request, **kwargs)
+        return super(GiveTeamAdvice, self).dispatch(request, *args, **kwargs)
+
+    def post(self, request, **kwargs):
+        return post_advice(get_team_case_advice, request, self.case, self.form, 'team', self.team)
+
+
+class GiveTeamAdviceDetail(TemplateView):
+    """
+    Post the advice details to the API
+    """
+    case = None
+    form = 'cases/case/give-advice.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.case = give_advice_detail_dispatch(request, **kwargs)
+        return super(GiveTeamAdviceDetail, self).dispatch(request, *args, **kwargs)
+
+    def post(self, request, **kwargs):
+        return post_advice_details(post_team_case_advice, request, self.case, self.form, 'team')
+
+
+class CoalesceTeamAdvice(TemplateView):
+    """
+    Group all team's advice into final advice
+    """
+    def get(self, request, **kwargs):
+        case_id = str(kwargs['pk'])
+        coalesce_team_advice(request, case_id)
+        return redirect(reverse('cases:final_advice_view', kwargs={'pk': case_id}))
+
+
+class ViewFinalAdvice(TemplateView):
+    """
+    View, clear and edit final advice
+    """
+    case = None
+    form = None
+
+    def dispatch(self, request, *args, **kwargs):
+        self.case, self.form = give_advice_dispatch('final', request, **kwargs)
+        return super(ViewFinalAdvice, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request, **kwargs):
+        """
+        Show all final advice given for a case
+        """
+        return get_case_advice(get_final_case_advice, request, self.case, 'final')
+
+    def post(self, request, **kwargs):
+        if request.POST.get('action') == 'delete':
+            clear_final_advice(request, self.case.get('id'))
+
+            return redirect(reverse('cases:final_advice_view', kwargs={'pk': self.case.get('id')}))
+
+        return render_form_page(get_final_case_advice, request, self.case, self.form)
+
+
+class GiveFinalAdvice(TemplateView):
+    """
+    Select advice type
+    """
+    case = None
+    form = None
+
+    def dispatch(self, request, *args, **kwargs):
+        self.case, self.form = give_advice_dispatch('final', request, **kwargs)
+        return super(GiveFinalAdvice, self).dispatch(request, *args, **kwargs)
+
+    def post(self, request, **kwargs):
+        return post_advice(get_final_case_advice, request, self.case, self.form, 'final')
+
+
+class GiveFinalAdviceDetail(TemplateView):
+    """
+    Post the advice details to the API
+    """
+    case = None
+    form = 'cases/case/give-advice.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.case = give_advice_detail_dispatch(request, **kwargs)
+        return super(GiveFinalAdviceDetail, self).dispatch(request, *args, **kwargs)
+
+    def post(self, request, **kwargs):
+        return post_advice_details(post_final_case_advice, request, self.case, self.form, 'final')
+
+
+class Finalise(TemplateView):
+    """
+    Finalise a case and change the case status to finalised
+    """
+    def get(self, request, *args, **kwargs):
+        case = get_case(request, str(kwargs['pk']))
+        advice, _ = get_final_case_advice(request, str(kwargs['pk']))
+        case_id = case['id']
+
+        for item in advice['advice']:
+            if item['type']['key'] == 'approve' or item['type']['key'] == 'proviso':
+                return form_page(request, approve_licence_form(case_id))
+
+        return form_page(request, refuse_licence_form(case_id))
+
+    def post(self, request, *args, **kwargs):
+        case = get_case(request, str(kwargs['pk']))
+        application_id = case.get('application').get('id')
+        data = request.POST.copy()
+        data['status'] = 'finalised'
+        put_applications(request, application_id, data)
+
+        return redirect(reverse_lazy('cases:case', kwargs={'pk': case['id']}))

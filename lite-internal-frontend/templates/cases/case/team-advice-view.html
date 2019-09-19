@@ -1,0 +1,77 @@
+{% extends 'layouts/base.html' %}
+
+{% load static %}
+
+{% block back_link %}
+	<a href="{% url 'cases:case' case.id %}" class="govuk-back-link">Back to case</a>
+{% endblock %}
+
+{% block body %}
+
+	{% include 'includes/messages.html' %}
+
+	<h2 class="govuk-heading-l">{{ title }}</h2>
+
+	<form method="post">
+
+		{% csrf_token %}
+
+		<!-- Tab bar -->
+		<div style="display: grid; grid-template-columns: 1fr auto; grid-gap: 30px;">
+			<div class="lite-tabs--fade">
+				<div class="lite-tabs">
+                    <a href="{% url 'cases:user_advice_view' case.id %}" class="lite-tabs__tab" id="user_advice">User Advice</a>
+					<a href="{% url 'cases:team_advice_view' case.id %}" class="lite-tabs__tab lite-tabs__tab--selected" id="team_advice">Team Advice</a>
+					<a href="{% url 'cases:final_advice_view' case.id %}" class="lite-tabs__tab" id="final_advice">Final Advice</a>
+				</div>
+			</div>
+            {% if 'MANAGE_TEAM_ADVICE' in permissions and is_user_team %}
+                {% if not case.has_advice.final %}
+                    {% if all_advice|length %}
+                        <div>
+                            <button id="button-give-advice" name="action" value="give-advice" type="submit" class="govuk-button" data-module="govuk-button">
+                                Give or change advice
+                            </button>
+                            <button id="button-clear-advice" name="action" value="delete" type="submit" class="govuk-button" data-module="govuk-button">
+                                Clear advice
+                            </button>
+                        </div>
+                    {% else %}
+                        <a class="govuk-button" href="{% url 'cases:coalesce_user_advice' case.id %}" class="lite-tabs__tab" id="combine_advice_button">
+                            Combine all user advice
+                        </a>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+		</div>
+
+        <div class="govuk-heading-m">
+            Team<br>
+            <select id="team" name="team" class="govuk-select {% if error %}govuk-select--error{% endif %}" style="min-width: 300px;">
+                {% for team_choice in teams %}
+                    <option value="{{ team_choice.id }}" {% if team_choice|key_in_array:team.id %}selected{% endif %}>{{ team_choice.name }}</option>
+                {% endfor %}
+            </select>
+            <button class="govuk-button" name="action" value="team" type="submit">Change team</button>
+        </div>
+
+		<!-- Conditional error wrapper -->
+		{% if case.has_advice.final %}
+            {% include 'cases/case/views/advice-view.html' with show_advice=True %}
+        {% elif all_advice|length and 'MANAGE_TEAM_ADVICE' in permissions %}
+            {% if is_user_team %}
+                {% include 'cases/case/views/advice-view.html' with show_checkboxes=True show_advice=True %}
+            {% else %}
+                {% include 'cases/case/views/advice-view.html' with show_advice=True %}
+            {% endif %}
+        {% else %}
+            {% include 'cases/case/views/advice-view.html' with show_advice=True %}
+        {% endif %}
+
+	</form>
+
+{% endblock %}
+
+{% block javascript %}
+	<script src="{% static 'javascripts/advice-view.js' %}"></script>
+{% endblock %}

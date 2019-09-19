@@ -1,7 +1,8 @@
 from cases.helpers import clean_advice
 from conf.client import post, get, put, delete
 from conf.constants import CASE_URL, CASE_NOTES_URL, APPLICATIONS_URL, ACTIVITY_URL, CLC_QUERIES_URL, DOCUMENTS_URL, \
-    CASE_FLAGS_URL, ADVICE_URL, ECJU_QUERIES_URL, GOOD_URL, FLAGS_URL, ASSIGN_FLAGS_URL, GOODS_TYPE_URL
+    CASE_FLAGS_URL, ECJU_QUERIES_URL, GOOD_URL, FLAGS_URL, ASSIGN_FLAGS_URL, GOODS_TYPE_URL, USER_ADVICE_URL,\
+    TEAM_ADVICE_URL, FINAL_ADVICE_URL, VIEW_TEAM_ADVICE_URL, VIEW_FINAL_ADVICE_URL
 
 
 def get_case(request, pk):
@@ -71,8 +72,38 @@ def delete_case_document(request, pk, s3_key):
 
 
 # Advice
-def get_case_advice(request, case_pk):
-    data = get(request, CASE_URL + case_pk + ADVICE_URL)
+def get_user_case_advice(request, case_pk):
+    data = get(request, CASE_URL + case_pk + USER_ADVICE_URL)
+    return data.json(), data.status_code
+
+
+def get_team_case_advice(request, case_pk, team_pk):
+    data = get(request, CASE_URL + case_pk + VIEW_TEAM_ADVICE_URL + team_pk)
+    return data.json(), data.status_code
+
+
+def coalesce_user_advice(request, case_pk):
+    data = get(request, CASE_URL + case_pk + TEAM_ADVICE_URL)
+    return data.json(), data.status_code
+
+
+def clear_team_advice(request, case_pk):
+    data = delete(request, CASE_URL + case_pk + TEAM_ADVICE_URL)
+    return data.json(), data.status_code
+
+
+def get_final_case_advice(request, case_pk):
+    data = get(request, CASE_URL + case_pk + VIEW_FINAL_ADVICE_URL)
+    return data.json(), data.status_code
+
+
+def coalesce_team_advice(request, case_pk):
+    data = get(request, CASE_URL + case_pk + FINAL_ADVICE_URL)
+    return data.json(), data.status_code
+
+
+def clear_final_advice(request, case_pk):
+    data = delete(request, CASE_URL + case_pk + FINAL_ADVICE_URL)
     return data.json(), data.status_code
 
 
@@ -82,7 +113,7 @@ def return_non_empty(data):
             return item
 
 
-def post_case_advice(request, case_pk, json):
+def prepare_data_for_advice(json):
     json = clean_advice(json)
 
     # Split the json data into multiple
@@ -154,7 +185,24 @@ def post_case_advice(request, case_pk, json):
                 data
             )
 
-    data = post(request, CASE_URL + case_pk + ADVICE_URL, new_data)
+    return new_data
+
+
+def post_user_case_advice(request, case_pk, json):
+    new_data = prepare_data_for_advice(json)
+    data = post(request, CASE_URL + case_pk + USER_ADVICE_URL, new_data)
+    return data.json(), data.status_code
+
+
+def post_team_case_advice(request, case_pk, json):
+    new_data = prepare_data_for_advice(json)
+    data = post(request, CASE_URL + case_pk + TEAM_ADVICE_URL, new_data)
+    return data.json(), data.status_code
+
+
+def post_final_case_advice(request, case_pk, json):
+    new_data = prepare_data_for_advice(json)
+    data = post(request, CASE_URL + case_pk + FINAL_ADVICE_URL, new_data)
     return data.json(), data.status_code
 
 

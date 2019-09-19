@@ -45,9 +45,9 @@
 		</div>
 		<div class="govuk-grid-column-one-third">
 			<div style="height: auto;">
-				<h4 class="lite-heading-s">Last Updated</h4>
+				<h4 class="lite-heading-s">Status</h4>
 				<p class="govuk-label">
-					{{ case.application.last_modified_at|str_date }}
+					{{ case.application.status|sentence_case }}
 				</p>
 			</div>
 		</div>

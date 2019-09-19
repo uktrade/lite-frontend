@@ -17,64 +17,6 @@ Feature: I want to record the final decision overall on an application case
     Then the status has been changed in the application
     And the application headers and information are correct
 
-  @LT_957_record
-  Scenario: Record decision
-    Given I create application or application has been previously created
-    And I go to internal homepage
-    When I give myself the required permissions for "Make final decisions"
-    And I go to application previously created
-    And I click record decision
-    And I "grant" application
-    And I click continue
-    Then I see application "granted"
-    When I click record decision
-    And I click continue
-    Then I see application "granted"
-    When I click record decision
-    And I "deny" application
-    And I click continue
-    And I select decision "2b"
-    And I type optional text "Reason denied due to bad information"
-    And I click continue
-    Then I see application "denied"
-    And I see denied reason
-    When I click record decision
-    And I click continue
-    And I select decision "2b"
-    And I click continue
-    Then I see application "denied"
-    And I reset the permissions
-
-  @LT_957_optional
-  Scenario: Record decision without optional text
-    Given I create application or application has been previously created
-    And I go to internal homepage
-    When I give myself the required permissions for "Make final decisions"
-    And I go to application previously created
-    And I click record decision
-    And I "deny" application
-    And I click continue
-    And I select decision "2b"
-    And I click continue
-    Then I see application "denied"
-    And I reset the permissions
-
-  @LT_957_multiple
-  Scenario: Record decision with multiple decision
-    Given I create application or application has been previously created
-    And I go to internal homepage
-    When I give myself the required permissions for "Make final decisions"
-    And I go to application previously created
-    And I click record decision
-    And I "deny" application
-    And I click continue
-    And I select decision "1a"
-    And I select decision "2b"
-    And I select decision "6c"
-    And I click continue
-    Then I see application "denied"
-    And I reset the permissions
-
   @LT_909_clc_status
   Scenario: Change CLC query status to Under Review
     Given I create clc query or clc query has been previously created
