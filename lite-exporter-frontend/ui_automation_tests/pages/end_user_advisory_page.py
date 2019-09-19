@@ -1,5 +1,3 @@
-
-
 class EndUserAdvisoryPage:
 
     def __init__(self, driver):

@@ -1,4 +1,4 @@
-class ApplicationPage():
+class ApplicationPage:
 
     def __init__(self, driver):
         self.driver = driver

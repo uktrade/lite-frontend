@@ -25,6 +25,7 @@
 					<th class="govuk-table__header" scope="col">Address</th>
 					<th class="govuk-table__header" scope="col">Website</th>
 					<th class="govuk-table__header" scope="col">Reference</th>
+					<th class="govuk-table__header" scope="col"></th>
 				</tr>
 			</thead>
 			<tbody class="govuk-table__body">
@@ -34,7 +35,7 @@
 							{{ advisory.end_user.name }}
 						</td>
 						<td class="govuk-table__cell">
-							{{ advisory.end_user.type.value }}
+							{{ advisory.end_user.sub_type.value }}
 						</td>
 						<td class="govuk-table__cell">
 							{{ advisory.end_user.address }}, {{ advisory.end_user.country.name }}
@@ -50,6 +51,9 @@
 						</td>
 						<td class="govuk-table__cell">
 							{{ advisory.id|reference_code }}
+						</td>
+						<td class="govuk-table__cell">
+							<a href="{% url 'end_users:copy' advisory.id %}">Copy</a>
 						</td>
 					</tr>
 				{% endfor %}

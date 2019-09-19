@@ -1,4 +1,4 @@
-class ApplicationGoodsTypeList():
+class ApplicationGoodsTypeList:
 
     def __init__(self, driver):
         self.driver = driver

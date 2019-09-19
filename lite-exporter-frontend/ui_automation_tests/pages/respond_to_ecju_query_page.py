@@ -1,6 +1,3 @@
-from selenium.webdriver.common.keys import Keys
-
-
 class RespondToEcjuQueryPage:
 
     def __init__(self, driver):

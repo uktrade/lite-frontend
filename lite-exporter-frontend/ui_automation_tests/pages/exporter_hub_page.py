@@ -1,6 +1,5 @@
 import time
 
-from selenium.webdriver.common.action_chains import ActionChains
 
 class ExporterHubPage:
 
@@ -118,4 +117,3 @@ class ExporterHubPage:
     def enter_name_for_application(self, name):
         self.driver.find_element_by_id("name").clear()
         self.driver.find_element_by_id("name").send_keys(name)
-

@@ -27,9 +27,9 @@ def driver(request):
 
     if browser == 'chrome':
         if str(os.environ.get('ENVIRONMENT')) == 'None':
-            browser = webdriver.Chrome("chromedriver", chrome_options=chrome_options)
+            browser = webdriver.Chrome("chromedriver", options=chrome_options)
         else:
-            browser = webdriver.Chrome(chrome_options=chrome_options)
+            browser = webdriver.Chrome(options=chrome_options)
         browser.get("about:blank")
         browser.set_timeout_to = types.MethodType(set_timout_to, browser)
         browser.set_timeout_to_10 = types.MethodType(set_timeout_to_10, browser)

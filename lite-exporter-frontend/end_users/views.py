@@ -1,12 +1,12 @@
-from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
+from django.shortcuts import render
 from django.views.generic import TemplateView
-from lite_forms.generators import form_page, success_page
+from lite_forms.components import HiddenField
+from lite_forms.generators import form_page
 from lite_forms.submitters import submit_paged_form
 
-from core.builtins.custom_tags import reference_code
-from end_users.forms import apply_for_an_end_user_advisory_form
-from end_users.services import get_end_user_advisories, post_end_user_advisories
+from end_users.forms import apply_for_an_end_user_advisory_form, copy_end_user_advisory_form, \
+    end_user_advisory_success_page
+from end_users.services import get_end_user_advisories, post_end_user_advisories, get_end_user_advisory
 
 
 class EndUsersList(TemplateView):
@@ -18,6 +18,42 @@ class EndUsersList(TemplateView):
             'end_users': end_users,
         }
         return render(request, 'end_users/index.html', context)
+
+
+class CopyAdvisory(TemplateView):
+
+    forms = None
+    data = None
+
+    def dispatch(self, request, *args, **kwargs):
+        self.forms = copy_end_user_advisory_form()
+        query = get_end_user_advisory(request, str(kwargs['pk']))
+
+        # Add the existing end user type as a hidden field to preserve its data
+        self.forms.forms[0].questions.append(HiddenField('end_user.sub_type', query['end_user']['sub_type']['key']))
+
+        self.data = {
+            'end_user.name': query['end_user']['name'],
+            'end_user.website': query['end_user']['website'],
+            'end_user.address': query['end_user']['address'],
+            'end_user.country': query['end_user']['country']['id'],
+            'reasoning': query.get('reasoning', ''),
+            'note': query.get('note', ''),
+            'copy_of': query['id'],
+        }
+
+        return super(CopyAdvisory, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request, **kwargs):
+        return form_page(request, self.forms.forms[0], data=self.data)
+
+    def post(self, request, **kwargs):
+        response, data = submit_paged_form(request, self.forms, post_end_user_advisories, inject_data=self.data)
+
+        if response:
+            return response
+
+        return end_user_advisory_success_page(request, str(data['end_user_advisory']['id']))
 
 
 class ApplyForAnAdvisory(TemplateView):
@@ -38,13 +74,4 @@ class ApplyForAnAdvisory(TemplateView):
         if response:
             return response
 
-        return success_page(request,
-                            title='Query sent successfully',
-                            secondary_title='Your reference code: ' + reference_code(str(data['end_user_advisory']['id'])),
-                            description='The Department for International Trade usually takes two working days to check an importer.',
-                            what_happens_next=['You\'ll receive an email from DIT when your check is finished.'],
-                            links={
-                                'View your list of end user advisories': reverse_lazy('end_users:end_users'),
-                                'Apply for another advisory': reverse_lazy('end_users:apply'),
-                                'Return to Exporter Hub': reverse_lazy('core:hub'),
-                            })
+        return end_user_advisory_success_page(request, str(data['end_user_advisory']['id']))

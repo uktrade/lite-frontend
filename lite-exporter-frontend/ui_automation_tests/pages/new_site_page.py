@@ -1,6 +1,3 @@
-from selenium.webdriver.common.keys import Keys
-
-
 class NewSite:
 
     def __init__(self, driver):

@@ -1,6 +1,3 @@
-from selenium.webdriver.common.keys import Keys
-
-
 class AddNewExternalLocationFormPage:
 
     def __init__(self, driver):
