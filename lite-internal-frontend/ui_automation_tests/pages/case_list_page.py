@@ -1,3 +1,5 @@
+import time
+
 import helpers.helpers as utils
 from helpers.BasePage import BasePage
 
@@ -33,21 +35,24 @@ class CaseListPage(BasePage):
     dropdown_item = '.app-dropdown__item' # CSS
     dropdown_item_class = 'app-dropdown__item'  # Class_Name
 
+    def search_pages_for_id(self, id):
+        is_present = len(self.driver.find_elements_by_link_text(id))
+        number_of_pages = len(self.driver.find_elements_by_css_selector(".lite-pagination__item"))
+        page_number = number_of_pages
+        if number_of_pages != 0:
+            while is_present == 0:
+                url = self.driver.current_url
+                if 'page' not in url:
+                    self.driver.find_element_by_id("page-" + str(number_of_pages)).click()
+                else:
+                    next_page = url + '&page=' + str(page_number)
+                    self.driver.get(next_page)
+                page_number -= 1
+                is_present = len(self.driver.find_elements_by_link_text(id))
+
     def click_on_case_checkbox(self, case_id):
         self.driver.set_timeout_to(1)
-        is_present = len(self.driver.find_elements_by_link_text(case_id))
-        number_of_pages = len(self.driver.find_elements_by_css_selector(".lite-pagination__item"))
-        while is_present == 0:
-            url = self.driver.current_url
-            if 'page' not in url:
-                self.driver.find_element_by_id("page-" + str(number_of_pages)).click()
-                page_number = number_of_pages
-            else:
-                next_page = url + '&page=' + str(page_number)
-                self.driver.get(next_page)
-            page_number -= 1
-            is_present = len(self.driver.find_elements_by_link_text(case_id))
-
+        self.search_pages_for_id(case_id)
         self.driver.set_timeout_to_10_seconds()
         self.driver.find_element_by_css_selector(self.CHECKBOX_CASE + case_id + "']").click()
 
@@ -56,19 +61,7 @@ class CaseListPage(BasePage):
 
     def get_text_of_assignees(self, case_id):
         self.driver.set_timeout_to(1)
-        is_present = len(self.driver.find_elements_by_link_text(case_id))
-        number_of_pages = len(self.driver.find_elements_by_css_selector(".lite-pagination__item"))
-        while is_present == 0:
-            url = self.driver.current_url
-            if 'page' not in url:
-                self.driver.find_element_by_id("page-" + str(number_of_pages)).click()
-                page_number = number_of_pages
-            else:
-                next_page = url + '&page=' + str(page_number)
-                self.driver.get(next_page)
-            page_number -= 1
-            is_present = len(self.driver.find_elements_by_link_text(case_id))
-
+        self.search_pages_for_id(case_id)
         self.driver.set_timeout_to_10_seconds()
         return self.driver.find_element_by_xpath("//*[text()[contains(.,'" + case_id + "')]]/following::p/following::p").text
 
@@ -112,13 +105,9 @@ class CaseListPage(BasePage):
 
     def click_on_queue_name(self, queue_name):
         self.click_on_queue_title()
-        elements = self.driver.find_elements_by_css_selector(self.dropdown_item)
-        for idx, element in enumerate(elements):
-            if queue_name in element.text:
-                self.driver.execute_script(
-                    "document.getElementsByClassName('" + self.dropdown_item_class + "')[" + str(idx) + "].scrollIntoView(true);")
-                element.click()
-                break
+        time.sleep(0.5)
+        utils.scroll_to_element_by_id(self.driver, queue_name)
+        self.driver.find_element_by_id(queue_name).click()
 
     def select_filter_status_from_dropdown(self, status):
         utils.select_visible_text_from_dropdown(self.driver.find_element_by_id(self.STATUS_DROPDOWN), status)

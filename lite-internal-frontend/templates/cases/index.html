@@ -26,7 +26,7 @@
 <div class="app-dropdown__container" id="queues">
     <div class="app-dropdown__list">
         {% for queue in queues %}
-            <a href="/cases/?queue={{ queue.id }}" class="app-dropdown__item {% if queue.id == current_queue.id %}app-dropdown__item--selected{% endif %}">
+            <a href="/cases/?queue={{ queue.id }}" id="{{ queue.name }}" class="app-dropdown__item {% if queue.id == current_queue.id %}app-dropdown__item--selected{% endif %}">
 				{{ queue.name }}
                 <span class="app-dropdown__item__count">{{ queue.cases_count }}</span>
             </a>

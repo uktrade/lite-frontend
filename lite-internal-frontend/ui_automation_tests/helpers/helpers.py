@@ -1,19 +1,18 @@
+import os
 import re
+import time
+from datetime import datetime
 
 import allure
-import os
-import time
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support.ui import Select
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
-from datetime import datetime
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support.ui import WebDriverWait
 
 now = datetime.now().isoformat()
 path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir))
 screen_dir = os.path.join(path, "screenshot", str(now))
-timeout_limit = 20
 
 
 def get_current_date_time_string():
@@ -153,22 +152,12 @@ def get_element_index_by_partial_text(elements, text: str):
     return element_number
 
 
-def wait_until_page_is_loaded(driver):
-    time_no = 0
-    while time_no < timeout_limit:
-        if driver.execute_script("return document.readyState") == "complete":
-            break
-        time.sleep(1)
-        time_no += 1
+def page_is_ready(driver):
+    return driver.execute_script("return document.readyState") == "complete"
 
 
-def wait_until_menu_is_visible(driver):
-    while True:
-        try:
-            if driver.find_element_by_css_selector('.lite-menu--visible').is_displayed():
-                break
-        except Exception: # noqa
-            continue
+def menu_is_visible(driver):
+    return driver.find_element_by_css_selector('.lite-menu--visible').is_displayed()
 
 
 def select_visible_text_from_dropdown(element, text):
@@ -180,3 +169,7 @@ def search_for_correct_date_regex_in_element(element):
     return re.search(
         "([0-9]{1,2}):([0-9]{2})(am|pm) ([0-9][0-9]) (January|February|March|April|May|June|July|August|September|October|November|December) ([0-9]{4,})", # noqa
         element)
+
+
+def scroll_to_element_by_id(driver, id):
+    driver.execute_script("document.getElementById('" + id + "').scrollIntoView(true);")

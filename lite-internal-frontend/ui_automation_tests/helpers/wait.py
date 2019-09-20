@@ -1,6 +1,8 @@
 import time
 
-# How many attempts to wait for the function to return True
+from helpers.helpers import page_is_ready, menu_is_visible
+
+# How long in seconds the function should be attempted until giving up
 timeout_limit = 20
 # How frequently in seconds the function should be checked
 function_retry_interval = 1
@@ -23,3 +25,11 @@ def wait_for_document(func, draft_id):
 def wait_for_ultimate_end_user_document(func, draft_id, ultimate_end_user_id):
     return wait_for_function(func, draft_id=draft_id,
                              ultimate_end_user_id=ultimate_end_user_id)
+
+
+def wait_until_page_is_loaded(driver):
+    return wait_for_function(page_is_ready, driver=driver)
+
+
+def wait_until_menu_is_visible(driver):
+    return wait_for_function(menu_is_visible, driver=driver)

@@ -7,7 +7,7 @@
 {% block body %}
 
 	<div class="lite-app-bar">
-		<h2 class="govuk-heading-l">{% get_string 'cases.ecju_queries.title' %}</h2>
+		<h2 class="govuk-heading-l">{{ title }}</h2>
 		<div class="lite-app-bar--right">
 			<a role="button" draggable="false" class="govuk-button {% if documents %}govuk-button--secondary{% endif %}" href="{% url 'cases:ecju_queries_add' case_id %}">
 				{% get_string 'cases.ecju_queries.add_query.add_button_label' %}
@@ -15,16 +15,75 @@
 		</div>
 	</div>
 
-	{% if ecju_queries %}
-	    <div class="lite-table">
-		{% for query in ecju_queries %}
-	        <div class="lite-table-row">
-	            <div class="lite-table__cell">
-	                {{ query.question }}
-	            </div>
-	        </div>
-		{% endfor %}
-	    </div>
+	{% if open_ecju_queries or closed_ecju_queries %}
+        {% if open_ecju_queries %}
+            <h3 class="govuk-heading-m">{% get_string 'cases.ecju_queries.open' %}</h3>
+            <div class="govuk-accordion" data-module="govuk-accordion">
+            {% for query in open_ecju_queries %}
+                {% if query.question|length > 200 %}
+                    <div class="govuk-accordion__section ">
+                        <div class="govuk-accordion__section-header">
+                            <div class="govuk-accordion__section-heading">
+                                <div class="govuk-accordion__section-button" id="open-question"  style="color:#34384b; text-decoration: none;">
+                                    {{ query.question|slice:":200" }}...
+                                </div>
+                            </div>
+                            <p class="govuk-label"><b>{{ query.raised_by_user_name }}</b>: {{ query.created_at|str_date }}</p>
+                        </div>
+                        <div class="govuk-accordion__section-content">
+                            <p class='govuk-body' id="open-question-full">
+                                {{ query.question }}
+                            </p>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="govuk-accordion__section-header">
+                        <span class="govuk-accordion__section-button" id="open-question" style="color:#34384b; text-decoration: none;">
+                            {{ query.question }}
+                        </span>
+                        <p class="govuk-label"><b>{{ query.raised_by_user_name }}</b>: {{ query.created_at|str_date }}</p>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            </div>
+        {% endif %}
+        {% if closed_ecju_queries %}
+            <h3 class="govuk-heading-m">{% get_string 'cases.ecju_queries.closed' %}</h3>
+            <div class="govuk-accordion" data-module="govuk-accordion">
+            {% for query in closed_ecju_queries %}
+              <div class="govuk-accordion__section ">
+                    <div class="govuk-accordion__section-header">
+                        <div class="govuk-accordion__section-heading" id="closed_query">
+                            <div class="govuk-accordion__section-button" style="text-decoration: none;">
+                                <div id="closed-question" style="width:40%; display:inline-block; vertical-align:top; color:#34384b;">
+                                    {% if query.question|length > 200 %}
+                                        {{ query.question|slice:":200" }}...
+                                    {% else %}
+                                        {{ query.question }}
+                                    {% endif %}
+                                    <p class="govuk-hint govuk-!-font-size-16">{{ query.raised_by_user_name }}: {{ query.created_at|str_date }}</p>
+                                </div>
+                                <div id="closed-answer" style="width:40%; display:inline-block; margin-left:5%; vertical-align:top;">
+                                    {% if query.response|length > 200 %}
+                                        {{ query.response|slice:":200" }}...
+                                    {% else %}
+                                        {{ query.response }}
+                                    {% endif %}
+                                    <p class="govuk-hint govuk-!-font-size-16">{{ query.responded_by_user_name }}: {{ query.responded_at|str_date }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="govuk-accordion__section-content">
+                        <p class='govuk-body' id="closed-question-full">{{ query.question }}</p>
+                        <p class="govuk-hint govuk-!-font-size-16">{{ query.raised_by_user_name }}: {{ query.created_at|str_date }}</p>
+                        <p class='govuk-body' id="closed-answer-full">{{ query.response }}</p>
+                        <p class="govuk-hint govuk-!-font-size-16">{{ query.responded_by_user_name }}: {{ query.responded_at|str_date }}</p>
+                    </div>
+              </div>
+            {% endfor %}
+        {% endif %}
 	{% else %}
 		<p class="govuk-caption-l">{% get_string 'cases.ecju_queries.case_has_no_queries' %}</p>
 	{% endif %}

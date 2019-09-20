@@ -4,7 +4,7 @@ from helpers.seed_data import SeedData
 from helpers.utils import get_or_create_attr
 from pages.shared import Shared
 
-from ui_automation_tests.helpers.helpers import wait_until_page_is_loaded
+from helpers.wait import wait_until_page_is_loaded
 from ui_automation_tests.pages.case_list_page import CaseListPage
 
 scenarios('../features/filter_and_sort_cases.feature', strict_gherkin=False)

@@ -1,5 +1,7 @@
 from uuid import uuid4
-from pytest_bdd import when, then, parsers, scenarios, given
+
+from pytest_bdd import when, then, scenarios, given
+
 from pages.application_page import ApplicationPage
 from pages.ecju_queries_pages import EcjuQueriesPages
 
@@ -51,8 +53,8 @@ def the_question_text_area_is_empty(driver):
 @when("I enter text in the question text area")
 def i_enter_text_in_the_question_text_area(driver, context):
     ecju_queries_pages = EcjuQueriesPages(driver)
-    context.custom_question_text = str(uuid4())
-    ecju_queries_pages.enter_question_text(context.custom_question_text)
+    context.ecju_question = str(uuid4())
+    ecju_queries_pages.enter_question_text(context.ecju_question)
 
 
 @when("I click No")
@@ -63,7 +65,7 @@ def i_click_no(driver):
 
 @then("the question text area contains previously entered text")
 def the_question_text_area_contains_expected_text(driver, context):
-    assert context.custom_question_text == EcjuQueriesPages(driver).get_question_text()
+    assert context.ecju_question == EcjuQueriesPages(driver).get_question_text()
 
 
 @when("I click Yes")
@@ -75,10 +77,24 @@ def i_click_yes(driver):
 @then("the new ECJU Query is visible in the list")
 def the_new_ecju_query_is_visible_in_the_list(driver, context):
     ecju_queries_pages = EcjuQueriesPages(driver)
-    assert context.custom_question_text in ecju_queries_pages.get_all_ecju_query_questions()
+    assert context.ecju_question in ecju_queries_pages.get_open_query_questions()
 
 
 @then("the ECJU Query creation is visible in the case timeline")
 def the_ecju_query_creation_is_visible_in_the_case_timeline(driver, context):
     application_page = ApplicationPage(driver)
-    assert context.custom_question_text in application_page.get_text_of_audit_trail_item(0)
+    assert context.ecju_question in application_page.get_text_of_audit_trail_item(0)
+
+
+@when("I create a response to the ECJU query")
+def i_create_a_response_to_an_ecju(driver, context):
+    context.ecju_response = str(uuid4())
+    context.api.add_ecju_response(question=context.ecju_question, response=context.ecju_response)
+    driver.refresh()
+
+
+@then("the ECJU Query is in the closed list")
+def ecju_query_in_closed_list(driver, context):
+    ecju_page = EcjuQueriesPages(driver)
+    assert context.ecju_response in ecju_page.get_closed_query_answers()
+    assert context.ecju_question in ecju_page.get_closed_query_questions()

@@ -4,17 +4,13 @@ from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
-from lite_forms.components import Option, HiddenField
 from lite_forms.generators import error_page, form_page
 from lite_forms.submitters import submit_single_form
 from s3chunkuploader.file_handler import S3FileUploadHandler, s3_client
 
 from cases.forms.attach_documents import attach_documents_form
-from cases.forms.create_ecju_query import create_ecju_query_write_or_edit_form, choose_ecju_query_type_form, \
-    create_ecju_create_confirmation_form
 from cases.forms.move_case import move_case_form
-from cases.services import get_case, post_case_notes, put_applications, get_activity, put_case, \
-    get_ecju_queries, post_ecju_query
+from cases.services import get_case, post_case_notes, put_applications, get_activity, put_case
 from cases.services import post_case_documents, get_case_documents, get_document
 from conf import settings
 from conf.constants import DEFAULT_QUEUE_ID
@@ -22,7 +18,6 @@ from conf.settings import AWS_STORAGE_BUCKET_NAME
 from core.builtins.custom_tags import get_string
 from core.helpers import convert_dict_to_query_params
 from core.services import get_user_permissions, get_statuses
-from picklists.services import get_picklists, get_picklist_item
 from queues.services import get_queue, get_queues, get_queue_cases
 
 
@@ -134,105 +129,6 @@ class ViewAdvice(TemplateView):
             'edit_case_flags': get_string('cases.case.edit_case_flags')
         }
         return render(request, 'cases/case/user-advice-view.html', context)
-
-
-class ViewEcjuQueries(TemplateView):
-    def get(self, request, **kwargs):
-        case_id = str(kwargs['pk'])
-        ecju_queries, _ = get_ecju_queries(request, case_id)
-
-        context = {
-            'case_id': case_id,
-            'ecju_queries': ecju_queries.get('ecju_queries')
-        }
-        return render(request, 'cases/case/ecju-queries.html', context)
-
-
-class CreateEcjuQuery(TemplateView):
-    NEW_QUESTION_DDL_ID = 'new_question'
-
-    def get(self, request, **kwargs):
-        case_id = str(kwargs['pk'])
-        picklists = get_picklists(request, 'ecju_query', False)
-        picklists = picklists.get('picklist_items')
-        picklist_choices = [Option(self.NEW_QUESTION_DDL_ID, 'Write a new question')] + \
-                           [Option(picklist.get('id'), picklist.get('name')) for picklist in picklists]
-        form = choose_ecju_query_type_form(
-            reverse('cases:ecju_queries', kwargs={'pk': case_id}),
-            picklist_choices
-        )
-
-        return form_page(request, form, extra_data={'case_id': case_id})
-
-    def post(self, request, **kwargs):
-        case_id = str(kwargs['pk'])
-        form_name = request.POST.get('form_name')
-
-        if form_name == 'ecju_query_type_select':
-            return self._handle_ecju_query_type_select_post(request, case_id)
-
-        elif form_name == 'ecju_query_write_or_edit_question':
-            return self._handle_ecju_query_write_or_edit_post(case_id, request)
-
-        elif form_name == 'ecju_query_create_confirmation':
-            return self._handle_ecju_query_confirmation_post(case_id, request)
-
-        else:
-            # Submitted data does not contain an expected form field - return an error
-            return error_page(None, 'We had an issue creating your question. Try again later.')
-
-    def _handle_ecju_query_type_select_post(self, request, case_id):
-        picklist_selection = request.POST.get('picklist')
-
-        if picklist_selection != self.NEW_QUESTION_DDL_ID:
-            picklist_item_text = get_picklist_item(request, picklist_selection)['text']
-        else:
-            picklist_item_text = ''
-
-        form = create_ecju_query_write_or_edit_form(reverse('cases:ecju_queries_add', kwargs={'pk': case_id}))
-        data = {'question': picklist_item_text}
-
-        return form_page(request, form, data=data)
-
-    def _handle_ecju_query_write_or_edit_post(self, case_id, request):
-        # Post the form data to API for validation only
-        data = {'question': request.POST.get('question'), 'validate_only': True}
-        ecju_query, status_code = post_ecju_query(request, case_id, data)
-
-        if status_code != 200:
-            return self._handle_ecju_query_form_errors(case_id, ecju_query, request)
-        else:
-            form = create_ecju_create_confirmation_form()
-            form.questions.append(HiddenField('question', request.POST.get('question')))
-            return form_page(request, form)
-
-    def _handle_ecju_query_confirmation_post(self, case_id, request):
-        data = {'question': request.POST.get('question')}
-
-        if request.POST.get('ecju_query_confirmation') == 'yes':
-            ecju_query, status_code = post_ecju_query(request, case_id, data)
-
-            if status_code != 201:
-                return self._handle_ecju_query_form_errors(case_id, ecju_query, request)
-            else:
-                return redirect(reverse('cases:ecju_queries', kwargs={'pk': case_id}))
-        elif request.POST.get('ecju_query_confirmation') == 'no':
-            form = create_ecju_query_write_or_edit_form(reverse('cases:ecju_queries_add', kwargs={'pk': case_id}))
-
-            return form_page(request, form, data=data)
-        else:
-            errors = {'ecju_query_confirmation': ['This field is required']}
-
-            form = create_ecju_create_confirmation_form()
-            form.questions.append(HiddenField('question', request.POST.get('question')))
-            return form_page(request, form, errors=errors)
-
-    def _handle_ecju_query_form_errors(self, case_id, ecju_query, request):
-        errors = ecju_query.get('errors')
-        errors = {error: message for error, message in errors.items()}
-        form = create_ecju_query_write_or_edit_form(reverse('cases:ecju_queries_add', kwargs={'pk': case_id}))
-        data = {'question': request.POST.get('question')}
-        return form_page(request, form, data=data, errors=errors)
 
 
 class ManageCase(TemplateView):
