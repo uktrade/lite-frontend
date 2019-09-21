@@ -1,0 +1,21 @@
+$highlight-box-shadow-height: 2px;
+
+.lite-highlight {
+	background-color: #FFF2D3;
+	box-shadow: 0 $highlight-box-shadow-height 0 #FFBF47;
+}
+
+.lite-highlight--purple {
+	background-color: lighten(govuk-colour("light-purple"), 37%)!important;
+	box-shadow: 0 $highlight-box-shadow-height 0 lighten(govuk-colour("light-purple"), 20%)!important;
+}
+
+.lite-highlight--red {
+	background-color: lighten(govuk-colour("red"), 45%)!important;
+	box-shadow: 0 $highlight-box-shadow-height 0 lighten(govuk-colour("red"), 23%)!important;
+}
+
+.lite-highlight--blue {
+	background-color: lighten(govuk-colour("light-blue"), 34%)!important;
+	box-shadow: 0 $highlight-box-shadow-height 0 lighten(govuk-colour("light-blue"), 24%)!important;
+}
