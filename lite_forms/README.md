@@ -43,3 +43,8 @@ Form(title='Register an organisation',
 ## Requirements
 
 * GOV.UK Design System 3.0 >
+
+## Deploying to PyPI:
+
+* ```python setup.py sdist```
+* ```twine upload dist/*```

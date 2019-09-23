@@ -90,3 +90,11 @@ def flatten_data(d, parent_key='', sep='.'):
         else:
             items.append((new_key, v))
     return dict(items)
+
+
+def conditional(condition: bool, obj):
+    """
+    Returns the object depending on a condition
+    """
+    if condition:
+        return obj

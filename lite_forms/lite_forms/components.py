@@ -39,20 +39,38 @@ class BackLink:
 class FormGroup:
     """
     Container for multiple forms
-    Automatically adds IDs to all forms to make it
-    easier to reference them
+    Automatically adds IDs to all forms to make it easier to reference them
     """
-
     def __init__(self, forms: list, show_progress_indicators=False):
-        self.forms = forms
+        self._forms = forms
+        self.show_progress_indicators = show_progress_indicators
 
+        self.update_progress_indicators()
+        self.update_pks()
+
+    def get_forms(self):
+        return [x for x in self._forms if x is not None]
+
+    def set_forms(self, value):
+        self._forms = value
+
+    forms = property(get_forms, set_forms)
+
+    def update_progress_indicators(self):
         index = 0
-        for form in forms:
-            form.pk = index
-            form.questions.append(HiddenField(name='form_pk', value=form.pk))
-            if show_progress_indicators:
-                form.caption = f'Part {index + 1} of {len(forms)}'
-            index += 1
+        if self.show_progress_indicators:
+            for form in self.forms:
+                if form:
+                    form.caption = f'Part {index + 1} of {len(self.forms)}'
+                    index += 1
+
+    def update_pks(self):
+        index = 0
+        for form in self.forms:
+            if form:
+                form.pk = index
+                form.questions.append(HiddenField(name='form_pk', value=form.pk))
+                index += 1
 
 
 class Label:
