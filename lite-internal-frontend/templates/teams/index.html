@@ -25,7 +25,7 @@
 			</thead>
 			<tbody class="lite-table__body">
 				{% for team in data.teams %}
-					<tr class="lite-table__row" style="vertical-align: top;">
+					<tr class="lite-table__row" id="row-{{ forloop.counter }}" style="vertical-align: top;">
 						<td class="lite-table__cell">
 							<a href="{% url 'teams:team' team.id %}" style="margin: 0;" class="govuk-link">
 								{{ team.name|default:"Untitled" }}

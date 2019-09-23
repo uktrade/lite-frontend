@@ -22,6 +22,7 @@ def go_to_teams(driver, sign_in_to_internal_sso, internal_url):
 
 @when('I click on my team')
 def click_on_my_team(driver, context):
+    Shared(driver).scroll_to_bottom_row()
     driver.find_element_by_link_text(context.team_name).click()
 
 
@@ -40,6 +41,7 @@ def select_team(driver):
 @when('I click edit for my user')
 def click_edit_for_my_user(driver, sso_login_info):
     no = utils.get_element_index_by_text(Shared(driver).get_rows_in_lite_table(), sso_login_info['email'])
+    Shared(driver).scroll_to_bottom_row()
     UsersPage(driver).click_edit_button_by_index(no)
 
 

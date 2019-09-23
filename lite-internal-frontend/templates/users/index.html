@@ -34,7 +34,7 @@
         </thead>
         <tbody class="lite-table__body">
             {% for user in data.gov_users %}
-                <tr class="lite-table__row" {% if not user.first_name %}style="background-color: rgba(40, 161, 151, 0.025);"{% endif %}>
+                <tr class="lite-table__row" id="row-{{ forloop.counter }}" {% if not user.first_name %}style="background-color: rgba(40, 161, 151, 0.025);"{% endif %}>
                     <td class="lite-table__cell">
 						{% if user.first_name %}
 							<a href="{% url 'users:user' user.id %}" style="margin: 0;" class="govuk-link govuk-link--no-visited-state">

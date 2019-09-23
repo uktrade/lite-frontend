@@ -9,7 +9,7 @@
 {% if errors %}
 	<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
 		<h2 class="govuk-error-summary__title" id="error-summary-title">
-			There is a problem
+			{% get_string 'cases.advice.error' %}
 		</h2>
 		<div class="govuk-error-summary__body">
 			<ul class="govuk-list govuk-error-summary__list">
@@ -56,7 +56,7 @@
 						</label>
 						<a id="link-import-proviso" onclick="return showProvisoModal();" href="#" class="govuk-label lite-js-only govuk-link govuk-link--no-visited-state app-picklist-picker-heading__link">
 							{% svg 'new' %}
-							Import proviso from picklists
+							{% get_string 'cases.advice.import_proviso' %}
 						</a>
 					</div>
 	<!--				<span class="govuk-hint" for="{{ question.name }}">-->
@@ -111,11 +111,11 @@
 		<div class="govuk-form-group {% if errors|key_value:'text' %}govuk-form-group--error{% endif %}">
 			<div class="app-picklist-picker-heading__container">
 				<label class="govuk-label" for="advice">
-					Why do you advise this?
+					{% get_string 'cases.advice.reason' %}
 				</label>
 				<a id="link-import-advice" onclick="return showAdviceModal();" href="#" class="govuk-label lite-js-only govuk-link govuk-link--no-visited-state app-picklist-picker-heading__link">
 					{% svg 'new' %}
-					Import advice from picklists
+					{% get_string 'cases.advice.import_advice' %}
 				</a>
 			</div>
 			{% if errors|key_value:'text' %}
@@ -137,7 +137,7 @@
 	<div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="200">
 		<div class="govuk-form-group {% if errors|key_value:'note' %}govuk-form-group--error{% endif %}">
 			<label class="govuk-label" for="{{ question.name }}">
-				Is there anything else you want to say to the applicant?
+				{% get_string 'cases.advice.other' %}
 			</label>
 			{% if errors|key_value:'note' %}
 				<span class="govuk-error-message">

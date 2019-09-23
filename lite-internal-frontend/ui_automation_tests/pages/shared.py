@@ -1,3 +1,4 @@
+from helpers.helpers import scroll_to_element_by_id
 from helpers.BasePage import BasePage
 
 
@@ -82,3 +83,8 @@ class Shared(BasePage):
     def click_back_link(self):
         return self.driver.find_element_by_css_selector(self.back_link).click()
 
+    def scroll_to_bottom_row(self):
+        # Requires that each row have the ID 'row-x' where x is it's index starting from 1
+        edit_buttons = self.driver.find_elements_by_css_selector(self.lite_table_row)
+        row_index = str(len(edit_buttons))
+        scroll_to_element_by_id(self.driver, 'row-'+row_index)
