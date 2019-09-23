@@ -76,15 +76,6 @@ class SeedData:
             'part_number': '1234',
             'validate_only': False,
         },
-        "gov_user": {
-            "email": "test-uat-user@digital.trade.gov.uk",
-            "first_name": "ecju",
-            "last_name": "user"
-        },
-        "export_user": {
-            "email": exporter_user_email,
-            "password": "password"
-        },
         'good_end_product_true': {
             'description': good_end_product_true,
             'is_good_controlled': 'yes',
@@ -272,12 +263,12 @@ class SeedData:
         self.log('Creating case note: ...')
         data = self.request_data['case_note']
         context.text = self.case_note_text
-        response = self.make_request("POST", url='/cases/' + context.case_id + '/case-notes/', headers=self.gov_headers, body=data)
+        _ = self.make_request("POST", url='/cases/' + context.case_id + '/case-notes/', headers=self.gov_headers, body=data) # noqa
 
     def add_ecju_query(self, case_id):
         self.log("Creating ecju query: ...")
         data = self.request_data['ecju_query']
-        response = self.make_request("POST", url='/cases/' + case_id + '/ecju-queries/', headers=self.gov_headers, body=data)
+        _ = self.make_request("POST", url='/cases/' + case_id + '/ecju-queries/', headers=self.gov_headers, body=data) # noqa
 
     def find_org_by_name(self, org_name):
         response = self.make_request('GET', url='/organisations/')
@@ -351,7 +342,7 @@ class SeedData:
 
     def submit_application(self, draft_id=None):
         self.log('submitting application: ...')
-        draft_id_to_submit = draft_id if None else self.context['draft_id']
+        draft_id_to_submit = draft_id if None else self.context['draft_id']  # noqa
         data = {'id': draft_id_to_submit}
         response = self.make_request('POST', url='/applications/', headers=self.export_headers, body=data)
         item = json.loads(response.text)['application']

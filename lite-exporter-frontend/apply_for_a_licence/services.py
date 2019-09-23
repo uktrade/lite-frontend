@@ -13,13 +13,13 @@ def add_document_data(request):
     file = files[0]
     try:
         original_name = file.original_name
-    except Exception:
+    except Exception: # noqa
         original_name = file.name
 
     data = {
         'name': original_name,
         's3_key': file.name,
-        'size': int(file.size / 1024) if file.size else 0,  # in kilobytes
+        'size': int(file.size // 1024) if file.size else 0,  # in kilobytes
     }
     if 'description' in request.POST:
         data['description'] = request.POST.get('description')

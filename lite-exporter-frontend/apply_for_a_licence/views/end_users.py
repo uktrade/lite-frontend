@@ -17,13 +17,13 @@ class EndUser(TemplateView):
 
     def post(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
-        response, data = submit_paged_form(request, new_end_user_forms(), post_end_user, pk=draft_id)
+        response, _ = submit_paged_form(request, new_end_user_forms(), post_end_user, pk=draft_id)
 
         # If there are more forms to go through, continue
         if response:
             return response
 
-        draft, status_code = get_draft(request, draft_id)
+        draft, _ = get_draft(request, draft_id)
 
         if draft.get('draft').get('licence_type').get('key') == STANDARD_LICENCE:
             return redirect(reverse_lazy('apply_for_a_licence:end_user_attach_document', kwargs={'pk': draft_id}))
@@ -34,7 +34,7 @@ class EndUser(TemplateView):
 class UltimateEndUsers(TemplateView):
     def get(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
-        data, status_code = get_ultimate_end_users(request, draft_id)
+        data, _ = get_ultimate_end_users(request, draft_id)
 
         context = {
             'ultimate_end_users': data['ultimate_end_users'],

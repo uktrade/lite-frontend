@@ -15,7 +15,7 @@ from drafts.services import get_draft, get_draft_countries, post_draft_countries
 class Location(TemplateView):
     def get(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
-        data, status_code = get_external_locations_on_draft(request, draft_id)
+        data, _ = get_external_locations_on_draft(request, draft_id)
         if data['external_locations']:
             data = {'organisation_or_external': 'external'}
         else:
@@ -47,14 +47,14 @@ class Location(TemplateView):
 class ExistingSites(TemplateView):
     def get(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
-        draft, status_code = get_draft(request, draft_id)
-        response, status_code = get_sites_on_draft(request, draft_id)
+        _, _ = get_draft(request, draft_id)
+        response, _ = get_sites_on_draft(request, draft_id)
 
         return form_page(request, sites_form(request), data=response)
 
     def post(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
-        draft, status_code = get_draft(request, draft_id)
+        _, status_code = get_draft(request, draft_id)
 
         data = {
             'sites': request.POST.getlist('sites')
@@ -74,9 +74,9 @@ class ExistingSites(TemplateView):
 class ExternalLocations(TemplateView):
     def get(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
-        draft, status_code = get_draft(request, draft_id)
-        org_external_locations, status_code = get_external_locations(request, request.user.organisation)
-        data, status_code = get_external_locations_on_draft(request, draft_id)
+        draft, _ = get_draft(request, draft_id)
+        org_external_locations, _ = get_external_locations(request, request.user.organisation)
+        data, _ = get_external_locations_on_draft(request, draft_id)
 
         context = {
             'title': 'External Locations',
@@ -91,7 +91,7 @@ class ExternalLocations(TemplateView):
 class AddExternalLocation(TemplateView):
     def get(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
-        response, status_code = get_sites_on_draft(request, draft_id)
+        response, _ = get_sites_on_draft(request, draft_id)
 
         return form_page(request, new_location_form(), data=response)
 
@@ -119,7 +119,7 @@ class AddExternalLocation(TemplateView):
 class AddExistingExternalLocation(TemplateView):
     def get(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
-        data, status_code = get_external_locations_on_draft(request, draft_id)
+        data, _ = get_external_locations_on_draft(request, draft_id)
 
         return form_page(request, external_locations_form(request), data=data)
 
@@ -144,7 +144,7 @@ class AddExistingExternalLocation(TemplateView):
 class Countries(TemplateView):
     def get(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
-        countries, status_code = get_draft_countries(request, draft_id)
+        countries, _ = get_draft_countries(request, draft_id)
 
         return form_page(request, countries_form(draft_id), data=countries)
 
@@ -155,7 +155,7 @@ class Countries(TemplateView):
             'countries': request.POST.getlist('countries')
         }
 
-        response, response_data = submit_single_form(request, countries_form(draft_id), post_draft_countries,
+        response, _ = submit_single_form(request, countries_form(draft_id), post_draft_countries,
                                                      pk=draft_id, override_data=data)
 
         if response:

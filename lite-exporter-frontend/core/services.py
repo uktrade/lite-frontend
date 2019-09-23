@@ -2,7 +2,7 @@ from lite_forms.components import Option
 
 from conf.client import get, post, put
 from conf.constants import UNITS_URL, DRAFTS_URL, COUNTRIES_URL, EXTERNAL_LOCATIONS_URL, NOTIFICATIONS_URL, \
-    CLC_NOTIFICATIONS_URL, ORGANISATIONS_URL, CASES_URL
+    ORGANISATIONS_URL, CASES_URL
 
 
 def get_units(request):

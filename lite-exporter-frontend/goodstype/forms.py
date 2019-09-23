@@ -7,7 +7,8 @@ form = Form(title='Add a description', questions=[
                  'max_length': 280,
              }),
     RadioButtons(title='Is your good controlled?',
-                 description='If you don\'t know you can use <a class="govuk-link" target="_blank" href="https://permissions-finder.service.trade.gov.uk/">Permissions Finder</a>.',
+                 description='If you don\'t know you can use <a class="govuk-link" target="_blank" '
+                             'href="https://permissions-finder.service.trade.gov.uk/">Permissions Finder</a>.',
                  name='is_good_controlled',
                  options=[
                      Option(key='yes',

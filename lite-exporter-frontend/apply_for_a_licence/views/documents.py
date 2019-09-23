@@ -100,14 +100,14 @@ class AttachDocuments(TemplateView):
             return error_page(None, get_string('end_user.documents.attach_documents.upload_error'))
 
         if 'ultimate-end-user' in request.path:
-            end_user_document, status_code = post_ultimate_end_user_document(request, draft_id,
+            _, status_code = post_ultimate_end_user_document(request, draft_id,
                                                                              str(kwargs['ueu_pk']), data)
         elif 'consignee' in request.path:
-            end_user_document, status_code = post_consignee_document(request, draft_id, data)
+            _, status_code = post_consignee_document(request, draft_id, data)
         elif 'third-parties' in request.path:
-            end_user_document, status_code = post_third_party_document(request, draft_id, str(kwargs['tp_pk']), data)
+            _, status_code = post_third_party_document(request, draft_id, str(kwargs['tp_pk']), data)
         elif 'end-user' in request.path:
-            end_user_document, status_code = post_end_user_document(request, draft_id, data)
+            _, status_code = post_end_user_document(request, draft_id, data)
         else:
             return error_page(None, get_string('end_user.documents.attach_documents.upload_error'))
 
@@ -121,13 +121,13 @@ class DownloadDocument(TemplateView):
     def get(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
         if 'ultimate-end-user' in request.path:
-            document, status_code = get_ultimate_end_user_document(request, draft_id, str(kwargs['ueu_pk']))
+            document, _ = get_ultimate_end_user_document(request, draft_id, str(kwargs['ueu_pk']))
         elif 'consignee' in request.path:
-            document, status_code = get_consignee_document(request, draft_id)
+            document, _ = get_consignee_document(request, draft_id)
         elif 'third-parties' in request.path:
-            document, status_code = get_third_party_document(request, draft_id, str(kwargs['tp_pk']))
+            document, _ = get_third_party_document(request, draft_id, str(kwargs['tp_pk']))
         elif 'end-user' in request.path:
-            document, status_code = get_end_user_document(request, draft_id)
+            document, _ = get_end_user_document(request, draft_id)
         else:
             return error_page(None, get_string('end_user.documents.attach_documents.download_error'))
 

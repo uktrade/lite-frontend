@@ -30,11 +30,11 @@ def get_formatted_date_time_m_d_h_s():
     return datetime.now().strftime("%m%d%H%M%S")
 
 def repeat_to_length(string_to_expand, length):
-    return (string_to_expand * (int(length/len(string_to_expand))+1))[:length]
+    return (string_to_expand * (int(length//len(string_to_expand))+1))[:length]
 
 
 def screen_path():
-    global screen_dir
+    global screen_dir # noqa
     if not os.path.exists(screen_dir):
         os.makedirs(screen_dir)
         os.chmod(screen_dir, 0o644)
@@ -43,7 +43,7 @@ def screen_path():
 
 def remove_special_characters(text):
     # text = text.translate(str.maketrans('', '', string.punctuation))
-    text = text.translate(str.maketrans('', '', '\ / : * ? " < > |'))
+    text = text.translate(str.maketrans('', '', '\ / : * ? " < > |'))  # noqa
     return text
 
 

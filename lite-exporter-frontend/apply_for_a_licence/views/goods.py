@@ -12,8 +12,8 @@ from goods.services import get_goods, get_good
 class DraftGoodsList(TemplateView):
     def get(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
-        draft, status_code = get_draft(request, draft_id)
-        data, status_code = get_draft_goods(request, draft_id)
+        draft, _ = get_draft(request, draft_id)
+        data, _ = get_draft_goods(request, draft_id)
 
         context = {
             'title': get_string('applications.standard.goods.title'),
@@ -27,11 +27,11 @@ class DraftGoodsList(TemplateView):
 class GoodsList(TemplateView):
     def get(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
-        draft, status_code = get_draft(request, draft_id)
+        draft, _ = get_draft(request, draft_id)
         description = request.GET.get('description', '').strip()
         part_number = request.GET.get('part_number', '').strip()
         control_rating = request.GET.get('control_rating', '').strip()
-        goods_list, status_code = get_goods(request, {'description': description,
+        goods_list, _ = get_goods(request, {'description': description,
                                                       'part_number': part_number,
                                                       'control_rating': control_rating})
 
@@ -55,8 +55,8 @@ class GoodsList(TemplateView):
 class DraftOpenGoodsList(TemplateView):
     def get(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
-        draft, status_code = get_draft(request, draft_id)
-        data, status_code = get_draft_goods(request, draft_id)
+        draft, _ = get_draft(request, draft_id)
+        data, _ = get_draft_goods(request, draft_id)
 
         context = {
             'title': 'Application Goods',
@@ -70,8 +70,8 @@ class DraftOpenGoodsList(TemplateView):
 class DraftOpenGoodsTypeList(TemplateView):
     def get(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
-        draft, status_code = get_draft(request, draft_id)
-        data, status_code = get_draft_goods_type(request, draft_id)
+        draft, _ = get_draft(request, draft_id)
+        data, _ = get_draft_goods_type(request, draft_id)
 
         context = {
             'title': get_string('good_types.overview_good_types.title'),
@@ -85,9 +85,9 @@ class DraftOpenGoodsTypeList(TemplateView):
 class OpenGoodsList(TemplateView):
     def get(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
-        draft, status_code = get_draft(request, draft_id)
+        draft, _ = get_draft(request, draft_id)
         description = request.GET.get('description', '')
-        data, status_code = get_goods(request, {'description': description})
+        data, _ = get_goods(request, {'description': description})
 
         context = {
             'title': 'Goods',
@@ -101,8 +101,7 @@ class OpenGoodsList(TemplateView):
 
 class AddPreexistingGood(TemplateView):
     def get(self, request, **kwargs):
-        draft_id = str(kwargs['pk'])
-        good, status_code = get_good(request, str(kwargs['good_pk']))
+        good, _ = get_good(request, str(kwargs['good_pk']))
 
         context = {
             'title': 'Add a pre-existing good to your application',

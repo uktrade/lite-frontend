@@ -40,7 +40,7 @@ class ApplicationDetail(TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         self.application_id = str(kwargs['pk'])
-        application, status_code = get_application(request, self.application_id)
+        application, _ = get_application(request, self.application_id)
         self.application = application['application']
         self.case_id = self.application['case']
         self.view_type = kwargs['type']
@@ -78,7 +78,7 @@ class ApplicationDetail(TemplateView):
         if self.view_type != 'case-notes':
             return Http404
 
-        response, status_code = post_application_case_notes(request, self.case_id, request.POST)
+        response, _ = post_application_case_notes(request, self.case_id, request.POST)
 
         if 'errors' in response:
             errors = response.get('errors')

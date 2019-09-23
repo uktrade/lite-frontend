@@ -9,7 +9,7 @@ from goodstype.services import post_goods_type, get_goods_type
 
 class GoodsType(TemplateView):
     def get(self, request, pk):
-        data, status_code = get_goods_type(request, pk)
+        data, _ = get_goods_type(request, pk)
 
         context = {
             'data': data,

@@ -209,7 +209,7 @@ LOGGING = {
     'formatters': {
         'json': {
             'class': 'pythonjsonlogger.jsonlogger.JsonFormatter',
-            'format': '(asctime)(levelname)(message)(filename)(lineno)(threadName)(name)(thread)(created)(process)(processName)(relativeCreated)(module)(funcName)(levelno)(msecs)(pathname)',
+            'format': '(asctime)(levelname)(message)(filename)(lineno)(threadName)(name)(thread)(created)(process)(processName)(relativeCreated)(module)(funcName)(levelno)(msecs)(pathname)', # noqa
         },
     },
     'handlers': {

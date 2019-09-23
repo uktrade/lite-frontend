@@ -65,6 +65,7 @@ jobs:
           name: Run tests
           command: pipenv run ./manage.py test --parallel
 
-      # - run:
-      #     name: Run linting
-      #     command: pipenv run prospector
+      # Linting: dodgy, mccabe, pep8, profile-validator, pyflakes, pylint
+      - run:
+          name: Run Linting
+          command: pipenv run prospector

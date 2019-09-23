@@ -1,6 +1,6 @@
 from django.urls import reverse, reverse_lazy
 from lite_forms.components import Form, TextArea, RadioButtons, Option, BackLink, FileUpload, TextInput, HTMLBlock, \
-    HiddenField, Button, Summary
+    HiddenField, Button
 from lite_forms.generators import confirm_form
 from lite_forms.styles import ButtonStyle
 
