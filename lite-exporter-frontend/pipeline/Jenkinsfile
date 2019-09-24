@@ -44,7 +44,7 @@ pipeline
     string(name: 'TESTS_TO_RUN', defaultValue: '', description: 'choose test to run e.g. LT_928_edit')
 
     // Define environment to run tests on
-    choice(name: 'ENVIRONMENT', description: 'choose what environment to run in', choices: 'dev\ndev2\nstaging\nuat\ndemo')
+    choice(name: 'ENVIRONMENT', description: 'choose what environment to run in', choices: 'dev\ndev2\nstaging\nuat')
 
     //Define branch to run
     string(name: 'BRANCH', defaultValue: 'master', description: 'choose branch to run against')
