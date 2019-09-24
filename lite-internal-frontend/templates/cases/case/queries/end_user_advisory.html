@@ -45,29 +45,91 @@
 					Type
 				</dt>
 				<dd class="govuk-summary-list__value">
-					{{ case.query.end_user.type.value }}
+					{{ case.query.end_user.sub_type.value }}
 				</dd>
 			</div>
-			<div class="govuk-summary-list__row">
-				<dt class="govuk-summary-list__key">
-					Address
-				</dt>
-				<dd class="govuk-summary-list__value">
-					{{ case.query.end_user.address }}<br>{{ case.query.end_user.country.name }}
-				</dd>
-			</div>
-			<div class="govuk-summary-list__row">
-				<dt class="govuk-summary-list__key">
-					Website
-				</dt>
-				<dd class="govuk-summary-list__value">
-					{% if case.query.end_user.website %}
-						<a class="govuk-link" href="{{ case.query.end_user.website }}">{{ case.query.end_user.website }}</a>
-					{% else %}
-						N/A
-					{% endif %}
-				</dd>
-			</div>
+            {% if case.query.end_user.sub_type.key == 'individual' %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Email
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ case.query.contact_email }}
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Telephone
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ case.query.contact_telephone }}
+                    </dd>
+                </div>
+            {% endif %}
+            {% if case.query.end_user.sub_type.key == 'commercial' %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Nature of Business
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ case.query.nature_of_business }}
+                    </dd>
+                </div>
+            {% endif %}
+            {% if case.query.end_user.sub_type.key != 'individual' %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Primary contact name
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ case.query.contact_name }}
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Primary contact job title
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ case.query.contact_job_title }}
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Primary contact email
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ case.query.contact_email }}
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Primary contact telephone
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ case.query.contact_telephone }}
+                    </dd>
+                </div>
+            {% endif %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Address
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ case.query.end_user.address }}<br>{{ case.query.end_user.country.name }}
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Website
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {% if case.query.end_user.website %}
+                        <a class="govuk-link" href="{{ case.query.end_user.website }}">{{ case.query.end_user.website }}</a>
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </dd>
+            </div>
 			<div class="govuk-summary-list__row">
 				<dt class="govuk-summary-list__key">
 					Reasoning behind query
@@ -86,18 +148,18 @@
 			</div>
 		</dl>
 
-		{% if case.query.copy_of %}
-			<dl class="govuk-summary-list">
-				<div class="govuk-summary-list__row">
-					<dt class="govuk-summary-list__key">
-						Copied from
-					</dt>
-					<dd class="govuk-summary-list__value">
-						<a class="govuk-link" href="{% url 'cases:case' case.query.copy_of.case_id %}">{{ case.query.copy_of.reference_code|reference_code }}</a>
-					</dd>
-				</div>
-			</dl>
-		{% endif %}
+        {% if case.query.copy_of %}
+            <dl class="govuk-summary-list">
+ 				<div class="govuk-summary-list__row">
+ 					<dt class="govuk-summary-list__key">
+ 						Copied from
+ 					</dt>
+ 					<dd class="govuk-summary-list__value">
+ 						<a class="govuk-link" href="{% url 'cases:case' case.query.copy_of.case_id %}">{{ case.query.copy_of.reference_code|reference_code }}</a>
+ 					</dd>
+ 				</div>
+ 			</dl>
+ 		{% endif %}
 
 		<br><br>
 
