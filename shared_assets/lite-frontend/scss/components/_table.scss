@@ -8,10 +8,8 @@
 }
 
 .lite-table__header {
-	@include govuk-font($size: 14, $weight: bold);
-	letter-spacing: 1px;
-	text-transform: uppercase;
-	color: govuk-colour("dark-grey");
+	@include govuk-font($size: 19, $weight: bold);
+	color: govuk-colour("black");
 }
 
 .lite-table__cell,
