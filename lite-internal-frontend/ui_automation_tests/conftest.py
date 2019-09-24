@@ -37,6 +37,8 @@ def pytest_addoption(parser):
                          default="https://internal2.lite.service.dev.uktrade.io/", help="url")
         parser.addoption("--lite_api_url", action="store",
                          default="https://lite-api2-dev.london.cloudapps.digital/", help="url")
+    elif env == 'demo':
+        raise Exception("This is the demo environment - Try another environment instead")
     else:
         parser.addoption("--internal_url", action="store",
                          default="https://internal.lite.service." + env + ".uktrade.io/", help="url")
