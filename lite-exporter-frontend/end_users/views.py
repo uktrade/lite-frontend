@@ -26,11 +26,7 @@ class CopyAdvisory(TemplateView):
     data = None
 
     def dispatch(self, request, *args, **kwargs):
-        self.forms = copy_end_user_advisory_form()
         query = get_end_user_advisory(request, str(kwargs['pk']))
-
-        # Add the existing end user type as a hidden field to preserve its data
-        self.forms.forms[0].questions.append(HiddenField('end_user.sub_type', query['end_user']['sub_type']['key']))
 
         self.data = {
             'end_user.name': query['end_user']['name'],
@@ -40,7 +36,27 @@ class CopyAdvisory(TemplateView):
             'reasoning': query.get('reasoning', ''),
             'note': query.get('note', ''),
             'copy_of': query['id'],
+            'contact_email': query['contact_email'],
+            'contact_telephone': query['contact_telephone']
         }
+
+        individual, commercial = False, False
+
+        sub_type = query['end_user']['sub_type']['key']
+        if sub_type != 'individual':
+            self.data['contact_name'] = query['contact_name']
+            self.data['contact_job_title'] = query['contact_job_title']
+        else:
+            individual = True
+
+        if sub_type == 'commercial':
+            commercial = True
+            self.data['nature_of_business'] = query['nature_of_business']
+
+        self.forms = copy_end_user_advisory_form(individual, commercial)
+
+        # Add the existing end user type as a hidden field to preserve its data
+        self.forms.forms[0].questions.append(HiddenField('end_user.sub_type', query['end_user']['sub_type']['key']))
 
         return super(CopyAdvisory, self).dispatch(request, *args, **kwargs)
 
@@ -61,7 +77,9 @@ class ApplyForAnAdvisory(TemplateView):
     forms = None
 
     def dispatch(self, request, *args, **kwargs):
-        self.forms = apply_for_an_end_user_advisory_form()
+        individual = request.POST.get('end_user.sub_type') == 'individual'
+        commercial = request.POST.get('end_user.sub_type') == 'commercial'
+        self.forms = apply_for_an_end_user_advisory_form(individual, commercial)
 
         return super(ApplyForAnAdvisory, self).dispatch(request, *args, **kwargs)
 
