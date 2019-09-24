@@ -18,8 +18,8 @@ class SeedData:
     logging = True
     case_note_text = 'I Am Easy to Find'
     ecju_query_text = 'This is a question, please answer'
-    first_name = 'Trinity'
-    last_name = 'Fishburne'
+    first_name = 'Test'
+    last_name = 'Lite'
     good_end_product_true = 'Hot Cross Buns'
     good_end_product_false = 'Falafels'
 
