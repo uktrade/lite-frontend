@@ -35,14 +35,13 @@ def enter_case_note_text(driver, text, context):
 def click_post_note(driver, context):
     application_page = SubmittedApplicationsPages(driver)
     application_page.click_post_note_btn()
-    context.date_time_of_post = utils.get_formatted_date_time_h_m_pm_d_m_y()
 
 
 @then('note is displayed')
 def note_is_displayed(driver, context):
     application_page = SubmittedApplicationsPages(driver)
     assert context.text in application_page.get_text_of_case_note(0)
-    assert utils.split_and_replace_date_time(context.date_time_of_post) in utils.split_and_replace_date_time(application_page.get_text_of_case_note_date_time(0)), 'incorrect time of post on case note'
+    assert utils.search_for_correct_date_regex_in_element(application_page.get_text_of_case_note_date_time(0)), 'incorrect time of post on case note'
 
 
 @when('I click cancel button')

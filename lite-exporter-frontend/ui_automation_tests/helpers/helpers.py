@@ -1,5 +1,7 @@
+import re
 import allure
 import os
+
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
@@ -15,19 +17,10 @@ screen_dir = os.path.join(path, "screenshot", str(now))
 def get_current_date_time_string():
     return datetime.now().strftime("%Y/%m/%d %H:%M:%S:%f")
 
-def get_formatted_date_time_h_m_pm_d_m_y():
-    time = datetime.now().strftime("%I:%M%p %d %B %Y").replace("PM", "pm").replace(
-        "AM", "am")
-    if time[0] == "0":
-        time = time[1:]
-    return time
-
-def get_unformatted_date_time():
-    return datetime.now()
-
 
 def get_formatted_date_time_m_d_h_s():
     return datetime.now().strftime("%m%d%H%M%S")
+
 
 def repeat_to_length(string_to_expand, length):
     return (string_to_expand * (int(length//len(string_to_expand))+1))[:length]
@@ -160,13 +153,11 @@ def get_element_index_by_partial_text(elements, text: str):
     return element_number
 
 
-def split_and_replace_date_time(date):
-    return date.split(':')[1].replace('am', '').replace('pm', '')
-
-
-def replace_pm_am_datetime(date):
-    return date.replace('am', '').replace('pm', '')
-
-
 def scroll_to_element_by_id(driver, id):
     driver.execute_script("document.getElementById('" + id + "').scrollIntoView(true);")
+
+
+def search_for_correct_date_regex_in_element(element):
+    return re.search(
+        "([0-9]{1,2}):([0-9]{2})(am|pm) ([0-9][0-9]) (January|February|March|April|May|June|July|August|September|October|November|December) ([0-9]{4,})", # noqa
+        element)

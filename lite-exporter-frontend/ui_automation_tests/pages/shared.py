@@ -3,7 +3,7 @@ class Shared:
     def __init__(self, driver):
         self.driver = driver
         self.heading = ".govuk-heading-xl"  # CSS
-        self.radio_buttons = ".govuk-radios__input"  # CSS
+        self.radio_buttons = ".govuk-radios__label"  # CSS
         self.submit_button = "button[type*='submit']"
         self.back_link = ".govuk-back-link"
         self.error_messages = ".govuk-error-summary__body"
@@ -42,6 +42,9 @@ class Shared:
 
     def get_text_of_heading(self):
         return self.driver.find_element_by_css_selector(self.heading).text
+
+    def get_radio_buttons_elements(self):
+        return self.driver.find_elements_by_css_selector(self.radio_buttons)
 
     def click_on_radio_buttons(self, no):
         return self.driver.find_elements_by_css_selector(self.radio_buttons)[no].click()
