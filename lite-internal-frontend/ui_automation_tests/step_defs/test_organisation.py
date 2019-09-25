@@ -29,6 +29,12 @@ class OrganisationSteps():
         organisations_page = OrganisationsPage(driver)
         organisations_page.click_new_organisation_btn()
 
+    @when(parsers.parse('I select "{individual_or_commercial}"'))
+    def select_organisation_type(driver, individual_or_commercial):
+        organisations_form_page = OrganisationsFormPage(driver)
+        organisations_form_page.select_type(individual_or_commercial)
+        organisations_form_page.click_submit()
+
     @when(parsers.parse('I provide company registration details of name: "{name}", EORI: "{eori}", SIC: "{sic}", VAT: "{vat}", CRN: "{registration}"'))
     def fill_out_company_details_page_and_continue(driver, name, eori, sic, vat, registration, context):
         if not context.org_registered_status:
@@ -43,6 +49,14 @@ class OrganisationSteps():
             organisations_form_page.enter_vat_number(vat)
             organisations_form_page.enter_registration_number(registration)
             organisations_form_page.click_submit()
+
+    @when(parsers.parse('I provide individual registration details of first name: "{first_name}", last name: "{last_name}" and email: "{email}"'))
+    def fill_out_individual_registration_page(driver, first_name, last_name, email):
+        organisations_form_page = OrganisationsFormPage(driver)
+        organisations_form_page.enter_email(email)
+        organisations_form_page.enter_first_name(first_name)
+        organisations_form_page.enter_last_name(last_name)
+        organisations_form_page.click_submit()
 
     @when(parsers.parse('I setup an initial site with name: "{name}", addres line 1: "{address_line_1}", town or city: "{city}", County: "{region}", post code: "{post_code}", country: "{country}"'))
     def fill_out_site_details(driver, name, address_line_1, city, region, post_code, country, context):

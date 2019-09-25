@@ -1,6 +1,3 @@
-
-
-
 class OrganisationsFormPage():
 
     # called e time you create an object for this class
@@ -10,6 +7,9 @@ class OrganisationsFormPage():
     def click_new_organisation_btn(self):
         new_organisation_btn = self.driver.find_element_by_css_selector("a[href*='organisations/register']")
         new_organisation_btn.click()
+
+    def select_type(self, individual_or_commercial):
+        self.driver.find_element_by_id("sub_type-" + individual_or_commercial).click()
 
     def enter_name(self, text):
         self.driver.find_element_by_id("name").send_keys(text)
@@ -56,9 +56,6 @@ class OrganisationsFormPage():
 
     def enter_last_name(self, text):
         self.driver.find_element_by_id("user.last_name").send_keys(text)
-
-    def enter_password(self, text):
-        self.driver.find_element_by_id("user.password").send_keys(text)
 
     def click_submit(self):
         submit = self.driver.find_element_by_xpath("//*[@action='submit']")
