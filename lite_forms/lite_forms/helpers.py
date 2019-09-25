@@ -92,9 +92,12 @@ def flatten_data(d, parent_key='', sep='.'):
     return dict(items)
 
 
-def conditional(condition: bool, obj):
+def conditional(condition: bool, obj, else_obj=None):
     """
     Returns the object depending on a condition
+    Optionally: returns else_obj if it is set
     """
     if condition:
         return obj
+
+    return else_obj

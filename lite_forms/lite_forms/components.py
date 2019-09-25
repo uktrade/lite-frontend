@@ -351,3 +351,20 @@ class Summary:
         self.classes = classes
         self.extras = extras
         self.input_type = 'summary'
+
+
+class ControlListEntryInput:
+    def __init__(self,
+                 name: str,
+                 options: [],
+                 title: str = '',
+                 description: str = '',
+                 optional: bool = False,
+                 classes: [] = None):
+        self.name = name
+        self.title = title
+        self.description = description
+        self.options = options
+        self.optional = optional
+        self.classes = classes
+        self.input_type = 'control_list_entry'

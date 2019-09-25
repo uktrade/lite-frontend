@@ -22,7 +22,7 @@
 	<!-- Error -->
 	{% if errors %}
 		{% if errors|key_value:question.name %}
-			<span for="{{ question.name }}" class="govuk-error-message">
+			<span id="error-{{ question.name }}" for="{{ question.name }}" class="govuk-error-message">
 				<span class="govuk-visually-hidden">Error:</span>
 				{% for error in errors|key_value:question.name %}
 					{{ error }}
@@ -65,6 +65,8 @@
 			{% include "components/date.html" with component=question errors=errors %}
         {% elif question.input_type == "summary" %}
 			{% include "components/summary.html" with component=question %}
+        {% elif question.input_type == "control_list_entry" %}
+			{% include "components/control_list_entry.html" with component=question value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
 		{% endif %}
 	</div>
 </div>

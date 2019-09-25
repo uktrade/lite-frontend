@@ -1,4 +1,4 @@
-from lite_forms.components import TextInput, Select
+from lite_forms.components import TextInput, Select, ControlListEntryInput
 
 
 def country_question(countries, prefix='address.'):
@@ -21,3 +21,16 @@ def address_questions(countries, prefix='address.'):
             TextInput(title='Postal Code',
                       name=prefix + 'postcode'),
             country_question(countries, prefix)]
+
+
+def control_list_entry_question(control_list_entries,
+                                title='Control List Entry',
+                                description='',
+                                name='control_list_entry',
+                                inset_text=True):
+    classes = ['govuk-inset-text'] if inset_text else []
+    return ControlListEntryInput(title=title,
+                                 name=name,
+                                 description=description,
+                                 options=control_list_entries,
+                                 classes=classes)

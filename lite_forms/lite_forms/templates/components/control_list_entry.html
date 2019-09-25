@@ -1,0 +1,54 @@
+<input id="input-{{ question.name }}" list="control_list_entries" name="{{ question.name }}" value="{{ value }}" class="govuk-input govuk-input--width-10 {% if error %}govuk-input--error{% endif %}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+<datalist id="control_list_entries">
+	{% for item in question.options %}
+		<option id="option-{{ item.key }}" value="{{ item.key }}" data-description="{{ item.description }}">
+	{% endfor %}
+</datalist>
+
+<div id="info-{{ question.name }}" class="{% for class in question.classes %}{{ class }} {% endfor %}" style="display: none;">
+	{% if 'govuk-inset-text' not in question.classes %}
+		<br>
+	{% endif %}
+	<h4 id="info-heading-{{ question.name }}" class="govuk-heading-s" style="margin-bottom: 5px;"></h4>
+	<p class="govuk-caption-m" id="info-description-{{ question.name }}" style="max-width: 80%; line-height: 1.66; margin-bottom: 0;"></p>
+</div>
+
+<script>
+	function control_list_entry_onchange(val, bypassValidation=false) {
+		input = $("#input-{{ question.name }}")
+		val = val.trim()
+
+		// Filter control_list_entries options based on the val given
+		options = $('option').filter(function() {
+		    return $(this).attr('value').toLowerCase() == val.toLowerCase();
+		});
+
+		// If there is a control list entry that matches the input text, display its details
+		if (options.length) {
+			console.log(options)
+			$('#info-{{ question.name }}').show();
+			input.val(options.first().attr('value'));
+			$('#info-heading-{{ question.name }}').text(options.first().attr('value'));
+			$('#info-description-{{ question.name }}').text(options.first().data('description'));
+			input.removeClass('govuk-input--error');
+			$("#error-{{ question.name }}").remove();
+		} else {
+			$('#info-{{ question.name }}').hide();
+
+			if (!bypassValidation) {
+				input.addClass('govuk-input--error');
+				if (!$( '#error-{{ question.name }}' ).length) {
+					input.before('<span id="error-{{ question.name }}" for="input-{{ question.name }}" class="govuk-error-message">Enter a valid control list entry</span>')
+				}
+			}
+		}
+	}
+
+	// When the textbox loses focus, validate control code and optionally show details
+	$("#input-{{ question.name }}").blur(function() {
+		control_list_entry_onchange($(this).val());
+	});
+
+	// Show control list entries on load if value is set
+	control_list_entry_onchange('{{ value }}', true);
+</script>
