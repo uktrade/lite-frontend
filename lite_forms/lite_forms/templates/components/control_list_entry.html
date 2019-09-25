@@ -1,4 +1,4 @@
-<input id="input-{{ question.name }}" list="control_list_entries" name="{{ question.name }}" value="{{ value }}" class="govuk-input govuk-input--width-10 {% if error %}govuk-input--error{% endif %}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+<input id="{{ question.name }}" list="control_list_entries" name="{{ question.name }}" value="{{ value }}" class="govuk-input govuk-input--width-10 {% if error %}govuk-input--error{% endif %}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
 <datalist id="control_list_entries">
 	{% for item in question.options %}
 		<option id="option-{{ item.key }}" value="{{ item.key }}" data-description="{{ item.description }}">
@@ -15,17 +15,16 @@
 
 <script>
 	function control_list_entry_onchange(val, bypassValidation=false) {
-		input = $("#input-{{ question.name }}")
+		input = $("#{{ question.name }}")
 		val = val.trim()
 
 		// Filter control_list_entries options based on the val given
 		options = $('option').filter(function() {
-		    return $(this).attr('value').toLowerCase() == val.toLowerCase();
+		    return $(this).attr('value').toLowerCase().equals(val.toLowerCase());
 		});
 
 		// If there is a control list entry that matches the input text, display its details
 		if (options.length) {
-			console.log(options)
 			$('#info-{{ question.name }}').show();
 			input.val(options.first().attr('value'));
 			$('#info-heading-{{ question.name }}').text(options.first().attr('value'));
@@ -38,14 +37,14 @@
 			if (!bypassValidation) {
 				input.addClass('govuk-input--error');
 				if (!$( '#error-{{ question.name }}' ).length) {
-					input.before('<span id="error-{{ question.name }}" for="input-{{ question.name }}" class="govuk-error-message">Enter a valid control list entry</span>')
+					input.before('<span id="error-{{ question.name }}" for="{{ question.name }}" class="govuk-error-message">Enter a valid control list entry</span>')
 				}
 			}
 		}
 	}
 
 	// When the textbox loses focus, validate control code and optionally show details
-	$("#input-{{ question.name }}").blur(function() {
+	$("#{{ question.name }}").blur(function() {
 		control_list_entry_onchange($(this).val());
 	});
 
