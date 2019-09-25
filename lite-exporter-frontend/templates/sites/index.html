@@ -13,7 +13,9 @@
 	<div style="display: grid; grid-template-columns: 1fr auto; grid-gap: 30px;">
 		<div class="lite-tabs--fade">
 			<div class="lite-tabs">
-				<a href="{% url 'users:users' %}" class="lite-tabs__tab">Members</a>
+                {% if organisation.sub_type.key != 'individual' %}
+				    <a href="{% url 'users:users' %}" class="lite-tabs__tab">Members</a>
+                {% endif %}
 				<a href="{% url 'sites:sites' %}" class="lite-tabs__tab lite-tabs__tab--selected">Sites</a>
 			</div>
 		</div>

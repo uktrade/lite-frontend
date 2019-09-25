@@ -26,6 +26,7 @@ class SeedData:
     request_data = {
         'organisation': {
             'name': org_name,
+            'sub_type': 'commercial',
             'eori_number': '1234567890AAA',
             'sic_number': '2345',
             'vat_number': 'GB1234567',
@@ -48,6 +49,7 @@ class SeedData:
         },
         'organisation_for_switching_organisations': {
             'name': org_name_for_switching_organisations,
+            'sub_type': 'commercial',
             'eori_number': '1234567890AAA',
             'sic_number': '2345',
             'vat_number': 'GB1234567',

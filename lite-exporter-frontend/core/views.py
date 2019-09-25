@@ -17,11 +17,7 @@ class Hub(TemplateView):
 
         notifications = get_notifications(request, unviewed=True)
         organisation, _ = get_organisation(request, str(request.user.organisation))
-
-        context = {
-            'title': get_string('hub.title'),
-            'organisation': organisation,
-            'sections': [
+        sections = [
                 Section('', [
                     Tile(get_string('licences.apply_for_a_licence'), '',
                          reverse_lazy('apply_for_a_licence:index')),
@@ -35,9 +31,18 @@ class Hub(TemplateView):
                          reverse_lazy('goods:goods')),
                     Tile('End User Advisories', '',
                          reverse_lazy('end_users:end_users')),
-                    Tile('Manage my organisation', '', reverse_lazy('users:users')),
                 ]),
-            ],
+            ]
+
+        if organisation.get('sub_type').get('key') == 'individual':
+            sections[1].tiles.append(Tile('Manage my sites', '', reverse_lazy('sites:sites')))
+        else:
+            sections[1].tiles.append(Tile('Manage my organisation', '', reverse_lazy('users:users')))
+
+        context = {
+            'title': get_string('hub.title'),
+            'organisation': organisation,
+            'sections': sections,
             'application_deleted': request.GET.get('application_deleted'),
             'user_data': user['user'],
             'notifications': notifications

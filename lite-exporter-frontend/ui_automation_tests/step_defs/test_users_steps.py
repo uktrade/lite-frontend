@@ -145,8 +145,6 @@ def user_reactivate(driver, exporter_url, context):
 def cant_deactivate_self(driver, context):
     exporter_hub = ExporterHubPage(driver)
     exporter_hub.click_user_profile()
-    assert context.first_name in driver.find_element_by_tag_name("h1").text
-    assert context.last_name in driver.find_element_by_tag_name("h1").text
     driver.set_timeout_to(0)
     deactivate = utils.is_element_present(driver, By.XPATH, "//*[text()[contains(.,'Deactivate')]]")
     assert not deactivate
