@@ -4,7 +4,7 @@ from conf.constants import END_USER_ADVISORIES_URL
 
 def get_end_user_advisory(request, pk):
     data = get(request, END_USER_ADVISORIES_URL + pk)
-    return data.json()['end_user_advisory']
+    return data.json()['end_user_advisory'], data.json()['case_id']
 
 
 def get_end_user_advisories(request):

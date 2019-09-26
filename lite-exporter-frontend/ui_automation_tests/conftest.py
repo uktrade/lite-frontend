@@ -4,14 +4,16 @@ import pytest
 from pytest_bdd import given, when, then, parsers
 from selenium.webdriver.common.by import By
 
-from fixtures.core import context, driver, invalid_username, exporter_sso_login_info, s3_key # noqa
-from fixtures.register_organisation import register_organisation, register_organisation_for_switching_organisation # noqa
-from fixtures.add_goods import add_an_incorporated_good_to_application, add_a_non_incorporated_good_to_application, create_non_incorporated_good # noqa
-from fixtures.add_an_application import add_an_application # noqa
-from fixtures.add_clc_query import add_clc_query # noqa
-from fixtures.sso_sign_in import sso_sign_in # noqa
-from fixtures.internal_case_note import internal_case_note # noqa
-from fixtures.urls import exporter_url, api_url # noqa
+from fixtures.core import context, driver, invalid_username, exporter_sso_login_info, s3_key  # noqa
+from fixtures.register_organisation import register_organisation, register_organisation_for_switching_organisation  # noqa
+from fixtures.add_goods import add_an_incorporated_good_to_application, add_a_non_incorporated_good_to_application, create_non_incorporated_good  # noqa
+from fixtures.add_an_application import add_an_application  # noqa
+from fixtures.add_clc_query import add_clc_query  # noqa
+from fixtures.add_end_user_advisory import add_end_user_advisory  # noqa
+from fixtures.internal_ecju_query import internal_ecju_query, internal_ecju_query_end_user_advisory  # noqa
+from fixtures.sso_sign_in import sso_sign_in  # noqa
+from fixtures.internal_case_note import internal_case_note, internal_case_note_end_user_advisory  # noqa
+from fixtures.urls import exporter_url, api_url  # noqa
 
 import helpers.helpers as utils
 from pages.add_goods_page import AddGoodPage

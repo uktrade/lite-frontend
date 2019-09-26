@@ -10,7 +10,7 @@
 			<textarea id="case_note" name="text" cols="80" class="govuk-textarea" placeholder="Add note to application"></textarea>
 			<div class="lite-expandable-textarea-controls">
 				<p id="case_note-warning" class="govuk-hint govuk-character-count__message" aria-live="polite" style="text-align: left; margin: 2px 0 0 0;">
-					You can enter up to 2200 characters
+					{% get_string 'case_notes.max_length' %}
 				</p>
 				<a id="case-note-cancel-button" href="{% url 'applications:application' application.id %}" class="govuk-button govuk-button--secondary govuk-button--secondary-white" type="button" draggable="false">
 					Cancel

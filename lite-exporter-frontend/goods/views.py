@@ -58,9 +58,9 @@ class GoodsDetail(TemplateView):
     def get(self, request, **kwargs):
         notifications = get_notifications(request, unviewed=True)
         documents = get_good_documents(request, str(self.good_id))
-        case_note_notifications = len([x for x in notifications if x['parent'] == self.good_id
-                                       and x['object'] == 'case_note'])
-        ecju_query_notifications = len([x for x in notifications if x['parent'] == self.good_id
+        case_note_notifications = len([x for x in notifications if str(x['parent']) == self.good_id
+                                       and x['object_type'] == 'case_note'])
+        ecju_query_notifications = len([x for x in notifications if str(x['parent']) == self.good_id
                                         and x['object_type'] == 'ecju_query'])
 
         context = {

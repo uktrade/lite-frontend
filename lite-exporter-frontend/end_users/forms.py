@@ -1,7 +1,8 @@
 from django.urls import reverse_lazy
 from lite_forms.common import country_question
-from lite_forms.components import RadioButtons, Form, Option, TextArea, TextInput, FormGroup, HiddenField, HTMLBlock
-from lite_forms.generators import success_page
+from lite_forms.components import RadioButtons, Form, Option, TextArea, TextInput, FormGroup, HiddenField, HTMLBlock, \
+    BackLink
+from lite_forms.generators import success_page, confirm_form
 from lite_forms.helpers import conditional
 
 from core.builtins.custom_tags import reference_code
@@ -149,3 +150,34 @@ def end_user_advisory_success_page(request, query_reference):
                             'Apply for another advisory': reverse_lazy('end_users:apply'),
                             'Return to Exporter Hub': reverse_lazy('core:hub'),
                         })
+
+
+def respond_to_query_form(query_id, ecju_query):
+    return Form(title='Respond to query',
+                description='',
+                questions=[
+                    HTMLBlock('<div class="app-ecju-query__text" style="display: block; max-width: 100%;">' +
+                              ecju_query['question'] +
+                              '</div><br><br>'),
+                    TextArea(name='response',
+                             title='Your response',
+                             description='You won\'t be able to edit this once you\'ve submitted it.',
+                             extras={
+                                 'max_length': 2200,
+                             }),
+                    HiddenField(name='form_name', value='respond_to_query')
+                ],
+                back_link=BackLink('Back to good', reverse_lazy('end_users:end_user_detail',
+                                                                kwargs={'pk': query_id,
+                                                                        'type': 'ecju-queries'})),
+                default_button_name='Submit response')
+
+
+def ecju_query_respond_confirmation_form(edit_response_url):
+    return confirm_form(title='Are you sure you want to send this response?',
+                        confirmation_name='confirm_response',
+                        hidden_field='ecju_query_response_confirmation',
+                        yes_label='Yes, send the response',
+                        no_label='No, change my response',
+                        back_link_text='Back to edit response',
+                        back_url=edit_response_url)

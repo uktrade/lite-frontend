@@ -29,7 +29,7 @@ class Hub(TemplateView):
                          reverse_lazy('applications:applications')),
                     Tile('Goods', generate_notification_string(notifications, 'control_list_classification_query'),
                          reverse_lazy('goods:goods')),
-                    Tile('End User Advisories', '',
+                    Tile('End User Advisories', generate_notification_string(notifications, 'end_user_advisory_query'),
                          reverse_lazy('end_users:end_users')),
                 ]),
             ]
