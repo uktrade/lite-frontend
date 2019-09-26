@@ -92,9 +92,9 @@ class SeedData:
             "reference_number_on_information_form": "1234"
         },
         "end-user": {
-            "name": "Government",
-            "address": "Westminster, London SW1A 0AA",
-            "country": "Ukraine",
+            "name": "Mr Smith",
+            "address": "Westminster, London SW1A 0BB",
+            "country": "GB",
             "sub_type": "government",
             "website": "https://www.gov.uk"
         },
@@ -137,6 +137,12 @@ class SeedData:
             's3_key': env('TEST_S3_KEY'),
             'size': 0,
             'description': 'document for test setup'
+        },
+        "additional_document": {
+            'name': 'picture',
+            's3_key': env('TEST_S3_KEY'),
+            'size': 0,
+            'description': 'document for additional'
         }
     }
 
@@ -263,6 +269,11 @@ class SeedData:
         self.make_request("POST", url='/drafts/' + draft_id + '/consignee/document/',
                           headers=self.export_headers, body=data)
 
+    def add_additional_document(self, draft_id):
+        data = self.request_data['additional_document']
+        self.make_request("POST", url='/drafts/' + draft_id + '/document/',
+                          headers=self.export_headers, body=data)
+
     def check_document(self, url):
         data = self.make_request("GET", url=url, headers=self.export_headers)
         return json.loads(data.text)['document']['safe']
@@ -288,7 +299,8 @@ class SeedData:
             ultimate_end_user_id=ultimate_end_user_id)
         assert ultimate_end_user_document_is_processed, "Ultimate end user document wasn't successfully processed"
 
-    def add_draft(self, draft=None, good=None, enduser=None, ultimate_end_user=None, consignee=None, third_party=None):
+    def add_draft(self, draft=None, good=None, enduser=None, ultimate_end_user=None, consignee=None, third_party=None,
+                  additional_documents=None):
         self.log("Creating draft: ...")
         data = self.request_data['draft'] if draft is None else draft
         response = self.make_request("POST", url='/drafts/', headers=self.export_headers, body=data)
@@ -299,10 +311,11 @@ class SeedData:
                           body={'sites': [self.context['primary_site_id']]})
         self.log("Adding end user: ...")
         end_user_data = self.request_data['end-user'] if enduser is None else enduser
-        self.make_request("POST", url='/drafts/' + draft_id + '/end-user/', headers=self.export_headers,
+        end_user_post = self.make_request("POST", url='/drafts/' + draft_id + '/end-user/', headers=self.export_headers,
                           body=end_user_data)
         self.log("Adding end user document: ...")
         self.add_end_user_document(draft_id)
+        self.add_to_context('end_user', json.loads(end_user_post.text)['end_user'])
         self.log("Adding good: ...")
         data = self.request_data['add_good'] if good is None else good
         data['good_id'] = self.context['good_id']
@@ -325,6 +338,13 @@ class SeedData:
         third_party_response = self.make_request('POST', url='/drafts/' + draft_id + '/third-parties/',
                                                  headers=self.export_headers, body=third_party_data)
         self.add_to_context('third_party', json.loads(third_party_response.text)['third_party'])
+
+        additional_documents_data = \
+            self.request_data['additional_document'] if additional_documents is None else additional_documents
+        additional_documents_response = self.make_request('POST', url='/drafts/' + draft_id + '/documents/',
+                                                          headers=self.export_headers, body=additional_documents_data)
+        self.add_to_context('additional_document',
+                            json.loads(additional_documents_response.text)['document'])
 
         self.check_documents(draft_id=draft_id, ultimate_end_user_id=ultimate_end_user_id)
 

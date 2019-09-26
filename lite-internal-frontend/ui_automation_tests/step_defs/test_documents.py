@@ -49,3 +49,8 @@ def can_click_on_the_good_document_download_link(driver):
 @then("I can click on the end user document download link")
 def can_click_on_the_end_user_document_download_link(driver):
     assert ApplicationPage(driver).end_user_document_link_is_enabled()
+
+
+@then("I can click on the additional document download link")
+def can_click_on_the_additional_document_download_link(driver):
+    assert ApplicationPage(driver).additional_document_link_is_enabled()

@@ -30,8 +30,8 @@ def pytest_addoption(parser):
     parser.addoption("--sso_sign_in_url", action="store", default="https://sso.trade.uat.uktrade.io/login/", help="url")
 
     if env.lower() == 'local':
-        parser.addoption("--internal_url", action="store", default="http://localhost:8200", help="url")
-        parser.addoption("--lite_api_url", action="store", default="http://localhost:8100", help="url")
+        parser.addoption("--internal_url", action="store", default="http://localhost:8080", help="url")
+        parser.addoption("--lite_api_url", action="store", default="http://localhost:8000", help="url")
     elif env.lower() == 'dev2':
         parser.addoption("--internal_url", action="store",
                          default="https://internal2.lite.service.dev.uktrade.io/", help="url")

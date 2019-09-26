@@ -9,6 +9,7 @@ Feature: I want to view the case details of a case
     Given I create application or application has been previously created
     And I sign in to SSO or am signed into SSO
     When I go to application previously created
-    Then I see an ultimate end user
+    Then I see an end user
+    And I see an ultimate end user
     And I see a third party
     And I see a consignee

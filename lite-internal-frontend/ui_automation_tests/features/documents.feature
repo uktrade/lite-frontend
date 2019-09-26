@@ -24,3 +24,5 @@ So that it is recorded against the case and available for other case workers to 
     When I go to application previously created
     Then I can click on the good document download link
     And I can click on the end user document download link
+    And I can click on the additional document download link
+
