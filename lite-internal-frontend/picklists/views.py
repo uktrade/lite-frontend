@@ -91,7 +91,7 @@ class EditPicklistItem(TemplateView):
         if status_code != 200:
             return form_page(request, self.form, data=request.POST, errors=response.get('errors'))
 
-        return redirect(reverse_lazy('picklists:picklist_item', kwargs={'pk': response['id']}))
+        return redirect(reverse_lazy('picklists:picklist_item', kwargs={'pk': response['picklist_item']['id']}))
 
 
 class DeactivatePicklistItem(TemplateView):
