@@ -15,12 +15,12 @@
 
 <script>
 	function control_list_entry_onchange(val, bypassValidation=false) {
-		input = $("#{{ question.name }}")
-		val = val.trim()
+        input = $("#{{ question.name }}");
+		val = val.trim();
 
 		// Filter control_list_entries options based on the val given
 		options = $('option').filter(function() {
-		    return $(this).attr('value').toLowerCase().equals(val.toLowerCase());
+		    return $(this).attr('value').toLowerCase() === val.toLowerCase();
 		});
 
 		// If there is a control list entry that matches the input text, display its details
