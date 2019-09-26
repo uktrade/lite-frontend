@@ -83,7 +83,7 @@
                         </div>
                     </td>
                     <td class="lite-table__cell">
-                        {{ consignee.sub_type }}
+                        {{ consignee.sub_type.value }}
                     </td>
                     <td class="lite-table__cell">
                         {{ consignee.address }}, {{ consignee.country.name }}
@@ -142,7 +142,7 @@
 							</div>
 						</td>
 						<td class="lite-table__cell">
-							{{ ultimate_end_user.sub_type }}
+							{{ ultimate_end_user.sub_type.value }}
 						</td>
 						</td>
 						<td class="lite-table__cell">
@@ -203,7 +203,7 @@
 							</div>
 						</td>
 						<td class="lite-table__cell">
-							{{ third_party.sub_type }}
+							{{ third_party.sub_type.value }}
 						</td>
 						<td class="lite-table__cell">
 							{{ third_party.address }}, {{ third_party.country.name }}
