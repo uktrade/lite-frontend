@@ -17,13 +17,21 @@
 		</div>
 		<div class="lite-app-bar__controls">
 			<div class="app-more-actions__container">
+				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:documents' case.id %}">
+					{% get_string 'cases.manage.documents.button' %}
+				</a>
+				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:ecju_queries' case.id %}">
+					{% get_string 'cases.ecju_queries.title' %}
+				</a>
 				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:move' case.id %}">
 					{% get_string 'cases.manage.move_case.button' %}
 				</a>
+                <a role="button" draggable="false" class="govuk-button" href="{% url 'cases:manage' case.id %}">
+                    Change Status
+                </a>
 			</div>
 		</div>
 	</div>
-
 	<!-- Case flags -->
 	{% include 'cases/case/views/case-flags.html' %}
 
@@ -146,20 +154,17 @@
 					{{ case.query.note|default:'N/A' }}
 				</dd>
 			</div>
+            {% if case.query.copy_of %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Copied from
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <a class="govuk-link" href="{% url 'cases:case' case.query.copy_of.case_id %}">{{ case.query.copy_of.reference_code|reference_code }}</a>
+                    </dd>
+                </div>
+            {% endif %}
 		</dl>
-
-        {% if case.query.copy_of %}
-            <dl class="govuk-summary-list">
- 				<div class="govuk-summary-list__row">
- 					<dt class="govuk-summary-list__key">
- 						Copied from
- 					</dt>
- 					<dd class="govuk-summary-list__value">
- 						<a class="govuk-link" href="{% url 'cases:case' case.query.copy_of.case_id %}">{{ case.query.copy_of.reference_code|reference_code }}</a>
- 					</dd>
- 				</div>
- 			</dl>
- 		{% endif %}
 
 		<br><br>
 

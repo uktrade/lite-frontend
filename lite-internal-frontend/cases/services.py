@@ -1,8 +1,9 @@
 from cases.helpers import clean_advice
 from conf.client import post, get, put, delete
 from conf.constants import CASE_URL, CASE_NOTES_URL, APPLICATIONS_URL, ACTIVITY_URL, CLC_QUERIES_URL, DOCUMENTS_URL, \
-    CASE_FLAGS_URL, ECJU_QUERIES_URL, GOOD_URL, FLAGS_URL, ASSIGN_FLAGS_URL, GOODS_TYPE_URL, USER_ADVICE_URL,\
-    TEAM_ADVICE_URL, FINAL_ADVICE_URL, VIEW_TEAM_ADVICE_URL, VIEW_FINAL_ADVICE_URL
+    END_USER_ADVISORY_URL, CASE_FLAGS_URL, ECJU_QUERIES_URL, GOOD_URL, FLAGS_URL, ASSIGN_FLAGS_URL, \
+    GOODS_TYPE_URL, USER_ADVICE_URL, TEAM_ADVICE_URL, FINAL_ADVICE_URL, VIEW_TEAM_ADVICE_URL, VIEW_FINAL_ADVICE_URL
+
 
 
 def get_case(request, pk):
@@ -24,6 +25,12 @@ def put_applications(request, pk, json):
 # CLC Queries
 def put_control_list_classification_query(request, pk, json):
     data = put(request, CLC_QUERIES_URL + pk, json)
+    return data.json(), data.status_code
+
+
+# EUA Queries
+def put_end_user_advisory_query(request, pk, json):
+    data = put(request, END_USER_ADVISORY_URL + str(pk), json)
     return data.json(), data.status_code
 
 

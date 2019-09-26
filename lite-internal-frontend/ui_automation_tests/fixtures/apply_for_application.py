@@ -70,3 +70,10 @@ def apply_for_clc_query(driver, request, api_url, context):
     api = get_or_create_attr(context, 'api', lambda: SeedData(api_url=api_url, logging=True))
     api.add_clc_query()
     context.clc_case_id = api.context['case_id']
+
+
+@fixture(scope="module")
+def apply_for_eua_query(driver, request, api_url, context):
+    api = get_or_create_attr(context, 'api', lambda: SeedData(api_url=api_url, logging=True))
+    api.add_eua_query()
+    context.eua_id = api.context['end_user_advisory_id']

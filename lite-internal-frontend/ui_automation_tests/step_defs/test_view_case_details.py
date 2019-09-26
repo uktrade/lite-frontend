@@ -4,7 +4,7 @@ from pages.application_page import ApplicationPage
 
 def assert_party_data(table, headings, values):
     for heading in headings:
-        assert heading in table
+        assert heading.lower() in table.lower()
     for value in values:
         assert value in table
 

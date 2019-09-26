@@ -98,6 +98,19 @@ class SeedData:
             "sub_type": "government",
             "website": "https://www.gov.uk"
         },
+        "end_user_advisory": {
+            "end_user": {
+              "name": "Person",
+              "address": "Westminster, London SW1A 0AA",
+              "country": "GB",
+              "sub_type": "government",
+              "website": "https://www.gov.uk"
+            },
+            "contact_email": "email@address.com",
+            "contact_telephone": 12345678901,
+            "reasoning": "I'm unsure about them",
+            "note": "note for end user advisory"
+        },
         "ultimate_end_user": {
             "name": "Individual",
             "address": "Bullring, Birmingham SW1A 0AA",
@@ -249,6 +262,12 @@ class SeedData:
         }
         response = self.make_request("POST", url='/queries/control-list-classifications/', headers=self.export_headers, body=data)
         self.add_to_context('case_id', json.loads(response.text)['case_id'])
+
+    def add_eua_query(self):
+        self.log("Adding end user advisory: ...")
+        data = self.request_data['end_user_advisory']
+        response = self.make_request("POST", url='/queries/end-user-advisories/', headers=self.export_headers, body=data)
+        self.add_to_context('end_user_advisory_id', json.loads(response.text)['end_user_advisory']['id'])
 
     def add_good_document(self, good_id):
         data = [self.request_data['document']]

@@ -4,7 +4,7 @@ from pytest_bdd import given, when, then, parsers
 
 from fixtures.core import context, driver, sso_login_info, invalid_username, new_cases_queue_id, sso_users_name # noqa
 from fixtures.urls import internal_url, sso_sign_in_url, api_url # noqa
-from fixtures.apply_for_application import apply_for_standard_application, apply_for_clc_query # noqa
+from fixtures.apply_for_application import apply_for_standard_application, apply_for_clc_query, apply_for_eua_query # noqa
 from fixtures.sign_in_to_sso import sign_in_to_internal_sso # noqa
 from fixtures.add_a_flag import add_uae_flag, add_suspicious_flag # noqa
 from fixtures.add_queue import add_queue # noqa
@@ -17,6 +17,7 @@ from pages.shared import Shared
 from pages.case_list_page import CaseListPage
 from pages.application_page import ApplicationPage
 from pages.queues_pages import QueuesPages
+from core.builtins.custom_tags import reference_code
 
 # Screenshot in case of any test failure
 
@@ -30,8 +31,8 @@ def pytest_addoption(parser):
     parser.addoption("--sso_sign_in_url", action="store", default="https://sso.trade.uat.uktrade.io/login/", help="url")
 
     if env.lower() == 'local':
-        parser.addoption("--internal_url", action="store", default="http://localhost:8080", help="url")
-        parser.addoption("--lite_api_url", action="store", default="http://localhost:8000", help="url")
+        parser.addoption("--internal_url", action="store", default="http://localhost:8200", help="url")
+        parser.addoption("--lite_api_url", action="store", default="http://localhost:8100", help="url")
     elif env.lower() == 'dev2':
         parser.addoption("--internal_url", action="store",
                          default="https://internal2.lite.service.dev.uktrade.io/", help="url")
@@ -77,6 +78,11 @@ def click_on_created_application(driver, context, internal_url):
     driver.get(internal_url.rstrip('/') + '/cases/' + context.case_id)
 
 
+@when('I go to end user advisory previously created') # noqa
+def click_on_created_eua(driver, context):
+    driver.find_element_by_link_text(reference_code(context.eua_id)).click()
+
+
 @when('I go to clc query previously created') # noqa
 def click_on_created_application(driver, context, internal_url):
     driver.get(internal_url.rstrip('/') + '/cases/' + context.clc_case_id)
@@ -89,6 +95,11 @@ def create_app(driver, apply_for_standard_application):
 
 @given('I create clc query or clc query has been previously created') # noqa
 def create_clc(driver, apply_for_clc_query):
+    pass
+
+
+@given('I create eua query or eua query has been previously created') # noqa
+def create_eua(driver, apply_for_eua_query):
     pass
 
 

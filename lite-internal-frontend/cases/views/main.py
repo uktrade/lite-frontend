@@ -10,7 +10,8 @@ from s3chunkuploader.file_handler import S3FileUploadHandler, s3_client
 
 from cases.forms.attach_documents import attach_documents_form
 from cases.forms.move_case import move_case_form
-from cases.services import get_case, post_case_notes, put_applications, get_activity, put_case
+from cases.services import get_case, post_case_notes, put_applications, get_activity, put_case, \
+    put_end_user_advisory_query
 from cases.services import post_case_documents, get_case_documents, get_document
 from conf import settings
 from conf.constants import DEFAULT_QUEUE_ID
@@ -142,7 +143,8 @@ class ManageCase(TemplateView):
 
         if case['type']['key'] == 'application':
             title = 'Manage ' + case.get('application').get('name')
-
+        elif case['query']['end_user']:
+            title = 'Manage End User Advisory'
         else:
             title = 'Manage CLC query case'
 
@@ -160,7 +162,9 @@ class ManageCase(TemplateView):
         if case['type']['key'] == 'application':
             application_id = case.get('application').get('id')
             put_applications(request, application_id, request.POST)
-
+        elif case['type']['key'] == 'end_user_advisory_query':
+            query_id = case.get('query').get('id')
+            put_end_user_advisory_query(request, query_id, request.POST)
         else:
             raise Http404
 

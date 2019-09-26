@@ -24,7 +24,12 @@
             {% endif %}
 			<select id="status" class="govuk-select" name="status" id="status">
                 {% for status in statuses.statuses %}
-				    <option value="{{ status.status }}" {% if data.case.application.status == status.status or data.case.clc_query.status == status.status%}selected{% endif %}>{{ status.status|default:"Untitled"|sentence_case }}</option>
+				    <option value="{{ status.status }}"
+                            {% if data.case.application.status == status.status or data.case.query.status == status.status%}
+                                selected
+                            {% endif %}>
+                        {{ status.status|default:"Untitled"|sentence_case }}
+                    </option>
                 {% endfor %}
 			</select>
 		</div>

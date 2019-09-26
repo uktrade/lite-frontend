@@ -28,14 +28,14 @@
 				</a>
 			{% endif %}
 			<div class="app-more-actions__container {% if case.query.good.status != 'final' %}app-more-actions__container--secondary{% endif %}">
-				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:move' case.id %}">
-					{% get_string 'cases.manage.move_case.button' %}
-				</a>
 				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:documents' case.id %}">
 					{% get_string 'cases.manage.documents.button' %}
 				</a>
 				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:ecju_queries' case.id %}">
 					{% get_string 'cases.ecju_queries.title' %}
+				</a>
+                <a role="button" draggable="false" class="govuk-button" href="{% url 'cases:move' case.id %}">
+					{% get_string 'cases.manage.move_case.button' %}
 				</a>
 			</div>
 		</div>

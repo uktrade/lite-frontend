@@ -18,7 +18,7 @@ class ApplicationPage(BasePage):
     progress_app_btn = '[href*="manage"]'
     record_decision_btn = '[href*="decide"]'  # css
     headers = ".lite-heading-s"  # css
-    activity_case_note_subject = ".lite-activity-item .govuk-body"
+    activity_case_note_subject = ".govuk-body"
     activity_dates = ".app-activity__item .govuk-hint"
     activity_user = ".user"
     is_visible_to_exporter_checkbox_id = 'is_visible_to_exporter'
@@ -76,20 +76,23 @@ class ApplicationPage(BasePage):
         return self.driver.find_element_by_id(self.post_note_btn).get_attribute("class")
 
     def click_progress_application(self):
-        self.driver.find_element_by_css_selector(self.actions_dropdown).click()
+        self.click_drop_down()
         self.driver.find_element_by_css_selector(self.progress_app_btn).click()
 
     def click_record_decision(self):
-        self.driver.find_element_by_css_selector(self.actions_dropdown).click()
+        self.click_drop_down()
         self.driver.find_element_by_css_selector(self.record_decision_btn).click()
 
     def click_documents_button(self):
-        self.driver.find_element_by_css_selector(self.actions_dropdown).click()
+        self.click_drop_down()
         self.driver.find_element_by_css_selector(self.documents_btn).click()
 
     def click_ecju_queries_button(self):
-        self.driver.find_element_by_css_selector(self.actions_dropdown).click()
+        self.click_drop_down()
         self.driver.find_element_by_css_selector(self.ecju_queries_btn).click()
+
+    def click_drop_down(self):
+        self.driver.find_element_by_css_selector(self.actions_dropdown).click()
 
     def select_status(self, status):
         case_status_dropdown = Select(self.driver.find_element_by_id(self.status))
@@ -128,7 +131,7 @@ class ApplicationPage(BasePage):
         return flag_name in self.driver.find_element_by_id("goods").text
 
     def click_move_case_button(self):
-        self.driver.find_element_by_css_selector(self.actions_dropdown).click()
+        self.click_drop_down()
         self.driver.find_element_by_css_selector(self.move_case_button).click()
 
     def get_text_of_audit_trail_item(self, no):
@@ -163,6 +166,22 @@ class ApplicationPage(BasePage):
 
     def end_user_document_link_is_enabled(self):
         return self.driver.find_element_by_id(self.download_end_user_document).is_enabled()
+
+    def get_case_flag_element(self):
+        return self.driver.find_element_by_id(self.case_flags)
+
+    def get_document_element(self):
+        return self.driver.find_element_by_css_selector(self.documents_btn)
+
+    def get_move_case_element(self):
+        return self.driver.find_element_by_css_selector(self.move_case_button)
+
+    def get_ecju_queries_element(self):
+        return self.driver.find_element_by_css_selector(self.ecju_queries_btn)
+
+    def is_change_status_available(self):
+        # this should equal 2 as there is a 'manage' in the link of the footer image
+        return len(self.driver.find_elements_by_css_selector(self.progress_app_btn)) == 2
 
     def additional_document_link_is_enabled(self):
         return self.driver.find_element_by_id(self.download_additional_document).is_enabled()
