@@ -1,9 +1,10 @@
-.autocomplete__wrapper {
+.lite-autocomplete__wrapper {
 	position: relative;
 	max-width: 400px;
 }
 
-.autocomplete__hint, .autocomplete__input {
+.lite-autocomplete__hint, .lite-autocomplete__input {
+	@include govuk-font($size: 19);
 	-webkit-appearance: none;
 	border: 2px solid;
 	border-radius: 0;
@@ -12,35 +13,35 @@
 	-webkit-box-sizing: border-box;
 	margin-bottom: 0;
 	width: 100%;
-    @include govuk-font($size: 19);
     max-width: 38ex + 3ex;
 }
 
-.autocomplete__input {
+.lite-autocomplete__input {
 	background-color: transparent;
 	position: relative
 }
 
-.autocomplete__hint {
+.lite-autocomplete__hint {
 	color: #bfc1c3;
 	position: absolute
 }
 
-.autocomplete__input--default {
+.lite-autocomplete__input--default {
 	padding: 4px
 }
 
-.autocomplete__input--focused {
+.lite-autocomplete__input--focused {
 	outline-offset: 0;
-	outline: 3px solid #ffbf47
+	outline: $govuk-focus-width solid $govuk-focus-colour;
+	box-shadow: inset 0 0 0 $govuk-border-width-form-element;
 }
 
-.autocomplete__input--show-all-values {
+.lite-autocomplete__input--show-all-values {
 	padding: 4px 34px 4px 4px;
 	cursor: pointer
 }
 
-.autocomplete__dropdown-arrow-down {
+.lite-autocomplete__dropdown-arrow-down {
 	z-index: -1;
 	display: inline-block;
 	position: absolute;
@@ -50,7 +51,7 @@
 	top: 10px
 }
 
-.autocomplete__menu {
+.lite-autocomplete__menu {
 	background-color: #fff;
 	border-top: 0;
 	color: #34384b;
@@ -59,17 +60,18 @@
 	overflow-x: hidden;
 	padding: 0;
 	width: calc(100% - 11px);
+	max-height: 300px;
 }
 
-.autocomplete__menu--visible {
+.lite-autocomplete__menu--visible {
 	display: block
 }
 
-.autocomplete__menu--hidden {
+.lite-autocomplete__menu--hidden {
 	display: none
 }
 
-.autocomplete__menu--overlay {
+.lite-autocomplete__menu--overlay {
 	box-shadow: $lite-drop-shadow;
 	left: 0;
 	position: absolute;
@@ -77,11 +79,12 @@
 	z-index: 100
 }
 
-.autocomplete__menu--inline {
+.lite-autocomplete__menu--inline {
 	position: relative
 }
 
-.autocomplete__option {
+.lite-autocomplete__option {
+	@include govuk-font($size: 19);
 	border-bottom: solid #bfc1c3;
 	border-width: 1px 0;
 	cursor: pointer;
@@ -89,46 +92,46 @@
 	position: relative
 }
 
-.autocomplete__option>* {
+.lite-autocomplete__option>* {
 	pointer-events: none
 }
 
-.autocomplete__option:first-of-type {
+.lite-autocomplete__option:first-of-type {
 	border-top-width: 0
 }
 
-.autocomplete__option:last-of-type {
+.lite-autocomplete__option:last-of-type {
 	border-bottom-width: 0
 }
 
-.autocomplete__option--odd {
+.lite-autocomplete__option--odd {
 	background-color: #fafafa
 }
 
-.autocomplete__option--focused, .autocomplete__option:hover {
-	background-color: #005ea5;
-	border-color: #005ea5;
-	color: #fff;
+.lite-autocomplete__option--focused, .lite-autocomplete__option:hover {
+	background-color: $govuk-brand-colour;
+	border-color: $govuk-brand-colour;
+	color: govuk-colour("white");
 	outline: 0
 }
 
-.autocomplete__option--no-results {
+.lite-autocomplete__option--no-results {
 	background-color: #fafafa;
 	color: #646b6f;
 	cursor: not-allowed
 }
 
-.autocomplete__hint, .autocomplete__input, .autocomplete__option {
+.lite-autocomplete__hint, .lite-autocomplete__input, .lite-autocomplete__option {
 	font-size: 16px;
 	line-height: 1.25
 }
 
-.autocomplete__hint, .autocomplete__option {
+.lite-autocomplete__hint, .lite-autocomplete__option {
 	padding: 4px
 }
 
 @media (min-width:641px) {
-	.autocomplete__hint, .autocomplete__input, .autocomplete__option {
+	.lite-autocomplete__hint, .lite-autocomplete__input, .lite-autocomplete__option {
 		font-size: 19px;
 		line-height: 1.31579
 	}
