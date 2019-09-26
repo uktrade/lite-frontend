@@ -1,5 +1,6 @@
 from django.urls import path
 
+import apply_for_a_licence.views.additional_documents
 from apply_for_a_licence.views import common, locations, end_users, third_parties, documents, goods
 from goodstype import views as goodstypeviews
 
@@ -83,5 +84,10 @@ urlpatterns = [
     # ex: /apply_for_a_licence/<uuid:pk>/ultimate-end-user/download-document/ - Delete a document
     path('<uuid:pk>/third-parties/<uuid:tp_pk>/document/delete', documents.DeleteDocument.as_view(), name="third_party_delete_document"),
     # ex: /<uuid:pk>/third-parties/remove
-    path('<uuid:pk>/third-parties/<uuid:ueu_pk>/remove', third_parties.RemoveThirdParty.as_view(), name='remove_third_party')
+    path('<uuid:pk>/third-parties/<uuid:ueu_pk>/remove', third_parties.RemoveThirdParty.as_view(), name='remove_third_party'),
+
+    path('<uuid:pk>/additional-documents/', apply_for_a_licence.views.additional_documents.AdditionalDocuments.as_view(), name='additional_documents'),
+    path('<uuid:pk>/additional-document/attach', documents.AttachDocuments.as_view(), name='attach_additional_document'),
+    path('<uuid:pk>/additional-document/<uuid:doc_pk>/download', documents.DownloadDocument.as_view(), name='download_additional_document'),
+    path('<uuid:pk>/additional-document/<uuid:doc_pk>/delete', documents.DeleteDocument.as_view(), name='delete_additional_document'),
 ]

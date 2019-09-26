@@ -7,7 +7,7 @@ from lite_forms.submitters import submit_paged_form
 from apply_for_a_licence.forms.initial import initial_questions
 from core.builtins.custom_tags import get_string
 from core.services import get_sites_on_draft, get_external_locations_on_draft
-from drafts.services import get_third_parties, get_consignee_document
+from drafts.services import get_third_parties, get_consignee_document, get_additional_documents
 from drafts.services import post_drafts, get_draft, get_draft_goods, submit_draft, \
     delete_draft, get_draft_countries, get_draft_goods_type, get_ultimate_end_users, \
     get_end_user_document
@@ -52,6 +52,8 @@ class Overview(TemplateView):
         external_locations, _ = get_external_locations_on_draft(request, draft_id)
         ultimate_end_users, _ = get_ultimate_end_users(request, draft_id)
         third_parties, _ = get_third_parties(request, draft_id)
+        additional_documents, _ = get_additional_documents(request, draft_id)
+
         end_user = draft.get('end_user')
         if end_user:
             end_user_document, _ = get_end_user_document(request, draft_id)
@@ -81,7 +83,8 @@ class Overview(TemplateView):
             'ultimate_end_users_required': ultimate_end_users_required,
             'end_user_document': end_user_document,
             'consignee_document': consignee_document,
-            'third_parties': third_parties['third_parties']
+            'third_parties': third_parties['third_parties'],
+            'additional_documents': additional_documents['documents']
         }
         return render(request, 'apply_for_a_licence/overview.html', context)
 

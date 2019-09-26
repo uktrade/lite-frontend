@@ -529,6 +529,49 @@
 </div>
 {% endif %}
 
+
+<div class="lite-section {% if errors|key_value:'additional_documents' %}govuk-form-group--error{% endif %}">
+	<div class="lite-section-header">
+		<div>
+			<a id="third_parties" href="{% url 'apply_for_a_licence:additional_documents' draft.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
+				Additional Documents (optional)
+			</a>
+		</div>
+		{% if additional_documents %}
+			<div class="lite-tag lite-tag--small lite-tag--blue">
+				Done
+			</div>
+		{% else %}
+			<div class="lite-tag lite-tag--small">
+				Not Started
+			</div>
+		{% endif %}
+	</div>
+	{% if errors|key_value:'additional_documents' %}
+		<p class="govuk-error-message">{{ errors|key_value:'additional_documents' }}</p>
+	{% endif %}
+	{% if additional_documents %}
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="col">Name</th>
+                    <th class="govuk-table__header" scope="col">Description</th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				{% for additional_document in additional_documents %}
+					<tr class="govuk-table__row">
+						<td class="govuk-table__cell">{{ additional_document.name }}</td>
+                        <td class="govuk-table__cell">{{ additional_document.description }}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		<p class="govuk-caption-m">Add additional documents to your application</p>
+	{% endif %}
+</div>
+
 <div class="lite-submit-bar js-is-sticky">
 <div class="lite-vertical-align" style="display: inline-flex; float: right; height: 38px;">
 	<a href="{% url 'apply_for_a_licence:delete' draft.id %}" class="govuk-link" style="margin: 0; float: right;" onclick="return showCancelApplication()">

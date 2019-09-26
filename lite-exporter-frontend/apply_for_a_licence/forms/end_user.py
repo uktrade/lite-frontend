@@ -43,10 +43,18 @@ def new_end_user_forms():
     return FormGroup(third_parties_standard_form('Who will be the final recipient (end-user) of your goods?'))
 
 
-def attach_document_form(draft_url, title, back_text, return_later_text):
+def attach_document_form(draft_url, title, back_text, return_later_text, description_text=None):
+    inputs = [FileUpload('documents')]
+    if description_text:
+        inputs.append(TextArea(title=description_text,
+                               optional=True,
+                               name='description',
+                               extras={
+                                   'max_length': 280,
+                               }))
     return Form(title,
                 get_string('end_user.documents.attach_documents.description'),
-                [FileUpload('documents')],
+                inputs,
                 back_link=BackLink(back_text,
                                    draft_url),
                 footer_label=Label('Or <a href="'

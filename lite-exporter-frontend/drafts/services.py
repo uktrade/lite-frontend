@@ -1,6 +1,6 @@
 from conf.client import get, post, put, delete
 from conf.constants import APPLICATIONS_URL, DRAFTS_URL, END_USER_DOCUMENT_URL, ULTIMATE_END_USER_URL, DOCUMENT_URL, \
-    CONSIGNEE_URL, THIRD_PARTIES_URL, CONSIGNEE_DOCUMENT_URL
+    CONSIGNEE_URL, THIRD_PARTIES_URL, CONSIGNEE_DOCUMENT_URL, ADDITIONAL_DOCUMENT_URL
 
 
 def get_drafts(request):
@@ -169,4 +169,25 @@ def post_third_party_document(request, pk, tp_pk, json):
 
 def delete_third_party_document(request, pk, tp_pk):
     data = delete(request, DRAFTS_URL + pk + THIRD_PARTIES_URL + tp_pk + DOCUMENT_URL)
+    return data.status_code
+
+
+# Additional Documents
+def post_additional_document(request, pk, json):
+    data = post(request, DRAFTS_URL + pk + ADDITIONAL_DOCUMENT_URL, json)
+    return data.json(), data.status_code
+
+
+def get_additional_documents(request, pk):
+    data = get(request, DRAFTS_URL + pk + ADDITIONAL_DOCUMENT_URL)
+    return data.json(), data.status_code
+
+
+def get_additional_document(request, pk, doc_pk):
+    data = get(request, DRAFTS_URL + pk + ADDITIONAL_DOCUMENT_URL + doc_pk + '/')
+    return data.json(), data.status_code
+
+
+def delete_additional_party_document(request, pk, doc_pk):
+    data = delete(request, DRAFTS_URL + pk + ADDITIONAL_DOCUMENT_URL + doc_pk + '/')
     return data.status_code
