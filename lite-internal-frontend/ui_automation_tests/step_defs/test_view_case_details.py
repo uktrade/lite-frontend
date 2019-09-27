@@ -36,7 +36,7 @@ class ViewCaseDetails:
         destinations_table = ApplicationPage(driver).get_text_of_ueu_table()
         headings = ["NAME", "TYPE", "WEBSITE", "ADDRESS", "DOCUMENT"]
         values = [
-            context.ultimate_end_user['sub_type'],
+            # context.ultimate_end_user['sub_type'],
             context.ultimate_end_user['name'],
             context.ultimate_end_user['website'],
             context.ultimate_end_user['address'],
@@ -49,7 +49,7 @@ class ViewCaseDetails:
         destinations_table = ApplicationPage(driver).get_text_of_consignee_table()
         headings = ["NAME", "TYPE", "WEBSITE", "ADDRESS", "DOCUMENT"]
         values = [
-            context.consignee['sub_type'],
+            # context.consignee['sub_type'],
             context.consignee['name'],
             context.consignee['website'],
             context.consignee['address'],
@@ -62,7 +62,7 @@ class ViewCaseDetails:
         destinations_table = ApplicationPage(driver).get_text_of_third_parties_table()
         headings = ["NAME", "TYPE", "WEBSITE", "ADDRESS", "DOCUMENT"]
         values = [
-            context.third_party['sub_type'],
+            # context.third_party['sub_type'],
             context.third_party['name'],
             context.third_party['website'],
             context.third_party['address'],
