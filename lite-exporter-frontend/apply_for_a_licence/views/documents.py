@@ -160,14 +160,14 @@ class DownloadDocument(TemplateView):
 
 class DeleteDocument(TemplateView):
     def get(self, request, **kwargs):
-        confirmation_form = get_delete_confirmation_page(request.path, str(kwargs['pk']))
-        return form_page(request, confirmation_form)
+        return form_page(request, get_delete_confirmation_page(request.path, str(kwargs['pk'])))
 
     def post(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
         option = request.POST.get('delete_document_confirmation')
         if option is None:
-            return redirect(request.path_info, kwargs={'pk': draft_id})
+            return form_page(request, get_delete_confirmation_page(request.path, str(kwargs['pk'])),
+                             errors={'delete_document_confirmation': ['This field is required']})
         else:
             if option == 'yes':
                 if 'ultimate-end-user' in request.path:
