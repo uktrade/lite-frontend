@@ -282,9 +282,13 @@
 			</a>
 		</div>
 
-		{% if draft.end_user %}
+		{% if draft.end_user and end_user_document %}
 			<div class="lite-tag lite-tag--small lite-tag--blue">
 				Done
+			</div>
+        {% elif draft.end_user %}
+            <div class="lite-tag lite-tag--small">
+				Started
 			</div>
 		{% else %}
 			<div class="lite-tag lite-tag--small">
@@ -302,7 +306,7 @@
 			<tbody class="govuk-table__body">
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" scope="row">Type</th>
-					<td class="govuk-table__cell">{{ draft.end_user.sub_type|title }}</td>
+					<td class="govuk-table__cell">{{ draft.end_user.sub_type.value|title }}</td>
 				</tr>
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" scope="row">Name</th>
@@ -358,9 +362,13 @@
 			</a>
 		</div>
 
-		{% if draft.consignee %}
+		{% if draft.consignee and consignee_document %}
 			<div class="lite-tag lite-tag--small lite-tag--blue">
 				Done
+			</div>
+        {% elif draft.consignee %}
+            <div class="lite-tag lite-tag--small">
+				Started
 			</div>
 		{% else %}
 			<div class="lite-tag lite-tag--small">
@@ -435,9 +443,13 @@
 			</a>
 		</div>
 
-		{% if ultimate_end_users %}
+		{% if ultimate_end_users and ultimate_end_users_documents_complete %}
 			<div class="lite-tag lite-tag--small lite-tag--blue">
 				Done
+			</div>
+        {% elif ultimate_end_users %}
+            <div class="lite-tag lite-tag--small">
+				Started
 			</div>
 		{% else %}
 			<div class="lite-tag lite-tag--small">
@@ -487,9 +499,13 @@
 				Third Parties (optional)
 			</a>
 		</div>
-		{% if third_parties %}
-			<div class="lite-tag lite-tag--small lite-tag--blue">
+        {% if third_parties and third_parties_documents_complete %}
+            <div class="lite-tag lite-tag--small lite-tag--blue">
 				Done
+			</div>
+		{% elif third_parties %}
+			<div class="lite-tag lite-tag--small">
+				Started
 			</div>
 		{% else %}
 			<div class="lite-tag lite-tag--small">
