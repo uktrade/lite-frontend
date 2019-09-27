@@ -499,6 +499,8 @@
 	</div>
 	{% if errors|key_value:'third_parties' %}
 		<p class="govuk-error-message">{{ errors|key_value:'third_parties' }}</p>
+    {% elif errors|key_value:'third_parties_documents'%}
+        <p class="govuk-error-message">{{ errors|key_value:'third_parties_documents' }}</p>
 	{% endif %}
 	{% if third_parties %}
 		<table class="govuk-table">
