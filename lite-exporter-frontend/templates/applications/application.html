@@ -2,6 +2,10 @@
 
 {% load humanize static %}
 
+{% block back_link %}
+	<a href="{% url 'applications:applications' %}" class="govuk-back-link">Back</a>
+{% endblock %}
+
 {% block body %}
 
 <h2 class="govuk-heading-l">{{ title }}</h2>
