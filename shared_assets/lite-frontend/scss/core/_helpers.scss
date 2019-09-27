@@ -18,7 +18,7 @@
 	display: block;
 	height: 2px;
 	background: govuk-colour("light-grey");
-	margin: govuk-spacing(1) 0 govuk-spacing(6) 0;
+	margin: govuk-spacing(1) 0 govuk-spacing(6);
 	border: none;
 }
 
@@ -30,7 +30,6 @@
 			margin-left: 0!important;
 		}
 	}
-
 	@include govuk-media-query($until: tablet) {
 		* {
 			margin-left: 0!important;
@@ -39,9 +38,8 @@
 }
 
 .lite-mobile-only {
-	display: none;
-
 	@include govuk-media-query($until: tablet) {
 		display: block;
 	}
+	display: none;
 }

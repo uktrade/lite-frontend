@@ -1,14 +1,6 @@
-:root {
-	--margin-right: 20px;
-}
-
 .lite-tabs__container {
 	position: relative;
 	display: block;
-	--margin-right: 20px;
-	@include govuk-media-query($from: tablet) {
-		--margin-right: 25px;
-	}
 
 	&:after {
 		content: "";
@@ -16,8 +8,8 @@
 		top: 0;
 		right: 0;
 		bottom: 0;
-		width: var(--margin-right);
-		background: linear-gradient(90deg, rgba(white, 0%), white);
+		width: 20px;
+		background: linear-gradient(90deg, rgba(white, 0%), govuk-colour("white"));
 		pointer-events: none;
 	}
 }
@@ -32,8 +24,8 @@
 }
 
 .lite-tabs__tab {
-	display: inline-block;
 	@include govuk-font($size: 14, $weight: bold);
+	display: inline-block;
 	line-height: 40px!important;
 	margin-right: 25px;
 	margin-bottom: 30px;
