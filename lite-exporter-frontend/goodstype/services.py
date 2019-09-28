@@ -1,7 +1,7 @@
 from urllib.parse import urlencode
 
 from conf.client import get, post, put, delete
-from conf.constants import GOODSTYPE_URL
+from conf.constants import GOODSTYPE_URL, GOODSTYPE_COUNTRY_URL
 
 
 def get_goods_types(request, params=None):
@@ -31,4 +31,9 @@ def update_goods_type(request, pk, json):
 
 def delete_goods_type(request, pk):
     data = delete(request, GOODSTYPE_URL + pk)
+    return data.json(), data.status_code
+
+
+def post_goods_type_countries(request, json):
+    data = put(request, GOODSTYPE_COUNTRY_URL, json)
     return data.json(), data.status_code

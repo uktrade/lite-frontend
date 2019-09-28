@@ -29,6 +29,7 @@ class ApplicationOverviewPage:
         self.attach_consignee_document = "consignee_attach_doc"  # ID
         self.download_consignee_document = "consignee_document_download"  # ID
         self.delete_consignee_document = "consignee_document_delete"  # ID
+        self.goods_countries_link = "goods_country_assignments"  # ID
 
     def click_application_locations_link(self):
         self.driver.execute_script("document.getElementById('" + self.location_link + "').scrollIntoView(true);")
@@ -53,6 +54,10 @@ class ApplicationOverviewPage:
     def click_countries_link(self):
         self.driver.execute_script("document.getElementById('" + self.countries_link + "').scrollIntoView(true);")
         self.driver.find_element_by_id(self.countries_link).click()
+
+    def click_goods_countries_link(self):
+        self.driver.execute_script("document.getElementById('" + self.goods_countries_link + "').scrollIntoView(true);")
+        self.driver.find_element_by_id(self.goods_countries_link).click()
 
     def get_text_of_countries_selected(self):
         return self.driver.find_element_by_css_selector(self.show_countries_link).text

@@ -60,6 +60,11 @@ def get_licence_overview(request, kwargs, errors=None):
     third_parties, _ = get_third_parties(request, draft_id)
     additional_documents, _ = get_additional_documents(request, draft_id)
 
+    countries_on_goods_types = False
+    for good in goodstypes['goods']:
+        if good['countries']:
+            countries_on_goods_types = True
+
     end_user = draft.get('end_user')
     if end_user:
         end_user_document, _ = get_end_user_document(request, draft_id)
@@ -91,6 +96,7 @@ def get_licence_overview(request, kwargs, errors=None):
             check_all_parties_have_a_document(ultimate_end_users['ultimate_end_users']),
         'end_user_document': end_user_document,
         'consignee_document': consignee_document,
+        'countries_on_goods_types': countries_on_goods_types,
         'third_parties': third_parties['third_parties'],
         'additional_documents': additional_documents['documents']
     }

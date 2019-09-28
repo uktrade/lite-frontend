@@ -74,3 +74,28 @@ Feature: I want to indicate the open licence I want
     And I click on countries
     And I search for country "Canada"
     Then only "Canada" is displayed in country list
+
+  @LT_1363_set_countries_on_goods
+  Scenario: Set countries on goodstypes
+    Given I go to exporter homepage and choose Test Org
+    When I go to exporter homepage
+    And I click on apply for a license button
+    And I click on start button
+    And I enter in name for application and continue
+    And I select "open" application and continue
+    And I select "permanent" option and continue
+    And I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
+    And I click on the goods link from overview
+    And I click Add goods type button
+    And I add a good or good type with description "Sniper" controlled "Yes" control code "1234" incorporated "Yes" and part number "not needed"
+    And I click overview
+    And I click on countries
+    And I select "Poland" from the country list
+    And I select "United Kingdom" from the country list
+    And I click continue
+    And I click on assign countries to goods
+    And I "assign" all countries to all goods
+    Then I see all countries are "assigned" to all goods
+    When I click on assign countries to goods
+    And I "unassign" all countries to all goods
+    Then I see all countries are "unassigned" to all goods

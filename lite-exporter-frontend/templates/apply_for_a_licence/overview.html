@@ -273,6 +273,36 @@
 </div>
 {% endif %}
 
+{% if draft.licence_type.key == 'open_licence' and goodstypes and countries %}
+    <div class="lite-section">
+        <div class="lite-section-header">
+            <div>
+                <a id="goods_country_assignments" href="{% url 'goods_type:goods_countries' draft.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
+                    Explain where each item is going (optional)
+                </a>
+            </div>
+            {% if countries_on_goods_types %}
+                <div class="lite-tag lite-tag--small lite-tag--blue">
+                    Done
+                </div>
+            {% else %}
+                <div class="lite-tag lite-tag--small">
+                    Not Done
+                </div>
+            {% endif %}
+        </div>
+
+        <p class="govuk-caption-m">In this section, you can choose an item and tick the countries it will go to.</p>
+        <p class="govuk-caption-m">You do not need this:
+            <ul class="govuk-list govuk-list--bullet govuk-caption-m">
+                <li>if you are sending every item to every country</li>
+                <li>but it may get you a quicker decision about your export licence</li>
+            </ul>
+        </p>
+
+    </div>
+{% endif %}
+
 {% if draft.licence_type.key == 'standard_licence' %}
 <div class="lite-section {% if errors|key_value:'end_user' %}govuk-form-group--error{% endif %}">
 	<div class="lite-section-header">
