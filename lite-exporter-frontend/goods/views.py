@@ -209,12 +209,13 @@ class AttachDocuments(TemplateView):
         good, _ = get_good(request, good_id)
 
         data, error = add_document_data(request)
+        
+        if error:
+            return error_page(None, error)
+
         if 'description' not in data:
             data['description'] = ''
         data = [data]
-
-        if error:
-            return error_page(None, error)
 
         # Send LITE API the file information
         good_documents, _ = post_good_documents(request, good_id, data)
