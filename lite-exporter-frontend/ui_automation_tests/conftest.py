@@ -42,9 +42,6 @@ def pytest_addoption(parser):
     if env == 'local':
         parser.addoption("--exporter_url", action="store", default="http://localhost:"+str(os.environ.get('PORT')), help="url")
         parser.addoption("--lite_api_url", action="store", default=str(os.environ.get('LITE_API_URL')), help="url")
-    elif env == 'dev2':
-        parser.addoption("--exporter_url", action="store", default="https://exporter2.lite.service.dev.uktrade.io/", help="url")
-        parser.addoption("--lite_api_url", action="store", default="https://lite-api2-dev.london.cloudapps.digital/", help="url")
     elif env == 'demo':
         raise Exception("This is the demo environment - Try another environment instead")
     else:
