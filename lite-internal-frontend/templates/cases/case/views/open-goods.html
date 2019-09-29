@@ -17,7 +17,13 @@
 			<tr class="lite-table__row">
 				<td class="lite-table__cell">
 					{% if show_checkboxes %}<div class="govuk-checkboxes__item">
-						<input class="govuk-checkboxes__input" type="checkbox" name="goods_types" value="{{ good.id }}" id="{{ good.id }}"> {% endif %}
+						<input class="govuk-checkboxes__input" type="checkbox"
+                            {% if show_advice %}
+                                name="goods_types"
+                            {% else %}
+                                name="goods"
+                            {% endif %}
+                            value="{{ good.id }}" id="{{ good.id }}"> {% endif %}
 						<label class="govuk-label {% if show_checkboxes %}govuk-checkboxes__label{% endif %}" for="{{ good.id }}">{{ good.description }}</label>
 					{% if show_checkboxes %}</div>{% endif %}
 				</td>

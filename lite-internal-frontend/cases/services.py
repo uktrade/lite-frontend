@@ -145,7 +145,7 @@ def prepare_data_for_advice(json):
     new_data = []
     single_cases = ['end_user', 'consignee']
     multiple_cases = {'ultimate_end_users': 'ultimate_end_user', 'third_parties': 'third_party',
-                      'countries': 'country', 'goods': 'good', 'goods_types': 'good_type'}
+                      'countries': 'country', 'goods': 'good', 'goods_types': 'goods_type'}
 
     for entity_name in single_cases:
         if json.get(entity_name):
