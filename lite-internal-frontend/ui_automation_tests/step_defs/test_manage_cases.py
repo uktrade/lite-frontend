@@ -48,6 +48,6 @@ class ManageCases:
         assert "LICENCE TYPE" in application_summary
         assert context.org_name in application_summary
         assert "Trading" in application_summary or "Brokering" in application_summary
-        assert context.date_time_of_update.split(':')[1] in application_summary
+        assert utils.search_for_correct_date_regex_in_element(application_summary)
         assert "None" in application_summary
         assert "Standard Licence" in application_summary
