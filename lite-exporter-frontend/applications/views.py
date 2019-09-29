@@ -98,17 +98,27 @@ class ApplicationDetail(TemplateView):
 
 
 class RespondToQuery(TemplateView):
+    application_id = None
+    ecju_query_id = None
+    ecju_query = None
+
+    def dispatch(self, request, *args, **kwargs):
+        self.application_id = str(kwargs['pk'])
+        self.ecju_query_id = str(kwargs['query_pk'])
+        self.ecju_query = get_ecju_query(request, str(kwargs['pk']), str(kwargs['query_pk']))
+
+        if self.ecju_query['response']:
+            return redirect(reverse_lazy('applications:application-detail', kwargs={'pk': self.application_id,
+                                                                 'type': 'ecju-queries'}))
+
+        return super(RespondToQuery, self).dispatch(request, *args, **kwargs)
+
+
     def get(self, request, **kwargs):
         """
         Will get a text area form for the user to respond to the ecju_query
         """
-        application_id = str(kwargs['pk'])
-        ecju_query = get_ecju_query(request, str(kwargs['pk']), str(kwargs['query_pk']))
-
-        if ecju_query['response']:
-            raise Http404
-
-        return form_page(request, respond_to_query_form(application_id, ecju_query))
+        return form_page(request, respond_to_query_form(self.application_id, self.ecju_query))
 
     def post(self, request, **kwargs):
         """
@@ -117,46 +127,42 @@ class RespondToQuery(TemplateView):
         else will allow the user to confirm they wish to respond and post data if accepted.
         """
         form_name = request.POST.get('form_name')
-        application_id = str(kwargs['pk'])
-        ecju_query_id = str(kwargs['query_pk'])
-
-        ecju_query = get_ecju_query(request, application_id, ecju_query_id)
 
         if form_name == 'respond_to_query':
             # Post the form data to API for validation only
             data = {'response': request.POST.get('response'), 'validate_only': True}
-            response, status_code = put_ecju_query(request, application_id, ecju_query_id, data)
+            response, status_code = put_ecju_query(request, self.application_id, self.ecju_query_id, data)
 
             if status_code != 200:
                 errors = response.get('errors')
                 errors = {error: message for error, message in errors.items()}
-                form = respond_to_query_form(application_id, ecju_query)
+                form = respond_to_query_form(self.application_id, self.ecju_query)
                 data = {'response': request.POST.get('response')}
                 return form_page(request, form, data=data, errors=errors)
             else:
                 form = ecju_query_respond_confirmation_form(reverse_lazy('applications:respond_to_query',
-                                                                         kwargs={'pk': application_id,
-                                                                                 'query_pk': ecju_query_id}))
+                                                                         kwargs={'pk': self.application_id,
+                                                                                 'query_pk': self.ecju_query_id}))
                 form.questions.append(HiddenField('response', request.POST.get('response')))
                 return form_page(request, form)
         elif form_name == 'ecju_query_response_confirmation':
             if request.POST.get('confirm_response') == 'yes':
-                data, status_code = put_ecju_query(request, application_id, ecju_query_id,
+                data, status_code = put_ecju_query(request, self.application_id, self.ecju_query_id,
                                                    request.POST)
 
                 if 'errors' in data:
-                    return form_page(request, respond_to_query_form(application_id, ecju_query), data=request.POST,
+                    return form_page(request, respond_to_query_form(self.application_id, self.ecju_query), data=request.POST,
                                      errors=data['errors'])
 
-                return redirect(reverse_lazy('applications:application-detail', kwargs={'pk': application_id,
+                return redirect(reverse_lazy('applications:application-detail', kwargs={'pk': self.application_id,
                                                                                         'type': 'ecju-queries'}))
             elif request.POST.get('confirm_response') == 'no':
-                return form_page(request, respond_to_query_form(application_id, ecju_query), data=request.POST)
+                return form_page(request, respond_to_query_form(self.application_id, self.ecju_query), data=request.POST)
             else:
                 error = {'required': ['This field is required']}
                 form = ecju_query_respond_confirmation_form(reverse_lazy('applications:respond_to_query',
-                                                                         kwargs={'pk': application_id,
-                                                                                 'query_pk': ecju_query_id}))
+                                                                         kwargs={'pk': self.application_id,
+                                                                                 'query_pk': self.ecju_query_id}))
                 form.questions.append(HiddenField('response', request.POST.get('response')))
                 return form_page(request, form, errors=error)
         else:

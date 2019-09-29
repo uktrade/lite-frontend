@@ -277,70 +277,75 @@ class DeleteDocument(TemplateView):
 
 
 class RespondToQuery(TemplateView):
+    good_id = None
+    ecju_query_id = None
+    ecju_query = None
+    clc_query_case_id = None
+
+    def dispatch(self, request, *args, **kwargs):
+        self.good_id = str(kwargs['pk'])
+        self.ecju_query_id = str(kwargs['query_pk'])
+
+        good, _ = get_good(request, self.good_id)
+        self.clc_query_case_id = good['case_id']
+        self.ecju_query = get_ecju_query(request, self.clc_query_case_id, self.ecju_query_id)
+
+        if self.ecju_query['response']:
+            return redirect(reverse_lazy('goods:good_detail', kwargs={'pk': self.good_id,
+                                                                      'type': 'ecju-queries'}))
+
+        return super(RespondToQuery, self).dispatch(request, *args, **kwargs)
+
     def get(self, request, **kwargs):
-        '''
+        """
         Will get a text area form for the user to respond to the ecju_query
-        '''
-        good_id = str(kwargs['pk'])
-        good, _ = get_good(request, good_id)
-        clc_query_case_id = good['case_id']
-        ecju_query = get_ecju_query(request, clc_query_case_id, str(kwargs['query_pk']))
+        """
 
-        # If an ecju query is already responded to, prevent a second response
-        if ecju_query['response']:
-            raise Http404
-
-        return form_page(request, respond_to_query_form(good_id, ecju_query))
+        return form_page(request, respond_to_query_form(self.good_id, self.ecju_query))
 
     def post(self, request, **kwargs):
-        '''
+        """
         will determine what form the user is on:
         if the user is on the input form will then will determine if data is valid, and move user to confirmation form
         else will allow the user to confirm they wish to respond and post data if accepted.
-        '''
-        good_id = str(kwargs['pk'])
+        """
         form_name = request.POST.get('form_name')
-        good, status_code = get_good(request, good_id)
-        clc_query_case_id = good['case_id']
-        ecju_query_id = str(kwargs['query_pk'])
-
-        ecju_query = get_ecju_query(request, clc_query_case_id, ecju_query_id)
 
         if form_name == 'respond_to_query':
             # Post the form data to API for validation only
             data = {'response': request.POST.get('response'), 'validate_only': True}
-            response, status_code = put_ecju_query(request, clc_query_case_id, ecju_query_id, data)
+            response, status_code = put_ecju_query(request, self.clc_query_case_id, self.ecju_query_id, data)
 
             if status_code != 200:
                 errors = response.get('errors')
                 errors = {error: message for error, message in errors.items()}
-                form = respond_to_query_form(clc_query_case_id, ecju_query)
+                form = respond_to_query_form(self.clc_query_case_id, self.ecju_query)
                 data = {'response': request.POST.get('response')}
                 return form_page(request, form, data=data, errors=errors)
             else:
                 form = ecju_query_respond_confirmation_form(reverse_lazy('goods:respond_to_query',
-                                                                         kwargs={'pk': good_id,
-                                                                                 'query_pk': ecju_query_id}))
+                                                                         kwargs={'pk': self.good_id,
+                                                                                 'query_pk': self.ecju_query_id}))
                 form.questions.append(HiddenField('response', request.POST.get('response')))
                 return form_page(request, form)
         elif form_name == 'ecju_query_response_confirmation':
             if request.POST.get('confirm_response') == 'yes':
-                data, status_code = put_ecju_query(request, clc_query_case_id, ecju_query_id,
+                data, status_code = put_ecju_query(request, self.clc_query_case_id, self.ecju_query_id,
                                                    request.POST)
                 if 'errors' in data:
-                    return form_page(request, respond_to_query_form(good_id, ecju_query), data=request.POST,
+                    return form_page(request, respond_to_query_form(self.good_id, self.ecju_query), data=request.POST,
                                      errors=data['errors'])
 
-                return redirect(reverse_lazy('goods:good_detail', kwargs={'pk': good_id,
+                return redirect(reverse_lazy('goods:good_detail', kwargs={'pk': self.good_id,
                                                                           'type': 'ecju-queries'}))
 
             elif request.POST.get('confirm_response') == 'no':
-                return form_page(request, respond_to_query_form(clc_query_case_id, ecju_query), data=request.POST)
+                return form_page(request, respond_to_query_form(self.clc_query_case_id, self.ecju_query), data=request.POST)
             else:
                 error = {'required': ['This field is required']}
                 form = ecju_query_respond_confirmation_form(reverse_lazy('goods:respond_to_query',
-                                                                         kwargs={'pk': good_id,
-                                                                                 'query_pk': ecju_query_id}))
+                                                                         kwargs={'pk': self.good_id,
+                                                                                 'query_pk': self.ecju_query_id}))
                 form.questions.append(HiddenField('response', request.POST.get('response')))
                 return form_page(request, form, errors=error)
         else:

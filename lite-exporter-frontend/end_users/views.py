@@ -102,6 +102,7 @@ class ApplyForAnAdvisory(TemplateView):
 
         return end_user_advisory_success_page(request, str(data['end_user_advisory']['id']))
 
+
 class EndUserDetailEmpty(TemplateView):
     def get(self, request, **kwargs):
         return redirect(reverse_lazy('end_users:end_user_detail', kwargs={'pk': kwargs['pk'],
@@ -189,25 +190,25 @@ class RespondToQuery(TemplateView):
         self.ecju_query_id = str(kwargs['query_pk'])
         self.ecju_query = get_ecju_query(request, self.case_id, self.ecju_query_id)
 
+        # If an ecju query is already responded to, return user to end_user_advisory_page
+        if self.ecju_query['response']:
+            return redirect(reverse_lazy('end_users:end_user_detail', kwargs={'pk': self.end_user_advisory_id,
+                                                                 'type': 'ecju-queries'}))
+
         return super(RespondToQuery, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, **kwargs):
-        '''
+        """
         Will get a text area form for the user to respond to the ecju_query
-        '''
-
-        # If an ecju query is already responded to, prevent a second response
-        if self.ecju_query['response']:
-            raise Http404
-
+        """
         return form_page(request, respond_to_query_form(self.end_user_advisory_id, self.ecju_query))
 
     def post(self, request, **kwargs):
-        '''
+        """
         will determine what form the user is on:
         if the user is on the input form will then will determine if data is valid, and move user to confirmation form
         else will allow the user to confirm they wish to respond and post data if accepted.
-        '''
+        """
         form_name = request.POST.get('form_name')
 
         if form_name == 'respond_to_query':
