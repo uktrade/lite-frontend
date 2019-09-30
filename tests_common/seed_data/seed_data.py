@@ -1,6 +1,6 @@
 import requests
 from tools.wait import wait_for_ultimate_end_user_document, wait_for_document
-from request_data import request_data, first_name, last_name
+from request_data import get_request_data, first_name, last_name
 
 
 class SeedData:
@@ -9,12 +9,14 @@ class SeedData:
     gov_headers = {'content-type': 'application/json'}
     export_headers = {'content-type': 'application/json'}
 
-    def __init__(self, api_url):
+    def __init__(self, api_url, exporter_login):
+        self.exporter_user_email = exporter_login['email']
         self.base_url = api_url.rstrip('/')
         self.auth_gov_user()
         self.setup_org()
         self.auth_export_user()
         self.add_good()
+        self.request_data = get_request_data(self.exporter_user_email)
 
     def log(self, text):
         print(text)
@@ -24,20 +26,20 @@ class SeedData:
         self.context[name] = value
 
     def auth_gov_user(self):
-        data = request_data['gov_user']
+        data = self.request_data['gov_user']
         response = self.make_request('POST', url='/gov-users/authenticate/', body=data)
         self.add_to_context('gov_user_token', response.json()['token'])
         self.gov_headers['gov-user-token'] = self.context['gov_user_token']
 
     def auth_export_user(self):
-        data = request_data['export_user']
+        data = self.request_data['export_user']
         response = self.make_request('POST', url='/users/authenticate/', body=data)
         self.add_to_context('export_user_token', response.json()['token'])
         self.export_headers['exporter-user-token'] = self.context['export_user_token']
         self.export_headers['organisation-id'] = self.context['org_id']
 
     def setup_org(self):
-        organisation = self.find_org_by_name(request_data['organisation']['name'])
+        organisation = self.find_org_by_name(self.request_data['organisation']['name'])
         if not organisation:
             organisation = self.add_org('organisation')
         org_id = organisation['id']
@@ -45,17 +47,17 @@ class SeedData:
         self.add_to_context('first_name', first_name)
         self.add_to_context('last_name', last_name)
         self.add_to_context('primary_site_id', self.get_org_primary_site_id(org_id))
-        self.add_to_context('org_name', request_data['organisation']['name'])
+        self.add_to_context('org_name', self.request_data['organisation']['name'])
 
     def setup_org_for_switching_organisations(self):
-        organisation = self.find_org_by_name(request_data['organisation_for_switching_organisations']['name'])
+        organisation = self.find_org_by_name(self.request_data['organisation_for_switching_organisations']['name'])
         if not organisation:
             self.add_org('organisation_for_switching_organisations')
-        self.add_to_context('org_name_for_switching_organisations', request_data['organisation_for_switching_organisations']['name'])
+        self.add_to_context('org_name_for_switching_organisations', self.request_data['organisation_for_switching_organisations']['name'])
 
     def add_good(self):
         self.log('Adding good: ...')
-        data = request_data['good']
+        data = self.request_data['good']
         response = self.make_request('POST', url='/goods/', headers=self.export_headers, body=data)
         item = response.json()['good']
         self.add_to_context('good_id', item['id'])
@@ -63,7 +65,7 @@ class SeedData:
 
     def add_clc_good(self):
         self.log('Adding clc good: ...')
-        data = request_data['clc_good']
+        data = self.request_data['clc_good']
         response = self.make_request('POST', url='/goods/', headers=self.export_headers, body=data)
         item = response.json()['good']
         self.add_to_context('clc_good_id', item['id'])
@@ -78,7 +80,7 @@ class SeedData:
 
     def add_eua_query(self):
         self.log("Adding end user advisory: ...")
-        data = request_data['end_user_advisory']
+        data = self.request_data['end_user_advisory']
         response = self.make_request("POST", url='/queries/end-user-advisories/', headers=self.export_headers, body=data)
         id = response.json()['end_user_advisory']['id']
         self.add_to_context('end_user_advisory_id', str(id))
@@ -93,40 +95,40 @@ class SeedData:
 
     def add_good_end_product_false(self):
         self.log('Adding good: ...')
-        good = self.find_good_by_name(request_data['good_end_product_false']['description'])
+        good = self.find_good_by_name(self.request_data['good_end_product_false']['description'])
         if not good:
-            data = request_data['good_end_product_false']
+            data = self.request_data['good_end_product_false']
             response = self.make_request('POST', url='/goods/', headers=self.export_headers, body=data)
             item = response.json()['good']
             self.add_good_document(item['id'])
-        self.add_to_context('goods_name', request_data['good_end_product_false']['description'])
+        self.add_to_context('goods_name', self.request_data['good_end_product_false']['description'])
 
     def add_good_end_product_true(self):
         self.log('Adding good: ...')
-        good = self.find_good_by_name(request_data['good_end_product_true']['description'])
+        good = self.find_good_by_name(self.request_data['good_end_product_true']['description'])
         if not good:
-            data = request_data['good_end_product_true']
+            data = self.request_data['good_end_product_true']
             response = self.make_request('POST', url='/goods/', headers=self.export_headers, body=data)
             item = response.json()['good']
             self.add_good_document(item['id'])
-        self.add_to_context('goods_name', request_data['good_end_product_true']['description'])
+        self.add_to_context('goods_name', self.request_data['good_end_product_true']['description'])
 
     def add_org(self, key):
         self.log('Creating org: ...')
-        data = request_data[key]
+        data = self.request_data[key]
         response = self.make_request('POST', url='/organisations/', body=data)
         organisation = response.json()['organisation']
         return organisation
 
     def add_case_note(self, context, case_id):
         self.log('Creating case note: ...')
-        data = request_data['case_note']
-        context.text = request_data['case_note']['text']
+        data = self.request_data['case_note']
+        context.text = self.request_data['case_note']['text']
         self.make_request("POST", url='/cases/' + case_id + '/case-notes/', headers=self.gov_headers, body=data)  # noqa
 
     def add_ecju_query(self, case_id):
         self.log("Creating ecju query: ...")
-        data = request_data['ecju_query']
+        data = self.request_data['ecju_query']
         self.make_request("POST", url='/cases/' + case_id + '/ecju-queries/', headers=self.gov_headers, body=data)  # noqa
 
     def find_org_by_name(self, org_name):
@@ -141,11 +143,11 @@ class SeedData:
         return organisation['primary_site']['id']
 
     def add_good_document(self, good_id):
-        data = [request_data['document']]
+        data = [self.request_data['document']]
         self.make_request("POST", url='/goods/' + good_id + '/documents/', headers=self.export_headers, body=data)
 
     def add_document(self, url):
-        data = request_data['document']
+        data = self.request_data['document']
         self.make_request("POST", url=url, headers=self.export_headers, body=data)
 
     def add_end_user_document(self, draft_id):
@@ -171,7 +173,7 @@ class SeedData:
 
     def add_draft(self, draft=None, good=None, enduser=None, ultimate_end_user=None, consignee=None):
         self.log('Creating draft: ...')
-        data = request_data['draft'] if draft is None else draft
+        data = self.request_data['draft'] if draft is None else draft
         response = self.make_request('POST', url='/drafts/', headers=self.export_headers, body=data)
         draft_id = response.json()['draft']['id']
         self.add_to_context('draft_id', draft_id)
@@ -179,21 +181,21 @@ class SeedData:
         self.make_request('POST', url='/drafts/' + draft_id + '/sites/', headers=self.export_headers,
                           body={'sites': [self.context['primary_site_id']]})
         self.log('Adding end user: ...')
-        data = request_data['end-user'] if enduser is None else enduser
+        data = self.request_data['end-user'] if enduser is None else enduser
         self.make_request('POST', url='/drafts/' + draft_id + '/end-user/', headers=self.export_headers,
                           body=data)
         self.add_end_user_document(draft_id)
         self.log("Adding good: ...")
-        data = request_data['add_good'] if good is None else good
+        data = self.request_data['add_good'] if good is None else good
         data['good_id'] = self.context['good_id']
         self.make_request('POST', url='/drafts/' + draft_id + '/goods/', headers=self.export_headers, body=data)
         self.log('Adding ultimate end user: ...')
-        data = request_data['ultimate_end_user'] if ultimate_end_user is None else ultimate_end_user
+        data = self.request_data['ultimate_end_user'] if ultimate_end_user is None else ultimate_end_user
         ultimate_end_user_post = self.make_request('POST', url='/drafts/' + draft_id + '/ultimate-end-users/',
                                                    headers=self.export_headers, body=data)
         ultimate_end_user_id = ultimate_end_user_post.json()['ultimate_end_user']['id']
         self.add_ultimate_end_user_document(draft_id, ultimate_end_user_id)
-        consignee_data = request_data['consignee'] if consignee is None else consignee
+        consignee_data = self.request_data['consignee'] if consignee is None else consignee
         self.make_request('POST', url='/drafts/' + draft_id + '/consignee/', headers=self.export_headers,
                           body=consignee_data)
         self.add_consignee_document(draft_id)
