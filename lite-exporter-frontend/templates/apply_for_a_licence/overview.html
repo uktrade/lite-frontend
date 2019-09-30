@@ -618,7 +618,7 @@
 
 <div class="lite-submit-bar js-is-sticky">
 <div class="lite-vertical-align" style="display: inline-flex; float: right; height: 38px;">
-	<a href="{% url 'apply_for_a_licence:delete' draft.id %}" class="govuk-link" style="margin: 0; float: right;" onclick="return showCancelApplication()">
+	<a href="{% url 'apply_for_a_licence:delete' draft.id %}" class="govuk-link" style="margin: 0; float: right;">
 		Delete draft
 	</a>
 </div>
@@ -652,15 +652,5 @@
 	<p class="govuk-body">
 		You can find this application in your <a class="govuk-link" href="/drafts/">drafts</a>.
 	</p>
-</aside>
-<br>
-<br>
-<aside role="complementary">
-	<h2 class="govuk-heading-m">
-		Don't want to continue this application?
-	</h2>
-	<a href="{% url 'apply_for_a_licence:delete' draft.id %}" class="govuk-body govuk-link">
-		Delete Draft Application
-	</a>
 </aside>
 {% endblock %}
