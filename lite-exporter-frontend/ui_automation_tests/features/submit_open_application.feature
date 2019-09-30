@@ -81,7 +81,7 @@ Feature: I want to indicate the open licence I want
     And I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
     And I click on the goods link from overview
     And I click Add goods type button
-    And I add a good or good type with description "Sniper" controlled "Yes" control code "1234" incorporated "Yes" and part number "not needed"
+    And I add a good or good type with description "Sniper" controlled "Yes" control code "ML1a" incorporated "Yes" and part number "not needed"
     And I click overview
     And I click on countries
     And I select "Poland" from the country list
