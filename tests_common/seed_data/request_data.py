@@ -8,7 +8,7 @@ last_name = 'Lite'
 good_end_product_true = 'Hot Cross Buns'
 good_end_product_false = 'Falafels'
 
-def get_request_data(exporter_user_email):
+def create_request_data(exporter_user_email, test_s3_key):
     return {
         'organisation': {
             'name': org_name,
@@ -153,7 +153,7 @@ def get_request_data(exporter_user_email):
         },
         'document': {
             'name': 'document 1',
-            's3_key': env('TEST_S3_KEY'),
+            's3_key': test_s3_key,
             'size': 0,
             'description': 'document for test setup'
         }
