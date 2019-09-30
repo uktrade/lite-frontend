@@ -57,7 +57,7 @@ def reference_code(value):
 
 @register.filter()
 def add_selected_class(key, url):
-    if key in url:
+    if key == url:
         return 'lite-menu-item--selected'
 
     return ''
