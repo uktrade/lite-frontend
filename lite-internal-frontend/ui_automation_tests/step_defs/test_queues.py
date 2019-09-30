@@ -77,9 +77,6 @@ def deselect_all_queues(driver):
     Shared(driver).click_submit()
 
 
-@when('I move case to new cases original queue and remove from new queue')
-def move_case_to_original_queue(driver, context):
-    ApplicationPage(driver).click_move_case_button()
-    driver.find_element_by_id(context.queue_name).click()
-    QueuesPages(driver).click_on_new_cases_queue()
-    Shared(driver).click_submit()
+@then("queue change is in audit trail")
+def queue_change_in_audit(driver, context):
+    assert "moved the case to: " + context.queue_name in ApplicationPage(driver).get_text_of_audit_trail_item(0)
