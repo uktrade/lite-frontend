@@ -1,175 +1,13 @@
 import requests
-
-from conf.settings import env
 from tools.wait import wait_for_ultimate_end_user_document, wait_for_document
+from request_data import request_data, first_name, last_name
 
 
 class SeedData:
     base_url = ''
-    exporter_user_email = env('TEST_EXPORTER_SSO_EMAIL')
-
+    context = {}
     gov_headers = {'content-type': 'application/json'}
     export_headers = {'content-type': 'application/json'}
-    context = {}
-    org_name = 'Test Org'
-    org_name_for_switching_organisations = 'Octopus Systems'
-    logging = True
-    case_note_text = 'I Am Easy to Find'
-    ecju_query_text = 'This is a question, please answer'
-    first_name = 'Test'
-    last_name = 'Lite'
-    good_end_product_true = 'Hot Cross Buns'
-    good_end_product_false = 'Falafels'
-
-    request_data = {
-        'organisation': {
-            'name': org_name,
-            'sub_type': 'commercial',
-            'eori_number': '1234567890AAA',
-            'sic_number': '2345',
-            'vat_number': 'GB1234567',
-            'registration_number': '09876543',
-            'user': {
-                'first_name': first_name,
-                'last_name': last_name,
-                'email': exporter_user_email
-            },
-            'site': {
-                'name': 'Headquarters',
-                'address': {
-                    'address_line_1': '42 Question Road',
-                    'postcode': 'Islington',
-                    'city': 'London',
-                    'region': 'London',
-                    'country': 'GB'
-                }
-            }
-        },
-        'organisation_for_switching_organisations': {
-            'name': org_name_for_switching_organisations,
-            'sub_type': 'commercial',
-            'eori_number': '1234567890AAA',
-            'sic_number': '2345',
-            'vat_number': 'GB1234567',
-            'registration_number': '09876543',
-            'user': {
-                'first_name': first_name,
-                'last_name': last_name,
-                'email': exporter_user_email
-            },
-            'site': {
-                'name': 'Headquarters',
-                'address': {
-                    'address_line_1': '42 Question Road',
-                    'postcode': 'Islington',
-                    'city': 'London',
-                    'region': 'London',
-                    'country': 'GB'
-                }
-            }
-        },
-        'good': {
-            'description': 'Lentils',
-            'is_good_controlled': 'yes',
-            'control_code': 'ML1a',
-            'is_good_end_product': True,
-            'part_number': '1234',
-            'validate_only': False,
-        },
-        'good_end_product_true': {
-            'description': good_end_product_true,
-            'is_good_controlled': 'yes',
-            'control_code': 'ML1a',
-            'is_good_end_product': True,
-            'part_number': '1234',
-            'validate_only': False
-        },
-        'good_end_product_false': {
-            'description': good_end_product_false,
-            'is_good_controlled': 'yes',
-            'control_code': 'ML1a',
-            'is_good_end_product': False,
-            'part_number': '1234',
-            'validate_only': False,
-        },
-        'gov_user': {
-            'email': 'test-uat-user@digital.trade.gov.uk',
-            'first_name': 'ecju',
-            'last_name': 'user'},
-        'export_user': {
-            'email': exporter_user_email,
-            'password': 'password'
-        },
-        'draft': {
-            'name': 'application',
-            'licence_type': 'standard_licence',
-            'export_type': 'permanent',
-            'have_you_been_informed': 'yes',
-            'reference_number_on_information_form': '1234'
-        },
-        'end-user': {
-            'name': 'Government',
-            'address': 'Westminster, London SW1A 0AA',
-            'country': 'Ukraine',
-            'sub_type': 'government',
-            'website': 'https://www.gov.uk'
-        },
-        "end_user_advisory": {
-            "end_user": {
-              "name": "Person",
-              "address": "Westminster, London SW1A 0AA",
-              "country": "GB",
-              "sub_type": "government",
-              "website": "https://www.gov.uk"
-            },
-            "contact_telephone": 12345678901,
-            "contact_email": "person@gov.uk",
-            "reasoning": "This is the reason for raising the enquiry",
-            "note": "note for end user advisory"
-        },
-        'ultimate_end_user': {
-            'name': 'Individual',
-            'address': 'Bullring, Birmingham SW1A 0AA',
-            'country': 'GB',
-            'sub_type': 'commercial',
-            'website': 'https://www.anothergov.uk'
-        },
-        'consignee': {
-            'name': 'Government',
-            'address': 'Westminster, London SW1A 0BB',
-            'country': 'GB',
-            'sub_type': 'government',
-            'website': 'https://www.gov.uk'
-        },
-        'add_good': {
-            'good_id': '',
-            'quantity': 1234,
-            'unit': 'NAR',
-            'value': 123.45
-        },
-        'clc_good': {
-            'description': 'Targus',
-            'is_good_controlled': 'unsure',
-            'control_code': 'ML1a',
-            'is_good_end_product': True,
-            'part_number': '1234',
-            'validate_only': False,
-            'details': 'Kebabs'
-        },
-        'case_note': {
-            'text': case_note_text,
-            'is_visible_to_exporter': True
-        },
-        'ecju_query': {
-            'question': ecju_query_text
-        },
-        'document': {
-            'name': 'document 1',
-            's3_key': env('TEST_S3_KEY'),
-            'size': 0,
-            'description': 'document for test setup'
-        }
-    }
 
     def __init__(self, api_url):
         self.base_url = api_url.rstrip('/')
@@ -186,38 +24,38 @@ class SeedData:
         self.context[name] = value
 
     def auth_gov_user(self):
-        data = self.request_data['gov_user']
+        data = request_data['gov_user']
         response = self.make_request('POST', url='/gov-users/authenticate/', body=data)
         self.add_to_context('gov_user_token', response.json()['token'])
         self.gov_headers['gov-user-token'] = self.context['gov_user_token']
 
     def auth_export_user(self):
-        data = self.request_data['export_user']
+        data = request_data['export_user']
         response = self.make_request('POST', url='/users/authenticate/', body=data)
         self.add_to_context('export_user_token', response.json()['token'])
         self.export_headers['exporter-user-token'] = self.context['export_user_token']
         self.export_headers['organisation-id'] = self.context['org_id']
 
     def setup_org(self):
-        organisation = self.find_org_by_name(self.org_name)
+        organisation = self.find_org_by_name(request_data['organisation']['name'])
         if not organisation:
             organisation = self.add_org('organisation')
         org_id = organisation['id']
         self.add_to_context('org_id', org_id)
-        self.add_to_context('first_name', self.first_name)
-        self.add_to_context('last_name', self.last_name)
+        self.add_to_context('first_name', first_name)
+        self.add_to_context('last_name', last_name)
         self.add_to_context('primary_site_id', self.get_org_primary_site_id(org_id))
-        self.add_to_context('org_name', self.org_name)
+        self.add_to_context('org_name', request_data['organisation']['name'])
 
     def setup_org_for_switching_organisations(self):
-        organisation = self.find_org_by_name(self.org_name_for_switching_organisations)
+        organisation = self.find_org_by_name(request_data['organisation_for_switching_organisations']['name'])
         if not organisation:
             self.add_org('organisation_for_switching_organisations')
-        self.add_to_context('org_name_for_switching_organisations', self.org_name_for_switching_organisations)
+        self.add_to_context('org_name_for_switching_organisations', request_data['organisation_for_switching_organisations']['name'])
 
     def add_good(self):
         self.log('Adding good: ...')
-        data = self.request_data['good']
+        data = request_data['good']
         response = self.make_request('POST', url='/goods/', headers=self.export_headers, body=data)
         item = response.json()['good']
         self.add_to_context('good_id', item['id'])
@@ -225,7 +63,7 @@ class SeedData:
 
     def add_clc_good(self):
         self.log('Adding clc good: ...')
-        data = self.request_data['clc_good']
+        data = request_data['clc_good']
         response = self.make_request('POST', url='/goods/', headers=self.export_headers, body=data)
         item = response.json()['good']
         self.add_to_context('clc_good_id', item['id'])
@@ -240,7 +78,7 @@ class SeedData:
 
     def add_eua_query(self):
         self.log("Adding end user advisory: ...")
-        data = self.request_data['end_user_advisory']
+        data = request_data['end_user_advisory']
         response = self.make_request("POST", url='/queries/end-user-advisories/', headers=self.export_headers, body=data)
         id = response.json()['end_user_advisory']['id']
         self.add_to_context('end_user_advisory_id', str(id))
@@ -255,40 +93,40 @@ class SeedData:
 
     def add_good_end_product_false(self):
         self.log('Adding good: ...')
-        good = self.find_good_by_name(self.good_end_product_false)
+        good = self.find_good_by_name(request_data['good_end_product_false']['description'])
         if not good:
-            data = self.request_data['good_end_product_false']
+            data = request_data['good_end_product_false']
             response = self.make_request('POST', url='/goods/', headers=self.export_headers, body=data)
             item = response.json()['good']
             self.add_good_document(item['id'])
-        self.add_to_context('goods_name', self.good_end_product_false)
+        self.add_to_context('goods_name', request_data['good_end_product_false']['description'])
 
     def add_good_end_product_true(self):
         self.log('Adding good: ...')
-        good = self.find_good_by_name(self.good_end_product_true)
+        good = self.find_good_by_name(request_data['good_end_product_true']['description'])
         if not good:
-            data = self.request_data['good_end_product_true']
+            data = request_data['good_end_product_true']
             response = self.make_request('POST', url='/goods/', headers=self.export_headers, body=data)
             item = response.json()['good']
             self.add_good_document(item['id'])
-        self.add_to_context('goods_name', self.good_end_product_true)
+        self.add_to_context('goods_name', request_data['good_end_product_true']['description'])
 
     def add_org(self, key):
         self.log('Creating org: ...')
-        data = self.request_data[key]
+        data = request_data[key]
         response = self.make_request('POST', url='/organisations/', body=data)
         organisation = response.json()['organisation']
         return organisation
 
     def add_case_note(self, context, case_id):
         self.log('Creating case note: ...')
-        data = self.request_data['case_note']
-        context.text = self.case_note_text
+        data = request_data['case_note']
+        context.text = request_data['case_note']['text']
         self.make_request("POST", url='/cases/' + case_id + '/case-notes/', headers=self.gov_headers, body=data)  # noqa
 
     def add_ecju_query(self, case_id):
         self.log("Creating ecju query: ...")
-        data = self.request_data['ecju_query']
+        data = request_data['ecju_query']
         self.make_request("POST", url='/cases/' + case_id + '/ecju-queries/', headers=self.gov_headers, body=data)  # noqa
 
     def find_org_by_name(self, org_name):
@@ -303,11 +141,11 @@ class SeedData:
         return organisation['primary_site']['id']
 
     def add_good_document(self, good_id):
-        data = [self.request_data['document']]
+        data = [request_data['document']]
         self.make_request("POST", url='/goods/' + good_id + '/documents/', headers=self.export_headers, body=data)
 
     def add_document(self, url):
-        data = self.request_data['document']
+        data = request_data['document']
         self.make_request("POST", url=url, headers=self.export_headers, body=data)
 
     def add_end_user_document(self, draft_id):
@@ -333,7 +171,7 @@ class SeedData:
 
     def add_draft(self, draft=None, good=None, enduser=None, ultimate_end_user=None, consignee=None):
         self.log('Creating draft: ...')
-        data = self.request_data['draft'] if draft is None else draft
+        data = request_data['draft'] if draft is None else draft
         response = self.make_request('POST', url='/drafts/', headers=self.export_headers, body=data)
         draft_id = response.json()['draft']['id']
         self.add_to_context('draft_id', draft_id)
@@ -341,21 +179,21 @@ class SeedData:
         self.make_request('POST', url='/drafts/' + draft_id + '/sites/', headers=self.export_headers,
                           body={'sites': [self.context['primary_site_id']]})
         self.log('Adding end user: ...')
-        data = self.request_data['end-user'] if enduser is None else enduser
+        data = request_data['end-user'] if enduser is None else enduser
         self.make_request('POST', url='/drafts/' + draft_id + '/end-user/', headers=self.export_headers,
                           body=data)
         self.add_end_user_document(draft_id)
         self.log("Adding good: ...")
-        data = self.request_data['add_good'] if good is None else good
+        data = request_data['add_good'] if good is None else good
         data['good_id'] = self.context['good_id']
         self.make_request('POST', url='/drafts/' + draft_id + '/goods/', headers=self.export_headers, body=data)
         self.log('Adding ultimate end user: ...')
-        data = self.request_data['ultimate_end_user'] if ultimate_end_user is None else ultimate_end_user
+        data = request_data['ultimate_end_user'] if ultimate_end_user is None else ultimate_end_user
         ultimate_end_user_post = self.make_request('POST', url='/drafts/' + draft_id + '/ultimate-end-users/',
                                                    headers=self.export_headers, body=data)
         ultimate_end_user_id = ultimate_end_user_post.json()['ultimate_end_user']['id']
         self.add_ultimate_end_user_document(draft_id, ultimate_end_user_id)
-        consignee_data = self.request_data['consignee'] if consignee is None else consignee
+        consignee_data = request_data['consignee'] if consignee is None else consignee
         self.make_request('POST', url='/drafts/' + draft_id + '/consignee/', headers=self.export_headers,
                           body=consignee_data)
         self.add_consignee_document(draft_id)
