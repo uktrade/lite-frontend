@@ -1,7 +1,7 @@
 import requests
 
 from conf.settings import env
-from helpers.wait import wait_for_ultimate_end_user_document, wait_for_document
+from tools.wait import wait_for_ultimate_end_user_document, wait_for_document
 
 
 class SeedData:
