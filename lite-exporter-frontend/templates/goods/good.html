@@ -11,7 +11,7 @@
 	{% if good.status.key == 'verified' %}
 		<div class="lite-info-bar lite-info-bar--no-animation app-info-bar--verified">
 			{% svg 'verified' %}
-			This good has been verified by ECJU
+			This good has been verified by ECJU based on the information provided
 		</div>
 	{% endif %}
 
@@ -20,7 +20,11 @@
 
 			<div class="lite-app-bar">
 				<div class="lite-app-bar__content">
-					<h2 class="govuk-heading-l">{{ title }}</h2>
+					<h2 class="govuk-heading-l">
+						{% block title %}
+							Good
+						{% endblock %}
+					</h2>
 				</div>
 				{% if good.status.key == 'draft' %}
 					<div class="lite-app-bar__controls">

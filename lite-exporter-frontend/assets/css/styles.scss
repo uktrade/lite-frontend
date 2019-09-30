@@ -10,12 +10,15 @@ main {
 
 .govuk-table a {
 	@extend .govuk-link--no-visited-state;
-	font-weight: bold;
 	text-decoration: none;
 
 	&:hover {
 		text-decoration: underline;
 	}
+}
+
+.govuk-table td:first-of-type a {
+	font-weight: bold;
 }
 
 .app-icon-label {

@@ -16,7 +16,7 @@ class Hub(TemplateView):
         user, _ = get_user(request)
 
         notifications = get_notifications(request, unviewed=True)
-        organisation, _ = get_organisation(request, str(request.user.organisation))
+        organisation = get_organisation(request, str(request.user.organisation))
         sections = [
                 Section('', [
                     Tile(get_string('licences.apply_for_a_licence'), '',
@@ -40,7 +40,6 @@ class Hub(TemplateView):
             sections[1].tiles.append(Tile('Manage my organisation', '', reverse_lazy('users:users')))
 
         context = {
-            'title': get_string('hub.title'),
             'organisation': organisation,
             'sections': sections,
             'application_deleted': request.GET.get('application_deleted'),

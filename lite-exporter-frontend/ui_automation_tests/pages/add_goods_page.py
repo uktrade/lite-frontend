@@ -21,6 +21,9 @@ class AddGoodPage:
         control_code_tb.clear()
         control_code_tb.send_keys(code)
 
+        # This is done as control code textbox needs to lose focus
+        self.driver.find_element_by_tag_name('body').click()
+
     def enter_control_code_unsure(self, code):
         control_code_tb = self.driver.find_element_by_id("not_sure_details_control_code")
         control_code_tb.clear()

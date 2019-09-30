@@ -11,7 +11,7 @@ from users.services import post_users, update_user, get_user
 class Users(TemplateView):
     def get(self, request, **kwargs):
         users, _ = get_organisation_users(request, str(request.user.organisation))
-        organisation, _ = get_organisation(request, str(request.user.organisation))
+        organisation = get_organisation(request, str(request.user.organisation))
 
         if organisation['sub_type']['key'] == 'individual':
             raise Http404

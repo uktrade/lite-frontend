@@ -3,14 +3,21 @@
 {% load svg %}
 
 {% block back_link %}
-	<a href="/" class="govuk-back-link">Back to Hub</a>
+	{% include 'includes/breadcrumbs.html' %}
 {% endblock %}
 
 {% block body %}
 
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
-			<h2 class="govuk-heading-l">{{ title }}</h2>
+			<h2 class="govuk-heading-l">
+				{% block title %}
+					Goods
+				{% endblock %}
+			</h2>
+			<p class="govuk-caption-m">
+				Your organisation has {{ goods|length }} goods
+			</p>
 		</div>
 		<div class="lite-app-bar__controls">
 			<a href="{% url 'goods:add' %}" id="add-a-good" class="govuk-button" draggable="false" role="button">
@@ -24,8 +31,8 @@
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" scope="col">Description</th>
+					<th class="govuk-table__header" scope="col" style="min-width: 150px">Control list entry</th>
 					<th class="govuk-table__header" scope="col">Part number</th>
-					<th class="govuk-table__header" scope="col">Control list entry</th>
 					<th class="govuk-table__header" scope="col">Status</th>
 				</tr>
 			</thead>
@@ -41,8 +48,8 @@
 								{% endif %}
 							</a>
                         </td>
-						<td class="govuk-table__cell" style="{% if not good.part_number %}opacity: 0.4;{% endif %}">{{ good.part_number|default:"N/A" }}</td>
 						<td class="govuk-table__cell" style="{% if not good.control_code %}opacity: 0.4;{% endif %}">{{ good.control_code|default:"N/A" }}</td>
+						<td class="govuk-table__cell" style="{% if not good.part_number %}opacity: 0.4;{% endif %}">{{ good.part_number|default:"N/A" }}</td>
 						<td class="govuk-table__cell">{{ good.status.value }}</td>
 					</tr>
 				{% endfor %}

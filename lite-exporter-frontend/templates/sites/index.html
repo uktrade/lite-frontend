@@ -3,7 +3,7 @@
 {% load humanize %}
 
 {% block back_link %}
-	<a href="/" class="govuk-back-link">Back to Hub</a>
+	{% include 'includes/breadcrumbs.html' %}
 {% endblock %}
 
 {% block body %}
@@ -43,6 +43,9 @@
 				<tr class="govuk-table__row">
 					<td class="govuk-table__cell" style="vertical-align: top;">
 						{{ site.name }}
+						{% if site.id == organisation.primary_site.id %}
+							<span class="govuk-caption-m" style="display: inline;">(Primary Site)</span>
+						{% endif %}
 					</td>
 					<td class="govuk-table__cell" style="vertical-align: top;">
 						{{ site.address.address_line_1 }}<br/>

@@ -3,7 +3,7 @@
 {% load humanize %}
 
 {% block back_link %}
-	<a href="/" class="govuk-back-link">Back to Hub</a>
+	{% include 'includes/breadcrumbs.html' %}
 {% endblock %}
 
 {% block body %}

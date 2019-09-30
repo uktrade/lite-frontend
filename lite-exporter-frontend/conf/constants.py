@@ -34,6 +34,7 @@ END_USER_ADVISORIES_URL = QUERIES_URL + 'end-user-advisories/'
 STATIC_URL = '/static/'
 UNITS_URL = STATIC_URL + 'units/'
 COUNTRIES_URL = STATIC_URL + 'countries/'
+CONTROL_LIST_ENTRIES_URL = STATIC_URL + 'control-list-entries/'
 
 # Applications constants
 STANDARD_LICENCE = 'standard_licence'

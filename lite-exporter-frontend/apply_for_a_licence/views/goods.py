@@ -32,8 +32,8 @@ class GoodsList(TemplateView):
         part_number = request.GET.get('part_number', '').strip()
         control_rating = request.GET.get('control_rating', '').strip()
         goods_list, _ = get_goods(request, {'description': description,
-                                                      'part_number': part_number,
-                                                      'control_rating': control_rating})
+                                            'part_number': part_number,
+                                            'control_rating': control_rating})
 
         filtered_data = []
         for good in goods_list:

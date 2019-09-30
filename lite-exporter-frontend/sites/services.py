@@ -2,18 +2,22 @@ from lite_forms.components import Option
 
 from conf.client import get, post, put
 from conf.constants import SITES_URL, ORGANISATIONS_URL
+from core.services import get_organisation
 
 
 def get_sites(request, organisation_id, formatted=False):
+    organisation = get_organisation(request, str(organisation_id))
     data = get(request, ORGANISATIONS_URL + str(organisation_id) + SITES_URL)
 
     if formatted:
         sites_options = []
 
         for site in data.json().get('sites'):
+            primary_site = '(Primary Site)' if site.get('id') == organisation['primary_site']['id'] else ''
             site_id = site.get('id')
-            site_name = site.get('name')
+            site_name = site.get('name') + ' ' + primary_site
             address = site.get('address')
+
             site_address = '\n'.join(filter(None, [address.get('address_line_1'),
                                                    address.get('address_line_2'),
                                                    address.get('postcode'),

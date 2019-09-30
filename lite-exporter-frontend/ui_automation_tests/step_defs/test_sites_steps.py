@@ -1,15 +1,12 @@
-from pytest_bdd import scenarios, when, then, parsers
-from pages.site_list_overview_page import SitesListOverview
-from pages.new_site_page import NewSite
-from pages.sites_page import SitesPage
-from pages.hub_page import Hub
 import datetime
-import logging
-from ui_automation_tests.pages.shared import Shared
 
-log = logging.getLogger()
-console = logging.StreamHandler()
-log.addHandler(console)
+from pytest_bdd import scenarios, when, then, parsers
+
+from pages.hub_page import Hub
+from pages.new_site_page import NewSite
+from pages.site_list_overview_page import SitesListOverview
+from pages.sites_page import SitesPage
+from ui_automation_tests.pages.shared import Shared
 
 scenarios('../features/sites.feature', strict_gherkin=False)
 
@@ -45,13 +42,14 @@ def new_sites_info(driver, edited, address, postcode, city, region, country, con
 
 @then('I see sites list')
 def i_see_sites_list(driver, context):
-    assert context.new_site_name in Shared(driver).get_text_of_gov_table(), 'Failed to return to Sites list page after Adding site'
+    assert context.new_site_name in Shared(driver).get_text_of_gov_table(), 'Failed to return to Sites list page ' \
+                                                                            'after Adding site '
 
 
-@when('I click last edit button')
-def click_new_site(driver):
+@when('I click the first edit link')
+def click_first_edit_link(driver):
     site_list_overview_page = SitesListOverview(driver)
-    site_list_overview_page.click_on_the_edit_button_at_last_position()
+    site_list_overview_page.click_on_the_edit_button_at_first_position()
 
 
 @when('I clear the fields for the site')
@@ -59,17 +57,9 @@ def clear_site(driver):
     new_site = NewSite(driver)
     new_site.clear_info_for_site()
 
-# Disabled step because site ordering seems not to be fixed (LT-1518)
-# @then('I see my new site at first position')
-# def assert_site_is_added_to_list(driver, context):
-#     sites_page = SitesPage(driver)
-#     assert sites_page.get_text_of_site(sites_page.get_size_of_sites()-1) == context.new_site_name
-#
-
 
 @then('I see last site name as edited')
 def last_site_name_edited(driver, context):
-
     assert context.new_site_name in Shared(driver).get_text_of_gov_table()
 
 

@@ -1,20 +1,20 @@
-from pytest import fixture
 import datetime
 
-from helpers.seed_data import SeedData
-from helpers.utils import Timer, get_or_create_attr
+from pytest import fixture
+
+from helpers.utils import Timer, get_lite_client
 
 
-@fixture(scope="module")
+@fixture(scope='module')
 def add_an_application(driver, request, api_url, exporter_url, context):
     timer = Timer()
-    api = get_or_create_attr(context, 'api', lambda: SeedData(api_url=api_url, logging=True))
+    lite_client = get_lite_client(context, api_url)
 
-    app_time_id = datetime.datetime.now().strftime(" %d%H%M%S")
+    app_time_id = datetime.datetime.now().strftime(' %d%H%M%S')
     context.app_time_id = app_time_id
-    app_name = "Test Application" + app_time_id
+    app_name = 'Test Application' + app_time_id
 
-    api.add_draft(
+    lite_client.add_draft(
         draft={
             "name": app_name,
             "licence_type": "standard_licence",
@@ -48,9 +48,9 @@ def add_an_application(driver, request, api_url, exporter_url, context):
              'website': 'https://www.gov.uk'
         }
     )
-    api.submit_application()
-    context.app_id = api.context['application_id']
+    lite_client.submit_application()
+    context.app_id = lite_client.context['application_id']
     context.app_name = app_name
-    context.case_id = api.context['case_id']
-    api.add_ecju_query(context.case_id)
+    context.case_id = lite_client.context['case_id']
+    lite_client.add_ecju_query(context.case_id)
     timer.print_time('apply_for_standard_application')

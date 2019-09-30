@@ -1,5 +1,3 @@
-import json
-
 import requests
 
 from conf.settings import env
@@ -73,7 +71,7 @@ class SeedData:
         'good': {
             'description': 'Lentils',
             'is_good_controlled': 'yes',
-            'control_code': '1234',
+            'control_code': 'ML1a',
             'is_good_end_product': True,
             'part_number': '1234',
             'validate_only': False,
@@ -81,7 +79,7 @@ class SeedData:
         'good_end_product_true': {
             'description': good_end_product_true,
             'is_good_controlled': 'yes',
-            'control_code': '1234',
+            'control_code': 'ML1a',
             'is_good_end_product': True,
             'part_number': '1234',
             'validate_only': False
@@ -89,7 +87,7 @@ class SeedData:
         'good_end_product_false': {
             'description': good_end_product_false,
             'is_good_controlled': 'yes',
-            'control_code': '1234',
+            'control_code': 'ML1a',
             'is_good_end_product': False,
             'part_number': '1234',
             'validate_only': False,
@@ -152,7 +150,7 @@ class SeedData:
         'clc_good': {
             'description': 'Targus',
             'is_good_controlled': 'unsure',
-            'control_code': '1234',
+            'control_code': 'ML1a',
             'is_good_end_product': True,
             'part_number': '1234',
             'validate_only': False,
@@ -173,17 +171,15 @@ class SeedData:
         }
     }
 
-    def __init__(self, api_url, logging=True):
+    def __init__(self, api_url):
         self.base_url = api_url.rstrip('/')
         self.auth_gov_user()
         self.setup_org()
         self.auth_export_user()
         self.add_good()
-        self.logging = logging
 
     def log(self, text):
-        if self.logging:
-            print(text)
+        print(text)
 
     def add_to_context(self, name, value):
         self.log(name + ': ' + value)
@@ -192,13 +188,13 @@ class SeedData:
     def auth_gov_user(self):
         data = self.request_data['gov_user']
         response = self.make_request('POST', url='/gov-users/authenticate/', body=data)
-        self.add_to_context('gov_user_token', json.loads(response.text)['token'])
+        self.add_to_context('gov_user_token', response.json()['token'])
         self.gov_headers['gov-user-token'] = self.context['gov_user_token']
 
     def auth_export_user(self):
         data = self.request_data['export_user']
         response = self.make_request('POST', url='/users/authenticate/', body=data)
-        self.add_to_context('export_user_token', json.loads(response.text)['token'])
+        self.add_to_context('export_user_token', response.json()['token'])
         self.export_headers['exporter-user-token'] = self.context['export_user_token']
         self.export_headers['organisation-id'] = self.context['org_id']
 
@@ -223,7 +219,7 @@ class SeedData:
         self.log('Adding good: ...')
         data = self.request_data['good']
         response = self.make_request('POST', url='/goods/', headers=self.export_headers, body=data)
-        item = json.loads(response.text)['good']
+        item = response.json()['good']
         self.add_to_context('good_id', item['id'])
         self.add_good_document(item['id'])
 
@@ -231,28 +227,29 @@ class SeedData:
         self.log('Adding clc good: ...')
         data = self.request_data['clc_good']
         response = self.make_request('POST', url='/goods/', headers=self.export_headers, body=data)
-        item = json.loads(response.text)['good']
+        item = response.json()['good']
         self.add_to_context('clc_good_id', item['id'])
         self.add_good_document(item['id'])
         data = {'good_id': self.context['clc_good_id'],
-                'not_sure_details_control_code': 'a',
+                'not_sure_details_control_code': 'ML1a',
                 'not_sure_details_details': 'b'}
-        response = self.make_request('POST', url='/queries/control-list-classifications/', headers=self.export_headers, body=data)
-        response_data = json.loads(response.text)
+        response = self.make_request('POST', url='/queries/control-list-classifications/', headers=self.export_headers,
+                                     body=data)
+        response_data = response.json()
         self.add_ecju_query(response_data['case_id'])
 
     def add_eua_query(self):
         self.log("Adding end user advisory: ...")
         data = self.request_data['end_user_advisory']
         response = self.make_request("POST", url='/queries/end-user-advisories/', headers=self.export_headers, body=data)
-        id = json.loads(response.text)['end_user_advisory']['id']
+        id = response.json()['end_user_advisory']['id']
         self.add_to_context('end_user_advisory_id', str(id))
         response = self.make_request("GET", url='/queries/end-user-advisories/' + str(id) + '/', headers=self.export_headers)
-        self.add_to_context('end_user_advisory_case_id', json.loads(response.text)['case_id'])
+        self.add_to_context('end_user_advisory_case_id', response.json()['case_id'])
 
     def find_good_by_name(self, good_name):
         response = self.make_request('GET', url='/goods/', headers=self.export_headers)
-        goods = json.loads(response.text)['goods']
+        goods = response.json()['goods']
         good = next((item for item in goods if item['description'] == good_name), None)
         return good
 
@@ -262,7 +259,7 @@ class SeedData:
         if not good:
             data = self.request_data['good_end_product_false']
             response = self.make_request('POST', url='/goods/', headers=self.export_headers, body=data)
-            item = json.loads(response.text)['good']
+            item = response.json()['good']
             self.add_good_document(item['id'])
         self.add_to_context('goods_name', self.good_end_product_false)
 
@@ -272,7 +269,7 @@ class SeedData:
         if not good:
             data = self.request_data['good_end_product_true']
             response = self.make_request('POST', url='/goods/', headers=self.export_headers, body=data)
-            item = json.loads(response.text)['good']
+            item = response.json()['good']
             self.add_good_document(item['id'])
         self.add_to_context('goods_name', self.good_end_product_true)
 
@@ -280,29 +277,29 @@ class SeedData:
         self.log('Creating org: ...')
         data = self.request_data[key]
         response = self.make_request('POST', url='/organisations/', body=data)
-        organisation = json.loads(response.text)['organisation']
+        organisation = response.json()['organisation']
         return organisation
 
     def add_case_note(self, context, case_id):
         self.log('Creating case note: ...')
         data = self.request_data['case_note']
         context.text = self.case_note_text
-        _ = self.make_request("POST", url='/cases/' + case_id + '/case-notes/', headers=self.gov_headers, body=data) # noqa
+        self.make_request("POST", url='/cases/' + case_id + '/case-notes/', headers=self.gov_headers, body=data)  # noqa
 
     def add_ecju_query(self, case_id):
         self.log("Creating ecju query: ...")
         data = self.request_data['ecju_query']
-        _ = self.make_request("POST", url='/cases/' + case_id + '/ecju-queries/', headers=self.gov_headers, body=data) # noqa
+        self.make_request("POST", url='/cases/' + case_id + '/ecju-queries/', headers=self.gov_headers, body=data)  # noqa
 
     def find_org_by_name(self, org_name):
         response = self.make_request('GET', url='/organisations/')
-        organisations = json.loads(response.text)['organisations']
+        organisations = response.json()['organisations']
         organisation = next((item for item in organisations if item['name'] == org_name), None)
         return organisation
 
     def get_org_primary_site_id(self, org_id):
         response = self.make_request('GET', url='/organisations/' + org_id)
-        organisation = json.loads(response.text)['organisation']
+        organisation = response.json()['organisation']
         return organisation['primary_site']['id']
 
     def add_good_document(self, good_id):
@@ -338,7 +335,7 @@ class SeedData:
         self.log('Creating draft: ...')
         data = self.request_data['draft'] if draft is None else draft
         response = self.make_request('POST', url='/drafts/', headers=self.export_headers, body=data)
-        draft_id = json.loads(response.text)['draft']['id']
+        draft_id = response.json()['draft']['id']
         self.add_to_context('draft_id', draft_id)
         self.log('Adding site: ...')
         self.make_request('POST', url='/drafts/' + draft_id + '/sites/', headers=self.export_headers,
@@ -355,8 +352,8 @@ class SeedData:
         self.log('Adding ultimate end user: ...')
         data = self.request_data['ultimate_end_user'] if ultimate_end_user is None else ultimate_end_user
         ultimate_end_user_post = self.make_request('POST', url='/drafts/' + draft_id + '/ultimate-end-users/',
-                                              headers=self.export_headers, body=data)
-        ultimate_end_user_id = json.loads(ultimate_end_user_post.text)['ultimate_end_user']['id']
+                                                   headers=self.export_headers, body=data)
+        ultimate_end_user_id = ultimate_end_user_post.json()['ultimate_end_user']['id']
         self.add_ultimate_end_user_document(draft_id, ultimate_end_user_id)
         consignee_data = self.request_data['consignee'] if consignee is None else consignee
         self.make_request('POST', url='/drafts/' + draft_id + '/consignee/', headers=self.export_headers,
@@ -369,13 +366,13 @@ class SeedData:
         draft_id_to_submit = draft_id if None else self.context['draft_id']  # noqa
         data = {'id': draft_id_to_submit}
         response = self.make_request('POST', url='/applications/', headers=self.export_headers, body=data)
-        item = json.loads(response.text)['application']
+        item = response.json()['application']
         self.add_to_context('application_id', item['id'])
         self.add_to_context('case_id', item['case_id'])
 
     def check_document(self, url):
-        data = self.make_request("GET", url=url, headers=self.export_headers)
-        return json.loads(data.text)['document']['safe']
+        response = self.make_request("GET", url=url, headers=self.export_headers)
+        return response.json()['document']['safe']
 
     def check_end_user_document_is_processed(self, draft_id):
         return self.check_document('/drafts/' + draft_id + '/end-user/document/')
@@ -391,7 +388,7 @@ class SeedData:
             headers = self.gov_headers
         if body:
             response = requests.request(method, self.base_url + url,
-                                        data=json.dumps(body),
+                                        json=body,
                                         headers=headers,
                                         files=files)
         else:

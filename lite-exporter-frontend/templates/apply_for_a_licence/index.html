@@ -1,5 +1,9 @@
 {% extends 'layouts/two_pane.html' %}
 
+{% block back_link %}
+	{% include 'includes/breadcrumbs.html' %}
+{% endblock %}
+
 {% block two_thirds %}
 	<h1 class="govuk-heading-xl">{{ title }}</h1>
 

@@ -2,7 +2,7 @@ from lite_forms.components import Option
 
 from conf.client import get, post, put
 from conf.constants import UNITS_URL, DRAFTS_URL, COUNTRIES_URL, EXTERNAL_LOCATIONS_URL, NOTIFICATIONS_URL, \
-    ORGANISATIONS_URL, CASES_URL
+    ORGANISATIONS_URL, CASES_URL, CONTROL_LIST_ENTRIES_URL
 
 
 def get_units(request):
@@ -11,7 +11,7 @@ def get_units(request):
 
     for key, value in data.get('units').items():
         converted_units.append(
-           Option(key, value)
+            Option(key, value)
         )
 
     return converted_units
@@ -89,7 +89,7 @@ def get_notifications(request, unviewed):
 # Organisation
 def get_organisation(request, pk):
     data = get(request, ORGANISATIONS_URL + pk)
-    return data.json()['organisation'], data.status_code
+    return data.json()['organisation']
 
 
 def get_organisation_users(request, pk):
@@ -111,3 +111,21 @@ def put_organisation_user(request, pk, user_pk, json):
 def get_case(request, pk):
     data = get(request, CASES_URL + pk)
     return data.json()['case']
+
+
+# Control List Entries
+def get_control_list_entries(request, convert_to_options=False):
+    if convert_to_options:
+        data = get(request, CONTROL_LIST_ENTRIES_URL + '?flatten=True')
+
+        converted_units = []
+
+        for control_list_entry in data.json()['control_list_entries']:
+            converted_units.append(Option(key=control_list_entry['rating'],
+                                          value=control_list_entry['rating'],
+                                          description=control_list_entry['text']))
+
+        return converted_units
+
+    data = get(request, CONTROL_LIST_ENTRIES_URL)
+    return data.json()['control_list_entries']

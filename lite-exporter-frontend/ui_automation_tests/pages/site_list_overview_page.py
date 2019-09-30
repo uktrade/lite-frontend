@@ -9,9 +9,9 @@ class SitesListOverview:
     def click_new_sites_link(self):
         self.driver.find_element_by_css_selector(self.new_sites_link).click()
 
-    def click_on_the_edit_button_at_last_position(self):
-        self.driver.find_elements_by_css_selector(self.edit_buttons)[len(self.driver.find_elements_by_css_selector(self.edit_buttons))-1].click()
+    def click_on_the_edit_button_at_first_position(self):
+        self.driver.find_elements_by_css_selector(self.edit_buttons)[0].click()
 
-    def get_text_of_last_site_name(self):
-        return self.driver.find_elements_by_css_selector(self.table_cells)[len(self.driver.find_elements_by_css_selector(self.table_cells))-3].text
+    def get_text_of_first_site_name(self):
+        return self.driver.find_elements_by_css_selector(self.table_cells)[0].text
 

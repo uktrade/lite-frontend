@@ -4,7 +4,7 @@
 
 <head>
 	<meta charset="utf-8" />
-	<title>{{ title }} - {% get_string 'common.service_name' %} - GOV.UK</title>
+	<title>{% block title %}{{ title }}{% endblock %} - {% get_string 'common.service_name' %} - GOV.UK</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 	<meta name="theme-color" content="#0b0c0c" />
 

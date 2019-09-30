@@ -27,7 +27,7 @@ def repeat_to_length(string_to_expand, length):
 
 
 def screen_path():
-    global screen_dir # noqa
+    global screen_dir  # noqa
     if not os.path.exists(screen_dir):
         os.makedirs(screen_dir)
         os.chmod(screen_dir, 0o644)
