@@ -1,6 +1,6 @@
 import requests
 from tools.wait import wait_for_ultimate_end_user_document, wait_for_document
-from request_data import get_request_data, first_name, last_name
+from request_data import create_request_data, first_name, last_name
 
 
 class SeedData:
@@ -9,14 +9,15 @@ class SeedData:
     gov_headers = {'content-type': 'application/json'}
     export_headers = {'content-type': 'application/json'}
 
-    def __init__(self, api_url, exporter_login):
-        self.exporter_user_email = exporter_login['email']
+    def __init__(self, api_url, seed_data_config):
+        exporter_user_email = seed_data_config['email']
+        test_s3_key = seed_data_config['s3_key']
         self.base_url = api_url.rstrip('/')
         self.auth_gov_user()
         self.setup_org()
         self.auth_export_user()
         self.add_good()
-        self.request_data = get_request_data(self.exporter_user_email)
+        self.request_data = create_request_data(exporter_user_email, test_s3_key)
 
     def log(self, text):
         print(text)
