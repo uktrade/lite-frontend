@@ -1,11 +1,12 @@
-from conf.settings import env
 import os
 import types
-from selenium import webdriver
-from pytest import fixture
 
-from helpers.seed_data import SeedData
-from helpers.utils import get_or_create_attr
+from pytest import fixture
+from selenium import webdriver
+
+from conf.settings import env
+from helpers.utils import get_lite_client
+
 
 # set_timeouts are for elements that dont exist that dont need a 10 second timeout to return that they dont exist.
 # so wait 0 seconds to return that the element doesnt exist rather than 10.
@@ -74,17 +75,16 @@ def invalid_username(request):
 
 
 def clear_down(context, api_url):
-    api = get_or_create_attr(context, 'api', lambda: SeedData(api_url=api_url, logging=True))
-    print(api.get_queues())
-    if "Application Bin" not in str(api.get_queues()):
-        api.add_queue("Application Bin")
+    lite_client = get_lite_client(context, api_url)
+    if "Application Bin" not in str(lite_client.get_queues()):
+        lite_client.add_queue("Application Bin")
         bin_id = context['queue_id']
     else:
-        for queue in api.get_queues():
+        for queue in lite_client.get_queues():
             if queue['name'] == "Application Bin":
                 bin_id = queue['id']
                 break
-    api.assign_test_cases_to_bin(bin_id)
+    lite_client.assign_test_cases_to_bin(bin_id)
 
 
 @fixture(scope="session")

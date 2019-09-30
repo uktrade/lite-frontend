@@ -41,7 +41,8 @@ class SeedData:
                 "name": "Headquarters",
                 "address": {
                     "address_line_1": "42 Question Road",
-                    "postcode": "Islington", "city": "London",
+                    "postcode": "Islington",
+                    "city": "London",
                     "region": "London",
                     "country": "GB"
                 }
@@ -50,7 +51,7 @@ class SeedData:
         "good": {
             "description": "MPG 2.",
             "is_good_controlled": "yes",
-            "control_code": "1234",
+            "control_code": "ML1a",
             "is_good_end_product": True,
             "part_number": "1234",
             "validate_only": False
@@ -159,17 +160,15 @@ class SeedData:
         }
     }
 
-    def __init__(self, api_url, logging=True):
+    def __init__(self, api_url):
         self.base_url = api_url.rstrip('/')
         self.auth_gov_user()
         self.setup_org()
         self.auth_export_user()
         self.add_good()
-        self.logging = logging
 
     def log(self, text):
-        if self.logging:
-            print(text)
+        print(text)
 
     def add_to_context(self, name, value):
         self.log(name + ": " + str(value))
@@ -257,7 +256,7 @@ class SeedData:
         self.add_good_document(item['id'])
         data = {
             'not_sure_details_details': 'something',
-            'not_sure_details_control_code': 'ML17',
+            'not_sure_details_control_code': 'ML1a',
             'good_id': item['id']
         }
         response = self.make_request("POST", url='/queries/control-list-classifications/', headers=self.export_headers, body=data)

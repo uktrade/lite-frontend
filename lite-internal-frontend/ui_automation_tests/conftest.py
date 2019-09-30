@@ -19,8 +19,6 @@ from pages.application_page import ApplicationPage
 from pages.queues_pages import QueuesPages
 from core.builtins.custom_tags import reference_code
 
-# Screenshot in case of any test failure
-
 
 def pytest_addoption(parser):
     env = str(os.environ.get('ENVIRONMENT'))
@@ -123,12 +121,6 @@ def go_to_flags(driver, internal_url, sign_in_to_internal_sso):
 def go_to_users(driver):
     header = HeaderPage(driver)
     header.open_users()
-
-
-@then('I see the clc-case previously created') # noqa
-def assert_case_is_present(driver, apply_for_clc_query, context):
-    case_list_page = CaseListPage(driver)
-    assert case_list_page.assert_case_is_present(context.clc_case_id), "clc case ID is not present on page"
 
 
 @when('I create a clc_query') # noqa

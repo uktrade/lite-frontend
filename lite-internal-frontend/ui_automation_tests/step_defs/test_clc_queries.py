@@ -10,11 +10,11 @@ def respond_to_query(driver):
     ClcQueriesPages(driver).click_respond_to_query()
 
 
-@when(parsers.parse('I respond "{controlled}", "{control_code}", "{report}", "{comment}" and click continue'))
-def enter_response(driver, controlled, control_code, report, comment):
+@when(parsers.parse('I respond "{controlled}", "{control_list_entry}", "{report}", "{comment}" and click continue'))
+def enter_response(driver, controlled, control_list_entry, report, comment):
     clc_query_page = ClcQueriesPages(driver)
     clc_query_page.click_is_good_controlled(controlled)
-    clc_query_page.type_in_to_control_list_entry(control_code)
+    clc_query_page.type_in_to_control_list_entry(control_list_entry)
     clc_query_page.choose_report_summary(report)
     clc_query_page.enter_a_comment(controlled)
     Shared(driver).click_submit()
