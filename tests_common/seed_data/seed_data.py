@@ -13,11 +13,14 @@ class SeedData:
         exporter_user_email = seed_data_config['email']
         test_s3_key = seed_data_config['s3_key']
         self.base_url = api_url.rstrip('/')
+        self.base_url = seed_data_config['api_url'].rstrip('/')
+        self.request_data = create_request_data(exporter_user_email, test_s3_key)
+
+    def setup_database(self):
         self.auth_gov_user()
         self.setup_org()
         self.auth_export_user()
         self.add_good()
-        self.request_data = create_request_data(exporter_user_email, test_s3_key)
 
     def log(self, text):
         print(text)
