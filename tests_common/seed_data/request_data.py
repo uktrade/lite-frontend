@@ -5,6 +5,7 @@ def create_user(user):
         'email': user['email']
     }
 
+
 def create_organisation(exporter, name):
     return {
         'name': name,
@@ -26,36 +27,27 @@ def create_organisation(exporter, name):
         }
     }
 
+
+def create_good(description, is_end_product):
+    return {
+        'description': description,
+        'is_good_controlled': 'yes',
+        'control_code': 'ML1a',
+        'is_good_end_product': is_end_product,
+        'part_number': '1234',
+        'validate_only': False,
+    }
+
+
 def create_request_data(exporter_user, gov_user, test_s3_key):
     exporter = create_user(exporter_user)
     gov = create_user(gov_user)
     return {
         'organisation': create_organisation(exporter, 'Test Org'),
         'organisation_for_switching_organisations': create_organisation(exporter, 'Octopus Systems'),
-        'good': {
-            'description': 'Lentils',
-            'is_good_controlled': 'yes',
-            'control_code': 'ML1a',
-            'is_good_end_product': True,
-            'part_number': '1234',
-            'validate_only': False,
-        },
-        'good_end_product_true': {
-            'description': 'Hot Cross Buns',
-            'is_good_controlled': 'yes',
-            'control_code': 'ML1a',
-            'is_good_end_product': True,
-            'part_number': '1234',
-            'validate_only': False
-        },
-        'good_end_product_false': {
-            'description': 'Falafels',
-            'is_good_controlled': 'yes',
-            'control_code': 'ML1a',
-            'is_good_end_product': False,
-            'part_number': '1234',
-            'validate_only': False,
-        },
+        'good': create_good('Lentils', True),
+        'good_end_product_true': create_good('Hot Cross Buns', True),
+        'good_end_product_false': create_good('Falafels', False),
         'gov_user': gov,
         'export_user': {
             'email': exporter['email'],
