@@ -67,3 +67,10 @@ def s3_key(request):
 @fixture(scope="session")
 def invalid_username(request):
     return "invalid@mail.com"
+
+
+@fixture(scope="session")
+def seed_data_config(request, exporter_sso_login_info, s3_key):
+    exporter_sso_email = exporter_sso_login_info['email']
+    api_url = request.config.getoption("--lite_api_url")
+    return {'api_url': api_url, 'email': exporter_sso_email, 's3_key': s3_key}

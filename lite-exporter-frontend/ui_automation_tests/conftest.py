@@ -4,7 +4,7 @@ import pytest
 from pytest_bdd import given, when, then, parsers
 from selenium.webdriver.common.by import By
 
-from fixtures.core import context, driver, invalid_username, exporter_sso_login_info, s3_key  # noqa
+from fixtures.core import context, driver, invalid_username, exporter_sso_login_info, s3_key, seed_data_config  # noqa
 from fixtures.register_organisation import register_organisation, register_organisation_for_switching_organisation  # noqa
 from fixtures.add_goods import add_an_incorporated_good_to_application, add_a_non_incorporated_good_to_application, create_non_incorporated_good  # noqa
 from fixtures.add_an_application import add_an_application  # noqa
