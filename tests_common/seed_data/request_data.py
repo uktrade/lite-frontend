@@ -5,50 +5,33 @@ def create_user(user):
         'email': user['email']
     }
 
+def create_organisation(exporter, name):
+    return {
+        'name': name,
+        'sub_type': 'commercial',
+        'eori_number': '1234567890AAA',
+        'sic_number': '2345',
+        'vat_number': 'GB1234567',
+        'registration_number': '09876543',
+        'user': exporter,
+        'site': {
+            'name': 'Headquarters',
+            'address': {
+                'address_line_1': '42 Question Road',
+                'postcode': 'Islington',
+                'city': 'London',
+                'region': 'London',
+                'country': 'GB'
+            }
+        }
+    }
 
 def create_request_data(exporter_user, gov_user, test_s3_key):
     exporter = create_user(exporter_user)
     gov = create_user(gov_user)
-
     return {
-        'organisation': {
-            'name': 'Test Org',
-            'sub_type': 'commercial',
-            'eori_number': '1234567890AAA',
-            'sic_number': '2345',
-            'vat_number': 'GB1234567',
-            'registration_number': '09876543',
-            'user': exporter,
-            'site': {
-                'name': 'Headquarters',
-                'address': {
-                    'address_line_1': '42 Question Road',
-                    'postcode': 'Islington',
-                    'city': 'London',
-                    'region': 'London',
-                    'country': 'GB'
-                }
-            }
-        },
-        'organisation_for_switching_organisations': {
-            'name': 'Octopus Systems',
-            'sub_type': 'commercial',
-            'eori_number': '1234567890AAA',
-            'sic_number': '2345',
-            'vat_number': 'GB1234567',
-            'registration_number': '09876543',
-            'user': exporter,
-            'site': {
-                'name': 'Headquarters',
-                'address': {
-                    'address_line_1': '42 Question Road',
-                    'postcode': 'Islington',
-                    'city': 'London',
-                    'region': 'London',
-                    'country': 'GB'
-                }
-            }
-        },
+        'organisation': create_organisation(exporter, 'Test Org'),
+        'organisation_for_switching_organisations': create_organisation(exporter, 'Octopus Systems'),
         'good': {
             'description': 'Lentils',
             'is_good_controlled': 'yes',
