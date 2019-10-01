@@ -1,6 +1,6 @@
 import requests
 from tools.wait import wait_for_ultimate_end_user_document, wait_for_document
-from request_data import create_request_data
+from seed_data.request_data import create_request_data
 
 
 class SeedData:
@@ -13,10 +13,7 @@ class SeedData:
 
     def __init__(self, seed_data_config):
         exporter_user = seed_data_config['exporter']
-        if 'gov' in seed_data_config:
-            gov_user = seed_data_config['gov']
-        else:
-            gov_user = None
+        gov_user = seed_data_config['gov']
         test_s3_key = seed_data_config['s3_key']
         self.base_url = seed_data_config['api_url'].rstrip('/')
         self.request_data = create_request_data(
