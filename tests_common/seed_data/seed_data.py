@@ -13,10 +13,17 @@ class SeedData:
 
     def __init__(self, seed_data_config):
         exporter_user = seed_data_config['exporter']
-        gov_user = seed_data_config['gov']
+        if 'gov' in seed_data_config:
+            gov_user = seed_data_config['gov']
+        else:
+            gov_user = None
         test_s3_key = seed_data_config['s3_key']
         self.base_url = seed_data_config['api_url'].rstrip('/')
-        self.request_data = create_request_data(exporter_user, gov_user, test_s3_key)
+        self.request_data = create_request_data(
+            exporter_user=exporter_user,
+            test_s3_key=test_s3_key,
+            gov_user=gov_user
+        )
 
     def setup_database(self):
         self.auth_gov_user()

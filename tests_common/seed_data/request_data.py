@@ -69,16 +69,14 @@ def create_picklist(name, text, type, proviso=None):
     return picklist
 
 
-def create_request_data(exporter_user, gov_user, test_s3_key):
+def create_request_data(exporter_user, test_s3_key, gov_user=None):
     exporter = create_user(exporter_user)
-    gov = create_user(gov_user)
-    return {
+    request_data = {
         'organisation': create_organisation(exporter, 'Test Org'),
         'organisation_for_switching_organisations': create_organisation(exporter, 'Octopus Systems'),
         'good': create_good('Lentils', True),
         'good_end_product_true': create_good('Hot Cross Buns', True),
         'good_end_product_false': create_good('Falafels', False),
-        'gov_user': gov,
         'export_user': {
             'email': exporter['email'],
             'password': 'password'
@@ -134,3 +132,6 @@ def create_request_data(exporter_user, gov_user, test_s3_key):
         'standard_advice_picklist': create_picklist('More advice', 'My standard advice would be this.', 'standard_advice'),
         'report_picklist': create_picklist('More advice', 'My standard advice would be this.', 'report_summary')
     }
+    if gov_user:
+        request_data['gov_user'] = create_user(gov_user)
+    return request_data
