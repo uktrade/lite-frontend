@@ -69,7 +69,7 @@ def create_picklist(name, text, type, proviso=None):
     return picklist
 
 
-def create_request_data(exporter_user, test_s3_key, gov_user=None):
+def create_request_data(exporter_user, test_s3_key, gov_user):
     exporter = create_user(exporter_user)
     request_data = {
         'organisation': create_organisation(exporter, 'Test Org'),
@@ -88,6 +88,7 @@ def create_request_data(exporter_user, test_s3_key, gov_user=None):
             'have_you_been_informed': 'yes',
             'reference_number_on_information_form': '1234'
         },
+        'gov_user': create_user(gov_user),
         'end-user': create_party('Government', 'government', 'https://www.gov.uk'),
         'end_user_advisory': {
             'end_user': create_party('Person', 'government', 'https://www.gov.uk'),
@@ -132,6 +133,4 @@ def create_request_data(exporter_user, test_s3_key, gov_user=None):
         'standard_advice_picklist': create_picklist('More advice', 'My standard advice would be this.', 'standard_advice'),
         'report_picklist': create_picklist('More advice', 'My standard advice would be this.', 'report_summary')
     }
-    if gov_user:
-        request_data['gov_user'] = create_user(gov_user)
     return request_data
