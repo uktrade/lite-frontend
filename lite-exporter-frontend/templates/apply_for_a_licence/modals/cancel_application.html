@@ -4,5 +4,5 @@
         {% csrf_token %}
         <button type="submit" class="govuk-button govuk-button--warning govuk-!-margin-right-2">Delete Application</button>
     </form>
-    <a href="{% url 'apply_for_a_licence:overview' draft.id %}" onclick="return LITECommon.Modal.closeAllModals()" role="button" draggable="false" class="govuk-button govuk-button--secondary">Cancel</a>
+    <a href="{% url 'drafts:drafts' %}" onclick="return LITECommon.Modal.closeAllModals()" role="button" draggable="false" class="govuk-button govuk-button--secondary">Cancel</a>
 </div>
