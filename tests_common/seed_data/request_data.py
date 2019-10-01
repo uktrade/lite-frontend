@@ -1,91 +1,86 @@
-org_name = 'Test Org'
-org_name_for_switching_organisations = 'Octopus Systems'
-logging = True
-case_note_text = 'I Am Easy to Find'
-ecju_query_text = 'This is a question, please answer'
-good_end_product_true = 'Hot Cross Buns'
-good_end_product_false = 'Falafels'
+def create_user(user):
+    return {
+        'first_name': user['first_name'],
+        'last_name': user['last_name'],
+        'email': user['email']
+    }
+
+
+def create_organisation(exporter, name):
+    return {
+        'name': name,
+        'sub_type': 'commercial',
+        'eori_number': '1234567890AAA',
+        'sic_number': '2345',
+        'vat_number': 'GB1234567',
+        'registration_number': '09876543',
+        'user': exporter,
+        'site': {
+            'name': 'Headquarters',
+            'address': {
+                'address_line_1': '42 Question Road',
+                'postcode': 'Islington',
+                'city': 'London',
+                'region': 'London',
+                'country': 'GB'
+            }
+        }
+    }
+
+
+def create_good(description, is_end_product):
+    return {
+        'description': description,
+        'is_good_controlled': 'yes',
+        'control_code': 'ML1a',
+        'is_good_end_product': is_end_product,
+        'part_number': '1234',
+        'validate_only': False,
+    }
+
+
+def create_party(name, sub_type, website):
+    return {
+        'name': name,
+        'address': 'Westminster, London SW1A 0AA',
+        'country': 'GB',
+        'sub_type': sub_type,
+        'website': website
+    }
+
+
+def create_document(name, description, s3_key):
+    return {
+        'name': name,
+        's3_key': s3_key,
+        'size': 0,
+        'description': description
+    }
+
+
+def create_picklist(name, text, type, proviso=None):
+    picklist = {
+                'name': name,
+                'text': text,
+                'type': type
+            }
+    if proviso:
+        picklist['proviso'] = proviso
+    return picklist
 
 
 def create_request_data(exporter_user, gov_user, test_s3_key):
+    exporter = create_user(exporter_user)
+    gov = create_user(gov_user)
     return {
-        'organisation': {
-            'name': org_name,
-            'sub_type': 'commercial',
-            'eori_number': '1234567890AAA',
-            'sic_number': '2345',
-            'vat_number': 'GB1234567',
-            'registration_number': '09876543',
-            'user': {
-                'first_name': exporter_user['first_name'],
-                'last_name': exporter_user['last_name'],
-                'email': exporter_user['email']
-            },
-            'site': {
-                'name': 'Headquarters',
-                'address': {
-                    'address_line_1': '42 Question Road',
-                    'postcode': 'Islington',
-                    'city': 'London',
-                    'region': 'London',
-                    'country': 'GB'
-                }
-            }
-        },
-        'organisation_for_switching_organisations': {
-            'name': org_name_for_switching_organisations,
-            'sub_type': 'commercial',
-            'eori_number': '1234567890AAA',
-            'sic_number': '2345',
-            'vat_number': 'GB1234567',
-            'registration_number': '09876543',
-            'user': {
-                'first_name': exporter_user['first_name'],
-                'last_name': exporter_user['last_name'],
-                'email': exporter_user['email']
-            },
-            'site': {
-                'name': 'Headquarters',
-                'address': {
-                    'address_line_1': '42 Question Road',
-                    'postcode': 'Islington',
-                    'city': 'London',
-                    'region': 'London',
-                    'country': 'GB'
-                }
-            }
-        },
-        'good': {
-            'description': 'Lentils',
-            'is_good_controlled': 'yes',
-            'control_code': 'ML1a',
-            'is_good_end_product': True,
-            'part_number': '1234',
-            'validate_only': False,
-        },
-        'good_end_product_true': {
-            'description': good_end_product_true,
-            'is_good_controlled': 'yes',
-            'control_code': 'ML1a',
-            'is_good_end_product': True,
-            'part_number': '1234',
-            'validate_only': False
-        },
-        'good_end_product_false': {
-            'description': good_end_product_false,
-            'is_good_controlled': 'yes',
-            'control_code': 'ML1a',
-            'is_good_end_product': False,
-            'part_number': '1234',
-            'validate_only': False,
-        },
-        'gov_user': {
-            'email': gov_user['email'],
-            'first_name': gov_user['first_name'],
-            'last_name': gov_user['last_name']
-        },
+        'organisation': create_organisation(exporter, 'Test Org'),
+        'organisation_for_switching_organisations': create_organisation(exporter, 'Octopus Systems'),
+        'good': create_good('Lentils', True),
+        'good_end_product_true': create_good('Hot Cross Buns', True),
+        'good_end_product_false': create_good('Falafels', False),
+        'gov_user': gov,
         'export_user': {
-            'email': exporter_user['email'],
+            'email': exporter['email'],
             'password': 'password'
         },
         'draft': {
@@ -95,47 +90,17 @@ def create_request_data(exporter_user, gov_user, test_s3_key):
             'have_you_been_informed': 'yes',
             'reference_number_on_information_form': '1234'
         },
-        'end-user': {
-            'name': 'Government',
-            'address': 'Westminster, London SW1A 0AA',
-            'country': 'GB',
-            'sub_type': 'government',
-            'website': 'https://www.gov.uk'
+        'end-user': create_party('Government', 'government', 'https://www.gov.uk'),
+        'end_user_advisory': {
+            'end_user': create_party('Person', 'government', 'https://www.gov.uk'),
+            'contact_telephone': 12345678901,
+            'contact_email': 'person@gov.uk',
+            'reasoning': 'This is the reason for raising the enquiry',
+            'note': 'note for end user advisory'
         },
-        "end_user_advisory": {
-            "end_user": {
-                "name": "Person",
-                "address": "Westminster, London SW1A 0AA",
-                "country": "GB",
-                "sub_type": "government",
-                "website": "https://www.gov.uk"
-            },
-            "contact_telephone": 12345678901,
-            "contact_email": "person@gov.uk",
-            "reasoning": "This is the reason for raising the enquiry",
-            "note": "note for end user advisory"
-        },
-        'ultimate_end_user': {
-            'name': 'Individual',
-            'address': 'Bullring, Birmingham SW1A 0AA',
-            'country': 'GB',
-            'sub_type': 'commercial',
-            'website': 'https://www.anothergov.uk'
-        },
-        'consignee': {
-            'name': 'Government',
-            'address': 'Westminster, London SW1A 0BB',
-            'country': 'GB',
-            'sub_type': 'government',
-            'website': 'https://www.gov.uk'
-        },
-        "third_party": {
-            "name": "Individual",
-            "address": "Ukraine, 01532",
-            "country": "UA",
-            "sub_type": "agent",
-            "website": "https://www.anothergov.uk"
-        },
+        'ultimate_end_user': create_party('Individual', 'commercial', 'https://www.anothergov.uk'),
+        'consignee': create_party('Government', 'government', 'https://www.gov.uk'),
+        'third_party': create_party('Individual', 'agent', 'https://www.anothergov.uk'),
         'add_good': {
             'good_id': '',
             'quantity': 1234,
@@ -152,43 +117,20 @@ def create_request_data(exporter_user, gov_user, test_s3_key):
             'details': 'Kebabs'
         },
         'case_note': {
-            'text': case_note_text,
+            'text': 'I Am Easy to Find',
             'is_visible_to_exporter': True
         },
         'ecju_query': {
-            'question': ecju_query_text
+            'question': 'This is a question, please answer'
         },
-        "ecju_query_picklist": {
-            "name": "Standard question 1",
-            "text": "Why did the chicken cross the road?",
-            "type": "ecju_query"
+        'ecju_query_picklist': {
+            'name': 'Standard question 1',
+            'text': 'Why did the chicken cross the road?',
+            'type': 'ecju_query'
         },
-        'document': {
-            'name': 'document 1',
-            's3_key': test_s3_key,
-            'size': 0,
-            'description': 'document for test setup'
-        },
-        "additional_document": {
-            'name': 'picture',
-            's3_key': test_s3_key,
-            'size': 0,
-            'description': 'document for additional'
-        },
-        "proviso_picklist": {
-            "name": "Misc",
-            "text": "My proviso advice would be this.",
-            "proviso": "My proviso would be this.",
-            "type": "proviso"
-        },
-        "standard_advice_picklist": {
-            "name": "More advice",
-            "text": "My standard advice would be this.",
-            "type": "standard_advice"
-        },
-        "report_picklist": {
-            "name": "More advice",
-            "text": "My standard advice would be this.",
-            "type": "report_summary"
-        }
+        'document': create_document('document 1', 'document for test setup', test_s3_key),
+        'additional_document': create_document('picture', 'document for additional', test_s3_key),
+        'proviso_picklist': create_picklist('Misc', 'My proviso advice would be this.', 'proviso', proviso='My proviso would be this.'),
+        'standard_advice_picklist': create_picklist('More advice', 'My standard advice would be this.', 'standard_advice'),
+        'report_picklist': create_picklist('More advice', 'My standard advice would be this.', 'report_summary')
     }
