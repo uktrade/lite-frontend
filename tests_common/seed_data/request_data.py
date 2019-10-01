@@ -1,26 +1,24 @@
-org_name = 'Test Org'
-org_name_for_switching_organisations = 'Octopus Systems'
-logging = True
-case_note_text = 'I Am Easy to Find'
-ecju_query_text = 'This is a question, please answer'
-good_end_product_true = 'Hot Cross Buns'
-good_end_product_false = 'Falafels'
+def create_user(user):
+    return {
+        'first_name': user['first_name'],
+        'last_name': user['last_name'],
+        'email': user['email']
+    }
 
 
 def create_request_data(exporter_user, gov_user, test_s3_key):
+    exporter = create_user(exporter_user)
+    gov = create_user(gov_user)
+
     return {
         'organisation': {
-            'name': org_name,
+            'name': 'Test Org',
             'sub_type': 'commercial',
             'eori_number': '1234567890AAA',
             'sic_number': '2345',
             'vat_number': 'GB1234567',
             'registration_number': '09876543',
-            'user': {
-                'first_name': exporter_user['first_name'],
-                'last_name': exporter_user['last_name'],
-                'email': exporter_user['email']
-            },
+            'user': exporter,
             'site': {
                 'name': 'Headquarters',
                 'address': {
@@ -33,17 +31,13 @@ def create_request_data(exporter_user, gov_user, test_s3_key):
             }
         },
         'organisation_for_switching_organisations': {
-            'name': org_name_for_switching_organisations,
+            'name': 'Octopus Systems',
             'sub_type': 'commercial',
             'eori_number': '1234567890AAA',
             'sic_number': '2345',
             'vat_number': 'GB1234567',
             'registration_number': '09876543',
-            'user': {
-                'first_name': exporter_user['first_name'],
-                'last_name': exporter_user['last_name'],
-                'email': exporter_user['email']
-            },
+            'user': exporter,
             'site': {
                 'name': 'Headquarters',
                 'address': {
@@ -64,7 +58,7 @@ def create_request_data(exporter_user, gov_user, test_s3_key):
             'validate_only': False,
         },
         'good_end_product_true': {
-            'description': good_end_product_true,
+            'description': 'Hot Cross Buns',
             'is_good_controlled': 'yes',
             'control_code': 'ML1a',
             'is_good_end_product': True,
@@ -72,20 +66,16 @@ def create_request_data(exporter_user, gov_user, test_s3_key):
             'validate_only': False
         },
         'good_end_product_false': {
-            'description': good_end_product_false,
+            'description': 'Falafels',
             'is_good_controlled': 'yes',
             'control_code': 'ML1a',
             'is_good_end_product': False,
             'part_number': '1234',
             'validate_only': False,
         },
-        'gov_user': {
-            'email': gov_user['email'],
-            'first_name': gov_user['first_name'],
-            'last_name': gov_user['last_name']
-        },
+        'gov_user': gov,
         'export_user': {
-            'email': exporter_user['email'],
+            'email': exporter['email'],
             'password': 'password'
         },
         'draft': {
@@ -152,11 +142,11 @@ def create_request_data(exporter_user, gov_user, test_s3_key):
             'details': 'Kebabs'
         },
         'case_note': {
-            'text': case_note_text,
+            'text': 'I Am Easy to Find',
             'is_visible_to_exporter': True
         },
         'ecju_query': {
-            'question': ecju_query_text
+            'question': 'This is a question, please answer'
         },
         "ecju_query_picklist": {
             "name": "Standard question 1",
