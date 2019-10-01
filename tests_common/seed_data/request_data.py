@@ -38,6 +38,7 @@ def create_good(description, is_end_product):
         'validate_only': False,
     }
 
+
 def create_party(name, sub_type, website):
     return {
         'name': name,
@@ -46,6 +47,16 @@ def create_party(name, sub_type, website):
         'sub_type': sub_type,
         'website': website
     }
+
+
+def create_document(name, description, s3_key):
+    return {
+        'name': name,
+        's3_key': s3_key,
+        'size': 0,
+        'description': description
+    }
+
 
 def create_request_data(exporter_user, gov_user, test_s3_key):
     exporter = create_user(exporter_user)
@@ -106,18 +117,8 @@ def create_request_data(exporter_user, gov_user, test_s3_key):
             'text': 'Why did the chicken cross the road?',
             'type': 'ecju_query'
         },
-        'document': {
-            'name': 'document 1',
-            's3_key': test_s3_key,
-            'size': 0,
-            'description': 'document for test setup'
-        },
-        'additional_document': {
-            'name': 'picture',
-            's3_key': test_s3_key,
-            'size': 0,
-            'description': 'document for additional'
-        },
+        'document': create_document('document 1', 'document for test setup', test_s3_key),
+        'additional_document': create_document('picture', 'document for additional', test_s3_key),
         'proviso_picklist': {
             'name': 'Misc',
             'text': 'My proviso advice would be this.',
