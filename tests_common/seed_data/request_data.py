@@ -58,6 +58,17 @@ def create_document(name, description, s3_key):
     }
 
 
+def create_picklist(name, text, type, proviso=None):
+    picklist = {
+                'name': name,
+                'text': text,
+                'type': type
+            }
+    if proviso:
+        picklist['proviso'] = proviso
+    return picklist
+
+
 def create_request_data(exporter_user, gov_user, test_s3_key):
     exporter = create_user(exporter_user)
     gov = create_user(gov_user)
@@ -119,20 +130,7 @@ def create_request_data(exporter_user, gov_user, test_s3_key):
         },
         'document': create_document('document 1', 'document for test setup', test_s3_key),
         'additional_document': create_document('picture', 'document for additional', test_s3_key),
-        'proviso_picklist': {
-            'name': 'Misc',
-            'text': 'My proviso advice would be this.',
-            'proviso': 'My proviso would be this.',
-            'type': 'proviso'
-        },
-        'standard_advice_picklist': {
-            'name': 'More advice',
-            'text': 'My standard advice would be this.',
-            'type': 'standard_advice'
-        },
-        'report_picklist': {
-            'name': 'More advice',
-            'text': 'My standard advice would be this.',
-            'type': 'report_summary'
-        }
+        'proviso_picklist': create_picklist('Misc', 'My proviso advice would be this.', 'proviso', proviso='My proviso would be this.'),
+        'standard_advice_picklist': create_picklist('More advice', 'My standard advice would be this.', 'standard_advice'),
+        'report_picklist': create_picklist('More advice', 'My standard advice would be this.', 'report_summary')
     }
