@@ -8,7 +8,8 @@ last_name = 'Lite'
 good_end_product_true = 'Hot Cross Buns'
 good_end_product_false = 'Falafels'
 
-def create_request_data(exporter_user_email, test_s3_key):
+
+def create_request_data(exporter_user, gov_user, test_s3_key):
     return {
         'organisation': {
             'name': org_name,
@@ -18,9 +19,9 @@ def create_request_data(exporter_user_email, test_s3_key):
             'vat_number': 'GB1234567',
             'registration_number': '09876543',
             'user': {
-                'first_name': first_name,
-                'last_name': last_name,
-                'email': exporter_user_email
+                'first_name': exporter_user['first_name'],
+                'last_name': exporter_user['last_name'],
+                'email': exporter_user['email']
             },
             'site': {
                 'name': 'Headquarters',
@@ -41,9 +42,9 @@ def create_request_data(exporter_user_email, test_s3_key):
             'vat_number': 'GB1234567',
             'registration_number': '09876543',
             'user': {
-                'first_name': first_name,
-                'last_name': last_name,
-                'email': exporter_user_email
+                'first_name': exporter_user['first_name'],
+                'last_name': exporter_user['last_name'],
+                'email': exporter_user['email']
             },
             'site': {
                 'name': 'Headquarters',
@@ -81,11 +82,12 @@ def create_request_data(exporter_user_email, test_s3_key):
             'validate_only': False,
         },
         'gov_user': {
-            'email': 'test-uat-user@digital.trade.gov.uk',
-            'first_name': 'ecju',
-            'last_name': 'user'},
+            'email': gov_user['email'],
+            'first_name': gov_user['first_name'],
+            'last_name': gov_user['last_name']
+        },
         'export_user': {
-            'email': exporter_user_email,
+            'email': exporter_user['email'],
             'password': 'password'
         },
         'draft': {
@@ -98,7 +100,7 @@ def create_request_data(exporter_user_email, test_s3_key):
         'end-user': {
             'name': 'Government',
             'address': 'Westminster, London SW1A 0AA',
-            'country': 'Ukraine',
+            'country': 'GB',
             'sub_type': 'government',
             'website': 'https://www.gov.uk'
         },
@@ -129,6 +131,13 @@ def create_request_data(exporter_user_email, test_s3_key):
             'sub_type': 'government',
             'website': 'https://www.gov.uk'
         },
+        "third_party": {
+            "name": "Individual",
+            "address": "Ukraine, 01532",
+            "country": "UA",
+            "sub_type": "agent",
+            "website": "https://www.anothergov.uk"
+        },
         'add_good': {
             'good_id': '',
             'quantity': 1234,
@@ -151,10 +160,37 @@ def create_request_data(exporter_user_email, test_s3_key):
         'ecju_query': {
             'question': ecju_query_text
         },
+        "ecju_query_picklist": {
+            "name": "Standard question 1",
+            "text": "Why did the chicken cross the road?",
+            "type": "ecju_query"
+        },
         'document': {
             'name': 'document 1',
             's3_key': test_s3_key,
             'size': 0,
             'description': 'document for test setup'
+        },
+        "additional_document": {
+            'name': 'picture',
+            's3_key': test_s3_key,
+            'size': 0,
+            'description': 'document for additional'
+        },
+        "proviso_picklist": {
+            "name": "Misc",
+            "text": "My proviso advice would be this.",
+            "proviso": "My proviso would be this.",
+            "type": "proviso"
+        },
+        "standard_advice_picklist": {
+            "name": "More advice",
+            "text": "My standard advice would be this.",
+            "type": "standard_advice"
+        },
+        "report_picklist": {
+            "name": "More advice",
+            "text": "My standard advice would be this.",
+            "type": "report_summary"
         }
     }
