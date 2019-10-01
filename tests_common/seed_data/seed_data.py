@@ -9,10 +9,10 @@ class SeedData:
     gov_headers = {'content-type': 'application/json'}
     export_headers = {'content-type': 'application/json'}
 
-    def __init__(self, api_url, seed_data_config):
+    def __init__(self, seed_data_config):
         exporter_user_email = seed_data_config['email']
         test_s3_key = seed_data_config['s3_key']
-        self.base_url = api_url.rstrip('/')
+        self.base_url = seed_data_config['api_url'].rstrip('/')
         self.auth_gov_user()
         self.setup_org()
         self.auth_export_user()
