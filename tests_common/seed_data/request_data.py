@@ -38,6 +38,14 @@ def create_good(description, is_end_product):
         'validate_only': False,
     }
 
+def create_party(name, sub_type, website):
+    return {
+        'name': name,
+        'address': 'Westminster, London SW1A 0AA',
+        'country': 'GB',
+        'sub_type': sub_type,
+        'website': website
+    }
 
 def create_request_data(exporter_user, gov_user, test_s3_key):
     exporter = create_user(exporter_user)
@@ -60,47 +68,17 @@ def create_request_data(exporter_user, gov_user, test_s3_key):
             'have_you_been_informed': 'yes',
             'reference_number_on_information_form': '1234'
         },
-        'end-user': {
-            'name': 'Government',
-            'address': 'Westminster, London SW1A 0AA',
-            'country': 'GB',
-            'sub_type': 'government',
-            'website': 'https://www.gov.uk'
+        'end-user': create_party('Government', 'government', 'https://www.gov.uk'),
+        'end_user_advisory': {
+            'end_user': create_party('Person', 'government', 'https://www.gov.uk'),
+            'contact_telephone': 12345678901,
+            'contact_email': 'person@gov.uk',
+            'reasoning': 'This is the reason for raising the enquiry',
+            'note': 'note for end user advisory'
         },
-        "end_user_advisory": {
-            "end_user": {
-                "name": "Person",
-                "address": "Westminster, London SW1A 0AA",
-                "country": "GB",
-                "sub_type": "government",
-                "website": "https://www.gov.uk"
-            },
-            "contact_telephone": 12345678901,
-            "contact_email": "person@gov.uk",
-            "reasoning": "This is the reason for raising the enquiry",
-            "note": "note for end user advisory"
-        },
-        'ultimate_end_user': {
-            'name': 'Individual',
-            'address': 'Bullring, Birmingham SW1A 0AA',
-            'country': 'GB',
-            'sub_type': 'commercial',
-            'website': 'https://www.anothergov.uk'
-        },
-        'consignee': {
-            'name': 'Government',
-            'address': 'Westminster, London SW1A 0BB',
-            'country': 'GB',
-            'sub_type': 'government',
-            'website': 'https://www.gov.uk'
-        },
-        "third_party": {
-            "name": "Individual",
-            "address": "Ukraine, 01532",
-            "country": "UA",
-            "sub_type": "agent",
-            "website": "https://www.anothergov.uk"
-        },
+        'ultimate_end_user': create_party('Individual', 'commercial', 'https://www.anothergov.uk'),
+        'consignee': create_party('Government', 'government', 'https://www.gov.uk'),
+        'third_party': create_party('Individual', 'agent', 'https://www.anothergov.uk'),
         'add_good': {
             'good_id': '',
             'quantity': 1234,
@@ -123,10 +101,10 @@ def create_request_data(exporter_user, gov_user, test_s3_key):
         'ecju_query': {
             'question': 'This is a question, please answer'
         },
-        "ecju_query_picklist": {
-            "name": "Standard question 1",
-            "text": "Why did the chicken cross the road?",
-            "type": "ecju_query"
+        'ecju_query_picklist': {
+            'name': 'Standard question 1',
+            'text': 'Why did the chicken cross the road?',
+            'type': 'ecju_query'
         },
         'document': {
             'name': 'document 1',
@@ -134,26 +112,26 @@ def create_request_data(exporter_user, gov_user, test_s3_key):
             'size': 0,
             'description': 'document for test setup'
         },
-        "additional_document": {
+        'additional_document': {
             'name': 'picture',
             's3_key': test_s3_key,
             'size': 0,
             'description': 'document for additional'
         },
-        "proviso_picklist": {
-            "name": "Misc",
-            "text": "My proviso advice would be this.",
-            "proviso": "My proviso would be this.",
-            "type": "proviso"
+        'proviso_picklist': {
+            'name': 'Misc',
+            'text': 'My proviso advice would be this.',
+            'proviso': 'My proviso would be this.',
+            'type': 'proviso'
         },
-        "standard_advice_picklist": {
-            "name": "More advice",
-            "text": "My standard advice would be this.",
-            "type": "standard_advice"
+        'standard_advice_picklist': {
+            'name': 'More advice',
+            'text': 'My standard advice would be this.',
+            'type': 'standard_advice'
         },
-        "report_picklist": {
-            "name": "More advice",
-            "text": "My standard advice would be this.",
-            "type": "report_summary"
+        'report_picklist': {
+            'name': 'More advice',
+            'text': 'My standard advice would be this.',
+            'type': 'report_summary'
         }
     }
