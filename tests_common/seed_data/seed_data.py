@@ -1,6 +1,6 @@
 import requests
-from tools.wait import wait_for_ultimate_end_user_document, wait_for_document
-from seed_data.request_data import create_request_data
+from shared.tools.wait import wait_for_ultimate_end_user_document, wait_for_document
+from shared.seed_data.request_data import create_request_data
 
 class SeedData:
     base_url = ''
