@@ -2,6 +2,7 @@ import re
 import allure
 import os
 
+from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
@@ -161,3 +162,32 @@ def search_for_correct_date_regex_in_element(element):
     return re.search(
         "([0-9]{1,2}):([0-9]{2})(am|pm) ([0-9][0-9]) (January|February|March|April|May|June|July|August|September|October|November|December) ([0-9]{4,})", # noqa
         element)
+
+
+def get_formatted_date_time_h_m_pm_d_m_y():
+    time = datetime.now().strftime("%I:%M%p %d %B %Y").replace("PM", "pm").replace(
+        "AM", "am")
+    if time[0] == "0":
+        time = time[1:]
+    return time
+
+
+def get_unformatted_date_time():
+    return datetime.now()
+
+
+def get_formatted_date_time_d_h_m_s():
+    return datetime.now().strftime(" %d%H%M%S")
+
+
+def page_is_ready(driver):
+    return driver.execute_script("return document.readyState") == "complete"
+
+
+def menu_is_visible(driver):
+    return driver.find_element_by_css_selector('.lite-menu--visible').is_displayed()
+
+
+def select_visible_text_from_dropdown(element, text):
+    select = Select(element)
+    select.select_by_visible_text(text)
