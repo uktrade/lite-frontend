@@ -122,36 +122,19 @@ def get_element_by_text(elements, text: str):
             return element
 
 
-def get_element_index_by_text(elements, text: str):
+def get_element_index_by_text(elements, text: str, complete_match=True):
     """
-    Loops through the list of elements, checks if the text is equal to
+    Loops through the list of elements, checks if the text is equal or in
     text and returns the index of it if so
     """
-    no = 0
-    element_number = -1
-    while no < len(elements):
-        if elements[no].text == text:
-            element_number = no
-            break
-        no += 1
-
-    return element_number
-
-
-def get_element_index_by_partial_text(elements, text: str):
-    """
-    Loops through the list of elements, checks if the text is equal to
-    text and returns the index of it if so
-    """
-    no = 0
-    element_number = -1
-    while no < len(elements):
-        if text in elements[no].text:
-            element_number = no
-            break
-        no += 1
-
-    return element_number
+    for i in range(0, len(elements)):
+        if complete_match:
+            if elements[i].text == text:
+                return i
+        else:
+            if text in elements[i].text:
+                return i
+    return -1
 
 
 def scroll_to_element_by_id(driver, id):
