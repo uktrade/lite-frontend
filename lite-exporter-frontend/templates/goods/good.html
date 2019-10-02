@@ -127,7 +127,7 @@
 				<div class="lite-app-bar__content">
 					<h3 class="govuk-heading-m">Documents</h3>
 				</div>
-			    {% if good.status == 'draft' %}
+			    {% if good.status.key == 'draft' %}
 		            <a role="button" draggable="false" class="govuk-button" href="{% url 'goods:attach_documents' good.id %}">
 		                {% get_string 'goods.documents.attach_documents.button' %}
 		            </a>
