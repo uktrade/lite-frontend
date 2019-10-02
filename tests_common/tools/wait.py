@@ -36,8 +36,8 @@ def element_is_present(driver, id):
     return bool(driver.find_elements_by_id(id))
 
 
-def wait_for_download_button(driver):
-    return wait_for_function(download_link_is_present, driver=driver)
+def wait_for_download_button(driver, page):
+    return wait_for_function(download_link_is_present, driver=driver, page=page)
 
 
 def wait_for_element(driver, id):
