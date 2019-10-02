@@ -139,3 +139,11 @@ def friendly_boolean(boolean):
         return 'Yes'
     else:
         return 'No'
+
+
+@register.filter()
+def get_first_country_from_first_good(dictionary: dict):
+    """
+    Returns the first key in a dictionary
+    """
+    return list(dictionary)[0] + '.' + next(iter(dictionary.values()))[0]

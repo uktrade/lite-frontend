@@ -37,9 +37,15 @@
                                     Clear advice
                                 </button>
                                 {% if able_to_finalize %}
-                                    <a class="govuk-button"  href="{% url 'cases:finalise' case.id %}" id="finalise_button">
-                                        Finalise
-                                    </a>
+                                    {% if case.application.licence_type.key == 'open_licence' %}
+                                        <a class="govuk-button"  href="{% url 'cases:finalise_goods_countries' case.id %}" id="finalise_button">
+                                            Finalise goods and countries
+                                        </a>
+                                    {% else %}
+                                        <a class="govuk-button"  href="{% url 'cases:finalise' case.id %}" id="finalise_button">
+                                            Finalise
+                                        </a>
+                                    {% endif %}
                                 {% endif %}
                             </div>
                         {% else %}

@@ -156,7 +156,7 @@ class ApplicationPage(BasePage):
         elements = self.driver.find_elements_by_css_selector(self.checkbox)
         num = 0
         for element in elements:
-            element.click()
+            self.driver.execute_script("arguments[0].click();", element)
             num += 1
         self.driver.find_element_by_id(self.give_advice_button).click()
         return num

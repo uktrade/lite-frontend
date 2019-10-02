@@ -1,14 +1,17 @@
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
-from lite_forms.generators import form_page
+from lite_forms.generators import form_page, error_page
 
 from cases.forms.finalise_case import approve_licence_form, refuse_licence_form
 from cases.services import post_user_case_advice, get_user_case_advice, get_team_case_advice, \
     get_final_case_advice, coalesce_user_advice, coalesce_team_advice, post_team_case_advice, \
-    post_final_case_advice, clear_team_advice, clear_final_advice, get_case, put_applications
+    post_final_case_advice, clear_team_advice, clear_final_advice, get_case, put_applications, \
+    post_good_countries_decisions, get_good_countries_decisions, _generate_data_and_keys, \
+    _generate_post_data_and_errors
 from cases.views_helpers import get_case_advice, render_form_page, post_advice, post_advice_details, \
     give_advice_detail_dispatch, give_advice_dispatch
+from conf.constants import DECISIONS_LIST
 
 
 class ViewUserAdvice(TemplateView):
@@ -66,6 +69,7 @@ class CoalesceUserAdvice(TemplateView):
     """
     Group all of a user's team's user level advice in a team advie for the user's team
     """
+
     def get(self, request, **kwargs):
         case_id = str(kwargs['pk'])
         coalesce_user_advice(request, case_id)
@@ -137,6 +141,7 @@ class CoalesceTeamAdvice(TemplateView):
     """
     Group all team's advice into final advice
     """
+
     def get(self, request, **kwargs):
         case_id = str(kwargs['pk'])
         coalesce_team_advice(request, case_id)
@@ -199,20 +204,93 @@ class GiveFinalAdviceDetail(TemplateView):
         return post_advice_details(post_final_case_advice, request, self.case, self.form, 'final')
 
 
+class FinaliseGoodsCountries(TemplateView):
+    def get(self, request, *args, **kwargs):
+        try:
+            case, data, _ = _generate_data_and_keys(request, str(kwargs['pk']))
+        except PermissionError:
+            return error_page(request, 'You do not have permission.')
+
+        context = {
+            'title': 'Finalise goods and countries',
+            'case': case,
+            'good_countries': data['data'],
+            'decisions': DECISIONS_LIST,
+        }
+        return render(request, 'cases/case/finalise-open-goods-countries.html', context)
+
+    def post(self, request, *args, **kwargs):
+        try:
+            case, data, keys = _generate_data_and_keys(request, str(kwargs['pk']))
+        except PermissionError:
+            return error_page(request, 'You do not have permission.')
+
+        request_data = request.POST.copy()
+        request_data.pop('csrfmiddlewaretoken')
+        selection = {}
+        action = request_data.pop('action')[0]
+
+        selection['good_countries'] = []
+        for key, value in request_data.items():
+            selection['good_countries'].append(
+                {
+                    'case': str(kwargs['pk']),
+                    'good': key.split('.')[0],
+                    'country': key.split('.')[1],
+                    'decision': value}
+            )
+
+        context = {
+            'title': 'Finalise goods and countries',
+            'case': case,
+            'decisions': DECISIONS_LIST,
+            'good_countries': data['data'],
+            'errors': {}
+        }
+
+        post_data, errors = _generate_post_data_and_errors(keys, request_data, action)
+
+        # If errors, return page
+        if errors:
+            context['errors'] = errors
+            context['good_countries'] = post_data
+            return render(request, 'cases/case/finalise-open-goods-countries.html', context)
+
+        data, _ = post_good_countries_decisions(request, str(kwargs['pk']), selection)
+
+        if action == 'save':
+            context['good_countries'] = data['data']
+            return render(request, 'cases/case/finalise-open-goods-countries.html', context)
+        elif 'errors' in data:
+            context['error'] = data.get('errors')
+            return render(request, 'cases/case/finalise-open-goods-countries.html', context)
+
+        return redirect(reverse_lazy('cases:finalise', kwargs={'pk': kwargs['pk']}))
+
+
 class Finalise(TemplateView):
     """
     Finalise a case and change the case status to finalised
     """
+
     def get(self, request, *args, **kwargs):
         case = get_case(request, str(kwargs['pk']))
-        advice, _ = get_final_case_advice(request, str(kwargs['pk']))
+        standard = case['application']['licence_type']['key'] == 'standard_licence'
+        if standard:
+            advice, _ = get_final_case_advice(request, str(kwargs['pk']))
+            data = advice['advice']
+            search_key = 'type'
+        else:
+            data = get_good_countries_decisions(request, str(kwargs['pk']))['data']
+            search_key = 'decision'
+
         case_id = case['id']
 
-        for item in advice['advice']:
-            if item['type']['key'] == 'approve' or item['type']['key'] == 'proviso':
-                return form_page(request, approve_licence_form(case_id))
+        for item in data:
+            if item[search_key]['key'] == 'approve' or item[search_key]['key'] == 'proviso':
+                return form_page(request, approve_licence_form(case_id, standard))
 
-        return form_page(request, refuse_licence_form(case_id))
+        return form_page(request, refuse_licence_form(case_id, standard))
 
     def post(self, request, *args, **kwargs):
         case = get_case(request, str(kwargs['pk']))

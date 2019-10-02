@@ -1,0 +1,83 @@
+{% extends 'layouts/base.html' %}
+
+{% load static %}
+
+{% block back_link %}
+	<a href="{% url 'cases:final_advice_view' case.id %}" class="govuk-back-link">Back to final advice</a>
+{% endblock %}
+
+{% block body %}
+
+<form action="{% url 'cases:finalise_goods_countries' case.id %}" method="post">
+
+	{% csrf_token %}
+
+	<h2 class="govuk-heading-l">Select a decision for each good and country combination</h2>
+
+	{% if errors %}
+		<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+			<h2 class="govuk-error-summary__title" id="error-summary-title">
+				There is a problem
+			</h2>
+			<div class="govuk-error-summary__body">
+				<ul class="govuk-list govuk-error-summary__list">
+					<li>
+						<a href="#{{ errors|get_first_country_from_first_good }}">Select a decision for each good and country combination</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	{% endif %}
+
+	<table class="lite-table">
+		<thead class="lite-table__head">
+			<tr class="lite-table__row">
+				<th class="lite-table__header">Good</th>
+				<th class="lite-table__header">Countries</th>
+				<th class="lite-table__header">Approve</th>
+				<th class="lite-table__header">Refuse</th>
+				<th class="lite-table__header">No Licence Required</th>
+			</tr>
+		</thead>
+
+		<tbody class="lite-table__body">
+			{% for good in case.application.goods_types %}
+				<tr class="lite-table__row">
+					<td class="lite-table__cell">{{ good.control_code|default:good.description }} <span style="opacity: 0.7">({{ good.advice.value|default:"No advice" }})</span></td>
+					<td class="lite-table__cell">
+						{% for country in good.countries %}
+							<div class="{% if good.id in errors %}{% if country.id in errors|key_value:good.id %}govuk-form-group--error govuk-error-message{% endif %}{% endif %}" style="margin-bottom: 25px;">
+								{{ country.name }} <span style="opacity: 0.7">({{ country.advice.value|default:"No advice" }})</span>
+							</div>
+						{% endfor %}
+					</td>
+					{% for decision in decisions %}
+						<td class="lite-table__cell">
+							{% for country in good.countries %}
+								<div class="govuk-radios govuk-radios--small" style="padding-bottom: 50px">
+									<div class="govuk-radios__item">
+										<input class="govuk-radios__input" type="radio" {% for data in good_countries %}{% if good.id == data.good %}{% if country.id == data.country %}{% if decision == data.decision %} checked
+										 {% elif decision == data.decision.key %} checked {% endif %}{% endif %}{% endif %}{% endfor %} name="{{ good.id }}.{{ country.id }}" id="{{ good.id }}.{{ country.id }}" value="{{ decision }}">
+										<label class="govuk-label govuk-radios__label {% if good.id in errors %}{% if country.id in errors|key_value:good.id %}app-radios__label--error{% endif %}{% endif %}" for="{{ good.id }}.{{ country.id }}">
+										</label>
+									</div>
+								</div>
+							{% endfor %}
+						</td>
+					{% endfor %}
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+
+	<button id="submit" type="submit" name="action" value="submit" class="govuk-button" data-module="govuk-button" style="margin-right: 15px">
+		Finalise
+	</button>
+    <button id="submit" type="submit" name="action" value="save" class="govuk-button govuk-button--secondary">
+        Save
+	</button>
+
+</form>
+
+{% endblock %}

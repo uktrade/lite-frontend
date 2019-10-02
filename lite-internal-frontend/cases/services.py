@@ -5,7 +5,6 @@ from conf.constants import CASE_URL, CASE_NOTES_URL, APPLICATIONS_URL, ACTIVITY_
     GOODS_TYPE_URL, USER_ADVICE_URL, TEAM_ADVICE_URL, FINAL_ADVICE_URL, VIEW_TEAM_ADVICE_URL, VIEW_FINAL_ADVICE_URL
 
 
-
 def get_case(request, pk):
     data = get(request, CASE_URL + pk)
     return data.json()['case']
@@ -159,6 +158,16 @@ def prepare_data_for_advice(json):
     return new_data
 
 
+def get_good_countries_decisions(request, case_pk):
+    data = get(request, CASE_URL + case_pk + '/goods-countries-decisions/')
+    return data.json()
+
+
+def post_good_countries_decisions(request, case_pk, json):
+    data = post(request, CASE_URL + case_pk + '/goods-countries-decisions/', json)
+    return data.json(), data.status_code
+
+
 def post_user_case_advice(request, case_pk, json):
     new_data = prepare_data_for_advice(json)
     data = post(request, CASE_URL + case_pk + USER_ADVICE_URL, new_data)
@@ -218,3 +227,64 @@ def get_flags_for_team_of_level(request, level):
 def put_flag_assignments(request, json):
     data = put(request, ASSIGN_FLAGS_URL, json)
     return data.json(), data.status_code
+
+
+def _generate_data_and_keys(request, pk):
+    case = get_case(request, pk)
+    case_advice, _ = get_final_case_advice(request, pk)
+
+    # The keys are each relevant good-country pairing in the format good_id.country_id
+    keys = []
+    # Builds form page data structure
+    # For each good in the case
+    for good in case['application']['goods_types']:
+        # Match the goods with the goods in advice for that case
+        # and attach the advice value to the good
+        for advice in case_advice['advice']:
+            if advice['goods_type'] == good['id']:
+                good['advice'] = advice['type']
+                break
+        # If the good has countries attached to it as destinations
+        # We do the same with the countries and their advice
+        if good['countries']:
+            for country in good['countries']:
+                keys.append(str(good['id']) + '.' + country['id'])
+                for advice in case_advice['advice']:
+                    if advice['country'] == country['id']:
+                        country['advice'] = advice['type']
+                        break
+        # If the good has no countries:
+        else:
+            good['countries'] = []
+            # We attach all countries from the case
+            # And then attach the advice as before
+            for country in case['application']['destinations']['data']:
+                good['countries'].append(country)
+                keys.append(str(good['id']) + '.' + country['id'])
+                for advice in case_advice['advice']:
+                    if advice['country'] == country['id']:
+                        country['advice'] = advice['type']
+                        break
+    data = get_good_countries_decisions(request, pk)
+    if 'detail' in data:
+        raise PermissionError
+
+    return case, data, keys
+
+
+def _generate_post_data_and_errors(keys, request_data, action):
+    post_data = []
+    errors = {}
+    for key in keys:
+        good_pk = key.split('.')[0]
+        country_pk = key.split('.')[1]
+        if key not in request_data and not action == 'save':
+            if good_pk in errors:
+                errors[good_pk].append(country_pk)
+            else:
+                errors[good_pk] = [country_pk]
+        else:
+            post_data.append({'good': good_pk,
+                              'country': country_pk,
+                              'decision': request_data.get(key)})
+    return post_data, errors

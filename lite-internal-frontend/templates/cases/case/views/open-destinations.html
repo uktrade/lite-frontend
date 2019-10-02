@@ -12,13 +12,25 @@
 				<tr class="lite-table__row">
 					<td class="lite-table__cell">
 						<div class="govuk-checkboxes govuk-checkboxes--small">
-							<div class="govuk-checkboxes__item">
-								<input class="govuk-checkboxes__input" type="checkbox" name="countries" id="{{ country.id }}" value="{{ country.id }}">
-								<label class="govuk-label govuk-checkboxes__label" for="{{ country.id }}">
-									<input class="govuk-checkboxes__input" type="checkbox" name="countries" value="{{ country.id }}" id="{{ country.id }}">
-									<label class="govuk-label govuk-checkboxes__label" for="{{ country.id }}">{{ country.name }} <span class="app-country-tag">{{ country.id }}</span>
-								</label>
-							</div>
+							{% if show_checkboxes %}<div class="govuk-checkboxes__item">
+							<input class="govuk-checkboxes__input" type="checkbox" name="countries" value="{{ country.id }}" id="{{ country.id }}"> {% endif %}
+							<label class="govuk-label {% if show_checkboxes %}govuk-checkboxes__label{% endif %}" for="{{ country.id }}">{{ country.name }}
+                                <span class="app-country-tag" style="margin-right: 10px">
+                                    {{ country.id }}
+                                </span>
+                                {% for good in case.application.goods_types %}
+                                    {% if good.countries %}
+                                        {% if country in good.countries %}
+                                            {% if good.control_code %}
+                                                <span class="app-country-tag app-country-tag--orange">{{ good.control_code }}</span>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="app-country-tag app-country-tag--orange">{{ good.control_code }}</span>
+                                    {% endif %}
+                                {% endfor %}
+                            </label>
+						{% if show_checkboxes %}</div>{% endif %}
 						</div>
 					</td>
 					<td class="lite-table__cell">

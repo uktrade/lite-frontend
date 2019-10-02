@@ -94,3 +94,29 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I combine all advice
     And I finalise the licence
     Then I reset the permissions
+
+
+  @LT_1334_finalise_goods_countries_matrix
+  Scenario: Finalise goods and countries
+    Given I create open application or open application has been previously created
+    And I create a proviso picklist
+    And I create a standard advice picklist
+    And I sign in to SSO or am signed into SSO
+    When I give myself all permissions
+    And I go to open application previously created
+    And I click on view advice
+    And I select all items in the advice view
+    And I choose to 'approve' the licence
+    And I import text from the 'advice' picklist
+    And I write 'We will get back to you in three weeks' in the note text field
+    And I click continue
+    And I go to the team advice
+    And I combine all advice
+    And I go to the final advice
+    And I combine all advice
+    And I finalise the goods and countries
+    And I click continue
+    Then I see error message "Albania (Approve)"
+    When I select approve for all combinations of goods and countries
+    And I click continue
+    Then I reset the permissions

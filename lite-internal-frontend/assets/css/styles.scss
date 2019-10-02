@@ -10,6 +10,18 @@ $govuk-link-active-colour: darken($govuk-brand-colour, 20%);
 @import "../shared/lite-frontend/scss/all"; // Local Assets
 @import "components/all";
 
+.app-radios__label--error {
+	color: $govuk-error-colour;
+
+	&::before {
+		border-width: $govuk-border-width-form-element-error;
+	}
+
+	&::after {
+		color: govuk-colour("black");
+	}
+}
+
 .app-panel {
 	background-color: govuk-colour("light-grey");
 	padding: govuk-spacing(6);

@@ -1,103 +1,85 @@
-<div class="govuk-accordion" data-module="govuk-accordion" id="accordion-with-summary-sections">
-	<table class="lite-table" id="goods">
-		<thead class="lite-table__head">
-			<tr class="lite-table__row">
-				<th class="lite-table__header" scope="col">Description</th>
-				<th class="lite-table__header" scope="col">Control List Entry</th>
-				<th class="lite-table__header" scope="col">Countries</th>
-				<th class="lite-table__header">Is Good controlled</th>
-				<th class="lite-table__header">Flags</th>
-				{% if show_advice %}
-				<th class="lite-table__header" style="width: 350px;">Advice</th>
-				{% endif %}
-			</tr>
-		</thead>
-	</table>
-	{% for good in case.application.goods_types %}
-	<div class="govuk-accordion__section ">
-		<div class="govuk-accordion__section-header">
-			<div class="govuk-accordion__section-heading">
-				<span class="govuk-accordion__section-button" id="accordion-with-summary-sections-heading-1">
-					{{ good.control_code|default:"N/A" }}
-				</span>
-			</div>
-		</div>
-		<table class="lite-table">
-			<tbody class="lite-table__body govuk-checkboxes govuk-checkboxes--small">
-				<tr class="lite-table__row">
-					<td class="lite-table__cell">
-						{% if show_checkboxes %}<div class="govuk-checkboxes__item">
-							<input class="govuk-checkboxes__input" type="checkbox" name="goods" value="{{ good.id }}" id="{{ good.id }}"> {% endif %}
-							<label class="govuk-label {% if show_checkboxes %}govuk-checkboxes__label{% endif %}" for="{{ good.id }}">{{ good.description }}</label>
-							{% if show_checkboxes %}</div>{% endif %}
-					</td>
-					<td class="lite-table__cell">
-						{% if good.control_code %}
-						<span class="app-country-tag app-country-tag--orange">{{ good.control_code }}</span></td>
+{% load svg %}
+
+<table class="lite-accordian-table">
+	<thead class="lite-accordian-table__head">
+		<tr>
+			<th class="lite-accordian-table__header" scope="col">Description</th>
+			<th class="lite-accordian-table__header" scope="col">Control list entry</th>
+			<th class="lite-accordian-table__header" scope="col">Countries</th>
+			<th class="lite-accordian-table__header" scope="col">Is good controlled</th>
+			<th class="lite-accordian-table__header" scope="col">Flags</th>
+			<th class="lite-accordian-table__header" scope="col"></th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for good in case.application.goods_types %}
+			<tr class="lite-accordian-table__row view">
+				<td class="lite-accordian-table__cell">
+					{% if show_checkboxes %}<div class="govuk-checkboxes--small govuk-checkboxes__item">
+						<input class="govuk-checkboxes__input" type="checkbox" name="goods" value="{{ good.id }}" id="{{ good.id }}"> {% endif %}
+						<label class="govuk-label {% if show_checkboxes %}govuk-checkboxes__label{% endif %}" for="{{ good.id }}">{{ good.description }}</label>
+						{% if show_checkboxes %}</div>{% endif %}
+				</td>
+				<td class="lite-accordian-table__cell">
+					{% if good.control_code %}
+					<span class="app-country-tag app-country-tag--orange">{{ good.control_code }}</span>
 					{% else %}
 					None
 					{% endif %}
-					<td class="lite-table__cell">
-						{% for country in good.countries %}
-						<span class="app-country-tag">{{ country.id }}</span>
-						{% empty %}
-						{% for country in case.application.destinations.data %}
-						<span class="app-country-tag">{{ country.id }}</span>
-						{% endfor %}
-						{% endfor %}
-					</td>
-					<td class="lite-table__cell">
-						{% if good.is_good_controlled %}
-						Yes
-						{% else %}
-						No
-						{% endif %}
-					</td>
-					<td class="lite-table__cell">
-						{% if good.flags %}
-						{% for flag in good.flags %}
-						{{ flag.name }}<br>
-						{% endfor %}
-						{% endif %}
-					</td>
-					{% if show_advice %}
-					<td class="lite-table__cell">
-						{% for advice in all_advice %}
-						{% if advice.goods_type == good.id %}
-						{% include 'cases/case/views/table-advice.html' %}
-						{% endif %}
-						{% endfor %}
-					</td>
+				</td>
+				<td class="lite-accordian-table__cell">
+					{% for country in good.countries %}
+					<span class="app-country-tag">{{ country.id }}</span>
+					{% empty %}
+					{% for country in case.application.destinations.data %}
+					<span class="app-country-tag">{{ country.id }}</span>
+					{% endfor %}
+					{% endfor %}
+				</td>
+				<td class="lite-accordian-table__cell">
+					{% if good.is_good_controlled %}
+					Yes
+					{% else %}
+					No
 					{% endif %}
-				</tr>
-			</tbody>
-		</table>
-		<div id="accordion-with-summary-sections-content" class="govuk-accordion__section-content" aria-labelledby="accordion-with-summary-sections-heading-1">
-			<table class="lite-table">
-				<thead class="lite-table__head">
-					<tr class="lite-table__row">
-						<th class="lite-table__header" scope="col">Description</th>
-						<th class="lite-table__header" scope="col">Countries</th>
-					</tr>
-				</thead>
-				<tbody class=lite-table__body>
-					<tr class="lite-table__row">
-						<td class="lite-table__cell">
-							{{ good.description }}
-						</td>
-						<td class="lite-table__cell">
-							{% for country in good.countries %}
+				</td>
+				<td class="lite-accordian-table__cell">
+					{% if good.flags %}
+					{% for flag in good.flags %}
+					{{ flag.name }}<br>
+					{% endfor %}
+					{% endif %}
+				</td>
+				<td class="lite-accordian-table__cell">
+					<a onclick="return openTableFold(this);">
+						{% svg 'chevron' %}
+					</a>
+				</td>
+			</tr>
+			<tr class="lite-accordian-table__fold">
+				<td class="lite-accordian-table__fold-wrapper" colspan="7">
+					<div class="lite-accordian-table__fold-content">
+						<p class="govuk-body"><span>Description: </span>{{ good.description }}</p>
+
+						<p class="govuk-body">Destinations: {% for country in good.countries %}
 							<span class="app-country-tag">{{ country.name }}</span>
 							{% empty %}
-							{% for country in case.application.destinations.data %}
-							<span>{{ country.name }}</span>
-							{% endfor %}
-							{% endfor %}
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
-	{% endfor %}
-</div>
+								{% for country in case.application.destinations.data %}
+									<span class="app-country-tag">{{ country.name }}</span>
+								{% endfor %}
+						{% endfor %}</p>
+					</div>
+				</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>
+
+{% block javascript %}
+	<script type="text/javascript">
+		function openTableFold(element) {
+			$(element).parent().parent().toggleClass("open").next(".lite-accordian-table__fold").toggleClass("open");
+			return false;
+		}
+	</script>
+{% endblock %}

@@ -126,3 +126,14 @@ def combine_all_advice(driver):
 def finalise(driver):
     page = GiveAdvicePages(driver)
     page.finalise()
+
+
+@when("I finalise the goods and countries")
+def finalise_goods_and_countries(driver):
+    page = GiveAdvicePages(driver)
+    page.finalise_goods_and_countries()
+
+@when("I select approve for all combinations of goods and countries")
+def select_approve_for_all(driver):
+    page = GiveAdvicePages(driver)
+    page.select_approve_for_all()

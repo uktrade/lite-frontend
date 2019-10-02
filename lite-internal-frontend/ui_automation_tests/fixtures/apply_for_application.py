@@ -78,3 +78,26 @@ def apply_for_eua_query(driver, seed_data_config, context):
     lite_client = get_lite_client(context, seed_data_config)
     lite_client.add_eua_query()
     context.eua_id = lite_client.context['end_user_advisory_id']
+
+
+@fixture(scope="module")
+def apply_for_open_application(driver, request, seed_data_config, context):
+    timer = Timer()
+    lite_client = get_lite_client(context, seed_data_config)
+
+    open_app_time_id = datetime.datetime.now().strftime(" %d%H%M%S")
+    context.open_app_time_id = open_app_time_id
+
+    lite_client.add_open_draft(
+        draft={
+            "name": "Test Application " + open_app_time_id,
+            "licence_type": "open_licence",
+            "export_type": "permanent",
+            "have_you_been_informed": "yes",
+            "reference_number_on_information_form": "1234"}
+    )
+    lite_client.submit_open_application()
+    context.open_app_id = lite_client.context['open_application_id']
+    context.open_case_id = lite_client.context['open_case_id']
+
+    timer.print_time('apply_for_open_application')

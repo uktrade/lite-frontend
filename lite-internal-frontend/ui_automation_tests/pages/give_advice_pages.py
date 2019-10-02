@@ -13,6 +13,8 @@ class GiveAdvicePages(BasePage):
     final_advice = 'final_advice'
     combine_advice_button = 'combine_advice_button'
     finalise_button = 'finalise_button'
+    finalise_goods_and_countries_button = 'finalise_button'
+    radio_input_approve = '.govuk-radios input[value="approve"]'
 
     def click_on_advice_option(self, option):
         self.driver.find_element_by_id(self.advice_checkbox_option + option).click()
@@ -44,3 +46,11 @@ class GiveAdvicePages(BasePage):
 
     def finalise(self):
         self.driver.find_element_by_id(self.finalise_button).click()
+
+    def finalise_goods_and_countries(self):
+        self.driver.find_element_by_id(self.finalise_goods_and_countries_button).click()
+
+    def select_approve_for_all(self):
+        elements = self.driver.find_elements_by_css_selector(self.radio_input_approve)
+        for element in elements:
+            self.driver.execute_script("arguments[0].click();", element)

@@ -35,9 +35,8 @@
 	z-index: 100;
 	-webkit-user-select: none;
 	user-select: none;
-
 	opacity: 0;
-	transform-origin: 50% 0%;
+	transform-origin: 50% 0;
 	transform: scale(0.8) translateY(-10px);
 	transition: 0.2s ease;
 
@@ -48,12 +47,14 @@
 		left: 165.5px;
 		width: 14px;
 		height: 6px;
-		background-image: url('/assets/images/lite_menu_chevron.svg');
+		background-image: url("/assets/images/chevron.svg");
 	}
+
 	* {
 		color: currentColor;
 		fill: currentColor;
 	}
+
 	a {
 		@include govuk-link-common;
 		@include govuk-font($size: 14, $weight: bold);
@@ -67,6 +68,7 @@
 		flex-direction: column;
 		line-height: normal;
 		padding: 10px;
+
 		.icon {
 			width: 50px;
 			height: 40px;
@@ -78,20 +80,24 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
+
 			img {
 				max-height: 40px;
 			}
 		}
+
 		&:hover {
 			background-color: govuk-colour("light-grey");
 			opacity: 1!important;
 			text-decoration: underline;
 		}
+
 		&:active {
 			background-color: govuk-colour("light-grey");
 			opacity: 1!important;
 		}
 	}
+
 	.lite-menu-item--selected {
 		background-color: $govuk-brand-colour;
 		color: govuk-colour("white");
@@ -105,6 +111,7 @@
 		&:hover {
 			background-color: darken($govuk-brand-colour, 5%);
 		}
+
 		&:active {
 			background-color: darken($govuk-brand-colour, 10%);
 		}
