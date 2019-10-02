@@ -243,6 +243,29 @@ class SeedData:
 
         self.check_documents(draft_id=draft_id, ultimate_end_user_id=ultimate_end_user_id)
 
+    def add_open_draft(self, draft=None):
+        self.log("Creating draft: ...")
+        data = self.request_data['draft'] if draft is None else draft
+        response = self.make_request("POST", url='/drafts/', headers=self.export_headers, body=data)
+        draft_id = response.json()['draft']['id']
+        self.add_to_context('draft_id', draft_id)
+        self.log("Adding site: ...")
+        self.make_request("POST", url='/drafts/' + draft_id + '/sites/', headers=self.export_headers,
+                          body={'sites': [self.context['primary_site_id']]})
+        self.log("Adding countries: ...")
+        self.make_request("POST", url='/drafts/' + draft_id + '/countries/', headers=self.export_headers,
+                          body={'countries': ['US', 'AL', 'ZM']})
+        self.log("Adding goods_type: ...")
+        data = {
+            'description': 'A goods type',
+            'is_good_controlled': True,
+            'control_code': 'ML1a',
+            'is_good_end_product': True,
+            'content_type': 'draft',
+            'object_id': draft_id
+        }
+        self.make_request("POST", url='/goodstype/', headers=self.export_headers, body=data)
+
     def submit_application(self, draft_id=None):
         self.log('submitting application: ...')
         draft_id_to_submit = draft_id if None else self.context['draft_id']  # noqa
