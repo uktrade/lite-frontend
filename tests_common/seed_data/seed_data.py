@@ -1,5 +1,5 @@
 import requests
-from shared.tools.wait import wait_for_ultimate_end_user_document, wait_for_document
+from shared.tools.wait import wait_for_ultimate_end_user_document, wait_for_third_party_document, wait_for_additional_document, wait_for_document
 from shared.seed_data.request_data import create_request_data
 
 class SeedData:
@@ -182,7 +182,7 @@ class SeedData:
     def add_consignee_document(self, draft_id):
         self.add_document('/drafts/' + draft_id + '/consignee/document/')
 
-    def check_documents(self, draft_id, ultimate_end_user_id):
+    def check_documents(self, draft_id, ultimate_end_user_id, third_party_id, additional_document_id):
         end_user_document_is_processed = wait_for_document(
             func=self.check_end_user_document_is_processed, draft_id=draft_id)
         assert end_user_document_is_processed, "End user document wasn't successfully processed"
@@ -193,6 +193,14 @@ class SeedData:
             func=self.check_ultimate_end_user_document_is_processed, draft_id=draft_id,
             ultimate_end_user_id=ultimate_end_user_id)
         assert ultimate_end_user_document_is_processed, "Ultimate end user document wasn't successfully processed"
+        third_party_document_is_processed = wait_for_third_party_document(
+            func=self.check_third_party_document_is_processed, draft_id=draft_id,
+            third_party_id=third_party_id)
+        assert third_party_document_is_processed, "Third party document wasn't successfully processed"
+        additional_document_is_processed = wait_for_additional_document(
+            func=self.check_additional_document_is_processed, draft_id=draft_id,
+            document_id=additional_document_id)
+        assert additional_document_is_processed, "Additional document wasn't successfully processed"
 
     def add_draft(self, draft=None, good=None, enduser=None, ultimate_end_user=None, consignee=None, third_party=None,
                   additional_documents=None):
@@ -233,6 +241,7 @@ class SeedData:
         third_party_response = self.make_request('POST', url='/drafts/' + draft_id + '/third-parties/',
                                                  headers=self.export_headers, body=third_party_data)
         self.add_to_context('third_party', third_party_response.json()['third_party'])
+        third_party_id = self.context['third_party']['id']
 
         additional_documents_data = \
             self.request_data['additional_document'] if additional_documents is None else additional_documents
@@ -240,6 +249,7 @@ class SeedData:
                                                           headers=self.export_headers, body=additional_documents_data)
         self.add_to_context('additional_document',
                             additional_documents_response.json()['document'])
+        additional_document_id = self.context['additional_document']['id']
 
         self.check_documents(draft_id=draft_id, ultimate_end_user_id=ultimate_end_user_id)
 
@@ -341,6 +351,12 @@ class SeedData:
 
     def check_ultimate_end_user_document_is_processed(self, draft_id, ultimate_end_user_id):
         return self.check_document('/drafts/' + draft_id + '/ultimate-end-user/' + ultimate_end_user_id + '/document/')
+
+    def check_third_party_document_is_processed(self, draft_id, third_party_id):
+        return self.check_document('/drafts/' + draft_id + '/third-party/' + third_party_id + '/document/')
+
+    def check_additional_document_is_processed(self, draft_id, document_id):
+        return self.check_document('/drafts/' + draft_id + '/documents/' + document_id + '/')
 
     def add_ecju_query_picklist(self):
         self.log("Creating ECJU Query picklist item ...")
