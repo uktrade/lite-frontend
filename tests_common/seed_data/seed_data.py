@@ -179,6 +179,9 @@ class SeedData:
     def add_ultimate_end_user_document(self, draft_id, ultimate_end_user_id):
         self.add_document('/drafts/' + draft_id + '/ultimate-end-user/' + ultimate_end_user_id + '/document/')
 
+    def add_third_party_document(self, draft_id, third_party_id):
+        self.add_document('/drafts/' + draft_id + '/third-parties/' + third_party_id + '/document/')
+
     def add_consignee_document(self, draft_id):
         self.add_document('/drafts/' + draft_id + '/consignee/document/')
 
@@ -229,7 +232,7 @@ class SeedData:
                                                    headers=self.export_headers, body=ueu_data)
         self.add_to_context('ultimate_end_user', ultimate_end_user_post.json()['ultimate_end_user'])
         ultimate_end_user_id = self.context['ultimate_end_user']['id']
-        self.add_ultimate_end_user_document(draft_id, self.context['ultimate_end_user']['id'])
+        self.add_ultimate_end_user_document(draft_id, ultimate_end_user_id)
 
         consignee_data = self.request_data['consignee'] if consignee is None else consignee
         consignee_response = self.make_request('POST', url='/drafts/' + draft_id + '/consignee/',
@@ -242,6 +245,7 @@ class SeedData:
                                                  headers=self.export_headers, body=third_party_data)
         self.add_to_context('third_party', third_party_response.json()['third_party'])
         third_party_id = self.context['third_party']['id']
+        self.add_third_party_document(draft_id, third_party_id)
 
         additional_documents_data = \
             self.request_data['additional_document'] if additional_documents is None else additional_documents
@@ -354,7 +358,7 @@ class SeedData:
         return self.check_document('/drafts/' + draft_id + '/ultimate-end-user/' + ultimate_end_user_id + '/document/')
 
     def check_third_party_document_is_processed(self, draft_id, third_party_id):
-        return self.check_document('/drafts/' + draft_id + '/third-party/' + third_party_id + '/document/')
+        return self.check_document('/drafts/' + draft_id + '/third-parties/' + third_party_id + '/document/')
 
     def check_additional_document_is_processed(self, draft_id, document_id):
         return self.check_document('/drafts/' + draft_id + '/documents/' + document_id + '/')
