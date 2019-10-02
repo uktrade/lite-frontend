@@ -42,3 +42,11 @@ def wait_for_download_button(driver, page):
 
 def wait_for_element(driver, id):
     return wait_for_function(element_is_present, driver=driver, id=id)
+
+
+def wait_until_page_is_loaded(driver):
+    return wait_for_function(page_is_ready, driver=driver)
+
+
+def wait_until_menu_is_visible(driver):
+    return wait_for_function(menu_is_visible, driver=driver)
