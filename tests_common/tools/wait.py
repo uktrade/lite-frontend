@@ -31,6 +31,7 @@ def wait_for_third_party_document(func, draft_id, third_party_id):
     return wait_for_function(func, draft_id=draft_id,
                              third_party_id=third_party_id)
 
+
 def wait_for_additional_document(func, draft_id, document_id):
     return wait_for_function(func, draft_id=draft_id,
                              document_id=document_id)
