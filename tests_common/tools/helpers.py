@@ -51,7 +51,6 @@ def find_element(driver, by_type, locator):
     delay = 2  # seconds
     try:
         return WebDriverWait(driver, delay).until(EC.presence_of_element_located((by_type, locator)))
-
     except TimeoutException:
         print("element {} was not found".format(locator))
 
@@ -102,7 +101,6 @@ def highlight(element):
     Highlights (blinks) a Selenium Webdriver element
     """
     driver = element._parent
-
     def apply_style(s):
         driver.execute_script("arguments[0].setAttribute('style', arguments[1]);",
                               element, s)
@@ -110,16 +108,6 @@ def highlight(element):
     apply_style("background: yellow; border: 2px solid red;")
     time.sleep(.8)
     apply_style(original_style)
-
-
-def get_element_by_text(elements, text: str):
-    """
-    Loops through the list of elements, checks if the text is equal to
-    text and returns the element if so
-    """
-    for element in elements:
-        if element == text:
-            return element
 
 
 def get_element_index_by_text(elements, text: str, complete_match=True):
