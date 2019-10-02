@@ -1,6 +1,6 @@
 import time
 
-from helpers.seed_data import SeedData
+from seed_data.seed_data import SeedData
 
 
 class Timer:

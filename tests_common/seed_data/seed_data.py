@@ -54,8 +54,8 @@ class SeedData:
             organisation = self.add_org('organisation')
         org_id = organisation['id']
         self.add_to_context('org_id', org_id)
-        self.add_to_context('first_name', first_name)
-        self.add_to_context('last_name', last_name)
+        self.add_to_context('first_name',  self.request_data['organisation']['user']['first_name'])
+        self.add_to_context('last_name',  self.request_data['organisation']['user']['last_name'])
         self.add_to_context('primary_site_id', self.get_org_primary_site_id(org_id))
         self.add_to_context('org_name', self.request_data['organisation']['name'])
 
