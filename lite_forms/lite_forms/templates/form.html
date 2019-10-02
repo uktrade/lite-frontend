@@ -36,93 +36,96 @@
 		</div>
 	{% endif %}
 
-	<!-- Page header and description -->
 	{% if page.caption %}
-		<span class="govuk-caption-l">{{ page.caption }}</span>
+		<span class="govuk-caption-xl">{{ page.caption }}</span>
 	{% endif %}
-		<h2 class="govuk-heading-l">{{ page.title }}</h2>
-		{% if page.description %}
-            <div class="govuk-form-group">
-                <p class="govuk-caption-m">
-                    {{ page.description|linebreaksbr }}
-                </p>
-            </div>
-        {% endif %}
 
-		<!-- Questions -->
-		<form {% if page.post_url %}action="{{ page.post_url }}"{% endif %} method="post" enctype="multipart/form-data">
-			{% csrf_token %}
+	<legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+		<h1 class="govuk-fieldset__heading">
+			{{ page.title }}
+		</h1>
+	</legend>
 
-			{% for question in page.questions %}
-				{% if question.input_type == "html_block"  %}
-					{{ question.html|safe }}
-				{% elif question.input_type == "detail"  %}
-					{% include "components/details.html" with title=question.title description=question.description %}
-				{% elif question.input_type == "heading" %}
-					{% include "components/heading.html" with text=question.text %}
-				{% elif question.input_type == "label" %}
-					{% include "components/label.html" with text=question.text %}
+	{% if page.description %}
+		<span class="govuk-hint" style="display: block; margin: 30px 0;">
+			{{ page.description|linebreaksbr }}
+		</span>
+	{% endif %}
+
+	<!-- Questions -->
+	<form {% if page.post_url %}action="{{ page.post_url }}"{% endif %} method="post" enctype="multipart/form-data">
+		{% csrf_token %}
+
+		{% for question in page.questions %}
+			{% if question.input_type == "html_block"  %}
+				{{ question.html|safe }}
+			{% elif question.input_type == "detail"  %}
+				{% include "components/details.html" with title=question.title description=question.description %}
+			{% elif question.input_type == "heading" %}
+				{% include "components/heading.html" with text=question.text %}
+			{% elif question.input_type == "label" %}
+				{% include "components/label.html" with text=question.text %}
+			{% else %}
+				{% if question.input_type == "side_by_side" %}
+					<div class="lite-side-by-side-wrapper">
+						{% for question in question.questions %}
+							{% include "components.html" with question=question errors=errors %}
+						{% endfor %}
+					</div>
+				{% elif question.input_type == "group" %}
+					<div id="pane_{{ question.name }}">
+						{% for question in question.components %}
+							{% include "components.html" with question=question errors=errors %}
+						{% endfor %}
+					</div>
 				{% else %}
-					{% if question.input_type == "side_by_side" %}
-						<div class="lite-side-by-side-wrapper">
-							{% for question in question.questions %}
-								{% include "components.html" with question=question errors=errors %}
-							{% endfor %}
-						</div>
-					{% elif question.input_type == "group" %}
-						<div id="pane_{{ question.name }}">
-							{% for question in question.components %}
-								{% include "components.html" with question=question errors=errors %}
-							{% endfor %}
-						</div>
-					{% else %}
-						{% include "components.html" with question=question errors=errors %}
-					{% endif %}
-			{% endif %}
-		{% endfor %}
+					{% include "components.html" with question=question errors=errors %}
+				{% endif %}
+		{% endif %}
+	{% endfor %}
 
-		<!-- Buttons -->
-		<div class="govuk-form-group">
-			<div class="lite-buttons-row">
-				{% for button in page.buttons %}
-					{% if button.link %}
-						<a href="{{ button.link }}" role="button" draggable="false" data-module="govuk-button" class="{{ button.style }}" {% if button.float_right %}style="float: right;"{% endif %}>{{ button.value }}</a>
-					{% else %}
-						<button type="submit" class="{{ button.style }}" {% if button.float_right %}style="float: right;"{% endif %} action="submit">{{ button.value }}</button>
-					{% endif %}
-				{% endfor %}
-			</div>
-
-            <!-- Footer Label -->
-			{% if page.footer_label %}
-				<p class="govuk-body">{{ page.footer_label.text|safe }}</p>
-			{% endif %}
+	<!-- Buttons -->
+	<div class="govuk-form-group">
+		<div class="lite-buttons-row">
+			{% for button in page.buttons %}
+				{% if button.link %}
+					<a href="{{ button.link }}" role="button" draggable="false" data-module="govuk-button" class="{{ button.style }}" {% if button.float_right %}style="float: right;"{% endif %}>{{ button.value }}</a>
+				{% else %}
+					<button type="submit" class="{{ button.style }}" {% if button.float_right %}style="float: right;"{% endif %} action="submit">{{ button.value }}</button>
+				{% endif %}
+			{% endfor %}
 		</div>
 
-	</form>
+        <!-- Footer Label -->
+		{% if page.footer_label %}
+			<p class="govuk-body">{{ page.footer_label.text|safe }}</p>
+		{% endif %}
+	</div>
 
-	<script type="text/javascript">
-		function showHidePanels() {
-			$('input:radio').each(function () {
-                var $this = $(this)
-                var show_pane = $this.attr('show_pane')
-                $('#' + show_pane).addClass('govuk-inset-text')
-                if (show_pane) {
-                    if ($this.is(':checked')) {
-                        $('#' + show_pane).show()
-                    } else {
-                        $('#' + show_pane).hide()
-                    }
+</form>
+
+<script type="text/javascript">
+	function showHidePanels() {
+		$('input:radio').each(function () {
+            var $this = $(this)
+            var show_pane = $this.attr('show_pane')
+            $('#' + show_pane).addClass('govuk-inset-text')
+            if (show_pane) {
+                if ($this.is(':checked')) {
+                    $('#' + show_pane).show()
+                } else {
+                    $('#' + show_pane).hide()
                 }
-			});
-		}
-
-		showHidePanels();
-
-		$("input:radio").on("change", function() {
-			showHidePanels()
+            }
 		});
-	</script>
+	}
+
+	showHidePanels();
+
+	$("input:radio").on("change", function() {
+		showHidePanels()
+	});
+</script>
 
 {% endblock %}
 {% block one_third %}

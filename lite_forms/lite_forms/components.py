@@ -61,7 +61,7 @@ class FormGroup:
         if self.show_progress_indicators:
             for form in self.forms:
                 if form:
-                    form.caption = f'Part {index + 1} of {len(self.forms)}'
+                    form.caption = f'Step {index + 1} of {len(self.forms)}'
                     index += 1
 
     def update_pks(self):
