@@ -34,16 +34,16 @@ class SeedData:
         self.log(name + ': ' + str(value))
         self.context[name] = value
 
+    def add_user(self, data, url, token_name):
+        response = self.make_request('POST', url=url, body=data)
+        self.add_to_context(token_name, response.json()['token'])
+
     def auth_gov_user(self):
-        data = self.request_data['gov_user']
-        response = self.make_request('POST', url='/gov-users/authenticate/', body=data)
-        self.add_to_context('gov_user_token', response.json()['token'])
+        self.add_user(self.request_data['gov_user'], '/gov-users/authenticate/', 'gov_user_token')
         self.gov_headers['gov-user-token'] = self.context['gov_user_token']
 
     def auth_export_user(self):
-        data = self.request_data['export_user']
-        response = self.make_request('POST', url='/users/authenticate/', body=data)
-        self.add_to_context('export_user_token', response.json()['token'])
+        self.add_user(self.request_data['export_user'], '/users/authenticate/', 'export_user_token')
         self.export_headers['exporter-user-token'] = self.context['export_user_token']
         self.export_headers['organisation-id'] = self.context['org_id']
 
