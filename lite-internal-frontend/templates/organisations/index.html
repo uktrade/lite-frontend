@@ -1,6 +1,6 @@
 {% extends 'layouts/base.html' %}
 
-{% load humanize %}
+{% load humanize svg %}
 
 {% block back_link %}{% endblock %}
 
@@ -17,7 +17,61 @@
 		</div>
 	</div>
 
-	{% if data.organisations|length %}
+    <div class="lite-js-only">
+    <a href="#" onclick="toggleFilters()" id="show-filters-link" class="govuk-link govuk-link--no-visited-state lite-show-filters-link">
+		{% svg 'filter_show' %}
+		Show filters
+	</a>
+    <a href="#" onclick="toggleFilters()" id="hide-filters-link" class="govuk-link govuk-link--no-visited-state lite-hide-filters-link">
+		{% svg 'filter_hide' %}
+		Hide filters
+	</a>
+</div>
+
+<form id="filters" action="{% url 'organisations:organisations'%}" method="get">
+    <div class="govuk-grid-row lite-filter-bar--horizontal">
+        <div class="govuk-grid-column-one-quarter">
+            <label class="govuk-label" for="status">
+                Filter by name
+            </label>
+            <div class="lite-search-wrapper">
+                <div class="lite-search-icon">
+                    {% svg 'search' %}
+                </div>
+                <input type="search" name="name" class="govuk-input" name="filter-box" id="filter-box" value="{{ params.name }}" placeholder="Search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    	    </div>
+        </div>
+        <div class="govuk-grid-column-one-quarter">
+            <label class="govuk-label" for="case_type">
+                Filter by organisation type
+            </label>
+            <div class="lite-select-wrapper">
+                <select class="govuk-select" id="org_type" name="org_type">
+                    <option {% if params.org_type == None %}selected{% endif %} value="">All</option>
+                    <option {% if params.org_type == "individual" %}selected{% endif %} value="individual">Individual</option>
+					<option {% if params.org_type == "commercial" %}selected{% endif %} value="commercial">Commercial</option>
+                    <option {% if params.org_type == "hmrc" %}selected{% endif %} value="hmrc">HMRC</option>
+                </select>
+            </div>
+        </div>
+        <div class="govuk-grid-column-one-half">
+            <label class="govuk-label" for="filter" style="visibility: collapse;">
+                --
+            </label>
+            <div class="lite-buttons-row">
+                <button type="submit" form="filters" class="govuk-button" style="margin: 0;" id="button-apply-filters">
+                    Apply filters
+                </button>
+                <a href="{% url 'organisations:organisations' %}" class="govuk-button govuk-button--secondary" style="margin-bottom: 0;" id="button-clear-filters">
+                    Clear filters
+                </a>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+	{% if data.results|length %}
 		<table class="lite-table">
 			<thead class="lite-table__head">
 				<tr class="lite-table__row">
@@ -30,13 +84,13 @@
 				</tr>
 			</thead>
 			<tbody class="lite-table__body">
-				{% for organisation in data.organisations %}
+				{% for organisation in data.results %}
 					<tr class="lite-table__row" style="vertical-align: top;">
 						<td class="lite-table__cell">
 							<a class="govuk-link" href="{% url 'organisations:organisation' organisation.id %}">{{ organisation.name|default:"Untitled" }}</a>
 						</td>
                         <td class="lite-table__cell">
-							{{ organisation.sub_type.value|default:"Untitled" }}
+							{{ organisation.type.value|default:"Untitled" }}
 						</td>
 						<td class="lite-table__cell">
 							{{ organisation.eori_number|default:"N/A" }}
@@ -57,8 +111,43 @@
 				{% endfor %}
 			</tbody>
 		</table>
+        {% if data.total_pages > 1 %}
+		        <br>
+
+		        <div class="lite-pagination__container ">
+		            {% for i in data.total_pages|times %}
+		                <a href="{% url 'organisations:organisations' %}?{{ params_str }}&page={{ i }}" class="lite-pagination__item {% if page == i %}lite-pagination__item--selected{% endif %}" id="page-{{ i }}">
+		                    {{ i }}
+		                </a>
+		            {% endfor %}
+		        </div>
+		    {% endif %}
+			<br><br>
 	{% else %}
 		<p class="govuk-caption-l">There are no registered organisations at the moment.</p>
 	{% endif %}
+
+<script>
+	$("#filters").hide();
+	$("#show-filters-link").show();
+	$("#hide-filters-link").hide();
+
+	{% if params.org_type or params.name %}
+		$("#filters").show();
+		$("#show-filters-link").hide();
+		$("#hide-filters-link").show();
+	{% endif %}
+
+	function toggleFilters() {
+		$("#filters").toggle();
+		if ($("#filters").is(':visible')) {
+			$("#show-filters-link").hide();
+			$("#hide-filters-link").show();
+		} else {
+			$("#show-filters-link").show();
+			$("#hide-filters-link").hide();
+		}
+	}
+</script>
 
 {% endblock %}

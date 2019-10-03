@@ -1,0 +1,48 @@
+{% extends 'layouts/base.html' %}
+
+{% load humanize %}
+
+{% block back_link %}{% endblock %}
+
+{% block body %}
+
+	{% include 'includes/messages.html' %}
+
+	<div class="lite-app-bar">
+		<h1 class="govuk-heading-l">HMRC organisations</h1>
+		<div class="lite-app-bar--right">
+			<a href="{% url 'register_business:register_hmrc' %}" class="govuk-button" draggable="false" role="button">
+				Add an HMRC organisation
+			</a>
+		</div>
+	</div>
+
+	{% if data.results|length %}
+		<table class="lite-table">
+			<thead class="lite-table__head">
+				<tr class="lite-table__row">
+					<th class="lite-table__header" scope="col">Name</th>
+					<th class="lite-table__header" scope="col">Address</th>
+				</tr>
+			</thead>
+			<tbody class="lite-table__body">
+				{% for organisation in data.results %}
+					<tr class="lite-table__row" style="vertical-align: top;">
+						<td class="lite-table__cell">
+							<a class="govuk-link" href="{% url 'organisations:organisation' organisation.id %}">{{ organisation.name|default:"Untitled" }}</a>
+						</td>
+						<td class="lite-table__cell">
+							{{ organisation.primary_site.address.address_line_1 }}<br/>
+							{{ organisation.primary_site.address.postcode }}<br/>
+							{{ organisation.primary_site.address.city }}<br/>
+							{{ organisation.primary_site.address.country.name }}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		<p class="govuk-caption-l">There are no registered organisations at the moment.</p>
+	{% endif %}
+
+{% endblock %}

@@ -2,8 +2,8 @@ from conf.client import get, post
 from conf.constants import ORGANISATIONS_URL, SITES_URL
 
 
-def get_organisations(request):
-    data = get(request, ORGANISATIONS_URL)
+def get_organisations(request, params):
+    data = get(request, ORGANISATIONS_URL + '?' + params)
     return data.json(), data.status_code
 
 

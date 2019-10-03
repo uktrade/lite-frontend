@@ -9,7 +9,7 @@ class OrganisationsFormPage():
         new_organisation_btn.click()
 
     def select_type(self, individual_or_commercial):
-        self.driver.find_element_by_id("sub_type-" + individual_or_commercial).click()
+        self.driver.find_element_by_id("type-" + individual_or_commercial).click()
 
     def enter_name(self, text):
         self.driver.find_element_by_id("name").send_keys(text)

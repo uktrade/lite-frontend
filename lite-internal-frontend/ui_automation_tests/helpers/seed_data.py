@@ -91,7 +91,7 @@ class SeedData:
 
     def find_org_by_name(self):
         response = self.make_request("GET", url='/organisations/')
-        organisations = json.loads(response.text)['organisations']
+        organisations = json.loads(response.text)['results']
         organisation = next((item for item in organisations if item["name"] == self.org_name), None)
         return organisation
 

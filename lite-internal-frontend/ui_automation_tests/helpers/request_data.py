@@ -11,7 +11,7 @@ def create_request_data(exporter_user, gov_user, test_s3_key):
     return {
         'organisation': {
             'name': org_name,
-            'sub_type': 'commercial',
+            'type': 'commercial',
             'eori_number': '1234567890AAA',
             'sic_number': '2345',
             'vat_number': 'GB1234567',
@@ -34,7 +34,7 @@ def create_request_data(exporter_user, gov_user, test_s3_key):
         },
         'organisation_for_switching_organisations': {
             'name': org_name_for_switching_organisations,
-            'sub_type': 'commercial',
+            'type': 'commercial',
             'eori_number': '1234567890AAA',
             'sic_number': '2345',
             'vat_number': 'GB1234567',
