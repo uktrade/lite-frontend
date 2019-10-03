@@ -27,3 +27,8 @@ class SeedGood(SeedClass):
         if not good:
             self.post_good(item)
         self.add_to_context('goods_name', self.request_data[item]['description'])
+
+    def find_good_by_name(self, good_name):
+        goods = make_request('GET', base_url=self.base_url, url='/goods/', headers=self.export_headers).json()['goods']
+        good = next((item for item in goods if item['description'] == good_name), None)
+        return good
