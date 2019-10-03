@@ -2,7 +2,6 @@ from shared.seed_data.seed_data_classes import SeedClass
 from shared.seed_data.make_requests import make_request
 
 class SeedGood(SeedClass):
-
     def post_good(self, key):
         data = self.request_data[key]
         item = make_request('POST', base_url=self.base_url, url='/goods/',
