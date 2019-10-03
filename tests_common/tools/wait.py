@@ -18,23 +18,27 @@ def wait_for_function(func, **kwargs):
     return False
 
 
-def wait_for_document(func, draft_id):
-    return wait_for_function(func, draft_id=draft_id)
-
-
-def wait_for_ultimate_end_user_document(func, draft_id, ultimate_end_user_id):
+def wait_for_document(func, draft_id, base_url, export_headers):
     return wait_for_function(func, draft_id=draft_id,
-                             ultimate_end_user_id=ultimate_end_user_id)
+                             base_url=base_url, export_headers=export_headers)
 
 
-def wait_for_third_party_document(func, draft_id, third_party_id):
+def wait_for_ultimate_end_user_document(func, draft_id, ultimate_end_user_id, base_url, export_headers):
     return wait_for_function(func, draft_id=draft_id,
-                             third_party_id=third_party_id)
+                             ultimate_end_user_id=ultimate_end_user_id,
+                             base_url=base_url, export_headers=export_headers)
 
 
-def wait_for_additional_document(func, draft_id, document_id):
+def wait_for_third_party_document(func, draft_id, third_party_id, base_url, export_headers):
     return wait_for_function(func, draft_id=draft_id,
-                             document_id=document_id)
+                             third_party_id=third_party_id,
+                             base_url=base_url, export_headers=export_headers)
+
+
+def wait_for_additional_document(func, draft_id, document_id, base_url, export_headers):
+    return wait_for_function(func, draft_id=draft_id,
+                             document_id=document_id,
+                             base_url=base_url, export_headers=export_headers)
 
 
 def download_link_is_present(driver, page):
