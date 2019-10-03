@@ -35,8 +35,8 @@ class SeedData:
         self.context[name] = value
 
     def add_user(self, data, url, token_name):
-        response = make_request('POST', base_url=self.base_url, url=url, body=data, headers=self.gov_headers)
-        self.add_to_context(token_name, response.json()['token'])
+        token = make_request('POST', base_url=self.base_url, url=url, body=data, headers=self.gov_headers).json()['token']
+        self.add_to_context(token_name, token)
 
     def auth_gov_user(self):
         self.add_user(self.request_data['gov_user'], '/gov-users/authenticate/', 'gov_user_token')
@@ -64,27 +64,29 @@ class SeedData:
             self.add_org('organisation_for_switching_organisations')
         self.add_to_context('org_name_for_switching_organisations', self.request_data['organisation_for_switching_organisations']['name'])
 
+    def post_good(self, key):
+        data = self.request_data[key]
+        item = make_request('POST', base_url=self.base_url, url='/goods/',
+                                     headers=self.export_headers, body=data).json()['good']
+        self.add_good_document(item['id'])
+        return item
+
     def add_good(self):
         self.log('Adding good: ...')
-        data = self.request_data['good']
-        response = make_request('POST', base_url=self.base_url, url='/goods/', headers=self.export_headers, body=data)
-        item = response.json()['good']
+        item = self.post_good('good')
         self.add_to_context('good_id', item['id'])
-        self.add_good_document(item['id'])
 
     def add_clc_query(self):
         self.log("Adding clc query: ...")
-        data = self.request_data['clc_good']
-        response = make_request("POST", base_url=self.base_url, url='/goods/', headers=self.export_headers, body=data)
-        item = response.json()['good']
-        self.add_good_document(item['id'])
+        item = self.post_good('clc_good')
         data = {
             'not_sure_details_details': 'something',
             'not_sure_details_control_code': 'ML1a',
             'good_id': item['id']
         }
-        response = make_request("POST", base_url=self.base_url, url='/queries/control-list-classifications/', headers=self.export_headers, body=data)
-        self.add_to_context('case_id', response.json()['case_id'])
+        case_id = make_request("POST", base_url=self.base_url, url='/queries/control-list-classifications/',
+                               headers=self.export_headers, body=data).json()['case_id']
+        self.add_to_context('case_id', case_id)
 
     def add_clc_good(self):
         self.log('Adding clc good: ...')
