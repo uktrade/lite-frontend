@@ -1,4 +1,3 @@
-from shared.tools.wait import wait_for_ultimate_end_user_document, wait_for_third_party_document, wait_for_additional_document, wait_for_document
 from shared.seed_data.request_data import create_request_data
 from shared.seed_data.make_requests import make_request
 from shared.seed_data.seed_data_classes.seed_good import SeedGood
@@ -8,6 +7,7 @@ from shared.seed_data.seed_data_classes.seed_clc import SeedClc
 from shared.seed_data.seed_data_classes.seed_party import SeedParty
 from shared.seed_data.seed_data_classes.seed_ecju import SeedEcju
 from shared.seed_data.seed_data_classes.seed_picklists import SeedPicklists
+from shared.seed_data.check_documents import check_documents
 
 
 class SeedData:
@@ -50,40 +50,11 @@ class SeedData:
         self.log(name + ': ' + str(value))
         self.context[name] = value
 
-    def setup_org_for_switching_organisations(self):
-        self.seed_org.setup_org_for_switching_organisations()
-
-    def add_clc_query(self):
-        self.seed_clc.add_clc_query(self.seed_good)
-
-    def add_eua_query(self):
-        self.seed_party.add_eua_query()
-
     def add_case_note(self, context, case_id):
         self.log('Creating case note: ...')
         data = self.request_data['case_note']
         context.case_note_text = self.request_data['case_note']['text']
         make_request("POST", base_url=self.base_url, url='/cases/' + case_id + '/case-notes/', headers=self.gov_headers, body=data)  # noqa
-
-    def check_documents(self, draft_id, ultimate_end_user_id, third_party_id, additional_document_id):
-        end_user_document_is_processed = wait_for_document(
-            func=self.check_end_user_document_is_processed, draft_id=draft_id)
-        assert end_user_document_is_processed, "End user document wasn't successfully processed"
-        consignee_document_is_processed = wait_for_document(
-            func=self.check_consignee_document_is_processed, draft_id=draft_id)
-        assert consignee_document_is_processed, "Consignee document wasn't successfully processed"
-        ultimate_end_user_document_is_processed = wait_for_ultimate_end_user_document(
-            func=self.check_ultimate_end_user_document_is_processed, draft_id=draft_id,
-            ultimate_end_user_id=ultimate_end_user_id)
-        assert ultimate_end_user_document_is_processed, "Ultimate end user document wasn't successfully processed"
-        third_party_document_is_processed = wait_for_third_party_document(
-            func=self.check_third_party_document_is_processed, draft_id=draft_id,
-            third_party_id=third_party_id)
-        assert third_party_document_is_processed, "Third party document wasn't successfully processed"
-        additional_document_is_processed = wait_for_additional_document(
-            func=self.check_additional_document_is_processed, draft_id=draft_id,
-            document_id=additional_document_id)
-        assert additional_document_is_processed, "Additional document wasn't successfully processed"
 
     def add_site(self, draft_id):
         self.log("Adding site: ...")
@@ -132,7 +103,7 @@ class SeedData:
                             additional_documents_response.json()['document'])
         additional_document_id = self.context['additional_document']['id']
 
-        self.check_documents(draft_id=draft_id, ultimate_end_user_id=ultimate_end_user_id, third_party_id=third_party_id,
+        check_documents(draft_id=draft_id, ultimate_end_user_id=ultimate_end_user_id, third_party_id=third_party_id,
                              additional_document_id=additional_document_id)
 
     def add_open_draft(self, draft=None):
@@ -207,22 +178,3 @@ class SeedData:
         for case in cases:
             data = {'queues': [bin_queue_id]}
             make_request("PUT", base_url=self.base_url, url='/cases/' + case['id'] + '/', headers=self.gov_headers, body=data)
-
-    def check_document(self, url):
-        response = make_request("GET", base_url=self.base_url, url=url, headers=self.export_headers)
-        return response.json()['document']['safe']
-
-    def check_end_user_document_is_processed(self, draft_id):
-        return self.check_document('/drafts/' + draft_id + '/end-user/document/')
-
-    def check_consignee_document_is_processed(self, draft_id):
-        return self.check_document('/drafts/' + draft_id + '/consignee/document/')
-
-    def check_ultimate_end_user_document_is_processed(self, draft_id, ultimate_end_user_id):
-        return self.check_document('/drafts/' + draft_id + '/ultimate-end-user/' + ultimate_end_user_id + '/document/')
-
-    def check_third_party_document_is_processed(self, draft_id, third_party_id):
-        return self.check_document('/drafts/' + draft_id + '/third-parties/' + third_party_id + '/document/')
-
-    def check_additional_document_is_processed(self, draft_id, document_id):
-        return self.check_document('/drafts/' + draft_id + '/documents/' + document_id + '/')
