@@ -6,6 +6,7 @@ from shared.seed_data.seed_data_classes.seed_user import SeedUser
 from shared.seed_data.seed_data_classes.seed_organisation import SeedOrganisation
 from shared.seed_data.seed_data_classes.seed_clc import SeedClc
 from shared.seed_data.seed_data_classes.seed_party import SeedParty
+from shared.seed_data.seed_data_classes.seed_ecju import SeedEcju
 
 
 class SeedData:
@@ -38,6 +39,7 @@ class SeedData:
 
         self.seed_clc = SeedClc(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
         self.seed_party = SeedParty(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
+        self.seed_ecju = SeedEcju(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
 
     def log(self, text):
         print(text)
@@ -81,6 +83,11 @@ class SeedData:
             document_id=additional_document_id)
         assert additional_document_is_processed, "Additional document wasn't successfully processed"
 
+    def add_site(self, draft_id):
+        self.log("Adding site: ...")
+        make_request("POST", base_url=self.base_url, url='/drafts/' + draft_id + '/sites/', headers=self.export_headers,
+                     body={'sites': [self.context['primary_site_id']]})
+
     def add_draft(self, draft=None, good=None, enduser=None, ultimate_end_user=None, consignee=None, third_party=None,
                   additional_documents=None):
         self.log("Creating draft: ...")
@@ -88,9 +95,7 @@ class SeedData:
         response = make_request("POST", base_url=self.base_url, url='/drafts/', headers=self.export_headers, body=data)
         draft_id = response.json()['draft']['id']
         self.add_to_context('draft_id', draft_id)
-        self.log("Adding site: ...")
-        make_request("POST", base_url=self.base_url, url='/drafts/' + draft_id + '/sites/', headers=self.export_headers,
-                          body={'sites': [self.context['primary_site_id']]})
+        self.add_site(draft_id)
         self.seed_party.add_end_user(draft_id, enduser)
         self.log("Adding good: ...")
         data = self.request_data['add_good'] if good is None else good
