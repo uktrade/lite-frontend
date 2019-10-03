@@ -1,7 +1,9 @@
 from shared.tools.wait import wait_for_ultimate_end_user_document, wait_for_third_party_document, wait_for_additional_document, wait_for_document
 from shared.seed_data.request_data import create_request_data
 from shared.seed_data.make_requests import make_request
-from shared.seed_data.seed_data_classes import SeedGood
+from shared.seed_data.seed_data_classes.seed_good import SeedGood
+from shared.seed_data.seed_data_classes.seed_user import SeedUser
+
 
 class SeedData:
     base_url = ''
@@ -21,12 +23,12 @@ class SeedData:
             test_s3_key=test_s3_key,
             gov_user=gov_user
         )
-
-    def setup_database(self):
-        self.auth_gov_user()
-        self.setup_org()
-        self.auth_export_user()
+        self.seed_user = SeedUser(self.base_url, self.gov_headers, self.export_headers, self.request_data)
         self.seed_good = SeedGood(self.base_url, self.gov_headers, self.export_headers, self.request_data)
+
+        self.seed_user.auth_gov_user()
+        self.setup_org()
+        self.seed_user.auth_export_user()
         self.seed_good.add_good()
 
     def log(self, text):
@@ -35,19 +37,6 @@ class SeedData:
     def add_to_context(self, name, value):
         self.log(name + ': ' + str(value))
         self.context[name] = value
-
-    def add_user(self, data, url, token_name):
-        token = make_request('POST', base_url=self.base_url, url=url, body=data, headers=self.gov_headers).json()['token']
-        self.add_to_context(token_name, token)
-
-    def auth_gov_user(self):
-        self.add_user(self.request_data['gov_user'], '/gov-users/authenticate/', 'gov_user_token')
-        self.gov_headers['gov-user-token'] = self.context['gov_user_token']
-
-    def auth_export_user(self):
-        self.add_user(self.request_data['export_user'], '/users/authenticate/', 'export_user_token')
-        self.export_headers['exporter-user-token'] = self.context['export_user_token']
-        self.export_headers['organisation-id'] = self.context['org_id']
 
     def setup_org(self):
         organisation = self.find_org_by_name(self.request_data['organisation']['name'])
