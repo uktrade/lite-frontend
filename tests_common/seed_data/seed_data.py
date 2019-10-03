@@ -1,6 +1,6 @@
 from shared.tools.wait import wait_for_ultimate_end_user_document, wait_for_third_party_document, wait_for_additional_document, wait_for_document
 from shared.seed_data.request_data import create_request_data
-from shared.seed_data.make_requests import make_request, get_data_from_request
+from shared.seed_data.make_requests import make_request
 
 class SeedData:
     base_url = ''
@@ -35,7 +35,7 @@ class SeedData:
         self.context[name] = value
 
     def add_user(self, data, url, token_name):
-        token = get_data_from_request('POST', base_url=self.base_url, url=url, key='token', body=data, headers=self.gov_headers)
+        token = make_request('POST', base_url=self.base_url, url=url, body=data, headers=self.gov_headers).json()['token']
         self.add_to_context(token_name, token)
 
     def auth_gov_user(self):
@@ -66,8 +66,8 @@ class SeedData:
 
     def post_good(self, key):
         data = self.request_data[key]
-        item = get_data_from_request('POST', base_url=self.base_url, url='/goods/', key='good',
-                                     headers=self.export_headers, body=data)
+        item = make_request('POST', base_url=self.base_url, url='/goods/',
+                                     headers=self.export_headers, body=data).json()['good']
         self.add_good_document(item['id'])
         return item
 
@@ -84,8 +84,8 @@ class SeedData:
             'not_sure_details_control_code': 'ML1a',
             'good_id': item['id']
         }
-        case_id = get_data_from_request("POST", base_url=self.base_url,
-                                        url='/queries/control-list-classifications/', key='case_id', headers=self.export_headers, body=data)
+        case_id = make_request("POST", base_url=self.base_url, url='/queries/control-list-classifications/',
+                               headers=self.export_headers, body=data).json()['case_id']
         self.add_to_context('case_id', case_id)
 
     def add_clc_good(self):
