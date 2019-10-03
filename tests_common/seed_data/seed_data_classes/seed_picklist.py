@@ -2,7 +2,7 @@ from shared.seed_data.seed_data_classes.seed_class import SeedClass
 from shared.seed_data.make_requests import make_request
 
 
-class SeedPicklists(SeedClass):
+class SeedPicklist(SeedClass):
     def add_ecju_query_picklist(self):
         self.log("Creating ECJU Query picklist item ...")
         data = self.request_data['ecju_query_picklist']

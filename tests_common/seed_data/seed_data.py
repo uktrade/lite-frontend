@@ -6,7 +6,8 @@ from shared.seed_data.seed_data_classes.seed_organisation import SeedOrganisatio
 from shared.seed_data.seed_data_classes.seed_clc import SeedClc
 from shared.seed_data.seed_data_classes.seed_party import SeedParty
 from shared.seed_data.seed_data_classes.seed_ecju import SeedEcju
-from shared.seed_data.seed_data_classes.seed_picklists import SeedPicklists
+from shared.seed_data.seed_data_classes.seed_picklist import SeedPicklist
+from shared.seed_data.seed_data_classes.seed_case import SeedCase
 from shared.seed_data.check_documents import check_documents
 
 
@@ -41,7 +42,8 @@ class SeedData:
         self.seed_clc = SeedClc(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
         self.seed_party = SeedParty(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
         self.seed_ecju = SeedEcju(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
-        self.seed_picklists = SeedPicklists(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
+        self.seed_picklist = SeedPicklist(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
+        self.seed_case = SeedCase(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
 
     def log(self, text):
         print(text)
@@ -49,12 +51,6 @@ class SeedData:
     def add_to_context(self, name, value):
         self.log(name + ': ' + str(value))
         self.context[name] = value
-
-    def add_case_note(self, context, case_id):
-        self.log('Creating case note: ...')
-        data = self.request_data['case_note']
-        context.case_note_text = self.request_data['case_note']['text']
-        make_request("POST", base_url=self.base_url, url='/cases/' + case_id + '/case-notes/', headers=self.gov_headers, body=data)  # noqa
 
     def add_site(self, draft_id):
         self.log("Adding site: ...")
@@ -163,19 +159,3 @@ class SeedData:
         response = make_request("GET", base_url=self.base_url, url='/queues/', headers=self.gov_headers)
         queues = response.json()['queues']
         return queues
-
-    def assign_case_to_queue(self, case_id=None, queue_id=None):
-        self.log("assigning case to queue: ...")
-        queue_id = self.context['queue_id'] if queue_id is None else queue_id
-        case_id = self.context['case_id'] if case_id is None else case_id
-        data = {'queues': [queue_id]}
-        make_request("PUT", base_url=self.base_url, url='/cases/' + case_id + '/', headers=self.gov_headers, body=data)
-
-    def assign_test_cases_to_bin(self, bin_queue_id, new_cases_queue_id):
-        self.log("assigning cases to bin: ...")
-        response = make_request("GET", base_url=self.base_url, url='/queues/' + new_cases_queue_id + '/', headers=self.gov_headers)
-        queue = response.json()['queue']
-        cases = queue['cases']
-        for case in cases:
-            data = {'queues': [bin_queue_id]}
-            make_request("PUT", base_url=self.base_url, url='/cases/' + case['id'] + '/', headers=self.gov_headers, body=data)
