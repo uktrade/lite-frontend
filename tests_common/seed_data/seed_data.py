@@ -7,6 +7,7 @@ from shared.seed_data.seed_data_classes.seed_organisation import SeedOrganisatio
 from shared.seed_data.seed_data_classes.seed_clc import SeedClc
 from shared.seed_data.seed_data_classes.seed_party import SeedParty
 from shared.seed_data.seed_data_classes.seed_ecju import SeedEcju
+from shared.seed_data.seed_data_classes.seed_picklists import SeedPicklists
 
 
 class SeedData:
@@ -40,6 +41,7 @@ class SeedData:
         self.seed_clc = SeedClc(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
         self.seed_party = SeedParty(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
         self.seed_ecju = SeedEcju(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
+        self.seed_picklists = SeedPicklists(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
 
     def log(self, text):
         print(text)
@@ -224,27 +226,3 @@ class SeedData:
 
     def check_additional_document_is_processed(self, draft_id, document_id):
         return self.check_document('/drafts/' + draft_id + '/documents/' + document_id + '/')
-
-    def add_ecju_query_picklist(self):
-        self.log("Creating ECJU Query picklist item ...")
-        data = self.request_data['ecju_query_picklist']
-        response = make_request("POST", base_url=self.base_url, url='/picklist/', body=data, headers=self.gov_headers)
-        return response.json()['picklist_item']
-
-    def add_proviso_picklist(self):
-        self.log("Creating proviso picklist item ...")
-        data = self.request_data['proviso_picklist']
-        response = make_request("POST", base_url=self.base_url, url='/picklist/', body=data, headers=self.gov_headers)
-        return response.json()['picklist_item']
-
-    def add_standard_advice_picklist(self):
-        self.log("Creating standard advice picklist item ...")
-        data = self.request_data['standard_advice_picklist']
-        response = make_request("POST", base_url=self.base_url, url='/picklist/', body=data, headers=self.gov_headers)
-        return response.json()['picklist_item']
-
-    def add_report_summary_picklist(self):
-        self.log("Creating standard advice picklist item ...")
-        data = self.request_data['report_picklist']
-        response = make_request("POST", base_url=self.base_url, url='/picklist/', body=data, headers=self.gov_headers)
-        return response.json()['picklist_item']
