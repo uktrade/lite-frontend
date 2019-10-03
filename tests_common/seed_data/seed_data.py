@@ -103,8 +103,9 @@ class SeedData:
                             additional_documents_response.json()['document'])
         additional_document_id = self.context['additional_document']['id']
 
-        check_documents(draft_id=draft_id, ultimate_end_user_id=ultimate_end_user_id, third_party_id=third_party_id,
-                             additional_document_id=additional_document_id)
+        check_documents(base_url=self.base_url, export_headers=self.export_headers, draft_id=draft_id,
+                        ultimate_end_user_id=ultimate_end_user_id, third_party_id=third_party_id,
+                        additional_document_id=additional_document_id)
 
     def add_open_draft(self, draft=None):
         self.log("Creating draft: ...")
