@@ -18,3 +18,12 @@ class SeedGood(SeedClass):
         data = [self.request_data['document']]
         make_request("POST", base_url=self.base_url, url='/goods/' + good_id + '/documents/',
                      headers=self.export_headers, body=data)
+
+    def add_good_end_product(self, item):
+        #'good_end_product_false' for add_good_end_product_false
+        #'good_end_product_true' for add_good_end_product_true
+        self.log('Adding good: ...')
+        good = self.find_good_by_name(self.request_data[item]['description'])
+        if not good:
+            self.post_good(item)
+        self.add_to_context('goods_name', self.request_data[item]['description'])

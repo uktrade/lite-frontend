@@ -65,26 +65,6 @@ class SeedData:
         good = next((item for item in goods if item['description'] == good_name), None)
         return good
 
-    def add_good_end_product_false(self):
-        self.log('Adding good: ...')
-        good = self.find_good_by_name(self.request_data['good_end_product_false']['description'])
-        if not good:
-            data = self.request_data['good_end_product_false']
-            response = make_request('POST', base_url=self.base_url, url='/goods/', headers=self.export_headers, body=data)
-            item = response.json()['good']
-            self.seed_good.add_good_document(item['id'])
-        self.add_to_context('goods_name', self.request_data['good_end_product_false']['description'])
-
-    def add_good_end_product_true(self):
-        self.log('Adding good: ...')
-        good = self.find_good_by_name(self.request_data['good_end_product_true']['description'])
-        if not good:
-            data = self.request_data['good_end_product_true']
-            response = make_request('POST', base_url=self.base_url, url='/goods/', headers=self.export_headers, body=data)
-            item = response.json()['good']
-            self.seed_good.add_good_document(item['id'])
-        self.add_to_context('goods_name', self.request_data['good_end_product_true']['description'])
-
     def add_case_note(self, context, case_id):
         self.log('Creating case note: ...')
         data = self.request_data['case_note']
