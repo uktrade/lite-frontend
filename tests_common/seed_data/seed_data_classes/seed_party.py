@@ -35,5 +35,5 @@ class SeedParty(SeedClass):
                                      headers=self.export_headers,
                                      body=end_user_data).json()['end_user']
         self.log("Adding end user document: ...")
-        self.seed_party.add_end_user_document(draft_id)
+        self.add_end_user_document(draft_id)
         self.add_to_context('end_user', end_user)
