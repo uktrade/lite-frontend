@@ -8,6 +8,7 @@ from shared.seed_data.seed_data_classes.seed_party import SeedParty
 from shared.seed_data.seed_data_classes.seed_ecju import SeedEcju
 from shared.seed_data.seed_data_classes.seed_picklist import SeedPicklist
 from shared.seed_data.seed_data_classes.seed_case import SeedCase
+from shared.seed_data.seed_data_classes.seed_queue import SeedQueue
 from shared.seed_data.check_documents import check_documents
 
 
@@ -44,6 +45,7 @@ class SeedData:
         self.seed_ecju = SeedEcju(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
         self.seed_picklist = SeedPicklist(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
         self.seed_case = SeedCase(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
+        self.seed_queue = SeedQueue(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
 
     def log(self, text):
         print(text)
@@ -143,19 +145,3 @@ class SeedData:
         item = response.json()['application']
         self.add_to_context('open_application_id', item['id'])
         self.add_to_context('open_case_id', item['case_id'])
-
-    def add_queue(self, queue_name):
-        self.log("adding queue: ...")
-        self.context['queue_name'] = queue_name
-        data = {'team': '00000000-0000-0000-0000-000000000001',
-                'name': queue_name
-                }
-        response = make_request("POST", base_url=self.base_url, url='/queues/', headers=self.gov_headers, body=data)
-        item = response.json()['queue']
-        self.add_to_context('queue_id', item['id'])
-
-    def get_queues(self):
-        self.log("getting queues: ...")
-        response = make_request("GET", base_url=self.base_url, url='/queues/', headers=self.gov_headers)
-        queues = response.json()['queues']
-        return queues
