@@ -1,7 +1,7 @@
 import requests
 
 
-def make_request(method, base_url, url, headers=None, body=None, files=None):
+def make_request(method, base_url, url, headers, body=None, files=None):
     if body:
         response = requests.request(method, base_url + url,
                                     json=body,
