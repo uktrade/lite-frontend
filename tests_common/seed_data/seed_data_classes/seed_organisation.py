@@ -19,3 +19,21 @@ class SeedOrganisation(SeedClass):
             self.add_org('organisation_for_switching_organisations')
         self.add_to_context('org_name_for_switching_organisations',
                             self.request_data['organisation_for_switching_organisations']['name'])
+
+    def find_org_by_name(self, org_name):
+        response = make_request('GET', base_url=self.base_url, url='/organisations/', headers=self.gov_headers)
+        organisations = response.json()['organisations']
+        organisation = next((item for item in organisations if item['name'] == org_name), None)
+        return organisation
+
+    def add_org(self, key):
+        self.log('Creating org: ...')
+        data = self.request_data[key]
+        response = make_request('POST', base_url=self.base_url, url='/organisations/', body=data, headers=self.gov_headers)
+        organisation = response.json()['organisation']
+        return organisation
+
+    def get_org_primary_site_id(self, org_id):
+        response = make_request('GET', base_url=self.base_url, url='/organisations/' + org_id, headers=self.gov_headers)
+        organisation = response.json()['organisation']
+        return organisation['primary_site']['id']
