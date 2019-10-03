@@ -23,8 +23,8 @@ class SeedData:
             test_s3_key=test_s3_key,
             gov_user=gov_user
         )
-        self.seed_user = SeedUser(self.base_url, self.gov_headers, self.export_headers, self.request_data)
-        self.seed_good = SeedGood(self.base_url, self.gov_headers, self.export_headers, self.request_data)
+        self.seed_user = SeedUser(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
+        self.seed_good = SeedGood(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
 
         self.seed_user.auth_gov_user()
         self.setup_org()
