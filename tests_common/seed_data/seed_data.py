@@ -5,6 +5,7 @@ from shared.seed_data.seed_data_classes.seed_good import SeedGood
 from shared.seed_data.seed_data_classes.seed_user import SeedUser
 from shared.seed_data.seed_data_classes.seed_organisation import SeedOrganisation
 from shared.seed_data.seed_data_classes.seed_clc import SeedClc
+from shared.seed_data.seed_data_classes.seed_party import SeedParty
 
 
 class SeedData:
@@ -36,6 +37,7 @@ class SeedData:
         self.seed_good.add_good()
 
         self.seed_clc = SeedClc(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
+        self.seed_party = SeedParty(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
 
     def log(self, text):
         print(text)
@@ -76,22 +78,6 @@ class SeedData:
         data = self.request_data['ecju_query']
         make_request("POST", base_url=self.base_url, url='/cases/' + case_id + '/ecju-queries/', headers=self.gov_headers, body=data)  # noqa
 
-    def add_document(self, url):
-        data = self.request_data['document']
-        make_request("POST", base_url=self.base_url, url=url, headers=self.export_headers, body=data)
-
-    def add_end_user_document(self, draft_id):
-        self.add_document('/drafts/' + draft_id + '/end-user/document/')
-
-    def add_ultimate_end_user_document(self, draft_id, ultimate_end_user_id):
-        self.add_document('/drafts/' + draft_id + '/ultimate-end-user/' + ultimate_end_user_id + '/document/')
-
-    def add_third_party_document(self, draft_id, third_party_id):
-        self.add_document('/drafts/' + draft_id + '/third-parties/' + third_party_id + '/document/')
-
-    def add_consignee_document(self, draft_id):
-        self.add_document('/drafts/' + draft_id + '/consignee/document/')
-
     def check_documents(self, draft_id, ultimate_end_user_id, third_party_id, additional_document_id):
         end_user_document_is_processed = wait_for_document(
             func=self.check_end_user_document_is_processed, draft_id=draft_id)
@@ -127,7 +113,7 @@ class SeedData:
         end_user_post = make_request("POST", base_url=self.base_url, url='/drafts/' + draft_id + '/end-user/', headers=self.export_headers,
                           body=end_user_data)
         self.log("Adding end user document: ...")
-        self.add_end_user_document(draft_id)
+        self.seed_party.add_end_user_document(draft_id)
         self.add_to_context('end_user', end_user_post.json()['end_user'])
         self.log("Adding good: ...")
         data = self.request_data['add_good'] if good is None else good
@@ -139,20 +125,20 @@ class SeedData:
                                                    headers=self.export_headers, body=ueu_data)
         self.add_to_context('ultimate_end_user', ultimate_end_user_post.json()['ultimate_end_user'])
         ultimate_end_user_id = self.context['ultimate_end_user']['id']
-        self.add_ultimate_end_user_document(draft_id, ultimate_end_user_id)
+        self.seed_party.add_ultimate_end_user_document(draft_id, ultimate_end_user_id)
 
         consignee_data = self.request_data['consignee'] if consignee is None else consignee
         consignee_response = make_request('POST', base_url=self.base_url, url='/drafts/' + draft_id + '/consignee/',
                                                headers=self.export_headers, body=consignee_data)
         self.add_to_context('consignee', consignee_response.json()['consignee'])
-        self.add_consignee_document(draft_id)
+        self.seed_party.add_consignee_document(draft_id)
 
         third_party_data = self.request_data['third_party'] if third_party is None else third_party
         third_party_response = make_request('POST', base_url=self.base_url, url='/drafts/' + draft_id + '/third-parties/',
                                                  headers=self.export_headers, body=third_party_data)
         self.add_to_context('third_party', third_party_response.json()['third_party'])
         third_party_id = self.context['third_party']['id']
-        self.add_third_party_document(draft_id, third_party_id)
+        self.seed_party.add_third_party_document(draft_id, third_party_id)
 
         additional_documents_data = \
             self.request_data['additional_document'] if additional_documents is None else additional_documents
