@@ -61,11 +61,6 @@ class SeedData:
         context.case_note_text = self.request_data['case_note']['text']
         make_request("POST", base_url=self.base_url, url='/cases/' + case_id + '/case-notes/', headers=self.gov_headers, body=data)  # noqa
 
-    def add_ecju_query(self, case_id):
-        self.log("Creating ecju query: ...")
-        data = self.request_data['ecju_query']
-        make_request("POST", base_url=self.base_url, url='/cases/' + case_id + '/ecju-queries/', headers=self.gov_headers, body=data)  # noqa
-
     def check_documents(self, draft_id, ultimate_end_user_id, third_party_id, additional_document_id):
         end_user_document_is_processed = wait_for_document(
             func=self.check_end_user_document_is_processed, draft_id=draft_id)
@@ -96,13 +91,7 @@ class SeedData:
         self.log("Adding site: ...")
         make_request("POST", base_url=self.base_url, url='/drafts/' + draft_id + '/sites/', headers=self.export_headers,
                           body={'sites': [self.context['primary_site_id']]})
-        self.log("Adding end user: ...")
-        end_user_data = self.request_data['end-user'] if enduser is None else enduser
-        end_user_post = make_request("POST", base_url=self.base_url, url='/drafts/' + draft_id + '/end-user/', headers=self.export_headers,
-                          body=end_user_data)
-        self.log("Adding end user document: ...")
-        self.seed_party.add_end_user_document(draft_id)
-        self.add_to_context('end_user', end_user_post.json()['end_user'])
+        self.seed_party.add_end_user(draft_id, enduser)
         self.log("Adding good: ...")
         data = self.request_data['add_good'] if good is None else good
         data['good_id'] = self.context['good_id']
@@ -211,19 +200,6 @@ class SeedData:
         for case in cases:
             data = {'queues': [bin_queue_id]}
             make_request("PUT", base_url=self.base_url, url='/cases/' + case['id'] + '/', headers=self.gov_headers, body=data)
-
-    def add_ecju_response(self, question, response):
-        self.log("adding response to ecju: ...")
-        case_id = self.context['case_id']
-        ecju_queries = make_request("GET", base_url=self.base_url, url='/cases/' + case_id + '/ecju-queries/', headers=self.gov_headers)
-        ecju_query_id = None
-        for ecju_query in ecju_queries.json()['ecju_queries']:
-            if ecju_query['question'] == question:
-                ecju_query_id = ecju_query['id']
-                break
-        data = {'response': response}
-        make_request("PUT", base_url=self.base_url, url='/cases/' + case_id + '/ecju-queries/' + ecju_query_id + '/',
-                          headers=self.export_headers, body=data)
 
     def check_document(self, url):
         response = make_request("GET", base_url=self.base_url, url=url, headers=self.export_headers)
