@@ -13,7 +13,7 @@ class Users(TemplateView):
         users, _ = get_organisation_users(request, str(request.user.organisation))
         organisation = get_organisation(request, str(request.user.organisation))
 
-        if organisation['sub_type']['key'] == 'individual':
+        if organisation['type']['key'] == 'individual':
             raise Http404
 
         context = {

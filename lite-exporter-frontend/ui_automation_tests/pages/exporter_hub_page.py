@@ -16,12 +16,16 @@ class ExporterHubPage:
         self.sites_link = "a[href*='sites']"
         self.goods_tile = "a[href*='sites']"
         self.end_user_advisory_tile = "a[href*='/end-users/']"
+        self.raise_hmrc_query_btn = "a[href*='/raise-hmrc-query/"
 
     def go_to(self, url):
         self.driver.get(url)
 
     def click_apply_for_a_licence(self):
         self.driver.find_element_by_css_selector(self.apply_for_a_licence_btn).click()
+
+    def click_raise_hmrc_query(self):
+        self.driver.find_element_by_css_selector(self.raise_hmrc_query_btn).click()
 
     def click_drafts(self):
         self.driver.find_element_by_css_selector(self.drafts_btn).click()

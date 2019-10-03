@@ -12,4 +12,5 @@ urlpatterns = [
     path('licences/', include('licences.urls')),
     path('sites/', include('sites.urls')),
     path('users/', include('users.urls')),
+    path('raise-hmrc-query/', include('raise_hmrc_query.urls'))
 ]

@@ -1,0 +1,74 @@
+{% extends 'layouts/two_pane.html' %}
+
+{% load svg %}
+
+{% block back_link %}
+<a href="{% url 'core:hub' %}" class="govuk-back-link">Back to hub</a>
+{% endblock %}
+
+{% block two_thirds %}
+
+	<legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+		<h1 class="govuk-fieldset__heading">
+			Which organisation are you enquiring about?
+		</h1>
+	</legend>
+	<span class="govuk-hint" style="margin: 30px 0;">
+		Write the name of the organisation in the search box.
+	</span>
+    <form method="get">
+		<div class="lite-search-wrapper">
+		    <div class="lite-search-icon">
+		    	{% svg 'search' %}
+		    </div>
+		    <input type="search" name="name" class="govuk-input" name="filter-box" id="filter-box" value="{{ params.name }}" placeholder="Search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+            <button type="submit" class="govuk-button">Search</button>
+	    </div>
+    </form>
+	<br><br>
+	{% if data.results|length and params.name %}
+		<form method="post">
+			<div class="govuk-form-group">
+				<div class="govuk-radios">
+					{% for organisation in data.results %}
+						<div class="govuk-radios__item">
+							<input class="govuk-radios__input" id="organisation-{{ organisation.id }}" name="organisation" type="radio" value="{{ organisation.id }}">
+							<label class="govuk-label govuk-radios__label" for="organisation-{{ organisation.id }}">
+								{{ organisation.name }}
+							</label>
+							<span id="sign-in-item-hint" class="govuk-hint govuk-radios__hint">
+								{{ organisation.type.value }}
+							</span>
+						</div>
+					{% endfor %}
+				</div>
+			</div>
+
+		    {% if data.total_pages > 1 %}
+		        <br>
+
+		        <div class="lite-pagination__container ">
+		            {% for i in data.total_pages|times %}
+		                <a href="{% url 'raise_hmrc_query:select_organisation' %}?{{ params_str }}&page={{ i }}" class="lite-pagination__item {% if page == i %}lite-pagination__item--selected{% endif %}" id="page-{{ i }}">
+		                    {{ i }}
+		                </a>
+		            {% endfor %}
+		        </div>
+		    {% endif %}
+			<br><br>
+
+			<button class="govuk-button govuk-button--disabled" data-module="govuk-button" disabled aria-disabled="true">
+				Confirm and continue
+			</button>
+		</form>
+	{% elif params.name %}
+		<div class="lite-information-text">
+			<span class="lite-information-text__icon" aria-hidden="true">!</span>
+			<p class="lite-information-text__text">
+				<span class="govuk-visually-hidden">Information</span>
+				There are no organisations to show.
+			</p>
+		</div>
+	{% endif %}
+
+{% endblock %}

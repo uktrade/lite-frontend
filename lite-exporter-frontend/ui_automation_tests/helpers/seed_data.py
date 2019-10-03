@@ -10,7 +10,7 @@ class SeedData:
     export_headers = {'content-type': 'application/json'}
 
     org_name = 'Test Org'
-    org_name_for_switching_organisations = 'Octopus Systems'
+    org_name_for_switching_organisations = 'HMRC Octopus Systems'
     case_note_text = 'I Am Easy to Find'
     ecju_query_text = 'This is a question, please answer'
     first_name = 'Test'
@@ -27,7 +27,7 @@ class SeedData:
         self.request_data = {
             'organisation': {
                 'name': self.org_name,
-                'sub_type': 'commercial',
+                'type': 'commercial',
                 'eori_number': '1234567890AAA',
                 'sic_number': '2345',
                 'vat_number': 'GB1234567',
@@ -50,18 +50,14 @@ class SeedData:
             },
             'organisation_for_switching_organisations': {
                 'name': self.org_name_for_switching_organisations,
-                'sub_type': 'commercial',
-                'eori_number': '1234567890AAA',
-                'sic_number': '2345',
-                'vat_number': 'GB1234567',
-                'registration_number': '09876543',
+                'type': 'hmrc',
                 'user': {
                     'first_name': self.first_name,
                     'last_name': self.last_name,
                     'email': exporter_user_email
                 },
                 'site': {
-                    'name': 'Headquarters',
+                    'name': 'Tilbury Docks',
                     'address': {
                         'address_line_1': '42 Question Road',
                         'postcode': 'Islington',
@@ -292,8 +288,8 @@ class SeedData:
         self.make_request("POST", url='/cases/' + case_id + '/ecju-queries/', headers=self.gov_headers, body=data)  # noqa
 
     def find_org_by_name(self, org_name):
-        response = self.make_request('GET', url='/organisations/')
-        organisations = response.json()['organisations']
+        response = self.make_request('GET', url='/organisations/?name=' + org_name)
+        organisations = response.json()['results']
         organisation = next((item for item in organisations if item['name'] == org_name), None)
         return organisation
 

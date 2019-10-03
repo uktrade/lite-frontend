@@ -47,3 +47,7 @@ def group_notifications(notifications: list):
         notifications_filtered[notification['parent']] += 1
 
     return notifications_filtered
+
+
+def convert_dict_to_query_params(dictionary):
+    return '&'.join(([key + '=' + str(value) for (key, value) in dictionary.items()]))
