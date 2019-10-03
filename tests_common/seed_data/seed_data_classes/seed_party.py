@@ -18,3 +18,12 @@ class SeedParty(SeedClass):
 
     def add_consignee_document(self, draft_id):
         self.add_document('/drafts/' + draft_id + '/consignee/document/')
+
+    def add_eua_query(self):
+        self.log("Adding end user advisory: ...")
+        data = self.request_data['end_user_advisory']
+        response = make_request("POST", base_url=self.base_url, url='/queries/end-user-advisories/', headers=self.export_headers, body=data)
+        id = response.json()['end_user_advisory']['id']
+        self.add_to_context('end_user_advisory_id', str(id))
+        response = make_request("GET", base_url=self.base_url, url='/queries/end-user-advisories/' + str(id) + '/', headers=self.export_headers)
+        self.add_to_context('end_user_advisory_case_id', response.json()['case_id'])

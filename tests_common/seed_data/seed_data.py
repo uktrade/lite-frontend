@@ -53,19 +53,7 @@ class SeedData:
         self.seed_clc.add_clc_query(self.seed_good)
 
     def add_eua_query(self):
-        self.log("Adding end user advisory: ...")
-        data = self.request_data['end_user_advisory']
-        response = make_request("POST", base_url=self.base_url, url='/queries/end-user-advisories/', headers=self.export_headers, body=data)
-        id = response.json()['end_user_advisory']['id']
-        self.add_to_context('end_user_advisory_id', str(id))
-        response = make_request("GET", base_url=self.base_url, url='/queries/end-user-advisories/' + str(id) + '/', headers=self.export_headers)
-        self.add_to_context('end_user_advisory_case_id', response.json()['case_id'])
-
-    def find_good_by_name(self, good_name):
-        response = make_request('GET', base_url=self.base_url, url='/goods/', headers=self.export_headers)
-        goods = response.json()['goods']
-        good = next((item for item in goods if item['description'] == good_name), None)
-        return good
+        self.seed_party.add_eua_query()
 
     def add_case_note(self, context, case_id):
         self.log('Creating case note: ...')
