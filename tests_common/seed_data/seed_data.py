@@ -1,6 +1,7 @@
 from shared.tools.wait import wait_for_ultimate_end_user_document, wait_for_third_party_document, wait_for_additional_document, wait_for_document
 from shared.seed_data.request_data import create_request_data
 from shared.seed_data.make_requests import make_request
+from shared.seed_data.seed_data_classes import SeedGood
 
 class SeedData:
     base_url = ''
@@ -25,7 +26,8 @@ class SeedData:
         self.auth_gov_user()
         self.setup_org()
         self.auth_export_user()
-        self.add_good()
+        self.seed_good = SeedGood(self.base_url, self.gov_headers, self.export_headers, self.request_data)
+        self.seed_good.add_good()
 
     def log(self, text):
         print(text)
@@ -64,21 +66,9 @@ class SeedData:
             self.add_org('organisation_for_switching_organisations')
         self.add_to_context('org_name_for_switching_organisations', self.request_data['organisation_for_switching_organisations']['name'])
 
-    def post_good(self, key):
-        data = self.request_data[key]
-        item = make_request('POST', base_url=self.base_url, url='/goods/',
-                                     headers=self.export_headers, body=data).json()['good']
-        self.add_good_document(item['id'])
-        return item
-
-    def add_good(self):
-        self.log('Adding good: ...')
-        item = self.post_good('good')
-        self.add_to_context('good_id', item['id'])
-
     def add_clc_query(self):
         self.log("Adding clc query: ...")
-        item = self.post_good('clc_good')
+        item = self.seed_good.post_good('clc_good')
         data = {
             'not_sure_details_details': 'something',
             'not_sure_details_control_code': 'ML1a',
