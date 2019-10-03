@@ -2,9 +2,9 @@ from shared.seed_data.seed_data_classes.seed_class import SeedClass
 from shared.seed_data.make_requests import make_request
 
 class SeedClc(SeedClass):
-    def add_clc_query(self):
+    def add_clc_query(self, seed_good):
         self.log("Adding clc query: ...")
-        item = self.seed_good.post_good('clc_good')
+        item = seed_good.post_good('clc_good')
         data = {
             'not_sure_details_details': 'something',
             'not_sure_details_control_code': 'ML1a',

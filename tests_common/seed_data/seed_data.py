@@ -4,7 +4,7 @@ from shared.seed_data.make_requests import make_request
 from shared.seed_data.seed_data_classes.seed_good import SeedGood
 from shared.seed_data.seed_data_classes.seed_user import SeedUser
 from shared.seed_data.seed_data_classes.seed_organisation import SeedOrganisation
-
+from shared.seed_data.seed_data_classes.seed_clc import SeedClc
 
 
 class SeedData:
@@ -35,6 +35,8 @@ class SeedData:
         self.seed_good = SeedGood(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
         self.seed_good.add_good()
 
+        self.seed_clc = SeedClc(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
+
     def log(self, text):
         print(text)
 
@@ -44,6 +46,9 @@ class SeedData:
 
     def setup_org_for_switching_organisations(self):
         self.seed_org.setup_org_for_switching_organisations()
+
+    def add_clc_query(self):
+        self.seed_clc.add_clc_query(self.seed_good)
 
     def add_eua_query(self):
         self.log("Adding end user advisory: ...")
