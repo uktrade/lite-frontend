@@ -107,13 +107,6 @@ class SeedData:
             self.seed_good.add_good_document(item['id'])
         self.add_to_context('goods_name', self.request_data['good_end_product_true']['description'])
 
-    def add_org(self, key):
-        self.log('Creating org: ...')
-        data = self.request_data[key]
-        response = make_request('POST', base_url=self.base_url, url='/organisations/', body=data, headers=self.gov_headers)
-        organisation = response.json()['organisation']
-        return organisation
-
     def add_case_note(self, context, case_id):
         self.log('Creating case note: ...')
         data = self.request_data['case_note']
@@ -124,17 +117,6 @@ class SeedData:
         self.log("Creating ecju query: ...")
         data = self.request_data['ecju_query']
         make_request("POST", base_url=self.base_url, url='/cases/' + case_id + '/ecju-queries/', headers=self.gov_headers, body=data)  # noqa
-
-    def find_org_by_name(self, org_name):
-        response = make_request('GET', base_url=self.base_url, url='/organisations/', headers=self.gov_headers)
-        organisations = response.json()['organisations']
-        organisation = next((item for item in organisations if item['name'] == org_name), None)
-        return organisation
-
-    def get_org_primary_site_id(self, org_id):
-        response = make_request('GET', base_url=self.base_url, url='/organisations/' + org_id, headers=self.gov_headers)
-        organisation = response.json()['organisation']
-        return organisation['primary_site']['id']
 
     def add_document(self, url):
         data = self.request_data['document']
