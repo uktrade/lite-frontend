@@ -13,3 +13,8 @@ class SeedGood(SeedClass):
         self.log('Adding good: ...')
         item = self.post_good('good')
         self.add_to_context('good_id', item['id'])
+
+    def add_good_document(self, good_id):
+        data = [self.request_data['document']]
+        make_request("POST", base_url=self.base_url, url='/goods/' + good_id + '/documents/',
+                     headers=self.export_headers, body=data)

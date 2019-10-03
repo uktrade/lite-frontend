@@ -73,7 +73,7 @@ class SeedData:
         response = make_request('POST', base_url=self.base_url, url='/goods/', headers=self.export_headers, body=data)
         item = response.json()['good']
         self.add_to_context('clc_good_id', item['id'])
-        self.add_good_document(item['id'])
+        self.seed_good.add_good_document(item['id'])
         data = {'good_id': self.context['clc_good_id'],
                 'not_sure_details_control_code': 'ML1a',
                 'not_sure_details_details': 'b'}
@@ -104,7 +104,7 @@ class SeedData:
             data = self.request_data['good_end_product_false']
             response = make_request('POST', base_url=self.base_url, url='/goods/', headers=self.export_headers, body=data)
             item = response.json()['good']
-            self.add_good_document(item['id'])
+            self.seed_good.add_good_document(item['id'])
         self.add_to_context('goods_name', self.request_data['good_end_product_false']['description'])
 
     def add_good_end_product_true(self):
@@ -114,7 +114,7 @@ class SeedData:
             data = self.request_data['good_end_product_true']
             response = make_request('POST', base_url=self.base_url, url='/goods/', headers=self.export_headers, body=data)
             item = response.json()['good']
-            self.add_good_document(item['id'])
+            self.seed_good.add_good_document(item['id'])
         self.add_to_context('goods_name', self.request_data['good_end_product_true']['description'])
 
     def add_org(self, key):
@@ -145,10 +145,6 @@ class SeedData:
         response = make_request('GET', base_url=self.base_url, url='/organisations/' + org_id, headers=self.gov_headers)
         organisation = response.json()['organisation']
         return organisation['primary_site']['id']
-
-    def add_good_document(self, good_id):
-        data = [self.request_data['document']]
-        make_request("POST", base_url=self.base_url, url='/goods/' + good_id + '/documents/', headers=self.export_headers, body=data)
 
     def add_document(self, url):
         data = self.request_data['document']
