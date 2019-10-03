@@ -35,7 +35,7 @@ class SeedData:
         self.context[name] = value
 
     def add_user(self, data, url, token_name):
-        response = make_request('POST', base_url=self.base_url, url=url, body=data)
+        response = make_request('POST', base_url=self.base_url, url=url, body=data, headers=self.gov_headers)
         self.add_to_context(token_name, response.json()['token'])
 
     def auth_gov_user(self):
@@ -139,7 +139,7 @@ class SeedData:
     def add_org(self, key):
         self.log('Creating org: ...')
         data = self.request_data[key]
-        response = make_request('POST', base_url=self.base_url, url='/organisations/', body=data)
+        response = make_request('POST', base_url=self.base_url, url='/organisations/', body=data, headers=self.gov_headers)
         organisation = response.json()['organisation']
         return organisation
 
@@ -155,13 +155,13 @@ class SeedData:
         make_request("POST", base_url=self.base_url, url='/cases/' + case_id + '/ecju-queries/', headers=self.gov_headers, body=data)  # noqa
 
     def find_org_by_name(self, org_name):
-        response = make_request('GET', base_url=self.base_url, url='/organisations/')
+        response = make_request('GET', base_url=self.base_url, url='/organisations/', headers=self.gov_headers)
         organisations = response.json()['organisations']
         organisation = next((item for item in organisations if item['name'] == org_name), None)
         return organisation
 
     def get_org_primary_site_id(self, org_id):
-        response = make_request('GET', base_url=self.base_url, url='/organisations/' + org_id)
+        response = make_request('GET', base_url=self.base_url, url='/organisations/' + org_id, headers=self.gov_headers)
         organisation = response.json()['organisation']
         return organisation['primary_site']['id']
 
@@ -366,23 +366,23 @@ class SeedData:
     def add_ecju_query_picklist(self):
         self.log("Creating ECJU Query picklist item ...")
         data = self.request_data['ecju_query_picklist']
-        response = make_request("POST", base_url=self.base_url, url='/picklist/', body=data)
+        response = make_request("POST", base_url=self.base_url, url='/picklist/', body=data, headers=self.gov_headers)
         return response.json()['picklist_item']
 
     def add_proviso_picklist(self):
         self.log("Creating proviso picklist item ...")
         data = self.request_data['proviso_picklist']
-        response = make_request("POST", base_url=self.base_url, url='/picklist/', body=data)
+        response = make_request("POST", base_url=self.base_url, url='/picklist/', body=data, headers=self.gov_headers)
         return response.json()['picklist_item']
 
     def add_standard_advice_picklist(self):
         self.log("Creating standard advice picklist item ...")
         data = self.request_data['standard_advice_picklist']
-        response = make_request("POST", base_url=self.base_url, url='/picklist/', body=data)
+        response = make_request("POST", base_url=self.base_url, url='/picklist/', body=data, headers=self.gov_headers)
         return response.json()['picklist_item']
 
     def add_report_summary_picklist(self):
         self.log("Creating standard advice picklist item ...")
         data = self.request_data['report_picklist']
-        response = make_request("POST", base_url=self.base_url, url='/picklist/', body=data)
+        response = make_request("POST", base_url=self.base_url, url='/picklist/', body=data, headers=self.gov_headers)
         return response.json()['picklist_item']
