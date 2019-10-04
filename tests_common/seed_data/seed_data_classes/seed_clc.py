@@ -19,4 +19,5 @@ class SeedClc(SeedClass):
         self.log('Adding clc good: ...')
         good = seed_good.post_good('clc_good')
         case_id = self.submit_to_control_list_classification(good['id'])
+        self.add_to_context('clc_good_id', good['id'])
         seed_ecju.add_ecju_query(case_id)
