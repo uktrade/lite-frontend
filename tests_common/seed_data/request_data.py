@@ -127,6 +127,10 @@ def create_request_data(exporter_user, test_s3_key, gov_user):
             'text': 'Why did the chicken cross the road?',
             'type': 'ecju_query'
         },
+        'not_sure_details':{
+            'not_sure_details_details': 'something',
+            'not_sure_details_control_code': 'ML1a'
+        },
         'document': create_document('document 1', 'document for test setup', test_s3_key),
         'additional_document': create_document('picture', 'document for additional', test_s3_key),
         'proviso_picklist': create_picklist('Misc', 'My proviso advice would be this.', 'proviso', proviso='My proviso would be this.'),
