@@ -7,7 +7,8 @@ class SeedCase(SeedClass):
         self.log("assigning case to queue: ...")
         queue_id = self.context['queue_id'] if queue_id is None else queue_id
         case_id = self.context['case_id'] if case_id is None else case_id
-        make_request("PUT", base_url=self.base_url, url='/cases/' + case_id + '/', headers=self.gov_headers, body={'queues': [queue_id]})
+        make_request("PUT", base_url=self.base_url, url='/cases/' + case_id + '/',
+                     headers=self.gov_headers, body={'queues': [queue_id]})
 
     def assign_test_cases_to_bin(self, bin_queue_id, new_cases_queue_id):
         self.log("assigning cases to bin: ...")

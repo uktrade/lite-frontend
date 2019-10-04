@@ -127,9 +127,19 @@ def create_request_data(exporter_user, test_s3_key, gov_user):
             'text': 'Why did the chicken cross the road?',
             'type': 'ecju_query'
         },
-        'not_sure_details':{
+        'not_sure_details': {
             'not_sure_details_details': 'something',
             'not_sure_details_control_code': 'ML1a'
+        },
+        'good_type': {
+            'description': 'A goods type',
+            'is_good_controlled': True,
+            'control_code': 'ML1a',
+            'is_good_end_product': True,
+            'content_type': 'draft',
+        },
+        'queue': {
+            'team': '00000000-0000-0000-0000-000000000001'
         },
         'document': create_document('document 1', 'document for test setup', test_s3_key),
         'additional_document': create_document('picture', 'document for additional', test_s3_key),
