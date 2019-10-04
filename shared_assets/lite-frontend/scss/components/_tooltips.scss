@@ -1,5 +1,5 @@
 .hoverable-link {
-    border-bottom: 1px dashed rgba(0, 0, 0, 0.5);
+	border-bottom: 1px dashed rgba(0, 0, 0, 0.5);
 }
 
 .tooltip {
@@ -15,8 +15,8 @@
 		position: absolute;
 		top: -20px;
 		left: 50%;
-		background-color: #0b0c0c;
-		color: #fff;
+		background-color: govuk-colour("black");
+		color: govuk-colour("white");
 		padding: 12px 16px;
 		transform: translateX(-50%) translateY(-90%);
 		z-index: 1;
@@ -39,7 +39,7 @@
 			width: 20px;
 			height: 10px;
 			box-sizing: border-box;
-			border-top: 10px solid #0b0c0c;
+			border-top: 10px solid govuk-colour("black");
 			border-left: 10px solid transparent;
 			border-right: 10px solid transparent;
 		}
