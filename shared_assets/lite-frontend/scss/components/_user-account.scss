@@ -1,11 +1,31 @@
 #lite-user-menu {
-	position: absolute;
-	top: 10px;
-	right: 0;
+	@include govuk-responsive-margin(2, "bottom");
 	height: 30px;
-	display: grid;
-	grid-template-columns: auto auto auto;
-	grid-gap: govuk-spacing(3);
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+
+	@include mq ($from: desktop) {
+		width: 25%;
+		float: right;
+		vertical-align: top;
+	}
+}
+
+.govuk-header__logo {
+	@include mq ($from: desktop) {
+		width: 25%;
+		padding-right: 0;
+	}
+}
+
+.govuk-header__content {
+	@include mq ($from: desktop) {
+		width: 50%;
+		padding-left: 0;
+		float: left;
+		text-align: center;
+	}
 }
 
 .lite-user-menu-button {
@@ -57,9 +77,8 @@
 }
 
 .lite-user-menu-divider {
-	height: 26px;
+	height: 100%;
 	width: 2px;
-	background: govuk-colour("white");
-	border-radius: 2px;
-	opacity: 0.4;
+	background: govuk-colour("dark-grey");
+	margin: 0 govuk-spacing(3);
 }
