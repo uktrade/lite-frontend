@@ -6,10 +6,10 @@ def create_user(user):
     }
 
 
-def create_organisation(exporter, name):
+def create_organisation(exporter, type, name):
     return {
         'name': name,
-        'type': 'commercial',
+        'type': type,
         'eori_number': '1234567890AAA',
         'sic_number': '2345',
         'vat_number': 'GB1234567',
@@ -72,8 +72,8 @@ def create_picklist(name, text, type, proviso=None):
 def create_request_data(exporter_user, test_s3_key, gov_user):
     exporter = create_user(exporter_user)
     request_data = {
-        'organisation': create_organisation(exporter, 'Test Org'),
-        'organisation_for_switching_organisations': create_organisation(exporter, 'Octopus Systems'),
+        'organisation': create_organisation(exporter, 'commercial', 'Test Org'),
+        'organisation_for_switching_organisations': create_organisation(exporter, 'hmrc', 'Octopus Systems'),
         'good': create_good('Lentils', True),
         'good_end_product_true': create_good('Hot Cross Buns', True),
         'good_end_product_false': create_good('Falafels', False),
