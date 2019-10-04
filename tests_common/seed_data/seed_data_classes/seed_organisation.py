@@ -23,9 +23,13 @@ class SeedOrganisation(SeedClass):
 
     def find_org_by_name(self, org_name):
         organisations = make_request('GET', base_url=self.base_url, url='/organisations/',
-                                     headers=self.gov_headers).json()['organisations']
-        organisation = next((item for item in organisations if item['name'] == org_name), None)
-        return organisation
+                                     headers=self.gov_headers).json()
+        if 'organisations' in organisations:
+            organisations = organisations['organisations']
+            organisation = next((item for item in organisations if item['name'] == org_name), None)
+            return organisation
+        else:
+            return None
 
     def add_org(self, key):
         self.log('Creating org: ...')
