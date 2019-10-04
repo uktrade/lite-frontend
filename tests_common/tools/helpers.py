@@ -24,7 +24,7 @@ def get_formatted_date_time_m_d_h_s():
 
 
 def repeat_to_length(string_to_expand, length):
-    return (string_to_expand * (int(length//len(string_to_expand))+1))[:length]
+    return (string_to_expand * (int(length // len(string_to_expand)) + 1))[:length]
 
 
 def screen_path():
@@ -101,9 +101,11 @@ def highlight(element):
     Highlights (blinks) a Selenium Webdriver element
     """
     driver = element._parent
+
     def apply_style(s):
         driver.execute_script("arguments[0].setAttribute('style', arguments[1]);",
                               element, s)
+
     original_style = element.get_attribute('style')
     apply_style("background: yellow; border: 2px solid red;")
     time.sleep(.8)
@@ -131,7 +133,8 @@ def scroll_to_element_by_id(driver, id):
 
 def search_for_correct_date_regex_in_element(element):
     return re.search(
-        "([0-9]{1,2}):([0-9]{2})(am|pm) ([0-9][0-9]) (January|February|March|April|May|June|July|August|September|October|November|December) ([0-9]{4,})", # noqa
+        "([0-9]{1,2}):([0-9]{2})(am|pm) ([0-9][0-9]) (January|February|March|April|May|June|July|August|September|October|November|December) ([0-9]{4,})",
+        # noqa
         element)
 
 
