@@ -42,14 +42,10 @@
 
 	&:hover {
 		text-decoration: underline;
-		outline: 6px solid rgba(white, 0.15);
-		background-color: rgba(white, 0.15);
 	}
 
 	&:active {
 		text-decoration: underline;
-		outline: 6px solid rgba(white, 0.25);
-		background-color: rgba(white, 0.25);
 	}
 
 	&:focus {
