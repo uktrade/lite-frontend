@@ -61,16 +61,22 @@ class SeedData:
         make_request("POST", base_url=self.base_url, url='/drafts/' + draft_id + '/sites/', headers=self.export_headers,
                      body={'sites': [self.context['primary_site_id']]})
 
-    def create_draft(self):
+    def create_draft(self, draft):
         self.log("Creating draft: ...")
         data = self.request_data['draft'] if draft is None else draft
         response = make_request("POST", base_url=self.base_url, url='/drafts/', headers=self.export_headers, body=data)
-        return response.json()['draft']['id']
+        draft_id = response.json()['draft']['id']
+        self.add_to_context('draft_id', draft_id)
+        return draft_id
+
+    def add_countries(self, draft_id):
+        self.log("Adding countries: ...")
+        make_request("POST", base_url=self.base_url, url='/drafts/' + draft_id + '/countries/',
+                     headers=self.export_headers, body={'countries': ['US', 'AL', 'ZM']})
 
     def add_draft(self, draft=None, good=None, enduser=None, ultimate_end_user=None, consignee=None, third_party=None,
                   additional_documents=None):
-        draft_id = self.create_draft()
-        self.add_to_context('draft_id', draft_id)
+        draft_id = self.create_draft(draft)
         self.add_site(draft_id)
         self.seed_party.add_end_user(draft_id, enduser)
         self.seed_good.add_good_to_draft(draft_id, good)
@@ -83,27 +89,10 @@ class SeedData:
                         additional_document_id=additional_document_id)
 
     def add_open_draft(self, draft=None):
-        self.log("Creating draft: ...")
-        data = self.request_data['draft'] if draft is None else draft
-        response = make_request("POST", base_url=self.base_url, url='/drafts/', headers=self.export_headers, body=data)
-        draft_id = response.json()['draft']['id']
-        self.add_to_context('draft_id', draft_id)
-        self.log("Adding site: ...")
-        make_request("POST", base_url=self.base_url, url='/drafts/' + draft_id + '/sites/', headers=self.export_headers,
-                          body={'sites': [self.context['primary_site_id']]})
-        self.log("Adding countries: ...")
-        make_request("POST", base_url=self.base_url, url='/drafts/' + draft_id + '/countries/', headers=self.export_headers,
-                          body={'countries': ['US', 'AL', 'ZM']})
-        self.log("Adding goods_type: ...")
-        data = {
-            'description': 'A goods type',
-            'is_good_controlled': True,
-            'control_code': 'ML1a',
-            'is_good_end_product': True,
-            'content_type': 'draft',
-            'object_id': draft_id
-        }
-        make_request("POST", base_url=self.base_url, url='/goodstype/', headers=self.export_headers, body=data)
+        draft_id = self.create_draft(draft)
+        self.add_site(draft_id)
+        self.add_countries(draft_id)
+        self.seed_good.add_open_draft_good(draft_id)
 
     def submit_application(self, draft_id=None):
         self.log('submitting application: ...')

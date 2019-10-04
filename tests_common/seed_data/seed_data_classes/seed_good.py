@@ -16,7 +16,6 @@ class SeedGood(SeedClass):
         make_request("POST", base_url=self.base_url, url='/drafts/' + draft_id + '/goods/',
                      headers=self.export_headers, body=good)
 
-
     def add_good(self):
         self.log('Adding good: ...')
         item = self.post_good('good')
@@ -40,3 +39,15 @@ class SeedGood(SeedClass):
         goods = make_request('GET', base_url=self.base_url, url='/goods/', headers=self.export_headers).json()['goods']
         good = next((item for item in goods if item['description'] == good_name), None)
         return good
+
+    def add_open_draft_good(self, draft_id):
+        self.log("Adding goods_type: ...")
+        data = {
+            'description': 'A goods type',
+            'is_good_controlled': True,
+            'control_code': 'ML1a',
+            'is_good_end_product': True,
+            'content_type': 'draft',
+            'object_id': draft_id
+        }
+        make_request("POST", base_url=self.base_url, url='/goodstype/', headers=self.export_headers, body=data)
