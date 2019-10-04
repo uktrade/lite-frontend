@@ -9,7 +9,7 @@ def create_user(user):
 def create_organisation(exporter, name):
     return {
         'name': name,
-        'sub_type': 'commercial',
+        'type': 'commercial',
         'eori_number': '1234567890AAA',
         'sic_number': '2345',
         'vat_number': 'GB1234567',
