@@ -119,13 +119,15 @@ class SeedData:
             'not_sure_details_control_code': 'ML1a',
             'good_id': item['id']
         }
-        response = self.make_request("POST", url='/queries/control-list-classifications/', headers=self.export_headers, body=data)
+        response = self.make_request("POST", url='/queries/control-list-classifications/', headers=self.export_headers,
+                                     body=data)
         self.add_to_context('case_id', json.loads(response.text)['case_id'])
 
     def add_eua_query(self):
         self.log("Adding end user advisory: ...")
         data = self.request_data['end_user_advisory']
-        response = self.make_request("POST", url='/queries/end-user-advisories/', headers=self.export_headers, body=data)
+        response = self.make_request("POST", url='/queries/end-user-advisories/', headers=self.export_headers,
+                                     body=data)
         self.add_to_context('end_user_advisory_id', json.loads(response.text)['end_user_advisory']['id'])
 
     def add_good_document(self, good_id):
@@ -190,7 +192,7 @@ class SeedData:
         self.log("Adding end user: ...")
         end_user_data = self.request_data['end-user'] if enduser is None else enduser
         end_user_post = self.make_request("POST", url='/drafts/' + draft_id + '/end-user/', headers=self.export_headers,
-                          body=end_user_data)
+                                          body=end_user_data)
         self.log("Adding end user document: ...")
         self.add_end_user_document(draft_id)
         self.add_to_context('end_user', json.loads(end_user_post.text)['end_user'])
@@ -245,25 +247,25 @@ class SeedData:
             'control_code': 'ML1a',
             'is_good_end_product': True,
             'content_type': 'draft',
-            'object_id': draft_id
+            'application': draft_id
         }
         self.make_request("POST", url='/goodstype/', headers=self.export_headers, body=data)
 
     def submit_application(self, draft_id=None):
-        self.log("submitting application: ...")
-        draft_id_to_submit = draft_id if None else self.context['draft_id'] # noqa
-        data = {'id': draft_id_to_submit}
-        response = self.make_request("POST", url='/applications/', headers=self.export_headers, body=data)
-        item = json.loads(response.text)['application']
+        self.log('submitting application: ...')
+        draft_id_to_submit = draft_id if None else self.context['draft_id']  # noqa
+        response = self.make_request('PUT', url='/applications/' + draft_id_to_submit + '/submit/',
+                                     headers=self.export_headers)
+        item = response.json()['application']
         self.add_to_context('application_id', item['id'])
         self.add_to_context('case_id', item['case_id'])
 
     def submit_open_application(self, draft_id=None):
-        self.log("submitting application: ...")
-        draft_id_to_submit = draft_id if None else self.context['draft_id'] # noqa
-        data = {'id': draft_id_to_submit}
-        response = self.make_request("POST", url='/applications/', headers=self.export_headers, body=data)
-        item = json.loads(response.text)['application']
+        self.log('submitting application: ...')
+        draft_id_to_submit = draft_id if None else self.context['draft_id']  # noqa
+        response = self.make_request('PUT', url='/applications/' + draft_id_to_submit + '/submit/',
+                                     headers=self.export_headers)
+        item = response.json()['application']
         self.add_to_context('open_application_id', item['id'])
         self.add_to_context('open_case_id', item['case_id'])
 
