@@ -8,6 +8,8 @@ from shared.seed_data.seed_data_classes.seed_party import SeedParty
 from shared.seed_data.seed_data_classes.seed_ecju import SeedEcju
 from shared.seed_data.seed_data_classes.seed_picklist import SeedPicklist
 from shared.seed_data.seed_data_classes.seed_case import SeedCase
+from shared.seed_data.seed_data_classes.seed_queue import SeedQueue
+from shared.seed_data.seed_data_classes.seed_additional_document import SeedAdditionalDocument
 from shared.seed_data.check_documents import check_documents
 
 
@@ -44,6 +46,8 @@ class SeedData:
         self.seed_ecju = SeedEcju(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
         self.seed_picklist = SeedPicklist(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
         self.seed_case = SeedCase(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
+        self.seed_queue = SeedQueue(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
+        self.seed_additional_doc = SeedAdditionalDocument(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
 
     def log(self, text):
         print(text)
@@ -57,48 +61,23 @@ class SeedData:
         make_request("POST", base_url=self.base_url, url='/drafts/' + draft_id + '/sites/', headers=self.export_headers,
                      body={'sites': [self.context['primary_site_id']]})
 
-    def add_draft(self, draft=None, good=None, enduser=None, ultimate_end_user=None, consignee=None, third_party=None,
-                  additional_documents=None):
+    def create_draft(self):
         self.log("Creating draft: ...")
         data = self.request_data['draft'] if draft is None else draft
         response = make_request("POST", base_url=self.base_url, url='/drafts/', headers=self.export_headers, body=data)
-        draft_id = response.json()['draft']['id']
+        return response.json()['draft']['id']
+
+    def add_draft(self, draft=None, good=None, enduser=None, ultimate_end_user=None, consignee=None, third_party=None,
+                  additional_documents=None):
+        draft_id = self.create_draft()
         self.add_to_context('draft_id', draft_id)
         self.add_site(draft_id)
         self.seed_party.add_end_user(draft_id, enduser)
-        self.log("Adding good: ...")
-        data = self.request_data['add_good'] if good is None else good
-        data['good_id'] = self.context['good_id']
-        make_request("POST", base_url=self.base_url, url='/drafts/' + draft_id + '/goods/', headers=self.export_headers, body=data)
-        self.log("Adding ultimate end user: ...")
-        ueu_data = self.request_data['ultimate_end_user'] if ultimate_end_user is None else ultimate_end_user
-        ultimate_end_user_post = make_request('POST', base_url=self.base_url, url='/drafts/' + draft_id + '/ultimate-end-users/',
-                                                   headers=self.export_headers, body=ueu_data)
-        self.add_to_context('ultimate_end_user', ultimate_end_user_post.json()['ultimate_end_user'])
-        ultimate_end_user_id = self.context['ultimate_end_user']['id']
-        self.seed_party.add_ultimate_end_user_document(draft_id, ultimate_end_user_id)
-
-        consignee_data = self.request_data['consignee'] if consignee is None else consignee
-        consignee_response = make_request('POST', base_url=self.base_url, url='/drafts/' + draft_id + '/consignee/',
-                                               headers=self.export_headers, body=consignee_data)
-        self.add_to_context('consignee', consignee_response.json()['consignee'])
-        self.seed_party.add_consignee_document(draft_id)
-
-        third_party_data = self.request_data['third_party'] if third_party is None else third_party
-        third_party_response = make_request('POST', base_url=self.base_url, url='/drafts/' + draft_id + '/third-parties/',
-                                                 headers=self.export_headers, body=third_party_data)
-        self.add_to_context('third_party', third_party_response.json()['third_party'])
-        third_party_id = self.context['third_party']['id']
-        self.seed_party.add_third_party_document(draft_id, third_party_id)
-
-        additional_documents_data = \
-            self.request_data['additional_document'] if additional_documents is None else additional_documents
-        additional_documents_response = make_request('POST', base_url=self.base_url, url='/drafts/' + draft_id + '/documents/',
-                                                          headers=self.export_headers, body=additional_documents_data)
-        self.add_to_context('additional_document',
-                            additional_documents_response.json()['document'])
-        additional_document_id = self.context['additional_document']['id']
-
+        self.seed_good.add_good_to_draft(draft_id, good)
+        ultimate_end_user_id = self.seed_party.add_ultimate_end_user(draft_id, ultimate_end_user)
+        self.seed_party.add_consignee(draft_id, consignee)
+        third_party_id = self.seed_party.add_third_party(draft_id, third_party)
+        additional_document_id = self.seed_additional_doc.add_additional_document(draft_id, additional_documents)
         check_documents(base_url=self.base_url, export_headers=self.export_headers, draft_id=draft_id,
                         ultimate_end_user_id=ultimate_end_user_id, third_party_id=third_party_id,
                         additional_document_id=additional_document_id)
@@ -143,19 +122,3 @@ class SeedData:
         item = response.json()['application']
         self.add_to_context('open_application_id', item['id'])
         self.add_to_context('open_case_id', item['case_id'])
-
-    def add_queue(self, queue_name):
-        self.log("adding queue: ...")
-        self.context['queue_name'] = queue_name
-        data = {'team': '00000000-0000-0000-0000-000000000001',
-                'name': queue_name
-                }
-        response = make_request("POST", base_url=self.base_url, url='/queues/', headers=self.gov_headers, body=data)
-        item = response.json()['queue']
-        self.add_to_context('queue_id', item['id'])
-
-    def get_queues(self):
-        self.log("getting queues: ...")
-        response = make_request("GET", base_url=self.base_url, url='/queues/', headers=self.gov_headers)
-        queues = response.json()['queues']
-        return queues
