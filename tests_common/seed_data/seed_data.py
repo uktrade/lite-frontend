@@ -94,20 +94,20 @@ class SeedData:
         self.add_countries(draft_id)
         self.seed_good.add_open_draft_good(draft_id)
 
-    def submit_application(self, draft_id=None):
-        self.log('submitting application: ...')
+    def submit_application(self, draft_id):
+        self.log('Submitting application: ...')
         draft_id_to_submit = draft_id if None else self.context['draft_id']  # noqa
         data = {'id': draft_id_to_submit}
-        response = make_request('POST', base_url=self.base_url, url='/applications/', headers=self.export_headers, body=data)
-        item = response.json()['application']
+        response = make_request('POST', base_url=self.base_url, url='/applications/', headers=self.export_headers,
+                                body=data)
+        return response.json()['application']
+
+    def submit_standard_application(self, draft_id=None):
+        item = self.submit_application(draft_id)
         self.add_to_context('application_id', item['id'])
         self.add_to_context('case_id', item['case_id'])
 
     def submit_open_application(self, draft_id=None):
-        self.log("submitting application: ...")
-        draft_id_to_submit = draft_id if None else self.context['draft_id']  # noqa
-        data = {'id': draft_id_to_submit}
-        response = make_request("POST", base_url=self.base_url, url='/applications/', headers=self.export_headers, body=data)
-        item = response.json()['application']
+        item = self.submit_application(draft_id)
         self.add_to_context('open_application_id', item['id'])
         self.add_to_context('open_case_id', item['case_id'])
