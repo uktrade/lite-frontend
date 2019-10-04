@@ -22,14 +22,10 @@ class SeedOrganisation(SeedClass):
                             self.request_data['organisation_for_switching_organisations']['name'])
 
     def find_org_by_name(self, org_name):
-        organisations = make_request('GET', base_url=self.base_url, url='/organisations/',
-                                     headers=self.gov_headers).json()
-        if 'organisations' in organisations:
-            organisations = organisations['organisations']
-            organisation = next((item for item in organisations if item['name'] == org_name), None)
-            return organisation
-        else:
-            return None
+        response = self.make_request("GET", url='/organisations/')
+        organisations = response.json()['results']
+        organisation = next((item for item in organisations if item["name"] == org_name), None)
+        return organisation
 
     def add_org(self, key):
         self.log('Creating org: ...')
