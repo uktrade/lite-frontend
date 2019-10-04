@@ -1,6 +1,7 @@
 from shared.seed_data.seed_data_classes.seed_class import SeedClass
 from shared.seed_data.make_requests import make_request
 
+
 class SeedOrganisation(SeedClass):
     def setup_org(self):
         organisation = self.find_org_by_name(self.request_data['organisation']['name'])
@@ -21,19 +22,18 @@ class SeedOrganisation(SeedClass):
                             self.request_data['organisation_for_switching_organisations']['name'])
 
     def find_org_by_name(self, org_name):
-        response = make_request('GET', base_url=self.base_url, url='/organisations/', headers=self.gov_headers)
-        organisations = response.json()['organisations']
+        organisations = make_request('GET', base_url=self.base_url, url='/organisations/',
+                                     headers=self.gov_headers).json()['organisations']
         organisation = next((item for item in organisations if item['name'] == org_name), None)
         return organisation
 
     def add_org(self, key):
         self.log('Creating org: ...')
         data = self.request_data[key]
-        response = make_request('POST', base_url=self.base_url, url='/organisations/', body=data, headers=self.gov_headers)
-        organisation = response.json()['organisation']
-        return organisation
+        return make_request('POST', base_url=self.base_url, url='/organisations/',
+                            body=data, headers=self.gov_headers).json()['organisation']
 
     def get_org_primary_site_id(self, org_id):
-        response = make_request('GET', base_url=self.base_url, url='/organisations/' + org_id, headers=self.gov_headers)
-        organisation = response.json()['organisation']
+        organisation = make_request('GET', base_url=self.base_url,
+                                    url='/organisations/' + org_id, headers=self.gov_headers).json()['organisation']
         return organisation['primary_site']['id']

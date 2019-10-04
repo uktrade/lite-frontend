@@ -1,11 +1,12 @@
 from shared.seed_data.seed_data_classes.seed_class import SeedClass
 from shared.seed_data.make_requests import make_request
 
+
 class SeedGood(SeedClass):
     def post_good(self, key):
         data = self.request_data[key]
         item = make_request('POST', base_url=self.base_url, url='/goods/',
-                                     headers=self.export_headers, body=data).json()['good']
+                            headers=self.export_headers, body=data).json()['good']
         self.add_good_document(item['id'])
         return item
 
@@ -27,8 +28,8 @@ class SeedGood(SeedClass):
                      headers=self.export_headers, body=data)
 
     def add_good_end_product(self, item):
-        #'good_end_product_false' for add_good_end_product_false
-        #'good_end_product_true' for add_good_end_product_true
+        # 'good_end_product_false' for add_good_end_product_false
+        # 'good_end_product_true' for add_good_end_product_true
         self.log('Adding good: ...')
         good = self.find_good_by_name(self.request_data[item]['description'])
         if not good:
@@ -42,12 +43,6 @@ class SeedGood(SeedClass):
 
     def add_open_draft_good(self, draft_id):
         self.log("Adding goods_type: ...")
-        data = {
-            'description': 'A goods type',
-            'is_good_controlled': True,
-            'control_code': 'ML1a',
-            'is_good_end_product': True,
-            'content_type': 'draft',
-            'object_id': draft_id
-        }
+        data = self.request_data['good_type']
+        data['object_id'] = draft_id
         make_request("POST", base_url=self.base_url, url='/goodstype/', headers=self.export_headers, body=data)
