@@ -4,6 +4,8 @@
 	Exporter hub
 {% endblock %}
 
+{% block header_title %}{% endblock %}
+
 {% block back_link %}
 	<div class="govuk-breadcrumbs">
 		<ol class="govuk-breadcrumbs__list">
@@ -18,21 +20,15 @@
 {% endblock %}
 
 {% block body %}
-    {% if applicationDeleted == "true" %}
-		<div class="information information-animated">
-			{% get_string 'drafts.deleted' %}
+	<h1 class="govuk-heading-xl">
+		{{ organisation.name }}
+	</h1>
+
+	{% if user_data.organisations|length > 1 %}
+		<div style="margin-top: -40px; margin-bottom: 50px;">
+			<a class="govuk-link govuk-link--no-visited-state govuk-!-font-size-16" style="text-decoration: none;" href="{% url 'core:pick_organisation' %}" id="switch-link">Switch</a>
 		</div>
 	{% endif %}
-
-	<h1 class="govuk-heading-xl">
-        {{ organisation.name }}
-    </h1>
-
-    {% if user_data.organisations|length > 1 %}
-        <div style="margin-top: -40px; margin-bottom: 50px;">
-            <a class="govuk-link govuk-link--no-visited-state govuk-!-font-size-16" style="text-decoration: none;" href="{% url 'core:pick_organisation' %}" id="switch-link">Switch</a>
-        </div>
-    {% endif %}
 
 	{% for section in sections %}
 		<section class="govuk-form-group">

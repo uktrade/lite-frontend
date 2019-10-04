@@ -1,6 +1,11 @@
-import os
+from conf.settings import env
 
 
 def export_vars(request):
-    data = {'ENVIRONMENT_VARIABLES': dict(os.environ.items())}
+    data = {
+        'SERVICE_NAME': 'LITE',
+        'GOV_UK_URL': 'https://www.gov.uk',
+        'FEEDBACK_URL': env('FEEDBACK_URL'),
+        'GOOGLE_ANALYTICS_KEY': env('GOOGLE_ANALYTICS_KEY'),
+    }
     return data
