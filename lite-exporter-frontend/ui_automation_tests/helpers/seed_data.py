@@ -360,8 +360,8 @@ class SeedData:
     def submit_application(self, draft_id=None):
         self.log('submitting application: ...')
         draft_id_to_submit = draft_id if None else self.context['draft_id']  # noqa
-        data = {'id': draft_id_to_submit}
-        response = self.make_request('POST', url='/applications/', headers=self.export_headers, body=data)
+        response = self.make_request('PUT', url='/applications/' + draft_id_to_submit + '/submit/',
+                                     headers=self.export_headers)
         item = response.json()['application']
         self.add_to_context('application_id', item['id'])
         self.add_to_context('case_id', item['case_id'])

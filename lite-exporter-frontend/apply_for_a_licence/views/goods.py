@@ -5,7 +5,7 @@ from django.views.generic import TemplateView
 from apply_for_a_licence.forms import goods
 from core.builtins.custom_tags import get_string
 from core.services import get_units
-from drafts.services import get_draft, get_draft_goods, get_draft_goods_type, post_draft_preexisting_goods
+from drafts.services import get_draft, get_draft_goods, get_draft_goods_types, post_draft_preexisting_goods
 from goods.services import get_goods, get_good
 
 
@@ -71,7 +71,7 @@ class DraftOpenGoodsTypeList(TemplateView):
     def get(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
         draft, _ = get_draft(request, draft_id)
-        data, _ = get_draft_goods_type(request, draft_id)
+        data, _ = get_draft_goods_types(request, draft_id)
 
         context = {
             'title': get_string('good_types.overview_good_types.title'),
@@ -115,15 +115,10 @@ class AddPreexistingGood(TemplateView):
 
         if status_code != 201:
             good, status_code = get_good(request, str(kwargs['good_pk']))
-            good = good.get('good')
 
             context = {
                 'title': 'Add a pre-existing good to your application',
-                'page': goods.preexisting_good_form(good.get('id'),
-                                                    good.get('description'),
-                                                    good.get('control_code'),
-                                                    good.get('part_number'),
-                                                    get_units(request)),
+                'page': goods.preexisting_good_form(good, get_units(request)),
                 'data': request.POST,
                 'errors': data.get('errors'),
             }

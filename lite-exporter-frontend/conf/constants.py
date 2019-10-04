@@ -2,6 +2,7 @@ ISO8601_FMT = '%Y-%m-%dT%H:%M:%S.%fZ'
 
 # URLs
 APPLICATIONS_URL = '/applications/'
+APPLICATION_SUBMIT_URL = '/submit/'
 CASES_URL = '/cases/'
 DRAFTS_URL = '/drafts/'
 GOODS_URL = '/goods/'

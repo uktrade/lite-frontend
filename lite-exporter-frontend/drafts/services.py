@@ -1,6 +1,6 @@
 from conf.client import get, post, put, delete
 from conf.constants import APPLICATIONS_URL, DRAFTS_URL, END_USER_DOCUMENT_URL, ULTIMATE_END_USER_URL, DOCUMENT_URL, \
-    CONSIGNEE_URL, THIRD_PARTIES_URL, CONSIGNEE_DOCUMENT_URL, ADDITIONAL_DOCUMENT_URL
+    CONSIGNEE_URL, THIRD_PARTIES_URL, CONSIGNEE_DOCUMENT_URL, APPLICATION_SUBMIT_URL, ADDITIONAL_DOCUMENT_URL
 
 
 def get_drafts(request):
@@ -29,7 +29,7 @@ def delete_draft(request, pk):
 
 
 def submit_draft(request, pk):
-    data = post(request, APPLICATIONS_URL, {'id': pk})
+    data = put(request, APPLICATIONS_URL + pk + APPLICATION_SUBMIT_URL, json={})
     return data.json(), data.status_code
 
 
@@ -39,7 +39,7 @@ def get_draft_goods(request, pk):
     return data.json(), data.status_code
 
 
-def get_draft_goods_type(request, pk):
+def get_draft_goods_types(request, pk):
     data = get(request, DRAFTS_URL + pk + '/goodstype/')
     return data.json(), data.status_code
 
