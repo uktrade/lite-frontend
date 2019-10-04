@@ -25,6 +25,10 @@ def driver(request):
     # chrome_options.add_argument('--headless')
     chrome_options.add_argument('--no-sandbox')
 
+    # Use proxy settings provided in config file for security testing
+    if os.environ.get('PROXY_IP_PORT') is not None:
+        chrome_options.add_argument('--proxy-server=%s' % str(os.environ.get('PROXY_IP_PORT')))
+
     if browser == 'chrome':
         if str(os.environ.get('ENVIRONMENT')) == 'None':
             browser = webdriver.Chrome("chromedriver", options=chrome_options)
