@@ -37,3 +37,32 @@ class SeedParty(SeedClass):
         self.log("Adding end user document: ...")
         self.add_end_user_document(draft_id)
         self.add_to_context('end_user', end_user)
+
+    def add_ultimate_end_user(self, draft_id, ultimate_end_user):
+        self.log("Adding ultimate end user: ...")
+        ueu_data = self.request_data['ultimate_end_user'] if ultimate_end_user is None else ultimate_end_user
+        ultimate_end_user_post = make_request('POST', base_url=self.base_url,
+                                              url='/drafts/' + draft_id + '/ultimate-end-users/',
+                                              headers=self.export_headers, body=ueu_data)
+        self.add_to_context('ultimate_end_user', ultimate_end_user_post.json()['ultimate_end_user'])
+        ultimate_end_user_id = self.context['ultimate_end_user']['id']
+        self.add_ultimate_end_user_document(draft_id, ultimate_end_user_id)
+        return ultimate_end_user_id
+
+    def add_consignee(self, draft_id, consignee):
+        self.log("Adding consignee: ...")
+        consignee_data = self.request_data['consignee'] if consignee is None else consignee
+        consignee_response = make_request('POST', base_url=self.base_url, url='/drafts/' + draft_id + '/consignee/',
+                                          headers=self.export_headers, body=consignee_data)
+        self.add_to_context('consignee', consignee_response.json()['consignee'])
+        self.add_consignee_document(draft_id)
+
+    def add_third_party(self, draft_id, third_party):
+        third_party_data = self.request_data['third_party'] if third_party is None else third_party
+        third_party_response = make_request('POST', base_url=self.base_url,
+                                            url='/drafts/' + draft_id + '/third-parties/',
+                                            headers=self.export_headers, body=third_party_data)
+        self.add_to_context('third_party', third_party_response.json()['third_party'])
+        third_party_id = self.context['third_party']['id']
+        self.add_third_party_document(draft_id, third_party_id)
+        return third_party_id

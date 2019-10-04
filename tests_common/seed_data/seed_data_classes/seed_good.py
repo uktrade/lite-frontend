@@ -9,6 +9,14 @@ class SeedGood(SeedClass):
         self.add_good_document(item['id'])
         return item
 
+    def add_good_to_draft(self, draft_id, good):
+        self.log("Adding good to draft: ...")
+        good = self.request_data['add_good'] if good is None else good
+        good['good_id'] = self.context['good_id']
+        make_request("POST", base_url=self.base_url, url='/drafts/' + draft_id + '/goods/',
+                     headers=self.export_headers, body=good)
+
+
     def add_good(self):
         self.log('Adding good: ...')
         item = self.post_good('good')
