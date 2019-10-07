@@ -5,7 +5,7 @@
 		</div>
 	{% endfor %}
 	{% if not hide_creation_link %}
-		<a class="app-flag app-flag--action" href="{% url 'cases:assign_flags' case_id %}?level=goods&items={{ good.id }}&origin={{ origin }}">
+		<a class="app-flag app-flag--action" href="{% url 'cases:assign_flags' case.id %}?level=goods&items={{ good.id }}&origin={{ origin }}">
 			{% if good.flags %}
 				Edit good flags
 			{% else %}

@@ -11,7 +11,7 @@ class Good(TemplateView):
         good, _ = get_good(request, good_pk)
 
         context = {
-            'case_id': case_id,
+            'case.id': case_id,
             'good': good['good']
         }
         return render(request, 'cases/case/good.html', context)
