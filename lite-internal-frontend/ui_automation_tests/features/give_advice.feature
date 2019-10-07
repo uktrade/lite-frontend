@@ -93,7 +93,8 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I go to the final advice
     And I combine all advice
     And I finalise the licence
-    Then I reset the permissions
+    Then Todays date is filled in
+    And I reset the permissions
 
 
   @LT_1334_finalise_goods_countries_matrix

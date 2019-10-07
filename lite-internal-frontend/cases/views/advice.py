@@ -2,6 +2,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
 from lite_forms.generators import form_page, error_page
+from datetime import date
 
 from cases.forms.finalise_case import approve_licence_form, refuse_licence_form
 from cases.services import post_user_case_advice, get_user_case_advice, get_team_case_advice, \
@@ -288,7 +289,9 @@ class Finalise(TemplateView):
 
         for item in data:
             if item[search_key]['key'] == 'approve' or item[search_key]['key'] == 'proviso':
-                return form_page(request, approve_licence_form(case_id, standard))
+                today = date.today()
+                date_dict = {'day': today.day, 'month': today.month, 'year': today.year}
+                return form_page(request, approve_licence_form(case_id, standard), data=date_dict)
 
         return form_page(request, refuse_licence_form(case_id, standard))
 

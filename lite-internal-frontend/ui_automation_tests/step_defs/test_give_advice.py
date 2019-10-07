@@ -6,6 +6,7 @@ from pages.record_decision_page import RecordDecision
 from pages.roles_pages import RolesPages
 from pages.shared import Shared
 from pages.users_page import UsersPage
+from datetime import date
 
 scenarios('../features/give_advice.feature', strict_gherkin=False)
 
@@ -133,7 +134,17 @@ def finalise_goods_and_countries(driver):
     page = GiveAdvicePages(driver)
     page.finalise_goods_and_countries()
 
+
 @when("I select approve for all combinations of goods and countries")
 def select_approve_for_all(driver):
     page = GiveAdvicePages(driver)
     page.select_approve_for_all()
+
+
+@then("Todays date is filled in")
+def todays_date_is_filled_in(driver):
+    date_in_form = GiveAdvicePages(driver).get_date_in_date_entry()
+    today = date.today()
+    assert today.day == int(date_in_form['day'])
+    assert today.month == int(date_in_form['month'])
+    assert today.year == int(date_in_form['year'])
