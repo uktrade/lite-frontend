@@ -5,7 +5,7 @@
 {% load humanize static %}
 
 {% block back_link %}
-	<a href="{% url 'cases:case' case_id %}" class="govuk-back-link">Back to Case</a>
+	<a href="{% url 'cases:case' case.id %}" class="govuk-back-link">Back to Case</a>
 {% endblock %}
 
 {% block body %}
@@ -48,7 +48,7 @@
                 <p class="govuk-body" style="margin-bottom: 10px">{{ document.description|slice:"0:40" }} {% if document.description|length > 40 %}...{% endif %}</p>
             </div>
             <div class="lite-vertical-align">
-                    <a class="govuk-link lite-link--icon govuk-link--no-visited-state" href="{% url 'cases:document' case_id document.id %}">
+                    <a class="govuk-link lite-link--icon govuk-link--no-visited-state" href="{% url 'cases:document' case.id document.id %}">
                         Download
                     </a>
             </div>
