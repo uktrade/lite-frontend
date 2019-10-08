@@ -1,5 +1,5 @@
-from shared.seed_data.make_requests import make_request
-from shared.tools.wait import wait_for_ultimate_end_user_document, wait_for_third_party_document, wait_for_additional_document, wait_for_document
+from ..seed_data.make_requests import make_request
+from ..tools.wait import wait_for_ultimate_end_user_document, wait_for_third_party_document, wait_for_additional_document, wait_for_document
 
 
 def check_document(url, base_url, export_headers):

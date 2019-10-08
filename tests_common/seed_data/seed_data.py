@@ -1,16 +1,16 @@
-from shared.seed_data.request_data import create_request_data
-from shared.seed_data.make_requests import make_request
-from shared.seed_data.seed_data_classes.seed_good import SeedGood
-from shared.seed_data.seed_data_classes.seed_user import SeedUser
-from shared.seed_data.seed_data_classes.seed_organisation import SeedOrganisation
-from shared.seed_data.seed_data_classes.seed_clc import SeedClc
-from shared.seed_data.seed_data_classes.seed_party import SeedParty
-from shared.seed_data.seed_data_classes.seed_ecju import SeedEcju
-from shared.seed_data.seed_data_classes.seed_picklist import SeedPicklist
-from shared.seed_data.seed_data_classes.seed_case import SeedCase
-from shared.seed_data.seed_data_classes.seed_queue import SeedQueue
-from shared.seed_data.seed_data_classes.seed_additional_document import SeedAdditionalDocument
-from shared.seed_data.check_documents import check_documents
+from ..seed_data.request_data import create_request_data
+from ..seed_data.make_requests import make_request
+from ..seed_data.seed_data_classes.seed_good import SeedGood
+from ..seed_data.seed_data_classes.seed_user import SeedUser
+from ..seed_data.seed_data_classes.seed_organisation import SeedOrganisation
+from ..seed_data.seed_data_classes.seed_clc import SeedClc
+from ..seed_data.seed_data_classes.seed_party import SeedParty
+from ..seed_data.seed_data_classes.seed_ecju import SeedEcju
+from ..seed_data.seed_data_classes.seed_picklist import SeedPicklist
+from ..seed_data.seed_data_classes.seed_case import SeedCase
+from ..seed_data.seed_data_classes.seed_queue import SeedQueue
+from ..seed_data.seed_data_classes.seed_additional_document import SeedAdditionalDocument
+from ..seed_data.check_documents import check_documents
 
 
 class SeedData:

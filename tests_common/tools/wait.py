@@ -1,6 +1,6 @@
 import time
 
-from shared.tools.helpers import page_is_ready, menu_is_visible
+from ..tools.helpers import page_is_ready, menu_is_visible
 
 # How many attempts to wait for the function to return True
 timeout_limit = 20

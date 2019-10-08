@@ -1,5 +1,5 @@
-from shared.seed_data.seed_data_classes.seed_class import SeedClass
-from shared.seed_data.make_requests import make_request
+from ...seed_data.seed_data_classes.seed_class import SeedClass
+from ...seed_data.make_requests import make_request
 
 
 class SeedEcju(SeedClass):
