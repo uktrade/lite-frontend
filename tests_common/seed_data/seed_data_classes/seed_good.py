@@ -14,7 +14,7 @@ class SeedGood(SeedClass):
         self.log("Adding good to draft: ...")
         good = self.request_data['add_good'] if good is None else good
         good['good_id'] = self.context['good_id']
-        make_request("POST", base_url=self.base_url, url='/drafts/' + draft_id + '/goods/',
+        make_request("POST", base_url=self.base_url, url='/applications/' + draft_id + '/goods/',
                      headers=self.export_headers, body=good)
 
     def add_good(self):
