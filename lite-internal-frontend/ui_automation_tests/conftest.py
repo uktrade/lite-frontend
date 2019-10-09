@@ -32,7 +32,7 @@ def pytest_addoption(parser):
         parser.addoption("--internal_url", action="store", default="http://localhost:8200", help="url")
         parser.addoption("--lite_api_url", action="store", default="http://localhost:8100", help="url")
     elif env == 'demo':
-        raise Exception("This is the demo environment - Try another environment instead")
+        raise NotImplementedError('This is the demo environment - Try another environment instead')
     else:
         parser.addoption("--internal_url", action="store",
                          default="https://internal.lite.service." + env + ".uktrade.io/", help="url")

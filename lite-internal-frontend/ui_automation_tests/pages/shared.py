@@ -22,6 +22,7 @@ class Shared(BasePage):
     govuk_panel_body = '.govuk-panel__body'  # CSS
     back_link = '.govuk-back-link'  # CSS
     info_bar = '.lite-info-bar'  # CSS
+    info_board = '.lite-information-board'  # CSS
 
     def click_submit(self):
         self.driver.find_element_by_css_selector(self.submit_button).click()
@@ -88,3 +89,6 @@ class Shared(BasePage):
         edit_buttons = self.driver.find_elements_by_css_selector(self.lite_table_row)
         row_index = str(len(edit_buttons))
         scroll_to_element_by_id(self.driver, 'row-'+row_index)
+
+    def info_board_is_displayed(self):
+        return self.driver.find_element_by_css_selector(self.info_board).is_displayed()
