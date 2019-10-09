@@ -1,23 +1,23 @@
 from pytest import fixture
 
-from helpers.utils import get_lite_client
+from shared.tools.utils import get_lite_client
 
 
 @fixture(scope='session')
 def add_an_ecju_query_picklist(context, seed_data_config):
-    return get_lite_client(context, seed_data_config).add_ecju_query_picklist()
+    return get_lite_client(context, seed_data_config).seed_picklist.add_ecju_query_picklist()
 
 
 @fixture(scope='session')
 def add_a_proviso_picklist(context, seed_data_config):
-    return get_lite_client(context, seed_data_config).add_proviso_picklist()
+    return get_lite_client(context, seed_data_config).seed_picklist.add_proviso_picklist()
 
 
 @fixture(scope='session')
 def add_a_standard_advice_picklist(context, seed_data_config):
-    return get_lite_client(context, seed_data_config).add_standard_advice_picklist()
+    return get_lite_client(context, seed_data_config).seed_picklist.add_standard_advice_picklist()
 
 
 @fixture(scope='session')
 def add_a_report_summary_picklist(context, seed_data_config):
-    return get_lite_client(context, seed_data_config).add_report_summary_picklist()
+    return get_lite_client(context, seed_data_config).seed_picklist.add_report_summary_picklist()

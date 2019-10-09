@@ -1,7 +1,7 @@
 import time
 from pytest_bdd import when, then, parsers, scenarios
 from pages.application_page import ApplicationPage
-import helpers.helpers as utils
+import shared.tools.helpers as utils
 
 scenarios('../features/case_notes.feature', strict_gherkin=False)
 

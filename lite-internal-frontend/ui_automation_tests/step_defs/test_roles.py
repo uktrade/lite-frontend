@@ -1,5 +1,5 @@
 from pytest_bdd import scenarios, when, parsers, then
-import helpers.helpers as utils
+import shared.tools.helpers as utils
 from pages.roles_pages import RolesPages
 from pages.shared import Shared
 from pages.users_page import UsersPage

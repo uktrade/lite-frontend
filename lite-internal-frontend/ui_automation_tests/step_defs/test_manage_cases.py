@@ -2,7 +2,7 @@ from pytest_bdd import when, then, parsers, scenarios
 from pages.application_page import ApplicationPage
 from pages.record_decision_page import RecordDecision
 
-import helpers.helpers as utils
+import shared.tools.helpers as utils
 
 
 class ManageCases:

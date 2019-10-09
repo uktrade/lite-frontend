@@ -188,4 +188,5 @@ class ApplicationPage(BasePage):
         return self.driver.find_element_by_id(self.download_additional_document).is_enabled()
 
     def click_good_description_link(self):
-        self.driver.find_element_by_css_selector(self.goods_description_link).click()
+        element = self.driver.find_element_by_css_selector(self.goods_description_link)
+        self.driver.execute_script('arguments[0].click();', element)

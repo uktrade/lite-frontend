@@ -2,7 +2,7 @@ from pages.header_page import HeaderPage
 from pages.shared import Shared
 from pages.picklist_pages import PicklistPages
 from pytest_bdd import scenarios, when, then, parsers
-import helpers.helpers as utils
+import shared.tools.helpers as utils
 
 scenarios('../features/picklists.feature', strict_gherkin=False)
 

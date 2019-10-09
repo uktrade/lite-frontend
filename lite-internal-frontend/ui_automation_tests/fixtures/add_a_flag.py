@@ -1,5 +1,5 @@
 from pytest import fixture
-import helpers.helpers as utils
+import shared.tools.helpers as utils
 from pages.flags_pages import FlagsPages
 from pages.shared import Shared
 

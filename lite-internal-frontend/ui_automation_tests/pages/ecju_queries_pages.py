@@ -1,5 +1,5 @@
 from helpers.BasePage import BasePage
-from helpers.helpers import select_visible_text_from_dropdown
+from shared.tools.helpers import select_visible_text_from_dropdown
 
 
 class EcjuQueriesPages(BasePage):

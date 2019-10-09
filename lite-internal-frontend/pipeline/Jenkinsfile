@@ -164,7 +164,15 @@ pipeline
             container(name: 'selenium-internal-frontend', shell: '/bin/bash') {
               checkout([
                 $class: 'GitSCM', branches: [[name: "${params.BRANCH}"]],
-                userRemoteConfigs: [[url: 'https://github.com/uktrade/lite-internal-frontend.git']]
+                doGenerateSubmoduleConfigurations: false,
+                extensions: [[$class: 'SubmoduleOption',
+                        disableSubmodules: false,
+                        parentCredentials: true,
+                        recursiveSubmodules: true,
+                        reference: '',
+                        trackingSubmodules: false]],
+                submoduleCfg: [],
+                userRemoteConfigs: [[credentialsId: env.SCM_CREDENTIAL, url: 'https://github.com/uktrade/lite-internal-frontend.git']]
               ])
               script {
                 timestamps {

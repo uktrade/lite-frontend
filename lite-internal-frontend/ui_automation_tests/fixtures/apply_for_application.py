@@ -2,7 +2,7 @@ import datetime
 
 from pytest import fixture
 
-from helpers.utils import Timer, get_lite_client
+from shared.tools.utils import Timer, get_lite_client
 
 
 @fixture(scope="module")
@@ -55,7 +55,7 @@ def apply_for_standard_application(driver, request, seed_data_config, context):
         }
 
     )
-    lite_client.submit_application()
+    lite_client.submit_standard_application()
     context.app_id = lite_client.context['application_id']
     context.case_id = lite_client.context['case_id']
     context.end_user = lite_client.context['end_user']
@@ -69,14 +69,14 @@ def apply_for_standard_application(driver, request, seed_data_config, context):
 @fixture(scope="module")
 def apply_for_clc_query(driver, seed_data_config, context):
     lite_client = get_lite_client(context, seed_data_config)
-    lite_client.add_clc_query()
+    lite_client.seed_clc.add_clc_query(lite_client.seed_good)
     context.clc_case_id = lite_client.context['case_id']
 
 
 @fixture(scope="module")
 def apply_for_eua_query(driver, seed_data_config, context):
     lite_client = get_lite_client(context, seed_data_config)
-    lite_client.add_eua_query()
+    lite_client.seed_party.add_eua_query()
     context.eua_id = lite_client.context['end_user_advisory_id']
 
 

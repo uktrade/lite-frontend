@@ -11,7 +11,7 @@ from fixtures.add_queue import add_queue # noqa
 from fixtures.add_a_team import add_a_team # noqa
 from fixtures.add_a_picklist import add_an_ecju_query_picklist, add_a_proviso_picklist, add_a_standard_advice_picklist, add_a_report_summary_picklist # noqa
 
-import helpers.helpers as utils
+import shared.tools.helpers as utils
 from pages.header_page import HeaderPage
 from pages.shared import Shared
 from pages.case_list_page import CaseListPage

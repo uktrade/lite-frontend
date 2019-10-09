@@ -1,6 +1,6 @@
 from pytest import fixture
 
-from helpers.utils import get_lite_client
+from shared.tools.utils import get_lite_client
 
 
 @fixture(scope="session")

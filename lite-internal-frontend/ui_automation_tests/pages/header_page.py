@@ -1,4 +1,4 @@
-from helpers.wait import wait_until_page_is_loaded, wait_until_menu_is_visible
+from shared.tools.wait import wait_until_page_is_loaded, wait_until_menu_is_visible
 
 
 class HeaderPage():

@@ -5,7 +5,7 @@ from pytest import fixture
 from selenium import webdriver
 
 from conf.settings import env
-from helpers.utils import get_lite_client
+from shared.tools.utils import get_lite_client
 
 
 # set_timeouts are for elements that dont exist that dont need a 10 second timeout to return that they dont exist.
@@ -78,24 +78,6 @@ def invalid_username(request):
     return 'invalid@mail.com'
 
 
-def clear_down(context, seed_data_config):
-    lite_client = get_lite_client(context, seed_data_config)
-    if 'Application Bin' not in str(lite_client.get_queues()):
-        lite_client.add_queue('Application Bin')
-        bin_id = context['queue_id']
-    else:
-        for queue in lite_client.get_queues():
-            if queue['name'] == 'Application Bin':
-                bin_id = queue['id']
-                break
-    lite_client.assign_test_cases_to_bin(bin_id)
-
-
-@fixture(scope='session')
-def new_cases_queue_id():
-    return '00000000-0000-0000-0000-000000000001'
-
-
 @fixture(scope='session')
 def exporter_info(request):
     exporter_sso_email = env('TEST_EXPORTER_SSO_EMAIL')
@@ -122,12 +104,6 @@ def internal_info(request):
 
 
 @fixture(scope='session')
-def s3_key(request):
-    s3_key = env('TEST_S3_KEY')
-    return s3_key
-
-
-@fixture(scope='session')
 def seed_data_config(request, exporter_info, internal_info, s3_key):
     api_url = request.config.getoption('--lite_api_url')
     return {
@@ -136,3 +112,27 @@ def seed_data_config(request, exporter_info, internal_info, s3_key):
         'gov': internal_info,
         's3_key': s3_key
     }
+
+
+def clear_down(context, seed_data_config):
+    lite_client = get_lite_client(context, seed_data_config)
+    if 'Application Bin' not in str(lite_client.get_queues()):
+        lite_client.add_queue('Application Bin')
+        bin_id = context['queue_id']
+    else:
+        for queue in lite_client.get_queues():
+            if queue['name'] == 'Application Bin':
+                bin_id = queue['id']
+                break
+    lite_client.assign_test_cases_to_bin(bin_id)
+
+
+@fixture(scope='session')
+def new_cases_queue_id():
+    return '00000000-0000-0000-0000-000000000001'
+
+
+@fixture(scope='session')
+def s3_key(request):
+    s3_key = env('TEST_S3_KEY')
+    return s3_key

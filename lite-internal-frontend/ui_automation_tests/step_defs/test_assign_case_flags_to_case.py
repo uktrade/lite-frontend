@@ -1,4 +1,4 @@
-import helpers.helpers as utils
+import shared.tools.helpers as utils
 from pages.shared import Shared
 from pytest_bdd import given, when, then, scenarios, parsers
 from pages.assign_flags_to_case import CaseFlagsPages

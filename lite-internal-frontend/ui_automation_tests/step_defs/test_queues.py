@@ -1,6 +1,6 @@
 from pytest_bdd import when, then, parsers, scenarios
 import logging
-import helpers.helpers as utils
+import shared.tools.helpers as utils
 from pages.application_page import ApplicationPage
 from pages.queues_pages import QueuesPages
 from pages.shared import Shared
@@ -15,7 +15,7 @@ log.addHandler(console)
 @when('I edit the new queue')
 def click_on_edit_queue(driver, context):
     queues = QueuesPages(driver)
-    no = utils.get_element_index_by_partial_text(Shared(driver).get_rows_in_lite_table(), context.queue_name)
+    no = utils.get_element_index_by_text(Shared(driver).get_rows_in_lite_table(), context.queue_name, complete_match=False)
     queues.click_queue_edit_button(no)
     context.edited_queue_name = str(context.queue_name)[:12] + "edited"
     QueuesPages(driver).enter_queue_name(context.edited_queue_name)

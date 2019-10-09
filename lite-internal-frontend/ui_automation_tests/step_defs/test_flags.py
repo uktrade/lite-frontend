@@ -1,5 +1,5 @@
 from pytest_bdd import when, then, parsers, scenarios
-import helpers.helpers as utils
+import shared.tools.helpers as utils
 from pages.header_page import HeaderPage
 from pages.shared import Shared
 

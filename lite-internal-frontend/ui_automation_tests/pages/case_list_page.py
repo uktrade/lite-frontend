@@ -1,6 +1,6 @@
 import time
 
-import helpers.helpers as utils
+import shared.tools.helpers as utils
 from helpers.BasePage import BasePage
 
 
@@ -79,7 +79,7 @@ class CaseListPage(BasePage):
 
     def assert_case_is_present(self, case_id):
         elements = self.driver.find_elements_by_css_selector(self.CASES_TABLE_ROW)
-        no = utils.get_element_index_by_partial_text(elements, case_id)
+        no = utils.get_element_index_by_text(elements, case_id, complete_match=False)
         return elements[no].is_displayed()
 
     def click_apply_filters_button(self):

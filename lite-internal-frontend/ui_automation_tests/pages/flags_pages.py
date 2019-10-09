@@ -1,4 +1,4 @@
-import helpers.helpers as utils
+import shared.tools.helpers as utils
 from pages.shared import Shared
 
 
