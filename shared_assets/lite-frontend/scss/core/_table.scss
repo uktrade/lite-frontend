@@ -1,0 +1,11 @@
+.lite-heading-s {
+	@include govuk-font($size: 14, $weight: bold);
+	margin-bottom: govuk-spacing(3);
+	color: govuk-colour("dark-grey");
+	letter-spacing: 1px;
+	text-transform: uppercase;
+}
+
+.lite-hint {
+	color: govuk-colour("dark-grey");
+}
