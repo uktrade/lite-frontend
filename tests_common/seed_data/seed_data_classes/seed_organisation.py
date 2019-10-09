@@ -35,5 +35,5 @@ class SeedOrganisation(SeedClass):
 
     def get_org_primary_site_id(self, org_id):
         organisation = make_request('GET', base_url=self.base_url,
-                                    url='/organisations/' + org_id, headers=self.gov_headers).json()['organisation']
+                                    url='/organisations/' + org_id, headers=self.gov_headers).json()
         return organisation['primary_site']['id']
