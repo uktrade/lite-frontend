@@ -60,22 +60,6 @@
 	}
 }
 
-
-.lite-filter-bar-item {
-	position: relative;
-	padding: 0 govuk-spacing(2);
-	z-index: 0;
-	display: flex;
-	margin-top: -2px;
-	background-color: white;
-}
-
-.lite-filter-bar-item-remove {
-	@include govuk-font($size: 14, $weight: bold);
-	display: inline-block;
-	line-height: 1.25;
-}
-
 .lite-checkbox-filter-link {
 	position: relative;
 	display: inline-block;
