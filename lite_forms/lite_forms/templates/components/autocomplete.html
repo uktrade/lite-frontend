@@ -5,7 +5,7 @@
 	{% endfor %}
 </select>
 <script src="/assets/javascripts/accessible-autocomplete.min.js"></script>
-<script>
+<script nonce="{{ request.csp_nonce }}">
 	accessibleAutocomplete.enhanceSelectElement({
 		defaultValue: '',
 		displayMenu: 'overlay',

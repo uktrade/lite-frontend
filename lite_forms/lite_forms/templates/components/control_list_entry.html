@@ -13,7 +13,7 @@
 	<p class="govuk-caption-m" id="info-description-{{ question.name }}" style="max-width: 80%; line-height: 1.66; margin-bottom: 0;"></p>
 </div>
 
-<script>
+<script nonce="{{ request.csp_nonce }}">
 	function control_list_entry_onchange(val, bypassValidation=false) {
         input = $("#{{ question.name }}");
 		val = val.trim();
