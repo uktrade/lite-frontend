@@ -4,3 +4,6 @@
 [submodule "assets/shared"]
 	path = assets/shared
 	url = git@github.com:uktrade/lite-shared-assets.git
+[submodule "ui_automation_tests/shared"]
+	path = ui_automation_tests/shared
+	url = git@github.com:uktrade/lite-tests-common.git

@@ -1,8 +1,8 @@
 from pytest_bdd import scenarios, when, then, parsers
 
-import helpers.helpers as utils
-from helpers.helpers import scroll_to_element_by_id
-from helpers.wait import wait_for_download_button, wait_for_element
+import shared.tools.helpers as utils
+from shared.tools.helpers import scroll_to_element_by_id
+from shared.tools.wait import wait_for_download_button, wait_for_element
 from pages.add_end_user_pages import AddEndUserPages
 from pages.application_goods_list import ApplicationGoodsList
 from pages.application_overview_page import ApplicationOverviewPage
@@ -104,7 +104,7 @@ def i_remove_an_ultimate_end_user(driver):
 @then('there is only one ultimate end user')
 def one_ultimate_end_user(driver):
     elements = Shared(driver).get_lite_sections()
-    no = utils.get_element_index_by_partial_text(elements, "Ultimate End Users")
+    no = utils.get_element_index_by_text(elements, "Ultimate End Users", complete_match=False)
     assert len(elements[no].find_elements_by_css_selector(".govuk-table__row")) == 2, "total on the application overview is incorrect after removing ultimate end user"
 
 
@@ -186,7 +186,7 @@ def delete_ultimate_end_user_document(driver):
 
 @then("Wait for download link")
 def wait_for_download_link(driver):
-    assert wait_for_download_button(driver)
+    assert wait_for_download_button(driver, page=Shared(driver))
 
 
 @then(parsers.parse('Wait for "{id}" to be present'))

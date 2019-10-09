@@ -2,8 +2,8 @@ import os
 
 from pytest import fixture
 
-import helpers.helpers as utils
-from helpers.utils import get_lite_client
+import shared.tools.helpers as utils
+from shared.tools.utils import get_lite_client
 from pages.add_goods_page import AddGoodPage
 from pages.application_goods_list import ApplicationGoodsList
 from pages.application_overview_page import ApplicationOverviewPage
@@ -17,14 +17,14 @@ def add_an_incorporated_good_to_application(driver, request, context, exporter_u
     url = driver.current_url
     overview_page = ApplicationOverviewPage(driver)
     lite_client = get_lite_client(context, seed_data_config=seed_data_config)
-    lite_client.add_good_end_product_false()
+    lite_client.seed_good.add_good_end_product('good_end_product_false')
     context.goods_name = lite_client.context['goods_name']
     driver.get(url)
     utils.scroll_to_element_by_id(driver, 'goods')
     overview_page.click_goods_link()
     driver.find_element_by_css_selector('a[href*="add-preexisting"]').click()
     elements = driver.find_elements_by_css_selector('.lite-card')
-    no = utils.get_element_index_by_partial_text(elements, context.goods_name)
+    no = utils.get_element_index_by_text(elements, context.goods_name, complete_match=False)
     driver.find_elements_by_css_selector('.lite-card .govuk-button')[no].click()
     application_goods_list = ApplicationGoodsList(driver)
     context.unit = 'Number of articles'
@@ -38,14 +38,14 @@ def add_an_incorporated_good_to_application(driver, request, context, exporter_u
 def add_a_non_incorporated_good_to_application(driver, context, request, exporter_url, seed_data_config):
     url = driver.current_url
     lite_client = get_lite_client(context, seed_data_config=seed_data_config)
-    lite_client.add_good_end_product_true()
+    lite_client.seed_good.add_good_end_product('good_end_product_true')
     context.goods_name = lite_client.context['goods_name']
     driver.get(url)
     utils.scroll_to_element_by_id(driver, 'goods')
     ApplicationOverviewPage(driver).click_goods_link()
     driver.find_element_by_css_selector('a[href*="add-preexisting"]').click()
     elements = driver.find_elements_by_css_selector('.lite-card')
-    no = utils.get_element_index_by_partial_text(elements, context.goods_name)
+    no = utils.get_element_index_by_text(elements, context.goods_name, complete_match=False)
     driver.find_elements_by_css_selector('.lite-card .govuk-button')[no].click()
     application_goods_list = ApplicationGoodsList(driver)
     context.unit = 'Number of articles'

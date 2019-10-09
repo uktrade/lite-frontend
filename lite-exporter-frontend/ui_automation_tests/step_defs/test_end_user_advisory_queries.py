@@ -4,10 +4,7 @@ from pages.add_end_user_advisory_pages import AddEndUserAdvisoryPages
 from pages.end_user_advisory_page import EndUserAdvisoryPage
 from pages.respond_to_ecju_query_page import RespondToEcjuQueryPage
 from pages.shared import Shared
-
-from core.builtins.custom_tags import reference_code
-from ui_automation_tests.helpers import helpers
-from ui_automation_tests.helpers.seed_data import SeedData
+from shared.seed_data.seed_data import SeedData
 from ui_automation_tests.pages.application_page import ApplicationPage
 from ui_automation_tests.pages.submitted_applications_page import SubmittedApplicationsPages
 
@@ -111,11 +108,11 @@ def notification_on_end_user_advisory_list(driver, context):
     pass
 
 @then('I see a notification for case note and can view the case note')
-def notification_on_notes_tab(driver):
+def notification_on_notes_tab(driver, context):
     enduseradvisorypage = EndUserAdvisoryPage(driver)
     # Commenting out due to bug LT-1433
     # assert '1' in enduseradvisorypage.case_note_notification_bubble_text()
-    assert SeedData.case_note_text in enduseradvisorypage.latest_case_note_text()
+    assert context.case_note_text in enduseradvisorypage.latest_case_note_text()
 
 
 @then(parsers.parse('I can view "{text}" in case notes'))

@@ -1,6 +1,6 @@
 from pytest_bdd import scenarios, when, then, parsers
 
-import helpers.helpers as utils
+import shared.tools.helpers as utils
 from pages.application_countries_list import ApplicationCountriesList
 from pages.application_goods_list import ApplicationGoodsList
 from pages.application_goods_type_list import ApplicationGoodsTypeList
@@ -70,7 +70,7 @@ def i_should_see_a_list_of_countries(driver):
  #   api_data, status_code = get_countries(None)
     assert len(page_countries) == 274
  #   assert len(page_countries) == len(api_data['countries'])
-    assert driver.find_element_by_tag_name("h1").text == "Where are your goods going?", \
+    assert application_countries_list.get_title() == "Where are your goods going?", \
         "Failed to go to countries list page"
 
 

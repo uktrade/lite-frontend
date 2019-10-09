@@ -1,6 +1,6 @@
 from pytest import fixture
 
-from helpers.utils import get_lite_client
+from shared.tools.utils import get_lite_client
 
 
 @fixture(scope="module")
@@ -12,4 +12,4 @@ def internal_ecju_query(driver, context, seed_data_config):
 @fixture(scope="module")
 def internal_ecju_query_end_user_advisory(driver, context, seed_data_config):
     lite_client = get_lite_client(context, seed_data_config=seed_data_config)
-    lite_client.add_ecju_query(context.end_user_advisory_case_id)
+    lite_client.seed_ecju.add_ecju_query(context.end_user_advisory_case_id)

@@ -2,7 +2,7 @@ import datetime
 
 from pytest import fixture
 
-from helpers.utils import Timer, get_lite_client
+from shared.tools.utils import Timer, get_lite_client
 
 
 @fixture(scope='module')
@@ -48,9 +48,9 @@ def add_an_application(driver, request, exporter_url, context, seed_data_config)
              'website': 'https://www.gov.uk'
         }
     )
-    lite_client.submit_application()
+    lite_client.submit_standard_application()
     context.app_id = lite_client.context['application_id']
     context.app_name = app_name
     context.case_id = lite_client.context['case_id']
-    lite_client.add_ecju_query(context.case_id)
+    lite_client.seed_ecju.add_ecju_query(context.case_id)
     timer.print_time('apply_for_standard_application')

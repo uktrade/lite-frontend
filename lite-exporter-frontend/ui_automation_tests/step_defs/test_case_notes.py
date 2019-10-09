@@ -1,9 +1,8 @@
 from pytest_bdd import when, then, parsers, scenarios, given
 
-from pages.shared import Shared
 from pages.submitted_applications_page import SubmittedApplicationsPages
 
-import helpers.helpers as utils
+import shared.tools.helpers as utils
 
 scenarios('../features/case_notes.feature', strict_gherkin=False)
 

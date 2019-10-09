@@ -163,12 +163,26 @@ pipeline
                 value: "${params.AWS_STORAGE_BUCKET_NAME}"
               - name: AWS_REGION
                 value: "${params.AWS_REGION}"
+              - name: TEST_SSO_EMAIL
+                value: "${params.TEST_SSO_EMAIL}"
+              - name: TEST_SSO_NAME
+                value: "${params.TEST_SSO_NAME}"
+              - name: TEST_SSO_PASSWORD
+                value: "${params.TEST_SSO_PASSWORD}"
         """) {
           node(POD_LABEL) {
             container(name: 'selenium-export-frontend', shell: '/bin/bash') {
               checkout([
                 $class: 'GitSCM', branches: [[name: "${params.BRANCH}"]],
-                userRemoteConfigs: [[url: 'https://github.com/uktrade/lite-exporter-frontend.git']]
+                doGenerateSubmoduleConfigurations: false,
+                extensions: [[$class: 'SubmoduleOption',
+                        disableSubmodules: false,
+                        parentCredentials: true,
+                        recursiveSubmodules: true,
+                        reference: '',
+                        trackingSubmodules: false]],
+                submoduleCfg: [],
+                userRemoteConfigs: [[credentialsId: env.SCM_CREDENTIAL, url: 'https://github.com/uktrade/lite-exporter-frontend.git']]
               ])
               script {
                 timestamps {

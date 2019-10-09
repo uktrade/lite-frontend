@@ -6,6 +6,7 @@ class ApplicationCountriesList:
         self.countries_labels = ".govuk-checkboxes__label"
         self.countries_search_box = "filter-box"   # ID
         self.countries_list = "pane_countries"   # ID
+        self.title = "h1"
 
     def get_countries_names(self):
         countries_names = []
@@ -26,3 +27,6 @@ class ApplicationCountriesList:
 
     def get_text_of_countries_list(self):
         return self.driver.find_element_by_id(self.countries_list).text
+
+    def get_title(self):
+        return self.driver.find_element_by_tag_name(self.title).text
