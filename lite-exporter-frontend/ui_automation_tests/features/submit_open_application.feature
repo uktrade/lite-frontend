@@ -8,7 +8,6 @@ Feature: I want to indicate the open licence I want
   Scenario: Apply for a licence to draft and delete
     Given I go to exporter homepage and choose Test Org
     When I click on apply for a license button
-    And I click on start button
     And I enter in name for application and continue
     And I select "open" application and continue
     And I select "permanent" option and continue
@@ -20,7 +19,6 @@ Feature: I want to indicate the open licence I want
   Scenario: Submit open application
     Given I go to exporter homepage and choose Test Org
     When I click on apply for a license button
-    And I click on start button
     And I enter in name for application and continue
     And I select "open" application and continue
     And I select "permanent" option and continue
@@ -60,7 +58,6 @@ Feature: I want to indicate the open licence I want
     Given I go to exporter homepage and choose Test Org
     When I go to exporter homepage
     And I click on apply for a license button
-    And I click on start button
     And I enter in name for application and continue
     And I select "open" application and continue
     And I select "permanent" option and continue
@@ -74,7 +71,6 @@ Feature: I want to indicate the open licence I want
     Given I go to exporter homepage and choose Test Org
     When I go to exporter homepage
     And I click on apply for a license button
-    And I click on start button
     And I enter in name for application and continue
     And I select "open" application and continue
     And I select "permanent" option and continue

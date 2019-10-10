@@ -32,7 +32,7 @@ class Hub(TemplateView):
             sections = [
                 Section('', [
                     Tile(get_string('licences.apply_for_a_licence'), '',
-                         reverse_lazy('apply_for_a_licence:index')),
+                         reverse_lazy('apply_for_a_licence:start')),
                 ]),
                 Section('Manage', [
                     Tile(get_string('drafts.title'), '',

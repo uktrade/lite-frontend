@@ -7,8 +7,6 @@ from goodstype import views as goodstypeviews
 app_name = 'apply_for_a_licence'
 
 urlpatterns = [
-    # ex: /
-    path('', common.StartApplication.as_view(), name='index'),
     # ex: /start/
     path('start/', common.InitialQuestions.as_view(), name='start'),
     # ex: /<uuid:pk>/overview/

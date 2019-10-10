@@ -395,7 +395,6 @@ def click_users_link(driver):
 @when('I create a standard application')  # noqa
 def create_standard_application(driver, context):
     click_apply_licence(driver)
-    click_start_button(driver)
     enter_application_name(driver, context)
     enter_type_of_application(driver, 'standard', context)
     enter_permanent_or_temporary(driver, 'permanent', context)

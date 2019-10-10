@@ -13,7 +13,6 @@ Feature: I want to search for goods in my goods list to add to an in progress ap
     And I upload file "file_for_doc_upload_test_1.txt" with description "Doesnt matter really"
     And I go to exporter homepage
     And I click on apply for a license button
-    And I click on start button
     And I enter in name for application and continue
     And I select "standard" application and continue
     And I select "permanent" option and continue
@@ -32,7 +31,6 @@ Feature: I want to search for goods in my goods list to add to an in progress ap
     And I upload file "file_for_doc_upload_test_1.txt" with description "Doesnt matter really"
     And I go to exporter homepage
     And I click on apply for a license button
-    And I click on start button
     And I enter in name for application and continue
     And I select "standard" application and continue
     And I select "permanent" option and continue
@@ -51,7 +49,6 @@ Feature: I want to search for goods in my goods list to add to an in progress ap
     And I upload file "file_for_doc_upload_test_1.txt" with description "Doesnt matter really"
     And I go to exporter homepage
     And I click on apply for a license button
-    And I click on start button
     And I enter in name for application and continue
     And I select "standard" application and continue
     And I select "permanent" option and continue
@@ -70,7 +67,6 @@ Feature: I want to search for goods in my goods list to add to an in progress ap
     And I upload file "file_for_doc_upload_test_1.txt" with description "Doesnt matter really"
     And I go to exporter homepage
     And I click on apply for a license button
-    And I click on start button
     And I enter in name for application and continue
     And I select "standard" application and continue
     And I select "permanent" option and continue

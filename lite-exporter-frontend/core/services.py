@@ -89,7 +89,7 @@ def get_notifications(request, unviewed):
 # Organisation
 def get_organisation(request, pk):
     data = get(request, ORGANISATIONS_URL + pk)
-    return data.json()['organisation']
+    return data.json()
 
 
 def get_organisation_users(request, pk):
