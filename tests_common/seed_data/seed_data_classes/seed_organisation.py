@@ -22,7 +22,7 @@ class SeedOrganisation(SeedClass):
                             self.request_data['organisation_for_switching_organisations']['name'])
 
     def find_org_by_name(self, org_name):
-        organisations = make_request("GET", base_url=self.base_url, url='/organisations/',
+        organisations = make_request("GET", base_url=self.base_url, url='/organisations/?name='+org_name,
                                      headers=self.gov_headers).json()['results']
         organisation = next((item for item in organisations if item["name"] == org_name), None)
         return organisation
@@ -35,5 +35,5 @@ class SeedOrganisation(SeedClass):
 
     def get_org_primary_site_id(self, org_id):
         organisation = make_request('GET', base_url=self.base_url,
-                                    url='/organisations/' + org_id, headers=self.gov_headers).json()['organisation']
+                                    url='/organisations/' + org_id, headers=self.gov_headers).json()
         return organisation['primary_site']['id']

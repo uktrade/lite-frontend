@@ -72,7 +72,7 @@ def create_picklist(name, text, type, proviso=None):
 def create_request_data(exporter_user, test_s3_key, gov_user):
     exporter = create_user(exporter_user)
     request_data = {
-        'organisation': create_organisation(exporter, 'commercial', 'Test Org'),
+        'organisation': create_organisation(exporter, 'commercial', 'Archway Communications'),
         'organisation_for_switching_organisations': create_organisation(exporter, 'hmrc', 'Octopus Systems'),
         'good': create_good('Lentils', True),
         'good_end_product_true': create_good('Hot Cross Buns', True),
