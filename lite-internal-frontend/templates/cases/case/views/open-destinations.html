@@ -63,7 +63,7 @@
                                                 <span class="app-country-tag app-country-tag--orange">{{ good.control_code }}</span>
                                             {% endif %}
                                         {% endif %}
-                                    {% else %}
+                                    {% elif good.control_code %}
                                         <span class="app-country-tag app-country-tag--orange">{{ good.control_code }}</span>
                                     {% endif %}
                                 {% endfor %}

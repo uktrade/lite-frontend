@@ -32,6 +32,7 @@ FLAGS_URL = '/flags/'
 ASSIGN_FLAGS_URL = FLAGS_URL + 'assign/'
 FLAGS_CASE_LEVEL_FOR_TEAM = '/flags/?level=Case&team=True'
 FLAGS_GOOD_LEVEL_FOR_TEAM = '/flags/?level=Good&team=True'
+FLAGS_ORGANISATION_LEVEL_FOR_TEAM = '/flags/?level=Organisation&team=True'
 CLC_QUERIES_URL = '/queries/control-list-classifications/'
 PICKLIST_URL = '/picklist/'
 

@@ -56,7 +56,7 @@ class GiveAdvicePages(BasePage):
     def select_approve_for_all(self):
         elements = self.driver.find_elements_by_css_selector(self.radio_input_approve)
         for element in elements:
-            self.driver.execute_script("arguments[0].click();", element)
+            self.driver.execute_script('arguments[0].click();', element)
 
     def get_date_in_date_entry(self):
         return {

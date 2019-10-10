@@ -30,7 +30,7 @@ class ApplicationPage(BasePage):
     move_case_button = '[href*="move"]' # CSS
     status = 'status'  # ID
     audit_trail_item = '.app-activity__item'  # CSS
-    application_summary_board = '.lite-information-board'  # CSS
+    application_summary_board = '.govuk-summary-list'  # CSS
     eu_table = 'end-user'  # ID
     ueu_table = 'ultimate-end-users'  # ID
     consignee_table = 'consignee'  # ID
@@ -40,7 +40,10 @@ class ApplicationPage(BasePage):
     download_good_document = 'good_document'  # ID
     download_end_user_document = 'end_user_document'  # ID
     download_additional_document = 'additional_document'  # ID
+    organisation = 'applicant_organisation'  # CSS
+
     goods_description_link = '#goods a'  # CSS
+
 
     def click_visible_to_exporter_checkbox(self):
         time.sleep(.5)
@@ -118,7 +121,7 @@ class ApplicationPage(BasePage):
 
     def select_a_good(self):
         element = self.driver.find_element_by_css_selector(self.checkbox_input)
-        self.driver.execute_script("arguments[0].click();", element)
+        self.driver.execute_script('arguments[0].click();', element)
 
     def click_view_advice(self):
         self.driver.find_element_by_css_selector(self.actions_dropdown).click()
@@ -126,7 +129,7 @@ class ApplicationPage(BasePage):
 
     def is_flag_applied(self, flag_id):
         count = len(self.driver.find_elements_by_id(flag_id))
-        return count == 1
+        return count > 0
 
     def is_good_flag_applied(self, flag_name):
         return flag_name in self.driver.find_element_by_id("goods").text
@@ -157,7 +160,7 @@ class ApplicationPage(BasePage):
         elements = self.driver.find_elements_by_css_selector(self.checkbox)
         num = 0
         for element in elements:
-            self.driver.execute_script("arguments[0].click();", element)
+            self.driver.execute_script('arguments[0].click();', element)
             num += 1
         self.driver.find_element_by_id(self.give_advice_button).click()
         return num
@@ -186,6 +189,10 @@ class ApplicationPage(BasePage):
 
     def additional_document_link_is_enabled(self):
         return self.driver.find_element_by_id(self.download_additional_document).is_enabled()
+
+    def go_to_organisation(self):
+        element = self.driver.find_element_by_id(self.organisation)
+        self.driver.execute_script('arguments[0].click();', element)
 
     def click_good_description_link(self):
         element = self.driver.find_element_by_css_selector(self.goods_description_link)

@@ -6,6 +6,8 @@ app_name = 'flags'
 urlpatterns = [
     # ex: /flags/ - View all active flags
     path('', views.FlagsList.as_view(), name='flags'),
+    # ex: /flags/assign-flags/
+    path('assign-flags/', views.AssignFlags.as_view(), name='assign_flags'),
     # ex: /all/ - view all flags
     path('<str:status>/', views.FlagsList.as_view(), name='flags'),
     # ex: /flags/add/ -  add a new flag

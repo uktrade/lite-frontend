@@ -49,14 +49,6 @@ def count_active_flags(driver, context):
     context.number_of_assigned_flags = number_of_assigned_flags
 
 
-@when('I select previously created flag')
-def assign_flags_to_case(driver, context):
-    case_flags_pages = CaseFlagsPages(driver)
-    case_flags_pages.select_flag(context, context.flag_name)
-    shared = Shared(driver)
-    shared.click_submit()
-
-
 @when("I unassign flags from the case")
 def unassign_flags_from_case(driver, context):
     case_flags_pages = CaseFlagsPages(driver)

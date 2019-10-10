@@ -41,12 +41,10 @@ class ManageCases:
     def application_headers_and_info_are_correct(driver, api_url, context):
         application_page = ApplicationPage(driver)
         application_summary = application_page.get_text_of_application_summary_board()
-        assert "APPLICANT" in application_summary
-        assert "ACTIVITY" in application_summary
-        assert "CREATED AT" in application_summary
-        assert "REFERENCE NUMBER" in application_summary
-        assert "LICENCE TYPE" in application_summary
-        assert context.org_name in application_summary
+        assert "Activity" in application_summary
+        assert "Created at" in application_summary
+        assert "Reference number" in application_summary
+        assert "Licence type" in application_summary
         assert "Trading" in application_summary or "Brokering" in application_summary
         assert utils.search_for_correct_date_regex_in_element(application_summary)
         assert "None" in application_summary

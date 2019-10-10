@@ -33,3 +33,16 @@ Feature: I want to add a company to LITE
     And I provide hmrc registration details of org_name: "HMRC Blue", site_name: "HQ", addres line 1: "123 Cobalt Street", town or city: "London", County: "Islington", post code: "AB1 2CD", country: "Ukraine"
     And I setup the admin user with email: "TestBusinessForSites@mail.com", first name: "Trinity", last name: "Fishburne"
     Then organisation is registered
+
+  @LT_1086_test_adding_a_flag_to_an_organisation
+  Scenario: Adding a flag to an organisation
+    Given I create open application or open application has been previously created
+    And I go to flags
+    And I add a flag called Suspicious at level Organisation
+    When I go to open application previously created
+    And I go to the organisation which submitted the case
+    And I click the edit flags link
+    And I select previously created flag
+    Then the previously created organisations flag is assigned
+    When I go to open application previously created
+    Then the previously created organisations flag is assigned

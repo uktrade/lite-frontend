@@ -1,7 +1,7 @@
 from lite_forms.components import Option
 
 from conf.client import get, post, put
-from conf.constants import FLAGS_URL, FLAGS_CASE_LEVEL_FOR_TEAM, FLAGS_GOOD_LEVEL_FOR_TEAM
+from conf.constants import FLAGS_URL, FLAGS_CASE_LEVEL_FOR_TEAM, FLAGS_GOOD_LEVEL_FOR_TEAM, FLAGS_ORGANISATION_LEVEL_FOR_TEAM
 
 
 def get_flags(request):
@@ -28,6 +28,23 @@ def get_cases_flags(request, convert_to_options=False):
 
 def get_goods_flags(request, convert_to_options=False):
     data = get(request, FLAGS_GOOD_LEVEL_FOR_TEAM).json()['flags']
+
+    if convert_to_options:
+        converted = []
+
+        for flag in data:
+            converted.append(
+                Option(key=flag['id'],
+                       value=flag['name'])
+            )
+
+        return converted
+
+    return data
+
+
+def get_organisation_flags(request, convert_to_options=False):
+    data = get(request, FLAGS_ORGANISATION_LEVEL_FOR_TEAM).json()['flags']
 
     if convert_to_options:
         converted = []

@@ -11,7 +11,7 @@ from s3chunkuploader.file_handler import S3FileUploadHandler, s3_client
 from cases.forms.attach_documents import attach_documents_form
 from cases.forms.move_case import move_case_form
 from cases.services import get_case, post_case_notes, put_applications, get_activity, put_case, \
-    put_end_user_advisory_query
+    put_end_user_advisory_query, _get_all_distinct_flags
 from cases.services import post_case_documents, get_case_documents, get_document
 from conf import settings
 from conf.constants import DEFAULT_QUEUE_ID
@@ -75,6 +75,8 @@ class ViewCase(TemplateView):
         case = get_case(request, case_id)
         activity = get_activity(request, case_id)
         permissions = get_user_permissions(request)
+
+        case['all_flags'] = _get_all_distinct_flags(case)
 
         context = {
             'title': 'Case',

@@ -288,3 +288,23 @@ def _generate_post_data_and_errors(keys, request_data, action):
                               'country': country_pk,
                               'decision': request_data.get(key)})
     return post_data, errors
+
+
+def _get_all_distinct_flags(case):
+    flags = []
+    flags.extend(case.get('flags'))
+    try:
+        flags.extend(case.get('application').get('organisation').get('flags'))
+        if 'goods_types' in case.get('application'):
+            for good in case.get('application').get('goods_types'):
+                for flag in good.get('flags'):
+                    if flag not in flags:
+                        flags.append(flag)
+        elif 'goods' in case.get('application'):
+            for good in case.get('application').get('goods'):
+                for flag in good.get('good').get('flags'):
+                    if flag not in flags:
+                        flags.append(flag)
+    except AttributeError:
+        return flags
+    return flags

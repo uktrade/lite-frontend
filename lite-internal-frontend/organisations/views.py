@@ -41,8 +41,8 @@ class OrganisationDetail(TemplateView):
         sites, _ = get_organisations_sites(request, organisation_pk)
 
         context = {
-            'organisation': data['organisation'],
-            'title': data['organisation']['name'],
+            'organisation': data,
+            'title': data['name'],
             'sites': sites['sites'],
         }
         return render(request, 'organisations/organisation.html', context)

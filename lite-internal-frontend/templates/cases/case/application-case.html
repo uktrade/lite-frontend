@@ -16,7 +16,7 @@
 	<div class="lite-app-bar__content">
 		<p class="govuk-caption-m" style="margin: 0;">{{ case.application.licence_type.value }}</p>
 		<h2 class="govuk-heading-l">{{ title }}</h2>
-		<p class="govuk-caption-m">Application by <a class="govuk-link govuk-link--no-visited-state" style="display: inline-block;" href="{% url 'organisations:organisation' case.application.organisation.id %}">{{ case.application.organisation.name }}</a></p>
+		<p class="govuk-caption-m">Application by <a id="applicant_organisation" class="govuk-link govuk-link--no-visited-state" style="display: inline-block;" href="{% url 'organisations:organisation' case.application.organisation.id %}">{{ case.application.organisation.name }}</a></p>
 	</div>
 	<div class="lite-app-bar__controls">
 		<div class="app-more-actions__container">
@@ -43,6 +43,18 @@
 		</div>
 	</div>
 </div>
+
+{% if case.all_flags %}
+    <p class="govuk-caption-m">All flags</p>
+    <div class="app-flags">
+        {% for flag in case.all_flags %}
+            <div class="app-flag" id="{{ flag.name }}">
+                {{ flag.name }}
+            </div>
+        {% endfor %}
+    </div>
+    <br>
+{% endif %}
 
 <!-- Case flags -->
 {% include 'cases/case/views/case-flags.html' %}
