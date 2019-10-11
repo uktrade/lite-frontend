@@ -77,7 +77,7 @@ class SeedData:
     def add_countries(self, draft_id):
         self.log("Adding countries: ...")
         make_request("POST", base_url=self.base_url, url='/applications/' + draft_id + '/countries/',
-                     headers=self.export_headers, body={'countries': ['US', 'AL', 'ZM']})
+                     headers=self.export_headers, body={'countries': ['US']})
 
     def add_draft(self, draft=None, good=None, enduser=None, ultimate_end_user=None, consignee=None, third_party=None,
                   additional_documents=None):
@@ -95,6 +95,7 @@ class SeedData:
 
     def add_open_draft(self, draft=None):
         draft_id = self.create_draft(draft)
+        self.add_to_context('open_draft_id', draft_id)
         self.add_site(draft_id)
         self.add_countries(draft_id)
         self.seed_good.add_open_draft_good(draft_id)
