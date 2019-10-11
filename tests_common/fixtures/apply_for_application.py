@@ -12,10 +12,11 @@ def apply_for_standard_application(driver, seed_data_config, context):
 
     app_time_id = datetime.datetime.now().strftime(" %d%H%M%S")
     context.app_time_id = app_time_id
+    app_name = "Test Application" + app_time_id
 
     lite_client.add_draft(
         draft={
-            "name": "Test Application " + app_time_id,
+            "name": app_name,
             "licence_type": "standard_licence",
             "export_type": "permanent",
             "have_you_been_informed": "yes",
@@ -64,8 +65,14 @@ def apply_for_standard_application(driver, seed_data_config, context):
     context.consignee = lite_client.context['consignee']
     context.third_party = lite_client.context['third_party']
     context.ultimate_end_user = lite_client.context['ultimate_end_user']
-
+    context.app_name = app_name
     timer.print_time('apply_for_standard_application')
+
+
+@fixture(scope="module")
+def add_an_ecju_query(driver, seed_data_config, context):
+    lite_client = get_lite_client(context, seed_data_config)
+    lite_client.seed_ecju.add_ecju_query(context.case_id)
 
 
 @fixture(scope="module")
