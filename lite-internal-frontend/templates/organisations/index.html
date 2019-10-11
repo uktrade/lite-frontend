@@ -127,7 +127,7 @@
 		<p class="govuk-caption-l">There are no registered organisations at the moment.</p>
 	{% endif %}
 
-<script>
+<script nonce="{{ request.csp_nonce }}">
 	$("#filters").hide();
 	$("#show-filters-link").show();
 	$("#hide-filters-link").hide();

@@ -76,7 +76,7 @@
 </table>
 
 {% block javascript %}
-	<script type="text/javascript">
+	<script nonce="{{ request.csp_nonce }}" type="text/javascript">
 		function openTableFold(element) {
 			$(element).parent().parent().toggleClass("open").next(".lite-accordian-table__fold").toggleClass("open");
 			return false;

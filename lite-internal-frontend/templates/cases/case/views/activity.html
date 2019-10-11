@@ -44,7 +44,7 @@
 
 <script src="{% static 'javascripts/pluralize.js' %}"></script>
 <script src="{% static 'javascripts/case_notes.js' %}"></script>
-<script>
+<script nonce="{{ request.csp_nonce }}">
     function confirmVisible() {
         let is_visible_for_exporter = document.getElementById('is_visible_to_exporter')
         if (is_visible_for_exporter.checked) {

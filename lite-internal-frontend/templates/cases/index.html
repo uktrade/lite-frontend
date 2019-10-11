@@ -224,7 +224,7 @@
 
 </form>
 
-<script>
+<script nonce="{{ request.csp_nonce }}">
 	$("#filters").hide();
 	$("#show-filters-link").show();
 	$("#hide-filters-link").hide();
