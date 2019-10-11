@@ -11,7 +11,7 @@ class SeedClc(SeedClass):
 
     def add_clc_query(self, seed_good):
         self.log("Adding clc query: ...")
-        good = seed_good.post_good('clc_good')
+        good = seed_good.post_good(self.request_data['clc_good'])
         case_id = self.submit_to_control_list_classification(good['id'])
         self.add_to_context('case_id', case_id)
 
