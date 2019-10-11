@@ -5,7 +5,7 @@ from ...seed_data.make_requests import make_request
 class SeedPicklist(SeedClass):
     def post_picklist(self, key):
         return make_request("POST", base_url=self.base_url, url='/picklist/',
-                                body=self.request_data[key], headers=self.gov_headers).json()['picklist_item']
+                            body=self.request_data[key], headers=self.gov_headers).json()['picklist_item']
 
     def add_ecju_query_picklist(self):
         self.log("Creating ECJU Query picklist item ...")

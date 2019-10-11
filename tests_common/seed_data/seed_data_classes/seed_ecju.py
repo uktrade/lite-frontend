@@ -14,7 +14,7 @@ class SeedEcju(SeedClass):
                 ecju_query_id = ecju_query['id']
                 break
         make_request("PUT", base_url=self.base_url, url='/cases/' + case_id + '/ecju-queries/' + ecju_query_id + '/',
-                          headers=self.export_headers, body={'response': response})
+                     headers=self.export_headers, body={'response': response})
 
     def add_ecju_query(self, case_id):
         self.log("Creating ecju query: ...")

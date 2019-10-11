@@ -42,12 +42,16 @@ class SeedData:
         self.seed_good.add_good()
 
         self.seed_clc = SeedClc(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
-        self.seed_party = SeedParty(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
+        self.seed_party = SeedParty(self.base_url, self.gov_headers, self.export_headers, self.request_data,
+                                    self.context)
         self.seed_ecju = SeedEcju(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
-        self.seed_picklist = SeedPicklist(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
+        self.seed_picklist = SeedPicklist(self.base_url, self.gov_headers, self.export_headers, self.request_data,
+                                          self.context)
         self.seed_case = SeedCase(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
-        self.seed_queue = SeedQueue(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
-        self.seed_additional_doc = SeedAdditionalDocument(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
+        self.seed_queue = SeedQueue(self.base_url, self.gov_headers, self.export_headers, self.request_data,
+                                    self.context)
+        self.seed_additional_doc = SeedAdditionalDocument(self.base_url, self.gov_headers, self.export_headers,
+                                                          self.request_data, self.context)
 
     def log(self, text):
         print(text)
@@ -58,20 +62,21 @@ class SeedData:
 
     def add_site(self, draft_id):
         self.log("Adding site: ...")
-        make_request("POST", base_url=self.base_url, url='/drafts/' + draft_id + '/sites/', headers=self.export_headers,
-                     body={'sites': [self.context['primary_site_id']]})
+        make_request("POST", base_url=self.base_url, url='/applications/' + draft_id + '/sites/',
+                     headers=self.export_headers, body={'sites': [self.context['primary_site_id']]})
 
     def create_draft(self, draft):
         self.log("Creating draft: ...")
-        data = self.request_data['draft'] if draft is None else draft
-        response = make_request("POST", base_url=self.base_url, url='/drafts/', headers=self.export_headers, body=data)
-        draft_id = response.json()['draft']['id']
+        data = self.request_data['application'] if draft is None else draft
+        response = make_request("POST", base_url=self.base_url, url='/applications/', headers=self.export_headers,
+                                body=data)
+        draft_id = response.json()['application']['id']
         self.add_to_context('draft_id', draft_id)
         return draft_id
 
     def add_countries(self, draft_id):
         self.log("Adding countries: ...")
-        make_request("POST", base_url=self.base_url, url='/drafts/' + draft_id + '/countries/',
+        make_request("POST", base_url=self.base_url, url='/applications/' + draft_id + '/countries/',
                      headers=self.export_headers, body={'countries': ['US', 'AL', 'ZM']})
 
     def add_draft(self, draft=None, good=None, enduser=None, ultimate_end_user=None, consignee=None, third_party=None,

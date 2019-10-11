@@ -1,5 +1,6 @@
 from ..seed_data.make_requests import make_request
-from ..tools.wait import wait_for_ultimate_end_user_document, wait_for_third_party_document, wait_for_additional_document, wait_for_document
+from ..tools.wait import wait_for_ultimate_end_user_document, wait_for_third_party_document, \
+    wait_for_additional_document, wait_for_document
 
 
 def check_document(url, base_url, export_headers):
@@ -8,23 +9,25 @@ def check_document(url, base_url, export_headers):
 
 
 def check_end_user_document_is_processed(draft_id, base_url, export_headers):
-    return check_document('/drafts/' + draft_id + '/end-user/document/', base_url, export_headers)
+    return check_document('/applications/' + draft_id + '/end-user/document/', base_url, export_headers)
 
 
 def check_consignee_document_is_processed(draft_id, base_url, export_headers):
-    return check_document('/drafts/' + draft_id + '/consignee/document/', base_url, export_headers)
+    return check_document('/applications/' + draft_id + '/consignee/document/', base_url, export_headers)
 
 
 def check_ultimate_end_user_document_is_processed(draft_id, ultimate_end_user_id, base_url, export_headers):
-    return check_document('/drafts/' + draft_id + '/ultimate-end-user/' + ultimate_end_user_id + '/document/', base_url, export_headers)
+    return check_document('/applications/' + draft_id + '/ultimate-end-user/' + ultimate_end_user_id + '/document/',
+                          base_url, export_headers)
 
 
 def check_third_party_document_is_processed(draft_id, third_party_id, base_url, export_headers):
-    return check_document('/drafts/' + draft_id + '/third-parties/' + third_party_id + '/document/', base_url, export_headers)
+    return check_document('/applications/' + draft_id + '/third-parties/' + third_party_id + '/document/', base_url,
+                          export_headers)
 
 
 def check_additional_document_is_processed(draft_id, document_id, base_url, export_headers):
-    return check_document('/drafts/' + draft_id + '/documents/' + document_id + '/', base_url, export_headers)
+    return check_document('/applications/' + draft_id + '/documents/' + document_id + '/', base_url, export_headers)
 
 
 def check_documents(base_url, export_headers, draft_id, ultimate_end_user_id, third_party_id, additional_document_id):
