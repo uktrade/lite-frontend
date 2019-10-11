@@ -32,11 +32,13 @@ def exporter_info(request, environment):
 @fixture(scope='session')
 def internal_info(request, environment):
     gov_user_email = environment('TEST_SSO_EMAIL')
-    gov_user_first_name, gov_user_last_name = environment('TEST_SSO_NAME').split(' ')
+    name = environment('TEST_SSO_NAME')
+    gov_user_first_name, gov_user_last_name = name.split(' ')
     gov_user_password = environment('TEST_SSO_PASSWORD')
 
     return {
         'email': gov_user_email,
+        'name': name,
         'first_name': gov_user_first_name,
         'last_name': gov_user_last_name,
         'password': gov_user_password
