@@ -1,5 +1,4 @@
 from selenium.webdriver.support.ui import Select
-from selenium.webdriver.common.by import By
 
 
 class ApplicationGoodsList:
@@ -20,6 +19,11 @@ class ApplicationGoodsList:
         self.filter_tags = ".lite-filter-bar a"
         self.card_heading = ".lite-card .govuk-heading-s"
         self.card_label = ".lite-card .govuk-label"
+        self.part_number = 'part-number'
+        self.control_code = 'control-code'
+        self.part_number_filter = 'part-number-filter'
+        self.control_code_filter = 'control-code-filter'
+        self.description_filter = 'description-filter'
 
     def add_values_to_good(self, value, quantity, unit):
         self.driver.find_element_by_id(self.value_field).send_keys(value)
@@ -42,21 +46,33 @@ class ApplicationGoodsList:
         self.driver.find_element_by_id(self.filter_control_rating_search_box).send_keys(value)
         self.driver.find_element_by_xpath(self.filter_button).click()
 
-    def get_size_of_goods(self):
-        return len(self.driver.find_elements_by_css_selector(self.goods_items))
-
     def get_text_of_good(self, no):
         return self.driver.find_elements_by_css_selector(self.goods_items)[no].text
 
-    def get_tag_name_of_good(self, no):
-        return self.driver.find_elements_by_css_selector(self.goods_items)[no].find_element(By.TAG_NAME, "h4").text
-
     def remove_filters(self):
-        for tag in range(len(self.driver.find_elements_by_css_selector(self.filter_tags))):
-            self.driver.find_elements_by_css_selector(self.filter_tags)[tag-1].click()
+        for button in self.driver.find_elements_by_css_selector(self.filter_tags):
+            button.click()
 
     def get_text_of_gov_heading_within_card(self, num):
         return self.driver.find_elements_by_css_selector(self.card_heading)[num].text
 
     def get_text_of_part_number(self, num):
         return self.driver.find_elements_by_css_selector(self.card_label)[num].text
+
+    def get_good_descriptions(self):
+        return self.driver.find_elements_by_css_selector(self.card_heading)
+
+    def get_good_part_numbers(self):
+        return self.driver.find_elements_by_id(self.part_number)
+
+    def get_good_control_codes(self):
+        return self.driver.find_elements_by_id(self.control_code)
+
+    def remove_part_number_filter(self):
+        self.driver.find_element_by_id(self.part_number_filter).click()
+
+    def remove_control_code_filter(self):
+        self.driver.find_element_by_id(self.control_code_filter).click()
+
+    def remove_description_filter(self):
+        self.driver.find_element_by_id(self.description_filter).click()

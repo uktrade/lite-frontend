@@ -42,42 +42,22 @@
 		<div class="govuk-grid-column-two-thirds">
 			{% if description or part_number or control_code %}
 				<div class="lite-filter-bar">
-					<p>Showing goods where</p>
-					{% if description %}
-						<p>description contains</p>
-						<a href="{% url 'apply_for_a_licence:preexisting_good' draft_id %}?part_number={{ part_number }}&?control_rating={{ control_code }}" class="govuk-button govuk-button--secondary lite-filter-bar-item">
-							<div class="lite-filter-bar-item-remove">
-								✕
-							</div>
-							{{ description }}
-						</a>
-					{% endif %}
-					{% if description and part_number and not control_code %}
-						<p>and</p>
-					{% elif part_number and control_code%}
-                        <p>,</p>
+                    <b>Containing</b>
+                    {% if description %}
+                        <a id="description-filter" href="{% url 'apply_for_a_licence:preexisting_good' draft_id %}?part_number={{ part_number }}&control_rating={{ control_code }}" class="govuk-button govuk-button--secondary lite-filter-bar-item">
+                            <div class="lite-filter-bar-item-remove">✕</div>{{ description }}
+                        </a>
                     {% endif %}
-					{% if part_number %}
-						<p>part number contains</p>
-						<a href="{% url 'apply_for_a_licence:preexisting_good' draft_id %}?description={{ description }}&?control_rating={{ control_code }}" class="govuk-button govuk-button--secondary lite-filter-bar-item">
-							<div class="lite-filter-bar-item-remove">
-								✕
-							</div>
-							{{ part_number }}
-						</a>
-					{% endif %}
-                    {% if description and part_number and control_code %}
-                        <p>and</p>
+                    {% if part_number %}
+                        <a id="part-number-filter" href="{% url 'apply_for_a_licence:preexisting_good' draft_id %}?description={{ description }}&control_rating={{ control_code }}" class="govuk-button govuk-button--secondary lite-filter-bar-item">
+                            <div class="lite-filter-bar-item-remove">✕</div>{{ part_number }}
+                        </a>
                     {% endif %}
                     {% if control_code %}
-						<p>control list entry contains</p>
-						<a href="{% url 'apply_for_a_licence:preexisting_good' draft_id %}?description={{ description }}&?part_number={{ part_number }}" class="govuk-button govuk-button--secondary lite-filter-bar-item">
-							<div class="lite-filter-bar-item-remove">
-								✕
-							</div>
-							{{ control_code }}
-						</a>
-					{% endif %}
+                        <a id="control-code-filter" href="{% url 'apply_for_a_licence:preexisting_good' draft_id %}?description={{ description }}&part_number={{ part_number }}" class="govuk-button govuk-button--secondary lite-filter-bar-item">
+                            <div class="lite-filter-bar-item-remove">✕</div>{{ control_code }}
+                        </a>
+                    {% endif %}
 				</div>
 			{% endif %}
 			{% if data %}
@@ -87,9 +67,9 @@
 							<h4 class="govuk-heading-s" style="margin-bottom: 0;">{{ good.description|highlight_text:description }}</h4>
 							{% if good.status.key == 'verified' %}<span class="app-verified__symbol">{% svg 'verified' %}</span><span class="govuk-visually-hidden"> (Verified good)</span>{% endif %}
 						</div>
-						<span class="govuk-caption-m" style="display: inline-block; margin-right: 10px;">Part number: </span><p class="govuk-label" style="display: inline-block; {% if not good.part_number %}opacity: 0.4;{% endif %}">{{ good.part_number|highlight_text:part_number|default:"N/A" }}</p>
+						<span class="govuk-caption-m" style="display: inline-block; margin-right: 10px;">Part number: </span><p class="govuk-label" style="display: inline-block; {% if not good.part_number %}opacity: 0.4;{% endif %}" id="part-number">{{ good.part_number|highlight_text:part_number|default:"N/A" }}</p>
 						<span style="display: block;">   </span>
-						<span class="govuk-caption-m" style="display: inline-block; margin-right: 10px;">Control list entry: </span><p class="govuk-label" style="display: inline-block; {% if not good.control_code %}opacity: 0.4;{% endif %}">{{ good.control_code|highlight_text:control_code|default:"N/A" }}</p>
+						<span class="govuk-caption-m" style="display: inline-block; margin-right: 10px;">Control list entry: </span><p class="govuk-label" style="display: inline-block; {% if not good.control_code %}opacity: 0.4;{% endif %}" id="control-code">{{ good.control_code|highlight_text:control_code|default:"N/A" }}</p>
 						<div style="display: flex; justify-content: flex-end;">
 							<a href="{% url 'apply_for_a_licence:add_preexisting_good' draft_id good.id %}" class="govuk-button" role="button" draggable="false" style="margin-bottom: 0;">Add to application</a>
 						</div>

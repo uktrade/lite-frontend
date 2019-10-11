@@ -12,12 +12,9 @@ from pages.exporter_hub_page import ExporterHubPage
 from pages.shared import Shared
 
 
-@fixture(scope="function")
-def add_an_incorporated_good_to_application(driver, request, context, exporter_url, seed_data_config):
+def add_good_to_application(driver, context, lite_client):
     url = driver.current_url
     overview_page = ApplicationOverviewPage(driver)
-    lite_client = get_lite_client(context, seed_data_config=seed_data_config)
-    lite_client.seed_good.add_good_end_product('good_end_product_false')
     context.goods_name = lite_client.context['goods_name']
     driver.get(url)
     utils.scroll_to_element_by_id(driver, 'goods')
@@ -35,24 +32,17 @@ def add_an_incorporated_good_to_application(driver, request, context, exporter_u
 
 
 @fixture(scope="function")
+def add_an_incorporated_good_to_application(driver, request, context, exporter_url, seed_data_config):
+    lite_client = get_lite_client(context, seed_data_config=seed_data_config)
+    lite_client.seed_good.add_good_end_product('good_end_product_false')
+    add_good_to_application(driver, context, lite_client)
+
+
+@fixture(scope="function")
 def add_a_non_incorporated_good_to_application(driver, context, request, exporter_url, seed_data_config):
-    url = driver.current_url
     lite_client = get_lite_client(context, seed_data_config=seed_data_config)
     lite_client.seed_good.add_good_end_product('good_end_product_true')
-    context.goods_name = lite_client.context['goods_name']
-    driver.get(url)
-    utils.scroll_to_element_by_id(driver, 'goods')
-    ApplicationOverviewPage(driver).click_goods_link()
-    driver.find_element_by_css_selector('a[href*="add-preexisting"]').click()
-    elements = driver.find_elements_by_css_selector('.lite-card')
-    no = utils.get_element_index_by_text(elements, context.goods_name, complete_match=False)
-    driver.find_elements_by_css_selector('.lite-card .govuk-button')[no].click()
-    application_goods_list = ApplicationGoodsList(driver)
-    context.unit = 'Number of articles'
-    context.value = '11'
-    application_goods_list.add_values_to_good(str(context.value), str(context.value), context.unit)
-    driver.find_element_by_css_selector("button[type*='submit']").click()
-    driver.get(url)
+    add_good_to_application(driver, context, lite_client)
 
 
 @fixture(scope='function')
