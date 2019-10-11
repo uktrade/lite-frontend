@@ -2,8 +2,8 @@ $('#filters').hide();
 $('#show-filters-link').show();
 $('#hide-filters-link').hide();
 
-$('#filters input').each(function() {
-	if ($(this).val() != '') {
+$('#filters input, #filters select').each(function() {
+	if ($(this).val() != '' && $(this).val() != 'Select' && $(this).attr('hidden') != 'hidden') {
 		$('#filters').show();
 		$('#show-filters-link').hide();
 		$('#hide-filters-link').show();
