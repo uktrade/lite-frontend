@@ -1,11 +1,12 @@
-.lite-heading-s {
-	@include govuk-font($size: 14, $weight: bold);
-	margin-bottom: govuk-spacing(3);
-	color: govuk-colour("dark-grey");
-	letter-spacing: 1px;
-	text-transform: uppercase;
+.govuk-table a {
+	@extend .govuk-link--no-visited-state;
+	text-decoration: none;
+
+	&:hover {
+		text-decoration: underline;
+	}
 }
 
-.lite-hint {
-	color: govuk-colour("dark-grey");
+.govuk-table td:first-of-type a {
+	font-weight: bold;
 }

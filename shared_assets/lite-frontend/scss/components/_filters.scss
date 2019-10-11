@@ -1,56 +1,63 @@
-.lite-filters {
-	position: -webkit-sticky;
-	position: sticky;
-	top: govuk-spacing(6);
-}
-
-.lite-filter-box {
-	background-color: govuk-colour("light-grey");
-	border: 2px solid darken(govuk-colour("light-grey"), 2%);
-	padding: govuk-spacing(4);
-	margin-bottom: govuk-spacing(6);
-
-	.govuk-button--secondary {
-		background-color: govuk-colour("white");
-
-		&:hover {
-			background-color: darken(govuk-colour("light-grey"), 5%);
-		}
-
-		&:active {
-			background-color: darken(govuk-colour("light-grey"), 10%);
-		}
-	}
-}
-
 .lite-filter-bar {
+	@include govuk-responsive-margin(6, "bottom");
 	@include govuk-font($size: 19);
-	display: flex;
-	flex-wrap: wrap;
-	background-color: govuk-colour("light-grey");
-	border: 1px solid darken(govuk-colour("light-grey"), 2%);
-	padding: govuk-spacing(4);
-	margin-bottom: govuk-spacing(6);
+	position: relative;
+	padding: govuk-spacing(6) 0;
+	box-sizing: border-box;
+	z-index: 0;
+
+	&:before {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 50%;
+		bottom: 0;
+		width: 100vw;
+		transform: translateX(-50vw);
+		background-color: govuk-colour("light-grey");
+		border-width: 2px 0;
+		border-style: solid;
+		border-color: darken(govuk-colour("light-grey"), 2%);
+		z-index: -1;
+	}
 
 	* {
-		margin: 0 govuk-spacing(1) 0 0;
-		line-height: 30px!important;
+		margin: 0;
+	}
+
+	.govuk-grid-column-one-quarter:not(:first-child):not(:last-child) {
+		@include govuk-media-query($until: tablet) {
+			@include govuk-responsive-margin(6, "top");
+		}
+	}
+
+	.govuk-label {
+		margin-bottom: govuk-spacing(2);
+		height: 25px;
 	}
 }
 
-.lite-filter-bar-item {
-	position: relative;
-	padding: 0 govuk-spacing(2);
-	z-index: 0;
-	display: flex;
-	margin-top: -2px;
-	background-color: white;
-}
-
-.lite-filter-bar-item-remove {
-	@include govuk-font($size: 14, $weight: bold);
+.lite-filter-toggle-link {
+	@include govuk-responsive-margin(4, "bottom");
 	display: inline-block;
-	line-height: 1.25;
+	text-decoration: none;
+	border-bottom: 1px solid transparent;
+	padding-bottom: 3px;
+
+	svg {
+		color: inherit;
+		max-width: 13px;
+		max-height: 13px;
+		margin-right: 3px;
+
+		* {
+			fill: currentColor;
+		}
+	}
+
+	&:hover {
+		border-color: currentColor;
+	}
 }
 
 .lite-checkbox-filter-link {
