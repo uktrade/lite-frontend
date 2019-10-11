@@ -29,6 +29,14 @@ def get_or_create_attr(obj, attr: str, fn):
     return getattr(obj, attr)
 
 
+def set_timeout_to(self, time=0):
+    self.implicitly_wait(time)
+
+
+def set_timeout_to_10_seconds(self):
+    self.implicitly_wait(10)
+
+
 def get_lite_client(context, seed_data_config):
     """
     Returns the existing LITE API client, or creates a new one
