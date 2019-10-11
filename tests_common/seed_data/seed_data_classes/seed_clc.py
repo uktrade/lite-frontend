@@ -7,7 +7,7 @@ class SeedClc(SeedClass):
         data = self.request_data['not_sure_details']
         data['good_id'] = good_id
         return make_request('POST', base_url=self.base_url, url='/queries/control-list-classifications/',
-                               headers=self.export_headers, body=data).json()['case_id']
+                            headers=self.export_headers, body=data).json()['case_id']
 
     def add_clc_query(self, seed_good):
         self.log("Adding clc query: ...")

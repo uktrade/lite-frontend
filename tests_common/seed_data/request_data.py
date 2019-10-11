@@ -81,7 +81,7 @@ def create_request_data(exporter_user, test_s3_key, gov_user):
             'email': exporter['email'],
             'password': 'password'
         },
-        'draft': {
+        'application': {
             'name': 'application',
             'licence_type': 'standard_licence',
             'export_type': 'permanent',
