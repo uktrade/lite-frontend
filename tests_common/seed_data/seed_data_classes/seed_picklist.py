@@ -22,3 +22,7 @@ class SeedPicklist(SeedClass):
     def add_report_summary_picklist(self):
         self.log("Creating standard advice picklist item ...")
         return self.post_picklist('report_picklist')
+
+    def add_letter_paragraph_picklist(self):
+        self.log("Creating standard advice picklist item ...")
+        return self.post_picklist('letter_paragraph_picklist')
