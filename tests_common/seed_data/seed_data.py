@@ -60,7 +60,7 @@ class SeedData:
                                                           self.request_data, self.context)
 
     def initialise_headers(self):
-        global gov_headers, export_headers, headers_initialised
+        global gov_headers, export_headers, headers_initialised  # noqa
         self.seed_user = SeedUser(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
         self.seed_user.auth_gov_user()
         self.seed_org = SeedOrganisation(self.base_url, self.gov_headers, self.export_headers, self.request_data,
