@@ -3,12 +3,15 @@ from ...seed_data.make_requests import make_request
 
 
 class SeedGood(SeedClass):
-    def post_good(self, key):
-        data = self.request_data[key]
+    def post_good(self, data):
         item = make_request('POST', base_url=self.base_url, url='/goods/',
                             headers=self.export_headers, body=data).json()['good']
         self.add_good_document(item['id'])
         return item
+
+    def get_goods(self):
+        return make_request('GET', base_url=self.base_url, url='/goods/',
+                            headers=self.export_headers).json()['goods']
 
     def add_good_to_draft(self, draft_id, good):
         self.log("Adding good to draft: ...")
@@ -17,9 +20,10 @@ class SeedGood(SeedClass):
         make_request("POST", base_url=self.base_url, url='/drafts/' + draft_id + '/goods/',
                      headers=self.export_headers, body=good)
 
-    def add_good(self):
+    def add_good(self, good=None):
         self.log('Adding good: ...')
-        item = self.post_good('good')
+        data = good if good else self.request_data['good']
+        item = self.post_good(data)
         self.add_to_context('good_id', item['id'])
 
     def add_good_document(self, good_id):
@@ -28,12 +32,10 @@ class SeedGood(SeedClass):
                      headers=self.export_headers, body=data)
 
     def add_good_end_product(self, item):
-        # 'good_end_product_false' for add_good_end_product_false
-        # 'good_end_product_true' for add_good_end_product_true
         self.log('Adding good: ...')
         good = self.find_good_by_name(self.request_data[item]['description'])
         if not good:
-            self.post_good(item)
+            self.post_good(self.request_data[item])
         self.add_to_context('goods_name', self.request_data[item]['description'])
 
     def find_good_by_name(self, good_name):

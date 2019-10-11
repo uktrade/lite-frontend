@@ -28,13 +28,13 @@ def create_organisation(exporter, type, name):
     }
 
 
-def create_good(description, is_end_product):
+def create_good(description, is_end_product, control_code='ML1a', part_number='1234'):
     return {
         'description': description,
         'is_good_controlled': 'yes',
-        'control_code': 'ML1a',
+        'control_code': control_code,
         'is_good_end_product': is_end_product,
-        'part_number': '1234',
+        'part_number': part_number,
         'validate_only': False,
     }
 
