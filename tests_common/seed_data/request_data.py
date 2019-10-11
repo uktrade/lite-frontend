@@ -145,6 +145,8 @@ def create_request_data(exporter_user, test_s3_key, gov_user):
         'additional_document': create_document('picture', 'document for additional', test_s3_key),
         'proviso_picklist': create_picklist('Misc', 'My proviso advice would be this.', 'proviso', proviso='My proviso would be this.'),
         'standard_advice_picklist': create_picklist('More advice', 'My standard advice would be this.', 'standard_advice'),
-        'report_picklist': create_picklist('More advice', 'My standard advice would be this.', 'report_summary')
+        'report_picklist': create_picklist('More advice', 'My standard advice would be this.', 'report_summary'),
+        'letter_paragraph_picklist': create_picklist('Letter Paragraph 1', 'My letter paragraph is this.', 'letter_paragraph')
+
     }
     return request_data
