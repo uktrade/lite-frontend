@@ -3,12 +3,12 @@ from conf.constants import CASE_NOTES_URL, APPLICATIONS_URL, CASES_URL, ECJU_QUE
 
 
 def get_application(request, pk):
-    data = get(request, APPLICATIONS_URL + pk)
+    data = get(request, APPLICATIONS_URL + pk + '/')
     return data.json(), data.status_code
 
 
 def get_applications(request):
-    data = get(request, APPLICATIONS_URL)
+    data = get(request, APPLICATIONS_URL + '?submitted=true')
     return data.json()['applications']
 
 

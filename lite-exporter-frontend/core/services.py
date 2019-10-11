@@ -1,7 +1,7 @@
 from lite_forms.components import Option
 
 from conf.client import get, post, put
-from conf.constants import UNITS_URL, DRAFTS_URL, COUNTRIES_URL, EXTERNAL_LOCATIONS_URL, NOTIFICATIONS_URL, \
+from conf.constants import UNITS_URL, APPLICATIONS_URL, COUNTRIES_URL, EXTERNAL_LOCATIONS_URL, NOTIFICATIONS_URL, \
     ORGANISATIONS_URL, CASES_URL, CONTROL_LIST_ENTRIES_URL
 
 
@@ -34,12 +34,12 @@ def get_countries(request, convert_to_options=False):
 
 
 def get_sites_on_draft(request, pk):
-    data = get(request, DRAFTS_URL + pk + '/sites/')
+    data = get(request, APPLICATIONS_URL + pk + '/sites/')
     return data.json(), data.status_code
 
 
 def post_sites_on_draft(request, pk, json):
-    data = post(request, DRAFTS_URL + pk + '/sites/', json)
+    data = post(request, APPLICATIONS_URL + pk + '/sites/', json)
     return data.json(), data.status_code
 
 
@@ -64,12 +64,12 @@ def get_external_locations(request, pk, formatted=False):
 
 
 def get_external_locations_on_draft(request, pk):
-    data = get(request, DRAFTS_URL + pk + '/external_locations/')
+    data = get(request, APPLICATIONS_URL + pk + '/external_locations/')
     return data.json(), data.status_code
 
 
 def post_external_locations_on_draft(request, pk, json):
-    data = post(request, DRAFTS_URL + pk + '/external_locations/', json)
+    data = post(request, APPLICATIONS_URL + pk + '/external_locations/', json)
     return data.json(), data.status_code
 
 

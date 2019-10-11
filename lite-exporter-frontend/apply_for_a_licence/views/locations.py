@@ -9,7 +9,7 @@ from apply_for_a_licence.forms.location import which_location_form, new_location
 from apply_for_a_licence.forms.sites import sites_form
 from core.services import get_sites_on_draft, post_sites_on_draft, post_external_locations, \
     get_external_locations_on_draft, get_external_locations, post_external_locations_on_draft
-from drafts.services import get_draft, get_draft_countries, post_draft_countries
+from drafts.services import get_draft_application, get_draft_countries, post_draft_countries
 
 
 class Location(TemplateView):
@@ -47,14 +47,14 @@ class Location(TemplateView):
 class ExistingSites(TemplateView):
     def get(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
-        _, _ = get_draft(request, draft_id)
+        _, _ = get_draft_application(request, draft_id)
         response, _ = get_sites_on_draft(request, draft_id)
 
         return form_page(request, sites_form(request), data=response)
 
     def post(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
-        _, status_code = get_draft(request, draft_id)
+        _, status_code = get_draft_application(request, draft_id)
 
         data = {
             'sites': request.POST.getlist('sites')
@@ -74,7 +74,7 @@ class ExistingSites(TemplateView):
 class ExternalLocations(TemplateView):
     def get(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
-        draft, _ = get_draft(request, draft_id)
+        draft, _ = get_draft_application(request, draft_id)
         org_external_locations, _ = get_external_locations(request, request.user.organisation)
         data, _ = get_external_locations_on_draft(request, draft_id)
 

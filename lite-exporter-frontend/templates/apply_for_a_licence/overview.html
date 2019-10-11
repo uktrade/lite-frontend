@@ -62,26 +62,26 @@
 		<tbody class="govuk-table__body">
 			<tr class="govuk-table__row">
 				<th class="govuk-table__header" scope="row">Name</th>
-				<td class="govuk-table__cell">{{ draft.name }}</td>
+				<td class="govuk-table__cell">{{ application.name }}</td>
 				<!--<td class="govuk-table__cell"><a href="#" class="govuk-link">Edit</a></td>-->
 			</tr>
 			<tr class="govuk-table__row">
 				<th class="govuk-table__header" scope="row">Licence type</th>
-				<td class="govuk-table__cell">{{ draft.licence_type.value }}</td>
+				<td class="govuk-table__cell">{{ application.licence_type.value }}</td>
 			</tr>
 			<tr class="govuk-table__row">
 				<th class="govuk-table__header" scope="row">Export type</th>
-				<td class="govuk-table__cell">{{ draft.export_type.value }}</td>
+				<td class="govuk-table__cell">{{ application.export_type.value }}</td>
 			</tr>
-			{% if draft.reference_number_on_information_form %}
+			{% if application.reference_number_on_information_form %}
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" scope="row">Reference Number</th>
-					<td class="govuk-table__cell">{{ draft.reference_number_on_information_form }}</td>
+					<td class="govuk-table__cell">{{ application.reference_number_on_information_form }}</td>
 				</tr>
 			{% endif %}
 			<tr class="govuk-table__row">
 				<th class="govuk-table__header" scope="row">Created at</th>
-				<td class="govuk-table__cell">{{ draft.created_at|str_date }}</td>
+				<td class="govuk-table__cell">{{ application.created_at|str_date }}</td>
 			</tr>
 		</tbody>
 	</table>
@@ -90,12 +90,12 @@
 <div class="lite-section {% if errors|key_value:'goods' %}govuk-form-group--error{% endif %}">
 	<div class="lite-section-header">
 		<div>
-            {% if draft.licence_type.key == 'open_licence' %}
-                <a id="goods" href="{% url 'apply_for_a_licence:open_goods' draft.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
+            {% if application.licence_type.key == 'open_licence' %}
+                <a id="goods" href="{% url 'apply_for_a_licence:open_goods' application.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
                 {% get_string 'good_types.overview.title' %}
                 </a>
             {% else %}
-                <a id="goods" href="{% url 'apply_for_a_licence:goods' draft.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
+                <a id="goods" href="{% url 'apply_for_a_licence:goods' application.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
                     Add Goods
                 </a>
             {% endif %}
@@ -115,7 +115,7 @@
 			{{ errors|key_value:'goods' }}
 		</p>
 	{% endif %}
-    {% if draft.licence_type.key == 'standard_licence' and goods %}
+    {% if application.licence_type.key == 'standard_licence' and goods %}
 		<table class="govuk-table">
 			<tbody class="govuk-table__body">
 				<tr class="govuk-table__row">
@@ -136,11 +136,11 @@
 				{% endfor %}
 			</tbody>
 		</table>
-    {% elif draft.licence_type.key == 'standard_licence' and not goods %}
+    {% elif application.licence_type.key == 'standard_licence' and not goods %}
 		<p class="govuk-caption-m">Add goods to your application</p>
 	{% endif %}
 
-	{% if draft.licence_type.key == 'open_licence' and goodstypes %}
+	{% if application.licence_type.key == 'open_licence' and goodstypes %}
 		<table id="good_types_table_overview" class="govuk-table">
 			<tbody class="govuk-table__body">
 				<tr class="govuk-table__row">
@@ -160,7 +160,7 @@
 				{% endfor %}
 			</tbody>
 		</table>
-    {% elif draft.licence_type.key == 'open_licence' and not goodstypes %}
+    {% elif application.licence_type.key == 'open_licence' and not goodstypes %}
 		<p class="govuk-caption-m">{% get_string 'good_types.overview.no_good_types' %}</p>
     {% endif %}
 
@@ -170,7 +170,7 @@
 <div class="lite-section {% if errors|key_value:'sites' %}govuk-form-group--error{% endif %}">
 	<div class="lite-section-header">
 		<div>
-			<a id="location" href="{% url 'apply_for_a_licence:location' draft.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
+			<a id="location" href="{% url 'apply_for_a_licence:location' application.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
 				Location of goods
 			</a>
 		</div>
@@ -233,11 +233,11 @@
 	{% endif %}
 </div>
 
-{% if draft.licence_type.key == 'open_licence' %}
+{% if application.licence_type.key == 'open_licence' %}
 <div class="lite-section {% if errors|key_value:'countries' %}govuk-form-group--error{% endif %}">
 	<div class="lite-section-header">
 		<div>
-			<a id="countries" href="{% url 'apply_for_a_licence:countries' draft.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
+			<a id="countries" href="{% url 'apply_for_a_licence:countries' application.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
 				Where are your goods going?
 			</a>
 		</div>
@@ -273,11 +273,11 @@
 </div>
 {% endif %}
 
-{% if draft.licence_type.key == 'open_licence' and goodstypes and countries %}
+{% if application.licence_type.key == 'open_licence' and goodstypes and countries %}
     <div class="lite-section">
         <div class="lite-section-header">
             <div>
-                <a id="goods_country_assignments" href="{% url 'goods_type:goods_countries' draft.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
+                <a id="goods_country_assignments" href="{% url 'goods_type:goods_countries' application.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
                     Explain where each item is going (optional)
                 </a>
             </div>
@@ -303,20 +303,20 @@
     </div>
 {% endif %}
 
-{% if draft.licence_type.key == 'standard_licence' %}
+{% if application.licence_type.key == 'standard_licence' %}
 <div class="lite-section {% if errors|key_value:'end_user' %}govuk-form-group--error{% endif %}">
 	<div class="lite-section-header">
 		<div>
-			<a id="end_users" href="{% url 'apply_for_a_licence:end_user' draft.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
+			<a id="end_users" href="{% url 'apply_for_a_licence:end_user' application.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
 				End User
 			</a>
 		</div>
 
-		{% if draft.end_user and end_user_document %}
+		{% if application.end_user and end_user_document %}
 			<div class="lite-tag lite-tag--small lite-tag--blue">
 				Done
 			</div>
-        {% elif draft.end_user %}
+        {% elif application.end_user %}
             <div class="lite-tag lite-tag--small">
 				Started
 			</div>
@@ -331,37 +331,37 @@
     {% elif errors|key_value:'end_user_document'%}
         <p class="govuk-error-message">{{ errors|key_value:'end_user_document' }}</p>
 	{% endif %}
-	{% if draft.end_user %}
+	{% if application.end_user %}
 		<table class="govuk-table">
 			<tbody class="govuk-table__body">
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" scope="row">Type</th>
-					<td class="govuk-table__cell">{{ draft.end_user.sub_type.value|title }}</td>
+					<td class="govuk-table__cell">{{ application.end_user.sub_type.value|title }}</td>
 				</tr>
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" scope="row">Name</th>
-					<td class="govuk-table__cell">{{ draft.end_user.name }}</td>
+					<td class="govuk-table__cell">{{ application.end_user.name }}</td>
 				</tr>
-				{% if draft.end_user.website %}
+				{% if application.end_user.website %}
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" scope="row">Website</th>
-					<td class="govuk-table__cell">{{ draft.end_user.website }}</td>
+					<td class="govuk-table__cell">{{ application.end_user.website }}</td>
 				</tr>
 				{% endif %}
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" scope="row">Address</th>
-					<td class="govuk-table__cell">{{ draft.end_user.address }}<br/>{{ draft.end_user.country.name }}</td>
+					<td class="govuk-table__cell">{{ application.end_user.address }}<br/>{{ application.end_user.country.name }}</td>
 				</tr>
                 {% if end_user_document %}
                     <tr class="govuk-table__row">
                         <th class="govuk-table__header" scope="row">Document</th>
                         <td class="govuk-table__cell" id="end_user_document_state">
                             {%  if end_user_document.safe == True %}
-                                <a href="{% url 'apply_for_a_licence:end_user_download_document' pk=draft.id %}" id="end_user_document_download" class='govuk-link govuk-link--no-visited-state'>
+                                <a href="{% url 'apply_for_a_licence:end_user_download_document' pk=application.id %}" id="end_user_document_download" class='govuk-link govuk-link--no-visited-state'>
                                     {% get_string 'end_user.documents.download_document' %}
                                 </a>
                                 <br/>
-                                <a href="{% url 'apply_for_a_licence:end_user_delete_document' pk=draft.id %}" id="end_user_document_delete" class='govuk-link govuk-link--no-visited-state'>
+                                <a href="{% url 'apply_for_a_licence:end_user_delete_document' pk=application.id %}" id="end_user_document_delete" class='govuk-link govuk-link--no-visited-state'>
                                     {% get_string 'end_user.documents.delete_document' %}
                                 </a>
                             {%  else %}
@@ -372,7 +372,7 @@
                 {% else %}
                     <tr class="govuk-table__row">
                         <th class="govuk-table__header" scope="row">Document</th>
-                        <td class="govuk-table__cell"><a id="end_user_attach_doc" href="{% url 'apply_for_a_licence:end_user_attach_document' draft.id %}" class='govuk-link govuk-link--no-visited-state'>Attach</a></td>
+                        <td class="govuk-table__cell"><a id="end_user_attach_doc" href="{% url 'apply_for_a_licence:end_user_attach_document' application.id %}" class='govuk-link govuk-link--no-visited-state'>Attach</a></td>
                     </tr>
                 {% endif %}
 			</tbody>
@@ -383,20 +383,20 @@
 </div>
 {% endif %}
 
-{% if draft.licence_type.key == 'standard_licence' %}
+{% if application.licence_type.key == 'standard_licence' %}
 <div class="lite-section {% if errors|key_value:'consignee' %}govuk-form-group--error{% endif %}">
 	<div class="lite-section-header">
 		<div>
-			<a id="consignees" href="{% url 'apply_for_a_licence:consignee' draft.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
+			<a id="consignees" href="{% url 'apply_for_a_licence:consignee' application.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
 				Consignee
 			</a>
 		</div>
 
-		{% if draft.consignee and consignee_document %}
+		{% if application.consignee and consignee_document %}
 			<div class="lite-tag lite-tag--small lite-tag--blue">
 				Done
 			</div>
-        {% elif draft.consignee %}
+        {% elif application.consignee %}
             <div class="lite-tag lite-tag--small">
 				Started
 			</div>
@@ -411,37 +411,37 @@
     {% elif errors|key_value:'consignee_document'%}
         <p class="govuk-error-message">{{ errors|key_value:'consignee_document' }}</p>
 	{% endif %}
-	{% if draft.consignee %}
+	{% if application.consignee %}
 		<table class="govuk-table">
 			<tbody class="govuk-table__body">
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" scope="row">Type</th>
-					<td class="govuk-table__cell">{{ draft.consignee.sub_type|title }}</td>
+					<td class="govuk-table__cell">{{ application.consignee.sub_type|title }}</td>
 				</tr>
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" scope="row">Name</th>
-					<td class="govuk-table__cell">{{ draft.consignee.name }}</td>
+					<td class="govuk-table__cell">{{ application.consignee.name }}</td>
 				</tr>
-				{% if draft.consignee.website %}
+				{% if application.consignee.website %}
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" scope="row">Website</th>
-					<td class="govuk-table__cell">{{ draft.consignee.website }}</td>
+					<td class="govuk-table__cell">{{ application.consignee.website }}</td>
 				</tr>
 				{% endif %}
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" scope="row">Address</th>
-					<td class="govuk-table__cell">{{ draft.consignee.address }}<br/>{{ draft.consignee.country.name }}</td>
+					<td class="govuk-table__cell">{{ application.consignee.address }}<br/>{{ application.consignee.country.name }}</td>
 				</tr>
                 {% if consignee_document %}
                         <tr class="govuk-table__row">
                             <th class="govuk-table__header" scope="row">Document</th>
                             <td class="govuk-table__cell" id="consignee_document_state">
                                 {%  if consignee_document.safe == True %}
-                                    <a href="{% url 'apply_for_a_licence:consignee_download_document' pk=draft.id %}" id="consignee_document_download" class='govuk-link govuk-link--no-visited-state'>
+                                    <a href="{% url 'apply_for_a_licence:consignee_download_document' pk=application.id %}" id="consignee_document_download" class='govuk-link govuk-link--no-visited-state'>
                                         {% get_string 'end_user.documents.download_document' %}
                                     </a>
                                     <br/>
-                                    <a href="{% url 'apply_for_a_licence:consignee_delete_document' pk=draft.id %}" id="consignee_document_delete" class='govuk-link govuk-link--no-visited-state'>
+                                    <a href="{% url 'apply_for_a_licence:consignee_delete_document' pk=application.id %}" id="consignee_document_delete" class='govuk-link govuk-link--no-visited-state'>
                                         {% get_string 'end_user.documents.delete_document' %}
                                     </a>
                                 {%  else %}
@@ -453,7 +453,7 @@
                     {% else %}
                         <tr class="govuk-table__row">
                             <th class="govuk-table__header" scope="row">Document</th>
-                            <td class="govuk-table__cell"><a id="consignee_attach_doc" href="{% url 'apply_for_a_licence:consignee_attach_document' draft.id %}" class='govuk-link govuk-link--no-visited-state'>Attach</a></td>
+                            <td class="govuk-table__cell"><a id="consignee_attach_doc" href="{% url 'apply_for_a_licence:consignee_attach_document' application.id %}" class='govuk-link govuk-link--no-visited-state'>Attach</a></td>
                         </tr>
                     {% endif %}
 			</tbody>
@@ -464,11 +464,11 @@
 </div>
 {% endif %}
 
-{% if draft.licence_type.key == 'standard_licence' and ultimate_end_users_required %}
+{% if application.licence_type.key == 'standard_licence' and ultimate_end_users_required %}
 <div class="lite-section {% if errors|key_value:'ultimate_end_users' %}govuk-form-group--error{% endif %}">
 	<div class="lite-section-header">
 		<div>
-			<a id="ultimate_end_users" href="{% url 'apply_for_a_licence:ultimate_end_users' draft.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
+			<a id="ultimate_end_users" href="{% url 'apply_for_a_licence:ultimate_end_users' application.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
 				Ultimate End Users
 			</a>
 		</div>
@@ -521,11 +521,11 @@
 </div>
 {% endif %}
 
-{% if draft.licence_type.key == 'standard_licence' %}
+{% if application.licence_type.key == 'standard_licence' %}
 <div class="lite-section {% if errors|key_value:'third_parties' %}govuk-form-group--error{% endif %}">
 	<div class="lite-section-header">
 		<div>
-			<a id="third_parties" href="{% url 'apply_for_a_licence:third_parties' draft.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
+			<a id="third_parties" href="{% url 'apply_for_a_licence:third_parties' application.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
 				Third Parties (optional)
 			</a>
 		</div>
@@ -577,7 +577,7 @@
 <div class="lite-section {% if errors|key_value:'additional_documents' %}govuk-form-group--error{% endif %}">
 	<div class="lite-section-header">
 		<div>
-			<a id="third_parties" href="{% url 'apply_for_a_licence:additional_documents' draft.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
+			<a id="third_parties" href="{% url 'apply_for_a_licence:additional_documents' application.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
 				Additional Documents (optional)
 			</a>
 		</div>
@@ -618,7 +618,7 @@
 
 <div class="lite-submit-bar js-is-sticky">
 <div class="lite-vertical-align" style="display: inline-flex; float: right; height: 38px;">
-	<a href="{% url 'apply_for_a_licence:delete' draft.id %}" class="govuk-link" style="margin: 0; float: right;">
+	<a href="{% url 'apply_for_a_licence:delete' application.id %}" class="govuk-link" style="margin: 0; float: right;">
 		Delete draft
 	</a>
 </div>
