@@ -13,10 +13,13 @@ from ..seed_data.seed_data_classes.seed_additional_document import SeedAdditiona
 from ..seed_data.check_documents import check_documents
 
 
+gov_headers = {'content-type': 'application/json'}
+export_headers = {'content-type': 'application/json'}
+headers_initialised = False
+
+
 class SeedData:
     base_url = ''
-    gov_headers = {'content-type': 'application/json'}
-    export_headers = {'content-type': 'application/json'}
     context = {}
     logging = True
     org_name = "Test Org"
@@ -31,15 +34,18 @@ class SeedData:
             test_s3_key=test_s3_key,
             gov_user=gov_user
         )
-        self.seed_user = SeedUser(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
-        self.seed_user.auth_gov_user()
-        self.seed_org = SeedOrganisation(self.base_url, self.gov_headers, self.export_headers, self.request_data,
-                                         self.context)
-        self.seed_org.setup_org()
-        self.seed_user.auth_export_user()
 
-        self.seed_good = SeedGood(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
-        self.seed_good.add_good()
+        self.gov_headers = gov_headers.copy()
+        self.export_headers = export_headers.copy()
+        if not headers_initialised:
+            self.initialise_headers()
+        else:
+            self.seed_user = SeedUser(self.base_url, self.gov_headers, self.export_headers, self.request_data,
+                                      self.context)
+            self.seed_org = SeedOrganisation(self.base_url, self.gov_headers, self.export_headers, self.request_data,
+                                             self.context)
+            self.seed_good = SeedGood(self.base_url, self.gov_headers, self.export_headers, self.request_data,
+                                      self.context)
 
         self.seed_clc = SeedClc(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
         self.seed_party = SeedParty(self.base_url, self.gov_headers, self.export_headers, self.request_data,
@@ -52,6 +58,20 @@ class SeedData:
                                     self.context)
         self.seed_additional_doc = SeedAdditionalDocument(self.base_url, self.gov_headers, self.export_headers,
                                                           self.request_data, self.context)
+
+    def initialise_headers(self):
+        global gov_headers, export_headers, headers_initialised
+        self.seed_user = SeedUser(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
+        self.seed_user.auth_gov_user()
+        self.seed_org = SeedOrganisation(self.base_url, self.gov_headers, self.export_headers, self.request_data,
+                                         self.context)
+        self.seed_org.setup_org()
+        self.seed_user.auth_export_user()
+        self.seed_good = SeedGood(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
+        self.seed_good.add_good()
+        gov_headers = self.gov_headers
+        export_headers = self.export_headers
+        headers_initialised = True
 
     def log(self, text):
         print(text)
