@@ -48,6 +48,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'csp.middleware.CSPMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -227,8 +228,19 @@ LOGGING = {
 }
 
 # Security settings
+
 # Enable security features in hosted environments.
 SECURE_BROWSER_XSS_FILTER = not DEBUG
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
 SECURE_CONTENT_TYPE_NOSNIFF = not DEBUG
+
+# Content Security Policy
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_STYLE_SRC = ("'self'", "'unsafe-inline'")
+CSP_SCRIPT_SRC = ("'self'", 'https://www.googletagmanager.com', 'https://script.hotjar.com', 'ajax.googleapis.com', 'https://www.google-analytics.com')
+CSP_FONT_SRC = ("'self'",)
+CSP_IMG_SRC = ("'self'", 'https://www.googletagmanager.com', 'https://www.google-analytics.com')
+CSP_FRAME_SRC = ('https://vars.hotjar.com/', 'https://vc.hotjar.io')
+CSP_CONNECT_SRC = ('https://vars.hotjar.com/', 'https://vc.hotjar.io')
+CSP_INCLUDE_NONCE_IN = ('script-src',)

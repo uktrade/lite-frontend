@@ -1,6 +1,7 @@
 import logging
 import time
 import uuid
+
 from django.shortcuts import redirect
 from django.urls import resolve
 from lite_forms.generators import error_page
@@ -50,7 +51,6 @@ class LoggingMiddleware:
             "method": request.method,
             "url": request.path,
         }
-        # logging.info(data)
         response = self.get_response(request)
         data['type'] = "http response"
         data['elapsed_time'] = time.time() - start
