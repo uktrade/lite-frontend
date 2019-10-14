@@ -147,12 +147,15 @@ class AssignFlags(TemplateView):
                 obj, status_code = get_good(request, self.objects[0])
                 if status_code == 404:
                     obj, _ = get_goods_type(request, self.objects[0])
+                self.url = reverse('cases:case', kwargs={'pk': str(kwargs['pk'])})
             elif self.level == 'cases':
                 obj = {'case': get_case(request, self.objects[0])}
+                self.url = reverse('cases:case', kwargs={'pk': str(kwargs['pk'])})
             elif self.level == 'organisations':
                 obj, _ = get_organisation(request, self.objects[0])
                 origin = 'organisation'
                 object_flags = obj.get('flags')
+                self.url = reverse('organisations:organisation', kwargs={'pk': self.objects[0]})
 
             # Fetches existing flags on the object
             if self.level != 'organisations':
@@ -171,11 +174,9 @@ class AssignFlags(TemplateView):
             # Origin is set to tell the form where to return to after submission or when back link is clicked
             if origin == 'good':
                 kwargs['good_pk'] = self.objects[0]
+                self.url = reverse('cases:good', kwargs={'pk': str(kwargs['pk']), 'good_pk': self.objects[0]})
 
         flags = [Option(flag['id'], flag['name']) for flag in flags]
-        self.url = reverse('organisations:organisation', kwargs={'pk': self.objects[0]}) \
-            if self.level == 'organisations' \
-            else reverse('cases:' + origin, kwargs={'pk': str(kwargs['pk'])})
 
         self.form = flags_form(
             flags=flags,
