@@ -6,6 +6,14 @@
 
 <h2 class="govuk-heading-l">Give advice</h2>
 
+<div class="govuk-warning-text">
+  <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+  <strong class="govuk-warning-text__text">
+    <span class="govuk-warning-text__assistive">Warning</span>
+    Some of this text will appear on the generated documentation.
+  </strong>
+</div>
+
 {% if errors %}
 	<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
 		<h2 class="govuk-error-summary__title" id="error-summary-title">
@@ -47,11 +55,12 @@
 	<input type="hidden" name="third_parties" value="{{ third_parties }}">
 
 	{% if type == 'proviso' %}
+
 		<div class="govuk-form-group {% if errors|key_value:'proviso' %}govuk-form-group--error{% endif %}">
 			<div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="5000">
 				<div class="govuk-form-group">
 					<div class="app-picklist-picker-heading__container">
-						<label class="govuk-label" for="proviso">
+						<label class="govuk-label--m" for="proviso">
 							Proviso
 						</label>
 						<a id="link-import-proviso" onclick="return showProvisoModal();" href="#" class="govuk-label lite-js-only govuk-link govuk-link--no-visited-state app-picklist-picker-heading__link">
@@ -59,9 +68,9 @@
 							{% get_string 'cases.advice.import_proviso' %}
 						</a>
 					</div>
-	<!--				<span class="govuk-hint" for="{{ question.name }}">-->
-	<!--					This is a really long description-->
-	<!--				</span>-->
+          <span class="govuk-hint" for="{{ question.name }}">
+            {% get_string 'cases.advice.text_on_licence' %}
+          </span>
 					{% if errors|key_value:'proviso' %}
 						<span class="govuk-error-message">
 							<span class="govuk-visually-hidden">Error:</span> {{ errors|key_value:'proviso'|first }}
@@ -79,7 +88,7 @@
 
 	{% if type == 'refuse' %}
 		<div class="govuk-form-group {% if errors|key_value:'denial_reasons' %}govuk-form-group--error{% endif %}">
-			<label class="govuk-label">
+			<label class="govuk-label--m">
 				Denial Reasons
 			</label>
 <!--				<span class="govuk-hint" for="{{ question.name }}">-->
@@ -110,7 +119,7 @@
 	<div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="5000">
 		<div class="govuk-form-group {% if errors|key_value:'text' %}govuk-form-group--error{% endif %}">
 			<div class="app-picklist-picker-heading__container">
-				<label class="govuk-label" for="advice">
+				<label class="govuk-label--m" for="advice">
 					{% get_string 'cases.advice.reason' %}
 				</label>
 				<a id="link-import-advice" onclick="return showAdviceModal();" href="#" class="govuk-label lite-js-only govuk-link govuk-link--no-visited-state app-picklist-picker-heading__link">
@@ -136,7 +145,7 @@
 
 	<div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="200">
 		<div class="govuk-form-group {% if errors|key_value:'note' %}govuk-form-group--error{% endif %}">
-			<label class="govuk-label" for="{{ question.name }}">
+			<label class="govuk-label--m" for="{{ question.name }}">
 				{% get_string 'cases.advice.other' %}
 			</label>
 			{% if errors|key_value:'note' %}
@@ -144,9 +153,9 @@
 					<span class="govuk-visually-hidden">Error:</span> {{ errors|key_value:'note'|first }}
 				</span>
 			{% endif %}
-<!--			<span class="govuk-hint" for="{{ question.name }}">-->
-<!--				This is a really long description-->
-<!--			</span>-->
+      <span class="govuk-hint" for="{{ question.name }}">
+        {% get_string 'cases.advice.text_on_licence' %}
+      </span>
 			<textarea class="govuk-textarea govuk-js-character-count " id="textarea-note" name="note" rows="5" aria-describedby="textarea-note-info textarea-note-hint">{{ data.note }}</textarea>
 		</div>
 

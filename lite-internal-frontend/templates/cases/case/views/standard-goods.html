@@ -32,7 +32,7 @@
 					</div>
 				</td>
                 <td class="lite-table__cell">
-                    <a class="govuk-link lite-link--icon govuk-link--no-visited-state" href="{% url 'cases:good' case.id good.good.id %}">
+                    <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:good' case.id good.good.id %}">
                           {{ good.good.description }}
                       </a>
                 </td>
@@ -40,7 +40,7 @@
 				<td class="lite-table__cell">
 				  {% for document in good.good.documents %}
 					  {% if document.safe == True %}
-						  <a class="govuk-link lite-link--icon govuk-link--no-visited-state" id="good_document" href="{% url 'cases:document' case.id document.id %}">
+						  <a class="govuk-link govuk-link--no-visited-state" id="good_document" href="{% url 'cases:document' case.id document.id %}">
 							  <span class="govuk-visually-hidden">{% get_string 'cases.manage.documents.download_document' %}</span>
 							  {{ document.name }}<br>
 						  </a>
