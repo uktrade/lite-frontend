@@ -245,3 +245,4 @@ CSP_IMG_SRC = ("'self'", 'https://www.googletagmanager.com', 'https://www.google
 CSP_FRAME_SRC = ('https://vars.hotjar.com/', 'https://vc.hotjar.io')
 CSP_CONNECT_SRC = ('https://vars.hotjar.com/', 'https://vc.hotjar.io')
 CSP_INCLUDE_NONCE_IN = ('script-src',)
+CSP_REPORT_ONLY = True
