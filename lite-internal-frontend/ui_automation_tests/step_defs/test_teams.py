@@ -16,7 +16,7 @@ def go_to_teams_via_menu(driver):
 
 
 @given('I go to teams')
-def go_to_teams(driver, sign_in_to_internal_sso, internal_url):
+def go_to_teams(driver, sso_sign_in, internal_url):
     driver.get(internal_url.rstrip('/') + '/teams/')
 
 
@@ -39,8 +39,8 @@ def select_team(driver):
 
 
 @when('I click edit for my user')
-def click_edit_for_my_user(driver, sso_login_info):
-    no = utils.get_element_index_by_text(Shared(driver).get_rows_in_lite_table(), sso_login_info['email'])
+def click_edit_for_my_user(driver, internal_info):
+    no = utils.get_element_index_by_text(Shared(driver).get_rows_in_lite_table(), internal_info['email'])
     Shared(driver).scroll_to_bottom_row()
     UsersPage(driver).click_edit_button_by_index(no)
 
@@ -78,13 +78,13 @@ def see_team_in_list(driver, context):
 
 
 @then(parsers.parse('I see my teams user list with user "{added_not_added}"'))
-def see_team_user_added(driver, added_not_added, context, sso_login_info, sso_users_name):
+def see_team_user_added(driver, added_not_added, context, internal_info):
     assert Shared(driver).get_text_of_h1() == context.team_name , "User is not on teams user list"
     assert Shared(driver).get_text_of_selected_tab() == "USERS" , "Users tab isn't shown"
     if added_not_added == "added":
         table = Shared(driver).get_text_of_lite_table_body()
-        assert sso_users_name in table, "User is not displayed in team list"
-        assert sso_login_info['email'] in table, "User is not displayed in team list"
+        assert internal_info['name'] in table, "User is not displayed in team list"
+        assert internal_info['email'] in table, "User is not displayed in team list"
         assert "Active" in table, "User is not displayed in team list"
     elif added_not_added == "not added":
         assert Shared(driver).get_text_of_caption() == "You don't have any users at the moment." , "Users are potentially displayed for a just created Team List"

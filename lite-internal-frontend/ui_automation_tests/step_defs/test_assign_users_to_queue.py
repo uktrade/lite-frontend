@@ -18,9 +18,9 @@ def click_checkbox_for_application(driver, internal_url, apply_for_standard_appl
 
 
 @when('I select user to assign SSO users name')
-def assign_user_to_case(driver, sso_users_name, context):
-    driver.find_element_by_id(sso_users_name).click()
-    context.user_name = sso_users_name
+def assign_user_to_case(driver, internal_info, context):
+    driver.find_element_by_id(internal_info['name']).click()
+    context.user_name = internal_info['name']
     Shared(driver).click_submit()
 
 
@@ -30,10 +30,10 @@ def user_is_on_case_list(driver, context):
 
 
 @then('only SSO users name is displayed in user list for assign cases')
-def user_is_on_case_list(driver, sso_users_name):
+def user_is_on_case_list(driver, internal_info):
     elements = CaseListPage(driver).get_text_checkbox_elements()
     for element in elements:
-        assert sso_users_name in element.text, sso_users_name + "is not displayed in user list"
+        assert internal_info['name'] in element.text, internal_info['name'] + "is not displayed in user list"
 
 
 @then('user is not assignee on case list')
@@ -47,8 +47,8 @@ def select_all_cases(driver):
 
 
 @when('I search for SSO users name to assign')
-def filter_search_for_assign_users(driver, sso_users_name):
-    CaseListPage(driver).enter_name_to_filter_search_box(sso_users_name)
+def filter_search_for_assign_users(driver, internal_info):
+    CaseListPage(driver).enter_name_to_filter_search_box(internal_info['name'])
 
 
 @then(parsers.parse('assign users button is "{enabled_disabled}"'))

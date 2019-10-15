@@ -2,14 +2,17 @@ import os
 
 from pytest_bdd import given, when, then, parsers
 
-from fixtures.core import context, driver, sso_login_info, invalid_username, new_cases_queue_id, sso_users_name, seed_data_config, exporter_info, internal_info, s3_key  # noqa
-from fixtures.urls import internal_url, sso_sign_in_url, api_url  # noqa
-from fixtures.apply_for_application import apply_for_standard_application, apply_for_clc_query, apply_for_eua_query, apply_for_open_application  # noqa
-from fixtures.sign_in_to_sso import sign_in_to_internal_sso  # noqa
-from fixtures.add_a_flag import add_uae_flag, add_suspicious_flag, add_organisation_suspicious_flag  # noqa
-from fixtures.add_queue import add_queue  # noqa
-from fixtures.add_a_team import add_a_team  # noqa
-from fixtures.add_a_picklist import add_an_ecju_query_picklist, add_a_proviso_picklist, add_a_standard_advice_picklist, add_a_report_summary_picklist  # noqa
+from ui_automation_tests.fixtures.env import environment # noqa
+from ui_automation_tests.fixtures.add_a_flag import add_uae_flag, add_suspicious_flag, add_organisation_suspicious_flag # noqa
+from ui_automation_tests.fixtures.add_queue import add_queue # noqa
+from ui_automation_tests.fixtures.add_a_team import add_a_team # noqa
+from ui_automation_tests.fixtures.add_a_picklist import add_an_ecju_query_picklist, add_a_proviso_picklist, add_a_standard_advice_picklist, add_a_report_summary_picklist # noqa
+
+from ui_automation_tests.shared.fixtures.apply_for_application import apply_for_standard_application, apply_for_clc_query, apply_for_eua_query, apply_for_open_application # noqa
+from ui_automation_tests.shared.fixtures.driver import driver # noqa
+from ui_automation_tests.shared.fixtures.sso_sign_in import sso_sign_in # noqa
+from ui_automation_tests.shared.fixtures.core import context, invalid_username, seed_data_config, exporter_info, internal_info, s3_key # noqa
+from ui_automation_tests.shared.fixtures.urls import internal_url, sso_sign_in_url, api_url # noqa
 
 import shared.tools.helpers as utils
 from pages.assign_flags_to_case import CaseFlagsPages
@@ -58,13 +61,13 @@ def when_go_to_internal_homepage(driver, internal_url):
     driver.get(internal_url)
 
 
-@given('I go to internal homepage')  # noqa
-def go_to_internal_homepage(driver, internal_url, sign_in_to_internal_sso):
+@given('I go to internal homepage') # noqa
+def go_to_internal_homepage(driver, internal_url, sso_sign_in):
     driver.get(internal_url)
 
 
-@given('I sign in to SSO or am signed into SSO')  # noqa
-def sign_into_sso(driver, sign_in_to_internal_sso):
+@given('I sign in to SSO or am signed into SSO') # noqa
+def sign_into_sso(driver, sso_sign_in):
     pass
 
 
@@ -124,9 +127,9 @@ def i_click_back(driver):
     Shared(driver).click_back()
 
 
-@given('I go to flags')  # noqa
-def go_to_flags(driver, internal_url, sign_in_to_internal_sso):
-    driver.get(internal_url.rstrip("/") + "/flags")
+@given('I go to flags') # noqa
+def go_to_flags(driver, internal_url, sso_sign_in):
+    driver.get(internal_url.rstrip("/")+"/flags")
 
 
 @when('I go to users')  # noqa
@@ -193,8 +196,8 @@ def go_to_queues_via_menu(driver):
     HeaderPage(driver).click_queues()
 
 
-@given('I go to queues')  # noqa
-def go_to_queues(driver, sign_in_to_internal_sso, internal_url):
+@given('I go to queues') # noqa
+def go_to_queues(driver, sso_sign_in, internal_url):
     driver.get(internal_url.rstrip('/') + '/queues/')
 
 
