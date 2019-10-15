@@ -4,16 +4,19 @@ import pytest
 from pytest_bdd import given, when, then, parsers
 from selenium.webdriver.common.by import By
 
-from fixtures.core import context, driver, invalid_username, exporter_info, internal_info, s3_key, seed_data_config  # noqa
-from fixtures.register_organisation import register_organisation, register_organisation_for_switching_organisation  # noqa
-from fixtures.add_goods import add_an_incorporated_good_to_application, add_a_non_incorporated_good_to_application, create_non_incorporated_good  # noqa
-from fixtures.add_an_application import add_an_application  # noqa
-from fixtures.add_clc_query import add_clc_query  # noqa
-from fixtures.add_end_user_advisory import add_end_user_advisory  # noqa
-from fixtures.internal_ecju_query import internal_ecju_query, internal_ecju_query_end_user_advisory  # noqa
-from fixtures.sso_sign_in import sso_sign_in  # noqa
-from fixtures.internal_case_note import internal_case_note, internal_case_note_end_user_advisory  # noqa
-from fixtures.urls import exporter_url, api_url  # noqa
+from ui_automation_tests.fixtures.register_organisation import register_organisation, register_organisation_for_switching_organisation  # noqa
+from ui_automation_tests.fixtures.env import environment # noqa
+from ui_automation_tests.fixtures.add_goods import add_an_incorporated_good_to_application, add_a_non_incorporated_good_to_application, create_non_incorporated_good  # noqa
+from ui_automation_tests.fixtures.add_clc_query import add_clc_query  # noqa
+from ui_automation_tests.fixtures.add_end_user_advisory import add_end_user_advisory  # noqa
+from ui_automation_tests.fixtures.internal_ecju_query import internal_ecju_query, internal_ecju_query_end_user_advisory  # noqa
+from ui_automation_tests.fixtures.sso_sign_in import sso_sign_in  # noqa
+from ui_automation_tests.fixtures.internal_case_note import internal_case_note, internal_case_note_end_user_advisory  # noqa
+
+from ui_automation_tests.shared.fixtures.apply_for_application import apply_for_standard_application, add_an_ecju_query  # noqa
+from ui_automation_tests.shared.fixtures.driver import driver  # noqa
+from ui_automation_tests.shared.fixtures.core import context, invalid_username, exporter_info, internal_info, s3_key, seed_data_config  # noqa
+from ui_automation_tests.shared.fixtures.urls import exporter_url, api_url  # noqa
 
 import shared.tools.helpers as utils
 from pages.add_goods_page import AddGoodPage

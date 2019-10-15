@@ -8,7 +8,7 @@ scenarios('../features/case_notes.feature', strict_gherkin=False)
 
 
 @given('an application exists')
-def application_exists_case_note_added(add_an_application):
+def application_exists_case_note_added(apply_for_standard_application, add_an_ecju_query):
     pass
 
 
