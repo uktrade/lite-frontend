@@ -325,6 +325,18 @@ class TextArea(_Component):
         self.input_type = 'textarea'
 
 
+class MarkdownArea(_Component):
+    def __init__(self,
+                 name: str,
+                 title: str = '',
+                 description: str = '',
+                 optional: bool = False,
+                 classes: [] = None,
+                 extras: [] = None):
+        super().__init__(name, title, description, optional, classes, extras)
+        self.input_type = 'markdown'
+
+
 class DateInput:
     def __init__(self,
                  prefix: str,

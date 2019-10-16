@@ -1,0 +1,75 @@
+<div data-module="character-count" data-maxlength="{{ extras.max_length }}">
+	<textarea
+			placeholder="Content"
+			autocomplete="off"
+			autocorrect="off"
+			autocapitalize="off"
+			id="content"
+			name="content"
+			rows="12"
+			class="govuk-textarea hwt-input hwt-content {% if error %}govuk-textarea--error{% endif %}">{{ value }}</textarea>
+	{% if extras.max_length %}
+		<span id="{{ name }}-info" class="govuk-hint govuk-character-count__message" aria-live="polite" style="margin-top: -10px;">
+			You can enter up to {{ extras.max_length }} characters
+		</span>
+	{% endif %}
+</div>
+{% block javascript %}
+	<script src="{% static 'javascripts/modal.js' %}"></script>
+	<script src="{% static 'javascripts/highlight_tags.js' %}"></script>
+	<script src="{% static 'javascripts/caret_position.js' %}"></script>
+    <script src="{% static 'javascripts/docgen.js' %}"></script>
+    <script src="{% static 'javascripts/suggest_word.js' %}"></script>
+	<script>
+		var text = {{ flattened_letter_context|safe }};
+
+		String.prototype.replaceBetween = function(start, end, what) {
+			return this.substring(0, start) + what + this.substring(end);
+		};
+
+		$('#content').highlightWithinTextarea({
+		    highlight: [
+		        {
+		            highlight: {% verbatim %}/{{(.*?)}}/g{% endverbatim %},
+		            className: 'lite-highlight'
+		        },
+		        {
+		            highlight: {% verbatim %}/{%(.*?)%}/g{% endverbatim %},
+		            className: 'lite-highlight lite-highlight--purple'
+		        }
+		    ]
+		});
+
+		$( '#content' ).keyup(function(e) {
+			suggestions = getSuggestions(getCurrentWord())
+
+			$("#autocomplete-suggestions").empty();
+			for (var i = 0; i < suggestions.length; i++) {
+			   nameList = "<a onclick='return clickSuggestion(\"" + suggestions[i][0] + "\")'>" + suggestions[i][0] + "<span>" + suggestions[i][1] + "</span>" + "</a>";
+			   $("#autocomplete-suggestions").append(nameList);
+			}
+		});
+
+		document.querySelector('textarea').addEventListener('input', function () {
+		  var caret = getCaretCoordinates(this, this.selectionEnd);
+
+		  posY =  $('#content')[0].getBoundingClientRect().top + $(window)['scrollTop']() + caret.top + 30;
+		  posX = $('#content').offset().left + 5;
+
+		  $( '#autocomplete-suggestions' ).css({'top': posY,
+		  										'left': caret.left + posX});
+		})
+
+		$( '#content' ).keypress(function(e) {
+			var code = e.keyCode ? e.keyCode : e.which;
+			suggestion = getSuggestion(getCurrentWord())
+
+			if (suggestion) {
+				if (code == 13) {
+					e.preventDefault();
+					replaceCurrentWord(suggestion);
+				}
+			}
+		});
+	</script>
+{% endblock %}

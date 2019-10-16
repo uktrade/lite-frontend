@@ -67,6 +67,8 @@
 			{% include "components/summary.html" with component=question %}
         {% elif question.input_type == "control_list_entry" %}
 			{% include "components/control_list_entry.html" with component=question value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
+        {% elif question.input_type == "markdown" %}
+			{% include "components/markdown.html" with component=question value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
 		{% endif %}
 	</div>
 </div>
