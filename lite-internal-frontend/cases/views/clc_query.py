@@ -44,14 +44,20 @@ class Respond(TemplateView):
             return form_page(request, form, data={'flags': self.case['query']['good']['flags']})
 
         if request.POST.get('action') != 'change':
-            response, data = submit_single_form(request,
+            form_data = request.POST.copy()
+
+            if request.POST.get('report_summary') == 'None':
+                del form_data['report_summary']
+
+            response, response_data = submit_single_form(request,
                                                 self.form,
                                                 put_control_list_classification_query,
-                                                pk=str(self.case['query']['id']))
+                                                pk=str(self.case['query']['id']),
+                                                override_data=form_data)
 
             if response:
                 return response
-
+            response_data = response_data['control_list_classification_query']
         # If validate only is removed (therefore the user is on the overview page
         # already) go back to the case and show a success message
         if not request.POST.get('validate_only'):
@@ -62,13 +68,20 @@ class Respond(TemplateView):
 
         # Remove validate only key and go to overview page
         data = request.POST.copy()
-        del data['validate_only']
+
+        if data.get('validate_only') and data.get('report_summary'):
+            report_summary = get_picklist_item(request, data['report_summary'])
+        else:
+            report_summary = {'text': ''}
+
+        if response_data['is_good_controlled'] == 'no':
+            response_data.pop('control_code')
 
         context = {
             'title': 'Response Overview',
-            'data': data,
+            'data': response_data,
             'case': self.case,
-            'report_summary': get_picklist_item(request, data['report_summary'])
+            'report_summary': report_summary
         }
         return render(request, 'cases/case/clc_query_overview.html', context)
 

@@ -1,3 +1,4 @@
+from pages.good_summary_page import GoodSummaryPage
 import shared.tools.helpers as utils
 from pages.shared import Shared
 from pytest_bdd import given, when, then, scenarios, parsers
@@ -31,13 +32,13 @@ def case_flags_have_been_created(driver):
 
 
 @when("I click edit flags link")
-def click_edit_flags_link(driver):
+def click_edit_case_flags_link(driver):
     application_page = ApplicationPage(driver)
     application_page.click_edit_case_flags()
 
 
 @when("I click edit goods flags link")
-def click_edit_flags_link(driver):
+def click_edit_goods_flags_link(driver):
     application_page = ApplicationPage(driver)
     application_page.select_a_good()
     application_page.click_edit_good_flags()

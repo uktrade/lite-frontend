@@ -1,0 +1,70 @@
+{% extends 'layouts/base.html' %}
+
+{% load humanize static %}
+
+{% block back_link %}
+	<a href="{% url 'cases:case' case_id %}" class="govuk-back-link">
+		{% get_string 'cases.review_goods_summary.back_link' %}
+	</a>
+{% endblock %}
+
+{% load svg %}
+
+{% block body %}
+
+<div class="lite-app-bar">
+	<div class="lite-app-bar__content">
+		<p class="govuk-caption-m" style="margin: 0;">{{ case.application.licence_type.value }}</p>
+		<h2 class="govuk-heading-l">{% get_string 'cases.review_goods_summary.heading' %}</h2>
+	</div>
+    <div class="lite-app-bar__controls">
+        <a id="button-add-report-summary" value="goods" class="btn govuk-button" data-module="govuk-button" href="{{ review_goods_clc_url }}">
+			{% get_string 'cases.review_goods_summary.review_button' %}
+        </a>
+    </div>
+</div>
+
+<div class="app-flags" id="application-case-flags">
+    {% for flag in case.flags %}
+        <div class="app-flag" id="{{ flag.name }}">
+            {{ flag.name }}
+        </div>
+    {% endfor %}
+	<a href="{{ edit_flags_url }}" id="button-edit-goods-flags" class="app-flag app-flag--action">
+        {% get_string 'cases.review_goods_summary.set_flags' %}
+	</a>
+</div>
+
+<!-- Goods -->
+<table class="lite-table" id="goods">
+	<thead class="lite-table__head">
+		<tr class="lite-table__row">
+			<th class="lite-table__header">Description</th>
+            <th class="lite-table__header">Report summary</th>
+			<th class="lite-table__header">Controlled</th>
+            <th class="lite-table__header">Controlled list entry</th>
+            <th class="lite-table__header">Goods Comment</th>
+            <th class="lite-table__header">Quantity/Value</th>
+            <th class="lite-table__header">Flags</th>
+		</tr>
+	</thead>
+	<tbody class="lite-table__body">
+		{% for good in objects %}
+			<tr class="lite-table__row">
+                <td class="lite-table__cell">{{ good.good.description }}</td>
+				<td class="lite-table__cell">{{ good.good.report_summary|default_if_none:"N/A" }}</td>
+				<td class="lite-table__cell">{{ good.good.is_good_controlled|capfirst}}</td>
+                <td class="lite-table__cell">{{ good.good.control_code}}</td>
+                <td class="lite-table__cell">{{ good.good.comment}}</td>
+                <td class="lite-table__cell">{{ good.quantity }} {{ good.unit.value }}/£{{ good.value }}</td>
+                <td class="lite-table__cell">
+                    {% for flag in good.good.flags %}
+                        {{ flag.name}} <br>
+                    {% endfor %}
+                </td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>
+
+{% endblock %}

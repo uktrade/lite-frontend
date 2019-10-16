@@ -1,30 +1,14 @@
-from django.template.defaultfilters import default
-from django.urls import reverse_lazy
 from lite_forms.common import control_list_entry_question
-from lite_forms.components import Form, BackLink, RadioButtons, Option, TextArea, HTMLBlock, Heading, \
-    HiddenField
-from lite_forms.styles import HeadingStyle
+from lite_forms.components import Form, BackLink, RadioButtons, Option, TextArea
 
-from core.builtins.custom_tags import reference_code
 from core.services import get_control_list_entries
 from picklists.services import get_picklists
+from core.builtins.custom_tags import get_string
 
 
-def respond_to_clc_query_form(request, case):
-    return Form(title='Respond to CLC Query',
+def review_goods_clc_query_form(request, back_url):
+    return Form(title=get_string('cases.review_goods_form.heading'),
                 questions=[
-                    Heading(reference_code(case['query']['id']), HeadingStyle.S),
-                    HTMLBlock(html='<div class="app-summary-list app-inset-text">'
-                                        '<div class="app-summary-list__item">'
-                                            '<p class="govuk-caption-m">Description</p>'
-                                            '<p class="govuk-body-m">' + case['query']['good']['description'] + '</p>'
-                                        '</div>'
-                                        '<div class="app-summary-list__item">'
-                                            '<p class="govuk-caption-m">Control list entry</p>'
-                                            '<p class="govuk-body-m">' + default(case['query']['good'].get('control_code'), 'N/A') + '</p>'
-                                        '</div>'
-                                    '</div>'),
-                    HTMLBlock(html='<hr class="lite-horizontal-separator">'),
                     RadioButtons(title='Is this good controlled?',
                                  name='is_good_controlled',
                                  options=[
@@ -50,11 +34,10 @@ def respond_to_clc_query_form(request, case):
                                  classes=['test']),
                     TextArea(title='Good\'s comment (optional)',
                              name='comment',
-                             optional=True,
                              extras={
                                  'max_length': 500,
-                             }),
-                    HiddenField('validate_only', True)
+                             })
                 ],
-                default_button_name='Continue to overview',
-                back_link=BackLink('Back to case', reverse_lazy('cases:case', kwargs={'pk': case['id']})))
+                default_button_name=get_string('cases.review_goods_form.confirm_button'),
+                back_link=BackLink(get_string('cases.review_goods_form.back_link'), back_url)
+                )

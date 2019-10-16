@@ -4,11 +4,14 @@ from conf.client import get, post, put
 from conf.constants import PICKLIST_URL
 
 
-def get_picklists(request, picklist_type, show_deactivated=False, convert_to_options=False):
+def get_picklists(request, picklist_type, show_deactivated=False, convert_to_options=False, include_none=False):
     data = get(request, PICKLIST_URL + '?type=' + picklist_type + '&show_deactivated=' + str(show_deactivated)).json()
 
     if convert_to_options:
         options = []
+
+        if include_none:
+            options.append(Option(None, 'None', 'None'))
 
         for item in data['picklist_items']:
             options.append(Option(item['id'], item['name'], item['text']))
