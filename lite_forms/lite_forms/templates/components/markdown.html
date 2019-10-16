@@ -15,11 +15,11 @@
 	{% endif %}
 </div>
 {% block javascript %}
-	<script src="javascripts/modal.js"></script>
-	<script src="javascripts/highlight_tags.js"></script>
-	<script src="javascripts/caret_position.js"></script>
-    <script src="javascripts/docgen.js"></script>
-    <script src="javascripts/suggest_word.js"></script>
+	<script src="{% static 'javascripts/modal.js' %}"></script>
+	<script src="{% static 'javascripts/highlight_tags.js' %}"></script>
+	<script src="{% static 'javascripts/caret_position.js' %}"></script>
+    <script src="{% static 'javascripts/docgen.js' %}"></script>
+    <script src="{% static 'javascripts/suggest_word.js' %}"></script>
 	<script>
 		var text = {{ flattened_letter_context|safe }};
 
