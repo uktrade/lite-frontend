@@ -41,7 +41,7 @@
 				<br>
 			{% endif %}
 
-			{% if good.status.key == 'clc_query' or good.status.key == 'verified' %}
+			{% if good.query_id %}
 				<h3 class="govuk-heading-m">Your Query</h3>
 				<dl class="govuk-summary-list">
 					<div class="govuk-summary-list__row">
@@ -89,7 +89,7 @@
 						Is the good controlled?
 					</dt>
 					<dd class="govuk-summary-list__value">
-						{{ good.is_good_controlled }}
+						{{ good.is_good_controlled|capfirst }}
 					</dd>
 				</div>
 				{% if good.control_code %}

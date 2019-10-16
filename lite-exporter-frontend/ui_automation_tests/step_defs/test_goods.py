@@ -77,6 +77,6 @@ def i_see_the_attached_good(driver, context):
 def click_on_draft_good(driver):
     text = driver.find_element_by_css_selector('.govuk-summary-list').text
     assert "edited" in text
-    assert "yes" in text
+    assert "Yes" in text
     assert "False" in text
     assert "321" in text
