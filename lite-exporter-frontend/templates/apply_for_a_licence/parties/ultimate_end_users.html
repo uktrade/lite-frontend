@@ -43,7 +43,7 @@
 		{% for ultimate_end_user in ultimate_end_users %}
 		<tr class="govuk-table__row">
 			<td class="govuk-table__cell">{{ ultimate_end_user.name }}</td>
-			<td class="govuk-table__cell">{{ ultimate_end_user.sub_type|title }}</td>
+			<td class="govuk-table__cell">{{ ultimate_end_user.sub_type.value|title }}</td>
 			<td class="govuk-table__cell">{{ ultimate_end_user.website }}</td>
 			<td class="govuk-table__cell">{{ ultimate_end_user.address }}</td>
 			<td class="govuk-table__cell">{{ ultimate_end_user.country.name }}</td>

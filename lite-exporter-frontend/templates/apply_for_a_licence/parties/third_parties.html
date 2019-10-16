@@ -42,7 +42,7 @@
 		{% for third_party in third_parties %}
 		<tr class="govuk-table__row">
 			<td class="govuk-table__cell">{{ third_party.name }}</td>
-			<td class="govuk-table__cell">{{ third_party.sub_type|title }}</td>
+			<td class="govuk-table__cell">{{ third_party.sub_type.value|title }}</td>
 			<td class="govuk-table__cell">{{ third_party.website }}</td>
 			<td class="govuk-table__cell">{{ third_party.address }}</td>
 			<td class="govuk-table__cell">{{ third_party.country.name }}</td>

@@ -424,7 +424,7 @@
 			<tbody class="govuk-table__body">
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" scope="row">Type</th>
-					<td class="govuk-table__cell">{{ application.consignee.sub_type|title }}</td>
+					<td class="govuk-table__cell">{{ application.consignee.sub_type.value|title }}</td>
 				</tr>
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" scope="row">Name</th>
@@ -515,7 +515,7 @@
 				{% for ultimate_end_user in ultimate_end_users %}
 					<tr class="govuk-table__row">
 						<td class="govuk-table__cell">{{ ultimate_end_user.name }}</td>
-                        <td class="govuk-table__cell">{{ ultimate_end_user.sub_type|title }}</td>
+                        <td class="govuk-table__cell">{{ ultimate_end_user.sub_type.value|title }}</td>
                         <td class="govuk-table__cell">{{ ultimate_end_user.website }}</td>
 						<td class="govuk-table__cell">{{ ultimate_end_user.address }}</td>
 						<td class="govuk-table__cell">{{ ultimate_end_user.country.name }}</td>
@@ -567,7 +567,7 @@
 				{% for third_party in third_parties %}
 					<tr class="govuk-table__row">
 						<td class="govuk-table__cell">{{ third_party.name }}</td>
-                        <td class="govuk-table__cell">{{ third_party.sub_type|strip_underscores }}</td>
+                        <td class="govuk-table__cell">{{ third_party.sub_type.value|title }}</td>
                         <td class="govuk-table__cell">{{ third_party.website }}</td>
 						<td class="govuk-table__cell">{{ third_party.address }}</td>
 						<td class="govuk-table__cell">{{ third_party.country.name }}</td>
