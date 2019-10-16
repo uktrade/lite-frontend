@@ -43,7 +43,7 @@
 							<a class="govuk-link govuk-link--no-visited-state app-icon-label" href="{% url 'goods:good' pk=good.id %}">
 								<p>{{ good.description }}</p>
 								{% if good.status.key == 'verified' %}<span class="app-verified__symbol">{% svg 'verified' %}</span>{% endif %}
-								{% if good.query_id in notifications %}
+								{% if good.query_id and good.query_id in notifications %}
 									<span class="app-icon-label__notification">{{ notifications|key_value:good.query_id }} <span class="govuk-visually-hidden"> notifications</span></span>
 								{% endif %}
 							</a>
