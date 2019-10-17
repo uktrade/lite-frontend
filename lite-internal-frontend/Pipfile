@@ -30,6 +30,7 @@ boto3 = ">=1.9"
 prospector = "*"
 lite-forms = "*"
 django-csp = "*"
+bandit = "*"
 
 [requires]
 python_version = "3.7"

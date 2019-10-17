@@ -73,6 +73,12 @@ Note the migrations will need to be run again the next time the service is to be
 
 Ask someone on the team for valid credentials here.
 
+
+## Running Bandit
+
+`pipenv run bandit -r .`
+
+
 ## LITE Repositories
 
 [lite-api](https://github.com/uktrade/lite-api) - Service for handling backend calls in LITE.
