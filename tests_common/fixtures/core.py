@@ -1,7 +1,5 @@
 from pytest import fixture
 
-from shared.seed_data.manage_s3_documents import upload_test_document_to_aws
-
 
 @fixture(scope="session")
 def context(request):
