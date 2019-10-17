@@ -1,5 +1,7 @@
 from pytest import fixture
 
+from shared.seed_data.manage_s3_documents import upload_test_document_to_aws
+
 
 @fixture(scope="session")
 def context(request):
@@ -58,5 +60,5 @@ def seed_data_config(request, exporter_info, internal_info, s3_key):
         'api_url': api_url,
         'exporter': exporter_info,
         'gov': internal_info,
-        's3_key': s3_key
+        's3_key': upload_test_document_to_aws()
     }
