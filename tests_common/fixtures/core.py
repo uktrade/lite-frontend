@@ -48,17 +48,10 @@ def internal_info(request, environment):
 
 
 @fixture(scope='session')
-def s3_key(request, environment):
-    s3_key = environment('TEST_S3_KEY')
-    return s3_key
-
-
-@fixture(scope='session')
-def seed_data_config(request, exporter_info, internal_info, s3_key):
+def seed_data_config(request, exporter_info, internal_info):
     api_url = request.config.getoption('--lite_api_url')
     return {
         'api_url': api_url,
         'exporter': exporter_info,
-        'gov': internal_info,
-        's3_key': upload_test_document_to_aws()
+        'gov': internal_info
     }
