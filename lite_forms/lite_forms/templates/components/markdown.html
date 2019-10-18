@@ -30,7 +30,7 @@
       data: data,
       headerTpl: '<div class="atwho-header govuk-label">Variables</div>',
       insertTpl: '{% templatetag openvariable %} ${key} {% templatetag closevariable %}',
-      displayTpl: "<li class='govuk-label'>${key} <small>${value}</small></li>"
+      displayTpl: "<li id='context_suggestion' class='govuk-label'>${key} <small>${value}</small></li>"
     };
     $inputor = $(id).atwho(at_config);
     $inputor.caret('pos', 47);
