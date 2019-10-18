@@ -108,4 +108,5 @@ def apply_for_open_application(driver, seed_data_config, context):
     lite_client.submit_open_application()
     context.app_id = lite_client.context['application_id']
     context.case_id = lite_client.context['case_id']
+    context.country = lite_client.context['country']
     timer.print_time('apply_for_open_application')

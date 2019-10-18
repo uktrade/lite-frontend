@@ -96,6 +96,7 @@ class SeedData:
         self.log("Adding countries: ...")
         make_request("POST", base_url=self.base_url, url='/applications/' + draft_id + '/countries/',
                      headers=self.export_headers, body={'countries': ['US']})
+        self.add_to_context('country', {'code': 'US', 'name': 'United States'})
 
     def add_draft(self, draft=None, good=None, enduser=None, ultimate_end_user=None, consignee=None, third_party=None,
                   additional_documents=None):
