@@ -92,8 +92,8 @@
 {% load static %}
 
 {% block javascript %}
-<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
-<script type="text/javascript" src="https://ichord.github.io/Caret.js/src/jquery.caret.js"></script>
+<script type="text/javascript" src="{% static 'javascripts/jquery-2.2.0.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'javascripts/jquery.caret.js' %}"></script>
 <script type="text/javascript" src="{% static 'javascripts/jquery.atwho.js' %}"></script>
 <script type="text/javascript">
   $(function(){
