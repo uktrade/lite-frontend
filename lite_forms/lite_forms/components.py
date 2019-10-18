@@ -328,12 +328,14 @@ class TextArea(_Component):
 class MarkdownArea(_Component):
     def __init__(self,
                  name: str,
+                 variables: [],
                  title: str = '',
                  description: str = '',
                  optional: bool = False,
                  classes: [] = None,
                  extras: [] = None):
         super().__init__(name, title, description, optional, classes, extras)
+        self.variables = variables
         self.input_type = 'markdown'
 
 
