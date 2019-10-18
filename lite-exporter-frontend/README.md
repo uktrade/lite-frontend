@@ -68,6 +68,11 @@ Application for handling exporter related activity in LITE.
 
 Ask someone on the team for valid credentials or check for them in Vault.
 
+
+## Running Bandit
+
+`pipenv run bandit -r .`
+
 ## LITE Repositories
 
 [lite-api](https://github.com/uktrade/lite-api) - Service for handling backend calls in LITE.

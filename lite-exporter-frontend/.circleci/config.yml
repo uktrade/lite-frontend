@@ -69,3 +69,9 @@ jobs:
       - run:
           name: Run Linting
           command: pipenv run prospector
+
+      - run:
+          name: Run Bandit
+          command: |
+            pipenv install bandit
+            pipenv run bandit -r .

@@ -7,8 +7,9 @@ from django.conf import settings
 
 from requests_oauthlib import OAuth2Session
 
+from conf.settings import env
 
-TOKEN_SESSION_KEY = '_authbroker_token'
+TOKEN_SESSION_KEY = env('TOKEN_SESSION_KEY')
 PROFILE_URL = urljoin(settings.AUTHBROKER_URL, '/api/v1/user/me/')
 INTROSPECT_URL = urljoin(settings.AUTHBROKER_URL, 'o/introspect/')
 TOKEN_URL = urljoin(settings.AUTHBROKER_URL, '/o/token/')
