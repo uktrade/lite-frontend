@@ -99,21 +99,21 @@
 	}
 
 	.lite-menu-item--selected {
-		background-color: $govuk-brand-colour;
+		background-color: $govuk-link-colour;
 		color: govuk-colour("white");
 
 		.icon {
 			img {
-				filter: drop-shadow(0 5px 10px darken($govuk-brand-colour, 2%))
+				filter: drop-shadow(0 5px 10px darken($govuk-link-colour, 2%))
 			}
 		}
 
 		&:hover {
-			background-color: darken($govuk-brand-colour, 5%);
+			background-color: darken($govuk-link-colour, 5%);
 		}
 
 		&:active {
-			background-color: darken($govuk-brand-colour, 10%);
+			background-color: darken($govuk-link-colour, 10%);
 		}
 	}
 }

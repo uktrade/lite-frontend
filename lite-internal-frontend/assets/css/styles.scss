@@ -1,13 +1,10 @@
 // Set defaults
 $lite-transition-speed: 0.3s !default;
 $govuk-page-width: 1200px !default;
-$govuk-brand-colour: #28A197; // GOV.UK Design System
-$govuk-link-colour: $govuk-brand-colour;
-$govuk-link-hover-colour: darken($govuk-brand-colour, 10%);
-$govuk-link-active-colour: darken($govuk-brand-colour, 20%);
-
-@import "../shared/node_modules/govuk-frontend/govuk/all"; // LITE Shared Assets
-@import "../shared/lite-frontend/scss/all"; // Local Assets
+$govuk-brand-colour: #cf102d;
+$govuk-font-family: Arial, Sans-Serif;
+@import "../shared/node_modules/govuk-frontend/govuk/all"; // GOV UK Design System
+@import "../shared/lite-frontend/scss/all"; // LITE Shared Assets
 @import "components/all";
 
 .app-radios__label--error {
@@ -40,29 +37,6 @@ $govuk-link-active-colour: darken($govuk-brand-colour, 20%);
 	.govuk-body-m:last-of-type {
 		margin-bottom: 0;
 		padding-bottom: 0;
-	}
-}
-
-.test {
-	position: relative;
-	background: govuk-colour("light-grey");
-	padding: govuk-spacing(4);
-	max-height: 285px;
-	overflow-y: scroll;
-	margin-top: govuk-spacing(3);
-	margin-bottom: govuk-spacing(6);
-	box-shadow: 0 0 0 2px rgba(govuk-colour("black"), 0.1);
-
-	.govuk-radios__item {
-		margin-bottom: govuk-spacing(4);
-
-		&:last-of-type {
-			margin-bottom: 0;
-		}
-	}
-
-	.govuk-radios__label::before {
-		background: white;
 	}
 }
 
@@ -152,10 +126,6 @@ $govuk-link-active-colour: darken($govuk-brand-colour, 20%);
 			line-height: inherit;
 		}
 	}
-}
-
-.govuk-tag {
-	background-color: $govuk-brand-colour;
 }
 
 .lite-checkboxes--inline {
