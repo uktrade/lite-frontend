@@ -115,45 +115,43 @@ Feature: I want to indicate the standard licence I want
     And "Delete" link is present
     When I delete the third party document
     Then "Attach" link is present
-
-  @LT_887_end_user_document
-  Scenario: Add an end user document that can be downloaded and deleted
-    Given I go to exporter homepage and choose Test Org
-    When I create a standard application
+    When I click back link
     And I click on end user
     And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I click back link
     And I click attach an end user document link
     And I upload a file "file_for_doc_upload_test_1.txt"
     Then Wait for "end_user_document_download" to be present
-    When I delete the third party document
+    When I delete the end user document
     Then The end user document has been deleted
 
-  @LT_887_consignee_document
-  Scenario: Add an end user document that can be downloaded and deleted
-    Given I go to exporter homepage and choose Test Org
-    When I create a standard application
-    And I click on consignees
-    And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
-    And I click back link
-    And I click attach an consignee document link
-    And I upload a file "file_for_doc_upload_test_1.txt"
-    Then Wait for "consignee_document_download" to be present
-    When I delete the consignee document
-    Then The consignee document has been deleted
+  # Commented the below tests out as they do the same thing as the above. If there is an issue with consignee or third party documents not being able to download please uncomment out these tests.
 
-  @LT_887_third_party_document
-  Scenario: Add an Third party document that can be downloaded and deleted
-    Given I go to exporter homepage and choose Test Org
-    When I create a standard application
-    And I click on third parties
-    And I click on the add button
-    And I add an end user of sub_type: "agent", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
-    And I click back link
-    Then "Attach" link is present
-    When I click on attach a document
-    And I upload a file "file_for_doc_upload_test_1.txt"
-    Then Wait for download link
-    And "Delete" link is present
-    When I delete the third party document
-    Then "Attach" link is present
+#  @LT_887_consignee_document
+#  Scenario: Add a consignee document that can be downloaded and deleted
+#    Given I go to exporter homepage and choose Test Org
+#    When I create a standard application
+#    And I click on consignees
+#    And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
+#    And I click back link
+#    And I click attach an consignee document link
+#    And I upload a file "file_for_doc_upload_test_1.txt"
+#    Then Wait for "consignee_document_download" to be present
+#    When I delete the consignee document
+#    Then The consignee document has been deleted
+#
+#  @LT_887_third_party_document
+#  Scenario: Add a Third party document that can be downloaded and deleted
+#    Given I go to exporter homepage and choose Test Org
+#    When I create a standard application
+#    And I click on third parties
+#    And I click on the add button
+#    And I add an end user of sub_type: "agent", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
+#    And I click back link
+#    Then "Attach" link is present
+#    When I click on attach a document
+#    And I upload a file "file_for_doc_upload_test_1.txt"
+#    Then Wait for download link
+#    And "Delete" link is present
+#    When I delete the third party document
+#    Then "Attach" link is present
