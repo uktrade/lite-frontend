@@ -19,6 +19,7 @@ class ClcQueriesPages(BasePage):
         self.driver.find_element_by_id(self.control_response + answer).click()
 
     def type_in_to_control_list_entry(self, code):
+        self.driver.find_element_by_id(self.control_list_entry).clear()
         self.driver.find_element_by_id(self.control_list_entry).send_keys(code)
 
     def choose_report_summary(self, num):

@@ -34,8 +34,8 @@ def pytest_addoption(parser):
     parser.addoption("--sso_sign_in_url", action="store", default="https://sso.trade.uat.uktrade.io/login/", help="url")
 
     if env.lower() == 'local':
-        parser.addoption("--internal_url", action="store", default="http://localhost:8200", help="url")
-        parser.addoption("--lite_api_url", action="store", default="http://localhost:8100", help="url")
+        parser.addoption("--internal_url", action="store", default="http://localhost:" + str(os.environ.get('PORT')), help="url")
+        parser.addoption("--lite_api_url", action="store", default=str(os.environ.get('LITE_API_URL')), help="url")
     elif env == 'demo':
         raise NotImplementedError('This is the demo environment - Try another environment instead')
     else:
