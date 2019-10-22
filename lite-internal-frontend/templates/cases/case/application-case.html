@@ -89,7 +89,7 @@
     </form>
 {% elif case.application.licence_type.key == 'standard_licence' %}
     <form action="{% url 'cases:review_goods' case.id %}" method="get">
-    {% if 'ASSESS_GOODS' in permissions %}
+    {% if 'REVIEW_GOODS' in permissions %}
         <button id="button-review-goods" name="action" value="review-goods" class="govuk-button" data-module="govuk-button">
             {% get_string 'cases.case.review_goods' %}
         </button>

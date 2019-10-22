@@ -36,7 +36,7 @@ class ReviewGoods(TemplateView):
             return redirect(reverse_lazy('cases:assign_flags', kwargs={'pk': case_id}) + post_url)
 
         permissions = get_user_permissions(request)
-        if 'ASSESS_GOODS' not in permissions:
+        if 'REVIEW_GOODS' not in permissions:
             return redirect(reverse_lazy('cases:case', kwargs={'pk': case_id}))
 
         goods_pk_list = request.GET.getlist('items', request.GET.getlist('goods'))
@@ -79,7 +79,7 @@ class ReviewGoodsClc(TemplateView):
         self.case_id = str(kwargs['pk'])
 
         permissions = get_user_permissions(request)
-        if 'ASSESS_GOODS' not in permissions:
+        if 'REVIEW_GOODS' not in permissions:
             return redirect(reverse_lazy('cases:case', kwargs={'pk': self.case_id}))
 
         self.goods = request.GET.getlist('items', request.GET.getlist('goods'))

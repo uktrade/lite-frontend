@@ -23,7 +23,7 @@ class Respond(TemplateView):
         self.form = respond_to_clc_query_form(request, self.case)
 
         permissions = get_user_permissions(request)
-        if 'ASSESS_GOODS' not in permissions:
+        if 'REVIEW_GOODS' not in permissions:
             return redirect(reverse_lazy('cases:case', kwargs={'pk': case_id}))
 
         return super(Respond, self).dispatch(request, *args, **kwargs)
