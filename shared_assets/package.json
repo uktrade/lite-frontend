@@ -2,7 +2,7 @@
   "name": "lite-shared-assets",
   "version": "1.0.0",
   "scripts": {
-    "test": "sass-lint -v"
+    "test": "sass-lint"
   },
   "repository": {
     "type": "git",
