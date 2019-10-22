@@ -75,7 +75,7 @@ def add_an_ecju_query(driver, seed_data_config, context):
     lite_client.seed_ecju.add_ecju_query(context.case_id)
 
 
-@fixture(scope="module")
+@fixture(scope="function")
 def apply_for_clc_query(driver, seed_data_config, context):
     lite_client = get_lite_client(context, seed_data_config)
     lite_client.seed_clc.add_clc_query(lite_client.seed_good)
