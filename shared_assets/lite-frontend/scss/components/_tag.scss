@@ -20,6 +20,12 @@
 		margin-bottom: govuk-spacing(3);
 	}
 
+	&--hollow {
+		color: govuk-colour("dark-grey");
+		background-color: govuk-colour("white");
+		border: 2px solid govuk-colour("light-grey");
+	}
+
 	&--green {
 		background-color: govuk-colour("green");
 	}
