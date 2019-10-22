@@ -63,8 +63,6 @@
 				{% include "components/details.html" with title=question.title description=question.description %}
 			{% elif question.input_type == "heading" %}
 				{% include "components/heading.html" with text=question.text %}
-			{% elif question.input_type == "label" %}
-				{% include "components/label.html" with text=question.text %}
 			{% else %}
 				{% if question.input_type == "side_by_side" %}
 					<div class="lite-side-by-side-wrapper">
@@ -73,7 +71,7 @@
 						{% endfor %}
 					</div>
 				{% elif question.input_type == "group" %}
-					<div id="pane_{{ question.name }}" class="{% for class in component.classes %}{{ class }} {% endfor %}">
+					<div id="pane_{{ question.name }}" class="{% for class in question.classes %}{{ class }} {% endfor %}">
 						{% for question in question.components %}
 							{% include "components.html" with question=question errors=errors %}
 						{% endfor %}
