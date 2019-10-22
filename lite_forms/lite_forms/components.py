@@ -267,10 +267,11 @@ class Group:
     Groups components together inside of a div
     """
 
-    def __init__(self, name, components):
+    def __init__(self, name, components, classes):
         self.input_type = 'group'
         self.name = name
         self.components = components
+        self.classes = classes
 
 
 class Filter:
