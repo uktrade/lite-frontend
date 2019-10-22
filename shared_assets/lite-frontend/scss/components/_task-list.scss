@@ -63,8 +63,11 @@ $task-list-spacing: govuk-spacing(5);
 
 .lite-task-list__item-details {
 	.govuk-caption-m {
-		margin: 0;
-		margin-top: - govuk-spacing(3);
+		margin: - govuk-spacing(3) 0 0;
+	}
+
+	* {
+		border: none;
 	}
 }
 
