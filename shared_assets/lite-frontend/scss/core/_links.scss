@@ -9,3 +9,34 @@
 		transform: translateY(1px);
 	}
 }
+
+.lite-link--warning {
+	@include govuk-font($size: 19);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: govuk-colour("red")!important;
+	text-decoration: none;
+	border-bottom: 1px solid transparent;
+	line-height: 30px!important;
+
+	&:hover {
+		color: govuk-shade(govuk-colour("red"), 25%)!important;
+		border-bottom: 1px solid currentColor;
+	}
+
+	&:active {
+		color: govuk-shade(govuk-colour("red"), 50%)!important;
+	}
+
+	svg {
+		width: 14px;
+		height: 14px;
+		margin-bottom: 1px;
+		margin-right: govuk-spacing(2);
+
+		* {
+			fill: currentColor;
+		}
+	}
+}
