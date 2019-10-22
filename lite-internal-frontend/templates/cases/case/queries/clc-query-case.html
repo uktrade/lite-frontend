@@ -22,7 +22,7 @@
 			<h2 class="govuk-heading-l app-reference-code">{{ case.query.id|reference_code }}</h2>
 		</div>
 		<div class="lite-app-bar__controls">
-			{% if case.query.good.status.key != 'verified' %}
+			{% if case.query.good.status.key != 'verified' and 'ASSESS_GOODS' in permissions %}
 				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:respond_to_clc_query' case.id %}">
 					Respond to query
 				</a>

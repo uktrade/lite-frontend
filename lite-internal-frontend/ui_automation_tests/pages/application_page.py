@@ -2,6 +2,7 @@ from selenium.webdriver.support.ui import Select
 import time
 
 from helpers.BasePage import BasePage
+from selenium.common.exceptions import NoSuchElementException
 
 
 class ApplicationPage(BasePage):
@@ -114,6 +115,13 @@ class ApplicationPage(BasePage):
 
     def click_review_goods(self):
         self.driver.find_element_by_id(self.review_goods).click()
+
+    def is_review_goods_button_present(self):
+        try:
+            self.driver.find_element_by_id(self.review_goods)
+            return True
+        except NoSuchElementException:
+            return False
 
     def click_edit_good_flags(self):
         edit_goods_btn = self.driver.find_element_by_id(self.edit_goods_flags)

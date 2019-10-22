@@ -94,7 +94,8 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I combine all advice
     And I finalise the licence
     Then Todays date is filled in
-    And I reset the permissions
+    When I reset the permissions
+    Then I see permissions are cleared
 
 
   @LT_1334_finalise_goods_countries_matrix
@@ -120,4 +121,5 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Then I see error message "Albania (Approve)"
     When I select approve for all combinations of goods and countries
     And I click continue
-    Then I reset the permissions
+    And I reset the permissions
+    Then I see permissions are cleared

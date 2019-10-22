@@ -7,6 +7,7 @@ from cases.forms.review_goods_clc import review_goods_clc_query_form
 from cases.services import get_good, get_case, post_goods_control_code
 from core.builtins.custom_tags import get_string
 from core.helpers import convert_dict_to_query_params
+from core.services import get_user_permissions
 
 
 class Good(TemplateView):
@@ -33,6 +34,10 @@ class ReviewGoods(TemplateView):
             params['level'] = 'goods'
             post_url = '?' + convert_dict_to_query_params(params)
             return redirect(reverse_lazy('cases:assign_flags', kwargs={'pk': case_id}) + post_url)
+
+        permissions = get_user_permissions(request)
+        if 'ASSESS_GOODS' not in permissions:
+            return redirect(reverse_lazy('cases:case', kwargs={'pk': case_id}))
 
         goods_pk_list = request.GET.getlist('items', request.GET.getlist('goods'))
         goods = []
@@ -72,6 +77,11 @@ class ReviewGoodsClc(TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         self.case_id = str(kwargs['pk'])
+
+        permissions = get_user_permissions(request)
+        if 'ASSESS_GOODS' not in permissions:
+            return redirect(reverse_lazy('cases:case', kwargs={'pk': self.case_id}))
+
         self.goods = request.GET.getlist('items', request.GET.getlist('goods'))
 
         parameters = {

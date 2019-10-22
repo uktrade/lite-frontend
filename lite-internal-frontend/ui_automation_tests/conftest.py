@@ -2,6 +2,8 @@ import os
 
 from pytest_bdd import given, when, then, parsers
 
+from pages.roles_pages import RolesPages
+from pages.users_page import UsersPage
 from ui_automation_tests.fixtures.env import environment # noqa
 from ui_automation_tests.fixtures.add_a_flag import add_uae_flag, add_suspicious_flag, add_organisation_suspicious_flag # noqa
 from ui_automation_tests.fixtures.add_queue import add_queue # noqa
@@ -215,3 +217,29 @@ def assign_flags_to_case(driver, context):
     case_flags_pages.select_flag(context, context.flag_name)
     shared = Shared(driver)
     shared.click_submit()
+
+
+@when("I give myself all permissions") # noqa
+def get_required_permissions(driver):
+    roles_page = RolesPages(driver)
+    HeaderPage(driver).open_users()
+    UsersPage(driver).click_on_manage_roles()
+    roles_page.click_edit_for_default_role()
+    roles_page.edit_default_role_to_have_all_permissions()
+    Shared(driver).click_submit()
+
+
+@when("I reset the permissions") # noqa
+def reset_permissions(driver):
+    roles_page = RolesPages(driver)
+    HeaderPage(driver).open_users()
+    UsersPage(driver).click_on_manage_roles()
+    roles_page.click_edit_for_default_role()
+    roles_page.remove_all_permissions_from_default_role()
+    Shared(driver).click_submit()
+
+
+@then("I see permissions are cleared") # noqa
+def no_permissions(driver):
+    roles_page = RolesPages(driver)
+    assert roles_page.current_permissions_count_for_default() == 0
