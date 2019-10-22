@@ -1,3 +1,5 @@
+from enum import Enum
+
 from lite_forms.styles import ButtonStyle
 
 
@@ -365,6 +367,23 @@ class Summary:
         self.classes = classes
         self.extras = extras
         self.input_type = 'summary'
+
+class List:
+    class ListType(Enum):
+        DEFAULT = 1
+        BULLETED = 2
+        NUMBERED = 3
+
+    def __init__(self,
+                 items: [],
+                 title: str = None,
+                 type: ListType = ListType.DEFAULT,
+                 classes: [] = None):
+        self.items = items
+        self.title = title
+        self.type = type
+        self.classes = classes
+        self.input_type = 'list'
 
 
 class ControlListEntryInput:

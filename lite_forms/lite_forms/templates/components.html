@@ -7,17 +7,21 @@
 						govuk-form-group--error
 					{% endif %}
 			{% endif %}">
-	<label class="govuk-label" for="{{ question.name }}">
-		{{ question.title }}
-		{% if question.optional %}
-			<p class="lite-form-optional">
-				<span class="govuk-visually-hidden">This field is </span>Optional
-			</p>
-		{% endif %}
-	</label>
-	<span class="govuk-hint" for="{{ question.name }}">
-		{{ question.description|safe }}
-	</span>
+	{% if question.title %}
+		<label class="govuk-label" for="{{ question.name }}">
+			{{ question.title }}
+			{% if question.optional %}
+				<p class="lite-form-optional">
+					<span class="govuk-visually-hidden">This field is </span>Optional
+				</p>
+			{% endif %}
+		</label>
+	{% endif %}
+	{% if question.description %}
+		<span class="govuk-hint" for="{{ question.name }}">
+			{{ question.description|safe }}
+		</span>
+	{% endif %}
 
 	<!-- Error -->
 	{% if errors %}
@@ -65,6 +69,8 @@
 			{% include "components/date.html" with component=question errors=errors %}
         {% elif question.input_type == "summary" %}
 			{% include "components/summary.html" with component=question %}
+		{% elif question.input_type == "list" %}
+			{% include "components/list.html" with component=question %}
         {% elif question.input_type == "control_list_entry" %}
 			{% include "components/control_list_entry.html" with component=question value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
         {% elif question.input_type == "markdown" %}
