@@ -25,6 +25,8 @@ services:
     networks:
       - lite-api_default
     command: pipenv run ./manage.py runserver 0.0.0.0:8080
+#    use this command to use gunicorn rather than the django development server
+#    command: pipenv run gunicorn -c gconfig.py -b 0.0.0.0:8080 --reload conf.wsgi
 
 networks:
   lite-api_default:
