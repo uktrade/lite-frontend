@@ -17,16 +17,15 @@ $task-list-spacing: govuk-spacing(2);
 
 .lite-task-list__section-number {
 	display: table-cell;
-	@include govuk-media-query($from: tablet) {
-		min-width: govuk-spacing(6);
-		padding-right: 0;
-	}
+	min-width: govuk-spacing(6);
+	padding-right: 0;
 }
 
 .lite-task-list__items {
 	@include govuk-font($size: 19);
 	@include govuk-responsive-margin(8, "bottom");
 	list-style: none;
+	padding-left: govuk-spacing(6);
 	@include govuk-media-query($from: tablet) {
 		padding-left: govuk-spacing(6);
 	}
@@ -41,10 +40,13 @@ $task-list-spacing: govuk-spacing(2);
 }
 
 .lite-task-list__item-header {
-	display: grid;
-	grid-template-columns: 1fr auto;
-	grid-gap: govuk-spacing(3);
-	line-height: 34px!important;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	a {
+		margin-right: $task-list-spacing;
+	}
 
 	.lite-tag {
 		@include govuk-font($size: 16, $weight: bold);
@@ -52,6 +54,7 @@ $task-list-spacing: govuk-spacing(2);
 		line-height: 34px!important;
 		padding-top: 0;
 		padding-bottom: 0;
+		min-width: 150px;
 	}
 }
 
