@@ -38,5 +38,19 @@
 
     $('#editable').atwho(at_config);
   });
-  </script>
+</script>
 {% endblock %}
+
+<div class="govuk-label">
+	<h3>Adding custom variables</h3>
+	<p>Use double curly braces to add custom variables to your paragraph text:</p>
+	<div class="govuk-inset-text">Hello {% templatetag openvariable %} applicant.name {% templatetag closevariable %}, your licence number is {% templatetag openvariable %} licence.id {% templatetag closevariable %}</div>
+	<noscript>
+			You can add the;
+			<ul>
+				{% for variable in variables %}
+				<li>{{ variable.key | old_character:"." | new_character:" " | title }}, by writing <b>{% templatetag openvariable %} {{ variable.key }} {% templatetag closevariable %}</b></li>
+				{% endfor %}
+			</ul>
+	</noscript>
+</div>
