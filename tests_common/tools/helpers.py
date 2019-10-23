@@ -96,6 +96,10 @@ def scroll_to_bottom_of_page(driver):
     driver.execute_script("window.scrollTo(0, document.body.scrollHeight)")
 
 
+def scroll_to_right_of_page(driver):
+    driver.execute_script("window.scrollBy(document.body.scrollWidth, 0)")
+
+
 def highlight(element):
     """
     Highlights (blinks) a Selenium Webdriver element
