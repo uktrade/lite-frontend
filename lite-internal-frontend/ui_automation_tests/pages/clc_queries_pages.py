@@ -9,6 +9,7 @@ class ClcQueriesPages(BasePage):
     report_summary = 'report_summary'  # name
     comment = 'comment'  # id
     case_close = '.lite-info-bar'  # css
+    app_bar = '.lite-app-bar'  # css
     submit_button = '.govuk-button[type*="submit"]'
 
     def click_respond_to_query(self):
@@ -33,4 +34,4 @@ class ClcQueriesPages(BasePage):
         return len(self.driver.find_elements_by_css_selector(self.case_close)) == 1
 
     def is_respond_to_query_button_present(self):
-        return len(self.driver.find_elements_by_css_selector(self.respond_to_query_btn)) > 0
+        return "Respond to query" in self.driver.find_element_by_css_selector(self.app_bar).text

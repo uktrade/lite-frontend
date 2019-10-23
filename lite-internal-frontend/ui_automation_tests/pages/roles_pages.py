@@ -38,7 +38,7 @@ class RolesPages():
                 element.click()
 
     def current_permissions_count_for_default(self):
-        elements = self.driver.find_elements_by_css_selector(".lite-table__body .lite-table__row")[1]
+        elements = self.driver.find_elements_by_css_selector(".lite-table__body .lite-table__row")[0]
         permissions = elements.find_elements_by_css_selector(".lite-tick-cross-list li")
         role_permissions = 0
         for permission in permissions:

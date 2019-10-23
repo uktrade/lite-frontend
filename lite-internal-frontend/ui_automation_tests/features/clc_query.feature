@@ -19,7 +19,7 @@ Feature: I want to respond to clc queries
     Then I see permissions are cleared
 
   @LT_1580_test_assess_goods_permission
-  Scenario: respond to a clc type case
+  Scenario: Respond to query not visible
     Given I create clc query or clc query has been previously created
     And I sign in to SSO or am signed into SSO
     And I create report summary picklist
