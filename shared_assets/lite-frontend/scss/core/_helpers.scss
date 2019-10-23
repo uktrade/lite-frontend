@@ -44,6 +44,11 @@
 	display: none;
 }
 
+.lite-\!-sticky {
+	position: sticky;
+	top: govuk-spacing(6);
+}
+
 .lite-\!-text-align-right {
 	text-align: right;
 }
