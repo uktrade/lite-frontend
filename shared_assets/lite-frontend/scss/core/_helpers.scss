@@ -5,12 +5,12 @@
 }
 
 .lite-js-only {
-	visibility: collapse;
+	display: none;
 }
 
 .js-enabled {
 	.lite-js-only {
-		visibility: visible;
+		display: block;
 	}
 }
 
