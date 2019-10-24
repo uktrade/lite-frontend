@@ -51,6 +51,8 @@
 			{% include "components/number.html" with name=question.name value=question.name %}
 		{% elif question.input_type == "radiobuttons" %}
 			{% include "components/radiobuttons.html" with component=question data=data|key_value:question.name %}
+        {% elif question.input_type == "radiobuttons_image" %}
+			{% include "components/radiobuttons_image.html" with component=question data=data|key_value:question.name %}
 		{% elif question.input_type == "checkboxes" %}
 			{% include "components/checkboxes.html" with component=question data=data|key_value:question.name %}
 		{% elif question.input_type == "select" %}

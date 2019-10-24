@@ -237,6 +237,25 @@ class RadioButtons(_Component):
         self.input_type = 'radiobuttons'
 
 
+class RadioButtonsImage(RadioButtons):
+    """
+    Displays radiobuttons on the page as images
+    Add Option components to the options array to show radiobuttons
+    Add optional classes such as 'lite-radiobuttons--inline' or 'govuk-radiobuttons--small'
+    """
+
+    def __init__(self,
+                 name: str,
+                 options: [],
+                 title: str = '',
+                 description: str = '',
+                 optional: bool = False,
+                 classes: [] = None,
+                 empty_notice: str = 'No items'):
+        super().__init__(name, options, title, description, optional, classes, empty_notice)
+        self.input_type = 'radiobuttons_image'
+
+
 class Select(_Component):
     def __init__(self,
                  name: str,
@@ -328,7 +347,7 @@ class TextArea(_Component):
         self.input_type = 'textarea'
 
 
-class MarkdownArea(_Component):
+class MarkdownArea(TextArea):
     def __init__(self,
                  name: str,
                  variables: [],
