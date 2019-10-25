@@ -1,7 +1,10 @@
+from django.test.client import RequestFactory
+
 from unittest import TestCase
 
 from lite_forms.components import Form, DetailComponent, TextInput, FormGroup
 from lite_forms.helpers import nest_data, flatten_data, remove_unused_errors, get_form_by_pk
+from lite_forms.submitters import submit_paged_form
 
 
 class FormTests(TestCase):
@@ -86,4 +89,49 @@ class FormTests(TestCase):
             'organisation.site.address.city': 'London',
             'organisation.site.name': 'Lemonworld',
             'user.first_name': "Matthew",
+        })
+
+
+class TestSubmitPagedFormTestCase(TestCase):
+    def setUp(self):
+        self.request_factory = RequestFactory()
+
+    def test_expect_many_values(self):
+        """
+        Ensure submit_paged_form handles a field which expects many values.
+        """
+        request = self.request_factory.post(
+            "/thing",
+            (
+                "key_a=a&key_a=b&key_a=c&"
+                "key_b=d&key_b=e&key_b=f&"
+                "key_c=g&"
+                "key_d=h&"
+                "form_pk=foo&"
+                "csrfmiddlewaretoken=bar"
+            ),
+            content_type="application/x-www-form-urlencoded",
+        )
+        forms = FormGroup([
+            Form(questions=[]),
+            Form(questions=[]),
+            Form(questions=[]),
+        ])
+
+        def handle_post(request, data):
+            return (data, 200)
+
+        form, data = submit_paged_form(
+            request,
+            forms,
+            handle_post,
+            expect_many_values=["key_a", "key_c", "key_e"]
+        )
+
+        self.assertEqual(data, {
+            "key_a": ["a", "b", "c"],
+            "key_b": "f",
+            "key_c": ["g"],
+            "key_d": "h",
+            "key_e": [],
         })
