@@ -113,13 +113,13 @@ class ReviewGoodsClc(TemplateView):
         form_data = {
             'objects': self.goods,
             'comment': request.POST.get('comment'),
-            'report_summary': request.POST.get('report_summary'),
             'control_code': request.POST.get('control_code', None),
             'is_good_controlled': request.POST.get('is_good_controlled')
         }
 
-        if request.POST.get('report_summary') == 'None':
-            del form_data['report_summary']
+        report_summary = request.POST.get('report_summary', None)
+
+        form_data['report_summary'] = report_summary if report_summary and report_summary != 'None' else None
 
         response = post_goods_control_code(request, self.case_id, form_data)
 

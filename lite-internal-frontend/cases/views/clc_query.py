@@ -73,13 +73,6 @@ class Respond(TemplateView):
             return redirect(reverse_lazy('cases:case', kwargs={'pk': self.case['id']}))
 
         # Remove validate only key and go to overview page
-        data = request.POST.copy()
-
-        if data.get('validate_only') and data.get('report_summary'):
-            report_summary = get_picklist_item(request, data['report_summary'])
-        else:
-            report_summary = {'text': ''}
-
         if response_data['is_good_controlled'] == 'no':
             response_data.pop('control_code')
 
@@ -87,8 +80,11 @@ class Respond(TemplateView):
             'title': 'Response Overview',
             'data': response_data,
             'case': self.case,
-            'report_summary': report_summary
         }
+
+        if response_data.get('report_summary'):
+            context['report_summary'] = get_picklist_item(request, response_data['report_summary'])
+
         return render(request, 'cases/case/clc_query_overview.html', context)
 
 
