@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -yq \
     libxml2-dev=2.9.4+dfsg1-2.2+deb9u2 \
     libxslt-dev \
     libz-dev \
+    python-pytest-xdist \
     xclip=0.12+svn84-4+b1
 
 # GeckoDriver v0.19.1

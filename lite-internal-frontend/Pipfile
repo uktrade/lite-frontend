@@ -11,6 +11,7 @@ selenium = "==3.141.0"
 allure-pytest = "==2.6.1"
 allure-python-commons = "==2.6.1"
 pytest-html = "*"
+pytest-xdist = "*"
 
 [packages]
 Django = "==2.2.4"

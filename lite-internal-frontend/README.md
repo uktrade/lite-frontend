@@ -64,6 +64,7 @@ Note the migrations will need to be run again the next time the service is to be
   * `pipenv sync -d`
 * Run `pipenv run python -m pytest`
 * For a specific tag (don't include the @) `pipenv run python -m pytest -m "tag name"`
+* To run in parallel `pipenv run python -m pytest -n 3` (replace 3 with how many you want in parallel.)
 * You may need to make sure in pycharm, within Preferences -> Tools -> Python Integrated Tools -> Default Test Runner is pytest
 * You may need to change the run configuration for the tests too. Click on run, edit configurations and make sure the Python framework being used in the left hand pane is Python tests 
 * You will need to change your .env file to include:
