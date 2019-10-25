@@ -30,8 +30,11 @@ def submit_paged_form(
     post_to,
     pk=None,
     inject_data=None,
-    expect_many_values=[],
+    expect_many_values=None,
 ):
+    if expect_many_values is None:
+        expect_many_values = []
+
     data = request.POST.copy()
 
     if inject_data:
