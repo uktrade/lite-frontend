@@ -72,7 +72,7 @@ def create_picklist(name, text, type, proviso=None):
     return picklist
 
 
-def create_request_data(exporter_user, gov_user):
+def create_request_data(exporter_user, gov_user, base_url):
     exporter = create_user(exporter_user)
     request_data = {
         'organisation': create_organisation(exporter, 'commercial', 'Archway Communications'),
@@ -144,8 +144,8 @@ def create_request_data(exporter_user, gov_user):
         'queue': {
             'team': '00000000-0000-0000-0000-000000000001'
         },
-        'document': create_document('document 1', 'document for test setup', upload_test_document_to_aws()),
-        'additional_document': create_document('picture', 'document for additional', upload_test_document_to_aws()),
+        'document': create_document('document 1', 'document for test setup', upload_test_document_to_aws(base_url)),
+        'additional_document': create_document('picture', 'document for additional', upload_test_document_to_aws(base_url)),
         'proviso_picklist': create_picklist('Misc', 'My proviso advice would be this.', 'proviso', proviso='My proviso would be this.'),
         'standard_advice_picklist': create_picklist('More advice', 'My standard advice would be this.', 'standard_advice'),
         'report_picklist': create_picklist('More advice', 'My standard advice would be this.', 'report_summary'),

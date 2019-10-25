@@ -6,7 +6,7 @@ from ...seed_data.make_requests import make_request
 
 class SeedParty(SeedClass):
     def add_document(self, url):
-        doc_s3_key = upload_test_document_to_aws()
+        doc_s3_key = upload_test_document_to_aws(self.base_url)
         data = create_document('kebab', 'tasty', doc_s3_key)
         make_request("POST", base_url=self.base_url, url=url, headers=self.export_headers, body=data)
 

@@ -30,7 +30,8 @@ class SeedData:
         self.base_url = seed_data_config['api_url'].rstrip('/')
         self.request_data = create_request_data(
             exporter_user=exporter_user,
-            gov_user=gov_user
+            gov_user=gov_user,
+            base_url=self.base_url
         )
 
         self.gov_headers = gov_headers.copy()
