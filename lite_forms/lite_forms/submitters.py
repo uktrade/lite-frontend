@@ -24,7 +24,17 @@ def submit_single_form(request: HttpRequest, form: Form, post_to, pk=None, overr
     return None, validated_data
 
 
-def submit_paged_form(request: HttpRequest, form_group: FormGroup, post_to, pk=None, inject_data=None):
+def submit_paged_form(
+    request: HttpRequest,
+    form_group: FormGroup,
+    post_to,
+    pk=None,
+    inject_data=None,
+    expect_many_values=None,
+):
+    if expect_many_values is None:
+        expect_many_values = []
+
     data = request.POST.copy()
 
     if inject_data:
@@ -38,8 +48,13 @@ def submit_paged_form(request: HttpRequest, form_group: FormGroup, post_to, pk=N
     del data['form_pk']
     del data['csrfmiddlewaretoken']
 
+    # Ensure data which is expected to have multiple values.
+    for many_value_key in expect_many_values:
+        data[many_value_key] = request.POST.getlist(many_value_key)
+
     # Post the data to the validator and check for errors
     nested_data = nest_data(data)
+
     if pk:
         validated_data, status_code = post_to(request, pk, nested_data)
     else:
@@ -73,7 +88,11 @@ def submit_paged_form(request: HttpRequest, form_group: FormGroup, post_to, pk=N
 
     # Add existing post data to new form as hidden fields
     for key, value in data.items():
-        next_form.questions.insert(0, HiddenField(key, value))
+        if key in expect_many_values:
+            for sub_value in value:
+                next_form.questions.insert(0, HiddenField(key, sub_value))
+        else:
+            next_form.questions.insert(0, HiddenField(key, value))
 
     # Go to the next page
     return form_page(request, next_form, data=data), validated_data
