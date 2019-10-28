@@ -27,12 +27,11 @@ class SeedData:
     def __init__(self, seed_data_config):
         exporter_user = seed_data_config['exporter']
         gov_user = seed_data_config['gov']
-        test_s3_key = seed_data_config['s3_key']
         self.base_url = seed_data_config['api_url'].rstrip('/')
         self.request_data = create_request_data(
             exporter_user=exporter_user,
-            test_s3_key=test_s3_key,
-            gov_user=gov_user
+            gov_user=gov_user,
+            base_url=self.base_url
         )
 
         self.gov_headers = gov_headers.copy()
@@ -97,7 +96,8 @@ class SeedData:
     def add_countries(self, draft_id):
         self.log("Adding countries: ...")
         make_request("POST", base_url=self.base_url, url='/applications/' + draft_id + '/countries/',
-                     headers=self.export_headers, body={'countries': ['US', 'AL', 'ZM']})
+                     headers=self.export_headers, body={'countries': ['US']})
+        self.add_to_context('country', {'code': 'US', 'name': 'United States'})
 
     def add_draft(self, draft=None, good=None, enduser=None, ultimate_end_user=None, consignee=None, third_party=None,
                   additional_documents=None):
@@ -115,6 +115,7 @@ class SeedData:
 
     def add_open_draft(self, draft=None):
         draft_id = self.create_draft(draft)
+        self.add_to_context('open_draft_id', draft_id)
         self.add_site(draft_id)
         self.add_countries(draft_id)
         self.seed_good.add_open_draft_good(draft_id)
@@ -133,5 +134,5 @@ class SeedData:
 
     def submit_open_application(self, draft_id=None):
         item = self.submit_application(draft_id)
-        self.add_to_context('open_application_id', item['id'])
-        self.add_to_context('open_case_id', item['case_id'])
+        self.add_to_context('application_id', item['id'])
+        self.add_to_context('case_id', item['case_id'])

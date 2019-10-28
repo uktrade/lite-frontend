@@ -47,4 +47,5 @@ class SeedGood(SeedClass):
         self.log("Adding goods_type: ...")
         data = self.request_data['good_type']
         data['application'] = draft_id
-        make_request("POST", base_url=self.base_url, url='/goodstype/', headers=self.export_headers, body=data)
+        make_request("POST", base_url=self.base_url, url='/applications/' + draft_id + '/goodstypes/',
+                     headers=self.export_headers, body=data)

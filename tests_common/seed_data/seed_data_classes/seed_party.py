@@ -1,10 +1,13 @@
+from shared.seed_data.manage_s3_documents import upload_test_document_to_aws
+from shared.seed_data.request_data import create_document
 from ...seed_data.seed_data_classes.seed_class import SeedClass
 from ...seed_data.make_requests import make_request
 
 
 class SeedParty(SeedClass):
     def add_document(self, url):
-        data = self.request_data['document']
+        doc_s3_key = upload_test_document_to_aws(self.base_url)
+        data = create_document('kebab', 'tasty', doc_s3_key)
         make_request("POST", base_url=self.base_url, url=url, headers=self.export_headers, body=data)
 
     def add_end_user_document(self, draft_id):
