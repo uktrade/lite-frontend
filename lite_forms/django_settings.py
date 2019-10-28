@@ -1,1 +1,1 @@
-SECRET_KEY = "something"
+SECRET_KEY = "something"  # nosec
