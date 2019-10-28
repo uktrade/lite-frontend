@@ -7,7 +7,7 @@ from datetime import date
 from cases.forms.finalise_case import approve_licence_form, refuse_licence_form
 from cases.services import post_user_case_advice, get_user_case_advice, get_team_case_advice, \
     get_final_case_advice, coalesce_user_advice, coalesce_team_advice, post_team_case_advice, \
-    post_final_case_advice, clear_team_advice, clear_final_advice, get_case, put_applications, \
+    post_final_case_advice, clear_team_advice, clear_final_advice, get_case, put_application_status, \
     post_good_countries_decisions, get_good_countries_decisions, _generate_data_and_keys, \
     _generate_post_data_and_errors
 from cases.views_helpers import get_case_advice, render_form_page, post_advice, post_advice_details, \
@@ -300,6 +300,6 @@ class Finalise(TemplateView):
         application_id = case.get('application').get('id')
         data = request.POST.copy()
         data['status'] = 'finalised'
-        put_applications(request, application_id, data)
+        put_application_status(request, application_id, data)
 
         return redirect(reverse_lazy('cases:case', kwargs={'pk': case['id']}))

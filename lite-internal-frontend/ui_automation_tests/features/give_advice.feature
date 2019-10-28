@@ -118,7 +118,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I combine all advice
     And I finalise the goods and countries
     And I click continue
-    Then I see error message "Albania (Approve)"
+    Then I see country error message
     When I select approve for all combinations of goods and countries
     And I click continue
     And I reset the permissions

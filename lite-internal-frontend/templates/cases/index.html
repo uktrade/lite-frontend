@@ -193,11 +193,7 @@
                     </p>
                 {% endif %}
                 <p class="govuk-body">
-                    {% if case.type.key == 'clc_query' %}
-                        {{ case.status|default:"Untitled"|sentence_case }}
-                    {% else %}
-                        {{ case.status|default:"Untitled"|sentence_case }}
-                    {% endif %}
+                    {{ case.status|default:"Untitled"|sentence_case }}
                 </p>
                 </div>
 			{% endfor %}

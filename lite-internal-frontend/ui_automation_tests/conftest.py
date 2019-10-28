@@ -4,6 +4,7 @@ from pytest_bdd import given, when, then, parsers
 
 from pages.roles_pages import RolesPages
 from pages.users_page import UsersPage
+
 from ui_automation_tests.fixtures.env import environment # noqa
 from ui_automation_tests.fixtures.add_a_flag import add_uae_flag, add_suspicious_flag, add_organisation_suspicious_flag # noqa
 from ui_automation_tests.fixtures.add_queue import add_queue # noqa
@@ -13,7 +14,7 @@ from ui_automation_tests.fixtures.add_a_picklist import add_an_ecju_query_pickli
 from ui_automation_tests.shared.fixtures.apply_for_application import apply_for_standard_application, apply_for_clc_query, apply_for_eua_query, apply_for_open_application # noqa
 from ui_automation_tests.shared.fixtures.driver import driver # noqa
 from ui_automation_tests.shared.fixtures.sso_sign_in import sso_sign_in # noqa
-from ui_automation_tests.shared.fixtures.core import context, invalid_username, seed_data_config, exporter_info, internal_info, s3_key # noqa
+from ui_automation_tests.shared.fixtures.core import context, invalid_username, seed_data_config, exporter_info, internal_info # noqa
 from ui_automation_tests.shared.fixtures.urls import internal_url, sso_sign_in_url, api_url # noqa
 
 import shared.tools.helpers as utils
@@ -75,12 +76,12 @@ def when_go_to_internal_homepage(driver, internal_url):
     driver.get(internal_url)
 
 
-@given('I go to internal homepage') # noqa
+@given('I go to internal homepage')  # noqa
 def go_to_internal_homepage(driver, internal_url, sso_sign_in):
     driver.get(internal_url)
 
 
-@given('I sign in to SSO or am signed into SSO') # noqa
+@given('I sign in to SSO or am signed into SSO')  # noqa
 def sign_into_sso(driver, sso_sign_in):
     pass
 
@@ -92,7 +93,7 @@ def click_on_created_application(driver, context, internal_url):
 
 @when('I go to open application previously created')  # noqa
 def click_on_created_application(driver, context, internal_url):
-    driver.get(internal_url.rstrip('/') + '/cases/' + context.open_case_id)
+    driver.get(internal_url.rstrip('/') + '/cases/' + context.case_id)
 
 
 @when('I go to end user advisory previously created')  # noqa
@@ -141,7 +142,7 @@ def i_click_back(driver):
     Shared(driver).click_back()
 
 
-@given('I go to flags') # noqa
+@given('I go to flags')  # noqa
 def go_to_flags(driver, internal_url, sso_sign_in):
     driver.get(internal_url.rstrip("/")+"/flags")
 
@@ -186,7 +187,8 @@ def new_queue_shown_in_dropdown(driver, context):
 
 @then('there are no cases shown')  # noqa
 def no_cases_shown(driver):
-    assert 'There are no new cases to show.' in QueuesPages(driver).get_no_cases_text(), "There are cases shown in the newly created queue."
+    assert 'There are no new cases to show.' in QueuesPages(driver).get_no_cases_text(),\
+        "There are cases shown in the newly created queue."
 
 
 @when(parsers.parse('I click on the "{queue_name}" queue in dropdown'))  # noqa
@@ -210,7 +212,7 @@ def go_to_queues_via_menu(driver):
     HeaderPage(driver).click_queues()
 
 
-@given('I go to queues') # noqa
+@given('I go to queues')  # noqa
 def go_to_queues(driver, sso_sign_in, internal_url):
     driver.get(internal_url.rstrip('/') + '/queues/')
 

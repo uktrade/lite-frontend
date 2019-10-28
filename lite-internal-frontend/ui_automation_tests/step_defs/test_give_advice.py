@@ -115,6 +115,12 @@ def finalise_goods_and_countries(driver):
     page.finalise_goods_and_countries()
 
 
+@then("I see country error message")
+def i_see_country_error_message(driver, context):
+    shared = Shared(driver)
+    assert context.country['name'] in shared.get_text_of_error_message(0), "expected error message is not displayed"
+
+
 @when("I select approve for all combinations of goods and countries")
 def select_approve_for_all(driver):
     page = GiveAdvicePages(driver)

@@ -10,7 +10,7 @@ from s3chunkuploader.file_handler import S3FileUploadHandler, s3_client
 
 from cases.forms.attach_documents import attach_documents_form
 from cases.forms.move_case import move_case_form
-from cases.services import get_case, post_case_notes, put_applications, get_activity, put_case, \
+from cases.services import get_case, post_case_notes, put_application_status, get_activity, put_case, \
     put_end_user_advisory_query, _get_all_distinct_flags
 from cases.services import post_case_documents, get_case_documents, get_document
 from conf import settings
@@ -140,8 +140,8 @@ class ManageCase(TemplateView):
         case = get_case(request, case_id)
         statuses, _ = get_statuses(request)
 
-        reduced_statuses = {}
-        reduced_statuses['statuses'] = [x for x in statuses['statuses'] if x['status'] != 'finalised']
+        reduced_statuses = {'statuses': [x for x in statuses['statuses'] if
+                                         (x['status'] != 'finalised' and x['status'] != 'applicant_editing')]}
 
         if case['type']['key'] == 'application':
             title = 'Manage ' + case.get('application').get('name')
@@ -163,7 +163,7 @@ class ManageCase(TemplateView):
 
         if case['type']['key'] == 'application':
             application_id = case.get('application').get('id')
-            put_applications(request, application_id, request.POST)
+            put_application_status(request, application_id, request.POST)
         elif case['type']['key'] == 'end_user_advisory_query':
             query_id = case.get('query').get('id')
             put_end_user_advisory_query(request, query_id, request.POST)
