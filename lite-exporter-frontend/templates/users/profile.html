@@ -1,15 +1,9 @@
 {% extends 'layouts/two_pane.html' %}
 
-{% load humanize custom_tags %}
-
-{% block back_link %}
-	<a href="#" class="govuk-back-link">Back</a>
-{% endblock %}
-
 {% block two_thirds %}
 
 	<h1 class="govuk-heading-xl">
-		{{ title }}
+		{% block title %}{{ profile.first_name }} {{ profile.last_name }}{% endblock %}
 	</h1>
 
 	<dl class="govuk-summary-list">
@@ -18,7 +12,7 @@
 				First Name
 			</dt>
 			<dd class="govuk-summary-list__value">
-				{{ user.first_name }}
+				{{ profile.first_name }}
 			</dd>
 		</div>
 		<div class="govuk-summary-list__row">
@@ -26,7 +20,7 @@
 				Last Name
 			</dt>
 			<dd class="govuk-summary-list__value">
-				{{ user.last_name }}
+				{{ profile.last_name }}
 			</dd>
 		</div>
 		<div class="govuk-summary-list__row">
@@ -34,19 +28,18 @@
 				Email
 			</dt>
 			<dd class="govuk-summary-list__value">
-				{{ user.email }}
+				{{ profile.email }}
 			</dd>
 		</div>
 	</dl>
 
-	<div class="lite-user-profile-container">
-		<a href="{% url 'users:edit' user.id %}" type="submit" class="govuk-button govuk-button--secondary">Edit</a>
-
-		{% if request.user.lite_api_user_id|stringformat:"s" != user.id|stringformat:"s" %}
-			{% if user.status == 'Active' %}
-				<a href="{% url 'users:change_status' user.id 'deactivate' %}" role="button" draggable="false" class="govuk-button govuk-button--warning govuk-!-margin-right-2" id="btn-deactivate">Deactivate</a>
-			{% elif user.status == 'Deactivated' %}
-				<a href="{% url 'users:change_status' user.id 'reactivate' %}" role="button" draggable="false" class="govuk-button govuk-!-margin-right-2" id="btn-reactivate">Reactivate</a>
+	<div class="lite-buttons-row">
+		<a href="{% url 'users:edit' profile.id %}" type="submit" class="govuk-button govuk-button--secondary">Edit</a>
+		{% if request.user.lite_api_user_id|stringformat:"s" != profile.id|stringformat:"s" %}
+			{% if profile.status == 'Active' %}
+				<a href="{% url 'users:change_status' profile.id 'deactivate' %}" role="button" draggable="false" class="govuk-button govuk-button--warning govuk-!-margin-right-2" id="btn-deactivate">Deactivate</a>
+			{% elif profile.status == 'Deactivated' %}
+				<a href="{% url 'users:change_status' profile.id 'reactivate' %}" role="button" draggable="false" class="govuk-button govuk-!-margin-right-2" id="btn-reactivate">Reactivate</a>
 			{% endif %}
 		{% endif %}
 	</div>

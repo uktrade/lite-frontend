@@ -54,7 +54,6 @@ Feature: I want to indicate the standard licence I want
     When I click on preexisting locations
     And I select the location at position "2" in external locations list and continue
     And I click back to the application overview
-    And I click back to the application overview
     And I add a non incorporated good to application
     Then good is added to application
     When I click on end user

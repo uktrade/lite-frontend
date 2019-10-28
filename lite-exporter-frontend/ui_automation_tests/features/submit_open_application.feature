@@ -1,4 +1,4 @@
-@licence @submit @all
+@licence @submit @all @open
 Feature: I want to indicate the open licence I want
   As a logged in exporter
   I want to indicate the kind of licence I want

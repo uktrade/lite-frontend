@@ -21,7 +21,10 @@ def post(request, appended_address, json):
                                   'ORGANISATION-ID': str(request.user.organisation)})
 
 
-def put(request, appended_address, json):
+def put(request, appended_address: str, json):
+    if not appended_address.endswith('/'):
+        appended_address = appended_address + '/'
+
     return requests.put(env('LITE_API_URL') + appended_address,
                         json=json,
                         headers={'EXPORTER-USER-TOKEN': str(request.user.user_token),

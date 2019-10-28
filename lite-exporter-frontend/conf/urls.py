@@ -5,7 +5,6 @@ urlpatterns = [
     path('applications/', include('applications.urls')),
     path('apply-for-a-licence/', include('apply_for_a_licence.urls')),
     path('auth/', include('auth.urls', namespace='authbroker')),
-    path('drafts/', include('drafts.urls')),
     path('end-users/', include('end_users.urls')),
     path('goods/', include('goods.urls')),
     path('goods-type/', include('goodstype.urls')),

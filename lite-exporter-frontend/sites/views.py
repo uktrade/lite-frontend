@@ -12,12 +12,12 @@ from sites.services import get_sites, get_site, post_sites, put_site
 class Sites(TemplateView):
     def get(self, request, **kwargs):
         organisation_id = str(request.user.organisation)
-        sites, _ = get_sites(request, organisation_id)
+        sites = get_sites(request, organisation_id)
         organisation = get_organisation(request, organisation_id)
 
         context = {
             'title': 'Sites - ' + organisation['name'],
-            'sites': sites['sites'],
+            'sites': sites,
             'organisation': organisation,
         }
         return render(request, 'sites/index.html', context)

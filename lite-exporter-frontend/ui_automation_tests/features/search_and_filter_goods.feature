@@ -16,7 +16,7 @@ Feature: I want to search for goods in my goods list to add to an in progress ap
     And I select "standard" application and continue
     And I select "permanent" option and continue
     And I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
-    And I click on goods tile
+    And I click on standard goods tile
     And I click the add from organisations goods button
     And I filter by description "Test apple123" and click filter
     And I filter by control list entry "ML4" and click filter
@@ -25,15 +25,4 @@ Feature: I want to search for goods in my goods list to add to an in progress ap
     And All goods have control code "ML4"
     And All goods have part number "5678"
     # Only 1 good matches all 3 criteria
-    And "1" goods are found
-    When I remove the part number filter
-    Then All goods have description "Test apple123"
-    And All goods have control code "ML4"
-    # 2 test goods match these criteria
-    And "2" goods are found
-    When I remove the control code filter
-    Then All goods have description "Test apple123"
-    # All test goods match these criteria
-    And "3" goods are found
-    When I remove the description filter
-    Then I see all goods
+    Then "1" goods are found

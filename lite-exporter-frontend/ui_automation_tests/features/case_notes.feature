@@ -7,7 +7,7 @@ Feature: I want to add a note to an application and view notes
   @LT_1119_add_cancel
   Scenario: Add a new valid case note
     Given I go to exporter homepage and choose Test Org
-    And an application exists
+    And I create a standard application via api
     When I click on applications
     And I click on application previously created
     And I enter "This is a note on my application!" for case note
@@ -20,7 +20,7 @@ Feature: I want to add a note to an application and view notes
   @LT_1119_too_many
   Scenario: Add a case note with too many characters
     Given I go to exporter homepage and choose Test Org
-    And an application exists
+    And I create a standard application via api
     When I click on applications
     And I click on application previously created
     And I enter "the maximum limit" for case note

@@ -1,6 +1,5 @@
 from pytest_bdd import scenarios, when, then, parsers
 
-import shared.tools.helpers as utils
 from shared.tools.helpers import scroll_to_element_by_id
 from shared.tools.wait import wait_for_download_button, wait_for_element
 from pages.add_end_user_pages import AddEndUserPages
@@ -19,7 +18,7 @@ def i_click_on_application_overview(driver):
 
 @then('good is added to application')
 def good_is_added(driver, context):
-    good = ApplicationOverviewPage(driver).get_text_of_good(1)
+    good = ApplicationOverviewPage(driver).get_text_of_good(index=0)
     assert context.goods_name in good
     # TODO put this back when bug is fixed - showing mtr instead of metres
     # assert str(context.quantity) + ".0 " + context.unit in good
@@ -94,7 +93,7 @@ def add_new_end_user_address(driver, address, country, context):
 @when('I remove an ultimate end user so there is one less and return to the overview')
 def i_remove_an_ultimate_end_user(driver):
     no_of_ultimate_end_users = Shared(driver).get_size_of_table_rows()
-    driver.find_element_by_link_text('Delete ultimate end user').click()
+    driver.find_element_by_link_text('Remove ultimate end user').click()
     total = no_of_ultimate_end_users - Shared(driver).get_size_of_table_rows()
     assert total == 1, "total on the ultimate end users summary is incorrect after removing ultimate end user"
     app = ApplicationOverviewPage(driver)
@@ -103,9 +102,8 @@ def i_remove_an_ultimate_end_user(driver):
 
 @then('there is only one ultimate end user')
 def one_ultimate_end_user(driver):
-    elements = Shared(driver).get_lite_sections()
-    no = utils.get_element_index_by_text(elements, "Ultimate End Users", complete_match=False)
-    assert len(elements[no].find_elements_by_css_selector(".govuk-table__row")) == 2, "total on the application overview is incorrect after removing ultimate end user"
+    elements = ApplicationOverviewPage(driver).get_ultimate_end_users()
+    assert len(elements) == 1, "total on the application overview is incorrect after removing ultimate end user"
 
 
 @then('I see end user on overview')

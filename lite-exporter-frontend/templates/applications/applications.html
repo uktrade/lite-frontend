@@ -1,0 +1,82 @@
+{% extends 'layouts/base.html' %}
+
+{% block back_link %}
+	{% include 'includes/breadcrumbs.html' %}
+{% endblock %}
+
+{% block body %}
+
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h2 class="govuk-heading-l">{% block title %}Applications{% endblock %}</h2>
+		</div>
+		<div class="lite-app-bar__controls">
+			<a href="." class="govuk-button govuk-button--secondary" draggable="false" role="button">
+				{% get_string 'licences.refresh' %}
+			</a>
+			<a href="{% url 'apply_for_a_licence:start' %}" class="govuk-button" draggable="false" role="button">
+				{% get_string 'licences.apply_for_a_licence' %}
+			</a>
+		</div>
+	</div>
+
+	<div class="lite-tabs--fade">
+		<div class="lite-tabs">
+			<a href="{% url 'applications:applications' %}?drafts=false" class="lite-tabs__tab lite-tabs__tab--selected">
+				In Progress
+			</a>
+			<a href="{% url 'applications:applications' %}?drafts=true" class="lite-tabs__tab">
+				Drafts
+			</a>
+		</div>
+	</div>
+
+	{% if applications %}
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="col">Reference</th>
+					<th class="govuk-table__header" scope="col">Type</th>
+					<th class="govuk-table__header" scope="col">Last updated</th>
+					<th class="govuk-table__header" scope="col">Status</th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				{% for application in applications %}
+					<tr class="govuk-table__row">
+						<td class="govuk-table__cell">
+							<a class="govuk-link govuk-link--no-visited-state app-icon-label"
+							    {% if application.status.key == 'applicant_editing' %}
+									href="{% url 'applications:edit' application.id %}">
+								{% else %}
+									href="{% url 'applications:application' application.id %}">
+								{% endif %}
+								<p>{{ application.name }}</p>
+								{% if application.id in notifications %}
+									<span class="app-icon-label__notification">{{ notifications|key_value:application.id }} <span class="govuk-visually-hidden"> notifications</span></span>
+								{% endif %}
+							</a>
+						</td>
+						<td class="govuk-table__cell">
+							{{ application.licence_type.value }}
+						</td>
+						<td class="govuk-table__cell">
+							{{ application.last_modified_at|str_date }}
+						</td>
+						<td class="govuk-table__cell">{{ application.status.value }}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		<br>
+		<div class="lite-information-text">
+			<span class="lite-information-text__icon" aria-hidden="true">!</span>
+			<p class="lite-information-text__text">
+			<span class="govuk-visually-hidden">Information</span>
+				You haven't applied for any licences yet.
+			</p>
+		</div>
+	{% endif %}
+
+{% endblock %}

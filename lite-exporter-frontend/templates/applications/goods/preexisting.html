@@ -1,0 +1,99 @@
+{% extends 'layouts/base.html' %}
+
+{% load static svg %}
+
+{% block back_link %}
+	<a href="{% url 'applications:goods' draft_id %}" class="govuk-back-link">Back to Goods</a>
+{% endblock%}
+
+{% block body %}
+
+	<h2 class="govuk-heading-l">{% block title %}Add a good from your organisation{% endblock %}</h2>
+
+	{% if data or description or part_number or control_code %}
+		<div class="lite-js-only">
+		    <a href="#" id="show-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
+				{% svg 'plus' %}
+				Show filters
+			</a>
+		    <a href="#" id="hide-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
+				{% svg 'minus' %}
+				Hide filters
+			</a>
+		</div>
+
+		<div id="filters" class="govuk-grid-row lite-filter-bar">
+			<form method="get">
+				<div class="govuk-grid-column-one-quarter">
+					<label class="govuk-label" for="description">
+						Description
+					</label>
+					<input class="govuk-input" id="description" name="description" type="text" autocomplete="off" autocorrect="off"  value="{{ description }}">
+				</div>
+				<div class="govuk-grid-column-one-quarter">
+					<label class="govuk-label" for="part_number">
+						Part number
+					</label>
+					<input class="govuk-input" id="part_number" name="part_number" type="text" autocomplete="off" autocorrect="off"  value="{{ part_number }}">
+				</div>
+				<div class="govuk-grid-column-one-quarter">
+					<label class="govuk-label" for="control_rating">
+						Control list entry
+					</label>
+					<input class="govuk-input" id="control_rating" name="control_rating" type="text" autocomplete="off" autocorrect="off"  value="{{ control_code }}">
+				</div>
+				<div class="govuk-grid-column-one-quarter">
+					<label class="govuk-label"></label>
+					<button type="submit" class="govuk-button">Apply filters</button>
+				</div>
+			</form>
+	    </div>
+
+		{% if data %}
+			<table class="govuk-table">
+				<thead class="govuk-table__head">
+					<tr class="govuk-table__row">
+						<th scope="col" class="govuk-table__header">Name</th>
+						<th scope="col" class="govuk-table__header">Part Number</th>
+						<th scope="col" class="govuk-table__header">Control List Entry</th>
+						<th scope="col" class="govuk-table__header"></th>
+					</tr>
+				</thead>
+				<tbody class="govuk-table__body">
+					{% for good in data %}
+						<tr class="govuk-table__row">
+							<td class="govuk-table__cell" id="good-description">
+								{{ good.description|highlight_text:description }}
+								{% if good.status.key == 'verified' %}<span class="app-verified__symbol">{% svg 'verified' %}</span><span class="govuk-visually-hidden"> (Verified good)</span>{% endif %}
+							</td>
+							<td class="govuk-table__cell" id="good-part-number">
+								{{ good.part_number|highlight_text:part_number|default_na }}
+							</td>
+							<td class="govuk-table__cell" id="good-control_code">
+								{{ good.control_code|highlight_text:control_code|default_na }}
+							</td>
+							<td class="govuk-table__cell lite-!-text-align-right">
+								<a href="{% url 'applications:add_preexisting_good' draft_id good.id %}" class="govuk-link govuk-link--no-visited-state" draggable="false" style="margin-bottom: 0;">
+									Add <span class="govuk-visually-hidden">{{ good.description }}</span> to application
+								</a>
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		{% else %}
+			<div class="lite-information-text">
+				<span class="lite-information-text__icon" aria-hidden="true">!</span>
+				<p class="lite-information-text__text">
+					<span class="govuk-visually-hidden">Information</span>
+					Your organisation doesn't have any goods which are available to be used on an application.
+				</p>
+			</div>
+		{% endif %}
+	{% endif %}
+
+{% endblock %}
+
+{% block javascript %}
+	<script src="{% static 'javascripts/filter-bar.js' %}"></script>
+{% endblock %}

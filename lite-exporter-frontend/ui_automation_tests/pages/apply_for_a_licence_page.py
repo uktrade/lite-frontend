@@ -55,6 +55,7 @@ class ApplyForALicencePage:
         return self.driver.find_element_by_css_selector(self.success_message).text
 
     def type_into_reference_number(self, string):
+        self.driver.find_element_by_id(self.reference_number).clear()
         self.driver.find_element_by_id(self.reference_number).send_keys(string)
 
     def application_submitted_text(self):

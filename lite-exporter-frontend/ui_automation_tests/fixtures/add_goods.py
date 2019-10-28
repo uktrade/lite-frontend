@@ -17,12 +17,11 @@ def add_good_to_application(driver, context, lite_client):
     overview_page = ApplicationOverviewPage(driver)
     context.goods_name = lite_client.context['goods_name']
     driver.get(url)
-    utils.scroll_to_element_by_id(driver, 'goods')
-    overview_page.click_goods_link()
+    overview_page.click_standard_goods_link()
     driver.find_element_by_css_selector('a[href*="add-preexisting"]').click()
-    elements = driver.find_elements_by_css_selector('.lite-card')
+    elements = driver.find_elements_by_css_selector('.govuk-table__row')
     no = utils.get_element_index_by_text(elements, context.goods_name, complete_match=False)
-    driver.find_elements_by_css_selector('.lite-card .govuk-button')[no].click()
+    driver.find_elements_by_css_selector('.govuk-table__row .govuk-link')[no - 1].click()
     application_goods_list = ApplicationGoodsList(driver)
     context.unit = 'Number of articles'
     context.value = '11'

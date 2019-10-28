@@ -112,3 +112,45 @@ def times(number):
     Returns a list of numbers from 1 to the number
     """
     return [x + 1 for x in range(number)]
+
+
+@register.filter()
+def default_na(value):
+    """
+    Returns N/A if the parameter given is none
+    """
+    if value:
+        return value
+    else:
+        return mark_safe('<span class="lite-hint">N/A</span>')  # nosec
+
+
+@register.filter()
+def friendly_boolean(boolean):
+    """
+    Returns 'Yes' if a boolean is equal to True, else 'No'
+    """
+    if boolean is True or str(boolean).lower() == 'true':
+        return 'Yes'
+    else:
+        return 'No'
+
+
+@register.filter()
+def pluralise_unit(unit, value):
+    """
+    Modify units given from the API to include an 's' if the
+    value is not singular.
+
+    Units require an (s) at the end of their names to
+    use this functionality.
+    """
+    is_singular = value == '1'
+
+    if '(s)' in unit:
+        if is_singular:
+            return unit.replace('(s)', '')
+        else:
+            return unit.replace('(s)', 's')
+
+    return unit

@@ -1,0 +1,8 @@
+<p class="govuk-caption-m">You won't be able to recover it if you delete it.</p>
+<div class="buttons-row">
+    <form method="post" style="display: inline;" action="{% url 'applications:delete' application.id %}">
+        {% csrf_token %}
+        <button type="submit" class="govuk-button govuk-button--warning govuk-!-margin-right-2">Delete Application</button>
+    </form>
+    <a href="{% url 'applications:applications' %}?drafts=True" onclick="return LITECommon.Modal.closeAllModals()" role="button" draggable="false" class="govuk-button govuk-button--secondary">Cancel</a>
+</div>

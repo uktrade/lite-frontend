@@ -1,21 +1,20 @@
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
-from lite_forms.generators import form_page
+from lite_forms.generators import form_page, error_page
 
-from drafts.services import get_application_goods_types, get_draft_countries
+from applications.services import get_application_goods_types, get_application_countries
 from goodstype.forms import goods_type_form
-from goodstype.services import post_goods_type, post_goods_type_countries
+from goodstype.services import post_goods_type, post_goods_type_countries, delete_goods_type
 
 
-class DraftAddGoodsType(TemplateView):
+class ApplicationAddGoodsType(TemplateView):
     def get(self, request, **kwargs):
         return form_page(request, goods_type_form())
 
     def post(self, request, **kwargs):
         copied_post = request.POST.copy()
-        copied_post['application'] = str(kwargs.get('pk'))
-        data, status_code = post_goods_type(request, copied_post)
+        data, status_code = post_goods_type(request, str(kwargs.get('pk')), copied_post)
 
         if status_code == 400:
             return form_page(request, goods_type_form(), request.POST, errors=data['errors'])
@@ -23,7 +22,20 @@ class DraftAddGoodsType(TemplateView):
         next = request.GET.get('next')
         if next:
             return redirect(next)
-        return redirect(reverse_lazy('apply_for_a_licence:overview', args=[kwargs['pk']]))
+        return redirect(reverse_lazy('applications:edit', args=[kwargs['pk']]))
+
+
+class ApplicationRemoveGoodsType(TemplateView):
+    def get(self, request, **kwargs):
+        application_id = str(kwargs['pk'])
+        good_type_id = str(kwargs['goods_type_pk'])
+
+        status_code = delete_goods_type(request, application_id, good_type_id)
+
+        if status_code != 200:
+            return error_page(request, 'Unexpected error removing goods description')
+
+        return redirect(reverse_lazy('applications:goods', kwargs={'pk': application_id}))
 
 
 class GoodsTypeCountries(TemplateView):
@@ -33,10 +45,8 @@ class GoodsTypeCountries(TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         self.draft_id = str(kwargs['pk'])
-        goods, _ = get_application_goods_types(request, self.draft_id)
-        self.goods = goods['goods']
-        countries, _ = get_draft_countries(request, self.draft_id)
-        self.countries = countries['countries']
+        self.goods = get_application_goods_types(request, self.draft_id)
+        self.countries = get_application_countries(request, self.draft_id)
 
         return super(GoodsTypeCountries, self).dispatch(request, *args, **kwargs)
 
@@ -47,7 +57,7 @@ class GoodsTypeCountries(TemplateView):
             'draft_id': self.draft_id,
             'select': request.GET.get('all', None)
         }
-        return render(request, 'apply_for_a_licence/goodstype/countries.html', context)
+        return render(request, 'applications/goodstype/countries.html', context)
 
     def post(self, request, **kwargs):
         data = request.POST.copy()
@@ -65,6 +75,6 @@ class GoodsTypeCountries(TemplateView):
             if good['id'] not in str(data):
                 post_data[good['id']] = []
 
-        post_goods_type_countries(request, post_data)
+        post_goods_type_countries(request, self.draft_id, list(post_data.keys())[0], post_data)
 
-        return redirect(reverse_lazy('apply_for_a_licence:overview', kwargs={'pk': self.draft_id}))
+        return redirect(reverse_lazy('applications:edit', kwargs={'pk': self.draft_id}))

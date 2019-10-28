@@ -14,13 +14,15 @@ class ApplicationGoodsList:
         self.filter_description_search_box = 'description'   # ID
         self.filter_part_number_search_box = 'part_number'   # ID
         self.filter_control_rating_search_box = 'control_rating'   # ID
-        self.filter_button = '//button[text()[contains(.,"Filter")]]' #xpath
+        self.filter_button = '//button[text()[contains(.,"filters")]]' #xpath
+        self.show_filters_link = 'show-filters-link' #xpath
         self.goods_items = '.lite-card'   # CSS
         self.filter_tags = ".lite-filter-bar a"
         self.card_heading = ".lite-card .govuk-heading-s"
         self.card_label = ".lite-card .govuk-label"
-        self.part_number = 'part-number'
-        self.control_code = 'control-code'
+        self.part_number = 'good-part-number'
+        self.description = 'good-description'
+        self.control_code = 'good-control_code'
         self.part_number_filter = 'part-number-filter'
         self.control_code_filter = 'control-code-filter'
         self.description_filter = 'description-filter'
@@ -35,6 +37,7 @@ class ApplicationGoodsList:
         self.driver.find_element_by_css_selector(self.overview_link).click()
 
     def type_into_filter_description_search_box_and_filter(self, value):
+        self.driver.find_element_by_id(self.show_filters_link).click()
         self.driver.find_element_by_id(self.filter_description_search_box).send_keys(value)
         self.driver.find_element_by_xpath(self.filter_button).click()
 
@@ -60,19 +63,10 @@ class ApplicationGoodsList:
         return self.driver.find_elements_by_css_selector(self.card_label)[num].text
 
     def get_good_descriptions(self):
-        return self.driver.find_elements_by_css_selector(self.card_heading)
+        return self.driver.find_elements_by_id(self.description)
 
     def get_good_part_numbers(self):
         return self.driver.find_elements_by_id(self.part_number)
 
     def get_good_control_codes(self):
         return self.driver.find_elements_by_id(self.control_code)
-
-    def remove_part_number_filter(self):
-        self.driver.find_element_by_id(self.part_number_filter).click()
-
-    def remove_control_code_filter(self):
-        self.driver.find_element_by_id(self.control_code_filter).click()
-
-    def remove_description_filter(self):
-        self.driver.find_element_by_id(self.description_filter).click()

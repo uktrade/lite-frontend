@@ -1,0 +1,93 @@
+{% extends 'layouts/base.html' %}
+
+{% load svg %}
+
+{% block back_link %}
+	{% include 'includes/breadcrumbs.html' %}
+{% endblock %}
+
+{% block body %}
+
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h2 class="govuk-heading-l">{% block title %}Applications{% endblock %}</h2>
+		</div>
+		<div class="lite-app-bar__controls">
+			<a href="{% url 'apply_for_a_licence:start' %}" class="govuk-button" draggable="false" role="button">
+				{% get_string 'licences.apply_for_a_licence' %}
+			</a>
+		</div>
+	</div>
+
+	<div class="lite-tabs--fade">
+		<div class="lite-tabs">
+			<a href="{% url 'applications:applications' %}?drafts=false" class="lite-tabs__tab">
+				In Progress
+			</a>
+			<a href="{% url 'applications:applications' %}?drafts=true" class="lite-tabs__tab lite-tabs__tab--selected">
+				Drafts
+			</a>
+		</div>
+	</div>
+
+	{% if drafts %}
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header">
+						Reference
+					</th>
+					<th class="govuk-table__header" scope="col">Type</th>
+					<th class="govuk-table__header">
+						Created On
+					</th>
+					<th class="govuk-table__header">
+						Export Type
+					</th>
+					<th class="govuk-table__header">
+					</th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__head">
+				{% for draft in drafts %}
+					<tr class="govuk-table__row">
+						<td class="govuk-table__cell">
+							<a class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:edit' draft.id %}">
+								{{ draft.name }}
+							</a>
+						</td>
+						<td class="govuk-table__cell">
+							{{ draft.licence_type.value }}
+						</td>
+						<td class="govuk-table__cell">
+							{{ draft.last_modified_at|str_date }}
+						</td>
+						<td class="govuk-table__cell">
+							{{ draft.export_type.value }}
+						</td>
+						<td class="govuk-table__cell govuk-table__cell--numeric">
+							<a href="{% url 'applications:delete' draft.id %}" class="govuk-link lite-link--icon">
+                                {% svg 'close' %}
+                                Delete <span class="govuk-visually-hidden">draft</span>
+                            </a>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		<br>
+		<div class="lite-information-text">
+			<span class="lite-information-text__icon" aria-hidden="true">!</span>
+			<p class="lite-information-text__text">
+			<span class="govuk-visually-hidden">Information</span>
+				You don't have any draft applications currently.
+			</p>
+		</div>
+	{% endif %}
+
+	{% load static %}
+	<script src="{% static 'javascripts/modal.js' %}"></script>
+	<script src="{% static 'javascripts/specific/overview.js' %}"></script>
+
+{% endblock %}

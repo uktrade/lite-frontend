@@ -1,0 +1,79 @@
+{% extends 'layouts/base.html' %}
+
+{% load svg %}
+
+{% block back_link %}
+	<a href="{% url 'applications:edit' application.id %}" class="govuk-back-link">Back to Application</a>
+{% endblock %}
+
+{% block body %}
+
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">{% block title %}Ultimate End Users{% endblock%}</h1>
+			<p class="govuk-caption-m">{% get_string 'ultimate_end_user.overview_description' %}</p>
+		</div>
+        {% if not application.status.value or application.status.key == 'applicant_editing' %}
+		<div class="lite-app-bar__controls">
+			<a href="{% url 'applications:add_ultimate_end_user' application.id %}" class="govuk-button" draggable="false" role="button">
+				Add an ultimate end user
+			</a>
+		</div>
+        {% endif %}
+	</div>
+
+	{% if ultimate_end_users|length %}
+	<table class="govuk-table">
+		<thead class="govuk-table__head">
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header" scope="col">Name</th>
+				<th class="govuk-table__header" scope="col">Type</th>
+				<th class="govuk-table__header" scope="col">Website</th>
+				<th class="govuk-table__header" scope="col">Address</th>
+				<th class="govuk-table__header" scope="col">Country</th>
+	            <th class="govuk-table__header" scope="col">Document</th>
+				<th class="govuk-table__header" scope="col"></th>
+			</tr>
+		</thead>
+		<tbody class="govuk-table__body">
+			{% for ultimate_end_user in ultimate_end_users %}
+			<tr class="govuk-table__row">
+				<td class="govuk-table__cell">{{ ultimate_end_user.name }}</td>
+				<td class="govuk-table__cell">{{ ultimate_end_user.sub_type.value }}</td>
+				<td class="govuk-table__cell">{{ ultimate_end_user.website|default_na }}</td>
+				<td class="govuk-table__cell">{{ ultimate_end_user.address }}</td>
+				<td class="govuk-table__cell">{{ ultimate_end_user.country.name }}</td>
+	            <td class="govuk-table__cell">
+	            {% if ultimate_end_user.document %}
+	                {% if ultimate_end_user.document.safe == True %}
+	                    <a href="{% url 'applications:ultimate_end_user_download_document' application.id ultimate_end_user.id %}" id="document_download" class='govuk-link govuk-link--no-visited-state'>
+	                        Download
+	                    </a>
+	                    <br/>
+	                    <a href="{% url 'applications:ultimate_end_user_delete_document' application.id ultimate_end_user.id %}" id="document_delete" class='govuk-link govuk-link--no-visited-state'>
+	                        Delete
+	                    </a>
+	                {% else %}
+	                    Processing
+	                {% endif %}
+	            {% else %}
+	                <a href="{% url 'applications:ultimate_end_user_attach_document' application.id ultimate_end_user.id %}" id="attach_doc" class='govuk-link govuk-link--no-visited-state'>
+	                    Attach
+	                </a>
+	            {% endif %}
+	            </td>
+				<td class="govuk-table__cell">
+					<a href="{% url 'applications:remove_ultimate_end_user' application.id ultimate_end_user.id %}" class="govuk-link lite-link--icon">
+						{% svg 'close' %}
+						Remove ultimate end user
+	                </a>
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	{% else %}
+		<p class="govuk-caption-l">You haven't added any ultimate end users to your application</p>
+	{% endif %}
+
+{% endblock %}

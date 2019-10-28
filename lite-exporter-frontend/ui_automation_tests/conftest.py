@@ -4,6 +4,8 @@ import pytest
 from pytest_bdd import given, when, then, parsers
 from selenium.webdriver.common.by import By
 
+from pages.application_edit_type_page import ApplicationEditTypePage
+from pages.application_page import ApplicationPage
 from ui_automation_tests.fixtures.register_organisation import register_organisation, register_organisation_for_switching_organisation  # noqa
 from ui_automation_tests.fixtures.env import environment # noqa
 from ui_automation_tests.fixtures.add_goods import add_an_incorporated_good_to_application, add_a_non_incorporated_good_to_application, create_non_incorporated_good  # noqa
@@ -13,9 +15,9 @@ from ui_automation_tests.fixtures.internal_ecju_query import internal_ecju_query
 from ui_automation_tests.fixtures.sso_sign_in import sso_sign_in  # noqa
 from ui_automation_tests.fixtures.internal_case_note import internal_case_note, internal_case_note_end_user_advisory  # noqa
 
-from ui_automation_tests.shared.fixtures.apply_for_application import apply_for_standard_application, add_an_ecju_query  # noqa
+from ui_automation_tests.shared.fixtures.apply_for_application import apply_for_standard_application, add_an_ecju_query, apply_for_open_application  # noqa
 from ui_automation_tests.shared.fixtures.driver import driver  # noqa
-from ui_automation_tests.shared.fixtures.core import context, invalid_username, exporter_info, internal_info, s3_key, seed_data_config  # noqa
+from ui_automation_tests.shared.fixtures.core import context, invalid_username, exporter_info, internal_info, seed_data_config  # noqa
 from ui_automation_tests.shared.fixtures.urls import exporter_url, api_url  # noqa
 
 import shared.tools.helpers as utils
@@ -90,6 +92,22 @@ def last_name(request):
     return request.config.getoption("--last_name")
 
 
+@given('I create a standard application via api')  # noqa
+def standard_application_exists(apply_for_standard_application):
+    pass
+
+
+@when('I click on application previously created')  # noqa
+def click_on_an_application(driver, context):
+    # Works on both the Drafts list and Applications list
+    driver.find_element_by_css_selector('a[href*="' + context.app_id + '"]').click()
+
+
+@when('I click edit application')  # noqa
+def i_click_edit_application(driver):
+    ApplicationPage(driver).click_edit_application_link()
+
+
 @given('I go to exporter homepage and choose Test Org')  # noqa
 def go_to_exporter(driver, register_organisation, sso_sign_in, exporter_url, context):
     if 'pick-organisation' in driver.current_url:
@@ -111,11 +129,6 @@ def go_to_exporter_when(driver, exporter_url):
 @when('I click on apply for a license button')  # noqa
 def click_apply_licence(driver):
     ExporterHubPage(driver).click_apply_for_a_licence()
-
-
-@when('I click on start button')  # noqa
-def click_start_button(driver):
-    ApplyForALicencePage(driver).click_start_now_btn()
 
 
 @when('I enter in name for application and continue')  # noqa
@@ -232,11 +245,16 @@ def click_my_goods_link(driver):
     exporter_hub.click_my_goods()
 
 
-@when('I click on goods tile')  # noqa
+@when("I click on standard goods tile")  # noqa
 def click_my_goods_link(driver):
     exporter_hub = ApplicationOverviewPage(driver)
-    driver.execute_script("document.getElementById('goods').scrollIntoView(true);")
-    exporter_hub.click_goods_link()
+    exporter_hub.click_standard_goods_link()
+
+
+@when("I click on open goods tile")  # noqa
+def click_my_goods_link(driver):
+    exporter_hub = ApplicationOverviewPage(driver)
+    exporter_hub.click_open_goods_link()
 
 
 @when('I click on end user advisories')  # noqa
@@ -323,8 +341,7 @@ def raise_clc_query(driver, control_code, description):
 @when('I click on the goods link from overview')  # noqa
 def click_goods_link_overview(driver):
     overview_page = ApplicationOverviewPage(driver)
-    driver.execute_script("document.getElementById('goods').scrollIntoView(true);")
-    overview_page.click_goods_link()
+    overview_page.click_open_goods_link()
 
 
 @then('application is submitted')  # noqa
@@ -350,18 +367,11 @@ def application_is_submitted(driver, context):
 
 @then('I see the application overview')  # noqa
 def i_see_the_application_overview(driver, context):
-    element = driver.find_element_by_css_selector(".govuk-table").text
-    assert "Name" in element
-    assert "Licence type" in element
-    assert "Export type" in element
-    assert "Reference Number" in element
-    assert "Created at" in element
-    assert context.type.capitalize() + " Licence" in element
-    assert context.perm_or_temp.capitalize() in element
+    element = ApplicationOverviewPage(driver).get_text_of_lite_task_list_items()
+    assert "Reference name" in element
+    assert context.app_name in element
+    assert "Told by an official" in element
     assert context.ref in element
-
-    # This can break if the minute changes between the five lines of code
-    assert utils.search_for_correct_date_regex_in_element(element)
 
     app_id = driver.current_url[-36:]
     context.app_id = app_id
@@ -377,7 +387,8 @@ def i_click_applications(driver):
 def i_delete_the_application(driver):
     apply = ApplyForALicencePage(driver)
     apply.click_delete_application()
-    assert 'Exporter hub - LITE' in driver.title, "failed to go to Exporter Hub page after deleting application from application overview page"
+    assert 'Applications - LITE' in driver.title, "failed to go to Applications list page after deleting application " \
+                                                  "from application overview page"
 
 
 @when('I submit the application')  # noqa
@@ -415,3 +426,10 @@ def switch_organisations_to_my_second_organisation(driver, context):
     no = utils.get_element_index_by_text(Shared(driver).get_radio_buttons_elements(), context.org_name_for_switching_organisations)
     Shared(driver).click_on_radio_buttons(no)
     Shared(driver).click_continue()
+
+
+@when("I choose to make major edits")  # noqa
+def i_choose_to_make_minor_edits(driver):
+    application_edit_type_page = ApplicationEditTypePage(driver)
+    application_edit_type_page.click_major_edits_radio_button()
+    application_edit_type_page.click_change_application_button()

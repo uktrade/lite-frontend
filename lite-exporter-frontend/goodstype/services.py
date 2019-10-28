@@ -1,39 +1,22 @@
-from urllib.parse import urlencode
-
 from conf.client import get, post, put, delete
-from conf.constants import GOODSTYPE_URL, GOODSTYPE_COUNTRY_URL
+from conf.constants import APPLICATIONS_URL, GOODSTYPES_URL, GOODSTYPE_URL, GOODSTYPE_COUNTRY_URL
 
 
-def get_goods_types(request, params=None):
-    if params:
-        query_params = urlencode(params)
-        data = get(request, GOODSTYPE_URL + '?' + query_params)
-    else:
-        data = get(request, GOODSTYPE_URL)
-
+def get_goods_type(request, app_pk, good_pk):
+    data = get(request, APPLICATIONS_URL + app_pk + GOODSTYPE_URL + good_pk + '/')
     return data.json(), data.status_code
 
 
-def get_goods_type(request, pk):
-    data = get(request, GOODSTYPE_URL + pk)
+def post_goods_type(request, app_pk, json):
+    data = post(request, APPLICATIONS_URL + app_pk + GOODSTYPES_URL, json)
     return data.json(), data.status_code
 
 
-def post_goods_type(request, json):
-    data = post(request, GOODSTYPE_URL, json)
-    return data.json(), data.status_code
+def delete_goods_type(request, app_pk, good_pk):
+    data = delete(request, APPLICATIONS_URL + app_pk + GOODSTYPE_URL + good_pk + "/")
+    return data.status_code
 
 
-def update_goods_type(request, pk, json):
-    data = put(request, GOODSTYPE_URL + pk + "/", json)
-    return data.json(), data.status_code
-
-
-def delete_goods_type(request, pk):
-    data = delete(request, GOODSTYPE_URL + pk)
-    return data.json(), data.status_code
-
-
-def post_goods_type_countries(request, json):
-    data = put(request, GOODSTYPE_COUNTRY_URL, json)
+def post_goods_type_countries(request, app_pk, good_pk, json):
+    data = put(request, APPLICATIONS_URL + app_pk + GOODSTYPE_URL + good_pk + GOODSTYPE_COUNTRY_URL, json)
     return data.json(), data.status_code

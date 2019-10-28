@@ -1,9 +1,9 @@
 {% extends 'layouts/base.html' %}
 
-{% load svg humanize static %}
+{% load svg static %}
 
 {% block back_link %}
-	<a href="{% url 'goods:goods' %}" class="govuk-back-link">Back to Goods</a>
+	<a href="{% url 'goods:goods' %}" class="govuk-back-link">Back to goods</a>
 {% endblock %}
 
 {% block body %}
@@ -89,7 +89,7 @@
 						Is the good controlled?
 					</dt>
 					<dd class="govuk-summary-list__value">
-						{{ good.is_good_controlled|capfirst }}
+						{{ good.is_good_controlled|title }}
 					</dd>
 				</div>
 				{% if good.control_code %}
@@ -115,7 +115,7 @@
 						Is the good intended to be incorporated into an end product?
 					</dt>
 					<dd class="govuk-summary-list__value">
-						{{ good.is_good_end_product }}
+						{{ good.is_good_end_product|friendly_boolean }}
 					</dd>
 				</div>
 			</dl>
@@ -123,15 +123,17 @@
 			<br><br>
 
 			<!-- Documents -->
-		    <div class="lite-app-bar" style="margin-bottom: -20px;">
+		    <div class="lite-app-bar">
 				<div class="lite-app-bar__content">
 					<h3 class="govuk-heading-m">Documents</h3>
 				</div>
-			    {% if good.status.key == 'draft' %}
-		            <a role="button" draggable="false" class="govuk-button" href="{% url 'goods:attach_documents' good.id %}">
-		                {% get_string 'goods.documents.attach_documents.button' %}
-		            </a>
-			    {% endif %}
+				<div class="lite-app-bar__controls">
+				    {% if good.status.key == 'draft' %}
+			            <a role="button" draggable="false" class="govuk-button" href="{% url 'goods:attach_documents' good.id %}" style="margin: 0;">
+			                {% get_string 'goods.documents.attach_documents.button' %}
+			            </a>
+				    {% endif %}
+				</div>
 		    </div>
 
 		    {% if documents %}

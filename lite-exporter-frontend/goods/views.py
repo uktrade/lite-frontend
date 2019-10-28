@@ -9,9 +9,7 @@ from lite_forms.generators import error_page, form_page
 from s3chunkuploader.file_handler import S3FileUploadHandler
 
 from applications.services import get_application_ecju_queries, get_case_notes, post_application_case_notes, \
-    get_ecju_query, put_ecju_query
-from apply_for_a_licence.services import add_document_data
-from apply_for_a_licence.services import download_document_from_s3
+    get_ecju_query, put_ecju_query, add_document_data, download_document_from_s3
 from core.helpers import group_notifications
 from core.services import get_notifications
 from goods import forms
@@ -159,7 +157,7 @@ class DraftAddGood(TemplateView):
         if status_code == 400:
             return form_page(request, forms.form, request.POST, errors=data['errors'])
 
-        return redirect(reverse_lazy('apply_for_a_licence:overview'), kwargs['pk'])
+        return redirect(reverse_lazy('applications:edit'), kwargs['pk'])
 
 
 class EditGood(TemplateView):

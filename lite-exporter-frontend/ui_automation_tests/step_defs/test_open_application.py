@@ -44,7 +44,7 @@ def i_see_the_goods_types_list(driver, position, context):
     goods_type_page = ApplicationGoodsTypeList(driver)
     good_type = goods_type_page.get_text_of_goods_type_info(int(position))
     assert context.good_description in good_type
-    assert "Control list classification: " + context.control_code in good_type
+    assert context.control_code in good_type
 
 
 @then('I see my goods type added to the overview page with a description and a control code')

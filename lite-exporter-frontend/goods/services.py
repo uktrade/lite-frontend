@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from urllib.parse import urlencode
 
 from conf.client import get, post, put, delete
@@ -11,12 +12,12 @@ def get_goods(request, params=None):
     else:
         data = get(request, GOODS_URL)
 
-    return data.json()['goods'], data.status_code
+    return data.json().get('goods'), data.status_code
 
 
 def get_good(request, pk):
     data = get(request, GOODS_URL + pk)
-    return data.json()['good'], data.status_code
+    return data.json().get('good'), data.status_code
 
 
 def post_goods(request, json):
@@ -36,7 +37,7 @@ def delete_good(request, pk):
 
 def get_clc_query(request, pk):
     data = get(request, CONTROL_LIST_CLASSIFICATIONS_URL + pk)
-    return data.json()['control_list_classification_query']
+    return data.json().get('control_list_classification_query') if data.status_code == HTTPStatus.OK else None
 
 
 def raise_clc_query(request, json):
@@ -47,12 +48,12 @@ def raise_clc_query(request, json):
 # Documents
 def get_good_document(request, pk, doc_pk):
     data = get(request, GOODS_URL + pk + DOCUMENTS_URL + doc_pk)
-    return data.json()['document']
+    return data.json().get('document') if data.status_code == HTTPStatus.OK else None
 
 
 def get_good_documents(request, pk):
     data = get(request, GOODS_URL + pk + DOCUMENTS_URL)
-    return data.json()['documents']
+    return data.json().get('documents') if data.status_code == HTTPStatus.OK else None
 
 
 def post_good_documents(request, pk, json):

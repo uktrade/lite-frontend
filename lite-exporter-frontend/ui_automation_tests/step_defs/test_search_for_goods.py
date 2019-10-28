@@ -31,6 +31,7 @@ def see_all_goods(driver, context):
     # commenting out the below due to bug with page not showing all goods. Please remove above line and uncomment below when fixed.
     # assert len(goods_list) == context.total_goods
 
+
 @when(parsers.parse('I create a good of description "{description}", control code "{control_code}" and part number "{part_number}" if it does not exist'))
 def add_a_good(context, description, control_code, part_number, seed_data_config):
     lite_client = get_lite_client(context, seed_data_config=seed_data_config)
@@ -75,21 +76,6 @@ def good_control_code_is_found(driver, control_code):
     assert len(goods_list) > 0
     for good in goods_list:
         assert good.text == control_code
-
-
-@when("I remove the part number filter")
-def part_number_filter(driver):
-    ApplicationGoodsList(driver).remove_part_number_filter()
-
-
-@when("I remove the control code filter")
-def part_number_filter(driver):
-    ApplicationGoodsList(driver).remove_control_code_filter()
-
-
-@when("I remove the description filter")
-def part_number_filter(driver):
-    ApplicationGoodsList(driver).remove_description_filter()
 
 
 @then(parsers.parse('"{total}" goods are found'))

@@ -1,0 +1,61 @@
+{% extends "layouts/base.html" %}
+
+{% block back_link %}
+    <a href="{% url 'applications:edit' draft_id %}" class="govuk-back-link">Back to application</a>
+{% endblock %}
+
+{% block body %}
+
+    <h1 class="govuk-heading-xl">{% block title %}Explain where each item is going (optional){% endblock %}</h1>
+
+    <form method="post">
+        <div class="lite-buttons-row">
+            <a id="link-select-all" href="./?all=True" class="govuk-link govuk-body govuk-link--no-visited-state">
+                Select all
+            </a>
+            <a id="link-deselect-all" href="./?all=False" class="govuk-link govuk-body govuk-link--no-visited-state">
+                Deselect all
+            </a>
+        </div>
+        <br><br>
+
+        {% csrf_token %}
+
+            <table class="govuk-table" id="countries_list">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="col">Control list entry</th>
+                        <th class="govuk-table__header" scope="col">Description</th>
+                        <th class="govuk-table__header" scope="col">Going to</th>
+                    </tr>
+                </thead>
+                {% for good in goods %}
+
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">{{ good.control_code|default:'N/A' }}</td>
+                        <td class="govuk-table__cell">{{ good.description }}</td>
+                        <td class="govuk-table__cell">
+                            {% for country in countries %}
+                                <div class="govuk-checkboxes govuk-checkboxes--small">
+                                    <div class="govuk-checkboxes__item">
+                                        <input class="govuk-checkboxes__input" {% if country in good.countries and select != 'False' or select == 'True' %}checked{% endif %} type="checkbox" name="{{ good.id }}.{{ country.id }}" id="{{ good.id }}.{{ country.id }}" value="{{ country.id }}">
+                                        <label class="govuk-label govuk-checkboxes__label" for="{{ good.id }}.{{ country.id }}">{{ country.name }}
+                                        </label>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        <button id="button-give-advice" type="submit" class="govuk-button" data-module="govuk-button">
+            Save
+        </button>
+
+        <p class="govuk-caption-m">
+            <a class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:edit' draft_id %}">Skip this section</a> if you are sending every item to every country
+        </p>
+
+    </form>
+
+{% endblock %}

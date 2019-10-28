@@ -251,11 +251,11 @@
         },
         "lite-forms": {
             "hashes": [
-                "sha256:2b601fe8fbe15818371e83d09480d6e2a12a799facd2bc9f37aa9dcc34257962",
-                "sha256:dd17356d407fb6f11777125291541c4165737e19d4932799e0a5cc5b256d1c06"
+                "sha256:d9fc180af00b6350d95e10673efb787fa2aa23ab7eec12c1da1e295f1b123432",
+                "sha256:ecb22882f93ee34af2ceedab2f8b0abfefffb0468db1ccf84f0d8d075b16014e"
             ],
             "index": "pypi",
-            "version": "==0.21"
+            "version": "==0.24"
         },
         "mako": {
             "hashes": [

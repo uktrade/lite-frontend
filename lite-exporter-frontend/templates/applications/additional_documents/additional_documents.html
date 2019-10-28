@@ -1,0 +1,70 @@
+{% extends 'layouts/base.html' %}
+
+{% load svg %}
+
+{% block back_link %}
+	<a href="{% url 'applications:edit' application.id %}" class="govuk-back-link">Back to application</a>
+{% endblock %}
+
+{% block body %}
+
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">{% block title %}{% get_string 'additional_documents.title'%}{% endblock %}</h1>
+		</div>
+		<div class="lite-app-bar__controls">
+			<a href="{% url 'applications:attach_additional_document' application.id %}" class="govuk-button" draggable="false" role="button">
+				{% get_string 'additional_documents.add' %}
+			</a>
+		</div>
+	</div>
+
+	{% if additional_documents %}
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="col">Document name</th>
+					<th class="govuk-table__header" scope="col">Description</th>
+					<th class="govuk-table__header" scope="col"></th>
+		            <th class="govuk-table__header" scope="col"></th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				{% for additional_document in additional_documents %}
+				<tr class="govuk-table__row">
+					<td class="govuk-table__cell">{{ additional_document.name }}</td>
+		            <td class="govuk-table__cell">
+						{{ additional_document.description|default_na }}
+					</td>
+					<td class="govuk-table__cell govuk-table__cell--numeric">
+						{% if additional_document.safe == True %}
+							<a href="{% url 'applications:download_additional_document' application.id additional_document.id %}" id="document_download" class='govuk-link govuk-link--no-visited-state'>
+								Download
+							</a>
+		                {% else %}
+		                    Processing
+						{% endif %}
+					</td>
+		            <td class="govuk-table__cell govuk-table__cell--numeric">
+		                {% if additional_document.safe == True %}
+		                    <a href="{% url 'applications:delete_additional_document' application.id additional_document.id %}" id="document_delete" class='govuk-link govuk-link--no-visited-state lite-link--icon'>
+		                        {% svg 'close' %}
+								Delete
+		                    </a>
+						{% endif %}
+		            </td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		<div class="lite-information-text">
+			<span class="lite-information-text__icon" aria-hidden="true">!</span>
+			<p class="lite-information-text__text">
+				<span class="govuk-visually-hidden">Information</span>
+				{% get_string 'additional_documents.no_results' %}
+			</p>
+		</div>
+	{% endif %}
+
+{% endblock %}

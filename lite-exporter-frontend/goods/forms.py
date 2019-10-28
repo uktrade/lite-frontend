@@ -12,7 +12,7 @@ from goods.helpers import good_summary
 
 
 def add_goods_questions():
-    return Form(title='Add Good',
+    return Form(title='Add a good',
                 questions=[
                     TextArea(title='Description of good',
                              description='This can make it easier to find your good later',

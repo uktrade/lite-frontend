@@ -52,8 +52,7 @@ class ViewUser(TemplateView):
         user = get_organisation_user(request, str(request.user.organisation), str(kwargs['pk']))['user']
 
         context = {
-            'user': user,
-            'title': user.get('first_name') + ' ' + user.get('last_name')
+            'profile': user
         }
         return render(request, 'users/profile.html', context)
 

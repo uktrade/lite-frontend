@@ -1,6 +1,6 @@
-{% extends 'layouts/full_width.html' %}
+{% extends 'layouts/base.html' %}
 
-{% load svg %}
+{% load svg humanize %}
 
 {% block back_link %}
 	{% include 'includes/breadcrumbs.html' %}
@@ -16,7 +16,11 @@
 				{% endblock %}
 			</h2>
 			<p class="govuk-caption-m">
-				Your organisation has {{ goods|length }} goods
+				{% if goods|length == 0 %}
+					Your organisation doesn't have any goods.
+				{% else %}
+					Your organisation has {{ goods|length|apnumber }} good{{ goods|pluralize }}.
+				{% endif %}
 			</p>
 		</div>
 		<div class="lite-app-bar__controls">
@@ -55,8 +59,6 @@
 				{% endfor %}
 			</tbody>
 		</table>
-	{% else %}
-		<p class="govuk-caption-l">There are no goods to show. To add a good, use the Add a good button.</p>
 	{% endif %}
 
 {% endblock %}

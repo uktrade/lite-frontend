@@ -1,0 +1,75 @@
+{% extends 'layouts/two_pane.html' %}
+
+{% load svg %}
+
+{% block back_link %}
+	<a href="{% url 'applications:edit' application.id %}" class="govuk-back-link">Back to overview</a>
+{% endblock %}
+
+{% block body %}
+
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h2 class="govuk-heading-l">
+				{% block title %}Goods{% endblock %}
+			</h2>
+		</div>
+        {% if not application.status.value or application.status.key == 'applicant_editing' %}
+		<div class="lite-app-bar__controls">
+			<a href="{% url 'applications:preexisting_good' application.id %}" role='button' draggable='false' class='govuk-button'>{% get_string 'goods.add_from_organisation.button' %}</a>
+		</div>
+        {% endif %}
+	</div>
+
+	{% if goods %}
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th scope="col" class="govuk-table__header">Name</th>
+					<th scope="col" class="govuk-table__header">Part Number</th>
+					<th scope="col" class="govuk-table__header">Control List Entry</th>
+					<th scope="col" class="govuk-table__header">Quantity</th>
+					<th scope="col" class="govuk-table__header">Monetary Value</th>
+					<th scope="col" class="govuk-table__header"></th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				{% for good_on_application in goods %}
+					<tr class="govuk-table__row">
+						<td class="govuk-table__cell">
+							{{ good_on_application.good.description }}
+							{% if good_on_application.good.status.key == 'verified' %}<span class="app-verified__symbol">{% svg 'verified' %}</span><span class="govuk-visually-hidden"> (Verified good)</span>{% endif %}
+						</td>
+						<td class="govuk-table__cell">
+							{{ good_on_application.good.part_number|default_na }}
+						</td>
+						<td class="govuk-table__cell">
+							{{ good_on_application.good.control_code|default_na }}
+						</td>
+						<td class="govuk-table__cell">
+							{{ good_on_application.quantity }} {{ good_on_application.unit.value|units_pluralise:good_on_application.quantity }}
+						</td>
+						<td class="govuk-table__cell">
+							£{{ good_on_application.value }}
+						</td>
+						<td class="govuk-table__cell govuk-table__cell--numeric">
+							<a class="govuk-link lite-link--icon" href="{% url 'applications:remove_preexisting_good' application.id good_on_application.id %}">
+								{% svg 'close' %}
+								Remove
+							</a>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		<div class="lite-information-text">
+			<span class="lite-information-text__icon" aria-hidden="true">!</span>
+			<p class="lite-information-text__text">
+				<span class="govuk-visually-hidden">Information</span>
+				You haven't added any goods to your application yet.
+			</p>
+		</div>
+	{% endif %}
+
+{% endblock %}
