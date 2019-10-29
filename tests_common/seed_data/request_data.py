@@ -147,8 +147,7 @@ def create_request_data(exporter_user, test_s3_key, gov_user):
         'standard_advice_picklist': create_picklist('More advice', 'My standard advice would be this.', 'standard_advice'),
         'report_picklist': create_picklist('More advice', 'My standard advice would be this.', 'report_summary'),
         'letter_paragraph_picklist': create_picklist('Letter Paragraph 1', 'My letter paragraph is this.', 'letter_paragraph'),
-        'document_template':{
-            'name': 'Test template',
+        'document_template': {
             'restricted_to': ['application'],
             'layout': 'licence'
         }
