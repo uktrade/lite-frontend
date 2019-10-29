@@ -12,6 +12,7 @@
 	margin: 0;
 	margin-bottom: govuk-spacing(6);
 	text-align: center;
+	border: 2px solid transparent;
 
 	&--small {
 		@include govuk-font($size: 14, $weight: bold);
