@@ -5,6 +5,7 @@ from unittest import TestCase
 from lite_forms.components import Form, DetailComponent, TextInput, FormGroup
 from lite_forms.helpers import nest_data, flatten_data, remove_unused_errors, get_form_by_pk
 from lite_forms.submitters import submit_paged_form
+from lite_forms.templatetags.custom_tags import prefix_dots
 
 
 class FormTests(TestCase):
@@ -135,3 +136,12 @@ class TestSubmitPagedFormTestCase(TestCase):
             "key_d": "h",
             "key_e": [],
         })
+
+
+class TemplateTagsTestCase(TestCase):
+    def test_prefix_dots(self):
+        self.assertEqual("nodots", prefix_dots("nodots"))
+        self.assertEqual(r"\\.startdot", prefix_dots(".startdot"))
+        self.assertEqual(r"enddot\\.", prefix_dots("enddot."))
+        self.assertEqual(r"mid\\.dot", prefix_dots("mid.dot"))
+        self.assertEqual(r"\\.all\\.the\\.dots\\.", prefix_dots(".all.the.dots."))
