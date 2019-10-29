@@ -5,10 +5,6 @@
 
 An easy to use Python library for building GOV.UK forms.
 
-## Docs
-
-[Getting Started](/docs/getting_started.md)
-
 ## Building a form
 
 ```
@@ -38,13 +34,12 @@ Form(title='Register an organisation',
 
 ## Installing
 
-```pipenv install lite-forms```
+Just add this repository as a submodule to your project.
+
+```bash
+git submodule add git@github.com:uktrade/lite-forms.git lite_forms
+```
 
 ## Requirements
 
 * GOV.UK Design System 3.0 >
-
-## Deploying to PyPI:
-
-* ```python setup.py sdist```
-* ```twine upload dist/*```
