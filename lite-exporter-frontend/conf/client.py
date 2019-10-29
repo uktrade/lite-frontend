@@ -10,7 +10,7 @@ def get(request, appended_address):
                                      'X-Correlation-Id': str(request.correlation),
                                      'ORGANISATION-ID': str(request.user.organisation)})
 
-    return requests.get(env("LITE_API_URL") + appended_address)
+    return requests.get(env('LITE_API_URL') + appended_address)
 
 
 def post(request, appended_address, json):
