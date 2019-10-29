@@ -1,9 +1,15 @@
 {% extends 'layouts/base.html' %}
 
 {% block back_link %}
-	<a href="{% url 'organisations:organisations' %}" class="govuk-back-link">
-		Back to organisations
-	</a>
+    {% if organisation.type.key == 'hmrc' %}
+        <a href="{% url 'organisations:hmrc' %}" class="govuk-back-link">
+            Back to hmrc organisations
+        </a>
+    {% else %}
+        <a href="{% url 'organisations:organisations' %}" class="govuk-back-link">
+            Back to organisations
+        </a>
+    {% endif %}
 {% endblock %}
 
 {% block body %}
