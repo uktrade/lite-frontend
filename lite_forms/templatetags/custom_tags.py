@@ -46,4 +46,9 @@ def key_in_array(data, key):
 
 @register.filter
 def prefix_dots(text):
-    return text.replace('.', '\\\.')
+    """
+    Prefix dots in an ID so it can be used in a jQuery selector.
+
+    See https://stackoverflow.com/a/9930611
+    """
+    return text.replace('.', r'\\.')

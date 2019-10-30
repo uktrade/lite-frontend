@@ -14,14 +14,32 @@ def submit_single_form(request: HttpRequest, form: Form, post_to, pk=None, overr
         data = override_data
 
     if pk:
-        validated_data, status_code = post_to(request, pk, data)
+        validated_data, _ = post_to(request, pk, data)
     else:
-        validated_data, status_code = post_to(request, data)
+        validated_data, _ = post_to(request, data)
 
     if 'errors' in validated_data:
         return form_page(request, form, data=data, errors=validated_data.get('errors')), None
 
     return None, validated_data
+
+
+def _prepare_data(request: HttpRequest, inject_data, expect_many_values):
+    data = request.POST.copy()
+
+    if inject_data:
+        data = dict(list(inject_data.items()) + list(data.items()))
+
+    # Remove form_pk and CSRF from POST data as the new form will replace them
+    del data['form_pk']
+    del data['csrfmiddlewaretoken']
+
+    # Ensure data which is expected to have multiple values.
+    for many_value_key in expect_many_values:
+        data[many_value_key] = request.POST.getlist(many_value_key)
+
+    # Post the data to the validator and check for errors
+    return nest_data(data)
 
 
 def submit_paged_form(
@@ -35,30 +53,18 @@ def submit_paged_form(
     if expect_many_values is None:
         expect_many_values = []
 
-    data = request.POST.copy()
+    form_pk = request.POST.get('form_pk')
 
-    if inject_data:
-        data = dict(list(inject_data.items()) + list(data.items()))
+    data = _prepare_data(request, inject_data, expect_many_values)
 
     # Get the next form based off form_pk
-    current_form = copy.deepcopy(get_form_by_pk(data.get('form_pk'), form_group))
-    next_form = copy.deepcopy(get_next_form_after_pk(data.get('form_pk'), form_group))
-
-    # Remove form_pk and CSRF from POST data as the new form will replace them
-    del data['form_pk']
-    del data['csrfmiddlewaretoken']
-
-    # Ensure data which is expected to have multiple values.
-    for many_value_key in expect_many_values:
-        data[many_value_key] = request.POST.getlist(many_value_key)
-
-    # Post the data to the validator and check for errors
-    nested_data = nest_data(data)
+    current_form = copy.deepcopy(get_form_by_pk(form_pk, form_group))
+    next_form = copy.deepcopy(get_next_form_after_pk(form_pk, form_group))
 
     if pk:
-        validated_data, status_code = post_to(request, pk, nested_data)
+        validated_data, _ = post_to(request, pk, data)
     else:
-        validated_data, status_code = post_to(request, nested_data)
+        validated_data, _ = post_to(request, data)
 
     # If the API returns errors, add the existing questions to the reloaded form
     errors = validated_data.get('errors')
