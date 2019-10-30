@@ -30,11 +30,6 @@ def check_case_closed(driver):
     assert ClcQueriesPages(driver).is_clc_query_case_closed()
 
 
-@given("I create report summary picklist")
-def add_report_summary_picklist(add_a_report_summary_picklist):
-    pass
-
-
 @then('I do not see the respond to query button')
 def no_respond_to_query_button(driver):
     assert not ClcQueriesPages(driver).is_respond_to_query_button_present()

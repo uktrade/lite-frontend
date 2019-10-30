@@ -257,3 +257,8 @@ def reset_permissions(driver):
 def no_permissions(driver):
     roles_page = RolesPages(driver)
     assert roles_page.current_permissions_count_for_default() == 0
+
+
+@given("I create report summary picklist") # noqa
+def add_report_summary_picklist(add_a_report_summary_picklist):
+    pass
