@@ -7,3 +7,6 @@
 [submodule "ui_automation_tests/shared"]
 	path = ui_automation_tests/shared
 	url = git@github.com:uktrade/lite-tests-common.git
+[submodule "lite_forms"]
+	path = lite_forms
+	url = git@github.com:uktrade/lite-forms.git
