@@ -19,7 +19,7 @@
     {% endif %}
 	{% if question.description %}
 		<span class="govuk-hint" for="{{ question.name }}">
-			{{ question.description|linebreaksbr|safe }}
+			{{ question.description|safe|linebreaksbr }}
 		</span>
 	{% endif %}
 
