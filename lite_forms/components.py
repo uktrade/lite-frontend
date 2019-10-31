@@ -91,7 +91,7 @@ class Form:
                  helpers=None,
                  footer_label: Label = None,
                  javascript_imports=None,
-                 default_button_name='Submit',
+                 default_button_name='Save',
                  back_link=BackLink(),
                  post_url=None):
         self.title = title
