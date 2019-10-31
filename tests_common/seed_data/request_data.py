@@ -122,7 +122,7 @@ def create_request_data(exporter_user, gov_user, base_url):
             'text': 'I Am Easy to Find',
             'is_visible_to_exporter': True
         },
-        'edit_case_app_name': {
+        'edit_case_app': {
             'name': 'new app name!'
         },
         'ecju_query': {

@@ -26,6 +26,7 @@ class SeedCase(SeedClass):
 
     def edit_case(self, app_id):
         self.log('Editing case application: ...')
-        data = self.request_data['edit_case_app_name']
+        data = self.request_data['edit_case_app']
+        self.context['edit_case_app'] = self.request_data['edit_case_app']
         make_request("PUT", base_url=self.base_url, url='/applications/' + app_id + '/', headers=self.export_headers,
-                     body=data)  # noqa
+                     body=data)
