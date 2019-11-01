@@ -23,3 +23,10 @@ class SeedCase(SeedClass):
         data = self.request_data['case_note']
         context.case_note_text = self.request_data['case_note']['text']
         make_request("POST", base_url=self.base_url, url='/cases/' + case_id + '/case-notes/', headers=self.gov_headers, body=data)  # noqa
+
+    def edit_case(self, app_id):
+        self.log('Editing case application: ...')
+        data = self.request_data['edit_case_app']
+        self.context['edit_case_app'] = self.request_data['edit_case_app']
+        make_request("PUT", base_url=self.base_url, url='/applications/' + app_id + '/', headers=self.export_headers,
+                     body=data)
