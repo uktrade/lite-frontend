@@ -4,7 +4,7 @@ Feature: I want to view the case details of a case
   I want to view the details on a case
   So that I can make review the case before making any decisions
 
-@LT_1042_can_see_all_parties
+  @LT_1042_can_see_all_parties
   Scenario: Gov user can see all parties on the case
     Given I create application or application has been previously created
     And I sign in to SSO or am signed into SSO
@@ -13,3 +13,11 @@ Feature: I want to view the case details of a case
     And I see an ultimate end user
     And I see a third party
     And I see a consignee
+
+  @LT_982_exporter_edited_case_anchor
+  Scenario: Gov user can see exporter has made changes to case
+    Given I create application or application has been previously created
+    And I sign in to SSO or am signed into SSO
+    When the exporter user has edited the case
+    And I go to application previously created
+    Then I see that changes have been made to the case

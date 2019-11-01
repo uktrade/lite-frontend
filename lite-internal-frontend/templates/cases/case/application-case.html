@@ -12,6 +12,12 @@
 
 {% block body %}
 
+{% if notification %}
+    <a id="case-notification" class="lite-info-bar app-info-bar--link lite-info-bar--no-animation" href="#case-activity-{{ notification.case_activity }}">
+        See what has changed
+    </a>
+{% endif %}
+
 <div class="lite-app-bar">
 	<div class="lite-app-bar__content">
 		<p class="govuk-caption-m" style="margin: 0;">{{ case.application.licence_type.value }}</p>

@@ -8,6 +8,8 @@ from selenium.common.exceptions import NoSuchElementException
 class ApplicationPage(BasePage):
 
     actions_dropdown = ".app-more-actions__button"  # CSS
+    case_notification_anchor = "case-notification"  # ID
+    audit_id = "[id^=case-activity-]"  # CSS
     case_note_field = "case_note"  # id
     post_note_btn = "button-post-note"  # id
     cancel_note_btn = "case-note-cancel-button"  # id
@@ -158,6 +160,17 @@ class ApplicationPage(BasePage):
 
     def get_text_of_eu_table(self):
         return self.driver.find_element_by_id(self.eu_table).text
+
+    def get_case_notification_anchor(self):
+        return self.driver.find_element_by_id(self.case_notification_anchor)
+
+    def get_case_activity_id_by_audit_text(self, audit_text):
+        audits = self.driver.find_elements_by_css_selector(self.audit_id)
+        for audit in audits:
+            if audit_text in audit.text:
+                return audit.get_attribute("id")
+
+        return None
 
     def get_text_of_ueu_table(self):
         return self.driver.find_element_by_id(self.ueu_table).text

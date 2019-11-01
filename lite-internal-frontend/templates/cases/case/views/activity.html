@@ -28,7 +28,7 @@
 
 <div class="app-activity__list">
 	{% for item in activity %}
-		<div class="app-activity__item">
+		<div id="case-activity-{{ item.id }}" class="app-activity__item">
 			<p class="govuk-body">
 				<span class="user">{{ item.user.first_name }} {{ item.user.last_name }}</span> {{ item.text }}
 			</p>

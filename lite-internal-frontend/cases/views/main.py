@@ -18,7 +18,7 @@ from conf.constants import DEFAULT_QUEUE_ID
 from conf.settings import AWS_STORAGE_BUCKET_NAME
 from core.builtins.custom_tags import get_string
 from core.helpers import convert_dict_to_query_params
-from core.services import get_user_permissions, get_statuses
+from core.services import get_user_permissions, get_statuses, get_user_case_notification
 from queues.services import get_queue, get_queues, get_queue_cases
 
 
@@ -93,6 +93,7 @@ class ViewCase(TemplateView):
             return render(request, 'cases/case/queries/clc-query-case.html', context)
         elif case['type']['key'] == 'application':
             context['title'] = case.get('application').get('name')
+            context['notification'] = get_user_case_notification(request, case_id)
             return render(request, 'cases/case/application-case.html', context)
 
     def post(self, request, **kwargs):
