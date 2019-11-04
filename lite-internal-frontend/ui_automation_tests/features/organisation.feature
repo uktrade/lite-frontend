@@ -32,7 +32,8 @@ Feature: I want to add a company to LITE
     And I choose to add a new organisation
     And I provide hmrc registration details of org_name: "HMRC Blue", site_name: "HQ", addres line 1: "123 Cobalt Street", town or city: "London", County: "Islington", post code: "AB1 2CD", country: "Ukraine"
     And I setup the admin user with email: "TestBusinessForSites@mail.com", first name: "Trinity", last name: "Fishburne"
-    Then organisation is registered
+    And I go to organisations
+    Then HMRC organisation is registered
 
   @LT_1086_test_adding_a_flag_to_an_organisation
   Scenario: Adding a flag to an organisation
