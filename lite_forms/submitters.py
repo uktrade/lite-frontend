@@ -39,7 +39,7 @@ def _prepare_data(request: HttpRequest, inject_data, expect_many_values):
         data[many_value_key] = request.POST.getlist(many_value_key)
 
     # Post the data to the validator and check for errors
-    return nest_data(data)
+    return data, nest_data(data)
 
 
 def submit_paged_form(
@@ -53,18 +53,17 @@ def submit_paged_form(
     if expect_many_values is None:
         expect_many_values = []
 
-    form_pk = request.POST.get('form_pk')
-
-    data = _prepare_data(request, inject_data, expect_many_values)
+    data, nested_data = _prepare_data(request, inject_data, expect_many_values)
 
     # Get the next form based off form_pk
+    form_pk = request.POST.get('form_pk')
     current_form = copy.deepcopy(get_form_by_pk(form_pk, form_group))
     next_form = copy.deepcopy(get_next_form_after_pk(form_pk, form_group))
 
     if pk:
-        validated_data, _ = post_to(request, pk, data)
+        validated_data, status_code = post_to(request, pk, nested_data)
     else:
-        validated_data, _ = post_to(request, data)
+        validated_data, status_code = post_to(request, nested_data)
 
     # If the API returns errors, add the existing questions to the reloaded form
     errors = validated_data.get('errors')
