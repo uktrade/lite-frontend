@@ -1,0 +1,11 @@
+.lite-back-link-button {
+	@include appearance(none);
+	@extend .govuk-back-link;
+	border: none;
+	border-bottom: 1px solid govuk-colour("black");
+	outline: none;
+	background: none;
+	padding: 0 0 0 14px;
+	margin-left: 0;
+	cursor: pointer;
+}
