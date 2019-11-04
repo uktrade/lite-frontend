@@ -10,6 +10,13 @@ def get_form_by_pk(pk, form_group: FormGroup):
     return
 
 
+def get_previous_form_before_pk(pk, form_group: FormGroup):
+    for form in form_group.forms:
+        if int(form.pk) == int(pk) - 1:
+            return form
+    return
+
+
 def get_next_form_after_pk(pk, form_group: FormGroup):
     next_one = False
     for form in form_group.forms:

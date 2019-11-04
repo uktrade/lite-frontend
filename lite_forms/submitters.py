@@ -1,22 +1,24 @@
 import copy
+from typing import Callable
 
 from django.http import HttpRequest
 
 from lite_forms.components import HiddenField, Form, FormGroup
 from lite_forms.generators import form_page
-from lite_forms.helpers import remove_unused_errors, nest_data, get_next_form_after_pk, get_form_by_pk, flatten_data
+from lite_forms.helpers import remove_unused_errors, nest_data, get_next_form_after_pk, get_form_by_pk, flatten_data, \
+    get_previous_form_before_pk
 
 
-def submit_single_form(request: HttpRequest, form: Form, post_to, pk=None, override_data=None):
+def submit_single_form(request: HttpRequest, form: Form, action: Callable, pk=None, override_data=None):
     data = request.POST.copy()
 
     if override_data:
         data = override_data
 
     if pk:
-        validated_data, _ = post_to(request, pk, data)
+        validated_data, _ = action(request, pk, data)
     else:
-        validated_data, _ = post_to(request, data)
+        validated_data, _ = action(request, data)
 
     if 'errors' in validated_data:
         return form_page(request, form, data=data, errors=validated_data.get('errors')), None
@@ -45,7 +47,7 @@ def _prepare_data(request: HttpRequest, inject_data, expect_many_values):
 def submit_paged_form(
     request: HttpRequest,
     form_group: FormGroup,
-    post_to,
+    action: Callable,
     pk=None,
     inject_data=None,
     expect_many_values=None,
@@ -58,13 +60,19 @@ def submit_paged_form(
     data = _prepare_data(request, inject_data, expect_many_values)
 
     # Get the next form based off form_pk
+    previous_form = copy.deepcopy(get_previous_form_before_pk(form_pk, form_group))
     current_form = copy.deepcopy(get_form_by_pk(form_pk, form_group))
     next_form = copy.deepcopy(get_next_form_after_pk(form_pk, form_group))
 
+    if data.get('_action') and data.get('_action') == 'back':
+        data = request.POST.copy()
+        del data['form_pk']
+        return form_page(request, previous_form, data=data, extra_data={'form_pk': previous_form.pk}), None
+
     if pk:
-        validated_data, _ = post_to(request, pk, data)
+        validated_data, _ = action(request, pk, data)
     else:
-        validated_data, _ = post_to(request, data)
+        validated_data, _ = action(request, data)
 
     # If the API returns errors, add the existing questions to the reloaded form
     errors = validated_data.get('errors')
@@ -86,7 +94,7 @@ def submit_paged_form(
             if not exists:
                 current_form.questions.insert(0, HiddenField(key, value))
 
-        return form_page(request, current_form, data=data, errors=errors), validated_data
+        return form_page(request, current_form, data=data, errors=errors, extra_data={'form_pk': current_form.pk}), validated_data
 
     # If there aren't any forms left to go through, return the data
     if next_form is None:
@@ -101,4 +109,4 @@ def submit_paged_form(
             next_form.questions.insert(0, HiddenField(key, value))
 
     # Go to the next page
-    return form_page(request, next_form, data=data), validated_data
+    return form_page(request, next_form, data=data, extra_data={'form_pk': next_form.pk}), validated_data

@@ -12,6 +12,7 @@ def form_page(request, form, data=None, errors=None, extra_data=None):
         'title': form.title if errors is None else 'Error: ' + form.title,
         'data': data,
         'errors': errors,
+        'form_pk': 0,
     }
 
     if extra_data:
