@@ -1,3 +1,5 @@
+from abc import ABC
+
 from django.shortcuts import redirect
 from django.views.generic import TemplateView
 from lite_forms.components import FormGroup, Form
@@ -6,18 +8,11 @@ from lite_forms.generators import form_page
 from lite_forms.submitters import submit_paged_form
 
 
-class SingleFormView(TemplateView):
-    form: Form = None
+class FormView(TemplateView, ABC):
     data: dict = None
     action: callable = None
     object_pk = None
     success_url: str = ''
-
-    def get_form(self):
-        if not self.form:
-            raise NotImplementedError('form has not been set')
-
-        return self.form
 
     def get_data(self):
         return self.data
@@ -42,6 +37,19 @@ class SingleFormView(TemplateView):
 
     def init(self, request, **kwargs):
         raise NotImplementedError('init function not implemented')
+
+
+class SingleFormView(FormView):
+    form: Form = None
+
+    def get_form(self):
+        if not self.form:
+            raise NotImplementedError('form has not been set')
+
+        return self.form
+
+    def init(self, request, **kwargs):
+        super().init(request, **kwargs)
 
     def get(self, request, **kwargs):
         self.init(request, **kwargs)
@@ -64,14 +72,8 @@ class SingleFormView(TemplateView):
         return redirect(self.get_success_url())
 
 
-class MultiFormView(TemplateView):
+class MultiFormView(FormView):
     forms: FormGroup = None
-    data: dict = None
-    action: callable = None
-    object_pk = None
-    success_url: str = ''
-
-    _validated_data = None
 
     def get_forms(self):
         if not self.forms:
@@ -79,29 +81,8 @@ class MultiFormView(TemplateView):
 
         return self.forms
 
-    def get_data(self):
-        return self.data
-
-    def get_action(self):
-        if not self.action:
-            raise NotImplementedError('action has not been set')
-
-        return self.action
-
-    def get_object_pk(self):
-        return self.object_pk
-
-    def get_success_url(self):
-        if not self.success_url:
-            raise NotImplementedError('success_url has not been set')
-
-        return self.success_url
-
-    def get_validated_data(self):
-        return self._validated_data
-
     def init(self, request, **kwargs):
-        raise NotImplementedError('init function not implemented')
+        super().init(request, **kwargs)
 
     def get(self, request, **kwargs):
         self.init(request, **kwargs)
