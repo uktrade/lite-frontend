@@ -5,8 +5,8 @@ from django.http import HttpRequest
 
 from lite_forms.components import HiddenField, Form, FormGroup
 from lite_forms.generators import form_page
-from lite_forms.helpers import remove_unused_errors, nest_data, get_next_form_after_pk, get_form_by_pk, flatten_data, \
-    get_previous_form_before_pk
+from lite_forms.helpers import remove_unused_errors, nest_data, get_next_form, get_form_by_pk, flatten_data, \
+    get_previous_form
 
 
 def submit_single_form(request: HttpRequest, form: Form, action: Callable, pk=None, override_data=None):
@@ -59,10 +59,9 @@ def submit_paged_form(
 
     data = _prepare_data(request, inject_data, expect_many_values)
 
-    # Get the next form based off form_pk
-    previous_form = copy.deepcopy(get_previous_form_before_pk(form_pk, form_group))
+    previous_form = copy.deepcopy(get_previous_form(form_pk, form_group))
     current_form = copy.deepcopy(get_form_by_pk(form_pk, form_group))
-    next_form = copy.deepcopy(get_next_form_after_pk(form_pk, form_group))
+    next_form = copy.deepcopy(get_next_form(form_pk, form_group))
 
     if data.get('_action') and data.get('_action') == 'back':
         data = request.POST.copy()

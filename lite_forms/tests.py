@@ -3,7 +3,8 @@ from django.test.client import RequestFactory
 from unittest import TestCase
 
 from lite_forms.components import Form, DetailComponent, TextInput, FormGroup
-from lite_forms.helpers import nest_data, flatten_data, remove_unused_errors, get_form_by_pk
+from lite_forms.helpers import nest_data, flatten_data, remove_unused_errors, get_form_by_pk, get_next_form, \
+    get_previous_form
 from lite_forms.submitters import submit_paged_form
 from lite_forms.templatetags.custom_tags import prefix_dots
 
@@ -14,6 +15,16 @@ class FormTests(TestCase):
         forms = FormGroup([Form(questions=[]), Form(questions=[]), Form(questions=[])])
 
         self.assertEqual(get_form_by_pk(1, forms).pk, 1)
+
+    def test_get_previous_form_by_pk(self):
+        forms = FormGroup([Form(questions=[]), Form(questions=[]), Form(questions=[])])
+
+        self.assertEqual(get_previous_form(2, forms).pk, 1)
+
+    def test_get_next_form_by_pk(self):
+        forms = FormGroup([Form(questions=[]), Form(questions=[]), Form(questions=[])])
+
+        self.assertEqual(get_next_form(1, forms).pk, 2)
 
     def test_remove_unused_errors(self):
         form = Form(questions=[
