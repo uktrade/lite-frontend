@@ -131,7 +131,7 @@ class TestSubmitPagedFormTestCase(TestCase):
         ])
 
         def handle_post(request, data):
-            return (data, 200)
+            return data, 200
 
         form, data = submit_paged_form(
             request,
