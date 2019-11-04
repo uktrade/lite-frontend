@@ -61,9 +61,9 @@ def submit_paged_form(
     next_form = copy.deepcopy(get_next_form_after_pk(form_pk, form_group))
 
     if pk:
-        validated_data, status_code = post_to(request, pk, nested_data)
+        validated_data, _ = post_to(request, pk, nested_data)
     else:
-        validated_data, status_code = post_to(request, nested_data)
+        validated_data, _ = post_to(request, nested_data)
 
     # If the API returns errors, add the existing questions to the reloaded form
     errors = validated_data.get('errors')
