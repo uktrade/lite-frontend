@@ -148,8 +148,7 @@ def create_request_data(exporter_user, test_s3_key, gov_user):
         'report_picklist': create_picklist('More advice', 'My standard advice would be this.', 'report_summary'),
         'letter_paragraph_picklist': create_picklist('Letter Paragraph 1', 'My letter paragraph is this.', 'letter_paragraph'),
         'document_template': {
-            'restricted_to': ['application'],
-            'layout': 'licence'
+            'restricted_to': ['application']
         }
     }
     return request_data
