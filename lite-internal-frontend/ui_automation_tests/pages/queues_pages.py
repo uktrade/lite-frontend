@@ -6,7 +6,7 @@ class QueuesPages():
         self.add_queue_button = ".govuk-button[href*='queues/add']"  # CSS
         self.no_cases_text = '.lite-information-text__text'  # CSS
         self.queue_checkboxes = ".govuk-checkboxes .govuk-checkboxes__input"  # CSS
-        self.table_rows = ".lite-table__body .lite-table__row"  # CSS
+        self.table_rows = ".govuk-table__body .govuk-table__row"  # CSS
         self.queues_edit_link = '.govuk-link[href*="queues"]'
 
     def enter_queue_name(self, text):

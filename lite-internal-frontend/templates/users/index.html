@@ -21,21 +21,21 @@
 		</div>
 	</div>
 
-    <table class="lite-table">
-        <thead class="lite-table__head">
-            <tr class="lite-table__row">
-                <th class="lite-table__header" scope="col">Name</th>
-                <th class="lite-table__header" scope="col">Email</th>
-                <th class="lite-table__header" scope="col">Team</th>
-                <th class="lite-table__header" scope="col">Role</th>
-                <th class="lite-table__header" scope="col">Status</th>
-                <th class="lite-table__header" scope="col"></th>
+    <table class="govuk-table">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th class="govuk-table__header" scope="col">Name</th>
+                <th class="govuk-table__header" scope="col">Email</th>
+                <th class="govuk-table__header" scope="col">Team</th>
+                <th class="govuk-table__header" scope="col">Role</th>
+                <th class="govuk-table__header" scope="col">Status</th>
+                <th class="govuk-table__header" scope="col"></th>
             </tr>
         </thead>
-        <tbody class="lite-table__body">
+        <tbody class="govuk-table__body">
             {% for user in data.gov_users %}
-                <tr class="lite-table__row" id="row-{{ forloop.counter }}" {% if not user.first_name %}style="background-color: rgba(40, 161, 151, 0.025);"{% endif %}>
-                    <td class="lite-table__cell">
+                <tr class="govuk-table__row" id="row-{{ forloop.counter }}" {% if not user.first_name %}style="background-color: rgba(40, 161, 151, 0.025);"{% endif %}>
+                    <td class="govuk-table__cell">
 						{% if user.first_name %}
 							<a href="{% url 'users:user' user.id %}" style="margin: 0;" class="govuk-link govuk-link--no-visited-state">
 								{{ user.first_name }} {{ user.last_name }}
@@ -46,15 +46,15 @@
 							</strong>
 						{% endif %}
                     </td>
-                    <td class="lite-table__cell">{{ user.email }}</td>
-                    <td class="lite-table__cell">
+                    <td class="govuk-table__cell">{{ user.email }}</td>
+                    <td class="govuk-table__cell">
                         <a href="{% url 'teams:team' user.team.id %}" style="margin: 0;" class="govuk-link govuk-link--no-visited-state">
                             {{ user.team.name }}
                         </a>
                     </td>
-                    <td class="lite-table__cell">{{ user.role.name }}</td>
-                    <td class="lite-table__cell">{{ user.status }}</td>
-                    <td class="lite-table__cell">
+                    <td class="govuk-table__cell">{{ user.role.name }}</td>
+                    <td class="govuk-table__cell">{{ user.status }}</td>
+                    <td class="govuk-table__cell">
                         <a href="{% url 'users:edit' user.id %}" style="margin: 0;" class="govuk-link govuk-link--no-visited-state">Edit</a>
                     </td>
                 </tr>

@@ -36,28 +36,28 @@
 </div>
 
 <!-- Goods -->
-<table class="lite-table" id="goods">
-	<thead class="lite-table__head">
-		<tr class="lite-table__row">
-			<th class="lite-table__header">Description</th>
-            <th class="lite-table__header">Report summary</th>
-			<th class="lite-table__header">Controlled</th>
-            <th class="lite-table__header">Controlled list entry</th>
-            <th class="lite-table__header">Goods Comment</th>
-            <th class="lite-table__header">Quantity/Value</th>
-            <th class="lite-table__header">Flags</th>
+<table class="govuk-table" id="goods">
+	<thead class="govuk-table__head">
+		<tr class="govuk-table__row">
+			<th class="govuk-table__header">Description</th>
+            <th class="govuk-table__header">Report summary</th>
+			<th class="govuk-table__header">Controlled</th>
+            <th class="govuk-table__header">Controlled list entry</th>
+            <th class="govuk-table__header">Goods Comment</th>
+            <th class="govuk-table__header">Quantity/Value</th>
+            <th class="govuk-table__header">Flags</th>
 		</tr>
 	</thead>
-	<tbody class="lite-table__body">
+	<tbody class="govuk-table__body">
 		{% for good in objects %}
-			<tr class="lite-table__row">
-                <td class="lite-table__cell">{{ good.good.description }}</td>
-				<td class="lite-table__cell">{{ good.good.report_summary|default_if_none:"N/A" }}</td>
-				<td class="lite-table__cell">{{ good.good.is_good_controlled|capfirst}}</td>
-                <td class="lite-table__cell">{{ good.good.control_code}}</td>
-                <td class="lite-table__cell">{{ good.good.comment}}</td>
-                <td class="lite-table__cell">{{ good.quantity }} {{ good.unit.value }}/£{{ good.value }}</td>
-                <td class="lite-table__cell">
+			<tr class="govuk-table__row">
+                <td class="govuk-table__cell">{{ good.good.description }}</td>
+				<td class="govuk-table__cell">{{ good.good.report_summary|default_if_none:"N/A" }}</td>
+				<td class="govuk-table__cell">{{ good.good.is_good_controlled|capfirst}}</td>
+                <td class="govuk-table__cell">{{ good.good.control_code}}</td>
+                <td class="govuk-table__cell">{{ good.good.comment}}</td>
+                <td class="govuk-table__cell">{{ good.quantity }} {{ good.unit.value }}/£{{ good.value }}</td>
+                <td class="govuk-table__cell">
                     {% for flag in good.good.flags %}
                         {{ flag.name}} <br>
                     {% endfor %}

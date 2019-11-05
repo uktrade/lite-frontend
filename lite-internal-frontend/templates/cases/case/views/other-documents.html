@@ -1,23 +1,23 @@
 {% if case.application.additional_documents %}
 <h3 class="govuk-heading-m">Other Documents</h3>
-	<table class="lite-table" id="other-documents">
-		<thead class="lite-table__head">
-			<tr class="lite-table__row">
-				<th class="lite-table__header" scope="col">Name</th>
-				<th class="lite-table__header" scope="col">Description</th>
-                <th class="lite-table__header" scope="col">Document</th>
+	<table class="govuk-table" id="other-documents">
+		<thead class="govuk-table__head">
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header" scope="col">Name</th>
+				<th class="govuk-table__header" scope="col">Description</th>
+                <th class="govuk-table__header" scope="col">Document</th>
 			</tr>
 		</thead>
-		<tbody class="lite-table__body">
+		<tbody class="govuk-table__body">
         {%  for additional_document in case.application.additional_documents %}
-            <tr class="lite-table__row">
-                <td class="lite-table__cell">
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell">
                     {{ additional_document.name }}
                 </td>
-                <td class="lite-table__cell">
+                <td class="govuk-table__cell">
                     {{ additional_document.description }}
                 </td>
-                <td class="lite-table__cell">
+                <td class="govuk-table__cell">
                     {% if additional_document.safe == True %}
                     <a class="govuk-link govuk-link--no-visited-state" id="additional_document" href="{% url 'cases:document' case.id additional_document.id %}">
                         <span class="govuk-visually-hidden">{% get_string 'cases.manage.documents.download_document' %}</span>

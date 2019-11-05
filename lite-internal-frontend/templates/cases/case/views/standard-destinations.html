@@ -1,23 +1,23 @@
 {% with end_user=case.application.destinations.data %}
 	<h3 class="govuk-heading-m">End User</h3>
-	<table class="lite-table" id="end-user">
-		<thead class="lite-table__head">
-			<tr class="lite-table__row">
-				<th class="lite-table__header" scope="col">Name</th>
-				<th class="lite-table__header" scope="col">Type</th>
-				<th class="lite-table__header" scope="col">Address</th>
-				<th class="lite-table__header" scope="col">Website</th>
+	<table class="govuk-table" id="end-user">
+		<thead class="govuk-table__head">
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header" scope="col">Name</th>
+				<th class="govuk-table__header" scope="col">Type</th>
+				<th class="govuk-table__header" scope="col">Address</th>
+				<th class="govuk-table__header" scope="col">Website</th>
                	{% if end_user.document.safe == True %}
-					<th class="lite-table__header" scope="col">Document</th>
+					<th class="govuk-table__header" scope="col">Document</th>
 				{% endif %}
 				{% if show_advice %}
-					<th class="lite-table__header" style="width: 350px;">Advice</th>
+					<th class="govuk-table__header" style="width: 350px;">Advice</th>
 				{% endif %}
 			</tr>
 		</thead>
-		<tbody class="lite-table__body">
-			<tr class="lite-table__row">
-				<td class="lite-table__cell">
+		<tbody class="govuk-table__body">
+			<tr class="govuk-table__row">
+				<td class="govuk-table__cell">
 					<div class="govuk-checkboxes govuk-checkboxes--small">
 						{% if show_checkboxes %}<div class="govuk-checkboxes__item">{% endif %}
 							<input class="govuk-checkboxes__input" type="checkbox" name="end_user" id="end_{{ end_user.id }}" value="{{ end_user.id }}">
@@ -25,16 +25,16 @@
 						{% if show_checkboxes %}</div>{% endif %}
 					</div>
 				</td>
-				<td class="lite-table__cell">
+				<td class="govuk-table__cell">
 					{{ end_user.sub_type.value }}
 				</td>
-				<td class="lite-table__cell">
+				<td class="govuk-table__cell">
 					{{ end_user.address }}, {{ end_user.country.name }}
 				</td>
-				<td class="lite-table__cell">
+				<td class="govuk-table__cell">
 					{{ end_user.website|default:'Not set' }}
 				</td>
-                <td class="lite-table__cell">
+                <td class="govuk-table__cell">
                 {% if end_user.document.safe == True %}
                     <a class="govuk-link govuk-link--no-visited-state" id="end_user_document" href="{% url 'cases:document' case.id end_user.document.id %}">
                         <span class="govuk-visually-hidden">{% get_string 'cases.manage.documents.download_document' %}</span>
@@ -43,7 +43,7 @@
                 {% endif %}
                 </td>
 				{% if show_advice %}
-					<td class="lite-table__cell">
+					<td class="govuk-table__cell">
 						{% for advice in all_advice %}
 							{% if advice.end_user == end_user.id %}
 								{% include 'cases/case/views/table-advice.html' %}
@@ -59,22 +59,22 @@
 {% with consignee=case.application.consignee %}
     {% if consignee %}
         <h3 class="govuk-heading-m">Consignee</h3>
-        <table class="lite-table" id="consignee">
-            <thead class="lite-table__head">
-                <tr class="lite-table__row">
-                    <th class="lite-table__header" scope="col">Name</th>
-                    <th class="lite-table__header" scope="col">Type</th>
-                    <th class="lite-table__header" scope="col">Address</th>
-                    <th class="lite-table__header" scope="col">Website</th>
-                	<th class="lite-table__header" scope="col">Document</th>
+        <table class="govuk-table" id="consignee">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th class="govuk-table__header" scope="col">Name</th>
+                    <th class="govuk-table__header" scope="col">Type</th>
+                    <th class="govuk-table__header" scope="col">Address</th>
+                    <th class="govuk-table__header" scope="col">Website</th>
+                	<th class="govuk-table__header" scope="col">Document</th>
                     {% if show_advice %}
-						<th class="lite-table__header" style="width: 350px;">Advice</th>
+						<th class="govuk-table__header" style="width: 350px;">Advice</th>
 					{% endif %}
                 </tr>
             </thead>
-            <tbody class="lite-table__body">
-                <tr class="lite-table__row">
-                    <td class="lite-table__cell">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">
                         <div class="govuk-checkboxes govuk-checkboxes--small">
                             {% if show_checkboxes %}<div class="govuk-checkboxes__item">{% endif %}
                                 <input class="govuk-checkboxes__input" type="checkbox" name="consignee" id="consignee_{{ consignee.id }}" value="{{ consignee.id }}">
@@ -82,16 +82,16 @@
                             {% if show_checkboxes %}</div>{% endif %}
                         </div>
                     </td>
-                    <td class="lite-table__cell">
+                    <td class="govuk-table__cell">
                         {{ consignee.sub_type.value }}
                     </td>
-                    <td class="lite-table__cell">
+                    <td class="govuk-table__cell">
                         {{ consignee.address }}, {{ consignee.country.name }}
                     </td>
-                    <td class="lite-table__cell">
+                    <td class="govuk-table__cell">
                         {{ consignee.website|default:'Not set' }}
                     </td>
-                    <td class="lite-table__cell">
+                    <td class="govuk-table__cell">
                     {% if consignee.document.safe == True %}
                         <a class="govuk-link govuk-link--no-visited-state" id="consignee_document" href="{% url 'cases:document' case.id consignee.document.id %}">
                             <span class="govuk-visually-hidden">{% get_string 'cases.manage.documents.download_document' %}</span>
@@ -100,7 +100,7 @@
                     {% endif %}
                     </td>
                     {% if show_advice %}
-                        <td class="lite-table__cell">
+                        <td class="govuk-table__cell">
                             {% for advice in all_advice %}
                                 {% if advice.consignee == consignee.id %}
                                     {% include 'cases/case/views/table-advice.html' %}
@@ -117,23 +117,23 @@
 {% with ultimate_end_users=case.application.ultimate_end_users %}
 	{% if ultimate_end_users %}
 		<h3 class="govuk-heading-m">Ultimate End Users</h3>
-		<table class="lite-table" id="ultimate-end-users">
-			<thead class="lite-table__head">
-				<tr class="lite-table__row">
-					<th class="lite-table__header" scope="col">Name</th>
-					<th class="lite-table__header" scope="col">Type</th>
-					<th class="lite-table__header" scope="col">Address</th>
-					<th class="lite-table__header" scope="col">Website</th>
-                    <th class="lite-table__header" scope="col">Document</th>
+		<table class="govuk-table" id="ultimate-end-users">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="col">Name</th>
+					<th class="govuk-table__header" scope="col">Type</th>
+					<th class="govuk-table__header" scope="col">Address</th>
+					<th class="govuk-table__header" scope="col">Website</th>
+                    <th class="govuk-table__header" scope="col">Document</th>
 					{% if show_advice %}
-						<th class="lite-table__header" style="width: 350px;">Advice</th>
+						<th class="govuk-table__header" style="width: 350px;">Advice</th>
 					{% endif %}
 				</tr>
 			</thead>
-			<tbody class="lite-table__body">
+			<tbody class="govuk-table__body">
 				{% for ultimate_end_user in ultimate_end_users %}
-					<tr class="lite-table__row">
-						<td class="lite-table__cell">
+					<tr class="govuk-table__row">
+						<td class="govuk-table__cell">
 							<div class="govuk-checkboxes govuk-checkboxes--small">
 								{% if show_checkboxes %}<div class="govuk-checkboxes__item">{% endif %}
 									<input class="govuk-checkboxes__input" type="checkbox" name="ultimate_end_users" id="ultimate_{{ ultimate_end_user.id}}" value="{{ ultimate_end_user.id }}">
@@ -141,17 +141,17 @@
 								{% if show_checkboxes %}</div>{% endif %}
 							</div>
 						</td>
-						<td class="lite-table__cell">
+						<td class="govuk-table__cell">
 							{{ ultimate_end_user.sub_type.value }}
 						</td>
 						</td>
-						<td class="lite-table__cell">
+						<td class="govuk-table__cell">
 							{{ ultimate_end_user.address }}, {{ ultimate_end_user.country.name }}
 						</td>
-						<td class="lite-table__cell">
+						<td class="govuk-table__cell">
 							{{ ultimate_end_user.website|default:'Not set' }}
 						</td>
-                        <td class="lite-table__cell">
+                        <td class="govuk-table__cell">
                         {% if ultimate_end_user.document.safe == True %}
                             <a class="govuk-link govuk-link--no-visited-state" id="end_user_document" href="{% url 'cases:document' case.id ultimate_end_user.document.id %}">
                                 <span class="govuk-visually-hidden">{% get_string 'cases.manage.documents.download_document' %}</span>
@@ -160,7 +160,7 @@
                         {% endif %}
                         </td>
 						{% if show_advice %}
-							<td class="lite-table__cell">
+							<td class="govuk-table__cell">
 								{% for advice in all_advice %}
 									{% if advice.ultimate_end_user == ultimate_end_user.id %}
 										{% include 'cases/case/views/table-advice.html' %}
@@ -178,23 +178,23 @@
 {% with third_parties=case.application.third_parties %}
 	{% if third_parties %}
 		<h3 class="govuk-heading-m">Third parties</h3>
-		<table class="lite-table" id="third-parties">
-			<thead class="lite-table__head">
-				<tr class="lite-table__row">
-					<th class="lite-table__header" scope="col">Name</th>
-					<th class="lite-table__header" scope="col">Type</th>
-					<th class="lite-table__header" scope="col">Address</th>
-					<th class="lite-table__header" scope="col">Website</th>
-					<th class="lite-table__header" scope="col">Document</th>
+		<table class="govuk-table" id="third-parties">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="col">Name</th>
+					<th class="govuk-table__header" scope="col">Type</th>
+					<th class="govuk-table__header" scope="col">Address</th>
+					<th class="govuk-table__header" scope="col">Website</th>
+					<th class="govuk-table__header" scope="col">Document</th>
                     {% if show_advice %}
-						<th class="lite-table__header" style="width: 350px;">Advice</th>
+						<th class="govuk-table__header" style="width: 350px;">Advice</th>
 					{% endif %}
 				</tr>
 			</thead>
-			<tbody class="lite-table__body">
+			<tbody class="govuk-table__body">
 				{% for third_party in third_parties %}
-					<tr class="lite-table__row">
-						<td class="lite-table__cell">
+					<tr class="govuk-table__row">
+						<td class="govuk-table__cell">
 							<div class="govuk-checkboxes govuk-checkboxes--small">
 								{% if show_checkboxes %}<div class="govuk-checkboxes__item">{% endif %}
 									<input class="govuk-checkboxes__input" type="checkbox" name="third_parties" id="third_{{ third_party.id}}" value="{{ third_party.id }}">
@@ -202,16 +202,16 @@
 								{% if show_checkboxes %}</div>{% endif %}
 							</div>
 						</td>
-						<td class="lite-table__cell">
+						<td class="govuk-table__cell">
 							{{ third_party.sub_type.value }}
 						</td>
-						<td class="lite-table__cell">
+						<td class="govuk-table__cell">
 							{{ third_party.address }}, {{ third_party.country.name }}
 						</td>
-						<td class="lite-table__cell">
+						<td class="govuk-table__cell">
 							{{ third_party.website|default:'Not set' }}
 						</td>
-                        <td class="lite-table__cell">
+                        <td class="govuk-table__cell">
                         {% if third_party.document.safe == True %}
                             <a class="govuk-link govuk-link--no-visited-state" id="third_party_document" href="{% url 'cases:document' case.id third_party.document.id %}">
                                 <span class="govuk-visually-hidden">{% get_string 'cases.manage.documents.download_document' %}</span>
@@ -220,7 +220,7 @@
                         {% endif %}
                         </td>
                         {% if show_advice %}
-							<td class="lite-table__cell">
+							<td class="govuk-table__cell">
 								{% for advice in all_advice %}
 									{% if advice.third_party == third_party.id %}
 										{% include 'cases/case/views/table-advice.html' %}

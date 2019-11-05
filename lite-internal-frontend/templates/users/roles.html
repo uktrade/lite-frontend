@@ -22,21 +22,21 @@
 		</div>
 	</div>
 
-    <table class="lite-table">
-        <thead class="lite-table__head">
-            <tr class="lite-table__row">
-                <th class="lite-table__header" scope="col">Role</th>
-                <th class="lite-table__header" scope="col">Users with this role <span aria-hidden="true">can</span></th>
-                <th class="lite-table__header" scope="col"></th>
+    <table class="govuk-table">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th class="govuk-table__header" scope="col">Role</th>
+                <th class="govuk-table__header" scope="col">Users with this role <span aria-hidden="true">can</span></th>
+                <th class="govuk-table__header" scope="col"></th>
             </tr>
         </thead>
-        <tbody class="lite-table__body">
+        <tbody class="govuk-table__body">
             {% for role in roles %}
-                <tr class="lite-table__row">
-                    <td class="lite-table__cell">
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">
 						{{ role.name }}
                     </td>
-                    <td class="lite-table__cell">
+                    <td class="govuk-table__cell">
 						<ul class="lite-tick-cross-list">
 							{% for permission in all_permissions %}
 								<li>
@@ -57,7 +57,7 @@
 							{% endfor %}
 						</ul>
 					</td>
-                    <td class="lite-table__cell">
+                    <td class="govuk-table__cell">
 						<a href="{% url 'users:edit_role' role.id %}" class="govuk-link govuk-link--no-visited-state">Edit</a>
                     </td>
                 </tr>

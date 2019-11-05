@@ -20,7 +20,7 @@ class UsersPage:
         self.email = "email"
         self.team = "team"
         self.role = "role"
-        self.edit_buttons_in_table = '.lite-table__cell a[href*="edit"]'
+        self.edit_buttons_in_table = '.govuk-table__cell a[href*="edit"]'
 
     def click_save_and_continue(self):
         self.driver.find_element_by_css_selector(self.submit_button).click()

@@ -6,19 +6,19 @@ class Shared(BasePage):
 
     submit_button = '.govuk-button[type*="submit"]'  # CSS
     error_message = '.govuk-error-message'  # CSS
-    lite_table = '.lite-table'  # CSS
-    lite_table_body = '.lite-table__body'  # CSS
-    lite_table_row = '.lite-table__body .lite-table__row'  # CSS
-    lite_table_cell = '.lite-table__body .lite-table__cell'  # CSS
-    lite_table_cell_no_body = '.lite-table__cell'  # CSS
+    lite_table = '.govuk-table'  # CSS
+    lite_table_body = '.govuk-table__body'  # CSS
+    lite_table_row = '.govuk-table__body .govuk-table__row'  # CSS
+    lite_table_cell = '.govuk-table__body .govuk-table__cell'  # CSS
+    lite_table_cell_no_body = '.govuk-table__cell'  # CSS
     govuk_table_body = '.govuk-table__body'  # CSS
     govuk_caption = '.govuk-caption-l'  # CSS
     selected_tab = '.lite-tabs__tab.selected'  # CSS
     body = 'body'  # CSS
-    links_in_table = '.lite-table td a'
+    links_in_table = '.govuk-table td a'
     rows_in_cases_table = '.lite-cases-table .lite-cases-table-row'  # CSS
     h1 = 'h1'  # CSS
-    links_in_lite_table = '.lite-table__cell a'  # CSS
+    links_in_lite_table = '.govuk-table__cell a'  # CSS
     govuk_panel_body = '.govuk-panel__body'  # CSS
     back_link = '.govuk-back-link'  # CSS
     info_bar = '.lite-info-bar'  # CSS

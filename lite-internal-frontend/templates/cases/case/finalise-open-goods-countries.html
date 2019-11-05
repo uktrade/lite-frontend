@@ -29,22 +29,22 @@
 		</div>
 	{% endif %}
 
-	<table class="lite-table">
-		<thead class="lite-table__head">
-			<tr class="lite-table__row">
-				<th class="lite-table__header">Good</th>
-				<th class="lite-table__header">Countries</th>
-				<th class="lite-table__header">Approve</th>
-				<th class="lite-table__header">Refuse</th>
-				<th class="lite-table__header">No Licence Required</th>
+	<table class="govuk-table">
+		<thead class="govuk-table__head">
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header">Good</th>
+				<th class="govuk-table__header">Countries</th>
+				<th class="govuk-table__header">Approve</th>
+				<th class="govuk-table__header">Refuse</th>
+				<th class="govuk-table__header">No Licence Required</th>
 			</tr>
 		</thead>
 
-		<tbody class="lite-table__body">
+		<tbody class="govuk-table__body">
 			{% for good in case.application.goods_types %}
-				<tr class="lite-table__row">
-					<td class="lite-table__cell">{{ good.control_code|default:good.description }} <span style="opacity: 0.7">({{ good.advice.value|default:"No advice" }})</span></td>
-					<td class="lite-table__cell">
+				<tr class="govuk-table__row">
+					<td class="govuk-table__cell">{{ good.control_code|default:good.description }} <span style="opacity: 0.7">({{ good.advice.value|default:"No advice" }})</span></td>
+					<td class="govuk-table__cell">
 						{% for country in good.countries %}
 							<div class="{% if good.id in errors %}{% if country.id in errors|key_value:good.id %}govuk-form-group--error govuk-error-message{% endif %}{% endif %}" style="margin-bottom: 25px;">
 								{{ country.name }} <span style="opacity: 0.7">({{ country.advice.value|default:"No advice" }})</span>
@@ -52,7 +52,7 @@
 						{% endfor %}
 					</td>
 					{% for decision in decisions %}
-						<td class="lite-table__cell">
+						<td class="govuk-table__cell">
 							{% for country in good.countries %}
 								<div class="govuk-radios govuk-radios--small" style="padding-bottom: 50px">
 									<div class="govuk-radios__item">
