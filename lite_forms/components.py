@@ -272,13 +272,15 @@ class Select(_Component):
 
 
 class Option:
-    def __init__(self, key, value, description=None, show_pane=None, sections=None, show_or=False):
+    def __init__(self, key, value, description=None, show_pane=None, sections=None,
+                 show_or=False, img_url=None):
         self.key = key
         self.value = value
         self.description = description
         self.sections = sections
         self.show_pane = show_pane
         self.show_or = show_or
+        self.img_url = img_url
 
 
 class Group:
