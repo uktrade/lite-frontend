@@ -89,7 +89,7 @@ class SeedData:
         data = self.request_data['application'] if draft is None else draft
         response = make_request("POST", base_url=self.base_url, url='/applications/', headers=self.export_headers,
                                 body=data)
-        draft_id = response.json()['application']['id']
+        draft_id = response.json()['id']
         self.add_to_context('draft_id', draft_id)
         return draft_id
 
@@ -125,12 +125,12 @@ class SeedData:
         draft_id_to_submit = draft_id if None else self.context['draft_id']  # noqa
         response = make_request('PUT', base_url=self.base_url, url='/applications/' + draft_id_to_submit + '/submit/',
                                 headers=self.export_headers)
-        return response.json()['application']
+        return response.json()
 
     def submit_standard_application(self, draft_id=None):
         item = self.submit_application(draft_id)
-        self.add_to_context('application_id', item['id'])
-        self.add_to_context('case_id', item['case_id'])
+        self.add_to_context('application_id', draft_id)
+        self.add_to_context('case_id', item['application']['case_id'])
 
     def submit_open_application(self, draft_id=None):
         item = self.submit_application(draft_id)

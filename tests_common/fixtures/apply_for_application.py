@@ -17,7 +17,7 @@ def apply_for_standard_application(driver, seed_data_config, context):
     lite_client.add_draft(
         draft={
             "name": app_name,
-            "licence_type": "standard_licence",
+            "application_type": "standard_licence",
             "export_type": "permanent",
             "have_you_been_informed": "yes",
             "reference_number_on_information_form": "1234"
@@ -100,7 +100,7 @@ def apply_for_open_application(driver, seed_data_config, context):
     lite_client.add_open_draft(
         draft={
             "name": context.app_name,
-            "licence_type": "open_licence",
+            "application_type": "open_licence",
             "export_type": "permanent",
             "have_you_been_informed": "yes",
             "reference_number_on_information_form": "1234"}
