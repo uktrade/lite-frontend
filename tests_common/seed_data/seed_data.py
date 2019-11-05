@@ -10,6 +10,7 @@ from ..seed_data.seed_data_classes.seed_picklist import SeedPicklist
 from ..seed_data.seed_data_classes.seed_case import SeedCase
 from ..seed_data.seed_data_classes.seed_queue import SeedQueue
 from ..seed_data.seed_data_classes.seed_additional_document import SeedAdditionalDocument
+from ..seed_data.seed_data_classes.seed_document_template import SeedDocumentTemplate
 from ..seed_data.check_documents import check_documents
 
 
@@ -57,6 +58,8 @@ class SeedData:
                                     self.context)
         self.seed_additional_doc = SeedAdditionalDocument(self.base_url, self.gov_headers, self.export_headers,
                                                           self.request_data, self.context)
+        self.seed_document_template = SeedDocumentTemplate(self.base_url, self.gov_headers, self.export_headers,
+                                                           self.request_data, self.context)
 
     def initialise_headers(self):
         global gov_headers, export_headers, headers_initialised  # noqa
