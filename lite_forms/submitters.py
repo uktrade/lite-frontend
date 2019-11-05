@@ -8,7 +8,7 @@ from lite_forms.helpers import remove_unused_errors, nest_data, get_next_form, g
     get_previous_form
 
 
-def submit_single_form(request: HttpRequest, form: Form, action: Callable, pk=None, override_data=None):
+def submit_single_form(request, form: Form, action: Callable, pk=None, override_data=None):
     data = request.POST.copy()
 
     if override_data:
@@ -25,7 +25,7 @@ def submit_single_form(request: HttpRequest, form: Form, action: Callable, pk=No
     return None, validated_data
 
 
-def _prepare_data(request: HttpRequest, inject_data, expect_many_values):
+def _prepare_data(request, inject_data, expect_many_values):
     data = request.POST.copy()
 
     if inject_data:
@@ -44,10 +44,10 @@ def _prepare_data(request: HttpRequest, inject_data, expect_many_values):
 
 
 def submit_paged_form(
-    request: HttpRequest,
+    request,
     form_group: FormGroup,
     action: Callable,
-    form_pk=None,
+    object_pk=None,
     inject_data=None,
     expect_many_values=None,
 ):
@@ -56,6 +56,7 @@ def submit_paged_form(
 
     data, nested_data = _prepare_data(request, inject_data, expect_many_values)
 
+    form_pk = request.POST.get('form_pk')
     previous_form = get_previous_form(form_pk, form_group)
     current_form = get_form_by_pk(form_pk, form_group)
     next_form = get_next_form(form_pk, form_group)
@@ -65,8 +66,8 @@ def submit_paged_form(
         del data['form_pk']
         return form_page(request, previous_form, data=data, extra_data={'form_pk': previous_form.pk}), None
 
-    if form_pk:
-        validated_data, _ = action(request, form_pk, data)
+    if object_pk:
+        validated_data, _ = action(request, object_pk, data)
     else:
         validated_data, _ = action(request, data)
 

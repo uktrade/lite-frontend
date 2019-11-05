@@ -91,7 +91,7 @@ class MultiFormView(FormView):
 
     def post(self, request, **kwargs):
         self.init(request, **kwargs)
-        response, data = submit_paged_form(request, self.get_forms(), self.get_action(), pk=self.get_object_pk())
+        response, data = submit_paged_form(request, self.get_forms(), self.get_action(), object_pk=self.get_object_pk())
 
         # If there are more forms to go through, continue
         if response:
