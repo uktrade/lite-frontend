@@ -22,7 +22,7 @@ class SeedOrganisation(SeedClass):
                             self.request_data['organisation_for_switching_organisations']['name'])
 
     def find_org_by_name(self, org_name):
-        organisations = make_request("GET", base_url=self.base_url, url='/organisations/?name='+org_name,
+        organisations = make_request("GET", base_url=self.base_url, url='/organisations/?search_term=' + org_name,
                                      headers=self.gov_headers).json()['results']
         organisation = next((item for item in organisations if item["name"] == org_name), None)
         return organisation
