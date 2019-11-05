@@ -1,4 +1,3 @@
-import copy
 from typing import Callable
 
 from django.http import HttpRequest
@@ -59,9 +58,9 @@ def submit_paged_form(
 
     data = _prepare_data(request, inject_data, expect_many_values)
 
-    previous_form = copy.deepcopy(get_previous_form(form_pk, form_group))
-    current_form = copy.deepcopy(get_form_by_pk(form_pk, form_group))
-    next_form = copy.deepcopy(get_next_form(form_pk, form_group))
+    previous_form = get_previous_form(form_pk, form_group)
+    current_form = get_form_by_pk(form_pk, form_group)
+    next_form = get_next_form(form_pk, form_group)
 
     if data.get('_action') and data.get('_action') == 'back':
         data = request.POST.copy()
