@@ -40,23 +40,21 @@ def _prepare_data(request: HttpRequest, inject_data, expect_many_values):
         data[many_value_key] = request.POST.getlist(many_value_key)
 
     # Post the data to the validator and check for errors
-    return nest_data(data)
+    return data, nest_data(data)
 
 
 def submit_paged_form(
     request: HttpRequest,
     form_group: FormGroup,
     action: Callable,
-    pk=None,
+    form_pk=None,
     inject_data=None,
     expect_many_values=None,
 ):
     if expect_many_values is None:
         expect_many_values = []
 
-    form_pk = request.POST.get('form_pk')
-
-    data = _prepare_data(request, inject_data, expect_many_values)
+    data, nested_data = _prepare_data(request, inject_data, expect_many_values)
 
     previous_form = get_previous_form(form_pk, form_group)
     current_form = get_form_by_pk(form_pk, form_group)
@@ -67,8 +65,8 @@ def submit_paged_form(
         del data['form_pk']
         return form_page(request, previous_form, data=data, extra_data={'form_pk': previous_form.pk}), None
 
-    if pk:
-        validated_data, _ = action(request, pk, data)
+    if form_pk:
+        validated_data, _ = action(request, form_pk, data)
     else:
         validated_data, _ = action(request, data)
 
