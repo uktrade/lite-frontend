@@ -1,5 +1,5 @@
-from . import seed_class
-from .. import make_requests
+from seed_data.helper_classes import seed_class
+from seed_data import make_requests
 
 
 class SeedPicklist(seed_class.SeedClass):

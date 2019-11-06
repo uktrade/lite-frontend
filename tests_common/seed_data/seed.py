@@ -1,6 +1,6 @@
-from . import request_data, make_requests, check_documents
-from .helper_classes import seed_good, seed_user, seed_organisation, seed_clc, seed_party, seed_ecju, seed_picklist, \
-    seed_case, seed_queue, seed_additional_document, seed_document_template
+from seed_data import request_data, make_requests, check_documents
+from seed_data.helper_classes import seed_good, seed_user, seed_organisation, seed_clc, seed_party, seed_ecju, \
+    seed_picklist, seed_case, seed_queue, seed_additional_document, seed_document_template
 
 gov_headers = {'content-type': 'application/json'}
 export_headers = {'content-type': 'application/json'}

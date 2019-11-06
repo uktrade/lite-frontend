@@ -1,4 +1,4 @@
-from . import make_requests
+from seed_data import make_requests
 
 
 def upload_test_document_to_aws(base_url):
