@@ -1,5 +1,5 @@
-from seed_data import make_requests
-from tools import wait
+from . import make_requests
+from ..tools import wait
 
 
 def check_document(url, base_url, export_headers):

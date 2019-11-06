@@ -4,7 +4,7 @@ import types
 from _pytest.fixtures import fixture
 from selenium import webdriver
 
-from tools import utils
+from ..tools import utils
 
 # Create driver fixture that initiates chrome
 @fixture(scope='session', autouse=True)

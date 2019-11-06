@@ -1,6 +1,6 @@
 import time
 
-from tools import helpers
+from . import helpers
 
 # How many attempts to wait for the function to return True
 timeout_limit = 20

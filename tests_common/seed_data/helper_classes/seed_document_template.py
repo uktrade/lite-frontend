@@ -1,7 +1,7 @@
 import uuid
 
-from seed_data.helper_classes import seed_class
-from seed_data import make_requests
+from . import seed_class
+from .. import make_requests
 
 
 class SeedDocumentTemplate(seed_class.SeedClass):

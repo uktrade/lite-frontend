@@ -1,4 +1,4 @@
-from seed_data import manage_s3_documents
+from . import manage_s3_documents
 
 
 def create_user(user):

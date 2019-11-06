@@ -1,7 +1,5 @@
-from seed_data.helper_classes import seed_class
-from seed_data import make_requests
-from seed_data import manage_s3_documents
-from seed_data import request_data
+from . import seed_class
+from .. import make_requests, manage_s3_documents, request_data
 
 
 class SeedParty(seed_class.SeedClass):

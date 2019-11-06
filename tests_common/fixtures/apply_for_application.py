@@ -2,7 +2,7 @@ import datetime
 
 from pytest import fixture
 
-from tools import utils
+from ..tools import utils
 
 
 @fixture(scope="module")
