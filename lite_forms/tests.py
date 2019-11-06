@@ -119,7 +119,7 @@ class TestSubmitPagedFormTestCase(TestCase):
                 "key_b=d&key_b=e&key_b=f&"
                 "key_c=g&"
                 "key_d=h&"
-                "form_pk=foo&"
+                "form_pk=0&"
                 "csrfmiddlewaretoken=bar"
             ),
             content_type="application/x-www-form-urlencoded",
