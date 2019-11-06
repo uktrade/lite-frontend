@@ -40,7 +40,7 @@ def third_parties_standard_form(opening_title=None):
 
 
 def new_end_user_forms():
-    return FormGroup(third_parties_standard_form('Who will be the final recipient (end-user) of your goods?'))
+    return FormGroup(third_parties_standard_form(get_string('end_user.title')))
 
 
 def attach_document_form(draft_url, title, back_text, return_later_text, description_text=None):
@@ -73,4 +73,4 @@ def delete_document_confirmation_form(overview_url, back_link_text):
 
 
 def new_consignee_forms():
-    return FormGroup(third_parties_standard_form('Who will be the consignee of your goods?'))
+    return FormGroup(third_parties_standard_form(get_string('consignee.title')))
