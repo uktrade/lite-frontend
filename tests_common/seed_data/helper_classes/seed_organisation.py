@@ -1,8 +1,8 @@
-from ...seed_data.seed_data_classes.seed_class import SeedClass
-from ...seed_data.make_requests import make_request
+from . import seed_class
+from .. import make_requests
 
 
-class SeedOrganisation(SeedClass):
+class SeedOrganisation(seed_class.SeedClass):
     def setup_org(self):
         organisation = self.find_org_by_name(self.request_data['organisation']['name'])
         if not organisation:
@@ -22,18 +22,19 @@ class SeedOrganisation(SeedClass):
                             self.request_data['organisation_for_switching_organisations']['name'])
 
     def find_org_by_name(self, org_name):
-        organisations = make_request("GET", base_url=self.base_url, url='/organisations/?name='+org_name,
-                                     headers=self.gov_headers).json()['results']
+        organisations = \
+        make_requests.make_request("GET", base_url=self.base_url, url='/organisations/?name=' + org_name,
+                                   headers=self.gov_headers).json()['results']
         organisation = next((item for item in organisations if item["name"] == org_name), None)
         return organisation
 
     def add_org(self, key):
         self.log('Creating org: ...')
         data = self.request_data[key]
-        return make_request('POST', base_url=self.base_url, url='/organisations/',
-                            body=data, headers=self.gov_headers).json()['organisation']
+        return make_requests.make_request('POST', base_url=self.base_url, url='/organisations/',
+                                          body=data, headers=self.gov_headers).json()['organisation']
 
     def get_org_primary_site_id(self, org_id):
-        organisation = make_request('GET', base_url=self.base_url,
-                                    url='/organisations/' + org_id, headers=self.gov_headers).json()
+        organisation = make_requests.make_request('GET', base_url=self.base_url,
+                                                  url='/organisations/' + org_id, headers=self.gov_headers).json()
         return organisation['primary_site']['id']

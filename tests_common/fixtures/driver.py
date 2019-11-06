@@ -4,7 +4,7 @@ import types
 from _pytest.fixtures import fixture
 from selenium import webdriver
 
-from ..tools.utils import set_timeout_to, set_timeout_to_10_seconds
+from ..tools import utils
 
 # Create driver fixture that initiates chrome
 @fixture(scope='session', autouse=True)
@@ -26,8 +26,8 @@ def driver(request):
         else:
             browser = webdriver.Chrome(chrome_options=chrome_options)
 
-        browser.set_timeout_to = types.MethodType(set_timeout_to, browser)
-        browser.set_timeout_to_10_seconds = types.MethodType(set_timeout_to_10_seconds, browser)
+        browser.set_timeout_to = types.MethodType(utils.set_timeout_to, browser)
+        browser.set_timeout_to_10_seconds = types.MethodType(utils.set_timeout_to_10_seconds, browser)
         browser.get('about:blank')
         browser.set_timeout_to_10_seconds()
         return browser

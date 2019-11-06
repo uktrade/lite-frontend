@@ -10,7 +10,6 @@ from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
 from datetime import datetime
 
-
 now = datetime.now().isoformat()
 path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir))
 screen_dir = os.path.join(path, "screenshot", str(now))
@@ -29,7 +28,7 @@ def repeat_to_length(string_to_expand, length):
 
 
 def screen_path():
-    global screen_dir  # noqa
+    global screen_dir
     if not os.path.exists(screen_dir):
         os.makedirs(screen_dir)
         os.chmod(screen_dir, 0o644)
@@ -38,7 +37,7 @@ def screen_path():
 
 def remove_special_characters(text):
     # text = text.translate(str.maketrans('', '', string.punctuation))
-    text = text.translate(str.maketrans('', '', '\ / : * ? " < > |'))  # noqa
+    text = text.translate(str.maketrans('', '', '\ / : * ? " < > |'))
     return text
 
 
@@ -139,7 +138,6 @@ def scroll_to_element_by_id(driver, id):
 def search_for_correct_date_regex_in_element(element):
     return re.search(
         "([0-9]{1,2}):([0-9]{2})(am|pm) ([0-9][0-9]) (January|February|March|April|May|June|July|August|September|October|November|December) ([0-9]{4,})",
-        # noqa
         element)
 
 

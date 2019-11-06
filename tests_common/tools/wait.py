@@ -1,6 +1,6 @@
 import time
 
-from ..tools.helpers import page_is_ready, menu_is_visible
+from ..tools import helpers
 
 # How many attempts to wait for the function to return True
 timeout_limit = 20
@@ -61,8 +61,8 @@ def wait_for_element(driver, id):
 
 
 def wait_until_page_is_loaded(driver):
-    return wait_for_function(page_is_ready, driver=driver)
+    return wait_for_function(helpers.page_is_ready, driver=driver)
 
 
 def wait_until_menu_is_visible(driver):
-    return wait_for_function(menu_is_visible, driver=driver)
+    return wait_for_function(helpers.menu_is_visible, driver=driver)

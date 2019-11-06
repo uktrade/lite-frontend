@@ -2,13 +2,13 @@ import datetime
 
 from pytest import fixture
 
-from ..tools.utils import Timer, get_lite_client
+from ..tools import utils
 
 
 @fixture(scope="module")
 def apply_for_standard_application(driver, seed_data_config, context):
-    timer = Timer()
-    lite_client = get_lite_client(context, seed_data_config)
+    timer = utils.Timer()
+    lite_client = utils.get_lite_client(context, seed_data_config)
 
     app_time_id = datetime.datetime.now().strftime(" %d%H%M%S")
     context.app_time_id = app_time_id
@@ -71,28 +71,28 @@ def apply_for_standard_application(driver, seed_data_config, context):
 
 @fixture(scope="module")
 def add_an_ecju_query(driver, seed_data_config, context):
-    lite_client = get_lite_client(context, seed_data_config)
+    lite_client = utils.get_lite_client(context, seed_data_config)
     lite_client.seed_ecju.add_ecju_query(context.case_id)
 
 
 @fixture(scope="function")
 def apply_for_clc_query(driver, seed_data_config, context):
-    lite_client = get_lite_client(context, seed_data_config)
+    lite_client = utils.get_lite_client(context, seed_data_config)
     lite_client.seed_clc.add_clc_query(lite_client.seed_good)
     context.clc_case_id = lite_client.context['case_id']
 
 
 @fixture(scope="module")
 def apply_for_eua_query(driver, seed_data_config, context):
-    lite_client = get_lite_client(context, seed_data_config)
+    lite_client = utils.get_lite_client(context, seed_data_config)
     lite_client.seed_party.add_eua_query()
     context.eua_id = lite_client.context['end_user_advisory_id']
 
 
 @fixture(scope="module")
 def apply_for_open_application(driver, seed_data_config, context):
-    timer = Timer()
-    lite_client = get_lite_client(context, seed_data_config)
+    timer = utils.Timer()
+    lite_client = utils.get_lite_client(context, seed_data_config)
 
     context.open_app_time_id = datetime.datetime.now().strftime(" %d%H%M%S")
     context.app_name = "Test Application " + context.open_app_time_id
