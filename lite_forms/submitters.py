@@ -1,7 +1,5 @@
 from typing import Callable
 
-from django.http import HttpRequest
-
 from lite_forms.components import HiddenField, Form, FormGroup
 from lite_forms.generators import form_page
 from lite_forms.helpers import remove_unused_errors, nest_data, get_next_form, get_form_by_pk, flatten_data, \
@@ -54,7 +52,7 @@ def submit_paged_form(
     if expect_many_values is None:
         expect_many_values = []
 
-    data, nested_data = _prepare_data(request, inject_data, expect_many_values)
+    data, _ = _prepare_data(request, inject_data, expect_many_values)
 
     form_pk = request.POST.get('form_pk')
     previous_form = get_previous_form(form_pk, form_group)

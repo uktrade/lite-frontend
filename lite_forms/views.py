@@ -60,9 +60,9 @@ class SingleFormView(FormView):
         data = request.POST.copy()
 
         if self.get_object_pk():
-            validated_data, _ = self.get_action()(request, self.get_object_pk(), data)
+            validated_data, _ = self.get_action()(request, self.get_object_pk(), data)  # noqa
         else:
-            validated_data, _ = self.get_action()(request, data)
+            validated_data, _ = self.get_action()(request, data)  # noqa
 
         if 'errors' in validated_data:
             return form_page(request, self.get_form(), data=data, errors=validated_data.get('errors'))
