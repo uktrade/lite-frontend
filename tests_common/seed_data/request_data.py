@@ -1,4 +1,4 @@
-from shared.seed_data.manage_s3_documents import upload_test_document_to_aws
+from ..seed_data.manage_s3_documents import upload_test_document_to_aws
 
 
 def create_user(user):

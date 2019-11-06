@@ -1,5 +1,5 @@
-from shared.seed_data.manage_s3_documents import upload_test_document_to_aws
-from shared.seed_data.request_data import create_document
+from ...seed_data.manage_s3_documents import upload_test_document_to_aws
+from ...seed_data.request_data import create_document
 from ...seed_data.seed_data_classes.seed_class import SeedClass
 from ...seed_data.make_requests import make_request
 
