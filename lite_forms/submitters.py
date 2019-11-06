@@ -65,9 +65,9 @@ def submit_paged_form(
         return form_page(request, previous_form, data=data, extra_data={'form_pk': previous_form.pk}), None
 
     if object_pk:
-        validated_data, _ = action(request, object_pk, data)
+        validated_data, _ = action(request, object_pk, nested_data)
     else:
-        validated_data, _ = action(request, data)
+        validated_data, _ = action(request, nested_data)
 
     # If the API returns errors, add the existing questions to the reloaded form
     errors = validated_data.get('errors')
