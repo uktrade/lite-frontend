@@ -84,7 +84,11 @@ def highlight_text(value: str, term: str) -> str:
     span = '<span class="lite-highlight">'
     span_end = '</span>'
 
+    loop = 0
     for index in indexes:
+        # Count along the number of positions of the new string then adjust for zero index
+        index += loop*(len(span) + len(term) + len(span_end) - 1)
+        loop += 1
         value = insert_str(value, span, index)
         value = insert_str(value, span_end, index + len(span) + len(term))
 
