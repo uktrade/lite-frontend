@@ -9,7 +9,7 @@ APPLICATION_GOODS_ADD_APPLICATION_DETAILS = "Details for good on application"
 APPLICATION_GOODS_ADD_DOCUMENT_DESCRIPTION = "To finish creating the good, you must attach a document." \
                                              "\n\nWarning: Do not upload any document which is above " \
                                              "'official-sensitive' level\n\nMaximum size: 100MB per file"
-APPLICATION_GOODS_ADD_DOCUMENT_MISSING = "A document is required."
+APPLICATION_GOODS_ADD_DOCUMENT_MISSING = "A document is required"
 APPLICATION_GOODS_ADD_PREEXISTING_TITLE = 'Add a pre-existing good to your application'
 
 APPLICATION_GOODS_CONTROL_CODE_REQUIRED_DESCRIPTION = "If you don't know, please use " + PERMISSION_FINDER_LINK +  \
