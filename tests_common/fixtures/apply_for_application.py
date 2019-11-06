@@ -14,7 +14,7 @@ def apply_for_standard_application(driver, seed_data_config, context):
     context.app_time_id = app_time_id
     app_name = "Test Application" + app_time_id
 
-    lite_client.add_draft(
+    draft_id = lite_client.add_draft(
         draft={
             "name": app_name,
             "application_type": "standard_licence",
@@ -58,7 +58,7 @@ def apply_for_standard_application(driver, seed_data_config, context):
         }
 
     )
-    lite_client.submit_standard_application()
+    lite_client.submit_standard_application(draft_id)
     context.app_id = lite_client.context['application_id']
     context.case_id = lite_client.context['case_id']
     context.end_user = lite_client.context['end_user']
@@ -97,7 +97,7 @@ def apply_for_open_application(driver, seed_data_config, context):
     context.open_app_time_id = datetime.datetime.now().strftime(" %d%H%M%S")
     context.app_name = "Test Application " + context.open_app_time_id
 
-    lite_client.add_open_draft(
+    draft_id = lite_client.add_open_draft(
         draft={
             "name": context.app_name,
             "application_type": "open_licence",
@@ -105,7 +105,7 @@ def apply_for_open_application(driver, seed_data_config, context):
             "have_you_been_informed": "yes",
             "reference_number_on_information_form": "1234"}
     )
-    lite_client.submit_open_application()
+    lite_client.submit_open_application(draft_id)
     context.app_id = lite_client.context['application_id']
     context.case_id = lite_client.context['case_id']
     context.country = lite_client.context['country']
