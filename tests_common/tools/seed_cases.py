@@ -5,7 +5,7 @@ from ..seed_data.seed_data import SeedData
 
 
 def _get_env():
-    base_dir = path.dirname(path.dirname(path.dirname(path.abspath(__file__))))
+    base_dir = path.dirname(path.dirname(path.abspath(__file__)))
     env_file = path.join(base_dir, '.env')
 
     if path.exists(env_file):
