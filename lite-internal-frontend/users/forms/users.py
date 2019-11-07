@@ -21,7 +21,7 @@ def add_user_form(request):
                 back_link=BackLink('Back to Users', reverse_lazy('users:users')))
 
 
-def edit_user_form(request):
+def edit_user_form(request, user_id):
     return Form(title='Edit User',
                 description='',
                 caption='',
@@ -35,5 +35,5 @@ def edit_user_form(request):
                            options=get_roles(request, True),
                            title='What role should this user have?'),
                 ],
-                back_link=BackLink('Back to Users', reverse_lazy('users:users')),
+                back_link=BackLink('Back to User', reverse_lazy('users:user', kwargs={'pk': user_id})),
                 default_button_name='Save')

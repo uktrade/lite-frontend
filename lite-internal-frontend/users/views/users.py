@@ -54,13 +54,13 @@ class ViewProfile(TemplateView):
 class EditUser(TemplateView):
     def get(self, request, **kwargs):
         user, _ = get_gov_user(request, str(kwargs['pk']))
-        return form_page(request, edit_user_form(request), data=user['user'])
+        return form_page(request, edit_user_form(request, str(kwargs['pk'])), data=user['user'])
 
     def post(self, request, **kwargs):
         response, status_code = put_gov_user(request, str(kwargs['pk']), request.POST)
 
         if status_code != 200:
-            return form_page(request, edit_user_form(request), data=request.POST, errors=response.get('errors'))
+            return form_page(request, edit_user_form(request, str(kwargs['pk'])), data=request.POST, errors=response.get('errors'))
 
         return redirect(reverse_lazy('users:users'))
 
