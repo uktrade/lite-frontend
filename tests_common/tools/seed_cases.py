@@ -48,7 +48,7 @@ def _get_internal_info(env):
 
 
 def _get_seed_data_config(exporter_info, internal_info):
-    api_url = env['API_URL']
+    api_url = env['LITE_API_URL']
 
     return {
         'api_url': api_url,
