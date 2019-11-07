@@ -1,5 +1,5 @@
-from ...seed_data.seed_data_classes.seed_class import SeedClass
-from ...seed_data.make_requests import make_request
+from .seed_class import SeedClass
+from ..make_requests import make_request
 
 
 class SeedAdditionalDocument(SeedClass):

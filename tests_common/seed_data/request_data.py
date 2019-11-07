@@ -1,4 +1,4 @@
-from shared.seed_data.manage_s3_documents import upload_test_document_to_aws
+from .manage_s3_documents import upload_test_document_to_aws
 
 
 def create_user(user):
@@ -63,10 +63,10 @@ def create_document(name, description, s3_key):
 
 def create_picklist(name, text, type, proviso=None):
     picklist = {
-                'name': name,
-                'text': text,
-                'type': type
-            }
+        'name': name,
+        'text': text,
+        'type': type
+    }
     if proviso:
         picklist['proviso'] = proviso
     return picklist
@@ -148,11 +148,15 @@ def create_request_data(exporter_user, gov_user, base_url):
             'team': '00000000-0000-0000-0000-000000000001'
         },
         'document': create_document('document 1', 'document for test setup', upload_test_document_to_aws(base_url)),
-        'additional_document': create_document('picture', 'document for additional', upload_test_document_to_aws(base_url)),
-        'proviso_picklist': create_picklist('Misc', 'My proviso advice would be this.', 'proviso', proviso='My proviso would be this.'),
-        'standard_advice_picklist': create_picklist('More advice', 'My standard advice would be this.', 'standard_advice'),
+        'additional_document': create_document('picture', 'document for additional',
+                                               upload_test_document_to_aws(base_url)),
+        'proviso_picklist': create_picklist('Misc', 'My proviso advice would be this.', 'proviso',
+                                            proviso='My proviso would be this.'),
+        'standard_advice_picklist': create_picklist('More advice', 'My standard advice would be this.',
+                                                    'standard_advice'),
         'report_picklist': create_picklist('More advice', 'My standard advice would be this.', 'report_summary'),
-        'letter_paragraph_picklist': create_picklist('Letter Paragraph 1', 'My letter paragraph is this.', 'letter_paragraph'),
+        'letter_paragraph_picklist': create_picklist('Letter Paragraph 1', 'My letter paragraph is this.',
+                                                     'letter_paragraph'),
         'document_template': {
             'restricted_to': ['application']
         }
