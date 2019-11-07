@@ -62,5 +62,5 @@ def seed(argv, action):
     action(seed_data)
 
     if len(argv) > 1:
-        for i in range(int(argv[1]) - 1):
+        for _ in range(int(argv[1]) - 1):
             action(seed_data)
