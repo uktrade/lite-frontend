@@ -139,4 +139,4 @@ class SeedData:
     def submit_open_application(self, draft_id=None):
         item = self.submit_application(draft_id)
         self.add_to_context('application_id', draft_id)
-        self.add_to_context('case_id', item['case_id'])
+        self.add_to_context('case_id', item['application']['case_id'])
