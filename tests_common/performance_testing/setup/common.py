@@ -1,10 +1,11 @@
+from sys import exit
 from os import path, environ
 
-from ..seed_data.seed_data import SeedData
+from ...seed_data.seed_data import SeedData
 
 
 def _get_env():
-    base_dir = path.dirname(path.dirname(path.abspath(__file__)))
+    base_dir = path.dirname(path.dirname(path.dirname(path.abspath(__file__))))
     env_file = path.join(base_dir, '.env')
 
     if path.exists(env_file):
@@ -57,10 +58,25 @@ def _get_seed_data_config():
     }
 
 
-def seed(argv, action):
-    seed_data = SeedData(_get_seed_data_config())
-    action(seed_data)
-
+def _get_amount_to_seed(argv):
     if len(argv) > 1:
-        for _ in range(int(argv[1]) - 1):
-            action(seed_data)
+        try:
+            amount_to_seed = int(argv[1])
+
+            if amount_to_seed <= 0:
+                raise ValueError
+
+            return amount_to_seed
+        except ValueError:
+            print('You must supply a positive integer.')
+            exit(1)
+
+    return 1
+
+
+def seed(argv, action):
+    amount_to_seed = _get_amount_to_seed(argv)
+    seed_data = SeedData(_get_seed_data_config())
+
+    for _ in range(amount_to_seed):
+        action(seed_data)
