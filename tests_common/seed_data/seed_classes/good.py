@@ -2,7 +2,11 @@ from .seed_class import SeedClass
 from ..make_requests import make_request
 
 
-class SeedGood(SeedClass):
+class Good(SeedClass):
+    def __init__(self, base_url, gov_headers, export_headers, request_data, context):
+        super(Good, self).__init__(base_url, gov_headers, export_headers, request_data, context)
+        self.add_good()
+
     def post_good(self, data):
         item = make_request('POST', base_url=self.base_url, url='/goods/', headers=self.export_headers,
                             body=data).json()['good']

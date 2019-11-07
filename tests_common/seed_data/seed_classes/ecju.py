@@ -2,7 +2,7 @@ from .seed_class import SeedClass
 from ..make_requests import make_request
 
 
-class SeedEcju(SeedClass):
+class Ecju(SeedClass):
     def add_ecju_response(self, question, response):
         self.log("adding response to ecju: ...")
         case_id = self.context['case_id']

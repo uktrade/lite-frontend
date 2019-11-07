@@ -2,7 +2,7 @@ from .seed_class import SeedClass
 from ..make_requests import make_request
 
 
-class SeedOrganisation(SeedClass):
+class Organisation(SeedClass):
     def setup_org(self):
         organisation = self.find_org_by_name(self.request_data['organisation']['name'])
 

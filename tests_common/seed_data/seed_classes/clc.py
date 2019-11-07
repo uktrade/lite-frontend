@@ -2,7 +2,7 @@ from .seed_class import SeedClass
 from ..make_requests import make_request
 
 
-class SeedClc(SeedClass):
+class Clc(SeedClass):
     def submit_to_control_list_classification(self, good_id):
         data = self.request_data['not_sure_details']
         data['good_id'] = good_id

@@ -2,7 +2,7 @@ from .seed_class import SeedClass
 from ..make_requests import make_request
 
 
-class SeedUser(SeedClass):
+class User(SeedClass):
     def add_user(self, data, url, token_name):
         token = make_request('POST', base_url=self.base_url, url=url, body=data,
                              headers=self.gov_headers).json()['token']

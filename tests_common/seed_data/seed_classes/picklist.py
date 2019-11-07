@@ -2,7 +2,7 @@ from .seed_class import SeedClass
 from ..make_requests import make_request
 
 
-class SeedPicklist(SeedClass):
+class Picklist(SeedClass):
     def post_picklist(self, key):
         return make_request("POST", base_url=self.base_url, url='/picklist/', body=self.request_data[key],
                             headers=self.gov_headers).json()['picklist_item']

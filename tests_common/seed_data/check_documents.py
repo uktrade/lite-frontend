@@ -1,9 +1,9 @@
-from . import make_requests
+from .make_requests import make_request
 from ..tools import wait
 
 
 def check_document(url, base_url, export_headers):
-    response = make_requests.make_request("GET", base_url=base_url, url=url, headers=export_headers)
+    response = make_request("GET", base_url=base_url, url=url, headers=export_headers)
     return response.json()['document']['safe']
 
 

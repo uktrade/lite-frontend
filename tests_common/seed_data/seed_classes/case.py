@@ -2,7 +2,7 @@ from .seed_class import SeedClass
 from ..make_requests import make_request
 
 
-class SeedCase(SeedClass):
+class Case(SeedClass):
     def assign_case_to_queue(self, case_id=None, queue_id=None):
         self.log("assigning case to queue: ...")
         queue_id = self.context['queue_id'] if queue_id is None else queue_id

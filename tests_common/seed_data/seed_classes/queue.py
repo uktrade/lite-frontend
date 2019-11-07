@@ -2,7 +2,7 @@ from .seed_class import SeedClass
 from ..make_requests import make_request
 
 
-class SeedQueue(SeedClass):
+class Queue(SeedClass):
     def add_queue(self, queue_name):
         self.log("adding queue: ...")
         self.context['queue_name'] = queue_name

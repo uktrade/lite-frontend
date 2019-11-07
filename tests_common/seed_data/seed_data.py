@@ -1,15 +1,15 @@
 from .check_documents import check_documents
-from .helper_classes.seed_additional_document import SeedAdditionalDocument
-from .helper_classes.seed_case import SeedCase
-from .helper_classes.seed_clc import SeedClc
-from .helper_classes.seed_document_template import SeedDocumentTemplate
-from .helper_classes.seed_ecju import SeedEcju
-from .helper_classes.seed_good import SeedGood
-from .helper_classes.seed_organisation import SeedOrganisation
-from .helper_classes.seed_party import SeedParty
-from .helper_classes.seed_picklist import SeedPicklist
-from .helper_classes.seed_queue import SeedQueue
-from .helper_classes.seed_user import SeedUser
+from .seed_classes.additional_document import SeedAdditionalDocument
+from .seed_classes.case import Case
+from .seed_classes.clc import Clc
+from .seed_classes.document_template import DocumentTemplate
+from .seed_classes.ecju import Ecju
+from .seed_classes.good import Good
+from .seed_classes.organisation import Organisation
+from .seed_classes.party import Party
+from .seed_classes.picklist import Picklist
+from .seed_classes.queue import Queue
+from .seed_classes.user import User
 from .make_requests import make_request
 from .request_data import create_request_data
 
@@ -37,34 +37,34 @@ class SeedData:
         if not headers_initialised:
             self.initialise_headers()
         else:
-            self.seed_user = SeedUser(self.base_url, self.gov_headers, self.export_headers, self.request_data,
-                                      self.context)
-            self.seed_org = SeedOrganisation(self.base_url, self.gov_headers, self.export_headers, self.request_data,
-                                             self.context)
-
-        self.seed_good = SeedGood(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
-        self.seed_clc = SeedClc(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
-        self.seed_party = SeedParty(self.base_url, self.gov_headers, self.export_headers, self.request_data,
-                                    self.context)
-        self.seed_ecju = SeedEcju(self.base_url, self.gov_headers, self.export_headers, self.request_data,
+            self.seed_user = User(self.base_url, self.gov_headers, self.export_headers, self.request_data,
                                   self.context)
-        self.seed_picklist = SeedPicklist(self.base_url, self.gov_headers, self.export_headers, self.request_data,
-                                          self.context)
-        self.seed_case = SeedCase(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
-        self.seed_queue = SeedQueue(self.base_url, self.gov_headers, self.export_headers, self.request_data,
-                                    self.context)
+            self.seed_org = Organisation(self.base_url, self.gov_headers, self.export_headers, self.request_data,
+                                         self.context)
+
+        self.seed_good = Good(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
+        self.seed_clc = Clc(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
+        self.seed_party = Party(self.base_url, self.gov_headers, self.export_headers, self.request_data,
+                                self.context)
+        self.seed_ecju = Ecju(self.base_url, self.gov_headers, self.export_headers, self.request_data,
+                              self.context)
+        self.seed_picklist = Picklist(self.base_url, self.gov_headers, self.export_headers, self.request_data,
+                                      self.context)
+        self.seed_case = Case(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
+        self.seed_queue = Queue(self.base_url, self.gov_headers, self.export_headers, self.request_data,
+                                self.context)
         self.seed_additional_doc = SeedAdditionalDocument(self.base_url, self.gov_headers, self.export_headers,
                                                           self.request_data, self.context)
-        self.seed_document_template = SeedDocumentTemplate(self.base_url, self.gov_headers, self.export_headers,
-                                                           self.request_data, self.context)
+        self.seed_document_template = DocumentTemplate(self.base_url, self.gov_headers, self.export_headers,
+                                                       self.request_data, self.context)
 
     def initialise_headers(self):
         global gov_headers, export_headers, headers_initialised
-        self.seed_user = SeedUser(self.base_url, self.gov_headers, self.export_headers, self.request_data,
-                                  self.context)
+        self.seed_user = User(self.base_url, self.gov_headers, self.export_headers, self.request_data,
+                              self.context)
         self.seed_user.auth_gov_user()
-        self.seed_org = SeedOrganisation(self.base_url, self.gov_headers, self.export_headers,
-                                         self.request_data, self.context)
+        self.seed_org = Organisation(self.base_url, self.gov_headers, self.export_headers,
+                                     self.request_data, self.context)
         self.seed_org.setup_org()
         self.seed_user.auth_export_user()
 

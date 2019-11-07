@@ -4,7 +4,7 @@ from .seed_class import SeedClass
 from ..make_requests import make_request
 
 
-class SeedDocumentTemplate(SeedClass):
+class DocumentTemplate(SeedClass):
     def add_template(self, seed_picklist):
         template_data = self.request_data['document_template']
         template_data['layout'] = self.get_layouts()[0]['id']

@@ -1,17 +1,17 @@
-import time
+from time import time
 
-from ..seed_data import main
+from ..seed_data.seed_data import SeedData
 
 
 class Timer:
     def __init__(self):
-        self.start = time.time()
+        self.start = time()
 
     def restart(self):
-        self.start = time.time()
+        self.start = time()
 
     def get_time(self):
-        return time.time() - self.start
+        return time() - self.start
 
     def print_time(self, context):
         print(f'Timer: {context}: {str(self.get_time())}')
@@ -41,5 +41,5 @@ def get_lite_client(context, seed_data_config):
     """
     Returns the existing LITE API client, or creates a new one
     """
-    seed_data = main.SeedData(seed_data_config=seed_data_config)
+    seed_data = SeedData(seed_data_config=seed_data_config)
     return get_or_create_attr(context, 'api', seed_data)
