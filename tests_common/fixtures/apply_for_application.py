@@ -5,7 +5,7 @@ from pytest import fixture
 from ..tools import utils
 
 
-@fixture(scope="module")
+@fixture
 def apply_for_standard_application(driver, seed_data_config, context):
     timer = utils.Timer()
     lite_client = utils.get_lite_client(context, seed_data_config)
