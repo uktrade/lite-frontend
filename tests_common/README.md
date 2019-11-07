@@ -1,5 +1,6 @@
 # lite-tests-common
-###This project can be used and expanded upon as a stand-alone service.
+
+### This project can be used and expanded upon as a stand-alone service.
 
 To seed the database with `X` amount of cases:
  1. `pipenv shell` whilst in the project's root
