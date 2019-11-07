@@ -1,5 +1,4 @@
 from os import path, environ
-from dotenv import load_dotenv
 
 from ..seed_data.seed_data import SeedData
 
@@ -9,7 +8,11 @@ def _get_env():
     env_file = path.join(base_dir, '.env')
 
     if path.exists(env_file):
-        load_dotenv(dotenv_path=env_file)
+        with open(env_file) as f:
+            for line in f:
+                key_value_pair = line.split('=')
+                if len(key_value_pair) == 2:
+                    environ[key_value_pair[0].strip()] = key_value_pair[1].strip()
 
     return environ
 
