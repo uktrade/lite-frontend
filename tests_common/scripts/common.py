@@ -1,5 +1,5 @@
 from os import path, environ
-from sys import argv
+from dotenv import load_dotenv
 
 from ..seed_data.seed_data import SeedData
 
@@ -9,11 +9,7 @@ def _get_env():
     env_file = path.join(base_dir, '.env')
 
     if path.exists(env_file):
-        with open(env_file) as f:
-            for line in f:
-                key_value_pair = line.split('=')
-                if len(key_value_pair) == 2:
-                    environ[key_value_pair[0].strip()] = key_value_pair[1].strip()
+        load_dotenv(dotenv_path=env_file)
 
     return environ
 
@@ -47,25 +43,21 @@ def _get_internal_info(env):
     }
 
 
-def _get_seed_data_config(exporter_info, internal_info):
+def _get_seed_data_config():
+    env = _get_env()
     api_url = env['LITE_API_URL']
 
     return {
         'api_url': api_url,
-        'exporter': exporter_info,
-        'gov': internal_info
+        'exporter': _get_exporter_info(env),
+        'gov': _get_internal_info(env)
     }
 
 
-if __name__ == '__main__':
-    env = _get_env()
-    exporter_info = _get_exporter_info(env)
-    internal_info = _get_internal_info(env)
-    seed_data_config = _get_seed_data_config(exporter_info, internal_info)
-
-    seed_data = SeedData(seed_data_config)
+def seed(argv, action):
+    seed_data = SeedData(_get_seed_data_config())
+    action(seed_data)
 
     if len(argv) > 1:
-        for i in range(int(argv[1])):
-            seed_data.add_draft()
-            seed_data.submit_standard_application()
+        for i in range(int(argv[1]) - 1):
+            action(seed_data)
