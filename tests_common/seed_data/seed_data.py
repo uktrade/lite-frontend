@@ -139,3 +139,10 @@ class SeedData:
         item = self.submit_application(draft_id)
         self.add_to_context('application_id', item['id'])
         self.add_to_context('case_id', item['case_id'])
+
+    def manage_case_status(self, draft_id):
+        draft_id_to_change = draft_id if None else self.context['draft_id']  # noqa
+        response = make_request('PUT', base_url=self.base_url, url='/applications/' + draft_id_to_change + '/status/',
+                                headers=self.gov_headers, body={'status': 'withdrawn'})
+
+        return response.status_code
