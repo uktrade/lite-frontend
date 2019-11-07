@@ -28,7 +28,7 @@ def apply_for_standard_application(driver, seed_data_config, context):
             "unit": "MTR",
             "value": 1
         },
-        enduser={
+        end_user={
             "name": "Mr Smith",
             "address": "Westminster, London SW1A 0BB",
             "country": "GB",

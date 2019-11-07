@@ -1,11 +1,11 @@
-from . import seed_class
-from .. import make_requests
+from .seed_class import SeedClass
+from ..make_requests import make_request
 
 
-class SeedUser(seed_class.SeedClass):
+class SeedUser(SeedClass):
     def add_user(self, data, url, token_name):
-        token = make_requests.make_request('POST', base_url=self.base_url, url=url, body=data, headers=self.gov_headers).json()[
-            'token']
+        token = make_request('POST', base_url=self.base_url, url=url, body=data,
+                             headers=self.gov_headers).json()['token']
         self.add_to_context(token_name, token)
 
     def auth_gov_user(self):
