@@ -27,7 +27,6 @@ def repeat_to_length(string_to_expand, length):
 
 
 def screen_path():
-    global screen_dir
     if not path.exists(screen_dir):
         makedirs(screen_dir)
         chmod(screen_dir, 0o644)
@@ -36,7 +35,7 @@ def screen_path():
 
 def remove_special_characters(text):
     # text = text.translate(str.maketrans('', '', string.punctuation))
-    text = text.translate(str.maketrans('', '', '\ / : * ? " < > |'))
+    text = text.translate(str.maketrans('', '', '\ / : * ? " < > |'))  # noqa
     return text
 
 

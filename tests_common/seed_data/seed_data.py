@@ -14,12 +14,10 @@ from .make_requests import make_request
 from .request_data import create_request_data
 
 
-gov_headers = {'content-type': 'application/json'}
-export_headers = {'content-type': 'application/json'}
-headers_initialised = False
-
-
 class SeedData:
+    gov_headers = {'content-type': 'application/json'}
+    export_headers = {'content-type': 'application/json'}
+    headers_initialised = False
     context = {}
 
     def __init__(self, seed_data_config):
@@ -31,10 +29,8 @@ class SeedData:
             gov_user=gov_user,
             base_url=self.base_url
         )
-        self.gov_headers = gov_headers.copy()
-        self.export_headers = export_headers.copy()
 
-        if not headers_initialised:
+        if not self.headers_initialised:
             self.initialise_headers()
         else:
             self.seed_user = User(self.base_url, self.gov_headers, self.export_headers, self.request_data,
@@ -59,18 +55,13 @@ class SeedData:
                                                        self.request_data, self.context)
 
     def initialise_headers(self):
-        global gov_headers, export_headers, headers_initialised
-        self.seed_user = User(self.base_url, self.gov_headers, self.export_headers, self.request_data,
-                              self.context)
+        self.seed_user = User(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context)
         self.seed_user.auth_gov_user()
-        self.seed_org = Organisation(self.base_url, self.gov_headers, self.export_headers,
-                                     self.request_data, self.context)
+        self.seed_org = Organisation(self.base_url, self.gov_headers, self.export_headers, self.request_data,
+                                     self.context)
         self.seed_org.setup_org()
         self.seed_user.auth_export_user()
-
-        gov_headers = self.gov_headers
-        export_headers = self.export_headers
-        headers_initialised = True
+        self.headers_initialised = True
 
     def log(self, text):
         print(text)
@@ -122,7 +113,7 @@ class SeedData:
 
     def submit_application(self, draft_id):
         self.log('Submitting application: ...')
-        draft_id_to_submit = draft_id if None else self.context['draft_id']
+        draft_id_to_submit = draft_id if None else self.context['draft_id']  # noqa
         response = make_request('PUT', base_url=self.base_url, url='/applications/' + draft_id_to_submit + '/submit/',
                                 headers=self.export_headers)
         return response.json()['application']
