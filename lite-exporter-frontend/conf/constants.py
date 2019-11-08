@@ -41,3 +41,7 @@ CONTROL_LIST_ENTRIES_URL = STATIC_URL + 'control-list-entries/'
 # Applications constants
 STANDARD_LICENCE = 'standard_licence'
 OPEN_LICENCE = 'open_licence'
+
+
+# Case statuses
+READ_ONLY_STATUSES = ['finalised', 'under final review', 'under review', 'withdrawn']

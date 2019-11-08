@@ -14,6 +14,7 @@ from applications.services import get_applications, get_case_notes, \
     submit_application, get_application, delete_application, set_application_status
 from core.helpers import group_notifications
 from core.services import get_notifications
+from conf import constants
 
 
 class ApplicationsList(TemplateView):
@@ -158,6 +159,8 @@ class ApplicationDetail(TemplateView):
 
         if self.view_type == 'ecju-queries':
             context['open_queries'], context['closed_queries'] = get_application_ecju_queries(request, self.case_id)
+
+        context['read_only_statuses'] = constants.READ_ONLY_STATUSES
 
         return render(request, 'applications/application.html', context)
 

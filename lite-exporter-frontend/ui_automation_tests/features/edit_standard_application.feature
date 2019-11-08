@@ -31,3 +31,12 @@ Feature: I want to be able to edit and update an active application
     And I remove an additional document
     And I confirm I want to delete the document
     Then the document is removed from the application
+
+  @LT_1099_prohibit_edit_application
+  Scenario: Cannot edit a read only application
+    Given I go to exporter homepage and choose Test Org
+    And I create a standard application via api
+    When I click on applications
+    And my application has been withdrawn
+    And I click on application previously created
+    Then the edit application button is not present

@@ -2,6 +2,7 @@ from pytest_bdd import when, scenarios, then
 
 from conftest import enter_application_name, enter_export_licence
 from pages.application_overview_page import ApplicationOverviewPage
+from pages.application_page import ApplicationPage
 from pages.shared import Shared
 
 scenarios('../features/edit_standard_application.feature', strict_gherkin=False)
@@ -97,3 +98,10 @@ def assert_ref_name(context, driver):
 @then("I see my edited reference number")
 def assert_ref_num(driver):
     assert '12345678' in driver.find_element_by_css_selector('.lite-task-list').text
+
+
+@then('the edit application button is not present')
+def edit_button_not_present(driver):
+    driver.set_timeout_to(0)
+    assert len((ApplicationPage(driver).find_edit_application_button())) == 0
+    driver.set_timeout_to(10)
