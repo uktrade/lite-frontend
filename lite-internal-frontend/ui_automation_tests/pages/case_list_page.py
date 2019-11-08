@@ -2,13 +2,14 @@ import time
 
 import shared.tools.helpers as utils
 from helpers.BasePage import BasePage
+from pages.shared import Shared
 
 
 class CaseListPage(BasePage):
 
     # Table
-    CASES_TABLE_ROW = '.lite-cases-table-row'  # CSS
-    CASES_TABLE = '.lite-cases-table'  # CSS
+    CASES_TABLE_ROW = '.govuk-table__row'  # CSS
+    CASES_TABLE = '.govuk-table'  # CSS
     CHECKBOX_CASE = ".govuk-checkboxes__input[value='"  # CSS
     CHECKBOX_TEXT = ".govuk-checkboxes"  # CSS
     CHECKBOX_SELECT_ALL = "select-all-checkbox"  # ID
@@ -26,7 +27,7 @@ class CaseListPage(BasePage):
     CASE_TYPE_DROPDOWN = 'case_type'  # ID
 
     # Deprecated
-    FILTER_SEARCH_BOX = "filter-box"  # ID
+    FILTER_SEARCH_BOX = 'filter-box'  # ID
     assignee = "[style='margin-bottom: 6px;']"  # CSS
     no_assignee = "[style='margin-bottom: 0; opacity: .7;']"  # CSS
 
@@ -34,6 +35,8 @@ class CaseListPage(BasePage):
     queue_dropdown_title = 'queue-title'  # ID
     dropdown_item = '.app-dropdown__item' # CSS
     dropdown_item_class = 'app-dropdown__item'  # Class_Name
+
+    chevron = 'chevron'  # ID
 
     def search_pages_for_id(self, id):
         is_present = len(self.driver.find_elements_by_link_text(id))
@@ -59,11 +62,13 @@ class CaseListPage(BasePage):
     def click_on_assign_users_button(self):
         self.driver.find_element_by_id(self.BUTTON_ASSIGN_USERS).click()
 
-    def get_text_of_assignees(self, case_id):
+    def get_text_of_assignees(self, driver, case_id):
         self.driver.set_timeout_to(1)
         self.search_pages_for_id(case_id)
         self.driver.set_timeout_to_10_seconds()
-        return self.driver.find_element_by_xpath("//*[text()[contains(.,'" + case_id + "')]]/following::p/following::p").text
+        elements = Shared(driver).get_rows_in_lite_table()
+        no = utils.get_element_index_by_text(elements, case_id)
+        return elements[no].text
 
     def click_select_all_checkbox(self):
         self.driver.find_element_by_id(self.CHECKBOX_SELECT_ALL).click()
@@ -103,6 +108,11 @@ class CaseListPage(BasePage):
     def click_on_queue_title(self):
         self.driver.find_element_by_id(self.queue_dropdown_title).click()
 
+    def click_chevron_based_on_context_case_id(self, context):
+        elements = Shared(self.driver).get_rows_in_lite_table()
+        no = utils.get_element_index_by_text(elements, context.case_id)
+        elements[no].find_element_by_css_selector(self.chevron).click()
+
     def click_on_queue_name(self, queue_name):
         self.click_on_queue_title()
         time.sleep(0.5)
@@ -114,3 +124,6 @@ class CaseListPage(BasePage):
 
     def select_filter_case_type_from_dropdown(self, status):
         utils.select_visible_text_from_dropdown(self.driver.find_element_by_id(self.CASE_TYPE_DROPDOWN), status)
+
+    def get_chevron_id_selector(self):
+        return self.chevron

@@ -48,7 +48,6 @@ class ApplicationPage(BasePage):
 
     goods_description_link = '#goods a'  # CSS
 
-
     def click_visible_to_exporter_checkbox(self):
         time.sleep(.5)
         self.driver.find_element_by_id(self.is_visible_to_exporter_checkbox_id).click()

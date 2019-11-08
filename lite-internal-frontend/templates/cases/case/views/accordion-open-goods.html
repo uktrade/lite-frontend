@@ -13,7 +13,7 @@
 	</thead>
 	<tbody>
 		{% for good in case.application.goods_types %}
-			<tr class="lite-accordian-table__row view">
+			<tr class="lite-accordian-table__row">
 				<td class="lite-accordian-table__cell">
 					{% if show_checkboxes %}<div class="govuk-checkboxes--small govuk-checkboxes__item">
 						<input class="govuk-checkboxes__input" type="checkbox" name="goods" value="{{ good.id }}" id="{{ good.id }}"> {% endif %}

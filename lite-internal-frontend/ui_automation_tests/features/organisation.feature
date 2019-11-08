@@ -37,13 +37,17 @@ Feature: I want to add a company to LITE
 
   @LT_1086_test_adding_a_flag_to_an_organisation
   Scenario: Adding a flag to an organisation
-    Given I create open application or open application has been previously created
-    And I go to flags
+    Given I create application or application has been previously created
+    And I go to internal homepage
+    When I go to flags via menu
     And I add a flag called Suspicious at level Organisation
-    When I go to open application previously created
+    And I go to application previously created
     And I go to the organisation which submitted the case
     And I click the edit flags link
     And I select previously created flag
     Then the previously created organisations flag is assigned
     When I go to open application previously created
     Then the previously created organisations flag is assigned
+    When I go to the internal homepage
+    Then I see previously created application
+    And I see the added flags on the queue

@@ -19,7 +19,7 @@ from conf.settings import AWS_STORAGE_BUCKET_NAME
 from core.builtins.custom_tags import get_string
 from core.helpers import convert_dict_to_query_params
 from core.services import get_user_permissions, get_statuses, get_user_case_notification
-from queues.services import get_queue, get_queues, get_queue_cases
+from queues.services import get_cases_search_data
 
 
 class Cases(TemplateView):
@@ -29,14 +29,13 @@ class Cases(TemplateView):
         """
         case_type = request.GET.get('case_type')
         status = request.GET.get('status')
-        statuses, _ = get_statuses(request)
         sort = request.GET.get('sort')
-        queue_id = request.GET.get('queue', DEFAULT_QUEUE_ID)
-        queues, _ = get_queues(request, include_system_queues=True)
-        queue, _ = get_queue(request, queue_id, case_type, status, sort)
+        queue_id = request.GET.get('queue_id')
 
         # Page parameters
-        params = {'queue': queue_id, 'page': int(request.GET.get('page', 1))}
+        params = {'page': int(request.GET.get('page', 1))}
+        if queue_id:
+            params['queue_id'] = queue_id
         if sort:
             params['sort'] = sort
         if status:
@@ -44,25 +43,24 @@ class Cases(TemplateView):
         if case_type:
             params['case_type'] = case_type
 
-        cases = get_queue_cases(request, queue_id, convert_dict_to_query_params(params))
+        data = get_cases_search_data(request, convert_dict_to_query_params(params))
 
         context = {
-            'title': queue['queue'].get('name'),
-            'queues': queues['queues'],
-            'current_queue': queue['queue'],
-            'cases': cases,
+            'title': data['results']['queue']['name'],
+            'data': data,
+            'queue': data['results']['queue'],
             'page': params.pop('page'),
-            'statuses': statuses,
             'params': params,
             'params_str': convert_dict_to_query_params(params)
         }
+
         return render(request, 'cases/index.html', context)
 
     def post(self, request, **kwargs):
         """
         Assign users depending on what cases were selected
         """
-        queue_id = request.GET.get('queue', DEFAULT_QUEUE_ID)
+        queue_id = request.GET.get('queue_id', DEFAULT_QUEUE_ID)
         return redirect(reverse('queues:case_assignments', kwargs={'pk': queue_id}) + '?cases=' + ','.join(
             request.POST.getlist('cases')))
 
@@ -70,21 +68,24 @@ class Cases(TemplateView):
 class ViewCase(TemplateView):
     def get(self, request, **kwargs):
         case_id = str(kwargs['pk'])
-        queue_id = request.GET.get('return_to', DEFAULT_QUEUE_ID)
-        queue, _ = get_queue(request, queue_id)
         case = get_case(request, case_id)
         activity = get_activity(request, case_id)
         permissions = get_user_permissions(request)
+        queue_id = request.GET.get('queue_id')
+        queue_name = request.GET.get('queue_name')
 
         case['all_flags'] = _get_all_distinct_flags(case)
 
         context = {
             'title': 'Case',
             'case': case,
-            'queue': queue,
             'activity': activity,
             'permissions': permissions,
         }
+        if queue_id:
+            context['queue_id'] = queue_id
+        if queue_name:
+            context['queue_name'] = queue_name
 
         if case['type']['key'] == 'end_user_advisory_query':
             return render(request, 'cases/case/queries/end_user_advisory.html', context)

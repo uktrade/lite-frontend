@@ -95,13 +95,6 @@ def i_see_the_original_number_of_active_flags(driver, context):
     assert context.original_number_of_deactivated_flags == number_of_deactivated_flags, "There is not equal deactivated flags to before"
 
 
-@when('I go to flags via menu')
-def go_to_flags_menu(driver):
-    header = HeaderPage(driver)
-    header.click_lite_menu()
-    header.click_flags()
-
-
 @when(parsers.parse('I add a flag called "{flag_name}" at level "{flag_level}"'))
 def add_a_flag(driver, flag_name, flag_level, context):
     flags_page = FlagsPages(driver)

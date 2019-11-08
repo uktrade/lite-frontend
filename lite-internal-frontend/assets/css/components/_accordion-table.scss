@@ -75,3 +75,8 @@
 	padding: govuk-spacing(4);
 	box-sizing: border-box;
 }
+
+.lite-accordian-table__chevron {
+	@include user-select(none);
+	color: govuk-colour("black")!important;
+}

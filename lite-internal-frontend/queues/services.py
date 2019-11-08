@@ -8,7 +8,6 @@ from conf.constants import QUEUES_URL
 
 def get_queues(request, convert_to_options=False, include_system_queues=False):
     data = get(request, QUEUES_URL + "?include_system_queues=" + str(include_system_queues))
-
     if convert_to_options:
         converted = []
 
@@ -49,8 +48,8 @@ def get_queue(request, pk, case_type=None, status=None, sort=None):
     return data.json(), data.status_code
 
 
-def get_queue_cases(request, pk, params):
-    data = get(request, QUEUES_URL + pk + '/cases/' + '?' + params)
+def get_cases_search_data(request, params):
+    data = get(request, '/cases/' + '?' + params)
     return data.json()
 
 

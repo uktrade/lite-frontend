@@ -1,7 +1,9 @@
+import functools
+
 from lite_forms.components import Option
 
 from conf.client import get, post, put
-from conf.constants import FLAGS_URL, FLAGS_CASE_LEVEL_FOR_TEAM, FLAGS_GOOD_LEVEL_FOR_TEAM, FLAGS_ORGANISATION_LEVEL_FOR_TEAM
+from conf.constants import FLAGS_URL
 
 
 def get_flags(request):
@@ -9,55 +11,17 @@ def get_flags(request):
     return data.json(), data.status_code
 
 
-def get_cases_flags(request, convert_to_options=False):
-    data = get(request, FLAGS_CASE_LEVEL_FOR_TEAM).json()['flags']
-
+def _get_team_flags(level, request, convert_to_options=False):
+    data = get(request, f'{FLAGS_URL}?level={level}&team=True').json()['flags']
     if convert_to_options:
-        converted = []
-
-        for flag in data:
-            converted.append(
-                Option(key=flag['id'],
-                       value=flag['name'])
-            )
-
-        return converted
+        return [Option(key=flag['id'], value=flag['name']) for flag in data]
 
     return data
 
 
-def get_goods_flags(request, convert_to_options=False):
-    data = get(request, FLAGS_GOOD_LEVEL_FOR_TEAM).json()['flags']
-
-    if convert_to_options:
-        converted = []
-
-        for flag in data:
-            converted.append(
-                Option(key=flag['id'],
-                       value=flag['name'])
-            )
-
-        return converted
-
-    return data
-
-
-def get_organisation_flags(request, convert_to_options=False):
-    data = get(request, FLAGS_ORGANISATION_LEVEL_FOR_TEAM).json()['flags']
-
-    if convert_to_options:
-        converted = []
-
-        for flag in data:
-            converted.append(
-                Option(key=flag['id'],
-                       value=flag['name'])
-            )
-
-        return converted
-
-    return data
+get_cases_flags = functools.partial(_get_team_flags, 'Case')
+get_goods_flags = functools.partial(_get_team_flags, 'Good')
+get_organisation_flags = functools.partial(_get_team_flags, 'Organisation')
 
 
 def post_flags(request, json):
