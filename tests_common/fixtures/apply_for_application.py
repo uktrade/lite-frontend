@@ -2,10 +2,10 @@ import datetime
 
 from pytest import fixture
 
-from ..tools.utils import Timer, get_lite_client
+from ..tools.utils import get_lite_client, Timer
 
 
-@fixture(scope="module")
+@fixture
 def apply_for_standard_application(driver, seed_data_config, context):
     timer = Timer()
     lite_client = get_lite_client(context, seed_data_config)
@@ -28,7 +28,7 @@ def apply_for_standard_application(driver, seed_data_config, context):
             "unit": "MTR",
             "value": 1
         },
-        enduser={
+        end_user={
             "name": "Mr Smith",
             "address": "Westminster, London SW1A 0BB",
             "country": "GB",

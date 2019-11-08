@@ -17,9 +17,9 @@ def invalid_username(request):
 @fixture(scope='session')
 def exporter_info(request, environment):
     exporter_sso_email = environment('TEST_EXPORTER_SSO_EMAIL')
+    name = environment('TEST_EXPORTER_SSO_NAME')
+    first_name, last_name = name.split(' ')
     exporter_sso_password = environment('TEST_EXPORTER_SSO_PASSWORD')
-    first_name = 'Test'
-    last_name = 'Lite'
 
     return {
         'email': exporter_sso_email,

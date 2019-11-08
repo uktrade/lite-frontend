@@ -1,18 +1,17 @@
-import re
-import allure
-import os
-
+from os import path, makedirs, chmod, pardir
+from re import search
+from allure import attach, attachment_type
+from time import sleep
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
 from datetime import datetime
-import time
 
 now = datetime.now().isoformat()
-path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir))
-screen_dir = os.path.join(path, "screenshot", str(now))
+file_path = path.abspath(path.join(path.dirname(path.abspath(__file__)), pardir))
+screen_dir = path.join(file_path, "screenshot", str(now))
 
 
 def get_current_date_time_string():
@@ -28,10 +27,9 @@ def repeat_to_length(string_to_expand, length):
 
 
 def screen_path():
-    global screen_dir  # noqa
-    if not os.path.exists(screen_dir):
-        os.makedirs(screen_dir)
-        os.chmod(screen_dir, 0o644)
+    if not path.exists(screen_dir):
+        makedirs(screen_dir)
+        chmod(screen_dir, 0o644)
     return screen_dir
 
 
@@ -43,8 +41,8 @@ def remove_special_characters(text):
 
 def save_screenshot(driver, name):
     _name = remove_special_characters(name)
-    driver.get_screenshot_as_file(os.path.join(screen_path(), _name + '-' + now + ".png"))
-    allure.attach(driver.get_screenshot_as_png(), name=_name + "-" + now, attachment_type=allure.attachment_type.PNG)
+    driver.get_screenshot_as_file(path.join(screen_path(), _name + '-' + now + ".png"))
+    attach(driver.get_screenshot_as_png(), name=_name + "-" + now, attachment_type=attachment_type.PNG)
 
 
 def find_element(driver, by_type, locator):
@@ -112,7 +110,7 @@ def highlight(element):
 
     original_style = element.get_attribute('style')
     apply_style("background: yellow; border: 2px solid red;")
-    time.sleep(.8)
+    sleep(.8)
     apply_style(original_style)
 
 
@@ -136,9 +134,8 @@ def scroll_to_element_by_id(driver, id):
 
 
 def search_for_correct_date_regex_in_element(element):
-    return re.search(
+    return search(
         "([0-9]{1,2}):([0-9]{2})(am|pm) ([0-9][0-9]) (January|February|March|April|May|June|July|August|September|October|November|December) ([0-9]{4,})",
-        # noqa
         element)
 
 

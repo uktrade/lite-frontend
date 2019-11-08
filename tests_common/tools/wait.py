@@ -1,6 +1,6 @@
-import time
+from time import sleep
 
-from ..tools.helpers import page_is_ready, menu_is_visible
+from .helpers import page_is_ready, menu_is_visible
 
 # How many attempts to wait for the function to return True
 timeout_limit = 20
@@ -13,7 +13,7 @@ def wait_for_function(func, **kwargs):
     while time_no < timeout_limit:
         if func(**kwargs):
             return True
-        time.sleep(function_retry_interval)
+        sleep(function_retry_interval)
         time_no += function_retry_interval
     return False
 
