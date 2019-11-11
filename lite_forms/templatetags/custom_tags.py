@@ -1,4 +1,5 @@
 from django.template.defaulttags import register
+from django.utils.safestring import mark_safe
 
 
 @register.filter
@@ -52,3 +53,12 @@ def prefix_dots(text):
     See https://stackoverflow.com/a/9930611
     """
     return text.replace('.', r'\\.')
+
+
+@register.simple_tag
+@mark_safe
+def hidden_field(key, value):
+    """
+    Generates a hidden field from the given key and value
+    """
+    return f'<input type="hidden" name="{key}" value="{value}">'

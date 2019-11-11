@@ -1,22 +1,30 @@
-import copy
-
-from django.http import HttpRequest
+from typing import Callable
 
 from lite_forms.components import HiddenField, Form, FormGroup
 from lite_forms.generators import form_page
-from lite_forms.helpers import remove_unused_errors, nest_data, get_next_form_after_pk, get_form_by_pk, flatten_data
+from lite_forms.helpers import remove_unused_errors, nest_data, get_next_form, get_form_by_pk, flatten_data, \
+    get_previous_form
 
 
-def submit_single_form(request: HttpRequest, form: Form, post_to, pk=None, override_data=None):
+def submit_single_form(request, form: Form, action: Callable, object_pk=None, override_data=None):
+    """
+    Function to handle the submission of data for a single, supplied form.
+
+    :param request: Standard Django request object
+    :param form: The Form for which to handle a submit
+    :param action: The callback action to be invoked to submit the form's data
+    :param object_pk: Entity primary key to be supplied with the submission, if any
+    :param override_data: Data to be used instead of the request's data, if applicable
+    """
     data = request.POST.copy()
 
     if override_data:
         data = override_data
 
-    if pk:
-        validated_data, _ = post_to(request, pk, data)
+    if object_pk:
+        validated_data, _ = action(request, object_pk, data)
     else:
-        validated_data, _ = post_to(request, data)
+        validated_data, _ = action(request, data)
 
     if 'errors' in validated_data:
         return form_page(request, form, data=data, errors=validated_data.get('errors')), None
@@ -24,7 +32,7 @@ def submit_single_form(request: HttpRequest, form: Form, post_to, pk=None, overr
     return None, validated_data
 
 
-def _prepare_data(request: HttpRequest, inject_data, expect_many_values):
+def _prepare_data(request, inject_data, expect_many_values):
     data = request.POST.copy()
 
     if inject_data:
@@ -43,27 +51,43 @@ def _prepare_data(request: HttpRequest, inject_data, expect_many_values):
 
 
 def submit_paged_form(
-    request: HttpRequest,
-    form_group: FormGroup,
-    post_to,
-    pk=None,
-    inject_data=None,
-    expect_many_values=None,
+        request,
+        form_group: FormGroup,
+        action: Callable,
+        object_pk=None,
+        inject_data=None,
+        expect_many_values=None,
 ):
+    """
+    Function to handle the submission of the data from one form in a sequence of forms (a FormGroup).
+
+    :param request: Standard Django request object
+    :param form_group: The FormGroup that defines the sequence of forms being traversed
+    :param action: The callback action to be invoked here to submit the form's data
+    :param object_pk: Entity primary key to be supplied with the submission, if any
+    :param inject_data: Additional data to be added to the supplied request's data before submitting
+    :param expect_many_values: List of the data keys whose values contain multiple values
+    :return: The next form page to display
+    """
     if expect_many_values is None:
         expect_many_values = []
 
     data, nested_data = _prepare_data(request, inject_data, expect_many_values)
 
-    # Get the next form based off form_pk
     form_pk = request.POST.get('form_pk')
-    current_form = copy.deepcopy(get_form_by_pk(form_pk, form_group))
-    next_form = copy.deepcopy(get_next_form_after_pk(form_pk, form_group))
+    previous_form = get_previous_form(form_pk, form_group)
+    current_form = get_form_by_pk(form_pk, form_group)
+    next_form = get_next_form(form_pk, form_group)
 
-    if pk:
-        validated_data, _ = post_to(request, pk, nested_data)
+    if data.get('_action') and data.get('_action') == 'back':
+        data = request.POST.copy()
+        del data['form_pk']
+        return form_page(request, previous_form, data=data, extra_data={'form_pk': previous_form.pk}), None
+
+    if object_pk:
+        validated_data, _ = action(request, object_pk, nested_data)
     else:
-        validated_data, _ = post_to(request, nested_data)
+        validated_data, _ = action(request, nested_data)
 
     # If the API returns errors, add the existing questions to the reloaded form
     errors = validated_data.get('errors')
@@ -85,7 +109,8 @@ def submit_paged_form(
             if not exists:
                 current_form.questions.insert(0, HiddenField(key, value))
 
-        return form_page(request, current_form, data=data, errors=errors), validated_data
+        return form_page(request, current_form, data=data, errors=errors,
+                         extra_data={'form_pk': current_form.pk}), validated_data
 
     # If there aren't any forms left to go through, return the data
     if next_form is None:
@@ -100,4 +125,4 @@ def submit_paged_form(
             next_form.questions.insert(0, HiddenField(key, value))
 
     # Go to the next page
-    return form_page(request, next_form, data=data), validated_data
+    return form_page(request, next_form, data=data, extra_data={'form_pk': next_form.pk}), validated_data
