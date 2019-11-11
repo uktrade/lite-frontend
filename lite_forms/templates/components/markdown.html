@@ -17,34 +17,26 @@
 {% load static %}
 
 {% block javascript %}
-<script type="text/javascript" src="{% static 'javascripts/jquery-2.2.0.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'javascripts/jquery.caret.js' %}"></script>
-<script type="text/javascript" src="{% static 'javascripts/jquery.atwho.js' %}"></script>
+<script type="text/javascript" src="{% static 'javascripts/tribute.min.js' %}"></script>
 <script type="text/javascript">
-  $(function(){
     var data = {{ variables|safe }};
-    var id = '#{{ name }}';
+    var id = '{{ name }}';
+    var trigger = "{";
 
-    var at_config = {
-      at: "{% templatetag openvariable %}",
-      data: data,
-      headerTpl: '<div class="atwho-header govuk-label">Variables</div>',
-      insertTpl: '{% templatetag openvariable %} ${key} {% templatetag closevariable %}',
-      displayTpl: "<li id='context_suggestion' class='govuk-label'>${key} <small>${value}</small></li>"
-    };
-    $inputor = $(id).atwho(at_config);
-    $inputor.caret('pos', 47);
-    $inputor.focus().atwho('run');
+    var tribute = new Tribute({
+        values: data,
+        trigger: trigger,
+        fillAttr: 'representation',
+    });
 
-    $('#editable').atwho(at_config);
-  });
+    tribute.attach(document.getElementById(id));
 </script>
 {% endblock %}
 
 <div class="govuk-label">
 	<h3>Adding custom variables</h3>
 	<p>Use double curly braces to add custom variables to your paragraph text:</p>
-	<div class="govuk-inset-text">Hello {% templatetag openvariable %} applicant.name {% templatetag closevariable %}, your licence number is {% templatetag openvariable %} licence.id {% templatetag closevariable %}</div>
+	<div class="govuk-inset-text">Hello {% templatetag openvariable %} applicant.name {% templatetag closevariable %}, your case number is {% templatetag openvariable %} case.id {% templatetag closevariable %}</div>
 	<noscript>
 			You can add the;
 			<ul>
