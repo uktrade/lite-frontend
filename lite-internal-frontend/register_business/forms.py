@@ -38,7 +38,6 @@ def register_business_forms(individual=False, name=''):
                              TextInput(title=get_string('register_business.last_name'),
                                        name='user.last_name'),
                              TextInput(title=get_string('register_business.eori_number'),
-                                       optional=True,
                                        name='eori_number'),
                              TextInput(title=get_string('register_business.uk_vat_number.title'),
                                        description=get_string('register_business.uk_vat_number.description'),

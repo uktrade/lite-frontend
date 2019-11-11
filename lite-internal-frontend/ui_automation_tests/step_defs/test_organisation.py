@@ -81,12 +81,13 @@ def fill_out_company_details_page_and_continue(driver, name, eori, sic, vat, reg
 
 
 @when(parsers.parse(
-    'I provide individual registration details of first name: "{first_name}", last name: "{last_name}" and email: "{email}"'))
-def fill_out_individual_registration_page(driver, first_name, last_name, email):
+    'I provide individual registration details of first name: "{first_name}", last name: "{last_name}", EORI: "{eori}" and email: "{email}"'))
+def fill_out_individual_registration_page(driver, first_name, last_name, email, eori):
     organisations_form_page = OrganisationsFormPage(driver)
     organisations_form_page.enter_email(email)
     organisations_form_page.enter_first_name(first_name)
     organisations_form_page.enter_last_name(last_name)
+    organisations_form_page.enter_eori_number(eori)
     organisations_form_page.click_submit()
 
 
