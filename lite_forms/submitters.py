@@ -6,14 +6,23 @@ from lite_forms.helpers import remove_unused_errors, nest_data, get_next_form, g
     get_previous_form
 
 
-def submit_single_form(request, form: Form, action: Callable, pk=None, override_data=None):
+def submit_single_form(request, form: Form, action: Callable, object_pk=None, override_data=None):
+    """
+    Function to handle the submission of data for a single, supplied form.
+
+    :param request: Standard Django request object
+    :param form: The Form for which to handle a submit
+    :param action: The callback action to be invoked to submit the form's data
+    :param object_pk: Entity primary key to be supplied with the submission, if any
+    :param override_data: Data to be used instead of the request's data, if applicable
+    """
     data = request.POST.copy()
 
     if override_data:
         data = override_data
 
-    if pk:
-        validated_data, _ = action(request, pk, data)
+    if object_pk:
+        validated_data, _ = action(request, object_pk, data)
     else:
         validated_data, _ = action(request, data)
 
