@@ -1,0 +1,304 @@
+{% load sass_tags  %}
+<link href="{% sass_src 'css/letter_templates/licence.scss' %}" rel="stylesheet" type="text/css" />
+
+<table id="first-page-table" class="fixed-layout page-break-after">
+  <!--
+    Table is broken up into 12 evenly-spaced columns.
+    Cell width is controlled by colspan attributes on cells.
+   -->
+  <tr class="set-width-hack">
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+  </tr>
+  <tr>
+    <td class="border-top-black padding-none align-centre" rowspan="999">
+      <div class="text-large border-left-black border-bottom-black">1</div>
+      <div class="sidebar-cell text-large border-left-black border-bottom-black bold uppercase">
+        <div class="rotate">Licence</div>
+      </div>
+      <div class="text-large border-left-black border-bottom-black">1</div>
+    </td>
+    <td class="border-black" rowspan="4" colspan="5">
+      <span class="cell__heading">1. Exporter</span>
+      <span class="cell__uppercase">
+          {{ applicant.name }}<br>
+          {{ applicant.primary_site.address.address_line_1 }}<br>
+          {{ applicant.primary_site.address.address_line_2 }}<br>
+          {{ applicant.primary_site.address.postcode }}<br>
+          {{ applicant.primary_site.address.city }}<br>
+          {{ applicant.primary_site.address.region }}<br>
+          {{ applicant.primary_site.address.country.name }}
+      </span>
+    </td>
+    <td class="border-black" colspan="3">
+      <span class="cell__heading">2. Licence number</span>
+      <span class="cell__uppercase">{{ licence.id }}</span>
+    </td>
+    <td class="border-black" colspan="3">
+      <span class="cell__heading">3a. Commencement date</span>
+      <span class="cell__uppercase">{{ licence.start_date }}</span>
+    </td>
+  </tr>
+  <tr>
+    <td class="border-black" colspan="3">
+      <span class="cell__heading">2a. Application number</span>
+      <span class="cell__uppercase">{{ application.id }}</span>
+    </td>
+    <td class="border-black" colspan="3">
+      <span class="cell__heading">3b. Expiry date</span>
+      <span class="cell__uppercase">{{ licence.end_date }}</span>
+    </td>
+    </tr>
+  <tr>
+    <td class="border-black" colspan="6">
+      <span class="cell__heading">2b. Applicant reference</span>
+      <span class="cell__uppercase">{{ application.reference }}</span>
+    </td>
+  </tr>
+  <tr>
+    <td class="border-black" colspan="6">
+      <span class="cell__heading">4. Exporter contact details</span>
+      <span class="cell__uppercase">
+          {{ applicant.email }}
+          {{ applicant.phone }}
+      </span>
+    </td>
+  </tr>
+  <tr>
+    <td class="border-black" colspan="5">
+      <span class="cell__heading">5. Consignee(s)/Destination(s)</span>
+      <span class="cell__uppercase">
+          <span class="cell__uppercase">
+            {{ consignee.name }}<br>
+            {{ consignee.address.address_line_1 }}<br>
+            {{ consignee.address.address_line_2 }}<br>
+            {{ consignee.address.postcode }}<br>
+            {{ consignee.address.city }}<br>
+            {{ consignee.address.region }}<br>
+            {{ consignee.address.country.name }}
+          </span>
+      </span>
+    </td>
+    <td class="border-black" colspan="6">
+      <span class="cell__heading">6. Address of the issuing authority</span>
+      <span class="cell__uppercase">
+          <span class="cell__uppercase">
+              TBC
+          </span>
+      </span>
+    </td>
+  </tr>
+  <tr>
+    <td class="border-black" colspan="5" rowspan="2">
+      <span class="cell__heading">7. Agent/Representative(if different from exporter)</span>
+      <span class="cell__uppercase">
+          <span class="cell__uppercase">
+              TBC
+          </span>
+      </span>
+    </td>
+    <td class="border-black" colspan="4">
+      <span class="cell__heading" colspan="2">8. Country of origin(if applicable)</span>
+      <span class="cell__uppercase">{{ goods.country.name }}</span>
+    </td>
+    <td class="border-black" colspan="2">
+      <span class="cell__heading">Code</span>
+      <span class="cell__uppercase">{{ goods.country.code }}</span>
+    </td>
+  </tr>
+  <tr>
+    <td class="border-black" colspan="4">
+      <span class="cell__heading" colspan="2">8. Country of consignment</span>
+      <span class="cell__uppercase">{{ consignment.country.name }}</span>
+    </td>
+    <td class="border-black" colspan="2">
+      <span class="cell__heading">Code</span>
+      <span class="cell__uppercase">{{ consignment.country.code }}</span>
+    </td>
+  </tr>
+  <tr>
+    <td class="border-black" colspan="5" rowspan="3">
+      <span class="cell__heading">10. End User(if different from consignee)</span>
+      <span class="cell__uppercase">
+        {{ end_user.name }}<br>
+        {{ end_user.address.address_line_1 }}<br>
+        {{ end_user.address.address_line_2 }}<br>
+        {{ end_user.address.postcode }}<br>
+        {{ end_user.address.city }}<br>
+        {{ end_user.address.region }}<br>
+        {{ end_user.address.country.name }}
+      </span>
+    </td>
+    <td class="border-black" colspan="4">
+      <span class="cell__heading">11. Member state of current or future location of the items</span>
+      <span class="cell__uppercase">TBC</span>
+    </td>
+    <td class="border-black" colspan="2">
+      <span class="cell__heading">Code</span>
+      <span class="cell__uppercase">TBC</span>
+    </td>
+  </tr>
+  <tr>
+    <td class="border-black" colspan="4">
+      <span class="cell__heading">12. Member State of intended entry into the Customs export procedure</span>
+      <span class="cell__uppercase">TBC</span>
+    </td>
+    <td class="border-black" colspan="2">
+      <span class="cell__heading">Code</span>
+      <span class="cell__uppercase">TBC</span>
+    </td>
+  </tr>
+  <tr>
+    <td class="border-black" colspan="4">
+      <span class="cell__heading">13. Country of Destination</span>
+      <span class="cell__uppercase">TBC</span>
+    </td>
+    <td class="border-black" colspan="2">
+      <span class="cell__heading">Code</span>
+      <span class="cell__uppercase">TBC</span>
+    </td>
+  </tr>
+  <tr>
+    <td class="border-black" colspan="5" rowspan="2">
+      <span class="cell__heading">14. Description of the items</span>
+      <span class="cell__uppercase">TBC</span>
+    </td>
+    <td class="border-black" colspan="3">
+      <span class="cell__heading">15. Commodity code</span>
+      <span class="cell__uppercase">TBC</span>
+    </td>
+    <td class="border-black" colspan="3">
+      <span class="cell__heading">16. Control list no</span>
+      <span class="cell__uppercase">TBC</span>
+    </td>
+  </tr>
+  <tr>
+    <td class="border-black" colspan="3">
+      <span class="cell__heading">17. Currency and Value</span>
+      <span class="cell__uppercase">TBC</span>
+    </td>
+    <td class="border-black" colspan="3">
+      <span class="cell__heading">18. Quantity of the items</span>
+      <span class="cell__uppercase">TBC</span>
+    </td>
+  </tr>
+  <tr>
+    <td class="border-black" colspan="5">
+      <span class="cell__heading">19. End use</span>
+      <span class="cell__uppercase">TBC</span>
+    </td>
+    <td class="border-black" colspan="3">
+      <span class="cell__heading">20. Contract date</span>
+      <span class="cell__uppercase">TBC</span>
+    </td>
+    <td class="border-black" colspan="3">
+      <span class="cell__heading">21. Customs export procedure(Type of licence)</span>
+      <span class="cell__uppercase">TBC</span>
+    </td>
+  </tr>
+  <tr>
+    <td class="border-black" colspan="11">
+      <span class="cell__heading">Digital Signature</span>
+      <span class="cell__uppercase">TBC</span>
+    </td>
+  </tr>
+</table>
+
+<table id="page-header" class="fixed-layout">
+  <!--
+    Table is broken up into 12 evenly-spaced columns.
+    Cell width is controlled by colspan attributes on cells.
+   -->
+  <tr class="set-width-hack">
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+  </tr>
+  <tr>
+    <td class="border-top-black border-right-black padding-none align-centre" rowspan="999">
+      <div class="text-large border-left-black border-bottom-black">1<br>DIT</div>
+      <div class="sidebar-cell text-large border-left-black border-bottom-black bold uppercase">
+        <div class="rotate">Licence</div>
+      </div>
+    </td>
+    <td class="border-black" rowspan="3" colspan="5">
+      <span class="cell__heading">1. Exporter</span>
+      <span class="cell__uppercase">{{ applicant.name }}<br>
+      {{ applicant.primary_site.address.address_line_1 }}<br>
+      {{ applicant.primary_site.address.address_line_2 }}<br>
+      {{ applicant.primary_site.address.postcode }}<br>
+      {{ applicant.primary_site.address.city }}<br>
+      {{ applicant.primary_site.address.region }}<br>
+      {{ applicant.primary_site.address.country.name }}</span>
+    </td>
+    <td class="border-black" colspan="3">
+      <span class="cell__heading">2. Licence number</span>
+      <span class="cell__uppercase">TBC</span>
+    </td>
+    <td class="border-black" colspan="3">
+      <span class="cell__heading">3a. Commencement date</span>
+      <span class="cell__uppercase">TBC</span>
+    </td>
+  </tr>
+  <tr>
+    <td class="border-black" colspan="3">
+      <span class="cell__heading">2a. Application number</span>
+      <span class="cell__uppercase">TBC</span>
+    </td>
+    <td class="border-black" colspan="3">
+      <span class="cell__heading">3b. Expiry date</span>
+      <span class="cell__uppercase">TBC</span>
+    </td>
+    </tr>
+  <tr>
+    <td class="border-black" colspan="6">
+      <span class="cell__heading">2b. Applicant reference</span>
+      <span class="cell__uppercase">TBC</span>
+    </td>
+  </tr>
+  <tr>
+    <td></td>
+  </tr>
+</table>
+
+<table class="page-break-after">
+  <tr>
+    <td class="border-black italic">Item</td>
+    <td class="border-black italic">14. Description of the items</td>
+    <td class="border-black italic">16. Control list no</td>
+    <td class="border-black italic">17. Currency and Value</td>
+    <td class="border-black italic">18. Quantity of the items</td>
+  </tr>
+    {% for good in goods %}
+    <tr>
+        <td class="border-black">{{ good.id }}</td>
+        <td class="border-black">{{ good.name }}</td>
+        <td class="border-black">{{ good.clc }}</td>
+        <td class="border-black">£{{ good.value }}</td>
+        <td class="border-black">{{ good.quantity }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<div class="border-black padding page-break-after" id="paragraph_content">
+  {{ content|safe }}
+</div>

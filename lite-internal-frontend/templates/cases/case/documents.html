@@ -10,7 +10,7 @@
 {% block body %}
 
 <div class="lite-app-bar">
-	<h1 class="govuk-heading-l">{{ title }}</h1>
+	<h2 class="govuk-heading-l">{{ title }}</h2>
 	<div class="lite-app-bar--right">
 		<a role="button" draggable="false" class="govuk-button {% if documents %}govuk-button--secondary{% endif %}" href="{% url 'cases:attach_documents' case.id %}">
 			{% get_string 'cases.manage.documents.attach_documents.button' %}

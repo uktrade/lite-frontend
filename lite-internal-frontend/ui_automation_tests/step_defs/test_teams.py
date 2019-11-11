@@ -40,9 +40,10 @@ def select_team(driver):
 
 @when('I click edit for my user')
 def click_edit_for_my_user(driver, internal_info):
-    no = utils.get_element_index_by_text(Shared(driver).get_rows_in_lite_table(), internal_info['email'])
+    index = utils.get_element_index_by_text(Shared(driver).get_rows_in_lite_table(), internal_info['email'])
     Shared(driver).scroll_to_bottom_row()
-    UsersPage(driver).click_edit_button_by_index(no)
+    utils.scroll_to_right_of_page(driver)
+    UsersPage(driver).click_edit_button_by_index(index)
 
 
 @when(parsers.parse('I add a team called BlueOcean'))
@@ -79,7 +80,7 @@ def see_team_in_list(driver, context):
 
 @then(parsers.parse('I see my teams user list with user "{added_not_added}"'))
 def see_team_user_added(driver, added_not_added, context, internal_info):
-    assert Shared(driver).get_text_of_h1() == context.team_name , "User is not on teams user list"
+    assert Shared(driver).get_text_of_h2() == context.team_name , "User is not on teams user list"
     assert Shared(driver).get_text_of_selected_tab() == "USERS" , "Users tab isn't shown"
     if added_not_added == "added":
         table = Shared(driver).get_text_of_lite_table_body()

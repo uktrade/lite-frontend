@@ -2,10 +2,11 @@ from django.http import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
-from lite_forms.generators import form_page
 
+from lite_forms.generators import form_page
 from picklists.forms import add_picklist_item_form, edit_picklist_item_form, deactivate_picklist_item, \
     reactivate_picklist_item
+from picklists.helpers import picklist_paragraph_errors
 from picklists.services import get_picklists, get_picklist_item, post_picklist_item, put_picklist_item
 from teams.services import get_team
 from users.services import get_gov_user
@@ -46,13 +47,20 @@ class AddPicklistItem(TemplateView):
             'type': picklist_type
         }
 
-        return form_page(request, add_picklist_item_form(), data=data)
+        return form_page(request, add_picklist_item_form(request), data=data)
 
     def post(self, request, **kwargs):
+        # Letter paragraphs are passed through the Django template engine, so we need
+        # to make sure they're valid.
+        if request.POST.get("type") == "letter_paragraph":
+            errors = picklist_paragraph_errors(request)
+            if errors:
+                return form_page(request, add_picklist_item_form(request), data=request.POST, errors=errors)
+
         response, status_code = post_picklist_item(request, request.POST)
 
         if status_code != 201:
-            return form_page(request, add_picklist_item_form(), data=request.POST, errors=response.get('errors'))
+            return form_page(request, add_picklist_item_form(request), data=request.POST, errors=response.get('errors'))
 
         picklist_type = request.POST['type']
 
@@ -86,6 +94,13 @@ class EditPicklistItem(TemplateView):
         return form_page(request, self.form, data=self.picklist_item)
 
     def post(self, request, **kwargs):
+        # Letter paragraphs are passed through the Django template engine, so we need
+        # to make sure they're valid.
+        if request.POST.get("type") == "letter_paragraph":
+            errors = picklist_paragraph_errors(request)
+            if errors:
+                return form_page(request, self.form, data=request.POST, errors=errors)
+
         response, status_code = put_picklist_item(request, self.picklist_item_id, request.POST)
 
         if status_code != 200:

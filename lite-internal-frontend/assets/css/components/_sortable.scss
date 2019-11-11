@@ -1,0 +1,27 @@
+// Class for dragging elements (added automatically to div by jQuery UI)
+.ui-sortable-helper  {
+	box-shadow: 0 1px 5px rgba(black, 0.2), 0 10px 30px rgba(black, 0.2);
+	background-color: govuk-colour("white");
+	transform: rotateZ(3deg) translateY(4px);
+	opacity: .9;
+	z-index: 10;
+
+	svg * {
+		fill: govuk-colour("black");
+	}
+
+	&::after {
+		@include fill-pseudo();
+		border: 2px solid transparent;
+	}
+}
+
+// Class for placeholder elements (added automatically to page by jQuery UI)
+.ui-sortable-placeholder {
+	visibility: visible!important;
+	background-color: transparent;
+
+	&::after {
+		border: 2px dashed govuk-colour("light-grey");
+	}
+}

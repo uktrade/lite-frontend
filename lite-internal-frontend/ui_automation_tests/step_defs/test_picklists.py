@@ -41,28 +41,21 @@ def go_to_picklist_list(driver, picklist_type, context):
 
 @when(parsers.parse('I add a new picklist item with "{picklist_name}" and "{picklist_description}"'))
 def add_to_picklist_item(driver, picklist_name, picklist_description, context):
-    PicklistPages(driver).click_on_picklist_add_button()
-    if picklist_description == "too many":
-        picklist_description = 'a' * 5001
-        PicklistPages(driver).type_into_picklist_name(picklist_name)
-        PicklistPages(driver).type_into_picklist_description(picklist_description)
-    elif picklist_description == " ":
-        PicklistPages(driver).type_into_picklist_name(picklist_name)
-        PicklistPages(driver).type_into_picklist_description(picklist_description)
-    else:
-        time = utils.get_formatted_date_time_m_d_h_s()
-        context.picklist_name = picklist_name + time
-        context.picklist_description = picklist_description + time
-        PicklistPages(driver).type_into_picklist_name(context.picklist_name)
-        PicklistPages(driver).type_into_picklist_description(context.picklist_description)
-    Shared(driver).click_submit()
+    time = utils.get_formatted_date_time_m_d_h_s()
+    context.picklist_name = picklist_name + time
+    context.picklist_description = picklist_description + time
+    PicklistPages(driver).type_into_picklist_name(context.picklist_name)
+    PicklistPages(driver).type_into_picklist_description(context.picklist_description)
 
 
 @then('I see my new picklist item in the list')
 def see_new_picklist(driver, context):
-    picklist_column = PicklistPages(driver).get_text_of_picklist_list()
-    assert context.picklist_name in picklist_column, "picklist name is not in column"
-    assert context.picklist_description in picklist_column, "picklist description is not in column"
+    picklist_page = PicklistPages(driver)
+    latest_picklist_name = picklist_page.get_latest_picklist_name()
+    latest_picklist_description = picklist_page.get_latest_picklist_description()
+    assert context.picklist_name in latest_picklist_name, "picklist name is not in column"
+    assert context.picklist_description in latest_picklist_description, "picklist description is not in column"
+    assert context.prompted_context_variable in latest_picklist_description, "picklist context variable not in column"
 
 
 @then('I see picklist error messages')
@@ -102,3 +95,35 @@ def i_see_my_picklist_page(driver, context, status):
         driver.set_timeout_to_10_seconds()
     assert "Last updated" in body, "last updated is not displayed"
     assert context.picklist_type.lower().replace("_", " ") in body.lower().replace("_", " "), "picklist type is not displayed"
+
+
+@when("I type {{ into the description")
+def type_context_variable_start(driver, context):
+    PicklistPages(driver).type_into_picklist_description(' {')
+
+
+@then("I am given context variable suggestions")
+def context_variable_overlay(driver):
+    assert PicklistPages(driver).context_suggestions_are_displayed(), "Context variable suggestion list didn't appear"
+
+
+@when("I click a suggested context variable")
+def context_variable_option(driver, context):
+    picklist_page = PicklistPages(driver)
+    context.prompted_context_variable = picklist_page.get_context_suggestion_variable_name().split('\n')[0]
+    picklist_page.click_context_suggestion()
+
+
+@when("I click add a new picklist")
+def click_add_picklist(driver):
+    PicklistPages(driver).click_on_picklist_add_button()
+
+
+@then(parsers.parse('An invalid variable error for "{variable_name}" is shown'))
+def context_variable_error(driver, variable_name):
+    assert variable_name in PicklistPages(driver).get_errors()
+
+
+@when("I clear the picklist name and description")
+def clear_picklist_name_and_description(driver):
+    PicklistPages(driver).clear_picklist_name_and_description()

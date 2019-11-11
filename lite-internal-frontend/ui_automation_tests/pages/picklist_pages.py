@@ -12,7 +12,12 @@ class PicklistPages():
         self.picklist_name_field = 'name' #name
         self.picklist_description_field = 'text' #name
         self.picklist_names_in_list = 'h4 a' #css
-        self.picklist_list = '.govuk-grid-column-three-quarters' #css
+        self.picklist_list_name = '.govuk-heading-s' #css
+        self.picklist_list_description = '.app-picklist-item__text' #css
+        self.errors = '.govuk-error-summary__list' #css
+
+        self.context_suggestions_overlay = '.tribute-container'  # css
+        self.context_suggestion = '.tribute-container .highlight'  # css
 
     def click_on_picklist_tab(self):
         self.driver.find_element_by_css_selector(self.picklist_tab).click()
@@ -35,8 +40,11 @@ class PicklistPages():
     def get_text_of_picklist_page_body(self):
         return self.driver.find_element_by_css_selector(self.picklist_page_body).text
 
-    def get_text_of_picklist_list(self):
-        return self.driver.find_element_by_css_selector(self.picklist_list).text
+    def get_latest_picklist_name(self):
+        return self.driver.find_elements_by_css_selector(self.picklist_list_name)[0].text
+
+    def get_latest_picklist_description(self):
+        return self.driver.find_elements_by_css_selector(self.picklist_list_description)[0].text
 
     def type_into_picklist_name(self, name):
         self.driver.find_element_by_name(self.picklist_name_field).send_keys(name)
@@ -44,5 +52,21 @@ class PicklistPages():
     def type_into_picklist_description(self, description):
         self.driver.find_element_by_name(self.picklist_description_field).send_keys(description)
 
+    def clear_picklist_name_and_description(self):
+        self.driver.find_element_by_name(self.picklist_name_field).clear()
+        self.driver.find_element_by_name(self.picklist_description_field).clear()
+
     def get_elements_of_picklist_names_in_list(self):
         return self.driver.find_elements_by_css_selector(self.picklist_names_in_list)
+
+    def context_suggestions_are_displayed(self):
+        return self.driver.find_element_by_css_selector(self.context_suggestions_overlay).is_displayed()
+
+    def get_context_suggestion_variable_name(self):
+        return self.driver.find_element_by_css_selector(self.context_suggestions_overlay).text
+
+    def click_context_suggestion(self):
+        self.driver.find_element_by_css_selector(self.context_suggestion).click()
+
+    def get_errors(self):
+        return self.driver.find_element_by_css_selector(self.errors).text

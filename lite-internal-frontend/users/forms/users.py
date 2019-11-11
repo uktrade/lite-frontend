@@ -23,8 +23,6 @@ def add_user_form(request):
 
 def edit_user_form(request, user_id):
     return Form(title='Edit User',
-                description='',
-                caption='',
                 questions=[
                     TextInput(title='Email',
                               name='email'),

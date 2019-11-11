@@ -41,12 +41,12 @@
 </div>
 
 <div class="lite-js-only">
-    <a href="#" onclick="toggleFilters()" id="show-filters-link" class="govuk-link govuk-link--no-visited-state lite-show-filters-link">
-		{% svg 'filter_show' %}
+	<a href="#" id="show-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
+		{% svg 'plus' %}
 		Show filters
 	</a>
-    <a href="#" onclick="toggleFilters()" id="hide-filters-link" class="govuk-link govuk-link--no-visited-state lite-hide-filters-link">
-		{% svg 'filter_hide' %}
+	<a href="#" id="hide-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
+		{% svg 'minus' %}
 		Hide filters
 	</a>
 </div>
@@ -54,7 +54,7 @@
 
     <input hidden name="queue_id" value="{{ data.results.queue.id }}">
 
-    <div class="govuk-grid-row lite-filter-bar--horizontal">
+    <div class="govuk-grid-row lite-filter-bar">
         <div class="govuk-grid-column-one-quarter">
             <label class="govuk-label" for="case_type">
                 Filter by case type

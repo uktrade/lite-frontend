@@ -1,12 +1,11 @@
+from datetime import date
+
 from pytest_bdd import when, then, parsers, scenarios, given
+
 from pages.application_page import ApplicationPage
 from pages.give_advice_pages import GiveAdvicePages
-from pages.header_page import HeaderPage
 from pages.record_decision_page import RecordDecision
-from pages.roles_pages import RolesPages
 from pages.shared import Shared
-from pages.users_page import UsersPage
-from datetime import date
 
 scenarios('../features/give_advice.feature', strict_gherkin=False)
 

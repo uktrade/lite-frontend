@@ -1,0 +1,57 @@
+{% extends 'layouts/base.html' %}
+
+{% load static %}
+
+{% block back_link %}
+	<a href="{% url 'letter_templates:letter_template' letter_template.id %}" class="govuk-back-link">Back to {{ letter_template.name }}</a>
+{% endblock %}
+
+{% block body %}
+
+	<legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+        <h1 class="govuk-fieldset__heading">
+            {% block title %}{% get_string 'letter_templates.edit_paragraph.title' %}{% endblock %}
+        </h1>
+    </legend>
+
+	<span class="govuk-hint" style="margin: 30px 0;">
+		{% get_string 'letter_templates.edit_paragraph.hint' %}
+	</span>
+
+	<form method="post">
+		<div class="app-letter-generator__container">
+			<div class="app-letter-generator__controls">
+				{% csrf_token %}
+				<div id="standard-advice-list" class="app-sortable">
+					{% for letter_paragraph in letter_paragraphs %}
+						<div class="app-letter-generator__picklist-item" data-id="{{ letter_paragraph.id }}" data-text="{{ letter_paragraph.text }}">
+							{% hidden_field 'letter_paragraphs' letter_paragraph.id %}
+							<p class="app-letter-generator__picklist-item-text">{{ letter_paragraph.name }}</p>
+							<button type="submit" name="action" value="delete.{{ letter_paragraph.id }}">
+								<span class="govuk-visually-hidden">{% get_string 'letter_templates.edit_paragraph.remove_button' %}</span>
+								✕
+							</button>
+						</div>
+					{% endfor %}
+				</div>
+				<br>
+				<button class="lite-button--link" type="submit" name="action" id="add_paragraph" value="add_letter_paragraph">{% get_string 'letter_templates.edit_paragraph.add_link' %}</button>
+				<br>
+				<br>
+				<br>
+			</div>
+			<div id="paragraph-list" class="govuk-body">
+				{% for letter_paragraph in letter_paragraphs %}
+					<p id="{{ letter_paragraph.id }}">{{ letter_paragraph.text }}</p>
+				{% endfor %}
+			</div>
+		</div>
+		<button type="submit" name="action" value="submit" class="govuk-button">{% get_string 'letter_templates.edit_paragraph.save_button' %}</button>
+	</form>
+
+{% endblock %}
+
+{% block javascript %}
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script src="{% static 'javascripts/letter-template-generator.js' %}"></script>
+{% endblock %}

@@ -23,8 +23,8 @@
 		</div>
 		<div class="lite-app-bar__controls">
 			{% if case.query.good.status.key != 'verified' and 'REVIEW_GOODS' in permissions %}
-				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:respond_to_clc_query' case.id %}">
-					Respond to query
+				<a role="button" draggable="false" id="respond" class="govuk-button" href="{% url 'cases:respond_to_clc_query' case.id %}">
+					Respond to Query
 				</a>
 			{% endif %}
 			<div class="app-more-actions__container {% if case.query.good.status != 'final' %}app-more-actions__container--secondary{% endif %}">

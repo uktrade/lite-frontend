@@ -30,7 +30,7 @@ Feature: I want to filter and sort cases on a queue
     And I select status "Under review" and save
     And I go to the internal homepage
     And I click on new queue in dropdown
-    And I sort cases by "Status"
+    And I sort cases by status
     Then "2" cases are shown
     Then the case at index "0" has the status of "Submitted"
     And the case at index "1" has the status of "Under review"
@@ -40,7 +40,7 @@ Feature: I want to filter and sort cases on a queue
     Given I create application or application has been previously created
     And I go to internal homepage
     When I click on the "All cases" queue in dropdown
-    And I sort cases by "Status"
+    And I sort cases by status
     Then the case at index "0" has the status of "Submitted"
 
   @LT_914_filter_and_sort

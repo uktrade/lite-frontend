@@ -54,10 +54,10 @@ def i_hide_filters(driver, context):
     CaseListPage(driver).click_hide_filters_link()
 
 
-@when(parsers.parse('I sort cases by "{sort_type}"'))
-def i_sort_cases_by(driver, context, sort_type):
+@when('I sort cases by status')
+def i_sort_cases_by(driver, context):
     wait_until_page_is_loaded(driver)
-    driver.find_element_by_link_text(sort_type).click()
+    CaseListPage(driver).sort_by_status()
 
 
 @then(parsers.parse('the case at index "{index}" has the status of "{status}"'))

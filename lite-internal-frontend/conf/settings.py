@@ -52,7 +52,8 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
     'svg',
     'authbroker_client',
-    'lite_forms'
+    'lite_forms',
+    'letter_templates',
 ]
 
 MIDDLEWARE = [
@@ -75,9 +76,10 @@ ROOT_URLCONF = 'conf.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates'),
-                 os.path.join(BASE_DIR, 'libraries')]
-        ,
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+            os.path.join(BASE_DIR, 'libraries')
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -237,6 +239,9 @@ LOGGING = {
         },
     }
 }
+
+
+LETTER_TEMPLATES_DIRECTORY = os.path.join(BASE_DIR, 'letter_templates', 'layouts')
 
 # Security settings
 

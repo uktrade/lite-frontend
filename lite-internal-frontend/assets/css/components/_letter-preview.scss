@@ -1,0 +1,113 @@
+.app-letter-generator__container {
+	position: relative;
+	display: grid;
+	grid-template-columns: 1fr 800px;
+	grid-gap: govuk-spacing(6);
+}
+
+.app-letter-generator__picklist-item {
+	@include govuk-font($size: 19);
+	@include govuk-responsive-margin(3, "bottom");
+	position: relative;
+	background-color: govuk-colour("light-grey");
+	padding: govuk-spacing(3) govuk-spacing(4);
+	transition: box-shadow .2s ease, transform .2s ease, opacity .2s ease;
+	box-sizing: border-box;
+	display: grid;
+	grid-template-columns: 1fr auto;
+	grid-gap: govuk-spacing(4);
+	cursor: move;
+	line-height: 30px!important;
+
+	svg {
+		min-width: 22px;
+		margin-top: px;
+
+		* {
+			fill: govuk-colour("mid-grey");
+		}
+	}
+
+	&:hover {
+		svg * {
+			fill: govuk-colour("dark-grey");
+		}
+	}
+
+	&::after {
+		@include fill-pseudo();
+		border: 2px solid rgba(govuk-colour("mid-grey"), 0.1);
+		pointer-events: none;
+	}
+
+	button {
+		@include govuk-font($size: 19);
+		@extend .govuk-link;
+		border: 0;
+		outline: 0;
+		background: 0;
+		cursor: pointer;
+		padding: 0;
+		height: 30px;
+		line-height: 30px;
+
+		&:hover {
+			text-decoration: underline;
+			color: govuk-colour("red");
+		}
+
+		&:active {
+			color: darken(govuk-colour("red"), 20%);
+		}
+	}
+}
+
+.app-letter-preview__container {
+	width: 804px;
+	margin: auto;
+	margin-top: - govuk-spacing(4);
+}
+
+.app-letter-preview__page {
+	width: 100%;
+	border: 2px solid govuk-colour("mid-grey");
+	margin: auto;
+	background-color: govuk-colour("white");
+	padding: govuk-spacing(7);
+	box-sizing: border-box;
+	font-family: Arial;
+	font-size: 15px;
+}
+
+#preview p {
+	transition: .2s ease;
+}
+
+.fade-out-text {
+	opacity: .3;
+	filter: saturate(0);
+}
+
+.lite-sticky-box {
+	position: -webkit-sticky;
+	position: sticky;
+	top: govuk-spacing(4);
+}
+
+.app-letter-generator__controls {
+	.govuk-hint {
+		svg {
+			transform: scale(0.9) translateY(2px);
+			margin: 0 3px;
+
+			* {
+				fill: currentColor;
+			}
+		}
+	}
+}
+
+.app-letter-generator__picklist-item-text {
+	margin: 0;
+	padding: 0;
+}

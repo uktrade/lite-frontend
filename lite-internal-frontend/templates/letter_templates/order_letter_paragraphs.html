@@ -1,0 +1,59 @@
+{% extends 'layouts/base.html' %}
+
+{% load static %}
+
+{% block body %}
+
+    <form action="{% url 'letter_templates:letter_paragraphs' %}" method="post">
+        {% csrf_token %}
+        {% hidden_field 'name' name %}
+        {% for restricted in restricted_to %}
+            {% hidden_field 'restricted_to' restricted %}
+        {% endfor %}
+        {% hidden_field 'layout' layout.id %}
+        <div class="lite-app-bar">
+            <div class="lite-app-bar__content">
+                <h2 class="govuk-heading-l">{% block title %}{% get_string 'letter_templates.order_paragraph.title' %}{% endblock %}</h2>
+                <h4 class="govuk-heading-s govuk-hint">
+                    <noscript>{% get_string 'letter_templates.order_paragraph.no_js_hint' %}</noscript>
+                    <span class="lite-js-only">{% get_string 'letter_templates.order_paragraph.js_hint' %}</span>
+                </h4>
+            </div>
+            <div class="lite-app-bar__controls">
+                <button class="govuk-button" id="button-preview" type="submit" name="action" value="preview">{% get_string 'letter_templates.order_paragraph.preview_button' %}</button>
+            </div>
+        </div>
+
+		<div class="app-letter-generator__container">
+			<div class="app-letter-generator__controls">
+				{% if letter_paragraphs %}
+					<div id="standard-advice-list" class="app-sortable">
+						{% for letter_paragraph in letter_paragraphs %}
+							<div class="app-letter-generator__picklist-item" data-id="{{ letter_paragraph.id }}" data-text="{{ letter_paragraph.text }}">
+								{% hidden_field 'letter_paragraphs' letter_paragraph.id %}
+								<p class="app-letter-generator__picklist-item-text">{{ letter_paragraph.name }}</p>
+								<button type="submit" name="action" value="delete.{{ letter_paragraph.id }}">
+									<span class="govuk-visually-hidden">{% get_string 'letter_templates.order_paragraph.remove_button' %}</span>
+									✕
+								</button>
+							</div>
+						{% endfor %}
+					</div>
+					<br>
+				{% endif %}
+                <button class="lite-button--link" type="submit" name="action" value="add_letter_paragraph">{% get_string 'letter_templates.order_paragraph.add_paragraph' %}</button>
+			</div>
+			<div id="paragraph-list" class="govuk-body">
+				{% for letter_paragraph in letter_paragraphs %}
+					<p id="{{ letter_paragraph.id }}">{{ letter_paragraph.text }}</p>
+				{% endfor %}
+			</div>
+		</div>
+	</form>
+
+{% endblock %}
+
+{% block javascript %}
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script src="{% static 'javascripts/letter-template-generator.js' %}"></script>
+{% endblock %}

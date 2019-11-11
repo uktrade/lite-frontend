@@ -4,7 +4,7 @@ from lite_forms.components import TextInput, Select, Option, BackLink, Form
 from core.builtins.custom_tags import get_string
 
 _name = TextInput(title='Name',
-                 name='name')
+                  name='name')
 
 _level = Select(name='level',
                 options=[Option('Case', 'Case'),
@@ -18,7 +18,6 @@ _back_link = BackLink('Back to Flags', reverse_lazy('flags:flags'))
 
 def add_flag_form():
     return Form(title=get_string('flags.create'),
-                description='',
                 questions=[
                     _name,
                     _level,
@@ -29,7 +28,6 @@ def add_flag_form():
 
 def edit_flag_form():
     return Form(title='Edit Flag',
-                description='',
                 questions=[
                     _name,
                     _level,

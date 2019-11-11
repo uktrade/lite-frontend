@@ -57,7 +57,7 @@
 									<a href="{% url 'flags:flag' flag.id %}" style="margin: 0; font-weight: bold; text-decoration: none;" class="govuk-link govuk-link--no-visited-state">
 										{{ flag.name|default:"Untitled" }}
 									</a>
-									<p style="margin: 0; opacity: 0.7;">{{ flag.team.name }}</p>
+									<p class="lite-hint" style="margin: 0;">{{ flag.team.name }}</p>
 								</td>
 		                        <td class="govuk-table__cell">
 		                            {{ flag.level }}

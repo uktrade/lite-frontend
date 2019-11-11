@@ -3,7 +3,6 @@ from lite_forms.components import Form, Filter, Checkboxes, TextArea, BackLink
 
 def flags_form(flags, level, origin, url):
     return Form(title='Edit ' + level + ' flags',
-                description='',
                 questions=[
                     Filter(placeholder='Filter flags'),
                     Checkboxes(

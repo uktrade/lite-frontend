@@ -13,11 +13,12 @@ class Shared(BasePage):
     lite_table_cell_no_body = '.govuk-table__cell'  # CSS
     govuk_table_body = '.govuk-table__body'  # CSS
     govuk_caption = '.govuk-caption-l'  # CSS
-    selected_tab = '.lite-tabs__tab.selected'  # CSS
+    selected_tab = '.lite-tabs__tab--selected'  # CSS
     body = 'body'  # CSS
     links_in_table = '.govuk-table td a'
     rows_in_cases_table = '.govuk-table__body .govuk-table__row'  # CSS
     h1 = 'h1'  # CSS
+    h2 = 'h2'  # CSS
     links_in_lite_table = '.govuk-table__cell a'  # CSS
     govuk_panel_body = '.govuk-panel__body'  # CSS
     back_link = '.govuk-back-link'  # CSS
@@ -56,6 +57,9 @@ class Shared(BasePage):
 
     def get_text_of_h1(self):
         return self.driver.find_element_by_css_selector(self.h1).text
+
+    def get_text_of_h2(self):
+        return self.driver.find_element_by_css_selector(self.h2).text
 
     def get_links_in_cells_in_table(self):
         return self.driver.find_elements_by_css_selector(self.links_in_table)

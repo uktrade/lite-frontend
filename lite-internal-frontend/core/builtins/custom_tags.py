@@ -121,6 +121,22 @@ def times(number):
     return [x + 1 for x in range(number)]
 
 
+def replace_all(text, old, new):
+    while old in text:
+        text = text.replace(old, new)
+    return text
+
+
+@register.filter(name='old_character')
+def old_character(text, old_char):
+    return replace_all(text, old_char, '$$')
+
+
+@register.filter(name='new_character')
+def new_character(text, new_char):
+    return replace_all(text, '$$', new_char)
+
+
 @register.simple_tag
 @mark_safe
 def hidden_field(key, value):

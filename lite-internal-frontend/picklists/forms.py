@@ -1,40 +1,38 @@
 from django.urls import reverse_lazy
-from lite_forms.components import TextInput, Select, Option, TextArea, BackLink, Form, Button
+from lite_forms.components import TextInput, TextArea, BackLink, Form, Button, MarkdownArea, HiddenField
+from lite_forms.helpers import conditional
 from lite_forms.styles import ButtonStyle
 
 from core.builtins.custom_tags import get_string
+from letter_templates.context_variables import get_sample_context_variables
 
 _name = TextInput(title='Name',
                   name='name')
 
-_picklist_type = Select(name='type',
-                        options=[Option('proviso', 'Proviso'),
-                                 Option('ecju_query', 'ECJU Query'),
-                                 Option('letter_paragraph', 'Letter Paragraph'),
-                                 Option('report_summary', 'Report Summary'),
-                                 Option('standard_advice', 'Standard Advice'),
-                                 Option('footnotes', 'Footnote')],
-                        title='Type')
-
-_text = TextArea(title='Add text for picklist item',
-                 description='',
+_text = TextArea(title='Text',
                  name='text',
                  extras={
                      'max_length': 5000,
                  })
 
-_back_link = BackLink('Back to picklists', '#')
+_paragraph = MarkdownArea(title='Paragraph Text',
+                          name='text',
+                          variables=get_sample_context_variables(),
+                          extras={
+                              'max_length': 5000,
+                          })
 
 
-def add_picklist_item_form():
-    return Form(title=get_string('picklist.create'),
-                description='',
+def add_picklist_item_form(request):
+    picklist_type = request.GET.get('type')
+
+    return Form(title=get_string(f'picklist.create.{picklist_type}'),
                 questions=[
                     _name,
-                    _picklist_type,
-                    _text,
+                    HiddenField('type', picklist_type),
+                    conditional(picklist_type == 'letter_paragraph', _paragraph, _text)
                 ],
-                back_link=_back_link,
+                back_link=BackLink('Back to picklists', reverse_lazy('picklists:picklists') + f'?type={picklist_type}'),
                 default_button_name='Save')
 
 
@@ -52,24 +50,18 @@ def edit_picklist_item_form(picklist_item):
                                                kwargs={'pk': picklist_item['id']}),
                              float_right=True)
 
-    if picklist_item['status']['key'] == 'deactivated':
-        button = activate_button
-    else:
-        button = deactivate_button
-
-    return Form(title=get_string('picklist.edit'),
-                description='',
+    return Form(title='Edit ' + picklist_item['name'],
                 questions=[
                     _name,
-                    _picklist_type,
-                    _text,
+                    conditional(picklist_item['type']['key'] == 'letter_paragraph', _paragraph, _text),
+                    HiddenField('type', picklist_item['type']['key'])
                 ],
                 back_link=BackLink('Back to ' + picklist_item['name'],
                                    reverse_lazy('picklists:picklist_item',
                                                 kwargs={'pk': picklist_item['id']})),
                 buttons=[
                     Button('Save', 'submit', ButtonStyle.DEFAULT),
-                    button,
+                    conditional(picklist_item['status']['key'] == 'deactivated', activate_button, deactivate_button),
                 ])
 
 

@@ -85,5 +85,5 @@ class UsersPage:
     def click_on_manage_roles(self):
         self.driver.find_element_by_id(self.manage_roles_button).click()
 
-    def click_edit_button_by_index(self, no):
-        self.driver.find_elements_by_css_selector(self.edit_buttons_in_table)[no].click()
+    def click_edit_button_by_index(self, index):
+        self.driver.find_elements_by_css_selector(self.edit_buttons_in_table)[index].click()

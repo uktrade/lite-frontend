@@ -6,11 +6,12 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('auth.urls', namespace='authbroker')),
     path('cases/', include('cases.urls')),
+    path('flags/', include('flags.urls')),
+    path('letter-templates/', include('letter_templates.urls')),
     path('organisations/', include('organisations.urls')),
     path('organisations/register/', include('register_business.urls')),
+    path('queues/', include('queues.urls')),
     path('team/picklists/', include('picklists.urls')),
     path('team', include('teams.urls')),
-    path('queues/', include('queues.urls')),
-    path('users/', include('users.urls')),
-    path('flags/', include('flags.urls')),
+    path('users/', include('users.urls'))
 ]

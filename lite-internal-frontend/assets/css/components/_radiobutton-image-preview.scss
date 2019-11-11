@@ -1,0 +1,64 @@
+.app-document-templates__item {
+    input {
+        width: 0;
+        height: 0;
+        opacity: 0;
+    }
+
+    label {
+        @include govuk-font($size: 16);
+        position: relative;
+        display: block;
+        text-align: center;
+        padding-bottom: govuk-spacing(3);
+        z-index: 0;
+        cursor: pointer;
+
+        &::before {
+            @include fill-pseudo(-5px);
+            z-index: -1;
+        }
+
+        img {
+            width: 100%;
+            border: 4px solid govuk-colour("light-grey");
+            box-sizing: border-box;
+            margin-bottom: govuk-spacing(2);
+        }
+
+        &:hover {
+            &::before {
+                background-color: govuk-colour("light-grey");
+            }
+
+            img {
+                border: 4px solid darken(govuk-colour("light-grey"), 5%);
+            }
+        }
+    }
+
+    input:focus + label {
+        outline: $govuk-focus-width solid $govuk-focus-colour;
+        // Ensure outline appears outside of the element
+        outline-offset: 0;
+    }
+
+    input:checked + label {
+        color: govuk-colour("white");
+        font-weight: bold;
+
+        img {
+            border: 4px solid transparent;
+        }
+
+        &::before {
+            background: govuk-colour("black");
+        }
+    }
+}
+
+.app-document-templates__list {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: govuk-spacing(6);
+}

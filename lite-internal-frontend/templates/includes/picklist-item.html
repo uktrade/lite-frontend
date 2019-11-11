@@ -1,3 +1,5 @@
+{% load variable_highlight %}
+
 <h4 class="govuk-heading-s"><a href="{% url 'picklists:picklist_item' picklist_item.id %}" class="govuk-link govuk-link--no-visited-state">{{ picklist_item.name }}</a></h4>
 <p class="govuk-body-m">
 	<span class="govuk-caption-m" style="display: inline;">Created by</span>
@@ -8,6 +10,10 @@
 </p>
 <div class="app-picklist-item__text">
 	<p class="govuk-body-m">
-		{{ picklist_item.text }}
+		{% if picklist_item.type.key == "letter_paragraph" %}
+			{{ picklist_item.text|variable_highlight|linebreaksbr }}
+		{% else %}
+			{{ picklist_item.text|linebreaksbr }}
+		{% endif %}
 	</p>
 </div>

@@ -22,7 +22,7 @@ class CaseListPage(BasePage):
     BUTTON_CLEAR_FILTERS = 'button-clear-filters'  # ID
     LINK_SHOW_FILTERS = 'show-filters-link'  # ID
     LINK_HIDE_FILTERS = 'hide-filters-link'  # ID
-    FILTER_BAR = 'lite-filter-bar--horizontal'  # Class
+    FILTER_BAR = 'lite-filter-bar'  # Class
     STATUS_DROPDOWN = 'status'  # ID
     CASE_TYPE_DROPDOWN = 'case_type'  # ID
 
@@ -36,6 +36,8 @@ class CaseListPage(BasePage):
     dropdown_item = '.app-dropdown__item' # CSS
     dropdown_item_class = 'app-dropdown__item'  # Class_Name
 
+    # Sort headings
+    sort_status = 'sort-status'  # ID
     chevron = 'chevron'  # ID
 
     def search_pages_for_id(self, id):
@@ -124,6 +126,9 @@ class CaseListPage(BasePage):
 
     def select_filter_case_type_from_dropdown(self, status):
         utils.select_visible_text_from_dropdown(self.driver.find_element_by_id(self.CASE_TYPE_DROPDOWN), status)
+
+    def sort_by_status(self):
+        self.driver.find_element_by_id(self.sort_status).click()
 
     def get_chevron_id_selector(self):
         return self.chevron

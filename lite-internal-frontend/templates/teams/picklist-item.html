@@ -1,5 +1,7 @@
 {% extends 'layouts/base.html' %}
 
+{% load variable_highlight %}
+
 {% block back_link %}
 	<a href="{% url 'picklists:picklists' %}?type={{ picklist_item.type.key }}" class="govuk-back-link">Back to picklist</a>
 {% endblock %}
@@ -34,7 +36,11 @@
 <br>
 
 <p class="govuk-body" style="line-height: 1.8; max-width: 700px; white-space: normal; word-wrap: break-word;">
-	{{ picklist_item.text|linebreaksbr }}
+	{% if picklist_item.type.key == "letter_paragraph" %}
+		{{ picklist_item.text|variable_highlight|linebreaksbr }}
+	{% else %}
+		{{ picklist_item.text|linebreaksbr }}
+	{% endif %}
 </p>
 
 {% endblock %}

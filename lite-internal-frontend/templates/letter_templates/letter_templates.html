@@ -1,0 +1,53 @@
+{% extends 'layouts/base.html' %}
+
+{% block back_link %}{% endblock %}
+
+{% block body %}
+
+	{% include 'includes/messages.html' %}
+
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h2 class="govuk-heading-l">{% block title %}{% get_string 'letter_templates.letter_templates.title' %}{% endblock %}</h2>
+		</div>
+		<div class="lite-app-bar__controls">
+			<a href="{% url 'letter_templates:add' %}" class="govuk-button" draggable="false" role="button" id="button-create-a-template">
+				{% get_string 'letter_templates.letter_templates.create_button' %}
+			</a>
+		</div>
+	</div>
+
+	{% if letter_templates %}
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="col">{% get_string 'letter_templates.letter_templates.name_column_title' %}</th>
+					<th class="govuk-table__header" scope="col">{% get_string 'letter_templates.letter_templates.layout_column_title' %}</th>
+					<th class="govuk-table__header" scope="col">{% get_string 'letter_templates.letter_templates.restricted_column_title' %}</th>
+					<th class="govuk-table__header" scope="col">{% get_string 'letter_templates.letter_templates.updated_column_title' %}</th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				{% for letter_template in letter_templates %}
+					<tr class="govuk-table__row">
+						<td class="govuk-table__cell">
+                            <a href="{% url 'letter_templates:letter_template' letter_template.id %}" id="{{ letter_template.name }}" class="govuk-link">{{ letter_template.name }}</a>
+                        </td>
+						<td class="govuk-table__cell">
+							{{ letter_template.layout.name }}
+						</td>
+						<td class="govuk-table__cell">
+							{% for restriction in letter_template.restricted_to_display %}{% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}{{ restriction }}{% endfor %}
+						</td>
+						<td class="govuk-table__cell">
+							{{ letter_template.last_modified_at|str_date }}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		{% include "includes/information-text.html" with text='There aren\'t any letter templates' %}
+	{% endif %}
+
+{% endblock %}
