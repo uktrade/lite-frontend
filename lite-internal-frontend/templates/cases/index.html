@@ -24,7 +24,7 @@
     </a>
     {% if not data.results.is_system_queue %}
     <div class="lite-app-bar__controls">
-        <button id="assign-users-button" form="cases-form" type="submit" class="govuk-button govuk-button--secondary">Assign users</button>
+        <button id="assign-users-button" form="cases-form" type="submit" class="govuk-button govuk-button--secondary">{% lcs 'CASES_ASSIGN_USERS' %}</button>
     </div>
     {% endif %}
 </div>

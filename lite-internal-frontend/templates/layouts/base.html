@@ -57,7 +57,7 @@
 				</a>
 			</div>
 
-			{% if user %}
+			{% if user and user.lite_api_user_id %}
 				<div id="lite-user-menu">
 					<a href="{% url 'authbroker:logout' %}" class="lite-user-menu-button">
 						Log out

@@ -1,7 +1,7 @@
 from lite_forms.components import Form, RadioButtons, Option, BackLink
 
 
-def advice_recommendation_form(post_url):
+def advice_recommendation_form(post_url, back_url):
     return Form('What do you advise?',
                 'You can advise to:',
                 [
@@ -14,5 +14,5 @@ def advice_recommendation_form(post_url):
                     ]),
                 ],
                 default_button_name='Continue',
-                back_link=BackLink('Back to advice'),
+                back_link=BackLink('Back to advice', back_url),
                 post_url=post_url)

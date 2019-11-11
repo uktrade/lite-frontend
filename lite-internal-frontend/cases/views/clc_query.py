@@ -56,10 +56,10 @@ class Respond(TemplateView):
                 del form_data['report_summary']
 
             response, response_data = submit_single_form(request,
-                                                self.form,
-                                                put_control_list_classification_query,
-                                                pk=str(self.case['query']['id']),
-                                                override_data=form_data)
+                                                         self.form,
+                                                         put_control_list_classification_query,
+                                                         object_pk=str(self.case['query']['id']),
+                                                         override_data=form_data)
 
             if response:
                 return response

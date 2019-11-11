@@ -26,7 +26,7 @@ class EditTemplate(TemplateView):
         response = submit_single_form(request,
                                       edit_letter_template(letter_template),
                                       put_letter_template,
-                                      pk=letter_template_id,
+                                      object_pk=letter_template_id,
                                       override_data=edited_letter_template_data)[0]
 
         if response:

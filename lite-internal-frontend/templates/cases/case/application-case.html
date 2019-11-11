@@ -14,7 +14,7 @@
 
 {% if notification %}
     <a id="case-notification" class="lite-info-bar app-info-bar--link lite-info-bar--no-animation" href="#case-activity-{{ notification.case_activity }}">
-        See what has changed
+        {% lcs 'CASE_CHANGES' %}
     </a>
 {% endif %}
 
@@ -27,24 +27,24 @@
 	<div class="lite-app-bar__controls">
 		<div class="app-more-actions__container">
 			<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:documents' case.id %}">
-	        	{% get_string 'cases.manage.documents.button' %}
+	        	{% lcs 'CASE_DOCUMENT_BUTTON' %}
 	        </a>
 	        <a role="button" draggable="false" class="govuk-button" href="{% url 'cases:ecju_queries' case.id %}">
-	            {% get_string 'cases.ecju_queries.title' %}
+	            {% lcs 'CASE_ECJU_BUTTON' %}
 			</a>
 	        <a role="button" draggable="false" class="govuk-button" href="{% url 'cases:move' case.id %}">
-				{% get_string 'cases.manage.move_case.button' %}
+				{% lcs 'CASE_MOVE_CASE_BUTTON' %}
 			</a>
 			<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:manage' case.id %}">
-				Change Status
+				{% lcs 'CASE_CHANGE_STATUS_BUTTON' %}
 			</a>
 			{% if permissions|key_in_array:'MAKE_FINAL_DECISIONS' %}
 				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:decide' case.id %}">
-					Record Decision
+					{% lcs 'CASE_RECORD_DECISION_BUTTON' %}
 				</a>
 			{% endif %}
 	        <a role="button" draggable="false" class="govuk-button" href="{% url 'cases:user_advice_view' case.id %}">
-				View Advice
+				{% lcs 'CASE_VIEW_ADVICE_BUTTON' %}
 			</a>
 		</div>
 	</div>
@@ -89,7 +89,7 @@
     <form action="{% url 'cases:assign_flags' case.id %}" method="get">
         <input type="hidden" name="level" value="goods"/>
         <button id="button-edit-goods-flags" value="goods" class="govuk-button" data-module="govuk-button">
-            {% get_string 'cases.case.edit_goods_flags' %}
+            {% lcs 'CASE_GOODS_EDIT_FLAGS' %}
         </button>
         {% include 'cases/case/views/accordion-open-goods.html' with show_checkboxes=True %}
     </form>
@@ -97,11 +97,11 @@
     <form action="{% url 'cases:review_goods' case.id %}" method="get">
     {% if 'REVIEW_GOODS' in permissions %}
         <button id="button-review-goods" name="action" value="review-goods" class="govuk-button" data-module="govuk-button">
-            {% get_string 'cases.case.review_goods' %}
+            {% lcs 'CASE_GOODS_REVIEW' %}
         </button>
     {% endif %}
         <button id="button-edit-goods-flags" name="action" value="edit-flags" class="govuk-button" data-module="govuk-button">
-            {% get_string 'cases.case.edit_goods_flags' %}
+            {% lcs 'CASE_GOODS_EDIT_FLAGS' %}
         </button>
         {% include 'cases/case/views/standard-goods.html' with show_checkboxes=True %}
     </form>

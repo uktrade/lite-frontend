@@ -62,7 +62,7 @@ class EditRole(TemplateView):
         response, data = submit_single_form(request,
                                             edit_role(request),
                                             put_role,
-                                            pk=role_id,
+                                            object_pk=role_id,
                                             override_data=data)
 
         if response:

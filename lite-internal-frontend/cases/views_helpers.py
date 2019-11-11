@@ -182,7 +182,9 @@ def give_advice_dispatch(user_team_final, request, **kwargs):
     Returns the case and the form for the level of the advice to be used in the end points
     """
     case = get_case(request, str(kwargs['pk']))
-    form = advice_recommendation_form(reverse_lazy('cases:give_' + user_team_final + '_advice', kwargs={'pk': str(kwargs['pk'])}))
+    post_endpoint = reverse_lazy('cases:give_' + user_team_final + '_advice', kwargs={'pk': str(kwargs['pk'])})
+    back_endpoint = reverse_lazy('cases:' + user_team_final + '_advice_view', kwargs={'pk': str(kwargs['pk'])})
+    form = advice_recommendation_form(post_endpoint, back_endpoint)
 
     if user_team_final == 'team':
         user, _ = get_gov_user(request)

@@ -59,6 +59,7 @@ class EditQueue(TemplateView):
             'data': data.get('queue'),
             'title': 'Edit Queue',
             'page': forms.edit_form,
+            'form_pk': 0
         }
         return render(request, 'form.html', context)
 
@@ -67,8 +68,9 @@ class EditQueue(TemplateView):
         if status_code == 400:
             context = {
                 'title': 'Add Queue',
-                'page': forms.form,
+                'page': forms.edit_form,
                 'data': request.POST,
+                'form_pk': 0,
                 'errors': data.get('errors')
             }
             return render(request, 'form.html', context)

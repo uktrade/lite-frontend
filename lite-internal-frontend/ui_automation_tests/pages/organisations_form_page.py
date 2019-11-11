@@ -58,5 +58,5 @@ class OrganisationsFormPage():
         self.driver.find_element_by_id("user.last_name").send_keys(text)
 
     def click_submit(self):
-        submit = self.driver.find_element_by_xpath("//*[@action='submit']")
+        submit = self.driver.find_element_by_css_selector('button[value="submit"]')
         submit.click()
