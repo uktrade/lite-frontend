@@ -18,7 +18,7 @@
 			{% for key, value in data.items %}
 				{% hidden_field key value %}
 			{% endfor %}
-			<button class="lite-back-link-button" role="link" id="back-link" type="submit" name="_action" value="back" action="back">Back</button>
+			<button class="lite-back-link-button" role="link" id="back-link" type="submit" name="_action" value="back" action="back">{{ page.back_link.text }}</button>
 		</form>
 	{% endif %}
 {% endblock %}

@@ -42,13 +42,24 @@ def _prepare_data(request, inject_data, expect_many_values):
 
 
 def submit_paged_form(
-    request,
-    form_group: FormGroup,
-    action: Callable,
-    object_pk=None,
-    inject_data=None,
-    expect_many_values=None,
+        request,
+        form_group: FormGroup,
+        action: Callable,
+        object_pk=None,
+        inject_data=None,
+        expect_many_values=None,
 ):
+    """
+    Function to handle the submission of the data from one form in a sequence of forms (a FormGroup).
+
+    :param request: Standard Django request object
+    :param form_group: The FormGroup that defines the sequence of forms being traversed
+    :param action: The callback action to be invoked here to submit the form's data
+    :param object_pk: Entity primary key to be supplied with the submission, if any
+    :param inject_data: Additional data to be added to the supplied request's data before submitting
+    :param expect_many_values: List of the data keys whose values contain multiple values
+    :return: The next form page to display
+    """
     if expect_many_values is None:
         expect_many_values = []
 
@@ -89,7 +100,8 @@ def submit_paged_form(
             if not exists:
                 current_form.questions.insert(0, HiddenField(key, value))
 
-        return form_page(request, current_form, data=data, errors=errors, extra_data={'form_pk': current_form.pk}), validated_data
+        return form_page(request, current_form, data=data, errors=errors,
+                         extra_data={'form_pk': current_form.pk}), validated_data
 
     # If there aren't any forms left to go through, return the data
     if next_form is None:
