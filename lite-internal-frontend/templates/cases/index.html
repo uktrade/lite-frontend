@@ -116,7 +116,7 @@
                     <th class="cases-table__header" style="width: 125px;" scope="col">Queue</th>
                     <th class="cases-table__header" style="width: 200px;" scope="col">Flags</th>
                     <th class="cases-table__header" style="width: 125px;" scope="col">
-                        <a href="{% url 'cases:cases' %}?{{ params_str }}&sort={{ 'status'|table_sort_text:params }}" class="app-table__sortable-header {{ 'status'|table_sort:params }}">
+                        <a href="{% url 'cases:cases' %}?{{ params_str }}&sort={{ 'status'|table_sort_text:params }}" id="sort-status" class="app-table__sortable-header {{ 'status'|table_sort:params }}">
                             Status
                             {% svg 'chevron' %}
                         </a>
@@ -303,4 +303,5 @@
 
 {% block javascript %}
 	<script src="{% static 'javascripts/cases.js' %}"></script>
+    <script src="{% static 'javascripts/filter-bar.js' %}"></script>
 {% endblock %}
