@@ -14,6 +14,7 @@ def get_form_by_pk(form_pk, form_group: FormGroup):
 
 def get_previous_form(form_pk, form_group: FormGroup):
     for form in form_group.forms:
+        # If the current form is the final form in the group
         if int(form.pk) == int(form_pk) - 1:
             return copy.deepcopy(form)
     return

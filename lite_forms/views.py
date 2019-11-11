@@ -9,6 +9,10 @@ from lite_forms.submitters import submit_paged_form
 
 
 class FormView(TemplateView, ABC):
+    """
+    Base class with properties necessary to support getting and posting to forms within subclasses of this
+    class, using supplied data and actions.
+    """
     data: dict = None
     action: callable = None
     object_pk = None
@@ -19,7 +23,7 @@ class FormView(TemplateView, ABC):
 
     def get_action(self):
         if not self.action:
-            raise NotImplementedError('action has not been set')
+            raise AttributeError('action has not been set')
 
         return self.action
 
@@ -28,7 +32,7 @@ class FormView(TemplateView, ABC):
 
     def get_success_url(self):
         if not self.success_url:
-            raise NotImplementedError('success_url has not been set')
+            raise AttributeError('success_url has not been set')
 
         return self.success_url
 
@@ -40,11 +44,14 @@ class FormView(TemplateView, ABC):
 
 
 class SingleFormView(FormView):
+    """
+    Takes a single Form as a parameter and handles getting and posting to it using supplied values.
+    """
     form: Form = None
 
     def get_form(self):
         if not self.form:
-            raise NotImplementedError('form has not been set')
+            raise AttributeError('form has not been set')
 
         return self.form
 
@@ -73,11 +80,14 @@ class SingleFormView(FormView):
 
 
 class MultiFormView(FormView):
+    """
+    Takes a FormGroup as a parameter and handles getting and posting to forms in the group using supplied values.
+    """
     forms: FormGroup = None
 
     def get_forms(self):
         if not self.forms:
-            raise NotImplementedError('form has not been set')
+            raise AttributeError('form has not been set')
 
         return self.forms
 
