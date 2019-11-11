@@ -47,12 +47,24 @@ def _get_internal_info(env):
     }
 
 
+def _get_api_url(env):
+    environment = env['ENVIRONMENT'].lower()
+
+    if environment == 'demo':
+        print('This is the demo environment - Try another environment instead.')
+        exit(1)
+
+    if environment == 'local':
+        return env['LITE_API_URL']
+
+    return 'https://lite-api-' + environment + '.london.cloudapps.digital/'
+
+
 def _get_seed_data_config():
     env = _get_env()
-    api_url = env['LITE_API_URL']
 
     return {
-        'api_url': api_url,
+        'api_url': _get_api_url(env),
         'exporter': _get_exporter_info(env),
         'gov': _get_internal_info(env)
     }
