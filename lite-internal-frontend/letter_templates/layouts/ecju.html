@@ -1,63 +1,62 @@
-{% load sass_tags  %}
-<link href="{% sass_src 'css/letter_templates/ecju.scss' %}" rel="stylesheet" type="text/css" />
+<div class="ecju-template">
+    <body>
+      <p id="references">
+        Our Ref: TBC<br>
+        Your Ref: TBC<br>
+        SPIRE Doc Ref:PREVIEW
+      </p>
 
-<body>
-  <p id="references">
-    Our Ref: TBC<br>
-    Your Ref: TBC<br>
-    SPIRE Doc Ref:PREVIEW
-  </p>
-  
-  <div id="addresses">
-    <div id="recipient-address">
-      <p>
-        {{ end_user.name }}<br>
-        {{ end_user.address.address_line_1 }}<br>
-        {{ end_user.address.address_line_2 }}<br>
-        {{ end_user.address.postcode }}<br>
-        {{ end_user.address.city }}<br>
-        {{ end_user.address.region }}<br>
-        {{ end_user.address.country.name }}
-      </p>
-      <p>Date: TBC</p>
-    </div>
-    <div id="sender-address">
-      <p>Export Control Organisation</p>
-      <p>
-        3 Whitehall Place<br>
-        London<br>
-        SW1A 2AW
-      </p>
-      <p>
-        Tel +44 (0)20 7215 4594<br>
-        Enquiries +44 (0)20 7215 5000
-      </p>
-      <p>
-        www.trade.gov.uk<br>
-        exportcontrol.help@trade.gov.uk
-      </p>
-    </div>
-  </div>
+      <div id="addresses">
+        <div id="recipient-address">
+          <p>
+            {{ end_user.name }}<br>
+            {{ end_user.address.address_line_1 }}<br>
+            {{ end_user.address.address_line_2 }}<br>
+            {{ end_user.address.postcode }}<br>
+            {{ end_user.address.city }}<br>
+            {{ end_user.address.region }}<br>
+            {{ end_user.address.country.name }}
+          </p>
+          <p>Date: TBC</p>
+        </div>
+        <div id="sender-address">
+          <p>Export Control Organisation</p>
+          <p>
+            3 Whitehall Place<br>
+            London<br>
+            SW1A 2AW
+          </p>
+          <p>
+            Tel +44 (0)20 7215 4594<br>
+            Enquiries +44 (0)20 7215 5000
+          </p>
+          <p>
+            www.trade.gov.uk<br>
+            exportcontrol.help@trade.gov.uk
+          </p>
+        </div>
+      </div>
 
-  <div class="border-black padding page-break-after" id="paragraph_content">
-      {{ content|safe }}
-  </div>
+      <div class="border-black padding page-break-after" id="paragraph_content">
+          {{ content|safe }}
+      </div>
 
-  <p>Yours sincerely</p>
-  
-  <div id="signature" class="page-break-after">
-    TBC<br>
-    Export Control Organisation
-  </div>
-  <h1>Schedule of Entities Assessed</h1>
-  <table>
-    <tr>
-      <th scope="col">Name and Address</th>
-      <th scope="col">Destination</th>
-    </tr>
-    <tr>
-      <td>TBC</td>
-      <td>TBC</td>
-    </tr>
-  </table>
-</body>
+      <p>Yours sincerely</p>
+
+      <div id="signature" class="page-break-after">
+        TBC<br>
+        Export Control Organisation
+      </div>
+      <h1>Schedule of Entities Assessed</h1>
+      <table>
+        <tr>
+          <th scope="col">Name and Address</th>
+          <th scope="col">Destination</th>
+        </tr>
+        <tr>
+          <td>TBC</td>
+          <td>TBC</td>
+        </tr>
+      </table>
+    </body>
+</div>

@@ -1,0 +1,65 @@
+.ecju-template{
+	$color_1: #6d6d6d;
+	$font_family_1: Helvetica, Arial, "Liberation Sans", sans-serif;
+
+	@page{
+		size:A4;
+		margin:20mm 29mm;
+		padding-top:23mm;
+		counter-increment:page;
+		background-image:url("dit.png");
+		background-repeat:no-repeat;
+		background-position:right top;
+		background-size:auto 12mm;
+		@bottom-center {
+			content:"Page "counter(page) " of "counter(pages);
+			color:#6d6d6d;
+			font-size:16px;
+		}
+		html {
+			font-size: 4mm;
+			font-family: $font_family_1;
+			color: $color_1;
+			line-height: 1.3;
+		}
+		body {
+			margin: 0;
+		}
+	}
+	#references {
+		position: fixed;
+		top: -23mm;
+		left: 0mm;
+	}
+	#addresses {
+		display: flex;
+		flex-direction: row;
+	}
+	#recipient-address {
+		width: 90mm;
+	}
+	#sender-address {
+		width: 60mm;
+	}
+	table {
+		border-collapse: collapse;
+		width: 100%;
+	}
+	td {
+		vertical-align: top;
+		border: 1px solid #6d6d6d;
+		padding: 2mm;
+		&:first-of-type {
+			width: 45mm;
+		}
+	}
+	th {
+		vertical-align: top;
+		border: 1px solid #6d6d6d;
+		padding: 2mm;
+	}
+	h1 {
+		page-break-before: always;
+		font-size: 5mm;
+	}
+}

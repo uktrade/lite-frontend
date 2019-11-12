@@ -1,0 +1,146 @@
+.licence-template {
+  .app-document-generator__preview-container {
+    font-size: 10px;
+    font-family: Helvetica, Arial, "Liberation Sans", sans-serif;
+    color: #6f777b;
+  }
+  * {
+      word-wrap: break-word;
+  }
+  @page {
+    size: A4;
+    margin: 10mm;
+    /* Set up padding so that content of pages appears aligned with #page-header */
+    padding-top: 62.2mm;
+    padding-left: 15mm;
+    counter-increment: page;
+    background-image: url("/assets/images/dit.png");
+    background-repeat: no-repeat;
+    background-position: right top;
+    background-size: auto 15mm;
+    @top-left {
+      content: "Standard Individual Export Licence";
+      font-size: 18px;
+      color: #6f777b;
+      padding-top: 20mm;
+    }
+    @bottom-center {
+      content: "Page " counter(page) " of " counter(pages);
+      color: #6f777b;
+      font-size: 16px;
+    }
+  }
+  @media print {
+    #first-page-table {
+      background: white; /* white background #page-header can hide behind */
+      z-index: 2; /* be above #page-header so it can hide */
+      position: relative; /* positioning required to appear above a fixed element */
+      top: -34.5mm;
+      left: -15.7mm;
+      width: 187mm;
+    }
+    #page-header {
+      position: fixed;
+      top: -32.25mm;
+      left: -13.2mm;
+      width: 185.9mm;
+      z-index: 1; /* hide under #first-page-table */
+    }
+    /* No fonts are set in print view, so set them. */
+    * {
+      font-size: 11px;
+      font-family: Helvetica, Arial, "Liberation Sans", sans-serif;
+      color: #6f777b;
+    }
+  }
+  @media screen {
+    .page-break-after {
+      margin-bottom: 10mm;
+    }
+    #page-header {
+      display: none;
+    }
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  td {
+    vertical-align: top;
+    margin: 0;
+    padding: 5px;
+  }
+  table.fixed-layout {
+    table-layout: fixed;
+  }
+  table.fixed-layout tr.set-width-hack td {
+    width: 8.33%; /* 100% / 12 */
+    height: 0;
+    padding: 0;
+  }
+  .border-black {
+    border: 1px solid black;
+  }
+  .border-top-black {
+    border-top: 1px solid black;
+  }
+  .border-bottom-black {
+    border-bottom: 1px solid black;
+  }
+  .border-left-black {
+    border-left: 1px solid black;
+  }
+  .border-right-black {
+    border-right: 1px solid black;
+  }
+  .cell__heading {
+    display: block;
+    font-style: italic;
+    margin-bottom: 5px;
+  }
+  .cell__uppercase {
+    display: block;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 14px;
+  }
+  .cell__subheading {
+    display: block;
+    text-decoration: underline;
+    margin-bottom: 5px;
+  }
+  .cell__body {
+    display: block;
+    margin-bottom: 5px;
+  }
+  .padding-none {
+    padding: 0;
+  }
+  .text-large {
+    font-size: 18px;
+  }
+  .align-centre {
+    text-align: center;
+  }
+  .rotate {
+    transform: rotate(270deg);
+  }
+  .uppercase {
+    text-transform: uppercase;
+  }
+  .sidebar-cell {
+    padding: 100px 0;
+  }
+  .bold {
+    font-weight: bold;
+  }
+  .italic {
+    font-style: italic;
+  }
+  .page-break-after {
+    page-break-after: always;
+  }
+  .padding {
+    padding: 5mm;
+  }
+}

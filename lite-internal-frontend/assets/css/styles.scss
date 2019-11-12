@@ -8,6 +8,7 @@ $govuk-font-family: Arial, Sans-Serif;
 @import "../shared/lite-frontend/scss/all"; // LITE Shared Assets
 
 @import "components/all";
+@import "letter_templates/all";
 
 .lite-button--link {
 	@include govuk-font($size: 19);
