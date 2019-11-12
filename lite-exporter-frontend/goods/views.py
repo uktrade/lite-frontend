@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from django.http import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
@@ -10,12 +12,13 @@ from s3chunkuploader.file_handler import S3FileUploadHandler
 
 from applications.services import get_application_ecju_queries, get_case_notes, post_application_case_notes, \
     get_ecju_query, put_ecju_query, add_document_data, download_document_from_s3
+from core.builtins.custom_tags import get_string
 from core.helpers import group_notifications
 from core.services import get_notifications
 from goods import forms
 from goods.forms import edit_form, attach_documents_form, respond_to_query_form, ecju_query_respond_confirmation_form, \
     delete_good_form
-from goods.services import get_goods, post_goods, get_good, update_good, delete_good, get_good_documents, \
+from goods.services import get_goods, post_good, get_good, update_good, delete_good, get_good_documents, \
     get_good_document, delete_good_document, post_good_documents, raise_clc_query
 
 
@@ -119,9 +122,8 @@ class AddGood(TemplateView):
 
     def post(self, request):
         data = request.POST.copy()
-        data['validate_only'] = False
 
-        validated_data, _ = post_goods(request, data)
+        validated_data, _ = post_good(request, data)
 
         if 'errors' in validated_data:
             if validated_data['errors']:
@@ -152,9 +154,9 @@ class DraftAddGood(TemplateView):
         return form_page(request, forms.form)
 
     def post(self, request, **kwargs):
-        data, status_code = post_goods(request, request.POST)
+        data, status_code = post_good(request, request.POST)
 
-        if status_code == 400:
+        if status_code == HTTPStatus.BAD_REQUEST:
             return form_page(request, forms.form, request.POST, errors=data['errors'])
 
         return redirect(reverse_lazy('applications:edit'), kwargs['pk'])
@@ -199,7 +201,8 @@ class AttachDocuments(TemplateView):
         good_id = str(kwargs['pk'])
         # get_good(request, good_id)
 
-        form = attach_documents_form(reverse('goods:good', kwargs={'pk': good_id}))
+        form = attach_documents_form(reverse('goods:good', kwargs={'pk': good_id}),
+                                     get_string('goods.documents.attach_documents.description'))
 
         return form_page(request, form, extra_data={'good_id': good_id})
 

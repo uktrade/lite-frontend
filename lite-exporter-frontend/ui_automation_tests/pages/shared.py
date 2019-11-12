@@ -4,7 +4,7 @@ class Shared:
         self.driver = driver
         self.heading = ".govuk-heading-xl"  # CSS
         self.radio_buttons = ".govuk-radios__label"  # CSS
-        self.submit_button = "button[type*='submit']"
+        self.submit_button = "button[value='submit']"
         self.back_link = ".govuk-back-link"
         self.error_messages = ".govuk-error-summary__body"
         self.error_message = ".govuk-error-message"

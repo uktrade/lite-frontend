@@ -25,7 +25,7 @@ class AddThirdParty(TemplateView):
         return form_page(request, self.form.forms[0])
 
     def post(self, request, **kwargs):
-        response, data = submit_paged_form(request, self.form, post_third_party, pk=self.draft_id)
+        response, data = submit_paged_form(request, self.form, post_third_party, object_pk=self.draft_id)
 
         if response:
             return response
@@ -61,7 +61,7 @@ class Consignee(TemplateView):
 
     def post(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
-        response, _ = submit_paged_form(request, new_consignee_forms(), post_consignee, pk=draft_id)
+        response, _ = submit_paged_form(request, new_consignee_forms(), post_consignee, object_pk=draft_id)
 
         # If there are more forms to go through, continue
         if response:

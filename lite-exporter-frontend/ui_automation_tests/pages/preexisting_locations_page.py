@@ -2,7 +2,7 @@ class PreexistingLocationsPage:
 
     def __init__(self, driver):
         self.driver = driver
-        self.submit_button = "button[type*='submit']"
+        self.submit_button = "button[type*='submit'][value='submit']"
         self.external_locations_checkbox = ".govuk-checkboxes__input"
 
     def click_external_locations_checkbox(self, no):

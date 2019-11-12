@@ -223,7 +223,7 @@ def i_click_add_preexisting_locations(driver):
 
 @when('I click continue')  # noqa
 def i_click_continue(driver):
-    driver.find_element_by_css_selector(".lite-buttons-row button[type*='submit']").click()
+    driver.find_element_by_css_selector("button[type*='submit']").click()
 
 
 @then(parsers.parse('error message is "{expected_error}"'))  # noqa

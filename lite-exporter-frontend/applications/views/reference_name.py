@@ -24,7 +24,7 @@ class ApplicationEditReferenceName(TemplateView):
         return form_page(request, self.form, data=self.application)
 
     def post(self, request, **kwargs):
-        response, _ = submit_single_form(request, self.form, put_application, pk=self.application_id)
+        response, _ = submit_single_form(request, self.form, put_application, object_pk=self.application_id)
 
         # If there are more forms to go through, continue
         if response:

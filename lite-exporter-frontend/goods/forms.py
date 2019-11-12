@@ -6,43 +6,51 @@ from lite_forms.generators import confirm_form
 from lite_forms.styles import ButtonStyle
 
 from conf.settings import env
-from core.builtins.custom_tags import get_string
+from core.builtins.custom_tags import get_string, get_const_string
 from core.services import get_control_list_entries
 from goods.helpers import good_summary
 
 
-def add_goods_questions():
-    return Form(title='Add a good',
+def add_goods_questions(allow_query=True, back_link=BackLink(), prefix=""):
+    if allow_query:
+        description = get_const_string('GOODS_CREATE_CONTROL_CODE_REQUIRED_DESC')
+        is_your_good_controlled_options = [Option(key='yes',
+                                                  value=get_const_string('GOODS_CREATE_CONTROL_CODE_YES'),
+                                                  show_pane='pane_' + prefix + 'control_code'),
+                                           Option(key='no',
+                                                  value=get_const_string('GOODS_CREATE_CONTROL_CODE_NO')),
+                                           Option(key='unsure',
+                                                  value=get_const_string('GOODS_CREATE_CONTROL_CODE_UNSURE'))]
+    else:
+        description = get_const_string('APPLICATION_GOODS_CONTROL_CODE_REQUIRED_DESCRIPTION')
+        is_your_good_controlled_options = [Option(key='yes',
+                                                  value=get_const_string('GOODS_CREATE_CONTROL_CODE_YES'),
+                                                  show_pane='pane_' + prefix + 'control_code'),
+                                           Option(key='no',
+                                                  value=get_const_string('GOODS_CREATE_CONTROL_CODE_NO'))]
+
+    form = Form(title=get_const_string('GOODS_CREATE_TITLE'),
                 questions=[
                     TextArea(title='Description of good',
                              description='This can make it easier to find your good later',
-                             name='description',
+                             name=prefix + 'description',
                              extras={
                                  'max_length': 280,
                              }),
                     RadioButtons(title='Is your good controlled?',
-                                 description='If you don\'t know you can use <a class="govuk-link" href="' + env(
-                                     'PERMISSIONS_FINDER_URL') + '">Permissions Finder</a>.',
-                                 name='is_good_controlled',
-                                 options=[
-                                     Option(key='yes',
-                                            value='Yes',
-                                            show_pane='pane_control_code'),
-                                     Option(key='no',
-                                            value='No'),
-                                     Option(key='unsure',
-                                            value='I don\'t know')
-                                 ],
+                                 description=description,
+                                 name=prefix + 'is_good_controlled',
+                                 options=is_your_good_controlled_options,
                                  classes=['govuk-radios--inline']),
                     control_list_entry_question(control_list_entries=get_control_list_entries(None, convert_to_options=True),
                                                 title='What\'s your good\'s control list entry?',
                                                 description='<noscript>If your good is controlled, enter its '
                                                             'control list entry. </noscript>For example, ML1a.',
-                                                name='control_code',
+                                                name=prefix + 'control_code',
                                                 inset_text=False),
                     RadioButtons(title='Is your good intended to be incorporated into an end product?',
                                  description='',
-                                 name='is_good_end_product',
+                                 name=prefix + 'is_good_end_product',
                                  options=[
                                      Option(key='no',
                                             value='Yes'),
@@ -51,9 +59,13 @@ def add_goods_questions():
                                  ],
                                  classes=['govuk-radios--inline']),
                     TextInput(title='Part Number',
-                              name='part_number',
+                              name=prefix + 'part_number',
                               optional=True),
-                ])
+                ],
+                back_link=back_link
+                )
+
+    return form
 
 
 def are_you_sure(good_id):
@@ -125,9 +137,9 @@ def edit_form(good_id):
                 ])
 
 
-def attach_documents_form(case_url):
+def attach_documents_form(back_url, description):
     return Form(get_string('goods.documents.attach_documents.title'),
-                get_string('goods.documents.attach_documents.description'),
+                description,
                 [
                     FileUpload('documents'),
                     TextArea(title=get_string('goods.documents.attach_documents.description_field_title'),
@@ -137,7 +149,7 @@ def attach_documents_form(case_url):
                                  'max_length': 280,
                              })
                 ],
-                back_link=BackLink(get_string('goods.documents.attach_documents.back_to_good'), case_url))
+                back_link=BackLink(get_string('goods.documents.attach_documents.back_to_good'), back_url))
 
 
 def respond_to_query_form(good_id, ecju_query):

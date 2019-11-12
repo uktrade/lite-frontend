@@ -1,3 +1,5 @@
+import os
+
 from pytest_bdd import scenarios, when, then, parsers
 
 from pages.attach_document_page import AttachDocumentPage
@@ -6,6 +8,11 @@ from pages.exporter_hub_page import ExporterHubPage
 from pages.add_goods_page import AddGoodPage
 from pages.goods_page import GoodsPage
 from pages.shared import Shared
+from pages.application_overview_page import ApplicationOverviewPage
+
+from ui_automation_tests.conftest import i_click_continue
+from ui_automation_tests.pages.application_goods_list import ApplicationGoodsList
+
 
 scenarios('../features/clc_queries_and_goods.feature', strict_gherkin=False)
 
@@ -80,3 +87,65 @@ def click_on_draft_good(driver):
     assert "Yes" in text
     assert "No" in text
     assert "321" in text
+
+
+@when("I click to manage goods on a standard application")
+def i_click_to_manage_goods_on_a_standard_application(driver):
+    ApplicationOverviewPage(driver).click_standard_goods_link()
+
+
+@then("I see there are no goods on the application")
+def i_see_there_are_no_goods_on_the_application(driver):
+    assert ApplicationGoodsList(driver).get_goods_count() == 0
+
+
+@when("I click Add a new good")
+def i_click_add_a_new_good(driver):
+    ApplicationGoodsList(driver).click_add_new_good_button()
+
+
+@when(parsers.parse('I enter details for a good on an application with value "{value}", quantity "{quantity}" and unit of measurement "{unit}" and I click Continue"'))  # noqa
+def i_enter_detail_for_the_good_on_the_application(driver, value, quantity, unit):
+    ApplicationGoodsList(driver).add_values_to_good(value, quantity, unit)
+    i_click_continue(driver)
+
+
+@when(parsers.parse('I attach a document to the good with description "{description}"'))  # noqa
+def i_attach_a_document_to_the_good(driver, description):
+    file_to_be_deleted_name = 'file_for_doc_upload_test_2.txt'
+
+    # Path gymnastics to get the absolute path for $PWD/../resources/(file_to_upload_x) that works everywhere
+    file_to_upload_abs_path = \
+        os.path.abspath(
+            os.path.join(os.path.dirname(__file__), os.pardir, 'resources', file_to_be_deleted_name))
+    if 'ui_automation_tests' not in file_to_upload_abs_path:
+        file_to_upload_abs_path = \
+            os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, 'ui_automation_tests/resources',
+                                         file_to_be_deleted_name))
+
+    attach_document_page = AttachDocumentPage(driver)
+    attach_document_page.choose_file(file_to_upload_abs_path)
+    attach_document_page.enter_description(description)
+    Shared(driver).click_continue()
+
+
+@then("A new good has been added to the application")
+def a_new_good_has_been_added_to_the_application(driver):
+    assert ApplicationGoodsList(driver).get_goods_count() == 1
+
+
+@when(parsers.parse('I add a new good with description "{description}" controlled "{controlled}" control code "{control_code}" incorporated "{incorporated}" and part number "{part_number}"'))  # noqa
+def create_a_new_good_in_application(driver, description, controlled, control_code, incorporated, part_number):
+    prefix = 'good_'
+    add_goods_page = AddGoodPage(driver, prefix=prefix)
+    add_goods_page.enter_description_of_goods(description)
+    add_goods_page.select_is_your_good_controlled(controlled)
+    add_goods_page.select_is_your_good_intended_to_be_incorporated_into_an_end_product(incorporated)
+    add_goods_page.enter_control_code(control_code)
+    Shared(driver).click_continue()
+
+
+@when(parsers.parse('I enter details for the new good on an application with value "{value}", quantity "{quantity}" and unit of measurement "{unit}" and I click Continue"'))  # noqa
+def i_enter_detail_for_the_good_on_the_application(driver, value, quantity, unit):
+    ApplicationGoodsList(driver, prefix="good_on_app_").add_values_to_good(value, quantity, unit)
+    Shared(driver).click_continue()

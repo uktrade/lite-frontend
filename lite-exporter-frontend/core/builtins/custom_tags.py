@@ -11,7 +11,17 @@ from conf.constants import ISO8601_FMT
 from conf.settings import env
 from core import strings
 
+from lite_content.lite_exporter_frontend import constants
+
 register = template.Library()
+
+
+@register.simple_tag(name='lcs')
+def get_const_string(value):
+    try:
+        return getattr(constants, value)
+    except AttributeError:
+        return ''
 
 
 @register.simple_tag
@@ -23,7 +33,7 @@ def get_string(value, *args, **kwargs):
 
     # Pull the latest changes from strings.json for faster debugging
     if env('DEBUG'):
-        with open('lite-content/lite-exporter-frontend/strings.json') as json_file:
+        with open('lite_content/lite-exporter-frontend/strings.json') as json_file:
             strings.constants = json.load(json_file)
 
     def get(d, keys):

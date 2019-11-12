@@ -51,3 +51,12 @@ def group_notifications(notifications: list):
 
 def convert_dict_to_query_params(dictionary):
     return '&'.join(([key + '=' + str(value) for (key, value) in dictionary.items()]))
+
+
+def remove_prefix(json, prefix):
+    post_data = {}
+    for k in json:
+        if k.startswith(prefix):
+            field = k[len(prefix):]
+            post_data[field] = json[k]
+    return post_data

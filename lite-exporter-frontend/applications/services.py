@@ -8,6 +8,8 @@ from conf.settings import AWS_STORAGE_BUCKET_NAME, STREAMING_CHUNK_SIZE
 from django.http import StreamingHttpResponse
 from s3chunkuploader.file_handler import s3_client
 
+from core.helpers import remove_prefix
+
 
 def get_draft_applications(request):
     data = get(request, APPLICATIONS_URL + '?submitted=false')
@@ -50,14 +52,31 @@ def get_application_goods(request, pk):
     return data.json().get('goods') if data.status_code == HTTPStatus.OK else None
 
 
+def validate_application_good(request, pk, json):
+    post_data = get_data_from_post_good_on_app(json)
+    post_data['validate_only'] = True
+    return post(request, APPLICATIONS_URL + pk + '/goods/', post_data)
+
+
 def get_application_goods_types(request, pk):
     data = get(request, APPLICATIONS_URL + pk + '/goodstypes/')
     return data.json().get('goods') if data.status_code == HTTPStatus.OK else None
 
 
-def post_application_preexisting_goods(request, pk, json):
-    data = post(request, APPLICATIONS_URL + pk + '/goods/', json)
+def post_good_on_application(request, pk, json):
+    post_data = get_data_from_post_good_on_app(json)
+    if 'good_id' not in post_data:
+        post_data['good_id'] = json['good_id']
+    data = post(request, APPLICATIONS_URL + pk + '/goods/', post_data)
     return data.json(), data.status_code
+
+
+def get_data_from_post_good_on_app(json):
+    if json.get('good_on_app_value') or json.get('good_on_app_value') == "":
+        post_data = remove_prefix(json, 'good_on_app_')
+    else:
+        post_data = json
+    return post_data
 
 
 # Countries

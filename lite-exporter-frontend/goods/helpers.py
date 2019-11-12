@@ -3,6 +3,9 @@ from lite_forms.components import Summary
 
 
 def good_summary(good):
+    if not good:
+        return
+
     return Summary(
         values={
             'Description': good['description'],

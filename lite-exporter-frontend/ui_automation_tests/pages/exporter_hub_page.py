@@ -42,7 +42,8 @@ class ExporterHubPage:
         email_tb.send_keys(email)
 
     def enter_add_user_email(self, email):
-        email_tb = self.driver.find_element_by_name("email")
+        # hidden fields may be added which means that you can not look for name.
+        email_tb = self.driver.find_element_by_id("email")
         email_tb.clear()
         email_tb.send_keys(email)
 
@@ -65,7 +66,7 @@ class ExporterHubPage:
         self.driver.find_element_by_css_selector(self.my_goods_btn).click()
 
     def click_save_and_continue(self):
-        self.driver.find_element_by_css_selector("button[type*='submit']").click()
+        self.driver.find_element_by_css_selector("button[type*='submit'][value='submit']").click()
 
     def verify_good_is_in_goods_list(self, description, part_number, control_code):
         goods_row = self.driver.find_element_by_xpath("//*[text()[contains(.,'" + description + "')]]")

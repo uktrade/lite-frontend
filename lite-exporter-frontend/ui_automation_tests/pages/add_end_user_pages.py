@@ -3,7 +3,7 @@ class AddEndUserPages:
     def __init__(self, driver):
         self.driver = driver
         self.add_new_address_button = 'a[href*="add"]'
-        self.submit_button = "button[type*='submit']"
+        self.submit_button = "button[type*='submit'][value='submit']"
         self.type_choices = "sub_type-"
         self.back_to_overview_text = "Back to Application"  # link text
 

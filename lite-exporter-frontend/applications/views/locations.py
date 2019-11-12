@@ -111,7 +111,7 @@ class AddExternalLocation(TemplateView):
     def post(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
         response, response_data = submit_single_form(request, new_location_form(), post_external_locations,
-                                                     pk=str(request.user.organisation))
+                                                     object_pk=str(request.user.organisation))
 
         if response:
             return response
@@ -180,7 +180,7 @@ class Countries(TemplateView):
         }
 
         response, _ = submit_single_form(request, countries_form(draft_id), post_application_countries,
-                                         pk=draft_id, override_data=data)
+                                         object_pk=draft_id, override_data=data)
 
         if response:
             return response

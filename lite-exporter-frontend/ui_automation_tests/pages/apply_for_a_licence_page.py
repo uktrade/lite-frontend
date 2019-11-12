@@ -11,7 +11,7 @@ class ApplyForALicencePage:
         self.name_or_reference_input_id = "name"
         self.standard_licence_button = "input#licence_type-standard_licence"
         self.open_licence_button = "input#licence_type-open_licence"
-        self.submit_button = "button[type*='submit']"
+        self.submit_button = "button[type*='submit'][value='submit']"
         self.export_button = "export_type-"
         self.export_licence_yes_or_no = "have_you_been_informed-"
         self.reference_number = "reference_number_on_information_form"

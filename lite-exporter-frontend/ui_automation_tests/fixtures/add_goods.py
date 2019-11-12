@@ -26,7 +26,7 @@ def add_good_to_application(driver, context, lite_client):
     context.unit = 'Number of articles'
     context.value = '11'
     application_goods_list.add_values_to_good(str(context.value), str(context.value), context.unit)
-    driver.find_element_by_css_selector("button[type*='submit']").click()
+    driver.find_element_by_css_selector("button[type*='submit'][value='submit']").click()
     driver.get(url)
 
 

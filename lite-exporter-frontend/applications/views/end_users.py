@@ -16,7 +16,7 @@ class EndUser(TemplateView):
 
     def post(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
-        response, _ = submit_paged_form(request, new_end_user_forms(), post_end_user, pk=draft_id)
+        response, _ = submit_paged_form(request, new_end_user_forms(), post_end_user, object_pk=draft_id)
 
         # If there are more forms to go through, continue
         if response:
@@ -68,7 +68,7 @@ class AddUltimateEndUser(TemplateView):
         return form_page(request, self.form.forms[0])
 
     def post(self, request, **kwargs):
-        response, data = submit_paged_form(request, self.form, post_ultimate_end_user, pk=self.draft_id)
+        response, data = submit_paged_form(request, self.form, post_ultimate_end_user, object_pk=self.draft_id)
 
         if response:
             return response

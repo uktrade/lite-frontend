@@ -11,11 +11,12 @@
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
 			<h2 class="govuk-heading-l">
-				{% block title %}Goods{% endblock %}
+				{% block title %}{% lcs 'APPLICATION_GOODS_TITLE' %}{% endblock %}
 			</h2>
 		</div>
         {% if not application.status.value or application.status.key == 'applicant_editing' %}
-		<div class="lite-app-bar__controls">
+        <div class="lite-app-bar__controls">
+			<a href="{% url 'applications:new_good' application.id %}" id='add-new' role='button' draggable='false' class='govuk-button govuk-button--secondary'>{% lcs 'APPLICATION_GOODS_ADD_NEW' %}</a>
 			<a href="{% url 'applications:preexisting_good' application.id %}" role='button' draggable='false' class='govuk-button'>{% get_string 'goods.add_from_organisation.button' %}</a>
 		</div>
         {% endif %}

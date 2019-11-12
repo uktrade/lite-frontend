@@ -9,5 +9,5 @@ class CoreConfig(AppConfig):
     name = 'core'
 
     def ready(self):
-        with open('lite-content/lite-exporter-frontend/strings.json') as json_file:
+        with open('lite_content/lite-exporter-frontend/strings.json') as json_file:
             strings.constants = json.load(json_file)
