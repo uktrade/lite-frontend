@@ -149,6 +149,7 @@ def attach_documents_form(back_url, description):
                                  'max_length': 280,
                              })
                 ],
+                buttons=[Button('Save', 'submit', disable_double_click=True)],
                 back_link=BackLink(get_string('goods.documents.attach_documents.back_to_good'), back_url))
 
 
