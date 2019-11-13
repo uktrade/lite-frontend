@@ -24,10 +24,10 @@ def key_in_array(data, key):
 
     # If data is a dict, check the id
     if isinstance(data, dict):
-        if 'id' in data:
-            return data['id'] == key
-        if 'key' in data:
-            return data['key'] == key
+        if "id" in data:
+            return data["id"] == key
+        if "key" in data:
+            return data["key"] == key
 
     # If data is a list, check for the key
     if isinstance(data, list):
@@ -39,7 +39,7 @@ def key_in_array(data, key):
                 if item == key:
                     return True
             else:
-                if item.get('id') == key:
+                if item.get("id") == key:
                     return True
 
     return False
@@ -52,7 +52,7 @@ def prefix_dots(text):
 
     See https://stackoverflow.com/a/9930611
     """
-    return text.replace('.', r'\\.')
+    return text.replace(".", r"\\.")
 
 
 @register.simple_tag
