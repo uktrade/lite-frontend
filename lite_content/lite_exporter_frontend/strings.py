@@ -22,6 +22,12 @@ GOODS_CREATE_CONTROL_CODE_YES = "Yes"
 GOODS_CREATE_CONTROL_CODE_UNSURE = "I don't know"
 GOODS_CREATE_TITLE = "Add a good"
 
+# Applications
+APPLICATION_REFERENCE_NAME = "Reference"
+APPLICATION_TYPE = "Licence type"
+APPLICATION_EXPORT_TYPE = "Export type"
+APPLICATION_SUBMITTED_AT = "Submitted at"
+
 # Withdraw application
 APPLICATION_WITHDRAW_ACCESS_BUTTON = "Withdraw application"
 APPLICATION_WITHDRAW_TITLE = "Are you sure you want to withdraw this application?"
