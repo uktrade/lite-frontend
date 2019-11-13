@@ -1,6 +1,8 @@
 import json
 
-JSON_PATH = 'lite_content/lite-internal-frontend/context_variables.json'
+from conf.settings import BASE_DIR
+
+JSON_PATH = BASE_DIR+'/lite_content/lite-internal-frontend/context_variables.json'
 HIDDEN_VARS = ['valid', 'extends']
 flattened_context_variables = []
 
@@ -47,7 +49,7 @@ def _clean_dict(dictionary):
     return dictionary
 
 
-def load_context_variables():
+def get_context_variables():
     with open(JSON_PATH, 'r') as f:
         variables = json.load(f)
 
@@ -75,12 +77,13 @@ def flatten_dict(dictionary, path):
                 flattened_context_variables.append(path + variable)
 
 
-context_variables = load_context_variables()
-flatten_dict(context_variables, '')
+def get_flattened_context_variables():
+    flatten_dict(get_context_variables(), '')
+    return set(flattened_context_variables)
 
 
 def get_sample_context_variables():
-    return get_key_value_pair(flattened_context_variables)
+    return get_key_value_pair(get_flattened_context_variables())
 
 
 def get_key_value_pair(data):
