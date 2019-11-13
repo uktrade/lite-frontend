@@ -24,12 +24,14 @@ class _Component:
 
 
 class Button:
-    def __init__(self, value, action, style=ButtonStyle.DEFAULT, link=None, float_right=False):
+    def __init__(self, value, action, style=ButtonStyle.DEFAULT, link=None,
+                 float_right=False, disable_double_click=False):
         self.value = value
         self.action = action
         self.style = style
         self.link = link
         self.float_right = float_right
+        self.disable_double_click = disable_double_click
 
 
 class BackLink:
