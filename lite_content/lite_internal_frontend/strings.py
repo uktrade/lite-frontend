@@ -1,4 +1,4 @@
-CASES_ASSIGN_USERS = 'Assign Users'
+CASES_ASSIGN_USERS = "Assign Users"
 
 CASE_CHANGES = "See what has changed"
 
