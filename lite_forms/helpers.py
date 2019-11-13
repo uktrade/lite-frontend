@@ -1,21 +1,31 @@
+import copy
+
 from collections.abc import MutableMapping
 
 from lite_forms.components import FormGroup
 
 
-def get_form_by_pk(pk, form_group: FormGroup):
+def get_form_by_pk(form_pk, form_group: FormGroup):
     for form in form_group.forms:
-        if str(form.pk) == str(pk):
-            return form
+        if str(form.pk) == str(form_pk):
+            return copy.deepcopy(form)
     return
 
 
-def get_next_form_after_pk(pk, form_group: FormGroup):
+def get_previous_form(form_pk, form_group: FormGroup):
+    for form in form_group.forms:
+        # If the current form is the final form in the group
+        if int(form.pk) == int(form_pk) - 1:
+            return copy.deepcopy(form)
+    return
+
+
+def get_next_form(form_pk, form_group: FormGroup):
     next_one = False
     for form in form_group.forms:
         if next_one:
-            return form
-        if str(form.pk) == str(pk):
+            return copy.deepcopy(form)
+        if str(form.pk) == str(form_pk):
             next_one = True
     return
 
