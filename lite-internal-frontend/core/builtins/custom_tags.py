@@ -1,5 +1,6 @@
 import datetime
 import json
+import warnings
 
 import stringcase
 from django import template
@@ -9,16 +10,21 @@ from django.utils.safestring import mark_safe
 
 from conf.constants import ISO8601_FMT
 from conf.settings import env
-from core import strings
-from lite_content.lite_internal_frontend import constants
+from core import lite_strings
+
+from lite_content.lite_internal_frontend import strings
 
 register = template.Library()
 
 
 @register.simple_tag(name='lcs')
 def get_const_string(value):
+    """
+    Template tag for accessing constants from LITE content library (not for Python use - only HTML)
+    """
+    warnings.warn('Reference constants from strings directly, only use LCS in HTML files', Warning)
     try:
-        return getattr(constants, value)
+        return getattr(strings, value)
     except AttributeError:
         return ''
 
@@ -29,11 +35,13 @@ def get_string(value):
     Given a string, such as 'cases.manage.attach_documents' it will return the relevant value
     from the strings.json file
     """
+    warnings.warn('get_string is deprecated. Use "lcs" instead, or reference constants from strings directly.',
+                  DeprecationWarning)
 
     # Pull the latest changes from strings.json for faster debugging
     if env('DEBUG'):
         with open('lite_content/lite-internal-frontend/strings.json') as json_file:
-            strings.constants = json.load(json_file)
+            lite_strings.constants = json.load(json_file)
 
     def get(d, keys):
         if "." in keys:
@@ -42,7 +50,7 @@ def get_string(value):
         else:
             return d[keys]
 
-    return get(strings.constants, value)
+    return get(lite_strings.constants, value)
 
 
 @register.filter
