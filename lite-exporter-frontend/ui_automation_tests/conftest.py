@@ -47,7 +47,19 @@ def pytest_addoption(parser):
     parser.addoption("--driver", action="store", default="chrome", help="Type in browser type")
     if env == 'local':
         parser.addoption("--exporter_url", action="store", default="http://localhost:" + str(os.environ.get('PORT')), help="url")
-        parser.addoption("--lite_api_url", action="store", default=str(os.environ.get('LITE_API_URL')), help="url")
+
+        # Get LITE API URL.
+        lite_api_url = os.environ.get(
+            "LOCAL_LITE_API_URL",
+            os.environ.get("LITE_API_URL"),
+        )
+        parser.addoption(
+            "--lite_api_url",
+            action="store",
+            default=lite_api_url,
+            help="url",
+        )
+
     elif env == 'demo':
         raise Exception("This is the demo environment - Try another environment instead")
     else:
