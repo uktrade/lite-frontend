@@ -1,6 +1,7 @@
 from django.shortcuts import render
 
-from lite_forms.components import RadioButtons, Option, HiddenField, Form, BackLink
+from lite_forms.components import RadioButtons, Option, HiddenField, Form, BackLink, Summary
+from lite_forms.helpers import conditional
 
 
 def form_page(request, form, data=None, errors=None, extra_data=None):
@@ -47,16 +48,30 @@ def error_page(request, description, title='An error occurred', show_back_link=T
     return render(request, 'error.html', context)
 
 
-def confirm_form(title, confirmation_name, back_url, back_link_text, hidden_field=None,
-                 description='', yes_label='Yes', no_label='No', submit_button_text='Submit'):
-    inputs = [RadioButtons(title='', name=confirmation_name, description='',
-                           options=[Option(key='yes', value=yes_label), Option(key='no', value=no_label)])]
-    if hidden_field is not None:
-        inputs.append(HiddenField(name='form_name', value=hidden_field))
+def confirm_form(title,
+                 confirmation_name,
+                 back_url,
+                 back_link_text,
+                 hidden_field=None,
+                 summary: Summary = None,
+                 description='',
+                 yes_label='Yes',
+                 no_label='No',
+                 submit_button_text='Submit',
+                 side_by_side=False):
+    inputs = [
+        summary,
+        RadioButtons(name=confirmation_name,
+                     options=[
+                         Option(key='yes', value=yes_label),
+                         Option(key='no', value=no_label)
+                     ],
+                     classes=['govuk-radios--inline'] if side_by_side else []),
+        conditional(hidden_field is not None, HiddenField(name='form_name', value=hidden_field))
+    ]
 
     return Form(title=title,
                 description=description,
                 questions=inputs,
                 back_link=BackLink(back_link_text, back_url),
-                default_button_name=submit_button_text
-                )
+                default_button_name=submit_button_text)
