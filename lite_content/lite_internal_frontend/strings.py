@@ -17,5 +17,7 @@ USER_PROFILE_PAGE_EDIT = "Edit"
 
 ROLES_LIST_PAGE_CREATE = "Create a new role"
 
+USER_ROLE_QUESTION = "What role should this user have?"
+
 USER_DEACTIVATE = "Deactivate"
 USER_REACTIVATE = "Reactivate"
