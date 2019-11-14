@@ -34,10 +34,10 @@
         </thead>
         <tbody class="govuk-table__body">
             {% for user in data.gov_users %}
-                <tr class="govuk-table__row" id="row-{{ forloop.counter }}" {% if not user.first_name %}style="background-color: rgba(40, 161, 151, 0.025);"{% endif %}>
+                <tr class="govuk-table__row" id="row-{{ forloop.counter }}">
                     <td class="govuk-table__cell">
 						{% if user.first_name %}
-							<a href="{% url 'users:user' user.id %}" style="margin: 0;" class="govuk-link govuk-link--no-visited-state">
+							<a href="{% url 'users:user' user.id %}" class="govuk-link govuk-link--no-visited-state">
 								{{ user.first_name }} {{ user.last_name }}
 							</a>
 						{% else %}
@@ -48,14 +48,22 @@
                     </td>
                     <td class="govuk-table__cell">{{ user.email }}</td>
                     <td class="govuk-table__cell">
-                        <a href="{% url 'teams:team' user.team.id %}" style="margin: 0;" class="govuk-link govuk-link--no-visited-state">
+                        <a href="{% url 'teams:team' user.team.id %}" class="govuk-link govuk-link--no-visited-state">
                             {{ user.team.name }}
                         </a>
                     </td>
                     <td class="govuk-table__cell">{{ user.role.name }}</td>
                     <td class="govuk-table__cell">{{ user.status }}</td>
                     <td class="govuk-table__cell">
-                        <a href="{% url 'users:edit' user.id %}" style="margin: 0;" class="govuk-link govuk-link--no-visited-state">Edit</a>
+                        {% if super_user %}
+                            <a href="{% url 'users:edit' user.id %}" class="govuk-link govuk-link--no-visited-state">
+                                {% lcs 'USERS_LIST_PAGE_EDIT' %}
+                            </a>
+                        {% elif not user.role.name == 'Super User' %}
+                            <a href="{% url 'users:edit' user.id %}" class="govuk-link govuk-link--no-visited-state">
+                                {% lcs 'USERS_LIST_PAGE_EDIT' %}
+                            </a>
+                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}

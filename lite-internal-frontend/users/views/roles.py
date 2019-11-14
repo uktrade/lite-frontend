@@ -1,6 +1,9 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import TemplateView
+
+from conf.constants import SUPER_USER_ROLE_ID
+from core.services import get_user_permissions
 from lite_forms.generators import form_page
 from lite_forms.submitters import submit_single_form
 
@@ -12,12 +15,15 @@ from users.services import get_roles, get_permissions, get_role, put_role, post_
 class Roles(TemplateView):
     def get(self, request, **kwargs):
         roles, _ = get_roles(request)
-        all_permissions, _ = get_permissions(request)
+        all_permissions = get_permissions(request)
+        permissions = get_user_permissions(request)
 
         context = {
-            'all_permissions': all_permissions['permissions'],
+            'all_permissions': all_permissions,
             'roles': roles['roles'],
             'title': get_string('roles.title'),
+            'user_permissions': permissions,
+            'super_user_role_id': SUPER_USER_ROLE_ID
         }
         return render(request, 'users/roles.html', context)
 

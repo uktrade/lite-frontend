@@ -11,18 +11,32 @@
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
 			<h2 class="govuk-heading-l">
-				{{ title }}
+				{% block title %}{{ data.user.first_name }} {{ data.user.last_name }}{% endblock %}
 			</h2>
 		</div>
 		<div class="lite-app-bar__controls">
-			<a href="{% url 'users:edit' data.user.id %}" type="submit" class="govuk-button">Edit</a>
-			{% if request.user.lite_api_user_id|stringformat:"s" != data.user.id|stringformat:"s" %}
-				{% if data.user.status == 'Active' %}
-					<a href="{% url 'users:change_status' data.user.id 'deactivate' %}" role="button" draggable="false" class="govuk-button govuk-button--warning govuk-!-margin-right-2">Deactivate</a>
-				{% elif data.user.status == 'Deactivated' %}
-					<a href="{% url 'users:change_status' data.user.id 'reactivate' %}" role="button" draggable="false" class="govuk-button govuk-!-margin-right-2">Reactivate</a>
-				{% endif %}
-			{% endif %}
+            {% if super_user %}
+                <a href="{% url 'users:edit' data.user.id %}" type="submit" class="govuk-button">
+                    {% lcs 'USER_PROFILE_PAGE_EDIT' %}
+                </a>
+            {% elif not data.user.role.id == super_user_role_id %}
+                <a href="{% url 'users:edit' data.user.id %}" type="submit" class="govuk-button">
+                    {% lcs 'USER_PROFILE_PAGE_EDIT' %}
+                </a>
+            {% endif %}
+            {% if can_deactivate %}
+                {% if request.user.lite_api_user_id|stringformat:"s" != data.user.id|stringformat:"s" %}
+                    {% if data.user.status == 'Active' %}
+                        <a href="{% url 'users:change_status' data.user.id 'deactivate' %}" role="button" draggable="false" class="govuk-button govuk-button--warning govuk-!-margin-right-2">
+                            {% lcs 'USER_DEACTIVATE' %}
+                        </a>
+                    {% elif data.user.status == 'Deactivated' %}
+                        <a href="{% url 'users:change_status' data.user.id 'reactivate' %}" role="button" draggable="false" class="govuk-button govuk-!-margin-right-2">
+                            {% lcs 'USER_REACTIVATE' %}
+                        </a>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
 		</div>
 	</div>
 

@@ -15,11 +15,13 @@
 				{% get_string 'roles.description' %}
 			</p>
 		</div>
-		<div class="lite-app-bar__controls">
-			<a id="button_add_role" href="{% url 'users:add_role' %}" class="govuk-button" draggable="false" role="button">
-				{% get_string 'roles.add.title' %}
-			</a>
-		</div>
+        {% if 'ADMINISTER_ROLES' in user_permissions %}
+            <div class="lite-app-bar__controls">
+                <a id="button_add_role" href="{% url 'users:add_role' %}" class="govuk-button" draggable="false" role="button">
+                    {% lcs 'ROLES_LIST_PAGE_CREATE' %}
+                </a>
+            </div>
+        {% endif %}
 	</div>
 
     <table class="govuk-table">
@@ -58,7 +60,11 @@
 						</ul>
 					</td>
                     <td class="govuk-table__cell">
-						<a href="{% url 'users:edit_role' role.id %}" class="govuk-link govuk-link--no-visited-state">Edit</a>
+                        {% if not role.id == super_user_role_id %}
+                            {% if 'ADMINISTER_ROLES' in user_permissions %}
+                                <a href="{% url 'users:edit_role' role.id %}" class="govuk-link govuk-link--no-visited-state">Edit</a>
+                            {% endif %}
+                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}

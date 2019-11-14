@@ -51,3 +51,6 @@ LETTER_LAYOUTS_URL = STATIC_URL + 'letter-layouts/'
 # Permissions
 MAKE_FINAL_DECISIONS = 'MAKE_FINAL_DECISIONS'
 DECISIONS_LIST = ['approve', 'refuse', 'no_licence_required']
+
+# ROLE IDS
+SUPER_USER_ROLE_ID = '00000000-0000-0000-0000-000000000002'

@@ -28,14 +28,3 @@ def submit_response(driver):
 @then('I see case is closed')
 def check_case_closed(driver):
     assert ClcQueriesPages(driver).is_clc_query_case_closed()
-
-
-@then('I do not see the respond to query button')
-def no_respond_to_query_button(driver):
-    assert not ClcQueriesPages(driver).is_respond_to_query_button_present()
-
-
-@then('I see the respond to query button')
-def no_respond_to_query_button(driver):
-    assert ClcQueriesPages(driver).is_respond_to_query_button_present()
-
