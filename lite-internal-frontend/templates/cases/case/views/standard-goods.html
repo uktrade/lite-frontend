@@ -1,4 +1,7 @@
+{% load humanize %}
+
 <h3 class="govuk-heading-m">Goods</h3>
+<p class="govuk-body">Total value: £{{ total_goods_value|intcomma }}</p>
 <table class="govuk-table" id="goods">
 	<thead class="govuk-table__head">
 		<tr class="govuk-table__row">
@@ -36,7 +39,7 @@
                           {{ good.good.description }}
                       </a>
                 </td>
-				<td class="govuk-table__cell">{{ good.quantity }} {{ good.unit.value }}/£{{ good.value }}</td>
+				<td class="govuk-table__cell">{{ good.quantity }} {{ good.unit.value }}/£{{ good.value|intcomma }}</td>
 				<td class="govuk-table__cell">
 				  {% for document in good.good.documents %}
 					  {% if document.safe == True %}
