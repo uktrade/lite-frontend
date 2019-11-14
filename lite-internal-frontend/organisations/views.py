@@ -10,12 +10,12 @@ class OrganisationList(TemplateView):
     Show all organisations.
     """
     def get(self, request, **kwargs):
-        name = request.GET.get('name', '').strip()
+        search_term = request.GET.get('search_term', '').strip()
         org_type = request.GET.get('org_type', '').strip()
 
         params = {'page': int(request.GET.get('page', 1))}
-        if name:
-            params['name'] = name
+        if search_term:
+            params['search_term'] = search_term
         if org_type:
             params['org_type'] = org_type
 
