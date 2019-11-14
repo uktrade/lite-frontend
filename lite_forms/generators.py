@@ -1,6 +1,14 @@
 from django.shortcuts import render
 
-from lite_forms.components import RadioButtons, Option, HiddenField, Form, BackLink
+from lite_forms.components import (
+    RadioButtons,
+    Option,
+    HiddenField,
+    Form,
+    BackLink,
+    Summary,
+)
+from lite_forms.helpers import conditional
 
 
 def form_page(request, form, data=None, errors=None, extra_data=None):
@@ -55,24 +63,27 @@ def confirm_form(
     back_url,
     back_link_text,
     hidden_field=None,
+    summary: Summary = None,
     description="",
     yes_label="Yes",
     no_label="No",
     submit_button_text="Submit",
+    side_by_side=False,
 ):
     inputs = [
+        summary,
         RadioButtons(
-            title="",
             name=confirmation_name,
-            description="",
             options=[
                 Option(key="yes", value=yes_label),
                 Option(key="no", value=no_label),
             ],
-        )
+            classes=["govuk-radios--inline"] if side_by_side else [],
+        ),
+        conditional(
+            hidden_field is not None, HiddenField(name="form_name", value=hidden_field)
+        ),
     ]
-    if hidden_field is not None:
-        inputs.append(HiddenField(name="form_name", value=hidden_field))
 
     return Form(
         title=title,
