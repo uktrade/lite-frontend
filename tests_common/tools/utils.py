@@ -29,7 +29,7 @@ def get_or_create_attr(obj, attr: str, fn):
     return getattr(obj, attr)
 
 
-def set_timeout_to(self, seconds: int = 0):
+def set_timeout_to(self, seconds: int):
     self.implicitly_wait(seconds)
 
 
