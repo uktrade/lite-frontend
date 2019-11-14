@@ -2,7 +2,6 @@ import os
 
 from pytest_bdd import scenarios, when, then, parsers
 
-from conftest import i_click_continue
 from pages.add_goods_page import AddGoodPage
 from pages.application_goods_list import ApplicationGoodsList
 from pages.application_overview_page import ApplicationOverviewPage
@@ -106,7 +105,7 @@ def i_click_add_a_new_good(driver):
 @when(parsers.parse('I enter details for a good on an application with value "{value}", quantity "{quantity}" and unit of measurement "{unit}" and I click Continue"'))  # noqa
 def i_enter_detail_for_the_good_on_the_application(driver, value, quantity, unit):
     ApplicationGoodsList(driver).add_values_to_good(value, quantity, unit)
-    i_click_continue(driver)
+    functions.click_submit(driver)
 
 
 @when(parsers.parse('I attach a document to the good with description "{description}"'))  # noqa

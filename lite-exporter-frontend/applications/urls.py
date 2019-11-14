@@ -111,6 +111,8 @@ urlpatterns = [
     path('<uuid:pk>/additional-document/<uuid:obj_pk>/delete', documents.DeleteDocument.as_view(),
          name='delete_additional_document'),
 
+    path('<uuid:pk>/withdraw/', common.WithdrawApplication.as_view(), name='withdraw'),
+
     # This HAS to be at the bottom, otherwise it will swallow other url calls
-    path('<uuid:pk>/<str:type>/', common.ApplicationDetail.as_view(), name='application-detail'),
+    path('<uuid:pk>/<str:type>/', common.ApplicationDetail.as_view(), name='detail'),
 ]

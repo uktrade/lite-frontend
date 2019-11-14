@@ -1,6 +1,7 @@
 import datetime
 import json
 import re
+import warnings
 
 from django import template
 from django.template.defaultfilters import stringfilter
@@ -9,17 +10,21 @@ from django.utils.safestring import mark_safe
 
 from conf.constants import ISO8601_FMT
 from conf.settings import env
-from core import strings
+from core import lite_strings
 
-from lite_content.lite_exporter_frontend import constants
+from lite_content.lite_exporter_frontend import strings
 
 register = template.Library()
 
 
 @register.simple_tag(name='lcs')
 def get_const_string(value):
+    """
+    Template tag for accessing constants from LITE content library (not for Python use - only HTML)
+    """
+    warnings.warn('Reference constants from strings directly, only use LCS in HTML files', Warning)
     try:
-        return getattr(constants, value)
+        return getattr(strings, value)
     except AttributeError:
         return ''
 
@@ -30,11 +35,13 @@ def get_string(value, *args, **kwargs):
     Given a string, such as 'cases.manage.attach_documents' it will return the relevant value
     from the strings.json file
     """
+    warnings.warn('get_string is deprecated. Use "lcs" instead, or reference constants from strings directly.',
+                  DeprecationWarning)
 
     # Pull the latest changes from strings.json for faster debugging
     if env('DEBUG'):
         with open('lite_content/lite-exporter-frontend/strings.json') as json_file:
-            strings.constants = json.load(json_file)
+            lite_strings.constants = json.load(json_file)
 
     def get(d, keys):
         if "." in keys:
@@ -43,12 +50,12 @@ def get_string(value, *args, **kwargs):
         else:
             return d[keys]
 
-    return_value = get(strings.constants, value)
+    return_value = get(lite_strings.constants, value)
 
     if isinstance(return_value, list):
         return return_value
 
-    return get(strings.constants, value).format(*args, **kwargs)
+    return get(lite_strings.constants, value).format(*args, **kwargs)
 
 
 @register.filter

@@ -266,7 +266,7 @@ def get_application_ecju_queries(request, pk):
 
 def set_application_status(request, pk, status):
     json = {'status': status}
-    data = put(request, APPLICATIONS_URL + pk + MANAGE_STATUS_URL, json)
+    data = put(request, APPLICATIONS_URL + str(pk) + MANAGE_STATUS_URL, json)
     return data.json(), data.status_code
 
 

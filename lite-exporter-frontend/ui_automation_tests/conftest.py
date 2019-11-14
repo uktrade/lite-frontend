@@ -4,10 +4,10 @@ import pytest
 from pytest_bdd import given, when, then, parsers
 from selenium.webdriver.common.by import By
 
-from shared import functions
 from pages.add_end_user_pages import AddEndUserPages
 from pages.application_edit_type_page import ApplicationEditTypePage
 from pages.application_page import ApplicationPage
+from shared import functions
 from ui_automation_tests.fixtures.register_organisation import register_organisation, register_organisation_for_switching_organisation  # noqa
 from ui_automation_tests.fixtures.env import environment # noqa
 from ui_automation_tests.fixtures.add_goods import add_an_incorporated_good_to_application, add_a_non_incorporated_good_to_application, create_non_incorporated_good  # noqa
@@ -265,11 +265,6 @@ def i_click_add_preexisting_locations(driver):
     external_locations_page.click_preexisting_locations()
 
 
-@when('I click continue')  # noqa
-def i_click_continue(driver):
-    functions.click_submit(driver)
-
-
 @then(parsers.parse('error message is "{expected_error}"'))  # noqa
 def error_message_is(driver, expected_error):
     shared = Shared(driver)
@@ -481,6 +476,12 @@ def i_choose_to_make_minor_edits(driver):
     application_edit_type_page = ApplicationEditTypePage(driver)
     application_edit_type_page.click_major_edits_radio_button()
     application_edit_type_page.click_change_application_button()
+
+
+@when("I click continue")  # noqa
+@when("I click submit")  # noqa
+def i_click_submit_button(driver):
+    functions.click_submit(driver)
 
 
 @when(parsers.parse('I leave a note for the "{reasoning}"'))  # noqa

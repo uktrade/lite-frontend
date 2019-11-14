@@ -1,35 +1,36 @@
 from django.urls import reverse, reverse_lazy
+
+from conf.settings import env
+from core.builtins.custom_tags import get_string
+from core.services import get_control_list_entries
+from goods.helpers import good_summary
+from lite_content.lite_exporter_frontend import strings
 from lite_forms.common import control_list_entry_question
 from lite_forms.components import Form, TextArea, RadioButtons, Option, BackLink, FileUpload, TextInput, HTMLBlock, \
     HiddenField, Button
 from lite_forms.generators import confirm_form
 from lite_forms.styles import ButtonStyle
 
-from conf.settings import env
-from core.builtins.custom_tags import get_string, get_const_string
-from core.services import get_control_list_entries
-from goods.helpers import good_summary
 
-
-def add_goods_questions(allow_query=True, back_link=BackLink(), prefix=""):
+def add_goods_questions(allow_query=True, back_link=BackLink, prefix=""):
     if allow_query:
-        description = get_const_string('GOODS_CREATE_CONTROL_CODE_REQUIRED_DESC')
+        description = strings.GOODS_CREATE_CONTROL_CODE_REQUIRED_DESC
         is_your_good_controlled_options = [Option(key='yes',
-                                                  value=get_const_string('GOODS_CREATE_CONTROL_CODE_YES'),
+                                                  value=strings.GOODS_CREATE_CONTROL_CODE_YES,
                                                   show_pane='pane_' + prefix + 'control_code'),
                                            Option(key='no',
-                                                  value=get_const_string('GOODS_CREATE_CONTROL_CODE_NO')),
+                                                  value=strings.GOODS_CREATE_CONTROL_CODE_NO),
                                            Option(key='unsure',
-                                                  value=get_const_string('GOODS_CREATE_CONTROL_CODE_UNSURE'))]
+                                                  value=strings.GOODS_CREATE_CONTROL_CODE_UNSURE)]
     else:
-        description = get_const_string('APPLICATION_GOODS_CONTROL_CODE_REQUIRED_DESCRIPTION')
+        description = strings.APPLICATION_GOODS_CONTROL_CODE_REQUIRED_DESCRIPTION
         is_your_good_controlled_options = [Option(key='yes',
-                                                  value=get_const_string('GOODS_CREATE_CONTROL_CODE_YES'),
+                                                  value=strings.GOODS_CREATE_CONTROL_CODE_YES,
                                                   show_pane='pane_' + prefix + 'control_code'),
                                            Option(key='no',
-                                                  value=get_const_string('GOODS_CREATE_CONTROL_CODE_NO'))]
+                                                  value=strings.GOODS_CREATE_CONTROL_CODE_NO)]
 
-    form = Form(title=get_const_string('GOODS_CREATE_TITLE'),
+    form = Form(title=strings.GOODS_CREATE_TITLE,
                 questions=[
                     TextArea(title='Description of good',
                              description='This can make it easier to find your good later',

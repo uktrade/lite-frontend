@@ -12,9 +12,9 @@ from applications.forms.goods import good_on_application_form, add_new_good_form
 from applications.services import get_application, get_application_goods, get_application_goods_types, \
     post_good_on_application, delete_application_preexisting_good, validate_application_good, \
     add_document_data
-from core.builtins.custom_tags import get_const_string
 from core.services import get_units
 from goods.services import get_goods, get_good, validate_good, post_goods, post_good_documents
+from lite_content.lite_exporter_frontend import strings
 from lite_forms.components import HiddenField
 from lite_forms.generators import error_page, form_page
 
@@ -138,7 +138,7 @@ class AddNewGood(TemplateView):
                 # Error is thrown if a document is not attached
                 self.data = request.POST.copy()
                 self.generate_form(request, form_num)
-                self.errors = {'documents': [get_const_string('APPLICATION_GOODS_ADD_DOCUMENT_MISSING')]}
+                self.errors = {'documents': [strings.APPLICATION_GOODS_ADD_DOCUMENT_MISSING]}
 
         return form_page(request, self.form, self.data, self.errors, {'form_pk': self.form_num})
 
@@ -199,7 +199,7 @@ class AddPreexistingGood(TemplateView):
     def get(self, request, **kwargs):
         good, _ = get_good(request, str(kwargs['good_pk']))
 
-        title = get_const_string('APPLICATION_GOODS_ADD_PREEXISTING_TITLE')
+        title = strings.APPLICATION_GOODS_ADD_PREEXISTING_TITLE
 
         context = {
             'title': title,
@@ -214,7 +214,7 @@ class AddPreexistingGood(TemplateView):
         if status_code != HTTPStatus.CREATED:
             good, status_code = get_good(request, str(kwargs['good_pk']))
 
-            title = get_const_string('APPLICATION_GOODS_ADD_PREEXISTING_TITLE')
+            title = strings.APPLICATION_GOODS_ADD_PREEXISTING_TITLE
 
             context = {
                 'title': title,
