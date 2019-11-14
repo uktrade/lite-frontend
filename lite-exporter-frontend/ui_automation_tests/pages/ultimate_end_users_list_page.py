@@ -22,4 +22,6 @@ class ThirdPartyListPage:
 
     def click_on_attach_document(self, row):
         shared = Shared(self.driver)
-        shared.get_table_row(row).find_element_by_id(self.attach_document).click()
+
+        attach_document_link = shared.get_table_row(row).find_element_by_id(self.attach_document)
+        self.driver.execute_script("arguments[0].click();", attach_document_link)

@@ -9,9 +9,8 @@ class ApplyForALicencePage:
     def __init__(self, driver):
         self.driver = driver
         self.name_or_reference_input_id = "name"
-        self.standard_licence_button = "input#licence_type-standard_licence"
-        self.open_licence_button = "input#licence_type-open_licence"
-        self.submit_button = "button[type*='submit'][value='submit']"
+        self.standard_licence_button = "input#application_type-standard_licence"
+        self.open_licence_button = "input#application_type-open_licence"
         self.export_button = "export_type-"
         self.export_licence_yes_or_no = "have_you_been_informed-"
         self.reference_number = "reference_number_on_information_form"
@@ -24,19 +23,10 @@ class ApplyForALicencePage:
         element.clear()
         element.send_keys(name)
 
-    def click_save_and_continue(self):
-        self.driver.find_element_by_css_selector(self.submit_button).click()
-
-    def click_continue(self):
-        self.click_save_and_continue()
-
     def click_delete_application(self):
         self.driver.find_element_by_css_selector(self.delete_application_button).click()
         self.driver.implicitly_wait(10)
         self.driver.execute_script("document.querySelectorAll('.govuk-button--warning')[0].click()")
-
-    def click_submit_application(self):
-        self.driver.execute_script("document.querySelectorAll(\"button[type*='submit']\")[0].click()")
 
     def click_export_licence(self, type):
         logging.info(type)

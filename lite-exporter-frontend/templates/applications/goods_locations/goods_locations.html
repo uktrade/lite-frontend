@@ -1,0 +1,94 @@
+{% extends 'layouts/base.html' %}
+
+{% block back_link %}
+	<a href="{% url 'applications:task_list' application.id %}" id="back-link" class="govuk-back-link">Back to task list</a>
+{% endblock %}
+
+{% block body %}
+
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h2 class="govuk-heading-l" style="max-width: 400px;">
+				{% block title %}
+					{% if application.goods_locations.type == 'sites' %}
+						Set which sites your goods are at
+					{% else %}
+						Set where your goods are located
+					{% endif %}
+				{% endblock %}
+			</h2>
+		</div>
+		<div class="lite-app-bar__controls">
+			<a href="{% url 'applications:edit_location' application.id %}" class="govuk-button govuk-button--secondary">
+				{% if application.goods_locations.type == 'sites' %}
+					Change to external locations
+				{% else %}
+					Change to sites
+				{% endif %}
+			</a>
+			{% if application.goods_locations.type == 'sites' %}
+				<a href="{% url 'applications:existing_sites' application.id %}" class="govuk-button">
+					Edit sites
+				</a>
+			{% else %}
+				<a href="{% url 'applications:add_preexisting_external_location' application.id %}" class="govuk-button">
+					{% get_string 'goods.location_lists.find_address_button' %}
+				</a>
+				<a href="{% url 'applications:add_external_location' application.id %}" class="govuk-button">
+					{% get_string 'goods.location_lists.add_address_button' %}
+				</a>
+			{% endif %}
+		</div>
+	</div>
+
+	{% if application.goods_locations.data %}
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th scope="col" class="govuk-table__header">Name</th>
+					<th scope="col" class="govuk-table__header">Address</th>
+					{% if application.goods_locations.type == 'external_locations' %}
+						<th scope="col" class="govuk-table__header"></th>
+					{% endif %}
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				{% for location in application.goods_locations.data %}
+					{% if application.goods_locations.type == 'sites' %}
+						<tr class="govuk-table__row">
+							<td class="govuk-table__cell">{{ location.name }}</td>
+							<td class="govuk-table__cell">
+								{{ location.address.address_line_1 }}<br>
+								{% if location.address.address_line_2 %}
+									{{ location.address.address_line_2 }}<br>
+								{% endif %}
+								{{ location.address.city }}<br>
+								{{ location.address.region }}<br>
+								{{ location.address.postcode }}<br>
+								{{ location.country.country.name }}
+							</td>
+						</tr>
+					{% else %}
+						<tr class="govuk-table__row">
+							<td class="govuk-table__cell">{{ location.name }}</td>
+							<td class="govuk-table__cell">
+								{{ location.address|linebreaksbr }}<br>
+								{{ location.country.name }}
+							</td>
+							{% if application.goods_locations.type == 'external_locations' %}
+								<td class="govuk-table__cell govuk-table__cell--numeric">
+									{% if not draft.status.value or draft.status.key == 'applicant_editing' or data.external_locations|length > 1 %}
+										<a class="govuk-link" href="{% url 'applications:remove_external_location' application.id location.id %}">
+											Remove
+										</a>
+									{% endif %}
+								</td>
+							{% endif %}
+						</tr>
+					{% endif %}
+				{% endfor %}
+			</tbody>
+		</table>
+	{% endif %}
+
+{% endblock %}

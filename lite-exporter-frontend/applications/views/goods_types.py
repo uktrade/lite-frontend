@@ -1,11 +1,27 @@
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
+
+from applications.forms.goods_types import goods_type_form
+from applications.services import delete_goods_type, post_goods_type, post_goods_type_countries, \
+    get_application_goods_types, get_application_countries, get_application
 from lite_forms.generators import form_page, error_page
 
-from applications.services import get_application_goods_types, get_application_countries
-from goodstype.forms import goods_type_form
-from goodstype.services import post_goods_type, post_goods_type_countries, delete_goods_type
+
+class DraftOpenGoodsTypeList(TemplateView):
+    def get(self, request, **kwargs):
+        application_id = str(kwargs['pk'])
+        application = get_application(request, application_id)
+        goods = get_application_goods_types(request, application_id)
+
+        if not application['goods_types']:
+            return redirect(reverse_lazy('applications:add_goods_type', kwargs={'pk': application_id}))
+
+        context = {
+            'goods': goods,
+            'application': application,
+        }
+        return render(request, 'applications/goods_types/index.html', context)
 
 
 class ApplicationAddGoodsType(TemplateView):
@@ -19,10 +35,7 @@ class ApplicationAddGoodsType(TemplateView):
         if status_code == 400:
             return form_page(request, goods_type_form(), request.POST, errors=data['errors'])
 
-        next = request.GET.get('next')
-        if next:
-            return redirect(next)
-        return redirect(reverse_lazy('applications:edit', args=[kwargs['pk']]))
+        return redirect(reverse_lazy('applications:goods_types', args=[kwargs['pk']]))
 
 
 class ApplicationRemoveGoodsType(TemplateView):
@@ -35,7 +48,7 @@ class ApplicationRemoveGoodsType(TemplateView):
         if status_code != 200:
             return error_page(request, 'Unexpected error removing goods description')
 
-        return redirect(reverse_lazy('applications:goods', kwargs={'pk': application_id}))
+        return redirect(reverse_lazy('applications:goods_types', kwargs={'pk': application_id}))
 
 
 class GoodsTypeCountries(TemplateView):
@@ -57,7 +70,7 @@ class GoodsTypeCountries(TemplateView):
             'draft_id': self.draft_id,
             'select': request.GET.get('all', None)
         }
-        return render(request, 'applications/goodstype/countries.html', context)
+        return render(request, 'applications/goods_types/countries.html', context)
 
     def post(self, request, **kwargs):
         data = request.POST.copy()
@@ -77,4 +90,4 @@ class GoodsTypeCountries(TemplateView):
 
         post_goods_type_countries(request, self.draft_id, list(post_data.keys())[0], post_data)
 
-        return redirect(reverse_lazy('applications:edit', kwargs={'pk': self.draft_id}))
+        return redirect(reverse_lazy('applications:task_list', kwargs={'pk': self.draft_id}))

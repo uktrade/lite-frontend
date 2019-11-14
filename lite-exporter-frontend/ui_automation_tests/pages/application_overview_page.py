@@ -1,11 +1,17 @@
 from selenium.common.exceptions import NoSuchElementException
 
+from shared import functions
+
 
 class ApplicationOverviewPage:
 
     def __init__(self, driver):
         self.driver = driver
         self.location_link = "location"
+        self.hmrc_location_link = "goods_locations"
+        self.hmrc_describe_your_goods = "describe_your_goods"
+        self.hmrc_set_end_user = "set_end_user"
+        self.hmrc_explain_your_reasoning = "explain_the_reason_behind_your_query"
         self.countries_link = "countries"
         self.standard_goods_link = "standard-goods"
         self.open_goods_link = "open-goods"
@@ -17,8 +23,6 @@ class ApplicationOverviewPage:
         self.goods_on_application = "[id^=good-on-application-row]"  # CSS
         self.ultimate_end_users = "[id^=ultimate-end-user-row]" # CSS
         self.gov_tables = ".govuk-table__body"   # CSS
-        self.back_to_overview_text = "Back to Application"  # link text
-        self.submit_button = "button[type*='submit']"  # CSS
         self.attach_end_user_document_link = "attach_doc"  # ID
         self.download_end_user_document = "end_user_document_download"  # ID
         self.delete_end_user_document = "end_user_document_delete"  # ID
@@ -75,7 +79,7 @@ class ApplicationOverviewPage:
 
     def confirm_delete_additional_document(self):
         self.driver.find_element_by_id(self.delete_additional_doc_confirm_yes).click()
-        self.driver.find_element_by_css_selector(self.submit_button).click()
+        functions.click_submit(self.driver)
 
     def click_third_parties(self):
         self.driver.find_element_by_id(self.third_parties).click()
@@ -83,6 +87,18 @@ class ApplicationOverviewPage:
     def click_application_locations_link(self):
         self.driver.execute_script("document.getElementById('" + self.location_link + "').scrollIntoView(true);")
         self.driver.find_element_by_id(self.location_link).click()
+
+    def click_hmrc_application_locations_link(self):
+        self.driver.find_element_by_id(self.hmrc_location_link).click()
+
+    def click_hmrc_describe_your_goods(self):
+        self.driver.find_element_by_id(self.hmrc_describe_your_goods).click()
+
+    def click_hmrc_set_end_user(self):
+        self.driver.find_element_by_id(self.hmrc_set_end_user).click()
+
+    def click_hmrc_explain_your_reasoning(self):
+        self.driver.find_element_by_id(self.hmrc_explain_your_reasoning).click()
 
     def click_standard_goods_link(self):
         self.driver.execute_script("document.getElementById('" + self.standard_goods_link + "').scrollIntoView(true);")
@@ -113,9 +129,6 @@ class ApplicationOverviewPage:
     def click_goods_countries_link(self):
         self.driver.execute_script("document.getElementById('" + self.goods_countries_link + "').scrollIntoView(true);")
         self.driver.find_element_by_id(self.goods_countries_link).click()
-
-    def click_on_back_to_overview_text(self):
-        self.driver.find_element_by_link_text(self.back_to_overview_text).click()
 
     def get_text_of_end_user_table(self):
         return self.driver.find_elements_by_css_selector(self.gov_tables)[len(self.driver.find_elements_by_css_selector(self.gov_tables))-1].text

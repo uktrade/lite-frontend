@@ -1,16 +1,16 @@
 from pytest_bdd import when, scenarios, then
 
+from shared import functions
 from conftest import enter_application_name, enter_export_licence
 from pages.application_overview_page import ApplicationOverviewPage
 from pages.application_page import ApplicationPage
-from pages.shared import Shared
 
 scenarios('../features/edit_standard_application.feature', strict_gherkin=False)
 
 
 @when('I click back to the application overview')
 def i_click_on_application_overview(driver):
-    Shared(driver).click_back_link()
+    functions.click_back_link(driver)
 
 
 @when('I click on the application third parties link')
@@ -80,13 +80,13 @@ def no_documents_are_set_on_the_application(driver):
 
 @when("I change my reference name")
 def change_ref_name(driver, context):
-    driver.find_element_by_id('reference-name').click()
+    driver.find_element_by_id('reference_name').click()
     enter_application_name(driver, context)
 
 
 @when("I change my reference number")
 def change_ref_num(driver, context):
-    driver.find_element_by_id('reference-number').click()
+    driver.find_element_by_id('told_by_an_official_that_you_need_an_export_licence').click()
     enter_export_licence(driver, 'yes', '12345678', context)
 
 

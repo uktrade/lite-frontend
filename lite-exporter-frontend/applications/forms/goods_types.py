@@ -1,3 +1,4 @@
+from core.builtins.custom_tags import get_string
 from lite_forms.common import control_list_entry_question
 from lite_forms.components import TextArea, RadioButtons, Option, Form
 
@@ -5,7 +6,7 @@ from core.services import get_control_list_entries
 
 
 def goods_type_form():
-    return Form(title='Add a description', questions=[
+    return Form(title=get_string('good_types.overview.title'), questions=[
         TextArea(title='Give a short description of your goods.',
                  name='description',
                  extras={

@@ -21,7 +21,7 @@ def get_good(request, pk):
     return data.json().get('good'), data.status_code
 
 
-def post_good(request, json):
+def post_goods(request, json):
     if json.get('good_description', False) or json.get('good_description') == "":
         post_data = remove_prefix(json, 'good_')
     else:

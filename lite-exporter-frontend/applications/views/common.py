@@ -4,28 +4,32 @@ from django.http import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
-from lite_forms.components import HiddenField
-from lite_forms.generators import error_page, form_page, success_page
 
 from applications.forms.common import respond_to_query_form, ecju_query_respond_confirmation_form, edit_type_form
-from applications.libraries.get_licence_overview import get_licence_overview
+from applications.libraries.check_your_answers_helpers import convert_application_to_check_your_answers
+from applications.libraries.task_lists import get_application_task_list
 from applications.services import get_applications, get_case_notes, \
     get_application_ecju_queries, get_ecju_query, put_ecju_query, post_application_case_notes, get_draft_applications, \
     submit_application, get_application, delete_application, set_application_status
+from conf.constants import HMRC_QUERY, APPLICANT_EDITING, NEWLINE
 from core.helpers import group_notifications
-from core.services import get_notifications
+from core.services import get_notifications, get_organisation
+from lite_forms.components import HiddenField
+from lite_forms.generators import error_page, form_page, success_page
 from conf import constants
 
 
 class ApplicationsList(TemplateView):
     def get(self, request, **kwargs):
         drafts = request.GET.get('drafts')
+        organisation = get_organisation(request, request.user.organisation)
 
         if drafts and drafts.lower() == 'true':
             drafts = get_draft_applications(request)
 
             context = {
-                'drafts': drafts
+                'drafts': drafts,
+                'organisation': organisation,
             }
             return render(request, 'applications/drafts.html', context)
         else:
@@ -35,8 +39,8 @@ class ApplicationsList(TemplateView):
             context = {
                 'applications': applications,
                 'notifications': group_notifications(notifications),
+                'organisation': organisation,
             }
-
             return render(request, 'applications/applications.html', context)
 
 
@@ -45,8 +49,8 @@ class ApplicationDetailEmpty(TemplateView):
         application_id = str(kwargs['pk'])
         data = get_application(request, application_id)
 
-        if data.get('status').get('key') == 'applicant_editing':
-            return redirect(reverse_lazy('applications:edit', kwargs={'pk': application_id}))
+        if data.get('status') and data.get('status').get('key') == APPLICANT_EDITING:
+            return redirect(reverse_lazy('applications:task_list', kwargs={'pk': application_id}))
 
         return redirect(reverse_lazy('applications:application-detail', kwargs={'pk': application_id,
                                                                                 'type': 'case-notes'}))
@@ -77,8 +81,8 @@ class ApplicationEditType(TemplateView):
         application_id = str(kwargs['pk'])
         data = get_application(request, application_id)
 
-        if data.get('status').get('key') == 'applicant_editing':
-            return redirect(reverse_lazy('applications:edit', kwargs={'pk': application_id}))
+        if data.get('status') and data.get('status').get('key') == APPLICANT_EDITING:
+            return redirect(reverse_lazy('applications:task_list', kwargs={'pk': application_id}))
 
         return form_page(request, edit_type_form(application_id))
 
@@ -87,7 +91,7 @@ class ApplicationEditType(TemplateView):
         edit_type = request.POST.get('edit-type')
 
         if edit_type == 'major':
-            data, status_code = set_application_status(request, str(kwargs['pk']), 'applicant_editing')
+            data, status_code = set_application_status(request, str(kwargs['pk']), APPLICANT_EDITING)
 
             if status_code != HTTPStatus.OK:
                 return form_page(request, edit_type_form(str(kwargs['pk'])), errors=data)
@@ -97,21 +101,21 @@ class ApplicationEditType(TemplateView):
                              edit_type_form(application_id),
                              errors={'edit-type': ['Select what type of edit you\'d like to make.']})
 
-        return redirect(reverse_lazy('applications:edit', kwargs={'pk': str(kwargs['pk'])}))
+        return redirect(reverse_lazy('applications:task_list', kwargs={'pk': str(kwargs['pk'])}))
 
 
-class ApplicationEditOverview(TemplateView):
+class ApplicationTaskList(TemplateView):
     def get(self, request, **kwargs):
-        application_data = get_application(request, str(kwargs['pk']))
-        return get_licence_overview(request, application=application_data)
+        application = get_application(request, kwargs['pk'])
+        return get_application_task_list(request, application)
 
     def post(self, request, **kwargs):
         application_id = str(kwargs['pk'])
-        application_data = get_application(request, str(kwargs['pk']))
-        submit_data, status_code = submit_application(request, application_id)
+        application = get_application(request, str(kwargs['pk']))
+        data, status_code = submit_application(request, application_id)
 
         if status_code != HTTPStatus.OK:
-            return get_licence_overview(request, application=application_data, errors=submit_data.get('errors'))
+            return get_application_task_list(request, application, errors=data.get('errors'))
 
         return success_page(request,
                             title='Application submitted',
@@ -154,11 +158,12 @@ class ApplicationDetail(TemplateView):
             'ecju_query_notifications': ecju_query_notifications,
         }
 
-        if self.view_type == 'case-notes':
-            context['notes'] = get_case_notes(request, self.case_id)['case_notes']
+        if self.application['application_type']['key'] != HMRC_QUERY:
+            if self.view_type == 'case-notes':
+                context['notes'] = get_case_notes(request, self.case_id)['case_notes']
 
-        if self.view_type == 'ecju-queries':
-            context['open_queries'], context['closed_queries'] = get_application_ecju_queries(request, self.case_id)
+            if self.view_type == 'ecju-queries':
+                context['open_queries'], context['closed_queries'] = get_application_ecju_queries(request, self.case_id)
 
         context['read_only_statuses'] = constants.READ_ONLY_STATUSES
 
@@ -181,7 +186,7 @@ class ApplicationDetail(TemplateView):
                 error_list = []
                 for key in errors:
                     error_list.append('{field}: {error}'.format(field=key, error=errors[key][0]))
-                error = '\n'.join(error_list)
+                error = NEWLINE.join(error_list)
             return error_page(request, error)
 
         return redirect(reverse_lazy('applications:application', kwargs={'pk': self.application_id}))
@@ -259,3 +264,28 @@ class RespondToQuery(TemplateView):
         else:
             # Submitted data does not contain an expected form field - return an error
             return error_page(None, 'We had an issue creating your response. Try again later.')
+
+
+class CheckYourAnswers(TemplateView):
+    def get(self, request, **kwargs):
+        application_id = kwargs['pk']
+        application = get_application(request, application_id)
+
+        context = {
+            'application': application,
+            'answers': {
+                **convert_application_to_check_your_answers(application)
+            }
+        }
+        return render(request, 'applications/check-your-answers.html', context)
+
+
+class Submit(TemplateView):
+    def get(self, request, **kwargs):
+        application_id = kwargs['pk']
+        application = get_application(request, application_id)
+
+        context = {
+            'application': application,
+        }
+        return render(request, 'applications/submit.html', context)

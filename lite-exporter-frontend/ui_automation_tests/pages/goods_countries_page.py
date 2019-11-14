@@ -4,6 +4,7 @@ class GoodsCountriesPage:
         self.gov_checkboxes_input = ".govuk-checkboxes__input"  # css selector
         self.select_all_id = "link-select-all"  # id
         self.deselect_all_id = "link-deselect-all"  # id
+        self.save_button = "button[type='submit']"
 
     def select_all(self):
         elements = self.driver.find_elements_by_css_selector(self.gov_checkboxes_input)
@@ -38,3 +39,6 @@ class GoodsCountriesPage:
                 return False
 
         return True
+
+    def click_save(self):
+        self.driver.find_element_by_css_selector(self.save_button).click()

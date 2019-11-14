@@ -3,7 +3,7 @@
 {% load svg static %}
 
 {% block back_link %}
-	<a href="{% url 'goods:goods' %}" class="govuk-back-link">Back to goods</a>
+	<a href="{% url 'goods:goods' %}" id="back-link" class="govuk-back-link">Back to goods</a>
 {% endblock %}
 
 {% block body %}
@@ -141,32 +141,42 @@
 
 				<br>
 
-		        {% for document in documents %}
-		            <div class="lite-card lite-card--download">
-		                <div>
-		                    <p class="govuk-body govuk-!-font-weight-bold" style="margin-bottom: 10px;">{{ document.name }}</p>
-		                    <p class="govuk-body" style="margin-bottom: 10px">{{ document.description|slice:"0:40" }} {% if document.description|length > 40 %}...{% endif %}</p>
-		                    <p class="govuk-caption-m" style="margin: 0;">Uploaded by {{ document.user.first_name }} {{ document.user.last_name }} at {{ document.created_at|str_date }}</p>
-		                </div>
-		                <div class="lite-vertical-align">
-		                    {% if document.safe == True %}
-		                        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:document' pk=good.id file_pk=document.id %}">
-		                            <span class="govuk-visually-hidden">{% get_string 'goods.documents.download_document' %}</span>
-		                            Download
-		                        </a>
-		                        {% if good.status.key == 'draft' %}
-		                            <a href="{% url 'goods:delete_document' good.id document.id %}" style="margin: 0; margin-left: 20px;" class="govuk-link">
-		                                Delete
-		                            </a>
-		                        {% endif %}
-		                    {% elif document.safe == False %}
-		                        <p class="govuk-label" style="margin: 0;color:red;">{% get_string 'goods.documents.virus_infected' %}</p>
-		                    {% else %}
-		                        <p class="govuk-label" style="margin: 0;">{% get_string 'goods.documents.processing' %}</p>
-		                    {% endif %}
-		                </div>
-		            </div>
-		        {% endfor %}
+					<table class="govuk-table">
+						<thead class="govuk-table__head">
+							<tr class="govuk-table__row">
+								<th scope="col" class="govuk-table__header">Name</th>
+								<th scope="col" class="govuk-table__header">Description</th>
+								<th scope="col" class="govuk-table__header">Uploaded by</th>
+								<th scope="col" class="govuk-table__header"></th>
+							</tr>
+						</thead>
+						<tbody class="govuk-table__body">
+							{% for document in documents %}
+								<tr id="document-{{ document.id }}" class="govuk-table__row">
+									<td class="govuk-table__cell">{{ document.name }}</td>
+									<td class="govuk-table__cell">{{ document.description|default_na|slice:"0:40" }} {% if document.description|length > 40 %}...{% endif %}</td>
+									<td class="govuk-table__cell">{{ document.user.first_name }} {{ document.user.last_name }} at {{ document.created_at|str_date }}</td>
+									<td class="govuk-table__cell govuk-table__cell--numeric">
+										{% if document.safe == True %}
+					                        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:document' pk=good.id file_pk=document.id %}">
+					                            <span class="govuk-visually-hidden">{% get_string 'goods.documents.download_document' %}</span>
+					                            Download
+					                        </a>
+					                        {% if good.status.key == 'draft' %}
+					                            <a href="{% url 'goods:delete_document' good.id document.id %}" style="margin: 0; margin-left: 20px;" class="govuk-link">
+					                                Delete
+					                            </a>
+					                        {% endif %}
+					                    {% elif document.safe == False %}
+					                        <p class="govuk-label" style="margin: 0;color:red;">{% get_string 'goods.documents.virus_infected' %}</p>
+					                    {% else %}
+					                        <p class="govuk-label" style="margin: 0;">{% get_string 'goods.documents.processing' %}</p>
+					                    {% endif %}
+									</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
 		    {% else %}
 				<br><br>
 				<div class="lite-information-text">

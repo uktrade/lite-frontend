@@ -1,7 +1,9 @@
 {% extends 'layouts/two_pane.html' %}
 
 {% block two_thirds %}
-	<h1 class="govuk-heading-xl">Service currently unavailable</h1>
+	<h1 class="govuk-heading-xl">
+		{% block title %}Service currently unavailable{% endblock %}
+	</h1>
 	<p class="govuk-body">
 		Please try again later.
 	</p>

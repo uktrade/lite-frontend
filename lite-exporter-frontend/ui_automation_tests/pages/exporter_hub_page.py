@@ -16,7 +16,7 @@ class ExporterHubPage:
         self.sites_link = "a[href*='sites']"
         self.goods_tile = "a[href*='sites']"
         self.end_user_advisory_tile = "a[href*='/end-users/']"
-        self.raise_hmrc_query_btn = "a[href*='/raise-hmrc-query/"
+        self.raise_hmrc_query_btn = "a[href*='/raise-a-query/"
 
     def go_to(self, url):
         self.driver.get(url)
@@ -59,14 +59,8 @@ class ExporterHubPage:
         self.driver.find_element_by_class_name("button").click()
         time.sleep(1)
 
-    def click_submit(self):
-        self.driver.find_element_by_class_name("govuk-button").click()
-
     def click_my_goods(self):
         self.driver.find_element_by_css_selector(self.my_goods_btn).click()
-
-    def click_save_and_continue(self):
-        self.driver.find_element_by_css_selector("button[type*='submit'][value='submit']").click()
 
     def verify_good_is_in_goods_list(self, description, part_number, control_code):
         goods_row = self.driver.find_element_by_xpath("//*[text()[contains(.,'" + description + "')]]")
@@ -78,7 +72,7 @@ class ExporterHubPage:
         self.driver.find_element_by_css_selector(self.users_btn).click()
 
     def click_add_a_user_btn(self):
-        self.driver.find_element_by_css_selector("a[href*='/users/add']").click()
+        self.driver.find_element_by_id("button-add-a-member").click()
 
     def enter_first_name(self, first_name):
         self.driver.find_element_by_id("first_name").clear()
@@ -91,7 +85,7 @@ class ExporterHubPage:
     def click_user_name_link(self, user_name):
         self.driver.find_element_by_link_text(user_name).click()
 
-    def click_deactivate_btn(self):
+    def click_deactivate_button(self):
         self.driver.find_element_by_id("btn-deactivate").click()
         self.driver.find_element_by_id("deactivate-confirm").click()
 

@@ -36,8 +36,8 @@ Feature: I  want to add and rename my sites
     Then I see sites list
     When I go to exporter homepage
     And I click on apply for a license button
-    And I enter in name for application and continue
     And I select "standard" application and continue
+    And I enter in name for application and continue
     And I select "permanent" option and continue
     And I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
     And I click on application locations link
@@ -46,15 +46,13 @@ Feature: I  want to add and rename my sites
 #    Then I see my new site at first position
     When I select the site at position "1"
     And I click continue
-    And I click on application locations link
-    And I select "organisation" for where my goods are located
+    And I click edit sites button
     Then the checkbox I have selected at position "1" is "checked"
     When I select the site at position "1"
     Then the checkbox I have selected at position "1" is "unchecked"
     When I select the site at position "2"
     Then the checkbox I have selected at position "2" is "checked"
     When I click continue
-    And I click on application locations link
-    And I select "organisation" for where my goods are located
+    And I click edit sites button
     Then the checkbox I have selected at position "1" is "unchecked"
     And the checkbox I have selected at position "2" is "checked"

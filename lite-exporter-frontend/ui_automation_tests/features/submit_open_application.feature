@@ -8,25 +8,26 @@ Feature: I want to indicate the open licence I want
   Scenario: Apply for a licence to draft and delete
     Given I go to exporter homepage and choose Test Org
     When I click on apply for a license button
-    And I enter in name for application and continue
     And I select "open" application and continue
+    And I enter in name for application and continue
     And I select "permanent" option and continue
     And I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
     Then I see the application overview
     When I delete the application
 
-  @LT_1114
+  @LT_1114 @submit_open_application
   Scenario: Submit open application
     Given I go to exporter homepage and choose Test Org
     When I click on apply for a license button
-    And I enter in name for application and continue
     And I select "open" application and continue
+    And I enter in name for application and continue
     And I select "permanent" option and continue
     And I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
     And I click on application locations link
     And I select "organisation" for where my goods are located
     And I select the site at position "1"
     And I click continue
+    And I click the back link
     And I click on the goods link from overview
     And I click Add goods type button
     And I add a good or good type with description "Sniper" controlled "Yes" control code "ML1a" incorporated "Yes" and part number "not needed"
@@ -58,8 +59,8 @@ Feature: I want to indicate the open licence I want
     Given I go to exporter homepage and choose Test Org
     When I go to exporter homepage
     And I click on apply for a license button
-    And I enter in name for application and continue
     And I select "open" application and continue
+    And I enter in name for application and continue
     And I select "permanent" option and continue
     And I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
     And I click on countries
@@ -71,8 +72,8 @@ Feature: I want to indicate the open licence I want
     Given I go to exporter homepage and choose Test Org
     When I go to exporter homepage
     And I click on apply for a license button
-    And I enter in name for application and continue
     And I select "open" application and continue
+    And I enter in name for application and continue
     And I select "permanent" option and continue
     And I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
     And I click on the goods link from overview

@@ -97,7 +97,7 @@ def highlight_text(value: str, term: str) -> str:
     loop = 0
     for index in indexes:
         # Count along the number of positions of the new string then adjust for zero index
-        index += loop*(len(span) + len(term) + len(span_end) - 1)
+        index += loop * (len(span) + len(term) + len(span_end) - 1)
         loop += 1
         value = insert_str(value, span, index)
         value = insert_str(value, span_end, index + len(span) + len(term))
@@ -107,6 +107,9 @@ def highlight_text(value: str, term: str) -> str:
 
 @register.filter()
 def reference_code(value):
+    """
+    Converts ten digit string to two five digit strings hyphenated
+    """
     value = str(value)
     return value[:5] + '-' + value[5:]
 
@@ -168,3 +171,20 @@ def pluralise_unit(unit, value):
             return unit.replace('(s)', 's')
 
     return unit
+
+
+@register.filter()
+def idify(string: str):
+    """
+    Converts a string to a format suitable for HTML IDs
+    eg 'Add goods' becomes 'add_goods'
+    """
+    return string.lower().replace(' ', '_')
+
+
+@register.filter
+def classname(obj):
+    """
+    Returns object class name
+    """
+    return obj.__class__.__name__

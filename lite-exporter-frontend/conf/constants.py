@@ -1,4 +1,5 @@
 ISO8601_FMT = '%Y-%m-%dT%H:%M:%S.%fZ'
+NEWLINE = '\n'
 
 # URLs
 APPLICATIONS_URL = '/applications/'
@@ -41,7 +42,13 @@ CONTROL_LIST_ENTRIES_URL = STATIC_URL + 'control-list-entries/'
 # Applications constants
 STANDARD_LICENCE = 'standard_licence'
 OPEN_LICENCE = 'open_licence'
-
+HMRC_QUERY = 'hmrc_query'
 
 # Case statuses
 READ_ONLY_STATUSES = ['finalised', 'under final review', 'under review', 'withdrawn']
+
+APPLICANT_EDITING = 'applicant_editing'
+
+NOT_STARTED = 'not_started'
+IN_PROGRESS = 'in_progress'
+DONE = 'done'

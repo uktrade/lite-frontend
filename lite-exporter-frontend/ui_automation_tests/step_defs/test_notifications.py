@@ -24,7 +24,7 @@ def notification_exists(driver, context):
 @when('I click on my application')
 def click_on_application(driver, context):
     elements = Shared(driver).get_gov_table_cell_links()
-    no = helpers.get_element_index_by_text(elements, context.app_id)
+    no = helpers.get_element_index_by_text(elements, context.app_name, complete_match=False)
     elements[no].click()
 
 

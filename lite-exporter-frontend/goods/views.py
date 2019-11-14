@@ -17,9 +17,10 @@ from core.helpers import group_notifications
 from core.services import get_notifications
 from goods import forms
 from goods.forms import edit_form, attach_documents_form, respond_to_query_form, ecju_query_respond_confirmation_form, \
-    delete_good_form
-from goods.services import get_goods, post_good, get_good, update_good, delete_good, get_good_documents, \
+    delete_good_form, add_goods_questions
+from goods.services import get_goods, post_goods, get_good, update_good, delete_good, get_good_documents, \
     get_good_document, delete_good_document, post_good_documents, raise_clc_query
+from lite_forms.views import SingleFormView
 
 
 class Goods(TemplateView):
@@ -108,28 +109,13 @@ class GoodsDetail(TemplateView):
                                                                   'type': 'case-notes'}))
 
 
-class AddGood(TemplateView):
+class AddGood(SingleFormView):
+    def init(self, request, **kwargs):
+        self.form = add_goods_questions()
+        self.action = post_goods
 
-    form = None
-
-    def dispatch(self, request, *args, **kwargs):
-        self.form = forms.add_goods_questions()
-
-        return super(AddGood, self).dispatch(request, *args, **kwargs)
-
-    def get(self, request, **kwargs):
-        return form_page(request, self.form)
-
-    def post(self, request):
-        data = request.POST.copy()
-
-        validated_data, _ = post_good(request, data)
-
-        if 'errors' in validated_data:
-            if validated_data['errors']:
-                return form_page(request, self.form, data=data, errors=validated_data.get('errors'))
-
-        return redirect(reverse_lazy('goods:attach_documents', kwargs={'pk': validated_data['good']['id']}))
+    def get_success_url(self):
+        return reverse_lazy('goods:attach_documents', kwargs={'pk': self.get_validated_data()['good']['id']})
 
 
 class RaiseCLCQuery(TemplateView):
@@ -154,12 +140,12 @@ class DraftAddGood(TemplateView):
         return form_page(request, forms.form)
 
     def post(self, request, **kwargs):
-        data, status_code = post_good(request, request.POST)
+        data, status_code = post_goods(request, request.POST)
 
         if status_code == HTTPStatus.BAD_REQUEST:
             return form_page(request, forms.form, request.POST, errors=data['errors'])
 
-        return redirect(reverse_lazy('applications:edit'), kwargs['pk'])
+        return redirect(reverse_lazy('applications:task_list'), kwargs['pk'])
 
 
 class EditGood(TemplateView):

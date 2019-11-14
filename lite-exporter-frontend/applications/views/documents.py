@@ -1,92 +1,40 @@
 import logging
+from inspect import signature
 
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
-from lite_forms.generators import form_page, error_page
 from s3chunkuploader.file_handler import S3FileUploadHandler
 
 from applications.forms.end_user import attach_document_form, delete_document_confirmation_form
+from applications.libraries.reverse_documents import document_switch
+from applications.services import add_document_data, download_document_from_s3
 from core.builtins.custom_tags import get_string
-from applications.services import post_ultimate_end_user_document, post_end_user_document, \
-    get_ultimate_end_user_document, get_end_user_document, delete_ultimate_end_user_document, delete_end_user_document, \
-    post_consignee_document, get_consignee_document, delete_consignee_document, post_third_party_document, \
-    get_third_party_document, delete_third_party_document, post_additional_document, get_additional_document, \
-    delete_additional_party_document, add_document_data, download_document_from_s3
-
-document_forms_paths = {
-    'ultimate-end-user':
-        {
-            'homepage': 'applications:ultimate_end_users',
-            'strings': 'ultimate_end_user.documents',
-            'description': False
-        },
-    'end-user':
-        {
-            'homepage': 'applications:edit',
-            'strings': 'end_user.documents',
-            'description': False
-        },
-    'consignee':
-        {
-            'homepage': 'applications:edit',
-            'strings': 'consignee.documents',
-            'description': False
-        },
-    'third-parties':
-        {
-            'homepage': 'applications:third_parties',
-            'strings': 'third_parties.documents',
-            'description': False
-        },
-    'additional-document':
-        {
-            'homepage': 'applications:additional_documents',
-            'strings': 'additional_documents.documents',
-            'description': True
-        }
-}
-
-
-def get_page_content(path):
-    if 'ultimate-end-user' in path:
-        return document_forms_paths['ultimate-end-user']
-    elif 'end-user' in path:
-        return document_forms_paths['end-user']
-    elif 'consignee' in path:
-        return document_forms_paths['consignee']
-    elif 'third-parties' in path:
-        return document_forms_paths['third-parties']
-    elif 'additional-document' in path:
-        return document_forms_paths['additional-document']
-    else:
-        return None
+from lite_forms.generators import form_page, error_page
 
 
 def get_upload_page(path, draft_id):
-    paths = get_page_content(path)
+    paths = document_switch(path)
 
-    if paths['description']:
+    if paths['has_description']:
         description_text = get_string(paths['strings'] + '.attach_documents.description_field_title')
     else:
         description_text = None
 
-    return attach_document_form(draft_url=reverse(paths['homepage'], kwargs={'pk': draft_id}),
+    return attach_document_form(application_id=draft_id,
                                 title=get_string(paths['strings'] + '.attach_documents.title'),
-                                back_text=get_string(
-                                    paths['strings'] + '.attach_documents.back_to_application_overview'),
                                 return_later_text=get_string(paths['strings'] + '.save_end_user'),
                                 description_text=description_text)
 
 
 def get_homepage(request, draft_id):
-    return redirect(reverse(get_page_content(request.path)['homepage'], kwargs={'pk': draft_id}))
+    return redirect(reverse(document_switch(request.path)['homepage'], kwargs={'pk': draft_id}))
 
 
 def get_delete_confirmation_page(path, pk):
-    paths = get_page_content(path)
+    paths = document_switch(path)
     return delete_document_confirmation_form(
         overview_url=reverse(paths['homepage'], kwargs={'pk': pk}),
         back_link_text=get_string(paths['strings'] + '.attach_documents.back_to_application_overview')
@@ -102,7 +50,13 @@ class AttachDocuments(TemplateView):
 
     @csrf_exempt
     def post(self, request, **kwargs):
+        draft_id = str(kwargs['pk'])
+        form = get_upload_page(request.path, draft_id)
         self.request.upload_handlers.insert(0, S3FileUploadHandler(request))
+
+        if not request.FILES:
+            return form_page(request, form, extra_data={'draft_id': draft_id}, errors={'documents': ['Select a file to upload']})
+
         logging.info(self.request)
         draft_id = str(kwargs['pk'])
         data, error = add_document_data(request)
@@ -110,19 +64,11 @@ class AttachDocuments(TemplateView):
         if error:
             return error_page(None, get_string('end_user.documents.attach_documents.upload_error'))
 
-        if 'ultimate-end-user' in request.path:
-            _, status_code = post_ultimate_end_user_document(request, draft_id,
-                                                                             str(kwargs['ueu_pk']), data)
-        elif 'consignee' in request.path:
-            _, status_code = post_consignee_document(request, draft_id, data)
-        elif 'third-parties' in request.path:
-            _, status_code = post_third_party_document(request, draft_id, str(kwargs['tp_pk']), data)
-        elif 'end-user' in request.path:
-            _, status_code = post_end_user_document(request, draft_id, data)
-        elif 'additional-document' in request.path:
-            _, status_code = post_additional_document(request, draft_id, data)
+        action = document_switch(request.path)['attach']
+        if len(signature(action).parameters) == 3:
+            _, status_code = action(request, draft_id, data)
         else:
-            return error_page(None, get_string('end_user.documents.attach_documents.upload_error'))
+            _, status_code = action(request, draft_id, kwargs['obj_pk'], data)
 
         if status_code == 201:
             return get_homepage(request, draft_id)
@@ -133,18 +79,12 @@ class AttachDocuments(TemplateView):
 class DownloadDocument(TemplateView):
     def get(self, request, **kwargs):
         draft_id = str(kwargs['pk'])
-        if 'ultimate-end-user' in request.path:
-            document, _ = get_ultimate_end_user_document(request, draft_id, str(kwargs['ueu_pk']))
-        elif 'consignee' in request.path:
-            document, _ = get_consignee_document(request, draft_id)
-        elif 'third-parties' in request.path:
-            document, _ = get_third_party_document(request, draft_id, str(kwargs['tp_pk']))
-        elif 'end-user' in request.path:
-            document, _ = get_end_user_document(request, draft_id)
-        elif 'additional-document' in request.path:
-            document, _ = get_additional_document(request, draft_id, str(kwargs['doc_pk']))
+        action = document_switch(request.path)['download']
+
+        if len(signature(action).parameters) == 2:
+            document, _ = action(request, draft_id)
         else:
-            return error_page(None, get_string('end_user.documents.attach_documents.download_error'))
+            document, _ = action(request, draft_id, kwargs['obj_pk'])
 
         document = document['document']
         if document['safe']:
@@ -165,18 +105,12 @@ class DeleteDocument(TemplateView):
                              errors={'delete_document_confirmation': ['This field is required']})
         else:
             if option == 'yes':
-                if 'ultimate-end-user' in request.path:
-                    status_code = delete_ultimate_end_user_document(request, draft_id, str(kwargs['ueu_pk']))
-                elif 'consignee' in request.path:
-                    status_code = delete_consignee_document(request, draft_id)
-                elif 'third-parties' in request.path:
-                    status_code = delete_third_party_document(request, draft_id, str(kwargs['tp_pk']))
-                elif 'end-user' in request.path:
-                    status_code = delete_end_user_document(request, draft_id)
-                elif 'additional-document' in request.path:
-                    status_code = delete_additional_party_document(request, draft_id, str(kwargs['doc_pk']))
+                action = document_switch(request.path)['delete']
+
+                if len(signature(action).parameters) == 2:
+                    status_code = action(request, draft_id)
                 else:
-                    return error_page(None, get_string('end_user.documents.attach_documents.delete_error'))
+                    status_code = action(request, draft_id, kwargs['obj_pk'])
 
                 if status_code == 204:
                     return get_homepage(request, draft_id)

@@ -8,15 +8,21 @@
 
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
-			<h2 class="govuk-heading-l">{% block title %}Applications{% endblock %}</h2>
+			<h1 class="govuk-heading-l">{% block title %}Applications{% endblock %}</h1>
 		</div>
 		<div class="lite-app-bar__controls">
-			<a href="." class="govuk-button govuk-button--secondary" draggable="false" role="button">
-				{% get_string 'licences.refresh' %}
-			</a>
-			<a href="{% url 'apply_for_a_licence:start' %}" class="govuk-button" draggable="false" role="button">
-				{% get_string 'licences.apply_for_a_licence' %}
-			</a>
+			{% if organisation.type.key == 'hmrc' %}
+				<a href="{% url 'hmrc:raise_a_query' %}" class="govuk-button" draggable="false" role="button">
+					Raise a query
+				</a>
+			{% else %}
+				<a href="." class="govuk-button govuk-button--secondary" draggable="false" role="button">
+					{% get_string 'licences.refresh' %}
+				</a>
+				<a href="{% url 'apply_for_a_licence:start' %}" class="govuk-button" draggable="false" role="button">
+					{% get_string 'licences.apply_for_a_licence' %}
+				</a>
+			{% endif %}
 		</div>
 	</div>
 
@@ -31,23 +37,27 @@
 		</div>
 	</div>
 
-	{% if applications %}
+	{% if applications.results %}
 		<table class="govuk-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" scope="col">Reference</th>
-					<th class="govuk-table__header" scope="col">Type</th>
+					{% if organisation.type.key != 'hmrc' %}
+						<th class="govuk-table__header" scope="col">Type</th>
+					{% endif %}
 					<th class="govuk-table__header" scope="col">Last updated</th>
-					<th class="govuk-table__header" scope="col">Status</th>
+					{% if organisation.type.key != 'hmrc' %}
+						<th class="govuk-table__header" scope="col">Status</th>
+					{% endif %}
 				</tr>
 			</thead>
 			<tbody class="govuk-table__body">
-				{% for application in applications %}
+				{% for application in applications.results %}
 					<tr class="govuk-table__row">
 						<td class="govuk-table__cell">
 							<a class="govuk-link govuk-link--no-visited-state app-icon-label"
 							    {% if application.status.key == 'applicant_editing' %}
-									href="{% url 'applications:edit' application.id %}">
+									href="{% url 'applications:task_list' application.id %}">
 								{% else %}
 									href="{% url 'applications:application' application.id %}">
 								{% endif %}
@@ -57,13 +67,17 @@
 								{% endif %}
 							</a>
 						</td>
-						<td class="govuk-table__cell">
-							{{ application.licence_type.value }}
-						</td>
+						{% if organisation.type.key != 'hmrc' %}
+							<td class="govuk-table__cell">
+								{{ application.application_type.value }}
+							</td>
+						{% endif %}
 						<td class="govuk-table__cell">
 							{{ application.last_modified_at|str_date }}
 						</td>
-						<td class="govuk-table__cell">{{ application.status.value }}</td>
+						{% if organisation.type.key != 'hmrc' %}
+							<td class="govuk-table__cell">{{ application.status.value }}</td>
+						{% endif %}
 					</tr>
 				{% endfor %}
 			</tbody>

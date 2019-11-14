@@ -1,0 +1,84 @@
+{% extends 'layouts/base.html' %}
+
+{% block back_link %}
+	<a href="{% url 'applications:task_list' application.id %}" id="back-link" class="govuk-back-link">Back to task list</a>
+{% endblock %}
+
+{% block body %}
+
+	<h1 class="govuk-heading-xl">
+		{% block title %}
+			Check your answers
+		{% endblock %}
+	</h1>
+
+	{% for key, value in answers.items %}
+		<h2 class="govuk-heading-m">{{ key }}</h2>
+		<div>
+			{% if not value %}
+				<p class="govuk-caption-m">You haven't added any information for this section.</p>
+			{% elif value|classname == 'str' %}
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dd class="govuk-summary-list__value">
+                            {{ value }}
+                        </dd>
+                        <!-- <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link" href="#">
+                                Change<span class="govuk-visually-hidden"> {{ key }}</span>
+                            </a>
+                        </dd> -->
+                    </div>
+                </dl>
+			{% elif value|classname == 'dict' %}
+				<dl class="govuk-summary-list">
+					{% for key, value in value.items %}
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								{{ key }}
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{{ value|linebreaksbr }}
+							</dd>
+							<!-- <dd class="govuk-summary-list__actions">
+								<a class="govuk-link" href="#">
+									Change<span class="govuk-visually-hidden"> {{ key }}</span>
+								</a>
+							</dd> -->
+						</div>
+					{% endfor %}
+				</dl>
+			{% elif value|classname == 'list' %}
+				<table class="govuk-table">
+					<thead class="govuk-table__head">
+						<tr class="govuk-table__row">
+							{% for key, value in value.0.items %}
+								<th scope="col" class="govuk-table__header">{{ key }}</th>
+							{% endfor %}
+							<!-- <th scope="col" class="govuk-table__header"></th> -->
+						</tr>
+					</thead>
+					<tbody class="govuk-table__body">
+						{% for item in value %}
+							<tr class="govuk-table__row">
+								{% for key, value in item.items %}
+									<td class="govuk-table__cell">{{ value|linebreaksbr }}</td>
+								{% endfor %}
+								<!-- <td class="govuk-table__cell">
+									<a href="#">Change</a>
+								</td> -->
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			{% endif %}
+		</div>
+		<hr class="app-check-your-answers-separator">
+	{% endfor %}
+
+	<!--<form method="post">
+		<button type="submit" class="govuk-button">Save and mark as done</button>
+	</form>
+	<a href="#" class="govuk-link govuk-link--no-visited-state">Or return to the task list</a>-->
+
+{% endblock %}

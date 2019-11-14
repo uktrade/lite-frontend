@@ -13,13 +13,14 @@ option_list = {
 }
 
 
-def third_party_forms(export_type):
-    if export_type['value'] == 'Permanent':
+def third_party_forms(application):
+    if application['export_type'] and application['export_type']['key'] == 'permanent':
         form_options = option_list.copy()
         del form_options['additional_end_user']
     else:
         form_options = option_list.copy()
-    third_party_form = third_parties_standard_form()
+
+    third_party_form = third_parties_standard_form(application)
     options = [Option(key, value) for key, value in form_options.items()]
     options.append(Option('other', 'Other', show_or=True))
     third_party_type = Form(title='What type of third party would you like to add?',

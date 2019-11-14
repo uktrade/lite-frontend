@@ -8,8 +8,8 @@ Feature: I want to indicate the standard licence I want
   Scenario: Apply for a licence to draft and delete
     Given I go to exporter homepage and choose Test Org
     When I click on apply for a license button
-    And I enter in name for application and continue
     And I select "standard" application and continue
+    And I enter in name for application and continue
     And I select "permanent" option and continue
     And I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
     Then I see the application overview
@@ -23,30 +23,33 @@ Feature: I want to indicate the standard licence I want
     And I select "organisation" for where my goods are located
     And I select the site at position "1"
     And I click continue
+    And I click the back link
     And I add a non incorporated good to application
     Then good is added to application
     When I click on end user
     And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
+    When I click back to the application overview
     Then Wait for "end_user_document_download" to be present
     When I click on consignees
     And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
+    And I click back to the application overview
     Then Wait for "consignee_document_download" to be present
-    Then I see end user on overview
+    And I see end user on overview
     When I submit the application
     Then application is submitted
     When I go to exporter homepage
     And I click applications
     Then I see submitted application
 
-  @LT_1091_external
+  @LT_1091_external @AT
   Scenario: Submit standard application with external locations
     Given I go to exporter homepage and choose Test Org
     When I create a standard application
     And I click on application locations link
     And I select "external" for where my goods are located
-    And I click on add new address
+    And I select "new" for whether or not I want a new or existing location to be added
     And I fill in new external location form with name: "32 Lime Street", address: "London" and country: "Ukraine" and continue
     And I click on add new address
     And I fill in new external location form with name: "place", address: "1 Paris Road" and country: "Ukraine" and continue
@@ -59,10 +62,12 @@ Feature: I want to indicate the standard licence I want
     When I click on end user
     And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
+    And I click back to the application overview
     Then Wait for "end_user_document_download" to be present
     When I click on consignees
     And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
+    And I click back to the application overview
     Then Wait for "consignee_document_download" to be present
     When I submit the application
     And I click applications
@@ -85,13 +90,16 @@ Feature: I want to indicate the standard licence I want
     And I select "organisation" for where my goods are located
     And I select the site at position "1"
     And I click continue
+    When I click the back link
     And I click on end user
     And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
+    And I click back to the application overview
     Then Wait for "end_user_document_download" to be present
     When I click on consignees
     And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
+    And I click back to the application overview
     Then Wait for "consignee_document_download" to be present
     When I submit the application
     Then application is submitted
@@ -106,7 +114,8 @@ Feature: I want to indicate the standard licence I want
     And I click on ultimate end users
     And I click on the add button
     And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
-    And I click back link
+    And I click back to the application overview
+    And I click on ultimate end users
     Then "Attach" link is present
     When I click on attach a document
     And I upload a file "file_for_doc_upload_test_1.txt"
@@ -114,14 +123,14 @@ Feature: I want to indicate the standard licence I want
     And "Delete" link is present
     When I delete the third party document
     Then "Attach" link is present
-    When I click back link
+    When I click back to the application overview
     And I click on end user
     And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
-    And I click back link
-    And I click attach an end user document link
     And I upload a file "file_for_doc_upload_test_1.txt"
+    And I click back to the application overview
     Then Wait for "end_user_document_download" to be present
     When I delete the end user document
+    And I click back to the application overview
     Then The end user document has been deleted
 
   # Commented the below tests out as they do the same thing as the above. If there is an issue with consignee or third party documents not being able to download please uncomment out these tests.
@@ -132,7 +141,7 @@ Feature: I want to indicate the standard licence I want
 #    When I create a standard application
 #    And I click on consignees
 #    And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
-#    And I click back link
+#    And I click the back link
 #    And I click attach an consignee document link
 #    And I upload a file "file_for_doc_upload_test_1.txt"
 #    Then Wait for "consignee_document_download" to be present
@@ -146,7 +155,7 @@ Feature: I want to indicate the standard licence I want
 #    And I click on third parties
 #    And I click on the add button
 #    And I add an end user of sub_type: "agent", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
-#    And I click back link
+#    And I click the back link
 #    Then "Attach" link is present
 #    When I click on attach a document
 #    And I upload a file "file_for_doc_upload_test_1.txt"

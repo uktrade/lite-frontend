@@ -95,3 +95,9 @@ class TestCustomTags(TestCase):
         actual_value = ct.str_date('1990-12-23T16:56:19.000Z')
 
         self.assertEqual(actual_value, expected_value)
+
+    def test_classname(self):
+        expected_value = 'type'
+        actual_value = ct.classname(TestCase)
+
+        self.assertEqual(actual_value, expected_value)

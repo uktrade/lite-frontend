@@ -4,7 +4,6 @@ class AddEndUserAdvisoryPages:
         self.driver = driver
         self.add_new_address_button = 'a[href*="add"]'
         self.type_choices = "sub_type-"
-        self.back_to_overview_text = "Back to Application"  # link text
 
         self.nature_of_business = "nature_of_business"  # ID
         self.primary_contact_email = "contact_email"  # ID

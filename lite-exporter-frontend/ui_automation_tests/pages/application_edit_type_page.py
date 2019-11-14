@@ -4,7 +4,7 @@ class ApplicationEditTypePage:
         self.driver = driver
         self.minor_edits_radio_button = "edit-type-minor"
         self.major_edits_radio_button = "edit-type-major"
-        self.change_application_btn = '.govuk-button[type="submit"][value="submit"]'
+        self.change_application_btn = '.govuk-button[value="submit"]'
 
     def click_minor_edits_radio_button(self):
         self.driver.find_element_by_id(self.minor_edits_radio_button).click()

@@ -1,5 +1,6 @@
 from pytest_bdd import scenarios, when, then, parsers
 
+from shared import functions
 import shared.tools.helpers as utils
 from pages.application_countries_list import ApplicationCountriesList
 from pages.application_goods_list import ApplicationGoodsList
@@ -106,7 +107,7 @@ def assign_all(driver, assign_or_unassign):
         countries_page.select_all()
     else:
         countries_page.deselect_all()
-    Shared(driver).click_continue()
+    countries_page.click_save()
 
 
 @when(parsers.parse('I "{assign_or_unassign}" all countries to all goods with link'))
@@ -116,7 +117,7 @@ def assign_all_with_link(driver, assign_or_unassign):
         countries_page.select_all_link()
     else:
         countries_page.deselect_all_link()
-    Shared(driver).click_continue()
+    countries_page.click_save()
 
 
 @then(parsers.parse('I see all countries are "{assigned_or_unassigned}" to all goods'))

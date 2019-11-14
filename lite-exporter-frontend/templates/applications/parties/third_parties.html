@@ -3,14 +3,14 @@
 {% load svg %}
 
 {% block back_link %}
-	<a href="{% url 'applications:edit' application.id %}" class="govuk-back-link">Back to Application</a>
+	<a href="{% url 'applications:task_list' application.id %}" id="back-link" class="govuk-back-link">Back to task list</a>
 {% endblock %}
 
 {% block body %}
 
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
-			<h1 class="govuk-heading-l">{% block title %}{% get_string 'third_parties.title' %}{% endblock %}</h1>
+			<h1 class="govuk-heading-l">{% block title %}Third parties{% endblock %}</h1>
 		</div>
         {% if not application.status.value or application.status.key == 'applicant_editing' %}
 		<div class="lite-app-bar__controls">

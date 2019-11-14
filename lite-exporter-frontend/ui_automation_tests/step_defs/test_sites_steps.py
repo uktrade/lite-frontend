@@ -6,6 +6,8 @@ from pages.hub_page import Hub
 from pages.new_site_page import NewSite
 from pages.site_list_overview_page import SitesListOverview
 from pages.sites_page import SitesPage
+from pages.goods_locations_page import GoodsLocationsPage
+
 from ui_automation_tests.pages.shared import Shared
 
 scenarios('../features/sites.feature', strict_gherkin=False)
@@ -70,3 +72,9 @@ def assert_checkbox_at_position(driver, no, checked):
         assert sites_page.get_checked_attribute_of_sites_checkbox(int(no)-1) == 'true'
     elif checked == 'unchecked':
         assert sites_page.get_checked_attribute_of_sites_checkbox(int(no)-1) is not 'true'
+
+
+@when('I click edit sites button')
+def i_click_edit_sites_button(driver):
+    goods_locations_page = GoodsLocationsPage(driver)
+    goods_locations_page.click_edit_sites_button()

@@ -11,6 +11,7 @@ def register_organisation(driver, request, context, seed_data_config):
     context.first_name = lite_client.context['first_name']
     context.last_name = lite_client.context['last_name']
     context.org_name = lite_client.context['org_name']
+    context.org_id = lite_client.context['org_id']
     timer.print_time('register_organisation')
 
 

@@ -2,14 +2,14 @@ import os
 
 from pytest import fixture
 
+from shared import functions
 import shared.tools.helpers as utils
-from shared.tools.utils import get_lite_client
 from pages.add_goods_page import AddGoodPage
 from pages.application_goods_list import ApplicationGoodsList
 from pages.application_overview_page import ApplicationOverviewPage
 from pages.attach_document_page import AttachDocumentPage
 from pages.exporter_hub_page import ExporterHubPage
-from pages.shared import Shared
+from shared.tools.utils import get_lite_client
 
 
 def add_good_to_application(driver, context, lite_client):
@@ -26,7 +26,7 @@ def add_good_to_application(driver, context, lite_client):
     context.unit = 'Number of articles'
     context.value = '11'
     application_goods_list.add_values_to_good(str(context.value), str(context.value), context.unit)
-    driver.find_element_by_css_selector("button[type*='submit'][value='submit']").click()
+    functions.click_submit(driver)
     driver.get(url)
 
 
@@ -53,13 +53,12 @@ def create_non_incorporated_good(driver, request, context):
     exporter_hub.click_my_goods()
     add_goods_page = AddGoodPage(driver)
     add_goods_page.click_add_a_good()
-    exporter_hub = ExporterHubPage(driver)
     add_goods_page = AddGoodPage(driver)
     add_goods_page.enter_description_of_goods(good_name)
     add_goods_page.select_is_your_good_controlled("Yes")
     add_goods_page.select_is_your_good_intended_to_be_incorporated_into_an_end_product("No")
     add_goods_page.enter_control_code("ML1a")
-    exporter_hub.click_save_and_continue()
+    functions.click_submit(driver)
     context.file_to_be_deleted_name = 'file_for_doc_upload_test_2.txt'
     # Path gymnastics to get the absolute path for $PWD/../resources/(file_to_upload_x) that works everywhere
     file_to_upload_abs_path = \
@@ -74,4 +73,4 @@ def create_non_incorporated_good(driver, request, context):
     attach_document_page.choose_file(file_to_upload_abs_path)
     context.document_description = utils.get_formatted_date_time_m_d_h_s()
     attach_document_page.enter_description(context.document_description)
-    Shared(driver).click_continue()
+    functions.click_submit(driver)

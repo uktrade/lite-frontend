@@ -3,7 +3,7 @@
 {% load svg %}
 
 {% block back_link %}
-	<a href="{% url 'applications:edit' application.id %}" class="govuk-back-link">Back to overview</a>
+	<a href="{% url 'applications:task_list' application.id %}" id="back-link" class="govuk-back-link">Back to task list</a>
 {% endblock %}
 
 {% block body %}

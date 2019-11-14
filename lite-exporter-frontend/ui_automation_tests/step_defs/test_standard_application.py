@@ -1,5 +1,6 @@
 from pytest_bdd import scenarios, when, then, parsers
 
+from shared import functions
 from shared.tools.helpers import scroll_to_element_by_id
 from shared.tools.wait import wait_for_download_button, wait_for_element
 from pages.add_end_user_pages import AddEndUserPages
@@ -13,7 +14,7 @@ scenarios('../features/submit_standard_application.feature', strict_gherkin=Fals
 
 @when('I click back to the application overview')
 def i_click_on_application_overview(driver):
-    Shared(driver).click_back_link()
+    functions.click_back_link(driver)
 
 
 @then('good is added to application')
@@ -49,8 +50,7 @@ def i_click_on_application_overview(driver):
 
 @when('I click on back to overview')
 def i_go_to_the_overview(driver):
-    app = ApplicationOverviewPage(driver)
-    app.click_on_back_to_overview_text()
+    functions.click_back_link(driver)
 
 
 @when('I click on the add button')
@@ -63,7 +63,7 @@ def add_new_end_user_type(driver, type, context):
     add_end_user_pages = AddEndUserPages(driver)
     add_end_user_pages.select_type(type)
     context.type_end_user = type
-    add_end_user_pages.click_continue()
+    functions.click_submit(driver)
 
 
 @when(parsers.parse('I add end user of name: "{name}"'))
@@ -71,14 +71,14 @@ def add_new_end_user_name(driver, name, context):
     add_end_user_pages = AddEndUserPages(driver)
     add_end_user_pages.enter_name(name)
     context.name_end_user = name
-    add_end_user_pages.click_continue()
+    functions.click_submit(driver)
 
 
 @when(parsers.parse('I add end user of website "{website}"'))
 def add_new_end_user_website(driver, website):
     add_end_user_pages = AddEndUserPages(driver)
     add_end_user_pages.enter_website(website)
-    add_end_user_pages.click_continue()
+    functions.click_submit(driver)
 
 
 @when(parsers.parse('I add end user of address: "{address}" and country "{country}"'))
@@ -87,7 +87,7 @@ def add_new_end_user_address(driver, address, country, context):
     add_end_user_pages.enter_address(address)
     context.address_end_user = address
     add_end_user_pages.enter_country(country)
-    add_end_user_pages.click_continue()
+    functions.click_submit(driver)
 
 
 @when('I remove an ultimate end user so there is one less and return to the overview')
@@ -96,8 +96,7 @@ def i_remove_an_ultimate_end_user(driver):
     driver.find_element_by_link_text('Remove ultimate end user').click()
     total = no_of_ultimate_end_users - Shared(driver).get_size_of_table_rows()
     assert total == 1, "total on the ultimate end users summary is incorrect after removing ultimate end user"
-    app = ApplicationOverviewPage(driver)
-    app.click_on_back_to_overview_text()
+    functions.click_back_link(driver)
 
 
 @then('there is only one ultimate end user')
@@ -125,25 +124,6 @@ def click_add_to_application_button(driver, no, context):
     driver.find_elements_by_css_selector('a.govuk-button')[num].click()
 
 
-@when(parsers.parse(
-    'I add an end user of sub_type: "{type}", name: "{name}", website: "{website}", address: "{address}" and country "{'
-    'country}"'))
-def add_new_end_user(driver, type, name, website, address, country, context):
-    add_end_user_pages = AddEndUserPages(driver)
-    add_end_user_pages.select_type(type)
-    context.type_end_user = type
-    add_end_user_pages.click_continue()
-    add_end_user_pages.enter_name(name)
-    context.name_end_user = name
-    add_end_user_pages.click_continue()
-    add_end_user_pages.enter_website(website)
-    add_end_user_pages.click_continue()
-    add_end_user_pages.enter_address(address)
-    context.address_end_user = address
-    add_end_user_pages.enter_country(country)
-    add_end_user_pages.click_continue()
-
-
 @when('I click on end user')
 def i_click_on_end_user(driver):
     app = ApplicationOverviewPage(driver)
@@ -168,18 +148,12 @@ def click_attach_a_document(driver):
     ThirdPartyListPage(driver).click_on_attach_document(-1)
 
 
-@when("I click back link")
-def click_back_link(driver):
-    Shared(driver).click_back_link()
-
-
 @when('I delete the third party document')
 def delete_ultimate_end_user_document(driver):
     third_party = ThirdPartyListPage(driver)
     third_party.click_on_delete_document(-1)
     third_party.accept_delete_confirm()
-    shared = Shared(driver)
-    shared.click_continue()
+    functions.click_submit(driver)
 
 
 @then("Wait for download link")
@@ -209,8 +183,7 @@ def end_user_document_delete_is_present(driver):
     scroll_to_element_by_id(Shared(driver).driver, 'end_user_document_delete')
     ApplicationOverviewPage(driver).click_delete_end_user_document()
     ThirdPartyListPage(driver).accept_delete_confirm()
-    shared = Shared(driver)
-    shared.click_continue()
+    functions.click_submit(driver)
 
 
 @when("I delete the consignee document")
@@ -218,8 +191,7 @@ def consignee_document_delete_is_present(driver):
     scroll_to_element_by_id(Shared(driver).driver, 'consignee_document_delete')
     ApplicationOverviewPage(driver).click_delete_consignee_document()
     ThirdPartyListPage(driver).accept_delete_confirm()
-    shared = Shared(driver)
-    shared.click_continue()
+    functions.click_submit(driver)
 
 
 @then("The end user document has been deleted")

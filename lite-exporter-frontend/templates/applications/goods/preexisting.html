@@ -3,7 +3,7 @@
 {% load static svg %}
 
 {% block back_link %}
-	<a href="{% url 'applications:goods' draft_id %}" class="govuk-back-link">Back to Goods</a>
+	<a href="{% url 'applications:goods' draft_id %}" id="back-link" class="govuk-back-link">Back to Goods</a>
 {% endblock%}
 
 {% block body %}
@@ -90,6 +90,14 @@
 				</p>
 			</div>
 		{% endif %}
+	{% else %}
+		<div class="lite-information-text">
+			<span class="lite-information-text__icon" aria-hidden="true">!</span>
+			<p class="lite-information-text__text">
+				<span class="govuk-visually-hidden">Information</span>
+				Your organisation doesn't have any goods which are available to be used on an application.
+			</p>
+		</div>
 	{% endif %}
 
 {% endblock %}

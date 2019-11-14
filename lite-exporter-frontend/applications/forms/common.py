@@ -20,9 +20,9 @@ def respond_to_query_form(application_id, ecju_query):
                              }),
                     HiddenField(name='form_name', value='respond_to_query')
                 ],
-                back_link=BackLink('Back to application', reverse_lazy('applications:application-detail',
-                                                                       kwargs={'pk': application_id,
-                                                                               'type': 'ecju-queries'})),
+                back_link=BackLink(get_string('common.back_to_task_list'),
+                                   reverse_lazy('applications:application-detail',
+                                                kwargs={'pk': application_id, 'type': 'ecju-queries'})),
                 default_button_name='Submit response')
 
 
@@ -50,7 +50,7 @@ def edit_type_form(application_id):
                                             value=get_string('applications.edit.major.title'),
                                             description=get_string('applications.edit.major.description')),
                                  ])],
-                back_link=BackLink('Back to application', reverse_lazy('applications:application-detail',
-                                                                       kwargs={'pk': application_id,
-                                                                               'type': 'ecju-queries'})),
+                back_link=BackLink(get_string('common.back_to_task_list'),
+                                   reverse_lazy('applications:application-detail',
+                                                kwargs={'pk': application_id, 'type': 'ecju-queries'})),
                 default_button_name='Continue')

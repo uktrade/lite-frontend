@@ -1,0 +1,98 @@
+{% extends 'layouts/two_pane.html' %}
+
+{% load svg %}
+
+{% block back_link %}
+<a href="{% url 'core:hub' %}" id="back-link" class="govuk-back-link">Back to hub</a>
+{% endblock %}
+
+{% block two_thirds %}
+
+	{% if show_error %}
+		 <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+			<h2 class="govuk-error-summary__title" id="error-summary-title">
+				There is a problem
+			</h2>
+			<div class="govuk-error-summary__body">
+				<ul class="govuk-list govuk-error-summary__list">
+					<li>
+						<a href="#">Select an organisation to raise a query for</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	{% endif %}
+
+	<legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+		<h1 class="govuk-fieldset__heading">
+			{% block title %}Which organisation are you enquiring about?{% endblock %}
+		</h1>
+	</legend>
+	<span class="govuk-hint" style="margin: 30px 0;">
+		Write the name or company registration number of the organisation in the search box.
+	</span>
+    <form method="get" class="govuk-!-margin-bottom-6">
+		<div class="lite-search__container">
+		    <input type="search" name="search_term" class="govuk-input" name="search" id="search" value="{{ params.search_term }}" placeholder="Search organisations" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+            <button class="lite-search__button" type="submit">
+				{% svg 'search' %}
+				<span>Search</span>
+			</button>
+	    </div>
+    </form>
+
+	{% if organisations.results|length and params.search_term %}
+		<form method="post">
+            {% csrf_token %}
+			<div class="govuk-form-group {% if show_error %}govuk-form-group--error{% endif %}">
+				{% if show_error %}
+					<span id="passport-issued-error" class="govuk-error-message">
+						<span class="govuk-visually-hidden">Error:</span> Select an organisation to raise a query for
+					</span>
+				{% endif %}
+				<div class="govuk-radios">
+					{% for organisation in organisations.results %}
+						<div class="govuk-radios__item">
+							<input class="govuk-radios__input" id="organisation-{{ organisation.id }}" name="organisation" type="radio" value="{{ organisation.id }}">
+							<label class="govuk-label govuk-radios__label" for="organisation-{{ organisation.id }}">
+								{{ organisation.name|highlight_text:params.search_term }}
+							</label>
+							<span id="sign-in-item-hint" class="govuk-hint govuk-radios__hint">
+								{{ organisation.registration_number|highlight_text:params.search_term }}<br>
+								{{ organisation.type.value }}
+							</span>
+						</div>
+					{% endfor %}
+				</div>
+			</div>
+
+		    {% if data.total_pages > 1 %}
+		        <br>
+
+		        <div class="lite-pagination__container ">
+		            {% for i in data.total_pages|times %}
+		                <a href="{% url 'raise_hmrc_query:select_organisation' %}?{{ params_str }}&page={{ i }}" class="lite-pagination__item {% if page == i %}lite-pagination__item--selected{% endif %}" id="page-{{ i }}">
+		                    {{ i }}
+		                </a>
+		            {% endfor %}
+		        </div>
+		    {% endif %}
+
+			<button class="govuk-button" name="action" value="continue" data-module="govuk-button">
+				Continue
+			</button>
+		</form>
+	{% elif params.search_term %}
+		<div class="lite-information-text">
+			<span class="lite-information-text__icon" aria-hidden="true">!</span>
+			<p class="lite-information-text__text">
+				<span class="govuk-visually-hidden">Information</span>
+				There are no organisations to show.<br>
+				<a class="govuk-link govuk-link--no-visited-state" href="{{ INTERNAL_URL }}/organisations/register/">
+					You can register an organisation on LITE
+				</a>
+			</p>
+		</div>
+	{% endif %}
+
+{% endblock %}

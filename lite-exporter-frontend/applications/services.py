@@ -3,7 +3,7 @@ from http import HTTPStatus
 from conf.client import get, post, put, delete
 from conf.constants import APPLICATIONS_URL, END_USER_DOCUMENT_URL, ULTIMATE_END_USER_URL, DOCUMENT_URL, \
     CONSIGNEE_URL, THIRD_PARTIES_URL, CONSIGNEE_DOCUMENT_URL, APPLICATION_SUBMIT_URL, ADDITIONAL_DOCUMENT_URL, \
-    CASES_URL, CASE_NOTES_URL, ECJU_QUERIES_URL, MANAGE_STATUS_URL
+    CASES_URL, CASE_NOTES_URL, ECJU_QUERIES_URL, MANAGE_STATUS_URL, GOODSTYPE_URL, GOODSTYPES_URL, GOODSTYPE_COUNTRY_URL
 from conf.settings import AWS_STORAGE_BUCKET_NAME, STREAMING_CHUNK_SIZE
 from django.http import StreamingHttpResponse
 from s3chunkuploader.file_handler import s3_client
@@ -13,26 +13,26 @@ from core.helpers import remove_prefix
 
 def get_draft_applications(request):
     data = get(request, APPLICATIONS_URL + '?submitted=false')
-    return data.json().get('applications') if data.status_code == HTTPStatus.OK else None
+    return data.json()
 
 
 def get_applications(request):
     data = get(request, APPLICATIONS_URL + '?submitted=true')
-    return data.json().get('applications') if data.status_code == HTTPStatus.OK else None
+    return data.json()
 
 
 def get_application(request, pk):
-    data = get(request, APPLICATIONS_URL + pk)
-    return data.json().get('application') if data.status_code == HTTPStatus.OK else None
+    data = get(request, APPLICATIONS_URL + str(pk))
+    return data.json()
 
 
-def post_application(request, json):
+def post_applications(request, json):
     data = post(request, APPLICATIONS_URL, json)
     return data.json(), data.status_code
 
 
 def put_application(request, pk, json):
-    data = put(request, APPLICATIONS_URL + pk + '/', json)
+    data = put(request, APPLICATIONS_URL + str(pk), json)
     return data.json(), data.status_code
 
 
@@ -42,7 +42,7 @@ def delete_application(request, pk):
 
 
 def submit_application(request, pk):
-    data = put(request, APPLICATIONS_URL + pk + APPLICATION_SUBMIT_URL, json={})
+    data = put(request, APPLICATIONS_URL + str(pk) + APPLICATION_SUBMIT_URL, json={})
     return data.json(), data.status_code
 
 
@@ -92,7 +92,7 @@ def post_application_countries(request, pk, json):
 
 # End User
 def post_end_user(request, pk, json):
-    data = post(request, APPLICATIONS_URL + pk + '/end-user/', json)
+    data = post(request, APPLICATIONS_URL + str(pk) + '/end-user/', json)
     return data.json(), data.status_code
 
 
@@ -128,24 +128,24 @@ def post_ultimate_end_user(request, pk, json):
     return data.json(), data.status_code
 
 
-def delete_ultimate_end_user(request, pk, ueu_pk):
-    data = delete(request, APPLICATIONS_URL + pk + '/ultimate-end-users/' + ueu_pk)
+def delete_ultimate_end_user(request, pk, obj_pk):
+    data = delete(request, APPLICATIONS_URL + pk + '/ultimate-end-users/' + obj_pk)
     return data.json(), data.status_code
 
 
 # Ultimate end user Documents
-def get_ultimate_end_user_document(request, pk, ueu_pk):
-    data = get(request, APPLICATIONS_URL + pk + ULTIMATE_END_USER_URL + ueu_pk + DOCUMENT_URL)
+def get_ultimate_end_user_document(request, pk, obj_pk):
+    data = get(request, APPLICATIONS_URL + pk + ULTIMATE_END_USER_URL + str(obj_pk) + DOCUMENT_URL)
     return data.json(), data.status_code
 
 
-def post_ultimate_end_user_document(request, pk, ueu_pk, json):
-    data = post(request, APPLICATIONS_URL + pk + ULTIMATE_END_USER_URL + ueu_pk + DOCUMENT_URL, json)
+def post_ultimate_end_user_document(request, pk, obj_pk, json):
+    data = post(request, APPLICATIONS_URL + pk + ULTIMATE_END_USER_URL + str(obj_pk) + DOCUMENT_URL, json)
     return data.json(), data.status_code
 
 
-def delete_ultimate_end_user_document(request, pk, ueu_pk):
-    data = delete(request, APPLICATIONS_URL + pk + ULTIMATE_END_USER_URL + ueu_pk + DOCUMENT_URL)
+def delete_ultimate_end_user_document(request, pk, obj_pk):
+    data = delete(request, APPLICATIONS_URL + pk + ULTIMATE_END_USER_URL + str(obj_pk) + DOCUMENT_URL)
     return data.status_code
 
 
@@ -160,30 +160,30 @@ def post_third_party(request, pk, json):
     return data.json(), data.status_code
 
 
-def delete_third_party(request, pk, tp_pk):
-    data = delete(request, APPLICATIONS_URL + pk + THIRD_PARTIES_URL + tp_pk)
+def delete_third_party(request, pk, obj_pk):
+    data = delete(request, APPLICATIONS_URL + pk + THIRD_PARTIES_URL + obj_pk)
     return data.status_code
 
 
 # Third party Documents
-def get_third_party_document(request, pk, tp_pk):
-    data = get(request, APPLICATIONS_URL + pk + THIRD_PARTIES_URL + tp_pk + DOCUMENT_URL)
+def get_third_party_document(request, pk, obj_pk):
+    data = get(request, APPLICATIONS_URL + str(pk) + THIRD_PARTIES_URL + str(obj_pk) + DOCUMENT_URL)
     return data.json(), data.status_code
 
 
-def post_third_party_document(request, pk, tp_pk, json):
-    data = post(request, APPLICATIONS_URL + pk + THIRD_PARTIES_URL + tp_pk + DOCUMENT_URL, json)
+def post_third_party_document(request, pk, obj_pk, json):
+    data = post(request, APPLICATIONS_URL + str(pk) + THIRD_PARTIES_URL + str(obj_pk) + DOCUMENT_URL, json)
     return data.json(), data.status_code
 
 
-def delete_third_party_document(request, pk, tp_pk):
-    data = delete(request, APPLICATIONS_URL + pk + THIRD_PARTIES_URL + tp_pk + DOCUMENT_URL)
+def delete_third_party_document(request, pk, obj_pk):
+    data = delete(request, APPLICATIONS_URL + str(pk) + THIRD_PARTIES_URL + str(obj_pk) + DOCUMENT_URL)
     return data.status_code
 
 
 # Consignee
 def post_consignee(request, pk, json):
-    data = post(request, APPLICATIONS_URL + pk + CONSIGNEE_URL, json)
+    data = post(request, APPLICATIONS_URL + str(pk) + CONSIGNEE_URL, json)
     return data.json(), data.status_code
 
 
@@ -220,12 +220,12 @@ def get_additional_documents(request, pk):
 
 
 def get_additional_document(request, pk, doc_pk):
-    data = get(request, APPLICATIONS_URL + pk + ADDITIONAL_DOCUMENT_URL + doc_pk + '/')
+    data = get(request, APPLICATIONS_URL + pk + ADDITIONAL_DOCUMENT_URL + str(doc_pk) + '/')
     return data.json(), data.status_code
 
 
 def delete_additional_party_document(request, pk, doc_pk):
-    data = delete(request, APPLICATIONS_URL + pk + ADDITIONAL_DOCUMENT_URL + doc_pk + '/')
+    data = delete(request, APPLICATIONS_URL + pk + ADDITIONAL_DOCUMENT_URL + str(doc_pk) + '/')
     return data.status_code
 
 
@@ -309,3 +309,38 @@ def download_document_from_s3(s3_key, original_file_name):
     response = StreamingHttpResponse(generate_file(s3_response), **_kwargs)
     response['Content-Disposition'] = f'attachment; filename="{original_file_name}"'
     return response
+
+# Goods Types
+def get_goods_type(request, app_pk, good_pk):
+    data = get(request, APPLICATIONS_URL + app_pk + GOODSTYPE_URL + good_pk + '/')
+    return data.json(), data.status_code
+
+
+def post_goods_type(request, app_pk, json):
+    data = post(request, APPLICATIONS_URL + app_pk + GOODSTYPES_URL, json)
+    return data.json(), data.status_code
+
+
+def delete_goods_type(request, app_pk, good_pk):
+    data = delete(request, APPLICATIONS_URL + app_pk + GOODSTYPE_URL + good_pk + "/")
+    return data.status_code
+
+
+def post_goods_type_countries(request, app_pk, good_pk, json):
+    data = put(request, APPLICATIONS_URL + app_pk + GOODSTYPE_URL + good_pk + GOODSTYPE_COUNTRY_URL, json)
+    return data.json(), data.status_code
+
+
+def get_goods_type_document(request, pk, good_pk):
+    data = get(request, APPLICATIONS_URL + pk + GOODSTYPE_URL + str(good_pk) + DOCUMENT_URL)
+    return data.json(), data.status_code
+
+
+def post_goods_type_document(request, pk, good_pk, json):
+    data = post(request, APPLICATIONS_URL + pk + GOODSTYPE_URL + str(good_pk) + DOCUMENT_URL, json)
+    return data.json(), data.status_code
+
+
+def delete_goods_type_document(request, pk, good_pk):
+    data = delete(request, APPLICATIONS_URL + pk + GOODSTYPE_URL + str(good_pk) + DOCUMENT_URL)
+    return data.status_code

@@ -1,5 +1,6 @@
 from pytest_bdd import when, then, given, parsers, scenarios
 
+from shared import functions
 from pages.application_page import ApplicationPage
 from pages.exporter_hub_page import ExporterHubPage
 from pages.respond_to_ecju_query_page import RespondToEcjuQueryPage
@@ -45,7 +46,7 @@ def click_ecju_query_tab(driver):
 def respond_to_query(driver, response):
     response_page = RespondToEcjuQueryPage(driver)
     response_page.enter_form_response(response)
-    Shared(driver).click_continue()
+    functions.click_submit(driver)
 
 
 @when(parsers.parse('I select "{value}" for submitting response and click submit'))

@@ -1,22 +1,16 @@
 from http import HTTPStatus
 
+from core.helpers import convert_parameters_to_query_params
 from lite_forms.components import Option
 
 from conf.client import get, post, put, delete
 from conf.constants import UNITS_URL, APPLICATIONS_URL, COUNTRIES_URL, EXTERNAL_LOCATIONS_URL, NOTIFICATIONS_URL, \
-    ORGANISATIONS_URL, CASES_URL, CONTROL_LIST_ENTRIES_URL
+    ORGANISATIONS_URL, CASES_URL, CONTROL_LIST_ENTRIES_URL, NEWLINE
 
 
 def get_units(request):
-    data = get(request, UNITS_URL).json()
-    converted_units = []
-
-    for key, value in data.get('units').items():
-        converted_units.append(
-            Option(key, value)
-        )
-
-    return converted_units
+    data = get(request, UNITS_URL).json().get('units')
+    return [Option(key, value) for key, value in data.items()]
 
 
 def get_countries(request, convert_to_options=False):
@@ -47,8 +41,8 @@ def get_external_locations(request, pk, formatted=False):
         for external_location in data.json().get('external_locations'):
             external_location_id = external_location.get('id')
             external_location_name = external_location.get('name')
-            external_location_address = external_location.get('address') + '\n' + \
-                                        external_location.get('country')
+            external_location_address = external_location.get('address') + NEWLINE + \
+                                        external_location.get('country').get('name')
 
             external_locations_options.append(
                 Option(external_location_id, external_location_name, description=external_location_address)
@@ -88,8 +82,23 @@ def get_notifications(request, unviewed):
 
 
 # Organisation
+def get_organisations(request, page: int = 0, search_term=None, org_type=None):
+    """
+    Returns a list of organisations
+    :param request: Standard HttpRequest object
+    :param page: Returns n page of page results
+    :param search_term: Filter by name
+    :param org_type: Filter by org type - 'hmrc', 'commercial', 'individual', or an array of it
+    """
+    data = get(request, ORGANISATIONS_URL + convert_parameters_to_query_params(locals()))
+    return data.json()
+
+
 def get_organisation(request, pk):
-    data = get(request, ORGANISATIONS_URL + pk)
+    """
+    Returns an organisation
+    """
+    data = get(request, ORGANISATIONS_URL + str(pk))
     return data.json()
 
 
