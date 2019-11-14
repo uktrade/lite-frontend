@@ -276,7 +276,7 @@ class Finalise(TemplateView):
 
     def get(self, request, *args, **kwargs):
         case = get_case(request, str(kwargs['pk']))
-        standard = case['application']['licence_type']['key'] == 'standard_licence'
+        standard = case['application']['application_type']['key'] == 'standard_licence'
         if standard:
             advice, _ = get_final_case_advice(request, str(kwargs['pk']))
             data = advice['advice']

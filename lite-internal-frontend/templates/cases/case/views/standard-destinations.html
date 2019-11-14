@@ -1,4 +1,4 @@
-{% with end_user=case.application.destinations.data %}
+{% with end_user=case.application|get_end_user %}
 	<h3 class="govuk-heading-m">End User</h3>
 	<table class="govuk-table" id="end-user">
 		<thead class="govuk-table__head">

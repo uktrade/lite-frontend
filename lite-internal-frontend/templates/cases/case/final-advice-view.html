@@ -37,7 +37,7 @@
                                     Clear advice
                                 </button>
                                 {% if able_to_finalize %}
-                                    {% if case.application.licence_type.key == 'open_licence' %}
+                                    {% if case.application.application_type.key == 'open_licence' %}
                                         <a class="govuk-button"  href="{% url 'cases:finalise_goods_countries' case.id %}" id="finalise_button">
                                             Finalise goods and countries
                                         </a>

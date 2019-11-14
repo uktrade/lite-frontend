@@ -34,12 +34,13 @@
 	            <label class="govuk-label" for="status">
 	                Filter by name
 	            </label>
-	            <div class="lite-search-wrapper">
-	                <div class="lite-search-icon">
-	                    {% svg 'search' %}
-	                </div>
-	                <input type="search" name="name" class="govuk-input" name="filter-box" id="filter-box" value="{{ params.name }}" placeholder="Search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-	    	    </div>
+				<div class="lite-search__container">
+				    <input type="search" name="name" class="govuk-input" name="filter-box" id="filter-box" value="{{ params.name }}" placeholder="Search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+				    <button class="lite-search__button lite-search__button--instant-search" type="submit">
+				        {% svg 'search' %}
+				        <span>Search</span>
+				    </button>
+				</div>
 	        </div>
 	        <div class="govuk-grid-column-one-quarter">
 	            <label class="govuk-label" for="case_type">

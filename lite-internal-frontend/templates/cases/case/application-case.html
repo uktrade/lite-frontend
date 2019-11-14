@@ -20,7 +20,7 @@
 
 <div class="lite-app-bar">
 	<div class="lite-app-bar__content">
-		<p class="govuk-caption-m" style="margin: 0;">{{ case.application.licence_type.value }}</p>
+		<p class="govuk-caption-m" style="margin: 0;">{{ case.application.application_type.value }}</p>
 		<h2 class="govuk-heading-l">{{ title }}</h2>
 		<p class="govuk-caption-m">Application by <a id="applicant_organisation" class="govuk-link govuk-link--no-visited-state" style="display: inline-block;" href="{% url 'organisations:organisation' case.application.organisation.id %}">{{ case.application.organisation.name }}</a></p>
 	</div>
@@ -85,7 +85,7 @@
 {% endif %}
 
 <!-- Goods -->
-{% if case.application.licence_type.key == 'open_licence' %}
+{% if case.application.application_type.key == 'open_licence' %}
     <form action="{% url 'cases:assign_flags' case.id %}" method="get">
         <input type="hidden" name="level" value="goods"/>
         <button id="button-edit-goods-flags" value="goods" class="govuk-button" data-module="govuk-button">
@@ -93,7 +93,7 @@
         </button>
         {% include 'cases/case/views/accordion-open-goods.html' with show_checkboxes=True %}
     </form>
-{% elif case.application.licence_type.key == 'standard_licence' %}
+{% elif case.application.application_type.key == 'standard_licence' %}
     <form action="{% url 'cases:review_goods' case.id %}" method="get">
     {% if 'REVIEW_GOODS' in permissions %}
         <button id="button-review-goods" name="action" value="review-goods" class="govuk-button" data-module="govuk-button">
@@ -107,12 +107,11 @@
     </form>
 {% endif %}
 
-
 <!-- Destinations/End-User -->
-{% if case.application.licence_type.key == 'open_licence' %}
+{% if case.application.application_type.key == 'open_licence' %}
 	{% include 'cases/case/views/open-destinations.html' %}
 {% endif %}
-{% if case.application.licence_type.key == 'standard_licence' %}
+{% if case.application.application_type.key == 'standard_licence' %}
 	{% include 'cases/case/views/standard-destinations.html' %}
 {% endif %}
 

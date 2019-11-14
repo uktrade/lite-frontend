@@ -1,16 +1,16 @@
-class DocumentsPage():
+class DocumentsPage:
 
     def __init__(self, driver):
         self.driver = driver
-        self.attach_docs_btn = '.govuk-button[href*="cases"]'  # css
-        self.doc_description = '//div[@class="lite-card lite-card--download"]/div[1]/p[@class="govuk-body"]'  # xpath
-        self.doc_filename = '//div[@class="lite-card lite-card--download"]/div[1]/p[@class="govuk-body govuk-!-font-weight-bold"]'  # xpath
+        self.attach_docs_button = "button-attach-document"  # ID
+        self.doc_description = 'tbody tr td:nth-of-type(1)'  # CSS
+        self.doc_filename = 'tbody tr th'  # CSS
 
     def click_attach_documents(self):
-        return self.driver.find_element_by_css_selector(self.attach_docs_btn).click()
+        return self.driver.find_element_by_id(self.attach_docs_button).click()
 
     def get_document_description_at_position(self, position: int):
-        return self.driver.find_elements_by_xpath(self.doc_description)[position].text
+        return self.driver.find_elements_by_css_selector(self.doc_description)[position].text
 
     def get_document_filename_at_position(self, position: int):
-        return self.driver.find_elements_by_xpath(self.doc_filename)[position].text
+        return self.driver.find_elements_by_css_selector(self.doc_filename)[position].text

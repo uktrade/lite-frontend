@@ -6,43 +6,51 @@
 	<a href="{% url 'cases:case' case.id %}" class="govuk-back-link">{% get_string 'cases.back_to_case' %}</a>
 {% endblock %}
 
-
 {% block body %}
 
-<div class="lite-app-bar">
-	<h2 class="govuk-heading-l">{{ title }}</h2>
-	<div class="lite-app-bar--right">
-		<a role="button" draggable="false" class="govuk-button {% if documents %}govuk-button--secondary{% endif %}" href="{% url 'cases:attach_documents' case.id %}">
-			{% get_string 'cases.manage.documents.attach_documents.button' %}
-		</a>
-	</div>
-</div>
-
-{% if case_documents %}
-	<p class="govuk-caption-m">{% get_string 'cases.manage.documents.description' %}</p>
-	{% for document in case_documents %}
-		<div class="lite-card lite-card--download">
-			<div>
-				<p class="govuk-body govuk-!-font-weight-bold" style="margin-bottom: 10px;">{{ document.name }}</p>
-				<p class="govuk-body" style="margin-bottom: 10px;">{{ document.description }}</p>
-				<p class="govuk-caption-m" style="margin: 0;">Uploaded by {{ document.user.first_name }} {{ document.user.last_name }} at {{ document.created_at|str_date }}</p>
-			</div>
-			<div class="lite-vertical-align">
-				{% if document.safe == True %}
-					<a class="govuk-link lite-link--icon govuk-link--no-visited-state" href="{% url 'cases:document' case.id document.metadata_id %}">
-						<span class="govuk-visually-hidden">{% get_string 'cases.manage.documents.download_document' %}</span>
-						{% svg 'download' %}
-				</a>
-				{% elif document.safe == False %}
-					<p class="govuk-label" style="margin: 0;color:red;">{% get_string 'cases.manage.documents.virus_infected' %}</p>
-				{% else %}
-					<p class="govuk-label" style="margin: 0;">{% get_string 'cases.manage.documents.processing' %}</p>
-				{% endif %}
-			</div>
+	<div class="lite-app-bar">
+		<h2 class="govuk-heading-l">{{ title }}</h2>
+		<div class="lite-app-bar--right">
+			<a id="button-attach-document" role="button" draggable="false" class="govuk-button {% if documents %}govuk-button--secondary{% endif %}" href="{% url 'cases:attach_documents' case.id %}">
+				{% get_string 'cases.manage.documents.attach_documents.button' %}
+			</a>
 		</div>
-	{% endfor %}
-{% else %}
-	<p class="govuk-caption-l">{% get_string 'cases.manage.documents.case_has_no_documents' %}</p>
-{% endif %}
+	</div>
+
+	{% if case_documents %}
+		<p class="govuk-caption-m">{% get_string 'cases.manage.documents.description' %}</p>
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th scope="col" class="govuk-table__header">Name</th>
+					<th scope="col" class="govuk-table__header">Description</th>
+					<th scope="col" class="govuk-table__header">Uploaded by</th>
+					<th scope="col" class="govuk-table__header"></th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				{% for document in case_documents %}
+					<tr class="govuk-table__row">
+						<th scope="row" class="govuk-table__header">{{ document.name }}</th>
+						<td class="govuk-table__cell">{{ document.description }}</td>
+						<td class="govuk-table__cell">{{ document.user.first_name }} {{ document.user.last_name }} at {{ document.created_at|str_date }}</td>
+						<td class="govuk-table__cell">
+							{% if document.safe == True %}
+								<a class="govuk-link lite-link--icon govuk-link--no-visited-state" href="{% url 'cases:document' case.id document.metadata_id %}">
+									Download
+								</a>
+							{% elif document.safe == False %}
+								<p class="govuk-label">Infected</p>
+							{% else %}
+								<p class="govuk-label">Processing</p>
+							{% endif %}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		<p class="govuk-caption-l">{% get_string 'cases.manage.documents.case_has_no_documents' %}</p>
+	{% endif %}
 
 {% endblock %}

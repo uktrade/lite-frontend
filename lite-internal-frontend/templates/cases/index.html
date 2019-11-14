@@ -135,10 +135,10 @@
                         </td>
                         <td class="cases-table__cell">
                             <a class="govuk-link govuk-!-font-weight-bold" href="{% url 'cases:case' case.id %}?queue_id={{data.results.queue.id}}&queue_name={{data.results.queue.name}}">
-                                {% if 'query' in case.type.key %}
-                                    {{ case.query.id }}
+								{% if case.type.key == 'application' or case.type.key == 'hmrc_query' %}
+								    {{ case.id }}
                                 {% else %}
-                                    {{ case.id }}
+									{{ case.query.id }}
                                 {% endif %}
                             </a>
                             <p class="govuk-body" style="opacity: .7; magin: 0;">

@@ -1,4 +1,4 @@
-@internal @departments
+@internal @teams
 Feature: I want to add departments
   As a logged in government user
   I want to add departments

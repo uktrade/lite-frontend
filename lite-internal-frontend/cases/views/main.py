@@ -92,6 +92,8 @@ class ViewCase(TemplateView):
         elif case['type']['key'] == 'clc_query':
             context['good'] = case['query']['good']
             return render(request, 'cases/case/queries/clc-query-case.html', context)
+        elif case.get('application').get('application_type').get('key') == 'hmrc_query':
+            return render(request, 'cases/case/hmrc-case.html', context)
         elif case['type']['key'] == 'application':
             context['title'] = case.get('application').get('name')
             context['notification'] = get_user_case_notification(request, case_id)
@@ -147,6 +149,8 @@ class ManageCase(TemplateView):
 
         if case['type']['key'] == 'application':
             title = 'Manage ' + case.get('application').get('name')
+        elif case['type']['key'] == 'hmrc_query':
+            title = 'Manage HMRC query'
         elif case['query']['end_user']:
             title = 'Manage End User Advisory'
         else:
@@ -163,7 +167,7 @@ class ManageCase(TemplateView):
         case_id = str(kwargs['pk'])
         case = get_case(request, case_id)
 
-        if case['type']['key'] == 'application':
+        if case['type']['key'] == 'application' or case['type']['key'] == 'hmrc_query':
             application_id = case.get('application').get('id')
             put_application_status(request, application_id, request.POST)
         elif case['type']['key'] == 'end_user_advisory_query':

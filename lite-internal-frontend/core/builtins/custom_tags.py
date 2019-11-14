@@ -180,3 +180,10 @@ def get_first_country_from_first_good(dictionary: dict):
     Returns the first key in a dictionary
     """
     return list(dictionary)[0] + '.' + next(iter(dictionary.values()))[0]
+
+
+@register.filter()
+def get_end_user(application: dict):
+    if application.get('end_user'):
+        return application.get('end_user')
+    return application.get('destinations').get('data')
