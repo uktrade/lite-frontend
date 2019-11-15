@@ -43,7 +43,7 @@ def remove_unused_errors(errors, form):
         return {}
 
     for question in form.questions:
-        if hasattr(question, 'name') and errors.get(question.name):
+        if hasattr(question, "name") and errors.get(question.name):
             cleaned_errors[question.name] = errors.get(question.name)
 
     return cleaned_errors
@@ -79,7 +79,7 @@ def nest_data(sent_data):
     return data
 
 
-def flatten_data(d, parent_key='', sep='.'):
+def flatten_data(d, parent_key="", sep="."):
     """
     Flattens dictionaries eg
     {
