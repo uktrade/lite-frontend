@@ -5,25 +5,25 @@ from helpers.BasePage import BasePage
 class Shared(BasePage):
 
     submit_button = '.govuk-button[type*="submit"]'  # CSS
-    error_message = '.govuk-error-message'  # CSS
-    lite_table = '.govuk-table'  # CSS
-    lite_table_body = '.govuk-table__body'  # CSS
-    lite_table_row = '.govuk-table__body .govuk-table__row'  # CSS
-    lite_table_cell = '.govuk-table__body .govuk-table__cell'  # CSS
-    lite_table_cell_no_body = '.govuk-table__cell'  # CSS
-    govuk_table_body = '.govuk-table__body'  # CSS
-    govuk_caption = '.govuk-caption-l'  # CSS
-    selected_tab = '.lite-tabs__tab--selected'  # CSS
-    body = 'body'  # CSS
-    links_in_table = '.govuk-table td a'
-    rows_in_cases_table = '.govuk-table__body .govuk-table__row'  # CSS
-    h1 = 'h1'  # CSS
-    h2 = 'h2'  # CSS
-    links_in_lite_table = '.govuk-table__cell a'  # CSS
-    govuk_panel_body = '.govuk-panel__body'  # CSS
-    back_link = '.govuk-back-link'  # CSS
-    info_bar = '.lite-info-bar'  # CSS
-    info_board = '.lite-information-board'  # CSS
+    error_message = ".govuk-error-message"  # CSS
+    lite_table = ".govuk-table"  # CSS
+    lite_table_body = ".govuk-table__body"  # CSS
+    lite_table_row = ".govuk-table__body .govuk-table__row"  # CSS
+    lite_table_cell = ".govuk-table__body .govuk-table__cell"  # CSS
+    lite_table_cell_no_body = ".govuk-table__cell"  # CSS
+    govuk_table_body = ".govuk-table__body"  # CSS
+    govuk_caption = ".govuk-caption-l"  # CSS
+    selected_tab = ".lite-tabs__tab--selected"  # CSS
+    body = "body"  # CSS
+    links_in_table = ".govuk-table td a"
+    rows_in_cases_table = ".govuk-table__body .govuk-table__row"  # CSS
+    h1 = "h1"  # CSS
+    h2 = "h2"  # CSS
+    links_in_lite_table = ".govuk-table__cell a"  # CSS
+    govuk_panel_body = ".govuk-panel__body"  # CSS
+    back_link = ".govuk-back-link"  # CSS
+    info_bar = ".lite-info-bar"  # CSS
+    info_board = ".lite-information-board"  # CSS
 
     def click_submit(self):
         self.driver.find_element_by_css_selector(self.submit_button).click()
@@ -95,7 +95,7 @@ class Shared(BasePage):
         # Requires that each row have the ID 'row-x' where x is it's index starting from 1
         edit_buttons = self.driver.find_elements_by_css_selector(self.lite_table_row)
         row_index = str(len(edit_buttons))
-        scroll_to_element_by_id(self.driver, 'row-'+row_index)
+        scroll_to_element_by_id(self.driver, "row-" + row_index)
 
     def info_board_is_displayed(self):
         return self.driver.find_element_by_css_selector(self.info_board).is_displayed()

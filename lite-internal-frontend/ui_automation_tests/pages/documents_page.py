@@ -1,10 +1,9 @@
 class DocumentsPage:
-
     def __init__(self, driver):
         self.driver = driver
         self.attach_docs_button = "button-attach-document"  # ID
-        self.doc_description = 'tbody tr td:nth-of-type(1)'  # CSS
-        self.doc_filename = 'tbody tr th'  # CSS
+        self.doc_description = "tbody tr td:nth-of-type(1)"  # CSS
+        self.doc_filename = "tbody tr th"  # CSS
 
     def click_attach_documents(self):
         return self.driver.find_element_by_id(self.attach_docs_button).click()

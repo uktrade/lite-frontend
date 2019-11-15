@@ -4,7 +4,6 @@ import time
 
 
 class UsersPage:
-
     def __init__(self, driver):
         self.driver = driver
         self.submit_button = "button[type*='submit']"
@@ -38,7 +37,8 @@ class UsersPage:
 
     def click_edit_for_user(self, user_name):
         element = self.driver.find_element_by_xpath(
-            "//*[text()[contains(.,'" + user_name + "')]]/following-sibling::td[last()]/a")
+            "//*[text()[contains(.,'" + user_name + "')]]/following-sibling::td[last()]/a"
+        )
         actions = ActionChains(self.driver)
         actions.move_to_element(element).perform()
         time.sleep(1)

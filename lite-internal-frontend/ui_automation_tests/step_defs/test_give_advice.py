@@ -7,13 +7,13 @@ from pages.give_advice_pages import GiveAdvicePages
 from pages.record_decision_page import RecordDecision
 from pages.shared import Shared
 
-scenarios('../features/give_advice.feature', strict_gherkin=False)
+scenarios("../features/give_advice.feature", strict_gherkin=False)
 
 
 @given("I create a proviso picklist")
 def i_create_an_proviso_picklist(context, add_a_proviso_picklist):
-    context.proviso_picklist_name = add_a_proviso_picklist['name']
-    context.proviso_picklist_question_text = add_a_proviso_picklist['text']
+    context.proviso_picklist_name = add_a_proviso_picklist["name"]
+    context.proviso_picklist_question_text = add_a_proviso_picklist["text"]
 
 
 @when(parsers.parse('I select decision "{number}"'))
@@ -25,8 +25,8 @@ def select_decision(driver, number, context):
 
 @given("I create a standard advice picklist")
 def i_create_an_standard_advice_picklist(context, add_a_standard_advice_picklist):
-    context.standard_advice_query_picklist_name = add_a_standard_advice_picklist['name']
-    context.standard_advice_query_picklist_question_text = add_a_standard_advice_picklist['text']
+    context.standard_advice_query_picklist_name = add_a_standard_advice_picklist["name"]
+    context.standard_advice_query_picklist_question_text = add_a_standard_advice_picklist["text"]
 
 
 @when("I select all items in the advice view")
@@ -34,7 +34,7 @@ def click_items_in_advice_view(driver, context):
     context.number_of_advice_items_clicked = ApplicationPage(driver).click_on_all_checkboxes()
 
 
-@when('I click on view advice')
+@when("I click on view advice")
 def i_click_on_view_advice(driver, context):
     application_page = ApplicationPage(driver)
     application_page.click_view_advice()
@@ -53,10 +53,10 @@ def write_note_text_field(driver, text, context):
     context.advice_data.append(text)
 
 
-@then('I see the fields pre-populated with the proviso and advice picklist items')
+@then("I see the fields pre-populated with the proviso and advice picklist items")
 def i_see_fields_prepopulated(driver, context):
-    advice = driver.find_element_by_id('advice').text
-    proviso = driver.find_element_by_id('proviso').text
+    advice = driver.find_element_by_id("advice").text
+    proviso = driver.find_element_by_id("proviso").text
     assert advice == context.standard_advice_query_picklist_question_text
     assert proviso == context.proviso_picklist_question_text
 
@@ -77,11 +77,11 @@ def posted_successfully_advice(driver):
     # assert Shared(driver).get_text_of_info_bar() == "Your advice has been posted successfully"
 
 
-@then('I see added advice in the same amount of places')
+@then("I see added advice in the same amount of places")
 def added_advice_on_application_page(driver, context):
-    assert len(driver.find_elements_by_css_selector('.app-advice__details')) == context.number_of_advice_items_clicked
+    assert len(driver.find_elements_by_css_selector(".app-advice__details")) == context.number_of_advice_items_clicked
     for advice in context.advice_data:
-        assert advice in driver.find_element_by_css_selector('.app-advice__details').text
+        assert advice in driver.find_element_by_css_selector(".app-advice__details").text
 
 
 @when("I go to the team advice")
@@ -117,7 +117,7 @@ def finalise_goods_and_countries(driver):
 @then("I see country error message")
 def i_see_country_error_message(driver, context):
     shared = Shared(driver)
-    assert context.country['name'] in shared.get_text_of_error_message(0), "expected error message is not displayed"
+    assert context.country["name"] in shared.get_text_of_error_message(0), "expected error message is not displayed"
 
 
 @when("I select approve for all combinations of goods and countries")
@@ -130,21 +130,21 @@ def select_approve_for_all(driver):
 def todays_date_is_filled_in(driver):
     date_in_form = GiveAdvicePages(driver).get_date_in_date_entry()
     today = date.today()
-    assert today.day == int(date_in_form['day'])
-    assert today.month == int(date_in_form['month'])
-    assert today.year == int(date_in_form['year'])
+    assert today.day == int(date_in_form["day"])
+    assert today.month == int(date_in_form["month"])
+    assert today.year == int(date_in_form["year"])
 
 
-@then('I see refusal flag is attached')
+@then("I see refusal flag is attached")
 def refusal_flag_displayed(driver):
     assert ApplicationPage(driver).is_flag_applied("Refusal Advice")
 
 
-@then('I see refusal flag is not attached')
+@then("I see refusal flag is not attached")
 def refusal_flag_not_displayed(driver):
     assert not ApplicationPage(driver).is_flag_applied("Refusal Advice")
 
 
-@when('I clear advice')
+@when("I clear advice")
 def clear_advice(driver):
     GiveAdvicePages(driver).click_on_clear_advice()

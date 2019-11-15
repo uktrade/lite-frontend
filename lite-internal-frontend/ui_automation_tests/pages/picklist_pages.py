@@ -1,23 +1,22 @@
-class PicklistPages():
-
+class PicklistPages:
     def __init__(self, driver):
         self.driver = driver
-        self.picklist_tab = '.lite-tabs__tab[href*="picklists"]' #css
-        self.picklist_edit_button = '.govuk-button[href*="edit"]' #css
-        self.picklist_add_button = '.govuk-button[href*="add"]' #css
-        self.picklist_deactivate_button = '.govuk-button[href*="deactivate"]' #css
-        self.picklist_reactivate_button = '.govuk-button[href*="reactivate"]' #css
-        self.picklist_type_sub_nav = '.govuk-link[href*="type=' #css
-        self.picklist_page_body = '.govuk-main-wrapper' #css
-        self.picklist_name_field = 'name' #name
-        self.picklist_description_field = 'text' #name
-        self.picklist_names_in_list = 'h4 a' #css
-        self.picklist_list_name = '.govuk-heading-s' #css
-        self.picklist_list_description = '.app-picklist-item__text' #css
-        self.errors = '.govuk-error-summary__list' #css
+        self.picklist_tab = '.lite-tabs__tab[href*="picklists"]'  # css
+        self.picklist_edit_button = '.govuk-button[href*="edit"]'  # css
+        self.picklist_add_button = '.govuk-button[href*="add"]'  # css
+        self.picklist_deactivate_button = '.govuk-button[href*="deactivate"]'  # css
+        self.picklist_reactivate_button = '.govuk-button[href*="reactivate"]'  # css
+        self.picklist_type_sub_nav = '.govuk-link[href*="type='  # css
+        self.picklist_page_body = ".govuk-main-wrapper"  # css
+        self.picklist_name_field = "name"  # name
+        self.picklist_description_field = "text"  # name
+        self.picklist_names_in_list = "h4 a"  # css
+        self.picklist_list_name = ".govuk-heading-s"  # css
+        self.picklist_list_description = ".app-picklist-item__text"  # css
+        self.errors = ".govuk-error-summary__list"  # css
 
-        self.context_suggestions_overlay = '.tribute-container'  # css
-        self.context_suggestion = '.tribute-container .highlight'  # css
+        self.context_suggestions_overlay = ".tribute-container"  # css
+        self.context_suggestion = ".tribute-container .highlight"  # css
 
     def click_on_picklist_tab(self):
         self.driver.find_element_by_css_selector(self.picklist_tab).click()

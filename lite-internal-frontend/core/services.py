@@ -1,8 +1,13 @@
 from lite_forms.components import Option, Checkboxes
 
 from conf.client import get
-from conf.constants import DENIAL_REASONS_URL, COUNTRIES_URL, STATUSES_URL, CONTROL_LIST_ENTRIES_URL, \
-    CASE_NOTIFICATIONS_URL
+from conf.constants import (
+    DENIAL_REASONS_URL,
+    COUNTRIES_URL,
+    STATUSES_URL,
+    CONTROL_LIST_ENTRIES_URL,
+    CASE_NOTIFICATIONS_URL,
+)
 from users.services import get_gov_user
 
 
@@ -13,8 +18,8 @@ def get_denial_reasons(request, convert_to_options=True):
 
     converted = {}
 
-    for denial_reason in data.get('denial_reasons'):
-        item_id = denial_reason['id']
+    for denial_reason in data.get("denial_reasons"):
+        item_id = denial_reason["id"]
 
         if not converted.get(item_id[0]):
             converted[item_id[0]] = []
@@ -29,9 +34,7 @@ def get_denial_reasons(request, convert_to_options=True):
             for item in value:
                 options.append(Option(item, item))
 
-            questions.append(
-                Checkboxes('reasons', options, description='')
-            )
+            questions.append(Checkboxes("reasons", options, description=""))
 
         return questions
     else:
@@ -44,10 +47,8 @@ def get_countries(request, convert_to_options=False):
     if convert_to_options:
         converted_units = []
 
-        for country in data.json().get('countries'):
-            converted_units.append(
-                Option(country.get('id'), country.get('name'))
-            )
+        for country in data.json().get("countries"):
+            converted_units.append(Option(country.get("id"), country.get("name")))
 
         return converted_units
 
@@ -64,29 +65,33 @@ def get_statuses(request):
 def get_user_permissions(request, with_team=False):
     user, _ = get_gov_user(request, str(request.user.lite_api_user_id))
     if with_team:
-        return user['user']['role']['permissions'], user['user']['team']
-    return user['user']['role']['permissions']
+        return user["user"]["role"]["permissions"], user["user"]["team"]
+    return user["user"]["role"]["permissions"]
 
 
 # Case Notification
 def get_user_case_notification(request, case_id):
-    data = get(request, CASE_NOTIFICATIONS_URL + '?case=' + case_id)
-    return data.json()['notification']
+    data = get(request, CASE_NOTIFICATIONS_URL + "?case=" + case_id)
+    return data.json()["notification"]
 
 
 # Control List Entries
 def get_control_list_entries(request, convert_to_options=False):
     if convert_to_options:
-        data = get(request, CONTROL_LIST_ENTRIES_URL + '?flatten=True')
+        data = get(request, CONTROL_LIST_ENTRIES_URL + "?flatten=True")
 
         converted_units = []
 
-        for control_list_entry in data.json()['control_list_entries']:
-            converted_units.append(Option(key=control_list_entry['rating'],
-                                          value=control_list_entry['rating'],
-                                          description=control_list_entry['text']))
+        for control_list_entry in data.json()["control_list_entries"]:
+            converted_units.append(
+                Option(
+                    key=control_list_entry["rating"],
+                    value=control_list_entry["rating"],
+                    description=control_list_entry["text"],
+                )
+            )
 
         return converted_units
 
     data = get(request, CONTROL_LIST_ENTRIES_URL)
-    return data.json()['control_list_entries']
+    return data.json()["control_list_entries"]

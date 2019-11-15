@@ -10,10 +10,8 @@ def get_teams(request, converted_to_options=False):
     if converted_to_options:
         converted_units = []
 
-        for team in data.json().get('teams'):
-            converted_units.append(
-                Option(team.get('id'), team.get('name'))
-            )
+        for team in data.json().get("teams"):
+            converted_units.append(Option(team.get("id"), team.get("name")))
 
         return converted_units
 

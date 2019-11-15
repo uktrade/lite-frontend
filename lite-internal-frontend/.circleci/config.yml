@@ -71,6 +71,10 @@ jobs:
           command: pipenv run prospector
 
       - run:
+          name: check code formatting
+          command: pipenv run black . --line-length 120 --check --diff
+
+      - run:
           name: Run Bandit
           command: |
             pipenv install bandit

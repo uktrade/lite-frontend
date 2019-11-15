@@ -5,15 +5,15 @@ from pytest_bdd import when, then, scenarios, given
 from pages.application_page import ApplicationPage
 from pages.ecju_queries_pages import EcjuQueriesPages
 
-scenarios('../features/ecju_query.feature', strict_gherkin=False)
+scenarios("../features/ecju_query.feature", strict_gherkin=False)
 
-NEW_QUESTION_DROP_DOWN_TEXT = 'Write a new question'
+NEW_QUESTION_DROP_DOWN_TEXT = "Write a new question"
 
 
 @given("I create an ecju query picklist")
 def i_create_an_ecju_query_picklist(context, add_an_ecju_query_picklist):
-    context.ecju_query_picklist_name = add_an_ecju_query_picklist['name']
-    context.ecju_query_picklist_question_text = add_an_ecju_query_picklist['text']
+    context.ecju_query_picklist_name = add_an_ecju_query_picklist["name"]
+    context.ecju_query_picklist_question_text = add_an_ecju_query_picklist["text"]
 
 
 @when("I click the ECJU Queries button")

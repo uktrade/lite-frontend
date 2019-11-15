@@ -5,16 +5,16 @@ from conf.constants import PICKLIST_URL
 
 
 def get_picklists(request, picklist_type, show_deactivated=False, convert_to_options=False, include_none=False):
-    data = get(request, PICKLIST_URL + '?type=' + picklist_type + '&show_deactivated=' + str(show_deactivated)).json()
+    data = get(request, PICKLIST_URL + "?type=" + picklist_type + "&show_deactivated=" + str(show_deactivated)).json()
 
     if convert_to_options:
         options = []
 
         if include_none:
-            options.append(Option(None, 'None', 'None'))
+            options.append(Option(None, "None", "None"))
 
-        for item in data['picklist_items']:
-            options.append(Option(item['id'], item['name'], item['text']))
+        for item in data["picklist_items"]:
+            options.append(Option(item["id"], item["name"], item["text"]))
 
         return options
 
@@ -28,7 +28,7 @@ def post_picklist_item(request, json):
 
 def get_picklist_item(request, pk):
     data = get(request, PICKLIST_URL + pk)
-    return data.json()['picklist_item']
+    return data.json()["picklist_item"]
 
 
 def put_picklist_item(request, pk, json):

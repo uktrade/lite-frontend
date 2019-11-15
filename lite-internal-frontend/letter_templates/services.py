@@ -17,8 +17,8 @@ def get_letter_paragraphs(request, ids: list):
     if not ids:
         return []
 
-    data = get(request, PICKLIST_URL + '?type=letter_paragraph' + '&ids=' + ','.join(ids))
-    letter_paragraphs = data.json()['picklist_items']
+    data = get(request, PICKLIST_URL + "?type=letter_paragraph" + "&ids=" + ",".join(ids))
+    letter_paragraphs = data.json()["picklist_items"]
     return sort_letter_paragraphs(letter_paragraphs, ids)
 
 
@@ -34,7 +34,7 @@ def put_letter_template(request, pk, json):
 
 def get_letter_templates(request):
     data = get(request, LETTER_TEMPLATES_URL)
-    return data.json()['results']
+    return data.json()["results"]
 
 
 def post_letter_template(request, json):
@@ -44,7 +44,7 @@ def post_letter_template(request, json):
 
 def get_letter_layouts(request=None):
     data = get(request, LETTER_LAYOUTS_URL)
-    return data.json()['results']
+    return data.json()["results"]
 
 
 def get_letter_layout(request, pk):

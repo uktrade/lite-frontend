@@ -1,4 +1,4 @@
-class OrganisationsPage():
+class OrganisationsPage:
 
     # called e time you create an object for this class
     def __init__(self, driver):

@@ -15,8 +15,8 @@ class ProtectAllViewsMiddleware:
 
     def __call__(self, request):
 
-        if resolve(request.path).app_name != 'authbroker_client' and not request.user.is_authenticated:
-            return redirect('authbroker_client:login')
+        if resolve(request.path).app_name != "authbroker_client" and not request.user.is_authenticated:
+            return redirect("authbroker_client:login")
 
         response = self.get_response(request)
 
@@ -35,7 +35,7 @@ class UploadFailedMiddleware:
         if not isinstance(exception, UploadFailed):
             return None
 
-        return error_page(request, get_string('cases.manage.documents.attach_documents.file_too_large'))
+        return error_page(request, get_string("cases.manage.documents.attach_documents.file_too_large"))
 
 
 class LoggingMiddleware:
@@ -53,7 +53,7 @@ class LoggingMiddleware:
             "url": request.path,
         }
         response = self.get_response(request)
-        data['type'] = "http response"
-        data['elapsed_time'] = time.time() - start
+        data["type"] = "http response"
+        data["elapsed_time"] = time.time() - start
         logging.info(data)
         return response

@@ -1,12 +1,11 @@
-class RecordDecision():
-
+class RecordDecision:
     def __init__(self, driver):
         self.driver = driver
-        self.grant_licence_radio = "status-approved" #id
-        self.deny_licence_radio = "status-declined" #id
-        self.optional_text = "reason_details" #name
-        self.denial_reasons_header = ".govuk-heading-s" #css
-        self.denial_reasons_listed = ".govuk-label" #css
+        self.grant_licence_radio = "status-approved"  # id
+        self.deny_licence_radio = "status-declined"  # id
+        self.optional_text = "reason_details"  # name
+        self.denial_reasons_header = ".govuk-heading-s"  # css
+        self.denial_reasons_listed = ".govuk-label"  # css
 
     def click_on_grant_licence(self):
         self.driver.find_element_by_id(self.grant_licence_radio).click()

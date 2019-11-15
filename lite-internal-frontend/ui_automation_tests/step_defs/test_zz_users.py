@@ -3,6 +3,7 @@ import shared.tools.helpers as utils
 import pytest
 from conf.settings import env
 import logging
+
 log = logging.getLogger()
 console = logging.StreamHandler()
 log.addHandler(console)
@@ -10,8 +11,8 @@ from pages.header_page import HeaderPage
 from pages.users_page import UsersPage
 
 
-sso_email=env('TEST_SSO_EMAIL')
-sso_password=env('TEST_SSO_PASSWORD')
+sso_email = env("TEST_SSO_EMAIL")
+sso_password = env("TEST_SSO_PASSWORD")
 
 
 @pytest.fixture(scope="function")
@@ -40,11 +41,13 @@ def test_manage_users(driver, open_internal_hub, context):
 
     user_page.click_save_and_continue()
 
-    assert driver.find_element_by_tag_name("h2").text == "Users", \
-        "Failed to return to Users list page after Adding user"
+    assert (
+        driver.find_element_by_tag_name("h2").text == "Users"
+    ), "Failed to return to Users list page after Adding user"
 
-    assert utils.is_element_present(driver, By.XPATH,
-                                    "//td[text()='" + context.email_to_search + "']/following-sibling::td[text()='Active']")
+    assert utils.is_element_present(
+        driver, By.XPATH, "//td[text()='" + context.email_to_search + "']/following-sibling::td[text()='Active']"
+    )
 
     email_edited = "edited" + email
     user_page.click_edit_for_user(email)
@@ -55,18 +58,24 @@ def test_manage_users(driver, open_internal_hub, context):
     assert "This field must be unique." in driver.find_element_by_css_selector(".govuk-error-message").text
     user_page.enter_email("invalidemail")
     user_page.click_save_and_continue()
-    assert "Enter an email address in the correct format, like name@example.com" in driver.find_element_by_css_selector(".govuk-error-message").text
+    assert (
+        "Enter an email address in the correct format, like name@example.com"
+        in driver.find_element_by_css_selector(".govuk-error-message").text
+    )
     # valid edit checks
     user_page.enter_email(email_edited)
 
     user_page.select_option_from_team_drop_down_by_value()
-    user_page.select_option_from_role_drop_down_by_visible_text('Default')
+    user_page.select_option_from_role_drop_down_by_visible_text("Default")
 
     # When I Save
     user_page.click_save_and_continue()
 
     assert utils.is_element_present(driver, By.XPATH, "//*[text()[contains(.,'" + email_edited + "')]]")
-    assert "Admin" not in driver.find_element_by_xpath("//td[text()='" + email_edited + "']/following-sibling::td[text()]").text
+    assert (
+        "Admin"
+        not in driver.find_element_by_xpath("//td[text()='" + email_edited + "']/following-sibling::td[text()]").text
+    )
 
 
 def test_inability_to_deactivate_oneself(driver, open_internal_hub):
@@ -91,12 +100,18 @@ def test_invalid(driver, open_internal_hub):
     assert "This field must be unique." in driver.find_element_by_css_selector(".govuk-error-message").text
     user_page.enter_email("invalidemail")
     user_page.click_save_and_continue()
-    assert "Enter an email address in the correct format, like name@example.com" in driver.find_element_by_css_selector(".govuk-error-message").text
+    assert (
+        "Enter an email address in the correct format, like name@example.com"
+        in driver.find_element_by_css_selector(".govuk-error-message").text
+    )
     user_page.enter_email("")
     user_page.select_option_from_team_drop_down_by_visible_text("Select")
     user_page.click_save_and_continue()
-    assert "Enter an email address in the correct format, like name@example.com" in driver.find_element_by_css_selector(".govuk-error-message").text
-    #TODO uncomment this when error message bug is fixed
+    assert (
+        "Enter an email address in the correct format, like name@example.com"
+        in driver.find_element_by_css_selector(".govuk-error-message").text
+    )
+    # TODO uncomment this when error message bug is fixed
     # assert "Select a team" in driver.find_elements_by_css_selector(".govuk-error-message")[1].text
 
 

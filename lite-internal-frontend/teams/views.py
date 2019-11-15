@@ -1,5 +1,4 @@
-from teams.services import get_team, get_teams, \
-    post_teams, update_team, get_users_by_team
+from teams.services import get_team, get_teams, post_teams, update_team, get_users_by_team
 from teams import forms
 
 from django.shortcuts import render, redirect
@@ -15,15 +14,15 @@ class Team(TemplateView):
         View the user's team
         """
         user, _ = get_gov_user(request)
-        team, _ = get_team(request, user['user']['team']['id'])
-        users, _ = get_users_by_team(request, team['team']['id'])
+        team, _ = get_team(request, user["user"]["team"]["id"])
+        users, _ = get_users_by_team(request, team["team"]["id"])
 
         context = {
-            'team': team['team'],
-            'title': 'Users - ' + team['team']['name'],
-            'users': users['users'],
+            "team": team["team"],
+            "title": "Users - " + team["team"]["name"],
+            "users": users["users"],
         }
-        return render(request, 'teams/own_team.html', context)
+        return render(request, "teams/own_team.html", context)
 
 
 class TeamsList(TemplateView):
@@ -31,66 +30,56 @@ class TeamsList(TemplateView):
         data, _ = get_teams(request)
 
         context = {
-            'data': data,
-            'title': 'Teams',
+            "data": data,
+            "title": "Teams",
         }
-        return render(request, 'teams/index.html', context)
+        return render(request, "teams/index.html", context)
 
 
 class AddTeam(TemplateView):
     def get(self, request, **kwargs):
         context = {
-            'title': 'Add Team',
-            'page': forms.form,
+            "title": "Add Team",
+            "page": forms.form,
         }
-        return render(request, 'form.html', context)
+        return render(request, "form.html", context)
 
     def post(self, request, **kwargs):
         data, status_code = post_teams(request, request.POST)
 
         if status_code == 400:
-            context = {
-                'title': 'Add Team',
-                'page': forms.form,
-                'data': request.POST,
-                'errors': data.get('errors')
-            }
-            return render(request, 'form.html', context)
+            context = {"title": "Add Team", "page": forms.form, "data": request.POST, "errors": data.get("errors")}
+            return render(request, "form.html", context)
 
-        return redirect(reverse_lazy('teams:teams'))
+        return redirect(reverse_lazy("teams:teams"))
 
 
 class TeamDetail(TemplateView):
     def get(self, request, **kwargs):
-        data, _ = get_team(request, str(kwargs['pk']))
-        title = data['team']['name']
-        data, _ = get_users_by_team(request, str(kwargs['pk']))
+        data, _ = get_team(request, str(kwargs["pk"]))
+        title = data["team"]["name"]
+        data, _ = get_users_by_team(request, str(kwargs["pk"]))
         context = {
-            'title': title,
-            'users': data['users'],
+            "title": title,
+            "users": data["users"],
         }
-        return render(request, 'teams/team.html', context)
+        return render(request, "teams/team.html", context)
 
 
 class EditTeam(TemplateView):
     def get(self, request, **kwargs):
-        data, _ = get_team(request, str(kwargs['pk']))
+        data, _ = get_team(request, str(kwargs["pk"]))
         context = {
-            'data': data.get('team'),
-            'title': 'Edit Team',
-            'page': forms.edit_form,
+            "data": data.get("team"),
+            "title": "Edit Team",
+            "page": forms.edit_form,
         }
-        return render(request, 'form.html', context)
+        return render(request, "form.html", context)
 
     def post(self, request, **kwargs):
-        data, status_code = update_team(request, str(kwargs['pk']), request.POST)
+        data, status_code = update_team(request, str(kwargs["pk"]), request.POST)
         if status_code == 400:
-            context = {
-                'title': 'Add Team',
-                'page': forms.form,
-                'data': request.POST,
-                'errors': data.get('errors')
-            }
-            return render(request, 'form.html', context)
+            context = {"title": "Add Team", "page": forms.form, "data": request.POST, "errors": data.get("errors")}
+            return render(request, "form.html", context)
 
-        return redirect(reverse_lazy('teams:teams'))
+        return redirect(reverse_lazy("teams:teams"))

@@ -8,33 +8,33 @@ from pages.organisations_form_page import OrganisationsFormPage
 from pages.organisations_page import OrganisationsPage
 from pages.shared import Shared
 
-scenarios('../features/organisation.feature', strict_gherkin=False)
+scenarios("../features/organisation.feature", strict_gherkin=False)
 
 
-@then('organisation is registered')
+@then("organisation is registered")
 def verify_registered_organisation(driver, context):
     if not context.org_registered_status:
-        driver.find_element_by_id('show-filters-link').click()
-        time.sleep(.5)
-        driver.find_element_by_id('filter-box').click()
-        driver.find_element_by_id('filter-box').send_keys(context.organisation_name)
-        driver.find_element_by_id('button-apply-filters').click()
+        driver.find_element_by_id("show-filters-link").click()
+        time.sleep(0.5)
+        driver.find_element_by_id("filter-box").click()
+        driver.find_element_by_id("filter-box").send_keys(context.organisation_name)
+        driver.find_element_by_id("button-apply-filters").click()
         assert context.organisation_name in Shared(driver).get_text_of_lite_table_body()
-        #assert context.organisation_name in Shared(driver).get_text_of_panel_body()
-        #assert Shared(driver).get_text_of_h1() == "Organisation Registered"
+        # assert context.organisation_name in Shared(driver).get_text_of_panel_body()
+        # assert Shared(driver).get_text_of_h1() == "Organisation Registered"
 
 
-@then('HMRC organisation is registered')
+@then("HMRC organisation is registered")
 def verify_hmrc_registered_organisation(driver, context):
-    driver.find_element_by_id('show-filters-link').click()
-    driver.find_element_by_id('filter-box').send_keys(context.hmrc_org_name)
-    driver.find_element_by_id('button-apply-filters').click()
+    driver.find_element_by_id("show-filters-link").click()
+    driver.find_element_by_id("filter-box").send_keys(context.hmrc_org_name)
+    driver.find_element_by_id("button-apply-filters").click()
     assert context.hmrc_org_name in Shared(driver).get_text_of_lite_table_body()
-    #assert context.organisation_name in Shared(driver).get_text_of_panel_body()
-    #assert Shared(driver).get_text_of_h1() == "Organisation Registered"
+    # assert context.organisation_name in Shared(driver).get_text_of_panel_body()
+    # assert Shared(driver).get_text_of_h1() == "Organisation Registered"
 
 
-@when('I go to organisations')
+@when("I go to organisations")
 def i_go_to_organisations(driver, context):
     header = HeaderPage(driver)
     header.click_lite_menu()
@@ -42,7 +42,7 @@ def i_go_to_organisations(driver, context):
     context.org_registered_status = False
 
 
-@when('I go to HMRC')
+@when("I go to HMRC")
 def i_go_to_hmrc(driver, context):
     header = HeaderPage(driver)
     header.click_lite_menu()
@@ -50,7 +50,7 @@ def i_go_to_hmrc(driver, context):
     context.org_registered_status = False
 
 
-@when('I choose to add a new organisation')
+@when("I choose to add a new organisation")
 def i_choose_to_add_a_new_organisation(driver):
     organisations_page = OrganisationsPage(driver)
     organisations_page.click_new_organisation_btn()
@@ -63,8 +63,11 @@ def select_organisation_type(driver, individual_or_commercial):
     organisations_form_page.click_submit()
 
 
-@when(parsers.parse(
-    'I provide company registration details of name: "{name}", EORI: "{eori}", SIC: "{sic}", VAT: "{vat}", CRN: "{registration}"'))
+@when(
+    parsers.parse(
+        'I provide company registration details of name: "{name}", EORI: "{eori}", SIC: "{sic}", VAT: "{vat}", CRN: "{registration}"'
+    )
+)
 def fill_out_company_details_page_and_continue(driver, name, eori, sic, vat, registration, context):
     if not context.org_registered_status:
         organisations_form_page = OrganisationsFormPage(driver)
@@ -80,8 +83,11 @@ def fill_out_company_details_page_and_continue(driver, name, eori, sic, vat, reg
         organisations_form_page.click_submit()
 
 
-@when(parsers.parse(
-    'I provide individual registration details of first name: "{first_name}", last name: "{last_name}", EORI: "{eori}" and email: "{email}"'))
+@when(
+    parsers.parse(
+        'I provide individual registration details of first name: "{first_name}", last name: "{last_name}", EORI: "{eori}" and email: "{email}"'
+    )
+)
 def fill_out_individual_registration_page(driver, first_name, last_name, email, eori):
     organisations_form_page = OrganisationsFormPage(driver)
     organisations_form_page.enter_email(email)
@@ -91,8 +97,11 @@ def fill_out_individual_registration_page(driver, first_name, last_name, email, 
     organisations_form_page.click_submit()
 
 
-@when(parsers.parse(
-    'I setup an initial site with name: "{name}", addres line 1: "{address_line_1}", town or city: "{city}", County: "{region}", post code: "{post_code}", country: "{country}"'))
+@when(
+    parsers.parse(
+        'I setup an initial site with name: "{name}", addres line 1: "{address_line_1}", town or city: "{city}", County: "{region}", post code: "{post_code}", country: "{country}"'
+    )
+)
 def fill_out_site_details(driver, name, address_line_1, city, region, post_code, country, context):
     if not context.org_registered_status:
         organisations_form_page = OrganisationsFormPage(driver)
@@ -107,7 +116,8 @@ def fill_out_site_details(driver, name, address_line_1, city, region, post_code,
 
 
 @when(
-    parsers.parse('I setup the admin user with email: "{email}", first name: "{first_name}", last name: "{last_name}"'))
+    parsers.parse('I setup the admin user with email: "{email}", first name: "{first_name}", last name: "{last_name}"')
+)
 def fill_out_admin_user_details(driver, email, first_name, last_name, context):
     if not context.org_registered_status:
         organisations_form_page = OrganisationsFormPage(driver)
@@ -124,7 +134,9 @@ def fill_out_admin_user_details(driver, email, first_name, last_name, context):
 @when(
     parsers.parse(
         'I provide hmrc registration details of org_name: "{org_name}", site_name: "{site_name}", addres line 1: '
-        '"{address}", town or city: "{city}", County: "{region}", post code: "{post_code}", country: "{country}"'))
+        '"{address}", town or city: "{city}", County: "{region}", post code: "{post_code}", country: "{country}"'
+    )
+)
 def register_hmrc_org(driver, org_name, site_name, address, city, region, post_code, country, context):
     if not context.org_registered_status:
         organisations_form_page = OrganisationsFormPage(driver)

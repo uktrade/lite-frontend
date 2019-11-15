@@ -3,36 +3,37 @@ from urllib.parse import urlencode
 from lite_forms.components import Option
 
 from conf.client import get, post, put
-from conf.constants import GOV_USERS_URL, GOV_USERS_ROLES_URL, GOV_USERS_PERMISSIONS_URL, SUPER_USER_ROLE_ID
+from conf.constants import (
+    GOV_USERS_URL,
+    GOV_USERS_ROLES_URL,
+    GOV_USERS_PERMISSIONS_URL,
+    SUPER_USER_ROLE_ID,
+)
 
 
 def get_gov_users(request, params=None, convert_to_options=False):
     if params:
         query_params = urlencode(params)
-        data = get(request, GOV_USERS_URL + '?' + query_params)
+        data = get(request, GOV_USERS_URL + "?" + query_params)
     else:
         data = get(request, GOV_USERS_URL)
 
     if convert_to_options:
         converted = []
 
-        for user in data.json().get('gov_users'):
-            first_name = user.get('first_name')
-            last_name = user.get('last_name')
-            email = user.get('email')
+        for user in data.json().get("gov_users"):
+            first_name = user.get("first_name")
+            last_name = user.get("last_name")
+            email = user.get("email")
 
             if first_name:
-                value = first_name + ' ' + last_name
+                value = first_name + " " + last_name
                 description = email
             else:
                 value = email
                 description = None
 
-            converted.append(
-                Option(key=user.get('id'),
-                       value=value,
-                       description=description)
-            )
+            converted.append(Option(key=user.get("id"), value=value, description=description))
 
         return converted
 
@@ -43,7 +44,7 @@ def get_gov_user(request, pk=None):
     if pk:
         data = get(request, GOV_USERS_URL + pk)
     else:
-        data = get(request, GOV_USERS_URL + 'me/')
+        data = get(request, GOV_USERS_URL + "me/")
     return data.json(), data.status_code
 
 
@@ -66,11 +67,8 @@ def get_roles(request, convert_to_options=False):
     if convert_to_options:
         converted = []
 
-        for item in data.json().get('roles'):
-            converted.append(
-                Option(key=item['id'],
-                       value=item['name'])
-            )
+        for item in data.json().get("roles"):
+            converted.append(Option(key=item["id"], value=item["name"]))
 
         return converted
 
@@ -88,7 +86,7 @@ def post_role(request, json):
 
 
 def put_role(request, pk, json):
-    data = put(request, GOV_USERS_ROLES_URL + pk + '/', json)
+    data = put(request, GOV_USERS_ROLES_URL + pk + "/", json)
     return data.json(), data.status_code
 
 
@@ -98,16 +96,13 @@ def get_permissions(request, convert_to_options=False):
     if convert_to_options:
         converted = []
 
-        for item in data.json().get('permissions'):
-            converted.append(
-                Option(key=item['id'],
-                       value=item['name'])
-            )
+        for item in data.json().get("permissions"):
+            converted.append(Option(key=item["id"], value=item["name"]))
 
         return converted
 
-    return data.json()['permissions']
+    return data.json()["permissions"]
 
 
 def is_super_user(user):
-    return user['user']['role']['id'] == SUPER_USER_ROLE_ID
+    return user["user"]["role"]["id"] == SUPER_USER_ROLE_ID

@@ -2,7 +2,6 @@ from selenium.webdriver.support.ui import Select
 
 
 class TeamsPages:
-
     def __init__(self, driver):
         self.driver = driver
         self.add_team_text_field = "name"  # ID
@@ -19,4 +18,3 @@ class TeamsPages:
     def select_team_from_dropdown(self, team):
         select = Select(self.driver.find_element_by_id(self.team_dropdown))
         select.select_by_visible_text(team)
-

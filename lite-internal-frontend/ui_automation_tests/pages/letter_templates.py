@@ -1,30 +1,29 @@
 class LetterTemplates:
-
     def __init__(self, driver):
         self.driver = driver
-        self.create_template_button = 'button-create-a-template'  # ID
-        self.template_name = 'name'  # ID
-        self.letter_paragraph = 'letter_paragraphs'  # NAME
-        self.letter_paragraph_name = 'letter_paragraph_name'  # NAME
+        self.create_template_button = "button-create-a-template"  # ID
+        self.template_name = "name"  # ID
+        self.letter_paragraph = "letter_paragraphs"  # NAME
+        self.letter_paragraph_name = "letter_paragraph_name"  # NAME
         self.add_letter_paragraph_button = '[value="add_letter_paragraph"]'  # CSS
         self.add_letter_paragraphs_button = '[value="return_to_preview"]'  # CSS
-        self.preview_button = 'button-preview'  # ID
-        self.preview_template_paragraphs = '.border-black.padding'  # CSS
-        self.save_button = 'action'  # NAME
-        self.edit_details_button = '.lite-app-bar__controls .govuk-button'  # CSS
-        self.drag_drop_list = 'standard-advice-list'  # ID
-        self.preview_paragraphs = 'paragraph-list'  # ID
+        self.preview_button = "button-preview"  # ID
+        self.preview_template_paragraphs = ".border-black.padding"  # CSS
+        self.save_button = "action"  # NAME
+        self.edit_details_button = ".lite-app-bar__controls .govuk-button"  # CSS
+        self.drag_drop_list = "standard-advice-list"  # ID
+        self.preview_paragraphs = "paragraph-list"  # ID
 
         # Template page
-        self.template_title = 'title'  # ID
-        self.template_layout = 'layout'  # ID
-        self.template_restricted_to = 'restricted_to'  # ID
-        self.template_paragraphs = 'paragraph_content'  # ID
-        self.edit_template_button = 'edit_template'  # ID
-        self.edit_paragraphs_button = 'edit_template_paragraphs'  # ID
-        self.add_paragraph_link = 'add_paragraph'  # ID
-        self.paragraph_checkboxes_list = '.govuk-checkboxes__input'  # CSS
-        self.paragraph_text_list = 'paragraph-list'  # ID
+        self.template_title = "title"  # ID
+        self.template_layout = "layout"  # ID
+        self.template_restricted_to = "restricted_to"  # ID
+        self.template_paragraphs = "paragraph_content"  # ID
+        self.edit_template_button = "edit_template"  # ID
+        self.edit_paragraphs_button = "edit_template_paragraphs"  # ID
+        self.add_paragraph_link = "add_paragraph"  # ID
+        self.paragraph_checkboxes_list = ".govuk-checkboxes__input"  # CSS
+        self.paragraph_text_list = "paragraph-list"  # ID
 
     def click_create_a_template(self):
         self.driver.find_element_by_id(self.create_template_button).click()
@@ -65,7 +64,7 @@ class LetterTemplates:
         return self.driver.find_element_by_id(self.preview_paragraphs).text
 
     def get_class_name_of_drag_and_drop_list(self):
-        return self.driver.find_element_by_id(self.drag_drop_list).get_attribute('class')
+        return self.driver.find_element_by_id(self.drag_drop_list).get_attribute("class")
 
     def get_drag_and_drop_list_name(self):
         return self.driver.find_element_by_id(self.drag_drop_list).text

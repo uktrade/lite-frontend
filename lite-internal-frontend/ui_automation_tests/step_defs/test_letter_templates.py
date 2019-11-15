@@ -8,7 +8,7 @@ from pages.letter_templates import LetterTemplates
 from pages.shared import Shared
 from ui_automation_tests.fixtures.add_a_document_template import get_paragraph_text
 
-scenarios('../features/letter_templates.feature', strict_gherkin=False)
+scenarios("../features/letter_templates.feature", strict_gherkin=False)
 
 
 @given("I create a letter paragraph picklist")
@@ -16,7 +16,7 @@ def add_letter_paragraph_picklist(add_a_letter_paragraph_picklist):
     pass
 
 
-@when('I go to letters')
+@when("I go to letters")
 def go_to_letters(driver):
     header = HeaderPage(driver)
     header.click_lite_menu()
@@ -26,10 +26,10 @@ def go_to_letters(driver):
 @when("I create a letter template")
 def create_letter_template(driver, context, get_template_id):
     LetterTemplates(driver).click_create_a_template()
-    context.template_name = 'Template ' + utils.get_formatted_date_time_m_d_h_s()
+    context.template_name = "Template " + utils.get_formatted_date_time_m_d_h_s()
     LetterTemplates(driver).enter_template_name(context.template_name)
     Shared(driver).click_submit()
-    LetterTemplates(driver).select_which_type_of_case_template_can_apply_to('Applications')
+    LetterTemplates(driver).select_which_type_of_case_template_can_apply_to("Applications")
     Shared(driver).click_submit()
     LetterTemplates(driver).click_licence_layout(get_template_id)
     Shared(driver).click_submit()
@@ -67,7 +67,7 @@ def templates_in_table(driver, context):
 def edit_template(driver, context):
     driver.find_element_by_link_text(context.template_name).click()
     LetterTemplates(driver).click_edit_details_button()
-    context.template_name = context.template_name + ' edited'
+    context.template_name = context.template_name + " edited"
     LetterTemplates(driver).enter_template_name(context.template_name)
     Shared(driver).click_submit()
     Shared(driver).click_back()
@@ -77,7 +77,7 @@ def edit_template(driver, context):
 def see_drag_and_drop_page(driver, context):
     letter_template = LetterTemplates(driver)
     context.picklist_text = letter_template.get_text_of_paragraphs_in_preview()
-    assert 'app-sortable ui-sortable' in letter_template.get_class_name_of_drag_and_drop_list()
+    assert "app-sortable ui-sortable" in letter_template.get_class_name_of_drag_and_drop_list()
     assert context.letter_paragraph_name in letter_template.get_drag_and_drop_list_name()
 
 
@@ -111,11 +111,11 @@ def paragraph_text_is_present(driver, context):
 @when("I edit my template name and layout")
 def edit_template_name_and_layout(driver, context):
     context.document_template_name = str(uuid.uuid4())[:35]
-    context.document_template_restricted_to.append('CLC Query')
+    context.document_template_restricted_to.append("CLC Query")
     letter_template = LetterTemplates(driver)
     letter_template.click_edit_template_button()
     letter_template.enter_template_name(context.document_template_name)
-    letter_template.select_which_type_of_case_template_can_apply_to('CLC Query')
+    letter_template.select_which_type_of_case_template_can_apply_to("CLC Query")
     Shared(driver).click_submit()
 
 

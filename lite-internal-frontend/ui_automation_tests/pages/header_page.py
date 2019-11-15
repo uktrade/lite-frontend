@@ -2,7 +2,6 @@ from shared.tools.wait import wait_until_page_is_loaded, wait_until_menu_is_visi
 
 
 class HeaderPage:
-
     def __init__(self, driver):
         self.driver = driver
         self.menu_button = "lite-user-menu-button"  # ID

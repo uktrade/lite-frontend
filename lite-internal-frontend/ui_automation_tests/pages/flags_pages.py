@@ -2,8 +2,7 @@ import shared.tools.helpers as utils
 from pages.shared import Shared
 
 
-class FlagsPages():
-
+class FlagsPages:
     def __init__(self, driver):
         self.driver = driver
         self.add_flag_text_field = "name"  # ID
@@ -29,10 +28,10 @@ class FlagsPages():
         return len(self.driver.find_elements_by_class_name(self.flags_in_edit_box))
 
     def get_size_of_active_flags(self):
-        return Shared(self.driver).get_text_of_lite_table_body().count('Active')
+        return Shared(self.driver).get_text_of_lite_table_body().count("Active")
 
     def get_size_of_inactive_flags(self):
-        return Shared(self.driver).get_text_of_lite_table_body().count('Deactivated')
+        return Shared(self.driver).get_text_of_lite_table_body().count("Deactivated")
 
     def click_on_deactivate_flag(self):
         self.driver.find_element_by_css_selector(self.deactivate_flag_button).click()

@@ -19,13 +19,13 @@ class Roles(TemplateView):
         permissions = get_user_permissions(request)
 
         context = {
-            'all_permissions': all_permissions,
-            'roles': roles['roles'],
-            'title': get_string('roles.title'),
-            'user_permissions': permissions,
-            'super_user_role_id': SUPER_USER_ROLE_ID
+            "all_permissions": all_permissions,
+            "roles": roles["roles"],
+            "title": get_string("roles.title"),
+            "user_permissions": permissions,
+            "super_user_role_id": SUPER_USER_ROLE_ID,
         }
-        return render(request, 'users/roles.html', context)
+        return render(request, "users/roles.html", context)
 
 
 class AddRole(TemplateView):
@@ -35,43 +35,38 @@ class AddRole(TemplateView):
 
     def post(self, request, **kwargs):
         data = {
-            'name': request.POST['name'],
-            'permissions': request.POST.getlist('permissions'),
+            "name": request.POST["name"],
+            "permissions": request.POST.getlist("permissions"),
         }
 
-        response, data = submit_single_form(request,
-                                            add_role(request),
-                                            post_role,
-                                            override_data=data)
+        response, data = submit_single_form(request, add_role(request), post_role, override_data=data)
 
         if response:
             return response
 
-        return redirect(reverse('users:roles'))
+        return redirect(reverse("users:roles"))
 
 
 class EditRole(TemplateView):
     def get(self, request, **kwargs):
-        role_id = kwargs['pk']
+        role_id = kwargs["pk"]
         role, _ = get_role(request, role_id)
 
-        return form_page(request, edit_role(request), data=role['role'])
+        return form_page(request, edit_role(request), data=role["role"])
 
     def post(self, request, **kwargs):
-        role_id = kwargs['pk']
+        role_id = kwargs["pk"]
 
         data = {
-            'name': request.POST['name'],
-            'permissions': request.POST.getlist('permissions'),
+            "name": request.POST["name"],
+            "permissions": request.POST.getlist("permissions"),
         }
 
-        response, data = submit_single_form(request,
-                                            edit_role(request),
-                                            put_role,
-                                            object_pk=role_id,
-                                            override_data=data)
+        response, data = submit_single_form(
+            request, edit_role(request), put_role, object_pk=role_id, override_data=data
+        )
 
         if response:
             return response
 
-        return redirect(reverse('users:roles'))
+        return redirect(reverse("users:roles"))

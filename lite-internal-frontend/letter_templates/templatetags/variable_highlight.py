@@ -9,7 +9,7 @@ register = template.Library()
 
 OPEN_TAG = '<span class="lite-highlight">'
 ALT_OPEN_TAG = '<span class="lite-highlight lite-highlight--purple">'
-CLOSE_TAG = '</span>'
+CLOSE_TAG = "</span>"
 
 
 @register.filter
@@ -23,11 +23,11 @@ def variable_highlight(value):
     value = bleach.clean(value)
 
     # Wrap {{}} in open and close tag
-    rx = '{{ (.+?) }}'
-    res = re.sub(rx, (lambda m: f'{OPEN_TAG}{m.group(0)}{CLOSE_TAG}'), value)
+    rx = "{{ (.+?) }}"
+    res = re.sub(rx, (lambda m: f"{OPEN_TAG}{m.group(0)}{CLOSE_TAG}"), value)
 
     # Wrap {%%} in open and close tag
-    rx = '{% (.+?) %}'
-    res = re.sub(rx, (lambda m: f'{ALT_OPEN_TAG}{m.group(0)}{CLOSE_TAG}'), res)
+    rx = "{% (.+?) %}"
+    res = re.sub(rx, (lambda m: f"{ALT_OPEN_TAG}{m.group(0)}{CLOSE_TAG}"), res)
 
     return res

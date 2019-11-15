@@ -2,15 +2,33 @@ from _decimal import Decimal
 
 from cases.helpers import clean_advice
 from conf.client import post, get, put, delete
-from conf.constants import CASE_URL, CASE_NOTES_URL, APPLICATIONS_URL, ACTIVITY_URL, CLC_QUERIES_URL, DOCUMENTS_URL, \
-    END_USER_ADVISORY_URL, CASE_FLAGS_URL, ECJU_QUERIES_URL, GOOD_URL, FLAGS_URL, ASSIGN_FLAGS_URL, \
-    GOODS_TYPE_URL, USER_ADVICE_URL, TEAM_ADVICE_URL, FINAL_ADVICE_URL, VIEW_TEAM_ADVICE_URL, VIEW_FINAL_ADVICE_URL, \
-    GOOD_CLC_REVIEW_URL, MANAGE_STATUS_URL
+from conf.constants import (
+    CASE_URL,
+    CASE_NOTES_URL,
+    APPLICATIONS_URL,
+    ACTIVITY_URL,
+    CLC_QUERIES_URL,
+    DOCUMENTS_URL,
+    END_USER_ADVISORY_URL,
+    CASE_FLAGS_URL,
+    ECJU_QUERIES_URL,
+    GOOD_URL,
+    FLAGS_URL,
+    ASSIGN_FLAGS_URL,
+    GOODS_TYPE_URL,
+    USER_ADVICE_URL,
+    TEAM_ADVICE_URL,
+    FINAL_ADVICE_URL,
+    VIEW_TEAM_ADVICE_URL,
+    VIEW_FINAL_ADVICE_URL,
+    GOOD_CLC_REVIEW_URL,
+    MANAGE_STATUS_URL,
+)
 
 
 def get_case(request, pk):
     data = get(request, CASE_URL + pk)
-    return data.json()['case']
+    return data.json()["case"]
 
 
 def put_case(request, pk, json):
@@ -54,8 +72,8 @@ def put_case_flags(request, pk, flags):
 
 # Activity
 def get_activity(request, pk):
-    data = get(request, CASE_URL + pk + ACTIVITY_URL + '?fields=status,flags')
-    return data.json()['activity']
+    data = get(request, CASE_URL + pk + ACTIVITY_URL + "?fields=status,flags")
+    return data.json()["activity"]
 
 
 # Case Documents
@@ -131,22 +149,23 @@ def prepare_data_for_advice(json):
     json = clean_advice(json)
 
     # Split the json data into multiple
-    base_data = {
-        'type': json['type'],
-        'text': json['advice'],
-        'note': json['note']
-    }
+    base_data = {"type": json["type"], "text": json["advice"], "note": json["note"]}
 
-    if json.get('type') == 'refuse':
-        base_data['denial_reasons'] = json['denial_reasons']
+    if json.get("type") == "refuse":
+        base_data["denial_reasons"] = json["denial_reasons"]
 
-    if json.get('type') == 'proviso':
-        base_data['proviso'] = json['proviso']
+    if json.get("type") == "proviso":
+        base_data["proviso"] = json["proviso"]
 
     new_data = []
-    single_cases = ['end_user', 'consignee']
-    multiple_cases = {'ultimate_end_users': 'ultimate_end_user', 'third_parties': 'third_party',
-                      'countries': 'country', 'goods': 'good', 'goods_types': 'goods_type'}
+    single_cases = ["end_user", "consignee"]
+    multiple_cases = {
+        "ultimate_end_users": "ultimate_end_user",
+        "third_parties": "third_party",
+        "countries": "country",
+        "goods": "good",
+        "goods_types": "goods_type",
+    }
 
     for entity_name in single_cases:
         if json.get(entity_name):
@@ -161,12 +180,12 @@ def prepare_data_for_advice(json):
 
 
 def get_good_countries_decisions(request, case_pk):
-    data = get(request, CASE_URL + case_pk + '/goods-countries-decisions/')
+    data = get(request, CASE_URL + case_pk + "/goods-countries-decisions/")
     return data.json()
 
 
 def post_good_countries_decisions(request, case_pk, json):
-    data = post(request, CASE_URL + case_pk + '/goods-countries-decisions/', json)
+    data = post(request, CASE_URL + case_pk + "/goods-countries-decisions/", json)
     return data.json(), data.status_code
 
 
@@ -216,7 +235,7 @@ def get_goods_type(request, pk):
 
 def post_goods_control_code(request, case_id, json):
     # Data will only be passed back when a error is thrown with status code of 400, as such it is not split here.
-    response = post(request, GOOD_CLC_REVIEW_URL + case_id + '/', json)
+    response = post(request, GOOD_CLC_REVIEW_URL + case_id + "/", json)
     return response
 
 
@@ -228,7 +247,7 @@ def get_flags_for_team_of_level(request, level):
     :param level: 'cases', 'goods'
     :return:
     """
-    data = get(request, FLAGS_URL + '?level=' + level + '&team=True')
+    data = get(request, FLAGS_URL + "?level=" + level + "&team=True")
     return data.json(), data.status_code
 
 
@@ -245,36 +264,36 @@ def _generate_data_and_keys(request, pk):
     keys = []
     # Builds form page data structure
     # For each good in the case
-    for good in case['application']['goods_types']:
+    for good in case["application"]["goods_types"]:
         # Match the goods with the goods in advice for that case
         # and attach the advice value to the good
-        for advice in case_advice['advice']:
-            if advice['goods_type'] == good['id']:
-                good['advice'] = advice['type']
+        for advice in case_advice["advice"]:
+            if advice["goods_type"] == good["id"]:
+                good["advice"] = advice["type"]
                 break
         # If the good has countries attached to it as destinations
         # We do the same with the countries and their advice
-        if good['countries']:
-            for country in good['countries']:
-                keys.append(str(good['id']) + '.' + country['id'])
-                for advice in case_advice['advice']:
-                    if advice['country'] == country['id']:
-                        country['advice'] = advice['type']
+        if good["countries"]:
+            for country in good["countries"]:
+                keys.append(str(good["id"]) + "." + country["id"])
+                for advice in case_advice["advice"]:
+                    if advice["country"] == country["id"]:
+                        country["advice"] = advice["type"]
                         break
         # If the good has no countries:
         else:
-            good['countries'] = []
+            good["countries"] = []
             # We attach all countries from the case
             # And then attach the advice as before
-            for country in case['application']['destinations']['data']:
-                good['countries'].append(country)
-                keys.append(str(good['id']) + '.' + country['id'])
-                for advice in case_advice['advice']:
-                    if advice['country'] == country['id']:
-                        country['advice'] = advice['type']
+            for country in case["application"]["destinations"]["data"]:
+                good["countries"].append(country)
+                keys.append(str(good["id"]) + "." + country["id"])
+                for advice in case_advice["advice"]:
+                    if advice["country"] == country["id"]:
+                        country["advice"] = advice["type"]
                         break
     data = get_good_countries_decisions(request, pk)
-    if 'detail' in data:
+    if "detail" in data:
         raise PermissionError
 
     return case, data, keys
@@ -284,33 +303,31 @@ def _generate_post_data_and_errors(keys, request_data, action):
     post_data = []
     errors = {}
     for key in keys:
-        good_pk = key.split('.')[0]
-        country_pk = key.split('.')[1]
-        if key not in request_data and not action == 'save':
+        good_pk = key.split(".")[0]
+        country_pk = key.split(".")[1]
+        if key not in request_data and not action == "save":
             if good_pk in errors:
                 errors[good_pk].append(country_pk)
             else:
                 errors[good_pk] = [country_pk]
         else:
-            post_data.append({'good': good_pk,
-                              'country': country_pk,
-                              'decision': request_data.get(key)})
+            post_data.append({"good": good_pk, "country": country_pk, "decision": request_data.get(key)})
     return post_data, errors
 
 
 def _get_all_distinct_flags(case):
     flags = []
-    flags.extend(case.get('flags'))
+    flags.extend(case.get("flags"))
     try:
-        flags.extend(case.get('application').get('organisation').get('flags'))
-        if 'goods_types' in case.get('application'):
-            for good in case.get('application').get('goods_types'):
-                for flag in good.get('flags'):
+        flags.extend(case.get("application").get("organisation").get("flags"))
+        if "goods_types" in case.get("application"):
+            for good in case.get("application").get("goods_types"):
+                for flag in good.get("flags"):
                     if flag not in flags:
                         flags.append(flag)
-        elif 'goods' in case.get('application'):
-            for good in case.get('application').get('goods'):
-                for flag in good.get('good').get('flags'):
+        elif "goods" in case.get("application"):
+            for good in case.get("application").get("goods"):
+                for flag in good.get("good").get("flags"):
                     if flag not in flags:
                         flags.append(flag)
     except AttributeError:
@@ -320,6 +337,6 @@ def _get_all_distinct_flags(case):
 
 def _get_total_goods_value(case):
     total_value = 0
-    for good in case.get('application').get('goods'):
-        total_value += Decimal(good['value']).quantize(Decimal('.01'))
+    for good in case.get("application").get("goods"):
+        total_value += Decimal(good["value"]).quantize(Decimal(".01"))
     return total_value

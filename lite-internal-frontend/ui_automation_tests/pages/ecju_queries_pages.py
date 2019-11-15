@@ -4,13 +4,13 @@ from shared.tools.helpers import select_visible_text_from_dropdown
 
 class EcjuQueriesPages(BasePage):
     add_an_ecju_query_btn = '.govuk-button[href*="ecju-queries/add"]'
-    query_type_drop_down = 'picklist'
-    question_text_area = 'question'
+    query_type_drop_down = "picklist"
+    question_text_area = "question"
     confirm_query_create_no = '.govuk-radios__input[value="no"]'
     confirm_query_create_yes = '.govuk-radios__input[value="yes"]'
-    open_questions = 'open-question'
-    closed_questions = 'closed-question'
-    closed_answers = 'closed-answer'
+    open_questions = "open-question"
+    closed_questions = "closed-question"
+    closed_answers = "closed-answer"
 
     def click_add_an_ecju_query_btn(self):
         self.driver.find_element_by_css_selector(self.add_an_ecju_query_btn).click()

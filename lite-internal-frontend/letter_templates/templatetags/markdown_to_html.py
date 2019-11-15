@@ -14,16 +14,16 @@ def markdown_to_html(context):
     placeholder tags with user requested params
     """
     # Clean initial content
-    text = bleach.clean(context.get('content', ''))
+    text = bleach.clean(context.get("content", ""))
 
     # Convert markdown text to html
     md = Markdown()
     text = md.convert(text)
     if not text:
-        return ''
+        return ""
 
     # Do string substitution for placeholders
-    django_engine = engines['django']
+    django_engine = engines["django"]
     page = django_engine.from_string(text)
 
     text = page.render(context.flatten())

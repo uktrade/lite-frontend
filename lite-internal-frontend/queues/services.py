@@ -11,10 +11,8 @@ def get_queues(request, convert_to_options=False, include_system_queues=False):
     if convert_to_options:
         converted = []
 
-        for queue in data.json().get('queues'):
-            converted.append(
-                Option(queue.get('id'), queue.get('name'), description=queue.get('team').get('name'))
-            )
+        for queue in data.json().get("queues"):
+            converted.append(Option(queue.get("id"), queue.get("name"), description=queue.get("team").get("name")))
 
         return converted
 
@@ -30,18 +28,18 @@ def get_queue(request, pk, case_type=None, status=None, sort=None):
     filter_and_sort = []
 
     if case_type:
-        filter_and_sort.append('case_type=' + case_type)
+        filter_and_sort.append("case_type=" + case_type)
 
     if status:
-        filter_and_sort.append('status=' + status)
+        filter_and_sort.append("status=" + status)
 
     if sort:
-        sort_json = sort.split('-')
+        sort_json = sort.split("-")
         if len(sort_json) == 2:
             sort = json.dumps({sort_json[0]: sort_json[1]})
-            filter_and_sort.append('sort=' + sort)
+            filter_and_sort.append("sort=" + sort)
 
-    filter_and_sort = '?' + '&'.join(filter_and_sort) if len(filter_and_sort) > 0 else ''
+    filter_and_sort = "?" + "&".join(filter_and_sort) if len(filter_and_sort) > 0 else ""
 
     data = get(request, QUEUES_URL + pk + filter_and_sort)
 
@@ -49,12 +47,12 @@ def get_queue(request, pk, case_type=None, status=None, sort=None):
 
 
 def get_cases_search_data(request, params):
-    data = get(request, '/cases/' + '?' + params)
+    data = get(request, "/cases/" + "?" + params)
     return data.json()
 
 
 def put_queue(request, pk, json):
-    data = put(request, QUEUES_URL + pk + '/', json)
+    data = put(request, QUEUES_URL + pk + "/", json)
     return data.json(), data.status_code
 
 
@@ -62,11 +60,10 @@ def put_queue(request, pk, json):
 
 
 def get_queue_case_assignments(request, pk):
-    data = get(request, QUEUES_URL + pk + '/case-assignments/')
+    data = get(request, QUEUES_URL + pk + "/case-assignments/")
     return data.json(), data.status_code
 
 
 def put_queue_case_assignments(request, pk, json):
-    data = put(request, QUEUES_URL + pk + '/case-assignments/', json)
+    data = put(request, QUEUES_URL + pk + "/case-assignments/", json)
     return data.json(), data.status_code
-

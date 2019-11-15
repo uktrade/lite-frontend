@@ -6,17 +6,17 @@ from pages.shared import Shared
 from shared.tools.wait import wait_until_page_is_loaded
 from ui_automation_tests.pages.case_list_page import CaseListPage
 
-scenarios('../features/filter_and_sort_cases.feature', strict_gherkin=False)
+scenarios("../features/filter_and_sort_cases.feature", strict_gherkin=False)
 
 
-@given('a queue has been created')
+@given("a queue has been created")
 def create_queue(context, seed_data_config):
     lite_client = get_lite_client(context, seed_data_config)
-    lite_client.seed_queue.add_queue('queue' + get_formatted_date_time_m_d_h_s())
-    context.queue_name = lite_client.context['queue_name']
+    lite_client.seed_queue.add_queue("queue" + get_formatted_date_time_m_d_h_s())
+    context.queue_name = lite_client.context["queue_name"]
 
 
-@when('case has been moved to new Queue')
+@when("case has been moved to new Queue")
 def assign_case_to_queue(context, seed_data_config):
     lite_client = get_lite_client(context, seed_data_config)
     lite_client.seed_case.assign_case_to_queue()
@@ -39,22 +39,22 @@ def filter_status_change(driver, context, case_type):
     CaseListPage(driver).click_apply_filters_button()
 
 
-@when('I show filters')
+@when("I show filters")
 def i_show_filters(driver, context):
     CaseListPage(driver).click_show_filters_link()
 
 
-@when('I click clear filters')
+@when("I click clear filters")
 def i_show_filters(driver, context):
     CaseListPage(driver).click_clear_filters_button()
 
 
-@when('I hide filters')
+@when("I hide filters")
 def i_hide_filters(driver, context):
     CaseListPage(driver).click_hide_filters_link()
 
 
-@when('I sort cases by status')
+@when("I sort cases by status")
 def i_sort_cases_by(driver, context):
     wait_until_page_is_loaded(driver)
     CaseListPage(driver).sort_by_status()
@@ -65,12 +65,12 @@ def the_cases_are_in_order_of(driver, index, status):
     assert status in Shared(driver).get_lite_row_text_by_index(index), status + " is not in the correct order"
 
 
-@then('the filters are shown')
+@then("the filters are shown")
 def the_filters_are_shown(driver, context):
     assert CaseListPage(driver).is_filters_visible(), "filters are not shown"
 
 
-@then('the filters are hidden')
+@then("the filters are hidden")
 def the_filters_are_hidden(driver, context):
     driver.set_timeout_to(0)
     assert not CaseListPage(driver).is_filters_visible(), "filters are shown"

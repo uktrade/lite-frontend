@@ -1,10 +1,9 @@
-class AttachDocumentPage():
-
+class AttachDocumentPage:
     def __init__(self, driver):
         self.driver = driver
-        self.file = 'file' #id
-        self.description = 'description' #id
-        self.submit_btn = '.govuk-button[value="submit"]' #css
+        self.file = "file"  # id
+        self.description = "description"  # id
+        self.submit_btn = '.govuk-button[value="submit"]'  # css
 
     def choose_file(self, file_location_path):
         self.driver.find_element_by_id(self.file).send_keys(file_location_path)

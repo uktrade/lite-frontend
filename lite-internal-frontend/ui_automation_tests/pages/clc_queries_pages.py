@@ -3,12 +3,12 @@ from helpers.BasePage import BasePage
 
 class ClcQueriesPages(BasePage):
 
-    control_response = 'is_good_controlled-'  # ID
-    control_list_entry = 'control_code'  # ID
-    report_summary = 'report_summary'  # Name
-    comment = 'comment'  # ID
-    case_close = '.lite-info-bar'  # CSS
-    respond_btn = 'respond'  # ID
+    control_response = "is_good_controlled-"  # ID
+    control_list_entry = "control_code"  # ID
+    report_summary = "report_summary"  # Name
+    comment = "comment"  # ID
+    case_close = ".lite-info-bar"  # CSS
+    respond_btn = "respond"  # ID
     submit_button = '.govuk-button[type*="submit"]'  # CSS
 
     def click_respond_to_query(self):
@@ -24,7 +24,7 @@ class ClcQueriesPages(BasePage):
 
     def choose_report_summary(self, num):
         element = self.driver.find_elements_by_name(self.report_summary)[int(num)]
-        self.driver.execute_script('arguments[0].click();', element)
+        self.driver.execute_script("arguments[0].click();", element)
 
     def enter_a_comment(self, comment):
         self.driver.find_element_by_id(self.comment).send_keys(comment)
