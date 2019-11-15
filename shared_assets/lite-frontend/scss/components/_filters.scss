@@ -70,23 +70,8 @@
 	margin-bottom: govuk-spacing(1);
 	text-decoration: none;
 	border-bottom: 1px solid transparent;
-	&:before {
-		content: "#";
-		position: absolute;
-		top: 0;
-		left: -15px;
-		bottom: 0;
-		color: govuk-colour("mid-grey");
-		opacity: 0;
-		transition: .2s ease;
-		transform: scale(0.9);
-		transform-origin: right center;
-	}
+
 	&:hover {
 		border-bottom: 1px solid currentColor;
-		&:before {
-			transform: scale(1);
-			opacity: 1;
-		}
 	}
 }
