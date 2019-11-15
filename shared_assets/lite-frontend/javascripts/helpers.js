@@ -9,3 +9,17 @@ function disableButton(button) {
 			 .addClass("govuk-button--disabled")
 			 .attr('aria-disabled', true);
 }
+
+function enableLink(link) {
+	$(link).prop('disabled', false)
+			 .removeClass("govuk-link--disabled")
+			 .attr('aria-disabled', false)
+			 .removeAttr('tabindex');
+}
+
+function disableLink(link) {
+	$(link).prop('disabled', true)
+			 .addClass("govuk-link--disabled")
+			 .attr('aria-disabled', true)
+			 .attr('tabindex', '-1');
+}
