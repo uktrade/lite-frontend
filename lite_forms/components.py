@@ -27,13 +27,7 @@ class _Component:
 
 class Button:
     def __init__(
-        self,
-        value,
-        action,
-        style=ButtonStyle.DEFAULT,
-        link=None,
-        float_right=False,
-        disable_double_click=False,
+        self, value, action, style=ButtonStyle.DEFAULT, link=None, float_right=False, disable_double_click=False,
     ):
         self.value = value
         self.action = action
@@ -156,12 +150,7 @@ class SideBySideSection:
 
 class TextInput(_Component):
     def __init__(
-        self,
-        name: str,
-        title: str = "",
-        description: str = "",
-        optional: bool = False,
-        classes: [] = None,
+        self, name: str, title: str = "", description: str = "", optional: bool = False, classes: [] = None,
     ):
         super().__init__(name, title, description, optional, classes)
         self.input_type = "text_input"
@@ -169,12 +158,7 @@ class TextInput(_Component):
 
 class NumberInput(_Component):
     def __init__(
-        self,
-        name: str,
-        title: str = "",
-        description: str = "",
-        optional: bool = False,
-        classes: [] = None,
+        self, name: str, title: str = "", description: str = "", optional: bool = False, classes: [] = None,
     ):
         super().__init__(name, title, description, optional, classes)
         self.input_type = "number_input"
@@ -182,12 +166,7 @@ class NumberInput(_Component):
 
 class QuantityInput(_Component):
     def __init__(
-        self,
-        name: str,
-        title: str = "",
-        description: str = "",
-        optional: bool = False,
-        classes: [] = None,
+        self, name: str, title: str = "", description: str = "", optional: bool = False, classes: [] = None,
     ):
         super().__init__(name, title, description, optional, classes)
         self.input_type = "quantity_input"
@@ -195,12 +174,7 @@ class QuantityInput(_Component):
 
 class PasswordInput(_Component):
     def __init__(
-        self,
-        name: str,
-        title: str = "",
-        description: str = "",
-        optional: bool = False,
-        classes: [] = None,
+        self, name: str, title: str = "", description: str = "", optional: bool = False, classes: [] = None,
     ):
         super().__init__(name, title, description, optional, classes)
         self.input_type = "password_input"
@@ -208,12 +182,7 @@ class PasswordInput(_Component):
 
 class CurrencyInput(_Component):
     def __init__(
-        self,
-        name: str,
-        title: str = "",
-        description: str = "",
-        optional: bool = False,
-        classes: [] = None,
+        self, name: str, title: str = "", description: str = "", optional: bool = False, classes: [] = None,
     ):
         super().__init__(name, title, description, optional, classes)
         self.input_type = "currency_input"
@@ -282,9 +251,7 @@ class RadioButtonsImage(RadioButtons):
         classes: [] = None,
         empty_notice: str = "No items",
     ):
-        super().__init__(
-            name, options, title, description, optional, classes, empty_notice
-        )
+        super().__init__(name, options, title, description, optional, classes, empty_notice)
         self.input_type = "radiobuttons_image"
 
 
@@ -307,14 +274,7 @@ class Select(_Component):
 
 class Option:
     def __init__(
-        self,
-        key,
-        value,
-        description=None,
-        show_pane=None,
-        sections=None,
-        show_or=False,
-        img_url=None,
+        self, key, value, description=None, show_pane=None, sections=None, show_or=False, img_url=None,
     ):
         self.key = key
         self.value = value
@@ -359,12 +319,7 @@ class Heading:
 
 class FileUpload(_Component):
     def __init__(
-        self,
-        name: str,
-        title: str = "",
-        description: str = "",
-        optional: bool = False,
-        classes: [] = None,
+        self, name: str, title: str = "", description: str = "", optional: bool = False, classes: [] = None,
     ):
         super().__init__(name, title, description, optional, classes)
         self.input_type = "file_upload"
@@ -372,12 +327,7 @@ class FileUpload(_Component):
 
 class MultiFileUpload(_Component):
     def __init__(
-        self,
-        name: str,
-        title: str = "",
-        description: str = "",
-        optional: bool = False,
-        classes: [] = None,
+        self, name: str, title: str = "", description: str = "", optional: bool = False, classes: [] = None,
     ):
         super().__init__(name, title, description, optional, classes)
         self.input_type = "multi_file_upload"
@@ -447,11 +397,7 @@ class List:
         NUMBERED = 3
 
     def __init__(
-        self,
-        items: [],
-        title: str = None,
-        type: ListType = ListType.DEFAULT,
-        classes: [] = None,
+        self, items: [], title: str = None, type: ListType = ListType.DEFAULT, classes: [] = None,
     ):
         self.items = items
         self.title = title

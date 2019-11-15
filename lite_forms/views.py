@@ -69,16 +69,12 @@ class SingleFormView(FormView):
         data = request.POST.copy()
 
         if self.get_object_pk():
-            validated_data, _ = self.get_action()(  # noqa
-                request, self.get_object_pk(), data
-            )
+            validated_data, _ = self.get_action()(request, self.get_object_pk(), data)  # noqa
         else:
             validated_data, _ = self.get_action()(request, data)  # noqa
 
         if "errors" in validated_data:
-            return form_page(
-                request, self.get_form(), data=data, errors=validated_data.get("errors")
-            )
+            return form_page(request, self.get_form(), data=data, errors=validated_data.get("errors"))
 
         self._validated_data = validated_data
 
@@ -107,17 +103,13 @@ class MultiFormView(FormView):
     def get(self, request, **kwargs):
         self.init(request, **kwargs)
         form = self.get_forms().forms[0]
-        return form_page(
-            request, form, data=self.get_data(), extra_data={"form_pk": form.pk}
-        )
+        return form_page(request, form, data=self.get_data(), extra_data={"form_pk": form.pk})
 
     def post(self, request, **kwargs):
         self.init(request, **kwargs)
         self.on_submission(request, **kwargs)
 
-        response, data = submit_paged_form(
-            request, self.get_forms(), self.get_action(), object_pk=self.get_object_pk()
-        )
+        response, data = submit_paged_form(request, self.get_forms(), self.get_action(), object_pk=self.get_object_pk())
 
         # If there are more forms to go through, continue
         if response:

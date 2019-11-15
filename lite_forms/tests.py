@@ -33,14 +33,7 @@ class FormTests(TestCase):
         self.assertEqual(get_next_form(1, forms).pk, 2)
 
     def test_remove_unused_errors(self):
-        form = Form(
-            questions=[
-                TextInput("name"),
-                TextInput("age"),
-                TextInput("password"),
-                DetailComponent("", ""),
-            ]
-        )
+        form = Form(questions=[TextInput("name"), TextInput("age"), TextInput("password"), DetailComponent("", ""),])
 
         errors = {
             "name": "This field must not be empty",
@@ -129,19 +122,10 @@ class TestSubmitPagedFormTestCase(TestCase):
         def handle_post(request, data):
             return data, HTTPStatus.OK
 
-        form, data = submit_paged_form(
-            request, forms, handle_post, expect_many_values=["key_a", "key_c", "key_e"]
-        )
+        form, data = submit_paged_form(request, forms, handle_post, expect_many_values=["key_a", "key_c", "key_e"])
 
         self.assertEqual(
-            data,
-            {
-                "key_a": ["a", "b", "c"],
-                "key_b": "f",
-                "key_c": ["g"],
-                "key_d": "h",
-                "key_e": [],
-            },
+            data, {"key_a": ["a", "b", "c"], "key_b": "f", "key_c": ["g"], "key_d": "h", "key_e": [],},
         )
 
 

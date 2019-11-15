@@ -12,9 +12,7 @@ from lite_forms.helpers import (
 )
 
 
-def submit_single_form(
-    request, form: Form, action: Callable, object_pk=None, override_data=None
-):
+def submit_single_form(request, form: Form, action: Callable, object_pk=None, override_data=None):
     """
     Function to handle the submission of data for a single, supplied form.
 
@@ -62,12 +60,7 @@ def _prepare_data(request, inject_data, expect_many_values):
 
 
 def submit_paged_form(
-    request,
-    form_group: FormGroup,
-    action: Callable,
-    object_pk=None,
-    inject_data=None,
-    expect_many_values=None,
+    request, form_group: FormGroup, action: Callable, object_pk=None, inject_data=None, expect_many_values=None,
 ):
     """
     Function to handle the submission of the data from one form in a sequence of forms (a FormGroup).
@@ -94,12 +87,7 @@ def submit_paged_form(
         data = request.POST.copy()
         del data["form_pk"]
         return (
-            form_page(
-                request,
-                previous_form,
-                data=data,
-                extra_data={"form_pk": previous_form.pk},
-            ),
+            form_page(request, previous_form, data=data, extra_data={"form_pk": previous_form.pk},),
             None,
         )
 
@@ -129,13 +117,7 @@ def submit_paged_form(
                 current_form.questions.insert(0, HiddenField(key, value))
 
         return (
-            form_page(
-                request,
-                current_form,
-                data=data,
-                errors=errors,
-                extra_data={"form_pk": current_form.pk},
-            ),
+            form_page(request, current_form, data=data, errors=errors, extra_data={"form_pk": current_form.pk},),
             validated_data,
         )
 
