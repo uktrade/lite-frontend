@@ -211,10 +211,12 @@ class Checkboxes(_Component):
                  description: str = '',
                  optional: bool = False,
                  classes: [] = None,
-                 empty_notice: str = 'No items'):
+                 empty_notice: str = 'No items',
+                 show_select_links: bool = False):
         super().__init__(name, title, description, optional, classes)
         self.options = options
         self.empty_notice = empty_notice
+        self.show_select_links = show_select_links
         self.input_type = 'checkboxes'
 
 

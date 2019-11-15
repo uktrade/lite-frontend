@@ -1,4 +1,12 @@
+{% load static %}
+
 {% if component.options %}
+	{% if component.show_select_links %}
+		<div class="lite-buttons-row govuk-body govuk-!-margin-bottom-6 lite-js-only">
+			<a id="link-select-all" href="#" role="button" draggable="false" class="govuk-link govuk-link--no-visited-state">Select all</a>
+			<a id="link-deselect-all" href="#" role="button" draggable="false" class="govuk-link govuk-link--no-visited-state">Deselect all</a>
+		</div>
+	{% endif %}
     <div class="govuk-checkboxes {% for class in component.classes %}{{ class }} {% endfor %}">
         {% for item in component.options %}
             <div class="govuk-checkboxes__item">
@@ -14,6 +22,9 @@
             </div>
         {% endfor %}
     </div>
+
+	<script src="{% static 'javascripts/helpers.js' %}"></script>
+	<script src="{% static 'javascripts/select-links.js' %}"></script>
 {% else %}
     <div class="lite-information-text">
         <span class="lite-information-text__icon" aria-hidden="true">!</span>
