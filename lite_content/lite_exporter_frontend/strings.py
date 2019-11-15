@@ -71,6 +71,7 @@ HELP_WITH_CHOOSING_A_LICENCE_CONTENT = 'If you\'re unsure about which licence to
                                        'abroad<span class="govuk-visually-hidden"> (Opens in a new window or tab)</span></a>.'
 
 ENTER_A_REFERENCE_NAME_TITLE = "Enter a reference name for your application"
+ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference name"
 ENTER_A_REFERENCE_NAME_DESCRIPTION = (
     "This can make it easier for you or your organisation to find in the future."
 )
