@@ -55,12 +55,18 @@ WHICH_EXPORT_LICENCE_DO_YOU_WANT_TITLE = "Which export licence do you want to ap
 WHICH_EXPORT_LICENCE_DO_YOU_WANT_DESCRIPTION = "Select one of the options."
 
 STANDARD_LICENCE = "Standard Licence"
-STANDARD_LICENCE_DESCRIPTION = "Standard Licences are specific to the company and the recipient (consignee). They are for a set quantity and set value of goods. You will need to provide support documentation with your application."
+STANDARD_LICENCE_DESCRIPTION = "Standard Licences are specific to the company and the recipient (consignee). " \
+                               "They are for a set quantity and set value of goods. You will need to provide support " \
+                               "documentation with your application."
 OPEN_LICENCE = "Open Licence"
-OPEN_LICENCE_DESCRIPTION = "Open Licences cover long-term projects and repeat business. This is company specific, with no set quantity or value of goods. You will receive compliance audits under this type of licence."
+OPEN_LICENCE_DESCRIPTION = "Open Licences cover long-term projects and repeat business. This is company specific, " \
+                           "with no set quantity or value of goods. You will receive compliance audits under this type of licence."
 
 HELP_WITH_CHOOSING_A_LICENCE = "Help with choosing a licence"
-HELP_WITH_CHOOSING_A_LICENCE_CONTENT = 'If you\'re unsure about which licence to select, then read the guidance on GOV.UK for <a class="govuk-link" target="_blank" href="https://www.gov.uk/starting-to-export/licences">exporting and doing business abroad<span class="govuk-visually-hidden"> (Opens in a new window or tab)</span></a>.'
+HELP_WITH_CHOOSING_A_LICENCE_CONTENT = 'If you\'re unsure about which licence to select, then read the guidance on ' \
+                                       'GOV.UK for <a class="govuk-link" target="_blank" ' \
+                                       'href="https://www.gov.uk/starting-to-export/licences">exporting and doing business ' \
+                                       'abroad<span class="govuk-visually-hidden"> (Opens in a new window or tab)</span></a>.'
 
 ENTER_A_REFERENCE_NAME_TITLE = "Enter a reference name for your application"
 ENTER_A_REFERENCE_NAME_DESCRIPTION = "This can make it easier for you or your organisation to find in the future."
