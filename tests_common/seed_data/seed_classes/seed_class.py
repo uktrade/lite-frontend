@@ -10,5 +10,5 @@ class SeedClass:
         print(text)
 
     def add_to_context(self, name, value):
-        self.log(name + ': ' + str(value))
+        self.log(name + ": " + str(value))
         self.context[name] = value
