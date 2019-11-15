@@ -9,6 +9,12 @@ SAVE = "Save"
 CONTINUE = "Continue"
 SAVE_AND_CONTINUE = "Save and continue"
 
+THIS_SECTION_IS = "This section is "  # The space at the end is intentional. Usage is 'This section is optional'
+OPTIONAL = "Optional"
+NOT_STARTED = "Not started"
+IN_PROGRESS = "In progress"
+DONE = "Done"
+
 PERMISSION_FINDER_LINK = (
     '<a class="govuk-link" href="'
     + env("PERMISSIONS_FINDER_URL")
