@@ -20,4 +20,4 @@ def element_with_css_selector_exists(driver: WebDriver, css_selector: str) -> bo
 
 
 def element_with_id_exists(driver: WebDriver, element_id: str) -> bool:
-    return element_with_css_selector_exists(driver, f'#{element_id}')
+    return element_with_css_selector_exists(driver, f"#{element_id}")

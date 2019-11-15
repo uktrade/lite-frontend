@@ -8,5 +8,5 @@ def seed_cases(seed_data):
     seed_data.submit_standard_application()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     seed(argv, seed_cases)

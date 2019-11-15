@@ -14,7 +14,7 @@ class Timer:
         return time() - self.start
 
     def print_time(self, context):
-        print(f'Timer: {context}: {str(self.get_time())}')
+        print(f"Timer: {context}: {str(self.get_time())}")
 
 
 def get_or_create_attr(obj, attr: str, fn):
@@ -42,4 +42,4 @@ def get_lite_client(context, seed_data_config):
     Returns the existing LITE API client, or creates a new one
     """
     seed_data = SeedData(seed_data_config=seed_data_config)
-    return get_or_create_attr(context, 'api', seed_data)
+    return get_or_create_attr(context, "api", seed_data)
