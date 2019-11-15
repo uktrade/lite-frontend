@@ -99,6 +99,10 @@ WHAT_WAS_THE_REFERENCE_CODE_TITLE = (
 )
 WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION = "This is the reference found on the letter or email to tell you to apply for an export licence."
 
+WHERE_ARE_YOUR_GOODS_GOING_TITLE = "Where are your goods going?"
+WHERE_ARE_YOUR_GOODS_GOING_SHORT_TITLE = "Set countries"
+WHERE_ARE_YOUR_GOODS_GOING_DESCRIPTION = "Select all countries that apply."
+
 # Edit application
 APPLICATION_EDIT_APPLICATION_BUTTON = "Edit application"
 
