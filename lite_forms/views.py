@@ -2,8 +2,8 @@ from abc import ABC
 
 from django.shortcuts import redirect
 from django.views.generic import TemplateView
-from lite_forms.components import FormGroup, Form
 
+from lite_forms.components import FormGroup, Form
 from lite_forms.generators import form_page
 from lite_forms.submitters import submit_paged_form
 
@@ -94,6 +94,9 @@ class MultiFormView(FormView):
     def init(self, request, **kwargs):
         super().init(request, **kwargs)
 
+    def on_submission(self, request, **kwargs):
+        pass
+
     def get(self, request, **kwargs):
         self.init(request, **kwargs)
         form = self.get_forms().forms[0]
@@ -101,6 +104,8 @@ class MultiFormView(FormView):
 
     def post(self, request, **kwargs):
         self.init(request, **kwargs)
+        self.on_submission(request, **kwargs)
+
         response, data = submit_paged_form(request, self.get_forms(), self.get_action(), object_pk=self.get_object_pk())
 
         # If there are more forms to go through, continue
