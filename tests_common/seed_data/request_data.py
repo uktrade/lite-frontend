@@ -78,7 +78,7 @@ def create_request_data(exporter_user, gov_user, base_url):
         "export_user": {"email": exporter["email"], "password": "password"},
         "application": {
             "name": "application",
-            "licence_type": "standard_licence",
+            "application_type": "standard_licence",
             "export_type": "permanent",
             "have_you_been_informed": "yes",
             "reference_number_on_information_form": "1234",

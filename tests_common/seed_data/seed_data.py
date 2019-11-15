@@ -157,7 +157,7 @@ class SeedData:
             headers=self.export_headers,
             body=data,
         )
-        draft_id = response.json()["application"]["id"]
+        draft_id = response.json()["id"]
         self.add_to_context("draft_id", draft_id)
         return draft_id
 
@@ -203,12 +203,16 @@ class SeedData:
             additional_document_id=additional_document_id,
         )
 
+        return draft_id
+
     def add_open_draft(self, draft=None):
         draft_id = self.create_draft(draft)
         self.add_to_context("open_draft_id", draft_id)
         self.add_site(draft_id)
         self.add_countries(draft_id)
         self.seed_good.add_open_draft_good(draft_id)
+
+        return draft_id
 
     def submit_application(self, draft_id):
         self.log("Submitting application: ...")
@@ -219,17 +223,17 @@ class SeedData:
             url="/applications/" + draft_id_to_submit + "/submit/",
             headers=self.export_headers,
         )
-        return response.json()["application"]
+        return response.json()
 
     def submit_standard_application(self, draft_id=None):
         item = self.submit_application(draft_id)
-        self.add_to_context("application_id", item["id"])
-        self.add_to_context("case_id", item["case_id"])
+        self.add_to_context("application_id", draft_id)
+        self.add_to_context("case_id", item["application"]["case_id"])
 
     def submit_open_application(self, draft_id=None):
         item = self.submit_application(draft_id)
-        self.add_to_context("application_id", item["id"])
-        self.add_to_context("case_id", item["case_id"])
+        self.add_to_context("application_id", draft_id)
+        self.add_to_context("case_id", item["application"]["case_id"])
 
     def manage_case_status(self, draft_id):
         draft_id_to_change = draft_id if None else self.context["draft_id"]  # noqa

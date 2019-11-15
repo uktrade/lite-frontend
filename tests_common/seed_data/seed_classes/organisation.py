@@ -37,7 +37,7 @@ class Organisation(SeedClass):
         organisations = make_request(
             "GET",
             base_url=self.base_url,
-            url="/organisations/?name=" + org_name,
+            url="/organisations/?search_term=" + org_name,
             headers=self.gov_headers,
         ).json()["results"]
         organisation = next(
