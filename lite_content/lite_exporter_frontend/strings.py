@@ -51,7 +51,9 @@ APPLICATION_LAST_UPDATED_AT = "Last updated"
 APPLICATION_SUBMITTED_AT = "Submitted at"
 
 # Initial application questions
-WHICH_EXPORT_LICENCE_DO_YOU_WANT_TITLE = "Which export licence do you want to apply for?"
+WHICH_EXPORT_LICENCE_DO_YOU_WANT_TITLE = (
+    "Which export licence do you want to apply for?"
+)
 WHICH_EXPORT_LICENCE_DO_YOU_WANT_DESCRIPTION = "Select one of the options."
 
 STANDARD_LICENCE = "Standard Licence"
@@ -69,7 +71,9 @@ HELP_WITH_CHOOSING_A_LICENCE_CONTENT = 'If you\'re unsure about which licence to
                                        'abroad<span class="govuk-visually-hidden"> (Opens in a new window or tab)</span></a>.'
 
 ENTER_A_REFERENCE_NAME_TITLE = "Enter a reference name for your application"
-ENTER_A_REFERENCE_NAME_DESCRIPTION = "This can make it easier for you or your organisation to find in the future."
+ENTER_A_REFERENCE_NAME_DESCRIPTION = (
+    "This can make it easier for you or your organisation to find in the future."
+)
 
 TEMPORARY_OR_PERMANENT_TITLE = "Do you want to export temporarily or permanently?"
 TEMPORARY_OR_PERMANENT_DESCRIPTION = ""
@@ -77,9 +81,15 @@ TEMPORARY_OR_PERMANENT_DESCRIPTION = ""
 TEMPORARY = "Temporarily"
 PERMANENT = "Permanently"
 
-HAVE_YOU_BEEN_INFORMED_TITLE = "Have you been told that you need an export licence by an official?"
-HAVE_YOU_BEEN_INFORMED_DESCRIPTION = "This could be a letter or email from HMRC or another government department."
-WHAT_WAS_THE_REFERENCE_CODE_TITLE = "What was the reference number if you were provided one?"
+HAVE_YOU_BEEN_INFORMED_TITLE = (
+    "Have you been told that you need an export licence by an official?"
+)
+HAVE_YOU_BEEN_INFORMED_DESCRIPTION = (
+    "This could be a letter or email from HMRC or another government department."
+)
+WHAT_WAS_THE_REFERENCE_CODE_TITLE = (
+    "What was the reference number if you were provided one?"
+)
 WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION = "This is the reference found on the letter or email to tell you to apply for an export licence."
 
 # Edit application
