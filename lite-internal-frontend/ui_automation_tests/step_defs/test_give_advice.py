@@ -133,3 +133,18 @@ def todays_date_is_filled_in(driver):
     assert today.day == int(date_in_form['day'])
     assert today.month == int(date_in_form['month'])
     assert today.year == int(date_in_form['year'])
+
+
+@then('I see refusal flag is attached')
+def refusal_flag_displayed(driver):
+    assert ApplicationPage(driver).is_flag_applied("Refusal Advice")
+
+
+@then('I see refusal flag is not attached')
+def refusal_flag_not_displayed(driver):
+    assert not ApplicationPage(driver).is_flag_applied("Refusal Advice")
+
+
+@when('I clear advice')
+def clear_advice(driver):
+    GiveAdvicePages(driver).click_on_clear_advice()

@@ -80,7 +80,7 @@ class ViewCase(TemplateView):
             'title': 'Case',
             'case': case,
             'activity': activity,
-            'permissions': permissions,
+            'permissions': permissions
         }
         if queue_id:
             context['queue_id'] = queue_id

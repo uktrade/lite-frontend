@@ -12,6 +12,7 @@ class GiveAdvicePages(BasePage):
     team_advice = 'team_advice'
     final_advice = 'final_advice'
     combine_advice_button = 'combine_advice_button'
+    clear_advice_button = 'button-clear-advice'
     finalise_button = 'finalise_button'
     finalise_goods_and_countries_button = 'finalise_button'
     radio_input_approve = '.govuk-radios input[value="approve"]'
@@ -21,6 +22,9 @@ class GiveAdvicePages(BasePage):
 
     def click_on_advice_option(self, option):
         self.driver.find_element_by_id(self.advice_checkbox_option + option).click()
+
+    def click_on_clear_advice(self):
+        self.driver.find_element_by_id(self.clear_advice_button).click()
 
     def click_on_import_advice_link(self, option):
         self.driver.find_element_by_id(self.import_advice_link + option).click()
