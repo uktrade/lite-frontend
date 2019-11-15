@@ -43,18 +43,14 @@ def save_screenshot(driver, name):
     _name = remove_special_characters(name)
     driver.get_screenshot_as_file(path.join(screen_path(), _name + "-" + now + ".png"))
     attach(
-        driver.get_screenshot_as_png(),
-        name=_name + "-" + now,
-        attachment_type=attachment_type.PNG,
+        driver.get_screenshot_as_png(), name=_name + "-" + now, attachment_type=attachment_type.PNG,
     )
 
 
 def find_element(driver, by_type, locator):
     delay = 2  # seconds
     try:
-        return WebDriverWait(driver, delay).until(
-            EC.presence_of_element_located((by_type, locator))
-        )
+        return WebDriverWait(driver, delay).until(EC.presence_of_element_located((by_type, locator)))
     except TimeoutException:
         print("element {} was not found".format(locator))
 
@@ -111,9 +107,7 @@ def highlight(element):
     driver = element._parent
 
     def apply_style(s):
-        driver.execute_script(
-            "arguments[0].setAttribute('style', arguments[1]);", element, s
-        )
+        driver.execute_script("arguments[0].setAttribute('style', arguments[1]);", element, s)
 
     original_style = element.get_attribute("style")
     apply_style("background: yellow; border: 2px solid red;")
@@ -148,12 +142,7 @@ def search_for_correct_date_regex_in_element(element):
 
 
 def get_formatted_date_time_h_m_pm_d_m_y():
-    time = (
-        datetime.now()
-        .strftime("%I:%M%p %d %B %Y")
-        .replace("PM", "pm")
-        .replace("AM", "am")
-    )
+    time = datetime.now().strftime("%I:%M%p %d %B %Y").replace("PM", "pm").replace("AM", "am")
     if time[0] == "0":
         time = time[1:]
     return time

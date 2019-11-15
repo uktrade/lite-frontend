@@ -18,9 +18,7 @@ def driver(request):
 
     # Use proxy settings provided in config file for security testing
     if os.environ.get("PROXY_IP_PORT") is not None:
-        chrome_options.add_argument(
-            "--proxy-server=%s" % str(os.environ.get("PROXY_IP_PORT"))
-        )
+        chrome_options.add_argument("--proxy-server=%s" % str(os.environ.get("PROXY_IP_PORT")))
 
     if browser == "chrome":
         if str(os.environ.get("ENVIRONMENT")) == "None":
@@ -29,9 +27,7 @@ def driver(request):
             browser = webdriver.Chrome(chrome_options=chrome_options)
 
         browser.set_timeout_to = types.MethodType(set_timeout_to, browser)
-        browser.set_timeout_to_10_seconds = types.MethodType(
-            set_timeout_to_10_seconds, browser
-        )
+        browser.set_timeout_to_10_seconds = types.MethodType(set_timeout_to_10_seconds, browser)
         browser.get("about:blank")
         browser.set_timeout_to_10_seconds()
         return browser

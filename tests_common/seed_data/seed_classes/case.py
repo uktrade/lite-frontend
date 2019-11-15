@@ -18,10 +18,7 @@ class Case(SeedClass):
     def assign_test_cases_to_bin(self, bin_queue_id, new_cases_queue_id):
         self.log("assigning cases to bin: ...")
         cases = make_request(
-            "GET",
-            base_url=self.base_url,
-            url="/queues/" + new_cases_queue_id + "/",
-            headers=self.gov_headers,
+            "GET", base_url=self.base_url, url="/queues/" + new_cases_queue_id + "/", headers=self.gov_headers,
         ).json()["queue"]["cases"]
         for case in cases:
             make_request(
@@ -49,9 +46,5 @@ class Case(SeedClass):
         data = self.request_data["edit_case_app"]
         self.context["edit_case_app"] = self.request_data["edit_case_app"]
         make_request(
-            "PUT",
-            base_url=self.base_url,
-            url="/applications/" + app_id + "/",
-            headers=self.export_headers,
-            body=data,
+            "PUT", base_url=self.base_url, url="/applications/" + app_id + "/", headers=self.export_headers, body=data,
         )

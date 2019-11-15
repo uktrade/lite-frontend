@@ -4,9 +4,7 @@ from ..tools.utils import get_lite_client
 
 
 @fixture(scope="session")
-def sso_sign_in(
-    driver, internal_url, sso_sign_in_url, internal_info, context, seed_data_config
-):
+def sso_sign_in(driver, internal_url, sso_sign_in_url, internal_info, context, seed_data_config):
     driver.get(sso_sign_in_url)
     driver.find_element_by_name("username").send_keys(internal_info["email"])
     driver.find_element_by_name("password").send_keys(internal_info["password"])

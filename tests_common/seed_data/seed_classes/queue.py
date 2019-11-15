@@ -9,16 +9,10 @@ class Queue(SeedClass):
         data = self.request_data["queue"]
         data["name"] = queue_name
         queue = make_request(
-            "POST",
-            base_url=self.base_url,
-            url="/queues/",
-            headers=self.gov_headers,
-            body=data,
+            "POST", base_url=self.base_url, url="/queues/", headers=self.gov_headers, body=data,
         ).json()["queue"]
         self.add_to_context("queue_id", queue["id"])
 
     def get_queues(self):
         self.log("getting queues: ...")
-        return make_request(
-            "GET", base_url=self.base_url, url="/queues/", headers=self.gov_headers
-        ).json()["queues"]
+        return make_request("GET", base_url=self.base_url, url="/queues/", headers=self.gov_headers).json()["queues"]

@@ -24,107 +24,39 @@ class SeedData:
         exporter_user = seed_data_config["exporter"]
         gov_user = seed_data_config["gov"]
         self.base_url = seed_data_config["api_url"].rstrip("/")
-        self.request_data = create_request_data(
-            exporter_user=exporter_user, gov_user=gov_user, base_url=self.base_url
-        )
+        self.request_data = create_request_data(exporter_user=exporter_user, gov_user=gov_user, base_url=self.base_url)
 
         if not self.headers_initialised:
             self.initialise_headers()
         else:
             self.seed_user = User(
-                self.base_url,
-                self.gov_headers,
-                self.export_headers,
-                self.request_data,
-                self.context,
+                self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context,
             )
             self.seed_org = Organisation(
-                self.base_url,
-                self.gov_headers,
-                self.export_headers,
-                self.request_data,
-                self.context,
+                self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context,
             )
 
-        self.seed_good = Good(
-            self.base_url,
-            self.gov_headers,
-            self.export_headers,
-            self.request_data,
-            self.context,
-        )
-        self.seed_clc = Clc(
-            self.base_url,
-            self.gov_headers,
-            self.export_headers,
-            self.request_data,
-            self.context,
-        )
-        self.seed_party = Party(
-            self.base_url,
-            self.gov_headers,
-            self.export_headers,
-            self.request_data,
-            self.context,
-        )
-        self.seed_ecju = Ecju(
-            self.base_url,
-            self.gov_headers,
-            self.export_headers,
-            self.request_data,
-            self.context,
-        )
+        self.seed_good = Good(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context,)
+        self.seed_clc = Clc(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context,)
+        self.seed_party = Party(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context,)
+        self.seed_ecju = Ecju(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context,)
         self.seed_picklist = Picklist(
-            self.base_url,
-            self.gov_headers,
-            self.export_headers,
-            self.request_data,
-            self.context,
+            self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context,
         )
-        self.seed_case = Case(
-            self.base_url,
-            self.gov_headers,
-            self.export_headers,
-            self.request_data,
-            self.context,
-        )
-        self.seed_queue = Queue(
-            self.base_url,
-            self.gov_headers,
-            self.export_headers,
-            self.request_data,
-            self.context,
-        )
+        self.seed_case = Case(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context,)
+        self.seed_queue = Queue(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context,)
         self.seed_additional_doc = SeedAdditionalDocument(
-            self.base_url,
-            self.gov_headers,
-            self.export_headers,
-            self.request_data,
-            self.context,
+            self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context,
         )
         self.seed_document_template = DocumentTemplate(
-            self.base_url,
-            self.gov_headers,
-            self.export_headers,
-            self.request_data,
-            self.context,
+            self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context,
         )
 
     def initialise_headers(self):
-        self.seed_user = User(
-            self.base_url,
-            self.gov_headers,
-            self.export_headers,
-            self.request_data,
-            self.context,
-        )
+        self.seed_user = User(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context,)
         self.seed_user.auth_gov_user()
         self.seed_org = Organisation(
-            self.base_url,
-            self.gov_headers,
-            self.export_headers,
-            self.request_data,
-            self.context,
+            self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context,
         )
         self.seed_org.setup_org()
         self.seed_user.auth_export_user()
@@ -151,11 +83,7 @@ class SeedData:
         self.log("Creating draft: ...")
         data = self.request_data["application"] if draft is None else draft
         response = make_request(
-            "POST",
-            base_url=self.base_url,
-            url="/applications/",
-            headers=self.export_headers,
-            body=data,
+            "POST", base_url=self.base_url, url="/applications/", headers=self.export_headers, body=data,
         )
         draft_id = response.json()["id"]
         self.add_to_context("draft_id", draft_id)
@@ -186,14 +114,10 @@ class SeedData:
         self.add_site(draft_id)
         self.seed_party.add_end_user(draft_id, end_user)
         self.seed_good.add_good_to_draft(draft_id, good)
-        ultimate_end_user_id = self.seed_party.add_ultimate_end_user(
-            draft_id, ultimate_end_user
-        )
+        ultimate_end_user_id = self.seed_party.add_ultimate_end_user(draft_id, ultimate_end_user)
         self.seed_party.add_consignee(draft_id, consignee)
         third_party_id = self.seed_party.add_third_party(draft_id, third_party)
-        additional_document_id = self.seed_additional_doc.add_additional_document(
-            draft_id, additional_documents
-        )
+        additional_document_id = self.seed_additional_doc.add_additional_document(draft_id, additional_documents)
         check_documents(
             base_url=self.base_url,
             export_headers=self.export_headers,

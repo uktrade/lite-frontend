@@ -6,9 +6,7 @@ class SeedAdditionalDocument(SeedClass):
     def add_additional_document(self, draft_id, additional_documents):
         self.log("Adding additional document: ...")
         additional_documents_data = (
-            self.request_data["additional_document"]
-            if additional_documents is None
-            else additional_documents
+            self.request_data["additional_document"] if additional_documents is None else additional_documents
         )
         additional_document = make_request(
             "POST",

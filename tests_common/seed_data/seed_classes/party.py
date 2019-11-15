@@ -9,33 +9,17 @@ class Party(SeedClass):
         doc_s3_key = upload_test_document_to_aws(self.base_url)
         data = create_document("kebab", "tasty", doc_s3_key)
         make_request(
-            "POST",
-            base_url=self.base_url,
-            url=url,
-            headers=self.export_headers,
-            body=data,
+            "POST", base_url=self.base_url, url=url, headers=self.export_headers, body=data,
         )
 
     def add_end_user_document(self, draft_id):
         self.add_document("/applications/" + draft_id + "/end-user/document/")
 
     def add_ultimate_end_user_document(self, draft_id, ultimate_end_user_id):
-        self.add_document(
-            "/applications/"
-            + draft_id
-            + "/ultimate-end-user/"
-            + ultimate_end_user_id
-            + "/document/"
-        )
+        self.add_document("/applications/" + draft_id + "/ultimate-end-user/" + ultimate_end_user_id + "/document/")
 
     def add_third_party_document(self, draft_id, third_party_id):
-        self.add_document(
-            "/applications/"
-            + draft_id
-            + "/third-parties/"
-            + third_party_id
-            + "/document/"
-        )
+        self.add_document("/applications/" + draft_id + "/third-parties/" + third_party_id + "/document/")
 
     def add_consignee_document(self, draft_id):
         self.add_document("/applications/" + draft_id + "/consignee/document/")
@@ -44,11 +28,7 @@ class Party(SeedClass):
         self.log("Adding end user advisory: ...")
         data = self.request_data["end_user_advisory"]
         id = make_request(
-            "POST",
-            base_url=self.base_url,
-            url="/queries/end-user-advisories/",
-            headers=self.export_headers,
-            body=data,
+            "POST", base_url=self.base_url, url="/queries/end-user-advisories/", headers=self.export_headers, body=data,
         ).json()["end_user_advisory"]["id"]
         self.add_to_context("end_user_advisory_id", str(id))
         case_id = make_request(
@@ -75,11 +55,7 @@ class Party(SeedClass):
 
     def add_ultimate_end_user(self, draft_id, ultimate_end_user):
         self.log("Adding ultimate end user: ...")
-        ueu_data = (
-            self.request_data["ultimate_end_user"]
-            if ultimate_end_user is None
-            else ultimate_end_user
-        )
+        ueu_data = self.request_data["ultimate_end_user"] if ultimate_end_user is None else ultimate_end_user
         ultimate_end_user_post = make_request(
             "POST",
             base_url=self.base_url,
@@ -87,18 +63,14 @@ class Party(SeedClass):
             headers=self.export_headers,
             body=ueu_data,
         )
-        self.add_to_context(
-            "ultimate_end_user", ultimate_end_user_post.json()["ultimate_end_user"]
-        )
+        self.add_to_context("ultimate_end_user", ultimate_end_user_post.json()["ultimate_end_user"])
         ultimate_end_user_id = self.context["ultimate_end_user"]["id"]
         self.add_ultimate_end_user_document(draft_id, ultimate_end_user_id)
         return ultimate_end_user_id
 
     def add_consignee(self, draft_id, consignee):
         self.log("Adding consignee: ...")
-        consignee_data = (
-            self.request_data["consignee"] if consignee is None else consignee
-        )
+        consignee_data = self.request_data["consignee"] if consignee is None else consignee
         consignee_response = make_request(
             "POST",
             base_url=self.base_url,
@@ -110,9 +82,7 @@ class Party(SeedClass):
         self.add_consignee_document(draft_id)
 
     def add_third_party(self, draft_id, third_party):
-        third_party_data = (
-            self.request_data["third_party"] if third_party is None else third_party
-        )
+        third_party_data = self.request_data["third_party"] if third_party is None else third_party
         third_party_response = make_request(
             "POST",
             base_url=self.base_url,
