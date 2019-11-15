@@ -2,11 +2,19 @@ from typing import Callable
 
 from lite_forms.components import HiddenField, Form, FormGroup
 from lite_forms.generators import form_page
-from lite_forms.helpers import remove_unused_errors, nest_data, get_next_form, get_form_by_pk, flatten_data, \
-    get_previous_form
+from lite_forms.helpers import (
+    remove_unused_errors,
+    nest_data,
+    get_next_form,
+    get_form_by_pk,
+    flatten_data,
+    get_previous_form,
+)
 
 
-def submit_single_form(request, form: Form, action: Callable, object_pk=None, override_data=None):
+def submit_single_form(
+    request, form: Form, action: Callable, object_pk=None, override_data=None
+):
     """
     Function to handle the submission of data for a single, supplied form.
 
@@ -26,8 +34,11 @@ def submit_single_form(request, form: Form, action: Callable, object_pk=None, ov
     else:
         validated_data, _ = action(request, data)
 
-    if 'errors' in validated_data:
-        return form_page(request, form, data=data, errors=validated_data.get('errors')), None
+    if "errors" in validated_data:
+        return (
+            form_page(request, form, data=data, errors=validated_data.get("errors")),
+            None,
+        )
 
     return None, validated_data
 
@@ -39,8 +50,8 @@ def _prepare_data(request, inject_data, expect_many_values):
         data = dict(list(inject_data.items()) + list(data.items()))
 
     # Remove form_pk and CSRF from POST data as the new form will replace them
-    del data['form_pk']
-    del data['csrfmiddlewaretoken']
+    del data["form_pk"]
+    del data["csrfmiddlewaretoken"]
 
     # Ensure data which is expected to have multiple values.
     for many_value_key in expect_many_values:
@@ -51,12 +62,12 @@ def _prepare_data(request, inject_data, expect_many_values):
 
 
 def submit_paged_form(
-        request,
-        form_group: FormGroup,
-        action: Callable,
-        object_pk=None,
-        inject_data=None,
-        expect_many_values=None,
+    request,
+    form_group: FormGroup,
+    action: Callable,
+    object_pk=None,
+    inject_data=None,
+    expect_many_values=None,
 ):
     """
     Function to handle the submission of the data from one form in a sequence of forms (a FormGroup).
@@ -74,15 +85,23 @@ def submit_paged_form(
 
     data, nested_data = _prepare_data(request, inject_data, expect_many_values)
 
-    form_pk = request.POST.get('form_pk')
+    form_pk = request.POST.get("form_pk")
     previous_form = get_previous_form(form_pk, form_group)
     current_form = get_form_by_pk(form_pk, form_group)
     next_form = get_next_form(form_pk, form_group)
 
-    if data.get('_action') and data.get('_action') == 'back':
+    if data.get("_action") and data.get("_action") == "back":
         data = request.POST.copy()
-        del data['form_pk']
-        return form_page(request, previous_form, data=data, extra_data={'form_pk': previous_form.pk}), None
+        del data["form_pk"]
+        return (
+            form_page(
+                request,
+                previous_form,
+                data=data,
+                extra_data={"form_pk": previous_form.pk},
+            ),
+            None,
+        )
 
     if object_pk:
         validated_data, _ = action(request, object_pk, nested_data)
@@ -90,7 +109,7 @@ def submit_paged_form(
         validated_data, _ = action(request, nested_data)
 
     # If the API returns errors, add the existing questions to the reloaded form
-    errors = validated_data.get('errors')
+    errors = validated_data.get("errors")
 
     if errors:
         errors = flatten_data(errors)
@@ -101,7 +120,7 @@ def submit_paged_form(
             exists = False
 
             for question in current_form.questions:
-                if hasattr(question, 'name'):
+                if hasattr(question, "name"):
                     if question.name == key:
                         exists = True
                         continue
@@ -109,8 +128,16 @@ def submit_paged_form(
             if not exists:
                 current_form.questions.insert(0, HiddenField(key, value))
 
-        return form_page(request, current_form, data=data, errors=errors,
-                         extra_data={'form_pk': current_form.pk}), validated_data
+        return (
+            form_page(
+                request,
+                current_form,
+                data=data,
+                errors=errors,
+                extra_data={"form_pk": current_form.pk},
+            ),
+            validated_data,
+        )
 
     # If there aren't any forms left to go through, return the data
     if next_form is None:
@@ -125,4 +152,7 @@ def submit_paged_form(
             next_form.questions.insert(0, HiddenField(key, value))
 
     # Go to the next page
-    return form_page(request, next_form, data=data, extra_data={'form_pk': next_form.pk}), validated_data
+    return (
+        form_page(request, next_form, data=data, extra_data={"form_pk": next_form.pk}),
+        validated_data,
+    )
