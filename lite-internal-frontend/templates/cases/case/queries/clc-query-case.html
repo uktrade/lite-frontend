@@ -4,7 +4,7 @@
 
 {% block back_link %}
 	<a href="{% url 'cases:cases' %}?queue={{ queue.queue.id }}" class="govuk-back-link">
-		Back to {{ queue.queue.name }}
+		Back to {{ queue_name }}
 	</a>
 {% endblock %}
 

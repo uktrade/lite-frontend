@@ -75,14 +75,12 @@ class ViewCase(TemplateView):
         queue_name = request.GET.get('queue_name')
 
         case['all_flags'] = _get_all_distinct_flags(case)
-        total_goods_value = _get_total_goods_value(case)
 
         context = {
             'title': 'Case',
             'case': case,
             'activity': activity,
             'permissions': permissions,
-            'total_goods_value': total_goods_value
         }
         if queue_id:
             context['queue_id'] = queue_id
@@ -95,10 +93,12 @@ class ViewCase(TemplateView):
             context['good'] = case['query']['good']
             return render(request, 'cases/case/queries/clc-query-case.html', context)
         elif case.get('application').get('application_type').get('key') == 'hmrc_query':
+            context['total_goods_value'] = _get_total_goods_value(case)
             return render(request, 'cases/case/hmrc-case.html', context)
         elif case['type']['key'] == 'application':
             context['title'] = case.get('application').get('name')
             context['notification'] = get_user_case_notification(request, case_id)
+            context['total_goods_value'] = _get_total_goods_value(case)
             return render(request, 'cases/case/application-case.html', context)
 
     def post(self, request, **kwargs):
