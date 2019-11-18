@@ -4,6 +4,18 @@
 	justify-content: center;
 }
 
+.lite-horizontal-align {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	&-right {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+	}
+}
+
 .lite-js-only {
 	display: none;
 }

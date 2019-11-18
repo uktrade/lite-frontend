@@ -1,3 +1,15 @@
+.lite-button--link {
+	@include govuk-font($size: 19);
+	@extend .govuk-link;
+	border: 0;
+	outline: 0;
+	background: 0;
+	color: $govuk-link-colour;
+	cursor: pointer;
+	text-decoration: underline;
+	padding: 0;
+}
+
 .lite-link--icon {
 	@extend .govuk-link--no-visited-state;
 	@include govuk-font($size: 19);

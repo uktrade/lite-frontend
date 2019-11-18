@@ -113,3 +113,20 @@
 		opacity: 0.5;
 	}
 }
+
+.app-info-bar--link {
+	display: block;
+	background-color: govuk-colour("blue");
+
+	&::before {
+		color: govuk-colour("blue");
+	}
+
+	&:hover {
+		background-color: govuk-shade(govuk-colour("blue"), 25%);
+	}
+
+	&:active {
+		background-color: govuk-shade(govuk-colour("blue"), 50%);
+	}
+}

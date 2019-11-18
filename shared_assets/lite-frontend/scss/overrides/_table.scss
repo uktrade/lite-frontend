@@ -1,0 +1,18 @@
+.govuk-table__cell--checkbox {
+	@extend .govuk-checkboxes--small;
+	position: relative;
+	width: 40px!important;
+	padding: 0;
+	margin: 0;
+
+	.govuk-checkboxes__label {
+		padding: 0!important;
+
+		&::before {
+			top: 14px;
+		}
+		&::after {
+			top: 21px;
+		}
+	}
+}
