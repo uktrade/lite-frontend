@@ -1,6 +1,6 @@
 {% extends 'layouts/two_pane.html' %}
 
-{% load svg %}
+{% load svg humanize %}
 
 {% block back_link %}
 	{% if application.status %}
@@ -123,11 +123,12 @@
 											<td class="govuk-table__cell" scope="row">{{ good.good.part_number|default_na }}</td>
 											<td class="govuk-table__cell" scope="row">{{ good.quantity }}</td>
 											<td class="govuk-table__cell" scope="row">{{ good.unit.value }}</td>
-											<td class="govuk-table__cell" scope="row">£{{ good.value }}</td>
+											<td class="govuk-table__cell" scope="row">£{{ good.value|intcomma }}</td>
 										</tr>
 									{% endfor %}
 								</tbody>
 							</table>
+                            <p class="govuk-!-font-weight-bold">Total value: £{{ total_goods_value|intcomma }}</p>
 						{% endif %}
 					</div>
 		        </li>

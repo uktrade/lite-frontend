@@ -1,3 +1,5 @@
+from _decimal import Decimal
+
 from django.shortcuts import render
 
 from applications.libraries.validate_status import check_all_parties_have_a_document
@@ -59,9 +61,13 @@ def _get_standard_application_task_list(request, application, errors=None):
         consignee_document, _ = get_consignee_document(request, application_id)
         consignee_document = consignee_document.get('document')
 
+    total_goods_value = 0
     for good in goods:
+        total_goods_value += Decimal(good['value']).quantize(Decimal('.01'))
         if not good['good']['is_good_end_product']:
             ultimate_end_users_required = True
+
+
 
     context = {
         'application': application,
@@ -70,6 +76,7 @@ def _get_standard_application_task_list(request, application, errors=None):
         'reference_number_description': reference_number_description,
         'sites': sites['sites'],
         'goods': goods,
+        'total_goods_value': total_goods_value,
         'external_locations': external_locations['external_locations'],
         'ultimate_end_users': ultimate_end_users,
         'ultimate_end_users_required': ultimate_end_users_required,
