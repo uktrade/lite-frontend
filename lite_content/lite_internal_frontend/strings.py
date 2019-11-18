@@ -10,6 +10,7 @@ CASE_RECORD_DECISION_BUTTON = "Record Decision"
 CASE_VIEW_ADVICE_BUTTON = "View Advice"
 CASE_GOODS_EDIT_FLAGS = "Edit goods flags"
 CASE_GOODS_REVIEW = "Review Goods"
+CASE_GENERATE_DOCUMENT = "Generate Document"
 
 USERS_LIST_PAGE_EDIT = "Edit"
 
