@@ -15,6 +15,7 @@ CASE_VIEW_ADVICE_BUTTON = "View Advice"
 CASE_GOODS_EDIT_FLAGS = "Edit goods flags"
 CASE_GOODS_REVIEW = "Review Goods"
 CASE_GENERATE_DOCUMENT = "Generate Document"
+CASE_TEAM_ADVICE_GIVE_OR_CHANGE = "Give or change advice"
 
 USERS_LIST_PAGE_EDIT = "Edit"
 
