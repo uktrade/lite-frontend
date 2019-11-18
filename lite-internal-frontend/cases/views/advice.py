@@ -1,6 +1,8 @@
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
+
+from cases.constants import STANDARD_LICENCE
 from lite_forms.generators import form_page, error_page
 from datetime import date
 
@@ -300,7 +302,7 @@ class Finalise(TemplateView):
 
     def get(self, request, *args, **kwargs):
         case = get_case(request, str(kwargs["pk"]))
-        standard = case["application"]["application_type"]["key"] == "standard_licence"
+        standard = case["application"]["application_type"]["key"] == STANDARD_LICENCE
         if standard:
             advice, _ = get_final_case_advice(request, str(kwargs["pk"]))
             data = advice["advice"]

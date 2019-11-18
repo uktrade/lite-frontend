@@ -337,6 +337,6 @@ def _get_all_distinct_flags(case):
 
 def _get_total_goods_value(case):
     total_value = 0
-    for good in case.get("application").get("goods"):
+    for good in case.get("application").get("goods", []):
         total_value += Decimal(good["value"]).quantize(Decimal(".01"))
     return total_value

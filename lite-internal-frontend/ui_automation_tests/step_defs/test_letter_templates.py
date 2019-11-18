@@ -26,7 +26,7 @@ def go_to_letters(driver):
 @when("I create a letter template")
 def create_letter_template(driver, context, get_template_id):
     LetterTemplates(driver).click_create_a_template()
-    context.template_name = "Template " + utils.get_formatted_date_time_m_d_h_s()
+    context.template_name = "00 Template " + utils.get_formatted_date_time_m_d_h_s()
     LetterTemplates(driver).enter_template_name(context.template_name)
     Shared(driver).click_submit()
     LetterTemplates(driver).select_which_type_of_case_template_can_apply_to("Applications")
