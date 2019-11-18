@@ -30,3 +30,4 @@ USER_REACTIVATE = "Reactivate"
 # Generate Document
 CHOOSE_TEMPLATE_TITLE = "Select a template"
 CHOOSE_TEMPLATE_BUTTON = CONTINUE
+PREVIEW_DOCUMENT_TITLE = "Preview"
