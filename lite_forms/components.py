@@ -194,20 +194,23 @@ class Checkboxes(_Component):
     Add Option components to the options array to show checkboxes
     Add optional classes such as 'lite-checkboxes--inline' or 'govuk-checkboxes--small'
     """
-    def __init__(self,
-                 name: str,
-                 options: [],
-                 title: str = '',
-                 description: str = '',
-                 optional: bool = False,
-                 classes: [] = None,
-                 empty_notice: str = 'No items',
-                 show_select_links: bool = False):
+
+    def __init__(
+        self,
+        name: str,
+        options: [],
+        title: str = "",
+        description: str = "",
+        optional: bool = False,
+        classes: [] = None,
+        empty_notice: str = "No items",
+        show_select_links: bool = False,
+    ):
         super().__init__(name, title, description, optional, classes)
         self.options = options
         self.empty_notice = empty_notice
         self.show_select_links = show_select_links
-        self.input_type = 'checkboxes'
+        self.input_type = "checkboxes"
 
 
 class RadioButtons(_Component):
