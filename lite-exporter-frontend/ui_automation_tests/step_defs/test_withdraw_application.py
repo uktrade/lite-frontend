@@ -30,4 +30,3 @@ def the_application_will_have_status(driver, status):
 @then("I won't be able to see the withdraw button")
 def i_wont_be_able_to_see_the_withdraw_button(driver):
     assert not element_with_id_exists(driver, ApplicationPage.BUTTON_WITHDRAW_APPLICATION_ID)
-

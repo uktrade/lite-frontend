@@ -4,7 +4,6 @@ from shared import functions
 
 
 class ApplicationOverviewPage:
-
     def __init__(self, driver):
         self.driver = driver
         self.location_link = "location"
@@ -15,14 +14,14 @@ class ApplicationOverviewPage:
         self.countries_link = "countries"
         self.standard_goods_link = "standard-goods"
         self.open_goods_link = "open-goods"
-        self.end_user_link = "end_users"   # ID
+        self.end_user_link = "end_users"  # ID
         self.consignees_link = "consignees"
-        self.ultimate_end_user_link = "ultimate_end_users"   # ID
+        self.ultimate_end_user_link = "ultimate_end_users"  # ID
         self.third_parties = "third_parties"  # ID
         self.sites_link = "a[href*='sites']"
         self.goods_on_application = "[id^=good-on-application-row]"  # CSS
-        self.ultimate_end_users = "[id^=ultimate-end-user-row]" # CSS
-        self.gov_tables = ".govuk-table__body"   # CSS
+        self.ultimate_end_users = "[id^=ultimate-end-user-row]"  # CSS
+        self.gov_tables = ".govuk-table__body"  # CSS
         self.attach_end_user_document_link = "attach_doc"  # ID
         self.download_end_user_document = "end_user_document_download"  # ID
         self.delete_end_user_document = "end_user_document_delete"  # ID
@@ -131,7 +130,9 @@ class ApplicationOverviewPage:
         self.driver.find_element_by_id(self.goods_countries_link).click()
 
     def get_text_of_end_user_table(self):
-        return self.driver.find_elements_by_css_selector(self.gov_tables)[len(self.driver.find_elements_by_css_selector(self.gov_tables))-1].text
+        return self.driver.find_elements_by_css_selector(self.gov_tables)[
+            len(self.driver.find_elements_by_css_selector(self.gov_tables)) - 1
+        ].text
 
     def get_text_of_good(self, index=0):
         return self.driver.find_elements_by_css_selector(self.goods_on_application)[index].text

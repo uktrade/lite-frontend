@@ -11,9 +11,7 @@ class AuthbrokerBackend:
 
             profile = get_profile(client)
 
-            user, created = User.objects.get_or_create(
-                email=profile['email']
-            )
+            user, created = User.objects.get_or_create(email=profile["email"])
             if created:
                 user.set_unusable_password()
                 user.save()

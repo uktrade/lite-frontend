@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from authbroker_client.utils import get_client, has_valid_token, get_profile
 
 
-logger = logging.getLogger('authbroker-client')
+logger = logging.getLogger("authbroker-client")
 
 
 class AuthbrokerBackend:
@@ -14,11 +14,9 @@ class AuthbrokerBackend:
 
             profile = get_profile(client)
 
-            user, created = User.objects.get_or_create(
-                email=profile['email']
-            )
+            user, created = User.objects.get_or_create(email=profile["email"])
             if created:
-                setattr(user, user.USERNAME_FIELD, profile['email'])
+                setattr(user, user.USERNAME_FIELD, profile["email"])
                 user.set_unusable_password()
                 user.save()
             return user

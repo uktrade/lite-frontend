@@ -1,11 +1,10 @@
 class ApplicationCountriesList:
-
     def __init__(self, driver):
         self.driver = driver
         self.countries_checkboxes = ".govuk-checkboxes__input"
         self.countries_labels = ".govuk-checkboxes__label"
-        self.countries_search_box = "filter-box"   # ID
-        self.countries_list = "pane_countries"   # ID
+        self.countries_search_box = "filter-box"  # ID
+        self.countries_list = "pane_countries"  # ID
         self.title = ".govuk-fieldset__heading"
 
     def get_countries_names(self):

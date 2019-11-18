@@ -2,7 +2,6 @@ import time
 
 
 class SubmittedApplicationsPages:
-
     def __init__(self, driver):
         self.driver = driver
         self.case_note_field = "case_note"  # id
@@ -20,11 +19,11 @@ class SubmittedApplicationsPages:
         return self.driver.find_element_by_id(self.case_note_field).text
 
     def click_post_note_btn(self):
-        time.sleep(.5)
+        time.sleep(0.5)
         self.driver.find_element_by_id(self.post_note_btn).click()
 
     def click_cancel_btn(self):
-        time.sleep(.5)
+        time.sleep(0.5)
         self.driver.find_element_by_id(self.cancel_note_btn).click()
 
     def get_text_of_case_note(self, no):

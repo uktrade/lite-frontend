@@ -9,21 +9,21 @@ from core.helpers import remove_prefix
 def get_goods(request, params=None):
     if params:
         query_params = urlencode(params)
-        data = get(request, GOODS_URL + '?' + query_params)
+        data = get(request, GOODS_URL + "?" + query_params)
     else:
         data = get(request, GOODS_URL)
 
-    return data.json().get('goods'), data.status_code
+    return data.json().get("goods"), data.status_code
 
 
 def get_good(request, pk):
     data = get(request, GOODS_URL + pk)
-    return data.json().get('good'), data.status_code
+    return data.json().get("good"), data.status_code
 
 
 def post_goods(request, json):
-    if json.get('good_description', False) or json.get('good_description') == "":
-        post_data = remove_prefix(json, 'good_')
+    if json.get("good_description", False) or json.get("good_description") == "":
+        post_data = remove_prefix(json, "good_")
     else:
         post_data = json
     data = post(request, GOODS_URL, post_data)
@@ -31,11 +31,11 @@ def post_goods(request, json):
 
 
 def validate_good(request, json):
-    if json.get('good_description', False) or json.get('good_description') == "":
-        post_data = remove_prefix(json, 'good_')
+    if json.get("good_description", False) or json.get("good_description") == "":
+        post_data = remove_prefix(json, "good_")
     else:
         post_data = json
-    post_data['validate_only'] = True
+    post_data["validate_only"] = True
     data = post(request, GOODS_URL, post_data)
     return data
 
@@ -52,7 +52,7 @@ def delete_good(request, pk):
 
 def get_clc_query(request, pk):
     data = get(request, CONTROL_LIST_CLASSIFICATIONS_URL + pk)
-    return data.json().get('control_list_classification_query') if data.status_code == HTTPStatus.OK else None
+    return data.json().get("control_list_classification_query") if data.status_code == HTTPStatus.OK else None
 
 
 def raise_clc_query(request, json):
@@ -63,12 +63,12 @@ def raise_clc_query(request, json):
 # Documents
 def get_good_document(request, pk, doc_pk):
     data = get(request, GOODS_URL + pk + DOCUMENTS_URL + doc_pk)
-    return data.json().get('document') if data.status_code == HTTPStatus.OK else None
+    return data.json().get("document") if data.status_code == HTTPStatus.OK else None
 
 
 def get_good_documents(request, pk):
     data = get(request, GOODS_URL + pk + DOCUMENTS_URL)
-    return data.json().get('documents') if data.status_code == HTTPStatus.OK else None
+    return data.json().get("documents") if data.status_code == HTTPStatus.OK else None
 
 
 def post_good_documents(request, pk, json):

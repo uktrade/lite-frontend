@@ -1,5 +1,4 @@
 class NewSite:
-
     def __init__(self, driver):
         self.driver = driver
         self.name = driver.find_element_by_id("name")

@@ -7,13 +7,9 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0003_user_lite_api_user_id'),
+        ("core", "0003_user_lite_api_user_id"),
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='user',
-            name='organisation',
-            field=models.UUIDField(default=uuid.uuid4),
-        ),
+        migrations.AddField(model_name="user", name="organisation", field=models.UUIDField(default=uuid.uuid4),),
     ]

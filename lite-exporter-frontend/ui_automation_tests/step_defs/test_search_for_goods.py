@@ -3,7 +3,7 @@ from pages.application_goods_list import ApplicationGoodsList
 from shared.tools.utils import get_lite_client
 from shared.seed_data.request_data import create_good
 
-scenarios('../features/search_and_filter_goods.feature', strict_gherkin=False)
+scenarios("../features/search_and_filter_goods.feature", strict_gherkin=False)
 
 
 @when(parsers.parse('I filter by part number "{part_number}" and click filter'))
@@ -24,7 +24,7 @@ def filter_by_description(driver, context, control_list):
     application_goods_list.type_into_filter_control_rating_search_box_and_filter(control_list)
 
 
-@then('I see all goods')
+@then("I see all goods")
 def see_all_goods(driver, context):
     goods_list = ApplicationGoodsList(driver).get_good_descriptions()
     assert len(goods_list) > 3
@@ -32,23 +32,31 @@ def see_all_goods(driver, context):
     # assert len(goods_list) == context.total_goods
 
 
-@when(parsers.parse('I create a good of description "{description}", control code "{control_code}" and part number "{part_number}" if it does not exist'))
+@when(
+    parsers.parse(
+        'I create a good of description "{description}", control code "{control_code}" and part number "{part_number}" if it does not exist'
+    )
+)
 def add_a_good(context, description, control_code, part_number, seed_data_config):
     lite_client = get_lite_client(context, seed_data_config=seed_data_config)
     goods = lite_client.seed_good.get_goods()
     total_goods = 0
     for good in goods:
-        if good['is_good_controlled'] != 'unsure':
+        if good["is_good_controlled"] != "unsure":
             total_goods += 1
     good_already_exists = False
     for good in goods:
-        if good['description'] == description and good['control_code'] == control_code \
-                and good['part_number'] == part_number:
+        if (
+            good["description"] == description
+            and good["control_code"] == control_code
+            and good["part_number"] == part_number
+        ):
             good_already_exists = True
             break
     if not good_already_exists:
-        good = create_good(description=description, is_end_product=True,
-                           control_code=control_code, part_number=part_number)
+        good = create_good(
+            description=description, is_end_product=True, control_code=control_code, part_number=part_number
+        )
         lite_client.seed_good.add_good(good)
         total_goods += 1
     context.total_goods = total_goods

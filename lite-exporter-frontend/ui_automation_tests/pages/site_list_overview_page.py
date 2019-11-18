@@ -1,5 +1,4 @@
 class SitesListOverview:
-
     def __init__(self, driver):
         self.driver = driver
         self.new_sites_link = ".govuk-button[href*='new']"
@@ -14,4 +13,3 @@ class SitesListOverview:
 
     def get_text_of_first_site_name(self):
         return self.driver.find_elements_by_css_selector(self.table_cells)[0].text
-

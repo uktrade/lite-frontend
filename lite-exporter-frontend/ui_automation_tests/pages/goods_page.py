@@ -6,12 +6,12 @@ class GoodsPage:
     # Selector for the edit/delete goods link in the table
     EDIT_LINK = '[href*="goods/edit"]'
     DELETE_LINK = '[href*="goods/delete"]'
-    confirm_delete_id = 'delete'
-    cancel_delete_id = 'cancel'
+    confirm_delete_id = "delete"
+    cancel_delete_id = "cancel"
     document_partial_id = "tr[id*='document']"
 
     # This is for the delete confirmation page
-    DELETE_BUTTON = '.govuk-button--warning'
+    DELETE_BUTTON = ".govuk-button--warning"
 
     def __init__(self, driver):
         self.driver = driver

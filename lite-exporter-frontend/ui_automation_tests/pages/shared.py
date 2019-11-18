@@ -1,5 +1,4 @@
 class Shared:
-
     def __init__(self, driver):
         self.driver = driver
         self.heading = ".govuk-heading-xl"  # CSS

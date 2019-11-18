@@ -6,12 +6,22 @@ from lite_forms.components import HiddenField
 from lite_forms.generators import form_page, error_page
 from lite_forms.submitters import submit_paged_form
 
-from applications.services import get_case_notes, get_application_ecju_queries, post_application_case_notes, \
-    get_ecju_query, put_ecju_query
+from applications.services import (
+    get_case_notes,
+    get_application_ecju_queries,
+    post_application_case_notes,
+    get_ecju_query,
+    put_ecju_query,
+)
 from core.helpers import group_notifications
 from core.services import get_notifications
-from end_users.forms import apply_for_an_end_user_advisory_form, copy_end_user_advisory_form, \
-    end_user_advisory_success_page, respond_to_query_form, ecju_query_respond_confirmation_form
+from end_users.forms import (
+    apply_for_an_end_user_advisory_form,
+    copy_end_user_advisory_form,
+    end_user_advisory_success_page,
+    respond_to_query_form,
+    ecju_query_respond_confirmation_form,
+)
 from end_users.services import get_end_user_advisories, post_end_user_advisories, get_end_user_advisory
 
 
@@ -21,11 +31,11 @@ class EndUsersList(TemplateView):
         notifications = get_notifications(request, unviewed=True)
 
         context = {
-            'title': 'End User Advisories',
-            'end_users': end_users,
-            'notifications': group_notifications(notifications),
+            "title": "End User Advisories",
+            "end_users": end_users,
+            "notifications": group_notifications(notifications),
         }
-        return render(request, 'end_users/end_users.html', context)
+        return render(request, "end_users/end_users.html", context)
 
 
 class CopyAdvisory(TemplateView):
@@ -34,37 +44,37 @@ class CopyAdvisory(TemplateView):
     data = None
 
     def dispatch(self, request, *args, **kwargs):
-        query, _ = get_end_user_advisory(request, str(kwargs['pk']))
+        query, _ = get_end_user_advisory(request, str(kwargs["pk"]))
 
         self.data = {
-            'end_user.name': query['end_user']['name'],
-            'end_user.website': query['end_user']['website'],
-            'end_user.address': query['end_user']['address'],
-            'end_user.country': query['end_user']['country']['id'],
-            'reasoning': query.get('reasoning', ''),
-            'note': query.get('note', ''),
-            'copy_of': query['id'],
-            'contact_email': query['contact_email'],
-            'contact_telephone': query['contact_telephone']
+            "end_user.name": query["end_user"]["name"],
+            "end_user.website": query["end_user"]["website"],
+            "end_user.address": query["end_user"]["address"],
+            "end_user.country": query["end_user"]["country"]["id"],
+            "reasoning": query.get("reasoning", ""),
+            "note": query.get("note", ""),
+            "copy_of": query["id"],
+            "contact_email": query["contact_email"],
+            "contact_telephone": query["contact_telephone"],
         }
 
         individual, commercial = False, False
 
-        sub_type = query['end_user']['sub_type']['key']
-        if sub_type != 'individual':
-            self.data['contact_name'] = query['contact_name']
-            self.data['contact_job_title'] = query['contact_job_title']
+        sub_type = query["end_user"]["sub_type"]["key"]
+        if sub_type != "individual":
+            self.data["contact_name"] = query["contact_name"]
+            self.data["contact_job_title"] = query["contact_job_title"]
         else:
             individual = True
 
-        if sub_type == 'commercial':
+        if sub_type == "commercial":
             commercial = True
-            self.data['nature_of_business'] = query['nature_of_business']
+            self.data["nature_of_business"] = query["nature_of_business"]
 
         self.forms = copy_end_user_advisory_form(individual, commercial)
 
         # Add the existing end user type as a hidden field to preserve its data
-        self.forms.forms[0].questions.append(HiddenField('end_user.sub_type', query['end_user']['sub_type']['key']))
+        self.forms.forms[0].questions.append(HiddenField("end_user.sub_type", query["end_user"]["sub_type"]["key"]))
 
         return super(CopyAdvisory, self).dispatch(request, *args, **kwargs)
 
@@ -77,7 +87,7 @@ class CopyAdvisory(TemplateView):
         if response:
             return response
 
-        return end_user_advisory_success_page(request, str(data['end_user_advisory']['id']))
+        return end_user_advisory_success_page(request, str(data["end_user_advisory"]["id"]))
 
 
 class ApplyForAnAdvisory(TemplateView):
@@ -85,8 +95,8 @@ class ApplyForAnAdvisory(TemplateView):
     forms = None
 
     def dispatch(self, request, *args, **kwargs):
-        individual = request.POST.get('end_user.sub_type') == 'individual'
-        commercial = request.POST.get('end_user.sub_type') == 'commercial'
+        individual = request.POST.get("end_user.sub_type") == "individual"
+        commercial = request.POST.get("end_user.sub_type") == "commercial"
         self.forms = apply_for_an_end_user_advisory_form(individual, commercial)
 
         return super(ApplyForAnAdvisory, self).dispatch(request, *args, **kwargs)
@@ -100,13 +110,12 @@ class ApplyForAnAdvisory(TemplateView):
         if response:
             return response
 
-        return end_user_advisory_success_page(request, str(data['end_user_advisory']['id']))
+        return end_user_advisory_success_page(request, str(data["end_user_advisory"]["id"]))
 
 
 class EndUserDetailEmpty(TemplateView):
     def get(self, request, **kwargs):
-        return redirect(reverse_lazy('end_users:end_user_detail', kwargs={'pk': kwargs['pk'],
-                                                                  'type': 'case-notes'}))
+        return redirect(reverse_lazy("end_users:end_user_detail", kwargs={"pk": kwargs["pk"], "type": "case-notes"}))
 
 
 class EndUserDetail(TemplateView):
@@ -116,53 +125,62 @@ class EndUserDetail(TemplateView):
     case_id = None
 
     def dispatch(self, request, *args, **kwargs):
-        self.end_user_advisory_id = str(kwargs['pk'])
+        self.end_user_advisory_id = str(kwargs["pk"])
         self.end_user_advisory, self.case_id = get_end_user_advisory(request, self.end_user_advisory_id)
-        self.view_type = kwargs['type']
+        self.view_type = kwargs["type"]
 
-        if self.view_type != 'case-notes' and self.view_type != 'ecju-queries':
+        if self.view_type != "case-notes" and self.view_type != "ecju-queries":
             return Http404
 
         return super(EndUserDetail, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, **kwargs):
         notifications = get_notifications(request, unviewed=True)
-        case_note_notifications = len([x for x in notifications if str(x['parent']) == self.end_user_advisory_id
-                                       and x['object_type'] == 'case_note'])
-        ecju_query_notifications = len([x for x in notifications if str(x['parent']) == self.end_user_advisory_id
-                                        and x['object_type'] == 'ecju_query'])
+        case_note_notifications = len(
+            [
+                x
+                for x in notifications
+                if str(x["parent"]) == self.end_user_advisory_id and x["object_type"] == "case_note"
+            ]
+        )
+        ecju_query_notifications = len(
+            [
+                x
+                for x in notifications
+                if str(x["parent"]) == self.end_user_advisory_id and x["object_type"] == "ecju_query"
+            ]
+        )
 
         context = {
-            'title': 'End User Advisory',
-            'case_id': self.case_id,
-            'end_user_advisory': self.end_user_advisory,
-            'case_note_notifications': case_note_notifications,
-            'ecju_query_notifications': ecju_query_notifications,
-            'type': self.view_type
+            "title": "End User Advisory",
+            "case_id": self.case_id,
+            "end_user_advisory": self.end_user_advisory,
+            "case_note_notifications": case_note_notifications,
+            "ecju_query_notifications": ecju_query_notifications,
+            "type": self.view_type,
         }
 
-        if self.view_type == 'case-notes':
-            case_notes = get_case_notes(request, self.case_id)['case_notes']
-            context['notes'] = filter(lambda note: note['is_visible_to_exporter'], case_notes)
+        if self.view_type == "case-notes":
+            case_notes = get_case_notes(request, self.case_id)["case_notes"]
+            context["notes"] = filter(lambda note: note["is_visible_to_exporter"], case_notes)
 
-        if self.view_type == 'ecju-queries':
-            context['open_queries'], context['closed_queries'] = get_application_ecju_queries(request,
-                                                                                              self.case_id)
+        if self.view_type == "ecju-queries":
+            context["open_queries"], context["closed_queries"] = get_application_ecju_queries(request, self.case_id)
 
-        return render(request, 'end_users/end_user.html', context)
+        return render(request, "end_users/end_user.html", context)
 
     def post(self, request, **kwargs):
-        if self.view_type != 'case-notes':
+        if self.view_type != "case-notes":
             return Http404
 
         response, _ = post_application_case_notes(request, self.case_id, request.POST)
 
-        if 'errors' in response:
-            errors = response.get('errors')
-            if errors.get('text'):
-                error = errors.get('text')[0]
-                error = error.replace('This field', 'Case note')
-                error = error.replace('this field', 'the case note')  # TODO: Move to API
+        if "errors" in response:
+            errors = response.get("errors")
+            if errors.get("text"):
+                error = errors.get("text")[0]
+                error = error.replace("This field", "Case note")
+                error = error.replace("this field", "the case note")  # TODO: Move to API
 
             else:
                 error_list = []
@@ -171,8 +189,9 @@ class EndUserDetail(TemplateView):
                 error = "\n".join(error_list)
             return error_page(request, error)
 
-        return redirect(reverse_lazy('end_users:end_user_detail', kwargs={'pk': self.end_user_advisory_id,
-                                                                  'type': 'case-notes'}))
+        return redirect(
+            reverse_lazy("end_users:end_user_detail", kwargs={"pk": self.end_user_advisory_id, "type": "case-notes"})
+        )
 
 
 class RespondToQuery(TemplateView):
@@ -184,16 +203,19 @@ class RespondToQuery(TemplateView):
     ecju_query = None
 
     def dispatch(self, request, *args, **kwargs):
-        self.end_user_advisory_id = str(kwargs['pk'])
+        self.end_user_advisory_id = str(kwargs["pk"])
         self.end_user_advisory, self.case_id = get_end_user_advisory(request, self.end_user_advisory_id)
 
-        self.ecju_query_id = str(kwargs['query_pk'])
+        self.ecju_query_id = str(kwargs["query_pk"])
         self.ecju_query = get_ecju_query(request, self.case_id, self.ecju_query_id)
 
         # If an ecju query is already responded to, return user to end_user_advisory_page
-        if self.ecju_query['response']:
-            return redirect(reverse_lazy('end_users:end_user_detail', kwargs={'pk': self.end_user_advisory_id,
-                                                                 'type': 'ecju-queries'}))
+        if self.ecju_query["response"]:
+            return redirect(
+                reverse_lazy(
+                    "end_users:end_user_detail", kwargs={"pk": self.end_user_advisory_id, "type": "ecju-queries"}
+                )
+            )
 
         return super(RespondToQuery, self).dispatch(request, *args, **kwargs)
 
@@ -209,47 +231,59 @@ class RespondToQuery(TemplateView):
         if the user is on the input form will then will determine if data is valid, and move user to confirmation form
         else will allow the user to confirm they wish to respond and post data if accepted.
         """
-        form_name = request.POST.get('form_name')
+        form_name = request.POST.get("form_name")
 
-        if form_name == 'respond_to_query':
+        if form_name == "respond_to_query":
             # Post the form data to API for validation only
-            data = {'response': request.POST.get('response'), 'validate_only': True}
+            data = {"response": request.POST.get("response"), "validate_only": True}
             response, status_code = put_ecju_query(request, self.case_id, self.ecju_query_id, data)
 
             if status_code != 200:
-                errors = response.get('errors')
+                errors = response.get("errors")
                 errors = {error: message for error, message in errors.items()}
                 form = respond_to_query_form(self.end_user_advisory_id, self.ecju_query)
-                data = {'response': request.POST.get('response')}
+                data = {"response": request.POST.get("response")}
                 return form_page(request, form, data=data, errors=errors)
             else:
-                form = ecju_query_respond_confirmation_form(reverse_lazy('end_users:respond_to_query',
-                                                                         kwargs={'pk': self.end_user_advisory_id,
-                                                                                 'query_pk': self.ecju_query_id}))
-                form.questions.append(HiddenField('response', request.POST.get('response')))
+                form = ecju_query_respond_confirmation_form(
+                    reverse_lazy(
+                        "end_users:respond_to_query",
+                        kwargs={"pk": self.end_user_advisory_id, "query_pk": self.ecju_query_id},
+                    )
+                )
+                form.questions.append(HiddenField("response", request.POST.get("response")))
                 return form_page(request, form)
-        elif form_name == 'ecju_query_response_confirmation':
-            if request.POST.get('confirm_response') == 'yes':
-                data, status_code = put_ecju_query(request, self.case_id, self.ecju_query_id,
-                                                   request.POST)
-                if 'errors' in data:
-                    return form_page(request, respond_to_query_form(self.end_user_advisory_id, self.ecju_query),
-                                     data=request.POST,
-                                     errors=data['errors'])
+        elif form_name == "ecju_query_response_confirmation":
+            if request.POST.get("confirm_response") == "yes":
+                data, status_code = put_ecju_query(request, self.case_id, self.ecju_query_id, request.POST)
+                if "errors" in data:
+                    return form_page(
+                        request,
+                        respond_to_query_form(self.end_user_advisory_id, self.ecju_query),
+                        data=request.POST,
+                        errors=data["errors"],
+                    )
 
-                return redirect(reverse_lazy('end_users:end_user_detail', kwargs={'pk': self.end_user_advisory_id,
-                                                                          'type': 'ecju-queries'}))
+                return redirect(
+                    reverse_lazy(
+                        "end_users:end_user_detail", kwargs={"pk": self.end_user_advisory_id, "type": "ecju-queries"}
+                    )
+                )
 
-            elif request.POST.get('confirm_response') == 'no':
-                return form_page(request, respond_to_query_form(self.end_user_advisory_id, self.ecju_query),
-                                 data=request.POST)
+            elif request.POST.get("confirm_response") == "no":
+                return form_page(
+                    request, respond_to_query_form(self.end_user_advisory_id, self.ecju_query), data=request.POST
+                )
             else:
-                error = {'required': ['This field is required']}
-                form = ecju_query_respond_confirmation_form(reverse_lazy('end_users:respond_to_query',
-                                                                         kwargs={'pk': self.end_user_advisory_id,
-                                                                                 'query_pk': self.ecju_query_id}))
-                form.questions.append(HiddenField('response', request.POST.get('response')))
+                error = {"required": ["This field is required"]}
+                form = ecju_query_respond_confirmation_form(
+                    reverse_lazy(
+                        "end_users:respond_to_query",
+                        kwargs={"pk": self.end_user_advisory_id, "query_pk": self.ecju_query_id},
+                    )
+                )
+                form.questions.append(HiddenField("response", request.POST.get("response")))
                 return form_page(request, form, errors=error)
         else:
             # Submitted data does not contain an expected form field - return an error
-            return error_page(None, 'We had an issue creating your response. Try again later.')
+            return error_page(None, "We had an issue creating your response. Try again later.")

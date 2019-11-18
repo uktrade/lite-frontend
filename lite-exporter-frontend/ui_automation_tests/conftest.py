@@ -8,19 +8,42 @@ from pages.add_end_user_pages import AddEndUserPages
 from pages.application_edit_type_page import ApplicationEditTypePage
 from pages.application_page import ApplicationPage
 from shared import functions
-from ui_automation_tests.fixtures.register_organisation import register_organisation, register_organisation_for_switching_organisation  # noqa
-from ui_automation_tests.fixtures.env import environment # noqa
-from ui_automation_tests.fixtures.add_goods import add_an_incorporated_good_to_application, add_a_non_incorporated_good_to_application, create_non_incorporated_good  # noqa
+from ui_automation_tests.fixtures.register_organisation import (  # noqa
+    register_organisation,
+    register_organisation_for_switching_organisation,
+)
+from ui_automation_tests.fixtures.env import environment  # noqa
+from ui_automation_tests.fixtures.add_goods import (  # noqa
+    add_an_incorporated_good_to_application,
+    add_a_non_incorporated_good_to_application,
+    create_non_incorporated_good,
+)
 from ui_automation_tests.fixtures.add_clc_query import add_clc_query  # noqa
 from ui_automation_tests.fixtures.add_end_user_advisory import add_end_user_advisory  # noqa
-from ui_automation_tests.fixtures.internal_ecju_query import internal_ecju_query, internal_ecju_query_end_user_advisory  # noqa
+from ui_automation_tests.fixtures.internal_ecju_query import (  # noqa
+    internal_ecju_query,
+    internal_ecju_query_end_user_advisory,
+)
 from ui_automation_tests.fixtures.sso_sign_in import sso_sign_in  # noqa
-from ui_automation_tests.fixtures.internal_case_note import internal_case_note, internal_case_note_end_user_advisory  # noqa
-from ui_automation_tests.fixtures.manage_case import manage_case_status_to_withdrawn # noqa
+from ui_automation_tests.fixtures.internal_case_note import (  # noqa
+    internal_case_note,
+    internal_case_note_end_user_advisory,
+)
+from ui_automation_tests.fixtures.manage_case import manage_case_status_to_withdrawn  # noqa
 
-from ui_automation_tests.shared.fixtures.apply_for_application import apply_for_standard_application, add_an_ecju_query, apply_for_open_application  # noqa
+from ui_automation_tests.shared.fixtures.apply_for_application import (  # noqa
+    apply_for_standard_application,
+    add_an_ecju_query,
+    apply_for_open_application,
+)
 from ui_automation_tests.shared.fixtures.driver import driver  # noqa
-from ui_automation_tests.shared.fixtures.core import context, invalid_username, exporter_info, internal_info, seed_data_config  # noqa
+from ui_automation_tests.shared.fixtures.core import (  # noqa
+    context,
+    invalid_username,
+    exporter_info,
+    internal_info,
+    seed_data_config,
+)
 from ui_automation_tests.shared.fixtures.urls import exporter_url, api_url  # noqa
 
 import shared.tools.helpers as utils
@@ -43,30 +66,36 @@ strict_gherkin = False
 
 
 def pytest_addoption(parser):
-    env = str(os.environ.get('ENVIRONMENT'))
-    if env == 'None':
+    env = str(os.environ.get("ENVIRONMENT"))
+    if env == "None":
         env = "dev"
     parser.addoption("--driver", action="store", default="chrome", help="Type in browser type")
-    if env == 'local':
-        parser.addoption("--exporter_url", action="store", default="http://localhost:" + str(os.environ.get('PORT')), help="url")
+    if env == "local":
+        parser.addoption(
+            "--exporter_url", action="store", default="http://localhost:" + str(os.environ.get("PORT")), help="url"
+        )
 
         # Get LITE API URL.
-        lite_api_url = os.environ.get(
-            "LOCAL_LITE_API_URL",
-            os.environ.get("LITE_API_URL"),
+        lite_api_url = os.environ.get("LOCAL_LITE_API_URL", os.environ.get("LITE_API_URL"),)
+        parser.addoption(
+            "--lite_api_url", action="store", default=lite_api_url, help="url",
+        )
+
+    elif env == "demo":
+        raise Exception("This is the demo environment - Try another environment instead")
+    else:
+        parser.addoption(
+            "--exporter_url",
+            action="store",
+            default="https://exporter.lite.service." + env + ".uktrade.io/",
+            help="url",
         )
         parser.addoption(
             "--lite_api_url",
             action="store",
-            default=lite_api_url,
+            default="https://lite-api-" + env + ".london.cloudapps.digital/",
             help="url",
         )
-
-    elif env == 'demo':
-        raise Exception("This is the demo environment - Try another environment instead")
-    else:
-        parser.addoption("--exporter_url", action="store", default="https://exporter.lite.service." + env + ".uktrade.io/", help="url")
-        parser.addoption("--lite_api_url", action="store", default="https://lite-api-" + env + ".london.cloudapps.digital/", help="url")
     parser.addoption("--sso_sign_in_url", action="store", default="https://sso.trade.uat.uktrade.io/login/", help="url")
     parser.addoption("--email", action="store", default="test@mail.com")
     parser.addoption("--password", action="store", default="password")
@@ -107,30 +136,30 @@ def last_name(request):
     return request.config.getoption("--last_name")
 
 
-@given('I create a standard application via api')  # noqa
+@given("I create a standard application via api")  # noqa
 def standard_application_exists(apply_for_standard_application):
     pass
 
 
-@when('my application has been withdrawn')  # noqa
+@when("my application has been withdrawn")  # noqa
 def withdrawn_application_exists(manage_case_status_to_withdrawn):
     pass
 
 
-@when('I click on application previously created')  # noqa
+@when("I click on application previously created")  # noqa
 def click_on_an_application(driver, context):
     # Works on both the Drafts list and Applications list
     driver.find_element_by_css_selector('a[href*="' + context.app_id + '"]').click()
 
 
-@when('I click edit application')  # noqa
+@when("I click edit application")  # noqa
 def i_click_edit_application(driver):
     ApplicationPage(driver).click_edit_application_link()
 
 
-@given('I go to exporter homepage and choose Test Org')  # noqa
+@given("I go to exporter homepage and choose Test Org")  # noqa
 def go_to_exporter(driver, register_organisation, sso_sign_in, exporter_url, context):
-    if 'pick-organisation' in driver.current_url:
+    if "pick-organisation" in driver.current_url:
         no = utils.get_element_index_by_text(Shared(driver).get_radio_buttons_elements(), context.org_name)
         Shared(driver).click_on_radio_buttons(no)
         functions.click_submit(driver)
@@ -141,17 +170,17 @@ def go_to_exporter(driver, register_organisation, sso_sign_in, exporter_url, con
         functions.click_submit(driver)
 
 
-@when('I go to exporter homepage')  # noqa
+@when("I go to exporter homepage")  # noqa
 def go_to_exporter_when(driver, exporter_url):
     driver.get(exporter_url)
 
 
-@when('I click on apply for a license button')  # noqa
+@when("I click on apply for a license button")  # noqa
 def click_apply_licence(driver):
     ExporterHubPage(driver).click_apply_for_a_licence()
 
 
-@when('I enter in name for application and continue')  # noqa
+@when("I enter in name for application and continue")  # noqa
 def enter_application_name(driver, context):
     apply = ApplyForALicencePage(driver)
     app_time_id = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -180,7 +209,11 @@ def enter_permanent_or_temporary(driver, permanent_or_temporary, context):
     functions.click_submit(driver)
 
 
-@when(parsers.parse('I select "{yes_or_no}" for whether I have an export licence and "{reference}" if I have a reference and continue'))  # noqa
+@when(  # noqa
+    parsers.parse(
+        'I select "{yes_or_no}" for whether I have an export licence and "{reference}" if I have a reference and continue'
+    )
+)
 def enter_export_licence(driver, yes_or_no, reference, context):
     apply = ApplyForALicencePage(driver)
     apply.click_export_licence_yes_or_no(yes_or_no)
@@ -189,7 +222,7 @@ def enter_export_licence(driver, yes_or_no, reference, context):
     functions.click_submit(driver)
 
 
-@when('I click on application locations link')  # noqa
+@when("I click on application locations link")  # noqa
 def i_click_application_locations_link(driver):
     app = ApplicationOverviewPage(driver)
     app.click_application_locations_link()
@@ -200,8 +233,12 @@ def i_click_on_link_with_id(driver, link_id):
     driver.find_element_by_id(link_id).click()
 
 
-@when(parsers.parse('I add an end user of sub_type: "{type}", name: "{name}", website: "{website}", address: "{address}" and country "{'  # noqa
-    'country}"'))
+@when(  # noqa
+    parsers.parse(
+        'I add an end user of sub_type: "{type}", name: "{name}", website: "{website}", address: "{address}" and country "{'
+        'country}"'
+    )
+)
 def add_new_end_user(driver, type, name, website, address, country, context):
     add_end_user_pages = AddEndUserPages(driver)
     add_end_user_pages.select_type(type)
@@ -232,7 +269,11 @@ def choose_location_type(driver, choice):
     functions.click_submit(driver)
 
 
-@when(parsers.parse('I fill in new external location form with name: "{name}", address: "{address}" and country: "{country}" and continue'))  # noqa
+@when(  # noqa
+    parsers.parse(
+        'I fill in new external location form with name: "{name}", address: "{address}" and country: "{country}" and continue'
+    )
+)
 def add_new_external_location(driver, name, address, country):
     add_new_external_location_form_page = AddNewExternalLocationFormPage(driver)
     add_new_external_location_form_page.enter_external_location_name(name)
@@ -241,7 +282,9 @@ def add_new_external_location(driver, name, address, country):
     functions.click_submit(driver)
 
 
-@when(parsers.parse('I select the location at position "{position_number}" in external locations list and continue'))  # noqa
+@when(  # noqa
+    parsers.parse('I select the location at position "{position_number}" in external locations list and continue')
+)
 def assert_checkbox_at_position(driver, position_number):
     preexisting_locations_page = PreexistingLocationsPage(driver)
     preexisting_locations_page.click_external_locations_checkbox(int(position_number) - 1)
@@ -250,16 +293,16 @@ def assert_checkbox_at_position(driver, position_number):
 
 @then(parsers.parse('I see "{number_of_locations}" locations'))  # noqa
 def i_see_a_number_of_locations(driver, number_of_locations):
-    assert len(driver.find_elements_by_css_selector('tbody tr')) == int(number_of_locations)
+    assert len(driver.find_elements_by_css_selector("tbody tr")) == int(number_of_locations)
 
 
-@when('I click on add new address')  # noqa
+@when("I click on add new address")  # noqa
 def i_click_on_add_new_address(driver):
     external_locations_page = ExternalLocationsPage(driver)
     external_locations_page.click_add_new_address()
 
 
-@when('I click on preexisting locations')  # noqa
+@when("I click on preexisting locations")  # noqa
 def i_click_add_preexisting_locations(driver):
     external_locations_page = ExternalLocationsPage(driver)
     external_locations_page.click_preexisting_locations()
@@ -278,13 +321,13 @@ def select_the_site_at_position(driver, no):
     sites.click_sites_checkbox(int(no) - 1)
 
 
-@when('I click on applications')  # noqa
+@when("I click on applications")  # noqa
 def click_my_application_link(driver):
     exporter_hub = ExporterHubPage(driver)
     exporter_hub.click_applications()
 
 
-@when('I click on goods link')  # noqa
+@when("I click on goods link")  # noqa
 def click_my_goods_link(driver):
     exporter_hub = ExporterHubPage(driver)
     exporter_hub.click_my_goods()
@@ -302,24 +345,29 @@ def click_my_goods_link(driver):
     exporter_hub.click_open_goods_link()
 
 
-@when('I click on end user advisories')  # noqa
+@when("I click on end user advisories")  # noqa
 def click_my_end_user_advisory_link(driver):
     exporter_hub = ExporterHubPage(driver)
     exporter_hub.click_end_user_advisories()
 
 
-@when('I click the add from organisations goods button')  # noqa
+@when("I click the add from organisations goods button")  # noqa
 def click_add_from_organisation_button(driver):
     driver.find_element_by_css_selector('a[href*="add-preexisting"]').click()
 
 
-@when('I click add a good button')  # noqa
+@when("I click add a good button")  # noqa
 def click_add_from_organisation_button(driver):
     add_goods_page = AddGoodPage(driver)
     add_goods_page.click_add_a_good()
 
 
-@when(parsers.parse('I add a good or good type with description "{description}" controlled "{controlled}" control code "{control_code}" incorporated "{incorporated}" and part number "{part}"'))  # noqa
+@when(  # noqa
+    parsers.parse(
+        'I add a good or good type with description "{description}" controlled "{controlled}" control code '
+        '"{control_code}" incorporated "{incorporated}" and part number "{part}"'
+    )
+)
 def add_new_good(driver, description, controlled, control_code, incorporated, part, context):
     good_part_needed = True
     add_goods_page = AddGoodPage(driver)
@@ -336,23 +384,22 @@ def add_new_good(driver, description, controlled, control_code, incorporated, pa
         good_part_needed = False
     elif "empty" not in good_part:
         add_goods_page.enter_part_number(good_part)
-    if controlled.lower() == 'unsure':
+    if controlled.lower() == "unsure":
         functions.click_submit(driver)
     else:
         add_goods_page.enter_control_code(control_code)
         functions.click_submit(driver)
     if good_part_needed:
-        context.good_id_from_url = driver.current_url.split('/goods/')[1].split('/')[0]
+        context.good_id_from_url = driver.current_url.split("/goods/")[1].split("/")[0]
 
 
 def get_file_upload_path(filename):
     # Path gymnastics to get the absolute path for $PWD/../resources/(file_to_upload_x) that works everywhere
-    file_to_upload_abs_path = \
-        os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, 'resources', filename))
-    if 'ui_automation_tests' not in file_to_upload_abs_path:
-        file_to_upload_abs_path = \
-            os.path.abspath(
-                os.path.join(os.path.dirname(__file__), os.pardir, 'ui_automation_tests/resources', filename))
+    file_to_upload_abs_path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, "resources", filename))
+    if "ui_automation_tests" not in file_to_upload_abs_path:
+        file_to_upload_abs_path = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), os.pardir, "ui_automation_tests/resources", filename)
+        )
     return file_to_upload_abs_path
 
 
@@ -381,23 +428,23 @@ def raise_clc_query(driver, control_code, description):
     functions.click_submit(driver)
 
 
-@when('I click on the goods link from overview')  # noqa
+@when("I click on the goods link from overview")  # noqa
 def click_goods_link_overview(driver):
     overview_page = ApplicationOverviewPage(driver)
     overview_page.click_open_goods_link()
 
 
-@then('application is submitted')  # noqa
+@then("application is submitted")  # noqa
 def application_is_submitted(driver):
     apply = ApplyForALicencePage(driver)
     assert "Application submitted" in apply.application_submitted_text()
 
 
-@then('I see submitted application')  # noqa
+@then("I see submitted application")  # noqa
 def application_is_submitted(driver, context):
     assert utils.is_element_present(driver, By.XPATH, "//*[text()[contains(.,'" + context.app_time_id + "')]]")
 
-    elements = driver.find_elements_by_css_selector('tr')
+    elements = driver.find_elements_by_css_selector("tr")
     element_number = utils.get_element_index_by_text(elements, context.app_time_id, complete_match=False)
     element_row = elements[element_number].text
     assert "Submitted" in element_row
@@ -408,7 +455,7 @@ def application_is_submitted(driver, context):
     assert driver.find_element_by_xpath("// th[text()[contains(., 'Reference')]]").is_displayed()
 
 
-@then('I see the application overview')  # noqa
+@then("I see the application overview")  # noqa
 def i_see_the_application_overview(driver, context):
     element = ApplicationOverviewPage(driver).get_text_of_lite_task_list_items()
     assert "Reference name" in element
@@ -420,42 +467,44 @@ def i_see_the_application_overview(driver, context):
     context.app_id = app_id
 
 
-@when('I click applications')  # noqa
+@when("I click applications")  # noqa
 def i_click_applications(driver):
     hub_page = Hub(driver)
     hub_page.click_applications()
 
 
-@when('I delete the application')  # noqa
+@when("I delete the application")  # noqa
 def i_delete_the_application(driver):
     apply = ApplyForALicencePage(driver)
     apply.click_delete_application()
-    assert 'Applications - LITE' in driver.title, "failed to go to Applications list page after deleting application " \
-                                                  "from application overview page"
+    assert "Applications - LITE" in driver.title, (
+        "failed to go to Applications list page after deleting application " "from application overview page"
+    )
 
 
-@when('I submit the application')  # noqa
+@when("I submit the application")  # noqa
 def submit_the_application(driver, context):
     apply = ApplyForALicencePage(driver)
     functions.click_submit(driver)
     assert apply.get_text_of_success_message() == "Application submitted"
-    context.time_date_submitted = datetime.datetime.now().strftime("%I:%M%p").lstrip("0").replace(" 0", " ").lower() \
-                                  + datetime.datetime.now().strftime(" %d %B %Y")
+    context.time_date_submitted = datetime.datetime.now().strftime("%I:%M%p").lstrip("0").replace(
+        " 0", " "
+    ).lower() + datetime.datetime.now().strftime(" %d %B %Y")
 
 
-@when('I click on the manage my organisation link')  # noqa
+@when("I click on the manage my organisation link")  # noqa
 def click_users_link(driver):
     exporter_hub = ExporterHubPage(driver)
     exporter_hub.click_users()
 
 
-@when('I create a standard application')  # noqa
+@when("I create a standard application")  # noqa
 def create_standard_application(driver, context):
     click_apply_licence(driver)
-    enter_type_of_application(driver, 'standard', context)
+    enter_type_of_application(driver, "standard", context)
     enter_application_name(driver, context)
-    enter_permanent_or_temporary(driver, 'permanent', context)
-    enter_export_licence(driver, 'yes', '123456', context)
+    enter_permanent_or_temporary(driver, "permanent", context)
+    enter_export_licence(driver, "yes", "123456", context)
 
 
 @given("I have a second set up organisation")  # noqa
@@ -466,7 +515,9 @@ def set_up_second_organisation(register_organisation_for_switching_organisation)
 @when("I switch organisations to my second organisation")  # noqa
 def switch_organisations_to_my_second_organisation(driver, context):
     Hub(driver).click_switch_link()
-    no = utils.get_element_index_by_text(Shared(driver).get_radio_buttons_elements(), context.org_name_for_switching_organisations)
+    no = utils.get_element_index_by_text(
+        Shared(driver).get_radio_buttons_elements(), context.org_name_for_switching_organisations
+    )
     Shared(driver).click_on_radio_buttons(no)
     functions.click_submit(driver)
 
@@ -491,6 +542,6 @@ def i_leave_a_note(driver, reasoning):
     text_area.send_keys(reasoning)
 
 
-@when('I click the back link')  # noqa
+@when("I click the back link")  # noqa
 def click_back_link(driver):
     functions.click_back_link(driver)

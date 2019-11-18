@@ -6,7 +6,7 @@ def get_user(request, pk=None):
     if pk:
         data = get(request, USERS_URL + pk)
     else:
-        data = get(request, USERS_URL + 'me/')
+        data = get(request, USERS_URL + "me/")
     return data.json(), data.status_code
 
 
@@ -21,5 +21,5 @@ def post_users(request, json):
 
 
 def update_user(request, pk, json):
-    data = put(request, USERS_URL + pk + '/', json)
+    data = put(request, USERS_URL + pk + "/", json)
     return data.json(), data.status_code

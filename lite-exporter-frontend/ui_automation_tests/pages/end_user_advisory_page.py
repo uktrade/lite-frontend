@@ -4,7 +4,6 @@ from pages.shared import Shared
 
 
 class EndUserAdvisoryPage:
-
     def __init__(self, driver):
         self.driver = driver
 

@@ -12,5 +12,5 @@ def validate_is_in_organisation_type(request, organisation_types):
     """
     organisation = get_organisation(request, request.user.organisation)
 
-    if not organisation['type']['key'] in organisation_types:
+    if not organisation["type"]["key"] in organisation_types:
         raise Http404

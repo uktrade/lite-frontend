@@ -9,7 +9,7 @@ def check_all_parties_have_a_document(parties):
         if not party:
             return NOT_STARTED
 
-        if not party['document']:
+        if not party["document"]:
             return IN_PROGRESS
 
     return DONE

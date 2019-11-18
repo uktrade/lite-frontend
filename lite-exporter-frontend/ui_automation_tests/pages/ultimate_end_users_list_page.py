@@ -2,7 +2,6 @@ from pages.shared import Shared
 
 
 class ThirdPartyListPage:
-
     def __init__(self, driver):
         self.driver = driver
         self.govuk_button = ".govuk-button"  # CSS

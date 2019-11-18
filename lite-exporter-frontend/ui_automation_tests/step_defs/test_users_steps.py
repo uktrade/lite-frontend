@@ -11,10 +11,10 @@ from pages.shared import Shared
 log = logging.getLogger()
 console = logging.StreamHandler()
 log.addHandler(console)
-scenarios('../features/users.feature', strict_gherkin=False)
+scenarios("../features/users.feature", strict_gherkin=False)
 
 
-@then('I add a user')
+@then("I add a user")
 def add_user(driver):
     exporter_hub = ExporterHubPage(driver)
     exists = utils.is_element_present(driver, By.XPATH, "//td[text()[contains(.,'testuser_1@mail.com')]]")
@@ -29,7 +29,7 @@ def add_user(driver):
             functions.click_submit(driver)
 
 
-@when('I add user')
+@when("I add user")
 def add_user(driver, context, exporter_info):
     user_id = datetime.datetime.now().strftime("%H%M%S")
     first_name = "Test"
@@ -46,7 +46,7 @@ def add_user(driver, context, exporter_info):
     elements = driver.find_elements_by_css_selector(".govuk-table__row")
     # When I choose the option to manage users # Then I should see the current user for my company
     no = utils.get_element_index_by_text(elements, exporter_info["email"])
-    assert 'Active' in elements[no].text
+    assert "Active" in elements[no].text
     # And I should have the ability to add a new user # And I can insert an name, last name email and password for user
     exporter_hub.click_add_a_user_btn()
     exporter_hub.enter_first_name(first_name)
@@ -57,30 +57,30 @@ def add_user(driver, context, exporter_info):
     functions.click_submit(driver)
 
 
-@when('I add self')
+@when("I add self")
 def add_self(driver, exporter_info):
     exporter_hub = ExporterHubPage(driver)
 
     # I want to add a user # I should have an option to manage users
     exporter_hub.click_users()
     exporter_hub.click_add_a_user_btn()
-    exporter_hub.enter_first_name('first_name')
-    exporter_hub.enter_last_name('last_name')
+    exporter_hub.enter_first_name("first_name")
+    exporter_hub.enter_last_name("last_name")
     exporter_hub.enter_add_user_email(exporter_info["email"])
 
     # When I Save
     functions.click_submit(driver)
 
 
-@then('user is added')
+@then("user is added")
 def user_is_added(driver, context):
     # Then I return to "Manage users" # And I can see the original list of users
     elements = driver.find_elements_by_css_selector(".govuk-table__row")
     no = utils.get_element_index_by_text(elements, context.email_to_search)
-    assert 'Active' in elements[no].text
+    assert "Active" in elements[no].text
 
 
-@when('I edit user then user is edited')
+@when("I edit user then user is edited")
 def user_is_edited(driver, exporter_url, context, exporter_info):
     user_id = datetime.datetime.now().strftime("%d%m%H%M")
     exporter_hub = ExporterHubPage(driver)
@@ -94,7 +94,7 @@ def user_is_edited(driver, exporter_url, context, exporter_info):
     # I should have the option to deactivate an active user # edit link, and link from user name
     elements = Shared(driver).get_table_rows()
     no = utils.get_element_index_by_text(Shared(driver).get_table_rows(), email, complete_match=False)
-    elements[no].find_element_by_link_text('Edit').click()
+    elements[no].find_element_by_link_text("Edit").click()
     exporter_hub.enter_first_name("Test_edited")
     exporter_hub.enter_last_name("user_2_edited")
     exporter_hub.enter_add_user_email(email_edited)
@@ -113,7 +113,7 @@ def user_is_edited(driver, exporter_url, context, exporter_info):
     assert utils.is_element_present(driver, By.XPATH, "//*[text()[contains(.,'" + email_edited + "')]]")
 
 
-@when('I deactivate user then user is deactivated')
+@when("I deactivate user then user is deactivated")
 def user_is_deactivated(driver, exporter_url, context, request):
     exporter_hub = ExporterHubPage(driver)
 
@@ -125,11 +125,10 @@ def user_is_deactivated(driver, exporter_url, context, request):
     elements = driver.find_elements_by_css_selector(".govuk-table__row")
     # When I choose the option to manage users # Then I should see the current user for my company
     no = utils.get_element_index_by_text(elements, context.added_user_name, complete_match=False)
-    assert 'Deactivated' in elements[no].text, \
-        "user should status was expected to be Deactivated"
+    assert "Deactivated" in elements[no].text, "user should status was expected to be Deactivated"
 
 
-@when('I reactivate user then user is reactivated')
+@when("I reactivate user then user is reactivated")
 def user_reactivate(driver, exporter_url, context):
     exporter_hub = ExporterHubPage(driver)
 
@@ -138,11 +137,10 @@ def user_reactivate(driver, exporter_url, context):
     elements = driver.find_elements_by_css_selector(".govuk-table__row")
     # When I choose the option to manage users # Then I should see the current user for my company
     no = utils.get_element_index_by_text(elements, context.added_user_name, complete_match=False)
-    assert 'Active' in elements[no].text, \
-        "user should status was expected to be Active"
+    assert "Active" in elements[no].text, "user should status was expected to be Active"
 
 
-@when('I try to deactivate myself I cannot')
+@when("I try to deactivate myself I cannot")
 def cant_deactivate_self(driver, context):
     exporter_hub = ExporterHubPage(driver)
     exporter_hub.click_user_profile()

@@ -2,7 +2,6 @@ import time
 
 
 class ExporterHubPage:
-
     def __init__(self, driver):
         self.driver = driver
 
@@ -96,7 +95,7 @@ class ExporterHubPage:
     def logout(self):
         self.driver.get("https://great.uat.uktrade.io/sso/accounts/")
         self.driver.find_element_by_id("header-sign-out-link").click()
-        self.driver.find_element_by_css_selector('.button').click()
+        self.driver.find_element_by_css_selector(".button").click()
 
     def click_user_profile(self):
         self.driver.find_element_by_css_selector("a[href*='/users/profile/']").click()

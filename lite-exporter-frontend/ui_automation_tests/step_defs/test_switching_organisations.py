@@ -1,7 +1,7 @@
 from pytest_bdd import then, scenarios
 from pages.shared import Shared
 
-scenarios('../features/switch_organisations.feature', strict_gherkin=False)
+scenarios("../features/switch_organisations.feature", strict_gherkin=False)
 
 
 @then("I am on my second organisation names homepage")

@@ -4,16 +4,17 @@ from pages.hub_page import Hub
 from pages.shared import Shared
 from shared.tools import helpers
 
-scenarios('../features/notifications.feature', strict_gherkin=False)
+scenarios("../features/notifications.feature", strict_gherkin=False)
 
 
-@given('an application exists and a case note has been added via internal gov site')
-def application_exists_case_note_added(driver, apply_for_standard_application, add_an_ecju_query,
-                                       internal_case_note, context):
+@given("an application exists and a case note has been added via internal gov site")
+def application_exists_case_note_added(
+    driver, apply_for_standard_application, add_an_ecju_query, internal_case_note, context
+):
     context.number_of_notifications = Hub(driver).return_number_of_notifications()
 
 
-@then('I can see a notification in application tile')
+@then("I can see a notification in application tile")
 def notification_exists(driver, context):
     # Creating an application creates an ecju-query attached to it,
     # and we add a case_note, should expect 2 new notifications
@@ -21,27 +22,27 @@ def notification_exists(driver, context):
     context.number_of_notifications = Hub(driver).return_number_of_notifications()
 
 
-@when('I click on my application')
+@when("I click on my application")
 def click_on_application(driver, context):
     elements = Shared(driver).get_gov_table_cell_links()
     no = helpers.get_element_index_by_text(elements, context.app_name, complete_match=False)
     elements[no].click()
 
 
-@then('I see a notification on application list')
+@then("I see a notification on application list")
 def notification_on_application_list(driver, context):
-    elements = driver.find_elements_by_css_selector('.govuk-table__row')
+    elements = driver.find_elements_by_css_selector(".govuk-table__row")
     no = helpers.get_element_index_by_text(elements, context.app_name, complete_match=False)
     # Commenting out due to bug LT-1433
     # assert elements[no].find_element_by_css_selector(Shared(driver).notification).is_displayed()
 
 
-@then('I can see the internally added note')
+@then("I can see the internally added note")
 def internal_note_visible(driver, context):
-    assert context.case_note_text in driver.find_element_by_css_selector('.lite-case-notes').text
+    assert context.case_note_text in driver.find_element_by_css_selector(".lite-case-notes").text
 
 
-@then('I cannot see a notification')
+@then("I cannot see a notification")
 def notification_does_not_exist(driver, context):
     if context.number_of_notifications != 1:
         number_of_notifications_after_acknowledgment = Hub(driver).return_number_of_notifications()

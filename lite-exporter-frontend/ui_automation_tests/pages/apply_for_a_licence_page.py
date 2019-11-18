@@ -1,11 +1,11 @@
 import logging
+
 log = logging.getLogger()
 console = logging.StreamHandler()
 log.addHandler(console)
 
 
 class ApplyForALicencePage:
-
     def __init__(self, driver):
         self.driver = driver
         self.name_or_reference_input_id = "name"
@@ -15,8 +15,8 @@ class ApplyForALicencePage:
         self.export_licence_yes_or_no = "have_you_been_informed-"
         self.reference_number = "reference_number_on_information_form"
         self.success_message = ".govuk-panel__title"
-        self.application_is_submitted = '.govuk-panel__title'
-        self.delete_application_button = '.govuk-link[href*="/delete"]'   # CSS
+        self.application_is_submitted = ".govuk-panel__title"
+        self.delete_application_button = '.govuk-link[href*="/delete"]'  # CSS
 
     def enter_name_or_reference_for_application(self, name):
         element = self.driver.find_element_by_id(self.name_or_reference_input_id)

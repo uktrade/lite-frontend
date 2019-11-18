@@ -9,17 +9,17 @@ from requests_oauthlib import OAuth2Session
 
 from conf.settings import env
 
-TOKEN_SESSION_KEY = env('TOKEN_SESSION_KEY')
-PROFILE_URL = urljoin(settings.AUTHBROKER_URL, 'sso/oauth2/user-profile/v1/')
-INTROSPECT_URL = urljoin(settings.AUTHBROKER_URL, 'sso/oauth2/introspect/')
-TOKEN_URL = urljoin(settings.AUTHBROKER_URL, 'sso/oauth2/token/')
-AUTHORISATION_URL = urljoin(settings.AUTHBROKER_URL, 'sso/oauth2/authorize/')
+TOKEN_SESSION_KEY = env("TOKEN_SESSION_KEY")
+PROFILE_URL = urljoin(settings.AUTHBROKER_URL, "sso/oauth2/user-profile/v1/")
+INTROSPECT_URL = urljoin(settings.AUTHBROKER_URL, "sso/oauth2/introspect/")
+TOKEN_URL = urljoin(settings.AUTHBROKER_URL, "sso/oauth2/token/")
+AUTHORISATION_URL = urljoin(settings.AUTHBROKER_URL, "sso/oauth2/authorize/")
 TOKEN_CHECK_PERIOD_SECONDS = 60
-SCOPE = 'profile'
+SCOPE = "profile"
 
 
 def get_client(request, **kwargs):
-    callback_url = reverse('authbroker_client:callback')
+    callback_url = reverse("authbroker_client:callback")
     redirect_uri = request.build_absolute_uri(callback_url)
 
     return OAuth2Session(
@@ -27,7 +27,8 @@ def get_client(request, **kwargs):
         redirect_uri=redirect_uri,
         scope=SCOPE,
         token=request.session.get(TOKEN_SESSION_KEY, None),
-        **kwargs)
+        **kwargs,
+    )
 
 
 def has_valid_token(client):
@@ -48,7 +49,8 @@ def authbroker_login_required(func):
     @functools.wraps(func)
     def decorated(request):
         if not has_valid_token(get_client(request)):
-            return redirect('authbroker:login')
+            return redirect("authbroker:login")
 
         return func(request)
+
     return decorated

@@ -1,5 +1,4 @@
 class GoodsLocationsPage:
-
     def __init__(self, driver):
         self.driver = driver
         self.edit_sites_button = 'a[href*="existing-sites"]'

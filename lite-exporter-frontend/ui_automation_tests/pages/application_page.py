@@ -6,7 +6,7 @@ class ApplicationPage(BasePage):
     BUTTON_EDIT_APPLICATION_ID = "button-edit-application"
     LABEL_APPLICATION_STATUS_ID = "label-application-status"
     ECJU_QUERY_TAB = "ecju-queries-tab"  # ID
-    ECJU_QUERY_RESPONSE_TEXT = 'Respond to query'  # text
+    ECJU_QUERY_RESPONSE_TEXT = "Respond to query"  # text
     ECJU_QUERIES_CLOSED = "closed-ecju-query"  # ID
     LINK_EDIT_APPLICATION = "a[href*='/edit-type/']"
 

@@ -1,10 +1,9 @@
 class AttachDocumentPage:
-
     def __init__(self, driver):
         self.driver = driver
-        self.file = 'file'  # ID
-        self.description = 'description'  # ID
-        self.added_document_item = '.lite-card--download'  # CSS
+        self.file = "file"  # ID
+        self.description = "description"  # ID
+        self.added_document_item = ".lite-card--download"  # CSS
 
     def choose_file(self, file_location_path):
         self.driver.find_element_by_id(self.file).send_keys(file_location_path)

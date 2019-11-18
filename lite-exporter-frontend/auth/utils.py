@@ -9,24 +9,25 @@ from requests_oauthlib import OAuth2Session
 
 from conf.settings import env
 
-TOKEN_SESSION_KEY = env('TOKEN_SESSION_KEY')
-PROFILE_URL = urljoin(settings.AUTHBROKER_URL, '/api/v1/user/me/')
-INTROSPECT_URL = urljoin(settings.AUTHBROKER_URL, 'o/introspect/')
-TOKEN_URL = urljoin(settings.AUTHBROKER_URL, '/o/token/')
-AUTHORISATION_URL = urljoin(settings.AUTHBROKER_URL, '/o/authorize/')
+TOKEN_SESSION_KEY = env("TOKEN_SESSION_KEY")
+PROFILE_URL = urljoin(settings.AUTHBROKER_URL, "/api/v1/user/me/")
+INTROSPECT_URL = urljoin(settings.AUTHBROKER_URL, "o/introspect/")
+TOKEN_URL = urljoin(settings.AUTHBROKER_URL, "/o/token/")
+AUTHORISATION_URL = urljoin(settings.AUTHBROKER_URL, "/o/authorize/")
 TOKEN_CHECK_PERIOD_SECONDS = 60
-SCOPE = 'read write'
+SCOPE = "read write"
 
 
 def get_client(request, **kwargs):
-    redirect_uri = request.build_absolute_uri(reverse('authbroker:callback'))
+    redirect_uri = request.build_absolute_uri(reverse("authbroker:callback"))
 
     return OAuth2Session(
         settings.AUTHBROKER_CLIENT_ID,
         redirect_uri=redirect_uri,
         scope=SCOPE,
         token=request.session.get(TOKEN_SESSION_KEY, None),
-        **kwargs)
+        **kwargs,
+    )
 
 
 def has_valid_token(client):
@@ -47,7 +48,8 @@ def authbroker_login_required(func):
     @functools.wraps(func)
     def decorated(request):
         if not has_valid_token(get_client(request)):
-            return redirect('authbroker:login')
+            return redirect("authbroker:login")
 
         return func(request)
+
     return decorated

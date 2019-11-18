@@ -7,37 +7,17 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0004_user_organisation'),
+        ("core", "0004_user_organisation"),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='user',
-            name='date_joined',
-        ),
-        migrations.RemoveField(
-            model_name='user',
-            name='is_active',
-        ),
-        migrations.RemoveField(
-            model_name='user',
-            name='is_staff',
-        ),
-        migrations.RemoveField(
-            model_name='user',
-            name='is_superuser',
-        ),
-        migrations.RemoveField(
-            model_name='user',
-            name='last_login',
-        ),
-        migrations.RemoveField(
-            model_name='user',
-            name='password',
-        ),
+        migrations.RemoveField(model_name="user", name="date_joined",),
+        migrations.RemoveField(model_name="user", name="is_active",),
+        migrations.RemoveField(model_name="user", name="is_staff",),
+        migrations.RemoveField(model_name="user", name="is_superuser",),
+        migrations.RemoveField(model_name="user", name="last_login",),
+        migrations.RemoveField(model_name="user", name="password",),
         migrations.AlterField(
-            model_name='user',
-            name='organisation',
-            field=models.UUIDField(blank=True, default=uuid.uuid4, null=True),
+            model_name="user", name="organisation", field=models.UUIDField(blank=True, default=uuid.uuid4, null=True),
         ),
     ]

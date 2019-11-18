@@ -14,23 +14,23 @@ class ProtectAllViewsMiddleware:
 
         response = self.get_response(request)
 
-        if resolve(request.path).url_name == 'logout' and request.user.is_authenticated:
+        if resolve(request.path).url_name == "logout" and request.user.is_authenticated:
             return response
 
-        if resolve(request.path).app_name != 'authbroker_client' and not request.user.is_authenticated:
-            return redirect('authbroker:login')
+        if resolve(request.path).app_name != "authbroker_client" and not request.user.is_authenticated:
+            return redirect("authbroker:login")
 
-        if resolve(request.path).url_name != 'pick_organisation' and not isinstance(request.user, AnonymousUser):
+        if resolve(request.path).url_name != "pick_organisation" and not isinstance(request.user, AnonymousUser):
             if not request.user.organisation:
                 user_dict, _ = get_user(request)
 
-                if len(user_dict['user']['organisations']) == 0:
-                    return error_page(request, 'You don\'t belong to any organisations', show_back_link=False)
-                elif len(user_dict['user']['organisations']) == 1:
+                if len(user_dict["user"]["organisations"]) == 0:
+                    return error_page(request, "You don't belong to any organisations", show_back_link=False)
+                elif len(user_dict["user"]["organisations"]) == 1:
                     user = request.user
-                    user.organisation = user_dict['user']['organisations'][0]['id']
+                    user.organisation = user_dict["user"]["organisations"][0]["id"]
                     user.save()
-                elif len(user_dict['user']['organisations']) > 1:
-                    return redirect('core:pick_organisation')
+                elif len(user_dict["user"]["organisations"]) > 1:
+                    return redirect("core:pick_organisation")
 
         return response

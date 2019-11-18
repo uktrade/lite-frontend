@@ -1,5 +1,4 @@
 class SitesPage:
-
     def __init__(self, driver):
         self.driver = driver
         self.sites_checkbox = ".govuk-checkboxes__input"
@@ -16,4 +15,3 @@ class SitesPage:
 
     def get_size_of_sites(self):
         return len(self.driver.find_elements_by_css_selector(".govuk-checkboxes__label"))
-

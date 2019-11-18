@@ -1,5 +1,4 @@
 class PreexistingLocationsPage:
-
     def __init__(self, driver):
         self.driver = driver
         self.external_locations_checkbox = ".govuk-checkboxes__input"
