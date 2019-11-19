@@ -50,23 +50,29 @@ Application for handling exporter related activity in LITE.
 
 ## Running selenium tests
 
-* Setup chromedriver
+### Installing
+* Install Chromedriver
+  * `brew cask install chromedriver`
+* or via browser:
   * Download chromedriver from http://chromedriver.chromium.org/ and install it  
   * make sure it has execute permissions and is in PATH
-* or
-  * `brew cask install chromedriver`
-
 * Setup dev pipenv environment:
   * `pipenv sync -d`
-* Run `pipenv run python -m pytest`
-* For a specific tag (e.g @my_tag) `pipenv run python -m pytest -m "my_tag"` 
+* Make sure that your .env file has the correct information
+  * ENVIRONMENT = Whichever environment you want to run it against e.g local for local
+  * TEST DATA - You will need certain data such as SSO users email and name. All of this information is accessible for Vault in the .env file for each project.
+  * PORT = This needs to equal whichever port you are running your code locally. So if you are running your front end code on 9000, PORT should equal 9000.
+  * LITE_API_URL = Same as above but for API.
+
+### Running tests
+* To run tests via command line, run `pipenv run python -m pytest` from within the `ui_automation_tests` folder.
+* For a specific tag (don't include the @) `pipenv run python -m pytest -m "tag name"`
+* To run in parallel `pipenv run python -m pytest -n 3` (replace 3 with how many you want in parallel.)
+* To ignore certain folders `pipenv run python -m pytest --ignore=some_folder`
+
+### Running tests via Pycharm tips
 * You may need to make sure in pycharm, within Preferences -> Tools -> Python Integrated Tools -> Default Test Runner is pytest
 * You may need to change the run configuration for the tests too. Click on run, edit configurations and make sure the Python framework being used in the left hand pane is Python tests 
-* You will need to change your .env file to include:
-`TEST_EXPORTER_SSO_EMAIL="email here"`
-`TEST_EXPORTER_SSO_PASSWORD="pw here"`
-
-Ask someone on the team for valid credentials or check for them in Vault.
 
 
 ## Running Bandit
