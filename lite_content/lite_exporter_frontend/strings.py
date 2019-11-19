@@ -48,6 +48,7 @@ APPLICATION_TYPE = "Licence type"
 APPLICATION_EXPORT_TYPE = "Export type"
 APPLICATION_STATUS = "Status"
 APPLICATION_LAST_UPDATED_AT = "Last updated"
+APPLICATION_CREATED_AT = "Created at"
 APPLICATION_SUBMITTED_AT = "Submitted at"
 
 # Initial application questions
@@ -97,6 +98,15 @@ WHERE_ARE_YOUR_GOODS_GOING_DESCRIPTION = "Select all countries that apply."
 
 # Edit application
 APPLICATION_EDIT_APPLICATION_BUTTON = "Edit application"
+
+# Delete draft
+DRAFT_DELETE_LINK = "Delete draft"
+DRAFT_DELETE_TITLE = "Are you sure you want to delete this draft?"
+DRAFT_DELETE_BACK_TEXT = BACK_TO_APPLICATION
+DRAFT_DELETE_YES_LABEL = YES
+DRAFT_DELETE_NO_LABEL = NO
+DRAFT_DELETE_SUBMIT_BUTTON = SUBMIT
+DRAFT_DELETE_ERROR = "Select a choice"
 
 # Withdraw application
 APPLICATION_WITHDRAW_ACCESS_BUTTON = "Withdraw application"
