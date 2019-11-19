@@ -25,22 +25,20 @@
 					<a href="{% url 'cases:final_advice_view' case.id %}" class="lite-tabs__tab" id="final_advice">Final Advice</a>
 				</div>
 			</div>
-            {% if 'MANAGE_TEAM_ADVICE' in permissions and is_user_team %}
-                {% if not case.has_advice.final %}
-                    {% if all_advice|length %}
-                        <div>
-                            <button id="button-give-advice" name="action" value="give-advice" type="submit" class="govuk-button" data-module="govuk-button">
-                                Give or change advice
-                            </button>
-                            <button id="button-clear-advice" name="action" value="delete" type="submit" class="govuk-button" data-module="govuk-button">
-                                Clear advice
-                            </button>
-                        </div>
-                    {% else %}
-                        <a class="govuk-button" href="{% url 'cases:coalesce_user_advice' case.id %}" class="lite-tabs__tab" id="combine_advice_button">
-                            Combine all user advice
-                        </a>
-                    {% endif %}
+            {% if able_to_create_and_edit_advice and is_user_team and not case.has_advice.final %}
+                {% if all_advice|length %}
+                    <div>
+                        <button id="button-give-advice" name="action" value="give-advice" type="submit" class="govuk-button" data-module="govuk-button">
+                            {% lcs 'CASE_TEAM_ADVICE_GIVE_OR_CHANGE' %}
+                        </button>
+                        <button id="button-clear-advice" name="action" value="delete" type="submit" class="govuk-button" data-module="govuk-button">
+                            Clear advice
+                        </button>
+                    </div>
+                {% else %}
+                    <a class="govuk-button" href="{% url 'cases:coalesce_user_advice' case.id %}" class="lite-tabs__tab" id="combine_advice_button">
+                        Combine all user advice
+                    </a>
                 {% endif %}
             {% endif %}
 		</div>

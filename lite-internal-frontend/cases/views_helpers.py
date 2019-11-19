@@ -47,7 +47,12 @@ def get_case_advice(get_advice, request, case, user_team_final, team=None):
             able_to_finalize = False
             break
 
+    able_to_create_and_edit_advice = "MANAGE_TEAM_CONFIRM_OWN_ADVICE" in permissions or (
+        "MANAGE_TEAM_ADVICE" in permissions and not case.get("has_advice").get("my_user")
+    )
+
     context["able_to_finalize"] = able_to_finalize
+    context["able_to_create_and_edit_advice"] = able_to_create_and_edit_advice
 
     return render(request, "cases/case/" + user_team_final + "-advice-view.html", context)
 
