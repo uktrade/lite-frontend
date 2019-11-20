@@ -51,6 +51,17 @@ APPLICATION_LAST_UPDATED_AT = "Last updated"
 APPLICATION_CREATED_AT = "Created at"
 APPLICATION_SUBMITTED_AT = "Submitted at"
 
+APPLICATION_END_USER = "End user"
+APPLICATION_ULTIMATE_END_USERS = "Ultimate end users"
+APPLICATION_CONSIGNEE = "Consignee"
+APPLICATION_THIRD_PARTIES = "Third parties"
+APPLICATION_GOODS_LOCATIONS = "Goods locations"
+APPLICATION_SUPPORTING_DOCUMENTATION = "Supporting documentation"
+APPLICATION_GOODS = "Goods"
+APPLICATION_COUNTRIES = "Countries"
+APPLICATION_ON_BEHALF_OF = "On behalf of"
+APPLICATION_OPTIONAL_NOTE = "Optional note"
+
 # Initial application questions
 WHICH_EXPORT_LICENCE_DO_YOU_WANT_TITLE = "Which export licence do you want to apply for?"
 WHICH_EXPORT_LICENCE_DO_YOU_WANT_DESCRIPTION = "Select one of the options."
