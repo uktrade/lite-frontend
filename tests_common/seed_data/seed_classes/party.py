@@ -31,13 +31,6 @@ class Party(SeedClass):
             "POST", base_url=self.base_url, url="/queries/end-user-advisories/", headers=self.export_headers, body=data,
         ).json()["end_user_advisory"]["id"]
         self.add_to_context("end_user_advisory_id", str(id))
-        case_id = make_request(
-            "GET",
-            base_url=self.base_url,
-            url="/queries/end-user-advisories/" + str(id) + "/",
-            headers=self.export_headers,
-        ).json()["case_id"]
-        self.add_to_context("end_user_advisory_case_id", case_id)
 
     def add_end_user(self, draft_id, enduser):
         self.log("Adding end user: ...")
