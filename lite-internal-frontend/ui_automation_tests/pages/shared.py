@@ -4,98 +4,98 @@ from helpers.BasePage import BasePage
 
 class Shared(BasePage):
 
-    submit_button = '.govuk-button[type*="submit"]'  # CSS
-    error_message = ".govuk-error-message"  # CSS
-    lite_table = ".govuk-table"  # CSS
-    lite_table_body = ".govuk-table__body"  # CSS
-    lite_table_row = ".govuk-table__body .govuk-table__row"  # CSS
-    lite_table_cell = ".govuk-table__body .govuk-table__cell"  # CSS
-    lite_table_cell_no_body = ".govuk-table__cell"  # CSS
-    govuk_table_body = ".govuk-table__body"  # CSS
-    govuk_caption = ".govuk-caption-l"  # CSS
-    selected_tab = ".lite-tabs__tab--selected"  # CSS
-    body = "body"  # CSS
-    links_in_table = ".govuk-table td a"
-    rows_in_cases_table = ".govuk-table__body .govuk-table__row"  # CSS
-    h1 = "h1"  # CSS
-    h2 = "h2"  # CSS
-    links_in_lite_table = ".govuk-table__cell a"  # CSS
-    govuk_panel_body = ".govuk-panel__body"  # CSS
-    back_link = ".govuk-back-link"  # CSS
-    info_bar = ".lite-info-bar"  # CSS
-    info_board = ".lite-information-board"  # CSS
+    SUBMIT_BUTTON = '.govuk-button[type*="submit"]'  # CSS
+    ERROR_MESSAGE = ".govuk-error-message"  # CSS
+    LITE_TABLE = ".govuk-table"  # CSS
+    LITE_TABLE_BODY = ".govuk-table__body"  # CSS
+    LITE_TABLE_ROW = ".govuk-table__body .govuk-table__row"  # CSS
+    LITE_TABLE_CELL = ".govuk-table__body .govuk-table__cell"  # CSS
+    LITE_TABLE_CELL_NO_BODY = ".govuk-table__cell"  # CSS
+    GOVUK_TABLE_BODY = ".govuk-table__body"  # CSS
+    GOVUK_CAPTION = ".govuk-caption-l"  # CSS
+    SELECTED_TAB = ".lite-tabs__tab--selected"  # CSS
+    BODY = "body"  # CSS
+    LINKS_IN_TABLE = ".govuk-table td a"
+    ROWS_IN_CASES_TABLE = ".govuk-table__body .govuk-table__row"  # CSS
+    H1 = "h1"  # CSS
+    H2 = "h2"  # CSS
+    LINKS_IN_LITE_TABLE = ".govuk-table__cell a"  # CSS
+    GOVUK_PANEL_BODY = ".govuk-panel__body"  # CSS
+    BACK_LINK = ".govuk-back-link"  # CSS
+    INFO_BAR = ".lite-info-bar"  # CSS
+    INFO_BOARD = ".lite-information-board"  # CSS
 
     def click_submit(self):
-        self.driver.find_element_by_css_selector(self.submit_button).click()
+        self.driver.find_element_by_css_selector(self.SUBMIT_BUTTON).click()
 
     def click_back(self):
-        self.driver.find_element_by_css_selector(self.back_link).click()
+        self.driver.find_element_by_css_selector(self.BACK_LINK).click()
 
     def get_text_of_error_message(self, no):
-        return self.driver.find_elements_by_css_selector(self.error_message)[no].text
+        return self.driver.find_elements_by_css_selector(self.ERROR_MESSAGE)[no].text
 
     def get_text_of_body(self):
-        return self.driver.find_element_by_css_selector(self.body).text
+        return self.driver.find_element_by_css_selector(self.BODY).text
 
     def get_text_of_selected_tab(self):
-        return self.driver.find_element_by_css_selector(self.selected_tab).text
+        return self.driver.find_element_by_css_selector(self.SELECTED_TAB).text
 
     def get_text_of_table_body(self):
-        return self.driver.find_element_by_css_selector(self.govuk_table_body).text
+        return self.driver.find_element_by_css_selector(self.GOVUK_TABLE_BODY).text
 
     def get_text_of_panel_body(self):
-        return self.driver.find_element_by_css_selector(self.govuk_panel_body).text
+        return self.driver.find_element_by_css_selector(self.GOVUK_PANEL_BODY).text
 
     def get_text_of_caption(self):
-        return self.driver.find_element_by_css_selector(self.govuk_caption).text
+        return self.driver.find_element_by_css_selector(self.GOVUK_CAPTION).text
 
     def get_text_of_table(self):
-        return self.driver.find_element_by_css_selector(self.lite_table).text
+        return self.driver.find_element_by_css_selector(self.LITE_TABLE).text
 
     def get_text_of_lite_table_body(self):
-        return self.driver.find_element_by_css_selector(self.lite_table_body).text
+        return self.driver.find_element_by_css_selector(self.LITE_TABLE_BODY).text
 
     def get_text_of_h1(self):
-        return self.driver.find_element_by_css_selector(self.h1).text
+        return self.driver.find_element_by_css_selector(self.H1).text
 
     def get_text_of_h2(self):
-        return self.driver.find_element_by_css_selector(self.h2).text
+        return self.driver.find_element_by_css_selector(self.H2).text
 
     def get_links_in_cells_in_table(self):
-        return self.driver.find_elements_by_css_selector(self.links_in_table)
+        return self.driver.find_elements_by_css_selector(self.LINKS_IN_TABLE)
 
     def get_number_of_rows_in_lite_table(self):
-        return len(self.driver.find_elements_by_css_selector(self.rows_in_cases_table))
+        return len(self.driver.find_elements_by_css_selector(self.ROWS_IN_CASES_TABLE))
 
     def get_lite_row_text_by_index(self, index):
-        return self.driver.find_elements_by_css_selector(self.rows_in_cases_table)[int(index)].text
+        return self.driver.find_elements_by_css_selector(self.ROWS_IN_CASES_TABLE)[int(index)].text
 
     def get_cells_in_lite_table(self):
-        return self.driver.find_elements_by_css_selector(self.lite_table_cell)
+        return self.driver.find_elements_by_css_selector(self.LITE_TABLE_CELL)
 
     def get_cells_in_lite_table_no_body(self):
-        return self.driver.find_elements_by_css_selector(self.lite_table_cell_no_body)
+        return self.driver.find_elements_by_css_selector(self.LITE_TABLE_CELL_NO_BODY)
 
     def get_rows_in_lite_table(self):
-        return self.driver.find_elements_by_css_selector(self.lite_table_row)
+        return self.driver.find_elements_by_css_selector(self.LITE_TABLE_ROW)
 
     def get_first_row_of_gov_uk_table(self):
-        return self.driver.find_elements_by_css_selector(self.lite_table_row)[0]
+        return self.driver.find_elements_by_css_selector(self.LITE_TABLE_ROW)[0]
 
     def get_links_in_lite_table(self):
-        return self.driver.find_elements_by_css_selector(self.links_in_lite_table)
+        return self.driver.find_elements_by_css_selector(self.LINKS_IN_LITE_TABLE)
 
     def get_text_of_info_bar(self):
-        return self.driver.find_element_by_css_selector(self.info_bar).text
+        return self.driver.find_element_by_css_selector(self.INFO_BAR).text
 
     def click_back_link(self):
-        return self.driver.find_element_by_css_selector(self.back_link).click()
+        return self.driver.find_element_by_css_selector(self.BACK_LINK).click()
 
     def scroll_to_bottom_row(self):
         # Requires that each row have the ID 'row-x' where x is it's index starting from 1
-        edit_buttons = self.driver.find_elements_by_css_selector(self.lite_table_row)
+        edit_buttons = self.driver.find_elements_by_css_selector(self.LITE_TABLE_ROW)
         row_index = str(len(edit_buttons))
         scroll_to_element_by_id(self.driver, "row-" + row_index)
 
     def info_board_is_displayed(self):
-        return self.driver.find_element_by_css_selector(self.info_board).is_displayed()
+        return self.driver.find_element_by_css_selector(self.INFO_BOARD).is_displayed()

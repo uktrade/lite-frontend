@@ -1,7 +1,7 @@
-class CaseFlagsPages:
-    def __init__(self, driver):
-        self.driver = driver
+from helpers.BasePage import BasePage
 
+
+class CaseFlagsPages(BasePage):
     def assign_flags(self, context):
         flags = self.driver.find_elements_by_css_selector("input.govuk-checkboxes__input")
         flags[0].click()

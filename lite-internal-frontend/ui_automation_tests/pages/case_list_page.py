@@ -28,17 +28,17 @@ class CaseListPage(BasePage):
 
     # Deprecated
     FILTER_SEARCH_BOX = "filter-box"  # ID
-    assignee = "[style='margin-bottom: 6px;']"  # CSS
-    no_assignee = "[style='margin-bottom: 0; opacity: .7;']"  # CSS
+    ASSIGNEE = "[style='margin-bottom: 6px;']"  # CSS
+    NO_ASSIGNEE = "[style='margin-bottom: 0; opacity: .7;']"  # CSS
 
     # Queue dropdown
-    queue_dropdown_title = "queue-title"  # ID
-    dropdown_item = ".app-dropdown__item"  # CSS
-    dropdown_item_class = "app-dropdown__item"  # Class_Name
+    QUEUE_DROPDOWN_TITLE = "queue-title"  # ID
+    DROPDOWN_ITEM = ".app-dropdown__item"  # CSS
+    DROPDOWN_ITEM_CLASS = "app-dropdown__item"  # Class_Name
 
     # Sort headings
-    sort_status = "sort-status"  # ID
-    chevron = "chevron"  # ID
+    SORT_STATUS = "sort-status"  # ID
+    CHEVRON = "chevron"  # ID
 
     def search_pages_for_id(self, id):
         is_present = len(self.driver.find_elements_by_link_text(id))
@@ -108,12 +108,12 @@ class CaseListPage(BasePage):
         self.driver.find_element_by_css_selector(self.CASES_TABLE + ' [href*="' + href + '"]').click()
 
     def click_on_queue_title(self):
-        self.driver.find_element_by_id(self.queue_dropdown_title).click()
+        self.driver.find_element_by_id(self.QUEUE_DROPDOWN_TITLE).click()
 
     def click_chevron_based_on_context_case_id(self, context):
         elements = Shared(self.driver).get_rows_in_lite_table()
         no = utils.get_element_index_by_text(elements, context.case_id)
-        elements[no].find_element_by_css_selector(self.chevron).click()
+        elements[no].find_element_by_css_selector(self.CHEVRON).click()
 
     def click_on_queue_name(self, queue_name):
         self.click_on_queue_title()
@@ -128,7 +128,7 @@ class CaseListPage(BasePage):
         utils.select_visible_text_from_dropdown(self.driver.find_element_by_id(self.CASE_TYPE_DROPDOWN), status)
 
     def sort_by_status(self):
-        self.driver.find_element_by_id(self.sort_status).click()
+        self.driver.find_element_by_id(self.SORT_STATUS).click()
 
     def get_chevron_id_selector(self):
-        return self.chevron
+        return self.CHEVRON

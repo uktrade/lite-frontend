@@ -1,42 +1,43 @@
-class LetterTemplates:
-    def __init__(self, driver):
-        self.driver = driver
-        self.create_template_button = "button-create-a-template"  # ID
-        self.template_name = "name"  # ID
-        self.letter_paragraph = "letter_paragraphs"  # NAME
-        self.letter_paragraph_name = "letter_paragraph_name"  # NAME
-        self.add_letter_paragraph_button = '[value="add_letter_paragraph"]'  # CSS
-        self.add_letter_paragraphs_button = '[value="return_to_preview"]'  # CSS
-        self.preview_button = "button-preview"  # ID
-        self.preview_template_paragraphs = ".border-black.padding"  # CSS
-        self.save_button = "action"  # NAME
-        self.edit_details_button = ".lite-app-bar__controls .govuk-button"  # CSS
-        self.drag_drop_list = "standard-advice-list"  # ID
-        self.preview_paragraphs = "paragraph-list"  # ID
+from helpers.BasePage import BasePage
 
-        # Template page
-        self.template_title = "title"  # ID
-        self.template_layout = "layout"  # ID
-        self.template_restricted_to = "restricted_to"  # ID
-        self.template_paragraphs = "paragraph_content"  # ID
-        self.edit_template_button = "edit_template"  # ID
-        self.edit_paragraphs_button = "edit_template_paragraphs"  # ID
-        self.add_paragraph_link = "add_paragraph"  # ID
-        self.paragraph_checkboxes_list = ".govuk-checkboxes__input"  # CSS
-        self.paragraph_text_list = "paragraph-list"  # ID
+
+class LetterTemplates(BasePage):
+    CREATE_TEMPLATE_BUTTON = "button-create-a-template"  # ID
+    TEMPLATE_NAME = "name"  # ID
+    LETTER_PARAGRAPH = "letter_paragraphs"  # NAME
+    LETTER_PARAGRAPH_NAME = "letter_paragraph_name"  # NAME
+    ADD_LETTER_PARAGRAPH_BUTTON = '[value="add_letter_paragraph"]'  # CSS
+    ADD_LETTER_PARAGRAPHS_BUTTON = '[value="return_to_preview"]'  # CSS
+    PREVIEW_BUTTON = "button-preview"  # ID
+    PREVIEW_TEMPLATE_PARAGRAPHS = ".border-black.padding"  # CSS
+    SAVE_BUTTON = "action"  # NAME
+    EDIT_DETAILS_BUTTON = ".lite-app-bar__controls .govuk-button"  # CSS
+    DRAG_DROP_LIST = "standard-advice-list"  # ID
+    PREVIEW_PARAGRAPHS = "paragraph-list"  # ID
+
+    # Template page
+    TEMPLATE_TITLE = "title"  # ID
+    TEMPLATE_LAYOUT = "layout"  # ID
+    TEMPLATE_RESTRICTED_TO = "restricted_to"  # ID
+    TEMPLATE_PARAGRAPHS = "paragraph_content"  # ID
+    EDIT_TEMPLATE_BUTTON = "edit_template"  # ID
+    EDIT_PARAGRAPHS_BUTTON = "edit_template_paragraphs"  # ID
+    ADD_PARAGRAPH_LINK = "add_paragraph"  # ID
+    PARAGRAPH_CHECKBOXES_LIST = ".govuk-checkboxes__input"  # CSS
+    PARAGRAPH_TEXT_LIST = "paragraph-list"  # ID
 
     def click_create_a_template(self):
-        self.driver.find_element_by_id(self.create_template_button).click()
+        self.driver.find_element_by_id(self.CREATE_TEMPLATE_BUTTON).click()
 
     def click_edit_details_button(self):
-        self.driver.find_element_by_css_selector(self.edit_details_button).click()
+        self.driver.find_element_by_css_selector(self.EDIT_DETAILS_BUTTON).click()
 
     def click_create_preview_button(self):
-        self.driver.find_element_by_id(self.preview_button).click()
+        self.driver.find_element_by_id(self.PREVIEW_BUTTON).click()
 
     def enter_template_name(self, name):
-        self.driver.find_element_by_id(self.template_name).clear()
-        self.driver.find_element_by_id(self.template_name).send_keys(name)
+        self.driver.find_element_by_id(self.TEMPLATE_NAME).clear()
+        self.driver.find_element_by_id(self.TEMPLATE_NAME).send_keys(name)
 
     def select_which_type_of_case_template_can_apply_to(self, id_selector):
         self.driver.find_element_by_id(id_selector).click()
@@ -45,59 +46,59 @@ class LetterTemplates:
         self.driver.find_element_by_id(template_id).click()
 
     def add_letter_paragraph(self):
-        self.driver.find_element_by_name(self.letter_paragraph).click()
-        return self.driver.find_element_by_name(self.letter_paragraph_name).text
+        self.driver.find_element_by_name(self.LETTER_PARAGRAPH).click()
+        return self.driver.find_element_by_name(self.LETTER_PARAGRAPH_NAME).text
 
     def click_save_button(self):
-        self.driver.find_element_by_name(self.save_button).click()
+        self.driver.find_element_by_name(self.SAVE_BUTTON).click()
 
     def click_add_letter_paragraph(self):
-        self.driver.find_element_by_css_selector(self.add_letter_paragraph_button).click()
+        self.driver.find_element_by_css_selector(self.ADD_LETTER_PARAGRAPH_BUTTON).click()
 
     def click_add_letter_paragraphs(self):
-        self.driver.find_element_by_css_selector(self.add_letter_paragraphs_button).click()
+        self.driver.find_element_by_css_selector(self.ADD_LETTER_PARAGRAPHS_BUTTON).click()
 
     def get_text_of_paragraphs_in_template(self):
-        return self.driver.find_element_by_css_selector(self.preview_template_paragraphs).text
+        return self.driver.find_element_by_css_selector(self.PREVIEW_TEMPLATE_PARAGRAPHS).text
 
     def get_text_of_paragraphs_in_preview(self):
-        return self.driver.find_element_by_id(self.preview_paragraphs).text
+        return self.driver.find_element_by_id(self.PREVIEW_PARAGRAPHS).text
 
     def get_class_name_of_drag_and_drop_list(self):
-        return self.driver.find_element_by_id(self.drag_drop_list).get_attribute("class")
+        return self.driver.find_element_by_id(self.DRAG_DROP_LIST).get_attribute("class")
 
     def get_drag_and_drop_list_name(self):
-        return self.driver.find_element_by_id(self.drag_drop_list).text
+        return self.driver.find_element_by_id(self.DRAG_DROP_LIST).text
 
     def click_letter_template(self, document_template_name):
         self.driver.find_element_by_id(document_template_name).click()
 
     def get_template_title(self):
-        return self.driver.find_element_by_id(self.template_title).text
+        return self.driver.find_element_by_id(self.TEMPLATE_TITLE).text
 
     def get_template_layout(self):
-        return self.driver.find_element_by_id(self.template_layout).text
+        return self.driver.find_element_by_id(self.TEMPLATE_LAYOUT).text
 
     def get_template_restricted_to(self):
-        return self.driver.find_element_by_id(self.template_restricted_to).text
+        return self.driver.find_element_by_id(self.TEMPLATE_RESTRICTED_TO).text
 
     def get_template_paragraphs(self):
-        return self.driver.find_element_by_id(self.template_paragraphs).text
+        return self.driver.find_element_by_id(self.TEMPLATE_PARAGRAPHS).text
 
     def click_edit_template_button(self):
-        self.driver.find_element_by_id(self.edit_template_button).click()
+        self.driver.find_element_by_id(self.EDIT_TEMPLATE_BUTTON).click()
 
     def click_edit_paragraphs_button(self):
-        self.driver.find_element_by_id(self.edit_paragraphs_button).click()
+        self.driver.find_element_by_id(self.EDIT_PARAGRAPHS_BUTTON).click()
 
     def click_add_paragraph_link(self):
-        self.driver.find_element_by_id(self.add_paragraph_link).click()
+        self.driver.find_element_by_id(self.ADD_PARAGRAPH_LINK).click()
 
     def get_add_paragraph_button(self):
-        paragraph = self.driver.find_element_by_css_selector(self.paragraph_checkboxes_list)
+        paragraph = self.driver.find_element_by_css_selector(self.PARAGRAPH_CHECKBOXES_LIST)
         id = paragraph.get_attribute("value")
         paragraph.click()
         return id
 
     def get_list_of_letter_paragraphs(self):
-        return self.driver.find_element_by_id(self.paragraph_text_list).text
+        return self.driver.find_element_by_id(self.PARAGRAPH_TEXT_LIST).text

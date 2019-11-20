@@ -1,52 +1,51 @@
+from helpers.BasePage import BasePage
 from shared.tools.wait import wait_until_page_is_loaded, wait_until_menu_is_visible
 
 
-class HeaderPage:
-    def __init__(self, driver):
-        self.driver = driver
-        self.menu_button = "lite-user-menu-button"  # ID
-        self.organisations_link = "a[href*='/organisations/']"  # CSS
-        self.templates_link = "a[href*='/letter-templates/']"  # CSS
-        self.hmrc_link = "a[href*='/hmrc/']"  # CSS
-        self.teams_link = "a[href*='/teams/']"  # CSS
-        self.users_link = "a[href*='/users/']"  # CSS
-        self.flags_link = "a[href*='/flags/']"  # CSS
-        self.queues_link = "a[href*='/queues/']"  # CSS
-        self.my_team_link = "a[href='/team']"  # CSS
-        self.user_profile = ".lite-user-menu-button--user"  # CSS
+class HeaderPage(BasePage):
+    MENU_BUTTON = "lite-user-menu-button"  # ID
+    ORGANISATIONS_LINK = "a[href*='/organisations/']"  # CSS
+    TEMPLATES_LINK = "a[href*='/letter-templates/']"  # CSS
+    HMRC_LINK = "a[href*='/hmrc/']"  # CSS
+    TEAMS_LINK = "a[href*='/teams/']"  # CSS
+    USERS_LINK = "a[href*='/users/']"  # CSS
+    FLAGS_LINK = "a[href*='/flags/']"  # CSS
+    QUEUES_LINK = "a[href*='/queues/']"  # CSS
+    MY_TEAM_LINK = "a[href='/team']"  # CSS
+    USER_PROFILE = ".lite-user-menu-button--user"  # CSS
 
     def click_lite_menu(self):
         wait_until_page_is_loaded(self.driver)
-        self.driver.find_element_by_id(self.menu_button).click()
+        self.driver.find_element_by_id(self.MENU_BUTTON).click()
         wait_until_menu_is_visible(self.driver)
 
     def click_organisations(self):
-        self.driver.find_element_by_css_selector(self.organisations_link).click()
+        self.driver.find_element_by_css_selector(self.ORGANISATIONS_LINK).click()
 
     def click_letters(self):
-        self.driver.find_element_by_css_selector(self.templates_link).click()
+        self.driver.find_element_by_css_selector(self.TEMPLATES_LINK).click()
 
     def click_hmrc(self):
-        self.driver.find_element_by_css_selector(self.hmrc_link).click()
+        self.driver.find_element_by_css_selector(self.HMRC_LINK).click()
 
     def click_teams(self):
-        self.driver.find_element_by_css_selector(self.teams_link).click()
+        self.driver.find_element_by_css_selector(self.TEAMS_LINK).click()
 
     def click_users(self):
-        self.driver.find_element_by_css_selector(self.users_link).click()
+        self.driver.find_element_by_css_selector(self.USERS_LINK).click()
 
     def open_users(self):
         self.click_lite_menu()
         self.click_users()
 
     def click_user_profile(self):
-        self.driver.find_element_by_css_selector(self.user_profile).click()
+        self.driver.find_element_by_css_selector(self.USER_PROFILE).click()
 
     def click_flags(self):
-        self.driver.find_element_by_css_selector(self.flags_link).click()
+        self.driver.find_element_by_css_selector(self.FLAGS_LINK).click()
 
     def click_queues(self):
-        self.driver.find_element_by_css_selector(self.queues_link).click()
+        self.driver.find_element_by_css_selector(self.QUEUES_LINK).click()
 
     def click_my_team(self):
-        self.driver.find_element_by_css_selector(self.my_team_link).click()
+        self.driver.find_element_by_css_selector(self.MY_TEAM_LINK).click()
