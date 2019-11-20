@@ -7,7 +7,7 @@ So that I can quickly identify where action is required by me and respond to any
   Scenario: view and respond to a ecju query in an application
     Given I go to exporter homepage and choose Test Org
     When I go to the recently created application
-    And I select to view ecju queries
+    And I click the ECJU Queries tab
     And I click to respond to the ecju query
     And I enter " " for ecju query and click submit
     Then I see This field may not be blank error message on the page
@@ -21,7 +21,7 @@ So that I can quickly identify where action is required by me and respond to any
    Scenario: view and respond to a ecju query in a good
     Given I go to exporter homepage and choose Test Org
     When I click on an CLC query previously created
-    And I select to view ecju queries
+    And I click the ECJU Queries tab
     And I click to respond to the ecju query
     And I enter " " for ecju query and click submit
     Then I see This field may not be blank error message on the page

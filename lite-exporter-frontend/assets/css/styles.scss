@@ -7,6 +7,17 @@ main {
 	min-height: 60vh;
 }
 
+.govuk-table {
+	table-layout: fixed;
+}
+
+.govuk-table__cell {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	word-break: break-all;
+}
+
 .govuk-summary-list__key--highlight {
 	border-left: govuk-spacing(1) solid govuk-colour("orange");
 	padding-left: govuk-spacing(3);

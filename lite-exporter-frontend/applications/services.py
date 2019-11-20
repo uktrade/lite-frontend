@@ -52,7 +52,7 @@ def put_application(request, pk, json):
 
 
 def delete_application(request, pk):
-    data = delete(request, APPLICATIONS_URL + pk)
+    data = delete(request, APPLICATIONS_URL + str(pk))
     return data.json(), data.status_code
 
 

@@ -1,5 +1,7 @@
 {% extends 'layouts/base.html' %}
 
+{% load static %}
+
 {% block back_link %}
     <a href="{% url 'applications:applications' %}" id="back-link" class="govuk-back-link">Back</a>
 {% endblock %}
@@ -14,58 +16,65 @@
 				<a href="{% url 'applications:withdraw' application.id %}" id="button-withdraw-application" class="govuk-button govuk-button--secondary">
 					{% lcs 'APPLICATION_WITHDRAW_ACCESS_BUTTON' %}
 				</a>
-				<a href="{% url 'applications:edit_type' application.id %}" id="button-edit-application" class="govuk-button">
+				<a href="{% url 'applications:edit_type' application.id %}" id="button-edit-application" class="govuk-button govuk-button--secondary">
 					{% lcs 'APPLICATION_EDIT_APPLICATION_BUTTON' %}
 				</a>
 			{% endif %}
         </div>
     </div>
 
-    <div class="lite-information-board">
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-one-third">
-                <p class="lite-heading-s">{% lcs 'APPLICATION_TYPE' %}</p>
-                <p class="govuk-label">{{ application.application_type.value }}</p>
-            </div>
-			{% if application.application_type.key != 'hmrc_query' %}
-	            <div class="govuk-grid-column-one-third">
-	                <p class="lite-heading-s">{% lcs 'APPLICATION_EXPORT_TYPE' %}</p>
-	                <p class="govuk-label">
-	                    {{ application.export_type.value }}
-	                </p>
-	            </div>
-			{% endif %}
-			<div class="govuk-grid-column-one-quarter">
-				<p class="lite-heading-s">{% lcs 'APPLICATION_STATUS' %}</p>
-				<p class="govuk-label" id="label-application-status">
-					{{ application.status.value }}
-				</p>
-			</div>
-            <div class="govuk-grid-column-one-third">
-                <p class="lite-heading-s">{% lcs 'APPLICATION_SUBMITTED_AT' %}</p>
-                <p class="govuk-label">
-                    {{ application.last_modified_at|str_date }}
-                </p>
-            </div>
-        </div>
-    </div>
+	<dl class="govuk-summary-list govuk-summary-list--no-border">
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs 'APPLICATION_TYPE' %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ application.application_type.value }}
+			</dd>
+		</div>
+		{% if application.application_type.key != 'hmrc_query' %}
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs 'APPLICATION_EXPORT_TYPE' %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ application.export_type.value }}
+			</dd>
+		</div>
+		{% endif %}
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs 'APPLICATION_STATUS' %}
+			</dt>
+			<dd id="label-application-status" class="govuk-summary-list__value">
+				{{ application.status.value }}
+			</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs 'APPLICATION_SUBMITTED_AT' %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ application.last_modified_at|str_date }}
+			</dd>
+		</div>
+	</dl>
 
-	{% if application.application_type.key != 'hmrc_query' %}
-	    <div class="lite-tabs--fade">
-	        <div class="lite-tabs">
-	            <a href="{% url 'applications:detail' application.id 'case-notes' %}"
-	               class="lite-tabs__tab {% if type == 'case-notes' %}lite-tabs__tab--selected{% endif %}"
-	               id="case-notes-tab">
-	                Notes
-	                {% if case_note_notifications %}
-	                    <div class="lite-notification-bubble">
-	                        {{ case_note_notifications }}
-	                    </div>
-	                {% endif %}
-	            </a>
-	            <a href="{% url 'applications:detail' application.id 'ecju-queries' %}"
-	               class="lite-tabs__tab {% if type == 'ecju-queries' %}lite-tabs__tab--selected{% endif %}"
-	               id="ecju-queries-tab">
+    <div class="lite-tabs__container">
+        <div class="lite-tabs">
+			<a href="{% url 'applications:application' application.id %}" class="lite-tabs__tab {% if not type %}lite-tabs__tab--selected{% endif %}" id="link-details">
+			   Details
+			</a>
+			{% if application.application_type.key != 'hmrc_query' %}
+				<a href="{% url 'applications:application' application.id 'case-notes' %}" class="lite-tabs__tab {% if type == 'case-notes' %}lite-tabs__tab--selected{% endif %}" id="link-case-notes">
+					Notes
+					{% if case_note_notifications %}
+						<div class="lite-notification-bubble">
+							{{ case_note_notifications }}
+						</div>
+					{% endif %}
+				</a>
+	            <a href="{% url 'applications:application' application.id 'ecju-queries' %}" class="lite-tabs__tab {% if type == 'ecju-queries' %}lite-tabs__tab--selected{% endif %}" id="link-ecju-queries">
 	                ECJU Queries
 	                {% if ecju_query_notifications %}
 	                    <div class="lite-notification-bubble">
@@ -73,13 +82,68 @@
 	                    </div>
 	                {% endif %}
 	            </a>
-	        </div>
-	    </div>
-	    {% if type == 'case-notes' %}
-	        {% include "applications/tabs/case-notes.html" %}
-	    {% elif type == 'ecju-queries' %}
-	        {% include "applications/tabs/ecju-queries.html" %}
-	    {% endif %}
-	{% endif %}
+			{% endif %}
+        </div>
+    </div>
 
+    {% if not type %}
+		{% for key, value in answers.items %}
+			<h2 class="govuk-heading-m">{{ key }}</h2>
+			<div>
+				{% if not value %}
+					<p class="govuk-caption-m">You haven't added any information for this section.</p>
+				{% elif value|classname == 'str' %}
+					<dl class="govuk-summary-list">
+						<div class="govuk-summary-list__row">
+							<dd class="govuk-summary-list__value">
+								{{ value }}
+							</dd>
+						</div>
+					</dl>
+				{% elif value|classname == 'dict' %}
+					<dl class="govuk-summary-list">
+						{% for key, value in value.items %}
+							<div class="govuk-summary-list__row">
+								<dt class="govuk-summary-list__key">
+									{{ key }}
+								</dt>
+								<dd class="govuk-summary-list__value">
+									{{ value|linebreaksbr }}
+								</dd>
+							</div>
+						{% endfor %}
+					</dl>
+				{% elif value|classname == 'list' %}
+					<table class="govuk-table">
+						<thead class="govuk-table__head">
+							<tr class="govuk-table__row">
+								{% for key, value in value.0.items %}
+									<th scope="col" class="govuk-table__header">{{ key }}</th>
+								{% endfor %}
+							</tr>
+						</thead>
+						<tbody class="govuk-table__body">
+							{% for item in value %}
+								<tr class="govuk-table__row">
+									{% for key, value in item.items %}
+										<td class="govuk-table__cell">{{ value|linebreaksbr }}</td>
+									{% endfor %}
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				{% endif %}
+			</div>
+			<hr class="app-check-your-answers-separator">
+		{% endfor %}
+    {% elif type == 'case-notes' %}
+        {% include "applications/tabs/case-notes.html" %}
+    {% elif type == 'ecju-queries' %}
+        {% include "applications/tabs/ecju-queries.html" %}
+    {% endif %}
+
+{% endblock %}
+
+{% block javascript %}
+	<script src="{% static 'javascripts/case-notes.js' %}"></script>
 {% endblock %}

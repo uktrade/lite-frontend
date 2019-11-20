@@ -12,6 +12,7 @@ Feature: I want to see externally visible case notes
     When I click on applications
     Then I see a notification on application list
     When I click on my application
+    And I click the notes tab
     Then I can see the internally added note
     When I go to exporter homepage
     Then I cannot see a notification

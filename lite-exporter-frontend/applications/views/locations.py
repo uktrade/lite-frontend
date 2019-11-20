@@ -12,7 +12,7 @@ from applications.forms.location import (
 )
 from applications.forms.sites import sites_form
 from applications.services import get_application, get_application_countries, post_application_countries
-from applications.libraries.validators import validate_external_location_choice
+from applications.helpers.validators import validate_external_location_choice
 from core.services import (
     get_sites_on_draft,
     post_sites_on_draft,

@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from applications.libraries.reverse_documents import document_switch
+from applications.helpers.reverse_documents import document_switch
 
 
 class TestHelpers(TestCase):

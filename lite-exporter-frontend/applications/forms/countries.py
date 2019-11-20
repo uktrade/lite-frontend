@@ -1,18 +1,23 @@
-from django.urls import reverse
-from lite_forms.components import Form, Filter, Checkboxes, BackLink
-
+from applications.components import back_to_task_list
 from core.services import get_countries
-from core.builtins.custom_tags import get_string
+from lite_content.lite_exporter_frontend import strings
+from lite_forms.components import Form, Filter, Checkboxes
 
 
-def countries_form(draft_id):
+def countries_form(application_id):
     return Form(
-        title=get_string("licences.countries.title"),
-        description=get_string("licences.countries.description"),
-        questions=[Filter(), Checkboxes("countries", get_countries(None, True), classes=["govuk-checkboxes--small"]),],
+        title=strings.WHERE_ARE_YOUR_GOODS_GOING_TITLE,
+        description=strings.WHERE_ARE_YOUR_GOODS_GOING_DESCRIPTION,
+        questions=[
+            Filter(),
+            Checkboxes(
+                name="countries",
+                options=get_countries(None, True),
+                classes=["govuk-checkboxes--small"],
+                show_select_links=True,
+            ),
+        ],
         javascript_imports=["/assets/javascripts/filter-checkbox-list.js"],
-        default_button_name="Save",
-        back_link=BackLink(
-            get_string("common.back_to_task_list"), reverse("applications:task_list", kwargs={"pk": draft_id})
-        ),
+        default_button_name=strings.SAVE,
+        back_link=back_to_task_list(application_id),
     )

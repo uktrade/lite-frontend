@@ -1,20 +1,22 @@
-class ApplicationCountriesList:
-    def __init__(self, driver):
-        self.driver = driver
-        self.countries_checkboxes = ".govuk-checkboxes__input"
-        self.countries_labels = ".govuk-checkboxes__label"
-        self.countries_search_box = "filter-box"  # ID
-        self.countries_list = "pane_countries"  # ID
-        self.title = ".govuk-fieldset__heading"
+from shared.BasePage import BasePage
+
+
+class ApplicationCountriesList(BasePage):
+    COUNTRIES_CHECKBOX = ".govuk-checkboxes__input"
+    COUNTRIES_LABELS = ".govuk-checkboxes__label"
+    COUNTRIES_SEARCH_BOX = "filter-box"  # ID
+    COUNTRIES_LIST_SELECTOR = "#pane_countries .govuk-checkboxes"
+    TITLE = ".govuk-fieldset__heading"
+    SELECT_ALL_LINK = "link-select-all"  # ID
 
     def get_countries_names(self):
         countries_names = []
-        for country in self.driver.find_elements_by_css_selector(self.countries_labels):
+        for country in self.driver.find_elements_by_css_selector(self.COUNTRIES_LABELS):
             countries_names.append(country.text)
         return countries_names
 
     def view_countries(self):
-        for checkbox in self.driver.find_elements_by_css_selector(self.countries_checkboxes):
+        for checkbox in self.driver.find_elements_by_css_selector(self.COUNTRIES_CHECKBOXES):
             checkbox.click()
 
     def select_country(self, name):
@@ -22,10 +24,19 @@ class ApplicationCountriesList:
         checkbox.click()
 
     def search_for_country(self, country):
-        self.driver.find_element_by_id(self.countries_search_box).send_keys(country)
+        self.driver.find_element_by_id(self.COUNTRIES_SEARCH_BOX).send_keys(country)
 
     def get_text_of_countries_list(self):
-        return self.driver.find_element_by_id(self.countries_list).text
+        return self.driver.find_elements_by_css_selector(self.COUNTRIES_LIST_SELECTOR)[0].text
 
     def get_title(self):
-        return self.driver.find_element_by_css_selector(self.title).text
+        return self.driver.find_element_by_css_selector(self.TITLE).text
+
+    def click_select_all(self):
+        self.driver.find_element_by_id(self.SELECT_ALL_LINK).click()
+
+    def get_number_of_checkboxes(self, checked=False):
+        if checked:
+            return len(self.driver.find_elements_by_css_selector("input[type='checkbox']:checked"))
+        else:
+            return len(self.driver.find_elements_by_css_selector(self.COUNTRIES_CHECKBOX))

@@ -76,9 +76,9 @@
 							</td>
 						{% endif %}
 						<td class="govuk-table__cell govuk-table__cell--numeric">
-							<a href="{% url 'applications:delete' draft.id %}" class="govuk-link lite-link--icon">
+							<a id="link-delete-draft" href="{% url 'applications:delete' draft.id %}" class="govuk-link lite-link--icon">
                                 {% svg 'close' %}
-                                Delete <span class="govuk-visually-hidden">draft</span>
+                                {% lcs 'DRAFT_DELETE_LINK' %}
                             </a>
 						</td>
 					</tr>

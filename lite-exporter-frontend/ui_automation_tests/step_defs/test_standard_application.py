@@ -39,14 +39,14 @@ def i_see_the_homepage(driver):
 @when("I click on ultimate end users")
 def i_click_on_application_overview(driver, add_an_incorporated_good_to_application):
     app = ApplicationOverviewPage(driver)
-    scroll_to_element_by_id(Shared(driver).driver, app.ultimate_end_user_link)
+    scroll_to_element_by_id(Shared(driver).driver, app.ULTIMATE_END_USER_LINK)
     app.click_ultimate_end_user_link()
 
 
 @when("I click on third parties")
 def i_click_on_application_overview(driver):
     app = ApplicationOverviewPage(driver)
-    scroll_to_element_by_id(Shared(driver).driver, app.third_parties)
+    scroll_to_element_by_id(Shared(driver).driver, app.THIRD_PARTIES)
     app.click_third_parties()
 
 
@@ -129,7 +129,7 @@ def click_add_to_application_button(driver, no, context):
 @when("I click on end user")
 def i_click_on_end_user(driver):
     app = ApplicationOverviewPage(driver)
-    scroll_to_element_by_id(Shared(driver).driver, app.end_user_link)
+    scroll_to_element_by_id(Shared(driver).driver, app.END_USER_LINK)
     app.click_end_user_link()
 
 

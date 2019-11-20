@@ -1,82 +1,77 @@
 from conf.constants import STANDARD_LICENCE, OPEN_LICENCE
-from core.builtins.custom_tags import get_string
+from lite_content.lite_exporter_frontend import strings
 from lite_forms.components import RadioButtons, Form, DetailComponent, TextInput, Option, FormGroup
+from lite_forms.helpers import conditional
 
 
-def initial_questions():
+def initial_questions(application_type):
     return FormGroup(
         [
             Form(
-                title=get_string("applications.initial_questions.export_title"),
+                title=strings.WHICH_EXPORT_LICENCE_DO_YOU_WANT_TITLE,
+                description=strings.WHICH_EXPORT_LICENCE_DO_YOU_WANT_DESCRIPTION,
                 questions=[
                     RadioButtons(
                         name="application_type",
                         options=[
                             Option(
                                 key=STANDARD_LICENCE,
-                                value="Standard Licence",
-                                description="Standard Licences are specific to the company and the recipient (consignee). "
-                                "They are for a set quantity and set value of goods. "
-                                "You will need to provide support documentation with your application.",
+                                value=strings.STANDARD_LICENCE,
+                                description=strings.STANDARD_LICENCE_DESCRIPTION,
                             ),
                             Option(
                                 key=OPEN_LICENCE,
-                                value="Open Licence",
-                                description="Open Licences cover long-term projects and repeat business. "
-                                "This is company specific, with no set quantity or value of goods. "
-                                "You will receive compliance audits under this type of licence.",
+                                value=strings.OPEN_LICENCE,
+                                description=strings.OPEN_LICENCE_DESCRIPTION,
                             ),
                         ],
                     ),
-                    DetailComponent(
-                        "Help with choosing a licence",
-                        "If you're unsure about which licence to select, "
-                        "then read the guidance on GOV.UK for "
-                        '<a class="govuk-link" target="_blank"'
-                        'href="https://www.gov.uk/starting-to-export/licences">'
-                        "exporting and doing business abroad<span "
-                        'class="govuk-visually-hidden"> (Opens in a new window or '
-                        "tab)</span></a>.",
-                    ),
+                    DetailComponent(strings.HELP_WITH_CHOOSING_A_LICENCE, strings.HELP_WITH_CHOOSING_A_LICENCE_CONTENT),
                 ],
-                default_button_name="Continue",
+                default_button_name=strings.CONTINUE,
             ),
             Form(
-                title=get_string("applications.initial_questions.reference_title"),
+                title=strings.ENTER_A_REFERENCE_NAME_TITLE,
+                description=strings.ENTER_A_REFERENCE_NAME_DESCRIPTION,
                 questions=[TextInput(name="name"),],
-                default_button_name="Continue",
+                default_button_name=strings.CONTINUE,
             ),
             Form(
-                title="Do you want to export temporarily or permanently",
-                description="",
+                title=strings.TEMPORARY_OR_PERMANENT_TITLE,
+                description=strings.TEMPORARY_OR_PERMANENT_DESCRIPTION,
                 questions=[
                     RadioButtons(
                         name="export_type",
-                        options=[Option("temporary", "Temporarily"), Option("permanent", "Permanently")],
+                        options=[Option("temporary", strings.TEMPORARY), Option("permanent", strings.PERMANENT)],
                     ),
                 ],
-                default_button_name="Continue",
+                default_button_name=strings.CONTINUE
+                if application_type == STANDARD_LICENCE
+                else strings.SAVE_AND_CONTINUE,
             ),
-            Form(
-                title="Have you been told that you need an export licence by an official?",
-                description="This could be a letter or email from HMRC or another government department.",
-                questions=[
-                    RadioButtons(
-                        name="have_you_been_informed",
-                        options=[
-                            Option("yes", "Yes", show_pane="pane_reference_number_on_information_form"),
-                            Option("no", "No"),
-                        ],
-                        classes=["govuk-radios--inline"],
-                    ),
-                    TextInput(
-                        title="What was the reference number if you were provided one?",
-                        description="This is the reference found on the letter or email to tell you to apply for an export licence.",
-                        name="reference_number_on_information_form",
-                        optional=True,
-                    ),
-                ],
-                default_button_name="Save and continue",
+            conditional(
+                application_type != OPEN_LICENCE,
+                Form(
+                    title=strings.HAVE_YOU_BEEN_INFORMED_TITLE,
+                    description=strings.HAVE_YOU_BEEN_INFORMED_DESCRIPTION,
+                    questions=[
+                        RadioButtons(
+                            name="have_you_been_informed",
+                            options=[
+                                Option("yes", strings.YES, show_pane="pane_reference_number_on_information_form"),
+                                Option("no", strings.NO),
+                            ],
+                            classes=["govuk-radios--inline"],
+                        ),
+                        TextInput(
+                            title=strings.WHAT_WAS_THE_REFERENCE_CODE_TITLE,
+                            description=strings.WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION,
+                            name="reference_number_on_information_form",
+                            optional=True,
+                        ),
+                    ],
+                    default_button_name=strings.SAVE_AND_CONTINUE,
+                ),
             ),
         ]
     )

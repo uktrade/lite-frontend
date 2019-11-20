@@ -10,6 +10,7 @@ Feature: I want to add a note to an application and view notes
     And I create a standard application via api
     When I click on applications
     And I click on application previously created
+    And I click the notes tab
     And I enter "This is a note on my application!" for case note
     And I click cancel button
     Then entered text is no longer in case note field
@@ -23,6 +24,7 @@ Feature: I want to add a note to an application and view notes
     And I create a standard application via api
     When I click on applications
     And I click on application previously created
+    And I click the notes tab
     And I enter "the maximum limit" for case note
     Then case note warning is "You have 0 characters remaining"
     When I enter "the maximum limit plus 1" for case note

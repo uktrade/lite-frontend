@@ -43,7 +43,6 @@ jobs:
             fi
             exit $VULNERABILITY_COUNT
 
-
       - run:
           name: Create environment file
           command: cp local.env .env
@@ -65,7 +64,6 @@ jobs:
           name: Run tests
           command: pipenv run ./manage.py test --parallel
 
-      # Linting: dodgy, mccabe, pep8, profile-validator, pyflakes, pylint
       - run:
           name: Run Linting
           command: pipenv run prospector

@@ -8,7 +8,7 @@ from django.template.defaultfilters import stringfilter
 from django.templatetags.tz import do_timezone
 from django.utils.safestring import mark_safe
 
-from conf.constants import ISO8601_FMT
+from conf.constants import ISO8601_FMT, NOT_STARTED, DONE
 from conf.settings import env
 from core import lite_strings
 
@@ -198,3 +198,28 @@ def classname(obj):
     Returns object class name
     """
     return obj.__class__.__name__
+
+
+@register.filter
+def task_list_item_status(data):
+    """
+    Returns 'not started' if length of data given is none, else returns 'done'
+    """
+    if len(data) == 0:
+        return NOT_STARTED
+
+    return DONE
+
+
+@register.simple_tag(name="tld")
+def task_list_item_list_description(data, singular, plural):
+    """
+    Returns a description for a task list item depending on how many
+    items are in its contents
+    """
+    if len(data) == 0:
+        return None
+    elif len(data) == 1:
+        return f"1 {singular} added"
+    else:
+        return f"{len(data)} {plural} added"

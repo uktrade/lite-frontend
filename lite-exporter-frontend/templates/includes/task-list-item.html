@@ -6,19 +6,19 @@
 		{% if not hide_tag %}
 			{% if status == 'done' %}
 				<div class="lite-tag lite-tag--blue">
-					Done
+					{% lcs 'DONE' %}
 				</div>
 			{% elif status == 'in_progress' %}
 				<div class="lite-tag lite-tag--orange">
-					In progress
+					{% lcs 'IN_PROGRESS' %}
 				</div>
 			{% else %}
 				<div class="lite-tag lite-tag--hollow">
-					<span class="govuk-visually-hidden">This section is </span>
+					<span class="govuk-visually-hidden">{% lcs 'THIS_SECTION_IS' %}</span>
 					{% if optional %}
-						Optional
+						{% lcs 'OPTIONAL' %}
 					{% else %}
-						Not started
+						{% lcs 'NOT_STARTED' %}
 					{% endif %}
 				</div>
 			{% endif %}

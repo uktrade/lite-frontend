@@ -1,15 +1,17 @@
-class ApplicationEditTypePage:
-    def __init__(self, driver):
-        self.driver = driver
-        self.minor_edits_radio_button = "edit-type-minor"
-        self.major_edits_radio_button = "edit-type-major"
-        self.change_application_btn = '.govuk-button[value="submit"]'
+from shared.BasePage import BasePage
+
+
+class ApplicationEditTypePage(BasePage):
+
+    MINOR_EDITS_RADIO_BUTTON = "edit-type-minor"
+    MAJOR_EDITS_RADIO_BUTTON = "edit-type-major"
+    CHANGE_APPLICATION_BTN = '.govuk-button[value="submit"]'
 
     def click_minor_edits_radio_button(self):
-        self.driver.find_element_by_id(self.minor_edits_radio_button).click()
+        self.driver.find_element_by_id(self.MINOR_EDITS_RADIO_BUTTON).click()
 
     def click_major_edits_radio_button(self):
-        self.driver.find_element_by_id(self.major_edits_radio_button).click()
+        self.driver.find_element_by_id(self.MAJOR_EDITS_RADIO_BUTTON).click()
 
     def click_change_application_button(self):
-        self.driver.find_element_by_css_selector(self.change_application_btn).click()
+        self.driver.find_element_by_css_selector(self.CHANGE_APPLICATION_BTN).click()

@@ -9,6 +9,7 @@ from django.views.generic import TemplateView
 from s3chunkuploader.file_handler import S3FileUploadHandler
 
 from applications.forms.goods import good_on_application_form, add_new_good_forms
+from applications.helpers.check_your_answers import get_total_goods_value
 from applications.services import (
     get_application,
     get_application_goods,
@@ -33,8 +34,9 @@ class DraftGoodsList(TemplateView):
         draft_id = str(kwargs["pk"])
         application = get_application(request, draft_id)
         goods = get_application_goods(request, draft_id)
+        goods_value = get_total_goods_value(goods)
 
-        context = {"goods": goods, "application": application}
+        context = {"goods": goods, "application": application, "goods_value": goods_value}
         return render(request, "applications/goods/index.html", context)
 
 

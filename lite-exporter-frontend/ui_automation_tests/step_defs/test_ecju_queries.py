@@ -19,12 +19,6 @@ def click_on_an_application(driver, exporter_url, context, apply_for_standard_ap
     driver.get(exporter_url.rstrip("/") + "/applications/" + context.app_id)
 
 
-@when("I select to view ecju queries")
-def click_ecju_query_tab(driver):
-    application_page = ApplicationPage(driver)
-    application_page.click_ecju_query_tab()
-
-
 @when("I click to view goods page")
 def click_on_goods_page(driver):
     exporter_hub = ExporterHubPage(driver)

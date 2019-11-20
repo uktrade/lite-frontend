@@ -1,71 +1,72 @@
-class Shared:
-    def __init__(self, driver):
-        self.driver = driver
-        self.heading = ".govuk-heading-xl"  # CSS
-        self.radio_buttons = ".govuk-radios__label"  # CSS
-        self.error_messages = ".govuk-error-summary__body"
-        self.error_message = ".govuk-error-message"
-        self.gov_body = ".govuk-body"
-        self.gov_grid_row = ".govuk-grid-row"
-        self.gov_table = ".govuk-table"
-        self.gov_table_row = ".govuk-table__row"
-        self.gov_table_cell_links = ".govuk-table__cell a"
-        self.application_name = "a[href*='overview']"
-        self.h2 = "h2"
-        self.h1 = "h1"
-        self.lite_section = ".lite-section"
-        self.notification = ".app-icon-label__notification"  # CSS
+from shared.BasePage import BasePage
+
+
+class Shared(BasePage):
+    HEADING = ".govuk-heading-xl"  # CSS
+    RADIO_BUTTONS = ".govuk-radios__label"  # CSS
+    ERROR_MESSAGES = ".govuk-error-summary__body"
+    ERROR_MESSAGE = ".govuk-error-message"
+    GOV_BODY = ".govuk-body"
+    GOV_GRID_ROW = ".govuk-grid-row"
+    GOV_TABLE = ".govuk-table"
+    GOV_TABLE_ROW = ".govuk-table__row"
+    GOV_TABLE_CELL_LINKS = ".govuk-table__cell a"
+    APPLICATION_NAME = "a[href*='overview']"
+    H2 = "h2"
+    H1 = "h1"
+    LITE_SECTION = ".lite-section"
+    NOTIFICATION = ".app-icon-label__notification"  # CSS
 
     def get_text_of_error_messages(self):
-        return self.driver.find_element_by_css_selector(self.error_messages).text
+        return self.driver.find_element_by_css_selector(self.ERROR_MESSAGES).text
 
     def is_error_message_displayed(self):
-        return self.driver.find_element_by_css_selector(self.error_messages).is_displayed()
+        return self.driver.find_element_by_css_selector(self.ERROR_MESSAGES).is_displayed()
 
     def get_text_of_body(self):
         return self.driver.find_element_by_tag_name("body").text
 
     def get_text_of_gov_table(self):
-        return self.driver.find_element_by_css_selector(self.gov_table).text
+        return self.driver.find_element_by_css_selector(self.GOV_TABLE).text
 
     def get_table_rows(self):
-        return self.driver.find_elements_by_css_selector(self.gov_table_row)
+        return self.driver.find_elements_by_css_selector(self.GOV_TABLE_ROW)
 
     def get_text_of_heading(self):
-        return self.driver.find_element_by_css_selector(self.heading).text
+        return self.driver.find_element_by_css_selector(self.HEADING).text
 
     def get_radio_buttons_elements(self):
-        return self.driver.find_elements_by_css_selector(self.radio_buttons)
+        return self.driver.find_elements_by_css_selector(self.RADIO_BUTTONS)
 
     def click_on_radio_buttons(self, no):
-        return self.driver.find_elements_by_css_selector(self.radio_buttons)[no].click()
+        return self.driver.find_elements_by_css_selector(self.RADIO_BUTTONS)[no].click()
 
     def get_text_of_gov_body(self):
-        return self.driver.find_element_by_css_selector(self.gov_body).text
+        return self.driver.find_element_by_css_selector(self.GOV_BODY).text
 
     def get_text_of_gov_grid_row(self):
-        return self.driver.find_element_by_css_selector(self.gov_grid_row).text
+        return self.driver.find_element_by_css_selector(self.GOV_GRID_ROW).text
 
     def get_gov_table_cell_links(self):
-        return self.driver.find_elements_by_css_selector(self.gov_table_cell_links)
+        return self.driver.find_elements_by_css_selector(self.GOV_TABLE_CELL_LINKS)
 
     def get_table_row(self, no):
-        return self.driver.find_elements_by_css_selector(self.gov_table_row)[no]
+        return self.driver.find_elements_by_css_selector(self.GOV_TABLE_ROW)[no]
 
     def get_links_of_table_row(self, no):
-        return self.get_table_row(no).find_elements_by_css_selector(self.gov_table_cell_links)
+        return self.get_table_row(no).find_elements_by_css_selector(self.GOV_TABLE_CELL_LINKS)
 
     def get_text_of_h2(self):
-        return self.driver.find_element_by_tag_name(self.h2).text
+        return self.driver.find_element_by_tag_name(self.H2).text
 
     def get_text_of_h1(self):
-        return self.driver.find_element_by_tag_name(self.h1).text
+        return self.driver.find_element_by_tag_name(self.H1).text
 
     def get_lite_sections(self):
-        return self.driver.find_elements_by_css_selector(self.lite_section)
+        return self.driver.find_elements_by_css_selector(self.LITE_SECTION)
 
     def get_size_of_table_rows(self):
-        return len(self.driver.find_elements_by_css_selector(self.gov_table_row))
+        return len(self.driver.find_elements_by_css_selector(self.GOV_TABLE_ROW))
 
     def click_on_application_name(self):
-        return self.driver.find_element_by_css_selector(self.application_name).click()
+        return self.driver.find_element_by_css_selector(self.APPLICATION_NAME).click()

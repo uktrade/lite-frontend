@@ -1,6 +1,6 @@
 {% load static %}
 
-{% url 'applications:detail' application.id 'case-notes' as post_url %}
+{% url 'applications:application' application.id 'case-notes' as post_url %}
 
 {% if post_url %}
 
@@ -12,7 +12,7 @@
 				<p id="case_note-warning" class="govuk-hint govuk-character-count__message" aria-live="polite" style="text-align: left; margin: 2px 0 0 0;">
 					{% get_string 'case_notes.max_length' %}
 				</p>
-				<a id="case-note-cancel-button" href="{% url 'applications:application' application.id %}" class="govuk-button govuk-button--secondary govuk-button--secondary-white" type="button" draggable="false">
+				<a id="case-note-cancel-button" href="{% url 'applications:application' application.id 'case-notes' %}" class="govuk-button govuk-button--secondary govuk-button--secondary-white" type="button" draggable="false">
 					Cancel
 				</a>
 				<button class="govuk-button" type="submit" id="button-post-note">

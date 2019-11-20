@@ -1,6 +1,5 @@
 from pytest_bdd import scenarios, when, then, parsers
 
-from shared import functions
 import shared.tools.helpers as utils
 from pages.application_countries_list import ApplicationCountriesList
 from pages.application_goods_list import ApplicationGoodsList
@@ -100,6 +99,18 @@ def search_country_result(driver, country):
 def go_to_good_countries(driver):
     page = ApplicationOverviewPage(driver)
     page.click_goods_countries_link()
+
+
+@when("I click select all countries")
+def select_all_countries(driver):
+    page = ApplicationCountriesList(driver)
+    page.click_select_all()
+
+
+@then("all checkboxes are selected")
+def all_selected(driver):
+    page = ApplicationCountriesList(driver)
+    assert page.get_number_of_checkboxes(checked=False) == page.get_number_of_checkboxes(checked=True)
 
 
 @when(parsers.parse('I "{assign_or_unassign}" all countries to all goods'))

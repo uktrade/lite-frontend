@@ -1,31 +1,33 @@
-class GoodsCountriesPage:
-    def __init__(self, driver):
-        self.driver = driver
-        self.gov_checkboxes_input = ".govuk-checkboxes__input"  # css selector
-        self.select_all_id = "link-select-all"  # id
-        self.deselect_all_id = "link-deselect-all"  # id
-        self.save_button = "button[type='submit']"
+from shared.BasePage import BasePage
+
+
+class GoodsCountriesPage(BasePage):
+
+    GOV_CHECKBOXES_INPUT = ".govuk-checkboxes__input"  # css selector
+    SELECT_ALL_ID = "link-select-all"  # id
+    DESELECT_ALL_ID = "link-deselect-all"  # id
+    SAVE_BUTTON = "button[type='submit']"
 
     def select_all(self):
-        elements = self.driver.find_elements_by_css_selector(self.gov_checkboxes_input)
+        elements = self.driver.find_elements_by_css_selector(self.GOV_CHECKBOXES_INPUT)
         for element in elements:
             if not element.is_selected():
                 element.click()
 
     def select_all_link(self):
-        self.driver.find_element_by_id(self.select_all_id).click()
+        self.driver.find_element_by_id(self.SELECT_ALL_ID).click()
 
     def deselect_all(self):
-        elements = self.driver.find_elements_by_css_selector(self.gov_checkboxes_input)
+        elements = self.driver.find_elements_by_css_selector(self.GOV_CHECKBOXES_INPUT)
         for element in elements:
             if element.is_selected():
                 element.click()
 
     def deselect_all_link(self):
-        self.driver.find_element_by_id(self.deselect_all_id).click()
+        self.driver.find_element_by_id(self.DESELECT_ALL_ID).click()
 
     def all_selected(self):
-        elements = self.driver.find_elements_by_css_selector(self.gov_checkboxes_input)
+        elements = self.driver.find_elements_by_css_selector(self.GOV_CHECKBOXES_INPUT)
         for element in elements:
             if not element.is_selected():
                 return False
@@ -33,7 +35,7 @@ class GoodsCountriesPage:
         return True
 
     def all_deselected(self):
-        elements = self.driver.find_elements_by_css_selector(self.gov_checkboxes_input)
+        elements = self.driver.find_elements_by_css_selector(self.GOV_CHECKBOXES_INPUT)
         for element in elements:
             if element.is_selected():
                 return False
@@ -41,4 +43,4 @@ class GoodsCountriesPage:
         return True
 
     def click_save(self):
-        self.driver.find_element_by_css_selector(self.save_button).click()
+        self.driver.find_element_by_css_selector(self.SAVE_BUTTON).click()

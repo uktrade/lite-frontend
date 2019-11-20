@@ -41,7 +41,7 @@ Feature: I want to raise an End User advisory enquiry to check if a particular e
     When I click on end user advisories
     Then I see a notification on end user advisory list
     When I open an end user advisory already created
-    And I select to view ecju queries
+    And I click the ECJU Queries tab
     And I click to respond to the ecju query
     And I enter "This is my response" for ecju query and click submit
     And I select "yes" for submitting response and click submit

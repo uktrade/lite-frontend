@@ -1,15 +1,13 @@
 from pytest_bdd import when, then, parsers, scenarios, given
 
-from shared import functions
+import shared.tools.helpers as utils
 from pages.add_end_user_advisory_pages import AddEndUserAdvisoryPages
 from pages.end_user_advisory_page import EndUserAdvisoryPage
 from pages.respond_to_ecju_query_page import RespondToEcjuQueryPage
 from pages.shared import Shared
-from shared.seed_data.seed_data import SeedData
+from shared import functions
 from ui_automation_tests.pages.application_page import ApplicationPage
 from ui_automation_tests.pages.submitted_applications_page import SubmittedApplicationsPages
-import shared.tools.helpers as utils
-
 
 scenarios("../features/end_user_advisory_queries.feature", strict_gherkin=False)
 
@@ -140,14 +138,8 @@ def enter_case_note_text(driver, text):
     application_page.click_post_note_btn()
 
 
-@when("I select to view ecju queries")
-def click_ecju_query_tab(driver):
-    application_page = ApplicationPage(driver)
-    application_page.click_ecju_query_tab()
-
-
 @when("I click to respond to the ecju query")
-def click_ecju_query_tab(driver):
+def click_to_respond_to_ecju_query(driver):
     application_page = ApplicationPage(driver)
     application_page.respond_to_ecju_query(0)
 

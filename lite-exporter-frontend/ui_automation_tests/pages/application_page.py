@@ -5,7 +5,8 @@ class ApplicationPage(BasePage):
     BUTTON_WITHDRAW_APPLICATION_ID = "button-withdraw-application"
     BUTTON_EDIT_APPLICATION_ID = "button-edit-application"
     LABEL_APPLICATION_STATUS_ID = "label-application-status"
-    ECJU_QUERY_TAB = "ecju-queries-tab"  # ID
+    LINK_NOTES_TAB_ID = "link-case-notes"  # ID
+    LINK_ECJU_QUERY_TAB_ID = "link-ecju-queries"  # ID
     ECJU_QUERY_RESPONSE_TEXT = "Respond to query"  # text
     ECJU_QUERIES_CLOSED = "closed-ecju-query"  # ID
     LINK_EDIT_APPLICATION = "a[href*='/edit-type/']"
@@ -17,7 +18,10 @@ class ApplicationPage(BasePage):
         self.driver.find_element_by_css_selector(self.LINK_EDIT_APPLICATION).click()
 
     def click_ecju_query_tab(self):
-        self.driver.find_element_by_id(self.ECJU_QUERY_TAB).click()
+        self.driver.find_element_by_id(self.LINK_ECJU_QUERY_TAB_ID).click()
+
+    def click_notes_tab(self):
+        self.driver.find_element_by_id(self.LINK_NOTES_TAB_ID).click()
 
     def get_count_of_closed_ecju_queries(self):
         return len(self.driver.find_elements_by_id(self.ECJU_QUERIES_CLOSED))

@@ -1,39 +1,39 @@
 import time
 
+from shared.BasePage import BasePage
 
-class ExporterHubPage:
-    def __init__(self, driver):
-        self.driver = driver
 
-        self.apply_for_a_licence_btn = "a[href*='/apply-for-a-licence/']"
-        self.drafts_btn = "a[href*='/drafts/']"
-        self.applications_btn = "a[href*='/applications/']"
-        self.my_goods_btn = "a[href*='/goods/']"
-        self.add_a_good_btn = "a[href*='/goods/add/']"
-        self.users_btn = "a[href='/users/']"
-        self.sites_btn = "a[href='/sites/']"
-        self.sites_link = "a[href*='sites']"
-        self.goods_tile = "a[href*='sites']"
-        self.end_user_advisory_tile = "a[href*='/end-users/']"
-        self.raise_hmrc_query_btn = "a[href*='/raise-a-query/"
+class ExporterHubPage(BasePage):
+
+    APPLY_FOR_A_LICENCE_BTN = "a[href*='/apply-for-a-licence/']"
+    DRAFTS_BTN = "a[href*='/drafts/']"
+    APPLICATIONS_BTN = "a[href*='/applications/']"
+    MY_GOODS_BTN = "a[href*='/goods/']"
+    ADD_A_GOOD_BTN = "a[href*='/goods/add/']"
+    USERS_BTN = "a[href='/users/']"
+    SITES_BTN = "a[href='/sites/']"
+    SITES_LINK = "a[href*='sites']"
+    GOODS_TILE = "a[href*='sites']"
+    END_USER_ADVISORY_TILE = "a[href*='/end-users/']"
+    RAISE_HMRC_QUERY_BTN = "a[href*='/raise-a-query/"
 
     def go_to(self, url):
         self.driver.get(url)
 
     def click_apply_for_a_licence(self):
-        self.driver.find_element_by_css_selector(self.apply_for_a_licence_btn).click()
+        self.driver.find_element_by_css_selector(self.APPLY_FOR_A_LICENCE_BTN).click()
 
     def click_raise_hmrc_query(self):
-        self.driver.find_element_by_css_selector(self.raise_hmrc_query_btn).click()
+        self.driver.find_element_by_css_selector(self.RAISE_HMRC_QUERY_BTN).click()
 
     def click_drafts(self):
-        self.driver.find_element_by_css_selector(self.drafts_btn).click()
+        self.driver.find_element_by_css_selector(self.DRAFTS_BTN).click()
 
     def click_applications(self):
-        self.driver.find_element_by_css_selector(self.applications_btn).click()
+        self.driver.find_element_by_css_selector(self.APPLICATIONS_BTN).click()
 
     def click_end_user_advisories(self):
-        self.driver.find_element_by_css_selector(self.end_user_advisory_tile).click()
+        self.driver.find_element_by_css_selector(self.END_USER_ADVISORY_TILE).click()
 
     def enter_email(self, email):
         email_tb = self.driver.find_element_by_name("login")
@@ -59,7 +59,7 @@ class ExporterHubPage:
         time.sleep(1)
 
     def click_my_goods(self):
-        self.driver.find_element_by_css_selector(self.my_goods_btn).click()
+        self.driver.find_element_by_css_selector(self.MY_GOODS_BTN).click()
 
     def verify_good_is_in_goods_list(self, description, part_number, control_code):
         goods_row = self.driver.find_element_by_xpath("//*[text()[contains(.,'" + description + "')]]")
@@ -68,7 +68,7 @@ class ExporterHubPage:
         assert goods_row.find_element_by_xpath(".//following-sibling::td[2]").text == control_code
 
     def click_users(self):
-        self.driver.find_element_by_css_selector(self.users_btn).click()
+        self.driver.find_element_by_css_selector(self.USERS_BTN).click()
 
     def click_add_a_user_btn(self):
         self.driver.find_element_by_id("button-add-a-member").click()
@@ -101,7 +101,7 @@ class ExporterHubPage:
         self.driver.find_element_by_css_selector("a[href*='/users/profile/']").click()
 
     def click_sites(self):
-        self.driver.find_element_by_css_selector(self.sites_btn).click()
+        self.driver.find_element_by_css_selector(self.SITES_BTN).click()
 
     def click_new_site(self):
         self.driver.find_element_by_css_selector("a[href*='/sites/new/']").click()

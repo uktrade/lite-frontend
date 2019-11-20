@@ -1,6 +1,6 @@
 {% extends 'layouts/two_pane.html' %}
 
-{% load svg %}
+{% load svg humanize %}
 
 {% block back_link %}
 	<a href="{% url 'applications:task_list' application.id %}" id="back-link" class="govuk-back-link">Back to task list</a>
@@ -16,7 +16,7 @@
 		</div>
         {% if not application.status.value or application.status.key == 'applicant_editing' %}
         <div class="lite-app-bar__controls">
-			<a href="{% url 'applications:new_good' application.id %}" id='add-new' role='button' draggable='false' class='govuk-button govuk-button--secondary'>{% lcs 'APPLICATION_GOODS_ADD_NEW' %}</a>
+			<a href="{% url 'applications:new_good' application.id %}" id='add-new' role='button' draggable='false' class='govuk-button'>{% lcs 'APPLICATION_GOODS_ADD_NEW' %}</a>
 			<a href="{% url 'applications:preexisting_good' application.id %}" role='button' draggable='false' class='govuk-button'>{% get_string 'goods.add_from_organisation.button' %}</a>
 		</div>
         {% endif %}
@@ -51,7 +51,7 @@
 							{{ good_on_application.quantity }} {{ good_on_application.unit.value|units_pluralise:good_on_application.quantity }}
 						</td>
 						<td class="govuk-table__cell">
-							£{{ good_on_application.value }}
+							£{{ good_on_application.value|intcomma }}
 						</td>
 						<td class="govuk-table__cell govuk-table__cell--numeric">
 							<a class="govuk-link lite-link--icon" href="{% url 'applications:remove_preexisting_good' application.id good_on_application.id %}">
@@ -63,6 +63,7 @@
 				{% endfor %}
 			</tbody>
 		</table>
+		<p class="govuk-body govuk-!-font-weight-bold">Total value<span class="govuk-visually-hidden"> of goods</span>: £{{ goods_value|intcomma }}</p>
 	{% else %}
 		<div class="lite-information-text">
 			<span class="lite-information-text__icon" aria-hidden="true">!</span>

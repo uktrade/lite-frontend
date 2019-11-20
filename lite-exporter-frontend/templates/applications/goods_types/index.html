@@ -1,6 +1,6 @@
 {% extends 'layouts/two_pane.html' %}
 
-{% load svg %}
+{% load svg humanize %}
 
 {% block back_link %}
 	<a href="{% url 'applications:task_list' application.id %}" id="back-link" class="govuk-back-link">Back to task list</a>
@@ -10,9 +10,12 @@
 
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
-			<h2 class="govuk-heading-l">
-				{% block title %}Describe your goods{% endblock%}
-			</h2>
+			<h1 class="govuk-heading-l">
+				{% block title %}Add goods{% endblock%}
+			</h1>
+			{% if goods %}
+				<p class="govuk-body-m">You've added {{ goods|length|apnumber }} good{{ goods|pluralize }}.</p>
+			{% endif %}
 		</div>
         {% if not application.status.value or application.status.key == 'applicant_editing' %}
 		<div class="lite-app-bar__controls">
@@ -28,11 +31,10 @@
 	</div>
 
 	{% if goods %}
-		<table class="govuk-table">
+		<table class="govuk-table lite-responsive-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
-					<th scope="col" class="govuk-table__header">Name</th>
-					<th scope="col" class="govuk-table__header">Part Number</th>
+					<th scope="col" class="govuk-table__header govuk-!-width-one-half">Description</th>
 					<th scope="col" class="govuk-table__header">Control List Entry</th>
 					{% if application.application_type.key == 'hmrc_query' %}
 						<th scope="col" class="govuk-table__header">Document</th>
@@ -44,16 +46,16 @@
 				{% for good_on_application in goods %}
 					<tr class="govuk-table__row">
 						<td class="govuk-table__cell">
+							<span class="lite-responsive-table__header">Description</span>
 							{{ good_on_application.description }}
 						</td>
 						<td class="govuk-table__cell">
-							{{ good_on_application.part_number|default_na }}
-						</td>
-						<td class="govuk-table__cell">
+							<span class="lite-responsive-table__header">Control list entry</span>
 							{{ good_on_application.control_code|default_na }}
 						</td>
 						{% if application.application_type.key == 'hmrc_query' %}
 							<td class="govuk-table__cell">
+								<span class="lite-responsive-table__header">Document</span>
 								{% if good_on_application.document %}
 					                {%  if good_on_application.document.safe == True %}
 					                    <a href="{% url 'applications:goods_type_download_document' application.id good_on_application.id %}" id="document_download" class='govuk-link govuk-link--no-visited-state'>
@@ -76,7 +78,7 @@
 						<td class="govuk-table__cell govuk-table__cell--numeric" scope="row">
 							<a class="lite-link--icon" href="{% url 'applications:remove_goods_type' application.id good_on_application.id %}">
 								{% svg 'close' %}
-								Remove
+								<span>Remove <span class="lite-responsive-table__help-text">good</span></span>
 							</a>
 						</td>
 					</tr>

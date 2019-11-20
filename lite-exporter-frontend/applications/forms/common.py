@@ -1,16 +1,14 @@
 from django.urls import reverse_lazy
 
+from core.builtins.custom_tags import get_string
 from lite_content.lite_exporter_frontend import strings
 from lite_forms.components import HiddenField, Form, BackLink, TextArea, HTMLBlock, RadioButtons, Option
-from lite_forms.generators import confirm_form
-
-from core.builtins.custom_tags import get_string
+from lite_forms.generators import confirm_form, success_page
 
 
 def respond_to_query_form(application_id, ecju_query):
     return Form(
         title="Respond to query",
-        description="",
         questions=[
             HTMLBlock(
                 '<div class="app-ecju-query__text" style="display: block; max-width: 100%;">'
@@ -27,7 +25,7 @@ def respond_to_query_form(application_id, ecju_query):
         ],
         back_link=BackLink(
             strings.BACK_TO_APPLICATION,
-            reverse_lazy("applications:detail", kwargs={"pk": application_id, "type": "ecju-queries"}),
+            reverse_lazy("applications:application", kwargs={"pk": application_id, "type": "ecju-queries"}),
         ),
         default_button_name="Submit response",
     )
@@ -42,7 +40,7 @@ def ecju_query_respond_confirmation_form(edit_response_url):
         no_label="No, change my response",
         back_link_text="Back to edit response",
         back_url=edit_response_url,
-        submit_button_text="Continue",
+        submit_button_text=strings.CONTINUE,
     )
 
 
@@ -69,7 +67,22 @@ def edit_type_form(application_id):
         ],
         back_link=BackLink(
             strings.BACK_TO_APPLICATION,
-            reverse_lazy("applications:detail", kwargs={"pk": application_id, "type": "ecju-queries"}),
+            reverse_lazy("applications:application", kwargs={"pk": application_id, "type": "ecju-queries"}),
         ),
-        default_button_name="Continue",
+        default_button_name=strings.CONTINUE,
+    )
+
+
+def application_success_page(request, application_id):
+    return success_page(
+        request=request,
+        title="Application sent successfully",
+        secondary_title="Your reference code: " + application_id,
+        description="",
+        what_happens_next=["You'll receive an email from DIT when your check is finished."],
+        links={
+            "View your list of applications": reverse_lazy("applications:applications"),
+            "Apply for another export licence": reverse_lazy("apply_for_a_licence:start"),
+            "Return to Exporter Hub": reverse_lazy("core:hub"),
+        },
     )

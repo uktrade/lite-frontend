@@ -1,16 +1,14 @@
 from pages.shared import Shared
+from shared.BasePage import BasePage
 
 
-class GoodsList:
+class GoodsList(BasePage):
     # Selector for the edit/delete goods link in the table
     EDIT_LINK = '[href*="goods/edit"]'
     DELETE_LINK = '[href*="goods/delete"]'
 
     # This is for the delete confirmation page
     DELETE_BUTTON = ".govuk-button--warning"
-
-    def __init__(self, driver):
-        self.driver = driver
 
     def assert_goods_are_displayed_of_good_name(self, driver, description, part_number, control_code):
         goods_row = Shared(driver).get_text_of_gov_table()

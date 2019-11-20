@@ -437,7 +437,7 @@ def click_goods_link_overview(driver):
 @then("application is submitted")  # noqa
 def application_is_submitted(driver):
     apply = ApplyForALicencePage(driver)
-    assert "Application submitted" in apply.application_submitted_text()
+    assert "Application sent successfully" in apply.application_submitted_text()
 
 
 @then("I see submitted application")  # noqa
@@ -460,8 +460,6 @@ def i_see_the_application_overview(driver, context):
     element = ApplicationOverviewPage(driver).get_text_of_lite_task_list_items()
     assert "Reference name" in element
     assert context.app_name in element
-    assert "Told by an official" in element
-    assert context.ref in element
 
     app_id = driver.current_url[-36:]
     context.app_id = app_id
@@ -486,7 +484,7 @@ def i_delete_the_application(driver):
 def submit_the_application(driver, context):
     apply = ApplyForALicencePage(driver)
     functions.click_submit(driver)
-    assert apply.get_text_of_success_message() == "Application submitted"
+    assert apply.get_text_of_success_message() == "Application sent successfully"
     context.time_date_submitted = datetime.datetime.now().strftime("%I:%M%p").lstrip("0").replace(
         " 0", " "
     ).lower() + datetime.datetime.now().strftime(" %d %B %Y")
@@ -545,3 +543,15 @@ def i_leave_a_note(driver, reasoning):
 @when("I click the back link")  # noqa
 def click_back_link(driver):
     functions.click_back_link(driver)
+
+
+@when("I click the notes tab")  # noqa
+def click_notes_tab(driver):
+    application_page = ApplicationPage(driver)
+    application_page.click_notes_tab()
+
+
+@when("I click the ECJU Queries tab")  # noqa
+def click_ecju_query_tab(driver):
+    application_page = ApplicationPage(driver)
+    application_page.click_ecju_query_tab()

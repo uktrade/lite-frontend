@@ -5,11 +5,16 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
-from applications.forms.common import respond_to_query_form, ecju_query_respond_confirmation_form, edit_type_form
-from applications.libraries.check_your_answers_helpers import convert_application_to_check_your_answers
-from applications.libraries.summaries import application_summary
-from applications.libraries.task_lists import get_application_task_list
-from applications.libraries.validators import validate_withdraw_application
+from applications.forms.common import (
+    respond_to_query_form,
+    ecju_query_respond_confirmation_form,
+    edit_type_form,
+    application_success_page,
+)
+from applications.helpers.check_your_answers import convert_application_to_check_your_answers
+from applications.helpers.summaries import application_summary, draft_summary
+from applications.helpers.task_lists import get_application_task_list
+from applications.helpers.validators import validate_withdraw_application, validate_delete_draft
 from applications.services import (
     get_applications,
     get_case_notes,
@@ -20,7 +25,6 @@ from applications.services import (
     get_draft_applications,
     submit_application,
     get_application,
-    delete_application,
     set_application_status,
 )
 from conf import constants
@@ -30,7 +34,7 @@ from core.services import get_notifications, get_organisation
 from lite_content.lite_exporter_frontend import strings
 from lite_forms.components import HiddenField
 from lite_forms.generators import confirm_form
-from lite_forms.generators import error_page, form_page, success_page
+from lite_forms.generators import error_page, form_page
 from lite_forms.views import SingleFormView
 
 
@@ -59,35 +63,30 @@ class ApplicationsList(TemplateView):
             return render(request, "applications/applications.html", context)
 
 
-class ApplicationDetailEmpty(TemplateView):
-    def get(self, request, **kwargs):
-        application_id = str(kwargs["pk"])
-        data = get_application(request, application_id)
+class DeleteApplication(SingleFormView):
+    def init(self, request, **kwargs):
+        self.object_pk = kwargs["pk"]
+        application = get_application(request, self.object_pk)
+        self.form = confirm_form(
+            title=strings.DRAFT_DELETE_TITLE,
+            confirmation_name="choice",
+            summary=draft_summary(application),
+            back_link_text=strings.DRAFT_DELETE_BACK_TEXT,
+            yes_label=strings.DRAFT_DELETE_YES_LABEL,
+            no_label=strings.DRAFT_DELETE_NO_LABEL,
+            submit_button_text=strings.DRAFT_DELETE_SUBMIT_BUTTON,
+            back_url=reverse_lazy("applications:application", kwargs={"pk": self.object_pk}),
+            side_by_side=True,
+        )
+        self.return_to = request.GET.get("return_to")
+        self.action = validate_delete_draft
+        self.success_url = reverse_lazy("applications:applications") + "?drafts=True"
 
-        if data.get("status") and data.get("status").get("key") == APPLICANT_EDITING:
-            return redirect(reverse_lazy("applications:task_list", kwargs={"pk": application_id}))
-
-        return redirect(reverse_lazy("applications:detail", kwargs={"pk": application_id, "type": "case-notes"}))
-
-
-class DeleteApplication(TemplateView):
-    def get(self, request, **kwargs):
-        application_id = str(kwargs["pk"])
-        application = get_application(request, application_id)
-
-        context = {
-            "title": "Are you sure you want to delete this application?",
-            "application": application,
-            "page": "applications/modals/cancel_application.html",
-        }
-        return render(request, "core/static.html", context)
-
-    def post(self, request, **kwargs):
-        draft_id = str(kwargs["pk"])
-        _, status = delete_application(request, draft_id)
-
-        url_with_query_params = f"?application_deleted={(str(status == HTTPStatus.OK)).lower()}"
-        return redirect(reverse_lazy("applications:applications") + "?drafts=True" + url_with_query_params)
+    def get_success_url(self):
+        if self.return_to == "application" and self.get_validated_data().get("choice") == "no":
+            return reverse_lazy("applications:task_list", kwargs={"pk": self.object_pk})
+        else:
+            return reverse_lazy("applications:applications") + "?drafts=True"
 
 
 class ApplicationEditType(TemplateView):
@@ -133,14 +132,7 @@ class ApplicationTaskList(TemplateView):
         if status_code != HTTPStatus.OK:
             return get_application_task_list(request, application, errors=data.get("errors"))
 
-        return success_page(
-            request,
-            title="Application submitted",
-            secondary_title="",
-            description="",
-            what_happens_next=[],
-            links={"Go to applications": reverse_lazy("applications:applications")},
-        )
+        return application_success_page(request, application_id)
 
 
 class ApplicationDetail(TemplateView):
@@ -153,10 +145,7 @@ class ApplicationDetail(TemplateView):
         self.application_id = str(kwargs["pk"])
         self.application = get_application(request, self.application_id)
         self.case_id = self.application["case"]
-        self.view_type = kwargs["type"]
-
-        if self.view_type != "case-notes" and self.view_type != "ecju-queries":
-            return Http404
+        self.view_type = kwargs.get("type")
 
         return super(ApplicationDetail, self).dispatch(request, *args, **kwargs)
 
@@ -176,6 +165,7 @@ class ApplicationDetail(TemplateView):
             "type": self.view_type,
             "case_note_notifications": case_note_notifications,
             "ecju_query_notifications": ecju_query_notifications,
+            "answers": {**convert_application_to_check_your_answers(self.application)},
         }
 
         if self.application["application_type"]["key"] != HMRC_QUERY:
@@ -209,7 +199,9 @@ class ApplicationDetail(TemplateView):
                 error = NEWLINE.join(error_list)
             return error_page(request, error)
 
-        return redirect(reverse_lazy("applications:application", kwargs={"pk": self.application_id}))
+        return redirect(
+            reverse_lazy("applications:application", kwargs={"pk": self.application_id, "type": "case-notes"})
+        )
 
 
 class RespondToQuery(TemplateView):
@@ -224,7 +216,7 @@ class RespondToQuery(TemplateView):
 
         if self.ecju_query["response"]:
             return redirect(
-                reverse_lazy("applications:detail", kwargs={"pk": self.application_id, "type": "ecju-queries"})
+                reverse_lazy("applications:application", kwargs={"pk": self.application_id, "type": "ecju-queries"})
             )
 
         return super(RespondToQuery, self).dispatch(request, *args, **kwargs)
@@ -276,7 +268,7 @@ class RespondToQuery(TemplateView):
                     )
 
                 return redirect(
-                    reverse_lazy("applications:detail", kwargs={"pk": self.application_id, "type": "ecju-queries"})
+                    reverse_lazy("applications:application", kwargs={"pk": self.application_id, "type": "ecju-queries"})
                 )
             elif request.POST.get("confirm_response") == "no":
                 return form_page(

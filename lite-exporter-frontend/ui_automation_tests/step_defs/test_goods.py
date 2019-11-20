@@ -60,7 +60,7 @@ def delete_my_good_in_list(driver, context):
     goods_page = GoodsPage(driver)
     goods_page.click_on_goods_edit_link()
     goods_page.click_on_delete_link()
-    goods_page.confirm_delete(True)
+    goods_page.confirm_delete()
 
 
 @then("my good is no longer in the goods list")

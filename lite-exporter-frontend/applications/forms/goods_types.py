@@ -9,7 +9,7 @@ def goods_type_form():
     return Form(
         title=get_string("good_types.overview.title"),
         questions=[
-            TextArea(title="Give a short description of your goods.", name="description", extras={"max_length": 280,}),
+            TextArea(title="Give a short description of your goods.", name="description", extras={"max_length": 2000,}),
             RadioButtons(
                 title="Is your good controlled?",
                 description='If you don\'t know you can use <a class="govuk-link" target="_blank" '

@@ -1,24 +1,25 @@
-class NewSite:
-    def __init__(self, driver):
-        self.driver = driver
-        self.name = driver.find_element_by_id("name")
-        self.address_line_1 = driver.find_element_by_id("address.address_line_1")
-        self.postcode = driver.find_element_by_id("address.postcode")
-        self.city = driver.find_element_by_id("address.city")
-        self.region = driver.find_element_by_id("address.region")
-        self.country = driver.find_element_by_id("address.country")
+from shared.BasePage import BasePage
+
+
+class NewSite(BasePage):
+    NAME = "name"
+    ADDRESS_LINE_1 = "address.address_line_1"
+    POSTCODE = "address.postcode"
+    CITY = "address.city"
+    REGION = "address.region"
+    COUNTRY = "address.country"
 
     def enter_info_for_new_site(self, name, address, postcode, city, region, country):
-        self.country.send_keys(country)
-        self.name.send_keys(name)
-        self.address_line_1.send_keys(address)
-        self.postcode.send_keys(postcode)
-        self.city.send_keys(city)
-        self.region.send_keys(region)
+        self.driver.find_element_by_id(self.COUNTRY).send_keys(country)
+        self.driver.find_element_by_id(self.NAME).send_keys(name)
+        self.driver.find_element_by_id(self.ADDRESS_LINE_1).send_keys(address)
+        self.driver.find_element_by_id(self.POSTCODE).send_keys(postcode)
+        self.driver.find_element_by_id(self.CITY).send_keys(city)
+        self.driver.find_element_by_id(self.REGION).send_keys(region)
 
     def clear_info_for_site(self):
-        self.name.clear()
-        self.address_line_1.clear()
-        self.postcode.clear()
-        self.city.clear()
-        self.region.clear()
+        self.driver.find_element_by_id(self.NAME).clear()
+        self.driver.find_element_by_id(self.ADDRESS_LINE_1).clear()
+        self.driver.find_element_by_id(self.POSTCODE).clear()
+        self.driver.find_element_by_id(self.CITY).clear()
+        self.driver.find_element_by_id(self.REGION).clear()
