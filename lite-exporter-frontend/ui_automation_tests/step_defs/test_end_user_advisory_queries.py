@@ -95,7 +95,7 @@ def confirm_submitted_page_code(driver):
 
 @when("I click copy on an existing end user advisory")
 def click_copy(driver):
-    no = utils.get_element_index_by_text(Shared(driver).get_table_rows(), "Commercial")
+    no = utils.get_element_index_by_text(Shared(driver).get_table_rows(), "Commercial", complete_match=False)
     Shared(driver).get_table_row(no).find_element_by_link_text("Copy").click()
 
 
