@@ -116,3 +116,16 @@ APPLICATION_WITHDRAW_YES_LABEL = YES
 APPLICATION_WITHDRAW_NO_LABEL = NO
 APPLICATION_WITHDRAW_SUBMIT_BUTTON = SUBMIT
 APPLICATION_WITHDRAW_ERROR = "Select a choice"
+
+# Where are your goods located?
+APPLICATION_WHERE_ARE_YOUR_GOODS_LOCATED_TITLE = "Where are your goods located?"
+APPLICATION_WHERE_ARE_YOUR_GOODS_LOCATED_DESCRIPTION = "You can only choose one type of location per application."
+APPLICATION_ONE_OF_MY_REGISTERED_SITES = "At one of my registered sites"
+APPLICATION_NOT_AT_MY_REGISTERED_SITES = "Other location not at my organisation's sites"
+
+APPLICATION_EXTERNAL_LOCATION_TITLE = "Do you want to add a new external location or use an existing one?"
+APPLICATION_EXTERNAL_LOCATION_NEW_LOCATION = "Add a new external location"
+APPLICATION_EXTERNAL_LOCATION_PREEXISTING_LOCATION = "Use a pre-existing external location"
+
+SELECT_SITES_TITLE = "Select which sites your goods are at"
+SELECT_SITES_BUTTON = "Select sites"
