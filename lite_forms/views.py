@@ -73,7 +73,7 @@ class SingleFormView(FormView):
         # We indicate which components return a list by [] appended at the end of its name
         data_temp = {}
         for key, value in data.items():
-            if key.endswith('[]'):
+            if key.endswith("[]"):
                 data_temp[key[:-2]] = data.getlist(key)
             else:
                 data_temp[key] = data.get(key)
