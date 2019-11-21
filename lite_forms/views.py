@@ -67,6 +67,14 @@ class SingleFormView(FormView):
     def post(self, request, **kwargs):
         self.init(request, **kwargs)
         data = request.POST.copy()
+        data_temp = {}
+
+        for key, value in data.items():
+            if key.endswith('[]'):
+                data_temp[key[:-2]] = data.getlist(key)
+            else:
+                data_temp[key] = data.get(key)
+        data = data_temp
 
         if self.get_object_pk():
             validated_data, _ = self.get_action()(request, self.get_object_pk(), data)  # noqa
