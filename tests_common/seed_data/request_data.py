@@ -66,8 +66,8 @@ def create_picklist(name, text, type, proviso=None):
 def create_request_data(exporter_user, gov_user, base_url):
     exporter = create_user(exporter_user)
     request_data = {
-        "organisation": create_organisation(exporter, "commercial", "Archway Communications"),
-        "organisation_for_switching_organisations": create_organisation(exporter, "hmrc", "Octopus Systems"),
+        "organisation": create_organisation(exporter, "commercial", "Circle is square Ltd"),
+        "organisation_for_switching_organisations": create_organisation(exporter, "hmrc", "Wayne Enterprises"),
         "good": create_good("Lentils", True),
         "good_end_product_true": create_good("Hot Cross Buns", True),
         "good_end_product_false": create_good("Falafels", False),
