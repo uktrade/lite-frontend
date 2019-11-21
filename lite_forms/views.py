@@ -72,7 +72,7 @@ class SingleFormView(FormView):
         # By default get() returns only one value, we use getlist() to return multiple values
         # We indicate which components return a list by [] appended at the end of its name
         data_temp = {}
-        for key, value in data.items():
+        for key, _ in data.items():
             if key.endswith("[]"):
                 data_temp[key[:-2]] = data.getlist(key)
             else:
