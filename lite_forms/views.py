@@ -67,8 +67,11 @@ class SingleFormView(FormView):
     def post(self, request, **kwargs):
         self.init(request, **kwargs)
         data = request.POST.copy()
-        data_temp = {}
 
+        # Handle lists (such as checkboxes)
+        # By default get() returns only one value, we use getlist() to return multiple values
+        # We indicate which components return a list by [] appended at the end of its name
+        data_temp = {}
         for key, value in data.items():
             if key.endswith('[]'):
                 data_temp[key[:-2]] = data.getlist(key)
