@@ -3,6 +3,8 @@ CONTINUE = "Continue"
 SAVE = "Save"
 NOT_APPLICABLE = "N/A"
 
+QUEUE_ALL_CASES = "All cases"
+
 CASES_ASSIGN_USERS = "Assign Users"
 
 CASE_CHANGES = "See what has changed"
@@ -53,6 +55,7 @@ CASE_GOODS_LOCATION = "Goods location"
 CASE_ENTITIES_INVOLVED = "Entities involved"
 CASE_ENTITIES_ACTIVITY = "Activity"
 
+CASE_INFO_TYPE = "Type"
 CASE_INFO_ORGANISATION = "Organisation"
 CASE_INFO_STATUS = "Status"
 CASE_INFO_ACTIVITY = "Activity"
@@ -62,11 +65,16 @@ CASE_INFO_EXPORT_TYPE = "Export type"
 CASE_INFO_USAGE = "Usage"
 CASE_INFO_LAST_UPDATED = "Last updated"
 
+CASE_COUNTRIES = "Countries"
+CASE_COUNTRIES_GREEN_LIST = "Green list"
+
 # Good
 GOOD_DESCRIPTION = "Description"
 GOOD_CONTROL_LIST_ENTRY = "Control list entry"
 GOOD_CONTROLLED = "Controlled"
 GOOD_FLAGS = "Flags"
+
+STANDARD_CASE_TOTAL_VALUE = "Total value:"
 
 # Supporting documentation
 SUPPORTING_DOCUMENTATION_TITLE = "Supporting documentation"
