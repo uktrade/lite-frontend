@@ -6,5 +6,3 @@ class LetterTemplatesPage:
     class Preview:
         title = "Preview"
         button = "Save"
-
-    NOT_FOUND_ERROR = "Letter template not found"
