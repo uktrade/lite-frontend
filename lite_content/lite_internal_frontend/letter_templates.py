@@ -9,4 +9,3 @@ class LetterTemplatesPage:
 
     TITLE = "Letter Templates"
     ERROR = "Template preview is not available at this time"
-    NOT_FOUND_ERROR = "Letter template not found"
