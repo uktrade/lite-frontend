@@ -6,6 +6,10 @@ from django.utils.safestring import mark_safe
 def key_value(dictionary, key):
     if not dictionary:
         return
+
+    if key.endswith("[]"):
+        key = key[:-2]
+
     return dictionary.get(key)
 
 
