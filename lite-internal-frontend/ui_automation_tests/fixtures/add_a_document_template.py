@@ -22,3 +22,9 @@ def get_paragraph_text(context, seed_data_config, paragraph_id):
 def get_template_id(context, seed_data_config):
     lite_client = get_lite_client(context, seed_data_config)
     return lite_client.seed_document_template.get_layouts()[0]["id"]
+
+
+@fixture(scope="session")
+def get_licence_template_id(context, seed_data_config):
+    lite_client = get_lite_client(context, seed_data_config)
+    return lite_client.seed_document_template.get_layouts()[1]["id"]

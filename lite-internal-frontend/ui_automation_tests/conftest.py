@@ -14,7 +14,11 @@ from ui_automation_tests.fixtures.add_a_flag import (  # noqa
 )
 from ui_automation_tests.fixtures.add_queue import add_queue  # noqa
 from ui_automation_tests.fixtures.add_a_team import add_a_team  # noqa
-from ui_automation_tests.fixtures.add_a_document_template import add_a_document_template, get_template_id  # noqa
+from ui_automation_tests.fixtures.add_a_document_template import (  # noqa
+    add_a_document_template,
+    get_template_id,
+    get_licence_template_id,
+)
 from ui_automation_tests.fixtures.add_a_picklist import (  # noqa
     add_a_letter_paragraph_picklist,
     add_an_ecju_query_picklist,
