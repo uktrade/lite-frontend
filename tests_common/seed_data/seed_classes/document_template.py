@@ -10,7 +10,7 @@ class DocumentTemplate(SeedClass):
         template_data["layout"] = self.get_layouts()[0]["id"]
         paragraph = seed_picklist.add_letter_paragraph_picklist()
         template_data["letter_paragraphs"] = [paragraph["id"]]
-        template_data["name"] = str(uuid.uuid4())[:35]
+        template_data["name"] = "00" + str(uuid.uuid4())[:33]
         template = make_request(
             "POST", base_url=self.base_url, url="/letter-templates/", headers=self.gov_headers, body=template_data,
         ).json()
