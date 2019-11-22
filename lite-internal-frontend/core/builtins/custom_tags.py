@@ -227,7 +227,7 @@ def get_address(data):
         address["postcode"],
         address["country"]["name"],
     ]
-    return ", ".join([x for x in address if len(x) is not 0 and x is not None])
+    return ", ".join([x for x in address if x])
 
 
 @register.filter()

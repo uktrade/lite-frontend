@@ -302,7 +302,7 @@ class Finalise(TemplateView):
 
     def get(self, request, *args, **kwargs):
         case = get_case(request, str(kwargs["pk"]))
-        standard = case["application"]["application_type"]["key"] == CaseType.STANDARD_LICENCE
+        standard = case["application"]["application_type"]["key"] == CaseType.STANDARD_LICENCE.value
         if standard:
             advice, _ = get_final_case_advice(request, str(kwargs["pk"]))
             data = advice["advice"]

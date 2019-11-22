@@ -97,30 +97,29 @@ class ViewCase(TemplateView):
             "queue_name": queue_name,
         }
 
-        try:
-            case_type = CaseType(case["type"]["key"])
-        except ValueError:
-            raise Exception("Invalid case_type: {}".format(case["type"]["key"]))
+        case_type = case["type"]["key"]
 
-        if case_type == CaseType.END_USER_ADVISORY_QUERY:
+        if case_type == CaseType.END_USER_ADVISORY_QUERY.value:
             return render(request, "case/queries/end_user_advisory.html", context)
-        elif case_type == CaseType.CLC_QUERY:
+        elif case_type == CaseType.CLC_QUERY.value:
             context["good"] = case["query"]["good"]
             return render(request, "case/queries/clc-query-case.html", context)
-        elif case_type == CaseType.APPLICATION:
+        elif case_type == CaseType.APPLICATION.value:
             context["notification"] = get_user_case_notification(request, case_id)
             context["total_goods_value"] = _get_total_goods_value(case)
-            try:
-                application_type = CaseType(case["application"]["application_type"]["key"])
-            except ValueError:
-                raise Exception("Invalid application_type: {}".format(case["type"]["key"]))
 
-            if application_type == CaseType.HMRC_QUERY:
+            application_type = case["application"]["application_type"]["key"]
+
+            if application_type == CaseType.HMRC_QUERY.value:
                 return render(request, "case/hmrc-case.html", context)
-            elif application_type == CaseType.OPEN_LICENCE:
+            elif application_type == CaseType.OPEN_LICENCE.value:
                 return render(request, "case/open-licence-case.html", context)
-            elif application_type == CaseType.STANDARD_LICENCE:
+            elif application_type == CaseType.STANDARD_LICENCE.value:
                 return render(request, "case/standard-licence-case.html", context)
+            else:
+                raise Exception("Invalid application_type: {}".format(case["application"]["application_type"]["key"]))
+        else:
+            raise Exception("Invalid case_type: {}".format(case_type))
 
     def post(self, request, **kwargs):
         case_id = str(kwargs["pk"])
@@ -173,14 +172,18 @@ class ManageCase(TemplateView):
             ]
         }
 
-        if case["type"]["key"] == CaseType.APPLICATION:
+        case_type = case["type"]["key"]
+
+        if case_type == CaseType.APPLICATION.value:
             title = "Manage " + case.get("application").get("name")
-        elif case["type"]["key"] == CaseType.HMRC_QUERY:
+        elif case_type == CaseType.HMRC_QUERY.value:
             title = "Manage HMRC query"
-        elif case["query"]["end_user"]:
+        elif case_type == CaseType.END_USER_ADVISORY_QUERY.value:
             title = "Manage End User Advisory"
-        else:
+        elif case_type == CaseType.CLC_QUERY.value:
             title = "Manage CLC query case"
+        else:
+            raise Exception("Invalid case_type: {}".format(case_type))
 
         context = {"case": case, "title": title, "statuses": reduced_statuses}
         return render(request, "case/change-status.html", context)
@@ -189,10 +192,10 @@ class ManageCase(TemplateView):
         case_id = str(kwargs["pk"])
         case = get_case(request, case_id)
 
-        if case["type"]["key"] == CaseType.APPLICATION or case["type"]["key"] == CaseType.HMRC_QUERY:
+        if case["type"]["key"] == CaseType.APPLICATION.value or case["type"]["key"] == CaseType.HMRC_QUERY.value:
             application_id = case.get("application").get("id")
             put_application_status(request, application_id, request.POST)
-        elif case["type"]["key"] == CaseType.END_USER_ADVISORY_QUERY:
+        elif case["type"]["key"] == CaseType.END_USER_ADVISORY_QUERY.value:
             query_id = case.get("query").get("id")
             put_end_user_advisory_query(request, query_id, request.POST)
         else:
