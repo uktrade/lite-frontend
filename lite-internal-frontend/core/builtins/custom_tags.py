@@ -1,10 +1,11 @@
 import datetime
 import json
 import warnings
+from html import escape
 
 import stringcase
 from django import template
-from django.template.defaultfilters import stringfilter
+from django.template.defaultfilters import stringfilter, safe
 from django.templatetags.tz import do_timezone
 from django.utils.safestring import mark_safe
 
@@ -192,3 +193,56 @@ def get_end_user(application: dict):
     if application.get("end_user"):
         return application.get("end_user")
     return application.get("destinations").get("data")
+
+
+@register.filter()
+def default_na(value):
+    """
+    Returns N/A if the parameter given is none
+    """
+    if value:
+        return value
+    else:
+        return mark_safe(f'<span class="lite-hint">{strings.NOT_APPLICABLE}</span>')  # nosec
+
+
+@register.filter()
+def get_address(data):
+    """
+    Returns a correctly formatted address
+    such as 10 Downing St, London, Westminster, SW1A 2AA, United Kingdom
+    from {'address': {'address_line_1': '10 Downing St', ...}
+    or {'address': '10 Downing St ...', 'country': {'name': United Kingdom'}}
+    """
+    address = data["address"]
+
+    if isinstance(address, str):
+        return address + ", " + data["country"]["name"]
+
+    address = [
+        address["address_line_1"],
+        address["address_line_2"],
+        address["city"],
+        address["region"],
+        address["postcode"],
+        address["country"]["name"],
+    ]
+    return ", ".join([x for x in address if len(x) is not 0 and x is not None])
+
+
+@register.filter()
+def linkify(address, name=None):
+    """
+    Returns a correctly formatted, safe link to an address
+    Returns default_na if no address is provided
+    """
+    if not address:
+        return default_na(None)
+
+    if not name:
+        name = address
+
+    address = escape(address)
+    name = escape(name)
+
+    return safe(f'<a href="{address}" class="govuk-link govuk-link--no-visited-state">{name}</a>')

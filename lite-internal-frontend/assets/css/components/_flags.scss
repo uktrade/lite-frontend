@@ -3,56 +3,71 @@
 	align-items: center;
 	justify-content: flex-start;
 	flex-wrap: wrap;
-	margin-bottom: govuk-spacing(6);
+	margin-bottom: govuk-spacing(4);
+}
+
+.app-flags--alt {
+	.app-flag {
+		background-color: govuk-shade(govuk-colour("light-grey"), 5%)!important;
+		box-shadow: 0 2px 0 govuk-shade(govuk-colour("light-grey"), 15%)!important;
+		padding: 0 govuk-spacing(2);
+		line-height: 32px!important;
+	}
+}
+
+.govuk-table__row-asd {
+	background-color: govuk-colour("light-grey");
+	margin-top: -2px;
+	padding-top: 0!important;
+	transform: translateY(-2px);
+	.govuk-table__cell {
+		padding-top: 0!important;
+	}
 }
 
 .app-flag {
-	@include govuk-font($size: 16);
+	@include govuk-font($size: 16, $weight: bold);
 	position: relative;
-	background: govuk-colour("light-grey");
-	padding: govuk-spacing(2) govuk-spacing(3);
+	background-color: govuk-colour("light-grey");
+	color: govuk-colour("black");
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	line-height: 40px!important;
+	padding: 0 govuk-spacing(3);
 	margin-right: govuk-spacing(2);
 	margin-bottom: govuk-spacing(2);
-	box-shadow: 0 0 0 2px darken(govuk-colour("light-grey"), 1%);
+	box-shadow: 0 2px 0 govuk-shade(govuk-colour("white"), 10%);
+
+	&:only-child {
+		padding: 0;
+		margin: 0;
+		line-height: normal!important;
+		margin-bottom: govuk-spacing(2);
+	}
 
 	&--action {
 		position: relative;
 		text-decoration: none;
-		color: $govuk-link-colour;
-		border: 0;
 		border-radius: 0;
 		outline: 0;
 	    -webkit-appearance: none;
+		color: $govuk-link-colour;
+		font-weight: normal;
+		text-transform: none;
+		letter-spacing: normal;
+		font-size: 16px;
+		text-decoration: underline;
+		background-color: transparent;
+		box-shadow: none;
+		padding: 0;
+		margin-left: govuk-spacing(2);
 
 		&:hover {
 			color: $govuk-link-hover-colour;
 		}
 
-		&:hover {
+		&:active {
 			color: $govuk-link-active-colour;
-		}
-
-		&::before {
-			content: "";
-			position: relative;
-			display: inline-block;
-			width: 15px;
-			height: 1px;
-			background: currentColor;
-			margin-right: govuk-spacing(1);
-			top: -5px;
-		}
-
-		&::after {
-			content: "";
-			position: absolute;
-			display: inline-block;
-			top: 12px;
-			left: 22px;
-			width: 1px;
-			height: 15px;
-			background: currentColor;
-			margin-right: govuk-spacing(1);
 		}
 	}
 }

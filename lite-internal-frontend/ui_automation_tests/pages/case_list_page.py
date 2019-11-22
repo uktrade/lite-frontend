@@ -1,7 +1,7 @@
 import time
 
 import shared.tools.helpers as utils
-from helpers.BasePage import BasePage
+from shared.BasePage import BasePage
 from pages.shared import Shared
 
 
@@ -12,7 +12,7 @@ class CaseListPage(BasePage):
     CASES_TABLE = ".govuk-table"  # CSS
     CHECKBOX_CASE = ".govuk-checkboxes__input[value='"  # CSS
     CHECKBOX_TEXT = ".govuk-checkboxes"  # CSS
-    CHECKBOX_SELECT_ALL = "select-all-checkbox"  # ID
+    CHECKBOX_SELECT_ALL = "button-select-all"  # ID
 
     # App Bar Buttons
     BUTTON_ASSIGN_USERS = "assign-users-button"  # ID

@@ -1,4 +1,4 @@
-from helpers.BasePage import BasePage
+from shared.BasePage import BasePage
 from shared.tools.wait import wait_until_page_is_loaded, wait_until_menu_is_visible
 
 

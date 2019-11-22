@@ -1,0 +1,10 @@
+.govuk-table {
+	.govuk-table__head {
+		// Override header so size is consistent with checkbox buttons
+		.govuk-table__header {
+			line-height: 24px!important;
+			padding-top: 0;
+			padding-bottom: govuk-spacing(2);
+		}
+	}
+}

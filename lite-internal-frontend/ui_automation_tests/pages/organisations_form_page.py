@@ -1,4 +1,4 @@
-from helpers.BasePage import BasePage
+from shared.BasePage import BasePage
 
 
 class OrganisationsFormPage(BasePage):

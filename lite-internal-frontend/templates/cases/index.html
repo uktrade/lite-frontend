@@ -5,303 +5,292 @@
 {% block back_link %}{% endblock %}
 
 {% block body %}
-<noscript>
-    <style>
-        #noscript_hide {display:none;}
-    </style>
-</noscript>
-<div class="lite-app-bar">
-	<form method="get" class="app-dropdown__select">
-		<select class="govuk-select" name="queue">
-			{% for queue in data.results.queues %}
-				<option value="{{ queue.id }}" {% if queue.id == data.results.queue.id %}selected{% endif %}>{{ queue.name }}</option>
-			{% endfor %}
-		</select>
-		<button type="submit" class="govuk-button">{% get_string 'cases.go_to_queue' %}</button>
+	<noscript>
+	    <style>
+	        #noscript_hide {display:none;}
+	    </style>
+	</noscript>
+	<div class="lite-app-bar">
+		<form method="get" class="app-dropdown__select">
+			<select class="govuk-select" name="queue">
+				{% for queue in data.results.queues %}
+					<option value="{{ queue.id }}" {% if queue.id == data.results.queue.id %}selected{% endif %}>{{ queue.name }}</option>
+				{% endfor %}
+			</select>
+			<button type="submit" class="govuk-button">{% get_string 'cases.go_to_queue' %}</button>
+		</form>
+	    <a id="queue-title" href="#" class="govuk-heading-l app-dropdown__heading" onclick="toggleDropdown()">
+	            {{ data.results.queue.name }}
+	    </a>
+	    {% if not data.results.is_system_queue %}
+	    <div class="lite-app-bar__controls">
+	        <button id="assign-users-button" form="cases-form" type="submit" class="govuk-button govuk-button--secondary">{% lcs 'CASES_ASSIGN_USERS' %}</button>
+	    </div>
+	    {% endif %}
+	</div>
+	<div class="app-dropdown__background" onclick="toggleDropdown()"></div>
+	<div class="app-dropdown__container" id="queues">
+	    <div class="app-dropdown__list">
+	        {% for queue in data.results.queues %}
+	            <a href="?queue_id={{queue.id}}" id="{{ queue.name }}" class="app-dropdown__item {% if queue.id == data.results.queue.id %}app-dropdown__item--selected{% endif %}">
+	                {{ queue.name }}
+	                <span class="app-dropdown__item__count">{{ queue.case_count }}</span>
+	            </a>
+	        {% endfor %}
+	    </div>
+	</div>
+
+	<div class="lite-js-only">
+		<a href="#" id="show-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
+			{% svg 'plus' %}
+			Show filters
+		</a>
+		<a href="#" id="hide-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
+			{% svg 'minus' %}
+			Hide filters
+		</a>
+	</div>
+	<form id="filters" action="{% url 'cases:cases'%}" method="get">
+
+	    <input hidden name="queue_id" value="{{ data.results.queue.id }}">
+
+	    <div class="govuk-grid-row lite-filter-bar">
+	        <div class="govuk-grid-column-one-quarter">
+	            <label class="govuk-label" for="case_type">
+	                Filter by case type
+	            </label>
+	            <div class="lite-select-wrapper">
+	                <select class="govuk-select" id="case_type" name="case_type">
+	                    <option {% if params.case_type == None %}selected{% endif %} value="">Select</option>
+	                    {% for case_type in data.results.filters.case_types %}
+	                        <option value="{{ case_type.value }}" {% if case_type.value == params.case_type %}selected{% endif %}>{{case_type.title}}</option>
+	                    {% endfor %}
+	                </select>
+	            </div>
+	        </div>
+	        <div class="govuk-grid-column-one-quarter">
+	            <label class="govuk-label" for="status">
+	                Filter by case status
+	            </label>
+	            <div class="lite-select-wrapper">
+	                <select class="govuk-select" id="status" name="status">
+	                    <option {% if params.status == None %}selected{% endif %} value="">Select</option>
+	                    {% for case_status in data.results.filters.statuses %}
+					        <option value="{{ case_status.status }}" {% if case_status.status == params.status %}selected{% endif %}>{{ case_status.status|default:"Untitled"|sentence_case }}</option>
+	                    {% endfor %}
+	                </select>
+	            </div>
+	        </div>
+	        <div class="govuk-grid-column-one-half">
+	            <label class="govuk-label" for="filter" style="visibility: collapse;">
+	                --
+	            </label>
+	            <div class="lite-buttons-row">
+	                <button type="submit" form="filters" class="govuk-button" style="margin: 0;" id="button-apply-filters">
+	                    Apply filters
+	                </button>
+	                <a href="{% url 'cases:cases' %}?queue_id={{ data.results.queue.id }}" class="govuk-button govuk-button--secondary" style="margin-bottom: 0;" id="button-clear-filters">
+	                    Clear filters
+	                </a>
+	            </div>
+	        </div>
+	    </div>
+
 	</form>
-    <a id="queue-title" href="#" class="govuk-heading-l app-dropdown__heading" onclick="toggleDropdown()">
-            {{ data.results.queue.name }}
-    </a>
-    {% if not data.results.is_system_queue %}
-    <div class="lite-app-bar__controls">
-        <button id="assign-users-button" form="cases-form" type="submit" class="govuk-button govuk-button--secondary">{% lcs 'CASES_ASSIGN_USERS' %}</button>
-    </div>
-    {% endif %}
-</div>
-<div class="app-dropdown__background" onclick="toggleDropdown()"></div>
-<div class="app-dropdown__container" id="queues">
-    <div class="app-dropdown__list">
-        {% for queue in data.results.queues %}
-            <a href="?queue_id={{queue.id}}" id="{{ queue.name }}" class="app-dropdown__item {% if queue.id == data.results.queue.id %}app-dropdown__item--selected{% endif %}">
-                {{ queue.name }}
-                <span class="app-dropdown__item__count">{{ queue.case_count }}</span>
-            </a>
-        {% endfor %}
-    </div>
-</div>
 
-<div class="lite-js-only">
-	<a href="#" id="show-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
-		{% svg 'plus' %}
-		Show filters
-	</a>
-	<a href="#" id="hide-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
-		{% svg 'minus' %}
-		Hide filters
-	</a>
-</div>
-<form id="filters" action="{% url 'cases:cases'%}" method="get">
+	<form id="cases-form" method="post">
+	    {% csrf_token %}
+	    {% if data.results.cases|length %}
+	        <table class="govuk-table">
+	            <thead class="govuk-table__head">
+	                <tr class="govuk-table__row">
+	                    <th class="cases-table__header cases-table__cell--checkbox">
+							<button id="button-select-all" type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
+	                    </th>
+	                    <th class="cases-table__header" style="width: 225px;" scope="col">Case</th>
+	                    <th class="cases-table__header" style="width: 1fr;" scope="col">Assignees</th>
+	                    <th class="cases-table__header" style="width: 125px;" scope="col">Type</th>
+	                    <th class="cases-table__header" style="width: 125px;" scope="col">Queue</th>
+	                    <th class="cases-table__header" style="width: 200px;" scope="col">Flags</th>
+	                    <th class="cases-table__header" style="width: 125px;" scope="col">
+	                        <a href="{% url 'cases:cases' %}?{{ params_str }}&sort={{ 'status'|table_sort_text:params }}" id="sort-status" class="app-table__sortable-header {{ 'status'|table_sort:params }}">
+	                            Status
+	                            {% svg 'chevron' %}
+	                        </a>
+	                    </th>
+	                    <th class="cases-table__header" scope="col"></th>
+	                </tr>
+	            </thead>
+	            <tbody class="govuk-table__body">
+	                {% for case in data.results.cases %}
+	                    <tr class="govuk-table__row lite-accordian-table__row">
+	                        <td class="cases-table__cell cases-table__cell--checkbox">
+	                            <div class="govuk-checkboxes__item">
+	                                <input class="govuk-checkboxes__input" type="checkbox" name="cases" value="{{ case.id }}">
+	                                <label class="govuk-label govuk-checkboxes__label"></label>
+	                            </div>
+	                        </td>
+	                        <td class="cases-table__cell">
+	                            <a class="govuk-link govuk-!-font-weight-bold" href="{% url 'cases:case' case.id %}?queue_id={{data.results.queue.id}}&queue_name={{data.results.queue.name}}">
+									{% if case.type.key == 'application' or case.type.key == 'hmrc_query' %}
+									    {{ case.id }}
+	                                {% else %}
+										{{ case.query.id }}
+	                                {% endif %}
+	                            </a>
+	                            <p class="govuk-body" style="opacity: .7; magin: 0;">
+	                                {{ case.organisation }}
+	                            </p>
+	                        </td>
+	                        <td class="cases-table__cell">
+	                            {% for user in case.users|slice:":3" %}
+	                                <div>
+	                                    {% if data.results.is_system_queue %}
+	                                        <span style="opacity: 0.6;">{{ user.queue }}:</span>
+	                                    {% endif %}
+	                                    {% if user.first_name %}
+	                                        {{ user.first_name }} {{ user.last_name }}
+	                                    {% else %}
+	                                        {{ user.email }}
+	                                    {% endif %}
+	                                    <span class="lite-hint app-expanded-row__item--invert">
+	                                        {% if case.users|length > 3 and forloop.counter == 3 %} (3 of {{case.users|length}}){% endif %}
+	                                    </span>
+	                                </div>
+	                            {% empty %}
+	                                <span class="lite-hint">No users assigned</span>
+	                            {% endfor %}
+	                            {% for user in case.users|slice:"3:" %}
+	                                <div class="app-expanded-row__item">
+	                                    {% if data.results.is_system_queue %}
+	                                        <span style="opacity: 0.6;">{{ user.queue }}:</span>
+	                                    {% endif %}
+	                                    {% if user.first_name %}
+	                                        {{ user.first_name }} {{ user.last_name }}
+	                                    {% else %}
+	                                        {{ user.email }}
+	                                    {% endif %}
+	                                </div>
+	                            {% endfor %}
+	                        </td>
+	                        <td class="cases-table__cell">
+	                            {{ case.type.value }}
+	                        </td>
+	                        <td class="cases-table__cell">
+	                            {% for queue_name in case.queue_names|slice:":3" %}
+	                                <div>
+	                                    {{ queue_name }}
+	                                    <span class="lite-hint app-expanded-row__item--invert">
+	                                        {% if case.queue_names|length > 3 and forloop.counter == 3 %} (3 of {{case.queue_names|length}}){% endif %}
+	                                    </span>
+	                                </div>
+	                            {% endfor %}
+	                            {% for queue_name in case.queue_names|slice:"3:" %}
+	                                <div class="app-expanded-row__item">{{ queue_name }}</div>
+	                            {% endfor %}
+	                        </td>
+	                        <td class="cases-table__cell">
+	                            {% for flag in case.flags|slice:":3" %}
+	                                <div>
+	                                    {{ flag.name }}
+	                                    <span class="lite-hint app-expanded-row__item--invert">
+	                                        {% if case.flags|length > 3 and forloop.counter == 3 %} (3 of {{case.flags|length}}){% endif %}
+	                                    </span>
+	                                </div>
+	                            {% endfor %}
 
-    <input hidden name="queue_id" value="{{ data.results.queue.id }}">
-
-    <div class="govuk-grid-row lite-filter-bar">
-        <div class="govuk-grid-column-one-quarter">
-            <label class="govuk-label" for="case_type">
-                Filter by case type
-            </label>
-            <div class="lite-select-wrapper">
-                <select class="govuk-select" id="case_type" name="case_type">
-                    <option {% if params.case_type == None %}selected{% endif %} value="">Select</option>
-                    {% for case_type in data.results.filters.case_types %}
-                        <option value="{{ case_type.value }}" {% if case_type.value == params.case_type %}selected{% endif %}>{{case_type.title}}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        </div>
-        <div class="govuk-grid-column-one-quarter">
-            <label class="govuk-label" for="status">
-                Filter by case status
-            </label>
-            <div class="lite-select-wrapper">
-                <select class="govuk-select" id="status" name="status">
-                    <option {% if params.status == None %}selected{% endif %} value="">Select</option>
-                    {% for case_status in data.results.filters.statuses %}
-				        <option value="{{ case_status.status }}" {% if case_status.status == params.status %}selected{% endif %}>{{ case_status.status|default:"Untitled"|sentence_case }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        </div>
-        <div class="govuk-grid-column-one-half">
-            <label class="govuk-label" for="filter" style="visibility: collapse;">
-                --
-            </label>
-            <div class="lite-buttons-row">
-                <button type="submit" form="filters" class="govuk-button" style="margin: 0;" id="button-apply-filters">
-                    Apply filters
-                </button>
-                <a href="{% url 'cases:cases' %}?queue_id={{ data.results.queue.id }}" class="govuk-button govuk-button--secondary" style="margin-bottom: 0;" id="button-clear-filters">
-                    Clear filters
-                </a>
-            </div>
-        </div>
-    </div>
-
-</form>
-
-<form id="cases-form" method="post">
-    {% csrf_token %}
-    {% if data.results.cases|length %}
-        <table class="govuk-table">
-            <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                    <th class="cases-table__header cases-table__cell--checkbox">
-                        <div class="govuk-checkboxes__item">
-                            <input id="select-all-checkbox" class="govuk-checkboxes__input" type="checkbox">
-                            <label class="govuk-label govuk-checkboxes__label"></label>
-                        </div>
-                    </th>
-                    <th class="cases-table__header" style="width: 225px;" scope="col">Case</th>
-                    <th class="cases-table__header" style="width: 1fr;" scope="col">Assignees</th>
-                    <th class="cases-table__header" style="width: 125px;" scope="col">Type</th>
-                    <th class="cases-table__header" style="width: 125px;" scope="col">Queue</th>
-                    <th class="cases-table__header" style="width: 200px;" scope="col">Flags</th>
-                    <th class="cases-table__header" style="width: 125px;" scope="col">
-                        <a href="{% url 'cases:cases' %}?{{ params_str }}&sort={{ 'status'|table_sort_text:params }}" id="sort-status" class="app-table__sortable-header {{ 'status'|table_sort:params }}">
-                            Status
-                            {% svg 'chevron' %}
-                        </a>
-                    </th>
-                    <th class="cases-table__header" scope="col"></th>
-                </tr>
-            </thead>
-            <tbody class="govuk-table__body">
-                {% for case in data.results.cases %}
-                    <tr class="govuk-table__row lite-accordian-table__row">
-                        <td class="cases-table__cell cases-table__cell--checkbox">
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" type="checkbox" name="cases" value="{{ case.id }}">
-                                <label class="govuk-label govuk-checkboxes__label"></label>
-                            </div>
-                        </td>
-                        <td class="cases-table__cell">
-                            <a class="govuk-link govuk-!-font-weight-bold" href="{% url 'cases:case' case.id %}?queue_id={{data.results.queue.id}}&queue_name={{data.results.queue.name}}">
-								{% if case.type.key == 'application' or case.type.key == 'hmrc_query' %}
-								    {{ case.id }}
-                                {% else %}
-									{{ case.query.id }}
-                                {% endif %}
-                            </a>
-                            <p class="govuk-body" style="opacity: .7; magin: 0;">
-                                {{ case.organisation }}
-                            </p>
-                        </td>
-                        <td class="cases-table__cell">
-                            {% for user in case.users|slice:":3" %}
-                                <div>
-                                    {% if data.results.is_system_queue %}
-                                        <span style="opacity: 0.6;">{{ user.queue }}:</span>
-                                    {% endif %}
-                                    {% if user.first_name %}
-                                        {{ user.first_name }} {{ user.last_name }}
-                                    {% else %}
-                                        {{ user.email }}
-                                    {% endif %}
-                                    <span class="lite-hint app-expanded-row__item--invert">
-                                        {% if case.users|length > 3 and forloop.counter == 3 %} (3 of {{case.users|length}}){% endif %}
-                                    </span>
-                                </div>
-                            {% empty %}
-                                <span class="lite-hint">No users assigned</span>
-                            {% endfor %}
-                            {% for user in case.users|slice:"3:" %}
-                                <div class="app-expanded-row__item">
-                                    {% if data.results.is_system_queue %}
-                                        <span style="opacity: 0.6;">{{ user.queue }}:</span>
-                                    {% endif %}
-                                    {% if user.first_name %}
-                                        {{ user.first_name }} {{ user.last_name }}
-                                    {% else %}
-                                        {{ user.email }}
-                                    {% endif %}
-                                </div>
-                            {% endfor %}
-                        </td>
-                        <td class="cases-table__cell">
-                            {{ case.type.value }}
-                        </td>
-                        <td class="cases-table__cell">
-                            {% for queue_name in case.queue_names|slice:":3" %}
-                                <div>
-                                    {{ queue_name }}
-                                    <span class="lite-hint app-expanded-row__item--invert">
-                                        {% if case.queue_names|length > 3 and forloop.counter == 3 %} (3 of {{case.queue_names|length}}){% endif %}
-                                    </span>
-                                </div>
-                            {% endfor %}
-                            {% for queue_name in case.queue_names|slice:"3:" %}
-                                <div class="app-expanded-row__item">{{ queue_name }}</div>
-                            {% endfor %}
-                        </td>
-                        <td class="cases-table__cell">
-                            {% for flag in case.flags|slice:":3" %}
-                                <div>
-                                    {{ flag.name }}
-                                    <span class="lite-hint app-expanded-row__item--invert">
-                                        {% if case.flags|length > 3 and forloop.counter == 3 %} (3 of {{case.flags|length}}){% endif %}
-                                    </span>
-                                </div>
-                            {% endfor %}
-
-                            {% for flag in case.flags|slice:"3:" %}
-                                <div class="app-expanded-row__item">
-                                    {{ flag.name }}
-                                </div>
-                            {% endfor %}
-                        </td>
-                        <td class="cases-table__cell">
-                            {{ case.status|sentence_case }}
-                        </td>
-                        <td class="cases-table__cell govuk-table__cell--numeric">
-                            <a id="noscript_hide" class="lite-accordian-table__chevron" onclick="return openTableFold(this);">
-                                {% if case.flags|length > 3 or case.users|length > 3 or case.queue_names|length > 3 %}
-                                    {% svg 'chevron' %}
-                                {% endif %}
-                            </a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% if data.total_pages > 1 %}
-        <br>
-        <div class="lite-pagination__container ">
-            {% for i in data.total_pages|times %}
-                <a href="{% url 'cases:cases' %}?{{ params_str }}&page={{ i }}" class="lite-pagination__item {% if page == i %}lite-pagination__item--selected{% endif %}" id="page-{{ i }}">
-                    {{ i }}
-                </a>
-            {% endfor %}
-        </div>
-    {% endif %}
-	{% else %}
-		{% get_string 'cases.no_cases' as no_cases_text %}
-		{% include "includes/information-text.html" with text=no_cases_text %}
-		<br><br>
-		{% if params.case_type or params.status %}
-			<a href="{% url 'cases:cases' %}?queue={{ data.results.queue.id }}" class="govuk-link govuk-link--no-visited-state govuk-body">Clear filters</a>
-		{% endif %}
-    {% endif %}
-</form>
-
-
-<script nonce="{{ request.csp_nonce }}">
-	$("#filters").hide();
-	$("#show-filters-link").show();
-	$("#hide-filters-link").hide();
-
-	{% if params.case_type or params.status %}
-		$("#filters").show();
-		$("#show-filters-link").hide();
-		$("#hide-filters-link").show();
-	{% endif %}
-
-	function toggleFilters() {
-		$("#filters").toggle();
-		if ($("#filters").is(':visible')) {
-			$("#show-filters-link").hide();
-			$("#hide-filters-link").show();
-		} else {
-			$("#show-filters-link").show();
-			$("#hide-filters-link").hide();
-		}
-	}
-
-	function toggleDropdown() {
-		$(".app-dropdown-background").toggle();
-		$("#queues").toggleClass('app-dropdown__container--visible');
-		$("#queue-title").toggleClass("app-dropdown__heading--flipped");
-	}
-
-	function setAssignUsersAbility() {
-		// Disable the assign users button unless a checkbox is selected
-		if ($("input[name='cases']:checked").length == 0) {
-			$("#assign-users-button").prop('disabled', true).addClass("govuk-button--disabled");
-		} else {
-			$("#assign-users-button").prop('disabled', false).removeClass("govuk-button--disabled");
-		}
-	}
-
-	setAssignUsersAbility();
-
-	$("#select-all-checkbox").click(function() {
-		if ($("input[name='cases']:checked").length == $("input[name='cases']").length) {
-			$("input[name='cases']").prop('checked', false);
-	   } else {
-		   $("input[name='cases']").prop('checked', true);
-	   }
-
-		setAssignUsersAbility();
-	});
-
-	$("input[name='cases']").change(function() {
-		setAssignUsersAbility();
-		$("#select-all-checkbox").prop('checked', $("input[name='cases']:checked").length == $("input[name='cases']").length);
-		$("#select-all-checkbox").prop("indeterminate", $("input[name='cases']:checked").length > 0 && $("input[name='cases']:checked").length < $("input[name='cases']").length);
-	});
-    </script>
-</script>
+	                            {% for flag in case.flags|slice:"3:" %}
+	                                <div class="app-expanded-row__item">
+	                                    {{ flag.name }}
+	                                </div>
+	                            {% endfor %}
+	                        </td>
+	                        <td class="cases-table__cell">
+	                            {{ case.status|sentence_case }}
+	                        </td>
+	                        <td class="cases-table__cell govuk-table__cell--numeric">
+	                            <a id="noscript_hide" class="lite-accordian-table__chevron" onclick="return openTableFold(this);">
+	                                {% if case.flags|length > 3 or case.users|length > 3 or case.queue_names|length > 3 %}
+	                                    {% svg 'chevron' %}
+	                                {% endif %}
+	                            </a>
+	                        </td>
+	                    </tr>
+	                {% endfor %}
+	            </tbody>
+	        </table>
+	    {% if data.total_pages > 1 %}
+	        <br>
+	        <div class="lite-pagination__container ">
+	            {% for i in data.total_pages|times %}
+	                <a href="{% url 'cases:cases' %}?{{ params_str }}&page={{ i }}" class="lite-pagination__item {% if page == i %}lite-pagination__item--selected{% endif %}" id="page-{{ i }}">
+	                    {{ i }}
+	                </a>
+	            {% endfor %}
+	        </div>
+	    {% endif %}
+		{% else %}
+			{% get_string 'cases.no_cases' as no_cases_text %}
+			{% include "includes/information-text.html" with text=no_cases_text %}
+			<br><br>
+			{% if params.case_type or params.status %}
+				<a href="{% url 'cases:cases' %}?queue={{ data.results.queue.id }}" class="govuk-link govuk-link--no-visited-state govuk-body">Clear filters</a>
+			{% endif %}
+	    {% endif %}
+	</form>
 {% endblock %}
 
 {% block javascript %}
 	<script src="{% static 'javascripts/cases.js' %}"></script>
-    <script src="{% static 'javascripts/filter-bar.js' %}"></script>
+	<script src="{% static 'javascripts/select-buttons.js' %}"></script>
+	<script src="{% static 'javascripts/filter-bar.js' %}"></script>
+	<script nonce="{{ request.csp_nonce }}">
+		$("#filters").hide();
+		$("#show-filters-link").show();
+		$("#hide-filters-link").hide();
+
+		{% if params.case_type or params.status %}
+			$("#filters").show();
+			$("#show-filters-link").hide();
+			$("#hide-filters-link").show();
+		{% endif %}
+
+		function toggleFilters() {
+			$("#filters").toggle();
+			if ($("#filters").is(':visible')) {
+				$("#show-filters-link").hide();
+				$("#hide-filters-link").show();
+			} else {
+				$("#show-filters-link").show();
+				$("#hide-filters-link").hide();
+			}
+		}
+
+		function toggleDropdown() {
+			$(".app-dropdown-background").toggle();
+			$("#queues").toggleClass('app-dropdown__container--visible');
+			$("#queue-title").toggleClass("app-dropdown__heading--flipped");
+		}
+
+		function setAssignUsersAbility() {
+			// Disable the assign users button unless a checkbox is selected
+			if ($("input[name='cases']:checked").length == 0) {
+				disableButton("#assign-users-button");
+			} else {
+				enableButton("#assign-users-button");
+			}
+		}
+
+		setAssignUsersAbility();
+
+		$("#button-select-all").click(function() {
+			setAssignUsersAbility();
+		});
+
+		$("input[name='cases']").change(function() {
+			setAssignUsersAbility();
+			$("#select-all-checkbox").prop('checked', $("input[name='cases']:checked").length == $("input[name='cases']").length);
+			$("#select-all-checkbox").prop("indeterminate", $("input[name='cases']:checked").length > 0 && $("input[name='cases']:checked").length < $("input[name='cases']").length);
+		});
+    </script>
 {% endblock %}

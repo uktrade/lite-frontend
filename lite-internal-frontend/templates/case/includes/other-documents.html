@@ -1,0 +1,33 @@
+{% if case.application.additional_documents %}
+	<table class="govuk-table" id="supporting-documentation">
+		<thead class="govuk-table__head">
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header" scope="col">{% lcs 'SUPPORTING_DOCUMENTATION_NAME' %}</th>
+				<th class="govuk-table__header" scope="col">{% lcs 'SUPPORTING_DOCUMENTATION_DESCRIPTION' %}</th>
+				<th class="govuk-table__header" scope="col">{% lcs 'SUPPORTING_DOCUMENTATION_DOCUMENT' %}</th>
+			</tr>
+		</thead>
+		<tbody class="govuk-table__body">
+			{% for supporting_documentation in case.application.additional_documents %}
+			<tr class="govuk-table__row">
+				<td class="govuk-table__cell">
+					{{ supporting_documentation.name }}
+				</td>
+				<td class="govuk-table__cell">
+					{{ supporting_documentation.description }}
+				</td>
+				<td class="govuk-table__cell">
+					{% if supporting_documentation.safe == True %}
+					<a class="govuk-link govuk-link--no-visited-state" id="supporting-documentation" href="{% url 'cases:document' case.id supporting_documentation.id %}">
+						<span class="govuk-visually-hidden">{% get_string 'cases.manage.documents.download_document' %}</span>
+						{{ supporting_documentation.name }}<br>
+					</a>
+					{% endif %}
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% else %}
+	{% lcs 'SUPPORTING_DOCUMENTATION_NO_DOCUMENTATION' %}
+{% endif %}

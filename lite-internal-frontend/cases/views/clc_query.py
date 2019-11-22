@@ -86,7 +86,7 @@ class Respond(TemplateView):
         if response_data.get("report_summary"):
             context["report_summary"] = get_picklist_item(request, response_data["report_summary"])
 
-        return render(request, "cases/case/clc_query_overview.html", context)
+        return render(request, "case/clc_query_overview.html", context)
 
 
 class RespondFlags(TemplateView):
@@ -117,4 +117,4 @@ class RespondFlags(TemplateView):
             "case": get_case(request, str(kwargs["pk"])),  # Do another pull of case as case flags have changed
             "report_summary": get_picklist_item(request, request.POST["report_summary"]),
         }
-        return render(request, "cases/case/clc_query_overview.html", context)
+        return render(request, "case/clc_query_overview.html", context)

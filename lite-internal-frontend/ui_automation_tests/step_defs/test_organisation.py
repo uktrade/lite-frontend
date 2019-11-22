@@ -4,6 +4,7 @@ from pytest_bdd import scenarios, when, then, parsers
 
 import shared.tools.helpers as utils
 from pages.header_page import HeaderPage
+from pages.organisation_page import OrganisationPage
 from pages.organisations_form_page import OrganisationsFormPage
 from pages.organisations_page import OrganisationsPage
 from pages.shared import Shared
@@ -20,8 +21,6 @@ def verify_registered_organisation(driver, context):
         driver.find_element_by_id("filter-box").send_keys(context.organisation_name)
         driver.find_element_by_id("button-apply-filters").click()
         assert context.organisation_name in Shared(driver).get_text_of_lite_table_body()
-        # assert context.organisation_name in Shared(driver).get_text_of_panel_body()
-        # assert Shared(driver).get_text_of_h1() == "Organisation Registered"
 
 
 @then("HMRC organisation is registered")
@@ -30,8 +29,6 @@ def verify_hmrc_registered_organisation(driver, context):
     driver.find_element_by_id("filter-box").send_keys(context.hmrc_org_name)
     driver.find_element_by_id("button-apply-filters").click()
     assert context.hmrc_org_name in Shared(driver).get_text_of_lite_table_body()
-    # assert context.organisation_name in Shared(driver).get_text_of_panel_body()
-    # assert Shared(driver).get_text_of_h1() == "Organisation Registered"
 
 
 @when("I go to organisations")
@@ -88,9 +85,10 @@ def fill_out_company_details_page_and_continue(driver, name, eori, sic, vat, reg
         'I provide individual registration details of first name: "{first_name}", last name: "{last_name}", EORI: "{eori}" and email: "{email}"'
     )
 )
-def fill_out_individual_registration_page(driver, first_name, last_name, email, eori):
+def fill_out_individual_registration_page(driver, first_name, last_name, email, eori, context):
     organisations_form_page = OrganisationsFormPage(driver)
     organisations_form_page.enter_email(email)
+    context.organisation_name = first_name
     organisations_form_page.enter_first_name(first_name)
     organisations_form_page.enter_last_name(last_name)
     organisations_form_page.enter_eori_number(eori)
@@ -99,7 +97,7 @@ def fill_out_individual_registration_page(driver, first_name, last_name, email, 
 
 @when(
     parsers.parse(
-        'I setup an initial site with name: "{name}", addres line 1: "{address_line_1}", town or city: "{city}", County: "{region}", post code: "{post_code}", country: "{country}"'
+        'I setup an initial site with name: "{name}", address line 1: "{address_line_1}", town or city: "{city}", County: "{region}", post code: "{post_code}", country: "{country}"'
     )
 )
 def fill_out_site_details(driver, name, address_line_1, city, region, post_code, country, context):
@@ -150,3 +148,8 @@ def register_hmrc_org(driver, org_name, site_name, address, city, region, post_c
         organisations_form_page.enter_city(city)
         organisations_form_page.enter_country(country)
         organisations_form_page.click_submit()
+
+
+@then("the previously created organisations flag is assigned")  # noqa
+def assert_flag_is_assigned(driver, context):
+    assert OrganisationPage(driver).is_organisation_flag_applied(context.flag_name)

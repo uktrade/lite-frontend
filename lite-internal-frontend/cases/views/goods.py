@@ -10,16 +10,6 @@ from core.helpers import convert_dict_to_query_params
 from core.services import get_user_permissions
 
 
-class Good(TemplateView):
-    def get(self, request, **kwargs):
-        case_id = str(kwargs["pk"])
-        good_pk = str(kwargs["good_pk"])
-        good, _ = get_good(request, good_pk)
-
-        context = {"case": {"id": case_id}, "good": good["good"]}
-        return render(request, "cases/case/good.html", context)
-
-
 class ReviewGoods(TemplateView):
     def get(self, request, **kwargs):
         case_id = str(kwargs["pk"])
@@ -60,7 +50,7 @@ class ReviewGoods(TemplateView):
             "edit_flags_url": edit_flags_url + goods_postfix_url,
             "review_goods_clc_url": review_goods_clc_url + goods_postfix_url,
         }
-        return render(request, "cases/case/review-goods.html", context)
+        return render(request, "case/review-goods.html", context)
 
 
 class ReviewGoodsClc(TemplateView):

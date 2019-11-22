@@ -1,5 +1,5 @@
 import shared.tools.helpers as utils
-from helpers.BasePage import BasePage
+from shared.BasePage import BasePage
 from pages.shared import Shared
 
 

@@ -1,6 +1,6 @@
 from selenium.webdriver.support.ui import Select
 
-from helpers.BasePage import BasePage
+from shared.BasePage import BasePage
 
 
 class TeamsPages(BasePage):

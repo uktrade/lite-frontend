@@ -11,7 +11,7 @@ Feature: I want to add a company to LITE
     And I choose to add a new organisation
     And I select "commercial"
     And I provide company registration details of name: "BlueOcean", EORI: "GB987654312000", SIC: "73200", VAT: "123456789", CRN: "000000011"
-    And I setup an initial site with name: "HQ", addres line 1: "123 Cobalt Street", town or city: "London", County: "Islington", post code: "AB1 2CD", country: "Ukraine"
+    And I setup an initial site with name: "HQ", address line 1: "123 Cobalt Street", town or city: "London", County: "Islington", post code: "AB1 2CD", country: "Ukraine"
     And I setup the admin user with email: "TestBusinessForSites@mail.com", first name: "Trinity", last name: "Fishburne"
     Then organisation is registered
 
@@ -22,7 +22,7 @@ Feature: I want to add a company to LITE
     And I choose to add a new organisation
     And I select "individual"
     And I provide individual registration details of first name: "Json", last name: "smith", EORI: "GB987654312000" and email: "johnsmith@email.com"
-    And I setup an initial site with name: "HQ", addres line 1: "123 Cobalt Street", town or city: "London", County: "Islington", post code: "AB1 2CD", country: "Ukraine"
+    And I setup an initial site with name: "HQ", address line 1: "123 Cobalt Street", town or city: "London", County: "Islington", post code: "AB1 2CD", country: "Ukraine"
     Then organisation is registered
 
   @LT_1008_test_adding_hmrc_organisation

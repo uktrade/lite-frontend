@@ -4,12 +4,6 @@ from pages.shared import Shared
 
 scenarios("../features/users_to_queue.feature", strict_gherkin=False)
 
-import logging
-
-log = logging.getLogger()
-console = logging.StreamHandler()
-log.addHandler(console)
-
 
 @when("I select the checkbox for previously created case to be assigned")
 def click_checkbox_for_application(driver, internal_url, apply_for_standard_application, context):

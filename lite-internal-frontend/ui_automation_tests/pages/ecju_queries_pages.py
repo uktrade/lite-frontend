@@ -1,4 +1,4 @@
-from helpers.BasePage import BasePage
+from shared.BasePage import BasePage
 from shared.tools.helpers import select_visible_text_from_dropdown
 
 

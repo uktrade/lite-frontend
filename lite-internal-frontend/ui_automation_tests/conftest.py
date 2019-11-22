@@ -308,11 +308,6 @@ def go_to_edit_flags(driver):
     OrganisationPage(driver).click_edit_organisation_flags()
 
 
-@then("the previously created organisations flag is assigned")  # noqa
-def assert_flag_is_assigned(driver, context):
-    assert OrganisationPage(driver).is_organisation_flag_applied(context.flag_name)
-
-
 @when("I click chevron")  # noqa
 def click_chevron(driver, context):
     elements = Shared(driver).get_rows_in_lite_table()

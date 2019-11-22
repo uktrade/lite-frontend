@@ -5,7 +5,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 
-from cases.constants import HMRC_QUERY, END_USER_ADVISORY_QUERY, APPLICATION, CLC_QUERY
+from cases.constants import CaseType
 from lite_forms.generators import error_page, form_page
 from lite_forms.submitters import submit_single_form
 from s3chunkuploader.file_handler import S3FileUploadHandler, s3_client
@@ -89,24 +89,38 @@ class ViewCase(TemplateView):
 
         case["all_flags"] = _get_all_distinct_flags(case)
 
-        context = {"title": "Case", "case": case, "activity": activity, "permissions": permissions}
-        if queue_id:
-            context["queue_id"] = queue_id
-        if queue_name:
-            context["queue_name"] = queue_name
+        context = {
+            "case": case,
+            "activity": activity,
+            "permissions": permissions,
+            "queue_id": queue_id,
+            "queue_name": queue_name,
+        }
 
-        if case["type"]["key"] == END_USER_ADVISORY_QUERY:
-            return render(request, "cases/case/queries/end_user_advisory.html", context)
-        elif case["type"]["key"] == CLC_QUERY:
+        try:
+            case_type = CaseType(case["type"]["key"])
+        except ValueError:
+            raise Exception("Invalid case_type: {}".format(case["type"]["key"]))
+
+        if case_type == CaseType.END_USER_ADVISORY_QUERY:
+            return render(request, "case/queries/end_user_advisory.html", context)
+        elif case_type == CaseType.CLC_QUERY:
             context["good"] = case["query"]["good"]
-            return render(request, "cases/case/queries/clc-query-case.html", context)
-        elif case.get("application").get("application_type").get("key") == HMRC_QUERY:
-            return render(request, "cases/case/hmrc-case.html", context)
-        elif case["type"]["key"] == APPLICATION:
-            context["title"] = case.get("application").get("name")
+            return render(request, "case/queries/clc-query-case.html", context)
+        elif case_type == CaseType.APPLICATION:
             context["notification"] = get_user_case_notification(request, case_id)
             context["total_goods_value"] = _get_total_goods_value(case)
-            return render(request, "cases/case/application-case.html", context)
+            try:
+                application_type = CaseType(case["application"]["application_type"]["key"])
+            except ValueError:
+                raise Exception("Invalid application_type: {}".format(case["type"]["key"]))
+
+            if application_type == CaseType.HMRC_QUERY:
+                return render(request, "case/hmrc-case.html", context)
+            elif application_type == CaseType.OPEN_LICENCE:
+                return render(request, "case/open-licence-case.html", context)
+            elif application_type == CaseType.STANDARD_LICENCE:
+                return render(request, "case/standard-licence-case.html", context)
 
     def post(self, request, **kwargs):
         case_id = str(kwargs["pk"])
@@ -144,7 +158,7 @@ class ViewAdvice(TemplateView):
             "permissions": permissions,
             "edit_case_flags": get_string("cases.case.edit_case_flags"),
         }
-        return render(request, "cases/case/user-advice-view.html", context)
+        return render(request, "case/user-advice-view.html", context)
 
 
 class ManageCase(TemplateView):
@@ -159,9 +173,9 @@ class ManageCase(TemplateView):
             ]
         }
 
-        if case["type"]["key"] == APPLICATION:
+        if case["type"]["key"] == CaseType.APPLICATION:
             title = "Manage " + case.get("application").get("name")
-        elif case["type"]["key"] == HMRC_QUERY:
+        elif case["type"]["key"] == CaseType.HMRC_QUERY:
             title = "Manage HMRC query"
         elif case["query"]["end_user"]:
             title = "Manage End User Advisory"
@@ -169,16 +183,16 @@ class ManageCase(TemplateView):
             title = "Manage CLC query case"
 
         context = {"case": case, "title": title, "statuses": reduced_statuses}
-        return render(request, "cases/case/change-status.html", context)
+        return render(request, "case/change-status.html", context)
 
     def post(self, request, **kwargs):
         case_id = str(kwargs["pk"])
         case = get_case(request, case_id)
 
-        if case["type"]["key"] == APPLICATION or case["type"]["key"] == HMRC_QUERY:
+        if case["type"]["key"] == CaseType.APPLICATION or case["type"]["key"] == CaseType.HMRC_QUERY:
             application_id = case.get("application").get("id")
             put_application_status(request, application_id, request.POST)
-        elif case["type"]["key"] == END_USER_ADVISORY_QUERY:
+        elif case["type"]["key"] == CaseType.END_USER_ADVISORY_QUERY:
             query_id = case.get("query").get("id")
             put_end_user_advisory_query(request, query_id, request.POST)
         else:
@@ -229,7 +243,7 @@ class Documents(TemplateView):
             "case": case,
             "case_documents": case_documents["documents"],
         }
-        return render(request, "cases/case/documents.html", context)
+        return render(request, "case/documents.html", context)
 
 
 @method_decorator(csrf_exempt, "dispatch")
@@ -292,43 +306,3 @@ class Document(TemplateView):
         response = StreamingHttpResponse(generate_file(s3_response), **_kwargs)
         response["Content-Disposition"] = f'attachment; filename="{original_file_name}"'
         return response
-
-
-# May be added to a future story, so don't delete :)
-# class DeleteDocument(TemplateView):
-#     def get(self, request, **kwargs):
-#         case_id = str(kwargs['pk'])
-#         file_pk = str(kwargs['file_pk'])
-#
-#         case = get_case(request, case_id)
-#         document, status_code = get_case_document(request, case_id, file_pk)
-#         original_file_name = document['document']['name']
-#
-#         context = {
-#             'title': 'Are you sure you want to delete this file?',
-#             'description': original_file_name,
-#             'case': case,
-#             'document': document['document'],
-#             'page': 'cases/case/modals/delete_document.html',
-#         }
-#         return render(request, 'core/static.html', context)
-#
-#     def post(self, request, **kwargs):
-#         case_id = str(kwargs['pk'])
-#         file_pk = str(kwargs['file_pk'])
-#
-#         case = get_case(request, case_id)
-#
-#         # Delete the file on the API
-#         delete_case_document(request, case_id, file_pk)
-#
-#
-#
-#         context = {
-#             'title': 'Are you sure you want to delete this file?',
-#             'description': original_file_name,
-#             'case': case,
-#             'document': document['document'],
-#             'page': 'cases/case/modals/delete_document.html',
-#         }
-#         return render(request, 'core/static.html', context)

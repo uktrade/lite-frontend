@@ -4,9 +4,10 @@ from lite_forms.components import Form, Filter, Checkboxes, TextArea, BackLink
 def flags_form(flags, level, origin, url):
     return Form(
         title="Edit " + level + " flags",
+        description="Select all flags that apply",
         questions=[
             Filter(placeholder="Filter flags"),
-            Checkboxes(title="Select all flags that apply", name="flags", options=flags),
+            Checkboxes(name="flags", options=flags),
             TextArea(
                 name="note",
                 title="Notes",

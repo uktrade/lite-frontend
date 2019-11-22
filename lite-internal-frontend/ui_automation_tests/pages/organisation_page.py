@@ -1,17 +1,18 @@
-from helpers.BasePage import BasePage
+from shared.BasePage import BasePage
 
 
 class OrganisationPage(BasePage):
-    EDIT_ORGANISATION_FLAGS = 'a[href*="/assign-flags/"]'
-    FLAGS_AREA = ".app-flag"
+
+    LINK_ORGANISATION_FLAGS_ID = "link-organisation-flags"
+    FLAGS_AREA_SELECTOR = ".app-flag"
 
     def click_edit_organisation_flags(self):
-        edit_flags_btn = self.driver.find_element_by_css_selector(self.EDIT_ORGANISATION_FLAGS)
-        edit_flags_btn.click()
+        self.driver.find_element_by_id(self.LINK_ORGANISATION_FLAGS_ID).click()
 
     def is_organisation_flag_applied(self, flag_name):
-        elements = self.driver.find_elements_by_css_selector(self.FLAGS_AREA)
+        elements = self.driver.find_elements_by_css_selector(self.FLAGS_AREA_SELECTOR)
+
         for element in elements:
-            if flag_name in element.text:
+            if flag_name.lower() == element.text.lower():
                 return True
         return False

@@ -26,7 +26,7 @@ def get_client(request, **kwargs):
         redirect_uri=redirect_uri,
         scope=SCOPE,
         token=request.session.get(TOKEN_SESSION_KEY, None),
-        **kwargs
+        **kwargs,
     )
 
 

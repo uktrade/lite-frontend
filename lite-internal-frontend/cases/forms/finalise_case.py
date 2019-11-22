@@ -1,7 +1,6 @@
 from django.urls import reverse_lazy
 from lite_forms.components import Form, TextInput, BackLink, DateInput
-
-from register_business.forms import conditional
+from lite_forms.helpers import conditional
 
 
 def approve_licence_form(case_id, standard):

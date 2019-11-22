@@ -1,0 +1,67 @@
+<h3 class="govuk-heading-m">Goods</h3>
+<table class="govuk-table" id="goods">
+	<thead class="govuk-table__head">
+		<tr class="govuk-table__row">
+			<th class="govuk-table__header" scope="col">Description</th>
+			<th class="govuk-table__header" scope="col">Control list entry</th>
+			<th class="govuk-table__header" scope="col">Countries</th>
+			<th class="govuk-table__header">{% lcs 'GOOD_CONTROLLED' %}</th>
+			<th class="govuk-table__header">Flags</th>
+			{% if show_advice %}
+				<th class="govuk-table__header" style="width: 350px;">Advice</th>
+			{% endif %}
+		</tr>
+	</thead>
+	<tbody class="govuk-table__body govuk-checkboxes govuk-checkboxes--small">
+		{% for good in case.application.goods_types %}
+			<tr class="govuk-table__row">
+				<td class="govuk-table__cell">
+					{% if show_checkboxes %}<div class="govuk-checkboxes__item">
+						<input class="govuk-checkboxes__input" type="checkbox"
+                            {% if show_advice %}
+                                name="goods_types"
+                            {% else %}
+                                name="goods"
+                            {% endif %}
+                            value="{{ good.id }}" id="{{ good.id }}"> {% endif %}
+						<label class="govuk-label {% if show_checkboxes %}govuk-checkboxes__label{% endif %}" for="{{ good.id }}">{{ good.description }}</label>
+					{% if show_checkboxes %}</div>{% endif %}
+				</td>
+				<td class="govuk-table__cell">
+                    {% if good.control_code %}
+                        <span class="app-country-tag app-country-tag--orange">{{ good.control_code }}</span></td>
+                    {% else %}
+                        None
+                    {% endif %}
+				<td class="govuk-table__cell">
+                    {% for country in good.countries %}
+                        <span class="app-country-tag">{{ country.id }}</span>
+                    {% empty %}
+                        {% for country in case.application.destinations.data %}
+                            <span class="app-country-tag">{{ country.id }}</span>
+                        {% endfor %}
+                    {% endfor %}
+                </td>
+				<td class="govuk-table__cell">
+                    {{ good.is_good_controlled|friendly_boolean }}
+                </td>
+                <td class="govuk-table__cell">
+                    {% if good.flags %}
+                        {% for flag in good.flags %}
+                            {{ flag.name }}<br>
+                        {% endfor %}
+                    {% endif %}
+                </td>
+				{% if show_advice %}
+					<td class="govuk-table__cell">
+						{% for advice in all_advice %}
+							{% if advice.goods_type == good.id %}
+								{% include 'case/views/table-advice.html' %}
+							{% endif %}
+						{% endfor %}
+					</td>
+				{% endif %}
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>

@@ -1,0 +1,301 @@
+{% extends 'layouts/base.html' %}
+
+{% load static humanize %}
+
+{% block back_link %}
+	<div class="govuk-breadcrumbs">
+		<ol class="govuk-breadcrumbs__list">
+			<li class="govuk-breadcrumbs__list-item">
+				<a class="govuk-breadcrumbs__link" href="{% url 'cases:cases' %}?queue={{ queue.queue.id }}">{% if queue_name %}{{ queue_name }}{% else %}{% lcs 'QUEUE_ALL_CASES' %}{% endif %}</a>
+			</li>
+			<!-- TODO -->
+			<li class="govuk-breadcrumbs__list-item" aria-current="page">&nbsp;</li>
+		</ol>
+	</div>
+{% endblock %}
+
+{% block body %}
+	{% if notification %}
+	    <a id="case-notification" class="lite-info-bar lite-info-bar--link lite-info-bar--no-animation" href="#case-activity-{{ notification.case_activity }}">
+	        {% lcs 'CASE_CHANGES' %}
+	    </a>
+	{% endif %}
+
+	<div class="lite-app-bar" style="margin-top: -20px;">
+		<div class="lite-app-bar__content">
+			<h2 class="govuk-heading-l">
+				{% block title %}{{ case.application.id }}{% endblock %}
+			</h2>
+		</div>
+		<div class="lite-app-bar__controls">
+			<div class="app-more-actions__container">
+				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:documents' case.id %}">
+		        	{% lcs 'CASE_DOCUMENT_BUTTON' %}
+		        </a>
+		        <a role="button" draggable="false" class="govuk-button" href="{% url 'cases:ecju_queries' case.id %}">
+		            {% lcs 'CASE_ECJU_BUTTON' %}
+				</a>
+		        <a role="button" draggable="false" class="govuk-button" href="{% url 'cases:move' case.id %}">
+					{% lcs 'CASE_MOVE_CASE_BUTTON' %}
+				</a>
+				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:manage' case.id %}">
+					{% lcs 'CASE_CHANGE_STATUS_BUTTON' %}
+				</a>
+				{% if permissions|key_in_array:'MAKE_FINAL_DECISIONS' %}
+					<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:decide' case.id %}">
+						{% lcs 'CASE_RECORD_DECISION_BUTTON' %}
+					</a>
+				{% endif %}
+		        <a role="button" draggable="false" class="govuk-button" href="{% url 'cases:user_advice_view' case.id %}">
+					{% lcs 'CASE_VIEW_ADVICE_BUTTON' %}
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<div class="app-flags" id="application-case-flags">
+		{% for flag in case.flags %}
+			<div class="app-flag" id="{{ flag.name }}">
+				{{ flag.name }}
+			</div>
+		{% endfor %}
+		<a href="{% url 'cases:assign_flags' case.id %}?level=cases&items={{ case.id }}" id="application-edit-case-flags" class="app-flag app-flag--action">
+			{% if case.flags %}
+				{% lcs 'EDIT_CASE_FLAGS' %}
+			{% else %}
+				{% lcs 'SET_CASE_FLAGS' %}
+			{% endif %}
+		</a>
+	</div>
+
+	<div class="app-flags" id="application-all-flags">
+		{% for flag in case.all_flags %}
+			<div class="app-flag" id="{{ flag.name }}">
+				{{ flag.name }}
+			</div>
+		{% endfor %}
+	</div>
+
+	<div class="app-case-board">
+		<div class="govuk-grid-row">
+			<div class="govuk-grid-column-one-quarter">
+				<p class="app-case-board__heading">{% lcs 'CASE_INFO_ORGANISATION' %}</p>
+				<a id="link-organisation" class="govuk-link govuk-link--no-visited-state" href="{% url 'organisations:organisation' case.application.organisation.id %}">
+					{{ case.application.organisation.name }}
+				</a>
+			</div>
+			<div class="govuk-grid-column-one-quarter">
+				<p class="app-case-board__heading">{% lcs 'CASE_INFO_STATUS' %}</p>
+				<p>{{ case.application.status.value }}</p>
+			</div>
+			<div class="govuk-grid-column-one-quarter">
+				<p class="app-case-board__heading">{% lcs 'CASE_INFO_ACTIVITY' %}</p>
+				<p>{{ case.application.activity }}</p>
+			</div>
+			<div class="govuk-grid-column-one-quarter">
+				<p class="app-case-board__heading">{% lcs 'CASE_INFO_SUBMITTED_AT' %}</p>
+				<p>{{ case.application.submitted_at|str_date }}</p>
+			</div>
+		</div>
+		<div class="govuk-grid-row">
+			<div class="govuk-grid-column-one-quarter">
+				<p class="app-case-board__heading">{% lcs 'CASE_INFO_REFERENCE_NUMBER' %}</p>
+				<p>{{ case.application.reference_number_on_information_form|default_na }}</p>
+			</div>
+			<div class="govuk-grid-column-one-quarter">
+				<p class="app-case-board__heading">{% lcs 'CASE_INFO_EXPORT_TYPE' %}</p>
+				<p>{{ case.application.export_type.value }}</p>
+			</div>
+			<div class="govuk-grid-column-one-quarter">
+				<p class="app-case-board__heading">{% lcs 'CASE_INFO_USAGE' %}</p>
+				<p>{{ case.application.usage|default_na }}</p>
+			</div>
+			<div class="govuk-grid-column-one-quarter">
+				<p class="app-case-board__heading">{% lcs 'CASE_INFO_LAST_UPDATED' %}</p>
+				<p>{{ case.application.last_modified_at|str_date }}</p>
+			</div>
+		</div>
+	</div>
+
+	<div class="govuk-accordion app-accordion" data-module="govuk-accordion" id="accordion-default">
+		<!-- Goods -->
+		<div class="govuk-accordion__section">
+			<div class="govuk-accordion__section-header">
+				<h2 class="govuk-accordion__section-heading">
+					<span class="govuk-accordion__section-button" id="accordion-goods">
+						{% lcs 'CASE_GOODS' %}
+					</span>
+				</h2>
+			</div>
+			<div id="accordion-goods-content" class="govuk-accordion__section-content" aria-labelledby="accordion-goods">
+			<form action="{% url 'cases:review_goods' case.id %}" method="get">
+			{% if 'REVIEW_GOODS' in permissions %}
+			    <button id="button-review-goods" name="action" value="review-goods" class="govuk-button" data-module="govuk-button">
+			        {% lcs 'CASE_GOODS_REVIEW' %}
+			    </button>
+			{% endif %}
+			    <button id="button-edit-goods-flags" name="action" value="edit-flags" class="govuk-button" data-module="govuk-button">
+			        {% lcs 'CASE_GOODS_EDIT_FLAGS' %}
+			    </button>
+			    {% include 'case/views/standard-goods.html' with show_checkboxes=True %}
+			</form>
+		</div>
+
+		<!-- Goods location -->
+		<div class="govuk-accordion__section">
+			<div class="govuk-accordion__section-header">
+				<h2 class="govuk-accordion__section-heading">
+					<span class="govuk-accordion__section-button" id="accordion-goods">
+						{% lcs 'CASE_GOODS_LOCATION' %}
+					</span>
+				</h2>
+			</div>
+			<div id="accordion-goods-content" class="govuk-accordion__section-content" aria-labelledby="accordion-goods">
+				<table class="govuk-table">
+					<thead class="govuk-table__head">
+						<tr class="govuk-table__row">
+							<th scope="col" class="govuk-table__header govuk-!-width-one-third">{% lcs 'CASE_GOODS_LOCATION_NAME' %}</th>
+							<th scope="col" class="govuk-table__header govuk-!-width-two-thirds">{% lcs 'CASE_GOODS_LOCATION_ADDRESS' %}</th>
+						</tr>
+					</thead>
+					<tbody class="govuk-table__body">
+						<tr class="govuk-table__row">
+							{% for location in case.application.goods_locations.data %}
+								<th scope="row" class="govuk-table__header">{{ location.name }}</th>
+								<td class="govuk-table__cell">{{ location|get_address }}</td>
+							{% endfor %}
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<!-- Parties -->
+		<div class="govuk-accordion__section">
+			<div class="govuk-accordion__section-header">
+				<h2 class="govuk-accordion__section-heading">
+					<span class="govuk-accordion__section-button" id="accordion-default-heading-3">
+						{% lcs 'CASE_ENTITIES_INVOLVED' %}
+					</span>
+				</h2>
+			</div>
+			<div id="accordion-default-content-3" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-3">
+				<table class="govuk-table" id="table-entities">
+					<thead class="govuk-table__head">
+						<tr class="govuk-table__row">
+							<th scope="col" class="govuk-table__header"></th>
+							<th scope="col" class="govuk-table__header govuk-!-width-one-third">{% lcs 'CASE_PARTIES_NAME' %}</th>
+							<th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs 'CASE_PARTIES_ADDRESS' %}</th>
+							<th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs 'CASE_PARTIES_TYPE' %}</th>
+							<th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs 'CASE_PARTIES_WEBSITE' %}</th>
+							<th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs 'CASE_PARTIES_DOCUMENT' %}</th>
+						</tr>
+					</thead>
+					<tbody class="govuk-table__body">
+						<tr class="govuk-table__row">
+							<th scope="row" class="govuk-table__header">{% lcs 'CASE_PARTIES_LICENSEE' %}</th>
+							<td class="govuk-table__cell">{{ case.application.organisation.name }}</td>
+							<td class="govuk-table__cell">{{ case.application.organisation.primary_site|get_address }}</td>
+							<td class="govuk-table__cell">{{ none|default_na }}</td>
+							<td class="govuk-table__cell">{{ none|default_na }}</td>
+							<td class="govuk-table__cell">{{ none|default_na }}</td>
+						</tr>
+						<tr class="govuk-table__row">
+							<th scope="row" class="govuk-table__header">End user</th>
+							<td class="govuk-table__cell">{{ case.application.end_user.name }}</td>
+							<td class="govuk-table__cell">{{ case.application.end_user|get_address }}</td>
+							<td class="govuk-table__cell">{{ case.application.end_user.sub_type.value }}</td>
+							<td class="govuk-table__cell">{{ case.application.end_user.website|linkify }}</td>
+							<td id="end_user_document" class="govuk-table__cell">
+								<a href="{% url 'cases:document' case.id case.application.end_user.document.id %}">
+									{{ case.application.end_user.document.name }}
+								</a>
+							</td>
+						</tr>
+						<tr class="govuk-table__row">
+							<th scope="row" class="govuk-table__header">Consignee</th>
+							<td class="govuk-table__cell">{{ case.application.consignee.name }}</td>
+							<td class="govuk-table__cell">{{ case.application.consignee|get_address }}</td>
+							<td class="govuk-table__cell">{{ case.application.consignee.sub_type.value }}</td>
+							<td class="govuk-table__cell">{{ case.application.consignee.website|linkify }}</td>
+							<td class="govuk-table__cell">
+								<a href="{% url 'cases:document' case.id case.application.consignee.document.id %}">
+									{{ case.application.consignee.document.name }}
+								</a>
+							</td>
+						</tr>
+						{% for ultimate_end_user in case.application.ultimate_end_users %}
+							<tr class="govuk-table__row">
+								<th scope="row" class="govuk-table__header">Ultimate end user</th>
+								<td class="govuk-table__cell">{{ ultimate_end_user.name }}</td>
+								<td class="govuk-table__cell">{{ ultimate_end_user|get_address }}</td>
+								<td class="govuk-table__cell">{{ ultimate_end_user.sub_type.value }}</td>
+								<td class="govuk-table__cell">{{ ultimate_end_user.website|linkify }}</td>
+								<td class="govuk-table__cell">
+									<a href="{% url 'cases:document' case.id ultimate_end_user.document.id %}">
+										{{ ultimate_end_user.document.name }}
+									</a>
+								</td>
+							</tr>
+						{% endfor %}
+						{% for party in case.application.third_parties %}
+							<tr class="govuk-table__row">
+								<th scope="row" class="govuk-table__header">Third party</th>
+								<td class="govuk-table__cell">{{ party.name }}</td>
+								<td class="govuk-table__cell">{{ party|get_address }}</td>
+								<td class="govuk-table__cell">{{ party.sub_type.value }}</td>
+								<td class="govuk-table__cell">{{ party.website|linkify }}</td>
+								<td class="govuk-table__cell">
+									<a href="{% url 'cases:document' case.id party.document.id %}">
+										{{ party.document.name }}
+									</a>
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<!-- Other Documents -->
+		<div class="govuk-accordion__section">
+			<div class="govuk-accordion__section-header">
+				<h2 class="govuk-accordion__section-heading">
+					<span class="govuk-accordion__section-button" id="accordion-default-heading-3">
+						{% lcs 'SUPPORTING_DOCUMENTATION_TITLE' %}
+					</span>
+				</h2>
+			</div>
+			<div id="accordion-default-content-3" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-3">
+				{% include 'case/includes/other-documents.html' %}
+			</div>
+		</div>
+
+		<!-- Activity -->
+		<div class="govuk-accordion__section">
+			<div class="govuk-accordion__section-header">
+				<h2 class="govuk-accordion__section-heading">
+					<span class="govuk-accordion__section-button" id="accordion-default-heading-3">
+						{% lcs 'CASE_ENTITIES_ACTIVITY' %}
+					</span>
+				</h2>
+			</div>
+			<div id="accordion-default-content-3" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-3">
+				{% include "case/views/activity.html" %}
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
+
+{% block javascript %}
+	<script src="{% static 'javascripts/more-actions.js' %}"></script>
+	<script src="{% static 'javascripts/edit-good-flags.js' %}"></script>
+	<script src="{% static 'javascripts/modal.js' %}"></script>
+	<script src="{% static 'javascripts/case.js' %}"></script>
+	<script src="{% static 'javascripts/select-buttons.js' %}"></script>
+
+	<script type="text/javascript">
+		$(".govuk-accordion__section").addClass("govuk-accordion__section--expanded");
+	</script>
+{% endblock %}

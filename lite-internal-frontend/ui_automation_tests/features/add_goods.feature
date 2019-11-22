@@ -8,11 +8,3 @@ Feature: I want to add a clc-case good to the goods list
     Scenario: Add "I don't know" good
         Given I go to internal homepage
         Then I see the clc-case previously created
-
-    @LT_1584_click_on_good
-    Scenario: Click on good
-        Given I create application or application has been previously created
-        And I go to internal homepage
-        When I go to application previously created
-        And I click on good
-        Then I see good information

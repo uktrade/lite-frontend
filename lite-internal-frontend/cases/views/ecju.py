@@ -38,7 +38,7 @@ class ViewEcjuQueries(TemplateView):
             "closed_ecju_queries": closed_ecju_queries,
             "title": get_string("cases.ecju_queries.title"),
         }
-        return render(request, "cases/case/ecju-queries.html", context)
+        return render(request, "case/ecju-queries.html", context)
 
 
 class CreateEcjuQuery(TemplateView):

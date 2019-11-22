@@ -1,7 +1,7 @@
 from selenium.webdriver.support.ui import Select
 import time
 
-from helpers.BasePage import BasePage
+from shared.BasePage import BasePage
 from selenium.common.exceptions import NoSuchElementException
 
 
@@ -33,17 +33,14 @@ class ApplicationPage(BasePage):
     MOVE_CASE_BUTTON = '[href*="move"]'  # CSS
     STATUS = "status"  # ID
     AUDIT_TRAIL_ITEM = ".app-activity__item"  # CSS
-    APPLICATION_SUMMARY_BOARD = ".govuk-summary-list"  # CSS
-    EU_TABLE = "end-user"  # ID
-    UEU_TABLE = "ultimate-end-users"  # ID
-    CONSIGNEE_TABLE = "consignee"  # ID
-    THIRD_PARTIES_TABLE = "third-parties"  # ID
+    APPLICATION_SUMMARY_BOARD = ".app-case-board"  # CSS
+    TABLE_ENTITIES = "table-entities"  # ID
     GIVE_ADVICE_BUTTON = "button-give-advice"  # ID
     CHECKBOX = '[type="checkbox"]'  # CSS
     DOWNLOAD_GOOD_DOCUMENT = "good_document"  # ID
     DOWNLOAD_END_USER_DOCUMENT = "end_user_document"  # ID
-    DOWNLOAD_ADDITIONAL_DOCUMENT = "additional_document"  # ID
-    ORGANISATION = "applicant_organisation"  # CSS
+    DOWNLOAD_ADDITIONAL_DOCUMENT = "supporting-documentation"  # ID
+    LINK_ORGANISATION_ID = "link-organisation"
     EDIT_GOODS_FLAGS = "button-edit-goods-flags"  # ID
 
     GOODS_DESCRIPTION_LINK = "#goods a"  # CSS
@@ -158,7 +155,7 @@ class ApplicationPage(BasePage):
         return self.driver.find_element_by_css_selector(self.APPLICATION_SUMMARY_BOARD).text
 
     def get_text_of_eu_table(self):
-        return self.driver.find_element_by_id(self.EU_TABLE).text
+        return self.driver.find_element_by_id(self.TABLE_ENTITIES).text
 
     def get_case_notification_anchor(self):
         return self.driver.find_element_by_id(self.CASE_NOTIFICATION_ANCHOR)
@@ -172,13 +169,13 @@ class ApplicationPage(BasePage):
         return None
 
     def get_text_of_ueu_table(self):
-        return self.driver.find_element_by_id(self.UEU_TABLE).text
+        return self.driver.find_element_by_id(self.TABLE_ENTITIES).text
 
     def get_text_of_consignee_table(self):
-        return self.driver.find_element_by_id(self.CONSIGNEE_TABLE).text
+        return self.driver.find_element_by_id(self.TABLE_ENTITIES).text
 
     def get_text_of_third_parties_table(self):
-        return self.driver.find_element_by_id(self.THIRD_PARTIES_TABLE).text
+        return self.driver.find_element_by_id(self.TABLE_ENTITIES).text
 
     def click_on_all_checkboxes(self):
         elements = self.driver.find_elements_by_css_selector(self.CHECKBOX)
@@ -215,8 +212,7 @@ class ApplicationPage(BasePage):
         return self.driver.find_element_by_id(self.DOWNLOAD_ADDITIONAL_DOCUMENT).is_enabled()
 
     def go_to_organisation(self):
-        element = self.driver.find_element_by_id(self.ORGANISATION)
-        self.driver.execute_script("arguments[0].click();", element)
+        self.driver.find_element_by_id(self.LINK_ORGANISATION_ID).click()
 
     def click_good_description_link(self):
         element = self.driver.find_element_by_css_selector(self.GOODS_DESCRIPTION_LINK)

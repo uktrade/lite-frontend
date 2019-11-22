@@ -1,0 +1,61 @@
+{% load humanize %}
+
+<table class="govuk-table" id="goods">
+	<thead class="govuk-table__head">
+		<tr class="govuk-table__row">
+			<th scope="col" class="govuk-table__header">
+				<button type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
+			</th>
+            <th class="govuk-table__header" scope="col">Control List Entry</th>
+			<th class="govuk-table__header" scope="col">Description</th>
+            <th class="govuk-table__header">Quantity/Value</th>
+			<th class="govuk-table__header">Documents</th>
+            <th class="govuk-table__header">Flags</th>
+			{% if show_advice %}
+				<th class="govuk-table__header" style="width: 350px;">Advice</th>
+			{% endif %}
+		</tr>
+	</thead>
+	<tbody class="govuk-table__body">
+		{% for good in case.application.goods %}
+			<tr class="govuk-table__row">
+                <td class="govuk-table__cell govuk-table__cell--checkbox">
+					<div class="govuk-checkboxes govuk-checkboxes--small">
+						<input class="govuk-checkboxes__input" type="checkbox" name="goods" value="{{ good.good.id }}" id="{{ good.good.id }}">
+						<label class="govuk-label {% if show_checkboxes %}govuk-checkboxes__label{% endif %}" for="{{ good.good.id }}"></label>
+					</div>
+				</td>
+				<td class="govuk-table__cell">
+					{{ good.good.control_code|default_na }}
+				</td>
+                <td class="govuk-table__cell">
+                	{{ good.good.description }}
+                </td>
+				<td class="govuk-table__cell">{{ good.quantity }} {{ good.unit.value }}/£{{ good.value|intcomma }}</td>
+				<td class="govuk-table__cell">
+				  {% for document in good.good.documents %}
+					  {% if document.safe == True %}
+						  <a class="govuk-link govuk-link--no-visited-state" id="good_document" href="{% url 'cases:document' case.id document.id %}">
+							  {% get_string 'cases.manage.documents.download_document' %}
+						  </a>
+					  {% endif %}
+				   {% endfor %}
+                <td class="govuk-table__cell">
+                    {% for flag in good.good.flags %}
+                        {{ flag.name }}<br>
+                    {% endfor %}
+                </td>
+				{% if show_advice %}
+					<td class="govuk-table__cell">
+						{% for advice in all_advice %}
+							{% if advice.good == good.good.id %}
+								{% include 'case/views/table-advice.html' %}
+							{% endif %}
+						{% endfor %}
+					</td>
+				{% endif %}
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>
+<p class="govuk-body govuk-!-margin-top-3 govuk-!-margin-bottom-0 govuk-!-font-weight-bold">{% lcs 'STANDARD_CASE_TOTAL_VALUE' %} £{{ total_goods_value|intcomma }}</p>

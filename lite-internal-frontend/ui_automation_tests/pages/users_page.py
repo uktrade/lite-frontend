@@ -2,7 +2,7 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.action_chains import ActionChains
 import time
 
-from helpers.BasePage import BasePage
+from shared.BasePage import BasePage
 
 
 class UsersPage(BasePage):

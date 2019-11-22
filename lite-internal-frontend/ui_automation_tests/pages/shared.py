@@ -1,5 +1,5 @@
 from shared.tools.helpers import scroll_to_element_by_id
-from helpers.BasePage import BasePage
+from shared.BasePage import BasePage
 
 
 class Shared(BasePage):

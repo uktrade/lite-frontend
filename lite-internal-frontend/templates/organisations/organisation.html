@@ -89,7 +89,22 @@
         </div>
     </dl>
 
-    {% include 'cases/case/views/organisation-flags.html' %}
+	<div id="flags-organisation" class="app-flags">
+		{% for flag in organisation.flags %}
+			<div class="app-flag" id="{{ flag.name }}">
+				{{ flag.name }}
+			</div>
+		{% endfor %}
+		{% if not hide_creation_link %}
+			<a id="link-organisation-flags" class="app-flag app-flag--action" href="{% url 'flags:assign_flags' %}?level=organisations&items={{ organisation.id }}">
+				{% if organisation.flags %}
+					{% lcs 'ORGANISATION_EDIT_FLAGS' %}
+				{% else %}
+					{% lcs 'ORGANISATION_SET_FLAGS' %}
+				{% endif %}
+			</a>
+		{% endif %}
+	</div>
 
 	<div class="lite-tabs--fade">
 		<div class="lite-tabs">
