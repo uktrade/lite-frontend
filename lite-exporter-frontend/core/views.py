@@ -100,6 +100,8 @@ class PickOrganisation(TemplateView):
             return form_page(request, self.form, errors={"organisation": ["Select an organisation to use"]})
 
         request.user.organisation = request.POST["organisation"]
+        organisation = get_organisation(request, request.user.organisation)
+        request.user.organisation_name = organisation["name"]
         request.user.save()
 
         return redirect("/")

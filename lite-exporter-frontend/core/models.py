@@ -46,6 +46,7 @@ class User(AbstractUser):
     user_token = models.TextField(default=None, blank=True, null=True)
     lite_api_user_id = models.TextField(default=None, blank=True, null=True)
     organisation = models.UUIDField(default=uuid.uuid4, null=True, blank=True)
+    organisation_name = models.TextField(default=None, blank=True, null=True)
 
     password = None
     last_login = None

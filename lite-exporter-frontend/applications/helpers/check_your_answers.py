@@ -189,8 +189,7 @@ def _convert_goods_locations(goods_locations):
                 "Site": site["name"],
                 "Address": site["address"]["address_line_1"]
                 + NEWLINE
-                + site["address"]["address_line_2"]
-                + NEWLINE
+                + (site["address"]["address_line_2"] + NEWLINE if site["address"]["address_line_2"] else "")
                 + site["address"]["city"]
                 + NEWLINE
                 + site["address"]["region"]
