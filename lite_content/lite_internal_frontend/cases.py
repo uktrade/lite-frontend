@@ -18,3 +18,8 @@ class ApplicationPage:
     edit_flags = "Edit goods flags"
     review_goods = "Review Goods"
     advice = "Give or change advice"
+
+
+class GenerateDocumentsPage:
+    TITLE = "Generate Document"
+    ERROR = "Document Generation is unavailable at this time"
