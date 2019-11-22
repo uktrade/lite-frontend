@@ -1,13 +1,14 @@
+from datetime import datetime
 from os import path, makedirs, chmod, pardir
 from re import search
-from allure import attach, attachment_type
 from time import sleep
+
+from allure import attach, attachment_type
+from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
-from selenium.common.exceptions import NoSuchElementException
-from datetime import datetime
 
 now = datetime.now().isoformat()
 file_path = path.abspath(path.join(path.dirname(path.abspath(__file__)), pardir))

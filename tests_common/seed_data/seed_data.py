@@ -1,4 +1,6 @@
 from .check_documents import check_documents
+from .make_requests import make_request
+from .request_data import create_request_data
 from .seed_classes.additional_document import SeedAdditionalDocument
 from .seed_classes.case import Case
 from .seed_classes.clc import Clc
@@ -10,8 +12,6 @@ from .seed_classes.party import Party
 from .seed_classes.picklist import Picklist
 from .seed_classes.queue import Queue
 from .seed_classes.user import User
-from .make_requests import make_request
-from .request_data import create_request_data
 
 
 class SeedData:

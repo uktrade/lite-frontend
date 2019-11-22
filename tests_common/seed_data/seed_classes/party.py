@@ -1,6 +1,6 @@
 from .seed_class import SeedClass
-from ..manage_s3_documents import upload_test_document_to_aws
 from ..make_requests import make_request
+from ..manage_s3_documents import upload_test_document_to_aws
 from ..request_data import create_document
 
 

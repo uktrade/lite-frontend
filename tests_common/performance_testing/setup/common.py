@@ -1,5 +1,5 @@
-from sys import exit
 from os import path, environ
+from sys import exit
 
 from ...seed_data.seed_data import SeedData
 
