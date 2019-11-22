@@ -7,17 +7,17 @@ class CaseDocumentsPage:
 
 class ApplicationPage:
     class Actions:
-        document = "Attached Documents"
-        ecju = "ECJU Queries"
-        move = "Move Case"
-        change_status = "Change Status"
-        decision = "Record Decision"
-        advice = "View Advice"
-        generate_document = "Generate Document"
+        DOCUMENT = "Attached Documents"
+        ECJU = "ECJU Queries"
+        MOVE = "Move Case"
+        CHANGE_STATUS = "Change Status"
+        DECISION = "Record Decision"
+        ADVICE = "View Advice"
+        GENERATE_DOCUMENT = "Generate Document"
 
-    edit_flags = "Edit goods flags"
-    review_goods = "Review Goods"
-    advice = "Give or change advice"
+    EDIT_FLAGS = "Edit goods flags"
+    REVIEW_GOODS = "Review Goods"
+    ADVICE = "Give or change advice"
 
 
 class GenerateDocumentsPage:
