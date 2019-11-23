@@ -11,7 +11,7 @@ CASES_ASSIGN_USERS = "Assign Users"
 
 CASE_CHANGES = "See what has changed"
 
-CASE_DOCUMENT_BUTTON = "Attached Documents"
+CASE_DOCUMENT_BUTTON = "Documents"
 CASE_ECJU_BUTTON = "ECJU Queries"
 CASE_MOVE_CASE_BUTTON = "Move Case"
 CASE_CHANGE_STATUS_BUTTON = "Change Status"
