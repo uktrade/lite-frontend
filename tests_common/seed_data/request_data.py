@@ -132,6 +132,6 @@ def create_request_data(exporter_user, gov_user, base_url):
         "letter_paragraph_picklist": create_picklist(
             "Letter Paragraph 1", "My letter paragraph is this.", "letter_paragraph"
         ),
-        "document_template": {"restricted_to": ["application"]},
+        "document_template": {"case_types": ["application"]},
     }
     return request_data
