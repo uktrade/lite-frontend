@@ -32,9 +32,9 @@ def put_letter_template(request, pk, json):
     return data.json(), data.status_code
 
 
-def get_letter_templates(request):
-    data = get(request, LETTER_TEMPLATES_URL)
-    return data.json()["results"]
+def get_letter_templates(request, params):
+    data = get(request, LETTER_TEMPLATES_URL + "?" + params)
+    return data.json()
 
 
 def post_letter_template(request, json):

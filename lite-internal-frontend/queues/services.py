@@ -3,7 +3,7 @@ import json
 from lite_forms.components import Option
 
 from conf.client import get, post, put
-from conf.constants import QUEUES_URL
+from conf.constants import QUEUES_URL, CASE_URL
 
 
 def get_queues(request, convert_to_options=False, include_system_queues=False):
@@ -47,7 +47,7 @@ def get_queue(request, pk, case_type=None, status=None, sort=None):
 
 
 def get_cases_search_data(request, params):
-    data = get(request, "/cases/" + "?" + params)
+    data = get(request, CASE_URL + "?" + params)
     return data.json()
 
 

@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
 
+from core.helpers import convert_dict_to_query_params
 from letter_templates import helpers
 from letter_templates.services import (
     get_letter_paragraphs,
@@ -11,7 +12,9 @@ from letter_templates.services import (
 
 class LetterTemplatesList(TemplateView):
     def get(self, request, **kwargs):
-        context = {"letter_templates": get_letter_templates(request)}
+        params = {"page": int(request.GET.get("page", 1))}
+        data = get_letter_templates(request, convert_dict_to_query_params(params))
+        context = {"data": data, "page": params.pop("page")}
         return render(request, "letter_templates/letter_templates.html", context)
 
 

@@ -49,4 +49,3 @@ So that I can create standard letters used by case workers and they can be updat
     Then The template paragraphs have been edited
     When I click save
     Then The paragraph text is present
-
