@@ -149,5 +149,14 @@ USER_PROFILE_PAGE_EDIT = "Edit"
 
 USER_ROLE_QUESTION = "What role should this user have?"
 
+USER_ADD_TITLE = "Add new user"
+USER_EMAIL_QUESTION = "Whats the user's email"
+USER_FIRST_NAME_QUESTION = "Whats the user's first name"
+USER_LAST_NAME_QUESTION = "Whats the user's last name"
+USER_ADD_FORM_BACK_TO_USERS = "Back to users"
+USER_EDIT_TITLE = "Edit user"
+USER_EDIT_FORM_BACK_TO_USER = "Back to user"
+USER_EDIT_FORM_SAVE = "Save"
+
 USER_DEACTIVATE = "Deactivate"
 USER_REACTIVATE = "Reactivate"
