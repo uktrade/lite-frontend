@@ -18,6 +18,8 @@ class ApplicationPage:
     EDIT_FLAGS = "Edit goods flags"
     REVIEW_GOODS = "Review Goods"
     ADVICE = "Give or change advice"
+    RESPOND_BUTTON = "Respond to Query"
+    CLOSED = "This case is closed"
 
 
 class GenerateDocumentsPage:
