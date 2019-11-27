@@ -7,8 +7,13 @@ def key_value(dictionary, key):
     if not dictionary:
         return
 
-    if key.endswith("[]"):
-        key = key[:-2]
+    try:
+        if key.endswith("[]"):
+            key = key[:-2]
+    # This allows defaultdicts to pass through unaffected as their keys
+    # do not have the endswith attribute
+    except AttributeError:
+        pass
 
     return dictionary.get(key)
 
