@@ -140,3 +140,7 @@ APPLICATION_EXTERNAL_LOCATION_PREEXISTING_LOCATION = "Use a pre-existing externa
 
 SELECT_SITES_TITLE = "Select which sites your goods are at"
 SELECT_SITES_BUTTON = "Select sites"
+
+COMBINE_USER_ADVICE = "Combine all user advice"
+GIVE_OR_CHANGE_ADVICE = "Give or change advice"
+CLEAR_ADVICE = "Clear advice"
