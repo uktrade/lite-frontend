@@ -26,3 +26,17 @@ class GenerateDocumentsPage:
 
     class SelectTemplateForm:
         BACK_LINK = "Back to Case"
+
+
+class AdditionalDocumentsPage:
+    class Table:
+        NAME_COLUMN = "Name"
+        DOCUMENT_TYPE_COLUMN = "Type"
+        DESCRIPTION_COLUMN = "Description"
+        USER_COLUMN = "Added by"
+        DATE_COLUMN = "Date"
+
+    class Document:
+        DOWNLOAD_LINK = "Download"
+        INFECTED_LABEL = "Infected"
+        PROCESSING_LABEL = "Processing"
