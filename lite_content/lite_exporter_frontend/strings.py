@@ -168,3 +168,9 @@ MANAGE_ORGANISATIONS_ROLES_TAB = "Roles"
 ROLE_INDEX_TABLE_HEADER_ROLE = "Role"
 ROLE_INDEX_TABLE_HEADER_PERMISSIONS = "Users with this role "
 ROLE_INDEX_TABLE_EDIT_ROLE = "Edit"
+
+
+HUB_MANAGE_MY_USERS = "Manage my users"
+HUB_MANAGE_MY_SITES = "Manage my sites"
+HUB_MANAGE_MY_ROLES = "Manage my roles"
+HUB_MANAGE_MY_ORGANISATION = "Manage my organisation"
