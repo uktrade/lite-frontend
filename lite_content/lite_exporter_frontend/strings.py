@@ -142,3 +142,12 @@ APPLICATION_EXTERNAL_LOCATION_PREEXISTING_LOCATION = "Use a pre-existing externa
 
 SELECT_SITES_TITLE = "Select which sites your goods are at"
 SELECT_SITES_BUTTON = "Select sites"
+
+USERS_LIST_PAGE_EDIT = "Edit"
+
+USER_PROFILE_PAGE_EDIT = "Edit"
+
+USER_ROLE_QUESTION = "What role should this user have?"
+
+USER_DEACTIVATE = "Deactivate"
+USER_REACTIVATE = "Reactivate"
