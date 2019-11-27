@@ -1,8 +1,7 @@
 class CaseDocumentsPage:
-    title = "Case Documents"
-    back_link = "Back to Case"
-    attach = "Attach Document"
-    generate = "Generate Document"
+    BACK_LINK = "Back to Case"
+    ATTACH = "Attach Document"
+    GENERATE = "Generate Document"
 
 
 class ApplicationPage:
