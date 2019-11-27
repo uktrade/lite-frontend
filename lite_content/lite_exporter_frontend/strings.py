@@ -146,6 +146,7 @@ SELECT_SITES_BUTTON = "Select sites"
 USERS_LIST_PAGE_EDIT = "Edit"
 
 USER_PROFILE_PAGE_EDIT = "Edit"
+USER_PROFILE_BACK_TO_USERS = "Back to users"
 
 USER_ROLE_QUESTION = "What role should this user have?"
 
@@ -174,3 +175,8 @@ HUB_MANAGE_MY_USERS = "Manage my users"
 HUB_MANAGE_MY_SITES = "Manage my sites"
 HUB_MANAGE_MY_ROLES = "Manage my roles"
 HUB_MANAGE_MY_ORGANISATION = "Manage my organisation"
+
+
+SUBMIT_APPLICATION = "Submit application"
+EDIT_APPLICATION_SUBMIT = "Submit application"
+EDIT_APPLICATION_DONE = "Done"
