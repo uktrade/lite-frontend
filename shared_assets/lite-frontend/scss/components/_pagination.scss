@@ -4,38 +4,25 @@
 }
 
 .lite-pagination__item {
-	@include govuk-font($size: 16, $weight: bold);
+	@include govuk-font($size: 14, $weight: bold);
 	position: relative;
 	display: inline-block;
 	box-sizing: border-box;
-	min-width: 40px;
-	height: 40px;
-	text-align: center;
-	color: $govuk-link-colour;
+	color: govuk-colour("dark-grey");
 	text-decoration: none;
 	line-height: 40px!important;
 	cursor: pointer;
 	user-select: none;
-	margin-right: govuk-spacing(1);
-	padding: 0 govuk-spacing(3);
-	opacity: .8;
+	margin-right: govuk-spacing(2);
+	padding: 0 govuk-spacing(2);
+	border-bottom: 2px solid transparent;
 
 	&:hover {
-		background-color: govuk-colour("light-grey");
-	}
-
-	&:active {
-		background-color: govuk-colour("mid-grey");
+		border-color: govuk-colour("mid-grey");
 	}
 
 	&--selected {
-		opacity: 1;
-
-		&::after {
-			@include fill-pseudo();
-			left: 10px;
-			right: 10px;
-			border-bottom: 2px solid $govuk-link-colour;
-		}
+		border-color: govuk-colour("blue")!important;
+		color: govuk-colour("black");
 	}
 }
