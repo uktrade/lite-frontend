@@ -192,7 +192,7 @@ class Checkboxes(_Component):
     """
     Displays checkboxes on the page
     Add Option components to the options array to show checkboxes
-    Add optional classes such as 'lite-checkboxes--inline' or 'govuk-checkboxes--small'
+    Add optional classes such as 'govuk-checkboxes--inline' or 'govuk-checkboxes--small'
     """
 
     def __init__(
