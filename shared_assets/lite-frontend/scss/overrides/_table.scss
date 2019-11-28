@@ -1,4 +1,6 @@
 .govuk-table__cell--checkbox {
+	// Style a table cell so that a checkbox
+	// fits in it correctly
 	@extend .govuk-checkboxes--small;
 	position: relative;
 	width: 40px!important;

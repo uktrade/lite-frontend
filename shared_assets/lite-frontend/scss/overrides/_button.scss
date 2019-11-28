@@ -1,5 +1,7 @@
 .govuk-button--secondary-white {
-	background-color: white;
+	// Add an alternative secondary style for use when
+	// the button is on a grey background
+	background-color: govuk-colour("white");
 
 	&:hover {
 		background-color: darken(govuk-colour("light-grey"), 5%);

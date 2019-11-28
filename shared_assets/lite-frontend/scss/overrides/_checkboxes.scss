@@ -8,3 +8,17 @@
 	border: none;
 	background-color: currentColor;
 }
+
+.govuk-checkboxes--inline {
+	// Add inline checkboxes as GOV.UK Frontend lacks it
+	& > * {
+		display: inline-block;
+	}
+
+	.govuk-checkboxes__label {
+		min-width: 50px;
+		text-align: center;
+		padding-left: 0;
+		padding-right: 15px;
+	}
+}
