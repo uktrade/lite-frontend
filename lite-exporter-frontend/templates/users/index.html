@@ -15,10 +15,15 @@
 	<h2 class="govuk-heading-l">{{ organisation.name }}</h2>
 
 	<div style="display: grid; grid-template-columns: 1fr auto; grid-gap: 30px;">
-		<div class="lite-tabs--fade">
+		<div class="lite-tabs__container">
 			<div class="lite-tabs">
-				<a href="{% url 'users:users' %}" class="lite-tabs__tab lite-tabs__tab--selected">Members</a>
-				<a href="{% url 'sites:sites' %}" class="lite-tabs__tab">Sites</a>
+				<a href="{% url 'users:users' %}" class="lite-tabs__tab lite-tabs__tab--selected" id="tab-users">{% lcs "MANAGE_ORGANISATIONS_MEMBERS_TAB" %}</a>
+                {% if can_administer_sites %}
+				    <a href="{% url 'sites:sites' %}" class="lite-tabs__tab" id="tab-sites">{% lcs "MANAGE_ORGANISATIONS_SITES_TAB" %}</a>
+                {% endif %}
+                {% if can_administer_roles %}
+                    <a href="{% url 'roles:roles' %}" class="lite-tabs__tab" id="tab-roles">{% lcs "MANAGE_ORGANISATIONS_ROLES_TAB" %}</a>
+                {% endif %}
 			</div>
 		</div>
 		<div class="lite-app-bar__controls">
@@ -33,6 +38,7 @@
 			<tr class="govuk-table__row">
 				<th class="govuk-table__header" scope="col">Name</th>
 				<th class="govuk-table__header" scope="col">Email</th>
+                <th class="govuk-table__header" scope="col">Role</th>
 				<th class="govuk-table__header" scope="col">Status</th>
                 <th class="govuk-table__header" scope="col"></th>
 			</tr>
@@ -46,6 +52,7 @@
 						</a>
 					</td>
 					<td class="govuk-table__cell">{{ user.email }}</td>
+					<td class="govuk-table__cell">{{ user.role.name }}</td>
 					<td class="govuk-table__cell">{{ user.status }}</td>
 					<td class="govuk-table__cell">
 						<a href="{% url 'users:edit' user.id %}" style="margin: 0;" class="govuk-link govuk-link--no-visited-state">Edit</a>

@@ -112,3 +112,10 @@ def remove_prefix(json, prefix):
             field = k[len(prefix) :]
             post_data[field] = json[k]
     return post_data
+
+
+def println(content=None, no=1):
+    print("\n" * no)
+    if content:
+        print(content)
+        print("\n" * no)

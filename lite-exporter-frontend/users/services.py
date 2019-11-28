@@ -1,5 +1,5 @@
 from conf.client import get, post, put
-from conf.constants import USERS_URL
+from conf.constants import USERS_URL, SUPER_USER_ROLE_ID
 
 
 def get_user(request, pk=None):
@@ -23,3 +23,7 @@ def post_users(request, json):
 def update_user(request, pk, json):
     data = put(request, USERS_URL + pk + "/", json)
     return data.json(), data.status_code
+
+
+def is_super_user(user):
+    return user["user"]["role"]["id"] == SUPER_USER_ROLE_ID

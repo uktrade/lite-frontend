@@ -24,11 +24,6 @@ Feature: I want to manage users
     When I add self
     Then error message is "is already a member of this organisation"
 
-  @edit_user
-  Scenario: Edit user
-    Given I go to exporter homepage and choose Test Org
-    When I edit user then user is edited
-
   @reactivate_oneself
   Scenario: Reactivate oneself
     Given I go to exporter homepage and choose Test Org

@@ -1,4 +1,6 @@
 from django.urls import reverse_lazy
+
+from lite_content.lite_exporter_frontend import strings
 from lite_forms.common import country_question
 from lite_forms.components import (
     RadioButtons,
@@ -158,7 +160,10 @@ def copy_end_user_advisory_form(individual, commercial):
                     country_question(countries=get_countries(None, True), prefix="end_user."),
                     HiddenField("validate_only", True),
                 ],
-                default_button_name="Continue",
+                back_link=BackLink(
+                    strings.COPY_END_USER_ADVISORY_BACK_TO_END_USER_ADVISORIES, reverse_lazy("end_users:end_users")
+                ),
+                default_button_name=strings.CONTINUE,
             ),
             Form(
                 title="More information about this advisory",

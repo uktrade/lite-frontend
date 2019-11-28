@@ -1,10 +1,13 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
+
+from conf.constants import Permissions
 from lite_forms.generators import form_page
 from lite_forms.helpers import flatten_data, nest_data
 
 from core.services import get_organisation
+from roles.services import get_user_permissions
 from sites.forms import new_site_form, edit_site_form
 from sites.services import get_sites, get_site, post_sites, put_site
 
@@ -14,11 +17,21 @@ class Sites(TemplateView):
         organisation_id = str(request.user.organisation)
         sites = get_sites(request, organisation_id)
         organisation = get_organisation(request, organisation_id)
+        user_permissions = get_user_permissions(request)
+
+        users, roles = False, False
+        if Permissions.ADMINISTER_USERS in user_permissions:
+            users = True
+
+        if Permissions.EXPORTER_ADMINISTER_ROLES in user_permissions:
+            roles = True
 
         context = {
             "title": "Sites - " + organisation["name"],
             "sites": sites,
             "organisation": organisation,
+            "can_administer_roles": roles,
+            "can_administer_users": users,
         }
         return render(request, "sites/index.html", context)
 

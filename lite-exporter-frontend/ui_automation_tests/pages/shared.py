@@ -6,11 +6,12 @@ class Shared(BasePage):
     RADIO_BUTTONS = ".govuk-radios__label"  # CSS
     ERROR_MESSAGES = ".govuk-error-summary__body"
     ERROR_MESSAGE = ".govuk-error-message"
-    GOV_BODY = ".govuk-body"
+    GOV_TABLE_BODY = ".govuk-table__body"
     GOV_GRID_ROW = ".govuk-grid-row"
     GOV_TABLE = ".govuk-table"
     GOV_TABLE_ROW = ".govuk-table__row"
     GOV_TABLE_CELL_LINKS = ".govuk-table__cell a"
+    GOV_TABLE_CELL = ".govuk-table__cell"
     APPLICATION_NAME = "a[href*='overview']"
     H2 = "h2"
     H1 = "h1"
@@ -41,9 +42,6 @@ class Shared(BasePage):
     def click_on_radio_buttons(self, no):
         return self.driver.find_elements_by_css_selector(self.RADIO_BUTTONS)[no].click()
 
-    def get_text_of_gov_body(self):
-        return self.driver.find_element_by_css_selector(self.GOV_BODY).text
-
     def get_text_of_gov_grid_row(self):
         return self.driver.find_element_by_css_selector(self.GOV_GRID_ROW).text
 
@@ -70,3 +68,9 @@ class Shared(BasePage):
 
     def click_on_application_name(self):
         return self.driver.find_element_by_css_selector(self.APPLICATION_NAME).click()
+
+    def get_cells_in_gov_table(self):
+        return self.driver.find_elements_by_css_selector(self.GOV_TABLE_CELL)
+
+    def get_text_of_govuk_table_body(self):
+        return self.driver.find_element_by_css_selector(self.GOV_TABLE_BODY).text

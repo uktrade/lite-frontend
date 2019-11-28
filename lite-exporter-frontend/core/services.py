@@ -122,8 +122,9 @@ def get_organisation_user(request, pk, user_pk):
     return data.json()
 
 
-def put_organisation_user(request, pk, user_pk, json):
-    data = put(request, ORGANISATIONS_URL + pk + "/users/" + user_pk + "/", json)
+def put_organisation_user(request, user_pk, json):
+    organisation_id = str(request.user.organisation)
+    data = put(request, ORGANISATIONS_URL + organisation_id + "/users/" + str(user_pk) + "/", json)
     return data.json(), data.status_code
 
 

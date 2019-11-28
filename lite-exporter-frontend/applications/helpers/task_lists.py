@@ -12,8 +12,18 @@ from applications.services import (
     get_consignee_document,
     get_additional_documents,
 )
-from conf.constants import HMRC_QUERY, OPEN_LICENCE, STANDARD_LICENCE, APPLICANT_EDITING, NOT_STARTED, DONE, IN_PROGRESS
+from conf.constants import (
+    HMRC_QUERY,
+    OPEN_LICENCE,
+    STANDARD_LICENCE,
+    APPLICANT_EDITING,
+    NOT_STARTED,
+    DONE,
+    IN_PROGRESS,
+    Permissions,
+)
 from core.services import get_sites_on_draft, get_external_locations_on_draft
+from roles.services import get_user_permissions
 
 
 def get_application_task_list(request, application, errors=None):
@@ -56,6 +66,11 @@ def _get_standard_application_task_list(request, application, errors=None):
     countries_on_goods_types = False
 
     ultimate_end_users = get_ultimate_end_users(request, application_id)
+    ultimate_end_users_documents_complete = True
+    for ueu in ultimate_end_users:
+        if not ueu.get("document"):
+            ultimate_end_users_documents_complete = False
+            break
     third_parties = get_third_parties(request, application_id)
     end_user = application.get("end_user")
     consignee = application.get("consignee")
@@ -73,6 +88,9 @@ def _get_standard_application_task_list(request, application, errors=None):
         if not good["good"]["is_good_end_product"]:
             ultimate_end_users_required = True
 
+    user_permissions = get_user_permissions(request)
+    submit = Permissions.SUBMIT_LICENCE_APPLICATION in user_permissions
+
     context = {
         "application": application,
         "is_editing": is_editing,
@@ -84,12 +102,14 @@ def _get_standard_application_task_list(request, application, errors=None):
         "external_locations": external_locations["external_locations"],
         "ultimate_end_users": ultimate_end_users,
         "ultimate_end_users_required": ultimate_end_users_required,
+        "ultimate_end_users_documents_complete": ultimate_end_users_documents_complete,
         "end_user_document": end_user_document,
         "consignee_document": consignee_document,
         "countries_on_goods_types": countries_on_goods_types,
         "third_parties": third_parties,
         "additional_documents": additional_documents["documents"],
         "errors": errors,
+        "can_submit": submit,
     }
     return render(request, "applications/standard-application-edit.html", context)
 
@@ -122,6 +142,9 @@ def _get_open_application_task_list(request, application, errors=None):
         if good["countries"]:
             countries_on_goods_types = True
 
+    user_permissions = get_user_permissions(request)
+    submit = Permissions.SUBMIT_LICENCE_APPLICATION in user_permissions
+
     context = {
         "application": application,
         "is_editing": is_editing,
@@ -138,6 +161,7 @@ def _get_open_application_task_list(request, application, errors=None):
         "third_parties": third_parties,
         "additional_documents": additional_documents["documents"],
         "errors": errors,
+        "can_submit": submit,
     }
     return render(request, "applications/open-application-edit.html", context)
 

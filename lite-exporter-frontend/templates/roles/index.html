@@ -1,0 +1,97 @@
+{% extends 'layouts/base.html' %}
+
+{% load svg %}
+
+{% block back_link %}
+	{% include 'includes/breadcrumbs.html' %}
+{% endblock %}
+
+{% block body %}
+
+	<h2 class="govuk-heading-l">{{ organisation.name }}</h2>
+
+	<div style="display: grid; grid-template-columns: 1fr auto; grid-gap: 30px;">
+		<div class="lite-tabs__container">
+			<div class="lite-tabs">
+                {% if organisation.sub_type.key != 'individual' %}
+                    {% if can_administer_users %}
+				        <a href="{% url 'users:users' %}" class="lite-tabs__tab" id="tab-users">{% lcs "MANAGE_ORGANISATIONS_MEMBERS_TAB" %}</a>
+                    {% endif %}
+                {% endif %}
+				{% if can_administer_sites %}<a href="{% url 'sites:sites' %}" class="lite-tabs__tab lite-tabs__tab" id="tab-sites">{% lcs "MANAGE_ORGANISATIONS_SITES_TAB" %}</a>{% endif %}
+				<a href="{% url 'roles:roles' %}" class="lite-tabs__tab lite-tabs__tab--selected" id="tab-roles">{% lcs "MANAGE_ORGANISATIONS_ROLES_TAB" %}</a>
+			</div>
+		</div>
+		{% if 'EXPORTER_ADMINISTER_ROLES' in user_permissions %}
+            <div class="lite-app-bar__controls">
+                <a id="button-add-role" href="{% url 'roles:new' %}" class="govuk-button" draggable="false" role="button">
+                    {% lcs 'ROLES_LIST_PAGE_CREATE' %}
+                </a>
+            </div>
+        {% endif %}
+	</div>
+
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h2 class="govuk-heading-l">{{ title }}</h2>
+			<p class="govuk-caption-m">
+				{% lcs 'ROLES_DESCRIPTION' %}
+			</p>
+		</div>
+        {% if 'ADMINISTER_ROLES' in user_permissions %}
+            <div class="lite-app-bar__controls">
+                <a id="button-add-role" href="{% url 'users:add_role' %}" class="govuk-button" draggable="false" role="button">
+                    {% lcs 'ROLES_LIST_PAGE_CREATE' %}
+                </a>
+            </div>
+        {% endif %}
+	</div>
+
+    <table class="govuk-table">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th class="govuk-table__header" scope="col">{% lcs "ROLE_INDEX_TABLE_HEADER_ROLE" %}</th>
+                <th class="govuk-table__header" scope="col">{% lcs "ROLE_INDEX_TABLE_HEADER_PERMISSIONS" %}<span aria-hidden="true">can</span></th>
+                <th class="govuk-table__header" scope="col"></th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+            {% for role in roles %}
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">
+						{{ role.name }}
+                    </td>
+                    <td class="govuk-table__cell">
+						<ul class="lite-tick-cross-list">
+							{% for permission in all_permissions %}
+								<li>
+									{% if permission.id in role.permissions %}
+										<span class="lite-tick-cross lite-tick-cross--tick">
+											{% svg 'tick' %}
+											<span class="govuk-visually-hidden">Can</span>
+											{{ permission.name }}
+										</span>
+									{% else %}
+										<span class="lite-tick-cross lite-tick-cross--cross">
+											{% svg 'cross' %}
+											<span class="govuk-visually-hidden">Cannot</span>
+											{{ permission.name }}
+										</span>
+									{% endif %}
+								</li>
+							{% endfor %}
+						</ul>
+					</td>
+                    <td class="govuk-table__cell">
+                        {% if not role.id in immutable_roles %}
+                            {% if 'EXPORTER_ADMINISTER_ROLES' in user_permissions %}
+                                <a href="{% url 'roles:edit' role.id %}" class="govuk-link govuk-link--no-visited-state">{% lcs "ROLE_INDEX_TABLE_EDIT_ROLE" %}</a>
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

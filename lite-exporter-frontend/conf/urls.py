@@ -10,5 +10,6 @@ urlpatterns = [
     path("licences/", include("licences.urls")),
     path("sites/", include("sites.urls")),
     path("users/", include("users.urls")),
+    path("roles/", include("roles.urls")),
     path("", include("hmrc.urls")),
 ]
