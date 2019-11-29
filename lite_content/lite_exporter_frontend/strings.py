@@ -195,3 +195,5 @@ EDIT_APPLICATION_SUBMIT = "Submit application"
 EDIT_APPLICATION_DONE = "Done"
 
 COPY_END_USER_ADVISORY_BACK_TO_END_USER_ADVISORIES = "Back to end user advisories"
+
+NOTIFICATIONS = "Notifications"
