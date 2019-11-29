@@ -128,6 +128,8 @@ APPLICATION_WITHDRAW_NO_LABEL = NO
 APPLICATION_WITHDRAW_SUBMIT_BUTTON = SUBMIT
 APPLICATION_WITHDRAW_ERROR = "Select a choice"
 
+# Roles
+ROLES_LIST_PAGE_CREATE = "Add role"
 # Where are your goods located?
 APPLICATION_WHERE_ARE_YOUR_GOODS_LOCATED_TITLE = "Where are your goods located?"
 APPLICATION_WHERE_ARE_YOUR_GOODS_LOCATED_DESCRIPTION = "You can only choose one type of location per application."
@@ -195,3 +197,5 @@ EDIT_APPLICATION_SUBMIT = "Submit application"
 EDIT_APPLICATION_DONE = "Done"
 
 COPY_END_USER_ADVISORY_BACK_TO_END_USER_ADVISORIES = "Back to end user advisories"
+
+NOTIFICATIONS = "Notifications"
