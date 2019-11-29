@@ -142,3 +142,58 @@ APPLICATION_EXTERNAL_LOCATION_PREEXISTING_LOCATION = "Use a pre-existing externa
 
 SELECT_SITES_TITLE = "Select which sites your goods are at"
 SELECT_SITES_BUTTON = "Select sites"
+
+USERS_LIST_PAGE_EDIT = "Edit"
+
+USER_PROFILE_PAGE_EDIT = "Edit"
+USER_PROFILE_BACK_TO_USERS = "Back to users"
+
+USER_ROLE_QUESTION = "What role should this user have?"
+
+USER_ADD_TITLE = "Add new user"
+USER_EMAIL_QUESTION = "Whats the user's email"
+USER_FIRST_NAME_QUESTION = "Whats the user's first name"
+USER_LAST_NAME_QUESTION = "Whats the user's last name"
+USER_ADD_FORM_BACK_TO_USERS = "Back to users"
+USER_EDIT_TITLE = "Edit user"
+USER_EDIT_FORM_BACK_TO_USER = "Back to user"
+USER_EDIT_FORM_SAVE = "Save"
+
+USER_DEACTIVATE = "Deactivate"
+USER_REACTIVATE = "Reactivate"
+
+MANAGE_ORGANISATIONS_MEMBERS_TAB = "Members"
+MANAGE_ORGANISATIONS_SITES_TAB = "Sites"
+MANAGE_ORGANISATIONS_ROLES_TAB = "Roles"
+
+ROLE_INDEX_TABLE_HEADER_ROLE = "Role"
+ROLE_INDEX_TABLE_HEADER_PERMISSIONS = "Users with this role "
+ROLE_INDEX_TABLE_EDIT_ROLE = "Edit"
+
+ADD_ROLE_TITLE = "Add a role"
+ADD_ROLE_DESCRIPTION = "This will create a new role to use within your organisation"
+EDIT_ROLE_TITLE = "Edit a role"
+EDIT_ROLE_DESCRIPTION = "This will change this role within your organisation"
+ROLES_ADD_NAME = "What do you want to call the role?"
+ROLES_ADD_PERMISSIONS = "What permissions should this role have?"
+ROLES_ADD_PERMISSIONS_DESCRIPTION = "Select all permissions that apply."
+ROLES_ADD_FORM_BACK_TO_ROLES = "Back to Roles"
+ROLES_ADD_FORM_CREATE = "Create"
+ROLES_EDIT_NAME = "What do you want to call the role?"
+ROLES_EDIT_PERMISSIONS = "What permissions should this role have?"
+ROLES_EDIT_PERMISSIONS_DESCRIPTION = "Select all permissions that apply."
+ROLES_EDIT_FORM_BACK_TO_ROLES = "Back to Roles"
+ROLES_EDIT_FORM_CREATE = "Create"
+
+
+HUB_MANAGE_MY_USERS = "Manage my users"
+HUB_MANAGE_MY_SITES = "Manage my sites"
+HUB_MANAGE_MY_ROLES = "Manage my roles"
+HUB_MANAGE_MY_ORGANISATION = "Manage my organisation"
+
+
+SUBMIT_APPLICATION = "Submit application"
+EDIT_APPLICATION_SUBMIT = "Submit application"
+EDIT_APPLICATION_DONE = "Done"
+
+COPY_END_USER_ADVISORY_BACK_TO_END_USER_ADVISORIES = "Back to end user advisories"
