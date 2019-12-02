@@ -35,7 +35,7 @@
                             <a class="govuk-link govuk-link--no-visited-state app-icon-label" href="{% url 'end_users:end_user' pk=advisory.id %}">
 							    {{ advisory.end_user.name }}
                                 {% if advisory.id in notifications %}
-                                    <span class="app-icon-label__notification">{{ notifications|key_value:advisory.id }} <span class="govuk-visually-hidden"> notifications</span></span>
+                                    <span class="lite-notification-bubble">{{ notifications|key_value:advisory.id }} <span class="govuk-visually-hidden"> {% lcs "NOTIFICATIONS" %}</span></span>
                                 {% endif %}
                             </a>
 						</td>

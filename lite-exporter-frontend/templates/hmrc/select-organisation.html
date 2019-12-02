@@ -66,17 +66,7 @@
 				</div>
 			</div>
 
-		    {% if data.total_pages > 1 %}
-		        <br>
-
-		        <div class="lite-pagination__container ">
-		            {% for i in data.total_pages|times %}
-		                <a href="{% url 'raise_hmrc_query:select_organisation' %}?{{ params_str }}&page={{ i }}" class="lite-pagination__item {% if page == i %}lite-pagination__item--selected{% endif %}" id="page-{{ i }}">
-		                    {{ i }}
-		                </a>
-		            {% endfor %}
-		        </div>
-		    {% endif %}
+			{% include "includes/pagination.html" with data=data %}
 
 			<button class="govuk-button" name="action" value="continue" data-module="govuk-button">
 				Continue

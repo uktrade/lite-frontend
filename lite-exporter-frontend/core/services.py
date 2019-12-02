@@ -92,7 +92,7 @@ def get_notifications(request, unviewed):
 
 
 # Organisation
-def get_organisations(request, page: int = 0, search_term=None, org_type=None):
+def get_organisations(request, page: int = 1, search_term=None, org_type=None):
     """
     Returns a list of organisations
     :param request: Standard HttpRequest object

@@ -27,16 +27,16 @@
 
 	<div class="lite-tabs__container">
 		<div class="lite-tabs">
-			<a href="{% url 'applications:applications' %}?drafts=false" class="lite-tabs__tab">
+			<a href="{% url 'applications:applications' %}?submitted=True" class="lite-tabs__tab">
 				In Progress
 			</a>
-			<a href="{% url 'applications:applications' %}?drafts=true" class="lite-tabs__tab lite-tabs__tab--selected">
+			<a href="{% url 'applications:applications' %}?submitted=False" class="lite-tabs__tab lite-tabs__tab--selected">
 				Drafts
 			</a>
 		</div>
 	</div>
 
-	{% if drafts.results %}
+	{% if applications.results %}
 		<table class="govuk-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
@@ -48,7 +48,7 @@
 						Created On
 					</th>
 					{% if organisation.type.key != 'hmrc' %}
-						<th class="govuk-table__header">
+						<th class="govuk-table__header govuk-table__cell--nowrap">
 							Export Type
 						</th>
 					{% endif %}
@@ -57,7 +57,7 @@
 				</tr>
 			</thead>
 			<tbody class="govuk-table__head">
-				{% for draft in drafts.results %}
+				{% for draft in applications.results %}
 					<tr class="govuk-table__row">
 						<td class="govuk-table__cell">
 							<a class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:task_list' draft.id %}">
@@ -67,7 +67,7 @@
 						<td class="govuk-table__cell">
 							{{ draft.application_type.value }}
 						</td>
-						<td class="govuk-table__cell">
+						<td class="govuk-table__cell govuk-table__cell--nowrap">
 							{{ draft.last_modified_at|str_date }}
 						</td>
 						{% if organisation.type.key != 'hmrc' %}
@@ -75,7 +75,7 @@
 								{{ draft.export_type.value }}
 							</td>
 						{% endif %}
-						<td class="govuk-table__cell govuk-table__cell--numeric">
+						<td class="govuk-table__cell govuk-table__cell--numeric govuk-table__cell--nowrap">
 							<a id="link-delete-draft" href="{% url 'applications:delete' draft.id %}" class="govuk-link lite-link--icon">
                                 {% svg 'close' %}
                                 {% lcs 'DRAFT_DELETE_LINK' %}
@@ -85,6 +85,9 @@
 				{% endfor %}
 			</tbody>
 		</table>
+
+		{% include "includes/pagination.html" with data=applications %}
+
 	{% else %}
 		<br>
 		<div class="lite-information-text">

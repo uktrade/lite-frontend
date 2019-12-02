@@ -3,21 +3,6 @@ $lite-transition-speed: 0s !default;
 @import "../shared/lite-frontend/scss/all"; // LITE Design System
 @import "components/all"; // Local assets
 
-main {
-	min-height: 60vh;
-}
-
-.govuk-table {
-	table-layout: fixed;
-}
-
-.govuk-table__cell {
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	word-break: break-all;
-}
-
 .govuk-summary-list__key--highlight {
 	border-left: govuk-spacing(1) solid govuk-colour("orange");
 	padding-left: govuk-spacing(3);
@@ -51,43 +36,7 @@ main {
 }
 
 .app-icon-label {
-	text-decoration: none;
-	display: flex;
-	align-items: center;
-	justify-content: flex-start;
-
-	&__notification {
-		@include govuk-font($size: 14, $weight: bold);
-		display: inline-block;
-		margin-left: govuk-spacing(1);
-		margin-top: 1px;
-		min-width: 16px;
-		height: 16px;
-		background-color: govuk-colour("red");
-		line-height: 16px!important;
-		color: govuk-colour("white");
-		border-radius: 8px;
-		text-align: center;
-		margin-bottom: 2px;
-		text-decoration: none!important;
-	}
-
-	&:hover {
-		p {
-			text-decoration: underline;
-		}
-
-		.app-icon-label__notification {
-			background-color: darken(govuk-colour("red"), 7.5%);
-		}
-	}
-
-	&:active {
-		.app-icon-label__notification {
-			background-color: darken(govuk-colour("red"), 15%);
-		}
-	}
-
+	display: inline-block;
 	p {
 		margin: 0;
 		padding: 0;

@@ -1,3 +1,5 @@
+from json import JSONDecodeError
+
 from django.http import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
@@ -15,8 +17,11 @@ from users.services import get_user
 
 class Hub(TemplateView):
     def get(self, request, **kwargs):
-        user, _ = get_user(request)
-        user_permissions = user["user"]["role"]["permissions"]
+        try:
+            user, _ = get_user(request)
+            user_permissions = user["user"]["role"]["permissions"]
+        except JSONDecodeError:
+            return redirect("authbroker:login")
 
         if Permissions.ADMINISTER_USERS in user_permissions:
             manage_organisation_section_link = reverse_lazy("users:users")
@@ -41,7 +46,9 @@ class Hub(TemplateView):
                     [
                         Tile(get_string("applications.title"), "", reverse_lazy("applications:applications")),
                         Tile(
-                            get_string("drafts.title"), "", reverse_lazy("applications:applications") + "?drafts=true"
+                            get_string("drafts.title"),
+                            "",
+                            reverse_lazy("applications:applications") + "?submitted=False",
                         ),
                     ],
                 ),

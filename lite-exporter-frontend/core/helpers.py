@@ -22,6 +22,14 @@ class Tile:
         self.url = url
 
 
+def str_to_bool(v, invert_none=False):
+    if v is None:
+        return invert_none
+    if isinstance(v, bool):
+        return v
+    return v.lower() in ("yes", "true", "t", "1")
+
+
 def str_date_only(value):
     return_value = do_timezone(datetime.datetime.strptime(value, ISO8601_FMT), "Europe/London")
     return return_value.strftime("%d %B %Y")

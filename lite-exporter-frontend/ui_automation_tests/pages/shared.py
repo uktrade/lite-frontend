@@ -16,7 +16,7 @@ class Shared(BasePage):
     H2 = "h2"
     H1 = "h1"
     LITE_SECTION = ".lite-section"
-    NOTIFICATION = ".app-icon-label__notification"  # CSS
+    NOTIFICATION = ".lite-notification-bubble"  # CSS
 
     def get_text_of_error_messages(self):
         return self.driver.find_element_by_css_selector(self.ERROR_MESSAGES).text

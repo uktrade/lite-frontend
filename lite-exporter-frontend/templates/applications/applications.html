@@ -28,10 +28,10 @@
 
 	<div class="lite-tabs__container">
 		<div class="lite-tabs">
-			<a href="{% url 'applications:applications' %}?drafts=false" class="lite-tabs__tab lite-tabs__tab--selected">
+			<a href="{% url 'applications:applications' %}?submitted=True" class="lite-tabs__tab lite-tabs__tab--selected">
 				In Progress
 			</a>
-			<a href="{% url 'applications:applications' %}?drafts=true" class="lite-tabs__tab">
+			<a href="{% url 'applications:applications' %}?submitted=False" class="lite-tabs__tab">
 				Drafts
 			</a>
 		</div>
@@ -42,6 +42,7 @@
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" scope="col">{% lcs 'APPLICATION_REFERENCE_NAME' %}</th>
+					<th class="govuk-table__header" scope="col"></th>
 					{% if organisation.type.key != 'hmrc' %}
 						<th class="govuk-table__header" scope="col">{% lcs 'APPLICATION_TYPE' %}</th>
 					{% endif %}
@@ -61,11 +62,13 @@
 								{% else %}
 									href="{% url 'applications:application' application.id %}">
 								{% endif %}
-								<p>{{ application.name }}</p>
-								{% if application.id in notifications %}
-									<span class="app-icon-label__notification">{{ notifications|key_value:application.id }} <span class="govuk-visually-hidden"> notifications</span></span>
-								{% endif %}
+								{{ application.name }}
 							</a>
+						</td>
+						<td class="govuk-table__cell">
+							{% if application.id in notifications %}
+								<span class="lite-notification-bubble">{{ notifications|key_value:application.id }} <span class="govuk-visually-hidden"> notifications</span></span>
+							{% endif %}
 						</td>
 						{% if organisation.type.key != 'hmrc' %}
 							<td class="govuk-table__cell">
@@ -82,6 +85,9 @@
 				{% endfor %}
 			</tbody>
 		</table>
+
+		{% include "includes/pagination.html" with data=applications %}
+
 	{% else %}
 		<br>
 		<div class="lite-information-text">
