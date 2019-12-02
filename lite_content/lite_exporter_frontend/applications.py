@@ -42,6 +42,7 @@ class ThirdPartyForm:
         CONSULTANT = "Consultant"
         CONTACT = "Contact"
         EXPORTER = "Exporter"
+
     TITLE = "What type of third party would you like to add?"
     BUTTON = "Continue"
     NAME_FORM_TITLE = "Enter the final recipient's name"
