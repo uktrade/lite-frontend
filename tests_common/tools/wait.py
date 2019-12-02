@@ -3,7 +3,7 @@ from time import sleep
 from .helpers import page_is_ready, menu_is_visible
 
 # How many attempts to wait for the function to return True
-timeout_limit = 20
+timeout_limit = 60
 # How frequently in seconds the function should be checked
 function_retry_interval = 1
 
