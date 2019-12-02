@@ -11,4 +11,12 @@ class ConsigneeForm:
 
 
 class ThirdPartyForm:
+    class Options:
+        AGENT = "Agent or broker"
+        ADDITIONAL_END_USER = "Additional end user"
+        INTERMEDIATE_CONSIGNEE = "Intermediate consignee"
+        SUBMITTER = "Authorised submitter"
+        CONSULTANT = "Consultant"
+        CONTACT = "Contact"
+        EXPORTER = "Exporter"
     TITLE = "What type of third party would you like to add?"
