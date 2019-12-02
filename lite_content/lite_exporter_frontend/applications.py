@@ -1,3 +1,11 @@
+class PartyForm:
+    class Options:
+        GOVERNMENT = "A Government Organisation"
+        COMMERCIAL = "A Commercial Organisation"
+        INDIVIDUAL = "An Individual"
+        OTHER = "Other"
+
+
 class EndUserForm:
     TITLE = "Who is the end user of your goods?"
 
