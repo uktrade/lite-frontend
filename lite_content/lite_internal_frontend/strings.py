@@ -86,4 +86,8 @@ SUPPORTING_DOCUMENTATION_DESCRIPTION = "Description"
 SUPPORTING_DOCUMENTATION_DOCUMENT = "Document"
 SUPPORTING_DOCUMENTATION_NO_DOCUMENTATION = "No supporting documentation"
 
+COMBINE_USER_ADVICE = "Combine all user advice"
+GIVE_OR_CHANGE_ADVICE = "Give or change advice"
+CLEAR_ADVICE = "Clear advice"
+
 DOCUMENT_TEMPLATES_TITLE = "Document templates"
