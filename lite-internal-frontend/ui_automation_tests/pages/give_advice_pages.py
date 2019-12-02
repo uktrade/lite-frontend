@@ -14,6 +14,7 @@ class GiveAdvicePages(BasePage):
     COMBINE_ADVICE_BUTTON = "combine_advice_button"
     CLEAR_ADVICE_BUTTON = "button-clear-advice"
     FINALISE_BUTTON = "finalise_button"
+    GIVE_OR_CHANGE_ADVICE_BUTTON = "button-give-advice"
     FINALISE_GOODS_AND_COUNTRIES_BUTTON = "finalise_button"
     RADIO_INPUT_APPROVE = '.govuk-radios input[value="approve"]'
     DAY = "day"
@@ -68,3 +69,9 @@ class GiveAdvicePages(BasePage):
             "month": self.driver.find_element_by_id(self.MONTH).get_attribute("value"),
             "year": self.driver.find_element_by_id(self.YEAR).get_attribute("value"),
         }
+
+    def checkbox_present(self):
+        return len(self.driver.find_elements_by_css_selector(".input"))
+
+    def give_advice_button_present(self):
+        return self.driver.find_elements_by_id(self.GIVE_OR_CHANGE_ADVICE_BUTTON)

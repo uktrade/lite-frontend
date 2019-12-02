@@ -2,12 +2,13 @@ from django.contrib import messages
 from django.http import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
+
 from lite_forms.generators import error_page, form_page
 
 from cases.forms.advice import advice_recommendation_form
 from cases.helpers import check_matching_advice, add_hidden_advice_data, clean_advice
 from cases.services import get_case
-from core.services import get_denial_reasons, get_user_permissions
+from core.services import get_denial_reasons, get_user_permissions, get_status_properties
 from picklists.services import get_picklists
 from teams.services import get_teams
 from users.services import get_gov_user
@@ -53,6 +54,14 @@ def get_case_advice(get_advice, request, case, user_team_final, team=None):
 
     context["able_to_finalize"] = able_to_finalize
     context["able_to_create_and_edit_advice"] = able_to_create_and_edit_advice
+
+    if "application" in case:
+        status_props, _ = get_status_properties(request, case["application"]["status"]["key"])
+    else:
+        status_props, _ = get_status_properties(request, case["query"]["status"]["key"])
+
+    context["status_is_read_only"] = status_props["is_read_only"]
+    context["status_is_terminal"] = status_props["is_terminal"]
 
     return render(request, "case/" + user_team_final + "-advice-view.html", context)
 

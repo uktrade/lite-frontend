@@ -3,7 +3,6 @@ import json
 import warnings
 from html import escape
 
-import stringcase
 from django import template
 from django.template.defaultfilters import stringfilter, safe
 from django.templatetags.tz import do_timezone
@@ -65,11 +64,6 @@ def str_date(value):
         + " "
         + return_value.strftime("%d %B " "%Y")
     )
-
-
-@register.filter()
-def sentence_case(value):
-    return stringcase.sentencecase(value)
 
 
 @register.filter()
@@ -246,3 +240,10 @@ def linkify(address, name=None):
     name = escape(name)
 
     return safe(f'<a href="{address}" class="govuk-link govuk-link--no-visited-state">{name}</a>')
+
+
+@register.filter()
+def sentence_case(value):
+    """Change value to uppercase on initial word and preserve casing on all other words. """
+    words = value.split("_")
+    return " ".join([words[0].capitalize()] + words[1:])

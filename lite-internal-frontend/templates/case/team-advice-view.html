@@ -32,13 +32,15 @@
                             {% lcs 'CASE_TEAM_ADVICE_GIVE_OR_CHANGE' %}
                         </button>
                         <button id="button-clear-advice" name="action" value="delete" type="submit" class="govuk-button" data-module="govuk-button">
-                            Clear advice
+                            {% lcs 'CLEAR_ADVICE' %}
                         </button>
                     </div>
                 {% else %}
-                    <a class="govuk-button" href="{% url 'cases:coalesce_user_advice' case.id %}" class="lite-tabs__tab" id="combine_advice_button">
-                        Combine all user advice
-                    </a>
+                    {% if not status_is_terminal %}
+                        <a class="govuk-button" href="{% url 'cases:coalesce_user_advice' case.id %}" class="lite-tabs__tab" id="combine_advice_button">
+                            {% lcs 'COMBINE_USER_ADVICE' %}
+                        </a>
+                    {% endif %}
                 {% endif %}
             {% endif %}
 		</div>

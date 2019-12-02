@@ -129,7 +129,7 @@
 			</div>
 			<div id="accordion-goods-content" class="govuk-accordion__section-content" aria-labelledby="accordion-goods">
 			<form action="{% url 'cases:review_goods' case.id %}" method="get">
-			{% if 'REVIEW_GOODS' in permissions %}
+			{% if 'REVIEW_GOODS' in permissions and not status_is_terminal %}
 			    <button id="button-review-goods" name="action" value="review-goods" class="govuk-button" data-module="govuk-button">
 			        {% lcs 'CASE_GOODS_REVIEW' %}
 			    </button>

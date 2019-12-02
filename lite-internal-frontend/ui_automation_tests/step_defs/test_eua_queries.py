@@ -31,4 +31,4 @@ def dropdown_contains_correct_functionality(driver):
 
 @then("the status has been changed in the end user advisory")
 def check_status_has_changed(driver):
-    assert "under_review" in ApplicationPage(driver).get_text_of_case_note_subject(0)
+    assert "closed" in ApplicationPage(driver).get_text_of_case_note_subject(0)

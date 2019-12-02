@@ -28,7 +28,7 @@ from conf.constants import DEFAULT_QUEUE_ID
 from conf.settings import AWS_STORAGE_BUCKET_NAME
 from core.builtins.custom_tags import get_string
 from core.helpers import convert_dict_to_query_params
-from core.services import get_user_permissions, get_statuses, get_user_case_notification
+from core.services import get_user_permissions, get_statuses, get_user_case_notification, get_status_properties
 from queues.services import get_cases_search_data
 
 
@@ -99,6 +99,14 @@ class ViewCase(TemplateView):
 
         case_type = case["type"]["key"]
 
+        if "application" in case:
+            status_props, _ = get_status_properties(request, case["application"]["status"]["key"])
+        else:
+            status_props, _ = get_status_properties(request, case["query"]["status"]["key"])
+
+        context["status_is_read_only"] = status_props["is_read_only"]
+        context["status_is_terminal"] = status_props["is_terminal"]
+
         if case_type == CaseType.END_USER_ADVISORY_QUERY.value:
             return render(request, "case/queries/end_user_advisory.html", context)
         elif case_type == CaseType.CLC_QUERY.value:
@@ -109,7 +117,6 @@ class ViewCase(TemplateView):
             context["total_goods_value"] = _get_total_goods_value(case)
 
             application_type = case["application"]["application_type"]["key"]
-
             if application_type == CaseType.HMRC_QUERY.value:
                 return render(request, "case/hmrc-case.html", context)
             elif application_type == CaseType.OPEN_LICENCE.value:
@@ -168,7 +175,7 @@ class ManageCase(TemplateView):
 
         reduced_statuses = {
             "statuses": [
-                x for x in statuses["statuses"] if (x["status"] != "finalised" and x["status"] != "applicant_editing")
+                status for status in statuses["statuses"] if status["status"] in ["closed", "submitted", "withdrawn"]
             ]
         }
 
@@ -176,6 +183,15 @@ class ManageCase(TemplateView):
 
         if case_type == CaseType.APPLICATION.value:
             title = "Manage " + case.get("application").get("name")
+
+            # additional but still reduced statuses needed for applications
+            reduced_statuses = {
+                "statuses": [
+                    status
+                    for status in statuses["statuses"]
+                    if status["status"] not in ["applicant_editing", "closed", "finalised", "registered"]
+                ]
+            }
         elif case_type == CaseType.HMRC_QUERY.value:
             title = "Manage HMRC query"
         elif case_type == CaseType.END_USER_ADVISORY_QUERY.value:

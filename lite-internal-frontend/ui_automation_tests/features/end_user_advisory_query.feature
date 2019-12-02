@@ -21,5 +21,5 @@ Feature: I want to respond to an End User Advisory query
     And I go to internal homepage
     When I go to end user advisory previously created
     And I click progress application
-    And I select status "Under review" and save
+    And I select status "Closed" and save
     Then the status has been changed in the end user advisory

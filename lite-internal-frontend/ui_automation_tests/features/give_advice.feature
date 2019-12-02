@@ -160,3 +160,23 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I clear advice
     And I go to application previously created
     Then I see refusal flag is not attached
+
+
+  @LT_920_cannot_give_advice_terminal_case
+  Scenario: Cannot give advice on a case in terminal state
+    Given I create application or application has been previously created
+    And I create a proviso picklist
+    And I create a standard advice picklist
+    And I sign in to SSO or am signed into SSO
+    When I go to application previously created
+    And I click progress application
+    And I select status "Withdrawn" and save
+    And I click on view advice
+    Then the give advice checkboxes are not present
+    And the give or change advice button is not present
+    When I go to the team advice
+    Then the give advice checkboxes are not present
+    And the give or change advice button is not present
+    When I go to the final advice
+    Then the give advice checkboxes are not present
+    And the give or change advice button is not present

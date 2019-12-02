@@ -7,6 +7,7 @@ from conf.constants import (
     STATUSES_URL,
     CONTROL_LIST_ENTRIES_URL,
     CASE_NOTIFICATIONS_URL,
+    STATUS_PROPERTIES_URL,
 )
 from users.services import get_gov_user
 
@@ -58,6 +59,11 @@ def get_countries(request, convert_to_options=False):
 # Statuses
 def get_statuses(request):
     data = get(request, STATUSES_URL)
+    return data.json(), data.status_code
+
+
+def get_status_properties(request, status):
+    data = get(request, STATUS_PROPERTIES_URL + status)
     return data.json(), data.status_code
 
 

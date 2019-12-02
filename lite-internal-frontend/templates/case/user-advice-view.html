@@ -27,15 +27,17 @@
 			</div>
             {% if not case.has_advice.my_team %}
                 {% if not case.has_advice.final %}
-                    <button id="button-give-advice" type="submit" class="govuk-button" data-module="govuk-button">
-                        Give or change advice
-                    </button>
+                    {% if not status_is_terminal %}
+                        <button id="button-give-advice" type="submit" class="govuk-button" data-module="govuk-button">
+                            {% lcs 'GIVE_OR_CHANGE_ADVICE' %}
+                        </button>
+                    {% endif %}
                 {% endif %}
             {% endif %}
 		</div>
 
 		<!-- Conditional error wrapper -->
-        {% if case.has_advice.my_team or case.has_advice.final %}
+        {% if case.has_advice.my_team or case.has_advice.final or status_is_terminal %}
             {% include 'case/views/advice-view.html' with show_advice=True %}
         {% else %}
             {% include 'case/views/advice-view.html' with show_checkboxes=True show_advice=True %}

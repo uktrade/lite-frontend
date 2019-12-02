@@ -25,7 +25,7 @@
                     <a href="{% url 'cases:final_advice_view' case.id %}" class="lite-tabs__tab lite-tabs__tab--selected" id="final_advice">Final Advice</a>
 				</div>
 			</div>
-            {% if case.application.status != 'finalised' %}
+            {% if not status_is_terminal %}
                 {% if 'MANAGE_FINAL_ADVICE' in permissions %}
                     {% if case.has_advice.team %}
                         {% if all_advice|length %}
