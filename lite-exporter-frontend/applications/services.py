@@ -18,6 +18,7 @@ from conf.constants import (
     GOODSTYPE_URL,
     GOODSTYPES_URL,
     GOODSTYPE_COUNTRY_URL,
+    STATUS_PROPERTIES_URL,
 )
 from conf.settings import AWS_STORAGE_BUCKET_NAME, STREAMING_CHUNK_SIZE
 from django.http import StreamingHttpResponse
@@ -278,6 +279,11 @@ def get_application_ecju_queries(request, pk):
     closed_queries = [x for x in data if x["response"]]
 
     return open_queries, closed_queries
+
+
+def get_status_properties(request, status):
+    data = get(request, STATUS_PROPERTIES_URL + status)
+    return data.json(), data.status_code
 
 
 def set_application_status(request, pk, status):

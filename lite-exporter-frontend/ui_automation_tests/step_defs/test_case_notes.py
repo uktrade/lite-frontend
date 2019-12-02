@@ -66,3 +66,10 @@ def post_note_is_disabled(driver):
 def entered_text_no_longer_in_case_field(driver):
     application_page = SubmittedApplicationsPages(driver)
     assert "Case note to cancel" not in application_page.get_text_of_case_note_field()
+
+
+@then("the case note text area is not present")
+def edit_button_not_present(driver):
+    driver.set_timeout_to(0)
+    assert len((SubmittedApplicationsPages(driver).find_case_note_text_area())) == 0
+    driver.set_timeout_to(10)

@@ -50,11 +50,6 @@ def delete_good(request, pk):
     return data.json(), data.status_code
 
 
-def get_clc_query(request, pk):
-    data = get(request, CONTROL_LIST_CLASSIFICATIONS_URL + pk)
-    return data.json().get("control_list_classification_query") if data.status_code == HTTPStatus.OK else None
-
-
 def raise_clc_query(request, json):
     data = post(request, CONTROL_LIST_CLASSIFICATIONS_URL, json)
     return data.json(), data.status_code

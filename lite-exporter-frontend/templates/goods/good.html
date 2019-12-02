@@ -208,7 +208,7 @@
 					    {% endif %}
 		            </a>
 		        </div>
-		        {% if type == 'case-notes' %}
+		        {% if type == 'case-notes' and good.query_id %}
 			        {% include "goods/tabs/case-notes.html" %}
 		        {% elif type == 'ecju-queries'%}
 			        {% include "goods/tabs/ecju-queries.html" %}

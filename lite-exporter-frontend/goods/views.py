@@ -18,6 +18,7 @@ from applications.services import (
     put_ecju_query,
     add_document_data,
     download_document_from_s3,
+    get_status_properties,
 )
 from core.builtins.custom_tags import get_string
 from core.helpers import group_notifications
@@ -95,6 +96,11 @@ class GoodsDetail(TemplateView):
             "case_note_notifications": case_note_notifications,
             "ecju_query_notifications": ecju_query_notifications,
         }
+
+        if self.good["query_id"]:
+            status_props, _ = get_status_properties(request, self.good["case_status"]["key"])
+            context["status_is_read_only"] = status_props["is_read_only"]
+            context["status_is_terminal"] = status_props["is_terminal"]
 
         if self.view_type == "case-notes":
             if self.good.get("case_id"):
