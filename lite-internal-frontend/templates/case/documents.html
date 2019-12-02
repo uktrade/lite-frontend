@@ -3,7 +3,7 @@
 {% load svg %}
 
 {% block back_link %}
-	<a href="{% url 'cases:case' case.id %}" class="govuk-back-link">{% get_string 'cases.back_to_case' %}</a>
+	<a href="{% url 'cases:case' case.id %}" class="govuk-back-link">{% lcs 'CASES.CaseDocumentsPage.BACK_LINK' %}</a>
 {% endblock %}
 
 {% block body %}
@@ -12,7 +12,10 @@
 		<h2 class="govuk-heading-l">{{ title }}</h2>
 		<div class="lite-app-bar--right">
 			<a id="button-attach-document" role="button" draggable="false" class="govuk-button {% if documents %}govuk-button--secondary{% endif %}" href="{% url 'cases:attach_documents' case.id %}">
-				{% get_string 'cases.manage.documents.attach_documents.button' %}
+				{% lcs 'CASES.CaseDocumentsPage.ATTACH' %}
+			</a>
+            <a id="button-attach-document" role="button" draggable="false" class="govuk-button {% if documents %}govuk-button--secondary{% endif %}" href="{% url 'cases:generate_document' case.id %}">
+				{% lcs 'CASES.CaseDocumentsPage.GENERATE' %}
 			</a>
 		</div>
 	</div>
@@ -22,9 +25,11 @@
 		<table class="govuk-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
-					<th scope="col" class="govuk-table__header">Name</th>
-					<th scope="col" class="govuk-table__header">Description</th>
-					<th scope="col" class="govuk-table__header">Uploaded by</th>
+					<th scope="col" class="govuk-table__header">{% lcs 'CASES.AdditionalDocumentsPage.Table.NAME_COLUMN' %}</th>
+                    <th scope="col" class="govuk-table__header">{% lcs 'CASES.AdditionalDocumentsPage.Table.DOCUMENT_TYPE_COLUMN' %}</th>
+					<th scope="col" class="govuk-table__header">{% lcs 'CASES.AdditionalDocumentsPage.Table.DESCRIPTION_COLUMN' %}</th>
+					<th scope="col" class="govuk-table__header">{% lcs 'CASES.AdditionalDocumentsPage.Table.USER_COLUMN' %}</th>
+                    <th scope="col" class="govuk-table__header">{% lcs 'CASES.AdditionalDocumentsPage.Table.DATE_COLUMN' %}</th>
 					<th scope="col" class="govuk-table__header"></th>
 				</tr>
 			</thead>
@@ -32,17 +37,19 @@
 				{% for document in case_documents %}
 					<tr class="govuk-table__row">
 						<th scope="row" class="govuk-table__header">{{ document.name }}</th>
+                        <td class="govuk-table__cell">{{ document.type.value }}</td>
 						<td class="govuk-table__cell">{{ document.description }}</td>
-						<td class="govuk-table__cell">{{ document.user.first_name }} {{ document.user.last_name }} at {{ document.created_at|str_date }}</td>
+						<td class="govuk-table__cell">{{ document.user.first_name }} {{ document.user.last_name }}</td>
+                        <td class="govuk-table__cell">{{ document.created_at|str_date }}</td>
 						<td class="govuk-table__cell">
 							{% if document.safe == True %}
-								<a class="govuk-link lite-link--icon govuk-link--no-visited-state" href="{% url 'cases:document' case.id document.metadata_id %}">
-									Download
+								<a id="link-download" class="govuk-link lite-link--icon govuk-link--no-visited-state" href="{% url 'cases:document' case.id document.metadata_id %}">
+									{% lcs 'CASES.AdditionalDocumentsPage.Document.DOWNLOAD_LINK' %}
 								</a>
 							{% elif document.safe == False %}
-								<p class="govuk-label">Infected</p>
+								<p class="govuk-label">{% lcs 'CASES.AdditionalDocumentsPage.Document.INFECTED_LABEL' %}</p>
 							{% else %}
-								<p class="govuk-label">Processing</p>
+								<p class="govuk-label">{% lcs 'CASES.AdditionalDocumentsPage.Document.PROCESSING_LABEL' %}</p>
 							{% endif %}
 						</td>
 					</tr>

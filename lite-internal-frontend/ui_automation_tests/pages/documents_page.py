@@ -3,7 +3,7 @@ from shared.BasePage import BasePage
 
 class DocumentsPage(BasePage):
     ATTACH_DOCS_BUTTON = "button-attach-document"  # ID
-    DOC_DESCRIPTION = "tbody tr td:nth-of-type(1)"  # CSS
+    DOC_DESCRIPTION = "tbody tr td:nth-of-type(2)"  # CSS
     DOC_FILENAME = "tbody tr th"  # CSS
 
     def click_attach_documents(self):

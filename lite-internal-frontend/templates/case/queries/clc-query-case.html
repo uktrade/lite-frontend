@@ -3,16 +3,21 @@
 {% load static %}
 
 {% block back_link %}
-	<a href="{% url 'cases:cases' %}?queue={{ queue.queue.id }}" class="govuk-back-link">
-		Back to {{ queue_name }}
-	</a>
+	<div class="govuk-breadcrumbs">
+		<ol class="govuk-breadcrumbs__list">
+			<li class="govuk-breadcrumbs__list-item">
+				<a class="govuk-breadcrumbs__link" href="{% url 'cases:cases' %}?queue={{ queue.queue.id }}">{% if queue_name %}{{ queue_name }}{% else %}{% lcs 'QUEUE_ALL_CASES' %}{% endif %}</a>
+			</li>
+			<li class="govuk-breadcrumbs__list-item" aria-current="page">&nbsp;</li>
+		</ol>
+	</div>
 {% endblock %}
 
 {% block body %}
 
 	{% if case.query.good.status.key == 'verified' %}
 		<div class="lite-info-bar lite-info-bar--no-animation {% if message.tags %}lite-info-bar--{{ message.tags }}{% endif %}">
-			This case is closed
+			{% lcs 'CASES.ApplicationPage.CLOSED' %}
 		</div>
 	{% endif %}
 
@@ -21,21 +26,24 @@
 			<p class="govuk-caption-m" style="margin: 0;">{{ case.type.value }} by <a class="govuk-link govuk-link--no-visited-state" style="display: inline-block;" href="{% url 'organisations:organisation' case.query.organisation.id %}">{{ case.query.organisation.name }}</a></p>
 			<h2 class="govuk-heading-l">{{ case.query.id|reference_code }}</h2>
 		</div>
-		<div class="lite-app-bar__controls">
+			<div class="lite-app-bar__controls">
 			{% if case.query.good.status.key != 'verified' and 'REVIEW_GOODS' in permissions and not status_is_terminal %}
 				<a role="button" draggable="false" id="respond" class="govuk-button" href="{% url 'cases:respond_to_clc_query' case.id %}">
-					Respond to Query
+					{% lcs 'CASES.ApplicationPage.RESPOND_BUTTON' %}
 				</a>
 			{% endif %}
 			<div class="app-more-actions__container {% if case.query.good.status != 'final' %}app-more-actions__container--secondary{% endif %}">
 				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:documents' case.id %}">
-					{% get_string 'cases.manage.documents.button' %}
+		      	    {% lcs 'CASES.ApplicationPage.Actions.DOCUMENT' %}
 				</a>
 				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:ecju_queries' case.id %}">
 					{% get_string 'cases.ecju_queries.title' %}
 				</a>
                 <a role="button" draggable="false" class="govuk-button" href="{% url 'cases:move' case.id %}">
 					{% get_string 'cases.manage.move_case.button' %}
+				</a>
+                <a role="button" draggable="false" class="govuk-button" id="generate-document" href="{% url 'cases:generate_document' case.id %}">
+					{% lcs 'CASES.ApplicationPage.Actions.GENERATE_DOCUMENT' %}
 				</a>
 			</div>
 		</div>

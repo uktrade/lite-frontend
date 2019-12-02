@@ -30,24 +30,27 @@
 		<div class="lite-app-bar__controls">
 			<div class="app-more-actions__container">
 				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:documents' case.id %}">
-		        	{% lcs 'CASE_DOCUMENT_BUTTON' %}
+		        	{% lcs 'CASES.ApplicationPage.Actions.DOCUMENT' %}
 		        </a>
 		        <a role="button" draggable="false" class="govuk-button" href="{% url 'cases:ecju_queries' case.id %}">
-		            {% lcs 'CASE_ECJU_BUTTON' %}
+		            {% lcs 'CASES.ApplicationPage.Actions.ECJU' %}
 				</a>
 		        <a role="button" draggable="false" class="govuk-button" href="{% url 'cases:move' case.id %}">
-					{% lcs 'CASE_MOVE_CASE_BUTTON' %}
+					{% lcs 'CASES.ApplicationPage.Actions.MOVE' %}
 				</a>
 				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:manage' case.id %}">
-					{% lcs 'CASE_CHANGE_STATUS_BUTTON' %}
+					{% lcs 'CASES.ApplicationPage.Actions.CHANGE_STATUS' %}
 				</a>
 				{% if permissions|key_in_array:'MAKE_FINAL_DECISIONS' %}
 					<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:decide' case.id %}">
-						{% lcs 'CASE_RECORD_DECISION_BUTTON' %}
+						{% lcs 'CASES.ApplicationPage.Actions.DECISION' %}
 					</a>
 				{% endif %}
 		        <a role="button" draggable="false" class="govuk-button" href="{% url 'cases:user_advice_view' case.id %}">
-					{% lcs 'CASE_VIEW_ADVICE_BUTTON' %}
+					{% lcs 'CASES.ApplicationPage.Actions.ADVICE' %}
+				</a>
+                <a role="button" draggable="false" class="govuk-button" id="generate-document" href="{% url 'cases:generate_document' case.id %}">
+					{% lcs 'CASES.ApplicationPage.Actions.GENERATE_DOCUMENT' %}
 				</a>
 			</div>
 		</div>
@@ -131,11 +134,11 @@
 			<form action="{% url 'cases:review_goods' case.id %}" method="get">
 			{% if 'REVIEW_GOODS' in permissions and not status_is_terminal %}
 			    <button id="button-review-goods" name="action" value="review-goods" class="govuk-button" data-module="govuk-button">
-			        {% lcs 'CASE_GOODS_REVIEW' %}
+			        {% lcs 'CASES.ApplicationPage.REVIEW_GOODS' %}
 			    </button>
 			{% endif %}
 			    <button id="button-edit-goods-flags" name="action" value="edit-flags" class="govuk-button" data-module="govuk-button">
-			        {% lcs 'CASE_GOODS_EDIT_FLAGS' %}
+			        {% lcs 'CASES.ApplicationPage.EDIT_FLAGS' %}
 			    </button>
 			    {% include 'case/views/standard-goods.html' with show_checkboxes=True %}
 			</form>

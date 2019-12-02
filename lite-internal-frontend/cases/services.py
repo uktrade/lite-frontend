@@ -23,6 +23,8 @@ from conf.constants import (
     VIEW_FINAL_ADVICE_URL,
     GOOD_CLC_REVIEW_URL,
     MANAGE_STATUS_URL,
+    GENERATED_DOCUMENTS_URL,
+    GENERATED_DOCUMENTS_PREVIEW_URL,
 )
 
 
@@ -340,3 +342,14 @@ def _get_total_goods_value(case):
     for good in case.get("application").get("goods", []):
         total_value += Decimal(good["value"]).quantize(Decimal(".01"))
     return total_value
+
+
+# Generated Documents
+def post_generated_document(request, pk, json):
+    data = post(request, CASE_URL + pk + GENERATED_DOCUMENTS_URL, json)
+    return data.json(), data.status_code
+
+
+def get_generated_document_preview(request, pk, tpk):
+    data = get(request, CASE_URL + pk + GENERATED_DOCUMENTS_PREVIEW_URL + "?template=" + str(tpk))
+    return data.json(), data.status_code

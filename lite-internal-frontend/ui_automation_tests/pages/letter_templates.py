@@ -9,7 +9,7 @@ class LetterTemplates(BasePage):
     ADD_LETTER_PARAGRAPH_BUTTON = '[value="add_letter_paragraph"]'  # CSS
     ADD_LETTER_PARAGRAPHS_BUTTON = '[value="return_to_preview"]'  # CSS
     PREVIEW_BUTTON = "button-preview"  # ID
-    PREVIEW_TEMPLATE_PARAGRAPHS = ".border-black.padding"  # CSS
+    PREVIEW = "preview"  # ID
     SAVE_BUTTON = "action"  # NAME
     EDIT_DETAILS_BUTTON = ".lite-app-bar__controls .govuk-button"  # CSS
     DRAG_DROP_LIST = "standard-advice-list"  # ID
@@ -18,7 +18,7 @@ class LetterTemplates(BasePage):
     # Template page
     TEMPLATE_TITLE = "title"  # ID
     TEMPLATE_LAYOUT = "layout"  # ID
-    TEMPLATE_RESTRICTED_TO = "restricted_to"  # ID
+    CASE_TYPES = "case_types"  # ID
     TEMPLATE_PARAGRAPHS = "paragraph_content"  # ID
     EDIT_TEMPLATE_BUTTON = "edit_template"  # ID
     EDIT_PARAGRAPHS_BUTTON = "edit_template_paragraphs"  # ID
@@ -58,8 +58,8 @@ class LetterTemplates(BasePage):
     def click_add_letter_paragraphs(self):
         self.driver.find_element_by_css_selector(self.ADD_LETTER_PARAGRAPHS_BUTTON).click()
 
-    def get_text_of_paragraphs_in_template(self):
-        return self.driver.find_element_by_css_selector(self.PREVIEW_TEMPLATE_PARAGRAPHS).text
+    def get_text_in_template(self):
+        return self.driver.find_element_by_id(self.PREVIEW).text
 
     def get_text_of_paragraphs_in_preview(self):
         return self.driver.find_element_by_id(self.PREVIEW_PARAGRAPHS).text
@@ -79,8 +79,8 @@ class LetterTemplates(BasePage):
     def get_template_layout(self):
         return self.driver.find_element_by_id(self.TEMPLATE_LAYOUT).text
 
-    def get_template_restricted_to(self):
-        return self.driver.find_element_by_id(self.TEMPLATE_RESTRICTED_TO).text
+    def get_template_case_types(self):
+        return self.driver.find_element_by_id(self.CASE_TYPES).text
 
     def get_template_paragraphs(self):
         return self.driver.find_element_by_id(self.TEMPLATE_PARAGRAPHS).text

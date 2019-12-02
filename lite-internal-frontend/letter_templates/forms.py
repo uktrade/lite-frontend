@@ -43,7 +43,7 @@ def add_letter_template():
                 title=get_string("letter_templates.add_letter_template.case_types.title"),
                 questions=[
                     Checkboxes(
-                        name="restricted_to",
+                        name="case_types",
                         options=[
                             Option("application", "Applications"),
                             Option("clc_query", "Control List Classification Queries"),
@@ -73,7 +73,7 @@ def edit_letter_template(letter_template):
             ),
             Checkboxes(
                 title=get_string("letter_templates.edit_letter_template.case_types.title"),
-                name="restricted_to",
+                name="case_types",
                 options=[
                     Option("application", "Application"),
                     Option("clc_query", "CLC Query"),

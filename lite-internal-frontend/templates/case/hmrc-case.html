@@ -28,7 +28,7 @@
 	<div class="lite-app-bar__controls">
 		<div class="app-more-actions__container">
 			<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:documents' case.id %}">
-	        	{% get_string 'cases.manage.documents.button' %}
+	           	{% lcs 'CASES.ApplicationPage.Actions.DOCUMENT' %}
 	        </a>
 	        <a role="button" draggable="false" class="govuk-button" href="{% url 'cases:move' case.id %}">
 				{% get_string 'cases.manage.move_case.button' %}
@@ -41,6 +41,9 @@
 					Record Decision
 				</a>
 			{% endif %}
+            <a role="button" draggable="false" class="govuk-button" id="generate-document" href="{% url 'cases:generate_document' case.id %}">
+                {% lcs 'CASES.ApplicationPage.Actions.GENERATE_DOCUMENT' %}
+            </a>
 		</div>
 	</div>
 </div>

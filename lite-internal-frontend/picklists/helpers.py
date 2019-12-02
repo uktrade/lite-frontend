@@ -1,11 +1,17 @@
-from django.template import Context, TemplateSyntaxError
+from django.template import Context, TemplateSyntaxError, Engine
 
 from letter_templates.context_variables import get_context_variables
-from letter_templates.helpers import template_engine_factory, InvalidVarException
+from picklists.exceptions import InvalidVarException
+
+
+def template_engine_factory():
+    # Put the variable name in if missing variables. Else trigger an InvalidVarException.
+    string_if_invalid = InvalidVarException()
+    return Engine(string_if_invalid=string_if_invalid)
 
 
 def picklist_paragraph_errors(request):
-    template_engine = template_engine_factory(allow_missing_variables=False)
+    template_engine = template_engine_factory()
     try:
         template = template_engine.from_string(request.POST["text"])
         context = Context(get_context_variables())

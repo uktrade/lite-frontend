@@ -1,0 +1,22 @@
+{% extends 'layouts/base.html' %}
+
+{% load static %}
+
+{% block body %}
+	<div class="app-letter-preview__container">
+		<div class="lite-app-bar">
+			<div class="lite-app-bar__content">
+				<h2 class="govuk-heading-l">{% block title %}{% lcs 'CASES.ApplicationPage.Actions.GENERATE_DOCUMENT' %}{% endblock %}</h2>
+			</div>
+            <div class="lite-app-bar__controls">
+				<form action="{% url 'cases:generate_document_preview' pk tpk %}" method="post">
+                    {% csrf_token %}
+					<button class="govuk-button" type="submit">{% lcs 'LETTER_TEMPLATES.LetterTemplatesPage.PickTemplate.button' %}</button>
+				</form>
+			</div>
+		</div>
+		<div class="app-letter-preview__page" id="preview">
+			{{ preview|safe }}
+		</div>
+	</div>
+{% endblock %}

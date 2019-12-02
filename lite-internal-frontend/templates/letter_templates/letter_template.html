@@ -26,8 +26,8 @@
 				</div>
 				<div class="govuk-grid-column-one-third">
 					<h4 class="govuk-heading-s">{% get_string 'letter_templates.letter_template.restricted_title' %}</h4>
-					<p class="govuk-label" id="restricted_to">
-						{% for restriction in letter_template.restricted_to_display %}{% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}{{ restriction }}{% endfor %}
+					<p class="govuk-label" id="case_types">
+						{% for case_type in letter_template.case_types %}{% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}{{ case_type.value }}{% endfor %}
 					</p>
 				</div>
 				<div class="govuk-grid-column-one-third">
@@ -43,7 +43,7 @@
 			</div>
 		</div>
 
-		<div class="app-letter-preview__page">
+		<div class="app-letter-preview__page" id="preview">
 			{{ preview|safe }}
 		</div>
 	</div>

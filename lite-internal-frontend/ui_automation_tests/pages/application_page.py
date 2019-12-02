@@ -17,6 +17,7 @@ class ApplicationPage(BasePage):
     CASE_NOTE_DATE_TIME = ".app-activity__item .govuk-hint"  # css
     CASE_NOTE_CHARACTER_WARNING = "case_note-warning"  # id
     DOCUMENTS_BTN = '[href*="documents"]'  # css
+    GENERATE_DOCUMENTS_BTN = "generate-document"  # id
     ECJU_QUERIES_BTN = '[href*="ecju-queries"]'  # css
     PROGRESS_APP_BTN = '[href*="manage"]'
     RECORD_DECISION_BTN = '[href*="decide"]'  # css
@@ -90,6 +91,10 @@ class ApplicationPage(BasePage):
     def click_documents_button(self):
         self.click_drop_down()
         self.driver.find_element_by_css_selector(self.DOCUMENTS_BTN).click()
+
+    def click_generate_document_button(self):
+        self.click_drop_down()
+        self.driver.find_element_by_id(self.GENERATE_DOCUMENTS_BTN).click()
 
     def click_ecju_queries_button(self):
         self.click_drop_down()

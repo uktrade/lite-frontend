@@ -206,9 +206,6 @@ LOGGING = {
     "loggers": {"": {"handlers": ["console"], "level": env("LOG_LEVEL").upper(),},},
 }
 
-
-LETTER_TEMPLATES_DIRECTORY = os.path.join(BASE_DIR, "letter_templates", "layouts")
-
 # Security settings
 
 # Enable security features in hosted environments.

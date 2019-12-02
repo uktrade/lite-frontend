@@ -17,7 +17,7 @@
 		</div>
 	</div>
 
-	{% if data.count %}
+	{% if data %}
 		<table class="govuk-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
@@ -28,7 +28,7 @@
 				</tr>
 			</thead>
 			<tbody class="govuk-table__body">
-				{% for letter_template in data.results %}
+				{% for letter_template in data %}
 					<tr class="govuk-table__row">
 						<td class="govuk-table__cell">
                             <a href="{% url 'letter_templates:letter_template' letter_template.id %}" id="{{ letter_template.name }}" class="govuk-link">{{ letter_template.name }}</a>
@@ -37,7 +37,7 @@
 							{{ letter_template.layout.name }}
 						</td>
 						<td class="govuk-table__cell">
-							{% for restriction in letter_template.restricted_to_display %}{% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}{{ restriction }}{% endfor %}
+							{% for case_type in letter_template.case_types %}{% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}{{ case_type.value }}{% endfor %}
 						</td>
 						<td class="govuk-table__cell">
 							{{ letter_template.last_modified_at|str_date }}
@@ -58,7 +58,8 @@
 	        </div>
 	    {% endif %}
 	{% else %}
-		{% include "includes/information-text.html" with text='There aren\'t any letter templates' %}
+        {% lcs 'LETTER_TEMPLATES.LetterTemplatesPage.NONE_FOUND' as text %}
+        {% include "includes/information-text.html" with text=text  %}
 	{% endif %}
 
 {% endblock %}
