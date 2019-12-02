@@ -11,6 +11,8 @@ class EndUserForm:
     BUTTON = "Continue"
     NAME_FORM_TITLE = "Enter the final recipient's name"
     WEBSITE_FORM_TITLE = "Enter the final recipient's web address (URL)"
+    ADDRESS_FORM_TITLE = "Where's the final recipient based?"
+    SUBMIT_BUTTON = "Save and continue"
 
 
 class UltimateEndUserForm:
@@ -18,6 +20,8 @@ class UltimateEndUserForm:
     BUTTON = "Continue"
     NAME_FORM_TITLE = "Enter the final recipient's name"
     WEBSITE_FORM_TITLE = "Enter the final recipient's web address (URL)"
+    ADDRESS_FORM_TITLE = "Where's the final recipient based?"
+    SUBMIT_BUTTON = "Save and continue"
 
 
 class ConsigneeForm:
@@ -25,6 +29,8 @@ class ConsigneeForm:
     BUTTON = "Continue"
     NAME_FORM_TITLE = "Enter the final recipient's name"
     WEBSITE_FORM_TITLE = "Enter the final recipient's web address (URL)"
+    ADDRESS_FORM_TITLE = "Where's the final recipient based?"
+    SUBMIT_BUTTON = "Save and continue"
 
 
 class ThirdPartyForm:
@@ -40,3 +46,5 @@ class ThirdPartyForm:
     BUTTON = "Continue"
     NAME_FORM_TITLE = "Enter the final recipient's name"
     WEBSITE_FORM_TITLE = "Enter the final recipient's web address (URL)"
+    ADDRESS_FORM_TITLE = "Where's the final recipient based?"
+    SUBMIT_BUTTON = "Save and continue"
