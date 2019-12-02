@@ -8,6 +8,8 @@ SUBMIT = "Submit"
 SAVE = "Save"
 CONTINUE = "Continue"
 SAVE_AND_CONTINUE = "Save and continue"
+CANCEL = "Cancel"
+POST_NOTE = "Post note"
 
 THIS_SECTION_IS = "This section is "  # The space at the end is intentional. Usage is 'This section is optional'
 OPTIONAL = "Optional"
