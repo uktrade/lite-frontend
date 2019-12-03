@@ -282,7 +282,7 @@ class RespondToQuery(TemplateView):
                 return form_page(request, form, errors=error)
         else:
             # Submitted data does not contain an expected form field - return an error
-            return error_page(None, "We had an issue creating your response. Try again later.")
+            return error_page(request, strings.UPLOAD_GENERIC_ERROR)
 
 
 class WithdrawApplication(SingleFormView):

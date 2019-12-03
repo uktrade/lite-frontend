@@ -2,6 +2,8 @@ from django.http import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
+
+from lite_content.lite_exporter_frontend import strings
 from lite_forms.components import HiddenField
 from lite_forms.generators import form_page, error_page
 from lite_forms.submitters import submit_paged_form
@@ -286,4 +288,4 @@ class RespondToQuery(TemplateView):
                 return form_page(request, form, errors=error)
         else:
             # Submitted data does not contain an expected form field - return an error
-            return error_page(None, "We had an issue creating your response. Try again later.")
+            return error_page(request, strings.UPLOAD_GENERIC_ERROR)

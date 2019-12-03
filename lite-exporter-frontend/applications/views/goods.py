@@ -133,7 +133,7 @@ class AddNewGood(TemplateView):
                 data, error = add_document_data(request)
 
                 if error:
-                    return error_page(None, error)
+                    return error_page(request, error)
 
                 # Send LITE API the file information
                 post_good_documents(request, good_id, [data])

@@ -12,6 +12,7 @@ from applications.forms.end_user import attach_document_form, delete_document_co
 from applications.helpers.reverse_documents import document_switch
 from applications.services import add_document_data, download_document_from_s3
 from core.builtins.custom_tags import get_string
+from lite_content.lite_exporter_frontend import strings
 from lite_forms.generators import form_page, error_page
 
 
@@ -66,7 +67,7 @@ class AttachDocuments(TemplateView):
         data, error = add_document_data(request)
 
         if error:
-            return error_page(None, get_string("end_user.documents.attach_documents.upload_error"))
+            return error_page(request, strings.UPLOAD_FAILURE_ERROR)
 
         action = document_switch(request.path)["attach"]
         if len(signature(action).parameters) == 3:
@@ -77,7 +78,7 @@ class AttachDocuments(TemplateView):
         if status_code == 201:
             return get_homepage(request, draft_id)
         else:
-            return error_page(None, get_string("end_user.documents.attach_documents.upload_error"))
+            return error_page(request, strings.UPLOAD_FAILURE_ERROR)
 
 
 class DownloadDocument(TemplateView):
@@ -94,7 +95,7 @@ class DownloadDocument(TemplateView):
         if document["safe"]:
             return download_document_from_s3(document["s3_key"], document["name"])
         else:
-            return error_page(None, get_string("end_user.documents.attach_documents.download_error"))
+            return error_page(request, strings.DOWNLOAD_GENERIC_ERROR)
 
 
 class DeleteDocument(TemplateView):
@@ -122,6 +123,6 @@ class DeleteDocument(TemplateView):
                 if status_code == 204:
                     return get_homepage(request, draft_id)
                 else:
-                    return error_page(None, get_string("end_user.documents.attach_documents.delete_error"))
+                    return error_page(request, strings.DOCUMENT_DELETE_GENERIC_ERROR)
             else:
                 return get_homepage(request, draft_id)
