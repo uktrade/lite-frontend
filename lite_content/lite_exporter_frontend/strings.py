@@ -204,3 +204,6 @@ NOTIFICATIONS = "Notifications"
 
 UPLOAD_FAILURE_ERROR = "We had an issue uploading your files. Try again later."
 UPLOAD_GENERIC_ERROR = "We had an issue creating your response. Try again later."
+DOWNLOAD_GENERIC_ERROR = "We had an issue downloading your file. Try again later."
+
+DOCUMENT_DELETE_GENERIC_ERROR = "We had an issue deleting your files. Try again later."
