@@ -425,3 +425,13 @@ class ControlListEntryInput:
         self.optional = optional
         self.classes = classes
         self.input_type = "control_list_entry"
+
+
+class Link:
+    def __init__(self, text, address, classes: [] = None):
+        self.text = text
+        self.address = address
+        self.classes = classes
+
+    def __eq__(self, other):
+        return other.text == self.text and other.address == self.address
