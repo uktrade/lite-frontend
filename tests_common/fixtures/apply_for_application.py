@@ -75,11 +75,11 @@ def apply_for_clc_query(driver, seed_data_config, context):
     lite_client.seed_clc.add_clc_query(lite_client.seed_good)
     context.clc_case_id = lite_client.context["case_id"]
 
-
+# The below is currently not used due to bug LT-1808 but willl need to be used for internal HMRC tests when fixed.
 @fixture(scope="function")
 def apply_for_hmrc_query(driver, seed_data_config, context):
-    timer = Timer()
     lite_client = get_lite_client(context, seed_data_config)
+    lite_client.seed_user.auth_export_user(lite_client.context["hmrc_org_id"])
 
     draft_id = lite_client.add_hmrc_draft(
         draft={
