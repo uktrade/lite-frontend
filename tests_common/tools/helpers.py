@@ -34,17 +34,10 @@ def screen_path():
     return screen_dir
 
 
-def remove_special_characters(text):
-    # text = text.translate(str.maketrans('', '', string.punctuation))
-    text = text.translate(str.maketrans("", "", '\ / : * ? " < > |'))  # noqa
-    return text
-
-
-def save_screenshot(driver, name):
-    _name = remove_special_characters(name)
-    driver.get_screenshot_as_file(path.join(screen_path(), _name + "-" + now + ".png"))
+def save_screenshot(driver, _):
+    driver.get_screenshot_as_file(path.join(screen_path(), now + ".png"))
     attach(
-        driver.get_screenshot_as_png(), name=_name + "-" + now, attachment_type=attachment_type.PNG,
+        driver.get_screenshot_as_png(), now, attachment_type=attachment_type.PNG,
     )
 
 
