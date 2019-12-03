@@ -201,3 +201,6 @@ EDIT_APPLICATION_DONE = "Done"
 COPY_END_USER_ADVISORY_BACK_TO_END_USER_ADVISORIES = "Back to end user advisories"
 
 NOTIFICATIONS = "Notifications"
+
+UPLOAD_FAILURE_ERROR = "We had an issue uploading your files. Try again later."
+UPLOAD_GENERIC_ERROR = "We had an issue creating your response. Try again later."
