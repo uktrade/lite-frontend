@@ -7,7 +7,7 @@ from lite_forms.generators import error_page, form_page
 
 from cases.forms.advice import advice_recommendation_form
 from cases.helpers import check_matching_advice, add_hidden_advice_data, clean_advice
-from cases.services import get_case
+from cases.services import get_case, _get_total_goods_value
 from core.services import get_denial_reasons, get_user_permissions, get_status_properties
 from picklists.services import get_picklists
 from teams.services import get_teams
@@ -34,6 +34,7 @@ def get_case_advice(get_advice, request, case, user_team_final, team=None):
         "title": case.get("application").get("name"),
         "all_advice": advice["advice"],
         "permissions": permissions,
+        "total_goods_value": _get_total_goods_value(case),
     }
 
     if team:
