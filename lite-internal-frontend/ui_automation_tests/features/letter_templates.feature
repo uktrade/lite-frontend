@@ -1,12 +1,12 @@
-@internal @templates
+@all @internal @templates
 Feature: I want to configure standard templates for letter generation
 As a logged in government user
 I want to configure standard templates for letter generation
 So that I can create standard letters used by case workers and they can be updated when required
 
 
-  @LT_1029_add_template
-  Scenario: Add template
+  @LT_1029_add_template @smoke
+  Scenario: Add ECJU Letter template
     Given I sign in to SSO or am signed into SSO
     And I go to internal homepage
     And I create a letter paragraph picklist
@@ -20,7 +20,7 @@ So that I can create standard letters used by case workers and they can be updat
     Then I see my template in the table
 
 
-  @LT_1029_add_template
+  @LT_1029_add_template @regression
   Scenario: Add Licence template
     Given I sign in to SSO or am signed into SSO
     And I go to internal homepage
@@ -34,7 +34,7 @@ So that I can create standard letters used by case workers and they can be updat
     When I click save
     Then I see my template in the table
 
-  @LT_1029_view_and_edit_template
+  @LT_1029_view_and_edit_template @regression
   Scenario: View and edit a created template
     Given I create a document template
     And I sign in to SSO or am signed into SSO

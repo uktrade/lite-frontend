@@ -1,10 +1,10 @@
-@internal @give_advice
+@all @internal @give_advice
 Feature: I want to record my user advice and any comments and conditions relating to my recommendation
   As a logged in government user working on a specific case that is assigned to me
   I want to record my user advice and any comments and conditions relating to my recommendation
   So that other users can see my decision and know that I have finished assessing this case
 
-  @LT_1376_grant
+  @LT_1376_grant @regression
   Scenario: Give advice and grant a licence
     Given I create application or application has been previously created
     And I create a proviso picklist
@@ -20,7 +20,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Then I see my advice has been posted successfully
     And I see added advice in the same amount of places
 
-  @LT_1376_proviso
+  @LT_1376_proviso @regression
   Scenario: Give advice and add a proviso
     Given I create application or application has been previously created
     And I create a proviso picklist
@@ -37,7 +37,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Then I see my advice has been posted successfully
     And I see added advice in the same amount of places
 
-  @LT_1376_deny
+  @LT_1376_deny @regression
   Scenario: Give advice and deny a licence
     Given I create application or application has been previously created
     And I create a proviso picklist
@@ -55,7 +55,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Then I see my advice has been posted successfully
     And I see added advice in the same amount of places
 
-  @LT_1378_pre_populate
+  @LT_1378_pre_populate @regression
   Scenario: See that advice pre-populates
     Given I create application or application has been previously created
     And I create a proviso picklist
@@ -74,7 +74,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Then I see the fields pre-populated with the proviso and advice picklist items
 
 
-  @LT_1115_grant
+  @LT_1115_grant @smoke
   Scenario: Finalise a licence
     Given I create application or application has been previously created
     And I create a proviso picklist
@@ -95,7 +95,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Then Todays date is filled in
 
 
-  @LT_1334_finalise_goods_countries_matrix
+  @LT_1334_finalise_goods_countries_matrix @regression
   Scenario: Finalise goods and countries
     Given I create open application or open application has been previously created
     And I create a proviso picklist
@@ -118,7 +118,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     When I select approve for all combinations of goods and countries
     And I click continue
 
-  @LT_966_refusal_flags
+  @LT_966_refusal_flags @regression
   Scenario: Test that refusal advice is given correctly
     Given I create application or application has been previously created
     And I sign in to SSO or am signed into SSO

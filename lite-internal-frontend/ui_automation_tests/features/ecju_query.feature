@@ -1,11 +1,11 @@
-@internal @ecju_query
+@all @internal @ecju_query
 Feature: I want to create ECJU queries
   As a logged in government user
   I want to raise a query to an exporter about their case
   So that I can ask them for additional information or to correct an issue with the case they have submitted
 
 
-  @LT_1192_add
+  @LT_1192_add @regression
   Scenario: Add an ECJU Query to a case
     Given I create application or application has been previously created
     And I sign in to SSO or am signed into SSO
@@ -33,7 +33,7 @@ Feature: I want to create ECJU queries
     Then the ECJU Query creation is visible in the case timeline
 
 
-  @LT_1320_view_response_to_ecju
+  @LT_1320_view_response_to_ecju @smoke
   Scenario: Add an ECJU Query and respond and view response
     Given I create application or application has been previously created
     And I sign in to SSO or am signed into SSO

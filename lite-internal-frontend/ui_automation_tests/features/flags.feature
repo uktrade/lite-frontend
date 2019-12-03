@@ -1,10 +1,10 @@
-@internal @flags
+@all @internal @flags
 Feature:  I want to create and deactivate case flags
   As a logged in government user
   I want to create and deactivate case flags
   So that I can make new flags where required and prevent flags which are no longer relevant from being assigned to cases
 
-  @LT_950_add
+  @LT_950_add @regression
   Scenario: Create new flag
     Given I go to internal homepage
     When I go to flags via menu
@@ -12,14 +12,14 @@ Feature:  I want to create and deactivate case flags
     When I add an existing flag name
     Then I see error message "Enter a name which is not already in use by another flag"
     
-  @LT_950_edit @setup
+  @LT_950_edit @regression
   Scenario: Edit a flag
     Given I go to flags
     When I add a flag called UAE at level Case
     And I edit my flag
     Then I see the flag in the flag list
 
-  @LT_950_deactivate
+  @LT_950_deactivate @regression
   Scenario: Deactivate and reactivate a flag
     Given I go to flags
     When I click include deactivated

@@ -1,10 +1,10 @@
-@internal @filter_and_sort
+@all @internal @filter_and_sort
 Feature: I want to filter and sort cases on a queue
   As a logged in government user
   I want to filter and sort the cases in the work queue I am viewing
   So that I can easily find the cases I am most interested in
 
-  @LT_914_filter_and_sort
+  @LT_914_filter_and_sort @smoke
   Scenario: Filter and sort
     Given a queue has been created
     And I create application or application has been previously created
@@ -35,7 +35,7 @@ Feature: I want to filter and sort cases on a queue
     Then the case at index "0" has the status of "Submitted"
     And the case at index "1" has the status of "Under review"
 
-  @LT_914_sort_all_cases
+  @LT_914_sort_all_cases @regression
   Scenario: Sort all cases
     Given I create application or application has been previously created
     And I go to internal homepage
@@ -43,7 +43,7 @@ Feature: I want to filter and sort cases on a queue
     And I sort cases by status
     Then the case at index "0" has the status of "Submitted"
 
-  @LT_914_filter_and_sort
+  @LT_914_filter_and_sort @regression
   Scenario: I can show and hide filters
     Given I go to internal homepage
     When I show filters

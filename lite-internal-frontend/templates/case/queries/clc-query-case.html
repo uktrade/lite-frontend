@@ -24,7 +24,7 @@
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
 			<p class="govuk-caption-m" style="margin: 0;">{{ case.type.value }} by <a class="govuk-link govuk-link--no-visited-state" style="display: inline-block;" href="{% url 'organisations:organisation' case.query.organisation.id %}">{{ case.query.organisation.name }}</a></p>
-			<h2 class="govuk-heading-l">{{ case.query.id|reference_code }}</h2>
+			<h2 class="govuk-heading-l">{% block title %}{{ case.query.id|reference_code }}{% endblock %}</h2>
 		</div>
 			<div class="lite-app-bar__controls">
 			{% if case.query.good.status.key != 'verified' and 'REVIEW_GOODS' in permissions and not status_is_terminal %}

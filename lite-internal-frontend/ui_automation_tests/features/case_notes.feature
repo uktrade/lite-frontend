@@ -1,10 +1,10 @@
-@internal @case_notes
+@all @internal @case_notes
 Feature: I want to add an internal note to a case and view notes
   As a logged in government user
   I want to add an internal note to a case and view existing notes
   So that I can record my findings and comments and others users can see these
 
-  @LT_911_add
+  @LT_911_add @regression
   Scenario: Add a new valid case note
     Given I create application or application has been previously created
     And I sign in to SSO or am signed into SSO
@@ -13,7 +13,7 @@ Feature: I want to add an internal note to a case and view notes
     And I click post note
     Then note is displayed
 
-  @LT_911_too_many
+  @LT_911_too_many @regression
   Scenario: Add a case note with too many characters
     Given I create application or application has been previously created
     And I sign in to SSO or am signed into SSO
@@ -24,7 +24,7 @@ Feature: I want to add an internal note to a case and view notes
     Then case note warning is "disabled"
     And post note is disabled
 
-  @LT_911_cancel
+  @LT_911_cancel @regression
   Scenario: Case note cancel button
     Given I create application or application has been previously created
     And I sign in to SSO or am signed into SSO
@@ -33,7 +33,7 @@ Feature: I want to add an internal note to a case and view notes
     And I click cancel button
     Then entered text is no longer in case note field
 
-  @LT_912_add_external
+  @LT_912_add_external @smoke
   Scenario: Add a new exporter visible case note
     Given I create application or application has been previously created
     And I sign in to SSO or am signed into SSO

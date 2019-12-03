@@ -1,10 +1,10 @@
-@internal @roles
+@all @internal @roles
 Feature: I want to create roles
   As a logged in government user
   I want to create roles with permissions
   So that I can restrict access to functionality
 
-  @LT_1127_edit
+  @LT_1127_edit @smoke
   Scenario: Edit a role
     Given I go to internal homepage
     When I go to users

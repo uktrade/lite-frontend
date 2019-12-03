@@ -1,11 +1,11 @@
-@internal @picklists
+@all @internal @picklists
 Feature: I want standard picklists
   As a logged in government user
   I want to define items for one of 6 picklists
   And activate/deactivate items on these picklists
   So that I can make it easier for other government users to quickly apply any relevant conditions to their approval recommendations
 
-  @LT_1077_add_edit
+  @LT_1077_add_edit @smoke
   Scenario: Add and edit a picklist item with context variables
     Given I go to internal homepage
     When I go to My Team
@@ -27,7 +27,7 @@ Feature: I want standard picklists
     When I edit my picklist to "edit" and "edit"
     Then I see my picklist page with status as "Active"
 
-  @LT_1077_deactivate
+  @LT_1077_deactivate @regression
   Scenario: Deactivate and reactivate a picklist item
     Given I go to internal homepage
     When I go to My Team

@@ -1,4 +1,4 @@
-@internal @manage_cases @setup
+@all @internal @manage_cases @setup
 Feature: I want to record the final decision overall on an application case
   As a Licensing Unit Case Officer
   I want to record the final decision overall on an application case
@@ -7,7 +7,7 @@ Feature: I want to record the final decision overall on an application case
   I want to: update the status of an application case
   So that: interested users can see the progress of the application case and whether it is complete
 
-  @LT_909_status
+  @LT_909_status @smoke
   Scenario: Change status to Under Review
     Given I create application or application has been previously created
     And I sign in to SSO or am signed into SSO

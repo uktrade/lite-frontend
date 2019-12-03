@@ -75,5 +75,5 @@ def click_visible_to_exporters_checkbox(driver):
 
 @when("I click confirm on confirmation box")
 def click_confirm_on_confirmation_box(driver):
-    alert = driver.switch_to_alert()
+    alert = driver.switch_to.alert
     alert.accept()

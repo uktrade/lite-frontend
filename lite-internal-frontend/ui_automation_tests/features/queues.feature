@@ -1,11 +1,11 @@
-@internal @queues
+@all @internal @queues
 Feature: I want to define new work queues and the teams they belong to
   As a logged in government user
   I want to be able to define new work queues and the department they belong to
   So that new government departments and teams within departments which require their own work queues can easily have one
 
 
-  @LT_919_add
+  @LT_919_add @regression
   Scenario: Add a new queue
     Given I go to internal homepage
     When I go to queues via menu
@@ -14,7 +14,7 @@ Feature: I want to define new work queues and the teams they belong to
     When I go to the internal homepage
     And I click on new queue in dropdown
 
-  @LT_1125_move_cases
+  @LT_1125_move_cases @smoke
   Scenario: Move case to new queue and remove from new queue
     Given I create application or application has been previously created
     And I go to queues
@@ -28,7 +28,7 @@ Feature: I want to define new work queues and the teams they belong to
     When I go to application previously created
     Then queue change is in audit trail
 
-  @LT_1123_view_all_cases @view_all_cases
+  @LT_1123_view_all_cases @view_all_cases @regression
   Scenario: Closed cases appear on the all cases queue
     Given I create application or application has been previously created
     And I sign in to SSO or am signed into SSO
@@ -39,7 +39,7 @@ Feature: I want to define new work queues and the teams they belong to
     And I click on the "All cases" queue in dropdown
     Then I see previously created application
 
-  @LT_1123_view_all_cases @view_all_cases
+  @LT_1123_view_all_cases @view_all_cases @regression
   Scenario: Closed cases dont appear on the open cases queue
     Given I create application or application has been previously created
     And I sign in to SSO or am signed into SSO
@@ -50,7 +50,7 @@ Feature: I want to define new work queues and the teams they belong to
     And I click on the "Open cases" queue in dropdown
     Then I dont see previously created application
     
-  @LT_919_edit
+  @LT_919_edit @regression
   Scenario: Edit a new queue
     Given I go to queues
     When I enter in queue name Review
