@@ -76,6 +76,32 @@ def apply_for_clc_query(driver, seed_data_config, context):
     context.clc_case_id = lite_client.context["case_id"]
 
 
+@fixture(scope="function")
+def apply_for_hmrc_query(driver, seed_data_config, context):
+    timer = Timer()
+    lite_client = get_lite_client(context, seed_data_config)
+
+    draft_id = lite_client.add_hmrc_draft(
+        draft={
+            "application_type": "hmrc_query",
+            "organisation": lite_client.context["org_id"],
+            "hmrc_organisation": lite_client.context["hmrc_org_id"],
+        },
+        good={"good_id": "",
+              "quantity": 1234,
+              "unit": "MTR",
+              "value": 1},
+        end_user={
+            "name": "Mr Smith",
+            "address": "Westminster, London SW1A 0BB",
+            "country": "GB",
+            "sub_type": "government",
+            "website": "https://www.gov.uk",
+        },
+    )
+    lite_client.submit_hmrc_application(draft_id)
+
+
 @fixture(scope="module")
 def apply_for_eua_query(driver, seed_data_config, context):
     lite_client = get_lite_client(context, seed_data_config)
