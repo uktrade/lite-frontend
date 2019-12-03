@@ -5,6 +5,7 @@ from shared.tools.utils import set_timeout_to, set_timeout_to_10_seconds
 
 def click_submit(driver: WebDriver):
     element = driver.find_element_by_css_selector("button[value='submit']")
+    driver.execute_script("arguments[0].scrollIntoView();", element)
     driver.execute_script("arguments[0].click();", element)
 
 
