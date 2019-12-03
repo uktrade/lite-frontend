@@ -87,10 +87,7 @@ def apply_for_hmrc_query(driver, seed_data_config, context):
             "organisation": lite_client.context["org_id"],
             "hmrc_organisation": lite_client.context["hmrc_org_id"],
         },
-        good={"good_id": "",
-              "quantity": 1234,
-              "unit": "MTR",
-              "value": 1},
+        good={"good_id": "", "quantity": 1234, "unit": "MTR", "value": 1},
         end_user={
             "name": "Mr Smith",
             "address": "Westminster, London SW1A 0BB",

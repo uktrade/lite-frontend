@@ -29,8 +29,7 @@ class Organisation(SeedClass):
             self.request_data["organisation_for_switching_organisations"]["name"],
         )
         self.add_to_context(
-            "hmrc_org_id",
-            org_id,
+            "hmrc_org_id", org_id,
         )
 
     def find_org_by_name(self, org_name):

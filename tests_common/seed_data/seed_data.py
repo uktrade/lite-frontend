@@ -131,10 +131,7 @@ class SeedData:
         return draft_id
 
     def add_hmrc_draft(
-        self,
-        draft=None,
-        good=None,
-        end_user=None,
+        self, draft=None, good=None, end_user=None,
     ):
         draft_id = self.create_draft(draft)
         self.add_site(draft_id)
