@@ -158,3 +158,8 @@ def check_advice_checkboxes_are_not_present(driver):
 @then("the give or change advice button is not present")
 def check_give_advice_button_is_not_present(driver):
     assert len(GiveAdvicePages(driver).give_advice_button_present()) == 0
+
+
+@then("I see total goods value")
+def total_goods_value(driver, context):
+    assert "Total value: £" + str(context.good_value) in Shared(driver).get_text_of_body()
