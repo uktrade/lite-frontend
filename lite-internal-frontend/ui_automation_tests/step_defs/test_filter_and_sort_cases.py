@@ -33,17 +33,6 @@ def filter_status_change(driver, context, status):
     CaseListPage(driver).click_apply_filters_button()
 
 
-@when(parsers.parse('filter case type has been changed to "{case_type}"'))
-def filter_status_change(driver, context, case_type):
-    CaseListPage(driver).select_filter_case_type_from_dropdown(case_type)
-    CaseListPage(driver).click_apply_filters_button()
-
-
-@when("I show filters")
-def i_show_filters(driver, context):
-    CaseListPage(driver).click_show_filters_link()
-
-
 @when("I click clear filters")
 def i_show_filters(driver, context):
     CaseListPage(driver).click_clear_filters_button()

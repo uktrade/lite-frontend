@@ -31,6 +31,7 @@ from ui_automation_tests.shared.fixtures.apply_for_application import (  # noqa
     apply_for_clc_query,
     apply_for_eua_query,
     apply_for_open_application,
+    apply_for_hmrc_query,
 )
 from ui_automation_tests.shared.fixtures.driver import driver  # noqa
 from ui_automation_tests.shared.fixtures.sso_sign_in import sso_sign_in  # noqa
@@ -323,3 +324,14 @@ def click_chevron(driver, context):
     except NoSuchElementException:
         pass
     driver.set_timeout_to(10)
+
+
+@when(parsers.parse('filter case type has been changed to "{case_type}"'))  # noqa
+def filter_status_change(driver, context, case_type):
+    CaseListPage(driver).select_filter_case_type_from_dropdown(case_type)
+    CaseListPage(driver).click_apply_filters_button()
+
+
+@when("I show filters")  # noqa
+def i_show_filters(driver, context):
+    CaseListPage(driver).click_show_filters_link()
