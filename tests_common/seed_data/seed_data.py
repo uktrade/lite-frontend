@@ -59,6 +59,7 @@ class SeedData:
             self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context,
         )
         self.seed_org.setup_org()
+        self.seed_org.setup_org_for_switching_organisations()
         self.seed_user.auth_export_user()
         self.headers_initialised = True
 
@@ -129,6 +130,16 @@ class SeedData:
 
         return draft_id
 
+    def add_hmrc_draft(
+        self, draft=None, good=None, end_user=None,
+    ):
+        draft_id = self.create_draft(draft)
+        self.add_site(draft_id)
+        self.seed_party.add_end_user(draft_id, end_user)
+        self.seed_good.add_good_to_draft(draft_id, good)
+
+        return draft_id
+
     def add_open_draft(self, draft=None):
         draft_id = self.create_draft(draft)
         self.add_to_context("open_draft_id", draft_id)
@@ -153,6 +164,9 @@ class SeedData:
         self.submit_application(draft_id)
         self.add_to_context("application_id", draft_id)
         self.add_to_context("case_id", draft_id)
+
+    def submit_hmrc_application(self, draft_id=None):
+        self.submit_application(draft_id)
 
     def submit_open_application(self, draft_id=None):
         self.submit_application(draft_id)
