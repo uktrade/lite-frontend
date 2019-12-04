@@ -26,6 +26,8 @@ class ApplicationEditReferenceName(SingleFormView):
 
 **success_url:** Refers to what page should be displayed on a successful submission.
 
+**redirect:** If set to false, the form will just display itself rather than use the success_url. (Optional)
+
 ## MultiFormView
 
 MultiFormViews enables you to display multiple forms (as part of a FormGroup) and handles submission of them.
