@@ -4,6 +4,8 @@ In order to display a form/series of forms you should extend your template view 
 
 ## SingleFormView
 
+SingleFormViews, as the name would suggest, enables you to display a form and handle submission of it.
+
 ```
 class ApplicationEditReferenceName(SingleFormView):
     def init(self, request, **kwargs):
@@ -25,6 +27,8 @@ action: Refers to the function that should be called on submission.
 success_url: Refers to what page should be displayed on a successful submission.
 
 ## MultiFormView
+
+MultiFormViews enables you to display multiple forms (as part of a FormGroup) and handles submission of them.
 
 ```
 class SetEndUser(MultiFormView):
