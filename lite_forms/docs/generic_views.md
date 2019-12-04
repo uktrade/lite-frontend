@@ -15,9 +15,13 @@ class ApplicationEditReferenceName(SingleFormView):
 ```
 
 object_pk: Refers to the object that the form is referencing. (Optional)
+
 data: Refers to initial data to be displayed on the form. (Optional)
+
 form: Refers to the form to be used.
+
 action: Refers to the function that should be called on submission.
+
 success_url: Refers to what page should be displayed on a successful submission.
 
 ## MultiFormView
