@@ -71,7 +71,7 @@ def create_request_data(exporter_user, gov_user, base_url):
         "good": create_good("Lentils", True),
         "good_end_product_true": create_good("Hot Cross Buns", True),
         "good_end_product_false": create_good("Falafels", False),
-        "export_user": {"email": exporter["email"], "password": "password"},
+        "export_user": {"email": exporter["email"], "user_profile": {"first_name": "Bruce", "last_name": "Wayne"}},
         "application": {
             "name": "application",
             "application_type": "standard_licence",
