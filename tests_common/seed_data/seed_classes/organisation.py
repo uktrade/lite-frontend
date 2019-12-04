@@ -17,14 +17,19 @@ class Organisation(SeedClass):
         self.add_to_context("last_name", self.request_data["organisation"]["user"]["last_name"])
 
     def setup_org_for_switching_organisations(self):
+
         organisation = self.find_org_by_name(self.request_data["organisation_for_switching_organisations"]["name"])
 
         if not organisation:
-            self.add_org("organisation_for_switching_organisations")
+            organisation = self.add_org("organisation_for_switching_organisations")
 
+        org_id = organisation["id"]
         self.add_to_context(
             "org_name_for_switching_organisations",
             self.request_data["organisation_for_switching_organisations"]["name"],
+        )
+        self.add_to_context(
+            "hmrc_org_id", org_id,
         )
 
     def find_org_by_name(self, org_name):
