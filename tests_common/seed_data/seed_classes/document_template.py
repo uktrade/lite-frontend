@@ -1,5 +1,3 @@
-import uuid
-
 import shared.tools.helpers as utils
 from .seed_class import SeedClass
 from ..make_requests import make_request
