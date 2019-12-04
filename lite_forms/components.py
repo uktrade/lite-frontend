@@ -82,8 +82,13 @@ class FormGroup:
 
 
 class Label:
-    def __init__(self, text: str):
-        self.text = text
+    def __init__(self, text: str, create_links=True):
+        if create_links:
+            from lite_forms.helpers import extract_links
+            self.text = extract_links(text)
+        else:
+            self.text = text
+        self.create_links = create_links
         self.input_type = "label"
 
 
