@@ -1,7 +1,7 @@
-@HMRC
+@HMRC @all
 Feature: I want to be able to perform actions as a HMRC user
 
-  @LT_1008_log_in_as_hmrc_and_select_organisation_to_raise_query_for
+  @LT_1008_log_in_as_hmrc_and_select_organisation_to_raise_query_for @smoke
   Scenario: Raise an HMRC Query
     # This has the second org in the seed data as a hmrc org, this is to save on multiple accesses to great sso
     Given I have a second set up organisation
@@ -15,8 +15,6 @@ Feature: I want to be able to perform actions as a HMRC user
     And I click the back link
     And I click on hmrc describe your goods
     When I add a good or good type with description "M4" controlled "Yes" control code "ML1a" incorporated "No" and part number "not needed"
-    And I click on link with id "attach_doc"
-    And I upload a file "file_for_doc_upload_test_1.txt"
     And I click the back link
     And I click on application hmrc locations link
     And I select "organisation" for where my goods are located

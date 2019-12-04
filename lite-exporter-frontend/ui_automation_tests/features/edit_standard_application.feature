@@ -4,7 +4,7 @@ Feature: I want to be able to edit and update an active application
   I want to be able to edit and update an active application
   So that any additional information and/or corrected details can be updated on my application
 
-  @LT_998_edit_standard_application
+  @LT_998_edit_standard_application @regression
   Scenario: Edit a standard application
     Given I go to exporter homepage and choose Test Org
     And I create a standard application via api
@@ -32,7 +32,7 @@ Feature: I want to be able to edit and update an active application
     And I confirm I want to delete the document
     Then the document is removed from the application
 
-  @LT_1099_prohibit_edit_application
+  @LT_1099_prohibit_edit_application @regression
   Scenario: Cannot edit a read only application
     Given I go to exporter homepage and choose Test Org
     And I create a standard application via api

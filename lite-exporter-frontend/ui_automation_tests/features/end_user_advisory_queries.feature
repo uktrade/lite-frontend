@@ -4,7 +4,7 @@ Feature: I want to raise an End User advisory enquiry to check if a particular e
   I want to raise an End User advisory enquiry for a particular end user/ultimate end user
   So that I can be advised whether or not the person I am seeking to export my goods is a suitable end user for export
 
-  @LT_1007 @LT_1483
+  @LT_1007 @LT_1483 @smoke
   Scenario: create an end user advisory and copy an existing end user advisory
     Given I go to exporter homepage and choose Test Org
     When I click on end user advisories
@@ -23,7 +23,7 @@ Feature: I want to raise an End User advisory enquiry to check if a particular e
     And I enter "reasoning" for my reason, and "these are notes" for notes and click submit
     Then I am given a confirmed submitted page, and am shown a 10 digit code
 
-  @LT_1474_case_notes
+  @LT_1474_case_notes @regression
   Scenario: can view gov users case note, and can submit own case note
     Given An end user advisory with a case note has been added via gov user
     And I go to exporter homepage and choose Test Org
@@ -34,7 +34,7 @@ Feature: I want to raise an End User advisory enquiry to check if a particular e
     When I enter "This is my new case note" for case note
     Then I can view "This is my new case note" in case notes
 
-  @LT_1474_ecju_queries
+  @LT_1474_ecju_queries @regression
   Scenario: can view and respond to ecju queries
     Given An end user advisory with an ecju query has been added via gov user
     And I go to exporter homepage and choose Test Org

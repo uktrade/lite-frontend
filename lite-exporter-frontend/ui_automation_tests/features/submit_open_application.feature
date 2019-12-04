@@ -4,7 +4,7 @@ Feature: I want to indicate the open licence I want
   I want to indicate the kind of licence I want
   So that I am more likely to get the correct kind of licence or the kind of licence I would like
 
-  @LT_1091_draft
+  @LT_1091_draft @regression
   Scenario: Apply for a licence to draft and delete
     Given I go to exporter homepage and choose Test Org
     When I click on apply for a license button
@@ -14,7 +14,7 @@ Feature: I want to indicate the open licence I want
     Then I see the application overview
     When I delete the application
 
-  @LT_1114 @submit_open_application @LT_1092_search
+  @LT_1114 @submit_open_application @LT_1092_search @smoke
   Scenario: Submit open application
     Given I go to exporter homepage and choose Test Org
     When I click on apply for a license button
@@ -57,7 +57,7 @@ Feature: I want to indicate the open licence I want
     Then I see submitted application
 
 
-  @LT_1363_set_countries_on_goods
+  @LT_1363_set_countries_on_goods @regression
   Scenario: Set countries on goods types
     Given I go to exporter homepage and choose Test Org
     When I go to exporter homepage

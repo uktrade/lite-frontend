@@ -4,7 +4,7 @@ Feature: I want to indicate the standard licence I want
   I want to indicate the kind of licence I want
   So that I am more likely to get the correct kind of licence or the kind of licence I would like
 
-  @LT_1091_draft
+  @LT_1091_draft @regression
   Scenario: Apply for a licence to draft and delete
     Given I go to exporter homepage and choose Test Org
     When I click on apply for a license button
@@ -15,7 +15,7 @@ Feature: I want to indicate the standard licence I want
     Then I see the application overview
     When I delete the application
 
-  @LT_1091_standard @setup
+  @LT_1091_standard @setup @smoke
   Scenario: Submit standard application
     Given I go to exporter homepage and choose Test Org
     When I create a standard application
@@ -43,7 +43,7 @@ Feature: I want to indicate the standard licence I want
     And I click applications
     Then I see submitted application
 
-  @LT_1091_external @AT
+  @LT_1091_external @regression
   Scenario: Submit standard application with external locations
     Given I go to exporter homepage and choose Test Org
     When I create a standard application
@@ -73,7 +73,7 @@ Feature: I want to indicate the standard licence I want
     And I click applications
     Then I see submitted application
 
-  @LT_1042_happy_path
+  @LT_1042_happy_path @regression
   Scenario: Apply for a licence with ultimate end users
     Given I go to exporter homepage and choose Test Org
     When I create a standard application
@@ -107,7 +107,7 @@ Feature: I want to indicate the standard licence I want
     And I click applications
     Then I see submitted application
 
-  @LT_1445_ultimate_end_user_document
+  @LT_1445_ultimate_end_user_document @regression
   Scenario: Add an Ultimate end user document and can download and delete
     Given I go to exporter homepage and choose Test Org
     When I create a standard application

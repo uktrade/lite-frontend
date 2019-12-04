@@ -3,7 +3,7 @@ Feature: As a logged in exporter
 I want to see when there are ECJU queries (RFIs) relating to my applications, queries and licences and be able to respond
 So that I can quickly identify where action is required by me and respond to any queries
 
-  @LT_996_application
+  @LT_996_application @smoke
   Scenario: view and respond to a ecju query in an application
     Given I go to exporter homepage and choose Test Org
     When I go to the recently created application
@@ -17,7 +17,7 @@ So that I can quickly identify where action is required by me and respond to any
     And I select "yes" for submitting response and click submit
     Then I see my ecju query is closed
 
-  @LT_996_clc
+  @LT_996_clc @regression
    Scenario: view and respond to a ecju query in a good
     Given I go to exporter homepage and choose Test Org
     When I click on an CLC query previously created

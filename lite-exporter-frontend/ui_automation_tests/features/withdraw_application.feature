@@ -1,6 +1,7 @@
+@all @status
 Feature: I want to be able to withdraw an active application
 
-  @LT_995_Withdraw_active_application
+  @LT_995_Withdraw_active_application @regression
     Scenario: Withdraw an active application
       Given I go to exporter homepage and choose Test Org
       And I create a standard application via api
