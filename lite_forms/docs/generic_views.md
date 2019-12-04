@@ -16,15 +16,15 @@ class ApplicationEditReferenceName(SingleFormView):
         self.success_url = reverse_lazy("applications:task_list", kwargs={"pk": self.object_pk})
 ```
 
-object_pk: Refers to the object that the form is referencing. (Optional)
+**object_pk:** Refers to the object that the form is referencing. (Optional)
 
-data: Refers to initial data to be displayed on the form. (Optional)
+**data:** Refers to initial data to be displayed on the form. (Optional)
 
-form: Refers to the form to be used.
+**form:** Refers to the form to be used.
 
-action: Refers to the function that should be called on submission.
+**action:** Refers to the function that should be called on submission.
 
-success_url: Refers to what page should be displayed on a successful submission.
+**success_url:** Refers to what page should be displayed on a successful submission.
 
 ## MultiFormView
 
@@ -41,12 +41,12 @@ class SetEndUser(MultiFormView):
         self.success_url = reverse_lazy("applications:end_user_attach_document", kwargs={"pk": self.object_pk})
 ```
 
-object_pk: Refers to the object that the forms are referencing. (Optional)
+**object_pk:** Refers to the object that the forms are referencing. (Optional)
 
-data: Refers to initial data to be displayed on the form. (Optional)
+**data:** Refers to initial data to be displayed on the form. (Optional)
 
-forms: Refers to the form group to be used.
+**forms:** Refers to the form group to be used.
 
-action: Refers to the function that should be called on submission.
+**action:** Refers to the function that should be called on submission.
 
-success_url: Refers to what page should be displayed on a successful submission.
+**success_url:** Refers to what page should be displayed on a successful submission.
