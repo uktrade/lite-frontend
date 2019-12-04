@@ -13,6 +13,7 @@ def apply_for_standard_application(driver, seed_data_config, context):
     app_time_id = datetime.datetime.now().strftime(" %d%H%M%S")
     context.app_time_id = app_time_id
     app_name = "Test Application" + app_time_id
+    context.good_value = 1.21
 
     draft_id = lite_client.add_draft(
         draft={
@@ -22,7 +23,7 @@ def apply_for_standard_application(driver, seed_data_config, context):
             "have_you_been_informed": "yes",
             "reference_number_on_information_form": "1234",
         },
-        good={"good_id": "", "quantity": 1234, "unit": "MTR", "value": 1},
+        good={"good_id": "", "quantity": 1234, "unit": "MTR", "value": context.good_value},
         end_user={
             "name": "Mr Smith",
             "address": "Westminster, London SW1A 0BB",
