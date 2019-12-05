@@ -1,4 +1,4 @@
-import shared.tools.helpers as utils
+from ...tools import helpers
 from .seed_class import SeedClass
 from ..make_requests import make_request
 
@@ -9,7 +9,7 @@ class DocumentTemplate(SeedClass):
         template_data["layout"] = self.get_layouts()[0]["id"]
         paragraph = seed_picklist.add_letter_paragraph_picklist()
         template_data["letter_paragraphs"] = [paragraph["id"]]
-        template_data["name"] = "0000" + utils.get_formatted_date_time_m_d_h_s()
+        template_data["name"] = "0000" + helpers.get_formatted_date_time_m_d_h_s()
         template = make_request(
             "POST", base_url=self.base_url, url="/letter-templates/", headers=self.gov_headers, body=template_data,
         ).json()
