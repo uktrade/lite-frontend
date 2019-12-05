@@ -155,7 +155,7 @@ USER_ROLE_QUESTION = "What role should this user have?"
 USER_ADD_TITLE = "Add new user"
 USER_EMAIL_QUESTION = "Whats the user's email"
 USER_ADD_FORM_BACK_TO_USERS = "Back to users"
-USER_EDIT_TITLE = "Edit"
+USER_EDIT_TITLE = "Change role"
 USER_EDIT_FORM_BACK_TO_USER = "Back to user"
 USER_EDIT_FORM_SAVE = "Save"
 
