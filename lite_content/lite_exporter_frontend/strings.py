@@ -17,6 +17,8 @@ NOT_STARTED = "Not started"
 IN_PROGRESS = "In progress"
 DONE = "Done"
 
+VIEW = "View"
+
 PERMISSION_FINDER_LINK = '<a class="govuk-link" href="' + env("PERMISSIONS_FINDER_URL") + '">Permissions Finder</a>'
 
 APPLICATION_GOODS_TITLE = "Goods"
@@ -158,6 +160,13 @@ USER_ADD_FORM_BACK_TO_USERS = "Back to users"
 USER_EDIT_TITLE = "Change role"
 USER_EDIT_FORM_BACK_TO_USER = "Back to user"
 USER_EDIT_FORM_SAVE = "Save"
+
+USER_EMAIL = "Email"
+USER_NAME = "Name"
+USER_FIRST_NAME = "First name"
+USER_LAST_NAME = "Last name"
+USER_ROLE = "Role"
+USER_STATUS = "Status"
 
 USER_DEACTIVATE = "Deactivate user"
 USER_REACTIVATE = "Reactivate user"
