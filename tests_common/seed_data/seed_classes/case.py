@@ -48,3 +48,14 @@ class Case(SeedClass):
         make_request(
             "PUT", base_url=self.base_url, url="/applications/" + app_id + "/", headers=self.export_headers, body=data,
         )
+
+    def add_generated_document(self, case_id, template_id):
+        self.log("Generating document: ...")
+        generated_document = make_request(
+            "POST",
+            base_url=self.base_url,
+            url="/cases/" + case_id + "/generated-documents/",
+            headers=self.gov_headers,
+            body={"template": template_id},
+        ).json()["generated_document"]
+        self.add_to_context("generated_document", generated_document)
