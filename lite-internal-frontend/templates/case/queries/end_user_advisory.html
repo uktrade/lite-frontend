@@ -165,7 +165,7 @@
                         Copied from
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        <a class="govuk-link" href="{% url 'cases:case' case.query.copy_of.case_id %}">{{ case.query.copy_of.reference_code|reference_code }}</a>
+                        <a class="govuk-link" href="{% url 'cases:case' case.query.copy_of %}">{{ case.query.copy_of|reference_code }}</a>
                     </dd>
                 </div>
             {% endif %}

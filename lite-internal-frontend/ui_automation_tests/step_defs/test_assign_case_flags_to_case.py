@@ -1,5 +1,3 @@
-from pages.case_list_page import CaseListPage
-from pages.good_summary_page import GoodSummaryPage
 import shared.tools.helpers as utils
 from pages.shared import Shared
 from pytest_bdd import given, when, then, scenarios, parsers
