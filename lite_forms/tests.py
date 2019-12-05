@@ -11,7 +11,8 @@ from lite_forms.helpers import (
     get_form_by_pk,
     get_next_form,
     get_previous_form,
-    extract_links)
+    extract_links,
+)
 from lite_forms.submitters import submit_paged_form
 from lite_forms.templatetags.custom_tags import prefix_dots
 
@@ -33,7 +34,7 @@ class FormTests(TestCase):
         self.assertEqual(get_next_form(1, forms).pk, 2)
 
     def test_remove_unused_errors(self):
-        form = Form(questions=[TextInput("name"), TextInput("age"), TextInput("password"), DetailComponent("", ""), ])
+        form = Form(questions=[TextInput("name"), TextInput("age"), TextInput("password"), DetailComponent("", ""),])
 
         errors = {
             "name": "This field must not be empty",
@@ -67,9 +68,9 @@ class FormTests(TestCase):
                 "reference": "conversation_16",
                 "organisation": {
                     "name": "Live on coffee and flowers inc.",
-                    "site": {"address": {"city": "London", }, "name": "Lemonworld", },
+                    "site": {"address": {"city": "London",}, "name": "Lemonworld",},
                 },
-                "user": {"first_name": "Matthew", },
+                "user": {"first_name": "Matthew",},
             },
         )
 
@@ -78,9 +79,9 @@ class FormTests(TestCase):
             "reference": "conversation_16",
             "organisation": {
                 "name": "Live on coffee and flowers inc.",
-                "site": {"address": {"city": "London", }, "name": "Lemonworld", },
+                "site": {"address": {"city": "London",}, "name": "Lemonworld",},
             },
-            "user": {"first_name": "Matthew", },
+            "user": {"first_name": "Matthew",},
         }
 
         data = flatten_data(value)
@@ -117,7 +118,7 @@ class TestSubmitPagedFormTestCase(TestCase):
             ),
             content_type="application/x-www-form-urlencoded",
         )
-        forms = FormGroup([Form(questions=[]), Form(questions=[]), Form(questions=[]), ])
+        forms = FormGroup([Form(questions=[]), Form(questions=[]), Form(questions=[]),])
 
         def handle_post(request, data):
             return data, HTTPStatus.OK
@@ -125,7 +126,7 @@ class TestSubmitPagedFormTestCase(TestCase):
         form, data = submit_paged_form(request, forms, handle_post, expect_many_values=["key_a", "key_c", "key_e"])
 
         self.assertEqual(
-            data, {"key_a": ["a", "b", "c"], "key_b": "f", "key_c": ["g"], "key_d": "h", "key_e": [], },
+            data, {"key_a": ["a", "b", "c"], "key_b": "f", "key_c": ["g"], "key_d": "h", "key_e": [],},
         )
 
 
@@ -140,9 +141,16 @@ class TemplateTagsTestCase(TestCase):
 
 class LabelMarkdownTest(TestCase):
     def test_links(self):
-        output = extract_links("This is [America](https://en.wikipedia.org/wiki/United_States)"
-                               "This is [United Kingdom](https://en.wikipedia.org/wiki/United_Kingdom).")
-        expected_output = ["This is ", Link("America", "https://en.wikipedia.org/wiki/United_States"),
-                           "This is ", Link("United Kingdom", "https://en.wikipedia.org/wiki/United_Kingdom"), "."]
+        output = extract_links(
+            "This is [America](https://en.wikipedia.org/wiki/United_States)"
+            "This is [United Kingdom](https://en.wikipedia.org/wiki/United_Kingdom)."
+        )
+        expected_output = [
+            "This is ",
+            Link("America", "https://en.wikipedia.org/wiki/United_States"),
+            "This is ",
+            Link("United Kingdom", "https://en.wikipedia.org/wiki/United_Kingdom"),
+            ".",
+        ]
 
         self.assertEqual(expected_output, output)
