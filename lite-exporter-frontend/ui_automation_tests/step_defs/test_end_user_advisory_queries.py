@@ -87,12 +87,6 @@ def enter_advisory_details(driver, reasoning, notes):
     functions.click_submit(driver)
 
 
-@then("I am given a confirmed submitted page, and am shown a 10 digit code")
-def confirm_submitted_page_code(driver):
-    end_user_page = AddEndUserAdvisoryPages(driver)
-    assert len(end_user_page.confirmation_code()) == 10
-
-
 @when("I click copy on an existing end user advisory")
 def click_copy(driver):
     no = utils.get_element_index_by_text(Shared(driver).get_table_rows(), "Commercial", complete_match=False)

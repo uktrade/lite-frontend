@@ -17,7 +17,7 @@
 				<p class="govuk-body-m">You've added {{ goods|length|apnumber }} good{{ goods|pluralize }}.</p>
 			{% endif %}
 		</div>
-        {% if not application.status.value or application.status.key == 'applicant_editing' %}
+        {% if application.status.key in 'applicant_editing,draft' %}
 		<div class="lite-app-bar__controls">
 			<a href="{% url 'applications:add_goods_type' application.id %}?next={% url 'applications:goods_types' application.id %}" role='button' draggable='false' class='govuk-button'>
 				{% if goods %}

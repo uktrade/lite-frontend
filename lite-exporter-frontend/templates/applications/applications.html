@@ -76,7 +76,7 @@
 							</td>
 						{% endif %}
 						<td class="govuk-table__cell">
-							{{ application.last_modified_at|str_date }}
+							{{ application.modified|str_date }}
 						</td>
 						{% if organisation.type.key != 'hmrc' %}
 							<td class="govuk-table__cell">{{ application.status.value }}</td>

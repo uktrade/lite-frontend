@@ -8,4 +8,3 @@ def add_end_user_advisory(driver, request, context, exporter_url, seed_data_conf
     lite_client = get_lite_client(context, seed_data_config=seed_data_config)
     lite_client.seed_party.add_eua_query()
     context.end_user_advisory_id = lite_client.context["end_user_advisory_id"]
-    context.end_user_advisory_case_id = lite_client.context["end_user_advisory_case_id"]

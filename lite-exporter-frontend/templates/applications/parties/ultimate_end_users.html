@@ -25,7 +25,7 @@
 			<h1 class="govuk-heading-l">{% block title %}Ultimate End Users{% endblock%}</h1>
 			<p class="govuk-caption-m">{% get_string 'ultimate_end_user.overview_description' %}</p>
 		</div>
-        {% if not application.status.value or application.status.key == 'applicant_editing' %}
+        {% if application.status.key in 'applicant_editing,draft' %}
 		<div class="lite-app-bar__controls">
 			<a href="{% url 'applications:add_ultimate_end_user' application.id %}" class="govuk-button" draggable="false" role="button">
 				Add an ultimate end user

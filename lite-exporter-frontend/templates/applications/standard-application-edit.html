@@ -522,13 +522,13 @@
 						<div class="app-submit-bar">
 							<form method="post">
 								{% csrf_token %}
-								{% if not application.status.value or application.status.key == 'applicant_editing' %}
+								{% if application.status.key in 'applicant_editing,draft' %}
 									<button type="submit" value="submit" class="govuk-button" data-prevent-double-click="true" style="margin-bottom: 0;">{% lcs "EDIT_APPLICATION_SUBMIT" %}</button>
 								{% else %}
 									<a href="{% url 'applications:application' application.id %}" class="govuk-button" draggable="false" role="button">{% lcs "EDIT_APPLICATION_DONE" %}</a>
 								{% endif %}
 							</form>
-							{% if not application.status.value %}
+							{% if application.status.key == 'draft' %}
 								<div class="lite-vertical-align">
 									<a id="link-delete-draft" href="{% url 'applications:delete' application.id %}?return_to=application" class="govuk-link lite-link--icon">
 										{% svg 'close' %}

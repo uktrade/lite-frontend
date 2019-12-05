@@ -12,7 +12,7 @@
 		<div class="lite-app-bar__content">
 			<h1 class="govuk-heading-l">{% block title %}Third parties{% endblock %}</h1>
 		</div>
-        {% if not application.status.value or application.status.key == 'applicant_editing' %}
+        {% if application.status.key in 'applicant_editing,draft' %}
 		<div class="lite-app-bar__controls">
 			<a href="{% url 'applications:add_third_party' application.id %}" class="govuk-button" draggable="false" role="button">
 				{% get_string 'third_parties.add' %}
