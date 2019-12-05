@@ -19,7 +19,7 @@ DONE = "Done"
 
 VIEW = "View"
 
-PERMISSION_FINDER_LINK = '<a class="govuk-link" href="' + env("PERMISSIONS_FINDER_URL") + '">Permissions Finder</a>'
+PERMISSION_FINDER_LINK = "[Permissions Finder](" + env("PERMISSIONS_FINDER_URL") + ")"
 
 APPLICATION_GOODS_TITLE = "Goods"
 APPLICATION_GOODS_ADD_NEW = "Add a new good"
