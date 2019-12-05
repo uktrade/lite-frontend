@@ -51,3 +51,4 @@ class AdditionalDocumentsPage:
         DOWNLOAD_LINK = "Download"
         INFECTED_LABEL = "Infected"
         PROCESSING_LABEL = "Processing"
+        REGENERATE_LINK = "Regenerate"
