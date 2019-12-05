@@ -167,6 +167,7 @@ USER_FIRST_NAME = "First name"
 USER_LAST_NAME = "Last name"
 USER_ROLE = "Role"
 USER_STATUS = "Status"
+USER_PENDING = "Pending"
 
 USER_DEACTIVATE = "Deactivate user"
 USER_REACTIVATE = "Reactivate user"
