@@ -91,3 +91,5 @@ GIVE_OR_CHANGE_ADVICE = "Give or change advice"
 CLEAR_ADVICE = "Clear advice"
 
 DOCUMENT_TEMPLATES_TITLE = "Document templates"
+
+REGISTER_BUSINESS_FIRST_AND_LAST_NAME = "First and last name"
