@@ -119,8 +119,8 @@ def extract_links(text: str):
     Takes a string and splits into a list of strings and links
     based on markdown conventions
     """
-    markup_regex = '(.*?)(\[.*?\))([^\[]*)'
-    link_regex = "\[(.*)\]\((.*)\)"
+    markup_regex = '(.*?)(\[.*?\))([^\[]*)'  # noqa
+    link_regex = "\[(.*)\]\((.*)\)"  # noqa
 
     return_value = []
 
