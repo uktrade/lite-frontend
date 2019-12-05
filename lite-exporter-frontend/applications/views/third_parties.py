@@ -2,7 +2,6 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
-from applications.forms.end_user import new_consignee_forms
 from applications.forms.third_party import third_party_forms
 from applications.helpers.check_your_answers import convert_consignee
 from applications.services import (
@@ -15,6 +14,8 @@ from applications.services import (
 from lite_forms.generators import form_page, error_page
 from lite_forms.submitters import submit_paged_form
 from lite_forms.views import MultiFormView
+from applications.forms.end_user import new_party_form_group
+from lite_content.lite_exporter_frontend.applications import ConsigneeForm
 
 
 class AddThirdParty(TemplateView):
@@ -88,7 +89,7 @@ class SetConsignee(MultiFormView):
         self.object_pk = kwargs["pk"]
         application = get_application(request, self.object_pk)
         self.data = application["consignee"]
-        self.forms = new_consignee_forms(application)
+        self.forms = new_party_form_group(application, ConsigneeForm)
         self.action = post_consignee
         self.success_url = reverse_lazy("applications:consignee_attach_document", kwargs={"pk": self.object_pk})
 

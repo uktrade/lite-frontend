@@ -6,45 +6,53 @@ from core.services import get_countries
 from lite_forms.common import country_question
 from lite_forms.components import RadioButtons, Form, Option, TextArea, TextInput, FormGroup, FileUpload, Label
 from lite_forms.generators import confirm_form
+from lite_content.lite_exporter_frontend.applications import PartyForm
 
 
-def third_parties_standard_form(application, opening_title=None):
-    return [
-        Form(
-            title=opening_title,
-            questions=[
-                RadioButtons(
-                    "sub_type",
-                    options=[
-                        Option("government", "A Government Organisation"),
-                        Option("commercial", "A Commercial Organisation"),
-                        Option("individual", "An Individual"),
-                        Option("other", "Other", show_or=True),
-                    ],
-                ),
-            ],
-            default_button_name="Continue",
-            back_link=back_to_task_list(application["id"]),
-        ),
-        Form(title="Enter the final recipient's name", questions=[TextInput("name"),], default_button_name="Continue"),
-        Form(
-            title="Enter the final recipient's web address (URL)",
-            questions=[TextInput("website", optional=True),],
-            default_button_name="Continue",
-        ),
-        Form(
-            title="Where's the final recipient based?",
-            questions=[
-                TextArea("address", "Address"),
-                country_question(countries=get_countries(None, True), prefix=""),
-            ],
-            default_button_name="Save and continue",
-        ),
-    ]
+def _party_type_form(application, title, button):
+    return Form(
+        title=title,
+        questions=[
+            RadioButtons(
+                "sub_type",
+                options=[
+                    Option("government", PartyForm.Options.GOVERNMENT),
+                    Option("commercial", PartyForm.Options.COMMERCIAL),
+                    Option("individual", PartyForm.Options.INDIVIDUAL),
+                    Option("other", PartyForm.Options.OTHER, show_or=True),
+                ],
+            ),
+        ],
+        default_button_name=button,
+        back_link=back_to_task_list(application["id"]),
+    )
 
 
-def new_end_user_forms(application):
-    return FormGroup(third_parties_standard_form(application, get_string("end_user.title")))
+def _party_name_form(title, button):
+    return Form(title=title, questions=[TextInput("name"),], default_button_name=button)
+
+
+def _party_website_form(title, button):
+    return Form(title=title, questions=[TextInput("website", optional=True),], default_button_name=button,)
+
+
+def _party_address_form(title, button):
+    return Form(
+        title=title,
+        questions=[TextArea("address", "Address"), country_question(countries=get_countries(None, True), prefix=""),],
+        default_button_name=button,
+    )
+
+
+def new_party_form_group(application, strings):
+    return FormGroup(
+        [
+            _party_type_form(application, strings.TITLE, strings.BUTTON),
+            _party_name_form(strings.NAME_FORM_TITLE, strings.BUTTON),
+            _party_website_form(strings.WEBSITE_FORM_TITLE, strings.BUTTON),
+            _party_address_form(strings.ADDRESS_FORM_TITLE, strings.SUBMIT_BUTTON),
+        ]
+    )
 
 
 def attach_document_form(application_id, title, return_later_text, description_text=None):
@@ -74,7 +82,3 @@ def delete_document_confirmation_form(overview_url, back_link_text):
         back_link_text=back_link_text,
         back_url=overview_url,
     )
-
-
-def new_consignee_forms(application):
-    return FormGroup(third_parties_standard_form(application, get_string("consignee.title")))
