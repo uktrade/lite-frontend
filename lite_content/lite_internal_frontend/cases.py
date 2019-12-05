@@ -28,6 +28,16 @@ class GenerateDocumentsPage:
     class SelectTemplateForm:
         BACK_LINK = "Back to Case"
 
+    class EditTextForm:
+        HEADING = "Edit text"
+        BACK_LINK = "Back to Templates"
+        ADD_PARAGRAPHS_LINK = "Add paragraphs"
+        BUTTON = "Continue"
+
+    class AddParagraphsForm:
+        HEADING = "Add paragraphs"
+        BUTTON = "Continue"
+
 
 class AdditionalDocumentsPage:
     class Table:
