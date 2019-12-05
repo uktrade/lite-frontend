@@ -49,3 +49,13 @@ class ThirdPartyForm:
     WEBSITE_FORM_TITLE = "Website address (optional)"
     ADDRESS_FORM_TITLE = "Address"
     SUBMIT_BUTTON = "Save and continue"
+
+
+class GeneratedDocuments:
+    TAB = "ECJU Documents"
+    NO_DOCUMENTS = "There are currently no documents from ECJU."
+
+    class Table:
+        NAME_COLUMN = "Name"
+        DATE_COLUMN = "Date"
+        DOWNLOAD_LINK = "Download"

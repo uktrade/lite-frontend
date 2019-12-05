@@ -1,4 +1,7 @@
 from conf.settings import env
+from lite_content.lite_exporter_frontend import applications
+
+APPLICATIONS = applications
 
 # Generic
 BACK_TO_APPLICATION = "Back to application"
@@ -63,12 +66,6 @@ APPLICATION_GOODS = "Goods"
 APPLICATION_COUNTRIES = "Countries"
 APPLICATION_ON_BEHALF_OF = "On behalf of"
 APPLICATION_OPTIONAL_NOTE = "Optional note"
-
-APPLICATION_GENERATED_DOCUMENTS_TAB = "ECJU Documents"
-APPLICATION_GENERATED_DOCUMENTS_NAME_COLUMN = "Name"
-APPLICATION_GENERATED_DOCUMENTS_DATE_COLUMN = "Date"
-APPLICATION_GENERATED_DOCUMENTS_DOWNLOAD_LINK = "Download"
-APPLICATION_GENERATED_DOCUMENTS_NO_DOCUMENTS = "There are currently no documents from ECJU."
 
 # Initial application questions
 WHICH_EXPORT_LICENCE_DO_YOU_WANT_TITLE = "Which export licence do you want to apply for?"
