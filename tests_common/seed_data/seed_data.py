@@ -1,4 +1,6 @@
 from .check_documents import check_documents
+from .make_requests import make_request
+from .request_data import create_request_data
 from .seed_classes.additional_document import SeedAdditionalDocument
 from .seed_classes.case import Case
 from .seed_classes.clc import Clc
@@ -10,8 +12,6 @@ from .seed_classes.party import Party
 from .seed_classes.picklist import Picklist
 from .seed_classes.queue import Queue
 from .seed_classes.user import User
-from .make_requests import make_request
-from .request_data import create_request_data
 
 
 class SeedData:
@@ -161,17 +161,17 @@ class SeedData:
         return response.json()
 
     def submit_standard_application(self, draft_id=None):
-        item = self.submit_application(draft_id)
+        self.submit_application(draft_id)
         self.add_to_context("application_id", draft_id)
-        self.add_to_context("case_id", item["application"]["case_id"])
+        self.add_to_context("case_id", draft_id)
 
     def submit_hmrc_application(self, draft_id=None):
         self.submit_application(draft_id)
 
     def submit_open_application(self, draft_id=None):
-        item = self.submit_application(draft_id)
+        self.submit_application(draft_id)
         self.add_to_context("application_id", draft_id)
-        self.add_to_context("case_id", item["application"]["case_id"])
+        self.add_to_context("case_id", draft_id)
 
     def manage_case_status(self, draft_id):
         draft_id_to_change = draft_id if None else self.context["draft_id"]  # noqa

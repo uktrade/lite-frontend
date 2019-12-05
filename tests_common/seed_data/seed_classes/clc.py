@@ -12,7 +12,7 @@ class Clc(SeedClass):
             url="/queries/control-list-classifications/",
             headers=self.export_headers,
             body=data,
-        ).json()["case_id"]
+        ).json()["id"]
 
     def add_clc_query(self, seed_good):
         self.log("Adding clc query: ...")
