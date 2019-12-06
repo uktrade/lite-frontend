@@ -1,16 +1,13 @@
 import datetime
-import logging
+
 from pytest_bdd import scenarios, when, then
 from selenium.webdriver.common.by import By
 
-from shared import functions
-from pages.exporter_hub_page import ExporterHubPage
 import shared.tools.helpers as utils
+from pages.exporter_hub_page import ExporterHubPage
 from pages.shared import Shared
+from shared import functions
 
-log = logging.getLogger()
-console = logging.StreamHandler()
-log.addHandler(console)
 scenarios("../features/users.feature", strict_gherkin=False)
 
 
@@ -23,8 +20,6 @@ def add_user(driver):
         for x in range(3):
             i = str(x + 1)
             exporter_hub.click_add_a_user_btn()
-            exporter_hub.enter_first_name("Test")
-            exporter_hub.enter_last_name("user_" + i)
             exporter_hub.enter_add_user_email("testuser_" + i + "@mail.com")
             functions.click_submit(driver)
 
@@ -35,7 +30,6 @@ def add_user(driver, context, exporter_info):
     first_name = "Test"
     last_name = "User" + user_id
     email_first_part = first_name + last_name
-    context.added_user_name = first_name + " " + last_name
     email = email_first_part.lower() + "@mail.com"
     context.email_to_search = email
     # logged in exporter hub as exporter
@@ -49,8 +43,6 @@ def add_user(driver, context, exporter_info):
     assert "Active" in elements[no].text
     # And I should have the ability to add a new user # And I can insert an name, last name email and password for user
     exporter_hub.click_add_a_user_btn()
-    exporter_hub.enter_first_name(first_name)
-    exporter_hub.enter_last_name(last_name)
     exporter_hub.enter_add_user_email(email)
 
     # When I Save
@@ -64,8 +56,6 @@ def add_self(driver, exporter_info):
     # I want to add a user # I should have an option to manage users
     exporter_hub.click_users()
     exporter_hub.click_add_a_user_btn()
-    exporter_hub.enter_first_name("first_name")
-    exporter_hub.enter_last_name("last_name")
     exporter_hub.enter_add_user_email(exporter_info["email"])
 
     # When I Save
@@ -95,8 +85,6 @@ def user_is_edited(driver, exporter_url, context, exporter_info):
     elements = Shared(driver).get_table_rows()
     no = utils.get_element_index_by_text(Shared(driver).get_table_rows(), email, complete_match=False)
     elements[no].find_element_by_link_text("Edit").click()
-    exporter_hub.enter_first_name("Test_edited")
-    exporter_hub.enter_last_name("user_2_edited")
     exporter_hub.enter_add_user_email(email_edited)
 
     functions.click_submit(driver)
@@ -117,26 +105,26 @@ def user_is_edited(driver, exporter_url, context, exporter_info):
 def user_is_deactivated(driver, exporter_url, context, request):
     exporter_hub = ExporterHubPage(driver)
 
-    exporter_hub.click_user_name_link(context.added_user_name)
+    exporter_hub.click_view_user_link(context.email_to_search)
 
     exporter_hub.click_deactivate_button()
 
     # And I can see that the user is now deactivated
     elements = driver.find_elements_by_css_selector(".govuk-table__row")
     # When I choose the option to manage users # Then I should see the current user for my company
-    no = utils.get_element_index_by_text(elements, context.added_user_name, complete_match=False)
-    assert "Deactivated" in elements[no].text, "user should status was expected to be Deactivated"
+    no = utils.get_element_index_by_text(elements, context.email_to_search, complete_match=False)
+    assert "Deactivated" in elements[no].text, "user status was expected to be Deactivated"
 
 
 @when("I reactivate user then user is reactivated")
 def user_reactivate(driver, exporter_url, context):
     exporter_hub = ExporterHubPage(driver)
 
-    exporter_hub.click_user_name_link(context.added_user_name)
+    exporter_hub.click_view_user_link(context.email_to_search)
     exporter_hub.click_reactivate_btn()
     elements = driver.find_elements_by_css_selector(".govuk-table__row")
     # When I choose the option to manage users # Then I should see the current user for my company
-    no = utils.get_element_index_by_text(elements, context.added_user_name, complete_match=False)
+    no = utils.get_element_index_by_text(elements, context.email_to_search, complete_match=False)
     assert "Active" in elements[no].text, "user should status was expected to be Active"
 
 

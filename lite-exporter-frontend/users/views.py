@@ -3,8 +3,9 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
-from conf.constants import Permissions, SUPER_USER_ROLE_ID
+from conf.constants import Permissions
 from core.services import get_organisation_users, get_organisation, get_organisation_user, put_organisation_user
+from lite_content.lite_exporter_frontend import strings
 from lite_forms.views import SingleFormView
 from roles.services import get_user_permissions
 from users.forms import add_user_form, edit_user_form
@@ -28,13 +29,13 @@ class Users(TemplateView):
             raise Http404
 
         context = {
-            "title": "Users - " + organisation["name"],
+            "title": strings.MANAGE_ORGANISATIONS_MEMBERS_TAB + " - " + organisation["name"],
             "users": users["users"],
             "organisation": organisation,
             "can_administer_roles": roles,
             "can_administer_sites": sites,
         }
-        return render(request, "users/index.html", context)
+        return render(request, "users/users.html", context)
 
 
 class AddUser(SingleFormView):
@@ -46,16 +47,19 @@ class AddUser(SingleFormView):
 
 class ViewUser(TemplateView):
     def get(self, request, **kwargs):
-        user = get_organisation_user(request, str(request.user.organisation), str(kwargs["pk"]))
-        request_user, _ = get_user(request)
-        super_user = is_super_user(request_user)
-        can_deactivate = not is_super_user(user)
+        user = get_user(request)
+        is_user_super_user = is_super_user(user)
+
+        request_user = get_organisation_user(request, str(request.user.organisation), str(kwargs["pk"]))
+        is_request_user_super_user = is_super_user(request_user)
+
+        show_change_status = not is_request_user_super_user
+        show_change_role = is_user_super_user and user["id"] != request_user["id"]
 
         context = {
-            "profile": user["user"],
-            "super_user": super_user,
-            "super_user_role_id": SUPER_USER_ROLE_ID,
-            "can_deactivate": can_deactivate,
+            "profile": request_user,
+            "show_change_status": show_change_status,
+            "show_change_role": show_change_role,
         }
         return render(request, "users/profile.html", context)
 
@@ -70,9 +74,8 @@ class EditUser(SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         user = get_organisation_user(request, str(request.user.organisation), str(self.object_pk))
-        super_user = is_super_user(user) and request.user.lite_api_user_id == str(kwargs["pk"])
-        self.form = edit_user_form(request, self.object_pk, super_user)
-        self.data = user["user"]
+        self.form = edit_user_form(request, user)
+        self.data = user
         self.action = put_organisation_user
         self.success_url = reverse_lazy("users:user", kwargs={"pk": self.object_pk})
 
@@ -111,4 +114,4 @@ class ChangeUserStatus(TemplateView):
 
         put_organisation_user(request, str(kwargs["pk"]), request.POST)
 
-        return redirect("/users/")
+        return redirect(reverse_lazy("users:users"))

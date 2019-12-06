@@ -65,23 +65,27 @@
 				</div>
 
 				{% block header_title %}
-					<div class="govuk-header__content">
-						<a href="/" class="govuk-header__link govuk-header__link--service-name">
-							{{ SERVICE_NAME }} {% if user.organisation_name  %} - {{ user.organisation_name }}{%  endif %}
-						</a>
-					</div>
+					{% if not user_in_limbo %}
+						<div class="govuk-header__content">
+							<a href="/" class="govuk-header__link govuk-header__link--service-name">
+								{{ SERVICE_NAME }} {% if user.organisation_name  %} - {{ user.organisation_name }}{%  endif %}
+							</a>
+						</div>
+					{% endif %}
 				{% endblock %}
 
 				{% if user.is_authenticated %}
 					<div id="lite-user-menu">
-						<a href="{% url 'authbroker_client:logout' %}" class="lite-user-menu-button">Sign out</a>
-						<div class="lite-user-menu-divider"></div>
-						<a class="lite-user-menu-button" href="{% url 'users:profile' %}">
-							{{ user.first_name }}
-							<div class="lite-user-menu-button--user">
-								{% svg 'user' %}
-							</div>
-						</a>
+						<a href="{% url 'auth:logout' %}" class="lite-user-menu-button">Sign out</a>
+						{% if not user_in_limbo %}
+							<div class="lite-user-menu-divider"></div>
+							<a class="lite-user-menu-button" href="{% url 'users:profile' %}">
+								{{ user.first_name }}
+								<div class="lite-user-menu-button--user">
+									{% svg 'user' %}
+								</div>
+							</a>
+						{% endif %}
 					</div>
 				{% endif %}
 			</div>

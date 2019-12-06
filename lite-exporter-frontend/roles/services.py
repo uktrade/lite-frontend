@@ -65,5 +65,5 @@ def get_permissions(request, convert_to_options=False):
 
 
 def get_user_permissions(request):
-    user, _ = get_user(request)
-    return user["user"]["role"]["permissions"]
+    user = get_user(request)
+    return user["role"]["permissions"]

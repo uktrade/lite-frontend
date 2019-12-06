@@ -4,61 +4,92 @@
     <a href="{% url 'users:users' %}" id="back-link" class="govuk-back-link">{% lcs "USER_PROFILE_BACK_TO_USERS" %}</a>
 {% endblock %}
 
+{% block full_width %}
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-xl">
+				{% block title %}
+					{% if profile.first_name and profile.last_name %}
+						{{ profile.first_name }} {{ profile.last_name }}
+					{% else %}
+						{{ profile.email }}
+					{% endif %}
+				{% endblock %}
+			</h1>
+		</div>
+		<div class="lite-app-bar__controls">
+			{% if show_change_status %}
+				{% if profile.status == 'Active' %}
+					<a href="{% url 'users:change_status' profile.id 'deactivate' %}" id="btn-deactivate" role="button" draggable="false" class="govuk-button govuk-button--secondary">
+						{% lcs 'USER_DEACTIVATE' %}
+					</a>
+				{% elif profile.status == 'Deactivated' %}
+					<a href="{% url 'users:change_status' profile.id 'reactivate' %}" id="btn-reactivate" role="button" draggable="false" class="govuk-button govuk-button--secondary">
+						{% lcs 'USER_REACTIVATE' %}
+					</a>
+				{% endif %}
+			{% endif %}
+			{% if show_change_role %}
+				<a href="{% url 'users:edit' profile.id %}" type="submit" class="govuk-button govuk-button--secondary">
+					{% lcs 'USER_EDIT_TITLE' %}
+				</a>
+			{% endif %}
+		</div>
+	</div>
+{% endblock %}
+
 {% block two_thirds %}
-
-	<h1 class="govuk-heading-xl">
-		{% block title %}{{ profile.first_name }} {{ profile.last_name }}{% endblock %}
-	</h1>
-
-	<dl class="govuk-summary-list">
-		<div class="govuk-summary-list__row">
-			<dt class="govuk-summary-list__key">
-				First Name
-			</dt>
-			<dd class="govuk-summary-list__value">
-				{{ profile.first_name }}
-			</dd>
+	{% if not profile.first_name or not profile.last_name %}
+		<div class="govuk-warning-text">
+			<span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+			<strong class="govuk-warning-text__text">
+				<span class="govuk-warning-text__assistive">Warning</span>
+				{% lcs "USER_NOT_ACTIVATED_YET" %}
+			</strong>
 		</div>
+	{% endif %}
+	<dl class="govuk-summary-list govuk-summary-list--no-border">
+		{% if profile.first_name and profile.last_name %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs "USER_FIRST_NAME" %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ profile.first_name }}
+				</dd>
+			</div>
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs "USER_LAST_NAME" %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ profile.last_name }}
+				</dd>
+			</div>
+		{% endif %}
 		<div class="govuk-summary-list__row">
 			<dt class="govuk-summary-list__key">
-				Last Name
-			</dt>
-			<dd class="govuk-summary-list__value">
-				{{ profile.last_name }}
-			</dd>
-		</div>
-		<div class="govuk-summary-list__row">
-			<dt class="govuk-summary-list__key">
-				Email
+				{% lcs "USER_EMAIL" %}
 			</dt>
 			<dd class="govuk-summary-list__value">
 				{{ profile.email }}
 			</dd>
 		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs "USER_ROLE" %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ profile.role.name }}
+			</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs "USER_STATUS" %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ profile.status }}
+			</dd>
+		</div>
 	</dl>
-
-    <div class="lite-buttons-row">
-        {% if super_user %}
-            <a href="{% url 'users:edit' profile.id %}" type="submit" class="govuk-button">
-                {% lcs 'USER_PROFILE_PAGE_EDIT' %}
-            </a>
-        {% elif not profile.role.id == super_user_role_id %}
-            <a href="{% url 'users:edit' profile.id %}" type="submit" class="govuk-button">
-                {% lcs 'USER_PROFILE_PAGE_EDIT' %}
-            </a>
-        {% endif %}
-        {% if can_deactivate %}
-            {% if request.user.lite_api_user_id|stringformat:"s" != profile.id|stringformat:"s" %}
-                {% if profile.status == 'Active' %}
-                    <a href="{% url 'users:change_status' profile.id 'deactivate' %}" id="btn-deactivate" role="button" draggable="false" class="govuk-button govuk-button--warning govuk-!-margin-right-2">
-                        {% lcs 'USER_DEACTIVATE' %}
-                    </a>
-                {% elif profile.status == 'Deactivated' %}
-                    <a href="{% url 'users:change_status' profile.id 'reactivate' %}" id="btn-reactivate" role="button" draggable="false" class="govuk-button govuk-!-margin-right-2">
-                        {% lcs 'USER_REACTIVATE' %}
-                    </a>
-                {% endif %}
-            {% endif %}
-        {% endif %}
-    </div>
 {% endblock %}

@@ -50,7 +50,6 @@ INSTALLED_APPS = [
     "django.contrib.humanize",
     "core.apps.CoreConfig",
     "svg",
-    "authbroker_client",
     "lite_forms",
 ]
 
@@ -64,7 +63,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "authbroker_client.middleware.ProtectAllViewsMiddleware",
     "conf.middleware.LoggingMiddleware",
     "conf.middleware.ProtectAllViewsMiddleware",
     "conf.middleware.UploadFailedMiddleware",
@@ -97,15 +95,12 @@ AUTHBROKER_CLIENT_SECRET = env("AUTHBROKER_CLIENT_SECRET")
 
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
-    "authbroker_client.backends.AuthbrokerBackend",
+    "auth.backends.AuthbrokerBackend",
 ]
 
-LOGIN_URL = reverse_lazy("authbroker_client:login")
-
-LOGIN_REDIRECT_URL = "/"
-
+LOGIN_URL = reverse_lazy("auth:login")
+LOGIN_REDIRECT_URL = reverse_lazy("core:hub")
 LOGOUT_URL = AUTHBROKER_URL + "/sso/accounts/logout/?next="
-
 AUTH_USER_MODEL = "core.User"
 
 WSGI_APPLICATION = "conf.wsgi.application"

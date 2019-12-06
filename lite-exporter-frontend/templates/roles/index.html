@@ -31,22 +31,6 @@
         {% endif %}
 	</div>
 
-	<div class="lite-app-bar">
-		<div class="lite-app-bar__content">
-			<h2 class="govuk-heading-l">{{ title }}</h2>
-			<p class="govuk-caption-m">
-				{% lcs 'ROLES_DESCRIPTION' %}
-			</p>
-		</div>
-        {% if 'ADMINISTER_ROLES' in user_permissions %}
-            <div class="lite-app-bar__controls">
-                <a id="button-add-role" href="{% url 'users:add_role' %}" class="govuk-button" draggable="false" role="button">
-                    {% lcs 'ROLES_LIST_PAGE_CREATE' %}
-                </a>
-            </div>
-        {% endif %}
-	</div>
-
     <table class="govuk-table">
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">

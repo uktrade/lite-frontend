@@ -18,10 +18,10 @@ from users.services import get_user
 class Hub(TemplateView):
     def get(self, request, **kwargs):
         try:
-            user, _ = get_user(request)
-            user_permissions = user["user"]["role"]["permissions"]
-        except JSONDecodeError:
-            return redirect("authbroker:login")
+            user = get_user(request)
+            user_permissions = user["role"]["permissions"]
+        except (JSONDecodeError, TypeError):
+            return redirect("auth:login")
 
         if Permissions.ADMINISTER_USERS in user_permissions:
             manage_organisation_section_link = reverse_lazy("users:users")
@@ -96,7 +96,7 @@ class Hub(TemplateView):
             "organisation": organisation,
             "sections": sections,
             "application_deleted": request.GET.get("application_deleted"),
-            "user_data": user["user"],
+            "user_data": user,
             "notifications": notifications,
         }
 
@@ -108,8 +108,8 @@ class PickOrganisation(TemplateView):
     organisations = None
 
     def dispatch(self, request, *args, **kwargs):
-        user, _ = get_user(request)
-        self.organisations = user["user"]["organisations"]
+        user = get_user(request)
+        self.organisations = user["organisations"]
         self.form = select_your_organisation_form(self.organisations)
 
         if len(self.organisations) == 1:
@@ -119,8 +119,7 @@ class PickOrganisation(TemplateView):
 
     def get(self, request, **kwargs):
         data = {"organisation": str(request.user.organisation)}
-
-        return form_page(request, self.form, data=data)
+        return form_page(request, self.form, data=data, extra_data={"user_in_limbo": data["organisation"] == "None"})
 
     def post(self, request, **kwargs):
         # If no data is given, error

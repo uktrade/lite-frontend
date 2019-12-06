@@ -7,7 +7,7 @@ def get_user(request, pk=None):
         data = get(request, USERS_URL + pk)
     else:
         data = get(request, USERS_URL + "me/")
-    return data.json(), data.status_code
+    return data.json()["user"]
 
 
 def get_users(request):
@@ -26,4 +26,4 @@ def update_user(request, pk, json):
 
 
 def is_super_user(user):
-    return user["user"]["role"]["id"] == SUPER_USER_ROLE_ID
+    return user["role"]["id"] == SUPER_USER_ROLE_ID

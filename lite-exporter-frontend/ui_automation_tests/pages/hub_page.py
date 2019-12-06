@@ -9,8 +9,6 @@ class Hub(BasePage):
     APPLICATION_BTN = "a[href*='/applications/']"  # CSS
     ADD_USER_BUTTON = "a[href*='/users/add']"  # CSS
     USERS_BUTTON = "a[href='/users/']"  # CSS
-    FIRST_NAME_FIELD = "first_name"  # ID
-    LAST_NAME_FIELD = "last_name"  # ID
     EMAIL_FIELD = "email"  # ID
     PASSWORD_FIELD = "password"  # ID  # noqa
     APPLICATIONS_TILE = '.app-tiles [href="/applications/"] p'  # ID
@@ -26,14 +24,6 @@ class Hub(BasePage):
 
     def click_on_users_button(self):
         self.driver.find_element_by_css_selector(self.USERS_BUTTON).click()
-
-    def enter_first_name(self, first_name):
-        self.driver.find_element_by_id(self.FIRST_NAME_FIELD).clear()
-        self.driver.find_element_by_id(self.FIRST_NAME_FIELD).send_keys(first_name)
-
-    def enter_last_name(self, last_name):
-        self.driver.find_element_by_id(self.LAST_NAME_FIELD).clear()
-        self.driver.find_element_by_id(self.LAST_NAME_FIELD).send_keys(last_name)
 
     def enter_email(self, email):
         self.driver.find_element_by_id(self.EMAIL_FIELD).clear()

@@ -119,7 +119,7 @@ def get_organisation_users(request, pk):
 
 def get_organisation_user(request, pk, user_pk):
     data = get(request, ORGANISATIONS_URL + pk + "/users/" + user_pk)
-    return data.json()
+    return data.json()["user"]
 
 
 def put_organisation_user(request, user_pk, json):

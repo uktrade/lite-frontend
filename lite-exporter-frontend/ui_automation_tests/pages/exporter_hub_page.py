@@ -16,6 +16,7 @@ class ExporterHubPage(BasePage):
     GOODS_TILE = "a[href*='sites']"
     END_USER_ADVISORY_TILE = "a[href*='/end-users/']"
     RAISE_HMRC_QUERY_BTN = "a[href*='/raise-a-query/"
+    LINK_VIEW_ID_PREFIX = "link-view-"
 
     def go_to(self, url):
         self.driver.get(url)
@@ -73,16 +74,8 @@ class ExporterHubPage(BasePage):
     def click_add_a_user_btn(self):
         self.driver.find_element_by_id("button-add-a-member").click()
 
-    def enter_first_name(self, first_name):
-        self.driver.find_element_by_id("first_name").clear()
-        self.driver.find_element_by_id("first_name").send_keys(first_name)
-
-    def enter_last_name(self, last_name):
-        self.driver.find_element_by_id("last_name").clear()
-        self.driver.find_element_by_id("last_name").send_keys(last_name)
-
-    def click_user_name_link(self, user_name):
-        self.driver.find_element_by_link_text(user_name).click()
+    def click_view_user_link(self, email: str):
+        self.driver.find_element_by_id(self.LINK_VIEW_ID_PREFIX + email).click()
 
     def click_deactivate_button(self):
         self.driver.find_element_by_id("btn-deactivate").click()
