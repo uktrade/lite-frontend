@@ -19,7 +19,7 @@ USERS_LIST_PAGE_EDIT = "Edit"
 ROLES_LIST_PAGE_CREATE = "Create a new role"
 
 USER_ROLE_QUESTION = "What role should this user have?"
-
+USER_PROFILE_PAGE_EDIT = "Edit"
 USER_DEACTIVATE = "Deactivate"
 USER_REACTIVATE = "Reactivate"
 
@@ -91,3 +91,5 @@ GIVE_OR_CHANGE_ADVICE = "Give or change advice"
 CLEAR_ADVICE = "Clear advice"
 
 DOCUMENT_TEMPLATES_TITLE = "Document templates"
+
+REGISTER_BUSINESS_FIRST_AND_LAST_NAME = "First and last name"
