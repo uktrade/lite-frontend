@@ -55,7 +55,7 @@ def apply_for_standard_application(driver, seed_data_config, context):
     )
     lite_client.submit_standard_application(draft_id)
     context.app_id = lite_client.context["application_id"]
-    context.case_id = lite_client.context["case_id"]
+    context.case_id = lite_client.context["application_id"]
     context.end_user = lite_client.context["end_user"]
     context.consignee = lite_client.context["consignee"]
     context.third_party = lite_client.context["third_party"]
@@ -127,6 +127,6 @@ def apply_for_open_application(driver, seed_data_config, context):
     )
     lite_client.submit_open_application(draft_id)
     context.app_id = lite_client.context["application_id"]
-    context.case_id = lite_client.context["case_id"]
+    context.case_id = lite_client.context["application_id"]
     context.country = lite_client.context["country"]
     timer.print_time("apply_for_open_application")

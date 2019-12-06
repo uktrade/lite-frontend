@@ -6,6 +6,7 @@ from selenium import webdriver
 
 from ..tools.utils import set_timeout_to, set_timeout_to_10_seconds
 
+
 # Create driver fixture that initiates chrome
 @fixture(scope="session", autouse=True)
 def driver(request):
