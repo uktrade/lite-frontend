@@ -6,6 +6,10 @@
 
 An easy to use Python library for building GOV.UK forms.
 
+## Preview
+
+![Screenshot](docs/preview.png)
+
 ## Documentation
 
 [View the docs folder](https://github.com/uktrade/lite-forms/tree/master/docs)
