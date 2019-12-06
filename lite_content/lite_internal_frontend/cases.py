@@ -31,6 +31,7 @@ class GenerateDocumentsPage:
     class EditTextForm:
         HEADING = "Edit text"
         BACK_LINK = "Back to Templates"
+        BACK_LINK_REGENERATE = "Back to Attached Documents"
         ADD_PARAGRAPHS_LINK = "Add paragraphs"
         BUTTON = "Continue"
 
