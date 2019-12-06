@@ -1,0 +1,22 @@
+version: 1.0
+
+orbs:
+  jq: circleci/jq@1.8.0
+
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.7
+        environment:
+          PIPENV_VENV_IN_PROJECT: true
+
+    working_directory: ~/lite-content
+
+    steps:
+      - checkout
+      - run:
+          name: Install black
+          command: pipenv install black==19.10b0
+      - run:
+          name: Check code formatting
+          command: pipenv run black . --check --diff
