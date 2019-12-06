@@ -20,6 +20,7 @@ class _Component:
         self.name = name
         self.title = title
         from lite_forms.helpers import extract_links
+
         self.description = extract_links(description)
         self.optional = optional
         self.classes = classes

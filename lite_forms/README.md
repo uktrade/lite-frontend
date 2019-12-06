@@ -12,7 +12,11 @@ An easy to use Python library for building GOV.UK forms.
 
 ## Documentation
 
-[View the docs folder](https://github.com/uktrade/lite-forms/tree/master/docs)
+1. [Building a form](https://github.com/uktrade/lite-forms/blob/master/docs/building_a_form.md)
+2. [Showing the form](https://github.com/uktrade/lite-forms/blob/master/docs/generic_views.md)
+3. [Handling submission and validation](https://github.com/uktrade/lite-forms/blob/master/docs/actions_and_validators.md)
+
+[View more](https://github.com/uktrade/lite-forms/tree/master/docs)
 
 ## Installing
 
