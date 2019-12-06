@@ -2,9 +2,6 @@ from shared.BasePage import BasePage
 
 
 class OrganisationsFormPage(BasePage):
-
-    # called e time you create an object for this class
-
     def click_new_organisation_btn(self):
         new_organisation_btn = self.driver.find_element_by_css_selector("a[href*='organisations/register']")
         new_organisation_btn.click()
@@ -49,15 +46,8 @@ class OrganisationsFormPage(BasePage):
         country_tb = self.driver.find_element_by_id("site.address.country")
         country_tb.send_keys(text)
 
+    def enter_individual_organisation_first_last_name(self, text):
+        self.driver.find_element_by_id("name").send_keys(text)
+
     def enter_email(self, text):
         self.driver.find_element_by_id("user.email").send_keys(text)
-
-    def enter_first_name(self, text):
-        self.driver.find_element_by_id("user.first_name").send_keys(text)
-
-    def enter_last_name(self, text):
-        self.driver.find_element_by_id("user.last_name").send_keys(text)
-
-    def click_submit(self):
-        submit = self.driver.find_element_by_css_selector('button[value="submit"]')
-        submit.click()

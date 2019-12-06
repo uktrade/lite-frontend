@@ -2,7 +2,7 @@ from django.urls import path
 
 from auth import views
 
-app_name = "authbroker_client"
+app_name = "auth"
 
 urlpatterns = [
     path("login/", views.AuthView.as_view(), name="login"),

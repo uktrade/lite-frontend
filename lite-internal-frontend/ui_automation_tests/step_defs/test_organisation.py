@@ -8,6 +8,7 @@ from pages.organisation_page import OrganisationPage
 from pages.organisations_form_page import OrganisationsFormPage
 from pages.organisations_page import OrganisationsPage
 from pages.shared import Shared
+from shared import functions
 
 scenarios("../features/organisation.feature", strict_gherkin=False)
 
@@ -57,7 +58,7 @@ def i_choose_to_add_a_new_organisation(driver):
 def select_organisation_type(driver, individual_or_commercial):
     organisations_form_page = OrganisationsFormPage(driver)
     organisations_form_page.select_type(individual_or_commercial)
-    organisations_form_page.click_submit()
+    functions.click_submit(driver)
 
 
 @when(
@@ -77,22 +78,21 @@ def fill_out_company_details_page_and_continue(driver, name, eori, sic, vat, reg
         organisations_form_page.enter_sic_number(sic)
         organisations_form_page.enter_vat_number(vat)
         organisations_form_page.enter_registration_number(registration)
-        organisations_form_page.click_submit()
+        functions.click_submit(driver)
 
 
 @when(
     parsers.parse(
-        'I provide individual registration details of first name: "{first_name}", last name: "{last_name}", EORI: "{eori}" and email: "{email}"'
+        'I provide individual registration details of first and last name: "{first_last_name}", EORI: "{eori}" and email: "{email}"'
     )
 )
-def fill_out_individual_registration_page(driver, first_name, last_name, email, eori, context):
+def fill_out_individual_registration_page(driver, first_last_name, eori, email, context):
     organisations_form_page = OrganisationsFormPage(driver)
+    organisations_form_page.enter_individual_organisation_first_last_name(first_last_name)
     organisations_form_page.enter_email(email)
-    context.organisation_name = first_name
-    organisations_form_page.enter_first_name(first_name)
-    organisations_form_page.enter_last_name(last_name)
+    context.organisation_name = first_last_name
     organisations_form_page.enter_eori_number(eori)
-    organisations_form_page.click_submit()
+    functions.click_submit(driver)
 
 
 @when(
@@ -110,13 +110,11 @@ def fill_out_site_details(driver, name, address_line_1, city, region, post_code,
         organisations_form_page.enter_post_code(post_code)
         organisations_form_page.enter_city(city)
         organisations_form_page.enter_country(country)
-        organisations_form_page.click_submit()
+        functions.click_submit(driver)
 
 
-@when(
-    parsers.parse('I setup the admin user with email: "{email}", first name: "{first_name}", last name: "{last_name}"')
-)
-def fill_out_admin_user_details(driver, email, first_name, last_name, context):
+@when(parsers.parse('I setup the admin user with email: "{email}"'))
+def fill_out_admin_user_details(driver, email, context):
     if not context.org_registered_status:
         organisations_form_page = OrganisationsFormPage(driver)
         if email == " ":
@@ -124,9 +122,7 @@ def fill_out_admin_user_details(driver, email, first_name, last_name, context):
         else:
             context.email = email + utils.get_formatted_date_time_m_d_h_s()
             organisations_form_page.enter_email(context.email)
-        organisations_form_page.enter_first_name(first_name)
-        organisations_form_page.enter_last_name(last_name)
-        organisations_form_page.click_submit()
+        functions.click_submit(driver)
 
 
 @when(
@@ -147,7 +143,7 @@ def register_hmrc_org(driver, org_name, site_name, address, city, region, post_c
         organisations_form_page.enter_post_code(post_code)
         organisations_form_page.enter_city(city)
         organisations_form_page.enter_country(country)
-        organisations_form_page.click_submit()
+        functions.click_submit(driver)
 
 
 @then("the previously created organisations flag is assigned")  # noqa

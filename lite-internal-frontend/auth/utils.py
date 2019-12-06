@@ -19,7 +19,7 @@ SCOPE = "read write"
 
 
 def get_client(request, **kwargs):
-    redirect_uri = request.build_absolute_uri(reverse("authbroker:callback"))
+    redirect_uri = request.build_absolute_uri(reverse("auth:callback"))
 
     return OAuth2Session(
         settings.AUTHBROKER_CLIENT_ID,
@@ -48,7 +48,7 @@ def authbroker_login_required(func):
     @functools.wraps(func)
     def decorated(request):
         if not has_valid_token(get_client(request)):
-            return redirect("authbroker:login")
+            return redirect("auth:login")
 
         return func(request)
 
