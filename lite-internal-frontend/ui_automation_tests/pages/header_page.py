@@ -5,7 +5,7 @@ from shared.tools.wait import wait_until_page_is_loaded, wait_until_menu_is_visi
 class HeaderPage(BasePage):
     MENU_BUTTON = "lite-user-menu-button"  # ID
     ORGANISATIONS_LINK = "a[href*='/organisations/']"  # CSS
-    TEMPLATES_LINK = "a[href*='/letter-templates/']"  # CSS
+    TEMPLATES_LINK = "a[href*='/document-templates/']"  # CSS
     HMRC_LINK = "a[href*='/hmrc/']"  # CSS
     TEAMS_LINK = "a[href*='/teams/']"  # CSS
     USERS_LINK = "a[href*='/users/']"  # CSS

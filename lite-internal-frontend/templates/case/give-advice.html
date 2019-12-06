@@ -101,7 +101,7 @@
 			{% endif %}
 			<div class="govuk-checkboxes">
 				{% for denial_reason_key, denial_reason_values in static_denial_reasons.items %}
-					<div class="govuk-form-group lite-checkboxes--inline">
+					<div class="govuk-form-group govuk-checkboxes--inline">
 						{% for denial_reason in denial_reason_values %}
 							<div class="govuk-checkboxes__item">
 								<input class="govuk-checkboxes__input" {% if denial_reason in data.denial_reasons %}checked{% endif %} id="{{ denial_reason }}" name="denial_reasons" type="checkbox" value="{{ denial_reason }}">

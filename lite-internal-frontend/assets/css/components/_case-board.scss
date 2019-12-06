@@ -1,0 +1,50 @@
+.app-case-board {
+	display: block;
+	position: relative;
+	margin-bottom: govuk-spacing(6);
+	padding: govuk-spacing(6) 0;
+	z-index: 0;
+
+	p {
+		@include govuk-font($size: 19);
+		color: govuk-colour("black");
+		margin: 0;
+	}
+
+	.govuk-link {
+		@include govuk-font($size: 19);
+		margin: 0;
+	}
+
+	.app-case-board__heading {
+		@include govuk-font($size: 16, $weight: bold);
+		@include govuk-responsive-margin(2, "bottom");
+		color: govuk-colour("dark-grey");
+		margin-top: 0;
+		text-transform: uppercase;
+		letter-spacing: 1px;
+	}
+
+	&:before {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 50%;
+		bottom: 0;
+		width: 100vw;
+		transform: translateX(-50vw);
+		background-color: govuk-colour("light-grey");
+		border-width: 2px 0;
+		border-style: solid;
+		border-color: govuk-shade(govuk-colour("white"), 10%);
+		z-index: -1;
+	}
+
+	.govuk-grid-row {
+		margin-bottom: govuk-spacing(6);
+
+		&:last-of-type {
+			margin-bottom: 0;
+		}
+	}
+}

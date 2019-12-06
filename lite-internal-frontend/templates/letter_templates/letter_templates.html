@@ -8,7 +8,7 @@
 
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
-			<h2 class="govuk-heading-l">{% block title %}{% get_string 'letter_templates.letter_templates.title' %}{% endblock %}</h2>
+			<h2 class="govuk-heading-l">{% block title %}{% lcs "DOCUMENT_TEMPLATES_TITLE" %}{% endblock %}</h2>
 		</div>
 		<div class="lite-app-bar__controls">
 			<a href="{% url 'letter_templates:add' %}" class="govuk-button" draggable="false" role="button" id="button-create-a-template">
