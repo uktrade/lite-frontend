@@ -154,3 +154,9 @@ class LabelMarkdownTest(TestCase):
         ]
 
         self.assertEqual(expected_output, output)
+
+    def test_no_links(self):
+        output = extract_links("Hello")
+        expected_output = ["Hello"]
+
+        self.assertEqual(expected_output, output)

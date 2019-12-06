@@ -19,7 +19,7 @@
     {% endif %}
 	{% if question.description %}
 		<span class="govuk-hint" for="{{ question.name }}">
-			{{ question.description|safe|linebreaksbr }}
+			{% for item in question.description %}{% if item|classname == "Link" %}<a class="govuk-link" href="{{ item.address }}">{{ item.text }}</a>{% else %}<span>{{ item }}</span>{% endif %}{% endfor %}
 		</span>
 	{% endif %}
 

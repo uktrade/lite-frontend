@@ -123,8 +123,12 @@ def extract_links(text: str):
     link_regex = "\[(.*)\]\((.*)\)"  # noqa
 
     return_value = []
+    matches = re.findall(markup_regex, text)
 
-    for match in re.findall(markup_regex, text):
+    if not matches:
+        return [text]
+
+    for match in matches:
         for item in [x for x in match if x]:
             value = re.findall(link_regex, item)
 
