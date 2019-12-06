@@ -8,7 +8,7 @@ An easy to use Python library for building GOV.UK forms.
 
 ## Documentation
 
-[View the docs folder](https://github.com/uktrade/lite-forms/tree/docs/docs)
+[View the docs folder](https://github.com/uktrade/lite-forms/tree/docs)
 
 ## Installing
 
