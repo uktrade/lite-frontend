@@ -15,7 +15,7 @@ pytest-xdist = "*"
 black = "==19.10b0"
 
 [packages]
-Django = "==2.2.4"
+Django = "==2.2.8"
 django-compressor = "==2.2"
 django-environ = "==0.4.5"
 django-sass-processor = "==0.7.2"
