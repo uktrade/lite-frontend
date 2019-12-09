@@ -87,6 +87,14 @@
 	                {% endif %}
 	            </a>
 			{% endif %}
+            <a href="{% url 'applications:application' application.id 'generated-documents' %}" class="lite-tabs__tab {% if type == 'generated-documents' %}lite-tabs__tab--selected{% endif %}" id="link-generated-documents">
+                {% lcs 'APPLICATIONS.GeneratedDocuments.TAB' %}
+                {% if generated_case_document_notifications %}
+                    <div class="lite-notification-bubble">
+                        {{ generated_case_document_notifications }}
+                    </div>
+                {% endif %}
+            </a>
         </div>
     </div>
 
@@ -144,6 +152,8 @@
         {% include "applications/tabs/case-notes.html" %}
     {% elif type == 'ecju-queries' %}
         {% include "applications/tabs/ecju-queries.html" %}
+    {% elif type == 'generated-documents' %}
+          {% include "applications/tabs/generated-documents.html" %}
     {% endif %}
 
 {% endblock %}

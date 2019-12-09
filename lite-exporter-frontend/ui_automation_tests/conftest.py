@@ -36,6 +36,13 @@ from ui_automation_tests.shared.fixtures.apply_for_application import (  # noqa
     add_an_ecju_query,
     apply_for_open_application,
 )
+from ui_automation_tests.shared.fixtures.add_a_document_template import (  # noqa
+    add_a_document_template,
+    get_paragraph_text,
+    get_template_id,
+    get_licence_template_id,
+)
+from ui_automation_tests.shared.fixtures.add_a_generated_document import add_a_generated_document  # noqa
 from ui_automation_tests.shared.fixtures.driver import driver  # noqa
 from ui_automation_tests.shared.fixtures.core import (  # noqa
     context,

@@ -186,6 +186,12 @@ urlpatterns = [
         name="delete_additional_document",
     ),
     path("<uuid:pk>/withdraw/", common.WithdrawApplication.as_view(), name="withdraw"),
+    # Case-relevant documentation
+    path(
+        "<uuid:pk>/generated-documents/<uuid:obj_pk>/download",
+        documents.DownloadDocument.as_view(),
+        name="download_generated_document",
+    ),
     # This HAS to be at the bottom, otherwise it will swallow other url calls
     path("<uuid:pk>/", common.ApplicationDetail.as_view(), name="application"),
     path("<uuid:pk>/<str:type>/", common.ApplicationDetail.as_view(), name="application"),

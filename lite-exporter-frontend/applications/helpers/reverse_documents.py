@@ -17,6 +17,7 @@ from applications.services import (
     post_goods_type_document,
     delete_goods_type_document,
     get_goods_type_document,
+    get_generated_document,
 )
 
 
@@ -74,6 +75,10 @@ def document_switch(path):
             "homepage": "applications:additional_documents",
             "strings": "additional_documents.documents",
             "has_description": False,
+        }
+    elif "generated-documents" in path:
+        return {
+            "download": get_generated_document,
         }
     else:
         raise NotImplementedError("document_switch doesn't support this document type")

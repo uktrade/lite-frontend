@@ -7,6 +7,8 @@ class ApplicationPage(BasePage):
     LABEL_APPLICATION_STATUS_ID = "label-application-status"
     LINK_NOTES_TAB_ID = "link-case-notes"  # ID
     LINK_ECJU_QUERY_TAB_ID = "link-ecju-queries"  # ID
+    LINK_GENERATED_DOCUMENTS_TAB_ID = "link-generated-documents"  # ID
+    LINK_GENERATED_DOCUMENT_DOWNLOAD_LINK = "generated-document-download"  # ID
     ECJU_QUERY_RESPONSE_TEXT = "Respond to query"  # text
     ECJU_QUERIES_CLOSED = "closed-ecju-query"  # ID
     LINK_EDIT_APPLICATION = "a[href*='/edit-type/']"
@@ -19,6 +21,12 @@ class ApplicationPage(BasePage):
 
     def click_ecju_query_tab(self):
         self.driver.find_element_by_id(self.LINK_ECJU_QUERY_TAB_ID).click()
+
+    def click_generated_documents_tab(self):
+        self.driver.find_element_by_id(self.LINK_GENERATED_DOCUMENTS_TAB_ID).click()
+
+    def generated_documents_count(self):
+        return len(self.driver.find_elements_by_id(self.LINK_GENERATED_DOCUMENT_DOWNLOAD_LINK))
 
     def click_notes_tab(self):
         self.driver.find_element_by_id(self.LINK_NOTES_TAB_ID).click()

@@ -1,0 +1,32 @@
+{% if generated_documents %}
+    <table class="govuk-table">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">{% lcs 'APPLICATIONS.GeneratedDocuments.Table.NAME_COLUMN' %}</th>
+                <th scope="col" class="govuk-table__header">{% lcs 'APPLICATIONS.GeneratedDocuments.Table.DATE_COLUMN' %}</th>
+                <th scope="col" class="govuk-table__header"></th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+            {% for document in generated_documents %}
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">{{ document.name }}</th>
+                    <td class="govuk-table__cell">{{ document.created_at|str_date }}</td>
+                    <td class="govuk-table__cell">
+                        <a href="{% url 'applications:download_generated_document' pk=application.id obj_pk=document.id %}" id="generated-document-download" class='govuk-link govuk-link--no-visited-state'>
+                            {% lcs 'APPLICATIONS.GeneratedDocuments.Table.DOWNLOAD_LINK' %}
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{%  else %}
+    <div class="lite-information-text">
+        <span class="lite-information-text__icon" aria-hidden="true">!</span>
+        <p class="lite-information-text__text">
+            <span class="govuk-visually-hidden">Information</span>
+            {% lcs 'APPLICATIONS.GeneratedDocuments.NO_DOCUMENTS' %}
+        </p>
+    </div>
+{% endif %}

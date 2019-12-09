@@ -19,6 +19,7 @@ from conf.constants import (
     GOODSTYPES_URL,
     GOODSTYPE_COUNTRY_URL,
     STATUS_PROPERTIES_URL,
+    GENERATED_DOCUMENTS_URL,
 )
 from conf.settings import AWS_STORAGE_BUCKET_NAME, STREAMING_CHUNK_SIZE
 from django.http import StreamingHttpResponse
@@ -279,6 +280,16 @@ def get_application_ecju_queries(request, pk):
     closed_queries = [x for x in data if x["response"]]
 
     return open_queries, closed_queries
+
+
+def get_application_generated_documents(request, pk):
+    data = get(request, APPLICATIONS_URL + pk + GENERATED_DOCUMENTS_URL).json()["generated_documents"]
+    return data
+
+
+def get_generated_document(request, pk, doc_pk):
+    data = get(request, APPLICATIONS_URL + pk + GENERATED_DOCUMENTS_URL + str(doc_pk) + "/")
+    return data.json(), data.status_code
 
 
 def get_status_properties(request, status):
