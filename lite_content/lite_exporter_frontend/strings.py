@@ -15,30 +15,30 @@ THIS_SECTION_IS = "This section is "  # The space at the end is intentional. Usa
 OPTIONAL = "Optional"
 NOT_STARTED = "Not started"
 IN_PROGRESS = "In progress"
-DONE = "Done"
+DONE = "Completed"
 
-PERMISSION_FINDER_LINK = '<a class="govuk-link" href="' + env("PERMISSIONS_FINDER_URL") + '">Permissions Finder</a>'
+PERMISSION_FINDER_LINK = '<a class="govuk-link" href="' + env("PERMISSIONS_FINDER_URL") + '">control list</a>'
 
 APPLICATION_GOODS_TITLE = "Goods"
-APPLICATION_GOODS_ADD_NEW = "Add a new good"
+APPLICATION_GOODS_ADD_NEW = "Add a new good to your application"
 APPLICATION_GOODS_ADD_BACK = "Back to goods"
 APPLICATION_GOODS_ADD_APPLICATION_DETAILS = "Details for good on application"
 APPLICATION_GOODS_ADD_DOCUMENT_DESCRIPTION = (
-    "To finish creating the good, you must attach a document."
-    "\n\nWarning: Do not upload any document which is above "
-    "'official-sensitive' level\n\nMaximum size: 100MB per file"
+    "Documentation could be specifications, datasheets, sales brochures, drawings or anything else that fully details what the item is and what it's designed to do."
+    "\n\nDo not attach a document that’s OFFICIAL-SENSITIVE or above. "
+    "\n\nThe file must be smaller than 100MB."
 )
 APPLICATION_GOODS_ADD_DOCUMENT_MISSING = "A document is required"
-APPLICATION_GOODS_ADD_PREEXISTING_TITLE = "Add a pre-existing good to your application"
+APPLICATION_GOODS_ADD_PREEXISTING_TITLE = "Add an item from your database to your application"
 
 APPLICATION_GOODS_CONTROL_CODE_REQUIRED_DESCRIPTION = (
-    "If you don't know, please use "
+    "Goods that aren't on the "
     + PERMISSION_FINDER_LINK
-    + " to find the appropriate code before adding the good to the application. You may need to create a good "
-    "from the goods list if you are still unsure."
+    + " may be affected by military end use controls, current trade sanctions and embargoes or weapons of mass destruction controls."
+    "If your goods and services aren't subject to any controls, you'll get a no licence required (NLR) document from ECJU."
 )
 
-GOODS_CREATE_CONTROL_CODE_REQUIRED_DESC = "If you don't know you can use " + PERMISSION_FINDER_LINK
+GOODS_CREATE_CONTROL_CODE_REQUIRED_DESC = "If you don't know, you can use the " + PERMISSION_FINDER_LINK
 GOODS_CREATE_CONTROL_CODE_NO = "No"
 GOODS_CREATE_CONTROL_CODE_YES = "Yes"
 GOODS_CREATE_CONTROL_CODE_UNSURE = "I don't know"
@@ -65,19 +65,17 @@ APPLICATION_ON_BEHALF_OF = "On behalf of"
 APPLICATION_OPTIONAL_NOTE = "Optional note"
 
 # Initial application questions
-WHICH_EXPORT_LICENCE_DO_YOU_WANT_TITLE = "Which export licence do you want to apply for?"
-WHICH_EXPORT_LICENCE_DO_YOU_WANT_DESCRIPTION = "Select one of the options."
+WHICH_EXPORT_LICENCE_DO_YOU_WANT_TITLE = "Select the type of licence you need"
+WHICH_EXPORT_LICENCE_DO_YOU_WANT_DESCRIPTION = " "
 
-STANDARD_LICENCE = "Standard Licence"
+STANDARD_LICENCE = "Standard licence"
 STANDARD_LICENCE_DESCRIPTION = (
-    "Standard Licences are specific to the company and the recipient (consignee). "
-    "They are for a set quantity and set value of goods. You will need to provide support "
-    "documentation with your application."
+    "Select a standard licence for a set quantity and set value of items."
 )
-OPEN_LICENCE = "Open Licence"
+OPEN_LICENCE = "Open licence"
 OPEN_LICENCE_DESCRIPTION = (
-    "Open Licences cover long-term projects and repeat business. This is company specific, "
-    "with no set quantity or value of goods. You will receive compliance audits under this type of licence."
+    "Select an open licence for multiple shipments of specific items to specific countries. "
+    "Open licences cover long term projects and repeat business."
 )
 
 HELP_WITH_CHOOSING_A_LICENCE = "Help with choosing a licence"
@@ -88,9 +86,9 @@ HELP_WITH_CHOOSING_A_LICENCE_CONTENT = (
     'abroad<span class="govuk-visually-hidden"> (Opens in a new window or tab)</span></a>.'
 )
 
-ENTER_A_REFERENCE_NAME_TITLE = "Enter a reference name for your application"
+ENTER_A_REFERENCE_NAME_TITLE = "Application reference"
 ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference name"
-ENTER_A_REFERENCE_NAME_DESCRIPTION = "This can make it easier for you or your organisation to find in the future."
+ENTER_A_REFERENCE_NAME_DESCRIPTION = "Name and save this application so you can refer back to it when needed."
 
 TEMPORARY_OR_PERMANENT_TITLE = "Do you want to export temporarily or permanently?"
 TEMPORARY_OR_PERMANENT_DESCRIPTION = ""
@@ -98,9 +96,9 @@ TEMPORARY_OR_PERMANENT_DESCRIPTION = ""
 TEMPORARY = "Temporarily"
 PERMANENT = "Permanently"
 
-HAVE_YOU_BEEN_INFORMED_TITLE = "Have you been told that you need an export licence by an official?"
+HAVE_YOU_BEEN_INFORMED_TITLE = "Have you been informed under an end use control that you need to apply for a licence?"
 HAVE_YOU_BEEN_INFORMED_DESCRIPTION = "This could be a letter or email from HMRC or another government department."
-WHAT_WAS_THE_REFERENCE_CODE_TITLE = "What was the reference number if you were provided one?"
+WHAT_WAS_THE_REFERENCE_CODE_TITLE = "Reference number"
 WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION = (
     "This is the reference found on the letter or email to tell you to apply for an export licence."
 )
@@ -134,7 +132,7 @@ APPLICATION_WITHDRAW_ERROR = "Select a choice"
 ROLES_LIST_PAGE_CREATE = "Add role"
 # Where are your goods located?
 APPLICATION_WHERE_ARE_YOUR_GOODS_LOCATED_TITLE = "Where are your goods located?"
-APPLICATION_WHERE_ARE_YOUR_GOODS_LOCATED_DESCRIPTION = "You can only choose one type of location per application."
+APPLICATION_WHERE_ARE_YOUR_GOODS_LOCATED_DESCRIPTION = " "
 APPLICATION_ONE_OF_MY_REGISTERED_SITES = "At one of my registered sites"
 APPLICATION_NOT_AT_MY_REGISTERED_SITES = "Other location not at my organisation's sites"
 
