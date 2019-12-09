@@ -56,6 +56,6 @@ class Case(SeedClass):
             base_url=self.base_url,
             url="/cases/" + case_id + "/generated-documents/",
             headers=self.gov_headers,
-            body={"template": template_id},
+            body={"template": template_id, "text": "random text"},
         ).json()["generated_document"]
         self.add_to_context("generated_document", generated_document)
