@@ -1,4 +1,7 @@
 from conf.settings import env
+from lite_content.lite_exporter_frontend import applications
+
+APPLICATIONS = applications
 
 # Generic
 BACK_TO_APPLICATION = "Back to application"
