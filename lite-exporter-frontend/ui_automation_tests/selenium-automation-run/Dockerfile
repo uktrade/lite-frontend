@@ -2,7 +2,7 @@ FROM python:3.7-stretch AS selenium_base
 
 RUN apt-get update && apt-get install -yq \
     firefox-esr \
-    chromium=70.0.3538.110-1~deb9u1 \
+    chromium \
     git-core \
     xvfb=2:1.19.2-1+deb9u5 \
     xsel=1.2.0-2+b1 \
@@ -22,7 +22,7 @@ RUN wget -q "https://github.com/mozilla/geckodriver/releases/download/v0.19.1/ge
     && rm /tmp/geckodriver.tgz
 
 # chromeDriver v2.35
-RUN wget -q "https://chromedriver.storage.googleapis.com/2.35/chromedriver_linux64.zip" -O /tmp/chromedriver.zip \
+RUN wget -q "https://chromedriver.storage.googleapis.com/73.0.3683.68/chromedriver_linux64.zip" -O /tmp/chromedriver.zip \
     && unzip -o /tmp/chromedriver.zip -d /usr/bin/ \
     && rm /tmp/chromedriver.zip
 
