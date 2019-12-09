@@ -11,8 +11,20 @@ So that I can easily and quickly generate different types of standard document t
     And I create a template
     When I go to application previously created
     And I click on the Generate document button
-#  Commenting out the test as no pagination on index LT-1828
-#    And I select the template previously created
-#    Then I see the generated document preview
-#    When I click continue
-#    Then I see my generated document
+    And I select the template previously created
+    Then I see the template text to edit
+    When I add a paragraph to the document
+    Then I see the template text to edit
+    When I add my custom text "yellowDuck"
+    Then I see the template text to edit
+    When I click continue
+    Then I see the generated document preview
+    When I click continue
+    Then I see my generated document
+    # Test Regenerate
+    When I click regenerate
+    Then I see the template text to edit
+    When I click continue
+    Then I see the generated document preview
+    When I click continue
+    Then I see both my generated documents

@@ -24,7 +24,7 @@ from cases.services import (
 )
 from cases.services import post_case_documents, get_case_documents, get_document
 from conf import settings
-from conf.constants import DEFAULT_QUEUE_ID
+from conf.constants import DEFAULT_QUEUE_ID, GENERATED_DOCUMENT
 from conf.settings import AWS_STORAGE_BUCKET_NAME
 from core.builtins.custom_tags import get_string
 from core.helpers import convert_dict_to_query_params
@@ -263,6 +263,7 @@ class Documents(TemplateView):
             "title": get_string("cases.manage.documents.title"),
             "case": case,
             "case_documents": case_documents["documents"],
+            "generated_document_key": GENERATED_DOCUMENT,
         }
         return render(request, "case/documents.html", context)
 

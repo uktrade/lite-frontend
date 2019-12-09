@@ -48,8 +48,28 @@ urlpatterns = [
     path("<uuid:pk>/review-goods-clc/", goods.ReviewGoodsClc.as_view(), name="review_goods_clc"),
     path("<uuid:pk>/generate-document/", generate_document.SelectTemplate.as_view(), name="generate_document"),
     path(
+        "<uuid:pk>/generate-document/<uuid:tpk>/edit/",
+        generate_document.EditDocumentText.as_view(),
+        name="generate_document_edit",
+    ),
+    path(
+        "<uuid:pk>/generate-document/<uuid:dpk>/",
+        generate_document.RegenerateExistingDocument.as_view(),
+        name="generate_document_regenerate",
+    ),
+    path(
+        "<uuid:pk>/generate-document/<uuid:tpk>/add-paragraphs/",
+        generate_document.AddDocumentParagraphs.as_view(),
+        name="generate_document_add_paragraphs",
+    ),
+    path(
         "<uuid:pk>/generate-document/<uuid:tpk>/preview/",
         generate_document.PreviewDocument.as_view(),
         name="generate_document_preview",
+    ),
+    path(
+        "<uuid:pk>/generate-document/<uuid:tpk>/create/",
+        generate_document.CreateDocument.as_view(),
+        name="generate_document_create",
     ),
 ]

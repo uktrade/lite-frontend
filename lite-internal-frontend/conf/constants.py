@@ -62,6 +62,9 @@ DECISIONS_LIST = ["approve", "refuse", "no_licence_required"]
 # Role IDs
 SUPER_USER_ROLE_ID = "00000000-0000-0000-0000-000000000002"
 
+# Document types
+GENERATED_DOCUMENT = "GENERATED"
+
 
 class Permission(Enum):
     MANAGE_TEAM_ADVICE = "MANAGE_TEAM_ADVICE"

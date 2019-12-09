@@ -31,6 +31,7 @@
 					<th scope="col" class="govuk-table__header">{% lcs 'CASES.AdditionalDocumentsPage.Table.USER_COLUMN' %}</th>
                     <th scope="col" class="govuk-table__header">{% lcs 'CASES.AdditionalDocumentsPage.Table.DATE_COLUMN' %}</th>
 					<th scope="col" class="govuk-table__header"></th>
+                    <th scope="col" class="govuk-table__header"></th>
 				</tr>
 			</thead>
 			<tbody class="govuk-table__body">
@@ -41,6 +42,14 @@
 						<td class="govuk-table__cell">{{ document.description }}</td>
 						<td class="govuk-table__cell">{{ document.user.first_name }} {{ document.user.last_name }}</td>
                         <td class="govuk-table__cell">{{ document.created_at|str_date }}</td>
+                        <td class="govuk-table__cell">
+                            {% if document.type.key == generated_document_key %}
+                                <form method="get" action="{% url "cases:generate_document_regenerate" case.id document.id %}">
+                                    {% csrf_token %}
+                                    <button id="regenerate" type="submit" class="lite-button--link">{% lcs 'CASES.AdditionalDocumentsPage.Document.REGENERATE_LINK' %}</button>
+                                </form>
+                            {% endif %}
+                        </td>
 						<td class="govuk-table__cell">
 							{% if document.safe == True %}
 								<a id="link-download" class="govuk-link lite-link--icon govuk-link--no-visited-state" href="{% url 'cases:document' case.id document.metadata_id %}">

@@ -31,7 +31,6 @@ from ui_automation_tests.shared.fixtures.apply_for_application import (  # noqa
     apply_for_clc_query,
     apply_for_eua_query,
     apply_for_open_application,
-    apply_for_hmrc_query,
 )
 from ui_automation_tests.shared.fixtures.driver import driver  # noqa
 from ui_automation_tests.shared.fixtures.sso_sign_in import sso_sign_in  # noqa
