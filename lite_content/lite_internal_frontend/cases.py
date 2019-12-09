@@ -26,7 +26,18 @@ class GenerateDocumentsPage:
     ERROR = "Document Generation is unavailable at this time"
 
     class SelectTemplateForm:
-        BACK_LINK = "Back to Case"
+        BACK_LINK = "Back to Case Documents"
+
+    class EditTextForm:
+        HEADING = "Edit text"
+        BACK_LINK = "Back to Templates"
+        BACK_LINK_REGENERATE = "Back to Case Documents"
+        ADD_PARAGRAPHS_LINK = "Add paragraphs"
+        BUTTON = "Continue"
+
+    class AddParagraphsForm:
+        HEADING = "Add paragraphs"
+        BUTTON = "Continue"
 
 
 class AdditionalDocumentsPage:
@@ -41,3 +52,4 @@ class AdditionalDocumentsPage:
         DOWNLOAD_LINK = "Download"
         INFECTED_LABEL = "Infected"
         PROCESSING_LABEL = "Processing"
+        REGENERATE_LINK = "Regenerate"
