@@ -1,3 +1,5 @@
+import time
+
 from pytest_bdd import when, scenarios
 
 from pages.application_overview_page import ApplicationOverviewPage
@@ -38,3 +40,14 @@ def i_click_on_hmrc_set_end_user(driver):
 def i_click_on_hmrc_explain_your_reasoning(driver):
     app = ApplicationOverviewPage(driver)
     app.click_hmrc_explain_your_reasoning()
+
+
+@when("I wait for document to upload")
+def wait_for_document(driver):
+    document_is_found = False
+    while not document_is_found:
+        if "Processing" in driver.find_element_by_id("document").text:
+            time.sleep(1)
+            driver.refresh()
+        else:
+            document_is_found = True

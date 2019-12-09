@@ -12,6 +12,7 @@ Feature: I want to be able to perform actions as a HMRC user
     And I click on hmrc set end user
     And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
+    And I wait for document to upload
     And I click the back link
     And I click on hmrc describe your goods
     When I add a good or good type with description "M4" controlled "Yes" control code "ML1a" incorporated "No" and part number "not needed"
