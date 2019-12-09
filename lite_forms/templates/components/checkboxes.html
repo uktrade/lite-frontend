@@ -10,12 +10,12 @@
     <div class="govuk-checkboxes {% for class in component.classes %}{{ class }} {% endfor %}">
         {% for item in component.options %}
             <div class="govuk-checkboxes__item">
-                <input {% if data|key_in_array:item.key %}checked{% endif %} class="govuk-checkboxes__input" id="{{ item.value }}" name="{{ component.name }}" type="checkbox" value="{{ item.key }}">
-                <label class="govuk-label govuk-checkboxes__label" for="{{ item.value }}">
+                <input {% if item.auto_check and data|key_in_array:item.key %}checked{% endif %} class="govuk-checkboxes__input" id="{{ item.value }}" name="{{ component.name }}" type="checkbox" value="{{ item.key }}">
+                <label class="govuk-label govuk-checkboxes__label">
                     {{ item.value }}
                 </label>
                 {% if item.description %}
-                    <label class="govuk-hint govuk-checkboxes__hint" for="{{ item.value }}">
+                    <label class="govuk-hint govuk-checkboxes__hint">
                         {{ item.description|linebreaksbr }}
                     </label>
                 {% endif %}

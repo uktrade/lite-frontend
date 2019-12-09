@@ -71,3 +71,11 @@ def hidden_field(key, value):
     Generates a hidden field from the given key and value
     """
     return f'<input type="hidden" name="{key}" value="{value}">'
+
+
+@register.filter
+def classname(obj):
+    """
+    Returns object class name
+    """
+    return obj.__class__.__name__

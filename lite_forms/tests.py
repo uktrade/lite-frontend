@@ -14,6 +14,7 @@ from lite_forms.helpers import (
     extract_links,
 )
 from lite_forms.submitters import submit_paged_form
+from lite_forms.templatetags import custom_tags
 from lite_forms.templatetags.custom_tags import prefix_dots
 
 
@@ -32,6 +33,12 @@ class FormTests(TestCase):
         forms = FormGroup([Form(questions=[]), Form(questions=[]), Form(questions=[])])
 
         self.assertEqual(get_next_form(1, forms).pk, 2)
+
+    def test_classname(self):
+        expected_value = "type"
+        actual_value = custom_tags.classname(TestCase)
+
+        self.assertEqual(actual_value, expected_value)
 
     def test_remove_unused_errors(self):
         form = Form(questions=[TextInput("name"), TextInput("age"), TextInput("password"), DetailComponent("", ""),])

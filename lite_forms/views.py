@@ -50,6 +50,7 @@ class SingleFormView(FormView):
     """
 
     form: Form = None
+    redirect: bool = True
 
     def get_form(self):
         if not self.form:
@@ -89,7 +90,10 @@ class SingleFormView(FormView):
 
         self._validated_data = validated_data
 
-        return redirect(self.get_success_url())
+        if self.redirect:
+            return redirect(self.get_success_url())
+        else:
+            return form_page(request, self.get_form(), data=data)
 
 
 class MultiFormView(FormView):

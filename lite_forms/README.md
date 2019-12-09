@@ -28,4 +28,4 @@ git submodule add git@github.com:uktrade/lite-forms.git lite_forms
 
 ## Requirements
 
-* GOV.UK Design System 3.0 >
+* GOV.UK Design System 3.0

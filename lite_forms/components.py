@@ -284,8 +284,9 @@ class Select(_Component):
 
 class Option:
     def __init__(
-        self, key, value, description=None, show_pane=None, sections=None, show_or=False, img_url=None,
+        self, key, value, description=None, show_pane=None, sections=None, show_or=False, img_url=None, auto_check=True
     ):
+        self.auto_check = auto_check
         self.key = key
         self.value = value
         self.description = description
@@ -436,10 +437,13 @@ class ControlListEntryInput:
 
 
 class Link:
-    def __init__(self, text, address, classes: [] = None):
+    def __init__(self, text: str, address: str, name: str = None, classes: [] = None, form_action: bool = False):
         self.text = text
         self.address = address
+        self.name = name
         self.classes = classes
+        self.form_action = form_action
+        self.input_type = "link"
 
     def __eq__(self, other):
         return other.text == self.text and other.address == self.address
