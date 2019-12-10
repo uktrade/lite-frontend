@@ -47,6 +47,7 @@ class AddUser(SingleFormView):
 
 class ViewUser(TemplateView):
     def get(self, request, **kwargs):
+        request_user = get_user(request)
         user = get_user(request)
         is_user_super_user = is_super_user(user)
 
@@ -55,7 +56,6 @@ class ViewUser(TemplateView):
 
         show_change_status = not is_request_user_super_user
         show_change_role = is_user_super_user and user["id"] != request_user["id"]
-
         context = {
             "profile": request_user,
             "show_change_status": show_change_status,
@@ -74,8 +74,9 @@ class EditUser(SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         user = get_organisation_user(request, str(request.user.organisation), str(self.object_pk))
-        self.form = edit_user_form(request, user)
-        self.data = user
+        can_edit_role = user["user"]["id"] != request.user.lite_api_user_id
+        self.form = edit_user_form(request, self.object_pk, can_edit_role)
+        self.data = user["user"]
         self.action = put_organisation_user
         self.success_url = reverse_lazy("users:user", kwargs={"pk": self.object_pk})
 

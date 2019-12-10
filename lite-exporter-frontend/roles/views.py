@@ -7,7 +7,8 @@ from core.services import get_organisation
 from lite_content.lite_exporter_frontend import strings
 from lite_forms.views import SingleFormView
 from roles.forms import add_role, edit_role
-from roles.services import get_roles, put_role, get_role, post_role, get_permissions, get_user_permissions
+from roles.services import get_roles, put_role, get_role, post_role, get_permissions
+from users.services import get_user
 
 
 class Roles(TemplateView):
@@ -16,7 +17,9 @@ class Roles(TemplateView):
         organisation = get_organisation(request, organisation_id)
         roles = get_roles(request, organisation_id)
         all_permissions = get_permissions(request)
-        user_permissions = get_user_permissions(request)
+        user = get_user(request)
+        user_permissions = user["role"]["permissions"]
+        user_role_id = user["role"]["id"]
 
         users, sites = False, False
         if Permissions.ADMINISTER_USERS in user_permissions:
@@ -34,6 +37,7 @@ class Roles(TemplateView):
             "can_administer_sites": sites,
             "can_administer_users": users,
             "organisation": organisation,
+            "user_role_id": user_role_id,
         }
         return render(request, "roles/index.html", context)
 

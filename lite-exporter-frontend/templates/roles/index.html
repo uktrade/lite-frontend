@@ -69,7 +69,9 @@
                     <td class="govuk-table__cell">
                         {% if not role.id in immutable_roles %}
                             {% if 'EXPORTER_ADMINISTER_ROLES' in user_permissions %}
-                                <a href="{% url 'roles:edit' role.id %}" class="govuk-link govuk-link--no-visited-state">{% lcs "ROLE_INDEX_TABLE_EDIT_ROLE" %}</a>
+                                {% if role.id != user_role_id %}
+                                    <a href="{% url 'roles:edit' role.id %}" class="govuk-link govuk-link--no-visited-state">{% lcs "ROLE_INDEX_TABLE_EDIT_ROLE" %}</a>
+                                {% endif %}
                             {% endif %}
                         {% endif %}
                     </td>
