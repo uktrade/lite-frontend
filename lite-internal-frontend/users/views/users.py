@@ -64,18 +64,18 @@ class ViewProfile(TemplateView):
 class EditUser(TemplateView):
     def get(self, request, **kwargs):
         user, _ = get_gov_user(request, str(kwargs["pk"]))
-        super_user = is_super_user(user) and request.user.lite_api_user_id == str(kwargs["pk"])
-        return form_page(request, edit_user_form(request, str(kwargs["pk"]), super_user), data=user["user"])
+        can_edit_role = user["user"]["id"] != request.user.lite_api_user_id
+        return form_page(request, edit_user_form(request, str(kwargs["pk"]), can_edit_role), data=user["user"])
 
     def post(self, request, **kwargs):
         response, status_code = put_gov_user(request, str(kwargs["pk"]), request.POST)
         user, _ = get_gov_user(request, str(kwargs["pk"]))
-        super_user = is_super_user(user) and request.user.lite_api_user_id == str(kwargs["pk"])
+        can_edit_role = user["user"]["id"] != request.user.lite_api_user_id
 
         if status_code != 200:
             return form_page(
                 request,
-                edit_user_form(request, str(kwargs["pk"]), super_user),
+                edit_user_form(request, str(kwargs["pk"]), can_edit_role),
                 data=request.POST,
                 errors=response.get("errors"),
             )
