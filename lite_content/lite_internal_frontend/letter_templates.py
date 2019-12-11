@@ -1,7 +1,7 @@
 class LetterTemplatesPage:
     class PickTemplate:
         TITLE = "Select a template"
-        BUTTOn = "Continue"
+        BUTTON = "Continue"
 
     class Preview:
         TITLE = "Preview"
