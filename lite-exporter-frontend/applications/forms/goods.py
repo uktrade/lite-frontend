@@ -14,11 +14,11 @@ def good_on_application_form(good, units, title, prefix=""):
         questions=[
             conditional(good, good_summary(good)),
             conditional(good, HiddenField(name="good_id", value=good.get("id"))),
-            CurrencyInput(title="What's the value of your goods?", name=prefix + "value"),
+            CurrencyInput(title="What's the value of your products?", name=prefix + "value"),
             SideBySideSection(
                 questions=[
                     QuantityInput(title="Quantity", name=prefix + "quantity"),
-                    Select(title="Unit of Measurement", name=prefix + "unit", options=units),
+                    Select(title="Unit of measurement", name=prefix + "unit", options=units),
                 ]
             ),
         ],
