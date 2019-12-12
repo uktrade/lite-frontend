@@ -7,7 +7,7 @@ class PartyForm:
 
 
 class EndUserForm:
-    TITLE = "Who is the end user of your goods?"
+    TITLE = "Select the type of end user"
     BUTTON = "Continue"
     NAME_FORM_TITLE = "Name"
     WEBSITE_FORM_TITLE = "Website address (optional)"
@@ -16,7 +16,7 @@ class EndUserForm:
 
 
 class UltimateEndUserForm:
-    TITLE = "Who is the ultimate end user of your goods?"
+    TITLE = "Select the type of ultimate end user"
     BUTTON = "Continue"
     NAME_FORM_TITLE = "Name"
     WEBSITE_FORM_TITLE = "Website address (optional)"
@@ -25,7 +25,7 @@ class UltimateEndUserForm:
 
 
 class ConsigneeForm:
-    TITLE = "Who will be the consignee of your goods?"
+    TITLE = "Select the type of consignee"
     BUTTON = "Continue"
     NAME_FORM_TITLE = "Name"
     WEBSITE_FORM_TITLE = "Website address (optional)"
