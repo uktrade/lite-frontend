@@ -12,7 +12,7 @@
 				<form action="{% url 'cases:generate_document_create' pk tpk %}" method="post">
                     {% csrf_token %}
                     <input name="text" type="hidden" value="{{ text }}">
-					<button class="govuk-button" type="submit">{% lcs 'LETTER_TEMPLATES.LetterTemplatesPage.PickTemplate.button' %}</button>
+					<button class="govuk-button" type="submit">{% lcs 'LETTER_TEMPLATES.LetterTemplatesPage.PickTemplate.BUTTON' %}</button>
 				</form>
 			</div>
 		</div>
