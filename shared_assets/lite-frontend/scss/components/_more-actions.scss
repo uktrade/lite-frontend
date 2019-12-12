@@ -2,28 +2,27 @@
 	&__container {
 		&--float {
 			position: absolute;
-			top: 40px;
+			top: 38px;
 			right: 0;
 			z-index: 2;
-			background: white;
-			box-shadow: $lite-drop-shadow;
+			background: govuk-shade(govuk-colour("light-grey"), 2.5%);
+			border-bottom: 2px solid govuk-shade(govuk-colour("light-grey"), 40%);
 
 			a {
-				@include govuk-font($size: 16, $weight: bold);
+				@include govuk-font($size: 19);
 				display: block;
 				width: 260px;
 				padding: govuk-spacing(3) govuk-spacing(4);
-				border-bottom: 2px solid darken(govuk-colour("light-grey"), 3%);
-				color: $govuk-link-colour;
+				border-bottom: 2px solid govuk-shade(govuk-colour("light-grey"), 10%);
+				color: govuk-colour("black");
 				text-decoration: none;
 
 				&:hover {
-					background-color: govuk-colour("light-grey");
+					background-color: govuk-shade(govuk-colour("light-grey"), 10%);
 				}
 
 				&:active {
-					background-color: $govuk-link-colour;
-					color: govuk-colour("white");
+					background-color: govuk-shade(govuk-colour("light-grey"), 20%);
 				}
 
 				&:last-of-type {
@@ -47,5 +46,11 @@
 			margin-left: 8px;
 			transform: translateY(-2px);
 		}
+	}
+}
+
+.lite-more-actions__parent-disabled-buttons {
+	& > .govuk-button:not(.lite-more-actions__button) {
+		opacity: 0.4;
 	}
 }

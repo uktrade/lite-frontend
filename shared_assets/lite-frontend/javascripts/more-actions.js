@@ -10,4 +10,5 @@ moreActionsContainer.children().removeClass('govuk-button')
 
 $('.lite-more-actions__button').click(function() {
 	$('.lite-more-actions__button').prev().toggleClass( 'lite-more-actions__container--hidden' )
+	moreActionsContainer.parent().toggleClass( 'lite-more-actions__parent-disabled-buttons' )
 });

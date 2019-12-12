@@ -43,6 +43,7 @@
 		&:first-of-type {
 			margin-left: 0;
 		}
+
 		@include govuk-media-query($until: tablet) {
 			margin-left: 0;
 			margin-bottom: govuk-spacing(3);
