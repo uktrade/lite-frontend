@@ -3,12 +3,12 @@
 {% load static svg %}
 
 {% block back_link %}
-	<a href="{% url 'applications:goods' draft_id %}" id="back-link" class="govuk-back-link">Back to Goods</a>
+	<a href="{% url 'applications:goods' draft_id %}" id="back-link" class="govuk-back-link">Back to products</a>
 {% endblock%}
 
 {% block body %}
 
-	<h2 class="govuk-heading-l">{% block title %}Add a good from your organisation{% endblock %}</h2>
+	<h2 class="govuk-heading-l">{% block title %}Add a product from your organisation{% endblock %}</h2>
 
 	{% if data or description or part_number or control_code %}
 		<div class="lite-js-only">
@@ -38,7 +38,7 @@
 				</div>
 				<div class="govuk-grid-column-one-quarter">
 					<label class="govuk-label" for="control_rating">
-						Control list entry
+						Control list classification
 					</label>
 					<input class="govuk-input" id="control_rating" name="control_rating" type="text" autocomplete="off" autocorrect="off"  value="{{ control_code }}">
 				</div>
@@ -53,9 +53,9 @@
 			<table class="govuk-table">
 				<thead class="govuk-table__head">
 					<tr class="govuk-table__row">
-						<th scope="col" class="govuk-table__header">Name</th>
-						<th scope="col" class="govuk-table__header">Part Number</th>
-						<th scope="col" class="govuk-table__header">Control List Entry</th>
+						<th scope="col" class="govuk-table__header">Description</th>
+						<th scope="col" class="govuk-table__header">Part number</th>
+						<th scope="col" class="govuk-table__header">Control list classification</th>
 						<th scope="col" class="govuk-table__header"></th>
 					</tr>
 				</thead>
@@ -64,7 +64,7 @@
 						<tr class="govuk-table__row">
 							<td class="govuk-table__cell" id="good-description">
 								{{ good.description|highlight_text:description }}
-								{% if good.status.key == 'verified' %}<span class="app-verified__symbol">{% svg 'verified' %}</span><span class="govuk-visually-hidden"> (Verified good)</span>{% endif %}
+								{% if good.status.key == 'verified' %}<span class="app-verified__symbol">{% svg 'verified' %}</span><span class="govuk-visually-hidden"> (Verified product)</span>{% endif %}
 							</td>
 							<td class="govuk-table__cell" id="good-part-number">
 								{{ good.part_number|highlight_text:part_number|default_na }}
@@ -86,7 +86,7 @@
 				<span class="lite-information-text__icon" aria-hidden="true">!</span>
 				<p class="lite-information-text__text">
 					<span class="govuk-visually-hidden">Information</span>
-					Your organisation doesn't have any goods which are available to be used on an application.
+					Your organisation doesn't have any products available to be used on an application.
 				</p>
 			</div>
 		{% endif %}
@@ -95,7 +95,7 @@
 			<span class="lite-information-text__icon" aria-hidden="true">!</span>
 			<p class="lite-information-text__text">
 				<span class="govuk-visually-hidden">Information</span>
-				Your organisation doesn't have any goods which are available to be used on an application.
+				Your organisation doesn't have any products available to be used on an application.
 			</p>
 		</div>
 	{% endif %}
