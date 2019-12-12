@@ -77,3 +77,7 @@ jobs:
           command: |
             pipenv install bandit
             pipenv run bandit -r .
+
+      - run:
+          name: Run Content String Check
+          command: pipenv run python templates/check_html_strings.py
