@@ -161,3 +161,19 @@ def menu_is_visible(driver):
 def select_visible_text_from_dropdown(element, text):
     select = Select(element)
     select.select_by_visible_text(text)
+
+
+def find_paginated_item(id, driver):
+    driver.set_timeout_to(0)
+    current_page = 1
+    while True:
+        template = driver.find_elements_by_id(id)
+        if template:
+            element = template[0]
+            break
+        else:
+            current_page += 1
+            driver.find_element_by_id(f"page-{current_page}").click()
+    driver.set_timeout_to(10)
+    assert element, f"Item couldn't be found across {current_page} pages"
+    return element
