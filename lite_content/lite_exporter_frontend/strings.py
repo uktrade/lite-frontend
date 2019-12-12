@@ -1,4 +1,7 @@
 from conf.settings import env
+from lite_content.lite_exporter_frontend import applications
+
+APPLICATIONS = applications
 
 # Generic
 BACK_TO_APPLICATION = "Back to application"
@@ -16,8 +19,9 @@ OPTIONAL = "Optional"
 NOT_STARTED = "Not started"
 IN_PROGRESS = "In progress"
 DONE = "Completed"
+VIEW = "View"
 
-PERMISSION_FINDER_LINK = '<a class="govuk-link" href="' + env("PERMISSIONS_FINDER_URL") + '">control list</a>'
+PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
 
 APPLICATION_GOODS_TITLE = "Goods"
 APPLICATION_GOODS_ADD_NEW = "Add a new good to your application"
@@ -69,9 +73,7 @@ WHICH_EXPORT_LICENCE_DO_YOU_WANT_TITLE = "Select the type of licence you need"
 WHICH_EXPORT_LICENCE_DO_YOU_WANT_DESCRIPTION = ""
 
 STANDARD_LICENCE = "Standard licence"
-STANDARD_LICENCE_DESCRIPTION = (
-    "Select a standard licence for a set quantity and set value of items."
-)
+STANDARD_LICENCE_DESCRIPTION = "Select a standard licence for a set quantity and set value of items."
 OPEN_LICENCE = "Open licence"
 OPEN_LICENCE_DESCRIPTION = (
     "Select an open licence for multiple shipments of specific items to specific countries. "
@@ -152,15 +154,22 @@ USER_ROLE_QUESTION = "What role should this user have?"
 
 USER_ADD_TITLE = "Add new user"
 USER_EMAIL_QUESTION = "Whats the user's email"
-USER_FIRST_NAME_QUESTION = "Whats the user's first name"
-USER_LAST_NAME_QUESTION = "Whats the user's last name"
 USER_ADD_FORM_BACK_TO_USERS = "Back to users"
-USER_EDIT_TITLE = "Edit user"
+USER_EDIT_TITLE = "Change role"
 USER_EDIT_FORM_BACK_TO_USER = "Back to user"
 USER_EDIT_FORM_SAVE = "Save"
 
-USER_DEACTIVATE = "Deactivate"
-USER_REACTIVATE = "Reactivate"
+USER_EMAIL = "Email"
+USER_NAME = "Name"
+USER_FIRST_NAME = "First name"
+USER_LAST_NAME = "Last name"
+USER_ROLE = "Role"
+USER_STATUS = "Status"
+USER_PENDING = "Pending"
+
+USER_DEACTIVATE = "Deactivate user"
+USER_REACTIVATE = "Reactivate user"
+USER_NOT_ACTIVATED_YET = "This user has yet to sign in to LITE."
 
 MANAGE_ORGANISATIONS_MEMBERS_TAB = "Members"
 MANAGE_ORGANISATIONS_SITES_TAB = "Sites"
