@@ -5,7 +5,7 @@ from pytest_bdd import when, then, scenarios, given
 from pages.application_page import ApplicationPage
 from pages.ecju_queries_pages import EcjuQueriesPages
 
-scenarios("../features/ecju_query.feature", strict_gherkin=False)
+scenarios("../features/ecju_queries.feature", strict_gherkin=False)
 
 NEW_QUESTION_DROP_DOWN_TEXT = "Write a new question"
 
@@ -47,7 +47,9 @@ def i_select_write_a_new_question(driver):
 
 @then("the question text area is empty")
 def the_question_text_area_is_empty(driver):
+    driver.set_timeout_to(0)
     assert not EcjuQueriesPages(driver).get_question_text()
+    driver.set_timeout_to(10)
 
 
 @when("I enter text in the question text area")

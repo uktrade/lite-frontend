@@ -1,7 +1,7 @@
 from pytest_bdd import then, scenarios
 from ui_automation_tests.pages.application_page import ApplicationPage
 
-scenarios("../features/end_user_advisory_query.feature", strict_gherkin=False)
+scenarios("../features/eua_queries.feature", strict_gherkin=False)
 
 
 @then("I should see flags can be added")

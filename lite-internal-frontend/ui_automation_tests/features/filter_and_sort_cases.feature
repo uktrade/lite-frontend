@@ -7,7 +7,7 @@ Feature: I want to filter and sort cases on a queue
   @LT_914_filter_and_sort @smoke
   Scenario: Filter and sort
     Given a queue has been created
-    And I create application or application has been previously created
+    Given I create open application or open application has been previously created
     And I go to internal homepage
     When case has been moved to new Queue
     And I create a clc_query
@@ -37,7 +37,7 @@ Feature: I want to filter and sort cases on a queue
 
   @LT_914_sort_all_cases @regression
   Scenario: Sort all cases
-    Given I create application or application has been previously created
+    Given I create open application or open application has been previously created
     And I go to internal homepage
     When I click on the "All cases" queue in dropdown
     And I sort cases by status

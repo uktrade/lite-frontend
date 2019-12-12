@@ -11,7 +11,7 @@ def assert_party_data(table, headings, values):
 
 
 class ViewCaseDetails:
-    scenarios("../features/case_view_details.feature", strict_gherkin=False)
+    scenarios("../features/view_case_details.feature", strict_gherkin=False)
 
     import logging
 

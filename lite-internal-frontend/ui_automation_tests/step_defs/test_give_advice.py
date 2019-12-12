@@ -142,7 +142,9 @@ def refusal_flag_displayed(driver):
 
 @then("I see refusal flag is not attached")
 def refusal_flag_not_displayed(driver):
+    driver.set_timeout_to(0)
     assert not ApplicationPage(driver).is_flag_applied("Refusal Advice")
+    driver.set_timeout_to(10)
 
 
 @when("I clear advice")
@@ -152,12 +154,16 @@ def clear_advice(driver):
 
 @then("the give advice checkboxes are not present")
 def check_advice_checkboxes_are_not_present(driver):
+    driver.set_timeout_to(0)
     assert GiveAdvicePages(driver).checkbox_present() == 0
+    driver.set_timeout_to(10)
 
 
 @then("the give or change advice button is not present")
 def check_give_advice_button_is_not_present(driver):
+    driver.set_timeout_to(0)
     assert len(GiveAdvicePages(driver).give_advice_button_present()) == 0
+    driver.set_timeout_to(10)
 
 
 @then("I see total goods value")

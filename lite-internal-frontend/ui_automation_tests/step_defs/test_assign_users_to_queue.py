@@ -2,11 +2,11 @@ from pytest_bdd import when, then, parsers, scenarios
 from pages.case_list_page import CaseListPage
 from pages.shared import Shared
 
-scenarios("../features/users_to_queue.feature", strict_gherkin=False)
+scenarios("../features/assign_users_to_queue.feature", strict_gherkin=False)
 
 
 @when("I select the checkbox for previously created case to be assigned")
-def click_checkbox_for_application(driver, internal_url, apply_for_standard_application, context):
+def click_checkbox_for_application(driver, internal_url, context):
     CaseListPage(driver).click_on_case_checkbox(context.case_id)
     CaseListPage(driver).click_on_assign_users_button()
 

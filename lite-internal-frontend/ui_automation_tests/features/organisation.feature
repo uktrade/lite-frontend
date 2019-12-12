@@ -37,7 +37,7 @@ Feature: I want to add a company to LITE
 
   @LT_1086_test_adding_a_flag_to_an_organisation @regression
   Scenario: Adding a flag to an organisation
-    Given I create application or application has been previously created
+    Given I create open application or open application has been previously created
     And I go to internal homepage
     When I go to flags via menu
     And I add a flag called Suspicious at level Organisation

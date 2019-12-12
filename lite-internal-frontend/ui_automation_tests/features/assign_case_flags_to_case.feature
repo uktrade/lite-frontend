@@ -6,7 +6,7 @@ Feature: I want to add case-level flags to a case and view them
 
   @LT_949_add @LT_951 @regression
   Scenario: Add flag to case
-    Given I create application or application has been previously created
+    Given I create open application or open application has been previously created
     And I go to internal homepage
     When I go to flags via menu
     And I add a flag called UAE at level Case
@@ -34,7 +34,7 @@ Feature: I want to add case-level flags to a case and view them
 
   @LT_951 @smoke
   Scenario: Add all flags to case
-    Given I create application or application has been previously created
+    Given I create open application or open application has been previously created
     And I go to internal homepage
     When I go to flags via menu
     And I add a flag called Suspicious at level Good

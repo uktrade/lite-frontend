@@ -7,7 +7,7 @@ Feature: I want to create ECJU queries
 
   @LT_1192_add @regression
   Scenario: Add an ECJU Query to a case
-    Given I create application or application has been previously created
+    Given I create open application or open application has been previously created
     And I sign in to SSO or am signed into SSO
     And I create an ecju query picklist
     When I go to application previously created
@@ -35,7 +35,7 @@ Feature: I want to create ECJU queries
 
   @LT_1320_view_response_to_ecju @smoke
   Scenario: Add an ECJU Query and respond and view response
-    Given I create application or application has been previously created
+    Given I create open application or open application has been previously created
     And I sign in to SSO or am signed into SSO
     And I create an ecju query picklist
     When I go to application previously created

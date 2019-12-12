@@ -6,7 +6,7 @@ So that it is recorded against the case and available for other case workers to 
 
   @LT_945_upload @regression
   Scenario: Upload a new document that doesn't contain a virus
-    Given I create application or application has been previously created
+    Given I create open application or open application has been previously created
     And I sign in to SSO or am signed into SSO
     When I go to application previously created
     And I click on the Documents button

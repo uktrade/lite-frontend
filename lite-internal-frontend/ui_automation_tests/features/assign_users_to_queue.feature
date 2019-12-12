@@ -6,7 +6,7 @@ Feature: I want to assign one or more specific users to a case in a work queue
 
   Background:
     Given I go to queues
-    And I create application or application has been previously created
+    And I create open application or open application has been previously created
     When I enter in queue name Review
     And I go to application previously created
     And I add case to newly created queue

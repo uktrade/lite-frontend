@@ -2,7 +2,7 @@ from pytest_bdd import when, then, parsers, scenarios, given
 from pages.clc_queries_pages import ClcQueriesPages
 from pages.shared import Shared
 
-scenarios("../features/clc_query.feature", strict_gherkin=False)
+scenarios("../features/clc_queries.feature", strict_gherkin=False)
 
 
 @when("I click Respond to query")

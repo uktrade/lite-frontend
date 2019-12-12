@@ -6,7 +6,7 @@ So that I can easily and quickly generate different types of standard document t
 
   @LT_1028_generate_document
   Scenario: Generate a document for a case
-    Given I create application or application has been previously created
+    Given I create open application or open application has been previously created
     And I sign in to SSO or am signed into SSO
     And I create a template
     When I go to application previously created

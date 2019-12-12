@@ -16,7 +16,7 @@ Feature: I want to define new work queues and the teams they belong to
 
   @LT_1125_move_cases @smoke
   Scenario: Move case to new queue and remove from new queue
-    Given I create application or application has been previously created
+    Given I create open application or open application has been previously created
     And I go to queues
     When I enter in queue name Review
     And I go to application previously created
@@ -30,7 +30,7 @@ Feature: I want to define new work queues and the teams they belong to
 
   @LT_1123_view_all_cases @view_all_cases @regression
   Scenario: Closed cases appear on the all cases queue
-    Given I create application or application has been previously created
+    Given I create open application or open application has been previously created
     And I sign in to SSO or am signed into SSO
     When I go to application previously created
     And I click progress application
@@ -41,7 +41,7 @@ Feature: I want to define new work queues and the teams they belong to
 
   @LT_1123_view_all_cases @view_all_cases @regression
   Scenario: Closed cases dont appear on the open cases queue
-    Given I create application or application has been previously created
+    Given I create open application or open application has been previously created
     And I sign in to SSO or am signed into SSO
     When I go to application previously created
     And I click progress application
