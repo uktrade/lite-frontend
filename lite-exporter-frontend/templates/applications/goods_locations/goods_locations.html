@@ -1,7 +1,7 @@
 {% extends 'layouts/base.html' %}
 
 {% block back_link %}
-	<a href="{% url 'applications:task_list' application.id %}" id="back-link" class="govuk-back-link">Back to task list</a>
+	<a href="{% url 'applications:task_list' application.id %}" id="back-link" class="govuk-back-link">Back to application overview</a>
 {% endblock %}
 
 {% block body %}
@@ -13,7 +13,7 @@
 					{% if application.goods_locations.type == 'sites' %}
 						{% lcs 'SELECT_SITES_TITLE' %}
 					{% else %}
-						Set where your goods are located
+						Set where your products are located
 					{% endif %}
 				{% endblock %}
 			</h2>

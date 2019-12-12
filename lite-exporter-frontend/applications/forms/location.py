@@ -40,9 +40,9 @@ def add_external_location():
 
 def new_location_form():
     return Form(
-        title="Add a new external location",
+        title="Add an external location",
         questions=[
-            TextInput(title="Company name", name="name"),
+            TextInput(title="Name", name="name"),
             TextArea("address", "Address"),
             Select(title="Country", description="", name="country", options=get_countries(None, True)),
         ],
@@ -52,8 +52,8 @@ def new_location_form():
 
 def external_locations_form(request):
     return Form(
-        title="Where are your goods located?",
-        description="Select all external locations that apply.",
+        title="Select locations",
+        description="",
         questions=[
             Filter(),
             Checkboxes("external_locations", get_external_locations(request, str(request.user.organisation), True)),
