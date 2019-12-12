@@ -18,14 +18,14 @@ def address_questions(countries, prefix="address."):
             name=prefix + "address_line_2",
         ),
         TextInput(title="Town or city", name=prefix + "city"),
-        TextInput(title="County/State", name=prefix + "region"),
-        TextInput(title="Postal Code", name=prefix + "postcode"),
+        TextInput(title="County or state", name=prefix + "region"),
+        TextInput(title="Postcode", name=prefix + "postcode"),
         country_question(countries, prefix),
     ]
 
 
 def control_list_entry_question(
-    control_list_entries, title="Control List Entry", description="", name="control_list_entry", inset_text=True,
+    control_list_entries, title="Control list entry", description="", name="control_list_entry", inset_text=True,
 ):
     classes = ["govuk-inset-text"] if inset_text else []
     return ControlListEntryInput(
