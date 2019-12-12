@@ -177,3 +177,18 @@ def find_paginated_item(id, driver):
     driver.set_timeout_to(10)
     assert element, f"Item couldn't be found across {current_page} pages"
     return element
+
+
+def get_text_of_multi_page_table(css_selector, driver):
+    driver.set_timeout_to(0)
+    text = ""
+    current_page = 1
+    while True:
+        text += driver.find_element_by_css_selector(css_selector).text
+        current_page += 1
+        try:
+            driver.find_element_by_id(f"page-{current_page}").click()
+        except NoSuchElementException:
+            break
+    driver.set_timeout_to(10)
+    return text
