@@ -17,7 +17,7 @@
 		</div>
 	</div>
 
-	{% if data %}
+	{% if data.results %}
 		<table class="govuk-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
@@ -28,7 +28,7 @@
 				</tr>
 			</thead>
 			<tbody class="govuk-table__body">
-				{% for letter_template in data %}
+				{% for letter_template in data.results %}
 					<tr class="govuk-table__row">
 						<td class="govuk-table__cell">
                             <a href="{% url 'letter_templates:letter_template' letter_template.id %}" id="{{ letter_template.name }}" class="govuk-link">{{ letter_template.name }}</a>
@@ -46,17 +46,7 @@
 				{% endfor %}
 			</tbody>
 		</table>
-        {% if data.total_pages > 1 %}
-	        <br>
-
-	        <div class="lite-pagination__container ">
-	            {% for i in data.total_pages|times %}
-	                <a href="{% url 'letter_templates:letter_templates' %}?page={{ i }}" class="lite-pagination__item {% if page == i %}lite-pagination__item--selected{% endif %}" id="page-{{ i }}">
-	                    {{ i }}
-	                </a>
-	            {% endfor %}
-	        </div>
-	    {% endif %}
+        {% include "includes/pagination.html" with data=data %}
 	{% else %}
         {% lcs 'LETTER_TEMPLATES.LetterTemplatesPage.NONE_FOUND' as text %}
         {% include "includes/information-text.html" with text=text  %}

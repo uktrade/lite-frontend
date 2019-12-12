@@ -9,7 +9,11 @@ from lite_forms.helpers import conditional
 
 
 def export_vars(request):
-    return {"ENVIRONMENT_VARIABLES": dict(os.environ.items())}
+    return {
+        "ENVIRONMENT_VARIABLES": dict(os.environ.items()),
+        "CURRENT_PATH": request.get_full_path(),
+        "CURRENT_PATH_WITHOUT_PARAMS": request.get_full_path().split("?")[0].split("#")[0],
+    }
 
 
 def lite_menu(request):

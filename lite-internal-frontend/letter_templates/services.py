@@ -36,7 +36,7 @@ def put_letter_template(request, pk, json):
 def get_letter_templates(request, params=""):
     url = LETTER_TEMPLATES_URL
     data = get(request, url + "?" + params)
-    return data.json()["results"], data.status_code
+    return data.json(), data.status_code
 
 
 def post_letter_template(request, json):

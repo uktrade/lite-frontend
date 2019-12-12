@@ -9,8 +9,10 @@
 {% block body %}
 
 	<div class="lite-app-bar">
-		<h2 class="govuk-heading-l">{{ title }}</h2>
-		<div class="lite-app-bar--right">
+        <div class="lite-app-bar__content">
+            <h2 class="govuk-heading-l">{{ title }}</h2>
+        </div>
+		<div class="lite-app-bar__controls">
 			<a id="button-attach-document" role="button" draggable="false" class="govuk-button {% if documents %}govuk-button--secondary{% endif %}" href="{% url 'cases:attach_documents' case.id %}">
 				{% lcs 'CASES.CaseDocumentsPage.ATTACH' %}
 			</a>
