@@ -13,6 +13,7 @@ allure-python-commons = "==2.6.1"
 pytest-html = "*"
 pytest-xdist = "*"
 black = "==19.10b0"
+pytest-rerunfailures = "*"
 
 [packages]
 Django = "==2.2.8"

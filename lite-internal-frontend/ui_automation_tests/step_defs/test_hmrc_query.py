@@ -1,7 +1,5 @@
 from pytest_bdd import given, scenarios, when, then
 
-from pages.case_list_page import CaseListPage
-
 scenarios("../features/hmrc_query.feature", strict_gherkin=False)
 
 

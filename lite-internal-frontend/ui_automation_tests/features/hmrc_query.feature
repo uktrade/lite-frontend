@@ -1,6 +1,6 @@
 Feature: Add a HMRC query
 
-
+  @smoke @HMRC
   Scenario: Add a HMRC query
     Given I go to internal homepage
     When I show filters
