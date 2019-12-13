@@ -3,7 +3,7 @@
 {% load svg humanize %}
 
 {% block back_link %}
-	<a href="{% url 'applications:task_list' application.id %}" id="back-link" class="govuk-back-link">Back to task list</a>
+	<a href="{% url 'applications:task_list' application.id %}" id="back-link" class="govuk-back-link">Back to application overview</a>
 {% endblock %}
 
 {% block body %}
@@ -11,17 +11,17 @@
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
 			<h1 class="govuk-heading-l">
-				{% block title %}Add goods{% endblock%}
+				{% block title %}Add products{% endblock%}
 			</h1>
 			{% if goods %}
-				<p class="govuk-body-m">You've added {{ goods|length|apnumber }} good{{ goods|pluralize }}.</p>
+				<p class="govuk-body-m">You've added {{ goods|length|apnumber }} product{{ goods|pluralize }}.</p>
 			{% endif %}
 		</div>
         {% if application.status.key in 'applicant_editing,draft' %}
 		<div class="lite-app-bar__controls">
 			<a href="{% url 'applications:add_goods_type' application.id %}?next={% url 'applications:goods_types' application.id %}" role='button' draggable='false' class='govuk-button'>
 				{% if goods %}
-					Add another good
+					Add another product
 				{% else %}
 					{% get_string 'good_types.overview_good_types.add_good_type_button' %}
 				{% endif %}
@@ -35,7 +35,7 @@
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
 					<th scope="col" class="govuk-table__header govuk-!-width-one-half">Description</th>
-					<th scope="col" class="govuk-table__header">Control List Entry</th>
+					<th scope="col" class="govuk-table__header">Control list classification</th>
 					{% if application.application_type.key == 'hmrc_query' %}
 						<th scope="col" class="govuk-table__header">Document</th>
 					{% endif %}
@@ -50,7 +50,7 @@
 							{{ good_on_application.description }}
 						</td>
 						<td class="govuk-table__cell">
-							<span class="lite-responsive-table__header">Control list entry</span>
+							<span class="lite-responsive-table__header">Control list classification</span>
 							{{ good_on_application.control_code|default_na }}
 						</td>
 						{% if application.application_type.key == 'hmrc_query' %}
@@ -90,7 +90,7 @@
 			<span class="lite-information-text__icon" aria-hidden="true">!</span>
 			<p class="lite-information-text__text">
 				<span class="govuk-visually-hidden">Information</span>
-				You haven't added any goods to your application yet.
+				You haven't added any products to your application.
 			</p>
 		</div>
 	{% endif %}

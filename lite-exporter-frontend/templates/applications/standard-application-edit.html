@@ -16,7 +16,7 @@
 	{% endif %}
 	{% if application.status.key == "applicant_editing" %}
 		<div class="lite-info-bar lite-info-bar--warning lite-info-bar--no-animation">
-			This application won't be processed until it is submitted.
+			This application won't be processed until it's submitted.
 		</div>
 	{% endif %}
 {% endblock %}
@@ -45,7 +45,7 @@
 	<h1 class="govuk-heading-l govuk-!-margin-bottom-2">
 		{% block title %}
 			{% if is_editing %}
-				Edit your application
+				Edit the application
 			{% else %}
 				Apply for a standard export licence
 			{% endif %}
@@ -115,7 +115,7 @@
 										<th class="govuk-table__header" scope="row">Part Number</th>
 										<th class="govuk-table__header" scope="row">Qty</th>
 										<th class="govuk-table__header" scope="row">Unit</th>
-										<th class="govuk-table__header" scope="row">Value of Good</th>
+										<th class="govuk-table__header" scope="row">Value</th>
 										<th class="govuk-table__header" scope="row"></th>
 									</tr>
 									{% for good in goods %}
@@ -138,7 +138,7 @@
 		        <li class="lite-task-list__item">
 					<div class="lite-task-list__item-header">
 						<a id="location" href="{% url 'applications:location' application.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
-							Goods locations
+							Product locations
 						</a>
 						{% if sites or external_locations %}
 							<div class="lite-tag lite-tag--blue">

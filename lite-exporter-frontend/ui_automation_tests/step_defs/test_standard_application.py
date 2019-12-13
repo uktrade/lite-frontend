@@ -95,7 +95,7 @@ def add_new_end_user_address(driver, address, country, context):
 @when("I remove an ultimate end user so there is one less and return to the overview")
 def i_remove_an_ultimate_end_user(driver):
     no_of_ultimate_end_users = Shared(driver).get_size_of_table_rows()
-    driver.find_element_by_link_text("Remove ultimate end user").click()
+    driver.find_element_by_link_text("Remove").click()
     total = no_of_ultimate_end_users - Shared(driver).get_size_of_table_rows()
     assert total == 1, "total on the ultimate end users summary is incorrect after removing ultimate end user"
     functions.click_back_link(driver)

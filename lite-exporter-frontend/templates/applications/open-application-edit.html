@@ -16,7 +16,7 @@
 	{% endif %}
 	{% if application.status.key == "applicant_editing" %}
 		<div class="lite-info-bar lite-info-bar--warning lite-info-bar--no-animation">
-			This application won't be processed until it is submitted.
+			This application won't be processed until it's submitted.
 		</div>
 	{% endif %}
 {% endblock %}
@@ -45,7 +45,7 @@
 	<h1 class="govuk-heading-l govuk-!-margin-bottom-2">
 		{% block title %}
 			{% if is_editing %}
-				Edit your application
+				Edit the application
 			{% else %}
 				Apply for an open export licence
 			{% endif %}
@@ -91,7 +91,7 @@
 		        <li class="lite-task-list__item">
 					<div class="lite-task-list__item-header">
                         <a id="open-goods" href="{% url 'applications:goods_types' application.id %}" class="govuk-link govuk-link--no-visited-state">
-                            Describe your goods
+                            Describe your products
                         </a>
 						{% if goods|length or goodstypes|length %}
 							<div class="lite-tag lite-tag--blue">
@@ -109,7 +109,7 @@
 								<tbody class="govuk-table__body">
 									<tr class="govuk-table__row">
 										<th class="govuk-table__header" scope="row">Description</th>
-										<th class="govuk-table__header" scope="row">Control List Classification</th>
+										<th class="govuk-table__header" scope="row">Control list classification</th>
 										<th class="govuk-table__header" scope="row"></th>
 									</tr>
 									{% for goodstype in goodstypes %}
@@ -132,7 +132,7 @@
 		        <li class="lite-task-list__item">
 					<div class="lite-task-list__item-header">
 						<a id="location" href="{% url 'applications:location' application.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
-							Goods locations
+							Product locations
 						</a>
 						{% if sites.sites or external_locations %}
 							<div class="lite-tag lite-tag--blue">
@@ -198,7 +198,7 @@
 					<li class="lite-task-list__item">
 						<div class="lite-task-list__item-header">
 							<a id="goods_country_assignments" href="{% url 'applications:goods_countries' application.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
-			                    Explain where each good is going
+			                    Explain where each product is going
 			                </a>
 							{% if countries_on_goods_types %}
 				                <div class="lite-tag lite-tag--blue">
