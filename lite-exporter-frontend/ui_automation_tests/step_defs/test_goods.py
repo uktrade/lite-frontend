@@ -12,7 +12,7 @@ from pages.goods_page import GoodsPage
 from pages.shared import Shared
 from shared import functions
 
-scenarios("../features/clc_queries_and_goods.feature", strict_gherkin=False)
+scenarios("../features/goods.feature", strict_gherkin=False)
 
 
 @then("I see good in goods list")
@@ -65,7 +65,9 @@ def delete_my_good_in_list(driver, context):
 
 @then("my good is no longer in the goods list")
 def good_is_no_longer_in_list(driver, context):
+    driver.set_timeout_to(0)
     assert len(driver.find_elements_by_id("delete-" + context.good_id_from_url)) == 0
+    driver.set_timeout_to(10)
 
 
 @when("I add a good and attach a document")
@@ -96,7 +98,9 @@ def i_click_to_manage_goods_on_a_standard_application(driver):
 
 @then("I see there are no goods on the application")
 def i_see_there_are_no_goods_on_the_application(driver):
+    driver.set_timeout_to(0)
     assert ApplicationGoodsList(driver).get_goods_count() == 0
+    driver.set_timeout_to(10)
 
 
 @when("I click Add a new good")

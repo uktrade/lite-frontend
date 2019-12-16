@@ -13,3 +13,4 @@ python-json-logger==0.1.11
 requests==2.21.0
 stringcase==1.2.0
 pytest-xdist==1.30.0
+pytest-rerunfailures==8.0

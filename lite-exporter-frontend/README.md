@@ -67,8 +67,9 @@ Application for handling exporter related activity in LITE.
 ### Running tests
 * To run tests via command line, run `pipenv run python -m pytest` from within the `ui_automation_tests` folder.
 * For a specific tag (don't include the @) `pipenv run python -m pytest -m "tag name"`
-* To run in parallel `pipenv run python -m pytest -n 3` (replace 3 with how many you want in parallel.)
+* To run in parallel `pipenv run python -m pytest -n 3 --dist=loadscope` (replace 3 with how many you want in parallel.)
 * To ignore certain folders `pipenv run python -m pytest --ignore=some_folder`
+* To automatically re run failed tests once(to try and avoid flaky UI tests)  add  `--reruns 1`
 
 ### Running tests via Pycharm tips
 * You may need to make sure in pycharm, within Preferences -> Tools -> Python Integrated Tools -> Default Test Runner is pytest
