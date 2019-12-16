@@ -44,7 +44,7 @@ class Organisation(SeedClass):
         data = self.request_data[key]
         return make_request(
             "POST", base_url=self.base_url, url="/organisations/", body=data, headers=self.gov_headers,
-        ).json()["organisation"]
+        ).json()
 
     def get_org_primary_site_id(self, org_id):
         organisation = make_request(
