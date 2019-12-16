@@ -1,4 +1,6 @@
-from .strings import PERMISSION_FINDER_LINK
+from conf.settings import env
+
+PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
 
 
 class DocumentSensitivityForm:

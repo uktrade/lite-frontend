@@ -22,8 +22,6 @@ IN_PROGRESS = "In progress"
 DONE = "Completed"
 VIEW = "View"
 
-PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
-
 APPLICATION_GOODS_TITLE = "Goods"
 APPLICATION_GOODS_ADD_NEW = "Add a new good to your application"
 APPLICATION_GOODS_ADD_BACK = "Back to goods"
