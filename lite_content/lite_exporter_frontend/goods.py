@@ -104,3 +104,18 @@ class EditGoodForm:
     class Buttons:
         SAVE = "Save"
         DELETE = "Delete Good"
+
+
+class AttachDocumentForm:
+    TITLE = "Attach a document"
+    DESCRIPTION = (
+        "Documentation could be specifications, datasheets, sales brochures, drawings "
+        "or anything else that fully details what the item is and what it's designed to do."
+        "\n\nDo not attach a document that’s OFFICIAL-SENSITIVE or above. "
+        "\n\nThe file must be smaller than 100MB."
+    )
+    BUTTON = "Save"
+    BACK_LINK = "Back to Good"
+
+    class Description:
+        TITLE = "Description (optional)"

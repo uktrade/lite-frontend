@@ -28,12 +28,6 @@ APPLICATION_GOODS_TITLE = "Goods"
 APPLICATION_GOODS_ADD_NEW = "Add a new good to your application"
 APPLICATION_GOODS_ADD_BACK = "Back to goods"
 APPLICATION_GOODS_ADD_APPLICATION_DETAILS = "Details for good on application"
-APPLICATION_GOODS_ADD_DOCUMENT_DESCRIPTION = (
-    "Documentation could be specifications, datasheets, sales brochures, drawings "
-    "or anything else that fully details what the item is and what it's designed to do."
-    "\n\nDo not attach a document that’s OFFICIAL-SENSITIVE or above. "
-    "\n\nThe file must be smaller than 100MB."
-)
 APPLICATION_GOODS_ADD_DOCUMENT_MISSING = "A document is required"
 APPLICATION_GOODS_ADD_PREEXISTING_TITLE = "Add an item from your database to your application"
 
