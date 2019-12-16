@@ -11,8 +11,10 @@ def get_flags(request):
     return data.json(), data.status_code
 
 
-def _get_team_flags(level, request, convert_to_options=False):
-    data = get(request, f"{FLAGS_URL}?level={level}&team=True").json()["flags"]
+def _get_team_flags(level, request, convert_to_options=False, include_deactivated=False):
+    data = get(request, f"{FLAGS_URL}?level={level}&team=True&include_deactivated={include_deactivated}").json()[
+        "flags"
+    ]
     if convert_to_options:
         return [Option(key=flag["id"], value=flag["name"]) for flag in data]
 
