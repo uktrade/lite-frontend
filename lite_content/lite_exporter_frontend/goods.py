@@ -131,3 +131,9 @@ class RespondToQueryForm:
     class Response:
         TITLE = "Your response"
         DESCRIPTION = "You won't be able to edit this once you've submitted it."
+
+    class ConfirmationForm:
+        TITLE = "Are you sure you want to send this response?"
+        BACK_LINK = "Back to edit response"
+        YES = "Yes, send the response"
+        NO = "No, change my response"
