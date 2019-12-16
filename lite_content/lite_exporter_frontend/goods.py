@@ -107,6 +107,11 @@ class EditGoodForm:
         SAVE = "Save"
         DELETE = "Delete Good"
 
+    class DeleteConfirmationForm:
+        TITLE = "Are you sure you want to delete this good?"
+        YES = "Yes, delete the good"
+        NO = "Cancel"
+
 
 class AttachDocumentForm:
     TITLE = "Attach a document"
