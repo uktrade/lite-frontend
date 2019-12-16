@@ -119,3 +119,13 @@ class AttachDocumentForm:
 
     class Description:
         TITLE = "Description (optional)"
+
+
+class RespondToQueryForm:
+    TITLE = "Respond to query"
+    BUTTON = "Submit response"
+    BACK_LINK = "Back to good"
+
+    class Response:
+        TITLE = "Your response"
+        DESCRIPTION = "You won't be able to edit this once you've submitted it."
