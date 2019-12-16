@@ -37,13 +37,6 @@ APPLICATION_GOODS_ADD_DOCUMENT_DESCRIPTION = (
 APPLICATION_GOODS_ADD_DOCUMENT_MISSING = "A document is required"
 APPLICATION_GOODS_ADD_PREEXISTING_TITLE = "Add an item from your database to your application"
 
-APPLICATION_GOODS_CONTROL_CODE_REQUIRED_DESCRIPTION = (
-    "Goods that aren't on the "
-    + PERMISSION_FINDER_LINK
-    + " may be affected by military end use controls, current trade sanctions and embargoes or weapons of mass destruction controls."
-    "If your goods and services aren't subject to any controls, you'll get a no licence required (NLR) document from ECJU."
-)
-
 # Applications
 APPLICATION_REFERENCE_NAME = "Reference"
 APPLICATION_TYPE = "Licence type"
