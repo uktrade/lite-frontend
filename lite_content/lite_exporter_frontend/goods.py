@@ -4,9 +4,9 @@ PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
 
 
 class DocumentSensitivityForm:
-    TITLE = "Does your good meet the following criteria?"
+    TITLE = "Does your product meet the following criteria?"
     DESCRIPTION = (
-        "I have a document for my good\nThe document is below official-sensitive in rating\nThe document "
+        "I have a document for my product\nThe document is below official-sensitive in rating\nThe document "
         "is not commercially sensitive"
     )
     ECJU_HELPLINE = (
@@ -21,15 +21,15 @@ class DocumentSensitivityForm:
 
 
 class CreateGoodForm:
-    TITLE = "Add a good"
+    TITLE = "Add a product"
     BUTTON = "Save"
 
     class Description:
-        TITLE = "Description of good"
-        DESCRIPTION = "This can make it easier to find your good later"
+        TITLE = "Description"
+        DESCRIPTION = "This can make it easier to find your product later"
 
     class IsControlled:
-        TITLE = "Is your good controlled?"
+        TITLE = "Is the product controlled?"
         DESCRIPTION = "If you don't know you can use " + PERMISSION_FINDER_LINK
         CLC_REQUIRED = (
             "Goods that aren't on the "
@@ -43,73 +43,74 @@ class CreateGoodForm:
         UNSURE = "I don't know"
 
     class ControlListEntry:
-        TITLE = "What's your good's control list entry?"
+        TITLE = "Control list classification"
         DESCRIPTION = (
-            "<noscript>If your good is controlled, enter its control list entry. </noscript>For example, " "ML1a. "
+            "<noscript>If your product is controlled, enter its control list classification. </noscript>"
+            "For example, ML1a. "
         )
 
     class Incorporated:
-        TITLE = "Is your good intended to be incorporated into an end product?"
+        TITLE = "Will the product be incorporated into another product?"
         DESCRIPTION = ""
         YES = "Yes"
         NO = "No"
 
     class PartNumber:
-        TITLE = "Part Number"
+        TITLE = "Part number (optional)"
 
 
 class CLCQueryForm:
     TITLE = "Create a CLC query"
     DESCRIPTION = "By submitting you are creating a CLC query that cannot be altered"
-    BACK_LINK = "Back to good"
+    BACK_LINK = "Back to product"
     BUTTON = "Save"
 
     class CLCCode:
-        TITLE = "What do you think is your good's control list entry?"
+        TITLE = "What do you think is your product's control list entry?"
         DESCRIPTION = "For example, ML1a."
 
     class Additional:
-        TITLE = "Further details about your goods"
-        DESCRIPTION = "Please enter details of why you don't know if your good is controlled"
+        TITLE = "Further details about your product"
+        DESCRIPTION = "Please enter details of why you don't know if your product is controlled"
 
 
 class EditGoodForm:
-    TITLE = "Edit Good"
+    TITLE = "Edit product"
     DESCRIPTION = ""
 
     class Description:
-        TITLE = "Description of good"
-        DESCRIPTION = "This can make it easier to find your good later"
+        TITLE = "Description"
+        DESCRIPTION = "This can make it easier to find your product later"
 
     class IsControlled:
-        TITLE = "Is your good controlled?"
+        TITLE = "Is your product controlled?"
         DESCRIPTION = "If you don't know you can use " + PERMISSION_FINDER_LINK
         YES = "Yes"
         NO = "No"
         UNSURE = "I don't know"
 
     class ControlListEntry:
-        TITLE = "What's your good's control list entry?"
+        TITLE = "Control list classification"
         DESCRIPTION = (
-            "<noscript>If your good is controlled, enter its control list entry. </noscript>For example, " "ML1a. "
+            "<noscript>If your product is controlled, enter its control list entry. </noscript>For example, " "ML1a. "
         )
 
     class Incorporated:
-        TITLE = "Is your good intended to be incorporated into an end product?"
+        TITLE = "Will the product be incorporated into another product?"
         DESCRIPTION = ""
         YES = "Yes"
         NO = "No"
 
     class PartNumber:
-        TITLE = "Part Number"
+        TITLE = "Part number (optional)"
 
     class Buttons:
         SAVE = "Save"
-        DELETE = "Delete Good"
+        DELETE = "Delete product"
 
     class DeleteConfirmationForm:
-        TITLE = "Are you sure you want to delete this good?"
-        YES = "Yes, delete the good"
+        TITLE = "Are you sure you want to delete this product?"
+        YES = "Yes, delete the product"
         NO = "Cancel"
 
 
@@ -131,7 +132,7 @@ class AttachDocumentForm:
 class RespondToQueryForm:
     TITLE = "Respond to query"
     BUTTON = "Submit response"
-    BACK_LINK = "Back to good"
+    BACK_LINK = "Back to product"
 
     class Response:
         TITLE = "Your response"
