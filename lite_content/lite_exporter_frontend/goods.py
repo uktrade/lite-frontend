@@ -12,7 +12,7 @@ class DocumentSensitivityForm:
     )
     ECJU_HELPLINE = (
         "Contact ECJU to arrange a more secure way to send this document.\n\n You can continue with the application "
-        "without attaching a document. **ECJU helpline** 020 7215 4594. "
+        "without attaching a document.\n\n **ECJU helpline**\n 020 7215 4594.\n "
         "[Find out about call charges](https://www.gov.uk/call-charges)"
     )
     BUTTON = "Continue"
