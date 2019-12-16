@@ -4,15 +4,16 @@ PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
 
 
 class DocumentSensitivityForm:
-    TITLE = "Does your product meet the following criteria?"
+    TITLE = "Does your product documentation meet the following criteria?"
     DESCRIPTION = (
-        "I have a document for my product\nThe document is below official-sensitive in rating\nThe document "
-        "is not commercially sensitive"
+        "I have a document for my product.\nDocumentation should be specifications, datasheets, sales brochures, "
+        "drawings or anything else that fully details what the product is and what it's designed to do.\n\n"
+        "The document is OFFICIAL-SENSITIVE.\n\nThe document is not commercially sensitive."
     )
     ECJU_HELPLINE = (
-        "You need to contact the Export Control Joint Unit (ECJU). They will arrange a secure way for you "
-        "to share this document.\n\nPhone: 020 7215 4594\n\nYou can continue using the system in the "
-        "meantime "
+        "Contact ECJU to arrange a more secure way to send this document.\n\n You can continue with the application "
+        "without attaching a document. **ECJU helpline** 020 7215 4594. "
+        "[Find out about call charges](https://www.gov.uk/call-charges)"
     )
     BUTTON = "Continue"
 
