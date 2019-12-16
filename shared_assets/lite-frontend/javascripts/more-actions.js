@@ -5,7 +5,7 @@ secondaryText = moreActionsContainer.hasClass( 'lite-more-actions__container--se
 
 // Add
 moreActionsContainer.parent().css({'position': 'relative'})
-moreActionsContainer.parent().append( '<a class="govuk-button ' + secondaryText + ' lite-more-actions__button">Actions</a>' )
+moreActionsContainer.parent().append( '<a id="button-more-actions" class="govuk-button ' + secondaryText + ' lite-more-actions__button">Actions</a>' )
 moreActionsContainer.children().removeClass('govuk-button')
 
 $('.lite-more-actions__button').click(function() {
