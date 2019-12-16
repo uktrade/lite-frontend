@@ -46,3 +46,17 @@ class CreateGoodForm:
 
     class PartNumber:
         TITLE = "Part Number"
+
+
+class CLCQuery:
+    TITLE = "Create a CLC query"
+    DESCRIPTION = "By submitting you are creating a CLC query that cannot be altered"
+    BACK_LINK = "Back to good"
+
+    class CLCCode:
+        TITLE = "What do you think is your good's control list entry?"
+        DESCRIPTION = "For example, ML1a."
+
+    class Additional:
+        TITLE = "Further details about your goods"
+        DESCRIPTION = "Please enter details of why you don't know if your good is controlled"
