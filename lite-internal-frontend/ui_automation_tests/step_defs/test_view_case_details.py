@@ -1,4 +1,5 @@
 from pytest_bdd import then, scenarios, when
+
 from pages.application_page import ApplicationPage
 from shared.tools.utils import get_lite_client
 

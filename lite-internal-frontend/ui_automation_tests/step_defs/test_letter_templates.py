@@ -1,7 +1,8 @@
 import uuid
 
-from pytest_bdd import scenarios, when, then, given
+from pytest_bdd import scenarios, when, then, given, parsers
 import shared.tools.helpers as utils
+from pages.application_page import ApplicationPage
 
 from pages.header_page import HeaderPage
 from pages.letter_templates import LetterTemplates
@@ -146,3 +147,8 @@ def template_paragraphs_have_been_edited(driver, context):
     paragraphs_text_list = LetterTemplates(driver).get_list_of_letter_paragraphs()
     for text in context.document_template_paragraph_text:
         assert text in paragraphs_text_list
+
+
+@then(parsers.parse('"{expected_text}" is shown as position "{no}" in the audit trail'))
+def latest_audit_trail(driver, expected_text, no):
+    assert expected_text in ApplicationPage(driver).get_text_of_audit_trail_item(int(no) - 1)

@@ -25,7 +25,7 @@ def select_decision(driver, number, context):
 def status_has_been_changed_in_header(driver, context, internal_info):
     application_page = ApplicationPage(driver)
     if context.status.lower() == "under review":
-        assert "updated the status to " + "under_review" in application_page.get_text_of_audit_trail_item(
+        assert "updated the status to: " + "Under review" in application_page.get_text_of_audit_trail_item(
             0
         ), "status has not been shown as approved in audit trail"
     else:

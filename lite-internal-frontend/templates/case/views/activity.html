@@ -25,17 +25,17 @@
 </form>
 
 <div class="app-activity__list">
-	{% for item in activity %}
-		<div id="case-activity-{{ item.id }}" class="app-activity__item">
+	{% for audit in activity %}
+		<div id="case-activity-{{ audit.id }}" class="app-activity__item">
 			<p class="govuk-body">
-				<span class="user">{{ item.user.first_name }} {{ item.user.last_name }}</span> {{ item.text }}
+				<span class="user">{{ audit.user.first_name }} {{ audit.user.last_name }}</span> {{ audit.text }}
 			</p>
-			{% if item.additional_text %}
+			{% if audit.additional_text %}
 				<div class="app-activity__additional-text">
-					{{ item.additional_text }}
+					{{ audit.additional_text }}
 				</div>
 			{% endif %}
-			<p class="govuk-hint govuk-!-font-size-16">{{ item.created_at|str_date }}</p>
+			<p class="govuk-hint govuk-!-font-size-16">{{ audit.created_at|str_date }}</p>
 		</div>
 	{% endfor %}
 </div>

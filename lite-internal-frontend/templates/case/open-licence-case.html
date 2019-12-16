@@ -15,6 +15,11 @@
 {% endblock %}
 
 {% block body %}
+	{% if notification %}
+		<a id="case-notification" class="lite-info-bar lite-info-bar--link lite-info-bar--no-animation" href="#case-activity-{{ notification.audit_id }}">
+	        {% lcs 'CASE_CHANGES' %}
+		</a>
+	{% endif %}
 	<div class="lite-app-bar" style="margin-top: -20px;">
 		<div class="lite-app-bar__content">
 			<h2 class="govuk-heading-l">

@@ -13,7 +13,7 @@ class ApplicationPage(BasePage):
     CASE_NOTE_FIELD = "case_note"  # id
     POST_NOTE_BTN = "button-post-note"  # id
     CANCEL_NOTE_BTN = "case-note-cancel-button"  # id
-    CASE_NOTES_TEXT = ".app-activity__additional-text"  # css
+    CASE_NOTES_TEXT = ".app-activity__item"  # css
     CASE_NOTE_DATE_TIME = ".app-activity__item .govuk-hint"  # css
     CASE_NOTE_CHARACTER_WARNING = "case_note-warning"  # id
     DOCUMENTS_BTN = '[href*="documents"]'  # css
@@ -22,7 +22,7 @@ class ApplicationPage(BasePage):
     PROGRESS_APP_BTN = '[href*="manage"]'
     RECORD_DECISION_BTN = '[href*="decide"]'  # css
     HEADERS = ".lite-heading-s"  # css
-    ACTIVITY_CASE_NOTE_SUBJECT = ".govuk-body"
+    ACTIVITY_CASE_NOTE_SUBJECT = ".app-activity__list .govuk-body"
     ACTIVITY_DATES = ".app-activity__item .govuk-hint"
     ACTIVITY_USER = ".user"
     IS_VISIBLE_TO_EXPORTER_CHECKBOX_ID = "is_visible_to_exporter"

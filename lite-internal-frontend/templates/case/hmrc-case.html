@@ -13,8 +13,8 @@
 {% block body %}
 
 {% if notification %}
-    <a id="case-notification" class="lite-info-bar lite-info-bar--link lite-info-bar--no-animation" href="#case-activity-{{ notification.case_activity }}">
-        See what has changed
+    <a id="case-notification" class="lite-info-bar lite-info-bar--link lite-info-bar--no-animation" href="#case-activity-{{ notification.audit_id }}">
+        {% lcs 'CASE_CHANGES' %}
     </a>
 {% endif %}
 
