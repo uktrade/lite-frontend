@@ -14,6 +14,7 @@ class DocumentSensitivityForm:
         "to share this document.\n\nPhone: 020 7215 4594\n\nYou can continue using the system in the "
         "meantime "
     )
+    BUTTON = "Continue"
 
     class Options:
         YES = "Yes"
