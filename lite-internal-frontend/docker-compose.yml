@@ -19,7 +19,7 @@ services:
     volumes:
       - .:/app
     ports:
-      - 8080:8080
+      - 8200:8080
     depends_on:
       - govfedb
     expose:
