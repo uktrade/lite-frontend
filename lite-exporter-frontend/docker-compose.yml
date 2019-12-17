@@ -17,7 +17,7 @@ services:
     volumes:
       - .:/app
     ports:
-      - 9000:8080
+      - 8300:8080
     depends_on:
       - exfedb
     expose:
