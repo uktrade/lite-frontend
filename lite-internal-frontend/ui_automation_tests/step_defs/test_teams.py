@@ -8,14 +8,7 @@ from pages.users_page import UsersPage
 scenarios("../features/teams.feature", strict_gherkin=False)
 
 
-@when("I go to teams via menu")
-def go_to_teams_via_menu(driver):
-    header = HeaderPage(driver)
-    header.click_lite_menu()
-    header.click_teams()
-
-
-@given("I go to teams")
+@when("I go to teams")
 def go_to_teams(driver, sso_sign_in, internal_url):
     driver.get(internal_url.rstrip("/") + "/teams/")
 

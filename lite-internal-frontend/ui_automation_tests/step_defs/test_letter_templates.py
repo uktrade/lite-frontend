@@ -17,13 +17,6 @@ def add_letter_paragraph_picklist(add_a_letter_paragraph_picklist):
     pass
 
 
-@when("I go to letters")
-def go_to_letters(driver):
-    header = HeaderPage(driver)
-    header.click_lite_menu()
-    header.click_letters()
-
-
 @when("I create a letter template for ECJU letter")
 def create_letter_template(driver, context, get_template_id):
     LetterTemplates(driver).click_create_a_template()
@@ -152,3 +145,8 @@ def template_paragraphs_have_been_edited(driver, context):
 @then(parsers.parse('"{expected_text}" is shown as position "{no}" in the audit trail'))
 def latest_audit_trail(driver, expected_text, no):
     assert expected_text in ApplicationPage(driver).get_text_of_audit_trail_item(int(no) - 1)
+
+
+@when("I go to letters")
+def i_go_to_letters(driver, internal_url):
+    driver.get(internal_url.rstrip("/") + "/document-templates")

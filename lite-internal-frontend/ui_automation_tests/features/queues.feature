@@ -8,7 +8,7 @@ Feature: I want to define new work queues and the teams they belong to
   @LT_919_add @regression
   Scenario: Add a new queue
     Given I go to internal homepage
-    When I go to queues via menu
+    When I go to queues
     And I enter in queue name Review
     Then I see the new queue
     When I go to the internal homepage
@@ -17,8 +17,8 @@ Feature: I want to define new work queues and the teams they belong to
   @LT_1125_move_cases @smoke
   Scenario: Move case to new queue and remove from new queue
     Given I create open application or open application has been previously created
-    And I go to queues
-    When I enter in queue name Review
+    When I go to queues
+    And I enter in queue name Review
     And I go to application previously created
     And I add case to newly created queue
     Then I see "1" queue checkboxes selected
@@ -52,7 +52,8 @@ Feature: I want to define new work queues and the teams they belong to
     
   @LT_919_edit @regression
   Scenario: Edit a new queue
-    Given I go to queues
+    Given I go to internal homepage
+    When I go to queues
     When I enter in queue name Review
     And I edit the new queue
     Then I see the edited queue

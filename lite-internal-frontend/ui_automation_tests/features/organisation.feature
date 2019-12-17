@@ -39,7 +39,7 @@ Feature: I want to add a company to LITE
   Scenario: Adding a flag to an organisation
     Given I create open application or open application has been previously created
     And I go to internal homepage
-    When I go to flags via menu
+    When I go to flags
     And I add a flag called Suspicious at level Organisation
     And I go to application previously created
     And I go to the organisation which submitted the case

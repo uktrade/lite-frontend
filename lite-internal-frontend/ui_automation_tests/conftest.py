@@ -45,8 +45,6 @@ from ui_automation_tests.shared.fixtures.urls import internal_url, sso_sign_in_u
 
 import shared.tools.helpers as utils
 from pages.assign_flags_to_case import CaseFlagsPages
-
-from pages.header_page import HeaderPage
 from pages.shared import Shared
 from pages.case_list_page import CaseListPage
 from pages.application_page import ApplicationPage
@@ -171,22 +169,9 @@ def i_click_back(driver):
     Shared(driver).click_back()
 
 
-@given("I go to flags")  # noqa
+@when("I go to flags")  # noqa
 def go_to_flags(driver, internal_url, sso_sign_in):
     driver.get(internal_url.rstrip("/") + "/flags")
-
-
-@when("I go to flags via menu")  # noqa
-def go_to_flags_menu(driver):
-    header = HeaderPage(driver)
-    header.click_lite_menu()
-    header.click_flags()
-
-
-@when("I go to users")  # noqa
-def go_to_users(driver):
-    header = HeaderPage(driver)
-    header.open_users()
 
 
 @when("I create a clc_query")  # noqa
@@ -243,13 +228,7 @@ def add_a_queue(driver, context, add_queue):
     pass
 
 
-@when("I go to queues via menu")  # noqa
-def go_to_queues_via_menu(driver):
-    HeaderPage(driver).click_lite_menu()
-    HeaderPage(driver).click_queues()
-
-
-@given("I go to queues")  # noqa
+@when("I go to queues")  # noqa
 def go_to_queues(driver, sso_sign_in, internal_url):
     driver.get(internal_url.rstrip("/") + "/queues/")
 
@@ -334,3 +313,8 @@ def filter_status_change(driver, context, case_type):
 @when("I show filters")  # noqa
 def i_show_filters(driver, context):
     CaseListPage(driver).click_show_filters_link()
+
+
+@when("I go to users")  # noqa
+def go_to_users(driver, sso_sign_in, internal_url):
+    driver.get(internal_url.rstrip("/") + "/users/")

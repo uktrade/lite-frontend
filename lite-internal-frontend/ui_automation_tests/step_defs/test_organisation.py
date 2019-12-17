@@ -9,19 +9,20 @@ from pages.organisations_form_page import OrganisationsFormPage
 from pages.organisations_page import OrganisationsPage
 from pages.shared import Shared
 from shared import functions
+from shared.tools.wait import wait_until_page_is_loaded
 
 scenarios("../features/organisation.feature", strict_gherkin=False)
 
 
 @then("organisation is registered")
 def verify_registered_organisation(driver, context):
-    if not context.org_registered_status:
-        driver.find_element_by_id("show-filters-link").click()
-        time.sleep(0.5)
-        driver.find_element_by_id("filter-box").click()
-        driver.find_element_by_id("filter-box").send_keys(context.organisation_name)
-        driver.find_element_by_id("button-apply-filters").click()
-        assert context.organisation_name in Shared(driver).get_text_of_lite_table_body()
+    wait_until_page_is_loaded(driver)
+    driver.find_element_by_id("show-filters-link").click()
+    time.sleep(0.5)
+    driver.find_element_by_id("filter-box").click()
+    driver.find_element_by_id("filter-box").send_keys(context.organisation_name)
+    driver.find_element_by_id("button-apply-filters").click()
+    assert context.organisation_name in Shared(driver).get_text_of_lite_table_body()
 
 
 @then("HMRC organisation is registered")
@@ -30,22 +31,6 @@ def verify_hmrc_registered_organisation(driver, context):
     driver.find_element_by_id("filter-box").send_keys(context.hmrc_org_name)
     driver.find_element_by_id("button-apply-filters").click()
     assert context.hmrc_org_name in Shared(driver).get_text_of_lite_table_body()
-
-
-@when("I go to organisations")
-def i_go_to_organisations(driver, context):
-    header = HeaderPage(driver)
-    header.click_lite_menu()
-    header.click_organisations()
-    context.org_registered_status = False
-
-
-@when("I go to HMRC")
-def i_go_to_hmrc(driver, context):
-    header = HeaderPage(driver)
-    header.click_lite_menu()
-    header.click_hmrc()
-    context.org_registered_status = False
 
 
 @when("I choose to add a new organisation")
@@ -149,3 +134,15 @@ def register_hmrc_org(driver, org_name, site_name, address, city, region, post_c
 @then("the previously created organisations flag is assigned")  # noqa
 def assert_flag_is_assigned(driver, context):
     assert OrganisationPage(driver).is_organisation_flag_applied(context.flag_name)
+
+
+@when("I go to organisations")
+def i_go_to_organisations(driver, internal_url, context):
+    driver.get(internal_url.rstrip("/") + "/organisations")
+    context.org_registered_status = False
+
+
+@when("I go to HMRC")
+def i_go_to_hmrc(driver, internal_url, context):
+    driver.get(internal_url.rstrip("/") + "/organisations/hmrc/")
+    context.org_registered_status = False

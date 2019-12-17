@@ -5,8 +5,9 @@ Feature: I want to assign one or more specific users to a case in a work queue
   So that: everyone is aware which specific users are working on this case in any given work queue / department
 
   Background:
-    Given I go to queues
+    Given I go to internal homepage
     And I create open application or open application has been previously created
+    When I go to queues
     When I enter in queue name Review
     And I go to application previously created
     And I add case to newly created queue

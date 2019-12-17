@@ -7,13 +7,6 @@ import shared.tools.helpers as utils
 scenarios("../features/picklists.feature", strict_gherkin=False)
 
 
-@when("I go to My Team")
-def i_go_to_my_team(driver):
-    header = HeaderPage(driver)
-    header.click_lite_menu()
-    header.click_my_team()
-
-
 @when("I go to picklists tab")
 def i_go_to_picklists_tab(driver):
     PicklistPages(driver).click_on_picklist_tab()
@@ -133,3 +126,8 @@ def context_variable_error(driver, variable_name):
 @when("I clear the picklist name and description")
 def clear_picklist_name_and_description(driver):
     PicklistPages(driver).clear_picklist_name_and_description()
+
+
+@when("I go to My Team")
+def go_to_my_team(driver, internal_url):
+    driver.get(internal_url.rstrip("/") + "/team")
