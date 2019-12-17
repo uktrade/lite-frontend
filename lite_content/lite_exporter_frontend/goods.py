@@ -11,7 +11,8 @@ class DocumentSensitivityForm:
         "The document is OFFICIAL-SENSITIVE.\n\nThe document is not commercially sensitive."
     )
     ECJU_HELPLINE = (
-        "Contact ECJU to arrange a more secure way to send this document.\n\n You can continue with the application "
+        "**<noscript>If the answer is No;</noscript>**\n\nContact ECJU to arrange a more secure way to send "
+        "this document.\n\n You can continue with the application "
         "without attaching a document.\n\n **ECJU helpline**\n 020 7215 4594.\n "
         "[Find out about call charges](https://www.gov.uk/call-charges)"
     )
