@@ -1,3 +1,4 @@
+from conf.settings import env
 from lite_content.lite_exporter_frontend import applications, goods
 
 APPLICATIONS = applications
