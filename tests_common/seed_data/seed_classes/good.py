@@ -15,7 +15,7 @@ class Good(SeedClass):
         return item
 
     def get_goods(self):
-        return make_request("GET", base_url=self.base_url, url="/goods/", headers=self.export_headers).json()["goods"]
+        return make_request("GET", base_url=self.base_url, url="/goods/", headers=self.export_headers).json()["results"]
 
     def add_good_to_draft(self, draft_id, good):
         self.log("Adding good to draft: ...")
@@ -53,7 +53,7 @@ class Good(SeedClass):
         self.add_to_context("goods_name", self.request_data[item]["description"])
 
     def find_good_by_name(self, good_name):
-        goods = make_request("GET", base_url=self.base_url, url="/goods/", headers=self.export_headers).json()["goods"]
+        goods = make_request("GET", base_url=self.base_url, url="/goods/", headers=self.export_headers).json()["results"]
         good = next((item for item in goods if item["description"] == good_name), None)
         return good
 
