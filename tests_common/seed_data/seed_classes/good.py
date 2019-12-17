@@ -53,7 +53,9 @@ class Good(SeedClass):
         self.add_to_context("goods_name", self.request_data[item]["description"])
 
     def find_good_by_name(self, good_name):
-        goods = make_request("GET", base_url=self.base_url, url="/goods/", headers=self.export_headers).json()["results"]
+        goods = make_request("GET", base_url=self.base_url, url="/goods/", headers=self.export_headers).json()[
+            "results"
+        ]
         good = next((item for item in goods if item["description"] == good_name), None)
         return good
 
