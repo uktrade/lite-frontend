@@ -102,9 +102,7 @@ PERMANENT = "Permanent"
 HAVE_YOU_BEEN_INFORMED_TITLE = "Have you been informed under an end use control that you need to apply for a licence?"
 HAVE_YOU_BEEN_INFORMED_DESCRIPTION = "This could be a letter or email from HMRC or another government department."
 WHAT_WAS_THE_REFERENCE_CODE_TITLE = "Reference number (optional)"
-WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION = (
-    "The reference number is on the letter or email."
-)
+WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION = "The reference number is on the letter or email."
 
 WHERE_ARE_YOUR_GOODS_GOING_TITLE = "Where are your products going?"
 WHERE_ARE_YOUR_GOODS_GOING_SHORT_TITLE = "Set countries"
