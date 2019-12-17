@@ -21,12 +21,33 @@ IN_PROGRESS = "In progress"
 DONE = "Completed"
 VIEW = "View"
 
-APPLICATION_GOODS_TITLE = "Goods"
-APPLICATION_GOODS_ADD_NEW = "Add a new good to your application"
-APPLICATION_GOODS_ADD_BACK = "Back to goods"
-APPLICATION_GOODS_ADD_APPLICATION_DETAILS = "Details for good on application"
+PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
+
+APPLICATION_GOODS_TITLE = "Products"
+APPLICATION_GOODS_ADD_NEW = "Add a new product to your application"
+APPLICATION_GOODS_ADD_BACK = "Back to products"
+APPLICATION_GOODS_ADD_APPLICATION_DETAILS = "Details for product on application"
+APPLICATION_GOODS_ADD_DOCUMENT_DESCRIPTION = (
+    "Documentation could be specifications, datasheets, sales brochures, drawings "
+    "or anything else that fully details what the product is and what it's designed to do."
+    "\n\nDo not attach a document that’s OFFICIAL-SENSITIVE or above. "
+    "\n\nThe file must be smaller than 100MB."
+)
 APPLICATION_GOODS_ADD_DOCUMENT_MISSING = "A document is required"
-APPLICATION_GOODS_ADD_PREEXISTING_TITLE = "Add an item from your database to your application"
+APPLICATION_GOODS_ADD_PREEXISTING_TITLE = "Add a product from your database to your application"
+
+APPLICATION_GOODS_CONTROL_CODE_REQUIRED_DESCRIPTION = (
+    "Products that aren't on the "
+    + PERMISSION_FINDER_LINK
+    + " may be affected by military end use controls, current trade sanctions and embargoes or weapons of mass destruction controls."
+    "If your products aren't subject to any controls, you'll get a no licence required (NLR) document from ECJU."
+)
+
+GOODS_CREATE_CONTROL_CODE_REQUIRED_DESC = "If you don't know, you can use the " + PERMISSION_FINDER_LINK
+GOODS_CREATE_CONTROL_CODE_NO = "No"
+GOODS_CREATE_CONTROL_CODE_YES = "Yes"
+GOODS_CREATE_CONTROL_CODE_UNSURE = "I don't know"
+GOODS_CREATE_TITLE = "Add a product"
 
 # Applications
 APPLICATION_REFERENCE_NAME = "Reference"
@@ -38,12 +59,12 @@ APPLICATION_CREATED_AT = "Created at"
 APPLICATION_SUBMITTED_AT = "Submitted at"
 
 APPLICATION_END_USER = "End user"
-APPLICATION_ULTIMATE_END_USERS = "Ultimate end users"
+APPLICATION_ULTIMATE_END_USERS = "Ultimate recipient"
 APPLICATION_CONSIGNEE = "Consignee"
 APPLICATION_THIRD_PARTIES = "Third parties"
-APPLICATION_GOODS_LOCATIONS = "Goods locations"
+APPLICATION_GOODS_LOCATIONS = "Product locations"
 APPLICATION_SUPPORTING_DOCUMENTATION = "Supporting documentation"
-APPLICATION_GOODS = "Goods"
+APPLICATION_GOODS = "Products"
 APPLICATION_COUNTRIES = "Countries"
 APPLICATION_ON_BEHALF_OF = "On behalf of"
 APPLICATION_OPTIONAL_NOTE = "Optional note"
@@ -53,39 +74,37 @@ WHICH_EXPORT_LICENCE_DO_YOU_WANT_TITLE = "Select the type of licence you need"
 WHICH_EXPORT_LICENCE_DO_YOU_WANT_DESCRIPTION = ""
 
 STANDARD_LICENCE = "Standard licence"
-STANDARD_LICENCE_DESCRIPTION = "Select a standard licence for a set quantity and set value of items."
+STANDARD_LICENCE_DESCRIPTION = "Select a standard licence for a set quantity and set value of products."
 OPEN_LICENCE = "Open licence"
 OPEN_LICENCE_DESCRIPTION = (
-    "Select an open licence for multiple shipments of specific items to specific countries. "
+    "Select an open licence for multiple shipments of specific products to specific countries. "
     "Open licences cover long term projects and repeat business."
 )
 
 HELP_WITH_CHOOSING_A_LICENCE = "Help with choosing a licence"
 HELP_WITH_CHOOSING_A_LICENCE_CONTENT = (
-    "If you're unsure about which licence to select, then read the guidance on "
+    "If you're unsure about which licence to select, read the guidance on "
     'GOV.UK for <a class="govuk-link" target="_blank" '
     'href="https://www.gov.uk/starting-to-export/licences">exporting and doing business '
-    'abroad<span class="govuk-visually-hidden"> (Opens in a new window or tab)</span></a>.'
+    'abroad<span class="govuk-visually-hidden"> (opens in a new window or tab)</span></a>.'
 )
 
 ENTER_A_REFERENCE_NAME_TITLE = "Application reference"
 ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference name"
 ENTER_A_REFERENCE_NAME_DESCRIPTION = "Name and save this application so you can refer back to it when needed."
 
-TEMPORARY_OR_PERMANENT_TITLE = "Do you want to export temporarily or permanently?"
+TEMPORARY_OR_PERMANENT_TITLE = "Select an export type"
 TEMPORARY_OR_PERMANENT_DESCRIPTION = ""
 
-TEMPORARY = "Temporarily"
-PERMANENT = "Permanently"
+TEMPORARY = "Temporary"
+PERMANENT = "Permanent"
 
 HAVE_YOU_BEEN_INFORMED_TITLE = "Have you been informed under an end use control that you need to apply for a licence?"
 HAVE_YOU_BEEN_INFORMED_DESCRIPTION = "This could be a letter or email from HMRC or another government department."
-WHAT_WAS_THE_REFERENCE_CODE_TITLE = "Reference number"
-WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION = (
-    "This is the reference found on the letter or email to tell you to apply for an export licence."
-)
+WHAT_WAS_THE_REFERENCE_CODE_TITLE = "Reference number (optional)"
+WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION = "The reference number is on the letter or email."
 
-WHERE_ARE_YOUR_GOODS_GOING_TITLE = "Where are your goods going?"
+WHERE_ARE_YOUR_GOODS_GOING_TITLE = "Where are your products going?"
 WHERE_ARE_YOUR_GOODS_GOING_SHORT_TITLE = "Set countries"
 WHERE_ARE_YOUR_GOODS_GOING_DESCRIPTION = "Select all countries that apply."
 
@@ -113,16 +132,16 @@ APPLICATION_WITHDRAW_ERROR = "Select a choice"
 # Roles
 ROLES_LIST_PAGE_CREATE = "Add role"
 # Where are your goods located?
-APPLICATION_WHERE_ARE_YOUR_GOODS_LOCATED_TITLE = "Where are your goods located?"
+APPLICATION_WHERE_ARE_YOUR_GOODS_LOCATED_TITLE = "Where are your products located?"
 APPLICATION_WHERE_ARE_YOUR_GOODS_LOCATED_DESCRIPTION = ""
-APPLICATION_ONE_OF_MY_REGISTERED_SITES = "At one of my registered sites"
-APPLICATION_NOT_AT_MY_REGISTERED_SITES = "Other location not at my organisation's sites"
+APPLICATION_ONE_OF_MY_REGISTERED_SITES = "At one of my organisation’s sites"
+APPLICATION_NOT_AT_MY_REGISTERED_SITES = "At a location that's not part of my organisation"
 
 APPLICATION_EXTERNAL_LOCATION_TITLE = "Do you want to add a new external location or use an existing one?"
 APPLICATION_EXTERNAL_LOCATION_NEW_LOCATION = "Add a new external location"
-APPLICATION_EXTERNAL_LOCATION_PREEXISTING_LOCATION = "Use a pre-existing external location"
+APPLICATION_EXTERNAL_LOCATION_PREEXISTING_LOCATION = "Use an existing external location"
 
-SELECT_SITES_TITLE = "Select which sites your goods are at"
+SELECT_SITES_TITLE = "Select which sites your products are at"
 SELECT_SITES_BUTTON = "Select sites"
 
 USERS_LIST_PAGE_EDIT = "Edit"
@@ -149,7 +168,7 @@ USER_PENDING = "Pending"
 
 USER_DEACTIVATE = "Deactivate user"
 USER_REACTIVATE = "Reactivate user"
-USER_NOT_ACTIVATED_YET = "This user has yet to sign in to LITE."
+USER_NOT_ACTIVATED_YET = "This user has yet to sign in to their export control account."
 
 MANAGE_ORGANISATIONS_MEMBERS_TAB = "Members"
 MANAGE_ORGANISATIONS_SITES_TAB = "Sites"
@@ -166,12 +185,12 @@ EDIT_ROLE_DESCRIPTION = "This will change this role within your organisation"
 ROLES_ADD_NAME = "What do you want to call the role?"
 ROLES_ADD_PERMISSIONS = "What permissions should this role have?"
 ROLES_ADD_PERMISSIONS_DESCRIPTION = "Select all permissions that apply."
-ROLES_ADD_FORM_BACK_TO_ROLES = "Back to Roles"
+ROLES_ADD_FORM_BACK_TO_ROLES = "Back to roles"
 ROLES_ADD_FORM_CREATE = "Create"
 ROLES_EDIT_NAME = "What do you want to call the role?"
 ROLES_EDIT_PERMISSIONS = "What permissions should this role have?"
 ROLES_EDIT_PERMISSIONS_DESCRIPTION = "Select all permissions that apply."
-ROLES_EDIT_FORM_BACK_TO_ROLES = "Back to Roles"
+ROLES_EDIT_FORM_BACK_TO_ROLES = "Back to roles"
 ROLES_EDIT_FORM_CREATE = "Create"
 
 

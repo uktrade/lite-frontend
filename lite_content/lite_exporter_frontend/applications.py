@@ -16,7 +16,7 @@ class EndUserForm:
 
 
 class UltimateEndUserForm:
-    TITLE = "Select the type of ultimate end user"
+    TITLE = "Select the type of ultimate recipient"
     BUTTON = "Continue"
     NAME_FORM_TITLE = "Name"
     WEBSITE_FORM_TITLE = "Website address (optional)"
