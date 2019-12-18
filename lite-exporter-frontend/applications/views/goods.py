@@ -20,6 +20,7 @@ from applications.services import (
     add_document_data,
 )
 from core.services import get_units
+from conf.constants import UNSURE
 from goods.services import get_goods, get_good, validate_good, post_goods, post_good_documents
 from lite_content.lite_exporter_frontend import strings
 from lite_forms.components import HiddenField
@@ -56,7 +57,7 @@ class GoodsList(TemplateView):
 
         filtered_data = []
         for good in goods_list:
-            if good["documents"] and not good["is_good_controlled"] == "unsure":
+            if (good["documents"] or good["missing_document_reason"]) and not good["is_good_controlled"] == UNSURE:
                 filtered_data.append(good)
 
         context = {

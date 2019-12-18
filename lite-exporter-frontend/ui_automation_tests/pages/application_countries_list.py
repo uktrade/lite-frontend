@@ -6,7 +6,6 @@ class ApplicationCountriesList(BasePage):
     COUNTRIES_LABELS = ".govuk-checkboxes__label"
     COUNTRIES_SEARCH_BOX = "filter-box"  # ID
     COUNTRIES_LIST_SELECTOR = "#pane_countries .govuk-checkboxes"
-    TITLE = ".govuk-fieldset__heading"
     SELECT_ALL_LINK = "link-select-all"  # ID
 
     def get_countries_names(self):
@@ -14,10 +13,6 @@ class ApplicationCountriesList(BasePage):
         for country in self.driver.find_elements_by_css_selector(self.COUNTRIES_LABELS):
             countries_names.append(country.text)
         return countries_names
-
-    def view_countries(self):
-        for checkbox in self.driver.find_elements_by_css_selector(self.COUNTRIES_CHECKBOXES):
-            checkbox.click()
 
     def select_country(self, name):
         checkbox = self.driver.find_element_by_id(name)
@@ -28,9 +23,6 @@ class ApplicationCountriesList(BasePage):
 
     def get_text_of_countries_list(self):
         return self.driver.find_elements_by_css_selector(self.COUNTRIES_LIST_SELECTOR)[0].text
-
-    def get_title(self):
-        return self.driver.find_element_by_css_selector(self.TITLE).text
 
     def click_select_all(self):
         self.driver.find_element_by_id(self.SELECT_ALL_LINK).click()

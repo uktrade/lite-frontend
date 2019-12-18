@@ -78,8 +78,8 @@ def attach_document_to_modifiable_good(driver, context, create_non_incorporated_
 @then("I see the document has been attached")
 def i_see_the_attached_good(driver, context):
     added_doc = GoodsPage(driver).get_text_of_document_added_item()
-    assert context.file_to_be_deleted_name in added_doc, "file is not displayed"
-    assert context.document_description in added_doc, "file description is not displayed"
+    assert context.good_document["name"] in added_doc, "file is not displayed"
+    assert context.good_document["description"] in added_doc, "file description is not displayed"
 
 
 @then("I see my edited good details in the good page")
@@ -144,16 +144,32 @@ def a_new_good_has_been_added_to_the_application(driver):
 
 @when(
     parsers.parse(
-        'I add a new good with description "{description}" controlled "{controlled}" control code "{control_code}" incorporated "{incorporated}" and part number "{part_number}"'
+        'I add a new good with description "{description}" controlled "{controlled}" control code "{control_code}" '
+        'incorporated "{incorporated}" and part number "{part_number}"'
     )
 )  # noqa
 def create_a_new_good_in_application(driver, description, controlled, control_code, incorporated, part_number):
-    prefix = "good_"
-    add_goods_page = AddGoodPage(driver, prefix=prefix)
+    add_goods_page = AddGoodPage(driver)
     add_goods_page.enter_description_of_goods(description)
     add_goods_page.select_is_your_good_controlled(controlled)
     add_goods_page.select_is_your_good_intended_to_be_incorporated_into_an_end_product(incorporated)
     add_goods_page.enter_control_code(control_code)
+    functions.click_submit(driver)
+
+
+@when(
+    parsers.parse(
+        'I add a new good with description "{description}" controlled "{controlled}" control code "{control_code}" '
+        'incorporated "{incorporated}" and part number "{part_number}" to the application'
+    )
+)  # noqa
+def create_a_new_good_in_application(driver, description, controlled, control_code, incorporated, part_number):
+    add_goods_page = AddGoodPage(driver)
+    prefix = "good_"
+    add_goods_page.enter_description_of_goods(description, prefix=prefix)
+    add_goods_page.select_is_your_good_controlled(controlled, prefix=prefix)
+    add_goods_page.select_is_your_good_intended_to_be_incorporated_into_an_end_product(incorporated, prefix=prefix)
+    add_goods_page.enter_control_code(control_code, prefix=prefix)
     functions.click_submit(driver)
 
 
@@ -165,3 +181,39 @@ def create_a_new_good_in_application(driver, description, controlled, control_co
 def i_enter_detail_for_the_good_on_the_application(driver, value, quantity, unit):
     ApplicationGoodsList(driver, prefix="good_on_app_").add_values_to_good(value, quantity, unit)
     functions.click_submit(driver)
+
+
+@when("I confirm I can upload a document")
+def confirm_can_upload_document(driver):
+    # Confirm you have a document that is not sensitive
+    AddGoodPage(driver).confirm_can_upload_good_document()
+    functions.click_submit(driver)
+
+
+@when("I go to my good")
+def go_to_good(driver, context, exporter_url):
+    driver.get(f"{exporter_url}goods/{context.good_id}")
+
+
+@when("I select that I cannot attach a document")
+def select_cannot_attach_a_document(driver):
+    AddGoodPage(driver).confirm_cannot_upload_good_document()
+
+
+@then("I see ECJU helpline details")
+def ecju_helpline(driver):
+    assert AddGoodPage(driver).get_ecju_help()
+
+
+@when("I select a valid missing document reason")
+def select_missing_document_reason(driver):
+    AddGoodPage(driver).select_valid_missing_document_reason()
+    functions.click_submit(driver)
+
+
+@then("My good is created")
+def good_created(driver, context):
+    summary = AddGoodPage(driver).get_good_summary_text()
+    assert context.good_description in summary
+    assert context.part in summary
+    assert context.control_code in summary

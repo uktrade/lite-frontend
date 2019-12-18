@@ -8,6 +8,7 @@ urlpatterns = [
     path("add/", views.AddGood.as_view(), name="add"),
     path("edit/<uuid:pk>/", views.EditGood.as_view(), name="edit"),
     path("delete/<uuid:pk>/", views.DeleteGood.as_view(), name="delete"),
+    path("<uuid:pk>/add-document/", views.CheckDocumentGrading.as_view(), name="add_document"),
     path("<uuid:pk>/documents/<uuid:file_pk>/", views.Document.as_view(), name="document"),
     path("<uuid:pk>/documents/<uuid:file_pk>/delete/", views.DeleteDocument.as_view(), name="delete_document"),
     path("<uuid:pk>/attach/", views.AttachDocuments.as_view(), name="attach_documents"),

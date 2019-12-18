@@ -69,12 +69,7 @@ def i_click_on_countries(driver):
 def i_should_see_a_list_of_countries(driver):
     application_countries_list = ApplicationCountriesList(driver)
     page_countries = application_countries_list.get_countries_names()
-    #   api_data, status_code = get_countries(None)
     assert len(page_countries) == 274
-    #   assert len(page_countries) == len(api_data['countries'])
-    assert (
-        application_countries_list.get_title() == "Where are your goods going?"
-    ), "Failed to go to countries list page"
 
 
 @when(parsers.parse('I select "{country}" from the country list'))

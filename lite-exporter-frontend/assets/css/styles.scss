@@ -3,6 +3,10 @@ $lite-transition-speed: 0s !default;
 @import "../shared/lite-frontend/scss/all"; // LITE Design System
 @import "components/all"; // Local assets
 
+.hidden .js-enabled{
+	display: none;
+}
+
 .govuk-summary-list__key--highlight {
 	border-left: govuk-spacing(1) solid govuk-colour("orange");
 	padding-left: govuk-spacing(3);

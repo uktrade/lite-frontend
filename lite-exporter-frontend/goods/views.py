@@ -6,10 +6,6 @@ from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
-
-from lite_content.lite_exporter_frontend import strings
-from lite_forms.components import HiddenField
-from lite_forms.generators import error_page, form_page
 from s3chunkuploader.file_handler import S3FileUploadHandler
 
 from applications.services import (
@@ -22,7 +18,6 @@ from applications.services import (
     download_document_from_s3,
     get_status_properties,
 )
-from core.builtins.custom_tags import get_string
 from core.helpers import group_notifications
 from core.services import get_notifications
 from goods import forms
@@ -33,6 +28,7 @@ from goods.forms import (
     ecju_query_respond_confirmation_form,
     delete_good_form,
     add_goods_questions,
+    document_grading_form,
 )
 from goods.services import (
     get_goods,
@@ -45,7 +41,11 @@ from goods.services import (
     delete_good_document,
     post_good_documents,
     raise_clc_query,
+    post_good_document_sensitivity,
 )
+from lite_content.lite_exporter_frontend import strings
+from lite_forms.components import HiddenField
+from lite_forms.generators import error_page, form_page
 from lite_forms.views import SingleFormView
 
 
@@ -148,12 +148,12 @@ class AddGood(SingleFormView):
         self.action = post_goods
 
     def get_success_url(self):
-        return reverse_lazy("goods:attach_documents", kwargs={"pk": self.get_validated_data()["good"]["id"]})
+        return reverse_lazy("goods:add_document", kwargs={"pk": self.get_validated_data()["good"]["id"]})
 
 
 class RaiseCLCQuery(TemplateView):
     def get(self, request, **kwargs):
-        return form_page(request, forms.are_you_sure(str(kwargs["pk"])))
+        return form_page(request, forms.raise_a_clc_query(str(kwargs["pk"])))
 
     def post(self, request, **kwargs):
         good_id = str(kwargs["pk"])
@@ -163,7 +163,9 @@ class RaiseCLCQuery(TemplateView):
         data, _ = raise_clc_query(request, request_data)
 
         if "errors" in data:
-            return form_page(request, forms.are_you_sure(str(kwargs["pk"])), data=request_data, errors=data["errors"])
+            return form_page(
+                request, forms.raise_a_clc_query(str(kwargs["pk"])), data=request_data, errors=data["errors"]
+            )
 
         return redirect(reverse("goods:goods"))
 
@@ -214,15 +216,28 @@ class DeleteGood(TemplateView):
         return redirect(reverse_lazy("goods:goods"))
 
 
+class CheckDocumentGrading(SingleFormView):
+    def init(self, request, **kwargs):
+        self.object_pk = kwargs["pk"]
+        self.form = document_grading_form(request)
+        self.action = post_good_document_sensitivity
+
+    def get_success_url(self):
+        good = self.get_validated_data()["good"]
+        if good["missing_document_reason"]:
+            url = "goods:good"
+        else:
+            url = "goods:attach_documents"
+        return reverse_lazy(url, kwargs={"pk": self.object_pk})
+
+
 @method_decorator(csrf_exempt, "dispatch")
 class AttachDocuments(TemplateView):
     def get(self, request, **kwargs):
         good_id = str(kwargs["pk"])
         # get_good(request, good_id)
 
-        form = attach_documents_form(
-            reverse("goods:good", kwargs={"pk": good_id}), get_string("goods.documents.attach_documents.description")
-        )
+        form = attach_documents_form(reverse("goods:good", kwargs={"pk": good_id}))
 
         return form_page(request, form, extra_data={"good_id": good_id})
 

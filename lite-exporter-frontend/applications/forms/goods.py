@@ -39,5 +39,5 @@ def add_new_good_forms(request, application_id):
             prefix="good_on_app_",
             title=strings.APPLICATION_GOODS_ADD_APPLICATION_DETAILS,
         ),
-        attach_documents_form("#", description=strings.APPLICATION_GOODS_ADD_DOCUMENT_DESCRIPTION),
+        attach_documents_form("#"),
     ]
