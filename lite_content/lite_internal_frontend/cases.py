@@ -14,6 +14,18 @@ class ApplicationPage:
         ADVICE = "View Advice"
         GENERATE_DOCUMENT = "Generate Document"
 
+    class Goods:
+        TITLE = "Goods"
+        MISSING_DOCUMENT_REASON_PREFIX = "No document given: "
+
+        class Table:
+            CLC = "Control List Entry"
+            DESCRIPTION = "Description"
+            VALUE = "Quantity/Value"
+            DOCUMENTS = "Documents"
+            FLAGS = "Flags"
+            ADVICE = "Advice"
+
     EDIT_FLAGS = "Edit goods flags"
     REVIEW_GOODS = "Review Goods"
     ADVICE = "Give or change advice"
