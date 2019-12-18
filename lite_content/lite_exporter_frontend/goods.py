@@ -35,10 +35,10 @@ class CreateGoodForm:
         TITLE = "Is the product controlled?"
         DESCRIPTION = "If you don't know you can use " + PERMISSION_FINDER_LINK
         CLC_REQUIRED = (
-            "Goods that aren't on the "
+            "Products that aren't on the "
             + PERMISSION_FINDER_LINK
             + "may be affected by military end use controls, current trade sanctions and embargoes or weapons of mass "
-            + "destruction controls. If your goods and services aren't subject to any controls, you'll get a no "
+            + "destruction controls. If your products and services aren't subject to any controls, you'll get a no "
             + "licence required (NLR) document from ECJU. "
         )
         YES = "Yes"
