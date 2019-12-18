@@ -53,3 +53,20 @@ class AdditionalDocumentsPage:
         INFECTED_LABEL = "Infected"
         PROCESSING_LABEL = "Processing"
         REGENERATE_LINK = "Regenerate"
+
+
+class EndUserAdvisoriesPage:
+    class Actions:
+        CHANGE_STATUS = "Change Status"
+        DOCUMENT = "Attached Documents"
+        ECJU = "ECJU Queries"
+        MOVE = "Move Case"
+
+
+class HMRCPage:
+    class Actions:
+        CHANGE_STATUS = "Change Status"
+        DOCUMENT = "Attached Documents"
+        MOVE = "Move Case"
+        RECORD_DECISION = "Record Decision"
+        GENERATE_DOCUMENT = "Generate Document"
