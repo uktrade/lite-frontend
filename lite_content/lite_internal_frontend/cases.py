@@ -15,7 +15,7 @@ class ApplicationPage:
         GENERATE_DOCUMENT = "Generate Document"
 
     class Goods:
-        TITLE = "Goods"
+        TITLE = "Products"
         MISSING_DOCUMENT_REASON_PREFIX = "No document given: "
 
         class Table:
