@@ -44,6 +44,7 @@ class Good(SeedClass):
             headers=self.export_headers,
             body=data,
         )
+        self.add_to_context("document", self.request_data["document"])
 
     def add_good_end_product(self, item):
         self.log("Adding good: ...")
