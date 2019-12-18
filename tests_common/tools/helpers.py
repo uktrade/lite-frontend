@@ -192,3 +192,14 @@ def get_text_of_multi_page_table(css_selector, driver):
             break
     driver.set_timeout_to(10)
     return text
+
+
+def strip_special_characters(string):
+    return ''.join(e for e in string if e.isalnum())
+
+
+def get_current_date_time(format_date_time=True):
+    date_time = datetime.now()
+    if not format_date_time:
+        return date_time
+    return strip_special_characters(str(date_time))
