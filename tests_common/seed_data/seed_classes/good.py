@@ -18,7 +18,6 @@ class Good(SeedClass):
         return make_request("GET", base_url=self.base_url, url="/goods/", headers=self.export_headers).json()["goods"]
 
     def add_good_to_draft(self, draft_id, good):
-        self.log("Adding good to draft: ...")
         good = self.request_data["add_good"] if good is None else good
         good["good_id"] = self.context["good_id"]
         make_request(
@@ -30,7 +29,6 @@ class Good(SeedClass):
         )
 
     def add_good(self, good=None):
-        self.log("Adding good: ...")
         data = good if good else self.request_data["good"]
         item = self.post_good(data)
         self.add_to_context("good_id", item["id"])
@@ -46,7 +44,6 @@ class Good(SeedClass):
         )
 
     def add_good_end_product(self, item):
-        self.log("Adding good: ...")
         good = self.find_good_by_name(self.request_data[item]["description"])
         if not good:
             self.post_good(self.request_data[item])
@@ -58,7 +55,6 @@ class Good(SeedClass):
         return good
 
     def add_open_draft_good(self, draft_id):
-        self.log("Adding goods_type: ...")
         data = self.request_data["good_type"]
         data["application"] = draft_id
         make_request(

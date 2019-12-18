@@ -63,16 +63,10 @@ class SeedData:
         self.seed_user.auth_export_user()
         self.headers_initialised = True
 
-    def log(self, text):
-        pass
-        # print(text)
-
     def add_to_context(self, name, value):
-        self.log(name + ": " + str(value))
         self.context[name] = value
 
     def add_site(self, draft_id):
-        self.log("Adding site: ...")
         make_request(
             "POST",
             base_url=self.base_url,
@@ -82,7 +76,6 @@ class SeedData:
         )
 
     def create_draft(self, draft):
-        self.log("Creating draft: ...")
         data = self.request_data["application"] if draft is None else draft
         response = make_request(
             "POST", base_url=self.base_url, url="/applications/", headers=self.export_headers, body=data,
@@ -92,7 +85,6 @@ class SeedData:
         return draft_id
 
     def add_countries(self, draft_id):
-        self.log("Adding countries: ...")
         make_request(
             "POST",
             base_url=self.base_url,
@@ -151,7 +143,6 @@ class SeedData:
         return draft_id
 
     def submit_application(self, draft_id):
-        self.log("Submitting application: ...")
         draft_id_to_submit = draft_id if None else self.context["draft_id"]  # noqa
         response = make_request(
             "PUT",

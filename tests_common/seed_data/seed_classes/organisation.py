@@ -40,7 +40,6 @@ class Organisation(SeedClass):
         return organisation
 
     def add_org(self, key):
-        self.log("Creating org: ...")
         data = self.request_data[key]
         return make_request(
             "POST", base_url=self.base_url, url="/organisations/", body=data, headers=self.gov_headers,
