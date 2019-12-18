@@ -59,3 +59,7 @@ class GeneratedDocuments:
         NAME_COLUMN = "Name"
         DATE_COLUMN = "Date"
         DOWNLOAD_LINK = "Download"
+
+
+class Activity:
+    TAB = "Activity"
