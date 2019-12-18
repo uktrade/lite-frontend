@@ -26,8 +26,8 @@ class ApplicationPage:
             FLAGS = "Flags"
             ADVICE = "Advice"
 
-    EDIT_FLAGS = "Edit goods flags"
-    REVIEW_GOODS = "Review Goods"
+    EDIT_FLAGS = "Edit products flags"
+    REVIEW_GOODS = "Review Products"
     ADVICE = "Give or change advice"
     RESPOND_BUTTON = "Respond to Query"
     CLOSED = "This case is closed"
