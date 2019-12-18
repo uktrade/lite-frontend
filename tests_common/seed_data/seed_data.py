@@ -64,7 +64,8 @@ class SeedData:
         self.headers_initialised = True
 
     def log(self, text):
-        print(text)
+        pass
+        # print(text)
 
     def add_to_context(self, name, value):
         self.log(name + ": " + str(value))

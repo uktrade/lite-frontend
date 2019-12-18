@@ -195,7 +195,7 @@ def get_text_of_multi_page_table(css_selector, driver):
 
 
 def strip_special_characters(string):
-    return ''.join(e for e in string if e.isalnum())
+    return "".join(e for e in string if e.isalnum())
 
 
 def get_current_date_time(format_date_time=True):
