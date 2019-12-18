@@ -1,7 +1,1 @@
-{% if component.create_links %}
-	<p class="govuk-body">
-		{% for item in component.text %}{% if item|classname == "Link" %}<a class="govuk-link" href="{{ item.address }}">{{ item.text }}</a>{% else %}<span>{{ item }}</span>{% endif %}{% endfor %}
-	</p>
-{% else %}
-	<p class="govuk-body">{{ component.text }}</p>
-{% endif %}
+<div class="govuk-body">{{ component.text|safe }}</div>
