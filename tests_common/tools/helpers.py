@@ -124,8 +124,8 @@ def get_element_index_by_text(elements, text: str, complete_match=True):
     return -1
 
 
-def scroll_to_element_by_id(driver, id):
-    driver.execute_script("document.getElementById('" + id + "').scrollIntoView(true);")
+def scroll_to_element_by_id(driver, element_id):
+    driver.execute_script("document.getElementById('" + element_id + "').scrollIntoView(true);")
 
 
 def search_for_correct_date_regex_in_element(element):
