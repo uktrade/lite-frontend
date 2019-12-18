@@ -23,17 +23,19 @@
 		<div class="lite-app-bar__controls">
 			<div class="app-more-actions__container">
 				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:documents' case.id %}">
-			      	{% lcs 'CASES.ApplicationPage.Actions.DOCUMENT' %}
+			      	{% lcs 'CASES.EndUserAdvisoriesPage.Actions.DOCUMENT' %}
 				</a>
 				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:ecju_queries' case.id %}">
-					{% get_string 'cases.ecju_queries.title' %}
+					{% lcs 'CASES.ApplicationPage.Actions.ECJU' %}
 				</a>
 				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:move' case.id %}">
-					{% get_string 'cases.manage.move_case.button' %}
+					{% lcs 'CASES.EndUserAdvisoriesPage.Actions.MOVE' %}
 				</a>
+                {% if not status_is_terminal or 'REOPEN_CLOSED_CASES' in permissions %}
                 <a role="button" draggable="false" class="govuk-button" href="{% url 'cases:manage' case.id %}">
-                    Change Status
+                    {% lcs 'CASES.EndUserAdvisoriesPage.Actions.CHANGE_STATUS' %}
                 </a>
+                {% endif %}
 			</div>
 		</div>
 	</div>

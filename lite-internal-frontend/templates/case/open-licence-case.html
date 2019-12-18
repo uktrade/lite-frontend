@@ -37,9 +37,11 @@
 		        <a role="button" draggable="false" class="govuk-button" href="{% url 'cases:move' case.id %}">
 					{% lcs 'CASES.ApplicationPage.Actions.MOVE' %}
 				</a>
+                {% if not status_is_terminal or 'REOPEN_CLOSED_CASES' in permissions %}
 				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:manage' case.id %}">
 					{% lcs 'CASES.ApplicationPage.Actions.CHANGE_STATUS' %}
 				</a>
+                {% endif %}
 				{% if permissions|key_in_array:'MAKE_FINAL_DECISIONS' %}
 					<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:decide' case.id %}">
 						{% lcs 'CASES.ApplicationPage.Actions.DECISION' %}
