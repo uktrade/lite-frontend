@@ -36,7 +36,7 @@ class DocumentSensitivityForm:
     DESCRIPTION = (
         "I have a document for my product.\nDocumentation should be specifications, datasheets, sales brochures, "
         "drawings or anything else that fully details what the product is and what it's designed to do.\n\n"
-        "The document is OFFICIAL-SENSITIVE.\n\nThe document is not commercially sensitive."
+        "The document is below OFFICIAL-SENSITIVE.\n\nThe document is not commercially sensitive."
     )
     ECJU_HELPLINE = (
         "**<noscript>If the answer is No;</noscript>**\n\nContact ECJU to arrange a more secure way to send "
