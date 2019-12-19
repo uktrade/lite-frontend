@@ -52,7 +52,6 @@ class ThirdPartyForm:
 
 
 class GeneratedDocuments:
-    TAB = "ECJU Documents"
     NO_DOCUMENTS = "There are currently no documents from ECJU."
 
     class Table:
@@ -61,5 +60,7 @@ class GeneratedDocuments:
         DOWNLOAD_LINK = "Download"
 
 
-class Activity:
-    TAB = "Activity"
+class Application:
+    class Tab:
+        ACTIVITY = "Activity"
+        GENERATED_DOCUMENTS = "ECJU Documents"
