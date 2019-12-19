@@ -1,14 +1,15 @@
 from conf.settings import env
-from lite_content.lite_exporter_frontend import applications, goods, roles, users, sites, core
+from lite_content.lite_exporter_frontend import applications, goods, roles, users, sites, core, end_users
 
 APPLICATIONS = applications
 CORE = core
+END_USERS = end_users
 GOODS = goods
 ROLES = roles
 SITES = sites
 USERS = users
 
-# Generic
+# Generic (used as defaults in forms)
 BACK_TO_APPLICATION = "Back to application"
 YES = "Yes"
 NO = "No"
@@ -26,16 +27,12 @@ IN_PROGRESS = "In progress"
 DONE = "Completed"
 VIEW = "View"
 
-# Constants
-PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
-
 SUBMIT_APPLICATION = "Submit application"
 EDIT_APPLICATION_SUBMIT = "Submit application"
 EDIT_APPLICATION_DONE = "Done"
 
-COPY_END_USER_ADVISORY_BACK_TO_END_USER_ADVISORIES = "Back to end user advisories"
-
-NOTIFICATIONS = "Notifications"
+# Constants
+PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
 
 UPLOAD_FAILURE_ERROR = "We had an issue uploading your files. Try again later."
 UPLOAD_GENERIC_ERROR = "We had an issue creating your response. Try again later."

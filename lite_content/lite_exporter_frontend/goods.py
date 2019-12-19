@@ -179,3 +179,7 @@ class GoodsLocationForm:
 class GoodsLocationPage:
     SELECT_SITES_TITLE = "Select which sites your products are at"
     SELECT_SITES_BUTTON = "Select sites"
+
+
+class GoodsPage:
+    NOTIFICATIONS = "Notifications"
