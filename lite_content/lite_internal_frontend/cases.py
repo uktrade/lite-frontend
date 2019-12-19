@@ -26,7 +26,13 @@ class ApplicationPage:
             FLAGS = "Flags"
             ADVICE = "Advice"
 
+    class Destinations:
+        COUNTRY_NAME = "Country"
+        PRODUCTS_CONTROL_CODES = "Goods"
+        FLAGS_TABLE_HEADER = "Flags"
+
     EDIT_FLAGS = "Edit products flags"
+    EDIT_DESTINATION_FLAGS = "Edit destination flags"
     REVIEW_GOODS = "Review Products"
     ADVICE = "Give or change advice"
     RESPOND_BUTTON = "Respond to Query"
