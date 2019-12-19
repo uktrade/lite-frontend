@@ -1,6 +1,19 @@
 class ProfilePage:
     BACK_TO_USERS = "Back to users"
     EDIT_USER_BUTTON = "Change role"
+    USER_EMAIL = "Email"
+    USER_FIRST_NAME = "First name"
+    USER_LAST_NAME = "Last name"
+    USER_ROLE = "Role"
+    USER_STATUS = "Status"
+    USER_PENDING = "Pending"
+
+
+class UsersPage:
+    USER_EMAIL = "Email"
+    USER_NAME = "Name"
+    USER_ROLE = "Role"
+    USER_STATUS = "Status"
 
 
 class AddUserForm:
