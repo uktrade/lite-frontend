@@ -28,21 +28,6 @@ VIEW = "View"
 # Constants
 PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
 
-ADD_ROLE_TITLE = "Add a role"
-ADD_ROLE_DESCRIPTION = "This will create a new role to use within your organisation"
-EDIT_ROLE_TITLE = "Edit a role"
-EDIT_ROLE_DESCRIPTION = "This will change this role within your organisation"
-ROLES_ADD_NAME = "What do you want to call the role?"
-ROLES_ADD_PERMISSIONS = "What permissions should this role have?"
-ROLES_ADD_PERMISSIONS_DESCRIPTION = "Select all permissions that apply."
-ROLES_ADD_FORM_BACK_TO_ROLES = "Back to roles"
-ROLES_ADD_FORM_CREATE = "Create"
-ROLES_EDIT_NAME = "What do you want to call the role?"
-ROLES_EDIT_PERMISSIONS = "What permissions should this role have?"
-ROLES_EDIT_PERMISSIONS_DESCRIPTION = "Select all permissions that apply."
-ROLES_EDIT_FORM_BACK_TO_ROLES = "Back to roles"
-ROLES_EDIT_FORM_CREATE = "Create"
-
 
 HUB_MANAGE_MY_USERS = "Manage my users"
 HUB_MANAGE_MY_SITES = "Manage my sites"
