@@ -1,3 +1,5 @@
+import os
+
 from pytest import fixture
 
 
@@ -10,16 +12,11 @@ def context(request):
 
 
 @fixture(scope="session")
-def invalid_username(request):
-    return "invalid@mail.com"
-
-
-@fixture(scope="session")
 def exporter_info(request, environment):
-    exporter_sso_email = environment("TEST_EXPORTER_SSO_EMAIL")
-    name = environment("TEST_EXPORTER_SSO_NAME")
+    exporter_sso_email = os.environ.get("TEST_EXPORTER_SSO_EMAIL")
+    name = os.environ.get("TEST_EXPORTER_SSO_NAME")
     first_name, last_name = name.split(" ")
-    exporter_sso_password = environment("TEST_EXPORTER_SSO_PASSWORD")
+    exporter_sso_password = os.environ.get("TEST_EXPORTER_SSO_PASSWORD")
 
     return {
         "email": exporter_sso_email,
@@ -30,11 +27,11 @@ def exporter_info(request, environment):
 
 
 @fixture(scope="session")
-def internal_info(request, environment):
-    gov_user_email = environment("TEST_SSO_EMAIL")
-    name = environment("TEST_SSO_NAME")
+def internal_info():
+    gov_user_email = os.environ.get("TEST_SSO_EMAIL")
+    name = os.environ.get("TEST_SSO_NAME")
     gov_user_first_name, gov_user_last_name = name.split(" ")
-    gov_user_password = environment("TEST_SSO_PASSWORD")
+    gov_user_password = os.environ.get("TEST_SSO_PASSWORD")
 
     return {
         "email": gov_user_email,
