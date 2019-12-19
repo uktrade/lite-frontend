@@ -1,9 +1,10 @@
 from conf.settings import env
-from lite_content.lite_exporter_frontend import applications, goods, hub
+from lite_content.lite_exporter_frontend import applications, goods, hub, end_user_advisories
 
 APPLICATIONS = applications
 GOODS = goods
 HUB = hub
+END_USER_ADVISORIES = end_user_advisories
 
 # Generic
 BACK_TO_APPLICATION = "Back to application"

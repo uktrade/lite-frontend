@@ -146,3 +146,14 @@ class RespondToQueryForm:
         BACK_LINK = "Back to edit response"
         YES = "Yes, send the response"
         NO = "No, change my response"
+
+
+class Good:
+    class Tabs:
+        DETAILS = "Details"
+        NOTES = "Notes"
+        ECJU_QUERIES = "ECJU Queries"
+        GENERATED_DOCUMENTS = "ECJU Documents"
+
+    class Query:
+        REFERENCE = "Reference"

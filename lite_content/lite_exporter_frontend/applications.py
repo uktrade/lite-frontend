@@ -52,10 +52,17 @@ class ThirdPartyForm:
 
 
 class GeneratedDocuments:
-    TAB = "ECJU Documents"
     NO_DOCUMENTS = "There are currently no documents from ECJU."
 
     class Table:
         NAME_COLUMN = "Name"
         DATE_COLUMN = "Date"
         DOWNLOAD_LINK = "Download"
+
+
+class Application:
+    class Tabs:
+        DETAILS = "Details"
+        NOTES = "Notes"
+        ECJU_QUERIES = "ECJU Queries"
+        GENERATED_DOCUMENTS = "ECJU Documents"

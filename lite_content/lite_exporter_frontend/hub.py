@@ -2,7 +2,7 @@ class Header:
     MANAGE = "Manage"
 
 
-class Tile:
+class Tiles:
     APPLY_FOR_LICENCE = "Apply for a licence"
     CUSTOMS_ENQUIRY = "Make a customs enquiry"
     NOTIFICATIONS = "Notifications"
