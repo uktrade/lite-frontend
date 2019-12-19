@@ -82,6 +82,15 @@ class ApplicationSummaryPage:
 
     class Buttons:
         EDIT_APPLICATION_BUTTON = "Edit application"
+        WITHDRAW_ACCESS_BUTTON = "Withdraw application"
+
+    class Withdraw:
+        TITLE = "Are you sure you want to withdraw this application?"
+        BACK_TEXT = "Back to application"
+        YES_LABEL = "Yes"
+        NO_LABEL = "No"
+        SUBMIT_BUTTON = "Submit"
+        WITHDRAW_ERROR = "Select a choice"
 
 
 class ApplicationsSummaryPage:
