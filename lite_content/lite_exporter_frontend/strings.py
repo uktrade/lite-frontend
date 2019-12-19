@@ -1,9 +1,10 @@
 from conf.settings import env
-from lite_content.lite_exporter_frontend import applications, goods, roles, users
+from lite_content.lite_exporter_frontend import applications, goods, roles, users, sites
 
 APPLICATIONS = applications
 GOODS = goods
 ROLES = roles
+SITES = sites
 USERS = users
 
 # Generic
@@ -24,10 +25,8 @@ IN_PROGRESS = "In progress"
 DONE = "Completed"
 VIEW = "View"
 
+# Constants
 PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
-
-MANAGE_ORGANISATIONS_SITES_TAB = "Sites"
-MANAGE_ORGANISATIONS_ROLES_TAB = "Roles"
 
 ROLE_INDEX_TABLE_HEADER_ROLE = "Role"
 ROLE_INDEX_TABLE_HEADER_PERMISSIONS = "Users with this role "
