@@ -28,10 +28,6 @@ VIEW = "View"
 # Constants
 PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
 
-ROLE_INDEX_TABLE_HEADER_ROLE = "Role"
-ROLE_INDEX_TABLE_HEADER_PERMISSIONS = "Users with this role "
-ROLE_INDEX_TABLE_EDIT_ROLE = "Edit"
-
 ADD_ROLE_TITLE = "Add a role"
 ADD_ROLE_DESCRIPTION = "This will create a new role to use within your organisation"
 EDIT_ROLE_TITLE = "Edit a role"
