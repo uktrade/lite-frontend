@@ -12,7 +12,7 @@ def context(request):
 
 
 @fixture(scope="session")
-def exporter_info(request, environment):
+def exporter_info(request):
     exporter_sso_email = os.environ.get("TEST_EXPORTER_SSO_EMAIL")
     name = os.environ.get("TEST_EXPORTER_SSO_NAME")
     first_name, last_name = name.split(" ")
@@ -27,7 +27,7 @@ def exporter_info(request, environment):
 
 
 @fixture(scope="session")
-def internal_info():
+def internal_info(request):
     gov_user_email = os.environ.get("TEST_SSO_EMAIL")
     name = os.environ.get("TEST_SSO_NAME")
     gov_user_first_name, gov_user_last_name = name.split(" ")
