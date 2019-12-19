@@ -183,3 +183,8 @@ class GoodsLocationPage:
 
 class GoodsPage:
     NOTIFICATIONS = "Notifications"
+
+
+class AttachDocumentPage:
+    UPLOAD_FAILURE_ERROR = "We had an issue uploading your files. Try again later."
+    UPLOAD_GENERIC_ERROR = "We had an issue creating your response. Try again later."

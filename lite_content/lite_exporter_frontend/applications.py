@@ -156,3 +156,9 @@ class DeleteApplicationPage:
     NO_LABEL = "No"
     SUBMIT_BUTTON = "Submit"
     DELETE_ERROR = "Select a choice"
+
+
+class AttachDocumentPage:
+    UPLOAD_FAILURE_ERROR = "We had an issue uploading your files. Try again later."
+    UPLOAD_GENERIC_ERROR = "We had an issue creating your response. Try again later."
+    DOWNLOAD_GENERIC_ERROR = "We had an issue downloading your file. Try again later."

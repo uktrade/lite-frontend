@@ -4,3 +4,7 @@ class CopyEndUserAdvisoryForm:
 
 class EndUsersPage:
     NOTIFICATIONS = "Notifications"
+
+
+class AttachDocumentPage:
+    UPLOAD_GENERIC_ERROR = "We had an issue creating your response. Try again later."
