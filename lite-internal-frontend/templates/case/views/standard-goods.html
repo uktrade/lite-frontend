@@ -1,55 +1,59 @@
 {% load humanize %}
 
-<h3 class="govuk-heading-m">Goods</h3>
+<h3 class="govuk-heading-m">{% lcs 'CASES.ApplicationPage.Goods.TITLE' %}</h3>
 <table class="govuk-table" id="goods">
 	<thead class="govuk-table__head">
 		<tr class="govuk-table__row">
 			<th scope="col" class="govuk-table__header">
 				<button type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
 			</th>
-            <th class="govuk-table__header" scope="col">Control List Entry</th>
-			<th class="govuk-table__header" scope="col">Description</th>
-            <th class="govuk-table__header">Quantity/Value</th>
-			<th class="govuk-table__header">Documents</th>
-            <th class="govuk-table__header">Flags</th>
+            <th class="govuk-table__header" scope="col">{% lcs 'CASES.ApplicationPage.Goods.Table.CLC' %}</th>
+			<th class="govuk-table__header" scope="col">{% lcs 'CASES.ApplicationPage.Goods.Table.DESCRIPTION' %}</th>
+            <th class="govuk-table__header">{% lcs 'CASES.ApplicationPage.Goods.Table.VALUE' %}</th>
+			<th class="govuk-table__header">{% lcs 'CASES.ApplicationPage.Goods.Table.DOCUMENTS' %}</th>
+            <th class="govuk-table__header">{% lcs 'CASES.ApplicationPage.Goods.Table.FLAGS' %}</th>
 			{% if show_advice %}
-				<th class="govuk-table__header" style="width: 350px;">Advice</th>
+				<th class="govuk-table__header" style="width: 350px;">{% lcs 'CASES.ApplicationPage.Goods.Table.FLAGS' %}</th>
 			{% endif %}
 		</tr>
 	</thead>
 	<tbody class="govuk-table__body">
-		{% for good in case.application.goods %}
+		{% for good_on_application in case.application.goods %}
 			<tr class="govuk-table__row">
                 <td class="govuk-table__cell govuk-table__cell--checkbox">
 					<div class="govuk-checkboxes govuk-checkboxes--small">
-						<input class="govuk-checkboxes__input" type="checkbox" name="goods" value="{{ good.good.id }}" id="{{ good.good.id }}">
-						<label class="govuk-label {% if show_checkboxes %}govuk-checkboxes__label{% endif %}" for="{{ good.good.id }}"></label>
+						<input class="govuk-checkboxes__input" type="checkbox" name="goods" value="{{ good_on_application.good.id }}" id="{{ good_on_application.good.id }}">
+						<label class="govuk-label {% if show_checkboxes %}govuk-checkboxes__label{% endif %}" for="{{ good_on_application.good.id }}"></label>
 					</div>
 				</td>
 				<td class="govuk-table__cell">
-					{{ good.good.control_code|default_na }}
+					{{ good_on_application.good.control_code|default_na }}
 				</td>
                 <td class="govuk-table__cell">
-                	{{ good.good.description }}
+                	{{ good_on_application.good.description }}
                 </td>
-				<td class="govuk-table__cell">{{ good.quantity }} {{ good.unit.value }}/£{{ good.value|intcomma }}</td>
+				<td class="govuk-table__cell">{{ good_on_application.quantity }} {{ good_on_application.unit.value }}/£{{ good_on_application.value|intcomma }}</td>
 				<td class="govuk-table__cell">
-				  {% for document in good.good.documents %}
-					  {% if document.safe == True %}
-						  <a class="govuk-link govuk-link--no-visited-state" id="good_document" href="{% url 'cases:document' case.id document.id %}">
-							  {% get_string 'cases.manage.documents.download_document' %}
-						  </a>
-					  {% endif %}
-				   {% endfor %}
+                    {% if good_on_application.good.documents %}
+                        {% for document in good_on_application.good.documents %}
+                            {% if document.safe == True %}
+                                <a class="govuk-link govuk-link--no-visited-state" id="good_document" href="{% url 'cases:document' case.id document.id %}">
+                                    {% get_string 'cases.manage.documents.download_document' %}
+                                </a>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        {% lcs 'CASES.ApplicationPage.Goods.MISSING_DOCUMENT_REASON_PREFIX' %}{{ good_on_application.good.missing_document_reason.value }}
+                    {% endif %}
                 <td class="govuk-table__cell">
-                    {% for flag in good.good.flags %}
+                    {% for flag in good_on_application.good.flags %}
                         {{ flag.name }}<br>
                     {% endfor %}
                 </td>
 				{% if show_advice %}
 					<td class="govuk-table__cell">
 						{% for advice in all_advice %}
-							{% if advice.good == good.good.id %}
+							{% if advice.good == good_on_application.good.id %}
 								{% include 'case/views/table-advice.html' %}
 							{% endif %}
 						{% endfor %}
