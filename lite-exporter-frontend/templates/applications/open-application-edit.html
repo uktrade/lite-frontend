@@ -69,7 +69,7 @@
 				{% endif %}
 			</h2>
 			<ul class="lite-task-list__items {% if is_editing %}govuk-!-padding-0{% endif %}">
-				{% lcs 'ENTER_A_REFERENCE_NAME_SHORT_TITLE' as reference_name_title %}
+				{% lcs 'applications.TaskListPage.ENTER_A_REFERENCE_NAME_SHORT_TITLE' as reference_name_title %}
 				{% url 'applications:edit_reference_name' application.id as reference_name_url %}
 				{% include "includes/task-list-item.html" with title=reference_name_title url=reference_name_url status='done' description=application.name %}
 			</ul>
@@ -188,7 +188,7 @@
 				</li>
 
 				<!-- Destination -->
-				{% lcs 'WHERE_ARE_YOUR_GOODS_GOING_SHORT_TITLE' as countries_title %}
+				{% lcs 'applications.TaskListPage.WHERE_ARE_YOUR_GOODS_GOING_SHORT_TITLE' as countries_title %}
 				{% url 'applications:countries' application.id as countries_url %}
 				{% tld countries 'country' 'countries' as countries_description %}
 				{% include "includes/task-list-item.html" with title=countries_title url=countries_url status=countries|task_list_item_status description=countries_description %}
@@ -283,7 +283,7 @@
 							<div class="lite-vertical-align">
 								<a id="link-delete-draft" href="{% url 'applications:delete' application.id %}?return_to=application" class="govuk-link lite-link--icon">
 									{% svg 'close' %}
-									{% lcs 'DRAFT_DELETE_LINK' %}
+									{% lcs 'applications.EditOpenApplicationPage.DRAFT_DELETE_LINK' %}
 								</a>
 							</div>
 						{% endif %}

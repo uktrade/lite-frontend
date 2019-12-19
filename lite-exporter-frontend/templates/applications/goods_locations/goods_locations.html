@@ -11,7 +11,7 @@
 			<h2 class="govuk-heading-l" style="max-width: 400px;">
 				{% block title %}
 					{% if application.goods_locations.type == 'sites' %}
-						{% lcs 'SELECT_SITES_TITLE' %}
+						{% lcs 'goods.GoodsLocationPage.SELECT_SITES_TITLE' %}
 					{% else %}
 						Set where your products are located
 					{% endif %}
@@ -28,7 +28,7 @@
 			</a>
 			{% if application.goods_locations.type == 'sites' %}
 				<a href="{% url 'applications:existing_sites' application.id %}" class="govuk-button">
-					{% lcs 'SELECT_SITES_BUTTON' %}
+					{% lcs 'goods.GoodsLocationPage.SELECT_SITES_BUTTON' %}
 				</a>
 			{% else %}
 				<a href="{% url 'applications:add_preexisting_external_location' application.id %}" class="govuk-button">

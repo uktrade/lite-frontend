@@ -29,7 +29,7 @@ class Users(TemplateView):
             raise Http404
 
         context = {
-            "title": strings.MANAGE_ORGANISATIONS_MEMBERS_TAB + " - " + organisation["name"],
+            "title": strings.users.UsersPage.MANAGE_ORGANISATIONS_MEMBERS_TAB + " - " + organisation["name"],
             "users": users["users"],
             "organisation": organisation,
             "can_administer_roles": roles,

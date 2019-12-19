@@ -149,7 +149,7 @@ class AddNewGood(TemplateView):
                 # Error is thrown if a document is not attached
                 self.data = request.POST.copy()
                 self.generate_form(request, form_num)
-                self.errors = {"documents": [strings.APPLICATION_GOODS_ADD_DOCUMENT_MISSING]}
+                self.errors = {"documents": [strings.goods.CreateGoodOnApplicationForm.DOCUMENT_MISSING]}
 
         return form_page(request, self.form, self.data, self.errors, {"form_pk": self.form_num})
 
@@ -209,10 +209,11 @@ class DraftOpenGoodsTypeList(TemplateView):
 class AddPreexistingGood(TemplateView):
     def get(self, request, **kwargs):
         good, _ = get_good(request, str(kwargs["good_pk"]))
-
-        title = strings.APPLICATION_GOODS_ADD_PREEXISTING_TITLE
-
-        context = {"title": title, "page": good_on_application_form(good, get_units(request), title)}
+        title = strings.goods.AddPrexistingGoodToApplicationForm.TITLE
+        context = {
+            "title": title,
+            "page": good_on_application_form(good, get_units(request), title),
+        }
         return render(request, "form.html", context)
 
     def post(self, request, **kwargs):
@@ -221,9 +222,7 @@ class AddPreexistingGood(TemplateView):
 
         if status_code != HTTPStatus.CREATED:
             good, status_code = get_good(request, str(kwargs["good_pk"]))
-
-            title = strings.APPLICATION_GOODS_ADD_PREEXISTING_TITLE
-
+            title = strings.goods.AddPrexistingGoodToApplicationForm.TITLE
             context = {
                 "title": title,
                 "page": good_on_application_form(good, get_units(request), title),

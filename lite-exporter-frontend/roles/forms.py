@@ -6,37 +6,24 @@ from lite_forms.components import Form, TextInput, Checkboxes, BackLink
 from roles.services import get_permissions
 
 
-def add_role(request: HttpRequest):
+def add_role(request: HttpRequest, add: bool):
+    if add:
+        form_strings = strings.roles.AddRoleForm
+    else:
+        form_strings = strings.roles.EditRoleForm
+
     return Form(
-        title=strings.ADD_ROLE_TITLE,
-        description=strings.ADD_ROLE_DESCRIPTION,
+        title=form_strings.TITLE,
+        description=form_strings.DESCRIPTION,
         questions=[
-            TextInput(title=strings.ROLES_ADD_NAME, name="name"),
+            TextInput(title=form_strings.NAME, name="name"),
             Checkboxes(
                 name="permissions[]",
                 options=get_permissions(request, True),
-                title=strings.ROLES_ADD_PERMISSIONS,
-                description=strings.ROLES_ADD_PERMISSIONS_DESCRIPTION,
+                title=form_strings.PERMISSIONS,
+                description=form_strings.PERMISSIONS_DESCRIPTION,
             ),
         ],
-        back_link=BackLink(strings.ROLES_ADD_FORM_BACK_TO_ROLES, reverse_lazy("roles:roles")),
-        default_button_name=strings.ROLES_ADD_FORM_CREATE,
-    )
-
-
-def edit_role(request: HttpRequest):
-    return Form(
-        title=strings.EDIT_ROLE_TITLE,
-        description=strings.EDIT_ROLE_DESCRIPTION,
-        questions=[
-            TextInput(title=strings.ROLES_EDIT_NAME, name="name"),
-            Checkboxes(
-                name="permissions[]",
-                options=get_permissions(request, True),
-                title=strings.ROLES_EDIT_PERMISSIONS,
-                description=strings.ROLES_EDIT_PERMISSIONS_DESCRIPTION,
-            ),
-        ],
-        back_link=BackLink(strings.ROLES_EDIT_FORM_BACK_TO_ROLES, reverse_lazy("roles:roles")),
-        default_button_name=strings.ROLES_EDIT_FORM_CREATE,
+        back_link=BackLink(form_strings.FORM_BACK_TO_ROLES, reverse_lazy("roles:roles")),
+        default_button_name=form_strings.FORM_CREATE,
     )

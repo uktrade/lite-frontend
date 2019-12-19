@@ -14,11 +14,11 @@ def good_on_application_form(good, units, title, prefix=""):
         questions=[
             conditional(good, good_summary(good)),
             conditional(good, HiddenField(name="good_id", value=good.get("id"))),
-            CurrencyInput(title="What's the value of your products?", name=prefix + "value"),
+            CurrencyInput(title=strings.goods.CreateGoodOnApplicationForm.VALUE, name=prefix + "value"),
             SideBySideSection(
                 questions=[
-                    QuantityInput(title="Quantity", name=prefix + "quantity"),
-                    Select(title="Unit of measurement", name=prefix + "unit", options=units),
+                    QuantityInput(title=strings.goods.CreateGoodOnApplicationForm.QUANTITY, name=prefix + "quantity"),
+                    Select(title=strings.goods.CreateGoodOnApplicationForm.UNITS, name=prefix + "unit", options=units),
                 ]
             ),
         ],
@@ -28,7 +28,8 @@ def good_on_application_form(good, units, title, prefix=""):
 
 def add_new_good_forms(request, application_id):
     back_link = BackLink(
-        strings.APPLICATION_GOODS_ADD_BACK, reverse("applications:goods", kwargs={"pk": application_id})
+        strings.goods.CreateGoodOnApplicationForm.BACK_LINK,
+        reverse("applications:goods", kwargs={"pk": application_id}),
     )
 
     return [
@@ -37,7 +38,7 @@ def add_new_good_forms(request, application_id):
             good={},
             units=get_units(request),
             prefix="good_on_app_",
-            title=strings.APPLICATION_GOODS_ADD_APPLICATION_DETAILS,
+            title=strings.goods.CreateGoodOnApplicationForm.TITLE,
         ),
         attach_documents_form("#"),
     ]

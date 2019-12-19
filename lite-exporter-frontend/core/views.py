@@ -25,13 +25,13 @@ class Hub(TemplateView):
 
         if Permissions.ADMINISTER_USERS in user_permissions:
             manage_organisation_section_link = reverse_lazy("users:users")
-            title = strings.HUB_MANAGE_MY_USERS
+            title = strings.core.HubPage.USERS
         elif Permissions.ADMINISTER_SITES in user_permissions:
             manage_organisation_section_link = reverse_lazy("sites:sites")
-            title = strings.HUB_MANAGE_MY_SITES
+            title = strings.core.HubPage.SITES
         elif Permissions.EXPORTER_ADMINISTER_ROLES in user_permissions:
             manage_organisation_section_link = reverse_lazy("roles:roles")
-            title = strings.HUB_MANAGE_MY_ROLES
+            title = strings.core.HubPage.ROLES
         else:
             manage_organisation_section_link = None
 
@@ -89,7 +89,7 @@ class Hub(TemplateView):
                     if permission in Permissions.MANAGE_ORGANISATION_PERMISSIONS:
                         number_permissions += 1
                 if number_permissions > 1:
-                    title = strings.HUB_MANAGE_MY_ORGANISATION
+                    title = strings.core.HubPage.ORGANISATION
                 sections[1].tiles.append(Tile(title, "", manage_organisation_section_link))
 
         context = {

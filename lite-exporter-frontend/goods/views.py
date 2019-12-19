@@ -261,7 +261,7 @@ class AttachDocuments(TemplateView):
         good_documents, _ = post_good_documents(request, good_id, data)
 
         if "errors" in good_documents:
-            return error_page(request, strings.UPLOAD_FAILURE_ERROR)
+            return error_page(request, strings.goods.AttachDocumentPage.UPLOAD_FAILURE_ERROR)
 
         if good["is_good_controlled"] == "unsure":
             return redirect(reverse("goods:raise_clc_query", kwargs={"pk": good_id}))
@@ -393,4 +393,4 @@ class RespondToQuery(TemplateView):
                 return form_page(request, form, errors=error)
         else:
             # Submitted data does not contain an expected form field - return an error
-            return error_page(request, strings.UPLOAD_GENERIC_ERROR)
+            return error_page(request, strings.goods.AttachDocumentPage.UPLOAD_GENERIC_ERROR)

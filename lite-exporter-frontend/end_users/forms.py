@@ -129,7 +129,7 @@ def copy_end_user_advisory_form(individual, commercial):
                     HiddenField("validate_only", True),
                 ],
                 back_link=BackLink(
-                    strings.COPY_END_USER_ADVISORY_BACK_TO_END_USER_ADVISORIES, reverse_lazy("end_users:end_users")
+                    strings.end_users.CopyEndUserAdvisoryForm.BACK_LINK, reverse_lazy("end_users:end_users")
                 ),
                 default_button_name=strings.CONTINUE,
             ),

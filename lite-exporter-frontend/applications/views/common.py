@@ -63,13 +63,13 @@ class DeleteApplication(SingleFormView):
         self.object_pk = kwargs["pk"]
         application = get_application(request, self.object_pk)
         self.form = confirm_form(
-            title=strings.DRAFT_DELETE_TITLE,
+            title=strings.applications.DeleteApplicationPage.TITLE,
             confirmation_name="choice",
             summary=draft_summary(application),
-            back_link_text=strings.DRAFT_DELETE_BACK_TEXT,
-            yes_label=strings.DRAFT_DELETE_YES_LABEL,
-            no_label=strings.DRAFT_DELETE_NO_LABEL,
-            submit_button_text=strings.DRAFT_DELETE_SUBMIT_BUTTON,
+            back_link_text=strings.applications.DeleteApplicationPage.BACK_TEXT,
+            yes_label=strings.applications.DeleteApplicationPage.YES_LABEL,
+            no_label=strings.applications.DeleteApplicationPage.NO_LABEL,
+            submit_button_text=strings.applications.DeleteApplicationPage.SUBMIT_BUTTON,
             back_url=reverse_lazy("applications:application", kwargs={"pk": self.object_pk}),
             side_by_side=True,
         )
@@ -286,7 +286,7 @@ class RespondToQuery(TemplateView):
                 return form_page(request, form, errors=error)
         else:
             # Submitted data does not contain an expected form field - return an error
-            return error_page(request, strings.UPLOAD_GENERIC_ERROR)
+            return error_page(request, strings.applications.AttachDocumentPage.UPLOAD_GENERIC_ERROR)
 
 
 class WithdrawApplication(SingleFormView):
@@ -294,13 +294,13 @@ class WithdrawApplication(SingleFormView):
         self.object_pk = kwargs["pk"]
         application = get_application(request, self.object_pk)
         self.form = confirm_form(
-            title=strings.APPLICATION_WITHDRAW_TITLE,
+            title=strings.applications.ApplicationSummaryPage.Withdraw.TITLE,
             confirmation_name="choice",
             summary=application_summary(application),
-            back_link_text=strings.APPLICATION_WITHDRAW_BACK_TEXT,
-            yes_label=strings.APPLICATION_WITHDRAW_YES_LABEL,
-            no_label=strings.APPLICATION_WITHDRAW_NO_LABEL,
-            submit_button_text=strings.APPLICATION_WITHDRAW_SUBMIT_BUTTON,
+            back_link_text=strings.applications.ApplicationSummaryPage.Withdraw.BACK_TEXT,
+            yes_label=strings.applications.ApplicationSummaryPage.Withdraw.YES_LABEL,
+            no_label=strings.applications.ApplicationSummaryPage.Withdraw.NO_LABEL,
+            submit_button_text=strings.applications.ApplicationSummaryPage.Withdraw.SUBMIT_BUTTON,
             back_url=reverse_lazy("applications:application", kwargs={"pk": self.object_pk}),
             side_by_side=True,
         )

@@ -9,10 +9,10 @@ def draft_summary(draft):
 
     return Summary(
         values={
-            strings.APPLICATION_REFERENCE_NAME: draft["name"],
-            strings.APPLICATION_TYPE: draft["application_type"]["value"],
-            strings.APPLICATION_EXPORT_TYPE: draft["export_type"]["value"],
-            strings.APPLICATION_CREATED_AT: str_date(draft["created"]),
+            strings.applications.ApplicationSummaryPage.REFERENCE_NAME: draft["name"],
+            strings.applications.ApplicationSummaryPage.TYPE: draft["application_type"]["value"],
+            strings.applications.ApplicationSummaryPage.EXPORT_TYPE: draft["export_type"]["value"],
+            strings.applications.ApplicationSummaryPage.CREATED_AT: str_date(draft["created"]),
         },
         classes=["govuk-summary-list--no-border"],
     )
@@ -24,10 +24,10 @@ def application_summary(application):
 
     return Summary(
         values={
-            strings.APPLICATION_REFERENCE_NAME: application["name"],
-            strings.APPLICATION_TYPE: application["application_type"]["value"],
-            strings.APPLICATION_EXPORT_TYPE: application["export_type"]["value"],
-            strings.APPLICATION_SUBMITTED_AT: str_date(application["submitted_at"]),
+            strings.applications.ApplicationSummaryPage.REFERENCE_NAME: application["name"],
+            strings.applications.ApplicationSummaryPage.TYPE: application["application_type"]["value"],
+            strings.applications.ApplicationSummaryPage.EXPORT_TYPE: application["export_type"]["value"],
+            strings.applications.ApplicationSummaryPage.SUBMITTED_AT: str_date(application["submitted_at"]),
         },
         classes=["govuk-summary-list--no-border"],
     )

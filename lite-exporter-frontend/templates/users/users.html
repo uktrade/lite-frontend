@@ -19,10 +19,10 @@
 			<div class="lite-tabs">
 				<a href="{% url 'users:users' %}" class="lite-tabs__tab lite-tabs__tab--selected" id="tab-users">{% lcs "MANAGE_ORGANISATIONS_MEMBERS_TAB" %}</a>
                 {% if can_administer_sites %}
-				    <a href="{% url 'sites:sites' %}" class="lite-tabs__tab" id="tab-sites">{% lcs "MANAGE_ORGANISATIONS_SITES_TAB" %}</a>
+				    <a href="{% url 'sites:sites' %}" class="lite-tabs__tab" id="tab-sites">{% lcs "sites.SitesPage.TAB" %}</a>
                 {% endif %}
                 {% if can_administer_roles %}
-                    <a href="{% url 'roles:roles' %}" class="lite-tabs__tab" id="tab-roles">{% lcs "MANAGE_ORGANISATIONS_ROLES_TAB" %}</a>
+                    <a href="{% url 'roles:roles' %}" class="lite-tabs__tab" id="tab-roles">{% lcs "roles.ManageRolesPage.TAB" %}</a>
                 {% endif %}
 			</div>
 		</div>
@@ -36,10 +36,10 @@
 	<table class="govuk-table">
 		<thead class="govuk-table__head">
 			<tr class="govuk-table__row">
-				<th class="govuk-table__header" scope="col">{% lcs "USER_NAME" %}</th>
-				<th class="govuk-table__header" scope="col">{% lcs "USER_EMAIL" %}</th>
-                <th class="govuk-table__header" scope="col">{% lcs "USER_ROLE" %}</th>
-				<th class="govuk-table__header" scope="col">{% lcs "USER_STATUS" %}</th>
+				<th class="govuk-table__header" scope="col">{% lcs "users.UsersPage.USER_NAME" %}</th>
+				<th class="govuk-table__header" scope="col">{% lcs "users.UsersPage.USER_EMAIL" %}</th>
+                <th class="govuk-table__header" scope="col">{% lcs "users.UsersPage.USER_ROLE" %}</th>
+				<th class="govuk-table__header" scope="col">{% lcs "users.UsersPage.USER_STATUS" %}</th>
                 <th class="govuk-table__header" scope="col"></th>
 			</tr>
 		</thead>

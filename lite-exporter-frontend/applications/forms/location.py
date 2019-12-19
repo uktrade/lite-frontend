@@ -6,14 +6,14 @@ from lite_forms.components import Form, RadioButtons, Option, TextArea, Select, 
 
 def which_location_form(application_id):
     return Form(
-        title=strings.APPLICATION_WHERE_ARE_YOUR_GOODS_LOCATED_TITLE,
-        description=strings.APPLICATION_WHERE_ARE_YOUR_GOODS_LOCATED_DESCRIPTION,
+        title=strings.goods.GoodsLocationForm.WHERE_ARE_YOUR_GOODS_LOCATED_TITLE,
+        description=strings.goods.GoodsLocationForm.WHERE_ARE_YOUR_GOODS_LOCATED_DESCRIPTION,
         questions=[
             RadioButtons(
                 "organisation_or_external",
                 [
-                    Option("organisation", strings.APPLICATION_ONE_OF_MY_REGISTERED_SITES),
-                    Option("external", strings.APPLICATION_NOT_AT_MY_REGISTERED_SITES),
+                    Option("organisation", strings.goods.GoodsLocationForm.ONE_OF_MY_REGISTERED_SITES),
+                    Option("external", strings.goods.GoodsLocationForm.NOT_AT_MY_REGISTERED_SITES),
                 ],
             )
         ],
@@ -24,13 +24,13 @@ def which_location_form(application_id):
 
 def add_external_location():
     return Form(
-        title=strings.APPLICATION_EXTERNAL_LOCATION_TITLE,
+        title=strings.goods.GoodsLocationForm.EXTERNAL_LOCATION_TITLE,
         questions=[
             RadioButtons(
                 "choice",
                 [
-                    Option("new", strings.APPLICATION_EXTERNAL_LOCATION_NEW_LOCATION),
-                    Option("preexisting", strings.APPLICATION_EXTERNAL_LOCATION_PREEXISTING_LOCATION),
+                    Option("new", strings.goods.GoodsLocationForm.EXTERNAL_LOCATION_NEW_LOCATION),
+                    Option("preexisting", strings.goods.GoodsLocationForm.EXTERNAL_LOCATION_PREEXISTING_LOCATION),
                 ],
             )
         ],

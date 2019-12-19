@@ -67,7 +67,7 @@ class AttachDocuments(TemplateView):
         data, error = add_document_data(request)
 
         if error:
-            return error_page(request, strings.UPLOAD_FAILURE_ERROR)
+            return error_page(request, strings.applications.AttachDocumentPage.UPLOAD_FAILURE_ERROR)
 
         action = document_switch(request.path)["attach"]
         if len(signature(action).parameters) == 3:
@@ -78,7 +78,7 @@ class AttachDocuments(TemplateView):
         if status_code == 201:
             return get_homepage(request, draft_id)
         else:
-            return error_page(request, strings.UPLOAD_FAILURE_ERROR)
+            return error_page(request, strings.applications.AttachDocumentPage.UPLOAD_FAILURE_ERROR)
 
 
 class DownloadDocument(TemplateView):
@@ -95,7 +95,7 @@ class DownloadDocument(TemplateView):
         if document["safe"]:
             return download_document_from_s3(document["s3_key"], document["name"])
         else:
-            return error_page(request, strings.DOWNLOAD_GENERIC_ERROR)
+            return error_page(request, strings.applications.AttachDocumentPage.DOWNLOAD_GENERIC_ERROR)
 
 
 class DeleteDocument(TemplateView):
@@ -123,6 +123,6 @@ class DeleteDocument(TemplateView):
                 if status_code == 204:
                     return get_homepage(request, draft_id)
                 else:
-                    return error_page(request, strings.DOCUMENT_DELETE_GENERIC_ERROR)
+                    return error_page(request, strings.applications.DeleteDocument.DOCUMENT_DELETE_GENERIC_ERROR)
             else:
                 return get_homepage(request, draft_id)

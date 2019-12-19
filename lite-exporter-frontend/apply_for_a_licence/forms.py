@@ -8,41 +8,47 @@ def initial_questions(application_type):
     return FormGroup(
         [
             Form(
-                title=strings.WHICH_EXPORT_LICENCE_DO_YOU_WANT_TITLE,
-                description=strings.WHICH_EXPORT_LICENCE_DO_YOU_WANT_DESCRIPTION,
+                title=strings.applications.InitialApplicationQuestionsForms.WHICH_EXPORT_LICENCE_DO_YOU_WANT_TITLE,
+                description=strings.applications.InitialApplicationQuestionsForms.WHICH_EXPORT_LICENCE_DO_YOU_WANT_DESCRIPTION,
                 questions=[
                     RadioButtons(
                         name="application_type",
                         options=[
                             Option(
                                 key=STANDARD_LICENCE,
-                                value=strings.STANDARD_LICENCE,
-                                description=strings.STANDARD_LICENCE_DESCRIPTION,
+                                value=strings.applications.InitialApplicationQuestionsForms.STANDARD_LICENCE,
+                                description=strings.applications.InitialApplicationQuestionsForms.STANDARD_LICENCE_DESCRIPTION,
                             ),
                             Option(
                                 key=OPEN_LICENCE,
-                                value=strings.OPEN_LICENCE,
-                                description=strings.OPEN_LICENCE_DESCRIPTION,
+                                value=strings.applications.InitialApplicationQuestionsForms.OPEN_LICENCE,
+                                description=strings.applications.InitialApplicationQuestionsForms.OPEN_LICENCE_DESCRIPTION,
                             ),
                         ],
                     ),
-                    DetailComponent(strings.HELP_WITH_CHOOSING_A_LICENCE, strings.HELP_WITH_CHOOSING_A_LICENCE_CONTENT),
+                    DetailComponent(
+                        strings.applications.InitialApplicationQuestionsForms.HELP_WITH_CHOOSING_A_LICENCE,
+                        strings.applications.InitialApplicationQuestionsForms.HELP_WITH_CHOOSING_A_LICENCE_CONTENT,
+                    ),
                 ],
                 default_button_name=strings.CONTINUE,
             ),
             Form(
-                title=strings.ENTER_A_REFERENCE_NAME_TITLE,
-                description=strings.ENTER_A_REFERENCE_NAME_DESCRIPTION,
+                title=strings.applications.InitialApplicationQuestionsForms.ENTER_A_REFERENCE_NAME_TITLE,
+                description=strings.applications.InitialApplicationQuestionsForms.ENTER_A_REFERENCE_NAME_DESCRIPTION,
                 questions=[TextInput(name="name"),],
                 default_button_name=strings.CONTINUE,
             ),
             Form(
-                title=strings.TEMPORARY_OR_PERMANENT_TITLE,
-                description=strings.TEMPORARY_OR_PERMANENT_DESCRIPTION,
+                title=strings.applications.InitialApplicationQuestionsForms.TEMPORARY_OR_PERMANENT_TITLE,
+                description=strings.applications.InitialApplicationQuestionsForms.TEMPORARY_OR_PERMANENT_DESCRIPTION,
                 questions=[
                     RadioButtons(
                         name="export_type",
-                        options=[Option("temporary", strings.TEMPORARY), Option("permanent", strings.PERMANENT)],
+                        options=[
+                            Option("temporary", strings.applications.InitialApplicationQuestionsForms.TEMPORARY),
+                            Option("permanent", strings.applications.InitialApplicationQuestionsForms.PERMANENT),
+                        ],
                     ),
                 ],
                 default_button_name=strings.CONTINUE
@@ -52,8 +58,8 @@ def initial_questions(application_type):
             conditional(
                 application_type != OPEN_LICENCE,
                 Form(
-                    title=strings.HAVE_YOU_BEEN_INFORMED_TITLE,
-                    description=strings.HAVE_YOU_BEEN_INFORMED_DESCRIPTION,
+                    title=strings.applications.InitialApplicationQuestionsForms.HAVE_YOU_BEEN_INFORMED_TITLE,
+                    description=strings.applications.InitialApplicationQuestionsForms.HAVE_YOU_BEEN_INFORMED_DESCRIPTION,
                     questions=[
                         RadioButtons(
                             name="have_you_been_informed",
@@ -64,8 +70,8 @@ def initial_questions(application_type):
                             classes=["govuk-radios--inline"],
                         ),
                         TextInput(
-                            title=strings.WHAT_WAS_THE_REFERENCE_CODE_TITLE,
-                            description=strings.WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION,
+                            title=strings.applications.InitialApplicationQuestionsForms.WHAT_WAS_THE_REFERENCE_CODE_TITLE,
+                            description=strings.applications.InitialApplicationQuestionsForms.WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION,
                             name="reference_number_on_information_form",
                             optional=True,
                         ),

@@ -41,14 +41,14 @@
 		<table class="govuk-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
-					<th class="govuk-table__header" scope="col">{% lcs 'APPLICATION_REFERENCE_NAME' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'applications.ApplicationsSummaryPage.REFERENCE_NAME' %}</th>
 					<th class="govuk-table__header" scope="col"></th>
 					{% if organisation.type.key != 'hmrc' %}
-						<th class="govuk-table__header" scope="col">{% lcs 'APPLICATION_TYPE' %}</th>
+						<th class="govuk-table__header" scope="col">{% lcs 'applications.ApplicationsSummaryPage.TYPE' %}</th>
 					{% endif %}
-					<th class="govuk-table__header" scope="col">{% lcs 'APPLICATION_LAST_UPDATED_AT' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'applications.ApplicationsSummaryPage.LAST_UPDATED_AT' %}</th>
 					{% if organisation.type.key != 'hmrc' %}
-						<th class="govuk-table__header" scope="col">{% lcs 'APPLICATION_STATUS' %}</th>
+						<th class="govuk-table__header" scope="col">{% lcs 'applications.ApplicationsSummaryPage.STATUS' %}</th>
 					{% endif %}
 				</tr>
 			</thead>

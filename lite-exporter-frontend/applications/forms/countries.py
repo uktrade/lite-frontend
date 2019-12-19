@@ -6,8 +6,8 @@ from lite_forms.components import Form, Filter, Checkboxes
 
 def countries_form(application_id):
     return Form(
-        title=strings.WHERE_ARE_YOUR_GOODS_GOING_TITLE,
-        description=strings.WHERE_ARE_YOUR_GOODS_GOING_DESCRIPTION,
+        title=strings.applications.DestinationForm.TITLE,
+        description=strings.applications.DestinationForm.DESCRIPTION,
         questions=[
             Filter(),
             Checkboxes(

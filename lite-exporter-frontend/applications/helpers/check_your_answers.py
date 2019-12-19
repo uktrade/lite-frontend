@@ -25,17 +25,23 @@ def convert_application_to_check_your_answers(application, editable=False):
 
 def _convert_standard_application(application, editable=False):
     return {
-        strings.APPLICATION_GOODS: _convert_goods(application["goods"]),
-        strings.APPLICATION_GOODS_LOCATIONS: _convert_goods_locations(application["goods_locations"]),
-        strings.APPLICATION_END_USER: convert_end_user(application["end_user"], application["id"], editable),
-        strings.APPLICATION_ULTIMATE_END_USERS: _convert_ultimate_end_users(
+        strings.applications.ApplicationSummaryPage.GOODS: _convert_goods(application["goods"]),
+        strings.applications.ApplicationSummaryPage.GOODS_LOCATIONS: _convert_goods_locations(
+            application["goods_locations"]
+        ),
+        strings.applications.ApplicationSummaryPage.END_USER: convert_end_user(
+            application["end_user"], application["id"], editable
+        ),
+        strings.applications.ApplicationSummaryPage.ULTIMATE_END_USERS: _convert_ultimate_end_users(
             application["ultimate_end_users"], application["id"], editable
         ),
-        strings.APPLICATION_THIRD_PARTIES: _convert_third_parties(
+        strings.applications.ApplicationSummaryPage.THIRD_PARTIES: _convert_third_parties(
             application["third_parties"], application["id"], editable
         ),
-        strings.APPLICATION_CONSIGNEE: convert_consignee(application["consignee"], application["id"], editable),
-        strings.APPLICATION_SUPPORTING_DOCUMENTATION: _get_supporting_documentation(
+        strings.applications.ApplicationSummaryPage.CONSIGNEE: convert_consignee(
+            application["consignee"], application["id"], editable
+        ),
+        strings.applications.ApplicationSummaryPage.SUPPORTING_DOCUMENTATION: _get_supporting_documentation(
             application["additional_documents"], application["id"]
         ),
     }
@@ -43,10 +49,12 @@ def _convert_standard_application(application, editable=False):
 
 def _convert_open_application(application, editable=False):
     return {
-        strings.APPLICATION_GOODS: _convert_goods_types(application["goods_types"]),
-        strings.APPLICATION_GOODS_LOCATIONS: _convert_goods_locations(application["goods_locations"]),
-        strings.APPLICATION_COUNTRIES: _convert_countries(application["destinations"]["data"]),
-        strings.APPLICATION_SUPPORTING_DOCUMENTATION: _get_supporting_documentation(
+        strings.applications.ApplicationSummaryPage.GOODS: _convert_goods_types(application["goods_types"]),
+        strings.applications.ApplicationSummaryPage.GOODS_LOCATIONS: _convert_goods_locations(
+            application["goods_locations"]
+        ),
+        strings.applications.ApplicationSummaryPage.COUNTRIES: _convert_countries(application["destinations"]["data"]),
+        strings.applications.ApplicationSummaryPage.SUPPORTING_DOCUMENTATION: _get_supporting_documentation(
             application["additional_documents"], application["id"]
         ),
     }
@@ -54,21 +62,27 @@ def _convert_open_application(application, editable=False):
 
 def _convert_hmrc_query(application, editable=False):
     return {
-        strings.APPLICATION_ON_BEHALF_OF: application["organisation"]["name"],
-        strings.APPLICATION_GOODS: _convert_goods_types(application["goods_types"]),
-        strings.APPLICATION_GOODS_LOCATIONS: _convert_goods_locations(application["goods_locations"]),
-        strings.APPLICATION_END_USER: convert_end_user(application["end_user"], application["id"], editable),
-        strings.APPLICATION_ULTIMATE_END_USERS: _convert_ultimate_end_users(
+        strings.applications.ApplicationSummaryPage.ON_BEHALF_OF: application["organisation"]["name"],
+        strings.applications.ApplicationSummaryPage.GOODS: _convert_goods_types(application["goods_types"]),
+        strings.applications.ApplicationSummaryPage.GOODS_LOCATIONS: _convert_goods_locations(
+            application["goods_locations"]
+        ),
+        strings.applications.ApplicationSummaryPage.END_USER: convert_end_user(
+            application["end_user"], application["id"], editable
+        ),
+        strings.applications.ApplicationSummaryPage.ULTIMATE_END_USERS: _convert_ultimate_end_users(
             application["ultimate_end_users"], application["id"], editable
         ),
-        strings.APPLICATION_THIRD_PARTIES: _convert_third_parties(
+        strings.applications.ApplicationSummaryPage.THIRD_PARTIES: _convert_third_parties(
             application["third_parties"], application["id"], editable
         ),
-        strings.APPLICATION_CONSIGNEE: convert_consignee(application["consignee"], application["id"], editable),
-        strings.APPLICATION_SUPPORTING_DOCUMENTATION: _get_supporting_documentation(
+        strings.applications.ApplicationSummaryPage.CONSIGNEE: convert_consignee(
+            application["consignee"], application["id"], editable
+        ),
+        strings.applications.ApplicationSummaryPage.SUPPORTING_DOCUMENTATION: _get_supporting_documentation(
             application["supporting_documentation"], application["id"]
         ),
-        strings.APPLICATION_OPTIONAL_NOTE: application["reasoning"],
+        strings.applications.ApplicationSummaryPage.OPTIONAL_NOTE: application["reasoning"],
     }
 
 

@@ -16,8 +16,8 @@
 				        <a href="{% url 'users:users' %}" class="lite-tabs__tab" id="tab-users">{% lcs "MANAGE_ORGANISATIONS_MEMBERS_TAB" %}</a>
                     {% endif %}
                 {% endif %}
-				<a href="{% url 'sites:sites' %}" class="lite-tabs__tab lite-tabs__tab--selected" id="tab-sites">{% lcs "MANAGE_ORGANISATIONS_SITES_TAB" %}</a>
-                {% if can_administer_roles %}<a href="{% url 'roles:roles' %}" class="lite-tabs__tab lite-tabs__tab" id="tab-roles">{% lcs "MANAGE_ORGANISATIONS_ROLES_TAB" %}</a>{% endif %}
+				<a href="{% url 'sites:sites' %}" class="lite-tabs__tab lite-tabs__tab--selected" id="tab-sites">{% lcs "sites.SitesPage.TAB" %}</a>
+                {% if can_administer_roles %}<a href="{% url 'roles:roles' %}" class="lite-tabs__tab lite-tabs__tab" id="tab-roles">{% lcs "roles.ManageRolesPage.TAB" %}</a>{% endif %}
 			</div>
 		</div>
 		<div class="lite-app-bar__controls">

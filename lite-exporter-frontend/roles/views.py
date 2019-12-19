@@ -6,7 +6,7 @@ from conf.constants import SUPER_USER_ROLE_ID, DEFAULT_USER_ROLE_ID, Permissions
 from core.services import get_organisation
 from lite_content.lite_exporter_frontend import strings
 from lite_forms.views import SingleFormView
-from roles.forms import add_role, edit_role
+from roles.forms import add_role
 from roles.services import get_roles, put_role, get_role, post_role, get_permissions
 from users.services import get_user
 
@@ -29,7 +29,7 @@ class Roles(TemplateView):
             sites = True
 
         context = {
-            "title": strings.MANAGE_ORGANISATIONS_ROLES_TAB + " - " + organisation["name"],
+            "title": strings.roles.ManageRolesPage.TAB + " - " + organisation["name"],
             "all_permissions": all_permissions,
             "roles": roles,
             "user_permissions": user_permissions,
@@ -44,7 +44,7 @@ class Roles(TemplateView):
 
 class AddRole(SingleFormView):
     def init(self, request, **kwargs):
-        self.form = add_role(request)
+        self.form = add_role(request, add=True)
         self.action = post_role
         self.success_url = reverse_lazy("roles:roles")
 
@@ -53,6 +53,6 @@ class EditRole(SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.data = get_role(request, self.object_pk)
-        self.form = edit_role(request)
+        self.form = add_role(request, add=False)
         self.action = put_role
         self.success_url = reverse_lazy("roles:roles")
