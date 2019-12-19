@@ -9,10 +9,10 @@ class GoodsList:
 
     class Count:
         ORGANISATION_ZERO = "Your organisation doesn't have any products."
-        FILTERED_ZERO = "There are no products based on filter"
         ORGANISATION_ONE = "Your organisation has 1 product"
-        FILTERED_ONE = "Displaying 1 product"
         ORGANISATION_MANY = "Your organisation has %s products"  # %s will add the count of goods
+        FILTERED_ZERO = "There are no products based on filter"
+        FILTERED_ONE = "Displaying 1 product"
         FILTERED_MANY = "Displaying %s products"  # %s will add the count of goods
 
     class Filter:
