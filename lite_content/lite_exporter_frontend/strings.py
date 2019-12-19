@@ -24,19 +24,6 @@ VIEW = "View"
 
 PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
 
-APPLICATION_GOODS_TITLE = "Products"
-APPLICATION_GOODS_ADD_NEW = "Add a new product to your application"
-APPLICATION_GOODS_ADD_BACK = "Back to products"
-APPLICATION_GOODS_ADD_APPLICATION_DETAILS = "Details for product on application"
-APPLICATION_GOODS_ADD_DOCUMENT_DESCRIPTION = (
-    "Documentation could be specifications, datasheets, sales brochures, drawings "
-    "or anything else that fully details what the product is and what it's designed to do."
-    "\n\nDo not attach a document that’s OFFICIAL-SENSITIVE or above. "
-    "\n\nThe file must be smaller than 100MB."
-)
-APPLICATION_GOODS_ADD_DOCUMENT_MISSING = "A document is required"
-APPLICATION_GOODS_ADD_PREEXISTING_TITLE = "Add a product from your database to your application"
-
 APPLICATION_GOODS_CONTROL_CODE_REQUIRED_DESCRIPTION = (
     "Products that aren't on the "
     + PERMISSION_FINDER_LINK

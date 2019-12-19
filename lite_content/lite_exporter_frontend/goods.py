@@ -146,3 +146,16 @@ class RespondToQueryForm:
         BACK_LINK = "Back to edit response"
         YES = "Yes, send the response"
         NO = "No, change my response"
+
+
+class CreateGoodOnApplicationForm:
+    TITLE = "Details for product on application"
+    DOCUMENT_MISSING = "A document is required"
+    BACK_LINK = "Back to products"
+    VALUE = "What's the value of your products?"
+    QUANTITY = "Quantity"
+    UNITS = "Unit of measurement"
+
+
+class AddPrexistingGoodToApplicationForm:
+    TITLE = "Add a product from your database to your application"
