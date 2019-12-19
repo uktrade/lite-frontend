@@ -33,5 +33,3 @@ EDIT_APPLICATION_DONE = "Done"
 
 # Constants
 PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
-
-DOCUMENT_DELETE_GENERIC_ERROR = "We had an issue deleting your files. Try again later."
