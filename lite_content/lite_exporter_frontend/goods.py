@@ -8,12 +8,12 @@ class GoodsList:
     CREATE_GOOD = "Add a product"
 
     class Count:
-        ORGANISATION_NO_GOODS = "Your organisation doesn't have any products."
-        FILTERED_NO_GOODS = "There are no products based on filter"
-        ORGANISATION_SINGULAR_GOOD = "Your organisation has 1 product"
-        FILTERED_SINGULAR_GOOD = "Displaying 1 product"
-        ORGANISATION_GOODS = "Your organisation has %s products"  # %s reference the count of goods
-        FILTERED_GOODS = "Displaying %s products"  # %s reference the count of goods
+        ORGANISATION_ZERO = "Your organisation doesn't have any products."
+        FILTERED_ZERO = "There are no products based on filter"
+        ORGANISATION_ONE = "Your organisation has 1 product"
+        FILTERED_ONE = "Displaying 1 product"
+        ORGANISATION_MANY = "Your organisation has %s products"  # %s will add the count of goods
+        FILTERED_MANY = "Displaying %s products"  # %s will add the count of goods
 
     class Filter:
         DESCRIPTION = "Description"
