@@ -24,19 +24,6 @@ VIEW = "View"
 
 PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
 
-APPLICATION_GOODS_CONTROL_CODE_REQUIRED_DESCRIPTION = (
-    "Products that aren't on the "
-    + PERMISSION_FINDER_LINK
-    + " may be affected by military end use controls, current trade sanctions and embargoes or weapons of mass destruction controls."
-    "If your products aren't subject to any controls, you'll get a no licence required (NLR) document from ECJU."
-)
-
-GOODS_CREATE_CONTROL_CODE_REQUIRED_DESC = "If you don't know, you can use the " + PERMISSION_FINDER_LINK
-GOODS_CREATE_CONTROL_CODE_NO = "No"
-GOODS_CREATE_CONTROL_CODE_YES = "Yes"
-GOODS_CREATE_CONTROL_CODE_UNSURE = "I don't know"
-GOODS_CREATE_TITLE = "Add a product"
-
 # Applications
 APPLICATION_REFERENCE_NAME = "Reference"
 APPLICATION_TYPE = "Licence type"
