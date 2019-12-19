@@ -25,19 +25,6 @@ VIEW = "View"
 
 PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
 
-# Roles
-APPLICATION_WHERE_ARE_YOUR_GOODS_LOCATED_TITLE = "Where are your products located?"
-APPLICATION_WHERE_ARE_YOUR_GOODS_LOCATED_DESCRIPTION = ""
-APPLICATION_ONE_OF_MY_REGISTERED_SITES = "At one of my organisation’s sites"
-APPLICATION_NOT_AT_MY_REGISTERED_SITES = "At a location that's not part of my organisation"
-
-APPLICATION_EXTERNAL_LOCATION_TITLE = "Do you want to add a new external location or use an existing one?"
-APPLICATION_EXTERNAL_LOCATION_NEW_LOCATION = "Add a new external location"
-APPLICATION_EXTERNAL_LOCATION_PREEXISTING_LOCATION = "Use an existing external location"
-
-SELECT_SITES_TITLE = "Select which sites your products are at"
-SELECT_SITES_BUTTON = "Select sites"
-
 USERS_LIST_PAGE_EDIT = "Edit"
 
 USER_PROFILE_PAGE_EDIT = "Edit"

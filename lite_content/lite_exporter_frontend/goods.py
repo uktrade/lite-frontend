@@ -164,3 +164,18 @@ class AddPrexistingGoodToApplicationForm:
 class ViewGoodOnApplicationPage:
     TITLE = "Products"
     ADD_NEW_BUTTON = "Add a new product to your application"
+
+
+class GoodsLocationForm:
+    WHERE_ARE_YOUR_GOODS_LOCATED_TITLE = "Where are your products located?"
+    WHERE_ARE_YOUR_GOODS_LOCATED_DESCRIPTION = ""
+    ONE_OF_MY_REGISTERED_SITES = "At one of my organisation’s sites"
+    NOT_AT_MY_REGISTERED_SITES = "At a location that's not part of my organisation"
+    EXTERNAL_LOCATION_TITLE = "Do you want to add a new external location or use an existing one?"
+    EXTERNAL_LOCATION_NEW_LOCATION = "Add a new external location"
+    EXTERNAL_LOCATION_PREEXISTING_LOCATION = "Use an existing external location"
+
+
+class GoodsLocationPage:
+    SELECT_SITES_TITLE = "Select which sites your products are at"
+    SELECT_SITES_BUTTON = "Select sites"
