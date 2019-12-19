@@ -80,6 +80,9 @@ class ApplicationSummaryPage:
     ON_BEHALF_OF = "On behalf of"
     OPTIONAL_NOTE = "Optional note"
 
+    class Buttons:
+        EDIT_APPLICATION_BUTTON = "Edit application"
+
 
 class ApplicationsSummaryPage:
     REFERENCE_NAME = "Reference"
@@ -126,3 +129,21 @@ class InitialApplicationQuestionsForms:
 class DestinationForm:
     TITLE = "Where are your products going?"
     DESCRIPTION = "Select all countries that apply."
+
+
+class EditStandardApplicationPage:
+    DRAFT_DELETE_LINK = "Delete draft"
+
+
+class EditOpenApplicationPage:
+    DRAFT_DELETE_LINK = "Delete draft"
+
+
+class DeleteApplicationPage:
+    BUTTON = "Delete draft"
+    TITLE = "Are you sure you want to delete this draft?"
+    BACK_TEXT = "Back to application"
+    YES_LABEL = "Yes"
+    NO_LABEL = "No"
+    SUBMIT_BUTTON = "Submit"
+    DELETE_ERROR = "Select a choice"

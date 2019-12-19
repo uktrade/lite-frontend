@@ -24,18 +24,6 @@ VIEW = "View"
 
 PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
 
-# Edit application
-APPLICATION_EDIT_APPLICATION_BUTTON = "Edit application"
-
-# Delete draft
-DRAFT_DELETE_LINK = "Delete draft"
-DRAFT_DELETE_TITLE = "Are you sure you want to delete this draft?"
-DRAFT_DELETE_BACK_TEXT = BACK_TO_APPLICATION
-DRAFT_DELETE_YES_LABEL = YES
-DRAFT_DELETE_NO_LABEL = NO
-DRAFT_DELETE_SUBMIT_BUTTON = SUBMIT
-DRAFT_DELETE_ERROR = "Select a choice"
-
 # Withdraw application
 APPLICATION_WITHDRAW_ACCESS_BUTTON = "Withdraw application"
 APPLICATION_WITHDRAW_TITLE = "Are you sure you want to withdraw this application?"
