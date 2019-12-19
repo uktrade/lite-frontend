@@ -119,7 +119,6 @@ APPLICATION_WITHDRAW_ERROR = "Select a choice"
 
 # Roles
 ROLES_LIST_PAGE_CREATE = "Add role"
-# Where are your goods located?
 APPLICATION_WHERE_ARE_YOUR_GOODS_LOCATED_TITLE = "Where are your products located?"
 APPLICATION_WHERE_ARE_YOUR_GOODS_LOCATED_DESCRIPTION = ""
 APPLICATION_ONE_OF_MY_REGISTERED_SITES = "At one of my organisation’s sites"
