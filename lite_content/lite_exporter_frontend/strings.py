@@ -1,9 +1,10 @@
 from conf.settings import env
-from lite_content.lite_exporter_frontend import applications, goods, roles
+from lite_content.lite_exporter_frontend import applications, goods, roles, users
 
 APPLICATIONS = applications
 GOODS = goods
 ROLES = roles
+USERS = users
 
 # Generic
 BACK_TO_APPLICATION = "Back to application"
@@ -25,19 +26,6 @@ VIEW = "View"
 
 PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
 
-USERS_LIST_PAGE_EDIT = "Edit"
-
-USER_PROFILE_PAGE_EDIT = "Edit"
-USER_PROFILE_BACK_TO_USERS = "Back to users"
-
-USER_ROLE_QUESTION = "What role should this user have?"
-
-USER_ADD_TITLE = "Add new user"
-USER_EMAIL_QUESTION = "Whats the user's email"
-USER_ADD_FORM_BACK_TO_USERS = "Back to users"
-USER_EDIT_TITLE = "Change role"
-USER_EDIT_FORM_BACK_TO_USER = "Back to user"
-USER_EDIT_FORM_SAVE = "Save"
 
 USER_EMAIL = "Email"
 USER_NAME = "Name"
