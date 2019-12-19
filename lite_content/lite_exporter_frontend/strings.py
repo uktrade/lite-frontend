@@ -24,17 +24,6 @@ VIEW = "View"
 
 PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
 
-APPLICATION_END_USER = "End user"
-APPLICATION_ULTIMATE_END_USERS = "Ultimate recipient"
-APPLICATION_CONSIGNEE = "Consignee"
-APPLICATION_THIRD_PARTIES = "Third parties"
-APPLICATION_GOODS_LOCATIONS = "Product locations"
-APPLICATION_SUPPORTING_DOCUMENTATION = "Supporting documentation"
-APPLICATION_GOODS = "Products"
-APPLICATION_COUNTRIES = "Countries"
-APPLICATION_ON_BEHALF_OF = "On behalf of"
-APPLICATION_OPTIONAL_NOTE = "Optional note"
-
 # Initial application questions
 WHICH_EXPORT_LICENCE_DO_YOU_WANT_TITLE = "Select the type of licence you need"
 WHICH_EXPORT_LICENCE_DO_YOU_WANT_DESCRIPTION = ""

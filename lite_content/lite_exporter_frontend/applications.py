@@ -69,6 +69,16 @@ class ApplicationSummaryPage:
     LAST_UPDATED_AT = "Last updated"
     CREATED_AT = "Created at"
     SUBMITTED_AT = "Submitted at"
+    END_USER = "End user"
+    ULTIMATE_END_USERS = "Ultimate recipient"
+    CONSIGNEE = "Consignee"
+    THIRD_PARTIES = "Third parties"
+    GOODS_LOCATIONS = "Product locations"
+    SUPPORTING_DOCUMENTATION = "Supporting documentation"
+    GOODS = "Products"
+    COUNTRIES = "Countries"
+    ON_BEHALF_OF = "On behalf of"
+    OPTIONAL_NOTE = "Optional note"
 
 
 class ApplicationsSummaryPage:
