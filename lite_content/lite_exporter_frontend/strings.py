@@ -26,11 +26,6 @@ VIEW = "View"
 
 PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
 
-USER_DEACTIVATE = "Deactivate user"
-USER_REACTIVATE = "Reactivate user"
-USER_NOT_ACTIVATED_YET = "This user has yet to sign in to their export control account."
-
-MANAGE_ORGANISATIONS_MEMBERS_TAB = "Members"
 MANAGE_ORGANISATIONS_SITES_TAB = "Sites"
 MANAGE_ORGANISATIONS_ROLES_TAB = "Roles"
 

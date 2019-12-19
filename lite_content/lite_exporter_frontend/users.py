@@ -7,9 +7,13 @@ class ProfilePage:
     USER_ROLE = "Role"
     USER_STATUS = "Status"
     USER_PENDING = "Pending"
+    USER_DEACTIVATE = "Deactivate user"
+    USER_REACTIVATE = "Reactivate user"
+    USER_NOT_ACTIVATED_YET = "This user has yet to sign in to their export control account."
 
 
 class UsersPage:
+    MANAGE_ORGANISATIONS_MEMBERS_TAB = "Members"
     USER_EMAIL = "Email"
     USER_NAME = "Name"
     USER_ROLE = "Role"
