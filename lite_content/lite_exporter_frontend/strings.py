@@ -1,7 +1,8 @@
 from conf.settings import env
-from lite_content.lite_exporter_frontend import applications, goods, roles, users, sites
+from lite_content.lite_exporter_frontend import applications, goods, roles, users, sites, core
 
 APPLICATIONS = applications
+CORE = core
 GOODS = goods
 ROLES = roles
 SITES = sites
@@ -27,13 +28,6 @@ VIEW = "View"
 
 # Constants
 PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
-
-
-HUB_MANAGE_MY_USERS = "Manage my users"
-HUB_MANAGE_MY_SITES = "Manage my sites"
-HUB_MANAGE_MY_ROLES = "Manage my roles"
-HUB_MANAGE_MY_ORGANISATION = "Manage my organisation"
-
 
 SUBMIT_APPLICATION = "Submit application"
 EDIT_APPLICATION_SUBMIT = "Submit application"
