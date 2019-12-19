@@ -41,8 +41,8 @@ SET_CASE_FLAGS = "Set case flags"
 EDIT_CASE_FLAGS = "Edit case flags"
 
 # Case
-CASE_GOODS = "Goods"
-CASE_GOODS_LOCATION = "Goods location"
+CASE_GOODS = "Products"
+CASE_GOODS_LOCATION = "Products location"
 CASE_GOODS_LOCATION_NAME = "Name"
 CASE_GOODS_LOCATION_ADDRESS = "Address"
 CASE_ENTITIES_INVOLVED = "Entities involved"
