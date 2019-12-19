@@ -59,3 +59,23 @@ class GeneratedDocuments:
         NAME_COLUMN = "Name"
         DATE_COLUMN = "Date"
         DOWNLOAD_LINK = "Download"
+
+
+class ApplicationSummaryPage:
+    REFERENCE_NAME = "Reference"
+    TYPE = "Licence type"
+    EXPORT_TYPE = "Export type"
+    STATUS = "Status"
+    LAST_UPDATED_AT = "Last updated"
+    CREATED_AT = "Created at"
+    SUBMITTED_AT = "Submitted at"
+
+
+class ApplicationsSummaryPage:
+    REFERENCE_NAME = "Reference"
+    TYPE = "Licence type"
+    EXPORT_TYPE = "Export type"
+    STATUS = "Status"
+    LAST_UPDATED_AT = "Last updated"
+    CREATED_AT = "Created at"
+    SUBMITTED_AT = "Submitted at"
