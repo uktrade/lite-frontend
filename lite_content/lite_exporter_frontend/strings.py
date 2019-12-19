@@ -1,8 +1,9 @@
 from conf.settings import env
-from lite_content.lite_exporter_frontend import applications, goods
+from lite_content.lite_exporter_frontend import applications, goods, roles
 
 APPLICATIONS = applications
 GOODS = goods
+ROLES = roles
 
 # Generic
 BACK_TO_APPLICATION = "Back to application"
@@ -25,7 +26,6 @@ VIEW = "View"
 PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
 
 # Roles
-ROLES_LIST_PAGE_CREATE = "Add role"
 APPLICATION_WHERE_ARE_YOUR_GOODS_LOCATED_TITLE = "Where are your products located?"
 APPLICATION_WHERE_ARE_YOUR_GOODS_LOCATED_DESCRIPTION = ""
 APPLICATION_ONE_OF_MY_REGISTERED_SITES = "At one of my organisation’s sites"
