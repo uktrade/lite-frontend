@@ -13,14 +13,14 @@
         {% hidden_field 'layout' layout.id %}
         <div class="lite-app-bar">
             <div class="lite-app-bar__content">
-                <h2 class="govuk-heading-l">{% block title %}{% get_string 'letter_templates.order_paragraph.title' %}{% endblock %}</h2>
+                <h2 class="govuk-heading-l">{% block title %}{% lcs 'LetterTemplates.OrderParagraph.TITLE' %}{% endblock %}</h2>
                 <h4 class="govuk-heading-s govuk-hint">
-                    <noscript>{% get_string 'letter_templates.order_paragraph.no_js_hint' %}</noscript>
-                    <span class="lite-js-only">{% get_string 'letter_templates.order_paragraph.js_hint' %}</span>
+                    <noscript>{% lcs 'LetterTemplates.OrderParagraph.NO_JS_HINT' %}</noscript>
+                    <span class="lite-js-only">{% lcs 'LetterTemplates.OrderParagraph.JS_HINT' %}</span>
                 </h4>
             </div>
             <div class="lite-app-bar__controls">
-                <button class="govuk-button" id="button-preview" type="submit" name="action" value="preview">{% get_string 'letter_templates.order_paragraph.preview_button' %}</button>
+                <button class="govuk-button" id="button-preview" type="submit" name="action" value="preview">{% lcs 'LetterTemplates.OrderParagraph.PREVIEW_BUTTON' %}</button>
             </div>
         </div>
 
@@ -33,7 +33,7 @@
 								{% hidden_field 'letter_paragraphs' letter_paragraph.id %}
 								<p class="app-letter-generator__picklist-item-text">{{ letter_paragraph.name }}</p>
 								<button type="submit" name="action" value="delete.{{ letter_paragraph.id }}">
-									<span class="govuk-visually-hidden">{% get_string 'letter_templates.order_paragraph.remove_button' %}</span>
+									<span class="govuk-visually-hidden">{% lcs 'LetterTemplates.OrderParagraph.REMOVE_BUTTON' %}</span>
 									✕
 								</button>
 							</div>

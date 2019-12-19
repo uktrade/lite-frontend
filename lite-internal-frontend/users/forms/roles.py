@@ -1,15 +1,15 @@
+from lite_content.lite_internal_frontend import strings
 from django.http import HttpRequest
 from django.urls import reverse_lazy
 from lite_forms.components import Form, TextInput, Checkboxes, BackLink
 
-from core.builtins.custom_tags import get_string
 from users.services import get_permissions
 
 
 def add_role(request: HttpRequest):
     return Form(
-        title=get_string("roles.add.title"),
-        description=get_string("roles.add.description"),
+        title=strings.Roles.Add.TITLE,
+        description=strings.Roles.Add.DESCRIPTION,
         questions=[
             TextInput(title="What do you want to call the role?", name="name"),
             Checkboxes(
@@ -26,8 +26,8 @@ def add_role(request: HttpRequest):
 
 def edit_role(request: HttpRequest):
     return Form(
-        title=get_string("roles.edit.title"),
-        description=get_string("roles.edit.description"),
+        title=strings.Roles.Edit.TITLE,
+        description=strings.Roles.Edit.DESCRIPTION,
         questions=[
             TextInput(title="What do you want to call the role?", name="name"),
             Checkboxes(

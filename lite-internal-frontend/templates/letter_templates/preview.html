@@ -6,7 +6,7 @@
 	<div class="app-letter-preview__container">
 		<div class="lite-app-bar">
 			<div class="lite-app-bar__content">
-				<h2 class="govuk-heading-l">{% block title %}{% get_string 'letter_templates.preview.title' %}{% endblock %}</h2>
+				<h2 class="govuk-heading-l">{% block title %}{% lcs 'LetterTemplates.Preview.TITLE' %}{% endblock %}</h2>
 			</div>
 			<div class="lite-app-bar__controls">
 				<form action="{% url 'letter_templates:create' %}" method="post">
@@ -19,7 +19,7 @@
 					{% for letter_paragraph in letter_paragraphs %}
 						{% hidden_field 'letter_paragraphs' letter_paragraph %}
 					{% endfor %}
-					<button class="govuk-button" type="submit" name="action" value="print">{% get_string 'letter_templates.preview.save_button' %}</button>
+					<button class="govuk-button" type="submit" name="action" value="print">{% lcs 'LetterTemplates.Preview.SAVE_BUTTON' %}</button>
 				</form>
 			</div>
 		</div>

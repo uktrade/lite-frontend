@@ -8,14 +8,14 @@
 
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
-			<h2 class="govuk-heading-l">{% get_string 'flags.title' %}</h2>
+			<h2 class="govuk-heading-l">{% lcs 'Flags.TITLE' %}</h2>
 			<p class="govuk-caption-m">
-				{% get_string 'flags.description' %}
+				{% lcs 'Flags.DESCRIPTION' %}
 			</p>
 		</div>
 		<div class="lite-app-bar__controls">
 			<a href="{% url 'flags:add' %}" class="govuk-button" draggable="false" role="button" id="add-a-flag-button">
-				{% get_string 'flags.create' %}
+				{% lcs 'Flags.CREATE' %}
 			</a>
 		</div>
 	</div>

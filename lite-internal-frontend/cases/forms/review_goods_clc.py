@@ -1,14 +1,14 @@
+from lite_content.lite_internal_frontend import strings
 from lite_forms.common import control_list_entry_question
 from lite_forms.components import Form, BackLink, RadioButtons, Option, TextArea
 
 from core.services import get_control_list_entries
 from picklists.services import get_picklists
-from core.builtins.custom_tags import get_string
 
 
 def review_goods_clc_query_form(request, back_url):
     return Form(
-        title=get_string("cases.review_goods_form.heading"),
+        title=strings.Cases.ReviewGoodsForm.HEADING,
         questions=[
             RadioButtons(
                 title="Is this good controlled?",
@@ -31,6 +31,6 @@ def review_goods_clc_query_form(request, back_url):
             ),
             TextArea(title="Good's comment (optional)", name="comment", extras={"max_length": 500,}),
         ],
-        default_button_name=get_string("cases.review_goods_form.confirm_button"),
-        back_link=BackLink(get_string("cases.review_goods_form.back_link"), back_url),
+        default_button_name=strings.Cases.ReviewGoodsForm.CONFIRM_BUTTON,
+        back_link=BackLink(strings.Cases.ReviewGoodsForm.BACK_LINK, back_url),
     )

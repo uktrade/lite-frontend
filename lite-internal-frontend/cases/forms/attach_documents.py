@@ -1,20 +1,19 @@
+from lite_content.lite_internal_frontend import strings
 from lite_forms.components import Form, TextArea, FileUpload, BackLink
-
-from core.builtins.custom_tags import get_string
 
 
 def attach_documents_form(case_url):
     return Form(
-        get_string("cases.manage.documents.attach_documents.title"),
-        get_string("cases.manage.documents.attach_documents.description"),
+        strings.Cases.Manage.Documents.AttachDocuments.TITLE,
+        strings.Cases.Manage.Documents.AttachDocuments.DESCRIPTION,
         [
             FileUpload("documents"),
             TextArea(
-                title=get_string("cases.manage.documents.attach_documents.description_field_title"),
+                title=strings.Cases.Manage.Documents.AttachDocuments.DESCRIPTION_FIELD_TITLE,
                 optional=True,
                 name="description",
                 extras={"max_length": 280,},
             ),
         ],
-        back_link=BackLink(get_string("cases.manage.documents.attach_documents.back_to_case_documents"), case_url),
+        back_link=BackLink(strings.Cases.Manage.Documents.AttachDocuments.BACK_TO_CASE_DOCUMENTS, case_url),
     )

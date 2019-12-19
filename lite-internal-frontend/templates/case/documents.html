@@ -23,7 +23,7 @@
 	</div>
 
 	{% if case_documents %}
-		<p class="govuk-caption-m">{% get_string 'cases.manage.documents.description' %}</p>
+		<p class="govuk-caption-m">{% lcs 'Cases.Manage.Documents.DESCRIPTION' %}</p>
 		<table class="govuk-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
@@ -68,7 +68,7 @@
 			</tbody>
 		</table>
 	{% else %}
-		<p class="govuk-caption-l">{% get_string 'cases.manage.documents.case_has_no_documents' %}</p>
+		<p class="govuk-caption-l">{% lcs 'Cases.Manage.Documents.CASE_HAS_NO_DOCUMENTS' %}</p>
 	{% endif %}
 
 {% endblock %}

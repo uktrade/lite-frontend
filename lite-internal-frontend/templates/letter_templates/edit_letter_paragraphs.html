@@ -10,12 +10,12 @@
 
 	<legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
         <h1 class="govuk-fieldset__heading">
-            {% block title %}{% get_string 'letter_templates.edit_paragraph.title' %}{% endblock %}
+            {% block title %}{% lcs 'LetterTemplates.EditParagraph.TITLE' %}{% endblock %}
         </h1>
     </legend>
 
 	<span class="govuk-hint" style="margin: 30px 0;">
-		{% get_string 'letter_templates.edit_paragraph.hint' %}
+		{% lcs 'LetterTemplates.EditParagraph.HINT' %}
 	</span>
 
 	<form method="post">
@@ -28,14 +28,14 @@
 							{% hidden_field 'letter_paragraphs' letter_paragraph.id %}
 							<p class="app-letter-generator__picklist-item-text">{{ letter_paragraph.name }}</p>
 							<button type="submit" name="action" value="delete.{{ letter_paragraph.id }}">
-								<span class="govuk-visually-hidden">{% get_string 'letter_templates.edit_paragraph.remove_button' %}</span>
+								<span class="govuk-visually-hidden">{% lcs 'LetterTemplates.EditParagraph.REMOVE_BUTTON' %}</span>
 								✕
 							</button>
 						</div>
 					{% endfor %}
 				</div>
 				<br>
-				<button class="lite-button--link" type="submit" name="action" id="add_paragraph" value="add_letter_paragraph">{% get_string 'letter_templates.edit_paragraph.add_link' %}</button>
+				<button class="lite-button--link" type="submit" name="action" id="add_paragraph" value="add_letter_paragraph">{% lcs 'LetterTemplates.EditParagraph.ADD_LINK' %}</button>
 				<br>
 				<br>
 				<br>
@@ -46,7 +46,7 @@
 				{% endfor %}
 			</div>
 		</div>
-		<button type="submit" name="action" value="submit" class="govuk-button">{% get_string 'letter_templates.edit_paragraph.save_button' %}</button>
+		<button type="submit" name="action" value="submit" class="govuk-button">{% lcs 'LetterTemplates.EditParagraph.SAVE_BUTTON' %}</button>
 	</form>
 
 {% endblock %}

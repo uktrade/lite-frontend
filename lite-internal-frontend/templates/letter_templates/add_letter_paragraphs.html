@@ -4,11 +4,11 @@
 
 	<legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
         <h1 class="govuk-fieldset__heading">
-            {% block title %}{% get_string 'letter_templates.add_paragraph.title' %}{% endblock %}
+            {% block title %}{% lcs 'LetterTemplates.AddParagraph.TITLE' %}{% endblock %}
         </h1>
     </legend>
     <span class="govuk-hint" style="margin: 30px 0;">
-        {% get_string 'letter_templates.add_paragraph.hint' %}
+        {% lcs 'LetterTemplates.AddParagraph.HINT' %}
     </span>
 
     {% if letter_paragraphs %}
@@ -39,7 +39,7 @@
             </div>
 
             <button class="govuk-button" type="submit" data-module="govuk-button" name="action" value="return_to_preview">
-                {% get_string 'letter_templates.add_paragraph.add_button' %}
+                {% lcs 'LetterTemplates.AddParagraph.ADD_BUTTON' %}
             </button>
         </form>
     {% else %}

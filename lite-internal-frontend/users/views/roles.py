@@ -1,3 +1,4 @@
+from lite_content.lite_internal_frontend import strings
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import TemplateView
@@ -7,7 +8,6 @@ from core.services import get_user_permissions
 from lite_forms.generators import form_page
 from lite_forms.submitters import submit_single_form
 
-from core.builtins.custom_tags import get_string
 from users.forms.roles import add_role, edit_role
 from users.services import get_roles, get_permissions, get_role, put_role, post_role, get_gov_user
 
@@ -22,7 +22,7 @@ class Roles(TemplateView):
         context = {
             "all_permissions": all_permissions,
             "roles": roles["roles"],
-            "title": get_string("roles.title"),
+            "title": strings.Roles.TITLE,
             "user_permissions": permissions,
             "super_user_role_id": SUPER_USER_ROLE_ID,
             "user_role_id": user["user"]["role"]["id"],

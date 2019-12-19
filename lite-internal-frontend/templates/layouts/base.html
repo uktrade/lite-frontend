@@ -4,7 +4,7 @@
 
 <head>
 	<meta charset="utf-8" />
-	<title>{% block title %}{{ title }}{% endblock %} - {% get_string 'common.service_name' %}</title>
+	<title>{% block title %}{{ title }}{% endblock %} - {% lcs 'Common.SERVICE_NAME' %}</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 	<meta name="theme-color" content="#0b0c0c" />
 
@@ -53,7 +53,7 @@
 
 			<div class="govuk-header__logo">
 				<a href="/" class="govuk-header__link govuk-header__link--homepage">
-					{% get_string 'common.service_name' %}
+					{% lcs 'Common.SERVICE_NAME' %}
 				</a>
 			</div>
 

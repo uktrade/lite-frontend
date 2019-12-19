@@ -1,3 +1,4 @@
+from lite_content.lite_internal_frontend import strings
 from django.http import StreamingHttpResponse, Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -26,7 +27,6 @@ from cases.services import post_case_documents, get_case_documents, get_document
 from conf import settings
 from conf.constants import DEFAULT_QUEUE_ID, GENERATED_DOCUMENT
 from conf.settings import AWS_STORAGE_BUCKET_NAME
-from core.builtins.custom_tags import get_string
 from core.helpers import convert_dict_to_query_params
 from core.services import get_user_permissions, get_statuses, get_user_case_notification, get_status_properties
 from queues.services import get_cases_search_data
@@ -164,7 +164,7 @@ class ViewAdvice(TemplateView):
             "title": case.get("application").get("name"),
             "activity": activity.get("activity"),
             "permissions": permissions,
-            "edit_case_flags": get_string("cases.case.edit_case_flags"),
+            "edit_case_flags": strings.Cases.Case.EDIT_CASE_FLAGS,
         }
         return render(request, "case/user-advice-view.html", context)
 
@@ -260,7 +260,7 @@ class Documents(TemplateView):
         case_documents, _ = get_case_documents(request, case_id)
 
         context = {
-            "title": get_string("cases.manage.documents.title"),
+            "title": strings.Cases.Manage.Documents.TITLE,
             "case": case,
             "case_documents": case_documents["documents"],
             "generated_document_key": GENERATED_DOCUMENT,

@@ -1,17 +1,9 @@
+from lite_content.lite_internal_frontend import strings
 from django.urls import reverse_lazy
-from lite_forms.components import (
-    TextInput,
-    TextArea,
-    BackLink,
-    Form,
-    Button,
-    MarkdownArea,
-    HiddenField,
-)
+from lite_forms.components import TextInput, TextArea, Form, Button, MarkdownArea, HiddenField, BackLink
 from lite_forms.helpers import conditional
 from lite_forms.styles import ButtonStyle
 
-from core.builtins.custom_tags import get_string
 from letter_templates.context_variables import get_sample_context_variables
 
 _name = TextInput(title="Name", name="name")
@@ -27,7 +19,7 @@ def add_picklist_item_form(request):
     picklist_type = request.GET.get("type")
 
     return Form(
-        title=get_string(f"picklist.create.{picklist_type}"),
+        title=getattr(strings.Picklist.Create, picklist_type.upper()),
         questions=[
             _name,
             HiddenField("type", picklist_type),

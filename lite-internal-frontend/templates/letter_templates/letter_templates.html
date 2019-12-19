@@ -12,7 +12,7 @@
 		</div>
 		<div class="lite-app-bar__controls">
 			<a href="{% url 'letter_templates:add' %}" class="govuk-button" draggable="false" role="button" id="button-create-a-template">
-				{% get_string 'letter_templates.letter_templates.create_button' %}
+				{% lcs 'LetterTemplates.LetterTemplates.CREATE_BUTTON' %}
 			</a>
 		</div>
 	</div>
@@ -21,10 +21,10 @@
 		<table class="govuk-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
-					<th class="govuk-table__header" scope="col">{% get_string 'letter_templates.letter_templates.name_column_title' %}</th>
-					<th class="govuk-table__header" scope="col">{% get_string 'letter_templates.letter_templates.layout_column_title' %}</th>
-					<th class="govuk-table__header" scope="col">{% get_string 'letter_templates.letter_templates.restricted_column_title' %}</th>
-					<th class="govuk-table__header" scope="col">{% get_string 'letter_templates.letter_templates.updated_column_title' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'LetterTemplates.LetterTemplates.NAME_COLUMN_TITLE' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'LetterTemplates.LetterTemplates.LAYOUT_COLUMN_TITLE' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'LetterTemplates.LetterTemplates.RESTRICTED_COLUMN_TITLE' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'LetterTemplates.LetterTemplates.UPDATED_COLUMN_TITLE' %}</th>
 				</tr>
 			</thead>
 			<tbody class="govuk-table__body">

@@ -37,7 +37,7 @@
                 <td class="govuk-table__cell">
                 {% if end_user.document.safe == True %}
                     <a class="govuk-link" id="end_user_document" href="{% url 'cases:document' case.id end_user.document.id %}">
-						{% get_string 'cases.manage.documents.download_document' %}
+						{% lcs 'Cases.Manage.Documents.DOWNLOAD_DOCUMENT' %}
                     </a>
                 {% endif %}
                 </td>
@@ -93,7 +93,7 @@
                     <td class="govuk-table__cell">
                     {% if consignee.document.safe == True %}
                         <a class="govuk-link" id="consignee_document" href="{% url 'cases:document' case.id consignee.document.id %}">
-                            {% get_string 'cases.manage.documents.download_document' %}
+                            {% lcs 'Cases.Manage.Documents.DOWNLOAD_DOCUMENT' %}
                         </a>
                     {% endif %}
                     </td>
@@ -152,7 +152,7 @@
                         <td class="govuk-table__cell">
                         {% if ultimate_end_user.document.safe == True %}
                             <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' case.id ultimate_end_user.document.id %}">
-                                <span class="govuk-visually-hidden">{% get_string 'cases.manage.documents.download_document' %}</span>
+                                <span class="govuk-visually-hidden">{% lcs 'Cases.Manage.Documents.DOWNLOAD_DOCUMENT' %}</span>
                                 {{ ultimate_end_user.document.name }}<br>
                             </a>
                         {% endif %}
@@ -212,7 +212,7 @@
                         <td class="govuk-table__cell">
                         {% if third_party.document.safe == True %}
                             <a class="govuk-link govuk-link--no-visited-state" id="third_party_document" href="{% url 'cases:document' case.id third_party.document.id %}">
-                                <span class="govuk-visually-hidden">{% get_string 'cases.manage.documents.download_document' %}</span>
+                                <span class="govuk-visually-hidden">{% lcs 'Cases.Manage.Documents.DOWNLOAD_DOCUMENT' %}</span>
                                 {{ third_party.document.name }}<br>
                             </a>
                         {% endif %}

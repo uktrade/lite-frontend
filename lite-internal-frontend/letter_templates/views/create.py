@@ -1,10 +1,10 @@
+from lite_content.lite_internal_frontend import strings
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.views.generic import TemplateView
 from lite_forms.generators import form_page, error_page
 from lite_forms.submitters import submit_paged_form
 
-from core.builtins.custom_tags import get_string
 from letter_templates.forms import add_letter_template
 from letter_templates.helpers import get_template_content
 from letter_templates.services import post_letter_template
@@ -37,7 +37,7 @@ class Create(TemplateView):
         response, status_code = post_letter_template(request, json)
 
         if status_code == 201:
-            messages.success(request, get_string("letter_templates.letter_templates.successfully_created_banner"))
+            messages.success(request, strings.LetterTemplates.LetterTemplates.SUCCESSFULLY_CREATED_BANNER)
 
         else:
             error_messages = []

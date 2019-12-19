@@ -64,9 +64,9 @@
 									<span class="govuk-visually-hidden">Download</span> {{ document.name }}
 								</a>
 							{% elif document.safe == False %}
-								{% get_string 'cases.manage.documents.virus_infected' %} {{ document.name }}
+								{% lcs 'Cases.Manage.Documents.VIRUS_INFECTED' %} {{ document.name }}
 							{% else %}
-								{% get_string 'cases.manage.documents.processing' %} {{ document.name }}
+								{% lcs 'Cases.Manage.Documents.PROCESSING' %} {{ document.name }}
 							{% endif %}
 						</a>
 					</div>

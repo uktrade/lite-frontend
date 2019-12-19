@@ -8,7 +8,7 @@
 		<div class="lite-app-bar__content">
 			<h2 class="govuk-heading-l">{{ title }}</h2>
 			<p class="govuk-caption-m">
-				{% get_string 'users.description' %}
+				{% lcs 'Users.DESCRIPTION' %}
 			</p>
 		</div>
 		<div class="lite-app-bar__controls">
@@ -16,7 +16,7 @@
 				Manage roles
 			</a>
 			<a id="button-invite-user" href="{% url 'users:add' %}" class="govuk-button" draggable="false" role="button">
-				{% get_string 'users.invite' %}
+				{% lcs 'Users.INVITE' %}
 			</a>
 		</div>
 	</div>

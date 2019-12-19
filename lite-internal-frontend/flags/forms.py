@@ -1,7 +1,7 @@
+from lite_content.lite_internal_frontend import strings
 from django.urls import reverse_lazy
 from lite_forms.components import TextInput, Select, Option, BackLink, Form
 
-from core.builtins.custom_tags import get_string
 
 _name = TextInput(title="Name", name="name")
 
@@ -21,7 +21,7 @@ _back_link = BackLink("Back to Flags", reverse_lazy("flags:flags"))
 
 def add_flag_form():
     return Form(
-        title=get_string("flags.create"), questions=[_name, _level,], back_link=_back_link, default_button_name="Create"
+        title=strings.Flags.CREATE, questions=[_name, _level,], back_link=_back_link, default_button_name="Create"
     )
 
 

@@ -17,7 +17,7 @@
 					<option value="{{ queue.id }}" {% if queue.id == data.results.queue.id %}selected{% endif %}>{{ queue.name }}</option>
 				{% endfor %}
 			</select>
-			<button type="submit" class="govuk-button">{% get_string 'cases.go_to_queue' %}</button>
+			<button type="submit" class="govuk-button">{% lcs 'Cases.GO_TO_QUEUE' %}</button>
 		</form>
 	    <a id="queue-title" href="#" class="govuk-heading-l app-dropdown__heading" onclick="toggleDropdown()">
 	            {{ data.results.queue.name }}
@@ -230,7 +230,7 @@
 	        </div>
 	    {% endif %}
 		{% else %}
-			{% get_string 'cases.no_cases' as no_cases_text %}
+			{% lcs 'Cases.NO_CASES' as no_cases_text %}
 			{% include "includes/information-text.html" with text=no_cases_text %}
 			<br><br>
 			{% if params.case_type or params.status %}

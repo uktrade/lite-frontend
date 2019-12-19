@@ -1,3 +1,4 @@
+from lite_content.lite_internal_frontend import strings
 from django.urls import reverse_lazy
 from lite_forms.components import (
     Form,
@@ -9,7 +10,6 @@ from lite_forms.components import (
     RadioButtonsImage,
 )
 
-from core.builtins.custom_tags import get_string
 from letter_templates.services import get_letter_layouts
 
 
@@ -30,17 +30,17 @@ def add_letter_template():
     return FormGroup(
         forms=[
             Form(
-                title=get_string("letter_templates.add_letter_template.name.title"),
-                description=get_string("letter_templates.add_letter_template.name.hint"),
+                title=strings.LetterTemplates.AddLetterTemplate.Name.TITLE,
+                description=strings.LetterTemplates.AddLetterTemplate.Name.HINT,
                 questions=[TextInput(name="name")],
                 back_link=BackLink(
-                    get_string("letter_templates.add_letter_template.name.back_link"),
+                    strings.LetterTemplates.AddLetterTemplate.Name.BACK_LINK,
                     reverse_lazy("letter_templates:letter_templates"),
                 ),
-                default_button_name=get_string("letter_templates.add_letter_template.name.continue_button"),
+                default_button_name=strings.LetterTemplates.AddLetterTemplate.Name.CONTINUE_BUTTON,
             ),
             Form(
-                title=get_string("letter_templates.add_letter_template.case_types.title"),
+                title=strings.LetterTemplates.AddLetterTemplate.CaseTypes.TITLE,
                 questions=[
                     Checkboxes(
                         name="case_types",
@@ -51,12 +51,12 @@ def add_letter_template():
                         ],
                     )
                 ],
-                default_button_name=get_string("letter_templates.add_letter_template.case_types.continue_button"),
+                default_button_name=strings.LetterTemplates.AddLetterTemplate.CaseTypes.CONTINUE_BUTTON,
             ),
             Form(
-                title=get_string("letter_templates.add_letter_template.layout.title"),
+                title=strings.LetterTemplates.AddLetterTemplate.Layout.TITLE,
                 questions=[RadioButtonsImage(name="layout", options=_letter_layout_options(),)],
-                default_button_name=get_string("letter_templates.add_letter_template.layout.continue_button"),
+                default_button_name=strings.LetterTemplates.AddLetterTemplate.Layout.CONTINUE_BUTTON,
             ),
         ]
     )
@@ -64,15 +64,15 @@ def add_letter_template():
 
 def edit_letter_template(letter_template):
     return Form(
-        title=get_string("letter_templates.edit_letter_template.title") % letter_template["name"],
+        title=strings.LetterTemplates.EditLetterTemplate.TITLE % letter_template["name"],
         questions=[
             TextInput(
-                title=get_string("letter_templates.edit_letter_template.name.title"),
-                description=get_string("letter_templates.edit_letter_template.name.hint"),
+                title=strings.LetterTemplates.EditLetterTemplate.Name.TITLE,
+                description=strings.LetterTemplates.EditLetterTemplate.Name.HINT,
                 name="name",
             ),
             Checkboxes(
-                title=get_string("letter_templates.edit_letter_template.case_types.title"),
+                title=strings.LetterTemplates.EditLetterTemplate.CaseTypes.TITLE,
                 name="case_types",
                 options=[
                     Option("application", "Application"),
@@ -81,7 +81,7 @@ def edit_letter_template(letter_template):
                 ],
             ),
             RadioButtonsImage(
-                title=get_string("letter_templates.edit_letter_template.layout.title"),
+                title=strings.LetterTemplates.EditLetterTemplate.Layout.TITLE,
                 name="layout",
                 options=_letter_layout_options(),
             ),
@@ -90,5 +90,5 @@ def edit_letter_template(letter_template):
             "Back to " + letter_template["name"],
             reverse_lazy("letter_templates:letter_template", kwargs={"pk": letter_template["id"]}),
         ),
-        default_button_name=get_string("letter_templates.edit_letter_template.button_name"),
+        default_button_name=strings.LetterTemplates.EditLetterTemplate.BUTTON_NAME,
     )

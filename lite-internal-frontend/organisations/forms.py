@@ -13,7 +13,6 @@ from lite_forms.components import (
 from lite_forms.helpers import conditional
 from lite_forms.styles import HeadingStyle
 
-from core.builtins.custom_tags import get_string
 from core.services import get_countries
 
 
@@ -21,7 +20,7 @@ def register_business_forms(individual=False, name=""):
     return FormGroup(
         [
             Form(
-                title=get_string("register_business.commercial_or_private_individual"),
+                title=strings.RegisterBusiness.COMMERCIAL_OR_PRIVATE_INDIVIDUAL,
                 questions=[
                     RadioButtons(
                         name="type",
@@ -36,14 +35,14 @@ def register_business_forms(individual=False, name=""):
             conditional(
                 individual,
                 Form(
-                    title=get_string("register_business.register_individual_title"),
+                    title=strings.RegisterBusiness.REGISTER_INDIVIDUAL_TITLE,
                     questions=[
                         TextInput(title=strings.REGISTER_BUSINESS_FIRST_AND_LAST_NAME, name="name"),
-                        TextInput(title=get_string("register_business.email"), name="user.email"),
-                        TextInput(title=get_string("register_business.eori_number"), name="eori_number"),
+                        TextInput(title=strings.RegisterBusiness.EMAIL, name="user.email"),
+                        TextInput(title=strings.RegisterBusiness.EORI_NUMBER, name="eori_number"),
                         TextInput(
-                            title=get_string("register_business.uk_vat_number.title"),
-                            description=get_string("register_business.uk_vat_number.description"),
+                            title=strings.RegisterBusiness.UkVatNumber.TITLE,
+                            description=strings.RegisterBusiness.UkVatNumber.DESCRIPTION,
                             optional=True,
                             name="vat_number",
                         ),
@@ -51,23 +50,23 @@ def register_business_forms(individual=False, name=""):
                     default_button_name=strings.CONTINUE,
                 ),
                 Form(
-                    title=get_string("register_business.register_commercial_title"),
+                    title=strings.RegisterBusiness.REGISTER_COMMERCIAL_TITLE,
                     questions=[
-                        TextInput(title=get_string("register_business.name"), name="name"),
-                        TextInput(title=get_string("register_business.eori_number"), name="eori_number"),
+                        TextInput(title=strings.RegisterBusiness.NAME, name="name"),
+                        TextInput(title=strings.RegisterBusiness.EORI_NUMBER, name="eori_number"),
                         TextInput(
-                            title=get_string("register_business.sic_number"),
+                            title=strings.RegisterBusiness.SIC_NUMBER,
                             description="Classifies industries by a four-digit code.",
                             name="sic_number",
                         ),
                         TextInput(
-                            title=get_string("register_business.uk_vat_number.title"),
-                            description=get_string("register_business.uk_vat_number.description"),
+                            title=strings.RegisterBusiness.UkVatNumber.TITLE,
+                            description=strings.RegisterBusiness.UkVatNumber.DESCRIPTION,
                             name="vat_number",
                         ),
                         TextInput(
-                            title=get_string("register_business.crn"),
-                            description=get_string("register_business.crn_description"),
+                            title=strings.RegisterBusiness.CRN,
+                            description=strings.RegisterBusiness.CRN_DESCRIPTION,
                             name="registration_number",
                         ),
                     ],
@@ -75,10 +74,10 @@ def register_business_forms(individual=False, name=""):
                 ),
             ),
             Form(
-                title=get_string("register_business.create_default_site"),
+                title=strings.RegisterBusiness.CREATE_DEFAULT_SITE,
                 questions=[
-                    TextInput(title=get_string("register_business.name_of_site"), name="site.name"),
-                    Heading(get_string("register_business.where_is_the_exporter_based"), HeadingStyle.M),
+                    TextInput(title=strings.RegisterBusiness.NAME_OF_SITE, name="site.name"),
+                    Heading(strings.RegisterBusiness.WHERE_IS_THE_EXPORTER_BASED, HeadingStyle.M),
                     *address_questions(get_countries(None, True), "site.address."),
                 ],
                 default_button_name=strings.CONTINUE,
@@ -87,9 +86,9 @@ def register_business_forms(individual=False, name=""):
                 not individual,
                 Form(
                     title="Create an admin user for " + name,
-                    questions=[TextInput(title=get_string("register_business.email"), name="user.email"),],
+                    questions=[TextInput(title=strings.RegisterBusiness.EMAIL, name="user.email"),],
                     default_button_name="Submit",
-                    helpers=[HelpSection("Help", get_string("register_business.default_user"))],
+                    helpers=[HelpSection("Help", strings.RegisterBusiness.DEFAULT_USER)],
                 ),
             ),
         ],
@@ -105,7 +104,7 @@ def register_hmrc_organisation_forms(name=""):
                 questions=[
                     HiddenField(name="type", value="hmrc"),
                     TextInput(title="Name of HMRC organisation", name="name"),
-                    TextInput(title=get_string("register_business.name_of_site"), name="site.name"),
+                    TextInput(title=strings.RegisterBusiness.NAME_OF_SITE, name="site.name"),
                     Heading("Where are they based?", HeadingStyle.M),
                     *address_questions(get_countries(None, True), "site.address."),
                 ],
@@ -113,9 +112,9 @@ def register_hmrc_organisation_forms(name=""):
             ),
             Form(
                 title="Create an admin for " + name,
-                questions=[TextInput(title=get_string("register_business.email"), name="user.email"),],
+                questions=[TextInput(title=strings.RegisterBusiness.EMAIL, name="user.email"),],
                 default_button_name="Submit",
-                helpers=[HelpSection("Help", get_string("register_business.default_user"))],
+                helpers=[HelpSection("Help", strings.RegisterBusiness.DEFAULT_USER)],
             ),
         ],
         show_progress_indicators=True,

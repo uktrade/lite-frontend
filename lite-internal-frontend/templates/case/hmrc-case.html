@@ -89,7 +89,7 @@
 <form action="{% url 'cases:assign_flags' case.id %}" method="get">
     <input type="hidden" name="level" value="goods"/>
     <button id="button-edit-goods-flags" value="goods" class="govuk-button" data-module="govuk-button">
-        {% get_string 'cases.case.edit_goods_flags' %}
+        {% lcs 'Cases.Case.EDIT_GOODS_FLAGS' %}
     </button>
     <table class="govuk-table">
         <thead class="govuk-table__header">
@@ -154,7 +154,7 @@
                 <td class="govuk-table__cell">
                     {% if supporting_documentation.safe == True %}
                     <a class="govuk-link govuk-link--no-visited-state" id="supporting_documentation-{{ supporting_documentation.id }}" href="{% url 'cases:document' case.id supporting_documentation.id %}">
-                        <span class="govuk-visually-hidden">{% get_string 'cases.manage.documents.download_document' %}</span>
+                        <span class="govuk-visually-hidden">{% lcs 'Cases.Manage.Documents.DOWNLOAD_DOCUMENT' %}</span>
                         {{ supporting_documentation.name }}<br>
                     </a>
                     {% endif %}

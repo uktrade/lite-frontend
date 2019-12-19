@@ -1,3 +1,4 @@
+from lite_content.lite_internal_frontend import strings
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import TemplateView
@@ -10,7 +11,6 @@ from cases.forms.create_ecju_query import (
     create_ecju_create_confirmation_form,
 )
 from cases.services import get_ecju_queries, post_ecju_query
-from core.builtins.custom_tags import get_string
 from picklists.services import get_picklists, get_picklist_item
 
 
@@ -36,7 +36,7 @@ class ViewEcjuQueries(TemplateView):
             "case_id": case_id,
             "open_ecju_queries": open_ecju_queries,
             "closed_ecju_queries": closed_ecju_queries,
-            "title": get_string("cases.ecju_queries.title"),
+            "title": strings.Cases.EcjuQueries.TITLE,
         }
         return render(request, "case/ecju-queries.html", context)
 

@@ -1,10 +1,10 @@
+from lite_content.lite_internal_frontend import strings
 from django.http import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
 from conf.constants import SUPER_USER_ROLE_ID
-from core.builtins.custom_tags import get_string
 from lite_forms.generators import form_page
 from users.forms.users import add_user_form, edit_user_form
 from users.services import (
@@ -92,10 +92,10 @@ class ChangeUserStatus(TemplateView):
             raise Http404
 
         if status == "deactivate":
-            description = get_string("update_user.status.deactivate_warning")
+            description = strings.UpdateUser.Status.DEACTIVATE_WARNING
 
         if status == "reactivate":
-            description = get_string("update_user.status.reactivate_warning")
+            description = strings.UpdateUser.Status.REACTIVATE_WARNING
 
         context = {
             "title": "Are you sure you want to {} this flag?".format(status),

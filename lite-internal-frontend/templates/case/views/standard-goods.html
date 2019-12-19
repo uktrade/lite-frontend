@@ -38,7 +38,7 @@
                         {% for document in good_on_application.good.documents %}
                             {% if document.safe == True %}
                                 <a class="govuk-link govuk-link--no-visited-state" id="good_document" href="{% url 'cases:document' case.id document.id %}">
-                                    {% get_string 'cases.manage.documents.download_document' %}
+                                    {% lcs 'Cases.Manage.Documents.DOWNLOAD_DOCUMENT' %}
                                 </a>
                             {% endif %}
                         {% endfor %}

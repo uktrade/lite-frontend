@@ -1,3 +1,4 @@
+from lite_content.lite_internal_frontend import strings
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseBadRequest, HttpResponseServerError
@@ -10,7 +11,6 @@ from lite_forms.generators import error_page
 
 from auth.services import authenticate_gov_user
 from conf.settings import env
-from core.builtins.custom_tags import get_string
 from core.models import User
 
 
@@ -62,8 +62,8 @@ class AuthCallbackView(View):
         if status_code != 200:
             return error_page(
                 None,
-                title=get_string("authentication.user_does_not_exist.title"),
-                description=get_string("authentication.user_does_not_exist.description"),
+                title=strings.Authentication.UserDoesNotExist.TITLE,
+                description=strings.Authentication.UserDoesNotExist.DESCRIPTION,
                 show_back_link=False,
             )
 

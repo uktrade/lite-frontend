@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "sass_processor",
     "django.contrib.humanize",
-    "core.apps.CoreConfig",
+    "core",
     "svg",
     "lite_forms",
     "letter_templates",

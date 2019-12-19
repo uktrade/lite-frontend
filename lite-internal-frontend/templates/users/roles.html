@@ -12,7 +12,7 @@
 		<div class="lite-app-bar__content">
 			<h2 class="govuk-heading-l">{{ title }}</h2>
 			<p class="govuk-caption-m">
-				{% get_string 'roles.description' %}
+				{% lcs 'Roles.DESCRIPTION' %}
 			</p>
 		</div>
         {% if 'ADMINISTER_ROLES' in user_permissions %}

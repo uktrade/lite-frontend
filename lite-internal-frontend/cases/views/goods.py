@@ -1,3 +1,4 @@
+from lite_content.lite_internal_frontend import strings
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
@@ -5,7 +6,6 @@ from lite_forms.generators import form_page
 
 from cases.forms.review_goods_clc import review_goods_clc_query_form
 from cases.services import get_good, get_case, post_goods_control_code
-from core.builtins.custom_tags import get_string
 from core.helpers import convert_dict_to_query_params
 from core.services import get_user_permissions
 
@@ -44,7 +44,7 @@ class ReviewGoods(TemplateView):
                 goods.append(good)
 
         context = {
-            "title": get_string("cases.review_goods_summary.heading"),
+            "title": strings.Cases.ReviewGoodsSummary.HEADING,
             "case_id": case_id,
             "objects": goods,
             "edit_flags_url": edit_flags_url + goods_postfix_url,

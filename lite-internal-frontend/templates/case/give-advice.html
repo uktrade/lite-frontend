@@ -17,7 +17,7 @@
 {% if errors %}
 	<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
 		<h2 class="govuk-error-summary__title" id="error-summary-title">
-			{% get_string 'cases.advice.error' %}
+			{% lcs 'Cases.Advice.ERROR' %}
 		</h2>
 		<div class="govuk-error-summary__body">
 			<ul class="govuk-list govuk-error-summary__list">
@@ -65,11 +65,11 @@
 						</label>
 						<a id="link-import-proviso" onclick="return showProvisoModal();" href="#" class="govuk-label lite-js-only govuk-link govuk-link--no-visited-state app-picklist-picker-heading__link">
 							{% svg 'new' %}
-							{% get_string 'cases.advice.import_proviso' %}
+							{% lcs 'Cases.Advice.IMPORT_PROVISO' %}
 						</a>
 					</div>
           <span class="govuk-hint" for="{{ question.name }}">
-            {% get_string 'cases.advice.text_on_licence' %}
+            {% lcs 'Cases.Advice.TEXT_ON_LICENCE' %}
           </span>
 					{% if errors|key_value:'proviso' %}
 						<span class="govuk-error-message">
@@ -120,11 +120,11 @@
 		<div class="govuk-form-group {% if errors|key_value:'text' %}govuk-form-group--error{% endif %}">
 			<div class="app-picklist-picker-heading__container">
 				<label class="govuk-label--m" for="advice">
-					{% get_string 'cases.advice.reason' %}
+					{% lcs 'Cases.Advice.REASON' %}
 				</label>
 				<a id="link-import-advice" onclick="return showAdviceModal();" href="#" class="govuk-label lite-js-only govuk-link govuk-link--no-visited-state app-picklist-picker-heading__link">
 					{% svg 'new' %}
-					{% get_string 'cases.advice.import_advice' %}
+					{% lcs 'Cases.Advice.IMPORT_ADVICE' %}
 				</a>
 			</div>
 			{% if errors|key_value:'text' %}
@@ -146,7 +146,7 @@
 	<div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="200">
 		<div class="govuk-form-group {% if errors|key_value:'note' %}govuk-form-group--error{% endif %}">
 			<label class="govuk-label--m" for="{{ question.name }}">
-				{% get_string 'cases.advice.other' %}
+				{% lcs 'Cases.Advice.OTHER' %}
 			</label>
 			{% if errors|key_value:'note' %}
 				<span class="govuk-error-message">
@@ -154,7 +154,7 @@
 				</span>
 			{% endif %}
       <span class="govuk-hint" for="{{ question.name }}">
-        {% get_string 'cases.advice.text_on_licence' %}
+        {% lcs 'Cases.Advice.TEXT_ON_LICENCE' %}
       </span>
 			<textarea class="govuk-textarea govuk-js-character-count " id="textarea-note" name="note" rows="5" aria-describedby="textarea-note-info textarea-note-hint">{{ data.note }}</textarea>
 		</div>

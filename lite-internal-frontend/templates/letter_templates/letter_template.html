@@ -1,7 +1,7 @@
 {% extends 'layouts/base.html' %}
 
 {% block back_link %}
-	<a href="{% url 'letter_templates:letter_templates' %}" class="govuk-back-link">{% get_string 'letter_templates.letter_template.back_link' %}</a>
+	<a href="{% url 'letter_templates:letter_templates' %}" class="govuk-back-link">{% lcs 'LetterTemplates.LetterTemplate.BACK_LINK' %}</a>
 {% endblock %}
 
 {% block body %}
@@ -11,33 +11,33 @@
 				<h2 class="govuk-heading-l" id="title">{% block title %}{{ letter_template.name }}{% endblock %}</h2>
 			</div>
 			<div class="lite-app-bar__controls">
-				<a id="edit_template" href="{% url 'letter_templates:edit' letter_template.id %}" class="govuk-button govuk-button--secondary">{% get_string 'letter_templates.letter_template.edit_button' %}</a>
-				<a id="edit_template_paragraphs" href="{% url 'letter_templates:edit_letter_paragraphs' letter_template.id %}" class="govuk-button govuk-button--secondary">{% get_string 'letter_templates.letter_template.edit_paragraph_button' %}</a>
+				<a id="edit_template" href="{% url 'letter_templates:edit' letter_template.id %}" class="govuk-button govuk-button--secondary">{% lcs 'LetterTemplates.LetterTemplate.EDIT_BUTTON' %}</a>
+				<a id="edit_template_paragraphs" href="{% url 'letter_templates:edit_letter_paragraphs' letter_template.id %}" class="govuk-button govuk-button--secondary">{% lcs 'LetterTemplates.LetterTemplate.EDIT_PARAGRAPH_BUTTON' %}</a>
 			</div>
 		</div>
 
 		<div class="lite-information-board">
 			<div class="govuk-grid-row">
 				<div class="govuk-grid-column-one-third">
-					<h4 class="govuk-heading-s">{% get_string 'letter_templates.letter_template.layout_title' %}</h4>
+					<h4 class="govuk-heading-s">{% lcs 'LetterTemplates.LetterTemplate.LAYOUT_TITLE' %}</h4>
 					<p class="govuk-label" id="layout">
 						{{ letter_template.layout.name }}
 					</p>
 				</div>
 				<div class="govuk-grid-column-one-third">
-					<h4 class="govuk-heading-s">{% get_string 'letter_templates.letter_template.restricted_title' %}</h4>
+					<h4 class="govuk-heading-s">{% lcs 'LetterTemplates.LetterTemplate.RESTRICTED_TITLE' %}</h4>
 					<p class="govuk-label" id="case_types">
 						{% for case_type in letter_template.case_types %}{% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}{{ case_type.value }}{% endfor %}
 					</p>
 				</div>
 				<div class="govuk-grid-column-one-third">
-					<h4 class="govuk-heading-s">{% get_string 'letter_templates.letter_template.last_update_title' %}</h4>
+					<h4 class="govuk-heading-s">{% lcs 'LetterTemplates.LetterTemplate.LAST_UPDATE_TITLE' %}</h4>
 					<p class="govuk-label" id="last_updated">{{ letter_template.last_modified_at|str_date }}</p>
 				</div>
 			</div>
 			<div class="govuk-grid-row">
 				<div class="govuk-grid-column-one-third">
-					<h4 class="govuk-heading-s">{% get_string 'letter_templates.letter_template.created_title' %}</h4>
+					<h4 class="govuk-heading-s">{% lcs 'LetterTemplates.LetterTemplate.CREATED_TITLE' %}</h4>
 					<p class="govuk-label" id="created_at">{{ letter_template.created_at|str_date }}</p>
 				</div>
 			</div>
