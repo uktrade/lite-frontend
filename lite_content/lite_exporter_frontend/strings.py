@@ -24,10 +24,6 @@ VIEW = "View"
 
 PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
 
-WHERE_ARE_YOUR_GOODS_GOING_TITLE = "Where are your products going?"
-WHERE_ARE_YOUR_GOODS_GOING_SHORT_TITLE = "Set countries"
-WHERE_ARE_YOUR_GOODS_GOING_DESCRIPTION = "Select all countries that apply."
-
 # Edit application
 APPLICATION_EDIT_APPLICATION_BUTTON = "Edit application"
 

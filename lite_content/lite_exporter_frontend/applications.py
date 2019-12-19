@@ -121,3 +121,8 @@ class InitialApplicationQuestionsForms:
     HAVE_YOU_BEEN_INFORMED_DESCRIPTION = "This could be a letter or email from HMRC or another government department."
     WHAT_WAS_THE_REFERENCE_CODE_TITLE = "Reference number (optional)"
     WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION = "The reference number is on the letter or email."
+
+
+class DestinationForm:
+    TITLE = "Where are your products going?"
+    DESCRIPTION = "Select all countries that apply."
