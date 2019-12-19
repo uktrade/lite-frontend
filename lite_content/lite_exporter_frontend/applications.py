@@ -116,9 +116,8 @@ class InitialApplicationQuestionsForms:
     HELP_WITH_CHOOSING_A_LICENCE = "Help with choosing a licence"
     HELP_WITH_CHOOSING_A_LICENCE_CONTENT = (
         "If you're unsure about which licence to select, read the guidance on "
-        'GOV.UK for <a class="govuk-link" target="_blank" '
-        'href="https://www.gov.uk/starting-to-export/licences">exporting and doing business '
-        'abroad<span class="govuk-visually-hidden"> (opens in a new window or tab)</span></a>.'
+        "GOV.UK for https://www.gov.uk/starting-to-export/licences exporting and doing business "
+        "abroad"
     )
     ENTER_A_REFERENCE_NAME_TITLE = "Application reference"
     ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference name"
