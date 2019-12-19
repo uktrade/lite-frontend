@@ -165,3 +165,8 @@ class AttachDocumentPage:
 
 class DeleteDocument:
     DOCUMENT_DELETE_GENERIC_ERROR = "We had an issue deleting your files. Try again later."
+
+
+class TaskListPage:
+    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference name"
+    WHERE_ARE_YOUR_GOODS_GOING_SHORT_TITLE = "Set countries"
