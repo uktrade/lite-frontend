@@ -2,8 +2,9 @@ import os
 
 import requests
 
+from fixtures.env import env
 
-LITE_API_URL = os.environ.get("LOCAL_LITE_API_URL", os.environ.get("LITE_API_URL"),)
+LITE_API_URL = env("LITE_API_URL")
 
 
 def get(appended_address, headers):
