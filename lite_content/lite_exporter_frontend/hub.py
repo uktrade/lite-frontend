@@ -8,6 +8,6 @@ class Tiles:
     NOTIFICATIONS = "Notifications"
     APPLICATIONS = "Applications"
     DRAFTS = "Drafts"
-    GOODS = "Goods"
+    GOODS = "Product list"
     SITES = "Manage my sites"
     END_USER_ADVISORIES = "End user advisories"
