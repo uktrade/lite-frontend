@@ -1,6 +1,5 @@
 from faker import Faker
 
-from fixtures.env import env
 from shared.api.client import post
 from shared.tools.helpers import strip_special_characters, get_current_date_time
 
@@ -18,4 +17,4 @@ def add_site(organisation_id, headers):
             "country": "GB",
         },
     }
-    return post(f"/organisations/{organisation_id}/sites/", json=data, headers=headers).json()["site"]
+    return post(f"organisations/{organisation_id}/sites/", json=data, headers=headers).json()["site"]
