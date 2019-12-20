@@ -16,7 +16,7 @@ class ApplicationGoodsList:
         self.filter_description_search_box = "description"  # ID
         self.filter_part_number_search_box = "part_number"  # ID
         self.filter_control_rating_search_box = "control_rating"  # ID
-        self.filter_button = '//button[text()[contains(.,"filters")]]'  # xpath
+        self.filter_button = "button-apply-filters"  # xpath
         self.show_filters_link = "show-filters-link"  # xpath
         self.filter_tags = ".lite-filter-bar a"
         self.card_heading = ".lite-card .govuk-heading-s"
@@ -41,15 +41,15 @@ class ApplicationGoodsList:
     def type_into_filter_description_search_box_and_filter(self, value):
         self.driver.find_element_by_id(self.show_filters_link).click()
         self.driver.find_element_by_id(self.filter_description_search_box).send_keys(value)
-        self.driver.find_element_by_xpath(self.filter_button).click()
+        self.driver.find_element_by_id(self.filter_button).click()
 
     def type_into_filter_part_number_search_box_and_filter(self, value):
         self.driver.find_element_by_id(self.filter_part_number_search_box).send_keys(value)
-        self.driver.find_element_by_xpath(self.filter_button).click()
+        self.driver.find_element_by_id(self.filter_button).click()
 
     def type_into_filter_control_rating_search_box_and_filter(self, value):
         self.driver.find_element_by_id(self.filter_control_rating_search_box).send_keys(value)
-        self.driver.find_element_by_xpath(self.filter_button).click()
+        self.driver.find_element_by_id(self.filter_button).click()
 
     def remove_filters(self):
         for button in self.driver.find_elements_by_css_selector(self.filter_tags):

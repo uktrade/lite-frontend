@@ -1,7 +1,7 @@
 {% if data.total_pages > 1 %}
 	<div class="lite-pagination__container">
 		{% for i in data.total_pages|times %}
-			<a href="{{ CURRENT_PATH_WITHOUT_PARAMS }}?{{ params_str }}{% if params_str %}&{% endif %}page={{ i }}" class="lite-pagination__item {% if page == i %}lite-pagination__item--selected{% endif %}" id="page-{{ i }}">
+			<a href="{{ CURRENT_PATH_WITHOUT_PARAMS }}?{{ params_str }}{% if params_str %}&{% endif %}page={{ i }}" class="lite-pagination__item {% if request.GET.page|stringformat:"s" == i|stringformat:"s" %}lite-pagination__item--selected{% endif %}" id="page-{{ i }}">
 				{{ i }}
 			</a>
 		{% endfor %}
