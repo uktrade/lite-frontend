@@ -1,5 +1,5 @@
 from conf.settings import env
-from lite_content.lite_exporter_frontend import applications, goods, roles, users, sites, core, end_users  # noqa
+from lite_content.lite_exporter_frontend import applications, goods, roles, users, sites, core, end_users, hub  # noqa
 
 # Generic (used as defaults in forms)
 BACK_TO_APPLICATION = "Back to application"

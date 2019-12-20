@@ -148,6 +148,17 @@ class RespondToQueryForm:
         NO = "No, change my response"
 
 
+class GoodPage:
+    class Tabs:
+        DETAILS = "Details"
+        NOTES = "Notes"
+        ECJU_QUERIES = "ECJU Queries"
+        GENERATED_DOCUMENTS = "ECJU Documents"
+
+    class Query:
+        REFERENCE = "Reference"
+
+
 class CreateGoodOnApplicationForm:
     TITLE = "Details for product on application"
     DOCUMENT_MISSING = "A document is required"

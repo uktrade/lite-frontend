@@ -8,3 +8,9 @@ class EndUsersPage:
 
 class AttachDocumentPage:
     UPLOAD_GENERIC_ERROR = "We had an issue creating your response. Try again later."
+
+
+class EndUserPage:
+    class Tabs:
+        NOTES = "Notes"
+        ECJU_QUERIES = "ECJU Queries"
