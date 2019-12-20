@@ -1,5 +1,6 @@
 from faker import Faker
 
+from fixtures.env import env
 from shared.api.client import post
 from shared.tools.helpers import strip_special_characters, get_current_date_time
 
@@ -11,7 +12,7 @@ def add_site(organisation_id, headers):
         "name": strip_special_characters(fake.company()) + get_current_date_time(),
         "address": {
             "address_line_1": fake.street_address(),
-            "city": fake.city(),
+            "city": env("LITE_API_URL"),
             "postcode": fake.postcode(),
             "region": fake.state(),
             "country": "GB",
