@@ -96,6 +96,7 @@ class ApplicationSummaryPage:
         NOTES = "Notes"
         ECJU_QUERIES = "ECJU Queries"
         GENERATED_DOCUMENTS = "ECJU Documents"
+        ACTIVITY = "Activity"
 
 
 class ApplicationsSummaryPage:
@@ -175,4 +176,3 @@ class DeleteDocument:
 class TaskListPage:
     ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference name"
     WHERE_ARE_YOUR_GOODS_GOING_SHORT_TITLE = "Set countries"
->>>>>>> master
