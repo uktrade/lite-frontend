@@ -52,7 +52,6 @@ class ThirdPartyForm:
 
 
 class GeneratedDocuments:
-    TAB = "ECJU Documents"
     NO_DOCUMENTS = "There are currently no documents from ECJU."
 
     class Table:
@@ -91,6 +90,12 @@ class ApplicationSummaryPage:
         NO_LABEL = "No"
         SUBMIT_BUTTON = "Submit"
         WITHDRAW_ERROR = "Select a choice"
+
+    class Tabs:
+        DETAILS = "Details"
+        NOTES = "Notes"
+        ECJU_QUERIES = "ECJU Queries"
+        GENERATED_DOCUMENTS = "ECJU Documents"
 
 
 class ApplicationsSummaryPage:
