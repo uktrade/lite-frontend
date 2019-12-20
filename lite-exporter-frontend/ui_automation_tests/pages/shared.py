@@ -12,7 +12,6 @@ class Shared(BasePage):
     GOV_TABLE_ROW = ".govuk-table__row"
     GOV_TABLE_CELL_LINKS = ".govuk-table__cell a"
     GOV_TABLE_CELL = ".govuk-table__cell"
-    APPLICATION_NAME = "a[href*='overview']"
     H2 = "h2"
     H1 = "h1"
     LITE_SECTION = ".lite-section"
@@ -60,14 +59,8 @@ class Shared(BasePage):
     def get_text_of_h1(self):
         return self.driver.find_element_by_tag_name(self.H1).text
 
-    def get_lite_sections(self):
-        return self.driver.find_elements_by_css_selector(self.LITE_SECTION)
-
     def get_size_of_table_rows(self):
         return len(self.driver.find_elements_by_css_selector(self.GOV_TABLE_ROW))
-
-    def click_on_application_name(self):
-        return self.driver.find_element_by_css_selector(self.APPLICATION_NAME).click()
 
     def get_cells_in_gov_table(self):
         return self.driver.find_elements_by_css_selector(self.GOV_TABLE_CELL)

@@ -13,7 +13,7 @@
 			<div class="lite-tabs">
                 {% if organisation.sub_type.key != 'individual' %}
                     {% if can_administer_users %}
-				        <a href="{% url 'users:users' %}" class="lite-tabs__tab" id="tab-users">{% lcs "MANAGE_ORGANISATIONS_MEMBERS_TAB" %}</a>
+				        <a href="{% url 'users:users' %}" class="lite-tabs__tab" id="tab-users">{% lcs "users.UsersPage.MANAGE_ORGANISATIONS_MEMBERS_TAB" %}</a>
                     {% endif %}
                 {% endif %}
 				<a href="{% url 'sites:sites' %}" class="lite-tabs__tab lite-tabs__tab--selected" id="tab-sites">{% lcs "sites.SitesPage.TAB" %}</a>
@@ -36,19 +36,22 @@
 				<th class="govuk-table__header">
 					Address
 				</th>
+				<th class="govuk-table__header">
+					Members
+				</th>
 				<th class="govuk-table__header"></th>
 			</tr>
 		</thead>
 		<tbody class="govuk-table__head">
 			{% for site in sites %}
 				<tr class="govuk-table__row">
-					<td class="govuk-table__cell" style="vertical-align: top;">
+					<td class="govuk-table__cell">
 						{{ site.name }}
 						{% if site.id == organisation.primary_site.id %}
 							<span class="govuk-caption-m" style="display: inline;">(Primary Site)</span>
 						{% endif %}
 					</td>
-					<td class="govuk-table__cell" style="vertical-align: top;">
+					<td class="govuk-table__cell">
 						{{ site.address.address_line_1 }}<br/>
 						{% if site.address.address_line_2 %}
 							{{ site.address.address_line_2 }}<br/>
@@ -57,8 +60,9 @@
 						{{ site.address.postcode }}<br/>
 						{{ site.address.country.name }}
 					</td>
-					<td class="govuk-table__cell" style="vertical-align: top;">
-						<a href="{% url 'sites:edit' site.id %}" class="govuk-link govuk-link--no-visited-state">Edit</a>
+					<td class="govuk-table__cell">{{ site.users|length }} member{{ site.users|pluralize }}</td>
+					<td class="govuk-table__cell govuk-table__cell--numeric">
+						<a id="link-view-site-{{ site.id }}" href="{% url 'sites:site' site.id %}" class="govuk-link govuk-link--no-visited-state">View</a>
 					</td>
 				</tr>
 			{% endfor %}

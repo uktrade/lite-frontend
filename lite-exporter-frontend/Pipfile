@@ -13,6 +13,7 @@ pytest-html = "*"
 prospector = "==1.1.6.2"
 pytest-xdist = "*"
 black = "==19.10b0"
+faker = "*"
 
 [packages]
 Django = "==2.2.8"

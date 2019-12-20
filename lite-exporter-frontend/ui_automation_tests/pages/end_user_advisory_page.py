@@ -1,4 +1,3 @@
-from core.builtins.custom_tags import reference_code
 from shared.BasePage import BasePage
 from shared.tools import helpers
 from pages.shared import Shared
@@ -15,17 +14,17 @@ class EndUserAdvisoryPage(BasePage):
     def click_apply_for_advisories(self):
         self.driver.find_element_by_id(self.APPLY_FOR_ADVISORY).click()
 
-    def open_advisory_by_reference_code(self, id):
-        elements, no = self.get_table_rows_and_position(id)
+    def open_advisory_by_reference_code(self, _id):
+        elements, no = self.get_table_rows_and_position(_id)
         elements[no].find_elements_by_css_selector("a")[0].click()
 
-    def confirm_advisory_displayed_by_reference_code(self, id):
-        elements, no = self.get_table_rows_and_position(id)
+    def confirm_advisory_displayed_by_reference_code(self, _id):
+        elements, no = self.get_table_rows_and_position(_id)
         return elements[no].find_element_by_css_selector(Shared(self.driver).NOTIFICATION).is_displayed()
 
-    def get_table_rows_and_position(self, id):
+    def get_table_rows_and_position(self, _id: str):
         elements = self.driver.find_elements_by_css_selector(self.TABLE_ROW)
-        no = helpers.get_element_index_by_text(elements, reference_code(id), complete_match=False)
+        no = helpers.get_element_index_by_text(elements, _id[:5] + "-" + _id[5:], complete_match=False)
         return elements, no
 
     def case_note_notification_bubble_text(self):

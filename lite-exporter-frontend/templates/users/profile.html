@@ -1,10 +1,30 @@
 {% extends 'layouts/two_pane.html' %}
 
+{% load static %}
+
 {% block back_link %}
-    <a href="{% url 'users:users' %}" id="back-link" class="govuk-back-link">{% lcs "users.ProfilePage.BACK_TO_USERS" %}</a>
+	<div class="govuk-breadcrumbs">
+		<ol class="govuk-breadcrumbs__list">
+			<li class="govuk-breadcrumbs__list-item">
+				<a class="govuk-breadcrumbs__link" href="{{ GOV_UK_URL }}">Home</a>
+			</li>
+			<li class="govuk-breadcrumbs__list-item">
+				<a class="govuk-breadcrumbs__link" href="/">{{ SERVICE_NAME }}</a>
+			</li>
+			<li class="govuk-breadcrumbs__list-item">
+				<a class="govuk-breadcrumbs__link" href="{% url 'users:users' %}">Members</a>
+			</li>
+		</ol>
+	</div>
 {% endblock %}
 
 {% block full_width %}
+	{% if profile.status == 'Deactivated' %}
+		<div class="lite-info-bar lite-info-bar--error lite-info-bar--no-animation">
+			This user is deactivated
+		</div>
+	{% endif %}
+
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
 			<h1 class="govuk-heading-xl">
@@ -18,21 +38,30 @@
 			</h1>
 		</div>
 		<div class="lite-app-bar__controls">
-			{% if show_change_status %}
-				{% if profile.status == 'Active' %}
-					<a href="{% url 'users:change_status' profile.id 'deactivate' %}" id="btn-deactivate" role="button" draggable="false" class="govuk-button govuk-button--secondary">
-						{% lcs 'users.ProfilePage.USER_DEACTIVATE' %}
-					</a>
-				{% elif profile.status == 'Deactivated' %}
-					<a href="{% url 'users:change_status' profile.id 'reactivate' %}" id="btn-reactivate" role="button" draggable="false" class="govuk-button govuk-button--secondary">
-						{% lcs 'users.ProfilePage.USER_REACTIVATE' %}
-					</a>
-				{% endif %}
-			{% endif %}
-			{% if show_change_role %}
-				<a href="{% url 'users:edit' profile.id %}" type="submit" class="govuk-button govuk-button--secondary">
-					{% lcs 'users.ProfilePage.EDIT_USER_BUTTON' %}
-				</a>
+			{% if show_change_status or show_change_role or show_assign_sites %}
+				<div class="lite-more-actions__container lite-more-actions__container--secondary">
+					{% if show_change_status %}
+						{% if profile.status == 'Active' %}
+							<a href="{% url 'users:change_status' profile.id 'deactivate' %}" id="button-deactivate" role="button" draggable="false" class="govuk-button">
+								{% lcs 'users.ProfilePage.USER_DEACTIVATE' %}
+							</a>
+						{% elif profile.status == 'Deactivated' %}
+							<a href="{% url 'users:change_status' profile.id 'reactivate' %}" id="button-reactivate" role="button" draggable="false" class="govuk-button">
+								{% lcs 'users.ProfilePage.USER_REACTIVATE' %}
+							</a>
+						{% endif %}
+					{% endif %}
+					{% if show_change_role %}
+						<a id="button-edit" href="{% url 'users:edit' profile.id %}" class="govuk-button">
+							{% lcs 'users.ProfilePage.EDIT_USER_BUTTON' %}
+						</a>
+					{% endif %}
+					{% if show_assign_sites %}
+						<a id="button-assign-sites" href="{% url 'users:assign_sites' profile.id %}" class="govuk-button">
+							Assign user to sites
+						</a>
+					{% endif %}
+				</div>
 			{% endif %}
 		</div>
 	</div>
@@ -92,4 +121,35 @@
 			</dd>
 		</div>
 	</dl>
+
+	<hr class="lite-horizontal-separator">
+
+	<h2 class="govuk-heading-m">Sites</h2>
+	<dl class="govuk-summary-list govuk-summary-list--no-border">
+		{% for site in profile.sites %}
+			<div class="govuk-summary-list__row">
+				<dd class="govuk-summary-list__key">
+					{{ site.name }}
+				</dd>
+				<dd class="govuk-summary-list__value govuk-hint">
+					{{ site.address.address_line_1 }}<br/>
+					{% if site.address.address_line_2 %}
+						{{ site.address.address_line_2 }}<br/>
+					{% endif %}
+					{{ site.address.city }}<br/>
+					{{ site.address.postcode }}<br/>
+					{{ site.address.country.name }}
+				</dd>
+				<dd class="govuk-summary-list__actions">
+					<a class="govuk-link" href="{% url 'sites:site' site.id %}">
+						View
+					</a>
+				</dd>
+			</div>
+		{% endfor %}
+	</dl>
+{% endblock %}
+
+{% block javascript %}
+	<script src="{% static 'javascripts/more-actions.js' %}"></script>
 {% endblock %}

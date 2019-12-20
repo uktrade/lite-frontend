@@ -8,11 +8,12 @@ from pages.add_end_user_pages import AddEndUserPages
 from pages.application_edit_type_page import ApplicationEditTypePage
 from pages.application_page import ApplicationPage
 from shared import functions
+from ui_automation_tests.fixtures.env import environment  # noqa
 from ui_automation_tests.fixtures.register_organisation import (  # noqa
     register_organisation,
     register_organisation_for_switching_organisation,
+    user_details,
 )
-from ui_automation_tests.fixtures.env import environment  # noqa
 from ui_automation_tests.fixtures.add_goods import (  # noqa
     add_an_incorporated_good_to_application,
     add_a_non_incorporated_good_to_application,
@@ -46,7 +47,6 @@ from ui_automation_tests.shared.fixtures.add_a_generated_document import add_a_g
 from ui_automation_tests.shared.fixtures.driver import driver  # noqa
 from ui_automation_tests.shared.fixtures.core import (  # noqa
     context,
-    invalid_username,
     exporter_info,
     internal_info,
     seed_data_config,
@@ -67,8 +67,6 @@ from pages.shared import Shared
 from pages.sites_page import SitesPage
 from pages.which_location_form_page import WhichLocationFormPage
 
-# from core import strings
-
 strict_gherkin = False
 
 
@@ -82,8 +80,8 @@ def pytest_addoption(parser):
             "--exporter_url", action="store", default=f"http://localhost:{str(os.environ.get('PORT'))}/", help="url"
         )
 
-        # Get LITE API URL.
         lite_api_url = os.environ.get("LOCAL_LITE_API_URL", os.environ.get("LITE_API_URL"),)
+
         parser.addoption(
             "--lite_api_url", action="store", default=lite_api_url, help="url",
         )
@@ -102,9 +100,6 @@ def pytest_addoption(parser):
     parser.addoption("--password", action="store", default="password")
     parser.addoption("--first_name", action="store", default="Test")
     parser.addoption("--last_name", action="store", default="User")
-    # Load in content strings
-    # with open('../../lite-content/lite-exporter-frontend/strings.json') as json_file:
-    #     strings.constants = json.load(json_file)
 
 
 def pytest_exception_interact(node, report):
@@ -229,11 +224,6 @@ def i_click_application_locations_link(driver):  # noqa
     app.click_application_locations_link()
 
 
-@when(parsers.parse('I click on link with id "{link_id}"'))  # noqa
-def i_click_on_link_with_id(driver, link_id):  # noqa
-    driver.find_element_by_id(link_id).click()
-
-
 @when(  # noqa
     parsers.parse(
         'I add an end user of sub_type: "{type}", name: "{name}", website: "{website}", address: "{address}" and country "{'
@@ -307,13 +297,6 @@ def i_click_on_add_new_address(driver):  # noqa
 def i_click_add_preexisting_locations(driver):  # noqa
     external_locations_page = ExternalLocationsPage(driver)
     external_locations_page.click_preexisting_locations()
-
-
-@then(parsers.parse('error message is "{expected_error}"'))  # noqa
-def error_message_is(driver, expected_error):  # noqa
-    shared = Shared(driver)
-    assert shared.is_error_message_displayed()
-    assert expected_error in shared.get_text_of_error_messages()
 
 
 @when(parsers.parse('I select the site at position "{no}"'))  # noqa

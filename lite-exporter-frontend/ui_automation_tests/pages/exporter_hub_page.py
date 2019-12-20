@@ -16,7 +16,6 @@ class ExporterHubPage(BasePage):
     GOODS_TILE = "a[href*='sites']"
     END_USER_ADVISORY_TILE = "a[href*='/end-users/']"
     RAISE_HMRC_QUERY_BTN = "a[href*='/raise-a-query/"
-    LINK_VIEW_ID_PREFIX = "link-view-"
 
     def go_to(self, url):
         self.driver.get(url)
@@ -38,12 +37,6 @@ class ExporterHubPage(BasePage):
 
     def enter_email(self, email):
         email_tb = self.driver.find_element_by_name("login")
-        email_tb.clear()
-        email_tb.send_keys(email)
-
-    def enter_add_user_email(self, email):
-        # hidden fields may be added which means that you can not look for name.
-        email_tb = self.driver.find_element_by_id("email")
         email_tb.clear()
         email_tb.send_keys(email)
 
@@ -70,20 +63,6 @@ class ExporterHubPage(BasePage):
 
     def click_users(self):
         self.driver.find_element_by_css_selector(self.USERS_BTN).click()
-
-    def click_add_a_user_btn(self):
-        self.driver.find_element_by_id("button-add-a-member").click()
-
-    def click_view_user_link(self, email: str):
-        self.driver.find_element_by_id(self.LINK_VIEW_ID_PREFIX + email).click()
-
-    def click_deactivate_button(self):
-        self.driver.find_element_by_id("btn-deactivate").click()
-        self.driver.find_element_by_id("deactivate-confirm").click()
-
-    def click_reactivate_btn(self):
-        self.driver.find_element_by_id("btn-reactivate").click()
-        self.driver.find_element_by_id("reactivate-confirm").click()
 
     def logout(self):
         self.driver.get("https://great.uat.uktrade.io/sso/accounts/")

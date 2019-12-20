@@ -15,7 +15,7 @@
 			<div class="lite-tabs">
                 {% if organisation.sub_type.key != 'individual' %}
                     {% if can_administer_users %}
-				        <a href="{% url 'users:users' %}" class="lite-tabs__tab" id="tab-users">{% lcs "MANAGE_ORGANISATIONS_MEMBERS_TAB" %}</a>
+				        <a href="{% url 'users:users' %}" class="lite-tabs__tab" id="tab-users">{% lcs "users.UsersPage.MANAGE_ORGANISATIONS_MEMBERS_TAB" %}</a>
                     {% endif %}
                 {% endif %}
 				{% if can_administer_sites %}<a href="{% url 'sites:sites' %}" class="lite-tabs__tab lite-tabs__tab" id="tab-sites">{% lcs "sites.SitesPage.TAB" %}</a>{% endif %}
@@ -66,7 +66,7 @@
 							{% endfor %}
 						</ul>
 					</td>
-                    <td class="govuk-table__cell">
+                    <td class="govuk-table__cell govuk-table__cell--numeric">
                         {% if not role.id in immutable_roles %}
                             {% if 'EXPORTER_ADMINISTER_ROLES' in user_permissions %}
                                 {% if role.id != user_role_id %}

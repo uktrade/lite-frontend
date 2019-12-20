@@ -4,7 +4,7 @@ from conf.constants import USERS_URL, SUPER_USER_ROLE_ID
 
 def get_user(request, pk=None):
     if pk:
-        data = get(request, USERS_URL + pk)
+        data = get(request, USERS_URL + str(pk))
     else:
         data = get(request, USERS_URL + "me/")
     return data.json()["user"]

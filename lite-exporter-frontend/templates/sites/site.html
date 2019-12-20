@@ -1,0 +1,122 @@
+{% extends 'layouts/two_pane.html' %}
+
+{% load static %}
+
+{% block back_link %}
+	<div class="govuk-breadcrumbs">
+		<ol class="govuk-breadcrumbs__list">
+			<li class="govuk-breadcrumbs__list-item">
+				<a class="govuk-breadcrumbs__link" href="{{ GOV_UK_URL }}">{% lcs "HOME" %}</a>
+			</li>
+			<li class="govuk-breadcrumbs__list-item">
+				<a class="govuk-breadcrumbs__link" href="/">{{ SERVICE_NAME }}</a>
+			</li>
+			<li class="govuk-breadcrumbs__list-item">
+				<a class="govuk-breadcrumbs__link" href="{% url 'sites:sites' %}">{% lcs "sites.SitesPage.TAB" %}</a>
+			</li>
+		</ol>
+	</div>
+{% endblock %}
+
+{% block full_width %}
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-xl">
+				{% block title %}
+					{{ site.name }}
+				{% endblock %}
+			</h1>
+		</div>
+		<div class="lite-app-bar__controls">
+			<a id="button-edit" href="{% url 'sites:edit' site.id %}" class="govuk-button govuk-button--secondary">
+				{% lcs "sites.SitesPage.EDIT_SITE" %}
+			</a>
+		</div>
+	</div>
+{% endblock %}
+
+{% block two_thirds %}
+	{% if site.id == organisation.primary_site.id %}
+		<div class="govuk-!-margin-bottom-8">
+			<span class="govuk-inset-text">{% lcs "sites.SitesPage.PRIMARY_SITE_DETAIL" %}</span>
+		</div>
+	{% endif %}
+
+	<dl class="govuk-summary-list govuk-summary-list--no-border">
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs "Address.ADDRESS_LINE_1" %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ site.address.address_line_1 }}
+			</dd>
+		</div>
+		{% if site.address.address_line_2 %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key"></dt>
+				<dd class="govuk-summary-list__value">
+					{{ site.address.address_line_2 }}
+				</dd>
+			</div>
+		{% endif %}
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs "Address.TOWN" %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ site.address.city }}
+			</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs "Address.COUNTY" %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ site.address.region }}
+			</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs "Address.POSTAL_CODE" %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ site.address.postcode }}
+			</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs "Address.COUNTRY" %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ site.address.country.name }}
+			</dd>
+		</div>
+	</dl>
+
+	<hr class="lite-horizontal-separator">
+
+	<h2 class="govuk-heading-m">{% lcs "sites.SitesPage.MEMBERS" %}</h2>
+	<dl class="govuk-summary-list govuk-summary-list--no-border">
+		{% for user in site.users %}
+			<div class="govuk-summary-list__row">
+				<dd class="govuk-summary-list__key">
+					{% if user.first_name %}
+						<span class="govuk-!-font-weight-bold">{{ user.first_name }} {{ user.last_name }}</span>
+					{% else %}
+						<strong class="govuk-tag govuk-phase-banner__content__tag ">
+							{% lcs "USER_PENDING" %}
+						</strong>
+					{% endif %}
+				</dd>
+				<dd class="govuk-summary-list__value govuk-hint">
+					{{ user.email }}
+				</dd>
+				<dd class="govuk-summary-list__actions">
+					<a class="govuk-link" href="{% url 'users:user' user.id %}">
+						{% lcs "VIEW" %}
+					</a>
+				</dd>
+			</div>
+		{% endfor %}
+	</dl>
+{% endblock %}

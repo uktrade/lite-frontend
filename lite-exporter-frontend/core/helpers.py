@@ -4,8 +4,10 @@ from html import escape
 from django.template.defaultfilters import safe
 from django.templatetags.tz import do_timezone
 
+from conf import decorators
 from conf.constants import ISO8601_FMT
 from core.builtins.custom_tags import default_na
+from roles.services import get_user_permissions
 
 
 class Section:
@@ -112,3 +114,28 @@ def println(content=None, no=1):
     if content:
         print(content)
         print("\n" * no)
+
+
+def has_permission(request, permission):
+    """
+    Returns true if the user has a given permission, else false
+    """
+    user_permissions = get_user_permissions(request)
+    return permission in user_permissions
+
+
+def decorate_patterns_with_permission(patterns, permission):
+    def _wrap_with_permission(_permission, view_func=None):
+        actual_decorator = decorators.has_permission(_permission)
+
+        if view_func:
+            return actual_decorator(view_func)
+        return actual_decorator
+
+    decorated_patterns = []
+    for pattern in patterns:
+        callback = pattern.callback
+        pattern.callback = _wrap_with_permission(permission, callback)
+        pattern._callback = _wrap_with_permission(permission, callback)
+        decorated_patterns.append(pattern)
+    return decorated_patterns

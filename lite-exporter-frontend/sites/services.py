@@ -1,7 +1,8 @@
+from lite_content.lite_exporter_frontend import strings
 from lite_forms.components import Option
 
 from conf.client import get, post, put
-from conf.constants import SITES_URL, ORGANISATIONS_URL, NEWLINE
+from conf.constants import SITES_URL, ORGANISATIONS_URL, NEWLINE, USERS_URL
 from core.services import get_organisation
 
 
@@ -13,9 +14,13 @@ def get_sites(request, organisation_id, convert_to_options=False):
         sites_options = []
 
         for site in data:
-            primary_site = "(Primary Site)" if site.get("id") == organisation["primary_site"]["id"] else ""
+            primary_site = (
+                " " + strings.sites.SitesPage.PRIMARY_SITE
+                if site.get("id") == organisation["primary_site"]["id"]
+                else ""
+            )
             site_id = site.get("id")
-            site_name = site.get("name") + " " + primary_site
+            site_name = site.get("name") + primary_site
             address = site.get("address")
 
             site_address = NEWLINE.join(
@@ -39,8 +44,8 @@ def get_sites(request, organisation_id, convert_to_options=False):
 
 
 def get_site(request, organisation_id, pk):
-    data = get(request, ORGANISATIONS_URL + organisation_id + SITES_URL + pk)
-    return data.json(), data.status_code
+    data = get(request, ORGANISATIONS_URL + str(organisation_id) + SITES_URL + str(pk))
+    return data.json()["site"]
 
 
 def put_site(request, organisation_id, pk, json):
@@ -50,4 +55,9 @@ def put_site(request, organisation_id, pk, json):
 
 def post_sites(request, organisation_id, json):
     data = post(request, ORGANISATIONS_URL + organisation_id + SITES_URL, json)
+    return data.json(), data.status_code
+
+
+def put_assign_sites(request, pk, json):
+    data = put(request, USERS_URL + str(pk) + SITES_URL, json)
     return data.json(), data.status_code
