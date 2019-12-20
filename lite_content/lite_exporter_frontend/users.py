@@ -25,6 +25,7 @@ class AddUserForm:
     USER_ADD_TITLE = "Add new user"
     USER_EMAIL_QUESTION = "Whats the user's email"
     USER_ADD_FORM_BACK_TO_USERS = "Back to users"
+    ASSIGN_USER_QUESTION = "What sites should the user be assigned to?"
 
 
 class EditUserForm:
@@ -32,3 +33,8 @@ class EditUserForm:
     USER_EDIT_TITLE = "Change role"
     USER_EDIT_FORM_BACK_TO_USER = "Back to user"
     USER_EDIT_FORM_SAVE = "Save"
+
+
+class AssignToSitesForm:
+    ASSIGN_USER_TO_SITES_TITLE = "Assign user to sites"
+    ASSIGN_USER_TO_SITES_DESCRIPTION = "Select all sites that apply."
