@@ -122,12 +122,12 @@ class InitialApplicationQuestionsForms:
         "Open licences cover long term projects and repeat business."
     )
     HELP_WITH_CHOOSING_A_LICENCE = "What licence do I need?"
-    HELP_WITH_CHOOSING_A_LICENCE_CONTENT = (
-        "Read about the different types of export control licences."
-    )
+    HELP_WITH_CHOOSING_A_LICENCE_CONTENT = "Read about the different types of export control licences."
     ENTER_A_REFERENCE_NAME_TITLE = "Name the application"
     ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference name"
-    ENTER_A_REFERENCE_NAME_DESCRIPTION = "Give this application a reference name so you can refer back to it when needed."
+    ENTER_A_REFERENCE_NAME_DESCRIPTION = (
+        "Give this application a reference name so you can refer back to it when needed."
+    )
     TEMPORARY_OR_PERMANENT_TITLE = "Select an export type"
     TEMPORARY_OR_PERMANENT_DESCRIPTION = ""
     TEMPORARY = "Temporary"
@@ -135,7 +135,9 @@ class InitialApplicationQuestionsForms:
     HAVE_YOU_BEEN_INFORMED_TITLE = (
         "Have you been informed under an 'end use control' that you need to apply for a licence?"
     )
-    HAVE_YOU_BEEN_INFORMED_DESCRIPTION = "An end use control is an official a letter or email from Border Force or HMRC."
+    HAVE_YOU_BEEN_INFORMED_DESCRIPTION = (
+        "An end use control is an official a letter or email from Border Force or HMRC."
+    )
     WHAT_WAS_THE_REFERENCE_CODE_TITLE = "Reference number (optional)"
     WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION = "The reference number is on the letter or email."
 
