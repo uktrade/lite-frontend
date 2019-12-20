@@ -7,16 +7,8 @@ def country_question(countries, prefix="address."):
 
 def address_questions(countries, prefix="address."):
     return [
-        TextInput(
-            title="Building and street",
-            description='<span class="govuk-visually-hidden">line 1 of 2</span>',
-            name=prefix + "address_line_1",
-        ),
-        TextInput(
-            title="",
-            description='<span class="govuk-visually-hidden">line 2 of 2</span>',
-            name=prefix + "address_line_2",
-        ),
+        TextInput(title="Building and street", accessible_description="line 1 of 2", name=prefix + "address_line_1",),
+        TextInput(title="", accessible_description="line 2 of 2", name=prefix + "address_line_2",),
         TextInput(title="Town or city", name=prefix + "city"),
         TextInput(title="County or state", name=prefix + "region"),
         TextInput(title="Postcode", name=prefix + "postcode"),

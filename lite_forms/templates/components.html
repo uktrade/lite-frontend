@@ -22,6 +22,11 @@
 			{% for item in question.description %}{% if item|classname == "Link" %}<a class="govuk-link" href="{{ item.address }}">{{ item.text }}</a>{% else %}<span>{{ item }}</span>{% endif %}{% endfor %}
 		</span>
 	{% endif %}
+	{% if question.accessible_description %}
+		<span class="govuk-hint govuk-visually-hidden" for="{{ question.name }}">
+			{{ question.accessible_description }}
+		</span>
+	{% endif %}
 
 	<!-- Error -->
 	{% if errors %}

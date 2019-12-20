@@ -15,6 +15,7 @@ class _Component:
         name: str,
         title: str = "",
         description: str = "",
+        accessible_description: str = None,
         optional: bool = False,
         classes: [] = None,
         extras=None,
@@ -24,6 +25,7 @@ class _Component:
         from lite_forms.helpers import extract_links
 
         self.description = extract_links(description)
+        self.accessible_description = accessible_description
         self.optional = optional
         self.classes = classes
         self.extras = extras
@@ -154,41 +156,71 @@ class SideBySideSection:
 
 class TextInput(_Component):
     def __init__(
-        self, name: str, title: str = "", description: str = "", optional: bool = False, classes: [] = None,
+        self,
+        name: str,
+        title: str = "",
+        description: str = "",
+        accessible_description: str = None,
+        optional: bool = False,
+        classes: [] = None,
     ):
-        super().__init__(name, title, description, optional, classes)
+        super().__init__(name, title, description, accessible_description, optional, classes)
         self.input_type = "text_input"
 
 
 class NumberInput(_Component):
     def __init__(
-        self, name: str, title: str = "", description: str = "", optional: bool = False, classes: [] = None,
+        self,
+        name: str,
+        title: str = "",
+        description: str = "",
+        accessible_description: str = None,
+        optional: bool = False,
+        classes: [] = None,
     ):
-        super().__init__(name, title, description, optional, classes)
+        super().__init__(name, title, description, accessible_description, optional, classes)
         self.input_type = "number_input"
 
 
 class QuantityInput(_Component):
     def __init__(
-        self, name: str, title: str = "", description: str = "", optional: bool = False, classes: [] = None,
+        self,
+        name: str,
+        title: str = "",
+        description: str = "",
+        accessible_description: str = None,
+        optional: bool = False,
+        classes: [] = None,
     ):
-        super().__init__(name, title, description, optional, classes)
+        super().__init__(name, title, description, accessible_description, optional, classes)
         self.input_type = "quantity_input"
 
 
 class PasswordInput(_Component):
     def __init__(
-        self, name: str, title: str = "", description: str = "", optional: bool = False, classes: [] = None,
+        self,
+        name: str,
+        title: str = "",
+        description: str = "",
+        accessible_description: str = None,
+        optional: bool = False,
+        classes: [] = None,
     ):
-        super().__init__(name, title, description, optional, classes)
+        super().__init__(name, title, description, accessible_description, optional, classes)
         self.input_type = "password_input"
 
 
 class CurrencyInput(_Component):
     def __init__(
-        self, name: str, title: str = "", description: str = "", optional: bool = False, classes: [] = None,
+        self,
+        name: str,
+        title: str = "",
+        description: str = "",
+        accessible_description: str = None,
+        optional: bool = False,
+        classes: [] = None,
     ):
-        super().__init__(name, title, description, optional, classes)
+        super().__init__(name, title, description, accessible_description, optional, classes)
         self.input_type = "currency_input"
 
 
@@ -205,12 +237,13 @@ class Checkboxes(_Component):
         options: [],
         title: str = "",
         description: str = "",
+        accessible_description: str = None,
         optional: bool = False,
         classes: [] = None,
         empty_notice: str = "No items",
         show_select_links: bool = False,
     ):
-        super().__init__(name, title, description, optional, classes)
+        super().__init__(name, title, description, accessible_description, optional, classes)
         self.options = options
         self.empty_notice = empty_notice
         self.show_select_links = show_select_links
@@ -230,11 +263,12 @@ class RadioButtons(_Component):
         options: [],
         title: str = "",
         description: str = "",
+        accessible_description: str = None,
         optional: bool = False,
         classes: [] = None,
         empty_notice: str = "No items",
     ):
-        super().__init__(name, title, description, optional, classes)
+        super().__init__(name, title, description, accessible_description, optional, classes)
         self.options = options
         self.empty_notice = empty_notice
         self.input_type = "radiobuttons"
@@ -253,12 +287,13 @@ class RadioButtonsImage(RadioButtons):
         options: [],
         title: str = "",
         description: str = "",
+        accessible_description: str = None,
         optional: bool = False,
         classes: [] = None,
         empty_notice: str = "No items",
         total_pages: int = 1,
     ):
-        super().__init__(name, options, title, description, optional, classes, empty_notice)
+        super().__init__(name, options, title, description, accessible_description, optional, classes, empty_notice)
         self.total_pages = total_pages
         self.input_type = "radiobuttons_image"
 
@@ -270,11 +305,12 @@ class Select(_Component):
         options: [],
         title: str = "",
         description: str = "",
+        accessible_description: str = None,
         optional: bool = False,
         classes: [] = None,
         include_default_select: bool = True,
     ):
-        super().__init__(name, title, description, optional, classes)
+        super().__init__(name, title, description, accessible_description, optional, classes)
         self.options = options
         self.input_type = "select"
         self.include_default_select = include_default_select
@@ -328,17 +364,29 @@ class Heading:
 
 class FileUpload(_Component):
     def __init__(
-        self, name: str, title: str = "", description: str = "", optional: bool = False, classes: [] = None,
+        self,
+        name: str,
+        title: str = "",
+        description: str = "",
+        accessible_description: str = None,
+        optional: bool = False,
+        classes: [] = None,
     ):
-        super().__init__(name, title, description, optional, classes)
+        super().__init__(name, title, description, accessible_description, optional, classes)
         self.input_type = "file_upload"
 
 
 class MultiFileUpload(_Component):
     def __init__(
-        self, name: str, title: str = "", description: str = "", optional: bool = False, classes: [] = None,
+        self,
+        name: str,
+        title: str = "",
+        description: str = "",
+        accessible_description: str = None,
+        optional: bool = False,
+        classes: [] = None,
     ):
-        super().__init__(name, title, description, optional, classes)
+        super().__init__(name, title, description, accessible_description, optional, classes)
         self.input_type = "multi_file_upload"
 
 
@@ -348,11 +396,12 @@ class TextArea(_Component):
         name: str,
         title: str = "",
         description: str = "",
+        accessible_description: str = None,
         optional: bool = False,
         classes: [] = None,
         extras: [] = None,
     ):
-        super().__init__(name, title, description, optional, classes, extras)
+        super().__init__(name, title, description, accessible_description, optional, classes, extras)
         self.input_type = "textarea"
 
 
@@ -363,11 +412,12 @@ class MarkdownArea(TextArea):
         variables: [],
         title: str = "",
         description: str = "",
+        accessible_description: str = None,
         optional: bool = False,
         classes: [] = None,
         extras: [] = None,
     ):
-        super().__init__(name, title, description, optional, classes, extras)
+        super().__init__(name, title, description, accessible_description, optional, classes, extras)
         self.variables = variables
         self.input_type = "markdown"
 
