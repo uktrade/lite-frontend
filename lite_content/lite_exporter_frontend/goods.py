@@ -48,9 +48,7 @@ class CreateGoodForm:
 
     class ControlListEntry:
         TITLE = "Control list classification"
-        DESCRIPTION = (
-            "For example, ML1a. "
-        )
+        DESCRIPTION = "For example, ML1a. "
 
     class Incorporated:
         TITLE = "Will the product be incorporated into another product?"
