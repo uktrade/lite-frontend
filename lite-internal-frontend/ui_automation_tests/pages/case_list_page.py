@@ -28,17 +28,12 @@ class CaseListPage(BasePage):
 
     # Deprecated
     FILTER_SEARCH_BOX = "filter-box"  # ID
-    ASSIGNEE = "[style='margin-bottom: 6px;']"  # CSS
-    NO_ASSIGNEE = "[style='margin-bottom: 0; opacity: .7;']"  # CSS
 
     # Queue dropdown
     QUEUE_DROPDOWN_TITLE = "queue-title"  # ID
-    DROPDOWN_ITEM = ".app-dropdown__item"  # CSS
-    DROPDOWN_ITEM_CLASS = "app-dropdown__item"  # Class_Name
 
     # Sort headings
     SORT_STATUS = "sort-status"  # ID
-    CHEVRON = "chevron"  # ID
 
     def search_pages_for_id(self, id):
         is_present = len(self.driver.find_elements_by_link_text(id))
@@ -110,11 +105,6 @@ class CaseListPage(BasePage):
     def click_on_queue_title(self):
         self.driver.find_element_by_id(self.QUEUE_DROPDOWN_TITLE).click()
 
-    def click_chevron_based_on_context_case_id(self, context):
-        elements = Shared(self.driver).get_rows_in_lite_table()
-        no = utils.get_element_index_by_text(elements, context.case_id)
-        elements[no].find_element_by_css_selector(self.CHEVRON).click()
-
     def click_on_queue_name(self, queue_name):
         self.click_on_queue_title()
         time.sleep(0.5)
@@ -129,6 +119,3 @@ class CaseListPage(BasePage):
 
     def sort_by_status(self):
         self.driver.find_element_by_id(self.SORT_STATUS).click()
-
-    def get_chevron_id_selector(self):
-        return self.CHEVRON

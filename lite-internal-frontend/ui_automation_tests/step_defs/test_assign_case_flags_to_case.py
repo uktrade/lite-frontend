@@ -52,7 +52,7 @@ def count_active_flags(driver, context):
 @when("I unassign flags from the case")
 def unassign_flags_from_case(driver, context):
     case_flags_pages = CaseFlagsPages(driver)
-    case_flags_pages.select_flag(context, context.flag_name)
+    case_flags_pages.select_flag(context.flag_name)
     shared = Shared(driver)
     shared.click_submit()
 

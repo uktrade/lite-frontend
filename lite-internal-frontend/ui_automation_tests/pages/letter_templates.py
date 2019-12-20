@@ -13,7 +13,6 @@ class LetterTemplates(BasePage):
     ADD_LETTER_PARAGRAPHS_BUTTON = '[value="return_to_preview"]'  # CSS
     PREVIEW_BUTTON = "button-preview"  # ID
     PREVIEW = "preview"  # ID
-    SAVE_BUTTON = "action"  # NAME
     EDIT_DETAILS_BUTTON = ".lite-app-bar__controls .govuk-button"  # CSS
     DRAG_DROP_LIST = "standard-advice-list"  # ID
     PREVIEW_PARAGRAPHS = "paragraph-list"  # ID
@@ -51,9 +50,6 @@ class LetterTemplates(BasePage):
     def add_letter_paragraph(self):
         self.driver.find_element_by_name(self.LETTER_PARAGRAPH).click()
         return self.driver.find_element_by_name(self.LETTER_PARAGRAPH_NAME).text
-
-    def click_save_button(self):
-        self.driver.find_element_by_name(self.SAVE_BUTTON).click()
 
     def click_add_letter_paragraph(self):
         self.driver.find_element_by_css_selector(self.ADD_LETTER_PARAGRAPH_BUTTON).click()

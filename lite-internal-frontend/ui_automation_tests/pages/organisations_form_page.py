@@ -30,9 +30,6 @@ class OrganisationsFormPage(BasePage):
     def enter_address_line_1(self, text):
         self.driver.find_element_by_id("site.address.address_line_1").send_keys(text)
 
-    def enter_address_line_2(self, text):
-        self.driver.find_element_by_id("site.address.address_line_2").send_keys(text)
-
     def enter_post_code(self, text):
         self.driver.find_element_by_id("site.address.postcode").send_keys(text)
 

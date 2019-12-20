@@ -14,12 +14,6 @@ def assert_party_data(table, headings, values):
 class ViewCaseDetails:
     scenarios("../features/view_case_details.feature", strict_gherkin=False)
 
-    import logging
-
-    log = logging.getLogger()
-    console = logging.StreamHandler()
-    log.addHandler(console)
-
     @when("the exporter user has edited the case")
     def exporter_user_has_edited_case(driver, context, seed_data_config):
         lite_client = get_lite_client(context, seed_data_config)

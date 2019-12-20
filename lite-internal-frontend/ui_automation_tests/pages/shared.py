@@ -10,20 +10,14 @@ class Shared(BasePage):
     LITE_TABLE_BODY = ".govuk-table__body"  # CSS
     LITE_TABLE_ROW = ".govuk-table__body .govuk-table__row"  # CSS
     LITE_TABLE_CELL = ".govuk-table__body .govuk-table__cell"  # CSS
-    LITE_TABLE_CELL_NO_BODY = ".govuk-table__cell"  # CSS
-    GOVUK_TABLE_BODY = ".govuk-table__body"  # CSS
     GOVUK_CAPTION = ".govuk-caption-l"  # CSS
     SELECTED_TAB = ".lite-tabs__tab--selected"  # CSS
     BODY = "body"  # CSS
     LINKS_IN_TABLE = ".govuk-table td a"
     ROWS_IN_CASES_TABLE = ".govuk-table__body .govuk-table__row"  # CSS
-    H1 = "h1"  # CSS
     H2 = "h2"  # CSS
     LINKS_IN_LITE_TABLE = ".govuk-table__cell a"  # CSS
-    GOVUK_PANEL_BODY = ".govuk-panel__body"  # CSS
     BACK_LINK = ".govuk-back-link"  # CSS
-    INFO_BAR = ".lite-info-bar"  # CSS
-    INFO_BOARD = ".lite-information-board"  # CSS
 
     def click_submit(self):
         self.driver.find_element_by_css_selector(self.SUBMIT_BUTTON).click()
@@ -40,12 +34,6 @@ class Shared(BasePage):
     def get_text_of_selected_tab(self):
         return self.driver.find_element_by_css_selector(self.SELECTED_TAB).text
 
-    def get_text_of_table_body(self):
-        return self.driver.find_element_by_css_selector(self.GOVUK_TABLE_BODY).text
-
-    def get_text_of_panel_body(self):
-        return self.driver.find_element_by_css_selector(self.GOVUK_PANEL_BODY).text
-
     def get_text_of_caption(self):
         return self.driver.find_element_by_css_selector(self.GOVUK_CAPTION).text
 
@@ -54,9 +42,6 @@ class Shared(BasePage):
 
     def get_text_of_lite_table_body(self):
         return self.driver.find_element_by_css_selector(self.LITE_TABLE_BODY).text
-
-    def get_text_of_h1(self):
-        return self.driver.find_element_by_css_selector(self.H1).text
 
     def get_text_of_h2(self):
         return self.driver.find_element_by_css_selector(self.H2).text
@@ -73,9 +58,6 @@ class Shared(BasePage):
     def get_cells_in_lite_table(self):
         return self.driver.find_elements_by_css_selector(self.LITE_TABLE_CELL)
 
-    def get_cells_in_lite_table_no_body(self):
-        return self.driver.find_elements_by_css_selector(self.LITE_TABLE_CELL_NO_BODY)
-
     def get_rows_in_lite_table(self):
         return self.driver.find_elements_by_css_selector(self.LITE_TABLE_ROW)
 
@@ -85,9 +67,6 @@ class Shared(BasePage):
     def get_links_in_lite_table(self):
         return self.driver.find_elements_by_css_selector(self.LINKS_IN_LITE_TABLE)
 
-    def get_text_of_info_bar(self):
-        return self.driver.find_element_by_css_selector(self.INFO_BAR).text
-
     def click_back_link(self):
         return self.driver.find_element_by_css_selector(self.BACK_LINK).click()
 
@@ -96,6 +75,3 @@ class Shared(BasePage):
         edit_buttons = self.driver.find_elements_by_css_selector(self.LITE_TABLE_ROW)
         row_index = str(len(edit_buttons))
         scroll_to_element_by_id(self.driver, "row-" + row_index)
-
-    def info_board_is_displayed(self):
-        return self.driver.find_element_by_css_selector(self.INFO_BOARD).is_displayed()

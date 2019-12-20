@@ -57,7 +57,9 @@ def pytest_addoption(parser):
         env = "dev"
 
     parser.addoption("--driver", action="store", default="chrome", help="Type in browser type")
-    parser.addoption("--sso_sign_in_url", action="store", default="https://sso.trade.uat.uktrade.io/login/", help="url")
+    parser.addoption(
+        "--sso_sign_in_url", action="store", default=str(os.environ.get("AUTHBROKER_URL")) + "/login", help="url"
+    )
 
     if env.lower() == "local":
         parser.addoption(
@@ -244,7 +246,7 @@ def move_case_to_new_queue(driver, context):
 @when("I select previously created flag")  # noqa
 def assign_flags_to_case(driver, context):
     case_flags_pages = CaseFlagsPages(driver)
-    case_flags_pages.select_flag(context, context.flag_name)
+    case_flags_pages.select_flag(context.flag_name)
     shared = Shared(driver)
     shared.click_submit()
 

@@ -8,10 +8,6 @@ from shared.BasePage import BasePage
 class UsersPage(BasePage):
     ADD_A_USER_BUTTON = "a[href*='/users/add']"
     SUBMIT_BUTTON = "button[type*='submit']"
-    FIRST_NAME = "button[type*='submit']"
-    LAST_NAME = "last_name"
-    DEACTIVATE_BUTTON = ".govuk-button[href*='deactivate']"
-    REACTIVATE_BUTTON = ".govuk-button[href*='reactivate']"
     LOGOUT_BUTTON = "a[href*='/logout']"
     PROFILE_LINK = "a[href*='/users/profile/']"
     MANAGE_ROLES_BUTTON = "button-manage-roles"
@@ -26,14 +22,6 @@ class UsersPage(BasePage):
     def click_add_a_user_btn(self):
         self.driver.find_element_by_css_selector(self.ADD_A_USER_BUTTON).click()
 
-    def enter_first_name(self, first_name):
-        self.driver.find_element_by_id(self.FIRST_NAME).clear()
-        self.driver.find_element_by_id(self.FIRST_NAME).send_keys(first_name)
-
-    def enter_last_name(self, last_name):
-        self.driver.find_element_by_id(self.LAST_NAME).clear()
-        self.driver.find_element_by_id(self.LAST_NAME).send_keys(last_name)
-
     def click_edit_for_user(self, user_name):
         element = self.driver.find_element_by_xpath(
             "//*[text()[contains(.,'" + user_name + "')]]/following-sibling::td[last()]/a"
@@ -42,21 +30,6 @@ class UsersPage(BasePage):
         actions.move_to_element(element).perform()
         time.sleep(1)
         element.click()
-
-    def click_user_name_link(self, user_name):
-        element = self.driver.find_element_by_xpath("//*[text()[contains(.,'" + user_name + "')]]")
-        actions = ActionChains(self.driver)
-        actions.move_to_element(element).perform()
-        time.sleep(1)
-        element.click()
-
-    def click_deactivate_btn(self):
-        self.driver.find_element_by_css_selector(self.DEACTIVATE_BUTTON).click()
-        self.driver.find_element_by_css_selector(self.SUBMIT_BUTTON).click()
-
-    def click_reactivate_btn(self):
-        self.driver.find_element_by_css_selector(self.REACTIVATE_BUTTON).click()
-        self.driver.find_element_by_css_selector(self.SUBMIT_BUTTON).click()
 
     def logout(self):
         self.driver.find_element_by_css_selector(self.LOGOUT_BUTTON).click()

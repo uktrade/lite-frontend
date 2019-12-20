@@ -15,13 +15,11 @@ class ApplicationPage(BasePage):
     CANCEL_NOTE_BTN = "case-note-cancel-button"  # id
     CASE_NOTES_TEXT = ".app-activity__item"  # css
     CASE_NOTE_DATE_TIME = ".app-activity__item .govuk-hint"  # css
-    CASE_NOTE_CHARACTER_WARNING = "case_note-warning"  # id
     DOCUMENTS_BTN = '[href*="documents"]'  # css
     GENERATE_DOCUMENTS_BTN = "generate-document"  # id
     ECJU_QUERIES_BTN = '[href*="ecju-queries"]'  # css
     PROGRESS_APP_BTN = '[href*="manage"]'
     RECORD_DECISION_BTN = '[href*="decide"]'  # css
-    HEADERS = ".lite-heading-s"  # css
     ACTIVITY_CASE_NOTE_SUBJECT = ".app-activity__list .govuk-body"
     ACTIVITY_DATES = ".app-activity__item .govuk-hint"
     ACTIVITY_USER = ".user"
@@ -43,8 +41,6 @@ class ApplicationPage(BasePage):
     DOWNLOAD_ADDITIONAL_DOCUMENT = "supporting-documentation"  # ID
     LINK_ORGANISATION_ID = "link-organisation"
     EDIT_GOODS_FLAGS = "button-edit-goods-flags"  # ID
-
-    GOODS_DESCRIPTION_LINK = "#goods a"  # CSS
 
     def click_visible_to_exporter_checkbox(self):
         time.sleep(0.5)
@@ -69,10 +65,6 @@ class ApplicationPage(BasePage):
 
     def get_text_of_case_note_date_time(self, no):
         return self.driver.find_elements_by_css_selector(self.CASE_NOTE_DATE_TIME)[no].text
-
-    def get_text_of_case_note_warning(self):
-        time.sleep(1)
-        return self.driver.find_element_by_id(self.CASE_NOTE_CHARACTER_WARNING).text
 
     def get_disabled_attribute_of_post_note(self):
         return self.driver.find_element_by_id(self.POST_NOTE_BTN).get_attribute("disabled")
@@ -218,7 +210,3 @@ class ApplicationPage(BasePage):
 
     def go_to_organisation(self):
         self.driver.find_element_by_id(self.LINK_ORGANISATION_ID).click()
-
-    def click_good_description_link(self):
-        element = self.driver.find_element_by_css_selector(self.GOODS_DESCRIPTION_LINK)
-        self.driver.execute_script("arguments[0].click();", element)

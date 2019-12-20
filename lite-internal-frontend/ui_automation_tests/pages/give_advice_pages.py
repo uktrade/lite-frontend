@@ -4,11 +4,8 @@ from shared.BasePage import BasePage
 class GiveAdvicePages(BasePage):
     ADVICE_CHECKBOX_OPTION = "type-"  # ID
     IMPORT_ADVICE_LINK = "link-import-"  # ID
-    PICKLIST_ITEM = "app-picklist-picker__item"  # CSS
     PICKLIST_ITEM_TEXT = ".app-picklist-picker__item p"  # CSS
     ADDITIONAL_NOTES = "textarea-note"  # ID
-    BACK_TO_ADVICE = "Go back to the advice screen"  # link text
-    USER_ADVICE = "user_advice"
     TEAM_ADVICE = "team_advice"
     FINAL_ADVICE = "final_advice"
     COMBINE_ADVICE_BUTTON = "combine_advice_button"
@@ -39,9 +36,6 @@ class GiveAdvicePages(BasePage):
 
     def type_in_additional_note_text_field(self, text):
         return self.driver.find_element_by_id(self.ADDITIONAL_NOTES).send_keys(text)
-
-    def click_go_back_to_advice_screen(self):
-        self.driver.find_element_by_link_text(self.BACK_TO_ADVICE).click()
 
     def go_to_team_advice(self):
         self.driver.find_element_by_id(self.TEAM_ADVICE).click()
