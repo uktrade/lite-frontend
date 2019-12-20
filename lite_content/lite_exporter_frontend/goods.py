@@ -3,6 +3,34 @@ from conf.settings import env
 PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
 
 
+class GoodsList:
+    TITLE = "Products"
+    CREATE_GOOD = "Add a product"
+
+    class Count:
+        ORGANISATION_ZERO = "Your organisation doesn't have any products."
+        ORGANISATION_ONE = "Your organisation has 1 product"
+        ORGANISATION_MANY = "Your organisation has %s products"  # %s will add the count of goods
+        FILTERED_ZERO = "There are no products based on filter"
+        FILTERED_ONE = "Displaying 1 product"
+        FILTERED_MANY = "Displaying %s products"  # %s will add the count of goods
+
+    class Filter:
+        DESCRIPTION = "Description"
+        CONTROL_LIST_ENTRY = "Control list entry"
+        PART_NUMBER = "Part number"
+        APPLY = "Apply filters"
+        CLEAR = "Clear filters"
+        SHOW = "Show filters"
+        HIDE = "Hide filters"
+
+    class Table:
+        DESCRIPTION = "Description"
+        CONTROL_LIST_ENTRY = "Control list entry"
+        PART_NUMBER = "Part number"
+        STATUS = "Status"
+
+
 class DocumentSensitivityForm:
     TITLE = "Does your product documentation meet the following criteria?"
     DESCRIPTION = (
