@@ -21,3 +21,4 @@ class User(SeedClass):
         )
         self.export_headers["exporter-user-token"] = self.context["export_user_token"]
         self.export_headers["organisation-id"] = org_id
+        self.add_to_context("exporter_headers", self.export_headers)

@@ -124,8 +124,8 @@ def get_element_index_by_text(elements, text: str, complete_match=True):
     return -1
 
 
-def scroll_to_element_by_id(driver, id):
-    driver.execute_script("document.getElementById('" + id + "').scrollIntoView(true);")
+def scroll_to_element_by_id(driver, element_id):
+    driver.execute_script("document.getElementById('" + element_id + "').scrollIntoView(true);")
 
 
 def search_for_correct_date_regex_in_element(element):
@@ -192,3 +192,14 @@ def get_text_of_multi_page_table(css_selector, driver):
             break
     driver.set_timeout_to(10)
     return text
+
+
+def strip_special_characters(string):
+    return "".join(e for e in string if e.isalnum())
+
+
+def get_current_date_time(format_date_time=True):
+    date_time = datetime.now()
+    if not format_date_time:
+        return date_time
+    return strip_special_characters(str(date_time))

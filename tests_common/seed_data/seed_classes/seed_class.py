@@ -6,9 +6,5 @@ class SeedClass:
         self.request_data = request_data
         self.context = context
 
-    def log(self, text):
-        print(text)
-
     def add_to_context(self, name, value):
-        self.log(name + ": " + str(value))
         self.context[name] = value

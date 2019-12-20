@@ -10,11 +10,6 @@ def context(request):
 
 
 @fixture(scope="session")
-def invalid_username(request):
-    return "invalid@mail.com"
-
-
-@fixture(scope="session")
 def exporter_info(request, environment):
     exporter_sso_email = environment("TEST_EXPORTER_SSO_EMAIL")
     name = environment("TEST_EXPORTER_SSO_NAME")

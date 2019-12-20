@@ -25,7 +25,6 @@ class Party(SeedClass):
         self.add_document("/applications/" + draft_id + "/consignee/document/")
 
     def add_eua_query(self):
-        self.log("Adding end user advisory: ...")
         data = self.request_data["end_user_advisory"]
         id = make_request(
             "POST", base_url=self.base_url, url="/queries/end-user-advisories/", headers=self.export_headers, body=data,
@@ -33,7 +32,6 @@ class Party(SeedClass):
         self.add_to_context("end_user_advisory_id", str(id))
 
     def add_end_user(self, draft_id, enduser):
-        self.log("Adding end user: ...")
         end_user_data = self.request_data["end-user"] if enduser is None else enduser
         end_user = make_request(
             "POST",
@@ -42,12 +40,10 @@ class Party(SeedClass):
             headers=self.export_headers,
             body=end_user_data,
         ).json()["end_user"]
-        self.log("Adding end user document: ...")
         self.add_end_user_document(draft_id)
         self.add_to_context("end_user", end_user)
 
     def add_ultimate_end_user(self, draft_id, ultimate_end_user):
-        self.log("Adding ultimate end user: ...")
         ueu_data = self.request_data["ultimate_end_user"] if ultimate_end_user is None else ultimate_end_user
         ultimate_end_user_post = make_request(
             "POST",
@@ -62,7 +58,6 @@ class Party(SeedClass):
         return ultimate_end_user_id
 
     def add_consignee(self, draft_id, consignee):
-        self.log("Adding consignee: ...")
         consignee_data = self.request_data["consignee"] if consignee is None else consignee
         consignee_response = make_request(
             "POST",
