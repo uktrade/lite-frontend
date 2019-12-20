@@ -148,7 +148,7 @@ class RespondToQueryForm:
         NO = "No, change my response"
 
 
-class Good:
+class GoodPage:
     class Tabs:
         DETAILS = "Details"
         NOTES = "Notes"
