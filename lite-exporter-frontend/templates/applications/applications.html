@@ -66,8 +66,8 @@
 							</a>
 						</td>
 						<td class="govuk-table__cell">
-							{% if application.id in notifications %}
-								<span class="lite-notification-bubble">{{ notifications|key_value:application.id }} <span class="govuk-visually-hidden"> notifications</span></span>
+							{% if application.exporter_user_notification_count.total %}
+								<span class="lite-notification-bubble">{{ application.exporter_user_notification_count.total }} <span class="govuk-visually-hidden"> notifications</span></span>
 							{% endif %}
 						</td>
 						{% if organisation.type.key != 'hmrc' %}

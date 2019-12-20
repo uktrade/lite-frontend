@@ -67,31 +67,31 @@
     <div class="lite-tabs__container">
         <div class="lite-tabs">
 			<a href="{% url 'applications:application' application.id %}" class="lite-tabs__tab {% if not type %}lite-tabs__tab--selected{% endif %}" id="link-details">
-			   Details
+            {% lcs 'applications.ApplicationSummaryPage.Tabs.DETAILS' %}
 			</a>
 			{% if application.application_type.key != 'hmrc_query' %}
 				<a href="{% url 'applications:application' application.id 'case-notes' %}" class="lite-tabs__tab {% if type == 'case-notes' %}lite-tabs__tab--selected{% endif %}" id="link-case-notes">
-					Notes
-					{% if case_note_notifications %}
+                    {% lcs 'applications.ApplicationSummaryPage.Tabs.NOTES' %}
+					{% if application.exporter_user_notification_count.casenote %}
 						<div class="lite-notification-bubble">
-							{{ case_note_notifications }}
+							{{ application.exporter_user_notification_count.casenote }}
 						</div>
 					{% endif %}
 				</a>
 	            <a href="{% url 'applications:application' application.id 'ecju-queries' %}" class="lite-tabs__tab {% if type == 'ecju-queries' %}lite-tabs__tab--selected{% endif %}" id="link-ecju-queries">
-	                ECJU Queries
-	                {% if ecju_query_notifications %}
+	                {% lcs 'applications.ApplicationSummaryPage.Tabs.ECJU_QUERIES' %}
+	                {% if application.exporter_user_notification_count.ecjuquery %}
 	                    <div class="lite-notification-bubble">
-	                        {{ ecju_query_notifications }}
+	                        {{ application.exporter_user_notification_count.ecjuquery }}
 	                    </div>
 	                {% endif %}
 	            </a>
 			{% endif %}
             <a href="{% url 'applications:application' application.id 'generated-documents' %}" class="lite-tabs__tab {% if type == 'generated-documents' %}lite-tabs__tab--selected{% endif %}" id="link-generated-documents">
-                {% lcs 'applications.GeneratedDocuments.TAB' %}
-                {% if generated_case_document_notifications %}
+                {% lcs 'applications.ApplicationSummaryPage.Tabs.GENERATED_DOCUMENTS' %}
+                {% if application.exporter_user_notification_count.generatedcasedocument %}
                     <div class="lite-notification-bubble">
-                        {{ generated_case_document_notifications }}
+                        {{ application.exporter_user_notification_count.generatedcasedocument }}
                     </div>
                 {% endif %}
             </a>

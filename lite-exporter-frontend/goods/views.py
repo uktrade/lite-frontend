@@ -18,8 +18,6 @@ from applications.services import (
     download_document_from_s3,
     get_status_properties,
 )
-from core.helpers import group_notifications
-from core.services import get_notifications
 from goods import forms
 from goods.forms import (
     edit_form,
@@ -52,12 +50,8 @@ from lite_forms.views import SingleFormView
 class Goods(TemplateView):
     def get(self, request, **kwargs):
         goods, _ = get_goods(request)
-        notifications = get_notifications(request, unviewed=True)
 
-        context = {
-            "goods": goods,
-            "notifications": group_notifications(notifications),
-        }
+        context = {"goods": goods}
         return render(request, "goods/goods.html", context)
 
 
@@ -82,24 +76,15 @@ class GoodsDetail(TemplateView):
         return super(GoodsDetail, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, **kwargs):
-        notifications = get_notifications(request, unviewed=True)
         documents = get_good_documents(request, str(self.good_id))
-        case_note_notifications = len(
-            [x for x in notifications if str(x["parent"]) == self.good_id and x["object_type"] == "case_note"]
-        )
-        ecju_query_notifications = len(
-            [x for x in notifications if str(x["parent"]) == self.good_id and x["object_type"] == "ecju_query"]
-        )
 
         context = {
             "good": self.good,
             "documents": documents,
             "type": self.view_type,
-            "case_note_notifications": case_note_notifications,
-            "ecju_query_notifications": ecju_query_notifications,
         }
 
-        if self.good["query_id"]:
+        if self.good["query"]:
             status_props, _ = get_status_properties(request, self.good["case_status"]["key"])
             context["status_is_read_only"] = status_props["is_read_only"]
             context["status_is_terminal"] = status_props["is_terminal"]

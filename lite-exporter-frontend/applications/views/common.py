@@ -28,9 +28,9 @@ from applications.services import (
     get_status_properties,
     get_application_generated_documents,
 )
-from conf.constants import HMRC_QUERY, APPLICANT_EDITING, NEWLINE, CASE_NOTE, ECJU_QUERY, GENERATED_CASE_DOCUMENT
-from core.helpers import group_notifications, str_to_bool, convert_dict_to_query_params
-from core.services import get_notifications, get_organisation
+from conf.constants import HMRC_QUERY, APPLICANT_EDITING, NEWLINE
+from core.helpers import str_to_bool, convert_dict_to_query_params
+from core.services import get_organisation
 from lite_content.lite_exporter_frontend import strings
 from lite_forms.components import HiddenField
 from lite_forms.generators import confirm_form
@@ -43,11 +43,9 @@ class ApplicationsList(TemplateView):
         params = {"page": int(request.GET.get("page", 1)), "submitted": str_to_bool(request.GET.get("submitted", True))}
         organisation = get_organisation(request, request.user.organisation)
         applications = get_applications(request, **params)
-        notifications = get_notifications(request, unviewed=True)
 
         context = {
             "applications": applications,
-            "notifications": group_notifications(notifications),
             "organisation": organisation,
             "params": params,
             "page": params.pop("page"),
@@ -145,23 +143,12 @@ class ApplicationDetail(TemplateView):
         return super(ApplicationDetail, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, **kwargs):
-        # add application number to next query
-        notifications = get_notifications(request, unviewed=True)
-        (
-            case_note_notifications,
-            ecju_query_notifications,
-            generated_case_document_notifications,
-        ) = _get_separate_notifications(notifications, self.application_id)
-
         status_props, _ = get_status_properties(request, self.application["status"]["key"])
 
         context = {
             "application": self.application,
             "title": self.application["name"],
             "type": self.view_type,
-            "case_note_notifications": case_note_notifications,
-            "ecju_query_notifications": ecju_query_notifications,
-            "generated_case_document_notifications": generated_case_document_notifications,
             "answers": {**convert_application_to_check_your_answers(self.application)},
             "status_is_read_only": status_props["is_read_only"],
             "status_is_terminal": status_props["is_terminal"],
@@ -326,20 +313,3 @@ class Submit(TemplateView):
             "application": application,
         }
         return render(request, "applications/submit.html", context)
-
-
-def _get_separate_notifications(notifications, application_id):
-    case_note_notifications = 0
-    ecju_query_notifications = 0
-    generated_case_document_notifications = 0
-
-    for notification in notifications:
-        if notification["parent"] == application_id:
-            if notification["object_type"] == CASE_NOTE:
-                case_note_notifications += 1
-            elif notification["object_type"] == ECJU_QUERY:
-                ecju_query_notifications += 1
-            elif notification["object_type"] == GENERATED_CASE_DOCUMENT:
-                generated_case_document_notifications += 1
-
-    return case_note_notifications, ecju_query_notifications, generated_case_document_notifications

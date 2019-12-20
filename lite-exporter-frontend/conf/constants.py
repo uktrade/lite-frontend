@@ -50,11 +50,6 @@ STANDARD_LICENCE = "standard_licence"
 OPEN_LICENCE = "open_licence"
 HMRC_QUERY = "hmrc_query"
 
-# Notification constants
-CASE_NOTE = "case_note"
-ECJU_QUERY = "ecju_query"
-GENERATED_CASE_DOCUMENT = "generated_case_document"
-
 APPLICANT_EDITING = "applicant_editing"
 
 NOT_STARTED = "not_started"
@@ -76,3 +71,10 @@ class Permissions:
     SUBMIT_LICENCE_APPLICATION = "SUBMIT_LICENCE_APPLICATION"
 
     MANAGE_ORGANISATION_PERMISSIONS = [ADMINISTER_SITES, ADMINISTER_USERS, EXPORTER_ADMINISTER_ROLES]
+
+
+class CaseType:
+    APPLICATION = "application"
+    CLC_QUERY = "clc_query"
+    EUA_QUERY = "end_user_advisory_query"
+    HMRC_QUERY = "hmrc_query"

@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from core.helpers import convert_parameters_to_query_params
+from core.helpers import convert_parameters_to_query_params, convert_value_to_query_param
 from lite_forms.components import Option
 
 from conf.client import get, post, put, delete
@@ -83,12 +83,17 @@ def post_external_locations(request, pk, json):
     return data.json(), data.status_code
 
 
-def get_notifications(request, unviewed):
-    url = NOTIFICATIONS_URL
-    if unviewed:
-        url = "%s?unviewed=True" % url
+def get_notifications(request, case_types=None, count_only=True):
+    """
+        :param count_only: query parameter to only return the number of notifcations; ignoring all other data
+    """
+    url = f"{NOTIFICATIONS_URL}?count_only={count_only}"
+
+    if case_types:
+        url = f"{url}&{convert_value_to_query_param(key='case_type', value=case_types)}"
+
     data = get(request, url)
-    return data.json().get("results")
+    return data.json(), data.status_code
 
 
 # Organisation

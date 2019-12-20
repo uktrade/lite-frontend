@@ -5,8 +5,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
-from conf.constants import Permissions
-from core.builtins.custom_tags import get_string
+from conf.constants import Permissions, CaseType
 from core.forms import select_your_organisation_form
 from core.helpers import Section, Tile, generate_notification_string
 from core.services import get_notifications, get_organisation
@@ -35,18 +34,18 @@ class Hub(TemplateView):
         else:
             manage_organisation_section_link = None
 
-        notifications = get_notifications(request, unviewed=True)
         organisation = get_organisation(request, str(request.user.organisation))
+        notifications, _ = get_notifications(request)
 
         if organisation.get("type").get("key") == "hmrc":
             sections = [
-                Section("", [Tile("Make a Customs enquiry", "", reverse_lazy("hmrc:raise_a_query")),]),
+                Section("", [Tile(strings.hub.Tiles.CUSTOMS_ENQUIRY, "", reverse_lazy("hmrc:raise_a_query")),]),
                 Section(
-                    "Manage",
+                    strings.hub.Header.MANAGE,
                     [
-                        Tile(get_string("applications.title"), "", reverse_lazy("applications:applications")),
+                        Tile(strings.hub.Tiles.APPLICATIONS, "", reverse_lazy("applications:applications"),),
                         Tile(
-                            get_string("drafts.title"),
+                            strings.hub.Tiles.DRAFTS,
                             "",
                             reverse_lazy("applications:applications") + "?submitted=False",
                         ),
@@ -56,25 +55,24 @@ class Hub(TemplateView):
         else:
             sections = [
                 Section(
-                    "",
-                    [Tile(get_string("licences.apply_for_a_licence"), "", reverse_lazy("apply_for_a_licence:start")),],
+                    "", [Tile(strings.hub.Tiles.APPLY_FOR_LICENCE, "", reverse_lazy("apply_for_a_licence:start"))],
                 ),
                 Section(
-                    "Manage",
+                    strings.hub.Header.MANAGE,
                     [
                         Tile(
-                            get_string("applications.title"),
-                            generate_notification_string(notifications, "base_application"),
+                            strings.hub.Tiles.APPLICATIONS,
+                            generate_notification_string(notifications, case_types=[CaseType.APPLICATION]),
                             reverse_lazy("applications:applications"),
                         ),
                         Tile(
-                            "Goods",
-                            generate_notification_string(notifications, "control_list_classification_query"),
+                            strings.hub.Tiles.GOODS,
+                            generate_notification_string(notifications, case_types=[CaseType.CLC_QUERY]),
                             reverse_lazy("goods:goods"),
                         ),
                         Tile(
-                            "End User Advisories",
-                            generate_notification_string(notifications, "end_user_advisory_query"),
+                            strings.hub.Tiles.END_USER_ADVISORIES,
+                            generate_notification_string(notifications, case_types=[CaseType.EUA_QUERY]),
                             reverse_lazy("end_users:end_users"),
                         ),
                     ],
@@ -82,7 +80,7 @@ class Hub(TemplateView):
             ]
 
             if organisation.get("type").get("key") == "individual":
-                sections[1].tiles.append(Tile("Manage my sites", "", reverse_lazy("sites:sites")))
+                sections[1].tiles.append(Tile(strings.hub.Tiles.SITES, "", reverse_lazy("sites:sites")))
             elif manage_organisation_section_link:
                 number_permissions = 0
                 for permission in user_permissions:

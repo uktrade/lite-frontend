@@ -1,5 +1,4 @@
 import datetime
-from collections import defaultdict
 from html import escape
 
 from django.template.defaultfilters import safe
@@ -35,30 +34,16 @@ def str_date_only(value):
     return return_value.strftime("%d %B %Y")
 
 
-def generate_notification_string(notifications, object_type):
-    notifications_count = len(
-        [x for x in notifications if x["object_type"] == object_type or x["parent_type"] == object_type]
-    )
+def generate_notification_string(notifications, case_types):
+    notification_count = notifications["notification_count"]
+    notification_count_sum = sum([count for case_type, count in notification_count.items() if case_type in case_types])
 
-    if notifications_count == 0:
+    if not notification_count_sum:
         return ""
-    elif notifications_count == 1:
-        return f"You have {notifications_count} new notification"
+    elif notification_count_sum:
+        return f"You have {notification_count_sum} new notification"
     else:
-        return f"You have {notifications_count} new notifications"
-
-
-def group_notifications(notifications: list):
-    """
-    Groups and counts notifications by object and parent ID
-    """
-    notifications_filtered = defaultdict(int)
-
-    for notification in notifications:
-        notifications_filtered[notification["object"]] += 1
-        notifications_filtered[notification["parent"]] += 1
-
-    return notifications_filtered
+        return f"You have {notification_count_sum} new notifications"
 
 
 def convert_value_to_query_param(key: str, value):
