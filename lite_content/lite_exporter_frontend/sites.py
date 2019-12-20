@@ -1,0 +1,2 @@
+class SitesPage:
+    TAB = "Sites"

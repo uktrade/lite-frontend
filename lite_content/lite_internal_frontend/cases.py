@@ -14,8 +14,26 @@ class ApplicationPage:
         ADVICE = "View Advice"
         GENERATE_DOCUMENT = "Generate Document"
 
-    EDIT_FLAGS = "Edit goods flags"
-    REVIEW_GOODS = "Review Goods"
+    class Goods:
+        TITLE = "Products"
+        MISSING_DOCUMENT_REASON_PREFIX = "No document given: "
+
+        class Table:
+            CLC = "Control List Entry"
+            DESCRIPTION = "Description"
+            VALUE = "Quantity/Value"
+            DOCUMENTS = "Documents"
+            FLAGS = "Flags"
+            ADVICE = "Advice"
+
+    class Destinations:
+        COUNTRY_NAME = "Country"
+        PRODUCTS_CONTROL_CODES = "Goods"
+        FLAGS_TABLE_HEADER = "Flags"
+
+    EDIT_FLAGS = "Edit products flags"
+    EDIT_DESTINATION_FLAGS = "Edit destination flags"
+    REVIEW_GOODS = "Review Products"
     ADVICE = "Give or change advice"
     RESPOND_BUTTON = "Respond to Query"
     CLOSED = "This case is closed"
