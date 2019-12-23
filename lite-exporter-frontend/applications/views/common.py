@@ -16,6 +16,7 @@ from applications.helpers.summaries import application_summary, draft_summary
 from applications.helpers.task_lists import get_application_task_list
 from applications.helpers.validators import validate_withdraw_application, validate_delete_draft
 from applications.services import (
+    get_activity,
     get_applications,
     get_case_notes,
     get_application_ecju_queries,
@@ -152,6 +153,7 @@ class ApplicationDetail(TemplateView):
             "answers": {**convert_application_to_check_your_answers(self.application)},
             "status_is_read_only": status_props["is_read_only"],
             "status_is_terminal": status_props["is_terminal"],
+            "activity": get_activity(request, self.application_id),
         }
 
         if self.application["application_type"]["key"] != HMRC_QUERY:

@@ -1,6 +1,7 @@
-from pytest_bdd import when, scenarios, then, given
+from pytest_bdd import when, scenarios, then, given, parsers
 
 from pages.application_overview_page import ApplicationOverviewPage
+from pages.application_page import ApplicationPage
 from ui_automation_tests.pages.application_goods_type_list import ApplicationGoodsTypeList
 
 scenarios("../features/edit_open_application.feature", strict_gherkin=False)

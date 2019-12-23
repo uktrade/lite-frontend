@@ -2,6 +2,7 @@ ISO8601_FMT = "%Y-%m-%dT%H:%M:%S.%fZ"
 NEWLINE = "\n"
 
 # URLs
+ACTIVITY_URL = "/activity/"
 ORGANISATIONS_URL = "/organisations/"
 EXPORTER_USERS_PERMISSIONS_URL = ORGANISATIONS_URL + "permissions/"
 APPLICATIONS_URL = "/applications/"

@@ -29,18 +29,6 @@ def goods_type_errors(driver):
     assert "This field is required." in shared.get_text_of_error_messages()
 
 
-@when("I click overview")
-def click_overview(driver):
-    application_goods_list = ApplicationGoodsList(driver)
-    application_goods_list.click_on_overview()
-
-
-@when("I click Add goods type button")
-def click_goods_type_button(driver):
-    goods_type_page = ApplicationGoodsTypeList(driver)
-    goods_type_page.click_goods_type_button()
-
-
 @then(parsers.parse('I see my goods type added at position "{position}" with a description and a control code'))
 def i_see_the_goods_types_list(driver, position, context):
     goods_type_page = ApplicationGoodsTypeList(driver)

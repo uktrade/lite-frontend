@@ -1,11 +1,15 @@
 import datetime
 import os
+import time
+
 import pytest
 from pytest_bdd import given, when, then, parsers
 from selenium.webdriver.common.by import By
 
 from pages.add_end_user_pages import AddEndUserPages
 from pages.application_edit_type_page import ApplicationEditTypePage
+from pages.application_goods_list import ApplicationGoodsList
+from pages.application_goods_type_list import ApplicationGoodsTypeList
 from pages.application_page import ApplicationPage
 from shared import functions
 from ui_automation_tests.fixtures.env import environment  # noqa
@@ -539,3 +543,54 @@ def click_notes_tab(driver):  # noqa
 def click_ecju_query_tab(driver):  # noqa
     application_page = ApplicationPage(driver)
     application_page.click_ecju_query_tab()
+
+
+@when("I click Add goods type button")  # noqa
+def click_goods_type_button(driver):  # noqa
+    goods_type_page = ApplicationGoodsTypeList(driver)
+    goods_type_page.click_goods_type_button()
+
+
+@when("I click overview")  # noqa
+def click_overview(driver):  # noqa
+    application_goods_list = ApplicationGoodsList(driver)
+    application_goods_list.click_on_overview()
+
+
+@when("I add a non incorporated good to application")  # noqa
+def add_a_non_incorporated_good(driver, add_a_non_incorporated_good_to_application):  # noqa
+    pass
+
+
+@when("I click on end user")  # noqa
+def i_click_on_end_user(driver):  # noqa
+    app = ApplicationOverviewPage(driver)
+    utils.scroll_to_element_by_id(Shared(driver).driver, app.END_USER_LINK)
+    app.click_end_user_link()
+
+
+@when("I click on consignees")  # noqa
+def i_click_on_consignees(driver):  # noqa
+    utils.scroll_to_element_by_id(Shared(driver).driver, "consignees")
+    ApplicationOverviewPage(driver).click_consignee_link()
+
+
+@when("I click on activity tab")  # noqa
+def activity_tab(driver):  # noqa
+    ApplicationPage(driver).click_activity_tab()
+
+
+@then(parsers.parse('"{expected_text}" is shown as position "{no}" in the audit trail'))  # noqa
+def latest_audit_trail(driver, expected_text, no):  # noqa
+    assert expected_text in ApplicationPage(driver).get_text_of_audit_trail_item(int(no) - 1)
+
+
+@when("I wait for document to upload")  # noqa
+def wait_for_document(driver):  # noqa
+    document_is_found = False
+    while not document_is_found:
+        if "Processing" in driver.find_element_by_id("document").text:
+            time.sleep(1)
+            driver.refresh()
+        else:
+            document_is_found = True

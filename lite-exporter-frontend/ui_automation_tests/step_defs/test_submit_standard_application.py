@@ -126,18 +126,6 @@ def click_add_to_application_button(driver, no, context):
     driver.find_elements_by_css_selector("a.govuk-button")[num].click()
 
 
-@when("I click on end user")
-def i_click_on_end_user(driver):
-    app = ApplicationOverviewPage(driver)
-    scroll_to_element_by_id(Shared(driver).driver, app.END_USER_LINK)
-    app.click_end_user_link()
-
-
-@when("I add a non incorporated good to application")
-def add_a_non_incorporated_good(driver, add_a_non_incorporated_good_to_application):
-    pass
-
-
 @then(parsers.parse('"{button}" link is present'))
 def download_and_delete_is_links_are_present(driver, button):
     shared = Shared(driver)
@@ -199,12 +187,6 @@ def consignee_document_delete_is_present(driver):
 @then("The end user document has been deleted")
 def document_has_been_deleted(driver):
     assert ApplicationOverviewPage(driver).attach_end_user_document_is_present()
-
-
-@when("I click on consignees")
-def i_click_on_consignees(driver):
-    scroll_to_element_by_id(Shared(driver).driver, "consignees")
-    ApplicationOverviewPage(driver).click_consignee_link()
 
 
 @then("The consignee document has been deleted")

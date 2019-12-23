@@ -6,12 +6,14 @@ class ApplicationPage(BasePage):
     BUTTON_EDIT_APPLICATION_ID = "button-edit-application"
     LABEL_APPLICATION_STATUS_ID = "label-application-status"
     LINK_NOTES_TAB_ID = "link-case-notes"  # ID
+    LINK_ACTIVITY_TAB_ID = "link-activity"  # ID
     LINK_ECJU_QUERY_TAB_ID = "link-ecju-queries"  # ID
     LINK_GENERATED_DOCUMENTS_TAB_ID = "link-generated-documents"  # ID
     LINK_GENERATED_DOCUMENT_DOWNLOAD_LINK = "generated-document-download"  # ID
     ECJU_QUERY_RESPONSE_TEXT = "Respond to query"  # text
     ECJU_QUERIES_CLOSED = "closed-ecju-query"  # ID
     LINK_EDIT_APPLICATION = "a[href*='/edit-type/']"
+    AUDIT_TRAIL_ITEM = ".app-activity__item"  # CSS
 
     def click_withdraw_application_button(self):
         self.driver.find_element_by_id(self.BUTTON_WITHDRAW_APPLICATION_ID).click()
@@ -31,6 +33,9 @@ class ApplicationPage(BasePage):
     def click_notes_tab(self):
         self.driver.find_element_by_id(self.LINK_NOTES_TAB_ID).click()
 
+    def click_activity_tab(self):
+        self.driver.find_element_by_id(self.LINK_ACTIVITY_TAB_ID).click()
+
     def get_count_of_closed_ecju_queries(self):
         return len(self.driver.find_elements_by_id(self.ECJU_QUERIES_CLOSED))
 
@@ -43,3 +48,6 @@ class ApplicationPage(BasePage):
 
     def get_status(self):
         return self.driver.find_element_by_id(self.LABEL_APPLICATION_STATUS_ID).text
+
+    def get_text_of_audit_trail_item(self, no):
+        return self.driver.find_elements_by_css_selector(self.AUDIT_TRAIL_ITEM)[no].text
