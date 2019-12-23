@@ -28,6 +28,7 @@ class GoodsList:
         DESCRIPTION = "Description"
         CONTROL_LIST_ENTRY = "Control list entry"
         PART_NUMBER = "Part number"
+        COUNTRIES = "Countries"
         STATUS = "Status"
 
 
