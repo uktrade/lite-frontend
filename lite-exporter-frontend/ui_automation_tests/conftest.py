@@ -90,7 +90,10 @@ def pytest_addoption(parser):
         raise Exception("This is the demo environment - Try another environment instead")
     else:
         parser.addoption(
-            "--exporter_url", action="store", default=f"https://exporter.lite.service.{env}.uktrade.io/", help="url",
+            "--exporter_url",
+            action="store",
+            default=f"https://exporter.lite.service.{env}.uktrade.digital/",
+            help="url",
         )
         parser.addoption(
             "--lite_api_url", action="store", default=f"https://lite-api-{env}.london.cloudapps.digital/", help="url",
