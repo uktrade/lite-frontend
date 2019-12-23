@@ -2,16 +2,22 @@ $linkSelectAll = $( '#link-select-all' );
 $linkDeselectAll = $( '#link-deselect-all' );
 $checkboxes = $( 'input:checkbox' );
 
-$linkSelectAll.click(function() {
+$linkSelectAll.click(function(e) {
+	e.preventDefault();
 	$checkboxes.prop('checked', true);
-	addCheckedCheckboxesToList();
+	try {
+		addCheckedCheckboxesToList();
+    } catch(e) {}
 	setSelectLinksState();
 	return false;
 });
 
-$linkDeselectAll.click(function() {
+$linkDeselectAll.click(function(e) {
+	e.preventDefault();
 	$checkboxes.prop('checked', false);
-	addCheckedCheckboxesToList();
+	try {
+		addCheckedCheckboxesToList();
+    } catch(e) {}
 	setSelectLinksState();
 	return false;
 });
