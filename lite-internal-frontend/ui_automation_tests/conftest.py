@@ -77,7 +77,7 @@ def pytest_addoption(parser):
         parser.addoption(
             "--internal_url",
             action="store",
-            default="https://internal.lite.service." + env + ".uktrade.io/",
+            default="https://internal.lite.service." + env + ".uktrade.digital/",
             help="url",
         )
         parser.addoption(
