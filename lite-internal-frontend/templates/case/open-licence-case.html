@@ -143,7 +143,7 @@
 						<thead class="govuk-table__head">
 							<tr class="govuk-table__row">
 								<th scope="col" class="govuk-table__header">
-									<button type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
+									<button id="link-select-all-goods" type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
 								</th>
 								<th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs 'GOOD_DESCRIPTION' %}</th>
 								<th scope="col" class="govuk-table__header">{% lcs 'GOOD_CONTROLLED' %}</th>
@@ -208,28 +208,62 @@
 		<div class="govuk-accordion__section">
 			<div class="govuk-accordion__section-header">
 				<h2 class="govuk-accordion__section-heading">
-					<span class="govuk-accordion__section-button" id="accordion-default-heading-2">
-						{{ case.application.destinations.data|length }} {% lcs 'CASE_COUNTRIES' %}
+					<span class="govuk-accordion__section-button" id="accordion-default-heading-3">
+						{% lcs 'CASE_ENTITIES_INVOLVED' %}
 					</span>
 				</h2>
 			</div>
-			<div id="accordion-default-content-2" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-2">
-				<table class="govuk-table">
-					<thead class="govuk-table__head">
-						<tr class="govuk-table__row">
-							<th scope="col" class="govuk-table__header">{% lcs 'CASE_COUNTRIES_GREEN_LIST' %}</th>
-						</tr>
-					</thead>
-					<tbody class="govuk-table__body">
-						{% for country in case.application.destinations.data %}
+			<div class="govuk-accordion__section-content">
+				<form action="{% url 'cases:assign_destination_flags' case.id %}" method="get">
+					<button id="button-edit-destinations-flags" class="govuk-button" data-module="govuk-button">
+						{% lcs 'CASES.ApplicationPage.EDIT_DESTINATION_FLAGS' %}
+					</button>
+					<table class="govuk-table">
+						<thead class="govuk-table__head">
 							<tr class="govuk-table__row">
-								<td class="govuk-table__cell">{{ country.name }}</td>
+								<th scope="col" class="govuk-table__header">
+									<button id="link-select-all-destinations" type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
+								</th>
+								<th scope="col" class="govuk-table__header govuk-!-width-one-third">{% lcs 'CASES.ApplicationPage.Destinations.COUNTRY_NAME' %}</th>
+								<th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs 'CASES.ApplicationPage.Destinations.PRODUCTS_CONTROL_CODES' %}</th>
+								<th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs 'CASES.ApplicationPage.Destinations.FLAGS_TABLE_HEADER' %}</th>
 							</tr>
-						{% endfor %}
-					</tbody>
-				</table>
+						</thead>
+						<tbody class="govuk-table__body">
+							{% for country in case.application.destinations.data %}
+							<tr class="govuk-table__row">
+								<td class="govuk-table__cell govuk-table__cell--checkbox">
+									<input class="govuk-checkboxes__input" type="checkbox" name="destinations" value="{{ country.id }}" id="{{ country.id }}">
+									<label class="govuk-label govuk-checkboxes__label" for="{{ country.id }}"></label>
+								</td>
+								<td class="govuk-table__cell">{{ country.name }}<span class="app-country-tag">{{ country.id }}</span></td>
+								<td class="govuk-table__cell">
+									{% for good in case.application.goods_types %}
+										{% if good.countries %}
+											{% if country in good.countries %}
+												{% if good.control_code %}
+													<span class="app-country-tag app-country-tag--orange">{{ good.control_code }}</span>
+												{% endif %}
+											{% endif %}
+										{% elif good.control_code %}
+											<span class="app-country-tag app-country-tag--orange">{{ good.control_code }}</span>
+										{% endif %}
+									{% endfor %}
+								</td>
+								<td class="govuk-table__cell">
+									{% for flag in country.flags %}
+										{{ flag.name }}<br>
+									{% endfor %}
+								</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</form>
 			</div>
 		</div>
+
+
 
 		<!-- Supporting documentation -->
 		<div class="govuk-accordion__section">
@@ -271,11 +305,12 @@
 		}
 	</script>
 
+    <script src="{% static 'javascripts/select-buttons.js' %}"></script>
 	<script src="{% static 'javascripts/more-actions.js' %}"></script>
 	<script src="{% static 'javascripts/edit-good-flags.js' %}"></script>
+	<script src="{% static 'javascripts/edit-destination-flags.js' %}"></script>
 	<script src="{% static 'javascripts/modal.js' %}"></script>
 	<script src="{% static 'javascripts/case.js' %}"></script>
-	<script src="{% static 'javascripts/select-buttons.js' %}"></script>
 
 	<script type="text/javascript">
 		$(".govuk-accordion__section").addClass("govuk-accordion__section--expanded");

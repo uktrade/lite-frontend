@@ -5,12 +5,9 @@ from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
-
-from cases.constants import CaseType
-from lite_forms.generators import error_page, form_page
-from lite_forms.submitters import submit_single_form
 from s3chunkuploader.file_handler import S3FileUploadHandler, s3_client
 
+from cases.constants import CaseType
 from cases.forms.attach_documents import attach_documents_form
 from cases.forms.move_case import move_case_form
 from cases.services import (
@@ -20,7 +17,6 @@ from cases.services import (
     get_activity,
     put_case,
     put_end_user_advisory_query,
-    _get_all_distinct_flags,
     _get_total_goods_value,
 )
 from cases.services import post_case_documents, get_case_documents, get_document
@@ -29,6 +25,8 @@ from conf.constants import DEFAULT_QUEUE_ID, GENERATED_DOCUMENT
 from conf.settings import AWS_STORAGE_BUCKET_NAME
 from core.helpers import convert_dict_to_query_params
 from core.services import get_user_permissions, get_statuses, get_user_case_notification, get_status_properties
+from lite_forms.generators import error_page, form_page
+from lite_forms.submitters import submit_single_form
 from queues.services import get_cases_search_data
 
 
@@ -86,8 +84,6 @@ class ViewCase(TemplateView):
         permissions = get_user_permissions(request)
         queue_id = request.GET.get("queue_id")
         queue_name = request.GET.get("queue_name")
-
-        case["all_flags"] = _get_all_distinct_flags(case)
 
         context = {
             "case": case,

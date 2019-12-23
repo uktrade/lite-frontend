@@ -24,6 +24,7 @@ def _get_team_flags(level, request, convert_to_options=False, include_deactivate
 get_cases_flags = functools.partial(_get_team_flags, "Case")
 get_goods_flags = functools.partial(_get_team_flags, "Good")
 get_organisation_flags = functools.partial(_get_team_flags, "Organisation")
+get_destination_flags = functools.partial(_get_team_flags, "Destination")
 
 
 def post_flags(request, json):

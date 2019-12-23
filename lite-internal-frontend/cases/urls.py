@@ -1,6 +1,6 @@
 from django.urls import path
 
-from cases.views import main, advice, goods, clc_query, ecju, generate_document
+from cases.views import main, advice, goods, clc_query, ecju, generate_document, destinations
 from flags.views import AssignFlags
 
 app_name = "cases"
@@ -71,5 +71,10 @@ urlpatterns = [
         "<uuid:pk>/generate-document/<uuid:tpk>/create/",
         generate_document.CreateDocument.as_view(),
         name="generate_document_create",
+    ),
+    path(
+        "<uuid:pk>/assign-destination-flags/",
+        destinations.AssignDestinationFlags.as_view(),
+        name="assign_destination_flags",
     ),
 ]

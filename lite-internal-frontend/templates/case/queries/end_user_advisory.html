@@ -173,6 +173,18 @@
             {% endif %}
 		</dl>
 
+
+        <div class="app-flags" id="application-destination-flags">
+            {% for flag in case.query.end_user.flags %}
+                <div class="app-flag" id="{{ flag.name }}">
+                    {{ flag.name }}
+                </div>
+            {% endfor %}
+            <a class="app-flag app-flag--action" href="{% url 'cases:assign_flags' case.id %}?level=destinations&items={{ case.query.end_user.id }}&origin=case">
+                {% lcs 'CASES.ApplicationPage.EDIT_DESTINATION_FLAGS' %}
+            </a>
+        </div>
+
 		<br><br>
 
 		{% include "case/views/activity.html" %}

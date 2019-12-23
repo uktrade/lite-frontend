@@ -45,6 +45,7 @@ GENERATED_DOCUMENTS_URL = "/generated-documents/"
 GENERATED_DOCUMENTS_PREVIEW_URL = GENERATED_DOCUMENTS_URL + "preview/"
 PREVIEW_URL = "/preview/"
 GENERATE_PREVIEW_URL = "generate-preview/"
+DESTINATION_URL = CASE_URL + "destinations/"
 
 # Static URLs
 STATIC_URL = "/static/"

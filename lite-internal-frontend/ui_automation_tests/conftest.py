@@ -36,7 +36,6 @@ from ui_automation_tests.shared.fixtures.driver import driver  # noqa
 from ui_automation_tests.shared.fixtures.sso_sign_in import sso_sign_in  # noqa
 from ui_automation_tests.shared.fixtures.core import (  # noqa
     context,
-    invalid_username,
     seed_data_config,
     exporter_info,
     internal_info,
