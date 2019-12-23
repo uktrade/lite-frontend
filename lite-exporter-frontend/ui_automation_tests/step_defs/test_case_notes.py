@@ -6,35 +6,6 @@ from pages.submitted_applications_page import SubmittedApplicationsPages
 scenarios("../features/case_notes.feature", strict_gherkin=False)
 
 
-@given("an application exists")
-def application_exists_case_note_added(apply_for_standard_application, add_an_ecju_query):
-    pass
-
-
-@when("I click on application previously created")
-def click_on_an_application(driver, context):
-    driver.find_element_by_partial_link_text(context.app_name).click()
-
-
-@when(parsers.parse('I enter "{text}" for case note'))
-def enter_case_note_text(driver, text, context):
-    application_page = SubmittedApplicationsPages(driver)
-    if text == "the maximum limit with spaces":
-        text = " " * 2200
-    elif text == "the maximum limit":
-        text = "T" * 2200
-    elif text == "the maximum limit plus 1":
-        text = "T" * 2201
-    context.text = text
-    application_page.enter_case_note(text)
-
-
-@when("I click post note")
-def click_post_note(driver, context):
-    application_page = SubmittedApplicationsPages(driver)
-    application_page.click_post_note_btn()
-
-
 @then("note is displayed")
 def note_is_displayed(driver, context):
     application_page = SubmittedApplicationsPages(driver)

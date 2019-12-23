@@ -18,7 +18,6 @@ class AddGoodPage(BasePage):
     PART_NUMBER = "part_number"  # ID
     GOOD_IS_END_PRODUCT = "is_good_end_product-yes"  # ID
     GOOD_IS_NOT_END_PRODUCT = "is_good_end_product-no"  # ID
-    CLC_CONFIRM = "clc_query_confirmation-"  # Partial ID
     IS_CONTROLLED = "is_good_controlled-"  # Partial ID
     CONTROL_CODE = "control_code"  # ID
     DESCRIPTION = "description"  # ID
@@ -54,10 +53,6 @@ class AddGoodPage(BasePage):
         unsure_details = self.driver.find_element_by_id(self.NOT_SURE_DETAILS)
         unsure_details.clear()
         unsure_details.send_keys(details)
-
-    def select_control_unsure_confirmation(self, option):
-        # The only options accepted here are 'yes' and 'no
-        self.driver.find_element_by_id(self.CLC_CONFIRM + option.lower()).click()
 
     def select_is_your_good_intended_to_be_incorporated_into_an_end_product(self, option, prefix=""):
         if option == "Yes":

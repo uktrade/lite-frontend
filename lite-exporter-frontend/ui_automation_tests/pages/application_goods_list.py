@@ -7,26 +7,19 @@ class ApplicationGoodsList:
     def __init__(self, driver, prefix=""):
         self.driver = driver
         self.prefix = prefix
-        self.add_from_org_goods_button = 'a.govuk-button[href*="add_preexisting"]'  # CSS
         self.add_new_good_button = "add-new"  # ID
-        self.add_to_application = "a.govuk-button"
         self.quantity_field = "quantity"  # ID
         self.unit_dropdown = "unit"  # ID
         self.value_field = "value"  # ID
         self.filter_description_search_box = "description"  # ID
         self.filter_part_number_search_box = "part_number"  # ID
         self.filter_control_rating_search_box = "control_rating"  # ID
-        self.filter_button = "button-apply-filters"  # xpath
-        self.show_filters_link = "show-filters-link"  # xpath
-        self.filter_tags = ".lite-filter-bar a"
-        self.card_heading = ".lite-card .govuk-heading-s"
+        self.filter_button = "button-apply-filters"  # ID
         self.card_label = ".lite-card .govuk-label"
         self.part_number = "good-part-number"
+        self.show_filters_link = "show-filters-link"  # ID
         self.description = "good-description"
         self.control_code = "good-control_code"
-        self.part_number_filter = "part-number-filter"
-        self.control_code_filter = "control-code-filter"
-        self.description_filter = "description-filter"
         self.good_entry = ".govuk-table__body .govuk-table__row"
 
     def add_values_to_good(self, value, quantity, unit):
@@ -50,16 +43,6 @@ class ApplicationGoodsList:
     def type_into_filter_control_rating_search_box_and_filter(self, value):
         self.driver.find_element_by_id(self.filter_control_rating_search_box).send_keys(value)
         self.driver.find_element_by_id(self.filter_button).click()
-
-    def remove_filters(self):
-        for button in self.driver.find_elements_by_css_selector(self.filter_tags):
-            button.click()
-
-    def get_text_of_gov_heading_within_card(self, num):
-        return self.driver.find_elements_by_css_selector(self.card_heading)[num].text
-
-    def get_text_of_part_number(self, num):
-        return self.driver.find_elements_by_css_selector(self.card_label)[num].text
 
     def get_good_descriptions(self):
         return self.driver.find_elements_by_id(self.description)

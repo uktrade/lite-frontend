@@ -6,9 +6,6 @@ class GoodsPage(BasePage):
 
     # Selector for the edit/delete goods link in the table
     EDIT_LINK = '[href*="goods/edit"]'
-    DELETE_LINK = '[href*="goods/delete"]'
-    confirm_delete_id = "delete"
-    cancel_delete_id = "cancel"
     document_partial_id = "tr[id*='document']"
 
     # This is for the delete confirmation page

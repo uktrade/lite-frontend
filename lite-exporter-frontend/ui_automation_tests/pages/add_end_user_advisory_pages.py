@@ -39,12 +39,6 @@ class AddEndUserAdvisoryPages(BasePage):
         reasoning_tb = self.driver.find_element_by_id("note")
         reasoning_tb.send_keys(notes)
 
-    def confirmation_code(self):
-        confirmation_panel_body = '//div[@class="govuk-panel__body"]'
-        text = self.driver.find_element_by_xpath(confirmation_panel_body).text
-        numbers = "".join(text.split(": ")[1].split("-"))
-        return numbers
-
     def select_type(self, string, prefix=""):
         self.driver.find_element_by_id(prefix + self.TYPE_CHOICES + string).click()
 

@@ -36,11 +36,7 @@ Feature: I  want to add and rename my sites
     And I click continue
     Then I see sites list
     When I go to exporter homepage
-    And I click on apply for a license button
-    And I select "standard" application and continue
-    And I enter in name for application and continue
-    And I select "permanent" option and continue
-    And I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
+    When I create a standard application
     And I click on application locations link
     And I select "organisation" for where my goods are located
 #    Disabled step because site ordering seems not to be fixed (LT-1518)

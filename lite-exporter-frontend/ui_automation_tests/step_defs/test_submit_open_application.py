@@ -1,6 +1,13 @@
 from pytest_bdd import scenarios, when, then, parsers
 
 import shared.tools.helpers as utils
+from conftest import (
+    click_apply_licence,
+    enter_type_of_application,
+    enter_application_name,
+    enter_permanent_or_temporary,
+    enter_export_licence,
+)
 from pages.application_countries_list import ApplicationCountriesList
 from pages.application_goods_list import ApplicationGoodsList
 from pages.application_goods_type_list import ApplicationGoodsTypeList
@@ -10,16 +17,6 @@ from pages.shared import Shared
 
 
 scenarios("../features/submit_open_application.feature", strict_gherkin=False)
-
-
-@then("I see no sites good types or countries attached error message")
-def i_see_open_licence_error(driver):
-    shared = Shared(driver)
-    assert "Cannot create an application with no good descriptions attached" in shared.get_text_of_error_messages()
-    assert (
-        "Cannot create an application with no sites or external sites attached" in shared.get_text_of_error_messages()
-    )
-    assert "Cannot create an application without countries being set" in shared.get_text_of_error_messages()
 
 
 @then("I see good types error messages")
@@ -116,6 +113,12 @@ def assign_all_with_link(driver, assign_or_unassign):
     countries_page.click_save()
 
 
+@when("I click Add goods type button")
+def click_goods_type_button(driver):
+    goods_type_page = ApplicationGoodsTypeList(driver)
+    goods_type_page.click_goods_type_button()
+
+
 @then(parsers.parse('I see all countries are "{assigned_or_unassigned}" to all goods'))
 def see_all_or_no_selected(driver, assigned_or_unassigned):
     countries_page = GoodsCountriesPage(driver)
@@ -123,3 +126,17 @@ def see_all_or_no_selected(driver, assigned_or_unassigned):
         assert countries_page.all_selected()
     else:
         assert countries_page.all_deselected()
+
+
+@when("I click on the goods link from overview")  # noqa
+def click_goods_link_overview(driver):  # noqa
+    overview_page = ApplicationOverviewPage(driver)
+    overview_page.click_open_goods_link()
+
+
+@when("I create an open application")  # noqa
+def create_open_app(driver, context):  # noqa
+    click_apply_licence(driver)
+    enter_type_of_application(driver, "open", context)
+    enter_application_name(driver, context)
+    enter_permanent_or_temporary(driver, "permanent", context)

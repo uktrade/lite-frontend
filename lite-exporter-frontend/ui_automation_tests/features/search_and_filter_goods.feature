@@ -11,11 +11,7 @@ Feature: I want to search for goods in my goods list to add to an in progress ap
     And I create a good of description "Test apple123", control code "ML4" and part number "1234" if it does not exist
     And I create a good of description "Test apple123", control code "ML5" and part number "9012" if it does not exist
     And I go to exporter homepage
-    And I click on apply for a license button
-    And I select "standard" application and continue
-    And I enter in name for application and continue
-    And I select "permanent" option and continue
-    And I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
+    When I create a standard application
     And I click on standard goods tile
     And I click the add from organisations goods button
     And I filter by description "Test apple123" and click filter

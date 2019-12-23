@@ -7,11 +7,7 @@ Feature: I want to indicate the standard licence I want
   @LT_1091_draft @regression
   Scenario: Apply for a licence to draft and delete
     Given I go to exporter homepage and choose Test Org
-    When I click on apply for a license button
-    And I select "standard" application and continue
-    And I enter in name for application and continue
-    And I select "permanent" option and continue
-    And I select "yes" for whether I have an export licence and "123456" if I have a reference and continue
+    When I create a standard application
     Then I see the application overview
     When I delete the application
 
@@ -29,12 +25,12 @@ Feature: I want to indicate the standard licence I want
     When I click on end user
     And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
-    When I click back to the application overview
+    And I click the back link
     Then Wait for "end_user_document_download" to be present
     When I click on consignees
     And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
-    And I click back to the application overview
+    And I click the back link
     Then Wait for "consignee_document_download" to be present
     And I see end user on overview
     When I submit the application
@@ -56,18 +52,18 @@ Feature: I want to indicate the standard licence I want
     Then I see "2" locations
     When I click on preexisting locations
     And I select the location at position "2" in external locations list and continue
-    And I click back to the application overview
+    And I click the back link
     And I add a non incorporated good to application
     Then good is added to application
     When I click on end user
     And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
-    And I click back to the application overview
+    And I click the back link
     Then Wait for "end_user_document_download" to be present
     When I click on consignees
     And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
-    And I click back to the application overview
+    And I click the back link
     Then Wait for "consignee_document_download" to be present
     When I submit the application
     And I click applications
@@ -94,12 +90,12 @@ Feature: I want to indicate the standard licence I want
     And I click on end user
     And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
-    And I click back to the application overview
+    And I click the back link
     Then Wait for "end_user_document_download" to be present
     When I click on consignees
     And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
-    And I click back to the application overview
+    And I click the back link
     Then Wait for "consignee_document_download" to be present
     When I submit the application
     Then application is submitted
@@ -114,7 +110,7 @@ Feature: I want to indicate the standard licence I want
     And I click on ultimate end users
     And I click on the add button
     And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
-    And I click back to the application overview
+    And I click the back link
     And I click on ultimate end users
     Then "Attach" link is present
     When I click on attach a document
@@ -123,43 +119,12 @@ Feature: I want to indicate the standard licence I want
     And "Delete" link is present
     When I delete the third party document
     Then "Attach" link is present
-    When I click back to the application overview
+    When I click the back link
     And I click on end user
     And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
-    And I click back to the application overview
+    And I click the back link
     Then Wait for "end_user_document_download" to be present
     When I delete the end user document
-    And I click back to the application overview
+    And I click the back link
     Then The end user document has been deleted
-
-  # Commented the below tests out as they do the same thing as the above. If there is an issue with consignee or third party documents not being able to download please uncomment out these tests.
-
-#  @LT_887_consignee_document
-#  Scenario: Add a consignee document that can be downloaded and deleted
-#    Given I go to exporter homepage and choose Test Org
-#    When I create a standard application
-#    And I click on consignees
-#    And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
-#    And I click the back link
-#    And I click attach an consignee document link
-#    And I upload a file "file_for_doc_upload_test_1.txt"
-#    Then Wait for "consignee_document_download" to be present
-#    When I delete the consignee document
-#    Then The consignee document has been deleted
-#
-#  @LT_887_third_party_document
-#  Scenario: Add a Third party document that can be downloaded and deleted
-#    Given I go to exporter homepage and choose Test Org
-#    When I create a standard application
-#    And I click on third parties
-#    And I click on the add button
-#    And I add an end user of sub_type: "agent", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
-#    And I click the back link
-#    Then "Attach" link is present
-#    When I click on attach a document
-#    And I upload a file "file_for_doc_upload_test_1.txt"
-#    Then Wait for download link
-#    And "Delete" link is present
-#    When I delete the third party document
-#    Then "Attach" link is present

@@ -1,20 +1,17 @@
 from pytest_bdd import scenarios, when, then, parsers
 
+from pages.add_new_external_location_form_page import AddNewExternalLocationFormPage
+from pages.external_locations_page import ExternalLocationsPage
+from pages.preexisting_locations_page import PreexistingLocationsPage
+from pages.which_location_form_page import WhichLocationFormPage
 from shared import functions
 from shared.tools.helpers import scroll_to_element_by_id
 from shared.tools.wait import wait_for_download_button, wait_for_element
-from pages.add_end_user_pages import AddEndUserPages
-from pages.application_goods_list import ApplicationGoodsList
 from pages.application_overview_page import ApplicationOverviewPage
 from pages.shared import Shared
 from pages.ultimate_end_users_list_page import ThirdPartyListPage
 
 scenarios("../features/submit_standard_application.feature", strict_gherkin=False)
-
-
-@when("I click back to the application overview")
-def i_click_on_application_overview(driver):
-    functions.click_back_link(driver)
 
 
 @then("good is added to application")
@@ -29,13 +26,6 @@ def good_is_added(driver, context):
         assert "£" + str(context.value) in good
 
 
-@then("I see the homepage")
-def i_see_the_homepage(driver):
-    assert (
-        "Exporter hub - LITE" in driver.title
-    ), "Delete Application link on overview page failed to go to Exporter Hub page"
-
-
 @when("I click on ultimate end users")
 def i_click_on_application_overview(driver, add_an_incorporated_good_to_application):
     app = ApplicationOverviewPage(driver)
@@ -43,53 +33,9 @@ def i_click_on_application_overview(driver, add_an_incorporated_good_to_applicat
     app.click_ultimate_end_user_link()
 
 
-@when("I click on third parties")
-def i_click_on_application_overview(driver):
-    app = ApplicationOverviewPage(driver)
-    scroll_to_element_by_id(Shared(driver).driver, app.THIRD_PARTIES)
-    app.click_third_parties()
-
-
-@when("I click on back to overview")
-def i_go_to_the_overview(driver):
-    functions.click_back_link(driver)
-
-
 @when("I click on the add button")
 def i_click_on_the_add_button(driver):
     ThirdPartyListPage(driver).click_on_add_a_third_party()
-
-
-@when(parsers.parse('I add end user of type: "{type}"'))
-def add_new_end_user_type(driver, type, context):
-    add_end_user_pages = AddEndUserPages(driver)
-    add_end_user_pages.select_type(type)
-    context.type_end_user = type
-    functions.click_submit(driver)
-
-
-@when(parsers.parse('I add end user of name: "{name}"'))
-def add_new_end_user_name(driver, name, context):
-    add_end_user_pages = AddEndUserPages(driver)
-    add_end_user_pages.enter_name(name)
-    context.name_end_user = name
-    functions.click_submit(driver)
-
-
-@when(parsers.parse('I add end user of website "{website}"'))
-def add_new_end_user_website(driver, website):
-    add_end_user_pages = AddEndUserPages(driver)
-    add_end_user_pages.enter_website(website)
-    functions.click_submit(driver)
-
-
-@when(parsers.parse('I add end user of address: "{address}" and country "{country}"'))
-def add_new_end_user_address(driver, address, country, context):
-    add_end_user_pages = AddEndUserPages(driver)
-    add_end_user_pages.enter_address(address)
-    context.address_end_user = address
-    add_end_user_pages.enter_country(country)
-    functions.click_submit(driver)
 
 
 @when("I remove an ultimate end user so there is one less and return to the overview")
@@ -116,14 +62,6 @@ def end_user_on_overview(driver, context):
     assert context.type_end_user.capitalize() in app.get_text_of_end_user_table()
     assert context.name_end_user in app.get_text_of_end_user_table()
     assert context.address_end_user in app.get_text_of_end_user_table()
-
-
-@when(parsers.parse('I click add to application for the good at position "{no}"'))
-def click_add_to_application_button(driver, no, context):
-    num = int(no) - 1
-    context.goods_name = ApplicationGoodsList(driver).get_text_of_gov_heading_within_card(num)
-    context.part_number = ApplicationGoodsList(driver).get_text_of_part_number(num)
-    driver.find_elements_by_css_selector("a.govuk-button")[num].click()
 
 
 @then(parsers.parse('"{button}" link is present'))
@@ -156,30 +94,10 @@ def wait_for_element_to_be_present(driver, id):
     assert wait_for_element(driver, id)
 
 
-@when("I click attach an end user document link")
-def attach_an_end_user_document(driver):
-    scroll_to_element_by_id(Shared(driver).driver, "end_user_attach_doc")
-    ApplicationOverviewPage(driver).click_attach_end_user_document()
-
-
-@when("I click attach an consignee document link")
-def attach_an_end_user_document(driver):
-    scroll_to_element_by_id(Shared(driver).driver, "consignee_attach_doc")
-    ApplicationOverviewPage(driver).click_attach_consignee_document()
-
-
 @when("I delete the end user document")
 def end_user_document_delete_is_present(driver):
     scroll_to_element_by_id(Shared(driver).driver, "end_user_document_delete")
     ApplicationOverviewPage(driver).click_delete_end_user_document()
-    ThirdPartyListPage(driver).accept_delete_confirm()
-    functions.click_submit(driver)
-
-
-@when("I delete the consignee document")
-def consignee_document_delete_is_present(driver):
-    scroll_to_element_by_id(Shared(driver).driver, "consignee_document_delete")
-    ApplicationOverviewPage(driver).click_delete_consignee_document()
     ThirdPartyListPage(driver).accept_delete_confirm()
     functions.click_submit(driver)
 
@@ -189,6 +107,47 @@ def document_has_been_deleted(driver):
     assert ApplicationOverviewPage(driver).attach_end_user_document_is_present()
 
 
-@then("The consignee document has been deleted")
-def document_has_been_deleted(driver):
-    assert ApplicationOverviewPage(driver).attach_consignee_document_is_present()
+@when(parsers.parse('I select "{choice}" for whether or not I want a new or existing location to be added'))  # noqa
+def choose_location_type(driver, choice):  # noqa
+    which_location_form = WhichLocationFormPage(driver)
+    which_location_form.click_on_choice_radio_button(choice)
+    functions.click_submit(driver)
+
+
+@when(  # noqa
+    parsers.parse(
+        'I fill in new external location form with name: "{name}", address: "{address}" and country: "{country}" and continue'
+    )
+)
+def add_new_external_location(driver, name, address, country):  # noqa
+    add_new_external_location_form_page = AddNewExternalLocationFormPage(driver)
+    add_new_external_location_form_page.enter_external_location_name(name)
+    add_new_external_location_form_page.enter_external_location_address(address)
+    add_new_external_location_form_page.enter_external_location_country(country)
+    functions.click_submit(driver)
+
+
+@when(  # noqa
+    parsers.parse('I select the location at position "{position_number}" in external locations list and continue')
+)
+def assert_checkbox_at_position(driver, position_number):  # noqa
+    preexisting_locations_page = PreexistingLocationsPage(driver)
+    preexisting_locations_page.click_external_locations_checkbox(int(position_number) - 1)
+    functions.click_submit(driver)
+
+
+@then(parsers.parse('I see "{number_of_locations}" locations'))  # noqa
+def i_see_a_number_of_locations(driver, number_of_locations):  # noqa
+    assert len(driver.find_elements_by_css_selector("tbody tr")) == int(number_of_locations)
+
+
+@when("I click on add new address")  # noqa
+def i_click_on_add_new_address(driver):  # noqa
+    external_locations_page = ExternalLocationsPage(driver)
+    external_locations_page.click_add_new_address()
+
+
+@when("I click on preexisting locations")  # noqa
+def i_click_add_preexisting_locations(driver):  # noqa
+    external_locations_page = ExternalLocationsPage(driver)
+    external_locations_page.click_preexisting_locations()

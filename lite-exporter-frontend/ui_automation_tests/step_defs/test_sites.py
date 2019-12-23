@@ -26,13 +26,6 @@ def click_new_site(driver):
     hub.click_sites_link()
 
 
-@when("I click sites link from overview")
-def click_new_site(driver):
-    hub = Hub(driver)
-    driver.execute_script("document.getElementById('goods').scrollIntoView(true);")
-    hub.click_sites_link()
-
-
 @when(
     parsers.parse(
         'I enter in text for new site "{edited}" "{address}" "{postcode}" "{city}" ' '"{region}" and "{country}"'

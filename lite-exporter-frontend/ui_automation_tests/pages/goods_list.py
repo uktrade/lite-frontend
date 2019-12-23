@@ -5,7 +5,6 @@ from shared.BasePage import BasePage
 class GoodsList(BasePage):
     # Selector for the edit/delete goods link in the table
     EDIT_LINK = '[href*="goods/edit"]'
-    DELETE_LINK = '[href*="goods/delete"]'
 
     # This is for the delete confirmation page
     DELETE_BUTTON = ".govuk-button--warning"

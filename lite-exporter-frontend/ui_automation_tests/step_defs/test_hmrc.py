@@ -1,4 +1,4 @@
-from pytest_bdd import when, scenarios
+from pytest_bdd import when, scenarios, parsers
 
 from pages.application_overview_page import ApplicationOverviewPage
 from pages.exporter_hub_page import ExporterHubPage
@@ -38,3 +38,10 @@ def i_click_on_hmrc_set_end_user(driver):
 def i_click_on_hmrc_explain_your_reasoning(driver):
     app = ApplicationOverviewPage(driver)
     app.click_hmrc_explain_your_reasoning()
+
+
+@when(parsers.parse('I leave a note for the "{reasoning}"'))  # noqa
+def i_leave_a_note(driver, reasoning):  # noqa
+    text_area = driver.find_element_by_id(reasoning)
+    text_area.clear()
+    text_area.send_keys(reasoning)

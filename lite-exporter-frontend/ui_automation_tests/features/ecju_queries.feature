@@ -6,7 +6,7 @@ So that I can quickly identify where action is required by me and respond to any
   @LT_996_application @smoke
   Scenario: view and respond to a ecju query in an application
     Given I go to exporter homepage and choose Test Org
-    When I go to the recently created application
+    When I go to the recently created application with ecju query
     And I click the ECJU Queries tab
     And I click to respond to the ecju query
     And I enter " " for ecju query and click submit

@@ -9,7 +9,6 @@ class EndUserAdvisoryPage(BasePage):
     TABLE_ROW = ".govuk-table__row"  # css
     CASE_NOTES_TAB = "link-case-notes"  # id
     NOTIFICATION_BUBBLE = ".lite-notification-bubble"  # css
-    CASE_NOTE = ".lite-application-note"  # css
 
     def click_apply_for_advisories(self):
         self.driver.find_element_by_id(self.APPLY_FOR_ADVISORY).click()

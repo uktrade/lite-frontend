@@ -26,12 +26,6 @@ def filter_by_description(driver, context, control_list):
     application_goods_list.type_into_filter_control_rating_search_box_and_filter(control_list)
 
 
-@then("I see all goods")
-def see_all_goods(driver, context):
-    goods_list = ApplicationGoodsList(driver).get_good_descriptions()
-    assert len(goods_list) == context.total_goods
-
-
 @when(
     parsers.parse(
         'I create a good of description "{description}", control code "{control_code}" and part number "{part_number}" if it does not exist'
@@ -57,14 +51,6 @@ def good_description_is_found(driver, description):
         assert good.text == description
 
 
-@then(parsers.parse('All goods have part number "{part_number}"'))
-def good_part_number_is_found(driver, part_number):
-    goods_list = ApplicationGoodsList(driver).get_good_part_numbers()
-    assert len(goods_list) > 0
-    for good in goods_list:
-        assert good.text == part_number
-
-
 @then(parsers.parse('All goods have control code "{control_code}"'))
 def good_control_code_is_found(driver, control_code):
     goods_list = ApplicationGoodsList(driver).get_good_control_codes()
@@ -73,7 +59,20 @@ def good_control_code_is_found(driver, control_code):
         assert good.text == control_code
 
 
+@then(parsers.parse('All goods have part number "{part_number}"'))
+def good_part_number_is_found(driver, part_number):
+    goods_list = ApplicationGoodsList(driver).get_good_part_numbers()
+    assert len(goods_list) > 0
+    for good in goods_list:
+        assert good.text == part_number
+
+
 @then(parsers.parse('"{total}" goods are found'))
 def total_goods_found(driver, total):
     total_goods = len(ApplicationGoodsList(driver).get_good_descriptions())
     assert total_goods == int(total), "Incorrect number of goods matching search criteria were found"
+
+
+@when("I click the add from organisations goods button")  # noqa
+def click_add_from_organisation_button(driver):  # noqa
+    driver.find_element_by_css_selector('a[href*="add-preexisting"]').click()

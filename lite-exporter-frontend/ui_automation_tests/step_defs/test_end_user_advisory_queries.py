@@ -3,10 +3,9 @@ from pytest_bdd import when, then, parsers, scenarios, given
 import shared.tools.helpers as utils
 from pages.add_end_user_advisory_pages import AddEndUserAdvisoryPages
 from pages.end_user_advisory_page import EndUserAdvisoryPage
-from pages.respond_to_ecju_query_page import RespondToEcjuQueryPage
+from pages.exporter_hub_page import ExporterHubPage
 from pages.shared import Shared
 from shared import functions
-from ui_automation_tests.pages.application_page import ApplicationPage
 from ui_automation_tests.pages.submitted_applications_page import SubmittedApplicationsPages
 
 scenarios("../features/end_user_advisory_queries.feature", strict_gherkin=False)
@@ -107,17 +106,15 @@ def open_already_created_end_user_advisory(driver, context):
 
 @then("I see a notification on end user advisory list")
 def notification_on_end_user_advisory_list(driver, context):
-    # Commenting out due to bug LT-1433
-    # assert EndUserAdvisoryPage(driver).confirm_advisory_displayed_by_reference_code(context.end_user_advisory_id)
+    assert EndUserAdvisoryPage(driver).confirm_advisory_displayed_by_reference_code(context.end_user_advisory_id)
     pass
 
 
 @then("I see a notification for case note and can view the case note")
 def notification_on_notes_tab(driver, context):
-    enduseradvisorypage = EndUserAdvisoryPage(driver)
-    # Commenting out due to bug LT-1433
-    # assert '1' in enduseradvisorypage.case_note_notification_bubble_text()
-    assert context.case_note_text in enduseradvisorypage.latest_case_note_text()
+    end_user_advisory_page = EndUserAdvisoryPage(driver)
+    assert "1" in end_user_advisory_page.case_note_notification_bubble_text()
+    assert context.case_note_text in end_user_advisory_page.latest_case_note_text()
 
 
 @then(parsers.parse('I can view "{text}" in case notes'))
@@ -125,34 +122,7 @@ def notification_on_notes_tab(driver, text):
     assert text in EndUserAdvisoryPage(driver).latest_case_note_text()
 
 
-@when(parsers.parse('I enter "{text}" for case note'))
-def enter_case_note_text(driver, text):
-    application_page = SubmittedApplicationsPages(driver)
-    application_page.enter_case_note(text)
-    application_page.click_post_note_btn()
-
-
-@when("I click to respond to the ecju query")
-def click_to_respond_to_ecju_query(driver):
-    application_page = ApplicationPage(driver)
-    application_page.respond_to_ecju_query(0)
-
-
-@when(parsers.parse('I enter "{response}" for ecju query and click submit'))
-def respond_to_query(driver, response):
-    response_page = RespondToEcjuQueryPage(driver)
-    response_page.enter_form_response(response)
-    functions.click_submit(driver)
-
-
-@when(parsers.parse('I select "{value}" for submitting response and click submit'))
-def submit_response_confirmation(driver, value):
-    driver.find_element_by_id("confirm_response-" + value).click()
-    driver.find_element_by_css_selector(".govuk-button").click()
-
-
-@then("I see my ecju query is closed")
-def determine_that_there_is_a_closed_query(driver):
-    application_page = ApplicationPage(driver)
-    closed_queries = application_page.get_count_of_closed_ecju_queries()
-    assert closed_queries > 0
+@when("I click on end user advisories")  # noqa
+def click_my_end_user_advisory_link(driver):  # noqa
+    exporter_hub = ExporterHubPage(driver)
+    exporter_hub.click_end_user_advisories()
