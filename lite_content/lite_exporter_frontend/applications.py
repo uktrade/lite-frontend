@@ -155,7 +155,7 @@ class EditOpenApplicationPage:
 class DeleteApplicationPage:
     BUTTON = "Delete draft"
     TITLE = "Are you sure you want to delete this draft?"
-    BACK_TEXT = "Back to application"
+    BACK_TEXT = "Back"
     YES_LABEL = "Yes"
     NO_LABEL = "No"
     SUBMIT_BUTTON = "Submit"
