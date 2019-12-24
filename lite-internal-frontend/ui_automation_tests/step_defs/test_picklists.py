@@ -1,4 +1,3 @@
-from pages.header_page import HeaderPage
 from pages.shared import Shared
 from pages.picklist_pages import PicklistPages
 from pytest_bdd import scenarios, when, then, parsers
@@ -49,16 +48,6 @@ def see_new_picklist(driver, context):
     assert context.picklist_name in latest_picklist_name, "picklist name is not in column"
     assert context.picklist_description in latest_picklist_description, "picklist description is not in column"
     assert context.prompted_context_variable in latest_picklist_description, "picklist context variable not in column"
-
-
-@then("I see picklist error messages")
-def i_see_picklist_error_messages(driver, context):
-    assert "Enter a name that best describes this template" in Shared(driver).get_text_of_error_message(
-        0
-    ), "picklist error message is not displayed"
-    assert "Enter some text to use as a template" in Shared(driver).get_text_of_error_message(
-        1
-    ), "picklist error message is not displayed"
 
 
 @when("I click on my picklist item")

@@ -5,12 +5,6 @@ import shared.tools.helpers as utils
 
 scenarios("../features/case_notes.feature", strict_gherkin=False)
 
-import logging
-
-log = logging.getLogger()
-console = logging.StreamHandler()
-log.addHandler(console)
-
 
 @when(parsers.parse('I enter "{text}" for case note'))
 def enter_case_note_text(driver, text, context):

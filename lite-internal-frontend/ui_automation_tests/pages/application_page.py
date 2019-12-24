@@ -2,7 +2,6 @@ from selenium.webdriver.support.ui import Select
 import time
 
 from shared.BasePage import BasePage
-from selenium.common.exceptions import NoSuchElementException
 
 
 class ApplicationPage(BasePage):
@@ -19,7 +18,6 @@ class ApplicationPage(BasePage):
     GENERATE_DOCUMENTS_BTN = "generate-document"  # id
     ECJU_QUERIES_BTN = '[href*="ecju-queries"]'  # css
     PROGRESS_APP_BTN = '[href*="manage"]'
-    RECORD_DECISION_BTN = '[href*="decide"]'  # css
     ACTIVITY_CASE_NOTE_SUBJECT = ".app-activity__list .govuk-body"
     ACTIVITY_DATES = ".app-activity__item .govuk-hint"
     ACTIVITY_USER = ".user"
@@ -76,10 +74,6 @@ class ApplicationPage(BasePage):
         self.click_drop_down()
         self.driver.find_element_by_css_selector(self.PROGRESS_APP_BTN).click()
 
-    def click_record_decision(self):
-        self.click_drop_down()
-        self.driver.find_element_by_css_selector(self.RECORD_DECISION_BTN).click()
-
     def click_documents_button(self):
         self.click_drop_down()
         self.driver.find_element_by_css_selector(self.DOCUMENTS_BTN).click()
@@ -110,13 +104,6 @@ class ApplicationPage(BasePage):
 
     def click_review_goods(self):
         self.driver.find_element_by_id(self.REVIEW_GOODS).click()
-
-    def is_review_goods_button_present(self):
-        try:
-            self.driver.find_element_by_id(self.REVIEW_GOODS)
-            return True
-        except NoSuchElementException:
-            return False
 
     def click_edit_good_flags(self):
         edit_goods_btn = self.driver.find_element_by_id(self.EDIT_GOODS_FLAGS)

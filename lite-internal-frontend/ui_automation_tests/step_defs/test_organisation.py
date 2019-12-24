@@ -3,7 +3,6 @@ import time
 from pytest_bdd import scenarios, when, then, parsers
 
 import shared.tools.helpers as utils
-from pages.header_page import HeaderPage
 from pages.organisation_page import OrganisationPage
 from pages.organisations_form_page import OrganisationsFormPage
 from pages.organisations_page import OrganisationsPage

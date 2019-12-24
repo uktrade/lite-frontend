@@ -1,13 +1,12 @@
-from pytest_bdd import then, scenarios
+from pytest_bdd import then, scenarios, given
 from ui_automation_tests.pages.application_page import ApplicationPage
 
 scenarios("../features/eua_queries.feature", strict_gherkin=False)
 
 
-@then("I should see flags can be added")
-def flags_are_available(driver):
-    application_page = ApplicationPage(driver)
-    assert application_page.get_case_flag_element()
+@given("I create eua query or eua query has been previously created")  # noqa
+def create_eua(driver, apply_for_eua_query):
+    pass
 
 
 @then("I should see the ability to add case notes")
@@ -32,3 +31,9 @@ def dropdown_contains_correct_functionality(driver):
 @then("the status has been changed in the end user advisory")
 def check_status_has_changed(driver):
     assert "closed" in ApplicationPage(driver).get_text_of_case_note_subject(0)
+
+
+@then("I should see flags can be added")
+def flags_are_available(driver):
+    application_page = ApplicationPage(driver)
+    assert application_page.get_case_flag_element()

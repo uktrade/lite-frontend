@@ -3,8 +3,6 @@ import uuid
 from pytest_bdd import scenarios, when, then, given, parsers
 import shared.tools.helpers as utils
 from pages.application_page import ApplicationPage
-
-from pages.header_page import HeaderPage
 from pages.letter_templates import LetterTemplates
 from pages.shared import Shared
 from ui_automation_tests.fixtures.add_a_document_template import get_paragraph_text
@@ -59,24 +57,9 @@ def picklist_in_template(driver, context):
     assert context.picklist_text in LetterTemplates(driver).get_text_in_template()
 
 
-@when("I click save")
-def click_save(driver):
-    Shared(driver).click_submit()
-
-
 @then("I see my template in the table")
 def templates_in_table(driver, context):
     assert context.template_name in LetterTemplates(driver).get_template_table_text()
-
-
-@when("I edit my template")
-def edit_template(driver, context):
-    driver.find_element_by_link_text(context.template_name).click()
-    LetterTemplates(driver).click_edit_details_button()
-    context.template_name = context.template_name + " edited"
-    LetterTemplates(driver).enter_template_name(context.template_name)
-    Shared(driver).click_submit()
-    Shared(driver).click_back()
 
 
 @then("I see the drag and drop page")

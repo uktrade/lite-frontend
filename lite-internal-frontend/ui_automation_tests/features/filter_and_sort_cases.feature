@@ -10,7 +10,7 @@ Feature: I want to filter and sort cases on a queue
     Given I create open application or open application has been previously created
     And I go to internal homepage
     When case has been moved to new Queue
-    And I create a clc_query
+    And I create a clc query
     And case has been moved to new Queue
     And I click on new queue in dropdown
     Then "2" cases are shown

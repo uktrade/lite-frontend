@@ -7,12 +7,6 @@ import shared.tools.helpers as utils
 scenarios("../features/manage_cases.feature", strict_gherkin=False)
 
 
-@when("I click record decision")
-def click_post_note(driver, context):
-    ApplicationPage(driver).click_record_decision()
-    context.decision_array = []
-
-
 @when(parsers.parse('I select decision "{number}"'))
 def select_decision(driver, number, context):
     record = RecordDecision(driver)

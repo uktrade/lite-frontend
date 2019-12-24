@@ -40,8 +40,3 @@ def check_control_list_code(driver, context):
         assert False, "Table rows not found"
     for row in rows:
         assert context.goods_control_list_entry in row.text
-
-
-@then("I see review goods button")
-def no_respond_to_query_button(driver):
-    assert ApplicationPage(driver).is_review_goods_button_present()

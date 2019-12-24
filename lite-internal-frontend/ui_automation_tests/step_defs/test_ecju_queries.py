@@ -4,6 +4,7 @@ from pytest_bdd import when, then, scenarios, given
 
 from pages.application_page import ApplicationPage
 from pages.ecju_queries_pages import EcjuQueriesPages
+from pages.shared import Shared
 
 scenarios("../features/ecju_queries.feature", strict_gherkin=False)
 
@@ -100,3 +101,8 @@ def ecju_query_in_closed_list(driver, context):
     ecju_page = EcjuQueriesPages(driver)
     assert context.ecju_response in ecju_page.get_closed_query_answers()
     assert context.ecju_question in ecju_page.get_closed_query_questions()
+
+
+@when("I click back")  # noqa
+def i_click_back(driver):
+    Shared(driver).click_back()

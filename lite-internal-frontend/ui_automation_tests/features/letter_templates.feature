@@ -15,7 +15,7 @@ So that I can create standard letters used by case workers and they can be updat
     Then I see the drag and drop page
     When I preview template
     Then my picklist is in template
-    When I click save
+    When I click continue
     Then I see my template in the table
 
   @LT_1029_add_template @regression
@@ -29,7 +29,7 @@ So that I can create standard letters used by case workers and they can be updat
     Then I see the drag and drop page
     When I preview template
     Then my picklist is in template
-    When I click save
+    When I click continue
     Then I see my template in the table
 
   @LT_1029_view_and_edit_template @regression
@@ -49,6 +49,6 @@ So that I can create standard letters used by case workers and they can be updat
     And "to" is shown as position "2" in the audit trail
     When I edit my template paragraphs
     Then The template paragraphs have been edited
-    When I click save
+    When I click continue
     Then The paragraph text is present
     And "updated letter paragraphs from" is shown as position "1" in the audit trail

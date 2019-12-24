@@ -1,4 +1,4 @@
-from pytest_bdd import when, then, parsers, scenarios, given
+from pytest_bdd import when, then, parsers, scenarios
 import shared.tools.helpers as utils
 from pages.shared import Shared
 from pages.teams_pages import TeamsPages
@@ -41,16 +41,6 @@ def click_edit_for_my_user(driver, internal_info):
 @when(parsers.parse("I add a team called BlueOcean"))
 def add_a_team_blue_ocean(driver, add_a_team, context):
     pass
-
-
-@when(parsers.parse('I add a team called "{team_name}"'))
-def add_a_team(driver, team_name, context):
-    teams_pages = TeamsPages(driver)
-    shared = Shared(driver)
-    utils.get_unformatted_date_time()
-    teams_pages.click_add_a_team_button()
-    teams_pages.enter_team_name(team_name)
-    shared.click_submit()
 
 
 @when("I edit my team")

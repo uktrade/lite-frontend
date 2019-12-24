@@ -2,11 +2,6 @@ from selenium.webdriver.common.by import By
 import shared.tools.helpers as utils
 import pytest
 from conf.settings import env
-import logging
-
-log = logging.getLogger()
-console = logging.StreamHandler()
-log.addHandler(console)
 from pages.header_page import HeaderPage
 from pages.users_page import UsersPage
 

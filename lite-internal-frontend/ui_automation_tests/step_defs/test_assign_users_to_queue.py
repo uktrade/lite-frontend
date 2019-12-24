@@ -59,3 +59,8 @@ def assign_user_to_case(driver, enabled_disabled):
         assert (
             "disabled" in CaseListPage(driver).get_class_name_of_assign_users_button()
         ), "assign users button is not disabled"
+
+
+@when("I click on the added queue in dropdown")  # noqa
+def system_queue_shown_in_dropdown(driver, context):
+    CaseListPage(driver).click_on_queue_name(context.queue_name)

@@ -4,14 +4,6 @@ Feature:  I want to create and deactivate case flags
   I want to create and deactivate case flags
   So that I can make new flags where required and prevent flags which are no longer relevant from being assigned to cases
 
-  @LT_950_add @regression
-  Scenario: Create new flag
-    Given I go to internal homepage
-    When I go to flags
-    And I add a flag called UAE at level Case
-    When I add an existing flag name
-    Then I see error message "Enter a name which is not already in use by another flag"
-    
   @LT_950_edit @regression
   Scenario: Edit a flag
     Given I go to internal homepage

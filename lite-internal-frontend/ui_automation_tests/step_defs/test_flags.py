@@ -1,31 +1,15 @@
-from pytest_bdd import when, then, parsers, scenarios
+from pytest_bdd import when, then, scenarios
 import shared.tools.helpers as utils
-from pages.header_page import HeaderPage
 from pages.shared import Shared
 
 from pages.flags_pages import FlagsPages
 
 scenarios("../features/flags.feature", strict_gherkin=False)
 
-import logging
-
-log = logging.getLogger()
-console = logging.StreamHandler()
-log.addHandler(console)
-
 
 @then("I see the flag in the flag list")
 def see_flag_in_list(driver, context):
     assert context.flag_name in Shared(driver).get_text_of_table()
-
-
-@when("I add an existing flag name")
-def add_existing_flag(driver, context):
-    flags_pages = FlagsPages(driver)
-    shared = Shared(driver)
-    flags_pages.click_add_a_flag_button()
-    flags_pages.enter_flag_name(context.flag_name)
-    shared.click_submit()
 
 
 @when("I edit my flag")
@@ -60,15 +44,6 @@ def click_include_deactivated(driver):
     driver.set_timeout_to_10_seconds()
 
 
-@when("I click include reactivated if displayed")
-def click_include_reactivated(driver):
-    flags = FlagsPages(driver)
-    driver.set_timeout_to(0)
-    if flags.is_include_reactivated_button_displayed():
-        flags.click_include_reactivated_flags()
-    driver.set_timeout_to_10_seconds()
-
-
 @then("I see one less active flags")
 def i_see_one_less_active_flag(driver, context):
     flags = FlagsPages(driver)
@@ -97,17 +72,3 @@ def i_see_the_original_number_of_active_flags(driver, context):
     assert (
         context.original_number_of_deactivated_flags == number_of_deactivated_flags
     ), "There is not equal deactivated flags to before"
-
-
-@when(parsers.parse('I add a flag called "{flag_name}" at level "{flag_level}"'))
-def add_a_flag(driver, flag_name, flag_level, context):
-    flags_page = FlagsPages(driver)
-    flags_page.click_add_a_flag_button()
-    flags_page.enter_flag_name(flag_name)
-    flags_page.select_flag_level(flag_level)
-    Shared(driver).click_submit()
-
-
-@when("I add a flag called UAE at level Case")
-def add_a_uae_flag(driver, context, add_uae_flag):
-    pass

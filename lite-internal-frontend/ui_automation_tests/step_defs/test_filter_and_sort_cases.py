@@ -1,4 +1,6 @@
 from pytest_bdd import given, when, then, parsers, scenarios
+
+from pages.queues_pages import QueuesPages
 from shared.tools.helpers import get_formatted_date_time_m_d_h_s
 from shared.tools.utils import get_lite_client
 from pages.shared import Shared
@@ -64,3 +66,15 @@ def the_filters_are_hidden(driver, context):
     driver.set_timeout_to(0)
     assert not CaseListPage(driver).is_filters_visible(), "filters are shown"
     driver.set_timeout_to_10_seconds()
+
+
+@then("there are no cases shown")  # noqa
+def no_cases_shown(driver):
+    assert (
+        "There are no new cases to show." in QueuesPages(driver).get_no_cases_text()
+    ), "There are cases shown in the newly created queue."
+
+
+@when("I create a clc query")  # noqa
+def create_clc_query(driver, apply_for_clc_query, context):
+    pass

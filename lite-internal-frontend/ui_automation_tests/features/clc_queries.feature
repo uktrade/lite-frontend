@@ -6,9 +6,9 @@ Feature: I want to respond to clc queries
 
   @LT_1138_respond @smoke
   Scenario: respond to a clc type case
-    Given I create clc query or clc query has been previously created
-    And I sign in to SSO or am signed into SSO
+    Given I sign in to SSO or am signed into SSO
     And I create report summary picklist
+    And I create a clc query
     When I go to clc query previously created
     And I click Respond to query
     And I respond "yes", "ML1a", "1", "Because the good is controlled" and click continue

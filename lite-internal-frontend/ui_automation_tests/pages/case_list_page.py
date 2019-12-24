@@ -9,7 +9,6 @@ class CaseListPage(BasePage):
 
     # Table
     CASES_TABLE_ROW = ".govuk-table__row"  # CSS
-    CASES_TABLE = ".govuk-table"  # CSS
     CHECKBOX_CASE = ".govuk-checkboxes__input[value='"  # CSS
     CHECKBOX_TEXT = ".govuk-checkboxes"  # CSS
     CHECKBOX_SELECT_ALL = "button-select-all"  # ID
@@ -98,9 +97,6 @@ class CaseListPage(BasePage):
 
     def is_filters_visible(self):
         return self.driver.find_element_by_class_name(self.FILTER_BAR).is_displayed()
-
-    def click_on_href_within_cases_table(self, href):
-        self.driver.find_element_by_css_selector(self.CASES_TABLE + ' [href*="' + href + '"]').click()
 
     def click_on_queue_title(self):
         self.driver.find_element_by_id(self.QUEUE_DROPDOWN_TITLE).click()

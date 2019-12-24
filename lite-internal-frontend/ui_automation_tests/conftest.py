@@ -3,6 +3,7 @@ import os
 from pytest_bdd import given, when, then, parsers
 from selenium.common.exceptions import NoSuchElementException
 
+from pages.clc_queries_pages import ClcQueriesPages
 from pages.organisation_page import OrganisationPage
 
 from ui_automation_tests.fixtures.env import environment  # noqa
@@ -129,11 +130,6 @@ def click_on_created_eua(driver, context):
     driver.find_element_by_link_text(context.eua_id).click()
 
 
-@when("I go to clc query previously created")  # noqa
-def click_on_created_application(driver, context, internal_url):
-    driver.get(internal_url.rstrip("/") + "/cases/" + context.clc_case_id)
-
-
 @given("I create application or application has been previously created")  # noqa
 def create_app(driver, apply_for_standard_application):
     pass
@@ -144,47 +140,14 @@ def create_open_app(driver, apply_for_open_application):
     pass
 
 
-@given("I create clc query or clc query has been previously created")  # noqa
-def create_clc(driver, apply_for_clc_query):
-    pass
-
-
-@given("I create eua query or eua query has been previously created")  # noqa
-def create_eua(driver, apply_for_eua_query):
-    pass
-
-
-@then(parsers.parse('I see error message "{expected_error}"'))  # noqa
-def error_message_shared(driver, expected_error):
-    shared = Shared(driver)
-    assert expected_error in shared.get_text_of_error_message(0), "expected error message is not displayed"
-
-
 @when("I click continue")  # noqa
 def i_click_continue(driver):
     Shared(driver).click_submit()
 
 
-@when("I click back")  # noqa
-def i_click_back(driver):
-    Shared(driver).click_back()
-
-
 @when("I go to flags")  # noqa
 def go_to_flags(driver, internal_url, sso_sign_in):
     driver.get(internal_url.rstrip("/") + "/flags")
-
-
-@when("I create a clc_query")  # noqa
-def create_clc_query(driver, apply_for_clc_query, context):
-    pass
-
-
-@when("I click on the clc-case previously created")  # noqa
-def click_on_clc_case_previously_created(driver, context):
-    case_list_page = CaseListPage(driver)
-    assert case_list_page.assert_case_is_present(context.case_id)
-    case_list_page.click_on_href_within_cases_table(context.case_id)
 
 
 @when("I click progress application")  # noqa
@@ -207,21 +170,9 @@ def new_queue_shown_in_dropdown(driver, context):
     CaseListPage(driver).click_on_queue_name(context.queue_name)
 
 
-@then("there are no cases shown")  # noqa
-def no_cases_shown(driver):
-    assert (
-        "There are no new cases to show." in QueuesPages(driver).get_no_cases_text()
-    ), "There are cases shown in the newly created queue."
-
-
 @when(parsers.parse('I click on the "{queue_name}" queue in dropdown'))  # noqa
 def system_queue_shown_in_dropdown(driver, queue_name):
     CaseListPage(driver).click_on_queue_name(queue_name)
-
-
-@when(parsers.parse("I click on the added queue in dropdown"))  # noqa
-def system_queue_shown_in_dropdown(driver, context):
-    CaseListPage(driver).click_on_queue_name(context.queue_name)
 
 
 @when("I enter in queue name Review")  # noqa
@@ -292,19 +243,6 @@ def go_to_edit_flags(driver):
     OrganisationPage(driver).click_edit_organisation_flags()
 
 
-@when("I click chevron")  # noqa
-def click_chevron(driver, context):
-    elements = Shared(driver).get_rows_in_lite_table()
-    no = utils.get_element_index_by_text(elements, context.case_id, complete_match=False)
-    try:
-        if elements[no].find_element_by_id("chevron").is_displayed():
-            element = elements[no].find_element_by_css_selector(".lite-accordian-table__chevron")
-            element.click()
-    except NoSuchElementException:
-        pass
-    driver.set_timeout_to(10)
-
-
 @when(parsers.parse('filter case type has been changed to "{case_type}"'))  # noqa
 def filter_status_change(driver, context, case_type):
     CaseListPage(driver).select_filter_case_type_from_dropdown(case_type)
@@ -319,3 +257,22 @@ def i_show_filters(driver, context):
 @when("I go to users")  # noqa
 def go_to_users(driver, sso_sign_in, internal_url):
     driver.get(internal_url.rstrip("/") + "/users/")
+
+
+@when(  # noqa
+    parsers.parse(
+        'I respond "{controlled}", "{control_list_entry}", "{report}", "{comment}" and click continue'
+    )  # noqa
+)  # noqa
+def enter_response(driver, controlled, control_list_entry, report, comment):  # noqa
+    clc_query_page = ClcQueriesPages(driver)
+    clc_query_page.click_is_good_controlled(controlled)
+    clc_query_page.type_in_to_control_list_entry(control_list_entry)
+    clc_query_page.choose_report_summary(report)
+    clc_query_page.enter_a_comment(controlled)
+    Shared(driver).click_submit()
+
+
+@when("I add a flag called UAE at level Case")  # noqa
+def add_a_flag(driver, add_uae_flag):  # noqa
+    pass

@@ -35,15 +35,6 @@ def see_role_in_list(driver, context):
     assert context.role_name in Shared(driver).get_text_of_lite_table_body()
 
 
-@when("I add an existing role name")
-def add_existing_flag(driver, context):
-    roles_pages = RolesPages(driver)
-    shared = Shared(driver)
-    roles_pages.click_add_a_role_button()
-    roles_pages.enter_role_name(context.role_name)
-    shared.click_submit()
-
-
 @when("I edit my role")
 def edit_existing_role(driver, context):
     elements = Shared(driver).get_cells_in_lite_table()

@@ -8,7 +8,6 @@ from shared.BasePage import BasePage
 class UsersPage(BasePage):
     ADD_A_USER_BUTTON = "a[href*='/users/add']"
     SUBMIT_BUTTON = "button[type*='submit']"
-    LOGOUT_BUTTON = "a[href*='/logout']"
     PROFILE_LINK = "a[href*='/users/profile/']"
     MANAGE_ROLES_BUTTON = "button-manage-roles"
     EMAIL = "email"
@@ -30,10 +29,6 @@ class UsersPage(BasePage):
         actions.move_to_element(element).perform()
         time.sleep(1)
         element.click()
-
-    def logout(self):
-        self.driver.find_element_by_css_selector(self.LOGOUT_BUTTON).click()
-        assert "logout" in self.driver.current_url
 
     def click_user_profile(self):
         self.driver.find_element_by_css_selector(self.PROFILE_LINK).click()
