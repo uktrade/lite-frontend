@@ -52,7 +52,7 @@ class ThirdPartyForm:
 
 
 class GeneratedDocuments:
-    NO_DOCUMENTS = "There are currently no documents from ECJU."
+    NO_DOCUMENTS = "There are no documents from ECJU."
 
     class Table:
         NAME_COLUMN = "Name"
@@ -73,7 +73,7 @@ class ApplicationSummaryPage:
     CONSIGNEE = "Consignee"
     THIRD_PARTIES = "Third parties"
     GOODS_LOCATIONS = "Product locations"
-    SUPPORTING_DOCUMENTATION = "Supporting documentation"
+    SUPPORTING_DOCUMENTATION = "Supporting documents"
     GOODS = "Products"
     COUNTRIES = "Countries"
     ON_BEHALF_OF = "On behalf of"
@@ -94,8 +94,8 @@ class ApplicationSummaryPage:
     class Tabs:
         DETAILS = "Details"
         NOTES = "Notes"
-        ECJU_QUERIES = "ECJU Queries"
-        GENERATED_DOCUMENTS = "ECJU Documents"
+        ECJU_QUERIES = "ECJU queries"
+        GENERATED_DOCUMENTS = "ECJU documents"
 
 
 class ApplicationsSummaryPage:
@@ -112,29 +112,32 @@ class InitialApplicationQuestionsForms:
     WHICH_EXPORT_LICENCE_DO_YOU_WANT_TITLE = "Select the type of licence you need"
     WHICH_EXPORT_LICENCE_DO_YOU_WANT_DESCRIPTION = ""
     STANDARD_LICENCE = "Standard licence"
-    STANDARD_LICENCE_DESCRIPTION = "Select a standard licence for a set quantity and set value of products."
+    STANDARD_LICENCE_DESCRIPTION = (
+        "Select a standard licence for a set quantity and set value of products. "
+        "You must attach a completed end user undertaking form to the application."
+    )
     OPEN_LICENCE = "Open licence"
     OPEN_LICENCE_DESCRIPTION = (
         "Select an open licence for multiple shipments of specific products to specific countries. "
         "Open licences cover long term projects and repeat business."
     )
-    HELP_WITH_CHOOSING_A_LICENCE = "Help with choosing a licence"
-    HELP_WITH_CHOOSING_A_LICENCE_CONTENT = (
-        "If you're unsure about which licence to select, read the guidance on "
-        "GOV.UK for https://www.gov.uk/starting-to-export/licences exporting and doing business "
-        "abroad"
-    )
-    ENTER_A_REFERENCE_NAME_TITLE = "Application reference"
+    HELP_WITH_CHOOSING_A_LICENCE = "What licence do I need?"
+    HELP_WITH_CHOOSING_A_LICENCE_CONTENT = "Read about the different types of export control licences."
+    ENTER_A_REFERENCE_NAME_TITLE = "Name the application"
     ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference name"
-    ENTER_A_REFERENCE_NAME_DESCRIPTION = "Name and save this application so you can refer back to it when needed."
+    ENTER_A_REFERENCE_NAME_DESCRIPTION = (
+        "Give this application a reference name so you can refer back to it when needed."
+    )
     TEMPORARY_OR_PERMANENT_TITLE = "Select an export type"
     TEMPORARY_OR_PERMANENT_DESCRIPTION = ""
     TEMPORARY = "Temporary"
     PERMANENT = "Permanent"
     HAVE_YOU_BEEN_INFORMED_TITLE = (
-        "Have you been informed under an end use control that you need to apply for a licence?"
+        "Have you been informed under an 'end use control' that you need to apply for a licence?"
     )
-    HAVE_YOU_BEEN_INFORMED_DESCRIPTION = "This could be a letter or email from HMRC or another government department."
+    HAVE_YOU_BEEN_INFORMED_DESCRIPTION = (
+        "An end use control is an official a letter or email from Border Force or HMRC."
+    )
     WHAT_WAS_THE_REFERENCE_CODE_TITLE = "Reference number (optional)"
     WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION = "The reference number is on the letter or email."
 
