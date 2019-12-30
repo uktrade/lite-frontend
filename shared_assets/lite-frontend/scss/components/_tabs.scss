@@ -1,8 +1,9 @@
 .lite-tabs__container {
 	position: relative;
-	display: block;
+	display: grid;
+	grid-template-columns: 1fr auto;
 
-	&:after {
+	&::after {
 		content: "";
 		position: absolute;
 		top: 0;
@@ -11,6 +12,28 @@
 		width: 20px;
 		background: linear-gradient(90deg, rgba(white, 0%), govuk-colour("white"));
 		pointer-events: none;
+	}
+}
+
+.lite-tabs__controls {
+	position: relative;
+	z-index: 1;
+
+	& > * {
+		margin: 0;
+		margin-left: govuk-spacing(3);
+	}
+
+	&::after {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: - 20px;
+		bottom: 0;
+		width: 20px;
+		background: linear-gradient(90deg, rgba(white, 0%), govuk-colour("white"));
+		pointer-events: none;
+		z-index: 1;
 	}
 }
 
