@@ -1,3 +1,4 @@
+@all
 Feature: Add a HMRC query
 
   @smoke @HMRC

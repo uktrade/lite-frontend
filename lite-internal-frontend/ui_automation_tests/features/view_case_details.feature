@@ -1,4 +1,4 @@
-a@all @internal @view_cases
+@all @internal @view_cases
 Feature: I want to view the case details of a case
   As a Logged in government user
   I want to view the details on a case

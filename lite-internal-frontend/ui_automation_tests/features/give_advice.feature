@@ -132,7 +132,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Then I see refusal flag is not attached
 
 
-  @LT_920_cannot_give_advice_terminal_case
+  @LT_920_cannot_give_advice_terminal_case @regression
   Scenario: Cannot give advice on a case in terminal state
     Given I create application or application has been previously created
     And I create a proviso picklist

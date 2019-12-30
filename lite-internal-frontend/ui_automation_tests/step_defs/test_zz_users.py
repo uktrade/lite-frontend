@@ -4,6 +4,9 @@ import pytest
 from conf.settings import env
 from pages.header_page import HeaderPage
 from pages.users_page import UsersPage
+from pytest_bdd import given, scenarios
+
+scenarios("../features/users.feature", strict_gherkin=False)
 
 
 sso_email = env("TEST_SSO_EMAIL")
@@ -21,6 +24,7 @@ def open_internal_hub(driver, internal_url, sso_sign_in_url):
         driver.get(internal_url)
 
 
+@given("I run the manage users test")
 def test_manage_users(driver, open_internal_hub, context):
     time = utils.get_formatted_date_time_m_d_h_s()
     email = time + "@mail.com"
@@ -73,6 +77,7 @@ def test_manage_users(driver, open_internal_hub, context):
     )
 
 
+@given("I run the inability to deactivate oneself test")
 def test_inability_to_deactivate_oneself(driver, open_internal_hub):
     header = HeaderPage(driver)
     header.click_user_profile()
@@ -82,6 +87,7 @@ def test_inability_to_deactivate_oneself(driver, open_internal_hub):
     driver.set_timeout_to_10_seconds()
 
 
+@given("I run the invalid user test")
 def test_invalid(driver, open_internal_hub):
     header = HeaderPage(driver)
     user_page = UsersPage(driver)

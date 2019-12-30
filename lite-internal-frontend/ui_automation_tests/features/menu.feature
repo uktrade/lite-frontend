@@ -1,5 +1,6 @@
-@internal
+@internal @all
 Feature: Go to each item in the menu
+
   @verify_build @menu
   Scenario: Go to each item in the menu
     Given I go to internal homepage

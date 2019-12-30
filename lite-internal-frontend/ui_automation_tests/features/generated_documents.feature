@@ -1,10 +1,10 @@
-@internal @documents @generated_documents
+@internal @documents @generated_documents @all
 Feature: I want to select a template to generate a document to the applicant on a case
 As a logged in government user
 I want to select a template to generate a document to the applicant on a case
 So that I can easily and quickly generate different types of standard document to send to the applicant
 
-  @LT_1028_generate_document
+  @LT_1028_generate_document @smoke
   Scenario: Generate a document for a case
     Given I create open application or open application has been previously created
     And I sign in to SSO or am signed into SSO
