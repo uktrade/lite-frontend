@@ -47,7 +47,7 @@ Feature: I want to edit and remove goods on the goods list
     And I attach a document to the good with description "Test good spec 01"
     Then A new good has been added to the application
 
-  @LT_1262_add_good_without_document
+  @LT_1262_add_good_without_document @regression
   Scenario: Add a new good without a document for a valid reason
     Given I go to exporter homepage and choose Test Org
     When I click on goods link

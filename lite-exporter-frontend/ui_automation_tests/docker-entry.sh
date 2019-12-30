@@ -3,11 +3,15 @@
 set -x
 
 # run py.test ($@ to derive parameters from commandline)
-if [ $NO_OF_PARALLEL_RUNNERS -gt 1 ]
+if [ -n "$TESTS_TO_RUN" ]
 then
-    py.test -k "$TESTS_TO_RUN" -n="$NO_OF_PARALLEL_RUNNERS" --dist=loadscope  --reruns 1 --ignore=core --alluredir=ui_automation_tests/allure-results &
+    py.test -k "$TESTS_TO_RUN"  --reruns 1 --ignore=core --disable-pytest-warnings --alluredir=ui_automation_tests/allure-results
 else
-    py.test -k "$TESTS_TO_RUN"  --reruns 1 --ignore=core --alluredir=ui_automation_tests/allure-results &
+    py.test -k "smoke"  --reruns 1 --ignore=core --disable-pytest-warnings --alluredir=ui_automation_tests/allure-results
+    if [ $? -eq 0 ]
+    then
+        py.test -k "regression"  --reruns 1 --ignore=core --disable-pytest-warnings --alluredir=ui_automation_tests/allure-results
+    fi
 fi
 pid="$!"
 
