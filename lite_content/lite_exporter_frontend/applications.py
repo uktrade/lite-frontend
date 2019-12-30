@@ -96,7 +96,7 @@ class ApplicationSummaryPage:
         NOTES = "Notes"
         ECJU_QUERIES = "ECJU queries"
         GENERATED_DOCUMENTS = "ECJU documents"
-		ACTIVITY = "Activity"
+        ACTIVITY = "Activity"
 
 
 class ApplicationsSummaryPage:
