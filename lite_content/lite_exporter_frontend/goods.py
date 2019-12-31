@@ -3,6 +3,34 @@ from conf.settings import env
 PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
 
 
+class GoodsList:
+    TITLE = "Products"
+    CREATE_GOOD = "Add a product"
+
+    class Count:
+        ORGANISATION_ZERO = "Your organisation doesn't have any products."
+        ORGANISATION_ONE = "Your organisation has 1 product"
+        ORGANISATION_MANY = "Your organisation has %s products"  # %s will add the count of goods
+        FILTERED_ZERO = "There are no products based on filter"
+        FILTERED_ONE = "Displaying 1 product"
+        FILTERED_MANY = "Displaying %s products"  # %s will add the count of goods
+
+    class Filter:
+        DESCRIPTION = "Description"
+        CONTROL_LIST_ENTRY = "Control list entry"
+        PART_NUMBER = "Part number"
+        APPLY = "Apply filters"
+        CLEAR = "Clear filters"
+        SHOW = "Show filters"
+        HIDE = "Hide filters"
+
+    class Table:
+        DESCRIPTION = "Description"
+        CONTROL_LIST_ENTRY = "Control list entry"
+        PART_NUMBER = "Part number"
+        STATUS = "Status"
+
+
 class DocumentSensitivityForm:
     TITLE = "Does your product documentation meet the following criteria?"
     DESCRIPTION = (
@@ -24,21 +52,22 @@ class DocumentSensitivityForm:
 
 
 class CreateGoodForm:
-    TITLE = "Add a product"
-    BUTTON = "Save"
+    TITLE = "Add a new product to your application"
+    BUTTON = "Save and continue"
 
     class Description:
         TITLE = "Description"
-        DESCRIPTION = "This can make it easier to find your product later"
+        DESCRIPTION = "Include the product name to make it easier to find the product when needed."
 
     class IsControlled:
-        TITLE = "Is the product controlled?"
+        TITLE = "Is the product on the control list?"
         DESCRIPTION = "If you don't know you can use " + PERMISSION_FINDER_LINK
         CLC_REQUIRED = (
             "Products that aren't on the "
             + PERMISSION_FINDER_LINK
             + "may be affected by military end use controls, current trade sanctions and embargoes or weapons of mass "
-            + "destruction controls. If your products and services aren't subject to any controls, you'll get a no "
+            + "destruction controls."
+            + "If your products and services aren't subject to any controls, you'll get a no "
             + "licence required (NLR) document from ECJU. "
         )
         YES = "Yes"
@@ -47,10 +76,7 @@ class CreateGoodForm:
 
     class ControlListEntry:
         TITLE = "Control list classification"
-        DESCRIPTION = (
-            "<noscript>If your product is controlled, enter its control list classification. </noscript>"
-            "For example, ML1a. "
-        )
+        DESCRIPTION = "For example, ML1a. "
 
     class Incorporated:
         TITLE = "Will the product be incorporated into another product?"
@@ -69,12 +95,12 @@ class CLCQueryForm:
     BUTTON = "Save"
 
     class CLCCode:
-        TITLE = "What do you think is your product's control list entry?"
+        TITLE = "What do you think is your product's control list classification?"
         DESCRIPTION = "For example, ML1a."
 
     class Additional:
-        TITLE = "Further details about your product"
-        DESCRIPTION = "Please enter details of why you don't know if your product is controlled"
+        TITLE = "Product details"
+        DESCRIPTION = "Include details of why you don't know if your product is controlled"
 
 
 class EditGoodForm:
@@ -83,10 +109,10 @@ class EditGoodForm:
 
     class Description:
         TITLE = "Description"
-        DESCRIPTION = "This can make it easier to find your product later"
+        DESCRIPTION = "Include the product name to make it easier to find the product when needed."
 
     class IsControlled:
-        TITLE = "Is your product controlled?"
+        TITLE = "Is the product on the control list?"
         DESCRIPTION = "If you don't know you can use " + PERMISSION_FINDER_LINK
         YES = "Yes"
         NO = "No"
@@ -94,9 +120,7 @@ class EditGoodForm:
 
     class ControlListEntry:
         TITLE = "Control list classification"
-        DESCRIPTION = (
-            "<noscript>If your product is controlled, enter its control list entry. </noscript>For example, " "ML1a. "
-        )
+        DESCRIPTION = "For example, ML1a."
 
     class Incorporated:
         TITLE = "Will the product be incorporated into another product?"
@@ -126,7 +150,7 @@ class AttachDocumentForm:
         "\n\nThe file must be smaller than 100MB."
     )
     BUTTON = "Save"
-    BACK_LINK = "Back to Good"
+    BACK_LINK = "Back to product"
 
     class Description:
         TITLE = "Description (optional)"
@@ -139,7 +163,7 @@ class RespondToQueryForm:
 
     class Response:
         TITLE = "Your response"
-        DESCRIPTION = "You won't be able to edit this once you've submitted it."
+        DESCRIPTION = "You won't be able to edit this once submitted."
 
     class ConfirmationForm:
         TITLE = "Are you sure you want to send this response?"
@@ -160,21 +184,21 @@ class GoodPage:
 
 
 class CreateGoodOnApplicationForm:
-    TITLE = "Details for product on application"
+    TITLE = "What's the total value of your products?"
     DOCUMENT_MISSING = "A document is required"
     BACK_LINK = "Back to products"
-    VALUE = "What's the value of your products?"
+    VALUE = ""
     QUANTITY = "Quantity"
     UNITS = "Unit of measurement"
 
 
 class AddPrexistingGoodToApplicationForm:
-    TITLE = "Add a product from your database to your application"
+    TITLE = "Add a product from your product list to your application"
 
 
 class ViewGoodOnApplicationPage:
     TITLE = "Products"
-    ADD_NEW_BUTTON = "Add a new product to your application"
+    ADD_NEW_BUTTON = "Add a new product"
 
 
 class GoodsLocationForm:
@@ -188,7 +212,7 @@ class GoodsLocationForm:
 
 
 class GoodsLocationPage:
-    SELECT_SITES_TITLE = "Select which sites your products are at"
+    SELECT_SITES_TITLE = "Products locations"
     SELECT_SITES_BUTTON = "Select sites"
 
 

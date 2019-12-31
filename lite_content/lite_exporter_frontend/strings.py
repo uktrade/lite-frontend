@@ -23,8 +23,19 @@ SUBMIT_APPLICATION = "Submit application"
 EDIT_APPLICATION_SUBMIT = "Submit application"
 EDIT_APPLICATION_DONE = "Done"
 
+HOME = "Home"
+
 # Constants
 PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
+
+
+class Address:
+    ADDRESS_LINE_1 = "Building and street"
+    ADDRESS_LINE_2 = ""
+    TOWN = "Town or city"
+    COUNTY = "County/State"
+    POSTAL_CODE = "Postal Code"
+    COUNTRY = "Country"
 
 
 class Applications:
