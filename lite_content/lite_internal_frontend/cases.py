@@ -92,7 +92,7 @@ class HMRCPage:
 
 
 class CaseOfficerPage:
-    BACKLINK = "Return to Case"
+    BACKLINK = "Back to Case"
     ERROR = "There appears to be a problem"
     TITLE = "Case Officer"
 
@@ -102,7 +102,7 @@ class CaseOfficerPage:
         TEAM = "Team"
         EMAIL = "Email"
         REMOVE = "Un-Assign"
-        BUTTON = "un-assign"
+        BUTTON = "Un-assign"
 
     class Search:
         TITLE = "Assign a case officer to the case"
