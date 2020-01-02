@@ -212,6 +212,16 @@ class GoodsLocationForm:
     EXTERNAL_LOCATION_PREEXISTING_LOCATION = "Use an existing external location"
 
 
+class GoodsCountriesMatrix:
+    BACK = "Back to application overview"
+    TITLE = "Select the countries each product is going to"
+    ERROR = "Select at least one country for each good"
+    THIS_IS_OPTIONAL = "This is optional."
+    SELECT_ALL = "Select all"
+    DESELECT_ALL = "Deselect all"
+    SAVE = "Save"
+
+
 class GoodsLocationPage:
     SELECT_SITES_TITLE = "Products locations"
     SELECT_SITES_BUTTON = "Select sites"
