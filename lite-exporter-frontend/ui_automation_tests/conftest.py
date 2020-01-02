@@ -495,3 +495,9 @@ def wait_for_document(driver):  # noqa
             driver.refresh()
         else:
             document_is_found = True
+
+
+@when("I click on end user advisories")  # noqa
+def click_my_end_user_advisory_link(driver):  # noqa
+    exporter_hub = ExporterHubPage(driver)
+    exporter_hub.click_end_user_advisories()

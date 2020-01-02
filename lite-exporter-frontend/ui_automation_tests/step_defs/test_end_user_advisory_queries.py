@@ -120,9 +120,3 @@ def notification_on_notes_tab(driver, context):
 @then(parsers.parse('I can view "{text}" in case notes'))
 def notification_on_notes_tab(driver, text):
     assert text in EndUserAdvisoryPage(driver).latest_case_note_text()
-
-
-@when("I click on end user advisories")  # noqa
-def click_my_end_user_advisory_link(driver):  # noqa
-    exporter_hub = ExporterHubPage(driver)
-    exporter_hub.click_end_user_advisories()
