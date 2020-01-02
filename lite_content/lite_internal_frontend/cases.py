@@ -94,6 +94,7 @@ class HMRCPage:
 class CaseOfficerPage:
     BACKLINK = "Return to Case"
     ERROR = "There appears to be a problem"
+    TITLE = "Case Officer"
 
     class CurrentOfficer:
         TITLE = "Current Case Officer"
