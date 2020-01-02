@@ -104,6 +104,10 @@ class CaseOfficerPage:
         REMOVE = "Un-Assign"
         BUTTON = "Un-assign"
 
+    class Error:
+        GENERIC = "There appears to be a problem"
+        NO_SELECTION = "Please select a user to assign"
+
     class Search:
         TITLE = "Assign a case officer to the case"
         DESCRIPTION = "Search for a user by their full name"
