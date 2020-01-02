@@ -13,6 +13,7 @@ class ApplicationPage:
         DECISION = "Record Decision"
         ADVICE = "View Advice"
         GENERATE_DOCUMENT = "Generate Document"
+        CASE_OFFICER = "Assign Case Officer"
 
     class Goods:
         TITLE = "Products"
@@ -88,3 +89,24 @@ class HMRCPage:
         MOVE = "Move Case"
         RECORD_DECISION = "Record Decision"
         GENERATE_DOCUMENT = "Generate Document"
+
+
+class CaseOfficerPage:
+    BACKLINK = "Return to Case"
+    ERROR = "There appears to be a problem"
+
+    class CurrentOfficer:
+        TITLE = "Current Case Officer"
+        FULLNAME = "Full Name"
+        TEAM = "Team"
+        EMAIL = "Email"
+        REMOVE = "Un-Assign"
+        BUTTON = "un-assign"
+
+    class Search:
+        TITLE = "Assign a case officer to the case"
+        DESCRIPTION = "Search for a user by their full name"
+        PLACEHOLDER = "Search Case Officer"
+        SEARCH = "Search"
+        ASSIGN = "Assign"
+        NORESULTS = "No Users matching the criteria"
