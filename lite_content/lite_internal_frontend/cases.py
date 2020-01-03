@@ -38,6 +38,8 @@ class ApplicationPage:
     ADVICE = "Give or change advice"
     RESPOND_BUTTON = "Respond to Query"
     CLOSED = "This case is closed"
+    CASE_OFFICER = "Case Officer: "
+    NO_CASE_OFFICER = "No Case Officer set."
 
 
 class GenerateDocumentsPage:
