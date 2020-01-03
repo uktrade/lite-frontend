@@ -8,8 +8,7 @@ Feature: I want to be able to edit and update an active application
   Scenario: Edit an open application
     Given I go to exporter homepage and choose Test Org
     And I create an open application via api
-    When I click on applications
-    And I click on application previously created
+    When I go to application previously created
     And I click edit application
     And I choose to make major edits
     And I click on open goods tile
@@ -18,9 +17,7 @@ Feature: I want to be able to edit and update an active application
     When I add a good or good type with description "Sniper" controlled "Yes" control code "ML1a" incorporated "Yes" and part number "not needed"
     And I click the back link
     And I submit the application
-    And I go to exporter homepage
-    And I click on applications
-    And I click on application previously created
+    And I go to application previously created
     And I click on activity tab
     Then "updated the status to: submitted" is shown as position "1" in the audit trail
     And "added good type:" is shown as position "2" in the audit trail

@@ -127,6 +127,11 @@ def click_on_an_application(driver, context):  # noqa
     driver.find_element_by_css_selector('a[href*="' + context.app_id + '"]').click()
 
 
+@when("I go to application previously created")  # noqa
+def click_on_an_application(driver, exporter_url, context):  # noqa
+    driver.get(exporter_url.rstrip("/") + "/applications/" + context.app_id)
+
+
 @when("I click edit application")  # noqa
 def i_click_edit_application(driver):  # noqa
     ApplicationPage(driver).click_edit_application_link()

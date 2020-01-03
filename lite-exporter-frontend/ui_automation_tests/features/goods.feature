@@ -27,14 +27,6 @@ Feature: I want to edit and remove goods on the goods list
     And I raise a clc query control code "ML1a" description "I believe it is ML1a"
     Then I see the clc query in goods list
 
-  @LT_1142_add_a_document @smoke
-  Scenario: Add a document
-    Given I go to exporter homepage and choose Test Org
-    When I click on goods link
-    And I add a good and attach a document
-    And I go to my good
-    Then I see the document has been attached
-
   @LT_886_add_new_good_to_app @regression
   Scenario: Add a new good directly to a standard application
     Given I go to exporter homepage and choose Test Org

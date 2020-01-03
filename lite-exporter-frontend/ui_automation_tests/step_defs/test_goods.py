@@ -65,18 +65,6 @@ def good_is_no_longer_in_list(driver, context):
     driver.set_timeout_to(10)
 
 
-@when("I add a good and attach a document")
-def attach_document_to_modifiable_good(driver, context, create_non_incorporated_good):
-    pass
-
-
-@then("I see the document has been attached")
-def i_see_the_attached_good(driver, context):
-    added_doc = GoodsPage(driver).get_text_of_document_added_item()
-    assert context.good_document["name"] in added_doc, "file is not displayed"
-    assert context.good_document["description"] in added_doc, "file description is not displayed"
-
-
 @then("I see my edited good details in the good page")
 def click_on_draft_good(driver):
     text = driver.find_element_by_css_selector(".govuk-summary-list").text
@@ -173,11 +161,6 @@ def confirm_can_upload_document(driver):
     # Confirm you have a document that is not sensitive
     AddGoodPage(driver).confirm_can_upload_good_document()
     functions.click_submit(driver)
-
-
-@when("I go to my good")
-def go_to_good(driver, context, exporter_url):
-    driver.get(f"{exporter_url}goods/{context.good_id}")
 
 
 @when("I select that I cannot attach a document")

@@ -97,9 +97,9 @@ def all_selected(driver):
 def assign_all(driver, assign_or_unassign):
     countries_page = GoodsCountriesPage(driver)
     if assign_or_unassign == "assign":
-        countries_page.select_all()
+        countries_page.select_all_link()
     else:
-        countries_page.deselect_all()
+        countries_page.deselect_all_link()
     countries_page.click_save()
 
 

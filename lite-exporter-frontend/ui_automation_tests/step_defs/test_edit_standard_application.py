@@ -58,7 +58,9 @@ def no_consignee_is_set_on_the_application(driver):
 
 @when("I remove an additional document")
 def i_remove_an_additional_document(driver):
+    driver.set_timeout_to(0)
     remove_consignee_link = ApplicationOverviewPage(driver).find_remove_additional_document_link()
+    driver.set_timeout_to(10)
     driver.execute_script("arguments[0].click();", remove_consignee_link)
 
 
@@ -92,10 +94,3 @@ def assert_ref_name(context, driver):
 @then("I see my edited reference number")
 def assert_ref_num(driver):
     assert "12345678" in driver.find_element_by_css_selector(".lite-task-list").text
-
-
-@then("the edit application button is not present")
-def edit_button_not_present(driver):
-    driver.set_timeout_to(0)
-    assert len((ApplicationPage(driver).find_edit_application_button())) == 0
-    driver.set_timeout_to(10)

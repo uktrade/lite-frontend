@@ -33,12 +33,5 @@ class SubmittedApplicationsPages(BasePage):
     def get_text_of_case_note_date_time(self, no):
         return self.driver.find_elements_by_css_selector(self.CASE_NOTE_DATE_TIME)[no].text
 
-    def get_text_of_case_note_warning(self):
-        time.sleep(1)
-        return self.driver.find_element_by_id(self.CASE_NOTE_CHARACTER_WARNING).text
-
-    def get_disabled_attribute_of_post_note(self):
-        return self.driver.find_element_by_id(self.POST_NOTE_BTN).get_attribute("disabled")
-
     def find_case_note_text_area(self):
         return self.driver.find_elements_by_id(self.CASE_NOTE_TEXT_AREA)
