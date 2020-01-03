@@ -22,3 +22,16 @@
 		padding-right: 15px;
 	}
 }
+
+.govuk-checkboxes__label--error {
+	// Add an error state to checkboxes as GOV.UK Frontend lacks it
+	color: $govuk-error-colour;
+
+	&::before {
+		border-width: $govuk-border-width-form-element-error;
+	}
+
+	&::after {
+		color: govuk-colour("black");
+	}
+}
