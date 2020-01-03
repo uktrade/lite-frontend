@@ -1,15 +1,15 @@
 from conf.settings import env
-from lite_content.lite_exporter_frontend import (
-    applications,
-    goods,
-    roles,
-    users,
-    sites,
-    core,
-    end_users,
-    hub,
-    third_parties,
-    generic,
+from lite_content.lite_exporter_frontend import (  # noqa
+    applications,  # noqa
+    goods,  # noqa
+    roles,  # noqa
+    users,  # noqa
+    sites,  # noqa
+    core,  # noqa
+    end_users,  # noqa
+    hub,  # noqa
+    third_parties,  # noqa
+    generic,  # noqa
 )  # noqa
 
 # Generic (used as defaults in forms)
