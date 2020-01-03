@@ -20,13 +20,13 @@
 {% endblock %}
 
 {% block body %}
-	<h1 class="govuk-heading-xl">
+	<h1 class="govuk-heading-xl govuk-!-margin-bottom-4">
 		{{ organisation.name }}
 	</h1>
 
 	{% if user_data.organisations|length > 1 %}
-		<div style="margin-top: -40px; margin-bottom: 50px;">
-			<a class="govuk-link govuk-link--no-visited-state govuk-!-font-size-16" style="text-decoration: none;" href="{% url 'core:pick_organisation' %}" id="switch-link">Switch organisation</a>
+		<div class="govuk-!-margin-bottom-6">
+			<a class="govuk-link govuk-link--no-visited-state govuk-!-font-size-16" href="{% url 'core:pick_organisation' %}" id="switch-link">Switch organisation</a>
 		</div>
 	{% endif %}
 

@@ -152,19 +152,13 @@
 			<hr class="app-check-your-answers-separator">
 		{% endfor %}
     {% elif type == 'case-notes' %}
-        {% include "applications/tabs/case-notes.html" %}
+		{% url "applications:application" application.id "case-notes" as post_url %}
+		{% include "includes/case-notes.html" with post_url=post_url %}
     {% elif type == 'ecju-queries' %}
         {% include "applications/tabs/ecju-queries.html" %}
     {% elif type == 'generated-documents' %}
           {% include "applications/tabs/generated-documents.html" %}
     {% elif type == 'activity' %}
-		<!-- Activity -->
 		{% include "applications/tabs/activity.html" %}
     {% endif %}
-
-
-{% endblock %}
-
-{% block javascript %}
-	<script src="{% static 'javascripts/case-notes.js' %}"></script>
 {% endblock %}

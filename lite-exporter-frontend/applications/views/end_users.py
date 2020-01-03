@@ -70,7 +70,7 @@ class UltimateEndUsers(TemplateView):
             "ultimate_end_users": ultimate_end_users,
             "show_warning": check_all_parties_have_a_document(ultimate_end_users) == "in_progress",
         }
-        return render(request, "applications/parties/ultimate_end_users.html", context)
+        return render(request, "applications/parties/ultimate-end-users.html", context)
 
 
 class AddUltimateEndUser(TemplateView):

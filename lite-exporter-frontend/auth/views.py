@@ -1,16 +1,16 @@
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponseBadRequest, HttpResponseServerError
+from django.http import HttpResponseServerError
 from django.shortcuts import redirect
+from django.urls import reverse_lazy
 from django.views.generic.base import RedirectView, View, TemplateView
-
-from auth.utils import get_client, AUTHORISATION_URL, TOKEN_SESSION_KEY, TOKEN_URL, get_profile
-from lite_forms.generators import error_page
 from raven.contrib.django.raven_compat.models import client
 
 from auth.services import authenticate_exporter_user
+from auth.utils import get_client, AUTHORISATION_URL, TOKEN_SESSION_KEY, TOKEN_URL, get_profile
 from conf.settings import LOGOUT_URL
 from core.builtins.custom_tags import get_string
+from lite_forms.generators import error_page
 from users.services import get_user
 
 
@@ -36,7 +36,7 @@ class AuthCallbackView(View):
         auth_code = request.GET.get("code", None)
 
         if not auth_code:
-            return HttpResponseBadRequest()
+            return redirect(reverse_lazy("auth:login"))
 
         state = self.request.session.get(TOKEN_SESSION_KEY + "_oauth_state", None)
 

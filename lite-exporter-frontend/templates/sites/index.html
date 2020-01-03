@@ -5,22 +5,19 @@
 {% endblock %}
 
 {% block body %}
+	<h1 class="govuk-heading-l">{{ organisation.name }}</h1>
 
-	<h2 class="govuk-heading-l">{{ organisation.name }}</h2>
-
-	<div style="display: grid; grid-template-columns: 1fr auto; grid-gap: 30px;">
-		<div class="lite-tabs__container">
-			<div class="lite-tabs">
-                {% if organisation.sub_type.key != 'individual' %}
-                    {% if can_administer_users %}
-				        <a href="{% url 'users:users' %}" class="lite-tabs__tab" id="tab-users">{% lcs "users.UsersPage.MANAGE_ORGANISATIONS_MEMBERS_TAB" %}</a>
-                    {% endif %}
+	<div class="lite-tabs__container">
+		<div class="lite-tabs">
+            {% if organisation.sub_type.key != 'individual' %}
+                {% if can_administer_users %}
+			        <a href="{% url 'users:users' %}" class="lite-tabs__tab" id="tab-users">{% lcs "users.UsersPage.MANAGE_ORGANISATIONS_MEMBERS_TAB" %}</a>
                 {% endif %}
-				<a href="{% url 'sites:sites' %}" class="lite-tabs__tab lite-tabs__tab--selected" id="tab-sites">{% lcs "sites.SitesPage.TAB" %}</a>
-                {% if can_administer_roles %}<a href="{% url 'roles:roles' %}" class="lite-tabs__tab lite-tabs__tab" id="tab-roles">{% lcs "roles.ManageRolesPage.TAB" %}</a>{% endif %}
-			</div>
+            {% endif %}
+			<a href="{% url 'sites:sites' %}" class="lite-tabs__tab lite-tabs__tab--selected" id="tab-sites">{% lcs "sites.SitesPage.TAB" %}</a>
+            {% if can_administer_roles %}<a href="{% url 'roles:roles' %}" class="lite-tabs__tab lite-tabs__tab" id="tab-roles">{% lcs "roles.ManageRolesPage.TAB" %}</a>{% endif %}
 		</div>
-		<div class="lite-app-bar__controls">
+		<div class="lite-tabs__controls">
 			<a href="{% url 'sites:new' %}" class="govuk-button" draggable="false" role="button">
 				{% get_string 'sites.create' %}
 			</a>
@@ -48,7 +45,7 @@
 					<td class="govuk-table__cell">
 						{{ site.name }}
 						{% if site.id == organisation.primary_site.id %}
-							<span class="govuk-caption-m" style="display: inline;">(Primary Site)</span>
+							<span class="govuk-hint">(Primary Site)</span>
 						{% endif %}
 					</td>
 					<td class="govuk-table__cell">
@@ -68,5 +65,4 @@
 			{% endfor %}
 		</tbody>
 	</table>
-
 {% endblock %}

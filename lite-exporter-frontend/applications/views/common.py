@@ -69,18 +69,16 @@ class DeleteApplication(SingleFormView):
             yes_label=strings.applications.DeleteApplicationPage.YES_LABEL,
             no_label=strings.applications.DeleteApplicationPage.NO_LABEL,
             submit_button_text=strings.applications.DeleteApplicationPage.SUBMIT_BUTTON,
-            back_url=reverse_lazy("applications:application", kwargs={"pk": self.object_pk}),
+            back_url=request.GET.get("return_to"),
             side_by_side=True,
         )
-        self.return_to = request.GET.get("return_to")
         self.action = validate_delete_draft
-        self.success_url = reverse_lazy("applications:applications") + "?submitted=False"
 
     def get_success_url(self):
-        if self.return_to == "application" and self.get_validated_data().get("choice") == "no":
-            return reverse_lazy("applications:task_list", kwargs={"pk": self.object_pk})
-        else:
+        if self.get_validated_data().get("status"):
             return reverse_lazy("applications:applications") + "?submitted=False"
+        else:
+            return self.request.GET.get("return_to")
 
 
 class ApplicationEditType(TemplateView):

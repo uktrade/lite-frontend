@@ -1,7 +1,7 @@
 <!-- for the future story, currently not in use, don't remove -->
 <p class="govuk-caption-m">You won't be able to recover the document once it's deleted.</p>
 <div class="buttons-row">
-    <form method="post" style="display: inline;" action="{% url 'goods:delete_document' good.id document.id %}">
+    <form method="post" action="{% url 'goods:delete_document' good.id document.id %}">
         {% csrf_token %}
         <button type="submit" class="govuk-button govuk-button--warning govuk-!-margin-right-2">Delete document</button>
     </form>

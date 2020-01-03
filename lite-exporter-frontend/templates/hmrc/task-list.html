@@ -1,9 +1,8 @@
-{% extends 'layouts/two_pane.html' %}
+{% extends 'layouts/two-pane.html' %}
 
 {% block back_link %}{% endblock %}
 
 {% block two_thirds %}
-
 	<h1 class="govuk-heading-xl govuk-!-margin-bottom-9">
 		{% block title %}
 			Raise a query on behalf of {{ application.organisation.name }}
@@ -82,5 +81,4 @@
 			</ul>
 		</li>
 	</ol> -->
-
 {% endblock %}

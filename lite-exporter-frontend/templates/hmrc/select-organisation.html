@@ -1,13 +1,12 @@
-{% extends 'layouts/two_pane.html' %}
+{% extends 'layouts/two-pane.html' %}
 
 {% load svg %}
 
 {% block back_link %}
-<a href="{% url 'core:hub' %}" id="back-link" class="govuk-back-link">Back to hub</a>
+	<a href="{% url 'core:hub' %}" id="back-link" class="govuk-back-link">Back to hub</a>
 {% endblock %}
 
 {% block two_thirds %}
-
 	{% if show_error %}
 		 <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
 			<h2 class="govuk-error-summary__title" id="error-summary-title">
@@ -28,7 +27,7 @@
 			{% block title %}Which organisation are you enquiring about?{% endblock %}
 		</h1>
 	</legend>
-	<span class="govuk-hint" style="margin: 30px 0;">
+	<span class="govuk-hint">
 		Write the name or company registration number of the organisation in the search box.
 	</span>
     <form method="get" class="govuk-!-margin-bottom-6">
@@ -84,5 +83,4 @@
 			</p>
 		</div>
 	{% endif %}
-
 {% endblock %}

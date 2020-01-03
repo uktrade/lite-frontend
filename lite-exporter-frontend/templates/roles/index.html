@@ -7,23 +7,20 @@
 {% endblock %}
 
 {% block body %}
+	<h1 class="govuk-heading-l">{{ organisation.name }}</h1>
 
-	<h2 class="govuk-heading-l">{{ organisation.name }}</h2>
-
-	<div style="display: grid; grid-template-columns: 1fr auto; grid-gap: 30px;">
-		<div class="lite-tabs__container">
-			<div class="lite-tabs">
-                {% if organisation.sub_type.key != 'individual' %}
-                    {% if can_administer_users %}
-				        <a href="{% url 'users:users' %}" class="lite-tabs__tab" id="tab-users">{% lcs "users.UsersPage.MANAGE_ORGANISATIONS_MEMBERS_TAB" %}</a>
-                    {% endif %}
+	<div class="lite-tabs__container">
+		<div class="lite-tabs">
+            {% if organisation.sub_type.key != 'individual' %}
+                {% if can_administer_users %}
+			        <a href="{% url 'users:users' %}" class="lite-tabs__tab" id="tab-users">{% lcs "users.UsersPage.MANAGE_ORGANISATIONS_MEMBERS_TAB" %}</a>
                 {% endif %}
-				{% if can_administer_sites %}<a href="{% url 'sites:sites' %}" class="lite-tabs__tab lite-tabs__tab" id="tab-sites">{% lcs "sites.SitesPage.TAB" %}</a>{% endif %}
-				<a href="{% url 'roles:roles' %}" class="lite-tabs__tab lite-tabs__tab--selected" id="tab-roles">{% lcs "roles.ManageRolesPage.TAB" %}</a>
-			</div>
+            {% endif %}
+			{% if can_administer_sites %}<a href="{% url 'sites:sites' %}" class="lite-tabs__tab lite-tabs__tab" id="tab-sites">{% lcs "sites.SitesPage.TAB" %}</a>{% endif %}
+			<a href="{% url 'roles:roles' %}" class="lite-tabs__tab lite-tabs__tab--selected" id="tab-roles">{% lcs "roles.ManageRolesPage.TAB" %}</a>
 		</div>
 		{% if 'EXPORTER_ADMINISTER_ROLES' in user_permissions %}
-            <div class="lite-app-bar__controls">
+			<div class="lite-tabs__controls">
                 <a id="button-add-role" href="{% url 'roles:new' %}" class="govuk-button" draggable="false" role="button">
                     {% lcs 'roles.ManageRolesPage.ADD_BUTTON' %}
                 </a>
@@ -79,5 +76,4 @@
             {% endfor %}
         </tbody>
     </table>
-
 {% endblock %}

@@ -12,4 +12,4 @@ class AdditionalDocuments(TemplateView):
 
         context = {"additional_documents": data["documents"], "application": application}
 
-        return render(request, "applications/additional_documents/additional_documents.html", context)
+        return render(request, "applications/additional-documents/additional-documents.html", context)

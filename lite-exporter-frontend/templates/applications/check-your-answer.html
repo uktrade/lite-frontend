@@ -1,11 +1,10 @@
-{% extends 'layouts/two_pane.html' %}
+{% extends 'layouts/two-pane.html' %}
 
 {% block back_link %}
 	<a href="{% url 'applications:task_list' application.id %}" id="back-link" class="govuk-back-link">Back to task list</a>
 {% endblock %}
 
 {% block two_thirds %}
-
 	{% if highlight %}
 		<div class="lite-warning-summary" role="alert" tabindex="-1" data-module="govuk-error-summary">
 			<div class="lite-error-summary__body">
@@ -54,5 +53,4 @@
             </div>
         {% endfor %}
     </dl>
-
 {% endblock %}

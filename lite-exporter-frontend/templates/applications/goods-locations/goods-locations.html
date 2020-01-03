@@ -5,10 +5,9 @@
 {% endblock %}
 
 {% block body %}
-
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
-			<h2 class="govuk-heading-l" style="max-width: 400px;">
+			<h1 class="govuk-heading-l">
 				{% block title %}
 					{% if application.goods_locations.type == 'sites' %}
 						{% lcs 'goods.GoodsLocationPage.SELECT_SITES_TITLE' %}
@@ -16,7 +15,7 @@
 						Set where your products are located
 					{% endif %}
 				{% endblock %}
-			</h2>
+			</h1>
 		</div>
 		<div class="lite-app-bar__controls">
 			<a href="{% url 'applications:edit_location' application.id %}" class="govuk-button govuk-button--secondary">
@@ -90,5 +89,4 @@
 			</tbody>
 		</table>
 	{% endif %}
-
 {% endblock %}

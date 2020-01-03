@@ -52,12 +52,12 @@ urlpatterns = [
         name="remove_preexisting_good",
     ),
     # Goods Types
-    path("<uuid:pk>/goods-types/", goods_types.DraftOpenGoodsTypeList.as_view(), name="goods_types"),
+    path("<uuid:pk>/goods-types/", goods_types.GoodsTypeList.as_view(), name="goods_types"),
     path("<uuid:pk>/goods-types/countries/", goods_types.GoodsTypeCountries.as_view(), name="goods_countries"),
-    path("<uuid:pk>/goods-types/add/", goods_types.ApplicationAddGoodsType.as_view(), name="add_goods_type"),
+    path("<uuid:pk>/goods-types/add/", goods_types.GoodsTypeAdd.as_view(), name="add_goods_type"),
     path(
         "<uuid:pk>/goods-types/remove/<uuid:goods_type_pk>/",
-        goods_types.ApplicationRemoveGoodsType.as_view(),
+        goods_types.GoodsTypeRemove.as_view(),
         name="remove_goods_type",
     ),
     path(

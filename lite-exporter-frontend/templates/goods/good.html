@@ -7,7 +7,6 @@
 {% endblock %}
 
 {% block body %}
-
 	{% if good.status.key == 'verified' %}
 		<div class="lite-info-bar lite-info-bar--no-animation app-info-bar--verified">
 			{% svg 'verified' %}
@@ -20,15 +19,15 @@
 
 			<div class="lite-app-bar">
 				<div class="lite-app-bar__content">
-					<h2 class="govuk-heading-l">
+					<h1 class="govuk-heading-l">
 						{% block title %}
 							Good
 						{% endblock %}
-					</h2>
+					</h1>
 				</div>
 				{% if good.status.key == 'draft' %}
 					<div class="lite-app-bar__controls">
-						<a href="{% url 'goods:edit' good.id %}" id="edit-{{ good.id }}" class="govuk-button govuk-button--secondary" style="margin: 0;">Edit good</a>
+						<a href="{% url 'goods:edit' good.id %}" id="edit-{{ good.id }}" class="govuk-button govuk-button--secondary">Edit good</a>
 					</div>
 				{% endif %}
 			</div>
@@ -107,7 +106,7 @@
 						Part Number
 					</dt>
 					<dd class="govuk-summary-list__value">
-						{{ good.part_number|default:"N/A" }}
+						{{ good.part_number|default_na }}
 					</dd>
 				</div>
 				<div class="govuk-summary-list__row">
@@ -129,7 +128,7 @@
 				</div>
 				<div class="lite-app-bar__controls">
 				    {% if good.status.key == 'draft' %}
-			            <a role="button" draggable="false" class="govuk-button" href="{% url 'goods:attach_documents' good.id %}" style="margin: 0;">
+			            <a role="button" draggable="false" class="govuk-button" href="{% url 'goods:attach_documents' good.id %}">
 			                {% get_string 'goods.documents.attach_documents.button' %}
 			            </a>
 				    {% endif %}
@@ -163,14 +162,14 @@
 					                            Download
 					                        </a>
 					                        {% if good.status.key == 'draft' %}
-					                            <a href="{% url 'goods:delete_document' good.id document.id %}" style="margin: 0; margin-left: 20px;" class="govuk-link">
+					                            <a href="{% url 'goods:delete_document' good.id document.id %}" class="govuk-link">
 					                                Delete
 					                            </a>
 					                        {% endif %}
 					                    {% elif document.safe == False %}
-					                        <p class="govuk-label" style="margin: 0;color:red;">{% get_string 'goods.documents.virus_infected' %}</p>
+					                        <p class="govuk-label">{% get_string 'goods.documents.virus_infected' %}</p>
 					                    {% else %}
-					                        <p class="govuk-label" style="margin: 0;">{% get_string 'goods.documents.processing' %}</p>
+					                        <p class="govuk-label">{% get_string 'goods.documents.processing' %}</p>
 					                    {% endif %}
 									</td>
 								</tr>
@@ -178,7 +177,6 @@
 						</tbody>
 					</table>
 		    {% else %}
-				<br><br>
 				<div class="lite-information-text">
 					<span class="lite-information-text__icon" aria-hidden="true">!</span>
 					<p class="lite-information-text__text">
@@ -189,33 +187,33 @@
 		    {% endif %}
 
 		    {% if good.query %}
-				<br><br>
-		        <div class="lite-tabs__container">
-		            <a href="{% url 'goods:good_detail' good.id 'case-notes' %}" class="lite-tabs__tab {% if type == 'case-notes' %}lite-tabs__tab--selected{% endif %}" id="link-case-notes">
-					    {% lcs 'goods.GoodPage.Tabs.NOTES' %}
-		                {% if good.query.exporter_user_notification_count.casenote %}
-		                    <div class="lite-notification-bubble">
-		                        {{ good.query.exporter_user_notification_count.casenote }}
-		                    </div>
-		                {% endif %}
-				    </a>
-		            <a href="{% url 'goods:good_detail' good.id 'ecju-queries' %}" class="lite-tabs__tab {% if type == 'ecju-queries' %}lite-tabs__tab--selected{% endif %}" id="link-ecju-queries">
-		                {% lcs 'goods.GoodPage.Tabs.ECJU_QUERIES' %}
-		                {% if good.query.exporter_user_notification_count.ecjuquery  %}
-		                    <div class="lite-notification-bubble">
-		                        {{ good.query.exporter_user_notification_count.ecjuquery }}
-		                    </div>
-					    {% endif %}
-		            </a>
+		        <div class="lite-tabs__container govuk-!-margin-top-6">
+		            <div class="lite-tabs">
+						<a href="{% url 'goods:good_detail' good.id 'case-notes' %}" class="lite-tabs__tab {% if type == 'case-notes' %}lite-tabs__tab--selected{% endif %}" id="link-case-notes">
+						    {% lcs 'goods.GoodPage.Tabs.NOTES' %}
+			                {% if good.query.exporter_user_notification_count.casenote %}
+			                    <div class="lite-notification-bubble">
+			                        {{ good.query.exporter_user_notification_count.casenote }}
+			                    </div>
+			                {% endif %}
+					    </a>
+			            <a href="{% url 'goods:good_detail' good.id 'ecju-queries' %}" class="lite-tabs__tab {% if type == 'ecju-queries' %}lite-tabs__tab--selected{% endif %}" id="link-ecju-queries">
+			                {% lcs 'goods.GoodPage.Tabs.ECJU_QUERIES' %}
+			                {% if good.query.exporter_user_notification_count.ecjuquery  %}
+			                    <div class="lite-notification-bubble">
+			                        {{ good.query.exporter_user_notification_count.ecjuquery }}
+			                    </div>
+						    {% endif %}
+			            </a>
+		            </div>
 		        </div>
 		        {% if type == 'case-notes' and good.query.id %}
-			        {% include "goods/tabs/case-notes.html" %}
+					{% url "goods:good_detail" good.id "case-notes" as post_url %}
+			        {% include "includes/case-notes.html" with post_url=post_url %}
 		        {% elif type == 'ecju-queries'%}
 			        {% include "goods/tabs/ecju-queries.html" %}
 		        {% endif %}
 		    {% endif %}
-
 		</div>
 	</div>
-
 {% endblock %}

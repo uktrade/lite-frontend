@@ -7,8 +7,7 @@
 {% endblock%}
 
 {% block body %}
-
-	<h2 class="govuk-heading-l">{% block title %}Add a product from your organisation{% endblock %}</h2>
+	<h1 class="govuk-heading-l">{% block title %}{% lcs 'goods.AddPrexistingGoodToApplicationForm.TITLE' %}{% endblock %}</h1>
 
 	{% if data or description or part_number or control_code %}
 		<div class="lite-js-only">
@@ -73,7 +72,7 @@
 								{{ good.control_code|highlight_text:control_code|default_na }}
 							</td>
 							<td class="govuk-table__cell lite-!-text-align-right">
-								<a href="{% url 'applications:add_preexisting_good' draft_id good.id %}" class="govuk-link govuk-link--no-visited-state" draggable="false" style="margin-bottom: 0;">
+								<a href="{% url 'applications:add_preexisting_good' draft_id good.id %}" class="govuk-link govuk-link--no-visited-state" draggable="false">
 									Add <span class="govuk-visually-hidden">{{ good.description }}</span> to application
 								</a>
 							</td>
@@ -100,7 +99,6 @@
 			</p>
 		</div>
 	{% endif %}
-
 {% endblock %}
 
 {% block javascript %}

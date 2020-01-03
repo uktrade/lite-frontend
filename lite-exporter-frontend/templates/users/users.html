@@ -5,28 +5,19 @@
 {% endblock %}
 
 {% block body %}
+	<h1 class="govuk-heading-l">{{ organisation.name }}</h1>
 
-	{% if userDeactivated == "true" %}
-		<div class="information information-animated">
-			{% get_string 'users.deleted' %}
+	<div class="lite-tabs__container">
+		<div class="lite-tabs">
+			<a href="{% url 'users:users' %}" class="lite-tabs__tab lite-tabs__tab--selected" id="tab-users">{% lcs "users.UsersPage.MANAGE_ORGANISATIONS_MEMBERS_TAB" %}</a>
+            {% if can_administer_sites %}
+			    <a href="{% url 'sites:sites' %}" class="lite-tabs__tab" id="tab-sites">{% lcs "sites.SitesPage.TAB" %}</a>
+            {% endif %}
+            {% if can_administer_roles %}
+                <a href="{% url 'roles:roles' %}" class="lite-tabs__tab" id="tab-roles">{% lcs "roles.ManageRolesPage.TAB" %}</a>
+            {% endif %}
 		</div>
-	{% endif %}
-
-	<h2 class="govuk-heading-l">{{ organisation.name }}</h2>
-
-	<div style="display: grid; grid-template-columns: 1fr auto; grid-gap: 30px;">
-		<div class="lite-tabs__container">
-			<div class="lite-tabs">
-				<a href="{% url 'users:users' %}" class="lite-tabs__tab lite-tabs__tab--selected" id="tab-users">{% lcs "users.UsersPage.MANAGE_ORGANISATIONS_MEMBERS_TAB" %}</a>
-                {% if can_administer_sites %}
-				    <a href="{% url 'sites:sites' %}" class="lite-tabs__tab" id="tab-sites">{% lcs "sites.SitesPage.TAB" %}</a>
-                {% endif %}
-                {% if can_administer_roles %}
-                    <a href="{% url 'roles:roles' %}" class="lite-tabs__tab" id="tab-roles">{% lcs "roles.ManageRolesPage.TAB" %}</a>
-                {% endif %}
-			</div>
-		</div>
-		<div class="lite-app-bar__controls">
+		<div class="lite-tabs__controls">
 			<a href="{% url 'users:add' %}" id="button-add-a-member" class="govuk-button" draggable="false" role="button">
 				Add a member
 			</a>
@@ -67,5 +58,4 @@
 			{% endfor %}
 		</tbody>
 	</table>
-
 {% endblock %}

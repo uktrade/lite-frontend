@@ -1,4 +1,4 @@
-{% extends 'layouts/two_pane.html' %}
+{% extends 'layouts/base.html' %}
 
 {% load svg humanize %}
 
@@ -7,12 +7,11 @@
 {% endblock %}
 
 {% block body %}
-
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
-			<h2 class="govuk-heading-l">
+			<h1 class="govuk-heading-l">
 				{% block title %}{% lcs 'goods.ViewGoodOnApplicationPage.TITLE' %}{% endblock %}
-			</h2>
+			</h1>
 		</div>
         {% if application.status.key in 'applicant_editing,draft' %}
         <div class="lite-app-bar__controls">
@@ -73,5 +72,4 @@
 			</p>
 		</div>
 	{% endif %}
-
 {% endblock %}

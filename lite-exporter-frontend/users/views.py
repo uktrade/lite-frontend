@@ -107,7 +107,7 @@ class ChangeUserStatus(TemplateView):
             "user_id": str(kwargs["pk"]),
             "status": status,
         }
-        return render(request, "users/change_status.html", context)
+        return render(request, "users/change-status.html", context)
 
     def post(self, request, **kwargs):
         status = kwargs["status"]

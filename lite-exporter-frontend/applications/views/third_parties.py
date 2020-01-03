@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
@@ -55,7 +57,7 @@ class ThirdParties(TemplateView):
             "application": application,
             "third_parties": application["third_parties"],
         }
-        return render(request, "applications/parties/third_parties.html", context)
+        return render(request, "applications/parties/third-parties.html", context)
 
 
 class RemoveThirdParty(TemplateView):
@@ -99,7 +101,7 @@ class RemoveConsignee(TemplateView):
         application_id = str(kwargs["pk"])
         status_code = delete_consignee(request, application_id)
 
-        if status_code != 204:
+        if status_code != HTTPStatus.NO_CONTENT:
             return error_page(request, "Unexpected error removing consignee")
 
         return redirect(reverse_lazy("applications:task_list", kwargs={"pk": application_id}))

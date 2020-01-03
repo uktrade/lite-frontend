@@ -16,7 +16,7 @@
 		</div>
 	</div>
 
-	{% if end_users|length %}
+	{% if end_users %}
 		<table class="govuk-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
@@ -48,10 +48,10 @@
 						<td class="govuk-table__cell">
 							{% if advisory.end_user.website %}
 								<a class="govuk-link" href="{{ advisory.end_user.website }}">
-									{{ advisory.end_user.website|default:'N/A' }}
+									{{ advisory.end_user.website|default_na }}
 								</a>
 							{% else %}
-								{{ advisory.end_user.website|default:'N/A' }}
+								{{ advisory.end_user.website|default_na }}
 							{% endif %}
 						</td>
 						<td class="govuk-table__cell">
@@ -74,5 +74,4 @@
 			</p>
 		</div>
 	{% endif %}
-
 {% endblock %}

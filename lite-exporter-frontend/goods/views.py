@@ -299,9 +299,8 @@ class DeleteDocument(TemplateView):
             "description": original_file_name,
             "good": good,
             "document": document,
-            "page": "goods/modals/delete_document.html",
         }
-        return render(request, "core/static.html", context)
+        return render(request, "goods/delete-document.html", context)
 
     def post(self, request, **kwargs):
         good_id = str(kwargs["pk"])
@@ -312,14 +311,6 @@ class DeleteDocument(TemplateView):
         # Delete the file on the API
         delete_good_document(request, good_id, file_pk)
 
-        # TODO: should we remove context variable below?
-        # context = {
-        #     'title': 'Are you sure you want to delete this file?',
-        #     'description': document['name'],
-        #     'good': good['good'],
-        #     'document': document,
-        #     'page': 'goods/modals/delete_document.html',
-        # }
         return redirect(reverse("goods:good", kwargs={"pk": good_id}))
 
 

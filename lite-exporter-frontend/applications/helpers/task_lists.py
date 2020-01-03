@@ -1,6 +1,7 @@
 from django.shortcuts import render
 
 from applications.helpers.check_your_answers import get_total_goods_value
+from applications.helpers.get_application_edit_type import get_application_edit_type
 from applications.helpers.validate_status import check_all_parties_have_a_document
 from applications.services import (
     get_application_countries,
@@ -118,12 +119,7 @@ def _get_open_application_task_list(request, application, errors=None):
     application_id = application["id"]
 
     # Add the editing type (if possible) to the context to make it easier to read/change in the future
-    is_editing = False
-    edit_type = None
-    if application["status"]:
-        is_editing = application["status"]["key"] == "submitted" or application["status"]["key"] == APPLICANT_EDITING
-        if is_editing:
-            edit_type = "minor_edit" if application["status"]["key"] == "submitted" else "major_edit"
+    edit_type = get_application_edit_type(application)
 
     sites, _ = get_sites_on_draft(request, application_id)
     external_locations, _ = get_external_locations_on_draft(request, application_id)
@@ -147,7 +143,6 @@ def _get_open_application_task_list(request, application, errors=None):
 
     context = {
         "application": application,
-        "is_editing": is_editing,
         "edit_type": edit_type,
         "countries": countries,
         "goodstypes": goodstypes,

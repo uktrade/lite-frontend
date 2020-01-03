@@ -34,7 +34,7 @@ class GoodsLocation(TemplateView):
         if not application["goods_locations"]:
             return redirect(reverse_lazy("applications:edit_location", kwargs={"pk": application_id}))
 
-        return render(request, "applications/goods_locations/goods_locations.html", {"application": application})
+        return render(request, "applications/goods-locations/goods-locations.html", {"application": application})
 
 
 class EditGoodsLocation(TemplateView):

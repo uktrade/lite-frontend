@@ -1,7 +1,7 @@
 from django.http import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, RedirectView
 
 from lite_content.lite_exporter_frontend import strings
 from lite_forms.components import HiddenField
@@ -33,7 +33,7 @@ class EndUsersList(TemplateView):
             "title": "End User Advisories",
             "end_users": end_users,
         }
-        return render(request, "end_users/end_users.html", context)
+        return render(request, "end-users/end-users.html", context)
 
 
 class CopyAdvisory(TemplateView):
@@ -111,9 +111,9 @@ class ApplyForAnAdvisory(TemplateView):
         return end_user_advisory_success_page(request, str(data["end_user_advisory"]["id"]))
 
 
-class EndUserDetailEmpty(TemplateView):
-    def get(self, request, **kwargs):
-        return redirect(reverse_lazy("end_users:end_user_detail", kwargs={"pk": kwargs["pk"], "type": "case-notes"}))
+class EndUserDetailEmpty(RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        return reverse_lazy("end_users:end_user_detail", kwargs={"pk": self.kwargs["pk"], "type": "case-notes"})
 
 
 class EndUserDetail(TemplateView):
@@ -134,7 +134,6 @@ class EndUserDetail(TemplateView):
 
     def get(self, request, **kwargs):
         context = {
-            "title": "End User Advisory",
             "case_id": self.case_id,
             "end_user_advisory": self.end_user_advisory,
             "type": self.view_type,
@@ -142,12 +141,12 @@ class EndUserDetail(TemplateView):
 
         if self.view_type == "case-notes":
             case_notes = get_case_notes(request, self.case_id)["case_notes"]
-            context["notes"] = filter(lambda note: note["is_visible_to_exporter"], case_notes)
+            context["notes"] = case_notes
 
         if self.view_type == "ecju-queries":
             context["open_queries"], context["closed_queries"] = get_application_ecju_queries(request, self.case_id)
 
-        return render(request, "end_users/end_user.html", context)
+        return render(request, "end-users/end-user.html", context)
 
     def post(self, request, **kwargs):
         if self.view_type != "case-notes":
