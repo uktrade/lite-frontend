@@ -194,7 +194,7 @@ class CreateGoodOnApplicationForm:
 
 
 class AddPrexistingGoodToApplicationForm:
-    TITLE = "Add a product from your product list to your application"
+    TITLE = "Add a product from your organisation"
 
 
 class ViewGoodOnApplicationPage:

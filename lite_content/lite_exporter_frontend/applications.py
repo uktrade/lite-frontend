@@ -154,6 +154,7 @@ class EditStandardApplicationPage:
 
 
 class EditOpenApplicationPage:
+    BACK_TO_APPLICATIONS = "Back to applications"
     DRAFT_DELETE_LINK = "Delete draft"
     SUBMIT = "Submit application"
 
