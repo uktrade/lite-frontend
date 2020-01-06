@@ -32,13 +32,13 @@ class ApplicationPage:
         FLAGS_TABLE_HEADER = "Flags"
 
     class EndUser:
-        NO_END_USER = "No end user"
+        NO_END_USER = "The applicant is editing the end user."
 
         class Table:
             Title = "End user"
 
     class Consignee:
-        NO_CONSIGNEE = "No consignee"
+        NO_CONSIGNEE = "The applicant is editing the consignee."
 
         class Table:
             Title = "Consignee"
