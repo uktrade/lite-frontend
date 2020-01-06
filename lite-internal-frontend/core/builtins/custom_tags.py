@@ -204,20 +204,22 @@ def get_address(data):
     from {'address': {'address_line_1': '10 Downing St', ...}
     or {'address': '10 Downing St ...', 'country': {'name': United Kingdom'}}
     """
-    address = data["address"]
+    if data and "address" in data:
+        address = data["address"]
 
-    if isinstance(address, str):
-        return address + ", " + data["country"]["name"]
+        if isinstance(address, str):
+            return address + ", " + data["country"]["name"]
 
-    address = [
-        address["address_line_1"],
-        address["address_line_2"],
-        address["city"],
-        address["region"],
-        address["postcode"],
-        address["country"]["name"],
-    ]
-    return ", ".join([x for x in address if x])
+        address = [
+            address["address_line_1"],
+            address["address_line_2"],
+            address["city"],
+            address["region"],
+            address["postcode"],
+            address["country"]["name"],
+        ]
+        return ", ".join([x for x in address if x])
+    return ""
 
 
 @register.filter()
