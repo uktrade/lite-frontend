@@ -94,26 +94,24 @@ class HMRCPage:
 
 
 class CaseOfficerPage:
-    BACKLINK = "Back to Case"
-    ERROR = "There appears to be a problem"
-    TITLE = "Case Officer"
+    ERROR = "There is a problem"
 
     class CurrentOfficer:
-        TITLE = "Current Case Officer"
-        FULLNAME = "Full Name"
+        TITLE = "Current case officer"
+        FULLNAME = "Name"
         TEAM = "Team"
         EMAIL = "Email"
-        REMOVE = "Un-Assign"
-        BUTTON = "Un-assign"
+        REMOVE = "Unassign"
+        BUTTON = "Unassign"
 
     class Error:
         GENERIC = "There appears to be a problem"
         NO_SELECTION = "Please select a user to assign"
 
     class Search:
-        TITLE = "Assign a case officer to the case"
-        DESCRIPTION = "Search for a user by their full name"
-        PLACEHOLDER = "Search Case Officer"
+        TITLE = "Assign a case officer"
+        DESCRIPTION = "A case officer oversees the case for its lifespan."
+        PLACEHOLDER = "Search users"
         SEARCH = "Search"
-        ASSIGN = "Assign"
-        NORESULTS = "No Users matching the criteria"
+        ASSIGN = "Assign user"
+        NO_RESULTS = "No users matching the criteria"
