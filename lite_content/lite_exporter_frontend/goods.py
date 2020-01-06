@@ -28,6 +28,7 @@ class GoodsList:
         DESCRIPTION = "Description"
         CONTROL_LIST_ENTRY = "Control list entry"
         PART_NUMBER = "Part number"
+        COUNTRIES = "Countries"
         STATUS = "Status"
 
 
@@ -193,7 +194,7 @@ class CreateGoodOnApplicationForm:
 
 
 class AddPrexistingGoodToApplicationForm:
-    TITLE = "Add a product from your product list to your application"
+    TITLE = "Add a product from your organisation"
 
 
 class ViewGoodOnApplicationPage:
@@ -209,6 +210,16 @@ class GoodsLocationForm:
     EXTERNAL_LOCATION_TITLE = "Do you want to add a new external location or use an existing one?"
     EXTERNAL_LOCATION_NEW_LOCATION = "Add a new external location"
     EXTERNAL_LOCATION_PREEXISTING_LOCATION = "Use an existing external location"
+
+
+class GoodsCountriesMatrix:
+    BACK = "Back to application overview"
+    TITLE = "Select the countries each product is going to"
+    ERROR = "Select at least one country for each good"
+    THIS_IS_OPTIONAL = "This is optional."
+    SELECT_ALL = "Select all"
+    DESELECT_ALL = "Deselect all"
+    SAVE = "Save"
 
 
 class GoodsLocationPage:

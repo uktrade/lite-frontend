@@ -150,16 +150,19 @@ class DestinationForm:
 
 class EditStandardApplicationPage:
     DRAFT_DELETE_LINK = "Delete draft"
+    SUBMIT = "Submit application"
 
 
 class EditOpenApplicationPage:
+    BACK_TO_APPLICATIONS = "Back to applications"
     DRAFT_DELETE_LINK = "Delete draft"
+    SUBMIT = "Submit application"
 
 
 class DeleteApplicationPage:
     BUTTON = "Delete draft"
     TITLE = "Are you sure you want to delete this draft?"
-    BACK_TEXT = "Back to application"
+    BACK_TEXT = "Back"
     YES_LABEL = "Yes"
     NO_LABEL = "No"
     SUBMIT_BUTTON = "Submit"
