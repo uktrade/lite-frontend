@@ -113,5 +113,5 @@ class CaseOfficerPage:
         DESCRIPTION = "A case officer oversees the case for its lifespan."
         PLACEHOLDER = "Search users"
         SEARCH = "Search"
-        ASSIGN = "Assign user"
+        ASSIGN = "Assign user as case officer"
         NO_RESULTS = "No users matching the criteria"
