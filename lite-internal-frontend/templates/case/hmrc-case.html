@@ -3,20 +3,24 @@
 {% load humanize static %}
 
 {% block back_link %}
-	<a href="{% url 'cases:cases' %}?queue={{ queue.queue.id }}" class="govuk-back-link">
-		Back to {% if queue_name %}{{ queue_name }}{% else %}All cases{% endif %}
-	</a>
+	<div class="govuk-breadcrumbs">
+		<ol class="govuk-breadcrumbs__list">
+			<li class="govuk-breadcrumbs__list-item">
+				<a class="govuk-breadcrumbs__link" href="{% url 'cases:cases' %}?queue={{ queue.queue.id }}">{% if queue_name %}{{ queue_name }}{% else %}{% lcs 'QUEUE_ALL_CASES' %}{% endif %}</a>
+			</li>
+			<li class="govuk-breadcrumbs__list-item" aria-current="page">&nbsp;</li>
+		</ol>
+	</div>
 {% endblock %}
 
 {% load svg %}
 
 {% block body %}
-
-{% if notification %}
-    <a id="case-notification" class="lite-info-bar lite-info-bar--link lite-info-bar--no-animation" href="#case-activity-{{ notification.audit_id }}">
-        {% lcs 'CASE_CHANGES' %}
-    </a>
-{% endif %}
+    {% if case.audit_notification %}
+        <a id="audit-notification" class="lite-info-bar lite-info-bar--link lite-info-bar--no-animation" href="#case-activity-{{ case.audit_notification.audit_id }}">
+            {% lcs 'CASE_CHANGES' %}
+        </a>
+    {% endif %}
 
 <div class="lite-app-bar">
 	<div class="lite-app-bar__content">

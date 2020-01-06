@@ -24,7 +24,7 @@ from conf import settings
 from conf.constants import DEFAULT_QUEUE_ID, GENERATED_DOCUMENT
 from conf.settings import AWS_STORAGE_BUCKET_NAME
 from core.helpers import convert_dict_to_query_params
-from core.services import get_user_permissions, get_statuses, get_user_case_notification, get_status_properties
+from core.services import get_user_permissions, get_statuses, get_status_properties
 from lite_forms.generators import error_page, form_page
 from lite_forms.submitters import submit_single_form
 from queues.services import get_cases_search_data
@@ -109,7 +109,6 @@ class ViewCase(TemplateView):
             context["good"] = case["query"]["good"]
             return render(request, "case/queries/clc-query-case.html", context)
         elif case_type == CaseType.APPLICATION.value:
-            context["notification"] = get_user_case_notification(request, case_id)
             context["total_goods_value"] = _get_total_goods_value(case)
 
             application_type = case["application"]["application_type"]["key"]
@@ -120,7 +119,6 @@ class ViewCase(TemplateView):
             else:
                 raise Exception("Invalid application_type: {}".format(case["application"]["application_type"]["key"]))
         elif case_type == CaseType.HMRC_QUERY.value:
-            context["notification"] = get_user_case_notification(request, case_id)
             context["total_goods_value"] = _get_total_goods_value(case)
             return render(request, "case/hmrc-case.html", context)
         else:

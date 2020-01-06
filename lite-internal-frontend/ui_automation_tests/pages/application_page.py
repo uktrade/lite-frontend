@@ -7,8 +7,8 @@ from shared.BasePage import BasePage
 class ApplicationPage(BasePage):
 
     ACTIONS_DROPDOWN = ".app-more-actions__button"  # CSS
-    CASE_NOTIFICATION_ANCHOR = "case-notification"  # ID
-    AUDIT_ID = "[id^=case-activity-]"  # CSS
+    AUDIT_NOTIFICATION_ANCHOR = "audit-notification"  # ID
+    AUDIT_CASE_ACTIVITY_ID = "[id^=case-activity-]"  # CSS
     CASE_NOTE_FIELD = "case_note"  # id
     POST_NOTE_BTN = "button-post-note"  # id
     CANCEL_NOTE_BTN = "case-note-cancel-button"  # id
@@ -142,10 +142,10 @@ class ApplicationPage(BasePage):
         return self.driver.find_element_by_id(self.TABLE_ENTITIES).text
 
     def get_case_notification_anchor(self):
-        return self.driver.find_element_by_id(self.CASE_NOTIFICATION_ANCHOR)
+        return self.driver.find_element_by_id(self.AUDIT_NOTIFICATION_ANCHOR)
 
     def get_case_activity_id_by_audit_text(self, audit_text):
-        audits = self.driver.find_elements_by_css_selector(self.AUDIT_ID)
+        audits = self.driver.find_elements_by_css_selector(self.AUDIT_CASE_ACTIVITY_ID)
         for audit in audits:
             if audit_text in audit.text:
                 return audit.get_attribute("id")

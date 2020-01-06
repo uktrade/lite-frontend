@@ -6,7 +6,7 @@ from conf.constants import (
     COUNTRIES_URL,
     STATUSES_URL,
     CONTROL_LIST_ENTRIES_URL,
-    CASE_NOTIFICATIONS_URL,
+    NOTIFICATIONS_URL,
     STATUS_PROPERTIES_URL,
 )
 from users.services import get_gov_user
@@ -75,10 +75,10 @@ def get_user_permissions(request, with_team=False):
     return user["user"]["role"]["permissions"]
 
 
-# Case Notification
-def get_user_case_notification(request, case_id):
-    data = get(request, CASE_NOTIFICATIONS_URL + "?case=" + case_id)
-    return data.json()["notification"]
+# Notifications
+def get_notifications(request):
+    data = get(request, NOTIFICATIONS_URL)
+    return data.json()["notifications"]
 
 
 # Control List Entries
