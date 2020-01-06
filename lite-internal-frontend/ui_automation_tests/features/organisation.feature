@@ -5,7 +5,7 @@ Feature: I want to add a company to LITE
   So that the new company can make applications
 
   @LT_934_test @smoke
-  Scenario: Test organisation
+  Scenario: Test registering an organisation
     Given I go to internal homepage
     When I go to organisations
     And I choose to add a new organisation

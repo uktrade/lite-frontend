@@ -16,6 +16,8 @@ scenarios("../features/organisation.feature", strict_gherkin=False)
 @then("organisation is registered")
 def verify_registered_organisation(driver, context):
     wait_until_page_is_loaded(driver)
+    # Assert that the success info bar is visible
+    assert functions.element_with_css_selector_exists(driver, ".lite-info-bar")
     driver.find_element_by_id("show-filters-link").click()
     time.sleep(0.5)
     driver.find_element_by_id("filter-box").click()
