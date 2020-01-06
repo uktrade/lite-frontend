@@ -1,7 +1,6 @@
 from selenium.webdriver.common.by import By
 import shared.tools.helpers as utils
 import pytest
-from conf.settings import env
 from pages.header_page import HeaderPage
 from pages.users_page import UsersPage
 from pytest_bdd import given, scenarios
@@ -9,23 +8,19 @@ from pytest_bdd import given, scenarios
 scenarios("../features/users.feature", strict_gherkin=False)
 
 
-sso_email = env("TEST_SSO_EMAIL")
-sso_password = env("TEST_SSO_PASSWORD")
-
-
 @pytest.fixture(scope="function")
-def open_internal_hub(driver, internal_url, sso_sign_in_url):
+def open_internal_hub(driver, internal_url, sso_sign_in_url, internal_info):
     driver.get(internal_url)
     if "login" in driver.current_url:
         driver.get(sso_sign_in_url)
-        driver.find_element_by_name("username").send_keys(sso_email)
-        driver.find_element_by_name("password").send_keys(sso_password)
+        driver.find_element_by_name("username").send_keys(internal_info["email"])
+        driver.find_element_by_name("password").send_keys(internal_info["password"])
         driver.find_element_by_css_selector("[type='submit']").click()
         driver.get(internal_url)
 
 
 @given("I run the manage users test")
-def test_manage_users(driver, open_internal_hub, context):
+def test_manage_users(driver, open_internal_hub, context, internal_info):
     time = utils.get_formatted_date_time_m_d_h_s()
     email = time + "@mail.com"
     context.email_to_search = email
@@ -51,7 +46,7 @@ def test_manage_users(driver, open_internal_hub, context):
     email_edited = "edited" + email
     user_page.click_edit_for_user(email)
     # invalid checks
-    user_page.enter_email(sso_email)
+    user_page.enter_email(internal_info["email"])
     user_page.select_option_from_team_drop_down_by_visible_text("Admin")
     user_page.click_save_and_continue()
     assert "This field must be unique." in driver.find_element_by_css_selector(".govuk-error-message").text
@@ -88,13 +83,13 @@ def test_inability_to_deactivate_oneself(driver, open_internal_hub):
 
 
 @given("I run the invalid user test")
-def test_invalid(driver, open_internal_hub):
+def test_invalid(driver, open_internal_hub, internal_info):
     header = HeaderPage(driver)
     user_page = UsersPage(driver)
 
     header.open_users()
     user_page.click_add_a_user_btn()
-    user_page.enter_email(sso_email)
+    user_page.enter_email(internal_info["email"])
     user_page.select_option_from_team_drop_down_by_visible_text("Admin")
     user_page.select_option_from_role_drop_down_by_visible_text("Default")
     user_page.click_save_and_continue()
@@ -114,7 +109,3 @@ def test_invalid(driver, open_internal_hub):
     )
     # TODO uncomment this when error message bug is fixed
     # assert "Select a team" in driver.find_elements_by_css_selector(".govuk-error-message")[1].text
-
-
-def test_teardown(driver):
-    driver.quit()
