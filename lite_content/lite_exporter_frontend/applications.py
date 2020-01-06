@@ -9,27 +9,27 @@ class PartyForm:
 class EndUserForm:
     TITLE = "Select the type of end user"
     BUTTON = "Continue"
-    NAME_FORM_TITLE = "Name"
-    WEBSITE_FORM_TITLE = "Website address (optional)"
-    ADDRESS_FORM_TITLE = "Address"
+    NAME_FORM_TITLE = "Name of the end user"
+    WEBSITE_FORM_TITLE = "Website address for the end user (optional)"
+    ADDRESS_FORM_TITLE = "Address of the end user"
     SUBMIT_BUTTON = "Save and continue"
 
 
 class UltimateEndUserForm:
     TITLE = "Select the type of ultimate recipient"
     BUTTON = "Continue"
-    NAME_FORM_TITLE = "Name"
-    WEBSITE_FORM_TITLE = "Website address (optional)"
-    ADDRESS_FORM_TITLE = "Address"
+    NAME_FORM_TITLE = "Name of the ultimate recipient"
+    WEBSITE_FORM_TITLE = "Website address for the ultimate recipient (optional)"
+    ADDRESS_FORM_TITLE = "Address of the ultimate recipient"
     SUBMIT_BUTTON = "Save and continue"
 
 
 class ConsigneeForm:
     TITLE = "Select the type of consignee"
     BUTTON = "Continue"
-    NAME_FORM_TITLE = "Name"
-    WEBSITE_FORM_TITLE = "Website address (optional)"
-    ADDRESS_FORM_TITLE = "Address"
+    NAME_FORM_TITLE = "Name of consignee"
+    WEBSITE_FORM_TITLE = "Website address for the consignee (optional)"
+    ADDRESS_FORM_TITLE = "Address of the consignee"
     SUBMIT_BUTTON = "Save and continue"
 
 
@@ -44,10 +44,10 @@ class ThirdPartyForm:
         EXPORTER = "Exporter"
 
     TITLE = "Select the type of third party"
-    BUTTON = "Save and continue"
-    NAME_FORM_TITLE = "Name"
-    WEBSITE_FORM_TITLE = "Website address (optional)"
-    ADDRESS_FORM_TITLE = "Address"
+    BUTTON = "Continue"
+    NAME_FORM_TITLE = "Name of the third party"
+    WEBSITE_FORM_TITLE = "Website address for the third party (optional)"
+    ADDRESS_FORM_TITLE = "Address of the third party"
     SUBMIT_BUTTON = "Save and continue"
 
 
@@ -84,12 +84,12 @@ class ApplicationSummaryPage:
         WITHDRAW_ACCESS_BUTTON = "Withdraw application"
 
     class Withdraw:
-        TITLE = "Are you sure you want to withdraw this application?"
+        TITLE = "Confirm you want to withdraw this application?"
         BACK_TEXT = "Back to application"
-        YES_LABEL = "Yes"
-        NO_LABEL = "No"
+        YES_LABEL = "Confirm and withdraw the application"
+        NO_LABEL = "Cancel"
         SUBMIT_BUTTON = "Submit"
-        WITHDRAW_ERROR = "Select a choice"
+        WITHDRAW_ERROR = "Select confirm if you want to withdraw the application"
 
     class Tabs:
         DETAILS = "Details"
@@ -127,7 +127,7 @@ class InitialApplicationQuestionsForms:
     ENTER_A_REFERENCE_NAME_TITLE = "Name the application"
     ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference name"
     ENTER_A_REFERENCE_NAME_DESCRIPTION = (
-        "Give this application a reference name so you can refer back to it when needed."
+        "Give the application a reference name so you can refer back to it when needed."
     )
     TEMPORARY_OR_PERMANENT_TITLE = "Select an export type"
     TEMPORARY_OR_PERMANENT_DESCRIPTION = ""
@@ -140,7 +140,7 @@ class InitialApplicationQuestionsForms:
         "An end use control is an official a letter or email from Border Force or HMRC."
     )
     WHAT_WAS_THE_REFERENCE_CODE_TITLE = "Reference number (optional)"
-    WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION = "The reference number is on the letter or email."
+    WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION = "The reference number is on the official letter or email."
 
 
 class DestinationForm:
@@ -161,12 +161,12 @@ class EditOpenApplicationPage:
 
 class DeleteApplicationPage:
     BUTTON = "Delete draft"
-    TITLE = "Are you sure you want to delete this draft?"
+    TITLE = "Confirm you want to delete this draft"
     BACK_TEXT = "Back"
-    YES_LABEL = "Yes"
-    NO_LABEL = "No"
+    YES_LABEL = "Confirm and delete the draft"
+    NO_LABEL = "Cancel"
     SUBMIT_BUTTON = "Submit"
-    DELETE_ERROR = "Select a choice"
+    DELETE_ERROR = "Select confirm if you want to delete the draft"
 
 
 class AttachDocumentPage:
@@ -176,7 +176,7 @@ class AttachDocumentPage:
 
 
 class DeleteDocument:
-    DOCUMENT_DELETE_GENERIC_ERROR = "We had an issue deleting your files. Try again later."
+    DOCUMENT_DELETE_GENERIC_ERROR = "We had an issue deleting your file. Try again later."
 
 
 class TaskListPage:

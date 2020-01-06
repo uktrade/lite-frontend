@@ -17,7 +17,7 @@ class GoodsList:
 
     class Filter:
         DESCRIPTION = "Description"
-        CONTROL_LIST_ENTRY = "Control list entry"
+        CONTROL_LIST_ENTRY = "Control list classification"
         PART_NUMBER = "Part number"
         APPLY = "Apply filters"
         CLEAR = "Clear filters"
@@ -26,7 +26,7 @@ class GoodsList:
 
     class Table:
         DESCRIPTION = "Description"
-        CONTROL_LIST_ENTRY = "Control list entry"
+        CONTROL_LIST_ENTRY = "Control list classification"
         PART_NUMBER = "Part number"
         COUNTRIES = "Countries"
         STATUS = "Status"
@@ -68,7 +68,7 @@ class CreateGoodForm:
             + PERMISSION_FINDER_LINK
             + "may be affected by military end use controls, current trade sanctions and embargoes or weapons of mass "
             + "destruction controls."
-            + "If your products and services aren't subject to any controls, you'll get a no "
+            + "If the product isn't subject to any controls, you'll get a no "
             + "licence required (NLR) document from ECJU. "
         )
         YES = "Yes"
@@ -96,7 +96,7 @@ class CLCQueryForm:
     BUTTON = "Save"
 
     class CLCCode:
-        TITLE = "What do you think is your product's control list classification?"
+        TITLE = "What do you think is the product's control list classification?"
         DESCRIPTION = "For example, ML1a."
 
     class Additional:
@@ -137,8 +137,8 @@ class EditGoodForm:
         DELETE = "Delete product"
 
     class DeleteConfirmationForm:
-        TITLE = "Are you sure you want to delete this product?"
-        YES = "Yes, delete the product"
+        TITLE = "Confirm you want to delete this product"
+        YES = "Confirm and delete the product"
         NO = "Cancel"
 
 
@@ -167,18 +167,18 @@ class RespondToQueryForm:
         DESCRIPTION = "You won't be able to edit this once submitted."
 
     class ConfirmationForm:
-        TITLE = "Are you sure you want to send this response?"
+        TITLE = "Confirm you want to send this response"
         BACK_LINK = "Back to edit response"
-        YES = "Yes, send the response"
-        NO = "No, change my response"
+        YES = "Confirm and send the response"
+        NO = "Cancel and change the response"
 
 
 class GoodPage:
     class Tabs:
         DETAILS = "Details"
         NOTES = "Notes"
-        ECJU_QUERIES = "ECJU Queries"
-        GENERATED_DOCUMENTS = "ECJU Documents"
+        ECJU_QUERIES = "ECJU queries"
+        GENERATED_DOCUMENTS = "ECJU documents"
 
     class Query:
         REFERENCE = "Reference"
@@ -194,7 +194,7 @@ class CreateGoodOnApplicationForm:
 
 
 class AddPrexistingGoodToApplicationForm:
-    TITLE = "Add a product from your organisation"
+    TITLE = "Select a product from your product list"
 
 
 class ViewGoodOnApplicationPage:
@@ -203,7 +203,7 @@ class ViewGoodOnApplicationPage:
 
 
 class GoodsLocationForm:
-    WHERE_ARE_YOUR_GOODS_LOCATED_TITLE = "Where are your products located?"
+    WHERE_ARE_YOUR_GOODS_LOCATED_TITLE = "Where are the products located?"
     WHERE_ARE_YOUR_GOODS_LOCATED_DESCRIPTION = ""
     ONE_OF_MY_REGISTERED_SITES = "At one of my organisation’s sites"
     NOT_AT_MY_REGISTERED_SITES = "At a location that's not part of my organisation"
@@ -214,9 +214,9 @@ class GoodsLocationForm:
 
 class GoodsCountriesMatrix:
     BACK = "Back to application overview"
-    TITLE = "Select the countries each product is going to"
-    ERROR = "Select at least one country for each good"
-    THIS_IS_OPTIONAL = "This is optional."
+    TITLE = "Select the countries each product is going to (optional)"
+    ERROR = "Select at least 1 country for each product"
+    THIS_IS_OPTIONAL = ""
     SELECT_ALL = "Select all"
     DESELECT_ALL = "Deselect all"
     SAVE = "Save"
