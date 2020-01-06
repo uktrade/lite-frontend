@@ -33,7 +33,7 @@ VIEW = "View"
 
 SUBMIT_APPLICATION = "Submit application"
 EDIT_APPLICATION_SUBMIT = "Submit application"
-EDIT_APPLICATION_DONE = "Done"
+EDIT_APPLICATION_DONE = "Completed"
 
 HOME = "Home"
 
@@ -45,6 +45,6 @@ class Address:
     ADDRESS_LINE_1 = "Building and street"
     ADDRESS_LINE_2 = ""
     TOWN = "Town or city"
-    COUNTY = "County/State"
-    POSTAL_CODE = "Postal Code"
+    COUNTY = "County or state"
+    POSTAL_CODE = "Postcode"
     COUNTRY = "Country"

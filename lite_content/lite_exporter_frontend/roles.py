@@ -10,19 +10,19 @@ class ManageRolesPage:
 
 class AddRoleForm:
     TITLE = "Add a role"
-    DESCRIPTION = "This will create a new role to use within your organisation"
-    NAME = "What do you want to call the role?"
-    PERMISSIONS = "What permissions should this role have?"
-    PERMISSIONS_DESCRIPTION = "Select all permissions that apply."
+    DESCRIPTION = ""
+    NAME = "Role name"
+    PERMISSIONS = "Permissions"
+    PERMISSIONS_DESCRIPTION = ""
     FORM_BACK_TO_ROLES = "Back to roles"
-    FORM_CREATE = "Create"
+    FORM_CREATE = "Save"
 
 
 class EditRoleForm:
-    TITLE = "Edit a role"
-    DESCRIPTION = "This will change this role within your organisation"
-    NAME = "What do you want to call the role?"
-    PERMISSIONS = "What permissions should this role have?"
-    PERMISSIONS_DESCRIPTION = "Select all permissions that apply."
+    TITLE = "Edit role"
+    DESCRIPTION = ""
+    NAME = "Role name"
+    PERMISSIONS = "Permissions"
+    PERMISSIONS_DESCRIPTION = ""
     FORM_BACK_TO_ROLES = "Back to roles"
-    FORM_CREATE = "Create"
+    FORM_CREATE = "Save"
