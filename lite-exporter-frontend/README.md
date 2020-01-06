@@ -59,13 +59,14 @@ Application for handling exporter related activity in LITE.
 * Setup dev pipenv environment:
   * `pipenv sync -d`
 * Make sure that your .env file has the correct information
+  * `cd ui_automation_tests && cp local.env .env` - then fill in the fields you need for the .env
   * ENVIRONMENT = Whichever environment you want to run it against e.g local for local
   * TEST DATA - You will need certain data such as SSO users email and name. All of this information is accessible for Vault in the .env file for each project.
   * PORT = This needs to equal whichever port you are running your code locally. So if you are running your front end code on 9000, PORT should equal 9000.
   * LITE_API_URL = Same as above but for API.
 
 ### Running tests
-* To run tests via command line, run `pipenv run python -m pytest` from within the `ui_automation_tests` folder.
+* To run tests via command line, run `pipenv run python -m pytest`.
 * For a specific tag (don't include the @) `pipenv run python -m pytest -m "tag name"`
 * To run in parallel `pipenv run python -m pytest -n 3 --dist=loadscope` (replace 3 with how many you want in parallel.)
 * To ignore certain folders `pipenv run python -m pytest --ignore=some_folder`
