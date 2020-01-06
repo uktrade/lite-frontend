@@ -12,13 +12,13 @@ class AttachDocumentPage:
 
 class EndUserPage:
     BACK_LINK = "Back to end user advisories"
-    TITLE = "End User Advisory"
-    YOUR_QUERY = "Your Query"
+    TITLE = "End user advisory"
+    YOUR_QUERY = "Your query"
     END_USER_DETAILS = "End user details"
 
     class Tabs:
         NOTES = "Notes"
-        ECJU_QUERIES = "ECJU Queries"
+        ECJU_QUERIES = "ECJU queries"
 
     class Variables:
         REFERENCE = "Reference"
