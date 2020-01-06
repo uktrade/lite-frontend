@@ -5,8 +5,8 @@ import core.builtins.custom_tags as ct
 
 class TestCustomTags(TestCase):
     def test_highlight_text(self):
-        span = '<span class="lite-highlight">'
-        span_end = "</span>"
+        span = '<mark class="lite-highlight">'
+        span_end = "</mark>"
         actual_string = ct.highlight_text("this is a sassy string", "a")
         expected_string = "this is " + span + "a" + span_end + " s" + span + "a" + span_end + "ssy string"
 

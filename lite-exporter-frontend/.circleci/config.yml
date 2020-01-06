@@ -4,10 +4,8 @@ orbs:
   jq: circleci/jq@1.8.0
 
 jobs:
-  build:
+  tests:
     docker:
-      # specify the version you desire here
-      # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
       - image: circleci/python:3.7
 
     environment:
@@ -48,7 +46,8 @@ jobs:
           command: cp local.env .env
 
       # Download and cache dependencies
-      - restore_cache:  # ensure this step occurs *before* installing dependencies
+      # ensure this step occurs *before* installing dependencies
+      - restore_cache:
           key: dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
 
       - run:
@@ -65,14 +64,6 @@ jobs:
           command: pipenv run ./manage.py test --parallel
 
       - run:
-          name: Run Linting
-          command: pipenv run prospector
-
-      - run:
-          name: check code formatting
-          command: pipenv run black . --check --diff
-
-      - run:
           name: Run Bandit
           command: |
             pipenv install bandit
@@ -81,3 +72,42 @@ jobs:
       - run:
           name: Run Content String Check
           command: pipenv run python templates/check_html_strings.py
+
+  linting:
+    docker:
+      - image: circleci/python:3.7
+    steps:
+      - checkout
+
+      - run:
+          name: Git Submodule Checkout
+          command: |
+            git submodule sync
+            git submodule update --init
+
+      - restore_cache:
+          key: dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+
+      - run:
+          name: Install Dependencies
+          command: pipenv sync --dev
+
+      - save_cache:
+          paths:
+            - ./venv
+          key: dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+
+      - run:
+          name: Prospector
+          command: pipenv run prospector
+
+      - run:
+          name: Black
+          command: pipenv run black . --check --diff
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - tests
+      - linting
