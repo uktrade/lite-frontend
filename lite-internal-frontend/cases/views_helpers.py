@@ -64,7 +64,7 @@ def get_case_advice(get_advice, request, case, user_team_final, team=None):
     context["status_is_read_only"] = status_props["is_read_only"]
     context["status_is_terminal"] = status_props["is_terminal"]
 
-    return render(request, "case/" + user_team_final + "-advice-view.html", context)
+    return render(request, "case/advice/" + user_team_final + ".html", context)
 
 
 def render_form_page(get_advice, request, case, form, team=None):

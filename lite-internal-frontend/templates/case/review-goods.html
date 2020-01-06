@@ -1,14 +1,12 @@
 {% extends 'layouts/base.html' %}
 
-{% load humanize static %}
+{% load humanize %}
 
 {% block back_link %}
 	<a href="{% url 'cases:case' case_id %}" class="govuk-back-link">
 		{% lcs 'Cases.ReviewGoodsSummary.BACK_LINK' %}
 	</a>
 {% endblock %}
-
-{% load svg %}
 
 {% block body %}
 

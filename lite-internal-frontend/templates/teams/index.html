@@ -1,11 +1,8 @@
 {% extends 'layouts/base.html' %}
 
-{% load humanize %}
-
 {% block back_link %}{% endblock %}
 
 {% block body %}
-
 	<div class="lite-app-bar">
 		<h2 class="govuk-heading-l">Teams</h2>
 		<div class="lite-app-bar--right">
@@ -15,31 +12,26 @@
 		</div>
 	</div>
 
-	{% if data.teams|length %}
-		<table class="govuk-table">
-			<thead class="govuk-table__head">
-				<tr class="govuk-table__row">
-					<th class="govuk-table__header" scope="col">Name</th>
-					<th class="govuk-table__header" scope="col"></th>
+	<table class="govuk-table">
+		<thead class="govuk-table__head">
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header" scope="col">Name</th>
+				<th class="govuk-table__header" scope="col"></th>
+			</tr>
+		</thead>
+		<tbody class="govuk-table__body">
+			{% for team in data.teams %}
+				<tr class="govuk-table__row" id="row-{{ forloop.counter }}">
+					<td class="govuk-table__cell">
+						<a href="{% url 'teams:team' team.id %}" class="govuk-link">
+							{{ team.name }}
+						</a>
+					</td>
+					<td class="govuk-table__cell">
+						<a href="{% url 'teams:edit' team.id %}" class="govuk-link">Edit</a>
+					</td>
 				</tr>
-			</thead>
-			<tbody class="govuk-table__body">
-				{% for team in data.teams %}
-					<tr class="govuk-table__row" id="row-{{ forloop.counter }}" style="vertical-align: top;">
-						<td class="govuk-table__cell">
-							<a href="{% url 'teams:team' team.id %}" style="margin: 0;" class="govuk-link">
-								{{ team.name|default:"Untitled" }}
-							</a>
-						</td>
-						<td class="govuk-table__cell">
-							<a href="{% url 'teams:edit' team.id %}" style="margin: 0;" class="govuk-link">Edit</a>
-						</td>
-					</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-	{% else %}
-		<p class="govuk-caption-l">There are no registered teams at the moment.</p>
-	{% endif %}
-
+			{% endfor %}
+		</tbody>
+	</table>
 {% endblock %}

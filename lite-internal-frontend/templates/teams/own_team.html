@@ -1,11 +1,8 @@
 {% extends 'layouts/base.html' %}
 
-{% load humanize %}
-
 {% block back_link %}{% endblock %}
 
 {% block body %}
-
 	<h2 class="govuk-heading-l">{{ team.name }}</h2>
 
 	<div style="display: grid; grid-template-columns: 1fr auto; grid-gap: 30px;">
@@ -20,7 +17,7 @@
 		</a>
 	</div>
 
-	{% if users|length %}
+	{% if users %}
 		<table class="govuk-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
@@ -56,5 +53,4 @@
 	{% else %}
 		<p class="govuk-caption-l">You don't have any users at the moment.</p>
 	{% endif %}
-
 {% endblock %}

@@ -1,13 +1,10 @@
-{% extends 'layouts/two-pane.html' %}
-
-{% load humanize %}
+{% extends 'layouts/base.html' %}
 
 {% block back_link %}
 	<a href="{% url 'cases:case' case.id %}" class="govuk-back-link">Back</a>
 {% endblock %}
 
 {% block body %}
-
 	<h2 class="govuk-heading-l">{{ title }}</h2>
 
 	<form method="post">
@@ -22,10 +19,10 @@
 	    			Application Status
 		    	</label>
             {% endif %}
-			<select id="status" class="govuk-select" name="status" id="status">
+			<select id="status" class="govuk-select" name="status">
                 {% for status in statuses.statuses %}
 				    <option value="{{ status.status }}"
-                            {% if data.case.application.status == status.status or data.case.query.status == status.status%}
+                            {% if data.case.application.status == status.status or data.case.query.status == status.status %}
                                 selected
                             {% endif %}>
                         {{ status.status|default:"Untitled"|sentence_case }}
@@ -38,5 +35,4 @@
 			<button type="submit" class="govuk-button">Save</button>
 		</div>
 	</form>
-
 {% endblock %}

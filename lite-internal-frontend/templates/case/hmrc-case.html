@@ -13,8 +13,6 @@
 	</div>
 {% endblock %}
 
-{% load svg %}
-
 {% block body %}
     {% if case.audit_notification %}
         <a id="audit-notification" class="lite-info-bar lite-info-bar--link lite-info-bar--no-animation" href="#case-activity-{{ case.audit_notification.audit_id }}">
@@ -169,8 +167,7 @@
 	</table>
 {% endif %}
 
-{% include "case/views/activity.html" %}
-
+    {% include "case/views/activity.html" %}
 {% endblock %}
 
 {% block javascript %}

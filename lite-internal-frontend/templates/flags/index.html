@@ -1,11 +1,8 @@
 {% extends 'layouts/base.html' %}
 
-{% load humanize %}
-
 {% block back_link %}{% endblock %}
 
 {% block body %}
-
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
 			<h2 class="govuk-heading-l">{% lcs 'Flags.TITLE' %}</h2>
@@ -52,7 +49,7 @@
 					</thead>
 					<tbody class="govuk-table__body">
 						{% for flag in data.flags %}
-							<tr class="govuk-table__row" style="vertical-align: top;">
+							<tr class="govuk-table__row">
 								<td class="govuk-table__cell">
 									<a href="{% url 'flags:flag' flag.id %}" style="margin: 0; font-weight: bold; text-decoration: none;" class="govuk-link govuk-link--no-visited-state">
 										{{ flag.name|default:"Untitled" }}
@@ -89,5 +86,4 @@
 			</div>
 		</div>
 	{% endif %}
-
 {% endblock %}
