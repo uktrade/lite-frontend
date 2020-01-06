@@ -31,6 +31,18 @@ class ApplicationPage:
         PRODUCTS_CONTROL_CODES = "Goods"
         FLAGS_TABLE_HEADER = "Flags"
 
+    class EndUser:
+        NO_END_USER = "No end user"
+
+        class Table:
+            Title = "End user"
+
+    class Consignee:
+        NO_CONSIGNEE = "No consignee"
+
+        class Table:
+            Title = "Consignee"
+
     EDIT_FLAGS = "Edit products flags"
     EDIT_DESTINATION_FLAGS = "Edit destination flags"
     REVIEW_GOODS = "Review Products"
