@@ -34,9 +34,10 @@ Feature: I want to edit and remove goods on the goods list
     And I click to manage goods on a standard application
     Then I see there are no goods on the application
     When I click Add a new good
-    And I add a new good with description "New good for application" controlled "Yes" control code "ML8a25b" incorporated "No" and part number "P123" to the application
-    And I enter details for the new good on an application with value "99.98", quantity "13" and unit of measurement "Kilogram(s)" and I click Continue"
+    And I add a new good with description "New good for application" controlled "Yes" control code "ML8a25b" incorporated "No" and part number "P123"
+    And I confirm I can upload a document
     And I attach a document to the good with description "Test good spec 01"
+    And I enter details for the new good on an application with value "99.98", quantity "13" and unit of measurement "Kilogram(s)" and I click Continue"
     Then A new good has been added to the application
 
   @LT_1262_add_good_without_document @regression

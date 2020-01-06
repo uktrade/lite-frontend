@@ -38,10 +38,10 @@ from goods.services import (
     get_good_documents,
     get_good_document,
     delete_good_document,
-    post_good_documents,
     raise_clc_query,
     post_good_document_sensitivity,
 )
+from goods.helpers import good_document_upload
 from lite_content.lite_exporter_frontend import strings
 from lite_forms.components import HiddenField
 from lite_forms.generators import error_page, form_page
@@ -242,10 +242,7 @@ class CheckDocumentGrading(SingleFormView):
 class AttachDocuments(TemplateView):
     def get(self, request, **kwargs):
         good_id = str(kwargs["pk"])
-        # get_good(request, good_id)
-
         form = attach_documents_form(reverse("goods:good", kwargs={"pk": good_id}))
-
         return form_page(request, form, extra_data={"good_id": good_id})
 
     @csrf_exempt
@@ -260,14 +257,7 @@ class AttachDocuments(TemplateView):
         if error:
             return error_page(request, error)
 
-        if "description" not in data:
-            data["description"] = ""
-        data = [data]
-
-        # Send LITE API the file information
-        good_documents, _ = post_good_documents(request, good_id, data)
-
-        if "errors" in good_documents:
+        if "errors" in good_document_upload(request, good_id, data):
             return error_page(request, strings.goods.AttachDocumentPage.UPLOAD_FAILURE_ERROR)
 
         if good["is_good_controlled"] == "unsure":

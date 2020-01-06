@@ -1,10 +1,6 @@
-from django.urls import reverse
-
-from core.services import get_units
-from goods.forms import add_goods_questions, attach_documents_form
 from goods.helpers import good_summary
 from lite_content.lite_exporter_frontend import strings
-from lite_forms.components import Form, HiddenField, SideBySideSection, Select, QuantityInput, CurrencyInput, BackLink
+from lite_forms.components import Form, HiddenField, SideBySideSection, Select, QuantityInput, CurrencyInput
 from lite_forms.helpers import conditional
 
 
@@ -24,21 +20,3 @@ def good_on_application_form(good, units, title, prefix=""):
         ],
         javascript_imports=["/assets/javascripts/specific/add_good.js"],
     )
-
-
-def add_new_good_forms(request, application_id):
-    back_link = BackLink(
-        strings.goods.CreateGoodOnApplicationForm.BACK_LINK,
-        reverse("applications:goods", kwargs={"pk": application_id}),
-    )
-
-    return [
-        add_goods_questions(allow_query=False, back_link=back_link, prefix="good_"),
-        good_on_application_form(
-            good={},
-            units=get_units(request),
-            prefix="good_on_app_",
-            title=strings.goods.CreateGoodOnApplicationForm.TITLE,
-        ),
-        attach_documents_form("#"),
-    ]

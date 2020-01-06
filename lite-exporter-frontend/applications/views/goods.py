@@ -1,6 +1,5 @@
 from http import HTTPStatus
 
-from django.http import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
@@ -8,7 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from s3chunkuploader.file_handler import S3FileUploadHandler
 
-from applications.forms.goods import good_on_application_form, add_new_good_forms
+from applications.forms.goods import good_on_application_form
 from applications.helpers.check_your_answers import get_total_goods_value
 from applications.services import (
     get_application,
@@ -16,15 +15,21 @@ from applications.services import (
     get_application_goods_types,
     post_good_on_application,
     delete_application_preexisting_good,
-    validate_application_good,
     add_document_data,
 )
 from core.helpers import convert_dict_to_query_params
 from core.services import get_units
-from goods.services import get_goods, get_good, validate_good, post_goods, post_good_documents
+from goods.forms import add_goods_questions, document_grading_form, attach_documents_form
+from goods.helpers import good_document_upload
+from goods.services import (
+    get_goods,
+    get_good,
+    post_goods,
+    post_good_document_sensitivity,
+)
 from lite_content.lite_exporter_frontend import strings
-from lite_forms.components import HiddenField
 from lite_forms.generators import error_page, form_page
+from lite_forms.views import SingleFormView
 
 
 class DraftGoodsList(TemplateView):
@@ -75,126 +80,60 @@ class GoodsList(TemplateView):
         return render(request, "applications/goods/preexisting.html", context)
 
 
+class AddGood(SingleFormView):
+    def init(self, request, **kwargs):
+        self.draft_pk = kwargs["pk"]
+        self.form = add_goods_questions(allow_query=False)
+        self.action = post_goods
+
+    def get_success_url(self):
+        return reverse_lazy(
+            "applications:add_document",
+            kwargs={"pk": self.draft_pk, "good_pk": self.get_validated_data()["good"]["id"]},
+        )
+
+
+class CheckDocumentGrading(SingleFormView):
+    def init(self, request, **kwargs):
+        self.draft_pk = kwargs["pk"]
+        self.object_pk = kwargs["good_pk"]
+        self.form = document_grading_form(request)
+        self.action = post_good_document_sensitivity
+
+    def get_success_url(self):
+        good = self.get_validated_data()["good"]
+        if good["missing_document_reason"]:
+            url = "applications:add_good_to_application"
+        else:
+            url = "applications:attach_documents"
+        return reverse_lazy(url, kwargs={"pk": self.draft_pk, "good_pk": self.object_pk})
+
+
 @method_decorator(csrf_exempt, "dispatch")
-class AddNewGood(TemplateView):
-    title = "Add Good"
-    form = None
-    form_num = None
-    application_id = None
-    prefix = ["good_", "good_on_app_"]
-    fields = [
-        [
-            "good_description",
-            "good_control_code",
-            "good_part_number",
-            "good_is_good_controlled",
-            "good_is_good_end_product",
-        ],
-        ["good_on_app_value", "good_on_app_quantity", "good_on_app_unit"],
-        [],
-    ]
-    data = None
-    errors = None
-    validation_function = [validate_good, validate_application_good]
-
+class AttachDocument(TemplateView):
     def get(self, request, **kwargs):
-        self.application_id = str(kwargs["pk"])
-        self.data = {}
-        self.generate_form(request, 0)
-        return form_page(request, self.form, self.data, extra_data={"form_pk": self.form_num})
+        good_id = str(kwargs["good_pk"])
+        draft_id = str(kwargs["pk"])
+        back_link = reverse_lazy("applications:add_good_to_application", kwargs={"pk": draft_id, "good_pk": good_id})
+        form = attach_documents_form(back_link)
+        return form_page(request, form, extra_data={"good_id": good_id})
 
-    @csrf_exempt
     def post(self, request, **kwargs):
-        # This has to be run at the top of the method before POST is accessed.
         self.request.upload_handlers.insert(0, S3FileUploadHandler(request))
 
-        self.application_id = str(kwargs["pk"])
-        form_num = int(request.POST.get("form_pk"))
+        good_id = str(kwargs["good_pk"])
+        draft_id = str(kwargs["pk"])
+        data, error = add_document_data(request)
 
-        if request.POST.get("_action", None) == "back":
-            generate_form_num = form_num - 1
-            self.data = request.POST.copy()
-            del self.data["_action"]
-            self.generate_form(request, generate_form_num)
+        if error:
+            return error_page(request, error)
 
-        elif form_num == 0:
-            self.handle_post_for_form(request, form_num)
+        if "errors" in good_document_upload(request, good_id, data):
+            return error_page(request, strings.goods.AttachDocumentPage.UPLOAD_FAILURE_ERROR)
 
-        elif form_num == 1:
-            self.handle_post_for_form(request, form_num, pk=self.application_id)
-
-        elif form_num == 2:
-            if request.FILES:
-                # post good
-                post_data = request.POST.copy()
-
-                validated_data, status_code = post_goods(request, post_data)
-
-                if status_code != HTTPStatus.CREATED:
-                    raise Http404
-
-                # attach document
-                good_id = validated_data["good"]["id"]
-                data, error = add_document_data(request)
-
-                if error:
-                    return error_page(request, error)
-
-                # Send LITE API the file information
-                post_good_documents(request, good_id, [data])
-
-                # Attach good to application
-                post_data["good_id"] = good_id
-
-                post_good_on_application(request, self.application_id, post_data)
-
-                return redirect("applications:goods", self.application_id)
-            else:
-                # Error is thrown if a document is not attached
-                self.data = request.POST.copy()
-                self.generate_form(request, form_num)
-                self.errors = {"documents": [strings.goods.CreateGoodOnApplicationForm.DOCUMENT_MISSING]}
-
-        return form_page(request, self.form, self.data, self.errors, {"form_pk": self.form_num})
-
-    def handle_post_for_form(self, request, form_num, pk=None):
-        post = request.POST.copy()
-        del post["form_pk"]
-        del post["_action"]
-
-        # Call the relevant validation function for the form that posted.
-        if pk:
-            data = self.validation_function[form_num](request, pk, json=post)
-        else:
-            data = self.validation_function[form_num](request, json=post)
-
-        if data.status_code != HTTPStatus.OK:
-            self.data = post
-            self.generate_form(request, form_num)
-            self.errors = self.add_prefix_to_errors(data.json()["errors"], self.prefix[form_num])
-        else:
-            self.data = post
-            generate_form_num = form_num + 1
-            self.generate_form(request, generate_form_num)
-            self.errors = None
-
-    def generate_form(self, request, destination_form):
-        self.form = add_new_good_forms(request, self.application_id)[destination_form]
-        self.form_num = destination_form
-        self.data["form_pk"] = destination_form
-        self.add_hidden_fields()
-
-    def add_hidden_fields(self):
-        self.form.questions.append(HiddenField("form_pk", self.form_num))
-        for fields_num in range(len(self.fields)):
-            if fields_num != self.form_num:
-                for field in self.fields[fields_num]:
-                    if self.data.get(field, ""):
-                        self.form.questions.append(HiddenField(field, self.data[field]))
-
-    @staticmethod
-    def add_prefix_to_errors(json, prefix):
-        return {prefix + k: v for (k, v) in json.items()}
+        return redirect(
+            reverse_lazy("applications:add_good_to_application", kwargs={"pk": draft_id, "good_pk": good_id})
+        )
 
 
 class DraftOpenGoodsTypeList(TemplateView):
@@ -210,7 +149,7 @@ class DraftOpenGoodsTypeList(TemplateView):
         return render(request, "applications/goodstype/index.html", context)
 
 
-class AddPreexistingGood(TemplateView):
+class AddGoodToApplication(TemplateView):
     def get(self, request, **kwargs):
         good, _ = get_good(request, str(kwargs["good_pk"]))
         title = strings.goods.AddPrexistingGoodToApplicationForm.TITLE

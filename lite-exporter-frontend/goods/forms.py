@@ -31,18 +31,18 @@ from lite_forms.generators import confirm_form
 from lite_forms.styles import ButtonStyle
 
 
-def add_goods_questions(allow_query=True, back_link=BackLink, prefix=""):
+def add_goods_questions(allow_query=True, back_link=BackLink):
     if allow_query:
         description = CreateGoodForm.IsControlled.DESCRIPTION
         is_your_good_controlled_options = [
-            Option(key="yes", value=CreateGoodForm.IsControlled.YES, show_pane="pane_" + prefix + "control_code"),
+            Option(key="yes", value=CreateGoodForm.IsControlled.YES, show_pane="pane_control_code"),
             Option(key="no", value=CreateGoodForm.IsControlled.NO),
             Option(key="unsure", value=CreateGoodForm.IsControlled.UNSURE),
         ]
     else:
         description = CreateGoodForm.IsControlled.CLC_REQUIRED
         is_your_good_controlled_options = [
-            Option(key="yes", value=CreateGoodForm.IsControlled.YES, show_pane="pane_" + prefix + "control_code"),
+            Option(key="yes", value=CreateGoodForm.IsControlled.YES, show_pane="pane_control_code"),
             Option(key="no", value=CreateGoodForm.IsControlled.NO),
         ]
 
@@ -52,13 +52,13 @@ def add_goods_questions(allow_query=True, back_link=BackLink, prefix=""):
             TextArea(
                 title=CreateGoodForm.Description.TITLE,
                 description=CreateGoodForm.Description.DESCRIPTION,
-                name=prefix + "description",
+                name="description",
                 extras={"max_length": 280,},
             ),
             RadioButtons(
                 title=CreateGoodForm.IsControlled.TITLE,
                 description=description,
-                name=prefix + "is_good_controlled",
+                name="is_good_controlled",
                 options=is_your_good_controlled_options,
                 classes=["govuk-radios--inline"],
             ),
@@ -66,20 +66,20 @@ def add_goods_questions(allow_query=True, back_link=BackLink, prefix=""):
                 control_list_entries=get_control_list_entries(None, convert_to_options=True),
                 title=CreateGoodForm.ControlListEntry.TITLE,
                 description=CreateGoodForm.ControlListEntry.DESCRIPTION,
-                name=prefix + "control_code",
+                name="control_code",
                 inset_text=False,
             ),
             RadioButtons(
                 title=CreateGoodForm.Incorporated.TITLE,
                 description=CreateGoodForm.Incorporated.DESCRIPTION,
-                name=prefix + "is_good_end_product",
+                name="is_good_end_product",
                 options=[
                     Option(key="no", value=CreateGoodForm.Incorporated.YES),
                     Option(key="yes", value=CreateGoodForm.Incorporated.NO),
                 ],
                 classes=["govuk-radios--inline"],
             ),
-            TextInput(title=CreateGoodForm.PartNumber.TITLE, name=prefix + "part_number", optional=True),
+            TextInput(title=CreateGoodForm.PartNumber.TITLE, name="part_number", optional=True),
         ],
         back_link=back_link,
         default_button_name=CreateGoodForm.BUTTON,
