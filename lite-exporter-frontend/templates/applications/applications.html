@@ -16,10 +16,10 @@
 				</a>
 			{% else %}
 				<a href="." class="govuk-button govuk-button--secondary" draggable="false" role="button">
-					{% get_string 'licences.refresh' %}
+					{% lcs 'Licences.REFRESH' %}
 				</a>
 				<a href="{% url 'apply_for_a_licence:start' %}" class="govuk-button" draggable="false" role="button">
-					{% get_string 'licences.apply_for_a_licence' %}
+					{% lcs 'Licences.APPLY_FOR_A_LICENCE' %}
 				</a>
 			{% endif %}
 		</div>

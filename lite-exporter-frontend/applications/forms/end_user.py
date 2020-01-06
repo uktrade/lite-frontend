@@ -1,7 +1,7 @@
+from lite_content.lite_exporter_frontend import strings
 from django.urls import reverse_lazy
 
 from applications.components import back_to_task_list
-from core.builtins.custom_tags import get_string
 from core.services import get_countries
 from lite_forms.common import country_question
 from lite_forms.components import RadioButtons, Form, Option, TextArea, TextInput, FormGroup, FileUpload, Label
@@ -61,7 +61,7 @@ def attach_document_form(application_id, title, return_later_text, description_t
         inputs.append(TextArea(title=description_text, optional=True, name="description", extras={"max_length": 280,}))
     return Form(
         title,
-        get_string("end_user.documents.attach_documents.description"),
+        strings.EndUser.Documents.AttachDocuments.DESCRIPTION,
         inputs,
         back_link=back_to_task_list(application_id),
         footer_label=Label(
@@ -70,7 +70,7 @@ def attach_document_form(application_id, title, return_later_text, description_t
             + '" class="govuk-link govuk-link--no-visited-state">'
             + return_later_text
             + "</a> "
-            + get_string("end_user.documents.attach_later")
+            + strings.EndUser.Documents.ATTACH_LATER
         ),
     )
 

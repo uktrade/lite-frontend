@@ -31,10 +31,10 @@
 				</a>
 			{% else %}
 				<a href="{% url 'applications:add_preexisting_external_location' application.id %}" class="govuk-button">
-					{% get_string 'goods.location_lists.find_address_button' %}
+					{% lcs 'Goods.LocationLists.FIND_ADDRESS_BUTTON' %}
 				</a>
 				<a href="{% url 'applications:add_external_location' application.id %}" class="govuk-button">
-					{% get_string 'goods.location_lists.add_address_button' %}
+					{% lcs 'Goods.LocationLists.ADD_ADDRESS_BUTTON' %}
 				</a>
 			{% endif %}
 		</div>

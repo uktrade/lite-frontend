@@ -1,7 +1,6 @@
+from lite_content.lite_exporter_frontend import strings
 from django.urls import reverse_lazy
 
-from core.builtins.custom_tags import get_string
-from lite_content.lite_exporter_frontend import strings
 from lite_forms.components import HiddenField, Form, BackLink, TextArea, HTMLBlock, RadioButtons, Option
 from lite_forms.generators import confirm_form, success_page
 
@@ -46,21 +45,21 @@ def ecju_query_respond_confirmation_form(edit_response_url):
 
 def edit_type_form(application_id):
     return Form(
-        title=get_string("applications.edit.title"),
-        description=get_string("applications.edit.description"),
+        title=strings.Applications.Edit.TITLE,
+        description=strings.Applications.Edit.DESCRIPTION,
         questions=[
             RadioButtons(
                 name="edit-type",
                 options=[
                     Option(
                         key="minor",
-                        value=get_string("applications.edit.minor.title"),
-                        description=get_string("applications.edit.minor.description"),
+                        value=strings.Applications.Edit.Minor.TITLE,
+                        description=strings.Applications.Edit.Minor.DESCRIPTION,
                     ),
                     Option(
                         key="major",
-                        value=get_string("applications.edit.major.title"),
-                        description=get_string("applications.edit.major.description"),
+                        value=strings.Applications.Edit.Major.TITLE,
+                        description=strings.Applications.Edit.Major.DESCRIPTION,
                     ),
                 ],
             )

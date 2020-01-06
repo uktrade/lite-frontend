@@ -1,3 +1,4 @@
+from lite_content.lite_exporter_frontend import strings
 import logging
 import time
 import uuid
@@ -9,8 +10,6 @@ from auth.urls import app_name as auth_app_name
 from conf import settings
 from lite_forms.generators import error_page
 from s3chunkuploader.file_handler import UploadFailed
-
-from core.builtins.custom_tags import get_string
 
 
 class ProtectAllViewsMiddleware:
@@ -37,7 +36,7 @@ class UploadFailedMiddleware:
     def process_exception(self, request, exception):
         if not isinstance(exception, UploadFailed):
             return None
-        return error_page(request, get_string("goods.documents.attach_documents.file_too_large"))
+        return error_page(request, strings.Goods.Documents.AttachDocuments.FILE_TOO_LARGE)
 
 
 class LoggingMiddleware:

@@ -1,7 +1,6 @@
 import datetime
 import json
 import re
-import warnings
 
 from django import template
 from django.template.defaultfilters import stringfilter
@@ -9,8 +8,6 @@ from django.templatetags.tz import do_timezone
 from django.utils.safestring import mark_safe
 
 from conf.constants import ISO8601_FMT, NOT_STARTED, DONE
-from conf.settings import env
-from core import lite_strings
 
 from lite_content.lite_exporter_frontend import strings
 
@@ -42,7 +39,6 @@ def get_const_string(value):
             # Search the object for the next property in `nested_properties_list`
             return get(object, nested_properties_list[1:])
 
-    warnings.warn("Reference constants from strings directly, only use LCS in HTML files", Warning)
     path = value.split(".")
     try:
         # Get initial object from strings.py (may return AttributeError)
@@ -50,36 +46,6 @@ def get_const_string(value):
         return get(path_object, path[1:]) if len(path) > 1 else path_object
     except AttributeError:
         return STRING_NOT_FOUND_ERROR
-
-
-@register.simple_tag
-def get_string(value, *args, **kwargs):
-    """
-    Given a string, such as 'cases.manage.attach_documents' it will return the relevant value
-    from the strings.json file
-    """
-    warnings.warn(
-        'get_string is deprecated. Use "lcs" instead, or reference constants from strings directly.', DeprecationWarning
-    )
-
-    # Pull the latest changes from strings.json for faster debugging
-    if env("DEBUG"):
-        with open("lite_content/lite-exporter-frontend/strings.json") as json_file:
-            lite_strings.constants = json.load(json_file)
-
-    def get(d, keys):
-        if "." in keys:
-            key, rest = keys.split(".", 1)
-            return get(d[key], rest)
-        else:
-            return d[keys]
-
-    return_value = get(lite_strings.constants, value)
-
-    if isinstance(return_value, list):
-        return return_value
-
-    return get(lite_strings.constants, value).format(*args, **kwargs)
 
 
 @register.filter

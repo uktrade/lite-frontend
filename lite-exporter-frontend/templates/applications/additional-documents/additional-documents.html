@@ -9,11 +9,11 @@
 {% block body %}
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
-			<h1 class="govuk-heading-l">{% block title %}{% get_string 'additional_documents.title'%}{% endblock %}</h1>
+			<h1 class="govuk-heading-l">{% block title %}{% lcs 'AdditionalDocuments.TITLE'%}{% endblock %}</h1>
 		</div>
 		<div class="lite-app-bar__controls">
 			<a href="{% url 'applications:attach_additional_document' application.id %}" class="govuk-button" draggable="false" role="button">
-				{% get_string 'additional_documents.add' %}
+				{% lcs 'AdditionalDocuments.ADD' %}
 			</a>
 		</div>
 	</div>
@@ -61,7 +61,7 @@
 			<span class="lite-information-text__icon" aria-hidden="true">!</span>
 			<p class="lite-information-text__text">
 				<span class="govuk-visually-hidden">Information</span>
-				{% get_string 'additional_documents.no_results' %}
+				{% lcs 'AdditionalDocuments.NO_RESULTS' %}
 			</p>
 		</div>
 	{% endif %}

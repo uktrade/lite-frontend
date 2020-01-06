@@ -1,3 +1,4 @@
+from lite_content.lite_exporter_frontend import strings
 from core.services import get_control_list_entries
 from lite_forms.common import control_list_entry_question
 from lite_forms.components import TextArea, RadioButtons, Option, Form
@@ -5,12 +6,13 @@ from lite_forms.components import TextArea, RadioButtons, Option, Form
 
 def goods_type_form():
     return Form(
-        title="Describe your products",
+        title=strings.GoodTypes.Overview.TITLE,
         questions=[
             TextArea(title="Description", name="description", extras={"max_length": 2000,}),
             RadioButtons(
                 title="Are your products controlled?",
-                description="Products that aren't on the [control list](https://permissions-finder.service.trade.gov.uk/) "
+                description="Products that aren't on the [control list]"
+                "(https://permissions-finder.service.trade.gov.uk/) "
                 "may be affected by military end use controls, current trade sanctions and embargoes or weapons of "
                 "mass destruction controls. If your products aren't subject to any controls, you'll get a no licence "
                 "required (NLR) document from ECJU.",

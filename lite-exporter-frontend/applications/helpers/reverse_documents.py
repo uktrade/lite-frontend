@@ -1,3 +1,4 @@
+from lite_content.lite_exporter_frontend import strings  # noqa
 from applications.services import (
     post_ultimate_end_user_document,
     post_end_user_document,
@@ -28,8 +29,11 @@ def document_switch(path):
             "download": get_ultimate_end_user_document,
             "delete": delete_ultimate_end_user_document,
             "homepage": "applications:ultimate_end_users",
-            "strings": "ultimate_end_user.documents",
             "has_description": False,
+            "attach_doc_description_field_string": strings.UltimateEndUser.Documents.AttachDocuments.DESCRIPTION_FIELD_TITLE,
+            "attach_doc_title_string": strings.UltimateEndUser.Documents.AttachDocuments.TITLE,
+            "attach_doc_return_later_string": strings.UltimateEndUser.Documents.SAVE_END_USER,
+            "delete_conf_back_link_string": strings.UltimateEndUser.Documents.AttachDocuments.BACK_TO_APPLICATION_OVERVIEW,
         }
     elif "end-user" in path:
         return {
@@ -37,8 +41,12 @@ def document_switch(path):
             "download": get_end_user_document,
             "delete": delete_end_user_document,
             "homepage": "applications:end_user",
-            "strings": "end_user.documents",
             "has_description": False,
+            "attach_doc_description_field_string": strings.EndUser.Documents.AttachDocuments.DESCRIPTION_FIELD_TITLE,
+            "attach_doc_title_string": strings.EndUser.Documents.AttachDocuments.TITLE,
+            "attach_doc_return_later_string": strings.EndUser.Documents.SAVE_END_USER,
+            "delete_conf_back_link_string": strings.EndUser.Documents.AttachDocuments.BACK_TO_APPLICATION_OVERVIEW,
+            # .AttachDocuments.DESCRIPTION_FIELD_TITLE
         }
     elif "consignee" in path:
         return {
@@ -46,8 +54,11 @@ def document_switch(path):
             "download": get_consignee_document,
             "delete": delete_consignee_document,
             "homepage": "applications:consignee",
-            "strings": "consignee.documents",
             "has_description": False,
+            "attach_doc_description_field_string": strings.Consignee.Documents.AttachDocuments.DESCRIPTION_FIELD_TITLE,
+            "attach_doc_title_string": strings.Consignee.Documents.AttachDocuments.TITLE,
+            "attach_doc_return_later_string": strings.Consignee.Documents.SAVE_END_USER,
+            "delete_conf_back_link_string": strings.Consignee.Documents.AttachDocuments.BACK_TO_APPLICATION_OVERVIEW,
         }
     elif "third-parties" in path:
         return {
@@ -55,8 +66,11 @@ def document_switch(path):
             "download": get_third_party_document,
             "delete": delete_third_party_document,
             "homepage": "applications:third_parties",
-            "strings": "third_parties.documents",
             "has_description": False,
+            "attach_doc_description_field_string": strings.ThirdParties.Documents.AttachDocuments.DESCRIPTION_FIELD_TITLE,
+            "attach_doc_title_string": strings.ThirdParties.Documents.AttachDocuments.TITLE,
+            "attach_doc_return_later_string": strings.ThirdParties.Documents.SAVE_END_USER,
+            "delete_conf_back_link_string": strings.ThirdParties.Documents.AttachDocuments.BACK_TO_APPLICATION_OVERVIEW,
         }
     elif "goods-type" in path:
         return {
@@ -64,8 +78,11 @@ def document_switch(path):
             "download": get_goods_type_document,
             "delete": delete_goods_type_document,
             "homepage": "applications:goods_types",
-            "strings": "goods_types.documents",
             "has_description": False,
+            "attach_doc_description_field_string": strings.GoodsTypes.Documents.AttachDocuments.DESCRIPTION_FIELD_TITLE,
+            "attach_doc_title_string": strings.GoodsTypes.Documents.AttachDocuments.TITLE,
+            "attach_doc_return_later_string": strings.GoodsTypes.Documents.SAVE_END_USER,
+            "delete_conf_back_link_string": strings.GoodsTypes.Documents.AttachDocuments.BACK_TO_APPLICATION_OVERVIEW,
         }
     elif "additional-document" in path:
         return {
@@ -73,8 +90,11 @@ def document_switch(path):
             "download": get_additional_document,
             "delete": delete_additional_party_document,
             "homepage": "applications:additional_documents",
-            "strings": "additional_documents.documents",
             "has_description": False,
+            "attach_doc_description_field_string": strings.AdditionalDocuments.Documents.AttachDocuments.DESCRIPTION_FIELD_TITLE,
+            "attach_doc_title_string": strings.AdditionalDocuments.Documents.AttachDocuments.TITLE,
+            "attach_doc_return_later_string": strings.AdditionalDocuments.Documents.SAVE_END_USER,
+            "delete_conf_back_link_string": strings.AdditionalDocuments.Documents.AttachDocuments.BACK_TO_APPLICATION_OVERVIEW,
         }
     elif "generated-documents" in path:
         return {

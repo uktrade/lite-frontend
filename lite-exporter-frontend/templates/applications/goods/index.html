@@ -16,7 +16,7 @@
         {% if application.status.key in 'applicant_editing,draft' %}
         <div class="lite-app-bar__controls">
 			<a href="{% url 'applications:new_good' application.id %}" id='add-new' role='button' draggable='false' class='govuk-button'>{% lcs 'goods.ViewGoodOnApplicationPage.ADD_NEW_BUTTON' %}</a>
-			<a href="{% url 'applications:preexisting_good' application.id %}" role='button' draggable='false' class='govuk-button'>{% get_string 'goods.add_from_organisation.button' %}</a>
+			<a href="{% url 'applications:preexisting_good' application.id %}" role='button' draggable='false' class='govuk-button'>{% lcs 'Goods.AddFromOrganisation.BUTTON' %}</a>
 		</div>
         {% endif %}
 	</div>

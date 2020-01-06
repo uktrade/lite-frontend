@@ -1,12 +1,12 @@
+from lite_content.lite_exporter_frontend import strings
 from applications.components import back_to_task_list
-from core.builtins.custom_tags import get_string
 from core.helpers import str_date_only
 from lite_forms.components import Form, TextArea, Summary, HiddenField
 
 
 def confirm_organisation_form(organisation):
     return Form(
-        title=get_string("hmrc.confirm_org.title"),
+        title=strings.Hmrc.ConfirmOrg.TITLE,
         questions=[
             Summary(
                 values={
@@ -19,14 +19,14 @@ def confirm_organisation_form(organisation):
             ),
             HiddenField("organisation", organisation["id"]),
         ],
-        default_button_name=get_string("hmrc.confirm_org.button_text"),
+        default_button_name=strings.Hmrc.ConfirmOrg.BUTTON_TEXT,
     )
 
 
 def query_explanation_form(application_id):
     return Form(
-        title=get_string("hmrc.query_explanation.title"),
+        title=strings.Hmrc.QueryExplanation.TITLE,
         questions=[TextArea(name="reasoning", optional=True, extras={"max_length": 1000,})],
-        default_button_name=get_string("hmrc.query_explanation.button_text"),
+        default_button_name=strings.Hmrc.QueryExplanation.BUTTON_TEXT,
         back_link=back_to_task_list(application_id),
     )

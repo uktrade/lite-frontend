@@ -22,7 +22,7 @@
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
 			<h1 class="govuk-heading-l">{% block title %}Ultimate end users{% endblock%}</h1>
-			<p class="govuk-caption-m">{% get_string 'ultimate_end_user.overview_description' %}</p>
+			<p class="govuk-caption-m">{% lcs 'UltimateEndUser.OVERVIEW_DESCRIPTION' %}</p>
 		</div>
         {% if application.status.key in 'applicant_editing,draft' %}
 		<div class="lite-app-bar__controls">

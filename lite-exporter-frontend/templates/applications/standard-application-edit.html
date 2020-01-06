@@ -252,16 +252,16 @@
 					                        <td class="govuk-table__cell" id="end_user_document_state">
 					                            {%  if end_user_document.safe == True %}
 					                                <a href="{% url 'applications:end_user_download_document' pk=application.id %}" id="end_user_document_download" class='govuk-link govuk-link--no-visited-state'>
-					                                    {% get_string 'end_user.documents.download_document' %}
+					                                    {% lcs 'EndUser.Documents.DOWNLOAD_DOCUMENT' %}
 					                                </a>
 					                                <br/>
 													{% if edit_type != 'minor_edit' %}
 					                                <a href="{% url 'applications:end_user_delete_document' pk=application.id %}" id="end_user_document_delete" class='govuk-link govuk-link--no-visited-state'>
-					                                    {% get_string 'end_user.documents.delete_document' %}
+					                                    {% lcs 'EndUser.Documents.DELETE_DOCUMENT' %}
 					                                </a>
 													{% endif %}
 					                            {%  else %}
-					                                {% get_string 'end_user.documents.processing' %}
+					                                {% lcs 'EndUser.Documents.PROCESSING' %}
 					                            {% endif %}
 					                        </td>
 					                    </tr>
@@ -338,16 +338,16 @@
 					                            <td class="govuk-table__cell" id="consignee_document_state">
 					                                {%  if consignee_document.safe == True %}
 					                                    <a href="{% url 'applications:consignee_download_document' pk=application.id %}" id="consignee_document_download" class='govuk-link govuk-link--no-visited-state'>
-					                                        {% get_string 'end_user.documents.download_document' %}
+					                                        {% lcs 'EndUser.Documents.DOWNLOAD_DOCUMENT' %}
 					                                    </a>
 					                                    <br/>
                                                         {% if edit_type != 'minor_edit' %}
                                                             <a href="{% url 'applications:consignee_delete_document' pk=application.id %}" id="consignee_document_delete" class='govuk-link govuk-link--no-visited-state'>
-                                                                {% get_string 'end_user.documents.delete_document' %}
+                                                                {% lcs 'EndUser.Documents.DELETE_DOCUMENT' %}
                                                             </a>
                                                         {% endif %}
 					                                {%  else %}
-					                                    {% get_string 'end_user.documents.processing' %}
+					                                    {% lcs 'EndUser.Documents.PROCESSING' %}
 					                                {% endif %}
 
 					                            </td>

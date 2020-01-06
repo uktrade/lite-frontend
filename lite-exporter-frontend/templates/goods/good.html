@@ -129,14 +129,14 @@
 				<div class="lite-app-bar__controls">
 				    {% if good.status.key == 'draft' %}
 			            <a role="button" draggable="false" class="govuk-button" href="{% url 'goods:attach_documents' good.id %}">
-			                {% get_string 'goods.documents.attach_documents.button' %}
+			                {% lcs 'Goods.Documents.AttachDocuments.BUTTON' %}
 			            </a>
 				    {% endif %}
 				</div>
 		    </div>
 
 		    {% if documents %}
-		        <p class="govuk-caption-m">{% get_string 'goods.documents.description' %}</p>
+		        <p class="govuk-caption-m">{% lcs 'Goods.Documents.DESCRIPTION' %}</p>
 
 				<br>
 
@@ -158,7 +158,7 @@
 									<td class="govuk-table__cell govuk-table__cell--numeric">
 										{% if document.safe == True %}
 					                        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:document' pk=good.id file_pk=document.id %}">
-					                            <span class="govuk-visually-hidden">{% get_string 'goods.documents.download_document' %}</span>
+					                            <span class="govuk-visually-hidden">{% lcs 'Goods.Documents.DOWNLOAD_DOCUMENT' %}</span>
 					                            Download
 					                        </a>
 					                        {% if good.status.key == 'draft' %}
@@ -167,9 +167,9 @@
 					                            </a>
 					                        {% endif %}
 					                    {% elif document.safe == False %}
-					                        <p class="govuk-label">{% get_string 'goods.documents.virus_infected' %}</p>
+					                        <p class="govuk-label">{% lcs 'Goods.Documents.VIRUS_INFECTED' %}</p>
 					                    {% else %}
-					                        <p class="govuk-label">{% get_string 'goods.documents.processing' %}</p>
+					                        <p class="govuk-label">{% lcs 'Goods.Documents.PROCESSING' %}</p>
 					                    {% endif %}
 									</td>
 								</tr>

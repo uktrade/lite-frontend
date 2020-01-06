@@ -1,3 +1,4 @@
+from lite_content.lite_exporter_frontend import strings
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseServerError
@@ -9,7 +10,6 @@ from raven.contrib.django.raven_compat.models import client
 from auth.services import authenticate_exporter_user
 from auth.utils import get_client, AUTHORISATION_URL, TOKEN_SESSION_KEY, TOKEN_URL, get_profile
 from conf.settings import LOGOUT_URL
-from core.builtins.custom_tags import get_string
 from lite_forms.generators import error_page
 from users.services import get_user
 
@@ -66,8 +66,8 @@ class AuthCallbackView(View):
         if status_code != 200:
             return error_page(
                 None,
-                title=get_string("authentication.user_does_not_exist.title"),
-                description=get_string("authentication.user_does_not_exist.description"),
+                title=strings.Authentication.UserDoesNotExist.TITLE,
+                description=strings.Authentication.UserDoesNotExist.DESCRIPTION,
                 show_back_link=False,
             )
 
