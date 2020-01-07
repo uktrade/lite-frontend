@@ -16,6 +16,7 @@ class UsersPage:
     MANAGE_ORGANISATIONS_MEMBERS_TAB = "Members"
     USER_EMAIL = "Email"
     USER_NAME = "Name"
+    USER_PENDING = "Pending"
     USER_ROLE = "Role"
     USER_STATUS = "Status"
 
