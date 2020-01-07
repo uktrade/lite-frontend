@@ -168,7 +168,7 @@ class ClcQuery:
 
     class GoodDetails:
         TITLE = "Good Details"
-        DESCIPRTION = "Description"
+        DESCRIPTION = "Description"
         CONTROLLED = "Controlled"
         CONTROL_CODE = "Control list entry"
         EXPECTED_CONTROL_CODE = "Expected Control list entry"
