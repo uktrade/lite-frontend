@@ -14,3 +14,10 @@ class ThirdPartiesPage:
 
 class UltimateEndUsers:
     TITLE = "Ultimate recipients"
+    HELP = "What is an ultimate recipient?"
+    DESCRIPTION = (
+        "An ultimate recipient is an entity that uses the product or the higher level system into which the products are"
+        " installed or incorporated. The end user and ultimate recipient may be different entities."
+    )
+    NOTICE = "You haven't added any ultimate recipients to this application"
+    ADD_BUTTON = "Add an ultimate recipient"

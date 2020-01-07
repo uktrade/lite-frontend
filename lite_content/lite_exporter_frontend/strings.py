@@ -141,11 +141,6 @@ class EndUser:
 
 
 class UltimateEndUser:
-    OVERVIEW_DESCRIPTION = (
-        "The entity that uses the product or the higher level system into which the products are"
-        " installed or incorporated. The end user and ultimate recipient may be different entities."
-    )
-
     class Documents:
         ATTACH_LATER = "to upload a document later."
         BUTTON = "Documents"
