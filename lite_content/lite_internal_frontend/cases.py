@@ -1,3 +1,7 @@
+class CaseListPage:
+    EXPORTER_AMENDMENTS_BANNER = "See what cases have changed"
+
+
 class CaseDocumentsPage:
     BACK_LINK = "Back to Case"
     ATTACH = "Attach Document"
