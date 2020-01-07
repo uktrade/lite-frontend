@@ -79,12 +79,6 @@ class CreateGoodForm:
         TITLE = "Control list classification"
         DESCRIPTION = "For example, ML1a. "
 
-    class Incorporated:
-        TITLE = "Will the product be incorporated into another product?"
-        DESCRIPTION = ""
-        YES = "Yes"
-        NO = "No"
-
     class PartNumber:
         TITLE = "Part number (optional)"
 
