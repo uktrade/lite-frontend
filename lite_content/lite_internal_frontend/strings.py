@@ -1,6 +1,7 @@
-from lite_content.lite_internal_frontend import cases, letter_templates
+from lite_content.lite_internal_frontend import cases, letter_templates, queues
 
 CASES = cases
+QUEUES = queues
 LETTER_TEMPLATES = letter_templates
 
 # Buttons
