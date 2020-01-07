@@ -114,12 +114,35 @@ class EndUserAdvisoriesPage:
 
 
 class HMRCPage:
+    class Heading:
+        EXPORTER = "Exporter "
+        RAISED_BY = "Raised by "
+
     class Actions:
         CHANGE_STATUS = "Change Status"
         DOCUMENT = "Attached Documents"
         MOVE = "Move Case"
         RECORD_DECISION = "Record Decision"
         GENERATE_DOCUMENT = "Generate Document"
+
+    class DenialReasons:
+        TITLE = "Denial Reasons"
+        REASON = "This case was denied because"
+        FURTHER_INFO = "Further information"
+
+    class Good:
+        DESCRIPTION = "Description"
+        CONTROL_CODE = "Control list entry"
+        CONTROLLED = "Controlled"
+        FLAGS = "Flags"
+
+    class SupportingDocumentation:
+        TITLE = "Supporting Documentation"
+        NAME = "Name"
+        DESCRIPTION = "Description"
+        DOCUMENT = "Document"
+
+    CASE_FLAGS = "All Flags"
 
 
 class CaseOfficerPage:
