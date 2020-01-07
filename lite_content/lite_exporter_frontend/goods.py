@@ -64,12 +64,12 @@ class CreateGoodForm:
         TITLE = "Is the product on the control list?"
         DESCRIPTION = "If you don't know you can use " + PERMISSION_FINDER_LINK
         CLC_REQUIRED = (
-            "Products that aren't on the "
-            + PERMISSION_FINDER_LINK
-            + " may be affected by [military end use controls](https://www.gov.uk/guidance/export-controls-military-goods-software-and-technology), [current trade sanctions and embargoes](https://www.gov.uk/guidance/current-arms-embargoes-and-other-restrictions) or "
-            + "[weapons of mass destruction controls](https://www.gov.uk/guidance/supplementary-wmd-end-use-controls). "
-            + "If the product isn't subject to any controls, you'll get a no "
-            + "licence required (NLR) document from ECJU."
+            "Products that aren't on the " + PERMISSION_FINDER_LINK + " may be affected by [military end use controls]"
+            "(https://www.gov.uk/guidance/export-controls-military-goods-software-and-technology), "
+            "[current trade sanctions and embargoes]"
+            "(https://www.gov.uk/guidance/current-arms-embargoes-and-other-restrictions) or "
+            "[weapons of mass destruction controls](https://www.gov.uk/guidance/supplementary-wmd-end-use-controls). "
+            "If the product isn't subject to any controls, you'll get a no licence required (NLR) document from ECJU."
         )
         YES = "Yes"
         NO = "No"

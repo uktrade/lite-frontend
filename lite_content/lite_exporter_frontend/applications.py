@@ -123,7 +123,10 @@ class InitialApplicationQuestionsForms:
         "Open licences cover long term projects and repeat business."
     )
     HELP_WITH_CHOOSING_A_LICENCE = "What licence do I need?"
-    HELP_WITH_CHOOSING_A_LICENCE_CONTENT = "Read about the [different types of export control licences](https://www.gov.uk/guidance/beginners-guide-to-export-controls#what-licence-do-i-need)."
+    HELP_WITH_CHOOSING_A_LICENCE_CONTENT = (
+        "Read about the [different types of export control licences]"
+        "(https://www.gov.uk/guidance/beginners-guide-to-export-controls#what-licence-do-i-need)."
+    )
     ENTER_A_REFERENCE_NAME_TITLE = "Name the application"
     ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference name"
     ENTER_A_REFERENCE_NAME_DESCRIPTION = (
