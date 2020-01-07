@@ -83,6 +83,23 @@ class EndUserAdvisoriesPage:
         ECJU = "ECJU Queries"
         MOVE = "Move Case"
 
+    class Details:
+        TITLE = "End User Details"
+        NAME = "Name"
+        TYPE = "Type"
+        EMAIL = "Email"
+        TELEPHONE = "Telephone"
+        NATURE_OF_BUSINESS = "Nature of Business"
+        PRIMARY_CONTACT_NAME = "Primary contact name"
+        PRIMARY_CONTACT_JOB = "Primary contact job title"
+        PRIMARY_CONTACT_EMAIL = "Primary contact email"
+        PRIMARY_CONTACT_TELEPHONE = "Primary contact telephone"
+        ADDRESS = "Address"
+        WEBSITE = "Website"
+        REASONING = "Reasoning behind query"
+        NOTES = "Notes about end user"
+        COPY_FROM = "Copied From"
+
 
 class HMRCPage:
     class Actions:
@@ -115,3 +132,39 @@ class CaseOfficerPage:
         SEARCH = "Search"
         ASSIGN = "Assign user as case officer"
         NO_RESULTS = "No users matching the criteria"
+
+
+class StandardApplication:
+    LICENSEE = "Licensee"
+    END_USER = "End user"
+    CONSIGNEE = "Consignee"
+    ULTIMATE_END_USER = "Ultimate end user"
+    THIRD_PARTY = "Third party"
+
+
+class OpenApplication:
+    SET_FLAGS = "Set flags"
+
+
+class ClcQuery:
+    class Verified:
+        OUTCOME = "Outcome"
+        CONTROLLED = "Is the good controlled?"
+        CONTROL_CODE = "What's the goods actual control list entry"
+        REPORT = "Report Summary (optional)"
+        COMMENT = "Why was this outcome chosen"
+
+    class GoodDetails:
+        TITLE = "Good Details"
+        DESCIPRTION = "Description"
+        CONTROLLED = "Controlled"
+        CONTROL_CODE = "Control list entry"
+        EXPECTED_CONTROL_CODE = "Expected Control list entry"
+        REASON = "Reason"
+        PART_NUMBER = "Part Number"
+        FLAGS = "Flags"
+        QUERY_TEXT = "CLC query Text"
+
+    class Documents:
+        TITLE = "Documents"
+        DOWNLOAD = "Download"
