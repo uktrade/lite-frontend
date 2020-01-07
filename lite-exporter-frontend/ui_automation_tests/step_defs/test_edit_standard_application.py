@@ -3,6 +3,7 @@ from pytest_bdd import when, scenarios, then
 from conftest import enter_application_name, enter_export_licence
 from pages.application_overview_page import ApplicationOverviewPage
 from pages.application_page import ApplicationPage
+from shared import functions
 
 scenarios("../features/edit_standard_application.feature", strict_gherkin=False)
 
@@ -42,6 +43,7 @@ def i_remove_the_end_user_off_the_application(driver):
 
 @then("no end user is set on the application")
 def no_end_user_is_set_on_the_application(driver):
+    functions.click_back_link(driver)
     assert (ApplicationOverviewPage(driver).find_remove_end_user_link(), None)
 
 
@@ -53,6 +55,7 @@ def i_remove_the_consignee_off_the_application(driver):
 
 @then("no consignee is set on the application")
 def no_consignee_is_set_on_the_application(driver):
+    functions.click_back_link(driver)
     assert (ApplicationOverviewPage(driver).find_remove_consignee_link(), None)
 
 

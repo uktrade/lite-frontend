@@ -104,4 +104,4 @@ class RemoveConsignee(TemplateView):
         if status_code != HTTPStatus.NO_CONTENT:
             return error_page(request, "Unexpected error removing consignee")
 
-        return redirect(reverse_lazy("applications:task_list", kwargs={"pk": application_id}))
+        return redirect(reverse_lazy("applications:set_consignee", kwargs={"pk": application_id}))

@@ -56,7 +56,7 @@ class RemoveEndUser(TemplateView):
         if status_code != 204:
             return error_page(request, "Unexpected error removing end user")
 
-        return redirect(reverse_lazy("applications:task_list", kwargs={"pk": application_id}))
+        return redirect(reverse_lazy("applications:set_end_user", kwargs={"pk": application_id}))
 
 
 class UltimateEndUsers(TemplateView):
