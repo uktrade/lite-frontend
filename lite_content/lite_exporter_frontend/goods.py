@@ -17,7 +17,7 @@ class GoodsList:
 
     class Filter:
         DESCRIPTION = "Description"
-        CONTROL_LIST_ENTRY = "Control list classification"
+        CONTROL_LIST_ENTRY = "Control list entry"
         PART_NUMBER = "Part number"
         APPLY = "Apply filters"
         CLEAR = "Clear filters"
@@ -26,8 +26,11 @@ class GoodsList:
 
     class Table:
         DESCRIPTION = "Description"
-        CONTROL_LIST_ENTRY = "Control list classification"
+        CONTROL_LIST_ENTRY = "Control list entry"
         PART_NUMBER = "Part number"
+        QUANTITY = "Quantity"
+        VALUE = "Value"
+        INCORPORATED = "Incorporated"
         COUNTRIES = "Countries"
         STATUS = "Status"
 
