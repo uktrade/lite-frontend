@@ -10,3 +10,7 @@ class ThirdPartiesPage:
         ADDRESS = "Address"
         COUNTRY = "Country"
         DOCUMENT = "Document"
+
+
+class UltimateEndUsers:
+    TITLE = "Ultimate recipients"
