@@ -77,10 +77,10 @@ class CreateGoodForm:
 
     class ControlListEntry:
         TITLE = "Control list classification"
-        DESCRIPTION = "For example, ML1a. "
+        DESCRIPTION = "For example, ML1a."
 
     class PartNumber:
-        TITLE = "Part number (optional)"
+        TITLE = "Part number"
 
 
 class CLCQueryForm:
