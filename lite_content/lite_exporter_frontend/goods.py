@@ -182,7 +182,7 @@ class GoodPage:
 
     class Query:
         CASE_OFFICER = "Case Officer"
-        NO_CASE_OFFICER = "Not assigned"
+        NO_ASSIGNED_CASE_OFFICER = "Not assigned"
         REFERENCE = "Reference"
 
 

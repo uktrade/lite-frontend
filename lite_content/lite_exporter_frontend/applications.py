@@ -64,7 +64,7 @@ class ApplicationSummaryPage:
     REFERENCE_NAME = "Reference"
     TYPE = "Licence type"
     CASE_OFFICER = "Case Officer"
-    NO_CASE_OFFICER = "Not assigned"
+    NO_ASSIGNED_CASE_OFFICER = "Not assigned"
     EXPORT_TYPE = "Export type"
     STATUS = "Status"
     LAST_UPDATED_AT = "Last updated"

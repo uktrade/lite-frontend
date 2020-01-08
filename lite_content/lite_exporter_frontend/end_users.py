@@ -16,7 +16,7 @@ class EndUserPage:
     YOUR_QUERY = "Your query"
     END_USER_DETAILS = "End user details"
     CASE_OFFICER = "Case Officer"
-    NO_CASE_OFFICER = "Not assigned"
+    NO_ASSIGNED_CASE_OFFICER = "Not assigned"
 
     class Tabs:
         NOTES = "Notes"
