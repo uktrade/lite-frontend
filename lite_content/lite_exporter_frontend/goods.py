@@ -27,6 +27,7 @@ class GoodsList:
     class Table:
         DESCRIPTION = "Description"
         CONTROL_LIST_ENTRY = "Control list entry"
+        IS_GOOD_CONTROLLED = "Controlled"
         PART_NUMBER = "Part number"
         QUANTITY = "Quantity"
         VALUE = "Value"
