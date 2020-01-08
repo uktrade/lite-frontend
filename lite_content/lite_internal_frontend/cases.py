@@ -1,5 +1,6 @@
 class CasesListPage:
     GO_TO_QUEUE = "Go to queue"
+    NO_CASES = "There are no new cases to show."
     EXPORTER_AMENDMENTS_BANNER = "See what cases have changed"
     ASSIGN_USERS = "Assign Users"
     STATUS = "Status"

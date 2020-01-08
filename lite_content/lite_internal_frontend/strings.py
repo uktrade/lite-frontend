@@ -108,7 +108,6 @@ class Common:
 class Cases:
     BACK_TO_CASE = "Back to Case"
     MANAGE_ORGANISATIONS = "Manage organisations"
-    NO_CASES = "There are no new cases to show."
 
     class Advice:
         ERROR = "There is a problem"
