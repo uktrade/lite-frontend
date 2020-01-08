@@ -1,5 +1,6 @@
 import datetime
 import json
+import re
 import warnings
 from html import escape
 
@@ -245,3 +246,41 @@ def sentence_case(value):
     """Change value to uppercase on initial word and preserve casing on all other words. """
     words = value.split("_")
     return " ".join([words[0].capitalize()] + words[1:])
+
+
+@register.filter
+@stringfilter
+@mark_safe
+def highlight_text(value: str, term: str) -> str:
+    def insert_str(string, str_to_insert, string_index):
+        return string[:string_index] + str_to_insert + string[string_index:]
+
+    if not term.strip():
+        return value
+
+    indexes = [m.start() for m in re.finditer(term, value, flags=re.IGNORECASE)]
+
+    mark_start = '<mark class="lite-highlight">'
+    mark_end = "</mark>"
+
+    loop = 0
+    for index in indexes:
+        # Count along the number of positions of the new string then adjust for zero index
+        index += loop * (len(mark_start) + len(term) + len(mark_end) - 1)
+        loop += 1
+        value = insert_str(value, mark_start, index)
+        value = insert_str(value, mark_end, index + len(mark_start) + len(term))
+
+    return value
+
+
+@register.filter()
+def username(user: dict):
+    """
+    Returns the user's first and last name if they've seen set, else
+    returns the user's email
+    """
+    if user["first_name"]:
+        return user["first_name"] + " " + user["last_name"]
+
+    return user["email"]

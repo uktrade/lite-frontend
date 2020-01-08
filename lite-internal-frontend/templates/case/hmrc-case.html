@@ -24,8 +24,8 @@
 	<div class="lite-app-bar__content">
 		<p class="govuk-caption-m" style="margin: 0;">{{ case.application.application_type.value }}</p>
 		<h2 class="govuk-heading-l">{{ title }}</h2>
-        <p class="govuk-caption-m">Exporter <a id="applicant_organisation" class="govuk-link govuk-link--no-visited-state" style="display: inline-block;" href="{% url 'organisations:organisation' case.application.organisation.id %}">{{ case.application.organisation.name }}</a></p>
-        <p class="govuk-caption-m">Raised by <a id="hmrc_organisation" class="govuk-link govuk-link--no-visited-state" style="display: inline-block;" href="{% url 'organisations:organisation' case.application.hmrc_organisation.id %}">{{ case.application.hmrc_organisation.name }}</a></p>
+        <p class="govuk-caption-m">{% lcs 'CASES.HMRCPage.Heading.EXPORTER' %}<a id="applicant_organisation" class="govuk-link govuk-link--no-visited-state" style="display: inline-block;" href="{% url 'organisations:organisation' case.application.organisation.id %}">{{ case.application.organisation.name }}</a></p>
+        <p class="govuk-caption-m">{% lcs 'CASES.HMRCPage.Heading.RAISED_BY' %}<a id="hmrc_organisation" class="govuk-link govuk-link--no-visited-state" style="display: inline-block;" href="{% url 'organisations:organisation' case.application.hmrc_organisation.id %}">{{ case.application.hmrc_organisation.name }}</a></p>
 	</div>
 	<div class="lite-app-bar__controls">
 		<div class="app-more-actions__container">
@@ -48,12 +48,21 @@
             <a role="button" draggable="false" class="govuk-button" id="generate-document" href="{% url 'cases:generate_document' case.id %}">
                 {% lcs 'CASES.ApplicationPage.Actions.GENERATE_DOCUMENT' %}
             </a>
+            <a role="button" draggable="false" class="govuk-button" id="case-officer" href="{% url 'cases:case_officer' case.id %}">
+                {% lcs 'CASES.ApplicationPage.Actions.CASE_OFFICER' %}
+            </a>
 		</div>
 	</div>
 </div>
 
+{% if case.case_officer %}
+    <p class="govuk-caption-m">{% lcs 'CASES.ApplicationPage.CASE_OFFICER' %} <a class="govuk-link govuk-link--no-visited-state" href="{% url 'users:user' case.case_officer.id %}">{{ case.case_officer|username }}</a></p>
+{% else %}
+    <p class="govuk-caption-m">{% lcs 'CASES.ApplicationPage.NO_CASE_OFFICER' %}</p>
+{% endif %}
+
 {% if case.all_flags %}
-    <p class="govuk-caption-m">All flags</p>
+    <p class="govuk-caption-m">{% lcs 'CASES.HMRCPage.CASE_FLAGS' %}</p>
     <div class="app-flags">
         {% for flag in case.all_flags %}
             <div class="app-flag" id="{{ flag.name }}">
@@ -71,19 +80,19 @@
 {% include 'case/views/application-information-board.html' %}
 
 {% if case.application.application_denial_reason %}
-<h3 class="govuk-heading-m">Denial Reasons</h3>
-{% for reason in case.application.application_denial_reason %}
-<p class="govuk-heading-s">This case was denied because</p>
-{% for reason_id in reason.reasons %}
-<p class="govuk-label">{{ reason_id.id }}</p>
-{% endfor %}
-{% if reason.reason_details %}
-<br />
-<p class="govuk-heading-s">Further information</p>
-<p class="govuk-label">{{ reason.reason_details }}</p>
-{% endif %}
-{% endfor %}
-<br /><br />
+    <h3 class="govuk-heading-m">{% lcs 'CASES.HMRCPage.DenialReasons.TITLE' %}</h3>
+    {% for reason in case.application.application_denial_reason %}
+        <p class="govuk-heading-s">{% lcs 'CASES.HMRCPage.DenialReasons.REASON' %}</p>
+        {% for reason_id in reason.reasons %}
+            <p class="govuk-label">{{ reason_id.id }}</p>
+        {% endfor %}
+        {% if reason.reason_details %}
+            <br />
+            <p class="govuk-heading-s">{% lcs 'CASES.HMRCPage.DenialReasons.FURTHER_INFO' %}</p>
+            <p class="govuk-label">{{ reason.reason_details }}</p>
+        {% endif %}
+    {% endfor %}
+    <br /><br />
 {% endif %}
 
 <!-- Goods -->
@@ -96,10 +105,10 @@
     <table class="govuk-table">
         <thead class="govuk-table__header">
             <tr>
-                <th class="govuk-table__header" scope="col">Description</th>
-                <th class="govuk-table__header" scope="col">Control list entry</th>
-                <th class="govuk-table__header" scope="col">{% lcs 'GOOD_CONTROLLED' %}</th>
-                <th class="govuk-table__header" scope="col">Flags</th>
+                <th class="govuk-table__header" scope="col">{% lcs 'CASES.HMRCPage.Good.DESCRIPTION' %}</th>
+                <th class="govuk-table__header" scope="col">{% lcs 'CASES.HMRCPage.Good.CONTROL_CODE' %}</th>
+                <th class="govuk-table__header" scope="col">{% lcs 'CASES.HMRCPage.Good.CONTROLLED' %}</th>
+                <th class="govuk-table__header" scope="col">{% lcs 'CASES.HMRCPage.Good.FLAGS' %}</th>
             </tr>
         </thead>
         <tbody>
@@ -135,13 +144,13 @@
 
 <!--TODO: Fix this JF-->
 {% if case.application.supporting_documentation %}
-<h3 class="govuk-heading-m">Supporting documentation</h3>
+<h3 class="govuk-heading-m">{% lcs 'CASES.HMRCPage.SupportingDocumentation.TITLE' %}</h3>
 	<table class="govuk-table" id="supporting-documentation">
 		<thead class="govuk-table__head">
 			<tr class="govuk-table__row">
-				<th class="govuk-table__header" scope="col">Name</th>
-				<th class="govuk-table__header" scope="col">Description</th>
-                <th class="govuk-table__header" scope="col">Document</th>
+				<th class="govuk-table__header" scope="col">{% lcs 'CASES.HMRCPage.SupportingDocumentation.NAME' %}</th>
+				<th class="govuk-table__header" scope="col">{% lcs 'CASES.HMRCPage.SupportingDocumentation.DESCRIPTION' %}</th>
+                <th class="govuk-table__header" scope="col">{% lcs 'CASES.HMRCPage.SupportingDocumentation.DOCUMENT' %}</th>
 			</tr>
 		</thead>
 		<tbody class="govuk-table__body">

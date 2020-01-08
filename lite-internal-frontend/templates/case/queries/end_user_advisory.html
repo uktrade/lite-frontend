@@ -22,7 +22,7 @@
 
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
-			<p class="govuk-caption-m" style="margin: 0;">{{ case.type.value }} by <a class="govuk-link govuk-link--no-visited-state" style="display: inline-block;" href="{% url 'organisations:organisation' case.query.organisation.id %}">{{ case.query.organisation.name }}</a></p>
+			<p class="govuk-caption-m">{{ case.type.value }} by <a class="govuk-link govuk-link--no-visited-state" style="display: inline-block;" href="{% url 'organisations:organisation' case.query.organisation.id %}">{{ case.case_officer.first_name }} {{ case.case_officer.last_name }}</a></p>
 			<h2 class="govuk-heading-l">{{ case.query.id|reference_code }}</h2>
 		</div>
 		<div class="lite-app-bar__controls">
@@ -41,20 +41,30 @@
                     {% lcs 'CASES.EndUserAdvisoriesPage.Actions.CHANGE_STATUS' %}
                 </a>
                 {% endif %}
+                <a role="button" draggable="false" class="govuk-button" id="case-officer" href="{% url 'cases:case_officer' case.id %}">
+                    {% lcs 'CASES.ApplicationPage.Actions.CASE_OFFICER' %}
+                </a>
 			</div>
 		</div>
 	</div>
-	<!-- Case flags -->
+
+    {% if case.case_officer %}
+        <p class="govuk-caption-m">{% lcs 'CASES.ApplicationPage.CASE_OFFICER' %} <a class="govuk-link govuk-link--no-visited-state" href="{% url 'users:user' case.case_officer.id %}">{{ case.case_officer|username }}</a></p>
+    {% else %}
+        <p class="govuk-caption-m">{% lcs 'CASES.ApplicationPage.NO_CASE_OFFICER' %}</p>
+    {% endif %}
+
+    <!-- Case flags -->
 	{% include 'case/views/case-flags.html' %}
 
 	<br><br>
 
-	<h3 class="govuk-heading-m">End User Details</h3>
+	<h3 class="govuk-heading-m">{% lcs 'CASES.EndUserAdvisoriesPage.Details.TITLE' %}</h3>
 	<div class="govuk-!-width-two-thirds">
 		<dl class="govuk-summary-list">
 			<div class="govuk-summary-list__row">
 				<dt class="govuk-summary-list__key">
-					Name
+					{% lcs 'CASES.EndUserAdvisoriesPage.Details.NAME' %}
 				</dt>
 				<dd class="govuk-summary-list__value">
 					{{ case.query.end_user.name }}
@@ -62,7 +72,7 @@
 			</div>
 			<div class="govuk-summary-list__row">
 				<dt class="govuk-summary-list__key">
-					Type
+					{% lcs 'CASES.EndUserAdvisoriesPage.Details.TYPE' %}
 				</dt>
 				<dd class="govuk-summary-list__value">
 					{{ case.query.end_user.sub_type.value }}
@@ -71,7 +81,7 @@
             {% if case.query.end_user.sub_type.key == 'individual' %}
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        Email
+                        {% lcs 'CASES.EndUserAdvisoriesPage.Details.EMAIL' %}
                     </dt>
                     <dd class="govuk-summary-list__value">
                         {{ case.query.contact_email }}
@@ -79,7 +89,7 @@
                 </div>
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        Telephone
+                        {% lcs 'CASES.EndUserAdvisoriesPage.Details.TELEPHONE' %}
                     </dt>
                     <dd class="govuk-summary-list__value">
                         {{ case.query.contact_telephone }}
@@ -89,7 +99,7 @@
             {% if case.query.end_user.sub_type.key == 'commercial' %}
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        Nature of Business
+                        {% lcs 'CASES.EndUserAdvisoriesPage.Details.NATURE_OF_BUSINESS' %}
                     </dt>
                     <dd class="govuk-summary-list__value">
                         {{ case.query.nature_of_business }}
@@ -99,7 +109,7 @@
             {% if case.query.end_user.sub_type.key != 'individual' %}
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        Primary contact name
+                        {% lcs 'CASES.EndUserAdvisoriesPage.Details.PRIMARY_CONTACT_NAME' %}
                     </dt>
                     <dd class="govuk-summary-list__value">
                         {{ case.query.contact_name }}
@@ -107,7 +117,7 @@
                 </div>
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        Primary contact job title
+                        {% lcs 'CASES.EndUserAdvisoriesPage.Details.PRIMARY_CONTACT_JOB' %}
                     </dt>
                     <dd class="govuk-summary-list__value">
                         {{ case.query.contact_job_title }}
@@ -115,7 +125,7 @@
                 </div>
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        Primary contact email
+                        {% lcs 'CASES.EndUserAdvisoriesPage.Details.PRIMARY_CONTACT_EMAIL' %}
                     </dt>
                     <dd class="govuk-summary-list__value">
                         {{ case.query.contact_email }}
@@ -123,7 +133,7 @@
                 </div>
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        Primary contact telephone
+                        {% lcs 'CASES.EndUserAdvisoriesPage.Details.PRIMARY_CONTACT_TELEPHONE' %}
                     </dt>
                     <dd class="govuk-summary-list__value">
                         {{ case.query.contact_telephone }}
@@ -132,7 +142,7 @@
             {% endif %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
-                    Address
+                    {% lcs 'CASES.EndUserAdvisoriesPage.Details.ADDRESS' %}
                 </dt>
                 <dd class="govuk-summary-list__value">
                     {{ case.query.end_user.address }}<br>{{ case.query.end_user.country.name }}
@@ -140,7 +150,7 @@
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
-                    Website
+                    {% lcs 'CASES.EndUserAdvisoriesPage.Details.WEBSITE' %}
                 </dt>
                 <dd class="govuk-summary-list__value">
                     {% if case.query.end_user.website %}
@@ -152,7 +162,7 @@
             </div>
 			<div class="govuk-summary-list__row">
 				<dt class="govuk-summary-list__key">
-					Reasoning behind query
+                    {% lcs 'CASES.EndUserAdvisoriesPage.Details.REASONING' %}
 				</dt>
 				<dd class="govuk-summary-list__value">
 					{{ case.query.reasoning|default_na }}
@@ -160,7 +170,7 @@
 			</div>
 			<div class="govuk-summary-list__row">
 				<dt class="govuk-summary-list__key">
-					Notes about end user
+                    {% lcs 'CASES.EndUserAdvisoriesPage.Details.NOTES' %}
 				</dt>
 				<dd class="govuk-summary-list__value">
 					{{ case.query.note|default_na }}
@@ -169,7 +179,7 @@
             {% if case.query.copy_of %}
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        Copied from
+                        {% lcs 'CASES.EndUserAdvisoriesPage.Details.COPY_FROM' %}
                     </dt>
                     <dd class="govuk-summary-list__value">
                         <a class="govuk-link" href="{% url 'cases:case' case.query.copy_of %}">{{ case.query.copy_of|reference_code }}</a>

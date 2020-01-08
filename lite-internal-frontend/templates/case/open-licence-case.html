@@ -22,6 +22,8 @@
 
 	<div class="lite-app-bar" style="margin-top: -20px;">
 		<div class="lite-app-bar__content">
+            <p class="govuk-caption-m">{{ case.type.value }} by <a class="govuk-link govuk-link--no-visited-state" style="display: inline-block;" href="{% url 'organisations:organisation' case.application.organisation.id %}">{{ case.application.organisation.name }}</a></p>
+
 			<h2 class="govuk-heading-l">
 				{% block title %}{{ case.application.id }}{% endblock %}
 			</h2>
@@ -53,9 +55,18 @@
                 <a role="button" draggable="false" class="govuk-button" id="generate-document" href="{% url 'cases:generate_document' case.id %}">
 					{% lcs 'CASES.ApplicationPage.Actions.GENERATE_DOCUMENT' %}
 				</a>
+                <a role="button" draggable="false" class="govuk-button" id="case-officer" href="{% url 'cases:case_officer' case.id %}">
+                    {% lcs 'CASES.ApplicationPage.Actions.CASE_OFFICER' %}
+                </a>
 			</div>
 		</div>
 	</div>
+
+    {% if case.case_officer %}
+        <p class="govuk-caption-m">{% lcs 'CASES.ApplicationPage.CASE_OFFICER' %} <a class="govuk-link govuk-link--no-visited-state" href="{% url 'users:user' case.case_officer.id %}">{{ case.case_officer|username }}</a></p>
+    {% else %}
+        <p class="govuk-caption-m">{% lcs 'CASES.ApplicationPage.NO_CASE_OFFICER' %}</p>
+    {% endif %}
 
 	<div class="app-flags" id="application-case-flags">
 		{% for flag in case.flags %}
@@ -136,7 +147,7 @@
 				    <input type="hidden" name="level" value="goods"/>
 				    <div class="lite-horizontal-align-right">
 						<button id="button-edit-goods-flags" value="goods" class="govuk-button" data-module="govuk-button">
-					        Set flags
+					        {% lcs 'CASES.OpenApplication.SET_FLAGS' %}
 					    </button>
 				    </div>
 					<table class="govuk-table">

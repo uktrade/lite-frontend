@@ -1,7 +1,9 @@
+from http import HTTPStatus
+
 from lite_content.lite_internal_frontend import strings
 from django.http import StreamingHttpResponse, Http404
 from django.shortcuts import render, redirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
@@ -18,6 +20,9 @@ from cases.services import (
     put_case,
     put_end_user_advisory_query,
     _get_total_goods_value,
+    get_case_officer,
+    put_case_officer,
+    delete_case_officer,
 )
 from cases.services import post_case_documents, get_case_documents, get_document
 from conf import settings
@@ -28,6 +33,7 @@ from core.services import get_user_permissions, get_statuses, get_status_propert
 from lite_forms.generators import error_page, form_page
 from lite_forms.submitters import submit_single_form
 from queues.services import get_cases_search_data
+from users.services import get_gov_users
 
 
 class Cases(TemplateView):
@@ -322,3 +328,63 @@ class Document(TemplateView):
         response = StreamingHttpResponse(generate_file(s3_response), **_kwargs)
         response["Content-Disposition"] = f'attachment; filename="{original_file_name}"'
         return response
+
+
+class CaseOfficer(TemplateView):
+    def get(self, request, **kwargs):
+        case_id = str(kwargs["pk"])
+        case = get_case(request, case_id)
+        params = {"name": request.GET.get("name", ""), "activated": True}
+        gov_users, _ = get_gov_users(request, params)
+
+        context = {
+            "case_officer": get_case_officer(request, case_id)[0],
+            "users": gov_users,
+            "case": case,
+            "name": params["name"],
+        }
+        return render(request, "case/set-case-officer.html", context)
+
+    def post(self, request, **kwargs):
+        case_id = str(kwargs["pk"])
+        user_id = request.POST.get("user")
+        action = request.POST.get("_action")
+
+        if action == "assign":
+            if not user_id:
+                case = get_case(request, case_id)
+                params = {"name": request.GET.get("name", ""), "activated": True}
+                gov_users, _ = get_gov_users(request, params)
+
+                context = {
+                    "error": strings.cases.CaseOfficerPage.Error.NO_SELECTION,
+                    "case_officer": get_case_officer(request, case_id)[0],
+                    "users": gov_users,
+                    "case": case,
+                    "name": request.GET.get("name", ""),
+                }
+                return render(request, "case/set-case-officer.html", context)
+
+            _, status_code = put_case_officer(request, case_id, user_id)
+
+        elif action == "unassign":
+            _, status_code = delete_case_officer(request, case_id)
+
+        if status_code != HTTPStatus.NO_CONTENT:
+            self.response_error(request, case_id)
+
+        return redirect(reverse_lazy("cases:case", kwargs={"pk": case_id}))
+
+    def response_error(self, request, case_id):
+        case = get_case(request, case_id)
+        params = {"name": request.GET.get("name", ""), "activated": True}
+        gov_users, _ = get_gov_users(request, params)
+
+        context = {
+            "show_error": True,
+            "case_officer": get_case_officer(request, case_id)[0],
+            "users": gov_users,
+            "case": case,
+            "name": params["name"],
+        }
+        return render(request, "case/set-case-officer.html", context)

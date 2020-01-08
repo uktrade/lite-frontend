@@ -77,4 +77,5 @@ urlpatterns = [
         destinations.AssignDestinationFlags.as_view(),
         name="assign_destination_flags",
     ),
+    path("<uuid:pk>/case-officer/", main.CaseOfficer.as_view(), name="case_officer"),
 ]

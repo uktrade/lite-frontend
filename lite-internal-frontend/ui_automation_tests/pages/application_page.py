@@ -39,6 +39,7 @@ class ApplicationPage(BasePage):
     DOWNLOAD_ADDITIONAL_DOCUMENT = "supporting-documentation"  # ID
     LINK_ORGANISATION_ID = "link-organisation"
     EDIT_GOODS_FLAGS = "button-edit-goods-flags"  # ID
+    CASE_OFFICER_ID = "case-officer"  # ID
 
     def click_visible_to_exporter_checkbox(self):
         time.sleep(0.5)
@@ -85,6 +86,10 @@ class ApplicationPage(BasePage):
     def click_ecju_queries_button(self):
         self.click_drop_down()
         self.driver.find_element_by_css_selector(self.ECJU_QUERIES_BTN).click()
+
+    def click_case_officer_button(self):
+        self.click_drop_down()
+        self.driver.find_element_by_id(self.CASE_OFFICER_ID).click()
 
     def click_drop_down(self):
         self.driver.find_element_by_css_selector(self.ACTIONS_DROPDOWN).click()
@@ -187,6 +192,9 @@ class ApplicationPage(BasePage):
 
     def get_ecju_queries_element(self):
         return self.driver.find_element_by_css_selector(self.ECJU_QUERIES_BTN)
+
+    def get_case_officer_element(self):
+        return self.driver.find_element_by_id(self.CASE_OFFICER_ID)
 
     def is_change_status_available(self):
         # this should equal 2 as there is a 'manage' in the link of the footer image
