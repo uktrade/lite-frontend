@@ -2,6 +2,7 @@ from selenium.webdriver.support.ui import Select
 import time
 
 from shared.BasePage import BasePage
+from shared.tools.helpers import scroll_to_element_by_id
 
 
 class ApplicationPage(BasePage):
@@ -89,6 +90,7 @@ class ApplicationPage(BasePage):
 
     def click_case_officer_button(self):
         self.click_drop_down()
+        scroll_to_element_by_id(self.driver, self.CASE_OFFICER_ID)
         self.driver.find_element_by_id(self.CASE_OFFICER_ID).click()
 
     def click_drop_down(self):

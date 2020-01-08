@@ -4,7 +4,7 @@ from pages.shared import Shared
 from pages.teams_pages import TeamsPages
 
 
-@fixture(scope="session")
+@fixture(scope="function")
 def add_a_team(driver, context):
     teams_pages = TeamsPages(driver)
     shared = Shared(driver)

@@ -5,7 +5,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
   So that other users can see my decision and know that I have finished assessing this case
 
   @LT_1376 @regression @LT_1760
-  Scenario: Give advice and grant a licence
+  Scenario: Give advice and proviso a licence
     Given I create application or application has been previously created
     And I create a proviso picklist
     And I create a standard advice picklist
@@ -13,13 +13,6 @@ Feature: I want to record my user advice and any comments and conditions relatin
     When I go to application previously created
     And I click on view advice
     Then I see total goods value
-    When I select all items in the advice view
-    And I choose to 'approve' the licence
-    And I import text from the 'advice' picklist
-    And I write 'We will get back to you in three weeks' in the note text field
-    And I click continue
-    Then I see my advice has been posted successfully
-    And I see added advice in the same amount of places
     When I select all items in the advice view
     And I choose to 'proviso' the licence
     And I import text from the 'proviso' picklist
@@ -31,17 +24,6 @@ Feature: I want to record my user advice and any comments and conditions relatin
     When I select all items in the advice view
     And I choose to 'proviso' the licence
     Then I see the fields pre-populated with the proviso and advice picklist items
-    When I go to application previously created
-    And I click on view advice
-    When I select all items in the advice view
-    And I choose to 'refuse' the licence
-    And I select decision "1a"
-    And I select decision "2b"
-    And I import text from the 'advice' picklist
-    And I write 'We will get back to you in three weeks' in the note text field
-    And I click continue
-    Then I see my advice has been posted successfully
-    And I see added advice in the same amount of places
 
 
   @LT_1115_grant @smoke
@@ -57,7 +39,8 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I import text from the 'advice' picklist
     And I write 'We will get back to you in three weeks' in the note text field
     And I click continue
-    And I go to the team advice
+    Then I see my advice has been posted successfully
+    When I go to the team advice
     And I combine all advice
     And I go to the final advice
     And I combine all advice
@@ -101,7 +84,9 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I import text from the 'advice' picklist
     And I write 'We will get back to you in three weeks' in the note text field
     And I click continue
-    And I go to the team advice
+    Then I see my advice has been posted successfully
+    And I see added advice in the same amount of places
+    When I go to the team advice
     And I combine all advice
     And I go to application previously created
     Then I see refusal flag is attached
