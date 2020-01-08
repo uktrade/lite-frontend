@@ -63,7 +63,7 @@ class GeneratedDocuments:
 class ApplicationSummaryPage:
     REFERENCE_NAME = "Reference"
     TYPE = "Licence type"
-    CASE_OFFICER = "Case Officer"
+    CASE_OFFICER = "Case officer"
     NO_ASSIGNED_CASE_OFFICER = "Not assigned"
     EXPORT_TYPE = "Export type"
     STATUS = "Status"

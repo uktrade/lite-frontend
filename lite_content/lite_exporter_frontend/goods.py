@@ -181,7 +181,7 @@ class GoodPage:
         GENERATED_DOCUMENTS = "ECJU documents"
 
     class Query:
-        CASE_OFFICER = "Case Officer"
+        CASE_OFFICER = "Case officer"
         NO_ASSIGNED_CASE_OFFICER = "Not assigned"
         REFERENCE = "Reference"
 
