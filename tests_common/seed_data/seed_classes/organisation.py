@@ -17,7 +17,6 @@ class Organisation(SeedClass):
         self.add_to_context("last_name", self.request_data["organisation"]["user"]["last_name"])
 
     def setup_org_for_switching_organisations(self):
-
         organisation = self.find_org_by_name(self.request_data["organisation_for_switching_organisations"]["name"])
 
         if not organisation:

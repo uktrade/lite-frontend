@@ -4,14 +4,27 @@ from ..make_requests import make_request
 
 class Case(SeedClass):
     def assign_case_to_queue(self, case_id=None, queue_id=None):
-        queue_id = self.context["queue_id"] if queue_id is None else queue_id
-        case_id = self.context["case_id"] if case_id is None else case_id
+        queue_id = queue_id or self.context["queue_id"]
+        case_id = case_id or self.context["case_id"]
         make_request(
             "PUT",
             base_url=self.base_url,
             url="/cases/" + case_id + "/",
             headers=self.gov_headers,
             body={"queues": [queue_id]},
+        )
+
+    def assign_case_to_user(self, case_id=None, queue_id=None, gov_user_id=None):
+        queue_id = queue_id or self.context["queue_id"]
+        case_id = case_id or self.context["case_id"]
+        gov_user_id = gov_user_id or self.context["gov_user_id"]
+        case_assignments = {"case_assignments": [{"case_id": case_id, "users": [gov_user_id]}]}
+        make_request(
+            "PUT",
+            base_url=self.base_url,
+            url="/queues/" + queue_id + "/case-assignments/",
+            headers=self.gov_headers,
+            body=case_assignments,
         )
 
     def assign_test_cases_to_bin(self, bin_queue_id, new_cases_queue_id):
