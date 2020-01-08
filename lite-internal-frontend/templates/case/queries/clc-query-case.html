@@ -50,6 +50,11 @@
                 <a role="button" draggable="false" class="govuk-button" id="generate-document" href="{% url 'cases:generate_document' case.id %}">
 					{% lcs 'CASES.ApplicationPage.Actions.GENERATE_DOCUMENT' %}
 				</a>
+                {% if not status_is_terminal or 'REOPEN_CLOSED_CASES' in permissions %}
+                <a role="button" draggable="false" class="govuk-button" href="{% url 'cases:manage' case.id %}">
+                    {% lcs 'CASES.EndUserAdvisoriesPage.Actions.CHANGE_STATUS' %}
+                </a>
+                {% endif %}
                 <a role="button" draggable="false" class="govuk-button" id="case-officer" href="{% url 'cases:case_officer' case.id %}">
                     {% lcs 'CASES.ApplicationPage.Actions.CASE_OFFICER' %}
                 </a>
