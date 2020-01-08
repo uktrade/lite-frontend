@@ -5,6 +5,12 @@
 {% block back_link %}{% endblock %}
 
 {% block body %}
+    {% if updated_cases_banner_queue_id %}
+        <a id="exporter-amendments-banner" class="lite-info-bar lite-info-bar--link lite-info-bar--no-animation" href="?queue_id={{ updated_cases_banner_queue_id }}">
+        {% lcs 'CASES.CasesListPage.EXPORTER_AMENDMENTS_BANNER' %}
+        </a>
+    {% endif %}
+
 	<noscript>
 	    <style>
 	        #noscript_hide {display:none;}
@@ -17,14 +23,14 @@
 					<option value="{{ queue.id }}" {% if queue.id == data.results.queue.id %}selected{% endif %}>{{ queue.name }}</option>
 				{% endfor %}
 			</select>
-			<button type="submit" class="govuk-button">{% lcs 'Cases.GO_TO_QUEUE' %}</button>
+			<button type="submit" class="govuk-button">{% lcs 'CASES.CasesListPage.GO_TO_QUEUE' %}</button>
 		</form>
 	    <a id="queue-title" href="#" class="govuk-heading-l app-dropdown__heading" onclick="toggleDropdown()">
 	            {{ data.results.queue.name }}
 	    </a>
 	    {% if not data.results.is_system_queue %}
 	    <div class="lite-app-bar__controls">
-	        <button id="assign-users-button" form="cases-form" type="submit" class="govuk-button govuk-button--secondary">{% lcs 'CASES_ASSIGN_USERS' %}</button>
+	        <button id="assign-users-button" form="cases-form" type="submit" class="govuk-button govuk-button--secondary">{% lcs 'CASES.CasesListPage.ASSIGN_USERS' %}</button>
 	    </div>
 	    {% endif %}
 	</div>
@@ -43,11 +49,11 @@
 	<div class="lite-js-only">
 		<a href="#" id="show-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
 			{% svg 'plus' %}
-			Show filters
+            {% lcs 'CASES.CasesListPage.Filters.SHOW_FILTERS' %}
 		</a>
 		<a href="#" id="hide-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
 			{% svg 'minus' %}
-			Hide filters
+			{% lcs 'CASES.CasesListPage.Filters.HIDE_FILTERS' %}
 		</a>
 	</div>
 	<form id="filters" action="{% url 'cases:cases'%}" method="get">
@@ -57,7 +63,7 @@
 	    <div class="govuk-grid-row lite-filter-bar">
 	        <div class="govuk-grid-column-one-quarter">
 	            <label class="govuk-label" for="case_type">
-	                Filter by case type
+                    {% lcs 'CASES.CasesListPage.Filters.FILTER_BY_CASE_TYPE' %}
 	            </label>
 	            <div class="lite-select-wrapper">
 	                <select class="govuk-select" id="case_type" name="case_type">
@@ -70,7 +76,7 @@
 	        </div>
 	        <div class="govuk-grid-column-one-quarter">
 	            <label class="govuk-label" for="status">
-	                Filter by case status
+                    {% lcs 'CASES.CasesListPage.Filters.FILTER_BY_CASE_STATUS' %}
 	            </label>
 	            <div class="lite-select-wrapper">
 	                <select class="govuk-select" id="status" name="status">
@@ -87,10 +93,10 @@
 	            </label>
 	            <div class="lite-buttons-row">
 	                <button type="submit" form="filters" class="govuk-button" style="margin: 0;" id="button-apply-filters">
-	                    Apply filters
+	                    {% lcs 'CASES.CasesListPage.Filters.APPLY_FILTERS' %}
 	                </button>
 	                <a href="{% url 'cases:cases' %}?queue_id={{ data.results.queue.id }}" class="govuk-button govuk-button--secondary" style="margin-bottom: 0;" id="button-clear-filters">
-	                    Clear filters
+	                     {% lcs 'CASES.CasesListPage.Filters.CLEAR_FILTERS' %}
 	                </a>
 	            </div>
 	        </div>
@@ -114,7 +120,7 @@
 	                    <th class="cases-table__header" style="width: 200px;" scope="col">Flags</th>
 	                    <th class="cases-table__header" style="width: 125px;" scope="col">
 	                        <a href="{% url 'cases:cases' %}?{{ params_str }}&sort={{ 'status'|table_sort_text:params }}" id="sort-status" class="app-table__sortable-header {{ 'status'|table_sort:params }}">
-	                            Status
+                                {% lcs 'CASES.CasesListPage.STATUS' %}
 	                            {% svg 'chevron' %}
 	                        </a>
 	                    </th>
@@ -230,7 +236,7 @@
 	        </div>
 	    {% endif %}
 		{% else %}
-			{% lcs 'Cases.NO_CASES' as no_cases_text %}
+			{% lcs 'CASES.CasesListPage.NO_CASES' as no_cases_text %}
 			{% include "includes/information-text.html" with text=no_cases_text %}
 			<br><br>
 			{% if params.case_type or params.status %}

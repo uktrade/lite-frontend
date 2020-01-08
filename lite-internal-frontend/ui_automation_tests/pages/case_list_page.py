@@ -34,6 +34,9 @@ class CaseListPage(BasePage):
     # Sort headings
     SORT_STATUS = "sort-status"  # ID
 
+    # Notification for updated cases
+    EXPORTER_AMENDMENTS_BANNER = "exporter-amendments-banner"  # ID
+
     def search_pages_for_id(self, id):
         is_present = len(self.driver.find_elements_by_link_text(id))
         number_of_pages = len(self.driver.find_elements_by_css_selector(".lite-pagination__item"))
@@ -115,3 +118,6 @@ class CaseListPage(BasePage):
 
     def sort_by_status(self):
         self.driver.find_element_by_id(self.SORT_STATUS).click()
+
+    def click_on_exporter_amendments_banner(self):
+        self.driver.find_element_by_id(self.EXPORTER_AMENDMENTS_BANNER).click()

@@ -14,10 +14,14 @@ Feature: I want to view the case details of a case
     And I see a third party
     And I see a consignee
 
-  @LT_982_exporter_edited_case_anchor @regression
+  @LT_982_exporter_edited_case_anchor @LT_1180_exporter_amendments_queue @regression
   Scenario: Gov user can see exporter has made changes to case
     Given I create application or application has been previously created
     And I sign in to SSO or am signed into SSO
+    And I am an assigned user for the case
     When the exporter user has edited the case
-    And I go to application previously created
+    And I go to the internal homepage
+    And I click on the exporter amendments banner
+    Then I can see the case on the exporter amendments queue
+    When I go to application previously created
     Then I see that changes have been made to the case

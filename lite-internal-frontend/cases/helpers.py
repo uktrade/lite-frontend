@@ -1,3 +1,4 @@
+from conf.constants import UPDATED_CASES_QUEUE_ID
 from lite_forms.components import HiddenField
 
 
@@ -94,3 +95,10 @@ def check_matching_advice(user_id, advice, goods_or_destinations):
                 break
 
     return pre_data
+
+
+def get_updated_cases_banner_queue_id(current_queue_id, queues):
+    if current_queue_id != UPDATED_CASES_QUEUE_ID:
+        for queue in queues:
+            if queue["id"] == UPDATED_CASES_QUEUE_ID and queue["case_count"]:
+                return UPDATED_CASES_QUEUE_ID

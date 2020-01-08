@@ -1,5 +1,5 @@
+from cases.helpers import get_updated_cases_banner_queue_id
 from http import HTTPStatus
-
 from lite_content.lite_internal_frontend import strings
 from django.http import StreamingHttpResponse, Http404
 from django.shortcuts import render, redirect
@@ -60,6 +60,8 @@ class Cases(TemplateView):
 
         data = get_cases_search_data(request, convert_dict_to_query_params(params))
 
+        updated_cases_banner_queue_id = get_updated_cases_banner_queue_id(queue_id, data["results"]["queues"])
+
         context = {
             "title": data["results"]["queue"]["name"],
             "data": data,
@@ -67,6 +69,7 @@ class Cases(TemplateView):
             "page": params.pop("page"),
             "params": params,
             "params_str": convert_dict_to_query_params(params),
+            "updated_cases_banner_queue_id": updated_cases_banner_queue_id,
         }
 
         return render(request, "cases/index.html", context)
@@ -167,7 +170,7 @@ class ViewAdvice(TemplateView):
             "permissions": permissions,
             "edit_case_flags": strings.Cases.Case.EDIT_CASE_FLAGS,
         }
-        return render(request, "case/user-advice-view.html", context)
+        return render(request, "case/advice/user.html", context)
 
 
 class ManageCase(TemplateView):
