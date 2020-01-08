@@ -18,7 +18,7 @@ class ApplicationPage(BasePage):
     DOCUMENTS_BTN = '[href*="documents"]'  # css
     GENERATE_DOCUMENTS_BTN = "generate-document"  # id
     ECJU_QUERIES_BTN = '[href*="ecju-queries"]'  # css
-    PROGRESS_APP_BTN = '[href*="manage"]'
+    PROGRESS_APP_BTN = "change-status"  #  ID
     ACTIVITY_CASE_NOTE_SUBJECT = ".app-activity__list .govuk-body"
     ACTIVITY_DATES = ".app-activity__item .govuk-hint"
     ACTIVITY_USER = ".user"
@@ -74,7 +74,8 @@ class ApplicationPage(BasePage):
 
     def click_progress_application(self):
         self.click_drop_down()
-        self.driver.find_element_by_css_selector(self.PROGRESS_APP_BTN).click()
+        scroll_to_element_by_id(self.driver, self.PROGRESS_APP_BTN)
+        self.driver.find_element_by_id(self.PROGRESS_APP_BTN).click()
 
     def click_documents_button(self):
         self.click_drop_down()
@@ -199,8 +200,7 @@ class ApplicationPage(BasePage):
         return self.driver.find_element_by_id(self.CASE_OFFICER_ID)
 
     def is_change_status_available(self):
-        # this should equal 2 as there is a 'manage' in the link of the footer image
-        return len(self.driver.find_elements_by_css_selector(self.PROGRESS_APP_BTN)) == 2
+        return len(self.driver.find_elements_by_id(self.PROGRESS_APP_BTN)) == 1
 
     def additional_document_link_is_enabled(self):
         return self.driver.find_element_by_id(self.DOWNLOAD_ADDITIONAL_DOCUMENT).is_enabled()

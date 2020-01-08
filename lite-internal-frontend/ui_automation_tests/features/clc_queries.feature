@@ -14,3 +14,6 @@ Feature: I want to respond to clc queries
     And I respond "yes", "ML1a", "1", "Because the good is controlled" and click continue
     And I submit response
     Then I see case is closed
+    When I click progress application
+    And I select status "Withdrawn" and save
+    Then the status has been changed in the application

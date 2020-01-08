@@ -276,3 +276,27 @@ def enter_response(driver, controlled, control_list_entry, report, comment):  # 
 @when("I add a flag called UAE at level Case")  # noqa
 def add_a_flag(driver, add_uae_flag):  # noqa
     pass
+
+
+@then("the status has been changed in the application")  # noqa
+def status_has_been_changed_in_header(driver, context, internal_info):  # noqa
+    application_page = ApplicationPage(driver)
+    if context.status.lower() == "under review":
+        assert "updated the status to: " + "Under review" in application_page.get_text_of_audit_trail_item(
+            0
+        ), "status has not been shown as approved in audit trail"
+    elif context.status.lower() == "withdrawn":
+        assert "updated the status to: " + context.status in application_page.get_text_of_audit_trail_item(
+            0
+        ), "status has not been shown as approved in audit trail"
+    else:
+        assert "updated the status to " + context.status.lower() in application_page.get_text_of_audit_trail_item(
+            0
+        ), "status has not been shown as approved in audit trail"
+
+    assert utils.search_for_correct_date_regex_in_element(
+        application_page.get_text_of_activity_dates(0)
+    ), "date is not displayed after status change"
+    assert (
+        application_page.get_text_of_activity_users(0) == internal_info["name"]
+    ), "user who has made the status change has not been displayed correctly"

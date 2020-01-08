@@ -37,7 +37,7 @@
 					{% lcs 'CASES.EndUserAdvisoriesPage.Actions.MOVE' %}
 				</a>
                 {% if not status_is_terminal or 'REOPEN_CLOSED_CASES' in permissions %}
-                <a role="button" draggable="false" class="govuk-button" href="{% url 'cases:manage' case.id %}">
+                <a role="button" draggable="false" class="govuk-button" id="change-status" href="{% url 'cases:manage' case.id %}">
                     {% lcs 'CASES.EndUserAdvisoriesPage.Actions.CHANGE_STATUS' %}
                 </a>
                 {% endif %}
