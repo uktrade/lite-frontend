@@ -31,12 +31,11 @@ def create_organisation(exporter, type, name):
     }
 
 
-def create_good(description, is_end_product, control_code="ML1a", part_number="1234"):
+def create_good(description, control_code="ML1a", part_number="1234"):
     return {
         "description": description,
         "is_good_controlled": "yes",
         "control_code": control_code,
-        "is_good_end_product": is_end_product,
         "part_number": part_number,
         "validate_only": False,
     }
@@ -69,9 +68,7 @@ def create_request_data(exporter_user, gov_user, base_url):
         "organisation": create_organisation(exporter, "commercial", "Square Is Circle Ltd"),
         # Please leave this as HMRC as tests depend on this being HMRC.
         "organisation_for_switching_organisations": create_organisation(exporter, "hmrc", "HMRC Wayne Enterprises"),
-        "good": create_good("Lentils", True),
-        "good_end_product_true": create_good("Hot Cross Buns", True),
-        "good_end_product_false": create_good("Falafels", False),
+        "good": create_good("Lentils"),
         "export_user": {"email": exporter["email"], "user_profile": {"first_name": "Bruce", "last_name": "Wayne"}},
         "application": {
             "name": "application",
@@ -92,7 +89,7 @@ def create_request_data(exporter_user, gov_user, base_url):
         "ultimate_end_user": create_party("Individual", "commercial", "https://www.anothergov.uk"),
         "consignee": create_party("Government", "government", "https://www.gov.uk"),
         "third_party": create_party("Individual", "agent", "https://www.anothergov.uk"),
-        "add_good": {"good_id": "", "quantity": 1234, "unit": "NAR", "value": 123.45},
+        "add_good": {"good_id": "", "quantity": 1234, "unit": "NAR", "value": 123.45, "is_good_incorporated": True},
         "clc_good": {
             "description": "Targus",
             "is_good_controlled": "unsure",
