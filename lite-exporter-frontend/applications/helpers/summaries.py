@@ -12,7 +12,7 @@ def draft_summary(draft):
             strings.applications.ApplicationSummaryPage.REFERENCE_NAME: draft["name"],
             strings.applications.ApplicationSummaryPage.TYPE: draft["application_type"]["value"],
             strings.applications.ApplicationSummaryPage.EXPORT_TYPE: draft["export_type"]["value"],
-            strings.applications.ApplicationSummaryPage.CREATED_AT: str_date(draft["created"]),
+            strings.applications.ApplicationSummaryPage.CREATED_AT: str_date(draft["created_at"]),
         },
         classes=["govuk-summary-list--no-border"],
     )

@@ -67,7 +67,7 @@
 							{{ draft.application_type.value }}
 						</td>
 						<td class="govuk-table__cell govuk-table__cell--nowrap">
-							{{ draft.modified|str_date }}
+							{{ draft.updated_at|str_date }}
 						</td>
 						{% if organisation.type.key != 'hmrc' %}
 							<td class="govuk-table__cell">
