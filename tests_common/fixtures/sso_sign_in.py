@@ -12,3 +12,5 @@ def sso_sign_in(driver, internal_url, sso_sign_in_url, internal_info, context, s
     driver.get(internal_url)
     lite_client = get_lite_client(context, seed_data_config)
     context.org_name = lite_client.context["org_name"]
+    context.gov_user_id = lite_client.context["gov_user_id"]
+    context.exporter_user_id = lite_client.context["exporter_user_id"]
