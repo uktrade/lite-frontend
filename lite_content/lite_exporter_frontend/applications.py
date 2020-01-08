@@ -9,27 +9,27 @@ class PartyForm:
 class EndUserForm:
     TITLE = "Select the type of end user"
     BUTTON = "Continue"
-    NAME_FORM_TITLE = "Name of the end user"
-    WEBSITE_FORM_TITLE = "Website address for the end user (optional)"
-    ADDRESS_FORM_TITLE = "Address of the end user"
+    NAME_FORM_TITLE = "End user name"
+    WEBSITE_FORM_TITLE = "End user website address (optional)"
+    ADDRESS_FORM_TITLE = "End user address"
     SUBMIT_BUTTON = "Save and continue"
 
 
 class UltimateEndUserForm:
     TITLE = "Select the type of ultimate recipient"
     BUTTON = "Continue"
-    NAME_FORM_TITLE = "Name of the ultimate recipient"
-    WEBSITE_FORM_TITLE = "Website address for the ultimate recipient (optional)"
-    ADDRESS_FORM_TITLE = "Address of the ultimate recipient"
+    NAME_FORM_TITLE = "Ultimate recipient name"
+    WEBSITE_FORM_TITLE = "Ultimate recipient website address (optional)"
+    ADDRESS_FORM_TITLE = "Ultimate recipient address"
     SUBMIT_BUTTON = "Save and continue"
 
 
 class ConsigneeForm:
     TITLE = "Select the type of consignee"
     BUTTON = "Continue"
-    NAME_FORM_TITLE = "Name of consignee"
-    WEBSITE_FORM_TITLE = "Website address for the consignee (optional)"
-    ADDRESS_FORM_TITLE = "Address of the consignee"
+    NAME_FORM_TITLE = "Consignee name"
+    WEBSITE_FORM_TITLE = "Consignee website address (optional)"
+    ADDRESS_FORM_TITLE = "Consignee address"
     SUBMIT_BUTTON = "Save and continue"
 
 
@@ -45,9 +45,9 @@ class ThirdPartyForm:
 
     TITLE = "Select the type of third party"
     BUTTON = "Continue"
-    NAME_FORM_TITLE = "Name of the third party"
-    WEBSITE_FORM_TITLE = "Website address for the third party (optional)"
-    ADDRESS_FORM_TITLE = "Address of the third party"
+    NAME_FORM_TITLE = "Third party name"
+    WEBSITE_FORM_TITLE = "Third party website address (optional)"
+    ADDRESS_FORM_TITLE = "Third party address"
     SUBMIT_BUTTON = "Save and continue"
 
 
@@ -115,7 +115,7 @@ class InitialApplicationQuestionsForms:
     STANDARD_LICENCE = "Standard licence"
     STANDARD_LICENCE_DESCRIPTION = (
         "Select a standard licence for a set quantity and set value of products. "
-        "You must attach a completed end user undertaking form to the application."
+        "You must attach a completed [end user undertaking form](https://www.gov.uk/government/publications/end-user-undertaking-euu-form) to the application."
     )
     OPEN_LICENCE = "Open licence"
     OPEN_LICENCE_DESCRIPTION = (
@@ -123,7 +123,10 @@ class InitialApplicationQuestionsForms:
         "Open licences cover long term projects and repeat business."
     )
     HELP_WITH_CHOOSING_A_LICENCE = "What licence do I need?"
-    HELP_WITH_CHOOSING_A_LICENCE_CONTENT = "Read about the different types of export control licences."
+    HELP_WITH_CHOOSING_A_LICENCE_CONTENT = (
+        "Read about the [different types of export control licences]"
+        "(https://www.gov.uk/guidance/beginners-guide-to-export-controls#what-licence-do-i-need)."
+    )
     ENTER_A_REFERENCE_NAME_TITLE = "Name the application"
     ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference name"
     ENTER_A_REFERENCE_NAME_DESCRIPTION = (
