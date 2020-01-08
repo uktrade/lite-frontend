@@ -1,3 +1,19 @@
+class CasesListPage:
+    GO_TO_QUEUE = "Go to queue"
+    NO_CASES = "There are no new cases to show."
+    EXPORTER_AMENDMENTS_BANNER = "See what cases have changed"
+    ASSIGN_USERS = "Assign Users"
+    STATUS = "Status"
+
+    class Filters:
+        SHOW_FILTERS = "Show filters"
+        HIDE_FILTERS = "Hide filters"
+        APPLY_FILTERS = "Apply filters"
+        CLEAR_FILTERS = "Clear filters"
+        FILTER_BY_CASE_TYPE = "Filter by case type"
+        FILTER_BY_CASE_STATUS = "Filter by case status"
+
+
 class CaseDocumentsPage:
     BACK_LINK = "Back to Case"
     ATTACH = "Attach Document"
