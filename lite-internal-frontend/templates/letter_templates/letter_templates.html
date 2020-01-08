@@ -40,7 +40,7 @@
 							{% for case_type in letter_template.case_types %}{% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}{{ case_type.value }}{% endfor %}
 						</td>
 						<td class="govuk-table__cell">
-							{{ letter_template.last_modified_at|str_date }}
+							{{ letter_template.updated_at|str_date }}
 						</td>
 					</tr>
 				{% endfor %}

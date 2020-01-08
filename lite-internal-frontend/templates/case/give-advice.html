@@ -174,7 +174,7 @@
 	{% if proviso_picklist %}
 		<div id="picklist-proviso" class="app-picklist-picker__container">
 			{% for item in proviso_picklist %}
-				<a onclick="return showPreviewModal(this, 'proviso')" data-title="{{ item.name }}" data-text="{{ item.text }}" data-last-updated="{{ item.last_modified_at|str_date }}" class="app-picklist-picker__item">
+				<a onclick="return showPreviewModal(this, 'proviso')" data-title="{{ item.name }}" data-text="{{ item.text }}" data-last-updated="{{ item.updated_at|str_date }}" class="app-picklist-picker__item">
 					<h4 class="govuk-heading-s">{{ item.name }}</h4>
 					<p class="govuk-caption-m">
 						{{ item.text|slice:":100" }}
@@ -191,7 +191,7 @@
 	{% if advice_picklist %}
 		<div id="picklist-advice" class="app-picklist-picker__container">
 			{% for item in advice_picklist %}
-				<a onclick="return showPreviewModal(this, 'advice')" data-title="{{ item.name }}" data-text="{{ item.text }}" data-last-updated="{{ item.last_modified_at|str_date }}" class="app-picklist-picker__item">
+				<a onclick="return showPreviewModal(this, 'advice')" data-title="{{ item.name }}" data-text="{{ item.text }}" data-last-updated="{{ item.updated_at|str_date }}" class="app-picklist-picker__item">
 					<h4 class="govuk-heading-s">{{ item.name }}</h4>
 					<p class="govuk-caption-m">
 						{{ item.text|slice:":100" }}

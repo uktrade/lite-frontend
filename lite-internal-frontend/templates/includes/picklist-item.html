@@ -6,7 +6,7 @@
 	<a class="govuk-link govuk-link--no-visited-state" href="{% url 'teams:team' picklist_item.team %}">{{ picklist_item.team_name }}</a>
 	<span class="govuk-caption-m" style="display: inline;">- Last updated</span>
 	<span class="govuk-visually-hidden"> on </span>
-	{{ picklist_item.last_modified_at|str_date }}
+	{{ picklist_item.updated_at|str_date }}
 </p>
 <div class="app-picklist-item__text">
 	<p class="govuk-body-m">
