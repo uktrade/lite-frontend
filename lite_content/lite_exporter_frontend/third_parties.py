@@ -20,4 +20,5 @@ class UltimateEndUsers:
         " installed or incorporated. The end user and ultimate recipient may be different entities."
     )
     NOTICE = "You haven't added any ultimate recipients to this application"
+    MISSING_DOCS_NOTICE = "You still need to attach a document to some ultimate recipients"
     ADD_BUTTON = "Add an ultimate recipient"
