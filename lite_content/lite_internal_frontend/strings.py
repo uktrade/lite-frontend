@@ -107,12 +107,8 @@ class Common:
 
 class Cases:
     BACK_TO_CASE = "Back to Case"
-    GO_TO_QUEUE = "Go to queue"
     MANAGE_ORGANISATIONS = "Manage organisations"
     NO_CASES = "There are no new cases to show."
-    EXPORTER_AMENDMENTS_BANNER = "See what cases have changed"
-    ASSIGN_USERS = "Assign Users"
-    STATUS = "Status"
 
     class Advice:
         ERROR = "There is a problem"
@@ -139,14 +135,6 @@ class Cases:
             )
             DROPDOWN_TITLE = "Ask a question"
             TITLE = "Write or edit your question"
-
-    class Filters:
-        SHOW_FILTERS = "Show filters"
-        HIDE_FILTERS = "Hide filters"
-        APPLY_FILTERS = "Apply filters"
-        CLEAR_FILTERS = "Clear filters"
-        FILTER_BY_CASE_TYPE = "Filter by case type"
-        FILTER_BY_CASE_STATUS = "Filter by case status"
 
     class GenerateDocuments:
         BUTTON = "Generate A Document"
