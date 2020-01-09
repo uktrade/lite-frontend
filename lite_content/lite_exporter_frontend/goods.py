@@ -10,8 +10,10 @@ class GoodsList:
     GOOD = "Product"
     VERIFIED = "This product has been verified by ECJU based on the information provided"
     EDIT_GOOD_LINK = "Edit product"
-    IN_REVIEW = "Your product is currently being reviewed by ECJU. " \
-                "It'll have limited functionality until the review is complete."
+    IN_REVIEW = (
+        "Your product is currently being reviewed by ECJU. "
+        "It'll have limited functionality until the review is complete."
+    )
     YOUR_GOOD = "Your product"
     NO_LONGER_CAN_BE_CHANGED = "Your good has been used in an application and can therefore no longer be changed."
 
