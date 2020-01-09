@@ -1,3 +1,6 @@
+from lite_content.lite_exporter_frontend import generic
+
+
 class ThirdPartiesPage:
     TITLE = "Third parties"
     ADD = "Add a third party"
@@ -22,3 +25,10 @@ class UltimateEndUsers:
     NOTICE = "You haven't added any ultimate recipients to this application"
     MISSING_DOCS_NOTICE = "You still need to attach a document to some ultimate recipients"
     ADD_BUTTON = "Add an ultimate recipient"
+
+    class Document:
+        DOWNLOAD = generic.Document.DOWNLOAD
+        DELETE = generic.Document.DELETE
+        PROCESSING = generic.Document.PROCESSING
+        ATTACH = generic.Document.ATTACH
+        REMOVE = generic.Document.REMOVE

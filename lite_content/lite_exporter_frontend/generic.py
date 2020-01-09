@@ -11,7 +11,7 @@ INCORPORATED = "Incorporated"
 INFORMATION = "Information"
 
 
-class Download:
+class Document:
     DOWNLOAD = "Download"
     DELETE = "Delete"
     PROCESSING = "Processing"
