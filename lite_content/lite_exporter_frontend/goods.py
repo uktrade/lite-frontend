@@ -49,7 +49,7 @@ class GoodsList:
         TITLE = "Documents"
         NO_DOCUMENT_ATTACHED = "This product has no documents attached"
         NAME = "Name"
-        Description = "Description"
+        DESCRIPTION = "Description"
         UPLOADED_BY = "Uploaded by"
 
 
