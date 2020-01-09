@@ -32,7 +32,9 @@ def select_team(driver):
 
 @when("I click edit for my user")
 def click_edit_for_my_user(driver, internal_info):
-    index = utils.get_element_index_by_text(Shared(driver).get_rows_in_lite_table(), internal_info["email"])
+    index = utils.get_element_index_by_text(
+        Shared(driver).get_rows_in_lite_table(), internal_info["email"], complete_match=False
+    )
     Shared(driver).scroll_to_bottom_row()
     utils.scroll_to_right_of_page(driver)
     UsersPage(driver).click_edit_button_by_index(index)

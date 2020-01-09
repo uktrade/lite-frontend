@@ -12,14 +12,13 @@ Feature: I want to add a team
     Then I see the team in the team list
     When I click on my team
     Then I see my teams user list with user "not added"
-    # Commented out due to ordering of names being broken . Will be fixed in LT-1232 API for exporter
-  #  When I go to users
-  #  And I click edit for my user
-  #  And I select my newly created team
-  #  And I click on my team
-  #  Then I see my teams user list with user "added"
-  #  When I click edit for my user
-  #  And I select Admin team
+    When I go to users
+    And I click edit for my user
+    And I select my newly created team
+    And I click on my team
+    Then I see my teams user list with user "added"
+    When I click edit for my user
+    And I select Admin team
 
   @LT_930_edit @smoke
   Scenario: Edit a team
