@@ -325,14 +325,6 @@ class GoodTypes:
         NO_GOOD_TYPES = "There are no products to show. To add a product use the Add a product button"
         TITLE = "Your products"
 
-    class OverviewAddGoodTypes:
-        DESCRIPTION = "Give us a short description of your products."
-        Q1 = "Is your product controlled?"
-        Q1_1 = "Control list classification"
-        Q1_2 = "For example, ML1a."
-        Q2 = "Is your product intended to be incorporated into an end product?"
-        TITLE = "Add a description"
-
 
 class HelpAddress:
     ADDRESS_CITY = "London"
