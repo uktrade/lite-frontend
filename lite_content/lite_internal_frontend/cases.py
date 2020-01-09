@@ -242,3 +242,8 @@ class ReviewGoodsSummary:
         GOODS_COMMENT = "Goods comment"
         FLAGS = "Flags"
         QUANTITY_VALUE = "Quantity/Value"
+
+    class NotSet:
+        REPORT_SUMMARY = "Not Set"
+        COMMENT = "Not Set"
+        FLAGS = "None Set"
