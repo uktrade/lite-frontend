@@ -16,11 +16,6 @@ class Variables:
     DOCUMENT = "Document"
 
 
-class OverviewGoodTypes:
-    NO_GOOD_TYPES = "There are no products to show. To add a product use the Add a product button"
-    TITLE = "Your products"
-
-
 class Documents:
     SAVE_END_USER = "save your progress and return to your application later"
 
@@ -42,10 +37,11 @@ class Documents:
 
 class CreateGoodsTypeForm:
     TITLE = "Add a new product to your application"
+    DESCRIPTION = ""
 
     class Description:
         TITLE = "Description"
-        DESCRIPTION = "Include the product name to make it easier to find the product when needed."
+        DESCRIPTION = "Include the product name to make it easier to find."
 
     class IsControlled:
         TITLE = "Are the products controlled??"

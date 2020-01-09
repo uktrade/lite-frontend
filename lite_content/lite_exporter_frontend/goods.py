@@ -1,4 +1,5 @@
 from conf.settings import env
+from lite_content.lite_exporter_frontend import generic
 
 PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
 
@@ -16,19 +17,19 @@ class GoodsList:
         FILTERED_MANY = "Displaying %s products"  # %s will add the count of goods
 
     class Filter:
-        DESCRIPTION = "Description"
-        CONTROL_LIST_ENTRY = "Control list entry"
-        PART_NUMBER = "Part number"
+        DESCRIPTION = generic.DESCRIPTION
+        CONTROL_LIST_ENTRY = generic.CONTROL_LIST_ENTRY
+        PART_NUMBER = generic.PART_NUMBER
         APPLY = "Apply filters"
         CLEAR = "Clear filters"
         SHOW = "Show filters"
         HIDE = "Hide filters"
 
     class Table:
-        DESCRIPTION = "Description"
-        CONTROL_LIST_ENTRY = "Control list entry"
-        IS_GOOD_CONTROLLED = "Controlled"
-        PART_NUMBER = "Part number"
+        DESCRIPTION = generic.DESCRIPTION
+        CONTROL_LIST_ENTRY = generic.CONTROL_LIST_ENTRY
+        IS_GOOD_CONTROLLED = generic.CONTROLLED
+        PART_NUMBER = generic.PART_NUMBER
         QUANTITY = "Quantity"
         VALUE = "Value"
         INCORPORATED = "Incorporated"
@@ -61,7 +62,7 @@ class CreateGoodForm:
     BUTTON = "Save and continue"
 
     class Description:
-        TITLE = "Description"
+        TITLE = generic.DESCRIPTION
         DESCRIPTION = "Include the product name to make it easier to find the product when needed."
 
     class IsControlled:
@@ -80,11 +81,11 @@ class CreateGoodForm:
         UNSURE = "I don't know"
 
     class ControlListEntry:
-        TITLE = "Control list classification"
+        TITLE = generic.CONTROL_LIST_ENTRY
         DESCRIPTION = "For example, ML1a."
 
     class PartNumber:
-        TITLE = "Part number"
+        TITLE = generic.PART_NUMBER
 
 
 class CLCQueryForm:
@@ -94,7 +95,7 @@ class CLCQueryForm:
     BUTTON = "Save"
 
     class CLCCode:
-        TITLE = "What do you think is the product's control list classification?"
+        TITLE = "What do you think is the product's control list entry?"
         DESCRIPTION = "For example, ML1a."
 
     class Additional:
@@ -118,7 +119,7 @@ class EditGoodForm:
         UNSURE = "I don't know"
 
     class ControlListEntry:
-        TITLE = "Control list classification"
+        TITLE = generic.CONTROL_LIST_ENTRY
         DESCRIPTION = "For example, ML1a."
 
     class Incorporated:
