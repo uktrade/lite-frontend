@@ -10,8 +10,6 @@ NOT_APPLICABLE = "N/A"
 
 QUEUE_ALL_CASES = "All cases"
 
-CASES_ASSIGN_USERS = "Assign Users"
-
 CASE_CHANGES = "See what has changed"
 
 USERS_LIST_PAGE_EDIT = "Edit"
@@ -109,9 +107,7 @@ class Common:
 
 class Cases:
     BACK_TO_CASE = "Back to Case"
-    GO_TO_QUEUE = "Go to queue"
     MANAGE_ORGANISATIONS = "Manage organisations"
-    NO_CASES = "There are no new cases to show."
 
     class Advice:
         ERROR = "There is a problem"
