@@ -195,6 +195,7 @@ class StandardApplication:
 
 class OpenApplication:
     SET_FLAGS = "Set flags"
+    REVIEW_PRODUCTS = "Review products"
 
 
 class ClcQuery:
