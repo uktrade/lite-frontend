@@ -7,6 +7,13 @@ PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
 class GoodsList:
     TITLE = "Products"
     CREATE_GOOD = "Add a product"
+    GOOD = "Product"
+    VERIFIED = "This product has been verified by ECJU based on the information provided"
+    EDIT_GOOD_LINK = "Edit product"
+    IN_REVIEW = "Your product is currently being reviewed by ECJU. " \
+                "It'll have limited functionality until the review is complete."
+    YOUR_GOOD = "Your product"
+    NO_LONGER_CAN_BE_CHANGED = "Your good has been used in an application and can therefore no longer be changed."
 
     class Count:
         ORGANISATION_ZERO = "Your organisation doesn't have any products."
@@ -35,6 +42,13 @@ class GoodsList:
         INCORPORATED = "Incorporated"
         COUNTRIES = "Countries"
         STATUS = "Status"
+
+    class Documents:
+        TITLE = "Documents"
+        NO_DOCUMENT_ATTACHED = "This product has no documents attached"
+        NAME = "Name"
+        Description = "Description"
+        UPLOADED_BY = "Uploaded by"
 
 
 class DocumentSensitivityForm:
