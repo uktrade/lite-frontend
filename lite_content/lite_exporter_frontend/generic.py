@@ -1,3 +1,6 @@
+SERVICE_NAME = "LITE"
+
+BACK = "Back"
 BACK_TO_APPLICATION_OVERVIEW = "Back to application overview"
 
 DESCRIPTION = "Description"
