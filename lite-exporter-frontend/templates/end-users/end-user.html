@@ -10,10 +10,10 @@
 			<div class="lite-app-bar">
 				<div class="lite-app-bar__content">
 					<h1 class="govuk-heading-l">
-                        {% block title %}
-                            {% lcs 'end_users.EndUserPage.TITLE' %}
-                        {% endblock %}
-                    </h1>
+						{% block title %}
+							{% lcs 'end_users.EndUserPage.TITLE' %}
+						{% endblock %}
+					</h1>
 				</div>
 			</div>
 
@@ -28,21 +28,33 @@
 					</dd>
 				</div>
 				<div class="govuk-summary-list__row">
-						<dt class="govuk-summary-list__key">
-							{% lcs 'end_users.EndUserPage.Variables.REASONING_BEHIND_QUERY' %}
-						</dt>
-						<dd class="govuk-summary-list__value">
-							{{ end_user_advisory.reasoning|default_na }}
-						</dd>
-					</div>
-					<div class="govuk-summary-list__row">
-						<dt class="govuk-summary-list__key">
-							{% lcs 'end_users.EndUserPage.Variables.END_USER_NOTES' %}
-						</dt>
-						<dd class="govuk-summary-list__value">
-							{{ end_user_advisory.note|default_na }}
-						</dd>
-					</div>
+					<dt class="govuk-summary-list__key">
+						{% lcs 'end_users.EndUserPage.CASE_OFFICER' %}
+					</dt>
+					<dd id="label-application-status" class="govuk-summary-list__value">
+						{% if end_user_advisory.case_officer.first_name %}
+							{{ end_user_advisory.case_officer.first_name }} {{ end_user_advisory.case_officer.last_name }}
+						{% else %}
+							{% lcs 'end_users.EndUserPage.NO_ASSIGNED_CASE_OFFICER' %}
+						{% endif %}
+					</dd>
+				</div>
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'end_users.EndUserPage.Variables.REASONING_BEHIND_QUERY' %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{{ end_user_advisory.reasoning|default_na }}
+					</dd>
+				</div>
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'end_users.EndUserPage.Variables.END_USER_NOTES' %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{{ end_user_advisory.note|default_na }}
+					</dd>
+				</div>
 			</dl>
 
 			<br><br>

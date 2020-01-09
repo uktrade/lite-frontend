@@ -51,6 +51,18 @@
 							{{ good.query.id|reference_code }}
 						</dd>
 					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							{% lcs 'goods.GoodPage.Query.CASE_OFFICER' %}
+						</dt>
+						<dd id="label-application-status" class="govuk-summary-list__value">
+							{% if good.case_officer.first_name %}
+								{{ good.case_officer.first_name }} {{ good.case_officer.last_name }}
+							{% else %}
+								{% lcs 'goods.GoodPage.Query.NO_ASSIGNED_CASE_OFFICER' %}
+							{% endif %}
+						</dd>
+					</div>
 				</dl>
 
 				<br><br>
