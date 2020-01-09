@@ -17,7 +17,7 @@ class GoodsList:
 
     class Filter:
         DESCRIPTION = "Description"
-        CONTROL_LIST_ENTRY = "Control list classification"
+        CONTROL_LIST_ENTRY = "Control list entry"
         PART_NUMBER = "Part number"
         APPLY = "Apply filters"
         CLEAR = "Clear filters"
@@ -26,8 +26,12 @@ class GoodsList:
 
     class Table:
         DESCRIPTION = "Description"
-        CONTROL_LIST_ENTRY = "Control list classification"
+        CONTROL_LIST_ENTRY = "Control list entry"
+        IS_GOOD_CONTROLLED = "Controlled"
         PART_NUMBER = "Part number"
+        QUANTITY = "Quantity"
+        VALUE = "Value"
+        INCORPORATED = "Incorporated"
         COUNTRIES = "Countries"
         STATUS = "Status"
 
@@ -77,16 +81,10 @@ class CreateGoodForm:
 
     class ControlListEntry:
         TITLE = "Control list classification"
-        DESCRIPTION = "For example, ML1a. "
-
-    class Incorporated:
-        TITLE = "Will the product be incorporated into another product?"
-        DESCRIPTION = ""
-        YES = "Yes"
-        NO = "No"
+        DESCRIPTION = "For example, ML1a."
 
     class PartNumber:
-        TITLE = "Part number (optional)"
+        TITLE = "Part number"
 
 
 class CLCQueryForm:
