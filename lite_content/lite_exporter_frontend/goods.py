@@ -191,6 +191,10 @@ class CreateGoodOnApplicationForm:
     VALUE = "Total value"
     QUANTITY = "Quantity"
     UNITS = "Unit of measurement"
+    INCORPORATED = "Is this product incorporated?"
+    INCORPORATED_DESCRIPTION = ""
+    INCORPORATED_YES = "yes"
+    INCORPORATED_NO = "No"
 
 
 class AddPrexistingGoodToApplicationForm:
