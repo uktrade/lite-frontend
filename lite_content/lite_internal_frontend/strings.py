@@ -186,12 +186,6 @@ class Cases:
                 CHARACTER_LIMIT_2200 = "You can enter up to 2200 characters"
                 MAKE_VISIBLE_TO_EXPORTER = "Make visible to exporter"
 
-    class ReviewGoodsSummary:
-        BACK_LINK = "Back to case"
-        HEADING = "Review Goods"
-        REVIEW_BUTTON = "Review and confirm item"
-        SET_FLAGS = "Set goods flags"
-
     class ReviewGoodsForm:
         BACK_LINK = "Back to review goods"
         CONFIRM_BUTTON = "Add to Case"

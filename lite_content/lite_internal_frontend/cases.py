@@ -226,3 +226,19 @@ class ClcQuery:
     class Documents:
         TITLE = "Documents"
         DOWNLOAD = "Download"
+
+
+class ReviewGoodsSummary:
+    BACK_LINK = "Back to case"
+    HEADING = "Review Goods"
+    REVIEW_BUTTON = "Review and confirm item"
+    SET_FLAGS = "Set goods flags"
+
+    class Table:
+        DESCRIPTION = "Description"
+        REPORT_SUMMARY = "Report summary"
+        CONTROLLED = "Controlled"
+        CONTROL_LIST_ENTRY = "Control list entry"
+        GOODS_COMMENT = "Goods comment"
+        FLAGS = "Flags"
+        QUANTITY_VALUE = "Quantity/Value"
