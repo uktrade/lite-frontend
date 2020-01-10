@@ -2,7 +2,7 @@ from conf.settings import env
 from lite_content.lite_exporter_frontend import (  # noqa
     applications,  # noqa
     goods,  # noqa
-    goods_types, # noqa
+    goods_types,  # noqa
     roles,  # noqa
     users,  # noqa
     sites,  # noqa
