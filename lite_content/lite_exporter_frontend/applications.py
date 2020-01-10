@@ -141,9 +141,7 @@ class InitialApplicationQuestionsForms:
     HAVE_YOU_BEEN_INFORMED_TITLE = (
         "Have you been informed under an 'end use control' that you need to apply for a licence?"
     )
-    HAVE_YOU_BEEN_INFORMED_DESCRIPTION = (
-        "An end use control is an official letter or email from Border Force or HMRC."
-    )
+    HAVE_YOU_BEEN_INFORMED_DESCRIPTION = "An end use control is an official letter or email from Border Force or HMRC."
     WHAT_WAS_THE_REFERENCE_CODE_TITLE = "Reference number (optional)"
     WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION = "The reference number is on the official letter or email."
 
