@@ -5,6 +5,13 @@ class PartyForm:
         INDIVIDUAL = "An individual"
         OTHER = "Other"
 
+    class CopyExistingForm:
+        TITLE = "Do you want to copy an existing party?"
+        YES = "Yes"
+        NO = "No"
+        BACK_LINK = "Back to application"
+        BUTTON = "Submit"
+
 
 class EndUserForm:
     TITLE = "Select the type of end user"
