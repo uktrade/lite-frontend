@@ -17,6 +17,24 @@ class PartyTypeForm:
     BACK_LINK = "Back"
 
 
+class AddPartyForm:
+    ERROR = "Please select an option"
+
+
+class CopyExistingPartyPage:
+    TITLE = "Existing Parties"
+    BACK_LINK = "Back"
+    HEADING = "Add a party you've created before"
+    ADD_BUTTON = "Add to application"
+    NONE_FOUND = "No existing parties found"
+
+    class Table:
+        NAME_COLUMN = "Name"
+        ADDRESS_COLUMN = "Address"
+        COUNTRY_COLUMN = "Country"
+        WEBSITE_COLUMN = "Website"
+
+
 class EndUserForm:
     TITLE = "Select the type of end user"
     BUTTON = "Continue"
