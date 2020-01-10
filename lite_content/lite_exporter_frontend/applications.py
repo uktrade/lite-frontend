@@ -6,7 +6,7 @@ class PartyForm:
         OTHER = "Other"
 
     class CopyExistingForm:
-        TITLE = "Do you want to copy an existing party?"
+        TITLE = "Do you want to resuse an existing party?"
         YES = "Yes"
         NO = "No"
         BACK_LINK = "Back to application"
@@ -27,6 +27,7 @@ class CopyExistingPartyPage:
     HEADING = "Add a party you've created before"
     ADD_BUTTON = "Add to application"
     NONE_FOUND = "No existing parties found"
+    RESULTS = " results found"
 
     class Table:
         NAME_COLUMN = "Name"
