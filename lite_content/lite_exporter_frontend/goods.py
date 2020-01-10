@@ -199,8 +199,8 @@ class GoodPage:
         REFERENCE = "Reference"
 
 
-class AddPreexistingGoodToApplicationForm:
-    TITLE = "Select a product from your product list"
+class AddGoodToApplicationForm:
+    TITLE = "Add a product to your application"
     DESCRIPTION = ""
     DOCUMENT_MISSING = "A document is required"
     BACK_LINK = "Back to products"
@@ -226,6 +226,10 @@ class AddPreexistingGoodToApplicationForm:
         DESCRIPTION = ""
         YES = "Yes"
         NO = "No"
+
+
+class AddPreexistingGoodToApplicationForm:
+    TITLE = "Select a product from your product list"
 
 
 class ViewGoodOnApplicationPage:
