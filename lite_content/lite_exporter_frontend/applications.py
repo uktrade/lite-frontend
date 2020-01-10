@@ -44,6 +44,11 @@ class EndUserForm:
     SUBMIT_BUTTON = "Save and continue"
 
 
+class EndUserPage:
+    TITLE = "End user"
+    DELETE_ERROR = "Unexpected error removing end user"
+
+
 class UltimateEndUserForm:
     TITLE = "Select the type of ultimate recipient"
     BUTTON = "Continue"
@@ -53,6 +58,10 @@ class UltimateEndUserForm:
     SUBMIT_BUTTON = "Save and continue"
 
 
+class UltimateEndUserPage:
+    DELETE_ERROR = "Unexpected error removing ultimate end user"
+
+
 class ConsigneeForm:
     TITLE = "Select the type of consignee"
     BUTTON = "Continue"
@@ -60,6 +69,11 @@ class ConsigneeForm:
     WEBSITE_FORM_TITLE = "Consignee website address (optional)"
     ADDRESS_FORM_TITLE = "Consignee address"
     SUBMIT_BUTTON = "Save and continue"
+
+
+class ConsigneePage:
+    TITLE = "Consignee"
+    DELETE_ERROR = "Unexpected error removing consignee"
 
 
 class ThirdPartyForm:
@@ -78,6 +92,10 @@ class ThirdPartyForm:
     WEBSITE_FORM_TITLE = "Third party website address (optional)"
     ADDRESS_FORM_TITLE = "Third party address"
     SUBMIT_BUTTON = "Save and continue"
+
+
+class ThirdPartyPage:
+    DELETE_ERROR = "Unexpected error removing third party"
 
 
 class DeletePartyDocumentForm:
