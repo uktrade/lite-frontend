@@ -1,4 +1,3 @@
-from conf.settings import env
 from lite_content.lite_exporter_frontend import (  # noqa
     applications,  # noqa
     goods,  # noqa
