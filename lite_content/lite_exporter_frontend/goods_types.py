@@ -6,13 +6,23 @@ class Overview:
     TITLE = "Add products"
     ADD_GOODS_TYPE_BUTTON = "Add a product"
     ADD_ANOTHER_GOODS_TYPE_BUTTON = "Add another product"
+    NO_GOODS = "You haven't added any products"
 
 
 class Variables:
     DESCRIPTION = generic.DESCRIPTION
     CONTROL_LIST_ENTRY = generic.CONTROL_LIST_ENTRY
     INCORPORATED = generic.INCORPORATED
-    DOCUMENT = "Document"
+    REMOVE_GOODS_TYPE = "Remove product"
+
+
+class Document:
+    TITLE = "Document"
+    DOWNLOAD = generic.Document.DOWNLOAD
+    DELETE = generic.Document.DELETE
+    PROCESSING = generic.Document.PROCESSING
+    ATTACH = generic.Document.ATTACH
+    REMOVE = generic.Document.REMOVE
 
 
 class Documents:
