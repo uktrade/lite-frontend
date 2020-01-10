@@ -18,7 +18,7 @@ class PartyTypeForm:
 
 
 class AddPartyForm:
-    ERROR = "Please select an option"
+    ERROR = "Select yes if you want to copy an existing party"
 
 
 class CopyExistingPartyPage:
@@ -59,7 +59,7 @@ class UltimateEndUserForm:
 
 
 class UltimateEndUserPage:
-    DELETE_ERROR = "Unexpected error removing ultimate end user"
+    DELETE_ERROR = "Unexpected error removing ultimate recipient"
 
 
 class ConsigneeForm:
