@@ -13,6 +13,10 @@ class PartyForm:
         BUTTON = "Submit"
 
 
+class PartyTypeForm:
+    BACK_LINK = "Back"
+
+
 class EndUserForm:
     TITLE = "Select the type of end user"
     BUTTON = "Continue"
