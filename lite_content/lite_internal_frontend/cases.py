@@ -22,6 +22,7 @@ class CaseDocumentsPage:
 
 class ApplicationPage:
     class Actions:
+        CASE_OFFICER = "Assign Case Officer"
         DOCUMENT = "Attached Documents"
         ECJU = "ECJU Queries"
         MOVE = "Move Case"
@@ -29,11 +30,10 @@ class ApplicationPage:
         DECISION = "Record Decision"
         ADVICE = "View Advice"
         GENERATE_DOCUMENT = "Generate Document"
-        CASE_OFFICER = "Assign Case Officer"
 
     class Goods:
-        TITLE = "Products"
         MISSING_DOCUMENT_REASON_PREFIX = "No document given: "
+        TITLE = "Products"
 
         class Table:
             CLC = "Control List Entry"
@@ -106,9 +106,11 @@ class AdditionalDocumentsPage:
 
 class EndUserAdvisoriesPage:
     class Actions:
+        CASE_OFFICER = "Assign Case Officer"
         CHANGE_STATUS = "Change Status"
         DOCUMENT = "Attached Documents"
         ECJU = "ECJU Queries"
+        GENERATE_DOCUMENT = "Generate Document"
         MOVE = "Move Case"
 
     class Details:
@@ -127,6 +129,10 @@ class EndUserAdvisoriesPage:
         REASONING = "Reasoning behind query"
         NOTES = "Notes about end user"
         COPY_FROM = "Copied From"
+
+    CASE_OFFICER = "Case Officer: "
+    EDIT_DESTINATION_FLAGS = "Edit destination flags"
+    NO_CASE_OFFICER = "No Case Officer set."
 
 
 class HMRCPage:
