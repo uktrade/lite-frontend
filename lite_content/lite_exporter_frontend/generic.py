@@ -1,3 +1,5 @@
+from conf.settings import env
+
 SERVICE_NAME = "LITE"
 
 BACK = "Back"
@@ -17,3 +19,7 @@ class Document:
     PROCESSING = "Processing"
     ATTACH = "Attach"
     REMOVE = "Remove"
+
+
+# Links
+PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"

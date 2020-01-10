@@ -1,7 +1,5 @@
-from conf.settings import env
 from lite_content.lite_exporter_frontend import generic
-
-PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
+from lite_content.lite_exporter_frontend.generic import PERMISSION_FINDER_LINK
 
 
 class GoodsList:

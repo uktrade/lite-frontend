@@ -2,6 +2,7 @@ from conf.settings import env
 from lite_content.lite_exporter_frontend import (  # noqa
     applications,  # noqa
     goods,  # noqa
+    goods_types, # noqa
     roles,  # noqa
     users,  # noqa
     sites,  # noqa
@@ -36,9 +37,6 @@ EDIT_APPLICATION_SUBMIT = "Submit application"
 EDIT_APPLICATION_DONE = "Completed"
 
 HOME = "Home"
-
-# Constants
-PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
 
 
 class Address:
