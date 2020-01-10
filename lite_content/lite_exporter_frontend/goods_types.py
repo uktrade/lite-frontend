@@ -1,7 +1,7 @@
 from lite_content.lite_exporter_frontend import generic
 
 
-class Overview:
+class OverviewPage:
     BACK = generic.BACK_TO_APPLICATION_OVERVIEW
     TITLE = "Add products"
     ADD_GOODS_TYPE_BUTTON = "Add a product"
