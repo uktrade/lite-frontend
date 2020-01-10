@@ -17,7 +17,11 @@ def address_questions(countries, prefix="address."):
 
 
 def control_list_entry_question(
-    control_list_entries, title="Control list entry", description="", name="control_list_entry", inset_text=True,
+    control_list_entries,
+    title="Control list classification",
+    description="For example, ML1a",
+    name="control_list_entry",
+    inset_text=True,
 ):
     classes = ["govuk-inset-text"] if inset_text else []
     return ControlListEntryInput(
