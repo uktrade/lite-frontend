@@ -153,6 +153,8 @@ class HMRCPage:
         FURTHER_INFO = "Further information"
 
     class Good:
+        REVIEW_GOODS = "Review products"
+        EDIT_FLAGS = "Set flags"
         DESCRIPTION = "Description"
         CONTROL_CODE = "Control list entry"
         CONTROLLED = "Controlled"
