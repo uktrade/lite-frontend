@@ -287,6 +287,27 @@ class Manage:
         DOWNLOAD_DOCUMENT = "Download document"
         PROCESSING = "Processing"
         VIRUS_INFECTED = "Virus infected"
+        TITLE = "Case Documents"
+
+        class AttachDocuments:
+            BACK_TO_CASE_DOCUMENTS = "Back to Case Documents"
+            BUTTON = "Attach Document"
+            DESCRIPTION = "Maximum size: 100MB per file"
+            DESCRIPTION_FIELD_DETAILS = "optional"
+            DESCRIPTION_FIELD_TITLE = "Document description"
+            FILE_TOO_LARGE = "The file you tried to upload was too large."
+            TITLE = "Attach a document to this case"
+
+    class MoveCase:
+        BUTTON = "Move Case"
+        DESCRIPTION = "Select all queues that apply."
+        TITLE = "Where do you want to move this case?"
+
+    class AssignUsers:
+        DESCRIPTION = "Select all users that apply."
+        MULTIPLE_TITLE = "Which users do you want to assign to these cases?"
+        MULTIPLE_WARNING = "Users already assigned to these cases will be overwritten."
+        TITLE = "Which users do you want to assign to this case?"
 
 
 class Tabs:
@@ -294,3 +315,9 @@ class Tabs:
         CHARACTER_LIMIT_2200 = "You can enter up to 2200 characters"
         CANCEL_POST = "Cancel"
         POST = "Post note"
+
+
+class ReviewGoodsForm:
+    BACK_LINK = "Back to review goods"
+    CONFIRM_BUTTON = "Add to Case"
+    HEADING = "Check control list classification and add report summary"
