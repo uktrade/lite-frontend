@@ -199,21 +199,33 @@ class GoodPage:
         REFERENCE = "Reference"
 
 
-class CreateGoodOnApplicationForm:
-    TITLE = "Value and quantity of the product"
+class AddPreexistingGoodToApplicationForm:
+    TITLE = "Select a product from your product list"
+    DESCRIPTION = ""
     DOCUMENT_MISSING = "A document is required"
     BACK_LINK = "Back to products"
-    VALUE = "Total value"
-    QUANTITY = "Quantity"
-    UNITS = "Unit of measurement"
-    INCORPORATED = "Is this product incorporated?"
-    INCORPORATED_DESCRIPTION = ""
-    INCORPORATED_YES = "yes"
-    INCORPORATED_NO = "No"
 
+    class Value:
+        TITLE = "Value of your products"
+        DESCRIPTION = ""
 
-class AddPrexistingGoodToApplicationForm:
-    TITLE = "Select a product from your product list"
+    class VALUE:
+        TITLE = "Total value"
+        DESCRIPTION = ""
+
+    class Quantity:
+        TITLE = "Quantity"
+        DESCRIPTION = ""
+
+    class Units:
+        TITLE = "Unit of measurement"
+        DESCRIPTION = ""
+
+    class Incorporated:
+        TITLE = "Is this product incorporated?"
+        DESCRIPTION = ""
+        YES = "Yes"
+        NO = "No"
 
 
 class ViewGoodOnApplicationPage:
