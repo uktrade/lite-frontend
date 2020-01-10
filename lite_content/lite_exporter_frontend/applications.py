@@ -58,6 +58,10 @@ class ThirdPartyForm:
     SUBMIT_BUTTON = "Save and continue"
 
 
+class DeletePartyDocumentForm:
+    TITLE = "Are you sure you want to delete this document?"
+
+
 class GeneratedDocuments:
     NO_DOCUMENTS = "There are no documents from ECJU."
 
