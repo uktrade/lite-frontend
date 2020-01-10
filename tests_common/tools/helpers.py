@@ -180,6 +180,10 @@ def find_paginated_item(id, driver):
 
 
 def paginated_search(driver, func: callable):
+    """
+    Calls a given function on every page until the function returns true or we run out of pages.
+    This is useful if you want to run a custom check for element(s) across a paginated page
+    """
     driver.set_timeout_to(0)
     success = False
     current_page = 1
