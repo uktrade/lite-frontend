@@ -249,3 +249,48 @@ class ReviewGoodsSummary:
         REPORT_SUMMARY = "Not Set"
         COMMENT = "Not Set"
         FLAGS = "None Set"
+
+
+class EcjuQueries:
+    BACK_TO_CASE = "Back to Case"
+    CASE_HAS_NO_QUERIES = "This case has no ECJU Queries"
+    CLOSED = "Closed queries"
+    OPEN = "Open queries"
+    TITLE = "ECJU Queries"
+
+    class AddQuery:
+        ADD_BUTTON_LABEL = "Add an ECJU Query"
+        DESCRIPTION = (
+            "Enter a full description. If your question is related to goods, then include technical"
+            " details if appropriate."
+        )
+        DROPDOWN_DESCRIPTION = (
+            "You can:<ul><li>write a new question, or</li><li>choose a question from a list</li></ul>"
+        )
+        DROPDOWN_TITLE = "Ask a question"
+        TITLE = "Write or edit your question"
+
+
+class Advice:
+    ERROR = "There is a problem"
+    IMPORT_ADVICE = "Import advice from picklists"
+    IMPORT_PROVISO = "Import proviso from picklists"
+    OTHER = "Is there anything else you want to say to the applicant? (optional)"
+    REASON = "What are your reasons for this decision?"
+    TEXT_ON_LICENCE = "This will appear on the generated documentation"
+
+
+class Manage:
+    class Documents:
+        CASE_HAS_NO_DOCUMENTS = "This case has no documents"
+        DESCRIPTION = "These are all the documents that have been uploaded to this case."
+        DOWNLOAD_DOCUMENT = "Download document"
+        PROCESSING = "Processing"
+        VIRUS_INFECTED = "Virus infected"
+
+
+class Tabs:
+    class Activity:
+        CHARACTER_LIMIT_2200 = "You can enter up to 2200 characters"
+        CANCEL_POST = "Cancel"
+        POST = "Post note"
