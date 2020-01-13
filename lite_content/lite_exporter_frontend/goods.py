@@ -1,11 +1,19 @@
-from conf.settings import env
-
-PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
+from lite_content.lite_exporter_frontend import generic
+from lite_content.lite_exporter_frontend.generic import PERMISSION_FINDER_LINK
 
 
 class GoodsList:
     TITLE = "Products"
     CREATE_GOOD = "Add a product"
+    GOOD = "Product"
+    VERIFIED = "This product has been verified by ECJU based on the information provided"
+    EDIT_GOOD_LINK = "Edit product"
+    IN_REVIEW = (
+        "Your product is currently being reviewed by ECJU. "
+        "It'll have limited functionality until the review is complete."
+    )
+    YOUR_GOOD = "Your product"
+    NO_LONGER_CAN_BE_CHANGED = "Your good has been used in an application and can therefore no longer be changed."
 
     class Count:
         ORGANISATION_ZERO = "Your organisation doesn't have any products."
@@ -16,20 +24,31 @@ class GoodsList:
         FILTERED_MANY = "Displaying %s products"  # %s will add the count of goods
 
     class Filter:
-        DESCRIPTION = "Description"
-        CONTROL_LIST_ENTRY = "Control list classification"
-        PART_NUMBER = "Part number"
+        DESCRIPTION = generic.DESCRIPTION
+        CONTROL_LIST_ENTRY = generic.CONTROL_LIST_ENTRY
+        PART_NUMBER = generic.PART_NUMBER
         APPLY = "Apply filters"
         CLEAR = "Clear filters"
         SHOW = "Show filters"
         HIDE = "Hide filters"
 
     class Table:
-        DESCRIPTION = "Description"
-        CONTROL_LIST_ENTRY = "Control list classification"
-        PART_NUMBER = "Part number"
+        DESCRIPTION = generic.DESCRIPTION
+        CONTROL_LIST_ENTRY = generic.CONTROL_LIST_ENTRY
+        IS_GOOD_CONTROLLED = generic.CONTROLLED
+        PART_NUMBER = generic.PART_NUMBER
+        QUANTITY = "Quantity"
+        VALUE = "Value"
+        INCORPORATED = "Incorporated"
         COUNTRIES = "Countries"
         STATUS = "Status"
+
+    class Documents:
+        TITLE = "Documents"
+        NO_DOCUMENT_ATTACHED = "This product has no documents attached"
+        NAME = "Name"
+        DESCRIPTION = "Description"
+        UPLOADED_BY = "Uploaded by"
 
 
 class DocumentSensitivityForm:
@@ -57,7 +76,7 @@ class CreateGoodForm:
     BUTTON = "Save and continue"
 
     class Description:
-        TITLE = "Description"
+        TITLE = generic.DESCRIPTION
         DESCRIPTION = "Include the product name to make it easier to find the product when needed."
 
     class IsControlled:
@@ -76,17 +95,11 @@ class CreateGoodForm:
         UNSURE = "I don't know"
 
     class ControlListEntry:
-        TITLE = "Control list classification"
-        DESCRIPTION = "For example, ML1a. "
-
-    class Incorporated:
-        TITLE = "Will the product be incorporated into another product?"
-        DESCRIPTION = ""
-        YES = "Yes"
-        NO = "No"
+        TITLE = generic.CONTROL_LIST_ENTRY
+        DESCRIPTION = "For example, ML1a."
 
     class PartNumber:
-        TITLE = "Part number (optional)"
+        TITLE = generic.PART_NUMBER
 
 
 class CLCQueryForm:
@@ -125,7 +138,7 @@ class EditGoodForm:
         UNSURE = "I don't know"
 
     class ControlListEntry:
-        TITLE = "Control list classification"
+        TITLE = generic.CONTROL_LIST_ENTRY
         DESCRIPTION = "For example, ML1a."
 
     class Incorporated:
@@ -191,16 +204,36 @@ class GoodPage:
         REFERENCE = "Reference"
 
 
-class CreateGoodOnApplicationForm:
-    TITLE = "Value and quantity of the product"
+class AddGoodToApplicationForm:
+    TITLE = "Add a product to your application"
+    DESCRIPTION = ""
     DOCUMENT_MISSING = "A document is required"
     BACK_LINK = "Back to products"
-    VALUE = "Total value"
-    QUANTITY = "Quantity"
-    UNITS = "Unit of measurement"
+
+    class Value:
+        TITLE = "Value of your products"
+        DESCRIPTION = ""
+
+    class VALUE:
+        TITLE = "Total value"
+        DESCRIPTION = ""
+
+    class Quantity:
+        TITLE = "Quantity"
+        DESCRIPTION = ""
+
+    class Units:
+        TITLE = "Unit of measurement"
+        DESCRIPTION = ""
+
+    class Incorporated:
+        TITLE = "Is this product incorporated?"
+        DESCRIPTION = ""
+        YES = "Yes"
+        NO = "No"
 
 
-class AddPrexistingGoodToApplicationForm:
+class AddPreexistingGoodToApplicationForm:
     TITLE = "Select a product from your product list"
 
 
