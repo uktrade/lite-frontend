@@ -52,6 +52,12 @@ def create_party(name, sub_type, website):
     }
 
 
+def create_third_party(name, sub_type, website):
+    party = create_party(name, sub_type, website)
+    party["role"] = "agent"
+    return party
+
+
 def create_document(name, description, s3_key):
     return {"name": name, "s3_key": s3_key, "size": 0, "description": description}
 
@@ -91,7 +97,7 @@ def create_request_data(exporter_user, gov_user, base_url):
         },
         "ultimate_end_user": create_party("Individual", "commercial", "https://www.anothergov.uk"),
         "consignee": create_party("Government", "government", "https://www.gov.uk"),
-        "third_party": create_party("Individual", "agent", "https://www.anothergov.uk"),
+        "third_party": create_third_party("Individual", "government", "https://www.anothergov.uk"),
         "add_good": {"good_id": "", "quantity": 1234, "unit": "NAR", "value": 123.45},
         "clc_good": {
             "description": "Targus",
