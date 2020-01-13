@@ -2,6 +2,7 @@ from shared.BasePage import BasePage
 
 
 class ApplicationPage(BasePage):
+
     BUTTON_WITHDRAW_APPLICATION_ID = "button-withdraw-application"
     BUTTON_EDIT_APPLICATION_ID = "button-edit-application"
     LABEL_APPLICATION_STATUS_ID = "label-application-status"

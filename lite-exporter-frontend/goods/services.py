@@ -19,7 +19,7 @@ def get_goods(request, page: int = 1, description=None, part_number=None, contro
 
 
 def get_good(request, pk):
-    data = get(request, GOODS_URL + pk)
+    data = get(request, GOODS_URL + str(pk))
     return data.json().get("good"), data.status_code
 
 

@@ -8,6 +8,7 @@ from selenium.webdriver.common.by import By
 from pages.add_end_user_pages import AddEndUserPages
 from pages.application_edit_type_page import ApplicationEditTypePage
 from pages.application_page import ApplicationPage
+from pages.open_application.add_goods_type import OpenApplicationAddGoodsType
 from pages.respond_to_ecju_query_page import RespondToEcjuQueryPage
 from pages.submitted_applications_page import SubmittedApplicationsPages
 from shared import functions
@@ -16,11 +17,6 @@ from ui_automation_tests.fixtures.register_organisation import (  # noqa
     register_organisation,
     register_organisation_for_switching_organisation,
     user_details,
-)
-from ui_automation_tests.fixtures.add_goods import (  # noqa
-    add_an_incorporated_good_to_application,
-    add_a_non_incorporated_good_to_application,
-    create_non_incorporated_good,
 )
 from ui_automation_tests.fixtures.add_party import add_end_user_to_application  # noqa
 from ui_automation_tests.fixtures.add_clc_query import add_clc_query  # noqa
@@ -60,7 +56,7 @@ from ui_automation_tests.shared.fixtures.urls import exporter_url, api_url  # no
 
 import shared.tools.helpers as utils
 from pages.add_goods_page import AddGoodPage
-from pages.application_overview_page import ApplicationOverviewPage
+from pages.generic_application.task_list import GenericApplicationTaskListPage
 from pages.apply_for_a_licence_page import ApplyForALicencePage
 from pages.attach_document_page import AttachDocumentPage
 from pages.exporter_hub_page import ExporterHubPage
@@ -212,7 +208,7 @@ def create_standard_application(driver, context):  # noqa
 
 @when("I click on application locations link")  # noqa
 def i_click_application_locations_link(driver):  # noqa
-    app = ApplicationOverviewPage(driver)
+    app = GenericApplicationTaskListPage(driver)
     app.click_application_locations_link()
 
 
@@ -264,19 +260,12 @@ def click_my_goods_link(driver):  # noqa
     exporter_hub.click_my_goods()
 
 
-@when("I click on standard goods tile")  # noqa
-def click_my_goods_link(driver):  # noqa
-    exporter_hub = ApplicationOverviewPage(driver)
-    exporter_hub.click_standard_goods_link()
-
-
 @when(  # noqa
     parsers.parse(
-        'I add a good or good type with description "{description}" controlled "{controlled}" control code '
-        '"{control_code}" incorporated "{incorporated}" and part number "{part}"'
+        'I add a good with description "{description}" controlled "{controlled}" control code "{control_code}" and part number "{part}"'
     )
 )
-def add_new_good(driver, description, controlled, control_code, incorporated, part, context):  # noqa
+def add_new_good(driver, description, controlled, control_code, part, context):  # noqa
     good_part_needed = True
     add_goods_page = AddGoodPage(driver)
     date_time = utils.get_current_date_time_string()
@@ -287,7 +276,6 @@ def add_new_good(driver, description, controlled, control_code, incorporated, pa
     context.control_code = control_code
     add_goods_page.enter_description_of_goods(good_description)
     add_goods_page.select_is_your_good_controlled(controlled)
-    add_goods_page.select_is_your_good_intended_to_be_incorporated_into_an_end_product(incorporated)
     if "not needed" in good_part:
         good_part_needed = False
     elif "empty" not in good_part:
@@ -334,7 +322,7 @@ def application_is_submitted(driver, context):  # noqa
 
 @then("I see the application overview")  # noqa
 def i_see_the_application_overview(driver, context):  # noqa
-    element = ApplicationOverviewPage(driver).get_text_of_lite_task_list_items()
+    element = GenericApplicationTaskListPage(driver).get_text_of_lite_task_list_items()
     assert "Reference name" in element
     assert context.app_name in element
 
@@ -471,22 +459,17 @@ def upload_a_file(driver, filename):  # noqa
     functions.click_submit(driver)
 
 
-@when("I add a non incorporated good to application")  # noqa
-def add_a_non_incorporated_good(driver, add_a_non_incorporated_good_to_application):  # noqa
-    pass
-
-
 @when("I click on end user")  # noqa
 def i_click_on_end_user(driver):  # noqa
-    app = ApplicationOverviewPage(driver)
-    utils.scroll_to_element_by_id(Shared(driver).driver, app.END_USER_LINK)
+    app = GenericApplicationTaskListPage(driver)
+    utils.scroll_to_element_by_id(driver, app.END_USER_LINK)
     app.click_end_user_link()
 
 
 @when("I click on consignees")  # noqa
 def i_click_on_consignees(driver):  # noqa
     utils.scroll_to_element_by_id(Shared(driver).driver, "consignees")
-    ApplicationOverviewPage(driver).click_consignee_link()
+    GenericApplicationTaskListPage(driver).click_consignee_link()
 
 
 @when("I click on activity tab")  # noqa
@@ -514,3 +497,21 @@ def wait_for_document(driver):  # noqa
 def click_my_end_user_advisory_link(driver):  # noqa
     exporter_hub = ExporterHubPage(driver)
     exporter_hub.click_end_user_advisories()
+
+
+@when(  # noqa
+    parsers.parse(
+        'I add a goods type with description "{description}" controlled "{controlled}" control code "{control_code}" incorporated "{incorporated}"'
+    )
+)
+def add_new_goods_type(driver, description, controlled, control_code, incorporated, context):  # noqa
+    OpenApplicationAddGoodsType(driver).enter_description(description)
+    OpenApplicationAddGoodsType(driver).select_is_your_good_controlled(controlled)
+    OpenApplicationAddGoodsType(driver).enter_control_code(control_code)
+    if incorporated != "N/A":
+        OpenApplicationAddGoodsType(driver).select_is_your_good_incorporated(incorporated)
+
+    context.good_description = description
+    context.control_code = control_code
+
+    functions.click_submit(driver)

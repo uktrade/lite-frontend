@@ -46,7 +46,6 @@ def document_switch(path):
             "attach_doc_title_string": strings.EndUser.Documents.AttachDocuments.TITLE,
             "attach_doc_return_later_string": strings.EndUser.Documents.SAVE_END_USER,
             "delete_conf_back_link_string": strings.EndUser.Documents.AttachDocuments.BACK_TO_APPLICATION_OVERVIEW,
-            # .AttachDocuments.DESCRIPTION_FIELD_TITLE
         }
     elif "consignee" in path:
         return {
@@ -79,10 +78,10 @@ def document_switch(path):
             "delete": delete_goods_type_document,
             "homepage": "applications:goods_types",
             "has_description": False,
-            "attach_doc_description_field_string": strings.GoodsTypes.Documents.AttachDocuments.DESCRIPTION_FIELD_TITLE,
-            "attach_doc_title_string": strings.GoodsTypes.Documents.AttachDocuments.TITLE,
-            "attach_doc_return_later_string": strings.GoodsTypes.Documents.SAVE_END_USER,
-            "delete_conf_back_link_string": strings.GoodsTypes.Documents.AttachDocuments.BACK_TO_APPLICATION_OVERVIEW,
+            "attach_doc_description_field_string": strings.AdditionalDocuments.Documents.AttachDocuments.DESCRIPTION_FIELD_TITLE,
+            "attach_doc_title_string": strings.AdditionalDocuments.Documents.AttachDocuments.TITLE,
+            "attach_doc_return_later_string": strings.AdditionalDocuments.Documents.SAVE_END_USER,
+            "delete_conf_back_link_string": strings.AdditionalDocuments.Documents.AttachDocuments.BACK_TO_APPLICATION_OVERVIEW,
         }
     elif "additional-document" in path:
         return {

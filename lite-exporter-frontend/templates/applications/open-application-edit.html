@@ -190,7 +190,7 @@
 				{% lcs 'applications.TaskListPage.WHERE_ARE_YOUR_GOODS_GOING_SHORT_TITLE' as countries_title %}
 				{% url 'applications:countries' application.id as countries_url %}
 				{% tld countries 'country' 'countries' as countries_description %}
-				{% include "includes/task-list-item.html" with title=countries_title url=countries_url status=countries|task_list_item_status description=countries_description %}
+				{% include "includes/task-list-item.html" with id="countries" title=countries_title url=countries_url status=countries|task_list_item_status description=countries_description %}
 
 				<!-- Good/country mapping -->
 				{% if goodstypes and countries and edit_type != "minor_edit" %}

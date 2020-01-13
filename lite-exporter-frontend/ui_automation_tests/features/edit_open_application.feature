@@ -14,7 +14,7 @@ Feature: I want to be able to edit and update an active application
     And I click on open goods tile
     And I remove a good type from the application
     Then no goods types are left on the application
-    When I add a good or good type with description "Sniper" controlled "Yes" control code "ML1a" incorporated "Yes" and part number "not needed"
+    When I add a goods type with description "Sniper" controlled "Yes" control code "ML1a" incorporated "Yes"
     And I click the back link
     And I submit the application
     And I go to application previously created

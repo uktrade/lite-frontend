@@ -1,7 +1,8 @@
 from shared.BasePage import BasePage
 
 
-class ApplicationCountriesList(BasePage):
+class OpenApplicationCountriesPage(BasePage):
+
     COUNTRIES_CHECKBOX = ".govuk-checkboxes__input"
     COUNTRIES_LABELS = ".govuk-checkboxes__label"
     COUNTRIES_SEARCH_BOX = "filter-box"  # ID

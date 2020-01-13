@@ -70,10 +70,10 @@
 			<ul class="lite-task-list__items {% if is_editing %}govuk-!-padding-0{% endif %}">
 				{% lcs 'applications.TaskListPage.ENTER_A_REFERENCE_NAME_SHORT_TITLE' as reference_name_title %}
 				{% url 'applications:edit_reference_name' application.id as reference_name_url %}
-				{% include "includes/task-list-item.html" with title=reference_name_title url=reference_name_url status="done" description=application.name %}
+				{% include "includes/task-list-item.html" with id="reference-name" title=reference_name_title url=reference_name_url status="done" description=application.name %}
 
 				{% url 'applications:edit_told_by_an_official' application.id as told_by_an_official_url %}
-				{% include "includes/task-list-item.html" with title="Told by an official that you need an export licence" url=told_by_an_official_url status="done" description=reference_number_description %}
+				{% include "includes/task-list-item.html" with id="told-by-an-official" title="Told by an official that you need an export licence" url=told_by_an_official_url status="done" description=reference_number_description %}
 			</ul>
 		</li>
 	</ol>
@@ -90,50 +90,12 @@
 			</h2>
 		    <ul class="lite-task-list__items {% if is_editing %}govuk-!-padding-0{% endif %}">
 		        <!-- Goods -->
-		        <li class="lite-task-list__item">
-					<div class="lite-task-list__item-header">
-                        <a id="standard-goods" href="{% url 'applications:goods' application.id %}" class="govuk-link govuk-link--no-visited-state">
-                            Goods
-                        </a>
-						{% if goods|length %}
-							<div class="lite-tag lite-tag--blue">
-								Done
-							</div>
-						{% else %}
-							<div class="lite-tag lite-tag--hollow">
-								Not started
-							</div>
-						{% endif %}
-		            </div>
-					<div class="lite-task-list__item-details">
-						{% if goods %}
-							<table class="govuk-table">
-								<tbody class="govuk-table__body">
-									<tr class="govuk-table__row">
-										<th class="govuk-table__header" scope="row">Description</th>
-										<th class="govuk-table__header" scope="row">Part Number</th>
-										<th class="govuk-table__header" scope="row">Qty</th>
-										<th class="govuk-table__header" scope="row">Unit</th>
-										<th class="govuk-table__header" scope="row">Value</th>
-										<th class="govuk-table__header" scope="row"></th>
-									</tr>
-									{% for good in goods %}
-										<tr class="govuk-table__row" id="good-on-application-row-{{ good.id }}">
-											<td class="govuk-table__cell" scope="row">{{ good.good.description }}</td>
-											<td class="govuk-table__cell" scope="row">{{ good.good.part_number|default_na }}</td>
-											<td class="govuk-table__cell" scope="row">{{ good.quantity }}</td>
-											<td class="govuk-table__cell" scope="row">{{ good.unit.value }}</td>
-											<td class="govuk-table__cell" scope="row">£{{ good.value|intcomma }}</td>
-										</tr>
-									{% endfor %}
-								</tbody>
-							</table>
-                            <p class="govuk-!-font-weight-bold">Total value: £{{ goods_value|intcomma }}</p>
-						{% endif %}
-					</div>
-		        </li>
+				{% lcs 'goods.GoodsList.TITLE' as goods_title %}
+				{% url 'applications:goods' application.id as goods_url %}
+				{% tld goods 'product' 'products' as goods_description %}
+				{% include "includes/task-list-item.html" with id='products' title=goods_title url=goods_url status=goods|task_list_item_status description=goods_description %}
 
-		        <!-- Add products -->
+		        <!-- Goods locations -->
 		        <li class="lite-task-list__item">
 					<div class="lite-task-list__item-header">
 						<a id="location" href="{% url 'applications:location' application.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
@@ -278,7 +240,6 @@
 				</li>
 
 				<!-- Consignee -->
-
 				<li class="lite-task-list__item">
 					<div class="lite-task-list__item-header">
                         {% if edit_type != 'minor_edit' %}
@@ -364,61 +325,18 @@
 					</div>
 				</li>
 
-				<!-- Ultimate End Users -->
+				<!-- Ultimate end users -->
 				{% if ultimate_end_users_required %}
-					<li class="lite-task-list__item">
-						<div class="lite-task-list__item-header">
-                            <a id="ultimate_end_users" href="{% url 'applications:ultimate_end_users' application.id %}" class="govuk-link govuk-link--no-visited-state">
-                                Ultimate End Users
-                            </a>
-							{% if ultimate_end_users and ultimate_end_users_documents_complete %}
-								<div class="lite-tag lite-tag--blue">
-									Done
-								</div>
-					        {% elif ultimate_end_users %}
-					            <div class="lite-tag lite-tag--orange">
-									In progress
-								</div>
-							{% else %}
-								<div class="lite-tag lite-tag--hollow">
-									Not started
-								</div>
-							{% endif %}
-						</div>
-						<div class="lite-task-list__item-details">
-							{% if ultimate_end_users %}
-								<table class="govuk-table">
-									<thead class="govuk-table__head">
-										<tr class="govuk-table__row">
-											<th class="govuk-table__header" scope="col">Name</th>
-						                    <th class="govuk-table__header" scope="col">Type</th>
-						                    <th class="govuk-table__header" scope="col">Website</th>
-											<th class="govuk-table__header" scope="col">Address</th>
-											<th class="govuk-table__header" scope="col">Country</th>
-											<th class="govuk-table__header" scope="col"></th>
-										</tr>
-									</thead>
-									<tbody class="govuk-table__body">
-										{% for ultimate_end_user in ultimate_end_users %}
-											<tr class="govuk-table__row" id="ultimate-end-user-row-{{ ultimate_end_user.id }}">
-												<td class="govuk-table__cell">{{ ultimate_end_user.name }}</td>
-						                        <td class="govuk-table__cell">{{ ultimate_end_user.sub_type.value }}</td>
-						                        <td class="govuk-table__cell">{{ ultimate_end_user.website|default_na }}</td>
-												<td class="govuk-table__cell">{{ ultimate_end_user.address }}</td>
-												<td class="govuk-table__cell">{{ ultimate_end_user.country.name }}</td>
-											</tr>
-										{% endfor %}
-									</tbody>
-								</table>
-							{% endif %}
-						</div>
-					</li>
+					{% lcs 'third_parties.UltimateEndUsers.TITLE' as ultimate_end_users_title %}
+					{% url 'applications:ultimate_end_users' application.id as ultimate_end_users_url %}
+					{% tld ultimate_end_users 'ultimate recipient' 'ultimate recipients' as ultimate_end_users_description %}
+					{% include "includes/task-list-item.html" with id='ultimate-recipients' title=ultimate_end_users_title url=ultimate_end_users_url status=ultimate_end_users|task_list_item_status description=ultimate_end_users_description %}
 				{% endif %}
 
-				<!-- Third Parties -->
+				<!-- Third parties -->
 				<li class="lite-task-list__item">
 					<div class="lite-task-list__item-header">
-                        <a id="third_parties" href="{% url 'applications:third_parties' application.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
+                        <a id="link-third-parties" href="{% url 'applications:third_parties' application.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
                         Third Parties
                         </a>
 				        {% if third_parties %}

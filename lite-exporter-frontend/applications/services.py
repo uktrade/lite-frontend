@@ -87,7 +87,7 @@ def post_good_on_application(request, pk, json):
     post_data = get_data_from_post_good_on_app(json)
     if "good_id" not in post_data:
         post_data["good_id"] = json["good_id"]
-    data = post(request, APPLICATIONS_URL + pk + "/goods/", post_data)
+    data = post(request, APPLICATIONS_URL + str(pk) + "/goods/", post_data)
     return data.json(), data.status_code
 
 

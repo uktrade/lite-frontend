@@ -4,13 +4,12 @@ from pytest_bdd import scenarios, when, then, parsers
 
 from conftest import get_file_upload_path
 from pages.add_goods_page import AddGoodPage
-from pages.application_goods_list import ApplicationGoodsList
-from pages.application_overview_page import ApplicationOverviewPage
 from pages.attach_document_page import AttachDocumentPage
-from pages.exporter_hub_page import ExporterHubPage
-from pages.goods_list import GoodsList
+from pages.goods_list import GoodsListPage
 from pages.goods_page import GoodsPage
-from pages.shared import Shared
+from pages.standard_application.goods import StandardApplicationGoodsPage
+from pages.standard_application.good_details import StandardApplicationGoodDetails
+from pages.standard_application.task_list import StandardApplicationTaskListPage
 from shared import functions
 
 scenarios("../features/goods.feature", strict_gherkin=False)
@@ -18,7 +17,7 @@ scenarios("../features/goods.feature", strict_gherkin=False)
 
 @then("I see good in goods list")
 def assert_good_is_in_list(driver, context, exporter_url):
-    goods_list = GoodsList(driver)
+    goods_list = GoodsListPage(driver)
     driver.get(exporter_url.rstrip("/") + "/goods/")
     goods_list.assert_goods_are_displayed_of_good_name(
         driver, context.good_description, context.part, context.control_code
@@ -27,7 +26,7 @@ def assert_good_is_in_list(driver, context, exporter_url):
 
 @then("I see the clc query in goods list")
 def assert_clc_is_in_list(driver, context, exporter_url):
-    goods_list = GoodsList(driver)
+    goods_list = GoodsListPage(driver)
     goods_list.assert_clc_goods_are_displayed_of_good_name(
         driver, context.good_description, context.part, context.control_code
     )
@@ -36,12 +35,12 @@ def assert_clc_is_in_list(driver, context, exporter_url):
 @when(
     parsers.parse(
         'I edit a good to description "{description}" controlled "{controlled}" '
-        'control code "{control_code}" incorporated "{incorporated}" and part number "{part}"'
+        'control code "{control_code}" and part number "{part}"'
     )
 )
-def edit_good(driver, description, controlled, control_code, incorporated, part, context):
+def edit_good(driver, description, controlled, control_code, part, context):
     add_goods_page = AddGoodPage(driver)
-    goods_list = GoodsList(driver)
+    goods_list = GoodsListPage(driver)
     goods_list.select_a_draft_good()
     goods_page = GoodsPage(driver)
     goods_page.click_on_goods_edit_link()
@@ -70,25 +69,24 @@ def click_on_draft_good(driver):
     text = driver.find_element_by_css_selector(".govuk-summary-list").text
     assert "edited" in text
     assert "Yes" in text
-    assert "No" in text
     assert "321" in text
 
 
 @when("I click to manage goods on a standard application")
 def i_click_to_manage_goods_on_a_standard_application(driver):
-    ApplicationOverviewPage(driver).click_standard_goods_link()
+    StandardApplicationTaskListPage(driver).click_goods_link()
 
 
 @then("I see there are no goods on the application")
 def i_see_there_are_no_goods_on_the_application(driver):
     driver.set_timeout_to(0)
-    assert ApplicationGoodsList(driver).get_goods_count() == 0
+    assert StandardApplicationGoodsPage(driver).get_goods_count() == 0
     driver.set_timeout_to(10)
 
 
 @when("I click Add a new good")
 def i_click_add_a_new_good(driver):
-    ApplicationGoodsList(driver).click_add_new_good_button()
+    StandardApplicationGoodsPage(driver).click_add_new_good_button()
 
 
 @when(parsers.parse('I attach a document to the good with description "{description}"'))  # noqa
@@ -112,31 +110,33 @@ def i_attach_a_document_to_the_good(driver, description):
 
 @then("A new good has been added to the application")
 def a_new_good_has_been_added_to_the_application(driver):
-    assert ApplicationGoodsList(driver).get_goods_count() == 1
+    assert StandardApplicationGoodsPage(driver).get_goods_count() == 1
 
 
 @when(
     parsers.parse(
-        'I add a new good with description "{description}" controlled "{controlled}" control code "{control_code}" '
-        'incorporated "{incorporated}" and part number "{part_number}"'
+        'I add a new good with description "{description}" controlled "{controlled}" control code "{control_code}" and part number "{part_number}"'
     )
 )  # noqa
-def create_a_new_good_in_application(driver, description, controlled, control_code, incorporated, part_number):
+def create_a_new_good_in_application(driver, description, controlled, control_code, part_number):
     add_goods_page = AddGoodPage(driver)
     add_goods_page.enter_description_of_goods(description)
     add_goods_page.select_is_your_good_controlled(controlled)
-    add_goods_page.select_is_your_good_intended_to_be_incorporated_into_an_end_product(incorporated)
     add_goods_page.enter_control_code(control_code)
     functions.click_submit(driver)
 
 
 @when(
     parsers.parse(
-        'I enter details for the new good on an application with value "{value}", quantity "{quantity}" and unit of measurement "{unit}" and I click Continue"'
+        'I enter details for the new good on an application with value "{value}", quantity "{quantity}" and unit of measurement "{unit}" and I click Continue'
     )
 )  # noqa
 def i_enter_detail_for_the_good_on_the_application(driver, value, quantity, unit):
-    ApplicationGoodsList(driver).add_values_to_good(value, quantity, unit)
+    StandardApplicationGoodDetails(driver).enter_value(value)
+    StandardApplicationGoodDetails(driver).enter_quantity(quantity)
+    StandardApplicationGoodDetails(driver).select_unit(unit)
+    StandardApplicationGoodDetails(driver).check_is_good_incorporated_false()
+
     functions.click_submit(driver)
 
 
@@ -173,8 +173,7 @@ def good_created(driver, context):
 
 @when("I click add a good button")  # noqa
 def click_add_from_organisation_button(driver):  # noqa
-    add_goods_page = AddGoodPage(driver)
-    add_goods_page.click_add_a_good()
+    GoodsListPage(driver).click_add_a_good()
 
 
 @when(parsers.parse('I upload file "{filename}" with description "{description}"'))  # noqa

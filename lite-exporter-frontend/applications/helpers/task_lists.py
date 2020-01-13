@@ -86,7 +86,7 @@ def _get_standard_application_task_list(request, application, errors=None):
         consignee_document = consignee_document.get("document")
 
     for good in goods:
-        if not good["good"]["is_good_end_product"]:
+        if good["is_good_incorporated"]:
             ultimate_end_users_required = True
 
     user_permissions = get_user_permissions(request)

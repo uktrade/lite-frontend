@@ -3,7 +3,18 @@
 {% load svg static %}
 
 {% block back_link %}
-	{% include 'includes/breadcrumbs.html' %}
+	<div class="govuk-breadcrumbs">
+		<ol class="govuk-breadcrumbs__list">
+			<li class="govuk-breadcrumbs__list-item">
+				<a class="govuk-breadcrumbs__link" href="{% url 'core:hub' %}">
+					{{ SERVICE_NAME }}
+				</a>
+			</li>
+			<li class="govuk-breadcrumbs__list-item">
+				{% lcs 'goods.GoodsList.TITLE' %}
+			</li>
+		</ol>
+	</div>
 {% endblock %}
 
 {% block body %}
@@ -16,7 +27,7 @@
 			</h1>
 		</div>
 		<div class="lite-app-bar__controls">
-			<a href="{% url 'goods:add' %}" id="add-a-good" class="govuk-button" draggable="false" role="button">
+			<a href="{% url 'goods:add' %}" id="button-add-a-good" class="govuk-button" draggable="false" role="button">
 				{% lcs 'goods.GoodsList.CREATE_GOOD' %}
 			</a>
 		</div>
@@ -34,46 +45,38 @@
             </a>
         </div>
         <form id="filters" action="{% url 'goods:goods'%}" method="get">
-
             <div class="govuk-grid-row lite-filter-bar">
-			<div method="get">
-				<div class="govuk-grid-column-one-quarter">
+				<div class="govuk-grid-column-one-third">
 					<label class="govuk-label" for="description">
 						{% lcs 'goods.GoodsList.Filter.DESCRIPTION' %}
 					</label>
 					<input class="govuk-input" id="description" name="description" type="text" autocomplete="off" autocorrect="off"  value="{{ description }}">
 				</div>
-                <div class="govuk-grid-column-one-quarter">
+                <div class="govuk-grid-column-one-third">
 					<label class="govuk-label" for="control_rating">
 						{% lcs 'goods.GoodsList.Filter.CONTROL_LIST_ENTRY' %}
 					</label>
 					<input class="govuk-input" id="control_rating" name="control_rating" type="text" autocomplete="off" autocorrect="off"  value="{{ control_code }}">
 				</div>
-				<div class="govuk-grid-column-one-quarter">
+				<div class="govuk-grid-column-one-third">
 					<label class="govuk-label" for="part_number">
 						{% lcs 'goods.GoodsList.Filter.PART_NUMBER' %}
 					</label>
 					<input class="govuk-input" id="part_number" name="part_number" type="text" autocomplete="off" autocorrect="off"  value="{{ part_number }}">
 				</div>
-				<div class="govuk-grid-column-one-quarter">
-                     <label class="govuk-label" for="filter">
-                        --
-                    </label>
-                    <div class="lite-buttons-row">
-                        <button type="submit" form="filters" class="govuk-button" id="button-apply-filters">
-						    {% lcs 'goods.GoodsList.Filter.APPLY' %}
-                        </button>
-                        <a href="{% url 'goods:goods' %}" class="govuk-button govuk-button--secondary" id="button-clear-filters">
-	                        {% lcs 'goods.GoodsList.Filter.CLEAR' %}
-	                    </a>
-                    </div>
-				</div>
-            </div>
+				<div class="govuk-grid-column-one-third govuk-!-margin-top-6">
+                    <button type="submit" form="filters" class="govuk-button govuk-!-margin-0" id="button-apply-filters">
+					    {% lcs 'goods.GoodsList.Filter.APPLY' %}
+                    </button>
+                    <a href="{% url 'goods:goods' %}" class="govuk-button govuk-!-margin-bottom-0 govuk-!-margin-left-3 govuk-button--secondary govuk-button--secondary-white" id="button-clear-filters">
+                        {% lcs 'goods.GoodsList.Filter.CLEAR' %}
+                    </a>
+                </div>
             </div>
         </form>
     {% endif %}
 
-    <p class="govuk-caption-m">
+    <p class="govuk-caption-m govuk-!-margin-top-1">
         {% if not filtered %}
             {% include 'includes/pluralise.html' with count=goods.count base_constant='goods.GoodsList.Count.ORGANISATION' %}
         {% else %}
@@ -85,10 +88,10 @@
         <table class="govuk-table">
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
-                    <th class="govuk-table__header" scope="col">{% lcs 'goods.GoodsList.Table.DESCRIPTION'%}</th>
-                    <th class="govuk-table__header" scope="col">{% lcs 'goods.GoodsList.Table.CONTROL_LIST_ENTRY'%}</th>
-                    <th class="govuk-table__header" scope="col">{% lcs 'goods.GoodsList.Table.PART_NUMBER'%}</th>
-                    <th class="govuk-table__header" scope="col">{% lcs 'goods.GoodsList.Table.STATUS'%}</th>
+                    <th class="govuk-table__header" scope="col">{% lcs 'goods.GoodsList.Table.DESCRIPTION' %}</th>
+                    <th class="govuk-table__header" scope="col">{% lcs 'goods.GoodsList.Table.CONTROL_LIST_ENTRY' %}</th>
+                    <th class="govuk-table__header" scope="col">{% lcs 'goods.GoodsList.Table.PART_NUMBER' %}</th>
+                    <th class="govuk-table__header" scope="col">{% lcs 'goods.GoodsList.Table.STATUS' %}</th>
                 </tr>
             </thead>
             <tbody class="govuk-table__body">

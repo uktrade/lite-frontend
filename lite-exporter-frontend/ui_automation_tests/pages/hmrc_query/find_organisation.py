@@ -3,7 +3,7 @@ from selenium.webdriver.common.keys import Keys
 from shared.BasePage import BasePage
 
 
-class HMRCQueryPage(BasePage):
+class HMRCQueryFindOrganisationPage(BasePage):
 
     TEXTBOX = ".govuk-input"
     ORG_RADIO_GUTTON_ID_PART = "organisation-"

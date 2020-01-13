@@ -194,7 +194,7 @@ def task_list_item_status(data):
     """
     Returns 'not started' if length of data given is none, else returns 'done'
     """
-    if len(data) == 0:
+    if not data:
         return NOT_STARTED
 
     return DONE

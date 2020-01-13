@@ -14,10 +14,10 @@
 			</h1>
 		</div>
         {% if application.status.key in 'applicant_editing,draft' %}
-        <div class="lite-app-bar__controls">
-			<a href="{% url 'applications:new_good' application.id %}" id='add-new' role='button' draggable='false' class='govuk-button'>{% lcs 'goods.ViewGoodOnApplicationPage.ADD_NEW_BUTTON' %}</a>
-			<a href="{% url 'applications:preexisting_good' application.id %}" role='button' draggable='false' class='govuk-button'>{% lcs 'Goods.AddFromOrganisation.BUTTON' %}</a>
-		</div>
+	        <div class="lite-app-bar__controls">
+				<a id="button-add-new-good" href="{% url 'applications:new_good' application.id %}" role='button' draggable='false' class='govuk-button'>{% lcs 'goods.ViewGoodOnApplicationPage.ADD_NEW_BUTTON' %}</a>
+				<a id="button-add-preexisting-good" href="{% url 'applications:preexisting_good' application.id %}" role='button' draggable='false' class='govuk-button'>{% lcs 'Goods.AddFromOrganisation.BUTTON' %}</a>
+			</div>
         {% endif %}
 	</div>
 
@@ -25,11 +25,12 @@
 		<table class="govuk-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
-					<th scope="col" class="govuk-table__header">Description</th>
-					<th scope="col" class="govuk-table__header">Part number</th>
-					<th scope="col" class="govuk-table__header">Control list classification</th>
-					<th scope="col" class="govuk-table__header">Quantity</th>
-					<th scope="col" class="govuk-table__header">Value</th>
+					<th scope="col" class="govuk-table__header">{% lcs 'goods.GoodsList.Table.DESCRIPTION' %}</th>
+					<th scope="col" class="govuk-table__header">{% lcs 'goods.GoodsList.Table.CONTROL_LIST_ENTRY' %}</th>
+					<th scope="col" class="govuk-table__header">{% lcs 'goods.GoodsList.Table.PART_NUMBER' %}</th>
+					<th scope="col" class="govuk-table__header">{% lcs 'goods.GoodsList.Table.QUANTITY' %}</th>
+					<th scope="col" class="govuk-table__header">{% lcs 'goods.GoodsList.Table.VALUE' %}</th>
+					<th scope="col" class="govuk-table__header">{% lcs 'goods.GoodsList.Table.INCORPORATED' %}</th>
 					<th scope="col" class="govuk-table__header"></th>
 				</tr>
 			</thead>
@@ -41,16 +42,19 @@
 							{% if good_on_application.good.status.key == 'verified' %}<span class="app-verified__symbol">{% svg 'verified' %}</span><span class="govuk-visually-hidden"> (Verified product)</span>{% endif %}
 						</td>
 						<td class="govuk-table__cell">
-							{{ good_on_application.good.part_number|default_na }}
-						</td>
-						<td class="govuk-table__cell">
 							{{ good_on_application.good.control_code|default_na }}
 						</td>
 						<td class="govuk-table__cell">
-							{{ good_on_application.quantity }} {{ good_on_application.unit.value|units_pluralise:good_on_application.quantity }}
+							{{ good_on_application.good.part_number|default_na }}
+						</td>
+						<td class="govuk-table__cell">
+							{{ good_on_application.quantity|intcomma }} {{ good_on_application.unit.value|units_pluralise:good_on_application.quantity }}
 						</td>
 						<td class="govuk-table__cell">
 							£{{ good_on_application.value|intcomma }}
+						</td>
+						<td class="govuk-table__cell">
+							{{ good_on_application.is_good_incorporated|friendly_boolean }}
 						</td>
 						<td class="govuk-table__cell govuk-table__cell--numeric">
 							<a class="govuk-link lite-link--icon" href="{% url 'applications:remove_preexisting_good' application.id good_on_application.id %}">
@@ -62,7 +66,7 @@
 				{% endfor %}
 			</tbody>
 		</table>
-		<p class="govuk-body govuk-!-font-weight-bold">Total value<span class="govuk-visually-hidden"> of products</span>: £{{ goods_value|intcomma }}</p>
+		<p class="govuk-body govuk-!-font-weight-bold">Total value<span class="govuk-visually-hidden"> of products</span>: <span id="span-goods-total-value">£{{ goods_value|intcomma }}</span></p>
 	{% else %}
 		<div class="lite-information-text">
 			<span class="lite-information-text__icon" aria-hidden="true">!</span>

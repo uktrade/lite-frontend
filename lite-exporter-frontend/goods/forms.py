@@ -3,6 +3,7 @@ from django.urls import reverse, reverse_lazy
 from core.services import get_control_list_entries
 from goods.helpers import good_summary
 from goods.services import get_document_missing_reasons
+from lite_content.lite_exporter_frontend import generic
 from lite_content.lite_exporter_frontend.goods import (
     DocumentSensitivityForm,
     CreateGoodForm,
@@ -10,6 +11,7 @@ from lite_content.lite_exporter_frontend.goods import (
     EditGoodForm,
     AttachDocumentForm,
     RespondToQueryForm,
+    GoodsList,
 )
 from lite_forms.common import control_list_entry_question
 from lite_forms.components import (
@@ -26,40 +28,34 @@ from lite_forms.components import (
     Label,
     Select,
     Group,
+    Breadcrumbs,
 )
 from lite_forms.generators import confirm_form
+from lite_forms.helpers import conditional
 from lite_forms.styles import ButtonStyle
 
 
-def add_goods_questions(allow_query=True, back_link=BackLink):
-    if allow_query:
-        description = CreateGoodForm.IsControlled.DESCRIPTION
-        is_your_good_controlled_options = [
-            Option(key="yes", value=CreateGoodForm.IsControlled.YES, show_pane="pane_control_code"),
-            Option(key="no", value=CreateGoodForm.IsControlled.NO),
-            Option(key="unsure", value=CreateGoodForm.IsControlled.UNSURE),
-        ]
-    else:
-        description = CreateGoodForm.IsControlled.CLC_REQUIRED
-        is_your_good_controlled_options = [
-            Option(key="yes", value=CreateGoodForm.IsControlled.YES, show_pane="pane_control_code"),
-            Option(key="no", value=CreateGoodForm.IsControlled.NO),
-        ]
-
-    form = Form(
-        title=CreateGoodForm.TITLE,
+def add_goods_questions(application_pk=None):
+    return Form(
+        title=conditional(application_pk, CreateGoodForm.TITLE, "Add a product to your organisation"),
         questions=[
             TextArea(
                 title=CreateGoodForm.Description.TITLE,
                 description=CreateGoodForm.Description.DESCRIPTION,
                 name="description",
-                extras={"max_length": 280,},
+                extras={"max_length": 280},
             ),
             RadioButtons(
                 title=CreateGoodForm.IsControlled.TITLE,
-                description=description,
+                description=conditional(
+                    application_pk, CreateGoodForm.IsControlled.DESCRIPTION, CreateGoodForm.IsControlled.CLC_REQUIRED,
+                ),
                 name="is_good_controlled",
-                options=is_your_good_controlled_options,
+                options=[
+                    Option(key="yes", value=CreateGoodForm.IsControlled.YES, show_pane="pane_control_code"),
+                    Option(key="no", value=CreateGoodForm.IsControlled.NO),
+                    conditional(not application_pk, Option(key="unsure", value=CreateGoodForm.IsControlled.UNSURE)),
+                ],
                 classes=["govuk-radios--inline"],
             ),
             control_list_entry_question(
@@ -69,23 +65,21 @@ def add_goods_questions(allow_query=True, back_link=BackLink):
                 name="control_code",
                 inset_text=False,
             ),
-            RadioButtons(
-                title=CreateGoodForm.Incorporated.TITLE,
-                description=CreateGoodForm.Incorporated.DESCRIPTION,
-                name="is_good_end_product",
-                options=[
-                    Option(key="no", value=CreateGoodForm.Incorporated.YES),
-                    Option(key="yes", value=CreateGoodForm.Incorporated.NO),
-                ],
-                classes=["govuk-radios--inline"],
-            ),
             TextInput(title=CreateGoodForm.PartNumber.TITLE, name="part_number", optional=True),
         ],
-        back_link=back_link,
+        back_link=conditional(
+            application_pk,
+            BackLink(generic.BACK, reverse_lazy("applications:goods", kwargs={"pk": application_pk})),
+            Breadcrumbs(
+                [
+                    BackLink(generic.SERVICE_NAME, reverse_lazy("core:hub")),
+                    BackLink(GoodsList.TITLE, reverse_lazy("goods:goods")),
+                    BackLink(GoodsList.CREATE_GOOD),
+                ]
+            ),
+        ),
         default_button_name=CreateGoodForm.BUTTON,
     )
-
-    return form
 
 
 def raise_a_clc_query(good_id):
@@ -139,16 +133,6 @@ def edit_form(good_id):
                 description=EditGoodForm.IsControlled.DESCRIPTION,
                 name="control_code",
                 inset_text=False,
-            ),
-            RadioButtons(
-                title=EditGoodForm.Incorporated.TITLE,
-                description=EditGoodForm.Incorporated.DESCRIPTION,
-                name="is_good_end_product",
-                options=[
-                    Option(key=True, value=EditGoodForm.Incorporated.YES),
-                    Option(key=False, value=EditGoodForm.Incorporated.NO),
-                ],
-                classes=["govuk-radios--inline"],
             ),
             TextInput(title=EditGoodForm.PartNumber.TITLE, name="part_number", optional=True),
         ],
@@ -224,7 +208,7 @@ def respond_to_query_form(good_id, ecju_query):
                 name="response",
                 title=RespondToQueryForm.Response.TITLE,
                 description=RespondToQueryForm.Response.DESCRIPTION,
-                extras={"max_length": 2200,},
+                extras={"max_length": 2200},
             ),
             HiddenField(name="form_name", value="respond_to_query"),
         ],

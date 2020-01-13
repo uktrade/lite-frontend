@@ -1,5 +1,3 @@
-from http import HTTPStatus
-
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
@@ -83,7 +81,7 @@ class GoodsList(TemplateView):
 class AddGood(SingleFormView):
     def init(self, request, **kwargs):
         self.draft_pk = kwargs["pk"]
-        self.form = add_goods_questions(allow_query=False)
+        self.form = add_goods_questions(self.draft_pk)
         self.action = post_goods
 
     def get_success_url(self):
@@ -149,32 +147,13 @@ class DraftOpenGoodsTypeList(TemplateView):
         return render(request, "applications/goodstype/index.html", context)
 
 
-class AddGoodToApplication(TemplateView):
-    def get(self, request, **kwargs):
-        good, _ = get_good(request, str(kwargs["good_pk"]))
-        title = strings.goods.AddPrexistingGoodToApplicationForm.TITLE
-        context = {
-            "title": title,
-            "page": good_on_application_form(good, get_units(request), title),
-        }
-        return render(request, "form.html", context)
-
-    def post(self, request, **kwargs):
-        draft_id = str(kwargs["pk"])
-        data, status_code = post_good_on_application(request, draft_id, request.POST)
-
-        if status_code != HTTPStatus.CREATED:
-            good, status_code = get_good(request, str(kwargs["good_pk"]))
-            title = strings.goods.AddPrexistingGoodToApplicationForm.TITLE
-            context = {
-                "title": title,
-                "page": good_on_application_form(good, get_units(request), title),
-                "data": request.POST,
-                "errors": data.get("errors"),
-            }
-            return render(request, "form.html", context)
-
-        return redirect(reverse_lazy("applications:goods", kwargs={"pk": draft_id}))
+class AddGoodToApplication(SingleFormView):
+    def init(self, request, **kwargs):
+        self.object_pk = kwargs["pk"]
+        good, _ = get_good(request, kwargs["good_pk"])
+        self.form = good_on_application_form(good, get_units(request))
+        self.action = post_good_on_application
+        self.success_url = reverse_lazy("applications:goods", kwargs={"pk": self.object_pk})
 
 
 class RemovePreexistingGood(TemplateView):

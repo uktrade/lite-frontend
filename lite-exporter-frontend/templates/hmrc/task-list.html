@@ -16,13 +16,13 @@
 			</h2>
 		    <ul class="lite-task-list__items">
 				{% url 'applications:goods_types' application.id as goods_url %}
-				{% include "includes/task-list-item.html" with title="Describe your goods" url=goods_url status=goods_types_status %}
+				{% include "includes/task-list-item.html" with id="goods" title="Describe your goods" url=goods_url status=goods_types_status %}
 
 				{% url 'applications:location' application.id as goods_location_url %}
-				{% include "includes/task-list-item.html" with title="Goods locations" url=goods_location_url status=goods_locations_status %}
+				{% include "includes/task-list-item.html" with id="goods-location" title="Goods locations" url=goods_location_url status=goods_locations_status %}
 
 				{% url 'applications:end_user' application.id as end_user_url %}
-				{% include "includes/task-list-item.html" with title="Set end user" url=end_user_url status=end_user_status %}
+				{% include "includes/task-list-item.html" with id="end-user" title="Set end user" url=end_user_url status=end_user_status %}
 
 				{% url 'applications:ultimate_end_users' application.id as ultimate_end_user_url %}
 				{% include "includes/task-list-item.html" with title="Add ultimate end users" url=ultimate_end_user_url status=ultimate_end_users_status optional=True %}
@@ -37,7 +37,7 @@
 				{% include "includes/task-list-item.html" with title="Attach supporting documentation" url=supporting_documentation_url status=supporting_documentation_status optional=True %}
 
 				{% url 'applications:optional_note' application.id as optional_note_url %}
-				{% include "includes/task-list-item.html" with title="Explain the reason behind your query" url=optional_note_url status=optional_note_status optional=True %}
+				{% include "includes/task-list-item.html" with id="reasoning" title="Explain the reason behind your query" url=optional_note_url status=optional_note_status optional=True %}
 			</ul>
 		</li>
 	</ol>

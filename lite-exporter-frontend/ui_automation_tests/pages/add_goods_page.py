@@ -12,12 +12,9 @@ class AddGoodPage(BasePage):
 
     # Good summary page
     GOOD_SUMMARY = ".govuk-summary-list"  # CSS
-    ADD_A_GOOD_BTN = "add-a-good"  # ID
 
     # Add a good
     PART_NUMBER = "part_number"  # ID
-    GOOD_IS_END_PRODUCT = "is_good_end_product-yes"  # ID
-    GOOD_IS_NOT_END_PRODUCT = "is_good_end_product-no"  # ID
     IS_CONTROLLED = "is_good_controlled-"  # Partial ID
     CONTROL_CODE = "control_code"  # ID
     DESCRIPTION = "description"  # ID
@@ -25,9 +22,6 @@ class AddGoodPage(BasePage):
     # Not sure form
     UNSURE_CODE = "not_sure_details_control_code"  # ID
     UNSURE_DETAILS = "not_sure_details_details"  # ID
-
-    def click_add_a_good(self):
-        self.driver.find_element_by_id(self.ADD_A_GOOD_BTN).click()
 
     def enter_description_of_goods(self, description):
         self.driver.find_element_by_id(self.DESCRIPTION).send_keys(description)
@@ -53,12 +47,6 @@ class AddGoodPage(BasePage):
         unsure_details = self.driver.find_element_by_id(self.UNSURE_DETAILS)
         unsure_details.clear()
         unsure_details.send_keys(details)
-
-    def select_is_your_good_intended_to_be_incorporated_into_an_end_product(self, option, prefix=""):
-        if option == "Yes":
-            self.driver.find_element_by_id(prefix + self.GOOD_IS_NOT_END_PRODUCT).click()
-        else:
-            self.driver.find_element_by_id(prefix + self.GOOD_IS_END_PRODUCT).click()
 
     def enter_part_number(self, part_number):
         part_number_tb = self.driver.find_element_by_id(self.PART_NUMBER)

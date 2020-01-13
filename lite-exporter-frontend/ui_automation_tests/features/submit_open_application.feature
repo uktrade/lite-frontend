@@ -4,7 +4,6 @@ Feature: I want to indicate the open licence I want
   I want to indicate the kind of licence I want
   So that I am more likely to get the correct kind of licence or the kind of licence I would like
 
-
   @LT_1114 @submit_open_application @LT_1092_search @smoke
   Scenario: Submit open application
     Given I go to exporter homepage and choose Test Org
@@ -16,13 +15,13 @@ Feature: I want to indicate the open licence I want
     And I click the back link
     And I click on the goods link from overview
     And I click Add goods type button
-    And I add a good or good type with description "Sniper" controlled "Yes" control code "ML1a" incorporated "Yes" and part number "not needed"
+    And I add a goods type with description "Sniper" controlled "Yes" control code "ML1a" incorporated "Yes"
     Then I see my goods type added at position "1" with a description and a control code
     When I click the back link
     Then I see my goods type added to the overview page with a description and a control code
     When I click on the goods link from overview
     And I click Add goods type button
-    When I add a good or good type with description "M4" controlled "Yes" control code "ML1a" incorporated "Yes" and part number "not needed"
+    When I add a goods type with description "M4" controlled "Yes" control code "ML1a" incorporated "Yes"
     Then I see my goods type added at position "2" with a description and a control code
     When I click the back link
     Then I see my goods type added to the overview page with a description and a control code

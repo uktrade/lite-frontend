@@ -3,7 +3,7 @@ from selenium.common.exceptions import NoSuchElementException
 from shared.BasePage import BasePage
 
 
-class ApplicationGoodsTypeList(BasePage):
+class OpenApplicationGoodsTypesPage(BasePage):
 
     ADD_GOODS_TYPE_BUTTON = ".govuk-button"
     GOODS_TYPE_INFO = ".govuk-table__row"

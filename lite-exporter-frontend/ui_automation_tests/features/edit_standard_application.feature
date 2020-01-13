@@ -15,7 +15,7 @@ Feature: I want to be able to edit and update an active application
     Then I see my edited reference name
     When I change my reference number
     Then I see my edited reference number
-    When I click on standard goods tile
+    When I click on goods
     And I remove a good from the application
     Then the good has been removed from the application
     When I click the back link

@@ -15,7 +15,7 @@ Feature: I want to be able to perform actions as a HMRC user
     And I wait for document to upload
     And I click the back link
     And I click on hmrc describe your goods
-    When I add a good or good type with description "M4" controlled "Yes" control code "ML1a" incorporated "No" and part number "not needed"
+    When I add a goods type with description "M4" controlled "Yes" control code "ML1a" incorporated "N/A"
     And I click the back link
     And I click on application hmrc locations link
     And I select "organisation" for where my goods are located

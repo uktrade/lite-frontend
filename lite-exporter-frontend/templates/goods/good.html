@@ -3,31 +3,48 @@
 {% load svg %}
 
 {% block back_link %}
-	<a href="{% url 'goods:goods' %}" id="back-link" class="govuk-back-link">Back to goods</a>
+	<div class="govuk-breadcrumbs">
+		<ol class="govuk-breadcrumbs__list">
+			<li class="govuk-breadcrumbs__list-item">
+				<a class="govuk-breadcrumbs__link" href="{% url 'core:hub' %}">
+					{{ SERVICE_NAME }}
+				</a>
+			</li>
+			<li class="govuk-breadcrumbs__list-item">
+				<a class="govuk-breadcrumbs__link" href="{% url 'goods:goods' %}">
+					{% lcs 'goods.GoodsList.TITLE' %}
+				</a>
+			</li>
+			<li class="govuk-breadcrumbs__list-item">
+				{% lcs 'goods.GoodsList.GOOD' %}
+			</li>
+		</ol>
+	</div>
 {% endblock %}
 
 {% block body %}
 	{% if good.status.key == 'verified' %}
 		<div class="lite-info-bar lite-info-bar--no-animation app-info-bar--verified">
 			{% svg 'verified' %}
-			This good has been verified by ECJU based on the information provided
+			{% lcs 'goods.GoodsList.VERIFIED' %}
 		</div>
 	{% endif %}
 
 	<div class="govuk-grid-row">
 		<div class="govuk-grid-column-two-thirds">
-
 			<div class="lite-app-bar">
 				<div class="lite-app-bar__content">
 					<h1 class="govuk-heading-l">
 						{% block title %}
-							Good
+							{% lcs 'goods.GoodsList.GOOD' %}
 						{% endblock %}
 					</h1>
 				</div>
 				{% if good.status.key == 'draft' %}
 					<div class="lite-app-bar__controls">
-						<a href="{% url 'goods:edit' good.id %}" id="edit-{{ good.id }}" class="govuk-button govuk-button--secondary">Edit good</a>
+						<a href="{% url 'goods:edit' good.id %}" id="edit-{{ good.id }}" class="govuk-button govuk-button--secondary">
+                            {% lcs 'goods.GoodsList.EDIT_GOOD_LINK' %}
+                        </a>
 					</div>
 				{% endif %}
 			</div>
@@ -35,7 +52,7 @@
 			<!-- Notify the user if their good has a special status -->
 			{% if good.status.key == 'clc_query' %}
 				<div class="govuk-inset-text">
-					Your good is currently being reviewed by ECJU. It'll have limited functionality until the review is complete.
+					{% lcs 'goods.GoodsList.IN_REVIEW' %}
 				</div>
 				<br>
 			{% endif %}
@@ -67,19 +84,19 @@
 
 				<br><br>
 
-				<h3 class="govuk-heading-m">Your Good</h3>
+				<h3 class="govuk-heading-m">{% lcs 'goods.GoodsList.YOUR_GOOD' %}</h3>
 			{% endif %}
 
 			{% if good.status.key == 'submitted' %}
 				<div class="govuk-inset-text">
-					Your good has been used in an application and can therefore no longer be changed.
+                    {% lcs 'goods.GoodsList.NO_LONGER_CAN_BE_CHANGED' %}
 				</div>
 				<br>
 			{% endif %}
 
 			{% if good.status.key == 'draft' %}
 				<div class="govuk-inset-text">
-					If you're unsure about whether your good is controlled or not, you can <a href="{% url 'goods:raise_clc_query' good.id %}" class="govuk-link govuk-link--no-visited-state">raise a query</a> to
+					If you're unsure about whether your product is controlled or not, you can <a href="{% url 'goods:raise_clc_query' good.id %}" class="govuk-link govuk-link--no-visited-state">raise a query</a> to
 					get help from ECJU.
 				</div>
 				<br>
@@ -89,7 +106,7 @@
 			<dl class="govuk-summary-list">
 				<div class="govuk-summary-list__row">
 					<dt class="govuk-summary-list__key">
-						Description
+						{% lcs "goods.GoodsList.Table.DESCRIPTION" %}
 					</dt>
 					<dd class="govuk-summary-list__value">
 						{{ good.description }}
@@ -97,36 +114,30 @@
 				</div>
 				<div class="govuk-summary-list__row">
 					<dt class="govuk-summary-list__key">
-						Is the good controlled?
+						{% lcs "goods.GoodsList.Table.IS_GOOD_CONTROLLED" %}
 					</dt>
 					<dd class="govuk-summary-list__value">
-						{{ good.is_good_controlled|title }}
+						{{ good.is_good_controlled.value }}
 					</dd>
 				</div>
 				{% if good.control_code %}
 					<div class="govuk-summary-list__row">
 						<dt class="govuk-summary-list__key">
-							Control list entry
+							{% lcs "goods.GoodsList.Table.CONTROL_LIST_ENTRY" %}
 						</dt>
 						<dd class="govuk-summary-list__value">
 							{{ good.control_code }}
+							<br>
+							<span class="govuk-hint govuk-!-margin-top-1">{{ control_list_entry_text }}</span>
 						</dd>
 					</div>
 				{% endif %}
 				<div class="govuk-summary-list__row">
 					<dt class="govuk-summary-list__key">
-						Part Number
+						{% lcs "goods.GoodsList.Table.PART_NUMBER" %}
 					</dt>
 					<dd class="govuk-summary-list__value">
 						{{ good.part_number|default_na }}
-					</dd>
-				</div>
-				<div class="govuk-summary-list__row">
-					<dt class="govuk-summary-list__key">
-						Is the good intended to be incorporated into an end product?
-					</dt>
-					<dd class="govuk-summary-list__value">
-						{{ good.is_good_end_product|friendly_boolean }}
 					</dd>
 				</div>
 			</dl>
@@ -136,7 +147,7 @@
 			<!-- Documents -->
 		    <div class="lite-app-bar">
 				<div class="lite-app-bar__content">
-					<h3 class="govuk-heading-m">Documents</h3>
+					<h3 class="govuk-heading-m">{% lcs 'goods.GoodsList.Documents.TITLE' %}</h3>
 				</div>
 				<div class="lite-app-bar__controls">
 				    {% if good.status.key == 'draft' %}
@@ -152,50 +163,44 @@
 
 				<br>
 
-					<table class="govuk-table">
-						<thead class="govuk-table__head">
-							<tr class="govuk-table__row">
-								<th scope="col" class="govuk-table__header">Name</th>
-								<th scope="col" class="govuk-table__header">Description</th>
-								<th scope="col" class="govuk-table__header">Uploaded by</th>
-								<th scope="col" class="govuk-table__header"></th>
-							</tr>
-						</thead>
-						<tbody class="govuk-table__body">
-							{% for document in documents %}
-								<tr id="document-{{ document.id }}" class="govuk-table__row">
-									<td class="govuk-table__cell">{{ document.name }}</td>
-									<td class="govuk-table__cell">{{ document.description|default_na|slice:"0:40" }} {% if document.description|length > 40 %}...{% endif %}</td>
-									<td class="govuk-table__cell">{{ document.user.first_name }} {{ document.user.last_name }} at {{ document.created_at|str_date }}</td>
-									<td class="govuk-table__cell govuk-table__cell--numeric">
-										{% if document.safe == True %}
-					                        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:document' pk=good.id file_pk=document.id %}">
-					                            <span class="govuk-visually-hidden">{% lcs 'Goods.Documents.DOWNLOAD_DOCUMENT' %}</span>
-					                            Download
-					                        </a>
-					                        {% if good.status.key == 'draft' %}
-					                            <a href="{% url 'goods:delete_document' good.id document.id %}" class="govuk-link">
-					                                Delete
-					                            </a>
-					                        {% endif %}
-					                    {% elif document.safe == False %}
-					                        <p class="govuk-label">{% lcs 'Goods.Documents.VIRUS_INFECTED' %}</p>
-					                    {% else %}
-					                        <p class="govuk-label">{% lcs 'Goods.Documents.PROCESSING' %}</p>
-					                    {% endif %}
-									</td>
-								</tr>
-							{% endfor %}
-						</tbody>
-					</table>
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header">{% lcs 'goods.GoodsList.Documents.NAME' %}</th>
+                            <th scope="col" class="govuk-table__header">{% lcs 'goods.GoodsList.Documents.DESCRIPTION' %}</th>
+                            <th scope="col" class="govuk-table__header">{% lcs 'goods.GoodsList.Documents.UPLOADED_BY' %}</th>
+                            <th scope="col" class="govuk-table__header"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        {% for document in documents %}
+                            <tr id="document-{{ document.id }}" class="govuk-table__row">
+                                <td class="govuk-table__cell">{{ document.name }}</td>
+                                <td class="govuk-table__cell">{{ document.description|default_na|slice:"0:40" }} {% if document.description|length > 40 %}...{% endif %}</td>
+                                <td class="govuk-table__cell">{{ document.user.first_name }} {{ document.user.last_name }} at {{ document.created_at|str_date }}</td>
+                                <td class="govuk-table__cell govuk-table__cell--numeric">
+                                    {% if document.safe == True %}
+                                        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:document' pk=good.id file_pk=document.id %}">
+                                            <span class="govuk-visually-hidden">{% lcs 'Goods.Documents.DOWNLOAD_DOCUMENT' %}</span>
+                                            Download
+                                        </a>
+                                        {% if good.status.key == 'draft' %}
+                                            <a href="{% url 'goods:delete_document' good.id document.id %}" class="govuk-link">
+                                                Delete
+                                            </a>
+                                        {% endif %}
+                                    {% elif document.safe == False %}
+                                        <p class="govuk-label">{% lcs 'Goods.Documents.VIRUS_INFECTED' %}</p>
+                                    {% else %}
+                                        <p class="govuk-label">{% lcs 'Goods.Documents.PROCESSING' %}</p>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
 		    {% else %}
-				<div class="lite-information-text">
-					<span class="lite-information-text__icon" aria-hidden="true">!</span>
-					<p class="lite-information-text__text">
-					<span class="govuk-visually-hidden">Information</span>
-						This good has no documents attached
-					</p>
-				</div>
+				{% include "includes/notice.html" with text="goods.GoodsList.Documents.NO_DOCUMENT_ATTACHED" %}
 		    {% endif %}
 
 		    {% if good.query %}

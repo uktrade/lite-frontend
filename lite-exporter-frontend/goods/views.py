@@ -19,6 +19,7 @@ from applications.services import (
     get_status_properties,
 )
 from core.helpers import convert_dict_to_query_params
+from core.services import get_control_list_entry
 from goods import forms
 from goods.forms import (
     edit_form,
@@ -101,10 +102,16 @@ class GoodsDetail(TemplateView):
     def get(self, request, **kwargs):
         documents = get_good_documents(request, str(self.good_id))
 
+        # Add the good's control list entry text if possible
+        control_list_entry_text = ""
+        if self.good["control_code"]:
+            control_list_entry_text = get_control_list_entry(request, self.good["control_code"])["text"]
+
         context = {
             "good": self.good,
             "documents": documents,
             "type": self.view_type,
+            "control_list_entry_text": control_list_entry_text,
         }
 
         if self.good["query"]:
@@ -260,7 +267,7 @@ class AttachDocuments(TemplateView):
         if "errors" in good_document_upload(request, good_id, data):
             return error_page(request, strings.goods.AttachDocumentPage.UPLOAD_FAILURE_ERROR)
 
-        if good["is_good_controlled"] == "unsure":
+        if good["is_good_controlled"]["key"] == "unsure":
             return redirect(reverse("goods:raise_clc_query", kwargs={"pk": good_id}))
 
         return redirect(reverse("goods:good", kwargs={"pk": good_id}))
