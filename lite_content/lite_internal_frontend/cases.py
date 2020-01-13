@@ -227,7 +227,7 @@ class ClcQuery:
         DOWNLOAD = "Download"
 
 
-class ChangeStatus:
+class ChangeStatusPage:
     TITLE_APPLICATION = "Application Status"
     TITLE_CLC = "CLC Query Status"
     TITLE_EUA = "End User Advisory Status"
