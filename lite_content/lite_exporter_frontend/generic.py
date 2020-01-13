@@ -10,7 +10,10 @@ PART_NUMBER = "Part number"
 CONTROL_LIST_ENTRY = "Control list entry"
 CONTROLLED = "Controlled"
 INCORPORATED = "Incorporated"
-INFORMATION = "Information"
+
+
+class NoticeComponent:
+    INFORMATION = "Information"
 
 
 class Document:

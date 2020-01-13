@@ -16,6 +16,7 @@ class ThirdPartiesPage:
 
 
 class UltimateEndUsers:
+    BACK = "Back to application overview"
     TITLE = "Ultimate recipients"
     HELP = "What is an ultimate recipient?"
     DESCRIPTION = (
