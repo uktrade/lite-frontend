@@ -237,3 +237,17 @@ class DeleteDocument:
 class TaskListPage:
     ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference name"
     WHERE_ARE_YOUR_GOODS_GOING_SHORT_TITLE = "Set countries"
+
+
+class ThirdPartiesPage:
+    TITLE = "Third parties"
+    ADD = "Add a third party"
+    NO_RESULTS = "You haven't added any third parties to your application"
+
+    class Variables:
+        NAME = "Name"
+        TYPE = "Type"
+        WEBSITE = "Website"
+        ADDRESS = "Address"
+        COUNTRY = "Country"
+        DOCUMENT = "Document"
