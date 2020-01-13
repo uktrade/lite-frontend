@@ -53,7 +53,7 @@ class DocumentSensitivityForm:
 
 
 class CreateGoodForm:
-    TITLE = "Add a new product to your application"
+    TITLE = "Add product"
     BUTTON = "Save and continue"
 
     class Description:
@@ -96,12 +96,12 @@ class CLCQueryForm:
     BUTTON = "Save"
 
     class CLCCode:
-        TITLE = "What do you think is the product's control list classification?"
+        TITLE = "What do you think is the product's control list classification? (optional)"
         DESCRIPTION = "For example, ML1a."
 
     class Additional:
-        TITLE = "Product details"
-        DESCRIPTION = "Include details of why you don't know if your product is controlled"
+        TITLE = "Product details (optional)"
+        DESCRIPTION = "Include details of why you don't know if the product is controlled."
 
 
 class EditGoodForm:
@@ -114,7 +114,12 @@ class EditGoodForm:
 
     class IsControlled:
         TITLE = "Is the product on the control list?"
-        DESCRIPTION = "If you don't know you can use " + PERMISSION_FINDER_LINK
+        DESCRIPTION = (
+            "Products that aren't on the " + PERMISSION_FINDER_LINK + "may be affected "
+            "by military end use controls, current trade sanctions and embargoes or weapons of "
+            "mass destruction controls. If the product isn't subject to any controls, you'll get "
+            "a no licence required (NLR) document from ECJU."
+        )
         YES = "Yes"
         NO = "No"
         UNSURE = "I don't know"
@@ -164,10 +169,10 @@ class RespondToQueryForm:
 
     class Response:
         TITLE = "Your response"
-        DESCRIPTION = "You won't be able to edit this once submitted."
+        DESCRIPTION = "You won't be able to edit the response once it's submitted."
 
     class ConfirmationForm:
-        TITLE = "Confirm you want to send this response"
+        TITLE = "Confirm you want to send the response?"
         BACK_LINK = "Back to edit response"
         YES = "Confirm and send the response"
         NO = "Cancel and change the response"
