@@ -71,6 +71,7 @@ CASE_ACTIVITY_HEADING = "Activity"
 # Good
 GOOD_DESCRIPTION = "Description"
 GOOD_CONTROL_LIST_ENTRY = "Control list entry"
+GOOD_INCORPORATED = "Incorporated"
 GOOD_CONTROLLED = "Controlled"
 GOOD_FLAGS = "Flags"
 
