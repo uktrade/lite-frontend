@@ -159,6 +159,7 @@
 								<th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs 'GOOD_DESCRIPTION' %}</th>
 								<th scope="col" class="govuk-table__header">{% lcs 'GOOD_CONTROLLED' %}</th>
 								<th scope="col" class="govuk-table__header">{% lcs 'GOOD_CONTROL_LIST_ENTRY' %}</th>
+								<th scope="col" class="govuk-table__header">{% lcs 'GOOD_INCORPORATED' %}</th>
 								<th scope="col" class="govuk-table__header"></th>
 							</tr>
 						</thead>
@@ -172,6 +173,7 @@
 									<td class="govuk-table__cell">{{ good.description }}</td>
 									<td class="govuk-table__cell">{{ good.is_good_controlled|friendly_boolean }}</td>
 									<td class="govuk-table__cell">{{ good.control_code|default_na }}</td>
+									<td class="govuk-table__cell">{{ good.is_good_incorporated|friendly_boolean }}</td>
 									<td class="govuk-table__cell">
 										<a onclick="return openTableFold(this);">
 											{% svg 'chevron' %}

@@ -10,6 +10,7 @@
             <th class="govuk-table__header" scope="col">{% lcs 'CASES.ApplicationPage.Goods.Table.CLC' %}</th>
 			<th class="govuk-table__header" scope="col">{% lcs 'CASES.ApplicationPage.Goods.Table.DESCRIPTION' %}</th>
             <th class="govuk-table__header">{% lcs 'CASES.ApplicationPage.Goods.Table.VALUE' %}</th>
+			<th class="govuk-table__header">{% lcs 'GOOD_INCORPORATED' %}</th>
 			<th class="govuk-table__header">{% lcs 'CASES.ApplicationPage.Goods.Table.DOCUMENTS' %}</th>
             <th class="govuk-table__header">{% lcs 'CASES.ApplicationPage.Goods.Table.FLAGS' %}</th>
 			{% if show_advice %}
@@ -33,6 +34,7 @@
                 	{{ good_on_application.good.description }}
                 </td>
 				<td class="govuk-table__cell">{{ good_on_application.quantity }} {{ good_on_application.unit.value }}/£{{ good_on_application.value|intcomma }}</td>
+				<td class="govuk-table__cell">{{ good_on_application.is_good_incorporated|friendly_boolean }}</td>
 				<td class="govuk-table__cell">
                     {% if good_on_application.good.documents %}
                         {% for document in good_on_application.good.documents %}
@@ -46,7 +48,7 @@
                         {% lcs 'CASES.ApplicationPage.Goods.MISSING_DOCUMENT_REASON_PREFIX' %}{{ good_on_application.good.missing_document_reason.value }}
                     {% endif %}
                 <td class="govuk-table__cell">
-                    {% for flag in good_on_application.good.flags %}
+                    {% for flag in good_on_application.flags %}
                         {{ flag.name }}<br>
                     {% endfor %}
                 </td>
