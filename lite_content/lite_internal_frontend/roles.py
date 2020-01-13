@@ -1,11 +1,13 @@
 class ManageRolesPage:
+    ADD_BUTTON = "Create a new role"
+    DESCRIPTION = "Roles define permissions for users to perform a set of tasks"
     TAB = "Roles"
-    ADD_BUTTON = "Add role"
+    TITLE = "Roles"
 
     class Table:
-        HEADER_ROLE = "Role"
-        HEADER_PERMISSIONS = "Users with this role "
-        EDIT_ROLE = "Edit"
+        EDIT_BUTTON = "Edit"
+        HEADER = "Role"
+        PERMISSIONS_TITLE = "Users with this role can"
 
 
 class AddRoleForm:
@@ -28,5 +30,5 @@ class EditRoleForm:
     PERMISSION_CHECKBOXES_DESCRIPTION = ""
     STATUSES_CHECKBOXES_TITLE = "Select the statuses this role can set manually"
     STATUSES_CHECKBOXES_DESCRIPTION = ""
-    BACK_TO_ROLES = "Back to roles"
+    FORM_BACK_TO_ROLES = "Back to roles"
     FORM_CREATE = "Save"
