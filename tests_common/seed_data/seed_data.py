@@ -75,8 +75,8 @@ class SeedData:
             body={"sites": [self.context["primary_site_id"]]},
         )
 
-    def create_draft(self, draft):
-        data = self.request_data["application"] if draft is None else draft
+    def create_draft(self, draft=None):
+        data = self.request_data["application"] if not draft else draft
         response = make_request(
             "POST", base_url=self.base_url, url="/applications/", headers=self.export_headers, body=data,
         )

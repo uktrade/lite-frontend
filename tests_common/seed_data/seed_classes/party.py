@@ -31,8 +31,8 @@ class Party(SeedClass):
         ).json()["end_user_advisory"]["id"]
         self.add_to_context("end_user_advisory_id", str(id))
 
-    def add_end_user(self, draft_id, enduser):
-        end_user_data = self.request_data["end-user"] if enduser is None else enduser
+    def add_end_user(self, draft_id, enduser=None):
+        end_user_data = self.request_data["end-user"] if not enduser else enduser
         end_user = make_request(
             "POST",
             base_url=self.base_url,
