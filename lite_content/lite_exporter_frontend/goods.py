@@ -25,7 +25,7 @@ class GoodsList:
 
     class Filter:
         DESCRIPTION = generic.DESCRIPTION
-        CONTROL_LIST_ENTRY = generic.CONTROL_LIST_ENTRY
+        CONTROL_LIST_ENTRY = "Control list classification"
         PART_NUMBER = generic.PART_NUMBER
         APPLY = "Apply filters"
         CLEAR = "Clear filters"
@@ -34,7 +34,7 @@ class GoodsList:
 
     class Table:
         DESCRIPTION = generic.DESCRIPTION
-        CONTROL_LIST_ENTRY = generic.CONTROL_LIST_ENTRY
+        CONTROL_LIST_ENTRY = "Control list classification"
         IS_GOOD_CONTROLLED = "Is the product on the control list?"
         PART_NUMBER = generic.PART_NUMBER
         QUANTITY = "Quantity"
@@ -95,7 +95,7 @@ class CreateGoodForm:
         UNSURE = "I don't know"
 
     class ControlListEntry:
-        TITLE = generic.CONTROL_LIST_ENTRY
+        TITLE = "Control list classification"
         DESCRIPTION = "For example, ML1a."
 
     class PartNumber:
@@ -138,7 +138,7 @@ class EditGoodForm:
         UNSURE = "I don't know"
 
     class ControlListEntry:
-        TITLE = generic.CONTROL_LIST_ENTRY
+        TITLE = "Control list classification"
         DESCRIPTION = "For example, ML1a."
 
     class Incorporated:
