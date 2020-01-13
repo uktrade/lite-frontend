@@ -21,6 +21,7 @@ from conf.constants import (
     GOODSTYPE_COUNTRY_URL,
     STATUS_PROPERTIES_URL,
     GENERATED_DOCUMENTS_URL,
+    EXISTING_PARTIES_URL,
 )
 from conf.settings import AWS_STORAGE_BUCKET_NAME, STREAMING_CHUNK_SIZE
 from django.http import StreamingHttpResponse
@@ -143,13 +144,13 @@ def get_ultimate_end_users(request, pk):
 
 
 def post_ultimate_end_user(request, pk, json):
-    data = post(request, APPLICATIONS_URL + pk + "/ultimate-end-users/", json)
+    data = post(request, APPLICATIONS_URL + str(pk) + "/ultimate-end-users/", json)
     return data.json(), data.status_code
 
 
 def delete_ultimate_end_user(request, pk, obj_pk):
     data = delete(request, APPLICATIONS_URL + pk + "/ultimate-end-users/" + obj_pk)
-    return data.json(), data.status_code
+    return data.status_code
 
 
 # Ultimate end user Documents
@@ -175,7 +176,7 @@ def get_third_parties(request, pk):
 
 
 def post_third_party(request, pk, json):
-    data = post(request, APPLICATIONS_URL + pk + THIRD_PARTIES_URL, json)
+    data = post(request, APPLICATIONS_URL + str(pk) + THIRD_PARTIES_URL, json)
     return data.json(), data.status_code
 
 
@@ -209,6 +210,14 @@ def post_consignee(request, pk, json):
 def delete_consignee(request, pk):
     data = delete(request, APPLICATIONS_URL + pk + CONSIGNEE_URL)
     return data.status_code
+
+
+# Existing Parties
+def get_existing_parties(request, pk, name=None, address=None, country=None):
+    params = {"name": name, "address": address, "country": country}
+    params = convert_parameters_to_query_params(params)
+    data = get(request, APPLICATIONS_URL + str(pk) + EXISTING_PARTIES_URL + params)
+    return data.json(), data.status_code
 
 
 # Consignee Documents

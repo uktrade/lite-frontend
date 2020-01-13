@@ -22,6 +22,7 @@ from ui_automation_tests.fixtures.add_goods import (  # noqa
     add_a_non_incorporated_good_to_application,
     create_non_incorporated_good,
 )
+from ui_automation_tests.fixtures.add_party import add_end_user_to_application  # noqa
 from ui_automation_tests.fixtures.add_clc_query import add_clc_query  # noqa
 from ui_automation_tests.fixtures.add_end_user_advisory import add_end_user_advisory  # noqa
 from ui_automation_tests.fixtures.internal_ecju_query import (  # noqa
@@ -35,6 +36,7 @@ from ui_automation_tests.fixtures.internal_case_note import (  # noqa
 )
 from ui_automation_tests.fixtures.manage_case import manage_case_status_to_withdrawn  # noqa
 
+from ui_automation_tests.shared.fixtures.add_a_draft import add_a_draft  # noqa
 from ui_automation_tests.shared.fixtures.apply_for_application import (  # noqa
     apply_for_standard_application,
     add_an_ecju_query,
@@ -113,6 +115,11 @@ def pytest_exception_interact(node, report):
 
 @given("I create a standard application via api")  # noqa
 def standard_application_exists(apply_for_standard_application):  # noqa
+    pass
+
+
+@given("I create a draft")  # noqa
+def create_a_draft(add_a_draft):  # noqa
     pass
 
 
@@ -217,6 +224,7 @@ def i_click_application_locations_link(driver):  # noqa
 )
 def add_new_end_user(driver, type, name, website, address, country, context):  # noqa
     add_end_user_pages = AddEndUserPages(driver)
+    add_end_user_pages.create_new_or_copy_existing(copy_existing=False)
     add_end_user_pages.select_type(type)
     context.type_end_user = type
     functions.click_submit(driver)

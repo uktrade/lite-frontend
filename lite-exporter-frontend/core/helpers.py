@@ -78,7 +78,7 @@ def convert_parameters_to_query_params(dictionary: dict):
     if "request" in dictionary:
         del dictionary["request"]
 
-    return "?" + convert_dict_to_query_params({key: value for key, value in dictionary.items() if value is not None})
+    return "?" + convert_dict_to_query_params({key: value for key, value in dictionary.items() if value})
 
 
 def convert_to_link(address, name=None, classes="", include_br=False):

@@ -1,8 +1,8 @@
-from lite_forms.components import RadioButtons, Form, Option, FormGroup
+from django.urls import reverse_lazy
 
-from lite_content.lite_exporter_frontend.applications import ThirdPartyForm, PartyForm
-from applications.forms.end_user import _party_name_form, _party_website_form, _party_address_form
-from applications.components import back_to_task_list
+from applications.forms.parties import party_name_form, party_website_form, party_address_form
+from lite_content.lite_exporter_frontend.applications import ThirdPartyForm, PartyForm, PartyTypeForm
+from lite_forms.components import BackLink, RadioButtons, Form, Option, FormGroup
 
 option_list = {
     "agent": ThirdPartyForm.Options.AGENT,
@@ -15,16 +15,16 @@ option_list = {
 }
 
 
-def _third_party_type_form(application, title, button, options):
+def _third_party_type_form(application, title, button, options, back_url):
     return Form(
         title=title,
         questions=[RadioButtons("sub_type", options=options)],
         default_button_name=button,
-        back_link=back_to_task_list(application["id"]),
+        back_link=BackLink(PartyTypeForm.BACK_LINK, reverse_lazy(back_url, kwargs={"pk": application["id"]})),
     )
 
 
-def third_party_forms(application):
+def third_party_forms(application, strings, back_url):
     form_options = option_list.copy()
     if application["export_type"] and application["export_type"]["key"] == "permanent":
         del form_options["additional_end_user"]
@@ -34,9 +34,9 @@ def third_party_forms(application):
 
     return FormGroup(
         [
-            _third_party_type_form(application, ThirdPartyForm.TITLE, ThirdPartyForm.BUTTON, options),
-            _party_name_form(ThirdPartyForm.NAME_FORM_TITLE, ThirdPartyForm.BUTTON),
-            _party_website_form(ThirdPartyForm.WEBSITE_FORM_TITLE, ThirdPartyForm.BUTTON),
-            _party_address_form(ThirdPartyForm.ADDRESS_FORM_TITLE, ThirdPartyForm.SUBMIT_BUTTON),
+            _third_party_type_form(application, strings.TITLE, strings.BUTTON, options, back_url),
+            party_name_form(strings.NAME_FORM_TITLE, strings.BUTTON),
+            party_website_form(strings.WEBSITE_FORM_TITLE, strings.BUTTON),
+            party_address_form(strings.ADDRESS_FORM_TITLE, strings.SUBMIT_BUTTON),
         ]
     )

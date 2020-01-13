@@ -220,3 +220,8 @@ def set_lcs_variable(value, arg):
         return value % arg
     except TypeError:
         return value
+
+
+@register.filter()
+def get(value, arg):
+    return value.get(arg)

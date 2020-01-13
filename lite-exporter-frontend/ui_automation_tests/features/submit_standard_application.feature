@@ -77,3 +77,23 @@ Feature: I want to indicate the standard licence I want
     When I submit the application
     And I click applications
     Then I see submitted application
+
+  @LT_1074_copy_existing_party @regression
+  Scenario: Submit standard application with external locations and ultimate end users
+    Given I go to exporter homepage and choose Test Org
+    And I create a draft
+    And I seed an end user for the draft
+    When I create a standard application
+    And I click on end user
+    And I select that I want to copy an existing party
+    When I filter for my previously created end user
+    Then I can select the existing party in the table
+    When I select a party type and continue
+    Then I see the party name is already filled in
+    When I click continue
+    Then I see the party website is already filled in
+    When I click continue
+    Then I see the party address and country is already filled in
+    When I click continue
+    And I skip uploading a document
+    Then I see end user on overview

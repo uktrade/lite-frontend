@@ -17,6 +17,7 @@ def i_click_on_application_third_parties_link(driver):
 def i_remove_a_third_party_from_the_application(driver):
     remove_good_link = ApplicationOverviewPage(driver).find_remove_third_party_link()
     driver.execute_script("arguments[0].click();", remove_good_link)
+    functions.click_back_link(driver)
 
 
 @then("the third party has been removed from the application")
@@ -39,11 +40,11 @@ def no_goods_are_left_on_the_application(driver):
 def i_remove_the_end_user_off_the_application(driver):
     remove_end_user_link = ApplicationOverviewPage(driver).find_remove_end_user_link()
     driver.execute_script("arguments[0].click();", remove_end_user_link)
+    functions.click_back_link(driver)
 
 
 @then("no end user is set on the application")
 def no_end_user_is_set_on_the_application(driver):
-    functions.click_back_link(driver)
     assert (ApplicationOverviewPage(driver).find_remove_end_user_link(), None)
 
 
@@ -51,11 +52,11 @@ def no_end_user_is_set_on_the_application(driver):
 def i_remove_the_consignee_off_the_application(driver):
     remove_consignee_link = ApplicationOverviewPage(driver).find_remove_consignee_link()
     driver.execute_script("arguments[0].click();", remove_consignee_link)
+    functions.click_back_link(driver)
 
 
 @then("no consignee is set on the application")
 def no_consignee_is_set_on_the_application(driver):
-    functions.click_back_link(driver)
     assert (ApplicationOverviewPage(driver).find_remove_consignee_link(), None)
 
 

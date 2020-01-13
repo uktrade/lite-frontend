@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from s3chunkuploader.file_handler import S3FileUploadHandler
 
-from applications.forms.end_user import attach_document_form, delete_document_confirmation_form
+from applications.forms.parties import attach_document_form, delete_document_confirmation_form
 from applications.helpers.reverse_documents import document_switch
 from applications.services import add_document_data, download_document_from_s3
 from lite_content.lite_exporter_frontend import strings

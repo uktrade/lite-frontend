@@ -1,11 +1,13 @@
-from pytest_bdd import scenarios, when, then, parsers
+from pytest_bdd import scenarios, when, then, parsers, given
 
 from pages.add_new_external_location_form_page import AddNewExternalLocationFormPage
 from pages.external_locations_page import ExternalLocationsPage
 from pages.preexisting_locations_page import PreexistingLocationsPage
 from pages.which_location_form_page import WhichLocationFormPage
+from pages.add_end_user_pages import AddEndUserPages
+from pages.attach_document_page import AttachDocumentPage
 from shared import functions
-from shared.tools.helpers import scroll_to_element_by_id
+from shared.tools.helpers import scroll_to_element_by_id, paginated_search
 from shared.tools.wait import wait_for_download_button, wait_for_element
 from pages.application_overview_page import ApplicationOverviewPage
 from pages.shared import Shared
@@ -56,9 +58,6 @@ def one_ultimate_end_user(driver):
 @then("I see end user on overview")
 def end_user_on_overview(driver, context):
     app = ApplicationOverviewPage(driver)
-    assert "Type" in app.get_text_of_end_user_table()
-    assert "Name" in app.get_text_of_end_user_table()
-    assert "Address" in app.get_text_of_end_user_table()
     assert context.type_end_user.capitalize() in app.get_text_of_end_user_table()
     assert context.name_end_user in app.get_text_of_end_user_table()
     assert context.address_end_user in app.get_text_of_end_user_table()
@@ -151,3 +150,67 @@ def i_click_on_add_new_address(driver):  # noqa
 def i_click_add_preexisting_locations(driver):  # noqa
     external_locations_page = ExternalLocationsPage(driver)
     external_locations_page.click_preexisting_locations()
+
+
+@given("I seed an end user for the draft")
+def seed_end_user(add_end_user_to_application):
+    pass
+
+
+@when("I select that I want to copy an existing party")
+def copy_existing_party_yes(driver):
+    AddEndUserPages(driver).create_new_or_copy_existing(copy_existing=True)
+
+
+@then("I can select the existing party in the table")
+def party_table(driver, context):
+    text = [context.end_user[key] for key in ["name", "address", "website"]]
+    text.append(context.end_user["country"]["name"])
+    row = Shared(driver).get_table_row(1)
+
+    for string in text:
+        assert string in row.text
+
+    AddEndUserPages(driver).click_copy_existing_button()
+
+
+@when("I select a party type and continue")
+def select_party_type(driver, context):
+    type = "government"
+    AddEndUserPages(driver).select_type(type)
+    context.type_end_user = type
+    functions.click_submit(driver)
+
+
+@then("I see the party name is already filled in")
+def party_name_autofill(driver, context):
+    assert AddEndUserPages(driver).get_name() == context.end_user["name"]
+
+
+@then("I see the party website is already filled in")
+def party_website_autofill(driver, context):
+    assert AddEndUserPages(driver).get_website() == context.end_user["website"]
+
+
+@then("I see the party address and country is already filled in")
+def party_address_autofill(driver, context):
+    assert AddEndUserPages(driver).get_address() == context.end_user["address"]
+    assert AddEndUserPages(driver).get_country() == context.end_user["country"]["id"]
+
+
+@when("I skip uploading a document")
+def skip_document_upload(driver, context):
+    AttachDocumentPage(driver).click_save_and_return_to_overview_link()
+    # Setup for checking on overview page
+    context.name_end_user = context.end_user["name"]
+    context.address_end_user = context.end_user["address"]
+
+
+@when("I filter for my previously created end user")
+def filter_for_party(driver, context):
+    parties_page = AddEndUserPages(driver)
+    parties_page.open_parties_filter()
+    parties_page.filter_name(context.end_user["name"])
+    parties_page.filter_address(context.end_user["address"])
+    parties_page.filter_country(context.end_user["country"]["name"])
+    parties_page.submit_filter()

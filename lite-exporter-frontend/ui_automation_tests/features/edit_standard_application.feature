@@ -26,8 +26,7 @@ Feature: I want to be able to edit and update an active application
     When I click on the application third parties link
     And I remove a third party from the application
     Then the third party has been removed from the application
-    When I click the back link
-    And I remove an additional document
+    When I remove an additional document
     And I confirm I want to delete the document
     Then the document is removed from the application
 
