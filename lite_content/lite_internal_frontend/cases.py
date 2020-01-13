@@ -225,3 +225,9 @@ class ClcQuery:
     class Documents:
         TITLE = "Documents"
         DOWNLOAD = "Download"
+
+
+class ChangeStatus:
+    TITLE_APPLICATION = "Application Status"
+    TITLE_CLC = "CLC Query Status"
+    TITLE_EUA = "End User Advisory Status"
