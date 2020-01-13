@@ -53,7 +53,7 @@ class CreateGoodsTypeForm:
         DESCRIPTION = "Include the product name to make it easier to find."
 
     class IsControlled:
-        TITLE = "Are the products controlled?"
+        TITLE = "Is the product on the control list?"
         DESCRIPTION = (
             "Products that aren't on the "
             + generic.PERMISSION_FINDER_LINK

@@ -7,7 +7,7 @@ BACK_TO_APPLICATION_OVERVIEW = "Back to application overview"
 
 DESCRIPTION = "Description"
 PART_NUMBER = "Part number"
-CONTROL_LIST_ENTRY = "Control list entry"
+CONTROL_LIST_ENTRY = "Control list classification"
 CONTROLLED = "Controlled"
 INCORPORATED = "Incorporated"
 

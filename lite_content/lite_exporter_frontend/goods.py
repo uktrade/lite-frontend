@@ -10,10 +10,10 @@ class GoodsList:
     EDIT_GOOD_LINK = "Edit product"
     IN_REVIEW = (
         "Your product is currently being reviewed by ECJU. "
-        "It'll have limited functionality until the review is complete."
+        "It has limited functionality until the review is complete."
     )
-    YOUR_GOOD = "Your product"
-    NO_LONGER_CAN_BE_CHANGED = "Your good has been used in an application and can therefore no longer be changed."
+    YOUR_GOOD = "Product"
+    NO_LONGER_CAN_BE_CHANGED = "Your product has been used in an application and can therefore no longer be changed."
 
     class Count:
         ORGANISATION_ZERO = "Your organisation doesn't have any products."
@@ -35,7 +35,7 @@ class GoodsList:
     class Table:
         DESCRIPTION = generic.DESCRIPTION
         CONTROL_LIST_ENTRY = generic.CONTROL_LIST_ENTRY
-        IS_GOOD_CONTROLLED = generic.CONTROLLED
+        IS_GOOD_CONTROLLED = "Is the product on the control list?"
         PART_NUMBER = generic.PART_NUMBER
         QUANTITY = "Quantity"
         VALUE = "Value"
@@ -45,7 +45,7 @@ class GoodsList:
 
     class Documents:
         TITLE = "Documents"
-        NO_DOCUMENT_ATTACHED = "This product has no documents attached"
+        NO_DOCUMENT_ATTACHED = "The product has no documents attached"
         NAME = "Name"
         DESCRIPTION = "Description"
         UPLOADED_BY = "Uploaded by"

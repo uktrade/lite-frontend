@@ -240,7 +240,7 @@ class EuaeQuery:
 
 class Hub:
     DESCRIPTION = "Home for exporters"
-    TITLE = "Exporter hub"
+    TITLE = "Export control account"
 
 
 class Licences:
