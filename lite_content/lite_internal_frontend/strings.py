@@ -1,7 +1,4 @@
-from lite_content.lite_internal_frontend import cases, letter_templates
-
-Cases = cases
-LETTER_TEMPLATES = letter_templates
+from lite_content.lite_internal_frontend import cases, letter_templates  # noqa
 
 # Buttons
 CONTINUE = "Continue"
