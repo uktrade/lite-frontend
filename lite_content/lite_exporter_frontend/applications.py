@@ -5,6 +5,36 @@ class PartyForm:
         INDIVIDUAL = "An individual"
         OTHER = "Other"
 
+    class CopyExistingForm:
+        TITLE = "Do you want to resuse an existing party?"
+        YES = "Yes"
+        NO = "No"
+        BACK_LINK = "Back to application"
+        BUTTON = "Submit"
+
+
+class PartyTypeForm:
+    BACK_LINK = "Back"
+
+
+class AddPartyForm:
+    ERROR = "Select yes if you want to copy an existing party"
+
+
+class CopyExistingPartyPage:
+    TITLE = "Existing Parties"
+    BACK_LINK = "Back"
+    HEADING = "Add a party you've created before"
+    ADD_BUTTON = "Add to application"
+    NONE_FOUND = "No existing parties found"
+    RESULTS = " results found"
+
+    class Table:
+        NAME_COLUMN = "Name"
+        ADDRESS_COLUMN = "Address"
+        COUNTRY_COLUMN = "Country"
+        WEBSITE_COLUMN = "Website"
+
 
 class EndUserForm:
     TITLE = "Select the type of end user"
@@ -13,6 +43,11 @@ class EndUserForm:
     WEBSITE_FORM_TITLE = "End user website address (optional)"
     ADDRESS_FORM_TITLE = "End user address"
     SUBMIT_BUTTON = "Save and continue"
+
+
+class EndUserPage:
+    TITLE = "End user"
+    DELETE_ERROR = "Unexpected error removing end user"
 
 
 class UltimateEndUserForm:
@@ -24,6 +59,10 @@ class UltimateEndUserForm:
     SUBMIT_BUTTON = "Save and continue"
 
 
+class UltimateEndUserPage:
+    DELETE_ERROR = "Unexpected error removing ultimate recipient"
+
+
 class ConsigneeForm:
     TITLE = "Select the type of consignee"
     BUTTON = "Continue"
@@ -31,6 +70,11 @@ class ConsigneeForm:
     WEBSITE_FORM_TITLE = "Consignee website address (optional)"
     ADDRESS_FORM_TITLE = "Consignee address"
     SUBMIT_BUTTON = "Save and continue"
+
+
+class ConsigneePage:
+    TITLE = "Consignee"
+    DELETE_ERROR = "Unexpected error removing consignee"
 
 
 class ThirdPartyForm:
@@ -49,6 +93,14 @@ class ThirdPartyForm:
     WEBSITE_FORM_TITLE = "Third party website address (optional)"
     ADDRESS_FORM_TITLE = "Third party address"
     SUBMIT_BUTTON = "Save and continue"
+
+
+class ThirdPartyPage:
+    DELETE_ERROR = "Unexpected error removing third party"
+
+
+class DeletePartyDocumentForm:
+    TITLE = "Are you sure you want to delete this document?"
 
 
 class GeneratedDocuments:
@@ -141,9 +193,7 @@ class InitialApplicationQuestionsForms:
     HAVE_YOU_BEEN_INFORMED_TITLE = (
         "Have you been informed under an 'end use control' that you need to apply for a licence?"
     )
-    HAVE_YOU_BEEN_INFORMED_DESCRIPTION = (
-        "An end use control is an official a letter or email from Border Force or HMRC."
-    )
+    HAVE_YOU_BEEN_INFORMED_DESCRIPTION = "An end use control is an official letter or email from Border Force or HMRC."
     WHAT_WAS_THE_REFERENCE_CODE_TITLE = "Reference number (optional)"
     WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION = "The reference number is on the official letter or email."
 
