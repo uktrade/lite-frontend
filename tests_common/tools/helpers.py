@@ -179,6 +179,26 @@ def find_paginated_item(id, driver):
     return element
 
 
+def paginated_search(driver, func: callable):
+    """
+    Calls a given function on every page until the function returns true or we run out of pages.
+    This is useful if you want to run a custom check for element(s) across a paginated page
+    """
+    driver.set_timeout_to(0)
+    success = False
+    current_page = 1
+    while True:
+        result = func
+        if result:
+            success = True
+            break
+        else:
+            current_page += 1
+            driver.find_element_by_id(f"page-{current_page}").click()
+    driver.set_timeout_to(10)
+    return success
+
+
 def get_text_of_multi_page_table(css_selector, driver):
     driver.set_timeout_to(0)
     text = ""
