@@ -1,6 +1,6 @@
 from lite_content.lite_internal_frontend import cases, letter_templates
 
-CASES = cases
+Cases = cases
 LETTER_TEMPLATES = letter_templates
 
 # Buttons
@@ -104,104 +104,6 @@ USER_EDIT_FORM_SAVE = "Save"
 
 class Common:
     SERVICE_NAME = "LITE Internal"
-
-
-class Cases:
-    BACK_TO_CASE = "Back to Case"
-    MANAGE_ORGANISATIONS = "Manage organisations"
-
-    class Advice:
-        ERROR = "There is a problem"
-        IMPORT_ADVICE = "Import advice from picklists"
-        IMPORT_PROVISO = "Import proviso from picklists"
-        OTHER = "Is there anything else you want to say to the applicant? (optional)"
-        REASON = "What are your reasons for this decision?"
-        TEXT_ON_LICENCE = "This will appear on the generated documentation"
-
-    class EcjuQueries:
-        CASE_HAS_NO_QUERIES = "This case has no ECJU Queries"
-        CLOSED = "Closed queries"
-        OPEN = "Open queries"
-        TITLE = "ECJU Queries"
-
-        class AddQuery:
-            ADD_BUTTON_LABEL = "Add an ECJU Query"
-            DESCRIPTION = (
-                "Enter a full description. If your question is related to goods, then include technical"
-                " details if appropriate."
-            )
-            DROPDOWN_DESCRIPTION = (
-                "You can:<ul><li>write a new question, or</li><li>choose a question from a list</li></ul>"
-            )
-            DROPDOWN_TITLE = "Ask a question"
-            TITLE = "Write or edit your question"
-
-    class GenerateDocuments:
-        BUTTON = "Generate A Document"
-        TEMPLATES_TITLE = "Pick a Template"
-        TITLE = "Generated Documents"
-
-    class Manage:
-        CASE_UPDATE_SUCCESSFUL = "Case updated successfully"
-
-        class Documents:
-            BUTTON = "Attached Documents"
-            CASE_HAS_NO_DOCUMENTS = "This case has no documents"
-            DESCRIPTION = "These are all the documents that have been uploaded to this case."
-            DOWNLOAD_DOCUMENT = "Download document"
-            PROCESSING = "Processing"
-            TITLE = "Case Documents"
-            VIRUS_INFECTED = "Virus infected"
-
-            class AttachDocuments:
-                BACK_TO_CASE_DOCUMENTS = "Back to Case Documents"
-                BUTTON = "Attach Document"
-                DESCRIPTION = "Maximum size: 100MB per file"
-                DESCRIPTION_FIELD_DETAILS = "optional"
-                DESCRIPTION_FIELD_TITLE = "Document description"
-                FILE_TOO_LARGE = "The file you tried to upload was too large."
-                TITLE = "Attach a document to this case"
-
-        class MoveCase:
-            BUTTON = "Move Case"
-            DESCRIPTION = "Select all queues that apply."
-            TITLE = "Where do you want to move this case?"
-
-        class AssignUsers:
-            DESCRIPTION = "Select all users that apply."
-            MULTIPLE_TITLE = "Which users do you want to assign to these cases?"
-            MULTIPLE_WARNING = "Users already assigned to these cases will be overwritten."
-            TITLE = "Which users do you want to assign to this case?"
-
-    class Case:
-        BACK_TO_CASES_LINK = "Back to Cases"
-        DESTINATION_HEADING = "Destinations"
-        EDIT_CASE_FLAGS = "Edit case flags"
-        EDIT_GOODS_FLAGS = "Edit goods flags"
-        GOODS_HEADING = "Goods"
-        GOODS_LOCATION_HEADING = "Goods location"
-        REVIEW_GOODS = "Review Goods"
-
-        class Tabs:
-            class Activity:
-                CHARACTER_LIMIT_2200 = "You can enter up to 2200 characters"
-                MAKE_VISIBLE_TO_EXPORTER = "Make visible to exporter"
-
-    class ReviewGoodsSummary:
-        BACK_LINK = "Back to case"
-        HEADING = "Review Goods"
-        REVIEW_BUTTON = "Review and confirm item"
-        SET_FLAGS = "Set goods flags"
-
-    class ReviewGoodsForm:
-        BACK_LINK = "Back to review goods"
-        CONFIRM_BUTTON = "Add to Case"
-        HEADING = "Check control list classification and add report summary"
-
-    class RecordDecision:
-        DENY = "Deny this application"
-        GRANT = "Grant this application"
-        TITLE = "Do you want to grant or deny this application?"
 
 
 class RegisterBusiness:
