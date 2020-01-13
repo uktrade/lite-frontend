@@ -16,7 +16,7 @@
 				</a>
 			</li>
 			<li class="govuk-breadcrumbs__list-item" aria-current="page">
-				{% lcs 'CASES.CaseOfficerPage.Search.TITLE' %}
+				{% lcs 'Cases.CaseOfficerPage.Search.TITLE' %}
 			</li>
 		</ol>
 	</div>
@@ -26,7 +26,7 @@
 	{% if error %}
 		<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
 			<h2 class="govuk-error-summary__title" id="error-summary-title">
-				{% lcs 'CASES.CaseOfficerPage.ERROR' %}
+				{% lcs 'Cases.CaseOfficerPage.ERROR' %}
 			</h2>
 			<div class="govuk-error-summary__body">
 				<ul class="govuk-list govuk-error-summary__list">
@@ -41,20 +41,20 @@
 	<legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
 		<h1 class="govuk-fieldset__heading govuk-!-margin-bottom-6">
 			{% block title %}
-				{% lcs 'CASES.CaseOfficerPage.Search.TITLE' %}
+				{% lcs 'Cases.CaseOfficerPage.Search.TITLE' %}
 			{% endblock %}
 		</h1>
 	</legend>
 	<span class="govuk-hint govuk-!-margin-bottom-6">
-        {% lcs 'CASES.CaseOfficerPage.Search.DESCRIPTION' %}
+        {% lcs 'Cases.CaseOfficerPage.Search.DESCRIPTION' %}
 	</span>
 
     <form method="get" class="govuk-!-margin-bottom-6">
 		<div class="lite-search__container">
-		    <input type="search" name="name" class="govuk-input" id="input-search" value="{{ name }}" placeholder="{% lcs 'CASES.CaseOfficerPage.Search.PLACEHOLDER' %}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+		    <input type="search" name="name" class="govuk-input" id="input-search" value="{{ name }}" placeholder="{% lcs 'Cases.CaseOfficerPage.Search.PLACEHOLDER' %}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
             <button class="lite-search__button" type="submit" id="button-search">
 				{% svg 'search' %}
-				<span>{% lcs 'CASES.CaseOfficerPage.Search.SEARCH' %}</span>
+				<span>{% lcs 'Cases.CaseOfficerPage.Search.SEARCH' %}</span>
 			</button>
 	    </div>
     </form>
@@ -94,11 +94,11 @@
 			</div>
 
             <button id="button-assign" class="govuk-button" data-module="govuk-button" type="submit" name="_action" value="assign" action="assign">
-                {% lcs 'CASES.CaseOfficerPage.Search.ASSIGN' %}
+                {% lcs 'Cases.CaseOfficerPage.Search.ASSIGN' %}
             </button>
 		</form>
 	{% else %}
-        <p class="govuk-caption-l">{% lcs 'CASES.CaseOfficerPage.Search.NO_RESULTS' %}</p>
+        <p class="govuk-caption-l">{% lcs 'Cases.CaseOfficerPage.Search.NO_RESULTS' %}</p>
 	{% endif %}
 {% endblock %}
 
@@ -106,13 +106,13 @@
 	{% if case_officer %}
 		<aside class="lite-related-items" role="complementary">
 			<h2 class="govuk-heading-m" id="subsection-title">
-				{% lcs 'CASES.CaseOfficerPage.CurrentOfficer.TITLE' %}
+				{% lcs 'Cases.CaseOfficerPage.CurrentOfficer.TITLE' %}
 			</h2>
 			<dl class="govuk-summary-list govuk-summary-list--no-border">
 				{% if case_officer.first_name %}
 					<div class="govuk-summary-list__row">
 						<dt class="govuk-summary-list__key">
-							{% lcs 'CASES.CaseOfficerPage.CurrentOfficer.FULLNAME' %}
+							{% lcs 'Cases.CaseOfficerPage.CurrentOfficer.FULLNAME' %}
 						</dt>
 						<dd class="govuk-summary-list__value">
 							{{ case_officer.first_name }} {{ case_officer.last_name }}
@@ -121,7 +121,7 @@
 				{% endif %}
 				<div class="govuk-summary-list__row">
 					<dt class="govuk-summary-list__key">
-						{% lcs 'CASES.CaseOfficerPage.CurrentOfficer.EMAIL' %}
+						{% lcs 'Cases.CaseOfficerPage.CurrentOfficer.EMAIL' %}
 					</dt>
 					<dd class="govuk-summary-list__value">
 						{{ case_officer.email }}
@@ -129,7 +129,7 @@
 				</div>
 				<div class="govuk-summary-list__row">
 					<dt class="govuk-summary-list__key">
-						{% lcs 'CASES.CaseOfficerPage.CurrentOfficer.TEAM' %}
+						{% lcs 'Cases.CaseOfficerPage.CurrentOfficer.TEAM' %}
 					</dt>
 					<dd class="govuk-summary-list__value">
 						{{ case_officer.team }}
@@ -140,7 +140,7 @@
 				{% csrf_token %}
 				<button id="button-unassign" class="govuk-link lite-button--link lite-link--icon" data-module="govuk-button" type="submit" name="_action" value="unassign" action="unassign">
 					{% svg 'close' %}
-					{% lcs 'CASES.CaseOfficerPage.CurrentOfficer.BUTTON' %}
+					{% lcs 'Cases.CaseOfficerPage.CurrentOfficer.BUTTON' %}
 				</button>
 			</form>
 		</aside>

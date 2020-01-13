@@ -37,29 +37,49 @@
 <table class="govuk-table" id="goods">
 	<thead class="govuk-table__head">
 		<tr class="govuk-table__row">
-			<th class="govuk-table__header">Description</th>
-            <th class="govuk-table__header">Report summary</th>
-			<th class="govuk-table__header">{% lcs 'GOOD_CONTROLLED' %}</th>
-            <th class="govuk-table__header">Controlled list entry</th>
-            <th class="govuk-table__header">Goods Comment</th>
-            <th class="govuk-table__header">Quantity/Value</th>
-            <th class="govuk-table__header">Flags</th>
+			<th class="govuk-table__header">{% lcs 'Cases.ReviewGoodsSummary.Table.DESCRIPTION' %}</th>
+			<th class="govuk-table__header">{% lcs 'Cases.ReviewGoodsSummary.Table.REPORT_SUMMARY' %}</th>
+			<th class="govuk-table__header">{% lcs 'Cases.ReviewGoodsSummary.Table.CONTROLLED' %}</th>
+			<th class="govuk-table__header">{% lcs 'Cases.ReviewGoodsSummary.Table.CONTROL_LIST_ENTRY' %}</th>
+			<th class="govuk-table__header">{% lcs 'Cases.ReviewGoodsSummary.Table.GOODS_COMMENT' %}</th>
+			{% if application_type == "standard_licence" %}
+				<th class="govuk-table__header">{% lcs 'Cases.ReviewGoodsSummary.Table.QUANTITY_VALUE' %}</th>
+			{% endif %}
+			<th class="govuk-table__header">{% lcs 'Cases.ReviewGoodsSummary.Table.FLAGS' %}</th>
 		</tr>
 	</thead>
 	<tbody class="govuk-table__body">
 		{% for good in objects %}
 			<tr class="govuk-table__row">
-                <td class="govuk-table__cell">{{ good.good.description }}</td>
-				<td class="govuk-table__cell">{{ good.good.report_summary|default_if_none:"N/A" }}</td>
-				<td class="govuk-table__cell">{{ good.good.is_good_controlled|capfirst}}</td>
-                <td class="govuk-table__cell">{{ good.good.control_code}}</td>
-                <td class="govuk-table__cell">{{ good.good.comment}}</td>
-                <td class="govuk-table__cell">{{ good.quantity }} {{ good.unit.value }}/£{{ good.value }}</td>
-                <td class="govuk-table__cell">
-                    {% for flag in good.good.flags %}
-                        {{ flag.name}} <br>
-                    {% endfor %}
-                </td>
+				<td class="govuk-table__cell">{{ good.description }}</td>
+				<td class="govuk-table__cell">
+					{% if good.report_summary %}
+						{{ good.report_summary }}
+					{% else %}
+						<span class="lite-hint">{% lcs 'Cases.ReviewGoodsSummary.NotSet.REPORT_SUMMARY' %}</span>
+					{% endif %}
+				</td>
+				<td class="govuk-table__cell">{{ good.is_good_controlled|friendly_boolean }}</td>
+				<td class="govuk-table__cell">{{ good.control_code|default_na }}</td>
+				<td class="govuk-table__cell">
+					{% if good.comment %}
+						{{ good.comment}}
+					{% else %}
+						<span class="lite-hint">{% lcs 'Cases.ReviewGoodsSummary.NotSet.COMMENT' %}</span>
+					{% endif %}
+				</td>
+				{% if application_type == "standard_licence" %}
+					<td class="govuk-table__cell">{{ good.quantity }} {{ good.unit.value }}/£{{ good.value }}</td>
+				{% endif %}
+				<td class="govuk-table__cell">
+					{% if good.flags %}
+						{% for flag in good.flags %}
+							{{ flag.name}} <br>
+						{% endfor %}
+					{% else %}
+						<span class="lite-hint">{% lcs 'Cases.ReviewGoodsSummary.NotSet.FLAGS' %}</span>
+					{% endif %}
+				</td>
 			</tr>
 		{% endfor %}
 	</tbody>

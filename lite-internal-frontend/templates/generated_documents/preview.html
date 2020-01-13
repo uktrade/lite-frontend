@@ -4,7 +4,7 @@
 	<div class="app-letter-preview__container">
 		<div class="lite-app-bar">
 			<div class="lite-app-bar__content">
-				<h2 class="govuk-heading-l">{% block title %}{% lcs 'CASES.ApplicationPage.Actions.GENERATE_DOCUMENT' %}{% endblock %}</h2>
+				<h2 class="govuk-heading-l">{% block title %}{% lcs 'Cases.ApplicationPage.Actions.GENERATE_DOCUMENT' %}{% endblock %}</h2>
 			</div>
             <div class="lite-app-bar__controls">
 				<form action="{% url 'cases:generate_document_create' pk tpk %}" method="post">

@@ -16,7 +16,7 @@
 {% block body %}
     {% if case.query.good.status.key == 'verified' %}
 		<div class="lite-info-bar lite-info-bar--no-animation {% if message.tags %}lite-info-bar--{{ message.tags }}{% endif %}">
-			{% lcs 'CASES.ApplicationPage.CLOSED' %}
+			{% lcs 'Cases.ApplicationPage.CLOSED' %}
 		</div>
 	{% endif %}
 
@@ -34,38 +34,38 @@
 			<div class="lite-app-bar__controls">
 			{% if case.query.good.status.key != 'verified' and 'REVIEW_GOODS' in permissions and not status_is_terminal %}
 				<a role="button" draggable="false" id="respond" class="govuk-button" href="{% url 'cases:respond_to_clc_query' case.id %}">
-					{% lcs 'CASES.ApplicationPage.RESPOND_BUTTON' %}
+					{% lcs 'Cases.ApplicationPage.RESPOND_BUTTON' %}
 				</a>
 			{% endif %}
 			<div class="app-more-actions__container {% if case.query.good.status != 'final' %}app-more-actions__container--secondary{% endif %}">
 				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:documents' case.id %}">
-		      	    {% lcs 'CASES.ApplicationPage.Actions.DOCUMENT' %}
+		      	    {% lcs 'Cases.ApplicationPage.Actions.DOCUMENT' %}
 				</a>
 				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:ecju_queries' case.id %}">
 					{% lcs 'Cases.EcjuQueries.TITLE' %}
 				</a>
                 <a role="button" draggable="false" class="govuk-button" href="{% url 'cases:move' case.id %}">
-					{% lcs 'Cases.Manage.MoveCase.BUTTON' %}
+					{% lcs 'Cases.ApplicationPage.Actions.MOVE' %}
 				</a>
                 <a role="button" draggable="false" class="govuk-button" id="generate-document" href="{% url 'cases:generate_document' case.id %}">
-					{% lcs 'CASES.ApplicationPage.Actions.GENERATE_DOCUMENT' %}
+					{% lcs 'Cases.ApplicationPage.Actions.GENERATE_DOCUMENT' %}
 				</a>
                 {% if not status_is_terminal or 'REOPEN_CLOSED_CASES' in permissions %}
                 <a role="button" draggable="false" class="govuk-button" id="change-status" href="{% url 'cases:manage' case.id %}">
-                    {% lcs 'CASES.EndUserAdvisoriesPage.Actions.CHANGE_STATUS' %}
+                    {% lcs 'Cases.EndUserAdvisoriesPage.Actions.CHANGE_STATUS' %}
                 </a>
                 {% endif %}
                 <a role="button" draggable="false" class="govuk-button" id="case-officer" href="{% url 'cases:case_officer' case.id %}">
-                    {% lcs 'CASES.ApplicationPage.Actions.CASE_OFFICER' %}
+                    {% lcs 'Cases.ApplicationPage.Actions.CASE_OFFICER' %}
                 </a>
 			</div>
 		</div>
 	</div>
 
     {% if case.case_officer %}
-        <p class="govuk-caption-m">{% lcs 'CASES.ApplicationPage.CASE_OFFICER' %} <a class="govuk-link govuk-link--no-visited-state" href="{% url 'users:user' case.case_officer.id %}">{{ case.case_officer|username }}</a></p>
+        <p class="govuk-caption-m">{% lcs 'Cases.ApplicationPage.CASE_OFFICER' %} <a class="govuk-link govuk-link--no-visited-state" href="{% url 'users:user' case.case_officer.id %}">{{ case.case_officer|username }}</a></p>
     {% else %}
-        <p class="govuk-caption-m">{% lcs 'CASES.ApplicationPage.NO_CASE_OFFICER' %}</p>
+        <p class="govuk-caption-m">{% lcs 'Cases.ApplicationPage.NO_CASE_OFFICER' %}</p>
     {% endif %}
 
 	<!-- Case flags -->
@@ -76,20 +76,20 @@
 	{% if case.query.good.status.key == 'verified' %}
 		<div class="govuk-!-width-two-thirds">
 			<div class="app-panel app-panel--info">
-				<h3 class="govuk-heading-m">{% lcs 'CASES.ClcQuery.Verified.OUTCOME' %}</h3>
+				<h3 class="govuk-heading-m">{% lcs 'Cases.ClcQuery.Verified.OUTCOME' %}</h3>
 
 				<hr>
 
-				<h4 class="govuk-heading-s">{% lcs 'CASES.ClcQuery.Verified.CONTROLLED' %}</h4>
+				<h4 class="govuk-heading-s">{% lcs 'Cases.ClcQuery.Verified.CONTROLLED' %}</h4>
 				<p class="govuk-body-m">{{ good.is_good_controlled|friendly_boolean }}</p>
 
-				<h4 class="govuk-heading-s">{% lcs 'CASES.ClcQuery.Verified.CONTROL_CODE' %}</h4>
+				<h4 class="govuk-heading-s">{% lcs 'Cases.ClcQuery.Verified.CONTROL_CODE' %}</h4>
 				<p class="govuk-body-m">{{ good.control_code|default_na }}</p>
 
-				<h4 class="govuk-heading-s">{% lcs 'CASES.ClcQuery.Verified.REPORT' %}</h4>
+				<h4 class="govuk-heading-s">{% lcs 'Cases.ClcQuery.Verified.REPORT' %}</h4>
 				<p class="govuk-body-m">{{ case.query.good.report_summary|default_na }}</p>
 
-				<h4 class="govuk-heading-s">{% lcs 'CASES.ClcQuery.Verified.COMMENT' %}</h4>
+				<h4 class="govuk-heading-s">{% lcs 'Cases.ClcQuery.Verified.COMMENT' %}</h4>
 				<p class="govuk-body-m">{{ case.query.good.comment|default_na }}</p>
 			</div>
 		</div>
@@ -97,12 +97,12 @@
 		<br><br>
 	{% endif %}
 
-	<h3 class="govuk-heading-m">{% lcs 'CASES.ClcQuery.GoodDetails.TITLE' %}</h3>
+	<h3 class="govuk-heading-m">{% lcs 'Cases.ClcQuery.GoodDetails.TITLE' %}</h3>
 	<div class="govuk-!-width-two-thirds">
 		<dl class="govuk-summary-list">
 			<div class="govuk-summary-list__row">
 				<dt class="govuk-summary-list__key">
-                    {% lcs 'CASES.ClcQuery.GoodDetails.DESCRIPTION' %}
+                    {% lcs 'Cases.ClcQuery.GoodDetails.DESCRIPTION' %}
 				</dt>
 				<dd class="govuk-summary-list__value">
 					{{ good.description }}
@@ -110,7 +110,7 @@
 			</div>
 			<div class="govuk-summary-list__row">
 				<dt class="govuk-summary-list__key">
-                    {% lcs 'CASES.ClcQuery.GoodDetails.CONTROLLED' %}
+                    {% lcs 'Cases.ClcQuery.GoodDetails.CONTROLLED' %}
 				</dt>
 				<dd class="govuk-summary-list__value">
 					{{ good.is_good_controlled|capfirst }}
@@ -119,11 +119,11 @@
 			<div class="govuk-summary-list__row">
 			{% if good.is_good_controlled != 'Unsure' %}
 				<dt class="govuk-summary-list__key">
-                    {% lcs 'CASES.ClcQuery.GoodDetails.CONTROL_CODE' %}
+                    {% lcs 'Cases.ClcQuery.GoodDetails.CONTROL_CODE' %}
 				</dt>
             {% else %}
                 <dt class="govuk-summary-list__key">
-                    {% lcs 'CASES.ClcQuery.GoodDetails.EXPECTED_CONTROL_CODE' %}
+                    {% lcs 'Cases.ClcQuery.GoodDetails.EXPECTED_CONTROL_CODE' %}
 				</dt>
 			{% endif %}
 				<dd class="govuk-summary-list__value">
@@ -132,7 +132,7 @@
 			</div>
             <div class="govuk-summary-list__row">
 				<dt class="govuk-summary-list__key">
-                    {% lcs 'CASES.ClcQuery.GoodDetails.REASON' %}
+                    {% lcs 'Cases.ClcQuery.GoodDetails.REASON' %}
 				</dt>
 				<dd class="govuk-summary-list__value">
 					{{ case.query.details|default_na }}
@@ -140,7 +140,7 @@
 			</div>
 			<div class="govuk-summary-list__row">
 				<dt class="govuk-summary-list__key">
-                    {% lcs 'CASES.ClcQuery.GoodDetails.PART_NUMBER' %}
+                    {% lcs 'Cases.ClcQuery.GoodDetails.PART_NUMBER' %}
 				</dt>
 				<dd class="govuk-summary-list__value">
 					{{ good.part_number|default_na }}
@@ -148,7 +148,7 @@
 			</div>
 			<div class="govuk-summary-list__row">
 				<dt class="govuk-summary-list__key">
-                    {% lcs 'CASES.ClcQuery.GoodDetails.FLAGS' %}
+                    {% lcs 'Cases.ClcQuery.GoodDetails.FLAGS' %}
 				</dt>
 				<dd class="govuk-summary-list__value">
 					{% include 'case/views/goods-flags.html' with origin='case' %}
@@ -160,7 +160,7 @@
 		{% if data.case.query.details %}
 			<div class="govuk-grid-row">
 				<div class="govuk-grid-column-full">
-					<p class="lite-heading-s">{% lcs 'CASES.ClcQuery.GoodDetails.QUERY_TEXT' %}</p>
+					<p class="lite-heading-s">{% lcs 'Cases.ClcQuery.GoodDetails.QUERY_TEXT' %}</p>
 					<p class="govuk-label">
 						{{ data.case.query.details }}
 					</p>
@@ -170,7 +170,7 @@
 
 		<br><br>
 
-		<h3 class="govuk-heading-m">{% lcs 'CASES.ClcQuery.Documents.TITLE' %}</h3>
+		<h3 class="govuk-heading-m">{% lcs 'Cases.ClcQuery.Documents.TITLE' %}</h3>
 		{% if case.query.good.documents %}
 			<dl class="govuk-summary-list">
 				{% for document in case.query.good.documents %}
@@ -181,7 +181,7 @@
 						<dd class="govuk-summary-list__value">
 							{% if document.safe == True %}
 								<a class="govuk-link lite-link--icon govuk-link--no-visited-state" href="{% url 'cases:document' case.id document.id %}">
-									{% lcs 'CASES.ClcQuery.Documents.DOWNLOAD' %}
+									{% lcs 'Cases.ClcQuery.Documents.DOWNLOAD' %}
 								</a>
 							{% elif document.safe == False %}
 								{% lcs 'Cases.Manage.Documents.VIRUS_INFECTED' %}

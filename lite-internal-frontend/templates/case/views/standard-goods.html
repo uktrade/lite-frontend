@@ -1,20 +1,21 @@
 {% load humanize %}
 
-<h3 class="govuk-heading-m">{% lcs 'CASES.ApplicationPage.Goods.TITLE' %}</h3>
+<h3 class="govuk-heading-m">{% lcs 'Cases.ApplicationPage.Goods.TITLE' %}</h3>
 <table class="govuk-table" id="goods">
 	<thead class="govuk-table__head">
 		<tr class="govuk-table__row">
 			<th scope="col" class="govuk-table__header">
 				<button type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
 			</th>
-            <th class="govuk-table__header" scope="col">{% lcs 'CASES.ApplicationPage.Goods.Table.CLC' %}</th>
-			<th class="govuk-table__header" scope="col">{% lcs 'CASES.ApplicationPage.Goods.Table.DESCRIPTION' %}</th>
-            <th class="govuk-table__header">{% lcs 'CASES.ApplicationPage.Goods.Table.VALUE' %}</th>
+            <th class="govuk-table__header" scope="col">{% lcs 'Cases.ApplicationPage.Goods.Table.CLC' %}</th>
+			<th class="govuk-table__header" scope="col">{% lcs 'Cases.ApplicationPage.Goods.Table.DESCRIPTION' %}</th>
+            <th class="govuk-table__header">{% lcs 'Cases.ApplicationPage.Goods.Table.VALUE' %}</th>
 			<th class="govuk-table__header">{% lcs 'GOOD_INCORPORATED' %}</th>
-			<th class="govuk-table__header">{% lcs 'CASES.ApplicationPage.Goods.Table.DOCUMENTS' %}</th>
-            <th class="govuk-table__header">{% lcs 'CASES.ApplicationPage.Goods.Table.FLAGS' %}</th>
+			<th class="govuk-table__header">{% lcs 'Cases.ApplicationPage.Goods.Table.DOCUMENTS' %}</th>
+            <th class="govuk-table__header">{% lcs 'Cases.ApplicationPage.Goods.Table.FLAGS' %}</th>
+
 			{% if show_advice %}
-				<th class="govuk-table__header" style="width: 350px;">{% lcs 'CASES.ApplicationPage.Goods.Table.FLAGS' %}</th>
+				<th class="govuk-table__header" style="width: 350px;">{% lcs 'Cases.ApplicationPage.Goods.Table.FLAGS' %}</th>
 			{% endif %}
 		</tr>
 	</thead>
@@ -45,7 +46,7 @@
                             {% endif %}
                         {% endfor %}
                     {% else %}
-                        {% lcs 'CASES.ApplicationPage.Goods.MISSING_DOCUMENT_REASON_PREFIX' %}{{ good_on_application.good.missing_document_reason.value }}
+                        {% lcs 'Cases.ApplicationPage.Goods.MISSING_DOCUMENT_REASON_PREFIX' %}{{ good_on_application.good.missing_document_reason.value }}
                     {% endif %}
                 <td class="govuk-table__cell">
                     {% for flag in good_on_application.flags %}

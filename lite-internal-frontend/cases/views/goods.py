@@ -4,8 +4,9 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 from lite_forms.generators import form_page
 
+from cases.constants import CaseType
 from cases.forms.review_goods_clc import review_goods_clc_query_form
-from cases.services import get_good, get_case, post_goods_control_code
+from cases.services import get_good, get_case, post_goods_control_code, get_goods_type
 from core.helpers import convert_dict_to_query_params
 from core.services import get_user_permissions
 
@@ -39,13 +40,24 @@ class ReviewGoods(TemplateView):
         parameters = {"level": "goods", "origin": "review_goods", "goods": goods_pk_list}
         goods_postfix_url = "?" + convert_dict_to_query_params(parameters)
 
-        for good in case["application"]["goods"]:
-            if good["good"]["id"] in goods_pk_list:
-                goods.append(good)
+        if case["application"]["application_type"]["key"] == "standard_licence":
+            for good in case["application"]["goods"]:
+                if good["good"]["id"] in goods_pk_list:
+                    # flatten the good details onto the first layer of the dictionary
+                    # (so both good on app and good details are together)
+                    flatten = good
+                    for key, val in good["good"].items():
+                        flatten[key] = val
+                    goods.append(flatten)
+        else:
+            for good in case["application"]["goods_types"]:
+                if good["id"] in goods_pk_list:
+                    goods.append(good)
 
         context = {
             "title": strings.Cases.ReviewGoodsSummary.HEADING,
             "case_id": case_id,
+            "application_type": case["application"]["application_type"]["key"],
             "objects": goods,
             "edit_flags_url": edit_flags_url + goods_postfix_url,
             "review_goods_clc_url": review_goods_clc_url + goods_postfix_url,
@@ -75,21 +87,29 @@ class ReviewGoodsClc(TemplateView):
         return super(ReviewGoodsClc, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        form = review_goods_clc_query_form(request, self.back_link)
-        if len(self.goods) == 1:
-            data = get_good(request, self.goods[0])[0]["good"]
+        case = get_case(request, self.case_id)
+        if case["application"]["application_type"]["key"] == "standard_licence":
+            get_good_func = get_good
+            form = review_goods_clc_query_form(request, self.back_link, is_goods_type=False)
         else:
-            initial_good = get_good(request, self.goods[0])[0]["good"]
+            get_good_func = get_goods_type
+            form = review_goods_clc_query_form(request, self.back_link, is_goods_type=True)
+
+        if len(self.goods) == 1:
+            data = get_good_func(request, self.goods[0])[0]["good"]
+        else:
+            initial_good = get_good_func(request, self.goods[0])[0]["good"]
             for good in self.goods[1:]:
-                good_data = get_good(request, good)[0]["good"]
+                good_data = get_good_func(request, good)[0]["good"]
                 if (
                     initial_good["control_code"] != good_data["control_code"]
-                    and initial_good["is_good_controlled"] != good_data["is_good_controlled"]
-                    and initial_good["comment"] != good_data["comment"]
-                    and initial_good["report_summary"] != good_data["report_summary"]
+                    or initial_good["is_good_controlled"] != good_data["is_good_controlled"]
+                    or initial_good["comment"] != good_data["comment"]
+                    or initial_good["report_summary"] != good_data["report_summary"]
                 ):
                     return form_page(request, form)
             data = initial_good
+        data["is_good_controlled"] = str(data["is_good_controlled"])
         return form_page(request, form, data=data)
 
     def post(self, request, *args, **kwargs):
@@ -107,7 +127,10 @@ class ReviewGoodsClc(TemplateView):
         response = post_goods_control_code(request, self.case_id, form_data)
 
         if response.status_code == 400:
-            form = review_goods_clc_query_form(request, self.back_link)
+            case = get_case(request, self.case_id)
+            is_goods_type = case["application"]["application_type"]["key"] != CaseType.STANDARD_LICENCE.value
+
+            form = review_goods_clc_query_form(request, self.back_link, is_goods_type=is_goods_type)
             return form_page(request, form, data=request.POST, errors=response.json().get("errors"))
 
         return redirect(self.back_link)

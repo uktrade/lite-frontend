@@ -1,7 +1,7 @@
 {% extends 'layouts/base.html' %}
 
 {% block back_link %}
-	<a href="{% url 'cases:case' case.id %}" class="govuk-back-link">{% lcs 'CASES.CaseDocumentsPage.BACK_LINK' %}</a>
+	<a href="{% url 'cases:case' case.id %}" class="govuk-back-link">{% lcs 'Cases.CaseDocumentsPage.BACK_LINK' %}</a>
 {% endblock %}
 
 {% block body %}
@@ -11,10 +11,10 @@
         </div>
 		<div class="lite-app-bar__controls">
 			<a id="button-attach-document" role="button" draggable="false" class="govuk-button {% if documents %}govuk-button--secondary{% endif %}" href="{% url 'cases:attach_documents' case.id %}">
-				{% lcs 'CASES.CaseDocumentsPage.ATTACH' %}
+				{% lcs 'Cases.CaseDocumentsPage.ATTACH' %}
 			</a>
             <a role="button" draggable="false" class="govuk-button {% if documents %}govuk-button--secondary{% endif %}" href="{% url 'cases:generate_document' case.id %}">
-				{% lcs 'CASES.CaseDocumentsPage.GENERATE' %}
+				{% lcs 'Cases.CaseDocumentsPage.GENERATE' %}
 			</a>
 		</div>
 	</div>
@@ -24,11 +24,11 @@
 		<table class="govuk-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
-					<th scope="col" class="govuk-table__header">{% lcs 'CASES.AdditionalDocumentsPage.Table.NAME_COLUMN' %}</th>
-                    <th scope="col" class="govuk-table__header">{% lcs 'CASES.AdditionalDocumentsPage.Table.DOCUMENT_TYPE_COLUMN' %}</th>
-					<th scope="col" class="govuk-table__header">{% lcs 'CASES.AdditionalDocumentsPage.Table.DESCRIPTION_COLUMN' %}</th>
-					<th scope="col" class="govuk-table__header">{% lcs 'CASES.AdditionalDocumentsPage.Table.USER_COLUMN' %}</th>
-                    <th scope="col" class="govuk-table__header">{% lcs 'CASES.AdditionalDocumentsPage.Table.DATE_COLUMN' %}</th>
+					<th scope="col" class="govuk-table__header">{% lcs 'Cases.AdditionalDocumentsPage.Table.NAME_COLUMN' %}</th>
+                    <th scope="col" class="govuk-table__header">{% lcs 'Cases.AdditionalDocumentsPage.Table.DOCUMENT_TYPE_COLUMN' %}</th>
+					<th scope="col" class="govuk-table__header">{% lcs 'Cases.AdditionalDocumentsPage.Table.DESCRIPTION_COLUMN' %}</th>
+					<th scope="col" class="govuk-table__header">{% lcs 'Cases.AdditionalDocumentsPage.Table.USER_COLUMN' %}</th>
+                    <th scope="col" class="govuk-table__header">{% lcs 'Cases.AdditionalDocumentsPage.Table.DATE_COLUMN' %}</th>
 					<th scope="col" class="govuk-table__header"></th>
                     <th scope="col" class="govuk-table__header"></th>
 				</tr>
@@ -45,19 +45,19 @@
                             {% if document.type.key == generated_document_key %}
                                 <form method="get" action="{% url "cases:generate_document_regenerate" case.id document.id %}">
                                     {% csrf_token %}
-                                    <button id="regenerate" type="submit" class="lite-button--link">{% lcs 'CASES.AdditionalDocumentsPage.Document.REGENERATE_LINK' %}</button>
+                                    <button id="regenerate" type="submit" class="lite-button--link">{% lcs 'Cases.AdditionalDocumentsPage.Document.REGENERATE_LINK' %}</button>
                                 </form>
                             {% endif %}
                         </td>
 						<td class="govuk-table__cell">
 							{% if document.safe == True %}
 								<a id="link-download" class="govuk-link lite-link--icon govuk-link--no-visited-state" href="{% url 'cases:document' case.id document.metadata_id %}">
-									{% lcs 'CASES.AdditionalDocumentsPage.Document.DOWNLOAD_LINK' %}
+									{% lcs 'Cases.AdditionalDocumentsPage.Document.DOWNLOAD_LINK' %}
 								</a>
 							{% elif document.safe == False %}
-								<p class="govuk-label">{% lcs 'CASES.AdditionalDocumentsPage.Document.INFECTED_LABEL' %}</p>
+								<p class="govuk-label">{% lcs 'Cases.AdditionalDocumentsPage.Document.INFECTED_LABEL' %}</p>
 							{% else %}
-								<p class="govuk-label">{% lcs 'CASES.AdditionalDocumentsPage.Document.PROCESSING_LABEL' %}</p>
+								<p class="govuk-label">{% lcs 'Cases.AdditionalDocumentsPage.Document.PROCESSING_LABEL' %}</p>
 							{% endif %}
 						</td>
 					</tr>

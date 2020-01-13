@@ -3,17 +3,21 @@ from lite_forms.common import control_list_entry_question
 from lite_forms.components import Form, BackLink, RadioButtons, Option, TextArea
 
 from core.services import get_control_list_entries
+from lite_forms.helpers import conditional
 from picklists.services import get_picklists
 
 
-def review_goods_clc_query_form(request, back_url):
+def review_goods_clc_query_form(request, back_url, is_goods_type):
     return Form(
         title=strings.Cases.ReviewGoodsForm.HEADING,
         questions=[
             RadioButtons(
                 title="Is this good controlled?",
                 name="is_good_controlled",
-                options=[Option(key="yes", value="Yes", show_pane="pane_control_code"), Option(key="no", value="No")],
+                options=[
+                    Option(key=conditional(is_goods_type, "True", "yes"), value="Yes", show_pane="pane_control_code"),
+                    Option(key=conditional(is_goods_type, "False", "no"), value="No"),
+                ],
                 classes=["govuk-radios--inline"],
             ),
             control_list_entry_question(
