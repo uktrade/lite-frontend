@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import List
 
 from markdown import markdown
 
@@ -47,6 +48,11 @@ class BackLink:
     def __init__(self, text="Back", url="#"):
         self.text = text
         self.url = url
+
+
+class Breadcrumbs:
+    def __init__(self, back_links: List[BackLink]):  # noqa
+        self.back_links = back_links
 
 
 class FormGroup:

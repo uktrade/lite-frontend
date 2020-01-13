@@ -3,23 +3,41 @@
 {% load custom_tags %}
 
 {% block back_link %}
-    {% if not form_pk or form_pk == 0 %}
-		{% if page.back_link.url != '#' or page.back_link.text != 'Back' %}
-			{% if page.back_link.text %}
-	    		<a href="{{ page.back_link.url }}" id="back-link" class="govuk-back-link">{{ page.back_link.text }}</a>
+	{% if page.back_link|classname == "Breadcrumbs" %}
+		<div class="govuk-breadcrumbs">
+			<ol class="govuk-breadcrumbs__list">
+				{% for breadcrumb in page.back_link.back_links %}
+					<li class="govuk-breadcrumbs__list-item">
+						{% if breadcrumb.url and breadcrumb.url != "#" %}
+							<a class="govuk-breadcrumbs__link" href="{{ breadcrumb.url }}">
+								{{ breadcrumb.text }}
+							</a>
+						{% else %}
+							{{ breadcrumb.text }}
+						{% endif %}
+					</li>
+				{% endfor %}
+			</ol>
+		</div>
+	{% else %}
+	    {% if not form_pk or form_pk == 0 %}
+			{% if page.back_link.url != '#' or page.back_link.text != 'Back' %}
+				{% if page.back_link.text %}
+		    		<a href="{{ page.back_link.url }}" id="back-link" class="govuk-back-link">{{ page.back_link.text }}</a>
+				{% endif %}
+			{% else %}
+				{{ block.super }}
 			{% endif %}
-		{% else %}
-			{{ block.super }}
+	    {% else %}
+			<form method="post">
+				{% csrf_token %}
+				{% hidden_field 'form_pk' form_pk %}
+				{% for key, value in data.items %}
+					{% hidden_field key value %}
+				{% endfor %}
+				<button class="lite-back-link-button" role="link" id="back-link" type="submit" name="_action" value="back" action="back">{{ page.back_link.text }}</button>
+			</form>
 		{% endif %}
-    {% else %}
-		<form method="post">
-			{% csrf_token %}
-			{% hidden_field 'form_pk' form_pk %}
-			{% for key, value in data.items %}
-				{% hidden_field key value %}
-			{% endfor %}
-			<button class="lite-back-link-button" role="link" id="back-link" type="submit" name="_action" value="back" action="back">{{ page.back_link.text }}</button>
-		</form>
 	{% endif %}
 {% endblock %}
 
