@@ -60,6 +60,9 @@ class ApplicationPage:
         class Table:
             Title = "Consignee"
 
+    class ThirdParty:
+        ROLE = "Role: "
+
     EDIT_FLAGS = "Edit products flags"
     EDIT_DESTINATION_FLAGS = "Edit destination flags"
     REVIEW_GOODS = "Review Products"
