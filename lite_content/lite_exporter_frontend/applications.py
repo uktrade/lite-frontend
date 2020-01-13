@@ -247,6 +247,7 @@ class ThirdPartiesPage:
     class Variables:
         NAME = "Name"
         TYPE = "Type"
+        ROLE = "Role"
         WEBSITE = "Website"
         ADDRESS = "Address"
         COUNTRY = "Country"
