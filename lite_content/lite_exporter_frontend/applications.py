@@ -6,7 +6,7 @@ class PartyForm:
         OTHER = "Other"
 
     class CopyExistingForm:
-        TITLE = "Do you want to resuse an existing party?"
+        TITLE = "Do you want to reuse an existing party?"
         YES = "Yes"
         NO = "No"
         BACK_LINK = "Back to application"
@@ -31,6 +31,7 @@ class CopyExistingPartyPage:
 
     class Table:
         NAME_COLUMN = "Name"
+        TYPE_COLUMN = "Type"
         ADDRESS_COLUMN = "Address"
         COUNTRY_COLUMN = "Country"
         WEBSITE_COLUMN = "Website"
