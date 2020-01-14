@@ -153,6 +153,8 @@ class HMRCPage:
         FURTHER_INFO = "Further information"
 
     class Good:
+        REVIEW_GOODS = "Review products"
+        EDIT_FLAGS = "Set flags"
         DESCRIPTION = "Description"
         CONTROL_CODE = "Control list entry"
         CONTROLLED = "Controlled"
@@ -201,6 +203,7 @@ class StandardApplication:
 
 class OpenApplication:
     SET_FLAGS = "Set flags"
+    REVIEW_PRODUCTS = "Review products"
 
 
 class ClcQuery:
@@ -231,3 +234,96 @@ class ChangeStatusPage:
     TITLE_APPLICATION = "Application Status"
     TITLE_CLC = "CLC Query Status"
     TITLE_EUA = "End User Advisory Status"
+
+
+class ReviewGoodsSummary:
+    BACK_LINK = "Back to case"
+    HEADING = "Review Goods"
+    REVIEW_BUTTON = "Review and confirm item"
+    SET_FLAGS = "Set goods flags"
+
+    class Table:
+        DESCRIPTION = "Description"
+        REPORT_SUMMARY = "Report summary"
+        CONTROLLED = "Controlled"
+        CONTROL_LIST_ENTRY = "Control list entry"
+        GOODS_COMMENT = "Goods comment"
+        FLAGS = "Flags"
+        QUANTITY_VALUE = "Quantity/Value"
+
+    class NotSet:
+        REPORT_SUMMARY = "Not Set"
+        COMMENT = "Not Set"
+        FLAGS = "None Set"
+
+
+class EcjuQueries:
+    BACK_TO_CASE = "Back to Case"
+    CASE_HAS_NO_QUERIES = "This case has no ECJU Queries"
+    CLOSED = "Closed queries"
+    OPEN = "Open queries"
+    TITLE = "ECJU Queries"
+
+    class AddQuery:
+        ADD_BUTTON_LABEL = "Add an ECJU Query"
+        DESCRIPTION = (
+            "Enter a full description. If your question is related to goods, then include technical"
+            " details if appropriate."
+        )
+        DROPDOWN_DESCRIPTION = (
+            "You can:<ul><li>write a new question, or</li><li>choose a question from a list</li></ul>"
+        )
+        DROPDOWN_TITLE = "Ask a question"
+        TITLE = "Write or edit your question"
+
+
+class Advice:
+    ERROR = "There is a problem"
+    IMPORT_ADVICE = "Import advice from picklists"
+    IMPORT_PROVISO = "Import proviso from picklists"
+    OTHER = "Is there anything else you want to say to the applicant? (optional)"
+    REASON = "What are your reasons for this decision?"
+    TEXT_ON_LICENCE = "This will appear on the generated documentation"
+
+
+class Manage:
+    class Documents:
+        CASE_HAS_NO_DOCUMENTS = "This case has no documents"
+        DESCRIPTION = "These are all the documents that have been uploaded to this case."
+        DOWNLOAD_DOCUMENT = "Download document"
+        PROCESSING = "Processing"
+        VIRUS_INFECTED = "Virus infected"
+        TITLE = "Case Documents"
+
+        class AttachDocuments:
+            BACK_TO_CASE_DOCUMENTS = "Back to Case Documents"
+            BUTTON = "Attach Document"
+            DESCRIPTION = "Maximum size: 100MB per file"
+            DESCRIPTION_FIELD_DETAILS = "optional"
+            DESCRIPTION_FIELD_TITLE = "Document description"
+            FILE_TOO_LARGE = "The file you tried to upload was too large."
+            TITLE = "Attach a document to this case"
+
+    class MoveCase:
+        BUTTON = "Move Case"
+        DESCRIPTION = "Select all queues that apply."
+        TITLE = "Where do you want to move this case?"
+
+    class AssignUsers:
+        DESCRIPTION = "Select all users that apply."
+        MULTIPLE_TITLE = "Which users do you want to assign to these cases?"
+        MULTIPLE_WARNING = "Users already assigned to these cases will be overwritten."
+        TITLE = "Which users do you want to assign to this case?"
+
+
+class Tabs:
+    class Activity:
+        CHARACTER_LIMIT_2200 = "You can enter up to 2200 characters"
+        CANCEL_POST = "Cancel"
+        POST = "Post note"
+
+
+class ReviewGoodsForm:
+    BACK_LINK = "Back to review goods"
+    CONFIRM_BUTTON = "Add to Case"
+    HEADING = "Check control list classification and add report summary"

@@ -1,11 +1,19 @@
-from conf.settings import env
-
-PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
+from lite_content.lite_exporter_frontend import generic
+from lite_content.lite_exporter_frontend.generic import PERMISSION_FINDER_LINK
 
 
 class GoodsList:
     TITLE = "Products"
     CREATE_GOOD = "Add a product"
+    GOOD = "Product"
+    VERIFIED = "This product has been verified by ECJU based on the information provided"
+    EDIT_GOOD_LINK = "Edit product"
+    IN_REVIEW = (
+        "Your product is currently being reviewed by ECJU. "
+        "It has limited functionality until the review is complete."
+    )
+    YOUR_GOOD = "Product"
+    NO_LONGER_CAN_BE_CHANGED = "Your product has been used in an application and can therefore no longer be changed."
 
     class Count:
         ORGANISATION_ZERO = "Your organisation doesn't have any products."
@@ -16,20 +24,31 @@ class GoodsList:
         FILTERED_MANY = "Displaying %s products"  # %s will add the count of goods
 
     class Filter:
-        DESCRIPTION = "Description"
+        DESCRIPTION = generic.DESCRIPTION
         CONTROL_LIST_ENTRY = "Control list classification"
-        PART_NUMBER = "Part number"
+        PART_NUMBER = generic.PART_NUMBER
         APPLY = "Apply filters"
         CLEAR = "Clear filters"
         SHOW = "Show filters"
         HIDE = "Hide filters"
 
     class Table:
-        DESCRIPTION = "Description"
+        DESCRIPTION = generic.DESCRIPTION
         CONTROL_LIST_ENTRY = "Control list classification"
-        PART_NUMBER = "Part number"
+        IS_GOOD_CONTROLLED = "Is the product on the control list?"
+        PART_NUMBER = generic.PART_NUMBER
+        QUANTITY = "Quantity"
+        VALUE = "Value"
+        INCORPORATED = "Incorporated"
         COUNTRIES = "Countries"
         STATUS = "Status"
+
+    class Documents:
+        TITLE = "Documents"
+        NO_DOCUMENT_ATTACHED = "The product has no documents attached"
+        NAME = "Name"
+        DESCRIPTION = "Description"
+        UPLOADED_BY = "Uploaded by"
 
 
 class DocumentSensitivityForm:
@@ -53,11 +72,11 @@ class DocumentSensitivityForm:
 
 
 class CreateGoodForm:
-    TITLE = "Add a new product to your application"
+    TITLE = "Add product"
     BUTTON = "Save and continue"
 
     class Description:
-        TITLE = "Description"
+        TITLE = generic.DESCRIPTION
         DESCRIPTION = "Include the product name to make it easier to find the product when needed."
 
     class IsControlled:
@@ -77,16 +96,10 @@ class CreateGoodForm:
 
     class ControlListEntry:
         TITLE = "Control list classification"
-        DESCRIPTION = "For example, ML1a. "
-
-    class Incorporated:
-        TITLE = "Will the product be incorporated into another product?"
-        DESCRIPTION = ""
-        YES = "Yes"
-        NO = "No"
+        DESCRIPTION = "For example, ML1a."
 
     class PartNumber:
-        TITLE = "Part number (optional)"
+        TITLE = generic.PART_NUMBER
 
 
 class CLCQueryForm:
@@ -96,12 +109,12 @@ class CLCQueryForm:
     BUTTON = "Save"
 
     class CLCCode:
-        TITLE = "What do you think is the product's control list classification?"
+        TITLE = "What do you think is the product's control list classification? (optional)"
         DESCRIPTION = "For example, ML1a."
 
     class Additional:
-        TITLE = "Product details"
-        DESCRIPTION = "Include details of why you don't know if your product is controlled"
+        TITLE = "Product details (optional)"
+        DESCRIPTION = "Include details of why you don't know if the product is controlled."
 
 
 class EditGoodForm:
@@ -114,7 +127,12 @@ class EditGoodForm:
 
     class IsControlled:
         TITLE = "Is the product on the control list?"
-        DESCRIPTION = "If you don't know you can use " + PERMISSION_FINDER_LINK
+        DESCRIPTION = (
+            "Products that aren't on the " + PERMISSION_FINDER_LINK + "may be affected "
+            "by military end use controls, current trade sanctions and embargoes or weapons of "
+            "mass destruction controls. If the product isn't subject to any controls, you'll get "
+            "a no licence required (NLR) document from ECJU."
+        )
         YES = "Yes"
         NO = "No"
         UNSURE = "I don't know"
@@ -164,10 +182,10 @@ class RespondToQueryForm:
 
     class Response:
         TITLE = "Your response"
-        DESCRIPTION = "You won't be able to edit this once submitted."
+        DESCRIPTION = "You won't be able to edit the response once it's submitted."
 
     class ConfirmationForm:
-        TITLE = "Confirm you want to send this response"
+        TITLE = "Confirm you want to send the response?"
         BACK_LINK = "Back to edit response"
         YES = "Confirm and send the response"
         NO = "Cancel and change the response"
@@ -186,16 +204,36 @@ class GoodPage:
         REFERENCE = "Reference"
 
 
-class CreateGoodOnApplicationForm:
-    TITLE = "Value and quantity of the product"
+class AddGoodToApplicationForm:
+    TITLE = "Add a product to your application"
+    DESCRIPTION = ""
     DOCUMENT_MISSING = "A document is required"
     BACK_LINK = "Back to products"
-    VALUE = "Total value"
-    QUANTITY = "Quantity"
-    UNITS = "Unit of measurement"
+
+    class Value:
+        TITLE = "Value of your products"
+        DESCRIPTION = ""
+
+    class VALUE:
+        TITLE = "Total value"
+        DESCRIPTION = ""
+
+    class Quantity:
+        TITLE = "Quantity"
+        DESCRIPTION = ""
+
+    class Units:
+        TITLE = "Unit of measurement"
+        DESCRIPTION = ""
+
+    class Incorporated:
+        TITLE = "Is this product incorporated?"
+        DESCRIPTION = ""
+        YES = "Yes"
+        NO = "No"
 
 
-class AddPrexistingGoodToApplicationForm:
+class AddPreexistingGoodToApplicationForm:
     TITLE = "Select a product from your product list"
 
 

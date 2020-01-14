@@ -1,7 +1,7 @@
-from conf.settings import env
 from lite_content.lite_exporter_frontend import (  # noqa
     applications,  # noqa
     goods,  # noqa
+    goods_types,  # noqa
     roles,  # noqa
     users,  # noqa
     sites,  # noqa
@@ -36,9 +36,6 @@ EDIT_APPLICATION_SUBMIT = "Submit application"
 EDIT_APPLICATION_DONE = "Completed"
 
 HOME = "Home"
-
-# Constants
-PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
 
 
 class Address:
@@ -141,11 +138,6 @@ class EndUser:
 
 
 class UltimateEndUser:
-    OVERVIEW_DESCRIPTION = (
-        "The entity that uses the product or the higher level system into which the products are"
-        " installed or incorporated. The end user and ultimate recipient may be different entities."
-    )
-
     class Documents:
         ATTACH_LATER = "to upload a document later."
         BUTTON = "Documents"
@@ -248,7 +240,7 @@ class EuaeQuery:
 
 class Hub:
     DESCRIPTION = "Home for exporters"
-    TITLE = "Exporter hub"
+    TITLE = "Export control account"
 
 
 class Licences:
@@ -320,25 +312,6 @@ class Goods:
         TITLE = "Product location address"
 
 
-class GoodTypes:
-    class Overview:
-        NO_GOOD_TYPES = "Add product descriptions to your application"
-        TITLE = "Describe your products"
-
-    class OverviewGoodTypes:
-        ADD_GOOD_TYPE_BUTTON = "Add a product"
-        NO_GOOD_TYPES = "There are no products to show. To add a product use the Add a product button"
-        TITLE = "Your products"
-
-    class OverviewAddGoodTypes:
-        DESCRIPTION = "Give us a short description of your products."
-        Q1 = "Is your product controlled?"
-        Q1_1 = "Control list classification"
-        Q1_2 = "For example, ML1a."
-        Q2 = "Is your product intended to be incorporated into an end product?"
-        TITLE = "Add a description"
-
-
 class HelpAddress:
     ADDRESS_CITY = "London"
     EMAIL = "Email: exportcontrol.help@trade.gov.uk"
@@ -352,26 +325,6 @@ class Sites:
     CREATE = "Add a site"
     DESCRIPTION = "Sites are locations where your organisation conducts business."
     TITLE = "Sites"
-
-
-class GoodsTypes:
-    class Documents:
-        SAVE_END_USER = "save your progress and return to your application later"
-
-        class AttachDocuments:
-            BACK_TO_APPLICATION_OVERVIEW = "Back to additional documents overview"
-            BUTTON = "Attach document"
-            DELETE_ERROR = "We had an issue deleting your files. Try again later."
-            DESCRIPTION = (
-                "Do not attach a document that\u2019s OFFICIAL-SENSITIVE or above.\n\nThe file must be"
-                " smaller than 100MB."
-            )
-            DESCRIPTION_FIELD_DETAILS = ""
-            DESCRIPTION_FIELD_TITLE = "Description (optional)"
-            DOWNLOAD_ERROR = "We had an issue downloading your file. Try again later."
-            FILE_TOO_LARGE = "The file you tried to upload is too large."
-            TITLE = "Upload a document to support your product (optional)"
-            UPLOAD_ERROR = "We had an issue uploading your files. Try again later."
 
 
 class AdditionalDocuments:
