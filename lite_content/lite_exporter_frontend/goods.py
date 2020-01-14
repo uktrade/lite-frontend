@@ -10,10 +10,10 @@ class GoodsList:
     EDIT_GOOD_LINK = "Edit product"
     IN_REVIEW = (
         "Your product is currently being reviewed by ECJU. "
-        "It'll have limited functionality until the review is complete."
+        "It has limited functionality until the review is complete."
     )
-    YOUR_GOOD = "Your product"
-    NO_LONGER_CAN_BE_CHANGED = "Your good has been used in an application and can therefore no longer be changed."
+    YOUR_GOOD = "Product"
+    NO_LONGER_CAN_BE_CHANGED = "Your product has been used in an application and can therefore no longer be changed."
 
     class Count:
         ORGANISATION_ZERO = "Your organisation doesn't have any products."
@@ -25,7 +25,7 @@ class GoodsList:
 
     class Filter:
         DESCRIPTION = generic.DESCRIPTION
-        CONTROL_LIST_ENTRY = generic.CONTROL_LIST_ENTRY
+        CONTROL_LIST_ENTRY = "Control list classification"
         PART_NUMBER = generic.PART_NUMBER
         APPLY = "Apply filters"
         CLEAR = "Clear filters"
@@ -34,8 +34,8 @@ class GoodsList:
 
     class Table:
         DESCRIPTION = generic.DESCRIPTION
-        CONTROL_LIST_ENTRY = generic.CONTROL_LIST_ENTRY
-        IS_GOOD_CONTROLLED = generic.CONTROLLED
+        CONTROL_LIST_ENTRY = "Control list classification"
+        IS_GOOD_CONTROLLED = "Is the product on the control list?"
         PART_NUMBER = generic.PART_NUMBER
         QUANTITY = "Quantity"
         VALUE = "Value"
@@ -45,7 +45,7 @@ class GoodsList:
 
     class Documents:
         TITLE = "Documents"
-        NO_DOCUMENT_ATTACHED = "This product has no documents attached"
+        NO_DOCUMENT_ATTACHED = "The product has no documents attached"
         NAME = "Name"
         DESCRIPTION = "Description"
         UPLOADED_BY = "Uploaded by"
@@ -72,7 +72,7 @@ class DocumentSensitivityForm:
 
 
 class CreateGoodForm:
-    TITLE = "Add a new product to your application"
+    TITLE = "Add product"
     BUTTON = "Save and continue"
 
     class Description:
@@ -95,7 +95,7 @@ class CreateGoodForm:
         UNSURE = "I don't know"
 
     class ControlListEntry:
-        TITLE = generic.CONTROL_LIST_ENTRY
+        TITLE = "Control list classification"
         DESCRIPTION = "For example, ML1a."
 
     class PartNumber:
@@ -109,12 +109,12 @@ class CLCQueryForm:
     BUTTON = "Save"
 
     class CLCCode:
-        TITLE = "What do you think is the product's control list entry?"
+        TITLE = "What do you think is the product's control list classification? (optional)"
         DESCRIPTION = "For example, ML1a."
 
     class Additional:
-        TITLE = "Product details"
-        DESCRIPTION = "Include details of why you don't know if your product is controlled"
+        TITLE = "Product details (optional)"
+        DESCRIPTION = "Include details of why you don't know if the product is controlled."
 
 
 class EditGoodForm:
@@ -127,13 +127,18 @@ class EditGoodForm:
 
     class IsControlled:
         TITLE = "Is the product on the control list?"
-        DESCRIPTION = "If you don't know you can use " + PERMISSION_FINDER_LINK
+        DESCRIPTION = (
+            "Products that aren't on the " + PERMISSION_FINDER_LINK + "may be affected "
+            "by military end use controls, current trade sanctions and embargoes or weapons of "
+            "mass destruction controls. If the product isn't subject to any controls, you'll get "
+            "a no licence required (NLR) document from ECJU."
+        )
         YES = "Yes"
         NO = "No"
         UNSURE = "I don't know"
 
     class ControlListEntry:
-        TITLE = generic.CONTROL_LIST_ENTRY
+        TITLE = "Control list classification"
         DESCRIPTION = "For example, ML1a."
 
     class Incorporated:
@@ -177,10 +182,10 @@ class RespondToQueryForm:
 
     class Response:
         TITLE = "Your response"
-        DESCRIPTION = "You won't be able to edit this once submitted."
+        DESCRIPTION = "You won't be able to edit the response once it's submitted."
 
     class ConfirmationForm:
-        TITLE = "Confirm you want to send this response"
+        TITLE = "Confirm you want to send the response?"
         BACK_LINK = "Back to edit response"
         YES = "Confirm and send the response"
         NO = "Cancel and change the response"

@@ -11,7 +11,7 @@ class OverviewPage:
 
 class Variables:
     DESCRIPTION = generic.DESCRIPTION
-    CONTROL_LIST_ENTRY = generic.CONTROL_LIST_ENTRY
+    CONTROL_LIST_ENTRY = "Control list classification"
     INCORPORATED = generic.INCORPORATED
     REMOVE_GOODS_TYPE = "Remove product"
 
@@ -53,7 +53,7 @@ class CreateGoodsTypeForm:
         DESCRIPTION = "Include the product name to make it easier to find."
 
     class IsControlled:
-        TITLE = "Are the products controlled?"
+        TITLE = "Is the product on the control list?"
         DESCRIPTION = (
             "Products that aren't on the "
             + generic.PERMISSION_FINDER_LINK
