@@ -245,7 +245,7 @@ def sendSlackNotification()
         emoji = "🔥"
     }
 
-	def message = "${emoji} UAT ${buildStatus} \n✈️ *lite-exporter-frontend* \n🔗 ${env.BUILD_URL}"
+	def message = "${emoji}   UAT ${buildStatus} \n✈️   *lite-exporter-frontend* \n🔗   ${env.BUILD_URL}"
 
 	// Set notification colour based on build status
 	if ("${params.ENVIRONMENT}" == "uat" && (buildStatus == "SUCCESS" || buildStatus == "UNSTABLE" || buildStatus == "FAILURE")) {
