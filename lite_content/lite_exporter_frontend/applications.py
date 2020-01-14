@@ -88,7 +88,8 @@ class ThirdPartyForm:
         CONTACT = "Contact"
         EXPORTER = "Exporter"
 
-    TITLE = "Select the type of third party"
+    ROLE_TITLE = "Select the role of the third party in your application"
+    TYPE_TITLE = "Select the type of third party"
     BUTTON = "Continue"
     NAME_FORM_TITLE = "Third party name"
     WEBSITE_FORM_TITLE = "Third party website address (optional)"
