@@ -49,6 +49,7 @@
 	&__button {
 		-webkit-user-select: none;
 		user-select: none;
+		margin: 0;
 
 		&:after {
 			@include govuk-shape-arrow($direction: down, $base: 10px, $height: 6px, $display: inline-block);
