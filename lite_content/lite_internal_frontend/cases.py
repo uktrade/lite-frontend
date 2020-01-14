@@ -48,6 +48,14 @@ class ApplicationPage:
         PRODUCTS_CONTROL_CODES = "Goods"
         FLAGS_TABLE_HEADER = "Flags"
 
+    class Parties:
+        SELECT_ALL = "Select all/Deselect all"
+        NAME = "Name"
+        ADDRESS = "Address"
+        TYPE = "Type"
+        WEBSITE = "Website"
+        DOCUMENT = "Document"
+
     class EndUser:
         NO_END_USER = "The applicant is editing the end user."
 
