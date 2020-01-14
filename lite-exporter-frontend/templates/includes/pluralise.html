@@ -1,15 +1,15 @@
 
 {% if count == 0 %}
-    {% with base_constant|add:'_ZERO' as constant %}
-        {% lcs constant %}
-    {% endwith %}
+	{% with base_constant|add:'_ZERO' as constant %}
+		{% lcs constant %}
+	{% endwith %}
 {% elif count == 1 %}
-    {% with base_constant|add:'_ONE' as constant %}
-        {% lcs constant %}
-    {% endwith %}
+	{% with base_constant|add:'_ONE' as constant %}
+		{% lcs constant %}
+	{% endwith %}
 {% else %}
-    {% with base_constant|add:'_MANY' as constant %}
-        {% lcs constant as text %}
-        {{  text|set_lcs_variable:count }}
-    {% endwith %}
+	{% with base_constant|add:'_MANY' as constant %}
+		{% lcs constant as text %}
+		{{  text|set_lcs_variable:count }}
+	{% endwith %}
 {% endif %}

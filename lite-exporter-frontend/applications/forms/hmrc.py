@@ -11,9 +11,9 @@ def confirm_organisation_form(organisation):
             Summary(
                 values={
                     "Name": organisation["name"],
-                    "Registration Number": organisation["registration_number"],
-                    "EORI Number": organisation["eori_number"],
-                    "VAT Number": organisation["vat_number"],
+                    "Registration number": organisation["registration_number"],
+                    "EORI number": organisation["eori_number"],
+                    "VAT number": organisation["vat_number"],
                     "Joined on": str_date_only(organisation["created_at"]),
                 }
             ),

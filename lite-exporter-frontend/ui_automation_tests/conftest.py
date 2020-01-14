@@ -301,8 +301,7 @@ def get_file_upload_path(filename):  # noqa
 
 @then("application is submitted")  # noqa
 def application_is_submitted(driver):  # noqa
-    apply = ApplyForALicencePage(driver)
-    assert "Application sent successfully" in apply.application_submitted_text()
+    assert ApplyForALicencePage(driver).is_success_panel_present()
 
 
 @then("I see submitted application")  # noqa
@@ -349,7 +348,7 @@ def i_delete_the_application(driver):  # noqa
 def submit_the_application(driver, context):  # noqa
     apply = ApplyForALicencePage(driver)
     functions.click_submit(driver)
-    assert apply.get_text_of_success_message() == "Application sent successfully"
+    assert apply.is_success_panel_present()
     context.time_date_submitted = datetime.datetime.now().strftime("%I:%M%p").lstrip("0").replace(
         " 0", " "
     ).lower() + datetime.datetime.now().strftime(" %d %B %Y")

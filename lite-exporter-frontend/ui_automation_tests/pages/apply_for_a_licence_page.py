@@ -13,6 +13,7 @@ class ApplyForALicencePage(BasePage):
     SUCCESS_MESSAGE = ".govuk-panel__title"
     APPLICATION_IS_SUBMITTED = ".govuk-panel__title"
     LINK_DELETE_DRAFT_ID = "link-delete-draft"
+    SUCCESS_BANNER_CLASS = ".govuk-panel--confirmation"
 
     def enter_name_or_reference_for_application(self, name):
         element = self.driver.find_element_by_id(self.NAME_OR_REFERENCE_INPUT_ID)
@@ -45,3 +46,6 @@ class ApplyForALicencePage(BasePage):
 
     def application_submitted_text(self):
         return self.driver.find_element_by_css_selector(self.APPLICATION_IS_SUBMITTED).text
+
+    def is_success_panel_present(self):
+        return len(self.driver.find_elements_by_css_selector(self.SUCCESS_BANNER_CLASS)) > 0

@@ -11,7 +11,7 @@
 {% block full_width %}
 	{% if application.status.key == "submitted" %}
 		<div class="lite-info-bar lite-info-bar--no-animation">
-			The changes you make to this application won't impact its processing time.
+			Changes made to this application won't impact its processing time.
 		</div>
 	{% endif %}
 	{% if application.status.key == "applicant_editing" %}
@@ -25,7 +25,7 @@
 	{% if errors %}
 		<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
 			<h2 class="govuk-error-summary__title" id="error-summary-title">
-				There are errors on this page
+				There is a problem
 			</h2>
 			<div class="govuk-error-summary__body">
 				<ul class="govuk-list govuk-error-summary__list">
@@ -90,11 +90,11 @@
 		        <li class="lite-task-list__item">
 					<div class="lite-task-list__item-header">
                         <a id="open-goods" href="{% url 'applications:goods_types' application.id %}" class="govuk-link govuk-link--no-visited-state">
-                            Describe your products
+                            Products
                         </a>
 						{% if goods|length or goodstypes|length %}
 							<div class="lite-tag lite-tag--blue">
-								Done
+								Completed
 							</div>
 						{% else %}
 							<div class="lite-tag lite-tag--hollow">
@@ -131,11 +131,11 @@
 		        <li class="lite-task-list__item">
 					<div class="lite-task-list__item-header">
 						<a id="location" href="{% url 'applications:location' application.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
-							Product locations
+							Locations
 						</a>
 						{% if sites.sites or external_locations %}
 							<div class="lite-tag lite-tag--blue">
-								Done
+								Completed
 							</div>
 						{% else %}
 							<div class="lite-tag lite-tag--hollow">
@@ -197,11 +197,11 @@
 					<li class="lite-task-list__item">
 						<div class="lite-task-list__item-header">
 							<a id="goods_country_assignments" href="{% url 'applications:goods_countries' application.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
-			                    Explain where each product is going
-			                </a>
-                            <div class="lite-tag lite-tag--hollow">
-                                {% lcs 'OPTIONAL' %}
-                            </div>
+								Countries each product is going to
+							</a>
+							<div class="lite-tag lite-tag--hollow">
+								{% lcs 'OPTIONAL' %}
+							</div>
 						</div>
 					</li>
 				{% endif %}
@@ -210,11 +210,11 @@
 				<li class="lite-task-list__item">
 					<div class="lite-task-list__item-header">
 						<a id="third_parties" href="{% url 'applications:additional_documents' application.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
-							Supporting documentation
+							Supporting documents
 						</a>
 						{% if additional_documents %}
 							<div class="lite-tag lite-tag--blue">
-								Done
+								Completed
 							</div>
 						{% else %}
 							<div class="lite-tag lite-tag--hollow">

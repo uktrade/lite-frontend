@@ -13,5 +13,5 @@ def footer_label(application_id):
     return Label(
         'Or <a class="govuk-link" href="'
         + reverse_lazy("applications:task_list", kwargs={"pk": str(application_id)})
-        + '">Or return to the task list</a>'
+        + '">Or return to application overview</a>'
     )

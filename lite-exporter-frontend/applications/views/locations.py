@@ -56,7 +56,7 @@ class EditGoodsLocation(TemplateView):
         data = request.POST.copy()
 
         if "organisation_or_external" not in data:
-            errors = {"organisation_or_external": ["Select which one you want"]}
+            errors = {"organisation_or_external": ["Select where the products are located"]}
 
             return form_page(request, which_location_form(draft_id), errors=errors)
 

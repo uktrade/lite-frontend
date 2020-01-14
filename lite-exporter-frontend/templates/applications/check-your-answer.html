@@ -1,7 +1,7 @@
 {% extends 'layouts/two-pane.html' %}
 
 {% block back_link %}
-	<a href="{% url 'applications:task_list' application.id %}" id="back-link" class="govuk-back-link">Back to task list</a>
+	<a href="{% url 'applications:task_list' application.id %}" id="back-link" class="govuk-back-link">Back to application overview</a>
 {% endblock %}
 
 {% block two_thirds %}
@@ -11,7 +11,7 @@
 				<ul class="govuk-list lite-error-summary__list">
 					{% for item in highlight %}
 						<li>
-							<a href="#{{ item|idify }}">You still need to attach a document</a>
+							<a href="#{{ item|idify }}">You need to attach a document</a>
 						</li>
 					{% endfor %}
 				</ul>

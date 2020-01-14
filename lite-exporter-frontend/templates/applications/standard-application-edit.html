@@ -11,7 +11,7 @@
 {% block full_width %}
 	{% if application.status.key == "submitted" %}
 		<div class="lite-info-bar lite-info-bar--no-animation">
-			The changes you make to this application won't impact its processing time.
+			Changes made to this application won't impact its processing time.
 		</div>
 	{% endif %}
 	{% if application.status.key == "applicant_editing" %}
@@ -25,7 +25,7 @@
 	{% if errors %}
 		<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
 			<h2 class="govuk-error-summary__title" id="error-summary-title">
-				There are errors on this page
+				There is a problem
 			</h2>
 			<div class="govuk-error-summary__body">
 				<ul class="govuk-list govuk-error-summary__list">
@@ -73,7 +73,7 @@
 				{% include "includes/task-list-item.html" with id="reference-name" title=reference_name_title url=reference_name_url status="done" description=application.name %}
 
 				{% url 'applications:edit_told_by_an_official' application.id as told_by_an_official_url %}
-				{% include "includes/task-list-item.html" with id="told-by-an-official" title="Told by an official that you need an export licence" url=told_by_an_official_url status="done" description=reference_number_description %}
+				{% include "includes/task-list-item.html" with id="told-by-an-official" title="End use control" url=told_by_an_official_url status="done" description=reference_number_description %}
 			</ul>
 		</li>
 	</ol>
@@ -99,11 +99,11 @@
 		        <li class="lite-task-list__item">
 					<div class="lite-task-list__item-header">
 						<a id="location" href="{% url 'applications:location' application.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
-							Product locations
+							Locations
 						</a>
 						{% if sites or external_locations %}
 							<div class="lite-tag lite-tag--blue">
-								Done
+								Completed
 							</div>
 						{% else %}
 							<div class="lite-tag lite-tag--hollow">
@@ -117,7 +117,7 @@
 								<tbody class="govuk-table__body">
 									<tr class="govuk-table__row">
 										<th class="govuk-table__header" scope="row">Site</th>
-										<td class="govuk-table__header">Location</td>
+										<td class="govuk-table__header">Address</td>
 									</tr>
 									{% for site in sites %}
 										<tr class="govuk-table__row">
@@ -140,7 +140,7 @@
 								<tbody class="govuk-table__body">
 									<tr class="govuk-table__row">
 										<th class="govuk-table__header" scope="row">Name</th>
-										<td class="govuk-table__header">Location</td>
+										<td class="govuk-table__header">Address</td>
 									</tr>
 									{% for external_location in external_locations %}
 										<tr class="govuk-table__row">
@@ -166,7 +166,7 @@
                         {% endif %}
 						{% if application.end_user and end_user_document %}
 							<div class="lite-tag lite-tag--blue">
-								Done
+								Completed
 							</div>
 				        {% elif application.end_user %}
 				            <div class="lite-tag lite-tag--orange">
@@ -251,7 +251,7 @@
                         {% endif %}
 						{% if application.consignee and consignee_document %}
 							<div class="lite-tag lite-tag--blue">
-								Done
+								Completed
 							</div>
 				        {% elif application.consignee %}
 				            <div class="lite-tag lite-tag--orange">
@@ -337,11 +337,11 @@
 				<li class="lite-task-list__item">
 					<div class="lite-task-list__item-header">
                         <a id="link-third-parties" href="{% url 'applications:third_parties' application.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
-                        Third Parties
+                        Third parties
                         </a>
 				        {% if third_parties %}
 				            <div class="lite-tag lite-tag--blue">
-								Done
+								Completed
 							</div>
 						{% else %}
 							<div class="lite-tag lite-tag--hollow">
@@ -382,11 +382,11 @@
 				<li class="lite-task-list__item">
 					<div class="lite-task-list__item-header">
 						<a id="link-supporting-documentation" href="{% url 'applications:additional_documents' application.id %}" class="lite-overview-section-header govuk-link govuk-link--no-visited-state">
-							Supporting documentation
+							Supporting documents
 						</a>
 						{% if additional_documents %}
 							<div class="lite-tag lite-tag--blue">
-								Done
+								Completed
 							</div>
 						{% else %}
 							<div class="lite-tag lite-tag--hollow">

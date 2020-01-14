@@ -7,9 +7,9 @@
 		<div class="buttons-row">
 			{% csrf_token %}
 			{% if status == 'reactivate' %}
-				<button type="submit" name="status" value="Active" class="govuk-button" id="reactivate-confirm">Reactivate User</button>
+				<button type="submit" name="status" value="Active" class="govuk-button" id="reactivate-confirm">Reactivate member</button>
 			{% else %}
-				<button type="submit" name="status" value="Deactivated" class="govuk-button govuk-button--warning" id="deactivate-confirm">Deactivate User</button>
+				<button type="submit" name="status" value="Deactivated" class="govuk-button govuk-button--warning" id="deactivate-confirm">Deactivate member</button>
 			{% endif %}
 			<a href="{% url 'users:user' user_id %}" role="button" draggable="false" class="govuk-button govuk-button--secondary">Cancel</a>
 		</div>

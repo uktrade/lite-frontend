@@ -58,7 +58,7 @@
 			{% endif %}
 
 			{% if good.query %}
-				<h3 class="govuk-heading-m">Your Query</h3>
+				<h3 class="govuk-heading-m">Your query</h3>
 				<dl class="govuk-summary-list">
 					<div class="govuk-summary-list__row">
 						<dt class="govuk-summary-list__key">
@@ -96,8 +96,7 @@
 
 			{% if good.status.key == 'draft' %}
 				<div class="govuk-inset-text">
-					If you're unsure about whether your product is controlled or not, you can <a href="{% url 'goods:raise_clc_query' good.id %}" class="govuk-link govuk-link--no-visited-state">raise a query</a> to
-					get help from ECJU.
+					If you're unsure the product is controlled or not, you can <a href="{% url 'goods:raise_clc_query' good.id %}" class="govuk-link govuk-link--no-visited-state">raise a control list classification (CLC) query</a>.
 				</div>
 				<br>
 			{% endif %}

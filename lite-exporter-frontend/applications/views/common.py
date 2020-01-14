@@ -105,7 +105,7 @@ class ApplicationEditType(TemplateView):
             return form_page(
                 request,
                 edit_type_form(application_id),
-                errors={"edit-type": ["Select what type of edit you'd like to make."]},
+                errors={"edit-type": ["Select the type of edit you need to make"]},
             )
 
         return redirect(reverse_lazy("applications:task_list", kwargs={"pk": str(kwargs["pk"])}))
