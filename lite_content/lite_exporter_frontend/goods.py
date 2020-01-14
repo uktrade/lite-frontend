@@ -164,7 +164,8 @@ class AttachDocumentForm:
         "\n\nThe file must be smaller than 100MB."
     )
     BUTTON = "Save"
-    BACK_LINK = "Back to product"
+    BACK_FORM_LINK = "Back"
+    BACK_GOOD_LINK = "Back to product"
 
     class Description:
         TITLE = "Description (optional)"
