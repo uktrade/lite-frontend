@@ -30,5 +30,5 @@ class EditRoleForm:
     PERMISSION_CHECKBOXES_DESCRIPTION = ""
     STATUSES_CHECKBOXES_TITLE = "Select the statuses this role can set manually"
     STATUSES_CHECKBOXES_DESCRIPTION = ""
-    FORM_BACK_TO_ROLES = "Back to roles"
+    BACK_TO_ROLES = "Back to roles"
     FORM_CREATE = "Save"
