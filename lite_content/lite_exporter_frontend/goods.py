@@ -203,6 +203,9 @@ class GoodPage:
         NO_ASSIGNED_CASE_OFFICER = "Not assigned"
         REFERENCE = "Reference"
 
+    class ECJUDocuments:
+        CREATED_AT = "Created at"
+
 
 class AddGoodToApplicationForm:
     TITLE = "Add a product to your application"
