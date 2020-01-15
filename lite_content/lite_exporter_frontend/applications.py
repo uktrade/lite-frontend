@@ -6,7 +6,7 @@ class PartyForm:
         OTHER = "Other"
 
     class CopyExistingForm:
-        TITLE = "Do you want to resuse an existing party?"
+        TITLE = "Do you want to reuse an existing party?"
         YES = "Yes"
         NO = "No"
         BACK_LINK = "Back to application"
@@ -31,6 +31,7 @@ class CopyExistingPartyPage:
 
     class Table:
         NAME_COLUMN = "Name"
+        TYPE_COLUMN = "Type"
         ADDRESS_COLUMN = "Address"
         COUNTRY_COLUMN = "Country"
         WEBSITE_COLUMN = "Website"
@@ -87,7 +88,8 @@ class ThirdPartyForm:
         CONTACT = "Contact"
         EXPORTER = "Exporter"
 
-    TITLE = "Select the type of third party"
+    ROLE_TITLE = "Select the role of the third party in your application"
+    TYPE_TITLE = "Select the type of third party"
     BUTTON = "Continue"
     NAME_FORM_TITLE = "Third party name"
     WEBSITE_FORM_TITLE = "Third party website address (optional)"
