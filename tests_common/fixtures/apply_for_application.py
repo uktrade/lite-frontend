@@ -55,7 +55,8 @@ def apply_for_standard_application(driver, seed_data_config, context):
             "name": "Individual",
             "address": "Ukraine, 01532",
             "country": "UA",
-            "sub_type": "agent",
+            "sub_type": "government",
+            "role": "agent",
             "website": "https://www.anothergov.uk",
         },
     )
