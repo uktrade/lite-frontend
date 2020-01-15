@@ -8,7 +8,6 @@ from lite_content.lite_exporter_frontend import (  # noqa
     core,  # noqa
     end_users,  # noqa
     hub,  # noqa
-    third_parties,  # noqa
     generic,  # noqa
 )  # noqa
 
