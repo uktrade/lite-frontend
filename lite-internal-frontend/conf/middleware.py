@@ -1,4 +1,4 @@
-from lite_content.lite_internal_frontend import strings
+from lite_content.lite_internal_frontend.strings import cases
 import logging
 import time
 import uuid
@@ -37,7 +37,7 @@ class UploadFailedMiddleware:
         if not isinstance(exception, UploadFailed):
             return None
 
-        return error_page(request, strings.Cases.Manage.Documents.AttachDocuments.FILE_TOO_LARGE)
+        return error_page(request, cases.Manage.Documents.AttachDocuments.FILE_TOO_LARGE)
 
 
 class LoggingMiddleware:

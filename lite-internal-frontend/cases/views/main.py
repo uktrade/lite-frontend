@@ -1,6 +1,6 @@
 from cases.helpers import get_updated_cases_banner_queue_id
 from http import HTTPStatus
-from lite_content.lite_internal_frontend import strings
+from lite_content.lite_internal_frontend.strings import cases
 from django.http import StreamingHttpResponse, Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
@@ -168,7 +168,7 @@ class ViewAdvice(TemplateView):
             "title": case.get("application").get("name"),
             "activity": activity.get("activity"),
             "permissions": permissions,
-            "edit_case_flags": strings.Cases.Case.EDIT_CASE_FLAGS,
+            "edit_case_flags": cases.Case.EDIT_CASE_FLAGS,
         }
         return render(request, "case/advice/user.html", context)
 
@@ -267,7 +267,7 @@ class Documents(TemplateView):
         case_documents, _ = get_case_documents(request, case_id)
 
         context = {
-            "title": strings.Cases.Manage.Documents.TITLE,
+            "title": cases.Manage.Documents.TITLE,
             "case": case,
             "case_documents": case_documents["documents"],
             "generated_document_key": GENERATED_DOCUMENT,
@@ -364,7 +364,7 @@ class CaseOfficer(TemplateView):
                 gov_users, _ = get_gov_users(request, params)
 
                 context = {
-                    "error": strings.cases.CaseOfficerPage.Error.NO_SELECTION,
+                    "error": cases.CaseOfficerPage.Error.NO_SELECTION,
                     "case_officer": get_case_officer(request, case_id)[0],
                     "users": gov_users,
                     "case": case,

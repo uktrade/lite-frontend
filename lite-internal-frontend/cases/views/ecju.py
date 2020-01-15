@@ -1,4 +1,4 @@
-from lite_content.lite_internal_frontend import strings
+from lite_content.lite_internal_frontend.strings import cases
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import TemplateView
@@ -36,7 +36,7 @@ class ViewEcjuQueries(TemplateView):
             "case_id": case_id,
             "open_ecju_queries": open_ecju_queries,
             "closed_ecju_queries": closed_ecju_queries,
-            "title": strings.Cases.EcjuQueries.TITLE,
+            "title": cases.EcjuQueries.TITLE,
         }
         return render(request, "case/ecju-queries.html", context)
 

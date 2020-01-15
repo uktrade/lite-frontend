@@ -1,7 +1,7 @@
 {% extends 'layouts/base.html' %}
 
 {% block back_link %}
-	<a href="{% url 'cases:case' case_id %}" class="govuk-back-link">{% lcs 'Cases.EcjuQueries.BACK_TO_CASE' %}</a>
+	<a href="{% url 'cases:case' case_id %}" class="govuk-back-link">{% lcs 'cases.EcjuQueries.BACK_TO_CASE' %}</a>
 {% endblock %}
 
 {% block body %}
@@ -9,14 +9,14 @@
 		<h2 class="govuk-heading-l">{{ title }}</h2>
 		<div class="lite-app-bar--right">
 			<a role="button" draggable="false" class="govuk-button {% if documents %}govuk-button--secondary{% endif %}" href="{% url 'cases:ecju_queries_add' case_id %}">
-				{% lcs 'Cases.EcjuQueries.AddQuery.ADD_BUTTON_LABEL' %}
+				{% lcs 'cases.EcjuQueries.AddQuery.ADD_BUTTON_LABEL' %}
 			</a>
 		</div>
 	</div>
 
 	{% if open_ecju_queries or closed_ecju_queries %}
         {% if open_ecju_queries %}
-            <h3 class="govuk-heading-m">{% lcs 'Cases.EcjuQueries.OPEN' %}</h3>
+            <h3 class="govuk-heading-m">{% lcs 'cases.EcjuQueries.OPEN' %}</h3>
             <div class="govuk-accordion" data-module="govuk-accordion">
             {% for query in open_ecju_queries %}
                 {% if query.question|length > 200 %}
@@ -47,7 +47,7 @@
             </div>
         {% endif %}
         {% if closed_ecju_queries %}
-            <h3 class="govuk-heading-m">{% lcs 'Cases.EcjuQueries.CLOSED' %}</h3>
+            <h3 class="govuk-heading-m">{% lcs 'cases.EcjuQueries.CLOSED' %}</h3>
             <div class="govuk-accordion" data-module="govuk-accordion">
             {% for query in closed_ecju_queries %}
                 <div class="govuk-accordion__section ">
@@ -83,6 +83,6 @@
             </div>
         {% endif %}
 	{% else %}
-		<p class="govuk-caption-l">{% lcs 'Cases.EcjuQueries.CASE_HAS_NO_QUERIES' %}</p>
+		<p class="govuk-caption-l">{% lcs 'cases.EcjuQueries.CASE_HAS_NO_QUERIES' %}</p>
 	{% endif %}
 {% endblock %}

@@ -31,41 +31,41 @@
 		<div class="lite-app-bar__controls">
 			<div class="app-more-actions__container">
 				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:documents' case.id %}">
-		        	{% lcs 'Cases.ApplicationPage.Actions.DOCUMENT' %}
+		        	{% lcs 'cases.ApplicationPage.Actions.DOCUMENT' %}
 		        </a>
 		        <a role="button" draggable="false" class="govuk-button" href="{% url 'cases:ecju_queries' case.id %}">
-		            {% lcs 'Cases.ApplicationPage.Actions.ECJU' %}
+		            {% lcs 'cases.ApplicationPage.Actions.ECJU' %}
 				</a>
 		        <a role="button" draggable="false" class="govuk-button" href="{% url 'cases:move' case.id %}">
-					{% lcs 'Cases.ApplicationPage.Actions.MOVE' %}
+					{% lcs 'cases.ApplicationPage.Actions.MOVE' %}
 				</a>
                 {% if not status_is_terminal or 'REOPEN_CLOSED_CASES' in permissions %}
 				<a role="button" draggable="false" class="govuk-button" id="change-status" href="{% url 'cases:manage' case.id %}">
-					{% lcs 'Cases.ApplicationPage.Actions.CHANGE_STATUS' %}
+					{% lcs 'cases.ApplicationPage.Actions.CHANGE_STATUS' %}
 				</a>
                 {% endif %}
 				{% if permissions|key_in_array:'MAKE_FINAL_DECISIONS' %}
 					<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:decide' case.id %}">
-						{% lcs 'Cases.ApplicationPage.Actions.DECISION' %}
+						{% lcs 'cases.ApplicationPage.Actions.DECISION' %}
 					</a>
 				{% endif %}
 		        <a role="button" draggable="false" class="govuk-button" href="{% url 'cases:user_advice_view' case.id %}">
-					{% lcs 'Cases.ApplicationPage.Actions.ADVICE' %}
+					{% lcs 'cases.ApplicationPage.Actions.ADVICE' %}
 				</a>
                 <a role="button" draggable="false" class="govuk-button" id="generate-document" href="{% url 'cases:generate_document' case.id %}">
-					{% lcs 'Cases.ApplicationPage.Actions.GENERATE_DOCUMENT' %}
+					{% lcs 'cases.ApplicationPage.Actions.GENERATE_DOCUMENT' %}
 				</a>
                 <a role="button" draggable="false" class="govuk-button" id="case-officer" href="{% url 'cases:case_officer' case.id %}">
-                    {% lcs 'Cases.ApplicationPage.Actions.CASE_OFFICER' %}
+                    {% lcs 'cases.ApplicationPage.Actions.CASE_OFFICER' %}
                 </a>
 			</div>
 		</div>
 	</div>
 
     {% if case.case_officer %}
-        <p class="govuk-caption-m">{% lcs 'Cases.ApplicationPage.CASE_OFFICER' %} <a class="govuk-link govuk-link--no-visited-state" href="{% url 'users:user' case.case_officer.id %}">{{ case.case_officer|username }}</a></p>
+        <p class="govuk-caption-m">{% lcs 'cases.ApplicationPage.CASE_OFFICER' %} <a class="govuk-link govuk-link--no-visited-state" href="{% url 'users:user' case.case_officer.id %}">{{ case.case_officer|username }}</a></p>
     {% else %}
-        <p class="govuk-caption-m">{% lcs 'Cases.ApplicationPage.NO_CASE_OFFICER' %}</p>
+        <p class="govuk-caption-m">{% lcs 'cases.ApplicationPage.NO_CASE_OFFICER' %}</p>
     {% endif %}
 
 	<div class="app-flags" id="application-case-flags">
@@ -146,11 +146,11 @@
 				<form action="{% url 'cases:review_goods' case.id %}" method="get">
 					{% if 'REVIEW_GOODS' in permissions and not status_is_terminal %}
 						<button id="button-review-goods" name="action" value="review-goods" class="govuk-button" data-module="govuk-button">
-							{% lcs 'Cases.OpenApplication.REVIEW_PRODUCTS' %}
+							{% lcs 'cases.OpenApplication.REVIEW_PRODUCTS' %}
 						</button>
 					{% endif %}
 					<button id="button-edit-goods-flags" name="action" value="edit-flags" class="govuk-button" data-module="govuk-button">
-						{% lcs 'Cases.OpenApplication.SET_FLAGS' %}
+						{% lcs 'cases.OpenApplication.SET_FLAGS' %}
 					</button>
 					<table class="govuk-table">
 						<thead class="govuk-table__head">
@@ -231,7 +231,7 @@
 			<div class="govuk-accordion__section-content">
 				<form action="{% url 'cases:assign_destination_flags' case.id %}" method="get">
 					<button id="button-edit-destinations-flags" class="govuk-button" data-module="govuk-button">
-						{% lcs 'Cases.ApplicationPage.EDIT_DESTINATION_FLAGS' %}
+						{% lcs 'cases.ApplicationPage.EDIT_DESTINATION_FLAGS' %}
 					</button>
 					<table class="govuk-table">
 						<thead class="govuk-table__head">
@@ -239,9 +239,9 @@
 								<th scope="col" class="govuk-table__header">
 									<button id="link-select-all-destinations" type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
 								</th>
-								<th scope="col" class="govuk-table__header govuk-!-width-one-third">{% lcs 'Cases.ApplicationPage.Destinations.COUNTRY_NAME' %}</th>
-								<th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs 'Cases.ApplicationPage.Destinations.PRODUCTS_CONTROL_CODES' %}</th>
-								<th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs 'Cases.ApplicationPage.Destinations.FLAGS_TABLE_HEADER' %}</th>
+								<th scope="col" class="govuk-table__header govuk-!-width-one-third">{% lcs 'cases.ApplicationPage.Destinations.COUNTRY_NAME' %}</th>
+								<th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs 'cases.ApplicationPage.Destinations.PRODUCTS_CONTROL_CODES' %}</th>
+								<th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs 'cases.ApplicationPage.Destinations.FLAGS_TABLE_HEADER' %}</th>
 							</tr>
 						</thead>
 						<tbody class="govuk-table__body">

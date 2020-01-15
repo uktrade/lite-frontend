@@ -48,7 +48,7 @@
 		</table>
         {% include "includes/pagination.html" with data=data %}
 	{% else %}
-        {% lcs 'LETTER_TEMPLATES.LetterTemplatesPage.NONE_FOUND' as text %}
+        {% lcs 'letter_templates.LetterTemplatesPage.NONE_FOUND' as text %}
         {% include "includes/information-text.html" with text=text  %}
 	{% endif %}
 

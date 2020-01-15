@@ -1,4 +1,4 @@
-from lite_content.lite_internal_frontend import strings
+from lite_content.lite_internal_frontend.strings import cases
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
@@ -55,7 +55,7 @@ class ReviewGoods(TemplateView):
                     goods.append(good)
 
         context = {
-            "title": strings.Cases.ReviewGoodsSummary.HEADING,
+            "title": cases.ReviewGoodsSummary.HEADING,
             "case_id": case_id,
             "application_type": case["application"]["application_type"]["key"],
             "objects": goods,

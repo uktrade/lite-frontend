@@ -4,7 +4,7 @@
 
 {% block back_link %}
 	<a href="{% url 'cases:case' case_id %}" class="govuk-back-link">
-		{% lcs 'Cases.ReviewGoodsSummary.BACK_LINK' %}
+		{% lcs 'cases.ReviewGoodsSummary.BACK_LINK' %}
 	</a>
 {% endblock %}
 
@@ -13,11 +13,11 @@
 <div class="lite-app-bar">
 	<div class="lite-app-bar__content">
 		<p class="govuk-caption-m" style="margin: 0;">{{ case.application.application_type.value }}</p>
-		<h2 class="govuk-heading-l">{% lcs 'Cases.ReviewGoodsSummary.HEADING' %}</h2>
+		<h2 class="govuk-heading-l">{% lcs 'cases.ReviewGoodsSummary.HEADING' %}</h2>
 	</div>
     <div class="lite-app-bar__controls">
         <a id="button-add-report-summary" value="goods" class="btn govuk-button" data-module="govuk-button" href="{{ review_goods_clc_url }}">
-			{% lcs 'Cases.ReviewGoodsSummary.REVIEW_BUTTON' %}
+			{% lcs 'cases.ReviewGoodsSummary.REVIEW_BUTTON' %}
         </a>
     </div>
 </div>
@@ -29,7 +29,7 @@
         </div>
     {% endfor %}
 	<a href="{{ edit_flags_url }}" id="button-edit-goods-flags" class="app-flag app-flag--action">
-        {% lcs 'Cases.ReviewGoodsSummary.SET_FLAGS' %}
+        {% lcs 'cases.ReviewGoodsSummary.SET_FLAGS' %}
 	</a>
 </div>
 
@@ -37,15 +37,15 @@
 <table class="govuk-table" id="goods">
 	<thead class="govuk-table__head">
 		<tr class="govuk-table__row">
-			<th class="govuk-table__header">{% lcs 'Cases.ReviewGoodsSummary.Table.DESCRIPTION' %}</th>
-			<th class="govuk-table__header">{% lcs 'Cases.ReviewGoodsSummary.Table.REPORT_SUMMARY' %}</th>
-			<th class="govuk-table__header">{% lcs 'Cases.ReviewGoodsSummary.Table.CONTROLLED' %}</th>
-			<th class="govuk-table__header">{% lcs 'Cases.ReviewGoodsSummary.Table.CONTROL_LIST_ENTRY' %}</th>
-			<th class="govuk-table__header">{% lcs 'Cases.ReviewGoodsSummary.Table.GOODS_COMMENT' %}</th>
+			<th class="govuk-table__header">{% lcs 'cases.ReviewGoodsSummary.Table.DESCRIPTION' %}</th>
+			<th class="govuk-table__header">{% lcs 'cases.ReviewGoodsSummary.Table.REPORT_SUMMARY' %}</th>
+			<th class="govuk-table__header">{% lcs 'cases.ReviewGoodsSummary.Table.CONTROLLED' %}</th>
+			<th class="govuk-table__header">{% lcs 'cases.ReviewGoodsSummary.Table.CONTROL_LIST_ENTRY' %}</th>
+			<th class="govuk-table__header">{% lcs 'cases.ReviewGoodsSummary.Table.GOODS_COMMENT' %}</th>
 			{% if application_type == "standard_licence" %}
-				<th class="govuk-table__header">{% lcs 'Cases.ReviewGoodsSummary.Table.QUANTITY_VALUE' %}</th>
+				<th class="govuk-table__header">{% lcs 'cases.ReviewGoodsSummary.Table.QUANTITY_VALUE' %}</th>
 			{% endif %}
-			<th class="govuk-table__header">{% lcs 'Cases.ReviewGoodsSummary.Table.FLAGS' %}</th>
+			<th class="govuk-table__header">{% lcs 'cases.ReviewGoodsSummary.Table.FLAGS' %}</th>
 		</tr>
 	</thead>
 	<tbody class="govuk-table__body">
@@ -56,7 +56,7 @@
 					{% if good.report_summary %}
 						{{ good.report_summary }}
 					{% else %}
-						<span class="lite-hint">{% lcs 'Cases.ReviewGoodsSummary.NotSet.REPORT_SUMMARY' %}</span>
+						<span class="lite-hint">{% lcs 'cases.ReviewGoodsSummary.NotSet.REPORT_SUMMARY' %}</span>
 					{% endif %}
 				</td>
 				<td class="govuk-table__cell">{{ good.is_good_controlled|friendly_boolean }}</td>
@@ -65,7 +65,7 @@
 					{% if good.comment %}
 						{{ good.comment}}
 					{% else %}
-						<span class="lite-hint">{% lcs 'Cases.ReviewGoodsSummary.NotSet.COMMENT' %}</span>
+						<span class="lite-hint">{% lcs 'cases.ReviewGoodsSummary.NotSet.COMMENT' %}</span>
 					{% endif %}
 				</td>
 				{% if application_type == "standard_licence" %}
@@ -77,7 +77,7 @@
 							{{ flag.name}} <br>
 						{% endfor %}
 					{% else %}
-						<span class="lite-hint">{% lcs 'Cases.ReviewGoodsSummary.NotSet.FLAGS' %}</span>
+						<span class="lite-hint">{% lcs 'cases.ReviewGoodsSummary.NotSet.FLAGS' %}</span>
 					{% endif %}
 				</td>
 			</tr>

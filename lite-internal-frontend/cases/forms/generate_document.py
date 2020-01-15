@@ -1,7 +1,7 @@
 from django.urls import reverse_lazy
 
 from letter_templates.context_variables import get_sample_context_variables
-from lite_content.lite_internal_frontend import strings
+from lite_content.lite_internal_frontend.strings import letter_templates
 from lite_content.lite_internal_frontend.cases import GenerateDocumentsPage
 from lite_forms.components import Form, RadioButtonsImage, Option, BackLink, Checkboxes, HiddenField, MarkdownArea, Link
 
@@ -10,7 +10,7 @@ ADD_PARAGRAPH_KEY = "add_paragraphs"
 
 def select_template_form(templates, total_pages, case_id):
     return Form(
-        title=strings.LETTER_TEMPLATES.LetterTemplatesPage.PickTemplate.TITLE,
+        title=letter_templates.LetterTemplatesPage.PickTemplate.TITLE,
         questions=[
             RadioButtonsImage(
                 name="template",
@@ -21,7 +21,7 @@ def select_template_form(templates, total_pages, case_id):
                 total_pages=total_pages,
             )
         ],
-        default_button_name=strings.LETTER_TEMPLATES.LetterTemplatesPage.PickTemplate.BUTTON,
+        default_button_name=letter_templates.LetterTemplatesPage.PickTemplate.BUTTON,
         back_link=BackLink(
             text=GenerateDocumentsPage.SelectTemplateForm.BACK_LINK,
             url=reverse_lazy("cases:documents", kwargs={"pk": case_id}),

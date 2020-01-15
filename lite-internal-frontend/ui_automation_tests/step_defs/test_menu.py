@@ -1,5 +1,3 @@
-import urllib.request
-
 from pytest_bdd import scenarios, then, when
 
 from pages.header_page import HeaderPage
@@ -7,10 +5,8 @@ from pages.header_page import HeaderPage
 scenarios("../features/menu.feature", strict_gherkin=False)
 
 
-@then("I get a 200")
+@then("the log out link is displayed")
 def success(driver):
-    conn = urllib.request.urlopen(driver.current_url)
-    assert conn.getcode() == 200
     assert driver.find_element_by_id(
         "link-log-out"
     ).is_displayed(), "Log out button is displayed. User may have the service unavailable screen."
