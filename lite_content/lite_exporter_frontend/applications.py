@@ -113,6 +113,7 @@ class GeneratedDocuments:
 
 
 class ApplicationSummaryPage:
+    REFERENCE_CODE = "Reference code"
     REFERENCE_NAME = "Reference"
     TYPE = "Licence type"
     CASE_OFFICER = "Case officer"
