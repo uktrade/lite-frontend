@@ -1,8 +1,4 @@
-from lite_content.lite_internal_frontend import cases, letter_templates, roles
-
-Cases = cases
-LETTER_TEMPLATES = letter_templates
-ROLES = roles
+from lite_content.lite_internal_frontend import cases, letter_templates  # noqa
 
 # Buttons
 CONTINUE = "Continue"
@@ -44,11 +40,6 @@ CASE_GOODS_LOCATION_NAME = "Name"
 CASE_GOODS_LOCATION_ADDRESS = "Address"
 CASE_ENTITIES_INVOLVED = "Entities involved"
 CASE_ENTITIES_ACTIVITY = "Activity"
-CASE_PARTIES_NAME = "Name"
-CASE_PARTIES_ADDRESS = "Address"
-CASE_PARTIES_TYPE = "Type"
-CASE_PARTIES_WEBSITE = "Website"
-CASE_PARTIES_DOCUMENT = "Document"
 CASE_PARTIES_LICENSEE = "Licensee"
 
 CASE_INFO_TYPE = "Type"
