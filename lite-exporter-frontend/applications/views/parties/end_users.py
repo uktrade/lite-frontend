@@ -18,7 +18,7 @@ class EndUser(TemplateView):
             context = {
                 "application": application,
                 "title": EndUserPage.TITLE,
-                "edit_url": reverse_lazy("applications:set_end_user", kwargs={"pk": application_id}),
+                "edit_url": reverse_lazy("applications:edit_end_user", kwargs={"pk": application_id}),
                 "remove_url": reverse_lazy("applications:remove_end_user", kwargs={"pk": application_id}),
                 "answers": convert_end_user(application["end_user"], application_id, True),
                 "highlight": ["Document"] if not application["end_user"]["document"] else {},
@@ -36,7 +36,7 @@ class AddEndUser(AddParty):
 
 
 class SetEndUser(SetParty):
-    def __init__(self):
+    def __init__(self, copy_existing=False):
         super().__init__(
             url="applications:end_user_attach_document",
             name="end_user",
@@ -45,7 +45,13 @@ class SetEndUser(SetParty):
             action=post_end_user,
             strings=EndUserForm,
             multiple_allowed=False,
+            copy_existing=copy_existing,
         )
+
+
+class EditEndUser(SetEndUser):
+    def __init__(self):
+        super().__init__(copy_existing=True)
 
 
 class RemoveEndUser(DeleteParty):

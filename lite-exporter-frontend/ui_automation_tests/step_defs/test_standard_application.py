@@ -314,6 +314,9 @@ def party_table(driver, context):
     for string in text:
         assert string in row.text
 
+
+@when("I click copy party")
+def copy_party(driver):
     AddEndUserPages(driver).click_copy_existing_button()
 
 
@@ -345,6 +348,7 @@ def party_address_autofill(driver, context):
 def skip_document_upload(driver, context):
     AttachDocumentPage(driver).click_save_and_return_to_overview_link()
     # Setup for checking on overview page
+    context.type_end_user = context.end_user["sub_type"]["value"]
     context.name_end_user = context.end_user["name"]
     context.address_end_user = context.end_user["address"]
 

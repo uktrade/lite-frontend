@@ -180,6 +180,7 @@ def _convert_third_parties(third_parties, application_id, editable):
         {
             "Name": third_party["name"],
             "Type": third_party["sub_type"]["value"],
+            "Role": third_party["role"]["value"],
             "Address": third_party["address"] + NEWLINE + third_party["country"]["name"],
             "Website": convert_to_link(third_party["website"]),
             "Document": _convert_attachable_document(

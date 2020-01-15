@@ -15,6 +15,7 @@
                 <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
                         <th scope="col" class="govuk-table__header">{% lcs 'applications.CopyExistingPartyPage.Table.NAME_COLUMN' %}</th>
+                        <th scope="col" class="govuk-table__header">{% lcs 'applications.CopyExistingPartyPage.Table.TYPE_COLUMN' %}</th>
                         <th scope="col" class="govuk-table__header">{% lcs 'applications.CopyExistingPartyPage.Table.ADDRESS_COLUMN' %}</th>
                         <th scope="col" class="govuk-table__header">{% lcs 'applications.CopyExistingPartyPage.Table.COUNTRY_COLUMN' %}</th>
                         <th scope="col" class="govuk-table__header">{% lcs 'applications.CopyExistingPartyPage.Table.WEBSITE_COLUMN' %}</th>
@@ -26,6 +27,9 @@
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell">
                                 {{ party.name }}
+                            </td>
+                            <td class="govuk-table__cell">
+                                {{ party.sub_type.value }}
                             </td>
                             <td class="govuk-table__cell">
                                 {{ party.address }}
@@ -41,6 +45,7 @@
                                     {% csrf_token %}
                                     <input type="hidden" name="form_pk" value="0">
                                     <input type="hidden" name="name" value="{{ party.name }}">
+                                    <input type="hidden" name="sub_type" value="{{ party.sub_type.key }}">
                                     <input type="hidden" name="website" value="{{ party.website }}">
                                     <input type="hidden" name="address" value="{{ party.address }}">
                                     <input type="hidden" name="country" value="{{ party.country.id }}">

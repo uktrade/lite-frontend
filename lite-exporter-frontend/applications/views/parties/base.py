@@ -36,7 +36,7 @@ class AddParty(TemplateView):
 
 
 class SetParty(MultiFormView):
-    def __init__(self, url, form, name, back_url, action, strings, multiple_allowed, **kwargs):
+    def __init__(self, url, form, name, back_url, action, strings, multiple_allowed, copy_existing=False, **kwargs):
         super().__init__(**kwargs)
         self.url = url
         self.name = name
@@ -45,15 +45,16 @@ class SetParty(MultiFormView):
         self.strings = strings
         self.form = form
         self.multiple_allowed = multiple_allowed
+        self.copy_existing = copy_existing
 
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         application = get_application(request, self.object_pk)
         self.forms = self.form(application, self.strings, self.back_url)
-        if self.multiple_allowed:
-            self.data = None
-        else:
-            self.data = application[self.name]
+        if not self.multiple_allowed and self.copy_existing:
+            if application[self.name]:
+                self.data = application[self.name]
+                self.data["country"] = self.data["country"]["id"]
 
     def get_success_url(self):
         if self.multiple_allowed:

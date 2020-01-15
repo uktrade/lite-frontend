@@ -18,7 +18,7 @@ class Consignee(TemplateView):
             context = {
                 "application": application,
                 "title": ConsigneePage.TITLE,
-                "edit_url": reverse_lazy("applications:set_consignee", kwargs={"pk": application_id}),
+                "edit_url": reverse_lazy("applications:edit_consignee", kwargs={"pk": application_id}),
                 "remove_url": reverse_lazy("applications:remove_consignee", kwargs={"pk": application_id}),
                 "answers": convert_consignee(application["consignee"], application_id, True),
             }
@@ -35,7 +35,7 @@ class AddConsignee(AddParty):
 
 
 class SetConsignee(SetParty):
-    def __init__(self):
+    def __init__(self, copy_existing=False):
         super().__init__(
             url="applications:consignee_attach_document",
             name="consignee",
@@ -44,7 +44,13 @@ class SetConsignee(SetParty):
             action=post_consignee,
             strings=ConsigneeForm,
             multiple_allowed=False,
+            copy_existing=copy_existing,
         )
+
+
+class EditConsignee(SetConsignee):
+    def __init__(self):
+        super().__init__(copy_existing=True)
 
 
 class RemoveConsignee(DeleteParty):

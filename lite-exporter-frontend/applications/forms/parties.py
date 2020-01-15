@@ -31,7 +31,7 @@ def party_create_new_or_copy_existing_form(application_id):
     )
 
 
-def party_type_form(application, title, button, back_url):
+def party_type_form(application, title, button, back_link):
     return Form(
         title=title,
         questions=[
@@ -46,7 +46,7 @@ def party_type_form(application, title, button, back_url):
             ),
         ],
         default_button_name=button,
-        back_link=BackLink(PartyTypeForm.BACK_LINK, reverse_lazy(back_url, kwargs={"pk": application["id"]})),
+        back_link=back_link,
     )
 
 
@@ -67,9 +67,10 @@ def party_address_form(title, button):
 
 
 def new_party_form_group(application, strings, back_url):
+    back_link = BackLink(PartyTypeForm.BACK_LINK, reverse_lazy(back_url, kwargs={"pk": application["id"]}))
     return FormGroup(
         [
-            party_type_form(application, strings.TITLE, strings.BUTTON, back_url),
+            party_type_form(application, strings.TITLE, strings.BUTTON, back_link),
             party_name_form(strings.NAME_FORM_TITLE, strings.BUTTON),
             party_website_form(strings.WEBSITE_FORM_TITLE, strings.BUTTON),
             party_address_form(strings.ADDRESS_FORM_TITLE, strings.SUBMIT_BUTTON),
