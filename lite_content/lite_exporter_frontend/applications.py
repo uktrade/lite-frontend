@@ -133,6 +133,8 @@ class ApplicationSummaryPage:
     COUNTRIES = "Countries"
     ON_BEHALF_OF = "On behalf of"
     OPTIONAL_NOTE = "Optional note"
+    COPY_REFERENCE_CODE = "Copy reference code"
+    COPIED = "Copied"
 
     class Buttons:
         EDIT_APPLICATION_BUTTON = "Edit application"
@@ -155,7 +157,8 @@ class ApplicationSummaryPage:
 
 
 class ApplicationsSummaryPage:
-    REFERENCE_NAME = "Reference"
+    NAME = "Name"
+    REFERENCE_CODE = "Reference code"
     TYPE = "Licence type"
     EXPORT_TYPE = "Export type"
     STATUS = "Status"
