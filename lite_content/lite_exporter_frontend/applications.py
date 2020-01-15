@@ -241,3 +241,13 @@ class DeleteDocument:
 class TaskListPage:
     ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference name"
     WHERE_ARE_YOUR_GOODS_GOING_SHORT_TITLE = "Set countries"
+
+
+class ApplicationSuccessPage:
+    TITLE = "Application submitted successfully"
+    SECONDARY_TITLE = "Your reference code: "
+    DESCRIPTION = ""
+    WHAT_HAPPENS_NEXT = ["You'll receive an email from ECJU when the check is finished."]
+    VIEW_APPLICATIONS = "View your list of applications"
+    APPLY_AGAIN = "Apply for another export licence"
+    RETURN_TO_DASHBOARD = "Return to your export control account dashboard"
