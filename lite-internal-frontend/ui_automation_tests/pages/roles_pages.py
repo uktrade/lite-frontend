@@ -15,3 +15,6 @@ class RolesPages(BasePage):
 
     def click_add_a_role_button(self):
         self.driver.find_element_by_id(self.ADD_ROLE).click()
+
+    def select_statuses(self, value):
+        self.driver.find_element_by_id(value).click()

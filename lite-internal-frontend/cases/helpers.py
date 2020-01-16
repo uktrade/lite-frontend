@@ -1,4 +1,5 @@
 from conf.constants import UPDATED_CASES_QUEUE_ID
+from core.builtins.custom_tags import lowercase_and_underscore
 from lite_forms.components import HiddenField
 
 
@@ -102,3 +103,11 @@ def get_updated_cases_banner_queue_id(current_queue_id, queues):
         for queue in queues:
             if queue["id"] == UPDATED_CASES_QUEUE_ID and queue["case_count"]:
                 return UPDATED_CASES_QUEUE_ID
+
+
+def format_status_in_request_data(data):
+    """ Format the status in the data to representation stored in database. """
+    data_copy = data.copy()
+    data_copy["status"] = lowercase_and_underscore(data_copy["status"])
+
+    return data_copy

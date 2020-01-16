@@ -1,3 +1,5 @@
+from cases.constants import CaseType
+from core.builtins.custom_tags import sentence_case
 from lite_forms.components import Option, Checkboxes
 
 from conf.client import get
@@ -58,8 +60,36 @@ def get_countries(request, convert_to_options=False):
 
 # Statuses
 def get_statuses(request):
+    """ Get static list of case statuses. """
     data = get(request, STATUSES_URL)
     return data.json(), data.status_code
+
+
+def get_statuses_as_options(request):
+    """ Get a list of statuses as Options. """
+    data, _ = get_statuses(request)
+    return [Option(key=item["id"], value=sentence_case(item["status"])) for item in data.get("statuses")]
+
+
+def get_permissible_statuses(request, case_type):
+    """ Get a list of case statuses permissible for the user's role. """
+    user, _ = get_gov_user(request, str(request.user.lite_api_user_id))
+    user_permissible_statuses = user["user"]["role"]["statuses"]
+
+    if case_type == CaseType.APPLICATION.value:
+        case_type_applicable_statuses = [
+            status
+            for status in get_statuses_as_options(request)
+            if status.value not in ["Applicant editing", "Closed", "Finalised", "Registered"]
+        ]
+    else:
+        case_type_applicable_statuses = [
+            status
+            for status in get_statuses_as_options(request)
+            if status.value in ["Closed", "Submitted", "Withdrawn"]
+        ]
+
+    return [status.value for status in case_type_applicable_statuses if status.key in user_permissible_statuses]
 
 
 def get_status_properties(request, status):

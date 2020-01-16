@@ -14,8 +14,12 @@ def go_to_manage_roles(driver):
     user_page.click_on_manage_roles()
 
 
-@when(parsers.parse('I add a new role called "{role_name}" with permission to "{permissions}"'))
-def add_a_role(driver, role_name, permissions, context):
+@when(
+    parsers.parse(
+        'I add a new role called "{role_name}" with permission to "{permissions}" and set status to "{status}"'
+    )
+)
+def add_a_role(driver, role_name, permissions, status, context):
     roles_page = RolesPages(driver)
     roles_page.click_add_a_role_button()
     if role_name == " ":
@@ -27,6 +31,7 @@ def add_a_role(driver, role_name, permissions, context):
 
     roles_page.enter_role_name(context.role_name)
     roles_page.select_permissions(permissions)
+    roles_page.select_statuses(status)
     Shared(driver).click_submit()
 
 

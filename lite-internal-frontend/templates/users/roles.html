@@ -12,13 +12,13 @@
 		<div class="lite-app-bar__content">
 			<h2 class="govuk-heading-l">{{ title }}</h2>
 			<p class="govuk-caption-m">
-				{% lcs 'Roles.DESCRIPTION' %}
+				{% lcs 'roles.ManageRolesPage.DESCRIPTION' %}
 			</p>
 		</div>
         {% if 'ADMINISTER_ROLES' in user_permissions %}
             <div class="lite-app-bar__controls">
                 <a id="button_add_role" href="{% url 'users:add_role' %}" class="govuk-button" draggable="false" role="button">
-                    {% lcs 'ROLES_LIST_PAGE_CREATE' %}
+                    {% lcs 'roles.ManageRolesPage.ADD_BUTTON' %}
                 </a>
             </div>
         {% endif %}
@@ -27,8 +27,8 @@
     <table class="govuk-table">
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
-                <th class="govuk-table__header" scope="col">Role</th>
-                <th class="govuk-table__header" scope="col">Users with this role <span aria-hidden="true">can</span></th>
+                <th class="govuk-table__header" scope="col"> {% lcs 'roles.ManageRolesPage.Table.HEADER' %} </th>
+                <th class="govuk-table__header" scope="col"> {% lcs 'roles.ManageRolesPage.Table.PERMISSIONS_TITLE' %} </th>
                 <th class="govuk-table__header" scope="col"></th>
             </tr>
         </thead>
@@ -63,7 +63,7 @@
                         {% if not role.id == super_user_role_id %}
                             {% if 'ADMINISTER_ROLES' in user_permissions %}
                                 {% if role.id != user_role_id %}
-                                    <a href="{% url 'users:edit_role' role.id %}" class="govuk-link govuk-link--no-visited-state">Edit</a>
+                                    <a href="{% url 'users:edit_role' role.id %}" class="govuk-link govuk-link--no-visited-state"> {% lcs 'roles.ManageRolesPage.Table.EDIT_BUTTON' %} </a>
                                 {% endif %}
                             {% endif %}
                         {% endif %}

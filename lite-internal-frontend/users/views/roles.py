@@ -22,7 +22,7 @@ class Roles(TemplateView):
         context = {
             "all_permissions": all_permissions,
             "roles": roles["roles"],
-            "title": strings.Roles.TITLE,
+            "title": strings.roles.ManageRolesPage.TITLE,
             "user_permissions": permissions,
             "super_user_role_id": SUPER_USER_ROLE_ID,
             "user_role_id": user["user"]["role"]["id"],
@@ -39,6 +39,7 @@ class AddRole(TemplateView):
         data = {
             "name": request.POST["name"],
             "permissions": request.POST.getlist("permissions"),
+            "statuses": request.POST.getlist("statuses"),
         }
 
         response, data = submit_single_form(request, add_role(request), post_role, override_data=data)
@@ -62,6 +63,7 @@ class EditRole(TemplateView):
         data = {
             "name": request.POST["name"],
             "permissions": request.POST.getlist("permissions"),
+            "statuses": request.POST.getlist("statuses"),
         }
 
         response, data = submit_single_form(

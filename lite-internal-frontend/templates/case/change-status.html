@@ -20,12 +20,12 @@
 		    	</label>
             {% endif %}
 			<select id="status" class="govuk-select" name="status">
-                {% for status in statuses.statuses %}
-				    <option value="{{ status.status }}"
-                            {% if data.case.application.status == status.status or data.case.query.status == status.status %}
+                {% for status in statuses %}
+				    <option value="{{ status }}"
+                            {% if data.case.application.status == status or data.case.query.status == status %}
                                 selected
                             {% endif %}>
-                        {{ status.status|default:"Untitled"|sentence_case }}
+                        {{ status|default:"Untitled"|sentence_case }}
                     </option>
                 {% endfor %}
 			</select>

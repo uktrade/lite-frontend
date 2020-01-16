@@ -9,6 +9,6 @@ Feature: I want to create roles
     Given I go to internal homepage
     When I go to users
     And I go to manage roles
-    And I add a new role called "Supervisor" with permission to "Manage final advice"
+    And I add a new role called "Supervisor" with permission to "Manage final advice" and set status to "Closed"
     And I edit my role
     Then I see the role in the roles list

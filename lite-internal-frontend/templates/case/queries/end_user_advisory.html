@@ -36,11 +36,13 @@
 				<a name="action-button" role="button" draggable="false" class="govuk-button" href="{% url 'cases:move' case.id %}">
 					{% lcs 'cases.EndUserAdvisoriesPage.Actions.MOVE' %}
 				</a>
-				{% if not status_is_terminal or 'REOPEN_CLOSED_CASES' in permissions %}
-				<a name="action-button" role="button" draggable="false" class="govuk-button" id="change-status" href="{% url 'cases:manage' case.id %}">
-					{% lcs 'cases.EndUserAdvisoriesPage.Actions.CHANGE_STATUS' %}
-				</a>
-				{% endif %}
+                {% if permissible_statuses %}
+                    {% if not status_is_terminal or 'REOPEN_CLOSED_CASES' in permissions %}
+                    <a name= "action-button" role="button" draggable="false" class="govuk-button" id="change-status" href="{% url 'cases:manage' case.id %}">
+                        {% lcs 'cases.EndUserAdvisoriesPage.Actions.CHANGE_STATUS' %}
+                    </a>
+                    {% endif %}
+                {% endif %}
 				<a name="action-button" role="button" draggable="false" class="govuk-button" id="case-officer" href="{% url 'cases:case_officer' case.id %}">
 					{% lcs 'cases.EndUserAdvisoriesPage.Actions.CASE_OFFICER' %}
 				</a>

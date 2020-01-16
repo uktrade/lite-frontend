@@ -30,7 +30,7 @@ from conf import settings
 from conf.constants import DEFAULT_QUEUE_ID, GENERATED_DOCUMENT
 from conf.settings import AWS_STORAGE_BUCKET_NAME
 from core.helpers import convert_dict_to_query_params
-from core.services import get_user_permissions, get_statuses, get_status_properties
+from core.services import get_user_permissions, get_status_properties, get_permissible_statuses
 from lite_forms.generators import error_page, form_page
 from lite_forms.submitters import submit_single_form
 from queues.services import get_cases_search_data
@@ -75,9 +75,7 @@ class Cases(TemplateView):
         return render(request, "cases/index.html", context)
 
     def post(self, request, **kwargs):
-        """
-        Assign users depending on what cases were selected
-        """
+        """ Assign users depending on what cases were selected. """
         queue_id = request.GET.get("queue_id", DEFAULT_QUEUE_ID)
         return redirect(
             reverse("queues:case_assignments", kwargs={"pk": queue_id})
@@ -90,19 +88,6 @@ class ViewCase(TemplateView):
     def get(self, request, **kwargs):
         case_id = str(kwargs["pk"])
         case = get_case(request, case_id)
-        activity = get_activity(request, case_id)
-        permissions = get_user_permissions(request)
-        queue_id = request.GET.get("queue_id")
-        queue_name = request.GET.get("queue_name")
-
-        context = {
-            "case": case,
-            "activity": activity,
-            "permissions": permissions,
-            "queue_id": queue_id,
-            "queue_name": queue_name,
-        }
-
         case_type = case["type"]["key"]
 
         if "application" in case:
@@ -110,8 +95,16 @@ class ViewCase(TemplateView):
         else:
             status_props, _ = get_status_properties(request, case["query"]["status"]["key"])
 
-        context["status_is_read_only"] = status_props["is_read_only"]
-        context["status_is_terminal"] = status_props["is_terminal"]
+        context = {
+            "activity": get_activity(request, case_id),
+            "case": case,
+            "permissions": get_user_permissions(request),
+            "queue_id": request.GET.get("queue_id"),
+            "queue_name": request.GET.get("queue_name"),
+            "permissible_statuses": get_permissible_statuses(request, case_type),
+            "status_is_read_only": status_props["is_read_only"],
+            "status_is_terminal": status_props["is_terminal"],
+        }
 
         if case_type == CaseType.END_USER_ADVISORY_QUERY.value:
             return render(request, "case/queries/end_user_advisory.html", context)
@@ -177,37 +170,21 @@ class ManageCase(TemplateView):
     def get(self, request, **kwargs):
         case_id = str(kwargs["pk"])
         case = get_case(request, case_id)
-        statuses, _ = get_statuses(request)
-
-        reduced_statuses = {
-            "statuses": [
-                status for status in statuses["statuses"] if status["status"] in ["closed", "submitted", "withdrawn"]
-            ]
-        }
-
         case_type = case["type"]["key"]
+        permissible_statuses = get_permissible_statuses(request, case_type)
 
         if case_type == CaseType.APPLICATION.value:
-            title = "Manage " + case.get("application").get("name")
-
-            # additional but still reduced statuses needed for applications
-            reduced_statuses = {
-                "statuses": [
-                    status
-                    for status in statuses["statuses"]
-                    if status["status"] not in ["applicant_editing", "closed", "finalised", "registered"]
-                ]
-            }
+            title = cases.ChangeStatusPage.TITLE_APPLICATION
         elif case_type == CaseType.HMRC_QUERY.value:
-            title = "Manage HMRC query"
+            title = cases.ChangeStatusPage.TITLE_APPLICATION
         elif case_type == CaseType.END_USER_ADVISORY_QUERY.value:
-            title = "Manage End User Advisory"
+            title = cases.ChangeStatusPage.TITLE_EUA
         elif case_type == CaseType.CLC_QUERY.value:
-            title = "Manage CLC query case"
+            title = cases.ChangeStatusPage.TITLE_CLC
         else:
             raise Exception("Invalid case_type: {}".format(case_type))
 
-        context = {"case": case, "title": title, "statuses": reduced_statuses}
+        context = {"case": case, "title": title, "statuses": permissible_statuses}
         return render(request, "case/change-status.html", context)
 
     def post(self, request, **kwargs):
