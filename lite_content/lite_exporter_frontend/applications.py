@@ -262,3 +262,4 @@ class ApplicationsList:
     DRAFTS_TAB = "Drafts"
     NOTIFICATIONS_SUFFIX = "notifications"
     NO_CONTENT_NOTICE = "You haven't applied for any licences."
+    NO_DRAFTS_CONTENT_NOTICE = "You don't have any draft applications at the moment."
