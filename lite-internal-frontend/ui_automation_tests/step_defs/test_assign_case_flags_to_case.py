@@ -44,28 +44,20 @@ def add_a_suspicious_flag(driver, add_new_flag):
     pass
 
 
-@then("I see 3 out of text")
+@then("I see 3 flags for the case")
 def three_out_of_text(driver, context):
     elements = Shared(driver).get_rows_in_lite_table()
     no = utils.get_element_index_by_text(elements, context.case_id, complete_match=False)
     assert "(3 of " in elements[no].text
 
 
-@then("I dont see 3 out of text")
+@then("I see all flags for the case")
 def dont_see_three_out_of(driver, context):
     elements = Shared(driver).get_rows_in_lite_table()
     no = utils.get_element_index_by_text(elements, context.case_id, complete_match=False)
     assert "(3 of " not in elements[no].text
 
 
-@when("I click chevron")  # noqa
+@when("I click the expand flags dropdown")  # noqa
 def click_chevron(driver, context):
-    elements = Shared(driver).get_rows_in_lite_table()
-    no = utils.get_element_index_by_text(elements, context.case_id, complete_match=False)
-    try:
-        if elements[no].find_element_by_id("chevron").is_displayed():
-            element = elements[no].find_element_by_css_selector(".lite-accordian-table__chevron")
-            element.click()
-    except NoSuchElementException:
-        pass
-    driver.set_timeout_to(10)
+    ApplicationPage(driver).click_expand_flags(context.case_id)

@@ -43,6 +43,7 @@ class ApplicationPage(BasePage):
     LINK_ORGANISATION_ID = "link-organisation"
     EDIT_GOODS_FLAGS = "button-edit-goods-flags"  # ID
     CASE_OFFICER_ID = "case-officer"  # ID
+    EXPAND_FLAGS_PARTIAL_ID = "expand-flags-"
 
     def click_visible_to_exporter_checkbox(self):
         time.sleep(0.5)
@@ -219,3 +220,6 @@ class ApplicationPage(BasePage):
                 self.ACTION_BUTTON_NAME
             )
         )
+
+    def click_expand_flags(self, case_id):
+        self.driver.find_element_by_id(self.EXPAND_FLAGS_PARTIAL_ID + case_id).click()

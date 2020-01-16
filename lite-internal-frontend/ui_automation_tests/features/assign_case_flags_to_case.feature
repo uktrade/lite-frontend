@@ -59,7 +59,7 @@ Feature: I want to add case-level flags to a case and view them
     And I select previously created flag
     And I go to the internal homepage
     Then I see previously created application
-    Then I see 3 out of text
-    When I click chevron
-    Then I dont see 3 out of text
+    Then I see 3 flags for the case
+    When I click the expand flags dropdown
+    Then I see all flags for the case
 
