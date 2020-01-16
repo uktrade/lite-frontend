@@ -72,7 +72,8 @@ class DocumentSensitivityForm:
 
 
 class CreateGoodForm:
-    TITLE = "Add product"
+    TITLE_APPLICATION = "Add product"
+    TITLE_GOODS_LIST = "Add a product to your organisation"
     BUTTON = "Save and continue"
 
     class Description:
@@ -92,14 +93,37 @@ class CreateGoodForm:
         )
         YES = "Yes"
         NO = "No"
-        UNSURE = "I don't know"
+        UNSURE = "I don't know, raise a control list classification (CLC) query"
 
     class ControlListEntry:
         TITLE = "Control list classification"
         DESCRIPTION = "For example, ML1a."
 
+    class IsGraded:
+        TITLE = "Does the product hold a PV grading?"
+        DESCRIPTION = ""
+
+        YES = "Yes"
+        NO = "No and it doesn't need one"
+        RAISE_QUERY = "No and it needs one, raise a grading query"
+
     class PartNumber:
         TITLE = generic.PART_NUMBER
+
+
+class GoodGradingForm:
+    TITLE = "Add the Ministry of Defence (MoD) grading"
+    DESCRIPTION = ""
+
+    PREFIX = "Prefix"
+    GRADING = "Grading"
+    SUFFIX = "Suffix"
+    OTHER_GRADING = "Other type of grading"
+    ISSUING_AUTHORITY = "Issuing authority"
+    REFERENCE = "Reference"
+    DATE_OF_ISSUE = "Date of issue"
+
+    BUTTON = "Save and Continue"
 
 
 class CLCQueryForm:
