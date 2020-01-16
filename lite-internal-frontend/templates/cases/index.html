@@ -25,9 +25,11 @@
 			</select>
 			<button type="submit" class="govuk-button">{% lcs 'cases.CasesListPage.GO_TO_QUEUE' %}</button>
 		</form>
-	    <a id="queue-title" href="#" class="govuk-heading-l app-dropdown__heading" onclick="toggleDropdown()">
-	            {{ data.results.queue.name }}
-	    </a>
+        <h1 class="govuk-heading-l">
+            <a id="queue-title" href="#" class="app-dropdown__heading" onclick="toggleDropdown()">
+                {{ data.results.queue.name }}
+            </a>
+        </h1>
 	    {% if not data.results.is_system_queue %}
 	    <div class="lite-app-bar__controls">
 	        <button id="assign-users-button" form="cases-form" type="submit" class="govuk-button govuk-button--secondary">{% lcs 'cases.CasesListPage.ASSIGN_USERS' %}</button>
@@ -132,8 +134,16 @@
 	                    <tr class="govuk-table__row lite-accordian-table__row">
 	                        <td class="cases-table__cell cases-table__cell--checkbox">
 	                            <div class="govuk-checkboxes__item">
-	                                <input class="govuk-checkboxes__input" type="checkbox" name="cases" value="{{ case.id }}">
-	                                <label class="govuk-label govuk-checkboxes__label"></label>
+	                                <input class="govuk-checkboxes__input" type="checkbox" id="case-{{ case.id }}" name="case-{{ case.id }}" value="{{ case.id }}">
+                                    <label class="govuk-label govuk-checkboxes__label" for="case-{{ case.id }}">
+                                        <span class="govuk-visually-hidden">
+                                            {% if case.type.key == 'application' or case.type.key == 'hmrc_query' %}
+                                                {{ case.id }}
+                                            {% else %}
+                                                {{ case.query.id }}
+                                            {% endif %}
+                                        </span>
+                                    </label>
 	                            </div>
 	                        </td>
 	                        <td class="cases-table__cell">
@@ -215,7 +225,7 @@
 	                            {{ case.status|sentence_case }}
 	                        </td>
 	                        <td class="cases-table__cell govuk-table__cell--numeric">
-	                            <a id="noscript_hide" class="lite-accordian-table__chevron" onclick="return openTableFold(this);">
+	                            <a class="lite-accordian-table__chevron" onclick="return openTableFold(this);">
 	                                {% if case.flags|length > 3 or case.users|length > 3 or case.queue_names|length > 3 %}
 	                                    {% svg 'chevron' %}
 	                                {% endif %}

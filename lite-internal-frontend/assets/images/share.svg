@@ -3,11 +3,11 @@
     <!-- Generator: Sketch 52.6 (67491) - http://www.bohemiancoding.com/sketch -->
     <title>Untitled</title>
     <desc>Created with Sketch.</desc>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <path d="M3,7 L12,12" id="Path" stroke="#005ea5"></path>
-        <path d="M12,3 L3,7" id="Path-2" stroke="#005ea5"></path>
-        <circle id="Oval" stroke="#005ea5" fill="#FFFFFF" cx="12" cy="3" r="2.5"></circle>
-        <circle id="Oval-Copy" stroke="#005ea5" fill="#FFFFFF" cx="12" cy="12" r="2.5"></circle>
-        <circle id="Oval-Copy-2" stroke="#005ea5" fill="#FFFFFF" cx="3" cy="7" r="2.5"></circle>
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M3,7 L12,12" stroke="#005ea5"></path>
+        <path d="M12,3 L3,7" stroke="#005ea5"></path>
+        <circle stroke="#005ea5" fill="#FFFFFF" cx="12" cy="3" r="2.5"></circle>
+        <circle stroke="#005ea5" fill="#FFFFFF" cx="12" cy="12" r="2.5"></circle>
+        <circle stroke="#005ea5" fill="#FFFFFF" cx="3" cy="7" r="2.5"></circle>
     </g>
 </svg>

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="28px" height="28px" viewBox="0 0 28 28" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <circle id="Oval-Copy" fill="#000000" cx="4.5" cy="4.5" r="2.5"></circle>
-        <circle id="Oval-Copy-2" fill="#000000" cx="23.5" cy="4.5" r="2.5"></circle>
-        <circle id="Oval-Copy-3" fill="#000000" cx="14" cy="4.5" r="2.5"></circle>
-        <circle id="Oval-Copy-6" fill="#000000" cx="4.5" cy="14" r="2.5"></circle>
-        <circle id="Oval-Copy-5" fill="#000000" cx="23.5" cy="14" r="2.5"></circle>
-        <circle id="Oval-Copy-4" fill="#000000" cx="14" cy="14" r="2.5"></circle>
-        <circle id="Oval-Copy-9" fill="#000000" cx="4.5" cy="23.5" r="2.5"></circle>
-        <circle id="Oval-Copy-8" fill="#000000" cx="23.5" cy="23.5" r="2.5"></circle>
-        <circle id="Oval-Copy-7" fill="#000000" cx="14" cy="23.5" r="2.5"></circle>
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <circle fill="#000000" cx="4.5" cy="4.5" r="2.5"></circle>
+        <circle fill="#000000" cx="23.5" cy="4.5" r="2.5"></circle>
+        <circle fill="#000000" cx="14" cy="4.5" r="2.5"></circle>
+        <circle fill="#000000" cx="4.5" cy="14" r="2.5"></circle>
+        <circle fill="#000000" cx="23.5" cy="14" r="2.5"></circle>
+        <circle fill="#000000" cx="14" cy="14" r="2.5"></circle>
+        <circle fill="#000000" cx="4.5" cy="23.5" r="2.5"></circle>
+        <circle fill="#000000" cx="23.5" cy="23.5" r="2.5"></circle>
+        <circle fill="#000000" cx="14" cy="23.5" r="2.5"></circle>
     </g>
 </svg>
