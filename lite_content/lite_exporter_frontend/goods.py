@@ -126,15 +126,27 @@ class GoodGradingForm:
     BUTTON = "Save and Continue"
 
 
-class CLCQueryForm:
-    TITLE = "Create a CLC query"
-    DESCRIPTION = "By submitting you are creating a CLC query that cannot be altered"
+class GoodsQueryForm:
+    TITLE = "Create a query"
+    DESCRIPTION = ""
     BACK_LINK = "Back to product"
     BUTTON = "Save"
 
-    class CLCCode:
-        TITLE = "What do you think is the product's control list classification? (optional)"
-        DESCRIPTION = "For example, ML1a."
+    class CLCQuery:
+        TITLE = "Control list classification (CLC) query"
+
+        class Code:
+            TITLE = "What do you think is the product's control list classification (CLC) is?"
+            DESCRIPTION = ""
+
+        class Details:
+            TITLE = "Product details"
+
+    class PVGrading:
+        TITLE = "Private venture (PV) grading query"
+
+        class Details:
+            TITLE = "Product details"
 
     class Additional:
         TITLE = "Product details (optional)"
