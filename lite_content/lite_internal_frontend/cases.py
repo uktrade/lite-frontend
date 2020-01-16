@@ -241,6 +241,12 @@ class ClcQuery:
         DOWNLOAD = "Download"
 
 
+class ChangeStatusPage:
+    TITLE_APPLICATION = "Application Status"
+    TITLE_CLC = "CLC Query Status"
+    TITLE_EUA = "End User Advisory Status"
+
+
 class ReviewGoodsSummary:
     BACK_LINK = "Back to case"
     HEADING = "Review Goods"
