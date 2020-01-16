@@ -1,7 +1,4 @@
-from lite_content.lite_internal_frontend import cases, letter_templates
-
-Cases = cases
-LETTER_TEMPLATES = letter_templates
+from lite_content.lite_internal_frontend import cases, letter_templates, roles  # noqa
 
 # Buttons
 CONTINUE = "Continue"
@@ -13,8 +10,6 @@ QUEUE_ALL_CASES = "All cases"
 CASE_CHANGES = "See what has changed"
 
 USERS_LIST_PAGE_EDIT = "Edit"
-
-ROLES_LIST_PAGE_CREATE = "Create a new role"
 
 USER_PROFILE_PAGE_EDIT = "Edit"
 USER_DEACTIVATE = "Deactivate"
@@ -45,11 +40,6 @@ CASE_GOODS_LOCATION_NAME = "Name"
 CASE_GOODS_LOCATION_ADDRESS = "Address"
 CASE_ENTITIES_INVOLVED = "Entities involved"
 CASE_ENTITIES_ACTIVITY = "Activity"
-CASE_PARTIES_NAME = "Name"
-CASE_PARTIES_ADDRESS = "Address"
-CASE_PARTIES_TYPE = "Type"
-CASE_PARTIES_WEBSITE = "Website"
-CASE_PARTIES_DOCUMENT = "Document"
 CASE_PARTIES_LICENSEE = "Licensee"
 
 CASE_INFO_TYPE = "Type"
@@ -155,19 +145,6 @@ class UpdateUser:
 class Activity:
     ADDED_AN_ECJU_QUERY = " added an ECJU query:"
     ADDED_A_CASE_NOTE = " added a case note:"
-
-
-class Roles:
-    DESCRIPTION = "Roles define permissions for users to perform a set of tasks"
-    TITLE = "Roles"
-
-    class Add:
-        DESCRIPTION = ""
-        TITLE = "Create a new role"
-
-    class Edit:
-        DESCRIPTION = ""
-        TITLE = "Edit role"
 
 
 class Queues:
