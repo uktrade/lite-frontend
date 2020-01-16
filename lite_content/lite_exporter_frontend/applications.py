@@ -245,7 +245,6 @@ class TaskListPage:
     WHERE_ARE_YOUR_GOODS_GOING_SHORT_TITLE = "Set countries"
 
 
-<<<<<<< HEAD
 class ApplicationSuccessPage:
     TITLE = "Application submitted successfully"
     SECONDARY_TITLE = "Your reference code: "
