@@ -200,10 +200,27 @@ class GoodPage:
         GENERATED_DOCUMENTS = "ECJU documents"
 
     class Query:
-        TITLE = "Your Query"
+        TITLE = "Your query"
         CASE_OFFICER = "Case officer"
         NO_ASSIGNED_CASE_OFFICER = "Not assigned"
         REFERENCE = "Reference"
+
+    class RaiseQuery:
+        PREFIX = "If you're unsure the product is controlled or not, you can "
+        LINK = "raise a query "
+        SUFFIX = "to get help from ECJU."
+
+    class Table:
+        DESCRIPTION = "Description"
+        IS_GOOD_CONTROLLED = "Is the product on the control list?"
+        CONTROL_LIST_ENTRY = "Control list classification"
+
+        class Grading:
+            IS_GRADED = "PV graded"
+            GRADING = "PV grade"
+            REFERENCE = "PV grading reference"
+            ISSUING_AUTHORITY = "PV grading issuing authority"
+            DATE_OF_ISSUE = "PV grading date of issue"
 
 
 class AddGoodToApplicationForm:
