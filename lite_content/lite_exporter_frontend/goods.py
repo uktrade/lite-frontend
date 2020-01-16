@@ -112,7 +112,7 @@ class CreateGoodForm:
 
 
 class GoodGradingForm:
-    TITLE = "Add the Ministry of Defence (MoD) grading"
+    TITLE = "Add the private venture (PV) grading"
     DESCRIPTION = ""
 
     PREFIX = "Prefix"
