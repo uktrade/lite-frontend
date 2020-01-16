@@ -263,3 +263,8 @@ class ApplicationsList:
     NOTIFICATIONS_SUFFIX = "notifications"
     NO_CONTENT_NOTICE = "You haven't applied for any licences."
     NO_DRAFTS_CONTENT_NOTICE = "You don't have any draft applications at the moment."
+
+
+class ApplicationPage:
+    BACK = "Back to applications"
+    NO_INFORMATION_PROVIDED = "You haven't added any information for this section."
