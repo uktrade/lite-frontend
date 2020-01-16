@@ -1,4 +1,4 @@
-from lite_content.lite_internal_frontend import cases, letter_templates  # noqa
+from lite_content.lite_internal_frontend import cases, letter_templates, roles  # noqa
 
 # Buttons
 CONTINUE = "Continue"
