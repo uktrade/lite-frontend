@@ -251,3 +251,14 @@ class ApplicationSuccessPage:
     VIEW_APPLICATIONS = "View your list of applications"
     APPLY_AGAIN = "Apply for another export licence"
     RETURN_TO_DASHBOARD = "Return to your export control account dashboard"
+
+
+class ApplicationsList:
+    TITLE = "Applications"
+    RAISE_A_QUERY_BUTTON = "Raise a query"
+    APPLY_FOR_A_LICENCE_BUTTON = "Apply for a licence"
+    REFRESH_BUTTON = "Refresh"
+    IN_PROGRESS_TAB = "In progress"
+    DRAFTS_TAB = "Drafts"
+    NOTIFICATIONS_SUFFIX = "notifications"
+    NO_CONTENT_NOTICE = "You haven't applied for any licences."
