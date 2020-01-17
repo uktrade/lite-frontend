@@ -115,7 +115,7 @@ class GeneratedDocuments:
 
 
 class ApplicationSummaryPage:
-    REFERENCE_CODE = "Reference code"
+    REFERENCE_CODE = "ECJU reference"
     REFERENCE_NAME = "Reference"
     TYPE = "Licence type"
     CASE_OFFICER = "Case officer"
@@ -135,7 +135,7 @@ class ApplicationSummaryPage:
     COUNTRIES = "Countries"
     ON_BEHALF_OF = "On behalf of"
     OPTIONAL_NOTE = "Optional note"
-    COPY_REFERENCE_CODE = "Copy reference code"
+    COPY_REFERENCE_CODE = "Copy ECJU reference"
     COPIED = "Copied"
 
     class Buttons:
@@ -160,7 +160,7 @@ class ApplicationSummaryPage:
 
 class ApplicationsSummaryPage:
     NAME = "Name"
-    REFERENCE_CODE = "Reference code"
+    REFERENCE_CODE = "ECJU reference"
     TYPE = "Licence type"
     EXPORT_TYPE = "Export type"
     STATUS = "Status"
@@ -247,7 +247,7 @@ class TaskListPage:
 
 class ApplicationSuccessPage:
     TITLE = "Application submitted successfully"
-    SECONDARY_TITLE = "Your reference code: "
+    SECONDARY_TITLE = "Your ECJU reference: "
     DESCRIPTION = ""
     WHAT_HAPPENS_NEXT = ["You'll receive an email from ECJU when the check is finished."]
     VIEW_APPLICATIONS = "View your list of applications"
