@@ -71,19 +71,6 @@ class ApplicationPage:
     class ThirdParty:
         ROLE = "Role: "
 
-    class Finalise:
-        class Duration:
-            TITLE = "How long will it last?"
-            DESCRIPTION = "This must be a whole number of months, such as 12"
-
-        class Date:
-            TITLE = "When will the licence start?"
-            DESCRIPTION = "For example, 27 3 2007"
-
-    class Back:
-        GOODS_AND_COUNTRIES = "Back to finalise goods and countries"
-        FINAL_ADVICE = "Back to final advice"
-
     EDIT_FLAGS = "Edit products flags"
     EDIT_DESTINATION_FLAGS = "Edit destination flags"
     REVIEW_GOODS = "Review Products"
@@ -92,6 +79,20 @@ class ApplicationPage:
     CLOSED = "This case is closed"
     CASE_OFFICER = "Case Officer: "
     NO_CASE_OFFICER = "No Case Officer set."
+
+
+class FinalisePage:
+    class Duration:
+        TITLE = "How long will it last?"
+        DESCRIPTION = "This must be a whole number of months, such as 12"
+
+    class Date:
+        TITLE = "When will the licence start?"
+        DESCRIPTION = "For example, 27 3 2007"
+
+    class BackLink:
+        GOODS_AND_COUNTRIES = "Back to finalise goods and countries"
+        FINAL_ADVICE = "Back to final advice"
 
 
 class GenerateDocumentsPage:
