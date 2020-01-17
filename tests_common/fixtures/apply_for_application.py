@@ -29,6 +29,7 @@ def apply_for_standard_application(driver, seed_data_config, context):
             "unit": "MTR",
             "value": context.good_value,
             "is_good_incorporated": True,
+            "is_good_pv_graded": "no",
         },
         end_user={
             "name": "Mr Smith",
@@ -80,7 +81,7 @@ def add_an_ecju_query(driver, seed_data_config, context):
 @fixture(scope="function")
 def apply_for_clc_query(driver, seed_data_config, context):
     lite_client = get_lite_client(context, seed_data_config)
-    lite_client.seed_clc.add_clc_query(lite_client.seed_good)
+    lite_client.seed_clc.add_goods_query(lite_client.seed_good)
     context.clc_case_id = lite_client.context["case_id"]
 
 

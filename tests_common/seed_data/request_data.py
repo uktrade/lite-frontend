@@ -105,6 +105,7 @@ def create_request_data(exporter_user, gov_user, base_url):
             "part_number": "1234",
             "validate_only": False,
             "details": "Kebabs",
+            "is_pv_graded": "no",
         },
         "case_note": {"text": "I Am Easy to Find", "is_visible_to_exporter": True},
         "edit_case_app": {"name": "new app name!"},
