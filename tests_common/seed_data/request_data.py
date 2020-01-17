@@ -38,6 +38,7 @@ def create_good(description, control_code="ML1a", part_number="1234"):
         "control_code": control_code,
         "part_number": part_number,
         "validate_only": False,
+        "is_pv_graded": "no",
     }
 
 
