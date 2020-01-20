@@ -338,3 +338,22 @@ class ReviewGoodsForm:
     BACK_LINK = "Back to review goods"
     CONFIRM_BUTTON = "Add to Case"
     HEADING = "Check control list classification and add report summary"
+
+
+class GoodsDecisionMatrixPage:
+    ERROR = "There is a problem"
+    NO_ADVICE_DEFAULT = "No advice"
+
+    class Actions:
+        BACK_TO_FINAL_ADVICE = "Back to final advice"
+        SELECT_DECISION = "Select a decision for each good and country combination"
+        FINALISE_BUTTON = "Finalise"
+        SAVE_BUTTON = "Save"
+
+    class Table:
+        GOOD_TITLE = "Good"
+        COUNTRIES_TITLE = "Countries"
+        APPROVE_TITLE = "Approve"
+        REJECT_TITLE = "Reject"
+        REFUSE_TITLE = "Refuse"
+        NRL_TITLE = "No Licence Required"
