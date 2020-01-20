@@ -23,8 +23,9 @@ def filter_users_found(driver, internal_info):
 def one_user_found(driver, internal_info):
     case_officer_page = CaseOfficerPages(driver)
     names = case_officer_page.get_users_name()
-    assert len(names) == 1
-    assert internal_info["name"] in names[0].text
+    assert len(names) > 0
+    for name in names:
+        assert internal_info["name"] in name.text
 
 
 @when("I click the user and assign")
