@@ -203,7 +203,7 @@ class GoodPage:
     class Query:
         CASE_OFFICER = "Case officer"
         NO_ASSIGNED_CASE_OFFICER = "Not assigned"
-        REFERENCE = "Reference"
+        REFERENCE = "ECJU reference"
 
     class Document:
         DOWNLOAD = generic.Document.DOWNLOAD
