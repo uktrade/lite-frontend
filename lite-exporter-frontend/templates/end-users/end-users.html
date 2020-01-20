@@ -7,11 +7,15 @@
 {% block body %}
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
-			<h1 class="govuk-heading-l">{{ title }}</h1>
+			<h1 class="govuk-heading-l">
+				{% block title %}
+					{% lcs "end_users.EndUsersPage.TITLE" %}
+				{% endblock %}
+			</h1>
 		</div>
 		<div class="lite-app-bar__controls">
 			<a href="{% url 'end_users:apply' %}" class="govuk-button" draggable="false" role="button" id="apply">
-				New end user advisory
+				{% lcs "end_users.EndUsersPage.NEW_END_USER_ADVISORY_BUTTON" %}
 			</a>
 		</div>
 	</div>
@@ -20,11 +24,11 @@
 		<table class="govuk-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
-					<th class="govuk-table__header" scope="col">Name</th>
-					<th class="govuk-table__header" scope="col">Type</th>
-					<th class="govuk-table__header" scope="col">Address</th>
-					<th class="govuk-table__header" scope="col">Website</th>
-					<th class="govuk-table__header" scope="col">Reference</th>
+					<th class="govuk-table__header" scope="col">{% lcs "end_users.EndUserPage.Variables.NAME" %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs "end_users.EndUserPage.Variables.TYPE" %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs "end_users.EndUserPage.Variables.ADDRESS" %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs "end_users.EndUserPage.Variables.WEBSITE" %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs "end_users.EndUserPage.Variables.REFERENCE" %}</th>
 					<th class="govuk-table__header" scope="col"></th>
 				</tr>
 			</thead>
@@ -55,7 +59,7 @@
 							{% endif %}
 						</td>
 						<td class="govuk-table__cell">
-							{{ advisory.id|reference_code }}
+							{{ advisory.reference_code }}
 						</td>
 						<td class="govuk-table__cell">
 							<a href="{% url 'end_users:copy' advisory.id %}">Copy</a>
@@ -64,14 +68,7 @@
 				{% endfor %}
 			</tbody>
 		</table>
-
 	{% else %}
-		<div class="lite-information-text">
-			<span class="lite-information-text__icon" aria-hidden="true">!</span>
-			<p class="lite-information-text__text">
-				<span class="govuk-visually-hidden">Information</span>
-				There are no end user advisories.
-			</p>
-		</div>
+		{% include "includes/notice.html" with text="end_users.EndUsersPage.NO_CONTENT_NOTICE" %}
 	{% endif %}
 {% endblock %}

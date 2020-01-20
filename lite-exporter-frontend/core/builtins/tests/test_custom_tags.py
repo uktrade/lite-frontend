@@ -30,12 +30,6 @@ class TestCustomTags(TestCase):
 
         self.assertEqual(actual_value, expected_value)
 
-    def test_reference_code(self):
-        expected_value = "12345-67890"
-        actual_value = ct.reference_code("1234567890")
-
-        self.assertEqual(actual_value, expected_value)
-
     def test_times(self):
         expected_value = [1, 2, 3, 4, 5]
         actual_value = ct.times(5)

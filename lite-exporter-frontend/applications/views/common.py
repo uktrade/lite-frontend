@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
@@ -124,7 +124,9 @@ class ApplicationTaskList(TemplateView):
         if status_code != HTTPStatus.OK:
             return get_application_task_list(request, application, errors=data.get("errors"))
 
-        return application_success_page(request, application_id)
+        # Redirect to the success page to prevent the user going back after the Post
+        # Follows this pattern: https://en.wikipedia.org/wiki/Post/Redirect/Get
+        return HttpResponseRedirect(reverse_lazy("applications:success_page", kwargs={"pk": application_id}))
 
 
 class ApplicationDetail(TemplateView):
@@ -146,7 +148,6 @@ class ApplicationDetail(TemplateView):
 
         context = {
             "application": self.application,
-            "title": self.application["name"],
             "type": self.view_type,
             "answers": {**convert_application_to_check_your_answers(self.application)},
             "status_is_read_only": status_props["is_read_only"],
@@ -313,3 +314,21 @@ class Submit(TemplateView):
             "application": application,
         }
         return render(request, "applications/submit.html", context)
+
+
+class ApplicationSubmitSuccessPage(TemplateView):
+    def get(self, request, **kwargs):
+        """
+        Display application submit success page
+        This page is accessed one of two ways:
+        1. Successful submission of an application
+        2. From a bookmark or link - this is intentional as some users will want to
+           save the page as evidence
+        """
+        application_id = kwargs["pk"]
+        application = get_application(request, application_id)
+
+        if application["status"]["key"] != "submitted":
+            raise Http404
+
+        return application_success_page(request, application["reference_code"])

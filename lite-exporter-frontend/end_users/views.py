@@ -30,7 +30,6 @@ class EndUsersList(TemplateView):
         end_users = get_end_user_advisories(request)
 
         context = {
-            "title": "End user advisories",
             "end_users": end_users,
         }
         return render(request, "end-users/end-users.html", context)
@@ -85,7 +84,7 @@ class CopyAdvisory(TemplateView):
         if response:
             return response
 
-        return end_user_advisory_success_page(request, str(data["end_user_advisory"]["id"]))
+        return end_user_advisory_success_page(request, str(data["end_user_advisory"]["reference_code"]))
 
 
 class ApplyForAnAdvisory(TemplateView):
@@ -108,7 +107,7 @@ class ApplyForAnAdvisory(TemplateView):
         if response:
             return response
 
-        return end_user_advisory_success_page(request, str(data["end_user_advisory"]["id"]))
+        return end_user_advisory_success_page(request, str(data["end_user_advisory"]["reference_code"]))
 
 
 class EndUserDetailEmpty(RedirectView):

@@ -7,19 +7,19 @@
 {% block body %}
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
-			<h1 class="govuk-heading-l">{% block title %}Applications{% endblock %}</h1>
+			<h1 class="govuk-heading-l">{% block title %}{% lcs "applications.ApplicationsList.TITLE" %}{% endblock %}</h1>
 		</div>
 		<div class="lite-app-bar__controls">
 			{% if organisation.type.key == 'hmrc' %}
 				<a href="{% url 'hmrc:raise_a_query' %}" class="govuk-button" draggable="false" role="button">
-					Raise a query
+					{% lcs "applications.ApplicationsList.RAISE_A_QUERY_BUTTON" %}
 				</a>
 			{% else %}
 				<a href="." class="govuk-button govuk-button--secondary" draggable="false" role="button">
-					{% lcs 'Licences.REFRESH' %}
+					{% lcs "applications.ApplicationsList.REFRESH_BUTTON" %}
 				</a>
 				<a href="{% url 'apply_for_a_licence:start' %}" class="govuk-button" draggable="false" role="button">
-					{% lcs 'Licences.APPLY_FOR_A_LICENCE' %}
+					{% lcs "applications.ApplicationsList.APPLY_FOR_A_LICENCE_BUTTON" %}
 				</a>
 			{% endif %}
 		</div>
@@ -28,10 +28,10 @@
 	<div class="lite-tabs__container">
 		<div class="lite-tabs">
 			<a href="{% url 'applications:applications' %}?submitted=True" class="lite-tabs__tab lite-tabs__tab--selected">
-				In progress
+				{% lcs "applications.ApplicationsList.IN_PROGRESS_TAB" %}
 			</a>
 			<a href="{% url 'applications:applications' %}?submitted=False" class="lite-tabs__tab">
-				Drafts
+				{% lcs "applications.ApplicationsList.DRAFTS_TAB" %}
 			</a>
 		</div>
 	</div>
@@ -40,14 +40,15 @@
 		<table class="govuk-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
-					<th class="govuk-table__header" scope="col">{% lcs 'applications.ApplicationsSummaryPage.REFERENCE_NAME' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs "applications.ApplicationsSummaryPage.NAME" %}</th>
 					<th class="govuk-table__header" scope="col"></th>
 					{% if organisation.type.key != 'hmrc' %}
-						<th class="govuk-table__header" scope="col">{% lcs 'applications.ApplicationsSummaryPage.TYPE' %}</th>
+						<th class="govuk-table__header" scope="col">{% lcs "applications.ApplicationsSummaryPage.REFERENCE_CODE" %}</th>
+						<th class="govuk-table__header" scope="col">{% lcs "applications.ApplicationsSummaryPage.TYPE" %}</th>
 					{% endif %}
-					<th class="govuk-table__header" scope="col">{% lcs 'applications.ApplicationsSummaryPage.LAST_UPDATED_AT' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs "applications.ApplicationsSummaryPage.LAST_UPDATED_AT" %}</th>
 					{% if organisation.type.key != 'hmrc' %}
-						<th class="govuk-table__header" scope="col">{% lcs 'applications.ApplicationsSummaryPage.STATUS' %}</th>
+						<th class="govuk-table__header" scope="col">{% lcs "applications.ApplicationsSummaryPage.STATUS" %}</th>
 					{% endif %}
 				</tr>
 			</thead>
@@ -61,15 +62,18 @@
 								{% else %}
 									href="{% url 'applications:application' application.id %}">
 								{% endif %}
-								{{ application.name }}
+								{{ application.name|default:application.reference_code }}
 							</a>
 						</td>
 						<td class="govuk-table__cell">
 							{% if application.exporter_user_notification_count.total %}
-								<span class="lite-notification-bubble">{{ application.exporter_user_notification_count.total }} <span class="govuk-visually-hidden"> notifications</span></span>
+								<span class="lite-notification-bubble">{{ application.exporter_user_notification_count.total }} <span class="govuk-visually-hidden"> {% lcs "applications.ApplicationsList.NOTIFICATIONS_SUFFIX" %}</span></span>
 							{% endif %}
 						</td>
 						{% if organisation.type.key != 'hmrc' %}
+							<td class="govuk-table__cell">
+								{{ application.reference_code }}
+							</td>
 							<td class="govuk-table__cell">
 								{{ application.application_type.value }}
 							</td>
@@ -86,15 +90,7 @@
 		</table>
 
 		{% include "includes/pagination.html" with data=applications %}
-
 	{% else %}
-		<br>
-		<div class="lite-information-text">
-			<span class="lite-information-text__icon" aria-hidden="true">!</span>
-			<p class="lite-information-text__text">
-			<span class="govuk-visually-hidden">Information</span>
-				You haven't applied for any licences.
-			</p>
-		</div>
+		{% include "includes/notice.html" with text="applications.ApplicationsList.NO_CONTENT_NOTICE" %}
 	{% endif %}
 {% endblock %}

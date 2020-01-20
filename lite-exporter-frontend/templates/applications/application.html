@@ -1,13 +1,19 @@
 {% extends 'layouts/base.html' %}
 
 {% block back_link %}
-    <a href="{% url 'applications:applications' %}" id="back-link" class="govuk-back-link">Back</a>
+    <a href="{% url 'applications:applications' %}" id="back-link" class="govuk-back-link">
+		{% lcs "applications.ApplicationPage.BACK" %}
+	</a>
 {% endblock %}
 
 {% block body %}
     <div class="lite-app-bar">
         <div class="lite-app-bar__content">
-            <h1 class="govuk-heading-l">{{ title }}</h1>
+            <h1 class="govuk-heading-l">
+				{% block title %}
+					{{ application.name|default:application.reference_code }}
+				{% endblock %}
+			</h1>
         </div>
         <div class="lite-app-bar__controls">
 			{% if application.application_type.key != 'hmrc_query' %}
@@ -25,54 +31,71 @@
         </div>
     </div>
 
-	<dl class="govuk-summary-list govuk-summary-list--no-border">
-		<div class="govuk-summary-list__row">
-			<dt class="govuk-summary-list__key">
-				{% lcs 'applications.ApplicationSummaryPage.TYPE' %}
-			</dt>
-			<dd class="govuk-summary-list__value">
-				{{ application.application_type.value }}
-			</dd>
-		</div>
-		{% if application.application_type.key != 'hmrc_query' %}
-		<div class="govuk-summary-list__row">
-			<dt class="govuk-summary-list__key">
-				{% lcs 'applications.ApplicationSummaryPage.EXPORT_TYPE' %}
-			</dt>
-			<dd class="govuk-summary-list__value">
-				{{ application.export_type.value }}
-			</dd>
-		</div>
-		{% endif %}
-		<div class="govuk-summary-list__row">
-			<dt class="govuk-summary-list__key">
-				{% lcs 'applications.ApplicationSummaryPage.STATUS' %}
-			</dt>
-			<dd id="label-application-status" class="govuk-summary-list__value">
-				{{ application.status.value }}
-			</dd>
-		</div>
-		<div class="govuk-summary-list__row">
-			<dt class="govuk-summary-list__key">
-				{% lcs 'applications.ApplicationSummaryPage.CASE_OFFICER' %}
-			</dt>
-			<dd id="label-application-status" class="govuk-summary-list__value">
-				{% if application.case_officer.first_name %}
-					{{ application.case_officer.first_name }} {{ application.case_officer.last_name }}
-				{% else %}
-					{% lcs 'applications.ApplicationSummaryPage.NO_ASSIGNED_CASE_OFFICER' %}
-				{% endif %}
-			</dd>
-		</div>
-		<div class="govuk-summary-list__row">
-			<dt class="govuk-summary-list__key">
-				{% lcs 'applications.ApplicationSummaryPage.SUBMITTED_AT' %}
-			</dt>
-			<dd class="govuk-summary-list__value">
-				{{ application.submitted_at|str_date }}
-			</dd>
-		</div>
-	</dl>
+	<div class="govuk-grid-row">
+		<dl class="govuk-summary-list govuk-summary-list--no-border govuk-grid-column-two-thirds">
+            {% if not application.application_type.key == "hmrc_query" %}
+    			<div class="govuk-summary-list__row">
+    				<dt class="govuk-summary-list__key">
+    					{% lcs 'applications.ApplicationSummaryPage.REFERENCE_CODE' %}
+    				</dt>
+    				<dd class="govuk-summary-list__value" id="summary-list-reference-code">
+    					{{ application.reference_code }}
+    				</dd>
+    				<!-- <dd class="govuk-summary-list__actions">
+    					<button class="lite-button--link lite-js-only" href="#" id="button-copy-reference-code">
+    						{% lcs "applications.ApplicationSummaryPage.COPY_REFERENCE_CODE" %}
+    					</button>
+    				</dd> -->
+    			</div>
+            {% endif %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs 'applications.ApplicationSummaryPage.TYPE' %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ application.application_type.value }}
+				</dd>
+			</div>
+			{% if application.application_type.key != 'hmrc_query' %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs 'applications.ApplicationSummaryPage.EXPORT_TYPE' %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ application.export_type.value }}
+				</dd>
+			</div>
+			{% endif %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs 'applications.ApplicationSummaryPage.STATUS' %}
+				</dt>
+				<dd id="label-application-status" class="govuk-summary-list__value">
+					{{ application.status.value }}
+				</dd>
+			</div>
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs 'applications.ApplicationSummaryPage.CASE_OFFICER' %}
+				</dt>
+				<dd id="label-application-status" class="govuk-summary-list__value">
+					{% if application.case_officer.first_name %}
+						{{ application.case_officer.first_name }} {{ application.case_officer.last_name }}
+					{% else %}
+						{% lcs 'applications.ApplicationSummaryPage.NO_ASSIGNED_CASE_OFFICER' %}
+					{% endif %}
+				</dd>
+			</div>
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs 'applications.ApplicationSummaryPage.SUBMITTED_AT' %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ application.submitted_at|str_date }}
+				</dd>
+			</div>
+		</dl>
+	</div>
 
     <div class="lite-tabs__container">
         <div class="lite-tabs">
@@ -116,7 +139,7 @@
 			<h2 class="govuk-heading-m">{{ key }}</h2>
 			<div>
 				{% if not value %}
-					<p class="govuk-caption-m">You haven't added any information for this section.</p>
+					<p class="govuk-caption-m">{% lcs "applications.ApplicationPage.NO_INFORMATION_PROVIDED" %}</p>
 				{% elif value|classname == 'str' %}
 					<dl class="govuk-summary-list">
 						<div class="govuk-summary-list__row">
@@ -171,4 +194,22 @@
     {% elif type == 'activity' %}
 		{% include "applications/tabs/activity.html" %}
     {% endif %}
+{% endblock %}
+
+{% block javascript %}
+	<script type="text/javascript">
+		function textToClipboard() {
+		    var dummy = document.createElement("textarea");
+		    document.body.appendChild(dummy);
+		    dummy.value = "{{ application.reference_code }}";
+		    dummy.select();
+		    document.execCommand("copy");
+		    document.body.removeChild(dummy);
+			$("#button-copy-reference-code").css({opacity: 0}).text("{% lcs "applications.ApplicationSummaryPage.COPIED" %}").animate({opacity: 1}, 250);
+		}
+
+		$("#button-copy-reference-code").click(function() {
+			textToClipboard();
+		});
+	</script>
 {% endblock %}

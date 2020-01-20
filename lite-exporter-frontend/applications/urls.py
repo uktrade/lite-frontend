@@ -19,6 +19,7 @@ urlpatterns = [
     path("", common.ApplicationsList.as_view(), name="applications"),
     path("<uuid:pk>/delete/", common.DeleteApplication.as_view(), name="delete"),
     path("<uuid:pk>/task-list/", common.ApplicationTaskList.as_view(), name="task_list"),
+    path("<uuid:pk>/submit-success/", common.ApplicationSubmitSuccessPage.as_view(), name="success_page"),
     path("<uuid:pk>/edit-type/", common.ApplicationEditType.as_view(), name="edit_type"),
     path("<uuid:pk>/check-your-answers/", common.CheckYourAnswers.as_view(), name="check_your_answers"),
     path("<uuid:pk>/submit/", common.Submit.as_view(), name="submit"),

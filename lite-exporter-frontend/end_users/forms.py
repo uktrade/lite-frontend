@@ -16,7 +16,6 @@ from lite_forms.components import (
 from lite_forms.generators import success_page, confirm_form
 from lite_forms.helpers import conditional
 
-from core.builtins.custom_tags import reference_code
 from core.services import get_countries
 
 
@@ -160,7 +159,7 @@ def end_user_advisory_success_page(request, query_reference):
     return success_page(
         request=request,
         title="Advisory successfully submitted",
-        secondary_title="Your reference number: " + reference_code(query_reference),
+        secondary_title="Your reference number: " + query_reference,
         description="ECJU usually takes 2 " "working days to check an end user.",
         what_happens_next=["You'll receive an email from ECJU when the check is finished."],
         links={

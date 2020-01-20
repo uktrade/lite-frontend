@@ -9,16 +9,16 @@
 {% block body %}
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
-			<h1 class="govuk-heading-l">{% block title %}Applications{% endblock %}</h1>
+			<h1 class="govuk-heading-l">{% block title %}{% lcs "applications.ApplicationsList.TITLE" %}{% endblock %}</h1>
 		</div>
 		<div class="lite-app-bar__controls">
 			{% if organisation.type.key == 'hmrc' %}
 				<a href="{% url 'hmrc:raise_a_query' %}" class="govuk-button" draggable="false" role="button">
-					Raise a query
+					{% lcs "applications.ApplicationsList.RAISE_A_QUERY_BUTTON" %}
 				</a>
 			{% else %}
 				<a href="{% url 'apply_for_a_licence:start' %}" class="govuk-button" draggable="false" role="button">
-					{% lcs 'Licences.APPLY_FOR_A_LICENCE' %}
+					{% lcs "applications.ApplicationsList.APPLY_FOR_A_LICENCE_BUTTON" %}
 				</a>
 			{% endif %}
 		</div>
@@ -27,10 +27,10 @@
 	<div class="lite-tabs__container">
 		<div class="lite-tabs">
 			<a href="{% url 'applications:applications' %}?submitted=True" class="lite-tabs__tab">
-				In Progress
+				{% lcs "applications.ApplicationsList.IN_PROGRESS_TAB" %}
 			</a>
 			<a href="{% url 'applications:applications' %}?submitted=False" class="lite-tabs__tab lite-tabs__tab--selected">
-				Drafts
+				{% lcs "applications.ApplicationsList.DRAFTS_TAB" %}
 			</a>
 		</div>
 	</div>
@@ -40,15 +40,15 @@
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header">
-						Reference
+						{% lcs 'applications.ApplicationsSummaryPage.NAME' %}
 					</th>
-					<th class="govuk-table__header" scope="col">Type</th>
+					<th class="govuk-table__header" scope="col">{% lcs "applications.ApplicationsSummaryPage.TYPE" %}</th>
 					<th class="govuk-table__header">
-						Created On
+						{% lcs "applications.ApplicationsSummaryPage.CREATED_AT" %}
 					</th>
 					{% if organisation.type.key != 'hmrc' %}
 						<th class="govuk-table__header govuk-table__cell--nowrap">
-							Export type
+							{% lcs "applications.ApplicationsSummaryPage.EXPORT_TYPE" %}
 						</th>
 					{% endif %}
 					<th class="govuk-table__header">
@@ -84,17 +84,8 @@
 				{% endfor %}
 			</tbody>
 		</table>
-
 		{% include "includes/pagination.html" with data=applications %}
-
 	{% else %}
-		<br>
-		<div class="lite-information-text">
-			<span class="lite-information-text__icon" aria-hidden="true">!</span>
-			<p class="lite-information-text__text">
-			<span class="govuk-visually-hidden">Information</span>
-				There are no draft applications.
-			</p>
-		</div>
+		{% include "includes/notice.html" with text="applications.ApplicationsList.NO_DRAFTS_CONTENT_NOTICE" %}
 	{% endif %}
 {% endblock %}

@@ -316,7 +316,6 @@ def application_is_submitted(driver, context):  # noqa
     assert "0 Goods" or "1 Good" or "2 Goods" in element_row
     assert driver.find_element_by_xpath("// th[text()[contains(., 'Status')]]").is_displayed()
     assert driver.find_element_by_xpath("// th[text()[contains(., 'Last updated')]]").is_displayed()
-    assert driver.find_element_by_xpath("// th[text()[contains(., 'Reference')]]").is_displayed()
 
 
 @then("I see the application overview")  # noqa

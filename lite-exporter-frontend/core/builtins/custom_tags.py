@@ -1,9 +1,10 @@
 import datetime
 import json
 import re
+from html import escape
 
 from django import template
-from django.template.defaultfilters import stringfilter
+from django.template.defaultfilters import stringfilter, safe
 from django.templatetags.tz import do_timezone
 from django.utils.safestring import mark_safe
 
@@ -104,15 +105,6 @@ def highlight_text(value: str, term: str) -> str:
     return value
 
 
-@register.filter()
-def reference_code(value):
-    """
-    Converts ten digit string to two five digit strings hyphenated
-    """
-    value = str(value)
-    return value[:5] + "-" + value[5:]
-
-
 @register.filter
 @mark_safe
 def pretty_json(value):
@@ -139,6 +131,24 @@ def default_na(value):
         return value
     else:
         return mark_safe('<span class="lite-hint">N/A</span>')  # nosec
+
+
+@register.filter()
+def linkify(address, name=None):
+    """
+    Returns a correctly formatted, safe link to an address
+    Returns default_na if no address is provided
+    """
+    if not address:
+        return default_na(None)
+
+    if not name:
+        name = address
+
+    address = escape(address)
+    name = escape(name)
+
+    return safe(f'<a href="{address}" class="govuk-link govuk-link--no-visited-state">{name}</a>')
 
 
 @register.filter()

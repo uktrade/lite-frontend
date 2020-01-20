@@ -24,7 +24,7 @@
 						{% lcs 'end_users.EndUserPage.Variables.REFERENCE' %}
 					</dt>
 					<dd class="govuk-summary-list__value">
-						{{ end_user_advisory.id|reference_code }}
+						{{ end_user_advisory.reference_code }}
 					</dd>
 				</div>
 				<div class="govuk-summary-list__row">
@@ -152,11 +152,7 @@
 						{% lcs 'end_users.EndUserPage.Variables.WEBSITE' %}
 					</dt>
 					<dd class="govuk-summary-list__value">
-						{% if end_user_advisory.end_user.website %}
-							<a class="govuk-link" href="{{ end_user_advisory.end_user.website }}">{{ end_user_advisory.end_user.website }}</a>
-						{% else %}
-							N/A
-						{% endif %}
+						{{ end_user_advisory.end_user.website|linkify }}
 					</dd>
 				</div>
 			</dl>

@@ -1,6 +1,7 @@
 from lite_content.lite_exporter_frontend import strings
 from django.urls import reverse_lazy
 
+from lite_content.lite_exporter_frontend.applications import ApplicationSuccessPage
 from lite_forms.components import HiddenField, Form, BackLink, TextArea, HTMLBlock, RadioButtons, Option
 from lite_forms.generators import confirm_form, success_page
 
@@ -72,16 +73,16 @@ def edit_type_form(application_id):
     )
 
 
-def application_success_page(request, application_id):
+def application_success_page(request, application_reference_code):
     return success_page(
         request=request,
-        title="Application submitted successfully",
-        secondary_title="Your reference code: " + application_id,
-        description="",
-        what_happens_next=["You'll receive an email from ECJU when the check is finished."],
+        title=ApplicationSuccessPage.TITLE,
+        secondary_title=ApplicationSuccessPage.SECONDARY_TITLE + application_reference_code,
+        description=ApplicationSuccessPage.DESCRIPTION,
+        what_happens_next=ApplicationSuccessPage.WHAT_HAPPENS_NEXT,
         links={
-            "View your list of applications": reverse_lazy("applications:applications"),
-            "Apply for another export licence": reverse_lazy("apply_for_a_licence:start"),
-            "Return to your export control account dashboard": reverse_lazy("core:hub"),
+            ApplicationSuccessPage.VIEW_APPLICATIONS: reverse_lazy("applications:applications"),
+            ApplicationSuccessPage.APPLY_AGAIN: reverse_lazy("apply_for_a_licence:start"),
+            ApplicationSuccessPage.RETURN_TO_DASHBOARD: reverse_lazy("core:hub"),
         },
     )
