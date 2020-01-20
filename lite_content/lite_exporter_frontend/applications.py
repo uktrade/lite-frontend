@@ -115,6 +115,7 @@ class GeneratedDocuments:
 
 
 class ApplicationSummaryPage:
+    REFERENCE_CODE = "ECJU reference"
     REFERENCE_NAME = "Reference"
     TYPE = "Licence type"
     CASE_OFFICER = "Case officer"
@@ -134,6 +135,8 @@ class ApplicationSummaryPage:
     COUNTRIES = "Countries"
     ON_BEHALF_OF = "On behalf of"
     OPTIONAL_NOTE = "Optional note"
+    COPY_REFERENCE_CODE = "Copy ECJU reference"
+    COPIED = "Copied"
 
     class Buttons:
         EDIT_APPLICATION_BUTTON = "Edit application"
@@ -156,7 +159,8 @@ class ApplicationSummaryPage:
 
 
 class ApplicationsSummaryPage:
-    REFERENCE_NAME = "Reference"
+    NAME = "Name"
+    REFERENCE_CODE = "ECJU reference"
     TYPE = "Licence type"
     EXPORT_TYPE = "Export type"
     STATUS = "Status"
@@ -239,6 +243,33 @@ class DeleteDocument:
 class TaskListPage:
     ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference name"
     WHERE_ARE_YOUR_GOODS_GOING_SHORT_TITLE = "Set countries"
+
+
+class ApplicationSuccessPage:
+    TITLE = "Application submitted successfully"
+    SECONDARY_TITLE = "Your ECJU reference: "
+    DESCRIPTION = ""
+    WHAT_HAPPENS_NEXT = ["You'll receive an email from ECJU when the check is finished."]
+    VIEW_APPLICATIONS = "View your list of applications"
+    APPLY_AGAIN = "Apply for another export licence"
+    RETURN_TO_DASHBOARD = "Return to your export control account dashboard"
+
+
+class ApplicationsList:
+    TITLE = "Applications"
+    RAISE_A_QUERY_BUTTON = "Raise a query"
+    APPLY_FOR_A_LICENCE_BUTTON = "Apply for a licence"
+    REFRESH_BUTTON = "Refresh"
+    IN_PROGRESS_TAB = "In progress"
+    DRAFTS_TAB = "Drafts"
+    NOTIFICATIONS_SUFFIX = "notifications"
+    NO_CONTENT_NOTICE = "You haven't applied for any licences."
+    NO_DRAFTS_CONTENT_NOTICE = "You don't have any draft applications at the moment."
+
+
+class ApplicationPage:
+    BACK = "Back to applications"
+    NO_INFORMATION_PROVIDED = "You haven't added any information for this section."
 
 
 class ThirdPartiesPage:
