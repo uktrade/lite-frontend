@@ -26,10 +26,11 @@ class Party(SeedClass):
 
     def add_eua_query(self):
         data = self.request_data["end_user_advisory"]
-        id = make_request(
+        data = make_request(
             "POST", base_url=self.base_url, url="/queries/end-user-advisories/", headers=self.export_headers, body=data,
-        ).json()["end_user_advisory"]["id"]
-        self.add_to_context("end_user_advisory_id", str(id))
+        ).json()["end_user_advisory"]
+        self.add_to_context("end_user_advisory_id", str(data["id"]))
+        self.add_to_context("end_user_advisory_reference_code", str(data["reference_code"]))
 
     def add_end_user(self, draft_id, enduser=None):
         end_user_data = self.request_data["end-user"] if not enduser else enduser
