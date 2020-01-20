@@ -5,6 +5,7 @@ from pytest_bdd import when, then, scenarios, given
 from pages.application_page import ApplicationPage
 from pages.ecju_queries_pages import EcjuQueriesPages
 from pages.shared import Shared
+from shared import functions
 
 scenarios("../features/ecju_queries.feature", strict_gherkin=False)
 
@@ -105,4 +106,9 @@ def ecju_query_in_closed_list(driver, context):
 
 @when("I click back")  # noqa
 def i_click_back(driver):
-    Shared(driver).click_back()
+    functions.click_back_link(driver)
+
+
+@when("I click the case breadcrumb")  # noqa
+def i_click_back_the_case_breadcrumb(driver):
+    driver.find_element_by_id("link-back-to-case").click()

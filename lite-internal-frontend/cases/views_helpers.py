@@ -31,7 +31,6 @@ def get_case_advice(get_advice, request, case, user_team_final, team=None):
 
     context = {
         "case": case,
-        "title": case.get("application").get("name"),
         "all_advice": advice["advice"],
         "permissions": permissions,
         "total_goods_value": _get_total_goods_value(case),

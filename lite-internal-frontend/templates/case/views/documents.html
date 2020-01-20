@@ -1,13 +1,17 @@
 {% extends 'layouts/base.html' %}
 
 {% block back_link %}
-	<a href="{% url 'cases:case' case.id %}" class="govuk-back-link">{% lcs 'cases.CaseDocumentsPage.BACK_LINK' %}</a>
+	{% include "case/views/includes/breadcrumbs.html" with text="cases.CaseDocumentsPage.ATTACH" %}
 {% endblock %}
 
 {% block body %}
 	<div class="lite-app-bar">
         <div class="lite-app-bar__content">
-            <h2 class="govuk-heading-l">{{ title }}</h2>
+            <h1 class="govuk-heading-l">
+				{% block title %}
+					{% lcs 'cases.CaseDocumentsPage.ATTACH' %}
+				{% endblock %}
+			</h1>
         </div>
 		<div class="lite-app-bar__controls">
 			<a id="button-attach-document" role="button" draggable="false" class="govuk-button {% if documents %}govuk-button--secondary{% endif %}" href="{% url 'cases:attach_documents' case.id %}">

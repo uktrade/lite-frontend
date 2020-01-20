@@ -5,7 +5,6 @@
 {% block back_link %}{% endblock %}
 
 {% block body %}
-
 	<div class="lite-app-bar">
 		<h2 class="govuk-heading-l">{% lcs 'Queues.QueueList.PAGE_HEADING' %}</h2>
 		<div class="lite-app-bar--right">
@@ -15,7 +14,7 @@
 		</div>
 	</div>
 
-	{% if data.queues|length %}
+	{% if queues %}
 		<table class="govuk-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
@@ -25,7 +24,7 @@
 				</tr>
 			</thead>
 			<tbody class="govuk-table__body">
-				{% for queue in data.queues %}
+				{% for queue in queues %}
 					<tr class="govuk-table__row" style="vertical-align: top;">
 						<td class="govuk-table__cell">
 							{{ queue.name|default:"Untitled" }}

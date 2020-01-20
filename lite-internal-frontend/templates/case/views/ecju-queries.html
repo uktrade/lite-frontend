@@ -1,14 +1,18 @@
 {% extends 'layouts/base.html' %}
 
 {% block back_link %}
-	<a href="{% url 'cases:case' case_id %}" class="govuk-back-link">{% lcs 'cases.EcjuQueries.BACK_TO_CASE' %}</a>
+	{% include "case/views/includes/breadcrumbs.html" with text="cases.EcjuQueries.TITLE" %}
 {% endblock %}
 
 {% block body %}
 	<div class="lite-app-bar">
-		<h2 class="govuk-heading-l">{{ title }}</h2>
+		<h2 class="govuk-heading-l">
+			{% block title %}
+				{% lcs "cases.EcjuQueries.TITLE" %}
+			{% endblock %}
+		</h2>
 		<div class="lite-app-bar--right">
-			<a role="button" draggable="false" class="govuk-button {% if documents %}govuk-button--secondary{% endif %}" href="{% url 'cases:ecju_queries_add' case_id %}">
+			<a role="button" draggable="false" class="govuk-button {% if documents %}govuk-button--secondary{% endif %}" href="{% url 'cases:ecju_queries_add' case.id %}">
 				{% lcs 'cases.EcjuQueries.AddQuery.ADD_BUTTON_LABEL' %}
 			</a>
 		</div>
@@ -23,7 +27,7 @@
                     <div class="govuk-accordion__section">
                         <div class="govuk-accordion__section-header">
                             <div class="govuk-accordion__section-heading">
-                                <div class="govuk-accordion__section-button" id="open-question"  style="color:#34384b; text-decoration: none;">
+                                <div class="govuk-accordion__section-button" id="open-question"  style="color: #34384b; text-decoration: none;">
                                     {{ query.question|slice:":200" }}...
                                 </div>
                             </div>

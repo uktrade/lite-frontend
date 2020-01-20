@@ -1,4 +1,4 @@
-{% extends 'layouts/base.html' %}
+{% extends 'layouts/two-pane.html' %}
 
 {% block back_link %}
     {% if organisation.type.key == 'hmrc' %}
@@ -12,9 +12,8 @@
     {% endif %}
 {% endblock %}
 
-{% block body %}
-
-    <h2 class="govuk-heading-l">{{ title }}</h2>
+{% block two_thirds %}
+    <h1 class="govuk-heading-l">{{ title }}</h1>
 
     <dl class="govuk-summary-list">
         {% if organisation.eori_number %}
@@ -96,7 +95,7 @@
 			</div>
 		{% endfor %}
 		{% if not hide_creation_link %}
-			<a id="link-organisation-flags" class="app-flag app-flag--action" href="{% url 'flags:assign_flags' %}?level=organisations&items={{ organisation.id }}">
+			<a id="link-organisation-flags" class="app-flag app-flag--action" href="{% url 'organisations:assign_flags' organisation.id %}?level=organisations&items={{ organisation.id }}">
 				{% if organisation.flags %}
 					{% lcs 'ORGANISATION_EDIT_FLAGS' %}
 				{% else %}
@@ -144,5 +143,4 @@
 	{% else %}
 		<span class="govuk-hint">This organisation doesn't have any sites.</span>
 	{% endif %}
-
 {% endblock %}

@@ -6,10 +6,9 @@ from shared.tools.helpers import scroll_to_element_by_id
 
 
 class ApplicationPage(BasePage):
-
     ACTIONS_LIST_CONTAINER_ID = "actions-list"  # ID
-    ACTION_BUTTON_NAME = "action-button"  # Name
-    ACTIONS_DROPDOWN = ".app-more-actions__button"  # CSS
+    ACTION_BUTTON_SELECTOR = "a"
+    ACTIONS_DROPDOWN = ".lite-more-actions__button"  # CSS
     AUDIT_NOTIFICATION_ANCHOR = "audit-notification"  # ID
     AUDIT_CASE_ACTIVITY_ID = "[id^=case-activity-]"  # CSS
     CASE_NOTE_FIELD = "case_note"  # id
@@ -20,7 +19,7 @@ class ApplicationPage(BasePage):
     DOCUMENTS_BTN = '[href*="documents"]'  # css
     GENERATE_DOCUMENTS_BTN = "generate-document"  # id
     ECJU_QUERIES_BTN = '[href*="ecju-queries"]'  # css
-    PROGRESS_APP_BTN = "change-status"  #  ID
+    PROGRESS_APP_BTN = "change-status"  # ID
     ACTIVITY_CASE_NOTE_SUBJECT = ".app-activity__list .govuk-body"
     ACTIVITY_DATES = ".app-activity__item .govuk-hint"
     ACTIVITY_USER = ".user"
@@ -216,8 +215,8 @@ class ApplicationPage(BasePage):
 
     def get_action_dropdown_entries_count(self):
         return len(
-            self.driver.find_element_by_id(self.ACTIONS_LIST_CONTAINER_ID).find_elements_by_name(
-                self.ACTION_BUTTON_NAME
+            self.driver.find_element_by_id(self.ACTIONS_LIST_CONTAINER_ID).find_elements_by_css_selector(
+                self.ACTION_BUTTON_SELECTOR
             )
         )
 

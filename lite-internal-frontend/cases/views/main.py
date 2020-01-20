@@ -1,6 +1,4 @@
-from cases.helpers import get_updated_cases_banner_queue_id
 from http import HTTPStatus
-from lite_content.lite_internal_frontend.strings import cases
 from django.http import StreamingHttpResponse, Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
@@ -12,6 +10,7 @@ from s3chunkuploader.file_handler import S3FileUploadHandler, s3_client
 from cases.constants import CaseType
 from cases.forms.attach_documents import attach_documents_form
 from cases.forms.move_case import move_case_form
+from cases.helpers import get_updated_cases_banner_queue_id
 from cases.services import (
     get_case,
     post_case_notes,
@@ -30,9 +29,10 @@ from conf import settings
 from conf.constants import DEFAULT_QUEUE_ID, GENERATED_DOCUMENT
 from conf.settings import AWS_STORAGE_BUCKET_NAME
 from core.helpers import convert_dict_to_query_params
-from core.services import get_user_permissions, get_status_properties, get_permissible_statuses
+from core.services import get_status_properties, get_user_permissions, get_permissible_statuses
+from lite_content.lite_internal_frontend import cases
 from lite_forms.generators import error_page, form_page
-from lite_forms.submitters import submit_single_form
+from lite_forms.views import SingleFormView
 from queues.services import get_cases_search_data
 from users.services import get_gov_users
 
@@ -99,8 +99,6 @@ class ViewCase(TemplateView):
             "activity": get_activity(request, case_id),
             "case": case,
             "permissions": get_user_permissions(request),
-            "queue_id": request.GET.get("queue_id"),
-            "queue_name": request.GET.get("queue_name"),
             "permissible_statuses": get_permissible_statuses(request, case_type),
             "status_is_read_only": status_props["is_read_only"],
             "status_is_terminal": status_props["is_terminal"],
@@ -110,20 +108,21 @@ class ViewCase(TemplateView):
             return render(request, "case/queries/end_user_advisory.html", context)
         elif case_type == CaseType.CLC_QUERY.value:
             context["good"] = case["query"]["good"]
+            context["verified"] = case["query"]["good"]["status"]["key"] == "verified"
             return render(request, "case/queries/clc-query-case.html", context)
         elif case_type == CaseType.APPLICATION.value:
             context["total_goods_value"] = _get_total_goods_value(case)
 
             application_type = case["application"]["application_type"]["key"]
             if application_type == CaseType.OPEN_LICENCE.value:
-                return render(request, "case/open-licence-case.html", context)
+                return render(request, "case/applications/open-licence-case.html", context)
             elif application_type == CaseType.STANDARD_LICENCE.value:
-                return render(request, "case/standard-licence-case.html", context)
+                return render(request, "case/applications/standard-licence-case.html", context)
             else:
                 raise Exception("Invalid application_type: {}".format(case["application"]["application_type"]["key"]))
         elif case_type == CaseType.HMRC_QUERY.value:
             context["total_goods_value"] = _get_total_goods_value(case)
-            return render(request, "case/hmrc-case.html", context)
+            return render(request, "case/queries/hmrc-case.html", context)
         else:
             raise Exception("Invalid case_type: {}".format(case_type))
 
@@ -158,7 +157,6 @@ class ViewAdvice(TemplateView):
 
         context = {
             "data": case,
-            "title": case.get("application").get("name"),
             "activity": activity.get("activity"),
             "permissions": permissions,
             "edit_case_flags": cases.Case.EDIT_CASE_FLAGS,
@@ -185,7 +183,7 @@ class ManageCase(TemplateView):
             raise Exception("Invalid case_type: {}".format(case_type))
 
         context = {"case": case, "title": title, "statuses": permissible_statuses}
-        return render(request, "case/change-status.html", context)
+        return render(request, "case/views/change-status.html", context)
 
     def post(self, request, **kwargs):
         case_id = str(kwargs["pk"])
@@ -206,32 +204,14 @@ class ManageCase(TemplateView):
         return redirect(reverse("cases:case", kwargs={"pk": case_id}))
 
 
-class MoveCase(TemplateView):
-    def get(self, request, **kwargs):
-        case_id = str(kwargs["pk"])
-        case = get_case(request, case_id)
-
-        return form_page(request, move_case_form(request, reverse("cases:case", kwargs={"pk": case_id})), data=case)
-
-    def post(self, request, **kwargs):
-        case_id = str(kwargs["pk"])
-
-        data = {
-            "queues": request.POST.getlist("queues"),
-        }
-
-        response, data = submit_single_form(
-            request,
-            move_case_form(request, reverse("cases:case", kwargs={"pk": case_id})),
-            put_case,
-            object_pk=case_id,
-            override_data=data,
-        )
-
-        if response:
-            return response
-
-        return redirect(reverse("cases:case", kwargs={"pk": case_id}))
+class MoveCase(SingleFormView):
+    def init(self, request, **kwargs):
+        self.object_pk = kwargs["pk"]
+        case = get_case(request, self.object_pk)
+        self.data = case
+        self.form = move_case_form(request, case)
+        self.action = put_case
+        self.success_url = reverse_lazy("cases:case", kwargs={"pk": self.object_pk})
 
 
 class Documents(TemplateView):
@@ -249,7 +229,7 @@ class Documents(TemplateView):
             "case_documents": case_documents["documents"],
             "generated_document_key": GENERATED_DOCUMENT,
         }
-        return render(request, "case/documents.html", context)
+        return render(request, "case/views/documents.html", context)
 
 
 @method_decorator(csrf_exempt, "dispatch")
@@ -327,7 +307,7 @@ class CaseOfficer(TemplateView):
             "case": case,
             "name": params["name"],
         }
-        return render(request, "case/set-case-officer.html", context)
+        return render(request, "case/views/set-case-officer.html", context)
 
     def post(self, request, **kwargs):
         case_id = str(kwargs["pk"])
@@ -347,7 +327,7 @@ class CaseOfficer(TemplateView):
                     "case": case,
                     "name": request.GET.get("name", ""),
                 }
-                return render(request, "case/set-case-officer.html", context)
+                return render(request, "case/views/set-case-officer.html", context)
 
             _, status_code = put_case_officer(request, case_id, user_id)
 
@@ -371,4 +351,4 @@ class CaseOfficer(TemplateView):
             "case": case,
             "name": params["name"],
         }
-        return render(request, "case/set-case-officer.html", context)
+        return render(request, "case/views/set-case-officer.html", context)

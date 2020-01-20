@@ -127,7 +127,7 @@ def click_on_created_application(driver, context, internal_url):  # noqa
 
 @when("I go to end user advisory previously created")  # noqa
 def click_on_created_eua(driver, context):  # noqa
-    driver.find_element_by_link_text(context.eua_id).click()
+    driver.find_element_by_link_text(context.eua_reference_code).click()
 
 
 @given("I create application or application has been previously created")  # noqa

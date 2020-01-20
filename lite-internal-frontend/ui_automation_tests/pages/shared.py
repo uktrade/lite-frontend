@@ -17,13 +17,9 @@ class Shared(BasePage):
     ROWS_IN_CASES_TABLE = ".govuk-table__body .govuk-table__row"  # CSS
     H2 = "h2"  # CSS
     LINKS_IN_LITE_TABLE = ".govuk-table__cell a"  # CSS
-    BACK_LINK = ".govuk-back-link"  # CSS
 
     def click_submit(self):
         self.driver.find_element_by_css_selector(self.SUBMIT_BUTTON).click()
-
-    def click_back(self):
-        self.driver.find_element_by_css_selector(self.BACK_LINK).click()
 
     def get_text_of_error_message(self, no):
         return self.driver.find_elements_by_css_selector(self.ERROR_MESSAGE)[no].text
@@ -66,9 +62,6 @@ class Shared(BasePage):
 
     def get_links_in_lite_table(self):
         return self.driver.find_elements_by_css_selector(self.LINKS_IN_LITE_TABLE)
-
-    def click_back_link(self):
-        return self.driver.find_element_by_css_selector(self.BACK_LINK).click()
 
     def scroll_to_bottom_row(self):
         # Requires that each row have the ID 'row-x' where x is it's index starting from 1

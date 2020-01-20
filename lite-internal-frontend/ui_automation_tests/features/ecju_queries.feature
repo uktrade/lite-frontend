@@ -29,7 +29,7 @@ Feature: I want to create ECJU queries
     And I click Yes
     And I click continue
     Then the new ECJU Query is visible in the list
-    When I click back
+    When I click the case breadcrumb
     Then the ECJU Query creation is visible in the case timeline
 
 

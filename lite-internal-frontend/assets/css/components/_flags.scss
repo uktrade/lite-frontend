@@ -4,6 +4,13 @@
 	justify-content: flex-start;
 	flex-wrap: wrap;
 	margin-bottom: govuk-spacing(4);
+
+	& > a:only-child {
+		padding: 0;
+		margin: 0;
+		line-height: normal!important;
+		margin-bottom: govuk-spacing(2);
+	}
 }
 
 .app-flags--alt {
@@ -20,6 +27,7 @@
 	margin-top: -2px;
 	padding-top: 0!important;
 	transform: translateY(-2px);
+
 	.govuk-table__cell {
 		padding-top: 0!important;
 	}
@@ -38,19 +46,12 @@
 	margin-bottom: govuk-spacing(2);
 	box-shadow: 0 2px 0 govuk-shade(govuk-colour("white"), 10%);
 
-	&:only-child {
-		padding: 0;
-		margin: 0;
-		line-height: normal!important;
-		margin-bottom: govuk-spacing(2);
-	}
-
 	&--action {
 		position: relative;
 		text-decoration: none;
 		border-radius: 0;
 		outline: 0;
-	    -webkit-appearance: none;
+		-webkit-appearance: none;
 		color: $govuk-link-colour;
 		font-weight: normal;
 		text-transform: none;

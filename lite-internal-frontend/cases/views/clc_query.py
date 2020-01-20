@@ -5,7 +5,7 @@ from lite_forms.components import HiddenField
 from lite_forms.generators import form_page
 from lite_forms.submitters import submit_single_form
 
-from cases.forms.goods_flags import flags_form
+from cases.forms.flags import flags_form
 from cases.forms.respond_to_clc_query import respond_to_clc_query_form
 from cases.services import (
     get_case,

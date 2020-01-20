@@ -1,16 +1,15 @@
-from lite_content.lite_internal_frontend.strings import cases
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import TemplateView
-from lite_forms.components import Option, HiddenField
-from lite_forms.generators import form_page, error_page
 
 from cases.forms.create_ecju_query import (
     choose_ecju_query_type_form,
     create_ecju_query_write_or_edit_form,
     create_ecju_create_confirmation_form,
 )
-from cases.services import get_ecju_queries, post_ecju_query
+from cases.services import get_ecju_queries, post_ecju_query, get_case
+from lite_forms.components import Option, HiddenField
+from lite_forms.generators import form_page, error_page
 from picklists.services import get_picklists, get_picklist_item
 
 
@@ -31,14 +30,14 @@ class ViewEcjuQueries(TemplateView):
         Get all ECJU queries for the given case, divided into open and close
         """
         case_id = str(kwargs["pk"])
+        case = get_case(request, case_id)
         open_ecju_queries, closed_ecju_queries = self._get_ecju_queries(request, case_id)
         context = {
-            "case_id": case_id,
+            "case": case,
             "open_ecju_queries": open_ecju_queries,
             "closed_ecju_queries": closed_ecju_queries,
-            "title": cases.EcjuQueries.TITLE,
         }
-        return render(request, "case/ecju-queries.html", context)
+        return render(request, "case/views/ecju-queries.html", context)
 
 
 class CreateEcjuQuery(TemplateView):

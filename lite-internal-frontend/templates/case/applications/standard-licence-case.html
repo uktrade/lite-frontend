@@ -1,97 +1,8 @@
-{% extends 'layouts/base.html' %}
+{% extends 'layouts/case.html' %}
 
 {% load static humanize %}
 
-{% block back_link %}
-	<div class="govuk-breadcrumbs">
-		<ol class="govuk-breadcrumbs__list">
-			<li class="govuk-breadcrumbs__list-item">
-				<a class="govuk-breadcrumbs__link" href="{% url 'cases:cases' %}?queue={{ queue.queue.id }}">{% if queue_name %}{{ queue_name }}{% else %}{% lcs 'QUEUE_ALL_CASES' %}{% endif %}</a>
-			</li>
-			<li class="govuk-breadcrumbs__list-item" aria-current="page">&nbsp;</li>
-		</ol>
-	</div>
-{% endblock %}
-
-{% block body %}
-    {% if case.audit_notification %}
-        <a id="audit-notification" class="lite-info-bar lite-info-bar--link lite-info-bar--no-animation" href="#case-activity-{{ case.audit_notification.audit_id }}">
-            {% lcs 'CASE_CHANGES' %}
-        </a>
-    {% endif %}
-
-	<div class="lite-app-bar" style="margin-top: -20px;">
-		<div class="lite-app-bar__content">
-			<p class="govuk-caption-m">{{ case.type.value }} by <a class="govuk-link govuk-link--no-visited-state" style="display: inline-block;" href="{% url 'organisations:organisation' case.application.organisation.id %}">{{ case.application.organisation.name }}</a></p>
-			<h2 class="govuk-heading-l">
-				{% block title %}{{ case.application.id }}{% endblock %}
-			</h2>
-		</div>
-		<div class="lite-app-bar__controls">
-			<div class="app-more-actions__container">
-				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:documents' case.id %}">
-		        	{% lcs 'cases.ApplicationPage.Actions.DOCUMENT' %}
-		        </a>
-		        <a role="button" draggable="false" class="govuk-button" href="{% url 'cases:ecju_queries' case.id %}">
-		            {% lcs 'cases.ApplicationPage.Actions.ECJU' %}
-				</a>
-		        <a role="button" draggable="false" class="govuk-button" href="{% url 'cases:move' case.id %}">
-					{% lcs 'cases.ApplicationPage.Actions.MOVE' %}
-				</a>
-                {% if permissible_statuses %}
-                    {% if not status_is_terminal or 'REOPEN_CLOSED_CASES' in permissions %}
-				<a role="button" draggable="false" class="govuk-button" id="change-status" href="{% url 'cases:manage' case.id %}">
-					{% lcs 'cases.ApplicationPage.Actions.CHANGE_STATUS' %}
-				</a>
-                    {% endif %}
-                {% endif %}
-				{% if permissions|key_in_array:'MAKE_FINAL_DECISIONS' %}
-					<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:decide' case.id %}">
-						{% lcs 'cases.ApplicationPage.Actions.DECISION' %}
-					</a>
-				{% endif %}
-		        <a role="button" draggable="false" class="govuk-button" href="{% url 'cases:user_advice_view' case.id %}">
-					{% lcs 'cases.ApplicationPage.Actions.ADVICE' %}
-				</a>
-                <a role="button" draggable="false" class="govuk-button" id="generate-document" href="{% url 'cases:generate_document' case.id %}">
-					{% lcs 'cases.ApplicationPage.Actions.GENERATE_DOCUMENT' %}
-				</a>
-                <a role="button" draggable="false" class="govuk-button" id="case-officer" href="{% url 'cases:case_officer' case.id %}">
-                    {% lcs 'cases.ApplicationPage.Actions.CASE_OFFICER' %}
-                </a>
-			</div>
-		</div>
-	</div>
-
-    {% if case.case_officer %}
-        <p class="govuk-caption-m">{% lcs 'cases.ApplicationPage.CASE_OFFICER' %} <a class="govuk-link govuk-link--no-visited-state" href="{% url 'users:user' case.case_officer.id %}">{{ case.case_officer|username }}</a></p>
-    {% else %}
-        <p class="govuk-caption-m">{% lcs 'cases.ApplicationPage.NO_CASE_OFFICER' %}</p>
-    {% endif %}
-
-    <div class="app-flags" id="application-case-flags">
-		{% for flag in case.flags %}
-			<div class="app-flag" id="{{ flag.name }}">
-				{{ flag.name }}
-			</div>
-		{% endfor %}
-		<a href="{% url 'cases:assign_flags' case.id %}?level=cases&items={{ case.id }}" id="application-edit-case-flags" class="app-flag app-flag--action">
-			{% if case.flags %}
-				{% lcs 'EDIT_CASE_FLAGS' %}
-			{% else %}
-				{% lcs 'SET_CASE_FLAGS' %}
-			{% endif %}
-		</a>
-	</div>
-
-	<div class="app-flags" id="application-all-flags">
-		{% for flag in case.all_flags %}
-			<div class="app-flag" id="{{ flag.name }}">
-				{{ flag.name }}
-			</div>
-		{% endfor %}
-	</div>
-
+{% block details %}
 	<div class="app-case-board">
 		<div class="govuk-grid-row">
 			<div class="govuk-grid-column-one-quarter">
@@ -153,7 +64,72 @@
                     <button id="button-edit-goods-flags" name="action" value="edit-flags" class="govuk-button" data-module="govuk-button">
                         {% lcs 'cases.ApplicationPage.EDIT_FLAGS' %}
                     </button>
-                    {% include 'case/views/standard-goods.html' with show_checkboxes=True %}
+					<table class="govuk-table" id="goods">
+						<thead class="govuk-table__head">
+							<tr class="govuk-table__row">
+								<th scope="col" class="govuk-table__header">
+									<button type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
+								</th>
+					            <th class="govuk-table__header" scope="col">{% lcs 'cases.ApplicationPage.Goods.Table.CLC' %}</th>
+								<th class="govuk-table__header" scope="col">{% lcs 'cases.ApplicationPage.Goods.Table.DESCRIPTION' %}</th>
+					            <th class="govuk-table__header">{% lcs 'cases.ApplicationPage.Goods.Table.VALUE' %}</th>
+								<th class="govuk-table__header">{% lcs 'GOOD_INCORPORATED' %}</th>
+								<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.Goods.Table.DOCUMENTS' %}</th>
+					            <th class="govuk-table__header">{% lcs 'cases.ApplicationPage.Goods.Table.FLAGS' %}</th>
+
+								{% if show_advice %}
+									<th class="govuk-table__header" style="width: 350px;">{% lcs 'cases.ApplicationPage.Goods.Table.FLAGS' %}</th>
+								{% endif %}
+							</tr>
+						</thead>
+						<tbody class="govuk-table__body">
+							{% for good_on_application in case.application.goods %}
+								<tr class="govuk-table__row">
+					                <td class="govuk-table__cell govuk-table__cell--checkbox">
+										<div class="govuk-checkboxes govuk-checkboxes--small">
+											<input class="govuk-checkboxes__input" type="checkbox" name="goods" value="{{ good_on_application.good.id }}" id="{{ good_on_application.good.id }}">
+											<label class="govuk-label govuk-checkboxes__label" for="{{ good_on_application.good.id }}"></label>
+										</div>
+									</td>
+									<td class="govuk-table__cell">
+										{{ good_on_application.good.control_code|default_na }}
+									</td>
+					                <td class="govuk-table__cell">
+					                	{{ good_on_application.good.description }}
+					                </td>
+									<td class="govuk-table__cell">{{ good_on_application.quantity }} {{ good_on_application.unit.value }}/£{{ good_on_application.value|intcomma }}</td>
+									<td class="govuk-table__cell">{{ good_on_application.is_good_incorporated|friendly_boolean }}</td>
+									<td class="govuk-table__cell">
+					                    {% if good_on_application.good.documents %}
+					                        {% for document in good_on_application.good.documents %}
+					                            {% if document.safe == True %}
+					                                <a class="govuk-link govuk-link--no-visited-state" id="good_document" href="{% url 'cases:document' case.id document.id %}">
+					                                    {% lcs 'cases.Manage.Documents.DOWNLOAD_DOCUMENT' %}
+					                                </a>
+					                            {% endif %}
+					                        {% endfor %}
+					                    {% else %}
+					                        {% lcs 'cases.ApplicationPage.Goods.MISSING_DOCUMENT_REASON_PREFIX' %}{{ good_on_application.good.missing_document_reason.value }}
+					                    {% endif %}
+					                <td class="govuk-table__cell">
+					                    {% for flag in good_on_application.flags %}
+					                        {{ flag.name }}<br>
+					                    {% endfor %}
+					                </td>
+									{% if show_advice %}
+										<td class="govuk-table__cell">
+											{% for advice in all_advice %}
+												{% if advice.good == good_on_application.good.id %}
+													{% include 'case/views/table-advice.html' %}
+												{% endif %}
+											{% endfor %}
+										</td>
+									{% endif %}
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+					<p class="govuk-body govuk-!-margin-top-3 govuk-!-font-weight-bold">{% lcs 'STANDARD_CASE_TOTAL_VALUE' %} £{{ total_goods_value|intcomma }}</p>
                 </form>
             </div>
 		</div>
@@ -237,12 +213,10 @@
 {% endblock %}
 
 {% block javascript %}
-    <script src="{% static 'javascripts/select-buttons.js' %}"></script>
-	<script src="{% static 'javascripts/more-actions.js' %}"></script>
+	{{ block.super }}
+
 	<script src="{% static 'javascripts/edit-good-flags.js' %}"></script>
     <script src="{% static 'javascripts/edit-destination-flags.js' %}"></script>
-	<script src="{% static 'javascripts/modal.js' %}"></script>
-	<script src="{% static 'javascripts/case.js' %}"></script>
 	<script type="text/javascript">
 		$(".govuk-accordion__section").addClass("govuk-accordion__section--expanded");
 	</script>

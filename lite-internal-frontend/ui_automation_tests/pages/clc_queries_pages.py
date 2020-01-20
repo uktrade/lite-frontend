@@ -8,11 +8,11 @@ class ClcQueriesPages(BasePage):
     REPORT_SUMMARY = "report_summary"  # Name
     COMMENT = "comment"  # ID
     CASE_CLOSE = ".lite-info-bar"  # CSS
-    RESPOND_BTN = "respond"  # ID
+    BUTTON_RESPOND_ID = "button-respond"
     SUBMIT_BUTTON = '.govuk-button[type*="submit"]'  # CSS
 
     def click_respond_to_query(self):
-        self.driver.find_element_by_id(self.RESPOND_BTN).click()
+        self.driver.find_element_by_id(self.BUTTON_RESPOND_ID).click()
 
     # Response Page
     def click_is_good_controlled(self, answer):

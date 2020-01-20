@@ -1,0 +1,121 @@
+{% extends 'layouts/case.html' %}
+
+{% load humanize static %}
+
+{% block details %}
+	<p id="case-type" class="govuk-caption-m">{{ case.application.application_type.value }}</p>
+    <p class="govuk-caption-m">{% lcs 'cases.HMRCPage.Heading.EXPORTER' %}<a id="applicant_organisation" class="govuk-link govuk-link--no-visited-state" style="display: inline-block;" href="{% url 'organisations:organisation' case.application.organisation.id %}">{{ case.application.organisation.name }}</a></p>
+    <p class="govuk-caption-m">{% lcs 'cases.HMRCPage.Heading.RAISED_BY' %}<a id="hmrc_organisation" class="govuk-link govuk-link--no-visited-state" style="display: inline-block;" href="{% url 'organisations:organisation' case.application.hmrc_organisation.id %}">{{ case.application.hmrc_organisation.name }}</a></p>
+
+	<!-- Information board -->
+	{% include 'case/views/application-information-board.html' %}
+
+	{% if case.application.application_denial_reason %}
+	    <h3 class="govuk-heading-m">{% lcs 'cases.HMRCPage.DenialReasons.TITLE' %}</h3>
+	    {% for reason in case.application.application_denial_reason %}
+	        <p class="govuk-heading-s">{% lcs 'cases.HMRCPage.DenialReasons.REASON' %}</p>
+	        {% for reason_id in reason.reasons %}
+	            <p class="govuk-label">{{ reason_id.id }}</p>
+	        {% endfor %}
+	        {% if reason.reason_details %}
+	            <br />
+	            <p class="govuk-heading-s">{% lcs 'cases.HMRCPage.DenialReasons.FURTHER_INFO' %}</p>
+	            <p class="govuk-label">{{ reason.reason_details }}</p>
+	        {% endif %}
+	    {% endfor %}
+	    <br /><br />
+	{% endif %}
+
+	<!-- Goods -->
+
+	<form action="{% url 'cases:review_goods' case.id %}" method="get">
+		{% if 'REVIEW_GOODS' in permissions and not status_is_terminal %}
+			<button id="button-review-goods" name="action" value="review-goods" class="govuk-button" data-module="govuk-button">
+				{% lcs 'cases.HMRCPage.Good.REVIEW_GOODS' %}
+			</button>
+		{% endif %}
+	    <button id="button-edit-goods-flags" name="action" value="edit-flags" class="govuk-button" data-module="govuk-button">
+			{% lcs 'cases.HMRCPage.Good.EDIT_FLAGS' %}
+		</button>
+	    <table class="govuk-table">
+	        <thead class="govuk-table__header">
+	            <tr>
+	                <th class="govuk-table__header" scope="col">{% lcs 'cases.HMRCPage.Good.DESCRIPTION' %}</th>
+	                <th class="govuk-table__header" scope="col">{% lcs 'cases.HMRCPage.Good.CONTROL_CODE' %}</th>
+	                <th class="govuk-table__header" scope="col">{% lcs 'cases.HMRCPage.Good.CONTROLLED' %}</th>
+	                <th class="govuk-table__header" scope="col">{% lcs 'cases.HMRCPage.Good.FLAGS' %}</th>
+	            </tr>
+	        </thead>
+	        <tbody>
+	            {% for good in case.application.goods_types %}
+	                <tr class="govuk-table__row">
+	                    <td class="govuk-table__cell">
+	                        <div class="govuk-checkboxes--small govuk-checkboxes__item">
+	                            <input class="govuk-checkboxes__input" type="checkbox" name="goods" value="{{ good.id }}" id="{{ good.id }}">
+	                            <label class="govuk-label govuk-checkboxes__label" for="{{ good.id }}">{{ good.description }}</label>
+	                        </div>
+	                    </td>
+	                    <td class="govuk-table__cell">
+	                        <span class="app-country-tag app-country-tag--orange">{{ good.control_code|default_na }}</span>
+	                    </td>
+	                    <td class="govuk-table__cell">
+	                        {{ good.is_good_controlled|friendly_boolean }}
+	                    </td>
+	                    <td class="govuk-table__cell">
+	                        {% if good.flags %}
+	                            {% for flag in good.flags %}
+	                                {{ flag.name }}<br>
+	                            {% endfor %}
+	                        {% endif %}
+	                    </td>
+	                </tr>
+	            {% endfor %}
+	        </tbody>
+	    </table>
+	</form>
+
+	<!-- Destinations/End-User -->
+	{% include 'case/views/standard-destinations.html' %}
+
+	<!--TODO: Fix this JF-->
+	{% if case.application.supporting_documentation %}
+		<h3 class="govuk-heading-m">{% lcs 'cases.HMRCPage.SupportingDocumentation.TITLE' %}</h3>
+		<table class="govuk-table" id="supporting-documentation">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="col">{% lcs 'cases.HMRCPage.SupportingDocumentation.NAME' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'cases.HMRCPage.SupportingDocumentation.DESCRIPTION' %}</th>
+	                <th class="govuk-table__header" scope="col">{% lcs 'cases.HMRCPage.SupportingDocumentation.DOCUMENT' %}</th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+	        {%  for supporting_documentation in case.application.supporting_documentation %}
+	            <tr class="govuk-table__row">
+	                <td class="govuk-table__cell">
+	                    {{ supporting_documentation.name }}
+	                </td>
+	                <td class="govuk-table__cell">
+	                    {{ supporting_documentation.description }}
+	                </td>
+	                <td class="govuk-table__cell">
+	                    {% if supporting_documentation.safe == True %}
+	                    <a class="govuk-link govuk-link--no-visited-state" id="supporting_documentation-{{ supporting_documentation.id }}" href="{% url 'cases:document' case.id supporting_documentation.id %}">
+	                        <span class="govuk-visually-hidden">{% lcs 'cases.Manage.Documents.DOWNLOAD_DOCUMENT' %}</span>
+	                        {{ supporting_documentation.name }}<br>
+	                    </a>
+	                    {% endif %}
+	                </td>
+	            </tr>
+	        {% endfor %}
+			</tbody>
+		</table>
+	{% endif %}
+
+    {% include "case/views/activity.html" %}
+{% endblock %}
+
+{% block javascript %}
+	{{ block.super }}
+
+	<script src="{% static 'javascripts/edit-good-flags.js' %}"></script>
+{% endblock %}

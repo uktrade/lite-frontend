@@ -5,8 +5,9 @@ from django.urls import reverse
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
-from cases.forms.goods_flags import flags_form
+from cases.forms.flags import flags_form, set_case_flags_form
 from cases.services import put_flag_assignments, get_good, get_goods_type, get_case, get_destination
+from conf.constants import FlagLevels
 from core.helpers import convert_dict_to_query_params
 from flags.forms import add_flag_form, edit_flag_form
 from flags.services import get_cases_flags, get_goods_flags, get_organisation_flags, get_destination_flags
@@ -135,14 +136,14 @@ class AssignFlags(TemplateView):
             kwargs["good_pk"] = self.objects[0]
 
         # Retrieve the list of flags depending on type
-        if self.level == "cases":
+        if self.level == FlagLevels.CASES:
             flags = get_cases_flags(request)
-        elif self.level == "goods":
+        elif self.level == FlagLevels.GOODS:
             flags = get_goods_flags(request)
-        elif self.level == "organisations":
+        elif self.level == FlagLevels.ORGANISATIONS:
             flags = get_organisation_flags(request)
             origin = "organisation"
-        elif self.level == "destinations":
+        elif self.level == FlagLevels.DESTINATIONS:
             flags = get_destination_flags(request)
 
         self.url = (
@@ -166,20 +167,24 @@ class AssignFlags(TemplateView):
 
         self.form = flags_form(flags=flags, level=self.level, origin=origin, url=self.url)
 
+        if self.level == FlagLevels.CASES:
+            case = get_case(request, kwargs["pk"])
+            self.form = set_case_flags_form(flags, case)
+
         return super(AssignFlags, self).dispatch(request, *args, **kwargs)
 
     def _single_item_processing(self, request, flags):
         object_flags = None
-        if self.level == "goods":
+        if self.level == FlagLevels.GOODS:
             obj, status_code = get_good(request, self.objects[0])
             if status_code == 404:
                 obj, _ = get_goods_type(request, self.objects[0])
-        elif self.level == "cases":
+        elif self.level == FlagLevels.CASES:
             obj = {"case": get_case(request, self.objects[0])}
-        elif self.level == "organisations":
+        elif self.level == FlagLevels.ORGANISATIONS:
             obj, _ = get_organisation(request, self.objects[0])
             object_flags = obj.get("flags")
-        elif self.level == "destinations":
+        elif self.level == FlagLevels.DESTINATIONS:
             obj = get_destination(request, self.objects[0])
 
         # Fetches existing flags on the object

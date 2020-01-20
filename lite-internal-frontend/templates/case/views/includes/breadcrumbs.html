@@ -1,0 +1,19 @@
+<div class="govuk-breadcrumbs">
+	<ol class="govuk-breadcrumbs__list">
+		<li class="govuk-breadcrumbs__list-item">
+			<a class="govuk-breadcrumbs__link" href="{% url 'cases:cases' %}">
+				{% lcs 'QUEUE_ALL_CASES' %}
+			</a>
+		</li>
+		<li class="govuk-breadcrumbs__list-item">
+			{% if text %}<a id="link-back-to-case" class="govuk-breadcrumbs__link" href="{% url 'cases:case' case.id %}">{% endif %}
+				{{ case.reference_code }}
+			{% if text %}</a>{% endif %}
+		</li>
+		{% if text %}
+			<li class="govuk-breadcrumbs__list-item" aria-current="page">
+				{% lcs text %}
+			</li>
+		{% endif %}
+	</ol>
+</div>

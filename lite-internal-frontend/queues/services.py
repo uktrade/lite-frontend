@@ -1,5 +1,3 @@
-import json
-
 from lite_forms.components import Option
 
 from conf.client import get, post, put
@@ -16,7 +14,7 @@ def get_queues(request, convert_to_options=False, include_system_queues=False):
 
         return converted
 
-    return data.json(), data.status_code
+    return data.json()["queues"]
 
 
 def post_queues(request, json):
@@ -35,15 +33,17 @@ def get_queue(request, pk, case_type=None, status=None, sort=None):
 
     if sort:
         sort_json = sort.split("-")
+        import json
+
         if len(sort_json) == 2:
             sort = json.dumps({sort_json[0]: sort_json[1]})
             filter_and_sort.append("sort=" + sort)
 
     filter_and_sort = "?" + "&".join(filter_and_sort) if len(filter_and_sort) > 0 else ""
 
-    data = get(request, QUEUES_URL + pk + filter_and_sort)
+    data = get(request, QUEUES_URL + str(pk) + filter_and_sort)
 
-    return data.json(), data.status_code
+    return data.json()
 
 
 def get_cases_search_data(request, params):
@@ -52,11 +52,8 @@ def get_cases_search_data(request, params):
 
 
 def put_queue(request, pk, json):
-    data = put(request, QUEUES_URL + pk + "/", json)
+    data = put(request, QUEUES_URL + str(pk) + "/", json)
     return data.json(), data.status_code
-
-
-# Case Assignments
 
 
 def get_queue_case_assignments(request, pk):

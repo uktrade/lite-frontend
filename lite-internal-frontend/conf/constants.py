@@ -74,3 +74,10 @@ class Permission(Enum):
     ADMINISTER_ROLES = "ADMINISTER_ROLES"
     REVIEW_GOODS = "REVIEW_GOODS"
     CONFIGURE_TEMPLATES = "CONFIGURE_TEMPLATES"
+
+
+class FlagLevels:
+    CASES = "cases"
+    GOODS = "goods"
+    ORGANISATIONS = "organisations"
+    DESTINATIONS = "destinations"

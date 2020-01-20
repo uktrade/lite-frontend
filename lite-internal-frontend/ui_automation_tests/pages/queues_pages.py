@@ -42,7 +42,7 @@ class QueuesPages(BasePage):
             self.QUEUES_EDIT_LINK
         ).click()
 
-    def get_size_of_selected_queues(self):
+    def get_number_of_selected_queues(self):
         no = 0
         elements = self.driver.find_elements_by_css_selector(self.QUEUE_CHECKBOXES)
         for element in elements:

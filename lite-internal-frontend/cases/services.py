@@ -31,12 +31,12 @@ from conf.constants import (
 
 
 def get_case(request, pk):
-    data = get(request, CASE_URL + pk)
+    data = get(request, CASE_URL + str(pk))
     return data.json()["case"]
 
 
 def put_case(request, pk, json):
-    data = put(request, CASE_URL + pk, json)
+    data = put(request, CASE_URL + str(pk), json)
     return data.json(), data.status_code
 
 

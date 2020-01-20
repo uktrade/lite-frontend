@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView
-from lite_forms.generators import form_page, error_page
 
 from cases.forms.assign_users import assign_users_form
-from queues import forms
+from lite_forms.generators import form_page, error_page
+from lite_forms.views import SingleFormView
+from queues.forms import edit_queue_form, new_queue_form
 from queues.helpers import get_assigned_users_from_cases
 from queues.services import (
     get_queue,
@@ -19,59 +20,30 @@ from users.services import get_gov_user
 
 class QueuesList(TemplateView):
     def get(self, request, **kwargs):
-        data, _ = get_queues(request)
+        queues = get_queues(request)
         user_data, _ = get_gov_user(request, str(request.user.lite_api_user_id))
 
         context = {
-            "data": data,
-            "title": "Queues",
+            "queues": queues,
             "user_data": user_data,
         }
         return render(request, "queues/index.html", context)
 
 
-class AddQueue(TemplateView):
-    def get(self, request, **kwargs):
-        context = {
-            "title": "Add Queue",
-            "page": forms.form,
-        }
-        return render(request, "form.html", context)
-
-    def post(self, request, **kwargs):
-        # including the user's team details in the post request
-        user_data, status_code = get_gov_user(request, str(request.user.lite_api_user_id))
-        post_data = request.POST.copy()
-        post_data["team"] = user_data["user"]["team"]["id"]
-        data, status_code = post_queues(request, post_data)
-
-        if status_code == 400:
-            context = {"title": "Add Queue", "page": forms.form, "data": request.POST, "errors": data.get("errors")}
-            return render(request, "form.html", context)
-
-        return redirect(reverse_lazy("queues:queues"))
+class AddQueue(SingleFormView):
+    def init(self, request, **kwargs):
+        self.form = new_queue_form()
+        self.action = post_queues
+        self.success_url = reverse_lazy("queues:queues")
 
 
-class EditQueue(TemplateView):
-    def get(self, request, **kwargs):
-        queue_id = str(kwargs["pk"])
-        data, _ = get_queue(request, queue_id)
-        context = {"data": data.get("queue"), "title": "Edit Queue", "page": forms.edit_form, "form_pk": 0}
-        return render(request, "form.html", context)
-
-    def post(self, request, **kwargs):
-        data, status_code = put_queue(request, str(kwargs["pk"]), request.POST)
-        if status_code == 400:
-            context = {
-                "title": "Add Queue",
-                "page": forms.edit_form,
-                "data": request.POST,
-                "form_pk": 0,
-                "errors": data.get("errors"),
-            }
-            return render(request, "form.html", context)
-
-        return redirect(reverse_lazy("queues:queues"))
+class EditQueue(SingleFormView):
+    def init(self, request, **kwargs):
+        self.object_pk = kwargs["pk"]
+        self.data = get_queue(request, self.object_pk)["queue"]
+        self.form = edit_queue_form()
+        self.action = put_queue
+        self.success_url = reverse_lazy("queues:queues")
 
 
 class CaseAssignments(TemplateView):
@@ -80,7 +52,7 @@ class CaseAssignments(TemplateView):
         Assign users to cases
         """
         queue_id = str(kwargs["pk"])
-        queue, _ = get_queue(request, queue_id)
+        queue = get_queue(request, queue_id)
         case_assignments, _ = get_queue_case_assignments(request, queue_id)
 
         case_ids = request.GET.get("cases").split(",")
@@ -103,7 +75,7 @@ class CaseAssignments(TemplateView):
         Update the queue's case assignments
         """
         queue_id = str(kwargs["pk"])
-        queue, _ = get_queue(request, queue_id)
+        queue = get_queue(request, queue_id)
         case_ids = request.GET.get("cases").split(",")
         user_data, _ = get_gov_user(request, str(request.user.lite_api_user_id))
 

@@ -41,8 +41,7 @@ def dont_see_queue_in_queue_list(driver, context):
 @then(parsers.parse('I see "{num}" queue checkboxes selected'))
 def see_number_of_checkboxes_selected(driver, context, num):
     ApplicationPage(driver).click_move_case_button()
-    assert QueuesPages(driver).get_size_of_selected_queues() == int(num)
-    Shared(driver).click_back_link()
+    assert QueuesPages(driver).get_number_of_selected_queues() == int(num)
 
 
 @then("queue change is in audit trail")

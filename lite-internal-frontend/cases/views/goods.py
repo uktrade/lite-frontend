@@ -62,7 +62,7 @@ class ReviewGoods(TemplateView):
             "edit_flags_url": edit_flags_url + goods_postfix_url,
             "review_goods_clc_url": review_goods_clc_url + goods_postfix_url,
         }
-        return render(request, "case/review-goods.html", context)
+        return render(request, "case/views/review-goods.html", context)
 
 
 class ReviewGoodsClc(TemplateView):

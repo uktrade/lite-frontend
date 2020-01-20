@@ -115,7 +115,7 @@
 			{% endblock %}
 		</section>
 
-		<main class="govuk-main-wrapper " id="main-content" role="main">
+		<main class="govuk-main-wrapper {% block body_classes %}{% endblock %}" id="main-content" role="main">
 			{% block body %}{% endblock %}
 		</main>
 	</div>

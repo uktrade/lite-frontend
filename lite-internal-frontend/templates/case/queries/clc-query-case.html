@@ -1,81 +1,23 @@
-{% extends 'layouts/base.html' %}
+{% extends 'layouts/case.html' %}
 
 {% load static %}
 
-{% block back_link %}
-	<div class="govuk-breadcrumbs">
-		<ol class="govuk-breadcrumbs__list">
-			<li class="govuk-breadcrumbs__list-item">
-				<a class="govuk-breadcrumbs__link" href="{% url 'cases:cases' %}?queue={{ queue.queue.id }}">{% if queue_name %}{{ queue_name }}{% else %}{% lcs 'QUEUE_ALL_CASES' %}{% endif %}</a>
-			</li>
-			<li class="govuk-breadcrumbs__list-item" aria-current="page">&nbsp;</li>
-		</ol>
-	</div>
+{% block additional_controls %}
+	{% if not verified and 'REVIEW_GOODS' in permissions and not status_is_terminal %}
+		<a role="button" draggable="false" id="button-respond" class="govuk-button" href="{% url 'cases:respond_to_clc_query' case.id %}">
+			{% lcs 'cases.ApplicationPage.RESPOND_BUTTON' %}
+		</a>
+	{% endif %}
 {% endblock %}
 
-{% block body %}
-    {% if case.query.good.status.key == 'verified' %}
+{% block details %}
+    {% if verified %}
 		<div class="lite-info-bar lite-info-bar--no-animation {% if message.tags %}lite-info-bar--{{ message.tags }}{% endif %}">
 			{% lcs 'cases.ApplicationPage.CLOSED' %}
 		</div>
 	{% endif %}
 
-    {% if case.audit_notification %}
-        <a id="audit-notification" class="lite-info-bar lite-info-bar--link lite-info-bar--no-animation" href="#case-activity-{{ case.audit_notification.audit_id }}">
-            {% lcs 'CASE_CHANGES' %}
-        </a>
-    {% endif %}
-
-	<div class="lite-app-bar">
-		<div class="lite-app-bar__content">
-			<p class="govuk-caption-m">{{ case.type.value }} by <a class="govuk-link govuk-link--no-visited-state" style="display: inline-block;" href="{% url 'organisations:organisation' case.query.organisation.id %}">{{ case.query.organisation.name }}</a></p>
-			<h2 class="govuk-heading-l">{% block title %}{{ case.query.id|reference_code }}{% endblock %}</h2>
-		</div>
-			<div class="lite-app-bar__controls">
-			{% if case.query.good.status.key != 'verified' and 'REVIEW_GOODS' in permissions and not status_is_terminal %}
-				<a role="button" draggable="false" id="respond" class="govuk-button" href="{% url 'cases:respond_to_clc_query' case.id %}">
-					{% lcs 'cases.ApplicationPage.RESPOND_BUTTON' %}
-				</a>
-			{% endif %}
-			<div class="app-more-actions__container {% if case.query.good.status != 'final' %}app-more-actions__container--secondary{% endif %}">
-				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:documents' case.id %}">
-		      	    {% lcs 'cases.ApplicationPage.Actions.DOCUMENT' %}
-				</a>
-				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:ecju_queries' case.id %}">
-					{% lcs 'cases.EcjuQueries.TITLE' %}
-				</a>
-                <a role="button" draggable="false" class="govuk-button" href="{% url 'cases:move' case.id %}">
-					{% lcs 'cases.Manage.MoveCase.BUTTON' %}
-				</a>
-                <a role="button" draggable="false" class="govuk-button" id="generate-document" href="{% url 'cases:generate_document' case.id %}">
-					{% lcs 'cases.ApplicationPage.Actions.GENERATE_DOCUMENT' %}
-				</a>
-                {% if permissible_statuses %}
-                    {% if not status_is_terminal or 'REOPEN_CLOSED_CASES' in permissions %}
-                    <a role="button" draggable="false" class="govuk-button" id="change-status" href="{% url 'cases:manage' case.id %}">
-                        {% lcs 'cases.EndUserAdvisoriesPage.Actions.CHANGE_STATUS' %}
-                    </a>
-                    {% endif %}
-                {% endif %}
-                <a role="button" draggable="false" class="govuk-button" id="case-officer" href="{% url 'cases:case_officer' case.id %}">
-                    {% lcs 'cases.ApplicationPage.Actions.CASE_OFFICER' %}
-                </a>
-			</div>
-		</div>
-	</div>
-
-    {% if case.case_officer %}
-        <p class="govuk-caption-m">{% lcs 'cases.ApplicationPage.CASE_OFFICER' %} <a class="govuk-link govuk-link--no-visited-state" href="{% url 'users:user' case.case_officer.id %}">{{ case.case_officer|username }}</a></p>
-    {% else %}
-        <p class="govuk-caption-m">{% lcs 'cases.ApplicationPage.NO_CASE_OFFICER' %}</p>
-    {% endif %}
-
-	<!-- Case flags -->
-	{% include 'case/views/case-flags.html' %}
-
-	<br><br>
-
-	{% if case.query.good.status.key == 'verified' %}
+	{% if verified %}
 		<div class="govuk-!-width-two-thirds">
 			<div class="app-panel app-panel--info">
 				<h3 class="govuk-heading-m">{% lcs 'cases.ClcQuery.Verified.OUTCOME' %}</h3>
@@ -83,7 +25,7 @@
 				<hr>
 
 				<h4 class="govuk-heading-s">{% lcs 'cases.ClcQuery.Verified.CONTROLLED' %}</h4>
-				<p class="govuk-body-m">{{ good.is_good_controlled|friendly_boolean }}</p>
+				<p class="govuk-body-m">{{ good.is_good_controlled.value }}</p>
 
 				<h4 class="govuk-heading-s">{% lcs 'cases.ClcQuery.Verified.CONTROL_CODE' %}</h4>
 				<p class="govuk-body-m">{{ good.control_code|default_na }}</p>
@@ -115,7 +57,7 @@
                     {% lcs 'cases.ClcQuery.GoodDetails.CONTROLLED' %}
 				</dt>
 				<dd class="govuk-summary-list__value">
-					{{ good.is_good_controlled|capfirst }}
+					{{ good.is_good_controlled.value }}
 				</dd>
 			</div>
 			<div class="govuk-summary-list__row">
@@ -202,11 +144,5 @@
 		<br><br>
 
 		{% include "case/views/activity.html" %}
-
 	</div>
-
-{% endblock %}
-
-{% block javascript %}
-	<script src="{% static 'javascripts/more-actions.js' %}"></script>
 {% endblock %}
