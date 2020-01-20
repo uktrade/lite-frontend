@@ -101,63 +101,63 @@ def pytest_exception_interact(node, report):
 
 
 @when("I go to the internal homepage")  # noqa
-def when_go_to_internal_homepage(driver, internal_url):
+def when_go_to_internal_homepage(driver, internal_url):  # noqa
     driver.get(internal_url)
 
 
 @given("I go to internal homepage")  # noqa
-def go_to_internal_homepage(driver, internal_url, sso_sign_in):
+def go_to_internal_homepage(driver, internal_url, sso_sign_in):  # noqa
     driver.get(internal_url)
 
 
 @given("I sign in to SSO or am signed into SSO")  # noqa
-def sign_into_sso(driver, sso_sign_in):
+def sign_into_sso(driver, sso_sign_in):  # noqa
     pass
 
 
 @when("I go to application previously created")  # noqa
-def click_on_created_application(driver, context, internal_url):
+def click_on_created_application(driver, context, internal_url):  # noqa
     driver.get(internal_url.rstrip("/") + "/cases/" + context.case_id)
 
 
 @when("I go to open application previously created")  # noqa
-def click_on_created_application(driver, context, internal_url):
+def click_on_created_application(driver, context, internal_url):  # noqa
     driver.get(internal_url.rstrip("/") + "/cases/" + context.case_id)
 
 
 @when("I go to end user advisory previously created")  # noqa
-def click_on_created_eua(driver, context):
+def click_on_created_eua(driver, context):  # noqa
     driver.find_element_by_link_text(context.eua_id).click()
 
 
 @given("I create application or application has been previously created")  # noqa
-def create_app(driver, apply_for_standard_application):
+def create_app(driver, apply_for_standard_application):  # noqa
     pass
 
 
 @given("I create open application or open application has been previously created")  # noqa
-def create_open_app(driver, apply_for_open_application):
+def create_open_app(driver, apply_for_open_application):  # noqa
     pass
 
 
 @when("I click continue")  # noqa
-def i_click_continue(driver):
+def i_click_continue(driver):  # noqa
     Shared(driver).click_submit()
 
 
 @when("I go to flags")  # noqa
-def go_to_flags(driver, internal_url, sso_sign_in):
+def go_to_flags(driver, internal_url, sso_sign_in):  # noqa
     driver.get(internal_url.rstrip("/") + "/flags")
 
 
 @when("I click progress application")  # noqa
-def click_post_note(driver):
+def click_post_note(driver):  # noqa
     application_page = ApplicationPage(driver)
     application_page.click_progress_application()
 
 
 @when(parsers.parse('I select status "{status}" and save'))  # noqa
-def select_status_save(driver, status, context):
+def select_status_save(driver, status, context):  # noqa
     application_page = ApplicationPage(driver)
     application_page.select_status(status)
     context.status = status
@@ -166,27 +166,27 @@ def select_status_save(driver, status, context):
 
 
 @when("I click on new queue in dropdown")  # noqa
-def new_queue_shown_in_dropdown(driver, context):
+def new_queue_shown_in_dropdown(driver, context):  # noqa
     CaseListPage(driver).click_on_queue_name(context.queue_name)
 
 
 @when(parsers.parse('I click on the "{queue_name}" queue in dropdown'))  # noqa
-def system_queue_shown_in_dropdown(driver, queue_name):
+def system_queue_shown_in_dropdown(driver, queue_name):  # noqa
     CaseListPage(driver).click_on_queue_name(queue_name)
 
 
 @when("I enter in queue name Review")  # noqa
-def add_a_queue(driver, context, add_queue):
+def add_a_queue(driver, context, add_queue):  # noqa
     pass
 
 
 @when("I go to queues")  # noqa
-def go_to_queues(driver, sso_sign_in, internal_url):
+def go_to_queues(driver, sso_sign_in, internal_url):  # noqa
     driver.get(internal_url.rstrip("/") + "/queues/")
 
 
 @when("I add case to newly created queue")  # noqa
-def move_case_to_new_queue(driver, context):
+def move_case_to_new_queue(driver, context):  # noqa
     ApplicationPage(driver).click_move_case_button()
     if not driver.find_element_by_id(context.queue_name).is_selected():
         driver.find_element_by_id(context.queue_name).click()
@@ -194,7 +194,7 @@ def move_case_to_new_queue(driver, context):
 
 
 @when("I select previously created flag")  # noqa
-def assign_flags_to_case(driver, context):
+def assign_flags_to_case(driver, context):  # noqa
     case_flags_pages = CaseFlagsPages(driver)
     case_flags_pages.select_flag(context.flag_name)
     shared = Shared(driver)
@@ -202,12 +202,12 @@ def assign_flags_to_case(driver, context):
 
 
 @given("I create report summary picklist")  # noqa
-def add_report_summary_picklist(add_a_report_summary_picklist):
+def add_report_summary_picklist(add_a_report_summary_picklist):  # noqa
     pass
 
 
 @then("I see the added flags on the queue")  # noqa
-def added_flags_on_queue(driver, context):
+def added_flags_on_queue(driver, context):  # noqa
     elements = Shared(driver).get_rows_in_lite_table()
     no = utils.get_element_index_by_text(elements, context.case_id, complete_match=False)
     driver.set_timeout_to(0)
@@ -222,40 +222,40 @@ def added_flags_on_queue(driver, context):
 
 
 @then("I see previously created application")  # noqa
-def see_queue_in_queue_list(driver, context):
+def see_queue_in_queue_list(driver, context):  # noqa
     assert QueuesPages(driver).is_case_on_the_list(context.case_id) == 1, (
         "previously created application is not displayed " + context.case_id
     )
 
 
 @when("I add a flag called Suspicious at level Organisation")  # noqa
-def add_a_suspicious_flag(driver, add_organisation_suspicious_flag):
+def add_a_suspicious_flag(driver, add_organisation_suspicious_flag):  # noqa
     pass
 
 
 @when("I go to the organisation which submitted the case")  # noqa
-def go_to_the_organisation_which_submitted_the_case(driver):
+def go_to_the_organisation_which_submitted_the_case(driver):  # noqa
     ApplicationPage(driver).go_to_organisation()
 
 
 @when("I click the edit flags link")  # noqa
-def go_to_edit_flags(driver):
+def go_to_edit_flags(driver):  # noqa
     OrganisationPage(driver).click_edit_organisation_flags()
 
 
 @when(parsers.parse('filter case type has been changed to "{case_type}"'))  # noqa
-def filter_status_change(driver, context, case_type):
+def filter_status_change(driver, context, case_type):  # noqa
     CaseListPage(driver).select_filter_case_type_from_dropdown(case_type)
     CaseListPage(driver).click_apply_filters_button()
 
 
 @when("I show filters")  # noqa
-def i_show_filters(driver, context):
+def i_show_filters(driver, context):  # noqa
     CaseListPage(driver).click_show_filters_link()
 
 
 @when("I go to users")  # noqa
-def go_to_users(driver, sso_sign_in, internal_url):
+def go_to_users(driver, sso_sign_in, internal_url):  # noqa
     driver.get(internal_url.rstrip("/") + "/users/")
 
 
