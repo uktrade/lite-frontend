@@ -79,6 +79,7 @@ class ApplicationPage:
     CLOSED = "This case is closed"
     CASE_OFFICER = "Case Officer: "
     NO_CASE_OFFICER = "No Case Officer set."
+    NO_USERS_ASSIGNED = "No users assigned."
 
 
 class GenerateDocumentsPage:
