@@ -155,12 +155,22 @@ class Queues:
         PAGE_HEADING = "My work queues"
 
     class QueueAdd:
-        PAGE_HEADING = "Add queue"
-        QUESTION_TITLE = "Name"
+        TITLE = "Add queue"
+        DESCRIPTION = ""
+        BACK = "Back to queue"
+
+        class Name:
+            TITLE = "Name"
+            DESCRIPTION = ""
 
     class QueueEdit:
-        PAGE_HEADING = "Edit queue"
-        QUESTION_TITLE = "Name"
+        TITLE = "Edit queue"
+        DESCRIPTION = ""
+        BACK = "Back to queue"
+
+        class Name:
+            TITLE = "Name"
+            DESCRIPTION = ""
 
 
 class Flags:
