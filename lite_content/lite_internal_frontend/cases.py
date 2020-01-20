@@ -371,3 +371,12 @@ class FinaliseLicenceForm:
     class Actions:
         BACK_TO_ADVICE_BUTTON = "Back to final advice"
         BACK_TO_DECISION_MATRIX_BUTTON = "Back to finalise goods and countries"
+
+
+class AdviceRecommendationForm:
+    TITLE = "What do you advise?"
+    DESCRIPTION = "You can advise to:"
+
+    class Actions:
+        CONTINUE_BUTTON = "Continue"
+        BACK_BUTTON = "Back to advice"
