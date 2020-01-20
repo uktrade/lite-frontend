@@ -113,6 +113,7 @@ def apply_for_eua_query(driver, seed_data_config, context):
     lite_client = get_lite_client(context, seed_data_config)
     lite_client.seed_party.add_eua_query()
     context.eua_id = lite_client.context["end_user_advisory_id"]
+    context.eua_reference_code = lite_client.context["end_user_advisory_reference_code"]
 
 
 @fixture(scope="module")
