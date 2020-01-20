@@ -81,6 +81,20 @@ class ApplicationPage:
     NO_CASE_OFFICER = "No Case Officer set."
 
 
+class FinalisePage:
+    class Duration:
+        TITLE = "Duration"
+        DESCRIPTION = "This must be a whole number of months, such as 12"
+
+    class Date:
+        TITLE = "Start Date"
+        DESCRIPTION = "For example, 27 3 2007"
+
+    class BackLink:
+        GOODS_AND_COUNTRIES = "Back to finalise goods and countries"
+        FINAL_ADVICE = "Back to final advice"
+
+
 class GenerateDocumentsPage:
     TITLE = "Generate Document"
     ERROR = "Document Generation is unavailable at this time"
