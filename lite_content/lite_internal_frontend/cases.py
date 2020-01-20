@@ -83,11 +83,11 @@ class ApplicationPage:
 
 class FinalisePage:
     class Duration:
-        TITLE = "How long will it last?"
+        TITLE = "Duration"
         DESCRIPTION = "This must be a whole number of months, such as 12"
 
     class Date:
-        TITLE = "When will the licence start?"
+        TITLE = "Start Date"
         DESCRIPTION = "For example, 27 3 2007"
 
     class BackLink:
