@@ -344,6 +344,7 @@ class ReviewGoodsForm:
 class GoodsDecisionMatrixPage:
     ERROR = "There is a problem"
     NO_ADVICE_DEFAULT = "No advice"
+    REFUSE_ADVICE_TAG = '(Reject)'
 
     class Actions:
         BACK_TO_FINAL_ADVICE = "Back to final advice"
@@ -358,6 +359,7 @@ class GoodsDecisionMatrixPage:
         REJECT_TITLE = "Reject"
         REFUSE_TITLE = "Refuse"
         NRL_TITLE = "No Licence Required"
+
 
 
 class FinaliseLicenceForm:
@@ -381,6 +383,14 @@ class AdviceRecommendationForm:
     class Actions:
         CONTINUE_BUTTON = "Continue"
         BACK_BUTTON = "Back to advice"
+
+    class RadioButtons:
+        GRANT = "Grant the licence"
+        PROVISO = "Add a proviso"
+        NLR = "Tell the applicant they do not need a licence"
+        NOT_APPLICABLE = "Not applicable"
+        REJECT = "Reject the licence"
+        REFUSE = "Refuse the licence"
 
 
 class AdvicePage:
