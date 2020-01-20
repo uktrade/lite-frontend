@@ -192,6 +192,8 @@ class RespondToQueryForm:
 
 
 class GoodPage:
+    YOUR_QUERY_HEADING = "Your query"
+
     class Tabs:
         DETAILS = "Details"
         NOTES = "Notes"
@@ -201,7 +203,14 @@ class GoodPage:
     class Query:
         CASE_OFFICER = "Case officer"
         NO_ASSIGNED_CASE_OFFICER = "Not assigned"
-        REFERENCE = "Reference"
+        REFERENCE = "ECJU reference"
+
+    class Document:
+        DOWNLOAD = generic.Document.DOWNLOAD
+        DELETE = generic.Document.DELETE
+        PROCESSING = generic.Document.PROCESSING
+        ATTACH = generic.Document.ATTACH
+        REMOVE = generic.Document.REMOVE
 
 
 class AddGoodToApplicationForm:
