@@ -205,6 +205,7 @@ class GoodPage:
 
     class ECJUDocuments:
         CREATED_AT = "Created at"
+        NONE = "There are no ECJU documents for this product"
 
 
 class AddGoodToApplicationForm:
