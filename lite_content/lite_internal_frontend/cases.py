@@ -297,7 +297,6 @@ class Advice:
     TEXT_ON_LICENCE = "This will appear on the generated documentation"
 
 
-
 class Manage:
     class Documents:
         CASE_HAS_NO_DOCUMENTS = "This case has no documents"
@@ -344,7 +343,7 @@ class ReviewGoodsForm:
 class GoodsDecisionMatrixPage:
     ERROR = "There is a problem"
     NO_ADVICE_DEFAULT = "No advice"
-    REFUSE_ADVICE_TAG = '(Reject)'
+    REFUSE_ADVICE_TAG = "(Reject)"
 
     class Actions:
         BACK_TO_FINAL_ADVICE = "Back to final advice"
@@ -359,7 +358,6 @@ class GoodsDecisionMatrixPage:
         REJECT_TITLE = "Reject"
         REFUSE_TITLE = "Refuse"
         NRL_TITLE = "No Licence Required"
-
 
 
 class FinaliseLicenceForm:
@@ -394,12 +392,12 @@ class AdviceRecommendationForm:
 
 
 class AdvicePage:
-    PROVISO_TITLE = 'Proviso'
-    DENIAL_REASONS_TITLE = 'Denial reasons'
-    REASON_FOR_ADVICE_TITLE = 'Reason for this advice'
-    NOTE_TO_APPLICANT_TITLE = 'Note to applicant'
+    PROVISO_TITLE = "Proviso"
+    DENIAL_REASONS_TITLE = "Denial reasons"
+    REASON_FOR_ADVICE_TITLE = "Reason for this advice"
+    NOTE_TO_APPLICANT_TITLE = "Note to applicant"
 
     class Table:
         REJECT = "Reject"
-        ADVICE_BY = 'advice by'
+        ADVICE_BY = "advice by"
         AT = "at"
