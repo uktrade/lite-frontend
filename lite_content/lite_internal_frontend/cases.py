@@ -297,6 +297,7 @@ class Advice:
     TEXT_ON_LICENCE = "This will appear on the generated documentation"
 
 
+
 class Manage:
     class Documents:
         CASE_HAS_NO_DOCUMENTS = "This case has no documents"
@@ -380,3 +381,15 @@ class AdviceRecommendationForm:
     class Actions:
         CONTINUE_BUTTON = "Continue"
         BACK_BUTTON = "Back to advice"
+
+
+class AdvicePage:
+    PROVISO_TITLE = 'Proviso'
+    DENIAL_REASONS_TITLE = 'Denial reasons'
+    REASON_FOR_ADVICE_TITLE = 'Reason for this advice'
+    NOTE_TO_APPLICANT_TITLE = 'Note to applicant'
+
+    class Table:
+        REJECT = "Reject"
+        ADVICE_BY = 'advice by'
+        AT = "at"
