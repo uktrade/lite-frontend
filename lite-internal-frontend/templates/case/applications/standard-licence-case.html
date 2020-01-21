@@ -70,6 +70,7 @@
 								<th scope="col" class="govuk-table__header">
 									<button type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
 								</th>
+								<th class="govuk-table__header" scope="col"></th>
 					            <th class="govuk-table__header" scope="col">{% lcs 'cases.ApplicationPage.Goods.Table.CLC' %}</th>
 								<th class="govuk-table__header" scope="col">{% lcs 'cases.ApplicationPage.Goods.Table.DESCRIPTION' %}</th>
 					            <th class="govuk-table__header">{% lcs 'cases.ApplicationPage.Goods.Table.VALUE' %}</th>
@@ -90,6 +91,9 @@
 											<input class="govuk-checkboxes__input" type="checkbox" name="goods" value="{{ good_on_application.good.id }}" id="{{ good_on_application.good.id }}">
 											<label class="govuk-label govuk-checkboxes__label" for="{{ good_on_application.good.id }}"></label>
 										</div>
+									</td>
+									<td class="govuk-table__cell govuk-table__cell--line-number">
+										{{ forloop.counter }}.
 									</td>
 									<td class="govuk-table__cell">
 										{{ good_on_application.good.control_code|default_na }}

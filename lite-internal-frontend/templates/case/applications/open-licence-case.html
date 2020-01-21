@@ -70,6 +70,7 @@
 								<th scope="col" class="govuk-table__header">
 									<button id="link-select-all-goods" type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
 								</th>
+								<th scope="col" class="govuk-table__header"></th>
 								<th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs 'GOOD_DESCRIPTION' %}</th>
 								<th scope="col" class="govuk-table__header">{% lcs 'GOOD_CONTROLLED' %}</th>
 								<th scope="col" class="govuk-table__header">{% lcs 'GOOD_CONTROL_LIST_ENTRY' %}</th>
@@ -83,6 +84,9 @@
 									<td class="govuk-table__cell govuk-table__cell--checkbox">
 										<input class="govuk-checkboxes__input" type="checkbox" name="goods" value="{{ good.id }}" id="{{ good.id }}">
 										<label class="govuk-checkboxes__label" for="{{ good.id }}"></label>
+									</td>
+									<td class="govuk-table__cell govuk-table__cell--line-number">
+										{{ forloop.counter }}.
 									</td>
 									<td class="govuk-table__cell">{{ good.description }}</td>
 									<td class="govuk-table__cell">{{ good.is_good_controlled|friendly_boolean }}</td>
@@ -224,7 +228,7 @@
 
 {% block javascript %}
 	{{ block.super }}
-	
+
 	<script nonce="{{ request.csp_nonce }}" type="text/javascript">
 		function openTableFold(element) {
 			$(element).parent().parent().next(".lite-accordian-table__fold").toggleClass("open");
