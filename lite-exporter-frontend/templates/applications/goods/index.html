@@ -25,6 +25,7 @@
 		<table class="govuk-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
+					<th scope="col" class="govuk-table__header"></th>
 					<th scope="col" class="govuk-table__header">{% lcs 'goods.GoodsList.Table.DESCRIPTION' %}</th>
 					<th scope="col" class="govuk-table__header">{% lcs 'goods.GoodsList.Table.CONTROL_LIST_ENTRY' %}</th>
 					<th scope="col" class="govuk-table__header">{% lcs 'goods.GoodsList.Table.PART_NUMBER' %}</th>
@@ -37,6 +38,9 @@
 			<tbody class="govuk-table__body">
 				{% for good_on_application in goods %}
 					<tr class="govuk-table__row">
+						<td class="govuk-table__cell govuk-table__cell--line-number">
+							{{ forloop.counter }}.
+						</td>
 						<td class="govuk-table__cell">
 							{{ good_on_application.good.description }}
 							{% if good_on_application.good.status.key == 'verified' %}<span class="app-verified__symbol">{% svg 'verified' %}</span><span class="govuk-visually-hidden"> (Verified product)</span>{% endif %}

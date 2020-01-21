@@ -33,6 +33,7 @@
 		<table class="govuk-table lite-responsive-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
+					<th scope="col" class="govuk-table__header"></th>
 					<th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs "goods_types.Variables.DESCRIPTION" %}</th>
 					<th scope="col" class="govuk-table__header">{% lcs "goods_types.Variables.CONTROL_LIST_ENTRY" %}</th>
 					{% if application.application_type.key != 'hmrc_query' %}
@@ -47,6 +48,9 @@
 			<tbody class="govuk-table__body">
 				{% for good_on_application in goods %}
 					<tr class="govuk-table__row">
+						<td class="govuk-table__cell govuk-table__cell--line-number">
+							{{ forloop.counter }}.
+						</td>
 						<td class="govuk-table__cell">
 							<span class="lite-responsive-table__header">{% lcs "goods_types.Variables.DESCRIPTION" %}</span>
 							{{ good_on_application.description }}
