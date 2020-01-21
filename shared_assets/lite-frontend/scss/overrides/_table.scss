@@ -25,3 +25,8 @@
 	text-overflow: ellipsis;
 	word-break: break-all;
 }
+
+ .govuk-table__cell--line-number {
+	 padding-right: govuk-spacing(2);
+	 color: $govuk-secondary-text-colour;
+ }
