@@ -212,7 +212,7 @@ def added_flags_on_queue(driver, context):  # noqa
     no = utils.get_element_index_by_text(elements, context.case_id, complete_match=False)
     driver.set_timeout_to(0)
     try:
-        if elements[no].find_element_by_css_selector(".lite-accordian-table__chevron").is_displayed():
+        if elements[no].find_element_by_css_selector(".lite-accordian-table__chevron svg").is_displayed():
             element = elements[no].find_element_by_css_selector(".lite-accordian-table__chevron")
             element.click()
     except NoSuchElementException:
