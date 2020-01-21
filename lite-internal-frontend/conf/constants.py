@@ -39,6 +39,8 @@ PICKLIST_URL = "/picklist/"
 LETTER_TEMPLATES_URL = "/letter-templates/"
 GOOD_CLC_REVIEW_URL = "/goods/controlcode/"
 MANAGE_STATUS_URL = "/status/"
+FINALISE_URL = "/finalise/"
+DURATION_URL = "/duration/"
 NOTIFICATIONS_URL = "/gov_users/notifications/"
 GENERATED_DOCUMENTS_URL = "/generated-documents/"
 GENERATED_DOCUMENTS_PREVIEW_URL = GENERATED_DOCUMENTS_URL + "preview/"
@@ -74,6 +76,7 @@ class Permission(Enum):
     ADMINISTER_ROLES = "ADMINISTER_ROLES"
     REVIEW_GOODS = "REVIEW_GOODS"
     CONFIGURE_TEMPLATES = "CONFIGURE_TEMPLATES"
+    MANAGE_LICENCE_DURATION = "MANAGE_LICENCE_DURATION"
 
 
 class FlagLevels:

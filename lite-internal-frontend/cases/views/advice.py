@@ -1,11 +1,10 @@
+from datetime import date
+
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
 
 from cases.constants import CaseType
-from lite_forms.generators import form_page, error_page
-from datetime import date
-
 from cases.forms.finalise_case import approve_licence_form, refuse_licence_form
 from cases.services import (
     post_user_case_advice,
@@ -19,11 +18,12 @@ from cases.services import (
     clear_team_advice,
     clear_final_advice,
     get_case,
-    put_application_status,
+    finalise_application,
     post_good_countries_decisions,
     get_good_countries_decisions,
     _generate_data_and_keys,
     _generate_post_data_and_errors,
+    get_application_default_duration,
 )
 from cases.views_helpers import (
     get_case_advice,
@@ -33,7 +33,9 @@ from cases.views_helpers import (
     give_advice_detail_dispatch,
     give_advice_dispatch,
 )
-from conf.constants import DECISIONS_LIST
+from conf.constants import DECISIONS_LIST, Permission
+from core import helpers
+from lite_forms.generators import form_page, error_page
 
 
 class ViewUserAdvice(TemplateView):
@@ -312,20 +314,47 @@ class Finalise(TemplateView):
             search_key = "decision"
 
         case_id = case["id"]
+        duration = get_application_default_duration(request, str(kwargs["pk"]))
 
         for item in data:
             if item[search_key]["key"] == "approve" or item[search_key]["key"] == "proviso":
                 today = date.today()
-                date_dict = {"day": today.day, "month": today.month, "year": today.year}
-                return form_page(request, approve_licence_form(case_id, standard), data=date_dict)
+                form_data = {
+                    "day": today.day,
+                    "month": today.month,
+                    "year": today.year,
+                    "licence_duration": duration,
+                }
+                form = approve_licence_form(
+                    case_id=case_id,
+                    standard=standard,
+                    duration=duration,
+                    editable_duration=helpers.has_permission(request, Permission.MANAGE_LICENCE_DURATION),
+                )
+                return form_page(request, form, data=form_data)
 
         return form_page(request, refuse_licence_form(case_id, standard))
 
     def post(self, request, *args, **kwargs):
         case = get_case(request, str(kwargs["pk"]))
+        standard = case["application"]["application_type"]["key"] == CaseType.STANDARD_LICENCE.value
         application_id = case.get("application").get("id")
         data = request.POST.copy()
-        data["status"] = "finalised"
-        put_application_status(request, application_id, data)
+
+        has_permission = helpers.has_permission(request, Permission.MANAGE_LICENCE_DURATION)
+
+        res = finalise_application(request, application_id, data)
+
+        if res.status_code == 403:
+            return error_page(request, "You do not have permission.")
+
+        if res.status_code == 400:
+            form = approve_licence_form(
+                case_id=case["id"],
+                standard=standard,
+                duration=data.get("licence_duration") or get_application_default_duration(request, str(kwargs["pk"])),
+                editable_duration=has_permission,
+            )
+            return form_page(request, form, data=data, errors=res.json()["errors"])
 
         return redirect(reverse_lazy("cases:case", kwargs={"pk": case["id"]}))

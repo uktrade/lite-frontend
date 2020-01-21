@@ -5,6 +5,7 @@ class GiveAdvicePages(BasePage):
     ADVICE_CHECKBOX_OPTION = "type-"  # ID
     IMPORT_ADVICE_LINK = "link-import-"  # ID
     PICKLIST_ITEM_TEXT = ".app-picklist-picker__item p"  # CSS
+    DURATION_TEXT = "licence_duration"
     ADDITIONAL_NOTES = "textarea-note"  # ID
     TEAM_ADVICE = "team_advice"
     FINAL_ADVICE = "final_advice"
@@ -63,6 +64,9 @@ class GiveAdvicePages(BasePage):
             "month": self.driver.find_element_by_id(self.MONTH).get_attribute("value"),
             "year": self.driver.find_element_by_id(self.YEAR).get_attribute("value"),
         }
+
+    def get_duration_in_finalise_view(self):
+        return self.driver.find_element_by_id(self.DURATION_TEXT).get_attribute("value")
 
     def checkbox_present(self):
         return len(self.driver.find_elements_by_css_selector(".input"))

@@ -23,6 +23,8 @@ from conf.constants import (
     VIEW_FINAL_ADVICE_URL,
     GOOD_CLC_REVIEW_URL,
     MANAGE_STATUS_URL,
+    FINALISE_URL,
+    DURATION_URL,
     GENERATED_DOCUMENTS_URL,
     GENERATED_DOCUMENTS_PREVIEW_URL,
     DESTINATION_URL,
@@ -44,6 +46,14 @@ def put_case(request, pk, json):
 def put_application_status(request, pk, json):
     json = format_status_in_request_data(json)
     return put(request, APPLICATIONS_URL + pk + MANAGE_STATUS_URL, json).status_code
+
+
+def finalise_application(request, pk, json):
+    return put(request, f"{APPLICATIONS_URL}{pk}{FINALISE_URL}", json)
+
+
+def get_application_default_duration(request, pk):
+    return int(get(request, f"{APPLICATIONS_URL}{pk}{DURATION_URL}").json()["licence_duration"])
 
 
 # CLC Queries
