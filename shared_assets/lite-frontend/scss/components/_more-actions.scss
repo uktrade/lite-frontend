@@ -10,12 +10,24 @@
 
 			a {
 				@include govuk-font($size: 19);
-				display: block;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
 				width: 260px;
-				padding: govuk-spacing(3) govuk-spacing(4);
+				padding: 0 govuk-spacing(4);
+				min-height: 54px;
 				border-bottom: 2px solid govuk-shade(govuk-colour("light-grey"), 10%);
 				color: govuk-colour("black");
 				text-decoration: none;
+
+				svg {
+					width: 21px;
+					height: 21px;
+
+					* {
+						fill: currentColor;
+					}
+				}
 
 				&:hover {
 					background-color: govuk-shade(govuk-colour("light-grey"), 10%);
@@ -37,6 +49,7 @@
 	&__button {
 		-webkit-user-select: none;
 		user-select: none;
+		margin: 0;
 
 		&:after {
 			@include govuk-shape-arrow($direction: down, $base: 10px, $height: 6px, $display: inline-block);
