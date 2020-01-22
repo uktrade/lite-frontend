@@ -265,7 +265,7 @@ class LetterTemplates:
 
             class Types:
                 APPLICATION = "Applications"
-                GOODS_QUERY = "Goods query"
+                GOODS_QUERY = "Goods Query"
                 END_USER_ADVISORY = "End User Advisory Queries"
 
         class Layout:
@@ -287,7 +287,7 @@ class LetterTemplates:
 
             class Types:
                 APPLICATION = "Applications"
-                GOODS_QUERY = "Goods query"
+                GOODS_QUERY = "Goods Query"
                 END_USER_ADVISORY = "End User Advisory Queries"
 
         class Layout:
