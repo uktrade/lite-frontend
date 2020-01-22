@@ -1,4 +1,3 @@
-from conf.settings import env
 from .seed_class import SeedClass
 from ..make_requests import make_request
 
