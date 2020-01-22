@@ -13,7 +13,7 @@ class Organisation(SeedClass):
             org_id = organisation["id"]
             user = self.find_test_user_in_org(org_id)
             if not user:
-                self.add_user_to_exporter_org(org_id)
+                self.add_test_user_to_exporter_org(org_id)
 
         self.add_to_context("org_id", org_id)
         self.add_to_context("org_name", self.request_data["organisation"]["name"])
@@ -31,7 +31,7 @@ class Organisation(SeedClass):
             org_id = organisation["id"]
             user = self.find_test_user_in_org(org_id)
             if not user:
-                self.add_user_to_exporter_org(org_id)
+                self.add_test_user_to_exporter_org(org_id)
 
         self.add_to_context(
             "org_name_for_switching_organisations",
@@ -41,7 +41,7 @@ class Organisation(SeedClass):
             "hmrc_org_id", org_id,
         )
 
-    def add_user_to_exporter_org(self, org_id):
+    def add_test_user_to_exporter_org(self, org_id):
         data = self.request_data["export_user"]
         return make_request(
             "POST", base_url=self.base_url, url="/organisations/" + org_id + "/users/", body=data,
