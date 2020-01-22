@@ -64,7 +64,8 @@ class DocumentSensitivityForm:
         "without attaching a document.\n\n **ECJU helpline**\n 020 7215 4594.\n "
         "[Find out about call charges](https://www.gov.uk/call-charges)"
     )
-    BUTTON = "Continue"
+    SUBMMIT_BUTTON = "Continue"
+    BACK_BUTTON = "Back"
 
     class Options:
         YES = "Yes"
@@ -74,7 +75,8 @@ class DocumentSensitivityForm:
 class CreateGoodForm:
     TITLE_APPLICATION = "Add product"
     TITLE_GOODS_LIST = "Add a product to your organisation"
-    BUTTON = "Save and continue"
+    SUBMIT_BUTTON = "Save and continue"
+    BACK_BUTTON = "Back"
 
     class Description:
         TITLE = generic.DESCRIPTION
