@@ -1,4 +1,3 @@
-from conf.settings import env
 from .manage_s3_documents import upload_test_document_to_aws
 
 
