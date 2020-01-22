@@ -15,6 +15,7 @@
 	margin-bottom: 0;
 	/* BUG: Safari 10 on macOS seems to add an implicit margin. */
 	width: 100%;
+	height: 40px!important;
 }
 
 .lite-autocomplete__input {
@@ -25,7 +26,6 @@
 .lite-autocomplete__hint {
 	color: #b1b4b6;
 	position: absolute;
-	top: -2px;
 }
 
 .lite-autocomplete__input--default {
@@ -127,8 +127,7 @@
 .lite-autocomplete__hint,
 .lite-autocomplete__input,
 .lite-autocomplete__option {
-	font-size: 16px;
-	line-height: 1.25;
+	@include govuk-font($size: 16);
 }
 
 .lite-autocomplete__hint,
@@ -139,7 +138,6 @@
 	.lite-autocomplete__hint,
 	.lite-autocomplete__input,
 	.lite-autocomplete__option {
-		font-size: 19px;
-		line-height: 1.31579;
+		@include govuk-font($size: 19);
 	}
 }
