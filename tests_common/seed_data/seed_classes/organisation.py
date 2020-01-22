@@ -26,7 +26,7 @@ class Organisation(SeedClass):
         organisation = self.find_org_by_name(self.request_data["organisation_for_switching_organisations"]["name"])
 
         if not organisation:
-            self.add_org("organisation_for_switching_organisations")
+            organisation = self.add_org("organisation_for_switching_organisations")
             org_id = organisation["id"]
         else:
             org_id = organisation["id"]
@@ -43,7 +43,7 @@ class Organisation(SeedClass):
         )
 
     def add_user_to_exporter_org(self, org_id):
-        data = self.request_data["exporter_user"]
+        data = self.request_data["export_user"]
         return make_request(
             "POST", base_url=self.base_url, url="/organisations/" + org_id + "/users/", body=data,
             headers=self.gov_headers,
@@ -60,7 +60,7 @@ class Organisation(SeedClass):
         users = make_request(
             "GET", base_url=self.base_url, url="/organisations/" + org_id + "/users/", headers=self.gov_headers,
         ).json()["users"]
-        user = next((item for item in users if item["email"] == env("TEST_EXPORTER_SSO_EMAIL")), None)
+        user = next((item for item in users if item["email"] == self.request_data["export_user"]["email"]), None)
         return user
 
     def add_org(self, key):

@@ -76,7 +76,6 @@ def create_request_data(exporter_user, gov_user, base_url):
         # Please leave this as HMRC as tests depend on this being HMRC.
         "organisation_for_switching_organisations": create_organisation_with_user(exporter, "hmrc", "HMRC Wayne Enterprises"),
         "good": create_good("Lentils"),
-        "export_user": {"email": exporter["email"], "user_profile": {"first_name": "Bruce", "last_name": "Wayne"}},
         "application": {
             "name": "application",
             "application_type": "standard_licence",
@@ -139,10 +138,13 @@ def create_request_data(exporter_user, gov_user, base_url):
         ),
         "document_template": {"case_types": ["application"]},
         "exporter_user": {
-            "first_name": env("TEST_EXPORTER_SSO_NAME"),
-            "last_name": env("TEST_EXPORTER_SSO_NAME"),
-            "email": env("TEST_EXPORTER_SSO_EMAIL"),
+            "first_name": exporter["first_name"],
+            "last_name": exporter["last_name"],
+            "email": exporter["email"],
             "sites": {}
-        }
+        },
+        "export_user": {"email": exporter["email"], "user_profile": {"first_name": "Bruce", "last_name": "Wayne"},
+                        "sites": {}},
+
     }
     return request_data
