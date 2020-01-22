@@ -54,6 +54,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "conf.middleware.SessionTimeoutMiddleware",
     "csp.middleware.CSPMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -181,7 +182,6 @@ STREAMING_CHUNK_SIZE = 8192
 S3_MIN_PART_SIZE = 5 * 1024 * 1024
 MAX_UPLOAD_SIZE = 100 * 1024 * 1024
 
-
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
@@ -216,9 +216,13 @@ CSRF_COOKIE_SECURE = not DEBUG
 SECURE_CONTENT_TYPE_NOSNIFF = not DEBUG
 
 # Content Security Policy
-
 CSP_DEFAULT_SRC = env("CSP_DEFAULT_SRC")
 CSP_STYLE_SRC = env("CSP_STYLE_SRC")
 CSP_SCRIPT_SRC = env("CSP_SCRIPT_SRC")
 CSP_FONT_SRC = env("CSP_FONT_SRC")
 CSP_REPORT_ONLY = env("CSP_REPORT_ONLY")
+
+# Session timeout
+SESSION_EXPIRE_SECONDS = env("SESSION_EXPIRE_SECONDS", default=60 * 60)
+
+LOGOUT_URL = env("AUTHBROKER_URL") + "/logout/"

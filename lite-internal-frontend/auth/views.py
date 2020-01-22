@@ -1,17 +1,15 @@
-from lite_content.lite_internal_frontend import strings
-from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseBadRequest, HttpResponseServerError
 from django.shortcuts import redirect
 from django.views.generic.base import RedirectView, View, TemplateView
 from raven.contrib.django.raven_compat.models import client
 
-from auth.utils import get_client, AUTHORISATION_URL, TOKEN_SESSION_KEY, TOKEN_URL, get_profile
-from lite_forms.generators import error_page
-
 from auth.services import authenticate_gov_user
-from conf.settings import env
+from auth.utils import get_client, AUTHORISATION_URL, TOKEN_SESSION_KEY, TOKEN_URL, get_profile
+from conf import settings
 from core.models import User
+from lite_content.lite_internal_frontend import strings
+from lite_forms.generators import error_page
 
 
 class AuthView(RedirectView):
@@ -82,4 +80,4 @@ class AuthLogoutView(TemplateView):
     def get(self, request, **kwargs):
         User.objects.get(id=request.user.id).delete()
         logout(request)
-        return redirect(env("AUTHBROKER_URL") + "/logout/")
+        return redirect(settings.LOGOUT_URL)
