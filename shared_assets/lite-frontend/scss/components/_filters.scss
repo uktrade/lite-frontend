@@ -2,9 +2,28 @@
 	@include govuk-responsive-margin(6, "bottom");
 	@include govuk-font($size: 19);
 	position: relative;
-	padding: govuk-spacing(6) 0;
+	padding: govuk-spacing(5) 0;
 	box-sizing: border-box;
 	z-index: 0;
+	margin-top: - govuk-spacing(3);
+
+	.govuk-button {
+		margin-bottom: 0;
+	}
+
+	&__label {
+		display: block;
+		margin: 0;
+		padding: 0;
+		margin-bottom: govuk-spacing(2);
+	}
+
+	&__components {
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr 1fr;
+		grid-gap: govuk-spacing(3);
+		margin-bottom: govuk-spacing(3);
+	}
 
 	&:before {
 		content: "";
@@ -21,12 +40,16 @@
 		z-index: -1;
 	}
 
-	input, select {
-		width: 100%;
+	button {
+		margin: 0;
+		margin-right: govuk-spacing(3);
 	}
 
-	* {
-		margin: 0;
+	input, select {
+		width: 100%;
+		display: block;
+		margin-right: 0;
+		max-width: 100%;
 	}
 
 	.govuk-grid-column-one-quarter:not(:first-child):not(:last-child) {
@@ -34,19 +57,14 @@
 			@include govuk-responsive-margin(6, "top");
 		}
 	}
-
-	.govuk-label {
-		margin-bottom: govuk-spacing(2);
-		height: 25px;
-	}
 }
 
 .lite-filter-toggle-link {
-	@include govuk-responsive-margin(4, "bottom");
+	@include govuk-responsive-margin(6, "bottom");
 	display: inline-block;
 	text-decoration: none;
-	border-bottom: 1px solid transparent;
-	padding-bottom: 3px;
+	border-bottom: 1px solid currentColor;
+	padding-bottom: govuk-spacing(1);
 
 	svg {
 		color: inherit;
