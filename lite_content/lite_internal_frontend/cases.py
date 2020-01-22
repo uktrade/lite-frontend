@@ -357,7 +357,7 @@ class GoodsDecisionMatrixPage:
         APPROVE_TITLE = "Approve"
         REJECT_TITLE = "Reject"
         REFUSE_TITLE = "Refuse"
-        NRL_TITLE = "No Licence Required"
+        NLR_TITLE = "No Licence Required"
 
 
 class FinaliseLicenceForm:
