@@ -11,7 +11,7 @@
 
 	{% csrf_token %}
 
-	<h2 class="govuk-heading-l">{% lcs 'cases.GoodsDecisionMatrixPage.Actions.SELECT_DECISION' %}</h2>
+	<h1 class="govuk-heading-l">{% lcs 'cases.GoodsDecisionMatrixPage.Actions.SELECT_DECISION' %}</h1>
 
 	{% if errors %}
 		<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
@@ -39,7 +39,7 @@
                 {% else %}
 				    <th class="govuk-table__header">{% lcs 'cases.GoodsDecisionMatrixPage.Table.REFUSE_TITLE' %}</th>
                 {% endif %}
-                <th class="govuk-table__header">{% lcs 'cases.GoodsDecisionMatrixPage.Table.NRL_TITLE' %}</th>
+                <th class="govuk-table__header">{% lcs 'cases.GoodsDecisionMatrixPage.Table.NLR_TITLE' %}</th>
 			</tr>
 		</thead>
 
@@ -71,7 +71,7 @@
 							{% for country in good.countries %}
 								<div class="govuk-radios govuk-radios--small" style="padding-bottom: 50px">
 									<div class="govuk-radios__item">
-										<input class="govuk-radios__input" type="radio" name="{{ good.id }}.{{ country.id }}" id="{{ good.id }}.{{ country.id }}" value="{{ decision }}"
+										<input class="govuk-radios__input" type="radio" name="{{ good.id }}.{{ country.id }}" id="{{ decision }}.{{ good.id }}.{{ country.id }}" value="{{ decision }}"
                                             {% for data in good_countries %}
                                                 {% if good.id == data.good and country.id == data.country %}
                                                     {% if decision == data.decision or decision == data.decision.key %}
@@ -84,7 +84,16 @@
                                                 {% if country.id in errors|key_value:good.id %}
                                                     govuk-radios__label--error
                                                 {% endif %}
-                                            {% endif %}" for="{{ good.id }}.{{ country.id }}">
+                                            {% endif %}" for="{{ decision }}.{{ good.id }}.{{ country.id }}">
+											<span class="govuk-visually-hidden">
+												{% if decision == "approve" %}
+													{% lcs 'cases.GoodsDecisionMatrixPage.Table.APPROVE_TITLE' %}
+												{% elif decision == "refuse"%}
+													{% lcs 'cases.GoodsDecisionMatrixPage.Table.REFUSE_TITLE' %}
+												{% elif decision == "no_licence_required" %}
+													{% lcs 'cases.GoodsDecisionMatrixPage.Table.HIDDEN_NLR_TITLE' %}
+												{% endif %} {{ good.control_code }}
+											</span>
 										</label>
 									</div>
 								</div>
@@ -96,10 +105,10 @@
 		</tbody>
 	</table>
 
-	<button id="submit" type="submit" name="action" value="submit" class="govuk-button" data-module="govuk-button" style="margin-right: 15px">
+	<button id="button-finalise" type="submit" name="action" value="submit" class="govuk-button" data-module="govuk-button" style="margin-right: 15px">
 		{% lcs 'cases.GoodsDecisionMatrixPage.Actions.FINALISE_BUTTON' %}
 	</button>
-    <button id="submit" type="submit" name="action" value="save" class="govuk-button govuk-button--secondary">
+    <button id="button-save" type="submit" name="action" value="save" class="govuk-button govuk-button--secondary">
         {% lcs 'cases.GoodsDecisionMatrixPage.Actions.SAVE_BUTTON' %}
 	</button>
 
