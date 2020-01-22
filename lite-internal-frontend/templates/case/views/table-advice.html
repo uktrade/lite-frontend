@@ -1,8 +1,13 @@
 <div class="app-advice">
     <div class="app-advice__user">
         <p class="govuk-body-s">
-            {{ advice.type.value }} advice by <a class="govuk-link govuk-link--no-visited-state" href="{% url 'users:user' advice.user.id %}">
-                {{ advice.user.first_name }} {{ advice.user.last_name }} </a> at {{ advice.created_at|str_date }}:
+            {% if case.application.application_type.key == 'open_licence' %}
+                {% lcs 'cases.AdvicePage.Table.REJECT' %}
+            {% else %}
+                {{ advice.type.value }}
+            {% endif %}
+            {% lcs 'cases.AdvicePage.Table.ADVICE_BY' %} <a class="govuk-link govuk-link--no-visited-state" href="{% url 'users:user' advice.user.id %}">
+            {{ advice.user.first_name }} {{ advice.user.last_name }} </a> {% lcs 'cases.AdvicePage.Table.AT' %} {{ advice.created_at|str_date }}:
         </p>
     </div>
     {% if advice.type.key == 'conflicting' %}
@@ -12,12 +17,12 @@
     {% endif %}
         <div class="app-advice__details">
             {% if advice.type.key == 'proviso' %}
-                <p class="govuk-heading-s">Proviso</p>
+                <p class="govuk-heading-s">{% lcs 'cases.AdvicePage.PROVISO_TITLE' %}</p>
                 <p class="govuk-body-s">{{ advice.proviso|default_na }}</p>
             {% endif %}
 
             {% if advice.type.key == 'refuse' %}
-                <p class="govuk-heading-s">Denial reasons</p>
+                <p class="govuk-heading-s">{% lcs 'cases.AdvicePage.DENIAL_REASONS_TITLE' %}</p>
                 {% for denial_reason in advice.denial_reasons %}
                     <p class="govuk-body-s">{{ denial_reason }}</p>
                 {% endfor %}
@@ -25,21 +30,21 @@
 
             {% if advice.type.key == 'conflicting' %}
                 {% if advice.proviso|length %}
-                    <p class="govuk-heading-s">Proviso</p>
+                    <p class="govuk-heading-s">{% lcs 'cases.AdvicePage.PROVISO_TITLE' %}</p>
                     <p class="govuk-body-s">{{ advice.proviso|default_na }}</p>
                 {% endif %}
                 {% if advice.denial_reasons|length %}
-                <p class="govuk-heading-s">Denial reasons</p>
+                <p class="govuk-heading-s">{% lcs 'cases.AdvicePage.DENIAL_REASONS_TITLE' %}</p>
                     {% for denial_reason in advice.denial_reasons %}
                         <p class="govuk-body-s">{{ denial_reason }}</p>
                     {% endfor %}
                 {% endif %}
             {% endif %}
 
-            <p class="govuk-heading-s">Reason for this advice</p>
+            <p class="govuk-heading-s">{% lcs 'cases.AdvicePage.REASON_FOR_ADVICE_TITLE' %}</p>
             <p class="govuk-body-s">{{ advice.text|default_na }}</p>
 
-            <p class="govuk-heading-s">Note to applicant</p>
+            <p class="govuk-heading-s">{% lcs 'cases.AdvicePage.NOTE_TO_APPLICANT_TITLE' %}</p>
             <p class="govuk-body-s" style="margin-bottom: 0;">{{ advice.note|default_na }}</p>
         </div>
     </div>

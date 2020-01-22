@@ -6,15 +6,19 @@ from lite_content.lite_internal_frontend import cases
 
 def approve_licence_form(case_id, standard, duration, editable_duration):
     return Form(
-        title="Approve",
+        title=cases.FinaliseLicenceForm.APPROVE_TITLE,
         questions=[
-            DateInput(title=cases.FinalisePage.Date.TITLE, description=cases.FinalisePage.Date.DESCRIPTION, prefix="",),
+            DateInput(
+                description=cases.FinaliseLicenceForm.DATE_DESCRIPTION,
+                title=cases.FinaliseLicenceForm.DATE_TITLE,
+                prefix="",
+            ),
             conditional(
                 editable_duration,
                 TextInput(
-                    title=cases.FinalisePage.Duration.TITLE,
+                    title=cases.FinaliseLicenceForm.DURATION_TITLE,
                     name="licence_duration",
-                    description=cases.FinalisePage.Duration.DESCRIPTION,
+                    description=cases.FinaliseLicenceForm.DURATION_DESCRIPTION,
                 ),
                 Label(text=f"Duration: {duration} months"),
             ),
@@ -23,28 +27,33 @@ def approve_licence_form(case_id, standard, duration, editable_duration):
             standard,
             BackLink(
                 url=reverse_lazy("cases:final_advice_view", kwargs={"pk": case_id}),
-                text=cases.FinalisePage.BackLink.FINAL_ADVICE,
+                text=cases.FinaliseLicenceForm.Actions.BACK_TO_ADVICE_BUTTON,
             ),
             BackLink(
                 url=reverse_lazy("cases:finalise_goods_countries", kwargs={"pk": case_id}),
-                text=cases.FinalisePage.BackLink.GOODS_AND_COUNTRIES,
+                text=cases.FinaliseLicenceForm.Actions.BACK_TO_DECISION_MATRIX_BUTTON,
             ),
         ),
     )
 
 
-def refuse_licence_form(case_id, standard):
+def deny_licence_form(case_id, is_standard_licence):
+    if is_standard_licence:
+        title = cases.FinaliseLicenceForm.REFUSE_TITLE
+    else:
+        title = cases.FinaliseLicenceForm.REJECT_TITLE
+
     return Form(
-        title="Refuse",
+        title=title,
         back_link=conditional(
-            standard,
+            is_standard_licence,
             BackLink(
                 url=reverse_lazy("cases:final_advice_view", kwargs={"pk": case_id}),
-                text=cases.FinalisePage.BackLink.FINAL_ADVICE,
+                text=cases.FinaliseLicenceForm.Actions.BACK_TO_ADVICE_BUTTON,
             ),
             BackLink(
                 url=reverse_lazy("cases:finalise_goods_countries", kwargs={"pk": case_id}),
-                text=cases.FinalisePage.BackLink.GOODS_AND_COUNTRIES,
+                text=cases.FinaliseLicenceForm.Actions.BACK_TO_DECISION_MATRIX_BUTTON,
             ),
         ),
     )

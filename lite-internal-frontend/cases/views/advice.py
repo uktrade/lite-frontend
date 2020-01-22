@@ -1,11 +1,13 @@
-from datetime import date
-
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
 
 from cases.constants import CaseType
-from cases.forms.finalise_case import approve_licence_form, refuse_licence_form
+
+from datetime import date
+
+from cases.forms.finalise_case import approve_licence_form, deny_licence_form
+
 from cases.services import (
     post_user_case_advice,
     get_user_case_advice,
@@ -304,8 +306,8 @@ class Finalise(TemplateView):
 
     def get(self, request, *args, **kwargs):
         case = get_case(request, str(kwargs["pk"]))
-        standard = case["application"]["application_type"]["key"] == CaseType.STANDARD_LICENCE.value
-        if standard:
+        is_standard_licence = case["application"]["application_type"]["key"] == CaseType.STANDARD_LICENCE.value
+        if is_standard_licence:
             advice, _ = get_final_case_advice(request, str(kwargs["pk"]))
             data = advice["advice"]
             search_key = "type"
@@ -319,6 +321,7 @@ class Finalise(TemplateView):
         for item in data:
             if item[search_key]["key"] == "approve" or item[search_key]["key"] == "proviso":
                 today = date.today()
+
                 form_data = {
                     "day": today.day,
                     "month": today.month,
@@ -327,13 +330,13 @@ class Finalise(TemplateView):
                 }
                 form = approve_licence_form(
                     case_id=case_id,
-                    standard=standard,
+                    standard=is_standard_licence,
                     duration=duration,
                     editable_duration=helpers.has_permission(request, Permission.MANAGE_LICENCE_DURATION),
                 )
                 return form_page(request, form, data=form_data)
 
-        return form_page(request, refuse_licence_form(case_id, standard))
+        return form_page(request, deny_licence_form(case_id, is_standard_licence))
 
     def post(self, request, *args, **kwargs):
         case = get_case(request, str(kwargs["pk"]))

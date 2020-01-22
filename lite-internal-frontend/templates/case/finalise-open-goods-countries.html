@@ -1,26 +1,27 @@
 {% extends 'layouts/base.html' %}
 
 {% block back_link %}
-	<a href="{% url 'cases:final_advice_view' case.id %}" class="govuk-back-link">Back to final advice</a>
+	<a href="{% url 'cases:final_advice_view' case.id %}" class="govuk-back-link">{% lcs 'cases.GoodsDecisionMatrixPage.Actions.BACK_TO_FINAL_ADVICE' %}</a>
 {% endblock %}
 
 {% block body %}
+
 
 <form action="{% url 'cases:finalise_goods_countries' case.id %}" method="post">
 
 	{% csrf_token %}
 
-	<h2 class="govuk-heading-l">Select a decision for each good and country combination</h2>
+	<h2 class="govuk-heading-l">{% lcs 'cases.GoodsDecisionMatrixPage.Actions.SELECT_DECISION' %}</h2>
 
 	{% if errors %}
 		<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
 			<h2 class="govuk-error-summary__title" id="error-summary-title">
-				There is a problem
+				{% lcs 'cases.GoodsDecisionMatrixPage.ERROR' %}
 			</h2>
 			<div class="govuk-error-summary__body">
 				<ul class="govuk-list govuk-error-summary__list">
 					<li>
-						<a href="#{{ errors|get_first_country_from_first_good }}">Select a decision for each good and country combination</a>
+						<a href="#{{ errors|get_first_country_from_first_good }}">{% lcs 'cases.GoodsDecisionMatrixPage.Actions.SELECT_DECISION' %}</a>
 					</li>
 				</ul>
 			</div>
@@ -30,22 +31,38 @@
 	<table class="govuk-table">
 		<thead class="govuk-table__head">
 			<tr class="govuk-table__row">
-				<th class="govuk-table__header">Good</th>
-				<th class="govuk-table__header">Countries</th>
-				<th class="govuk-table__header">Approve</th>
-				<th class="govuk-table__header">Refuse</th>
-				<th class="govuk-table__header">No Licence Required</th>
+				<th class="govuk-table__header">{% lcs 'cases.GoodsDecisionMatrixPage.Table.GOOD_TITLE' %}</th>
+				<th class="govuk-table__header">{% lcs 'cases.GoodsDecisionMatrixPage.Table.COUNTRIES_TITLE' %}</th>
+				<th class="govuk-table__header">{% lcs 'cases.GoodsDecisionMatrixPage.Table.APPROVE_TITLE' %}</th>
+                {% if case.application.application_type.key == 'open_licence' %}
+				    <th class="govuk-table__header">{% lcs 'cases.GoodsDecisionMatrixPage.Table.REJECT_TITLE' %}</th>
+                {% else %}
+				    <th class="govuk-table__header">{% lcs 'cases.GoodsDecisionMatrixPage.Table.REFUSE_TITLE' %}</th>
+                {% endif %}
+                <th class="govuk-table__header">{% lcs 'cases.GoodsDecisionMatrixPage.Table.NRL_TITLE' %}</th>
 			</tr>
 		</thead>
 
 		<tbody class="govuk-table__body">
+            {% lcs 'cases.GoodsDecisionMatrixPage.NO_ADVICE_DEFAULT' as NO_ADVICE_DEFAULT%}
 			{% for good in case.application.goods_types %}
 				<tr class="govuk-table__row">
-					<td class="govuk-table__cell">{{ good.control_code|default:good.description }} <span style="opacity: 0.7">({{ good.advice.value|default:"No advice" }})</span></td>
+					<td class="govuk-table__cell">
+                        {{ good.control_code|default:good.description }}
+                        {% if good.advice.value == 'Refuse' and case.application.application_type.key == 'open_licence' %}
+                            <span style="opacity: 0.7">{% lcs 'cases.GoodsDecisionMatrixPage.REFUSE_ADVICE_TAG'%}</span>
+                        {% else %}
+                            <span style="opacity: 0.7">({{ good.advice.value|default:NO_ADVICE_DEFAULT }})</span></td>
+                        {%  endif %}
 					<td class="govuk-table__cell">
 						{% for country in good.countries %}
 							<div class="{% if good.id in errors %}{% if country.id in errors|key_value:good.id %}govuk-form-group--error govuk-error-message{% endif %}{% endif %}" style="margin-bottom: 25px;">
-								{{ country.name }} <span style="opacity: 0.7">({{ country.advice.value|default:"No advice" }})</span>
+								{{ country.name }}
+                                {% if country.advice.value == 'Refuse' and case.application.application_type.key == 'open_licence' %}
+                                    <span style="opacity: 0.7">{% lcs 'cases.GoodsDecisionMatrixPage.REFUSE_ADVICE_TAG'%}</span>
+                                {% else %}
+                                    <span style="opacity: 0.7">({{ country.advice.value|default:NO_ADVICE_DEFAULT }})</span>
+                                {%  endif %}
 							</div>
 						{% endfor %}
 					</td>
@@ -54,9 +71,20 @@
 							{% for country in good.countries %}
 								<div class="govuk-radios govuk-radios--small" style="padding-bottom: 50px">
 									<div class="govuk-radios__item">
-										<input class="govuk-radios__input" type="radio" {% for data in good_countries %}{% if good.id == data.good %}{% if country.id == data.country %}{% if decision == data.decision %} checked
-										 {% elif decision == data.decision.key %} checked {% endif %}{% endif %}{% endif %}{% endfor %} name="{{ good.id }}.{{ country.id }}" id="{{ good.id }}.{{ country.id }}" value="{{ decision }}">
-										<label class="govuk-label govuk-radios__label {% if good.id in errors %}{% if country.id in errors|key_value:good.id %}govuk-radios__label--error{% endif %}{% endif %}" for="{{ good.id }}.{{ country.id }}">
+										<input class="govuk-radios__input" type="radio" name="{{ good.id }}.{{ country.id }}" id="{{ good.id }}.{{ country.id }}" value="{{ decision }}"
+                                            {% for data in good_countries %}
+                                                {% if good.id == data.good and country.id == data.country %}
+                                                    {% if decision == data.decision or decision == data.decision.key %}
+                                                        checked
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endfor %} >
+										<label class="govuk-label govuk-radios__label
+                                            {% if good.id in errors %}
+                                                {% if country.id in errors|key_value:good.id %}
+                                                    govuk-radios__label--error
+                                                {% endif %}
+                                            {% endif %}" for="{{ good.id }}.{{ country.id }}">
 										</label>
 									</div>
 								</div>
@@ -68,12 +96,11 @@
 		</tbody>
 	</table>
 
-
 	<button id="submit" type="submit" name="action" value="submit" class="govuk-button" data-module="govuk-button" style="margin-right: 15px">
-		Finalise
+		{% lcs 'cases.GoodsDecisionMatrixPage.Actions.FINALISE_BUTTON' %}
 	</button>
     <button id="submit" type="submit" name="action" value="save" class="govuk-button govuk-button--secondary">
-        Save
+        {% lcs 'cases.GoodsDecisionMatrixPage.Actions.SAVE_BUTTON' %}
 	</button>
 
 </form>
