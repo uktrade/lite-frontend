@@ -81,20 +81,6 @@ class ApplicationPage:
     NO_CASE_OFFICER = "No Case Officer set."
 
 
-class FinalisePage:
-    class Duration:
-        TITLE = "Duration"
-        DESCRIPTION = "This must be a whole number of months, such as 12"
-
-    class Date:
-        TITLE = "Start Date"
-        DESCRIPTION = "For example, 27 3 2007"
-
-    class BackLink:
-        GOODS_AND_COUNTRIES = "Back to finalise goods and countries"
-        FINAL_ADVICE = "Back to final advice"
-
-
 class GenerateDocumentsPage:
     TITLE = "Generate Document"
     ERROR = "Document Generation is unavailable at this time"
@@ -352,3 +338,66 @@ class ReviewGoodsForm:
     BACK_LINK = "Back to review goods"
     CONFIRM_BUTTON = "Add to Case"
     HEADING = "Check control list classification and add report summary"
+
+
+class GoodsDecisionMatrixPage:
+    ERROR = "There is a problem"
+    NO_ADVICE_DEFAULT = "No advice"
+    REFUSE_ADVICE_TAG = "(Reject)"
+
+    class Actions:
+        BACK_TO_FINAL_ADVICE = "Back to final advice"
+        SELECT_DECISION = "Select a decision for each good and country combination"
+        FINALISE_BUTTON = "Finalise"
+        SAVE_BUTTON = "Save"
+
+    class Table:
+        GOOD_TITLE = "Good"
+        COUNTRIES_TITLE = "Countries"
+        APPROVE_TITLE = "Approve"
+        REJECT_TITLE = "Reject"
+        REFUSE_TITLE = "Refuse"
+        NRL_TITLE = "No Licence Required"
+
+
+class FinaliseLicenceForm:
+    APPROVE_TITLE = "Approve"
+    REFUSE_TITLE = "Refuse"
+    REJECT_TITLE = "Reject"
+    DATE_DESCRIPTION = "For example, 27 3 2007"
+    DATE_TITLE = "When will the licence start?"
+    DURATION_DESCRIPTION = "This must be a whole number of months, such as 12"
+    DURATION_TITLE = "How long will it last?"
+
+    class Actions:
+        BACK_TO_ADVICE_BUTTON = "Back to final advice"
+        BACK_TO_DECISION_MATRIX_BUTTON = "Back to finalise goods and countries"
+
+
+class AdviceRecommendationForm:
+    TITLE = "What do you advise?"
+    DESCRIPTION = "You can advise to:"
+
+    class Actions:
+        CONTINUE_BUTTON = "Continue"
+        BACK_BUTTON = "Back to advice"
+
+    class RadioButtons:
+        GRANT = "Grant the licence"
+        PROVISO = "Add a proviso"
+        NLR = "Tell the applicant they do not need a licence"
+        NOT_APPLICABLE = "Not applicable"
+        REJECT = "Reject the licence"
+        REFUSE = "Refuse the licence"
+
+
+class AdvicePage:
+    PROVISO_TITLE = "Proviso"
+    DENIAL_REASONS_TITLE = "Denial reasons"
+    REASON_FOR_ADVICE_TITLE = "Reason for this advice"
+    NOTE_TO_APPLICANT_TITLE = "Note to applicant"
+
+    class Table:
+        REJECT = "Reject"
+        ADVICE_BY = "advice by"
+        AT = "at"
