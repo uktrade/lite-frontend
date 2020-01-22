@@ -80,6 +80,7 @@ class ApplicationPage:
     CASE_OFFICER = "Case Officer: "
     NO_CASE_OFFICER = "No Case Officer set."
     NO_USERS_ASSIGNED = "No users assigned."
+    NO_QUEUES_ASSIGNED = "No queues assigned."
 
 
 class GenerateDocumentsPage:
