@@ -26,7 +26,7 @@ class EndUserPage:
         ECJU_QUERIES = "ECJU queries"
 
     class Variables:
-        REFERENCE = "Reference"
+        REFERENCE = "ECJU reference"
         REASONING_BEHIND_QUERY = "Reasoning behind query"
         END_USER_NOTES = "Notes about end user"
         NAME = "Name"
@@ -35,8 +35,8 @@ class EndUserPage:
         TELEPHONE = "Telephone"
         NATURE_OF_BUSINESS = "Nature of business"
         CONTACT_NAME = "Contact name"
-        CONTACT_JOB_TITLE = "Contact job title"
-        CONTACT_JOB_EMAIL = "Contact job email"
-        CONTACT_TELEPHONE = "Contact telephone"
+        CONTACT_JOB_TITLE = "Job title"
+        CONTACT_JOB_EMAIL = "Email"
+        CONTACT_TELEPHONE = "Telephone"
         ADDRESS = "Address"
         WEBSITE = "Website"
