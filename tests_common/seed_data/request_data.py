@@ -136,12 +136,6 @@ def create_request_data(exporter_user, gov_user, base_url):
             "Letter Paragraph 1", "My letter paragraph is this.", "letter_paragraph"
         ),
         "document_template": {"case_types": ["application"]},
-        "exporter_user": {
-            "first_name": exporter["first_name"],
-            "last_name": exporter["last_name"],
-            "email": exporter["email"],
-            "sites": {}
-        },
         "export_user": {"email": exporter["email"], "user_profile": {"first_name": "Bruce", "last_name": "Wayne"},
                         "sites": {}},
 
