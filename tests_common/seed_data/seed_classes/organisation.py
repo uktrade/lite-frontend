@@ -44,7 +44,10 @@ class Organisation(SeedClass):
     def add_test_user_to_exporter_org(self, org_id):
         data = self.request_data["export_user"]
         return make_request(
-            "POST", base_url=self.base_url, url="/organisations/" + org_id + "/users/", body=data,
+            "POST",
+            base_url=self.base_url,
+            url="/organisations/" + org_id + "/users/",
+            body=data,
             headers=self.gov_headers,
         ).json()
 
