@@ -240,7 +240,7 @@ def i_remove_the_end_user_off_the_application(driver):
 
 @then("no end user is set on the application")
 def no_end_user_is_set_on_the_application(driver):
-    assert (GenericApplicationTaskListPage(driver).find_remove_end_user_link(), None)
+    assert not GenericApplicationTaskListPage(driver).does_remove_end_user_exist(driver)
 
 
 @when("I remove the consignee off the application")
@@ -252,7 +252,7 @@ def i_remove_the_consignee_off_the_application(driver):
 
 @then("no consignee is set on the application")
 def no_consignee_is_set_on_the_application(driver):
-    assert (GenericApplicationTaskListPage(driver).find_remove_consignee_link(), None)
+    assert not GenericApplicationTaskListPage(driver).does_remove_consignee_exist(driver)
 
 
 @when("I remove an additional document")
@@ -270,7 +270,7 @@ def i_click_confirm(driver):
 
 @then("the document is removed from the application")
 def no_documents_are_set_on_the_application(driver):
-    assert (GenericApplicationTaskListPage(driver).find_remove_additional_document_link(), None)
+    assert not GenericApplicationTaskListPage(driver).does_remove_additional_document_exist(driver)
 
 
 @when("I change my reference name")

@@ -2,6 +2,7 @@ from selenium.common.exceptions import NoSuchElementException
 
 from shared import functions
 from shared.BasePage import BasePage
+from shared.functions import element_with_css_selector_exists, element_with_id_exists
 
 
 class GenericApplicationTaskListPage(BasePage):
@@ -40,11 +41,17 @@ class GenericApplicationTaskListPage(BasePage):
         except NoSuchElementException:
             return None
 
+    def does_remove_end_user_exist(self, driver):
+        return element_with_css_selector_exists(driver, self.REMOVE_END_USER_LINK)
+
     def find_remove_consignee_link(self):
         try:
             return self.driver.find_element_by_css_selector(self.REMOVE_CONSIGNEE_LINK)
         except NoSuchElementException:
             return None
+
+    def does_remove_consignee_exist(self, driver):
+        return element_with_css_selector_exists(driver, self.REMOVE_CONSIGNEE_LINK)
 
     def find_remove_third_party_link(self):
         try:
@@ -57,6 +64,9 @@ class GenericApplicationTaskListPage(BasePage):
             return self.driver.find_element_by_id(self.REMOVE_ADDITIONAL_DOCUMENT_LINK)
         except NoSuchElementException:
             return None
+
+    def does_remove_additional_document_exist(self, driver):
+        return element_with_id_exists(driver, self.REMOVE_ADDITIONAL_DOCUMENT_LINK)
 
     def confirm_delete_additional_document(self):
         self.driver.find_element_by_id(self.DELETE_ADDITIONAL_DOC_CONFIRM_YES).click()

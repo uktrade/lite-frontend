@@ -26,6 +26,9 @@ Feature: I want to edit and remove goods on the goods list
     And I upload file "file_for_doc_upload_test_1.txt" with description "This is a file I want to upload to show."
     And I raise a clc query control code "ML1a" description "I believe it is ML1a"
     Then I see the clc query in goods list
+    When I go to good from goods list
+    Then I see good information
+
 
   @LT_886_add_new_good_to_app @regression
   Scenario: Add a new good directly to a standard application

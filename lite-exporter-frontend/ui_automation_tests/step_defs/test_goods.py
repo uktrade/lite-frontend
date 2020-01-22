@@ -7,6 +7,7 @@ from pages.add_goods_page import AddGoodPage
 from pages.attach_document_page import AttachDocumentPage
 from pages.goods_list import GoodsListPage
 from pages.goods_page import GoodsPage
+from pages.shared import Shared
 from pages.standard_application.goods import StandardApplicationGoodsPage
 from pages.standard_application.good_details import StandardApplicationGoodDetails
 from pages.standard_application.task_list import StandardApplicationTaskListPage
@@ -17,19 +18,22 @@ scenarios("../features/goods.feature", strict_gherkin=False)
 
 @then("I see good in goods list")
 def assert_good_is_in_list(driver, context, exporter_url):
-    goods_list = GoodsListPage(driver)
     driver.get(exporter_url.rstrip("/") + "/goods/")
-    goods_list.assert_goods_are_displayed_of_good_name(
-        driver, context.good_description, context.part, context.control_code
-    )
+    goods_row = Shared(driver).get_text_of_gov_table()
+
+    assert context.good_description in goods_row
+    assert context.part in goods_row
+    assert context.control_code in goods_row
 
 
 @then("I see the clc query in goods list")
 def assert_clc_is_in_list(driver, context, exporter_url):
-    goods_list = GoodsListPage(driver)
-    goods_list.assert_clc_goods_are_displayed_of_good_name(
-        driver, context.good_description, context.part, context.control_code
-    )
+    goods_row = Shared(driver).get_text_of_gov_table()
+
+    assert context.good_description in goods_row
+    assert context.part in goods_row
+    assert context.control_code in goods_row
+    assert "Control List Classification Query" in goods_row
 
 
 @when(
@@ -191,3 +195,16 @@ def raise_clc_query(driver, control_code, description):  # noqa
     raise_clc_query_page.enter_control_code_unsure(control_code)
     raise_clc_query_page.enter_control_unsure_details(description)
     functions.click_submit(driver)
+
+
+@when("I go to good from goods list")
+def go_to_good_goods_list(driver, context):
+    driver.find_element_by_link_text(context.good_description).click()
+
+
+@then("I see good information")
+def see_good_info(driver, context):
+    body = Shared(driver).get_text_of_body()
+    assert context.good_description in body
+    assert context.part in body
+    assert context.control_code in body
