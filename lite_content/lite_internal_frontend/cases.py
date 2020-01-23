@@ -11,10 +11,11 @@ class CasesListPage:
         HIDE_FILTERS = "Hide filters"
         APPLY_FILTERS = "Apply filters"
         CLEAR_FILTERS = "Clear filters"
-        CASE_TYPE = "Type"
-        CASE_STATUS = "Status"
-        CASE_OFFICER = "Case officer"
-        ASSIGNED_USER = "Assigned user"
+        CASE_TYPE = "type"
+        CASE_STATUS = "status"
+        CASE_OFFICER = "case officer"
+        ASSIGNED_USER = "assigned user"
+
 
 class CaseDocumentsPage:
     BACK_LINK = "Back to Case"
