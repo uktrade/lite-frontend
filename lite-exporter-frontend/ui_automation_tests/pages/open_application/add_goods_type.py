@@ -17,7 +17,7 @@ class OpenApplicationAddGoodsType(BasePage):
     def enter_control_code(self, value):
         self.driver.find_element_by_id(self.INPUT_CONTROL_CODE_ID).send_keys(value)
         # This is done as control code textbox needs to lose focus
-        self.driver.find_element_by_tag_name("body").click()
+        self.driver.find_element_by_id(self.INPUT_DESCRIPTION_ID).click()
 
     def select_is_your_good_incorporated(self, value):
         self.driver.find_element_by_id(self.RADIO_IS_GOOD_INCORPORATED_ID + str(value.lower() == "yes")).click()
