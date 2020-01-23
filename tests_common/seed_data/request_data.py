@@ -9,7 +9,7 @@ def create_user(user):
     }
 
 
-def create_organisation(exporter, type, name):
+def create_organisation_with_user(exporter, type, name):
     return {
         "name": name,
         "type": type,
@@ -72,11 +72,12 @@ def create_picklist(name, text, type, proviso=None):
 def create_request_data(exporter_user, gov_user, base_url):
     exporter = create_user(exporter_user)
     request_data = {
-        "organisation": create_organisation(exporter, "commercial", "Square Is Circle Ltd"),
+        "organisation": create_organisation_with_user(exporter, "commercial", "Square Is Circle Ltd"),
         # Please leave this as HMRC as tests depend on this being HMRC.
-        "organisation_for_switching_organisations": create_organisation(exporter, "hmrc", "HMRC Wayne Enterprises"),
+        "organisation_for_switching_organisations": create_organisation_with_user(
+            exporter, "hmrc", "HMRC Wayne Enterprises"
+        ),
         "good": create_good("Lentils"),
-        "export_user": {"email": exporter["email"], "user_profile": {"first_name": "Bruce", "last_name": "Wayne"}},
         "application": {
             "name": "application",
             "application_type": "standard_licence",
@@ -139,5 +140,10 @@ def create_request_data(exporter_user, gov_user, base_url):
             "Letter Paragraph 1", "My letter paragraph is this.", "letter_paragraph"
         ),
         "document_template": {"case_types": ["application"]},
+        "export_user": {
+            "email": exporter["email"],
+            "user_profile": {"first_name": "Bruce", "last_name": "Wayne"},
+            "sites": {},
+        },
     }
     return request_data
