@@ -64,8 +64,8 @@ class DocumentSensitivityForm:
         "without attaching a document.\n\n **ECJU helpline**\n 020 7215 4594.\n "
         "[Find out about call charges](https://www.gov.uk/call-charges)"
     )
-    SUBMMIT_BUTTON = "Continue"
-    BACK_BUTTON = "Back"
+    SUBMIT_BUTTON = "Continue"
+    BACK_BUTTON = "Back to product"
 
     class Options:
         YES = "Yes"
@@ -102,7 +102,7 @@ class CreateGoodForm:
         DESCRIPTION = "For example, ML1a."
 
     class IsGraded:
-        TITLE = "Does the product hold a PV grading?"
+        TITLE = "Does the product hold a security grading?"
         DESCRIPTION = ""
 
         YES = "Yes"
