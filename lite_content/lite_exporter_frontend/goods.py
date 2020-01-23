@@ -211,6 +211,10 @@ class GoodPage:
         ATTACH = generic.Document.ATTACH
         REMOVE = generic.Document.REMOVE
 
+    class ECJUDocuments:
+        CREATED_AT = "Created at"
+        NONE = "There are no ECJU documents for this product"
+
 
 class AddGoodToApplicationForm:
     TITLE = "Add a product to your application"
