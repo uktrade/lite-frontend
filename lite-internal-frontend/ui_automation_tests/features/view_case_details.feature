@@ -25,3 +25,12 @@ Feature: I want to view the case details of a case
     Then I can see the case on the exporter amendments queue
     When I go to application previously created
     Then I see that changes have been made to the case
+
+    @LT_948_can_see_assigned_users @regression
+    Scenario: Gov user can see which users are assigned to a case from the case screen
+    Given I create application or application has been previously created
+    And I sign in to SSO or am signed into SSO
+    And I am an assigned user for the case
+    When I go to application previously created
+    Then I see assigned queues
+    And I see assigned users
