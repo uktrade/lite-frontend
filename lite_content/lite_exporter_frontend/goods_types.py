@@ -1,4 +1,5 @@
 from lite_content.lite_exporter_frontend import generic
+from lite_content.lite_exporter_frontend.generic import PERMISSION_FINDER_LINK
 
 
 class OverviewPage:
@@ -39,13 +40,13 @@ class Documents:
         DESCRIPTION_FIELD_DETAILS = ""
         DESCRIPTION_FIELD_TITLE = "Description (optional)"
         DOWNLOAD_ERROR = "We had an issue downloading your file. Try again later."
-        FILE_TOO_LARGE = "The file you tried to upload is too large."
+        FILE_TOO_LARGE = "The selected file must be smaller than 100MB"
         TITLE = "Upload a document to support your product (optional)"
         UPLOAD_ERROR = "We had an issue uploading your files. Try again later."
 
 
 class CreateGoodsTypeForm:
-    TITLE = "Add a new product to your application"
+    TITLE = "Add a new product category to your application"
     DESCRIPTION = ""
 
     class Description:
@@ -55,11 +56,11 @@ class CreateGoodsTypeForm:
     class IsControlled:
         TITLE = "Is the product on the control list?"
         DESCRIPTION = (
-            "Products that aren't on the "
-            + generic.PERMISSION_FINDER_LINK
-            + " may be affected by military end use controls, current trade sanctions and embargoes or weapons of "
-            "mass destruction controls. If your products aren't subject to any controls, you'll get a no licence "
-            "required (NLR) document from ECJU."
+            "Products that aren't on the " + PERMISSION_FINDER_LINK + " may be affected by "
+            "[military end use controls](https://www.gov.uk/guidance/export-controls-military-goods-software-and-technology), "
+            "[current trade sanctions and embargoes](https://www.gov.uk/guidance/current-arms-embargoes-and-other-restrictions) or "
+            "[weapons of mass destruction controls](https://www.gov.uk/guidance/supplementary-wmd-end-use-controls). "
+            "If the products aren't subject to any controls, you'll get a no licence required (NLR) document from ECJU."
         )
         YES = "Yes"
         NO = "No"
