@@ -43,8 +43,8 @@
 				{% if good.status.key == 'draft' %}
 					<div class="lite-app-bar__controls">
 						<a href="{% url 'goods:edit' good.id %}" id="edit-{{ good.id }}" class="govuk-button govuk-button--secondary">
-                            {% lcs 'goods.GoodsList.EDIT_GOOD_LINK' %}
-                        </a>
+							{% lcs 'goods.GoodsList.EDIT_GOOD_LINK' %}
+						</a>
 					</div>
 				{% endif %}
 			</div>
@@ -89,7 +89,7 @@
 
 			{% if good.status.key == 'submitted' %}
 				<div class="govuk-inset-text">
-                    {% lcs 'goods.GoodsList.NO_LONGER_CAN_BE_CHANGED' %}
+					{% lcs 'goods.GoodsList.NO_LONGER_CAN_BE_CHANGED' %}
 				</div>
 				<br>
 			{% endif %}
@@ -144,21 +144,21 @@
 			<br><br>
 
 			<!-- Documents -->
-		    <div class="lite-app-bar">
+			<div class="lite-app-bar">
 				<div class="lite-app-bar__content">
 					<h3 class="govuk-heading-m">{% lcs 'goods.GoodsList.Documents.TITLE' %}</h3>
 				</div>
 				<div class="lite-app-bar__controls">
-				    {% if good.status.key == 'draft' %}
-			            <a role="button" draggable="false" class="govuk-button" href="{% url 'goods:attach_documents' good.id %}">
-			                {% lcs 'Goods.Documents.AttachDocuments.BUTTON' %}
-			            </a>
-				    {% endif %}
+					{% if good.status.key == 'draft' %}
+						<a role="button" draggable="false" class="govuk-button" href="{% url 'goods:attach_documents' good.id %}">
+							{% lcs 'Goods.Documents.AttachDocuments.BUTTON' %}
+						</a>
+					{% endif %}
 				</div>
-		    </div>
+			</div>
 
-		    {% if documents %}
-		        <p class="govuk-caption-m">{% lcs 'Goods.Documents.DESCRIPTION' %}</p>
+			{% if documents %}
+				<p class="govuk-caption-m">{% lcs 'Goods.Documents.DESCRIPTION' %}</p>
 
 				<br>
 
@@ -199,36 +199,41 @@
                 </table>
 		    {% else %}
 				{% include "includes/notice.html" with text="goods.GoodsList.Documents.NO_DOCUMENT_ATTACHED" %}
-		    {% endif %}
+			{% endif %}
 
-		    {% if good.query %}
-		        <div class="lite-tabs__container govuk-!-margin-top-6">
-		            <div class="lite-tabs">
+			{% if good.query %}
+				<div class="lite-tabs__container govuk-!-margin-top-6">
+					<div class="lite-tabs">
 						<a href="{% url 'goods:good_detail' good.id 'case-notes' %}" class="lite-tabs__tab {% if type == 'case-notes' %}lite-tabs__tab--selected{% endif %}" id="link-case-notes">
-						    {% lcs 'goods.GoodPage.Tabs.NOTES' %}
-			                {% if good.query.exporter_user_notification_count.casenote %}
-			                    <div class="lite-notification-bubble">
-			                        {{ good.query.exporter_user_notification_count.casenote }}
-			                    </div>
-			                {% endif %}
-					    </a>
-			            <a href="{% url 'goods:good_detail' good.id 'ecju-queries' %}" class="lite-tabs__tab {% if type == 'ecju-queries' %}lite-tabs__tab--selected{% endif %}" id="link-ecju-queries">
-			                {% lcs 'goods.GoodPage.Tabs.ECJU_QUERIES' %}
-			                {% if good.query.exporter_user_notification_count.ecjuquery  %}
-			                    <div class="lite-notification-bubble">
-			                        {{ good.query.exporter_user_notification_count.ecjuquery }}
-			                    </div>
-						    {% endif %}
-			            </a>
-		            </div>
-		        </div>
-		        {% if type == 'case-notes' and good.query.id %}
+							{% lcs 'goods.GoodPage.Tabs.NOTES' %}
+							{% if good.query.exporter_user_notification_count.casenote %}
+								<div class="lite-notification-bubble">
+									{{ good.query.exporter_user_notification_count.casenote }}
+								</div>
+							{% endif %}
+						</a>
+						<a href="{% url 'goods:good_detail' good.id 'ecju-queries' %}" class="lite-tabs__tab {% if type == 'ecju-queries' %}lite-tabs__tab--selected{% endif %}" id="link-ecju-queries">
+							{% lcs 'goods.GoodPage.Tabs.ECJU_QUERIES' %}
+							{% if good.query.exporter_user_notification_count.ecjuquery  %}
+								<div class="lite-notification-bubble">
+									{{ good.query.exporter_user_notification_count.ecjuquery }}
+								</div>
+							{% endif %}
+						</a>
+						<a href="{% url 'goods:good_detail' good.id 'ecju-generated-documents' %}" class="lite-tabs__tab {% if type == 'ecju-generated-documents' %}lite-tabs__tab--selected{% endif %}" id="link-ecju-generated-documents">
+							{% lcs 'goods.GoodPage.Tabs.GENERATED_DOCUMENTS' %}
+						</a>
+					</div>
+				</div>
+				{% if type == 'case-notes' and good.query.id %}
 					{% url "goods:good_detail" good.id "case-notes" as post_url %}
-			        {% include "includes/case-notes.html" with post_url=post_url %}
-		        {% elif type == 'ecju-queries'%}
-			        {% include "goods/tabs/ecju-queries.html" %}
-		        {% endif %}
-		    {% endif %}
+					{% include "includes/case-notes.html" with post_url=post_url %}
+				{% elif type == 'ecju-queries'%}
+					{% include "goods/tabs/ecju-queries.html" %}
+				{% elif type == 'ecju-generated-documents'%}
+					{% include "goods/tabs/ecju-generated-documents.html" %}
+				{% endif %}
+			{% endif %}
 		</div>
 	</div>
 {% endblock %}

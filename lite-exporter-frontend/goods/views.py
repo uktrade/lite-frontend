@@ -41,6 +41,8 @@ from goods.services import (
     delete_good_document,
     raise_clc_query,
     post_good_document_sensitivity,
+    get_clc_query_generated_documents,
+    get_case_document_download,
 )
 from goods.helpers import good_document_upload
 from lite_content.lite_exporter_frontend import strings
@@ -94,7 +96,7 @@ class GoodsDetail(TemplateView):
         self.good = get_good(request, self.good_id)[0]
         self.view_type = kwargs["type"]
 
-        if self.view_type != "case-notes" and self.view_type != "ecju-queries":
+        if self.view_type not in ["case-notes", "ecju-queries", "ecju-generated-documents"]:
             return Http404
 
         return super(GoodsDetail, self).dispatch(request, *args, **kwargs)
@@ -118,6 +120,10 @@ class GoodsDetail(TemplateView):
             status_props, _ = get_status_properties(request, self.good["case_status"]["key"])
             context["status_is_read_only"] = status_props["is_read_only"]
             context["status_is_terminal"] = status_props["is_terminal"]
+
+            if self.view_type == "ecju-generated-documents":
+                generated_documents, _ = get_clc_query_generated_documents(request, self.good["query"]["id"])
+                context["generated_documents"] = generated_documents["generated_documents"]
 
         if self.view_type == "case-notes":
             if self.good.get("case_id"):
@@ -280,6 +286,11 @@ class Document(TemplateView):
 
         document = get_good_document(request, good_id, file_pk)
         return download_document_from_s3(document["s3_key"], document["name"])
+
+
+class DownloadDocument(TemplateView):
+    def get(self, request, query_pk, document_pk):
+        return get_case_document_download(request, case_pk=query_pk, document_pk=document_pk)
 
 
 class DeleteDocument(TemplateView):

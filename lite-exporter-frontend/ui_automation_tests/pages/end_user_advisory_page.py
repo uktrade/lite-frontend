@@ -1,6 +1,6 @@
+from pages.shared import Shared
 from shared.BasePage import BasePage
 from shared.tools import helpers
-from pages.shared import Shared
 
 
 class EndUserAdvisoryPage(BasePage):
@@ -19,7 +19,10 @@ class EndUserAdvisoryPage(BasePage):
 
     def confirm_advisory_displayed_by_reference_code(self, _id):
         elements, no = self.get_table_rows_and_position(_id)
-        return elements[no].find_element_by_css_selector(Shared(self.driver).NOTIFICATION).is_displayed()
+        self.driver.set_timeout_to(0)
+        return_value = len(elements[no].find_elements_by_css_selector(Shared(self.driver).NOTIFICATION)) != 0
+        self.driver.set_timeout_to(10)
+        return return_value
 
     def get_table_rows_and_position(self, _id: str):
         elements = self.driver.find_elements_by_css_selector(self.TABLE_ROW)

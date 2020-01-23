@@ -1,0 +1,22 @@
+{% if generated_documents %}
+    {% for generated_document in generated_documents %}
+        <div class="app-ecju-query">
+            <div class="app-ecju-query__item">
+                <p class="app-ecju-query__heading">{{ generated_document.name }}</p>
+                <p class="app-ecju-query__date">
+                    <span class="govuk-visually-hidden">{% lcs 'goods.GoodPage.ECJUDocuments.CREATED_AT' %}</span>{{ generated_document.created_at|str_date }}
+                </p>
+				<a href="{% url 'goods:download_document' generated_document.id good.query.id %}" class="govuk-link govuk-link--no-visited-state">Download</a>
+            </div>
+        </div>
+        <hr class="lite-horizontal-separator">
+    {% endfor %}
+{% else %}
+<div class="lite-information-text">
+	<span class="lite-information-text__icon" aria-hidden="true">!</span>
+	<p class="lite-information-text__text">
+		<span class="govuk-visually-hidden">{% lcs 'generic.NoticeComponent.INFORMATION' %}</span>
+		{% lcs 'goods.GoodPage.ECJUDocuments.NONE' %}
+	</p>
+</div>
+{% endif %}

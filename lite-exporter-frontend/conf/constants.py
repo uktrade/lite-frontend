@@ -47,6 +47,9 @@ COUNTRIES_URL = STATIC_URL + "countries/"
 CONTROL_LIST_ENTRIES_URL = STATIC_URL + "control-list-entries/"
 MISSING_DOCUMENT_REASONS_URL = STATIC_URL + "missing-document-reasons/"
 
+# Document URLs
+DOWNLOAD_URL = "/download/"
+
 # Applications constants
 STANDARD_LICENCE = "standard_licence"
 OPEN_LICENCE = "open_licence"

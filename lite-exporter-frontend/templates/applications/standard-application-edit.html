@@ -327,7 +327,7 @@
 
 				<!-- Ultimate end users -->
 				{% if ultimate_end_users_required %}
-					{% lcs 'third_parties.UltimateEndUsers.TITLE' as ultimate_end_users_title %}
+					{% lcs 'applications.UltimateEndUsersPage.TITLE' as ultimate_end_users_title %}
 					{% url 'applications:ultimate_end_users' application.id as ultimate_end_users_url %}
 					{% tld ultimate_end_users 'ultimate recipient' 'ultimate recipients' as ultimate_end_users_description %}
 					{% include "includes/task-list-item.html" with id='ultimate-recipients' title=ultimate_end_users_title url=ultimate_end_users_url status=ultimate_end_users|task_list_item_status description=ultimate_end_users_description %}

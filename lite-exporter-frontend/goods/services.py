@@ -1,15 +1,20 @@
 from http import HTTPStatus
 
 from conf.client import get, post, put, delete
-from core.helpers import convert_parameters_to_query_params
 from conf.constants import (
     GOODS_URL,
     DOCUMENTS_URL,
     CONTROL_LIST_CLASSIFICATIONS_URL,
     DOCUMENT_SENSITIVITY_URL,
     MISSING_DOCUMENT_REASONS_URL,
+    GENERATED_DOCUMENTS_URL,
+    CASES_URL,
+    ADDITIONAL_DOCUMENT_URL,
+    DOWNLOAD_URL,
 )
+from core.helpers import convert_parameters_to_query_params
 from core.helpers import remove_prefix
+from core.services import get_document_download_stream
 
 
 def get_goods(request, page: int = 1, description=None, part_number=None, control_rating=None, for_application=None):
@@ -57,6 +62,11 @@ def raise_clc_query(request, json):
     return data.json(), data.status_code
 
 
+def get_clc_query_generated_documents(request, pk):
+    data = get(request, CONTROL_LIST_CLASSIFICATIONS_URL + pk + GENERATED_DOCUMENTS_URL)
+    return data.json(), data.status_code
+
+
 # Documents
 def get_good_document(request, pk, doc_pk):
     data = get(request, GOODS_URL + pk + DOCUMENTS_URL + doc_pk)
@@ -87,3 +97,9 @@ def get_document_missing_reasons(request):
 def post_good_document_sensitivity(request, pk, json):
     data = post(request, GOODS_URL + str(pk) + DOCUMENT_SENSITIVITY_URL, json)
     return data.json(), data.status_code
+
+
+def get_case_document_download(request, document_pk, case_pk):
+    return get_document_download_stream(
+        request, CASES_URL + str(document_pk) + ADDITIONAL_DOCUMENT_URL + str(case_pk) + DOWNLOAD_URL
+    )
