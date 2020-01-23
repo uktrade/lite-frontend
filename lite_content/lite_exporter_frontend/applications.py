@@ -285,3 +285,34 @@ class ThirdPartiesPage:
         ADDRESS = "Address"
         COUNTRY = "Country"
         DOCUMENT = "Document"
+
+
+class UltimateEndUsersPage:
+    TITLE = "Ultimate recipients"
+    ADD = "Add a third party"
+    NO_RESULTS = "You haven't added any third parties to your application"
+    BACK = "Back to application overview"
+    HELP = "What is an ultimate recipient?"
+    DESCRIPTION = (
+        "An ultimate recipient is an entity that uses the product or the higher level system into which the products are"
+        " installed or incorporated. The end user and ultimate recipient may be different entities."
+    )
+    NOTICE = "You haven't added any ultimate recipients to the application"
+    MISSING_DOCS_NOTICE = "You need to attach a document to some ultimate recipients"
+    ADD_BUTTON = "Add an ultimate recipient"
+
+    class Document:
+        DOWNLOAD = "Download"
+        DELETE = "Delete"
+        PROCESSING = "Processing"
+        ATTACH = "Attach"
+        REMOVE = "Remove"
+
+    class Variables:
+        NAME = "Name"
+        TYPE = "Type"
+        ROLE = "Role"
+        WEBSITE = "Website"
+        ADDRESS = "Address"
+        COUNTRY = "Country"
+        DOCUMENT = "Document"
