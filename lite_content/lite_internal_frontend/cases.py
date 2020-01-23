@@ -15,6 +15,7 @@ class CasesListPage:
         CASE_STATUS = "status"
         CASE_OFFICER = "case officer"
         ASSIGNED_USER = "assigned user"
+        NOT_ASSIGNED = "Not assigned"
 
 
 class CaseDocumentsPage:

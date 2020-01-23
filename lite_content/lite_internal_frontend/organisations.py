@@ -10,3 +10,7 @@ class OrganisationsPage:
         SIC_NUMBER = "SIC number"
         VAT_NUMBER = "VAT number"
         ADDRESS = "Address"
+
+    class Filters:
+        NAME = "name"
+        TYPE = "organisation type"
