@@ -48,7 +48,7 @@ class Address:
 
 
 class Applications:
-    NO_APPLICATIONS = "You haven't applied for any licences yet."
+    NO_APPLICATIONS = "You haven't applied for any licences."
 
     class Standard:
         class Goods:
@@ -57,7 +57,7 @@ class Applications:
 
     class Edit:
         DESCRIPTION = "Depending on your answer it can take longer to reach a decision."
-        TITLE = "How do you want to change your application?"
+        TITLE = "How do you want to change the application?"
 
         class Minor:
             DESCRIPTION = "This won't impact the time it takes to reach a decision."
@@ -88,21 +88,21 @@ class CaseNotes:
 
 
 class EcjuQueries:
-    NONE_APPLICATION = "There haven't been any queries on this application."
-    NONE_END_USER_ADVISORY = "There haven't been any queries on this advisory."
-    NONE_GOOD = "There haven't been any queries on this product."
+    NONE_APPLICATION = "There are no queries on this application."
+    NONE_END_USER_ADVISORY = "There are no queries on this advisory."
+    NONE_GOOD = "There are no queries on this product."
 
 
 class Clc:
     class ClcForm:
-        DESCRIPTION = "By submitting you are creating a CLC query that cannot be altered"
-        TITLE = "Create a CLC query"
+        DESCRIPTION = ""
+        TITLE = "Create a control list classification (CLC) query"
 
 
 class Drafts:
     DELETED = "Application deleted"
     DRAFT_NOT_FOUND = "Cannot find draft"
-    NO_DRAFTS = "You don't have any draft applications."
+    NO_DRAFTS = "There are no draft applications."
     TITLE = "Drafts"
 
 
@@ -115,7 +115,7 @@ class EndUser:
         DELETE_DOCUMENT = "Delete"
         DESCRIPTION = "This is the document that has been uploaded for this end user."
         DOWNLOAD_DOCUMENT = "Download"
-        END_USER_HAS_NO_DOCUMENTS = "This end user has no documents attached"
+        END_USER_HAS_NO_DOCUMENTS = "There are no documents attached"
         PROCESSING = "Processing"
         SAVE_END_USER = "Save and return to the application overview "
         TITLE = "End user document"
@@ -132,7 +132,7 @@ class EndUser:
             DESCRIPTION_FIELD_DETAILS = "optional"
             DESCRIPTION_FIELD_TITLE = "Description"
             DOWNLOAD_ERROR = "We had an issue downloading your file. Try again later."
-            FILE_TOO_LARGE = "The file you tried to upload is too large."
+            FILE_TOO_LARGE = "The selected file must be smaller than 100MB"
             TITLE = "Attach a document"
             UPLOAD_ERROR = "We had an issue uploading your files. Try again later."
 
@@ -144,15 +144,15 @@ class UltimateEndUser:
         DELETE_DOCUMENT = "Delete"
         DESCRIPTION = "This is the document that has been uploaded for this ultimate recipient."
         DOWNLOAD_DOCUMENT = "Download"
-        END_USER_HAS_NO_DOCUMENTS = "This ultimate recipient has no documents attached"
+        END_USER_HAS_NO_DOCUMENTS = "There are no documents attached"
         PROCESSING = "Processing"
         SAVE_END_USER = "Save and return to the application overview "
         TITLE = "Ultimate recipient document"
-        VIRUS_INFECTED = "Virus infected"
+        VIRUS_INFECTED = "The selected file contains a virus"
 
         class AttachDocuments:
             BACK_TO_APPLICATION_OVERVIEW = "Back to ultimate recipients"
-            BUTTON = "Attach Document"
+            BUTTON = "Attach document"
             DELETE_ERROR = "We had an issue deleting your files. Try again later."
             DESCRIPTION = (
                 "Do not attach a document that's OFFICIAL-SENSITIVE or above.\n\nThe file must be smaller"
@@ -161,7 +161,7 @@ class UltimateEndUser:
             DESCRIPTION_FIELD_DETAILS = ""
             DESCRIPTION_FIELD_TITLE = "Description (optional)"
             DOWNLOAD_ERROR = "We had an issue downloading your file. Try again later."
-            FILE_TOO_LARGE = "The file you tried to upload is too large."
+            FILE_TOO_LARGE = "The selected file must be smaller than 100MB"
             TITLE = "Attach a document"
             UPLOAD_ERROR = "We had an issue uploading your files. Try again later."
 
@@ -175,15 +175,15 @@ class Consignee:
         DELETE_DOCUMENT = "Delete"
         DESCRIPTION = "This is the document that has been uploaded for this consignee."
         DOWNLOAD_DOCUMENT = "Download"
-        END_USER_HAS_NO_DOCUMENTS = "This consignee has no documents attached"
+        END_USER_HAS_NO_DOCUMENTS = "There are no documents attached"
         PROCESSING = "Processing"
         SAVE_END_USER = "Save and return to the application overview "
         TITLE = "Consignee document"
-        VIRUS_INFECTED = "Virus infected"
+        VIRUS_INFECTED = "The selected file contains a virus"
 
         class AttachDocuments:
             BACK_TO_APPLICATION_OVERVIEW = "Back to application overview"
-            BUTTON = "Attach Document"
+            BUTTON = "Attach document"
             DELETE_ERROR = "We had an issue deleting your files. Try again later."
             DESCRIPTION = (
                 "Do not attach a document that's OFFICIAL-SENSITIVE or above.\n\nThe file must be smaller"
@@ -192,7 +192,7 @@ class Consignee:
             DESCRIPTION_FIELD_DETAILS = ""
             DESCRIPTION_FIELD_TITLE = "Description (optional)"
             DOWNLOAD_ERROR = "We had an issue downloading your file. Try again later."
-            FILE_TOO_LARGE = "The file you tried to upload is too large."
+            FILE_TOO_LARGE = "The selected file must be smaller than 100MB"
             TITLE = "Attach a document"
             UPLOAD_ERROR = "We had an issue uploading your files. Try again later."
 
@@ -200,7 +200,7 @@ class Consignee:
 class ThirdParties:
     ADD = "Add a third party"
     DESCRIPTION = "You can add as many third parties as you want. These can be:"
-    NO_RESULTS = "You haven't added any third parties to your application"
+    NO_RESULTS = "There are no third parties on the application"
     TITLE = "Will there be any third parties involved?"
 
     class Documents:
@@ -209,11 +209,11 @@ class ThirdParties:
         DELETE_DOCUMENT = "Delete"
         DESCRIPTION = "This is the document that has been uploaded for this third party."
         DOWNLOAD_DOCUMENT = "Download"
-        END_USER_HAS_NO_DOCUMENTS = "This third party has no documents attached"
+        END_USER_HAS_NO_DOCUMENTS = "There are no documents attached"
         PROCESSING = "Processing"
         SAVE_END_USER = "Save and return to the application overview "
         TITLE = "Third party document"
-        VIRUS_INFECTED = "Virus infected"
+        VIRUS_INFECTED = "The selected file contains a virus"
 
         class AttachDocuments:
             BACK_TO_APPLICATION_OVERVIEW = "Back to third parties overview"
@@ -226,7 +226,7 @@ class ThirdParties:
             DESCRIPTION_FIELD_DETAILS = ""
             DESCRIPTION_FIELD_TITLE = "Description (optional)"
             DOWNLOAD_ERROR = "We had an issue downloading your file. Try again later."
-            FILE_TOO_LARGE = "The file you tried to upload is too large."
+            FILE_TOO_LARGE = "The selected file must be smaller than 100MB"
             TITLE = "Attach a document"
             UPLOAD_ERROR = "We had an issue uploading your files. Try again later."
 
@@ -234,7 +234,7 @@ class ThirdParties:
 class EuaeQuery:
     CHECK_ELIGIBLE = "Check if an end user is eligible"
     CREATE_ADVISORY = "Create a new advisory"
-    NO_ADVISORIES = "You haven't applied for any end user advisories"
+    NO_ADVISORIES = "There are no end user advisories"
     REFRESH = "refresh this page"
 
 
@@ -272,11 +272,11 @@ class Misc:
 
 
 class Goods:
-    NOTICE = "You haven't added any products to your application."
+    NOTICE = "There are no products on the application."
 
     class AddFromOrganisation:
-        BUTTON = "Add an existing product"
-        TITLE = "Add a product from your product database"
+        BUTTON = "Add a product from your product list"
+        TITLE = "Add a product from your product list"
 
     class Documents:
         BUTTON = "Documents"
@@ -285,7 +285,7 @@ class Goods:
         GOOD_HAS_NO_DOCUMENTS = "This product has no documents attached"
         PROCESSING = "Processing"
         TITLE = "Product documents"
-        VIRUS_INFECTED = "Virus infected"
+        VIRUS_INFECTED = "The selected file contains a virus"
 
         class AttachDocuments:
             BACK_TO_GOOD = "Back to product"
@@ -297,7 +297,7 @@ class Goods:
             )
             DESCRIPTION_FIELD_DETAILS = ""
             DESCRIPTION_FIELD_TITLE = "Description (optional)"
-            FILE_TOO_LARGE = "The file you tried to upload is too large."
+            FILE_TOO_LARGE = "The selected file must be smaller than 100MB"
             TITLE = "Attach a document"
 
     class LocationQuestions:
@@ -329,7 +329,7 @@ class Sites:
 
 class AdditionalDocuments:
     ADD = "Add a document"
-    NO_RESULTS = "You haven't added any additional documents to your application"
+    NO_RESULTS = "There are no supporting documents on the application"
     TITLE = "Supporting documents"
 
     class Documents:
@@ -338,14 +338,14 @@ class AdditionalDocuments:
         DELETE_DOCUMENT = "Delete"
         DESCRIPTION = "This is the document that has been uploaded for this draft."
         DOWNLOAD_DOCUMENT = "Download"
-        END_USER_HAS_NO_DOCUMENTS = "This consignee has no documents attached"
+        END_USER_HAS_NO_DOCUMENTS = "There are no documents attached"
         PROCESSING = "Processing"
         SAVE_END_USER = "save your progress and return to your application later"
         TITLE = "Additional document"
-        VIRUS_INFECTED = "Virus infected"
+        VIRUS_INFECTED = "The selected file contains a virus"
 
         class AttachDocuments:
-            BACK_TO_APPLICATION_OVERVIEW = "Back to additional documents overview"
+            BACK_TO_APPLICATION_OVERVIEW = "Back to supporting documents"
             BUTTON = "Attach document"
             DELETE_ERROR = "We had an issue deleting your files. Try again later."
             DESCRIPTION = (
@@ -355,7 +355,7 @@ class AdditionalDocuments:
             DESCRIPTION_FIELD_DETAILS = ""
             DESCRIPTION_FIELD_TITLE = "Description (optional)"
             DOWNLOAD_ERROR = "We had an issue downloading your file. Try again later."
-            FILE_TOO_LARGE = "The file you tried to upload is too large."
+            FILE_TOO_LARGE = "The selected file must be smaller than 100MB"
             TITLE = "Attach a document"
             UPLOAD_ERROR = "We had an issue uploading your files. Try again later."
 
