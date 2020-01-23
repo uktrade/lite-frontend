@@ -22,6 +22,7 @@ class Document:
     ATTACH = "Attach"
     REMOVE = "Remove"
     ACCESS_DENIED = "You don't have access to this document"
+    DOWNLOAD_ERROR = "This document cannot be downloaded at the moment"
 
 
 # Links
