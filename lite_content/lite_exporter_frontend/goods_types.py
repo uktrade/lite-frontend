@@ -1,4 +1,5 @@
 from lite_content.lite_exporter_frontend import generic
+from lite_content.lite_exporter_frontend.generic import PERMISSION_FINDER_LINK
 
 
 class OverviewPage:
