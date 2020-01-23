@@ -10,7 +10,7 @@ class UltimateEndUsers:
         "An ultimate recipient is an entity that uses the product or the higher level system into which the products are"
         " installed or incorporated. The end user and ultimate recipient may be different entities."
     )
-    NOTICE = "You haven't added any ultimate recipients to the application"
+    NOTICE = "There are no ultimate recipients on the application"
     MISSING_DOCS_NOTICE = "You need to attach a document to some ultimate recipients"
     ADD_BUTTON = "Add an ultimate recipient"
 
