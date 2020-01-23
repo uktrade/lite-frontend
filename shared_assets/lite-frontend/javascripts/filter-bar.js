@@ -3,7 +3,7 @@ $('#show-filters-link').show();
 $('#hide-filters-link').hide();
 
 $('#filters input, #filters select').each(function() {
-	if ($(this).val() != '' && $(this).val() != 'Select'&& $(this).val() != 'blank' && $(this).attr('type') != 'hidden') {
+	if ($(this).val() != '' && $(this).val() != 'Select' && $(this).val() != 'blank' && $(this).attr('type') != 'hidden') {
 		$('#filters').show();
 		$('#show-filters-link').hide();
 		$('#hide-filters-link').show();
