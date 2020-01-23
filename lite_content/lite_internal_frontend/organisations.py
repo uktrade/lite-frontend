@@ -14,3 +14,8 @@ class OrganisationsPage:
     class Filters:
         NAME = "name"
         TYPE = "organisation type"
+
+        class Types:
+            INDIVIDUAL = "Individual"
+            COMMERCIAL = "Commercial"
+            HMRC = "HMRC"

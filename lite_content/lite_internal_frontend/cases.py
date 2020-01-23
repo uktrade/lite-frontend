@@ -3,14 +3,10 @@ class CasesListPage:
     NO_CASES = "There are no new cases to show"
     ACTIVE_FILTER_NO_CASES = "There are no cases to show with those filters"
     EXPORTER_AMENDMENTS_BANNER = "See what cases have changed"
-    ASSIGN_USERS = "Assign Users"
+    ASSIGN_USERS = "Assign users"
     STATUS = "Status"
 
     class Filters:
-        SHOW_FILTERS = "Show filters"
-        HIDE_FILTERS = "Hide filters"
-        APPLY_FILTERS = "Apply filters"
-        CLEAR_FILTERS = "Clear filters"
         CASE_TYPE = "type"
         CASE_STATUS = "status"
         CASE_OFFICER = "case officer"
