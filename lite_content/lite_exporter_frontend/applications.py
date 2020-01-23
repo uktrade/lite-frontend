@@ -9,8 +9,8 @@ class PartyForm:
         TITLE = "Do you want to reuse an existing party?"
         YES = "Yes"
         NO = "No"
-        BACK_LINK = "Back to application"
-        BUTTON = "Submit"
+        BACK_LINK = "Back to application overview"
+        BUTTON = "Continue"
 
 
 class PartyTypeForm:
@@ -18,16 +18,16 @@ class PartyTypeForm:
 
 
 class AddPartyForm:
-    ERROR = "Select yes if you want to copy an existing party"
+    ERROR = "Select yes if you want to reuse an existing party"
 
 
 class CopyExistingPartyPage:
-    TITLE = "Existing Parties"
+    TITLE = "Existing parties"
     BACK_LINK = "Back"
-    HEADING = "Add a party you've created before"
-    ADD_BUTTON = "Add to application"
-    NONE_FOUND = "No existing parties found"
-    RESULTS = " results found"
+    HEADING = "Select a party"
+    ADD_BUTTON = "Edit and add to application"
+    NONE_FOUND = "No parties found"
+    RESULTS = " parties found"
 
     class Table:
         NAME_COLUMN = "Name"
@@ -123,13 +123,13 @@ class ApplicationSummaryPage:
     EXPORT_TYPE = "Export type"
     STATUS = "Status"
     LAST_UPDATED_AT = "Last updated"
-    CREATED_AT = "Created at"
-    SUBMITTED_AT = "Submitted at"
+    CREATED_AT = "Created"
+    SUBMITTED_AT = "Submitted"
     END_USER = "End user"
     ULTIMATE_END_USERS = "Ultimate recipient"
     CONSIGNEE = "Consignee"
     THIRD_PARTIES = "Third parties"
-    GOODS_LOCATIONS = "Product locations"
+    GOODS_LOCATIONS = "Locations"
     SUPPORTING_DOCUMENTATION = "Supporting documents"
     GOODS = "Products"
     COUNTRIES = "Countries"
@@ -165,8 +165,8 @@ class ApplicationsSummaryPage:
     EXPORT_TYPE = "Export type"
     STATUS = "Status"
     LAST_UPDATED_AT = "Last updated"
-    CREATED_AT = "Created at"
-    SUBMITTED_AT = "Submitted at"
+    CREATED_AT = "Created"
+    SUBMITTED_AT = "Submitted"
 
 
 class InitialApplicationQuestionsForms:
@@ -205,8 +205,8 @@ class InitialApplicationQuestionsForms:
 
 
 class DestinationForm:
-    TITLE = "Where are your products going?"
-    DESCRIPTION = "Select all countries that apply."
+    TITLE = "Where are the products going?"
+    DESCRIPTION = ""
 
 
 class EditStandardApplicationPage:
@@ -241,17 +241,17 @@ class DeleteDocument:
 
 
 class TaskListPage:
-    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference name"
-    WHERE_ARE_YOUR_GOODS_GOING_SHORT_TITLE = "Set countries"
+    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
+    WHERE_ARE_YOUR_GOODS_GOING_SHORT_TITLE = "Countries"
 
 
 class ApplicationSuccessPage:
-    TITLE = "Application submitted successfully"
-    SECONDARY_TITLE = "Your ECJU reference: "
+    TITLE = "Application submitted"
+    SECONDARY_TITLE = "ECJU reference: "
     DESCRIPTION = ""
     WHAT_HAPPENS_NEXT = ["You'll receive an email from ECJU when the check is finished."]
     VIEW_APPLICATIONS = "View your list of applications"
-    APPLY_AGAIN = "Apply for another export licence"
+    APPLY_AGAIN = "Apply for another licence or clearance"
     RETURN_TO_DASHBOARD = "Return to your export control account dashboard"
 
 
@@ -263,8 +263,8 @@ class ApplicationsList:
     IN_PROGRESS_TAB = "In progress"
     DRAFTS_TAB = "Drafts"
     NOTIFICATIONS_SUFFIX = "notifications"
-    NO_CONTENT_NOTICE = "You haven't applied for any licences."
-    NO_DRAFTS_CONTENT_NOTICE = "You don't have any draft applications at the moment."
+    NO_CONTENT_NOTICE = "There are no applications."
+    NO_DRAFTS_CONTENT_NOTICE = "There are no draft applications."
 
 
 class ApplicationPage:
@@ -275,7 +275,7 @@ class ApplicationPage:
 class ThirdPartiesPage:
     TITLE = "Third parties"
     ADD = "Add a third party"
-    NO_RESULTS = "You haven't added any third parties to your application"
+    NO_RESULTS = "There are no third parties on this application"
 
     class Variables:
         NAME = "Name"

@@ -3,23 +3,21 @@ from lite_content.lite_exporter_frontend.generic import PERMISSION_FINDER_LINK
 
 
 class GoodsList:
-    TITLE = "Products"
+    TITLE = "Product list"
     CREATE_GOOD = "Add a product"
     GOOD = "Product"
-    VERIFIED = "This product has been verified by ECJU based on the information provided"
+    VERIFIED = "ECJU has verified this product"
     EDIT_GOOD_LINK = "Edit product"
-    IN_REVIEW = (
-        "Your product is currently being reviewed by ECJU. "
-        "It has limited functionality until the review is complete."
-    )
+    IN_REVIEW = "ECJU is currently reviewing this product."
+
     YOUR_GOOD = "Product"
-    NO_LONGER_CAN_BE_CHANGED = "Your product has been used in an application and can therefore no longer be changed."
+    NO_LONGER_CAN_BE_CHANGED = "This product has been used on an application so can’t be edited."
 
     class Count:
-        ORGANISATION_ZERO = "Your organisation doesn't have any products."
-        ORGANISATION_ONE = "Your organisation has 1 product"
-        ORGANISATION_MANY = "Your organisation has %s products"  # %s will add the count of goods
-        FILTERED_ZERO = "There are no products based on filter"
+        ORGANISATION_ZERO = "Your organisation doesn't have any products listed."
+        ORGANISATION_ONE = "Your organisation has 1 product listed"
+        ORGANISATION_MANY = "Your organisation has %s products listed"  # %s will add the count of goods
+        FILTERED_ZERO = "There are no products to show"
         FILTERED_ONE = "Displaying 1 product"
         FILTERED_MANY = "Displaying %s products"  # %s will add the count of goods
 
@@ -35,7 +33,7 @@ class GoodsList:
     class Table:
         DESCRIPTION = generic.DESCRIPTION
         CONTROL_LIST_ENTRY = "Control list classification"
-        IS_GOOD_CONTROLLED = "Is the product on the control list?"
+        IS_GOOD_CONTROLLED = "Controlled"
         PART_NUMBER = generic.PART_NUMBER
         QUANTITY = "Quantity"
         VALUE = "Value"
@@ -138,8 +136,8 @@ class GoodsQueryForm:
         TITLE = "Control list classification (CLC) query"
 
         class Code:
-            TITLE = "What do you think is the product's control list classification (CLC) is?"
-            DESCRIPTION = ""
+            TITLE = "What do you think the CLC is for the product? (optional)"
+            DESCRIPTION = "For example, ML1a."
 
         class Details:
             TITLE = "Product details"
@@ -151,7 +149,7 @@ class GoodsQueryForm:
             TITLE = "Product details"
 
     class Additional:
-        TITLE = "Product details (optional)"
+        TITLE = "Comments (optional)"
         DESCRIPTION = "Include details of why you don't know if the product is controlled."
 
 
@@ -166,10 +164,11 @@ class EditGoodForm:
     class IsControlled:
         TITLE = "Is the product on the control list?"
         DESCRIPTION = (
-            "Products that aren't on the " + PERMISSION_FINDER_LINK + "may be affected "
-            "by military end use controls, current trade sanctions and embargoes or weapons of "
-            "mass destruction controls. If the product isn't subject to any controls, you'll get "
-            "a no licence required (NLR) document from ECJU."
+            "Products that aren't on the " + PERMISSION_FINDER_LINK + " may be affected by "
+            "[military end use controls](https://www.gov.uk/guidance/export-controls-military-goods-software-and-technology), "
+            "[current trade sanctions and embargoes](https://www.gov.uk/guidance/current-arms-embargoes-and-other-restrictions) or "
+            "[weapons of mass destruction controls](https://www.gov.uk/guidance/supplementary-wmd-end-use-controls). "
+            "If the product isn't subject to any controls, you'll get a no licence required (NLR) document from ECJU."
         )
         YES = "Yes"
         NO = "No"
@@ -215,16 +214,16 @@ class AttachDocumentForm:
 
 
 class RespondToQueryForm:
-    TITLE = "Respond to query"
+    TITLE = "Respond to ECJU query"
     BUTTON = "Submit response"
     BACK_LINK = "Back to product"
 
     class Response:
         TITLE = "Your response"
-        DESCRIPTION = "You won't be able to edit the response once it's submitted."
+        DESCRIPTION = "You can't edit the response once it's submitted."
 
     class ConfirmationForm:
-        TITLE = "Confirm you want to send the response?"
+        TITLE = "Confirm you want to send the response"
         BACK_LINK = "Back to edit response"
         YES = "Confirm and send the response"
         NO = "Cancel and change the response"
@@ -293,7 +292,7 @@ class AddGoodToApplicationForm:
         DESCRIPTION = ""
 
     class Incorporated:
-        TITLE = "Is this product incorporated?"
+        TITLE = "Will the product be incorporated into another product?"
         DESCRIPTION = ""
         YES = "Yes"
         NO = "No"
