@@ -25,6 +25,27 @@ def user_is_on_case_list(driver, context):
     )
 
 
+@then("user is not an assignee on case list")
+def user_is_not_on_case_list(driver, context):
+    assert context.user_name in CaseListPage(driver).get_text_of_assignees(driver, context.case_id), (
+        "user name " + context.user_name + " is an assignee on case list"
+    )
+
+
+@when("I filter assigned user by Not Assigned")
+def i_filter_case_officer_by_not_assigned(driver):
+    CaseListPage(driver).click_show_filters_link()
+    CaseListPage(driver).enter_assigned_user_filter_text("Not assigned")
+    CaseListPage(driver).click_apply_filters_button()
+
+
+@when("I filter assigned user by SSO users name")
+def i_filter_case_officer_by_not_assigned(driver, context):
+    CaseListPage(driver).click_show_filters_link()
+    CaseListPage(driver).enter_assigned_user_filter_text(context.user_name)
+    CaseListPage(driver).click_apply_filters_button()
+
+
 @then("only SSO users name is displayed in user list for assign cases")
 def user_is_on_case_list(driver, internal_info):
     elements = CaseListPage(driver).get_text_checkbox_elements()

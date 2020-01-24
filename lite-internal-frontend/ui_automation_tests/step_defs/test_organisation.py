@@ -20,8 +20,8 @@ def verify_registered_organisation(driver, context):
     assert functions.element_with_css_selector_exists(driver, ".lite-info-bar")
     driver.find_element_by_id("show-filters-link").click()
     time.sleep(0.5)
-    driver.find_element_by_id("filter-box").click()
-    driver.find_element_by_id("filter-box").send_keys(context.organisation_name)
+    driver.find_element_by_id(OrganisationsPage(driver).INPUT_SEARCH_TERM_ID).click()
+    driver.find_element_by_id(OrganisationsPage(driver).INPUT_SEARCH_TERM_ID).send_keys(context.organisation_name)
     driver.find_element_by_id("button-apply-filters").click()
     assert context.organisation_name in Shared(driver).get_text_of_lite_table_body()
 
@@ -29,7 +29,7 @@ def verify_registered_organisation(driver, context):
 @then("HMRC organisation is registered")
 def verify_hmrc_registered_organisation(driver, context):
     driver.find_element_by_id("show-filters-link").click()
-    driver.find_element_by_id("filter-box").send_keys(context.hmrc_org_name)
+    driver.find_element_by_id(OrganisationsPage(driver).INPUT_SEARCH_TERM_ID).send_keys(context.hmrc_org_name)
     driver.find_element_by_id("button-apply-filters").click()
     assert context.hmrc_org_name in Shared(driver).get_text_of_lite_table_body()
 

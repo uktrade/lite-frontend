@@ -24,6 +24,10 @@ Feature: I want to assign one or more specific users to a case in a work queue
     And I select user to assign SSO users name
     And I click on the added queue in dropdown
     Then user is assignee on case list
+    When I filter assigned user by Not Assigned
+    Then user is not an assignee on case list
+    When I filter assigned user by SSO users name
+    Then user is assignee on case list
     When I select the checkbox for previously created case to be assigned
     And I select user to assign SSO users name
     And I click on the added queue in dropdown

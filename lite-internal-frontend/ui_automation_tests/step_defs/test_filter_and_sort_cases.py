@@ -71,7 +71,7 @@ def the_filters_are_hidden(driver, context):
 @then("there are no cases shown")  # noqa
 def no_cases_shown(driver):
     assert (
-        "There are no new cases to show." in QueuesPages(driver).get_no_cases_text()
+        "There are no cases to show with those filters" in QueuesPages(driver).get_no_cases_text()
     ), "There are cases shown in the newly created queue."
 
 

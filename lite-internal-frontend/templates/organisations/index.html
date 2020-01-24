@@ -1,133 +1,68 @@
 {% extends 'layouts/base.html' %}
 
-{% load static svg %}
-
 {% block back_link %}{% endblock %}
 
 {% block body %}
-
 	{% include 'includes/messages.html' %}
 
 	<div class="lite-app-bar">
-		<h2 class="govuk-heading-l">Organisations</h2>
+		<h1 class="govuk-heading-l">
+			{% block title %}
+				{% lcs "organisations.OrganisationsPage.TITLE" %}
+			{% endblock %}
+		</h1>
 		<div class="lite-app-bar--right">
 			<a href="{% url 'organisations:register' %}" class="govuk-button" draggable="false" role="button">
-				Add an organisation
+				{% lcs "organisations.OrganisationsPage.ADD_BUTTON" %}
 			</a>
 		</div>
 	</div>
 
-	<div class="lite-js-only">
-		<a href="#" id="show-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
-			{% svg 'plus' %}
-			Show filters
-		</a>
-		<a href="#" id="hide-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
-			{% svg 'minus' %}
-			Hide filters
-		</a>
-	</div>
+	{% include "filters.html" %}
 
-	<form id="filters" action="{% url 'organisations:organisations'%}" method="get">
-	    <div class="govuk-grid-row lite-filter-bar">
-	        <div class="govuk-grid-column-one-quarter">
-	            <label class="govuk-label" for="status">
-	                Filter by name
-	            </label>
-				<div class="lite-search__container">
-				    <input type="search" class="govuk-input" name="search_term" id="filter-box" value="{{ params.search_term }}" placeholder="Search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-				    <button class="lite-search__button lite-search__button--instant-search" type="submit">
-				        {% svg 'search' %}
-				        <span>Search</span>
-				    </button>
-				</div>
-	        </div>
-	        <div class="govuk-grid-column-one-quarter">
-	            <label class="govuk-label" for="case_type">
-	                Filter by organisation type
-	            </label>
-	            <div class="lite-select-wrapper">
-	                <select class="govuk-select" id="org_type" name="org_type">
-	                    <option {% if params.org_type == None %}selected{% endif %} value="">All</option>
-	                    <option {% if params.org_type == "individual" %}selected{% endif %} value="individual">Individual</option>
-						<option {% if params.org_type == "commercial" %}selected{% endif %} value="commercial">Commercial</option>
-	                    <option {% if params.org_type == "hmrc" %}selected{% endif %} value="hmrc">HMRC</option>
-	                </select>
-	            </div>
-	        </div>
-	        <div class="govuk-grid-column-one-half">
-	            <label class="govuk-label" for="filter" style="visibility: collapse;">
-	                --
-	            </label>
-	            <div class="lite-buttons-row">
-	                <button type="submit" form="filters" class="govuk-button" style="margin: 0;" id="button-apply-filters">
-	                    Apply filters
-	                </button>
-	                <a href="{% url 'organisations:organisations' %}" class="govuk-button govuk-button--secondary govuk-button--secondary-white" style="margin-bottom: 0;" id="button-clear-filters">
-	                    Clear filters
-	                </a>
-	            </div>
-	        </div>
-	    </div>
-
-	</form>
-
-	{% if data.results|length %}
+	{% if data.results %}
 		<table class="govuk-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
-					<th class="govuk-table__header" scope="col">Name</th>
-					<th class="govuk-table__header" scope="col">Type</th>
-					<th class="govuk-table__header" scope="col">EORI Number</th>
-					<th class="govuk-table__header" scope="col">SIC Number</th>
-					<th class="govuk-table__header" scope="col">VAT Number</th>
-					<th class="govuk-table__header" scope="col">Address</th>
+					<th class="govuk-table__header" scope="col">{% lcs "organisations.OrganisationsPage.Table.NAME" %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs "organisations.OrganisationsPage.Table.TYPE" %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs "organisations.OrganisationsPage.Table.EORI_NUMBER" %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs "organisations.OrganisationsPage.Table.SIC_NUMBER" %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs "organisations.OrganisationsPage.Table.VAT_NUMBER" %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs "organisations.OrganisationsPage.Table.ADDRESS" %}</th>
 				</tr>
 			</thead>
 			<tbody class="govuk-table__body">
 				{% for organisation in data.results %}
 					<tr class="govuk-table__row">
 						<td class="govuk-table__cell">
-							<a class="govuk-link" href="{% url 'organisations:organisation' organisation.id %}">{{ organisation.name }}</a>
+							<a class="govuk-link" href="{% url 'organisations:organisation' organisation.id %}">
+								{{ organisation.name|highlight_text:search_term }}
+							</a>
 						</td>
                         <td class="govuk-table__cell">
-							{{ organisation.type.value|default:"Untitled" }}
+							{{ organisation.type.value }}
 						</td>
 						<td class="govuk-table__cell">
-							{{ organisation.eori_number|default:"N/A" }}
+							{{ organisation.eori_number|default_na }}
 						</td>
 						<td class="govuk-table__cell">
-							{{ organisation.sic_number|default:"N/A" }}
+							{{ organisation.sic_number|default_na }}
 						</td>
 						<td class="govuk-table__cell">
-							{{ organisation.vat_number|default:"N/A" }}
+							{{ organisation.vat_number|default_na }}
 						</td>
 						<td class="govuk-table__cell">
-							{{ organisation.primary_site.address.address_line_1 }}<br/>
-							{{ organisation.primary_site.address.postcode }}<br/>
-							{{ organisation.primary_site.address.city }}<br/>
-							{{ organisation.primary_site.address.country.name }}
+							{{ organisation.primary_site|get_address }}
 						</td>
 					</tr>
 				{% endfor %}
 			</tbody>
 		</table>
         {% if data.total_pages > 1 %}
-	        <br>
-
-	        <div class="lite-pagination__container ">
-	            {% for i in data.total_pages|times %}
-	                <a href="{% url 'organisations:organisations' %}?{{ params_str }}&page={{ i }}" class="lite-pagination__item {% if page == i %}lite-pagination__item--selected{% endif %}" id="page-{{ i }}">
-	                    {{ i }}
-	                </a>
-	            {% endfor %}
-	        </div>
-	    {% endif %}
-		<br><br>
+	        {% include "includes/pagination.html" %}
+		{% endif %}
+	{% else %}
+		{% include "includes/notice.html" with text="organisations.OrganisationsPage.ACTIVE_FILTER_NO_ORGANISATIONS" %}
 	{% endif %}
-
-{% endblock %}
-
-{% block javascript %}
-	<script src="{% static 'javascripts/filter-bar.js' %}"></script>
 {% endblock %}

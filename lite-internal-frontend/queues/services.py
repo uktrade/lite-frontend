@@ -4,8 +4,8 @@ from conf.client import get, post, put
 from conf.constants import QUEUES_URL, CASE_URL
 
 
-def get_queues(request, convert_to_options=False, include_system_queues=False):
-    data = get(request, QUEUES_URL + "?include_system_queues=" + str(include_system_queues))
+def get_queues(request, convert_to_options=False):
+    data = get(request, QUEUES_URL)
     if convert_to_options:
         converted = []
 

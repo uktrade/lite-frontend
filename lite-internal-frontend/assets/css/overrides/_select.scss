@@ -1,0 +1,14 @@
+.govuk-select {
+	position: relative;
+	min-height: 40px!important;
+	height: 40px!important;
+	border-radius: 0!important;
+	-webkit-appearance: none;
+	padding-left: govuk-spacing(2);
+	padding-right: 16px + govuk-spacing(4);
+	background-color: govuk-colour("white");
+	background-image: url("/assets/images/chevron.svg");
+	background-repeat: no-repeat;
+	background-position: right govuk-spacing(2) center;
+	background-size: 16px;
+}

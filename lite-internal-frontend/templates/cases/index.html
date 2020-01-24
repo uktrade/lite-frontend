@@ -13,7 +13,7 @@
 
 	<div class="lite-app-bar">
 		<form method="get" class="app-dropdown__select">
-			<select class="govuk-select" name="queue">
+			<select class="govuk-select" name="queue_id">
 				{% for queue in data.results.queues %}
 					<option value="{{ queue.id }}" {% if queue.id == data.results.queue.id %}selected{% endif %}>{{ queue.name }}</option>
 				{% endfor %}
@@ -42,62 +42,7 @@
 		</div>
 	</div>
 
-	<div class="lite-js-only">
-		<a href="#" id="show-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
-			{% svg 'plus' %}
-			{% lcs 'cases.CasesListPage.Filters.SHOW_FILTERS' %}
-		</a>
-		<a href="#" id="hide-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
-			{% svg 'minus' %}
-			{% lcs 'cases.CasesListPage.Filters.HIDE_FILTERS' %}
-		</a>
-	</div>
-	<form id="filters" action="{% url 'cases:cases'%}" method="get">
-
-		<input hidden name="queue_id" value="{{ data.results.queue.id }}">
-
-		<div class="govuk-grid-row lite-filter-bar">
-			<div class="govuk-grid-column-one-quarter">
-				<label class="govuk-label" for="case_type">
-					{% lcs 'cases.CasesListPage.Filters.FILTER_BY_CASE_TYPE' %}
-				</label>
-				<div class="lite-select-wrapper">
-					<select class="govuk-select" id="case_type" name="case_type">
-						<option {% if params.case_type == None %}selected{% endif %} value="">Select</option>
-						{% for case_type in data.results.filters.case_types %}
-							<option value="{{ case_type.value }}" {% if case_type.value == params.case_type %}selected{% endif %}>{{case_type.title}}</option>
-						{% endfor %}
-					</select>
-				</div>
-			</div>
-			<div class="govuk-grid-column-one-quarter">
-				<label class="govuk-label" for="status">
-					{% lcs 'cases.CasesListPage.Filters.FILTER_BY_CASE_STATUS' %}
-				</label>
-				<div class="lite-select-wrapper">
-					<select class="govuk-select" id="status" name="status">
-						<option {% if params.status == None %}selected{% endif %} value="">Select</option>
-						{% for case_status in data.results.filters.statuses %}
-							<option value="{{ case_status.status }}" {% if case_status.status == params.status %}selected{% endif %}>{{ case_status.status|default:"Untitled"|sentence_case }}</option>
-						{% endfor %}
-					</select>
-				</div>
-			</div>
-			<div class="govuk-grid-column-one-half">
-				<label class="govuk-label" for="filter" style="visibility: collapse;">
-					--
-				</label>
-				<div class="lite-buttons-row">
-					<button type="submit" form="filters" class="govuk-button" style="margin: 0;" id="button-apply-filters">
-						{% lcs 'cases.CasesListPage.Filters.APPLY_FILTERS' %}
-					</button>
-					<a href="{% url 'cases:cases' %}?queue_id={{ data.results.queue.id }}" class="govuk-button govuk-button--secondary" style="margin-bottom: 0;" id="button-clear-filters">
-						 {% lcs 'cases.CasesListPage.Filters.CLEAR_FILTERS' %}
-					</a>
-				</div>
-			</div>
-		</div>
-	</form>
+	{% include "filters.html" %}
 
 	<form id="cases-form" method="post">
 		{% csrf_token %}
@@ -203,41 +148,41 @@
 										</span>
 									</div>
 								{% endfor %}
-						{% for flag in case.flags|slice:"3:" %}
-							<div class="app-expanded-row__item">
-								{{ flag.name }}
-							</div>
-						{% endfor %}
-					</td>
-					<td class="cases-table__cell">
-						{{ case.status|sentence_case }}
-					</td>
-					<td class="cases-table__cell govuk-table__cell--numeric">
-						<a id="expand-flags-{{ case.id }}" class="lite-accordian-table__chevron" onclick="return openTableFold(this);">
-							{% if case.flags|length > 3 or case.users|length > 3 or case.queue_names|length > 3 %}
-								{% svg 'chevron' %}
-							{% endif %}
+								{% for flag in case.flags|slice:"3:" %}
+									<div class="app-expanded-row__item">
+										{{ flag.name }}
+									</div>
+								{% endfor %}
+							</td>
+							<td class="cases-table__cell">
+								{{ case.status|sentence_case }}
+							</td>
+							<td class="cases-table__cell govuk-table__cell--numeric">
+								<a id="expand-flags-{{ case.id }}" class="lite-accordian-table__chevron" onclick="return openTableFold(this);">
+									{% if case.flags|length > 3 or case.users|length > 3 or case.queue_names|length > 3 %}
+										{% svg 'chevron' %}
+									{% endif %}
+								</a>
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			{% if data.total_pages > 1 %}
+				<br>
+				<div class="lite-pagination__container ">
+					{% for i in data.total_pages|times %}
+						<a href="{% url 'cases:cases' %}?{{ params_str }}&page={{ i }}" class="lite-pagination__item {% if page == i %}lite-pagination__item--selected{% endif %}" id="page-{{ i }}">
+							{{ i }}
 						</a>
-					</td>
-				</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-		{% if data.total_pages > 1 %}
-		<br>
-		<div class="lite-pagination__container ">
-			{% for i in data.total_pages|times %}
-				<a href="{% url 'cases:cases' %}?{{ params_str }}&page={{ i }}" class="lite-pagination__item {% if page == i %}lite-pagination__item--selected{% endif %}" id="page-{{ i }}">
-					{{ i }}
-				</a>
-			{% endfor %}
-		</div>
-		{% endif %}
+					{% endfor %}
+				</div>
+			{% endif %}
 		{% else %}
-			{% include "includes/notice.html" with text="cases.CasesListPage.NO_CASES" %}
-			<br><br>
-			{% if params.case_type or params.status %}
-				<a href="{% url 'cases:cases' %}?queue={{ data.results.queue.id }}" class="govuk-link govuk-link--no-visited-state govuk-body">Clear filters</a>
+			{% if params.case_type or params.status or params.case_officer or params.assigned_user %}
+				{% include "includes/notice.html" with text="cases.CasesListPage.ACTIVE_FILTER_NO_CASES" %}
+			{% else %}
+				{% include "includes/notice.html" with text="cases.CasesListPage.NO_CASES" %}
 			{% endif %}
 		{% endif %}
 	</form>
@@ -246,29 +191,7 @@
 {% block javascript %}
 	<script src="{% static 'javascripts/cases.js' %}"></script>
 	<script src="{% static 'javascripts/select-buttons.js' %}"></script>
-	<script src="{% static 'javascripts/filter-bar.js' %}"></script>
 	<script nonce="{{ request.csp_nonce }}">
-		$("#filters").hide();
-		$("#show-filters-link").show();
-		$("#hide-filters-link").hide();
-
-		{% if params.case_type or params.status %}
-			$("#filters").show();
-			$("#show-filters-link").hide();
-			$("#hide-filters-link").show();
-		{% endif %}
-
-		function toggleFilters() {
-			$("#filters").toggle();
-			if ($("#filters").is(':visible')) {
-				$("#show-filters-link").hide();
-				$("#hide-filters-link").show();
-			} else {
-				$("#show-filters-link").show();
-				$("#hide-filters-link").hide();
-			}
-		}
-
 		function toggleDropdown() {
 			$(".app-dropdown-background").toggle();
 			$("#queues").toggleClass('app-dropdown__container--visible');

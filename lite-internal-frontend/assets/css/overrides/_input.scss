@@ -1,3 +1,10 @@
 .govuk-input {
 	min-height: 40px!important;
 }
+
+.lite-filter-bar {
+	.govuk-input, .lite-autocomplete__hint, .lite-autocomplete__input, .lite-autocomplete__option {
+		padding-left: govuk-spacing(2);
+		padding-right: govuk-spacing(2);
+	}
+}
