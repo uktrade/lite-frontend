@@ -79,3 +79,8 @@ def classname(obj):
     Returns object class name
     """
     return obj.__class__.__name__
+
+
+@register.filter()
+def get(value, arg):
+    return value.get(arg, "")

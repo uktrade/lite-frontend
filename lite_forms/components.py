@@ -490,6 +490,14 @@ class ControlListEntryInput:
         self.input_type = "control_list_entry"
 
 
+class AutocompleteInput:
+    def __init__(self, name: str, options: [], title: str = ""):
+        self.name = name
+        self.options = options
+        self.title = title
+        self.input_type = "autocomplete"
+
+
 class Link:
     def __init__(self, text: str, address: str, name: str = None, classes: [] = None, form_action: bool = False):
         self.text = text
@@ -501,3 +509,8 @@ class Link:
 
     def __eq__(self, other):
         return other.text == self.text and other.address == self.address
+
+
+class FiltersBar:
+    def __init__(self, filters: list):
+        self.filters = filters

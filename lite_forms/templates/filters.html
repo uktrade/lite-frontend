@@ -1,0 +1,38 @@
+{% load svg static %}
+
+<div class="lite-js-only">
+	<a href="#" id="show-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
+		{% svg 'plus' %}
+		{% lcs 'generic.Filters.SHOW_FILTERS_LINK' %}
+	</a>
+	<a href="#" id="hide-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
+		{% svg 'minus' %}
+		{% lcs 'generic.Filters.HIDE_FILTERS_LINK' %}
+	</a>
+</div>
+<form id="filters" method="get">
+	<div class="lite-filter-bar">
+		<div class="lite-filter-bar__components">
+			{% for component in filters.filters %}
+				{% if component.input_type != "hidden" and component != None %}
+					<div>
+						<label class="lite-filter-bar__label" for="{{ component.name }}"><span>{% lcs 'generic.Filters.FILTER_BY_PREFIX' %}</span> {{ component.title }}</label>
+						{% include "components/"|add:component.input_type|add:".html" with component=component data=request.GET|get:component.name name=component.name value=request.GET|get:component.name %}
+					</div>
+				{% else %}
+					<input type="hidden" name="{{ component.name }}" value="{{ component.value }}">
+				{% endif %}
+			{% endfor %}
+		</div>
+		<div class="lite-filter-bar__buttons">
+			<button type="submit" form="filters" class="govuk-button" id="button-apply-filters">
+				{% lcs 'generic.Filters.APPLY_FILTERS_BUTTON' %}
+			</button>
+			<a href="?{% for component in filters.filters %}{% if component.input_type == "hidden" %}{{ component.name }}={{ component.value }}&{% endif %}{% endfor %}" class="govuk-button govuk-button--secondary govuk-button--secondary-white" id="button-clear-filters">
+				 {% lcs 'generic.Filters.CLEAR_FILTERS_BUTTON' %}
+			</a>
+		</div>
+	</div>
+</form>
+
+<script src="{% static 'javascripts/filter-bar.js' %}"></script>
