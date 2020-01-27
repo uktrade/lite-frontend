@@ -139,3 +139,23 @@ def apply_for_open_application(driver, seed_data_config, context):
     context.case_id = lite_client.context["application_id"]
     context.country = lite_client.context["country"]
     timer.print_time("apply_for_open_application")
+
+
+@fixture(scope="module")
+def apply_for_exhibition_clearance(driver, seed_data_config, context):
+    lite_client = get_lite_client(context, seed_data_config)
+    name = f"Exhibition Clearance {datetime.datetime.now().strftime(' %d%H%M%S')}"
+    draft_id = lite_client.add_draft(
+        draft={
+            "name": name,
+            "application_type": "exhibition_clearance",
+        }
+    )
+    lite_client.submit_standard_application(draft_id)
+    context.app_id = lite_client.context["application_id"]
+    context.case_id = lite_client.context["application_id"]
+    context.end_user = lite_client.context["end_user"]
+    context.consignee = lite_client.context["consignee"]
+    context.third_party = lite_client.context["third_party"]
+    context.ultimate_end_user = lite_client.context["ultimate_end_user"]
+    context.app_name = name
