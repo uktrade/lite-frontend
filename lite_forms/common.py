@@ -27,3 +27,14 @@ def control_list_entry_question(
     return ControlListEntryInput(
         title=title, name=name, description=description, options=control_list_entries, classes=classes,
     )
+
+
+def pv_grading_question(
+    pv_gradings,
+    title="PV grading",
+    description="For example, UK official - sensitive",
+    name="pv_grading",
+    inset_text=True,
+):
+    classes = ["govuk-inset-text"] if inset_text else []
+    return ControlListEntryInput(title=title, name=name, description=description, options=pv_gradings, classes=classes,)

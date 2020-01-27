@@ -59,7 +59,7 @@ def _prepare_data(request, inject_data, expect_many_values):
     return data, nest_data(data)
 
 
-def submit_paged_form(
+def submit_paged_form(  # noqa
     request, form_group: FormGroup, action: Callable, object_pk=None, inject_data=None, expect_many_values=None,
 ):
     """
@@ -108,7 +108,11 @@ def submit_paged_form(
             exists = False
 
             for question in current_form.questions:
-                if hasattr(question, "name"):
+                if hasattr(question, "prefix") and question.prefix:
+                    if question.prefix in key:
+                        exists = True
+                        continue
+                elif hasattr(question, "name"):
                     if question.name == key:
                         exists = True
                         continue

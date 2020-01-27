@@ -434,13 +434,15 @@ class DateInput:
         prefix: str,
         title: str = "",
         description: str = "",
-        optional: bool = False,
+        name: str = None,
+        optional: bool = None,
         classes: [] = None,
         extras: [] = None,
     ):
         self.prefix = prefix
         self.title = title
         self.description = description
+        self.name = name
         self.optional = optional
         self.classes = classes
         self.extras = extras

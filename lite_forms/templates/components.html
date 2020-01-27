@@ -73,7 +73,7 @@
 		{% elif question.input_type == "quantity_input" %}
 			{% include "components/quantity.html" with name=question.name value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
 		{% elif question.input_type == "date" %}
-			{% include "components/date.html" with component=question errors=errors %}
+			{% include "components/date.html" with component=question data=data|date_join:question.prefix|default:'' errors=errors %}
         {% elif question.input_type == "summary" %}
 			{% include "components/summary.html" with component=question %}
 		{% elif question.input_type == "list" %}
