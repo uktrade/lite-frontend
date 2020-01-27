@@ -67,7 +67,7 @@ class Hub(TemplateView):
                         ),
                         Tile(
                             strings.hub.Tiles.GOODS,
-                            generate_notification_string(notifications, case_types=[CaseType.CLC_QUERY]),
+                            generate_notification_string(notifications, case_types=[CaseType.GOODS_QUERY]),
                             reverse_lazy("goods:goods"),
                         ),
                         Tile(

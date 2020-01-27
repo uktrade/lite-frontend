@@ -16,12 +16,14 @@ class AddGoodPage(BasePage):
     # Add a good
     PART_NUMBER = "part_number"  # ID
     IS_CONTROLLED = "is_good_controlled-"  # Partial ID
+    IS_PV_GRADED = "is_pv_graded-"
     CONTROL_CODE = "control_code"  # ID
     DESCRIPTION = "description"  # ID
 
     # Not sure form
-    UNSURE_CODE = "not_sure_details_control_code"  # ID
-    UNSURE_DETAILS = "not_sure_details_details"  # ID
+    UNSURE_CLC_CODE = "clc_control_code"  # ID
+    UNSURE_CLC_DETAILS = "clc_raised_reasons"  # ID
+    UNSURE_PV_GRADING_DETAILS = "pv_grading_raised_reasons"  # ID
 
     def enter_description_of_goods(self, description):
         self.driver.find_element_by_id(self.DESCRIPTION).send_keys(description)
@@ -29,6 +31,10 @@ class AddGoodPage(BasePage):
     def select_is_your_good_controlled(self, option):
         # The only options accepted here are 'yes', 'no' and 'unsure'
         self.driver.find_element_by_id(self.IS_CONTROLLED + option.lower()).click()
+
+    def select_is_your_good_graded(self, option):
+        # The only options accepted here are 'yes', 'no' and 'grading_required'
+        self.driver.find_element_by_id(self.IS_PV_GRADED + option.lower()).click()
 
     def enter_control_code(self, code):
         control_code_tb = self.driver.find_element_by_id(self.CONTROL_CODE)
@@ -39,14 +45,19 @@ class AddGoodPage(BasePage):
         self.driver.find_element_by_tag_name("body").click()
 
     def enter_control_code_unsure(self, code):
-        control_code_tb = self.driver.find_element_by_id(self.UNSURE_CODE)
+        control_code_tb = self.driver.find_element_by_id(self.UNSURE_CLC_CODE)
         control_code_tb.clear()
         control_code_tb.send_keys(code)
 
     def enter_control_unsure_details(self, details):
-        unsure_details = self.driver.find_element_by_id(self.UNSURE_DETAILS)
+        unsure_details = self.driver.find_element_by_id(self.UNSURE_CLC_DETAILS)
         unsure_details.clear()
         unsure_details.send_keys(details)
+
+    def enter_grading_unsure_details(self, details):
+        unsure_pv_details = self.driver.find_element_by_id(self.UNSURE_PV_GRADING_DETAILS)
+        unsure_pv_details.clear()
+        unsure_pv_details.send_keys(details)
 
     def enter_part_number(self, part_number):
         part_number_tb = self.driver.find_element_by_id(self.PART_NUMBER)

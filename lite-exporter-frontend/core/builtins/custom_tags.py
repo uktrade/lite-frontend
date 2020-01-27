@@ -235,3 +235,26 @@ def set_lcs_variable(value, arg):
 @register.filter()
 def get(value, arg):
     return value.get(arg)
+
+
+@register.filter()
+def date_display(value):
+    months = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+    ]
+
+    year, month, day = value.split("-")
+    month = months[(int(month) - 1)]
+
+    return f"{int(day)} {month} {year}"

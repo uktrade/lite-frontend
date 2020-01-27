@@ -36,7 +36,7 @@ EXISTING_PARTIES_URL = "/existing-parties"
 
 # Queries URLs
 QUERIES_URL = "/queries/"
-CONTROL_LIST_CLASSIFICATIONS_URL = QUERIES_URL + "control-list-classifications/"
+GOODS_QUERY_URL = QUERIES_URL + "goods-queries/"
 END_USER_ADVISORIES_URL = QUERIES_URL + "end-user-advisories/"
 
 # Static URLs
@@ -45,6 +45,7 @@ STATUS_PROPERTIES_URL = STATIC_URL + "statuses/properties/"
 UNITS_URL = STATIC_URL + "units/"
 COUNTRIES_URL = STATIC_URL + "countries/"
 CONTROL_LIST_ENTRIES_URL = STATIC_URL + "control-list-entries/"
+PV_GRADINGS_URL = STATIC_URL + "private-venture-gradings/"
 MISSING_DOCUMENT_REASONS_URL = STATIC_URL + "missing-document-reasons/"
 
 # Document URLs
@@ -80,6 +81,6 @@ class Permissions:
 
 class CaseType:
     APPLICATION = "application"
-    CLC_QUERY = "clc_query"
+    GOODS_QUERY = "goods_query"
     EUA_QUERY = "end_user_advisory_query"
     HMRC_QUERY = "hmrc_query"

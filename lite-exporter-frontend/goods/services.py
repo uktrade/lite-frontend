@@ -4,7 +4,7 @@ from conf.client import get, post, put, delete
 from conf.constants import (
     GOODS_URL,
     DOCUMENTS_URL,
-    CONTROL_LIST_CLASSIFICATIONS_URL,
+    GOODS_QUERY_URL,
     DOCUMENT_SENSITIVITY_URL,
     MISSING_DOCUMENT_REASONS_URL,
     GENERATED_DOCUMENTS_URL,
@@ -12,14 +12,13 @@ from conf.constants import (
     ADDITIONAL_DOCUMENT_URL,
     DOWNLOAD_URL,
 )
+from goods.helpers import process_pv_grading_for_post
 from core.helpers import convert_parameters_to_query_params
-from core.helpers import remove_prefix
 from core.services import get_document_download_stream
 
 
 def get_goods(request, page: int = 1, description=None, part_number=None, control_rating=None, for_application=None):
     data = get(request, GOODS_URL + convert_parameters_to_query_params(locals()))
-
     return data.json()
 
 
@@ -29,27 +28,44 @@ def get_good(request, pk):
 
 
 def post_goods(request, json):
-    if json.get("good_description", False) or json.get("good_description") == "":
-        post_data = remove_prefix(json, "good_")
-    else:
-        post_data = json
-    data = post(request, GOODS_URL, post_data)
+    data = post(request, GOODS_URL, json)
+    if data.status_code == HTTPStatus.OK:
+        data.json().get("good"), data.status_code
     return data.json(), data.status_code
 
 
 def validate_good(request, json):
-    if json.get("good_description", False) or json.get("good_description") == "":
-        post_data = remove_prefix(json, "good_")
-    else:
-        post_data = json
+    post_data = json
     post_data["validate_only"] = True
-    data = post(request, GOODS_URL, post_data)
+
+    data = post_goods(request, post_data)
     return data
 
 
-def update_good(request, pk, json):
+def post_good_with_pv_grading(request, json):
+    post_data = process_pv_grading_for_post(json)
+
+    data = post_goods(request, post_data)
+    return data
+
+
+def edit_good(request, pk, json):
     data = put(request, GOODS_URL + pk + "/", json)
     return data.json(), data.status_code
+
+
+def validate_edit_good(request, pk, json):
+    post_data = json
+
+    post_data["validate_only"] = True
+    return edit_good(request, pk, post_data)
+
+
+def edit_good_with_pv_grading(request, pk, json):
+    post_data = process_pv_grading_for_post(json)
+
+    data = edit_good(request, pk, post_data)
+    return data
 
 
 def delete_good(request, pk):
@@ -57,13 +73,16 @@ def delete_good(request, pk):
     return data.json(), data.status_code
 
 
-def raise_clc_query(request, json):
-    data = post(request, CONTROL_LIST_CLASSIFICATIONS_URL, json)
+def raise_goods_query(request, pk, json):
+    post_data = json
+    post_data["good_id"] = pk
+
+    data = post(request, GOODS_QUERY_URL, post_data)
     return data.json(), data.status_code
 
 
-def get_clc_query_generated_documents(request, pk):
-    data = get(request, CONTROL_LIST_CLASSIFICATIONS_URL + pk + GENERATED_DOCUMENTS_URL)
+def get_goods_query_generated_documents(request, pk):
+    data = get(request, GOODS_QUERY_URL + pk + GENERATED_DOCUMENTS_URL)
     return data.json(), data.status_code
 
 
@@ -79,6 +98,10 @@ def get_good_documents(request, pk):
 
 
 def post_good_documents(request, pk, json):
+    if "description" not in json:
+        json["description"] = ""
+    json = [json]
+
     data = post(request, GOODS_URL + pk + DOCUMENTS_URL, json)
     return data.json(), data.status_code
 

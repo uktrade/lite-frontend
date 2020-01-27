@@ -26,23 +26,19 @@ def assert_good_is_in_list(driver, context, exporter_url):
     assert context.control_code in goods_row
 
 
-@then("I see the clc query in goods list")
-def assert_clc_is_in_list(driver, context, exporter_url):
-    goods_row = Shared(driver).get_text_of_gov_table()
-
-    assert context.good_description in goods_row
-    assert context.part in goods_row
-    assert context.control_code in goods_row
-    assert "Control List Classification Query" in goods_row
+@then("I see the good is in a query")
+def assert_good_contain_query_details(driver, context, exporter_url):
+    goods_list = GoodsPage(driver)
+    assert goods_list.get_text_of_query_details()
 
 
 @when(
     parsers.parse(
-        'I edit a good to description "{description}" controlled "{controlled}" '
-        'control code "{control_code}" and part number "{part}"'
+        'I edit a good to description "{description}" part number "{part}" controlled "{controlled}" '
+        'control code "{control_code}" and graded "{graded}"'
     )
 )
-def edit_good(driver, description, controlled, control_code, part, context):
+def edit_good(driver, description, part, controlled, control_code, graded, context):
     add_goods_page = AddGoodPage(driver)
     goods_list = GoodsListPage(driver)
     goods_list.select_a_draft_good()
@@ -50,6 +46,7 @@ def edit_good(driver, description, controlled, control_code, part, context):
     goods_page.click_on_goods_edit_link()
     context.edited_description = context.good_description + " " + description
     add_goods_page.enter_description_of_goods(context.edited_description)
+    add_goods_page.select_is_your_good_graded(graded)
     functions.click_submit(driver)
 
 
@@ -69,7 +66,9 @@ def good_is_no_longer_in_list(driver, context):
 
 
 @then("I see my edited good details in the good page")
-def click_on_draft_good(driver):
+def click_on_draft_good(driver, context, exporter_url):
+    good_id = driver.current_url.split("/goods/")[1].split("/")[0]
+    driver.get(exporter_url.rstrip("/") + "/goods/" + good_id)
     text = driver.find_element_by_css_selector(".govuk-summary-list").text
     assert "edited" in text
     assert "Yes" in text
@@ -119,14 +118,15 @@ def a_new_good_has_been_added_to_the_application(driver):
 
 @when(
     parsers.parse(
-        'I add a new good with description "{description}" controlled "{controlled}" control code "{control_code}" and part number "{part_number}"'
+        'I add a new good with description "{description}" part number "{part_number}" controlled "{controlled}" control code "{control_code}" and graded "{graded}"'
     )
 )  # noqa
-def create_a_new_good_in_application(driver, description, controlled, control_code, part_number):
+def create_a_new_good_in_application(driver, description, part_number, controlled, control_code, graded):
     add_goods_page = AddGoodPage(driver)
     add_goods_page.enter_description_of_goods(description)
     add_goods_page.select_is_your_good_controlled(controlled)
     add_goods_page.enter_control_code(control_code)
+    add_goods_page.select_is_your_good_graded(graded)
     functions.click_submit(driver)
 
 
@@ -189,11 +189,16 @@ def upload_a_file_with_description(driver, filename, description):  # noqa
     functions.click_submit(driver)
 
 
-@when(parsers.parse('I raise a clc query control code "{control_code}" description "{description}"'))  # noqa
-def raise_clc_query(driver, control_code, description):  # noqa
+@when(
+    parsers.parse(
+        'I raise a clc query control code "{control_code}" clc description "{clc_reason}" and pv grading reason "{pv_grading_reason}"'
+    )
+)  # noqa
+def raise_clc_query(driver, control_code, clc_reason, pv_grading_reason):  # noqa
     raise_clc_query_page = AddGoodPage(driver)
     raise_clc_query_page.enter_control_code_unsure(control_code)
-    raise_clc_query_page.enter_control_unsure_details(description)
+    raise_clc_query_page.enter_control_unsure_details(clc_reason)
+    raise_clc_query_page.enter_grading_unsure_details(pv_grading_reason)
     functions.click_submit(driver)
 
 
