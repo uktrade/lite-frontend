@@ -263,6 +263,11 @@ class LetterTemplates:
         class CaseTypes:
             TITLE = "When should someone use this template?"
 
+            class Types:
+                APPLICATION = "Applications"
+                GOODS_QUERY = "Goods Query"
+                END_USER_ADVISORY = "End User Advisory Queries"
+
         class Layout:
             TITLE = "Choose a layout"
 
@@ -279,6 +284,11 @@ class LetterTemplates:
         class CaseTypes:
             CONTINUE_BUTTON = "Continue"
             TITLE = "When should someone use this template?"
+
+            class Types:
+                APPLICATION = "Applications"
+                GOODS_QUERY = "Goods Query"
+                END_USER_ADVISORY = "End User Advisory Queries"
 
         class Layout:
             CONTINUE_BUTTON = "Continue"
