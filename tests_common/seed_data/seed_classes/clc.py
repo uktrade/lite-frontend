@@ -7,14 +7,10 @@ class Clc(SeedClass):
         data = self.request_data["not_sure_details"]
         data["good_id"] = good_id
         return make_request(
-            "POST",
-            base_url=self.base_url,
-            url="/queries/control-list-classifications/",
-            headers=self.export_headers,
-            body=data,
+            "POST", base_url=self.base_url, url="/queries/goods-queries/", headers=self.export_headers, body=data,
         ).json()["id"]
 
-    def add_clc_query(self, seed_good):
+    def add_goods_query(self, seed_good):
         good = seed_good.post_good(self.request_data["clc_good"])
         case_id = self.submit_to_control_list_classification(good["id"])
         self.add_to_context("case_id", case_id)
