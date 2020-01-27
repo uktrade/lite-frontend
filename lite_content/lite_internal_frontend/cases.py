@@ -231,6 +231,7 @@ class ClcQuery:
 class ChangeStatusPage:
     TITLE = "Change case status"
     DESCRIPTION = ""
+    SUCCESS_MESSAGE = "You've changed the case status successfully"
 
 
 class ReviewGoodsSummary:
@@ -302,9 +303,9 @@ class Manage:
             TITLE = "Attach a document to this case"
 
     class MoveCase:
-        BUTTON = "Move Case"
-        DESCRIPTION = "Select all queues that apply."
         TITLE = "Where do you want to move this case?"
+        DESCRIPTION = "Select all queues that apply."
+        SUCCESS_MESSAGE = "You've moved the case successfully"
 
     class AssignUsers:
         DESCRIPTION = "Select all users that apply."
