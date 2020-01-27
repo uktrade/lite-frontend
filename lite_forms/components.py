@@ -260,7 +260,7 @@ class RadioButtons(_Component):
     """
     Displays radiobuttons on the page
     Add Option components to the options array to show radiobuttons
-    Add optional classes such as 'lite-radiobuttons--inline' or 'govuk-radiobuttons--small'
+    Add optional classes such as 'lite-radios--inline' or 'govuk-radios--small'
     """
 
     def __init__(
