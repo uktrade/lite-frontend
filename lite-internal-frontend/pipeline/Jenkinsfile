@@ -16,7 +16,7 @@ pipeline
             role: worker
           containers:
           - name: builder
-            image: gcr.io/kaniko-project/executor:debug
+            image: gcr.io/kaniko-project/executor:debug-v0.15.0
             imagePullPolicy: Always
             command:
             - cat
