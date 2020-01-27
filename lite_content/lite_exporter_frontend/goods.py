@@ -54,7 +54,7 @@ class DocumentSensitivityForm:
     DESCRIPTION = (
         "I have a document for my product.\nDocumentation should be specifications, datasheets, sales brochures, "
         "drawings or anything else that fully details what the product is and what it's designed to do.\n\n"
-        "The document is below OFFICIAL-SENSITIVE.\n\nThe document is not commercially sensitive."
+        "The document is below OFFICIAL-SENSITIVE."
     )
     ECJU_HELPLINE = (
         "**<noscript>If the answer is No;</noscript>**\n\nContact ECJU to arrange a more secure way to send "
@@ -62,7 +62,8 @@ class DocumentSensitivityForm:
         "without attaching a document.\n\n **ECJU helpline**\n 020 7215 4594.\n "
         "[Find out about call charges](https://www.gov.uk/call-charges)"
     )
-    BUTTON = "Continue"
+    SUBMIT_BUTTON = "Continue"
+    BACK_BUTTON = "Back to product"
 
     class Options:
         YES = "Yes"
@@ -70,8 +71,10 @@ class DocumentSensitivityForm:
 
 
 class CreateGoodForm:
-    TITLE = "Add product"
-    BUTTON = "Save and continue"
+    TITLE_APPLICATION = "Add product"
+    TITLE_GOODS_LIST = "Add a product to your organisation"
+    SUBMIT_BUTTON = "Save and continue"
+    BACK_BUTTON = "Back"
 
     class Description:
         TITLE = generic.DESCRIPTION
@@ -90,25 +93,60 @@ class CreateGoodForm:
         )
         YES = "Yes"
         NO = "No"
-        UNSURE = "I don't know"
+        UNSURE = "I don't know, raise a control list classification (CLC) query"
 
     class ControlListEntry:
         TITLE = "Control list classification"
         DESCRIPTION = "For example, ML1a."
 
+    class IsGraded:
+        TITLE = "Does the product hold a security grading?"
+        DESCRIPTION = ""
+
+        YES = "Yes"
+        NO = "No and it doesn't need one"
+        RAISE_QUERY = "No and it needs one, raise a grading query"
+
     class PartNumber:
         TITLE = generic.PART_NUMBER
 
 
-class CLCQueryForm:
-    TITLE = "Create a control list classification (CLC) query"
+class GoodGradingForm:
+    TITLE = "Add the private venture (PV) grading"
+    DESCRIPTION = ""
+
+    PREFIX = "Prefix"
+    GRADING = "Grading"
+    SUFFIX = "Suffix"
+    OTHER_GRADING = "Other type of grading"
+    ISSUING_AUTHORITY = "Issuing authority"
+    REFERENCE = "Reference"
+    DATE_OF_ISSUE = "Date of issue"
+
+    BUTTON = "Save and Continue"
+
+
+class GoodsQueryForm:
+    TITLE = "Create a query"
     DESCRIPTION = ""
     BACK_LINK = "Back to product"
-    BUTTON = "Submit"
+    BUTTON = "Save"
 
-    class CLCCode:
-        TITLE = "What do you think the CLC is for the product? (optional)"
-        DESCRIPTION = "For example, ML1a."
+    class CLCQuery:
+        TITLE = "Control list classification (CLC) query"
+
+        class Code:
+            TITLE = "What do you think the CLC is for the product? (optional)"
+            DESCRIPTION = "For example, ML1a."
+
+        class Details:
+            TITLE = "Product details"
+
+    class PVGrading:
+        TITLE = "Private venture (PV) grading query"
+
+        class Details:
+            TITLE = "Product details"
 
     class Additional:
         TITLE = "Comments (optional)"
@@ -168,7 +206,8 @@ class AttachDocumentForm:
         "\n\nThe file must be smaller than 100MB."
     )
     BUTTON = "Save"
-    BACK_LINK = "Back to product"
+    BACK_FORM_LINK = "Back"
+    BACK_GOOD_LINK = "Back to product"
 
     class Description:
         TITLE = "Description (optional)"
@@ -200,6 +239,7 @@ class GoodPage:
         GENERATED_DOCUMENTS = "ECJU documents"
 
     class Query:
+        TITLE = "Your query"
         CASE_OFFICER = "Case officer"
         NO_ASSIGNED_CASE_OFFICER = "Not assigned"
         REFERENCE = "ECJU reference"
@@ -210,6 +250,23 @@ class GoodPage:
         PROCESSING = generic.Document.PROCESSING
         ATTACH = generic.Document.ATTACH
         REMOVE = generic.Document.REMOVE
+
+    class RaiseQuery:
+        PREFIX = "If you're unsure the product is controlled or not, you can "
+        LINK = "raise a query "
+        SUFFIX = "to get help from ECJU."
+
+    class Table:
+        DESCRIPTION = "Description"
+        IS_GOOD_CONTROLLED = "Is the product on the control list?"
+        CONTROL_LIST_ENTRY = "Control list classification"
+
+        class Grading:
+            IS_GRADED = "PV graded"
+            GRADING = "PV grade"
+            REFERENCE = "PV grading reference"
+            ISSUING_AUTHORITY = "PV grading issuing authority"
+            DATE_OF_ISSUE = "PV grading date of issue"
 
     class ECJUDocuments:
         CREATED_AT = "Created at"
