@@ -85,16 +85,15 @@ def classname(obj):
 def date_join(data, prefix):
     date = dict()
     prefix_length = len(prefix)
-    if prefix_length:
-        for key, value in data.items():
-            if value and prefix in key:
-                string = key[prefix_length:]
-                if string == "day":
-                    date["day"] = value
-                elif string == "month":
-                    date["month"] = value
-                elif string == "year":
-                    date["year"] = value
+    for key, value in data.items():
+        if value and prefix in key:
+            string = key[prefix_length:]
+            if string == "day":
+                date["day"] = value
+            elif string == "month":
+                date["month"] = value
+            elif string == "year":
+                date["year"] = value
     return date
 
 
