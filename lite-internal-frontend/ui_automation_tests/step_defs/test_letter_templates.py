@@ -100,11 +100,11 @@ def paragraph_text_is_present(driver, context):
 @when("I edit my template name and layout")
 def edit_template_name_and_layout(driver, context):
     context.document_template_name = str(uuid.uuid4())[:35]
-    context.document_template_case_types.append(dict(key="clc_query", value="CLC Query"))
+    context.document_template_case_types.append(dict(key="goods_query", value="Goods Query"))
     letter_template = LetterTemplates(driver)
     letter_template.click_edit_template_button()
     letter_template.enter_template_name(context.document_template_name)
-    letter_template.select_which_type_of_case_template_can_apply_to("CLC Query")
+    letter_template.select_which_type_of_case_template_can_apply_to("Goods Query")
     Shared(driver).click_submit()
 
 

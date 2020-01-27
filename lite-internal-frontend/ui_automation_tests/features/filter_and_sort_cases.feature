@@ -19,7 +19,7 @@ Feature: I want to filter and sort cases on a queue
     Then there are no cases shown
     When I click clear filters
     When I show filters
-    When filter case type has been changed to "CLC Query"
+    When filter case type has been changed to "Product Query"
     Then "1" cases are shown
     When filter status has been changed to "Submitted"
     Then "1" cases are shown

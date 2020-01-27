@@ -1,6 +1,6 @@
 from django.urls import path
 
-from cases.views import main, advice, goods, clc_query, ecju, generate_document, destinations
+from cases.views import main, advice, goods, goods_query, ecju, generate_document, destinations
 from flags.views import AssignFlags
 
 app_name = "cases"
@@ -42,8 +42,8 @@ urlpatterns = [
     path("<uuid:pk>/finalise/", advice.Finalise.as_view(), name="finalise"),
     path("<uuid:pk>/ecju-queries/", ecju.ViewEcjuQueries.as_view(), name="ecju_queries"),
     path("<uuid:pk>/ecju-queries/add", ecju.CreateEcjuQuery.as_view(), name="ecju_queries_add"),
-    path("<uuid:pk>/respond-to-query/", clc_query.Respond.as_view(), name="respond_to_clc_query"),
-    path("<uuid:pk>/respond-to-query/flags/", clc_query.RespondFlags.as_view(), name="respond_to_clc_query_flags"),
+    path("<uuid:pk>/respond-to-query/", goods_query.RespondCLCQuery.as_view(), name="respond_to_clc_query"),
+    path("<uuid:pk>/respond-to-query/flags/", goods_query.RespondFlags.as_view(), name="respond_to_clc_query_flags"),
     path("<uuid:pk>/review-goods/", goods.ReviewGoods.as_view(), name="review_goods"),
     path("<uuid:pk>/review-goods-clc/", goods.ReviewGoodsClc.as_view(), name="review_goods_clc"),
     path("<uuid:pk>/generate-document/", generate_document.SelectTemplate.as_view(), name="generate_document"),

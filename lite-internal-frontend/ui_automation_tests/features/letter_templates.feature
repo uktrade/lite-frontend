@@ -44,7 +44,7 @@ So that I can create standard letters used by case workers and they can be updat
     And The paragraph text is present
     When I edit my template name and layout
     Then The template details are present
-    And "updated letter template types from Application to Application, CLC Query" is shown as position "1" in the audit trail
+    And "updated letter template types from Application to Application, Product Query" is shown as position "1" in the audit trail
     And "updated letter template name from" is shown as position "2" in the audit trail
     And "to" is shown as position "2" in the audit trail
     When I edit my template paragraphs

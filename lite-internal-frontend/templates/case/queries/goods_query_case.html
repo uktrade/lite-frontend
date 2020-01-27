@@ -4,9 +4,11 @@
 
 {% block additional_controls %}
 	{% if not verified and 'REVIEW_GOODS' in permissions and not status_is_terminal %}
-		<a role="button" draggable="false" id="button-respond" class="govuk-button" href="{% url 'cases:respond_to_clc_query' case.id %}">
-			{% lcs 'cases.ApplicationPage.RESPOND_BUTTON' %}
-		</a>
+		{% if clc_query %}
+			<a role="button" draggable="false" id="button-respond" class="govuk-button" href="{% url 'cases:respond_to_clc_query' case.id %}">
+				{% lcs 'cases.ApplicationPage.RESPOND_BUTTON' %}
+			</a>
+		{% endif %}
 	{% endif %}
 {% endblock %}
 

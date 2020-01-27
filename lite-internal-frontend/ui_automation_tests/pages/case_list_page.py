@@ -25,6 +25,7 @@ class CaseListPage(BasePage):
     STATUS_DROPDOWN = "status"  # ID
     CASE_TYPE_DROPDOWN = "case_type"  # ID
     INPUT_ASSIGNED_USER_ID = "assigned_user"
+    FILTER_SEARCH_BOX = "filter-box"  # ID
 
     # Queue dropdown
     QUEUE_DROPDOWN_TITLE = "queue-title"  # ID
@@ -119,3 +120,6 @@ class CaseListPage(BasePage):
 
     def enter_assigned_user_filter_text(self, text):
         self.driver.find_element_by_id(self.INPUT_ASSIGNED_USER_ID).send_keys(text)
+
+    def enter_name_to_filter_search_box(self, text):
+        self.driver.find_element_by_id(self.FILTER_SEARCH_BOX).send_keys(text)

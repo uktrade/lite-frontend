@@ -4,12 +4,12 @@ from django.views.generic import TemplateView
 from lite_forms.components import HiddenField
 from lite_forms.generators import form_page
 from lite_forms.submitters import submit_single_form
-
 from cases.forms.flags import flags_form
-from cases.forms.respond_to_clc_query import respond_to_clc_query_form
+from cases.forms.respond_to_good_query import respond_to_clc_query_form
+
 from cases.services import (
     get_case,
-    put_control_list_classification_query,
+    put_goods_query_clc,
     put_flag_assignments,
 )
 from core.services import get_user_permissions
@@ -17,7 +17,7 @@ from flags.services import get_goods_flags
 from picklists.services import get_picklist_item
 
 
-class Respond(TemplateView):
+class RespondCLCQuery(TemplateView):
     case = None
     form = None
 
@@ -30,7 +30,7 @@ class Respond(TemplateView):
         if "REVIEW_GOODS" not in permissions:
             return redirect(reverse_lazy("cases:case", kwargs={"pk": case_id}))
 
-        return super(Respond, self).dispatch(request, *args, **kwargs)
+        return super(RespondCLCQuery, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, **kwargs):
         return form_page(request, self.form)
@@ -57,7 +57,7 @@ class Respond(TemplateView):
             response, response_data = submit_single_form(
                 request,
                 self.form,
-                put_control_list_classification_query,
+                put_goods_query_clc,
                 object_pk=str(self.case["query"]["id"]),
                 override_data=form_data,
             )
