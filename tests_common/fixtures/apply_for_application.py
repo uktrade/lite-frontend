@@ -5,6 +5,19 @@ from pytest import fixture
 from ..tools.utils import get_lite_client, Timer
 
 
+def save_application_data_to_context(lite_client, context):
+    context.app_id = lite_client.context["application_id"]
+    context.case_id = lite_client.context["application_id"]
+    context.end_user = lite_client.context["end_user"]
+    context.consignee = lite_client.context["consignee"]
+    context.third_party = lite_client.context["third_party"]
+    context.ultimate_end_user = lite_client.context["ultimate_end_user"]
+
+
+def generate_name(prefix):
+    return f"{prefix} {datetime.datetime.now().strftime(' %d%H%M%S')}"
+
+
 @fixture
 def apply_for_standard_application(driver, seed_data_config, context):
     timer = Timer()
@@ -12,7 +25,7 @@ def apply_for_standard_application(driver, seed_data_config, context):
 
     app_time_id = datetime.datetime.now().strftime(" %d%H%M%S")
     context.app_time_id = app_time_id
-    app_name = "Test Application" + app_time_id
+    app_name = generate_name("Standard Application")
     context.good_value = 1.21
 
     draft_id = lite_client.add_draft(
@@ -62,12 +75,7 @@ def apply_for_standard_application(driver, seed_data_config, context):
         },
     )
     lite_client.submit_standard_application(draft_id)
-    context.app_id = lite_client.context["application_id"]
-    context.case_id = lite_client.context["application_id"]
-    context.end_user = lite_client.context["end_user"]
-    context.consignee = lite_client.context["consignee"]
-    context.third_party = lite_client.context["third_party"]
-    context.ultimate_end_user = lite_client.context["ultimate_end_user"]
+    save_application_data_to_context(lite_client, context)
     context.app_name = app_name
     timer.print_time("apply_for_standard_application")
 
@@ -144,13 +152,8 @@ def apply_for_open_application(driver, seed_data_config, context):
 @fixture(scope="module")
 def apply_for_exhibition_clearance(driver, seed_data_config, context):
     lite_client = get_lite_client(context, seed_data_config)
-    name = f"Exhibition Clearance {datetime.datetime.now().strftime(' %d%H%M%S')}"
+    name = generate_name("Exhibition Clearance")
     draft_id = lite_client.add_draft(draft={"name": name, "application_type": "exhibition_clearance",})
     lite_client.submit_standard_application(draft_id)
-    context.app_id = lite_client.context["application_id"]
-    context.case_id = lite_client.context["application_id"]
-    context.end_user = lite_client.context["end_user"]
-    context.consignee = lite_client.context["consignee"]
-    context.third_party = lite_client.context["third_party"]
-    context.ultimate_end_user = lite_client.context["ultimate_end_user"]
+    save_application_data_to_context(lite_client, context)
     context.app_name = name
