@@ -170,38 +170,78 @@ class ApplicationsSummaryPage:
 
 
 class InitialApplicationQuestionsForms:
-    WHICH_EXPORT_LICENCE_DO_YOU_WANT_TITLE = "Select the type of licence you need"
-    WHICH_EXPORT_LICENCE_DO_YOU_WANT_DESCRIPTION = ""
-    STANDARD_LICENCE = "Standard licence"
-    STANDARD_LICENCE_DESCRIPTION = (
-        "Select a standard licence for a set quantity and set value of products. "
-        "You must attach a completed [end user undertaking form](https://www.gov.uk/government/publications/end-user-undertaking-euu-form) to the application."
-    )
-    OPEN_LICENCE = "Open licence"
-    OPEN_LICENCE_DESCRIPTION = (
-        "Select an open licence for multiple shipments of specific products to specific countries. "
-        "Open licences cover long term projects and repeat business."
-    )
-    HELP_WITH_CHOOSING_A_LICENCE = "What licence do I need?"
-    HELP_WITH_CHOOSING_A_LICENCE_CONTENT = (
-        "Read about the [different types of export control licences]"
-        "(https://www.gov.uk/guidance/beginners-guide-to-export-controls#what-licence-do-i-need)."
-    )
-    ENTER_A_REFERENCE_NAME_TITLE = "Name the application"
-    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference name"
-    ENTER_A_REFERENCE_NAME_DESCRIPTION = (
-        "Give the application a reference name so you can refer back to it when needed."
-    )
-    TEMPORARY_OR_PERMANENT_TITLE = "Select an export type"
-    TEMPORARY_OR_PERMANENT_DESCRIPTION = ""
-    TEMPORARY = "Temporary"
-    PERMANENT = "Permanent"
-    HAVE_YOU_BEEN_INFORMED_TITLE = (
-        "Have you been informed under an 'end use control' that you need to apply for a licence?"
-    )
-    HAVE_YOU_BEEN_INFORMED_DESCRIPTION = "An end use control is an official letter or email from Border Force or HMRC."
-    WHAT_WAS_THE_REFERENCE_CODE_TITLE = "Reference number (optional)"
-    WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION = "The reference number is on the official letter or email."
+    class OpeningQuestion:
+        TITLE = "What type of licence do you want to apply for?"
+        DESCRIPTION = ""
+        BREADCRUMB = "Apply for a licence"
+        HELP_WITH_CHOOSING_A_LICENCE = "What licence do I need?"
+        HELP_WITH_CHOOSING_A_LICENCE_CONTENT = (
+            "Read about the [different types of export control licences]"
+            "(https://www.gov.uk/guidance/beginners-guide-to-export-controls#what-licence-do-i-need)."
+        )
+
+        class LicenceTypes:
+            EXPORT_LICENCE_TITLE = "Export Licence"
+            EXPORT_LICENCE_DESCRIPTION = "Select if you’re sending products produced in the UK to another country"
+
+            TRANSHIPMENT_LICENCE_TITLE = "Transhipment licence"
+            TRANSHIPMENT_LICENCE_DESCRIPTION = "Select if you’re shipping something from overseas through the UK on to another country. If the products will be in the UK for 31 days or more, apply for an export licence"
+
+            TRADE_CONTROL_LICENCE_TITLE = "Trade control licence"
+            TRADE_CONTROL_LICENCE_DESCRIPTION = "Select if you’re arranging or brokering the sale or movement of controlled products located overseas"
+
+            MOD_CLEARANCE_TITLE = "MOD clearance"
+            MOD_CLEARANCE_DESCRIPTION = "Select if you need to share information, go to an exhibition or gifting products"
+
+    class ReferenceNameQuestion:
+        TITLE = "Name the application"
+        ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference name"
+        DESCRIPTION = "Give the application a reference name so you can refer back to it when needed."
+
+
+class ExportLicenceQuestions:
+    class ExportLicenceQuestion:
+        TITLE = "Select the type of licence you need"
+        DESCRIPTION = ""
+        STANDARD_LICENCE = "Standard licence"
+        STANDARD_LICENCE_DESCRIPTION = (
+            "Select a standard licence for a set quantity and set value of products. "
+            "You must attach a completed [end user undertaking form](https://www.gov.uk/government/publications/end-user-undertaking-euu-form) to the application."
+        )
+        OPEN_LICENCE = "Open licence"
+        OPEN_LICENCE_DESCRIPTION = (
+            "Select an open licence for multiple shipments of specific products to specific countries. "
+            "Open licences cover long term projects and repeat business."
+        )
+
+    class ExportType:
+        TITLE = "Select an export type"
+        DESCRIPTION = ""
+        TEMPORARY = "Temporary"
+        PERMANENT = "Permanent"
+
+    class HaveYouBeenInformedQuestion:
+        TITLE = (
+            "Have you been informed under an 'end use control' that you need to apply for a licence?"
+        )
+        DESCRIPTION = "An end use control is an official letter or email from Border Force or HMRC."
+        WHAT_WAS_THE_REFERENCE_CODE_TITLE = "Reference number"
+        WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION = "The reference number is on the official letter or email."
+
+
+class MODQuestions:
+    class WhatAreYouApplyingFor:
+        TITLE = "What are you applying for?"
+        DESCRIPTION = ""
+
+        PERMISSION_TITLE = "Permission"
+        PERMISSION_DESCRIPTION = ""
+
+        EXHIBITION_CLEARANCE_TITLE = "Exhibition clearance"
+        EXHIBITION_CLEARANCE_DESCRIPTION = ""
+
+        GIFTING_CLEARANCE_TITLE = "Gifting clearance"
+        GIFTING_CLEARANCE_DESCRIPTION = ""
 
 
 class DestinationForm:
