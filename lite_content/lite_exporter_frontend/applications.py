@@ -240,14 +240,14 @@ class MODQuestions:
         TITLE = "What are you applying for?"
         DESCRIPTION = ""
 
-        PERMISSION_TITLE = "Permission"
-        PERMISSION_DESCRIPTION = ""
+        PERMISSION_TITLE = "F680"
+        PERMISSION_DESCRIPTION = "Coming soon"
 
         EXHIBITION_CLEARANCE_TITLE = "Exhibition clearance"
         EXHIBITION_CLEARANCE_DESCRIPTION = ""
 
         GIFTING_CLEARANCE_TITLE = "Gifting clearance"
-        GIFTING_CLEARANCE_DESCRIPTION = ""
+        GIFTING_CLEARANCE_DESCRIPTION = "Coming soon"
 
 
 class DestinationForm:
