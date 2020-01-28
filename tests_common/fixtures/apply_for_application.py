@@ -15,7 +15,7 @@ def save_application_data_to_context(lite_client, context):
 
 
 def generate_name(prefix):
-    time_id = datetime.datetime.now().strftime(' %d%H%M%S')
+    time_id = datetime.datetime.now().strftime(" %d%H%M%S")
     return f"{prefix} {time_id}", time_id
 
 
