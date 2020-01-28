@@ -15,7 +15,8 @@ def save_application_data_to_context(lite_client, context):
 
 
 def generate_name(prefix):
-    return f"{prefix} {datetime.datetime.now().strftime(' %d%H%M%S')}"
+    time_id = datetime.datetime.now().strftime(' %d%H%M%S')
+    return f"{prefix} {time_id}", time_id
 
 
 @fixture
@@ -23,14 +24,12 @@ def apply_for_standard_application(driver, seed_data_config, context):
     timer = Timer()
     lite_client = get_lite_client(context, seed_data_config)
 
-    app_time_id = datetime.datetime.now().strftime(" %d%H%M%S")
-    context.app_time_id = app_time_id
-    app_name = generate_name("Standard Application")
+    context.app_name, context.app_time_id = generate_name("Standard Application")
     context.good_value = 1.21
 
     draft_id = lite_client.add_draft(
         draft={
-            "name": app_name,
+            "name": context.app_name,
             "application_type": "standard_licence",
             "export_type": "permanent",
             "have_you_been_informed": "yes",
@@ -76,7 +75,6 @@ def apply_for_standard_application(driver, seed_data_config, context):
     )
     lite_client.submit_standard_application(draft_id)
     save_application_data_to_context(lite_client, context)
-    context.app_name = app_name
     timer.print_time("apply_for_standard_application")
 
 
@@ -152,8 +150,7 @@ def apply_for_open_application(driver, seed_data_config, context):
 @fixture(scope="module")
 def apply_for_exhibition_clearance(driver, seed_data_config, context):
     lite_client = get_lite_client(context, seed_data_config)
-    name = generate_name("Exhibition Clearance")
-    draft_id = lite_client.add_draft(draft={"name": name, "application_type": "exhibition_clearance",})
+    context.app_name, context.app_time_id = generate_name("Exhibition Clearance")
+    draft_id = lite_client.add_draft(draft={"name": context.app_name, "application_type": "exhibition_clearance",})
     lite_client.submit_standard_application(draft_id)
     save_application_data_to_context(lite_client, context)
-    context.app_name = name
