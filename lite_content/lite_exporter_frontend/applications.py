@@ -185,8 +185,10 @@ class InitialApplicationQuestionsForms:
             EXPORT_LICENCE_DESCRIPTION = "Select if you’re sending products produced in the UK to another country"
 
             TRANSHIPMENT_LICENCE_TITLE = "Transhipment licence"
-            TRANSHIPMENT_LICENCE_DESCRIPTION = "Select if you’re shipping something from overseas through the UK on to another country. If the products will be in the UK for 31 days or more, apply for an export licence"
-
+            TRANSHIPMENT_LICENCE_DESCRIPTION = (
+                "Select if you're shipping something from overseas through the UK on to another country."
+                " If the products will be in the UK for 31 days or more, apply for an export licence"
+            )
             TRADE_CONTROL_LICENCE_TITLE = "Trade control licence"
             TRADE_CONTROL_LICENCE_DESCRIPTION = (
                 "Select if you’re arranging or brokering the sale or movement of controlled products located overseas"
@@ -210,7 +212,9 @@ class ExportLicenceQuestions:
         STANDARD_LICENCE = "Standard licence"
         STANDARD_LICENCE_DESCRIPTION = (
             "Select a standard licence for a set quantity and set value of products. "
-            "You must attach a completed [end user undertaking form](https://www.gov.uk/government/publications/end-user-undertaking-euu-form) to the application."
+            "You must attach a completed "
+            "[end user undertaking form](https://www.gov.uk/government/publications/end-user-undertaking-euu-form)"
+            " to the application."
         )
         OPEN_LICENCE = "Open licence"
         OPEN_LICENCE_DESCRIPTION = (
