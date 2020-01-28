@@ -251,6 +251,10 @@ class DestinationForm:
     DESCRIPTION = ""
 
 
+class OpenApplicationTaskList:
+    END_USE_CONTROL = "End use control"
+
+
 class EditStandardApplicationPage:
     DRAFT_DELETE_LINK = "Delete draft"
     SUBMIT = "Submit application"
