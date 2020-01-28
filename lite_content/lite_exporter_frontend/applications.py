@@ -138,6 +138,21 @@ class ApplicationSummaryPage:
     COPY_REFERENCE_CODE = "Copy ECJU reference"
     COPIED = "Copied"
 
+    class Sections:
+        COMPLETED_TAG = "Completed"
+        IN_PROGRESS_TAG = "In Progress"
+        NOT_STARTED_TAG = "Not started"
+
+    class PartiesPreviewList:
+        NAME = "Name"
+        TYPE = "Type"
+        ROLE = "Role"
+        WEBSITE = "Website"
+        ADDRESS = "Address"
+        COUNTRY = "Country"
+        ATTACH = "Attach"
+        DOCUMENT = "Document"
+
     class Buttons:
         EDIT_APPLICATION_BUTTON = "Edit application"
         WITHDRAW_ACCESS_BUTTON = "Withdraw application"
