@@ -145,12 +145,7 @@ def apply_for_open_application(driver, seed_data_config, context):
 def apply_for_exhibition_clearance(driver, seed_data_config, context):
     lite_client = get_lite_client(context, seed_data_config)
     name = f"Exhibition Clearance {datetime.datetime.now().strftime(' %d%H%M%S')}"
-    draft_id = lite_client.add_draft(
-        draft={
-            "name": name,
-            "application_type": "exhibition_clearance",
-        }
-    )
+    draft_id = lite_client.add_draft(draft={"name": name, "application_type": "exhibition_clearance",})
     lite_client.submit_standard_application(draft_id)
     context.app_id = lite_client.context["application_id"]
     context.case_id = lite_client.context["application_id"]
