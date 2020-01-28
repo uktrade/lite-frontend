@@ -188,10 +188,14 @@ class InitialApplicationQuestionsForms:
             TRANSHIPMENT_LICENCE_DESCRIPTION = "Select if you’re shipping something from overseas through the UK on to another country. If the products will be in the UK for 31 days or more, apply for an export licence"
 
             TRADE_CONTROL_LICENCE_TITLE = "Trade control licence"
-            TRADE_CONTROL_LICENCE_DESCRIPTION = "Select if you’re arranging or brokering the sale or movement of controlled products located overseas"
+            TRADE_CONTROL_LICENCE_DESCRIPTION = (
+                "Select if you’re arranging or brokering the sale or movement of controlled products located overseas"
+            )
 
             MOD_CLEARANCE_TITLE = "MOD clearance"
-            MOD_CLEARANCE_DESCRIPTION = "Select if you need to share information, go to an exhibition or gifting products"
+            MOD_CLEARANCE_DESCRIPTION = (
+                "Select if you need to share information, go to an exhibition or gifting products"
+            )
 
     class ReferenceNameQuestion:
         TITLE = "Name the application"
@@ -221,9 +225,7 @@ class ExportLicenceQuestions:
         PERMANENT = "Permanent"
 
     class HaveYouBeenInformedQuestion:
-        TITLE = (
-            "Have you been informed under an 'end use control' that you need to apply for a licence?"
-        )
+        TITLE = "Have you been informed under an 'end use control' that you need to apply for a licence?"
         DESCRIPTION = "An end use control is an official letter or email from Border Force or HMRC."
         WHAT_WAS_THE_REFERENCE_CODE_TITLE = "Reference number"
         WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION = "The reference number is on the official letter or email."
