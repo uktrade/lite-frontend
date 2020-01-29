@@ -1,5 +1,5 @@
 from ui_automation_tests.shared.BasePage import BasePage
-from ui_automation_tests.shared.tools.helpers import find_paginated_item
+from ui_automation_tests.shared.tools.helpers import find_paginated_item_by_id
 
 
 class GeneratedDocument(BasePage):
@@ -12,7 +12,7 @@ class GeneratedDocument(BasePage):
     REGENERATE_LINK = "regenerate"  # ID
 
     def click_letter_template(self, document_template_name):
-        find_paginated_item(document_template_name, self.driver).click()
+        find_paginated_item_by_id(document_template_name, self.driver).click()
 
     def preview_is_shown(self):
         return self.driver.find_element_by_id(self.PREVIEW).is_displayed()
