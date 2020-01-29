@@ -64,6 +64,7 @@ class DocumentSensitivityForm:
     )
     SUBMIT_BUTTON = "Continue"
     BACK_BUTTON = "Back to product"
+    LABEL = "Missing Document Reason"
 
     class Options:
         YES = "Yes"
