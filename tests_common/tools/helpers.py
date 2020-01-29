@@ -13,7 +13,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 now = datetime.now().isoformat()
 file_path = path.abspath(path.join(path.dirname(path.abspath(__file__)), pardir))
 screen_dir = path.join(file_path, "screenshot", str(now))
-
+page_limit = 100
 
 def get_current_date_time_string():
     return datetime.now().strftime("%Y/%m/%d %H:%M:%S:%f")
@@ -163,20 +163,40 @@ def select_visible_text_from_dropdown(element, text):
     select.select_by_visible_text(text)
 
 
-def find_paginated_item(id, driver):
+def find_paginated_item_by_id(id, driver):
     driver.set_timeout_to(0)
     current_page = 1
     while True:
-        template = driver.find_elements_by_id(id)
-        if template:
-            element = template[0]
+        element_to_find = driver.find_elements_by_id(id)
+        if element_to_find:
+            element_is_found = element_to_find[0]
             break
+        elif current_page == page_limit:
+            assert False, f"Item couldn't be found across {current_page} pages"
         else:
             current_page += 1
             driver.find_element_by_id(f"page-{current_page}").click()
     driver.set_timeout_to(10)
-    assert element, f"Item couldn't be found across {current_page} pages"
-    return element
+    assert element_is_found, f"Item couldn't be found across {current_page} pages"
+    return element_is_found
+
+
+def find_paginated_item_by_link_text(link_text, driver):
+    driver.set_timeout_to(0)
+    current_page = 1
+    while True:
+        element_to_find = driver.find_elements_by_link_text(link_text)
+        if element_to_find:
+            element_is_found = element_to_find[0]
+            break
+        elif current_page == page_limit:
+            assert False, f"Item couldn't be found across {current_page} pages"
+        else:
+            current_page += 1
+            driver.find_element_by_id(f"page-{current_page}").click()
+    driver.set_timeout_to(10)
+    assert element_is_found, f"Item couldn't be found across {current_page} pages"
+    return element_is_found
 
 
 def paginated_search(driver, func: callable):
