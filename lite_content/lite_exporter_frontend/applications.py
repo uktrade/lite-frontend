@@ -274,9 +274,20 @@ class TaskListPage:
     ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
 
 
+class StandardApplicationTaskList:
+    NEW_TITLE = "Apply for an open export licence"
+    EDIT_TITLE = "Edit the application"
+    GOODS = "Products"
+    GOODS_LOCATION = "Location of products"
+    GOODS_DESTINATION = "Countries"
+    COUNTRIES_WHERE_EACH_GOOD_IS_GOING = "Countries each product is going to"
+    SUPPORTING_DOCUMENTS = "Supporting documents"
+
+
 class OpenApplicationTaskList:
     NEW_TITLE = "Apply for an open export licence"
     EDIT_TITLE = "Edit the application"
+    END_USE_CONTROL = "End use control"
     GOODS = "Products"
     GOODS_LOCATION = "Location of products"
     GOODS_DESTINATION = "Countries"
