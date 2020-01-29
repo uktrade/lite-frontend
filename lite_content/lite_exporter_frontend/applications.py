@@ -187,6 +187,7 @@ class ApplicationsSummaryPage:
 class InitialApplicationQuestionsForms:
     class OpeningQuestion:
         TITLE = "What type of licence do you want to apply for?"
+        LABEL = "Licence Type"
         DESCRIPTION = ""
         BREADCRUMB = "Apply for a licence"
         HELP_WITH_CHOOSING_A_LICENCE = "What licence do I need?"
@@ -218,6 +219,7 @@ class InitialApplicationQuestionsForms:
         TITLE = "Name the application"
         ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference name"
         DESCRIPTION = "Give the application a reference name so you can refer back to it when needed."
+        LABEL = "Name"
 
 
 class ExportLicenceQuestions:
