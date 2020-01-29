@@ -266,6 +266,42 @@ class ClcQuery:
             DOWNLOAD = "Download"
 
 
+class RespondClCQueryForm:
+    TITLE = "Respond to CLC Query"
+    BUTTON = "Continue to overview"
+    BACK = "Back to case"
+
+    CONTROL_LIST_ENTRY = "What is the correct control list entry?"
+    COMMENT = "Good's comment (optional)"
+
+    class Summary:
+        DESCRIPTION = "Description"
+        CONTROL_LIST_ENTRY = "Control list entry"
+        NO_CONTROL_LIST_ENTRY = "N/A"
+
+    class Controlled:
+        TITLE = "Is this good controlled?"
+        YES = "Yes"
+        NO = "No"
+
+    class ReportSummary:
+        TITLE = "Which report summary would you like to use? (optional)"
+        DESCRIPTION = "You only need to do this if the item is controlled"
+
+
+class RespondGradingQueryForm:
+    TITLE = "Respond to grading query"
+    BUTTON = "Continue to overview"
+    BACK = "Back to case"
+
+    COMMENT = "Comment"
+
+    class Grading:
+        PREFIX = "Prefix"
+        GRADING = "Grading"
+        SUFFIX = "Suffix"
+
+
 class ChangeStatusPage:
     TITLE_APPLICATION = "Application Status"
     TITLE_CLC = "CLC Query Status"
