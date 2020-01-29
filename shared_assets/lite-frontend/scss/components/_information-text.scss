@@ -23,4 +23,13 @@
 		margin: 0;
 		color: $color;
 	}
+
+	&__help {
+		@include govuk-font($size: 19, $line-height: 1.66);
+		color: govuk-colour("dark-grey");
+		margin-left: $size + govuk-spacing(3);
+		margin-top: govuk-spacing(3);
+		max-width: 85%;
+		line-height: 1.66;
+	}
 }
