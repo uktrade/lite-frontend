@@ -15,6 +15,7 @@ file_path = path.abspath(path.join(path.dirname(path.abspath(__file__)), pardir)
 screen_dir = path.join(file_path, "screenshot", str(now))
 PAGE_LIMIT = 100
 
+
 def get_current_date_time_string():
     return datetime.now().strftime("%Y/%m/%d %H:%M:%S:%f")
 
