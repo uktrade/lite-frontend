@@ -282,9 +282,11 @@ class StandardApplicationTaskList:
     END_USE_CONTROL = "End use control"
     GOODS = "Products"
     GOODS_LOCATION = "Location of products"
-    GOODS_DESTINATION = "Countries"
-    COUNTRIES_WHERE_EACH_GOOD_IS_GOING = "Countries each product is going to"
+    END_USER = "End user"
+    ULTIMATE_END_USERS = "Ultimate recipients"
+    CONSIGNEE = "Consignee"
     SUPPORTING_DOCUMENTS = "Supporting documents"
+    THIRD_PARTIES = "Third parties"
 
 
 class OpenApplicationTaskList:
@@ -301,11 +303,24 @@ class HMRCApplicationTaskList:
     GOODS = "Products"
     GOODS_LOCATION = "Location of products"
     END_USER = "End user"
-    ULTIMATE_END_USER = "Ultimate recipient"
+    ULTIMATE_END_USERS = "Ultimate recipients"
     THIRD_PARTIES = "Third parties"
     CONSIGNEE = "Consignee"
     SUPPORTING_DOCUMENTS = "Supporting documents"
     REASON_FOR_QUERY = "Reason for query"
+
+
+class ExhibitionClearanceTaskList:
+    NEW_TITLE = "Apply for an Exhibition Clearance licence"
+    EDIT_TITLE = "Edit the application"
+    END_USE_CONTROL = "End use control"
+    GOODS = "Products"
+    GOODS_LOCATION = "Location of products"
+    END_USER = "End user"
+    ULTIMATE_END_USERS = "Ultimate recipients"
+    CONSIGNEE = "Consignee"
+    SUPPORTING_DOCUMENTS = "Supporting documents"
+    THIRD_PARTIES = "Third parties"
 
 
 class EditStandardApplicationPage:
