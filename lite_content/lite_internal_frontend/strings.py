@@ -35,9 +35,6 @@ EDIT_CASE_FLAGS = "Edit case flags"
 
 # Case
 CASE_GOODS = "Products"
-CASE_GOODS_LOCATION = "Products location"
-CASE_GOODS_LOCATION_NAME = "Name"
-CASE_GOODS_LOCATION_ADDRESS = "Address"
 CASE_ENTITIES_INVOLVED = "Entities involved"
 CASE_ENTITIES_ACTIVITY = "Activity"
 CASE_PARTIES_LICENSEE = "Licensee"
