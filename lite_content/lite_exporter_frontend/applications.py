@@ -220,11 +220,14 @@ class InitialApplicationQuestionsForms:
         ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference name"
         DESCRIPTION = "Give the application a reference name so you can refer back to it when needed."
         LABEL = "Name"
+        BACK_TO_LICENCE_TYPE = "Back to licence type"
+        BACK_TO_MOD_CLEARANCE_TYPE = "Back to MOD clearance type"
 
 
 class ExportLicenceQuestions:
     class ExportLicenceQuestion:
         TITLE = "Select the type of licence you need"
+        BACK = "Back to application type"
         DESCRIPTION = ""
         STANDARD_LICENCE = "Standard licence"
         STANDARD_LICENCE_DESCRIPTION = (
@@ -256,6 +259,7 @@ class MODQuestions:
     class WhatAreYouApplyingFor:
         TITLE = "What are you applying for?"
         DESCRIPTION = ""
+        BACK = "Back to application type"
 
         PERMISSION_TITLE = "F680"
         PERMISSION_DESCRIPTION = "Coming soon"
