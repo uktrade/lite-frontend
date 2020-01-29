@@ -270,8 +270,18 @@ class DestinationForm:
     DESCRIPTION = ""
 
 
+class TaskListPage:
+    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
+
+
 class OpenApplicationTaskList:
-    END_USE_CONTROL = "End use control"
+    NEW_TITLE = "Apply for an open export licence"
+    EDIT_TITLE = "Edit the application"
+    GOODS = "Products"
+    GOODS_LOCATION = "Location of products"
+    GOODS_DESTINATION = "Countries"
+    COUNTRIES_WHERE_EACH_GOOD_IS_GOING = "Countries each product is going to"
+    SUPPORTING_DOCUMENTS = "Supporting documents"
 
 
 class HMRCApplicationTaskList:
@@ -314,11 +324,6 @@ class AttachDocumentPage:
 
 class DeleteDocument:
     DOCUMENT_DELETE_GENERIC_ERROR = "We had an issue deleting your file. Try again later."
-
-
-class TaskListPage:
-    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
-    WHERE_ARE_YOUR_GOODS_GOING_SHORT_TITLE = "Countries"
 
 
 class ApplicationSuccessPage:
