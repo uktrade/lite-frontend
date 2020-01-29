@@ -220,27 +220,50 @@ class OpenApplication:
 
 
 class ClcQuery:
+    class Actions:
+        RESPOND_CLC = "Respond to CLC query"
+        RESPOND_GRADING = "Respond to grading query"
+
     class Verified:
         OUTCOME = "Outcome"
-        CONTROLLED = "Is the good controlled?"
-        CONTROL_CODE = "What's the goods actual control list entry"
-        REPORT = "Report Summary (optional)"
-        COMMENT = "Why was this outcome chosen"
+
+        class Clc:
+            TITLE = "Clc query"
+            CONTROLLED = "Is the good controlled?"
+            CONTROL_CODE = "What's the goods actual control list entry"
+            REPORT = "Report Summary (optional)"
+            COMMENT = "Why was this outcome chosen"
+
+        class PvGrading:
+            TITLE = "Grading Query"
+            GRADING = "Grading"
+            COMMENT = "Comment"
 
     class GoodDetails:
-        TITLE = "Good Details"
-        DESCRIPTION = "Description"
-        CONTROLLED = "Controlled"
-        CONTROL_CODE = "Control list entry"
-        EXPECTED_CONTROL_CODE = "Expected Control list entry"
-        REASON = "Reason"
-        PART_NUMBER = "Part Number"
-        FLAGS = "Flags"
-        QUERY_TEXT = "CLC query Text"
+        class Details:
+            TITLE = "Product Details"
+            DESCRIPTION = "Description"
+            PART_NUMBER = "Part Number"
+            FLAGS = "Flags"
 
-    class Documents:
-        TITLE = "Documents"
-        DOWNLOAD = "Download"
+        class Clc:
+            TITLE = "Control list classification"
+            CONTROLLED = "Controlled"
+            CONTROL_CODE = "Control list entry"
+            EXPECTED_CONTROL_CODE = "Expected Control list entry"
+            REASON = "Reason"
+
+        class Grading:
+            TITLE = "Grading"
+            GRADING = "Grading"
+            ISSUING_AUTHORITY = "Issuing authority"
+            REFERENCE = "Reference"
+            DATE_OF_ISSUE = "Date of issue"
+            COMMENTS = "Comments"
+
+        class Documents:
+            TITLE = "Documents"
+            DOWNLOAD = "Download"
 
 
 class ChangeStatusPage:
