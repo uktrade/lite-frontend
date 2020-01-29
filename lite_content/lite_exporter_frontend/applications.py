@@ -277,6 +277,7 @@ class TaskListPage:
 class StandardApplicationTaskList:
     NEW_TITLE = "Apply for an open export licence"
     EDIT_TITLE = "Edit the application"
+    END_USE_CONTROL = "End use control"
     GOODS = "Products"
     GOODS_LOCATION = "Location of products"
     GOODS_DESTINATION = "Countries"
@@ -287,7 +288,6 @@ class StandardApplicationTaskList:
 class OpenApplicationTaskList:
     NEW_TITLE = "Apply for an open export licence"
     EDIT_TITLE = "Edit the application"
-    END_USE_CONTROL = "End use control"
     GOODS = "Products"
     GOODS_LOCATION = "Location of products"
     GOODS_DESTINATION = "Countries"
