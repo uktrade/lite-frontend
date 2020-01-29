@@ -34,6 +34,9 @@ class ApplicationPage:
     class Goods:
         MISSING_DOCUMENT_REASON_PREFIX = "No document given: "
         TITLE = "Products"
+        CASE_GOODS_LOCATION = "Products location"
+        CASE_GOODS_LOCATION_NAME = "Name"
+        CASE_GOODS_LOCATION_ADDRESS = "Address"
 
         class Table:
             CLC = "Control List Entry"
@@ -157,6 +160,9 @@ class HMRCPage:
         CONTROL_CODE = "Control list entry"
         CONTROLLED = "Controlled"
         FLAGS = "Flags"
+        CASE_GOODS_LOCATION = "Products location"
+        CASE_GOODS_LOCATION_NAME = "Name"
+        CASE_GOODS_LOCATION_ADDRESS = "Address"
 
     class SupportingDocumentation:
         TITLE = "Supporting Documentation"

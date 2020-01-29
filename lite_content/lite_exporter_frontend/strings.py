@@ -27,12 +27,12 @@ THIS_SECTION_IS = "This section is "  # The space at the end is intentional. Usa
 OPTIONAL = "Optional"
 NOT_STARTED = "Not started"
 IN_PROGRESS = "In progress"
-DONE = "Completed"
+DONE = "Saved"
 VIEW = "View"
 
 SUBMIT_APPLICATION = "Submit application"
 EDIT_APPLICATION_SUBMIT = "Submit application"
-EDIT_APPLICATION_DONE = "Completed"
+EDIT_APPLICATION_DONE = "Saved"
 
 HOME = "Home"
 
