@@ -274,6 +274,17 @@ class OpenApplicationTaskList:
     END_USE_CONTROL = "End use control"
 
 
+class HMRCApplicationTaskList:
+    GOODS = "Products"
+    GOODS_LOCATION = "Location of products"
+    END_USER = "End user"
+    ULTIMATE_END_USER = "Ultimate recipient"
+    THIRD_PARTIES = "Third parties"
+    CONSIGNEE = "Consignee"
+    SUPPORTING_DOCUMENTS = "Supporting documents"
+    REASON_FOR_QUERY = "Reason for query"
+
+
 class EditStandardApplicationPage:
     DRAFT_DELETE_LINK = "Delete draft"
     SUBMIT = "Submit application"
