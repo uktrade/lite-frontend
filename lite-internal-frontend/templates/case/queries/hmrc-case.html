@@ -78,6 +78,25 @@
 	    </table>
 	</form>
 
+	<!-- Goods Locations -->
+	<h3 class="govuk-heading-m">{% lcs 'cases.HMRCPage.Good.CASE_GOODS_LOCATION' %}</h3>
+	<table class="govuk-table" id="hmrc-goods-location">
+		<thead class="govuk-table__head">
+			<tr class="govuk-table__row">
+				<th scope="col" class="govuk-table__header govuk-!-width-one-third">{% lcs 'cases.HMRCPage.Good.CASE_GOODS_LOCATION_NAME' %}</th>
+				<th scope="col" class="govuk-table__header govuk-!-width-two-thirds">{% lcs 'cases.HMRCPage.Good.CASE_GOODS_LOCATION_ADDRESS' %}</th>
+			</tr>
+		</thead>
+		<tbody class="govuk-table__body">
+			{% for location in case.application.goods_locations.data %}
+				<tr class="govuk-table__row">
+						<th scope="row" class="govuk-table__header">{{ location.name }}</th>
+						<td class="govuk-table__cell">{{ location|get_address }}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
 	<!-- Destinations/End-User -->
 	{% include 'case/views/standard-destinations.html' %}
 

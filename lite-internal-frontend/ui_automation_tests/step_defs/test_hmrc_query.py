@@ -1,5 +1,8 @@
 from pytest_bdd import scenarios, when, then
 
+from ui_automation_tests.pages.application_page import ApplicationPage
+from ui_automation_tests.shared import functions
+
 scenarios("../features/hmrc_query.feature", strict_gherkin=False)
 
 
@@ -17,3 +20,4 @@ def go_to_hmrc(driver, context):
 def see_hmrc(driver, context):
     if context.hmrc_is_found:
         assert driver.find_element_by_id("case-type").text == "HMRC Query"
+        assert functions.element_with_id_exists(driver, ApplicationPage(driver).HMRC_GOODS_LOCATION)
