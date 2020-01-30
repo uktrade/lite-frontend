@@ -312,6 +312,7 @@ class HMRCApplicationTaskList:
     CONSIGNEE = "Consignee"
     SUPPORTING_DOCUMENTS = "Supporting documents"
     REASON_FOR_QUERY = "Reason for query"
+    CHECK_YOUR_ANSWERS = "Check your answers"
 
 
 class ExhibitionClearanceTaskList:
