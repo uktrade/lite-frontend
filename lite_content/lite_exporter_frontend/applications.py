@@ -187,7 +187,7 @@ class ApplicationsSummaryPage:
 class InitialApplicationQuestionsForms:
     class OpeningQuestion:
         TITLE = "What type of licence do you want to apply for?"
-        LABEL = "Licence Type"
+        LABEL = "Licence type"
         DESCRIPTION = ""
         BREADCRUMB = "Apply for a licence"
         HELP_WITH_CHOOSING_A_LICENCE = "What licence do I need?"
