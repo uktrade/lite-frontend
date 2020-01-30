@@ -266,6 +266,56 @@ class ClcQuery:
             DOWNLOAD = "Download"
 
 
+class ClcResponseOverview:
+    TITLE = "Response overview"
+    WARNING = "You won't be able to change this once submitted"
+    SUBMIT = "Submit response"
+    CHANGE = "Change response"
+
+    class Details:
+        DESCRIPTION = "Description"
+        CONTROL_LIST_ENTRY = "Control list entry"
+        PART_NUMBER = "Part number"
+
+        class Flags:
+            FLAGS = "Flags"
+            EDIT = "Edit good flags"
+            SET = "Set a flag on this good"
+
+        class Documents:
+            DOCUMENTS = "Documents"
+            DOWNLOAD = "Download"
+            NONE = "This good has no documents attached."
+
+    class Response:
+        TITLE = "What you've said"
+        CONTROLLED = "Is this good controlled?"
+        CONTROL_LIST_ENTRY = "Control list entry"
+        REPORT_SUMMARY = "Report Summary (optional)"
+        COMMENT = "Comment (optional)"
+
+
+class GradingResponseOverview:
+    TITLE = "Response overview"
+    WARNING = "You won't be able to change this once submitted"
+    SUBMIT = "Submit response"
+    CHANGE = "Change response"
+
+    class Details:
+        class Flags:
+            FLAGS = "Flags"
+            EDIT = "Edit good flags"
+            SET = "Set a flag on this good"
+
+        class Documents:
+            DOCUMENTS = "Documents"
+            DOWNLOAD = "Download"
+            NONE = "This good has no documents attached."
+
+    class Reponse:
+        TITLE = "What you've said"
+
+
 class RespondClCQueryForm:
     TITLE = "Respond to CLC Query"
     BUTTON = "Continue to overview"
