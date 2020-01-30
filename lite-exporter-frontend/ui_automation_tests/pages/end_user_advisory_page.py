@@ -19,8 +19,8 @@ class EndUserAdvisoryPage(BasePage):
 
     def confirm_advisory_displayed_by_reference_code(self, _id):
         elements, no = self.get_table_rows_and_position(_id)
-        self.driver.set_timeout_to(0)
-        return_value = len(elements[no].find_elements_by_css_selector(Shared(self.driver).NOTIFICATION)) != 0
+        self.driver.set_timeout_to(5)
+        return_value = len(elements[no].find_elements_by_css_selector(Shared.NOTIFICATION)) != 0
         self.driver.set_timeout_to(10)
         return return_value
 

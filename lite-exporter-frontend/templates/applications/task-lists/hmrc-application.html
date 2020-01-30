@@ -50,11 +50,11 @@
 			<ul class="lite-task-list__items">
 				{% if show_submit_button %}
 					{% url 'applications:check_your_answers' application.id as check_your_answers_url %}
-			        {% include "includes/task-list-item.html" with title="Check your answers" url=check_your_answers_url hide_tag=True %}
+			        {% include "includes/task-list-item.html" with title="applications.HMRCApplicationTaskList.CHECK_YOUR_ANSWERS" url=check_your_answers_url hide_tag=True %}
 				{% else %}
 					<li class="lite-task-list__item">
 						<div class="lite-task-list__item-header">
-							Check your answers
+							{% lcs 'applications.HMRCApplicationTaskList.CHECK_YOUR_ANSWERS' %}
 						</div>
 					</li>
 				{% endif %}

@@ -107,7 +107,6 @@ def open_already_created_end_user_advisory(driver, context):
 @then("I see a notification on end user advisory list")
 def notification_on_end_user_advisory_list(driver, context):
     assert EndUserAdvisoryPage(driver).confirm_advisory_displayed_by_reference_code(context.end_user_advisory_id)
-    pass
 
 
 @then("I see a notification for case note and can view the case note")
