@@ -242,6 +242,7 @@ class ClcQuery:
             CONTROLLED = "Controlled"
             CONTROL_CODE = "Control list entry"
             EXPECTED_CONTROL_CODE = "Expected Control list entry"
+            NO_CONTROL_CODE = "Not on the control list"
             REASON = "Reason"
 
         class Grading:
