@@ -10,13 +10,13 @@
 	{% if question.title %}
 		<label class="govuk-label" for="{{ question.name }}">
 			{{ question.title }}
+			{% if question.optional %}
+				<span class="lite-form-optional">
+					<span class="govuk-visually-hidden">This field is </span>(Optional)
+				</span>
+			{% endif %}
 		</label>
 	{% endif %}
-    {% if question.optional %}
-        <p class="lite-form-optional">
-            <span class="govuk-visually-hidden">This field is </span>Optional
-        </p>
-    {% endif %}
 	{% if question.description %}
 		<span class="govuk-hint" for="{{ question.name }}">
 			{% for item in question.description %}{% if item|classname == "Link" %}<a class="govuk-link" href="{{ item.address }}">{{ item.text }}</a>{% else %}<span>{{ item }}</span>{% endif %}{% endfor %}
