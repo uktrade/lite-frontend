@@ -7,6 +7,7 @@ from shared.tools.helpers import scroll_to_element_by_id
 
 class ApplicationPage(BasePage):
     ACTIONS_LIST_CONTAINER_ID = "actions-list"  # ID
+    HEADING_ID = "heading-reference-code"
     ACTION_BUTTON_SELECTOR = "a"
     ACTIONS_DROPDOWN = ".lite-more-actions__button"  # CSS
     AUDIT_NOTIFICATION_ANCHOR = "audit-notification"  # ID

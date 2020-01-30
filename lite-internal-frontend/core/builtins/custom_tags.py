@@ -241,19 +241,6 @@ def linkify(address, name=None):
     return safe(f'<a href="{address}" class="govuk-link govuk-link--no-visited-state">{name}</a>')
 
 
-@register.filter()
-def sentence_case(value):
-    """Change value to uppercase on initial word and preserve casing on all other words. """
-    words = value.split("_")
-    return " ".join([words[0].capitalize()] + words[1:])
-
-
-def lowercase_and_underscore(value):
-    """Change value to lowercase and change spaces to underscores. """
-    words = value.split(" ")
-    return "_".join(words).lower()
-
-
 @register.filter
 @stringfilter
 @mark_safe

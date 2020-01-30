@@ -1,4 +1,4 @@
-from core.services import get_statuses_as_options
+from core.services import get_statuses
 from lite_content.lite_internal_frontend.roles import AddRoleForm, EditRoleForm
 from django.http import HttpRequest
 from django.urls import reverse_lazy
@@ -21,7 +21,7 @@ def add_role(request: HttpRequest):
             ),
             Checkboxes(
                 name="statuses",
-                options=get_statuses_as_options(request),
+                options=get_statuses(request, True),
                 title=AddRoleForm.STATUSES_CHECKBOXES_TITLE,
                 description=AddRoleForm.STATUSES_CHECKBOXES_DESCRIPTION,
             ),
@@ -45,7 +45,7 @@ def edit_role(request: HttpRequest):
             ),
             Checkboxes(
                 name="statuses",
-                options=get_statuses_as_options(request),
+                options=get_statuses(request, True),
                 title=AddRoleForm.STATUSES_CHECKBOXES_TITLE,
                 description=AddRoleForm.STATUSES_CHECKBOXES_DESCRIPTION,
             ),

@@ -155,7 +155,7 @@
 								{% endfor %}
 							</td>
 							<td class="cases-table__cell">
-								{{ case.status|sentence_case }}
+								{{ case.status.value }}
 							</td>
 							<td class="cases-table__cell govuk-table__cell--numeric">
 								<a id="expand-flags-{{ case.id }}" class="lite-accordian-table__chevron" onclick="return openTableFold(this);">

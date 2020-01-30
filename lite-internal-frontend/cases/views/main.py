@@ -1,6 +1,7 @@
 from http import HTTPStatus
 
-from django.http import StreamingHttpResponse, Http404
+from django.contrib import messages
+from django.http import StreamingHttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
@@ -10,6 +11,7 @@ from s3chunkuploader.file_handler import S3FileUploadHandler, s3_client
 
 from cases.constants import CaseType
 from cases.forms.attach_documents import attach_documents_form
+from cases.forms.change_status import change_status_form
 from cases.forms.move_case import move_case_form
 from cases.helpers import get_updated_cases_banner_queue_id
 from cases.services import (
@@ -160,6 +162,10 @@ class ViewCase(TemplateView):
                 return render(request, "case/applications/standard-licence-case.html", context)
             else:
                 raise Exception("Invalid application_type: {}".format(case["application"]["application_type"]["key"]))
+        elif case_type == CaseType.EXHIBITION_CLEARANCE.value:
+            context["total_goods_value"] = _get_total_goods_value(case)
+
+            return render(request, "case/applications/exhibition-clearance.html", context)
         elif case_type == CaseType.HMRC_QUERY.value:
             context["total_goods_value"] = _get_total_goods_value(case)
             return render(request, "case/queries/hmrc-case.html", context)
@@ -204,44 +210,30 @@ class ViewAdvice(TemplateView):
         return render(request, "case/advice/user.html", context)
 
 
-class ManageCase(TemplateView):
-    def get(self, request, **kwargs):
-        case_id = str(kwargs["pk"])
-        case = get_case(request, case_id)
-        case_type = case["type"]["key"]
-        permissible_statuses = get_permissible_statuses(request, case_type)
+class ChangeStatus(SingleFormView):
+    def init(self, request, **kwargs):
+        self.object_pk = str(kwargs["pk"])
+        case = get_case(request, self.object_pk)
+        self.case_type = case["type"]["key"]
+        permissible_statuses = get_permissible_statuses(request, self.case_type)
+        self.data = case["application"] if "application" in case else case["query"]
+        self.form = change_status_form(case, permissible_statuses)
 
-        if case_type == CaseType.APPLICATION.value:
-            title = cases.ChangeStatusPage.TITLE_APPLICATION
-        elif case_type == CaseType.HMRC_QUERY.value:
-            title = cases.ChangeStatusPage.TITLE_APPLICATION
-        elif case_type == CaseType.END_USER_ADVISORY_QUERY.value:
-            title = cases.ChangeStatusPage.TITLE_EUA
-        elif case_type == CaseType.GOODS_QUERY.value:
-            title = cases.ChangeStatusPage.TITLE_CLC
-        else:
-            raise Exception("Invalid case_type: {}".format(case_type))
+    def get_action(self):
+        if (
+            self.case_type == CaseType.APPLICATION.value
+            or self.case_type == CaseType.HMRC_QUERY.value
+            or self.case_type == CaseType.EXHIBITION_CLEARANCE.value
+        ):
+            return put_application_status
+        elif self.case_type == CaseType.END_USER_ADVISORY_QUERY.value:
+            return put_end_user_advisory_query
+        elif self.case_type == CaseType.GOODS_QUERY.value:
+            return put_goods_query_status
 
-        context = {"case": case, "title": title, "statuses": permissible_statuses}
-        return render(request, "case/views/change-status.html", context)
-
-    def post(self, request, **kwargs):
-        case_id = str(kwargs["pk"])
-        case = get_case(request, case_id)
-
-        if case["type"]["key"] == CaseType.APPLICATION.value or case["type"]["key"] == CaseType.HMRC_QUERY.value:
-            application_id = case.get("application").get("id")
-            put_application_status(request, application_id, request.POST)
-        elif case["type"]["key"] == CaseType.END_USER_ADVISORY_QUERY.value:
-            query_id = case.get("query").get("id")
-            put_end_user_advisory_query(request, query_id, request.POST)
-        elif case["type"]["key"] == CaseType.GOODS_QUERY.value:
-            query_id = case.get("query").get("id")
-            put_goods_query_status(request, query_id, request.POST)
-        else:
-            raise Http404
-
-        return redirect(reverse("cases:case", kwargs={"pk": case_id}))
+    def get_success_url(self):
+        messages.success(self.request, cases.ChangeStatusPage.SUCCESS_MESSAGE)
+        return reverse_lazy("cases:case", kwargs={"pk": self.object_pk})
 
 
 class MoveCase(SingleFormView):
@@ -251,7 +243,10 @@ class MoveCase(SingleFormView):
         self.data = case
         self.form = move_case_form(request, case)
         self.action = put_case
-        self.success_url = reverse_lazy("cases:case", kwargs={"pk": self.object_pk})
+
+    def get_success_url(self):
+        messages.success(self.request, cases.Manage.MoveCase.SUCCESS_MESSAGE)
+        return reverse_lazy("cases:case", kwargs={"pk": self.object_pk})
 
 
 class Documents(TemplateView):

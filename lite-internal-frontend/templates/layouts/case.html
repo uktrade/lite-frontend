@@ -9,6 +9,8 @@
 {% block body_classes %}lite-main-wrapper--case{% endblock %}
 
 {% block body %}
+	{% include 'includes/messages.html' %}
+
 	{% if case.audit_notification %}
 		<a id="audit-notification" class="lite-info-bar lite-info-bar--link lite-info-bar--no-animation" href="#case-activity-{{ case.audit_notification.audit_id }}">
 			{% lcs 'CASE_CHANGES' %}
@@ -17,7 +19,7 @@
 
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
-			<h1 class="govuk-heading-l govuk-!-margin-0">
+			<h1 id="heading-reference-code" class="govuk-heading-l govuk-!-margin-0">
 				{% block title %}
 					{{ case.reference_code }}
 				{% endblock %}

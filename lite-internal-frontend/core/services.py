@@ -1,5 +1,4 @@
 from cases.constants import CaseType
-from core.builtins.custom_tags import sentence_case
 from lite_forms.components import Option, Checkboxes
 
 from conf.client import get
@@ -10,6 +9,7 @@ from conf.constants import (
     CONTROL_LIST_ENTRIES_URL,
     NOTIFICATIONS_URL,
     STATUS_PROPERTIES_URL,
+    Statuses,
 )
 from users.services import get_gov_user
 
@@ -59,37 +59,35 @@ def get_countries(request, convert_to_options=False):
 
 
 # Statuses
-def get_statuses(request):
+def get_statuses(request, convert_to_options=False):
     """ Get static list of case statuses. """
     data = get(request, STATUSES_URL)
-    return data.json(), data.status_code
 
+    if convert_to_options:
+        return [Option(key=item["id"], value=item["value"]) for item in data.json().get("statuses")]
 
-def get_statuses_as_options(request):
-    """ Get a list of statuses as Options. """
-    data, _ = get_statuses(request)
-    return [Option(key=item["id"], value=sentence_case(item["status"])) for item in data.get("statuses")]
+    return data.json()["statuses"], data.status_code
 
 
 def get_permissible_statuses(request, case_type):
     """ Get a list of case statuses permissible for the user's role. """
     user, _ = get_gov_user(request, str(request.user.lite_api_user_id))
     user_permissible_statuses = user["user"]["role"]["statuses"]
+    statuses, _ = get_statuses(request)
 
     if case_type == CaseType.APPLICATION.value:
         case_type_applicable_statuses = [
             status
-            for status in get_statuses_as_options(request)
-            if status.value not in ["Applicant editing", "Closed", "Finalised", "Registered"]
+            for status in statuses
+            if status["key"]
+            not in [Statuses.APPLICANT_EDITING, Statuses.CLOSED, Statuses.FINALISED, Statuses.REGISTERED]
         ]
     else:
         case_type_applicable_statuses = [
-            status
-            for status in get_statuses_as_options(request)
-            if status.value in ["Closed", "Submitted", "Withdrawn"]
+            status for status in statuses if status["key"] in [Statuses.CLOSED, Statuses.SUBMITTED, Statuses.WITHDRAWN]
         ]
 
-    return [status.value for status in case_type_applicable_statuses if status.key in user_permissible_statuses]
+    return [status for status in case_type_applicable_statuses if status in user_permissible_statuses]
 
 
 def get_status_properties(request, status):

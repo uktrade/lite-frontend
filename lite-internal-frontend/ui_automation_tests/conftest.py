@@ -27,12 +27,7 @@ from ui_automation_tests.fixtures.add_a_picklist import (  # noqa
     add_a_standard_advice_picklist,
     add_a_report_summary_picklist,
 )
-from ui_automation_tests.shared.fixtures.apply_for_application import (  # noqa
-    apply_for_standard_application,
-    apply_for_clc_query,
-    apply_for_eua_query,
-    apply_for_open_application,
-)
+from ui_automation_tests.shared.fixtures.apply_for_application import *  # noqa
 from ui_automation_tests.shared.fixtures.driver import driver  # noqa
 from ui_automation_tests.shared.fixtures.sso_sign_in import sso_sign_in  # noqa
 from ui_automation_tests.shared.fixtures.core import (  # noqa

@@ -1,7 +1,6 @@
 from django.urls import reverse_lazy
 
 from conf.constants import UPDATED_CASES_QUEUE_ID
-from core.builtins.custom_tags import lowercase_and_underscore
 from lite_content.lite_internal_frontend.strings import QUEUE_ALL_CASES
 from lite_forms.components import Breadcrumbs, BackLink, HiddenField
 
@@ -121,11 +120,3 @@ def case_view_breadcrumbs(case: dict, current_view: str):
             BackLink(current_view),
         ]
     )
-
-
-def format_status_in_request_data(data):
-    """ Format the status in the data to representation stored in database. """
-    data_copy = data.copy()
-    data_copy["status"] = lowercase_and_underscore(data_copy["status"])
-
-    return data_copy
