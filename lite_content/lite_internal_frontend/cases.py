@@ -219,7 +219,7 @@ class ClcQuery:
         OUTCOME = "Outcome"
 
         class Clc:
-            TITLE = "Clc query"
+            TITLE = "CLC query"
             CONTROLLED = "Is the good controlled?"
             CONTROL_CODE = "What's the goods actual control list entry"
             REPORT = "Report Summary (optional)"
