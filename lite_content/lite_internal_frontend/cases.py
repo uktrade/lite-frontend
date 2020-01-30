@@ -302,6 +302,13 @@ class GradingResponseOverview:
     CHANGE = "Change response"
 
     class Details:
+        PRODUCT_HEADING = "Product details"
+        DESCRIPTION = "Description"
+        PART_NUMBER = "Part number"
+
+        CONTROL_HEADING = "Control code"
+        CONTROL_LIST_ENTRY = "Control list entry"
+
         class Flags:
             FLAGS = "Flags"
             EDIT = "Edit good flags"
@@ -312,8 +319,12 @@ class GradingResponseOverview:
             DOWNLOAD = "Download"
             NONE = "This good has no documents attached."
 
-    class Reponse:
+    class Response:
         TITLE = "What you've said"
+        PREFIX = "Prefix (optional)"
+        GRADING = "Grading"
+        SUFFIX = "Suffix (optional)"
+        COMMENT = "Comment (optional)"
 
 
 class RespondClCQueryForm:
