@@ -243,6 +243,8 @@ class GoodPage:
         CASE_OFFICER = "Case officer"
         NO_ASSIGNED_CASE_OFFICER = "Not assigned"
         REFERENCE = "ECJU reference"
+        CLC_RAISED_REASONS = "Clc query reasons"
+        GRADING_RAISED_REASONS = "grading query reasons"
 
     class Document:
         DOWNLOAD = generic.Document.DOWNLOAD
