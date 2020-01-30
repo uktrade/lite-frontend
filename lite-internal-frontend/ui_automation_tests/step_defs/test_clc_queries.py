@@ -2,6 +2,8 @@ from pytest_bdd import when, then, scenarios, given
 from pages.clc_queries_pages import ClcQueriesPages
 from pages.shared import Shared
 
+from ui_automation_tests.shared.tools.helpers import scroll_to_element_by_id
+
 scenarios("../features/clc_queries.feature", strict_gherkin=False)
 
 
@@ -12,6 +14,7 @@ def respond_to_query(driver):
 
 @when("I submit response")
 def submit_response(driver):
+    scroll_to_element_by_id(driver, ClcQueriesPages.SUBMIT_RESPONSE_BUTTON_ID)
     Shared(driver).click_submit()
 
 

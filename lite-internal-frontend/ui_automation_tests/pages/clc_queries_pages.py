@@ -2,7 +2,7 @@ from shared.BasePage import BasePage
 
 
 class ClcQueriesPages(BasePage):
-
+    SUBMIT_RESPONSE_BUTTON_ID = "submit-response"  # ID
     CONTROL_RESPONSE = "is_good_controlled-"  # ID
     CONTROL_LIST_ENTRY = "control_code"  # ID
     REPORT_SUMMARY = "report_summary"  # Name

@@ -50,15 +50,9 @@ def changes_have_been_made_to_case(driver, context, exporter_info, seed_data_con
 
     lite_client = get_lite_client(context, seed_data_config)
 
-    audit_text = (
-        ' updated the application name from "'
-        + context.app_name
-        + '" to "'
-        + lite_client.context["edit_case_app"]["name"]
-        + '".'
+    last_exporter_case_activity_id = app_page.get_case_activity_id_by_audit_text(
+        context.app_name, lite_client.context["edit_case_app"]["name"]
     )
-
-    last_exporter_case_activity_id = app_page.get_case_activity_id_by_audit_text(audit_text)
     expected_anchor_href = driver.current_url + "#" + last_exporter_case_activity_id
 
     assert case_notification_anchor.get_attribute("href") == expected_anchor_href
