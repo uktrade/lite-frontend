@@ -197,7 +197,7 @@ class InitialApplicationQuestionsForms:
         )
 
         class LicenceTypes:
-            EXPORT_LICENCE_TITLE = "Export Licence"
+            EXPORT_LICENCE_TITLE = "Export licence"
             EXPORT_LICENCE_DESCRIPTION = "Select if you’re sending products produced in the UK to another country"
 
             TRANSHIPMENT_LICENCE_TITLE = "Transhipment licence"
