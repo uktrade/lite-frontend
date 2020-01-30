@@ -79,7 +79,7 @@ def new_party_form_group(application, strings, back_url):
 
 
 def attach_document_form(application_id, title, return_later_text, description_text=None):
-    inputs = [FileUpload("documents")]
+    inputs = [FileUpload("document")]
     if description_text:
         inputs.append(TextArea(title=description_text, optional=True, name="description", extras={"max_length": 280,}))
     return Form(

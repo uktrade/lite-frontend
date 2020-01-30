@@ -26,14 +26,13 @@ Feature: I want to indicate the standard licence I want
     When I click on end user
     And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
-    And I click the back link
-    Then Wait for "end_user_document_download" to be present
-    When I click on consignees
+    Then wait for download link
+    When I click the back link
+    And I click on consignees
     And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
-    And I click the back link
-    Then Wait for "consignee_document_download" to be present
-    And I see end user on overview
+    Then wait for download link
+    When I click the back link
     When I submit the application
     Then application is submitted
     When I go to exporter homepage
@@ -51,7 +50,7 @@ Feature: I want to indicate the standard licence I want
     And I click on the add button
     And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     When I upload a file "file_for_doc_upload_test_1.txt"
-    Then Wait for download link
+    Then wait for download link
     And "Delete" link is present
     When I click on the add button
     And I add an end user of sub_type: "commercial", name: "Mr Jones", website: " ", address: "London" and country "Ukraine"
@@ -71,14 +70,14 @@ Feature: I want to indicate the standard licence I want
     When I click on end user
     And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
-    And I click the back link
-    Then Wait for "end_user_document_download" to be present
-    When I click on consignees
+    And Wait for "end_user_document_download" to be present
+    When I click the back link
+    And I click on consignees
     And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
-    And I click the back link
-    Then Wait for "consignee_document_download" to be present
-    When I submit the application
+    And Wait for "consignee_document_download" to be present
+    When I click the back link
+    And I submit the application
     And I click applications
     Then I see submitted application
 
@@ -100,4 +99,3 @@ Feature: I want to indicate the standard licence I want
     Then I see the party address and country is already filled in
     When I click continue
     And I skip uploading a document
-    Then I see end user on overview

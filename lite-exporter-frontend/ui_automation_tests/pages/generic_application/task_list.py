@@ -7,16 +7,17 @@ from shared.functions import element_with_css_selector_exists, element_with_id_e
 
 class GenericApplicationTaskListPage(BasePage):
 
-    LOCATION_LINK = "location"
-    OPEN_GOODS_LINK = "open-goods"
-    END_USER_LINK = "end_users"  # ID
-    CONSIGNEES_LINK = "consignees"
-    ULTIMATE_END_USER_LINK = "ultimate_end_users"  # ID
+    LOCATION_LINK = "link-locations"
+    OPEN_GOODS_LINK = "link-products"
+    LINK_END_USER_ID = "link-end-user"
+    LINK_CONSIGNEE_ID = "link-consignee"
+    LINK_SUPPORTING_DOCUMENTS_ID = "link-supporting-documents"
+    ULTIMATE_END_USER_LINK = "link-ultimate_end_users"  # ID
     GOODS_ON_APPLICATION = "[id^=good-on-application-row]"  # CSS
     GOV_TABLES = ".govuk-table__body"  # CSS
     DELETE_END_USER_DOCUMENT = "end_user_document_delete"  # ID
     ATTACH_END_USER_DOCUMENT = "end_user_attach_doc"  # ID
-    GOODS_COUNTRIES_LINK = "goods_country_assignments"  # ID
+    LINK_COUNTRIES_MATRIX_ID = "link-countries-matrix"
     REMOVE_GOOD_LINK = "a[href*='good-on-application']"
     REMOVE_GOODS_TYPE_LINK = "a[href*='goods-types/remove']"
     REMOVE_END_USER_LINK = "a[href*='end-user/remove']"
@@ -25,6 +26,9 @@ class GenericApplicationTaskListPage(BasePage):
     REMOVE_ADDITIONAL_DOCUMENT_LINK = "document_delete"  # ID
     LITE_TASK_LIST_ITEMS = ".lite-task-list__items"
     DELETE_ADDITIONAL_DOC_CONFIRM_YES = "delete_document_confirmation-yes"  # ID
+
+    def click_supporting_documents_link(self):
+        self.driver.find_element_by_id(self.LINK_SUPPORTING_DOCUMENTS_ID).click()
 
     def find_remove_goods_type_link(self):
         try:
@@ -82,14 +86,16 @@ class GenericApplicationTaskListPage(BasePage):
         self.driver.execute_script("arguments[0].click();", element)
 
     def click_end_user_link(self):
-        self.driver.find_element_by_id(self.END_USER_LINK).click()
+        self.driver.find_element_by_id(self.LINK_END_USER_ID).click()
 
     def click_consignee_link(self):
-        self.driver.find_element_by_id(self.CONSIGNEES_LINK).click()
+        self.driver.find_element_by_id(self.LINK_CONSIGNEE_ID).click()
 
     def click_goods_countries_link(self):
-        self.driver.execute_script("document.getElementById('" + self.GOODS_COUNTRIES_LINK + "').scrollIntoView(true);")
-        self.driver.find_element_by_id(self.GOODS_COUNTRIES_LINK).click()
+        self.driver.execute_script(
+            "document.getElementById('" + self.LINK_COUNTRIES_MATRIX_ID + "').scrollIntoView(true);"
+        )
+        self.driver.find_element_by_id(self.LINK_COUNTRIES_MATRIX_ID).click()
 
     def get_text_of_end_user_table(self):
         return self.driver.find_elements_by_css_selector(self.GOV_TABLES)[

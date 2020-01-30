@@ -1,7 +1,5 @@
 {% extends 'layouts/base.html' %}
 
-{% load svg %}
-
 {% block back_link %}
 	{% include 'includes/breadcrumbs.html' %}
 {% endblock %}
@@ -71,12 +69,11 @@
 						</td>
 						{% if organisation.type.key != 'hmrc' %}
 							<td class="govuk-table__cell">
-								{{ draft.export_type.value }}
+								{{ draft.export_type.value|default_na }}
 							</td>
 						{% endif %}
 						<td class="govuk-table__cell govuk-table__cell--numeric govuk-table__cell--nowrap">
-							<a id="link-delete-draft" href="{% url 'applications:delete' draft.id %}?return_to={{ CURRENT_PATH }}" class="govuk-link lite-link--icon">
-                                {% svg 'close' %}
+							<a id="link-delete-draft" href="{% url 'applications:delete' draft.id %}?return_to={{ CURRENT_PATH }}" class="govuk-link--no-visited-state">
                                 {% lcs 'applications.DeleteApplicationPage.BUTTON' %}
                             </a>
 						</td>

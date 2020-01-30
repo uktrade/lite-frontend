@@ -2,7 +2,7 @@ from shared.BasePage import BasePage
 
 
 class AttachDocumentPage(BasePage):
-    FILE = "file"  # ID
+    FILE = "document"  # ID
     DESCRIPTION = "description"  # ID
     ADDED_DOCUMENT_ITEM = ".lite-card--download"  # CSS
     LINK_SKIP_UPLOAD_ID = "return_to_application"

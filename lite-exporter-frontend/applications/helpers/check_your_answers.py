@@ -3,7 +3,7 @@ from _decimal import Decimal
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.urls import reverse_lazy
 
-from conf.constants import NEWLINE, STANDARD_LICENCE, OPEN_LICENCE, HMRC_QUERY
+from conf.constants import NEWLINE, STANDARD_LICENCE, OPEN_LICENCE, HMRC_QUERY, EXHIBITION_CLEARANCE
 from core.builtins.custom_tags import default_na, friendly_boolean, pluralise_unit
 from core.helpers import convert_to_link
 from lite_content.lite_exporter_frontend import strings
@@ -19,8 +19,15 @@ def convert_application_to_check_your_answers(application, editable=False):
         return _convert_open_application(application, editable)
     elif application["application_type"]["key"] == HMRC_QUERY:
         return _convert_hmrc_query(application, editable)
+    elif application["application_type"]["key"] == EXHIBITION_CLEARANCE:
+        return _convert_exhibition_clearance(application, editable)
     else:
         raise NotImplementedError()
+
+
+def _convert_exhibition_clearance(application, editable=False):
+    # Temp as exhibition clearance is currently the same as standard but will change
+    return _convert_standard_application(application, editable)
 
 
 def _convert_standard_application(application, editable=False):

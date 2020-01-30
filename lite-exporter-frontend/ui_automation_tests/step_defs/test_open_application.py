@@ -1,12 +1,14 @@
 from pytest_bdd import scenarios, when, then, parsers, given
 
 import shared.tools.helpers as utils
+from shared import functions
 from conftest import (
     click_apply_licence,
     enter_type_of_application,
     enter_application_name,
     enter_permanent_or_temporary,
 )
+from pages.apply_for_a_licence_page import ApplyForALicencePage
 from pages.generic_application.task_list import GenericApplicationTaskListPage
 from pages.open_application.countries import OpenApplicationCountriesPage
 from pages.open_application.goods_countries_page import GoodsCountriesPage
@@ -32,16 +34,6 @@ def i_see_the_goods_types_list(driver, position, context):
     good_type = goods_type_page.get_text_of_goods_type_info(int(position))
     assert context.good_description in good_type
     assert context.control_code in good_type
-
-
-@then("I see my goods type added to the overview page with a description and a control code")
-def i_see_the_goods_types_list_overview(driver, context):
-    goods_type_page = OpenApplicationGoodsTypesPage(driver)
-    good_type_table_overview = goods_type_page.get_text_of_goods_type_info_overview()
-    assert "Description" in good_type_table_overview
-    assert "Control list classification" in good_type_table_overview
-    assert context.good_description in good_type_table_overview
-    assert context.control_code in good_type_table_overview
 
 
 @when("I click on countries")
@@ -128,6 +120,8 @@ def click_goods_link_overview(driver):  # noqa
 @when("I create an open application")  # noqa
 def create_open_app(driver, context):  # noqa
     click_apply_licence(driver)
+    ApplyForALicencePage(driver).select_licence_type("export_licence")
+    functions.click_submit(driver)
     enter_type_of_application(driver, "open", context)
     enter_application_name(driver, context)
     enter_permanent_or_temporary(driver, "permanent", context)

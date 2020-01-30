@@ -9,7 +9,7 @@ class StandardApplicationTaskListPage(BasePage):
     LINK_END_USER_ID = "link-end-user"
     LINK_CONSIGNEE_ID = "link-consignee"
     LINK_THIRD_PARTIES_ID = "link-third-parties"
-    LINK_ULTIMATE_RECIPIENTS_ID = "link-ultimate-recipients"
+    LINK_ULTIMATE_RECIPIENTS_ID = "link-ultimate-end-users"
     LINK_SUPPORTING_DOCUMENTATION = "link-supporting-documentation"
 
     def _click_link(self, element_id):

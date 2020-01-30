@@ -5,5 +5,7 @@ from apply_for_a_licence import views
 app_name = "apply_for_a_licence"
 
 urlpatterns = [
-    path("", views.InitialQuestions.as_view(), name="start"),
+    path("", views.LicenceType.as_view(), name="start"),
+    path("licence/", views.ExportLicenceQuestions.as_view(), name="export_licence_questions"),
+    path("mod/", views.MODClearanceQuestions.as_view(), name="mod_questions"),
 ]

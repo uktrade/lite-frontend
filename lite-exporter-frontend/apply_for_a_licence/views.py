@@ -1,17 +1,38 @@
 from django.urls import reverse_lazy
 
 from applications.services import post_applications
-from apply_for_a_licence.forms import initial_questions
-from lite_forms.views import MultiFormView
+from apply_for_a_licence.forms import opening_question, export_licence_questions, MOD_questions
+from apply_for_a_licence.validators import validate_opening_question
+from lite_forms.views import SingleFormView, MultiFormView
 
 
-class InitialQuestions(MultiFormView):
+class LicenceType(SingleFormView):
     def init(self, request, **kwargs):
-        self.forms = initial_questions(None)
+        self.form = opening_question()
+        self.action = validate_opening_question
+
+    def get_success_url(self):
+        licence_type = self.get_validated_data()["licence_type"]
+        return reverse_lazy(f"apply_for_a_licence:{licence_type}_questions")
+
+
+class ExportLicenceQuestions(MultiFormView):
+    def init(self, request, **kwargs):
+        self.forms = export_licence_questions(None)
         self.action = post_applications
 
     def on_submission(self, request, **kwargs):
-        self.forms = initial_questions(request.POST.copy().get("application_type"))
+        self.forms = export_licence_questions(request.POST.copy().get("application_type"))
+
+    def get_success_url(self):
+        pk = self.get_validated_data()["id"]
+        return reverse_lazy("applications:task_list", kwargs={"pk": pk})
+
+
+class MODClearanceQuestions(MultiFormView):
+    def init(self, request, **kwargs):
+        self.forms = MOD_questions()
+        self.action = post_applications
 
     def get_success_url(self):
         pk = self.get_validated_data()["id"]

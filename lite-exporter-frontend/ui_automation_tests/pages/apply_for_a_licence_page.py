@@ -5,6 +5,8 @@ from shared.BasePage import BasePage
 class ApplyForALicencePage(BasePage):
 
     NAME_OR_REFERENCE_INPUT_ID = "name"
+    LICENCE_TYPE_PARTIAL_ID = "licence_type-"
+    MOD_APPLICATION_TYPE_PARTIAL_ID = "application_type-"
     BUTTON_STANDARD_LICENCE = "input#application_type-standard_licence"
     BUTTON_OPEN_LICENCE = "input#application_type-open_licence"
     EXPORT_BUTTON = "export_type-"
@@ -19,6 +21,12 @@ class ApplyForALicencePage(BasePage):
         element = self.driver.find_element_by_id(self.NAME_OR_REFERENCE_INPUT_ID)
         element.clear()
         element.send_keys(name)
+
+    def select_licence_type(self, type):
+        self.driver.find_element_by_id(f"{self.LICENCE_TYPE_PARTIAL_ID}{type}").click()
+
+    def select_mod_application_type(self, type):
+        self.driver.find_element_by_id(f"{self.MOD_APPLICATION_TYPE_PARTIAL_ID}{type}").click()
 
     def click_delete_application(self):
         self.driver.find_element_by_id(self.LINK_DELETE_DRAFT_ID).click()

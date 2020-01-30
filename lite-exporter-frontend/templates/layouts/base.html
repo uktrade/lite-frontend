@@ -93,19 +93,21 @@
 	{% endblock %}
 
 	<div class="govuk-width-container">
-		<div class="govuk-phase-banner">
-			<p class="govuk-phase-banner__content">
-				<strong class="govuk-tag govuk-phase-banner__content__tag ">
-					alpha
-				</strong>
-				<span class="govuk-phase-banner__text">
-					This is a new service – your <a class="govuk-link" href="{{ FEEDBACK_URL }}">feedback</a> will help us to improve it.
-				</span>
-			</p>
-		</div>
-		{% block back_link %}
-			<a href="#" id="back-link" class="govuk-back-link">Back</a>
-		{% endblock %}
+		<section aria-label="banner">
+			<div class="govuk-phase-banner">
+				<p class="govuk-phase-banner__content">
+					<strong class="govuk-tag govuk-phase-banner__content__tag ">
+						alpha
+					</strong>
+					<span class="govuk-phase-banner__text">
+						This is a new service – your <a class="govuk-link" href="{{ FEEDBACK_URL }}">feedback</a> will help us to improve it.
+					</span>
+				</p>
+			</div>
+			{% block back_link %}
+				<a href="#" id="back-link" class="govuk-back-link">Back</a>
+			{% endblock %}
+		</section>
 		<main class="govuk-main-wrapper " id="main-content" role="main">
 			{% block body %}{% endblock %}
 		</main>

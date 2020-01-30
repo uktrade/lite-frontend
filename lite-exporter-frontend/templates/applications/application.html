@@ -41,11 +41,11 @@
     				<dd class="govuk-summary-list__value" id="summary-list-reference-code">
     					{{ application.reference_code }}
     				</dd>
-    				<!-- <dd class="govuk-summary-list__actions">
+    				<dd class="govuk-summary-list__actions">
     					<button class="lite-button--link lite-js-only" href="#" id="button-copy-reference-code">
     						{% lcs "applications.ApplicationSummaryPage.COPY_REFERENCE_CODE" %}
     					</button>
-    				</dd> -->
+    				</dd>
     			</div>
             {% endif %}
 			<div class="govuk-summary-list__row">
@@ -56,15 +56,15 @@
 					{{ application.application_type.value }}
 				</dd>
 			</div>
-			{% if application.application_type.key != 'hmrc_query' %}
-			<div class="govuk-summary-list__row">
-				<dt class="govuk-summary-list__key">
-					{% lcs 'applications.ApplicationSummaryPage.EXPORT_TYPE' %}
-				</dt>
-				<dd class="govuk-summary-list__value">
-					{{ application.export_type.value }}
-				</dd>
-			</div>
+			{% if application.application_type.key != 'hmrc_query' and application.application_type.key != 'exhibition_clearance' %}
+    			<div class="govuk-summary-list__row">
+    				<dt class="govuk-summary-list__key">
+    					{% lcs 'applications.ApplicationSummaryPage.EXPORT_TYPE' %}
+    				</dt>
+    				<dd class="govuk-summary-list__value">
+    					{{ application.export_type.value }}
+    				</dd>
+    			</div>
 			{% endif %}
 			<div class="govuk-summary-list__row">
 				<dt class="govuk-summary-list__key">
@@ -78,7 +78,7 @@
 				<dt class="govuk-summary-list__key">
 					{% lcs 'applications.ApplicationSummaryPage.CASE_OFFICER' %}
 				</dt>
-				<dd id="label-application-status" class="govuk-summary-list__value">
+				<dd class="govuk-summary-list__value">
 					{% if application.case_officer.first_name %}
 						{{ application.case_officer.first_name }} {{ application.case_officer.last_name }}
 					{% else %}
@@ -197,7 +197,7 @@
 {% endblock %}
 
 {% block javascript %}
-	<script type="text/javascript">
+	<script type="text/javascript" nonce="{{ request.csp_nonce }}">
 		function textToClipboard() {
 		    var dummy = document.createElement("textarea");
 		    document.body.appendChild(dummy);

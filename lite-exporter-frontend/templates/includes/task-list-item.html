@@ -1,7 +1,7 @@
 <li class="lite-task-list__item">
 	<div class="lite-task-list__item-header">
 		<a id="link-{{ id }}" href="{{ url }}" class="govuk-link govuk-link--no-visited-state">
-			{{ title }}
+			{% lcs title %}
 		</a>
 		{% if not hide_tag %}
 			{% if status == 'done' %}
