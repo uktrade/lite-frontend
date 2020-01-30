@@ -130,6 +130,7 @@ class ApplicationSummaryPage:
     CONSIGNEE = "Consignee"
     THIRD_PARTIES = "Third parties"
     GOODS_LOCATIONS = "Locations"
+    GOODS_DEPARTED = "Have the goods already left the UK?"
     SUPPORTING_DOCUMENTATION = "Supporting documents"
     GOODS = "Products"
     COUNTRIES = "Countries"
