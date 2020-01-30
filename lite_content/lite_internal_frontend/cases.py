@@ -22,14 +22,14 @@ class CaseDocumentsPage:
 
 class ApplicationPage:
     class Actions:
-        CASE_OFFICER = "Assign Case Officer"
-        DOCUMENT = "Attached Documents"
-        ECJU = "ECJU Queries"
-        MOVE = "Move Case"
-        CHANGE_STATUS = "Change Status"
-        DECISION = "Record Decision"
-        ADVICE = "View Advice"
-        GENERATE_DOCUMENT = "Generate Document"
+        CASE_OFFICER = "Assign case officer"
+        DOCUMENT = "Attached documents"
+        ECJU = "ECJU queries"
+        MOVE = "Move case"
+        CHANGE_STATUS = "Change status"
+        DECISION = "Record decision"
+        ADVICE = "View advice"
+        GENERATE_DOCUMENT = "Generate document"
 
     class Goods:
         MISSING_DOCUMENT_REASON_PREFIX = "No document given: "
@@ -121,14 +121,6 @@ class AdditionalDocumentsPage:
 
 
 class EndUserAdvisoriesPage:
-    class Actions:
-        CASE_OFFICER = "Assign Case Officer"
-        CHANGE_STATUS = "Change Status"
-        DOCUMENT = "Attached Documents"
-        ECJU = "ECJU Queries"
-        GENERATE_DOCUMENT = "Generate Document"
-        MOVE = "Move Case"
-
     class Details:
         TITLE = "End User Details"
         NAME = "Name"
@@ -155,13 +147,6 @@ class HMRCPage:
     class Heading:
         EXPORTER = "Exporter "
         RAISED_BY = "Raised by "
-
-    class Actions:
-        CHANGE_STATUS = "Change Status"
-        DOCUMENT = "Attached Documents"
-        MOVE = "Move Case"
-        RECORD_DECISION = "Record Decision"
-        GENERATE_DOCUMENT = "Generate Document"
 
     class DenialReasons:
         TITLE = "Denial Reasons"
@@ -370,9 +355,9 @@ class RespondGradingQueryForm:
 
 
 class ChangeStatusPage:
-    TITLE_APPLICATION = "Application Status"
-    TITLE_CLC = "CLC Query Status"
-    TITLE_EUA = "End User Advisory Status"
+    TITLE = "Change case status"
+    DESCRIPTION = ""
+    SUCCESS_MESSAGE = "You've changed the case status successfully"
 
 
 class ReviewGoodsSummary:
@@ -444,9 +429,9 @@ class Manage:
             TITLE = "Attach a document to this case"
 
     class MoveCase:
-        BUTTON = "Move Case"
-        DESCRIPTION = "Select all queues that apply."
         TITLE = "Where do you want to move this case?"
+        DESCRIPTION = "Select all queues that apply."
+        SUCCESS_MESSAGE = "You've moved the case successfully"
 
     class AssignUsers:
         DESCRIPTION = "Select all users that apply."

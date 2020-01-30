@@ -138,6 +138,21 @@ class ApplicationSummaryPage:
     COPY_REFERENCE_CODE = "Copy ECJU reference"
     COPIED = "Copied"
 
+    class Sections:
+        COMPLETED_TAG = "Completed"
+        IN_PROGRESS_TAG = "In Progress"
+        NOT_STARTED_TAG = "Not started"
+
+    class PartiesPreviewList:
+        NAME = "Name"
+        TYPE = "Type"
+        ROLE = "Role"
+        WEBSITE = "Website"
+        ADDRESS = "Address"
+        COUNTRY = "Country"
+        ATTACH = "Attach"
+        DOCUMENT = "Document"
+
     class Buttons:
         EDIT_APPLICATION_BUTTON = "Edit application"
         WITHDRAW_ACCESS_BUTTON = "Withdraw application"
@@ -170,38 +185,90 @@ class ApplicationsSummaryPage:
 
 
 class InitialApplicationQuestionsForms:
-    WHICH_EXPORT_LICENCE_DO_YOU_WANT_TITLE = "Select the type of licence you need"
-    WHICH_EXPORT_LICENCE_DO_YOU_WANT_DESCRIPTION = ""
-    STANDARD_LICENCE = "Standard licence"
-    STANDARD_LICENCE_DESCRIPTION = (
-        "Select a standard licence for a set quantity and set value of products. "
-        "You must attach a completed [end user undertaking form](https://www.gov.uk/government/publications/end-user-undertaking-euu-form) to the application."
-    )
-    OPEN_LICENCE = "Open licence"
-    OPEN_LICENCE_DESCRIPTION = (
-        "Select an open licence for multiple shipments of specific products to specific countries. "
-        "Open licences cover long term projects and repeat business."
-    )
-    HELP_WITH_CHOOSING_A_LICENCE = "What licence do I need?"
-    HELP_WITH_CHOOSING_A_LICENCE_CONTENT = (
-        "Read about the [different types of export control licences]"
-        "(https://www.gov.uk/guidance/beginners-guide-to-export-controls#what-licence-do-i-need)."
-    )
-    ENTER_A_REFERENCE_NAME_TITLE = "Name the application"
-    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference name"
-    ENTER_A_REFERENCE_NAME_DESCRIPTION = (
-        "Give the application a reference name so you can refer back to it when needed."
-    )
-    TEMPORARY_OR_PERMANENT_TITLE = "Select an export type"
-    TEMPORARY_OR_PERMANENT_DESCRIPTION = ""
-    TEMPORARY = "Temporary"
-    PERMANENT = "Permanent"
-    HAVE_YOU_BEEN_INFORMED_TITLE = (
-        "Have you been informed under an 'end use control' that you need to apply for a licence?"
-    )
-    HAVE_YOU_BEEN_INFORMED_DESCRIPTION = "An end use control is an official letter or email from Border Force or HMRC."
-    WHAT_WAS_THE_REFERENCE_CODE_TITLE = "Reference number (optional)"
-    WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION = "The reference number is on the official letter or email."
+    class OpeningQuestion:
+        TITLE = "Select what you need"
+        LABEL = "Licence type"
+        DESCRIPTION = ""
+        BREADCRUMB = "Apply for a licence"
+        HELP_WITH_CHOOSING_A_LICENCE = ""
+        HELP_WITH_CHOOSING_A_LICENCE_CONTENT = (
+            "Read about the [different types of export control licences]"
+            "(https://www.gov.uk/guidance/beginners-guide-to-export-controls#what-licence-do-i-need)."
+        )
+
+        class LicenceTypes:
+            EXPORT_LICENCE_TITLE = "Export licence"
+            EXPORT_LICENCE_DESCRIPTION = "Select if you’re sending products produced in the UK to another country"
+
+            TRANSHIPMENT_LICENCE_TITLE = "Transhipment licence"
+            TRANSHIPMENT_LICENCE_DESCRIPTION = (
+                "Select if you're shipping something from overseas through the UK on to another country."
+                " If the products will be in the UK for 31 days or more, apply for an export licence"
+            )
+            TRADE_CONTROL_LICENCE_TITLE = "Trade control licence"
+            TRADE_CONTROL_LICENCE_DESCRIPTION = (
+                "Select if you’re arranging or brokering the sale or movement of controlled products located overseas"
+            )
+
+            MOD_CLEARANCE_TITLE = "MOD clearance"
+            MOD_CLEARANCE_DESCRIPTION = (
+                "Select if you need to share information, go to an exhibition or gifting products"
+            )
+
+    class ReferenceNameQuestion:
+        TITLE = "Name the application"
+        ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference name"
+        DESCRIPTION = "Give the application a reference name so you can refer back to it when needed."
+        LABEL = "Name"
+        BACK_TO_LICENCE_TYPE = "Back to licence type"
+        BACK_TO_MOD_CLEARANCE_TYPE = "Back to MOD clearance type"
+
+
+class ExportLicenceQuestions:
+    class ExportLicenceQuestion:
+        TITLE = "Select the type of licence you need"
+        BACK = "Back to application type"
+        DESCRIPTION = ""
+        STANDARD_LICENCE = "Standard licence"
+        STANDARD_LICENCE_DESCRIPTION = (
+            "Select a standard licence for a set quantity and set value of products. "
+            "You must attach a completed "
+            "[end user undertaking form](https://www.gov.uk/government/publications/end-user-undertaking-euu-form)"
+            " to the application."
+        )
+        OPEN_LICENCE = "Open licence"
+        OPEN_LICENCE_DESCRIPTION = (
+            "Select an open licence for multiple shipments of specific products to specific countries. "
+            "Open licences cover long term projects and repeat business."
+        )
+
+    class ExportType:
+        TITLE = "Select an export type"
+        DESCRIPTION = ""
+        TEMPORARY = "Temporary"
+        PERMANENT = "Permanent"
+
+    class HaveYouBeenInformedQuestion:
+        TITLE = "Have you been informed under an 'end use control' that you need to apply for a licence?"
+        DESCRIPTION = "An end use control is an official letter or email from Border Force or HMRC."
+        WHAT_WAS_THE_REFERENCE_CODE_TITLE = "Reference number"
+        WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION = "The reference number is on the official letter or email."
+
+
+class MODQuestions:
+    class WhatAreYouApplyingFor:
+        TITLE = "What are you applying for?"
+        DESCRIPTION = ""
+        BACK = "Back to application type"
+
+        PERMISSION_TITLE = "F680"
+        PERMISSION_DESCRIPTION = "Coming soon"
+
+        EXHIBITION_CLEARANCE_TITLE = "Exhibition clearance"
+        EXHIBITION_CLEARANCE_DESCRIPTION = ""
+
+        GIFTING_CLEARANCE_TITLE = "Gifting clearance"
+        GIFTING_CLEARANCE_DESCRIPTION = "Coming soon"
 
 
 class DestinationForm:
@@ -209,9 +276,73 @@ class DestinationForm:
     DESCRIPTION = ""
 
 
-class EditStandardApplicationPage:
+class TaskListPage:
+    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
+
+
+class StandardApplicationTaskList:
+    NEW_TITLE = "Apply for a standard export licence"
+    EDIT_TITLE = "Edit the application"
+    END_USE_CONTROL = "End use control"
+    GOODS = "Products"
+    GOODS_LOCATION = "Location of products"
+    END_USER = "End user"
+    ULTIMATE_END_USERS = "Ultimate recipients"
+    CONSIGNEE = "Consignee"
+    SUPPORTING_DOCUMENTS = "Supporting documents"
+    THIRD_PARTIES = "Third parties"
+
+
+class OpenApplicationTaskList:
+    NEW_TITLE = "Apply for an open export licence"
+    EDIT_TITLE = "Edit the application"
+    GOODS = "Products"
+    GOODS_LOCATION = "Location of products"
+    GOODS_DESTINATION = "Countries"
+    COUNTRIES_WHERE_EACH_GOOD_IS_GOING = "Countries each product is going to"
+    SUPPORTING_DOCUMENTS = "Supporting documents"
+
+
+class HMRCApplicationTaskList:
+    GOODS = "Products"
+    GOODS_LOCATION = "Location of products"
+    END_USER = "End user"
+    ULTIMATE_END_USERS = "Ultimate recipients"
+    THIRD_PARTIES = "Third parties"
+    CONSIGNEE = "Consignee"
+    SUPPORTING_DOCUMENTS = "Supporting documents"
+    REASON_FOR_QUERY = "Reason for query"
+
+
+class ExhibitionClearanceTaskList:
+    NEW_TITLE = "Apply for an Exhibition Clearance licence"
+    EDIT_TITLE = "Edit the application"
+    END_USE_CONTROL = "End use control"
+    GOODS = "Products"
+    GOODS_LOCATION = "Location of products"
+    END_USER = "End user"
+    ULTIMATE_END_USERS = "Ultimate recipients"
+    CONSIGNEE = "Consignee"
+    SUPPORTING_DOCUMENTS = "Supporting documents"
+    THIRD_PARTIES = "Third parties"
+
+
+class EditApplicationPage:
+    BACK = "Back to applications"
     DRAFT_DELETE_LINK = "Delete draft"
     SUBMIT = "Submit application"
+    DONE = "Saved"
+    ERRORS = "There is a problem"
+    MINOR_EDIT = "Changes made to this application won't impact its processing time."
+    MAJOR_EDIT = "This application won't be processed until it's submitted."
+
+    class InitialTaskSection:
+        TITLE = "Prepare application"
+        EDITING = "Basic details"
+
+    class MainTaskSection:
+        TITLE = "Complete application"
+        EDITING = "More information"
 
 
 class EditOpenApplicationPage:
@@ -238,11 +369,6 @@ class AttachDocumentPage:
 
 class DeleteDocument:
     DOCUMENT_DELETE_GENERIC_ERROR = "We had an issue deleting your file. Try again later."
-
-
-class TaskListPage:
-    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
-    WHERE_ARE_YOUR_GOODS_GOING_SHORT_TITLE = "Countries"
 
 
 class ApplicationSuccessPage:
