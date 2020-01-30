@@ -59,7 +59,7 @@
 						<span class="lite-hint">{% lcs 'cases.ReviewGoodsSummary.NotSet.REPORT_SUMMARY' %}</span>
 					{% endif %}
 				</td>
-				<td class="govuk-table__cell">{{ good.is_good_controlled|friendly_boolean }}</td>
+				<td class="govuk-table__cell">{{ good.is_good_controlled.value|friendly_boolean }}</td>
 				<td class="govuk-table__cell">{{ good.control_code|default_na }}</td>
 				<td class="govuk-table__cell">
 					{% if good.comment %}

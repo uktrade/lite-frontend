@@ -165,7 +165,7 @@ def friendly_boolean(boolean):
     """
     Returns 'Yes' if a boolean is equal to True, else 'No'
     """
-    if boolean is True or boolean == "true" or boolean == "True":
+    if boolean is True or boolean == "true" or boolean == "True" or boolean == "yes" or boolean == "Yes":
         return "Yes"
     else:
         return "No"

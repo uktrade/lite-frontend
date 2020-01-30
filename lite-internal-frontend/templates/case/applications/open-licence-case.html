@@ -75,6 +75,7 @@
 								<th scope="col" class="govuk-table__header">{% lcs 'GOOD_CONTROLLED' %}</th>
 								<th scope="col" class="govuk-table__header">{% lcs 'GOOD_CONTROL_LIST_ENTRY' %}</th>
 								<th scope="col" class="govuk-table__header">{% lcs 'GOOD_INCORPORATED' %}</th>
+								<th scope="col" class="govuk-table__header">{% lcs 'cases.ApplicationPage.Goods.Table.FLAGS' %}</th>
 								<th scope="col" class="govuk-table__header"></th>
 							</tr>
 						</thead>
@@ -93,25 +94,16 @@
 									<td class="govuk-table__cell">{{ good.control_code|default_na }}</td>
 									<td class="govuk-table__cell">{{ good.is_good_incorporated|friendly_boolean }}</td>
 									<td class="govuk-table__cell">
+					                    {% for flag in good.flags %}
+					                        {{ flag.name }}<br>
+					                    {% endfor %}
+					                </td>
+									<td class="govuk-table__cell">
 										<a onclick="return openTableFold(this);">
 											{% svg 'chevron' %}
 										</a>
 									</td>
 								</tr>
-								{% if good.flags %}
-								<tr class="govuk-table__row govuk-table__row-asd">
-									<td class="govuk-table__cell"></td>
-									<td class="govuk-table__cell" colspan="5">
-										<div class="app-flags app-flags--alt" style="margin-bottom: -10px;">
-											{% for flag in good.flags %}
-												<div class="app-flag" id="{{ flag.name }}">
-													{{ flag.name }}
-												</div>
-											{% endfor %}
-										</div>
-									</td>
-								</tr>
-								{% endif %}
 								<tr class="lite-accordian-table__fold">
 									<td class="lite-accordian-table__fold-wrapper" colspan="7">
 										<div class="lite-accordian-table__fold-content">
@@ -170,15 +162,13 @@
 								<td class="govuk-table__cell">{{ country.name }}<span class="app-country-tag">{{ country.id }}</span></td>
 								<td class="govuk-table__cell">
 									{% for good in case.application.goods_types %}
-										{% if good.countries %}
-											{% if country in good.countries %}
+										{% for good_country in good.countries %}
+											{% if good_country.id == country.id %}
 												{% if good.control_code %}
-													<span class="app-country-tag app-country-tag--orange">{{ good.control_code }}</span>
+													<span class="app-country-tag app-country-tag--orange">{{ good.description }}</span>
 												{% endif %}
 											{% endif %}
-										{% elif good.control_code %}
-											<span class="app-country-tag app-country-tag--orange">{{ good.control_code }}</span>
-										{% endif %}
+										{% endfor %}
 									{% endfor %}
 								</td>
 								<td class="govuk-table__cell">
