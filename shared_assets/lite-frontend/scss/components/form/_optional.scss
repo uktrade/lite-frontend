@@ -1,8 +1,4 @@
 .lite-form-optional {
-	@include govuk-font($size: 19);
-	display: block;
-	position: relative;
-	margin-top: govuk-spacing(2);
-	margin-bottom: govuk-spacing(2);
-	color: govuk-colour("dark-grey");
+	color: $govuk-secondary-text-colour;
+	padding-left: govuk-spacing(1);
 }
