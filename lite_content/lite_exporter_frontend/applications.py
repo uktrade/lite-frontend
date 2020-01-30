@@ -186,11 +186,11 @@ class ApplicationsSummaryPage:
 
 class InitialApplicationQuestionsForms:
     class OpeningQuestion:
-        TITLE = "What type of licence do you want to apply for?"
+        TITLE = "Select what you need"
         LABEL = "Licence type"
         DESCRIPTION = ""
         BREADCRUMB = "Apply for a licence"
-        HELP_WITH_CHOOSING_A_LICENCE = "What licence do I need?"
+        HELP_WITH_CHOOSING_A_LICENCE = ""
         HELP_WITH_CHOOSING_A_LICENCE_CONTENT = (
             "Read about the [different types of export control licences]"
             "(https://www.gov.uk/guidance/beginners-guide-to-export-controls#what-licence-do-i-need)."
