@@ -69,7 +69,7 @@ def confirm_form(
     side_by_side=False,
 ):
     inputs = [
-        summary,
+        conditional(summary is not None, summary),
         RadioButtons(
             name=confirmation_name,
             options=[Option(key="yes", value=yes_label), Option(key="no", value=no_label),],
