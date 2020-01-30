@@ -16,7 +16,7 @@ def save_application_data_to_context(lite_client, context):
 
 def generate_name(prefix):
     time_id = datetime.datetime.now().strftime(" %d%H%M%S")
-    return f"{prefix} {time_id}", time_id
+    return f"{prefix}{time_id}", time_id
 
 
 @fixture
@@ -152,5 +152,6 @@ def apply_for_exhibition_clearance(driver, seed_data_config, context):
     lite_client = get_lite_client(context, seed_data_config)
     context.app_name, context.app_time_id = generate_name("Exhibition Clearance")
     draft_id = lite_client.add_draft(draft={"name": context.app_name, "application_type": "exhibition_clearance",})
-    lite_client.submit_standard_application(draft_id)
+    lite_client.submit_exhibition_application(draft_id)
     save_application_data_to_context(lite_client, context)
+    context.reference_code = lite_client.context["reference_code"]

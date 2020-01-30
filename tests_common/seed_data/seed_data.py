@@ -165,6 +165,11 @@ class SeedData:
         self.add_to_context("application_id", draft_id)
         self.add_to_context("case_id", draft_id)
 
+    def submit_exhibition_application(self, draft_id):
+        data = self.submit_application(draft_id)
+        self.add_to_context("case_id", draft_id)
+        self.add_to_context("reference_code", data["application"]["reference_code"])
+
     def manage_case_status(self, draft_id):
         draft_id_to_change = draft_id if None else self.context["draft_id"]  # noqa
         response = make_request(

@@ -2,6 +2,8 @@ from time import sleep
 
 from .helpers import page_is_ready, menu_is_visible
 
+from pages.shared import Shared
+
 # How many attempts to wait for the function to return True
 timeout_limit = 60
 # How frequently in seconds the function should be checked
@@ -46,8 +48,7 @@ def wait_for_additional_document(func, draft_id, document_id, base_url, export_h
 
 def download_link_is_present(driver, page):
     driver.refresh()
-    latest_ueu_links = [link.text for link in page.get_links_of_table_row(-1)]
-    return "Download" in latest_ueu_links
+    return "Download" in Shared(driver).get_text_of_body()
 
 
 def element_is_present(driver, id):
