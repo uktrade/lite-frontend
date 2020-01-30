@@ -327,9 +327,22 @@ class ExhibitionClearanceTaskList:
     THIRD_PARTIES = "Third parties"
 
 
-class EditStandardApplicationPage:
+class EditApplicationPage:
+    BACK = "Back to applications"
     DRAFT_DELETE_LINK = "Delete draft"
     SUBMIT = "Submit application"
+    DONE = "Saved"
+    ERRORS = "There is a problem"
+    MINOR_EDIT = "Changes made to this application won't impact its processing time."
+    MAJOR_EDIT = "This application won't be processed until it's submitted."
+
+    class InitialTaskSection:
+        TITLE = "Prepare application"
+        EDITING = "Basic details"
+
+    class MainTaskSection:
+        TITLE = "Complete application"
+        EDITING = "More information"
 
 
 class EditOpenApplicationPage:
