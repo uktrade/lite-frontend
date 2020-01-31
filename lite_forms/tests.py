@@ -3,7 +3,18 @@ from unittest import TestCase
 
 from django.test.client import RequestFactory
 
-from lite_forms.components import Form, DetailComponent, TextInput, FormGroup, Link
+from lite_forms.components import (
+    Form,
+    DetailComponent,
+    TextInput,
+    FormGroup,
+    _Component,
+    Label,
+    HelpSection,
+    Option,
+    DateInput,
+    ControlListEntryInput,
+)
 from lite_forms.helpers import (
     nest_data,
     flatten_data,
@@ -11,7 +22,6 @@ from lite_forms.helpers import (
     get_form_by_pk,
     get_next_form,
     get_previous_form,
-    extract_links,
 )
 from lite_forms.submitters import submit_paged_form
 from lite_forms.templatetags import custom_tags
@@ -146,24 +156,40 @@ class TemplateTagsTestCase(TestCase):
         self.assertEqual(r"\\.all\\.the\\.dots\\.", prefix_dots(".all.the.dots."))
 
 
-class LabelMarkdownTest(TestCase):
-    def test_links(self):
-        output = extract_links(
-            "This is [America](https://en.wikipedia.org/wiki/United_States)"
-            "This is [United Kingdom](https://en.wikipedia.org/wiki/United_Kingdom)."
-        )
-        expected_output = [
-            "This is ",
-            Link("America", "https://en.wikipedia.org/wiki/United_States"),
-            "This is ",
-            Link("United Kingdom", "https://en.wikipedia.org/wiki/United_Kingdom"),
-            ".",
-        ]
+class MarkdownTest(TestCase):
+    def setUp(self):
+        super().setUp()
+        self.markdown_description = "Please **Click** this [link](https://www.gov.uk/)"
+        self.html_description = 'Please <strong>Click</strong> this <a href="https://www.gov.uk/">link</a>'
 
-        self.assertEqual(expected_output, output)
+    def test_generic_component(self):
+        component = _Component(name="a", description=self.markdown_description)
+        self.assertEqual(component.description, self.html_description)
 
-    def test_no_links(self):
-        output = extract_links("Hello")
-        expected_output = ["Hello"]
+    def test_label(self):
+        label = Label(self.markdown_description)
+        self.assertEqual(label.text, self.html_description)
 
-        self.assertEqual(expected_output, output)
+    def test_form(self):
+        form = Form(description=self.markdown_description)
+        self.assertEqual(form.description, self.html_description)
+
+    def test_detail_component(self):
+        detail = DetailComponent(title="abc", description=self.markdown_description)
+        self.assertEqual(detail.description, self.html_description)
+
+    def test_help_section(self):
+        detail = HelpSection(title="abc", description=self.markdown_description)
+        self.assertEqual(detail.description, self.html_description)
+
+    def test_option(self):
+        option = Option(key="a", value="A", description=self.markdown_description)
+        self.assertEqual(option.description, self.html_description)
+
+    def test_date_input(self):
+        date = DateInput(prefix="Date", description=self.markdown_description)
+        self.assertEqual(date.description, self.html_description)
+
+    def test_control_list_entry_input(self):
+        clc = ControlListEntryInput(name="abc", options=[], description=self.markdown_description)
+        self.assertEqual(clc.description, self.html_description)

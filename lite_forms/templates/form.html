@@ -77,7 +77,7 @@
 
 	{% if page.description %}
 		<span class="govuk-hint" style="display: block; margin: 30px 0;">
-			{{ page.description|linebreaksbr }}
+			{{ page.description|safe|linebreaksbr }}
 		</span>
 	{% endif %}
 
@@ -168,7 +168,7 @@
 				{{ question.title }}
 			</h2>
 			<p class="govuk-body">
-				{{ question.description }}
+				{{ question.description|safe }}
 			</p>
 		</aside>
 	{% endfor %}

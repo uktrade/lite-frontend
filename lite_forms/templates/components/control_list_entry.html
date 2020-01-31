@@ -1,7 +1,7 @@
 <input id="{{ question.name }}" list="control_list_entries" name="{{ question.name }}" value="{{ value }}" class="govuk-input govuk-input--width-10 {% if error %}govuk-input--error{% endif %}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
 <datalist id="control_list_entries">
 	{% for item in question.options %}
-		<option id="option-{{ item.key }}" value="{{ item.key }}" data-description="{{ item.description }}">
+		<option id="option-{{ item.key }}" value="{{ item.key }}" data-description="{{ item.description|safe }}">
 	{% endfor %}
 </datalist>
 

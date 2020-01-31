@@ -1,9 +1,9 @@
 import copy
-import re
-
 from collections.abc import MutableMapping
 
-from lite_forms.components import FormGroup, Link
+from markdown import markdown
+
+from lite_forms.components import FormGroup
 
 
 def get_form_by_pk(form_pk, form_group: FormGroup):
@@ -114,27 +114,12 @@ def conditional(condition: bool, obj, else_obj=None):
     return else_obj
 
 
-def extract_links(text: str):
-    """
-    Takes a string and splits into a list of strings and links
-    based on markdown conventions
-    """
-    markup_regex = "(.*?)(\[.*?\))([^\[]*)"  # noqa
-    link_regex = "\[(.*)\]\((.*)\)"  # noqa
-
-    return_value = []
-    matches = re.findall(markup_regex, text)
-
-    if not matches:
-        return [text]
-
-    for match in matches:
-        for item in [x for x in match if x]:
-            value = re.findall(link_regex, item)
-
-            if len(value) == 0:
-                return_value.append(item)
-            else:
-                return_value.append(Link(value[0][0], value[0][1]))
-
-    return [x for x in return_value if x]
+def convert_to_markdown(text):
+    if text:
+        text = markdown(text, extensions=["nl2br"])
+        # Replace leading (<p>) & trailing (</p>) p tags as they are not needed
+        text = text.replace("<p>", "")
+        text = text.replace("</p>", "")
+        return text
+    else:
+        return None

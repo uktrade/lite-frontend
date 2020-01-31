@@ -1,8 +1,6 @@
 from enum import Enum
 from typing import List
 
-from markdown import markdown
-
 from lite_forms.styles import ButtonStyle
 
 
@@ -21,11 +19,11 @@ class _Component:
         classes: [] = None,
         extras=None,
     ):
+        from lite_forms.helpers import convert_to_markdown
+
         self.name = name
         self.title = title
-        from lite_forms.helpers import extract_links
-
-        self.description = extract_links(description)
+        self.description = convert_to_markdown(description)
         self.accessible_description = accessible_description
         self.optional = optional
         self.classes = classes
@@ -95,7 +93,9 @@ class FormGroup:
 
 class Label:
     def __init__(self, text: str):
-        self.text = markdown(text, extensions=["nl2br"])
+        from lite_forms.helpers import convert_to_markdown
+
+        self.text = convert_to_markdown(text)
         self.input_type = "label"
 
 
@@ -114,8 +114,10 @@ class Form:
         back_link=BackLink(),
         post_url=None,
     ):
+        from lite_forms.helpers import convert_to_markdown
+
         self.title = title
-        self.description = description
+        self.description = convert_to_markdown(description)
         self.questions = questions
         self.caption = caption
         self.helpers = helpers
@@ -130,8 +132,10 @@ class Form:
 
 class DetailComponent:
     def __init__(self, title, description):
+        from lite_forms.helpers import convert_to_markdown
+
         self.title = title
-        self.description = description
+        self.description = convert_to_markdown(description)
         self.input_type = "detail"
 
 
@@ -144,8 +148,10 @@ class HiddenField:
 
 class HelpSection:
     def __init__(self, title, description):
+        from lite_forms.helpers import convert_to_markdown
+
         self.title = title
-        self.description = description
+        self.description = convert_to_markdown(description)
 
 
 class HTMLBlock:
@@ -326,10 +332,12 @@ class Option:
     def __init__(
         self, key, value, description=None, show_pane=None, sections=None, show_or=False, img_url=None, auto_check=True
     ):
+        from lite_forms.helpers import convert_to_markdown
+
         self.auto_check = auto_check
         self.key = key
         self.value = value
-        self.description = description
+        self.description = convert_to_markdown(description)
         self.sections = sections
         self.show_pane = show_pane
         self.show_or = show_or
@@ -439,9 +447,11 @@ class DateInput:
         classes: [] = None,
         extras: [] = None,
     ):
+        from lite_forms.helpers import convert_to_markdown
+
         self.prefix = prefix
         self.title = title
-        self.description = description
+        self.description = convert_to_markdown(description)
         self.name = name
         self.optional = optional
         self.classes = classes
@@ -483,9 +493,11 @@ class ControlListEntryInput:
         optional: bool = False,
         classes: [] = None,
     ):
+        from lite_forms.helpers import convert_to_markdown
+
         self.name = name
         self.title = title
-        self.description = description
+        self.description = convert_to_markdown(description)
         self.options = options
         self.optional = optional
         self.classes = classes

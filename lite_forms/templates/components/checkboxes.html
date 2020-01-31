@@ -16,7 +16,7 @@
                 </label>
                 {% if item.description %}
                     <label class="govuk-hint govuk-checkboxes__hint">
-                        {{ item.description|linebreaksbr }}
+                        {{ item.description|safe|linebreaksbr }}
                     </label>
                 {% endif %}
             </div>

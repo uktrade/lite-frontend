@@ -12,7 +12,7 @@
                 </label>
                 {% if item.description %}
                     <label class="govuk-hint govuk-radios__hint" for="{{ component.name }}-{{ item.key }}">
-                        {{ item.description|linebreaksbr }}
+                        {{ item.description|safe|linebreaksbr }}
                     </label>
                 {% endif %}
             </div>
