@@ -58,6 +58,7 @@ CASE_OFFICER_URL = "/case-officer/"
 
 # Static URLs
 STATIC_URL = "/static/"
+CASE_TYPES_URL = STATIC_URL + "case-types/"
 DENIAL_REASONS_URL = STATIC_URL + "denial-reasons/"
 COUNTRIES_URL = STATIC_URL + "countries/"
 STATUSES_URL = STATIC_URL + "statuses/"

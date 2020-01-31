@@ -5,26 +5,12 @@ I want to configure standard templates for letter generation
 So that I can create standard letters used by case workers and they can be updated when required
 
   @LT_1029_add_template @smoke
-  Scenario: Add ECJU Letter template
+  Scenario: Create a Template
     Given I sign in to SSO or am signed into SSO
     And I go to internal homepage
     And I create a letter paragraph picklist
     When I go to letters
-    And I create a letter template for ECJU letter
-    And I add a letter paragraph to template
-    Then I see the drag and drop page
-    When I preview template
-    Then my picklist is in template
-    When I click continue
-    Then I see my template in the table
-
-  @LT_1029_add_template @regression
-  Scenario: Add Licence template
-    Given I sign in to SSO or am signed into SSO
-    And I go to internal homepage
-    And I create a letter paragraph picklist
-    When I go to letters
-    And I create a letter template for document
+    And I create a letter template for a document
     And I add a letter paragraph to template
     Then I see the drag and drop page
     When I preview template

@@ -13,12 +13,12 @@ from letter_templates.views.letter_paragraphs import get_order_paragraphs_page
 
 class Add(TemplateView):
     def get(self, request, **kwargs):
-        return form_page(request, add_letter_template().forms[0])
+        return form_page(request, add_letter_template(request).forms[0])
 
     @staticmethod
     def post(request):
         response = submit_paged_form(
-            request, add_letter_template(), post_letter_template, expect_many_values=["case_types"]
+            request, add_letter_template(request), post_letter_template, expect_many_values=["case_types"]
         )[0]
 
         if response:

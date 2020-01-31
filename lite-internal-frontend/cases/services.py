@@ -28,11 +28,19 @@ from conf.constants import (
     GENERATED_DOCUMENTS_PREVIEW_URL,
     DESTINATION_URL,
     CASE_OFFICER_URL,
+    CASE_TYPES_URL,
     GOODS_QUERIES_URL,
     CLC_RESPONSE_URL,
 )
 
 
+# Case types
+def get_case_types(request):
+    data = get(request, CASE_TYPES_URL)
+    return data.json()["case_types"]
+
+
+# Case
 def get_case(request, pk):
     data = get(request, CASE_URL + str(pk))
     return data.json()["case"]
