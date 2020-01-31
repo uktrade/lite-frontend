@@ -26,8 +26,7 @@ Feature: I want to raise an End User advisory enquiry to check if a particular e
     Given An end user advisory with a case note has been added via gov user
     And I go to exporter homepage and choose Test Org
     When I click on end user advisories
-#   TODO Uncomment (flaky)
-#   Then I see a notification on end user advisory list
+    Then I see a notification on end user advisory list
     When I open an end user advisory already created
     Then I see a notification for case note and can view the case note
     When I enter "This is my new case note" for case note

@@ -3,26 +3,23 @@ from pytest_bdd import when, then, parsers, scenarios, given
 import shared.tools.helpers as utils
 from pages.add_end_user_advisory_pages import AddEndUserAdvisoryPages
 from pages.end_user_advisory_page import EndUserAdvisoryPage
-from pages.exporter_hub_page import ExporterHubPage
 from pages.shared import Shared
 from shared import functions
-from ui_automation_tests.pages.submitted_applications_page import SubmittedApplicationsPages
+from shared.tools.utils import get_lite_client
 
 scenarios("../features/end_user_advisory_queries.feature", strict_gherkin=False)
 
 
 @given("An end user advisory with a case note has been added via gov user")
-def end_user_advisory_exists_case_note_added(
-    driver, add_end_user_advisory, internal_case_note_end_user_advisory, context
-):
-    pass
+def end_user_advisory_exists_case_note_added(add_end_user_advisory, context, seed_data_config):
+    lite_client = get_lite_client(context, seed_data_config=seed_data_config)
+    lite_client.seed_case.add_case_note(context, context.end_user_advisory_id)
 
 
 @given("An end user advisory with an ecju query has been added via gov user")
-def end_user_advisory_exists_ecju_query_added(
-    driver, add_end_user_advisory, internal_ecju_query_end_user_advisory, context
-):
-    pass
+def end_user_advisory_exists_ecju_query_added(add_end_user_advisory, context, seed_data_config):
+    lite_client = get_lite_client(context, seed_data_config=seed_data_config)
+    lite_client.seed_ecju.add_ecju_query(context.end_user_advisory_id)
 
 
 @when("I select to create a new advisory")
@@ -101,12 +98,12 @@ def enter_name(driver, name):
 
 @when("I open an end user advisory already created")
 def open_already_created_end_user_advisory(driver, context):
-    EndUserAdvisoryPage(driver).open_advisory_by_reference_code(context.end_user_advisory_id)
+    EndUserAdvisoryPage(driver).open_end_user_advisory(context.end_user_advisory_id)
 
 
 @then("I see a notification on end user advisory list")
 def notification_on_end_user_advisory_list(driver, context):
-    assert EndUserAdvisoryPage(driver).confirm_advisory_displayed_by_reference_code(context.end_user_advisory_id)
+    assert EndUserAdvisoryPage(driver).is_end_user_advisory_displayed_with_notification(context.end_user_advisory_id)
 
 
 @then("I see a notification for case note and can view the case note")
