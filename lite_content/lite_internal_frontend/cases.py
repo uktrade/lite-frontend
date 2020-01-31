@@ -160,7 +160,10 @@ class HMRCPage:
         CONTROL_CODE = "Control list entry"
         CONTROLLED = "Controlled"
         FLAGS = "Flags"
-        CASE_GOODS_LOCATION = "Products location"
+
+    class GoodsLocation:
+        GOODS_DEPARTED = "Products have already left the UK"
+        TITLE = "Products location"
         CASE_GOODS_LOCATION_NAME = "Name"
         CASE_GOODS_LOCATION_ADDRESS = "Address"
 
