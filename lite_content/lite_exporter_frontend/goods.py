@@ -319,7 +319,7 @@ class GoodsLocationForm:
     ONE_OF_MY_REGISTERED_SITES_DESCRIPTION = ""
     NOT_AT_MY_REGISTERED_SITES = "At a location that's not part of my organisation"
     NOT_AT_MY_REGISTERED_SITES_DESCRIPTION = ""
-    DEPARTED_THE_COUNTRY = "The products have already departed the country"
+    DEPARTED_THE_COUNTRY = "The products are no longer in the UK"
     DEPARTED_THE_COUNTRY_DESCRIPTION = ""
     EXTERNAL_LOCATION_TITLE = "Do you want to add a new external location or use an existing one?"
     EXTERNAL_LOCATION_NEW_LOCATION = "Add a new external location"
