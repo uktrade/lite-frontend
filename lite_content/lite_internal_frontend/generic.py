@@ -4,3 +4,7 @@ class Filters:
     APPLY_FILTERS_BUTTON = "Apply filters"
     CLEAR_FILTERS_BUTTON = "Clear filters"
     FILTER_BY_PREFIX = "Filter by"
+
+
+class Checkboxes:
+    SELECT_DESELECT_ALL = "Select all/Deselect all"
