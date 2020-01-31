@@ -32,7 +32,7 @@ class GoodsList:
 
     class Table:
         DESCRIPTION = generic.DESCRIPTION
-        CONTROL_LIST_ENTRY = "Control list classification"
+        CONTROL_LIST_ENTRY = "CLC"
         IS_GOOD_CONTROLLED = "Controlled"
         PART_NUMBER = generic.PART_NUMBER
         QUANTITY = "Quantity"
@@ -72,18 +72,25 @@ class DocumentSensitivityForm:
 
 
 class CreateGoodForm:
-    TITLE_APPLICATION = "Add product"
-    TITLE_GOODS_LIST = "Add a product to your organisation"
-    SUBMIT_BUTTON = "Save and continue"
+    TITLE_APPLICATION = "Add a new product to your application"
+    TITLE_GOODS_LIST = "Add a product to your product list"
+    SUBMIT_BUTTON = "Continue"
     BACK_BUTTON = "Back"
 
     class Description:
         TITLE = generic.DESCRIPTION
-        DESCRIPTION = "Include the product name to make it easier to find the product when needed."
+        DESCRIPTION = "Start with the product name to make it easier to find the product when needed."
 
     class IsControlled:
         TITLE = "Is the product on the control list?"
-        DESCRIPTION = "If you don't know you can use " + PERMISSION_FINDER_LINK
+        DESCRIPTION = (
+            "Products that aren't on the " + PERMISSION_FINDER_LINK + " may be affected by [military end use controls]"
+            "(https://www.gov.uk/guidance/export-controls-military-goods-software-and-technology), "
+            "[current trade sanctions and embargoes]"
+            "(https://www.gov.uk/guidance/current-arms-embargoes-and-other-restrictions) or "
+            "[weapons of mass destruction controls](https://www.gov.uk/guidance/supplementary-wmd-end-use-controls). "
+            "If the product isn't subject to any controls, you'll get a no licence required (NLR) document from ECJU."
+        )
         CLC_REQUIRED = (
             "Products that aren't on the " + PERMISSION_FINDER_LINK + " may be affected by [military end use controls]"
             "(https://www.gov.uk/guidance/export-controls-military-goods-software-and-technology), "
@@ -101,53 +108,53 @@ class CreateGoodForm:
         DESCRIPTION = "For example, ML1a."
 
     class IsGraded:
-        TITLE = "Does the product hold a security grading?"
-        DESCRIPTION = ""
+        TITLE = "Does the product have a security grading?"
+        DESCRIPTION = "For example, UK OFFICIAL or NATO UNCLASSIFIED"
 
         YES = "Yes"
-        NO = "No and it doesn't need one"
-        RAISE_QUERY = "No and it needs one, raise a grading query"
+        NO = "No, it doesn't need one"
+        RAISE_QUERY = "No, it needs one so apply for a private venture (PV) grading"
 
     class PartNumber:
         TITLE = generic.PART_NUMBER
 
 
 class GoodGradingForm:
-    TITLE = "Add the private venture (PV) grading"
+    TITLE = "Security grading"
     DESCRIPTION = ""
 
     PREFIX = "Prefix"
     GRADING = "Grading"
     SUFFIX = "Suffix"
-    OTHER_GRADING = "Other type of grading"
+    OTHER_GRADING = "Other type of security grading"
     ISSUING_AUTHORITY = "Issuing authority"
     REFERENCE = "Reference"
     DATE_OF_ISSUE = "Date of issue"
 
-    BUTTON = "Save and Continue"
+    BUTTON = "Save and continue"
 
 
 class GoodsQueryForm:
-    TITLE = "Create a query"
+    TITLE = "Create a product query"
     DESCRIPTION = ""
     BACK_LINK = "Back to product"
     BUTTON = "Save"
 
     class CLCQuery:
-        TITLE = "Control list classification (CLC) query"
+        TITLE = "Raise a control list classification (CLC) query"
 
         class Code:
             TITLE = "What do you think the CLC is for the product? (optional)"
             DESCRIPTION = "For example, ML1a."
 
         class Details:
-            TITLE = "Product details"
+            TITLE = "Comments (optional)"
 
     class PVGrading:
-        TITLE = "Private venture (PV) grading query"
+        TITLE = "Apply for a private venture (PV) grading"
 
         class Details:
-            TITLE = "Product details"
+            TITLE = "Comments"
 
     class Additional:
         TITLE = "Comments (optional)"
@@ -160,7 +167,7 @@ class EditGoodForm:
 
     class Description:
         TITLE = "Description"
-        DESCRIPTION = "Include the product name to make it easier to find the product when needed."
+        DESCRIPTION = "Start with the product name to make it easier to find the product when needed."
 
     class IsControlled:
         TITLE = "Is the product on the control list?"
@@ -221,7 +228,7 @@ class RespondToQueryForm:
 
     class Response:
         TITLE = "Your response"
-        DESCRIPTION = "You can't edit the response once it's submitted."
+        DESCRIPTION = ""
 
     class ConfirmationForm:
         TITLE = "Confirm you want to send the response"
@@ -253,21 +260,21 @@ class GoodPage:
         REMOVE = generic.Document.REMOVE
 
     class RaiseQuery:
-        PREFIX = "If you're unsure the product is controlled or not, you can "
-        LINK = "raise a query "
-        SUFFIX = "to get help from ECJU."
+        PREFIX = "If you're not sure the product is controlled or not, "
+        LINK = "raise a control list classification (CLC) query"
+        SUFFIX = "."
 
     class Table:
         DESCRIPTION = "Description"
-        IS_GOOD_CONTROLLED = "Is the product on the control list?"
-        CONTROL_LIST_ENTRY = "Control list classification"
+        IS_GOOD_CONTROLLED = "Controlled"
+        CONTROL_LIST_ENTRY = "CLC"
 
         class Grading:
-            IS_GRADED = "PV graded"
-            GRADING = "PV grade"
-            REFERENCE = "PV grading reference"
-            ISSUING_AUTHORITY = "PV grading issuing authority"
-            DATE_OF_ISSUE = "PV grading date of issue"
+            IS_GRADED = "Security graded"
+            GRADING = "Grade"
+            REFERENCE = "Reference"
+            ISSUING_AUTHORITY = "Issuing authority"
+            DATE_OF_ISSUE = "Date of issue"
 
     class ECJUDocuments:
         CREATED_AT = "Created at"
@@ -275,7 +282,7 @@ class GoodPage:
 
 
 class AddGoodToApplicationForm:
-    TITLE = "Add a product to your application"
+    TITLE = "Value and quantity of the product"
     DESCRIPTION = ""
     DOCUMENT_MISSING = "A document is required"
     BACK_LINK = "Back to products"

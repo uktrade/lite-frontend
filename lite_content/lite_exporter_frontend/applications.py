@@ -187,7 +187,7 @@ class ApplicationsSummaryPage:
 class InitialApplicationQuestionsForms:
     class OpeningQuestion:
         TITLE = "Select what you need"
-        LABEL = "Licence type"
+        LABEL = ""
         DESCRIPTION = ""
         BREADCRUMB = "Apply for a licence"
         HELP_WITH_CHOOSING_A_LICENCE = ""
@@ -219,14 +219,14 @@ class InitialApplicationQuestionsForms:
         TITLE = "Name the application"
         ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference name"
         DESCRIPTION = "Give the application a reference name so you can refer back to it when needed."
-        LABEL = "Name"
-        BACK_TO_LICENCE_TYPE = "Back to licence type"
+        LABEL = ""
+        BACK_TO_LICENCE_TYPE = "Back to export licence type"
         BACK_TO_MOD_CLEARANCE_TYPE = "Back to MOD clearance type"
 
 
 class ExportLicenceQuestions:
     class ExportLicenceQuestion:
-        TITLE = "Select the type of licence you need"
+        TITLE = "Select the type of export licence you need"
         BACK = "Back to application type"
         DESCRIPTION = ""
         STANDARD_LICENCE = "Standard licence"
@@ -257,18 +257,23 @@ class ExportLicenceQuestions:
 
 class MODQuestions:
     class WhatAreYouApplyingFor:
-        TITLE = "What are you applying for?"
+        TITLE = "Select the type of MOD clearance you need"
         DESCRIPTION = ""
         BACK = "Back to application type"
 
-        PERMISSION_TITLE = "F680"
-        PERMISSION_DESCRIPTION = "Coming soon"
+        PERMISSION_TITLE = "MOD Form 680"
+        PERMISSION_DESCRIPTION = (
+            "Select an F680 approval if you need to release equipment or information with a classification of "
+            "OFFICIAL-SENSITIVE or above to any foreign entity overseas or demonstrate it to them in the UK."
+        )
 
         EXHIBITION_CLEARANCE_TITLE = "Exhibition clearance"
-        EXHIBITION_CLEARANCE_DESCRIPTION = ""
+        EXHIBITION_CLEARANCE_DESCRIPTION = (
+            "Select if you need clearance to exhibit defence related products that aren't MOD funded."
+        )
 
         GIFTING_CLEARANCE_TITLE = "Gifting clearance"
-        GIFTING_CLEARANCE_DESCRIPTION = "Coming soon"
+        GIFTING_CLEARANCE_DESCRIPTION = "Select to request the gifting of surplus MOD property."
 
 
 class DestinationForm:
@@ -281,11 +286,11 @@ class TaskListPage:
 
 
 class StandardApplicationTaskList:
-    NEW_TITLE = "Apply for a standard export licence"
+    NEW_TITLE = "Standard export licence application"
     EDIT_TITLE = "Edit the application"
     END_USE_CONTROL = "End use control"
     GOODS = "Products"
-    GOODS_LOCATION = "Location of products"
+    GOODS_LOCATION = "Locations"
     END_USER = "End user"
     ULTIMATE_END_USERS = "Ultimate recipients"
     CONSIGNEE = "Consignee"
@@ -294,18 +299,18 @@ class StandardApplicationTaskList:
 
 
 class OpenApplicationTaskList:
-    NEW_TITLE = "Apply for an open export licence"
+    NEW_TITLE = "Open export licence application"
     EDIT_TITLE = "Edit the application"
     GOODS = "Products"
-    GOODS_LOCATION = "Location of products"
+    GOODS_LOCATION = "Locations"
     GOODS_DESTINATION = "Countries"
-    COUNTRIES_WHERE_EACH_GOOD_IS_GOING = "Countries each product is going to"
+    COUNTRIES_WHERE_EACH_GOOD_IS_GOING = "Product destinations"
     SUPPORTING_DOCUMENTS = "Supporting documents"
 
 
 class HMRCApplicationTaskList:
     GOODS = "Products"
-    GOODS_LOCATION = "Location of products"
+    GOODS_LOCATION = "Locations"
     END_USER = "End user"
     ULTIMATE_END_USERS = "Ultimate recipients"
     THIRD_PARTIES = "Third parties"
@@ -316,11 +321,11 @@ class HMRCApplicationTaskList:
 
 
 class ExhibitionClearanceTaskList:
-    NEW_TITLE = "Apply for an Exhibition Clearance licence"
+    NEW_TITLE = "Exhibition clearance application"
     EDIT_TITLE = "Edit the application"
     END_USE_CONTROL = "End use control"
     GOODS = "Products"
-    GOODS_LOCATION = "Location of products"
+    GOODS_LOCATION = "Locations"
     END_USER = "End user"
     ULTIMATE_END_USERS = "Ultimate recipients"
     CONSIGNEE = "Consignee"
@@ -390,13 +395,13 @@ class ApplicationsList:
     IN_PROGRESS_TAB = "In progress"
     DRAFTS_TAB = "Drafts"
     NOTIFICATIONS_SUFFIX = "notifications"
-    NO_CONTENT_NOTICE = "There are no applications."
+    NO_CONTENT_NOTICE = "There are no applications in progress."
     NO_DRAFTS_CONTENT_NOTICE = "There are no draft applications."
 
 
 class ApplicationPage:
     BACK = "Back to applications"
-    NO_INFORMATION_PROVIDED = "You haven't added any information for this section."
+    NO_INFORMATION_PROVIDED = "You haven't added any information to this section."
 
 
 class ThirdPartiesPage:
@@ -417,14 +422,14 @@ class ThirdPartiesPage:
 class UltimateEndUsersPage:
     TITLE = "Ultimate recipients"
     ADD = "Add a third party"
-    NO_RESULTS = "You haven't added any third parties to your application"
+    NO_RESULTS = "There are no third parties on this application"
     BACK = "Back to application overview"
     HELP = "What is an ultimate recipient?"
     DESCRIPTION = (
         "An ultimate recipient is an entity that uses the product or the higher level system into which the products are"
         " installed or incorporated. The end user and ultimate recipient may be different entities."
     )
-    NOTICE = "You haven't added any ultimate recipients to the application"
+    NOTICE = "There are no ultimate recipients on this application"
     MISSING_DOCS_NOTICE = "You need to attach a document to some ultimate recipients"
     ADD_BUTTON = "Add an ultimate recipient"
 
