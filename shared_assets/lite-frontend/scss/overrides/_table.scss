@@ -1,20 +1,24 @@
+.govuk-table__header--checkbox {
+	display: flex;
+	border-bottom-width: 0px;
+}
+
 .govuk-table__cell--checkbox {
 	// Style a table cell so that a checkbox
 	// fits in it correctly
 	@extend .govuk-checkboxes--small;
 	position: relative;
-	width: 40px!important;
-	padding: 0;
+	width: 24px!important;
 	margin: 0;
 
 	.govuk-checkboxes__label {
 		padding: 0!important;
 
 		&::before {
-			top: 14px;
+			top: 10px;
 		}
 		&::after {
-			top: 21px;
+			top: 17px;
 		}
 	}
 }
@@ -26,7 +30,10 @@
 	word-break: break-all;
 }
 
- .govuk-table__cell--line-number {
-	 padding-right: govuk-spacing(2);
-	 color: $govuk-secondary-text-colour;
- }
+.govuk-table__cell--line-number {
+	padding-right: govuk-spacing(2);
+	color: $govuk-secondary-text-colour;
+	white-space: nowrap;
+	width: 1%;
+	min-width: govuk-spacing(3);
+}

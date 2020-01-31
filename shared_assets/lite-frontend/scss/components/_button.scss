@@ -1,7 +1,7 @@
 .lite-button-checkbox {
 	@include appearance(none);
-	position: relative;
 	display: block;
+	position: relative;
 	width: 24px!important;
 	height: 24px!important;
 	background: govuk-colour("white");
@@ -12,6 +12,7 @@
 	outline: none;
 	cursor: pointer;
 	box-sizing: border-box;
+	overflow: hidden;
 
 	&:hover {
 		box-shadow: 0 0 0 ($govuk-hover-width - $govuk-border-width-form-element) $govuk-hover-colour;
@@ -36,12 +37,8 @@
 	&--checked {
 		&::after {
 			display: block;
+			transform: rotate(-45deg);
 
-			-webkit-transform: rotate(-45deg);
-
-				-ms-transform: rotate(-45deg);
-
-					transform: rotate(-45deg);
 			border: solid;
 			// Fix bug in IE11 caused by transform rotate (-45deg).
 			// See: alphagov/govuk_elements/issues/518
