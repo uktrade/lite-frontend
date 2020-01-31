@@ -109,24 +109,25 @@ class EndUser:
     TITLE = "Select the type of end user"
 
     class Documents:
-        ATTACH_LATER = "to upload a document later."
+        ATTACH_LATER = "to upload the EUU later."
         BUTTON = "Documents"
         DELETE_DOCUMENT = "Delete"
         DESCRIPTION = "This is the document that has been uploaded for this end user."
         DOWNLOAD_DOCUMENT = "Download"
         END_USER_HAS_NO_DOCUMENTS = "There are no documents attached"
         PROCESSING = "Processing"
-        SAVE_END_USER = "Save and return to the application overview "
+        SAVE_END_USER = "save and return to the application overview "
         TITLE = "End user document"
         VIRUS_INFECTED = "Virus infected"
 
         class AttachDocuments:
             BACK_TO_APPLICATION_OVERVIEW = "Back to application overview"
-            BUTTON = "Attach document"
+            BUTTON = "Attach the end user undertaking (EUU) form for this end user"
             DELETE_ERROR = "We had an issue deleting your files. Try again later."
             DESCRIPTION = (
-                "Do not attach a document that's OFFICIAL-SENSITIVE or above.\n\nThe file must be smaller"
-                " than 100MB."
+                "You must attach a completed [EUU form](https://www.gov.uk/government/publications/end-user-undertaking-euu-form). "
+                "You can upload the EUU later if you haven’t received the completed form from the end "
+                "user.\n\nThe file must be smaller than 100MB."
             )
             DESCRIPTION_FIELD_DETAILS = "optional"
             DESCRIPTION_FIELD_TITLE = "Description"
@@ -145,7 +146,7 @@ class UltimateEndUser:
         DOWNLOAD_DOCUMENT = "Download"
         END_USER_HAS_NO_DOCUMENTS = "There are no documents attached"
         PROCESSING = "Processing"
-        SAVE_END_USER = "Save and return to the application overview "
+        SAVE_END_USER = "save and return to the application overview "
         TITLE = "Ultimate recipient document"
         VIRUS_INFECTED = "The selected file contains a virus"
 
@@ -176,7 +177,7 @@ class Consignee:
         DOWNLOAD_DOCUMENT = "Download"
         END_USER_HAS_NO_DOCUMENTS = "There are no documents attached"
         PROCESSING = "Processing"
-        SAVE_END_USER = "Save and return to the application overview "
+        SAVE_END_USER = "save and return to the application overview "
         TITLE = "Consignee document"
         VIRUS_INFECTED = "The selected file contains a virus"
 
@@ -210,7 +211,7 @@ class ThirdParties:
         DOWNLOAD_DOCUMENT = "Download"
         END_USER_HAS_NO_DOCUMENTS = "There are no documents attached"
         PROCESSING = "Processing"
-        SAVE_END_USER = "Save and return to the application overview "
+        SAVE_END_USER = "save and return to the application overview "
         TITLE = "Third party document"
         VIRUS_INFECTED = "The selected file contains a virus"
 

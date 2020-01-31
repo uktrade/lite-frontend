@@ -4,10 +4,10 @@ from lite_content.lite_exporter_frontend.generic import PERMISSION_FINDER_LINK
 
 class OverviewPage:
     BACK = generic.BACK_TO_APPLICATION_OVERVIEW
-    TITLE = "Add products"
-    ADD_GOODS_TYPE_BUTTON = "Add a product"
+    TITLE = "Products"
+    ADD_GOODS_TYPE_BUTTON = "Add products"
     ADD_ANOTHER_GOODS_TYPE_BUTTON = "Add another product"
-    NO_GOODS = "You haven't added any products"
+    NO_GOODS = "The are no products on the application"
 
 
 class Variables:
@@ -27,7 +27,7 @@ class Document:
 
 
 class Documents:
-    SAVE_END_USER = "save your progress and return to your application later"
+    SAVE_END_USER = "save your progress and return to the application later"
 
     class AttachDocuments:
         BACK_TO_APPLICATION_OVERVIEW = "Back to additional documents overview"
@@ -51,7 +51,7 @@ class CreateGoodsTypeForm:
 
     class Description:
         TITLE = "Description"
-        DESCRIPTION = "Include the product name to make it easier to find."
+        DESCRIPTION = "Start with the product name to make it easier to find the product when needed."
 
     class IsControlled:
         TITLE = "Is the product on the control list?"
