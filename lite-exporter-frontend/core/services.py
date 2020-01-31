@@ -10,7 +10,7 @@ from conf.client import get, post, put, delete
 from conf.constants import (
     UNITS_URL,
     APPLICATIONS_URL,
-    COUNTRIES_URL,
+    STATIC_COUNTRIES_URL,
     EXTERNAL_LOCATIONS_URL,
     NOTIFICATIONS_URL,
     ORGANISATIONS_URL,
@@ -28,7 +28,7 @@ def get_units(request):
 
 
 def get_countries(request, convert_to_options=False):
-    data = get(request, COUNTRIES_URL).json()["countries"]
+    data = get(request, STATIC_COUNTRIES_URL).json()["countries"]
 
     if convert_to_options:
         return [Option(x["id"], x["name"]) for x in data]

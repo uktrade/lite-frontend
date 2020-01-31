@@ -8,6 +8,7 @@ from applications.services import (
     get_ultimate_end_users,
     post_ultimate_end_user,
     delete_ultimate_end_user,
+    validate_ultimate_end_user,
 )
 from applications.views.parties.base import AddParty, ExistingPartiesList, SetParty, DeleteParty
 from lite_content.lite_exporter_frontend.applications import UltimateEndUserForm, UltimateEndUserPage
@@ -44,6 +45,8 @@ class SetUltimateEndUser(SetParty):
             back_url="applications:add_ultimate_end_user",
             strings=UltimateEndUserForm,
             multiple_allowed=True,
+            post_action=post_ultimate_end_user,
+            validate_action=validate_ultimate_end_user,
         )
 
 

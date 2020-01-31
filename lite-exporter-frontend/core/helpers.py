@@ -139,3 +139,10 @@ def decorate_patterns_with_permission(patterns, permission):
         pattern._callback = _wrap_with_permission(permission, callback)
         decorated_patterns.append(pattern)
     return decorated_patterns
+
+
+def add_validate_only_to_data(data):
+    data = data.copy()
+    data["validate_only"] = True
+
+    return data

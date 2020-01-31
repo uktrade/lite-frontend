@@ -4,7 +4,7 @@ from django.views.generic import TemplateView
 
 from applications.forms.parties import new_party_form_group
 from applications.helpers.check_your_answers import convert_end_user
-from applications.services import get_application, post_end_user, delete_end_user
+from applications.services import get_application, post_end_user, delete_end_user, validate_end_user
 from applications.views.parties.base import AddParty, SetParty, DeleteParty, ExistingPartiesList
 from lite_content.lite_exporter_frontend.applications import EndUserForm, EndUserPage
 
@@ -42,10 +42,11 @@ class SetEndUser(SetParty):
             name="end_user",
             form=new_party_form_group,
             back_url="applications:add_end_user",
-            action=post_end_user,
             strings=EndUserForm,
             multiple_allowed=False,
             copy_existing=copy_existing,
+            post_action=post_end_user,
+            validate_action=validate_end_user,
         )
 
 

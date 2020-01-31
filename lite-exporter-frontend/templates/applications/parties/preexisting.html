@@ -55,6 +55,11 @@
                                 <input type="hidden" name="website" value="{{ party.website }}">
                                 <input type="hidden" name="address" value="{{ party.address }}">
                                 <input type="hidden" name="country" value="{{ party.country.id }}">
+								{% if party.copy_of %}
+									<input type="hidden" name="copy_of" value="{{ party.copy_of }}">
+								{% else %}
+									<input type="hidden" name="copy_of" value="{{ party.id }}">
+								{% endif %}
                                 <button type="submit" class="lite-button--link" id="copy">
                                     {% lcs 'applications.CopyExistingPartyPage.ADD_BUTTON' %}
                                 </button>
