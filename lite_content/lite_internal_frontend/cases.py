@@ -154,6 +154,7 @@ class HMRCPage:
         FURTHER_INFO = "Further information"
 
     class Good:
+        TITLE = "Products"
         REVIEW_GOODS = "Review products"
         EDIT_FLAGS = "Set flags"
         DESCRIPTION = "Description"
