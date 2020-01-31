@@ -47,21 +47,19 @@
 }
 
 .lite-tabs__tab {
-	@include govuk-font($size: 14, $weight: bold);
+	@include govuk-font($size: 16, $weight: bold);
 	display: inline-block;
 	line-height: 40px!important;
 	margin-right: 25px;
 	margin-bottom: 30px;
 	border-bottom: 2px solid transparent;
-	color: govuk-colour("dark-grey");
-	letter-spacing: 1px;
-	text-transform: uppercase;
+	color: $govuk-secondary-text-colour;
 	cursor: pointer;
 	white-space: nowrap;
 	text-decoration: none!important;
 
 	&:hover {
-		border-bottom: 2px solid govuk-colour("mid-grey");
+		border-bottom: 2px solid $govuk-secondary-text-colour;
 	}
 
 	.lite-notification-bubble {
