@@ -71,7 +71,13 @@
 
 	<legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
 		<h1 class="govuk-fieldset__heading">
-			{{ page.title }}
+			{% if page.single_form_element %}
+				<label for="{{ page.single_form_element }}">
+					{{ page.title }}
+				</label>
+			{% else %}
+				{{ page.title }}
+			{% endif %}
 		</h1>
 	</legend>
 

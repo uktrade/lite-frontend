@@ -114,7 +114,7 @@ class Form:
         back_link=BackLink(),
         post_url=None,
     ):
-        from lite_forms.helpers import convert_to_markdown
+        from lite_forms.helpers import convert_to_markdown, heading_used_as_label
 
         self.title = title
         self.description = convert_to_markdown(description)
@@ -128,6 +128,7 @@ class Form:
             self.buttons = [Button(default_button_name, "submit")]
         self.javascript_imports = javascript_imports
         self.post_url = post_url
+        self.single_form_element = heading_used_as_label(questions)
 
 
 class DetailComponent:

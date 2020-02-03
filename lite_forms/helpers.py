@@ -114,6 +114,22 @@ def conditional(condition: bool, obj, else_obj=None):
     return else_obj
 
 
+def heading_used_as_label(components):
+    single_input = None
+
+    if components:
+        for component in components:
+            if hasattr(component, "title"):
+                if single_input:
+                    # If single_input has already been found, then we have multiple inputs
+                    # and the heading cannot be used for multiple inputs
+                    return None
+                else:
+                    single_input = component.name
+
+    return single_input
+
+
 def convert_to_markdown(text):
     if text:
         text = markdown(text, extensions=["nl2br"])

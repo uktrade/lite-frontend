@@ -14,6 +14,9 @@ from lite_forms.components import (
     Option,
     DateInput,
     ControlListEntryInput,
+    BackLink,
+    HiddenField,
+    NumberInput,
 )
 from lite_forms.helpers import (
     nest_data,
@@ -193,3 +196,27 @@ class MarkdownTest(TestCase):
     def test_control_list_entry_input(self):
         clc = ControlListEntryInput(name="abc", options=[], description=self.markdown_description)
         self.assertEqual(clc.description, self.html_description)
+
+
+class SingleQuestionFormAccessibilityTest(TestCase):
+    def test_no_questions_no_title_label(self):
+        form = Form()
+        self.assertIsNone(form.single_form_element)
+
+    def test_no_user_inputs_no_title_label(self):
+        form = Form(questions=[BackLink(), Label("abc"), HiddenField("abc", "123"),])
+        self.assertIsNone(form.single_form_element)
+
+    def test_single_user_input_with_other_questions_has_title_label(self):
+        name = "Test"
+        form = Form(questions=[BackLink(), Label("abc"), TextInput(name), HiddenField("abc", "123"),])
+        self.assertEqual(form.single_form_element, name)
+
+    def test_single_user_input_alone_has_title_label(self):
+        name = "Test"
+        form = Form(questions=[TextInput(name),])
+        self.assertEqual(form.single_form_element, name)
+
+    def test_multiple_user_inputs_no_title_label(self):
+        form = Form(questions=[TextInput("abc"), NumberInput("def"),])
+        self.assertIsNone(form.single_form_element)
