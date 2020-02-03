@@ -8,3 +8,8 @@
 		}
 	}
 }
+
+.govuk-table__caption {
+	@include govuk-font($size: 27, $weight: bold);
+	margin-bottom: govuk-spacing(3);
+}

@@ -27,7 +27,6 @@
 	{% endif %}
 
 	<!-- Goods -->
-
 	<form action="{% url 'cases:review_goods' case.id %}" method="get">
 		{% if 'REVIEW_GOODS' in permissions and not status_is_terminal %}
 			<button id="button-review-goods" name="action" value="review-goods" class="govuk-button" data-module="govuk-button">
@@ -38,33 +37,30 @@
 			{% lcs 'cases.HMRCPage.Good.EDIT_FLAGS' %}
 		</button>
 	    <table class="govuk-table">
+			<caption class="govuk-table__caption">{% lcs 'cases.HMRCPage.Good.TITLE' %}</caption>
 	        <thead class="govuk-table__header">
-	            <tr>
+	            <tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="col">
+						<button type="button" name="button" class="lite-button-checkbox" title="{% lcs 'generic.Checkboxes.SELECT_DESELECT_ALL' %}"></button>
+					</th>
 					<th class="govuk-table__header" scope="col"></th>
-	                <th class="govuk-table__header" scope="col">{% lcs 'cases.HMRCPage.Good.DESCRIPTION' %}</th>
-	                <th class="govuk-table__header" scope="col">{% lcs 'cases.HMRCPage.Good.CONTROL_CODE' %}</th>
-	                <th class="govuk-table__header" scope="col">{% lcs 'cases.HMRCPage.Good.CONTROLLED' %}</th>
+					<th class="govuk-table__header" scope="col">
+						{% lcs 'cases.HMRCPage.Good.DESCRIPTION' %}
+					</th>
 	                <th class="govuk-table__header" scope="col">{% lcs 'cases.HMRCPage.Good.FLAGS' %}</th>
 	            </tr>
 	        </thead>
-	        <tbody>
+	        <tbody class="govuk-table__body">
 	            {% for good in case.application.goods_types %}
 	                <tr class="govuk-table__row">
-						<td class="govuk-table__cell govuk-table__cell--line-number">
-							{{ forloop.counter }}.
-						</td>
-	                    <td class="govuk-table__cell">
-	                        <div class="govuk-checkboxes--small govuk-checkboxes__item">
-	                            <input class="govuk-checkboxes__input" type="checkbox" name="goods" value="{{ good.id }}" id="{{ good.id }}">
-	                            <label class="govuk-label govuk-checkboxes__label" for="{{ good.id }}">{{ good.description }}</label>
-	                        </div>
+	                    <td class="govuk-table__cell govuk-table__cell--checkbox">
+                            <input class="govuk-checkboxes__input" type="checkbox" name="goods" value="{{ good.id }}" id="{{ good.id }}">
+                            <label class="govuk-label govuk-checkboxes__label" for="{{ good.id }}">
+								<span class="govuk-visually-hidden">{{ good.description }}</span>
+							</label>
 	                    </td>
-	                    <td class="govuk-table__cell">
-	                        <span class="app-country-tag app-country-tag--orange">{{ good.control_code|default_na }}</span>
-	                    </td>
-	                    <td class="govuk-table__cell">
-	                        {{ good.is_good_controlled|friendly_boolean }}
-	                    </td>
+						<td class="govuk-table__cell govuk-table__cell--line-number">{{ forloop.counter }}.</td>
+						<td class="govuk-table__cell" aria-hidden="true">{{ good.description }}</td>
 	                    <td class="govuk-table__cell">
 	                        {% if good.flags %}
 	                            {% for flag in good.flags %}
@@ -79,31 +75,38 @@
 	</form>
 
 	<!-- Goods Locations -->
-	<h3 class="govuk-heading-m">{% lcs 'cases.HMRCPage.Good.CASE_GOODS_LOCATION' %}</h3>
-	<table class="govuk-table" id="hmrc-goods-location">
-		<thead class="govuk-table__head">
-			<tr class="govuk-table__row">
-				<th scope="col" class="govuk-table__header govuk-!-width-one-third">{% lcs 'cases.HMRCPage.Good.CASE_GOODS_LOCATION_NAME' %}</th>
-				<th scope="col" class="govuk-table__header govuk-!-width-two-thirds">{% lcs 'cases.HMRCPage.Good.CASE_GOODS_LOCATION_ADDRESS' %}</th>
-			</tr>
-		</thead>
-		<tbody class="govuk-table__body">
-			{% for location in case.application.goods_locations.data %}
+	{% if case.application.have_goods_departed %}
+		<div class="govuk-!-margin-bottom-6">
+			<p class="govuk-heading-m">{% lcs 'cases.HMRCPage.GoodsLocation.TITLE' %}</p>
+			{% include "includes/notice.html" with text='cases.HMRCPage.GoodsLocation.GOODS_DEPARTED' %}
+		</div>
+	{% else %}
+		<table class="govuk-table" id="hmrc-goods-location">
+			<caption class="govuk-table__caption">{% lcs 'cases.HMRCPage.GoodsLocation.TITLE' %}</caption>
+			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
+					<th scope="col" class="govuk-table__header govuk-!-width-one-third">{% lcs 'cases.HMRCPage.GoodsLocation.CASE_GOODS_LOCATION_NAME' %}</th>
+					<th scope="col" class="govuk-table__header govuk-!-width-two-thirds">{% lcs 'cases.HMRCPage.GoodsLocation.CASE_GOODS_LOCATION_ADDRESS' %}</th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				{% for location in case.application.goods_locations.data %}
+					<tr class="govuk-table__row">
 						<th scope="row" class="govuk-table__header">{{ location.name }}</th>
 						<td class="govuk-table__cell">{{ location|get_address }}</td>
-				</tr>
-			{% endfor %}
-		</tbody>
-	</table>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% endif %}
 
 	<!-- Destinations/End-User -->
 	{% include 'case/views/standard-destinations.html' %}
 
 	<!--TODO: Fix this JF-->
 	{% if case.application.supporting_documentation %}
-		<h3 class="govuk-heading-m">{% lcs 'cases.HMRCPage.SupportingDocumentation.TITLE' %}</h3>
 		<table class="govuk-table" id="supporting-documentation">
+			<caption class="govuk-table__caption">{% lcs 'cases.HMRCPage.SupportingDocumentation.TITLE' %}</caption>
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" scope="col">{% lcs 'cases.HMRCPage.SupportingDocumentation.NAME' %}</th>
