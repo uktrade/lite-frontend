@@ -3,6 +3,8 @@ from pytest_bdd import when, scenarios, parsers
 from pages.exporter_hub_page import ExporterHubPage
 from pages.hmrc_query.task_list import HMRCQueryTaskListPage
 from pages.hmrc_query.find_organisation import HMRCQueryFindOrganisationPage
+from pages.open_application.add_goods_type import OpenApplicationAddGoodsType
+from shared import functions
 
 scenarios("../features/hmrc.feature", strict_gherkin=False)
 
@@ -24,6 +26,14 @@ def i_click_application_locations_link(driver):
 @when("I click on hmrc describe your goods")  # noqa
 def i_click_on_hmrc_describe_goods(driver):
     HMRCQueryTaskListPage(driver).click_describe_your_goods()
+
+
+@when(parsers.parse('I add a goods type with description "{description}"'))  # noqa
+def add_new_goods_type(driver, description, context):  # noqa
+    OpenApplicationAddGoodsType(driver).enter_description(description)
+    context.good_description = description
+
+    functions.click_submit(driver)
 
 
 @when("I click on hmrc set end user")  # noqa

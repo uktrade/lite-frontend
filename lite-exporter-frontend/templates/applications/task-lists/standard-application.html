@@ -39,7 +39,7 @@
 	{% include "includes/task-list-item.html" with id="consignee" title="applications.StandardApplicationTaskList.CONSIGNEE" url=consignee_url status=consignee_status %}
 
 	{% url 'applications:third_parties' application.id as third_parties_url %}
-	{% tld goods 'third party' 'third parties' as third_parties_description %}
+	{% tld third_parties 'third party' 'third parties' as third_parties_description %}
 	{% include "includes/task-list-item.html" with id='third-parties' title='applications.StandardApplicationTaskList.THIRD_PARTIES' url=third_parties_url status=third_parties|task_list_item_status description=third_parties_description optional=True %}
 
 	{% url 'applications:additional_documents' application.id as supporting_documents_url %}

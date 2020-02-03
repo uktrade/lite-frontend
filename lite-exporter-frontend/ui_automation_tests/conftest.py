@@ -243,10 +243,10 @@ def add_new_end_user(driver, type, name, website, address, country, context):  #
     functions.click_submit(driver)
 
 
-@when(parsers.parse('I select "{organisation_or_external}" for where my goods are located'))  # noqa
-def choose_location_type(driver, organisation_or_external):  # noqa
+@when(parsers.parse('I select "{choice}" for where my goods are located'))  # noqa
+def choose_location_type(driver, choice):  # noqa
     which_location_form = WhichLocationFormPage(driver)
-    which_location_form.click_on_organisation_or_external_radio_button(organisation_or_external)
+    which_location_form.click_on_location_radiobutton(choice)
     functions.click_submit(driver)
 
 
@@ -531,8 +531,7 @@ def add_new_goods_type(driver, description, controlled, control_code, incorporat
     OpenApplicationAddGoodsType(driver).enter_description(description)
     OpenApplicationAddGoodsType(driver).select_is_your_good_controlled(controlled)
     OpenApplicationAddGoodsType(driver).enter_control_code(control_code)
-    if incorporated != "N/A":
-        OpenApplicationAddGoodsType(driver).select_is_your_good_incorporated(incorporated)
+    OpenApplicationAddGoodsType(driver).select_is_your_good_incorporated(incorporated)
 
     context.good_description = description
     context.control_code = control_code

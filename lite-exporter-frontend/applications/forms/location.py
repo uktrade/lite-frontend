@@ -1,19 +1,44 @@
 from applications.components import back_to_task_list
+from conf.constants import HMRC_QUERY
 from core.services import get_countries, get_external_locations
-from lite_content.lite_exporter_frontend import strings
+from lite_content.lite_exporter_frontend import goods, strings
 from lite_forms.components import Form, RadioButtons, Option, TextArea, Select, Filter, Checkboxes, TextInput
+from lite_forms.helpers import conditional
 
 
-def which_location_form(application_id):
+class Locations:
+    ORGANISATION = "organisation"
+    EXTERNAL = "external"
+    DEPARTED = "departed"
+
+
+def which_location_form(application_id, application_type):
     return Form(
-        title=strings.goods.GoodsLocationForm.WHERE_ARE_YOUR_GOODS_LOCATED_TITLE,
-        description=strings.goods.GoodsLocationForm.WHERE_ARE_YOUR_GOODS_LOCATED_DESCRIPTION,
+        title=goods.GoodsLocationForm.WHERE_ARE_YOUR_GOODS_LOCATED_TITLE,
+        description=goods.GoodsLocationForm.WHERE_ARE_YOUR_GOODS_LOCATED_DESCRIPTION,
         questions=[
             RadioButtons(
-                "organisation_or_external",
+                "choice",
                 [
-                    Option("organisation", strings.goods.GoodsLocationForm.ONE_OF_MY_REGISTERED_SITES),
-                    Option("external", strings.goods.GoodsLocationForm.NOT_AT_MY_REGISTERED_SITES),
+                    Option(
+                        key=Locations.ORGANISATION,
+                        value=goods.GoodsLocationForm.ONE_OF_MY_REGISTERED_SITES,
+                        description=goods.GoodsLocationForm.NOT_AT_MY_REGISTERED_SITES_DESCRIPTION,
+                    ),
+                    Option(
+                        key=Locations.EXTERNAL,
+                        value=goods.GoodsLocationForm.NOT_AT_MY_REGISTERED_SITES,
+                        description=goods.GoodsLocationForm.NOT_AT_MY_REGISTERED_SITES_DESCRIPTION,
+                    ),
+                    conditional(
+                        application_type == HMRC_QUERY,
+                        Option(
+                            key=Locations.DEPARTED,
+                            value=goods.GoodsLocationForm.DEPARTED_THE_COUNTRY,
+                            description=goods.GoodsLocationForm.DEPARTED_THE_COUNTRY_DESCRIPTION,
+                            show_or=True,
+                        ),
+                    ),
                 ],
             )
         ],
@@ -24,13 +49,13 @@ def which_location_form(application_id):
 
 def add_external_location():
     return Form(
-        title=strings.goods.GoodsLocationForm.EXTERNAL_LOCATION_TITLE,
+        title=goods.GoodsLocationForm.EXTERNAL_LOCATION_TITLE,
         questions=[
             RadioButtons(
                 "choice",
                 [
-                    Option("new", strings.goods.GoodsLocationForm.EXTERNAL_LOCATION_NEW_LOCATION),
-                    Option("preexisting", strings.goods.GoodsLocationForm.EXTERNAL_LOCATION_PREEXISTING_LOCATION),
+                    Option("new", goods.GoodsLocationForm.EXTERNAL_LOCATION_NEW_LOCATION),
+                    Option("preexisting", goods.GoodsLocationForm.EXTERNAL_LOCATION_PREEXISTING_LOCATION),
                 ],
             )
         ],

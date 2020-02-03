@@ -71,7 +71,7 @@ def get_standard_task_list(request, application, template, reference_number_desc
     additional_documents, _ = get_additional_documents(request, application_id)
     end_user_document = get_end_user_document_section(request, application)
     consignee_document = get_consignee_document_section(request, application)
-    ultimate_end_users, ultimate_end_users_documents_complete = get_ultimate_end_users_section(request, application)
+    ultimate_end_users, _ = get_ultimate_end_users_section(request, application)
     third_parties = get_third_parties(request, application_id)
     goods = get_application_goods(request, application_id)
 
@@ -89,12 +89,12 @@ def get_standard_task_list(request, application, template, reference_number_desc
         "end_user_status": check_all_parties_have_a_document([application["end_user"]]),
         "consignee_status": DONE if application["consignee"] else NOT_STARTED,
         "reference_number_description": reference_number_description,
-        "locations": sites or external_locations["external_locations"],
+        "locations": sites["sites"] or external_locations["external_locations"],
         "goods": goods,
         "goods_value": get_total_goods_value(goods),
         "ultimate_end_users": ultimate_end_users,
         "ultimate_end_users_required": ultimate_end_users_required,
-        "ultimate_end_users_documents_complete": ultimate_end_users_documents_complete,
+        "ultimate_end_users_status": check_all_parties_have_a_document(application["ultimate_end_users"]),
         "end_user_document": end_user_document,
         "consignee_document": consignee_document,
         "countries_on_goods_types": countries_on_goods_types,
@@ -137,7 +137,7 @@ def _get_open_application_task_list(request, application, errors=None):
         "edit_type": edit_type,
         "countries": countries,
         "goodstypes": goodstypes,
-        "locations": sites or external_locations["external_locations"],
+        "locations": sites["sites"] or external_locations["external_locations"],
         "ultimate_end_users": ultimate_end_users,
         "ultimate_end_users_required": ultimate_end_users_required,
         "end_user_document": end_user_document,
@@ -155,7 +155,9 @@ def _get_hmrc_query_task_list(request, application):
     context = {
         "application": application,
         "goods_types_status": DONE if application["goods_types"] else NOT_STARTED,
-        "goods_locations_status": DONE if application["goods_locations"] else NOT_STARTED,
+        "goods_locations_status": DONE
+        if application["goods_locations"] or application["have_goods_departed"]
+        else NOT_STARTED,
         "end_user_status": check_all_parties_have_a_document([application["end_user"]]),
         "ultimate_end_users_status": check_all_parties_have_a_document(application["ultimate_end_users"]),
         "third_parties_status": DONE if application["third_parties"] else NOT_STARTED,

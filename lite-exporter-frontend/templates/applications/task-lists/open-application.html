@@ -27,8 +27,8 @@
 	{% include "includes/task-list-item.html" with id="countries" title='applications.OpenApplicationTaskList.GOODS_DESTINATION' url=countries_url status=countries|task_list_item_status description=countries_description %}
 
 	{% if goodstypes and countries and edit_type != "minor_edit" %}
-		{% url 'applications:countries' application.id as countries_matrix_url %}
-		{% include "includes/task-list-item.html" with id="countries-matrix" title='applications.OpenApplicationTaskList.COUNTRIES_WHERE_EACH_GOOD_IS_GOING' url=countries_matrix_url %}
+		{% url 'applications:goods_countries' application.id as countries_matrix_url %}
+		{% include "includes/task-list-item.html" with id="countries-matrix" title='applications.OpenApplicationTaskList.COUNTRIES_WHERE_EACH_GOOD_IS_GOING' url=countries_matrix_url optional=True %}
 	{% endif %}
 
 	{% url 'applications:additional_documents' application.id as supporting_documents_url %}

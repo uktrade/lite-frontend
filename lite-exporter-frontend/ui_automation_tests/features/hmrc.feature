@@ -15,13 +15,10 @@ Feature: I want to be able to perform actions as a HMRC user
     And I wait for document to upload
     And I click the back link
     And I click on hmrc describe your goods
-    When I add a goods type with description "M4" controlled "Yes" control code "ML1a" incorporated "N/A"
+    When I add a goods type with description "M4"
     And I click the back link
     And I click on application hmrc locations link
-    And I select "external" for where my goods are located
-    And I select "new" for whether or not I want a new or existing location to be added
-    And I fill in new external location form with name: "32 Lime Street", address: "London" and country: "Ukraine" and continue
-    And I click the back link
+    And I select "departed" for where my goods are located
     And I click on hmrc explain your reasoning
     And I leave a note for the "reasoning"
     And I click continue

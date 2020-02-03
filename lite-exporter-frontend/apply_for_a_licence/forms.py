@@ -10,7 +10,6 @@ from lite_content.lite_exporter_frontend.applications import (
 from lite_forms.components import (
     RadioButtons,
     Form,
-    DetailComponent,
     TextInput,
     Option,
     FormGroup,
@@ -24,7 +23,7 @@ def reference_name_question(back_link):
     return Form(
         title=InitialApplicationQuestionsForms.ReferenceNameQuestion.TITLE,
         description=InitialApplicationQuestionsForms.ReferenceNameQuestion.DESCRIPTION,
-        questions=[TextInput(name="name", title=InitialApplicationQuestionsForms.ReferenceNameQuestion.LABEL),],
+        questions=[TextInput(name="name"),],
         default_button_name=strings.CONTINUE,
         back_link=back_link,
     )
@@ -37,7 +36,6 @@ def opening_question():
         questions=[
             RadioButtons(
                 name="licence_type",
-                title=InitialApplicationQuestionsForms.OpeningQuestion.LABEL,
                 options=[
                     Option(
                         key="export_licence",
@@ -60,10 +58,6 @@ def opening_question():
                         description=InitialApplicationQuestionsForms.OpeningQuestion.LicenceTypes.MOD_CLEARANCE_DESCRIPTION,
                     ),
                 ],
-            ),
-            DetailComponent(
-                InitialApplicationQuestionsForms.OpeningQuestion.HELP_WITH_CHOOSING_A_LICENCE,
-                InitialApplicationQuestionsForms.OpeningQuestion.HELP_WITH_CHOOSING_A_LICENCE_CONTENT,
             ),
         ],
         default_button_name=strings.CONTINUE,
