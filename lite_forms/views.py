@@ -62,7 +62,9 @@ class SingleFormView(FormView):
         super().init(request, **kwargs)
 
     def get(self, request, **kwargs):
-        self.init(request, **kwargs)
+        override_return = self.init(request, **kwargs)  # noqa
+        if override_return:
+            return redirect(override_return)
         return form_page(request, self.get_form(), data=self.get_data())
 
     def post(self, request, **kwargs):
