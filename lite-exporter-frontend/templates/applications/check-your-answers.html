@@ -17,18 +17,18 @@
 			{% if not value %}
 				<p class="govuk-caption-m">You haven't added any information for this section.</p>
 			{% elif value|classname == 'str' %}
-                <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row">
-                        <dd class="govuk-summary-list__value">
-                            {{ value }}
-                        </dd>
-                        <!-- <dd class="govuk-summary-list__actions">
-                            <a class="govuk-link" href="#">
-                                Change<span class="govuk-visually-hidden"> {{ key }}</span>
-                            </a>
-                        </dd> -->
-                    </div>
-                </dl>
+				<dl class="govuk-summary-list">
+					<div class="govuk-summary-list__row">
+						<dd class="govuk-summary-list__value">
+							{{ value }}
+						</dd>
+						<!-- <dd class="govuk-summary-list__actions">
+							<a class="govuk-link" href="#">
+								Change<span class="govuk-visually-hidden"> {{ key }}</span>
+							</a>
+						</dd> -->
+					</div>
+				</dl>
 			{% elif value|classname == 'dict' %}
 				<dl class="govuk-summary-list">
 					{% for key, value in value.items %}

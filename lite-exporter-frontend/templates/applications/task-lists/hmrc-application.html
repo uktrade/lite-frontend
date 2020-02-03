@@ -14,7 +14,7 @@
 			<h2 class="lite-task-list__section">
 				<span class="lite-task-list__section-number">1. </span> Provide details of your query
 			</h2>
-		    <ul class="lite-task-list__items">
+			<ul class="lite-task-list__items">
 				{% url 'applications:goods_types' application.id as goods_url %}
 				{% include "includes/task-list-item.html" with id="goods" title="applications.HMRCApplicationTaskList.GOODS" url=goods_url status=goods_types_status %}
 
@@ -50,7 +50,7 @@
 			<ul class="lite-task-list__items">
 				{% if show_submit_button %}
 					{% url 'applications:check_your_answers' application.id as check_your_answers_url %}
-			        {% include "includes/task-list-item.html" with title="applications.HMRCApplicationTaskList.CHECK_YOUR_ANSWERS" url=check_your_answers_url hide_tag=True %}
+					{% include "includes/task-list-item.html" with title="applications.HMRCApplicationTaskList.CHECK_YOUR_ANSWERS" url=check_your_answers_url hide_tag=True %}
 				{% else %}
 					<li class="lite-task-list__item">
 						<div class="lite-task-list__item-header">
@@ -63,7 +63,7 @@
 		{% if show_submit_button %}
 			<li>
 				<form method="post">
-	                {% csrf_token %}
+					{% csrf_token %}
 					<button type="submit" value="submit" class="govuk-button">Submit</button>
 				</form>
 			</li>
@@ -75,7 +75,7 @@
 			<h2 class="lite-task-list__section">
 				<span class="lite-task-list__section-number">3. </span> Confirm and submit your query
 			</h2>
-		    <ul class="lite-task-list__items">
+			<ul class="lite-task-list__items">
 				{% url 'applications:submit' application.id as confirm_url %}
 				{% include "includes/task-list-item.html" with title="Confirm and submit your query" url=confirm_url %}
 			</ul>

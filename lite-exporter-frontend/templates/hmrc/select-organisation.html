@@ -8,7 +8,7 @@
 
 {% block two_thirds %}
 	{% if show_error %}
-		 <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+		<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
 			<h2 class="govuk-error-summary__title" id="error-summary-title">
 				There is a problem
 			</h2>
@@ -30,19 +30,19 @@
 	<span class="govuk-hint">
 		Write the name or company registration number of the organisation in the search box.
 	</span>
-    <form method="get" class="govuk-!-margin-bottom-6">
+	<form method="get" class="govuk-!-margin-bottom-6">
 		<div class="lite-search__container">
-		    <input type="search" name="search_term" class="govuk-input" name="search" id="search" value="{{ params.search_term }}" placeholder="Search organisations" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-            <button class="lite-search__button" type="submit">
+			<input type="search" name="search_term" class="govuk-input" name="search" id="search" value="{{ params.search_term }}" placeholder="Search organisations" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+			<button class="lite-search__button" type="submit">
 				{% svg 'search' %}
 				<span>Search</span>
 			</button>
-	    </div>
-    </form>
+		</div>
+	</form>
 
 	{% if organisations.results|length and params.search_term %}
 		<form method="post">
-            {% csrf_token %}
+			{% csrf_token %}
 			<div class="govuk-form-group {% if show_error %}govuk-form-group--error{% endif %}">
 				{% if show_error %}
 					<span id="passport-issued-error" class="govuk-error-message">

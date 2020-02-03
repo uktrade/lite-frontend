@@ -25,14 +25,14 @@
 					<th class="govuk-table__header" scope="col">Document</th>
 					<th class="govuk-table__header" scope="col">Description</th>
 					<th class="govuk-table__header" scope="col"></th>
-		            <th class="govuk-table__header" scope="col"></th>
+					<th class="govuk-table__header" scope="col"></th>
 				</tr>
 			</thead>
 			<tbody class="govuk-table__body">
 				{% for additional_document in additional_documents %}
 				<tr class="govuk-table__row">
 					<td class="govuk-table__cell">{{ additional_document.name }}</td>
-		            <td class="govuk-table__cell">
+					<td class="govuk-table__cell">
 						{{ additional_document.description|default_na }}
 					</td>
 					<td class="govuk-table__cell govuk-table__cell--numeric">
@@ -40,18 +40,18 @@
 							<a href="{% url 'applications:download_additional_document' application.id additional_document.id %}" id="document_download" class='govuk-link govuk-link--no-visited-state'>
 								Download
 							</a>
-		                {% else %}
-		                    Processing
+						{% else %}
+							Processing
 						{% endif %}
 					</td>
-		            <td class="govuk-table__cell govuk-table__cell--numeric">
-		                {% if additional_document.safe == True %}
-		                    <a href="{% url 'applications:delete_additional_document' application.id additional_document.id %}" id="document_delete" class='govuk-link govuk-link--no-visited-state lite-link--icon'>
-		                        {% svg 'close' %}
+					<td class="govuk-table__cell govuk-table__cell--numeric">
+						{% if additional_document.safe == True %}
+							<a href="{% url 'applications:delete_additional_document' application.id additional_document.id %}" id="document_delete" class='govuk-link govuk-link--no-visited-state lite-link--icon'>
+								{% svg 'close' %}
 								Delete
-		                    </a>
+							</a>
 						{% endif %}
-		            </td>
+					</td>
 				</tr>
 				{% endfor %}
 			</tbody>
