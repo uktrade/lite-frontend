@@ -75,30 +75,32 @@
 	</form>
 
 	<!-- Goods Locations -->
-	{% if case.application.have_goods_departed %}
-		<div class="govuk-!-margin-bottom-6">
-			<p class="govuk-heading-m">{% lcs 'cases.HMRCPage.GoodsLocation.TITLE' %}</p>
-			{% include "includes/notice.html" with text='cases.HMRCPage.GoodsLocation.GOODS_DEPARTED' %}
-		</div>
-	{% else %}
-		<table class="govuk-table" id="hmrc-goods-location">
-			<caption class="govuk-table__caption">{% lcs 'cases.HMRCPage.GoodsLocation.TITLE' %}</caption>
-			<thead class="govuk-table__head">
-				<tr class="govuk-table__row">
-					<th scope="col" class="govuk-table__header govuk-!-width-one-third">{% lcs 'cases.HMRCPage.GoodsLocation.CASE_GOODS_LOCATION_NAME' %}</th>
-					<th scope="col" class="govuk-table__header govuk-!-width-two-thirds">{% lcs 'cases.HMRCPage.GoodsLocation.CASE_GOODS_LOCATION_ADDRESS' %}</th>
-				</tr>
-			</thead>
-			<tbody class="govuk-table__body">
-				{% for location in case.application.goods_locations.data %}
+	<div id="hmrc-goods-location">
+		{% if case.application.have_goods_departed %}
+			<div class="govuk-!-margin-bottom-6">
+				<p class="govuk-heading-m">{% lcs 'cases.HMRCPage.GoodsLocation.TITLE' %}</p>
+				{% include "includes/notice.html" with text='cases.HMRCPage.GoodsLocation.GOODS_DEPARTED' %}
+			</div>
+		{% else %}
+			<table class="govuk-table">
+				<caption class="govuk-table__caption">{% lcs 'cases.HMRCPage.GoodsLocation.TITLE' %}</caption>
+				<thead class="govuk-table__head">
 					<tr class="govuk-table__row">
-						<th scope="row" class="govuk-table__header">{{ location.name }}</th>
-						<td class="govuk-table__cell">{{ location|get_address }}</td>
+						<th scope="col" class="govuk-table__header govuk-!-width-one-third">{% lcs 'cases.HMRCPage.GoodsLocation.CASE_GOODS_LOCATION_NAME' %}</th>
+						<th scope="col" class="govuk-table__header govuk-!-width-two-thirds">{% lcs 'cases.HMRCPage.GoodsLocation.CASE_GOODS_LOCATION_ADDRESS' %}</th>
 					</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-	{% endif %}
+				</thead>
+				<tbody class="govuk-table__body">
+					{% for location in case.application.goods_locations.data %}
+						<tr class="govuk-table__row">
+							<th scope="row" class="govuk-table__header">{{ location.name }}</th>
+							<td class="govuk-table__cell">{{ location|get_address }}</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		{% endif %}
+	</div>
 
 	<!-- Destinations/End-User -->
 	{% include 'case/views/standard-destinations.html' %}
