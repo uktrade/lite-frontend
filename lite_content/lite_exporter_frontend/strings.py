@@ -20,7 +20,6 @@ SAVE = "Save"
 CONTINUE = "Continue"
 SAVE_AND_CONTINUE = "Save and continue"
 CANCEL = "Cancel"
-POST_NOTE = "Post note"
 THERE_IS_A_PROBLEM = "There is a problem"
 
 THIS_SECTION_IS = "This section is "  # The space at the end is intentional. Usage is 'This section is optional'
