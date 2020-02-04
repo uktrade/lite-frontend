@@ -11,11 +11,11 @@
 
 	{% if data or description or part_number or control_code %}
 		<div class="lite-js-only">
-			<a href="#" id="show-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
+		    <a href="#" id="show-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
 				{% svg 'plus' %}
 				Show filters
 			</a>
-			<a href="#" id="hide-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
+		    <a href="#" id="hide-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
 				{% svg 'minus' %}
 				Hide filters
 			</a>
@@ -46,7 +46,7 @@
 					<button type="submit" class="govuk-button" id="button-apply-filters">Apply filters</button>
 				</div>
 			</form>
-		</div>
+	    </div>
 
 		{% if data %}
 			<table class="govuk-table">
@@ -80,7 +80,7 @@
 					{% endfor %}
 				</tbody>
 			</table>
-			{% include "includes/pagination.html" with data=data %}
+            {% include "includes/pagination.html" with data=data %}
 		{% else %}
 			<div class="lite-information-text">
 				<span class="lite-information-text__icon" aria-hidden="true">!</span>

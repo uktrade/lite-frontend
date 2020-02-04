@@ -14,7 +14,6 @@ prospector = "==1.1.6.2"
 pytest-xdist = "*"
 black = "==19.10b0"
 faker = "*"
-lite-linter = "*"
 
 [packages]
 Django = "==2.2.9"

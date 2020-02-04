@@ -13,12 +13,12 @@
 				{% block title %}{% lcs 'goods.ViewGoodOnApplicationPage.TITLE' %}{% endblock %}
 			</h1>
 		</div>
-		{% if application.status.key in 'applicant_editing,draft' %}
-			<div class="lite-app-bar__controls">
+        {% if application.status.key in 'applicant_editing,draft' %}
+	        <div class="lite-app-bar__controls">
 				<a id="button-add-new-good" href="{% url 'applications:new_good' application.id %}" role='button' draggable='false' class='govuk-button'>{% lcs 'goods.ViewGoodOnApplicationPage.ADD_NEW_BUTTON' %}</a>
 				<a id="button-add-preexisting-good" href="{% url 'applications:preexisting_good' application.id %}" role='button' draggable='false' class='govuk-button'>{% lcs 'Goods.AddFromOrganisation.BUTTON' %}</a>
 			</div>
-		{% endif %}
+        {% endif %}
 	</div>
 
 	{% if goods %}

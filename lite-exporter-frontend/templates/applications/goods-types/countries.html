@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block back_link %}
-	<a href="{% url 'applications:task_list' draft_id %}" id="back-link" class="govuk-back-link">{% lcs "goods.GoodsCountriesMatrix.BACK" %}</a>
+    <a href="{% url 'applications:task_list' draft_id %}" id="back-link" class="govuk-back-link">{% lcs "goods.GoodsCountriesMatrix.BACK" %}</a>
 {% endblock %}
 
 {% block body %}
@@ -22,7 +22,7 @@
 		</div>
 	{% endif %}
 
-	<h1 class="govuk-heading-xl govuk-!-margin-bottom-5">
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-5">
 		{% block title %}{% lcs "goods.GoodsCountriesMatrix.TITLE" %}{% endblock %}
 	</h1>
 
@@ -30,44 +30,44 @@
 		{% lcs "goods.GoodsCountriesMatrix.THIS_IS_OPTIONAL" %}
 	</span>
 
-	<form method="post">
-		<div class="lite-buttons-row govuk-!-margin-bottom-5">
-			<a id="link-select-all" role="button" draggable="false" href="./?all=True" class="govuk-link govuk-body govuk-link--no-visited-state">{% lcs "goods.GoodsCountriesMatrix.SELECT_ALL" %}</a>
-			<a id="link-deselect-all" role="button" draggable="false" href="./?all=False" class="govuk-link govuk-body govuk-link--no-visited-state">{% lcs "goods.GoodsCountriesMatrix.DESELECT_ALL" %}</a>
-		</div>
+    <form method="post">
+        <div class="lite-buttons-row govuk-!-margin-bottom-5">
+            <a id="link-select-all" role="button" draggable="false" href="./?all=True" class="govuk-link govuk-body govuk-link--no-visited-state">{% lcs "goods.GoodsCountriesMatrix.SELECT_ALL" %}</a>
+            <a id="link-deselect-all" role="button" draggable="false" href="./?all=False" class="govuk-link govuk-body govuk-link--no-visited-state">{% lcs "goods.GoodsCountriesMatrix.DESELECT_ALL" %}</a>
+        </div>
 
-		{% csrf_token %}
+        {% csrf_token %}
 
-		<table class="govuk-table" id="countries_list">
-			<thead class="govuk-table__head">
-				<tr class="govuk-table__row">
-					<th class="govuk-table__header" scope="col">{% lcs "goods.GoodsList.Table.CONTROL_LIST_ENTRY" %}</th>
-					<th class="govuk-table__header" scope="col">{% lcs "goods.GoodsList.Table.DESCRIPTION" %}</th>
-					<th class="govuk-table__header" scope="col">{% lcs "goods.GoodsList.Table.COUNTRIES" %}</th>
-				</tr>
-			</thead>
-			{% for good in goods %}
-				<tr class="govuk-table__row">
-					<td class="govuk-table__cell">{{ good.control_code|default_na }}</td>
-					<td class="govuk-table__cell">{{ good.description }}</td>
-					<td class="govuk-table__cell">
-						{% for country in countries %}
-							<div class="govuk-checkboxes govuk-checkboxes--small">
-								<div class="govuk-checkboxes__item">
-									<input class="govuk-checkboxes__input" {% if good.countries|key_in_array:country.id and select != 'False' or select == 'True' %}checked{% endif %} type="checkbox" name="{{ good.id }}.{{ country.id }}" id="{{ good.id }}.{{ country.id }}" value="{{ country.id }}">
-									<label class="govuk-label govuk-checkboxes__label {% if not good.countries %}govuk-checkboxes__label--error{% endif %}" for="{{ good.id }}.{{ country.id }}">{{ country.name }}</label>
-								</div>
-							</div>
-						{% endfor %}
-					</td>
-				</tr>
-			{% endfor %}
-		</table>
+        <table class="govuk-table" id="countries_list">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th class="govuk-table__header" scope="col">{% lcs "goods.GoodsList.Table.CONTROL_LIST_ENTRY" %}</th>
+                    <th class="govuk-table__header" scope="col">{% lcs "goods.GoodsList.Table.DESCRIPTION" %}</th>
+                    <th class="govuk-table__header" scope="col">{% lcs "goods.GoodsList.Table.COUNTRIES" %}</th>
+                </tr>
+            </thead>
+            {% for good in goods %}
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">{{ good.control_code|default_na }}</td>
+                    <td class="govuk-table__cell">{{ good.description }}</td>
+                    <td class="govuk-table__cell">
+                        {% for country in countries %}
+                            <div class="govuk-checkboxes govuk-checkboxes--small">
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" {% if good.countries|key_in_array:country.id and select != 'False' or select == 'True' %}checked{% endif %} type="checkbox" name="{{ good.id }}.{{ country.id }}" id="{{ good.id }}.{{ country.id }}" value="{{ country.id }}">
+                                    <label class="govuk-label govuk-checkboxes__label {% if not good.countries %}govuk-checkboxes__label--error{% endif %}" for="{{ good.id }}.{{ country.id }}">{{ country.name }}</label>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
 
-		<button id="button-give-advice" type="submit" value="submit" class="govuk-button" data-module="govuk-button">
-			{% lcs "goods.GoodsCountriesMatrix.SAVE" %}
-		</button>
-	</form>
+        <button id="button-give-advice" type="submit" value="submit" class="govuk-button" data-module="govuk-button">
+            {% lcs "goods.GoodsCountriesMatrix.SAVE" %}
+        </button>
+    </form>
 {% endblock %}
 
 {% block javascript %}

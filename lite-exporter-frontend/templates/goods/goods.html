@@ -34,25 +34,25 @@
 	</div>
 
 	{% if goods.count or filtered %}
-		<div class="lite-js-only">
-			<a href="#" id="show-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
-				{% svg 'plus' %}
-				{% lcs 'goods.GoodsList.Filter.SHOW' %}
-			</a>
-			<a href="#" id="hide-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
-				{% svg 'minus' %}
-				{% lcs 'goods.GoodsList.Filter.HIDE' %}
-			</a>
-		</div>
-		<form id="filters" action="{% url 'goods:goods'%}" method="get">
-			<div class="govuk-grid-row lite-filter-bar">
+        <div class="lite-js-only">
+            <a href="#" id="show-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
+                {% svg 'plus' %}
+                {% lcs 'goods.GoodsList.Filter.SHOW' %}
+            </a>
+            <a href="#" id="hide-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
+                {% svg 'minus' %}
+                {% lcs 'goods.GoodsList.Filter.HIDE' %}
+            </a>
+        </div>
+        <form id="filters" action="{% url 'goods:goods'%}" method="get">
+            <div class="govuk-grid-row lite-filter-bar">
 				<div class="govuk-grid-column-one-third">
 					<label class="govuk-label" for="description">
 						{% lcs 'goods.GoodsList.Filter.DESCRIPTION' %}
 					</label>
 					<input class="govuk-input" id="description" name="description" type="text" autocomplete="off" autocorrect="off"  value="{{ description }}">
 				</div>
-				<div class="govuk-grid-column-one-third">
+                <div class="govuk-grid-column-one-third">
 					<label class="govuk-label" for="control_rating">
 						{% lcs 'goods.GoodsList.Filter.CONTROL_LIST_ENTRY' %}
 					</label>
@@ -65,39 +65,39 @@
 					<input class="govuk-input" id="part_number" name="part_number" type="text" autocomplete="off" autocorrect="off"  value="{{ part_number }}">
 				</div>
 				<div class="govuk-grid-column-one-third govuk-!-margin-top-6">
-					<button type="submit" form="filters" class="govuk-button govuk-!-margin-0" id="button-apply-filters">
-						{% lcs 'goods.GoodsList.Filter.APPLY' %}
-					</button>
-					<a href="{% url 'goods:goods' %}" class="govuk-button govuk-!-margin-bottom-0 govuk-!-margin-left-3 govuk-button--secondary govuk-button--secondary-white" id="button-clear-filters">
-						{% lcs 'goods.GoodsList.Filter.CLEAR' %}
-					</a>
-				</div>
-			</div>
-		</form>
-	{% endif %}
+                    <button type="submit" form="filters" class="govuk-button govuk-!-margin-0" id="button-apply-filters">
+					    {% lcs 'goods.GoodsList.Filter.APPLY' %}
+                    </button>
+                    <a href="{% url 'goods:goods' %}" class="govuk-button govuk-!-margin-bottom-0 govuk-!-margin-left-3 govuk-button--secondary govuk-button--secondary-white" id="button-clear-filters">
+                        {% lcs 'goods.GoodsList.Filter.CLEAR' %}
+                    </a>
+                </div>
+            </div>
+        </form>
+    {% endif %}
 
-	<p class="govuk-caption-m govuk-!-margin-top-1">
-		{% if not filtered %}
-			{% include 'includes/pluralise.html' with count=goods.count base_constant='goods.GoodsList.Count.ORGANISATION' %}
-		{% else %}
-			{% include 'includes/pluralise.html' with count=goods.count base_constant='goods.GoodsList.Count.FILTERED' %}
-		{% endif %}
-	</p>
+    <p class="govuk-caption-m govuk-!-margin-top-1">
+        {% if not filtered %}
+            {% include 'includes/pluralise.html' with count=goods.count base_constant='goods.GoodsList.Count.ORGANISATION' %}
+        {% else %}
+            {% include 'includes/pluralise.html' with count=goods.count base_constant='goods.GoodsList.Count.FILTERED' %}
+        {% endif %}
+    </p>
 
-	{% if goods.count %}
-		<table class="govuk-table">
-			<thead class="govuk-table__head">
-				<tr class="govuk-table__row">
-					<th class="govuk-table__header" scope="col">{% lcs 'goods.GoodsList.Table.DESCRIPTION' %}</th>
-					<th class="govuk-table__header" scope="col">{% lcs 'goods.GoodsList.Table.CONTROL_LIST_ENTRY' %}</th>
-					<th class="govuk-table__header" scope="col">{% lcs 'goods.GoodsList.Table.PART_NUMBER' %}</th>
-					<th class="govuk-table__header" scope="col">{% lcs 'goods.GoodsList.Table.STATUS' %}</th>
-				</tr>
-			</thead>
-			<tbody class="govuk-table__body">
-				{% for good in goods.results %}
-					<tr class="govuk-table__row">
-						<td class="govuk-table__cell">
+    {% if goods.count %}
+        <table class="govuk-table">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th class="govuk-table__header" scope="col">{% lcs 'goods.GoodsList.Table.DESCRIPTION' %}</th>
+                    <th class="govuk-table__header" scope="col">{% lcs 'goods.GoodsList.Table.CONTROL_LIST_ENTRY' %}</th>
+                    <th class="govuk-table__header" scope="col">{% lcs 'goods.GoodsList.Table.PART_NUMBER' %}</th>
+                    <th class="govuk-table__header" scope="col">{% lcs 'goods.GoodsList.Table.STATUS' %}</th>
+                </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+                {% for good in goods.results %}
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">
 							<a class="govuk-link govuk-link--no-visited-state app-icon-label" href="{% url "goods:good" good.id %}" id="good-description">
 								<p>{{ good.description|highlight_text:description }}</p>
 								{% if good.status.key == 'verified' %}<span class="app-verified__symbol">{% svg "verified" %}</span>{% endif %}
@@ -105,16 +105,16 @@
 									<span class="lite-notification-bubble">{{ good.query.exporter_user_notification_count.total }} <span class="govuk-visually-hidden"> {% lcs "goods.GoodsPage.NOTIFICATIONS" %}</span></span>
 								{% endif %}
 							</a>
-						</td>
-						<td class="govuk-table__cell" id="good-control_code">{{ good.control_code|highlight_text:control_code|default_na }}</td>
-						<td class="govuk-table__cell" id="good-part-number">{{ good.part_number|highlight_text:part_number|default_na }}</td>
-						<td class="govuk-table__cell">{{ good.status.value }}</td>
-					</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-		{% include "includes/pagination.html" with data=goods %}
-	{% endif %}
+                        </td>
+                        <td class="govuk-table__cell" id="good-control_code">{{ good.control_code|highlight_text:control_code|default_na }}</td>
+                        <td class="govuk-table__cell" id="good-part-number">{{ good.part_number|highlight_text:part_number|default_na }}</td>
+                        <td class="govuk-table__cell">{{ good.status.value }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% include "includes/pagination.html" with data=goods %}
+    {% endif %}
 {% endblock %}
 
 {% block javascript %}

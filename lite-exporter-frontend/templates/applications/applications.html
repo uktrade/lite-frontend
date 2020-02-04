@@ -57,7 +57,7 @@
 					<tr class="govuk-table__row">
 						<td class="govuk-table__cell">
 							<a class="govuk-link govuk-link--no-visited-state app-icon-label"
-								{% if application.status.key == 'applicant_editing' %}
+							    {% if application.status.key == 'applicant_editing' %}
 									href="{% url 'applications:task_list' application.id %}">
 								{% else %}
 									href="{% url 'applications:application' application.id %}">

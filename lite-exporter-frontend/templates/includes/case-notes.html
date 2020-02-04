@@ -3,23 +3,23 @@
 {% if post_url %}
 	<form method="post" action="{{ post_url }}">
 		{% csrf_token %}
-		{% if not status_is_terminal %}
-			<div class="lite-expandable-textarea lite-case-note-no-transition">
-				<textarea id="case_note" name="text" cols="80" class="govuk-textarea" placeholder="Add note"></textarea>
-				<div class="lite-expandable-textarea-controls">
-					<p id="case_note-warning" class="govuk-hint govuk-character-count__message" aria-live="polite">
-						{% lcs 'CaseNotes.MAX_LENGTH' %}
+        {% if not status_is_terminal %}
+		    <div class="lite-expandable-textarea lite-case-note-no-transition">
+			    <textarea id="case_note" name="text" cols="80" class="govuk-textarea" placeholder="Add note"></textarea>
+			    <div class="lite-expandable-textarea-controls">
+				    <p id="case_note-warning" class="govuk-hint govuk-character-count__message" aria-live="polite">
+					    {% lcs 'CaseNotes.MAX_LENGTH' %}
 
-					</p>
-					<a id="case-note-cancel-button" href="{{ post_url }}" class="govuk-button govuk-button--secondary govuk-button--secondary-white" type="button" draggable="false">
-						{% lcs 'CANCEL' %}
-					</a>
-					<button class="govuk-button" type="submit" id="button-post-note">
-						{% lcs 'POST_NOTE' %}
-					</button>
-				</div>
-			</div>
-		{% endif %}
+				    </p>
+				    <a id="case-note-cancel-button" href="{{ post_url }}" class="govuk-button govuk-button--secondary govuk-button--secondary-white" type="button" draggable="false">
+					    {% lcs 'CANCEL' %}
+				    </a>
+				    <button class="govuk-button" type="submit" id="button-post-note">
+					    {% lcs 'POST_NOTE' %}
+				    </button>
+			    </div>
+		    </div>
+        {% endif %}
 	</form>
 {% endif %}
 
@@ -38,13 +38,13 @@
 		{% endfor %}
 	</div>
 {% else %}
-	<div class="lite-information-text">
-		<span class="lite-information-text__icon" aria-hidden="true">!</span>
-		<p class="lite-information-text__text">
-			<span class="govuk-visually-hidden">Information</span>
-			There are no notes on this application.
-		</p>
-	</div>
+    <div class="lite-information-text">
+        <span class="lite-information-text__icon" aria-hidden="true">!</span>
+        <p class="lite-information-text__text">
+            <span class="govuk-visually-hidden">Information</span>
+            There are no notes on this application.
+        </p>
+    </div>
 {% endif %}
 
 <script src="{% static 'javascripts/pluralize.js' %}"></script>

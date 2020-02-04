@@ -105,10 +105,6 @@ jobs:
           name: Black
           command: pipenv run black . --check --diff
 
-      - run:
-          name: LITE Linter
-          command: pipenv run lint
-
 workflows:
   version: 2
   test:

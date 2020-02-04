@@ -153,18 +153,18 @@
 							{% lcs "goods.GoodPage.Table.Grading.GRADING" %}
 						</dt>
 						<dd class="govuk-summary-list__value">
-							{% if good.pv_grading_details.prefix %}
-								{{ good.pv_grading_details.prefix }}
-							{% endif %}
-							{% if good.pv_grading_details.grading %}
-								{{ good.pv_grading_details.grading.value }}
-							{% else %}
-								{{ good.pv_grading_details.custom_grading }}
-							{% endif %}
-							{% if good.pv_grading_details.suffix %}
-								{{ good.pv_grading_details.suffix }}
-							{% endif %}
-						</dd>
+                            {% if good.pv_grading_details.prefix %}
+                                {{ good.pv_grading_details.prefix }}
+                            {% endif %}
+                            {% if good.pv_grading_details.grading %}
+                             {{ good.pv_grading_details.grading.value }}
+                            {% else %}
+                                 {{ good.pv_grading_details.custom_grading }}
+                            {% endif %}
+                            {% if good.pv_grading_details.suffix %}
+                                {{ good.pv_grading_details.suffix }}
+                            {% endif %}
+                        </dd>
 					</div>
 					<div class="govuk-summary-list__row">
 						<dt class="govuk-summary-list__key">
@@ -209,7 +209,7 @@
 					<h3 class="govuk-heading-m">{% lcs 'goods.GoodsList.Documents.TITLE' %}</h3>
 				</div>
 				<div class="lite-app-bar__controls">
-					{% if good.status.key == 'draft' %}
+				    {% if good.status.key == 'draft' %}
 						{% if documents %}
 							<a role="button" draggable="false" class="govuk-button" href="{% url 'goods:attach_documents' good.id %}?goodpage=yes">
 								{% lcs 'Goods.Documents.AttachDocuments.BUTTON' %}
@@ -219,7 +219,7 @@
 								{% lcs 'Goods.Documents.AttachDocuments.BUTTON' %}
 							</a>
 						{% endif %}
-					{% endif %}
+				    {% endif %}
 				</div>
 			</div>
 
@@ -228,41 +228,41 @@
 
 				<br>
 
-				<table class="govuk-table">
-					<thead class="govuk-table__head">
-						<tr class="govuk-table__row">
-							<th scope="col" class="govuk-table__header">{% lcs 'goods.GoodsList.Documents.NAME' %}</th>
-							<th scope="col" class="govuk-table__header">{% lcs 'goods.GoodsList.Documents.DESCRIPTION' %}</th>
-							<th scope="col" class="govuk-table__header">{% lcs 'goods.GoodsList.Documents.UPLOADED_BY' %}</th>
-							<th scope="col" class="govuk-table__header"></th>
-						</tr>
-					</thead>
-					<tbody class="govuk-table__body">
-						{% for document in documents %}
-							<tr id="document-{{ document.id }}" class="govuk-table__row">
-								<td class="govuk-table__cell">{{ document.name }}</td>
-								<td class="govuk-table__cell">{{ document.description|default_na|slice:"0:40" }} {% if document.description|length > 40 %}...{% endif %}</td>
-								<td class="govuk-table__cell">{{ document.user.first_name }} {{ document.user.last_name }} at {{ document.created_at|str_date }}</td>
-								<td class="govuk-table__cell govuk-table__cell--numeric">
-									{% if document.safe == True %}
-										<a class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:document' pk=good.id file_pk=document.id %}">
-											{% lcs "goods.GoodPage.Document.DOWNLOAD" %}
-										</a>
-										{% if good.status.key == 'draft' %}
-											<a href="{% url 'goods:delete_document' good.id document.id %}" class="govuk-link">
-												{% lcs "goods.GoodPage.Document.DELETE" %}
-											</a>
-										{% endif %}
-									{% elif document.safe == False %}
-										<p class="govuk-label">{% lcs 'Goods.Documents.VIRUS_INFECTED' %}</p>
-									{% else %}
-										<p class="govuk-label">{% lcs 'Goods.Documents.PROCESSING' %}</p>
-									{% endif %}
-								</td>
-							</tr>
-						{% endfor %}
-					</tbody>
-				</table>
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header">{% lcs 'goods.GoodsList.Documents.NAME' %}</th>
+                            <th scope="col" class="govuk-table__header">{% lcs 'goods.GoodsList.Documents.DESCRIPTION' %}</th>
+                            <th scope="col" class="govuk-table__header">{% lcs 'goods.GoodsList.Documents.UPLOADED_BY' %}</th>
+                            <th scope="col" class="govuk-table__header"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        {% for document in documents %}
+                            <tr id="document-{{ document.id }}" class="govuk-table__row">
+                                <td class="govuk-table__cell">{{ document.name }}</td>
+                                <td class="govuk-table__cell">{{ document.description|default_na|slice:"0:40" }} {% if document.description|length > 40 %}...{% endif %}</td>
+                                <td class="govuk-table__cell">{{ document.user.first_name }} {{ document.user.last_name }} at {{ document.created_at|str_date }}</td>
+                                <td class="govuk-table__cell govuk-table__cell--numeric">
+                                    {% if document.safe == True %}
+                                        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:document' pk=good.id file_pk=document.id %}">
+                                            {% lcs "goods.GoodPage.Document.DOWNLOAD" %}
+                                        </a>
+                                        {% if good.status.key == 'draft' %}
+                                            <a href="{% url 'goods:delete_document' good.id document.id %}" class="govuk-link">
+                                                {% lcs "goods.GoodPage.Document.DELETE" %}
+                                            </a>
+                                        {% endif %}
+                                    {% elif document.safe == False %}
+                                        <p class="govuk-label">{% lcs 'Goods.Documents.VIRUS_INFECTED' %}</p>
+                                    {% else %}
+                                        <p class="govuk-label">{% lcs 'Goods.Documents.PROCESSING' %}</p>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
 			{% elif good.missing_document_reason.key %}
 				<div class="lite-information-text">
 					<span class="lite-information-text__icon" aria-hidden="true">!</span>
@@ -271,7 +271,7 @@
 						Document not required: {{ good.missing_document_reason.value }}
 					</p>
 				</div>
-			{% else %}
+		    {% else %}
 				{% include "includes/notice.html" with text="goods.GoodsList.Documents.NO_DOCUMENT_ATTACHED" %}
 			{% endif %}
 

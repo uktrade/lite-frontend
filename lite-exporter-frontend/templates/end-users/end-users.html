@@ -36,12 +36,12 @@
 				{% for advisory in end_users %}
 					<tr id={{ advisory.id }} class="govuk-table__row">
 						<td class="govuk-table__cell">
-							<a id="advisory-details-link" class="govuk-link govuk-link--no-visited-state app-icon-label" href="{% url 'end_users:end_user' pk=advisory.id %}">
-								{{ advisory.end_user.name }}
-								{% if advisory.exporter_user_notification_count.total %}
-									<span class="lite-notification-bubble">{{ advisory.exporter_user_notification_count.total }} <span class="govuk-visually-hidden"> {% lcs "end_users.EndUsersPage.NOTIFICATIONS" %}</span></span>
-								{% endif %}
-							</a>
+                            <a id="advisory-details-link" class="govuk-link govuk-link--no-visited-state app-icon-label" href="{% url 'end_users:end_user' pk=advisory.id %}">
+							    {{ advisory.end_user.name }}
+                                {% if advisory.exporter_user_notification_count.total %}
+                                    <span class="lite-notification-bubble">{{ advisory.exporter_user_notification_count.total }} <span class="govuk-visually-hidden"> {% lcs "end_users.EndUsersPage.NOTIFICATIONS" %}</span></span>
+                                {% endif %}
+                            </a>
 						</td>
 						<td class="govuk-table__cell">
 							{{ advisory.end_user.sub_type.value }}

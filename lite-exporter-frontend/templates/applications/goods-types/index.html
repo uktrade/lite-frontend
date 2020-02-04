@@ -16,7 +16,7 @@
 				<p class="govuk-body-m">You've added {{ goods|length|apnumber }} product{{ goods|pluralize }}.</p>
 			{% endif %}
 		</div>
-		{% if application.status.key in 'applicant_editing,draft' %}
+        {% if application.status.key in 'applicant_editing,draft' %}
 		<div class="lite-app-bar__controls">
 			<a href="{% url 'applications:add_goods_type' application.id %}?next={% url 'applications:goods_types' application.id %}" role='button' draggable='false' class='govuk-button'>
 				{% if goods %}
@@ -26,7 +26,7 @@
 				{% endif %}
 			</a>
 		</div>
-		{% endif %}
+        {% endif %}
 	</div>
 
 	{% if goods %}
@@ -69,22 +69,22 @@
 							<td class="govuk-table__cell">
 								<span class="lite-responsive-table__header">{% lcs "goods_types.Document.TITLE" %}</span>
 								{% if good_on_application.document %}
-									{%  if good_on_application.document.safe == True %}
-										<a href="{% url 'applications:goods_type_download_document' application.id good_on_application.id %}" id="document_download" class='govuk-link govuk-link--no-visited-state'>
-											{% lcs "goods_types.Document.DOWNLOAD" %}
-										</a>
-										<br/>
-										<a href="{% url 'applications:goods_type_delete_document' application.id good_on_application.id %}" id="document_delete" class='govuk-link govuk-link--no-visited-state'>
-											{% lcs "goods_types.Document.DELETE" %}
-										</a>
-									{% else %}
-										{% lcs "goods_types.Document.PROCESSING" %}
-									{% endif %}
-								{% else %}
-									<a href="{% url 'applications:goods_type_attach_document' application.id good_on_application.id %}" id="attach_doc" class='govuk-link govuk-link--no-visited-state'>
-										{% lcs "goods_types.Document.ATTACH" %}
-									</a>
-								{% endif %}
+					                {%  if good_on_application.document.safe == True %}
+					                    <a href="{% url 'applications:goods_type_download_document' application.id good_on_application.id %}" id="document_download" class='govuk-link govuk-link--no-visited-state'>
+					                        {% lcs "goods_types.Document.DOWNLOAD" %}
+					                    </a>
+					                    <br/>
+					                    <a href="{% url 'applications:goods_type_delete_document' application.id good_on_application.id %}" id="document_delete" class='govuk-link govuk-link--no-visited-state'>
+					                        {% lcs "goods_types.Document.DELETE" %}
+					                    </a>
+					                {% else %}
+					                    {% lcs "goods_types.Document.PROCESSING" %}
+					                {% endif %}
+					            {% else %}
+					                <a href="{% url 'applications:goods_type_attach_document' application.id good_on_application.id %}" id="attach_doc" class='govuk-link govuk-link--no-visited-state'>
+					                    {% lcs "goods_types.Document.ATTACH" %}
+					                </a>
+					            {% endif %}
 							</td>
 						{% endif %}
 						<td class="govuk-table__cell govuk-table__cell--numeric" scope="row">
@@ -97,6 +97,6 @@
 			</tbody>
 		</table>
 	{% else %}
-		{% include "includes/notice.html" with text="goods.GoodsList.Overview.NO_GOODS" %}
+        {% include "includes/notice.html" with text="goods.GoodsList.Overview.NO_GOODS" %}
 	{% endif %}
 {% endblock %}

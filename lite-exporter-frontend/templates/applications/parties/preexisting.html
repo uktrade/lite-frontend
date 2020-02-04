@@ -2,8 +2,8 @@
 
 {% block back_link %}
 	<a href="{% url back_url draft_id %}" id="back-link" class="govuk-back-link">
-		{% lcs 'applications.CopyExistingPartyPage.BACK_LINK' %}
-	</a>
+        {% lcs 'applications.CopyExistingPartyPage.BACK_LINK' %}
+    </a>
 {% endblock%}
 
 {% block body %}
@@ -13,64 +13,64 @@
 		{% endblock %}
 	</h1>
 
-	{% include "includes/filter.html" with filters=filters %}
+    {% include "includes/filter.html" with filters=filters %}
 
-	{% if data.results %}
-		<p class="govuk-hint">{{ data.count }}{% lcs 'applications.CopyExistingPartyPage.RESULTS' %}</p>
-		<table class="govuk-table">
-			<thead class="govuk-table__head">
-				<tr class="govuk-table__row">
-					<th scope="col" class="govuk-table__header">{% lcs 'applications.CopyExistingPartyPage.Table.NAME_COLUMN' %}</th>
-					<th scope="col" class="govuk-table__header">{% lcs 'applications.CopyExistingPartyPage.Table.TYPE_COLUMN' %}</th>
-					<th scope="col" class="govuk-table__header">{% lcs 'applications.CopyExistingPartyPage.Table.ADDRESS_COLUMN' %}</th>
-					<th scope="col" class="govuk-table__header">{% lcs 'applications.CopyExistingPartyPage.Table.COUNTRY_COLUMN' %}</th>
-					<th scope="col" class="govuk-table__header">{% lcs 'applications.CopyExistingPartyPage.Table.WEBSITE_COLUMN' %}</th>
-					<th scope="col" class="govuk-table__header"></th>
-				</tr>
-			</thead>
-			<tbody class="govuk-table__body">
-				{% for party in data.results %}
-					<tr class="govuk-table__row">
-						<td class="govuk-table__cell">
-							{{ party.name }}
-						</td>
-						<td class="govuk-table__cell">
-							{{ party.sub_type.value }}
-						</td>
-						<td class="govuk-table__cell">
-							{{ party.address }}
-						</td>
-						<td class="govuk-table__cell">
-							{{ party.country.name }}
-						</td>
-						<td class="govuk-table__cell">
-							{{ party.website|linkify }}
-						</td>
-						<td class="govuk-table__cell lite-!-text-align-right">
-							<form action="{% url url draft_id %}" method="post">
-								{% csrf_token %}
-								<input type="hidden" name="form_pk" value="0">
-								<input type="hidden" name="name" value="{{ party.name }}">
-								<input type="hidden" name="sub_type" value="{{ party.sub_type.key }}">
-								<input type="hidden" name="website" value="{{ party.website }}">
-								<input type="hidden" name="address" value="{{ party.address }}">
-								<input type="hidden" name="country" value="{{ party.country.id }}">
+    {% if data.results %}
+        <p class="govuk-hint">{{ data.count }}{% lcs 'applications.CopyExistingPartyPage.RESULTS' %}</p>
+        <table class="govuk-table">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header">{% lcs 'applications.CopyExistingPartyPage.Table.NAME_COLUMN' %}</th>
+                    <th scope="col" class="govuk-table__header">{% lcs 'applications.CopyExistingPartyPage.Table.TYPE_COLUMN' %}</th>
+                    <th scope="col" class="govuk-table__header">{% lcs 'applications.CopyExistingPartyPage.Table.ADDRESS_COLUMN' %}</th>
+                    <th scope="col" class="govuk-table__header">{% lcs 'applications.CopyExistingPartyPage.Table.COUNTRY_COLUMN' %}</th>
+                    <th scope="col" class="govuk-table__header">{% lcs 'applications.CopyExistingPartyPage.Table.WEBSITE_COLUMN' %}</th>
+                    <th scope="col" class="govuk-table__header"></th>
+                </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+                {% for party in data.results %}
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">
+                            {{ party.name }}
+                        </td>
+                        <td class="govuk-table__cell">
+                            {{ party.sub_type.value }}
+                        </td>
+                        <td class="govuk-table__cell">
+                            {{ party.address }}
+                        </td>
+                        <td class="govuk-table__cell">
+                            {{ party.country.name }}
+                        </td>
+                        <td class="govuk-table__cell">
+                            {{ party.website|linkify }}
+                        </td>
+                        <td class="govuk-table__cell lite-!-text-align-right">
+                            <form action="{% url url draft_id %}" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="form_pk" value="0">
+                                <input type="hidden" name="name" value="{{ party.name }}">
+                                <input type="hidden" name="sub_type" value="{{ party.sub_type.key }}">
+                                <input type="hidden" name="website" value="{{ party.website }}">
+                                <input type="hidden" name="address" value="{{ party.address }}">
+                                <input type="hidden" name="country" value="{{ party.country.id }}">
 								{% if party.copy_of %}
 									<input type="hidden" name="copy_of" value="{{ party.copy_of }}">
 								{% else %}
 									<input type="hidden" name="copy_of" value="{{ party.id }}">
 								{% endif %}
-								<button type="submit" class="lite-button--link" id="copy">
-									{% lcs 'applications.CopyExistingPartyPage.ADD_BUTTON' %}
-								</button>
-							</form>
-						</td>
-					</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-		{% include "includes/pagination.html" with data=data %}
-	{% else %}
-		<h2 class="govuk-heading-m">{% lcs 'applications.CopyExistingPartyPage.NONE_FOUND' %}</h2>
-	{% endif %}
+                                <button type="submit" class="lite-button--link" id="copy">
+                                    {% lcs 'applications.CopyExistingPartyPage.ADD_BUTTON' %}
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% include "includes/pagination.html" with data=data %}
+    {% else %}
+        <h2 class="govuk-heading-m">{% lcs 'applications.CopyExistingPartyPage.NONE_FOUND' %}</h2>
+    {% endif %}
 {% endblock %}

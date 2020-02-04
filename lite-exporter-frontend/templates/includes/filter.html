@@ -1,41 +1,42 @@
 {% load static svg %}
 
 <div class="lite-js-only">
-	<a href="#" id="show-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
-		{% svg 'plus' %}
-		Show filters
-	</a>
-	<a href="#" id="hide-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
-		{% svg 'minus' %}
-		Hide filters
-	</a>
+    <a href="#" id="show-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
+        {% svg 'plus' %}
+        Show filters
+    </a>
+    <a href="#" id="hide-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
+        {% svg 'minus' %}
+        Hide filters
+    </a>
 </div>
 
 <div id="filters" class="govuk-grid-row lite-filter-bar">
-	<form method="get">
-		{% for filter in filters %}
-			{% with filter|idify as name %}
-				<div class="govuk-grid-column-one-quarter">
-					<label class="govuk-label" for="description">{{ filter }}</label>
-					<input class="govuk-input"
-						id="{{ name }}"
-						name="{{ name }}"
-						type="text"
-						autocomplete="off"
-						autocorrect="off"
-						{% with request.GET|get:name as value %}
-							{% if value %}
-								value="{{ value }}"
-							{% endif %}
-						{% endwith %}>
-				</div>
-			{% endwith %}
-		{% endfor %}
-		<div class="govuk-grid-column-one-quarter">
-			<label class="govuk-label"></label>
-			<button type="submit" class="govuk-button" id="button-apply-filters">Apply filters</button>
-		</div>
-	</form>
+    <form method="get">
+        {% for filter in filters %}
+            {% with filter|idify as name %}
+                <div class="govuk-grid-column-one-quarter">
+                    <label class="govuk-label" for="description">{{ filter }}</label>
+                    <input class="govuk-input"
+                           id="{{ name }}"
+                           name="{{ name }}"
+                           type="text"
+                           autocomplete="off"
+                           autocorrect="off"
+                           {% with request.GET|get:name as value %}
+                               {% if value %}
+                                   value="{{ value }}"
+                               {% endif %}
+                           {% endwith %}
+                    >
+                </div>
+            {% endwith %}
+        {% endfor %}
+        <div class="govuk-grid-column-one-quarter">
+            <label class="govuk-label"></label>
+            <button type="submit" class="govuk-button" id="button-apply-filters">Apply filters</button>
+        </div>
+    </form>
 </div>
 
 {% block javascript %}
