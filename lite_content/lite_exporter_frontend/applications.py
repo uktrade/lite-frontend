@@ -451,6 +451,10 @@ class UltimateEndUsersPage:
         DOCUMENT = "Document"
 
 
+class Activity:
+    NO_ACTIVITY = "There hasn't been any activity on this application"
+
+
 class CaseNotes:
     TITLE = "Add a note"
     NOTICE = "You can enter up to 2200 characters."
