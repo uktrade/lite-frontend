@@ -28,6 +28,7 @@ django-inline-svg = "*"
 pytest-bdd = "*"
 raven = ">=6.10.0"
 requests-oauthlib = ">=1.2.0"
+django-storages = "==1.8"     # Need to fix this version because 1.9 removes support for boto
 s3chunkuploader = "*"
 boto3 = ">=1.9"
 prospector = "*"
