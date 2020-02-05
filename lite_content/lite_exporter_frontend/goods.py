@@ -14,12 +14,12 @@ class GoodsList:
     NO_LONGER_CAN_BE_CHANGED = "This product has been used on an application so can’t be edited."
 
     class Count:
-        ORGANISATION_ZERO = "Your organisation doesn't have any products listed."
+        ORGANISATION_ZERO = "Your organisation has no products listed."
         ORGANISATION_ONE = "Your organisation has 1 product listed"
         ORGANISATION_MANY = "Your organisation has %s products listed"  # %s will add the count of goods
-        FILTERED_ZERO = "There are no products to show"
-        FILTERED_ONE = "Displaying 1 product"
-        FILTERED_MANY = "Displaying %s products"  # %s will add the count of goods
+        FILTERED_ZERO = "No products match your filters"
+        FILTERED_ONE = "1 product matches your filters"
+        FILTERED_MANY = "%s products match your filters"  # %s will add the count of goods
 
     class Filter:
         DESCRIPTION = generic.DESCRIPTION
@@ -43,14 +43,14 @@ class GoodsList:
 
     class Documents:
         TITLE = "Documents"
-        NO_DOCUMENT_ATTACHED = "The product has no documents attached"
-        NAME = "Name"
+        NO_DOCUMENT_ATTACHED = "There are no documents"
+        NAME = "File"
         DESCRIPTION = "Description"
         UPLOADED_BY = "Uploaded by"
 
 
 class DocumentSensitivityForm:
-    TITLE = "Does your product documentation meet the following criteria?"
+    TITLE = "Does the product documentation meet the following criteria?"
     DESCRIPTION = (
         "I have a document for my product.\nDocumentation should be specifications, datasheets, sales brochures, "
         "drawings or anything else that fully details what the product is and what it's designed to do.\n\n"
@@ -72,7 +72,7 @@ class DocumentSensitivityForm:
 
 
 class CreateGoodForm:
-    TITLE_APPLICATION = "Add a new product to your application"
+    TITLE_APPLICATION = "Add a product to your application"
     TITLE_GOODS_LIST = "Add a product to your product list"
     SUBMIT_BUTTON = "Continue"
     BACK_BUTTON = "Back"
@@ -113,7 +113,7 @@ class CreateGoodForm:
 
         YES = "Yes"
         NO = "No, it doesn't need one"
-        RAISE_QUERY = "No, it needs one so apply for a private venture (PV) grading"
+        RAISE_QUERY = "No, it needs one, apply for a private venture (PV) grading"
 
     class PartNumber:
         TITLE = generic.PART_NUMBER
@@ -138,17 +138,17 @@ class GoodsQueryForm:
     TITLE = "Create a product query"
     DESCRIPTION = ""
     BACK_LINK = "Back to product"
-    BUTTON = "Save"
+    BUTTON = "Submit"
 
     class CLCQuery:
         TITLE = "Raise a control list classification (CLC) query"
 
         class Code:
-            TITLE = "What do you think the CLC is for the product? (optional)"
+            TITLE = "What do you think the CLC is for the product?"
             DESCRIPTION = "For example, ML1a."
 
         class Details:
-            TITLE = "Comments (optional)"
+            TITLE = "Comments"
 
     class PVGrading:
         TITLE = "Apply for a private venture (PV) grading"
@@ -157,7 +157,7 @@ class GoodsQueryForm:
             TITLE = "Comments"
 
     class Additional:
-        TITLE = "Comments (optional)"
+        TITLE = "Comments"
         DESCRIPTION = "Include details of why you don't know if the product is controlled."
 
 
@@ -180,7 +180,7 @@ class EditGoodForm:
         )
         YES = "Yes"
         NO = "No"
-        UNSURE = "I don't know"
+        UNSURE = "I don't know, raise a control list classification (CLC) query"
 
     class ControlListEntry:
         TITLE = "Control list classification"
@@ -193,7 +193,7 @@ class EditGoodForm:
         NO = "No"
 
     class PartNumber:
-        TITLE = "Part number (optional)"
+        TITLE = "Part number"
 
     class Buttons:
         SAVE = "Save"
@@ -209,7 +209,7 @@ class AttachDocumentForm:
     TITLE = "Attach a document"
     DESCRIPTION = (
         "Documentation could be specifications, datasheets, sales brochures, drawings "
-        "or anything else that fully details what the item is and what it's designed to do."
+        "or anything else that fully details what the product is and what it's designed to do."
         "\n\nDo not attach a document that’s OFFICIAL-SENSITIVE or above. "
         "\n\nThe file must be smaller than 100MB."
     )
@@ -218,7 +218,7 @@ class AttachDocumentForm:
     BACK_GOOD_LINK = "Back to product"
 
     class Description:
-        TITLE = "Description (optional)"
+        TITLE = "Description"
 
 
 class RespondToQueryForm:
@@ -261,7 +261,7 @@ class GoodPage:
 
     class RaiseQuery:
         PREFIX = "If you're not sure the product is controlled or not, "
-        LINK = "raise a control list classification (CLC) query"
+        LINK = "raise a control list classification query"
         SUFFIX = "."
 
     class Table:
@@ -336,7 +336,7 @@ class GoodsLocationForm:
 
 class GoodsCountriesMatrix:
     BACK = "Back to application overview"
-    TITLE = "Select the countries each product is going to (optional)"
+    TITLE = "Select the countries each product is going to"
     ERROR = "Select at least 1 country for each product"
     THIS_IS_OPTIONAL = ""
     SELECT_ALL = "Select all"
@@ -346,7 +346,7 @@ class GoodsCountriesMatrix:
 
 class GoodsLocationPage:
     SELECT_SITES_TITLE = "Products locations"
-    SELECT_SITES_BUTTON = "Select sites"
+    SELECT_SITES_BUTTON = "Add sites"
 
 
 class GoodsPage:

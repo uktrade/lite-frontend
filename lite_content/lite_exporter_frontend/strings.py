@@ -32,7 +32,7 @@ VIEW = "View"
 
 SUBMIT_APPLICATION = "Submit application"
 EDIT_APPLICATION_SUBMIT = "Submit application"
-EDIT_APPLICATION_DONE = "Saved"
+EDIT_APPLICATION_DONE = "Done"
 
 HOME = "Home"
 
@@ -56,7 +56,7 @@ class Applications:
 
     class Edit:
         DESCRIPTION = "Depending on your answer it can take longer to reach a decision."
-        TITLE = "How do you want to change the application?"
+        TITLE = "How do you want to edit the application?"
 
         class Minor:
             DESCRIPTION = "This won't impact the time it takes to reach a decision."
@@ -95,7 +95,7 @@ class EcjuQueries:
 class Clc:
     class ClcForm:
         DESCRIPTION = ""
-        TITLE = "Create a control list classification (CLC) query"
+        TITLE = "Raise a control list classification (CLC) query"
 
 
 class Drafts:
@@ -109,20 +109,20 @@ class EndUser:
     TITLE = "Select the type of end user"
 
     class Documents:
-        ATTACH_LATER = "to upload the EUU later."
+        ATTACH_LATER = " to upload the EUU later."
         BUTTON = "Documents"
         DELETE_DOCUMENT = "Delete"
         DESCRIPTION = "This is the document that has been uploaded for this end user."
         DOWNLOAD_DOCUMENT = "Download"
         END_USER_HAS_NO_DOCUMENTS = "There are no documents attached"
         PROCESSING = "Processing"
-        SAVE_END_USER = "save and return to the application overview "
+        SAVE_END_USER = "save and return to the application overview"
         TITLE = "End user document"
         VIRUS_INFECTED = "Virus infected"
 
         class AttachDocuments:
             BACK_TO_APPLICATION_OVERVIEW = "Back to application overview"
-            BUTTON = "Attach the end user undertaking (EUU) form for this end user"
+            BUTTON = "Attach document"
             DELETE_ERROR = "We had an issue deleting your files. Try again later."
             DESCRIPTION = (
                 "You must attach a completed [EUU form](https://www.gov.uk/government/publications/end-user-undertaking-euu-form). "
@@ -133,20 +133,20 @@ class EndUser:
             DESCRIPTION_FIELD_TITLE = "Description"
             DOWNLOAD_ERROR = "We had an issue downloading your file. Try again later."
             FILE_TOO_LARGE = "The selected file must be smaller than 100MB"
-            TITLE = "Attach a document"
+            TITLE = "Attach the end user undertaking (EUU) form"
             UPLOAD_ERROR = "We had an issue uploading your files. Try again later."
 
 
 class UltimateEndUser:
     class Documents:
-        ATTACH_LATER = "to upload a document later."
+        ATTACH_LATER = " to upload a document later."
         BUTTON = "Documents"
         DELETE_DOCUMENT = "Delete"
         DESCRIPTION = "This is the document that has been uploaded for this ultimate recipient."
         DOWNLOAD_DOCUMENT = "Download"
         END_USER_HAS_NO_DOCUMENTS = "There are no documents attached"
         PROCESSING = "Processing"
-        SAVE_END_USER = "save and return to the application overview "
+        SAVE_END_USER = "save and return to the application overview"
         TITLE = "Ultimate recipient document"
         VIRUS_INFECTED = "The selected file contains a virus"
 
@@ -170,14 +170,14 @@ class Consignee:
     TITLE = "Select the type of consignee"
 
     class Documents:
-        ATTACH_LATER = "to upload a document later."
+        ATTACH_LATER = " to upload a document later."
         BUTTON = "Documents"
         DELETE_DOCUMENT = "Delete"
         DESCRIPTION = "This is the document that has been uploaded for this consignee."
         DOWNLOAD_DOCUMENT = "Download"
         END_USER_HAS_NO_DOCUMENTS = "There are no documents attached"
         PROCESSING = "Processing"
-        SAVE_END_USER = "save and return to the application overview "
+        SAVE_END_USER = "save and return to the application overview"
         TITLE = "Consignee document"
         VIRUS_INFECTED = "The selected file contains a virus"
 
@@ -204,14 +204,14 @@ class ThirdParties:
     TITLE = "Will there be any third parties involved?"
 
     class Documents:
-        ATTACH_LATER = "to upload a document later."
+        ATTACH_LATER = " to upload a document later."
         BUTTON = "Documents"
         DELETE_DOCUMENT = "Delete"
         DESCRIPTION = "This is the document that has been uploaded for this third party."
         DOWNLOAD_DOCUMENT = "Download"
         END_USER_HAS_NO_DOCUMENTS = "There are no documents attached"
         PROCESSING = "Processing"
-        SAVE_END_USER = "save and return to the application overview "
+        SAVE_END_USER = "save and return to the application overview"
         TITLE = "Third party document"
         VIRUS_INFECTED = "The selected file contains a virus"
 
@@ -249,7 +249,7 @@ class Licences:
     REFRESH = "Refresh"
 
     class ApplyForALicenceStart:
-        TITLE = "Select the type of licence you need"
+        TITLE = "Select the type of export licence you need"
 
         class LicenceQuestions:
             HINT = ""
@@ -262,7 +262,7 @@ class Licences:
 
     class Countries:
         DESCRIPTION = "Select all countries that apply."
-        TITLE = "Where are your products going?"
+        TITLE = "Where are the products going?"
 
 
 class Misc:
@@ -280,9 +280,9 @@ class Goods:
 
     class Documents:
         BUTTON = "Documents"
-        DESCRIPTION = "These are all the documents that have been attached to this product."
+        DESCRIPTION = ""
         DOWNLOAD_DOCUMENT = "Download document"
-        GOOD_HAS_NO_DOCUMENTS = "This product has no documents attached"
+        GOOD_HAS_NO_DOCUMENTS = "There are no documents"
         PROCESSING = "Processing"
         TITLE = "Product documents"
         VIRUS_INFECTED = "The selected file contains a virus"
@@ -296,7 +296,7 @@ class Goods:
                 " or above.\n\nThe file must be smaller than 100MB."
             )
             DESCRIPTION_FIELD_DETAILS = ""
-            DESCRIPTION_FIELD_TITLE = "Description (optional)"
+            DESCRIPTION_FIELD_TITLE = "Description"
             FILE_TOO_LARGE = "The selected file must be smaller than 100MB"
             TITLE = "Attach a document"
 
@@ -307,9 +307,9 @@ class Goods:
             TITLE = "Where are your products located?"
 
     class LocationLists:
-        ADD_ADDRESS_BUTTON = "Add new address"
-        FIND_ADDRESS_BUTTON = "Find existing address"
-        TITLE = "Product location address"
+        ADD_ADDRESS_BUTTON = "Create new address"
+        FIND_ADDRESS_BUTTON = "Add existing address"
+        TITLE = "Product locations"
 
 
 class HelpAddress:
@@ -340,7 +340,7 @@ class AdditionalDocuments:
         DOWNLOAD_DOCUMENT = "Download"
         END_USER_HAS_NO_DOCUMENTS = "There are no documents attached"
         PROCESSING = "Processing"
-        SAVE_END_USER = "save your progress and return to your application later"
+        SAVE_END_USER = ""
         TITLE = "Additional document"
         VIRUS_INFECTED = "The selected file contains a virus"
 
@@ -356,7 +356,7 @@ class AdditionalDocuments:
             DESCRIPTION_FIELD_TITLE = "Description (optional)"
             DOWNLOAD_ERROR = "We had an issue downloading your file. Try again later."
             FILE_TOO_LARGE = "The selected file must be smaller than 100MB"
-            TITLE = "Attach a document"
+            TITLE = "Attach a supporting document"
             UPLOAD_ERROR = "We had an issue uploading your files. Try again later."
 
 
