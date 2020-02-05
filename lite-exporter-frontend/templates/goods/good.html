@@ -50,13 +50,12 @@
 			</div>
 
 			<!-- Notify the user if their good has a special status -->
-			{% if good.status.key == 'clc_query' %}
+			{% if good.status.key == 'query' %}
 				<div class="govuk-inset-text">
 					{% lcs 'goods.GoodsList.IN_REVIEW' %}
 				</div>
 				<br>
 			{% endif %}
-
 			{% if good.query %}
 				<h3 class="govuk-heading-m">{% lcs 'goods.GoodPage.Query.TITLE' %}</h3>
 				<dl class="govuk-summary-list" id="query_table">
@@ -80,6 +79,26 @@
 							{% endif %}
 						</dd>
 					</div>
+					{% if good.query.clc_raised_reasons %}
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								{% lcs 'goods.GoodPage.Query.CLC_RAISED_REASONS' %}
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{{ good.query.clc_raised_reasons }}
+							</dd>
+						</div>
+					{% endif %}
+					{% if good.query.pv_grading_raised_reasons %}
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								{% lcs 'goods.GoodPage.Query.GRADING_RAISED_REASONS' %}
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{{ good.query.pv_grading_raised_reasons }}
+							</dd>
+						</div>
+					{% endif %}
 				</dl>
 
 				<br><br>
@@ -166,30 +185,32 @@
                             {% endif %}
                         </dd>
 					</div>
-					<div class="govuk-summary-list__row">
-						<dt class="govuk-summary-list__key">
-							{% lcs "goods.GoodPage.Table.Grading.REFERENCE" %}
-						</dt>
-						<dd class="govuk-summary-list__value">
-							{{ good.pv_grading_details.reference }}
-						</dd>
-					</div>
-					<div class="govuk-summary-list__row">
-						<dt class="govuk-summary-list__key">
-							{% lcs "goods.GoodPage.Table.Grading.ISSUING_AUTHORITY" %}
-						</dt>
-						<dd class="govuk-summary-list__value">
-							{{ good.pv_grading_details.issuing_authority }}
-						</dd>
-					</div>
-					<div class="govuk-summary-list__row">
-						<dt class="govuk-summary-list__key">
-							{% lcs "goods.GoodPage.Table.Grading.DATE_OF_ISSUE" %}
-						</dt>
-						<dd class="govuk-summary-list__value">
-							{{ good.pv_grading_details.date_of_issue|date_display }}
-						</dd>
-					</div>
+					{% if not good.query.pv_grading_responded %}
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								{% lcs "goods.GoodPage.Table.Grading.REFERENCE" %}
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{{ good.pv_grading_details.reference }}
+							</dd>
+						</div>
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								{% lcs "goods.GoodPage.Table.Grading.ISSUING_AUTHORITY" %}
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{{ good.pv_grading_details.issuing_authority }}
+							</dd>
+						</div>
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								{% lcs "goods.GoodPage.Table.Grading.DATE_OF_ISSUE" %}
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{{ good.pv_grading_details.date_of_issue|date_display }}
+							</dd>
+						</div>
+					{% endif %}
 				{% endif %}
 				<div class="govuk-summary-list__row">
 					<dt class="govuk-summary-list__key">
