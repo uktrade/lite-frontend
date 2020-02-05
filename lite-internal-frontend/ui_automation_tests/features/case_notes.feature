@@ -18,11 +18,8 @@ Feature: I want to add an internal note to a case and view notes
     Given I create open application or open application has been previously created
     And I sign in to SSO or am signed into SSO
     When I go to application previously created
-    And I enter "the maximum limit" for case note
-    Then case note warning is "None"
-    When I enter "T" for case note
-    Then case note warning is "disabled"
-    And post note is disabled
+    And I enter "too many characters" for case note
+    Then the case note is disabled
 
   @LT_911_cancel @regression
   Scenario: Case note cancel button

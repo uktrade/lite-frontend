@@ -12,9 +12,9 @@ class ApplicationPage(BasePage):
     ACTIONS_DROPDOWN = ".lite-more-actions__button"  # CSS
     AUDIT_NOTIFICATION_ANCHOR = "audit-notification"  # ID
     AUDIT_CASE_ACTIVITY_ID = "[id^=case-activity-]"  # CSS
-    CASE_NOTE_FIELD = "case_note"  # id
-    POST_NOTE_BTN = "button-post-note"  # id
-    CANCEL_NOTE_BTN = "case-note-cancel-button"  # id
+    INPUT_CASE_NOTE_ID = "input-case-note"
+    BUTTON_POST_NOTE_ID = "button-case-note-post"
+    LINK_CANCEL_NOTE_ID = "link-case-note-cancel"
     CASE_NOTES_TEXT = ".app-activity__item"  # css
     CASE_NOTE_DATE_TIME = ".app-activity__item .govuk-hint"  # css
     DOCUMENTS_BTN = '[href*="documents"]'  # css
@@ -53,18 +53,18 @@ class ApplicationPage(BasePage):
         self.driver.find_element_by_id(self.IS_VISIBLE_TO_EXPORTER_CHECKBOX_ID).click()
 
     def enter_case_note(self, text):
-        self.driver.execute_script(f'document.getElementById("{self.CASE_NOTE_FIELD}").value = "{text[:-1]}"')
-        self.driver.find_element_by_id(self.CASE_NOTE_FIELD).send_keys(text[-1:])
+        self.driver.execute_script(f'document.getElementById("{self.INPUT_CASE_NOTE_ID}").value = "{text[:-1]}"')
+        self.driver.find_element_by_id(self.INPUT_CASE_NOTE_ID).send_keys(text[-1:])
 
     def get_text_of_case_note_field(self):
-        return self.driver.find_element_by_id(self.CASE_NOTE_FIELD).text
+        return self.driver.find_element_by_id(self.INPUT_CASE_NOTE_ID).text
 
     def click_post_note_btn(self):
-        self.driver.find_element_by_id(self.POST_NOTE_BTN).click()
+        self.driver.find_element_by_id(self.BUTTON_POST_NOTE_ID).click()
 
     def click_cancel_btn(self):
         time.sleep(0.5)
-        self.driver.find_element_by_id(self.CANCEL_NOTE_BTN).click()
+        self.driver.find_element_by_id(self.LINK_CANCEL_NOTE_ID).click()
 
     def get_text_of_case_note(self, no):
         return self.driver.find_elements_by_css_selector(self.CASE_NOTES_TEXT)[no].text
@@ -73,10 +73,10 @@ class ApplicationPage(BasePage):
         return self.driver.find_elements_by_css_selector(self.CASE_NOTE_DATE_TIME)[no].text
 
     def get_disabled_attribute_of_post_note(self):
-        return self.driver.find_element_by_id(self.POST_NOTE_BTN).get_attribute("disabled")
+        return self.driver.find_element_by_id(self.BUTTON_POST_NOTE_ID).get_attribute("disabled")
 
     def get_class_name_of_post_note(self):
-        return self.driver.find_element_by_id(self.POST_NOTE_BTN).get_attribute("class")
+        return self.driver.find_element_by_id(self.BUTTON_POST_NOTE_ID).get_attribute("class")
 
     def click_progress_application(self):
         self.click_drop_down()
