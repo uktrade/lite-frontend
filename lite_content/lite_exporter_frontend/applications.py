@@ -22,7 +22,7 @@ class AddPartyForm:
 
 
 class CopyExistingPartyPage:
-    TITLE = "Existing parties"
+    TITLE = "Select a party"
     BACK_LINK = "Back"
     HEADING = "Select a party"
     ADD_BUTTON = "Edit and add to application"
@@ -102,7 +102,7 @@ class ThirdPartyPage:
 
 
 class DeletePartyDocumentForm:
-    TITLE = "Are you sure you want to delete this document?"
+    TITLE = "Confirm you want to delete the document"
 
 
 class GeneratedDocuments:
@@ -140,8 +140,8 @@ class ApplicationSummaryPage:
     COPIED = "Copied"
 
     class Sections:
-        COMPLETED_TAG = "Completed"
-        IN_PROGRESS_TAG = "In Progress"
+        COMPLETED_TAG = "Saved"
+        IN_PROGRESS_TAG = "In progress"
         NOT_STARTED_TAG = "Not started"
 
     class PartiesPreviewList:
@@ -155,11 +155,11 @@ class ApplicationSummaryPage:
         DOCUMENT = "Document"
 
     class Buttons:
-        EDIT_APPLICATION_BUTTON = "Edit application"
-        WITHDRAW_ACCESS_BUTTON = "Withdraw application"
+        EDIT_APPLICATION_BUTTON = "Edit"
+        WITHDRAW_ACCESS_BUTTON = "Withdraw"
 
     class Withdraw:
-        TITLE = "Confirm you want to withdraw this application?"
+        TITLE = "Confirm you want to withdraw this application"
         BACK_TEXT = "Back to application"
         YES_LABEL = "Confirm and withdraw the application"
         NO_LABEL = "Cancel"
@@ -199,22 +199,21 @@ class InitialApplicationQuestionsForms:
 
         class LicenceTypes:
             EXPORT_LICENCE_TITLE = "Export licence"
-            EXPORT_LICENCE_DESCRIPTION = "Select if you’re sending products produced in the UK to another country"
+            EXPORT_LICENCE_DESCRIPTION = "Select if you’re sending products from the UK to another country"
 
             TRANSHIPMENT_LICENCE_TITLE = "Transhipment licence"
             TRANSHIPMENT_LICENCE_DESCRIPTION = (
                 "Select if you're shipping something from overseas through the UK on to another country."
-                " If the products will be in the UK for 31 days or more, apply for an export licence"
+                " If the products will be in the UK for 30 days or more, apply for an export licence"
             )
             TRADE_CONTROL_LICENCE_TITLE = "Trade control licence"
             TRADE_CONTROL_LICENCE_DESCRIPTION = (
-                "Select if you’re arranging or brokering the sale or movement of controlled products located overseas"
+                "Select if you’re arranging or brokering the sale or movement of controlled military products "
+                "located overseas"
             )
 
             MOD_CLEARANCE_TITLE = "MOD clearance"
-            MOD_CLEARANCE_DESCRIPTION = (
-                "Select if you need to share information, go to an exhibition or gifting products"
-            )
+            MOD_CLEARANCE_DESCRIPTION = "Select if you need an F680 to share information, go to an exhibition or you're gifting surplus products"
 
     class ReferenceNameQuestion:
         TITLE = "Name the application"
@@ -402,7 +401,7 @@ class ApplicationsList:
 
 class ApplicationPage:
     BACK = "Back to applications"
-    NO_INFORMATION_PROVIDED = "You haven't added any information to this section."
+    NO_INFORMATION_PROVIDED = "No information added to this section."
 
 
 class ThirdPartiesPage:
@@ -427,8 +426,8 @@ class UltimateEndUsersPage:
     BACK = "Back to application overview"
     HELP = "What is an ultimate recipient?"
     DESCRIPTION = (
-        "An ultimate recipient is an entity that uses the product or the higher level system into which the products are"
-        " installed or incorporated. The end user and ultimate recipient may be different entities."
+        "An ultimate recipient is an entity that uses the product or the higher level system into which the product is"
+        " installed or incorporated. The end user and ultimate recipient may be different parties."
     )
     NOTICE = "There are no ultimate recipients on this application"
     MISSING_DOCS_NOTICE = "You need to attach a document to some ultimate recipients"
