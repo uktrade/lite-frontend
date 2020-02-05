@@ -2,7 +2,7 @@
 
 {% block back_link %}
 	{% if application.status %}
-    	<a href="{% url 'applications:applications' %}" id="back-link" class="govuk-back-link">{% lcs 'applications.EditApplicationPage.BACK' %}</a>
+		<a href="{% url 'applications:applications' %}" id="back-link" class="govuk-back-link">{% lcs 'applications.EditApplicationPage.BACK' %}</a>
 	{% endif %}
 {% endblock %}
 
@@ -75,7 +75,7 @@
 					<span class="lite-task-list__section-number">2. </span>{% lcs 'applications.EditApplicationPage.MainTaskSection.TITLE' %}
 				{% endif %}
 			</h2>
-		    <ul class="lite-task-list__items {% if is_editing %}govuk-!-padding-0{% endif %}">
+			<ul class="lite-task-list__items {% if is_editing %}govuk-!-padding-0{% endif %}">
 				{% block main_tasks %}
 				{% endblock %}
 

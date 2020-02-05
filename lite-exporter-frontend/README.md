@@ -49,7 +49,6 @@ Application for handling exporter related activity in LITE.
 
 
 ## Running selenium tests
-
 ### Installing
 * Install Chromedriver
   * `brew cask install chromedriver`
