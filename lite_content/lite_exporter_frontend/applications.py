@@ -213,9 +213,7 @@ class InitialApplicationQuestionsForms:
             )
 
             MOD_CLEARANCE_TITLE = "MOD clearance"
-            MOD_CLEARANCE_DESCRIPTION = (
-                "Select if you need an F680 to share information, go to an exhibition or you're gifting surplus products"
-            )
+            MOD_CLEARANCE_DESCRIPTION = "Select if you need an F680 to share information, go to an exhibition or you're gifting surplus products"
 
     class ReferenceNameQuestion:
         TITLE = "Name the application"
