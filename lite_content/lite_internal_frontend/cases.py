@@ -215,27 +215,148 @@ class OpenApplication:
 
 
 class ClcQuery:
+    class Actions:
+        RESPOND_CLC = "Respond to CLC query"
+        RESPOND_GRADING = "Respond to grading query"
+
     class Verified:
         OUTCOME = "Outcome"
-        CONTROLLED = "Is the good controlled?"
-        CONTROL_CODE = "What's the goods actual control list entry"
-        REPORT = "Report Summary (optional)"
-        COMMENT = "Why was this outcome chosen"
+
+        class Clc:
+            TITLE = "CLC query"
+            CONTROLLED = "Is the good controlled?"
+            CONTROL_CODE = "What's the goods actual control list entry"
+            REPORT = "Report Summary (optional)"
+            COMMENT = "Why was this outcome chosen"
+
+        class PvGrading:
+            TITLE = "Grading Query"
+            GRADING = "Grading"
+            COMMENT = "Comment"
 
     class GoodDetails:
-        TITLE = "Good Details"
-        DESCRIPTION = "Description"
-        CONTROLLED = "Controlled"
-        CONTROL_CODE = "Control list entry"
-        EXPECTED_CONTROL_CODE = "Expected Control list entry"
-        REASON = "Reason"
-        PART_NUMBER = "Part Number"
-        FLAGS = "Flags"
-        QUERY_TEXT = "CLC query Text"
+        class Details:
+            TITLE = "Product Details"
+            DESCRIPTION = "Description"
+            PART_NUMBER = "Part Number"
+            FLAGS = "Flags"
 
-    class Documents:
-        TITLE = "Documents"
-        DOWNLOAD = "Download"
+        class Clc:
+            TITLE = "Control list classification"
+            CONTROLLED = "Controlled"
+            CONTROL_CODE = "Control list entry"
+            EXPECTED_CONTROL_CODE = "Expected Control list entry"
+            NO_CONTROL_CODE = "Not on the control list"
+            REASON = "Reason"
+
+        class Grading:
+            TITLE = "Grading"
+            GRADING = "Grading"
+            ISSUING_AUTHORITY = "Issuing authority"
+            REFERENCE = "Reference"
+            DATE_OF_ISSUE = "Date of issue"
+            COMMENTS = "Comments"
+
+        class Documents:
+            TITLE = "Documents"
+            DOWNLOAD = "Download"
+
+
+class ClcResponseOverview:
+    TITLE = "Response overview"
+    WARNING = "You won't be able to change this once submitted"
+    SUBMIT = "Submit response"
+    CHANGE = "Change response"
+
+    class Details:
+        DESCRIPTION = "Description"
+        CONTROL_LIST_ENTRY = "Control list entry"
+        PART_NUMBER = "Part number"
+
+        class Flags:
+            FLAGS = "Flags"
+            EDIT = "Edit good flags"
+            SET = "Set a flag on this good"
+
+        class Documents:
+            DOCUMENTS = "Documents"
+            DOWNLOAD = "Download"
+            NONE = "This good has no documents attached."
+
+    class Response:
+        TITLE = "What you've said"
+        CONTROLLED = "Is this good controlled?"
+        CONTROL_LIST_ENTRY = "Control list entry"
+        REPORT_SUMMARY = "Report Summary (optional)"
+        COMMENT = "Comment (optional)"
+
+
+class GradingResponseOverview:
+    TITLE = "Response overview"
+    WARNING = "You won't be able to change this once submitted"
+    SUBMIT = "Submit response"
+    CHANGE = "Change response"
+
+    class Details:
+        PRODUCT_HEADING = "Product details"
+        DESCRIPTION = "Description"
+        PART_NUMBER = "Part number"
+
+        CONTROL_HEADING = "Control code"
+        CONTROL_LIST_ENTRY = "Control list entry"
+
+        class Flags:
+            FLAGS = "Flags"
+            EDIT = "Edit good flags"
+            SET = "Set a flag on this good"
+
+        class Documents:
+            DOCUMENTS = "Documents"
+            DOWNLOAD = "Download"
+            NONE = "This good has no documents attached."
+
+    class Response:
+        TITLE = "What you've said"
+        PREFIX = "Prefix (optional)"
+        GRADING = "Grading"
+        SUFFIX = "Suffix (optional)"
+        COMMENT = "Comment (optional)"
+
+
+class RespondClCQueryForm:
+    TITLE = "Respond to CLC Query"
+    BUTTON = "Continue to overview"
+    BACK = "Back to case"
+
+    CONTROL_LIST_ENTRY = "What is the correct control list entry?"
+    COMMENT = "Good's comment (optional)"
+
+    class Summary:
+        DESCRIPTION = "Description"
+        CONTROL_LIST_ENTRY = "Control list entry"
+        NO_CONTROL_LIST_ENTRY = "N/A"
+
+    class Controlled:
+        TITLE = "Is this good controlled?"
+        YES = "Yes"
+        NO = "No"
+
+    class ReportSummary:
+        TITLE = "Which report summary would you like to use? (optional)"
+        DESCRIPTION = "You only need to do this if the item is controlled"
+
+
+class RespondGradingQueryForm:
+    TITLE = "Respond to grading query"
+    BUTTON = "Continue to overview"
+    BACK = "Back to case"
+
+    COMMENT = "Comment"
+
+    class Grading:
+        PREFIX = "Prefix"
+        GRADING = "Grading"
+        SUFFIX = "Suffix"
 
 
 class ChangeStatusPage:
