@@ -22,10 +22,9 @@ from ui_automation_tests.fixtures.env import environment  # noqa
 from ui_automation_tests.fixtures.register_organisation import (  # noqa
     register_organisation,
     register_organisation_for_switching_organisation,
-    user_details,
 )
 from ui_automation_tests.fixtures.add_party import add_end_user_to_application  # noqa
-from ui_automation_tests.fixtures.add_clc_query import add_clc_query  # noqa
+from ui_automation_tests.fixtures.add_goods_query import add_goods_clc_query  # noqa
 from ui_automation_tests.fixtures.add_end_user_advisory import add_end_user_advisory  # noqa
 from ui_automation_tests.fixtures.sso_sign_in import sso_sign_in  # noqa
 from ui_automation_tests.fixtures.manage_case import manage_case_status_to_withdrawn  # noqa
@@ -47,7 +46,7 @@ from ui_automation_tests.shared.fixtures.core import (  # noqa
     context,
     exporter_info,
     internal_info,
-    seed_data_config,
+    api_client_config,
 )
 from ui_automation_tests.shared.fixtures.urls import exporter_url, api_url  # noqa
 

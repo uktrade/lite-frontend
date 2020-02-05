@@ -8,8 +8,8 @@ from pages.member_page import MemberPage
 from pages.members_page import MembersPage
 from pages.shared import Shared
 from shared import functions
-from shared.api.organisations import add_site
 from shared.tools.helpers import scroll_to_element_by_id
+from shared.tools.utils import get_lite_client
 
 scenarios("../features/members.feature", strict_gherkin=False)
 
@@ -48,8 +48,9 @@ def user_reactivate(driver):
 
 
 @when("I change what sites they're assigned to")
-def change_members_role(driver, context, user_details):
-    site = add_site(context.org_id, context.exporter_headers)
+def change_members_role(driver, context, api_client_config):
+    lite_client = get_lite_client(context, api_client_config=api_client_config)
+    site = lite_client.organisations.add_site(context.org_id)
 
     MemberPage(driver).click_assign_sites_button()
 

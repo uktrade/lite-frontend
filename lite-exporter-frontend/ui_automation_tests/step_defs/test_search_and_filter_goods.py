@@ -3,7 +3,7 @@ from urllib.parse import urlencode
 from pytest_bdd import when, then, parsers, scenarios
 from pages.standard_application.goods import StandardApplicationGoodsPage
 from shared.tools.utils import get_lite_client
-from shared.seed_data.request_data import create_good
+from shared.api_client.request_data import build_good
 
 scenarios("../features/search_and_filter_goods.feature", strict_gherkin=False)
 
@@ -31,14 +31,14 @@ def filter_by_description(driver, context, control_list):
         'I create a good of description "{description}", control code "{control_code}" and part number "{part_number}" if it does not exist'
     )
 )
-def add_a_good(context, description, control_code, part_number, seed_data_config):
-    lite_client = get_lite_client(context, seed_data_config=seed_data_config)
+def add_a_good(context, description, control_code, part_number, api_client_config):
+    lite_client = get_lite_client(context, api_client_config=api_client_config)
     params = {"description": description, "control_rating": control_code, "part_number": part_number}
-    goods = lite_client.seed_good.get_goods(urlencode(params))
+    goods = lite_client.goods.get_goods(urlencode(params))
     if not len(goods):
-        good = create_good(description=description, control_code=control_code, part_number=part_number)
-        lite_client.seed_good.add_good(good)
-    context.total_goods = len(lite_client.seed_good.get_goods())  # gets count of paginated page
+        good = build_good(description=description, control_code=control_code, part_number=part_number)
+        lite_client.goods.add_good(good)
+    context.total_goods = len(lite_client.goods.get_goods())  # gets count of paginated page
 
 
 @then(parsers.parse('All goods have description "{description}"'))

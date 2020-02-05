@@ -11,15 +11,15 @@ scenarios("../features/end_user_advisory_queries.feature", strict_gherkin=False)
 
 
 @given("An end user advisory with a case note has been added via gov user")
-def end_user_advisory_exists_case_note_added(add_end_user_advisory, context, seed_data_config):
-    lite_client = get_lite_client(context, seed_data_config=seed_data_config)
-    lite_client.seed_case.add_case_note(context, context.end_user_advisory_id)
+def end_user_advisory_exists_case_note_added(add_end_user_advisory, context, api_client_config):
+    lite_client = get_lite_client(context, api_client_config=api_client_config)
+    lite_client.cases.add_case_note(context, context.end_user_advisory_id)
 
 
 @given("An end user advisory with an ecju query has been added via gov user")
-def end_user_advisory_exists_ecju_query_added(add_end_user_advisory, context, seed_data_config):
-    lite_client = get_lite_client(context, seed_data_config=seed_data_config)
-    lite_client.seed_ecju.add_ecju_query(context.end_user_advisory_id)
+def end_user_advisory_exists_ecju_query_added(add_end_user_advisory, context, api_client_config):
+    lite_client = get_lite_client(context, api_client_config=api_client_config)
+    lite_client.ecju_queries.add_ecju_query(context.end_user_advisory_id)
 
 
 @when("I select to create a new advisory")

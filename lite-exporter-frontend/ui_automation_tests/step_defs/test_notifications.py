@@ -9,10 +9,10 @@ scenarios("../features/notifications.feature", strict_gherkin=False)
 
 
 @given("an application exists and a case note has been added via internal gov site")
-def application_exists_case_note_added(apply_for_standard_application, seed_data_config, context, driver):
-    lite_client = get_lite_client(context, seed_data_config=seed_data_config)
-    lite_client.seed_ecju.add_ecju_query(context.case_id)
-    lite_client.seed_case.add_case_note(context, context.case_id)
+def application_exists_case_note_added(apply_for_standard_application, api_client_config, context, driver):
+    lite_client = get_lite_client(context, api_client_config=api_client_config)
+    lite_client.ecju_queries.add_ecju_query(context.case_id)
+    lite_client.cases.add_case_note(context, context.case_id)
     context.number_of_notifications = Hub(driver).return_number_of_notifications()
 
 
