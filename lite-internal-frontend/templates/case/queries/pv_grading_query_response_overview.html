@@ -1,0 +1,114 @@
+{% extends 'layouts/two-pane.html' %}
+
+{% block back_link %}{% endblock %}
+
+{% block two_thirds %}
+
+	<h1 class="govuk-heading-l">{% lcs 'cases.GradingResponseOverview.TITLE' %}</h1>
+
+	<p class="govuk-body-m">{% lcs 'cases.GradingResponseOverview.WARNING' %}</p>
+
+	<form action="{% url 'cases:respond_to_pv_grading_query' case.id %}" method="post">
+
+		{% hidden_field 'prefix' data.prefix %}
+		{% hidden_field 'grading' data.grading%}
+		{% hidden_field 'suffix' data.suffix %}
+		{% hidden_field 'comment' data.comment %}
+
+		{% csrf_token %}
+
+		<h4 class="govuk-heading-m">{{ case.reference_code }}</h4>
+		<div class="app-summary-list app-inset-text">
+			<p class="govuk-heading-s">{% lcs 'cases.GradingResponseOverview.Details.PRODUCT_HEADING' %}</p>
+			<div class="app-summary-list__item">
+				<p class="govuk-caption-m">{% lcs 'cases.GradingResponseOverview.Details.DESCRIPTION' %}</p>
+				<p class="govuk-body-m">{{ case.query.good.description }}</p>
+			</div>
+
+			<div class="app-summary-list__item">
+				<p class="govuk-caption-m">{% lcs 'cases.GradingResponseOverview.Details.PART_NUMBER' %}</p>
+				<p class="govuk-body-m">{{ case.query.good.part_number|default_na }}</p>
+			</div>
+
+			<div class="app-summary-list__item">
+				<p class="govuk-caption-m">{% lcs 'cases.GradingResponseOverview.Details.Flags.FLAGS' %}</p>
+				<div class="app-flags">
+					{% for flag in case.query.good.flags %}
+						<div class="app-flag" id="{{ flag.name }}">
+							{{ flag.name }}
+						</div>
+					{% endfor %}
+					<button class="lite-button--link" type="submit" name="action" value="set-flags">
+						{% if case.query.good.flags %}
+							{% lcs 'cases.GradingResponseOverview.Details.Flags.EDIT' %}
+						{% else %}
+							{% lcs 'cases.GradingResponseOverview.Details.Flags.SET' %}
+						{% endif %}
+					</button>
+				</div>
+			</div>
+
+			<p class="govuk-heading-s">{% lcs 'cases.GradingResponseOverview.Details.CONTROL_HEADING' %}</p>
+			<div class="app-summary-list__item">
+				<p class="govuk-caption-m">{% lcs 'cases.GradingResponseOverview.Details.CONTROL_LIST_ENTRY' %}</p>
+				<p class="govuk-body-m">{{ case.query.good.control_code|default_na }}</p>
+			</div>
+
+			<p class="govuk-heading-s">{% lcs 'cases.GradingResponseOverview.Details.Documents.DOCUMENTS' %}</p>
+			<div class="app-summary-list__item">
+				{% for document in case.query.good.documents %}
+					<div>
+						<a href="#" class="govuk-link govuk-body-m">
+							{% if document.safe == True %}
+								<a class="govuk-link lite-link--icon govuk-link--no-visited-state" href="{% url 'cases:document' case.id document.id %}">
+									<span class="govuk-visually-hidden">{% lcs 'cases.ClcResponseOverview.Details.Documents.DOWNLOAD' %}</span> {{ document.name }}
+								</a>
+							{% elif document.safe == False %}
+								{% lcs 'cases.Manage.Documents.VIRUS_INFECTED' %} {{ document.name }}
+							{% else %}
+								{% lcs 'cases.Manage.Documents.PROCESSING' %} {{ document.name }}
+							{% endif %}
+						</a>
+					</div>
+				{% empty %}
+					<p class="govuk-body-m">{% lcs 'cases.GradingResponseOverview.Details.Documents.NONE' %}</p>
+				{% endfor %}
+			</div>
+		</div>
+
+		<br>
+
+		<h4 class="govuk-heading-m">{% lcs 'cases.GradingResponseOverview.Response.TITLE' %}</h4>
+		<div class="app-summary-list app-inset-text">
+			<div class="app-summary-list__item">
+				<div class="app-pv-grading-inputs">
+					<div class="govuk-form-group">
+						<p class="govuk-caption-m">{% lcs 'cases.GradingResponseOverview.Response.PREFIX' %}</p>
+						<p class="govuk-body-m">{{data.prefix|default_na}}</p>
+					</div>
+					<div class="govuk-form-group">
+						<p class="govuk-caption-m">{% lcs 'cases.GradingResponseOverview.Response.GRADING' %}</p>
+						<p class="govuk-body-m">{{data.grading|display_grading}}</p>
+					</div>
+					<div class="govuk-form-group">
+						<p class="govuk-caption-m">{% lcs 'cases.GradingResponseOverview.Response.SUFFIX' %}</p>
+						<p class="govuk-body-m">{{ data.suffix|default_na }}</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="app-summary-list__item">
+				<p class="govuk-caption-m">{% lcs 'cases.GradingResponseOverview.Response.COMMENT' %}</p>
+				<p class="govuk-body-m">{{ data.comment|default_na }}</p>
+			</div>
+		</div>
+
+		<br><br>
+
+		<div class="lite-buttons-row">
+			<button type="submit" id="submit-response" name="action" value="submit" class="govuk-button">{% lcs 'cases.GradingResponseOverview.SUBMIT' %}</button>
+			<button type="submit" id="change-response" name="action" value="change" class="govuk-button govuk-button--secondary">{% lcs 'cases.GradingResponseOverview.CHANGE' %}</button>
+		</div>
+	</form>
+
+{% endblock %}

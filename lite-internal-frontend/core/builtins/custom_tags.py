@@ -277,3 +277,12 @@ def username(user: dict):
         return user["first_name"] + " " + user["last_name"]
 
     return user["email"]
+
+
+@register.filter()
+def display_grading(text: str):
+    value = text.split("_")
+    if len(value):
+        return f"{value[0].upper()} {' '.join(value[1:]).title()}"
+
+    return text

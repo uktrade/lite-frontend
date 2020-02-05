@@ -3,7 +3,7 @@ import os
 from pytest_bdd import given, when, then, parsers
 from selenium.common.exceptions import NoSuchElementException
 
-from pages.clc_queries_pages import ClcQueriesPages
+from pages.goods_queries_pages import GoodsQueriesPages  # noqa
 from pages.organisation_page import OrganisationPage
 
 from ui_automation_tests.fixtures.env import environment  # noqa
@@ -260,7 +260,7 @@ def go_to_users(driver, sso_sign_in, internal_url):  # noqa
     )  # noqa
 )  # noqa
 def enter_response(driver, controlled, control_list_entry, report, comment):  # noqa
-    clc_query_page = ClcQueriesPages(driver)
+    clc_query_page = GoodsQueriesPages(driver)
     clc_query_page.click_is_good_controlled(controlled)
     clc_query_page.type_in_to_control_list_entry(control_list_entry)
     clc_query_page.choose_report_summary(report)

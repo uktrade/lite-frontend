@@ -3,52 +3,73 @@
 {% load static %}
 
 {% block additional_controls %}
-	{% if not verified and 'REVIEW_GOODS' in permissions and not status_is_terminal %}
-		{% if clc_query %}
-			<a role="button" draggable="false" id="button-respond" class="govuk-button" href="{% url 'cases:respond_to_clc_query' case.id %}">
-				{% lcs 'cases.ApplicationPage.RESPOND_BUTTON' %}
-			</a>
-		{% endif %}
+	{% if case.query.clc_responded == False and 'REVIEW_GOODS' in permissions and not status_is_terminal %}
+		<a role="button" draggable="false" id="clc-button-respond" class="govuk-button" href="{% url 'cases:respond_to_clc_query' case.id %}">
+			{% lcs 'cases.ClcQuery.Actions.RESPOND_CLC' %}
+		</a>
+	{% endif %}
+	{% if case.query.pv_grading_responded == False and 'RESPOND_PV_GRADING' in permissions and not status_is_terminal %}
+		<a role="button" draggable="false" id="grading-button-respond" class="govuk-button" href="{% url 'cases:respond_to_pv_grading_query' case.id %}">
+			{% lcs 'cases.ClcQuery.Actions.RESPOND_GRADING' %}
+		</a>
 	{% endif %}
 {% endblock %}
 
 {% block details %}
-    {% if verified %}
-		<div class="lite-info-bar lite-info-bar--no-animation {% if message.tags %}lite-info-bar--{{ message.tags }}{% endif %}">
+    {% if case.query.status.key == "closed" %}
+		<div id="closed" class="lite-info-bar lite-info-bar--no-animation {% if message.tags %}lite-info-bar--{{ message.tags }}{% endif %}">
 			{% lcs 'cases.ApplicationPage.CLOSED' %}
 		</div>
 	{% endif %}
 
-	{% if verified %}
+	{% if case.query.clc_responded or case.query.pv_grading_responded %}
 		<div class="govuk-!-width-two-thirds">
 			<div class="app-panel app-panel--info">
 				<h3 class="govuk-heading-m">{% lcs 'cases.ClcQuery.Verified.OUTCOME' %}</h3>
 
-				<hr>
+				{% if case.query.clc_responded %}
+					<hr>
+					<p class="govuk-heading-m">{% lcs 'cases.ClcQuery.Verified.Clc.TITLE' %}</p>
 
-				<h4 class="govuk-heading-s">{% lcs 'cases.ClcQuery.Verified.CONTROLLED' %}</h4>
-				<p class="govuk-body-m">{{ good.is_good_controlled.value }}</p>
+					<h4 class="govuk-heading-s">{% lcs 'cases.ClcQuery.Verified.Clc.CONTROLLED' %}</h4>
+					<p class="govuk-body-m">{{ good.is_good_controlled.value }}</p>
 
-				<h4 class="govuk-heading-s">{% lcs 'cases.ClcQuery.Verified.CONTROL_CODE' %}</h4>
-				<p class="govuk-body-m">{{ good.control_code|default_na }}</p>
+					<h4 class="govuk-heading-s">{% lcs 'cases.ClcQuery.Verified.Clc.CONTROL_CODE' %}</h4>
+					<p class="govuk-body-m">{{ good.control_code|default_na }}</p>
 
-				<h4 class="govuk-heading-s">{% lcs 'cases.ClcQuery.Verified.REPORT' %}</h4>
-				<p class="govuk-body-m">{{ case.query.good.report_summary|default_na }}</p>
+					<h4 class="govuk-heading-s">{% lcs 'cases.ClcQuery.Verified.Clc.REPORT' %}</h4>
+					<p class="govuk-body-m">{{ case.query.good.report_summary|default_na }}</p>
 
-				<h4 class="govuk-heading-s">{% lcs 'cases.ClcQuery.Verified.COMMENT' %}</h4>
-				<p class="govuk-body-m">{{ case.query.good.comment|default_na }}</p>
+					<h4 class="govuk-heading-s">{% lcs 'cases.ClcQuery.Verified.Clc.COMMENT' %}</h4>
+					<p class="govuk-body-m">{{ case.query.good.comment|default_na }}</p>
+				{% endif %}
+				{% if case.query.pv_grading_responded %}
+					<hr>
+					<p class="govuk-heading-m">{% lcs 'cases.ClcQuery.Verified.PvGrading.TITLE' %}</p>
+
+					<h4 class="govuk-heading-s">{% lcs 'cases.ClcQuery.Verified.PvGrading.GRADING' %}</h4>
+					<p class="govuk-body-m">
+						{{ good.pv_grading_details.prefix }}
+						{{ good.pv_grading_details.grading.value }}
+						{{ good.pv_grading_details.suffix }}
+					</p>
+
+					<h4 class="govuk-heading-s">{% lcs 'cases.ClcQuery.Verified.PvGrading.COMMENT' %}</h4>
+					<p class="govuk-body-m">{{ good.grading_comment|default_na }}</p>
+
+				{% endif %}
 			</div>
 		</div>
 
 		<br><br>
 	{% endif %}
 
-	<h3 class="govuk-heading-m">{% lcs 'cases.ClcQuery.GoodDetails.TITLE' %}</h3>
+	<h3 class="govuk-heading-m">{% lcs 'cases.ClcQuery.GoodDetails.Details.TITLE' %}</h3>
 	<div class="govuk-!-width-two-thirds">
 		<dl class="govuk-summary-list">
 			<div class="govuk-summary-list__row">
 				<dt class="govuk-summary-list__key">
-                    {% lcs 'cases.ClcQuery.GoodDetails.DESCRIPTION' %}
+                    {% lcs 'cases.ClcQuery.GoodDetails.Details.DESCRIPTION' %}
 				</dt>
 				<dd class="govuk-summary-list__value">
 					{{ good.description }}
@@ -56,45 +77,15 @@
 			</div>
 			<div class="govuk-summary-list__row">
 				<dt class="govuk-summary-list__key">
-                    {% lcs 'cases.ClcQuery.GoodDetails.CONTROLLED' %}
+                    {% lcs 'cases.ClcQuery.GoodDetails.Details.PART_NUMBER' %}
 				</dt>
 				<dd class="govuk-summary-list__value">
-					{{ good.is_good_controlled.value }}
-				</dd>
-			</div>
-			<div class="govuk-summary-list__row">
-			{% if good.is_good_controlled != 'Unsure' %}
-				<dt class="govuk-summary-list__key">
-                    {% lcs 'cases.ClcQuery.GoodDetails.CONTROL_CODE' %}
-				</dt>
-            {% else %}
-                <dt class="govuk-summary-list__key">
-                    {% lcs 'cases.ClcQuery.GoodDetails.EXPECTED_CONTROL_CODE' %}
-				</dt>
-			{% endif %}
-				<dd class="govuk-summary-list__value">
-					{{ good.control_code|default_na }}
-				</dd>
-			</div>
-            <div class="govuk-summary-list__row">
-				<dt class="govuk-summary-list__key">
-                    {% lcs 'cases.ClcQuery.GoodDetails.REASON' %}
-				</dt>
-				<dd class="govuk-summary-list__value">
-					{{ case.query.details|default_na }}
+					{{ good.part_number|default:"Not set" }}
 				</dd>
 			</div>
 			<div class="govuk-summary-list__row">
 				<dt class="govuk-summary-list__key">
-                    {% lcs 'cases.ClcQuery.GoodDetails.PART_NUMBER' %}
-				</dt>
-				<dd class="govuk-summary-list__value">
-					{{ good.part_number|default_na }}
-				</dd>
-			</div>
-			<div class="govuk-summary-list__row">
-				<dt class="govuk-summary-list__key">
-                    {% lcs 'cases.ClcQuery.GoodDetails.FLAGS' %}
+                    {% lcs 'cases.ClcQuery.GoodDetails.Details.FLAGS' %}
 				</dt>
 				<dd class="govuk-summary-list__value">
 					{% include 'case/views/goods-flags.html' with origin='case' %}
@@ -102,21 +93,90 @@
 			</div>
 		</dl>
 
-		<!-- Query Details -->
-		{% if data.case.query.details %}
-			<div class="govuk-grid-row">
-				<div class="govuk-grid-column-full">
-					<p class="lite-heading-s">{% lcs 'cases.ClcQuery.GoodDetails.QUERY_TEXT' %}</p>
-					<p class="govuk-label">
-						{{ data.case.query.details }}
-					</p>
-				</div>
+		<h3 class="govuk-heading-m">{% lcs 'cases.ClcQuery.GoodDetails.Clc.TITLE' %}</h3>
+		<dl class="govuk-summary-list">
+			<div class="govuk-summary-list__row">
+			{% if good.is_good_controlled != 'Unsure' %}
+				<dt class="govuk-summary-list__key">
+                    {% lcs 'cases.ClcQuery.GoodDetails.Clc.CONTROL_CODE' %}
+				</dt>
+            {% else %}
+                <dt class="govuk-summary-list__key">
+                    {% lcs 'cases.ClcQuery.GoodDetails.Clc.EXPECTED_CONTROL_CODE' %}
+				</dt>
+			{% endif %}
+				<dd class="govuk-summary-list__value">
+					{% lcs 'cases.ClcQuery.GoodDetails.Clc.NO_CONTROL_CODE' as default %}
+					{{ good.control_code|default:default }}
+				</dd>
 			</div>
-		{% endif %}
+			{% if good.is_good_controlled.key == "unsure" %}
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'cases.ClcQuery.GoodDetails.Clc.REASON' %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{{ case.query.clc_raised_reasons|default_na }}
+					</dd>
+				</div>
+			{% endif %}
+		</dl>
 
+		{% if not good.is_pv_graded.key == "no" %}
+			<h3 class="govuk-heading-m">{% lcs 'cases.ClcQuery.GoodDetails.Grading.TITLE' %}</h3>
+			<dl class="govuk-summary-list">
+				{% if case.query.pv_grading_responded %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							{% lcs 'cases.ClcQuery.GoodDetails.Grading.COMMENTS' %}
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ case.query.pv_grading_raised_reasons|default_na }}
+						</dd>
+					</div>
+				{% elif good.pv_grading_details %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							{% lcs 'cases.ClcQuery.GoodDetails.Grading.GRADING' %}
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ good.pv_grading_details.prefix }}
+							{{ good.pv_grading_details.grading.value }}
+							{{ good.pv_grading_details.suffix }}
+						</dd>
+					</div>
+					{% if not case.query.pv_grading_responded %}
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								{% lcs 'cases.ClcQuery.GoodDetails.Grading.ISSUING_AUTHORITY' %}
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{{ good.pv_grading_details.issuing_authority }}
+							</dd>
+						</div>
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								{% lcs 'cases.ClcQuery.GoodDetails.Grading.REFERENCE' %}
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{{ good.pv_grading_details.reference }}
+							</dd>
+						</div>
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								{% lcs 'cases.ClcQuery.GoodDetails.Grading.DATE_OF_ISSUE' %}
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{{ good.pv_grading_details.date_of_issue }}
+							</dd>
+						</div>
+					{% endif %}
+				{% endif %}
+			</dl>
+		{% endif %}
 		<br><br>
 
-		<h3 class="govuk-heading-m">{% lcs 'cases.ClcQuery.Documents.TITLE' %}</h3>
+		<h3 class="govuk-heading-m">{% lcs 'cases.ClcQuery.GoodDetails.Documents.TITLE' %}</h3>
 		{% if case.query.good.documents %}
 			<dl class="govuk-summary-list">
 				{% for document in case.query.good.documents %}
@@ -127,7 +187,7 @@
 						<dd class="govuk-summary-list__value">
 							{% if document.safe == True %}
 								<a class="govuk-link lite-link--icon govuk-link--no-visited-state" href="{% url 'cases:document' case.id document.id %}">
-									{% lcs 'cases.ClcQuery.Documents.DOWNLOAD' %}
+									{% lcs 'cases.ClcQuery.GoodDetails.Documents.DOWNLOAD' %}
 								</a>
 							{% elif document.safe == False %}
 								{% lcs 'cases.Manage.Documents.VIRUS_INFECTED' %}

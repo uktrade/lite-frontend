@@ -1,0 +1,7 @@
+.app-pv-grading-inputs {
+	@include govuk-media-query($from: desktop) {
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr!important;
+		grid-gap: govuk-spacing(6);
+	}
+}

@@ -4,9 +4,9 @@
 
 {% block two_thirds %}
 
-	<h2 class="govuk-heading-l">{{ title }}</h2>
+	<h2 class="govuk-heading-l">{% lcs 'cases.ClcResponseOverview.TITLE' %}</h2>
 
-    <p class="govuk-body-m">You won't be able to change this case once you've submitted.</p>
+    <p class="govuk-body-m">{% lcs 'cases.ClcResponseOverview.WARNING' %}</p>
 
 	<br>
 
@@ -19,49 +19,49 @@
 
 		{% csrf_token %}
 
-		<h4 class="govuk-heading-s">{{ case.query.id|reference_code }}</h4>
+		<h4 class="govuk-heading-s">{{ case.reference_code }}</h4>
 		<div class="app-summary-list app-inset-text">
 			<div class="app-summary-list__item">
-				<p class="govuk-caption-m">Description</p>
+				<p class="govuk-caption-m">{% lcs 'cases.ClcResponseOverview.Details.DESCRIPTION' %}</p>
 				<p class="govuk-body-m">{{ case.query.good.description }}</p>
 			</div>
 
 			<div class="app-summary-list__item">
-				<p class="govuk-caption-m">Control list entry</p>
+				<p class="govuk-caption-m">{% lcs 'cases.ClcResponseOverview.Details.CONTROL_LIST_ENTRY' %}</p>
 				<p class="govuk-body-m">{{ case.query.good.control_code|default_na }}</p>
 			</div>
 
 			<div class="app-summary-list__item">
-				<p class="govuk-caption-m">Part Number</p>
+				<p class="govuk-caption-m">{% lcs 'cases.ClcResponseOverview.Details.PART_NUMBER' %}</p>
 				<p class="govuk-body-m">{{ case.query.good.part_number }}</p>
 			</div>
 
 			<div class="app-summary-list__item">
-				<p class="govuk-caption-m">Flags</p>
+				<p class="govuk-caption-m">{% lcs 'cases.ClcResponseOverview.Details.Flags.FLAGS' %}</p>
 				<div class="app-flags">
 					{% for flag in case.query.good.flags %}
 						<div class="app-flag" id="{{ flag.name }}">
 							{{ flag.name }}
 						</div>
 					{% endfor %}
-					<button class="app-flag app-flag--action" type="submit" name="action" value="set-flags">
+					<button class="lite-button--link" type="submit" name="action" value="set-flags">
 						{% if case.query.good.flags %}
-							Edit good flags
+							{% lcs 'cases.ClcResponseOverview.Details.Flags.EDIT' %}
 						{% else %}
-							Set a flag on this good
+							{% lcs 'cases.ClcResponseOverview.Details.Flags.SET' %}
 						{% endif %}
 					</button>
 				</div>
 			</div>
 
 			<div class="app-summary-list__item">
-				<p class="govuk-caption-m">Documents</p>
+				<p class="govuk-caption-m">{% lcs 'cases.ClcResponseOverview.Details.Documents.DOCUMENTS' %}</p>
 				{% for document in case.query.good.documents %}
 					<div>
 						<a href="#" class="govuk-link govuk-body-m">
 							{% if document.safe == True %}
 								<a class="govuk-link lite-link--icon govuk-link--no-visited-state" href="{% url 'cases:document' case.id document.id %}">
-									<span class="govuk-visually-hidden">Download</span> {{ document.name }}
+									<span class="govuk-visually-hidden">{% lcs 'cases.ClcResponseOverview.Details.Documents.DOWNLOAD' %}</span> {{ document.name }}
 								</a>
 							{% elif document.safe == False %}
 								{% lcs 'cases.Manage.Documents.VIRUS_INFECTED' %} {{ document.name }}
@@ -71,36 +71,36 @@
 						</a>
 					</div>
 				{% empty %}
-					<p class="govuk-body-m">This good has no documents attached.</p>
+					<p class="govuk-body-m">{% lcs 'cases.ClcResponseOverview.Details.Documents.NONE' %}</p>
 				{% endfor %}
 			</div>
 		</div>
 
 		<br>
 
-		<h4 class="govuk-heading-s">What you've said</h4>
+		<h4 class="govuk-heading-s">{% lcs 'cases.ClcResponseOverview.Response.TITLE' %}</h4>
 		<div class="app-summary-list app-inset-text">
 			<div class="app-summary-list__item">
-				<p class="govuk-caption-m">Is this good controlled?</p>
+				<p class="govuk-caption-m">{% lcs 'cases.ClcResponseOverview.Response.CONTROLLED' %}</p>
 				<p class="govuk-body-m">{{ data.is_good_controlled }}</p>
 			</div>
 
 			{% if data.control_code %}
 				<div class="app-summary-list__item">
-					<p class="govuk-caption-m">Control list entry</p>
+					<p class="govuk-caption-m">{% lcs 'cases.ClcResponseOverview.Response.CONTROL_LIST_ENTRY' %}</p>
 					<p class="govuk-body-m">{{ data.control_code }}</p>
 				</div>
 			{% endif %}
 
 			<div class="app-summary-list__item">
-				<p class="govuk-caption-m">Report Summary (optional)</p>
+				<p class="govuk-caption-m">{% lcs 'cases.ClcResponseOverview.Response.REPORT_SUMMARY' %}</p>
 				<p class="govuk-body-m">{{ report_summary.name }}</p>
 				<br>
 				<p class="govuk-body-m">{{ report_summary.text }}</p>
 			</div>
 
 			<div class="app-summary-list__item">
-				<p class="govuk-caption-m">Comment (optional)</p>
+				<p class="govuk-caption-m">{% lcs 'cases.ClcResponseOverview.Response.COMMENT' %}</p>
 				<p class="govuk-body-m">{{ data.comment }}</p>
 			</div>
 		</div>
@@ -108,8 +108,8 @@
 		<br><br>
 
 		<div class="lite-buttons-row">
-			<button type="submit" id="submit-response" name="action" value="submit" class="govuk-button">Submit response</button>
-			<button type="submit" name="action" value="change" class="govuk-button govuk-button--secondary">Change answers</button>
+			<button type="submit" id="submit-response" name="action" value="submit" class="govuk-button">{% lcs 'cases.ClcResponseOverview.SUBMIT' %}</button>
+			<button type="submit" id="change-response" name="action" value="change" class="govuk-button govuk-button--secondary">{% lcs 'cases.ClcResponseOverview.CHANGE' %}</button>
 		</div>
 	</form>
 

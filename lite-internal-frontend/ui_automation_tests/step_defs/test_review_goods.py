@@ -1,4 +1,4 @@
-from pages.clc_queries_pages import ClcQueriesPages
+from pages.goods_queries_pages import GoodsQueriesPages
 from pytest_bdd import when, then, scenarios, parsers
 from pages.application_page import ApplicationPage
 from pages.good_summary_page import GoodSummaryPage
@@ -23,7 +23,7 @@ def click_edit_flags_link(driver):
 
 @when(parsers.parse('I respond "{controlled}", "{control_list_entry}", "{report}", "{comment}" and click continue'))
 def click_continue(driver, controlled, control_list_entry, report, comment, context):
-    query_page = ClcQueriesPages(driver)
+    query_page = GoodsQueriesPages(driver)
     query_page.click_is_good_controlled(controlled)
     query_page.type_in_to_control_list_entry(control_list_entry)
     context.goods_control_list_entry = control_list_entry

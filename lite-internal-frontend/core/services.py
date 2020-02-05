@@ -9,6 +9,7 @@ from conf.constants import (
     CONTROL_LIST_ENTRIES_URL,
     NOTIFICATIONS_URL,
     STATUS_PROPERTIES_URL,
+    GOV_PV_GRADINGS_URL,
     Statuses,
 )
 from users.services import get_gov_user
@@ -129,3 +130,15 @@ def get_control_list_entries(request, convert_to_options=False):
 
     data = get(request, CONTROL_LIST_ENTRIES_URL)
     return data.json()["control_list_entries"]
+
+
+def get_pv_gradings(request, convert_to_options=False):
+    data = get(request, GOV_PV_GRADINGS_URL)
+    if convert_to_options:
+        converted_units = []
+        for pvg in data.json().get("pv_gradings"):
+            for key in pvg:
+                converted_units.append(Option(key=key, value=pvg[key]))
+        return converted_units
+
+    return data.json().get("pv-gradings")

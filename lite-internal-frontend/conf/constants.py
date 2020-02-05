@@ -42,6 +42,7 @@ FLAGS_GOOD_LEVEL_FOR_TEAM = "/flags/?level=Good&team=True"
 FLAGS_ORGANISATION_LEVEL_FOR_TEAM = "/flags/?level=Organisation&team=True"
 GOODS_QUERIES_URL = "/queries/goods-queries/"
 CLC_RESPONSE_URL = "/clc-response/"
+PV_GRADING_RESPONSE_URL = "/pv-grading-response/"
 PICKLIST_URL = "/picklist/"
 LETTER_TEMPLATES_URL = "/letter-templates/"
 GOOD_CLC_REVIEW_URL = "/goods/controlcode/"
@@ -64,6 +65,7 @@ COUNTRIES_URL = STATIC_URL + "countries/"
 STATUSES_URL = STATIC_URL + "statuses/"
 STATUS_PROPERTIES_URL = STATUSES_URL + "properties/"
 CONTROL_LIST_ENTRIES_URL = STATIC_URL + "control-list-entries/"
+GOV_PV_GRADINGS_URL = STATIC_URL + "private-venture-gradings/gov/"
 LETTER_LAYOUTS_URL = STATIC_URL + "letter-layouts/"
 
 # Permissions
@@ -85,6 +87,7 @@ class Permission(Enum):
     REVIEW_GOODS = "REVIEW_GOODS"
     CONFIGURE_TEMPLATES = "CONFIGURE_TEMPLATES"
     MANAGE_LICENCE_DURATION = "MANAGE_LICENCE_DURATION"
+    RESPOND_PV_GRADING = "RESPOND_PV_GRADING"
 
 
 class FlagLevels:

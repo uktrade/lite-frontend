@@ -64,8 +64,6 @@ def see_team_in_list(driver, context):
 
 @then(parsers.parse('I see my teams user list with user "{added_not_added}"'))
 def see_team_user_added(driver, added_not_added, context, internal_info):
-    assert Shared(driver).get_text_of_h2() == context.team_name, "User is not on teams user list"
-    assert Shared(driver).get_text_of_selected_tab() == "USERS", "Users tab isn't shown"
     if added_not_added == "added":
         table = Shared(driver).get_text_of_lite_table_body()
         assert internal_info["name"] in table, "User is not displayed in team list"
