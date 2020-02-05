@@ -91,6 +91,13 @@ def apply_for_clc_query(driver, seed_data_config, context):
     context.clc_case_id = lite_client.context["case_id"]
 
 
+@fixture(scope="function")
+def apply_for_grading_query(driver, seed_data_config, context):
+    lite_client = get_lite_client(context, seed_data_config)
+    lite_client.seed_grading.add_goods_query(lite_client.seed_good)
+    context.clc_case_id = lite_client.context["case_id"]
+
+
 # The below is currently not used due to bug LT-1808 but willl need to be used for internal HMRC tests when fixed.
 @fixture(scope="function")
 def apply_for_hmrc_query(driver, seed_data_config, context):

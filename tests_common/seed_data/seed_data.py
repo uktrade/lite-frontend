@@ -1,3 +1,4 @@
+from ui_automation_tests.shared.seed_data.seed_classes.grading import Grading
 from .check_documents import check_documents
 from .make_requests import make_request
 from .request_data import create_request_data
@@ -38,6 +39,9 @@ class SeedData:
 
         self.seed_good = Good(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context,)
         self.seed_clc = Clc(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context,)
+        self.seed_grading = Grading(
+            self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context,
+        )
         self.seed_party = Party(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context,)
         self.seed_ecju = Ecju(self.base_url, self.gov_headers, self.export_headers, self.request_data, self.context,)
         self.seed_picklist = Picklist(
