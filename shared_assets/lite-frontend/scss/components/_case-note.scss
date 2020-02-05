@@ -52,6 +52,7 @@
 			}
 
 			button {
+				@include govuk-font($size: 19);
 				margin: 0;
 			}
 		}
