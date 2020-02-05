@@ -447,9 +447,11 @@ class Manage:
 
 class Tabs:
     class Activity:
+        TITLE = "Add case note"
         CHARACTER_LIMIT_2200 = "You can enter up to 2200 characters"
         CANCEL_POST = "Cancel"
         POST = "Post note"
+        MAKE_VISIBLE_TO_EXPORTER = "Make visible to exporter"
 
 
 class ReviewGoodsForm:

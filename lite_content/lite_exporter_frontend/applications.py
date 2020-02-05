@@ -458,3 +458,16 @@ class UltimateEndUsersPage:
         ADDRESS = "Address"
         COUNTRY = "Country"
         DOCUMENT = "Document"
+
+
+class Activity:
+    NO_ACTIVITY = "There hasn't been any activity on this application"
+
+
+class CaseNotes:
+    TITLE = "Add a note"
+    NOTICE = "You can enter up to 2200 characters."
+    POST_NOTE = "Post note"
+    CANCEL = "Cancel"
+    ADDED_A_NOTE_SUFFIX = "added a note:"
+    NO_NOTES = "There aren't any notes on this application"
