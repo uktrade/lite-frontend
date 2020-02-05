@@ -4,19 +4,19 @@
 	<form method="post" action="{{ post_url }}">
 		{% csrf_token %}
 		{% if not status_is_terminal %}
-			<div class="lite-expandable-textarea lite-case-note-no-transition">
-				<textarea id="case_note" name="text" cols="80" class="govuk-textarea" placeholder="Add note"></textarea>
-				<div class="lite-expandable-textarea-controls">
-					<p id="case_note-warning" class="govuk-hint govuk-character-count__message" aria-live="polite">
-						{% lcs 'CaseNotes.MAX_LENGTH' %}
-
+			<label class="govuk-label" for="input-case-note">{% lcs 'applications.CaseNotes.TITLE' %}</label>
+			<div class="lite-case-note__container">
+				<textarea id="input-case-note" name="text" cols="80" class="lite-case-note__textarea"></textarea>
+				<div class="lite-case-note__controls">
+					<p id="input-case-note-warning" class="govuk-hint govuk-character-count__message" aria-live="polite">
+						{% lcs 'applications.CaseNotes.NOTICE' %}
 					</p>
-					<a id="case-note-cancel-button" href="{{ post_url }}" class="govuk-button govuk-button--secondary govuk-button--secondary-white" type="button" draggable="false">
-						{% lcs 'CANCEL' %}
-					</a>
-					<button class="govuk-button" type="submit" id="button-post-note">
-						{% lcs 'POST_NOTE' %}
-					</button>
+					<div class="lite-case-note__controls-buttons">
+						<a id="link-case-note-cancel" href="{{ post_url }}" class="govuk-link govuk-link--no-visited-state" type="button" draggable="false">{% lcs 'applications.CaseNotes.CANCEL' %}</a>
+						<button id="button-case-note-post" class="govuk-button govuk-button--secondary govuk-button--secondary-white" type="submit">
+							{% lcs 'applications.CaseNotes.POST_NOTE' %}
+						</button>
+					</div>
 				</div>
 			</div>
 		{% endif %}
@@ -28,7 +28,7 @@
 		{% for item in notes %}
 			<p class="govuk-body">
 				{% if item.user.team %}<span>{{ item.user.team.name }}</span>{% else %}<a href="{% url 'users:user' item.user.id %}" class="govuk-link govuk-link--no-visited-state govuk-!-font-weight-bold">{{ item.user.first_name }} {{ item.user.last_name }}</a>
-				{% endif %} added a note:
+				{% endif %} {% lcs 'applications.CaseNotes.ADDED_A_NOTE_SUFFIX' %}
 			</p>
 			<div class="lite-application-note lite-application-note{% if item.user.team %}--internal{% else %}--exporter{% endif %}">
 				{{ item.text }}
@@ -38,14 +38,9 @@
 		{% endfor %}
 	</div>
 {% else %}
-	<div class="lite-information-text">
-		<span class="lite-information-text__icon" aria-hidden="true">!</span>
-		<p class="lite-information-text__text">
-			<span class="govuk-visually-hidden">Information</span>
-			There are no notes on this application.
-		</p>
-	</div>
+	{% include "includes/notice.html" with text="applications.CaseNotes.NO_NOTES" %}
 {% endif %}
 
+<script src="{% static 'javascripts/helpers.js' %}"></script>
 <script src="{% static 'javascripts/pluralize.js' %}"></script>
 <script src="{% static 'javascripts/case-notes.js' %}"></script>
