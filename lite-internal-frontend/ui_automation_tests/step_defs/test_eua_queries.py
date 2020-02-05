@@ -11,8 +11,7 @@ def create_eua(driver, apply_for_eua_query):
 
 @then("I should see the ability to add case notes")
 def case_notes_are_available(driver):
-    case_notes = "case_note"
-    assert driver.find_element_by_id(case_notes)
+    assert driver.find_element_by_id(ApplicationPage.INPUT_CASE_NOTE_ID)
 
 
 @then("The dropdown should contain Move Case, Documents, and Ecju queries")
