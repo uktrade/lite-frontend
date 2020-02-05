@@ -1,0 +1,164 @@
+from .api_client import ApiClient
+from ...tools.wait import wait_for_function
+
+
+class Applications(ApiClient):
+    def __init__(self, parties, goods, **kwargs):
+        super().__init__(**kwargs)
+        self.parties = parties
+        self.goods = goods
+
+    def create_draft(self, draft=None):
+        data = draft or self.request_data["application"]
+        response = self.make_request(method="POST", url="/applications/", headers=ApiClient.exporter_headers, body=data)
+        draft_id = response.json()["id"]
+        self.add_to_context("draft_id", draft_id)
+        return draft_id
+
+    def add_countries(self, draft_id):
+        self.make_request(
+            method="POST",
+            url="/applications/" + draft_id + "/countries/",
+            headers=ApiClient.exporter_headers,
+            body={"countries": ["US"]},
+        )
+        self.add_to_context("country", {"code": "US", "name": "United States"})
+
+    def add_additional_document(self, draft_id):
+        url = "/applications/" + draft_id + "/documents/"
+        additional_document_metadata = self.add_document(
+            url=url, name="additional document", description="this is a test additional document"
+        )
+        self.add_to_context("additional_document", additional_document_metadata)
+        return self.context["additional_document"]["document"]["id"]
+
+    def add_site(self, draft_id):
+        self.make_request(
+            method="POST",
+            url="/applications/" + draft_id + "/sites/",
+            headers=ApiClient.exporter_headers,
+            body={"sites": [self.context["primary_site_id"]]},
+        )
+
+    def add_draft(self, draft=None, good=None, end_user=None, ultimate_end_user=None, consignee=None, third_party=None):
+        draft_id = self.create_draft(draft=draft)
+        self.add_site(draft_id=draft_id)
+        self.parties.add_end_user(draft_id=draft_id, end_user=end_user)
+        self.goods.add_good_to_draft(draft_id=draft_id, good=good)
+        ultimate_end_user_id = self.parties.add_ultimate_end_user(
+            draft_id=draft_id, ultimate_end_user=ultimate_end_user
+        )
+        self.parties.add_consignee(draft_id=draft_id, consignee=consignee)
+        third_party_id = self.parties.add_third_party(draft_id=draft_id, third_party=third_party)
+        additional_document_id = self.add_additional_document(draft_id=draft_id)
+        self._assert_all_documents_are_processed(
+            draft_id=draft_id,
+            ultimate_end_user_id=ultimate_end_user_id,
+            third_party_id=third_party_id,
+            additional_document_id=additional_document_id,
+        )
+
+        return draft_id
+
+    def add_hmrc_draft(self, draft=None, good=None, end_user=None):
+        draft_id = self.create_draft(draft)
+        self.add_site(draft_id)
+        self.parties.add_end_user(draft_id, end_user)
+        self.goods.add_good_to_draft(draft_id, good)
+
+        return draft_id
+
+    def add_open_draft(self, draft=None):
+        draft_id = self.create_draft(draft)
+        self.add_to_context("open_draft_id", draft_id)
+        self.add_site(draft_id)
+        self.add_countries(draft_id)
+        self.goods.add_open_draft_good(draft_id)
+
+        return draft_id
+
+    def submit_application(self, draft_id=None):
+        draft_id_to_submit = draft_id or self.context["draft_id"]
+        response = self.make_request(
+            method="PUT", url="/applications/" + draft_id_to_submit + "/submit/", headers=ApiClient.exporter_headers
+        )
+        return response.json()
+
+    def submit_standard_application(self, draft_id=None):
+        self.submit_application(draft_id)
+        self.add_to_context("application_id", draft_id)
+        self.add_to_context("case_id", draft_id)
+
+    def submit_hmrc_application(self, draft_id=None):
+        self.submit_application(draft_id)
+
+    def submit_open_application(self, draft_id=None):
+        self.submit_application(draft_id)
+        self.add_to_context("application_id", draft_id)
+        self.add_to_context("case_id", draft_id)
+
+    def submit_exhibition_application(self, draft_id):
+        data = self.submit_application(draft_id)
+        self.add_to_context("case_id", draft_id)
+        self.add_to_context("reference_code", data["application"]["reference_code"])
+
+    def is_end_user_document_processed(self, draft_id):
+        return self.is_document_processed(url="/applications/" + draft_id + "/end-user/document/")
+
+    def is_consignee_document_processed(self, draft_id):
+        return self.is_document_processed(url="/applications/" + draft_id + "/consignee/document/")
+
+    def is_ultimate_end_user_document_processed(self, draft_id, ultimate_end_user_id):
+        return self.is_document_processed(
+            url="/applications/" + draft_id + "/ultimate-end-user/" + ultimate_end_user_id + "/document/"
+        )
+
+    def is_third_party_document_processed(self, draft_id, third_party_id):
+        return self.is_document_processed(
+            url="/applications/" + draft_id + "/third-parties/" + third_party_id + "/document/"
+        )
+
+    def is_additional_document_processed(self, draft_id, document_id):
+        return self.is_document_processed("/applications/" + draft_id + "/documents/" + document_id + "/")
+
+    def is_document_processed(self, url):
+        response = self.make_request(method="GET", url=url, headers=ApiClient.exporter_headers)
+        return response.json()["document"]["safe"]
+
+    def _assert_all_documents_are_processed(
+        self, draft_id, ultimate_end_user_id, third_party_id, additional_document_id
+    ):
+        self._assert_document_is_processed(
+            document_type="End user", callback_function=self.is_end_user_document_processed, draft_id=draft_id,
+        )
+
+        self._assert_document_is_processed(
+            document_type="Consignee", callback_function=self.is_consignee_document_processed, draft_id=draft_id,
+        )
+
+        self._assert_document_is_processed(
+            document_type="Ultimate end user",
+            callback_function=self.is_ultimate_end_user_document_processed,
+            draft_id=draft_id,
+            ultimate_end_user_id=ultimate_end_user_id,
+        )
+
+        self._assert_document_is_processed(
+            document_type="Third party",
+            callback_function=self.is_third_party_document_processed,
+            draft_id=draft_id,
+            third_party_id=third_party_id,
+        )
+
+        self._assert_document_is_processed(
+            document_type="Additional",
+            callback_function=self.is_additional_document_processed,
+            draft_id=draft_id,
+            document_id=additional_document_id,
+        )
+
+    @staticmethod
+    def _assert_document_is_processed(**kwargs):
+        document_type = kwargs.pop("document_type")
+        callback_function = kwargs.pop("callback_function")
+        assert wait_for_function(callback_function, **kwargs), document_type + " document wasn't successfully processed"

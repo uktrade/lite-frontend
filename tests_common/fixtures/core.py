@@ -41,6 +41,6 @@ def internal_info(request, environment):
 
 
 @fixture(scope="session")
-def seed_data_config(request, exporter_info, internal_info):
+def api_client_config(request, exporter_info, internal_info):
     api_url = request.config.getoption("--lite_api_url")
     return {"api_url": api_url, "exporter": exporter_info, "gov": internal_info}

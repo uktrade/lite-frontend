@@ -1,8 +1,15 @@
-from .seed_class import SeedClass
-from ..make_requests import make_request
+from faker import Faker
+
+from .api_client import ApiClient
+from ...tools.helpers import strip_special_characters, get_current_date_time
+
+fake = Faker()
 
 
-class Organisation(SeedClass):
+class Organisations(ApiClient):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
     def setup_org(self):
         organisation = self.find_org_by_name(self.request_data["organisation"]["name"])
 
@@ -43,36 +50,49 @@ class Organisation(SeedClass):
 
     def add_test_user_to_exporter_org(self, org_id):
         data = self.request_data["export_user"]
-        return make_request(
-            "POST",
-            base_url=self.base_url,
-            url="/organisations/" + org_id + "/users/",
-            body=data,
-            headers=self.gov_headers,
+        return self.make_request(
+            method="POST", url="/organisations/" + org_id + "/users/", body=data, headers=ApiClient.gov_headers,
         ).json()
 
     def find_org_by_name(self, org_name):
-        organisations = make_request(
-            "GET", base_url=self.base_url, url="/organisations/?search_term=" + org_name, headers=self.gov_headers,
+        organisations = self.make_request(
+            method="GET", url="/organisations/?search_term=" + org_name, headers=ApiClient.gov_headers,
         ).json()["results"]
         organisation = next((item for item in organisations if item["name"] == org_name), None)
         return organisation
 
     def find_test_user_in_org(self, org_id):
-        users = make_request(
-            "GET", base_url=self.base_url, url="/organisations/" + org_id + "/users/", headers=self.gov_headers,
+        users = self.make_request(
+            method="GET", url="/organisations/" + org_id + "/users/", headers=ApiClient.gov_headers,
         ).json()["users"]
         user = next((item for item in users if item["email"] == self.request_data["export_user"]["email"]), None)
         return user
 
     def add_org(self, key):
         data = self.request_data[key]
-        return make_request(
-            "POST", base_url=self.base_url, url="/organisations/", body=data, headers=self.gov_headers,
-        ).json()
+        return self.make_request(method="POST", url="/organisations/", body=data, headers=ApiClient.gov_headers,).json()
 
     def get_org_primary_site_id(self, org_id):
-        organisation = make_request(
-            "GET", base_url=self.base_url, url="/organisations/" + org_id, headers=self.gov_headers,
+        organisation = self.make_request(
+            method="GET", url="/organisations/" + org_id, headers=ApiClient.gov_headers,
         ).json()
         return organisation["primary_site"]["id"]
+
+    def add_site(self, organisation_id=None):
+        organisation_id = organisation_id or self.request_data["organisation"]["id"]
+        data = {
+            "name": strip_special_characters(fake.company()) + get_current_date_time(),
+            "address": {
+                "address_line_1": fake.street_address(),
+                "city": fake.city(),
+                "postcode": fake.postcode(),
+                "region": fake.state(),
+                "country": "GB",
+            },
+        }
+        return self.make_request(
+            method="POST",
+            url=f"/organisations/{organisation_id}/sites/",
+            headers=ApiClient.exporter_headers,
+            body=data,
+        ).json()["site"]

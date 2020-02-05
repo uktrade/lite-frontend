@@ -1,6 +1,6 @@
 from time import time
 
-from ..seed_data.seed_data import SeedData
+from ..api_client.builder import Builder
 
 
 class Timer:
@@ -37,9 +37,8 @@ def set_timeout_to_10_seconds(self):
     self.set_timeout_to(10)
 
 
-def get_lite_client(context, seed_data_config):
+def get_lite_client(context, api_client_config):
     """
     Returns the existing LITE API client, or creates a new one
     """
-    seed_data = SeedData(seed_data_config=seed_data_config)
-    return get_or_create_attr(context, "api", seed_data)
+    return get_or_create_attr(context, "api", Builder(api_client_config=api_client_config, context={}))

@@ -10,40 +10,14 @@ timeout_limit = 60
 function_retry_interval = 1
 
 
-def wait_for_function(func, **kwargs):
+def wait_for_function(callback_function, **kwargs):
     time_no = 0
     while time_no < timeout_limit:
-        if func(**kwargs):
+        if callback_function(**kwargs):
             return True
         sleep(function_retry_interval)
         time_no += function_retry_interval
     return False
-
-
-def wait_for_document(func, draft_id, base_url, export_headers):
-    return wait_for_function(func, draft_id=draft_id, base_url=base_url, export_headers=export_headers)
-
-
-def wait_for_ultimate_end_user_document(func, draft_id, ultimate_end_user_id, base_url, export_headers):
-    return wait_for_function(
-        func,
-        draft_id=draft_id,
-        ultimate_end_user_id=ultimate_end_user_id,
-        base_url=base_url,
-        export_headers=export_headers,
-    )
-
-
-def wait_for_third_party_document(func, draft_id, third_party_id, base_url, export_headers):
-    return wait_for_function(
-        func, draft_id=draft_id, third_party_id=third_party_id, base_url=base_url, export_headers=export_headers,
-    )
-
-
-def wait_for_additional_document(func, draft_id, document_id, base_url, export_headers):
-    return wait_for_function(
-        func, draft_id=draft_id, document_id=document_id, base_url=base_url, export_headers=export_headers,
-    )
 
 
 def download_link_is_present(driver, page):
