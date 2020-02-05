@@ -32,7 +32,7 @@ from ui_automation_tests.shared.fixtures.driver import driver  # noqa
 from ui_automation_tests.shared.fixtures.sso_sign_in import sso_sign_in  # noqa
 from ui_automation_tests.shared.fixtures.core import (  # noqa
     context,
-    seed_data_config,
+    api_client_config,
     exporter_info,
     internal_info,
 )

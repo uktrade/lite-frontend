@@ -12,16 +12,16 @@ scenarios("../features/filter_and_sort_cases.feature", strict_gherkin=False)
 
 
 @given("a queue has been created")
-def create_queue(context, seed_data_config):
-    lite_client = get_lite_client(context, seed_data_config)
-    lite_client.seed_queue.add_queue("queue" + get_formatted_date_time_m_d_h_s())
+def create_queue(context, api_client_config):
+    lite_client = get_lite_client(context, api_client_config)
+    lite_client.queues.add_queue("queue" + get_formatted_date_time_m_d_h_s())
     context.queue_name = lite_client.context["queue_name"]
 
 
 @when("case has been moved to new Queue")
-def assign_case_to_queue(context, seed_data_config):
-    lite_client = get_lite_client(context, seed_data_config)
-    lite_client.seed_case.assign_case_to_queue()
+def assign_case_to_queue(context, api_client_config):
+    lite_client = get_lite_client(context, api_client_config)
+    lite_client.cases.assign_case_to_queue()
 
 
 @then(parsers.parse('"{number}" cases are shown'))
