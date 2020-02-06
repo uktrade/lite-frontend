@@ -4,6 +4,7 @@ from shared.BasePage import BasePage
 class ApplicationPage(BasePage):
 
     BUTTON_WITHDRAW_APPLICATION_ID = "button-withdraw-application"
+    BUTTON_SURRENDER_APPLICATION_ID = "button-surrender-application"
     BUTTON_EDIT_APPLICATION_ID = "button-edit-application"
     LABEL_APPLICATION_STATUS_ID = "label-application-status"
     LINK_NOTES_TAB_ID = "link-case-notes"  # ID
@@ -18,6 +19,9 @@ class ApplicationPage(BasePage):
 
     def click_withdraw_application_button(self):
         self.driver.find_element_by_id(self.BUTTON_WITHDRAW_APPLICATION_ID).click()
+
+    def click_surrender_application_button(self):
+        self.driver.find_element_by_id(self.BUTTON_SURRENDER_APPLICATION_ID).click()
 
     def click_edit_application_link(self):
         self.driver.find_element_by_css_selector(self.LINK_EDIT_APPLICATION).click()

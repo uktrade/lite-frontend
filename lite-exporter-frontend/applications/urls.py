@@ -210,6 +210,7 @@ urlpatterns = [
         name="delete_additional_document",
     ),
     path("<uuid:pk>/withdraw/", common.WithdrawApplication.as_view(), name="withdraw"),
+    path("<uuid:pk>/surrender/", common.SurrenderApplication.as_view(), name="surrender"),
     # Case-relevant documentation
     path(
         "<uuid:pk>/generated-documents/<uuid:obj_pk>/download",

@@ -1,16 +1,21 @@
-from pytest_bdd import scenarios, then, when, parsers
+from pytest_bdd import scenarios, then, when, parsers, given
 
 from pages.application_page import ApplicationPage
 from pages.submitted_applications_page import SubmittedApplicationsPages
 from shared import selectors
 from shared.functions import element_with_id_exists
 
-scenarios("../features/withdraw_application.feature", strict_gherkin=False)
+scenarios("../features/withdraw_and_surrender_application.feature", strict_gherkin=False)
 
 
 @when("I click the button 'Withdraw Application'")
 def i_click_withdraw_application(driver):
     ApplicationPage(driver).click_withdraw_application_button()
+
+
+@when("I click the button 'Surrender Application'")
+def i_click_withdraw_application(driver):
+    ApplicationPage(driver).click_surrender_application_button()
 
 
 @then("I should see a confirmation page")
@@ -35,6 +40,13 @@ def i_wont_be_able_to_see_the_withdraw_button(driver):
     driver.set_timeout_to(10)
 
 
+@then("I won't be able to see the surrender button")
+def i_wont_be_able_to_see_the_surrender_button(driver):
+    driver.set_timeout_to(0)
+    assert not element_with_id_exists(driver, ApplicationPage.BUTTON_SURRENDER_APPLICATION_ID)
+    driver.set_timeout_to(10)
+
+
 @then("the edit application button is not present")
 def edit_button_not_present(driver):
     driver.set_timeout_to(0)
@@ -47,3 +59,8 @@ def edit_button_not_present(driver):
     driver.set_timeout_to(0)
     assert len((SubmittedApplicationsPages(driver).find_case_note_text_area())) == 0
     driver.set_timeout_to(10)
+
+
+@given("The application has been approved")
+def approve_application(approve_case):
+    pass

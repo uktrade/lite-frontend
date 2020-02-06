@@ -5,17 +5,19 @@ import re
 LCS_PATTERN = "{% lcs '(.*)' %}"
 
 
-def check_string_for_occurance(module, string):
+def check_string_for_occurance(attribute, string):
     """
     Check that the given string variable i.e. `CASES.Page.TITLE` is found within a given module (strings.py).
     Checks each section of the path is found inside the module defined in the last iteration
-    :param module: Python module to search
+    :param attribute: Python attribute to search
     :param string: Path to find (split into sections)
     :return: True/False
     """
     for path_section in string:
-        module = module.__dict__.get(path_section)
-        if not module:
+        attribute = attribute.__dict__.get(path_section)
+        if isinstance(attribute, str):
+            return True
+        if not attribute:
             return False
 
     return True
