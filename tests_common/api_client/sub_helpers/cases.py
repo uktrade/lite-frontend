@@ -71,3 +71,13 @@ class Cases:
         )
 
         return response.status_code
+
+    def finalise_case(self, draft_id, action):
+        response = self.api_client.make_request(
+            method="PUT",
+            url="/applications/" + draft_id + "/finalise/",
+            headers=ApiClient.gov_headers,
+            body={"action": action},
+        )
+
+        return response.status_code
