@@ -157,6 +157,7 @@ class ApplicationSummaryPage:
     class Buttons:
         EDIT_APPLICATION_BUTTON = "Edit"
         WITHDRAW_ACCESS_BUTTON = "Withdraw"
+        SURRENDER_APPLICATION_BUTTON = "Surrender licence"
 
     class Withdraw:
         TITLE = "Confirm you want to withdraw this application"
@@ -165,6 +166,14 @@ class ApplicationSummaryPage:
         NO_LABEL = "Cancel"
         SUBMIT_BUTTON = "Submit"
         WITHDRAW_ERROR = "Select confirm if you want to withdraw the application"
+
+    class Surrender:
+        TITLE = "Confirm you want to surrender this application"
+        BACK_TEXT = "Back to application"
+        YES_LABEL = "Confirm and surrender the application"
+        NO_LABEL = "Cancel"
+        SUBMIT_BUTTON = "Submit"
+        WITHDRAW_ERROR = "Select confirm if you want to surrender the application"
 
     class Tabs:
         DETAILS = "Details"
