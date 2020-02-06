@@ -168,7 +168,7 @@ class ApplicationSummaryPage:
         WITHDRAW_ERROR = "Select confirm if you want to withdraw the application"
 
     class Surrender:
-        TITLE = "Confirm you want to surrender this application?"
+        TITLE = "Confirm you want to surrender this application"
         BACK_TEXT = "Back to application"
         YES_LABEL = "Confirm and surrender the application"
         NO_LABEL = "Cancel"
