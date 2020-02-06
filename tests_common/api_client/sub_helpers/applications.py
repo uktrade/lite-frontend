@@ -1,43 +1,48 @@
-from .api_client import ApiClient
+from ...api_client.api_client import ApiClient
 from ...tools.wait import wait_for_function
 
 
-class Applications(ApiClient):
-    def __init__(self, parties, goods, **kwargs):
+class Applications:
+    def __init__(self, api_client, documents, parties, goods, request_data, **kwargs):
         super().__init__(**kwargs)
+        self.api_client = api_client
+        self.request_data = request_data
         self.parties = parties
         self.goods = goods
+        self.documents = documents
 
     def create_draft(self, draft=None):
         data = draft or self.request_data["application"]
-        response = self.make_request(method="POST", url="/applications/", headers=ApiClient.exporter_headers, body=data)
+        response = self.api_client.make_request(
+            method="POST", url="/applications/", headers=ApiClient.exporter_headers, body=data
+        )
         draft_id = response.json()["id"]
-        self.add_to_context("draft_id", draft_id)
+        self.api_client.add_to_context("draft_id", draft_id)
         return draft_id
 
     def add_countries(self, draft_id):
-        self.make_request(
+        self.api_client.make_request(
             method="POST",
             url="/applications/" + draft_id + "/countries/",
             headers=ApiClient.exporter_headers,
             body={"countries": ["US"]},
         )
-        self.add_to_context("country", {"code": "US", "name": "United States"})
+        self.api_client.add_to_context("country", {"code": "US", "name": "United States"})
 
     def add_additional_document(self, draft_id):
         url = "/applications/" + draft_id + "/documents/"
-        additional_document_metadata = self.add_document(
+        additional_document_metadata = self.documents.add_document(
             url=url, name="additional document", description="this is a test additional document"
         )
-        self.add_to_context("additional_document", additional_document_metadata)
-        return self.context["additional_document"]["document"]["id"]
+        self.api_client.add_to_context("additional_document", additional_document_metadata)
+        return self.api_client.context["additional_document"]["document"]["id"]
 
     def add_site(self, draft_id):
-        self.make_request(
+        self.api_client.make_request(
             method="POST",
             url="/applications/" + draft_id + "/sites/",
             headers=ApiClient.exporter_headers,
-            body={"sites": [self.context["primary_site_id"]]},
+            body={"sites": [self.api_client.context["primary_site_id"]]},
         )
 
     def add_draft(self, draft=None, good=None, end_user=None, ultimate_end_user=None, consignee=None, third_party=None):
@@ -70,7 +75,7 @@ class Applications(ApiClient):
 
     def add_open_draft(self, draft=None):
         draft_id = self.create_draft(draft)
-        self.add_to_context("open_draft_id", draft_id)
+        self.api_client.add_to_context("open_draft_id", draft_id)
         self.add_site(draft_id)
         self.add_countries(draft_id)
         self.goods.add_open_draft_good(draft_id)
@@ -78,29 +83,29 @@ class Applications(ApiClient):
         return draft_id
 
     def submit_application(self, draft_id=None):
-        draft_id_to_submit = draft_id or self.context["draft_id"]
-        response = self.make_request(
+        draft_id_to_submit = draft_id or self.api_client.context["draft_id"]
+        response = self.api_client.make_request(
             method="PUT", url="/applications/" + draft_id_to_submit + "/submit/", headers=ApiClient.exporter_headers
         )
         return response.json()
 
     def submit_standard_application(self, draft_id=None):
         self.submit_application(draft_id)
-        self.add_to_context("application_id", draft_id)
-        self.add_to_context("case_id", draft_id)
+        self.api_client.add_to_context("application_id", draft_id)
+        self.api_client.add_to_context("case_id", draft_id)
 
     def submit_hmrc_application(self, draft_id=None):
         self.submit_application(draft_id)
 
     def submit_open_application(self, draft_id=None):
         self.submit_application(draft_id)
-        self.add_to_context("application_id", draft_id)
-        self.add_to_context("case_id", draft_id)
+        self.api_client.add_to_context("application_id", draft_id)
+        self.api_client.add_to_context("case_id", draft_id)
 
     def submit_exhibition_application(self, draft_id):
         data = self.submit_application(draft_id)
-        self.add_to_context("case_id", draft_id)
-        self.add_to_context("reference_code", data["application"]["reference_code"])
+        self.api_client.add_to_context("case_id", draft_id)
+        self.api_client.add_to_context("reference_code", data["application"]["reference_code"])
 
     def is_end_user_document_processed(self, draft_id):
         return self.is_document_processed(url="/applications/" + draft_id + "/end-user/document/")
@@ -122,7 +127,7 @@ class Applications(ApiClient):
         return self.is_document_processed("/applications/" + draft_id + "/documents/" + document_id + "/")
 
     def is_document_processed(self, url):
-        response = self.make_request(method="GET", url=url, headers=ApiClient.exporter_headers)
+        response = self.api_client.make_request(method="GET", url=url, headers=ApiClient.exporter_headers)
         return response.json()["document"]["safe"]
 
     def _assert_all_documents_are_processed(

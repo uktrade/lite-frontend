@@ -1,13 +1,15 @@
-from .api_client import ApiClient
+from ...api_client.api_client import ApiClient
 
 
-class EcjuQueries(ApiClient):
-    def __init__(self, **kwargs):
+class EcjuQueries:
+    def __init__(self, api_client, request_data, **kwargs):
         super().__init__(**kwargs)
+        self.api_client = api_client
+        self.request_data = request_data
 
     def add_ecju_response(self, question, response):
-        case_id = self.context["case_id"]
-        ecju_queries = self.make_request(
+        case_id = self.api_client.context["case_id"]
+        ecju_queries = self.api_client.make_request(
             method="GET", url="/cases/" + case_id + "/ecju-queries/", headers=ApiClient.gov_headers,
         ).json()["ecju_queries"]
 
@@ -17,7 +19,7 @@ class EcjuQueries(ApiClient):
                 ecju_query_id = ecju_query["id"]
                 break
 
-        self.make_request(
+        self.api_client.make_request(
             method="PUT",
             url="/cases/" + case_id + "/ecju-queries/" + ecju_query_id + "/",
             headers=ApiClient.exporter_headers,
@@ -25,7 +27,7 @@ class EcjuQueries(ApiClient):
         )
 
     def add_ecju_query(self, case_id):
-        self.make_request(
+        self.api_client.make_request(
             method="POST",
             url="/cases/" + case_id + "/ecju-queries/",
             headers=ApiClient.gov_headers,

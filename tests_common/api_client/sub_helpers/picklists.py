@@ -1,12 +1,14 @@
-from .api_client import ApiClient
+from ...api_client.api_client import ApiClient
 
 
-class Picklists(ApiClient):
-    def __init__(self, **kwargs):
+class Picklists:
+    def __init__(self, api_client, request_data, **kwargs):
         super().__init__(**kwargs)
+        self.api_client = api_client
+        self.request_data = request_data
 
     def post_picklist(self, key):
-        return self.make_request(
+        return self.api_client.make_request(
             method="POST", url="/picklist/", body=self.request_data[key], headers=ApiClient.gov_headers,
         ).json()["picklist_item"]
 
