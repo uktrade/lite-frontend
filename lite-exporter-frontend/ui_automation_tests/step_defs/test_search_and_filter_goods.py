@@ -3,7 +3,7 @@ from urllib.parse import urlencode
 from pytest_bdd import when, then, parsers, scenarios
 from pages.standard_application.goods import StandardApplicationGoodsPage
 from shared.tools.utils import get_lite_client
-from shared.api_client.request_data import build_good
+from shared.api_client.libraries.request_data import build_good
 
 scenarios("../features/search_and_filter_goods.feature", strict_gherkin=False)
 
