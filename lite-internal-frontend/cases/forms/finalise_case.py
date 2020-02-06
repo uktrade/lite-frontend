@@ -1,5 +1,5 @@
 from django.urls import reverse_lazy
-from lite_forms.components import Form, TextInput, BackLink, DateInput, Label
+from lite_forms.components import Form, TextInput, BackLink, DateInput, Label, HiddenField
 from lite_forms.helpers import conditional
 from lite_content.lite_internal_frontend import cases
 
@@ -22,6 +22,7 @@ def approve_licence_form(case_id, standard, duration, editable_duration):
                 ),
                 Label(text=f"Duration: {duration} months"),
             ),
+            HiddenField(name="action", value="approve"),
         ],
         back_link=conditional(
             standard,
@@ -38,13 +39,9 @@ def approve_licence_form(case_id, standard, duration, editable_duration):
 
 
 def deny_licence_form(case_id, is_standard_licence):
-    if is_standard_licence:
-        title = cases.FinaliseLicenceForm.REFUSE_TITLE
-    else:
-        title = cases.FinaliseLicenceForm.REJECT_TITLE
-
     return Form(
-        title=title,
+        title=cases.FinaliseLicenceForm.FINALISE_TITLE,
+        questions=[HiddenField(name="action", value="refuse")],
         back_link=conditional(
             is_standard_licence,
             BackLink(
