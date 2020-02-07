@@ -33,7 +33,7 @@ parameters
     string(name: 'TESTS_TO_RUN', defaultValue: '', description: 'choose test to run, leave blank to run all tests')
 
     // Define environment to run tests on
-    choice(name: 'ENVIRONMENT', description: 'choose what environment to run in', choices: 'dev\nqa\ndevpopcorn\nstaging\nuat')
+    choice(name: 'ENVIRONMENT', description: 'choose what environment to run in', choices: 'dev\nqa\ndevpopcorn\nsandbox\nstaging\nuat')
 
     //Define branch to run
     string(name: 'BRANCH', defaultValue: 'master', description: 'choose branch to run against')
