@@ -483,8 +483,7 @@ class GoodsDecisionMatrixPage:
 
 class FinaliseLicenceForm:
     APPROVE_TITLE = "Approve"
-    REFUSE_TITLE = "Refuse"
-    REJECT_TITLE = "Reject"
+    FINALISE_TITLE = "Finalise"
     DATE_DESCRIPTION = "For example, 27 3 2007"
     DATE_TITLE = "When will the licence start?"
     DURATION_DESCRIPTION = "This must be a whole number of months, such as 12"
