@@ -186,14 +186,6 @@ class Flags:
 class Picklist:
     TITLE = "Picklists"
 
-    class Create:
-        ECJU_QUERY = "Create an ECJU Query"
-        FOOTNOTES = "Create a footnote"
-        LETTER_PARAGRAPH = "Create a letter paragraph"
-        PROVISO = "Create a proviso"
-        REPORT_SUMMARY = "Create a report summary"
-        STANDARD_ADVICE = "Create standard advice"
-
     class Edit:
         class Status:
             DEACTIVATE_HEADING = "Are you sure you want to deactivate this picklist item?"
