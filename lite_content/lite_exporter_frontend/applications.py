@@ -282,11 +282,8 @@ class DestinationForm:
     DESCRIPTION = ""
 
 
-class TaskListPage:
-    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
-
-
 class StandardApplicationTaskList:
+    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
     NEW_TITLE = "Standard export licence application"
     EDIT_TITLE = "Edit the application"
     END_USE_CONTROL = "End use control"
@@ -300,6 +297,7 @@ class StandardApplicationTaskList:
 
 
 class OpenApplicationTaskList:
+    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
     NEW_TITLE = "Open export licence application"
     EDIT_TITLE = "Edit the application"
     GOODS = "Products"
@@ -310,6 +308,7 @@ class OpenApplicationTaskList:
 
 
 class HMRCApplicationTaskList:
+    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
     GOODS = "Products"
     GOODS_LOCATION = "Locations"
     END_USER = "End user"
@@ -322,14 +321,36 @@ class HMRCApplicationTaskList:
 
 
 class ExhibitionClearanceTaskList:
+    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
     NEW_TITLE = "Exhibition clearance application"
     EDIT_TITLE = "Edit the application"
-    END_USE_CONTROL = "End use control"
     GOODS = "Products"
     GOODS_LOCATION = "Locations"
     END_USER = "End user"
     ULTIMATE_END_USERS = "Ultimate recipients"
     CONSIGNEE = "Consignee"
+    SUPPORTING_DOCUMENTS = "Supporting documents"
+    THIRD_PARTIES = "Third parties"
+
+
+class GiftingClearanceTaskList:
+    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
+    NEW_TITLE = "Gifting clearance application"
+    EDIT_TITLE = "Edit the application"
+    GOODS = "Products"
+    GOODS_LOCATION = "Locations"
+    END_USER = "End user"
+    SUPPORTING_DOCUMENTS = "Supporting documents"
+    THIRD_PARTIES = "Third parties"
+
+
+class F680ClearanceTaskList:
+    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
+    NEW_TITLE = "F680 clearance application"
+    EDIT_TITLE = "Edit the application"
+    GOODS = "Products"
+    GOODS_LOCATION = "Locations"
+    END_USER = "End user"
     SUPPORTING_DOCUMENTS = "Supporting documents"
     THIRD_PARTIES = "Third parties"
 
