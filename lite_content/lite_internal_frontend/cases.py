@@ -58,6 +58,8 @@ class ApplicationPage:
         TYPE = "Type"
         WEBSITE = "Website"
         DOCUMENT = "Document"
+        NO_INACTIVE_CASES = "No inactive case entities"
+        INACTIVE_CASES = "Entities deleted by exporter"
 
     class EndUser:
         NO_END_USER = "The applicant is editing the end user."
