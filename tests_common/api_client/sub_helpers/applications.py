@@ -48,18 +48,18 @@ class Applications:
     def add_draft(self, draft=None, good=None, end_user=None, ultimate_end_user=None, consignee=None, third_party=None):
         draft_id = self.create_draft(draft=draft)
         self.add_site(draft_id=draft_id)
-        self.parties.add_end_user(draft_id=draft_id, end_user=end_user)
-        self.goods.add_good_to_draft(draft_id=draft_id, good=good)
-        ultimate_end_user_id = self.parties.add_ultimate_end_user(
-            draft_id=draft_id, ultimate_end_user=ultimate_end_user
+        end_user = self.parties.add_party(request_data_key="end_user", draft_id=draft_id, party=end_user)
+        ultimate_end_user = self.parties.add_party(
+            request_data_key="ultimate_end_user", draft_id=draft_id, party=ultimate_end_user
         )
-        self.parties.add_consignee(draft_id=draft_id, consignee=consignee)
-        third_party_id = self.parties.add_third_party(draft_id=draft_id, third_party=third_party)
+        consignee = self.parties.add_party(request_data_key="consignee", draft_id=draft_id, party=consignee)
+        third_party = self.parties.add_party(request_data_key="third_party", draft_id=draft_id, party=third_party)
         additional_document_id = self.add_additional_document(draft_id=draft_id)
+        self.goods.add_good_to_draft(draft_id=draft_id, good=good)
+
         self._assert_all_documents_are_processed(
             draft_id=draft_id,
-            ultimate_end_user_id=ultimate_end_user_id,
-            third_party_id=third_party_id,
+            parties=[end_user, consignee, third_party, ultimate_end_user],
             additional_document_id=additional_document_id,
         )
 
@@ -68,7 +68,7 @@ class Applications:
     def add_hmrc_draft(self, draft=None, good=None, end_user=None):
         draft_id = self.create_draft(draft)
         self.add_site(draft_id)
-        self.parties.add_end_user(draft_id, end_user)
+        self.parties.add_party("end_user", draft_id, end_user)
         self.goods.add_good_to_draft(draft_id, good)
 
         return draft_id
@@ -107,21 +107,9 @@ class Applications:
         self.api_client.add_to_context("case_id", draft_id)
         self.api_client.add_to_context("reference_code", data["application"]["reference_code"])
 
-    def is_end_user_document_processed(self, draft_id):
-        return self.is_document_processed(url="/applications/" + draft_id + "/end-user/document/")
-
-    def is_consignee_document_processed(self, draft_id):
-        return self.is_document_processed(url="/applications/" + draft_id + "/consignee/document/")
-
-    def is_ultimate_end_user_document_processed(self, draft_id, ultimate_end_user_id):
-        return self.is_document_processed(
-            url="/applications/" + draft_id + "/ultimate-end-user/" + ultimate_end_user_id + "/document/"
-        )
-
-    def is_third_party_document_processed(self, draft_id, third_party_id):
-        return self.is_document_processed(
-            url="/applications/" + draft_id + "/third-parties/" + third_party_id + "/document/"
-        )
+    def is_party_document_processed(self, draft_id, party_id):
+        url = "/applications/" + draft_id + "/parties/" + party_id + "/document/"
+        return self.is_document_processed(url)
 
     def is_additional_document_processed(self, draft_id, document_id):
         return self.is_document_processed("/applications/" + draft_id + "/documents/" + document_id + "/")
@@ -130,30 +118,14 @@ class Applications:
         response = self.api_client.make_request(method="GET", url=url, headers=ApiClient.exporter_headers)
         return response.json()["document"]["safe"]
 
-    def _assert_all_documents_are_processed(
-        self, draft_id, ultimate_end_user_id, third_party_id, additional_document_id
-    ):
-        self._assert_document_is_processed(
-            document_type="End user", callback_function=self.is_end_user_document_processed, draft_id=draft_id,
-        )
-
-        self._assert_document_is_processed(
-            document_type="Consignee", callback_function=self.is_consignee_document_processed, draft_id=draft_id,
-        )
-
-        self._assert_document_is_processed(
-            document_type="Ultimate end user",
-            callback_function=self.is_ultimate_end_user_document_processed,
-            draft_id=draft_id,
-            ultimate_end_user_id=ultimate_end_user_id,
-        )
-
-        self._assert_document_is_processed(
-            document_type="Third party",
-            callback_function=self.is_third_party_document_processed,
-            draft_id=draft_id,
-            third_party_id=third_party_id,
-        )
+    def _assert_all_documents_are_processed(self, draft_id, parties, additional_document_id):
+        for party in parties:
+            self._assert_document_is_processed(
+                document_type=party["type"],
+                callback_function=self.is_party_document_processed,
+                draft_id=draft_id,
+                party_id=party["id"],
+            )
 
         self._assert_document_is_processed(
             document_type="Additional",

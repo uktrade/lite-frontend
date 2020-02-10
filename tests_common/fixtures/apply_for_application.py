@@ -49,6 +49,7 @@ def apply_for_standard_application(driver, api_client_config, context):
             "country": "GB",
             "sub_type": "government",
             "website": "https://www.gov.uk",
+            "type": "end_user",
         },
         ultimate_end_user={
             "name": "Individual",
@@ -56,6 +57,7 @@ def apply_for_standard_application(driver, api_client_config, context):
             "country": "GB",
             "sub_type": "commercial",
             "website": "https://www.anothergov.uk",
+            "type": "ultimate_end_user",
         },
         consignee={
             "name": "Government",
@@ -63,6 +65,7 @@ def apply_for_standard_application(driver, api_client_config, context):
             "country": "GB",
             "sub_type": "government",
             "website": "https://www.gov.uk",
+            "type": "consignee",
         },
         third_party={
             "name": "Individual",
@@ -71,6 +74,7 @@ def apply_for_standard_application(driver, api_client_config, context):
             "sub_type": "government",
             "role": "agent",
             "website": "https://www.anothergov.uk",
+            "type": "third_party",
         },
     )
     lite_client.applications.submit_standard_application(draft_id)
@@ -117,6 +121,7 @@ def apply_for_hmrc_query(driver, api_client_config, context):
             "country": "GB",
             "sub_type": "government",
             "website": "https://www.gov.uk",
+            "type": "end_user",
         },
     )
     lite_client.applications.submit_hmrc_application(draft_id)

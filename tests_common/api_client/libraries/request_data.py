@@ -39,20 +39,18 @@ def build_good(description, control_code="ML1a", part_number="1234"):
     }
 
 
-def build_party(name, sub_type, website):
-    return {
+def build_party(name, sub_type, website, party_type):
+    data = {
         "name": name,
         "address": "Westminster, London SW1A 0AA",
         "country": "GB",
         "sub_type": sub_type,
         "website": website,
+        "type": party_type,
     }
-
-
-def build_third_party(name, sub_type, website):
-    party = build_party(name, sub_type, website)
-    party["role"] = "agent"
-    return party
+    if party_type == "third_party":
+        data["role"] = "agent"
+    return data
 
 
 def build_picklist_data(name, text, type, proviso=None):
@@ -79,17 +77,17 @@ def build_request_data(exporter_user, gov_user):
             "reference_number_on_information_form": "1234",
         },
         "gov_user": build_user(gov_user),
-        "end-user": build_party("Government", "government", "https://www.gov.uk"),
+        "end-user": build_party("Government", "government", "https://www.gov.uk", "end_user"),
         "end_user_advisory": {
-            "end_user": build_party("Person", "government", "https://www.gov.uk"),
+            "end_user": build_party("Person", "government", "https://www.gov.uk", "end_user"),
             "contact_telephone": 12345678901,
             "contact_email": "person@gov.uk",
             "reasoning": "This is the reason for raising the enquiry",
             "note": "note for end user advisory",
         },
-        "ultimate_end_user": build_party("Individual", "commercial", "https://www.anothergov.uk"),
-        "consignee": build_party("Government", "government", "https://www.gov.uk"),
-        "third_party": build_third_party("Individual", "government", "https://www.anothergov.uk"),
+        "ultimate_end_user": build_party("Individual", "commercial", "https://www.anothergov.uk", "ultimate_end_user"),
+        "consignee": build_party("Government", "government", "https://www.gov.uk", "consignee"),
+        "third_party": build_party("Individual", "government", "https://www.anothergov.uk", "third_party"),
         "add_good": {"good_id": "", "quantity": 1234, "unit": "NAR", "value": 123.45, "is_good_incorporated": True},
         "clc_good": {
             "description": "Targus",
