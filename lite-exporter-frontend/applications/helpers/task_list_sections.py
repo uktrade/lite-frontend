@@ -1,4 +1,4 @@
-from applications.services import get_end_user_document, get_consignee_document, get_ultimate_end_users
+from applications.services import get_party_document, get_ultimate_end_users
 from conf.constants import APPLICANT_EDITING
 
 
@@ -28,18 +28,10 @@ def get_edit_type(application):
     return is_editing, edit_type
 
 
-def get_end_user_document_section(request, application):
-    if application.get("end_user"):
-        end_user_document, _ = get_end_user_document(request, application["id"])
-        return end_user_document.get("document")
-    else:
-        return None
-
-
-def get_consignee_document_section(request, application):
-    if application.get("consignee"):
-        consignee_document, _ = get_consignee_document(request, application["id"])
-        return consignee_document.get("document")
+def get_party_document_section(request, application, party_type):
+    if application.get(party_type):
+        party_document, _ = get_party_document(request, application["id"], application[party_type]["id"])
+        return party_document.get("document")
     else:
         return None
 

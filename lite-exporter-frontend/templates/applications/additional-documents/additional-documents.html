@@ -45,7 +45,7 @@
 						{% endif %}
 					</td>
 					<td class="govuk-table__cell govuk-table__cell--numeric">
-						{% if additional_document.safe == True %}
+						{% if editable %}
 							<a href="{% url 'applications:delete_additional_document' application.id additional_document.id %}" id="document_delete" class='govuk-link govuk-link--no-visited-state lite-link--icon'>
 								{% svg 'close' %}
 								Delete

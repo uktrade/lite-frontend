@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
 from applications.forms.parties import party_create_new_or_copy_existing_form
-from applications.services import get_application, get_existing_parties
+from applications.services import get_application, get_existing_parties, copy_party
 from lite_content.lite_exporter_frontend.applications import AddPartyForm, CopyExistingPartyPage
 from lite_forms.generators import form_page, error_page
 from lite_forms.views import MultiFormView
@@ -37,25 +37,14 @@ class AddParty(TemplateView):
 
 class SetParty(MultiFormView):
     def __init__(
-        self,
-        url,
-        form,
-        name,
-        back_url,
-        strings,
-        multiple_allowed,
-        validate_action,
-        post_action,
-        copy_existing=False,
-        **kwargs,
+        self, url, form, party_type, back_url, strings, validate_action, post_action, copy_existing=False, **kwargs,
     ):
         super().__init__(**kwargs)
         self.url = url
-        self.name = name
+        self.party_type = party_type
         self.back_url = back_url
         self.strings = strings
         self.form = form
-        self.multiple_allowed = multiple_allowed
         self.copy_existing = copy_existing
         self.action = None
         self.post_action = post_action
@@ -65,18 +54,12 @@ class SetParty(MultiFormView):
         self.object_pk = kwargs["pk"]
         application = get_application(request, self.object_pk)
         self.forms = self.form(application, self.strings, self.back_url)
-        if not self.multiple_allowed and self.copy_existing:
-            if application[self.name]:
-                self.data = application[self.name]
-                self.data["country"] = self.data["country"]["id"]
+        self.data = {"type": self.party_type}
 
     def get_success_url(self):
-        if self.multiple_allowed:
-            return reverse_lazy(
-                self.url, kwargs={"pk": self.object_pk, "obj_pk": self.get_validated_data()[self.name]["id"]}
-            )
-        else:
-            return reverse_lazy(self.url, kwargs={"pk": self.object_pk})
+        return reverse_lazy(
+            self.url, kwargs={"pk": self.object_pk, "obj_pk": self.get_validated_data()[self.party_type]["id"]}
+        )
 
     def on_submission(self, request, **kwargs):
         if int(self.request.POST.get("form_pk")) == len(self.forms.forms) - 1:
@@ -86,31 +69,29 @@ class SetParty(MultiFormView):
 
 
 class DeleteParty(TemplateView):
-    def __init__(self, url, action, error, multiple_allowed, **kwargs):
+    def __init__(self, url, action, error, **kwargs):
         super().__init__(**kwargs)
         self.url = url
         self.action = action
         self.error = error
-        self.multiple_allowed = multiple_allowed
 
     def get(self, request, **kwargs):
         application_id = str(kwargs["pk"])
-        if self.multiple_allowed:
-            status_code = self.action(request, application_id, str(kwargs["obj_pk"]))
-        else:
-            status_code = self.action(request, application_id)
+        status_code = self.action(request, application_id, str(kwargs["obj_pk"]))
 
-        if status_code != HTTPStatus.NO_CONTENT:
+        if status_code != HTTPStatus.OK:
             return error_page(request, self.error)
 
         return redirect(reverse_lazy(self.url, kwargs={"pk": application_id}))
 
 
-class ExistingPartiesList(TemplateView):
-    def __init__(self, destination_url, back_url, **kwargs):
+class CopyParties(TemplateView):
+    def __init__(self, new_party_type, **kwargs):
         super().__init__(**kwargs)
-        self.destination_url = destination_url
-        self.back_url = back_url
+        self.destination_url = f"applications:set_{new_party_type}"
+        self.copy_url = f"applications:copy_{new_party_type}"
+        self.back_url = f"applications:add_{new_party_type}"
+        self.new_party_type = new_party_type
 
     def get(self, request, **kwargs):
         """
@@ -131,6 +112,16 @@ class ExistingPartiesList(TemplateView):
             "filters": ["Name", "Address", "Country"],
             "draft_id": application_id,
             "data": parties,
-            "url": self.destination_url,
+            "url": self.copy_url,
+            "new_party_type": self.new_party_type,
         }
         return render(request, "applications/parties/preexisting.html", context)
+
+
+class CopyAndSetParty(SetParty):
+    def init(self, request, **kwargs):
+        self.object_pk = kwargs["pk"]
+        application = get_application(request, self.object_pk)
+        self.forms = self.form(application, self.strings, self.back_url)
+        self.data = copy_party(request=request, pk=self.object_pk, party_pk=kwargs["obj_pk"])
+        self.data["type"] = self.party_type

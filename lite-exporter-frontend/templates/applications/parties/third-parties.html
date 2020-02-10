@@ -49,10 +49,12 @@
 							<a href="{% url 'applications:third_party_download_document' application.id third_party.id %}" id="document_download" class='govuk-link govuk-link--no-visited-state'>
 								{% lcs 'generic.Document.DOWNLOAD' %}
 							</a>
+							{%  if application.status.value == "draft" %}
 							<br/>
 							<a href="{% url 'applications:third_party_delete_document' application.id third_party.id %}" id="document_delete" class='govuk-link govuk-link--no-visited-state'>
 								{% lcs 'generic.Document.DELETE' %}
 							</a>
+							{% endif %}
 						{% else %}
 							{% lcs 'generic.Document.PROCESSING' %}
 						{% endif %}

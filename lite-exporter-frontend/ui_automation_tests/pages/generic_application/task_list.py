@@ -20,8 +20,8 @@ class GenericApplicationTaskListPage(BasePage):
     LINK_COUNTRIES_MATRIX_ID = "link-countries-matrix"
     REMOVE_GOOD_LINK = "a[href*='good-on-application']"
     REMOVE_GOODS_TYPE_LINK = "a[href*='goods-types/remove']"
-    REMOVE_END_USER_LINK = "a[href*='end-user/remove']"
-    REMOVE_CONSIGNEE_LINK = "a[href*='consignee/remove']"
+    REMOVE_END_USER_LINK = "a[href*='remove']"
+    REMOVE_CONSIGNEE_LINK = "a[href*='remove']"
     REMOVE_THIRD_PARTY_LINK = "a[href*='remove']"
     REMOVE_ADDITIONAL_DOCUMENT_LINK = "document_delete"  # ID
     LITE_TASK_LIST_ITEMS = ".lite-task-list__items"

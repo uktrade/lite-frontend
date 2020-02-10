@@ -5,8 +5,7 @@ from applications.helpers.get_application_edit_type import get_application_edit_
 from applications.helpers.task_list_sections import (
     get_reference_number_description,
     get_edit_type,
-    get_end_user_document_section,
-    get_consignee_document_section,
+    get_party_document_section,
     get_ultimate_end_users_section,
 )
 from applications.helpers.validate_status import check_all_parties_have_a_document
@@ -69,9 +68,10 @@ def get_standard_task_list(request, application, template, reference_number_desc
     sites, _ = get_sites_on_draft(request, application_id)
     external_locations, _ = get_external_locations_on_draft(request, application_id)
     additional_documents, _ = get_additional_documents(request, application_id)
-    end_user_document = get_end_user_document_section(request, application)
-    consignee_document = get_consignee_document_section(request, application)
+    end_user_document = get_party_document_section(request, application, "end_user")
+    consignee_document = get_party_document_section(request, application, "consignee")
     ultimate_end_users, _ = get_ultimate_end_users_section(request, application)
+
     third_parties = get_third_parties(request, application_id)
     goods = get_application_goods(request, application_id)
 

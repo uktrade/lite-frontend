@@ -47,19 +47,9 @@
 							{{ party.website|linkify }}
 						</td>
 						<td class="govuk-table__cell lite-!-text-align-right">
-							<form action="{% url url draft_id %}" method="post">
+							<form action="{% url url draft_id party.id %}" method="get">
 								{% csrf_token %}
 								<input type="hidden" name="form_pk" value="0">
-								<input type="hidden" name="name" value="{{ party.name }}">
-								<input type="hidden" name="sub_type" value="{{ party.sub_type.key }}">
-								<input type="hidden" name="website" value="{{ party.website }}">
-								<input type="hidden" name="address" value="{{ party.address }}">
-								<input type="hidden" name="country" value="{{ party.country.id }}">
-								{% if party.copy_of %}
-									<input type="hidden" name="copy_of" value="{{ party.copy_of }}">
-								{% else %}
-									<input type="hidden" name="copy_of" value="{{ party.id }}">
-								{% endif %}
 								<button type="submit" class="lite-button--link" id="copy">
 									{% lcs 'applications.CopyExistingPartyPage.ADD_BUTTON' %}
 								</button>

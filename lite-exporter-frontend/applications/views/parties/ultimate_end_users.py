@@ -6,11 +6,11 @@ from applications.helpers.validate_status import check_all_parties_have_a_docume
 from applications.services import (
     get_application,
     get_ultimate_end_users,
-    post_ultimate_end_user,
-    delete_ultimate_end_user,
-    validate_ultimate_end_user,
+    post_party,
+    delete_party,
+    validate_party,
 )
-from applications.views.parties.base import AddParty, ExistingPartiesList, SetParty, DeleteParty
+from applications.views.parties.base import AddParty, CopyParties, SetParty, DeleteParty, CopyAndSetParty
 from lite_content.lite_exporter_frontend.applications import UltimateEndUserForm, UltimateEndUserPage
 
 
@@ -31,7 +31,7 @@ class UltimateEndUsers(TemplateView):
 class AddUltimateEndUser(AddParty):
     def __init__(self):
         super().__init__(
-            new_url="applications:set_ultimate_end_user", copy_url="applications:copy_ultimate_end_user",
+            new_url="applications:set_ultimate_end_user", copy_url="applications:ultimate_end_users_copy",
         )
 
 
@@ -39,14 +39,13 @@ class SetUltimateEndUser(SetParty):
     def __init__(self):
         super().__init__(
             url="applications:ultimate_end_user_attach_document",
-            name="ultimate_end_user",
-            action=post_ultimate_end_user,
+            party_type="ultimate_end_user",
+            action=post_party,
             form=new_party_form_group,
             back_url="applications:add_ultimate_end_user",
             strings=UltimateEndUserForm,
-            multiple_allowed=True,
-            post_action=post_ultimate_end_user,
-            validate_action=validate_ultimate_end_user,
+            post_action=post_party,
+            validate_action=validate_party,
         )
 
 
@@ -54,15 +53,25 @@ class RemoveUltimateEndUser(DeleteParty):
     def __init__(self, **kwargs):
         super().__init__(
             url="applications:ultimate_end_users",
-            action=delete_ultimate_end_user,
+            action=delete_party,
             error=UltimateEndUserPage.DELETE_ERROR,
-            multiple_allowed=True,
             **kwargs,
         )
 
 
-class ExistingUltimateEndUser(ExistingPartiesList):
+class CopyUltimateEndUsers(CopyParties):
+    def __init__(self):
+        super().__init__(new_party_type="ultimate_end_user")
+
+
+class CopyUltimateEndUser(CopyAndSetParty):
     def __init__(self):
         super().__init__(
-            destination_url="applications:set_ultimate_end_user", back_url="applications:add_ultimate_end_user"
+            url="applications:ultimate_end_user_attach_document",
+            party_type="ultimate_end_user",
+            form=new_party_form_group,
+            back_url="applications:ultimate_end_users_copy",
+            strings=UltimateEndUserForm,
+            validate_action=validate_party,
+            post_action=post_party,
         )

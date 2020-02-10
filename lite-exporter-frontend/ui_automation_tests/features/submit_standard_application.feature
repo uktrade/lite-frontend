@@ -92,6 +92,7 @@ Feature: I want to indicate the standard licence I want
     When I filter for my previously created end user
     Then I can select the existing party in the table
     When I click copy party
+    And I click continue
     Then I see the party name is already filled in
     When I click continue
     Then I see the party website is already filled in

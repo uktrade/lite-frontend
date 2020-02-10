@@ -1,17 +1,7 @@
-from lite_content.lite_exporter_frontend import strings  # noqa
 from applications.services import (
-    post_ultimate_end_user_document,
-    post_end_user_document,
-    get_ultimate_end_user_document,
-    get_end_user_document,
-    delete_ultimate_end_user_document,
-    delete_end_user_document,
-    post_consignee_document,
-    get_consignee_document,
-    delete_consignee_document,
-    post_third_party_document,
-    get_third_party_document,
-    delete_third_party_document,
+    post_party_document,
+    get_party_document,
+    delete_party_document,
     post_additional_document,
     get_additional_document,
     delete_additional_party_document,
@@ -20,14 +10,15 @@ from applications.services import (
     get_goods_type_document,
     get_generated_document,
 )
+from lite_content.lite_exporter_frontend import strings  # noqa
 
 
 def document_switch(path):
     if "ultimate-end-user" in path:
         return {
-            "attach": post_ultimate_end_user_document,
-            "download": get_ultimate_end_user_document,
-            "delete": delete_ultimate_end_user_document,
+            "attach": post_party_document,
+            "download": get_party_document,
+            "delete": delete_party_document,
             "homepage": "applications:ultimate_end_users",
             "has_description": False,
             "attach_doc_description_field_string": strings.UltimateEndUser.Documents.AttachDocuments.DESCRIPTION_FIELD_TITLE,
@@ -37,9 +28,9 @@ def document_switch(path):
         }
     elif "end-user" in path:
         return {
-            "attach": post_end_user_document,
-            "download": get_end_user_document,
-            "delete": delete_end_user_document,
+            "attach": post_party_document,
+            "download": get_party_document,
+            "delete": delete_party_document,
             "homepage": "applications:end_user",
             "has_description": False,
             "attach_doc_description_field_string": strings.EndUser.Documents.AttachDocuments.DESCRIPTION_FIELD_TITLE,
@@ -49,9 +40,9 @@ def document_switch(path):
         }
     elif "consignee" in path:
         return {
-            "attach": post_consignee_document,
-            "download": get_consignee_document,
-            "delete": delete_consignee_document,
+            "attach": post_party_document,
+            "download": get_party_document,
+            "delete": delete_party_document,
             "homepage": "applications:consignee",
             "has_description": False,
             "attach_doc_description_field_string": strings.Consignee.Documents.AttachDocuments.DESCRIPTION_FIELD_TITLE,
@@ -61,9 +52,9 @@ def document_switch(path):
         }
     elif "third-parties" in path:
         return {
-            "attach": post_third_party_document,
-            "download": get_third_party_document,
-            "delete": delete_third_party_document,
+            "attach": post_party_document,
+            "download": get_party_document,
+            "delete": delete_party_document,
             "homepage": "applications:third_parties",
             "has_description": False,
             "attach_doc_description_field_string": strings.ThirdParties.Documents.AttachDocuments.DESCRIPTION_FIELD_TITLE,

@@ -31,7 +31,6 @@ def third_party_forms(application, strings, back_url):
 
     options = [Option(key, value) for key, value in form_options.items()]
     options.append(Option("other", PartyForm.Options.OTHER, show_or=True))
-
     return FormGroup(
         [
             _third_party_role_form(application, strings.ROLE_TITLE, strings.BUTTON, options, back_url),
