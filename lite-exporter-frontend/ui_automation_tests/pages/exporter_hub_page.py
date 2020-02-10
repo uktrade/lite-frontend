@@ -40,7 +40,7 @@ class ExporterHubPage(BasePage):
         if "logout" in self.driver.current_url:
             self.driver.find_element_by_xpath("//a[text()[contains(.,'Log In')]]").click()
 
-        if self.driver.find_element_by_link_text("Accept all cookies"):
+        if self.driver.find_elements_by_link_text("Accept all cookies"):
             self.driver.find_element_by_link_text("Accept all cookies").click()
 
         time.sleep(1)
