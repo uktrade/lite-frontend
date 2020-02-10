@@ -1,32 +1,23 @@
-from lite_content.lite_internal_frontend import strings
 from django.urls import reverse_lazy
-from lite_forms.components import TextInput, TextArea, Form, Button, MarkdownArea, HiddenField, BackLink
+
+from letter_templates.context_variables import get_sample_context_variables
+from lite_content.lite_internal_frontend import picklists
+from lite_forms.components import TextInput, TextArea, Form, Button, MarkdownArea, HiddenField, BackLink, HelpSection
 from lite_forms.helpers import conditional
 from lite_forms.styles import ButtonStyle
 
-from letter_templates.context_variables import get_sample_context_variables
 
-_name = TextInput(title="Name", name="name")
-
-_text = TextArea(title="Text", name="text", extras={"max_length": 5000,})
-
-_paragraph = MarkdownArea(
-    title="Paragraph Text", name="text", variables=get_sample_context_variables(), extras={"max_length": 5000,}
-)
-
-
-def add_picklist_item_form(request):
-    picklist_type = request.GET.get("type")
-
+def add_picklist_item_form(picklist_type):
     return Form(
-        title=getattr(strings.Picklist.Create, picklist_type.upper()),
+        title=getattr(picklists.NewPicklistForm, picklist_type.upper()),
         questions=[
-            _name,
+            TextInput(title=picklists.NewPicklistForm.Name.TITLE, name="name"),
             HiddenField("type", picklist_type),
-            conditional(picklist_type == "letter_paragraph", _paragraph, _text),
+            TextArea(title=picklists.NewPicklistForm.Text.TITLE, name="text", extras={"max_length": 5000,}),
         ],
-        back_link=BackLink("Back to picklists", reverse_lazy("picklists:picklists") + f"?type={picklist_type}"),
-        default_button_name="Save",
+        back_link=BackLink(
+            picklists.NewPicklistForm.BACK_LINK, reverse_lazy("picklists:picklists") + f"?type={picklist_type}"
+        ),
     )
 
 
@@ -49,9 +40,9 @@ def edit_picklist_item_form(picklist_item):
     return Form(
         title="Edit " + picklist_item["name"],
         questions=[
-            _name,
-            conditional(picklist_item["type"]["key"] == "letter_paragraph", _paragraph, _text),
+            TextInput(title="Name", name="name"),
             HiddenField("type", picklist_item["type"]["key"]),
+            TextArea(title="Text", name="text", extras={"max_length": 5000,}),
         ],
         back_link=BackLink(
             "Back to " + picklist_item["name"],
@@ -61,6 +52,40 @@ def edit_picklist_item_form(picklist_item):
             Button("Save", "submit", ButtonStyle.DEFAULT),
             conditional(picklist_item["status"]["key"] == "deactivated", activate_button, deactivate_button),
         ],
+    )
+
+
+def add_letter_paragraph_form(picklist_type):
+    return Form(
+        title=picklists.NewPicklistForm.LETTER_PARAGRAPH,
+        questions=[
+            HiddenField("type", picklist_type),
+            TextInput(title=picklists.NewPicklistForm.Name.TITLE, name="name", classes=["govuk-!-width-full"]),
+            MarkdownArea(
+                title=picklists.NewPicklistForm.Text.TITLE,
+                name="text",
+                variables=get_sample_context_variables(),
+                extras={"max_length": 5000,},
+            ),
+        ],
+        helpers=[HelpSection(picklists.NewPicklistForm.HELP, None, "teams/markdown-help.html")],
+    )
+
+
+def edit_letter_paragraph_form(picklist_item):
+    return Form(
+        title=picklists.NewPicklistForm.EDIT_PREFIX + " " + picklist_item["name"],
+        questions=[
+            HiddenField("type", picklist_item["type"]["key"]),
+            TextInput(title=picklists.NewPicklistForm.Name.TITLE, name="name", classes=["govuk-!-width-full"]),
+            MarkdownArea(
+                title=picklists.NewPicklistForm.Text.TITLE,
+                name="text",
+                variables=get_sample_context_variables(),
+                extras={"max_length": 5000,},
+            ),
+        ],
+        helpers=[HelpSection(picklists.NewPicklistForm.HELP, None, "teams/markdown-help.html")],
     )
 
 

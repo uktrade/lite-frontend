@@ -3,18 +3,18 @@
 {% block back_link %}{% endblock %}
 
 {% block body %}
-	<h2 class="govuk-heading-l">{{ team.name }}</h2>
+	<h1 class="govuk-heading-l">{{ team.name }}</h1>
 
-	<div style="display: grid; grid-template-columns: 1fr auto; grid-gap: 30px;">
-		<div class="lite-tabs--fade">
-			<div class="lite-tabs">
-				<a href="{% url 'teams:team' %}" class="lite-tabs__tab lite-tabs__tab--selected">Users</a>
-				<a href="{% url 'picklists:picklists' %}" class="lite-tabs__tab">Picklists</a>
-			</div>
+	<div class="lite-tabs__container">
+		<div class="lite-tabs">
+			<a href="{% url 'teams:team' %}" class="lite-tabs__tab lite-tabs__tab--selected">Users</a>
+			<a href="{% url 'picklists:picklists' %}" class="lite-tabs__tab">Picklists</a>
 		</div>
-		<a id="button-invite-user" href="{% url 'users:add' %}" class="govuk-button" draggable="false" role="button">
-			{% lcs 'Users.INVITE' %}
-		</a>
+		<div class="lite-tabs__controls">
+			<a id="button-invite-user" href="{% url 'users:add' %}" class="govuk-button" draggable="false" role="button">
+				{% lcs 'Users.INVITE' %}
+			</a>
+		</div>
 	</div>
 
 	{% if users %}

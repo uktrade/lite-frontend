@@ -19,5 +19,5 @@ def picklist_paragraph_errors(request):
         # Template is valid! :)
     except (TemplateSyntaxError, InvalidVarException) as err:
         # Template is invalid! :(
-        return {"text": err.args}
+        return {"errors": {"text": err.args}}
     return None

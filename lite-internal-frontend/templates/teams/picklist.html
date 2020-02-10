@@ -3,67 +3,65 @@
 {% block back_link %}{% endblock %}
 
 {% block body %}
+	<h1 class="govuk-heading-l">{{ team.name }}</h1>
 
-<h2 class="govuk-heading-l">{{ team.name }}</h2>
-
-<div style="display: grid; grid-template-columns: 1fr auto; grid-gap: 30px;">
-	<div class="lite-tabs--fade">
+	<div class="lite-tabs__container">
 		<div class="lite-tabs">
 			<a href="{% url 'teams:team' %}" class="lite-tabs__tab">Users</a>
 			<a href="{% url 'picklists:picklists' %}" class="lite-tabs__tab lite-tabs__tab--selected">Picklists</a>
 		</div>
+		<div class="lite-tabs__controls">
+			<a href="{% url 'picklists:add' %}?type={{ type }}" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+				Add an item
+			</a>
+		</div>
 	</div>
-	<a href="{% url 'picklists:add' %}?type={{ type }}" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
-		Add an item
-	</a>
-</div>
 
-<div class="govuk-grid-row">
-	<div class="govuk-grid-column-one-quarter" style="position: -webkit-sticky; position: sticky; top: 30px;">
-		<ul class="lite-subnav">
-			<li class="lite-subnav__link {{ 'proviso'|add_subnav_selected_class:request.get_full_path }}">
-				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=proviso">Provisos</a>
-			</li>
-			<li class="lite-subnav__link {{ 'ecju_query'|add_subnav_selected_class:request.get_full_path }}">
-				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=ecju_query">ECJU Queries</a>
-			</li>
-			<li class="lite-subnav__link {{ 'letter_paragraph'|add_subnav_selected_class:request.get_full_path }}">
-				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=letter_paragraph">Letter Paragraphs</a>
-			</li>
-			<li class="lite-subnav__link {{ 'report_summary'|add_subnav_selected_class:request.get_full_path }}">
-				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=report_summary">Report Summaries</a>
-			</li>
-			<li class="lite-subnav__link {{ 'standard_advice'|add_subnav_selected_class:request.get_full_path }}">
-				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=standard_advice">Standard Advice</a>
-			</li>
-			<li class="lite-subnav__link {{ 'footnotes'|add_subnav_selected_class:request.get_full_path }}">
-				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=footnotes">Footnotes</a>
-			</li>
-		</ul>
-	</div>
-	<div class="govuk-grid-column-three-quarters">
-		<div style="margin: auto; max-width: 700px;">
-			{% if active_picklist_items or deactivated_picklist_items %}
-				<div>
-					{% for picklist_item in active_picklist_items %}
-						{% include 'includes/picklist-item.html' %}
-					{% endfor %}
-				</div>
-				{% if deactivated_picklist_items %}
+	<div class="govuk-grid-row">
+		<div class="govuk-grid-column-one-quarter">
+			<ul class="lite-subnav">
+				<li class="lite-subnav__link {{ 'proviso'|add_subnav_selected_class:request.get_full_path }}">
+					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=proviso">Provisos</a>
+				</li>
+				<li class="lite-subnav__link {{ 'ecju_query'|add_subnav_selected_class:request.get_full_path }}">
+					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=ecju_query">ECJU Queries</a>
+				</li>
+				<li class="lite-subnav__link {{ 'letter_paragraph'|add_subnav_selected_class:request.get_full_path }}">
+					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=letter_paragraph">Letter Paragraphs</a>
+				</li>
+				<li class="lite-subnav__link {{ 'report_summary'|add_subnav_selected_class:request.get_full_path }}">
+					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=report_summary">Report Summaries</a>
+				</li>
+				<li class="lite-subnav__link {{ 'standard_advice'|add_subnav_selected_class:request.get_full_path }}">
+					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=standard_advice">Standard Advice</a>
+				</li>
+				<li class="lite-subnav__link {{ 'footnotes'|add_subnav_selected_class:request.get_full_path }}">
+					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=footnotes">Footnotes</a>
+				</li>
+			</ul>
+		</div>
+		<div class="govuk-grid-column-three-quarters">
+			<div>
+				{% if active_picklist_items or deactivated_picklist_items %}
 					<div>
-						<h4 class="govuk-heading-s" style="{% if active_picklist_items %}margin-top: 60px;{% endif %} margin-bottom: 15px;">Deactivated</h4>
-						<hr class="lite-horizontal-separator" style="margin-top: 0;">
-						{% for picklist_item in deactivated_picklist_items %}
+						{% for picklist_item in active_picklist_items %}
 							{% include 'includes/picklist-item.html' %}
 						{% endfor %}
 					</div>
+					{% if deactivated_picklist_items %}
+						<div>
+							<h4 class="govuk-heading-s" style="{% if active_picklist_items %}margin-top: 60px;{% endif %} margin-bottom: 15px;">Deactivated</h4>
+							<hr class="lite-horizontal-separator" style="margin-top: 0;">
+							{% for picklist_item in deactivated_picklist_items %}
+								{% include 'includes/picklist-item.html' %}
+							{% endfor %}
+						</div>
+					{% endif %}
+				{% else %}
+					<p class="govuk-caption-l" style="margin-top: 10px;"></p>
+					{% include "includes/information-text.html" with text="There aren't any items in this picklist" %}
 				{% endif %}
-			{% else %}
-				<p class="govuk-caption-l" style="margin-top: 10px;"></p>
-				{% include "includes/information-text.html" with text="There aren't any items in this picklist" %}
-			{% endif %}
+			</div>
 		</div>
 	</div>
-</div>
-
 {% endblock %}

@@ -87,4 +87,4 @@ def get_sample_context_variables():
 
 
 def get_key_value_pair(data):
-    return [{"key": item, "representation": "{" + item + "}}"} for item in data]
+    return [{"key": item, "representation": "{ " + item + " }}"} for item in data]

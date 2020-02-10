@@ -1,0 +1,205 @@
+{% load static %}
+
+<a id="link-help-formatting" class="app-markdown__help-link" href="#">
+	Help with formatting
+</a>
+<a id="link-help-variables" class="app-markdown__help-link" href="#">
+	What variables can I use to personalise my text?
+</a>
+
+<br>
+
+<h3 class="govuk-heading-m">Personalisation</h3>
+
+<p class="govuk-body govuk-!-margin-bottom-2">Use double brackets to personalise your text:</p>
+
+<p class="govuk-inset-text govuk-inset-text--slim govuk-!-margin-top-0">
+	{% verbatim %}
+		Hello <span class="lite-highlight lite-highlight--blue">{{ applicant.name }}</span>, your reference is <span class="lite-highlight lite-highlight--blue">{{ refence_number }}</span>
+	{% endverbatim %}</p>
+
+<p class="govuk-body govuk-!-margin-bottom-2">Use magic brackets to have conditional content:</p>
+
+<p class="govuk-inset-text govuk-inset-text--slim govuk-!-margin-top-0">
+	{% verbatim %}
+		<span class="lite-highlight lite-highlight--purple">{% if case.is_finalised %}</span><br>
+		<span class="govuk-!-margin-left-4">Your application has been approved...</span><br>
+		<span class="lite-highlight lite-highlight--purple">{% endif %}</span>
+	{% endverbatim %}
+</p>
+
+<p class="govuk-body govuk-!-margin-bottom-2">You can also use magic brackets to have looping content:</p>
+
+<p class="govuk-inset-text govuk-inset-text--slim govuk-!-margin-top-0">
+	{% verbatim %}
+	<span class="lite-highlight lite-highlight--purple">{% for flag in case.flags %}</span><br>
+	<span class="lite-highlight lite-highlight--blue govuk-!-margin-left-4">{{ flag.name }}</span><br>
+	<span class="lite-highlight lite-highlight--purple">{% endfor %}</span>
+	{% endverbatim %}
+</p>
+
+<div id="modal-help-formatting" class="govuk-visually-hidden">
+	<p class="govuk-body">To add a title, use a hash:</p>
+
+	<p class="govuk-inset-text govuk-inset-text--slim govuk-!-margin-top-0"># This is a title</p>
+
+	<p class="govuk-body">To make bullet points, use asterisks:</p>
+
+	<p class="govuk-inset-text govuk-inset-text--slim govuk-!-margin-top-0">
+		* point 1<br>
+		* point 2<br>
+		* point 3
+	</p>
+
+	<p class="govuk-body">To add a horizontal line, use three dashes:</p>
+
+	<p class="govuk-inset-text govuk-inset-text--slim govuk-!-margin-top-0">
+		First paragraph
+		<br>
+		<span style="letter-spacing: 2px;">---</span>
+		<br>
+		Second paragraph
+	</p>
+</div>
+
+<div id="modal-help-variables" class="govuk-visually-hidden">
+	<div class="app-markdown__help-variables">
+		<div class="lite-tabs__container">
+			<div id="tabs" class="lite-tabs">
+				<a href="#" onclick="changeTab(this, 1)" class="lite-tabs__tab lite-tabs__tab--selected">Countries</a>
+				<a href="#" onclick="changeTab(this, 2)" class="lite-tabs__tab">Flags</a>
+				<a href="#" onclick="changeTab(this, 3)" class="lite-tabs__tab">Licence types</a>
+				<a href="#" onclick="changeTab(this, 4)" class="lite-tabs__tab">Refusal reasons</a>
+			</div>
+		</div>
+		<div id="tab-contents">
+			<div>
+				<div class="app-markdown__help-example">
+					<span class="govuk-hint">Print "This is conditional text" if the country is on that case</span>
+					{% verbatim %}
+					<span class="lite-highlight lite-highlight--purple">{% if <span class="govuk-!-font-weight-bold">key</span> in case.countries %}</span><br>
+					<span class="govuk-!-margin-left-4">This is conditional text</span><br>
+					<span class="lite-highlight lite-highlight--purple">{% endif %}</span>
+					{% endverbatim %}
+				</div>
+				<table class="govuk-table">
+					<thead class="govuk-table__head">
+						<tr class="govuk-table__row">
+							<th scope="col" class="govuk-table__header">Country</th>
+							<th scope="col" class="govuk-table__header">Key</th>
+						</tr>
+					</thead>
+					<tbody class="govuk-table__body">
+						{% for country in countries %}
+						<tr class="govuk-table__row">
+							<td class="govuk-table__cell">{{ country.name }}</td>
+							<td scope="row" class="govuk-table__cell">{{ country.id }}</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+
+			<div>
+				<div class="app-markdown__help-example">
+					<span class="govuk-hint">Print "This is conditional text" if the flag is on that case</span>
+					{% verbatim %}
+					<span class="lite-highlight lite-highlight--purple">{% if <span class="govuk-!-font-weight-bold">key</span> in case.flags %}</span><br>
+					<span class="govuk-!-margin-left-4">This is conditional text</span><br>
+					<span class="lite-highlight lite-highlight--purple">{% endif %}</span>
+					{% endverbatim %}
+				</div>
+				<table class="govuk-table">
+					<thead class="govuk-table__head">
+						<tr class="govuk-table__row">
+							<th scope="col" class="govuk-table__header">Key</th>
+						</tr>
+					</thead>
+					<tbody class="govuk-table__body">
+						{% for flag in flags %}
+						<tr class="govuk-table__row">
+							<td class="govuk-table__cell">{{ flag.name }}</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+
+			<div>
+				<div class="app-markdown__help-example">
+					<span class="govuk-hint">Print "This is conditional text" depending on the type of case</span>
+					{% verbatim %}
+					<span class="lite-highlight lite-highlight--purple">{% if case.type == <span class="govuk-!-font-weight-bold">key</span> %}</span><br>
+					<span class="govuk-!-margin-left-4">This is conditional text</span><br>
+					<span class="lite-highlight lite-highlight--purple">{% endif %}</span>
+					{% endverbatim %}
+				</div>
+				<table class="govuk-table">
+					<thead class="govuk-table__head">
+						<tr class="govuk-table__row">
+							<th scope="col" class="govuk-table__header">Licence type</th>
+							<th scope="col" class="govuk-table__header">Key</th>
+						</tr>
+					</thead>
+					<tbody class="govuk-table__body">
+						<tr class="govuk-table__row">
+							<td class="govuk-table__cell">Standard licence</td>
+							<td scope="row" class="govuk-table__cell">standard_licence</td>
+						</tr>
+						<tr class="govuk-table__row">
+							<td class="govuk-table__cell">Open licence</td>
+							<td scope="row" class="govuk-table__cell">open_licence</td>
+						</tr>
+						<tr class="govuk-table__row">
+							<td class="govuk-table__cell">HMRC query</td>
+							<td scope="row" class="govuk-table__cell">hmrc_query</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div>
+				<table class="govuk-table">
+					<thead class="govuk-table__head">
+						<tr class="govuk-table__row">
+							<th scope="col" class="govuk-table__header">Key</th>
+						</tr>
+					</thead>
+					<tbody class="govuk-table__body">
+						{% for reason in denial_reasons %}
+							<tr class="govuk-table__row">
+								<td class="govuk-table__cell">{{ reason.id }}</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script src="{% static 'javascripts/modal.js' %}"></script>
+<script type="text/javascript">
+	$("#tab-contents > div").hide();
+	$("#tab-contents > div:first-of-type").show();
+
+	function changeTab(element, index) {
+		$(".lite-tabs__tab--selected").removeClass("lite-tabs__tab--selected");
+		$(element).addClass("lite-tabs__tab--selected");
+		$("#tab-contents > div").hide();
+		$("#tab-contents > div:nth-of-type(" + index + ")").show();
+		return false;
+	}
+
+	$("#link-help-formatting").click(function() {
+		LITECommon.Modal.showModal('Help with formatting', $('#modal-help-formatting').html(), false, true, {
+			maxWidth: '500px'
+		});
+		return false;
+	});
+
+	$("#link-help-variables").click(function() {
+		changeTab($(".lite-tabs a:first-of-type"), 1)
+		LITECommon.Modal.showModal('', $('#modal-help-variables').html(), false, true);
+		return false;
+	});
+</script>

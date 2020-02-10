@@ -15,10 +15,13 @@ from conf.constants import (
 from users.services import get_gov_user
 
 
-def get_denial_reasons(request, convert_to_options=True):
+def get_denial_reasons(request, convert_to_options=True, group=True):
     data = get(request, DENIAL_REASONS_URL)
     status_code = data.status_code
     data = data.json()
+
+    if not group:
+        return data, status_code
 
     converted = {}
 

@@ -27,11 +27,11 @@ def post_picklist_item(request, json):
 
 
 def get_picklist_item(request, pk):
-    data = get(request, PICKLIST_URL + pk)
+    data = get(request, PICKLIST_URL + str(pk))
     return data.json()["picklist_item"]
 
 
 def put_picklist_item(request, pk, json):
-    data = put(request, PICKLIST_URL + pk + "/", json)
+    data = put(request, PICKLIST_URL + str(pk) + "/", json)
 
     return data.json(), data.status_code
