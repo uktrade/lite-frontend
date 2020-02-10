@@ -110,6 +110,7 @@ class Parties:
         DOWNLOAD = "Download"
         ATTACH = "Attach document"
 
+
 class EndUser:
     TITLE = "Select the type of end user"
 
