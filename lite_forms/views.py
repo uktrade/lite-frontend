@@ -51,6 +51,7 @@ class SingleFormView(FormView):
 
     form: Form = None
     redirect: bool = True
+    context: dict = {}
 
     def get_form(self):
         if not self.form:
@@ -65,7 +66,7 @@ class SingleFormView(FormView):
         override_return = self.init(request, **kwargs)  # noqa
         if override_return:
             return redirect(override_return)
-        return form_page(request, self.get_form(), data=self.get_data())
+        return form_page(request, self.get_form(), data=self.get_data(), extra_data=self.context)
 
     def post(self, request, **kwargs):
         self.init(request, **kwargs)
@@ -88,7 +89,9 @@ class SingleFormView(FormView):
             validated_data, _ = self.get_action()(request, data)  # noqa
 
         if "errors" in validated_data:
-            return form_page(request, self.get_form(), data=data, errors=validated_data.get("errors"))
+            return form_page(
+                request, self.get_form(), data=data, errors=validated_data.get("errors"), extra_data=self.context
+            )
 
         self._validated_data = validated_data
 

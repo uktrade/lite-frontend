@@ -1,48 +1,131 @@
-<div data-module="character-count" data-maxlength="{{ extras.max_length }}">
-	<textarea class="govuk-textarea js-character-count {% if error %}govuk-textarea--error{% endif %}"
-		  id="{{ name }}"
-		  name="{{ name }}"
-		  rows="10"
-		  cols="40"
-          {% if extras.max_length %}
-              maxlength="{{ extras.max_length }}"
-          {% endif %}>{{ value }}</textarea>
-	{% if extras.max_length %}
-		<span id="{{ name }}-info" class="govuk-hint govuk-character-count__message" aria-live="polite" style="margin-top: -10px;">
-			You can enter up to {{ extras.max_length }} characters
-		</span>
-	{% endif %}
-</div>
-
 {% load static %}
 
-{% block javascript %}
-<script type="text/javascript" src="{% static 'javascripts/tribute.min.js' %}"></script>
-<script type="text/javascript">
-    var data = {{ variables|safe }};
-    var id = '{{ name }}';
-    var trigger = "{";
-
-    var tribute = new Tribute({
-        values: data,
-        trigger: trigger,
-        fillAttr: 'representation',
-    });
-
-    tribute.attach(document.getElementById(id));
-</script>
-{% endblock %}
-
-<div class="govuk-label">
-	<h3>Adding custom variables</h3>
-	<p>Use double curly braces to add custom variables to your paragraph text:</p>
-	<div class="govuk-inset-text">Hello {% templatetag openvariable %} applicant.name {% templatetag closevariable %}, your case number is {% templatetag openvariable %} case.id {% templatetag closevariable %}</div>
-	<noscript>
-			You can add the;
-			<ul>
-				{% for variable in variables %}
-				<li>{{ variable.key | old_character:"." | new_character:" " | title }}, by writing <b>{% templatetag openvariable %} {{ variable.key }} {% templatetag closevariable %}</b></li>
-				{% endfor %}
-			</ul>
-	</noscript>
+<div class="app-markdown">
+	<div id="format-bar-{{ name }}" class="app-markdown__format-bar">
+		<button id="button-format-bold" type="button" name="button" class="app-markdown__format-bar__button">B<span class="govuk-visually-hidden">old</span></button>
+		<button id="button-format-italic" type="button" name="button" class="app-markdown__format-bar__button">I<span class="govuk-visually-hidden">talic</span></button>
+	</div>
+	<div data-module="character-count" data-maxlength="{{ extras.max_length }}">
+		<textarea class="app-markdown__textarea js-character-count {% if error %}govuk-textarea--error{% endif %}"
+			  id="{{ name }}"
+			  name="{{ name }}"
+			  rows="10"
+			  cols="40"
+	          {% if extras.max_length %}
+	              maxlength="{{ extras.max_length }}"
+	          {% endif %}>{{ value }}</textarea>
+		{% if extras.max_length %}
+			<span id="{{ name }}-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
+				You can enter up to {{ extras.max_length }} characters
+			</span>
+		{% endif %}
+	</div>
 </div>
+
+{% block javascript %}
+	<script type="text/javascript" src="{% static 'javascripts/highlight-tags.js' %}"></script>
+	<script type="text/javascript" src="{% static 'javascripts/tribute.min.js' %}"></script>
+	<script type="text/javascript">
+		var data = {{ variables|safe }};
+		var id = '{{ name }}';
+		var trigger = "{";
+
+		var tribute = new Tribute({
+			values: data,
+			trigger: trigger,
+			fillAttr: 'representation',
+		});
+
+		tribute.attach(document.getElementById(id));
+	</script>
+
+	<script type="text/javascript">
+		$('#{{ name }}').highlightWithinTextarea({
+			highlight: [
+				{
+					highlight: {% verbatim %}/{{(.*?)}}/g{% endverbatim %},
+					className: 'lite-highlight'
+				},
+				{
+					highlight: {% verbatim %}/{%(.*?)%}/g{% endverbatim %},
+					className: 'lite-highlight lite-highlight--purple'
+				}
+			]
+		});
+	</script>
+
+	<script type="text/javascript">
+		function getInputSelection(el) {
+		    var start = 0, end = 0, normalizedValue, range,
+		        textInputRange, len, endRange;
+
+		    if (typeof el.selectionStart == "number" && typeof el.selectionEnd == "number") {
+		        start = el.selectionStart;
+		        end = el.selectionEnd;
+		    } else {
+		        range = document.selection.createRange();
+
+		        if (range && range.parentElement() == el) {
+		            len = el.value.length;
+		            normalizedValue = el.value.replace(/\r\n/g, "\n");
+
+		            // Create a working TextRange that lives only in the input
+		            textInputRange = el.createTextRange();
+		            textInputRange.moveToBookmark(range.getBookmark());
+
+		            // Check if the start and end of the selection are at the very end
+		            // of the input, since moveStart/moveEnd doesn't return what we want
+		            // in those cases
+		            endRange = el.createTextRange();
+		            endRange.collapse(false);
+
+		            if (textInputRange.compareEndPoints("StartToEnd", endRange) > -1) {
+		                start = end = len;
+		            } else {
+		                start = -textInputRange.moveStart("character", -len);
+		                start += normalizedValue.slice(0, start).split("\n").length - 1;
+
+		                if (textInputRange.compareEndPoints("EndToEnd", endRange) > -1) {
+		                    end = len;
+		                } else {
+		                    end = -textInputRange.moveEnd("character", -len);
+		                    end += normalizedValue.slice(0, end).split("\n").length - 1;
+		                }
+		            }
+		        }
+		    }
+
+		    return {
+		        start: start,
+		        end: end
+		    };
+		}
+
+		function replaceSelectedText(modifier) {
+			var element = document.getElementById("{{ name }}")
+		    var selectedIndex = getInputSelection(element);
+			var selectedText = element.value.substring(selectedIndex.start, selectedIndex.end);
+			var val = element.value;
+
+			if (selectedText.startsWith(modifier) && selectedText.endsWith(modifier)) {
+				newText = selectedText.substring(modifier.length, selectedText.length - modifier.length);
+			    element.value = val.slice(0, selectedIndex.start) + newText + val.slice(selectedIndex.end);
+				element.setSelectionRange(selectedIndex.start, selectedIndex.end - (modifier.length * 2))
+			} else {
+				newText = modifier + selectedText + modifier;
+			    element.value = val.slice(0, selectedIndex.start) + newText + val.slice(selectedIndex.end);
+				element.setSelectionRange(selectedIndex.start, selectedIndex.end + (modifier.length * 2))
+			}
+		}
+
+		$("#button-format-bold").click(function() {
+			replaceSelectedText("*");
+		});
+
+		$("#button-format-italic").click(function() {
+			replaceSelectedText("_");
+		});
+
+		$('#{{ name }}').highlightWithinTextarea('update');
+	</script>
+{% endblock %}

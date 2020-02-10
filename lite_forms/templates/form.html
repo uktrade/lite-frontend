@@ -168,14 +168,19 @@
 
 {% endblock %}
 {% block one_third %}
-	{% for question in page.helpers %}
+	{% for helper in page.helpers %}
 		<aside class="lite-related-items" role="complementary">
 			<h2 class="govuk-heading-m" id="subsection-title">
-				{{ question.title }}
+				{{ helper.title }}
 			</h2>
-			<p class="govuk-body">
-				{{ question.description|safe }}
-			</p>
+			{% if helper.description %}
+				<p class="govuk-body">
+					{{ helper.description|safe }}
+				</p>
+			{% endif %}
+			{% if helper.includes %}
+				{% include helper.includes %}
+			{% endif %}
 		</aside>
 	{% endfor %}
 
