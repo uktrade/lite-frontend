@@ -104,6 +104,12 @@ class Drafts:
     TITLE = "Drafts"
 
 
+class Parties:
+    class Documents:
+        DELETE = "Delete"
+        DOWNLOAD = "Download"
+        ATTACH = "Attach document"
+
 class EndUser:
     TITLE = "Select the type of end user"
 
