@@ -12,13 +12,13 @@ LITECommon.Modal = {
 	showModal: function(title, content, hideCloseButton = false, backLinkText = true, options={}) {
 		// Generate modal container if it doesn't exist
 		if (!$("#lite-modal-background").length) {
-			let closeText = "<a id='lite-modal-close-link' class='govuk-link govuk-link--no-visited-state' href='#'>Close<span class='govuk-visually-hidden'> popover</span></a>";
+			let closeText = "<a id='lite-modal-close-link' class='lite-modal-close-link govuk-link govuk-link--no-visited-state' href='#'>Close<span class='govuk-visually-hidden'> popover</span></a>";
 
 			if (hideCloseButton) {
 				closeText = "";
 			}
 
-			$("body").append("<div id='lite-modal-background'><div id='lite-modal'><div id='modal-aria-description' class='govuk-visually-hidden'>Press escape to close this popover</div><div id='lite-modal-header'><a id='lite-modal-back-link' class='govuk-link' href='#'>Back</a>" + closeText + "</div><div id='lite-modal__contents'></div></div></div>")
+			$("body").append("<div class='lite-modal-background' id='lite-modal-background'><div class='lite-modal' id='lite-modal'><div id='modal-aria-description' class='govuk-visually-hidden'>Press escape to close this popover</div><div class='lite-modal-header' id='lite-modal-header'><a class='lite-modal-back-link' id='lite-modal-back-link' class='govuk-link' href='#'>Back</a>" + closeText + "</div><div class='lite-modal__contents' id='lite-modal__contents'></div></div></div>")
 
 			// Bind
 			this.modalBackground = $("#lite-modal-background");
