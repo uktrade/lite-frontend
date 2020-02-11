@@ -280,6 +280,16 @@ def username(user: dict):
 
 
 @register.filter()
+def get_party_type(party):
+    return {
+        "end_user": "End User",
+        "third_party": "Third Party",
+        "ultimate_end_user": "Ultimate End User",
+        "consignee": "Consignee",
+    }[party["type"]]
+
+
+@register.filter()
 def display_grading(text: str):
     value = text.split("_")
     if len(value):
