@@ -169,3 +169,4 @@ def apply_for_exhibition_clearance(driver, api_client_config, context):
     lite_client.applications.submit_exhibition_application(draft_id)
     save_application_data_to_context(lite_client, context)
     context.reference_code = lite_client.context["reference_code"]
+    context.case_id = lite_client.context["case_id"]
