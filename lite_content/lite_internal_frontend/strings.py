@@ -36,6 +36,7 @@ EDIT_CASE_FLAGS = "Edit case flags"
 # Case
 CASE_GOODS = "Products"
 CASE_ENTITIES_NONE = "No inactive case entities"
+CASE_ENTITIES_ACTIVITY = "Activity"
 CASE_PARTIES_LICENSEE = "Licensee"
 
 CASE_INFO_TYPE = "Type"
