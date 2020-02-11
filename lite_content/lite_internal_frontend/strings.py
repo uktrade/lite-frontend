@@ -36,6 +36,8 @@ EDIT_CASE_FLAGS = "Edit case flags"
 # Case
 CASE_GOODS = "Products"
 CASE_ENTITIES_INVOLVED = "Entities involved"
+CASE_ENTITIES_INACTIVE = "Entities deleted by exporter"
+CASE_ENTITIES_NONE = "No inactive case entities"
 CASE_ENTITIES_ACTIVITY = "Activity"
 CASE_PARTIES_LICENSEE = "Licensee"
 
@@ -70,6 +72,8 @@ SUPPORTING_DOCUMENTATION_NAME = "Name"
 SUPPORTING_DOCUMENTATION_DESCRIPTION = "Description"
 SUPPORTING_DOCUMENTATION_DOCUMENT = "Document"
 SUPPORTING_DOCUMENTATION_NO_DOCUMENTATION = "No supporting documentation"
+
+INACTIVE_ENTITIES = "No supporting documentation"
 
 COMBINE_USER_ADVICE = "Combine all user advice"
 GIVE_OR_CHANGE_ADVICE = "Give or change advice"
@@ -185,14 +189,6 @@ class Flags:
 
 class Picklist:
     TITLE = "Picklists"
-
-    class Create:
-        ECJU_QUERY = "Create an ECJU Query"
-        FOOTNOTES = "Create a footnote"
-        LETTER_PARAGRAPH = "Create a letter paragraph"
-        PROVISO = "Create a proviso"
-        REPORT_SUMMARY = "Create a report summary"
-        STANDARD_ADVICE = "Create standard advice"
 
     class Edit:
         class Status:
