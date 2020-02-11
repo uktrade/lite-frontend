@@ -3,7 +3,8 @@ Feature: Go to each item in the menu
 
   @verify_build @menu
   Scenario: Go to each item in the menu
-    Given I go to internal homepage
+    Given I sign in to SSO or am signed into SSO
+    And I go to internal homepage
     When I refresh the page
     Then the log out link is displayed
     When I go to organisations via menu
