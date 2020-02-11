@@ -536,4 +536,3 @@ class ViewAdvicePage:
         FINALISED_GOODS_AND_COUNTRIES = "Finalise goods and countries"
         FINALISE = "Finalise"
         COMBINE_TEAM_ADVICE = "Combine all team advice"
-
