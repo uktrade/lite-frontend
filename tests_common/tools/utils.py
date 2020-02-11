@@ -37,8 +37,6 @@ def set_timeout_to_10_seconds(self):
     self.set_timeout_to(10)
 
 
+# TODO: returns the helper not the client - needs fixing as this could be confusing
 def get_lite_client(context, api_client_config):
-    """
-    Returns the existing LITE API client, or creates a new one
-    """
-    return get_or_create_attr(context, "api", build_test_helper(config=api_client_config, context={}))
+    return get_or_create_attr(context, "api", build_test_helper(api_client_config["the_client"]))

@@ -1,6 +1,3 @@
-from ...api_client.api_client import ApiClient
-
-
 class Documents:
     def __init__(self, api_client, request_data, **kwargs):
         super().__init__(**kwargs)
@@ -14,7 +11,7 @@ class Documents:
         if multi_upload_endpoint:
             document_data = [document_data]
         response = self.api_client.make_request(
-            method="POST", url=url, headers=ApiClient.exporter_headers, body=document_data
+            method="POST", url=url, headers=self.api_client.exporter_headers, body=document_data
         ).json()
 
         return response

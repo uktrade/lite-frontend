@@ -1,5 +1,8 @@
 from pytest import fixture
 
+from ui_automation_tests.shared.api_client.api_client import ApiClient
+from ui_automation_tests.shared.api_client.libraries.request_data import build_request_data
+
 
 @fixture(scope="session")
 def context(request):
@@ -40,7 +43,13 @@ def internal_info(request, environment):
     }
 
 
+# TODO: this will be renamed to api_client however this requires changes
+# to exporter and internal FE's and will be done as the next step
 @fixture(scope="session")
 def api_client_config(request, exporter_info, internal_info):
     api_url = request.config.getoption("--lite_api_url")
-    return {"api_url": api_url, "exporter": exporter_info, "gov": internal_info}
+    base_url = api_url.rstrip("/")
+    request_data = build_request_data(exporter_user=exporter_info, gov_user=internal_info)
+    api_client = ApiClient(base_url, request_data, {})
+
+    return {"api_url": api_url, "exporter": exporter_info, "gov": internal_info, "the_client": api_client}

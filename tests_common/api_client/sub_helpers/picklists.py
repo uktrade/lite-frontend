@@ -1,6 +1,3 @@
-from ...api_client.api_client import ApiClient
-
-
 class Picklists:
     def __init__(self, api_client, request_data, **kwargs):
         super().__init__(**kwargs)
@@ -9,7 +6,7 @@ class Picklists:
 
     def post_picklist(self, key):
         return self.api_client.make_request(
-            method="POST", url="/picklist/", body=self.request_data[key], headers=ApiClient.gov_headers,
+            method="POST", url="/picklist/", body=self.request_data[key], headers=self.api_client.gov_headers,
         ).json()["picklist_item"]
 
     def add_ecju_query_picklist(self):

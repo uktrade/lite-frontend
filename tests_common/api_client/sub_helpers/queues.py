@@ -1,6 +1,3 @@
-from ...api_client.api_client import ApiClient
-
-
 class Queues:
     def __init__(self, api_client, request_data, **kwargs):
         super().__init__(**kwargs)
@@ -12,11 +9,11 @@ class Queues:
         data = self.request_data["queue"]
         data["name"] = queue_name
         queue = self.api_client.make_request(
-            method="POST", url="/queues/", headers=ApiClient.gov_headers, body=data,
+            method="POST", url="/queues/", headers=self.api_client.gov_headers, body=data,
         ).json()["queue"]
         self.api_client.add_to_context("queue_id", queue["id"])
 
     def get_queues(self):
-        return self.api_client.make_request(method="GET", url="/queues/", headers=ApiClient.gov_headers).json()[
+        return self.api_client.make_request(method="GET", url="/queues/", headers=self.api_client.gov_headers).json()[
             "queues"
         ]

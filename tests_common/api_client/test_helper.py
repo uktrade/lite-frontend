@@ -1,5 +1,3 @@
-from ..api_client.api_client import ApiClient
-from ..api_client.libraries.request_data import build_request_data
 from .sub_helpers.documents import Documents
 from .sub_helpers.applications import Applications
 from .sub_helpers.cases import Cases
@@ -23,13 +21,11 @@ class TestHelper:
     this is possible by constructing individual sub-helpers directly and passing the custom request data to them.
     """
 
-    def __init__(self, config, context):
-        self.context = context
+    def __init__(self, api):
+        self.api_client = api
+        self.context = self.api_client.context
 
-        base_url = config["api_url"].rstrip("/")
-        request_data = build_request_data(exporter_user=config["exporter"], gov_user=config["gov"])
-
-        self.api_client = ApiClient(base_url=base_url, request_data=request_data, context=self.context)
+        request_data = self.api_client.request_data
 
         self.documents = Documents(api_client=self.api_client, request_data=request_data)
         self.users = Users(api_client=self.api_client, request_data=request_data)
@@ -51,8 +47,8 @@ class TestHelper:
         )
 
 
-def build_test_helper(config, context):
-    test_helper = TestHelper(config, context)
+def build_test_helper(config):
+    test_helper = TestHelper(config)
     _seed_essential_data(test_helper)
     return test_helper
 

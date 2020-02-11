@@ -1,15 +1,18 @@
 import os
 import types
 
-from _pytest.fixtures import fixture
 from selenium import webdriver
+from _pytest.fixtures import fixture
+from ..fixtures.cci import enable_browser_stack
+from ..tools.utils import set_timeout_to_10_seconds, set_timeout_to
 
-from ..tools.utils import set_timeout_to, set_timeout_to_10_seconds
 
-
-# Create driver fixture that initiates chrome
 @fixture(scope="session", autouse=True)
-def driver(request):
+def driver(request, api_client_config):
+    if os.getenv("TEST_TYPE_BROWSER_STACK", "False") == "True":
+        driver = enable_browser_stack(request, api_client_config)
+        return driver
+
     browser = request.config.getoption("--driver")
 
     chrome_options = webdriver.ChromeOptions()
@@ -22,20 +25,23 @@ def driver(request):
         chrome_options.add_argument("--proxy-server=%s" % str(os.environ.get("PROXY_IP_PORT")))
 
     if browser == "chrome":
-        if str(os.environ.get("ENVIRONMENT")) == "None":
-            browser = webdriver.Chrome("chromedriver", options=chrome_options)
-        else:
-            browser = webdriver.Chrome(options=chrome_options)
-
-        browser.set_timeout_to = types.MethodType(set_timeout_to, browser)
-        browser.set_timeout_to_10_seconds = types.MethodType(set_timeout_to_10_seconds, browser)
-        browser.get("about:blank")
-        browser.set_timeout_to_10_seconds()
-        return browser
+        return create_selenium_chrome_driver(chrome_options, request)
     else:
         print("Only Chrome is supported at the moment")
+
+
+def create_selenium_chrome_driver(chrome_options, request):
+    if str(os.environ.get("ENVIRONMENT")) == "None":
+        driver = webdriver.Chrome("chromedriver", options=chrome_options)
+    else:
+        driver = webdriver.Chrome(options=chrome_options)
+    driver.set_timeout_to = types.MethodType(set_timeout_to, driver)
+    driver.set_timeout_to_10_seconds = types.MethodType(set_timeout_to_10_seconds, driver)
+    driver.get("about:blank")
+    driver.set_timeout_to(10)
 
     def fin():
         driver.quit()
 
     request.addfinalizer(fin)
+    return driver

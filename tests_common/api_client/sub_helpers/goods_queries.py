@@ -1,6 +1,3 @@
-from ...api_client.api_client import ApiClient
-
-
 class GoodsQueries:
     def __init__(self, api_client, request_data, **kwargs):
         super().__init__(**kwargs)
@@ -11,7 +8,7 @@ class GoodsQueries:
         data = self.request_data["not_sure_details"]
         data["good_id"] = good_id
         return self.api_client.make_request(
-            method="POST", url="/queries/goods-queries/", headers=ApiClient.exporter_headers, body=data,
+            method="POST", url="/queries/goods-queries/", headers=self.api_client.exporter_headers, body=data,
         ).json()["id"]
 
     def add_goods_clc_query(self, seed_good):

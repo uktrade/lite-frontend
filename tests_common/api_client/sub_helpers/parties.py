@@ -1,6 +1,3 @@
-from ...api_client.api_client import ApiClient
-
-
 class Parties:
     def __init__(self, api_client, documents, request_data, **kwargs):
         super().__init__(**kwargs)
@@ -11,7 +8,7 @@ class Parties:
     def add_eua_query(self):
         data = self.request_data["end_user_advisory"]
         data = self.api_client.make_request(
-            method="POST", url="/queries/end-user-advisories/", headers=ApiClient.exporter_headers, body=data,
+            method="POST", url="/queries/end-user-advisories/", headers=self.api_client.exporter_headers, body=data,
         ).json()["end_user_advisory"]
         self.api_client.add_to_context("end_user_advisory_id", str(data["id"]))
         self.api_client.add_to_context("end_user_advisory_reference_code", str(data["reference_code"]))
@@ -21,7 +18,7 @@ class Parties:
         party = self.api_client.make_request(
             method="POST",
             url=f"/applications/{draft_id}/parties/",
-            headers=ApiClient.exporter_headers,
+            headers=self.api_client.exporter_headers,
             body=party_data,
         ).json()[party_data["type"]]
         self.add_party_document(draft_id, party["id"])
@@ -30,7 +27,7 @@ class Parties:
 
     def delete_party(self, draft_id, party):
         party = self.api_client.make_request(
-            "DELETE", url=f"/applications/{draft_id}/parties/{party['id']}/", headers=ApiClient.exporter_headers,
+            "DELETE", url=f"/applications/{draft_id}/parties/{party['id']}/", headers=self.api_client.exporter_headers,
         ).json()["party"]
 
         self.api_client.add_to_context("inactive_party", party)

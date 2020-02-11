@@ -1,4 +1,3 @@
-from ...api_client.api_client import ApiClient
 from ...tools.wait import wait_for_function
 
 
@@ -14,7 +13,7 @@ class Applications:
     def create_draft(self, draft=None):
         data = draft or self.request_data["application"]
         response = self.api_client.make_request(
-            method="POST", url="/applications/", headers=ApiClient.exporter_headers, body=data
+            method="POST", url="/applications/", headers=self.api_client.exporter_headers, body=data
         )
         draft_id = response.json()["id"]
         self.api_client.add_to_context("draft_id", draft_id)
@@ -24,7 +23,7 @@ class Applications:
         self.api_client.make_request(
             method="POST",
             url="/applications/" + draft_id + "/countries/",
-            headers=ApiClient.exporter_headers,
+            headers=self.api_client.exporter_headers,
             body={"countries": ["US"]},
         )
         self.api_client.add_to_context("country", {"code": "US", "name": "United States"})
@@ -41,7 +40,7 @@ class Applications:
         self.api_client.make_request(
             method="POST",
             url="/applications/" + draft_id + "/sites/",
-            headers=ApiClient.exporter_headers,
+            headers=self.api_client.exporter_headers,
             body={"sites": [self.api_client.context["primary_site_id"]]},
         )
 
@@ -85,7 +84,9 @@ class Applications:
     def submit_application(self, draft_id=None):
         draft_id_to_submit = draft_id or self.api_client.context["draft_id"]
         response = self.api_client.make_request(
-            method="PUT", url="/applications/" + draft_id_to_submit + "/submit/", headers=ApiClient.exporter_headers
+            method="PUT",
+            url="/applications/" + draft_id_to_submit + "/submit/",
+            headers=self.api_client.exporter_headers,
         )
         return response.json()
 
@@ -115,7 +116,7 @@ class Applications:
         return self.is_document_processed("/applications/" + draft_id + "/documents/" + document_id + "/")
 
     def is_document_processed(self, url):
-        response = self.api_client.make_request(method="GET", url=url, headers=ApiClient.exporter_headers)
+        response = self.api_client.make_request(method="GET", url=url, headers=self.api_client.exporter_headers)
         return response.json()["document"]["safe"]
 
     def _assert_all_documents_are_processed(self, draft_id, parties, additional_document_id):

@@ -1,4 +1,3 @@
-from ...api_client.api_client import ApiClient
 from ...tools import helpers
 
 
@@ -15,17 +14,17 @@ class DocumentTemplates:
         template_data["letter_paragraphs"] = [paragraph["id"]]
         template_data["name"] = "0000" + helpers.get_formatted_date_time_m_d_h_s()
         template = self.api_client.make_request(
-            method="POST", url="/letter-templates/", headers=ApiClient.gov_headers, body=template_data,
+            method="POST", url="/letter-templates/", headers=self.api_client.gov_headers, body=template_data,
         ).json()
         template["paragraph"] = paragraph
         return template
 
     def get_paragraph(self, paragraph_id):
         return self.api_client.make_request(
-            method="GET", url="/picklist/" + str(paragraph_id) + "/", headers=ApiClient.gov_headers,
+            method="GET", url="/picklist/" + str(paragraph_id) + "/", headers=self.api_client.gov_headers,
         ).json()["picklist_item"]
 
     def get_layouts(self):
         return self.api_client.make_request(
-            method="GET", url="/static/letter-layouts/", headers=ApiClient.gov_headers,
+            method="GET", url="/static/letter-layouts/", headers=self.api_client.gov_headers,
         ).json()["results"]
