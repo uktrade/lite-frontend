@@ -298,6 +298,7 @@ class StandardApplicationTaskList:
     NEW_TITLE = "Standard export licence application"
     EDIT_TITLE = "Edit the application"
     END_USE_CONTROL = "End use control"
+    GOODS_CATEGORIES = "Goods categories"
     GOODS = "Products"
     GOODS_LOCATION = "Locations"
     END_USER = "End user"
