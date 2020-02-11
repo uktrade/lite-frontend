@@ -7,7 +7,7 @@ Feature: I want standard picklists
 
   @LT_1077_add_edit @smoke
   Scenario: Add and edit a picklist item with context variables
-    Given I go to internal homepage
+    Given I sign in to SSO or am signed into SSO
     When I go to My Team
     And I go to picklists tab
     And I go to "letter_paragraph" picklist
@@ -29,7 +29,7 @@ Feature: I want standard picklists
 
   @LT_1077_deactivate @regression
   Scenario: Deactivate and reactivate a picklist item
-    Given I go to internal homepage
+    Given I sign in to SSO or am signed into SSO
     When I go to My Team
     And I go to picklists tab
     And I go to "report_summary" picklist

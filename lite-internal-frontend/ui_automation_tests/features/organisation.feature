@@ -6,7 +6,7 @@ Feature: I want to add a company to LITE
 
   @LT_934_test @smoke
   Scenario: Test registering an organisation
-    Given I go to internal homepage
+    Given I sign in to SSO or am signed into SSO
     When I go to organisations
     And I choose to add a new organisation
     And I select "commercial"
@@ -17,7 +17,7 @@ Feature: I want to add a company to LITE
 
   @LT_1417_test_adding_individual_as_organisation @regression
   Scenario: Test registering an individual
-    Given I go to internal homepage
+    Given I sign in to SSO or am signed into SSO
     When I go to organisations
     And I choose to add a new organisation
     And I select "individual"
@@ -27,7 +27,7 @@ Feature: I want to add a company to LITE
 
   @LT_1008_test_adding_hmrc_organisation @regression
   Scenario: Test registering a HMRC organisation
-    Given I go to internal homepage
+    Given I sign in to SSO or am signed into SSO
     When I go to HMRC
     And I choose to add a new organisation
     And I provide hmrc registration details of org_name: "HMRC Blue", site_name: "HQ", addres line 1: "123 Cobalt Street", town or city: "London", County: "Islington", post code: "AB1 2CD", country: "Ukraine"
@@ -37,8 +37,8 @@ Feature: I want to add a company to LITE
 
   @LT_1086_test_adding_a_flag_to_an_organisation @regression
   Scenario: Adding a flag to an organisation
-    Given I create open application or open application has been previously created
-    And I go to internal homepage
+    Given I sign in to SSO or am signed into SSO
+    And I create open application or open application has been previously created
     When I go to flags
     And I add a flag called Suspicious at level Organisation
     And I go to application previously created

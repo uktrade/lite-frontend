@@ -25,13 +25,13 @@ def i_am_an_assigned_user_for_the_case(driver, context, api_client_config):
     lite_client.cases.assign_case_to_user(context.app_id, lite_client.context["queue_id"], context.gov_user_id)
 
 
-@when("the exporter user has edited the case")
+@given("the exporter user has edited the case")
 def exporter_user_has_edited_case(driver, context, api_client_config):
     lite_client = get_lite_client(context, api_client_config)
     lite_client.cases.edit_case(context.app_id)
 
 
-@when("the exporter has deleted the third party")
+@given("the exporter has deleted the third party")
 def exporter_has_deleted_end_user(driver, context, api_client_config):
     lite_client = get_lite_client(context, api_client_config)
     lite_client.applications.parties.delete_party(draft_id=context.app_id, party=context.third_party)

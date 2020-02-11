@@ -33,11 +33,6 @@ def click_on_created_application(driver, context, internal_url):
     driver.get(internal_url.rstrip("/") + "/cases/" + context.clc_case_id)
 
 
-@given("I create a clc query")  # noqa
-def create_clc_query(driver, apply_for_clc_query, context):
-    pass
-
-
 @given("I create a grading query")  # noqa
 def create_grading_query(driver, apply_for_grading_query, context):
     pass

@@ -6,12 +6,13 @@ Feature: I want to filter and sort cases on a queue
 
   @LT_914_filter_and_sort @smoke
   Scenario: Filter and sort
-    Given a queue has been created
-    Given I create open application or open application has been previously created
+    Given I sign in to SSO or am signed into SSO
+    And a queue has been created
+    And I create open application or open application has been previously created
+    And case has been moved to new Queue
+    And I create a clc query
     And I go to internal homepage
     When case has been moved to new Queue
-    And I create a clc query
-    And case has been moved to new Queue
     And I click on new queue in dropdown
     Then "2" cases are shown
     When I show filters
@@ -37,7 +38,8 @@ Feature: I want to filter and sort cases on a queue
 
   @LT_914_sort_all_cases @regression
   Scenario: Sort all cases
-    Given I create open application or open application has been previously created
+    Given I sign in to SSO or am signed into SSO
+    And I create open application or open application has been previously created
     And I go to internal homepage
     When I click on the "All cases" queue in dropdown
     And I sort cases by status
@@ -45,7 +47,8 @@ Feature: I want to filter and sort cases on a queue
 
   @LT_914_filter_and_sort @regression
   Scenario: I can show and hide filters
-    Given I go to internal homepage
+    Given I sign in to SSO or am signed into SSO
+    And I go to internal homepage
     When I show filters
     Then the filters are shown
     When I hide filters

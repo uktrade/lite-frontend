@@ -6,7 +6,7 @@ Feature: I want to add a team
 
   @LT_930_click @regression
   Scenario: Add a team and click on team name and add user to team and rollback
-    Given I go to internal homepage
+    Given I sign in to SSO or am signed into SSO
     When I go to teams
     And I add a team called BlueOcean
     Then I see the team in the team list
@@ -22,7 +22,7 @@ Feature: I want to add a team
 
   @LT_930_edit @smoke
   Scenario: Edit a team
-    Given I go to internal homepage
+    Given I sign in to SSO or am signed into SSO
     When I go to teams
     And I add a team called BlueOcean
     And I edit my team

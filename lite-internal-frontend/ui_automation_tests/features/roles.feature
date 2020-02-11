@@ -6,7 +6,7 @@ Feature: I want to create roles
 
   @LT_1127_edit @smoke
   Scenario: Edit a role
-    Given I go to internal homepage
+    Given I sign in to SSO or am signed into SSO
     When I go to users
     And I go to manage roles
     And I add a new role called "Supervisor" with permission to "Manage final advice" and set status to "Closed"

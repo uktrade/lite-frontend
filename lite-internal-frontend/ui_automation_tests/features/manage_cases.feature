@@ -9,8 +9,8 @@ Feature: I want to record the final decision overall on an application case
 
   @LT_909_status @smoke
   Scenario: Change status to Under Review
-    Given I create open application or open application has been previously created
-    And I sign in to SSO or am signed into SSO
+    Given I sign in to SSO or am signed into SSO
+    And I create open application or open application has been previously created
     When I go to application previously created
     And I click progress application
     And I select status "Under review" and save

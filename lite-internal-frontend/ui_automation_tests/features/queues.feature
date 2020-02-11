@@ -7,7 +7,7 @@ Feature: I want to define new work queues and the teams they belong to
 
   @LT_919_add @regression
   Scenario: Add a new queue
-    Given I go to internal homepage
+    Given I sign in to SSO or am signed into SSO
     When I go to queues
     And I enter in queue name Review
     Then I see the new queue
@@ -16,7 +16,8 @@ Feature: I want to define new work queues and the teams they belong to
 
   @LT_1125_move_cases @smoke
   Scenario: Move case to new queue and remove from new queue
-    Given I create open application or open application has been previously created
+    Given I sign in to SSO or am signed into SSO
+    And I create open application or open application has been previously created
     When I go to queues
     And I enter in queue name Review
     And I go to application previously created
@@ -28,10 +29,10 @@ Feature: I want to define new work queues and the teams they belong to
     When I go to application previously created
     Then queue change is in audit trail
 
-  @LT_1123_view_all_cases @view_all_cases @regression
+  @LT_1123_view_all_cases_closed_appear @regression
   Scenario: Closed cases appear on the all cases queue
-    Given I create open application or open application has been previously created
-    And I sign in to SSO or am signed into SSO
+    Given I sign in to SSO or am signed into SSO
+    And I create open application or open application has been previously created
     When I go to application previously created
     And I click progress application
     And I select status "Withdrawn" and save
@@ -39,10 +40,10 @@ Feature: I want to define new work queues and the teams they belong to
     And I click on the "All cases" queue in dropdown
     Then I see previously created application
 
-  @LT_1123_view_all_cases @view_all_cases @regression
+  @LT_1123_view_all_cases_closed_dont_appear @regression
   Scenario: Closed cases dont appear on the open cases queue
-    Given I create open application or open application has been previously created
-    And I sign in to SSO or am signed into SSO
+    Given I sign in to SSO or am signed into SSO
+    And I create open application or open application has been previously created
     When I go to application previously created
     And I click progress application
     And I select status "Withdrawn" and save
@@ -52,8 +53,8 @@ Feature: I want to define new work queues and the teams they belong to
     
   @LT_919_edit @regression
   Scenario: Edit a new queue
-    Given I go to internal homepage
+    Given I sign in to SSO or am signed into SSO
     When I go to queues
-    When I enter in queue name Review
+    And I enter in queue name Review
     And I edit the new queue
     Then I see the edited queue

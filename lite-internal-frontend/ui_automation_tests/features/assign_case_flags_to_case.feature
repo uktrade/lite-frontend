@@ -6,8 +6,8 @@ Feature: I want to add case-level flags to a case and view them
 
   @LT_949_add @LT_951 @regression
   Scenario: Add flag to case
-    Given I create open application or open application has been previously created
-    And I go to internal homepage
+    Given I sign in to SSO or am signed into SSO
+    And I create open application or open application has been previously created
     When I go to flags
     And I add a flag called UAE at level Case
     And I go to application previously created
@@ -20,8 +20,8 @@ Feature: I want to add case-level flags to a case and view them
 
   @LT_1185_add @LT_951 @regression
   Scenario: Add flag to good
-    Given I create application or application has been previously created
-    And I go to internal homepage
+    Given I sign in to SSO or am signed into SSO
+    And I create application or application has been previously created
     When I go to flags
     And I add a flag called Suspicious at level Good
     And I go to application previously created
@@ -34,8 +34,8 @@ Feature: I want to add case-level flags to a case and view them
 
   @LT_951 @smoke
   Scenario: Add all flags to case
-    Given I create open application or open application has been previously created
-    And I go to internal homepage
+    Given I sign in to SSO or am signed into SSO
+    And I create open application or open application has been previously created
     When I go to flags
     And I add a flag called Suspicious at level Good
     And I go to application previously created

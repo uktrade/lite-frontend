@@ -5,7 +5,7 @@ Feature: I want to assign one or more specific users to a case in a work queue
   So that: everyone is aware which specific users are working on this case in any given work queue / department
 
   Background:
-    Given I go to internal homepage
+    Given I sign in to SSO or am signed into SSO
     And I create open application or open application has been previously created
     When I go to queues
     When I enter in queue name Review
@@ -38,3 +38,4 @@ Feature: I want to assign one or more specific users to a case in a work queue
     When I select the checkbox for previously created case to be assigned
     And I search for SSO users name to assign
     Then only SSO users name is displayed in user list for assign cases
+    

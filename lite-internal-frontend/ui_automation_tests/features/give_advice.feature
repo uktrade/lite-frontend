@@ -6,10 +6,10 @@ Feature: I want to record my user advice and any comments and conditions relatin
 
   @LT_1376 @regression @LT_1760
   Scenario: Give advice and proviso a licence
-    Given I create application or application has been previously created
+    Given I sign in to SSO or am signed into SSO
+    And I create application or application has been previously created
     And I create a proviso picklist
     And I create a standard advice picklist
-    And I sign in to SSO or am signed into SSO
     When I go to application previously created
     And I click on view advice
     Then I see total goods value
@@ -28,10 +28,10 @@ Feature: I want to record my user advice and any comments and conditions relatin
 
   @LT_1115_grant @smoke
   Scenario: Finalise a licence
-    Given I create application or application has been previously created
+    Given I sign in to SSO or am signed into SSO
+    And I create application or application has been previously created
     And I create a proviso picklist
     And I create a standard advice picklist
-    And I sign in to SSO or am signed into SSO
     When I go to application previously created
     And I click on view advice
     And I select all items in the advice view
@@ -50,10 +50,10 @@ Feature: I want to record my user advice and any comments and conditions relatin
 
   @LT_1334_finalise_goods_countries_matrix @regression
   Scenario: Finalise goods and countries
-    Given I create open application or open application has been previously created
+    Given I sign in to SSO or am signed into SSO
+    And I create open application or open application has been previously created
     And I create a proviso picklist
     And I create a standard advice picklist
-    And I sign in to SSO or am signed into SSO
     When I go to open application previously created
     And I click on view advice
     And I select all items in the advice view
@@ -73,8 +73,8 @@ Feature: I want to record my user advice and any comments and conditions relatin
 
   @LT_966_refusal_flags @regression
   Scenario: Test that refusal advice is given correctly
-    Given I create application or application has been previously created
-    And I sign in to SSO or am signed into SSO
+    Given I sign in to SSO or am signed into SSO
+    And I create application or application has been previously created
     When I go to application previously created
     And I click on view advice
     And I select all items in the advice view
@@ -119,10 +119,10 @@ Feature: I want to record my user advice and any comments and conditions relatin
 
   @LT_920_cannot_give_advice_terminal_case @regression
   Scenario: Cannot give advice on a case in terminal state
-    Given I create application or application has been previously created
+    Given I sign in to SSO or am signed into SSO
+    And I create application or application has been previously created
     And I create a proviso picklist
     And I create a standard advice picklist
-    And I sign in to SSO or am signed into SSO
     When I go to application previously created
     And I click progress application
     And I select status "Withdrawn" and save

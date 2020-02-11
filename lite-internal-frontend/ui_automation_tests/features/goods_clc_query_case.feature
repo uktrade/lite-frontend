@@ -6,5 +6,6 @@ Feature: I want to add a clc-case good to the goods list
 
     @LT_1006_add_clc_query_good @regression
     Scenario: Add "I don't know" good
-        Given I go to internal homepage
+        Given I sign in to SSO or am signed into SSO
+        And I go to internal homepage
         Then I see the clc-case previously created
