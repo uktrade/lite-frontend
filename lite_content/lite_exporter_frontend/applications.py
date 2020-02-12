@@ -469,4 +469,4 @@ class CaseNotes:
     POST_NOTE = "Post note"
     CANCEL = "Cancel"
     ADDED_A_NOTE_SUFFIX = "added a note:"
-    NO_NOTES = "There are on notes on this application"
+    NO_NOTES = "There are no notes on this application"
