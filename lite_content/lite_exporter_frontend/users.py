@@ -9,7 +9,7 @@ class ProfilePage:
     USER_PENDING = "Pending"
     USER_DEACTIVATE = "Deactivate member"
     USER_REACTIVATE = "Reactivate member"
-    USER_NOT_ACTIVATED_YET = "This member has yet to sign in to their export control account."
+    USER_NOT_ACTIVATED_YET = "This member hasn't signed in to their export control account."
 
 
 class UsersPage:
@@ -23,7 +23,7 @@ class UsersPage:
 
 class AddUserForm:
     USER_ROLE_QUESTION = "Role"
-    USER_ADD_TITLE = "Add new member"
+    USER_ADD_TITLE = "Add a member"
     USER_EMAIL_QUESTION = "Email"
     USER_ADD_FORM_BACK_TO_USERS = "Back to members"
     ASSIGN_USER_QUESTION = "Assigned sites"
