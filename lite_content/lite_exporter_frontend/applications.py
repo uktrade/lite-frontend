@@ -471,3 +471,8 @@ class CaseNotes:
     CANCEL = "Cancel"
     ADDED_A_NOTE_SUFFIX = "added a note:"
     NO_NOTES = "There aren't any notes on this application"
+
+
+class GoodsCategories:
+    TITLE = "Does your application include?"
+    DESCRIPTION = ""
