@@ -86,9 +86,9 @@ class CaseNotes:
 
 
 class EcjuQueries:
-    NONE_APPLICATION = "There are no queries on this application."
-    NONE_END_USER_ADVISORY = "There are no queries on this advisory."
-    NONE_GOOD = "There are no queries on this product."
+    NONE_APPLICATION = "There are no ECJU queries on this application."
+    NONE_END_USER_ADVISORY = "There are no ECJU queries on this advisory."
+    NONE_GOOD = "There are no queries from ECJU."
 
 
 class Clc:

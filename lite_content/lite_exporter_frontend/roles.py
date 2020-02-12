@@ -1,10 +1,10 @@
 class ManageRolesPage:
     TAB = "Roles"
-    ADD_BUTTON = "Add role"
+    ADD_BUTTON = "Add a role"
 
     class Table:
         HEADER_ROLE = "Role"
-        HEADER_PERMISSIONS = "Users with this role "
+        HEADER_PERMISSIONS = "Members with this role "
         EDIT_ROLE = "Edit"
 
 
