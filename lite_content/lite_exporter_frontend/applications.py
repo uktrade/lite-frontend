@@ -158,6 +158,7 @@ class ApplicationSummaryPage:
         EDIT_APPLICATION_BUTTON = "Edit"
         WITHDRAW_ACCESS_BUTTON = "Withdraw"
         SURRENDER_APPLICATION_BUTTON = "Surrender licence"
+        COPY_APPLICATION_BUTTON = "Copy"
 
     class Withdraw:
         TITLE = "Confirm you want to withdraw this application"
@@ -406,6 +407,8 @@ class ApplicationsList:
     NOTIFICATIONS_SUFFIX = "notifications"
     NO_CONTENT_NOTICE = "There are no applications in progress."
     NO_DRAFTS_CONTENT_NOTICE = "There are no draft applications."
+    COPY_HEADER = "Copy"
+    COPY_LINK = "Copy"
 
 
 class ApplicationPage:
