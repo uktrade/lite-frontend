@@ -84,6 +84,7 @@ class ApplicationPage:
     NO_CASE_OFFICER = "No Case Officer set."
     NO_USERS_ASSIGNED = "No users assigned."
     NO_QUEUES_ASSIGNED = "No queues assigned."
+    COPY_OF = "Copied from:"
 
 
 class GenerateDocumentsPage:
