@@ -333,7 +333,7 @@ class GoodsLocationForm:
     EXTERNAL_LOCATION_TITLE = "Do you want to add a new external location or use an existing one?"
     EXTERNAL_LOCATION_NEW_LOCATION = "Add a new external location"
     EXTERNAL_LOCATION_PREEXISTING_LOCATION = "Use an existing external location"
-    ERROR = "Select a option"
+    ERROR = "Select an option"
 
 
 class GoodsCountriesMatrix:
