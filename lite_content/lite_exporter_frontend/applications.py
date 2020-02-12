@@ -476,3 +476,4 @@ class CaseNotes:
 class GoodsCategories:
     TITLE = "Does your application include?"
     DESCRIPTION = ""
+    ERROR = "You can't change goods categories whilst doing a minor edit"
