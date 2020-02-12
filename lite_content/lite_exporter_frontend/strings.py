@@ -346,7 +346,7 @@ class AdditionalDocuments:
         DOWNLOAD_DOCUMENT = "Download"
         END_USER_HAS_NO_DOCUMENTS = "There are no documents attached"
         PROCESSING = "Processing"
-        SAVE_END_USER = ""
+        SAVE_END_USER = "save and return to the application overview"
         TITLE = "Additional document"
         VIRUS_INFECTED = "The selected file contains a virus"
 
