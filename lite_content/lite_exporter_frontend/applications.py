@@ -208,21 +208,21 @@ class InitialApplicationQuestionsForms:
 
         class LicenceTypes:
             EXPORT_LICENCE_TITLE = "Export licence"
-            EXPORT_LICENCE_DESCRIPTION = "Select if you’re sending products from the UK to another country"
+            EXPORT_LICENCE_DESCRIPTION = "Select if you’re sending products from the UK to another country."
 
             TRANSHIPMENT_LICENCE_TITLE = "Transhipment licence"
             TRANSHIPMENT_LICENCE_DESCRIPTION = (
                 "Select if you're shipping something from overseas through the UK on to another country."
-                " If the products will be in the UK for 30 days or more, apply for an export licence"
+                " If the products will be in the UK for 30 days or more, apply for an export licence."
             )
             TRADE_CONTROL_LICENCE_TITLE = "Trade control licence"
             TRADE_CONTROL_LICENCE_DESCRIPTION = (
                 "Select if you’re arranging or brokering the sale or movement of controlled military products "
-                "located overseas"
+                "located overseas."
             )
 
             MOD_CLEARANCE_TITLE = "MOD clearance"
-            MOD_CLEARANCE_DESCRIPTION = "Select if you need an F680 to share information, go to an exhibition or you're gifting surplus products"
+            MOD_CLEARANCE_DESCRIPTION = "Select if you need an F680 to share information, go to an exhibition or you're gifting surplus products."
 
     class ReferenceNameQuestion:
         TITLE = "Name the application"
@@ -390,7 +390,7 @@ class EditOpenApplicationPage:
 class DeleteApplicationPage:
     BUTTON = "Delete draft"
     TITLE = "Confirm you want to delete this draft"
-    BACK_TEXT = "Back"
+    BACK_TEXT = "Back to applications"
     YES_LABEL = "Confirm and delete the draft"
     NO_LABEL = "Cancel"
     SUBMIT_BUTTON = "Submit"
@@ -490,4 +490,4 @@ class CaseNotes:
     POST_NOTE = "Post note"
     CANCEL = "Cancel"
     ADDED_A_NOTE_SUFFIX = "added a note:"
-    NO_NOTES = "There aren't any notes on this application"
+    NO_NOTES = "There are no notes on this application"
