@@ -5,16 +5,16 @@ from lite_content.lite_exporter_frontend.generic import PERMISSION_FINDER_LINK
 class OverviewPage:
     BACK = generic.BACK_TO_APPLICATION_OVERVIEW
     TITLE = "Products"
-    ADD_GOODS_TYPE_BUTTON = "Add products"
-    ADD_ANOTHER_GOODS_TYPE_BUTTON = "Add another product"
-    NO_GOODS = "The are no products on the application"
+    ADD_GOODS_TYPE_BUTTON = "Add a product"
+    ADD_ANOTHER_GOODS_TYPE_BUTTON = "Add a product"
+    NO_GOODS = "The are no products on the application."
 
 
 class Variables:
     DESCRIPTION = generic.DESCRIPTION
-    CONTROL_LIST_ENTRY = "Control list classification"
+    CONTROL_LIST_ENTRY = "CLC"
     INCORPORATED = generic.INCORPORATED
-    REMOVE_GOODS_TYPE = "Remove product"
+    REMOVE_GOODS_TYPE = "Remove"
 
 
 class Document:
@@ -38,7 +38,7 @@ class Documents:
             " smaller than 100MB."
         )
         DESCRIPTION_FIELD_DETAILS = ""
-        DESCRIPTION_FIELD_TITLE = "Description (optional)"
+        DESCRIPTION_FIELD_TITLE = "Description"
         DOWNLOAD_ERROR = "We had an issue downloading your file. Try again later."
         FILE_TOO_LARGE = "The selected file must be smaller than 100MB"
         TITLE = "Upload a document to support your product (optional)"
@@ -46,7 +46,7 @@ class Documents:
 
 
 class CreateGoodsTypeForm:
-    TITLE = "Add a new product category to your application"
+    TITLE = "Add a product to your application"
     DESCRIPTION = ""
 
     class Description:
@@ -66,7 +66,7 @@ class CreateGoodsTypeForm:
         NO = "No"
 
     class IsIncorporated:
-        TITLE = "Will the products be incorporated into other products?"
+        TITLE = "Will the product be incorporated into another product?"
         DESCRIPTION = ""
         YES = "Yes"
         NO = "No"
