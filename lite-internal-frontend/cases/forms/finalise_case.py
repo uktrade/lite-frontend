@@ -4,7 +4,7 @@ from lite_forms.helpers import conditional
 from lite_content.lite_internal_frontend import cases
 
 
-def approve_licence_form(case_id, standard, duration, editable_duration):
+def approve_licence_form(case_id, is_open_licence, duration, editable_duration):
     return Form(
         title=cases.FinaliseLicenceForm.APPROVE_TITLE,
         questions=[
@@ -25,32 +25,32 @@ def approve_licence_form(case_id, standard, duration, editable_duration):
             HiddenField(name="action", value="approve"),
         ],
         back_link=conditional(
-            standard,
-            BackLink(
-                url=reverse_lazy("cases:final_advice_view", kwargs={"pk": case_id}),
-                text=cases.FinaliseLicenceForm.Actions.BACK_TO_ADVICE_BUTTON,
-            ),
+            is_open_licence,
             BackLink(
                 url=reverse_lazy("cases:finalise_goods_countries", kwargs={"pk": case_id}),
                 text=cases.FinaliseLicenceForm.Actions.BACK_TO_DECISION_MATRIX_BUTTON,
+            ),
+            BackLink(
+                url=reverse_lazy("cases:final_advice_view", kwargs={"pk": case_id}),
+                text=cases.FinaliseLicenceForm.Actions.BACK_TO_ADVICE_BUTTON,
             ),
         ),
     )
 
 
-def deny_licence_form(case_id, is_standard_licence):
+def deny_licence_form(case_id, is_open_licence):
     return Form(
         title=cases.FinaliseLicenceForm.FINALISE_TITLE,
         questions=[HiddenField(name="action", value="refuse")],
         back_link=conditional(
-            is_standard_licence,
-            BackLink(
-                url=reverse_lazy("cases:final_advice_view", kwargs={"pk": case_id}),
-                text=cases.FinaliseLicenceForm.Actions.BACK_TO_ADVICE_BUTTON,
-            ),
+            is_open_licence,
             BackLink(
                 url=reverse_lazy("cases:finalise_goods_countries", kwargs={"pk": case_id}),
                 text=cases.FinaliseLicenceForm.Actions.BACK_TO_DECISION_MATRIX_BUTTON,
+            ),
+            BackLink(
+                url=reverse_lazy("cases:final_advice_view", kwargs={"pk": case_id}),
+                text=cases.FinaliseLicenceForm.Actions.BACK_TO_ADVICE_BUTTON,
             ),
         ),
     )

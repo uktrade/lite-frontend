@@ -42,7 +42,7 @@ from lite_forms.generators import form_page, error_page
 
 class ViewUserAdvice(TemplateView):
     """
-    view advice at a user level and select advice to edit
+    View advice at a user level and select advice to edit
     """
 
     case = None
@@ -54,7 +54,7 @@ class ViewUserAdvice(TemplateView):
 
     def get(self, request, **kwargs):
         """
-        Show all advice given for a case
+        Show all advice that has been given for a case
         """
         return get_case_advice(get_user_case_advice, request, self.case, "user")
 
@@ -306,14 +306,17 @@ class Finalise(TemplateView):
 
     def get(self, request, *args, **kwargs):
         case = get_case(request, str(kwargs["pk"]))
-        is_standard_licence = case["application"]["application_type"]["key"] == CaseType.STANDARD_LICENCE.value
-        if is_standard_licence:
+        case_type = case["application"]["application_type"]["key"]
+
+        if case_type == CaseType.STANDARD_LICENCE.value or case_type == CaseType.EXHIBITION_CLEARANCE.value:
             advice, _ = get_final_case_advice(request, str(kwargs["pk"]))
             data = advice["advice"]
             search_key = "type"
+            is_open_licence = False
         else:
             data = get_good_countries_decisions(request, str(kwargs["pk"]))["data"]
             search_key = "decision"
+            is_open_licence = True
 
         case_id = case["id"]
         duration = get_application_default_duration(request, str(kwargs["pk"]))
@@ -330,17 +333,17 @@ class Finalise(TemplateView):
                 }
                 form = approve_licence_form(
                     case_id=case_id,
-                    standard=is_standard_licence,
+                    is_open_licence=is_open_licence,
                     duration=duration,
                     editable_duration=helpers.has_permission(request, Permission.MANAGE_LICENCE_DURATION),
                 )
                 return form_page(request, form, data=form_data)
 
-        return form_page(request, deny_licence_form(case_id, is_standard_licence))
+        return form_page(request, deny_licence_form(case_id, is_open_licence))
 
     def post(self, request, *args, **kwargs):
         case = get_case(request, str(kwargs["pk"]))
-        standard = case["application"]["application_type"]["key"] == CaseType.STANDARD_LICENCE.value
+        is_open_licence = case["application"]["application_type"]["key"] == CaseType.OPEN_LICENCE.value
         application_id = case.get("application").get("id")
         data = request.POST.copy()
 
@@ -354,7 +357,7 @@ class Finalise(TemplateView):
         if res.status_code == 400:
             form = approve_licence_form(
                 case_id=case["id"],
-                standard=standard,
+                is_open_licence=is_open_licence,
                 duration=data.get("licence_duration") or get_application_default_duration(request, str(kwargs["pk"])),
                 editable_duration=has_permission,
             )

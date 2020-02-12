@@ -12,13 +12,14 @@ from core.services import get_denial_reasons, get_user_permissions, get_status_p
 from picklists.services import get_picklists
 from teams.services import get_teams
 from users.services import get_gov_user
+from conf.constants import Permission, APPLICATION_CASE_TYPES, CLEARANCE_CASE_TYPES, CONFLICTING
 
 
-def get_case_advice(get_advice, request, case, user_team_final, team=None):
+def get_case_advice(get_advice, request, case, advice_level, team=None):
     """
     :param get_advice: This is a service method to get the advice from a particular level
     :param case: Case DTO returned form API in the dispatch
-    :param user_team_final: This is a choice of "user", "team" or "final"
+    :param advice_level: This is a choice of "user", "team" or "final"
     :param team: Optional team object, only used if getting the advice for a case at the team level
     :return: A page with all the advice for a case at the user level, team level for a chosen team or a final level
     """
@@ -32,8 +33,13 @@ def get_case_advice(get_advice, request, case, user_team_final, team=None):
     context = {
         "case": case,
         "all_advice": advice["advice"],
-        "permissions": permissions,
         "total_goods_value": _get_total_goods_value(case),
+        "permitted_to_give_final_advice": _check_user_permitted_to_give_final_advice(
+            case["application"]["application_type"]["key"], permissions
+        ),
+        "can_create_and_edit_advice": _can_user_create_and_edit_advice(case, permissions),
+        "can_advice_be_finalised": _can_advice_be_finalised(advice),
+        "can_manage_team_advice": Permission.MANAGE_TEAM_ADVICE.value in permissions,
     }
 
     if team:
@@ -41,19 +47,6 @@ def get_case_advice(get_advice, request, case, user_team_final, team=None):
         context["is_user_team"] = team.get("id") == user_team.get("id")
         teams, _ = get_teams(request)
         context["teams"] = teams["teams"]
-
-    able_to_finalize = True
-    for item in advice["advice"]:
-        if item["type"]["key"] == "conflicting":
-            able_to_finalize = False
-            break
-
-    able_to_create_and_edit_advice = "MANAGE_TEAM_CONFIRM_OWN_ADVICE" in permissions or (
-        "MANAGE_TEAM_ADVICE" in permissions and not case.get("has_advice").get("my_user")
-    )
-
-    context["able_to_finalize"] = able_to_finalize
-    context["able_to_create_and_edit_advice"] = able_to_create_and_edit_advice
 
     if "application" in case:
         status_props, _ = get_status_properties(request, case["application"]["status"]["key"])
@@ -63,7 +56,36 @@ def get_case_advice(get_advice, request, case, user_team_final, team=None):
     context["status_is_read_only"] = status_props["is_read_only"]
     context["status_is_terminal"] = status_props["is_terminal"]
 
-    return render(request, "case/advice/" + user_team_final + ".html", context)
+    return render(request, f"case/advice/{advice_level}.html", context)
+
+
+def _check_user_permitted_to_give_final_advice(case_type, permissions):
+    """ Check if the user is permitted to give final advice on the case based on their
+    permissions and the case type. """
+    if case_type in APPLICATION_CASE_TYPES and Permission.MANAGE_LICENCE_FINAL_ADVICE.value in permissions:
+        return True
+    elif case_type in CLEARANCE_CASE_TYPES and Permission.MANAGE_CLEARANCE_FINAL_ADVICE.value in permissions:
+        return True
+    else:
+        return False
+
+
+def _can_advice_be_finalised(advice):
+    """Check that there is no conflicting advice and that the advice can be finalised. """
+    for item in advice["advice"]:
+        if item["type"]["key"] == CONFLICTING:
+            return False
+    return True
+
+
+def _can_user_create_and_edit_advice(case, permissions):
+    """Check that the user can create and edit advice. """
+    if Permission.MANAGE_TEAM_CONFIRM_OWN_ADVICE.value in permissions or (
+        Permission.MANAGE_TEAM_ADVICE.value in permissions and not case.get("has_advice").get("my_user")
+    ):
+        return True
+    else:
+        return False
 
 
 def render_form_page(get_advice, request, case, form, team=None):

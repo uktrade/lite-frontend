@@ -52,7 +52,7 @@
 						{% lcs 'cases.ApplicationPage.Actions.DECISION' %}
 					</a>
 				{% endif %}
-				{% if case.type.key != "clc_query" and case.type.key != "end_user_advisory_query" %}
+				{% if not case.type.key == "goods_query" and not case.type.key == "end_user_advisory_query" and not case.type.key == "hmrc_query"%}
 					<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:user_advice_view' case.id %}">
 						{% lcs 'cases.ApplicationPage.Actions.ADVICE' %}
 					</a>

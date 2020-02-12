@@ -21,12 +21,12 @@
 		<div style="display: grid; grid-template-columns: 1fr auto; grid-gap: 30px;">
 			<div class="lite-tabs--fade">
 				<div class="lite-tabs">
-                    <a href="{% url 'cases:user_advice_view' case.id %}" class="lite-tabs__tab" id="user_advice">User Advice</a>
-					<a href="{% url 'cases:team_advice_view' case.id %}" class="lite-tabs__tab lite-tabs__tab--selected" id="team_advice">Team Advice</a>
-					<a href="{% url 'cases:final_advice_view' case.id %}" class="lite-tabs__tab" id="final_advice">Final Advice</a>
+                    <a href="{% url 'cases:user_advice_view' case.id %}" class="lite-tabs__tab" id="user_advice">{% lcs 'cases.ViewAdvicePage.USER_ADVICE' %}</a>
+					<a href="{% url 'cases:team_advice_view' case.id %}" class="lite-tabs__tab lite-tabs__tab--selected" id="team_advice">{% lcs 'cases.ViewAdvicePage.TEAM_ADVICE' %}</a>
+					<a href="{% url 'cases:final_advice_view' case.id %}" class="lite-tabs__tab" id="final_advice">{% lcs 'cases.ViewAdvicePage.FINAL_ADVICE' %}</a>
 				</div>
 			</div>
-            {% if able_to_create_and_edit_advice and is_user_team and not case.has_advice.final %}
+            {% if can_create_and_edit_advice and is_user_team and not case.has_advice.final %}
                 {% if all_advice|length %}
                     <div>
                         <button id="button-give-advice" name="action" value="give-advice" type="submit" class="govuk-button" data-module="govuk-button">
@@ -59,7 +59,7 @@
 		<!-- Conditional error wrapper -->
 		{% if case.has_advice.final %}
             {% include 'case/views/advice-view.html' with show_advice=True %}
-        {% elif all_advice|length and 'MANAGE_TEAM_ADVICE' in permissions %}
+        {% elif all_advice|length and can_manage_team_advice %}
             {% if is_user_team %}
                 {% include 'case/views/advice-view.html' with show_checkboxes=True show_advice=True %}
             {% else %}
