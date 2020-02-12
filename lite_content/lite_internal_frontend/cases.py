@@ -524,3 +524,16 @@ class AdvicePage:
         REJECT = "Reject"
         ADVICE_BY = "advice by"
         AT = "at"
+
+
+class ViewAdvicePage:
+    USER_ADVICE = "User Advice"
+    TEAM_ADVICE = "Team Advice"
+    FINAL_ADVICE = "Final Advice"
+
+    class Actions:
+        GIVE_OR_CHANGE = "Give or change advice"
+        CLEAR = "Clear advice"
+        FINALISED_GOODS_AND_COUNTRIES = "Finalise goods and countries"
+        FINALISE = "Finalise"
+        COMBINE_TEAM_ADVICE = "Combine all team advice"
