@@ -16,7 +16,7 @@ def told_by_an_official_form(application_id):
                 classes=["govuk-radios--inline"],
             ),
             TextInput(
-                title="Reference number (optional)",
+                title="Reference number",
                 description="The reference number is on the official letter or email.",
                 name="reference_number_on_information_form",
                 optional=True,

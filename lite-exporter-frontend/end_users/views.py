@@ -253,7 +253,7 @@ class RespondToQuery(TemplateView):
                     request, respond_to_query_form(self.end_user_advisory_id, self.ecju_query), data=request.POST
                 )
             else:
-                error = {"required": ["This field is required"]}
+                error = {"required": ["Select yes to confirm you want to send the response"]}
                 form = ecju_query_respond_confirmation_form(
                     reverse_lazy(
                         "end_users:respond_to_query",

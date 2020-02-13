@@ -5,14 +5,14 @@
 {% block two_thirds %}
 	<h1 class="govuk-heading-xl govuk-!-margin-bottom-9">
 		{% block title %}
-			Raise a query on behalf of {{ application.organisation.name }}
+			Raise a query for {{ application.organisation.name }}
 		{% endblock %}
 	</h1>
 
 	<ol class="lite-task-list">
 		<li>
 			<h2 class="lite-task-list__section">
-				<span class="lite-task-list__section-number">1. </span> Provide details of your query
+				<span class="lite-task-list__section-number">1. </span> Query details
 			</h2>
 			<ul class="lite-task-list__items">
 				{% url 'applications:goods_types' application.id as goods_url %}

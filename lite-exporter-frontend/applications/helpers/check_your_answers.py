@@ -99,9 +99,9 @@ def _convert_goods(goods):
             "Description": good["good"]["description"],
             "Part number": default_na(good["good"]["part_number"]),
             "Controlled": friendly_boolean(good["good"]["is_good_controlled"]),
-            "Control list entry": default_na(good["good"]["control_code"]),
+            "CLC": default_na(good["good"]["control_code"]),
             "Quantity": intcomma(good["quantity"]) + " " + pluralise_unit(good["unit"]["value"], good["quantity"]),
-            "Monetary value": "£" + good["value"],
+            "Value": "£" + good["value"],
         }
         for good in goods
     ]
@@ -112,7 +112,7 @@ def _convert_goods_types(goods_types):
         {
             "Description": good["description"],
             "Controlled": friendly_boolean(good["is_good_controlled"]),
-            "Control list entry": default_na(good["control_code"]),
+            "CLC": default_na(good["control_code"]),
         }
         for good in goods_types
     ]

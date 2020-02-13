@@ -178,6 +178,6 @@ class RemovePreexistingGood(TemplateView):
         status_code = delete_application_preexisting_good(request, good_on_application_id)
 
         if status_code != 200:
-            return error_page(request, "Unexpected error removing good")
+            return error_page(request, "Unexpected error removing product")
 
         return redirect(reverse_lazy("applications:goods", kwargs={"pk": application_id}))

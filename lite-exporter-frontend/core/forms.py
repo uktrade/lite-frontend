@@ -5,8 +5,8 @@ from core.helpers import str_date_only
 
 def select_your_organisation_form(organisations):
     return Form(
-        "Which organisation do you want to sign into?",
-        "You can change this later from the home screen.",
+        "Select an organisation",
+        "You can switch between organisations from your dashboard.",
         [
             RadioButtons(
                 name="organisation",

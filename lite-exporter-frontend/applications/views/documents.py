@@ -60,9 +60,7 @@ class AttachDocuments(TemplateView):
         form = get_upload_page(request.path, draft_id)
         self.request.upload_handlers.insert(0, S3FileUploadHandler(request))
         if not request.FILES:
-            return form_page(
-                request, form, extra_data={"draft_id": draft_id}, errors={"documents": ["Select a file to upload"]}
-            )
+            return form_page(request, form, extra_data={"draft_id": draft_id}, errors={"documents": ["Select a file"]})
 
         logging.info(self.request)
         draft_id = str(kwargs["pk"])
@@ -112,7 +110,7 @@ class DeleteDocument(TemplateView):
             return form_page(
                 request,
                 get_delete_confirmation_page(request.path, str(kwargs["pk"])),
-                errors={"delete_document_confirmation": ["This field is required"]},
+                errors={"delete_document_confirmation": ["Select yes to confirm you want to delete the document"]},
             )
         else:
             if option == "yes":

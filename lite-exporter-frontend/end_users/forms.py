@@ -23,14 +23,14 @@ def apply_for_an_end_user_advisory_form(individual, commercial):
     return FormGroup(
         [
             Form(
-                title="Confirm how your products will be used",
+                title="Confirm how the products will be used",
                 questions=[
                     HTMLBlock(
                         "<ul class='govuk-list govuk-list--bullet'>"
-                        "<li class='govuk-!-margin-bottom-5'>I've checked the <a class='govuk-link' href='https://scsanctions.un.org/fop/fop?xml=htdocs/resources/xml/en/consolidated.xml&xslt=htdocs/resources/xsl/en/consolidated.xsl'>UN Security Council Committee's list</a> and my products will not be used by anyone named on this list</li>"  # noqa
-                        "<li class='govuk-!-margin-bottom-5'>I've checked the <a class='govuk-link' href='https://permissions-finder.service.trade.gov.uk/'>Department for International Trade's list of controlled goods</a> and my products are not controlled</li>"  # noqa
-                        "<li class='govuk-!-margin-bottom-5'>I've previously not been informed by the Export Control Joint Unit (ECJU) that my products could be used to make chemical, biological or nuclear weapons</li>"  # noqa
-                        "<li>I do not have any reason to suspect that my products could be used to make chemical, biological or nuclear weapons</li>"  # noqa
+                        "<li class='govuk-!-margin-bottom-5'>I've checked the <a class='govuk-link' href='https://scsanctions.un.org/fop/fop?xml=htdocs/resources/xml/en/consolidated.xml&xslt=htdocs/resources/xsl/en/consolidated.xsl'>UN Security Council Committee's list</a> and the products will not be used by anyone named on this list</li>"  # noqa
+                        "<li class='govuk-!-margin-bottom-5'>I've checked the <a class='govuk-link' href='https://permissions-finder.service.trade.gov.uk/'>Department for International Trade's list of controlled goods</a> and the products are not controlled</li>"  # noqa
+                        "<li class='govuk-!-margin-bottom-5'>I've previously not been informed by the Export Control Joint Unit (ECJU) that the products could be used to make chemical, biological or nuclear weapons</li>"  # noqa
+                        "<li>I do not have any reason to suspect that the products could be used to make chemical, biological or nuclear weapons</li>"  # noqa
                         "</ul>"
                     ),
                 ],
@@ -65,7 +65,7 @@ def apply_for_an_end_user_advisory_form(individual, commercial):
                     conditional(not individual, TextInput(title="Job title", name="contact_job_title"),),
                     conditional(not individual, TextInput(title="Email address", name="contact_email"),),
                     conditional(not individual, TextInput(title="Telephone number", name="contact_telephone"),),
-                    TextInput(title="Website address (optional)", name="end_user.website", optional=True),
+                    TextInput(title="Website address", name="end_user.website", optional=True),
                     TextArea(
                         title="Address",
                         description="The delivery address or registered office for the person "
@@ -81,13 +81,13 @@ def apply_for_an_end_user_advisory_form(individual, commercial):
                 title="More information about the end user",
                 questions=[
                     TextArea(
-                        title="What's your reasoning behind this query? (optional)",
+                        title="What's your reasoning behind this query?",
                         optional=True,
                         name="reasoning",
                         extras={"max_length": 2000},
                     ),
                     TextArea(
-                        title="Is there any other information you can provide about the end user? (optional)",
+                        title="Is there any other information you can provide about the end user?",
                         description="This may help provide a quicker response from ECJU.",
                         optional=True,
                         name="note",
@@ -117,7 +117,7 @@ def copy_end_user_advisory_form(individual, commercial):
                     conditional(not individual, TextInput(title="Job title", name="contact_job_title"),),
                     conditional(not individual, TextInput(title="Email address", name="contact_email"),),
                     conditional(not individual, TextInput(title="Telephone number", name="contact_telephone"),),
-                    TextInput(title="Website address (optional)", name="end_user.website", optional=True),
+                    TextInput(title="Website address", name="end_user.website", optional=True),
                     TextArea(
                         title="Address",
                         description="The delivery address or registered office for the person "
@@ -136,7 +136,7 @@ def copy_end_user_advisory_form(individual, commercial):
                 title="More information about the end user",
                 questions=[
                     TextArea(
-                        title="What's your reasoning behind this query? (optional)",
+                        title="What's your reasoning behind this query?",
                         optional=True,
                         name="reasoning",
                         extras={"max_length": 2000,},
@@ -158,9 +158,9 @@ def copy_end_user_advisory_form(individual, commercial):
 def end_user_advisory_success_page(request, query_reference):
     return success_page(
         request=request,
-        title="Advisory successfully submitted",
-        secondary_title="Your reference number: " + query_reference,
-        description="ECJU usually takes 2 " "working days to check an end user.",
+        title="Advisory submitted",
+        secondary_title="ECJU reference: " + query_reference,
+        description="ECJU usually takes 2 working days to check an end user.",
         what_happens_next=["You'll receive an email from ECJU when the check is finished."],
         links={
             "View your end user advisories": reverse_lazy("end_users:end_users"),
@@ -180,12 +180,7 @@ def respond_to_query_form(query_id, ecju_query):
                 + ecju_query["question"]
                 + "</div><br><br>"
             ),
-            TextArea(
-                name="response",
-                title="Your response",
-                description="You can't edit the response once it's submitted.",
-                extras={"max_length": 2200},
-            ),
+            TextArea(name="response", title="Your response", description="", extras={"max_length": 2200},),
             HiddenField(name="form_name", value="respond_to_query"),
         ],
         back_link=BackLink(
