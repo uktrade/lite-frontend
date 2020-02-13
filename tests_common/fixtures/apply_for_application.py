@@ -106,15 +106,13 @@ def apply_for_grading_query(driver, api_client_config, context):
 @fixture(scope="function")
 def apply_for_hmrc_query(driver, api_client_config, context):
     lite_client = get_lite_client(context, api_client_config)
-    lite_client.users.auth_export_user(lite_client.context["hmrc_org_id"])
-
+    lite_client.api_client.auth_exporter_user(lite_client.context["hmrc_org_id"])
     draft_id = lite_client.applications.add_hmrc_draft(
         draft={
             "application_type": "hmrc_query",
             "organisation": lite_client.context["org_id"],
             "hmrc_organisation": lite_client.context["hmrc_org_id"],
         },
-        good={"good_id": "", "quantity": 1234, "unit": "MTR", "value": 1, "is_good_incorporated": True},
         end_user={
             "name": "Mr Smith",
             "address": "Westminster, London SW1A 0BB",
@@ -125,6 +123,7 @@ def apply_for_hmrc_query(driver, api_client_config, context):
         },
     )
     lite_client.applications.submit_hmrc_application(draft_id)
+    context.case_id = lite_client.context["case_id"]
 
 
 @fixture(scope="module")

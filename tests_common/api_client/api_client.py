@@ -22,8 +22,9 @@ class ApiClient:
             self.request_data["gov_user"], "/gov-users/authenticate/", "gov_user"
         )
 
-    def auth_exporter_user(self, org_id=None):
+    def auth_exporter_user(self, org_id=None, hmrc_org_id=None):
         self.exporter_headers["organisation-id"] = org_id or self.context["org_id"]
+        self.exporter_headers["hmrc_org_id"] = hmrc_org_id or self.context["hmrc_org_id"]
         self.exporter_headers["exporter-user-token"] = self._auth_user(
             self.request_data["export_user"], "/users/authenticate/", "exporter_user"
         )
@@ -31,7 +32,7 @@ class ApiClient:
     def make_request(self, method, url, headers, body=None, files=None):
         response = self.session.request(method, self.base_url + url, headers=headers, json=body, files=files)
         if not response.ok:
-            raise Exception("bad response: " + response.text)
+            raise Exception("bad response at: " + url + "\nwith message: " + response.text)
         return response
 
     def _auth_user(self, data, url, user_type):

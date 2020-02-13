@@ -36,12 +36,16 @@ class Applications:
         self.api_client.add_to_context("additional_document", additional_document_metadata)
         return self.api_client.context["additional_document"]["document"]["id"]
 
-    def add_site(self, draft_id):
+    def add_site(self, draft_id, is_hmrc=False):
+        if is_hmrc:
+            primary_site_id_key = "hmrc_primary_site_id"
+        else:
+            primary_site_id_key = "primary_site_id"
         self.api_client.make_request(
             method="POST",
             url="/applications/" + draft_id + "/sites/",
             headers=self.api_client.exporter_headers,
-            body={"sites": [self.api_client.context["primary_site_id"]]},
+            body={"sites": [self.api_client.context[primary_site_id_key]]},
         )
 
     def add_draft(self, draft=None, good=None, end_user=None, ultimate_end_user=None, consignee=None, third_party=None):
@@ -64,11 +68,11 @@ class Applications:
 
         return draft_id
 
-    def add_hmrc_draft(self, draft=None, good=None, end_user=None):
+    def add_hmrc_draft(self, draft=None, end_user=None):
         draft_id = self.create_draft(draft)
-        self.add_site(draft_id)
-        self.parties.add_party("end_user", draft_id, end_user)
-        self.goods.add_good_to_draft(draft_id, good)
+        self.add_site(draft_id, is_hmrc=True)
+        self.parties.add_party(request_data_key="end_user", draft_id=draft_id, party=end_user)
+        self.goods.add_open_draft_good(draft_id)
 
         return draft_id
 
@@ -97,6 +101,7 @@ class Applications:
 
     def submit_hmrc_application(self, draft_id=None):
         self.submit_application(draft_id)
+        self.api_client.add_to_context("case_id", draft_id)
 
     def submit_open_application(self, draft_id=None):
         self.submit_application(draft_id)

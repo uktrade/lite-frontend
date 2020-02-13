@@ -48,6 +48,7 @@ class Organisations:
         self.api_client.add_to_context(
             "hmrc_org_id", org_id,
         )
+        self.api_client.add_to_context("hmrc_primary_site_id", self.get_org_primary_site_id(org_id))
 
     def add_test_user_to_exporter_org(self, org_id):
         data = self.request_data["export_user"]
