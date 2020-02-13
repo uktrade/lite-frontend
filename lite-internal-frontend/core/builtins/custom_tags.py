@@ -12,6 +12,7 @@ from django.utils.safestring import mark_safe
 from conf.constants import ISO8601_FMT
 
 from lite_content.lite_internal_frontend import strings
+from conf.constants import SystemTeamsID
 
 register = template.Library()
 STRING_NOT_FOUND_ERROR = "STRING_NOT_FOUND"
@@ -296,3 +297,9 @@ def display_grading(text: str):
         return f"{value[0].upper()} {' '.join(value[1:]).title()}"
 
     return text
+
+
+@register.filter()
+def is_system_team(id: str):
+    ids = [team_id.value for team_id in SystemTeamsID]
+    return id in ids

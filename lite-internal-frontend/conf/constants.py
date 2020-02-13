@@ -112,3 +112,7 @@ class Statuses:
     REGISTERED = "registered"
     SUBMITTED = "submitted"
     WITHDRAWN = "withdrawn"
+
+
+class SystemTeamsID(Enum):
+    ADMIN = "00000000-0000-0000-0000-000000000001"
