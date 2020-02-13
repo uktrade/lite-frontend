@@ -135,6 +135,8 @@ class Authentication:
 class Users:
     DESCRIPTION = "Team level users can manage and view team user accounts."
     INVITE = "Invite a new user"
+    MANAGE_ROLES = "Manage roles"
+    PENDING = "Pending"
 
 
 class UpdateUser:
