@@ -32,7 +32,7 @@ def control_list_entry_question(
 def pv_grading_question(
     pv_gradings,
     title="PV grading",
-    description="For example, UK official - sensitive",
+    description="For example, UK OFFICIAL-SENSITIVE",
     name="pv_grading",
     inset_text=True,
 ):
