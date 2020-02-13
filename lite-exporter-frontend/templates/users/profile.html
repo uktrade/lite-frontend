@@ -21,7 +21,7 @@
 {% block full_width %}
 	{% if profile.status == 'Deactivated' %}
 		<div class="lite-info-bar lite-info-bar--error lite-info-bar--no-animation">
-			This user is deactivated
+			This member is deactivated
 		</div>
 	{% endif %}
 
@@ -58,7 +58,7 @@
 					{% endif %}
 					{% if show_assign_sites %}
 						<a id="button-assign-sites" href="{% url 'users:assign_sites' profile.id %}" class="govuk-button">
-							Assign user to sites
+							Assign member to sites
 						</a>
 					{% endif %}
 				</div>

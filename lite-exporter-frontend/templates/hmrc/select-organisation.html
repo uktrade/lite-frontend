@@ -15,7 +15,7 @@
 			<div class="govuk-error-summary__body">
 				<ul class="govuk-list govuk-error-summary__list">
 					<li>
-						<a href="#">Select an organisation to raise a query for</a>
+						<a href="#">Select an organisation</a>
 					</li>
 				</ul>
 			</div>
@@ -24,11 +24,11 @@
 
 	<legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
 		<h1 class="govuk-fieldset__heading">
-			{% block title %}Which organisation are you enquiring about?{% endblock %}
+			{% block title %}Search for an organisation or individual{% endblock %}
 		</h1>
 	</legend>
 	<span class="govuk-hint">
-		Write the name or company registration number of the organisation in the search box.
+		Enter the name or company registration number.
 	</span>
 	<form method="get" class="govuk-!-margin-bottom-6">
 		<div class="lite-search__container">
@@ -46,7 +46,7 @@
 			<div class="govuk-form-group {% if show_error %}govuk-form-group--error{% endif %}">
 				{% if show_error %}
 					<span id="passport-issued-error" class="govuk-error-message">
-						<span class="govuk-visually-hidden">Error:</span> Select an organisation to raise a query for
+						<span class="govuk-visually-hidden">Error:</span> Select an organisation
 					</span>
 				{% endif %}
 				<div class="govuk-radios">
@@ -78,7 +78,7 @@
 				<span class="govuk-visually-hidden">Information</span>
 				There are no organisations to show.<br>
 				<a class="govuk-link govuk-link--no-visited-state" href="{{ INTERNAL_URL }}/organisations/register/">
-					You can register an organisation
+					Register the organisation or individual
 				</a>
 			</p>
 		</div>
