@@ -361,8 +361,8 @@ class AttachDocumentPage:
 
 
 class DeleteGoodDocumentPage:
-    TITLE = "Are you sure you want to delete this file?"
-    BACK = "Back to good overview"
+    TITLE = "Are you sure you want to delete this document?"
+    BACK = "Back to product"
     DOCUMENT_NAME = "Name"
     DOCUMENT_CREATED_AT = "Created at"
     DOCUMENT_CREATED_BY = "Created by"
