@@ -104,7 +104,7 @@ class CreateGoodForm:
         UNSURE = "I don't know, raise a control list classification (CLC) query"
 
     class ControlListEntry:
-        TITLE = "Control list classification"
+        TITLE = "Control list classification (CLC)"
         DESCRIPTION = "For example, ML1a."
 
     class IsGraded:
@@ -135,7 +135,7 @@ class GoodGradingForm:
 
 
 class GoodsQueryForm:
-    TITLE = "Create a product query"
+    TITLE = "Product query"
     DESCRIPTION = ""
     BACK_LINK = "Back to product"
     BUTTON = "Submit"
@@ -183,7 +183,7 @@ class EditGoodForm:
         UNSURE = "I don't know, raise a control list classification (CLC) query"
 
     class ControlListEntry:
-        TITLE = "Control list classification"
+        TITLE = "Control list classification (CLC)"
         DESCRIPTION = "For example, ML1a."
 
     class Incorporated:
@@ -247,7 +247,7 @@ class GoodPage:
         GENERATED_DOCUMENTS = "ECJU documents"
 
     class Query:
-        TITLE = "Your query"
+        TITLE = "Product query"
         CASE_OFFICER = "Case officer"
         NO_ASSIGNED_CASE_OFFICER = "Not assigned"
         REFERENCE = "ECJU reference"
@@ -262,7 +262,7 @@ class GoodPage:
         REMOVE = generic.Document.REMOVE
 
     class RaiseQuery:
-        PREFIX = "If you're not sure the product is controlled or not, "
+        PREFIX = "If you're not sure it's a controlled product, "
         LINK = "raise a control list classification query"
         SUFFIX = "."
 
@@ -286,7 +286,7 @@ class GoodPage:
 class AddGoodToApplicationForm:
     TITLE = "Value and quantity of the product"
     DESCRIPTION = ""
-    DOCUMENT_MISSING = "A document is required"
+    DOCUMENT_MISSING = "Select a document"
     BACK_LINK = "Back to products"
 
     class Value:
@@ -333,7 +333,7 @@ class GoodsLocationForm:
     EXTERNAL_LOCATION_TITLE = "Do you want to add a new external location or use an existing one?"
     EXTERNAL_LOCATION_NEW_LOCATION = "Add a new external location"
     EXTERNAL_LOCATION_PREEXISTING_LOCATION = "Use an existing external location"
-    ERROR = "Select a choice"
+    ERROR = "Select an option"
 
 
 class GoodsCountriesMatrix:
@@ -347,7 +347,7 @@ class GoodsCountriesMatrix:
 
 
 class GoodsLocationPage:
-    SELECT_SITES_TITLE = "Products locations"
+    SELECT_SITES_TITLE = "Product locations"
     SELECT_SITES_BUTTON = "Add sites"
 
 
