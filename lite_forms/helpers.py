@@ -139,3 +139,24 @@ def convert_to_markdown(text):
         return text
     else:
         return None
+
+
+def handle_lists(data):
+    """
+    By default get() returns only one value, we use getlist() to return multiple values
+    We indicate which components return a list by [] appended at the end of its name
+    """
+    temp_data = {}
+    lists = []
+
+    # If a key ends with [] remove the two characters, and instead
+    # of doing a get() to get its values use a getlist() which returns all
+    # of its values
+    for key in data.keys():
+        if key.endswith("[]"):
+            temp_data[key[:-2]] = data.getlist(key)
+            lists.append(key[:-2])
+        else:
+            temp_data[key] = data.get(key)
+
+    return temp_data, lists

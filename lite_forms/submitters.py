@@ -9,6 +9,7 @@ from lite_forms.helpers import (
     get_form_by_pk,
     flatten_data,
     get_previous_form,
+    handle_lists,
 )
 
 
@@ -51,12 +52,16 @@ def _prepare_data(request, inject_data, expect_many_values):
     del data["form_pk"]
     del data["csrfmiddlewaretoken"]
 
+    # expect_many_values is DEPRECATED
     # Ensure data which is expected to have multiple values.
     for many_value_key in expect_many_values:
         data[many_value_key] = request.POST.getlist(many_value_key)
 
+    # Handle lists (such as checkboxes)
+    data, lists = handle_lists(data)
+
     # Post the data to the validator and check for errors
-    return data, nest_data(data)
+    return data, nest_data(data), lists
 
 
 def submit_paged_form(  # noqa
@@ -76,7 +81,7 @@ def submit_paged_form(  # noqa
     if expect_many_values is None:
         expect_many_values = []
 
-    data, nested_data = _prepare_data(request, inject_data, expect_many_values)
+    data, nested_data, lists = _prepare_data(request, inject_data, expect_many_values)
 
     form_pk = request.POST.get("form_pk")
     previous_form = get_previous_form(form_pk, form_group)
@@ -131,9 +136,17 @@ def submit_paged_form(  # noqa
 
     # Add existing post data to new form as hidden fields
     for key, value in data.items():
-        if key in expect_many_values:
+        # If the keys value is a list, insert each individually
+        if key in lists:
             for sub_value in value:
-                next_form.questions.insert(0, HiddenField(key, sub_value))
+                next_form.questions.insert(0, HiddenField(key + "[]", sub_value))
+        elif key in expect_many_values:
+            # Deprecated - add [] after your components name
+            if value:
+                for sub_value in value:
+                    next_form.questions.insert(0, HiddenField(key, sub_value))
+            else:
+                next_form.questions.insert(0, HiddenField(key, []))
         else:
             next_form.questions.insert(0, HiddenField(key, value))
 

@@ -5,6 +5,7 @@ from django.views.generic import TemplateView
 
 from lite_forms.components import FormGroup, Form
 from lite_forms.generators import form_page
+from lite_forms.helpers import handle_lists
 from lite_forms.submitters import submit_paged_form
 
 
@@ -62,26 +63,23 @@ class SingleFormView(FormView):
     def init(self, request, **kwargs):
         super().init(request, **kwargs)
 
+    def on_submission(self, request, **kwargs):
+        return request.POST.copy()
+
     def get(self, request, **kwargs):
         override_return = self.init(request, **kwargs)  # noqa
         if override_return:
-            return redirect(override_return)
+            if isinstance(override_return, str):
+                return redirect(override_return)
+            return override_return
         return form_page(request, self.get_form(), data=self.get_data(), extra_data=self.context)
 
     def post(self, request, **kwargs):
         self.init(request, **kwargs)
-        data = request.POST.copy()
+        data = self.on_submission(request, **kwargs)
 
         # Handle lists (such as checkboxes)
-        # By default get() returns only one value, we use getlist() to return multiple values
-        # We indicate which components return a list by [] appended at the end of its name
-        data_temp = {}
-        for key, _ in data.items():
-            if key.endswith("[]"):
-                data_temp[key[:-2]] = data.getlist(key)
-            else:
-                data_temp[key] = data.get(key)
-        data = data_temp
+        data, _ = handle_lists(data)
 
         if self.get_object_pk():
             validated_data, _ = self.get_action()(request, self.get_object_pk(), data)  # noqa
