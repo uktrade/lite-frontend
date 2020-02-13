@@ -574,4 +574,3 @@ class ViewAdvicePage:
         WEBSITE_COLUMN = "Website"
         DOCUMENT_COLUMN = "Document"
         ADVICE_COLUMN = "Advice"
-
