@@ -21,7 +21,7 @@ Feature: I want to add case-level flags to a case and view them
   @LT_1185_add @LT_951 @regression
   Scenario: Add flag to good
     Given I sign in to SSO or am signed into SSO
-    And I create application or application has been previously created
+    And I create standard application or standard application has been previously created
     When I go to flags
     And I add a flag called Suspicious at level Good
     And I go to application previously created
