@@ -125,7 +125,7 @@ def click_on_created_eua(driver, context, internal_url):  # noqa
     driver.get(internal_url.rstrip("/") + "/cases/" + context.eua_id)
 
 
-@given("I create standard application or standard application has been previously created")  # noqa
+@given("I create application or application has been previously created")  # noqa
 def create_app(driver, apply_for_standard_application):  # noqa
     pass
 

@@ -8,7 +8,7 @@ Feature: I want to review, amend where required and confirm the goods ratings an
   @LT_1300 @smoke
   Scenario: Review goods On Standard Application
     Given I sign in to SSO or am signed into SSO
-    And I create standard application or standard application has been previously created
+    And I create application or application has been previously created
     And I create report summary picklist
     When I go to application previously created
     And I select goods and click review

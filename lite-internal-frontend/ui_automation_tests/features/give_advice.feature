@@ -7,7 +7,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
   @LT_1376 @regression @LT_1760
   Scenario: Give advice and proviso a licence
     Given I sign in to SSO or am signed into SSO
-    And I create standard application or standard application has been previously created
+    And I create application or application has been previously created
     And I create a proviso picklist
     And I create a standard advice picklist
     When I go to application previously created
@@ -29,7 +29,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
   @LT_1115_grant @smoke
   Scenario: Finalise a licence
     Given I sign in to SSO or am signed into SSO
-    And I create standard application or standard application has been previously created
+    And I create application or application has been previously created
     And I create a proviso picklist
     And I create a standard advice picklist
     When I go to application previously created
@@ -74,7 +74,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
   @LT_966_refusal_flags @regression
   Scenario: Test that refusal advice is given correctly
     Given I sign in to SSO or am signed into SSO
-    And I create standard application or standard application has been previously created
+    And I create application or application has been previously created
     When I go to application previously created
     And I click on view advice
     And I select all items in the advice view
@@ -120,7 +120,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
   @LT_920_cannot_give_advice_terminal_case @regression
   Scenario: Cannot give advice on a case in terminal state
     Given I sign in to SSO or am signed into SSO
-    And I create standard application or standard application has been previously created
+    And I create application or application has been previously created
     And I create a proviso picklist
     And I create a standard advice picklist
     When I go to application previously created
