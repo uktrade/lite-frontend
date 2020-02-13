@@ -16,6 +16,9 @@
 {% block initial_tasks %}
 	{% url 'applications:edit_told_by_an_official' application.id as told_by_an_official_url %}
 	{% include "includes/task-list-item.html" with id="told-by-an-official" title="applications.StandardApplicationTaskList.END_USE_CONTROL" url=told_by_an_official_url status="done" description=reference_number_description %}
+
+	{% url 'applications:edit_goods_categories' application.id as goods_categories_url %}
+	{% include "includes/task-list-item.html" with id="goods-categories" title="applications.StandardApplicationTaskList.GOODS_CATEGORIES" url=goods_categories_url status="done" description=application.goods_categories|join_key_value_list disabled=edit_type|equals:'minor_edit' %}
 {% endblock %}
 
 {% block main_tasks %}

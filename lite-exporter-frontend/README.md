@@ -1,4 +1,6 @@
-# lite-exporter-frontend
+<img src="docs/logo.png" alt="Logo" width="50">
+
+![Logo text](docs/logo-text.svg)
 
 [![CircleCI](https://circleci.com/gh/uktrade/lite-exporter-frontend.svg?style=svg)](https://circleci.com/gh/uktrade/lite-exporter-frontend)
 [![Maintainability](https://api.codeclimate.com/v1/badges/07f341e7b8a40681c3c6/maintainability)](https://codeclimate.com/github/uktrade/lite-exporter-frontend/maintainability)
@@ -73,7 +75,7 @@ Application for handling exporter related activity in LITE.
 
 ### Running tests via Pycharm tips
 * You may need to make sure in pycharm, within Preferences -> Tools -> Python Integrated Tools -> Default Test Runner is pytest
-* You may need to change the run configuration for the tests too. Click on run, edit configurations and make sure the Python framework being used in the left hand pane is Python tests 
+* You may need to change the run configuration for the tests too. Click on run, edit configurations and make sure the Python framework being used in the left hand pane is Python tests
 
 
 ## Running Bandit

@@ -4,6 +4,9 @@ from lite_forms.components import BackLink, Label
 
 
 def back_to_task_list(application_id):
+    if not application_id:
+        return BackLink()
+
     return BackLink(
         strings.Common.BACK_TO_TASK_LIST, reverse_lazy("applications:task_list", kwargs={"pk": application_id})
     )

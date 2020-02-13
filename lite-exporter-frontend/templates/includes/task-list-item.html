@@ -1,8 +1,14 @@
 <li class="lite-task-list__item">
 	<div class="lite-task-list__item-header">
-		<a id="link-{{ id }}" href="{{ url }}" class="govuk-link govuk-link--no-visited-state">
-			{% lcs title %}
-		</a>
+		{% if disabled %}
+			<span id="link-{{ id }}">
+				{% lcs title %}
+			</span>
+		{% else %}
+			<a id="link-{{ id }}" href="{{ url }}" class="govuk-link govuk-link--no-visited-state">
+				{% lcs title %}
+			</a>
+		{% endif %}
 		{% if not hide_tag %}
 			{% if status == 'done' %}
 				<div class="lite-tag lite-tag--blue">

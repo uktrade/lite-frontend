@@ -16,6 +16,7 @@ class ApplyForALicencePage(BasePage):
     APPLICATION_IS_SUBMITTED = ".govuk-panel__title"
     LINK_DELETE_DRAFT_ID = "link-delete-draft"
     SUCCESS_BANNER_CLASS = ".govuk-panel--confirmation"
+    CHECKBOXES_GOODS_CATEGORIES_NAME = "goods_categories[]"
 
     def enter_name_or_reference_for_application(self, name):
         element = self.driver.find_element_by_id(self.NAME_OR_REFERENCE_INPUT_ID)
@@ -38,6 +39,11 @@ class ApplyForALicencePage(BasePage):
             return self.driver.find_element_by_css_selector(self.BUTTON_STANDARD_LICENCE).click()
         elif export_type == "open":
             return self.driver.find_element_by_css_selector(self.BUTTON_OPEN_LICENCE).click()
+
+    def select_goods_categories(self):
+        checkboxes = self.driver.find_elements_by_name(self.CHECKBOXES_GOODS_CATEGORIES_NAME)
+        for checkbox in checkboxes:
+            checkbox.click()
 
     def click_permanent_or_temporary_button(self, string):
         self.driver.find_element_by_id(self.EXPORT_BUTTON + string).click()

@@ -51,6 +51,9 @@ def _convert_standard_application(application, editable=False):
         applications.ApplicationSummaryPage.SUPPORTING_DOCUMENTATION: _get_supporting_documentation(
             application["additional_documents"], application["id"]
         ),
+        applications.ApplicationSummaryPage.GOODS_CATEGORIES: ", ".join(
+            [x["value"] for x in application["goods_categories"]]
+        ),
     }
 
 

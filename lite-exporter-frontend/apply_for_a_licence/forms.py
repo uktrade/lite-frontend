@@ -1,5 +1,6 @@
 from django.urls import reverse_lazy
 
+from applications.forms.edit import goods_categories, reference_name_form
 from conf.constants import STANDARD_LICENCE, OPEN_LICENCE
 from lite_content.lite_exporter_frontend import strings, generic
 from lite_content.lite_exporter_frontend.applications import (
@@ -7,26 +8,8 @@ from lite_content.lite_exporter_frontend.applications import (
     ExportLicenceQuestions,
     MODQuestions,
 )
-from lite_forms.components import (
-    RadioButtons,
-    Form,
-    TextInput,
-    Option,
-    FormGroup,
-    Breadcrumbs,
-    BackLink,
-)
+from lite_forms.components import RadioButtons, Form, TextInput, Option, FormGroup, Breadcrumbs, BackLink
 from lite_forms.helpers import conditional
-
-
-def reference_name_question(back_link):
-    return Form(
-        title=InitialApplicationQuestionsForms.ReferenceNameQuestion.TITLE,
-        description=InitialApplicationQuestionsForms.ReferenceNameQuestion.DESCRIPTION,
-        questions=[TextInput(name="name"),],
-        default_button_name=strings.CONTINUE,
-        back_link=back_link,
-    )
 
 
 def opening_question():
@@ -60,7 +43,7 @@ def opening_question():
                 ],
             ),
         ],
-        default_button_name=strings.CONTINUE,
+        default_button_name=generic.CONTINUE,
         back_link=Breadcrumbs(
             [
                 BackLink(generic.SERVICE_NAME, reverse_lazy("core:hub")),
@@ -93,17 +76,12 @@ def export_licence_questions(application_type):
                         ],
                     ),
                 ],
-                default_button_name=strings.CONTINUE,
+                default_button_name=generic.CONTINUE,
                 back_link=BackLink(
                     ExportLicenceQuestions.ExportLicenceQuestion.BACK, reverse_lazy("apply_for_a_licence:start")
                 ),
             ),
-            reference_name_question(
-                BackLink(
-                    InitialApplicationQuestionsForms.ReferenceNameQuestion.BACK_TO_LICENCE_TYPE,
-                    reverse_lazy("apply_for_a_licence:export_licence_questions"),
-                )
-            ),
+            reference_name_form(),
             Form(
                 title=ExportLicenceQuestions.ExportType.TITLE,
                 description=ExportLicenceQuestions.ExportType.DESCRIPTION,
@@ -116,33 +94,37 @@ def export_licence_questions(application_type):
                         ],
                     ),
                 ],
-                default_button_name=strings.CONTINUE
+                default_button_name=generic.CONTINUE
                 if application_type == STANDARD_LICENCE
-                else strings.SAVE_AND_CONTINUE,
+                else generic.SAVE_AND_CONTINUE,
             ),
-            conditional(
+            *conditional(
                 application_type != OPEN_LICENCE,
-                Form(
-                    title=ExportLicenceQuestions.HaveYouBeenInformedQuestion.TITLE,
-                    description=ExportLicenceQuestions.HaveYouBeenInformedQuestion.DESCRIPTION,
-                    questions=[
-                        RadioButtons(
-                            name="have_you_been_informed",
-                            options=[
-                                Option("yes", strings.YES, show_pane="pane_reference_number_on_information_form"),
-                                Option("no", strings.NO),
-                            ],
-                            classes=["govuk-radios--inline"],
-                        ),
-                        TextInput(
-                            title=ExportLicenceQuestions.HaveYouBeenInformedQuestion.WHAT_WAS_THE_REFERENCE_CODE_TITLE,
-                            description=ExportLicenceQuestions.HaveYouBeenInformedQuestion.WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION,
-                            name="reference_number_on_information_form",
-                            optional=True,
-                        ),
-                    ],
-                    default_button_name=strings.SAVE_AND_CONTINUE,
-                ),
+                [
+                    goods_categories(),
+                    Form(
+                        title=ExportLicenceQuestions.HaveYouBeenInformedQuestion.TITLE,
+                        description=ExportLicenceQuestions.HaveYouBeenInformedQuestion.DESCRIPTION,
+                        questions=[
+                            RadioButtons(
+                                name="have_you_been_informed",
+                                options=[
+                                    Option("yes", strings.YES, show_pane="pane_reference_number_on_information_form"),
+                                    Option("no", strings.NO),
+                                ],
+                                classes=["govuk-radios--inline"],
+                            ),
+                            TextInput(
+                                title=ExportLicenceQuestions.HaveYouBeenInformedQuestion.WHAT_WAS_THE_REFERENCE_CODE_TITLE,
+                                description=ExportLicenceQuestions.HaveYouBeenInformedQuestion.WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION,
+                                name="reference_number_on_information_form",
+                                optional=True,
+                            ),
+                        ],
+                        default_button_name=generic.SAVE_AND_CONTINUE,
+                    ),
+                ],
+                [],
             ),
         ]
     )
@@ -176,14 +158,9 @@ def MOD_questions():
                         ],
                     ),
                 ],
-                default_button_name=strings.CONTINUE,
+                default_button_name=generic.CONTINUE,
                 back_link=BackLink(MODQuestions.WhatAreYouApplyingFor.BACK, reverse_lazy("apply_for_a_licence:start")),
             ),
-            reference_name_question(
-                BackLink(
-                    InitialApplicationQuestionsForms.ReferenceNameQuestion.BACK_TO_MOD_CLEARANCE_TYPE,
-                    reverse_lazy("apply_for_a_licence:mod_questions"),
-                )
-            ),
+            reference_name_form(),
         ]
     )
