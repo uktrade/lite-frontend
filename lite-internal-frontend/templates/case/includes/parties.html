@@ -45,10 +45,6 @@
                         {{ flag.name }}<br>
                     {% endfor %}
                 </td>
-            {% else %}
-                <td class="govuk-table__cell">&nbsp;</td>
-                <th scope="row" class="govuk-table__header">{% lcs 'cases.ApplicationPage.EndUser.Table.Title' %}</th>
-                <td colspan=6 class="govuk-table__cell">{% lcs 'cases.ApplicationPage.EndUser.NO_END_USER' %}</td>
             {% endif %}
         </tr>
         <tr class="govuk-table__row">
@@ -72,10 +68,6 @@
                         {{ flag.name }}<br>
                     {% endfor %}
                 </td>
-            {% else %}
-                <td class="govuk-table__cell">&nbsp;</td>
-                <th scope="row" class="govuk-table__header">{% lcs 'cases.ApplicationPage.Consignee.Table.Title' %}</th>
-                    <td colspan=6 class="govuk-table__cell">{% lcs 'cases.ApplicationPage.Consignee.NO_CONSIGNEE' %}</td>
             {% endif %}
         </tr>
         {% for ultimate_end_user in case.application.ultimate_end_users %}

@@ -135,33 +135,35 @@
 		</div>
 
 		<!-- Goods location -->
-		<div class="govuk-accordion__section">
-			<div class="govuk-accordion__section-header">
-				<h2 class="govuk-accordion__section-heading">
-					<span class="govuk-accordion__section-button" id="accordion-goods">
-						{% lcs 'cases.ApplicationPage.Goods.CASE_GOODS_LOCATION' %}
-					</span>
-				</h2>
+		{% if case.application.goods_locations %}
+			<div class="govuk-accordion__section">
+				<div class="govuk-accordion__section-header">
+					<h2 class="govuk-accordion__section-heading">
+						<span class="govuk-accordion__section-button" id="accordion-goods">
+							{% lcs 'cases.ApplicationPage.Goods.CASE_GOODS_LOCATION' %}
+						</span>
+					</h2>
+				</div>
+				<div id="accordion-goods-content" class="govuk-accordion__section-content" aria-labelledby="accordion-goods">
+					<table class="govuk-table">
+						<thead class="govuk-table__head">
+							<tr class="govuk-table__row">
+								<th scope="col" class="govuk-table__header govuk-!-width-one-third">{% lcs 'cases.ApplicationPage.Goods.CASE_GOODS_LOCATION_NAME' %}</th>
+								<th scope="col" class="govuk-table__header govuk-!-width-two-thirds">{% lcs 'cases.ApplicationPage.Goods.CASE_GOODS_LOCATION_ADDRESS' %}</th>
+							</tr>
+						</thead>
+						<tbody class="govuk-table__body">
+							<tr class="govuk-table__row">
+								{% for location in case.application.goods_locations.data %}
+									<th scope="row" class="govuk-table__header">{{ location.name }}</th>
+									<td class="govuk-table__cell">{{ location|get_address }}</td>
+								{% endfor %}
+							</tr>
+						</tbody>
+					</table>
+				</div>
 			</div>
-			<div id="accordion-goods-content" class="govuk-accordion__section-content" aria-labelledby="accordion-goods">
-				<table class="govuk-table">
-					<thead class="govuk-table__head">
-						<tr class="govuk-table__row">
-							<th scope="col" class="govuk-table__header govuk-!-width-one-third">{% lcs 'cases.ApplicationPage.Goods.CASE_GOODS_LOCATION_NAME' %}</th>
-							<th scope="col" class="govuk-table__header govuk-!-width-two-thirds">{% lcs 'cases.ApplicationPage.Goods.CASE_GOODS_LOCATION_ADDRESS' %}</th>
-						</tr>
-					</thead>
-					<tbody class="govuk-table__body">
-						<tr class="govuk-table__row">
-							{% for location in case.application.goods_locations.data %}
-								<th scope="row" class="govuk-table__header">{{ location.name }}</th>
-								<td class="govuk-table__cell">{{ location|get_address }}</td>
-							{% endfor %}
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
+		{% endif %}
 
 		<!-- Parties -->
 		<div class="govuk-accordion__section">

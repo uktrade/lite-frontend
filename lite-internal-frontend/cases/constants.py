@@ -8,4 +8,6 @@ class CaseType(Enum):
     END_USER_ADVISORY_QUERY = "end_user_advisory_query"
     APPLICATION = "application"
     GOODS_QUERY = "goods_query"
+    F680_CLEARANCE = "F680_clearance"
     EXHIBITION_CLEARANCE = "exhibition_clearance"
+    GIFTING_CLEARANCE = "gifting_clearance"

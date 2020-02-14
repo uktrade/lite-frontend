@@ -80,7 +80,7 @@ GENERATED_DOCUMENT = "GENERATED"
 
 # Case types
 APPLICATION_CASE_TYPES = ["open_licence", "standard_licence", "hmrc"]
-CLEARANCE_CASE_TYPES = ["exhibition_clearance"]
+CLEARANCE_CASE_TYPES = ["exhibition_clearance", "gifting_clearance", "F680_clearance"]
 
 # Advice
 CONFLICTING = "conflicting"
