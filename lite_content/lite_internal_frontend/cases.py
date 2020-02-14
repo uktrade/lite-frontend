@@ -537,3 +537,40 @@ class ViewAdvicePage:
         FINALISED_GOODS_AND_COUNTRIES = "Finalise goods and countries"
         FINALISE = "Finalise"
         COMBINE_TEAM_ADVICE = "Combine all team advice"
+
+    class EndUserTable:
+        HEADING = "End User"
+        NAME_COLUMN = "Name"
+        TYPE_COLUMN = "Type"
+        ADDRESS_COLUMN = "Address"
+        WEBSITE_COLUMN = "Website"
+        DOCUMENT_COLUMN = "Document"
+        ADVICE_COLUMN = "Advice"
+
+    class ConsigneeTable:
+        HEADING = "Consignee"
+        NAME_COLUMN = "Name"
+        TYPE_COLUMN = "Type"
+        ADDRESS_COLUMN = "Address"
+        WEBSITE_COLUMN = "Website"
+        DOCUMENT_COLUMN = "Document"
+        ADVICE_COLUMN = "Advice"
+
+    class UltimateEndUserTable:
+        HEADING = "Ultimate end users"
+        NAME_COLUMN = "Name"
+        TYPE_COLUMN = "Type"
+        ADDRESS_COLUMN = "Address"
+        WEBSITE_COLUMN = "Website"
+        DOCUMENT_COLUMN = "Document"
+        ADVICE_COLUMN = "Advice"
+
+    class ThirdPartyTable:
+        HEADING = "Third parties"
+        NAME_COLUMN = "Name"
+        TYPE_COLUMN = "Type"
+        ROLE_COLUMN = "Role"
+        ADDRESS_COLUMN = "Address"
+        WEBSITE_COLUMN = "Website"
+        DOCUMENT_COLUMN = "Document"
+        ADVICE_COLUMN = "Advice"
