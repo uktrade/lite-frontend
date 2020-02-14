@@ -48,6 +48,7 @@ class ApplicationPage(BasePage):
     ASSIGNED_USERS_ID = "assigned_users"
     CASE_QUEUES_ID = "case_queues"
     HMRC_GOODS_LOCATION = "hmrc-goods-location"
+    TYPE_OF_CASE = "case-type"  # ID
 
     def click_visible_to_exporter_checkbox(self):
         time.sleep(0.5)
@@ -230,3 +231,6 @@ class ApplicationPage(BasePage):
 
     def click_expand_flags(self, case_id):
         self.driver.find_element_by_id(self.EXPAND_FLAGS_PARTIAL_ID + case_id).click()
+
+    def get_type_of_case_from_page(self):
+        return self.driver.find_element_by_id(self.TYPE_OF_CASE).text
