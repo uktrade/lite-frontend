@@ -24,7 +24,7 @@ def generate_name(prefix):
 def apply_for_standard_application(driver, api_client_config, context):
     timer = Timer()
     lite_client = get_lite_client(context, api_client_config)
-
+    lite_client.api_client.auth_exporter_user(lite_client.context["org_id"])
     context.app_name, context.app_time_id = generate_name("Standard Application")
     context.good_value = 1.21
 
@@ -86,12 +86,14 @@ def apply_for_standard_application(driver, api_client_config, context):
 @fixture(scope="module")
 def add_an_ecju_query(driver, api_client_config, context):
     lite_client = get_lite_client(context, api_client_config)
+    lite_client.api_client.auth_exporter_user(lite_client.context["org_id"])
     lite_client.ecju_queries.add_ecju_query(context.case_id)
 
 
 @fixture(scope="function")
 def apply_for_clc_query(driver, api_client_config, context):
     lite_client = get_lite_client(context, api_client_config)
+    lite_client.api_client.auth_exporter_user(lite_client.context["org_id"])
     lite_client.goods_queries.add_goods_clc_query(lite_client.goods)
     context.clc_case_id = lite_client.context["case_id"]
 
@@ -99,6 +101,7 @@ def apply_for_clc_query(driver, api_client_config, context):
 @fixture(scope="function")
 def apply_for_grading_query(driver, api_client_config, context):
     lite_client = get_lite_client(context, api_client_config)
+    lite_client.api_client.auth_exporter_user(lite_client.context["org_id"])
     lite_client.goods_queries.add_goods_grading_query(lite_client.goods)
     context.clc_case_id = lite_client.context["case_id"]
 
@@ -124,11 +127,13 @@ def apply_for_hmrc_query(driver, api_client_config, context):
         },
     )
     lite_client.applications.submit_application(draft_id)
+    context.case_id = lite_client.context["case_id"]
 
 
 @fixture(scope="module")
 def apply_for_eua_query(driver, api_client_config, context):
     lite_client = get_lite_client(context, api_client_config)
+    lite_client.api_client.auth_exporter_user(lite_client.context["org_id"])
     lite_client.parties.add_eua_query()
     context.eua_id = lite_client.context["end_user_advisory_id"]
     context.eua_reference_code = lite_client.context["end_user_advisory_reference_code"]
@@ -138,6 +143,7 @@ def apply_for_eua_query(driver, api_client_config, context):
 def apply_for_open_application(driver, api_client_config, context):
     timer = Timer()
     lite_client = get_lite_client(context, api_client_config)
+    lite_client.api_client.auth_exporter_user(lite_client.context["org_id"])
 
     context.open_app_time_id = datetime.datetime.now().strftime(" %d%H%M%S")
     context.app_name = "Test Application " + context.open_app_time_id
@@ -159,6 +165,7 @@ def apply_for_open_application(driver, api_client_config, context):
 
 def _apply_for_mod_clearance(type, has_consignee, has_ultimate_end_user, has_location, api_client_config, context):
     lite_client = get_lite_client(context, api_client_config)
+    lite_client.api_client.auth_exporter_user(lite_client.context["org_id"])
     context.app_name, context.app_time_id = generate_name(type)
     draft_id = lite_client.applications.add_draft(
         draft={"name": context.app_name, "application_type": type},

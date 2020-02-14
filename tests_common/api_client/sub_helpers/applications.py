@@ -89,8 +89,12 @@ class Applications:
     def add_hmrc_draft(self, draft=None, end_user=None):
         draft_id = self.create_draft(draft)
         self.add_site(draft_id, is_hmrc=True)
-        self.parties.add_party(request_data_key="end_user", draft_id=draft_id, party=end_user)
+        end_user = self.parties.add_party(request_data_key="end_user", draft_id=draft_id, party=end_user)
         self.goods.add_open_draft_good(draft_id)
+        additional_document_id = self.add_additional_document(draft_id=draft_id)
+        self._assert_all_documents_are_processed(
+            draft_id=draft_id, parties=[end_user], additional_document_id=additional_document_id,
+        )
 
         return draft_id
 
