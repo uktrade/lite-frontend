@@ -125,6 +125,7 @@ def apply_for_hmrc_query(driver, api_client_config, context):
     )
     lite_client.applications.submit_application(draft_id)
 
+
 @fixture(scope="module")
 def apply_for_eua_query(driver, api_client_config, context):
     lite_client = get_lite_client(context, api_client_config)
