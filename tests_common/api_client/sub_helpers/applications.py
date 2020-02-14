@@ -48,22 +48,40 @@ class Applications:
             body={"sites": [self.api_client.context[primary_site_id_key]]},
         )
 
-    def add_draft(self, draft=None, good=None, end_user=None, ultimate_end_user=None, consignee=None, third_party=None):
+    def add_draft(
+        self,
+        draft=None,
+        good=None,
+        end_user=None,
+        has_ultimate_end_user=True,
+        ultimate_end_user=None,
+        has_consignee=True,
+        has_location=True,
+        consignee=None,
+        third_party=None,
+    ):
         draft_id = self.create_draft(draft=draft)
-        self.add_site(draft_id=draft_id)
-        end_user = self.parties.add_party(request_data_key="end_user", draft_id=draft_id, party=end_user)
-        ultimate_end_user = self.parties.add_party(
-            request_data_key="ultimate_end_user", draft_id=draft_id, party=ultimate_end_user
-        )
-        consignee = self.parties.add_party(request_data_key="consignee", draft_id=draft_id, party=consignee)
-        third_party = self.parties.add_party(request_data_key="third_party", draft_id=draft_id, party=third_party)
-        additional_document_id = self.add_additional_document(draft_id=draft_id)
+        if has_location:
+            self.add_site(draft_id=draft_id)
         self.goods.add_good_to_draft(draft_id=draft_id, good=good)
 
+        parties = [
+            self.parties.add_party(request_data_key="end_user", draft_id=draft_id, party=end_user),
+            self.parties.add_party(request_data_key="third_party", draft_id=draft_id, party=third_party),
+        ]
+
+        if has_ultimate_end_user:
+            parties.append(
+                self.parties.add_party(request_data_key="ultimate_end_user", draft_id=draft_id, party=ultimate_end_user)
+            )
+
+        if has_consignee:
+            parties.append(self.parties.add_party(request_data_key="consignee", draft_id=draft_id, party=consignee))
+
+        additional_document_id = self.add_additional_document(draft_id=draft_id)
+
         self._assert_all_documents_are_processed(
-            draft_id=draft_id,
-            parties=[end_user, consignee, third_party, ultimate_end_user],
-            additional_document_id=additional_document_id,
+            draft_id=draft_id, parties=parties, additional_document_id=additional_document_id,
         )
 
         return draft_id
@@ -92,26 +110,11 @@ class Applications:
             url="/applications/" + draft_id_to_submit + "/submit/",
             headers=self.api_client.exporter_headers,
         )
-        return response.json()
-
-    def submit_standard_application(self, draft_id=None):
-        self.submit_application(draft_id)
+        data = response.json()
         self.api_client.add_to_context("application_id", draft_id)
-        self.api_client.add_to_context("case_id", draft_id)
-
-    def submit_hmrc_application(self, draft_id=None):
-        self.submit_application(draft_id)
-        self.api_client.add_to_context("case_id", draft_id)
-
-    def submit_open_application(self, draft_id=None):
-        self.submit_application(draft_id)
-        self.api_client.add_to_context("application_id", draft_id)
-        self.api_client.add_to_context("case_id", draft_id)
-
-    def submit_exhibition_application(self, draft_id):
-        data = self.submit_application(draft_id)
         self.api_client.add_to_context("case_id", draft_id)
         self.api_client.add_to_context("reference_code", data["application"]["reference_code"])
+        return data
 
     def is_party_document_processed(self, draft_id, party_id):
         url = "/applications/" + draft_id + "/parties/" + party_id + "/document/"

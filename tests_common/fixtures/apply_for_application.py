@@ -8,10 +8,11 @@ from ..tools.utils import get_lite_client, Timer
 def save_application_data_to_context(lite_client, context):
     context.app_id = lite_client.context["application_id"]
     context.case_id = lite_client.context["application_id"]
-    context.end_user = lite_client.context["end_user"]
-    context.consignee = lite_client.context["consignee"]
-    context.third_party = lite_client.context["third_party"]
-    context.ultimate_end_user = lite_client.context["ultimate_end_user"]
+    context.reference_code = lite_client.context["reference_code"]
+    context.end_user = lite_client.context.get("end_user")
+    context.consignee = lite_client.context.get("consignee")
+    context.third_party = lite_client.context.get("third_party")
+    context.ultimate_end_user = lite_client.context.get("ultimate_end_user")
 
 
 def generate_name(prefix):
@@ -77,7 +78,7 @@ def apply_for_standard_application(driver, api_client_config, context):
             "type": "third_party",
         },
     )
-    lite_client.applications.submit_standard_application(draft_id)
+    lite_client.applications.submit_application(draft_id)
     save_application_data_to_context(lite_client, context)
     timer.print_time("apply_for_standard_application")
 
@@ -122,9 +123,7 @@ def apply_for_hmrc_query(driver, api_client_config, context):
             "type": "end_user",
         },
     )
-    lite_client.applications.submit_hmrc_application(draft_id)
-    context.case_id = lite_client.context["case_id"]
-
+    lite_client.applications.submit_application(draft_id)
 
 @fixture(scope="module")
 def apply_for_eua_query(driver, api_client_config, context):
@@ -151,21 +150,56 @@ def apply_for_open_application(driver, api_client_config, context):
             "reference_number_on_information_form": "1234",
         }
     )
-    lite_client.applications.submit_open_application(draft_id)
-    context.app_id = lite_client.context["application_id"]
-    context.case_id = lite_client.context["application_id"]
+    lite_client.applications.submit_application(draft_id)
+    save_application_data_to_context(lite_client, context)
     context.country = lite_client.context["country"]
     timer.print_time("apply_for_open_application")
 
 
+def _apply_for_mod_clearance(type, has_consignee, has_ultimate_end_user, has_location, api_client_config, context):
+    lite_client = get_lite_client(context, api_client_config)
+    context.app_name, context.app_time_id = generate_name(type)
+    draft_id = lite_client.applications.add_draft(
+        draft={"name": context.app_name, "application_type": type},
+        has_consignee=has_consignee,
+        has_ultimate_end_user=has_ultimate_end_user,
+        has_location=has_location,
+    )
+    lite_client.applications.submit_application(draft_id)
+    save_application_data_to_context(lite_client, context)
+
+
 @fixture(scope="module")
 def apply_for_exhibition_clearance(driver, api_client_config, context):
-    lite_client = get_lite_client(context, api_client_config)
-    context.app_name, context.app_time_id = generate_name("Exhibition Clearance")
-    draft_id = lite_client.applications.add_draft(
-        draft={"name": context.app_name, "application_type": "exhibition_clearance"}
+    _apply_for_mod_clearance(
+        "exhibition_clearance",
+        has_consignee=True,
+        has_ultimate_end_user=True,
+        has_location=True,
+        api_client_config=api_client_config,
+        context=context,
     )
-    lite_client.applications.submit_exhibition_application(draft_id)
-    save_application_data_to_context(lite_client, context)
-    context.reference_code = lite_client.context["reference_code"]
-    context.case_id = lite_client.context["case_id"]
+
+
+@fixture(scope="module")
+def apply_for_f680_clearance(driver, api_client_config, context):
+    _apply_for_mod_clearance(
+        "F680_clearance",
+        has_consignee=False,
+        has_ultimate_end_user=False,
+        has_location=False,
+        api_client_config=api_client_config,
+        context=context,
+    )
+
+
+@fixture(scope="module")
+def apply_for_gifting_clearance(driver, api_client_config, context):
+    _apply_for_mod_clearance(
+        "gifting_clearance",
+        has_consignee=False,
+        has_ultimate_end_user=False,
+        has_location=False,
+        api_client_config=api_client_config,
+        context=context,
+    )
