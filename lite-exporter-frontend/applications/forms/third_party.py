@@ -1,6 +1,7 @@
 from django.urls import reverse_lazy
 
 from applications.forms.parties import party_name_form, party_website_form, party_address_form, party_type_form
+from conf.constants import PERMANENT
 from lite_content.lite_exporter_frontend.applications import ThirdPartyForm, PartyForm, PartyTypeForm
 from lite_forms.components import BackLink, RadioButtons, Form, Option, FormGroup
 
@@ -26,7 +27,8 @@ def _third_party_role_form(application, title, button, options, back_url):
 
 def third_party_forms(application, strings, back_url):
     form_options = role_option_list.copy()
-    if application["export_type"] and application["export_type"]["key"] == "permanent":
+    export_type = application.get("export_type")
+    if not export_type or export_type.get("key") == PERMANENT:
         del form_options["additional_end_user"]
 
     options = [Option(key, value) for key, value in form_options.items()]

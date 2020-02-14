@@ -1,4 +1,3 @@
-from shared import selectors
 from shared.BasePage import BasePage
 
 
@@ -16,6 +15,8 @@ class StandardApplicationGoodsPage(BasePage):
     DESCRIPTION = "good-description"
     CONTROL_LIST_ENTRY = "good-control_code"
     GOOD_ENTRY = ".govuk-table__body .govuk-table__row"
+    TABLE_BODY = "tbody"
+    TABLE_ROW = "tr"
 
     def click_add_new_good_button(self):
         self.driver.find_element_by_id(self.BUTTON_ADD_NEW_GOOD_ID).click()
@@ -24,7 +25,7 @@ class StandardApplicationGoodsPage(BasePage):
         self.driver.find_element_by_id(self.BUTTON_ADD_PREEXISTING_GOOD_ID).click()
 
     def get_goods(self):
-        return self.driver.find_elements_by_css_selector(selectors.TABLE_BODY + " " + selectors.TABLE_ROW)
+        return self.driver.find_elements_by_css_selector(self.TABLE_BODY + " " + self.TABLE_ROW)
 
     def get_goods_total_value(self):
         return self.driver.find_element_by_id(self.SPAN_GOODS_TOTAL_VALUE).text

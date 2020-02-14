@@ -1,4 +1,4 @@
-@licence @submit @all @standard
+@licence @submit @all @MOD
 Feature: I want to create MOD Licence Applications
   As a logged in exporter
   I want to apply for an MOD clearance for equipment or information if I need one
@@ -24,6 +24,46 @@ Feature: I want to create MOD Licence Applications
     Then wait for download link
     When I click the back link
     And I click on consignees
+    And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
+    And I upload a file "file_for_doc_upload_test_1.txt"
+    Then wait for download link
+    When I click the back link
+    And I submit the application
+    Then application is submitted
+    When I go to exporter homepage
+    And I click applications
+    Then I see submitted application
+
+  @LT_1980_MOD_clearance @setup @smoke
+  Scenario: Submit F680 Application
+    Given I go to exporter homepage and choose Test Org
+    When I select a licence of type "mod"
+    And I select a MOD licence of type "F680_clearance"
+    And I enter a licence name
+    When I click on goods
+    And I add a non-incorporated good to the application
+    Then the good is added to the application
+    When I click on end user
+    And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
+    And I upload a file "file_for_doc_upload_test_1.txt"
+    Then wait for download link
+    When I click the back link
+    And I submit the application
+    Then application is submitted
+    When I go to exporter homepage
+    And I click applications
+    Then I see submitted application
+
+  @LT_1980_MOD_clearance @setup @smoke
+  Scenario: Submit Gifting Application
+    Given I go to exporter homepage and choose Test Org
+    When I select a licence of type "mod"
+    And I select a MOD licence of type "gifting_clearance"
+    And I enter a licence name
+    When I click on goods
+    And I add a non-incorporated good to the application
+    Then the good is added to the application
+    When I click on end user
     And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
     Then wait for download link

@@ -62,7 +62,7 @@
 					{{ application.application_type.value }}
 				</dd>
 			</div>
-			{% if application.application_type.key != 'hmrc_query' and application.application_type.key != 'exhibition_clearance' %}
+			{% if application.export_type %}
 				<div class="govuk-summary-list__row">
 					<dt class="govuk-summary-list__key">
 						{% lcs 'applications.ApplicationSummaryPage.EXPORT_TYPE' %}

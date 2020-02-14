@@ -2,10 +2,11 @@ from pytest_bdd import scenarios, then, when, parsers, given
 
 from pages.application_page import ApplicationPage
 from pages.submitted_applications_page import SubmittedApplicationsPages
-from shared import selectors
 from shared.functions import element_with_id_exists
 
 scenarios("../features/withdraw_and_surrender_application.feature", strict_gherkin=False)
+
+RADIO_BUTTONS = "[type='radio']"
 
 
 @when("I click the button 'Withdraw Application'")
@@ -20,7 +21,7 @@ def i_click_withdraw_application(driver):
 
 @then("I should see a confirmation page")
 def i_should_see_a_confirmation_page(driver):
-    assert len(driver.find_elements_by_css_selector(selectors.RADIO_BUTTONS)) == 2
+    assert len(driver.find_elements_by_css_selector(RADIO_BUTTONS)) == 2
 
 
 @when("I select the yes radiobutton")

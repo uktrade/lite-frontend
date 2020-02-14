@@ -33,6 +33,9 @@ from ui_automation_tests.shared.fixtures.apply_for_application import (  # noqa
     apply_for_standard_application,
     add_an_ecju_query,
     apply_for_open_application,
+    apply_for_exhibition_clearance,
+    apply_for_f680_clearance,
+    apply_for_gifting_clearance,
 )
 from ui_automation_tests.shared.fixtures.add_a_document_template import (  # noqa
     add_a_document_template,

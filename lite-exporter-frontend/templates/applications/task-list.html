@@ -1,0 +1,98 @@
+{% extends 'layouts/task-list.html' %}
+
+{% block title %}
+	{% if application|application_type_in_list:"HMRC" %}
+		Raise a query on behalf of {{ application.organisation.name }}
+	{% elif edit_type %}
+		{{ strings.EDIT_TITLE }}
+	{% else %}
+		{{ strings.NEW_TITLE }}
+	{% endif %}
+{% endblock %}
+
+{% block subtitle %}
+	{% if application_type|application_type_in_list:"HAS_LICENCE_TYPE" %}
+			{% if is_editing %}Licence type: {{ application.application_type.value }} - {% endif %}
+			Export type: {{ application.export_type.value }}
+	{% endif %}
+{% endblock %}
+
+{% block initial_tasks %}
+	{% if application_type|application_type_in_list:"HAS_TOLD_BY_OFFICIAL" %}
+		{% url 'applications:edit_told_by_an_official' application.id as told_by_an_official_url %}
+		{% include "includes/task-list-item.html" with id="told-by-an-official" title=strings.END_USE_CONTROL url=told_by_an_official_url status="done" description=reference_number_description %}
+	{% endif %}
+{% endblock %}
+
+{% block main_tasks %}
+	{# Good types #}
+	{% if application_type|application_type_in_list:"HAS_GOODS_TYPES" %}
+		{% url 'applications:goods_types' application.id as goods_url %}
+		{% tld goodstypes 'product' 'products' as goods_description %}
+		{% include "includes/task-list-item.html" with id='products' title=strings.GOODS url=goods_url status=goodstypes|task_list_item_status description=goods_description %}
+	{% endif %}
+
+	{# Goods #}
+	{% if application_type|application_type_in_list:"HAS_GOODS" %}
+		{% url 'applications:goods' application.id as goods_url %}
+		{% tld goods 'product' 'products' as goods_description %}
+		{% include "includes/task-list-item.html" with id='products' title=strings.GOODS url=goods_url status=goods|task_list_item_status description=goods_description %}
+	{% endif %}
+
+	{# Location #}
+	{% if application_type|application_type_in_list:"HAS_LOCATIONS" %}
+		{% url 'applications:location' application.id as goods_url %}
+		{% tld locations 'location' 'locations' as location_description %}
+		{% include "includes/task-list-item.html" with id='locations' title=strings.GOODS_LOCATION url=goods_url status=locations|task_list_item_status description=location_description %}
+	{% endif %}
+
+	{# Countries #}
+	{% if application_type|application_type_in_list:"HAS_COUNTRIES" %}
+		{% url 'applications:countries' application.id as countries_url %}
+		{% tld countries 'country' 'countries' as countries_description %}
+		{% include "includes/task-list-item.html" with id="countries" title=strings.GOODS_DESTINATION url=countries_url status=countries|task_list_item_status description=countries_description %}
+
+		{% if goodstypes and countries and edit_type != "minor_edit" %}
+			{% url 'applications:goods_countries' application.id as countries_matrix_url %}
+			{% include "includes/task-list-item.html" with id="countries-matrix" title=strings.COUNTRIES_WHERE_EACH_GOOD_IS_GOING url=countries_matrix_url optional=True %}
+		{% endif %}
+	{% endif %}
+
+	{# End User #}
+	{% if application_type|application_type_in_list:"HAS_END_USER" %}
+		{% url 'applications:end_user' application.id as end_user_url %}
+		{% include "includes/task-list-item.html" with id="end-user" title=strings.END_USER url=end_user_url status=application.end_user|get_parties_status optional=application_type|application_type_in_list:"F680" %}
+	{% endif %}
+
+	{# Ultimate End Users #}
+	{% if application_type|application_type_in_list:"HAS_ULTIMATE_END_USERS" %}
+		{% if ultimate_end_users_required %}
+			{% url 'applications:ultimate_end_users' application.id as ultimate_end_user_url %}
+			{% include "includes/task-list-item.html" with id="ultimate-end-users" title=strings.ULTIMATE_END_USERS url=ultimate_end_user_url status=application.ultimate_end_users|get_parties_status %}
+		{% endif %}
+	{% endif %}
+
+	{# Consignee #}
+	{% if application_type|application_type_in_list:"HAS_CONSIGNEE" %}
+		{% url 'applications:consignee' application.id as consignee_url %}
+		{% include "includes/task-list-item.html" with id="consignee" title=strings.CONSIGNEE url=consignee_url status=application.consignee|get_parties_status %}
+	{% endif %}
+
+	{# Third Parties #}
+	{% if application_type|application_type_in_list:"HAS_THIRD_PARTIES" %}
+		{% url 'applications:third_parties' application.id as third_parties_url %}
+		{% tld third_parties 'third party' 'third parties' as third_parties_description %}
+		{% include "includes/task-list-item.html" with id='third-parties' title=strings.THIRD_PARTIES url=third_parties_url status=application.third_parties|get_parties_status description=third_parties_description optional=True %}
+	{% endif %}
+
+	{# Additional Documents #}
+	{% url 'applications:additional_documents' application.id as supporting_documents_url %}
+	{% tld supporting_documents 'document' 'documents' as supporting_documents_description %}
+	{% include "includes/task-list-item.html" with id="supporting-documents" title=strings.SUPPORTING_DOCUMENTS url=supporting_documents_url status=supporting_documents|task_list_item_status description=supporting_documents_description %}
+
+	{# Optional Note #}
+	{% if application_type|application_type_in_list:"HAS_OPTIONAL_NOTE" %}
+		{% url 'applications:optional_note' application.id as optional_note_url %}
+		{% include "includes/task-list-item.html" with id="reasoning" title=strings.REASON_FOR_QUERY url=optional_note_url status=application.reasoning|task_list_item_status optional=True %}
+	{% endif %}
+{% endblock %}
