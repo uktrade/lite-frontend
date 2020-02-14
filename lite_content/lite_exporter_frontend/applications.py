@@ -132,6 +132,7 @@ class ApplicationSummaryPage:
     GOODS_LOCATIONS = "Locations"
     GOODS_DEPARTED = "Have the goods already left the UK?"
     SUPPORTING_DOCUMENTATION = "Supporting documents"
+    GOODS_CATEGORIES = "Product categories"
     GOODS = "Products"
     COUNTRIES = "Countries"
     ON_BEHALF_OF = "On behalf of"
@@ -295,6 +296,7 @@ class StandardApplicationTaskList:
     NEW_TITLE = "Standard export licence application"
     EDIT_TITLE = "Edit the application"
     END_USE_CONTROL = "End use control"
+    GOODS_CATEGORIES = "Product categories"
     GOODS = "Products"
     GOODS_LOCATION = "Locations"
     END_USER = "End user"
@@ -491,3 +493,9 @@ class CaseNotes:
     CANCEL = "Cancel"
     ADDED_A_NOTE_SUFFIX = "added a note:"
     NO_NOTES = "There are no notes on this application"
+
+
+class GoodsCategories:
+    TITLE = "Does your application include?"
+    DESCRIPTION = ""
+    ERROR = "You can't change product categories whilst doing a minor edit"
