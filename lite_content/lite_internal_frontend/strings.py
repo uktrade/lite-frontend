@@ -135,6 +135,9 @@ class Users:
     INVITE = "Invite a new user"
     MANAGE_ROLES = "Manage roles"
     PENDING = "Pending"
+    REACTIVATE_USER = "Reactivate user"
+    DEACTIVATE_USER = "Deactivate user"
+    CANCEL = "Cancel"
 
 
 class UpdateUser:
