@@ -137,7 +137,7 @@
 
         <!-- Footer Label -->
 		{% if page.footer_label %}
-			<p class="govuk-body">{{ page.footer_label.text|safe }}</p>
+			{% include "components/label.html" with component=page.footer_label %}
 		{% endif %}
 	</div>
 

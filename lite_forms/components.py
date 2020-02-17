@@ -92,9 +92,10 @@ class FormGroup:
 
 
 class Label:
-    def __init__(self, text: str):
+    def __init__(self, text: str, id: str = None):
         from lite_forms.helpers import convert_to_markdown
 
+        self.id = id
         self.text = convert_to_markdown(text)
         self.input_type = "label"
 
