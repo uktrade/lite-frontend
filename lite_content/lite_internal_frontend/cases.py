@@ -58,6 +58,9 @@ class ApplicationPage:
         TYPE = "Type"
         WEBSITE = "Website"
         DOCUMENT = "Document"
+        ENTITIES_INVOLVED = "Entities involved"
+        NO_INACTIVE_CASES = "No inactive case entities"
+        ENTITIES_DELETED = "Entities deleted by exporter"
 
     class EndUser:
         NO_END_USER = "The applicant is editing the end user."
@@ -521,3 +524,53 @@ class AdvicePage:
         REJECT = "Reject"
         ADVICE_BY = "advice by"
         AT = "at"
+
+
+class ViewAdvicePage:
+    USER_ADVICE = "User Advice"
+    TEAM_ADVICE = "Team Advice"
+    FINAL_ADVICE = "Final Advice"
+
+    class Actions:
+        GIVE_OR_CHANGE = "Give or change advice"
+        CLEAR = "Clear advice"
+        FINALISED_GOODS_AND_COUNTRIES = "Finalise goods and countries"
+        FINALISE = "Finalise"
+        COMBINE_TEAM_ADVICE = "Combine all team advice"
+
+    class EndUserTable:
+        HEADING = "End User"
+        NAME_COLUMN = "Name"
+        TYPE_COLUMN = "Type"
+        ADDRESS_COLUMN = "Address"
+        WEBSITE_COLUMN = "Website"
+        DOCUMENT_COLUMN = "Document"
+        ADVICE_COLUMN = "Advice"
+
+    class ConsigneeTable:
+        HEADING = "Consignee"
+        NAME_COLUMN = "Name"
+        TYPE_COLUMN = "Type"
+        ADDRESS_COLUMN = "Address"
+        WEBSITE_COLUMN = "Website"
+        DOCUMENT_COLUMN = "Document"
+        ADVICE_COLUMN = "Advice"
+
+    class UltimateEndUserTable:
+        HEADING = "Ultimate end users"
+        NAME_COLUMN = "Name"
+        TYPE_COLUMN = "Type"
+        ADDRESS_COLUMN = "Address"
+        WEBSITE_COLUMN = "Website"
+        DOCUMENT_COLUMN = "Document"
+        ADVICE_COLUMN = "Advice"
+
+    class ThirdPartyTable:
+        HEADING = "Third parties"
+        NAME_COLUMN = "Name"
+        TYPE_COLUMN = "Type"
+        ROLE_COLUMN = "Role"
+        ADDRESS_COLUMN = "Address"
+        WEBSITE_COLUMN = "Website"
+        DOCUMENT_COLUMN = "Document"
+        ADVICE_COLUMN = "Advice"

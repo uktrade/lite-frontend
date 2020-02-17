@@ -132,6 +132,7 @@ class ApplicationSummaryPage:
     GOODS_LOCATIONS = "Locations"
     GOODS_DEPARTED = "Have the goods already left the UK?"
     SUPPORTING_DOCUMENTATION = "Supporting documents"
+    GOODS_CATEGORIES = "Product categories"
     GOODS = "Products"
     COUNTRIES = "Countries"
     ON_BEHALF_OF = "On behalf of"
@@ -208,21 +209,21 @@ class InitialApplicationQuestionsForms:
 
         class LicenceTypes:
             EXPORT_LICENCE_TITLE = "Export licence"
-            EXPORT_LICENCE_DESCRIPTION = "Select if you’re sending products from the UK to another country"
+            EXPORT_LICENCE_DESCRIPTION = "Select if you’re sending products from the UK to another country."
 
             TRANSHIPMENT_LICENCE_TITLE = "Transhipment licence"
             TRANSHIPMENT_LICENCE_DESCRIPTION = (
                 "Select if you're shipping something from overseas through the UK on to another country."
-                " If the products will be in the UK for 30 days or more, apply for an export licence"
+                " If the products will be in the UK for 30 days or more, apply for an export licence."
             )
             TRADE_CONTROL_LICENCE_TITLE = "Trade control licence"
             TRADE_CONTROL_LICENCE_DESCRIPTION = (
                 "Select if you’re arranging or brokering the sale or movement of controlled military products "
-                "located overseas"
+                "located overseas."
             )
 
             MOD_CLEARANCE_TITLE = "MOD clearance"
-            MOD_CLEARANCE_DESCRIPTION = "Select if you need an F680 to share information, go to an exhibition or you're gifting surplus products"
+            MOD_CLEARANCE_DESCRIPTION = "Select if you need an F680 to share information, go to an exhibition or you're gifting surplus products."
 
     class ReferenceNameQuestion:
         TITLE = "Name the application"
@@ -290,14 +291,12 @@ class DestinationForm:
     DESCRIPTION = ""
 
 
-class TaskListPage:
-    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
-
-
 class StandardApplicationTaskList:
+    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
     NEW_TITLE = "Standard export licence application"
     EDIT_TITLE = "Edit the application"
     END_USE_CONTROL = "End use control"
+    GOODS_CATEGORIES = "Product categories"
     GOODS = "Products"
     GOODS_LOCATION = "Locations"
     END_USER = "End user"
@@ -308,6 +307,7 @@ class StandardApplicationTaskList:
 
 
 class OpenApplicationTaskList:
+    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
     NEW_TITLE = "Open export licence application"
     EDIT_TITLE = "Edit the application"
     GOODS = "Products"
@@ -318,6 +318,7 @@ class OpenApplicationTaskList:
 
 
 class HMRCApplicationTaskList:
+    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
     GOODS = "Products"
     GOODS_LOCATION = "Locations"
     END_USER = "End user"
@@ -330,14 +331,36 @@ class HMRCApplicationTaskList:
 
 
 class ExhibitionClearanceTaskList:
+    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
     NEW_TITLE = "Exhibition clearance application"
     EDIT_TITLE = "Edit the application"
-    END_USE_CONTROL = "End use control"
     GOODS = "Products"
     GOODS_LOCATION = "Locations"
     END_USER = "End user"
     ULTIMATE_END_USERS = "Ultimate recipients"
     CONSIGNEE = "Consignee"
+    SUPPORTING_DOCUMENTS = "Supporting documents"
+    THIRD_PARTIES = "Third parties"
+
+
+class GiftingClearanceTaskList:
+    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
+    NEW_TITLE = "Gifting clearance application"
+    EDIT_TITLE = "Edit the application"
+    GOODS = "Products"
+    GOODS_LOCATION = "Locations"
+    END_USER = "End user"
+    SUPPORTING_DOCUMENTS = "Supporting documents"
+    THIRD_PARTIES = "Third parties"
+
+
+class F680ClearanceTaskList:
+    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
+    NEW_TITLE = "F680 clearance application"
+    EDIT_TITLE = "Edit the application"
+    GOODS = "Products"
+    GOODS_LOCATION = "Locations"
+    END_USER = "End user"
     SUPPORTING_DOCUMENTS = "Supporting documents"
     THIRD_PARTIES = "Third parties"
 
@@ -369,7 +392,7 @@ class EditOpenApplicationPage:
 class DeleteApplicationPage:
     BUTTON = "Delete draft"
     TITLE = "Confirm you want to delete this draft"
-    BACK_TEXT = "Back"
+    BACK_TEXT = "Back to applications"
     YES_LABEL = "Confirm and delete the draft"
     NO_LABEL = "Cancel"
     SUBMIT_BUTTON = "Submit"
@@ -469,4 +492,10 @@ class CaseNotes:
     POST_NOTE = "Post note"
     CANCEL = "Cancel"
     ADDED_A_NOTE_SUFFIX = "added a note:"
-    NO_NOTES = "There aren't any notes on this application"
+    NO_NOTES = "There are no notes on this application"
+
+
+class GoodsCategories:
+    TITLE = "Does your application include?"
+    DESCRIPTION = ""
+    ERROR = "You can't change product categories whilst doing a minor edit"
