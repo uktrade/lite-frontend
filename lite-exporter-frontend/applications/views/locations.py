@@ -42,7 +42,7 @@ class EditGoodsLocation(SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         application = get_application(request, self.object_pk)
-        self.form = which_location_form(self.object_pk, application["application_type"]["key"])
+        self.form = which_location_form(self.object_pk, application["case_type"]["sub_type"]["key"])
         self.action = validate_and_update_goods_location_choice
         self.data = {"choice": Locations.DEPARTED if application.get("have_goods_departed") else ""}
 

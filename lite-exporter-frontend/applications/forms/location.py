@@ -1,5 +1,5 @@
 from applications.components import back_to_task_list
-from conf.constants import HMRC_QUERY
+from conf.constants import HMRC
 from core.services import get_countries, get_external_locations
 from lite_content.lite_exporter_frontend import goods, strings
 from lite_forms.components import Form, RadioButtons, Option, TextArea, Select, Filter, Checkboxes, TextInput
@@ -31,7 +31,7 @@ def which_location_form(application_id, application_type):
                         description=goods.GoodsLocationForm.NOT_AT_MY_REGISTERED_SITES_DESCRIPTION,
                     ),
                     conditional(
-                        application_type == HMRC_QUERY,
+                        application_type == HMRC,
                         Option(
                             key=Locations.DEPARTED,
                             value=goods.GoodsLocationForm.DEPARTED_THE_COUNTRY,

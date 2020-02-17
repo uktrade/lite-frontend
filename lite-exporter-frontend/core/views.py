@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
-from conf.constants import Permissions, CaseType
+from conf.constants import Permissions, NotificationType
 from core.forms import select_your_organisation_form
 from core.helpers import Section, Tile, generate_notification_string
 from core.services import get_notifications, get_organisation
@@ -62,17 +62,17 @@ class Hub(TemplateView):
                     [
                         Tile(
                             strings.hub.Tiles.APPLICATIONS,
-                            generate_notification_string(notifications, case_types=[CaseType.APPLICATION]),
+                            generate_notification_string(notifications, case_types=[NotificationType.APPLICATION]),
                             reverse_lazy("applications:applications"),
                         ),
                         Tile(
                             strings.hub.Tiles.GOODS,
-                            generate_notification_string(notifications, case_types=[CaseType.GOODS_QUERY]),
+                            generate_notification_string(notifications, case_types=[NotificationType.GOODS]),
                             reverse_lazy("goods:goods"),
                         ),
                         Tile(
                             strings.hub.Tiles.END_USER_ADVISORIES,
-                            generate_notification_string(notifications, case_types=[CaseType.EUA_QUERY]),
+                            generate_notification_string(notifications, case_types=[NotificationType.EUA]),
                             reverse_lazy("end_users:end_users"),
                         ),
                     ],

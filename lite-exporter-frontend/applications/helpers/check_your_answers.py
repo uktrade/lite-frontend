@@ -5,12 +5,12 @@ from django.urls import reverse_lazy
 
 from conf.constants import (
     NEWLINE,
-    STANDARD_LICENCE,
-    OPEN_LICENCE,
-    HMRC_QUERY,
-    EXHIBITION_CLEARANCE,
-    GIFTING_CLEARANCE,
-    F680_CLEARANCE,
+    STANDARD,
+    OPEN,
+    HMRC,
+    EXHIBITION,
+    GIFTING,
+    F680,
 )
 from core.builtins.custom_tags import default_na, friendly_boolean, pluralise_unit
 from core.helpers import convert_to_link
@@ -23,17 +23,17 @@ def convert_application_to_check_your_answers(application, editable=False):
     """
     Returns a correctly formatted check your answers page for the supplied application
     """
-    if application["application_type"]["key"] == STANDARD_LICENCE:
+    if application["case_type"]["sub_type"]["key"] == STANDARD:
         return _convert_standard_application(application, editable)
-    elif application["application_type"]["key"] == OPEN_LICENCE:
+    elif application["case_type"]["sub_type"]["key"] == OPEN:
         return _convert_open_application(application, editable)
-    elif application["application_type"]["key"] == HMRC_QUERY:
+    elif application["case_type"]["sub_type"]["key"] == HMRC:
         return _convert_hmrc_query(application, editable)
-    elif application["application_type"]["key"] == EXHIBITION_CLEARANCE:
+    elif application["case_type"]["sub_type"]["key"] == EXHIBITION:
         return _convert_exhibition_clearance(application, editable)
-    elif application["application_type"]["key"] == GIFTING_CLEARANCE:
+    elif application["case_type"]["sub_type"]["key"] == GIFTING:
         return _convert_gifting_clearance(application, editable)
-    elif application["application_type"]["key"] == F680_CLEARANCE:
+    elif application["case_type"]["sub_type"]["key"] == F680:
         return _convert_f680_clearance(application, editable)
     else:
         raise NotImplementedError()

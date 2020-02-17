@@ -10,7 +10,7 @@ def draft_summary(draft):
     return Summary(
         values={
             strings.applications.ApplicationSummaryPage.REFERENCE_NAME: draft["name"],
-            strings.applications.ApplicationSummaryPage.TYPE: draft["application_type"]["value"],
+            strings.applications.ApplicationSummaryPage.TYPE: draft["case_type"]["sub_type"]["key"],
             strings.applications.ApplicationSummaryPage.CREATED_AT: str_date(draft["created_at"]),
         },
         classes=["govuk-summary-list--no-border"],
@@ -25,7 +25,7 @@ def application_summary(application):
         values={
             strings.applications.ApplicationSummaryPage.REFERENCE_NAME: application["name"],
             strings.applications.ApplicationSummaryPage.REFERENCE_CODE: application["reference_code"],
-            strings.applications.ApplicationSummaryPage.TYPE: application["application_type"]["value"],
+            strings.applications.ApplicationSummaryPage.TYPE: application["case_type"]["sub_type"]["key"],
             strings.applications.ApplicationSummaryPage.SUBMITTED_AT: str_date(application["submitted_at"]),
         },
         classes=["govuk-summary-list--no-border"],

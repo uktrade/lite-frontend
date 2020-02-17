@@ -16,7 +16,7 @@
 			</h1>
 		</div>
 		<div class="lite-app-bar__controls">
-			{% if application.application_type.key != 'hmrc_query' %}
+			{% if application.case_type.sub_type.key != 'hmrc' %}
 				{%  if not status_is_terminal %}
 					<a href="{% url 'applications:withdraw' application.id %}" id="button-withdraw-application" class="govuk-button govuk-button--secondary">
 						{% lcs 'applications.ApplicationSummaryPage.Buttons.WITHDRAW_ACCESS_BUTTON' %}
@@ -39,7 +39,7 @@
 
 	<div class="govuk-grid-row">
 		<dl class="govuk-summary-list govuk-summary-list--no-border govuk-grid-column-two-thirds">
-			{% if not application.application_type.key == "hmrc_query" %}
+			{% if not application.case_type.sub_type.key == "hmrc" %}
 				<div class="govuk-summary-list__row">
 					<dt class="govuk-summary-list__key">
 						{% lcs 'applications.ApplicationSummaryPage.REFERENCE_CODE' %}
@@ -59,7 +59,7 @@
 					{% lcs 'applications.ApplicationSummaryPage.TYPE' %}
 				</dt>
 				<dd class="govuk-summary-list__value">
-					{{ application.application_type.value }}
+					{{ application.case_type.sub_type.value }}
 				</dd>
 			</div>
 			{% if application.export_type %}
@@ -108,7 +108,7 @@
 			<a href="{% url 'applications:application' application.id %}" class="lite-tabs__tab {% if not type %}lite-tabs__tab--selected{% endif %}" id="link-details">
 			{% lcs 'applications.ApplicationSummaryPage.Tabs.DETAILS' %}
 			</a>
-			{% if application.application_type.key != 'hmrc_query' %}
+			{% if application.case_type.sub_type.key != 'hmrc' %}
 				<a href="{% url 'applications:application' application.id 'case-notes' %}" class="lite-tabs__tab {% if type == 'case-notes' %}lite-tabs__tab--selected{% endif %}" id="link-case-notes">
 					{% lcs 'applications.ApplicationSummaryPage.Tabs.NOTES' %}
 					{% if application.exporter_user_notification_count.casenote %}

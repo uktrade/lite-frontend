@@ -37,7 +37,7 @@ def str_date_only(value):
 
 
 def generate_notification_string(notifications, case_types):
-    notification_count = notifications["notification_count"]
+    notification_count = notifications["notifications"]
     notification_count_sum = sum([count for case_type, count in notification_count.items() if case_type in case_types])
 
     if not notification_count_sum:

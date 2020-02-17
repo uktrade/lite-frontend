@@ -35,11 +35,11 @@
 				<tr class="govuk-table__row">
 					<th scope="col" class="govuk-table__header"></th>
 					<th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs "goods_types.Variables.DESCRIPTION" %}</th>
-					{% if application.application_type.key != 'hmrc_query' %}
+					{% if application.case_type.sub_type.key != 'hmrc' %}
 						<th scope="col" class="govuk-table__header">{% lcs "goods_types.Variables.CONTROL_LIST_ENTRY" %}</th>
 						<th scope="col" class="govuk-table__header">{% lcs "goods_types.Variables.INCORPORATED" %}</th>
 					{% endif %}
-					{% if application.application_type.key == 'hmrc_query' %}
+					{% if application.case_type.sub_type.key == 'hmrc' %}
 						<th scope="col" class="govuk-table__header">{% lcs "goods_types.Document.TITLE" %}</th>
 					{% endif %}
 					<th scope="col" class="govuk-table__header"></th>
@@ -55,7 +55,7 @@
 							<span class="lite-responsive-table__header">{% lcs "goods_types.Variables.DESCRIPTION" %}</span>
 							{{ good_on_application.description }}
 						</td>
-						{% if application.application_type.key != 'hmrc_query' %}
+						{% if application.case_type.sub_type.key != 'hmrc' %}
 							<td class="govuk-table__cell">
 								<span class="lite-responsive-table__header">{% lcs "goods_types.Variables.CONTROL_LIST_ENTRY" %}</span>
 								{{ good_on_application.control_code|default_na }}
@@ -65,7 +65,7 @@
 								{{ good_on_application.is_good_incorporated|friendly_boolean }}
 							</td>
 						{% endif %}
-						{% if application.application_type.key == 'hmrc_query' %}
+						{% if application.case_type.sub_type.key == 'hmrc' %}
 							<td class="govuk-table__cell">
 								<span class="lite-responsive-table__header">{% lcs "goods_types.Document.TITLE" %}</span>
 								{% if good_on_application.document %}

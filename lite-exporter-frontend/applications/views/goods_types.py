@@ -37,7 +37,7 @@ class GoodsTypeAdd(SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         application = get_application(request, self.object_pk)
-        self.form = goods_type_form(application["application_type"]["key"])
+        self.form = goods_type_form(application["case_type"]["sub_type"]["key"])
         self.action = post_goods_type
         self.success_url = reverse_lazy("applications:goods_types", kwargs={"pk": self.object_pk})
 

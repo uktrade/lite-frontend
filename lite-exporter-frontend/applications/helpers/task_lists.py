@@ -12,12 +12,12 @@ from applications.services import (
     get_additional_documents,
 )
 from conf.constants import (
-    HMRC_QUERY,
-    OPEN_LICENCE,
-    STANDARD_LICENCE,
-    EXHIBITION_CLEARANCE,
-    F680_CLEARANCE,
-    GIFTING_CLEARANCE,
+    HMRC,
+    OPEN,
+    STANDARD,
+    EXHIBITION,
+    F680,
+    GIFTING,
     NOT_STARTED,
     DONE,
     IN_PROGRESS,
@@ -32,24 +32,24 @@ def get_application_task_list(request, application, errors=None):
     """
     Returns a correctly formatted task list page for the supplied application
     """
-    if application["application_type"]["key"] == HMRC_QUERY:
+    if application["case_type"]["sub_type"]["key"] == HMRC:
         return _get_hmrc_query_task_list(request, application)
     else:
         return _get_task_list(request, application, errors)
 
 
 def _get_strings(application_type):
-    if application_type == STANDARD_LICENCE:
+    if application_type == STANDARD:
         return applications.StandardApplicationTaskList
-    elif application_type == OPEN_LICENCE:
+    elif application_type == OPEN:
         return applications.OpenApplicationTaskList
-    elif application_type == HMRC_QUERY:
+    elif application_type == HMRC:
         return applications.HMRCApplicationTaskList
-    elif application_type == EXHIBITION_CLEARANCE:
+    elif application_type == EXHIBITION:
         return applications.ExhibitionClearanceTaskList
-    elif application_type == F680_CLEARANCE:
+    elif application_type == F680:
         return applications.F680ClearanceTaskList
-    elif application_type == GIFTING_CLEARANCE:
+    elif application_type == GIFTING:
         return applications.GiftingClearanceTaskList
     else:
         raise NotImplementedError(f"No string class for given for {application_type}")
@@ -60,7 +60,7 @@ def _get_task_list(request, application, errors=None):
     additional_documents, _ = get_additional_documents(request, application["id"])
     sites, _ = get_sites_on_draft(request, application["id"])
     external_locations, _ = get_external_locations_on_draft(request, application["id"])
-    application_type = application["application_type"]["key"]
+    application_type = application["case_type"]["sub_type"]["key"]
     edit = get_edit_type(application)
 
     context = {
@@ -75,10 +75,10 @@ def _get_task_list(request, application, errors=None):
         "locations": sites["sites"] or external_locations["external_locations"],
     }
 
-    if application_type == STANDARD_LICENCE:
+    if application_type == STANDARD:
         context["reference_number_description"] = get_reference_number_description(application)
 
-    if application_type == OPEN_LICENCE:
+    if application_type == OPEN:
         context["countries"] = get_application_countries(request, application["id"])
         context["goodstypes"] = get_application_goods_types(request, application["id"])
     else:

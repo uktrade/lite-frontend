@@ -1,4 +1,4 @@
-from conf.constants import HMRC_QUERY
+from conf.constants import HMRC
 from core.services import get_control_list_entries
 from lite_content.lite_exporter_frontend.goods_types import CreateGoodsTypeForm
 from lite_forms.common import control_list_entry_question
@@ -13,7 +13,7 @@ def goods_type_form(application_type: str):
         questions=[
             TextArea(title=CreateGoodsTypeForm.Description.TITLE, name="description", extras={"max_length": 2000,}),
             *conditional(
-                application_type != HMRC_QUERY,
+                application_type != HMRC,
                 [
                     RadioButtons(
                         title=CreateGoodsTypeForm.IsControlled.TITLE,

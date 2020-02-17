@@ -1,6 +1,6 @@
 from django.urls import reverse_lazy
 
-from conf.constants import STANDARD_LICENCE, OPEN_LICENCE, EXHIBITION_CLEARANCE, F680_CLEARANCE, GIFTING_CLEARANCE
+from conf.constants import STANDARD, OPEN, EXHIBITION, F680, GIFTING
 from applications.forms.edit import goods_categories, reference_name_form
 from lite_content.lite_exporter_frontend import strings, generic
 from lite_content.lite_exporter_frontend.applications import (
@@ -64,12 +64,12 @@ def export_licence_questions(application_type):
                         name="application_type",
                         options=[
                             Option(
-                                key=STANDARD_LICENCE,
+                                key=STANDARD,
                                 value=ExportLicenceQuestions.ExportLicenceQuestion.STANDARD_LICENCE,
                                 description=ExportLicenceQuestions.ExportLicenceQuestion.STANDARD_LICENCE_DESCRIPTION,
                             ),
                             Option(
-                                key=OPEN_LICENCE,
+                                key=OPEN,
                                 value=ExportLicenceQuestions.ExportLicenceQuestion.OPEN_LICENCE,
                                 description=ExportLicenceQuestions.ExportLicenceQuestion.OPEN_LICENCE_DESCRIPTION,
                             ),
@@ -94,12 +94,10 @@ def export_licence_questions(application_type):
                         ],
                     ),
                 ],
-                default_button_name=generic.CONTINUE
-                if application_type == STANDARD_LICENCE
-                else generic.SAVE_AND_CONTINUE,
+                default_button_name=generic.CONTINUE if application_type == STANDARD else generic.SAVE_AND_CONTINUE,
             ),
             *conditional(
-                application_type != OPEN_LICENCE,
+                application_type != OPEN,
                 [
                     goods_categories(),
                     Form(
@@ -141,17 +139,17 @@ def MOD_questions():
                         name="application_type",
                         options=[
                             Option(
-                                key=F680_CLEARANCE,
+                                key=F680,
                                 value=MODQuestions.WhatAreYouApplyingFor.PERMISSION_TITLE,
                                 description=MODQuestions.WhatAreYouApplyingFor.PERMISSION_DESCRIPTION,
                             ),
                             Option(
-                                key=EXHIBITION_CLEARANCE,
+                                key=EXHIBITION,
                                 value=MODQuestions.WhatAreYouApplyingFor.EXHIBITION_CLEARANCE_TITLE,
                                 description=MODQuestions.WhatAreYouApplyingFor.EXHIBITION_CLEARANCE_DESCRIPTION,
                             ),
                             Option(
-                                key=GIFTING_CLEARANCE,
+                                key=GIFTING,
                                 value=MODQuestions.WhatAreYouApplyingFor.GIFTING_CLEARANCE_TITLE,
                                 description=MODQuestions.WhatAreYouApplyingFor.GIFTING_CLEARANCE_DESCRIPTION,
                             ),

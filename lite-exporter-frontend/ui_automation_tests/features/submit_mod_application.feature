@@ -38,7 +38,7 @@ Feature: I want to create MOD Licence Applications
   Scenario: Submit F680 Application
     Given I go to exporter homepage and choose Test Org
     When I select a licence of type "mod"
-    And I select a MOD licence of type "F680_clearance"
+    And I select a MOD licence of type "f680_clearance"
     And I enter a licence name
     When I click on goods
     And I add a non-incorporated good to the application
