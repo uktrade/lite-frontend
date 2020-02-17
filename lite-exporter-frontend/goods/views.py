@@ -49,7 +49,7 @@ from goods.services import (
 )
 from lite_content.lite_exporter_frontend.goods import AttachDocumentForm
 from lite_forms.views import SingleFormView, MultiFormView
-from lite_content.lite_exporter_frontend import strings
+from lite_content.lite_exporter_frontend import strings, goods
 from lite_forms.components import HiddenField, BackLink
 from lite_forms.generators import error_page, form_page
 
@@ -331,11 +331,9 @@ class DeleteDocument(TemplateView):
 
         good, _ = get_good(request, good_id)
         document = get_good_document(request, good_id, file_pk)
-        original_file_name = document["name"]
 
         context = {
-            "title": "Confirm you want to delete this file",
-            "description": original_file_name,
+            "title": goods.DeleteGoodDocumentPage.TITLE,
             "good": good,
             "document": document,
         }

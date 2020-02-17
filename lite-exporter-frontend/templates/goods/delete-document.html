@@ -1,9 +1,56 @@
-<!-- for the future story, currently not in use, don't remove -->
-<p class="govuk-caption-m">You won't be able to recover the document once it's deleted.</p>
-<div class="buttons-row">
+{% extends 'layouts/base.html' %}
+
+{% load svg %}
+
+{% block back_link %}
+	<a href="{% url 'goods:good_detail' good.id "case-notes" %}" id="back-link" class="govuk-back-link">{% lcs "goods.DeleteGoodDocumentPage.BACK" %}</a>
+{% endblock %}
+
+{% block body %}
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">{% block title %}{{ title }}{% endblock %}</h1>
+			<dl class="govuk-summary-list" id="good-details">
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs "goods.DeleteGoodDocumentPage.DOCUMENT_NAME" %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{{ document.name }}
+					</dd>
+				</div>
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs "goods.DeleteGoodDocumentPage.DOCUMENT_CREATED_AT" %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{{ document.created_at|str_date }}
+					</dd>
+				</div>
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs "goods.DeleteGoodDocumentPage.DOCUMENT_CREATED_BY" %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{{ document.user.first_name }} {{ document.user.last_name }}
+					</dd>
+				</div>
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs "goods.DeleteGoodDocumentPage.DOCUMENT_DESCRIPTION" %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{{ document.description|default_na|slice:"0:40" }} {% if document.description|length > 40 %}...{% endif %}
+					</dd>
+				</div>
+			</dl>
+		</div>
+	</div>
+
+	<div class="buttons-row">
 	<form method="post" action="{% url 'goods:delete_document' good.id document.id %}">
 		{% csrf_token %}
-		<button type="submit" class="govuk-button govuk-button--warning govuk-!-margin-right-2">Delete document</button>
+		<button type="submit" class="govuk-button govuk-button--warning govuk-!-margin-right-2">{% lcs "goods.DeleteGoodDocumentPage.BUTTON" %}</button>
 	</form>
-	<a href="{% url 'goods:good' good.id %}" onclick="return LITECommon.Modal.closeAllModals()" role="button" draggable="false" class="govuk-button govuk-button--secondary">Cancel</a>
 </div>
+{% endblock %}
