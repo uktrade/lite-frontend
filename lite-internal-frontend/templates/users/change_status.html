@@ -7,11 +7,11 @@
 		<div class="buttons-row">
 			{% csrf_token %}
 			{% if status == 'reactivate' %}
-				<button type="submit" name="status" value="Active" class="govuk-button">Reactivate User</button>
+				<button type="submit" name="status" value="Active" class="govuk-button" id="reactivated_button">{% lcs 'users.ManagePage.REACTIVATE_USER' %}</button>
 			{% else %}
-				<button type="submit" name="status" value="Deactivated" class="govuk-button govuk-button--warning">Deactivate User</button>
+				<button type="submit" name="status" value="Deactivated" class="govuk-button govuk-button--warning" id="deactivated_button">{% lcs 'users.ManagePage.DEACTIVATE_USER' %}</button>
 			{% endif %}
-			<a href="{% url 'users:users' %}" role="button" draggable="false" class="govuk-button govuk-button--secondary">Cancel</a>
+			<a href="{% url 'users:users' %}" role="button" draggable="false" class="govuk-button govuk-button--secondary">{% lcs 'users.ManagePage.CANCEL' %}</a>
 		</div>
 	</form>
 {% endblock %}

@@ -2,7 +2,10 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.action_chains import ActionChains
 import time
 
+from pages.shared import Shared
+from shared import functions
 from shared.BasePage import BasePage
+import shared.tools.helpers as utils
 
 
 class UsersPage(BasePage):
@@ -14,6 +17,10 @@ class UsersPage(BasePage):
     TEAM = "team"
     ROLE = "role"
     EDIT_BUTTONS_IN_TABLE = '.govuk-table__cell a[href*="edit"]'
+    DEACTIVATE_BUTTON_CSS = '.govuk-button[href*="deactivate"]'
+    REACTIVATE_BUTTON_CSS = '.govuk-button[href*="reactivate"]'
+    DEACTIVATE_ARE_YOU_SURE_BUTTON_ID = "deactivated_button"
+    REACTIVATE_ARE_YOU_SURE_BUTTON_ID = "reactivated_button"
 
     def click_save_and_continue(self):
         self.driver.find_element_by_css_selector(self.SUBMIT_BUTTON).click()
@@ -54,3 +61,19 @@ class UsersPage(BasePage):
 
     def click_edit_button_by_index(self, index):
         self.driver.find_elements_by_css_selector(self.EDIT_BUTTONS_IN_TABLE)[index].click()
+
+    def deactivate_user(self):
+        self.driver.find_element_by_css_selector(self.DEACTIVATE_BUTTON_CSS).click()
+        self.driver.find_element_by_id(self.DEACTIVATE_ARE_YOU_SURE_BUTTON_ID).click()
+
+    def reactivate_user(self):
+        self.driver.find_element_by_css_selector(self.REACTIVATE_BUTTON_CSS).click()
+        self.driver.find_element_by_id(self.REACTIVATE_ARE_YOU_SURE_BUTTON_ID).click()
+
+    def go_to_users_page(self, context):
+        utils.find_paginated_item_by_id(context.added_email, self.driver)
+        no = utils.get_element_index_by_text(
+            Shared(self.driver).get_rows_in_lite_table(), context.added_email, complete_match=False
+        )
+        self.driver.find_elements_by_link_text("Edit")[no].click()
+        functions.click_back_link(self.driver)

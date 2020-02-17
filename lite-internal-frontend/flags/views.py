@@ -24,10 +24,7 @@ class FlagsList(TemplateView):
         data, _ = get_flags(request)
         user_data, _ = get_gov_user(request, str(request.user.lite_api_user_id))
 
-        try:
-            status = kwargs["status"]
-        except KeyError:
-            status = "active"
+        status = kwargs.get("status", "active")
 
         if status == "active":
             status = "no_deactivated"

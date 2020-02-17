@@ -1,3 +1,4 @@
+from core.helpers import convert_dict_to_query_params
 from lite_content.lite_internal_frontend import strings
 from django.http import Http404
 from django.shortcuts import render, redirect
@@ -5,6 +6,7 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
 from conf.constants import SUPER_USER_ROLE_ID
+from lite_forms.components import FiltersBar, Select, Option
 from lite_forms.generators import form_page
 from users.forms.users import add_user_form, edit_user_form
 from users.services import (
@@ -18,11 +20,31 @@ from users.services import (
 
 class UsersList(TemplateView):
     def get(self, request, **kwargs):
-        data, _ = get_gov_users(request)
+        status = request.GET.get("status", "active")
+        params = {"page": int(request.GET.get("page", 1)), "status": status}
+
+        data, _ = get_gov_users(request, params)
+
         user, _ = get_gov_user(request, str(request.user.lite_api_user_id))
         super_user = is_super_user(user)
 
-        context = {"data": data, "title": "Users", "super_user": super_user}
+        statuses = [
+            Option(option["key"], option["value"])
+            for option in [{"key": "active", "value": "Active"}, {"key": "", "value": "All"}]
+        ]  # TODO[future]: filters in API?
+
+        filters = FiltersBar([Select(name="status", title="status", options=statuses)])
+
+        context = {
+            "data": data,
+            "title": "Users",
+            "super_user": super_user,
+            "status": status,
+            "page": params.pop("page"),
+            "params_str": convert_dict_to_query_params(params),
+            "filters": filters,
+        }
+
         return render(request, "users/index.html", context)
 
 

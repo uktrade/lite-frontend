@@ -3,23 +3,24 @@
 {% block back_link %}{% endblock %}
 
 {% block body %}
-
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
-			<h2 class="govuk-heading-l">{{ title }}</h2>
+			<h1 class="govuk-heading-l">{{ title }}</h1>
 			<p class="govuk-caption-m">
 				{% lcs 'Users.DESCRIPTION' %}
 			</p>
 		</div>
 		<div class="lite-app-bar__controls">
 			<a id="button-manage-roles" href="{% url 'users:roles' %}" class="govuk-button govuk-button--secondary" draggable="false" role="button">
-				Manage roles
+				{% lcs 'users.ManagePage.MANAGE_ROLES' %}
 			</a>
 			<a id="button-invite-user" href="{% url 'users:add' %}" class="govuk-button" draggable="false" role="button">
 				{% lcs 'Users.INVITE' %}
 			</a>
 		</div>
 	</div>
+
+	{% include "filters.html" %}
 
     <table class="govuk-table">
         <thead class="govuk-table__head">
@@ -33,7 +34,7 @@
             </tr>
         </thead>
         <tbody class="govuk-table__body">
-            {% for user in data.gov_users %}
+            {% for user in data.results %}
                 <tr class="govuk-table__row" id="row-{{ forloop.counter }}">
                     <td class="govuk-table__cell">
 						{% if user.first_name %}
@@ -42,11 +43,11 @@
 							</a>
 						{% else %}
 							<strong class="govuk-tag govuk-phase-banner__content__tag ">
-								Pending
+								{% lcs 'users.ManagePage.PENDING' %}
 							</strong>
 						{% endif %}
                     </td>
-                    <td class="govuk-table__cell">{{ user.email }}</td>
+                    <td class="govuk-table__cell" id="{{ user.email }}">{{ user.email }}</td>
                     <td class="govuk-table__cell">
                         <a href="{% url 'teams:team' user.team.id %}" class="govuk-link govuk-link--no-visited-state">
                             {{ user.team.name }}
@@ -70,4 +71,5 @@
         </tbody>
     </table>
 
+	{% include "includes/pagination.html" %}
 {% endblock %}

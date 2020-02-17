@@ -1,7 +1,5 @@
 from urllib.parse import urlencode
 
-from lite_forms.components import Option
-
 from conf.client import get, post, put
 from conf.constants import (
     GOV_USERS_URL,
@@ -9,6 +7,7 @@ from conf.constants import (
     GOV_USERS_PERMISSIONS_URL,
     SUPER_USER_ROLE_ID,
 )
+from lite_forms.components import Option
 
 
 def get_gov_users(request, params=None, convert_to_options=False):
@@ -21,7 +20,7 @@ def get_gov_users(request, params=None, convert_to_options=False):
     if convert_to_options:
         converted = []
 
-        for user in data.json().get("gov_users"):
+        for user in data.json()["results"]:
             first_name = user.get("first_name")
             last_name = user.get("last_name")
             email = user.get("email")
@@ -36,7 +35,6 @@ def get_gov_users(request, params=None, convert_to_options=False):
             converted.append(Option(key=user.get("id"), value=value, description=description))
 
         return converted
-
     return data.json(), data.status_code
 
 

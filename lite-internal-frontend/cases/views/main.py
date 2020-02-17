@@ -26,7 +26,6 @@ from cases.services import (
     get_case_officer,
     put_case_officer,
     delete_case_officer,
-    get_case_types,
 )
 from cases.services import post_case_documents, get_case_documents, get_document
 from conf import settings
@@ -75,9 +74,11 @@ class Cases(TemplateView):
         updated_cases_banner_queue_id = get_updated_cases_banner_queue_id(queue_id, data["results"]["queues"])
 
         # Filter bar
-        statuses = [Option(option["key"], option["value"]) for option in data["results"]["filters"]["statuses"]]
-        case_types = [Option(option["key"], option["value"]) for option in get_case_types(request)]
-        gov_users = get_gov_users(request, {"name": request.GET.get("name", ""), "activated": True}, True)
+        filters = data["results"]["filters"]
+        statuses = [Option(option["key"], option["value"]) for option in filters["statuses"]]
+        case_types = [Option(option["key"], option["value"]) for option in filters["case_types"]]
+        gov_users = [Option(option["key"], option["value"]) for option in filters["gov_users"]]
+
         filters = FiltersBar(
             [
                 conditional(queue_id, HiddenField(name="queue_id", value=queue_id)),
@@ -327,12 +328,11 @@ class CaseOfficer(TemplateView):
     def get(self, request, **kwargs):
         case_id = str(kwargs["pk"])
         case = get_case(request, case_id)
-        params = {"name": request.GET.get("name", ""), "activated": True}
+        params = {"name": request.GET.get("name", ""), "activated": True, "no_page": True}
         gov_users, _ = get_gov_users(request, params)
-
         context = {
             "case_officer": get_case_officer(request, case_id)[0],
-            "users": gov_users,
+            "users": gov_users["results"],
             "case": case,
             "name": params["name"],
         }
@@ -346,13 +346,13 @@ class CaseOfficer(TemplateView):
         if action == "assign":
             if not user_id:
                 case = get_case(request, case_id)
-                params = {"name": request.GET.get("name", ""), "activated": True}
+                params = {"name": request.GET.get("name", ""), "activated": True, "no_page": True}
                 gov_users, _ = get_gov_users(request, params)
 
                 context = {
                     "error": cases.CaseOfficerPage.Error.NO_SELECTION,
                     "case_officer": get_case_officer(request, case_id)[0],
-                    "users": gov_users,
+                    "users": gov_users["results"],
                     "case": case,
                     "name": request.GET.get("name", ""),
                 }
@@ -370,13 +370,13 @@ class CaseOfficer(TemplateView):
 
     def response_error(self, request, case_id):
         case = get_case(request, case_id)
-        params = {"name": request.GET.get("name", ""), "activated": True}
+        params = {"name": request.GET.get("name", ""), "activated": True, "no_page": True}
         gov_users, _ = get_gov_users(request, params)
 
         context = {
             "show_error": True,
             "case_officer": get_case_officer(request, case_id)[0],
-            "users": gov_users,
+            "users": gov_users["results"],
             "case": case,
             "name": params["name"],
         }

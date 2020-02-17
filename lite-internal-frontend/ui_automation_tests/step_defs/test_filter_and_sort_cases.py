@@ -35,12 +35,6 @@ def num_cases_appear(driver, context, number):
     assert int(number) == Shared(driver).get_number_of_rows_in_lite_table(), "incorrect number of cases are shown"
 
 
-@when(parsers.parse('filter status has been changed to "{status}"'))
-def filter_status_change(driver, context, status):
-    CaseListPage(driver).select_filter_status_from_dropdown(status)
-    CaseListPage(driver).click_apply_filters_button()
-
-
 @when("I click clear filters")
 def i_show_filters(driver, context):
     CaseListPage(driver).click_clear_filters_button()

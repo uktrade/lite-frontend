@@ -251,6 +251,11 @@ def go_to_users(driver, sso_sign_in, internal_url):  # noqa
     driver.get(internal_url.rstrip("/") + "/users/")
 
 
+@given("I go to users")  # noqa
+def go_to_users(driver, sso_sign_in, internal_url):  # noqa
+    driver.get(internal_url.rstrip("/") + "/users/")
+
+
 @when(  # noqa
     parsers.parse(
         'I respond "{controlled}", "{control_list_entry}", "{report}", "{comment}" and click continue'
@@ -297,3 +302,9 @@ def status_has_been_changed_in_header(driver, context, internal_info):  # noqa
 @given("I create a clc query")  # noqa
 def create_clc_query(driver, apply_for_clc_query, context):
     pass
+
+
+@when(parsers.parse('filter status has been changed to "{status}"'))  # noqa
+def filter_status_change(driver, context, status):
+    CaseListPage(driver).select_filter_status_from_dropdown(status)
+    CaseListPage(driver).click_apply_filters_button()

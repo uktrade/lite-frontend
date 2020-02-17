@@ -6,10 +6,11 @@ from users.services import get_gov_users
 
 
 def assign_users_form(request: HttpRequest, team_id, queue, multiple: bool):
+    params = {"teams": team_id, "no_page": True}
     return Form(
         title=cases.Manage.AssignUsers.MULTIPLE_TITLE if multiple else cases.Manage.AssignUsers.TITLE,
         description=cases.Manage.AssignUsers.DESCRIPTION,
-        questions=[Filter(), Checkboxes("users", get_gov_users(request, {"teams": team_id}, convert_to_options=True))],
+        questions=[Filter(), Checkboxes("users", get_gov_users(request, params, convert_to_options=True))],
         caption=queue["name"],
         default_button_name="Submit",
         javascript_imports=["/assets/javascripts/filter-checkbox-list.js"],

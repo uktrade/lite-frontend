@@ -59,7 +59,7 @@
 	    </div>
     </form>
 
-	{% if users.gov_users %}
+	{% if users %}
 		<form method="post">
             {% csrf_token %}
 
@@ -70,7 +70,7 @@
 						{{ error }}
 					</span>
 				{% endif %}
-	            {% for user in users.gov_users %}
+	            {% for user in users %}
 	                <div class="govuk-radios__item">
 	                    <input class="govuk-radios__input" id="user-{{ user.id }}" name="user" type="radio" value="{{ user.id }}"
 	                        {% if user.id == case_officer.id %}checked{% endif %}>
