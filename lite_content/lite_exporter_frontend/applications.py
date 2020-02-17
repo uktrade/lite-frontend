@@ -404,6 +404,12 @@ class DeleteApplicationPage:
     DELETE_ERROR = "Select confirm if you want to delete the draft"
 
 
+class ApplicationNotesPage:
+    TITLE = "Notes"
+    DESCRIPTION = ""
+    BACK_LINK = "Back to application overview"
+
+
 class AttachDocumentPage:
     UPLOAD_FAILURE_ERROR = "We had an issue uploading your files. Try again later."
     UPLOAD_GENERIC_ERROR = "We had an issue creating your response. Try again later."
