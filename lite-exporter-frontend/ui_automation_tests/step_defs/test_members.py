@@ -1,5 +1,5 @@
 from faker import Faker
-from pytest_bdd import scenarios, when, then
+from pytest_bdd import scenarios, when, then, parsers
 from selenium.webdriver.support.select import Select
 
 from pages.add_member import AddMemberPage
@@ -10,6 +10,8 @@ from pages.shared import Shared
 from shared import functions
 from shared.tools.helpers import scroll_to_element_by_id
 from shared.tools.utils import get_lite_client
+
+from ui_automation_tests.shared.tools.helpers import paginated_item_exists
 
 scenarios("../features/members.feature", strict_gherkin=False)
 
@@ -81,3 +83,28 @@ def cant_deactivate_self(driver, context):
     member_page = MemberPage(driver)
     member_page.try_click_more_actions_button()
     assert not functions.element_with_id_exists(driver, member_page.BUTTON_DEACTIVATE_ID)
+
+
+@when("I show filters")
+def show_filters(driver):
+    members_page = MembersPage(driver)
+    members_page.click_show_filters_link()
+
+
+@when(parsers.parse('filter status has been changed to "{status}"'))  # noqa
+def filter_status_change(driver, status):
+    members_page = MembersPage(driver)
+    members_page.select_filter_status_from_dropdown(status)
+    members_page.click_apply_filters_button()
+
+
+@then("I see the new member")
+def see_new_user(driver, context):
+    assert paginated_item_exists(context.email_to_search, driver), "Item couldn't be found"
+
+
+@then("I do not see the new member")
+def do_not_see_new_user(driver, context):
+    driver.set_timeout_to(0)
+    assert paginated_item_exists(context.email_to_search, driver, exists=False), "Item couldn't be found"
+    driver.set_timeout_to(10)

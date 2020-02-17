@@ -24,6 +24,8 @@
 		</div>
 	</div>
 
+	{% include "filters.html" %}
+
 	<table class="govuk-table">
 		<thead class="govuk-table__head">
 			<tr class="govuk-table__row">
@@ -35,7 +37,7 @@
 			</tr>
 		</thead>
 		<tbody class="govuk-table__body">
-			{% for user in users %}
+			{% for user in data.results.users %}
 				<tr class="govuk-table__row">
 					<td class="govuk-table__cell">
 						{% if user.first_name %}
@@ -46,7 +48,7 @@
 							</strong>
 						{% endif %}
 					</td>
-					<td class="govuk-table__cell">{{ user.email }}</td>
+					<td class="govuk-table__cell" id="{{ user.email }}">{{ user.email }}</td>
 					<td class="govuk-table__cell">{{ user.role.name }}</td>
 					<td class="govuk-table__cell">{{ user.status }}</td>
 					<td class="govuk-table__cell govuk-table__cell--numeric">
@@ -58,4 +60,6 @@
 			{% endfor %}
 		</tbody>
 	</table>
+
+	{% include "includes/pagination.html" %}
 {% endblock %}

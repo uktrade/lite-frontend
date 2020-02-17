@@ -4,8 +4,10 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
 from conf.constants import Permissions
+from core.helpers import convert_dict_to_query_params
 from core.services import get_organisation_users, get_organisation, get_organisation_user, put_organisation_user
 from lite_content.lite_exporter_frontend import strings
+from lite_forms.components import Option, FiltersBar, Select
 from lite_forms.views import SingleFormView
 from roles.services import get_user_permissions
 from sites.services import put_assign_sites
@@ -15,7 +17,10 @@ from users.services import post_users, get_user, is_super_user
 
 class Users(TemplateView):
     def get(self, request, **kwargs):
-        users, _ = get_organisation_users(request, str(request.user.organisation))
+        status = request.GET.get("status", "active")
+        params = {"page": int(request.GET.get("page", 1)), "status": status}
+
+        data, _ = get_organisation_users(request, str(request.user.organisation), params)
         organisation = get_organisation(request, str(request.user.organisation))
         user_permissions = get_user_permissions(request)
 
@@ -29,13 +34,24 @@ class Users(TemplateView):
         if organisation["type"]["key"] == "individual":
             raise Http404
 
+        statuses = [
+            Option(option["key"], option["value"])
+            for option in [{"key": "active", "value": "Active"}, {"key": "", "value": "All"}]
+        ]
+        filters = FiltersBar([Select(name="status", title="status", options=statuses)])
+
         context = {
             "title": strings.users.UsersPage.MANAGE_ORGANISATIONS_MEMBERS_TAB + " - " + organisation["name"],
-            "users": users["users"],
+            "data": data,
             "organisation": organisation,
             "can_administer_roles": roles,
             "can_administer_sites": sites,
+            "status": status,
+            "page": params.pop("page"),
+            "params_str": convert_dict_to_query_params(params),
+            "filters": filters,
         }
+
         return render(request, "users/users.html", context)
 
 

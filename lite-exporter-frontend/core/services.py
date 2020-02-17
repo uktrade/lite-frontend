@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from urllib.parse import urlencode
 
 from django.http import StreamingHttpResponse
 
@@ -114,8 +115,8 @@ def get_organisation(request, pk):
     return data.json()
 
 
-def get_organisation_users(request, pk):
-    data = get(request, ORGANISATIONS_URL + pk + "/users/")
+def get_organisation_users(request, pk, params):
+    data = get(request, ORGANISATIONS_URL + pk + "/users/?" + urlencode(params))
     return data.json(), data.status_code
 
 
