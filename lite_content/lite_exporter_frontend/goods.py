@@ -358,3 +358,13 @@ class GoodsPage:
 class AttachDocumentPage:
     UPLOAD_FAILURE_ERROR = "We had an issue uploading your files. Try again later."
     UPLOAD_GENERIC_ERROR = "We had an issue creating your response. Try again later."
+
+
+class DeleteGoodDocumentPage:
+    TITLE = "Confirm you want to delete this document"
+    BACK = "Back to product"
+    DOCUMENT_NAME = "Name"
+    DOCUMENT_CREATED_AT = "Created at"
+    DOCUMENT_CREATED_BY = "Created by"
+    DOCUMENT_DESCRIPTION = "Description"
+    BUTTON = "Delete document"
