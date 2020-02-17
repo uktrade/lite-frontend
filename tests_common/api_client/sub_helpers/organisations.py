@@ -66,7 +66,7 @@ class Organisations:
     def find_test_user_in_org(self, org_id):
         users = self.api_client.make_request(
             method="GET", url="/organisations/" + org_id + "/users/", headers=self.api_client.gov_headers,
-        ).json()["users"]
+        ).json()["results"]["users"]
         user = next((item for item in users if item["email"] == self.request_data["export_user"]["email"]), None)
         return user
 
