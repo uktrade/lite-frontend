@@ -83,6 +83,7 @@ def _get_task_list(request, application, errors=None):
         context["goodstypes"] = get_application_goods_types(request, application["id"])
     else:
         context["goods"] = get_application_goods(request, application["id"])
+        context["ultimate_end_users_required"] = True in [good["is_good_incorporated"] for good in context["goods"]]
 
     return render(request, "applications/task-list.html", context)
 

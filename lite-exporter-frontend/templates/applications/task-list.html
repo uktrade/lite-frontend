@@ -65,11 +65,9 @@
 	{% endif %}
 
 	{# Ultimate End Users #}
-	{% if application_type|application_type_in_list:"HAS_ULTIMATE_END_USERS" %}
-		{% if ultimate_end_users_required %}
-			{% url 'applications:ultimate_end_users' application.id as ultimate_end_user_url %}
-			{% include "includes/task-list-item.html" with id="ultimate-end-users" title=strings.ULTIMATE_END_USERS url=ultimate_end_user_url status=application.ultimate_end_users|get_parties_status %}
-		{% endif %}
+	{% if application_type|application_type_in_list:"HAS_ULTIMATE_END_USERS" and ultimate_end_users_required %}
+		{% url 'applications:ultimate_end_users' application.id as ultimate_end_user_url %}
+		{% include "includes/task-list-item.html" with id="ultimate-end-users" title=strings.ULTIMATE_END_USERS url=ultimate_end_user_url status=application.ultimate_end_users|get_parties_status %}
 	{% endif %}
 
 	{# Consignee #}
