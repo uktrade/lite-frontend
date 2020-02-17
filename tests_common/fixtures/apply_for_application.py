@@ -31,7 +31,7 @@ def apply_for_standard_application(driver, api_client_config, context):
     draft_id = lite_client.applications.add_draft(
         draft={
             "name": context.app_name,
-            "application_type": "standard_licence",
+            "application_type": "standard",
             "export_type": "permanent",
             "have_you_been_informed": "yes",
             "reference_number_on_information_form": "1234",
@@ -113,7 +113,7 @@ def apply_for_hmrc_query(driver, api_client_config, context):
     lite_client.api_client.auth_exporter_user(lite_client.context["hmrc_org_id"])
     draft_id = lite_client.applications.add_hmrc_draft(
         draft={
-            "application_type": "hmrc_query",
+            "application_type": "hmrc",
             "organisation": lite_client.context["org_id"],
             "hmrc_organisation": lite_client.context["hmrc_org_id"],
         },
@@ -151,7 +151,7 @@ def apply_for_open_application(driver, api_client_config, context):
     draft_id = lite_client.applications.add_open_draft(
         draft={
             "name": context.app_name,
-            "application_type": "open_licence",
+            "application_type": "open",
             "export_type": "permanent",
             "have_you_been_informed": "yes",
             "reference_number_on_information_form": "1234",
@@ -192,7 +192,7 @@ def apply_for_exhibition_clearance(driver, api_client_config, context):
 @fixture(scope="module")
 def apply_for_f680_clearance(driver, api_client_config, context):
     _apply_for_mod_clearance(
-        "F680_clearance",
+        "f680_clearance",
         has_consignee=False,
         has_ultimate_end_user=False,
         has_location=False,

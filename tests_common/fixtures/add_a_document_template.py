@@ -10,7 +10,7 @@ def add_a_document_template(context, api_client_config):
     context.document_template_id = document_template["id"]
     context.document_template_name = document_template["name"]
     context.document_template_layout = document_template["layout"]["name"]
-    context.document_template_case_types = [document_template["case_types"][0]]
+    context.document_template_case_types = document_template["case_types"]
     context.document_template_paragraph_text = [document_template["paragraph"]["text"]]
 
 

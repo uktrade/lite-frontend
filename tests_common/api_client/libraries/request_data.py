@@ -71,7 +71,7 @@ def build_request_data(exporter_user, gov_user):
         "good": build_good("Lentils"),
         "application": {
             "name": "application",
-            "application_type": "standard_licence",
+            "application_type": "standard",
             "export_type": "permanent",
             "have_you_been_informed": "yes",
             "reference_number_on_information_form": "1234",
@@ -136,7 +136,7 @@ def build_request_data(exporter_user, gov_user):
         "letter_paragraph_picklist": build_picklist_data(
             "Letter Paragraph 1", "My letter paragraph is this.", "letter_paragraph"
         ),
-        "document_template": {"case_types": ["application"]},
+        "document_template": {"case_types": ["siel", "oiel"]},
         "export_user": {
             "email": exporter["email"],
             "user_profile": {"first_name": "Bruce", "last_name": "Wayne"},
