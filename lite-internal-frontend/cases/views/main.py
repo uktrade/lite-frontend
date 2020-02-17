@@ -26,6 +26,7 @@ from cases.services import (
     get_case_officer,
     put_case_officer,
     delete_case_officer,
+    get_case_types,
 )
 from cases.services import post_case_documents, get_case_documents, get_document
 from conf import settings
@@ -75,7 +76,7 @@ class Cases(TemplateView):
 
         # Filter bar
         statuses = [Option(option["key"], option["value"]) for option in data["results"]["filters"]["statuses"]]
-        case_types = [Option(option["key"], option["value"]) for option in data["results"]["filters"]["case_types"]]
+        case_types = [Option(option["key"], option["value"]) for option in get_case_types(request)]
         gov_users = get_gov_users(request, {"name": request.GET.get("name", ""), "activated": True}, True)
         filters = FiltersBar(
             [
@@ -122,7 +123,8 @@ class ViewCase(TemplateView):
     def get(self, request, **kwargs):
         case_id = str(kwargs["pk"])
         case = get_case(request, case_id)
-        case_type = case["type"]["key"]
+        case_type = case["case_type"]["type"]["key"]
+        case_sub_type = case["case_type"]["sub_type"]["key"]
 
         if "application" in case:
             status_props, _ = get_status_properties(request, case["application"]["status"]["key"])
@@ -138,36 +140,30 @@ class ViewCase(TemplateView):
             "status_is_terminal": status_props["is_terminal"],
         }
 
-        if case_type == CaseType.END_USER_ADVISORY_QUERY.value:
+        if case_sub_type == CaseType.END_USER_ADVISORY.value:
             return render(request, "case/queries/end_user_advisory.html", context)
-        elif case_type == CaseType.GOODS_QUERY.value:
+        elif case_sub_type == CaseType.GOODS.value:
             context["good"] = case["query"]["good"]
-
             context["verified"] = case["query"]["good"]["status"]["key"] == "verified"
             return render(request, "case/queries/goods_query_case.html", context)
-        elif case_type == CaseType.APPLICATION.value:
-            context["total_goods_value"] = _get_total_goods_value(case)
-
-            application_type = case["application"]["application_type"]["key"]
-            if application_type == CaseType.OPEN_LICENCE.value:
-                return render(request, "case/applications/open-licence-case.html", context)
-            elif application_type == CaseType.STANDARD_LICENCE.value:
-                return render(request, "case/applications/standard-licence-case.html", context)
-            else:
-                raise Exception("Invalid application_type: {}".format(case["application"]["application_type"]["key"]))
-        elif case_type in [
-            CaseType.EXHIBITION_CLEARANCE.value,
-            CaseType.F680_CLEARANCE.value,
-            CaseType.GIFTING_CLEARANCE.value,
-        ]:
-            context["total_goods_value"] = _get_total_goods_value(case)
-
-            return render(request, "case/applications/mod-clearance.html", context)
-        elif case_type == CaseType.HMRC_QUERY.value:
+        elif case_sub_type == CaseType.HMRC.value:
             context["total_goods_value"] = _get_total_goods_value(case)
             return render(request, "case/queries/hmrc-case.html", context)
-        else:
-            raise Exception("Invalid case_type: {}".format(case_type))
+        elif case_sub_type in [
+            CaseType.EXHIBITION.value,
+            CaseType.F680.value,
+            CaseType.GIFTING.value,
+        ]:
+            context["total_goods_value"] = _get_total_goods_value(case)
+            return render(request, "case/applications/mod-clearance.html", context)
+        elif case_type == CaseType.APPLICATION.value:
+            context["total_goods_value"] = _get_total_goods_value(case)
+            if case_sub_type == CaseType.OPEN.value:
+                return render(request, "case/applications/open-licence-case.html", context)
+            elif case_sub_type == CaseType.STANDARD.value:
+                return render(request, "case/applications/standard-licence-case.html", context)
+
+        raise Exception("Invalid case_sub_type: {}".format(case_sub_type))
 
     def post(self, request, **kwargs):
         case_id = str(kwargs["pk"])
@@ -211,7 +207,8 @@ class ChangeStatus(SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = str(kwargs["pk"])
         case = get_case(request, self.object_pk)
-        self.case_type = case["type"]["key"]
+        self.case_type = case["case_type"]["type"]["key"]
+        self.case_sub_type = case["case_type"]["sub_type"]["key"]
         permissible_statuses = get_permissible_statuses(request, self.case_type)
         self.data = case["application"] if "application" in case else case["query"]
         self.form = change_status_form(case, permissible_statuses)
@@ -219,13 +216,13 @@ class ChangeStatus(SingleFormView):
     def get_action(self):
         if (
             self.case_type == CaseType.APPLICATION.value
-            or self.case_type == CaseType.HMRC_QUERY.value
-            or self.case_type == CaseType.EXHIBITION_CLEARANCE.value
+            or self.case_sub_type == CaseType.HMRC.value
+            or self.case_sub_type == CaseType.EXHIBITION.value
         ):
             return put_application_status
-        elif self.case_type == CaseType.END_USER_ADVISORY_QUERY.value:
+        elif self.case_sub_type == CaseType.END_USER_ADVISORY.value:
             return put_end_user_advisory_query
-        elif self.case_type == CaseType.GOODS_QUERY.value:
+        elif self.case_sub_type == CaseType.GOODS.value:
             return put_goods_query_status
 
     def get_success_url(self):

@@ -27,7 +27,7 @@
 		<div class="govuk-grid-row">
 			<div class="govuk-grid-column-one-quarter">
 				<p class="app-case-board__heading">{% lcs 'CASE_INFO_TYPE' %}</p>
-				<p>{{ case.application.application_type.value }}</p>
+				<p>{{ case.application.case_type.sub_type.key }}</p>
 			</div>
 			<div class="govuk-grid-column-one-quarter">
 				<p class="app-case-board__heading">{% lcs 'CASE_INFO_EXPORT_TYPE' %}</p>

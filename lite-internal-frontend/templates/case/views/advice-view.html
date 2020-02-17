@@ -1,8 +1,8 @@
 <div class="govuk-form-group">
-    {% if case.application.application_type.key == 'open_licence' %}
+    {% if case.application.case_type.sub_type.key == 'open' %}
         {% include 'case/views/open-goods.html' %}
 		{% include 'case/views/open-destinations.html' %}
-    {% elif case.application.application_type.key != 'hmrc_query' %}
+    {% elif case.application.case_type.sub_type.key != 'hmrc' %}
 		{% if not status_is_terminal %}
         	{% include 'case/views/standard-goods.html' %}
 		{% endif %}

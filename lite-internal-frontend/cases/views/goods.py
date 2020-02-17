@@ -40,7 +40,7 @@ class ReviewGoods(TemplateView):
         parameters = {"level": "goods", "origin": "review_goods", "goods": goods_pk_list}
         goods_postfix_url = "?" + convert_dict_to_query_params(parameters)
 
-        if case["application"]["application_type"]["key"] == "standard_licence":
+        if case["application"]["case_type"]["sub_type"]["key"] == "standard":
             for good in case["application"]["goods"]:
                 if good["good"]["id"] in goods_pk_list:
                     # flatten the good details onto the first layer of the dictionary
@@ -57,7 +57,7 @@ class ReviewGoods(TemplateView):
         context = {
             "title": cases.ReviewGoodsSummary.HEADING,
             "case_id": case_id,
-            "application_type": case["application"]["application_type"]["key"],
+            "case_sub_type": case["application"]["case_type"]["sub_type"]["key"],
             "objects": goods,
             "edit_flags_url": edit_flags_url + goods_postfix_url,
             "review_goods_clc_url": review_goods_clc_url + goods_postfix_url,
@@ -88,7 +88,7 @@ class ReviewGoodsClc(TemplateView):
 
     def get(self, request, *args, **kwargs):
         case = get_case(request, self.case_id)
-        if case["application"]["application_type"]["key"] == "standard_licence":
+        if case["application"]["case_type"]["sub_type"]["key"] == "standard":
             get_good_func = get_good
             form = review_goods_clc_query_form(request, self.back_link, is_goods_type=False)
         else:
@@ -128,7 +128,7 @@ class ReviewGoodsClc(TemplateView):
 
         if response.status_code == 400:
             case = get_case(request, self.case_id)
-            is_goods_type = case["application"]["application_type"]["key"] != CaseType.STANDARD_LICENCE.value
+            is_goods_type = case["application"]["case_type"]["sub_type"]["key"] != CaseType.STANDARD.value
 
             form = review_goods_clc_query_form(request, self.back_link, is_goods_type=is_goods_type)
             return form_page(request, form, data=request.POST, errors=response.json().get("errors"))

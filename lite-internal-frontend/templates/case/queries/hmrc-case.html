@@ -3,7 +3,7 @@
 {% load humanize static %}
 
 {% block details %}
-	<p id="case-type" class="govuk-caption-m">{{ case.application.application_type.value }}</p>
+	<p id="case-type" class="govuk-caption-m">{{ case.application.case_type.sub_type.value }}</p>
     <p class="govuk-caption-m">{% lcs 'cases.HMRCPage.Heading.EXPORTER' %}<a id="applicant_organisation" class="govuk-link govuk-link--no-visited-state" style="display: inline-block;" href="{% url 'organisations:organisation' case.application.organisation.id %}">{{ case.application.organisation.name }}</a></p>
     <p class="govuk-caption-m">{% lcs 'cases.HMRCPage.Heading.RAISED_BY' %}<a id="hmrc_organisation" class="govuk-link govuk-link--no-visited-state" style="display: inline-block;" href="{% url 'organisations:organisation' case.application.hmrc_organisation.id %}">{{ case.application.hmrc_organisation.name }}</a></p>
 

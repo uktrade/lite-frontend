@@ -27,7 +27,7 @@
 				<div class="govuk-grid-column-one-third">
 					<h4 class="govuk-heading-s">{% lcs 'LetterTemplates.LetterTemplate.RESTRICTED_TITLE' %}</h4>
 					<p class="govuk-label" id="case_types">
-						{% for case_type in letter_template.case_types %}{% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}{{ case_type.value }}{% endfor %}
+						{% for case_type in letter_template.case_types %}{% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}{{ case_type.reference.value }}{% endfor %}
 					</p>
 				</div>
 				<div class="govuk-grid-column-one-third">

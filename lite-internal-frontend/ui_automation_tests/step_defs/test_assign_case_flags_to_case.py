@@ -46,16 +46,14 @@ def add_a_suspicious_flag(driver, add_new_flag):
 
 @then("I see 3 flags for the case")
 def three_out_of_text(driver, context):
-    elements = Shared(driver).get_rows_in_lite_table()
-    no = utils.get_element_index_by_text(elements, context.case_id, complete_match=False)
-    assert "(3 of " in elements[no].text
+    case_row = driver.find_element_by_id(context.case_id)
+    assert "(3 of " in case_row.text
 
 
 @then("I see all flags for the case")
 def dont_see_three_out_of(driver, context):
-    elements = Shared(driver).get_rows_in_lite_table()
-    no = utils.get_element_index_by_text(elements, context.case_id, complete_match=False)
-    assert "(3 of " not in elements[no].text
+    case_row = driver.find_element_by_id(context.case_id)
+    assert "(3 of " not in case_row.text
 
 
 @when("I click the expand flags dropdown")  # noqa

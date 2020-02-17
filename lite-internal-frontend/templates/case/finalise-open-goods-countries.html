@@ -34,7 +34,7 @@
 				<th class="govuk-table__header">{% lcs 'cases.GoodsDecisionMatrixPage.Table.GOOD_TITLE' %}</th>
 				<th class="govuk-table__header">{% lcs 'cases.GoodsDecisionMatrixPage.Table.COUNTRIES_TITLE' %}</th>
 				<th class="govuk-table__header">{% lcs 'cases.GoodsDecisionMatrixPage.Table.APPROVE_TITLE' %}</th>
-                {% if case.application.application_type.key == 'open_licence' %}
+                {% if case.application.case_type.sub_type.key == 'open' %}
 				    <th class="govuk-table__header">{% lcs 'cases.GoodsDecisionMatrixPage.Table.REJECT_TITLE' %}</th>
                 {% else %}
 				    <th class="govuk-table__header">{% lcs 'cases.GoodsDecisionMatrixPage.Table.REFUSE_TITLE' %}</th>
@@ -49,7 +49,7 @@
 				<tr class="govuk-table__row">
 					<td class="govuk-table__cell">
                         {{ good.control_code|default:good.description }}
-                        {% if good.advice.value == 'Refuse' and case.application.application_type.key == 'open_licence' %}
+                        {% if good.advice.value == 'Refuse' and case.application.case_type.sub_type.key == 'open' %}
                             <span style="opacity: 0.7">{% lcs 'cases.GoodsDecisionMatrixPage.REFUSE_ADVICE_TAG'%}</span>
                         {% else %}
                             <span style="opacity: 0.7">({{ good.advice.value|default:NO_ADVICE_DEFAULT }})</span></td>
@@ -58,7 +58,7 @@
 						{% for country in good.countries %}
 							<div class="{% if good.id in errors %}{% if country.id in errors|key_value:good.id %}govuk-form-group--error govuk-error-message{% endif %}{% endif %}" style="margin-bottom: 25px;">
 								{{ country.name }}
-                                {% if country.advice.value == 'Refuse' and case.application.application_type.key == 'open_licence' %}
+                                {% if country.advice.value == 'Refuse' and case.application.case_type.sub_type.key == 'open' %}
                                     <span style="opacity: 0.7">{% lcs 'cases.GoodsDecisionMatrixPage.REFUSE_ADVICE_TAG'%}</span>
                                 {% else %}
                                     <span style="opacity: 0.7">({{ country.advice.value|default:NO_ADVICE_DEFAULT }})</span>

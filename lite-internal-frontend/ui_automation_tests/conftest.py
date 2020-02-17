@@ -1,7 +1,6 @@
 import os
 
 from pytest_bdd import given, when, then, parsers
-from selenium.common.exceptions import NoSuchElementException
 
 from pages.goods_queries_pages import GoodsQueriesPages  # noqa
 from pages.organisation_page import OrganisationPage
@@ -208,17 +207,10 @@ def add_report_summary_picklist(add_a_report_summary_picklist):  # noqa
 
 @then("I see the added flags on the queue")  # noqa
 def added_flags_on_queue(driver, context):  # noqa
-    elements = Shared(driver).get_rows_in_lite_table()
-    no = utils.get_element_index_by_text(elements, context.case_id, complete_match=False)
-    driver.set_timeout_to(0)
-    try:
-        if elements[no].find_element_by_css_selector(".lite-accordian-table__chevron svg").is_displayed():
-            element = elements[no].find_element_by_css_selector(".lite-accordian-table__chevron")
-            element.click()
-    except NoSuchElementException:
-        pass
-    driver.set_timeout_to(10)
-    assert context.flag_name in elements[no].text
+    case_row = driver.find_element_by_id(context.case_id)
+    if "(3 of " in case_row.text:
+        ApplicationPage(driver).click_expand_flags(context.case_id)
+    assert context.flag_name in case_row.text
 
 
 @then("I see previously created application")  # noqa

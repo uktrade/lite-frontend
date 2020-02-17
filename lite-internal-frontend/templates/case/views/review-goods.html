@@ -12,7 +12,7 @@
 
 <div class="lite-app-bar">
 	<div class="lite-app-bar__content">
-		<p class="govuk-caption-m" style="margin: 0;">{{ case.application.application_type.value }}</p>
+		<p class="govuk-caption-m" style="margin: 0;">{{ case.application.case_type.sub_type.value }}</p>
 		<h2 class="govuk-heading-l">{% lcs 'cases.ReviewGoodsSummary.HEADING' %}</h2>
 	</div>
     <div class="lite-app-bar__controls">
@@ -42,7 +42,7 @@
 			<th class="govuk-table__header">{% lcs 'cases.ReviewGoodsSummary.Table.CONTROLLED' %}</th>
 			<th class="govuk-table__header">{% lcs 'cases.ReviewGoodsSummary.Table.CONTROL_LIST_ENTRY' %}</th>
 			<th class="govuk-table__header">{% lcs 'cases.ReviewGoodsSummary.Table.GOODS_COMMENT' %}</th>
-			{% if application_type == "standard_licence" %}
+			{% if case_sub_type.key == "standard" %}
 				<th class="govuk-table__header">{% lcs 'cases.ReviewGoodsSummary.Table.QUANTITY_VALUE' %}</th>
 			{% endif %}
 			<th class="govuk-table__header">{% lcs 'cases.ReviewGoodsSummary.Table.FLAGS' %}</th>
@@ -68,7 +68,7 @@
 						<span class="lite-hint">{% lcs 'cases.ReviewGoodsSummary.NotSet.COMMENT' %}</span>
 					{% endif %}
 				</td>
-				{% if application_type == "standard_licence" %}
+				{% if case_sub_type.key == "standard" %}
 					<td class="govuk-table__cell">{{ good.quantity }} {{ good.unit.value }}/£{{ good.value }}</td>
 				{% endif %}
 				<td class="govuk-table__cell">

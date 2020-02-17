@@ -35,7 +35,7 @@ def get_case_advice(get_advice, request, case, advice_level, team=None):
         "all_advice": advice["advice"],
         "total_goods_value": _get_total_goods_value(case),
         "permitted_to_give_final_advice": _check_user_permitted_to_give_final_advice(
-            case["application"]["application_type"]["key"], permissions
+            case["application"]["case_type"]["sub_type"]["key"], permissions
         ),
         "can_create_and_edit_advice": _can_user_create_and_edit_advice(case, permissions),
         "can_advice_be_finalised": _can_advice_be_finalised(advice),
@@ -220,7 +220,7 @@ def give_advice_dispatch(user_team_final, request, **kwargs):
     case = get_case(request, str(kwargs["pk"]))
     post_endpoint = reverse_lazy("cases:give_" + user_team_final + "_advice", kwargs={"pk": str(kwargs["pk"])})
     back_endpoint = reverse_lazy("cases:" + user_team_final + "_advice_view", kwargs={"pk": str(kwargs["pk"])})
-    form = advice_recommendation_form(post_endpoint, back_endpoint, case["application"]["application_type"]["key"])
+    form = advice_recommendation_form(post_endpoint, back_endpoint, case["application"]["case_type"]["sub_type"]["key"])
 
     if user_team_final == "team":
         user, _ = get_gov_user(request)

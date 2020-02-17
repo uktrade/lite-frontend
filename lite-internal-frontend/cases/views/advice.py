@@ -306,9 +306,9 @@ class Finalise(TemplateView):
 
     def get(self, request, *args, **kwargs):
         case = get_case(request, str(kwargs["pk"]))
-        case_type = case["application"]["application_type"]["key"]
+        case_type = case["application"]["case_type"]["sub_type"]["key"]
 
-        if case_type == CaseType.STANDARD_LICENCE.value or case_type == CaseType.EXHIBITION_CLEARANCE.value:
+        if case_type == CaseType.STANDARD.value or case_type == CaseType.EXHIBITION.value:
             advice, _ = get_final_case_advice(request, str(kwargs["pk"]))
             data = advice["advice"]
             search_key = "type"
@@ -343,7 +343,7 @@ class Finalise(TemplateView):
 
     def post(self, request, *args, **kwargs):
         case = get_case(request, str(kwargs["pk"]))
-        is_open_licence = case["application"]["application_type"]["key"] == CaseType.OPEN_LICENCE.value
+        is_open_licence = case["application"]["casetype"]["sub_type"]["key"] == CaseType.OPEN.value
         application_id = case.get("application").get("id")
         data = request.POST.copy()
 

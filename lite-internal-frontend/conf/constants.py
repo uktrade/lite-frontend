@@ -79,8 +79,8 @@ SUPER_USER_ROLE_ID = "00000000-0000-0000-0000-000000000002"
 GENERATED_DOCUMENT = "GENERATED"
 
 # Case types
-APPLICATION_CASE_TYPES = ["open_licence", "standard_licence", "hmrc"]
-CLEARANCE_CASE_TYPES = ["exhibition_clearance", "gifting_clearance", "F680_clearance"]
+APPLICATION_CASE_TYPES = ["open", "standard", "hmrc"]
+CLEARANCE_CASE_TYPES = ["exhibition_clearance", "gifting_clearance", "f680_clearance"]
 
 # Advice
 CONFLICTING = "conflicting"

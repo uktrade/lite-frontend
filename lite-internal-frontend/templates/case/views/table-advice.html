@@ -1,7 +1,7 @@
 <div class="app-advice">
     <div class="app-advice__user">
         <p class="govuk-body-s">
-            {% if case.application.application_type.key == 'open_licence' %}
+            {% if case.application.case_type.sub_type.key == 'open' %}
                 {% lcs 'cases.AdvicePage.Table.REJECT' %}
             {% else %}
                 {{ advice.type.value }}

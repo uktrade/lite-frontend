@@ -3,8 +3,8 @@ from lite_forms.components import Form, RadioButtons, Option, BackLink
 from lite_content.lite_internal_frontend.strings import cases
 
 
-def advice_recommendation_form(post_url, back_url, application_type):
-    if application_type == CaseType.OPEN_LICENCE.value:
+def advice_recommendation_form(post_url, back_url, case_sub_type):
+    if case_sub_type == CaseType.OPEN.value:
         denial_option = Option("refuse", cases.AdviceRecommendationForm.RadioButtons.REJECT)
     else:
         denial_option = Option("refuse", cases.AdviceRecommendationForm.RadioButtons.REFUSE)

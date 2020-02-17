@@ -21,7 +21,9 @@ def create_letter_template(driver, context, get_template_id):
     context.template_name = "000 Template " + utils.get_formatted_date_time_m_d_h_s()
     LetterTemplates(driver).enter_template_name(context.template_name)
     Shared(driver).click_submit()
-    LetterTemplates(driver).select_which_type_of_case_template_can_apply_to("Application")
+    LetterTemplates(driver).select_which_type_of_cases_template_can_apply_to(
+        ["Standard Individual Export Licence", "Open Individual Export Licence"]
+    )
     Shared(driver).click_submit()
     LetterTemplates(driver).click_licence_layout(get_template_id)
     Shared(driver).click_submit()
@@ -75,7 +77,7 @@ def template_details_are_present(driver, context):
     assert context.document_template_layout == letter_template.get_template_layout()
 
     for case_type in context.document_template_case_types:
-        assert case_type["value"] in letter_template.get_template_case_types()
+        assert case_type["reference"]["value"] in letter_template.get_template_case_types()
 
 
 @then("The paragraph text is present")
@@ -88,11 +90,10 @@ def paragraph_text_is_present(driver, context):
 @when("I edit my template name and layout")
 def edit_template_name_and_layout(driver, context):
     context.document_template_name = str(uuid.uuid4())[:35]
-    context.document_template_case_types.append(dict(key="goods_query", value="Goods Query"))
     letter_template = LetterTemplates(driver)
     letter_template.click_edit_template_button()
     letter_template.enter_template_name(context.document_template_name)
-    letter_template.select_which_type_of_case_template_can_apply_to("Goods Query")
+    letter_template.select_which_type_of_cases_template_can_apply_to(["Goods Query"])
     Shared(driver).click_submit()
 
 

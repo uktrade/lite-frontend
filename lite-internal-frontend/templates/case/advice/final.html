@@ -37,7 +37,7 @@
 								{% lcs 'cases.ViewAdvicePage.Actions.CLEAR' %}
 							</button>
 							{% if can_advice_be_finalised %}
-								{% if case.application.application_type.key == 'open_licence' %}
+								{% if case.application.case_type.sub_type.key == 'open' %}
 									<a class="govuk-button"  href="{% url 'cases:finalise_goods_countries' case.id %}" id="finalise_button">
 										{% lcs 'cases.ViewAdvicePage.Actions.FINALISED_GOODS_AND_COUNTRIES' %}
 									</a>
