@@ -26,7 +26,7 @@ class CopyExistingPartyPage:
     BACK_LINK = "Back"
     HEADING = "Select a party"
     ADD_BUTTON = "Edit and add to application"
-    NONE_FOUND = "No parties found"
+    NONE_FOUND = "There are no existing parties"
     RESULTS = " parties found"
 
     class Table:
@@ -224,7 +224,7 @@ class InitialApplicationQuestionsForms:
             )
 
             MOD_CLEARANCE_TITLE = "MOD clearance"
-            MOD_CLEARANCE_DESCRIPTION = "Select if you need an F680 to share information, go to an exhibition or you're gifting surplus products."
+            MOD_CLEARANCE_DESCRIPTION = "Select if you need to share information (an F680) or go to an exhibition, or if you're gifting surplus products."
 
     class ReferenceNameQuestion:
         TITLE = "Name the application"
@@ -241,12 +241,7 @@ class ExportLicenceQuestions:
         BACK = "Back to application type"
         DESCRIPTION = ""
         STANDARD_LICENCE = "Standard licence"
-        STANDARD_LICENCE_DESCRIPTION = (
-            "Select a standard licence for a set quantity and set value of products. "
-            "You must attach a completed "
-            "[end user undertaking form](https://www.gov.uk/government/publications/end-user-undertaking-euu-form)"
-            " to the application."
-        )
+        STANDARD_LICENCE_DESCRIPTION = "Select a standard licence for a set quantity and set value of products."
         OPEN_LICENCE = "Open licence"
         OPEN_LICENCE_DESCRIPTION = (
             "Select an open licence for multiple shipments of specific products to specific countries. "
@@ -461,7 +456,7 @@ class UltimateEndUsersPage:
     BACK = "Back to application overview"
     HELP = "What is an ultimate recipient?"
     DESCRIPTION = (
-        "An ultimate recipient is an entity that uses the product or the higher level system into which the product is"
+        "An ultimate recipient is a party that uses the product or the higher level system into which the product is"
         " installed or incorporated. The end user and ultimate recipient may be different parties."
     )
     NOTICE = "There are no ultimate recipients on this application"
