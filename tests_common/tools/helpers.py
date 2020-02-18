@@ -176,7 +176,10 @@ def find_paginated_item_by_id(id, driver):
             assert False, f"Item couldn't be found across {current_page} pages"
         else:
             current_page += 1
-            driver.find_element_by_id(f"page-{current_page}").click()
+            try:
+                driver.find_element_by_id(f"page-{current_page}").click()
+            except NoSuchElementException:
+                pass
     driver.set_timeout_to(10)
     assert element_is_found, f"Item couldn't be found across {current_page} pages"
     return element_is_found
