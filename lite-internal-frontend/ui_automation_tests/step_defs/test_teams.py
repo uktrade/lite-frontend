@@ -14,7 +14,7 @@ def go_to_teams(driver, sso_sign_in, internal_url):
 
 @when("I click on my team")
 def click_on_my_team(driver, context):
-    Shared(driver).scroll_to_bottom_row()
+    utils.find_paginated_item_by_link_text(context.team_name, driver)
     driver.find_element_by_link_text(context.team_name).click()
 
 
@@ -32,6 +32,7 @@ def select_team(driver):
 
 @when("I click edit for my user")
 def click_edit_for_my_user(driver, internal_info):
+    utils.find_paginated_item_by_id(internal_info["email"], driver)
     index = utils.get_element_index_by_text(
         Shared(driver).get_rows_in_lite_table(), internal_info["email"], complete_match=False
     )
@@ -65,6 +66,7 @@ def see_team_in_list(driver, context):
 @then(parsers.parse('I see my teams user list with user "{added_not_added}"'))
 def see_team_user_added(driver, added_not_added, context, internal_info):
     if added_not_added == "added":
+        utils.find_paginated_item_by_id(internal_info["email"], driver)
         table = Shared(driver).get_text_of_lite_table_body()
         # Test commented out until bug LT-2136 is fixed
         # assert internal_info["name"] in table, "User is not displayed in team list"
