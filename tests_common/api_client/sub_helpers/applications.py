@@ -120,6 +120,21 @@ class Applications:
         self.api_client.add_to_context("reference_code", data["application"]["reference_code"])
         return data
 
+    def copy_application(self, draft_id, data):
+        response = self.api_client.make_request(
+            method="POST",
+            url="/applications/" + draft_id + "/copy/",
+            headers=self.api_client.exporter_headers,
+            body=data,
+        )
+        return response.json()
+
+    def add_copied_application(self, draft_id, data):
+        response = self.copy_application(draft_id, data)
+        self.submit_application(response["data"])
+        self.api_client.add_to_context("application_id", response["data"])
+        self.api_client.add_to_context("case_id", response["data"])
+
     def is_party_document_processed(self, draft_id, party_id):
         url = "/applications/" + draft_id + "/parties/" + party_id + "/document/"
         return self.is_document_processed(url)
