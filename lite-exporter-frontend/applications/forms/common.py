@@ -1,9 +1,12 @@
+from apply_for_a_licence.forms import reference_name_form, have_you_been_informed
+from conf.constants import STANDARD
 from lite_content.lite_exporter_frontend import strings
 from django.urls import reverse_lazy
 
 from lite_content.lite_exporter_frontend.applications import ApplicationSuccessPage
-from lite_forms.components import HiddenField, Form, BackLink, TextArea, HTMLBlock, RadioButtons, Option
+from lite_forms.components import HiddenField, Form, BackLink, TextArea, HTMLBlock, RadioButtons, Option, FormGroup
 from lite_forms.generators import confirm_form, success_page
+from lite_forms.helpers import conditional
 
 
 def respond_to_query_form(application_id, ecju_query):
@@ -80,4 +83,10 @@ def application_success_page(request, application_reference_code):
             ApplicationSuccessPage.APPLY_AGAIN: reverse_lazy("apply_for_a_licence:start"),
             ApplicationSuccessPage.RETURN_TO_DASHBOARD: reverse_lazy("core:hub"),
         },
+    )
+
+
+def application_copy_form(application_type=None):
+    return FormGroup(
+        forms=[reference_name_form(), conditional((application_type == STANDARD), have_you_been_informed()),]
     )

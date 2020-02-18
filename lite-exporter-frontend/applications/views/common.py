@@ -10,6 +10,7 @@ from applications.forms.common import (
     ecju_query_respond_confirmation_form,
     edit_type_form,
     application_success_page,
+    application_copy_form,
 )
 from applications.forms.application_actions import withdraw_application_confirmation, surrender_application_confirmation
 from applications.helpers.check_your_answers import convert_application_to_check_your_answers
@@ -33,6 +34,7 @@ from applications.services import (
     set_application_status,
     get_status_properties,
     get_application_generated_documents,
+    copy_application,
 )
 from conf.constants import HMRC, APPLICANT_EDITING, NEWLINE
 from core.helpers import str_to_bool, convert_dict_to_query_params
@@ -41,7 +43,7 @@ from lite_content.lite_exporter_frontend import strings
 from lite_forms.components import HiddenField
 from lite_forms.generators import confirm_form
 from lite_forms.generators import error_page, form_page
-from lite_forms.views import SingleFormView
+from lite_forms.views import SingleFormView, MultiFormView
 
 
 class ApplicationsList(TemplateView):
@@ -336,3 +338,15 @@ class ApplicationSubmitSuccessPage(TemplateView):
             raise Http404
 
         return application_success_page(request, application["reference_code"])
+
+
+class ApplicationCopy(MultiFormView):
+    def init(self, request, **kwargs):
+        self.object_pk = kwargs["pk"]
+        application = get_application(request, self.object_pk)
+        self.forms = application_copy_form(application["case_type"]["sub_type"]["key"])
+        self.action = copy_application
+
+    def get_success_url(self):
+        id = self.get_validated_data()["data"]
+        return reverse_lazy("applications:task_list", kwargs={"pk": id})

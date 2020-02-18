@@ -11,15 +11,15 @@
 		{% endif %}
 		{% if not hide_tag %}
 			{% if status == 'done' %}
-				<div class="lite-tag lite-tag--blue">
+				<div id="{{ id }}-status" data-status="done" class="lite-tag lite-tag--blue">
 					{% lcs 'DONE' %}
 				</div>
 			{% elif status == 'in_progress' %}
-				<div class="lite-tag lite-tag--orange">
+				<div id="{{ id }}-status" data-status="in-progress" class="lite-tag lite-tag--orange">
 					{% lcs 'IN_PROGRESS' %}
 				</div>
 			{% else %}
-				<div class="lite-tag lite-tag--hollow">
+				<div id="{{ id }}-status" data-status="other" class="lite-tag lite-tag--hollow">
 					<span class="govuk-visually-hidden">{% lcs 'THIS_SECTION_IS' %}</span>
 					{% if optional %}
 						{% lcs 'OPTIONAL' %}

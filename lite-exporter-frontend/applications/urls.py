@@ -23,6 +23,7 @@ urlpatterns = [
     path("<uuid:pk>/edit-type/", common.ApplicationEditType.as_view(), name="edit_type"),
     path("<uuid:pk>/check-your-answers/", common.CheckYourAnswers.as_view(), name="check_your_answers"),
     path("<uuid:pk>/submit/", common.Submit.as_view(), name="submit"),
+    path("<uuid:pk>/copy/", common.ApplicationCopy.as_view(), name="copy"),
     path("<uuid:pk>/ecju-queries/<uuid:query_pk>/", common.RespondToQuery.as_view(), name="respond_to_query"),
     # Standard and Open Licence
     path("<uuid:pk>/edit/reference-name/", edit.EditReferenceName.as_view(), name="edit_reference_name",),

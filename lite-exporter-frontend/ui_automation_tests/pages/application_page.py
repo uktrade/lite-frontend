@@ -6,6 +6,7 @@ class ApplicationPage(BasePage):
     BUTTON_WITHDRAW_APPLICATION_ID = "button-withdraw-application"
     BUTTON_SURRENDER_APPLICATION_ID = "button-surrender-application"
     BUTTON_EDIT_APPLICATION_ID = "button-edit-application"
+    BUTTON_COPY_APPLICATION_ID = "button-copy-application"
     LABEL_APPLICATION_STATUS_ID = "label-application-status"
     LINK_NOTES_TAB_ID = "link-case-notes"  # ID
     LINK_ACTIVITY_TAB_ID = "link-activity"  # ID
@@ -25,6 +26,9 @@ class ApplicationPage(BasePage):
 
     def click_edit_application_link(self):
         self.driver.find_element_by_css_selector(self.LINK_EDIT_APPLICATION).click()
+
+    def click_copy_application(self):
+        self.driver.find_element_by_id(self.BUTTON_COPY_APPLICATION_ID).click()
 
     def click_ecju_query_tab(self):
         self.driver.find_element_by_id(self.LINK_ECJU_QUERY_TAB_ID).click()

@@ -23,6 +23,7 @@ from conf.constants import (
     EXISTING_PARTIES_URL,
     COUNTRIES_URL,
     PARTIES_URL,
+    APPLICATION_COPY_URL,
 )
 from conf.settings import AWS_STORAGE_BUCKET_NAME, STREAMING_CHUNK_SIZE
 from core.helpers import remove_prefix, convert_parameters_to_query_params, add_validate_only_to_data
@@ -325,3 +326,8 @@ def delete_goods_type_document(request, pk, good_pk):
 def get_activity(request, pk):
     data = get(request, CASES_URL + pk + ACTIVITY_URL)
     return data.json()["activity"]
+
+
+def copy_application(request, pk, data):
+    data = post(request, APPLICATIONS_URL + str(pk) + APPLICATION_COPY_URL, json=data)
+    return data.json(), data.status_code

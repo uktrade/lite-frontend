@@ -33,6 +33,9 @@
 						{% lcs 'applications.ApplicationSummaryPage.Buttons.SURRENDER_APPLICATION_BUTTON' %}
 					</a>
 				{% endif %}
+				<a class="govuk-button govuk-button--secondary" id="button-copy-application" href="{% url 'applications:copy' application.id %}">
+					{% lcs 'applications.ApplicationSummaryPage.Buttons.COPY_APPLICATION_BUTTON' %}
+				</a>
 			{% endif %}
 		</div>
 	</div>
