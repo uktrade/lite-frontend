@@ -300,6 +300,7 @@ class StandardApplicationTaskList:
     CONSIGNEE = "Consignee"
     SUPPORTING_DOCUMENTS = "Supporting documents"
     THIRD_PARTIES = "Third parties"
+    NOTES = "Notes"
 
 
 class OpenApplicationTaskList:
@@ -311,6 +312,7 @@ class OpenApplicationTaskList:
     GOODS_DESTINATION = "Countries"
     COUNTRIES_WHERE_EACH_GOOD_IS_GOING = "Product destinations"
     SUPPORTING_DOCUMENTS = "Supporting documents"
+    NOTES = "Notes"
 
 
 class HMRCApplicationTaskList:
@@ -337,6 +339,7 @@ class ExhibitionClearanceTaskList:
     CONSIGNEE = "Consignee"
     SUPPORTING_DOCUMENTS = "Supporting documents"
     THIRD_PARTIES = "Third parties"
+    NOTES = "Notes"
 
 
 class GiftingClearanceTaskList:
@@ -348,6 +351,7 @@ class GiftingClearanceTaskList:
     END_USER = "End user"
     SUPPORTING_DOCUMENTS = "Supporting documents"
     THIRD_PARTIES = "Third parties"
+    NOTES = "Notes"
 
 
 class F680ClearanceTaskList:
@@ -359,6 +363,7 @@ class F680ClearanceTaskList:
     END_USER = "End user"
     SUPPORTING_DOCUMENTS = "Supporting documents"
     THIRD_PARTIES = "Third parties"
+    NOTES = "Notes"
 
 
 class EditApplicationPage:
@@ -393,6 +398,12 @@ class DeleteApplicationPage:
     NO_LABEL = "Cancel"
     SUBMIT_BUTTON = "Submit"
     DELETE_ERROR = "Select confirm if you want to delete the draft"
+
+
+class ApplicationNotesPage:
+    TITLE = "Notes"
+    DESCRIPTION = ""
+    BACK_LINK = "Back to application overview"
 
 
 class AttachDocumentPage:
