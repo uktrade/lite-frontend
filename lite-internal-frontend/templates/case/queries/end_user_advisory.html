@@ -119,16 +119,6 @@
 					{{ case.query.note|default_na }}
 				</dd>
 			</div>
-            {% if case.query.copy_of %}
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        {% lcs 'cases.EndUserAdvisoriesPage.Details.COPY_FROM' %}
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        <a class="govuk-link" href="{% url 'cases:case' case.query.copy_of %}">{{ case.query.copy_of|reference_code }}</a>
-                    </dd>
-                </div>
-            {% endif %}
 		</dl>
 
 

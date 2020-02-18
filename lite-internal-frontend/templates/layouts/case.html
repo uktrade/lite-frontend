@@ -73,6 +73,10 @@
 		<p class="govuk-caption-m">{% lcs 'cases.ApplicationPage.NO_CASE_OFFICER' %}</p>
 	{% endif %}
 
+	{% if case.copy_of %}
+		<p class="govuk-caption-m">{% lcs 'cases.ApplicationPage.COPY_OF_LABEL' %}<a class="govuk-link govuk-link--no-visited-state" id="case-copy-of" href="{% url 'cases:case' case.copy_of.id %}">{{ case.copy_of.reference_code }}</a></p>
+	{% endif %}
+
 	<div class="govuk-!-margin-bottom-6" id="case_queues">
 		{% for queue_name in case.queue_names %}
 			<div class="govuk-caption-m">{{ queue_name }}</div>
