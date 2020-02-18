@@ -41,6 +41,12 @@ class GenericApplicationTaskListPage(BasePage):
     SECTION_SUPPORTING_DOCUMENT_STATUS_ID = SECTION_SUPPORTING_DOCUMENT_ID + STATUS
 
     LOCATION_LINK = "link-locations"
+    OPEN_GOODS_LINK = "link-products"
+    LINK_END_USER_ID = "link-end-user"
+    LINK_CONSIGNEE_ID = "link-consignee"
+    LINK_NOTES_ID = "link-notes"
+    LINK_SUPPORTING_DOCUMENTS_ID = "link-supporting-documents"
+    ULTIMATE_END_USER_LINK = "link-ultimate_end_users"  # ID
     GOODS_ON_APPLICATION = "[id^=good-on-application-row]"  # CSS
     GOV_TABLES = ".govuk-table__body"  # CSS
     DELETE_END_USER_DOCUMENT = "end_user_document_delete"  # ID
@@ -138,6 +144,9 @@ class GenericApplicationTaskListPage(BasePage):
 
     def get_text_of_lite_task_list_items(self):
         return self.driver.find_element_by_css_selector(self.LITE_TASK_LIST_ITEMS).text
+
+    def click_notes(self):
+        self.driver.find_element_by_id(self.LINK_NOTES_ID).click()
 
     def check_good_section_status(self, status):
         assert status == self.driver.find_element_by_id(self.SECTION_GOOD_STATUS_ID).get_attribute("data-status")

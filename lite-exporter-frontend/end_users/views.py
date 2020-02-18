@@ -11,7 +11,7 @@ from lite_forms.submitters import submit_paged_form
 from applications.services import (
     get_case_notes,
     get_application_ecju_queries,
-    post_application_case_notes,
+    post_case_notes,
     get_ecju_query,
     put_ecju_query,
 )
@@ -136,6 +136,8 @@ class EndUserDetail(TemplateView):
             "case_id": self.case_id,
             "end_user_advisory": self.end_user_advisory,
             "type": self.view_type,
+            "error": kwargs.get("error"),
+            "text": kwargs.get("text", ""),
         }
 
         if self.view_type == "case-notes":
@@ -151,21 +153,10 @@ class EndUserDetail(TemplateView):
         if self.view_type != "case-notes":
             return Http404
 
-        response, _ = post_application_case_notes(request, self.case_id, request.POST)
+        response, _ = post_case_notes(request, self.case_id, request.POST)
 
         if "errors" in response:
-            errors = response.get("errors")
-            if errors.get("text"):
-                error = errors.get("text")[0]
-                error = error.replace("This field", "Case note")
-                error = error.replace("this field", "the case note")  # TODO: Move to API
-
-            else:
-                error_list = []
-                for key in errors:
-                    error_list.append("{field}: {error}".format(field=key, error=errors[key][0]))
-                error = "\n".join(error_list)
-            return error_page(request, error)
+            return self.get(request, error=response["errors"]["text"][0], text=request.POST.get("text"), **kwargs)
 
         return redirect(
             reverse_lazy("end_users:end_user_detail", kwargs={"pk": self.end_user_advisory_id, "type": "case-notes"})

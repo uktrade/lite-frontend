@@ -18,7 +18,7 @@ def note_is_displayed(driver, context):
 @when("I click cancel button")
 def i_click_cancel_button(driver):
     application_page = SubmittedApplicationsPages(driver)
-    application_page.click_cancel_btn()
+    application_page.click_cancel_button()
 
 
 @then("entered text is no longer in case note field")

@@ -33,7 +33,8 @@ Feature: I want to indicate the standard licence I want
     And I upload a file "file_for_doc_upload_test_1.txt"
     Then wait for download link
     When I click the back link
-    When I submit the application
+    And I add a note to the draft application
+    And I submit the application
     Then application is submitted
     When I go to exporter homepage
     And I click applications
@@ -70,19 +71,19 @@ Feature: I want to indicate the standard licence I want
     When I click on end user
     And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
-    And Wait for "end_user_document_download" to be present
+    Then wait for download link
     When I click the back link
     And I click on consignees
     And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
-    And Wait for "consignee_document_download" to be present
+    Then wait for download link
     When I click the back link
     And I submit the application
     And I click applications
     Then I see submitted application
 
   @LT_1074_copy_existing_party @regression
-  Scenario: Submit standard application with external locations and ultimate end users
+  Scenario: Submit standard application with external locations and ultimate end users and copy party
     Given I go to exporter homepage and choose Test Org
     And I create a draft
     And I seed an end user for the draft

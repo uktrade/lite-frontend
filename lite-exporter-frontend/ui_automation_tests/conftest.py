@@ -2,6 +2,7 @@ import datetime
 import os
 import time
 
+from faker import Faker
 from pytest_bdd import given, when, then, parsers
 from selenium.webdriver.common.by import By
 
@@ -16,7 +17,7 @@ from pages.standard_application.good_details import StandardApplicationGoodDetai
 from pages.standard_application.goods import StandardApplicationGoodsPage
 from pages.add_new_external_location_form_page import AddNewExternalLocationFormPage
 from shared import functions
-from shared.tools.wait import wait_for_element, wait_for_download_button
+from shared.tools.wait import wait_for_download_button
 
 from ui_automation_tests.fixtures.env import environment  # noqa
 from ui_automation_tests.fixtures.register_organisation import (  # noqa
@@ -28,7 +29,6 @@ from ui_automation_tests.fixtures.add_goods_query import add_goods_clc_query  # 
 from ui_automation_tests.fixtures.add_end_user_advisory import add_end_user_advisory  # noqa
 from ui_automation_tests.fixtures.sso_sign_in import sso_sign_in  # noqa
 from ui_automation_tests.fixtures.manage_case import manage_case_status_to_withdrawn, approve_case  # noqa
-from ui_automation_tests.shared.fixtures.add_a_draft import add_a_draft  # noqa
 from ui_automation_tests.shared.fixtures.apply_for_application import (  # noqa
     apply_for_standard_application,
     add_an_ecju_query,
@@ -37,6 +37,7 @@ from ui_automation_tests.shared.fixtures.apply_for_application import (  # noqa
     apply_for_f680_clearance,
     apply_for_gifting_clearance,
 )
+from ui_automation_tests.shared.fixtures.add_a_draft import add_a_draft  # noqa
 from ui_automation_tests.shared.fixtures.add_a_document_template import (  # noqa
     add_a_document_template,
     get_paragraph_text,
@@ -66,6 +67,7 @@ from pages.which_location_form_page import WhichLocationFormPage
 from ui_automation_tests.pages.add_goods_grading_page import AddGoodGradingPage
 
 strict_gherkin = False
+fake = Faker()
 
 
 def pytest_addoption(parser):
@@ -174,11 +176,11 @@ def enter_application_name(driver, context):  # noqa
     functions.click_submit(driver)
 
 
-def enter_type_of_application(driver, type, context):  # noqa
-    context.type = type
+def enter_type_of_application(driver, _type, context):  # noqa
+    context.type = _type
     # type needs to be standard or open
     apply = ApplyForALicencePage(driver)
-    apply.click_export_licence(type)
+    apply.click_export_licence(_type)
     functions.click_submit(driver)
 
 
@@ -426,6 +428,18 @@ def click_back_link(driver):  # noqa
     functions.click_back_link(driver)
 
 
+@when("I add a note to the draft application")  # noqa
+def add_a_note_to_draft_application(driver, context):  # noqa
+    GenericApplicationTaskListPage(driver).click_notes()
+    case_note_text = fake.paragraph(nb_sentences=3, variable_nb_sentences=True, ext_word_list=None)
+
+    enter_case_note_text(driver, case_note_text, context)
+    click_post_note(driver)
+    SubmittedApplicationsPages(driver).assert_case_notes_exists([case_note_text])
+
+    functions.click_back_link(driver)
+
+
 @when("I click the notes tab")  # noqa
 def click_notes_tab(driver):  # noqa
     application_page = ApplicationPage(driver)
@@ -478,9 +492,9 @@ def enter_case_note_text(driver, text, context):  # noqa
 
 
 @when("I click post note")  # noqa
-def click_post_note(driver, context):  # noqa
+def click_post_note(driver):  # noqa
     application_page = SubmittedApplicationsPages(driver)
-    application_page.click_post_note_btn()
+    application_page.click_post_note_button()
 
 
 @when(parsers.parse('I upload a file "{filename}"'))  # noqa
@@ -608,11 +622,6 @@ def the_good_is_added_to_the_application(driver, context):  # noqa
 @then("wait for download link")  # noqa
 def wait_for_download_link(driver):  # noqa
     assert wait_for_download_button(driver, page=Shared(driver))
-
-
-@then(parsers.parse('Wait for "{element_id}" to be present'))  # noqa
-def wait_for_element_to_be_present(driver, element_id):  # noqa
-    assert wait_for_element(driver, element_id)
 
 
 @when("I change my reference name")  # noqa

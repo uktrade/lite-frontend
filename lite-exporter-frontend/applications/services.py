@@ -200,7 +200,7 @@ def get_case_notes(request, pk):
     return data.json()
 
 
-def post_application_case_notes(request, pk, json):
+def post_case_notes(request, pk, json):
     data = post(request, CASES_URL + pk + CASE_NOTES_URL, json)
     return data.json(), data.status_code
 

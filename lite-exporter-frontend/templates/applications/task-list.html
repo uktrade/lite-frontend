@@ -86,11 +86,16 @@
 	{# Additional Documents #}
 	{% url 'applications:additional_documents' application.id as supporting_documents_url %}
 	{% tld supporting_documents 'document' 'documents' as supporting_documents_description %}
-	{% include "includes/task-list-item.html" with id="supporting-documents" title=strings.SUPPORTING_DOCUMENTS url=supporting_documents_url status=supporting_documents|task_list_item_status description=supporting_documents_description %}
+	{% include "includes/task-list-item.html" with id="supporting-documents" title=strings.SUPPORTING_DOCUMENTS url=supporting_documents_url status=supporting_documents|task_list_item_status description=supporting_documents_description optional=True %}
 
 	{# Optional Note #}
 	{% if application_type|application_type_in_list:"HAS_OPTIONAL_NOTE" %}
 		{% url 'applications:optional_note' application.id as optional_note_url %}
 		{% include "includes/task-list-item.html" with id="reasoning" title=strings.REASON_FOR_QUERY url=optional_note_url status=application.reasoning|task_list_item_status optional=True %}
+	{% endif %}
+
+	{% if application_type|application_type_in_list:"HAS_NOTES" %}
+		{% url 'applications:notes' application.id as notes_url %}
+		{% include "includes/task-list-item.html" with id="notes" title=strings.NOTES url=notes_url optional=True %}
 	{% endif %}
 {% endblock %}

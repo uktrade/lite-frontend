@@ -1,12 +1,18 @@
 {% load static %}
 
 {% if post_url %}
-	<form method="post" action="{{ post_url }}">
+	<form method="post" action="{{ post_url }}" {% if error %}class="govuk-form-group--error"{% endif %}>
 		{% csrf_token %}
 		{% if not status_is_terminal %}
 			<label class="govuk-label" for="input-case-note">{% lcs 'applications.CaseNotes.TITLE' %}</label>
-			<div class="lite-case-note__container">
-				<textarea id="input-case-note" name="text" cols="80" class="lite-case-note__textarea"></textarea>
+			{% if error %}
+				<span id="error-case-note" for="input-case-note" class="govuk-error-message">
+					<span class="govuk-visually-hidden">Error:</span>
+					{{ error }}
+				</span>
+			{% endif %}
+			<div class="lite-case-note__container {% if error %}lite-case-note__container--error{% endif %}">
+				<textarea id="input-case-note" name="text" cols="80" class="lite-case-note__textarea">{{ text }}</textarea>
 				<div class="lite-case-note__controls">
 					<p id="input-case-note-warning" class="govuk-hint govuk-character-count__message" aria-live="polite">
 						{% lcs 'applications.CaseNotes.NOTICE' %}
