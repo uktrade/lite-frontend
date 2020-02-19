@@ -23,7 +23,7 @@ class GoodsList:
 
     class Filter:
         DESCRIPTION = generic.DESCRIPTION
-        CONTROL_LIST_ENTRY = "Control list classification"
+        CONTROL_LIST_ENTRY = "Control list classification (CLC)"
         PART_NUMBER = generic.PART_NUMBER
         APPLY = "Apply filters"
         CLEAR = "Clear filters"
@@ -79,7 +79,10 @@ class CreateGoodForm:
 
     class Description:
         TITLE = generic.DESCRIPTION
-        DESCRIPTION = "Start with the product name to make it easier to find the product when needed."
+        DESCRIPTION = (
+            "Start with the product name to make it easier to find the product when needed. Include the commodity code "
+            "if you know it."
+        )
 
     class IsControlled:
         TITLE = "Is the product on the control list?"
@@ -109,8 +112,10 @@ class CreateGoodForm:
 
     class IsGraded:
         TITLE = "Does the product have a security grading?"
-        DESCRIPTION = "For example, UK OFFICIAL or NATO UNCLASSIFIED"
-
+        DESCRIPTION = (
+            "For example, UK OFFICIAL or NATO UNCLASSIFIED. The security grading of the product doesn't affect if an "
+            "export licence is needed."
+        )
         YES = "Yes"
         NO = "No, it doesn't need one"
         RAISE_QUERY = "No, it needs one, apply for a private venture (PV) grading"
@@ -167,7 +172,10 @@ class EditGoodForm:
 
     class Description:
         TITLE = "Description"
-        DESCRIPTION = "Start with the product name to make it easier to find the product when needed."
+        DESCRIPTION = (
+            "Start with the product name to make it easier to find the product when needed. Include the commodity code "
+            "if you know it."
+        )
 
     class IsControlled:
         TITLE = "Is the product on the control list?"
@@ -252,7 +260,7 @@ class GoodPage:
         NO_ASSIGNED_CASE_OFFICER = "Not assigned"
         REFERENCE = "ECJU reference"
         CLC_RAISED_REASONS = "CLC query reasons"
-        GRADING_RAISED_REASONS = "grading query reasons"
+        GRADING_RAISED_REASONS = "Grading query reasons"
 
     class Document:
         DOWNLOAD = generic.Document.DOWNLOAD
@@ -309,7 +317,7 @@ class AddGoodToApplicationForm:
 
 
 class AddPreexistingGoodToApplicationForm:
-    TITLE = "Select a product from your product list"
+    TITLE = "Add a product from your product list"
 
 
 class ViewGoodOnApplicationPage:

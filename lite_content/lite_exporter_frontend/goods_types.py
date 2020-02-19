@@ -51,7 +51,10 @@ class CreateGoodsTypeForm:
 
     class Description:
         TITLE = "Description"
-        DESCRIPTION = "Start with the product name to make it easier to find the product when needed."
+        DESCRIPTION = (
+            "Start with the product name to make it easier to find the product when needed. Include the commodity code "
+            "if you know it."
+        )
 
     class IsControlled:
         TITLE = "Is the product on the control list?"

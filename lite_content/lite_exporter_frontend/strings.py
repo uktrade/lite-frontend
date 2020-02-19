@@ -131,15 +131,17 @@ class EndUser:
             BUTTON = "Attach document"
             DELETE_ERROR = "We had an issue deleting your files. Try again later."
             DESCRIPTION = (
-                "You must attach a completed [EUU form](https://www.gov.uk/government/publications/end-user-undertaking-euu-form). "
-                "You can upload the EUU later if you haven’t received the completed form from the end "
+                "You must attach a completed [end user undertaking "
+                "(EUU)](https://www.gov.uk/government/publications/end-user-undertaking-euu-form) "
+                "or [stockist undertaking (SU)](https://www.gov.uk/government/publications/stockist-undertaking-su-form). "
+                "You can upload it later if you haven’t received the completed form from the end "
                 "user.\n\nThe file must be smaller than 100MB."
             )
             DESCRIPTION_FIELD_DETAILS = "optional"
             DESCRIPTION_FIELD_TITLE = "Description"
             DOWNLOAD_ERROR = "We had an issue downloading your file. Try again later."
             FILE_TOO_LARGE = "The selected file must be smaller than 100MB"
-            TITLE = "Attach the end user undertaking (EUU) form"
+            TITLE = "Attach a completed end user form"
             UPLOAD_ERROR = "We had an issue uploading your files. Try again later."
 
 
