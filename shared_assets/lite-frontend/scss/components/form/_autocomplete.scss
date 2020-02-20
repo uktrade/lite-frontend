@@ -1,6 +1,7 @@
 .lite-autocomplete__wrapper {
 	position: relative;
 	background-color: govuk-colour("white");
+	max-width: 38ex + 3ex;
 }
 
 .lite-autocomplete__hint,
