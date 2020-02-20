@@ -193,7 +193,7 @@ class CaseOfficerPage:
         BUTTON = "Unassign"
 
     class Error:
-        GENERIC = "TThere is a problem"
+        GENERIC = "There is a problem"
         NO_SELECTION = "Select a user to assign"
 
     class Search:
