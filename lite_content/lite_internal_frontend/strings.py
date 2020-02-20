@@ -259,6 +259,10 @@ class LetterTemplates:
                 GOODS_QUERY = "Goods Query"
                 END_USER_ADVISORY = "End User Advisory Queries"
 
+        class Decisions:
+            TITLE = "Decisions (optional)"
+            DESCRIPTION = "Select the decisions that apply to your template"
+
         class Layout:
             TITLE = "Choose a layout"
 
@@ -280,6 +284,9 @@ class LetterTemplates:
                 APPLICATION = "Applications"
                 GOODS_QUERY = "Goods Query"
                 END_USER_ADVISORY = "End User Advisory Queries"
+
+        class Decisions:
+            TITLE = "Decisions (optional)"
 
         class Layout:
             CONTINUE_BUTTON = "Continue"
