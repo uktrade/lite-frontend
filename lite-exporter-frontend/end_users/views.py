@@ -14,6 +14,7 @@ from applications.services import (
     post_case_notes,
     get_ecju_query,
     put_ecju_query,
+    get_case_generated_documents,
 )
 from end_users.forms import (
     apply_for_an_end_user_advisory_form,
@@ -126,7 +127,7 @@ class EndUserDetail(TemplateView):
         self.end_user_advisory, self.case_id = get_end_user_advisory(request, self.end_user_advisory_id)
         self.view_type = kwargs["type"]
 
-        if self.view_type != "case-notes" and self.view_type != "ecju-queries":
+        if self.view_type not in ["case-notes", "ecju-queries", "ecju-generated-documents"]:
             return Http404
 
         return super(EndUserDetail, self).dispatch(request, *args, **kwargs)
@@ -146,6 +147,10 @@ class EndUserDetail(TemplateView):
 
         if self.view_type == "ecju-queries":
             context["open_queries"], context["closed_queries"] = get_application_ecju_queries(request, self.case_id)
+
+        if self.view_type == "ecju-generated-documents":
+            generated_documents, _ = get_case_generated_documents(request, self.case_id)
+            context["generated_documents"] = generated_documents["results"]
 
         return render(request, "end-users/end-user.html", context)
 

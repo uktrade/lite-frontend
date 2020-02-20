@@ -12,6 +12,7 @@ from s3chunkuploader.file_handler import S3FileUploadHandler
 from applications.forms.parties import attach_document_form, delete_document_confirmation_form
 from applications.helpers.reverse_documents import document_switch
 from applications.services import add_document_data, download_document_from_s3
+from goods.services import get_case_document_download
 from lite_content.lite_exporter_frontend import strings
 from lite_forms.generators import form_page, error_page
 
@@ -97,6 +98,11 @@ class DownloadDocument(TemplateView):
             return download_document_from_s3(document["s3_key"], document["name"])
         else:
             return error_page(request, strings.applications.AttachDocumentPage.DOWNLOAD_GENERIC_ERROR)
+
+
+class DownloadGeneratedDocument(TemplateView):
+    def get(self, request, case_pk, document_pk):
+        return get_case_document_download(request, case_pk=case_pk, document_pk=document_pk)
 
 
 class DeleteDocument(TemplateView):

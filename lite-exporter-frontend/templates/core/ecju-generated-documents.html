@@ -4,9 +4,9 @@
 			<div class="app-ecju-query__item">
 				<p class="app-ecju-query__heading">{{ generated_document.name }}</p>
 				<p class="app-ecju-query__date">
-					<span class="govuk-visually-hidden">{% lcs 'goods.GoodPage.ECJUDocuments.CREATED_AT' %}</span>{{ generated_document.created_at|str_date }}
+					<span class="govuk-visually-hidden">{% lcs 'core.ECJUDocumentsTab.CREATED_AT' %}</span>{{ generated_document.created_at|str_date }}
 				</p>
-				<a href="{% url 'goods:download_document' generated_document.id good.query.id %}" class="govuk-link govuk-link--no-visited-state">Download</a>
+				<a href="{% url 'applications:download_generated_document' generated_document.id case_id %}" class="govuk-link govuk-link--no-visited-state" id="generated-document-download">{% lcs 'core.ECJUDocumentsTab.DOWNLOAD_LINK' %}</a>
 			</div>
 		</div>
 		<hr class="lite-horizontal-separator">
@@ -16,7 +16,7 @@
 	<span class="lite-information-text__icon" aria-hidden="true">!</span>
 	<p class="lite-information-text__text">
 		<span class="govuk-visually-hidden">{% lcs 'generic.NoticeComponent.INFORMATION' %}</span>
-		{% lcs 'goods.GoodPage.ECJUDocuments.NONE' %}
+		{% lcs 'core.ECJUDocumentsTab.NONE' %}
 	</p>
 </div>
 {% endif %}

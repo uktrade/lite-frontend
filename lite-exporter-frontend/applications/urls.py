@@ -246,10 +246,10 @@ urlpatterns = [
     path("<uuid:pk>/notes/", common.Notes.as_view(), name="notes"),
     path("<uuid:pk>/withdraw/", common.WithdrawApplication.as_view(), name="withdraw"),
     path("<uuid:pk>/surrender/", common.SurrenderApplication.as_view(), name="surrender"),
-    # Case-relevant documentation
+    # Download generated documents
     path(
-        "<uuid:pk>/generated-documents/<uuid:obj_pk>/download",
-        documents.DownloadDocument.as_view(),
+        "<uuid:case_pk>/documents/<uuid:document_pk>/download/",
+        documents.DownloadGeneratedDocument.as_view(),
         name="download_generated_document",
     ),
     # This HAS to be at the bottom, otherwise it will swallow other url calls

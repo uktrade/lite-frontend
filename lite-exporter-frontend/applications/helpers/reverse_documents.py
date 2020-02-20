@@ -8,7 +8,6 @@ from applications.services import (
     post_goods_type_document,
     delete_goods_type_document,
     get_goods_type_document,
-    get_generated_document,
 )
 from lite_content.lite_exporter_frontend import strings  # noqa
 
@@ -85,10 +84,6 @@ def document_switch(path):
             "attach_doc_title_string": strings.AdditionalDocuments.Documents.AttachDocuments.TITLE,
             "attach_doc_return_later_string": strings.AdditionalDocuments.Documents.SAVE_END_USER,
             "delete_conf_back_link_string": strings.AdditionalDocuments.Documents.AttachDocuments.BACK_TO_APPLICATION_OVERVIEW,
-        }
-    elif "generated-documents" in path:
-        return {
-            "download": get_generated_document,
         }
     else:
         raise NotImplementedError("document_switch doesn't support this document type")

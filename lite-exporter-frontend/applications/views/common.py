@@ -25,6 +25,7 @@ from applications.services import (
     get_activity,
     get_applications,
     get_case_notes,
+    get_case_generated_documents,
     get_application_ecju_queries,
     get_ecju_query,
     put_ecju_query,
@@ -33,7 +34,6 @@ from applications.services import (
     get_application,
     set_application_status,
     get_status_properties,
-    get_application_generated_documents,
     copy_application,
 )
 from conf.constants import HMRC, APPLICANT_EDITING
@@ -154,6 +154,7 @@ class ApplicationDetail(TemplateView):
         status_props, _ = get_status_properties(request, self.application["status"]["key"])
 
         context = {
+            "case_id": self.application_id,
             "application": self.application,
             "type": self.view_type,
             "answers": {**convert_application_to_check_your_answers(self.application)},
@@ -172,7 +173,8 @@ class ApplicationDetail(TemplateView):
                 context["open_queries"], context["closed_queries"] = get_application_ecju_queries(request, self.case_id)
 
         if self.view_type == "generated-documents":
-            context["generated_documents"] = get_application_generated_documents(request, self.application_id)
+            generated_documents, _ = get_case_generated_documents(request, self.application_id)
+            context["generated_documents"] = generated_documents["results"]
 
         return render(request, "applications/application.html", context)
 

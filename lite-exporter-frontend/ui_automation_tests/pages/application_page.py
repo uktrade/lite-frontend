@@ -1,5 +1,7 @@
 from shared.BasePage import BasePage
 
+from ui_automation_tests.pages.shared import Shared
+
 
 class ApplicationPage(BasePage):
 
@@ -35,6 +37,13 @@ class ApplicationPage(BasePage):
 
     def click_generated_documents_tab(self):
         self.driver.find_element_by_id(self.LINK_GENERATED_DOCUMENTS_TAB_ID).click()
+
+    def generated_documents_notification_count(self):
+        return (
+            self.driver.find_element_by_id(self.LINK_GENERATED_DOCUMENTS_TAB_ID)
+            .find_element_by_css_selector(Shared.NOTIFICATION)
+            .text
+        )
 
     def generated_documents_count(self):
         return len(self.driver.find_elements_by_id(self.LINK_GENERATED_DOCUMENT_DOWNLOAD_LINK))

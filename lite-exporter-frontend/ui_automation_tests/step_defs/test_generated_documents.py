@@ -19,4 +19,5 @@ def click_generated_documents_tab(driver):
 @then("I can see the Generated Document")
 def i_can_see_the_generated_document(driver):
     application_page = ApplicationPage(driver)
+    assert application_page.generated_documents_notification_count() == "1"
     assert application_page.generated_documents_count() == 1
