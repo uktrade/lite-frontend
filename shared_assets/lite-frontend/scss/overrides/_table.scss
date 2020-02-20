@@ -1,6 +1,6 @@
 .govuk-table__header--checkbox {
 	display: flex;
-	border-bottom-width: 0px;
+	border-bottom-width: 0;
 }
 
 .govuk-table__cell--checkbox {
@@ -12,11 +12,12 @@
 	margin: 0;
 
 	.govuk-checkboxes__label {
-		padding: 0!important;
+		padding: 0!important !important;
 
 		&::before {
 			top: 10px;
 		}
+
 		&::after {
 			top: 17px;
 		}
@@ -30,10 +31,38 @@
 	word-break: break-all;
 }
 
+.govuk-table__cell--tight {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	word-break: break-all;
+	width: 10px;
+}
+
+.govuk-table__header--tight {
+	width: 10px;
+}
+
 .govuk-table__cell--line-number {
 	padding-right: govuk-spacing(2);
 	color: $govuk-secondary-text-colour;
 	white-space: nowrap;
 	width: 1%;
 	min-width: govuk-spacing(3);
+}
+
+.govuk-table__cell__actions-list {
+	width: 100%;
+	margin: 0; // Reset default user agent styles
+	padding: 0; // Reset default user agent styles
+}
+
+.govuk-table__cell__actions-list-item {
+	display: inline;
+
+	&:not(:last-child) {
+		border-right: 1px solid $govuk-border-colour;
+		margin-right: govuk-spacing(2);
+		padding-right: govuk-spacing(2);
+	}
 }
