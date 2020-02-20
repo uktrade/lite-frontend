@@ -26,7 +26,7 @@ class CopyExistingPartyPage:
     BACK_LINK = "Back"
     HEADING = "Select a party"
     ADD_BUTTON = "Edit and add to application"
-    NONE_FOUND = "No parties found"
+    NONE_FOUND = "There are no existing parties"
     RESULTS = " parties found"
 
     class Table:
@@ -159,6 +159,7 @@ class ApplicationSummaryPage:
         EDIT_APPLICATION_BUTTON = "Edit"
         WITHDRAW_ACCESS_BUTTON = "Withdraw"
         SURRENDER_APPLICATION_BUTTON = "Surrender licence"
+        COPY_APPLICATION_BUTTON = "Copy"
 
     class Withdraw:
         TITLE = "Confirm you want to withdraw this application"
@@ -223,7 +224,7 @@ class InitialApplicationQuestionsForms:
             )
 
             MOD_CLEARANCE_TITLE = "MOD clearance"
-            MOD_CLEARANCE_DESCRIPTION = "Select if you need an F680 to share information, go to an exhibition or you're gifting surplus products."
+            MOD_CLEARANCE_DESCRIPTION = "Select if you need to share information (an F680) or go to an exhibition, or if you're gifting surplus products."
 
     class ReferenceNameQuestion:
         TITLE = "Name the application"
@@ -240,12 +241,7 @@ class ExportLicenceQuestions:
         BACK = "Back to application type"
         DESCRIPTION = ""
         STANDARD_LICENCE = "Standard licence"
-        STANDARD_LICENCE_DESCRIPTION = (
-            "Select a standard licence for a set quantity and set value of products. "
-            "You must attach a completed "
-            "[end user undertaking form](https://www.gov.uk/government/publications/end-user-undertaking-euu-form)"
-            " to the application."
-        )
+        STANDARD_LICENCE_DESCRIPTION = "Select a standard licence for a set quantity and set value of products."
         OPEN_LICENCE = "Open licence"
         OPEN_LICENCE_DESCRIPTION = (
             "Select an open licence for multiple shipments of specific products to specific countries. "
@@ -304,6 +300,7 @@ class StandardApplicationTaskList:
     CONSIGNEE = "Consignee"
     SUPPORTING_DOCUMENTS = "Supporting documents"
     THIRD_PARTIES = "Third parties"
+    NOTES = "Notes"
 
 
 class OpenApplicationTaskList:
@@ -315,6 +312,7 @@ class OpenApplicationTaskList:
     GOODS_DESTINATION = "Countries"
     COUNTRIES_WHERE_EACH_GOOD_IS_GOING = "Product destinations"
     SUPPORTING_DOCUMENTS = "Supporting documents"
+    NOTES = "Notes"
 
 
 class HMRCApplicationTaskList:
@@ -341,6 +339,7 @@ class ExhibitionClearanceTaskList:
     CONSIGNEE = "Consignee"
     SUPPORTING_DOCUMENTS = "Supporting documents"
     THIRD_PARTIES = "Third parties"
+    NOTES = "Notes"
 
 
 class GiftingClearanceTaskList:
@@ -352,6 +351,7 @@ class GiftingClearanceTaskList:
     END_USER = "End user"
     SUPPORTING_DOCUMENTS = "Supporting documents"
     THIRD_PARTIES = "Third parties"
+    NOTES = "Notes"
 
 
 class F680ClearanceTaskList:
@@ -363,6 +363,7 @@ class F680ClearanceTaskList:
     END_USER = "End user"
     SUPPORTING_DOCUMENTS = "Supporting documents"
     THIRD_PARTIES = "Third parties"
+    NOTES = "Notes"
 
 
 class EditApplicationPage:
@@ -399,6 +400,12 @@ class DeleteApplicationPage:
     DELETE_ERROR = "Select confirm if you want to delete the draft"
 
 
+class ApplicationNotesPage:
+    TITLE = "Notes"
+    DESCRIPTION = ""
+    BACK_LINK = "Back to application overview"
+
+
 class AttachDocumentPage:
     UPLOAD_FAILURE_ERROR = "We had an issue uploading your files. Try again later."
     UPLOAD_GENERIC_ERROR = "We had an issue creating your response. Try again later."
@@ -429,6 +436,8 @@ class ApplicationsList:
     NOTIFICATIONS_SUFFIX = "notifications"
     NO_CONTENT_NOTICE = "There are no applications in progress."
     NO_DRAFTS_CONTENT_NOTICE = "There are no draft applications."
+    COPY_HEADER = "Copy"
+    COPY_LINK = "Copy"
 
 
 class ApplicationPage:
@@ -458,7 +467,7 @@ class UltimateEndUsersPage:
     BACK = "Back to application overview"
     HELP = "What is an ultimate recipient?"
     DESCRIPTION = (
-        "An ultimate recipient is an entity that uses the product or the higher level system into which the product is"
+        "An ultimate recipient is a party that uses the product or the higher level system into which the product is"
         " installed or incorporated. The end user and ultimate recipient may be different parties."
     )
     NOTICE = "There are no ultimate recipients on this application"
@@ -496,6 +505,6 @@ class CaseNotes:
 
 
 class GoodsCategories:
-    TITLE = "Does your application include?"
+    TITLE = "Do any products on the application fall into any of these categories?"
     DESCRIPTION = ""
-    ERROR = "You can't change product categories whilst doing a minor edit"
+    ERROR = "You can't change product categories while doing a minor edit"
