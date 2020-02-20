@@ -505,6 +505,6 @@ class CaseNotes:
 
 
 class GoodsCategories:
-    TITLE = "Does your application include?"
+    TITLE = "Do any products on the application fall into any of these categories?"
     DESCRIPTION = ""
-    ERROR = "You can't change product categories whilst doing a minor edit"
+    ERROR = "You can't change product categories while doing a minor edit"
