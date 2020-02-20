@@ -132,6 +132,7 @@ class ApplicationSummaryPage:
     GOODS_LOCATIONS = "Locations"
     GOODS_DEPARTED = "Have the goods already left the UK?"
     SUPPORTING_DOCUMENTATION = "Supporting documents"
+    EXHIBITION_DETAILS = "Exhibition Details"
     GOODS_CATEGORIES = "Product categories"
     GOODS = "Products"
     COUNTRIES = "Countries"
