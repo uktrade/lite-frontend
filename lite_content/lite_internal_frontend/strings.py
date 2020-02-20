@@ -34,7 +34,7 @@ SET_CASE_FLAGS = "Set case flags"
 EDIT_CASE_FLAGS = "Edit case flags"
 
 # Case
-CASE_GOODS = "Products"
+CASE_GOODS = "Goods"
 CASE_ENTITIES_NONE = "No inactive case entities"
 CASE_ENTITIES_ACTIVITY = "Activity"
 CASE_PARTIES_LICENSEE = "Licensee"
@@ -57,7 +57,7 @@ CASE_ACTIVITY_HEADING = "Activity"
 
 # Good
 GOOD_DESCRIPTION = "Description"
-GOOD_CONTROL_LIST_ENTRY = "Control list entry"
+GOOD_CONTROL_LIST_ENTRY = "Control list classification"
 GOOD_INCORPORATED = "Incorporated"
 GOOD_CONTROLLED = "Controlled"
 GOOD_FLAGS = "Flags"
@@ -65,13 +65,13 @@ GOOD_FLAGS = "Flags"
 STANDARD_CASE_TOTAL_VALUE = "Total value:"
 
 # Supporting documentation
-SUPPORTING_DOCUMENTATION_TITLE = "Supporting documentation"
+SUPPORTING_DOCUMENTATION_TITLE = "Supporting documents"
 SUPPORTING_DOCUMENTATION_NAME = "Name"
 SUPPORTING_DOCUMENTATION_DESCRIPTION = "Description"
 SUPPORTING_DOCUMENTATION_DOCUMENT = "Document"
-SUPPORTING_DOCUMENTATION_NO_DOCUMENTATION = "No supporting documentation"
+SUPPORTING_DOCUMENTATION_NO_DOCUMENTATION = "No supporting documents"
 
-INACTIVE_ENTITIES = "No supporting documentation"
+INACTIVE_ENTITIES = "No supporting documents"
 
 COMBINE_USER_ADVICE = "Combine all user advice"
 GIVE_OR_CHANGE_ADVICE = "Give or change advice"
@@ -81,10 +81,10 @@ DOCUMENT_TEMPLATES_TITLE = "Document templates"
 
 REGISTER_BUSINESS_FIRST_AND_LAST_NAME = "First and last name"
 
-USER_ADD_TITLE = "Add new user"
-USER_EMAIL_QUESTION = "Whats the user's email"
-USER_TEAM_QUESTION = "What team will the user belong to?"
-USER_ROLE_QUESTION = "What role should this user have?"
+USER_ADD_TITLE = "Add user"
+USER_EMAIL_QUESTION = "Email address"
+USER_TEAM_QUESTION = "Team"
+USER_ROLE_QUESTION = "Role"
 USER_ADD_FORM_BACK_TO_USERS = "Back to users"
 USER_EDIT_TITLE = "Edit user"
 USER_EDIT_FORM_BACK_TO_USER = "Back to user"
@@ -108,18 +108,18 @@ class RegisterBusiness:
     GO_HOME = "Go home"
     GO_TO_COMPANIES = "Go to organisation list"
     LAST_NAME = "Last name"
-    NAME = "What's the organisation's name?"
+    NAME = "Name of organisation"
     NAME_OF_SITE = "Name of site"
     REGISTER_COMMERCIAL_TITLE = "Register an organisation"
     REGISTER_INDIVIDUAL_TITLE = "Register a private individual"
     REGISTRATION_COMPLETE = "Registration complete"
-    SIC_NUMBER = "Classifies industries by a four-digit code."
+    SIC_NUMBER = "Classifies industries by a 4 digit code."
     SUCCESSFULLY_REGISTERED = " Successfully registered"
     WHERE_IS_THE_EXPORTER_BASED = "Where is the exporter based?"
 
     class UkVatNumber:
         DESCRIPTION = (
-            "9 digits long, with the first two letters indicating the country code of the registered business."
+            "9 digits long, with the first 2 letters indicating the country code of the registered business."
         )
         TITLE = "UK VAT number"
 
@@ -137,8 +137,8 @@ class Users:
 
 class UpdateUser:
     class Status:
-        DEACTIVATE_WARNING = "This user will no longer be able to log in or perform tasks"
-        REACTIVATE_WARNING = "This user will be able to log in to and perform tasks"
+        DEACTIVATE_WARNING = "This user will no longer be able to sign in or perform tasks"
+        REACTIVATE_WARNING = "This user will be able to sign in to and perform tasks"
 
 
 class Activity:
@@ -180,9 +180,9 @@ class Flags:
     class UpdateFlag:
         class Status:
             DEACTIVATE_HEADING = "Are you sure you want to deactivate this flag?"
-            DEACTIVATE_WARNING = "This flag will no longer be able to be used unless it is reactivated"
+            DEACTIVATE_WARNING = "This flag will no longer be able to be used unless it's reactivated"
             REACTIVATE_HEADING = "Are you sure you want to reactivate this flag?"
-            REACTIVATE_WARNING = "This flag will be able to be used unless it is deactivated again"
+            REACTIVATE_WARNING = "This flag will be able to be used unless it's deactivated again"
 
 
 class Picklist:
@@ -191,9 +191,9 @@ class Picklist:
     class Edit:
         class Status:
             DEACTIVATE_HEADING = "Are you sure you want to deactivate this picklist item?"
-            DEACTIVATE_WARNING = "This picklist item will no longer be able to be used unless it is reactivated"
+            DEACTIVATE_WARNING = "This picklist item will no longer be able to be used unless it's reactivated"
             REACTIVATE_HEADING = "Are you sure you want to reactivate this picklist item?"
-            REACTIVATE_WARNING = "This picklist item will be able to be used unless it is deactivated again"
+            REACTIVATE_WARNING = "This picklist item will be able to be used unless it's deactivated again"
 
 
 class LetterTemplates:
@@ -246,8 +246,8 @@ class LetterTemplates:
 
         class Name:
             HINT = (
-                "Call it something that:\n• Is easy to find\n• Explains when to use this template\n\n For example,"
-                " 'Refuse a licence'."
+                "Call it something that:\n• is easy to find\n• explains when to use this template\n\n For example,"
+                " 'Refuse a licence'"
             )
             TITLE = "Give your template a name"
 
@@ -256,8 +256,8 @@ class LetterTemplates:
 
             class Types:
                 APPLICATION = "Applications"
-                GOODS_QUERY = "Goods Query"
-                END_USER_ADVISORY = "End User Advisory Queries"
+                GOODS_QUERY = "Goods query"
+                END_USER_ADVISORY = "End user advisory queries"
 
         class Layout:
             TITLE = "Choose a layout"
@@ -267,8 +267,8 @@ class LetterTemplates:
             BACK_LINK = "Back to letter templates"
             CONTINUE_BUTTON = "Continue"
             HINT = (
-                "Call it something that:\n• Is easy to find\n• Explains when to use this template\n\n For example,"
-                " 'Refuse a licence'."
+                "Call it something that:\n• is easy to find\n• explains when to use this template\n\n For example,"
+                " 'Refuse a licence'"
             )
             TITLE = "Give your template a name"
 
@@ -278,8 +278,8 @@ class LetterTemplates:
 
             class Types:
                 APPLICATION = "Applications"
-                GOODS_QUERY = "Goods Query"
-                END_USER_ADVISORY = "End User Advisory Queries"
+                GOODS_QUERY = "Goods query"
+                END_USER_ADVISORY = "End user advisory queries"
 
         class Layout:
             CONTINUE_BUTTON = "Continue"
