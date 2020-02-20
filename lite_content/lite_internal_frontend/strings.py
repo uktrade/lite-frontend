@@ -118,9 +118,7 @@ class RegisterBusiness:
     WHERE_IS_THE_EXPORTER_BASED = "Where is the exporter based?"
 
     class UkVatNumber:
-        DESCRIPTION = (
-            "9 digits long, with the first 2 letters indicating the country code of the registered business."
-        )
+        DESCRIPTION = "9 digits long, with the first 2 letters indicating the country code of the registered business."
         TITLE = "UK VAT number"
 
 
