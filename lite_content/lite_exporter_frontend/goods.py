@@ -327,6 +327,8 @@ class AddPreexistingGoodToApplicationForm:
 class ViewGoodOnApplicationPage:
     TITLE = "Products"
     ADD_NEW_BUTTON = "Add a new product"
+    NO_CONTENT = "You haven't added any products to this application"
+    NO_CONTENT_DESCRIPTION = "Adding a new product to the application will also add it to your product list. This allows you to add the product to other applications."
 
 
 class GoodsLocationForm:
