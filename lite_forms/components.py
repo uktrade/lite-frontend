@@ -333,7 +333,16 @@ class Select(_Component):
 
 class Option:
     def __init__(
-        self, key, value, description=None, show_pane=None, sections=None, show_or=False, img_url=None, auto_check=True
+        self,
+        key,
+        value,
+        description=None,
+        show_pane=None,
+        sections=None,
+        show_or=False,
+        img_url=None,
+        auto_check=True,
+        components=None,
     ):
         from lite_forms.helpers import convert_to_markdown
 
@@ -345,6 +354,7 @@ class Option:
         self.show_pane = show_pane
         self.show_or = show_or
         self.img_url = img_url
+        self.components = components
 
 
 class Group:
