@@ -72,3 +72,15 @@ def i_see_the_original_number_of_active_flags(driver, context):
     assert (
         context.original_number_of_deactivated_flags == number_of_deactivated_flags
     ), "There is not equal deactivated flags to before"
+
+
+@when("I add a flag called UAE at level Case")
+def add_flag_uae_case(driver, context):
+    flags_page = FlagsPages(driver)
+    flags_page.click_add_a_flag_button()
+    extra_string = str(utils.get_formatted_date_time_d_h_m_s())
+    context.flag_name = "UAE" + extra_string
+    flags_page.enter_flag_name(context.flag_name)
+    flags_page.select_flag_level("Case")
+    Shared(driver).click_submit()
+    assert context.flag_name in Shared(driver).get_text_of_table()

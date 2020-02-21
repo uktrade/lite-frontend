@@ -40,7 +40,7 @@ Feature: I want to add a company to LITE
     Given I sign in to SSO or am signed into SSO
     And I create open application or open application has been previously created
     When I go to flags
-    And I add a flag called Suspicious at level Organisation
+    And I add a flag at level Organisation
     And I go to application previously created
     And I go to the organisation which submitted the case
     And I click the edit flags link

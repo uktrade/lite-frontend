@@ -27,6 +27,7 @@ class ApplicationPage(BasePage):
     IS_VISIBLE_TO_EXPORTER_CHECKBOX_ID = "is_visible_to_exporter"
     REVIEW_GOODS = "button-review-goods"
     EDIT_CASE_FLAGS = "application-edit-case-flags"  # ID
+    EDIT_DESTINATION_FLAGS_BUTTON = "button-edit-destinations-flags"  # ID
     CHECKBOX_INPUT = ".govuk-checkboxes__input"
     VIEW_ADVICE = 'a[href*="/user-advice-view/"]'
     CASE_FLAGS = "application-case-flags"
@@ -50,6 +51,7 @@ class ApplicationPage(BasePage):
     HMRC_GOODS_LOCATION = "hmrc-goods-location"
     CASE_COPY_OF_ID = "case-copy-of"
     TYPE_OF_CASE = "case-type"  # ID
+    DESTINATION_CHECKBOX = "destinations"  # NAME
 
     def get_case_copy_of_field_href(self):
         return self.driver.find_element_by_id(self.CASE_COPY_OF_ID).get_attribute("href")
@@ -132,6 +134,11 @@ class ApplicationPage(BasePage):
     def click_edit_case_flags(self):
         edit_cases_btn = self.driver.find_element_by_id(self.EDIT_CASE_FLAGS)
         edit_cases_btn.click()
+
+    def click_edit_destination_flags(self):
+        self.driver.find_element_by_name(self.DESTINATION_CHECKBOX).click()
+        edit_destination_flags_btn = self.driver.find_element_by_id(self.EDIT_DESTINATION_FLAGS_BUTTON)
+        edit_destination_flags_btn.click()
 
     def select_a_good(self):
         element = self.driver.find_element_by_css_selector(self.CHECKBOX_INPUT)

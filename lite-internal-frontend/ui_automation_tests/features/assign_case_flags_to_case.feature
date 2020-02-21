@@ -8,8 +8,7 @@ Feature: I want to add case-level flags to a case and view them
   Scenario: Add flag to case
     Given I sign in to SSO or am signed into SSO
     And I create open application or open application has been previously created
-    When I go to flags
-    And I add a flag called UAE at level Case
+    When I add a flag at level Case
     And I go to application previously created
     And I click edit flags link
     And I select previously created flag
@@ -22,8 +21,7 @@ Feature: I want to add case-level flags to a case and view them
   Scenario: Add flag to good
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
-    When I go to flags
-    And I add a flag called Suspicious at level Good
+    When I add a flag at level Good
     And I go to application previously created
     And I click edit goods flags link
     And I select previously created flag
@@ -36,23 +34,19 @@ Feature: I want to add case-level flags to a case and view them
   Scenario: Add all flags to case
     Given I sign in to SSO or am signed into SSO
     And I create open application or open application has been previously created
-    When I go to flags
-    And I add a flag called Suspicious at level Good
+    When I add a flag at level Good
     And I go to application previously created
     And I click edit goods flags link
     And I select previously created flag
-    And I go to flags
-    And I add a flag called New at level Case
+    And I add a flag at level Case
     And I go to application previously created
     And I click edit flags link
     And I select previously created flag
-    And I go to flags
-    And I add a flag called UAE at level Case
+    And I add a flag at level Destination
     And I go to application previously created
-    And I click edit flags link
+    And I click edit destination flags link
     And I select previously created flag
-    And I go to flags
-    And I add a flag called Suspicious at level Organisation
+    And I add a flag at level Organisation
     And I go to application previously created
     And I go to the organisation which submitted the case
     And I click the edit flags link

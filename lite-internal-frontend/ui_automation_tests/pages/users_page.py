@@ -1,6 +1,4 @@
 from selenium.webdriver.support.ui import Select
-from selenium.webdriver.common.action_chains import ActionChains
-import time
 
 from pages.shared import Shared
 from shared import functions
@@ -11,12 +9,12 @@ import shared.tools.helpers as utils
 class UsersPage(BasePage):
     ADD_A_USER_BUTTON = "a[href*='/users/add']"
     SUBMIT_BUTTON = "button[type*='submit']"
-    PROFILE_LINK = "a[href*='/users/profile/']"
     MANAGE_ROLES_BUTTON = "button-manage-roles"
     EMAIL = "email"
     TEAM = "team"
     ROLE = "role"
     EDIT_BUTTONS_IN_TABLE = '.govuk-table__cell a[href*="edit"]'
+    EDIT_BUTTON_ON_USERS_PAGE = "edit_button"
     DEACTIVATE_BUTTON_CSS = '.govuk-button[href*="deactivate"]'
     REACTIVATE_BUTTON_CSS = '.govuk-button[href*="reactivate"]'
     DEACTIVATE_ARE_YOU_SURE_BUTTON_ID = "deactivated_button"
@@ -27,18 +25,6 @@ class UsersPage(BasePage):
 
     def click_add_a_user_btn(self):
         self.driver.find_element_by_css_selector(self.ADD_A_USER_BUTTON).click()
-
-    def click_edit_for_user(self, user_name):
-        element = self.driver.find_element_by_xpath(
-            "//*[text()[contains(.,'" + user_name + "')]]/following-sibling::td[last()]/a"
-        )
-        actions = ActionChains(self.driver)
-        actions.move_to_element(element).perform()
-        time.sleep(1)
-        element.click()
-
-    def click_user_profile(self):
-        self.driver.find_element_by_css_selector(self.PROFILE_LINK).click()
 
     def enter_email(self, email):
         self.driver.find_element_by_id(self.EMAIL).clear()
@@ -61,6 +47,9 @@ class UsersPage(BasePage):
 
     def click_edit_button_by_index(self, index):
         self.driver.find_elements_by_css_selector(self.EDIT_BUTTONS_IN_TABLE)[index].click()
+
+    def click_edit_button_on_users_page(self):
+        self.driver.find_element_by_id(self.EDIT_BUTTON_ON_USERS_PAGE).click()
 
     def deactivate_user(self):
         self.driver.find_element_by_css_selector(self.DEACTIVATE_BUTTON_CSS).click()

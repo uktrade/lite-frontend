@@ -7,10 +7,10 @@ from pages.organisation_page import OrganisationPage
 
 from ui_automation_tests.fixtures.env import environment  # noqa
 from ui_automation_tests.fixtures.add_a_flag import (  # noqa
-    add_uae_flag,
-    add_suspicious_flag,
-    add_organisation_suspicious_flag,
-    add_new_flag,
+    add_case_flag,
+    add_good_flag,
+    add_organisation_flag,
+    add_destination_flag,
 )
 from ui_automation_tests.fixtures.add_queue import add_queue  # noqa
 from ui_automation_tests.fixtures.add_a_team import add_a_team  # noqa
@@ -230,8 +230,8 @@ def see_queue_in_queue_list(driver, context):  # noqa
     )
 
 
-@when("I add a flag called Suspicious at level Organisation")  # noqa
-def add_a_suspicious_flag(driver, add_organisation_suspicious_flag):  # noqa
+@when("I add a flag at level Organisation")  # noqa
+def add_an_organisation_flag(driver, add_organisation_flag):  # noqa
     pass
 
 
@@ -280,8 +280,8 @@ def enter_response(driver, controlled, control_list_entry, report, comment):  # 
     Shared(driver).click_submit()
 
 
-@when("I add a flag called UAE at level Case")  # noqa
-def add_a_flag(driver, add_uae_flag):  # noqa
+@when("I add a flag at level Case")  # noqa
+def add_a_flag(driver, add_case_flag):  # noqa
     pass
 
 
