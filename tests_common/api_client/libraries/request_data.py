@@ -117,6 +117,7 @@ def build_request_data(exporter_user, gov_user):
             "text": "Why did the chicken cross the road?",
             "type": "ecju_query",
         },
+        "flag": {"team": "00000000-0000-0000-0000-000000000001"},
         "not_sure_details": {"not_sure_details_details": "something", "not_sure_details_control_code": "ML1a"},
         "good_type": {
             "description": "A goods type",
