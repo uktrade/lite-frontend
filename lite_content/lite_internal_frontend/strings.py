@@ -239,6 +239,7 @@ class LetterTemplates:
         LAST_UPDATE_TITLE = "Last updated"
         LAYOUT_TITLE = "Layout"
         RESTRICTED_TITLE = "Restricted to"
+        DECISIONS_TITLE = "Decisions"
 
     class EditLetterTemplate:
         BUTTON_NAME = "Save"
