@@ -198,7 +198,7 @@ class CaseOfficerPage:
 
     class Search:
         TITLE = "Assign a case officer"
-        DESCRIPTION = ""
+        DESCRIPTION = " "
         PLACEHOLDER = "Search users"
         SEARCH = "Search"
         ASSIGN = "Assign user as case officer"
