@@ -315,6 +315,10 @@ class AddGoodToApplicationForm:
         YES = "Yes"
         NO = "No"
 
+    class Exhibition:
+        TITLE = "Select what will be exhibited for the product"
+        DESCRIPTION = ""
+
 
 class AddPreexistingGoodToApplicationForm:
     TITLE = "Add a product from your product list"
