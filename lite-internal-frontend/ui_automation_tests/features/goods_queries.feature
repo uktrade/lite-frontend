@@ -19,6 +19,9 @@ Feature: I want to respond to clc queries
     When I click progress application
     And I select status "Withdrawn" and save
     Then the status has been changed in the application
+    When I click progress application
+    And I select status "CLC review" and save
+    Then the status has been changed in the application
 
   @LT_1528_respond @pv_grading @smoke
   Scenario: respond to a grading type of query
@@ -34,4 +37,7 @@ Feature: I want to respond to clc queries
     Then I see case is closed
     When I click progress application
     And I select status "Withdrawn" and save
+    Then the status has been changed in the application
+    When I click progress application
+    And I select status "PV grading review" and save
     Then the status has been changed in the application

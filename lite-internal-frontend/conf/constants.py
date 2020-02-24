@@ -113,6 +113,11 @@ class Statuses:
     REGISTERED = "registered"
     SUBMITTED = "submitted"
     WITHDRAWN = "withdrawn"
+    CLC = "clc_review"
+    PV = "pv_review"
+
+
+GOODS_QUERY_STATUSES = [Statuses.CLOSED, Statuses.SUBMITTED, Statuses.WITHDRAWN, Statuses.CLC, Statuses.PV]
 
 
 class SystemTeamsID(Enum):

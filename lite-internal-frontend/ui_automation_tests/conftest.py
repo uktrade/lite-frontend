@@ -296,6 +296,14 @@ def status_has_been_changed_in_header(driver, context, internal_info):  # noqa
         assert "updated the status to: " + context.status in application_page.get_text_of_audit_trail_item(
             0
         ), "status has not been shown as approved in audit trail"
+    elif context.status.lower() == "pv grading review":
+        assert "updated the status to: " + context.status in application_page.get_text_of_audit_trail_item(
+            0
+        ), "status has not been shown as approved in audit trail"
+    elif context.status.lower() == "clc review":
+        assert "updated the status to: " + context.status in application_page.get_text_of_audit_trail_item(
+            0
+        ), "status has not been shown as approved in audit trail"
     else:
         assert "updated the status to " + context.status.lower() in application_page.get_text_of_audit_trail_item(
             0

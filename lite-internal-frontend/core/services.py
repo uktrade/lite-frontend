@@ -11,6 +11,7 @@ from conf.constants import (
     STATUS_PROPERTIES_URL,
     GOV_PV_GRADINGS_URL,
     Statuses,
+    GOODS_QUERY_STATUSES,
 )
 from users.services import get_gov_user
 
@@ -87,9 +88,7 @@ def get_permissible_statuses(request, case_type):
             not in [Statuses.APPLICANT_EDITING, Statuses.CLOSED, Statuses.FINALISED, Statuses.REGISTERED]
         ]
     else:
-        case_type_applicable_statuses = [
-            status for status in statuses if status["key"] in [Statuses.CLOSED, Statuses.SUBMITTED, Statuses.WITHDRAWN]
-        ]
+        case_type_applicable_statuses = [status for status in statuses if status["key"] in GOODS_QUERY_STATUSES]
 
     return [status for status in case_type_applicable_statuses if status in user_permissible_statuses]
 
