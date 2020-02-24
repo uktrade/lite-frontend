@@ -21,6 +21,9 @@ class CaseDocumentsPage:
 
 
 class ApplicationPage:
+    class Info:
+        CLEARANCE_LEVEL = "Clearance"
+
     class Actions:
         CASE_OFFICER = "Assign case officer"
         DOCUMENT = "Attached documents"
@@ -54,6 +57,7 @@ class ApplicationPage:
     class Parties:
         SELECT_ALL = "Select all/Deselect all"
         NAME = "Name"
+        CLEARANCE_LEVEL = "Clearance"
         ADDRESS = "Address"
         TYPE = "Type"
         WEBSITE = "Website"
