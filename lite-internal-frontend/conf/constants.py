@@ -67,6 +67,7 @@ STATUS_PROPERTIES_URL = STATUSES_URL + "properties/"
 CONTROL_LIST_ENTRIES_URL = STATIC_URL + "control-list-entries/"
 GOV_PV_GRADINGS_URL = STATIC_URL + "private-venture-gradings/gov/"
 LETTER_LAYOUTS_URL = STATIC_URL + "letter-layouts/"
+DECISIONS_URL = STATIC_URL + "decisions/"
 
 # Permissions
 MAKE_FINAL_DECISIONS = "MAKE_FINAL_DECISIONS"

@@ -343,7 +343,7 @@ class Finalise(TemplateView):
 
     def post(self, request, *args, **kwargs):
         case = get_case(request, str(kwargs["pk"]))
-        is_open_licence = case["application"]["casetype"]["sub_type"]["key"] == CaseType.OPEN.value
+        is_open_licence = case["application"]["case_type"]["sub_type"]["key"] == CaseType.OPEN.value
         application_id = case.get("application").get("id")
         data = request.POST.copy()
 

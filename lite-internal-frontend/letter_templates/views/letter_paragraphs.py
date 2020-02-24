@@ -18,6 +18,7 @@ def get_order_paragraphs_page(request, template_content):
             "name": template_content["name"],
             "layout": template_content["layout"],
             "case_types": template_content["case_types"],
+            "decisions": template_content["decisions"],
         },
     )
 
@@ -36,6 +37,7 @@ class LetterParagraphs(TemplateView):
             "name": template_content["name"],
             "layout": template_content["layout"],
             "case_types": template_content["case_types"],
+            "decisions": template_content["decisions"],
             "letter_paragraphs": [
                 paragraph
                 for paragraph in all_letter_paragraphs["picklist_items"]
@@ -62,6 +64,7 @@ class LetterParagraphs(TemplateView):
                 "name": template_content["name"],
                 "layout": template_content["layout"],
                 "case_types": template_content["case_types"],
+                "decisions": template_content["decisions"],
                 "letter_paragraphs": template_content["letter_paragraphs"],
             },
         )

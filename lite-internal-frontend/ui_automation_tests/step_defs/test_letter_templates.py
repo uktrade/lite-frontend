@@ -25,6 +25,8 @@ def create_letter_template(driver, context, get_template_id):
         ["Standard Individual Export Licence", "Open Individual Export Licence"]
     )
     Shared(driver).click_submit()
+    LetterTemplates(driver).select_which_type_of_decisions_template_can_apply_to(["Approve", "Proviso"])
+    Shared(driver).click_submit()
     LetterTemplates(driver).click_licence_layout(get_template_id)
     Shared(driver).click_submit()
 
@@ -77,7 +79,7 @@ def template_details_are_present(driver, context):
     assert context.document_template_layout == letter_template.get_template_layout()
 
     for case_type in context.document_template_case_types:
-        assert case_type["reference"]["value"] in letter_template.get_template_case_types()
+        assert case_type["reference"]["key"].upper() in letter_template.get_template_case_types()
 
 
 @then("The paragraph text is present")

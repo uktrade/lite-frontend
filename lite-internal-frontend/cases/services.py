@@ -32,12 +32,13 @@ from conf.constants import (
     GOODS_QUERIES_URL,
     CLC_RESPONSE_URL,
     PV_GRADING_RESPONSE_URL,
+    DECISIONS_URL,
 )
 
 
 # Case types
-def get_case_types(request):
-    data = get(request, CASE_TYPES_URL)
+def get_case_types(request, type_only=True):
+    data = get(request, CASE_TYPES_URL + "?type_only=" + str(type_only))
     return data.json()["case_types"]
 
 
@@ -355,6 +356,12 @@ def _get_total_goods_value(case):
     for good in case.get("application").get("goods", []):
         total_value += Decimal(good["value"]).quantize(Decimal(".01"))
     return total_value
+
+
+# Letter template decisions
+def get_decisions(request):
+    data = get(request, DECISIONS_URL)
+    return data.json()["decisions"], data.status_code
 
 
 # Generated Documents
