@@ -139,6 +139,7 @@ class ApplicationSummaryPage:
     OPTIONAL_NOTE = "Optional note"
     COPY_REFERENCE_CODE = "Copy ECJU reference"
     COPIED = "Copied"
+    CLEARANCE = "Clearance level"
 
     class Sections:
         COMPLETED_TAG = "Saved"
@@ -364,6 +365,7 @@ class F680ClearanceTaskList:
     SUPPORTING_DOCUMENTS = "Supporting documents"
     THIRD_PARTIES = "Third parties"
     NOTES = "Notes"
+    CLEARANCE = "Clearance level"
 
 
 class EditApplicationPage:
@@ -453,6 +455,8 @@ class ThirdPartiesPage:
     class Variables:
         NAME = "Name"
         TYPE = "Type"
+        CLEARANCE_LEVEL = "Clearance"
+        DESCRIPTORS = "Descriptors"
         ROLE = "Role"
         WEBSITE = "Website"
         ADDRESS = "Address"
