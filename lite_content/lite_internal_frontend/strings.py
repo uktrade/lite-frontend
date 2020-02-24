@@ -237,6 +237,7 @@ class LetterTemplates:
         LAST_UPDATE_TITLE = "Last updated"
         LAYOUT_TITLE = "Layout"
         RESTRICTED_TITLE = "Restricted to"
+        DECISIONS_TITLE = "Decisions"
 
     class EditLetterTemplate:
         BUTTON_NAME = "Save"
@@ -256,6 +257,10 @@ class LetterTemplates:
                 APPLICATION = "Applications"
                 GOODS_QUERY = "Goods query"
                 END_USER_ADVISORY = "End user advisory queries"
+
+        class Decisions:
+            TITLE = "Decisions (optional)"
+            DESCRIPTION = "Select the decisions that apply to your template"
 
         class Layout:
             TITLE = "Choose a layout"
@@ -278,6 +283,9 @@ class LetterTemplates:
                 APPLICATION = "Applications"
                 GOODS_QUERY = "Goods query"
                 END_USER_ADVISORY = "End user advisory queries"
+
+        class Decisions:
+            TITLE = "Decisions (optional)"
 
         class Layout:
             CONTINUE_BUTTON = "Continue"
