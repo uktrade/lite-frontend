@@ -23,6 +23,7 @@ class CaseDocumentsPage:
 class ApplicationPage:
     class Info:
         CLEARANCE_LEVEL = "Clearance"
+        DESCRIPTORS = "Descriptors"
 
     class Actions:
         CASE_OFFICER = "Assign case officer"
@@ -58,6 +59,7 @@ class ApplicationPage:
         SELECT_ALL = "Select all/Deselect all"
         NAME = "Name"
         CLEARANCE_LEVEL = "Clearance"
+        DESCRIPTORS = "Descriptors"
         ADDRESS = "Address"
         TYPE = "Type"
         WEBSITE = "Website"
