@@ -110,6 +110,16 @@ class Parties:
         DOWNLOAD = "Download"
         ATTACH = "Attach document"
 
+    class Clearance:
+        class Level:
+            TITLE = "Clearance Level"
+            DESCRIPTION = "Select clearance level for the entity."
+
+        class Descriptors:
+            TITLE = "Descriptors, caveats or codewords"
+            INPUT = "Please add relevant information."
+            DESCRIPTION = "Keywords."
+
 
 class EndUser:
     TITLE = "Select the type of end user"
