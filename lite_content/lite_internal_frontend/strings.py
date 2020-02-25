@@ -112,6 +112,8 @@ class RegisterBusiness:
     NAME_OF_SITE = "Name of site"
     REGISTER_COMMERCIAL_TITLE = "Register an organisation"
     REGISTER_INDIVIDUAL_TITLE = "Register a private individual"
+    EDIT_COMMERCIAL_TITLE = "Edit an organisation"
+    EDIT_INDIVIDUAL_TITLE = "Edit a private individual"
     REGISTRATION_COMPLETE = "Registration complete"
     SIC_NUMBER = "Classifies industries by a 4 digit code."
     SUCCESSFULLY_REGISTERED = " Successfully registered"
