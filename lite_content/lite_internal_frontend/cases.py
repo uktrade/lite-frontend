@@ -89,6 +89,15 @@ class ApplicationPage:
     NO_QUEUES_ASSIGNED = "No queues assigned"
     COPY_OF_LABEL = "Copied from:"
 
+    class Details:
+        DETAILS = "Details"
+
+        class Table:
+            TITLE = "Title"
+            REQUIRED_BY_DATE = "Required by date"
+            FIRST_EXHIBITION_DATE = "First exhibition date"
+            REASON_FOR_CLEARANCE = "Reason for clearance"
+
 
 class GenerateDocumentsPage:
     TITLE = "Generate document"
