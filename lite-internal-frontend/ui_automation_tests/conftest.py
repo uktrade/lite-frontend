@@ -44,6 +44,8 @@ from pages.case_list_page import CaseListPage
 from pages.application_page import ApplicationPage
 from pages.queues_pages import QueuesPages
 
+from ui_automation_tests.shared.tools.helpers import paginated_item_exists
+
 
 def pytest_addoption(parser):
     env = str(os.environ.get("ENVIRONMENT"))
@@ -147,6 +149,7 @@ def copy_open_app(driver, apply_for_open_application, api_client_config, context
     context.old_app_id = context.app_id
     context.app_id = lite_client.context["application_id"]
     context.case_id = lite_client.context["application_id"]
+    context.reference_code = lite_client.context["reference_code"]
 
 
 @when("I click continue")  # noqa
@@ -326,3 +329,25 @@ def create_clc_query(driver, apply_for_clc_query, context):
 def filter_status_change(driver, context, status):
     CaseListPage(driver).select_filter_status_from_dropdown(status)
     CaseListPage(driver).click_apply_filters_button()
+
+
+@when("I go to the case list page")  # noqa
+def case_list_page(driver, internal_url):
+    driver.get(internal_url.rstrip("/") + "/cases/")
+
+
+@then("I should see my case in the cases list")  # noqa
+def case_in_cases_list(driver, context):
+    assert paginated_item_exists(context.case_id, driver)
+    context.case_row = CaseListPage(driver).get_case_row(context.case_id)
+    assert context.reference_code in context.case_row.text
+
+
+@then("I should see my case SLA")  # noqa
+def case_sla(driver, context):
+    assert CaseListPage(driver).get_case_row_sla(context.case_row) == "0"
+
+
+@then("I see the case page")  # noqa
+def i_see_the_case_page(driver, context):
+    assert driver.find_element_by_id(ApplicationPage.HEADING_ID).text == context.reference_code

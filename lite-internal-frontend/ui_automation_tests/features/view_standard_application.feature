@@ -8,17 +8,15 @@ Feature: I want to view the case details of a case
   Scenario: Gov user can see all parties on the case
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
+    When I go to the case list page
+    Then I should see my case in the cases list
+    And I should see my case SLA
     When I go to application previously created
     Then I see an end user
     And I see an ultimate end user
     And I see a third party
     And I see a consignee
-
-  @LT_1658_parties_refactor @regression
-  Scenario: Gov user can see inactive parties on case
-    Given I sign in to SSO or am signed into SSO
-    And I create standard application or standard application has been previously created
-    And the exporter has deleted the third party
+    Given the exporter has deleted the third party
     When I go to application previously created
     Then I see an inactive party on page
 
@@ -33,12 +31,6 @@ Feature: I want to view the case details of a case
     Then I can see the case on the exporter amendments queue
     When I go to application previously created
     Then I see that changes have been made to the case
-
-    @LT_948_can_see_assigned_users @regression
-    Scenario: Gov user can see which users are assigned to a case from the case screen
-    Given I sign in to SSO or am signed into SSO
-    And I create standard application or standard application has been previously created
-    And I am an assigned user for the case
     When I go to application previously created
     Then I see assigned queues
     And I see assigned users

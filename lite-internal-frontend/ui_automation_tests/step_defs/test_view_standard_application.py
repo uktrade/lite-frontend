@@ -7,7 +7,7 @@ import shared.tools.helpers as utils
 
 from ui_automation_tests.shared import functions
 
-scenarios("../features/view_case_details.feature", strict_gherkin=False)
+scenarios("../features/view_standard_application.feature", strict_gherkin=False)
 
 
 def assert_party_data(table, headings, values):

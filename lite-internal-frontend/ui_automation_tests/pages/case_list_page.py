@@ -36,6 +36,9 @@ class CaseListPage(BasePage):
     # Notification for updated cases
     EXPORTER_AMENDMENTS_BANNER = "exporter-amendments-banner"  # ID
 
+    # SLA
+    SLA_ID = "sla"
+
     def search_pages_for_id(self, id):
         is_present = len(self.driver.find_elements_by_link_text(id))
         number_of_pages = len(self.driver.find_elements_by_css_selector(".lite-pagination__item"))
@@ -123,3 +126,9 @@ class CaseListPage(BasePage):
 
     def enter_name_to_filter_search_box(self, text):
         self.driver.find_element_by_id(self.FILTER_SEARCH_BOX).send_keys(text)
+
+    def get_case_row(self, case_id):
+        return self.driver.find_element_by_id(case_id)
+
+    def get_case_row_sla(self, row):
+        return row.find_element_by_id(self.SLA_ID).text

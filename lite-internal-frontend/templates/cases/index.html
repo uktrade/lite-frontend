@@ -53,6 +53,7 @@
 						<th class="cases-table__header cases-table__cell--checkbox">
 							<button id="button-select-all" type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
 						</th>
+						<th class="cases-table__header" style="width: 50px;" scope="col"></th>
 						<th class="cases-table__header" style="width: 225px;" scope="col">Case</th>
 						<th class="cases-table__header" style="width: 1fr;" scope="col">Assignees</th>
 						<th class="cases-table__header" style="width: 125px;" scope="col">Type</th>
@@ -83,6 +84,18 @@
 										</span>
 									</label>
 								</div>
+							</td>
+							<td class="cases-table__cell">
+								{% if case.sla_remaining_days != None %}
+									<div class="pie-wrapper progress-{{ case|get_sla_percentage }} {{ case.sla_remaining_days|get_sla_ring_colour }}" id="sla">
+									  <span class="label"><strong>{{ case.sla_days }}</strong></span>
+									  <div class="pie">
+										<div class="left-side half-circle"></div>
+										<div class="right-side half-circle"></div>
+									  </div>
+									  <div class="shadow"></div>
+									</div>
+								{% endif %}
 							</td>
 							<td class="cases-table__cell">
 								<a class="govuk-link govuk-!-font-weight-bold" href="{% url 'cases:case' case.id %}?queue_id={{data.results.queue.id}}&queue_name={{data.results.queue.name}}">

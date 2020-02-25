@@ -1,5 +1,8 @@
+from __future__ import division
+
 import datetime
 import json
+import math
 import re
 import warnings
 from html import escape
@@ -303,3 +306,27 @@ def display_grading(text: str):
 def is_system_team(id: str):
     ids = [team_id.value for team_id in SystemTeamsID]
     return id in ids
+
+
+@register.filter()
+def get_sla_percentage(case):
+    if case["sla_remaining_days"] <= 0:
+        return "100"
+    else:
+        percentage = (case["sla_days"] / (case["sla_days"] + case["sla_remaining_days"])) * 100
+        # Round up to nearest 10
+        if percentage == 0:
+            return "10"
+        else:
+            percentage = math.ceil(percentage / 10) * 10
+            return str(percentage)
+
+
+@register.filter()
+def get_sla_ring_colour(remaining_days):
+    if remaining_days > 5:
+        return "green"
+    elif remaining_days >= 0:
+        return "orange"
+    else:
+        return "red"
