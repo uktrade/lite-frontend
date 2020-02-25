@@ -115,6 +115,7 @@ class GeneratedDocuments:
 
 
 class ApplicationSummaryPage:
+    CLEARANCE_LEVEL = "Clearance level"
     REFERENCE_CODE = "ECJU reference"
     REFERENCE_NAME = "Reference"
     TYPE = "Licence type"
