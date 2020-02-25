@@ -466,6 +466,11 @@ class ThirdPartiesPage:
         DOCUMENT = "Document"
 
 
+class ClearanceLevel:
+    TITLE = "Clearance level"
+    DESCRIPTION = "Select clearance level for the application."
+
+
 class UltimateEndUsersPage:
     TITLE = "Ultimate recipients"
     ADD = "Add a third party"
