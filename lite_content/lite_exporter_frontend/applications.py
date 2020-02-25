@@ -87,6 +87,7 @@ class ThirdPartyForm:
         CONSULTANT = "Consultant"
         CONTACT = "Contact"
         EXPORTER = "Exporter"
+        CUSTOMER = "Customer"
 
     ROLE_TITLE = "Select the role of the third party in your application"
     TYPE_TITLE = "Select the type of third party"
