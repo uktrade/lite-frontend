@@ -358,6 +358,7 @@ class F680ClearanceTaskList:
     ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
     NEW_TITLE = "F680 clearance application"
     EDIT_TITLE = "Edit the application"
+    F680_DETAILS = "F680 Details"
     GOODS = "Products"
     GOODS_LOCATION = "Locations"
     END_USER = "End user"

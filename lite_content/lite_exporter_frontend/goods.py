@@ -372,3 +372,11 @@ class DeleteGoodDocumentPage:
     DOCUMENT_CREATED_BY = "Created by"
     DOCUMENT_DESCRIPTION = "Description"
     BUTTON = "Delete document"
+
+
+class F680Details:
+    TITLE = "Select the types of clearance you need"
+    DESCRIPTION = ""
+
+    BACK = "Back"
+    BUTTON = "Save and continue"
