@@ -40,6 +40,7 @@ class GoodsList:
         INCORPORATED = "Incorporated"
         COUNTRIES = "Countries"
         STATUS = "Status"
+        ITEM_TYPE = "Item type"
 
     class Documents:
         TITLE = "Documents"
