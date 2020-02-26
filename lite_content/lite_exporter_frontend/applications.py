@@ -334,7 +334,7 @@ class HMRCApplicationTaskList:
 
 class ExhibitionClearanceTaskList:
     ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
-    DETAILS = "Details"
+    DETAILS = "Exhibition details"
     NEW_TITLE = "Exhibition clearance application"
     EDIT_TITLE = "Edit the application"
     GOODS = "Products"
