@@ -110,6 +110,16 @@ class Parties:
         DOWNLOAD = "Download"
         ATTACH = "Attach document"
 
+    class Clearance:
+        class Level:
+            TITLE = "Select a proposed security grading"
+            DESCRIPTION = ""
+
+        class Descriptors:
+            TITLE = "Descriptors, caveats or codewords"
+            TITLE_OPTIONAL = "Descriptors, caveats or codewords (optional)"
+            DESCRIPTION = ""
+
 
 class EndUser:
     TITLE = "Select the type of end user"
