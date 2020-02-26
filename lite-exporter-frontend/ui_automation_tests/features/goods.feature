@@ -10,7 +10,7 @@ Feature: I want to edit and remove goods on the goods list
     When I click on goods link
     And I click add a good button
     And I add a good with description "123 pistol" part number "321" controlled "Yes" control code "ML1a" and graded "yes"
-    And I add the goods grading with prefix "abc" grading "NATO restricted" suffix "def" issuing authority "NATO" reference "12345" Date of issue "10-05-2015"
+    And I add the goods grading with prefix "abc" grading "NATO RESTRICTED" suffix "def" issuing authority "NATO" reference "12345" Date of issue "10-05-2015"
     Then I see good in goods list
     When I edit a good to description "edited" part number "321" controlled "Yes" control code "ML1a" and graded "no"
     Then I see my edited good details in the good page
@@ -37,7 +37,7 @@ Feature: I want to edit and remove goods on the goods list
     Then I see there are no goods on the application
     When I click Add a new good
     And I add a new good with description "New good for application" part number "P123" controlled "Yes" control code "ML8a25b" and graded "yes"
-    And I add the goods grading with prefix "abc" grading "NATO restricted" suffix "def" issuing authority "NATO" reference "12345" Date of issue "10-05-2015"
+    And I add the goods grading with prefix "abc" grading "NATO RESTRICTED" suffix "def" issuing authority "NATO" reference "12345" Date of issue "10-05-2015"
     And I confirm I can upload a document
     And I attach a document to the good with description "Test good spec 01"
     And I enter details for the new good on an application with value "99.98", quantity "13" and unit of measurement "Kilograms" and I click Continue

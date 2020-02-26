@@ -25,6 +25,13 @@
 {% endblock %}
 
 {% block main_tasks %}
+	{# Clearance Level #}
+	{% if application_type|application_type_in_list:"HAS_CLEARANCE_LEVEL" %}
+		{% url 'applications:clearance_level' application.id as clearance_url %}
+		{% tld clearance 'clearance' 'clearances' as clearance_level %}
+		{% include "includes/task-list-item.html" with id='clearance' title=strings.CLEARANCE url=clearance_url status=application.clearance_level|task_list_item_status description=clearance_description %}
+	{% endif %}
+
 	{# Good types #}
 	{% if application_type|application_type_in_list:"HAS_GOODS_TYPES" %}
 		{% url 'applications:goods_types' application.id as goods_url %}

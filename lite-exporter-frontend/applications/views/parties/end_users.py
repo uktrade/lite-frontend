@@ -22,7 +22,7 @@ class EndUser(TemplateView):
                 "remove_url": reverse_lazy("applications:remove_end_user", kwargs=kwargs),
                 "answers": convert_party(
                     party=application["end_user"],
-                    application_id=application_id,
+                    application=application,
                     editable=application["status"]["value"] == "draft",
                 ),
                 "highlight": ["Document"] if not application["end_user"]["document"] else {},

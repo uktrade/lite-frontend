@@ -255,6 +255,34 @@ def add_new_end_user(driver, type, name, website, address, country, context):  #
     functions.click_submit(driver)
 
 
+@when(  # noqa
+    parsers.parse(
+        'I add an end user with clearance of sub_type: "{type}", name: "{name}", '
+        'website: "{website}", clearance: "{clearance}", address: "{address}" and country "{'
+        'country}"'
+    )
+)
+def add_new_end_user_with_clearance(driver, type, name, website, clearance, address, country, context):  # noqa
+    add_end_user_pages = AddEndUserPages(driver)
+    add_end_user_pages.create_new_or_copy_existing(copy_existing=False)
+    add_end_user_pages.select_type(type)
+    context.type_end_user = type
+    functions.click_submit(driver)
+    add_end_user_pages.enter_name(name)
+    context.name_end_user = name
+    functions.click_submit(driver)
+    add_end_user_pages.enter_website(website)
+    functions.click_submit(driver)
+    no = utils.get_element_index_by_text(Shared(driver).get_radio_buttons_elements(), clearance)
+    Shared(driver).click_on_radio_buttons(no)
+    functions.click_submit(driver)
+    functions.click_submit(driver)
+    add_end_user_pages.enter_address(address)
+    context.address_end_user = address
+    add_end_user_pages.enter_country(country)
+    functions.click_submit(driver)
+
+
 @when(parsers.parse('I select "{choice}" for where my goods are located'))  # noqa
 def choose_location_type(driver, choice):  # noqa
     which_location_form = WhichLocationFormPage(driver)
@@ -407,6 +435,15 @@ def switch_organisations_to_my_second_organisation(driver, context):  # noqa
         Shared(driver).get_radio_buttons_elements(), context.org_name_for_switching_organisations
     )
     Shared(driver).click_on_radio_buttons(no)
+    functions.click_submit(driver)
+
+
+@when("I choose a clearance level for my application")  # noqa
+def choose_application_clearance_level(driver, context):  # noqa
+    no = utils.get_element_index_by_text(Shared(driver).get_radio_buttons_elements(), "uk_unclassified")
+
+    Shared(driver).click_on_radio_buttons(no)
+
     functions.click_submit(driver)
 
 
@@ -586,6 +623,11 @@ def add_new_external_location(driver, name, address, country):  # noqa
 @when("I click on goods")  # noqa
 def i_click_on_goods(driver):  # noqa
     StandardApplicationTaskListPage(driver).click_goods_link()
+
+
+@when("I click on clearance level")  # noqa
+def i_click_on_clearance_level(driver):  # noqa
+    StandardApplicationTaskListPage(driver).click_clearance_level_link()
 
 
 @when("I add a non-incorporated good to the application")  # noqa

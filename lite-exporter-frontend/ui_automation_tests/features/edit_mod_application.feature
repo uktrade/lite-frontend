@@ -29,7 +29,7 @@ Feature: I want to be able to edit MOD Licence Applications
     And I click the back link
     Then the document is removed from the application
 
-  @LT_1980_edit_MOD_clearance @regression
+  @LT_1598 @LT_1980_edit_MOD_clearance @regression
   Scenario: Edit a F680 Clearance Application
     Given I go to exporter homepage and choose Test Org
     And I create a F680 clearance application via api
@@ -38,6 +38,8 @@ Feature: I want to be able to edit MOD Licence Applications
     And I choose to make major edits
     And I change my reference name
     Then I see my edited reference name
+    When I click on clearance level
+    And I choose a clearance level for my application
     When I click on goods
     And I remove a good from the application
     Then the good has been removed from the application

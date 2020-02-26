@@ -48,7 +48,7 @@
 					{{ key }}
 				</dt>
 				<dd id="{{ key|idify }}" class="govuk-summary-list__value">
-					{{ value|linebreaksbr }}
+					{{ value|default_na|linebreaksbr }}
 				</dd>
 			</div>
 		{% endfor %}

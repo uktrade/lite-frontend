@@ -40,11 +40,14 @@ Feature: I want to create MOD Licence Applications
     When I select a licence of type "mod"
     And I select a MOD licence of type "f680_clearance"
     And I enter a licence name
-    When I click on goods
+    When I click on clearance level
+    And I choose a clearance level for my application
+    And I click on goods
     And I add a non-incorporated good to the application
     Then the good is added to the application
     When I click on end user
-    And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
+    And I add an end user with clearance of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", clearance: "uk_unclassified", address: "London" and country "Ukraine"
+    And I click continue
     And I upload a file "file_for_doc_upload_test_1.txt"
     Then wait for download link
     When I click the back link
@@ -54,7 +57,7 @@ Feature: I want to create MOD Licence Applications
     And I click applications
     Then I see submitted application
 
-  @LT_1980_MOD_clearance @setup @smoke
+  @LT_1980_gifting_clearance @setup @smoke
   Scenario: Submit Gifting Application
     Given I go to exporter homepage and choose Test Org
     When I select a licence of type "mod"

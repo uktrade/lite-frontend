@@ -10,6 +10,7 @@ APPLICATION_SUBMIT_URL = "/submit/"
 APPLICATION_COPY_URL = "/copy/"
 CASES_URL = "/cases/"
 GOODS_URL = "/goods/"
+CLEARANCE = "/clearance/"
 DOCUMENTS_URL = "/documents/"
 PARTIES_URL = "/parties/"
 DOCUMENT_URL = "/document/"
@@ -61,6 +62,7 @@ F680 = "f680_clearance"
 CASE_SECTIONS = {
     "HMRC": HMRC,
     "F680": F680,
+    "HAS_CLEARANCE_LEVEL": [F680],
     "HAS_LICENCE_TYPE": [STANDARD, OPEN],
     "HAS_TOLD_BY_OFFICIAL": [STANDARD],
     "HAS_GOODS": [STANDARD, EXHIBITION, GIFTING, F680],
