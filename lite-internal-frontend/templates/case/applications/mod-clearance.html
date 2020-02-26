@@ -37,6 +37,12 @@
 				<p class="app-case-board__heading">{% lcs 'CASE_INFO_LAST_UPDATED' %}</p>
 				<p>{{ case.application.updated_at|str_date }}</p>
 			</div>
+			{% if case.application.case_type.sub_type.key == "f680_clearance" %}
+			<div class="govuk-grid-column-one-quarter">
+				<p class="app-case-board__heading">{% lcs 'cases.ApplicationPage.Info.CLEARANCE_LEVEL' %}</p>
+				<p>{{ case.application.clearance_level.value|default_na }}</p>
+			</div>
+			{% endif %}
 		</div>
 	</div>
 

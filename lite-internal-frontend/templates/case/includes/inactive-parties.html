@@ -4,6 +4,10 @@
 			<tr class="govuk-table__row">
 				<th scope="col" class="govuk-table__header govuk-!-width-one-third"></th>
 				<th scope="col" class="govuk-table__header govuk-!-width-one-third">{% lcs 'cases.ApplicationPage.Parties.NAME' %}</th>
+				{% if case.application.case_type.sub_type.key == "f680_clearance" %}
+					<th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs 'cases.ApplicationPage.Parties.CLEARANCE_LEVEL' %}</th>
+				{% endif %}
+				<th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs 'cases.ApplicationPage.Parties.DESCRIPTORS' %}</th>
 				<th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs 'cases.ApplicationPage.Parties.ADDRESS' %}</th>
 				<th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs 'cases.ApplicationPage.Parties.TYPE' %}</th>
 				<th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs 'cases.ApplicationPage.Parties.WEBSITE' %}</th>
@@ -16,6 +20,10 @@
 				<tr class="govuk-table__row">
 					<th scope="row" class="govuk-table__header">{{ party|get_party_type }}</th>
 					<td class="govuk-table__cell">{{ party.name }}</td>
+					{% if case.application.case_type.sub_type.key == "f680_clearance" %}
+						<td class="govuk-table__cell">{{ case.application.end_user.clearance_level.value|default_na }}</td>
+					{% endif %}
+					<td class="govuk-table__cell">{{ case.application.end_user.descriptors.value|default_na }}</td>
 					<td class="govuk-table__cell">{{ party|get_address }}</td>
 					<td class="govuk-table__cell">{{ party.sub_type.value }} ({% lcs 'cases.ApplicationPage.ThirdParty.ROLE' %}{{ party.role.value  }})</td>
 					<td class="govuk-table__cell">{{ party.website|linkify }}</td>
