@@ -194,7 +194,6 @@ class CaseOfficerPage:
 
     class Error:
         GENERIC = "There appears to be a problem"
-        NO_SELECTION = "Please select a user to assign"
 
     class Search:
         TITLE = "Assign a case officer"
