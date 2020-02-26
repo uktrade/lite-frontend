@@ -116,7 +116,7 @@ class GeneratedDocuments:
 
 
 class ApplicationSummaryPage:
-    CLEARANCE_LEVEL = "Clearance level"
+    CLEARANCE_LEVEL = "Security grading"
     REFERENCE_CODE = "ECJU reference"
     REFERENCE_NAME = "Reference"
     TYPE = "Licence type"
@@ -467,8 +467,8 @@ class ThirdPartiesPage:
 
 
 class ClearanceLevel:
-    TITLE = "Clearance level"
-    DESCRIPTION = "Select clearance level for the application."
+    TITLE = "Select a proposed security grading for the F680 clearance"
+    DESCRIPTION = "Select a proposed security grading for the F680 clearance"
 
 
 class UltimateEndUsersPage:

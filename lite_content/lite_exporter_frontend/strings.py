@@ -112,8 +112,8 @@ class Parties:
 
     class Clearance:
         class Level:
-            TITLE = "Clearance Level"
-            DESCRIPTION = "Select clearance level for the entity."
+            TITLE = "Select a proposed security grading"
+            DESCRIPTION = "Select clearance level for the entity"
 
         class Descriptors:
             TITLE = "Descriptors, caveats or codewords"
