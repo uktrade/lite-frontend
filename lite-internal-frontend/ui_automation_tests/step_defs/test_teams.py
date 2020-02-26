@@ -42,8 +42,13 @@ def click_edit_for_my_user(driver, internal_info):
 
 
 @when(parsers.parse("I add a team called BlueOcean"))
-def add_a_team_blue_ocean(driver, add_a_team, context):
-    pass
+def add_a_team_blue_ocean(driver, context):
+    teams_pages = TeamsPages(driver)
+    shared = Shared(driver)
+    teams_pages.click_add_a_team_button()
+    context.team_name = "BlueOcean" + str(utils.get_unformatted_date_time())
+    teams_pages.enter_team_name(context.team_name)
+    shared.click_submit()
 
 
 @when("I edit my team")

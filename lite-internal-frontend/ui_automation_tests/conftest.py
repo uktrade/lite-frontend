@@ -13,11 +13,9 @@ from ui_automation_tests.fixtures.add_a_flag import (  # noqa
     add_destination_flag,
 )
 from ui_automation_tests.fixtures.add_queue import add_queue  # noqa
-from ui_automation_tests.fixtures.add_a_team import add_a_team  # noqa
 from ui_automation_tests.fixtures.add_a_document_template import (  # noqa
     add_a_document_template,
     get_template_id,
-    get_licence_template_id,
 )
 from ui_automation_tests.fixtures.add_a_picklist import (  # noqa
     add_a_letter_paragraph_picklist,
@@ -126,11 +124,6 @@ def click_on_created_application(driver, context, internal_url):  # noqa
     driver.get(internal_url.rstrip("/") + "/cases/" + context.case_id)
 
 
-@when("I go to end user advisory previously created")  # noqa
-def click_on_created_eua(driver, context, internal_url):  # noqa
-    driver.get(internal_url.rstrip("/") + "/cases/" + context.eua_id)
-
-
 @given("I create standard application or standard application has been previously created")  # noqa
 def create_app(driver, apply_for_standard_application):  # noqa
     pass
@@ -139,17 +132,6 @@ def create_app(driver, apply_for_standard_application):  # noqa
 @given("I create open application or open application has been previously created")  # noqa
 def create_open_app(driver, apply_for_open_application):  # noqa
     pass
-
-
-@given("I have an open application from copying")  # noqa
-def copy_open_app(driver, apply_for_open_application, api_client_config, context):  # noqa
-    lite_client = get_lite_client(context, api_client_config)  # noqa
-    data = {"name": "new application"}
-    lite_client.applications.add_copied_application(context.app_id, data)
-    context.old_app_id = context.app_id
-    context.app_id = lite_client.context["application_id"]
-    context.case_id = lite_client.context["application_id"]
-    context.reference_code = lite_client.context["reference_code"]
 
 
 @when("I click continue")  # noqa
@@ -248,25 +230,9 @@ def go_to_edit_flags(driver):  # noqa
     OrganisationPage(driver).click_edit_organisation_flags()
 
 
-@when(parsers.parse('filter case type has been changed to "{case_type}"'))  # noqa
-def filter_status_change(driver, context, case_type):  # noqa
-    CaseListPage(driver).select_filter_case_type_from_dropdown(case_type)
-    CaseListPage(driver).click_apply_filters_button()
-
-
 @when("I show filters")  # noqa
 def i_show_filters(driver, context):  # noqa
     CaseListPage(driver).click_show_filters_link()
-
-
-@when("I go to users")  # noqa
-def go_to_users(driver, sso_sign_in, internal_url):  # noqa
-    driver.get(internal_url.rstrip("/") + "/users/")
-
-
-@given("I go to users")  # noqa
-def go_to_users(driver, sso_sign_in, internal_url):  # noqa
-    driver.get(internal_url.rstrip("/") + "/users/")
 
 
 @when(  # noqa
@@ -281,11 +247,6 @@ def enter_response(driver, controlled, control_list_entry, report, comment):  # 
     clc_query_page.choose_report_summary(report)
     clc_query_page.enter_a_comment(controlled)
     Shared(driver).click_submit()
-
-
-@when("I add a flag at level Case")  # noqa
-def add_a_flag(driver, add_case_flag):  # noqa
-    pass
 
 
 @then("the status has been changed in the application")  # noqa
@@ -351,3 +312,8 @@ def case_sla(driver, context):
 @then("I see the case page")  # noqa
 def i_see_the_case_page(driver, context):
     assert driver.find_element_by_id(ApplicationPage.HEADING_ID).text == context.reference_code
+
+
+@when("I go to users")  # noqa
+def go_to_users(driver, sso_sign_in, internal_url):  # noqa
+    driver.get(internal_url.rstrip("/") + "/users/")

@@ -1,6 +1,4 @@
-from pytest_bdd import scenarios, when, then, given
-
-from pages.application_page import ApplicationPage
+from pytest_bdd import scenarios, given
 
 scenarios("../features/view_mod_clearance.feature", strict_gherkin=False)
 

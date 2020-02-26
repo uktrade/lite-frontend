@@ -6,7 +6,6 @@ from ui_automation_tests.shared import functions
 class CaseOfficerPages(BasePage):
     BUTTON_ASSIGN_ID = "button-assign"  # id
     BUTTON_UNASSIGN_ID = "button-unassign"  # id
-    CHOICES = ".govuk-radios__item"  # css
     CHOICES_NAMES = ".govuk-radios__item label"
     CURRENT_CASE_OFFICER_PANEL = ".govuk-grid-column-one-third .lite-related-items"
     TEXTAREA_SEARCH_ID = "input-search"  # id

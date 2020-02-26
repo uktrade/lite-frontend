@@ -14,7 +14,7 @@ def click_edit_case_flags_link(driver):
 
 
 @when("I click edit destination flags link")
-def click_edit_case_flags_link(driver):
+def click_edit_destination_flags_link(driver):
     ApplicationPage(driver).click_edit_destination_flags()
 
 
@@ -62,3 +62,8 @@ def dont_see_three_out_of(driver, context):
 @when("I click the expand flags dropdown")  # noqa
 def click_chevron(driver, context):
     ApplicationPage(driver).click_expand_flags(context.case_id)
+
+
+@when("I add a flag at level Case")  # noqa
+def add_a_flag(driver, add_case_flag):  # noqa
+    pass

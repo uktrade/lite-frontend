@@ -1,4 +1,4 @@
-from pytest_bdd import scenarios, when, then, given
+from pytest_bdd import scenarios, then, given
 
 from ui_automation_tests.pages.application_page import ApplicationPage
 from ui_automation_tests.shared import functions

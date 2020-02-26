@@ -2,7 +2,6 @@ from pytest_bdd import then, scenarios, when
 
 from ui_automation_tests.pages.application_page import ApplicationPage
 from ui_automation_tests.pages.case_officer_pages import CaseOfficerPages
-from ui_automation_tests.shared.fixtures.core import internal_info
 
 scenarios("../features/case_officer.feature", strict_gherkin=False)
 

@@ -12,7 +12,6 @@ class HeaderPage(BasePage):
     FLAGS_LINK = "a[href*='/flags/']"  # CSS
     QUEUES_LINK = "a[href*='/queues/']"  # CSS
     MY_TEAM_LINK = "a[href='/team']"  # CSS
-    USER_PROFILE = ".lite-user-menu-button--user"  # CSS
 
     def click_lite_menu(self):
         wait_until_page_is_loaded(self.driver)
@@ -37,9 +36,6 @@ class HeaderPage(BasePage):
     def open_users(self):
         self.click_lite_menu()
         self.click_users()
-
-    def click_user_profile(self):
-        self.driver.find_element_by_css_selector(self.USER_PROFILE).click()
 
     def click_flags(self):
         self.driver.find_element_by_css_selector(self.FLAGS_LINK).click()

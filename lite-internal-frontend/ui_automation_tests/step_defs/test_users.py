@@ -1,10 +1,7 @@
-import pytest
 from faker import Faker
-from pytest_bdd import given, scenarios, when, then
-from selenium.webdriver.common.by import By
+from pytest_bdd import scenarios, when, then, given
 
 import shared.tools.helpers as utils
-from pages.header_page import HeaderPage
 from pages.users_page import UsersPage
 
 scenarios("../features/users.feature", strict_gherkin=False)
@@ -61,3 +58,8 @@ def edit_user(driver, context):
 
     # When I Save
     user_page.click_save_and_continue()
+
+
+@given("I go to users")  # noqa
+def go_to_users(driver, sso_sign_in, internal_url):  # noqa
+    driver.get(internal_url.rstrip("/") + "/users/")

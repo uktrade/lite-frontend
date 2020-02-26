@@ -14,7 +14,6 @@ class GoodsQueriesPages(BasePage):
     SUBMIT_BUTTON = '.govuk-button[type*="submit"]'  # CSS
     PREFIX_ID = "prefix"
     GRADING_ID = "grading"
-    SUFFIX_ID = "suffix"
 
     def click_respond_to_clc_query(self):
         self.driver.find_element_by_id(self.BUTTON_CLC_RESPOND_ID).click()

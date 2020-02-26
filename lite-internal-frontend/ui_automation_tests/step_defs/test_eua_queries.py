@@ -1,4 +1,4 @@
-from pytest_bdd import then, scenarios, given
+from pytest_bdd import then, scenarios, given, when
 from ui_automation_tests.pages.application_page import ApplicationPage
 
 scenarios("../features/eua_queries.feature", strict_gherkin=False)
@@ -38,3 +38,8 @@ def check_status_has_changed(driver):
 def flags_are_available(driver):
     application_page = ApplicationPage(driver)
     assert application_page.get_case_flag_element()
+
+
+@when("I go to end user advisory previously created")  # noqa
+def click_on_created_eua(driver, context, internal_url):  # noqa
+    driver.get(internal_url.rstrip("/") + "/cases/" + context.eua_id)

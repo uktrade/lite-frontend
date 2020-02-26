@@ -1,8 +1,5 @@
-from pytest_bdd import when, then, parsers, scenarios
+from pytest_bdd import then, scenarios
 from pages.application_page import ApplicationPage
-from pages.record_decision_page import RecordDecision
-
-import shared.tools.helpers as utils
 
 scenarios("../features/manage_cases.feature", strict_gherkin=False)
 
