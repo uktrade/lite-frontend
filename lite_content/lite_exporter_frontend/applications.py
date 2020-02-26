@@ -87,6 +87,7 @@ class ThirdPartyForm:
         CONSULTANT = "Consultant"
         CONTACT = "Contact"
         EXPORTER = "Exporter"
+        CUSTOMER = "Customer"
 
     ROLE_TITLE = "Select the role of the third party in your application"
     TYPE_TITLE = "Select the type of third party"
@@ -115,6 +116,7 @@ class GeneratedDocuments:
 
 
 class ApplicationSummaryPage:
+    CLEARANCE_LEVEL = "Security grading"
     REFERENCE_CODE = "ECJU reference"
     REFERENCE_NAME = "Reference"
     TYPE = "Licence type"
@@ -139,6 +141,7 @@ class ApplicationSummaryPage:
     OPTIONAL_NOTE = "Optional note"
     COPY_REFERENCE_CODE = "Copy ECJU reference"
     COPIED = "Copied"
+    CLEARANCE = "Clearance level"
 
     class Sections:
         COMPLETED_TAG = "Saved"
@@ -364,6 +367,7 @@ class F680ClearanceTaskList:
     SUPPORTING_DOCUMENTS = "Supporting documents"
     THIRD_PARTIES = "Third parties"
     NOTES = "Notes"
+    CLEARANCE = "Clearance level"
 
 
 class EditApplicationPage:
@@ -453,11 +457,18 @@ class ThirdPartiesPage:
     class Variables:
         NAME = "Name"
         TYPE = "Type"
+        CLEARANCE_LEVEL = "Clearance"
+        DESCRIPTORS = "Descriptors"
         ROLE = "Role"
         WEBSITE = "Website"
         ADDRESS = "Address"
         COUNTRY = "Country"
         DOCUMENT = "Document"
+
+
+class ClearanceLevel:
+    TITLE = "Select a proposed security grading for the F680 clearance"
+    DESCRIPTION = ""
 
 
 class UltimateEndUsersPage:
@@ -505,6 +516,6 @@ class CaseNotes:
 
 
 class GoodsCategories:
-    TITLE = "Does your application include?"
+    TITLE = "Do any products on the application fall into any of these categories?"
     DESCRIPTION = ""
-    ERROR = "You can't change product categories whilst doing a minor edit"
+    ERROR = "You can't change product categories while doing a minor edit"

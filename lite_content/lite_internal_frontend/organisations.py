@@ -1,7 +1,7 @@
 class OrganisationsPage:
     TITLE = "Organisations"
     ADD_BUTTON = "Add an organisation"
-    ACTIVE_FILTER_NO_ORGANISATIONS = "There are no organisations to show with those filters"
+    ACTIVE_FILTER_NO_ORGANISATIONS = "No organisations match your filters"
 
     class Table:
         NAME = "Name"

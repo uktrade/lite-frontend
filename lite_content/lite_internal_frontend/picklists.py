@@ -1,5 +1,5 @@
 class NewPicklistForm:
-    ECJU_QUERY = "Create an ECJU Query"
+    ECJU_QUERY = "Create an ECJU query"
     FOOTNOTES = "Create a footnote"
     LETTER_PARAGRAPH = "Create a letter paragraph"
     PROVISO = "Create a proviso"
