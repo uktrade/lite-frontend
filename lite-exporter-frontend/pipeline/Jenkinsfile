@@ -30,7 +30,7 @@ spec:
       choice(name: 'DRIVER', description: 'Choose browser', choices: 'chrome\nfirefox\nheadless')
 
       // Define environment to run tests on
-      choice(name: 'ENVIRONMENT', description: 'choose what environment to run in', choices: 'dev\nqa\ndevpopcorn\nsandbox\nstaging\nuat')
+      choice(name: 'ENVIRONMENT', description: 'choose what environment to run in', choices: 'dev\nqa\ndevpopcorn\ndevkoala\nsandbox\nstaging\nuat')
 
       // Define test path to run
       string(name: 'TESTS_TO_RUN', defaultValue: '', description: 'choose test to run e.g. LT_928_edit')
