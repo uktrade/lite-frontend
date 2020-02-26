@@ -468,7 +468,7 @@ class ThirdPartiesPage:
 
 class ClearanceLevel:
     TITLE = "Select a proposed security grading for the F680 clearance"
-    DESCRIPTION = "Select a proposed security grading for the F680 clearance"
+    DESCRIPTION = ""
 
 
 class UltimateEndUsersPage:

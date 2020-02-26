@@ -113,12 +113,11 @@ class Parties:
     class Clearance:
         class Level:
             TITLE = "Select a proposed security grading"
-            DESCRIPTION = "Select clearance level for the entity"
+            DESCRIPTION = ""
 
         class Descriptors:
             TITLE = "Descriptors, caveats or codewords"
-            INPUT = "Please add relevant information."
-            DESCRIPTION = "Keywords."
+            DESCRIPTION = ""
 
 
 class EndUser:
