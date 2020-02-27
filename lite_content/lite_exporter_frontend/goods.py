@@ -319,6 +319,7 @@ class AddGoodToApplicationForm:
     class Exhibition:
         TITLE = "Select what will be exhibited for the product"
         DESCRIPTION = ""
+        BACK_LINK = "Back to goods list"
 
 
 class AddPreexistingGoodToApplicationForm:
