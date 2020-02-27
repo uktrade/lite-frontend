@@ -49,6 +49,7 @@ class ApplicationPage:
             DOCUMENTS = "Documents"
             FLAGS = "Flags"
             ADVICE = "Advice"
+            ITEM_TYPE = "Item type"
 
     class Destinations:
         COUNTRY_NAME = "Country"
@@ -96,7 +97,7 @@ class ApplicationPage:
     COPY_OF_LABEL = "Copied from:"
 
     class Details:
-        DETAILS = "Details"
+        DETAILS = "Exhibition details"
 
         class Table:
             TITLE = "Title"
