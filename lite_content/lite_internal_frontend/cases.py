@@ -452,6 +452,13 @@ class Manage:
         MULTIPLE_TITLE = "Which users do you want to assign to these cases?"
         MULTIPLE_WARNING = "Users already assigned to these cases will be overwritten."
         TITLE = "Which users do you want to assign to this case?"
+        BUTTON = "Submit"
+
+    class AssignCaseOfficer:
+        TITLE = "Assign a case officer"
+        DESCRIPTION = ""
+        DELETE_BUTTON = "Delete existing case officer only"
+        SUBMIT_BUTTON = "Submit"
 
 
 class Tabs:
