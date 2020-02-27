@@ -59,7 +59,7 @@ class DocumentSensitivityForm:
     ECJU_HELPLINE = (
         "**<noscript>If the answer is No;</noscript>**\n\nContact ECJU to arrange a more secure way to send "
         "this document.\n\n You can continue with the application "
-        "without attaching a document.\n\n **ECJU helpline**\n 020 7215 4594.\n "
+        "without attaching a document.\n\n**ECJU helpline**\n 020 7215 4594\n "
         "[Find out about call charges](https://www.gov.uk/call-charges)"
     )
     SUBMIT_BUTTON = "Continue"
@@ -328,7 +328,10 @@ class ViewGoodOnApplicationPage:
     TITLE = "Products"
     ADD_NEW_BUTTON = "Add a new product"
     NO_CONTENT = "You haven't added any products to this application"
-    NO_CONTENT_DESCRIPTION = "Adding a new product to the application will also add it to your product list. This allows you to add the product to other applications."
+    NO_CONTENT_DESCRIPTION = (
+        "Adding a new product to the application will also add it to your product list. "
+        "This allows you to add the product to other applications."
+    )
 
 
 class GoodsLocationForm:
