@@ -39,6 +39,7 @@ class ApplicationPage:
         MISSING_DOCUMENT_REASON_PREFIX = "No document given: "
         TITLE = "Products"
         CASE_GOODS_LOCATION = "Products location"
+        OPEN_CASE_GOODS_LOCATION = "Countries"
         CASE_GOODS_LOCATION_NAME = "Name"
         CASE_GOODS_LOCATION_ADDRESS = "Address"
 
