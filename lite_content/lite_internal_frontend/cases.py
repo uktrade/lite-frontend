@@ -1,8 +1,8 @@
 class CasesListPage:
     GO_TO_QUEUE = "Go to queue"
-    NO_CASES = "There are no new cases to show"
-    ACTIVE_FILTER_NO_CASES = "There are no cases to show with those filters"
-    EXPORTER_AMENDMENTS_BANNER = "See what cases have changed"
+    NO_CASES = "There are no new cases"
+    ACTIVE_FILTER_NO_CASES = "No cases match your filters"
+    EXPORTER_AMENDMENTS_BANNER = "View cases that have changed"
     ASSIGN_USERS = "Assign users"
     STATUS = "Status"
 
@@ -15,12 +15,16 @@ class CasesListPage:
 
 
 class CaseDocumentsPage:
-    BACK_LINK = "Back to Case"
-    ATTACH = "Attach Document"
-    GENERATE = "Generate Document"
+    BACK_LINK = "Back to case"
+    ATTACH = "Attach document"
+    GENERATE = "Generate document"
 
 
 class ApplicationPage:
+    class Info:
+        CLEARANCE_LEVEL = "Clearance"
+        DESCRIPTORS = "Descriptors"
+
     class Actions:
         CASE_OFFICER = "Assign case officer"
         DOCUMENT = "Attached documents"
@@ -39,9 +43,9 @@ class ApplicationPage:
         CASE_GOODS_LOCATION_ADDRESS = "Address"
 
         class Table:
-            CLC = "Control List Entry"
+            CLC = "CLC"
             DESCRIPTION = "Description"
-            VALUE = "Quantity/Value"
+            VALUE = "Quantity & value"
             DOCUMENTS = "Documents"
             FLAGS = "Flags"
             ADVICE = "Advice"
@@ -54,6 +58,8 @@ class ApplicationPage:
     class Parties:
         SELECT_ALL = "Select all/Deselect all"
         NAME = "Name"
+        CLEARANCE_LEVEL = "Clearance"
+        DESCRIPTORS = "Descriptors"
         ADDRESS = "Address"
         TYPE = "Type"
         WEBSITE = "Website"
@@ -79,28 +85,28 @@ class ApplicationPage:
 
     EDIT_FLAGS = "Edit products flags"
     EDIT_DESTINATION_FLAGS = "Edit destination flags"
-    REVIEW_GOODS = "Review Products"
+    REVIEW_GOODS = "Review products"
     ADVICE = "Give or change advice"
-    RESPOND_BUTTON = "Respond to Query"
+    RESPOND_BUTTON = "Respond to query"
     CLOSED = "This case is closed"
-    CASE_OFFICER = "Case Officer: "
-    NO_CASE_OFFICER = "No Case Officer set."
-    NO_USERS_ASSIGNED = "No users assigned."
-    NO_QUEUES_ASSIGNED = "No queues assigned."
+    CASE_OFFICER = "Case officer: "
+    NO_CASE_OFFICER = "No case officer set"
+    NO_USERS_ASSIGNED = "No users assigned"
+    NO_QUEUES_ASSIGNED = "No queues assigned"
     COPY_OF_LABEL = "Copied from:"
 
 
 class GenerateDocumentsPage:
-    TITLE = "Generate Document"
-    ERROR = "Document Generation is unavailable at this time"
+    TITLE = "Generate document"
+    ERROR = "Document generation is not available at this time"
 
     class SelectTemplateForm:
-        BACK_LINK = "Back to Case Documents"
+        BACK_LINK = "Back to case documents"
 
     class EditTextForm:
         HEADING = "Edit text"
-        BACK_LINK = "Back to Templates"
-        BACK_LINK_REGENERATE = "Back to Case Documents"
+        BACK_LINK = "Back to templates"
+        BACK_LINK_REGENERATE = "Back to case documents"
         ADD_PARAGRAPHS_LINK = "Add paragraphs"
         BUTTON = "Continue"
 
@@ -126,25 +132,25 @@ class AdditionalDocumentsPage:
 
 class EndUserAdvisoriesPage:
     class Details:
-        TITLE = "End User Details"
+        TITLE = "End user details"
         NAME = "Name"
         TYPE = "Type"
         EMAIL = "Email"
         TELEPHONE = "Telephone"
-        NATURE_OF_BUSINESS = "Nature of Business"
-        PRIMARY_CONTACT_NAME = "Primary contact name"
-        PRIMARY_CONTACT_JOB = "Primary contact job title"
-        PRIMARY_CONTACT_EMAIL = "Primary contact email"
-        PRIMARY_CONTACT_TELEPHONE = "Primary contact telephone"
+        NATURE_OF_BUSINESS = "Nature of business"
+        PRIMARY_CONTACT_NAME = "Contact name"
+        PRIMARY_CONTACT_JOB = "Job title"
+        PRIMARY_CONTACT_EMAIL = "Email"
+        PRIMARY_CONTACT_TELEPHONE = "Telephone"
         ADDRESS = "Address"
         WEBSITE = "Website"
-        REASONING = "Reasoning behind query"
-        NOTES = "Notes about end user"
-        COPY_FROM = "Copied From"
+        REASONING = "Reason for query"
+        NOTES = "Notes about the end user"
+        COPY_FROM = "Copied from"
 
-    CASE_OFFICER = "Case Officer: "
+    CASE_OFFICER = "Case officer: "
     EDIT_DESTINATION_FLAGS = "Edit destination flags"
-    NO_CASE_OFFICER = "No Case Officer set."
+    NO_CASE_OFFICER = "No case officer set"
 
 
 class HMRCPage:
@@ -153,13 +159,13 @@ class HMRCPage:
         RAISED_BY = "Raised by "
 
     class DenialReasons:
-        TITLE = "Denial Reasons"
+        TITLE = "Denial reasons"
         REASON = "This case was denied because"
         FURTHER_INFO = "Further information"
 
     class Good:
-        TITLE = "Products"
-        REVIEW_GOODS = "Review products"
+        TITLE = "Goods"
+        REVIEW_GOODS = "Review goods"
         EDIT_FLAGS = "Set flags"
         DESCRIPTION = "Description"
         CONTROL_CODE = "Control list entry"
@@ -167,18 +173,18 @@ class HMRCPage:
         FLAGS = "Flags"
 
     class GoodsLocation:
-        GOODS_DEPARTED = "Products have already left the UK"
-        TITLE = "Products location"
+        GOODS_DEPARTED = "Goods have already left the UK"
+        TITLE = "Goods locations"
         CASE_GOODS_LOCATION_NAME = "Name"
         CASE_GOODS_LOCATION_ADDRESS = "Address"
 
     class SupportingDocumentation:
-        TITLE = "Supporting Documentation"
+        TITLE = "Supporting documents"
         NAME = "Name"
         DESCRIPTION = "Description"
         DOCUMENT = "Document"
 
-    CASE_FLAGS = "All Flags"
+    CASE_FLAGS = "All flags"
 
 
 class CaseOfficerPage:
@@ -193,12 +199,12 @@ class CaseOfficerPage:
         BUTTON = "Unassign"
 
     class Error:
-        GENERIC = "There appears to be a problem"
-        NO_SELECTION = "Please select a user to assign"
+        GENERIC = "There is a problem"
+        NO_SELECTION = "Select a user to assign"
 
     class Search:
         TITLE = "Assign a case officer"
-        DESCRIPTION = "A case officer oversees the case for its lifespan."
+        DESCRIPTION = " "
         PLACEHOLDER = "Search users"
         SEARCH = "Search"
         ASSIGN = "Assign user as case officer"
@@ -209,7 +215,7 @@ class StandardApplication:
     LICENSEE = "Licensee"
     END_USER = "End user"
     CONSIGNEE = "Consignee"
-    ULTIMATE_END_USER = "Ultimate end user"
+    ULTIMATE_END_USER = "Ultimate recipient"
     THIRD_PARTY = "Third party"
 
 
@@ -221,35 +227,35 @@ class OpenApplication:
 class ClcQuery:
     class Actions:
         RESPOND_CLC = "Respond to CLC query"
-        RESPOND_GRADING = "Respond to grading query"
+        RESPOND_GRADING = "Respond to PV grading request"
 
     class Verified:
         OUTCOME = "Outcome"
 
         class Clc:
             TITLE = "CLC query"
-            CONTROLLED = "Is the good controlled?"
-            CONTROL_CODE = "What's the goods actual control list entry"
-            REPORT = "Report Summary (optional)"
+            CONTROLLED = "Are the goods controlled?"
+            CONTROL_CODE = "What's the goods actual control list classification"
+            REPORT = "Report summary (optional)"
             COMMENT = "Why was this outcome chosen"
 
         class PvGrading:
-            TITLE = "Grading Query"
+            TITLE = "PV grading request"
             GRADING = "Grading"
             COMMENT = "Comment"
 
     class GoodDetails:
         class Details:
-            TITLE = "Product Details"
+            TITLE = "Goods details"
             DESCRIPTION = "Description"
-            PART_NUMBER = "Part Number"
+            PART_NUMBER = "Part number"
             FLAGS = "Flags"
 
         class Clc:
             TITLE = "Control list classification"
             CONTROLLED = "Controlled"
-            CONTROL_CODE = "Control list entry"
-            EXPECTED_CONTROL_CODE = "Expected Control list entry"
+            CONTROL_CODE = "Control list classification"
+            EXPECTED_CONTROL_CODE = "Expected CLC"
             NO_CONTROL_CODE = "Not on the control list"
             REASON = "Reason"
 
@@ -268,56 +274,56 @@ class ClcQuery:
 
 class ClcResponseOverview:
     TITLE = "Response overview"
-    WARNING = "You won't be able to change this once submitted"
+    WARNING = "You will not be able to change this once submitted"
     SUBMIT = "Submit response"
     CHANGE = "Change response"
 
     class Details:
         DESCRIPTION = "Description"
-        CONTROL_LIST_ENTRY = "Control list entry"
+        CONTROL_LIST_ENTRY = "Control list classification"
         PART_NUMBER = "Part number"
 
         class Flags:
             FLAGS = "Flags"
-            EDIT = "Edit good flags"
+            EDIT = "Edit goods flags"
             SET = "Set a flag on this good"
 
         class Documents:
             DOCUMENTS = "Documents"
             DOWNLOAD = "Download"
-            NONE = "This good has no documents attached."
+            NONE = "This good has no attached documents."
 
     class Response:
         TITLE = "What you've said"
         CONTROLLED = "Is this good controlled?"
-        CONTROL_LIST_ENTRY = "Control list entry"
-        REPORT_SUMMARY = "Report Summary (optional)"
+        CONTROL_LIST_ENTRY = "Control list classification"
+        REPORT_SUMMARY = "Report summary (optional)"
         COMMENT = "Comment (optional)"
 
 
 class GradingResponseOverview:
     TITLE = "Response overview"
-    WARNING = "You won't be able to change this once submitted"
+    WARNING = "You will not be able to change this once submitted"
     SUBMIT = "Submit response"
     CHANGE = "Change response"
 
     class Details:
-        PRODUCT_HEADING = "Product details"
+        PRODUCT_HEADING = "Goods details"
         DESCRIPTION = "Description"
         PART_NUMBER = "Part number"
 
         CONTROL_HEADING = "Control code"
-        CONTROL_LIST_ENTRY = "Control list entry"
+        CONTROL_LIST_ENTRY = "Control list classification"
 
         class Flags:
             FLAGS = "Flags"
-            EDIT = "Edit good flags"
+            EDIT = "Edit goods flags"
             SET = "Set a flag on this good"
 
         class Documents:
             DOCUMENTS = "Documents"
             DOWNLOAD = "Download"
-            NONE = "This good has no documents attached."
+            NONE = "This good has no attached documents."
 
     class Response:
         TITLE = "What you've said"
@@ -328,16 +334,16 @@ class GradingResponseOverview:
 
 
 class RespondClCQueryForm:
-    TITLE = "Respond to CLC Query"
+    TITLE = "Respond to CLC query"
     BUTTON = "Continue to overview"
     BACK = "Back to case"
 
-    CONTROL_LIST_ENTRY = "What is the correct control list entry?"
-    COMMENT = "Good's comment (optional)"
+    CONTROL_LIST_ENTRY = "What is the correct control list classification?"
+    COMMENT = "Goods comment (optional)"
 
     class Summary:
         DESCRIPTION = "Description"
-        CONTROL_LIST_ENTRY = "Control list entry"
+        CONTROL_LIST_ENTRY = "Control list classification"
         NO_CONTROL_LIST_ENTRY = "N/A"
 
     class Controlled:
@@ -347,11 +353,11 @@ class RespondClCQueryForm:
 
     class ReportSummary:
         TITLE = "Which report summary would you like to use? (optional)"
-        DESCRIPTION = "You only need to do this if the item is controlled"
+        DESCRIPTION = "You only need to do this if the good is controlled"
 
 
 class RespondGradingQueryForm:
-    TITLE = "Respond to grading query"
+    TITLE = "Respond to PV grading request"
     BUTTON = "Continue to overview"
     BACK = "Back to case"
 
@@ -366,23 +372,23 @@ class RespondGradingQueryForm:
 class ChangeStatusPage:
     TITLE = "Change case status"
     DESCRIPTION = ""
-    SUCCESS_MESSAGE = "You've changed the case status successfully"
+    SUCCESS_MESSAGE = "Case status successfully changed"
 
 
 class ReviewGoodsSummary:
     BACK_LINK = "Back to case"
-    HEADING = "Review Goods"
-    REVIEW_BUTTON = "Review and confirm item"
+    HEADING = "Review goods"
+    REVIEW_BUTTON = "Review and confirm goods"
     SET_FLAGS = "Set goods flags"
 
     class Table:
         DESCRIPTION = "Description"
         REPORT_SUMMARY = "Report summary"
         CONTROLLED = "Controlled"
-        CONTROL_LIST_ENTRY = "Control list entry"
+        CONTROL_LIST_ENTRY = "Control list classification"
         GOODS_COMMENT = "Goods comment"
         FLAGS = "Flags"
-        QUANTITY_VALUE = "Quantity/Value"
+        QUANTITY_VALUE = "Quantity & value"
 
     class NotSet:
         REPORT_SUMMARY = "Not Set"
@@ -391,14 +397,14 @@ class ReviewGoodsSummary:
 
 
 class EcjuQueries:
-    BACK_TO_CASE = "Back to Case"
-    CASE_HAS_NO_QUERIES = "This case has no ECJU Queries"
+    BACK_TO_CASE = "Back to case"
+    CASE_HAS_NO_QUERIES = "This case has no ECJU queries"
     CLOSED = "Closed queries"
     OPEN = "Open queries"
-    TITLE = "ECJU Queries"
+    TITLE = "ECJU queries"
 
     class AddQuery:
-        ADD_BUTTON_LABEL = "Add an ECJU Query"
+        ADD_BUTTON_LABEL = "Add an ECJU query"
         DESCRIPTION = (
             "Enter a full description. If your question is related to goods, then include technical"
             " details if appropriate."
@@ -426,24 +432,24 @@ class Manage:
         DOWNLOAD_DOCUMENT = "Download document"
         PROCESSING = "Processing"
         VIRUS_INFECTED = "Virus infected"
-        TITLE = "Case Documents"
+        TITLE = "Case documents"
 
         class AttachDocuments:
-            BACK_TO_CASE_DOCUMENTS = "Back to Case Documents"
-            BUTTON = "Attach Document"
-            DESCRIPTION = "Maximum size: 100MB per file"
+            BACK_TO_CASE_DOCUMENTS = "Back to case documents"
+            BUTTON = "Attach document"
+            DESCRIPTION = "Files must be smaller than 100MB"
             DESCRIPTION_FIELD_DETAILS = "optional"
             DESCRIPTION_FIELD_TITLE = "Document description"
-            FILE_TOO_LARGE = "The file you tried to upload was too large."
+            FILE_TOO_LARGE = "The selected file must be smaller than 100MB"
             TITLE = "Attach a document to this case"
 
     class MoveCase:
         TITLE = "Where do you want to move this case?"
-        DESCRIPTION = "Select all queues that apply."
-        SUCCESS_MESSAGE = "You've moved the case successfully"
+        DESCRIPTION = ""
+        SUCCESS_MESSAGE = "Case moved successfully"
 
     class AssignUsers:
-        DESCRIPTION = "Select all users that apply."
+        DESCRIPTION = ""
         MULTIPLE_TITLE = "Which users do you want to assign to these cases?"
         MULTIPLE_WARNING = "Users already assigned to these cases will be overwritten."
         TITLE = "Which users do you want to assign to this case?"
@@ -452,7 +458,7 @@ class Manage:
 class Tabs:
     class Activity:
         TITLE = "Add case note"
-        CHARACTER_LIMIT_2200 = "You can enter up to 2200 characters"
+        CHARACTER_LIMIT_2200 = "Enter up to 2200 characters"
         CANCEL_POST = "Cancel"
         POST = "Post note"
         MAKE_VISIBLE_TO_EXPORTER = "Make visible to exporter"
@@ -460,7 +466,7 @@ class Tabs:
 
 class ReviewGoodsForm:
     BACK_LINK = "Back to review goods"
-    CONFIRM_BUTTON = "Add to Case"
+    CONFIRM_BUTTON = "Add to case"
     HEADING = "Check control list classification and add report summary"
 
 
@@ -476,7 +482,7 @@ class GoodsDecisionMatrixPage:
         SAVE_BUTTON = "Save"
 
     class Table:
-        GOOD_TITLE = "Good"
+        GOOD_TITLE = "Goods"
         COUNTRIES_TITLE = "Countries"
         APPROVE_TITLE = "Approve"
         REJECT_TITLE = "Reject"
@@ -488,8 +494,8 @@ class GoodsDecisionMatrixPage:
 class FinaliseLicenceForm:
     APPROVE_TITLE = "Approve"
     FINALISE_TITLE = "Finalise"
-    DATE_DESCRIPTION = "For example, 27 3 2007"
-    DATE_TITLE = "When will the licence start?"
+    DATE_DESCRIPTION = "For example, 27 3 2019"
+    DATE_TITLE = "Licence start date"
     DURATION_DESCRIPTION = "This must be a whole number of months, such as 12"
     DURATION_TITLE = "How long will it last?"
 
@@ -528,9 +534,9 @@ class AdvicePage:
 
 
 class ViewAdvicePage:
-    USER_ADVICE = "User Advice"
-    TEAM_ADVICE = "Team Advice"
-    FINAL_ADVICE = "Final Advice"
+    USER_ADVICE = "User advice"
+    TEAM_ADVICE = "Team advice"
+    FINAL_ADVICE = "Final advice"
 
     class Actions:
         GIVE_OR_CHANGE = "Give or change advice"
@@ -540,7 +546,7 @@ class ViewAdvicePage:
         COMBINE_TEAM_ADVICE = "Combine all team advice"
 
     class EndUserTable:
-        HEADING = "End User"
+        HEADING = "End user"
         NAME_COLUMN = "Name"
         TYPE_COLUMN = "Type"
         ADDRESS_COLUMN = "Address"
@@ -558,7 +564,7 @@ class ViewAdvicePage:
         ADVICE_COLUMN = "Advice"
 
     class UltimateEndUserTable:
-        HEADING = "Ultimate end users"
+        HEADING = "Ultimate recipient"
         NAME_COLUMN = "Name"
         TYPE_COLUMN = "Type"
         ADDRESS_COLUMN = "Address"

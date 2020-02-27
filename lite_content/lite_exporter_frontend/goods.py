@@ -286,10 +286,6 @@ class GoodPage:
             ISSUING_AUTHORITY = "Issuing authority"
             DATE_OF_ISSUE = "Date of issue"
 
-    class ECJUDocuments:
-        CREATED_AT = "Created at"
-        NONE = "There are no ECJU documents for this product"
-
 
 class AddGoodToApplicationForm:
     TITLE = "Value and quantity of the product"
