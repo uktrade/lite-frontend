@@ -106,7 +106,7 @@ class Drafts:
 
 class Parties:
     class Documents:
-        DELETE = :q
+        DELETE = "Delete"
         DOWNLOAD = "Download"
         ATTACH = "Attach document"
 
