@@ -10,8 +10,10 @@ $("#filter-box").on('input', function() {
 		// Show checkbox if it's in the filter
 	    if (checkboxText.includes(value) || checkboxDescription.includes(value)) {
 			$(obj).show();
+			$(obj).addClass("visible");
 		} else {
 			$(obj).hide();
+			$(obj).removeClass("visible");
 		}
 	});
 });
