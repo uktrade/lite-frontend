@@ -1,17 +1,18 @@
 from pytest_bdd import scenarios, when, then, parsers, given
 
-from pages.add_end_user_pages import AddEndUserPages
-from pages.attach_document_page import AttachDocumentPage
-from pages.external_locations_page import ExternalLocationsPage
-from pages.generic_application.task_list import GenericApplicationTaskListPage
-from pages.generic_application.ultimate_end_users import GenericApplicationUltimateEndUsers
-from pages.preexisting_locations_page import PreexistingLocationsPage
-from pages.shared import Shared
-from pages.standard_application.good_details import StandardApplicationGoodDetails
-from pages.standard_application.goods import StandardApplicationGoodsPage
-from pages.standard_application.task_list import StandardApplicationTaskListPage
-from shared import functions
-from shared.tools.helpers import scroll_to_element_by_id
+from ui_automation_tests.pages.add_end_user_pages import AddEndUserPages
+from ui_automation_tests.pages.attach_document_page import AttachDocumentPage
+from ui_automation_tests.pages.external_locations_page import ExternalLocationsPage
+from ui_automation_tests.pages.generic_application.ultimate_end_users import GenericApplicationUltimateEndUsers
+from ui_automation_tests.pages.preexisting_locations_page import PreexistingLocationsPage
+from ui_automation_tests.pages.shared import Shared
+from ui_automation_tests.pages.standard_application.good_details import StandardApplicationGoodDetails
+from ui_automation_tests.pages.standard_application.goods import StandardApplicationGoodsPage
+from ui_automation_tests.shared import functions
+from ui_automation_tests.shared.tools.helpers import scroll_to_element_by_id
+
+from ui_automation_tests.pages.generic_application.task_list import TaskListPage
+from ui_automation_tests.pages.generic_application.end_user import EndUserPage
 
 scenarios(
     "../features/submit_standard_application.feature",
@@ -64,14 +65,14 @@ def delete_ultimate_end_user_document(driver):
 @when("I delete the end user document")
 def end_user_document_delete_is_present(driver):
     scroll_to_element_by_id(Shared(driver).driver, "end_user_document_delete")
-    GenericApplicationTaskListPage(driver).click_delete_end_user_document()
+    EndUserPage(driver).click_delete_end_user_document()
     GenericApplicationUltimateEndUsers(driver).click_confirm_delete_yes()
     functions.click_submit(driver)
 
 
 @then("The end user document has been deleted")
 def document_has_been_deleted(driver):
-    assert GenericApplicationTaskListPage(driver).attach_end_user_document_is_present()
+    assert TaskListPage(driver).attach_end_user_document_is_present()
 
 
 @when(  # noqa
@@ -115,11 +116,6 @@ def i_add_a_non_incorporated_good_to_the_application(driver, context):  # noqa
     context.is_good_incorporated = "Yes"
 
     functions.click_submit(driver)
-
-
-@when("I click on ultimate end users")
-def i_click_on_application_overview(driver):
-    StandardApplicationTaskListPage(driver).click_ultimate_recipients_link()
 
 
 @given("I seed an end user for the draft")

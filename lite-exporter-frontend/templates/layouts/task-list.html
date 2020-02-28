@@ -47,61 +47,6 @@
 		{% block subtitle %}{% endblock %}
 	</p>
 
-	<!-- Initial tasks -->
-	<ol class="lite-task-list">
-		<li>
-			<h2 class="lite-task-list__section">
-				{% if is_editing %}
-					{% lcs 'applications.EditApplicationPage.InitialTaskSection.EDITING' %}
-				{% else %}
-					<span class="lite-task-list__section-number">1. </span>{% lcs 'applications.EditApplicationPage.InitialTaskSection.TITLE' %}
-				{% endif %}
-			</h2>
-			<ul class="lite-task-list__items {% if is_editing %}govuk-!-padding-0{% endif %}">
-				{% url 'applications:edit_reference_name' application.id as reference_name_url %}
-				{% include "includes/task-list-item.html" with id='reference-name' title=strings.ENTER_A_REFERENCE_NAME_SHORT_TITLE url=reference_name_url status="done" description=application.name %}
-				{% block initial_tasks %}{% endblock %}
-			</ul>
-		</li>
-	</ol>
-
-	<!-- Main tasks -->
-	<ol class="lite-task-list">
-		<li>
-			<h2 class="lite-task-list__section">
-				{% if is_editing %}
-					{% lcs 'applications.EditApplicationPage.MainTaskSection.EDITING' %}
-				{% else %}
-					<span class="lite-task-list__section-number">2. </span>{% lcs 'applications.EditApplicationPage.MainTaskSection.TITLE' %}
-				{% endif %}
-			</h2>
-			<ul class="lite-task-list__items {% if is_editing %}govuk-!-padding-0{% endif %}">
-				{% block main_tasks %}
-				{% endblock %}
-
-				{% if can_submit %}
-					<li>
-						<br><br>
-						<div class="app-submit-bar">
-							<form method="post">
-								{% csrf_token %}
-								{% if application.status.key in 'applicant_editing,draft' %}
-									<button type="submit" value="submit" class="govuk-button" data-prevent-double-click="true">{% lcs 'applications.EditApplicationPage.SUBMIT' %}</button>
-								{% else %}
-									<a href="{% url 'applications:application' application.id %}" class="govuk-button" draggable="false" role="button">{% lcs 'applications.EditApplicationPage.DONE' %}</a>
-								{% endif %}
-							</form>
-							{% if application.status.key == 'draft' %}
-								<div class="lite-vertical-align">
-									<a id="link-delete-draft" href="{% url 'applications:delete' application.id %}?return_to={{ CURRENT_PATH }}" class="govuk-link--no-visited-state">
-										{% lcs 'applications.EditApplicationPage.DRAFT_DELETE_LINK' %}
-									</a>
-								</div>
-							{% endif %}
-						</div>
-					</li>
-				{% endif %}
-			</ul>
-		</li>
-	</ol>
+	{% block tasks %}
+	{% endblock %}
 {% endblock %}

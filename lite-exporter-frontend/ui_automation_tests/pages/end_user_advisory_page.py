@@ -1,5 +1,5 @@
-from pages.shared import Shared
-from shared.BasePage import BasePage
+from ui_automation_tests.pages.shared import Shared
+from ui_automation_tests.shared.BasePage import BasePage
 
 
 class EndUserAdvisoryPage(BasePage):

@@ -1,20 +1,20 @@
 from pytest_bdd import scenarios, when, then, parsers, given
 
-import shared.tools.helpers as utils
-from shared import functions
-from conftest import (
+import ui_automation_tests.shared.tools.helpers as utils
+from ui_automation_tests.shared import functions
+from ui_automation_tests.conftest import (
     click_apply_licence,
     enter_type_of_application,
     enter_application_name,
     enter_permanent_or_temporary,
 )
-from pages.apply_for_a_licence_page import ApplyForALicencePage
-from pages.generic_application.task_list import GenericApplicationTaskListPage
-from pages.open_application.countries import OpenApplicationCountriesPage
-from pages.open_application.goods_countries_page import GoodsCountriesPage
-from pages.open_application.goods_types import OpenApplicationGoodsTypesPage
-from pages.open_application.task_list import OpenApplicationTaskListPage
-from pages.shared import Shared
+from ui_automation_tests.pages.apply_for_a_licence_page import ApplyForALicencePage
+from ui_automation_tests.pages.open_application.countries import OpenApplicationCountriesPage
+from ui_automation_tests.pages.open_application.goods_countries_page import GoodsCountriesPage
+from ui_automation_tests.pages.open_application.goods_types import OpenApplicationGoodsTypesPage
+from ui_automation_tests.pages.shared import Shared
+
+from ui_automation_tests.pages.standard_application.goods import StandardApplicationGoodsPage
 
 scenarios(
     "../features/submit_open_application.feature", "../features/edit_open_application.feature", strict_gherkin=False
@@ -34,11 +34,6 @@ def i_see_the_goods_types_list(driver, position, context):
     good_type = goods_type_page.get_text_of_goods_type_info(int(position))
     assert context.good_description in good_type
     assert context.control_code in good_type
-
-
-@when("I click on countries")
-def i_click_on_countries(driver):
-    OpenApplicationTaskListPage(driver).click_countries_link()
 
 
 @then("I should see a list of countries")
@@ -66,12 +61,6 @@ def search_country_result(driver, country):
     assert (
         country == OpenApplicationCountriesPage(driver).get_text_of_countries_list()
     ), "Country not searched correctly"
-
-
-@when("I click on assign countries to goods")
-def go_to_good_countries(driver):
-    page = GenericApplicationTaskListPage(driver)
-    page.click_goods_countries_link()
 
 
 @when("I click select all countries")
@@ -111,12 +100,6 @@ def see_all_or_no_selected(driver, assigned_or_unassigned):
         assert countries_page.all_deselected()
 
 
-@when("I click on the goods link from overview")  # noqa
-def click_goods_link_overview(driver):  # noqa
-    overview_page = GenericApplicationTaskListPage(driver)
-    overview_page.click_goods_type_link()
-
-
 @when("I create an open application")  # noqa
 def create_open_app(driver, context):  # noqa
     click_apply_licence(driver)
@@ -134,16 +117,10 @@ def open_application_exists(apply_for_open_application):
 
 @when("I remove a good type from the application")
 def i_remove_a_good_from_the_application(driver):
-    remove_good_link = GenericApplicationTaskListPage(driver).find_remove_goods_type_link()
+    remove_good_link = StandardApplicationGoodsPage(driver).find_remove_goods_type_link()
     driver.execute_script("arguments[0].click();", remove_good_link)
 
 
 @then("no goods types are left on the application")
 def no_goods_types_are_left_on_the_application(driver):
     assert (OpenApplicationGoodsTypesPage(driver).find_remove_goods_type_link(), None)
-
-
-@when("I click on open goods tile")  # noqa
-def click_my_goods_link(driver):  # noqa
-    exporter_hub = GenericApplicationTaskListPage(driver)
-    exporter_hub.click_goods_type_link()

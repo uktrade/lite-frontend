@@ -11,20 +11,24 @@ Feature: I want to be able to edit MOD Licence Applications
     When I go to application previously created
     And I click edit application
     And I choose to make major edits
-    And I change my reference name
+    And I click on the "reference-name" section
+    And I enter a licence name
     Then I see my edited reference name
-    When I click on goods
+    When I click on the "goods" section
     And I remove a good from the application
     Then the good has been removed from the application
     When I click the back link
+    When I click on the "end_user" section
     And I remove the end user off the application
     Then no end user is set on the application
-    When I remove the consignee off the application
+    When I click on the "consignee" section
+    And I remove the consignee off the application
     Then no consignee is set on the application
-    When I click on the application third parties link
+    When I click on the "third-parties" section
     And I remove a third party from the application
     Then the third party has been removed from the application
-    When I remove an additional document
+    When I click on the "supporting-documents" section
+    And I remove an additional document
     And I confirm I want to delete the document
     And I click the back link
     Then the document is removed from the application
@@ -36,19 +40,22 @@ Feature: I want to be able to edit MOD Licence Applications
     When I go to application previously created
     And I click edit application
     And I choose to make major edits
-    And I change my reference name
+    And I click on the "reference-name" section
+    And I enter a licence name
     Then I see my edited reference name
-    When I click on clearance level
+    When I click on the "clearance" section
     And I choose a clearance level for my application
-    When I click on goods
+    When I click on the "goods" section
     And I remove a good from the application
     Then the good has been removed from the application
     When I click the back link
+    When I click on the "end_user" section
     And I remove the end user off the application
     Then no end user is set on the application
-    When I click on the application third parties link
+    When I click on the "third-parties" section
     And I remove a third party from the application
     Then the third party has been removed from the application
+    When I click on the "supporting-documents" section
     When I remove an additional document
     And I confirm I want to delete the document
     And I click the back link
@@ -61,17 +68,20 @@ Feature: I want to be able to edit MOD Licence Applications
     When I go to application previously created
     And I click edit application
     And I choose to make major edits
-    And I change my reference name
+    And I click on the "reference-name" section
+    And I enter a licence name
     Then I see my edited reference name
-    When I click on goods
+    When I click on the "goods" section
     And I remove a good from the application
     Then the good has been removed from the application
     When I click the back link
+    And I click on the "end_user" section
     And I remove the end user off the application
     Then no end user is set on the application
-    When I click on the application third parties link
+    When I click on the "third-parties" section
     And I remove a third party from the application
     Then the third party has been removed from the application
+    When I click on the "supporting-documents" section
     When I remove an additional document
     And I confirm I want to delete the document
     And I click the back link

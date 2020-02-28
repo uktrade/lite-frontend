@@ -15,24 +15,25 @@ Feature: I want to indicate the standard licence I want
   Scenario: Submit standard application
     Given I go to exporter homepage and choose Test Org
     When I create a standard application
-    And I click on application locations link
+    And I click on the "location" section
     And I select "organisation" for where my goods are located
     And I select the site at position "1"
     And I click continue
     And I click the back link
-    When I click on goods
+    When I click on the "goods" section
     And I add a non-incorporated good to the application
     Then the good is added to the application
-    When I click on end user
+    When I click on the "end_user" section
     And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
     Then wait for download link
     When I click the back link
-    And I click on consignees
+    And I click on the "consignee" section
     And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
     Then wait for download link
     When I click the back link
+    And I click on the "notes" section
     And I add a note to the draft application
     And I submit the application
     Then application is submitted
@@ -44,10 +45,10 @@ Feature: I want to indicate the standard licence I want
   Scenario: Submit standard application with external locations and ultimate end users
     Given I go to exporter homepage and choose Test Org
     When I create a standard application
-    When I click on goods
+    When I click on the "goods" section
     And I add an incorporated good to the application
     Then the good is added to the application
-    When I click on ultimate end users
+    When I click on the "ultimate-end-users" section
     And I click on the add button
     And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     When I upload a file "file_for_doc_upload_test_1.txt"
@@ -58,7 +59,7 @@ Feature: I want to indicate the standard licence I want
     And I upload a file "file_for_doc_upload_test_1.txt"
     And I remove an ultimate end user so there is one less
     Then there is only one ultimate end user
-    When I click on application locations link
+    When I click on the "location" section
     And I select "external" for where my goods are located
     And I select "new" for whether or not I want a new or existing location to be added
     And I fill in new external location form with name: "32 Lime Street", address: "London" and country: "Ukraine" and continue
@@ -68,12 +69,12 @@ Feature: I want to indicate the standard licence I want
     When I click on preexisting locations
     And I select the location at position "2" in external locations list and continue
     And I click the back link
-    When I click on end user
+    When I click on the "end_user" section
     And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
     Then wait for download link
     When I click the back link
-    And I click on consignees
+    And I click on the "consignee" section
     And I add an end user of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
     Then wait for download link
@@ -88,7 +89,7 @@ Feature: I want to indicate the standard licence I want
     And I create a draft
     And I seed an end user for the draft
     When I create a standard application
-    And I click on end user
+    And I click on the "end_user" section
     And I select that I want to copy an existing party
     When I filter for my previously created end user
     Then I can select the existing party in the table

@@ -2,16 +2,15 @@ import os
 
 from pytest_bdd import scenarios, when, then, parsers
 
-from conftest import get_file_upload_path
-from pages.add_goods_page import AddGoodPage
-from pages.attach_document_page import AttachDocumentPage
-from pages.goods_list import GoodsListPage
-from pages.goods_page import GoodsPage
-from pages.shared import Shared
-from pages.standard_application.goods import StandardApplicationGoodsPage
-from pages.standard_application.good_details import StandardApplicationGoodDetails
-from pages.standard_application.task_list import StandardApplicationTaskListPage
-from shared import functions
+from ui_automation_tests.conftest import get_file_upload_path
+from ui_automation_tests.pages.add_goods_page import AddGoodPage
+from ui_automation_tests.pages.attach_document_page import AttachDocumentPage
+from ui_automation_tests.pages.goods_list import GoodsListPage
+from ui_automation_tests.pages.goods_page import GoodsPage
+from ui_automation_tests.pages.shared import Shared
+from ui_automation_tests.pages.standard_application.goods import StandardApplicationGoodsPage
+from ui_automation_tests.pages.standard_application.good_details import StandardApplicationGoodDetails
+from ui_automation_tests.shared import functions
 
 scenarios("../features/goods.feature", strict_gherkin=False)
 
@@ -73,11 +72,6 @@ def click_on_draft_good(driver, context, exporter_url):
     assert "edited" in text
     assert "Yes" in text
     assert "321" in text
-
-
-@when("I click to manage goods on a standard application")
-def i_click_to_manage_goods_on_a_standard_application(driver):
-    StandardApplicationTaskListPage(driver).click_goods_link()
 
 
 @then("I see there are no goods on the application")

@@ -1,9 +1,9 @@
 from pytest_bdd import scenarios, given, when, then
 
-from pages.hub_page import Hub
-from pages.shared import Shared
-from shared.tools import helpers
-from shared.tools.utils import get_lite_client
+from ui_automation_tests.pages.hub_page import Hub
+from ui_automation_tests.pages.shared import Shared
+from ui_automation_tests.shared.tools import helpers
+from ui_automation_tests.shared.tools.utils import get_lite_client
 
 scenarios("../features/notifications.feature", strict_gherkin=False)
 

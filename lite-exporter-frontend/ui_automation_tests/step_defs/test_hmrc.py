@@ -1,10 +1,9 @@
 from pytest_bdd import when, scenarios, parsers
 
-from pages.exporter_hub_page import ExporterHubPage
-from pages.hmrc_query.task_list import HMRCQueryTaskListPage
-from pages.hmrc_query.find_organisation import HMRCQueryFindOrganisationPage
-from pages.open_application.add_goods_type import OpenApplicationAddGoodsType
-from shared import functions
+from ui_automation_tests.pages.exporter_hub_page import ExporterHubPage
+from ui_automation_tests.pages.hmrc_query.find_organisation import HMRCQueryFindOrganisationPage
+from ui_automation_tests.pages.open_application.add_goods_type import OpenApplicationAddGoodsType
+from ui_automation_tests.shared import functions
 
 scenarios("../features/hmrc.feature", strict_gherkin=False)
 
@@ -18,32 +17,12 @@ def raise_query_on_behalf_of_my_first_org(driver, context):
     page.click_continue()
 
 
-@when("I click on application hmrc locations link")  # noqa
-def i_click_application_locations_link(driver):
-    HMRCQueryTaskListPage(driver).click_application_locations_link()
-
-
-@when("I click on hmrc describe your goods")  # noqa
-def i_click_on_hmrc_describe_goods(driver):
-    HMRCQueryTaskListPage(driver).click_describe_your_goods()
-
-
 @when(parsers.parse('I add a goods type with description "{description}"'))  # noqa
 def add_new_goods_type(driver, description, context):  # noqa
     OpenApplicationAddGoodsType(driver).enter_description(description)
     context.good_description = description
 
     functions.click_submit(driver)
-
-
-@when("I click on hmrc set end user")  # noqa
-def i_click_on_hmrc_set_end_user(driver):
-    HMRCQueryTaskListPage(driver).click_set_end_user()
-
-
-@when("I click on hmrc explain your reasoning")  # noqa
-def i_click_on_hmrc_explain_your_reasoning(driver):
-    HMRCQueryTaskListPage(driver).click_explain_your_reasoning()
 
 
 @when(parsers.parse('I leave a note for the "{reasoning}"'))  # noqa

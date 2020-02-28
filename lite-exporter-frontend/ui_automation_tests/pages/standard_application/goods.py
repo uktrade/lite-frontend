@@ -1,4 +1,7 @@
-from shared.BasePage import BasePage
+from selenium.common.exceptions import NoSuchElementException
+from ui_automation_tests.shared.BasePage import BasePage
+
+from ui_automation_tests.shared import functions
 
 
 class StandardApplicationGoodsPage(BasePage):
@@ -17,6 +20,8 @@ class StandardApplicationGoodsPage(BasePage):
     GOOD_ENTRY = ".govuk-table__body .govuk-table__row"
     TABLE_BODY = "tbody"
     TABLE_ROW = "tr"
+    REMOVE_GOOD_LINK = "a[href*='good-on-application']"
+    REMOVE_GOODS_TYPE_LINK = "a[href*='goods-types/remove']"
 
     def click_add_new_good_button(self):
         self.driver.find_element_by_id(self.BUTTON_ADD_NEW_GOOD_ID).click()
@@ -54,3 +59,15 @@ class StandardApplicationGoodsPage(BasePage):
 
     def get_goods_count(self):
         return len(self.driver.find_elements_by_css_selector(self.GOOD_ENTRY))
+
+    def get_remove_good_link(self):
+        return self.driver.find_element_by_css_selector(self.REMOVE_GOOD_LINK)
+
+    def find_remove_goods_type_link(self):
+        try:
+            return self.driver.find_element_by_css_selector(self.REMOVE_GOODS_TYPE_LINK)
+        except NoSuchElementException:
+            return None
+
+    def goods_exist_on_the_application(self):
+        return functions.element_with_css_selector_exists(self.driver, self.REMOVE_GOOD_LINK)

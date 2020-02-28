@@ -1,11 +1,11 @@
 from pytest_bdd import when, then, parsers, scenarios, given
 
-import shared.tools.helpers as utils
-from pages.add_end_user_advisory_pages import AddEndUserAdvisoryPages
-from pages.end_user_advisory_page import EndUserAdvisoryPage
-from pages.shared import Shared
-from shared import functions
-from shared.tools.utils import get_lite_client
+import ui_automation_tests.shared.tools.helpers as utils
+from ui_automation_tests.pages.add_end_user_advisory_pages import AddEndUserAdvisoryPages
+from ui_automation_tests.pages.end_user_advisory_page import EndUserAdvisoryPage
+from ui_automation_tests.pages.shared import Shared
+from ui_automation_tests.shared import functions
+from ui_automation_tests.shared.tools.utils import get_lite_client
 
 scenarios("../features/end_user_advisory_queries.feature", strict_gherkin=False)
 

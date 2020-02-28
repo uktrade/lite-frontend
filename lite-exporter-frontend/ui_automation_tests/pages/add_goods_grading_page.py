@@ -1,6 +1,6 @@
 from selenium.webdriver.support.select import Select
 
-from shared.BasePage import BasePage
+from ui_automation_tests.shared.BasePage import BasePage
 
 
 class AddGoodGradingPage(BasePage):
@@ -19,7 +19,7 @@ class AddGoodGradingPage(BasePage):
         self.driver.find_element_by_id(self.PREFIX_ID).send_keys(prefix)
 
     def enter_good_grading(self, grading):
-        Select(self.driver.find_element_by_id(self.GRADING_ID)).select_by_visible_text(grading)
+        Select(self.driver.find_element_by_id(self.GRADING_ID)).select_by_value(grading)
 
     def enter_suffix_of_goods_grading(self, suffix):
         self.driver.find_element_by_id(self.SUFFIX_ID).send_keys(suffix)

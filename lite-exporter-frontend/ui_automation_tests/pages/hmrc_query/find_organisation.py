@@ -1,6 +1,6 @@
 from selenium.webdriver.common.keys import Keys
 
-from shared.BasePage import BasePage
+from ui_automation_tests.shared.BasePage import BasePage
 
 
 class HMRCQueryFindOrganisationPage(BasePage):

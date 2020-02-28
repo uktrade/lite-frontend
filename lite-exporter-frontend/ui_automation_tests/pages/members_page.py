@@ -1,4 +1,4 @@
-from shared.BasePage import BasePage
+from ui_automation_tests.shared.BasePage import BasePage
 
 from ui_automation_tests.shared.tools.helpers import select_visible_text_from_dropdown
 

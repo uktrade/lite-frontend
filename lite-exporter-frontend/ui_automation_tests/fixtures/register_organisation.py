@@ -1,6 +1,6 @@
 from pytest import fixture
 
-from shared.tools.utils import Timer, get_lite_client
+from ui_automation_tests.shared.tools.utils import Timer, get_lite_client
 
 
 @fixture(scope="session")

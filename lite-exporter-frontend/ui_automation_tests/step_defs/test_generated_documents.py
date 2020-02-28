@@ -1,6 +1,6 @@
 from pytest_bdd import when, scenarios, then
 
-from pages.application_page import ApplicationPage
+from ui_automation_tests.pages.application_page import ApplicationPage
 
 scenarios("../features/generated_documents.feature", strict_gherkin=False)
 

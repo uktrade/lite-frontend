@@ -1,6 +1,6 @@
 from selenium.common.exceptions import NoSuchElementException
 
-from shared.BasePage import BasePage
+from ui_automation_tests.shared.BasePage import BasePage
 
 
 class OpenApplicationGoodsTypesPage(BasePage):

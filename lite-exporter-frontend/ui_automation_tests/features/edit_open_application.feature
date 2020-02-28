@@ -11,7 +11,7 @@ Feature: I want to be able to edit and update an active application
     When I go to application previously created
     And I click edit application
     And I choose to make major edits
-    And I click on open goods tile
+    And I click on the "goods" section
     And I remove a good type from the application
     Then no goods types are left on the application
     When I add a goods type with description "Sniper" controlled "Yes" control code "ML1a" incorporated "Yes"

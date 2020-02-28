@@ -1,6 +1,6 @@
 from typing import List
 
-from shared.BasePage import BasePage
+from ui_automation_tests.shared.BasePage import BasePage
 
 
 class SubmittedApplicationsPages(BasePage):

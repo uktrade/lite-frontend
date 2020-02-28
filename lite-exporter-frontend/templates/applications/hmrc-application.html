@@ -1,14 +1,11 @@
-{% extends 'layouts/two-pane.html' %}
+{% extends 'layouts/task-list.html' %}
 
-{% block back_link %}{% endblock %}
+{% block title %}
+	Raise a query for {{ application.organisation.name }}
+{% endblock %}
 
-{% block two_thirds %}
-	<h1 class="govuk-heading-xl govuk-!-margin-bottom-9">
-		{% block title %}
-			Raise a query for {{ application.organisation.name }}
-		{% endblock %}
-	</h1>
 
+{% block tasks %}
 	<ol class="lite-task-list">
 		<li>
 			<h2 class="lite-task-list__section">
@@ -16,28 +13,28 @@
 			</h2>
 			<ul class="lite-task-list__items">
 				{% url 'applications:goods_types' application.id as goods_url %}
-				{% include "includes/task-list-item.html" with id="goods" title="applications.HMRCApplicationTaskList.GOODS" url=goods_url status=goods_types_status %}
+				{% include "includes/task-list-item.html" with id="goods" title=strings.GOODS url=goods_url status=application.goods_types|task_list_item_status %}
 
 				{% url 'applications:location' application.id as goods_location_url %}
-				{% include "includes/task-list-item.html" with id="goods-location" title="applications.HMRCApplicationTaskList.GOODS_LOCATION" url=goods_location_url status=goods_locations_status %}
+				{% include "includes/task-list-item.html" with id="location" title=strings.GOODS_LOCATION url=goods_location_url status=locations|task_list_item_status %}
 
 				{% url 'applications:end_user' application.id as end_user_url %}
-				{% include "includes/task-list-item.html" with id="end-user" title="applications.HMRCApplicationTaskList.END_USER" url=end_user_url status=end_user_status %}
+				{% include "includes/task-list-item.html" with id="end_user" title=strings.END_USER url=end_user_url status=application.end_user|get_parties_status %}
 
 				{% url 'applications:ultimate_end_users' application.id as ultimate_end_user_url %}
-				{% include "includes/task-list-item.html" with title="applications.HMRCApplicationTaskList.ULTIMATE_END_USERS" url=ultimate_end_user_url status=ultimate_end_users_status optional=True %}
+				{% include "includes/task-list-item.html" with title=strings.ULTIMATE_END_USERS url=ultimate_end_user_url status=application.ultimate_end_users|get_parties_status optional=True %}
 
 				{% url 'applications:third_parties' application.id as third_parties_url %}
-				{% include "includes/task-list-item.html" with title="applications.HMRCApplicationTaskList.THIRD_PARTIES" url=third_parties_url status=third_parties_status optional=True %}
+				{% include "includes/task-list-item.html" with title=strings.THIRD_PARTIES url=third_parties_url status=application.third_parties|task_list_item_status optional=True %}
 
 				{% url 'applications:consignee' application.id as consignee_url %}
-				{% include "includes/task-list-item.html" with title="applications.HMRCApplicationTaskList.CONSIGNEE" url=consignee_url status=consignee_status optional=True %}
+				{% include "includes/task-list-item.html" with title=strings.CONSIGNEE url=consignee_url status=application.consignee|get_parties_status optional=True %}
 
 				{% url 'applications:additional_documents' application.id as supporting_documentation_url %}
-				{% include "includes/task-list-item.html" with title="applications.HMRCApplicationTaskList.SUPPORTING_DOCUMENTS" url=supporting_documentation_url status=supporting_documentation_status optional=True %}
+				{% include "includes/task-list-item.html" with title=strings.SUPPORTING_DOCUMENTS url=supporting_documentation_url status=application.supporting_documentation|task_list_item_status optional=True %}
 
 				{% url 'applications:optional_note' application.id as optional_note_url %}
-				{% include "includes/task-list-item.html" with id="reasoning" title="applications.HMRCApplicationTaskList.REASON_FOR_QUERY" url=optional_note_url status=optional_note_status optional=True %}
+				{% include "includes/task-list-item.html" with id="reasoning" title=strings.REASON_FOR_QUERY url=optional_note_url status=application.reasoning|task_list_item_status optional=True %}
 			</ul>
 		</li>
 	</ol>
@@ -48,37 +45,15 @@
 				<span class="lite-task-list__section-number">2. </span> Check your answers
 			</h2>
 			<ul class="lite-task-list__items">
-				{% if show_submit_button %}
-					{% url 'applications:check_your_answers' application.id as check_your_answers_url %}
-					{% include "includes/task-list-item.html" with title="applications.HMRCApplicationTaskList.CHECK_YOUR_ANSWERS" url=check_your_answers_url hide_tag=True %}
-				{% else %}
-					<li class="lite-task-list__item">
-						<div class="lite-task-list__item-header">
-							{% lcs 'applications.HMRCApplicationTaskList.CHECK_YOUR_ANSWERS' %}
-						</div>
-					</li>
-				{% endif %}
+				{% url 'applications:check_your_answers' application.id as check_your_answers_url %}
+				{% include "includes/task-list-item.html" with title=strings.CHECK_YOUR_ANSWERS url=check_your_answers_url hide_tag=True %}
 			</ul>
 		</li>
-		{% if show_submit_button %}
-			<li>
-				<form method="post">
-					{% csrf_token %}
-					<button type="submit" value="submit" class="govuk-button">Submit</button>
-				</form>
-			</li>
-		{% endif %}
-	</ol>
-
-	<!-- <ol class="lite-task-list">
 		<li>
-			<h2 class="lite-task-list__section">
-				<span class="lite-task-list__section-number">3. </span> Confirm and submit your query
-			</h2>
-			<ul class="lite-task-list__items">
-				{% url 'applications:submit' application.id as confirm_url %}
-				{% include "includes/task-list-item.html" with title="Confirm and submit your query" url=confirm_url %}
-			</ul>
+			<form method="post">
+				{% csrf_token %}
+				<button type="submit" value="submit" class="govuk-button">Submit</button>
+			</form>
 		</li>
-	</ol> -->
+	</ol>
 {% endblock %}

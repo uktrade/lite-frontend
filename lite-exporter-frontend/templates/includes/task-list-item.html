@@ -1,11 +1,11 @@
 <li class="lite-task-list__item">
 	<div class="lite-task-list__item-header">
 		{% if disabled %}
-			<span id="link-{{ id }}">
+			<span id="{{ id }}">
 				{{ title }}
 			</span>
 		{% else %}
-			<a id="link-{{ id }}" href="{{ url }}" class="govuk-link govuk-link--no-visited-state">
+			<a id="{{ id }}" href="{{ url }}" class="govuk-link govuk-link--no-visited-state">
 				{{ title }}
 			</a>
 		{% endif %}

@@ -1,5 +1,5 @@
 from pytest_bdd import then, scenarios
-from pages.shared import Shared
+from ui_automation_tests.pages.shared import Shared
 
 scenarios("../features/switch_organisations.feature", strict_gherkin=False)
 

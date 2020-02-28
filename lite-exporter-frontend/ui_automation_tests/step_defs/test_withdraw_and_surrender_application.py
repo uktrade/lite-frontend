@@ -1,8 +1,8 @@
 from pytest_bdd import scenarios, then, when, parsers, given
 
-from pages.application_page import ApplicationPage
-from pages.submitted_applications_page import SubmittedApplicationsPages
-from shared.functions import element_with_id_exists
+from ui_automation_tests.pages.application_page import ApplicationPage
+from ui_automation_tests.pages.submitted_applications_page import SubmittedApplicationsPages
+from ui_automation_tests.shared.functions import element_with_id_exists
 
 scenarios("../features/withdraw_and_surrender_application.feature", strict_gherkin=False)
 

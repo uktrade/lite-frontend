@@ -8,7 +8,16 @@ from lite_content.lite_exporter_frontend.applications import (
     ExportLicenceQuestions,
     MODQuestions,
 )
-from lite_forms.components import RadioButtons, Form, TextInput, Option, FormGroup, Breadcrumbs, BackLink
+from lite_forms.components import (
+    DetailComponent,
+    RadioButtons,
+    Form,
+    TextInput,
+    Option,
+    FormGroup,
+    Breadcrumbs,
+    BackLink,
+)
 from lite_forms.helpers import conditional
 
 
@@ -98,6 +107,10 @@ def export_licence_questions(application_type):
                                 description=ExportLicenceQuestions.ExportLicenceQuestion.OPEN_LICENCE_DESCRIPTION,
                             ),
                         ],
+                    ),
+                    DetailComponent(
+                        InitialApplicationQuestionsForms.OpeningQuestion.HELP_WITH_CHOOSING_A_LICENCE,
+                        InitialApplicationQuestionsForms.OpeningQuestion.HELP_WITH_CHOOSING_A_LICENCE_CONTENT,
                     ),
                 ],
                 default_button_name=generic.CONTINUE,
