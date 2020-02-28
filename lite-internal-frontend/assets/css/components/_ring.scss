@@ -1,5 +1,5 @@
 // -- vars
-$bg-color: #34495e;
+$bg-color: govuk-colour("white");
 $default-size: 0.3em;
 $label-font-size: $default-size * 0.4;
 $label-font-size-redo: $default-size * 4;
@@ -108,7 +108,7 @@ $top: $label-font-size-redo * 0.65;
 
   .shadow {
     @include size(100%, 100%);
-    border: $default-size / 10 solid #bdc3c7;
+    border: $default-size / 10 solid govuk-colour("light-grey");
     border-radius: 50%;
   }
 
@@ -160,8 +160,8 @@ $top: $label-font-size-redo * 0.65;
     @include colour(govuk-colour("green"));
   }
 
-  &.orange {
-    @include colour(govuk-colour("orange"));
+  &.yellow {
+    @include colour(govuk-colour("yellow"));
   }
 
   &.red {

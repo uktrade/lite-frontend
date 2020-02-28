@@ -327,6 +327,6 @@ def get_sla_ring_colour(remaining_days):
     if remaining_days > 5:
         return "green"
     elif remaining_days >= 0:
-        return "orange"
+        return "yellow"
     else:
         return "red"
