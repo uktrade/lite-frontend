@@ -345,6 +345,23 @@ class GoodsLocationForm:
     ERROR = "Select an option"
 
 
+class NewLocationForm:
+    TITLE = "Add an external location"
+    DESCRIPTION = ""
+
+    class Name:
+        TITLE = "Name"
+        DESCRIPTION = ""
+
+    class Address:
+        TITLE = "Address"
+        DESCRIPTION = ""
+        SITL_DESCRIPTION = "If you're unsure of the exact location of where your goods are, explain why."
+
+    class Country:
+        TITLE = "Country"
+
+
 class GoodsCountriesMatrix:
     BACK = "Back to application overview"
     TITLE = "Select the countries each product is going to"
