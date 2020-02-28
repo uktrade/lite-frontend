@@ -124,7 +124,7 @@
 				{% if button.link %}
 					<a href="{{ button.link }}" role="button" draggable="false" data-module="govuk-button" class="{{ button.style }}" {% if button.float_right %}style="float: right;"{% endif %}>{{ button.value }}</a>
 				{% else %}
-					<button type="submit" name="_action" value="submit" class="{{ button.style }}"
+					<button type="submit" name="_action" value="{{ button.action }}" id="button-{{ button.id }}" class="{{ button.style }}"
 						{% if button.float_right %}style="float: right;"{% endif %}
 						{% if button.disable_double_click %}
 							data-module="govuk-button"
