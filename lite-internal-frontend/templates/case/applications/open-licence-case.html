@@ -27,7 +27,7 @@
 		<div class="govuk-grid-row">
 			<div class="govuk-grid-column-one-quarter">
 				<p class="app-case-board__heading">{% lcs 'CASE_INFO_TYPE' %}</p>
-				<p>{{ case.application.case_type.sub_type.key }}</p>
+				<p>{{ case.application.case_type.sub_type.value }}</p>
 			</div>
 			<div class="govuk-grid-column-one-quarter">
 				<p class="app-case-board__heading">{% lcs 'CASE_INFO_EXPORT_TYPE' %}</p>
@@ -50,7 +50,7 @@
 			<div class="govuk-accordion__section-header">
 				<h2 class="govuk-accordion__section-heading">
 					<span class="govuk-accordion__section-button" id="accordion-default-heading-1">
-						{{ case.application.goods_types|length }} {% lcs 'CASE_GOODS' %}
+						{% lcs 'CASE_GOODS' %}
 					</span>
 				</h2>
 			</div>
@@ -132,7 +132,7 @@
 			<div class="govuk-accordion__section-header">
 				<h2 class="govuk-accordion__section-heading">
 					<span class="govuk-accordion__section-button" id="accordion-default-heading-3">
-						{% lcs 'cases.ApplicationPage.Parties.ENTITIES_DELETED' %}
+						{% lcs 'cases.ApplicationPage.Goods.OPEN_CASE_GOODS_LOCATION' %}
 					</span>
 				</h2>
 			</div>
@@ -183,8 +183,6 @@
 				</form>
 			</div>
 		</div>
-
-
 
 		<!-- Supporting documentation -->
 		<div class="govuk-accordion__section">

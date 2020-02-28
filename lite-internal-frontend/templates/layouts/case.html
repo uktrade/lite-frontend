@@ -68,9 +68,9 @@
 	</div>
 
 	{% if case.case_officer %}
-		<p class="govuk-caption-m">{% lcs 'cases.ApplicationPage.CASE_OFFICER' %} <a class="govuk-link govuk-link--no-visited-state" href="{% url 'users:user' case.case_officer.id %}">{{ case.case_officer|username }}</a></p>
+		<p class="govuk-caption-m" id="selected-case-officer">{% lcs 'cases.ApplicationPage.CASE_OFFICER' %} <a class="govuk-link govuk-link--no-visited-state" href="{% url 'users:user' case.case_officer.id %}">{{ case.case_officer|username }}</a></p>
 	{% else %}
-		<p class="govuk-caption-m">{% lcs 'cases.ApplicationPage.NO_CASE_OFFICER' %}</p>
+		<p class="govuk-caption-m" id="selected-case-officer">{% lcs 'cases.ApplicationPage.NO_CASE_OFFICER' %}</p>
 	{% endif %}
 
 	{% if case.copy_of %}

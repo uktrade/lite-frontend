@@ -10,6 +10,7 @@ from django.views.generic import TemplateView
 from s3chunkuploader.file_handler import S3FileUploadHandler, s3_client
 
 from cases.constants import CaseType
+from cases.forms.assign_users import assign_case_officer_form
 from cases.forms.attach_documents import attach_documents_form
 from cases.forms.change_status import change_status_form
 from cases.forms.move_case import move_case_form
@@ -40,7 +41,6 @@ from lite_forms.generators import error_page, form_page
 from lite_forms.helpers import conditional
 from lite_forms.views import SingleFormView
 from queues.services import get_cases_search_data
-from users.services import get_gov_users
 
 
 class Cases(TemplateView):
@@ -327,57 +327,23 @@ class Document(TemplateView):
 class CaseOfficer(TemplateView):
     def get(self, request, **kwargs):
         case_id = str(kwargs["pk"])
-        case = get_case(request, case_id)
-        params = {"name": request.GET.get("name", ""), "activated": True, "no_page": True}
-        gov_users, _ = get_gov_users(request, params)
-        context = {
-            "case_officer": get_case_officer(request, case_id)[0],
-            "users": gov_users["results"],
-            "case": case,
-            "name": params["name"],
-        }
-        return render(request, "case/views/set-case-officer.html", context)
+        return form_page(request, assign_case_officer_form(request, get_case_officer(request, case_id)[0]),)
 
     def post(self, request, **kwargs):
         case_id = str(kwargs["pk"])
         user_id = request.POST.get("user")
         action = request.POST.get("_action")
 
-        if action == "assign":
-            if not user_id:
-                case = get_case(request, case_id)
-                params = {"name": request.GET.get("name", ""), "activated": True, "no_page": True}
-                gov_users, _ = get_gov_users(request, params)
-
-                context = {
-                    "error": cases.CaseOfficerPage.Error.NO_SELECTION,
-                    "case_officer": get_case_officer(request, case_id)[0],
-                    "users": gov_users["results"],
-                    "case": case,
-                    "name": request.GET.get("name", ""),
-                }
-                return render(request, "case/views/set-case-officer.html", context)
-
-            _, status_code = put_case_officer(request, case_id, user_id)
-
-        elif action == "unassign":
-            _, status_code = delete_case_officer(request, case_id)
+        if action == "delete":
+            response, status_code = delete_case_officer(request, case_id)
+        else:
+            response, status_code = put_case_officer(request, case_id, user_id)
 
         if status_code != HTTPStatus.NO_CONTENT:
-            self.response_error(request, case_id)
+            return form_page(
+                request,
+                assign_case_officer_form(request, get_case_officer(request, case_id)[0]),
+                errors=response.json()["errors"],
+            )
 
         return redirect(reverse_lazy("cases:case", kwargs={"pk": case_id}))
-
-    def response_error(self, request, case_id):
-        case = get_case(request, case_id)
-        params = {"name": request.GET.get("name", ""), "activated": True, "no_page": True}
-        gov_users, _ = get_gov_users(request, params)
-
-        context = {
-            "show_error": True,
-            "case_officer": get_case_officer(request, case_id)[0],
-            "users": gov_users["results"],
-            "case": case,
-            "name": params["name"],
-        }
-        return render(request, "case/views/set-case-officer.html", context)

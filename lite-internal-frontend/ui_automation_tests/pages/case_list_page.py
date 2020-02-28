@@ -1,6 +1,7 @@
 import time
 
 import shared.tools.helpers as utils
+from selenium.webdriver.support.select import Select
 from shared.BasePage import BasePage
 from pages.shared import Shared
 
@@ -22,6 +23,7 @@ class CaseListPage(BasePage):
     LINK_SHOW_FILTERS = "show-filters-link"  # ID
     LINK_HIDE_FILTERS = "hide-filters-link"  # ID
     FILTER_BAR = "lite-filter-bar"  # Class
+    USER_STATUS_DROPDOWN_ID = "status"
     STATUS_DROPDOWN = "status"  # ID
     CASE_TYPE_DROPDOWN = "case_type"  # ID
     INPUT_ASSIGNED_USER_ID = "assigned_user"
@@ -110,10 +112,13 @@ class CaseListPage(BasePage):
         self.driver.find_element_by_id(queue_name).click()
 
     def select_filter_status_from_dropdown(self, status):
-        utils.select_visible_text_from_dropdown(self.driver.find_element_by_id(self.STATUS_DROPDOWN), status)
+        Select(self.driver.find_element_by_id(self.STATUS_DROPDOWN)).select_by_visible_text(status)
+
+    def select_filter_user_status_from_dropdown(self, status):
+        Select(self.driver.find_element_by_id(self.USER_STATUS_DROPDOWN_ID)).select_by_visible_text(status)
 
     def select_filter_case_type_from_dropdown(self, status):
-        utils.select_visible_text_from_dropdown(self.driver.find_element_by_id(self.CASE_TYPE_DROPDOWN), status)
+        Select(self.driver.find_element_by_id(self.CASE_TYPE_DROPDOWN)).select_by_visible_text(status)
 
     def sort_by_status(self):
         self.driver.find_element_by_id(self.SORT_STATUS).click()

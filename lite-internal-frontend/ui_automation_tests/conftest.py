@@ -235,6 +235,11 @@ def i_show_filters(driver, context):  # noqa
     CaseListPage(driver).click_show_filters_link()
 
 
+@when("I go to users")  # noqa
+def go_to_users(driver, sso_sign_in, internal_url):  # noqa
+    driver.get(internal_url.rstrip("/") + "/users/")
+
+
 @when(  # noqa
     parsers.parse(
         'I respond "{controlled}", "{control_list_entry}", "{report}", "{comment}" and click continue'
@@ -289,6 +294,12 @@ def create_clc_query(driver, apply_for_clc_query, context):
 @when(parsers.parse('filter status has been changed to "{status}"'))  # noqa
 def filter_status_change(driver, context, status):
     CaseListPage(driver).select_filter_status_from_dropdown(status)
+    CaseListPage(driver).click_apply_filters_button()
+
+
+@when(parsers.parse('I change the user filter to "{status}"'))  # noqa
+def filter_status_change(driver, context, status):
+    CaseListPage(driver).select_filter_user_status_from_dropdown(status)
     CaseListPage(driver).click_apply_filters_button()
 
 

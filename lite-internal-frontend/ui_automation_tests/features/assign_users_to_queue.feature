@@ -13,7 +13,7 @@ Feature: I want to assign one or more specific users to a case in a work queue
 #    And I add case to newly created queue
 #    And I go to the internal homepage
 #    And I click on the added queue in dropdown
-
+#
   @LT_947_select_all @smoke
   Scenario: Select all cases and deselect, Add user to case
 #    When I click select all cases checkbox
@@ -32,7 +32,7 @@ Feature: I want to assign one or more specific users to a case in a work queue
 #    And I select user to assign SSO users name
 #    And I click on the added queue in dropdown
 #    Then user is not assignee on case list
-
+#
   @LT_947_search_filter @regression
   Scenario: Filter by user
 #    When I select the checkbox for previously created case to be assigned

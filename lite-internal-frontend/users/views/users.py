@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
-from conf.constants import SUPER_USER_ROLE_ID
+from conf.constants import SUPER_USER_ROLE_ID, UserStatuses
 from lite_forms.components import FiltersBar, Select, Option
 from lite_forms.generators import form_page
 from users.forms.users import add_user_form, edit_user_form
@@ -30,7 +30,7 @@ class UsersList(TemplateView):
 
         statuses = [
             Option(option["key"], option["value"])
-            for option in [{"key": "active", "value": "Active"}, {"key": "", "value": "All"}]
+            for option in [{"key": "active", "value": UserStatuses.ACTIVE}, {"key": "", "value": "All"}]
         ]  # TODO[future]: filters in API?
 
         filters = FiltersBar([Select(name="status", title="status", options=statuses)])
