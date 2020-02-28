@@ -3,9 +3,9 @@ $(".lite-search__container").show();
 $("#filter-box").on('input', function() {
 	var value = $(this).val().toLowerCase();
 
-	$(".govuk-checkboxes__item").each(function(i, obj) {
-		var checkboxText = $(obj).find(".govuk-checkboxes__label").text().toLowerCase();
-		var checkboxDescription = $(obj).find(".govuk-checkboxes__hint").text().toLowerCase();
+	$(".govuk-radios__item").each(function(i, obj) {
+		var checkboxText = $(obj).find(".govuk-radios__label").text().toLowerCase();
+		var checkboxDescription = $(obj).find(".govuk-radios__hint").text().toLowerCase();
 
 		// Show checkbox if it's in the filter
 	    if (checkboxText.includes(value) || checkboxDescription.includes(value)) {
@@ -19,7 +19,7 @@ $("#filter-box").on('input', function() {
 });
 
 $("input[type='checkbox']").change(function() {
-	var checkboxText = $(this).parent().find(".govuk-checkboxes__label").text();
+	var checkboxText = $(this).parent().find(".govuk-radios__label").text();
 	addCheckedCheckboxesToList();
 });
 
@@ -33,7 +33,7 @@ function addCheckedCheckboxesToList() {
 	$("#checkbox-list").empty();
 	$("#checkbox-list-title").text($("input[type='checkbox']:checked").length + " Selected");
 	$("input[type='checkbox']:checked").each(function(i, obj) {
-		var checkboxText = $(this).parent().find(".govuk-checkboxes__label").text();
+		var checkboxText = $(this).parent().find(".govuk-radios__label").text();
 		$("#checkbox-list").append("<div><a class='govuk-link govuk-link--no-visited-state lite-checkbox-filter-link' href='#" + checkboxText.trim() + "'>" + checkboxText + "</a></div>");
 	});
 	if ($("input[type='checkbox']:checked").length == 0) {
