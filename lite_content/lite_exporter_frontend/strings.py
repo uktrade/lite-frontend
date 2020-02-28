@@ -106,7 +106,7 @@ class Drafts:
 
 class Parties:
     class Documents:
-        DELETE = "Delete"
+        DELETE = :q
         DOWNLOAD = "Download"
         ATTACH = "Attach document"
 
@@ -132,14 +132,11 @@ class EndUser:
         DOWNLOAD_DOCUMENT = "Download"
         END_USER_HAS_NO_DOCUMENTS = "There are no documents attached"
         PROCESSING = "Processing"
-        SAVE_END_USER = "save and return to the application overview"
         TITLE = "End user document"
         VIRUS_INFECTED = "Virus infected"
 
         class AttachDocuments:
-            BACK_TO_APPLICATION_OVERVIEW = "Back to application overview"
-            BUTTON = "Attach document"
-            DELETE_ERROR = "We had an issue deleting your files. Try again later."
+            TITLE = "Attach a completed end user form"
             DESCRIPTION = (
                 "You must attach a completed [end user undertaking "
                 "(EUU)](https://www.gov.uk/government/publications/end-user-undertaking-euu-form) "
@@ -147,12 +144,10 @@ class EndUser:
                 "You can upload it later if you haven’t received the completed form from the end "
                 "user.\n\nThe file must be smaller than 100MB."
             )
-            DESCRIPTION_FIELD_DETAILS = "optional"
             DESCRIPTION_FIELD_TITLE = "Description"
-            DOWNLOAD_ERROR = "We had an issue downloading your file. Try again later."
-            FILE_TOO_LARGE = "The selected file must be smaller than 100MB"
-            TITLE = "Attach a completed end user form"
-            UPLOAD_ERROR = "We had an issue uploading your files. Try again later."
+            BACK = "Back to the application overview"
+            SAVE_AND_RETURN_LATER = "save and return to the application overview"
+            ATTACH_LATER = " to upload a document later."
 
 
 class UltimateEndUser:
@@ -164,24 +159,20 @@ class UltimateEndUser:
         DOWNLOAD_DOCUMENT = "Download"
         END_USER_HAS_NO_DOCUMENTS = "There are no documents attached"
         PROCESSING = "Processing"
-        SAVE_END_USER = "save and return to the application overview"
+        SAVE_AND_RETURN_LATER = "save and return to the application overview"
         TITLE = "Ultimate recipient document"
         VIRUS_INFECTED = "The selected file contains a virus"
 
         class AttachDocuments:
-            BACK_TO_APPLICATION_OVERVIEW = "Back to ultimate recipients"
-            BUTTON = "Attach document"
-            DELETE_ERROR = "We had an issue deleting your files. Try again later."
+            TITLE = "Attach a document"
             DESCRIPTION = (
                 "Do not attach a document that's OFFICIAL-SENSITIVE or above.\n\nThe file must be smaller"
                 " than 100MB."
             )
-            DESCRIPTION_FIELD_DETAILS = ""
-            DESCRIPTION_FIELD_TITLE = "Description (optional)"
-            DOWNLOAD_ERROR = "We had an issue downloading your file. Try again later."
-            FILE_TOO_LARGE = "The selected file must be smaller than 100MB"
-            TITLE = "Attach a document"
-            UPLOAD_ERROR = "We had an issue uploading your files. Try again later."
+            DESCRIPTION_FIELD_TITLE = "Description"
+            BACK = "Back to ultimate recipients"
+            SAVE_AND_RETURN_LATER = "save and return to the application overview"
+            ATTACH_LATER = " to upload a document later."
 
 
 class Consignee:
@@ -195,24 +186,20 @@ class Consignee:
         DOWNLOAD_DOCUMENT = "Download"
         END_USER_HAS_NO_DOCUMENTS = "There are no documents attached"
         PROCESSING = "Processing"
-        SAVE_END_USER = "save and return to the application overview"
+        SAVE_AND_RETURN_LATER = "save and return to the application overview"
         TITLE = "Consignee document"
         VIRUS_INFECTED = "The selected file contains a virus"
 
         class AttachDocuments:
-            BACK_TO_APPLICATION_OVERVIEW = "Back to application overview"
-            BUTTON = "Attach document"
-            DELETE_ERROR = "We had an issue deleting your files. Try again later."
+            TITLE = "Attach a document"
             DESCRIPTION = (
                 "Do not attach a document that's OFFICIAL-SENSITIVE or above.\n\nThe file must be smaller"
                 " than 100MB."
             )
-            DESCRIPTION_FIELD_DETAILS = ""
-            DESCRIPTION_FIELD_TITLE = "Description (optional)"
-            DOWNLOAD_ERROR = "We had an issue downloading your file. Try again later."
-            FILE_TOO_LARGE = "The selected file must be smaller than 100MB"
-            TITLE = "Attach a document"
-            UPLOAD_ERROR = "We had an issue uploading your files. Try again later."
+            DESCRIPTION_FIELD_TITLE = "Description"
+            BACK = "Back to the application overview"
+            SAVE_AND_RETURN_LATER = "save and return to the application overview"
+            ATTACH_LATER = " to upload a document later."
 
 
 class ThirdParties:
@@ -229,24 +216,20 @@ class ThirdParties:
         DOWNLOAD_DOCUMENT = "Download"
         END_USER_HAS_NO_DOCUMENTS = "There are no documents attached"
         PROCESSING = "Processing"
-        SAVE_END_USER = "save and return to the application overview"
+        SAVE_AND_RETURN_LATER = "save and return to the application overview"
         TITLE = "Third party document"
         VIRUS_INFECTED = "The selected file contains a virus"
 
         class AttachDocuments:
-            BACK_TO_APPLICATION_OVERVIEW = "Back to third parties overview"
-            BUTTON = "Attach document"
-            DELETE_ERROR = "We had an issue deleting your files. Try again later."
+            TITLE = "Attach a document"
             DESCRIPTION = (
                 "Do not attach a document that's OFFICIAL-SENSITIVE or above.\n\nThe file must be smaller"
                 " than 100MB."
             )
-            DESCRIPTION_FIELD_DETAILS = ""
-            DESCRIPTION_FIELD_TITLE = "Description (optional)"
-            DOWNLOAD_ERROR = "We had an issue downloading your file. Try again later."
-            FILE_TOO_LARGE = "The selected file must be smaller than 100MB"
-            TITLE = "Attach a document"
-            UPLOAD_ERROR = "We had an issue uploading your files. Try again later."
+            DESCRIPTION_FIELD_TITLE = "Description"
+            BACK = "Back to third parties overview"
+            SAVE_AND_RETURN_LATER = "save and return to the application overview"
+            ATTACH_LATER = " to upload a document later."
 
 
 class EuaeQuery:
@@ -358,24 +341,20 @@ class AdditionalDocuments:
         DOWNLOAD_DOCUMENT = "Download"
         END_USER_HAS_NO_DOCUMENTS = "There are no documents attached"
         PROCESSING = "Processing"
-        SAVE_END_USER = "save and return to the application overview"
+        SAVE_AND_RETURN_LATER = "save and return to the application overview"
         TITLE = "Additional document"
         VIRUS_INFECTED = "The selected file contains a virus"
 
         class AttachDocuments:
-            BACK_TO_APPLICATION_OVERVIEW = "Back to supporting documents"
-            BUTTON = "Attach document"
-            DELETE_ERROR = "We had an issue deleting your files. Try again later."
+            TITLE = "Attach a supporting document"
             DESCRIPTION = (
                 "Do not attach a document that's OFFICIAL-SENSITIVE or above.\n\nThe file must be smaller"
                 " than 100MB."
             )
-            DESCRIPTION_FIELD_DETAILS = ""
-            DESCRIPTION_FIELD_TITLE = "Description (optional)"
-            DOWNLOAD_ERROR = "We had an issue downloading your file. Try again later."
-            FILE_TOO_LARGE = "The selected file must be smaller than 100MB"
-            TITLE = "Attach a supporting document"
-            UPLOAD_ERROR = "We had an issue uploading your files. Try again later."
+            DESCRIPTION_FIELD_TITLE = "Description"
+            BACK = "Back to supporting documents"
+            SAVE_AND_RETURN_LATER = "save and return to the application overview"
+            ATTACH_LATER = " to upload a document later."
 
 
 class Hmrc:
