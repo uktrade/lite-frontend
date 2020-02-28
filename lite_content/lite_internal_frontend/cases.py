@@ -109,7 +109,7 @@ class GenerateDocumentsPage:
         BACK_LINK = "Back to templates"
         BACK_LINK_REGENERATE = "Back to case documents"
         ADD_PARAGRAPHS_LINK = "Add paragraphs"
-        BUTTON = "Continue"
+        BUTTON = "Preview"
 
     class AddParagraphsForm:
         HEADING = "Add paragraphs"
