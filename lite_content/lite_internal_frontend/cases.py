@@ -458,7 +458,7 @@ class Manage:
     class AssignCaseOfficer:
         TITLE = "Assign a case officer"
         DESCRIPTION = ""
-        DELETE_BUTTON = "Delete existing case officer only"
+        DELETE_BUTTON = "Unassign existing case officer only"
         SUBMIT_BUTTON = "Submit"
 
 
