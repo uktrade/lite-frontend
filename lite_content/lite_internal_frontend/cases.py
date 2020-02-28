@@ -49,7 +49,7 @@ class ApplicationPage:
             DOCUMENTS = "Documents"
             FLAGS = "Flags"
             ADVICE = "Advice"
-            ITEM_TYPE = "Item type"
+            PRODUCT_TYPE = "Product type"
 
     class Destinations:
         COUNTRY_NAME = "Country"
