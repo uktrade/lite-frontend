@@ -146,6 +146,7 @@ class EndUser:
             )
             DESCRIPTION_FIELD_TITLE = "Description"
             BACK = "Back to the application overview"
+            # Partial strings below
             SAVE_AND_RETURN_LATER = "save and return to the application overview"
             ATTACH_LATER = " to upload a document later."
 
@@ -171,6 +172,7 @@ class UltimateEndUser:
             )
             DESCRIPTION_FIELD_TITLE = "Description"
             BACK = "Back to ultimate recipients"
+            # Partial strings below
             SAVE_AND_RETURN_LATER = "save and return to the application overview"
             ATTACH_LATER = " to upload a document later."
 
@@ -198,6 +200,7 @@ class Consignee:
             )
             DESCRIPTION_FIELD_TITLE = "Description"
             BACK = "Back to the application overview"
+            # Partial strings below
             SAVE_AND_RETURN_LATER = "save and return to the application overview"
             ATTACH_LATER = " to upload a document later."
 
@@ -228,6 +231,7 @@ class ThirdParties:
             )
             DESCRIPTION_FIELD_TITLE = "Description"
             BACK = "Back to third parties overview"
+            # Partial strings below
             SAVE_AND_RETURN_LATER = "save and return to the application overview"
             ATTACH_LATER = " to upload a document later."
 
@@ -353,6 +357,7 @@ class AdditionalDocuments:
             )
             DESCRIPTION_FIELD_TITLE = "Description"
             BACK = "Back to supporting documents"
+            # Partial strings below
             SAVE_AND_RETURN_LATER = "save and return to the application overview"
             ATTACH_LATER = " to upload a document later."
 
