@@ -117,6 +117,7 @@ class GeneratedDocuments:
 
 class ApplicationSummaryPage:
     CLEARANCE_LEVEL = "Security grading"
+    F680_CLEARANCE_TYPES = "F680 Clearance Types"
     REFERENCE_CODE = "ECJU reference"
     REFERENCE_NAME = "Reference"
     TYPE = "Licence type"
