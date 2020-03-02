@@ -1,6 +1,6 @@
 .lite-button--link {
-	@include govuk-font($size: 19);
 	@extend .govuk-link;
+	@include govuk-font($size: 19);
 	border: 0;
 	outline: 0;
 	background: 0;

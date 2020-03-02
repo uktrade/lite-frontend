@@ -10,19 +10,14 @@ options:
   max-warnings: 50
 # File Options
 files:
-  include: 'lite-frontend/**/*.s+(a|c)ss'
+  include:
+    - 'lite-frontend/**/*.s+(a|c)ss'
+  ignore:
+    - 'lite-frontend/scss/all.scss'
 # Rule Configuration
 rules:
   extends-before-mixins: 2
   extends-before-declarations: 2
-  placeholder-in-extend: 2
-  mixins-before-declarations:
-    - 2
-    -
-      exclude:
-        - breakpoint
-        - mq
-
   no-warn: 1
   no-debug: 1
   no-ids: 2

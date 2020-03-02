@@ -8,7 +8,7 @@ Add the project as a submodule in your repository, then add an import in your ma
 
 ## Linting
 
-To run linting: `npm test`
+To run linting: `npx sass-lint -v`
 
 ## To use LITE SVGs in your project:
 

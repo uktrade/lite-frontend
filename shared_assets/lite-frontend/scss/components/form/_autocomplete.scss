@@ -7,7 +7,7 @@
 .lite-autocomplete__hint,
 .lite-autocomplete__input {
 	-webkit-appearance: none;
-	border: 2px solid #0b0c0c;
+	border: 2px solid #0B0C0C;
 	border-radius: 0;
 	/* Safari 10 on iOS adds implicit border rounding. */
 	box-sizing: border-box;
@@ -25,7 +25,7 @@
 }
 
 .lite-autocomplete__hint {
-	color: #b1b4b6;
+	color: #B1B4B6;
 	position: absolute;
 }
 
@@ -34,7 +34,7 @@
 }
 
 .lite-autocomplete__input--focused {
-	outline: 3px solid #fd0;
+	outline: 3px solid #FD0;
 	outline-offset: 0;
 	box-shadow: inset 0 0 0 2px;
 }
@@ -55,10 +55,10 @@
 }
 
 .lite-autocomplete__menu {
-	background-color: #fff;
-	border: 2px solid #0B0C0C;
+	background-color: govuk-colour("white");
+	border: 2px solid govuk-colour("black");
 	border-top: 0;
-	color: #0B0C0C;
+	color: govuk-colour("black");
 	margin: 0;
 	max-height: 342px;
 	overflow-x: hidden;
@@ -88,7 +88,7 @@
 }
 
 .lite-autocomplete__option {
-	border-bottom: solid #b1b4b6;
+	border-bottom: solid #B1B4B6;
 	border-width: 1px 0;
 	cursor: pointer;
 	display: block;
@@ -113,15 +113,15 @@
 
 .lite-autocomplete__option--focused,
 .lite-autocomplete__option:hover {
-	background-color: #1d70b8;
-	border-color: #1d70b8;
-	color: white;
+	background-color: #1D70B8;
+	border-color: #1D70B8;
+	color: govuk-colour("white");
 	outline: none;
 }
 
 .lite-autocomplete__option--no-results {
 	background-color: #FAFAFA;
-	color: #646b6f;
+	color: #646B6F;
 	cursor: not-allowed;
 }
 
