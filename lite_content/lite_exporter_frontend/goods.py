@@ -59,7 +59,7 @@ class DocumentSensitivityForm:
     ECJU_HELPLINE = (
         "**<noscript>If the answer is No;</noscript>**\n\nContact ECJU to arrange a more secure way to send "
         "this document.\n\n You can continue with the application "
-        "without attaching a document.\n\n **ECJU helpline**\n 020 7215 4594.\n "
+        "without attaching a document.\n\n**ECJU helpline**\n 020 7215 4594\n "
         "[Find out about call charges](https://www.gov.uk/call-charges)"
     )
     SUBMIT_BUTTON = "Continue"
@@ -323,6 +323,11 @@ class AddPreexistingGoodToApplicationForm:
 class ViewGoodOnApplicationPage:
     TITLE = "Products"
     ADD_NEW_BUTTON = "Add a new product"
+    NO_CONTENT = "You haven't added any products to this application"
+    NO_CONTENT_DESCRIPTION = (
+        "Adding a new product to the application will also add it to your product list. "
+        "This allows you to add the product to other applications."
+    )
 
 
 class GoodsLocationForm:
@@ -338,6 +343,23 @@ class GoodsLocationForm:
     EXTERNAL_LOCATION_NEW_LOCATION = "Add a new external location"
     EXTERNAL_LOCATION_PREEXISTING_LOCATION = "Use an existing external location"
     ERROR = "Select an option"
+
+
+class NewLocationForm:
+    TITLE = "Add an external location"
+    DESCRIPTION = ""
+
+    class Name:
+        TITLE = "Name"
+        DESCRIPTION = ""
+
+    class Address:
+        TITLE = "Address"
+        DESCRIPTION = ""
+        SITL_DESCRIPTION = "If you're unsure of the exact location of where your goods are, explain why."
+
+    class Country:
+        TITLE = "Country"
 
 
 class GoodsCountriesMatrix:
