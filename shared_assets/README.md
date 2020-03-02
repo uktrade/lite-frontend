@@ -1,6 +1,6 @@
 # LITE Shared Assets
 
-TEST
+I Am Easy to Find
 
 LITE Shared Assets contains the code and assets you need to start building a consistent user interface for LITE services.
 
