@@ -51,8 +51,7 @@ class AddEndUserPages(BasePage):
         return self.driver.find_element_by_id(self.INPUT_WEBSITE_ID).get_attribute("value")
 
     def enter_country(self, country):
-        country_tb = self.driver.find_element_by_id(self.INPUT_COUNTRY_ID)
-        country_tb.send_keys(country)
+        functions.send_keys_to_autocomplete(self.driver, self.INPUT_COUNTRY_ID, country)
 
     def get_country(self):
         return self.driver.find_element_by_id(self.INPUT_COUNTRY_ID).get_attribute("value")

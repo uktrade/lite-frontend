@@ -212,7 +212,7 @@ def create_standard_application(driver, context):  # noqa
     click_apply_licence(driver)
     ApplyForALicencePage(driver).select_licence_type("export_licence")
     functions.click_submit(driver)
-    enter_type_of_application(driver, "standard", context)
+    enter_type_of_application(driver, "siel", context)
     enter_application_name(driver, context)
     enter_permanent_or_temporary(driver, "permanent", context)
     select_goods_categories(driver)
@@ -228,11 +228,11 @@ def create_mod_application(driver, context, type):  # noqa
 
 @when(  # noqa
     parsers.parse(
-        'I add an end user of sub_type: "{type}", name: "{name}", website: "{website}", address: "{address}" and country "{'
+        'I add a party of sub_type: "{type}", name: "{name}", website: "{website}", address: "{address}" and country "{'
         'country}"'
     )
 )
-def add_new_end_user(driver, type, name, website, address, country, context):  # noqa
+def add_new_party(driver, type, name, website, address, country, context):  # noqa
     add_end_user_pages = AddEndUserPages(driver)
     add_end_user_pages.create_new_or_copy_existing(copy_existing=False)
     add_end_user_pages.select_type(type)
@@ -632,7 +632,7 @@ def the_good_is_added_to_the_application(driver, context):  # noqa
 
 @then("wait for download link")  # noqa
 def wait_for_download_link(driver):  # noqa
-    assert wait_for_download_button(driver, page=Shared(driver))
+    assert wait_for_download_button(driver)
 
 
 @then("I see my edited reference name")

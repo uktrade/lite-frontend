@@ -1,25 +1,27 @@
+from ui_automation_tests.shared import functions
 from ui_automation_tests.shared.BasePage import BasePage
 
 
 class NewSite(BasePage):
-    NAME = "name"
-    ADDRESS_LINE_1 = "address.address_line_1"
-    POSTCODE = "address.postcode"
-    CITY = "address.city"
-    REGION = "address.region"
-    COUNTRY = "address.country"
+    INPUT_NAME_ID = "name"
+    INPUT_ADDRESS_LINE_1_ID = "address.address_line_1"
+    INPUT_POSTCODE_ID = "address.postcode"
+    INPUT_CITY_ID = "address.city"
+    INPUT_REGION_ID = "address.region"
+    AUTOCOMPLETE_COUNTRY_ID = "address.country"
 
     def enter_info_for_new_site(self, name, address, postcode, city, region, country):
-        self.driver.find_element_by_id(self.COUNTRY).send_keys(country)
-        self.driver.find_element_by_id(self.NAME).send_keys(name)
-        self.driver.find_element_by_id(self.ADDRESS_LINE_1).send_keys(address)
-        self.driver.find_element_by_id(self.POSTCODE).send_keys(postcode)
-        self.driver.find_element_by_id(self.CITY).send_keys(city)
-        self.driver.find_element_by_id(self.REGION).send_keys(region)
+        self.driver.find_element_by_id(self.INPUT_NAME_ID).send_keys(name)
+        self.driver.find_element_by_id(self.INPUT_ADDRESS_LINE_1_ID).send_keys(address)
+        self.driver.find_element_by_id(self.INPUT_CITY_ID).send_keys(city)
+        self.driver.find_element_by_id(self.INPUT_REGION_ID).send_keys(region)
+        self.driver.find_element_by_id(self.INPUT_POSTCODE_ID).send_keys(postcode)
+        functions.send_keys_to_autocomplete(self.driver, self.AUTOCOMPLETE_COUNTRY_ID, country)
 
     def clear_info_for_site(self):
-        self.driver.find_element_by_id(self.NAME).clear()
-        self.driver.find_element_by_id(self.ADDRESS_LINE_1).clear()
-        self.driver.find_element_by_id(self.POSTCODE).clear()
-        self.driver.find_element_by_id(self.CITY).clear()
-        self.driver.find_element_by_id(self.REGION).clear()
+        self.driver.find_element_by_id(self.INPUT_NAME_ID).clear()
+        self.driver.find_element_by_id(self.INPUT_ADDRESS_LINE_1_ID).clear()
+        self.driver.find_element_by_id(self.INPUT_POSTCODE_ID).clear()
+        self.driver.find_element_by_id(self.INPUT_CITY_ID).clear()
+        self.driver.find_element_by_id(self.INPUT_REGION_ID).clear()
+        self.driver.find_element_by_id(self.AUTOCOMPLETE_COUNTRY_ID).clear()

@@ -1,9 +1,12 @@
 from applications.components import back_to_task_list
-from conf.constants import HMRC
+from conf.constants import HMRC, CaseTypes
 from core.services import get_countries, get_external_locations
-from lite_content.lite_exporter_frontend import goods, strings
-from lite_forms.components import Form, RadioButtons, Option, TextArea, Select, Filter, Checkboxes, TextInput
+from lite_content.lite_exporter_frontend import goods, strings, generic
+from lite_content.lite_exporter_frontend.goods import NewLocationForm
+from lite_forms.common import country_question
+from lite_forms.components import Form, RadioButtons, Option, TextArea, Filter, Checkboxes, TextInput
 from lite_forms.helpers import conditional
+from sites.services import get_sites
 
 
 class Locations:
@@ -63,26 +66,63 @@ def add_external_location():
     )
 
 
-def new_location_form():
+def new_location_form(application_type):
+    exclude = []
+    if application_type == CaseTypes.SITL:
+        exclude.append("GB")
+
+    countries = get_countries(None, True, exclude)
+
     return Form(
-        title="Add an external location",
+        title=NewLocationForm.TITLE,
+        description=NewLocationForm.DESCRIPTION,
         questions=[
-            TextInput(title="Name", name="name"),
-            TextArea("address", "Address"),
-            Select(title="Country", description="", name="country", options=get_countries(None, True)),
+            TextInput(name="name", title=NewLocationForm.Name.TITLE),
+            TextArea(
+                name="address",
+                title=NewLocationForm.Address.TITLE,
+                description=conditional(
+                    application_type == CaseTypes.SITL,
+                    NewLocationForm.Address.SITL_DESCRIPTION,
+                    NewLocationForm.Address.DESCRIPTION,
+                ),
+            ),
+            country_question(prefix="", countries=countries),
         ],
         default_button_name=strings.SAVE_AND_CONTINUE,
     )
 
 
-def external_locations_form(request):
+def external_locations_form(request, application_type):
+    exclude = []
+    if application_type == CaseTypes.SITL:
+        exclude.append("GB")
+
     return Form(
         title="Select locations",
-        description="",
         questions=[
             Filter(),
-            Checkboxes("external_locations", get_external_locations(request, str(request.user.organisation), True)),
+            Checkboxes(
+                name="external_locations[]",
+                options=get_external_locations(request, str(request.user.organisation), True, exclude),
+            ),
         ],
         javascript_imports=["/assets/javascripts/filter-checkbox-list.js"],
         default_button_name=strings.SAVE_AND_CONTINUE,
+    )
+
+
+def sites_form(request, application_type):
+    exclude = []
+    if application_type == CaseTypes.SITL:
+        exclude.append("GB")
+
+    return Form(
+        title="Select locations",
+        questions=[
+            Filter(),
+            Checkboxes(name="sites[]", options=get_sites(request, request.user.organisation, True, exclude)),
+        ],
+        javascript_imports=["/assets/javascripts/filter-checkbox-list.js"],
+        default_button_name=generic.SAVE_AND_CONTINUE,
     )

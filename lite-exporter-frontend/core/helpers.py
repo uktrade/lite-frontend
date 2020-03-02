@@ -54,6 +54,9 @@ def convert_value_to_query_param(key: str, value):
     eg {'type': 'organisation'} becomes type=organisation
     eg {'type': ['organisation', 'organisation']} becomes type=organisation&type=organisation
     """
+    if value is None:
+        return ""
+
     if isinstance(value, list):
         return_value = ""
         for item in value:

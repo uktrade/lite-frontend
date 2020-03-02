@@ -1,3 +1,4 @@
+from ui_automation_tests.shared import functions
 from ui_automation_tests.shared.BasePage import BasePage
 
 
@@ -16,5 +17,4 @@ class AddNewExternalLocationFormPage(BasePage):
         address_tb.send_keys(address)
 
     def enter_external_location_country(self, country):
-        country_tb = self.driver.find_element_by_id("country")
-        country_tb.send_keys(country)
+        functions.send_keys_to_autocomplete(self.driver, "country", country)

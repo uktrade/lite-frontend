@@ -23,17 +23,18 @@ def convert_application_to_check_your_answers(application, editable=False):
     """
     Returns a correctly formatted check your answers page for the supplied application
     """
-    if application["case_type"]["sub_type"]["key"] == STANDARD:
+    sub_type = application.sub_type
+    if sub_type == STANDARD:
         return _convert_standard_application(application, editable)
-    elif application["case_type"]["sub_type"]["key"] == OPEN:
+    elif sub_type == OPEN:
         return _convert_open_application(application, editable)
-    elif application["case_type"]["sub_type"]["key"] == HMRC:
+    elif sub_type == HMRC:
         return _convert_hmrc_query(application, editable)
-    elif application["case_type"]["sub_type"]["key"] == EXHIBITION:
+    elif sub_type == EXHIBITION:
         return _convert_exhibition_clearance(application, editable)
-    elif application["case_type"]["sub_type"]["key"] == GIFTING:
+    elif sub_type == GIFTING:
         return _convert_gifting_clearance(application, editable)
-    elif application["case_type"]["sub_type"]["key"] == F680:
+    elif sub_type == F680:
         return _convert_f680_clearance(application, editable)
     else:
         raise NotImplementedError()

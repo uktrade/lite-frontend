@@ -59,17 +59,22 @@ def add_goods_questions(application_pk=None):
                 ),
                 name="is_good_controlled",
                 options=[
-                    Option(key="yes", value=CreateGoodForm.IsControlled.YES, show_pane="pane_control_code"),
+                    Option(
+                        key="yes",
+                        value=CreateGoodForm.IsControlled.YES,
+                        components=[
+                            control_list_entry_question(
+                                control_list_entries=get_control_list_entries(None, convert_to_options=True),
+                                title=CreateGoodForm.ControlListEntry.TITLE,
+                                description=CreateGoodForm.ControlListEntry.DESCRIPTION,
+                                name="control_code",
+                                inset_text=False,
+                            ),
+                        ],
+                    ),
                     Option(key="no", value=CreateGoodForm.IsControlled.NO),
                     conditional(not application_pk, Option(key="unsure", value=CreateGoodForm.IsControlled.UNSURE)),
                 ],
-            ),
-            control_list_entry_question(
-                control_list_entries=get_control_list_entries(None, convert_to_options=True),
-                title=CreateGoodForm.ControlListEntry.TITLE,
-                description=CreateGoodForm.ControlListEntry.DESCRIPTION,
-                name="control_code",
-                inset_text=False,
             ),
             RadioButtons(
                 title=CreateGoodForm.IsGraded.TITLE,
@@ -151,17 +156,22 @@ def edit_good_detail_form(good_id):
                 description=EditGoodForm.IsControlled.DESCRIPTION,
                 name="is_good_controlled",
                 options=[
-                    Option(key="yes", value=EditGoodForm.IsControlled.YES, show_pane="pane_control_code"),
+                    Option(
+                        key="yes",
+                        value=EditGoodForm.IsControlled.YES,
+                        components=[
+                            control_list_entry_question(
+                                control_list_entries=get_control_list_entries(None, convert_to_options=True),
+                                title=EditGoodForm.ControlListEntry.TITLE,
+                                description=EditGoodForm.ControlListEntry.DESCRIPTION,
+                                name="control_code",
+                                inset_text=False,
+                            ),
+                        ],
+                    ),
                     Option(key="no", value=EditGoodForm.IsControlled.NO),
                     Option(key="unsure", value=EditGoodForm.IsControlled.UNSURE),
                 ],
-            ),
-            control_list_entry_question(
-                control_list_entries=get_control_list_entries(None, convert_to_options=True),
-                title=EditGoodForm.ControlListEntry.TITLE,
-                description=EditGoodForm.IsControlled.DESCRIPTION,
-                name="control_code",
-                inset_text=False,
             ),
             RadioButtons(
                 title=CreateGoodForm.IsGraded.TITLE,
@@ -203,16 +213,19 @@ def document_grading_form(request, good_id):
                 name="has_document_to_upload",
                 options=[
                     Option(key="yes", value=DocumentSensitivityForm.Options.YES),
-                    Option(key="no", value=DocumentSensitivityForm.Options.NO, show_pane="pane_ecju_contact"),
+                    Option(
+                        key="no",
+                        value=DocumentSensitivityForm.Options.NO,
+                        components=[
+                            Label(text=DocumentSensitivityForm.ECJU_HELPLINE),
+                            Select(
+                                name="missing_document_reason",
+                                title=DocumentSensitivityForm.LABEL,
+                                options=select_options,
+                            ),
+                        ],
+                    ),
                 ],
-            ),
-            Group(
-                components=[
-                    Label(text=DocumentSensitivityForm.ECJU_HELPLINE),
-                    Select(name="missing_document_reason", title=DocumentSensitivityForm.LABEL, options=select_options),
-                ],
-                name="ecju_contact",
-                classes=["govuk-inset-text", "hidden"],
             ),
         ],
         back_link=BackLink(DocumentSensitivityForm.BACK_BUTTON, reverse_lazy("goods:good", kwargs={"pk": good_id})),

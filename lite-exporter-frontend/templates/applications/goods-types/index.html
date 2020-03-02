@@ -18,7 +18,7 @@
 		</div>
 		{% if application.status.key in 'applicant_editing,draft' %}
 		<div class="lite-app-bar__controls">
-			<a href="{% url 'applications:add_goods_type' application.id %}?next={% url 'applications:goods_types' application.id %}" role='button' draggable='false' class='govuk-button'>
+			<a id="button-add-good" href="{% url 'applications:add_goods_type' application.id %}?next={% url 'applications:goods_types' application.id %}" role='button' draggable='false' class='govuk-button'>
 				{% if goods %}
 					{% lcs "goods_types.OverviewPage.ADD_ANOTHER_GOODS_TYPE_BUTTON" %}
 				{% else %}
@@ -33,7 +33,7 @@
 		<table class="govuk-table lite-responsive-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
-					<th scope="col" class="govuk-table__header"></th>
+					<th scope="col" class="govuk-table__header">#</th>
 					<th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs "goods_types.Variables.DESCRIPTION" %}</th>
 					{% if application.case_type.sub_type.key != 'hmrc' %}
 						<th scope="col" class="govuk-table__header">{% lcs "goods_types.Variables.CONTROL_LIST_ENTRY" %}</th>

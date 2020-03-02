@@ -7,7 +7,7 @@ class AddGoodPage(BasePage):
     # Confirm has document
     DOCUMENT_VALID_YES = "has_document_to_upload-yes"  # ID
     DOCUMENT_VALID_NO = "has_document_to_upload-no"  # ID
-    ECJU_HELPLINE = "pane_ecju_contact"  # ID
+    ECJU_HELPLINE_ID = "conditional-has_document_to_upload-no-conditional"
     MISSING_DOCUMENT_REASON = "missing_document_reason"  # ID
 
     # Good summary page
@@ -71,7 +71,7 @@ class AddGoodPage(BasePage):
         self.driver.find_element_by_id(self.DOCUMENT_VALID_NO).click()
 
     def get_ecju_help(self):
-        return self.driver.find_element_by_id(self.ECJU_HELPLINE).is_displayed()
+        return self.driver.find_element_by_id(self.ECJU_HELPLINE_ID).is_displayed()
 
     def select_valid_missing_document_reason(self):
         Select(self.driver.find_element_by_id(self.MISSING_DOCUMENT_REASON)).select_by_index(1)

@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from applications.forms.location import Locations
+from applications.forms.locations import Locations
 from applications.services import set_application_status, delete_application, put_application
 from lite_content.lite_exporter_frontend import strings, goods
 

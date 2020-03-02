@@ -17,7 +17,7 @@ scenarios("../features/sites.feature", strict_gherkin=False)
 @when("I click new site")
 def click_new_site(driver):
     sites = SitesListOverview(driver)
-    sites.click_new_sites_link()
+    sites.click_new_site_link()
 
 
 @when("I click sites link")

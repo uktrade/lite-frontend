@@ -61,8 +61,7 @@
 								</a>
 								<br/>
 								{%  if application.status.value == "draft" %}
-									<a href="{% ur
-									l 'applications:ultimate_end_user_delete_document' application.id ultimate_end_user.id %}" id="document_delete" class='govuk-link govuk-link--no-visited-state'>
+									<a href="{% url 'applications:ultimate_end_user_delete_document' application.id ultimate_end_user.id %}" id="document_delete" class='govuk-link govuk-link--no-visited-state'>
 										{% lcs "applications.UltimateEndUsersPage.Document.DELETE" %}
 									</a>
 								{% endif %}
@@ -76,8 +75,7 @@
 						{% endif %}
 						</td>
 						<td class="govuk-table__cell">
-							<a href="{% url 'applications:remove_ultimate_end_user' application.id ultimate_end_user.id %}" class="govuk-link lite-link--icon">
-								{% svg 'close' %}
+							<a href="{% url 'applications:remove_ultimate_end_user' application.id ultimate_end_user.id %}" class="govuk-link">
 								{% lcs "applications.UltimateEndUsersPage.Document.REMOVE" %}
 							</a>
 						</td>

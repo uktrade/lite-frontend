@@ -3,11 +3,11 @@ from ui_automation_tests.shared.BasePage import BasePage
 
 class OpenApplicationCountriesPage(BasePage):
 
-    COUNTRIES_CHECKBOX = ".govuk-checkboxes__input"
+    CHECKBOX_COUNTRIES_SELECTOR = ".govuk-checkboxes__input"
     COUNTRIES_LABELS = ".govuk-checkboxes__label"
     COUNTRIES_SEARCH_BOX = "filter-box"  # ID
-    COUNTRIES_LIST_SELECTOR = "#pane_countries .govuk-checkboxes"
-    SELECT_ALL_LINK = "link-select-all"  # ID
+    COUNTRIES_LIST_SELECTOR = ".govuk-checkboxes"
+    LINK_SELECT_ALL_ID = "link-select-all"
 
     def get_countries_names(self):
         countries_names = []
@@ -26,10 +26,10 @@ class OpenApplicationCountriesPage(BasePage):
         return self.driver.find_elements_by_css_selector(self.COUNTRIES_LIST_SELECTOR)[0].text
 
     def click_select_all(self):
-        self.driver.find_element_by_id(self.SELECT_ALL_LINK).click()
+        self.driver.find_element_by_id(self.LINK_SELECT_ALL_ID).click()
 
     def get_number_of_checkboxes(self, checked=False):
         if checked:
             return len(self.driver.find_elements_by_css_selector("input[type='checkbox']:checked"))
         else:
-            return len(self.driver.find_elements_by_css_selector(self.COUNTRIES_CHECKBOX))
+            return len(self.driver.find_elements_by_css_selector(self.CHECKBOX_COUNTRIES_SELECTOR))

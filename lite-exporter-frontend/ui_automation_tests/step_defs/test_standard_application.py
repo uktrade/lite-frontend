@@ -1,5 +1,14 @@
 from pytest_bdd import scenarios, when, then, parsers, given
 
+from ui_automation_tests.conftest import (
+    click_apply_licence,
+    enter_application_name,
+    enter_type_of_application,
+    enter_permanent_or_temporary,
+    select_goods_categories,
+    enter_export_licence,
+)
+from ui_automation_tests.pages.apply_for_a_licence_page import ApplyForALicencePage
 from ui_automation_tests.pages.add_end_user_pages import AddEndUserPages
 from ui_automation_tests.pages.attach_document_page import AttachDocumentPage
 from ui_automation_tests.pages.external_locations_page import ExternalLocationsPage
@@ -164,7 +173,7 @@ def party_website_autofill(driver, context):
 @then("I see the party address and country is already filled in")
 def party_address_autofill(driver, context):
     assert AddEndUserPages(driver).get_address() == context.end_user["address"]
-    assert AddEndUserPages(driver).get_country() == context.end_user["country"]["id"]
+    assert AddEndUserPages(driver).get_country() == context.end_user["country"]["name"]
 
 
 @when("I skip uploading a document")
@@ -184,3 +193,15 @@ def filter_for_party(driver, context):
     parties_page.filter_address(context.end_user["address"])
     parties_page.filter_country(context.end_user["country"]["name"])
     parties_page.submit_filter()
+
+
+@when("I create a standard individual transhipment application")  # noqa
+def create_standard_individual_transhipment_application(driver, context):  # noqa
+    click_apply_licence(driver)
+    ApplyForALicencePage(driver).select_licence_type("transhipment")
+    functions.click_submit(driver)
+    enter_type_of_application(driver, "sitl", context)
+    enter_application_name(driver, context)
+    enter_permanent_or_temporary(driver, "permanent", context)
+    select_goods_categories(driver)
+    enter_export_licence(driver, "yes", "123456", context)

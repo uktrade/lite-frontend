@@ -1,7 +1,7 @@
 {% extends 'layouts/base.html' %}
 
 {% block back_link %}
-	{% include 'includes/breadcrumbs.html' %}
+	{% include 'includes/breadcrumbs.html' with title='hub.Tiles.APPLICATIONS' %}
 {% endblock %}
 
 {% block body %}
@@ -50,7 +50,7 @@
 					{% if organisation.type.key != 'hmrc' %}
 						<th class="govuk-table__header" scope="col">{% lcs "applications.ApplicationsSummaryPage.STATUS" %}</th>
 					{% endif %}
-					<th class="govuk-table__header" scope="col">{% lcs "applications.ApplicationsList.COPY_HEADER" %}</th>
+					<th class="govuk-table__header" scope="col">Actions</th>
 				</tr>
 			</thead>
 			<tbody class="govuk-table__body">

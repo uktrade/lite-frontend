@@ -1,7 +1,7 @@
 {% extends 'layouts/base.html' %}
 
 {% block back_link %}
-	{% include 'includes/breadcrumbs.html' %}
+	{% include 'includes/breadcrumbs.html' with title='hub.Tiles.APPLICATIONS' %}
 {% endblock %}
 
 {% block body %}
@@ -49,9 +49,9 @@
 							{% lcs "applications.ApplicationsSummaryPage.EXPORT_TYPE" %}
 						</th>
 					{% endif %}
-					<th class="govuk-table__header">
+					<th class="govuk-table__header govuk-table__header--tight">
+						Actions
 					</th>
-					<th class="govuk-table__header" scope="col">{% lcs "applications.ApplicationsList.COPY_HEADER" %}</th>
 				</tr>
 			</thead>
 			<tbody class="govuk-table__head">
@@ -73,13 +73,15 @@
 								{{ draft.export_type.value|default_na }}
 							</td>
 						{% endif %}
-						<td class="govuk-table__cell govuk-table__cell--numeric govuk-table__cell--nowrap">
-							<a id="link-delete-draft" href="{% url 'applications:delete' draft.id %}?return_to={{ CURRENT_PATH }}" class="govuk-link--no-visited-state">
-								{% lcs 'applications.DeleteApplicationPage.BUTTON' %}
-							</a>
-						</td>
-						<td class="govuk-table__cell">
-							<a class="govuk-link govuk-link--no-visited-state app-icon-label" href="{% url 'applications:copy' draft.id %}">{% lcs "applications.ApplicationsList.COPY_LINK" %}</a>
+						<td class="govuk-table__cell govuk-table__cell--tight">
+							<ul class="govuk-table__cell__actions-list">
+								<li class="govuk-table__cell__actions-list-item">
+									<a id="link-delete-draft" href="{% url 'applications:delete' draft.id %}?return_to={{ CURRENT_PATH }}" class="govuk-link--no-visited-state">{% lcs 'applications.DeleteApplicationPage.BUTTON' %}</a>
+								</li>
+								<li class="govuk-table__cell__actions-list-item">
+									<a class="govuk-link govuk-link--no-visited-state app-icon-label" href="{% url 'applications:copy' draft.id %}">{% lcs 'applications.ApplicationsList.COPY_LINK' %}</a>
+								</li>
+							</ul>
 						</td>
 					</tr>
 				{% endfor %}

@@ -3,7 +3,7 @@ from urllib.parse import urlencode
 
 from django.http import StreamingHttpResponse
 
-from core.helpers import convert_parameters_to_query_params
+from core.helpers import convert_parameters_to_query_params, convert_value_to_query_param
 from lite_content.lite_exporter_frontend.generic import Document
 from lite_forms.components import Option
 
@@ -28,8 +28,15 @@ def get_units(request):
     return [Option(key, value) for key, value in data.items()]
 
 
-def get_countries(request, convert_to_options=False):
-    data = get(request, STATIC_COUNTRIES_URL).json()["countries"]
+def get_countries(request, convert_to_options=False, exclude: list = None):
+    """
+    Returns a list of GOV.UK countries and territories
+    param exclude: Takes a list of country codes and excludes them
+    """
+
+    data = get(request, STATIC_COUNTRIES_URL + "?" + convert_value_to_query_param("exclude", exclude)).json()[
+        "countries"
+    ]
 
     if convert_to_options:
         return [Option(x["id"], x["name"]) for x in data]
@@ -38,19 +45,22 @@ def get_countries(request, convert_to_options=False):
 
 
 def get_sites_on_draft(request, pk):
-    data = get(request, APPLICATIONS_URL + pk + "/sites/")
+    data = get(request, APPLICATIONS_URL + str(pk) + "/sites/")
     return data.json(), data.status_code
 
 
 def post_sites_on_draft(request, pk, json):
-    data = post(request, APPLICATIONS_URL + pk + "/sites/", json)
+    data = post(request, APPLICATIONS_URL + str(pk) + "/sites/", json)
     return data.json(), data.status_code
 
 
-def get_external_locations(request, pk, formatted=False):
-    data = get(request, ORGANISATIONS_URL + str(pk) + EXTERNAL_LOCATIONS_URL)
+def get_external_locations(request, pk, convert_to_options=False, exclude: list = None):
+    data = get(
+        request,
+        ORGANISATIONS_URL + str(pk) + EXTERNAL_LOCATIONS_URL + "?" + convert_value_to_query_param("exclude", exclude),
+    )
 
-    if formatted:
+    if convert_to_options:
         external_locations_options = []
 
         for external_location in data.json().get("external_locations"):
@@ -70,7 +80,7 @@ def get_external_locations(request, pk, formatted=False):
 
 
 def get_external_locations_on_draft(request, pk):
-    data = get(request, APPLICATIONS_URL + pk + "/external_locations/")
+    data = get(request, APPLICATIONS_URL + str(pk) + "/external_locations/")
     return data.json(), data.status_code
 
 
@@ -80,13 +90,20 @@ def delete_external_locations_from_draft(request, pk, ext_loc_pk):
 
 
 def post_external_locations_on_draft(request, pk, json):
-    data = post(request, APPLICATIONS_URL + pk + "/external_locations/", json)
+    data = post(request, APPLICATIONS_URL + str(pk) + "/external_locations/", json)
     return data.json(), data.status_code
 
 
 def post_external_locations(request, pk, json):
-    data = post(request, ORGANISATIONS_URL + pk + EXTERNAL_LOCATIONS_URL, json)
-    return data.json(), data.status_code
+    data = post(request, ORGANISATIONS_URL + str(request.user.organisation) + EXTERNAL_LOCATIONS_URL, json)
+
+    if "errors" in data.json():
+        return data.json(), data.status_code
+
+    # Append the new external location to the list of external locations rather than clearing them
+    _id = data.json()["external_location"]["id"]
+    data = {"external_locations": [_id], "method": "append_location"}
+    return post_external_locations_on_draft(request, str(pk), data)
 
 
 def get_notifications(request):

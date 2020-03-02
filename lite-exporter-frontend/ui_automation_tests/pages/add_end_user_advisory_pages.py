@@ -1,3 +1,4 @@
+from ui_automation_tests.shared import functions
 from ui_automation_tests.shared.BasePage import BasePage
 
 
@@ -28,8 +29,7 @@ class AddEndUserAdvisoryPages(BasePage):
         address_tb.send_keys(website)
 
     def enter_country(self, country, prefix=""):
-        country_tb = self.driver.find_element_by_id(prefix + "country")
-        country_tb.send_keys(country)
+        functions.send_keys_to_autocomplete(self.driver, prefix + "country", country)
 
     def enter_reasoning(self, reasoning):
         reasoning_tb = self.driver.find_element_by_id("reasoning")

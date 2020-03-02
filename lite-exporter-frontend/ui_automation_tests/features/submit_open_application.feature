@@ -14,14 +14,8 @@ Feature: I want to indicate the open licence I want
     And I click continue
     And I click the back link
     And I click on the "goods" section
-    And I click Add goods type button
     And I add a goods type with description "Sniper" controlled "Yes" control code "ML1a" incorporated "Yes"
     Then I see my goods type added at position "1" with a description and a control code
-    When I click the back link
-    When I click on the "goods" section
-    And I click Add goods type button
-    When I add a goods type with description "M4" controlled "Yes" control code "ML1a" incorporated "Yes"
-    Then I see my goods type added at position "2" with a description and a control code
     When I click the back link
     When I click on the "countries" section
     Then I should see a list of countries

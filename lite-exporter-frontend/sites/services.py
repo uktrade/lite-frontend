@@ -1,3 +1,4 @@
+from core.helpers import convert_value_to_query_param
 from lite_content.lite_exporter_frontend import strings
 from lite_forms.components import Option
 
@@ -6,9 +7,12 @@ from conf.constants import SITES_URL, ORGANISATIONS_URL, NEWLINE, USERS_URL
 from core.services import get_organisation
 
 
-def get_sites(request, organisation_id, convert_to_options=False):
+def get_sites(request, organisation_id, convert_to_options=False, exclude: list = None):
     organisation = get_organisation(request, str(organisation_id))
-    data = get(request, ORGANISATIONS_URL + str(organisation_id) + SITES_URL).json()["sites"]
+    data = get(
+        request,
+        ORGANISATIONS_URL + str(organisation_id) + SITES_URL + "?" + convert_value_to_query_param("exclude", exclude),
+    ).json()["sites"]
 
     if convert_to_options:
         sites_options = []

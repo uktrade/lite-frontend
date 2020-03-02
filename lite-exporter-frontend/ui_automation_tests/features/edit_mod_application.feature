@@ -33,8 +33,8 @@ Feature: I want to be able to edit MOD Licence Applications
     And I click the back link
     Then the document is removed from the application
 
-  @LT_1598 @LT_1980_edit_MOD_clearance @regression
-  Scenario: Edit a F680 Clearance Application
+  @LT_1598 @LT_1980_edit_f680_clearance @regression
+  Scenario: Edit an F680 Clearance Application
     Given I go to exporter homepage and choose Test Org
     And I create a F680 clearance application via api
     When I go to application previously created
@@ -61,7 +61,7 @@ Feature: I want to be able to edit MOD Licence Applications
     And I click the back link
     Then the document is removed from the application
 
-  @LT_1980_edit_MOD_clearance @regression
+  @LT_1980_edit_gifting_clearance @regression
   Scenario: Edit a Gifting Clearance Application
     Given I go to exporter homepage and choose Test Org
     And I create a gifting clearance application via api

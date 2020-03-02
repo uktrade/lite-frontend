@@ -3,6 +3,7 @@ from http import HTTPStatus
 from django.http import StreamingHttpResponse
 from s3chunkuploader.file_handler import s3_client
 
+from core.objects import Application
 from conf.client import get, post, put, delete
 from conf.constants import (
     ACTIVITY_URL,
@@ -40,9 +41,9 @@ def get_applications(request, page: int = 1, submitted: bool = True):
     return data.json()
 
 
-def get_application(request, pk):
+def get_application(request, pk) -> Application:
     data = get(request, APPLICATIONS_URL + str(pk))
-    return data.json()
+    return Application(data.json())
 
 
 def post_applications(request, json):
@@ -100,12 +101,12 @@ def get_data_from_post_good_on_app(json):
 
 # Countries
 def get_application_countries(request, pk):
-    data = get(request, APPLICATIONS_URL + pk + COUNTRIES_URL)
+    data = get(request, APPLICATIONS_URL + str(pk) + COUNTRIES_URL)
     return data.json()["countries"]
 
 
 def post_application_countries(request, pk, json):
-    data = post(request, APPLICATIONS_URL + pk + COUNTRIES_URL, json)
+    data = post(request, APPLICATIONS_URL + str(pk) + COUNTRIES_URL, json)
     return data.json(), data.status_code
 
 

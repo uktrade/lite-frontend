@@ -1,7 +1,7 @@
 {% extends 'layouts/base.html' %}
 
 {% block back_link %}
-	{% include 'includes/breadcrumbs.html' %}
+	{% include 'includes/breadcrumbs.html' with title='core.HubPage.ORGANISATION' %}
 {% endblock %}
 
 {% block body %}
@@ -18,7 +18,7 @@
 			{% if can_administer_roles %}<a href="{% url 'roles:roles' %}" class="lite-tabs__tab lite-tabs__tab" id="tab-roles">{% lcs "roles.ManageRolesPage.TAB" %}</a>{% endif %}
 		</div>
 		<div class="lite-tabs__controls">
-			<a href="{% url 'sites:new' %}" class="govuk-button" draggable="false" role="button">
+			<a id="button-add-site" href="{% url 'sites:new' %}" class="govuk-button" draggable="false" role="button">
 				{% lcs 'Sites.CREATE' %}
 			</a>
 		</div>

@@ -58,6 +58,22 @@ EXHIBITION = "exhibition_clearance"
 GIFTING = "gifting_clearance"
 F680 = "f680_clearance"
 
+
+class CaseTypes:
+    OIEL = "oiel"
+    OGEL = "ogel"
+    OICL = "oicl"
+    SIEL = "siel"
+    SICL = "sicl"
+    SITL = "sitl"
+    F680 = "f680"
+    EXHC = "exhc"
+    GIFT = "gift"
+    CRE = "cre"
+    GQY = "gqy"
+    EUA = "eua"
+
+
 # Case type task list sections
 CASE_SECTIONS = {
     "HMRC": HMRC,

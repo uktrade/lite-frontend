@@ -1,6 +1,6 @@
 from django.urls import reverse_lazy
 
-from applications.forms.told_by_an_official import told_by_an_official_form
+from applications.forms.edit import told_by_an_official_form
 from applications.services import get_application, put_application
 from lite_forms.views import SingleFormView
 

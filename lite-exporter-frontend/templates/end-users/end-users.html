@@ -1,7 +1,7 @@
 {% extends 'layouts/base.html' %}
 
 {% block back_link %}
-	{% include 'includes/breadcrumbs.html' %}
+	{% include 'includes/breadcrumbs.html' with title='end_users.EndUsersPage.TITLE' %}
 {% endblock %}
 
 {% block body %}
@@ -9,7 +9,7 @@
 		<div class="lite-app-bar__content">
 			<h1 class="govuk-heading-l">
 				{% block title %}
-					{% lcs "end_users.EndUsersPage.TITLE" %}
+					{% lcs 'end_users.EndUsersPage.TITLE' %}
 				{% endblock %}
 			</h1>
 		</div>

@@ -5,12 +5,12 @@ from ui_automation_tests.shared.BasePage import BasePage
 
 class OpenApplicationGoodsTypesPage(BasePage):
 
-    ADD_GOODS_TYPE_BUTTON = ".govuk-button"
+    BUTTON_ADD_GOOD_ID = "button-add-good"
     GOODS_TYPE_INFO = ".govuk-table__row"
     REMOVE_GOODS_TYPE_LINK = "a[href*='goods-types']"
 
-    def click_goods_type_button(self):
-        self.driver.find_element_by_css_selector(self.ADD_GOODS_TYPE_BUTTON).click()
+    def click_add_good_button(self):
+        self.driver.find_element_by_id(self.BUTTON_ADD_GOOD_ID).click()
 
     def get_text_of_goods_type_info(self, num):
         return self.driver.find_elements_by_css_selector(self.GOODS_TYPE_INFO)[num].text

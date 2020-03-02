@@ -4,7 +4,7 @@ from django.views.generic import TemplateView
 
 from applications.forms.hmrc import confirm_organisation_form
 from applications.services import post_applications
-from conf.constants import HMRC
+from conf.constants import CaseTypes
 from core.helpers import convert_dict_to_query_params
 from core.permissions import validate_is_in_organisation_type
 from core.services import get_organisations, get_organisation
@@ -48,7 +48,7 @@ class SelectAnOrganisation(TemplateView):
                 return self.get(request, show_error=True, *args, **kwargs)
         else:
             # Create a draft HMRC application
-            data = {"name": "HMRC query", "application_type": HMRC, "organisation": organisation}
+            data = {"name": "HMRC query", "application_type": CaseTypes.CRE, "organisation": organisation}
 
             response, _ = post_applications(request, data)
 

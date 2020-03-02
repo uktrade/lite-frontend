@@ -87,8 +87,7 @@ def assign_all_with_link(driver, assign_or_unassign):
 
 @when("I click Add goods type button")
 def click_goods_type_button(driver):
-    goods_type_page = OpenApplicationGoodsTypesPage(driver)
-    goods_type_page.click_goods_type_button()
+    OpenApplicationGoodsTypesPage(driver).click_add_good_button()
 
 
 @then(parsers.parse('I see all countries are "{assigned_or_unassigned}" to all goods'))
@@ -105,7 +104,7 @@ def create_open_app(driver, context):  # noqa
     click_apply_licence(driver)
     ApplyForALicencePage(driver).select_licence_type("export_licence")
     functions.click_submit(driver)
-    enter_type_of_application(driver, "open", context)
+    enter_type_of_application(driver, "oiel", context)
     enter_application_name(driver, context)
     enter_permanent_or_temporary(driver, "permanent", context)
 
