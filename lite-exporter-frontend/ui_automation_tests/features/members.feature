@@ -16,11 +16,6 @@ Feature: I want to manage my organisation's members
     And I change what sites they're assigned to
     Then I change their role
 
-  @deactivate_oneself @regression
-  Scenario: Deactivate oneself
-    Given I go to exporter homepage and choose Test Org
-    When I try to deactivate myself I cannot
-
   @LT_1177 @add_and_edit_member @regression
   Scenario: Add user, deactivate, then reactivate
     Given I go to exporter homepage and choose Test Org

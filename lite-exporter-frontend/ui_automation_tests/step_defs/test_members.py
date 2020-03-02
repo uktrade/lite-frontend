@@ -75,16 +75,6 @@ def change_members_role(driver):
     assert "Super User" in Shared(driver).get_text_of_body(), "user role was expected to be Super User"
 
 
-@when("I try to deactivate myself I cannot")
-def cant_deactivate_self(driver, context):
-    exporter_hub = ExporterHubPage(driver)
-    exporter_hub.click_user_profile()
-
-    member_page = MemberPage(driver)
-    member_page.try_click_more_actions_button()
-    assert not functions.element_with_id_exists(driver, member_page.BUTTON_DEACTIVATE_ID)
-
-
 @when("I show filters")
 def show_filters(driver):
     members_page = MembersPage(driver)
