@@ -205,7 +205,7 @@ class InitialApplicationQuestionsForms:
         LABEL = ""
         DESCRIPTION = ""
         BREADCRUMB = "Apply for a licence"
-        HELP_WITH_CHOOSING_A_LICENCE = ""
+        HELP_WITH_CHOOSING_A_LICENCE = "Help with choosing a licence"
         HELP_WITH_CHOOSING_A_LICENCE_CONTENT = (
             "Read about the [different types of export control licences]"
             "(https://www.gov.uk/guidance/beginners-guide-to-export-controls#what-licence-do-i-need)."
