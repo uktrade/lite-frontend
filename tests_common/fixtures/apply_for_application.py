@@ -31,7 +31,7 @@ def apply_for_standard_application(driver, api_client_config, context):
     draft_id = lite_client.applications.add_draft(
         draft={
             "name": context.app_name,
-            "application_type": "standard",
+            "application_type": "siel",
             "export_type": "permanent",
             "have_you_been_informed": "yes",
             "reference_number_on_information_form": "1234",
@@ -113,7 +113,7 @@ def apply_for_hmrc_query(driver, api_client_config, context):
     lite_client.api_client.auth_exporter_user(lite_client.context["hmrc_org_id"])
     draft_id = lite_client.applications.add_hmrc_draft(
         draft={
-            "application_type": "hmrc",
+            "application_type": "cre",
             "organisation": lite_client.context["org_id"],
             "hmrc_organisation": lite_client.context["hmrc_org_id"],
         },
@@ -151,7 +151,7 @@ def apply_for_open_application(driver, api_client_config, context):
     draft_id = lite_client.applications.add_open_draft(
         draft={
             "name": context.app_name,
-            "application_type": "open",
+            "application_type": "oiel",
             "export_type": "permanent",
             "have_you_been_informed": "yes",
             "reference_number_on_information_form": "1234",
@@ -163,15 +163,15 @@ def apply_for_open_application(driver, api_client_config, context):
     timer.print_time("apply_for_open_application")
 
 
-def _apply_for_mod_clearance(type, has_consignee, has_ultimate_end_user, has_location, api_client_config, context):
+def _apply_for_mod_clearance(_type, has_consignee, has_ultimate_end_user, has_location, api_client_config, context):
     lite_client = get_lite_client(context, api_client_config)
     lite_client.api_client.auth_exporter_user(lite_client.context["org_id"])
-    context.app_name, context.app_time_id = generate_name(type)
+    context.app_name, context.app_time_id = generate_name(_type)
     draft_id = lite_client.applications.add_draft(
         draft={
             "name": context.app_name,
-            "application_type": type,
-            "clearance_level": "uk_official" if type == "f680_clearance" else None,
+            "application_type": _type,
+            "clearance_level": "uk_official" if _type == "f680" else None,
         },
         end_user={
             "name": "Mr Smith",
@@ -180,7 +180,7 @@ def _apply_for_mod_clearance(type, has_consignee, has_ultimate_end_user, has_loc
             "sub_type": "government",
             "website": "https://www.gov.uk",
             "type": "end_user",
-            "clearance_level": "uk_official" if type == "f680_clearance" else None,
+            "clearance_level": "uk_official" if _type == "f680" else None,
         },
         ultimate_end_user={
             "name": "Individual",
@@ -189,7 +189,7 @@ def _apply_for_mod_clearance(type, has_consignee, has_ultimate_end_user, has_loc
             "sub_type": "commercial",
             "website": "https://www.anothergov.uk",
             "type": "ultimate_end_user",
-            "clearance_level": "uk_official" if type == "f680_clearance" else None,
+            "clearance_level": "uk_official" if _type == "f680" else None,
         },
         consignee={
             "name": "Government",
@@ -198,7 +198,7 @@ def _apply_for_mod_clearance(type, has_consignee, has_ultimate_end_user, has_loc
             "sub_type": "government",
             "website": "https://www.gov.uk",
             "type": "consignee",
-            "clearance_level": "uk_official" if type == "f680_clearance" else None,
+            "clearance_level": "uk_official" if _type == "f680" else None,
         },
         third_party={
             "name": "Individual",
@@ -208,7 +208,7 @@ def _apply_for_mod_clearance(type, has_consignee, has_ultimate_end_user, has_loc
             "role": "agent",
             "website": "https://www.anothergov.uk",
             "type": "third_party",
-            "clearance_level": "uk_official" if type == "f680_clearance" else None,
+            "clearance_level": "uk_official" if _type == "f680" else None,
         },
         has_consignee=has_consignee,
         has_ultimate_end_user=has_ultimate_end_user,
@@ -221,7 +221,7 @@ def _apply_for_mod_clearance(type, has_consignee, has_ultimate_end_user, has_loc
 @fixture(scope="module")
 def apply_for_exhibition_clearance(driver, api_client_config, context):
     _apply_for_mod_clearance(
-        "exhibition_clearance",
+        _type="exhc",
         has_consignee=True,
         has_ultimate_end_user=True,
         has_location=True,
@@ -233,7 +233,7 @@ def apply_for_exhibition_clearance(driver, api_client_config, context):
 @fixture(scope="module")
 def apply_for_f680_clearance(driver, api_client_config, context):
     _apply_for_mod_clearance(
-        "f680_clearance",
+        _type="f680",
         has_consignee=False,
         has_ultimate_end_user=False,
         has_location=False,
@@ -245,7 +245,7 @@ def apply_for_f680_clearance(driver, api_client_config, context):
 @fixture(scope="module")
 def apply_for_gifting_clearance(driver, api_client_config, context):
     _apply_for_mod_clearance(
-        "gifting_clearance",
+        _type="gift",
         has_consignee=False,
         has_ultimate_end_user=False,
         has_location=False,

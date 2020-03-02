@@ -1,6 +1,9 @@
+import time
+
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from shared.tools.utils import set_timeout_to, set_timeout_to_10_seconds
+from ui_automation_tests.shared.tools.utils import set_timeout_to, set_timeout_to_10_seconds
 
 
 def click_submit(driver: WebDriver):
@@ -22,3 +25,12 @@ def element_with_css_selector_exists(driver: WebDriver, css_selector: str) -> bo
 
 def element_with_id_exists(driver: WebDriver, element_id: str) -> bool:
     return element_with_css_selector_exists(driver, f"#{element_id}")
+
+
+def send_keys_to_autocomplete(driver: WebDriver, element_id: str, keys: str):
+    element = driver.find_element_by_id(element_id)
+    element.send_keys(keys)
+
+    # Tab away from element and wait
+    element.send_keys(Keys.TAB)
+    time.sleep(1)

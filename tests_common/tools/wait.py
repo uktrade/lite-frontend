@@ -1,41 +1,39 @@
 from time import sleep
 
-from .helpers import page_is_ready, menu_is_visible
+from ui_automation_tests.shared.tools.helpers import page_is_ready, menu_is_visible
 
-from pages.shared import Shared
+from ui_automation_tests.pages.shared import Shared
 
-# How many attempts to wait for the function to return True
-timeout_limit = 60
-# How frequently in seconds the function should be checked
-function_retry_interval = 1
+TIMEOUT_LIMIT = 60  # How many attempts to wait for the function to return True
+FUNCTION_RETRY_INTERVAL = 1  # How frequently in seconds the function should be checked
 
 
 def wait_for_function(callback_function, **kwargs):
     time_no = 0
-    while time_no < timeout_limit:
+    while time_no < TIMEOUT_LIMIT:
         if callback_function(**kwargs):
             return True
-        sleep(function_retry_interval)
-        time_no += function_retry_interval
+        sleep(FUNCTION_RETRY_INTERVAL)
+        time_no += FUNCTION_RETRY_INTERVAL
     return False
 
 
-def download_link_is_present(driver, page):
+def is_download_link_present(driver):
     driver.refresh()
     return "Download" in Shared(driver).get_text_of_body()
 
 
-def element_is_present(driver, id):
+def element_is_present(driver, _id):
     driver.refresh()
-    return bool(driver.find_elements_by_id(id))
+    return bool(driver.find_elements_by_id(_id))
 
 
-def wait_for_download_button(driver, page):
-    return wait_for_function(download_link_is_present, driver=driver, page=page)
+def wait_for_download_button(driver):
+    return wait_for_function(is_download_link_present, driver=driver)
 
 
-def wait_for_element(driver, id):
-    return wait_for_function(element_is_present, driver=driver, id=id)
+def wait_for_element(driver, _id):
+    return wait_for_function(element_is_present, driver=driver, _id=_id)
 
 
 def wait_until_page_is_loaded(driver):

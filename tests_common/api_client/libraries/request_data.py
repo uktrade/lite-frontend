@@ -71,7 +71,7 @@ def build_request_data(exporter_user, gov_user):
         "good": build_good("Lentils"),
         "application": {
             "name": "application",
-            "application_type": "standard",
+            "application_type": "siel",
             "export_type": "permanent",
             "have_you_been_informed": "yes",
             "reference_number_on_information_form": "1234",
