@@ -163,7 +163,9 @@ class MarkdownTest(TestCase):
     def setUp(self):
         super().setUp()
         self.markdown_description = "Please **Click** this [link](https://www.gov.uk/)"
-        self.html_description = 'Please <strong>Click</strong> this <a href="https://www.gov.uk/">link</a>'
+        self.html_description = (
+            "Please <strong>Click</strong> this <a class='govuk-link' href=\"https://www.gov.uk/\">link</a>"
+        )
 
     def test_generic_component(self):
         component = _Component(name="a", description=self.markdown_description)

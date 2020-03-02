@@ -1,8 +1,8 @@
-from lite_forms.components import TextInput, Select, ControlListEntryInput
+from lite_forms.components import TextInput, ControlListEntryInput, AutocompleteInput
 
 
 def country_question(countries, prefix="address."):
-    return Select(title="Country", name=prefix + "country", options=countries)
+    return AutocompleteInput(title="Country", name=prefix + "country", options=countries)
 
 
 def address_questions(countries, prefix="address."):

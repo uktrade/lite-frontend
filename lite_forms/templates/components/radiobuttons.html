@@ -21,7 +21,7 @@
             {% if item.components %}
                 <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-{{ component.name }}-{{ item.key }}-conditional">
                 	{% for component in item.components %}
-                        {% include 'components.html' with question=component %}
+                        {% include 'components.html' with question=component data=component_data %}
                     {% endfor %}
                 </div>
             {% endif %}

@@ -349,7 +349,6 @@ class Option:
         value,
         description=None,
         show_pane=None,
-        sections=None,
         show_or=False,
         img_url=None,
         auto_check=True,
@@ -361,8 +360,7 @@ class Option:
         self.key = key
         self.value = value
         self.description = convert_to_markdown(description)
-        self.sections = sections
-        self.show_pane = show_pane
+        self.show_pane = show_pane  # DEPRECATED, use components instead
         self.show_or = show_or
         self.img_url = img_url
         self.components = components

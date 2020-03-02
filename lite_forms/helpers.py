@@ -136,6 +136,7 @@ def convert_to_markdown(text):
         # Replace leading (<p>) & trailing (</p>) p tags as they are not needed
         text = text.replace("<p>", "")
         text = text.replace("</p>", "")
+        text = text.replace("<a", "<a class='govuk-link'")
         return text
     else:
         return None
