@@ -39,6 +39,7 @@ class ApplicationPage:
         MISSING_DOCUMENT_REASON_PREFIX = "No document given: "
         TITLE = "Products"
         CASE_GOODS_LOCATION = "Products location"
+        OPEN_CASE_GOODS_LOCATION = "Countries"
         CASE_GOODS_LOCATION_NAME = "Name"
         CASE_GOODS_LOCATION_ADDRESS = "Address"
 
@@ -108,7 +109,7 @@ class GenerateDocumentsPage:
         BACK_LINK = "Back to templates"
         BACK_LINK_REGENERATE = "Back to case documents"
         ADD_PARAGRAPHS_LINK = "Add paragraphs"
-        BUTTON = "Continue"
+        BUTTON = "Preview"
 
     class AddParagraphsForm:
         HEADING = "Add paragraphs"
@@ -199,8 +200,7 @@ class CaseOfficerPage:
         BUTTON = "Unassign"
 
     class Error:
-        GENERIC = "There is a problem"
-        NO_SELECTION = "Select a user to assign"
+        GENERIC = "There appears to be a problem"
 
     class Search:
         TITLE = "Assign a case officer"
@@ -453,6 +453,13 @@ class Manage:
         MULTIPLE_TITLE = "Which users do you want to assign to these cases?"
         MULTIPLE_WARNING = "Users already assigned to these cases will be overwritten."
         TITLE = "Which users do you want to assign to this case?"
+        BUTTON = "Submit"
+
+    class AssignCaseOfficer:
+        TITLE = "Assign a case officer"
+        DESCRIPTION = ""
+        DELETE_BUTTON = "Unassign existing case officer only"
+        SUBMIT_BUTTON = "Submit"
 
 
 class Tabs:
