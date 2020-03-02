@@ -1,7 +1,5 @@
 # LITE Shared Assets
 
-TEST
-
 LITE Shared Assets contains the code and assets you need to start building a consistent user interface for LITE services.
 
 ## Installation
