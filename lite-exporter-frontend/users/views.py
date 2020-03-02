@@ -73,7 +73,9 @@ class ViewUser(TemplateView):
         show_change_status = not is_self_editing and is_user_super_user and not is_request_user_super_user
         show_change_role = not is_self_editing and is_user_super_user
         show_assign_sites = not is_self_editing and not is_request_user_super_user
+
         context = {
+            "signed_in_user": user,
             "profile": request_user,
             "show_change_status": show_change_status,
             "show_change_role": show_change_role,
