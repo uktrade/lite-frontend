@@ -112,14 +112,19 @@ class RegisterBusiness:
     NAME_OF_SITE = "Name of site"
     REGISTER_COMMERCIAL_TITLE = "Register an organisation"
     REGISTER_INDIVIDUAL_TITLE = "Register a private individual"
+    EDIT_COMMERCIAL_TITLE = "Edit an organisation"
+    EDIT_INDIVIDUAL_TITLE = "Edit a private individual"
     REGISTRATION_COMPLETE = "Registration complete"
-    SIC_NUMBER = "Classifies industries by a 4 digit code."
     SUCCESSFULLY_REGISTERED = " Successfully registered"
     WHERE_IS_THE_EXPORTER_BASED = "Where is the exporter based?"
 
     class UkVatNumber:
         DESCRIPTION = "9 digits long, with the first 2 letters indicating the country code of the registered business."
         TITLE = "UK VAT number"
+
+    class SicNumber:
+        DESCRIPTION = "Classifies industries by a 4 digit code."
+        TITLE = "SIC number"
 
 
 class Authentication:
