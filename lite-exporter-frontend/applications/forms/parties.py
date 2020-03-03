@@ -1,9 +1,8 @@
 from django.urls import reverse_lazy
 
-from applications.components import back_to_task_list
 from core.services import get_countries
 from lite_content.lite_exporter_frontend import strings
-from lite_content.lite_exporter_frontend.applications import PartyForm, PartyTypeForm, DeletePartyDocumentForm
+from lite_content.lite_exporter_frontend.applications import PartyForm, PartyTypeForm
 from lite_forms.common import country_question
 from lite_forms.components import (
     BackLink,
@@ -13,8 +12,6 @@ from lite_forms.components import (
     TextArea,
     TextInput,
     FormGroup,
-    FileUpload,
-    Label,
 )
 from lite_forms.generators import confirm_form
 
@@ -107,32 +104,3 @@ def new_party_form_group(application, strings, back_url, clearance_options=None)
     forms.append(party_address_form(strings.ADDRESS_FORM_TITLE, strings.SUBMIT_BUTTON))
 
     return FormGroup(forms)
-
-
-def attach_document_form(application_id, title, return_later_text, description_text=None):
-    inputs = [FileUpload("document")]
-    if description_text:
-        inputs.append(TextArea(title=description_text, optional=True, name="description", extras={"max_length": 280,}))
-    return Form(
-        title,
-        strings.EndUser.Documents.AttachDocuments.DESCRIPTION,
-        inputs,
-        back_link=back_to_task_list(application_id),
-        footer_label=Label(
-            'Or <a id="return_to_application" href="'
-            + str(reverse_lazy("applications:task_list", kwargs={"pk": application_id}))
-            + '" class="govuk-link govuk-link--no-visited-state">'
-            + return_later_text
-            + "</a> "
-            + strings.EndUser.Documents.ATTACH_LATER
-        ),
-    )
-
-
-def delete_document_confirmation_form(overview_url, back_link_text):
-    return confirm_form(
-        title=DeletePartyDocumentForm.TITLE,
-        confirmation_name="delete_document_confirmation",
-        back_link_text=back_link_text,
-        back_url=overview_url,
-    )
