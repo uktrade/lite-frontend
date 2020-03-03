@@ -11,6 +11,7 @@ def sso_sign_in(driver, internal_url, sso_sign_in_url, internal_info, context, a
     driver.find_element_by_css_selector("[type='submit']").click()
     driver.get(internal_url)
     lite_client = get_lite_client(context, api_client_config)
+    context.org_id = lite_client.context["org_id"]
     context.org_name = lite_client.context["org_name"]
     context.gov_user_id = lite_client.context["gov_user_id"]
     context.exporter_user_id = lite_client.context["exporter_user_id"]
