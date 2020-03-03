@@ -117,6 +117,7 @@ class GeneratedDocuments:
 
 class ApplicationSummaryPage:
     CLEARANCE_LEVEL = "Security grading"
+    F680_CLEARANCE_TYPES = "F680 Clearance Types"
     REFERENCE_CODE = "ECJU reference"
     REFERENCE_NAME = "Reference"
     TYPE = "Licence type"
@@ -242,8 +243,34 @@ class InitialApplicationQuestionsForms:
 class ExportLicenceQuestions:
     class ExportLicenceQuestion:
         TITLE = "Select the type of export licence you need"
-        BACK = "Back to application type"
         DESCRIPTION = ""
+        BACK = "Back"
+        STANDARD_LICENCE = "Standard licence"
+        STANDARD_LICENCE_DESCRIPTION = "Select a standard licence for a set quantity and set value of products."
+        OPEN_LICENCE = "Open licence"
+        OPEN_LICENCE_DESCRIPTION = (
+            "Select an open licence for multiple shipments of specific products to specific countries. "
+            "Open licences cover long term projects and repeat business."
+        )
+
+    class ExportType:
+        TITLE = "Select an export type"
+        DESCRIPTION = ""
+        TEMPORARY = "Temporary"
+        PERMANENT = "Permanent"
+
+    class HaveYouBeenInformedQuestion:
+        TITLE = "Have you been informed under an 'end use control' that you need to apply for a licence?"
+        DESCRIPTION = "An end use control is an official letter or email from Border Force or HMRC."
+        WHAT_WAS_THE_REFERENCE_CODE_TITLE = "Reference number"
+        WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION = "The reference number is on the official letter or email."
+
+
+class TranshipmentQuestions:
+    class TranshipmentLicenceQuestion:
+        TITLE = "Select the type of transhipment licence you need"
+        DESCRIPTION = ""
+        BACK = "Back"
         STANDARD_LICENCE = "Standard licence"
         STANDARD_LICENCE_DESCRIPTION = "Select a standard licence for a set quantity and set value of products."
         OPEN_LICENCE = "Open licence"
@@ -363,6 +390,7 @@ class F680ClearanceTaskList:
     ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
     NEW_TITLE = "F680 clearance application"
     EDIT_TITLE = "Edit the application"
+    F680_DETAILS = "F680 Details"
     GOODS = "Products"
     GOODS_LOCATION = "Locations"
     END_USER = "End user"

@@ -23,6 +23,7 @@ class CaseDocumentsPage:
 class ApplicationPage:
     class Info:
         CLEARANCE_LEVEL = "Clearance"
+        F680_CLEARANCE_TYPES = "Clearance Types"
         DESCRIPTORS = "Descriptors"
 
     class Actions:
