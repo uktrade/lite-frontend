@@ -5,6 +5,7 @@ class CasesListPage:
     EXPORTER_AMENDMENTS_BANNER = "View cases that have changed"
     ASSIGN_USERS = "Assign users"
     STATUS = "Status"
+    NOT_UPDATED_RECENTLY = "This case has not been updated in over 5 days"
 
     class Filters:
         CASE_TYPE = "type"
