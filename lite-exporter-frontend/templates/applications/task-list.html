@@ -48,6 +48,15 @@
 				{% endif %}
 			</h2>
 			<ul class="lite-task-list__items {% if is_editing %}govuk-!-padding-0{% endif %}">
+				{# F680 clearance types #}
+				{% if application_type|application_type_in_list:"F680" %}
+					{%  if not is_editing or edit_type == 'major_edit' %}
+						{% url 'applications:f680_details' application.id as f680_details_url %}
+						{% tld f680detail 'f680detail' 'f680details' as f680_details %}
+						{% include "includes/task-list-item.html" with id='types' title=strings.F680_DETAILS url=f680_details_url status=application.types|task_list_item_status description=f680_details %}
+					{% endif %}
+				{% endif %}
+
 				{# Clearance Level #}
 				{% if application_type|application_type_in_list:"HAS_CLEARANCE_LEVEL" %}
 					{% url 'applications:clearance_level' application.id as clearance_url %}
@@ -91,8 +100,10 @@
 
 				{# End User #}
 				{% if application_type|application_type_in_list:"HAS_END_USER" %}
-					{% url 'applications:end_user' application.id as end_user_url %}
-					{% include "includes/task-list-item.html" with id="end_user" title=strings.END_USER url=end_user_url status=application.end_user|get_parties_status optional=application_type|application_type_in_list:"F680" %}
+					{%  if not is_editing or edit_type == 'major_edit' %}
+						{% url 'applications:end_user' application.id as end_user_url %}
+						{% include "includes/task-list-item.html" with id="end_user" title=strings.END_USER url=end_user_url status=application.end_user|get_parties_status optional=application_type|application_type_in_list:"F680" %}
+					{% endif %}
 				{% endif %}
 
 				{# Ultimate End Users #}

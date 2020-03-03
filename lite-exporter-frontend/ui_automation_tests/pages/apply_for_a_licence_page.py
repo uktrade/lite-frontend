@@ -16,6 +16,7 @@ class ApplyForALicencePage(BasePage):
     LINK_DELETE_DRAFT_ID = "link-delete-draft"
     SUCCESS_BANNER_CLASS = ".govuk-panel--confirmation"
     CHECKBOXES_GOODS_CATEGORIES_NAME = "goods_categories[]"
+    F680_CLEARANCE_TYPE_CHECKBOXES_NAME = "types[]"
 
     def enter_name_or_reference_for_application(self, name):
         element = self.driver.find_element_by_id(self.NAME_OR_REFERENCE_INPUT_ID)
@@ -38,6 +39,11 @@ class ApplyForALicencePage(BasePage):
 
     def select_goods_categories(self):
         checkboxes = self.driver.find_elements_by_name(self.CHECKBOXES_GOODS_CATEGORIES_NAME)
+        for checkbox in checkboxes:
+            checkbox.click()
+
+    def select_types_of_clearance(self):
+        checkboxes = self.driver.find_elements_by_name(self.F680_CLEARANCE_TYPE_CHECKBOXES_NAME)
         for checkbox in checkboxes:
             checkbox.click()
 

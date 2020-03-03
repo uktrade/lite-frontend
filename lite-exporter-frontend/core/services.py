@@ -19,6 +19,7 @@ from conf.constants import (
     CONTROL_LIST_ENTRIES_URL,
     NEWLINE,
     PV_GRADINGS_URL,
+    STATIC_F680_CLEARANCE_TYPES_URL,
 )
 from lite_forms.generators import error_page
 
@@ -174,6 +175,12 @@ def get_control_list_entries(request, convert_to_options=False):
 
     data = get(request, CONTROL_LIST_ENTRIES_URL)
     return data.json().get("control_list_entries")
+
+
+# F680 clearance types
+def get_f680_clearance_types(request):
+    data = get(request, STATIC_F680_CLEARANCE_TYPES_URL)
+    return data.json().get("types")
 
 
 # PV gradings

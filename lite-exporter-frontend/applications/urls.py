@@ -11,6 +11,7 @@ from applications.views import (
     told_by_an_official,
     optional_note,
     goods_types,
+    f680_details,
     clearance,
 )
 
@@ -52,6 +53,8 @@ urlpatterns = [
         goods.RemovePreexistingGood.as_view(),
         name="remove_preexisting_good",
     ),
+    # F680 details
+    path("<uuid:pk>/f680-details/", f680_details.F680Details.as_view(), name="f680_details"),
     # Goods Types
     path("<uuid:pk>/goods-types/", goods_types.GoodsTypeList.as_view(), name="goods_types"),
     path("<uuid:pk>/goods-types/countries/", goods_types.GoodsTypeCountries.as_view(), name="goods_countries"),

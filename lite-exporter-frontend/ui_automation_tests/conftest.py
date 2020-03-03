@@ -249,34 +249,6 @@ def add_new_party(driver, type, name, website, address, country, context):  # no
     functions.click_submit(driver)
 
 
-@when(  # noqa
-    parsers.parse(
-        'I add an end user with clearance of sub_type: "{type}", name: "{name}", '
-        'website: "{website}", clearance: "{clearance}", address: "{address}" and country "{'
-        'country}"'
-    )
-)
-def add_new_end_user_with_clearance(driver, type, name, website, clearance, address, country, context):  # noqa
-    add_end_user_pages = AddEndUserPages(driver)
-    add_end_user_pages.create_new_or_copy_existing(copy_existing=False)
-    add_end_user_pages.select_type(type)
-    context.type_end_user = type
-    functions.click_submit(driver)
-    add_end_user_pages.enter_name(name)
-    context.name_end_user = name
-    functions.click_submit(driver)
-    add_end_user_pages.enter_website(website)
-    functions.click_submit(driver)
-    no = utils.get_element_index_by_text(Shared(driver).get_radio_buttons_elements(), clearance)
-    Shared(driver).click_on_radio_buttons(no)
-    functions.click_submit(driver)
-    functions.click_submit(driver)
-    add_end_user_pages.enter_address(address)
-    context.address_end_user = address
-    add_end_user_pages.enter_country(country)
-    functions.click_submit(driver)
-
-
 @when(parsers.parse('I select "{choice}" for where my goods are located'))  # noqa
 def choose_location_type(driver, choice):  # noqa
     which_location_form = WhichLocationFormPage(driver)

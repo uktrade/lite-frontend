@@ -85,6 +85,18 @@
 					</dd>
 				</div>
 			{% endif %}
+			{% if application.types %}
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'applications.ApplicationSummaryPage.F680_CLEARANCE_TYPES' %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{% for clearance_type in application.types %}
+							<p>{{ clearance_type.name.value|default_na }}</p>
+						{% endfor %}
+					</dd>
+				</div>
+			{% endif %}
 			<div class="govuk-summary-list__row">
 				<dt class="govuk-summary-list__key">
 					{% lcs 'applications.ApplicationSummaryPage.STATUS' %}
