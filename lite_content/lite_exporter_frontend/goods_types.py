@@ -27,7 +27,7 @@ class Document:
 
 
 class Documents:
-    SAVE_END_USER = "save your progress and return to the application later"
+    SAVE_AND_RETURN_LATER = "save your progress and return to the application later"
 
     class AttachDocuments:
         BACK_TO_APPLICATION_OVERVIEW = "Back to additional documents overview"
