@@ -10,34 +10,54 @@ class OrganisationsFormPage(BasePage):
         self.driver.find_element_by_id("type-" + individual_or_commercial).click()
 
     def enter_name(self, text):
-        self.driver.find_element_by_id("name").send_keys(text)
+        name = self.driver.find_element_by_id("name")
+        name.clear()
+        name.send_keys(text)
 
     def enter_eori_number(self, text):
-        self.driver.find_element_by_id("eori_number").send_keys(text)
+        eori_number = self.driver.find_element_by_id("eori_number")
+        eori_number.clear()
+        eori_number.send_keys(text)
 
     def enter_sic_number(self, text):
-        self.driver.find_element_by_id("sic_number").send_keys(text)
+        sic_number = self.driver.find_element_by_id("sic_number")
+        sic_number.clear()
+        sic_number.send_keys(text)
 
     def enter_vat_number(self, text):
-        self.driver.find_element_by_id("vat_number").send_keys(text)
+        vat_number = self.driver.find_element_by_id("vat_number")
+        vat_number.clear()
+        vat_number.send_keys(text)
 
     def enter_registration_number(self, text):
-        self.driver.find_element_by_id("registration_number").send_keys(text)
+        registration_number = self.driver.find_element_by_id("registration_number")
+        registration_number.clear()
+        registration_number.send_keys(text)
 
     def enter_site_name(self, text):
-        self.driver.find_element_by_id("site.name").send_keys(text)
+        site_name = self.driver.find_element_by_id("site.name")
+        site_name.clear()
+        site_name.send_keys(text)
 
     def enter_address_line_1(self, text):
-        self.driver.find_element_by_id("site.address.address_line_1").send_keys(text)
+        site_address_line_1 = self.driver.find_element_by_id("site.address.address_line_1")
+        site_address_line_1.clear()
+        site_address_line_1.send_keys(text)
 
     def enter_post_code(self, text):
-        self.driver.find_element_by_id("site.address.postcode").send_keys(text)
+        site_address_postcode = self.driver.find_element_by_id("site.address.postcode")
+        site_address_postcode.clear()
+        site_address_postcode.send_keys(text)
 
     def enter_city(self, text):
-        self.driver.find_element_by_id("site.address.city").send_keys(text)
+        site_address_city = self.driver.find_element_by_id("site.address.city")
+        site_address_city.clear()
+        site_address_city.send_keys(text)
 
     def enter_region(self, text):
-        self.driver.find_element_by_id("site.address.region").send_keys(text)
+        site_address_region = self.driver.find_element_by_id("site.address.region")
+        site_address_region.clear()
+        site_address_region.send_keys(text)
 
     def enter_country(self, text):
         country_tb = self.driver.find_element_by_id("site.address.country")

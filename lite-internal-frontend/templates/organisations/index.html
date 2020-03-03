@@ -30,31 +30,39 @@
 					<th class="govuk-table__header" scope="col">{% lcs "organisations.OrganisationsPage.Table.SIC_NUMBER" %}</th>
 					<th class="govuk-table__header" scope="col">{% lcs "organisations.OrganisationsPage.Table.VAT_NUMBER" %}</th>
 					<th class="govuk-table__header" scope="col">{% lcs "organisations.OrganisationsPage.Table.ADDRESS" %}</th>
+					<th class="govuk-table__header" scope="col"></th>
 				</tr>
 			</thead>
 			<tbody class="govuk-table__body">
 				{% for organisation in data.results %}
-					<tr class="govuk-table__row">
-						<td class="govuk-table__cell">
+					<tr class="govuk-table__row" id="{{ organisation.id }}">
+						<td class="govuk-table__cell" id="name">
 							<a class="govuk-link" href="{% url 'organisations:organisation' organisation.id %}">
 								{{ organisation.name|highlight_text:search_term }}
 							</a>
 						</td>
-                        <td class="govuk-table__cell">
+                        <td class="govuk-table__cell" id="type">
 							{{ organisation.type.value }}
 						</td>
-						<td class="govuk-table__cell">
+						<td class="govuk-table__cell" id="eori-number">
 							{{ organisation.eori_number|default_na }}
 						</td>
-						<td class="govuk-table__cell">
+						<td class="govuk-table__cell" id="sic-number">
 							{{ organisation.sic_number|default_na }}
 						</td>
-						<td class="govuk-table__cell">
+						<td class="govuk-table__cell" id="vat-number">
 							{{ organisation.vat_number|default_na }}
 						</td>
-						<td class="govuk-table__cell">
+						<td class="govuk-table__cell" id="primary-site">
 							{{ organisation.primary_site|get_address }}
 						</td>
+						<td class="govuk-table__cell">
+                        {% if can_manage_organisations %}
+                            <a href="{% url 'organisations:edit' organisation.id %}" class="govuk-link govuk-link--no-visited-state" id="edit-org-{{ organisation.id }}">
+                                {% lcs "organisations.OrganisationsPage.Table.EDIT" %}
+                            </a>
+                        {% endif %}
+                    </td>
 					</tr>
 				{% endfor %}
 			</tbody>

@@ -14,6 +14,10 @@ Feature: I want to add a company to LITE
     And I setup an initial site with name: "HQ", address line 1: "123 Cobalt Street", town or city: "London", County: "Islington", post code: "AB1 2CD", country: "Ukraine"
     And I setup the admin user with email: "TestBusinessForSites@mail.com"
     Then organisation is registered
+    When I click on an organisation to edit
+    And I select "commercial"
+    And I provide company registration details of name: "ChangedBlueOcean", EORI: "123", SIC: "456", VAT: "789", CRN: "101112"
+    Then The organisation is listed on the organisations page
 
   @LT_1417_test_adding_individual_as_organisation @regression
   Scenario: Test registering an individual
@@ -23,7 +27,7 @@ Feature: I want to add a company to LITE
     And I select "individual"
     And I provide individual registration details of first and last name: "Json", EORI: "GB987654312000" and email: "johnsmith@email.com"
     And I setup an initial site with name: "HQ", address line 1: "123 Cobalt Street", town or city: "London", County: "Islington", post code: "AB1 2CD", country: "Ukraine"
-    Then organisation is registered
+    Then individual organisation is registered
 
   @LT_1008_test_adding_hmrc_organisation @regression
   Scenario: Test registering a HMRC organisation

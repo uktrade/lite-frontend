@@ -3,23 +3,33 @@
 {% block back_link %}
     {% if organisation.type.key == 'hmrc' %}
         <a href="{% url 'organisations:hmrc' %}" class="govuk-back-link">
-            Back to hmrc organisations
+            {% lcs "organisations.OrganisationPage.Actions.BACK_TO_HMRC" %}
         </a>
     {% else %}
         <a href="{% url 'organisations:organisations' %}" class="govuk-back-link">
-            Back to organisations
+           {% lcs "organisations.OrganisationPage.Actions.BACK_TO_ORGS" %}
         </a>
     {% endif %}
+
 {% endblock %}
 
 {% block two_thirds %}
+	<div class="lite-app-bar">
     <h1 class="govuk-heading-l">{{ title }}</h1>
+	<div class="lite-app-bar__controls">
+		{% if can_manage_organisations %}
+			<a href="{% url 'organisations:edit' organisation.id %}" type="submit" class="govuk-button" id="button-edit-org">
+				{% lcs "organisations.OrganisationPage.Actions.EDIT" %}
+			</a>
+		{% endif %}
+	</div>
+	</div>
 
     <dl class="govuk-summary-list">
         {% if organisation.eori_number %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
-                    EORI number
+                    {% lcs "organisations.OrganisationPage.Fields.EORI_NUMBER" %}
                 </dt>
                 <dd class="govuk-summary-list__value">
                     {{ organisation.eori_number }}
@@ -29,7 +39,7 @@
         {% if organisation.sic_number %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
-                    SIC number
+                    {% lcs "organisations.OrganisationPage.Fields.SIC_NUMBER" %}
                 </dt>
                 <dd class="govuk-summary-list__value">
                     {{ organisation.sic_number }}
@@ -39,7 +49,7 @@
         {% if organisation.vat_number %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
-                    VAT number
+                    {% lcs "organisations.OrganisationPage.Fields.VAT_NUMBER" %}
                 </dt>
                 <dd class="govuk-summary-list__value">
                     {{ organisation.vat_number }}
@@ -49,7 +59,7 @@
         {% if organisation.registration_number %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
-                    Company registration number
+                   {% lcs "organisations.OrganisationPage.Fields.COMPANY_REG_NUMBER" %}
                 </dt>
                 <dd class="govuk-summary-list__value">
                     {{ organisation.registration_number }}
@@ -58,7 +68,7 @@
         {% endif %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
-                Created at
+                {% lcs "organisations.OrganisationPage.Fields.CREATED_AT" %}
             </dt>
             <dd class="govuk-summary-list__value">
                 {{ organisation.created_at|str_date }}
@@ -66,7 +76,7 @@
         </div>
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
-                Address
+                {% lcs "organisations.OrganisationPage.Fields.ADDRESS" %}
             </dt>
             <dd class="govuk-summary-list__value">
                 {{ organisation.primary_site.address.address_line_1 }}<br/>
@@ -80,7 +90,7 @@
         </div>
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
-                Type
+                {% lcs "organisations.OrganisationPage.Fields.TYPE" %}
             </dt>
             <dd class="govuk-summary-list__value">
                 {{ organisation.type.value }}
@@ -116,9 +126,9 @@
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header">
-						Name
+						{% lcs "organisations.OrganisationPage.Sites.NAME" %}
 					</th>
-					<th class="govuk-table__header" scope="col">Address</th>
+					<th class="govuk-table__header" scope="col">{% lcs "organisations.OrganisationPage.Sites.ADDRESS" %}</th>
 				</tr>
 			</thead>
 			<tbody class="govuk-table__head">
@@ -141,6 +151,6 @@
 			</tbody>
 		</table>
 	{% else %}
-		<span class="govuk-hint">This organisation doesn't have any sites.</span>
+		<span class="govuk-hint">{% lcs "organisations.OrganisationPage.Sites.NO_SITES" %}</span>
 	{% endif %}
 {% endblock %}
