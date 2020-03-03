@@ -1,8 +1,6 @@
 from time import sleep
 
-from ui_automation_tests.shared.tools.helpers import page_is_ready, menu_is_visible
-
-from ui_automation_tests.pages.shared import Shared
+from ..tools.helpers import page_is_ready, menu_is_visible
 
 TIMEOUT_LIMIT = 60  # How many attempts to wait for the function to return True
 FUNCTION_RETRY_INTERVAL = 1  # How frequently in seconds the function should be checked
@@ -20,7 +18,7 @@ def wait_for_function(callback_function, **kwargs):
 
 def is_download_link_present(driver):
     driver.refresh()
-    return "Download" in Shared(driver).get_text_of_body()
+    return "Download" in driver.find_element_by_tag_name("body").text
 
 
 def element_is_present(driver, _id):

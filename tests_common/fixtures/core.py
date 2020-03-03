@@ -1,7 +1,7 @@
 from pytest import fixture
 
-from ui_automation_tests.shared.api_client.api_client import ApiClient
-from ui_automation_tests.shared.api_client.libraries.request_data import build_request_data
+from ..api_client.api_client import ApiClient
+from ..api_client.libraries.request_data import build_request_data
 
 
 @fixture(scope="session")

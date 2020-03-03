@@ -3,7 +3,7 @@ import time
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from ui_automation_tests.shared.tools.utils import set_timeout_to, set_timeout_to_10_seconds
+from .tools.utils import set_timeout_to, set_timeout_to_10_seconds
 
 
 def click_submit(driver: WebDriver):

@@ -213,6 +213,7 @@ def _apply_for_mod_clearance(_type, has_consignee, has_ultimate_end_user, has_lo
         has_consignee=has_consignee,
         has_ultimate_end_user=has_ultimate_end_user,
         has_location=has_location,
+        f680_clearance_types=["market_survey"] if _type == "f680" else None,
     )
     lite_client.applications.submit_application(draft_id)
     save_application_data_to_context(lite_client, context)

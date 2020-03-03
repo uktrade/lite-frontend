@@ -48,6 +48,14 @@ class Applications:
             body={"sites": [self.api_client.context[primary_site_id_key]]},
         )
 
+    def add_f680_clearance_types(self, draft_id, types):
+        self.api_client.make_request(
+            method="PUT",
+            url="/applications/" + draft_id + "/",
+            headers=self.api_client.exporter_headers,
+            body={"types": types},
+        )
+
     def add_draft(
         self,
         draft=None,
@@ -59,6 +67,7 @@ class Applications:
         has_location=True,
         consignee=None,
         third_party=None,
+        f680_clearance_types=None,
     ):
         draft_id = self.create_draft(draft=draft)
         if has_location:
@@ -77,6 +86,9 @@ class Applications:
 
         if has_consignee:
             parties.append(self.parties.add_party(request_data_key="consignee", draft_id=draft_id, party=consignee))
+
+        if f680_clearance_types:
+            self.add_f680_clearance_types(draft_id=draft_id, types=f680_clearance_types)
 
         additional_document_id = self.add_additional_document(draft_id=draft_id)
 
