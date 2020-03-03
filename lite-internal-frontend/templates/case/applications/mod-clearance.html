@@ -44,6 +44,16 @@
 			</div>
 			{% endif %}
 		</div>
+		{% if case.application.case_type.sub_type.key == "f680_clearance" %}
+			<div class="govuk-grid-row">
+				<div class="govuk-grid-column-one-quarter">
+					<p class="app-case-board__heading">{% lcs 'cases.ApplicationPage.Info.F680_CLEARANCE_TYPES' %}</p>
+					{% for clearance_type in case.application.types %}
+						<p>{{ clearance_type.name.value|default_na }}</p>
+					{% endfor %}
+				</div>
+			</div>
+		{%  endif %}
 	</div>
 
 	<div class="govuk-accordion app-accordion" data-module="govuk-accordion" id="accordion-default">
