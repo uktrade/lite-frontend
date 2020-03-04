@@ -18,7 +18,7 @@ from lite_forms.components import (
 )
 from lite_forms.styles import HeadingStyle
 
-from core.services import get_control_list_entries, get_pv_gradings
+from core.services import get_control_list_entries, get_gov_pv_gradings
 from picklists.services import get_picklists
 
 
@@ -70,6 +70,7 @@ def respond_to_clc_query_form(request, case):
 
 
 def respond_to_grading_query_form(case):
+    pv_gradings = get_gov_pv_gradings(request=None, convert_to_options=True)
     return Form(
         title=cases.RespondGradingQueryForm.TITLE,
         questions=[
@@ -81,7 +82,7 @@ def respond_to_grading_query_form(case):
                     TextInput(title=cases.RespondGradingQueryForm.Grading.PREFIX, name="prefix", optional=True),
                     Select(
                         # request not supplied since static endpoints don't require it.
-                        options=get_pv_gradings(request=None, convert_to_options=True),
+                        options=pv_gradings,
                         title=cases.RespondGradingQueryForm.Grading.GRADING,
                         name="grading",
                     ),

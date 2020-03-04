@@ -193,6 +193,9 @@ def prepare_data_for_advice(json):
     if json.get("type") == "proviso":
         base_data["proviso"] = json["proviso"]
 
+    if json.get("pv_grading"):
+        base_data["pv_grading"] = json["pv_grading"]
+
     new_data = []
     single_cases = ["end_user", "consignee"]
     multiple_cases = {

@@ -41,7 +41,15 @@
                 {% endif %}
             {% endif %}
 
-            <p class="govuk-heading-s">{% lcs 'cases.AdvicePage.REASON_FOR_ADVICE_TITLE' %}</p>
+            {% if advice.collated_pv_grading %}
+                <p class="govuk-heading-s">{% lcs 'cases.AdvicePage.GRADING_TITLE' %}</p>
+                <p class="govuk-body-s">{{ advice.collated_pv_grading }}</p>
+            {% elif advice.pv_grading %}
+                <p class="govuk-heading-s">{% lcs 'cases.AdvicePage.GRADING_TITLE' %}</p>
+                <p class="govuk-body-s">{{ advice.pv_grading.value }}</p>
+            {% endif %}
+
+			<p class="govuk-heading-s">{% lcs 'cases.AdvicePage.REASON_FOR_ADVICE_TITLE' %}</p>
             <p class="govuk-body-s">{{ advice.text|default_na }}</p>
 
             <p class="govuk-heading-s">{% lcs 'cases.AdvicePage.NOTE_TO_APPLICANT_TITLE' %}</p>

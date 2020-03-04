@@ -1,3 +1,5 @@
+from selenium.webdriver.support.select import Select
+
 from shared.BasePage import BasePage
 
 
@@ -14,6 +16,7 @@ class GiveAdvicePages(BasePage):
     FINALISE_BUTTON = "finalise_button"
     GIVE_OR_CHANGE_ADVICE_BUTTON = "button-give-advice"
     FINALISE_GOODS_AND_COUNTRIES_BUTTON = "finalise_button"
+    CLEARANCE_LEVEL_DROPDOWN_ID = "pv_grading"
     RADIO_INPUT_APPROVE = '.govuk-radios input[value="approve"]'
     DAY = "day"
     MONTH = "month"
@@ -73,3 +76,10 @@ class GiveAdvicePages(BasePage):
 
     def give_advice_button_present(self):
         return self.driver.find_elements_by_id(self.GIVE_OR_CHANGE_ADVICE_BUTTON)
+
+    def clearance_grading_present(self):
+        return self.driver.find_elements_by_id(self.CLEARANCE_LEVEL_DROPDOWN_ID)
+
+    def select_clearance_grading(self, clearance_level):
+        clearance_level_dropdown = Select(self.driver.find_element_by_id(self.CLEARANCE_LEVEL_DROPDOWN_ID))
+        clearance_level_dropdown.select_by_visible_text(clearance_level)

@@ -171,3 +171,17 @@ def check_give_advice_button_is_not_present(driver):
 @then("I see total goods value")
 def total_goods_value(driver, context):
     assert "Total value: £" + str(context.good_value) in Shared(driver).get_text_of_body()
+
+
+@then("I dont see clearance level")
+def dont_see_clearance_level(driver):
+    driver.set_timeout_to(0)
+    assert (
+        len(GiveAdvicePages(driver).clearance_grading_present()) == 0
+    ), "clearance level is displayed when it shouldn't be"
+    driver.set_timeout_to(10)
+
+
+@when(parsers.parse('I select "{clearance_level}" clearance level'))
+def select_clearance_level(driver, clearance_level):
+    GiveAdvicePages(driver).select_clearance_grading(clearance_level)

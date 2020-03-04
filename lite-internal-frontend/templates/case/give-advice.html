@@ -54,10 +54,25 @@
 	<input type="hidden" name="ultimate_end_users" value="{{ ultimate_end_users }}">
 	<input type="hidden" name="third_parties" value="{{ third_parties }}">
 
-	{% if type == 'proviso' %}
+   {% if type == 'approve' or type == 'proviso' %}
+        {% if show_clearance %}
+            <div class="govuk-form-group {% if errors|key_value:'option' %}govuk-form-group--error{% endif %}">
+                <div class="govuk-heading-m">{% lcs 'cases.Advice.SELECT_GRADING' %}<br>
+                    <select id="pv_grading" name="pv_grading" class="govuk-select {% if error %}govuk-select--error{% endif %}" style="min-width: 300px;">
+                    {% for grading in pv_gradings %}
+                        {% for key, value in grading.items %}
+                            <option value="{{ key }}">{{ value }}</option>
+                        {% endfor %}
+                    {% endfor %}
+                    </select>
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
 
-		<div class="govuk-form-group {% if errors|key_value:'proviso' %}govuk-form-group--error{% endif %}">
-			<div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="5000">
+    {% if type == 'proviso' %}
+        <div class="govuk-form-group {% if errors|key_value:'proviso' %}govuk-form-group--error{% endif %}">
+            <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="5000">
 				<div class="govuk-form-group">
 					<div class="app-picklist-picker-heading__container">
 						<label class="govuk-label--m" for="proviso">

@@ -7,14 +7,14 @@ Feature: I want to record my user advice and any comments and conditions relatin
   @LT_1376 @regression @LT_1760
   Scenario: Give advice and proviso a licence
     Given I sign in to SSO or am signed into SSO
-    And I create standard application or standard application has been previously created
+    And an Exhibition Clearance is created
     And I create a proviso picklist
     And I create a standard advice picklist
     When I go to application previously created
     And I click on view advice
-    Then I see total goods value
-    When I select all items in the advice view
+    And I select all items in the advice view
     And I choose to 'proviso' the licence
+    And I select "UK SECRET" clearance level
     And I import text from the 'proviso' picklist
     And I import text from the 'advice' picklist
     And I write 'We will get back to you in three weeks' in the note text field
@@ -34,9 +34,11 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I create a standard advice picklist
     When I go to application previously created
     And I click on view advice
-    And I select all items in the advice view
+    Then I see total goods value
+    When I select all items in the advice view
     And I choose to 'approve' the licence
-    And I import text from the 'advice' picklist
+    Then I dont see clearance level
+    When I import text from the 'advice' picklist
     And I write 'We will get back to you in three weeks' in the note text field
     And I click continue
     Then I see my advice has been posted successfully

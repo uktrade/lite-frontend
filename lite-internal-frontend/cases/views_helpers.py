@@ -3,12 +3,13 @@ from django.http import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 
+from cases.constants import CaseType
 from lite_forms.generators import error_page, form_page
 
 from cases.forms.advice import advice_recommendation_form
 from cases.helpers import check_matching_advice, add_hidden_advice_data, clean_advice
 from cases.services import get_case, _get_total_goods_value
-from core.services import get_denial_reasons, get_user_permissions, get_status_properties
+from core.services import get_denial_reasons, get_user_permissions, get_status_properties, get_pv_gradings
 from picklists.services import get_picklists
 from teams.services import get_teams
 from users.services import get_gov_user
@@ -80,12 +81,9 @@ def _can_advice_be_finalised(advice):
 
 def _can_user_create_and_edit_advice(case, permissions):
     """Check that the user can create and edit advice. """
-    if Permission.MANAGE_TEAM_CONFIRM_OWN_ADVICE.value in permissions or (
+    return Permission.MANAGE_TEAM_CONFIRM_OWN_ADVICE.value in permissions or (
         Permission.MANAGE_TEAM_ADVICE.value in permissions and not case.get("has_advice").get("my_user")
-    ):
-        return True
-    else:
-        return False
+    )
 
 
 def render_form_page(get_advice, request, case, form, team=None):
@@ -154,6 +152,7 @@ def post_advice(get_advice, request, case, form, user_team_final, team=None):
         "proviso_picklist": proviso_picklist_items["picklist_items"],
         "advice_picklist": advice_picklist_items["picklist_items"],
         "static_denial_reasons": static_denial_reasons,
+        "pv_gradings": get_pv_gradings(request),
         # Add previous data
         "goods": selected_advice_data.get("goods"),
         "goods_types": selected_advice_data.get("goods_types"),
@@ -164,6 +163,7 @@ def post_advice(get_advice, request, case, form, user_team_final, team=None):
         "consignee": selected_advice_data.get("consignee"),
         "data": pre_data,
         "level": user_team_final,
+        "show_clearance": CaseType.is_mod(case["case_type"]["sub_type"]["key"]),
     }
     return render(request, form, context)
 
@@ -193,6 +193,7 @@ def post_advice_details(post_case_advice, request, case, form, user_team_final):
             "proviso_picklist": proviso_picklist_items["picklist_items"],
             "advice_picklist": advice_picklist_items["picklist_items"],
             "static_denial_reasons": static_denial_reasons,
+            "pv_gradings": get_pv_gradings(request),
             # Add previous data
             "goods": data.get("goods"),
             "goods_types": data.get("goods_types"),
