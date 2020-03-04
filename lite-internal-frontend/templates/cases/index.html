@@ -66,6 +66,7 @@
 							</a>
 						</th>
 						<th class="cases-table__header" scope="col"></th>
+						<th class="cases-table__header" scope="col"></th>
 					</tr>
 				</thead>
 				<tbody class="govuk-table__body">
@@ -177,6 +178,13 @@
 									{% endif %}
 								</a>
 							</td>
+							<td class="cases-table__cell govuk-table__cell--numeric">
+								{% if not case.is_recently_updated and not is_all_cases_queue %}
+									<span class="app-cases__row__attention-needed">
+										!
+									</span>
+								{% endif %}
+							</td>
 						</tr>
 					{% endfor %}
 				</tbody>
@@ -204,7 +212,12 @@
 {% block javascript %}
 	<script src="{% static 'javascripts/cases.js' %}"></script>
 	<script src="{% static 'javascripts/select-buttons.js' %}"></script>
+
 	<script nonce="{{ request.csp_nonce }}">
+		tippy('.app-cases__row__attention-needed', {
+		  content: "{% lcs 'cases.CasesListPage.NOT_UPDATED_RECENTLY' %}"
+		});
+
 		function toggleDropdown() {
 			$(".app-dropdown-background").toggle();
 			$("#queues").toggleClass('app-dropdown__container--visible');

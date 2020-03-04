@@ -1,0 +1,17 @@
+$tooltip-background-colour: govuk-colour("black");
+
+.tippy-box {
+    @include govuk-font($size: 14);
+    background-color: $tooltip-background-colour;
+    color: govuk-colour("white");
+    border-radius: 0;
+    filter: drop-shadow(0 2px 5px rgba(black, 0.3));
+}
+
+.tippy-box[data-placement^='top'] > .tippy-arrow::before {
+    border-top-color: $tooltip-background-colour;
+}
+
+.tippy-box[data-placement^='bottom'] > .tippy-arrow::before {
+    border-bottom-color: $tooltip-background-colour;
+}

@@ -30,7 +30,7 @@ from cases.services import (
 )
 from cases.services import post_case_documents, get_case_documents, get_document
 from conf import settings
-from conf.constants import DEFAULT_QUEUE_ID, GENERATED_DOCUMENT
+from conf.constants import ALL_CASES_QUEUE_ID, GENERATED_DOCUMENT
 from conf.settings import AWS_STORAGE_BUCKET_NAME
 from core.helpers import convert_dict_to_query_params
 from core.services import get_status_properties, get_user_permissions, get_permissible_statuses
@@ -51,7 +51,7 @@ class Cases(TemplateView):
         case_type = request.GET.get("case_type")
         status = request.GET.get("status")
         sort = request.GET.get("sort")
-        queue_id = request.GET.get("queue_id")
+        queue_id = request.GET.get("queue_id", ALL_CASES_QUEUE_ID)
         case_officer = request.GET.get("case_officer")
         assigned_user = request.GET.get("assigned_user")
 
@@ -106,13 +106,14 @@ class Cases(TemplateView):
             "params_str": convert_dict_to_query_params(params),
             "updated_cases_banner_queue_id": updated_cases_banner_queue_id,
             "filters": filters,
+            "is_all_cases_queue": queue_id == ALL_CASES_QUEUE_ID,
         }
 
         return render(request, "cases/index.html", context)
 
     def post(self, request, **kwargs):
         """ Assign users depending on what cases were selected. """
-        queue_id = request.GET.get("queue_id", DEFAULT_QUEUE_ID)
+        queue_id = request.GET.get("queue_id", ALL_CASES_QUEUE_ID)
         return redirect(
             reverse("queues:case_assignments", kwargs={"pk": queue_id})
             + "?cases="

@@ -1,3 +1,28 @@
+.app-cases__row__attention-needed {
+    position: relative;
+    @include govuk-font($size: 16, $weight: bold, $line-height: 24px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    color: govuk-colour("black");
+    z-index: 0;
+    padding-top: 2px;
+    text-shadow: 0 1px 0 govuk-colour("white");
+    cursor: default;
+
+    &::after {
+        @include govuk-shape-arrow($direction: up, $base: 24px);
+        position: absolute;
+        content: "";
+        top: 2px;
+        left: 0;
+        border-color: govuk-colour("yellow");
+        z-index: -1;
+    }
+}
+
 .cases-table__header {
     @extend .govuk-table__header;
 	line-height: 40px;
