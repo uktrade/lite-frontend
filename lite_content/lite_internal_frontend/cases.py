@@ -424,6 +424,7 @@ class Advice:
     OTHER = "Is there anything else you want to say to the applicant? (optional)"
     REASON = "What are your reasons for this decision?"
     TEXT_ON_LICENCE = "This will appear on the generated documentation"
+    SELECT_GRADING = "Select a grading"
 
 
 class Manage:
@@ -534,6 +535,7 @@ class AdvicePage:
     DENIAL_REASONS_TITLE = "Denial reasons"
     REASON_FOR_ADVICE_TITLE = "Reason for this advice"
     NOTE_TO_APPLICANT_TITLE = "Note to applicant"
+    GRADING_TITLE = "Grading"
 
     class Table:
         REJECT = "Reject"
