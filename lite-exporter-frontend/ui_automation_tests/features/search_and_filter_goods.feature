@@ -4,7 +4,6 @@ Feature: I want to search for goods in my goods list to add to an in progress ap
   I want to search for goods in my goods list to add to an in progress application
   So that I can quickly and easily complete my application for types of goods I have exported before
 
-
   @LT_1450_filters @regression
   Scenario: Search for goods by filters in goods list
     Given I go to exporter homepage and choose Test Org

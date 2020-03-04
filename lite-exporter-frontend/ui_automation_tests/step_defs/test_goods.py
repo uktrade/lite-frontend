@@ -2,6 +2,7 @@ import os
 
 from pytest_bdd import scenarios, when, then, parsers
 
+from ui_automation_tests.pages.add_goods_grading_page import AddGoodGradingPage
 from ui_automation_tests.conftest import get_file_upload_path
 from ui_automation_tests.pages.add_goods_page import AddGoodPage
 from ui_automation_tests.pages.attach_document_page import AttachDocumentPage
@@ -11,6 +12,7 @@ from ui_automation_tests.pages.shared import Shared
 from ui_automation_tests.pages.standard_application.goods import StandardApplicationGoodsPage
 from ui_automation_tests.pages.standard_application.good_details import StandardApplicationGoodDetails
 from ui_automation_tests.shared import functions
+import ui_automation_tests.shared.tools.helpers as utils
 
 scenarios("../features/goods.feature", strict_gherkin=False)
 
@@ -196,14 +198,55 @@ def raise_clc_query(driver, control_code, clc_reason, pv_grading_reason):  # noq
     functions.click_submit(driver)
 
 
-@when("I go to good from goods list")
-def go_to_good_goods_list(driver, context):
-    driver.find_element_by_link_text(context.good_description).click()
-
-
 @then("I see good information")
 def see_good_info(driver, context):
     body = Shared(driver).get_text_of_body()
     assert context.good_description in body
     assert context.part in body
     assert context.control_code in body
+
+
+@when(  # noqa
+    parsers.parse(
+        'I add a good with description "{description}" part number "{part}" controlled "{controlled}" control code "{control_code}" and graded "{graded}"'
+    )
+)
+def add_new_good(driver, description, part, controlled, control_code, graded, context):  # noqa
+    good_part_needed = True
+    add_goods_page = AddGoodPage(driver)
+    date_time = utils.get_current_date_time_string()
+    good_description = "%s %s" % (description, date_time)
+    good_part = "%s %s" % (part, date_time)
+    context.good_description = good_description
+    context.part = good_part
+    context.control_code = control_code
+    add_goods_page.enter_description_of_goods(good_description)
+    add_goods_page.select_is_your_good_controlled(controlled)
+    if "not needed" in good_part:
+        good_part_needed = False
+    elif "empty" not in good_part:
+        add_goods_page.enter_part_number(good_part)
+    if controlled.lower() == "yes":
+        add_goods_page.enter_control_code(control_code)
+    if good_part_needed:
+        context.good_id_from_url = driver.current_url.split("/goods/")[1].split("/")[0]
+    add_goods_page.select_is_your_good_graded(graded)
+    functions.click_submit(driver)
+
+
+@when(  # noqa
+    parsers.parse(
+        'I add the goods grading with prefix "{prefix}" grading "{grading}" suffix "{suffix}" '
+        'issuing authority "{issuing_authority}" reference "{reference}" Date of issue "{date_of_issue}"'
+    )
+)
+def add_good_grading(driver, prefix, grading, suffix, issuing_authority, reference, date_of_issue, context):  # noqa
+    goods_grading_page = AddGoodGradingPage(driver)
+    goods_grading_page.enter_prefix_of_goods_grading(prefix)
+    goods_grading_page.enter_good_grading(grading)
+    goods_grading_page.enter_suffix_of_goods_grading(suffix)
+    goods_grading_page.enter_issuing_authority(issuing_authority)
+    goods_grading_page.enter_reference(reference)
+    date = date_of_issue.split("-")
+    goods_grading_page.enter_date_of_issue(date[0], date[1], date[2])
+    functions.click_submit(driver)

@@ -8,7 +8,6 @@ class AddGoodGradingPage(BasePage):
     PREFIX_ID = "prefix"
     GRADING_ID = "grading"
     SUFFIX_ID = "suffix"
-    CUSTOM_GRADING_ID = "custom_grading"
     ISSUING_AUTHORITY_ID = "issuing_authority"
     REFERENCE_ID = "reference"
     DATE_OF_ISSUE_DAY_ID = "date_of_issueday"
@@ -23,9 +22,6 @@ class AddGoodGradingPage(BasePage):
 
     def enter_suffix_of_goods_grading(self, suffix):
         self.driver.find_element_by_id(self.SUFFIX_ID).send_keys(suffix)
-
-    def enter_custom_grading_goods(self, grading):
-        self.driver.find_element_by_id(self.CUSTOM_GRADING_ID).send_keys(grading)
 
     def enter_issuing_authority(self, issuing_authority):
         self.driver.find_element_by_id(self.ISSUING_AUTHORITY_ID).send_keys(issuing_authority)

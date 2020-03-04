@@ -4,7 +4,7 @@ Feature: I want to create roles
   I want to create roles with permissions
   So that I can restrict access to functionality
 
-  @LT_1400_edit @smoke
+  @LT_1400_edit @regression
   Scenario: Edit a role
     Given I go to exporter homepage and choose Test Org
     When I click on the manage my organisation link

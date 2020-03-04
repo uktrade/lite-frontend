@@ -4,7 +4,7 @@ Feature: I  want to add and rename my sites
   I want to add and rename sites
   So that an application can be made from one of those sites
 
-  @LT_933_add_edit_site @smoke
+  @LT_933_add_edit_site @regression
   Scenario: Add and edit a site
     Given I go to exporter homepage and choose Test Org
     When I click on the manage my organisation link

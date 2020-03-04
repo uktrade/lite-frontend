@@ -7,7 +7,6 @@ from ui_automation_tests.shared.tools.helpers import scroll_to_element_by_id
 class TaskListPage(BasePage):
     STATUS_PARTIAL_ID = "-status"
     TASK_LIST_ITEMS_CSS = ".lite-task-list__items"
-    ATTACH_END_USER_DOCUMENT_ID = "end_user_attach_doc"
     REMOVE_PARTY_LINK = "a[href*='remove']"
 
     def click_on_task_list_section(self, section):
@@ -19,9 +18,6 @@ class TaskListPage(BasePage):
 
     def get_text_of_lite_task_list_items(self):
         return self.driver.find_element_by_css_selector(self.TASK_LIST_ITEMS_CSS).text
-
-    def attach_end_user_document_is_present(self):
-        return self.driver.find_elements_by_id(self.ATTACH_END_USER_DOCUMENT_ID)
 
     def find_remove_party_link(self):
         try:

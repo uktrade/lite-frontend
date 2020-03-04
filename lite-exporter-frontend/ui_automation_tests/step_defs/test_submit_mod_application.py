@@ -1,6 +1,7 @@
 from pytest_bdd import scenarios, when, parsers, then
 
 from ui_automation_tests.pages.add_end_user_pages import AddEndUserPages
+from ui_automation_tests.pages.exporter_hub_page import ExporterHubPage
 from ui_automation_tests.pages.shared import Shared
 from ui_automation_tests.pages.apply_for_a_licence_page import ApplyForALicencePage
 from ui_automation_tests.shared import functions
@@ -12,6 +13,13 @@ scenarios("../features/submit_mod_application.feature", strict_gherkin=False)
 @when(parsers.parse('I select a MOD licence of type "{type}"'))  # noqa
 def create_mod_application(driver, context, type):  # noqa
     ApplyForALicencePage(driver).select_mod_application_type(type)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I select a licence of type "{type}"'))  # noqa
+def create_mod_application(driver, context, type):  # noqa
+    ExporterHubPage(driver).click_apply_for_a_licence()
+    ApplyForALicencePage(driver).select_licence_type(type)
     functions.click_submit(driver)
 
 

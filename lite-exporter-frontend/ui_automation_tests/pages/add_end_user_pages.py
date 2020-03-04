@@ -15,7 +15,6 @@ class AddEndUserPages(BasePage):
     BUTTON_SUBMIT_FILTER_ID = "button-apply-filters"
 
     INPUT_PARTY_TYPE_ID_PARTIAL = "sub_type-"
-    INPUT_PARTY_TYPE_NAME = "sub_type"
     INPUT_CREATE_NEW_OR_COPY_ID = "copy_existing"
     LINK_COPY_EXISTING_ID = "copy"
 
@@ -58,12 +57,6 @@ class AddEndUserPages(BasePage):
 
     def select_type(self, string):
         self.driver.find_element_by_id(self.INPUT_PARTY_TYPE_ID_PARTIAL + string).click()
-
-    def get_type(self):
-        for option in self.driver.find_elements_by_name(self.INPUT_PARTY_TYPE_NAME):
-            if option.get_attribute("selected") == "true":
-                return option.get_attribute("value")
-        return None
 
     def click_copy_existing_button(self):
         self.driver.find_element_by_id(self.LINK_COPY_EXISTING_ID).click()

@@ -69,8 +69,3 @@ def good_part_number_is_found(driver, part_number):
 def total_goods_found(driver, total):
     total_goods = len(StandardApplicationGoodsPage(driver).get_good_descriptions())
     assert total_goods == int(total), "Incorrect number of goods matching search criteria were found"
-
-
-@when("I click the add from organisations goods button")  # noqa
-def click_add_from_organisation_button(driver):  # noqa
-    driver.find_element_by_css_selector('a[href*="add-preexisting"]').click()

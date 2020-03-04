@@ -33,5 +33,5 @@ Feature: I want to indicate the open licence I want
     When I submit the application
     Then application is submitted
     When I go to exporter homepage
-    And I click applications
+    And I click on applications
     Then I see submitted application

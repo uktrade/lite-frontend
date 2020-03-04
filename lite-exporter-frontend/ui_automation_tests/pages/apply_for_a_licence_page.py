@@ -11,8 +11,6 @@ class ApplyForALicencePage(BasePage):
     EXPORT_BUTTON = "export_type-"
     EXPORT_LICENCE_YES_OR_NO = "have_you_been_informed-"
     REFERENCE_NUMBER = "reference_number_on_information_form"
-    SUCCESS_MESSAGE = ".govuk-panel__title"
-    APPLICATION_IS_SUBMITTED = ".govuk-panel__title"
     LINK_DELETE_DRAFT_ID = "link-delete-draft"
     SUCCESS_BANNER_CLASS = ".govuk-panel--confirmation"
     CHECKBOXES_GOODS_CATEGORIES_NAME = "goods_categories[]"
@@ -53,15 +51,9 @@ class ApplyForALicencePage(BasePage):
     def click_export_licence_yes_or_no(self, string):
         self.driver.find_element_by_id(self.EXPORT_LICENCE_YES_OR_NO + string).click()
 
-    def get_text_of_success_message(self):
-        return self.driver.find_element_by_css_selector(self.SUCCESS_MESSAGE).text
-
     def type_into_reference_number(self, string):
         self.driver.find_element_by_id(self.REFERENCE_NUMBER).clear()
         self.driver.find_element_by_id(self.REFERENCE_NUMBER).send_keys(string)
-
-    def application_submitted_text(self):
-        return self.driver.find_element_by_css_selector(self.APPLICATION_IS_SUBMITTED).text
 
     def is_success_panel_present(self):
         return len(self.driver.find_elements_by_css_selector(self.SUCCESS_BANNER_CLASS)) > 0

@@ -37,15 +37,24 @@ def select_the_member_that_was_just_added(driver, context):
     MembersPage(driver).click_view_member_link(context.email_to_search)
 
 
-@when("I deactivate them, then the member is deactivated")
+@when("I deactivate them")
 def user_deactivate(driver):
     MemberPage(driver).click_deactivate_button()
+
+
+@then("the member is deactivated")
+def user_deactivate(driver):
+    # TODO get rid of this body.
     assert "Deactivated" in Shared(driver).get_text_of_body(), "user status was expected to be Deactivated"
 
 
-@when("I reactivate them, then the member is reactivated")
+@when("I reactivate them")
 def user_reactivate(driver):
     MemberPage(driver).click_reactivate_button()
+
+
+@then("the member is reactivated")
+def user_reactivate(driver):
     assert "Active" in Shared(driver).get_text_of_body(), "user status was expected to be Deactivated"
 
 
@@ -64,7 +73,7 @@ def change_members_role(driver, context, api_client_config):
     assert site["name"] in Shared(driver).get_text_of_body(), "user was expected to be assigned to site"
 
 
-@then("I change their role")
+@when("I change their role to Super User")
 def change_members_role(driver):
     MemberPage(driver).click_change_role_button()
 
@@ -72,6 +81,9 @@ def change_members_role(driver):
     role_select.select_by_visible_text("Super User")
     functions.click_submit(driver)
 
+
+@then("role is changed")
+def change_members_role(driver):
     assert "Super User" in Shared(driver).get_text_of_body(), "user role was expected to be Super User"
 
 

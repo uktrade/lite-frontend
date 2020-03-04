@@ -1,6 +1,5 @@
 import datetime
 import os
-import time
 
 from faker import Faker
 from pytest_bdd import given, when, then, parsers
@@ -14,9 +13,8 @@ from ui_automation_tests.pages.respond_to_ecju_query_page import RespondToEcjuQu
 from ui_automation_tests.pages.submitted_applications_page import SubmittedApplicationsPages
 from ui_automation_tests.pages.standard_application.good_details import StandardApplicationGoodDetails
 from ui_automation_tests.pages.standard_application.goods import StandardApplicationGoodsPage
-from ui_automation_tests.pages.add_new_external_location_form_page import AddNewExternalLocationFormPage
 from ui_automation_tests.shared import functions
-from ui_automation_tests.shared.tools.wait import wait_for_download_button
+from ui_automation_tests.shared.tools.wait import wait_for_download_button_on_exporter_main_content
 
 from ui_automation_tests.fixtures.env import environment  # noqa
 from ui_automation_tests.fixtures.register_organisation import (  # noqa
@@ -54,7 +52,6 @@ from ui_automation_tests.shared.fixtures.core import (  # noqa
 from ui_automation_tests.shared.fixtures.urls import exporter_url, api_url  # noqa
 
 import ui_automation_tests.shared.tools.helpers as utils
-from ui_automation_tests.pages.add_goods_page import AddGoodPage
 from ui_automation_tests.pages.generic_application.task_list import TaskListPage
 from ui_automation_tests.pages.generic_application.additional_documents import AdditionalDocumentsPage
 from ui_automation_tests.pages.apply_for_a_licence_page import ApplyForALicencePage
@@ -64,7 +61,6 @@ from ui_automation_tests.pages.hub_page import Hub
 from ui_automation_tests.pages.shared import Shared
 from ui_automation_tests.pages.sites_page import SitesPage
 from ui_automation_tests.pages.which_location_form_page import WhichLocationFormPage
-from ui_automation_tests.pages.add_goods_grading_page import AddGoodGradingPage
 
 strict_gherkin = False
 fake = Faker()
@@ -116,22 +112,6 @@ def standard_application_exists(apply_for_standard_application):  # noqa
     pass
 
 
-@given("I create a draft")  # noqa
-def create_a_draft(add_a_draft):  # noqa
-    pass
-
-
-@when("my application has been withdrawn")  # noqa
-def withdrawn_application_exists(manage_case_status_to_withdrawn):  # noqa
-    pass
-
-
-@when("I click on application previously created")  # noqa
-def click_on_an_application(driver, context):  # noqa
-    # Works on both the Drafts list and Applications list
-    driver.find_element_by_css_selector('a[href*="' + context.app_id + '"]').click()
-
-
 @when("I go to application previously created")  # noqa
 def click_on_an_application(driver, exporter_url, context):  # noqa
     driver.get(exporter_url.rstrip("/") + "/applications/" + context.app_id)
@@ -158,11 +138,6 @@ def go_to_exporter(driver, register_organisation, sso_sign_in, exporter_url, con
 @when("I go to exporter homepage")  # noqa
 def go_to_exporter_when(driver, exporter_url):  # noqa
     driver.get(exporter_url)
-
-
-@when("I click on apply for a license button")  # noqa
-def click_apply_licence(driver):  # noqa
-    ExporterHubPage(driver).click_apply_for_a_licence()
 
 
 @when("I enter a licence name")  # noqa
@@ -192,37 +167,11 @@ def enter_permanent_or_temporary(driver, permanent_or_temporary, context):  # no
     functions.click_submit(driver)
 
 
-def select_goods_categories(driver):  # noqa
-    apply = ApplyForALicencePage(driver)
-    assert len(driver.find_elements_by_name(apply.CHECKBOXES_GOODS_CATEGORIES_NAME)) == 4
-    apply.select_goods_categories()
-    functions.click_submit(driver)
-
-
 def enter_export_licence(driver, yes_or_no, reference, context):  # noqa
     apply = ApplyForALicencePage(driver)
     apply.click_export_licence_yes_or_no(yes_or_no)
     context.ref = reference
     apply.type_into_reference_number(reference)
-    functions.click_submit(driver)
-
-
-@when("I create a standard application")  # noqa
-def create_standard_application(driver, context):  # noqa
-    click_apply_licence(driver)
-    ApplyForALicencePage(driver).select_licence_type("export_licence")
-    functions.click_submit(driver)
-    enter_type_of_application(driver, "siel", context)
-    enter_application_name(driver, context)
-    enter_permanent_or_temporary(driver, "permanent", context)
-    select_goods_categories(driver)
-    enter_export_licence(driver, "yes", "123456", context)
-
-
-@when(parsers.parse('I select a licence of type "{type}"'))  # noqa
-def create_mod_application(driver, context, type):  # noqa
-    ExporterHubPage(driver).click_apply_for_a_licence()
-    ApplyForALicencePage(driver).select_licence_type(type)
     functions.click_submit(driver)
 
 
@@ -274,62 +223,6 @@ def click_my_goods_link(driver):  # noqa
     exporter_hub.click_my_goods()
 
 
-@when(  # noqa
-    parsers.parse(
-        'I add a good with description "{description}" part number "{part}" controlled "{controlled}" control code "{control_code}" and graded "{graded}"'
-    )
-)
-def add_new_good(driver, description, part, controlled, control_code, graded, context):  # noqa
-    good_part_needed = True
-    add_goods_page = AddGoodPage(driver)
-    date_time = utils.get_current_date_time_string()
-    good_description = "%s %s" % (description, date_time)
-    good_part = "%s %s" % (part, date_time)
-    context.good_description = good_description
-    context.part = good_part
-    context.control_code = control_code
-    add_goods_page.enter_description_of_goods(good_description)
-    add_goods_page.select_is_your_good_controlled(controlled)
-    if "not needed" in good_part:
-        good_part_needed = False
-    elif "empty" not in good_part:
-        add_goods_page.enter_part_number(good_part)
-    if controlled.lower() == "yes":
-        add_goods_page.enter_control_code(control_code)
-    if good_part_needed:
-        context.good_id_from_url = driver.current_url.split("/goods/")[1].split("/")[0]
-    add_goods_page.select_is_your_good_graded(graded)
-    functions.click_submit(driver)
-
-
-@when(  # noqa
-    parsers.parse(
-        'I add the goods grading with prefix "{prefix}" grading "{grading}" suffix "{suffix}" '
-        'issuing authority "{issuing_authority}" reference "{reference}" Date of issue "{date_of_issue}"'
-    )
-)
-def add_good_grading(driver, prefix, grading, suffix, issuing_authority, reference, date_of_issue, context):  # noqa
-    goods_grading_page = AddGoodGradingPage(driver)
-    goods_grading_page.enter_prefix_of_goods_grading(prefix)
-    goods_grading_page.enter_good_grading(grading)
-    goods_grading_page.enter_suffix_of_goods_grading(suffix)
-    goods_grading_page.enter_issuing_authority(issuing_authority)
-    goods_grading_page.enter_reference(reference)
-    date = date_of_issue.split("-")
-    goods_grading_page.enter_date_of_issue(date[0], date[1], date[2])
-    functions.click_submit(driver)
-
-
-def get_file_upload_path(filename):  # noqa
-    # Path gymnastics to get the absolute path for $PWD/../resources/(file_to_upload_x) that works everywhere
-    file_to_upload_abs_path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, "resources", filename))
-    if "ui_automation_tests" not in file_to_upload_abs_path:
-        file_to_upload_abs_path = os.path.abspath(
-            os.path.join(os.path.dirname(__file__), os.pardir, "ui_automation_tests/resources", filename)
-        )
-    return file_to_upload_abs_path
-
-
 @then("application is submitted")  # noqa
 def application_is_submitted(driver):  # noqa
     assert ApplyForALicencePage(driver).is_success_panel_present()
@@ -347,30 +240,6 @@ def application_is_submitted(driver, context):  # noqa
     assert "0 Goods" or "1 Good" or "2 Goods" in element_row
     assert driver.find_element_by_xpath("// th[text()[contains(., 'Status')]]").is_displayed()
     assert driver.find_element_by_xpath("// th[text()[contains(., 'Last updated')]]").is_displayed()
-
-
-@then("I see the application overview")  # noqa
-def i_see_the_application_overview(driver, context):  # noqa
-    element = TaskListPage(driver).get_text_of_lite_task_list_items()
-    assert context.app_name in element
-
-    app_id = driver.current_url[-36:]
-    context.app_id = app_id
-
-
-@when("I click applications")  # noqa
-def i_click_applications(driver):  # noqa
-    hub_page = Hub(driver)
-    hub_page.click_applications()
-
-
-@when("I delete the application")  # noqa
-def i_delete_the_application(driver):  # noqa
-    apply = ApplyForALicencePage(driver)
-    apply.click_delete_application()
-    assert "Applications - LITE" in driver.title, (
-        "failed to go to Applications list page after deleting application " "from application overview page"
-    )
 
 
 @when("I submit the application")  # noqa
@@ -428,17 +297,6 @@ def i_click_submit_button(driver):  # noqa
 
 @when("I click the back link")  # noqa
 def click_back_link(driver):  # noqa
-    functions.click_back_link(driver)
-
-
-@when("I add a note to the draft application")  # noqa
-def add_a_note_to_draft_application(driver, context):  # noqa
-    case_note_text = fake.paragraph(nb_sentences=3, variable_nb_sentences=True, ext_word_list=None)
-
-    enter_case_note_text(driver, case_note_text, context)
-    click_post_note(driver)
-    SubmittedApplicationsPages(driver).assert_case_notes_exists([case_note_text])
-
     functions.click_back_link(driver)
 
 
@@ -517,17 +375,6 @@ def latest_audit_trail(driver, expected_text, no):  # noqa
     assert expected_text in ApplicationPage(driver).get_text_of_audit_trail_item(int(no) - 1)
 
 
-@when("I wait for document to upload")  # noqa
-def wait_for_document(driver):  # noqa
-    document_is_found = False
-    while not document_is_found:
-        if "Processing" in driver.find_element_by_id("document").text:
-            time.sleep(1)
-            driver.refresh()
-        else:
-            document_is_found = True
-
-
 @when("I click on end user advisories")  # noqa
 def click_my_end_user_advisory_link(driver):  # noqa
     exporter_hub = ExporterHubPage(driver)
@@ -548,26 +395,6 @@ def add_new_goods_type(driver, description, controlled, control_code, incorporat
     context.good_description = description
     context.control_code = control_code
 
-    functions.click_submit(driver)
-
-
-@when(parsers.parse('I select "{choice}" for whether or not I want a new or existing location to be added'))  # noqa
-def choose_location_type(driver, choice):  # noqa
-    which_location_form = WhichLocationFormPage(driver)
-    which_location_form.click_on_choice_radio_button(choice)
-    functions.click_submit(driver)
-
-
-@when(  # noqa
-    parsers.parse(
-        'I fill in new external location form with name: "{name}", address: "{address}" and country: "{country}" and continue'
-    )
-)
-def add_new_external_location(driver, name, address, country):  # noqa
-    add_new_external_location_form_page = AddNewExternalLocationFormPage(driver)
-    add_new_external_location_form_page.enter_external_location_name(name)
-    add_new_external_location_form_page.enter_external_location_address(address)
-    add_new_external_location_form_page.enter_external_location_country(country)
     functions.click_submit(driver)
 
 
@@ -602,24 +429,14 @@ def the_good_is_added_to_the_application(driver, context):  # noqa
     functions.click_back_link(driver)
 
 
-@then("wait for download link")  # noqa
+@then("download link is present")  # noqa
 def wait_for_download_link(driver):  # noqa
-    assert wait_for_download_button(driver)
+    assert wait_for_download_button_on_exporter_main_content(driver)
 
 
 @then("I see my edited reference name")
 def assert_ref_name(context, driver):  # noqa
     assert context.app_name in driver.find_element_by_css_selector(".lite-task-list").text
-
-
-@then("I see my edited reference number")
-def assert_ref_num(driver):  # noqa
-    assert "12345678" in driver.find_element_by_css_selector(".lite-task-list").text
-
-
-@when("I change my reference number")
-def change_ref_num(driver, context):  # noqa
-    enter_export_licence(driver, "yes", "12345678", context)
 
 
 @when("I remove a good from the application")
@@ -694,3 +511,13 @@ def go_to_task_list_section(driver, section):  # noqa
 @then(parsers.parse('The "{section}" section is set to status "{status}"'))  # noqa
 def go_to_task_list_section(driver, section, status):  # noqa
     assert TaskListPage(driver).get_section_status(section) == status
+
+
+def get_file_upload_path(filename):  # noqa
+    # Path gymnastics to get the absolute path for $PWD/../resources/(file_to_upload_x) that works everywhere
+    file_to_upload_abs_path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, "resources", filename))
+    if "ui_automation_tests" not in file_to_upload_abs_path:
+        file_to_upload_abs_path = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), os.pardir, "ui_automation_tests/resources", filename)
+        )
+    return file_to_upload_abs_path

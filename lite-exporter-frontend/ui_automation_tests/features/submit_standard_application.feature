@@ -26,19 +26,19 @@ Feature: I want to indicate the standard licence I want
     When I click on the "end_user" section
     And I add a party of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
-    Then wait for download link
+    Then download link is present
     When I click the back link
     And I click on the "consignee" section
     And I add a party of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
-    Then wait for download link
+    Then download link is present
     When I click the back link
     And I click on the "notes" section
     And I add a note to the draft application
     And I submit the application
     Then application is submitted
     When I go to exporter homepage
-    And I click applications
+    And I click on applications
     Then I see submitted application
 
   @LT_1091_external @regression
@@ -52,7 +52,7 @@ Feature: I want to indicate the standard licence I want
     And I click on the add button
     And I add a party of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     When I upload a file "file_for_doc_upload_test_1.txt"
-    Then wait for download link
+    Then download link is present
     And "Delete" link is present
     When I click on the add button
     And I add a party of sub_type: "commercial", name: "Mr Jones", website: " ", address: "London" and country "Ukraine"
@@ -72,15 +72,15 @@ Feature: I want to indicate the standard licence I want
     When I click on the "end_user" section
     And I add a party of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
-    Then wait for download link
+    Then download link is present
     When I click the back link
     And I click on the "consignee" section
     And I add a party of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
-    Then wait for download link
+    Then download link is present
     When I click the back link
     And I submit the application
-    And I click applications
+    And I click on applications
     Then I see submitted application
 
   @LT_1074_copy_existing_party @regression
@@ -108,9 +108,9 @@ Feature: I want to indicate the standard licence I want
     Given I go to exporter homepage and choose Test Org
     When I create a standard individual transhipment application
     And I click on the "location" section
-    And I select "organisation" for where my goods are located
-    And I select the site at position "1"
-    And I click continue
+    And I select "external" for where my goods are located
+    And I select "new" for whether or not I want a new or existing location to be added
+    And I fill in new external location form with name: "32 Lime Street", address: "London" and country: "Ukraine" and continue
     And I click the back link
     And I click on the "goods" section
     And I add a non-incorporated good to the application
@@ -118,17 +118,17 @@ Feature: I want to indicate the standard licence I want
     When I click on the "end_user" section
     And I add a party of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
-    Then wait for download link
+    Then download link is present
     When I click the back link
     And I click on the "consignee" section
     And I add a party of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
-    Then wait for download link
+    Then download link is present
     When I click the back link
     And I click on the "notes" section
     And I add a note to the draft application
     And I submit the application
     Then application is submitted
     When I go to exporter homepage
-    And I click applications
+    And I click on applications
     Then I see submitted application

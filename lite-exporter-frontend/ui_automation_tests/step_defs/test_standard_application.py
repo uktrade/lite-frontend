@@ -1,14 +1,18 @@
 from pytest_bdd import scenarios, when, then, parsers, given
 
 from ui_automation_tests.conftest import (
-    click_apply_licence,
-    enter_application_name,
     enter_type_of_application,
+    enter_application_name,
     enter_permanent_or_temporary,
-    select_goods_categories,
     enter_export_licence,
+    enter_case_note_text,
+    click_post_note,
 )
+from ui_automation_tests.pages.add_new_external_location_form_page import AddNewExternalLocationFormPage
 from ui_automation_tests.pages.apply_for_a_licence_page import ApplyForALicencePage
+from ui_automation_tests.pages.exporter_hub_page import ExporterHubPage
+from ui_automation_tests.pages.submitted_applications_page import SubmittedApplicationsPages
+from ui_automation_tests.pages.which_location_form_page import WhichLocationFormPage
 from ui_automation_tests.pages.add_end_user_pages import AddEndUserPages
 from ui_automation_tests.pages.attach_document_page import AttachDocumentPage
 from ui_automation_tests.pages.external_locations_page import ExternalLocationsPage
@@ -18,10 +22,12 @@ from ui_automation_tests.pages.shared import Shared
 from ui_automation_tests.pages.standard_application.good_details import StandardApplicationGoodDetails
 from ui_automation_tests.pages.standard_application.goods import StandardApplicationGoodsPage
 from ui_automation_tests.shared import functions
-from ui_automation_tests.shared.tools.helpers import scroll_to_element_by_id
 
 from ui_automation_tests.pages.generic_application.task_list import TaskListPage
-from ui_automation_tests.pages.generic_application.end_user import EndUserPage
+
+from faker import Faker
+
+fake = Faker()
 
 scenarios(
     "../features/submit_standard_application.feature",
@@ -56,32 +62,6 @@ def download_and_delete_is_links_are_present(driver, button):
     shared = Shared(driver)
     latest_ueu_links = [link.text for link in shared.get_links_of_table_row(-1)]
     assert button in latest_ueu_links
-
-
-@when("I click on attach a document")
-def click_attach_a_document(driver):
-    GenericApplicationUltimateEndUsers(driver).click_attach_document_link(-1)
-
-
-@when("I delete the third party document")
-def delete_ultimate_end_user_document(driver):
-    third_party = GenericApplicationUltimateEndUsers(driver)
-    third_party.click_delete_document_link(-1)
-    third_party.click_confirm_delete_yes()
-    functions.click_submit(driver)
-
-
-@when("I delete the end user document")
-def end_user_document_delete_is_present(driver):
-    scroll_to_element_by_id(Shared(driver).driver, "end_user_document_delete")
-    EndUserPage(driver).click_delete_end_user_document()
-    GenericApplicationUltimateEndUsers(driver).click_confirm_delete_yes()
-    functions.click_submit(driver)
-
-
-@then("The end user document has been deleted")
-def document_has_been_deleted(driver):
-    assert TaskListPage(driver).attach_end_user_document_is_present()
 
 
 @when(  # noqa
@@ -152,14 +132,6 @@ def copy_party(driver):
     AddEndUserPages(driver).click_copy_existing_button()
 
 
-@when("I select a party type and continue")
-def select_party_type(driver, context):
-    type = "government"
-    AddEndUserPages(driver).select_type(type)
-    context.type_end_user = type
-    functions.click_submit(driver)
-
-
 @then("I see the party name is already filled in")
 def party_name_autofill(driver, context):
     assert AddEndUserPages(driver).get_name() == context.end_user["name"]
@@ -195,13 +167,93 @@ def filter_for_party(driver, context):
     parties_page.submit_filter()
 
 
+@given("I create a draft")  # noqa
+def create_a_draft(add_a_draft):  # noqa
+    pass
+
+
+@when("I create a standard application")  # noqa
+def create_standard_application(driver, context):  # noqa
+    ExporterHubPage(driver).click_apply_for_a_licence()
+    ApplyForALicencePage(driver).select_licence_type("export_licence")
+    functions.click_submit(driver)
+    enter_type_of_application(driver, "siel", context)
+    enter_application_name(driver, context)
+    enter_permanent_or_temporary(driver, "permanent", context)
+    apply = ApplyForALicencePage(driver)
+    assert len(driver.find_elements_by_name(apply.CHECKBOXES_GOODS_CATEGORIES_NAME)) == 4
+    apply.select_goods_categories()
+    functions.click_submit(driver)
+    enter_export_licence(driver, "yes", "123456", context)
+
+
+@then("I see the application overview")  # noqa
+def i_see_the_application_overview(driver, context):  # noqa
+    element = TaskListPage(driver).get_text_of_lite_task_list_items()
+    assert context.app_name in element
+
+    app_id = driver.current_url[-36:]
+    context.app_id = app_id
+
+
+@when("I delete the application")  # noqa
+def i_delete_the_application(driver):  # noqa
+    apply = ApplyForALicencePage(driver)
+    apply.click_delete_application()
+    assert "Applications - LITE" in driver.title, (
+        "failed to go to Applications list page after deleting application " "from application overview page"
+    )
+
+
+@when("I add a note to the draft application")  # noqa
+def add_a_note_to_draft_application(driver, context):  # noqa
+    case_note_text = fake.paragraph(nb_sentences=3, variable_nb_sentences=True, ext_word_list=None)
+
+    enter_case_note_text(driver, case_note_text, context)
+    click_post_note(driver)
+    SubmittedApplicationsPages(driver).assert_case_notes_exists([case_note_text])
+
+    functions.click_back_link(driver)
+
+
+@when(parsers.parse('I select "{choice}" for whether or not I want a new or existing location to be added'))  # noqa
+def choose_location_type(driver, choice):  # noqa
+    which_location_form = WhichLocationFormPage(driver)
+    which_location_form.click_on_choice_radio_button(choice)
+    functions.click_submit(driver)
+
+
+@when(  # noqa
+    parsers.parse(
+        'I fill in new external location form with name: "{name}", address: "{address}" and country: "{country}" and continue'
+    )
+)
+def add_new_external_location(driver, name, address, country):  # noqa
+    add_new_external_location_form_page = AddNewExternalLocationFormPage(driver)
+    add_new_external_location_form_page.enter_external_location_name(name)
+    add_new_external_location_form_page.enter_external_location_address(address)
+    add_new_external_location_form_page.enter_external_location_country(country)
+    functions.click_submit(driver)
+
+
+@then("I see my edited reference number")
+def assert_ref_num(driver):  # noqa
+    assert "12345678" in driver.find_element_by_css_selector(".lite-task-list").text
+
+
+@when("I change my reference number")
+def change_ref_num(driver, context):  # noqa
+    enter_export_licence(driver, "yes", "12345678", context)
+
+
 @when("I create a standard individual transhipment application")  # noqa
 def create_standard_individual_transhipment_application(driver, context):  # noqa
-    click_apply_licence(driver)
+    ExporterHubPage(driver).click_apply_for_a_licence()
     ApplyForALicencePage(driver).select_licence_type("transhipment")
     functions.click_submit(driver)
     enter_type_of_application(driver, "sitl", context)
     enter_application_name(driver, context)
     enter_permanent_or_temporary(driver, "permanent", context)
-    select_goods_categories(driver)
+    ApplyForALicencePage(driver).select_goods_categories()
+    functions.click_submit(driver)
     enter_export_licence(driver, "yes", "123456", context)

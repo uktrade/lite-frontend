@@ -11,12 +11,6 @@ class GoodsCountriesPage(BasePage):
     def select_all_link(self):
         self.driver.find_element_by_id(self.SELECT_ALL_ID).click()
 
-    def deselect_all(self):
-        elements = self.driver.find_elements_by_css_selector(self.GOV_CHECKBOXES_INPUT)
-        for element in elements:
-            if element.is_selected():
-                element.click()
-
     def deselect_all_link(self):
         self.driver.find_element_by_id(self.DESELECT_ALL_ID).click()
 
