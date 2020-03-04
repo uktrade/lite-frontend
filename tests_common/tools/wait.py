@@ -18,7 +18,7 @@ def wait_for_function(callback_function, **kwargs):
 
 def is_download_link_present(driver):
     driver.refresh()
-    return "Download" in driver.find_element_by_tag_name("body").text
+    return "Download" in driver.find_element_by_id("main-content").text
 
 
 def element_is_present(driver, _id):
@@ -26,7 +26,7 @@ def element_is_present(driver, _id):
     return bool(driver.find_elements_by_id(_id))
 
 
-def wait_for_download_button(driver):
+def wait_for_download_button_on_exporter_main_content(driver):
     return wait_for_function(is_download_link_present, driver=driver)
 
 
