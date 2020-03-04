@@ -28,7 +28,6 @@ class StartPage:
     NOTICE = (
         "There are different services if you want to export drugs and medicines, export fine art or export livestock"
     )
-
     BREADCRUMBS = [
         ["Home", "https://gov.uk"],
         ["Business and enterprise", "https://www.gov.uk/topic/business-enterprise"],
