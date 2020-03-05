@@ -14,8 +14,11 @@ from lite_forms.generators import form_page
 from users.services import get_user
 
 
-class Hub(TemplateView):
+class Home(TemplateView):
     def get(self, request, **kwargs):
+        if not request.user.is_authenticated:
+            return render(request, "core/start.html")
+
         try:
             user = get_user(request)
             user_permissions = user["role"]["permissions"]

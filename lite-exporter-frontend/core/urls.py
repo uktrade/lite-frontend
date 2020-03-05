@@ -4,6 +4,6 @@ from core import views
 
 app_name = "core"
 urlpatterns = [
-    path("", views.Hub.as_view(), name="hub"),
+    path("", views.Home.as_view(), name="home"),
     path("pick-organisation/", views.PickOrganisation.as_view(), name="pick_organisation"),
 ]

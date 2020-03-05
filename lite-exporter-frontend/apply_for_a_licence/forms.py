@@ -47,7 +47,7 @@ def opening_question():
         default_button_name=generic.CONTINUE,
         back_link=Breadcrumbs(
             [
-                BackLink(generic.SERVICE_NAME, reverse_lazy("core:hub")),
+                BackLink(generic.SERVICE_NAME, reverse_lazy("core:home")),
                 BackLink(InitialApplicationQuestionsForms.OpeningQuestion.BREADCRUMB, ""),
             ]
         ),

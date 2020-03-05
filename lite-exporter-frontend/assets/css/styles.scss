@@ -80,29 +80,3 @@ $lite-transition-speed: 0s !default;
 		display: none;
 	}
 }
-
-.great-button {
-	background-color: lighten(#1e1348, 20%);
-	box-shadow: 0 2px 0 #1e1348;
-	padding: 10px 15px;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	font-weight: 600;
-
-	&:hover {
-		background-color: lighten(#1e1348, 7.5%);
-		box-shadow: 0 2px 0 darken(#1e1348, 5%);
-	}
-
-	&:active {
-		background-color: #1e1348;
-		box-shadow: 0 2px 0 darken(#1e1348, 10%);
-	}
-
-	svg {
-		width: auto;
-		max-height: 20px;
-		margin-left: govuk-spacing(2);
-	}
-}

@@ -165,7 +165,7 @@ def end_user_advisory_success_page(request, query_reference):
         links={
             "View your end user advisories": reverse_lazy("end_users:end_users"),
             "Submit another end user advisory": reverse_lazy("end_users:apply"),
-            "Return to your export control account dashboard": reverse_lazy("core:hub"),
+            "Return to your export control account dashboard": reverse_lazy("core:home"),
         },
     )
 

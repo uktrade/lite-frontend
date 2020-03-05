@@ -94,7 +94,7 @@ def add_goods_questions(application_pk=None):
             BackLink(generic.BACK, reverse_lazy("applications:goods", kwargs={"pk": application_pk})),
             Breadcrumbs(
                 [
-                    BackLink(generic.SERVICE_NAME, reverse_lazy("core:hub")),
+                    BackLink(generic.SERVICE_NAME, reverse_lazy("core:home")),
                     BackLink(GoodsList.TITLE, reverse_lazy("goods:goods")),
                     BackLink(GoodsList.CREATE_GOOD),
                 ]

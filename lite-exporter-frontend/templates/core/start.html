@@ -1,0 +1,57 @@
+{% extends 'layouts/two-pane.html' %}
+
+{% load svg %}
+
+{% block header_title %}{% endblock %}
+
+{% block service_name %}{% endblock %}
+
+{% block back_link %}
+	<div class="govuk-breadcrumbs">
+		<ol class="govuk-breadcrumbs__list">
+			{% lcs 'core.StartPage.BREADCRUMBS' as breadcrumbs %}
+			{% for breadcrumb in breadcrumbs %}
+				<li class="govuk-breadcrumbs__list-item">
+					<a class="govuk-breadcrumbs__link" href="{{ breadcrumb.1 }}">{{ breadcrumb.0 }}</a>
+				</li>
+			{% endfor %}
+			<li class="govuk-breadcrumbs__list-item">
+				{{ SERVICE_NAME }}
+			</li>
+		</ol>
+	</div>
+{% endblock %}
+
+{% block two_thirds %}
+	<h1 class="govuk-heading-xl">
+		{% block title %}
+			{% lcs 'core.StartPage.TITLE' %}
+		{% endblock %}
+	</h1>
+
+	<p class="govuk-body">{% lcs 'core.StartPage.DESCRIPTION' %}</p>
+	<ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-7">
+		{% lcs 'core.StartPage.BULLET_POINTS' as bullet_points %}
+		{% for point in bullet_points %}
+			<li>{{ point }}</li>
+		{% endfor %}
+	</ul>
+
+	<div class="govuk-inset-text govuk-!-margin-bottom-7">
+		{% lcs 'core.StartPage.NOTICE' as notice %}
+		{{ notice|markdown }}
+	</div>
+
+	<div class="app-start-page__register-container govuk-!-margin-bottom-2">
+		<a id="button-sign-in" href="{% url 'auth:login' %}" role="button" draggable="false" class="app-start-page__great-button" data-module="govuk-button">
+			{% svg 'union-jack' %}
+			{% lcs 'core.StartPage.SIGN_IN_BUTTON' %}
+			<span>{% lcs 'core.StartPage.SIGN_IN_BUTTON_SUFFIX' %}</span>
+		</a>
+
+		<p class="govuk-hint govuk-!-margin-0 govuk-!-margin-left-3">
+			{% lcs 'core.StartPage.OR' %}
+			<a id="link-register" href="{{ AUTHBROKER_URL }}/profile/enrol/" class="govuk-link govuk-link--no-visited-state govuk-!-margin-left-2">{% lcs 'core.StartPage.REGISTER_ACCOUNT_LINK' %}</a>
+		</p>
+	</div>
+{% endblock %}

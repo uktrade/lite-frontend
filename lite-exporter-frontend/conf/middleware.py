@@ -1,15 +1,13 @@
-from lite_content.lite_exporter_frontend import strings
 import logging
 import time
 import uuid
 
 from django.shortcuts import redirect
-from django.urls import resolve
-
-from auth.urls import app_name as auth_app_name
-from conf import settings
-from lite_forms.generators import error_page
+from django.urls import resolve, reverse_lazy
 from s3chunkuploader.file_handler import UploadFailed
+
+from lite_content.lite_exporter_frontend import strings
+from lite_forms.generators import error_page
 
 
 class ProtectAllViewsMiddleware:
@@ -17,8 +15,10 @@ class ProtectAllViewsMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        if resolve(request.path).app_name != auth_app_name and not request.user.is_authenticated:
-            return redirect(settings.LOGIN_URL)
+        if not request.user.is_authenticated:
+            name = f"{resolve(request.path).app_name}:{resolve(request.path).url_name}"
+            if name != "auth:login" and name != "auth:callback" and name != "core:home":
+                return redirect(reverse_lazy("auth:login"))
 
         response = self.get_response(request)
 

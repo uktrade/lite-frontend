@@ -6,20 +6,10 @@ class Hub(BasePage):
     SWITCH_LINK = "switch-link"  # ID
     SITES_BTN = "[href*='/sites/']"  # CSS
     APPLICATION_BTN = "a[href*='/applications/']"  # CSS
-    EMAIL_FIELD = "email"  # ID
-    PASSWORD_FIELD = "password"  # ID  # noqa
     APPLICATIONS_TILE = '.app-tiles [href="/applications/"] p'  # ID
 
     def click_applications(self):
         self.driver.find_element_by_css_selector(self.APPLICATION_BTN).click()
-
-    def enter_email(self, email):
-        self.driver.find_element_by_id(self.EMAIL_FIELD).clear()
-        self.driver.find_element_by_id(self.EMAIL_FIELD).send_keys(email)
-
-    def enter_password(self, password):
-        self.driver.find_element_by_id(self.PASSWORD_FIELD).clear()
-        self.driver.find_element_by_id(self.PASSWORD_FIELD).send_keys(password)
 
     def click_sites_link(self):
         self.driver.find_element_by_css_selector(self.SITES_BTN).click()

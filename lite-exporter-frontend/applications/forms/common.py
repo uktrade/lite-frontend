@@ -81,7 +81,7 @@ def application_success_page(request, application_reference_code):
         links={
             ApplicationSuccessPage.VIEW_APPLICATIONS: reverse_lazy("applications:applications"),
             ApplicationSuccessPage.APPLY_AGAIN: reverse_lazy("apply_for_a_licence:start"),
-            ApplicationSuccessPage.RETURN_TO_DASHBOARD: reverse_lazy("core:hub"),
+            ApplicationSuccessPage.RETURN_TO_DASHBOARD: reverse_lazy("core:home"),
         },
     )
 
