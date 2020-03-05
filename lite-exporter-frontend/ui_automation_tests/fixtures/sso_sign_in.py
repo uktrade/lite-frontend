@@ -1,6 +1,6 @@
 from pytest import fixture
 
-from pages.start_page import StartPage
+from ui_automation_tests.pages.start_page import StartPage
 from ui_automation_tests.pages.great_signin_page import GreatSigninPage
 
 
