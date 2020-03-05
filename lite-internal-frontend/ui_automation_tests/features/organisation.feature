@@ -8,34 +8,23 @@ Feature: I want to add a company to LITE
   Scenario: Test registering an organisation
     Given I sign in to SSO or am signed into SSO
     When I go to organisations
-    And I choose to add a new organisation
-    And I select "commercial"
-    And I provide company registration details of name: "BlueOcean", EORI: "GB987654312000", SIC: "73200", VAT: "123456789", CRN: "000000011"
-    And I setup an initial site with name: "HQ", address line 1: "123 Cobalt Street", town or city: "London", County: "Islington", post code: "AB1 2CD", country: "Ukraine"
-    And I setup the admin user with email: "TestBusinessForSites@mail.com"
+    And I add a new commercial organisation
     Then organisation is registered
-    When I click on an organisation to edit
-    And I select "commercial"
-    And I provide company registration details of name: "ChangedBlueOcean", EORI: "123", SIC: "456", VAT: "789", CRN: "101112"
-    Then The organisation is listed on the organisations page
+    When I edit an organisation
+    Then organisation is edited
 
   @LT_1417_test_adding_individual_as_organisation @regression
   Scenario: Test registering an individual
     Given I sign in to SSO or am signed into SSO
     When I go to organisations
-    And I choose to add a new organisation
-    And I select "individual"
-    And I provide individual registration details of first and last name: "Json", EORI: "GB987654312000" and email: "johnsmith@email.com"
-    And I setup an initial site with name: "HQ", address line 1: "123 Cobalt Street", town or city: "London", County: "Islington", post code: "AB1 2CD", country: "Ukraine"
+    And I add a new individual organisation
     Then individual organisation is registered
 
   @LT_1008_test_adding_hmrc_organisation @regression
   Scenario: Test registering a HMRC organisation
     Given I sign in to SSO or am signed into SSO
     When I go to HMRC
-    And I choose to add a new organisation
-    And I provide hmrc registration details of org_name: "HMRC Blue", site_name: "HQ", addres line 1: "123 Cobalt Street", town or city: "London", County: "Islington", post code: "AB1 2CD", country: "Ukraine"
-    And I setup the admin user with email: "TestBusinessForSites@mail.com"
+    And I add a new HMRC organisation
     And I go to organisations
     Then HMRC organisation is registered
 

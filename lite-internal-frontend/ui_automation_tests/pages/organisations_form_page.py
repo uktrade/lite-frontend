@@ -1,4 +1,9 @@
 from shared.BasePage import BasePage
+from shared import functions
+from faker import Faker
+
+
+fake = Faker()
 
 
 class OrganisationsFormPage(BasePage):
@@ -8,6 +13,7 @@ class OrganisationsFormPage(BasePage):
 
     def select_type(self, individual_or_commercial):
         self.driver.find_element_by_id("type-" + individual_or_commercial).click()
+        functions.click_submit(self.driver)
 
     def enter_name(self, text):
         name = self.driver.find_element_by_id("name")
@@ -68,3 +74,34 @@ class OrganisationsFormPage(BasePage):
 
     def enter_email(self, text):
         self.driver.find_element_by_id("user.email").send_keys(text)
+        functions.click_submit(self.driver)
+
+    def fill_in_company_info_page_1(self, context):
+        context.organisation_name = fake.company() + " " + fake.company_suffix()
+        self.enter_name(context.organisation_name)
+        context.eori = fake.ein()
+        self.enter_eori_number(context.eori)
+        context.sic = fake.ein()
+        self.enter_sic_number(context.sic)
+        context.vat = fake.ein()
+        self.enter_vat_number(context.vat)
+        self.enter_registration_number(fake.ein())
+        functions.click_submit(self.driver)
+
+    def fill_in_individual_info_page_1(self, context):
+        context.organisation_name = fake.name()
+        context.eori = fake.ein()
+        self.enter_individual_organisation_first_last_name(context.organisation_name)
+        self.enter_email(fake.free_email())
+        self.enter_eori_number(context.eori)
+        functions.click_submit(self.driver)
+
+    def fill_in_site_info_page_2(self, context):
+        context.site_name = fake.company()
+        self.enter_site_name(context.site_name)
+        self.enter_address_line_1(fake.street_address())
+        self.enter_region(fake.city())
+        self.enter_post_code(fake.postcode())
+        self.enter_city(fake.state())
+        self.enter_country("Ukraine")
+        functions.click_submit(self.driver)

@@ -14,7 +14,7 @@ def add_user(driver, context):
     user_page = UsersPage(driver)
     user_page.click_add_a_user_btn()
     fake = Faker()
-    context.added_email = fake.email()
+    context.added_email = fake.free_email()
     user_page.enter_email(context.added_email)
     user_page.select_option_from_team_drop_down_by_visible_text("Admin")
     user_page.select_option_from_role_drop_down_by_visible_text("Default")
