@@ -12,6 +12,7 @@ class CasesListPage:
         CASE_OFFICER = "case officer"
         ASSIGNED_USER = "assigned user"
         NOT_ASSIGNED = "Not assigned"
+        HIDDEN = "Show cases with open enquiries by your team"
 
 
 class CaseDocumentsPage:
