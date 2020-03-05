@@ -84,6 +84,7 @@ parameters
             } catch (error) {
                     archiveArtifacts artifacts: "ui_automation_tests/allure-results/**.*"
                     error.message
+		    currentBuild.result = "UNSTABLE"
                   }
 
             }
