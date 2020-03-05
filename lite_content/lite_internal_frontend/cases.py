@@ -5,6 +5,7 @@ class CasesListPage:
     EXPORTER_AMENDMENTS_BANNER = "View cases that have changed"
     ASSIGN_USERS = "Assign users"
     STATUS = "Status"
+    NOT_UPDATED_RECENTLY = "This case has not been updated in over 5 days"
 
     class Filters:
         CASE_TYPE = "type"
@@ -23,8 +24,8 @@ class CaseDocumentsPage:
 
 class ApplicationPage:
     class Info:
-        CLEARANCE_LEVEL = "Clearance"
-        F680_CLEARANCE_TYPES = "Clearance Types"
+        CLEARANCE_LEVEL = "Security grading"
+        F680_CLEARANCE_TYPES = "Clearance types"
         DESCRIPTORS = "Descriptors"
 
     class Actions:
@@ -425,6 +426,7 @@ class Advice:
     OTHER = "Is there anything else you want to say to the applicant? (optional)"
     REASON = "What are your reasons for this decision?"
     TEXT_ON_LICENCE = "This will appear on the generated documentation"
+    SELECT_GRADING = "Select a grading"
 
 
 class Manage:
@@ -535,6 +537,7 @@ class AdvicePage:
     DENIAL_REASONS_TITLE = "Denial reasons"
     REASON_FOR_ADVICE_TITLE = "Reason for this advice"
     NOTE_TO_APPLICANT_TITLE = "Note to applicant"
+    GRADING_TITLE = "Grading"
 
     class Table:
         REJECT = "Reject"
