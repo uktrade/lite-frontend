@@ -25,7 +25,12 @@ class StartPage:
     SIGN_IN_BUTTON_SUFFIX = "GREAT"
     OR = "or"
     REGISTER_ACCOUNT_LINK = "register an account"
-    NOTICE = "There are different services if you want to export [drugs and medicines](https://www.artscouncil.org.uk/export-controls/export-licensing), [export fine art](https://www.gov.uk/guidance/export-drugs-and-medicines-special-rules) or [export livestock](https://www.gov.uk/guidance/export-livestock-and-poultry)"
+    NOTICE = (
+        "There are different services if you want to export "
+        "[drugs and medicines](https://www.artscouncil.org.uk/export-controls/export-licensing), "
+        "[export fine art](https://www.gov.uk/guidance/export-drugs-and-medicines-special-rules) "
+        "or [export livestock](https://www.gov.uk/guidance/export-livestock-and-poultry)"
+    )
     BREADCRUMBS = [
         ["Home", "https://gov.uk"],
         ["Business and enterprise", "https://www.gov.uk/topic/business-enterprise"],
