@@ -288,7 +288,7 @@ class GoodPage:
 
 
 class AddGoodToApplicationForm:
-    TITLE = "Value and quantity of the product"
+    TITLE = "Quantity and value of the product"
     DESCRIPTION = ""
     DOCUMENT_MISSING = "Select a document"
     BACK_LINK = "Back to products"
