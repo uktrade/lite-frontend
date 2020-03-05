@@ -70,12 +70,6 @@ class Applications:
         REFERENCE_TITLE = "Name and save this application so you can refer back to it when needed."
 
 
-class Authentication:
-    class UserDoesNotExist:
-        DESCRIPTION = "You are not registered to use this system"
-        TITLE = "User not found"
-
-
 class Common:
     BACK_TO_TASK_LIST = "Back to application overview"
     SERVICE_NAME = "LITE"
