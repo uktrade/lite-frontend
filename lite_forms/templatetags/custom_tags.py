@@ -1,6 +1,8 @@
 from django.template.defaulttags import register
 from django.utils.safestring import mark_safe
 
+from lite_forms.helpers import convert_to_markdown
+
 
 @register.filter
 def key_value(dictionary, key):
@@ -98,6 +100,12 @@ def date_join(data, prefix):
         return date
 
 
-@register.filter()
+@register.filter
 def get(value, arg):
     return value.get(arg, "")
+
+
+@register.filter
+@mark_safe
+def markdown(text):
+    return convert_to_markdown(text)
