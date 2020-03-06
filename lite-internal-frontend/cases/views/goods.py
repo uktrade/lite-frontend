@@ -39,8 +39,9 @@ class ReviewGoods(TemplateView):
         review_goods_clc_url = reverse_lazy("cases:review_goods_clc", kwargs={"pk": case_id})
         parameters = {"level": "goods", "origin": "review_goods", "goods": goods_pk_list}
         goods_postfix_url = "?" + convert_dict_to_query_params(parameters)
+        case_type = case["application"]["case_type"]["sub_type"]["key"]
 
-        if case["application"]["case_type"]["sub_type"]["key"] == "standard":
+        if case_type not in [CaseType.OPEN.value, CaseType.HMRC.value]:
             for good in case["application"]["goods"]:
                 if good["good"]["id"] in goods_pk_list:
                     # flatten the good details onto the first layer of the dictionary
@@ -88,7 +89,7 @@ class ReviewGoodsClc(TemplateView):
 
     def get(self, request, *args, **kwargs):
         case = get_case(request, self.case_id)
-        if case["application"]["case_type"]["sub_type"]["key"] == "standard":
+        if case["application"]["case_type"]["sub_type"]["key"] not in [CaseType.OPEN.value, CaseType.HMRC.value]:
             get_good_func = get_good
             form = review_goods_clc_query_form(request, self.back_link, is_goods_type=False)
         else:

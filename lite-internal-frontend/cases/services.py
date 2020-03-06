@@ -357,7 +357,9 @@ def _generate_post_data_and_errors(keys, request_data, action):
 def _get_total_goods_value(case):
     total_value = 0
     for good in case.get("application").get("goods", []):
-        total_value += Decimal(good["value"]).quantize(Decimal(".01"))
+        # conditional, as some case types e.g. exhibition clearances don't contain a value.
+        if good.get("value"):
+            total_value += Decimal(good["value"]).quantize(Decimal(".01"))
     return total_value
 
 

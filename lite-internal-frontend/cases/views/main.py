@@ -156,7 +156,8 @@ class ViewCase(TemplateView):
             CaseType.F680.value,
             CaseType.GIFTING.value,
         ]:
-            context["total_goods_value"] = _get_total_goods_value(case)
+            if case_sub_type != CaseType.EXHIBITION.value:
+                context["total_goods_value"] = _get_total_goods_value(case)
             return render(request, "case/applications/mod-clearance.html", context)
         elif case_type == CaseType.APPLICATION.value:
             context["total_goods_value"] = _get_total_goods_value(case)

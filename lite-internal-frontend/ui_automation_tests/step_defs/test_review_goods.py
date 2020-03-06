@@ -16,7 +16,7 @@ def click_edit_flags_link(driver):
 
 
 @when("I click on add report summary")
-def click_edit_flags_link(driver):
+def click_add_report_summary_link(driver):
     good_summary_page = GoodSummaryPage(driver)
     good_summary_page.click_add_report_summary()
 

@@ -65,4 +65,7 @@
 		{% endfor %}
 	</tbody>
 </table>
-<p class="govuk-body govuk-!-margin-top-3 govuk-!-font-weight-bold">{% lcs 'STANDARD_CASE_TOTAL_VALUE' %} £{{ total_goods_value|intcomma }}</p>
+{% if case.case_type.sub_type.key != 'exhibition_clearance' %}
+	<p class="govuk-body govuk-!-margin-top-3 govuk-!-font-weight-bold">{% lcs 'STANDARD_CASE_TOTAL_VALUE' %} £{{ total_goods_value|intcomma }}</p>
+{% endif %}
+

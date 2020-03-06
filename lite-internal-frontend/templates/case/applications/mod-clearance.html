@@ -26,14 +26,6 @@
 		</div>
 		<div class="govuk-grid-row">
 			<div class="govuk-grid-column-one-quarter">
-				<p class="app-case-board__heading">{% lcs 'CASE_INFO_REFERENCE_NUMBER' %}</p>
-				<p>{{ case.application.reference_number_on_information_form|default_na }}</p>
-			</div>
-			<div class="govuk-grid-column-one-quarter">
-				<p class="app-case-board__heading">{% lcs 'CASE_INFO_USAGE' %}</p>
-				<p>{{ case.application.usage|default_na }}</p>
-			</div>
-			<div class="govuk-grid-column-one-quarter">
 				<p class="app-case-board__heading">{% lcs 'CASE_INFO_LAST_UPDATED' %}</p>
 				<p>{{ case.application.updated_at|str_date }}</p>
 			</div>
@@ -57,6 +49,39 @@
 	</div>
 
 	<div class="govuk-accordion app-accordion" data-module="govuk-accordion" id="accordion-default">
+		{% if case.case_type.sub_type.key|is_exhibition %}
+		<!-- Details -->
+			<div class="govuk-accordion__section">
+				<div class="govuk-accordion__section-header">
+					<h2 class="govuk-accordion__section-heading">
+						<span class="govuk-accordion__section-button" id="accordion-goods">
+							{% lcs 'cases.ApplicationPage.Details.DETAILS' %}
+						</span>
+					</h2>
+				</div>
+				<div id="accordion-goods-content" class="govuk-accordion__section-content" aria-labelledby="accordion-goods">
+					<table class="govuk-table">
+						<thead class="govuk-table__head">
+							<tr class="govuk-table__row">
+								<th scope="col" class="govuk-table__header">{% lcs 'cases.ApplicationPage.Details.Table.TITLE' %}</th>
+								<th scope="col" class="govuk-table__header">{% lcs 'cases.ApplicationPage.Details.Table.REQUIRED_BY_DATE' %}</th>
+								<th scope="col" class="govuk-table__header">{% lcs 'cases.ApplicationPage.Details.Table.FIRST_EXHIBITION_DATE' %}</th>
+								<th scope="col" class="govuk-table__header govuk-!-width-one-third">{% lcs 'cases.ApplicationPage.Details.Table.REASON_FOR_CLEARANCE' %}</th>
+							</tr>
+						</thead>
+						<tbody class="govuk-table__body">
+							<tr class="govuk-table__row">
+								<th scope="row" class="govuk-table__header">{{ case.application.title }}</th>
+								<td class="govuk-table__cell">{{ case.application.required_by_date|str_date_only }}</td>
+								<td class="govuk-table__cell">{{ case.application.first_exhibition_date|str_date_only }}</td>
+								<td class="govuk-table__cell">{{ case.application.reason_for_clearance|default_na  }}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		{% endif %}
+
 		<!-- Goods -->
 		<div class="govuk-accordion__section">
 			<div class="govuk-accordion__section-header">
@@ -85,7 +110,11 @@
 								<th class="govuk-table__header" scope="col"></th>
 					            <th class="govuk-table__header" scope="col">{% lcs 'cases.ApplicationPage.Goods.Table.CLC' %}</th>
 								<th class="govuk-table__header" scope="col">{% lcs 'cases.ApplicationPage.Goods.Table.DESCRIPTION' %}</th>
-					            <th class="govuk-table__header">{% lcs 'cases.ApplicationPage.Goods.Table.VALUE' %}</th>
+								{% if not case.case_type.sub_type.key|is_exhibition %}
+									<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.Goods.Table.VALUE' %}</th>
+								{% else %}
+									<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.Goods.Table.PRODUCT_TYPE' %}</th>
+								{% endif %}
 								<th class="govuk-table__header">{% lcs 'GOOD_INCORPORATED' %}</th>
 								<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.Goods.Table.DOCUMENTS' %}</th>
 					            <th class="govuk-table__header">{% lcs 'cases.ApplicationPage.Goods.Table.FLAGS' %}</th>
@@ -113,7 +142,11 @@
 					                <td class="govuk-table__cell">
 					                	{{ good_on_application.good.description }}
 					                </td>
-									<td class="govuk-table__cell">{{ good_on_application.quantity }} {{ good_on_application.unit.value }}/£{{ good_on_application.value|intcomma }}</td>
+									{% if case.case_type.sub_type.key|is_exhibition %}
+										<td class="govuk-table__cell">{{ good_on_application.other_item_type|title }}</td>
+									{% else %}
+										<td class="govuk-table__cell">{{ good_on_application.quantity }} {{ good_on_application.unit.value }}/£{{ good_on_application.value|intcomma }}</td>
+									{% endif %}
 									<td class="govuk-table__cell">{{ good_on_application.is_good_incorporated|friendly_boolean }}</td>
 									<td class="govuk-table__cell">
 					                    {% if good_on_application.good.documents %}
@@ -145,7 +178,9 @@
 							{% endfor %}
 						</tbody>
 					</table>
-					<p class="govuk-body govuk-!-margin-top-3 govuk-!-font-weight-bold">{% lcs 'STANDARD_CASE_TOTAL_VALUE' %} £{{ total_goods_value|intcomma }}</p>
+					{% if not case.case_type.sub_type.key|is_exhibition %}
+						<p class="govuk-body govuk-!-margin-top-3 govuk-!-font-weight-bold">{% lcs 'STANDARD_CASE_TOTAL_VALUE' %} £{{ total_goods_value|intcomma }}</p>
+					{% endif %}
                 </form>
             </div>
 		</div>
@@ -201,18 +236,20 @@
 		</div>
 
 		<!-- Inactive Parties -->
-		<div class="govuk-accordion__section">
-			<div class="govuk-accordion__section-header">
-				<h2 class="govuk-accordion__section-heading">
-					<span class="govuk-accordion__section-button" id="accordion-default-heading-3">
-						{% lcs 'cases.ApplicationPage.Parties.ENTITIES_DELETED' %}
-					</span>
-				</h2>
+		{% if not case.case_type.sub_type.key|is_exhibition %}
+			<div class="govuk-accordion__section">
+				<div class="govuk-accordion__section-header">
+					<h2 class="govuk-accordion__section-heading">
+						<span class="govuk-accordion__section-button" id="accordion-default-heading-3">
+							{% lcs 'cases.ApplicationPage.Parties.ENTITIES_DELETED' %}
+						</span>
+					</h2>
+				</div>
+				<div id="accordion-default-content-3" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-3">
+					{% include "case/includes/inactive-parties.html" %}
+				</div>
 			</div>
-			<div id="accordion-default-content-3" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-3">
-				{% include "case/includes/inactive-parties.html" %}
-			</div>
-		</div>
+		{% endif %}
 
 		<!-- Other Documents -->
 		<div class="govuk-accordion__section">

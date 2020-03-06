@@ -12,10 +12,10 @@ from django.template.defaultfilters import stringfilter, safe
 from django.templatetags.tz import do_timezone
 from django.utils.safestring import mark_safe
 
-from conf.constants import ISO8601_FMT
+from conf.constants import ISO8601_FMT, DATE_FORMAT
 
 from lite_content.lite_internal_frontend import strings
-from conf.constants import SystemTeamsID
+from conf.constants import SystemTeamsID, CaseType
 
 register = template.Library()
 STRING_NOT_FOUND_ERROR = "STRING_NOT_FOUND"
@@ -65,6 +65,13 @@ def str_date(value):
         + " "
         + return_value.strftime("%d %B " "%Y")
     )
+
+
+@register.filter
+@stringfilter
+def str_date_only(value):
+    date_str = do_timezone(datetime.datetime.strptime(value, DATE_FORMAT), "Europe/London")
+    return date_str.strftime("%d %B %Y")
 
 
 @register.filter()
@@ -330,3 +337,9 @@ def get_sla_ring_colour(remaining_days):
         return "yellow"
     else:
         return "red"
+
+
+@register.filter()
+def is_exhibition(case_type):
+    result = True if case_type == CaseType.EXHIBITION else False
+    return result

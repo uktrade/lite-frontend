@@ -1,6 +1,7 @@
 from enum import Enum
 
 ISO8601_FMT = "%Y-%m-%dT%H:%M:%S.%fZ"
+DATE_FORMAT = "%Y-%m-%d"
 ALL_CASES_QUEUE_ID = "00000000-0000-0000-0000-000000000001"
 UPDATED_CASES_QUEUE_ID = "00000000-0000-0000-0000-000000000004"
 
@@ -130,3 +131,7 @@ GOODS_QUERY_STATUSES = [Statuses.CLOSED, Statuses.SUBMITTED, Statuses.WITHDRAWN,
 
 class SystemTeamsID(Enum):
     ADMIN = "00000000-0000-0000-0000-000000000001"
+
+
+class CaseType:
+    EXHIBITION = "exhibition_clearance"
