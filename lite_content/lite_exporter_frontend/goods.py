@@ -40,6 +40,7 @@ class GoodsList:
         INCORPORATED = "Incorporated"
         COUNTRIES = "Countries"
         STATUS = "Status"
+        PRODUCT_TYPE = "Product type"
 
     class Documents:
         TITLE = "Documents"
@@ -314,6 +315,11 @@ class AddGoodToApplicationForm:
         DESCRIPTION = ""
         YES = "Yes"
         NO = "No"
+
+    class Exhibition:
+        TITLE = "Select what will be exhibited for the product"
+        DESCRIPTION = ""
+        BACK_LINK = "Back"
 
 
 class AddPreexistingGoodToApplicationForm:

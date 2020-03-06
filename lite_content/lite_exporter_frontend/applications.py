@@ -89,7 +89,7 @@ class ThirdPartyForm:
         EXPORTER = "Exporter"
         CUSTOMER = "Customer"
 
-    ROLE_TITLE = "Select the role of the third party in your application"
+    ROLE_TITLE = "Select the role of the third party"
     TYPE_TITLE = "Select the type of third party"
     BUTTON = "Continue"
     NAME_FORM_TITLE = "Third party name"
@@ -117,7 +117,7 @@ class GeneratedDocuments:
 
 class ApplicationSummaryPage:
     CLEARANCE_LEVEL = "Security grading"
-    F680_CLEARANCE_TYPES = "F680 Clearance Types"
+    F680_CLEARANCE_TYPES = "Clearance types"
     REFERENCE_CODE = "ECJU reference"
     REFERENCE_NAME = "Reference"
     TYPE = "Licence type"
@@ -135,14 +135,15 @@ class ApplicationSummaryPage:
     GOODS_LOCATIONS = "Locations"
     GOODS_DEPARTED = "Have the goods already left the UK?"
     SUPPORTING_DOCUMENTATION = "Supporting documents"
-    GOODS_CATEGORIES = "Product categories"
+    EXHIBITION_DETAILS = "Exhibition details"
+    GOODS_CATEGORIES = "Products"
     GOODS = "Products"
     COUNTRIES = "Countries"
     ON_BEHALF_OF = "On behalf of"
     OPTIONAL_NOTE = "Optional note"
     COPY_REFERENCE_CODE = "Copy ECJU reference"
     COPIED = "Copied"
-    CLEARANCE = "Clearance level"
+    CLEARANCE = "Security grading"
 
     class Sections:
         COMPLETED_TAG = "Saved"
@@ -228,7 +229,10 @@ class InitialApplicationQuestionsForms:
             )
 
             MOD_CLEARANCE_TITLE = "MOD clearance"
-            MOD_CLEARANCE_DESCRIPTION = "Select if you need to share information (an F680) or go to an exhibition, or if you're gifting surplus products."
+            MOD_CLEARANCE_DESCRIPTION = (
+                "Select if you need to share information (an F680) or to go to an exhibition, or if you're gifting "
+                "surplus products."
+            )
 
     class ReferenceNameQuestion:
         TITLE = "Name the application"
@@ -259,8 +263,8 @@ class ExportLicenceQuestions:
         PERMANENT = "Permanent"
 
     class HaveYouBeenInformedQuestion:
-        TITLE = "Have you been informed under an 'end use control' that you need to apply for a licence?"
-        DESCRIPTION = "An end use control is an official letter or email from Border Force or HMRC."
+        TITLE = "Have you received a letter or email from Border Force or HMRC informing you to apply for a licence?"
+        DESCRIPTION = "You may know this as an 'end use control'."
         WHAT_WAS_THE_REFERENCE_CODE_TITLE = "Reference number"
         WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION = "The reference number is on the official letter or email."
 
@@ -360,6 +364,7 @@ class HMRCApplicationTaskList:
 
 class ExhibitionClearanceTaskList:
     ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
+    DETAILS = "Exhibition details"
     NEW_TITLE = "Exhibition clearance application"
     EDIT_TITLE = "Edit the application"
     GOODS = "Products"
@@ -386,16 +391,16 @@ class GiftingClearanceTaskList:
 
 class F680ClearanceTaskList:
     ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
-    NEW_TITLE = "F680 clearance application"
+    NEW_TITLE = "MOD Form 680 application"
     EDIT_TITLE = "Edit the application"
-    F680_DETAILS = "F680 Details"
+    F680_DETAILS = "Clearance types"
     GOODS = "Products"
     GOODS_LOCATION = "Locations"
     END_USER = "End user"
     SUPPORTING_DOCUMENTS = "Supporting documents"
     THIRD_PARTIES = "Third parties"
     NOTES = "Notes"
-    CLEARANCE = "Clearance level"
+    CLEARANCE = "Security grading"
 
 
 class EditApplicationPage:
