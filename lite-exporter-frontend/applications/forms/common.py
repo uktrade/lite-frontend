@@ -5,7 +5,18 @@ from lite_content.lite_exporter_frontend import strings
 from django.urls import reverse_lazy
 
 from lite_content.lite_exporter_frontend.applications import ApplicationSuccessPage
-from lite_forms.components import HiddenField, Form, BackLink, TextArea, HTMLBlock, RadioButtons, Option, FormGroup
+from lite_forms.components import (
+    HiddenField,
+    Form,
+    BackLink,
+    TextArea,
+    HTMLBlock,
+    RadioButtons,
+    Option,
+    FormGroup,
+    TextInput,
+    DateInput,
+)
 from lite_forms.generators import confirm_form, success_page
 from lite_forms.helpers import conditional
 
@@ -89,4 +100,34 @@ def application_success_page(request, application_reference_code):
 def application_copy_form(application_type=None):
     return FormGroup(
         forms=[reference_name_form(), conditional((application_type == STANDARD), told_by_an_official_form()),]
+    )
+
+
+def exhibition_details_form(application_id):
+    return Form(
+        title=strings.Exhibition.EXHIBITION_TITLE,
+        questions=[
+            TextInput(title=strings.Exhibition.TITLE, name="title"),
+            DateInput(
+                title=strings.Exhibition.FIRST_EXHIBITION_DATE,
+                description=strings.Exhibition.DATE_DESCRIPTION,
+                prefix="first_exhibition_date",
+                name="first_exhibition_date",
+            ),
+            DateInput(
+                title=strings.Exhibition.REQUIRED_BY_DATE,
+                description=strings.Exhibition.DATE_DESCRIPTION,
+                prefix="required_by_date",
+                name="required_by_date",
+            ),
+            TextArea(
+                title=strings.Exhibition.REASON_FOR_CLEARANCE,
+                name="reason_for_clearance",
+                optional=True,
+                extras={"max_length": 2000},
+            ),
+        ],
+        back_link=BackLink(
+            strings.BACK_TO_APPLICATION, reverse_lazy("applications:task_list", kwargs={"pk": application_id}),
+        ),
     )

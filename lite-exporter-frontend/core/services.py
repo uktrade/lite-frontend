@@ -5,7 +5,7 @@ from django.http import StreamingHttpResponse
 
 from core.helpers import convert_parameters_to_query_params, convert_value_to_query_param
 from lite_content.lite_exporter_frontend.generic import Document
-from lite_forms.components import Option
+from lite_forms.components import Option, TextArea
 
 from conf.client import get, post, put, delete
 from conf.constants import (
@@ -19,6 +19,7 @@ from conf.constants import (
     CONTROL_LIST_ENTRIES_URL,
     NEWLINE,
     PV_GRADINGS_URL,
+    ITEM_TYPES_URL,
     STATIC_F680_CLEARANCE_TYPES_URL,
 )
 from lite_forms.generators import error_page
@@ -27,6 +28,21 @@ from lite_forms.generators import error_page
 def get_units(request):
     data = get(request, UNITS_URL).json().get("units")
     return [Option(key, value) for key, value in data.items()]
+
+
+def get_item_types(request):
+    data = get(request, ITEM_TYPES_URL).json().get("item_types")
+    options = []
+    for key, value in data.items():
+        if key == "other":
+            options.append(
+                Option(
+                    key=key, value=value, components=[TextArea(name="other_item_type", extras={"max_length": 100},),],
+                )
+            )
+        else:
+            options.append(Option(key=key, value=value))
+    return options
 
 
 def get_countries(request, convert_to_options=False, exclude: list = None):

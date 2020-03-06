@@ -48,6 +48,15 @@
 				{% endif %}
 			</h2>
 			<ul class="lite-task-list__items {% if is_editing %}govuk-!-padding-0{% endif %}">
+				{# Exhibition clearance types #}
+				{% if application_type|application_type_in_list:"EXHIBITION" and edit_type != "minor_edit" %}
+					{% url 'applications:exhibition_details' application.id as exhibition_details_url %}
+					{% include "includes/task-list-item.html" with id="exhibition-details" title=strings.DETAILS url=exhibition_details_url status=application.title|task_list_item_status description=application.title%}
+				{% elif application_type|application_type_in_list:"EXHIBITION" %}
+					{% url 'applications:exhibition_details' application.id as exhibition_details_url %}
+					{% include "includes/task-list-item.html" with id="exhibition-details" title=strings.DETAILS url=exhibition_details_url status=application.title|task_list_item_status description=application.title disabled=True %}
+				{% endif %}
+
 				{# F680 clearance types #}
 				{% if application_type|application_type_in_list:"F680" %}
 					{%  if not is_editing or edit_type == 'major_edit' %}

@@ -34,7 +34,7 @@ Feature: I want to be able to edit and update an active application
     And I remove an additional document
     And I confirm I want to delete the document
     And I click the back link
-    Then the document is removed from the application
+    Then the document has been removed from the application
 
   @LT_998_edit_standard_application_fast @regression
   Scenario: Edit a standard application with audit

@@ -15,8 +15,8 @@ from applications.services import (
     delete_application_preexisting_good,
     add_document_data,
 )
+from conf.constants import EXHIBITION
 from core.helpers import convert_dict_to_query_params
-from core.services import get_units
 
 from goods.forms import document_grading_form, attach_documents_form, add_good_form_group
 from goods.services import (
@@ -41,9 +41,11 @@ class DraftGoodsList(TemplateView):
         draft_id = str(kwargs["pk"])
         application = get_application(request, draft_id)
         goods = get_application_goods(request, draft_id)
-        goods_value = get_total_goods_value(goods)
+        exhibition = application["case_type"]["sub_type"]["key"] == EXHIBITION
 
-        context = {"goods": goods, "application": application, "goods_value": goods_value}
+        context = {"goods": goods, "application": application, "exhibition": exhibition}
+        if not exhibition:
+            context["goods_value"] = get_total_goods_value(goods)
         return render(request, "applications/goods/index.html", context)
 
 
@@ -164,8 +166,9 @@ class DraftOpenGoodsTypeList(TemplateView):
 class AddGoodToApplication(SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
+        application = get_application(self.request, self.object_pk)
         good, _ = get_good(request, kwargs["good_pk"])
-        self.form = good_on_application_form(good, get_units(request))
+        self.form = good_on_application_form(request, good, application["case_type"]["sub_type"], self.object_pk)
         self.action = post_good_on_application
         self.success_url = reverse_lazy("applications:goods", kwargs={"pk": self.object_pk})
 

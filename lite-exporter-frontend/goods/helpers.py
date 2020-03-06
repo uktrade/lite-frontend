@@ -1,5 +1,6 @@
 from django.template.defaultfilters import default
 
+from applications.helpers.date_fields import format_date
 from lite_forms.components import Summary
 
 
@@ -20,15 +21,7 @@ def good_summary(good):
 def process_pv_grading_for_post(json):
     post_data = json
     # Convert date
-    date_field = "date_of_issue"
-    year = json.get(date_field + "year", "")
-    month = json.get(date_field + "month", "")
-    if len(month) == 1:
-        month = "0" + month
-    day = json.get(date_field + "day", "")
-    if len(day) == 1:
-        day = "0" + day
-    date_of_issue = f"{year}-{month}-{day}"
+    date_of_issue = format_date(json, "date_of_issue")
 
     post_data["pv_grading_details"] = {
         "grading": post_data["grading"],

@@ -26,6 +26,7 @@ from ui_automation_tests.fixtures.add_goods_query import add_goods_clc_query  # 
 from ui_automation_tests.fixtures.add_end_user_advisory import add_end_user_advisory  # noqa
 from ui_automation_tests.fixtures.sso_sign_in import sso_sign_in  # noqa
 from ui_automation_tests.fixtures.manage_case import manage_case_status_to_withdrawn, approve_case  # noqa
+from ui_automation_tests.pages.mod_clearances.ExhibitionClearanceDetails import ExhibitionClearanceDetailsPage
 from ui_automation_tests.shared.fixtures.apply_for_application import (  # noqa
     apply_for_standard_application,
     add_an_ecju_query,
@@ -400,16 +401,16 @@ def add_new_goods_type(driver, description, controlled, control_code, incorporat
 
 @when("I add a non-incorporated good to the application")  # noqa
 def i_add_a_non_incorporated_good_to_the_application(driver, context):  # noqa
-    StandardApplicationGoodsPage(driver).click_add_preexisting_good_button()
-
-    # Click the "Add to application" link on the first good
-    driver.find_elements_by_css_selector(".govuk-table__row .govuk-link")[0].click()
+    goods_page = StandardApplicationGoodsPage(driver)
+    goods_page.click_add_preexisting_good_button()
+    goods_page.click_add_to_application()
 
     # Enter good details
-    StandardApplicationGoodDetails(driver).enter_value("1")
-    StandardApplicationGoodDetails(driver).enter_quantity("2")
-    StandardApplicationGoodDetails(driver).select_unit("Number of articles")
-    StandardApplicationGoodDetails(driver).check_is_good_incorporated_false()
+    goods_details_page = StandardApplicationGoodDetails(driver)
+    goods_details_page.enter_value("1")
+    goods_details_page.enter_quantity("2")
+    goods_details_page.select_unit("Number of articles")
+    goods_details_page.check_is_good_incorporated_false()
     context.is_good_incorporated = "No"
 
     functions.click_submit(driver)
@@ -485,6 +486,11 @@ def no_third_parties_are_left_on_the_application(driver):  # noqa
     assert not TaskListPage(driver).find_remove_party_link()
 
 
+@then("the document has been removed from the application")
+def no_documents_are_left_on_the_application(driver):  # noqa
+    assert not TaskListPage(driver).find_remove_party_link()
+
+
 @when("I remove an additional document")
 def i_remove_an_additional_document(driver):  # noqa
     driver.set_timeout_to(0)
@@ -498,9 +504,13 @@ def i_click_confirm(driver):  # noqa
     AdditionalDocumentsPage(driver).confirm_delete_additional_document()
 
 
-@then("the document is removed from the application")
-def no_documents_are_set_on_the_application(driver):  # noqa
-    assert not AdditionalDocumentsPage(driver).does_remove_additional_document_exist(driver)
+@when(parsers.parse('I enter Exhibition details with the name "{name}"'))
+def enter_exhibition_details(driver, name):  # noqa
+    exhibition_details_page = ExhibitionClearanceDetailsPage(driver)
+    exhibition_details_page.enter_exhibition_name(name)
+    exhibition_details_page.enter_exhibition_start_date("1", "1", "2100")
+    exhibition_details_page.enter_exhibition_required_by_date("1", "1", "2100")
+    functions.click_submit(driver)
 
 
 @when(parsers.parse('I click on the "{section}" section'))  # noqa

@@ -29,9 +29,13 @@
 					<th scope="col" class="govuk-table__header">{% lcs 'goods.GoodsList.Table.DESCRIPTION' %}</th>
 					<th scope="col" class="govuk-table__header">{% lcs 'goods.GoodsList.Table.CONTROL_LIST_ENTRY' %}</th>
 					<th scope="col" class="govuk-table__header">{% lcs 'goods.GoodsList.Table.PART_NUMBER' %}</th>
-					<th scope="col" class="govuk-table__header">{% lcs 'goods.GoodsList.Table.QUANTITY' %}</th>
-					<th scope="col" class="govuk-table__header">{% lcs 'goods.GoodsList.Table.VALUE' %}</th>
-					<th scope="col" class="govuk-table__header">{% lcs 'goods.GoodsList.Table.INCORPORATED' %}</th>
+					{% if exhibition %}
+						<th scope="col" class="govuk-table__header">{% lcs 'goods.GoodsList.Table.PRODUCT_TYPE' %}</th>
+					{% else %}
+						<th scope="col" class="govuk-table__header">{% lcs 'goods.GoodsList.Table.QUANTITY' %}</th>
+						<th scope="col" class="govuk-table__header">{% lcs 'goods.GoodsList.Table.VALUE' %}</th>
+						<th scope="col" class="govuk-table__header">{% lcs 'goods.GoodsList.Table.INCORPORATED' %}</th>
+					{% endif %}
 					<th scope="col" class="govuk-table__header"></th>
 				</tr>
 			</thead>
@@ -51,15 +55,25 @@
 						<td class="govuk-table__cell">
 							{{ good_on_application.good.part_number|default_na }}
 						</td>
-						<td class="govuk-table__cell">
-							{{ good_on_application.quantity|intcomma }} {{ good_on_application.unit.value|units_pluralise:good_on_application.quantity }}
-						</td>
-						<td class="govuk-table__cell">
-							£{{ good_on_application.value|intcomma }}
-						</td>
-						<td class="govuk-table__cell">
-							{{ good_on_application.is_good_incorporated|friendly_boolean }}
-						</td>
+						{% if exhibition %}
+							<td class="govuk-table__cell">
+								{% if good_on_application.other_item_type %}
+									{{ good_on_application.other_item_type|title }}
+								{% else %}
+									{{ good_on_application.item_type|title }}
+								{% endif %}
+							</td>
+						{% else %}
+							<td class="govuk-table__cell">
+								{{ good_on_application.quantity|intcomma }} {{ good_on_application.unit.value|units_pluralise:good_on_application.quantity }}
+							</td>
+							<td class="govuk-table__cell">
+								£{{ good_on_application.value|intcomma }}
+							</td>
+							<td class="govuk-table__cell">
+								{{ good_on_application.is_good_incorporated|friendly_boolean }}
+							</td>
+						{% endif %}
 						<td class="govuk-table__cell govuk-table__cell--numeric">
 							<a class="govuk-link" href="{% url 'applications:remove_preexisting_good' application.id good_on_application.id %}">
 								Remove
@@ -69,7 +83,9 @@
 				{% endfor %}
 			</tbody>
 		</table>
-		<p class="govuk-body govuk-!-font-weight-bold">Total value<span class="govuk-visually-hidden"> of products</span>: <span id="span-goods-total-value">£{{ goods_value|intcomma }}</span></p>
+		{% if goods_value %}
+			<p class="govuk-body govuk-!-font-weight-bold">Total value<span class="govuk-visually-hidden"> of products</span>: <span id="span-goods-total-value">£{{ goods_value|intcomma }}</span></p>
+		{% endif %}
 	{% else %}
 		{% include "includes/notice.html" with text='goods.ViewGoodOnApplicationPage.NO_CONTENT' help='goods.ViewGoodOnApplicationPage.NO_CONTENT_DESCRIPTION' %}
 	{% endif %}

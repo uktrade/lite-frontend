@@ -12,7 +12,7 @@ from conf.constants import (
     GIFTING,
     F680,
 )
-from core.builtins.custom_tags import default_na, friendly_boolean, pluralise_unit
+from core.builtins.custom_tags import default_na, friendly_boolean, pluralise_unit, date_display
 from core.helpers import convert_to_link
 from lite_content.lite_exporter_frontend import applications
 from lite_content.lite_exporter_frontend.strings import Parties
@@ -42,16 +42,9 @@ def convert_application_to_check_your_answers(application, editable=False):
 
 def _convert_exhibition_clearance(application, editable=False):
     return {
-        applications.ApplicationSummaryPage.GOODS: _convert_goods(application["goods"]),
+        applications.ApplicationSummaryPage.EXHIBITION_DETAILS: _get_exhibition_details(application),
+        applications.ApplicationSummaryPage.GOODS: _convert_goods(application["goods"], True),
         applications.ApplicationSummaryPage.GOODS_LOCATIONS: _convert_goods_locations(application["goods_locations"]),
-        applications.ApplicationSummaryPage.END_USER: convert_party(application["end_user"], application, editable),
-        applications.ApplicationSummaryPage.ULTIMATE_END_USERS: [
-            convert_party(party, application, editable) for party in application["ultimate_end_users"]
-        ],
-        applications.ApplicationSummaryPage.THIRD_PARTIES: [
-            convert_party(party, application, editable) for party in application["third_parties"]
-        ],
-        applications.ApplicationSummaryPage.CONSIGNEE: convert_party(application["consignee"], application, editable),
         applications.ApplicationSummaryPage.SUPPORTING_DOCUMENTATION: _get_supporting_documentation(
             application["additional_documents"], application["id"]
         ),
@@ -140,18 +133,38 @@ def _convert_hmrc_query(application, editable=False):
     }
 
 
-def _convert_goods(goods):
-    return [
-        {
+def _convert_goods(goods, is_exhibition=False):
+    goods_list = []
+
+    for good in goods:
+        goods_dict = {
             "Description": good["good"]["description"],
             "Part number": default_na(good["good"]["part_number"]),
             "Controlled": friendly_boolean(good["good"]["is_good_controlled"]),
             "CLC": default_na(good["good"]["control_code"]),
-            "Quantity": intcomma(good["quantity"]) + " " + pluralise_unit(good["unit"]["value"], good["quantity"]),
-            "Value": "£" + good["value"],
         }
-        for good in goods
-    ]
+        if is_exhibition:
+            goods_dict["Product type"] = good["other_item_type"] if good["other_item_type"] else good["item_type"]
+        else:
+            goods_dict["Quantity"] = (
+                intcomma(good["quantity"]) + " " + pluralise_unit(good["unit"]["value"], good["quantity"])
+            )
+            goods_dict["Value"] = "£" + good["value"]
+
+        goods_list.append(goods_dict)
+
+    return goods_list
+
+
+def _get_exhibition_details(application):
+    data = {
+        "Title": application["title"],
+        "Exhibition start date": date_display(application["first_exhibition_date"]),
+        "Required by": date_display(application["required_by_date"]),
+    }
+    if application["reason_for_clearance"]:
+        data["Reason for clearance"] = application["reason_for_clearance"]
+    return data
 
 
 def _convert_goods_types(goods_types):
