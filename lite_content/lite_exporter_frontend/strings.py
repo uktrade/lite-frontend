@@ -370,3 +370,12 @@ class Hmrc:
     class QueryExplanation:
         BUTTON_TEXT = "Save and mark as done"
         TITLE = "Explain the reason behind your query"
+
+
+class Exhibition:
+    EXHIBITION_TITLE = "Exhibition details"
+    TITLE = "Name"
+    FIRST_EXHIBITION_DATE = "Exhibition start date"
+    REQUIRED_BY_DATE = "Date the clearance is needed"
+    DATE_DESCRIPTION = "For example, 12 11 2020"
+    REASON_FOR_CLEARANCE = "The reason the clearance is needed by this date"
