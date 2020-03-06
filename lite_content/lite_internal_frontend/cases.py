@@ -6,7 +6,7 @@ class CasesListPage:
     ASSIGN_USERS = "Assign users"
     STATUS = "Status"
     NOT_UPDATED_RECENTLY = "This case has not been updated in over 5 days"
-    OPEN_TEAM_ECJU = "This case contains enquiries opened by your team"
+    OPEN_TEAM_ECJU = "This case contains open enquiries by your team"
 
     class Filters:
         CASE_TYPE = "type"
