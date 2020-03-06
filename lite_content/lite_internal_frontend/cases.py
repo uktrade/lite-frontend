@@ -53,6 +53,7 @@ class ApplicationPage:
             DOCUMENTS = "Documents"
             FLAGS = "Flags"
             ADVICE = "Advice"
+            PRODUCT_TYPE = "Product type"
 
     class Destinations:
         COUNTRY_NAME = "Country"
@@ -98,6 +99,15 @@ class ApplicationPage:
     NO_USERS_ASSIGNED = "No users assigned"
     NO_QUEUES_ASSIGNED = "No queues assigned"
     COPY_OF_LABEL = "Copied from:"
+
+    class Details:
+        DETAILS = "Exhibition details"
+
+        class Table:
+            TITLE = "Title"
+            REQUIRED_BY_DATE = "Required by date"
+            FIRST_EXHIBITION_DATE = "First exhibition date"
+            REASON_FOR_CLEARANCE = "Reason for clearance"
 
 
 class GenerateDocumentsPage:
