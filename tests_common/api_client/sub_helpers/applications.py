@@ -61,23 +61,33 @@ class Applications:
         draft=None,
         good=None,
         end_user=None,
+        has_end_user=True,
         has_ultimate_end_user=True,
         ultimate_end_user=None,
         has_consignee=True,
         has_location=True,
         consignee=None,
         third_party=None,
+        has_third_party=True,
         f680_clearance_types=None,
     ):
         draft_id = self.create_draft(draft=draft)
         if has_location:
             self.add_site(draft_id=draft_id)
-        self.goods.add_good_to_draft(draft_id=draft_id, good=good)
 
-        parties = [
-            self.parties.add_party(request_data_key="end_user", draft_id=draft_id, party=end_user),
-            self.parties.add_party(request_data_key="third_party", draft_id=draft_id, party=third_party),
-        ]
+        if draft["application_type"] != "exhc":
+            self.goods.add_good_to_draft(draft_id=draft_id, good=good)
+        else:
+            self.goods.add_good_to_draft(draft_id=draft_id, good=self.request_data["add_exhibition_good"])
+            self.add_site(draft_id=draft_id)
+
+        parties = []
+
+        if has_end_user:
+            parties.append(self.parties.add_party(request_data_key="end_user", draft_id=draft_id, party=end_user))
+
+        if has_third_party:
+            parties.append(self.parties.add_party(request_data_key="third_party", draft_id=draft_id, party=third_party))
 
         if has_ultimate_end_user:
             parties.append(
@@ -179,3 +189,12 @@ class Applications:
         document_type = kwargs.pop("document_type")
         callback_function = kwargs.pop("callback_function")
         assert wait_for_function(callback_function, **kwargs), document_type + " document wasn't successfully processed"
+
+    def post_exhibition_details(self, draft_id, data):
+        data = data if data else self.request_data["exhibition_details"]
+        self.api_client.make_request(
+            method="POST",
+            url="/applications/" + draft_id + "/exhibition-details/",
+            headers=self.api_client.exporter_headers,
+            body=data,
+        )

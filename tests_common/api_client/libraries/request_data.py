@@ -109,6 +109,7 @@ def build_request_data(exporter_user, gov_user):
             "details": "Kebabs",
             "is_pv_graded": "grading_required",
         },
+        "add_exhibition_good": {"good_id": "", "item_type": "video"},
         "case_note": {"text": "I Am Easy to Find", "is_visible_to_exporter": True},
         "edit_case_app": {"name": "new app name!"},
         "ecju_query": {"question": "This is a question, please answer"},
@@ -142,6 +143,11 @@ def build_request_data(exporter_user, gov_user):
             "email": exporter["email"],
             "user_profile": {"first_name": "Bruce", "last_name": "Wayne"},
             "sites": {},
+        },
+        "exhibition_details": {
+            "title": "exhibition title",
+            "first_exhibition_date": "3000-02-01",
+            "required_by_date": "3000-01-01",
         },
     }
     return request_data
