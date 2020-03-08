@@ -135,6 +135,7 @@ class ApplicationSummaryPage:
     GOODS_LOCATIONS = "Locations"
     GOODS_DEPARTED = "Have the goods already left the UK?"
     SUPPORTING_DOCUMENTATION = "Supporting documents"
+    EXHIBITION_DETAILS = "Exhibition details"
     GOODS_CATEGORIES = "Products"
     GOODS = "Products"
     COUNTRIES = "Countries"
@@ -363,6 +364,7 @@ class HMRCApplicationTaskList:
 
 class ExhibitionClearanceTaskList:
     ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
+    DETAILS = "Exhibition details"
     NEW_TITLE = "Exhibition clearance application"
     EDIT_TITLE = "Edit the application"
     GOODS = "Products"
