@@ -60,14 +60,18 @@ class RegisterAnOrganisation:
         EORI_NUMBER_DESCRIPTION = (
             "If you don't have a EORI number you can apply for one on [GOV.UK](https://www.gov.uk/eori)."
         )
+        EORI_NUMBER_SHORT_TITLE = "EORI number"
         SIC_NUMBER = "SIC number"
         SIC_NUMBER_DESCRIPTION = "If you don't know your SIC number you can find it on [GOV.UK](https://www.gov.uk/government/publications/standard-industrial-classification-of-economic-activities-sic)."
+        SIC_NUMBER_SHORT_TITLE = "SIC number"
         VAT_NUMBER = "UK VAT number"
         VAT_NUMBER_DESCRIPTION = (
             "9 digits long, with the first 2 letters indicating the country code of the registered business."
         )
+        VAT_NUMBER_SHORT_TITLE = "UK VAT number"
         CRN_NUMBER = "Company registration number (CRN)"
         CRN_NUMBER_DESCRIPTION = "8 numbers, or 2 letters followed by 6 numbers."
+        CRN_NUMBER_SHORT_TITLE = "CRN number"
 
     class Individual:
         TITLE = "Register a private individual"
@@ -78,10 +82,12 @@ class RegisterAnOrganisation:
         EORI_NUMBER_DESCRIPTION = (
             "If you don't have a EORI number you can apply for one on [GOV.UK](https://www.gov.uk/eori)."
         )
+        EORI_NUMBER_SHORT_TITLE = "EORI number"
         VAT_NUMBER = "UK VAT number"
         VAT_NUMBER_DESCRIPTION = (
             "9 digits long, with the first 2 letters indicating the country code of the registered business."
         )
+        VAT_NUMBER_SHORT_TITLE = "UK VAT number"
 
     class Headquarters:
         TITLE = "Where is your organisation based?"
