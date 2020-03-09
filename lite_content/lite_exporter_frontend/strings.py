@@ -9,6 +9,7 @@ from lite_content.lite_exporter_frontend import (  # noqa
     end_users,  # noqa
     hub,  # noqa
     generic,  # noqa
+    organisation,  # noqa
 )  # noqa
 
 # Generic (used as defaults in forms)
@@ -27,7 +28,6 @@ OPTIONAL = "Optional"
 NOT_STARTED = "Not started"
 IN_PROGRESS = "In progress"
 DONE = "Saved"
-VIEW = "View"
 
 SUBMIT_APPLICATION = "Submit application"
 EDIT_APPLICATION_SUBMIT = "Submit application"

@@ -1,7 +1,4 @@
 class HubPage:
-    USERS = "Manage my users"
-    SITES = "Manage my sites"
-    ROLES = "Manage my roles"
     ORGANISATION = "Manage my organisation"
 
 
@@ -27,8 +24,8 @@ class StartPage:
     REGISTER_ACCOUNT_LINK = "register an account"
     NOTICE = (
         "There are different services if you want to export "
-        "[drugs and medicines](https://www.artscouncil.org.uk/export-controls/export-licensing), "
-        "[export fine art](https://www.gov.uk/guidance/export-drugs-and-medicines-special-rules) "
+        "[drugs and medicines](https://www.gov.uk/guidance/export-drugs-and-medicines-special-rules), "
+        "[export fine art](https://www.artscouncil.org.uk/export-controls/export-licensing) "
         "or [export livestock](https://www.gov.uk/guidance/export-livestock-and-poultry)"
     )
     BREADCRUMBS = [
@@ -36,3 +33,59 @@ class StartPage:
         ["Business and enterprise", "https://www.gov.uk/topic/business-enterprise"],
         ["Trade restrictions on exports", "https://www.gov.uk/topic/business-enterprise/importing-exporting"],
     ]
+
+
+class RegisterAnOrganisation:
+    class Landing:
+        TITLE = "Create an export control account"
+        DESCRIPTION = "To use this service, you need to register with the Export Control Joint Unit (ECJU) for an export control account."
+        DESCRIPTION_2 = "If you work for an organisation, check with your colleagues first before creating an account as your organisation might already be registered. If your organisation does have an export control account, ask a super user to add you as a team member."
+        SUMMARY_LIST_HEADER = "Once approved, you can use your account to: "
+        BUTTON = "Create an account"
+
+    class CommercialOrIndividual:
+        TITLE = "Commercial organisation or private individual"
+        DESCRIPTION = ""
+        COMMERCIAL = "Commercial organisation"
+        COMMERCIAL_DESCRIPTION = "Select this if you want to register an organisation that will be exporting"
+        INDIVIDUAL = "Private individual"
+        INDIVIDUAL_DESCRIPTION = "Select this if you're a private individual that will be exporting alone"
+
+    class Commercial:
+        TITLE = "Register a commercial organisation"
+        DESCRIPTION = ""
+        NAME = "Name of organisation"
+        NAME_DESCRIPTION = ""
+        EORI_NUMBER = "European Union registration and identification number (EORI)"
+        EORI_NUMBER_DESCRIPTION = (
+            "If you don't have a EORI number you can apply for one on [GOV.UK](https://www.gov.uk/eori)."
+        )
+        SIC_NUMBER = "SIC number"
+        SIC_NUMBER_DESCRIPTION = "If you don't know your SIC number you can find it on [GOV.UK](https://www.gov.uk/government/publications/standard-industrial-classification-of-economic-activities-sic)."
+        VAT_NUMBER = "UK VAT number"
+        VAT_NUMBER_DESCRIPTION = (
+            "9 digits long, with the first 2 letters indicating the country code of the registered business."
+        )
+        CRN_NUMBER = "Company registration number (CRN)"
+        CRN_NUMBER_DESCRIPTION = "8 numbers, or 2 letters followed by 6 numbers."
+
+    class Individual:
+        TITLE = "Register a private individual"
+        DESCRIPTION = ""
+        NAME = "First and last name"
+        NAME_DESCRIPTION = ""
+        EORI_NUMBER = "European Union registration and identification number (EORI)"
+        EORI_NUMBER_DESCRIPTION = (
+            "If you don't have a EORI number you can apply for one on [GOV.UK](https://www.gov.uk/eori)."
+        )
+        VAT_NUMBER = "UK VAT number"
+        VAT_NUMBER_DESCRIPTION = (
+            "9 digits long, with the first 2 letters indicating the country code of the registered business."
+        )
+
+    class Headquarters:
+        TITLE = "Where is your organisation based?"
+        TITLE_INDIVIDUAL = "Where are you based?"
+        DESCRIPTION = ""
+        NAME = "Name of headquarters"
+        NAME_DESCRIPTION = ""
