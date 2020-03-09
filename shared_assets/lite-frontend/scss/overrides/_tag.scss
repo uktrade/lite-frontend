@@ -1,0 +1,29 @@
+.govuk-table__cell, .govuk-summary-list__value {
+	.govuk-tag {
+		position: relative;
+		z-index: 0;
+		padding: 4px 16px;
+
+		&::before {
+			content: "";
+			position: absolute;
+			top: -4px;
+			bottom: -4px;
+			left: 0;
+			right: 0;
+			background: inherit;
+			z-index: -1;
+		}
+	}
+}
+
+@include govuk-media-query($from: tablet) {
+	.govuk-table__cell {
+		.govuk-tag {
+			box-sizing: border-box;
+			width: 100%;
+			text-align: center;
+			padding: 4px;
+		}
+	}
+}
