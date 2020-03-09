@@ -1,4 +1,4 @@
-from lite_content.lite_internal_frontend import (
+from lite_content.lite_internal_frontend import (  # noqa
     cases,  # noqa
     letter_templates,  # noqa
     roles,  # noqa
