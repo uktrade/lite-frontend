@@ -1,6 +1,7 @@
-import datetime
-
 from pytest import fixture
+from faker import Faker
+
+fake = Faker()
 
 from ..tools.utils import get_lite_client, Timer
 
@@ -15,17 +16,12 @@ def save_application_data_to_context(lite_client, context):
     context.ultimate_end_user = lite_client.context.get("ultimate_end_user")
 
 
-def generate_name(prefix):
-    time_id = datetime.datetime.now().strftime(" %d%H%M%S")
-    return f"{prefix}{time_id}", time_id
-
-
 @fixture
 def apply_for_standard_application(driver, api_client_config, context):
     timer = Timer()
     lite_client = get_lite_client(context, api_client_config)
     lite_client.api_client.auth_exporter_user(lite_client.context["org_id"])
-    context.app_name, context.app_time_id = generate_name("Standard Application")
+    context.app_name = fake.bs()
     context.good_value = 1.21
 
     draft_id = lite_client.applications.add_draft(
@@ -45,36 +41,36 @@ def apply_for_standard_application(driver, api_client_config, context):
             "is_good_pv_graded": "no",
         },
         end_user={
-            "name": "Mr Smith",
-            "address": "Westminster, London SW1A 0BB",
+            "name": fake.name(),
+            "address": fake.street_address() + fake.state() + fake.postcode(),
             "country": "GB",
             "sub_type": "government",
-            "website": "https://www.gov.uk",
+            "website": fake.uri(),
             "type": "end_user",
         },
         ultimate_end_user={
-            "name": "Individual",
-            "address": "Bullring, Birmingham SW1A 0AA",
+            "name": fake.name(),
+            "address": fake.street_address() + fake.state() + fake.postcode(),
             "country": "GB",
             "sub_type": "commercial",
-            "website": "https://www.anothergov.uk",
+            "website": fake.uri(),
             "type": "ultimate_end_user",
         },
         consignee={
-            "name": "Government",
-            "address": "Westminster, London SW1A 0BB",
+            "name": fake.name(),
+            "address": fake.street_address() + fake.state() + fake.postcode(),
             "country": "GB",
             "sub_type": "government",
-            "website": "https://www.gov.uk",
+            "website": fake.uri(),
             "type": "consignee",
         },
         third_party={
-            "name": "Individual",
-            "address": "Ukraine, 01532",
+            "name": fake.name(),
+            "address": fake.street_address() + fake.state() + fake.postcode(),
             "country": "UA",
             "sub_type": "government",
             "role": "agent",
-            "website": "https://www.anothergov.uk",
+            "website": fake.uri(),
             "type": "third_party",
         },
     )
@@ -118,11 +114,11 @@ def apply_for_hmrc_query(driver, api_client_config, context):
             "hmrc_organisation": lite_client.context["hmrc_org_id"],
         },
         end_user={
-            "name": "Mr Smith",
-            "address": "Westminster, London SW1A 0BB",
+            "name": fake.name(),
+            "address": fake.street_address() + fake.state() + fake.postcode(),
             "country": "GB",
             "sub_type": "government",
-            "website": "https://www.gov.uk",
+            "website": fake.uri(),
             "type": "end_user",
         },
     )
@@ -145,8 +141,7 @@ def apply_for_open_application(driver, api_client_config, context):
     lite_client = get_lite_client(context, api_client_config)
     lite_client.api_client.auth_exporter_user(lite_client.context["org_id"])
 
-    context.open_app_time_id = datetime.datetime.now().strftime(" %d%H%M%S")
-    context.app_name = "Test Application " + context.open_app_time_id
+    context.app_name = fake.bs()
 
     draft_id = lite_client.applications.add_open_draft(
         draft={
@@ -168,7 +163,7 @@ def _apply_for_mod_clearance(
 ):
     lite_client = get_lite_client(context, api_client_config)
     lite_client.api_client.auth_exporter_user(lite_client.context["org_id"])
-    context.app_name, context.app_time_id = generate_name(type)
+    context.app_name = fake.bs()
     draft_id = lite_client.applications.add_draft(
         draft={
             "name": context.app_name,
@@ -176,39 +171,39 @@ def _apply_for_mod_clearance(
             "clearance_level": "uk_official" if type == "f680" else None,
         },
         end_user={
-            "name": "Mr Smith",
-            "address": "Westminster, London SW1A 0BB",
+            "name": fake.name(),
+            "address": fake.street_address() + fake.state() + fake.postcode(),
             "country": "GB",
             "sub_type": "government",
-            "website": "https://www.gov.uk",
+            "website": fake.uri(),
             "type": "end_user",
             "clearance_level": "uk_official" if type == "f680" else None,
         },
         ultimate_end_user={
-            "name": "Individual",
-            "address": "Bullring, Birmingham SW1A 0AA",
+            "name": fake.name(),
+            "address": fake.street_address() + fake.state() + fake.postcode(),
             "country": "GB",
             "sub_type": "commercial",
-            "website": "https://www.anothergov.uk",
+            "website": fake.uri(),
             "type": "ultimate_end_user",
             "clearance_level": "uk_official" if type == "f680" else None,
         },
         consignee={
-            "name": "Government",
-            "address": "Westminster, London SW1A 0BB",
+            "name": fake.name(),
+            "address": fake.street_address() + fake.state() + fake.postcode(),
             "country": "GB",
             "sub_type": "government",
-            "website": "https://www.gov.uk",
+            "website": fake.uri(),
             "type": "consignee",
             "clearance_level": "uk_official" if type == "f680" else None,
         },
         third_party={
-            "name": "Individual",
-            "address": "Ukraine, 01532",
+            "name": fake.name(),
+            "address": fake.street_address() + fake.state() + fake.postcode(),
             "country": "UA",
             "sub_type": "government",
             "role": "agent",
-            "website": "https://www.anothergov.uk",
+            "website": fake.uri(),
             "type": "third_party",
             "clearance_level": "uk_official" if type == "f680" else None,
         },
