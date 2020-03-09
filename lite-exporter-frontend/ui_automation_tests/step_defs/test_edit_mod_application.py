@@ -1,4 +1,4 @@
-from pytest_bdd import scenarios, given, when
+from pytest_bdd import scenarios, given
 
 scenarios("../features/edit_mod_application.feature", strict_gherkin=False)
 

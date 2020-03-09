@@ -10,9 +10,9 @@ Feature: I want to add a note to an application and view notes
     And I create a standard application via api
     When I go to application previously created
     And I click the notes tab
-    And I enter "This is a note on my application!" for case note
+    And I enter text for case note
     And I click cancel button
     Then entered text is no longer in case note field
-    When I enter "This is a note on my application!" for case note
+    When I enter text for case note
     And I click post note
     Then note is displayed

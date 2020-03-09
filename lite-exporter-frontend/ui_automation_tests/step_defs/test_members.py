@@ -3,7 +3,6 @@ from pytest_bdd import scenarios, when, then, parsers
 from selenium.webdriver.support.select import Select
 
 from ui_automation_tests.pages.add_member import AddMemberPage
-from ui_automation_tests.pages.exporter_hub_page import ExporterHubPage
 from ui_automation_tests.pages.member_page import MemberPage
 from ui_automation_tests.pages.members_page import MembersPage
 from ui_automation_tests.pages.shared import Shared

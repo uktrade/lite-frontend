@@ -207,11 +207,9 @@ def i_delete_the_application(driver):  # noqa
 
 @when("I add a note to the draft application")  # noqa
 def add_a_note_to_draft_application(driver, context):  # noqa
-    case_note_text = fake.paragraph(nb_sentences=3, variable_nb_sentences=True, ext_word_list=None)
-
-    enter_case_note_text(driver, case_note_text, context)
+    enter_case_note_text(driver, context)
     click_post_note(driver)
-    SubmittedApplicationsPages(driver).assert_case_notes_exists([case_note_text])
+    SubmittedApplicationsPages(driver).assert_case_notes_exists([context.text])
 
     functions.click_back_link(driver)
 

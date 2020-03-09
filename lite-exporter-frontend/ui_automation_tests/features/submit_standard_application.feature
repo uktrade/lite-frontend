@@ -70,7 +70,7 @@ Feature: I want to indicate the standard licence I want
     And I select the location at position "2" in external locations list and continue
     And I click the back link
     When I click on the "end_user" section
-    And I add a party of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
+    And I add a party of sub_type: "commercial", name: "Mr Jones", website: " ", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
     Then download link is present
     When I click the back link

@@ -29,9 +29,9 @@ Feature: I want to raise an End User advisory enquiry to check if a particular e
     Then I see a notification on end user advisory list
     When I open an end user advisory already created
     Then I see a notification for case note and can view the case note
-    When I enter "This is my new case note" for case note
+    When I enter text for case note
     And I click post note
-    Then I can view "This is my new case note" in case notes
+    Then I can view text in case notes
 
   @LT_1474_ecju_queries @regression
   Scenario: can view and respond to ecju queries

@@ -28,7 +28,7 @@ Feature: I want to create MOD Licence Applications
     And I click on applications
     Then I see submitted application
 
-  @LT_1980_MOD_clearance @setup @smoke
+  @LT_1980_MOD_clearance @setup @regression
   Scenario: Submit F680 Application
     Given I go to exporter homepage and choose Test Org
     When I select a licence of type "mod"

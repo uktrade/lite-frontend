@@ -22,6 +22,6 @@ def i_click_cancel_button(driver):
 
 
 @then("entered text is no longer in case note field")
-def entered_text_no_longer_in_case_field(driver):
+def entered_text_no_longer_in_case_field(driver, context):
     application_page = SubmittedApplicationsPages(driver)
-    assert "Case note to cancel" not in application_page.get_text_of_case_note_field()
+    assert context.text not in application_page.get_text_of_case_note_field()
