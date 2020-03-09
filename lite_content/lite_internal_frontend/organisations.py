@@ -9,7 +9,7 @@ class OrganisationsPage:
         EORI_NUMBER = "EORI number"
         SIC_NUMBER = "SIC number"
         VAT_NUMBER = "VAT number"
-        ADDRESS = "Address"
+        STATUS = "Status"
         EDIT = "Edit"
 
     class Filters:
@@ -35,6 +35,7 @@ class OrganisationPage:
         COMPANY_REG_NUMBER = "Company registration number"
         CREATED_AT = "Created at"
         ADDRESS = "Address"
+        STATUS = "Status"
         TYPE = "Type"
 
     class Sites:
