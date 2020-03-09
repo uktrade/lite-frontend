@@ -38,8 +38,11 @@ class StartPage:
 class RegisterAnOrganisation:
     class Landing:
         TITLE = "Create an export control account"
-        DESCRIPTION = "To use this service, you need to register with the Export Control Joint Unit (ECJU) for an export control account."
-        DESCRIPTION_2 = "If you work for an organisation, check with your colleagues first before creating an account as your organisation might already be registered. If your organisation does have an export control account, ask a super user to add you as a team member."
+        DESCRIPTION = "To use this service, you need to register with the Export Control Joint Unit " \
+                      "(ECJU) for an export control account."
+        DESCRIPTION_2 = "If you work for an organisation, check with your colleagues first before creating " \
+                        "an account as your organisation might already be registered. If your organisation " \
+                        "does have an export control account, ask a super user to add you as a team member."
         SUMMARY_LIST_HEADER = "Once approved, you can use your account to: "
         BUTTON = "Create an account"
 
@@ -62,7 +65,9 @@ class RegisterAnOrganisation:
         )
         EORI_NUMBER_SHORT_TITLE = "EORI number"
         SIC_NUMBER = "SIC number"
-        SIC_NUMBER_DESCRIPTION = "If you don't know your SIC number you can find it on [GOV.UK](https://www.gov.uk/government/publications/standard-industrial-classification-of-economic-activities-sic)."
+        SIC_NUMBER_DESCRIPTION = "If you don't know your SIC number you can find it on " \
+                                 "[GOV.UK](https://www.gov.uk/government/publications/standard-industria" \
+                                 "l-classification-of-economic-activities-sic)."
         SIC_NUMBER_SHORT_TITLE = "SIC number"
         VAT_NUMBER = "UK VAT number"
         VAT_NUMBER_DESCRIPTION = (

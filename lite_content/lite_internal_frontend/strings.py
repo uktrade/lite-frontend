@@ -1,11 +1,11 @@
 from lite_content.lite_internal_frontend import (
-    cases,
-    letter_templates,
-    roles,
-    organisations,
-    generic,
-    users,
-    teams,
+    cases,  # noqa
+    letter_templates,  # noqa
+    roles,  # noqa
+    organisations,  # noqa
+    generic,  # noqa
+    users,  # noqa
+    teams,  # noqa
 )  # noqa
 
 # Buttons
