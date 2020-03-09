@@ -16,7 +16,7 @@ Feature: I want to filter and sort cases on a queue
     And I click on new queue in dropdown
     Then "2" cases are shown
     When I show filters
-    And filter status has been changed to "Finalised"
+    When filter status has been changed to "Finalised"
     Then there are no cases shown
     When I click clear filters
     When I show filters
@@ -35,6 +35,9 @@ Feature: I want to filter and sort cases on a queue
     Then "2" cases are shown
     Then the case at index "0" has the status of "Submitted"
     And the case at index "1" has the status of "Under review"
+    When I show filters
+    And I click filter to show cases with open team ecju queries
+    Then "2" cases are shown
 
   @LT_914_sort_all_cases @regression
   Scenario: Sort all cases

@@ -54,6 +54,8 @@
 							<button id="button-select-all" type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
 						</th>
 						<th class="cases-table__header" style="width: 50px;" scope="col"></th>
+						<th class="cases-table__header" scope="col"></th>
+						<th class="cases-table__header" scope="col"></th>
 						<th class="cases-table__header" style="width: 225px;" scope="col">Case</th>
 						<th class="cases-table__header" style="width: 1fr;" scope="col">Assignees</th>
 						<th class="cases-table__header" style="width: 125px;" scope="col">Type</th>
@@ -65,7 +67,6 @@
 								{% svg 'chevron' %}
 							</a>
 						</th>
-						<th class="cases-table__header" scope="col"></th>
 						<th class="cases-table__header" scope="col"></th>
 					</tr>
 				</thead>
@@ -96,6 +97,22 @@
 									  </div>
 									  <div class="shadow"></div>
 									</div>
+								{% endif %}
+							</td>
+							<td class="cases-table__cell">
+								{% if not case.is_recently_updated and not is_all_cases_queue %}
+									<span class="app-cases__row__attention-needed">
+										!
+									</span>
+								{% endif %}
+							</td>
+							<td class="cases-table__cell">
+								{% if data.results.is_work_queue %}
+									{% if case.open_team_ecju_queries %}
+										<div class="govuk-!-margin-right-3 govuk-!-margin-top-2 app-cases__row__ecju-query">
+											{% svg 'ecju-query' %}
+										</div>
+									{% endif %}
 								{% endif %}
 							</td>
 							<td class="cases-table__cell">
@@ -178,13 +195,6 @@
 									{% endif %}
 								</a>
 							</td>
-							<td class="cases-table__cell govuk-table__cell--numeric">
-								{% if not case.is_recently_updated and not is_all_cases_queue %}
-									<span class="app-cases__row__attention-needed">
-										!
-									</span>
-								{% endif %}
-							</td>
 						</tr>
 					{% endfor %}
 				</tbody>
@@ -216,6 +226,9 @@
 	<script nonce="{{ request.csp_nonce }}">
 		tippy('.app-cases__row__attention-needed', {
 		  content: "{% lcs 'cases.CasesListPage.NOT_UPDATED_RECENTLY' %}"
+		});
+		tippy('.app-cases__row__ecju-query', {
+		  content: "{% lcs 'cases.CasesListPage.OPEN_TEAM_ECJU' %}"
 		});
 
 		function toggleDropdown() {

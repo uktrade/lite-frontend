@@ -79,3 +79,9 @@ def no_cases_shown(driver):
 def filter_status_change(driver, context, case_type):  # noqa
     CaseListPage(driver).select_filter_case_type_from_dropdown(case_type)
     CaseListPage(driver).click_apply_filters_button()
+
+
+@when("I click filter to show cases with open team ecju queries")  # noqa
+def i_show_filters(driver, context):  # noqa
+    CaseListPage(driver).click_checkbox_to_show_team_ecju_query()
+    CaseListPage(driver).click_apply_filters_button()

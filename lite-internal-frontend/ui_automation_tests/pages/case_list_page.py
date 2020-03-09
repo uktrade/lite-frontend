@@ -28,6 +28,7 @@ class CaseListPage(BasePage):
     CASE_TYPE_DROPDOWN = "case_type"  # ID
     INPUT_ASSIGNED_USER_ID = "assigned_user"
     FILTER_SEARCH_BOX = "filter-box"  # ID
+    SHOW_TEAM_ECJU = "Show cases with open enquiries by your team"
 
     # Queue dropdown
     QUEUE_DROPDOWN_TITLE = "queue-title"  # ID
@@ -137,3 +138,6 @@ class CaseListPage(BasePage):
 
     def get_case_row_sla(self, row):
         return row.find_element_by_id(self.SLA_ID).text
+
+    def click_checkbox_to_show_team_ecju_query(self):
+        return self.driver.find_element_by_id(self.SHOW_TEAM_ECJU).click()
