@@ -308,7 +308,7 @@ class AddGoodToApplicationForm:
 
     class Units:
         TITLE = "Unit of measurement"
-        DESCRIPTION = ""
+        DESCRIPTION = "If you select 'intangible', quantity and value are optional."
 
     class Incorporated:
         TITLE = "Will the product be incorporated into another product?"
