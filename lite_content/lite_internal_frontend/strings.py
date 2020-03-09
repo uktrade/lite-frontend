@@ -188,6 +188,46 @@ class Flags:
             REACTIVATE_WARNING = "This flag will be able to be used unless it's deactivated again"
 
 
+class FlaggingRules:
+    CREATE = "Create new flagging rule"
+    TITLE = "Flagging Rules"
+    DESCRIPTION = "Flagging rules apply flags to cases automatically based on conditions"
+
+    class List:
+        TEAM = "Team"
+        TYPE = "Type"
+        FLAG = "Flag"
+        STATUS = "Status"
+
+        REACTIVATE = "Reactivate"
+        DEACTIVATE = "Deactivate"
+
+    class Create:
+        BACKLINK = "Back to Flagging rules"
+
+        class Type:
+            TITLE = "Select Flagging Rule Type"
+
+            GOOD = "Good"
+            DESTINATION = "Destination"
+            APPLICATION = "Application Type"
+
+        class Condition_and_flag:
+            TITLE = "Select an condition and flag"
+
+            GOOD = "Good control code condition"
+            DESTINATION = "Country condition"
+            APPLICATION = "Application Type condition"
+
+            FLAG = "Flag"
+
+    class Status:
+        DEACTIVATE_HEADING = "Are you sure you want to deactivate this flagging rule?"
+        DEACTIVATE_WARNING = "This flagging rule will no longer be able to be used unless it's reactivated"
+        REACTIVATE_HEADING = "Are you sure you want to reactivate this flagging rule?"
+        REACTIVATE_WARNING = "This flagging rule will be able to be used unless it's deactivated again"
+
+
 class Picklist:
     TITLE = "Picklists"
 
