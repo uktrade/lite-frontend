@@ -202,6 +202,7 @@ class FlaggingRules:
         TEAM = "Team"
         TYPE = "Type"
         FLAG = "Flag"
+        CONDITION = "Condition"
         STATUS = "Status"
 
         EDIT = "Edit"
