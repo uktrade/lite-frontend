@@ -336,6 +336,7 @@ class StandardApplicationTaskList:
     THIRD_PARTIES = "Third parties"
     END_USE_DETAILS = "End use details"
     NOTES = "Notes"
+    END_USE_DETAILS = "End use details"
 
 
 class OpenApplicationTaskList:
@@ -349,6 +350,7 @@ class OpenApplicationTaskList:
     SUPPORTING_DOCUMENTS = "Supporting documents"
     END_USE_DETAILS = "End use details"
     NOTES = "Notes"
+    END_USE_DETAILS = "End use details"
 
 
 class HMRCApplicationTaskList:
