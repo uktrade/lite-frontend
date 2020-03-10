@@ -554,3 +554,36 @@ class GoodsCategories:
     TITLE = "Do any products on the application fall into any of these categories?"
     DESCRIPTION = ""
     ERROR = "You can't change product categories while doing a minor edit"
+
+
+class EndUseDetailsForm:
+    REFERENCE_ECJU_LETTER = "This reference is on the ECJU letter"
+    NOTICE = "You can enter up to 2200 characters."
+    SUSPECTED_WMD_PROVIDE_DETAILS = "Provide details"
+    EU_MILITARY_PROVIDE_DETAILS = "If no, provide details (optional)"
+
+    INFORMED_TO_APPLY = (
+        "Have you received a letter from ECJU informing you that the products "
+        "require a license to export or are controlled under the military end use controls?"
+    )
+    INFORMED_WMD = (
+        "Have you been informed by ECJU that the products are or may be intended, wholly or in part, "
+        "for use in chemical, biological or nuclear weapons, "
+        "or any purpose connected with missiles capable of delivering these weapons?"
+    )
+    SUSPECTED_WMD = (
+        "Do you know or suspect that the products might be used, wholly or in part, in connection with "
+        "chemical, biological or nuclear weapons, "
+        "or any purpose connected with missiles capable of delivering these weapons?"
+    )
+    EU_MILITARY = (
+        "Have you received European military products under a transfer licence from an EU member state "
+        "that have export limitations attached to them?"
+    )
+
+    class EndUseDetailsSummaryList:
+        TITLE = "WMD end use summary list"
+        INFORMED_TO_APPLY = "Informed by ECJU to apply for a licence"
+        INFORMED_WMD = "Informed by ECJU that the products may be used in weapons of mass destruction"
+        SUSPECTED_WMD = "You suspect the products may be used in weapons of mass destruction"
+        EU_MILITARY = "Products received under a transfer licence from an EU member state"
