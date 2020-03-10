@@ -289,7 +289,7 @@ class GoodPage:
 
 
 class AddGoodToApplicationForm:
-    TITLE = "Value and quantity of the product"
+    TITLE = "Quantity and value of the product"
     DESCRIPTION = ""
     DOCUMENT_MISSING = "Select a document"
     BACK_LINK = "Back to products"
@@ -308,7 +308,7 @@ class AddGoodToApplicationForm:
 
     class Units:
         TITLE = "Unit of measurement"
-        DESCRIPTION = ""
+        DESCRIPTION = "If you select 'intangible', quantity and value are optional."
 
     class Incorporated:
         TITLE = "Will the product be incorporated into another product?"
