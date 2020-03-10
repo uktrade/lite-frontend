@@ -5,6 +5,8 @@ class CasesListPage:
     EXPORTER_AMENDMENTS_BANNER = "View cases that have changed"
     ASSIGN_USERS = "Assign users"
     STATUS = "Status"
+    NOT_UPDATED_RECENTLY = "This case has not been updated in over 5 days"
+    OPEN_TEAM_ECJU = "This case contains open enquiries by your team"
 
     class Filters:
         CASE_TYPE = "type"
@@ -12,6 +14,7 @@ class CasesListPage:
         CASE_OFFICER = "case officer"
         ASSIGNED_USER = "assigned user"
         NOT_ASSIGNED = "Not assigned"
+        HIDDEN = "Show cases with open enquiries by your team"
 
 
 class CaseDocumentsPage:
@@ -22,8 +25,8 @@ class CaseDocumentsPage:
 
 class ApplicationPage:
     class Info:
-        CLEARANCE_LEVEL = "Clearance"
-        F680_CLEARANCE_TYPES = "Clearance Types"
+        CLEARANCE_LEVEL = "Security grading"
+        F680_CLEARANCE_TYPES = "Clearance types"
         DESCRIPTORS = "Descriptors"
 
     class Actions:
@@ -52,6 +55,7 @@ class ApplicationPage:
             DOCUMENTS = "Documents"
             FLAGS = "Flags"
             ADVICE = "Advice"
+            PRODUCT_TYPE = "Product type"
 
     class Destinations:
         COUNTRY_NAME = "Country"
@@ -97,6 +101,15 @@ class ApplicationPage:
     NO_USERS_ASSIGNED = "No users assigned"
     NO_QUEUES_ASSIGNED = "No queues assigned"
     COPY_OF_LABEL = "Copied from:"
+
+    class Details:
+        DETAILS = "Exhibition details"
+
+        class Table:
+            TITLE = "Title"
+            REQUIRED_BY_DATE = "Required by date"
+            FIRST_EXHIBITION_DATE = "First exhibition date"
+            REASON_FOR_CLEARANCE = "Reason for clearance"
 
 
 class GenerateDocumentsPage:
@@ -425,6 +438,7 @@ class Advice:
     OTHER = "Is there anything else you want to say to the applicant? (optional)"
     REASON = "What are your reasons for this decision?"
     TEXT_ON_LICENCE = "This will appear on the generated documentation"
+    SELECT_GRADING = "Select a grading"
 
 
 class Manage:
@@ -542,6 +556,7 @@ class AdvicePage:
     DENIAL_REASONS_TITLE = "Denial reasons"
     REASON_FOR_ADVICE_TITLE = "Reason for this advice"
     NOTE_TO_APPLICANT_TITLE = "Note to applicant"
+    GRADING_TITLE = "Grading"
 
     class Table:
         REJECT = "Reject"
