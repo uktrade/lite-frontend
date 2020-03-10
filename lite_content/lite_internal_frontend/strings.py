@@ -194,11 +194,17 @@ class FlaggingRules:
     DESCRIPTION = "Flagging rules apply flags to cases automatically based on conditions"
 
     class List:
+        class Filter:
+            Type = "Type"
+            MY_TEAM_ONLY = "Only show my team"
+            INCLUDE_DEACTIVATED = "Include deactivated"
+
         TEAM = "Team"
         TYPE = "Type"
         FLAG = "Flag"
         STATUS = "Status"
 
+        EDIT = "Edit"
         REACTIVATE = "Reactivate"
         DEACTIVATE = "Deactivate"
 
