@@ -334,6 +334,7 @@ class StandardApplicationTaskList:
     CONSIGNEE = "Consignee"
     SUPPORTING_DOCUMENTS = "Supporting documents"
     THIRD_PARTIES = "Third parties"
+    END_USE_DETAILS = "End use details"
     NOTES = "Notes"
 
 
@@ -346,6 +347,7 @@ class OpenApplicationTaskList:
     GOODS_DESTINATION = "Countries"
     COUNTRIES_WHERE_EACH_GOOD_IS_GOING = "Product destinations"
     SUPPORTING_DOCUMENTS = "Supporting documents"
+    END_USE_DETAILS = "End use details"
     NOTES = "Notes"
 
 
