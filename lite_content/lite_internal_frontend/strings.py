@@ -190,7 +190,7 @@ class Flags:
 
 class FlaggingRules:
     CREATE = "Create new flagging rule"
-    TITLE = "Flagging Rules"
+    TITLE = "Flagging rules"
     DESCRIPTION = "Flagging rules apply flags to cases automatically based on conditions"
 
     class List:
@@ -203,21 +203,23 @@ class FlaggingRules:
         DEACTIVATE = "Deactivate"
 
     class Create:
-        BACKLINK = "Back to Flagging rules"
+        BACKLINK = "Back to flagging rules"
 
         class Type:
-            TITLE = "Select Flagging Rule Type"
+            TITLE = "Select flagging rule type"
 
             GOOD = "Good"
             DESTINATION = "Destination"
-            APPLICATION = "Application Type"
+            APPLICATION = "Application type"
 
         class Condition_and_flag:
-            TITLE = "Select an condition and flag"
+            GOOD_TITLE = "Select a control list classification and flag"
+            DESTINATION_TITLE = "Select a country and flag"
+            APPLICATION_TITLE = "Select a application type and flag"
 
-            GOOD = "Good control code condition"
-            DESTINATION = "Country condition"
-            APPLICATION = "Application Type condition"
+            GOOD = "Control list classification"
+            DESTINATION = "Country"
+            APPLICATION = "Application type"
 
             FLAG = "Flag"
 
