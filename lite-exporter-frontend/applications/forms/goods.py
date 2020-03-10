@@ -8,7 +8,6 @@ from lite_content.lite_exporter_frontend.goods import AddGoodToApplicationForm
 from lite_forms.components import (
     Form,
     HiddenField,
-    SideBySideSection,
     Select,
     QuantityInput,
     CurrencyInput,
@@ -43,25 +42,21 @@ def good_on_application_form(request, good, sub_case_type, application_id):
             questions=[
                 good_summary(good),
                 HiddenField(name="good_id", value=good.get("id")),
+                Select(
+                    title=AddGoodToApplicationForm.Units.TITLE,
+                    description="<noscript>" + AddGoodToApplicationForm.Units.DESCRIPTION + "</noscript>",
+                    name="unit",
+                    options=get_units(request),
+                ),
+                QuantityInput(
+                    title=AddGoodToApplicationForm.Quantity.TITLE,
+                    description=AddGoodToApplicationForm.Quantity.DESCRIPTION,
+                    name="quantity",
+                ),
                 CurrencyInput(
                     title=AddGoodToApplicationForm.VALUE.TITLE,
                     description=AddGoodToApplicationForm.VALUE.DESCRIPTION,
                     name="value",
-                ),
-                SideBySideSection(
-                    questions=[
-                        QuantityInput(
-                            title=AddGoodToApplicationForm.Quantity.TITLE,
-                            description=AddGoodToApplicationForm.Quantity.DESCRIPTION,
-                            name="quantity",
-                        ),
-                        Select(
-                            title=AddGoodToApplicationForm.Units.TITLE,
-                            description=AddGoodToApplicationForm.Units.DESCRIPTION,
-                            name="unit",
-                            options=get_units(request),
-                        ),
-                    ]
                 ),
                 RadioButtons(
                     name="is_good_incorporated",
