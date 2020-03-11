@@ -16,7 +16,7 @@ def build_organisation_with_user(exporter, type, name):
         "name": name,
         "type": type,
         "eori_number": "1234567890AAA",
-        "sic_number": "2345",
+        "sic_number": "12345",
         "vat_number": "GB1234567",
         "registration_number": "09876543",
         "user": exporter,
