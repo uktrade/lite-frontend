@@ -7,6 +7,7 @@ BACK_TO_APPLICATION_OVERVIEW = "Back to application overview"
 CONTINUE = "Continue"
 SAVE_AND_CONTINUE = "Save and continue"
 SAVE_AND_RETURN = "Save and return to task list"
+VIEW = "View"
 
 DESCRIPTION = "Description"
 PART_NUMBER = "Part number"
