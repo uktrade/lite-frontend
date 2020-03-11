@@ -9,6 +9,7 @@ from lite_content.lite_exporter_frontend import (  # noqa
     end_users,  # noqa
     hub,  # noqa
     generic,  # noqa
+    organisation,  # noqa
 )  # noqa
 
 # Generic (used as defaults in forms)
@@ -27,7 +28,6 @@ OPTIONAL = "Optional"
 NOT_STARTED = "Not started"
 IN_PROGRESS = "In progress"
 DONE = "Saved"
-VIEW = "View"
 
 SUBMIT_APPLICATION = "Submit application"
 EDIT_APPLICATION_SUBMIT = "Submit application"
@@ -68,12 +68,6 @@ class Applications:
     class InitialQuestions:
         EXPORT_TITLE = "Which export licence do you want to apply for?', 'Select one of the options."
         REFERENCE_TITLE = "Name and save this application so you can refer back to it when needed."
-
-
-class Authentication:
-    class UserDoesNotExist:
-        DESCRIPTION = "You are not registered to use this system"
-        TITLE = "User not found"
 
 
 class Common:
