@@ -6,13 +6,15 @@
 	{% include 'includes/messages.html' %}
 
 	<div class="lite-app-bar">
-		<h1 class="govuk-heading-l">
-			{% block title %}
-				{% lcs "organisations.OrganisationsPage.TITLE" %}
-			{% endblock %}
-		</h1>
-		<div class="lite-app-bar--right">
-			<a href="{% url 'organisations:register' %}" class="govuk-button" draggable="false" role="button">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">
+				{% block title %}
+					{% lcs "organisations.OrganisationsPage.TITLE" %}
+				{% endblock %}
+			</h1>
+		</div>
+		<div class="lite-app-bar__controls">
+			<a id="button-register-organisation" href="{% url 'organisations:register' %}" class="govuk-button" draggable="false" role="button">
 				{% lcs "organisations.OrganisationsPage.ADD_BUTTON" %}
 			</a>
 		</div>
@@ -29,40 +31,52 @@
 					<th class="govuk-table__header" scope="col">{% lcs "organisations.OrganisationsPage.Table.EORI_NUMBER" %}</th>
 					<th class="govuk-table__header" scope="col">{% lcs "organisations.OrganisationsPage.Table.SIC_NUMBER" %}</th>
 					<th class="govuk-table__header" scope="col">{% lcs "organisations.OrganisationsPage.Table.VAT_NUMBER" %}</th>
-					<th class="govuk-table__header" scope="col">{% lcs "organisations.OrganisationsPage.Table.ADDRESS" %}</th>
-					<th class="govuk-table__header" scope="col"></th>
+					<th class="govuk-table__header" scope="col">{% lcs "organisations.OrganisationsPage.Table.STATUS" %}</th>
 				</tr>
 			</thead>
 			<tbody class="govuk-table__body">
 				{% for organisation in data.results %}
 					<tr class="govuk-table__row" id="{{ organisation.id }}">
 						<td class="govuk-table__cell" id="name">
+							<span class="govuk-table__header" aria-hidden="true">
+								{% lcs "organisations.OrganisationsPage.Table.NAME" %}
+							</span>
 							<a class="govuk-link" href="{% url 'organisations:organisation' organisation.id %}">
 								{{ organisation.name|highlight_text:search_term }}
 							</a>
 						</td>
                         <td class="govuk-table__cell" id="type">
+							<span class="govuk-table__header" aria-hidden="true">
+								{% lcs "organisations.OrganisationsPage.Table.TYPE" %}
+							</span>
 							{{ organisation.type.value }}
 						</td>
 						<td class="govuk-table__cell" id="eori-number">
+							<span class="govuk-table__header" aria-hidden="true">
+								{% lcs "organisations.OrganisationsPage.Table.EORI_NUMBER" %}
+							</span>
 							{{ organisation.eori_number|default_na }}
 						</td>
 						<td class="govuk-table__cell" id="sic-number">
+							<span class="govuk-table__header" aria-hidden="true">
+								{% lcs "organisations.OrganisationsPage.Table.SIC_NUMBER" %}
+							</span>
 							{{ organisation.sic_number|default_na }}
 						</td>
 						<td class="govuk-table__cell" id="vat-number">
+							<span class="govuk-table__header" aria-hidden="true">
+								{% lcs "organisations.OrganisationsPage.Table.VAT_NUMBER" %}
+							</span>
 							{{ organisation.vat_number|default_na }}
 						</td>
-						<td class="govuk-table__cell" id="primary-site">
-							{{ organisation.primary_site|get_address }}
+						<td class="govuk-table__cell" id="status">
+							<span class="govuk-table__header" aria-hidden="true">
+								{% lcs "organisations.OrganisationsPage.Table.STATUS" %}
+							</span>
+							<strong class="govuk-tag {% if organisation.status.key == 'in_review' %}govuk-tag--blue{% endif %}">
+								{{ organisation.status.value }}
+							</strong>
 						</td>
-						<td class="govuk-table__cell">
-                        {% if can_manage_organisations %}
-                            <a href="{% url 'organisations:edit' organisation.id %}" class="govuk-link govuk-link--no-visited-state" id="edit-org-{{ organisation.id }}">
-                                {% lcs "organisations.OrganisationsPage.Table.EDIT" %}
-                            </a>
-                        {% endif %}
-                    </td>
 					</tr>
 				{% endfor %}
 			</tbody>

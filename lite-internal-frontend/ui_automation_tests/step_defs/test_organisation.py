@@ -13,7 +13,7 @@ scenarios("../features/organisation.feature", strict_gherkin=False)
 fake = Faker()
 
 
-@then("organisation is registered")
+@then("commercial organisation is registered")
 def verify_registered_organisation(driver, context):
     wait_until_page_is_loaded(driver)
     # Assert that the success info bar is visible
@@ -57,7 +57,7 @@ def verify_hmrc_registered_organisation(driver, context):
 
 @when("I add a new commercial organisation")
 def i_choose_to_add_a_new_commercial_organisation(driver, context):
-    OrganisationsPage(driver).click_new_organisation_btn()
+    OrganisationsPage(driver).click_new_organisation_button()
     organisations_form_page = OrganisationsFormPage(driver)
     organisations_form_page.select_type("commercial")
     organisations_form_page.fill_in_company_info_page_1(context)
@@ -69,7 +69,7 @@ def i_choose_to_add_a_new_commercial_organisation(driver, context):
 
 @when("I add a new individual organisation")
 def i_choose_to_add_a_new_individual_organisation(driver, context):
-    OrganisationsPage(driver).click_new_organisation_btn()
+    OrganisationsPage(driver).click_new_organisation_button()
     organisations_form_page = OrganisationsFormPage(driver)
     organisations_form_page.select_type("individual")
     organisations_form_page.fill_in_individual_info_page_1(context)
@@ -78,7 +78,7 @@ def i_choose_to_add_a_new_individual_organisation(driver, context):
 
 @when("I add a new HMRC organisation")
 def i_choose_to_add_a_new_hmrc_organisation(driver, context):
-    OrganisationsPage(driver).click_new_organisation_btn()
+    OrganisationsPage(driver).click_new_organisation_button()
     context.hmrc_org_name = fake.company() + " " + fake.company_suffix()
     organisations_form_page = OrganisationsFormPage(driver)
     organisations_form_page.enter_name(context.hmrc_org_name)
@@ -102,9 +102,14 @@ def i_go_to_hmrc(driver, internal_url, context):
     driver.get(internal_url.rstrip("/") + "/organisations/hmrc/")
 
 
-@when("I edit an organisation")
-def click_organisation_to_edit(driver, context):
-    OrganisationPage(driver).click_edit_organisation(driver, context)
+@when("I click the organisation")
+def click_organisation(driver, context):
+    OrganisationsPage(driver).click_organisation(context.organisation_name)
+
+
+@when("I edit the organisation")
+def click_edit(driver, context):
+    OrganisationPage(driver).click_edit_organisation()
     organisations_form_page = OrganisationsFormPage(driver)
     organisations_form_page.select_type("commercial")
     organisations_form_page = OrganisationsFormPage(driver)

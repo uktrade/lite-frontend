@@ -4,10 +4,16 @@
 
 {% block body %}
 	<div class="lite-app-bar">
-		<h2 class="govuk-heading-l">Teams</h2>
-		<div class="lite-app-bar--right">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">
+				{% block title %}
+					{% lcs 'teams.TeamsPage.TITLE' %}
+				{% endblock %}
+			</h1>
+		</div>
+		<div class="lite-app-bar__controls">
 			<a href="{% url 'teams:add' %}" class="govuk-button" draggable="false" role="button">
-				Add a team
+				{% lcs 'teams.TeamsPage.ADD_A_TEAM_BUTTON' %}
 			</a>
 		</div>
 	</div>
@@ -15,21 +21,25 @@
 	<table class="govuk-table">
 		<thead class="govuk-table__head">
 			<tr class="govuk-table__row">
-				<th class="govuk-table__header" scope="col">Name</th>
-				<th class="govuk-table__header" scope="col"></th>
+				<th class="govuk-table__header" scope="col">{% lcs 'teams.TeamsPage.Table.NAME' %}</th>
+				<th class="govuk-table__header" scope="col">{% lcs 'teams.TeamsPage.Table.ACTIONS' %}</th>
 			</tr>
 		</thead>
 		<tbody class="govuk-table__body">
 			{% for team in data.teams %}
 				<tr class="govuk-table__row" id="row-{{ forloop.counter }}">
 					<td class="govuk-table__cell">
+						<span class="govuk-table__header" aria-hidden="true">{% lcs 'teams.TeamsPage.Table.NAME' %}</span>
 						<a href="{% url 'teams:team' team.id %}" class="govuk-link">
 							{{ team.name }}
 						</a>
 					</td>
 					<td class="govuk-table__cell">
 						{% if not team.id|is_system_team %}
-							<a href="{% url 'teams:edit' team.id %}" class="govuk-link">Edit</a>
+							<span class="govuk-table__header" aria-hidden="true">{% lcs 'teams.TeamsPage.Table.ACTIONS' %}</span>
+							<a href="{% url 'teams:edit' team.id %}" class="govuk-link">
+								{% lcs 'teams.TeamsPage.Table.EDIT' %}
+							</a>
 						{% endif %}
 					</td>
 				</tr>

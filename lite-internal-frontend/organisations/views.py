@@ -18,7 +18,7 @@ from organisations.services import (
     get_organisations_sites,
     get_organisation,
     post_organisations,
-    post_organisation,
+    put_organisation,
     validate_post_organisation,
 )
 
@@ -140,13 +140,13 @@ class RegisterHMRC(TemplateView):
         return redirect("organisations:hmrc")
 
 
-class EditBusiness(MultiFormView):
+class EditOrganisation(MultiFormView):
     forms = None
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.validate_action = validate_post_organisation
-        self.post_action = post_organisation
+        self.post_action = put_organisation
 
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]

@@ -9,9 +9,11 @@
 	{% include 'includes/messages.html' %}
 
 	<div class="lite-app-bar">
-		<h1 class="govuk-heading-l">HMRC organisations</h1>
-		<div class="lite-app-bar--right">
-			<a href="{% url 'organisations:register_hmrc' %}" class="govuk-button" draggable="false" role="button">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">HMRC organisations</h1>
+		</div>
+		<div class="lite-app-bar__controls">
+			<a id="button-register-organisation" href="{% url 'organisations:register_hmrc' %}" class="govuk-button" draggable="false" role="button">
 				Add an HMRC organisation
 			</a>
 		</div>
@@ -22,7 +24,6 @@
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" scope="col">Name</th>
-					<th class="govuk-table__header" scope="col">Address</th>
 				</tr>
 			</thead>
 			<tbody class="govuk-table__body">
@@ -30,12 +31,6 @@
 					<tr class="govuk-table__row" style="vertical-align: top;">
 						<td class="govuk-table__cell">
 							<a class="govuk-link" href="{% url 'organisations:organisation' organisation.id %}">{{ organisation.name }}</a>
-						</td>
-						<td class="govuk-table__cell">
-							{{ organisation.primary_site.address.address_line_1 }}<br/>
-							{{ organisation.primary_site.address.postcode }}<br/>
-							{{ organisation.primary_site.address.city }}<br/>
-							{{ organisation.primary_site.address.country.name }}
 						</td>
 					</tr>
 				{% endfor %}

@@ -7,7 +7,7 @@ class OrganisationPage(BasePage):
 
     LINK_ORGANISATION_FLAGS_ID = "link-organisation-flags"
     FLAGS_AREA_SELECTOR = ".app-flag"
-    EDIT_ORGANISATION_PARTIAL_CSS = "[id^=edit-org]"
+    BUTTON_EDIT_ORGANISATION_ID = "button-edit-organisation"
 
     def click_edit_organisation_flags(self):
         self.driver.find_element_by_id(self.LINK_ORGANISATION_FLAGS_ID).click()
@@ -20,8 +20,8 @@ class OrganisationPage(BasePage):
                 return True
         return False
 
-    def click_edit_organisation(self, driver, context):
-        self.driver.find_element_by_css_selector(self.EDIT_ORGANISATION_PARTIAL_CSS).click()
+    def click_edit_organisation(self):
+        self.driver.find_element_by_id(self.BUTTON_EDIT_ORGANISATION_ID).click()
 
     def get_organisation_row(self, organisation_id=None):
         if organisation_id:

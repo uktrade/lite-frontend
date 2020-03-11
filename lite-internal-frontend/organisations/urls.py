@@ -11,6 +11,6 @@ urlpatterns = [
     path("<uuid:pk>/assign-flags/", AssignFlags.as_view(), name="assign_flags"),
     path("hmrc/", views.HMRCList.as_view(), name="hmrc"),
     path("register/", views.RegisterBusiness.as_view(), name="register"),
-    path("<uuid:pk>/edit/", views.EditBusiness.as_view(), name="edit"),
+    path("<uuid:pk>/edit/", views.EditOrganisation.as_view(), name="edit"),
     path("register-hmrc/", views.RegisterHMRC.as_view(), name="register_hmrc"),
 ]

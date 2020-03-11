@@ -12,7 +12,9 @@ def post_organisations(request, json):
     return data.json(), data.status_code
 
 
-def post_organisation(request, pk, json):
+def put_organisation(request, pk, json):
+    if "status" in json:
+        del json["status"]
     data = put(request=request, appended_address=ORGANISATIONS_URL + str(pk) + "/", json=json)
     return data.json(), data.status_code
 

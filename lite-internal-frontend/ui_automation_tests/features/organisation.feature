@@ -4,31 +4,32 @@ Feature: I want to add a company to LITE
   I want to add a new company to LITE
   So that the new company can make applications
 
-  @LT_934_test @smoke
-  Scenario: Test registering an organisation
+  @LT_934_register_commercial_organisation @smoke
+  Scenario: Registering a commercial organisation
     Given I sign in to SSO or am signed into SSO
     When I go to organisations
     And I add a new commercial organisation
-    Then organisation is registered
-    When I edit an organisation
+    Then commercial organisation is registered
+    When I click the organisation
+    And I edit the organisation
     Then organisation is edited
 
-  @LT_1417_test_adding_individual_as_organisation @regression
-  Scenario: Test registering an individual
+  @LT_1417_register_individual_organisation @regression
+  Scenario: Registering an individual
     Given I sign in to SSO or am signed into SSO
     When I go to organisations
     And I add a new individual organisation
     Then individual organisation is registered
 
-  @LT_1008_test_adding_hmrc_organisation @regression
-  Scenario: Test registering a HMRC organisation
+  @LT_1008_register_hmrc_organisation @regression
+  Scenario: Registering an HMRC organisation
     Given I sign in to SSO or am signed into SSO
     When I go to HMRC
     And I add a new HMRC organisation
     And I go to organisations
     Then HMRC organisation is registered
 
-  @LT_1086_test_adding_a_flag_to_an_organisation @regression
+  @LT_1086_adding_a_flag_to_an_organisation @regression
   Scenario: Adding a flag to an organisation
     Given I sign in to SSO or am signed into SSO
     And I create open application or open application has been previously created

@@ -78,18 +78,18 @@ class OrganisationsFormPage(BasePage):
     def fill_in_company_info_page_1(self, context):
         context.organisation_name = fake.company() + " " + fake.company_suffix()
         self.enter_name(context.organisation_name)
-        context.eori = fake.ein()
+        context.eori = "12345"
         self.enter_eori_number(context.eori)
-        context.sic = fake.ein()
+        context.sic = "12345"
         self.enter_sic_number(context.sic)
-        context.vat = fake.ein()
+        context.vat = "GB1234567"
         self.enter_vat_number(context.vat)
-        self.enter_registration_number(fake.ein())
+        self.enter_registration_number(12345678)
         functions.click_submit(self.driver)
 
     def fill_in_individual_info_page_1(self, context):
         context.organisation_name = fake.name()
-        context.eori = fake.ein()
+        context.eori = "12345"
         self.enter_individual_organisation_first_last_name(context.organisation_name)
         self.enter_email(fake.free_email())
         self.enter_eori_number(context.eori)
