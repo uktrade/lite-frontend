@@ -204,6 +204,7 @@ class FlaggingRules:
         FLAG = "Flag"
         CONDITION = "Condition"
         STATUS = "Status"
+        ACTIONS = "Actions"
 
         EDIT = "Edit"
         REACTIVATE = "Reactivate"
@@ -214,6 +215,7 @@ class FlaggingRules:
 
         class Type:
             TITLE = "Select flagging rule type"
+            SAVE = "Continue"
 
             GOOD = "Good"
             DESTINATION = "Destination"
