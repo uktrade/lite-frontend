@@ -336,7 +336,6 @@ class StandardApplicationTaskList:
     THIRD_PARTIES = "Third parties"
     END_USE_DETAILS = "End use details"
     NOTES = "Notes"
-    END_USE_DETAILS = "End use details"
 
 
 class OpenApplicationTaskList:
@@ -350,7 +349,6 @@ class OpenApplicationTaskList:
     SUPPORTING_DOCUMENTS = "Supporting documents"
     END_USE_DETAILS = "End use details"
     NOTES = "Notes"
-    END_USE_DETAILS = "End use details"
 
 
 class HMRCApplicationTaskList:
@@ -558,7 +556,7 @@ class GoodsCategories:
     ERROR = "You can't change product categories while doing a minor edit"
 
 
-class EndUseDetailsForm:
+class EndUseDetails:
     REFERENCE_ECJU_LETTER = "This reference is on the ECJU letter"
     NOTICE = "You can enter up to 2200 characters."
     PROVIDE_DETAILS = "Provide details"
@@ -593,6 +591,6 @@ class EndUseDetailsForm:
         INFORMED_WMD = "Informed by ECJU that the products may be used in weapons of mass destruction"
         SUSPECTED_WMD = "You suspect the products may be used in weapons of mass destruction"
         EU_MILITARY = "Products received under a transfer licence from an EU member state"
-        IS_COMPLIANT_LIMITATIONS_EU = (
+        COMPLIANT_LIMITATIONS_EU = (
             "Compliant with terms of export limitations or obtained consent from originating EU member state"
         )
