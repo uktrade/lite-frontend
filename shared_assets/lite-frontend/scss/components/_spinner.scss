@@ -1,0 +1,62 @@
+.lite-\!-fade-in {
+	@for $i from 0 through 100 {
+		& > *:nth-child(#{$i}) {
+			animation-name: fade-in;
+			animation-duration: 0.35s;
+			animation-fill-mode: both;
+			animation-delay: 0.9s + ($i * 0.1s);
+		}
+	}
+}
+
+.lite-spinner {
+	@extend .lite-\!-fade-in;
+	position: relative;
+
+	&::after {
+		content: "";
+		position: absolute;
+		top: calc(50% - 15px);
+		left: calc(50% - 15px);
+		border: govuk-spacing(1) solid rgba(govuk-colour("white"), 0.4);
+		border-radius: 50%;
+		border-top-color: govuk-colour("white");
+		width: 30px;
+		height: 30px;
+		animation: spin 1s linear;
+		animation-fill-mode: both;
+	}
+}
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	90% {
+		opacity: 1;
+	}
+	100% {
+		transform: rotate(900deg);
+		opacity: 0;
+	}
+}
+@keyframes fade-in {
+	0% {
+		transform: translateY(15px);
+		opacity: 0;
+	}
+	100% {
+		transform: translateY(0px);
+		opacity: 1;
+	}
+}
+
+.lite-confirmation-details-delay {
+	@for $i from 0 through 100 {
+		& > *:nth-child(#{$i}) {
+			animation-name: fade-in;
+			animation-duration: 0.35s;
+			animation-fill-mode: both;
+			animation-delay: 1.15s + ($i * 0.1s);
+		}
+	}
+}
