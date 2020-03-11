@@ -243,8 +243,16 @@ class FlaggingRules:
     class Status:
         DEACTIVATE_HEADING = "Are you sure you want to deactivate this flagging rule?"
         DEACTIVATE_WARNING = "This flagging rule will no longer be able to be used unless it's reactivated"
+        DEACTIVATE_CONFIRM = "Deactivate this flagging rule"
+
         REACTIVATE_HEADING = "Are you sure you want to reactivate this flagging rule?"
         REACTIVATE_WARNING = "This flagging rule will be able to be used unless it's deactivated again"
+        REACTIVATE_CONFIRM = "Reactivate this flagging rule"
+
+        BACK = "Back to flagging rules"
+        CANCEL = "Cancel"
+
+        NO_SELECTION_ERROR = "Select to confirm or not"
 
 
 class Picklist:
