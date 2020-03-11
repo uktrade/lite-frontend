@@ -1,4 +1,4 @@
-<select id="{{ component.name }}" name="{{ component.name }}" class="govuk-select">
+<select id="{{ component.name }}" name="{{ component.name }}" class="govuk-select {% if error %}govuk-select--error{% endif %}">
 	<option value="">Select</option>
 	{% for item in component.options %}
 		<option value="{{ item.key }}" {% if value == item.key %}selected{% endif %}>{{ item.value }}</option>

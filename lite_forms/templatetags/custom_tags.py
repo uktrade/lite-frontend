@@ -1,7 +1,18 @@
 from django.template.defaulttags import register
 from django.utils.safestring import mark_safe
 
-from lite_forms.helpers import convert_to_markdown
+from lite_forms.helpers import convert_to_markdown, flatten_data
+
+
+@register.filter
+def has_attribute(_object, attribute):
+    return hasattr(_object, attribute)
+
+
+@register.filter
+def component_name(data, _object):
+    name = getattr(_object, "name", None)
+    return flatten_data(data).get(name)
 
 
 @register.filter

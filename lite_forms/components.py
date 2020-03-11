@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List
+from typing import List, Optional
 
 from lite_forms.styles import ButtonStyle
 
@@ -14,9 +14,10 @@ class _Component:
         name: str,
         title: str = "",
         description: str = "",
+        short_title: str = None,
         accessible_description: str = None,
         optional: bool = False,
-        classes: [] = None,
+        classes: Optional[List] = None,
         extras=None,
     ):
         from lite_forms.helpers import convert_to_markdown
@@ -24,6 +25,7 @@ class _Component:
         self.name = name
         self.title = title
         self.description = convert_to_markdown(description)
+        self.short_title = short_title or title
         self.accessible_description = accessible_description
         self.optional = optional
         self.classes = classes
@@ -103,11 +105,14 @@ class FormGroup:
 
 
 class Label:
-    def __init__(self, text: str, id: str = None):
+    def __init__(
+        self, text: str, id: str = None, classes: Optional[List] = None,
+    ):
         from lite_forms.helpers import convert_to_markdown
 
         self.id = id
         self.text = convert_to_markdown(text)
+        self.classes = classes
         self.input_type = "label"
 
 
@@ -123,6 +128,7 @@ class Form:
         footer_label: Label = None,
         javascript_imports=None,
         default_button_name="Save",
+        default_button_style=ButtonStyle.DEFAULT,
         back_link=BackLink(),
         post_url=None,
     ):
@@ -137,7 +143,7 @@ class Form:
         self.buttons = buttons
         self.back_link = back_link
         if self.buttons is None:
-            self.buttons = [Button(default_button_name, "submit")]
+            self.buttons = [Button(default_button_name, "submit", style=default_button_style)]
         self.javascript_imports = javascript_imports
         self.post_url = post_url
         self.single_form_element = heading_used_as_label(questions)
@@ -186,11 +192,12 @@ class TextInput(_Component):
         name: str,
         title: str = "",
         description: str = "",
+        short_title: str = None,
         accessible_description: str = None,
         optional: bool = False,
-        classes: [] = None,
+        classes: Optional[List] = None,
     ):
-        super().__init__(name, title, description, accessible_description, optional, classes)
+        super().__init__(name, title, description, short_title, accessible_description, optional, classes)
         self.input_type = "text_input"
 
 
@@ -202,7 +209,7 @@ class NumberInput(_Component):
         description: str = "",
         accessible_description: str = None,
         optional: bool = False,
-        classes: [] = None,
+        classes: Optional[List] = None,
     ):
         super().__init__(name, title, description, accessible_description, optional, classes)
         self.input_type = "number_input"
@@ -216,24 +223,10 @@ class QuantityInput(_Component):
         description: str = "",
         accessible_description: str = None,
         optional: bool = False,
-        classes: [] = None,
+        classes: Optional[List] = None,
     ):
         super().__init__(name, title, description, accessible_description, optional, classes)
         self.input_type = "quantity_input"
-
-
-class PasswordInput(_Component):
-    def __init__(
-        self,
-        name: str,
-        title: str = "",
-        description: str = "",
-        accessible_description: str = None,
-        optional: bool = False,
-        classes: [] = None,
-    ):
-        super().__init__(name, title, description, accessible_description, optional, classes)
-        self.input_type = "password_input"
 
 
 class CurrencyInput(_Component):
@@ -244,7 +237,7 @@ class CurrencyInput(_Component):
         description: str = "",
         accessible_description: str = None,
         optional: bool = False,
-        classes: [] = None,
+        classes: Optional[List] = None,
     ):
         super().__init__(name, title, description, accessible_description, optional, classes)
         self.input_type = "currency_input"
@@ -265,7 +258,7 @@ class Checkboxes(_Component):
         description: str = "",
         accessible_description: str = None,
         optional: bool = False,
-        classes: [] = None,
+        classes: Optional[List] = None,
         empty_notice: str = "No items",
         show_select_links: bool = False,
     ):
@@ -286,15 +279,16 @@ class RadioButtons(_Component):
     def __init__(
         self,
         name: str,
-        options: [],
+        options: List,
         title: str = "",
         description: str = "",
+        short_title: str = None,
         accessible_description: str = None,
         optional: bool = False,
-        classes: [] = None,
+        classes: Optional[List] = None,
         empty_notice: str = "No items",
     ):
-        super().__init__(name, title, description, accessible_description, optional, classes)
+        super().__init__(name, title, description, short_title, accessible_description, optional, classes)
         self.options = options
         self.empty_notice = empty_notice
         self.input_type = "radiobuttons"
@@ -310,12 +304,12 @@ class RadioButtonsImage(RadioButtons):
     def __init__(
         self,
         name: str,
-        options: [],
+        options: List,
         title: str = "",
         description: str = "",
         accessible_description: str = None,
         optional: bool = False,
-        classes: [] = None,
+        classes: Optional[List] = None,
         empty_notice: str = "No items",
         total_pages: int = 1,
     ):
@@ -328,12 +322,12 @@ class Select(_Component):
     def __init__(
         self,
         name: str,
-        options: [],
+        options: List,
         title: str = "",
         description: str = "",
         accessible_description: str = None,
         optional: bool = False,
-        classes: [] = None,
+        classes: Optional[List] = None,
         include_default_select: bool = True,
     ):
         super().__init__(name, title, description, accessible_description, optional, classes)
@@ -406,9 +400,16 @@ class FileUpload(_Component):
         description: str = "",
         accessible_description: str = None,
         optional: bool = False,
-        classes: [] = None,
+        classes: Optional[List] = None,
     ):
-        super().__init__(name, title, description, accessible_description, optional, classes)
+        super().__init__(
+            name=name,
+            title=title,
+            description=description,
+            accessible_description=accessible_description,
+            optional=optional,
+            classes=classes,
+        )
         self.input_type = "file_upload"
 
 
@@ -420,9 +421,16 @@ class MultiFileUpload(_Component):
         description: str = "",
         accessible_description: str = None,
         optional: bool = False,
-        classes: [] = None,
+        classes: Optional[List] = None,
     ):
-        super().__init__(name, title, description, accessible_description, optional, classes)
+        super().__init__(
+            name=name,
+            title=title,
+            description=description,
+            accessible_description=accessible_description,
+            optional=optional,
+            classes=classes,
+        )
         self.input_type = "multi_file_upload"
 
 
@@ -434,10 +442,18 @@ class TextArea(_Component):
         description: str = "",
         accessible_description: str = None,
         optional: bool = False,
-        classes: [] = None,
-        extras: [] = None,
+        classes: Optional[List] = None,
+        extras: Optional[List] = None,
     ):
-        super().__init__(name, title, description, accessible_description, optional, classes, extras)
+        super().__init__(
+            name=name,
+            title=title,
+            description=description,
+            accessible_description=accessible_description,
+            optional=optional,
+            classes=classes,
+            extras=extras,
+        )
         self.input_type = "textarea"
 
 
@@ -445,13 +461,13 @@ class MarkdownArea(TextArea):
     def __init__(
         self,
         name: str,
-        variables: [],
+        variables: List,
         title: str = "",
         description: str = "",
         accessible_description: str = None,
         optional: bool = False,
-        classes: [] = None,
-        extras: [] = None,
+        classes: Optional[List] = None,
+        extras: Optional[List] = None,
     ):
         super().__init__(name, title, description, accessible_description, optional, classes, extras)
         self.variables = variables
@@ -466,8 +482,8 @@ class DateInput:
         description: str = "",
         name: str = None,
         optional: bool = None,
-        classes: [] = None,
-        extras: [] = None,
+        classes: Optional[List] = None,
+        extras: Optional[List] = None,
     ):
         from lite_forms.helpers import convert_to_markdown
 
@@ -482,7 +498,7 @@ class DateInput:
 
 
 class Summary:
-    def __init__(self, values: dict = None, classes: [] = None, extras: [] = None):
+    def __init__(self, values: dict = None, classes: Optional[List] = None, extras: Optional[List] = None):
         self.values = values
         self.classes = classes
         self.extras = extras
@@ -496,7 +512,7 @@ class List:
         NUMBERED = 3
 
     def __init__(
-        self, items: [], title: str = None, type: ListType = ListType.DEFAULT, classes: [] = None,
+        self, items: [], title: str = None, type: ListType = ListType.DEFAULT, classes: Optional[List] = None,
     ):
         self.items = items
         self.title = title
@@ -527,7 +543,7 @@ class ControlListEntryInput:
 
 
 class AutocompleteInput:
-    def __init__(self, name: str, options: [], title: str = ""):
+    def __init__(self, name: str, options: List, title: str = ""):
         self.name = name
         self.options = options
         self.title = title
@@ -535,7 +551,9 @@ class AutocompleteInput:
 
 
 class Link:
-    def __init__(self, text: str, address: str, name: str = None, classes: [] = None, form_action: bool = False):
+    def __init__(
+        self, text: str, address: str, name: str = None, classes: Optional[List] = None, form_action: bool = False
+    ):
         self.text = text
         self.address = address
         self.name = name

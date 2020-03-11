@@ -49,8 +49,10 @@ def _prepare_data(request, inject_data, expect_many_values):
         data = dict(list(inject_data.items()) + list(data.items()))
 
     # Remove form_pk and CSRF from POST data as the new form will replace them
-    del data["form_pk"]
-    del data["csrfmiddlewaretoken"]
+    if "form_pk" in data:
+        del data["form_pk"]
+    if "csrfmiddlewaretoken" in data:
+        del data["csrfmiddlewaretoken"]
 
     # expect_many_values is DEPRECATED
     # Ensure data which is expected to have multiple values.
@@ -65,19 +67,27 @@ def _prepare_data(request, inject_data, expect_many_values):
 
 
 def submit_paged_form(  # noqa
-    request, form_group: FormGroup, action: Callable, object_pk=None, inject_data=None, expect_many_values=None,
+    request,
+    form_group: FormGroup,
+    action: Callable,
+    object_pk=None,
+    inject_data=None,
+    expect_many_values=None,
+    additional_context: dict = None,
 ):
     """
     Function to handle the submission of the data from one form in a sequence of forms (a FormGroup).
-
     :param request: Standard Django request object
     :param form_group: The FormGroup that defines the sequence of forms being traversed
     :param action: The callback action to be invoked here to submit the form's data
     :param object_pk: Entity primary key to be supplied with the submission, if any
     :param inject_data: Additional data to be added to the supplied request's data before submitting
     :param expect_many_values: List of the data keys whose values contain multiple values
+    :param additional_context: Adds additional items to context for form
     :return: The next form page to display
     """
+    if additional_context is None:
+        additional_context = {}
     if expect_many_values is None:
         expect_many_values = []
 
@@ -92,7 +102,9 @@ def submit_paged_form(  # noqa
         data = request.POST.copy()
         del data["form_pk"]
         return (
-            form_page(request, previous_form, data=data, extra_data={"form_pk": previous_form.pk},),
+            form_page(
+                request, previous_form, data=data, extra_data={"form_pk": previous_form.pk, **additional_context},
+            ),
             None,
         )
 
@@ -126,7 +138,13 @@ def submit_paged_form(  # noqa
                 current_form.questions.insert(0, HiddenField(key, value))
 
         return (
-            form_page(request, current_form, data=data, errors=errors, extra_data={"form_pk": current_form.pk},),
+            form_page(
+                request,
+                current_form,
+                data=data,
+                errors=errors,
+                extra_data={"form_pk": current_form.pk, **additional_context},
+            ),
             validated_data,
         )
 
@@ -152,6 +170,6 @@ def submit_paged_form(  # noqa
 
     # Go to the next page
     return (
-        form_page(request, next_form, data=data, extra_data={"form_pk": next_form.pk}),
+        form_page(request, next_form, data=data, extra_data={"form_pk": next_form.pk, **additional_context}),
         validated_data,
     )

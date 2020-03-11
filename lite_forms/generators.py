@@ -29,17 +29,34 @@ def form_page(request, form, data=None, errors=None, extra_data=None):
     return render(request, "form.html", context)
 
 
-def success_page(request, title, secondary_title, description, what_happens_next, links):
+def success_page(
+    request,
+    title,
+    secondary_title,
+    description,
+    what_happens_next,
+    links,
+    animated=False,
+    back_link=None,
+    additional_context=None,
+):
     """
     Returns a standard GOV.UK Design System styled success page.
     """
+    if additional_context is None:
+        additional_context = {}
+
     context = {
         "title": title,
         "secondary_title": secondary_title,
         "description": description,
         "what_happens_next": what_happens_next,
         "links": links,
+        "back_link": back_link,
+        "animated": animated,
     }
+    if additional_context:
+        context.update(additional_context)
     return render(request, "confirmation.html", context)
 
 

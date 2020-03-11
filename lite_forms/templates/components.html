@@ -30,7 +30,7 @@
 
 	<!-- Error -->
 	{% if errors %}
-		{% if errors|key_value:question.name %}
+		{% if errors|key_value:question.name and question.input_type != "hidden" %}
 			<span id="error-{{ question.name }}" for="{{ question.name }}" class="govuk-error-message">
 				<span class="govuk-visually-hidden">Error:</span>
 				{% for error in errors|key_value:question.name %}
@@ -66,8 +66,6 @@
 			{% include "components/file_upload.html" with name=question.name value=question.name %}
 		{% elif question.input_type == "multi_file_upload" %}
 			{% include "components/multi_file_upload.html" with component=question data=data|key_value:question.name %}
-		{% elif question.input_type == "password_input" %}
-	        {% include "components/password.html" with name=question.name value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
 		{% elif question.input_type == "quantity_input" %}
 			{% include "components/quantity.html" with name=question.name value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
 		{% elif question.input_type == "date" %}

@@ -17,6 +17,7 @@ from lite_forms.components import (
     BackLink,
     HiddenField,
     NumberInput,
+    RadioButtons,
 )
 from lite_forms.helpers import (
     nest_data,
@@ -25,6 +26,9 @@ from lite_forms.helpers import (
     get_form_by_pk,
     get_next_form,
     get_previous_form,
+    convert_form_to_summary_list_instance,
+    get_all_form_components,
+    insert_hidden_fields,
 )
 from lite_forms.submitters import submit_paged_form
 from lite_forms.templatetags import custom_tags
@@ -116,6 +120,34 @@ class FormTests(TestCase):
                 "user.first_name": "Matthew",
             },
         )
+
+    def test_convert_form_to_summary_list_instance(self):
+        form = Form(title="I Am Easy to Find", caption="The National", default_button_name="Rylan")
+        form = convert_form_to_summary_list_instance(form)
+        self.assertEqual(form.caption, "")
+        self.assertEqual(form.buttons[0].value, "Save and return")
+        self.assertEqual(form.buttons[0].action, "return")
+
+    def test_get_all_form_components(self):
+        form = Form(
+            title="I Am Easy to Find",
+            questions=[
+                RadioButtons(
+                    name="hello",
+                    options=[
+                        Option("key", "value", components=[TextInput("text")]),
+                        Option("key2", "value", components=[TextInput("text2")]),
+                    ],
+                )
+            ],
+        )
+        components = get_all_form_components(form)
+        self.assertEqual(len(components), 3)
+
+    def test_insert_hidden_fields(self):
+        form = Form(title="I Am Easy to Find", questions=[],)
+        insert_hidden_fields({"matt": "berninger"}, form)
+        self.assertEqual(len(form.questions), 1)
 
 
 class TestSubmitPagedFormTestCase(TestCase):
@@ -212,12 +244,12 @@ class SingleQuestionFormAccessibilityTest(TestCase):
     def test_single_user_input_with_other_questions_has_title_label(self):
         name = "Test"
         form = Form(questions=[BackLink(), Label("abc"), TextInput(name), HiddenField("abc", "123"),])
-        self.assertEqual(form.single_form_element, name)
+        self.assertEqual(form.single_form_element.name, name)
 
     def test_single_user_input_alone_has_title_label(self):
         name = "Test"
         form = Form(questions=[TextInput(name),])
-        self.assertEqual(form.single_form_element, name)
+        self.assertEqual(form.single_form_element.name, name)
 
     def test_multiple_user_inputs_no_title_label(self):
         form = Form(questions=[TextInput("abc"), NumberInput("def"),])

@@ -3,14 +3,13 @@ from collections.abc import MutableMapping
 
 from markdown import markdown
 
-from lite_forms.components import FormGroup
+from lite_forms.components import FormGroup, Form, HiddenField
 
 
 def get_form_by_pk(form_pk, form_group: FormGroup):
     for form in form_group.forms:
         if str(form.pk) == str(form_pk):
             return copy.deepcopy(form)
-    return
 
 
 def get_previous_form(form_pk, form_group: FormGroup):
@@ -18,7 +17,6 @@ def get_previous_form(form_pk, form_group: FormGroup):
         # If the current form is the final form in the group
         if int(form.pk) == int(form_pk) - 1:
             return copy.deepcopy(form)
-    return
 
 
 def get_next_form(form_pk, form_group: FormGroup):
@@ -28,10 +26,9 @@ def get_next_form(form_pk, form_group: FormGroup):
             return copy.deepcopy(form)
         if str(form.pk) == str(form_pk):
             next_one = True
-    return
 
 
-def remove_unused_errors(errors, form):
+def remove_unused_errors(errors, form: Form):
     """
     Removes all errors that don't belong to a form's fields
     :param errors: ['errors'] children
@@ -43,9 +40,9 @@ def remove_unused_errors(errors, form):
     if not errors:
         return {}
 
-    for question in form.questions:
-        if hasattr(question, "name") and errors.get(question.name):
-            cleaned_errors[question.name] = errors.get(question.name)
+    for component in get_all_form_components(form):
+        if hasattr(component, "name") and errors.get(component.name):
+            cleaned_errors[component.name] = errors.get(component.name)
 
     return cleaned_errors
 
@@ -119,13 +116,13 @@ def heading_used_as_label(components):
 
     if components:
         for component in components:
-            if hasattr(component, "title"):
+            if hasattr(component, "title") and hasattr(component, "name"):
                 if single_input:
                     # If single_input has already been found, then we have multiple inputs
                     # and the heading cannot be used for multiple inputs
                     return None
                 else:
-                    single_input = component.name
+                    single_input = component
 
     return single_input
 
@@ -161,3 +158,38 @@ def handle_lists(data):
             temp_data[key] = data.get(key)
 
     return temp_data, lists
+
+
+def get_all_form_components(form: Form):
+    components = []
+    for component in form.questions:
+        components.append(component)
+
+        if getattr(component, "options", None):
+            for option in component.options:
+                if option.components:
+                    for _component in option.components:
+                        components.append(_component)
+
+    return components
+
+
+def convert_form_to_summary_list_instance(form: Form):
+    form.buttons[0].value = "Save and return"
+    form.buttons[0].action = "return"
+    form.caption = ""
+    return form
+
+
+def insert_hidden_fields(data: dict, form: Form):
+    for key, value in data.items():
+        form.questions.insert(0, HiddenField(key, value))
+
+
+def validate_data_unknown(object_pk, action, request, validated_data):
+    if object_pk:
+        return_value = action(request, object_pk, validated_data)  # noqa
+    else:
+        return_value = action(request, validated_data)  # noqa
+
+    return return_value[0]

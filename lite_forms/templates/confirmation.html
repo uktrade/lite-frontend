@@ -1,34 +1,54 @@
 {% extends 'layouts/base.html' %}
 
-{% block back_link %}{% endblock %}
+{% block back_link %}
+    {% if back_link %}
+        <a href="{{ back_link.url }}" id="back-link" class="govuk-back-link">{{ back_link.text }}</a>
+    {% endif %}
+{% endblock %}
 
 {% block body %}
-
-	<div class="govuk-panel govuk-panel--confirmation">
+	<div class="govuk-panel govuk-panel--confirmation {% if animated %}lite-panel--confirmation{% endif %} {% if request.GET.animate %}lite-spinner{% endif %}">
 		<h1 class="govuk-panel__title">
 			{{ title }}
 		</h1>
 		<div class="govuk-panel__body">
 			{{ secondary_title }}
 		</div>
+        {% if animated %}
+            <div class="lite-panel__status">
+                <div class="lite-panel__status__item">
+                    <p>Received</p>
+                    <div class="lite-panel__status__item__progress lite-panel__status__item__progress--complete"></div>
+                </div>
+                <div class="lite-panel__status__item">
+                    <p>Processing</p>
+                    <div class="lite-panel__status__item__progress lite-panel__status__item__progress--in-progress"></div>
+                </div>
+                <div class="lite-panel__status__item">
+                    <p>Decision</p>
+                    <div class="lite-panel__status__item__progress"></div>
+                </div>
+            </div>
+        {% endif %}
 	</div>
 
-	<p class="govuk-body">{{ description }}</p>
+	<div class="{% if request.GET.animate %}lite-confirmation-details-delay{% endif %}">
+		<p class="govuk-body">{{ description }}</p>
 
-	{% if what_happens_next %}
-		<h2 class="govuk-heading-m">What happens next</h2>
+		{% if what_happens_next %}
+			<h2 class="govuk-heading-m">What happens next</h2>
 
-		{% for string in what_happens_next %}
+			{% for string in what_happens_next %}
+				<p class="govuk-body">
+					{{ string }}
+				</p>
+			{% endfor %}
+		{% endif %}
+
+		{% for key, value in links.items %}
 			<p class="govuk-body">
-				{{ string }}
+				<a href="{{ value }}" class="govuk-link govuk-link--no-visited-state">{{ key }}</a>
 			</p>
 		{% endfor %}
-	{% endif %}
-
-	{% for key, value in links.items %}
-		<p class="govuk-body">
-			<a href="{{ value }}" class="govuk-link govuk-link--no-visited-state">{{ key }}</a>
-		</p>
-	{% endfor %}
-
+	</div>
 {% endblock %}
