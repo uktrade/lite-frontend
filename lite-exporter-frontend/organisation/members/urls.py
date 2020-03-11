@@ -2,12 +2,12 @@ from django.urls import path
 
 from conf.constants import Permissions
 from core.helpers import decorate_patterns_with_permission
-from users import views
+from organisation.members import views
 
-app_name = "users"
+app_name = "members"
 
 urlpatterns = [
-    path("", views.Users.as_view(), name="users"),
+    path("", views.Members.as_view(), name="members"),
     path("<uuid:pk>/", views.ViewUser.as_view(), name="user"),
     path("add/", views.AddUser.as_view(), name="add"),
     path("<uuid:pk>/edit/", views.EditUser.as_view(), name="edit"),

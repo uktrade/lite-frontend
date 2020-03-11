@@ -2,7 +2,7 @@ from django.urls import path
 
 from conf.constants import Permissions
 from core.helpers import decorate_patterns_with_permission
-from sites import views
+from organisation.sites import views
 
 app_name = "sites"
 

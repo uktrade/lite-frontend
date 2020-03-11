@@ -65,13 +65,19 @@
 		</form>
 	{% endif %}
 
-	<p class="govuk-caption-m govuk-!-margin-top-1">
-		{% if not filtered %}
-			{% include 'includes/pluralise.html' with count=goods.count base_constant='goods.GoodsList.Count.ORGANISATION' %}
-		{% else %}
-			{% include 'includes/pluralise.html' with count=goods.count base_constant='goods.GoodsList.Count.FILTERED' %}
-		{% endif %}
-	</p>
+	{% if not filtered and not goods.count %}
+		{% include "includes/notice.html" with text='goods.GoodsList.Count.ORGANISATION_ZERO' %}
+	{% elif not goods.count %}
+		{% include "includes/notice.html" with text='goods.GoodsList.Count.FILTERED_ZERO' %}
+	{% else %}
+		<p class="govuk-caption-m govuk-!-margin-top-1">
+			{% if not filtered %}
+				{% include 'includes/pluralise.html' with count=goods.count base_constant='goods.GoodsList.Count.ORGANISATION' %}
+			{% else %}
+				{% include 'includes/pluralise.html' with count=goods.count base_constant='goods.GoodsList.Count.FILTERED' %}
+			{% endif %}
+		</p>
+	{% endif %}
 
 	{% if goods.count %}
 		<table class="govuk-table">

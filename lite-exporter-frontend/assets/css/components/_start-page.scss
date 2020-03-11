@@ -65,5 +65,15 @@ $great-brand-colour: #1C1448;
 
 	&:active {
 		background-color: lighten($great-brand-colour, 10%);
+		transform: translateY(2px);
+	}
+
+	&:focus {
+		@include govuk-focused-text;
+		color: govuk-colour("black")!important;
+
+		&::after {
+			opacity: 0;
+		}
 	}
 }

@@ -252,7 +252,7 @@ def submit_the_application(driver, context):  # noqa
 @when("I click on the manage my organisation link")  # noqa
 def click_users_link(driver):  # noqa
     exporter_hub = ExporterHubPage(driver)
-    exporter_hub.click_users()
+    exporter_hub.click_manage_my_organisation_tile()
 
 
 @given("I have a second set up organisation")  # noqa

@@ -1,7 +1,7 @@
 from conf.client import get, post, put
 from conf.constants import SITES_URL, ORGANISATIONS_URL, ROLES_URL, EXPORTER_USERS_PERMISSIONS_URL
 from lite_forms.components import Option
-from users.services import get_user
+from organisation.members.services import get_user
 
 
 def get_site(request, organisation_id, pk):

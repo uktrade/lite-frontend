@@ -12,8 +12,9 @@ def has_permission(permission):
     def decorator(view_func):
         @wraps(view_func)
         def _wrapped_view(request, *args, **kwargs):
-            if helpers.has_permission(request, permission):
-                return view_func(request, *args, **kwargs)
+            has_permission_bool, permissions = helpers.has_permission(request, permission)
+            if has_permission_bool:
+                return view_func(request, *args, **kwargs, permissions=permissions)
 
             raise PermissionDeniedError(
                 f"You don't have the permission '{permission}' to view this, "

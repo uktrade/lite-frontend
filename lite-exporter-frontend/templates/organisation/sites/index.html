@@ -1,0 +1,51 @@
+{% extends 'organisation/base.html' %}
+
+{% block controls %}
+	<a id="button-add-site" href="{% url 'organisation:sites:new' %}" class="govuk-button" draggable="false" role="button">
+		{% lcs 'Sites.CREATE' %}
+	</a>
+{% endblock %}
+
+{% block contents %}
+	<table class="govuk-table">
+		<thead class="govuk-table__head">
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header">
+					Name
+				</th>
+				<th class="govuk-table__header">
+					Address
+				</th>
+				<th class="govuk-table__header">
+					Members
+				</th>
+				<th class="govuk-table__header"></th>
+			</tr>
+		</thead>
+		<tbody class="govuk-table__head">
+			{% for site in sites %}
+				<tr class="govuk-table__row">
+					<td class="govuk-table__cell">
+						{{ site.name }}
+						{% if site.id == organisation.primary_site.id %}
+							<span class="govuk-hint">(primary site)</span>
+						{% endif %}
+					</td>
+					<td class="govuk-table__cell">
+						{{ site.address.address_line_1 }}<br/>
+						{% if site.address.address_line_2 %}
+							{{ site.address.address_line_2 }}<br/>
+						{% endif %}
+						{{ site.address.city }}<br/>
+						{{ site.address.postcode }}<br/>
+						{{ site.address.country.name }}
+					</td>
+					<td class="govuk-table__cell">{{ site.users|length }} member{{ site.users|pluralize }}</td>
+					<td class="govuk-table__cell govuk-table__cell--numeric">
+						<a id="link-view-site-{{ site.id }}" href="{% url 'organisation:sites:site' site.id %}" class="govuk-link govuk-link--no-visited-state">View</a>
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% endblock %}

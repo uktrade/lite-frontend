@@ -10,7 +10,7 @@
 			</li>
 			{% if USER_PERMISSIONS.ADMINISTER_USERS in signed_in_user.role.permissions %}
 				<li class="govuk-breadcrumbs__list-item">
-					<a class="govuk-breadcrumbs__link" href="{% url 'users:users' %}">{% lcs 'core.HubPage.ORGANISATION' %}</a>
+					<a class="govuk-breadcrumbs__link" href="{% url 'organisation:members:members' %}">{% lcs 'core.HubPage.ORGANISATION' %}</a>
 				</li>
 			{% endif %}
 		</ol>
@@ -41,22 +41,22 @@
 				<div class="lite-more-actions__container lite-more-actions__container--secondary">
 					{% if show_change_status %}
 						{% if profile.status == 'Active' %}
-							<a href="{% url 'users:change_status' profile.id 'deactivate' %}" id="button-deactivate" role="button" draggable="false" class="govuk-button">
+							<a href="{% url 'organisation:members:change_status' profile.id 'deactivate' %}" id="button-deactivate" role="button" draggable="false" class="govuk-button">
 								{% lcs 'users.ProfilePage.USER_DEACTIVATE' %}
 							</a>
 						{% elif profile.status == 'Deactivated' %}
-							<a href="{% url 'users:change_status' profile.id 'reactivate' %}" id="button-reactivate" role="button" draggable="false" class="govuk-button">
+							<a href="{% url 'organisation:members:change_status' profile.id 'reactivate' %}" id="button-reactivate" role="button" draggable="false" class="govuk-button">
 								{% lcs 'users.ProfilePage.USER_REACTIVATE' %}
 							</a>
 						{% endif %}
 					{% endif %}
 					{% if show_change_role %}
-						<a id="button-edit" href="{% url 'users:edit' profile.id %}" class="govuk-button">
+						<a id="button-edit" href="{% url 'organisation:members:edit' profile.id %}" class="govuk-button">
 							{% lcs 'users.ProfilePage.EDIT_USER_BUTTON' %}
 						</a>
 					{% endif %}
 					{% if show_assign_sites %}
-						<a id="button-assign-sites" href="{% url 'users:assign_sites' profile.id %}" class="govuk-button">
+						<a id="button-assign-sites" href="{% url 'organisation:members:assign_sites' profile.id %}" class="govuk-button">
 							Assign member to sites
 						</a>
 					{% endif %}
@@ -140,7 +140,7 @@
 					{{ site.address.country.name }}
 				</dd>
 				<dd class="govuk-summary-list__actions">
-					<a class="govuk-link" href="{% url 'sites:site' site.id %}">
+					<a class="govuk-link" href="{% url 'organisation:sites:site' site.id %}">
 						View
 					</a>
 				</dd>

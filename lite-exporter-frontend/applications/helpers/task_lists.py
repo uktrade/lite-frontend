@@ -21,7 +21,7 @@ from conf.constants import (
 )
 from core.services import get_sites_on_draft, get_external_locations_on_draft
 from lite_content.lite_exporter_frontend.strings import applications
-from roles.services import get_user_permissions
+from organisation.roles.services import get_user_permissions
 
 
 def _get_strings(application_type):

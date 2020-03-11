@@ -17,7 +17,7 @@ def new_site_form():
             Heading("Address", HeadingStyle.M),
             *address_questions(get_countries(None, True)),
         ],
-        back_link=BackLink("Back to sites", reverse_lazy("sites:sites")),
+        back_link=BackLink("Back to sites", reverse_lazy("organisation:sites:sites")),
     )
 
 
@@ -30,6 +30,7 @@ def edit_site_form(site):
             *address_questions(get_countries(None, True)),
         ],
         back_link=BackLink(
-            strings.sites.SitesPage.BACK_TO + site["name"], reverse_lazy("sites:site", kwargs={"pk": site["id"]})
+            strings.sites.SitesPage.BACK_TO + site["name"],
+            reverse_lazy("organisation:sites:site", kwargs={"pk": site["id"]}),
         ),
     )

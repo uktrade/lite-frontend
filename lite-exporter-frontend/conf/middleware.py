@@ -17,7 +17,9 @@ class ProtectAllViewsMiddleware:
     def __call__(self, request):
         if not request.user.is_authenticated:
             name = f"{resolve(request.path).app_name}:{resolve(request.path).url_name}"
-            if name != "auth:login" and name != "auth:callback" and name != "core:home":
+            allowed_paths = ["auth:login", "auth:callback", "core:home", "core:register_an_organisation"]
+
+            if name not in allowed_paths:
                 return redirect(reverse_lazy("auth:login"))
 
         response = self.get_response(request)

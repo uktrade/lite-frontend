@@ -8,8 +8,6 @@ urlpatterns = [
     path("end-users/", include("end_users.urls")),
     path("goods/", include("goods.urls")),
     path("licences/", include("licences.urls")),
-    path("sites/", include("sites.urls")),
-    path("users/", include("users.urls")),
-    path("roles/", include("roles.urls")),
+    path("organisation/", include("organisation.urls")),
     path("", include("hmrc.urls")),
 ]

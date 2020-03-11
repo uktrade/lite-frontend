@@ -7,10 +7,9 @@ from ui_automation_tests.pages.member_page import MemberPage
 from ui_automation_tests.pages.members_page import MembersPage
 from ui_automation_tests.pages.shared import Shared
 from ui_automation_tests.shared import functions
+from ui_automation_tests.shared.tools.helpers import paginated_item_exists
 from ui_automation_tests.shared.tools.helpers import scroll_to_element_by_id
 from ui_automation_tests.shared.tools.utils import get_lite_client
-
-from ui_automation_tests.shared.tools.helpers import paginated_item_exists
 
 scenarios("../features/members.feature", strict_gherkin=False)
 
@@ -109,3 +108,8 @@ def do_not_see_new_user(driver, context):
     driver.set_timeout_to(0)
     assert paginated_item_exists(context.email_to_search, driver, exists=False), "Item couldn't be found"
     driver.set_timeout_to(10)
+
+
+@when("I go back to the members page")
+def i_go_back_to_the_members_page(driver):
+    driver.find_element_by_css_selector("a[href='/organisation/members/']").click()

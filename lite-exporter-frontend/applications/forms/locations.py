@@ -6,7 +6,7 @@ from lite_content.lite_exporter_frontend.goods import NewLocationForm
 from lite_forms.common import country_question
 from lite_forms.components import Form, RadioButtons, Option, TextArea, Filter, Checkboxes, TextInput
 from lite_forms.helpers import conditional
-from sites.services import get_sites
+from organisation.sites.services import get_sites
 
 
 class Locations:

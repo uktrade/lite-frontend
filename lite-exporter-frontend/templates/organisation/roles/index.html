@@ -1,33 +1,18 @@
-{% extends 'layouts/base.html' %}
+{% extends 'organisation/base.html' %}
 
 {% load svg %}
 
-{% block back_link %}
-	{% include 'includes/breadcrumbs.html' with title='core.HubPage.ORGANISATION' %}
+{% block controls %}
+	{% if can_administer_roles %}
+		<div class="lite-tabs__controls">
+			<a id="button-add-role" href="{% url 'organisation:roles:new' %}" class="govuk-button" draggable="false" role="button">
+				{% lcs 'roles.ManageRolesPage.ADD_BUTTON' %}
+			</a>
+		</div>
+	{% endif %}
 {% endblock %}
 
-{% block body %}
-	<h1 class="govuk-heading-l">{{ organisation.name }}</h1>
-
-	<div class="lite-tabs__container">
-		<div class="lite-tabs">
-			{% if organisation.sub_type.key != 'individual' %}
-				{% if can_administer_users %}
-					<a href="{% url 'users:users' %}" class="lite-tabs__tab" id="tab-users">{% lcs "users.UsersPage.MANAGE_ORGANISATIONS_MEMBERS_TAB" %}</a>
-				{% endif %}
-			{% endif %}
-			{% if can_administer_sites %}<a href="{% url 'sites:sites' %}" class="lite-tabs__tab lite-tabs__tab" id="tab-sites">{% lcs "sites.SitesPage.TAB" %}</a>{% endif %}
-			<a href="{% url 'roles:roles' %}" class="lite-tabs__tab lite-tabs__tab--selected" id="tab-roles">{% lcs "roles.ManageRolesPage.TAB" %}</a>
-		</div>
-		{% if 'EXPORTER_ADMINISTER_ROLES' in user_permissions %}
-			<div class="lite-tabs__controls">
-				<a id="button-add-role" href="{% url 'roles:new' %}" class="govuk-button" draggable="false" role="button">
-					{% lcs 'roles.ManageRolesPage.ADD_BUTTON' %}
-				</a>
-			</div>
-		{% endif %}
-	</div>
-
+{% block contents %}
 	<table class="govuk-table">
 		<thead class="govuk-table__head">
 			<tr class="govuk-table__row">
@@ -67,7 +52,7 @@
 						{% if not role.id in immutable_roles %}
 							{% if 'EXPORTER_ADMINISTER_ROLES' in user_permissions %}
 								{% if role.id != user_role_id %}
-									<a href="{% url 'roles:edit' role.id %}" class="govuk-link govuk-link--no-visited-state">{% lcs "roles.ManageRolesPage.Table.EDIT_ROLE" %}</a>
+									<a href="{% url 'organisation:roles:edit' role.id %}" class="govuk-link govuk-link--no-visited-state">{% lcs "roles.ManageRolesPage.Table.EDIT_ROLE" %}</a>
 								{% endif %}
 							{% endif %}
 						{% endif %}

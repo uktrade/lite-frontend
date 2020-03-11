@@ -1,4 +1,3 @@
-from lite_content.lite_exporter_frontend import strings
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseServerError
@@ -10,8 +9,7 @@ from raven.contrib.django.raven_compat.models import client
 from auth.services import authenticate_exporter_user
 from auth.utils import get_client, AUTHORISATION_URL, TOKEN_SESSION_KEY, TOKEN_URL, get_profile
 from conf.settings import LOGOUT_URL
-from lite_forms.generators import error_page
-from users.services import get_user
+from organisation.members.services import get_user
 
 
 class AuthView(RedirectView):
@@ -63,33 +61,35 @@ class AuthCallbackView(View):
         profile = get_profile(get_client(self.request))
 
         response, status_code = authenticate_exporter_user(profile)
-        if status_code != 200:
-            return error_page(
-                None,
-                title=strings.Authentication.UserDoesNotExist.TITLE,
-                description=strings.Authentication.UserDoesNotExist.DESCRIPTION,
-                show_back_link=False,
-            )
-
-        # Create the user in the session
         user = authenticate(request)
-        user.user_token = response["token"]
-        user.first_name = response["first_name"]
-        user.last_name = response["last_name"]
-        user.lite_api_user_id = response["lite_api_user_id"]
+        bypass = False
+        if status_code == 200:
+            user.user_token = response["token"]
+            user.first_name = response["first_name"]
+            user.last_name = response["last_name"]
+            user.lite_api_user_id = response["lite_api_user_id"]
+        else:
+            bypass = True
         user.organisation = None
         user.save()
 
         if user is not None:
             login(request, user)
 
+            if bypass:
+                return redirect("core:register_an_organisation_triage")
+
             user_dict = get_user(request)
 
             if len(user_dict["organisations"]) == 0:
-                return error_page(request, "You don't belong to any organisations", show_back_link=False)
+                return redirect("core:register_an_organisation_triage")
             elif len(user_dict["organisations"]) == 1:
-                user.organisation = user_dict["organisations"][0]["id"]
-                user.save()
+                organisation = user_dict["organisations"][0]
+                if organisation["status"]["key"] != "in_review":
+                    user.organisation = user_dict["organisations"][0]["id"]
+                    user.save()
+                else:
+                    return redirect("core:register_an_organisation_confirm")
             elif len(user_dict["organisations"]) > 1:
                 return redirect("core:pick_organisation")
 

@@ -33,7 +33,7 @@
 	<div class="lite-case-notes">
 		{% for item in notes %}
 			<p class="govuk-body">
-				{% if item.user.team %}<span>{{ item.user.team.name }}</span>{% else %}<a href="{% url 'users:user' item.user.id %}" class="govuk-link govuk-link--no-visited-state govuk-!-font-weight-bold">{{ item.user.first_name }} {{ item.user.last_name }}</a>
+				{% if item.user.team %}<span>{{ item.user.team.name }}</span>{% else %}<a href="{% url "organisation:members:user" item.user.id %}" class="govuk-link govuk-link--no-visited-state govuk-!-font-weight-bold">{{ item.user.first_name }} {{ item.user.last_name }}</a>
 				{% endif %} {% lcs 'applications.CaseNotes.ADDED_A_NOTE_SUFFIX' %}
 			</p>
 			<div class="lite-application-note lite-application-note{% if item.user.team %}--internal{% else %}--exporter{% endif %}">

@@ -1,0 +1,36 @@
+{% extends 'layouts/base.html' %}
+
+{% block back_link %}
+	{% include 'includes/breadcrumbs.html' with title='core.HubPage.ORGANISATION' %}
+{% endblock %}
+
+{% block title %}
+	{% for tab in tabs %}
+		{% if tab.url == request.path %}
+			{{ tab.name }}
+		{% endif %}
+	{% endfor %} - {% lcs 'core.HubPage.ORGANISATION' %}
+{% endblock %}
+
+{% block body %}
+	<h1 class="govuk-heading-l">{{ organisation.name }}</h1>
+
+	<div class="lite-tabs__container">
+		<div class="lite-tabs">
+			{% for tab in tabs %}
+				{% if tab %}
+					<a id="{{ tab.id }}" href="{{ tab.url }}" class="lite-tabs__tab {% if tab.url == request.path %}lite-tabs__tab--selected{% endif %}" id="tab-members">
+						{{ tab.name }}
+					</a>
+				{% endif %}
+			{% endfor %}
+		</div>
+		<div class="lite-tabs__controls">
+			{% block controls %}
+			{% endblock %}
+		</div>
+	</div>
+
+	{% block contents %}
+	{% endblock %}
+{% endblock %}

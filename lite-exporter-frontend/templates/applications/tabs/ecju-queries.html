@@ -34,7 +34,7 @@
 			</div>
 			<div class="app-ecju-query__item app-ecju-query__item--right">
 				<p class="app-ecju-query__heading">
-					<a href="{% url 'users:user' ecju_query.responded_by_user.id %}" class="govuk-link govuk-link--no-visited-state">
+					<a href="{% url "organisation:members:user" ecju_query.responded_by_user.id %}" class="govuk-link govuk-link--no-visited-state">
 						{{ ecju_query.responded_by_user.first_name }} {{ ecju_query.responded_by_user.last_name }}
 					</a>
 				</p>

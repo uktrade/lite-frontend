@@ -10,7 +10,7 @@
 				<a class="govuk-breadcrumbs__link" href="/">{{ SERVICE_NAME }}</a>
 			</li>
 			<li class="govuk-breadcrumbs__list-item">
-				<a class="govuk-breadcrumbs__link" href="{% url 'sites:sites' %}">{% lcs "sites.SitesPage.TAB" %}</a>
+				<a class="govuk-breadcrumbs__link" href="{% url 'organisation:sites:sites' %}">{% lcs "sites.SitesPage.TAB" %}</a>
 			</li>
 		</ol>
 	</div>
@@ -26,7 +26,7 @@
 			</h1>
 		</div>
 		<div class="lite-app-bar__controls">
-			<a id="button-edit" href="{% url 'sites:edit' site.id %}" class="govuk-button govuk-button--secondary">
+			<a id="button-edit" href="{% url 'organisation:sites:edit' site.id %}" class="govuk-button govuk-button--secondary">
 				{% lcs "sites.SitesPage.EDIT_SITE" %}
 			</a>
 		</div>
@@ -101,8 +101,8 @@
 					{% if user.first_name %}
 						<span class="govuk-!-font-weight-bold">{{ user.first_name }} {{ user.last_name }}</span>
 					{% else %}
-						<strong class="govuk-tag govuk-phase-banner__content__tag ">
-							{% lcs "USER_PENDING" %}
+						<strong class="govuk-tag govuk-tag--blue">
+							{% lcs 'users.UsersPage.USER_PENDING' %}
 						</strong>
 					{% endif %}
 				</dd>
@@ -110,8 +110,8 @@
 					{{ user.email }}
 				</dd>
 				<dd class="govuk-summary-list__actions">
-					<a class="govuk-link" href="{% url 'users:user' user.id %}">
-						{% lcs "VIEW" %}
+					<a class="govuk-link" href="{% url 'organisation:members:user' user.id %}">
+						{% lcs 'generic.VIEW' %}
 					</a>
 				</dd>
 			</div>

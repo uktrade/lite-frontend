@@ -5,8 +5,7 @@ class ExporterHubPage(BasePage):
     APPLY_FOR_A_LICENCE_BTN = "a[href*='/apply-for-a-licence/']"
     APPLICATIONS_BTN = "a[href*='/applications/']"
     MY_GOODS_BTN = "a[href*='/goods/']"
-    USERS_BTN = "a[href='/users/']"
-    SITES_BTN = "a[href='/sites/']"
+    TILE_MANAGE_MY_ORGANISATION_SELECTOR = "a[href='/organisation/']"
     END_USER_ADVISORY_TILE = "a[href*='/end-users/']"
     RAISE_HMRC_QUERY_BTN = "a[href*='/raise-a-query/"
     USER_PROFILE_BTN = "a[href*='/users/profile/']"
@@ -26,8 +25,8 @@ class ExporterHubPage(BasePage):
     def click_my_goods(self):
         self.driver.find_element_by_css_selector(self.MY_GOODS_BTN).click()
 
-    def click_users(self):
-        self.driver.find_element_by_css_selector(self.USERS_BTN).click()
+    def click_manage_my_organisation_tile(self):
+        self.driver.find_element_by_css_selector(self.TILE_MANAGE_MY_ORGANISATION_SELECTOR).click()
 
     def click_user_profile(self):
         self.driver.find_element_by_css_selector(self.USER_PROFILE_BTN).click()

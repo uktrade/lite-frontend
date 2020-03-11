@@ -15,7 +15,7 @@ Feature: I want to manage my organisation's members
     When I select the member that was just added
     And I deactivate them
     Then the member is deactivated
-    When I click on the manage my organisation link
+    When I go back to the members page
     And I show filters
     And filter status has been changed to "Active"
     Then I do not see the new member
@@ -24,7 +24,7 @@ Feature: I want to manage my organisation's members
     When I select the member that was just added
     And I reactivate them
     Then the member is reactivated
-    When I click on the manage my organisation link
+    When I go back to the members page
     And I show filters
     And filter status has been changed to "Active"
     Then I see the new member

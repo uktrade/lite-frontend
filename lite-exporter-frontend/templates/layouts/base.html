@@ -79,7 +79,7 @@
 						<a href="{% url 'auth:logout' %}" class="lite-user-menu-button" id="link-sign-out">Sign out</a>
 						{% if not user_in_limbo %}
 							<div class="lite-user-menu-divider"></div>
-							<a class="lite-user-menu-button" href="{% url 'users:profile' %}">
+							<a class="lite-user-menu-button" href="{% url 'organisation:members:profile' %}">
 								{{ user.first_name }}
 								<div class="lite-user-menu-button--user">
 									{% svg 'user' %}

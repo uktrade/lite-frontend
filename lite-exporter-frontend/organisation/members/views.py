@@ -3,62 +3,42 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
-from conf.constants import Permissions
 from core.helpers import convert_dict_to_query_params
-from core.services import get_organisation_users, get_organisation, get_organisation_user, put_organisation_user
-from lite_content.lite_exporter_frontend import strings
+from core.services import get_organisation_user, put_organisation_user, get_organisation_users
 from lite_forms.components import Option, FiltersBar, Select
 from lite_forms.views import SingleFormView
-from roles.services import get_user_permissions
-from sites.services import put_assign_sites
-from users.forms import add_user_form, edit_user_form, assign_sites
-from users.services import post_users, get_user, is_super_user
+from organisation.members.forms import add_user_form, edit_user_form, assign_sites
+from organisation.members.services import post_users, get_user, is_super_user
+from organisation.sites.services import put_assign_sites
+from organisation.views import OrganisationView
 
 
-class Users(TemplateView):
-    def get(self, request, **kwargs):
-        status = request.GET.get("status", "active")
-        params = {"page": int(request.GET.get("page", 1)), "status": status}
+class Members(OrganisationView):
+    template_name = "members/index"
 
-        data, _ = get_organisation_users(request, str(request.user.organisation), params)
-        organisation = get_organisation(request, str(request.user.organisation))
-        user_permissions = get_user_permissions(request)
-
-        sites, roles = False, False
-        if Permissions.ADMINISTER_SITES in user_permissions:
-            sites = True
-
-        if Permissions.EXPORTER_ADMINISTER_ROLES in user_permissions:
-            roles = True
-
-        if organisation["type"]["key"] == "individual":
-            raise Http404
-
+    def get_additional_context(self):
+        status = self.request.GET.get("status", "active")
+        params = {"page": int(self.request.GET.get("page", 1)), "status": status}
+        data, _ = get_organisation_users(self.request, str(self.request.user.organisation), params)
         statuses = [
             Option(option["key"], option["value"])
             for option in [{"key": "active", "value": "Active"}, {"key": "", "value": "All"}]
         ]
         filters = FiltersBar([Select(name="status", title="status", options=statuses)])
 
-        context = {
-            "title": strings.users.UsersPage.MANAGE_ORGANISATIONS_MEMBERS_TAB + " - " + organisation["name"],
-            "data": data,
-            "organisation": organisation,
-            "can_administer_roles": roles,
-            "can_administer_sites": sites,
+        return {
             "status": status,
+            "data": data,
             "page": params.pop("page"),
             "params_str": convert_dict_to_query_params(params),
             "filters": filters,
         }
 
-        return render(request, "users/users.html", context)
-
 
 class AddUser(SingleFormView):
     def init(self, request, **kwargs):
         self.form = add_user_form(request)
-        self.success_url = reverse_lazy("users:users")
+        self.success_url = reverse_lazy("organisation:members:members")
         self.action = post_users
 
 
@@ -81,13 +61,13 @@ class ViewUser(TemplateView):
             "show_change_role": show_change_role,
             "show_assign_sites": show_assign_sites,
         }
-        return render(request, "users/profile.html", context)
+        return render(request, "organisation/members/profile.html", context)
 
 
 class ViewProfile(TemplateView):
     def get(self, request, **kwargs):
         user = request.user
-        return redirect(reverse_lazy("users:user", kwargs={"pk": user.lite_api_user_id}))
+        return redirect(reverse_lazy("organisation:members:user", kwargs={"pk": user.lite_api_user_id}))
 
 
 class EditUser(SingleFormView):
@@ -98,7 +78,7 @@ class EditUser(SingleFormView):
         self.form = edit_user_form(request, self.object_pk, can_edit_role)
         self.data = user
         self.action = put_organisation_user
-        self.success_url = reverse_lazy("users:user", kwargs={"pk": self.object_pk})
+        self.success_url = reverse_lazy("organisation:members:user", kwargs={"pk": self.object_pk})
 
 
 class ChangeUserStatus(TemplateView):
@@ -125,7 +105,7 @@ class ChangeUserStatus(TemplateView):
             "user_id": str(kwargs["pk"]),
             "status": status,
         }
-        return render(request, "users/change-status.html", context)
+        return render(request, "organisation/members/change-status.html", context)
 
     def post(self, request, **kwargs):
         status = kwargs["status"]
@@ -135,7 +115,7 @@ class ChangeUserStatus(TemplateView):
 
         put_organisation_user(request, str(kwargs["pk"]), request.POST)
 
-        return redirect(reverse_lazy("users:user", kwargs={"pk": kwargs["pk"]}))
+        return redirect(reverse_lazy("organisation:members:user", kwargs={"pk": kwargs["pk"]}))
 
 
 class AssignSites(SingleFormView):
@@ -144,4 +124,4 @@ class AssignSites(SingleFormView):
         self.data = get_user(request, self.object_pk)
         self.form = assign_sites(request)
         self.action = put_assign_sites
-        self.success_url = reverse_lazy("users:user", kwargs={"pk": self.object_pk})
+        self.success_url = reverse_lazy("organisation:members:user", kwargs={"pk": self.object_pk})
