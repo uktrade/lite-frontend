@@ -101,6 +101,13 @@ class ApplicationPage:
     NO_QUEUES_ASSIGNED = "No queues assigned"
     COPY_OF_LABEL = "Copied from:"
 
+    class EndUseDetails:
+        INFORMED_TO_APPLY = "INFORMED_TO_APPLY"
+        INFORMED_WMD = "INFORMED_WMD"
+        SUSPECTED_WMD = "SUSPECTED_WMD"
+        EU_MILITARY = "EU_MILITARY"
+        COMPLIANT_LIMITATIONS_EU = "COMPLIANT_LIMITATIONS_EU"
+
     class Details:
         DETAILS = "Exhibition details"
 
