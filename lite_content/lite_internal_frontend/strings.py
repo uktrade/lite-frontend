@@ -196,6 +196,65 @@ class Flags:
             REACTIVATE_WARNING = "This flag will be able to be used unless it's deactivated again"
 
 
+class FlaggingRules:
+    CREATE = "Create new flagging rule"
+    TITLE = "Flagging rules"
+    DESCRIPTION = "Flagging rules apply flags to cases automatically based on conditions"
+
+    class List:
+        class Filter:
+            Type = "Type"
+            MY_TEAM_ONLY = "Only show my team"
+            INCLUDE_DEACTIVATED = "Include deactivated"
+
+        TEAM = "Team"
+        TYPE = "Type"
+        FLAG = "Flag"
+        CONDITION = "Condition"
+        STATUS = "Status"
+        ACTIONS = "Actions"
+
+        EDIT = "Edit"
+        REACTIVATE = "Reactivate"
+        DEACTIVATE = "Deactivate"
+
+    class Create:
+        BACKLINK = "Back to flagging rules"
+
+        class Type:
+            TITLE = "Select flagging rule type"
+            SAVE = "Continue"
+
+            GOOD = "Good"
+            DESTINATION = "Destination"
+            APPLICATION = "Application type"
+
+        class Condition_and_flag:
+            GOOD_TITLE = "Select a control list classification and flag"
+            DESTINATION_TITLE = "Select a country and flag"
+            APPLICATION_TITLE = "Select a application type and flag"
+
+            GOOD = "Control list classification"
+            DESTINATION = "Country"
+            APPLICATION = "Application type"
+
+            FLAG = "Flag"
+
+    class Status:
+        DEACTIVATE_HEADING = "Are you sure you want to deactivate this flagging rule?"
+        DEACTIVATE_WARNING = "This flagging rule will no longer be able to be used unless it's reactivated"
+        DEACTIVATE_CONFIRM = "Deactivate this flagging rule"
+
+        REACTIVATE_HEADING = "Are you sure you want to reactivate this flagging rule?"
+        REACTIVATE_WARNING = "This flagging rule will be able to be used unless it's deactivated again"
+        REACTIVATE_CONFIRM = "Reactivate this flagging rule"
+
+        BACK = "Back to flagging rules"
+        CANCEL = "Cancel"
+
+        NO_SELECTION_ERROR = "Select to confirm or not"
+
+
 class Picklist:
     TITLE = "Picklists"
 
