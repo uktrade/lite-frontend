@@ -1,6 +1,13 @@
-from pytest_bdd import when, then, parsers, scenarios
+from pytest_bdd import when, then, parsers, scenarios, given
 from pages.case_list_page import CaseListPage
 from pages.shared import Shared
+
+from ui_automation_tests.pages.application_page import ApplicationPage
+from ui_automation_tests.shared import functions
+
+from ui_automation_tests.pages.assign_user_page import AssignUserPage
+from ui_automation_tests.shared.tools.helpers import get_formatted_date_time_m_d_h_s
+from ui_automation_tests.shared.tools.utils import get_lite_client
 
 scenarios("../features/assign_users_to_queue.feature", strict_gherkin=False)
 
@@ -85,3 +92,56 @@ def assign_user_to_case(driver, enabled_disabled):
 @when("I click on the added queue in dropdown")  # noqa
 def system_queue_shown_in_dropdown(driver, context):
     CaseListPage(driver).click_on_queue_name(context.queue_name)
+
+
+@when("filter by test user email to assign a user")
+def filter_gov_users_found(driver, internal_info):
+    assign_user_page = AssignUserPage(driver)
+    assign_user_page.search(internal_info["email"])
+
+
+@when("filter by queue name")
+def filter_gov_users_found(driver, internal_info):
+    assign_user_page = AssignUserPage(driver)
+    assign_user_page.search("queue")
+
+
+@then("I should see one user with the test user name")
+def one_user_found(driver, internal_info):
+    assign_user_page = AssignUserPage(driver)
+    emails = assign_user_page.get_users_email()
+    assert len(emails) > 0
+    for email in emails:
+        assert internal_info["email"] in email.text
+
+
+@when("I click the user and click continue")
+def click_user_and_assign(driver):
+    assign_user_page = AssignUserPage(driver)
+    assign_user_page.select_first_radio_button()
+    functions.click_submit(driver)
+
+
+@when("I click the queue and click continue")
+def click_user_and_assign(driver):
+    assign_user_page = AssignUserPage(driver)
+    assign_user_page.select_first_radio_button()
+    functions.click_submit(driver)
+
+
+@given("a new queue has been created")
+def create_queue(context, api_client_config):
+    lite_client = get_lite_client(context, api_client_config)
+    lite_client.queues.add_queue("queue" + get_formatted_date_time_m_d_h_s())
+    context.queue_name = lite_client.context["queue_name"]
+
+
+@then("I see a user is assigned")
+def case_officer_is_set(driver, internal_info):
+    assert internal_info["name"] in AssignUserPage(driver).get_assigned_user()
+
+
+@when("I click assign user Button")  # noqa
+def i_click_assign_user_button(driver):
+    application_page = ApplicationPage(driver)
+    application_page.click_assign_user_button()

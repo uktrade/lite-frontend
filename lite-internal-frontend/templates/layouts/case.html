@@ -63,6 +63,9 @@
 				<a role="button" draggable="false" class="govuk-button" id="case-officer" href="{% url 'cases:case_officer' case.id %}">
 					{% lcs 'cases.ApplicationPage.Actions.CASE_OFFICER' %}
 				</a>
+				<a role="button" draggable="false" class="govuk-button" id="assign-user" href="{% url 'cases:assign_user' case.id %}">
+					{% lcs 'cases.ApplicationPage.Actions.USER_WORK_QUEUE' %}
+				</a>
 			</div>
 		</div>
 	</div>

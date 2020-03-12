@@ -1,9 +1,11 @@
 from conf.constants import UserStatuses
+from lite_content.lite_internal_frontend import strings
 from lite_forms.styles import ButtonStyle
 
 from lite_content.lite_internal_frontend.strings import cases
 from django.http import HttpRequest
-from lite_forms.components import Checkboxes, Filter, Form, RadioButtons, Button
+from lite_forms.components import Checkboxes, Filter, Form, RadioButtons, Button, HiddenField
+from teams.services import get_users_teams
 
 from users.services import get_gov_users
 
@@ -36,5 +38,32 @@ def assign_case_officer_form(request: HttpRequest, existing_officer):
         description=cases.Manage.AssignCaseOfficer.DESCRIPTION,
         questions=[Filter(), RadioButtons("user", users)],
         buttons=buttons,
+        javascript_imports=["/assets/javascripts/filter-radiobuttons-list.js"],
+    )
+
+
+def assign_user_and_work_queue(request):
+    user_params = {"disable_pagination": True, "status": UserStatuses.ACTIVE}
+    users = get_gov_users(request, user_params, convert_to_options=True)
+    return Form(
+        title=cases.Manage.AssignUserAndQueue.USER_TITLE,
+        description=cases.Manage.AssignUserAndQueue.USER_DESCRIPTION,
+        questions=[Filter(), RadioButtons("user", users)],
+        default_button_name=strings.CONTINUE,
+        javascript_imports=["/assets/javascripts/filter-radiobuttons-list.js"],
+    )
+
+
+def users_team_queues(request, case_pk, user_pk):
+    queues = get_users_teams(request, user_pk, True)
+    return Form(
+        title=cases.Manage.AssignUserAndQueue.QUEUE_TITLE,
+        description=cases.Manage.AssignUserAndQueue.QUEUE_DESCRIPTION,
+        questions=[
+            Filter(),
+            RadioButtons("queue", queues),
+            HiddenField("user_pk", user_pk),
+            HiddenField("case_pk", case_pk),
+        ],
         javascript_imports=["/assets/javascripts/filter-radiobuttons-list.js"],
     )

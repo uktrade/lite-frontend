@@ -92,4 +92,6 @@ urlpatterns = [
         name="assign_destination_flags",
     ),
     path("<uuid:pk>/case-officer/", main.CaseOfficer.as_view(), name="case_officer"),
+    path("<uuid:pk>/assign-user/", main.UserWorkQueue.as_view(), name="assign_user"),
+    path("<uuid:pk>/assign-user-queue/<uuid:user_pk>/", main.UserTeamQueue.as_view(), name="assign_user_queue"),
 ]

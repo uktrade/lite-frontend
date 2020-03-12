@@ -10,7 +10,7 @@ from django.views.generic import TemplateView
 from s3chunkuploader.file_handler import S3FileUploadHandler, s3_client
 
 from cases.constants import CaseType
-from cases.forms.assign_users import assign_case_officer_form
+from cases.forms.assign_users import assign_case_officer_form, assign_user_and_work_queue, users_team_queues
 from cases.forms.attach_documents import attach_documents_form
 from cases.forms.change_status import change_status_form
 from cases.forms.move_case import move_case_form
@@ -40,7 +40,8 @@ from lite_forms.components import FiltersBar, AutocompleteInput, Option, HiddenF
 from lite_forms.generators import error_page, form_page
 from lite_forms.helpers import conditional
 from lite_forms.views import SingleFormView
-from queues.services import get_cases_search_data
+from queues.services import get_cases_search_data, put_queue_single_case_assignment
+from users.services import get_gov_user_from_form_selection
 
 
 class Cases(TemplateView):
@@ -360,3 +361,29 @@ class CaseOfficer(TemplateView):
             )
 
         return redirect(reverse_lazy("cases:case", kwargs={"pk": case_id}))
+
+
+class UserWorkQueue(SingleFormView):
+    def init(self, request, **kwargs):
+        self.object_pk = kwargs["pk"]
+        self.form = assign_user_and_work_queue(request)
+        self.action = get_gov_user_from_form_selection
+
+    @staticmethod
+    def _get_form_data(request, case_pk, json):
+        return json, HTTPStatus.OK
+
+    def get_success_url(self):
+        user_id = self.get_validated_data().get("user").get("id")
+        return reverse_lazy("cases:assign_user_queue", kwargs={"pk": self.object_pk, "user_pk": user_id})
+
+
+class UserTeamQueue(SingleFormView):
+    def init(self, request, **kwargs):
+        user_pk = str(kwargs["user_pk"])
+        self.object_pk = kwargs["pk"]
+        self.form = users_team_queues(request, str(kwargs["pk"]), user_pk)
+        self.action = put_queue_single_case_assignment
+
+    def get_success_url(self):
+        return reverse_lazy("cases:case", kwargs={"pk": self.object_pk})
