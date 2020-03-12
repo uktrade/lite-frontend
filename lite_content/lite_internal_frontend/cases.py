@@ -38,6 +38,7 @@ class ApplicationPage:
         DECISION = "Record decision"
         ADVICE = "View advice"
         GENERATE_DOCUMENT = "Generate document"
+        USER_WORK_QUEUE = "Assign user"
 
     class Goods:
         MISSING_DOCUMENT_REASON_PREFIX = "No document given: "
@@ -468,7 +469,14 @@ class Manage:
         MULTIPLE_TITLE = "Which users do you want to assign to these cases?"
         MULTIPLE_WARNING = "Users already assigned to these cases will be overwritten."
         TITLE = "Which users do you want to assign to this case?"
-        BUTTON = "Submit"
+        BUTTON = "Continue"
+
+    class AssignUserAndQueue:
+        USER_TITLE = "Select the user you want to assign the case to"
+        USER_DESCRIPTION = ""
+        QUEUE_TITLE = "Select a team queue to add the case to"
+        QUEUE_DESCRIPTION = ""
+        SUBMIT_BUTTON = "Submit"
 
     class AssignCaseOfficer:
         TITLE = "Assign a case officer"
