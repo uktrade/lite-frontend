@@ -103,11 +103,11 @@ class ApplicationPage:
     COPY_OF_LABEL = "Copied from:"
 
     class EndUseDetails:
-        INFORMED_TO_APPLY_TITLE = "INFORMED_TO_APPLY"
-        INFORMED_WMD_TITLE = "INFORMED_WMD"
-        SUSPECTED_WMD_TITLE = "SUSPECTED_WMD"
-        EU_MILITARY_TITLE = "EU_MILITARY"
-        COMPLIANT_LIMITATIONS_EU_TITLE = "COMPLIANT_LIMITATIONS_EU"
+        INFORMED_TO_APPLY_TITLE = "Informed to apply"
+        INFORMED_WMD_TITLE = "Informed WMD"
+        SUSPECTED_WMD_TITLE = "Suspect WMD"
+        EU_MILITARY_TITLE = "EU transfer licence"
+        COMPLIANT_LIMITATIONS_EU_TITLE = "Complied to terms"
 
     class Details:
         DETAILS = "Exhibition details"
