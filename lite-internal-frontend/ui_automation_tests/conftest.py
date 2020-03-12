@@ -215,11 +215,6 @@ def see_queue_in_queue_list(driver, context):  # noqa
     )
 
 
-@when("I add a flag at level Organisation")  # noqa
-def add_an_organisation_flag(driver, add_organisation_flag):  # noqa
-    pass
-
-
 @when("I go to the organisation which submitted the case")  # noqa
 def go_to_the_organisation_which_submitted_the_case(driver):  # noqa
     ApplicationPage(driver).go_to_organisation()
@@ -332,4 +327,24 @@ def go_to_users(driver, sso_sign_in, internal_url):  # noqa
 
 @given("an Exhibition Clearance is created")  # noqa
 def an_exhibition_clearance_is_created(driver, apply_for_exhibition_clearance):
+    pass
+
+
+@when("I add a flag at level Case")  # noqa
+def add_a_case_flag(driver, add_case_flag):  # noqa
+    pass
+
+
+@when("I add a flag at level Good")  # noqa
+def add_a_flag(driver, add_good_flag):  # noqa
+    pass
+
+
+@when("I add a flag at level Destination")  # noqa
+def add_a_flag(driver, add_destination_flag):  # noqa
+    pass
+
+
+@when("I add a flag at level Organisation")  # noqa
+def add_a_flag(driver, add_organisation_flag):  # noqa
     pass

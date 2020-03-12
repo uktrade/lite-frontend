@@ -14,6 +14,15 @@ def convert_dict_to_query_params(dictionary):
     return "&".join(items)
 
 
+def get_params_if_exist(request, keys, json=None):
+    params = json if json else dict()
+    for key in keys:
+        value = request.GET.get(key, False)
+        if value:
+            params[key] = value
+    return params
+
+
 def has_permission(request, permission: Permission):
     """
     Returns true if the user has a given permission, else false

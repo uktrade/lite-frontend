@@ -37,16 +37,6 @@ def assert_flag_is_assigned(driver, context):
     assert ApplicationPage(driver).is_good_flag_applied(context.flag_name)
 
 
-@when("I add a flag at level Good")
-def add_a_good_flag(driver, add_good_flag):
-    pass
-
-
-@when("I add a flag at level Destination")
-def add_a_good_flag(driver, add_destination_flag):
-    pass
-
-
 @then("I see 3 flags for the case")
 def three_out_of_text(driver, context):
     case_row = driver.find_element_by_id(context.case_id)
@@ -62,8 +52,3 @@ def dont_see_three_out_of(driver, context):
 @when("I click the expand flags dropdown")  # noqa
 def click_chevron(driver, context):
     ApplicationPage(driver).click_expand_flags(context.case_id)
-
-
-@when("I add a flag at level Case")  # noqa
-def add_a_flag(driver, add_case_flag):  # noqa
-    pass

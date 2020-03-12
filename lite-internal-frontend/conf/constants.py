@@ -38,6 +38,7 @@ GOV_USERS_ROLES_URL = "/gov-users/roles/"
 GOV_USERS_PERMISSIONS_URL = "/gov-users/permissions/"
 FLAGS_URL = "/flags/"
 ASSIGN_FLAGS_URL = FLAGS_URL + "assign/"
+FLAGGING_RULES = FLAGS_URL + "rules/"
 FLAGS_CASE_LEVEL_FOR_TEAM = "/flags/?level=Case&team=True"
 FLAGS_GOOD_LEVEL_FOR_TEAM = "/flags/?level=Good&team=True"
 FLAGS_ORGANISATION_LEVEL_FOR_TEAM = "/flags/?level=Organisation&team=True"
@@ -101,6 +102,7 @@ class Permission(Enum):
     RESPOND_PV_GRADING = "RESPOND_PV_GRADING"
     MANAGE_ORGANISATIONS = "MANAGE_ORGANISATIONS"
     REOPEN_CLOSED_CASES = "REOPEN_CLOSED_CASES"
+    MANAGE_FLAGGING_RULES = "MANAGE_FLAGGING_RULES"
 
 
 class FlagLevels:

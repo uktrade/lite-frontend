@@ -1,0 +1,82 @@
+{% extends 'layouts/base.html' %}
+
+{% block back_link %}{% endblock %}
+
+{% block body %}
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">{% lcs 'FlaggingRules.TITLE' %}</h1>
+			<p class="govuk-caption-m">
+				{% lcs 'FlaggingRules.DESCRIPTION' %}
+			</p>
+		</div>
+		<div class="lite-app-bar__controls">
+			<a href="{% url 'flags:create_flagging_rules' %}" class="govuk-button" draggable="false" role="button" id="add-a-flag-button">
+				{% lcs 'FlaggingRules.CREATE' %}
+			</a>
+		</div>
+	</div>
+
+	{% include "filters.html" %}
+
+	<table class="govuk-table">
+		<thead class="govuk-table__head">
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header" scope="col">{% lcs 'FlaggingRules.List.TEAM' %}</th>
+				<th class="govuk-table__header" scope="col">{% lcs 'FlaggingRules.List.TYPE' %}</th>
+				<th class="govuk-table__header" scope="col">{% lcs 'FlaggingRules.List.FLAG' %}</th>
+				<th class="govuk-table__header" scope="col">{% lcs 'FlaggingRules.List.CONDITION' %}</th>
+				<th class="govuk-table__header" scope="col">{% lcs 'FlaggingRules.List.STATUS' %}</th>
+				<th class="govuk-table__header" scope="col">{% lcs 'FlaggingRules.List.ACTIONS' %}</th>
+			</tr>
+		</thead>
+		<tbody class="govuk-table__body">
+			{% for flagging_rule in data.results %}
+				<tr class="govuk-table__row">
+					<td class="govuk-table__cell">
+						{{ flagging_rule.team.name }}
+					</td>
+					<td class="govuk-table__cell">
+						{{ flagging_rule.level }}
+					</td>
+					<td class="govuk-table__cell" id="{{ flagging_rule.flag }}">
+						{{ flagging_rule.flag_name }}
+					</td>
+					<td class="govuk-table__cell">
+						{{ flagging_rule.matching_value }}
+					</td>
+					<td class="govuk-table__cell">
+						{{ flagging_rule.status }}
+					</td>
+					<td class="govuk-table__cell govuk-table__cell--tight">
+						{% if flagging_rule.team.id == team %}
+							<ul class="govuk-table__cell__actions-list">
+								<li class="govuk-table__cell__actions-list-item">
+									<a href="{% url 'flags:edit_flagging_rule' flagging_rule.id %}" role="button" draggable="false" class="govuk-link govuk-link--no-visited-state">{% lcs 'FlaggingRules.List.EDIT' %}</a>
+								</li>
+								<li class="govuk-table__cell__actions-list-item">
+									{% if flagging_rule.status == 'Active' %}
+										<a href="{% url 'flags:change_flagging_rule_status' flagging_rule.id 'Deactivated' %}" role="button" draggable="false" class="govuk-link govuk-link--no-visited-state">{% lcs 'FlaggingRules.List.DEACTIVATE' %}</a>
+									{% elif flagging_rule.status == 'Deactivated' %}
+										<a href="{% url 'flags:change_flagging_rule_status' flagging_rule.id 'Active' %}" role="button" draggable="false" class="govuk-link govuk-link--no-visited-state">{% lcs 'FlaggingRules.List.REACTIVATE' %}</a>
+									{% endif %}
+								</li>
+							</ul>
+						{% endif %}
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	{% if data.total_pages > 1 %}
+		<br>
+		<div class="lite-pagination__container ">
+			{% for i in data.total_pages|times %}
+				<a href="{% url 'flags:flagging_rules' %}?{{ params_str }}&page={{ i }}" class="lite-pagination__item {% if page == i %}lite-pagination__item--selected{% endif %}" id="page-{{ i }}">
+					{{ i }}
+				</a>
+			{% endfor %}
+		</div>
+	{% endif %}
+
+{% endblock %}
