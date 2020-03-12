@@ -560,6 +560,7 @@ class EndUseDetails:
     REFERENCE_ECJU_LETTER = "This reference is on the ECJU letter"
     NOTICE = "You can enter up to 2200 characters."
     PROVIDE_DETAILS = "Provide details"
+    EU_MILITARY_PROVIDE_DETAILS = "If no, provide details (optional)"
 
     INFORMED_TO_APPLY = (
         "Have you received a letter from ECJU informing you that the products "
