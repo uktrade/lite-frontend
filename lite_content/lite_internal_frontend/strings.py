@@ -2,6 +2,7 @@ from lite_content.lite_internal_frontend import (  # noqa
     cases,  # noqa
     letter_templates,  # noqa
     roles,  # noqa
+    flags,  # noqa
     organisations,  # noqa
     generic,  # noqa
     users,  # noqa
@@ -136,19 +137,6 @@ class UpdateUser:
 class Activity:
     ADDED_AN_ECJU_QUERY = " added an ECJU query:"
     ADDED_A_CASE_NOTE = " added a case note:"
-
-
-class Flags:
-    CREATE = "Create a flag"
-    DESCRIPTION = "Flags are a simple way to tag cases, organisations, destinations and goods."
-    TITLE = "Flags"
-
-    class UpdateFlag:
-        class Status:
-            DEACTIVATE_HEADING = "Are you sure you want to deactivate this flag?"
-            DEACTIVATE_WARNING = "This flag will no longer be able to be used unless it's reactivated"
-            REACTIVATE_HEADING = "Are you sure you want to reactivate this flag?"
-            REACTIVATE_WARNING = "This flag will be able to be used unless it's deactivated again"
 
 
 class FlaggingRules:
