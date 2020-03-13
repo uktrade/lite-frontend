@@ -144,6 +144,7 @@ class ApplicationSummaryPage:
     COPY_REFERENCE_CODE = "Copy ECJU reference"
     COPIED = "Copied"
     CLEARANCE = "Security grading"
+    END_USE_DETAILS = "End use details"
 
     class Sections:
         COMPLETED_TAG = "Saved"
@@ -595,3 +596,10 @@ class EndUseDetails:
         COMPLIANT_LIMITATIONS_EU = (
             "Compliant with terms of export limitations or obtained consent from originating EU member state"
         )
+
+    class CheckYourAnswers:
+        INFORMED_TO_APPLY_TITLE = "Informed to apply"
+        INFORMED_WMD_TITLE = "Informed WMD"
+        SUSPECTED_WMD_TITLE = "Suspect WMD"
+        EU_MILITARY_TITLE = "EU transfer licence"
+        COMPLIANT_LIMITATIONS_EU_TITLE = "Complied to terms"
