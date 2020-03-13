@@ -26,7 +26,7 @@ class CopyExistingPartyPage:
     BACK_LINK = "Back"
     HEADING = "Select a party"
     ADD_BUTTON = "Edit and add to application"
-    NONE_FOUND = "There are no existing parties"
+    NONE_FOUND = "There are no existing parties."
     RESULTS = " parties found"
 
     class Table:
@@ -133,17 +133,18 @@ class ApplicationSummaryPage:
     CONSIGNEE = "Consignee"
     THIRD_PARTIES = "Third parties"
     GOODS_LOCATIONS = "Locations"
-    GOODS_DEPARTED = "Have the goods already left the UK?"
+    GOODS_DEPARTED = "Goods have left the UK"
     SUPPORTING_DOCUMENTATION = "Supporting documents"
     EXHIBITION_DETAILS = "Exhibition details"
     GOODS_CATEGORIES = "Products"
     GOODS = "Products"
     COUNTRIES = "Countries"
-    ON_BEHALF_OF = "On behalf of"
-    OPTIONAL_NOTE = "Optional note"
+    ON_BEHALF_OF = "Exporter"
+    OPTIONAL_NOTE = "Notes"
     COPY_REFERENCE_CODE = "Copy ECJU reference"
     COPIED = "Copied"
     CLEARANCE = "Security grading"
+    END_USE_DETAILS = "End use details"
 
     class Sections:
         COMPLETED_TAG = "Saved"
@@ -193,7 +194,7 @@ class ApplicationSummaryPage:
 class ApplicationsSummaryPage:
     NAME = "Name"
     REFERENCE_CODE = "ECJU reference"
-    TYPE = "Licence type"
+    TYPE = "Type"
     EXPORT_TYPE = "Export type"
     STATUS = "Status"
     LAST_UPDATED_AT = "Last updated"
@@ -215,7 +216,10 @@ class InitialApplicationQuestionsForms:
 
         class LicenceTypes:
             EXPORT_LICENCE_TITLE = "Export licence"
-            EXPORT_LICENCE_DESCRIPTION = "Select if you’re sending products from the UK to another country."
+            EXPORT_LICENCE_DESCRIPTION = (
+                "Select if you’re sending products from the UK to another country. You need an export licence "
+                "before you provide access to technology, software or data."
+            )
 
             TRANSHIPMENT_LICENCE_TITLE = "Transhipment licence"
             TRANSHIPMENT_LICENCE_DESCRIPTION = (
@@ -289,8 +293,8 @@ class TranshipmentQuestions:
         PERMANENT = "Permanent"
 
     class HaveYouBeenInformedQuestion:
-        TITLE = "Have you been informed under an 'end use control' that you need to apply for a licence?"
-        DESCRIPTION = "An end use control is an official letter or email from Border Force or HMRC."
+        TITLE = "Have you received a letter or email from Border Force or HMRC informing you to apply for a licence?"
+        DESCRIPTION = "You may know this as an 'end use control'."
         WHAT_WAS_THE_REFERENCE_CODE_TITLE = "Reference number"
         WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION = "The reference number is on the official letter or email."
 
@@ -323,10 +327,10 @@ class DestinationForm:
 
 class StandardApplicationTaskList:
     ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
-    NEW_TITLE = "Standard export licence application"
+    NEW_TITLE = "Standard Individual Export Licence application"
     EDIT_TITLE = "Edit the application"
-    END_USE_CONTROL = "End use control"
-    GOODS_CATEGORIES = "Product categories"
+    END_USE_CONTROL = "Informed to apply"
+    GOODS_CATEGORIES = "Categories"
     GOODS = "Products"
     GOODS_LOCATION = "Locations"
     END_USER = "End user"
@@ -334,18 +338,20 @@ class StandardApplicationTaskList:
     CONSIGNEE = "Consignee"
     SUPPORTING_DOCUMENTS = "Supporting documents"
     THIRD_PARTIES = "Third parties"
+    END_USE_DETAILS = "End use details"
     NOTES = "Notes"
 
 
 class OpenApplicationTaskList:
     ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
-    NEW_TITLE = "Open export licence application"
+    NEW_TITLE = "Open Individual Export Licence application"
     EDIT_TITLE = "Edit the application"
     GOODS = "Products"
     GOODS_LOCATION = "Locations"
     GOODS_DESTINATION = "Countries"
     COUNTRIES_WHERE_EACH_GOOD_IS_GOING = "Product destinations"
     SUPPORTING_DOCUMENTS = "Supporting documents"
+    END_USE_DETAILS = "End use details"
     NOTES = "Notes"
 
 
@@ -358,14 +364,14 @@ class HMRCApplicationTaskList:
     THIRD_PARTIES = "Third parties"
     CONSIGNEE = "Consignee"
     SUPPORTING_DOCUMENTS = "Supporting documents"
-    REASON_FOR_QUERY = "Reason for query"
+    REASON_FOR_QUERY = "Notes"
     CHECK_YOUR_ANSWERS = "Check your answers"
 
 
 class ExhibitionClearanceTaskList:
     ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
     DETAILS = "Exhibition details"
-    NEW_TITLE = "Exhibition clearance application"
+    NEW_TITLE = "Exhibition Clearance application"
     EDIT_TITLE = "Edit the application"
     GOODS = "Products"
     GOODS_LOCATION = "Locations"
@@ -379,7 +385,7 @@ class ExhibitionClearanceTaskList:
 
 class GiftingClearanceTaskList:
     ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
-    NEW_TITLE = "Gifting clearance application"
+    NEW_TITLE = "Gifting Clearance application"
     EDIT_TITLE = "Edit the application"
     GOODS = "Products"
     GOODS_LOCATION = "Locations"
@@ -468,7 +474,7 @@ class ApplicationsList:
     RAISE_A_QUERY_BUTTON = "Raise a query"
     APPLY_FOR_A_LICENCE_BUTTON = "Apply for a licence"
     REFRESH_BUTTON = "Refresh"
-    IN_PROGRESS_TAB = "In progress"
+    IN_PROGRESS_TAB = "Submitted"
     DRAFTS_TAB = "Drafts"
     NOTIFICATIONS_SUFFIX = "notifications"
     NO_CONTENT_NOTICE = "There are no applications in progress."
@@ -485,7 +491,7 @@ class ApplicationPage:
 class ThirdPartiesPage:
     TITLE = "Third parties"
     ADD = "Add a third party"
-    NO_RESULTS = "There are no third parties on this application"
+    NO_RESULTS = "There are no third parties on this application."
 
     class Variables:
         NAME = "Name"
@@ -514,7 +520,7 @@ class UltimateEndUsersPage:
         "An ultimate recipient is a party that uses the product or the higher level system into which the product is"
         " installed or incorporated. The end user and ultimate recipient may be different parties."
     )
-    NOTICE = "There are no ultimate recipients on this application"
+    NOTICE = "There are no ultimate recipients on this application."
     MISSING_DOCS_NOTICE = "You need to attach a document to some ultimate recipients"
     ADD_BUTTON = "Add an ultimate recipient"
 
@@ -536,19 +542,67 @@ class UltimateEndUsersPage:
 
 
 class Activity:
-    NO_ACTIVITY = "There hasn't been any activity on this application"
+    NO_ACTIVITY = "There's been no activity."
 
 
 class CaseNotes:
     TITLE = "Add a note"
-    NOTICE = "You can enter up to 2200 characters."
+    NOTICE = "Enter up to 2200 characters."
     POST_NOTE = "Post note"
     CANCEL = "Cancel"
     ADDED_A_NOTE_SUFFIX = "added a note:"
-    NO_NOTES = "There are no notes on this application"
+    NO_NOTES = "There are no notes."
 
 
 class GoodsCategories:
     TITLE = "Do any products on the application fall into any of these categories?"
     DESCRIPTION = ""
     ERROR = "You can't change product categories while doing a minor edit"
+
+
+class EndUseDetails:
+    REFERENCE_ECJU_LETTER = "This reference is on the ECJU letter"
+    NOTICE = "You can enter up to 2200 characters."
+    PROVIDE_DETAILS = "Provide details"
+    EU_MILITARY_PROVIDE_DETAILS = "If no, provide details (optional)"
+
+    INFORMED_TO_APPLY = (
+        "Have you received a letter from ECJU informing you that the products "
+        "require a license to export or are controlled under the military end use controls?"
+    )
+    INFORMED_WMD = (
+        "Have you been informed by ECJU that the products are or may be intended, wholly or in part, "
+        "for use in chemical, biological or nuclear weapons, "
+        "or any purpose connected with missiles capable of delivering these weapons?"
+    )
+    SUSPECTED_WMD = (
+        "Do you know or suspect that the products might be used, wholly or in part, in connection with "
+        "chemical, biological or nuclear weapons, "
+        "or any purpose connected with missiles capable of delivering these weapons?"
+    )
+    EU_MILITARY = (
+        "Have you received European military products under a transfer licence from an EU member state "
+        "that have export limitations attached to them?"
+    )
+    IS_COMPLIANT_LIMITATIONS_EU = (
+        "Have you complied with the terms of the export limitations attached to them? "
+        "Or where appropriate, have you obtained the required consent from the originating "
+        "EU member state?"
+    )
+
+    class EndUseDetailsSummaryList:
+        TITLE = "WMD end use summary list"
+        INFORMED_TO_APPLY = "Informed by ECJU to apply for a licence"
+        INFORMED_WMD = "Informed by ECJU that the products may be used in weapons of mass destruction"
+        SUSPECTED_WMD = "You suspect the products may be used in weapons of mass destruction"
+        EU_MILITARY = "Products received under a transfer licence from an EU member state"
+        COMPLIANT_LIMITATIONS_EU = (
+            "Compliant with terms of export limitations or obtained consent from originating EU member state"
+        )
+
+    class CheckYourAnswers:
+        INFORMED_TO_APPLY_TITLE = "Informed to apply"
+        INFORMED_WMD_TITLE = "Informed WMD"
+        SUSPECTED_WMD_TITLE = "Suspect WMD"
+        EU_MILITARY_TITLE = "EU transfer licence"
+        COMPLIANT_LIMITATIONS_EU_TITLE = "Complied to terms"

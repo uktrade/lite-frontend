@@ -4,7 +4,7 @@ class HubPage:
 
 class ECJUDocumentsTab:
     CREATED_AT = "Created at"
-    NONE = "There are no ECJU documents for this product"
+    NONE = "There are no ECJU documents for this product."
     DOWNLOAD_LINK = "Download"
 
 

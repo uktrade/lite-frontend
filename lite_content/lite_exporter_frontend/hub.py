@@ -3,7 +3,7 @@ class Header:
 
 
 class Tiles:
-    APPLY_FOR_LICENCE = "Apply for a licence"
+    APPLY_FOR_LICENCE = "Apply for a licence or MOD clearance"
     CUSTOMS_ENQUIRY = "Make a customs enquiry"
     NOTIFICATIONS = "Notifications"
     APPLICATIONS = "Applications"
