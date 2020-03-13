@@ -1,6 +1,5 @@
 class UsersPage:
-    TITLE = "Users"
-    DESCRIPTION = "Team level users can manage and view team user accounts."
+    TITLE = "All users"
     INVITE_BUTTON = "Invite a new user"
     MANAGE_ROLES_BUTTON = "Manage roles"
     INVITE_SUCCESSFUL_BANNER = "User has been invited successfully"
