@@ -10,7 +10,9 @@ class UsersPage:
         TEAM = "Team"
         ROLE = "Role"
         STATUS = "Status"
+        ACTIONS = "Actions"
         PENDING = "Pending"
+        VIEW = "View"
 
 
 class UserProfile:
