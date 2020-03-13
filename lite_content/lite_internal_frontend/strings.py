@@ -6,6 +6,7 @@ from lite_content.lite_internal_frontend import (  # noqa
     generic,  # noqa
     users,  # noqa
     teams,  # noqa
+    queues,  # noqa
 )  # noqa
 
 # Buttons
@@ -135,32 +136,6 @@ class UpdateUser:
 class Activity:
     ADDED_AN_ECJU_QUERY = " added an ECJU query:"
     ADDED_A_CASE_NOTE = " added a case note:"
-
-
-class Queues:
-    class QueueList:
-        COLUMN_HEADING_ACTIONS = "Actions"
-        COLUMN_HEADING_NAME = "Queue name"
-        COLUMN_HEADING_TEAM = "Team name"
-        PAGE_HEADING = "My work queues"
-
-    class QueueAdd:
-        TITLE = "Add queue"
-        DESCRIPTION = ""
-        BACK = "Back to queue"
-
-        class Name:
-            TITLE = "Name"
-            DESCRIPTION = ""
-
-    class QueueEdit:
-        TITLE = "Edit queue"
-        DESCRIPTION = ""
-        BACK = "Back to queue"
-
-        class Name:
-            TITLE = "Name"
-            DESCRIPTION = ""
 
 
 class Flags:
