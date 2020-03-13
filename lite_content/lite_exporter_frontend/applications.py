@@ -144,6 +144,7 @@ class ApplicationSummaryPage:
     COPY_REFERENCE_CODE = "Copy ECJU reference"
     COPIED = "Copied"
     CLEARANCE = "Security grading"
+    END_USE_DETAILS = "End use details"
 
     class Sections:
         COMPLETED_TAG = "Saved"
@@ -337,6 +338,7 @@ class StandardApplicationTaskList:
     CONSIGNEE = "Consignee"
     SUPPORTING_DOCUMENTS = "Supporting documents"
     THIRD_PARTIES = "Third parties"
+    END_USE_DETAILS = "End use details"
     NOTES = "Notes"
 
 
@@ -349,6 +351,7 @@ class OpenApplicationTaskList:
     GOODS_DESTINATION = "Countries"
     COUNTRIES_WHERE_EACH_GOOD_IS_GOING = "Product destinations"
     SUPPORTING_DOCUMENTS = "Supporting documents"
+    END_USE_DETAILS = "End use details"
     NOTES = "Notes"
 
 
@@ -555,3 +558,51 @@ class GoodsCategories:
     TITLE = "Do any products on the application fall into any of these categories?"
     DESCRIPTION = ""
     ERROR = "You can't change product categories while doing a minor edit"
+
+
+class EndUseDetails:
+    REFERENCE_ECJU_LETTER = "This reference is on the ECJU letter"
+    NOTICE = "You can enter up to 2200 characters."
+    PROVIDE_DETAILS = "Provide details"
+    EU_MILITARY_PROVIDE_DETAILS = "If no, provide details (optional)"
+
+    INFORMED_TO_APPLY = (
+        "Have you received a letter from ECJU informing you that the products "
+        "require a license to export or are controlled under the military end use controls?"
+    )
+    INFORMED_WMD = (
+        "Have you been informed by ECJU that the products are or may be intended, wholly or in part, "
+        "for use in chemical, biological or nuclear weapons, "
+        "or any purpose connected with missiles capable of delivering these weapons?"
+    )
+    SUSPECTED_WMD = (
+        "Do you know or suspect that the products might be used, wholly or in part, in connection with "
+        "chemical, biological or nuclear weapons, "
+        "or any purpose connected with missiles capable of delivering these weapons?"
+    )
+    EU_MILITARY = (
+        "Have you received European military products under a transfer licence from an EU member state "
+        "that have export limitations attached to them?"
+    )
+    IS_COMPLIANT_LIMITATIONS_EU = (
+        "Have you complied with the terms of the export limitations attached to them? "
+        "Or where appropriate, have you obtained the required consent from the originating "
+        "EU member state?"
+    )
+
+    class EndUseDetailsSummaryList:
+        TITLE = "WMD end use summary list"
+        INFORMED_TO_APPLY = "Informed by ECJU to apply for a licence"
+        INFORMED_WMD = "Informed by ECJU that the products may be used in weapons of mass destruction"
+        SUSPECTED_WMD = "You suspect the products may be used in weapons of mass destruction"
+        EU_MILITARY = "Products received under a transfer licence from an EU member state"
+        COMPLIANT_LIMITATIONS_EU = (
+            "Compliant with terms of export limitations or obtained consent from originating EU member state"
+        )
+
+    class CheckYourAnswers:
+        INFORMED_TO_APPLY_TITLE = "Informed to apply"
+        INFORMED_WMD_TITLE = "Informed WMD"
+        SUSPECTED_WMD_TITLE = "Suspect WMD"
+        EU_MILITARY_TITLE = "EU transfer licence"
+        COMPLIANT_LIMITATIONS_EU_TITLE = "Complied to terms"
