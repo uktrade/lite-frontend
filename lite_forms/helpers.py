@@ -37,6 +37,9 @@ def remove_unused_errors(errors, form: Form):
     """
     cleaned_errors = {}
 
+    if errors.get("non_field_errors"):
+        cleaned_errors["non_field_errors"] = errors.get("non_field_errors")
+
     if not errors:
         return {}
 
