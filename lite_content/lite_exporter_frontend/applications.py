@@ -26,7 +26,7 @@ class CopyExistingPartyPage:
     BACK_LINK = "Back"
     HEADING = "Select a party"
     ADD_BUTTON = "Edit and add to application"
-    NONE_FOUND = "There are no existing parties"
+    NONE_FOUND = "There are no existing parties."
     RESULTS = " parties found"
 
     class Table:
@@ -133,14 +133,14 @@ class ApplicationSummaryPage:
     CONSIGNEE = "Consignee"
     THIRD_PARTIES = "Third parties"
     GOODS_LOCATIONS = "Locations"
-    GOODS_DEPARTED = "Have the goods already left the UK?"
+    GOODS_DEPARTED = "Goods have left the UK"
     SUPPORTING_DOCUMENTATION = "Supporting documents"
     EXHIBITION_DETAILS = "Exhibition details"
     GOODS_CATEGORIES = "Products"
     GOODS = "Products"
     COUNTRIES = "Countries"
-    ON_BEHALF_OF = "On behalf of"
-    OPTIONAL_NOTE = "Optional note"
+    ON_BEHALF_OF = "Exporter"
+    OPTIONAL_NOTE = "Notes"
     COPY_REFERENCE_CODE = "Copy ECJU reference"
     COPIED = "Copied"
     CLEARANCE = "Security grading"
@@ -193,7 +193,7 @@ class ApplicationSummaryPage:
 class ApplicationsSummaryPage:
     NAME = "Name"
     REFERENCE_CODE = "ECJU reference"
-    TYPE = "Licence type"
+    TYPE = "Type"
     EXPORT_TYPE = "Export type"
     STATUS = "Status"
     LAST_UPDATED_AT = "Last updated"
@@ -215,7 +215,10 @@ class InitialApplicationQuestionsForms:
 
         class LicenceTypes:
             EXPORT_LICENCE_TITLE = "Export licence"
-            EXPORT_LICENCE_DESCRIPTION = "Select if you’re sending products from the UK to another country."
+            EXPORT_LICENCE_DESCRIPTION = (
+                "Select if you’re sending products from the UK to another country. You need an export licence "
+                "before you provide access to technology, software or data."
+            )
 
             TRANSHIPMENT_LICENCE_TITLE = "Transhipment licence"
             TRANSHIPMENT_LICENCE_DESCRIPTION = (
@@ -289,8 +292,8 @@ class TranshipmentQuestions:
         PERMANENT = "Permanent"
 
     class HaveYouBeenInformedQuestion:
-        TITLE = "Have you been informed under an 'end use control' that you need to apply for a licence?"
-        DESCRIPTION = "An end use control is an official letter or email from Border Force or HMRC."
+        TITLE = "Have you received a letter or email from Border Force or HMRC informing you to apply for a licence?"
+        DESCRIPTION = "You may know this as an 'end use control'."
         WHAT_WAS_THE_REFERENCE_CODE_TITLE = "Reference number"
         WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION = "The reference number is on the official letter or email."
 
@@ -323,10 +326,10 @@ class DestinationForm:
 
 class StandardApplicationTaskList:
     ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
-    NEW_TITLE = "Standard export licence application"
+    NEW_TITLE = "Standard Individual Export Licence application"
     EDIT_TITLE = "Edit the application"
-    END_USE_CONTROL = "End use control"
-    GOODS_CATEGORIES = "Product categories"
+    END_USE_CONTROL = "Informed to apply"
+    GOODS_CATEGORIES = "Categories"
     GOODS = "Products"
     GOODS_LOCATION = "Locations"
     END_USER = "End user"
@@ -339,7 +342,7 @@ class StandardApplicationTaskList:
 
 class OpenApplicationTaskList:
     ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
-    NEW_TITLE = "Open export licence application"
+    NEW_TITLE = "Open Individual Export Licence application"
     EDIT_TITLE = "Edit the application"
     GOODS = "Products"
     GOODS_LOCATION = "Locations"
@@ -358,14 +361,14 @@ class HMRCApplicationTaskList:
     THIRD_PARTIES = "Third parties"
     CONSIGNEE = "Consignee"
     SUPPORTING_DOCUMENTS = "Supporting documents"
-    REASON_FOR_QUERY = "Reason for query"
+    REASON_FOR_QUERY = "Notes"
     CHECK_YOUR_ANSWERS = "Check your answers"
 
 
 class ExhibitionClearanceTaskList:
     ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
     DETAILS = "Exhibition details"
-    NEW_TITLE = "Exhibition clearance application"
+    NEW_TITLE = "Exhibition Clearance application"
     EDIT_TITLE = "Edit the application"
     GOODS = "Products"
     GOODS_LOCATION = "Locations"
@@ -379,7 +382,7 @@ class ExhibitionClearanceTaskList:
 
 class GiftingClearanceTaskList:
     ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
-    NEW_TITLE = "Gifting clearance application"
+    NEW_TITLE = "Gifting Clearance application"
     EDIT_TITLE = "Edit the application"
     GOODS = "Products"
     GOODS_LOCATION = "Locations"
@@ -468,7 +471,7 @@ class ApplicationsList:
     RAISE_A_QUERY_BUTTON = "Raise a query"
     APPLY_FOR_A_LICENCE_BUTTON = "Apply for a licence"
     REFRESH_BUTTON = "Refresh"
-    IN_PROGRESS_TAB = "In progress"
+    IN_PROGRESS_TAB = "Submitted"
     DRAFTS_TAB = "Drafts"
     NOTIFICATIONS_SUFFIX = "notifications"
     NO_CONTENT_NOTICE = "There are no applications in progress."
@@ -485,7 +488,7 @@ class ApplicationPage:
 class ThirdPartiesPage:
     TITLE = "Third parties"
     ADD = "Add a third party"
-    NO_RESULTS = "There are no third parties on this application"
+    NO_RESULTS = "There are no third parties on this application."
 
     class Variables:
         NAME = "Name"
@@ -514,7 +517,7 @@ class UltimateEndUsersPage:
         "An ultimate recipient is a party that uses the product or the higher level system into which the product is"
         " installed or incorporated. The end user and ultimate recipient may be different parties."
     )
-    NOTICE = "There are no ultimate recipients on this application"
+    NOTICE = "There are no ultimate recipients on this application."
     MISSING_DOCS_NOTICE = "You need to attach a document to some ultimate recipients"
     ADD_BUTTON = "Add an ultimate recipient"
 
@@ -536,16 +539,16 @@ class UltimateEndUsersPage:
 
 
 class Activity:
-    NO_ACTIVITY = "There hasn't been any activity on this application"
+    NO_ACTIVITY = "There's been no activity."
 
 
 class CaseNotes:
     TITLE = "Add a note"
-    NOTICE = "You can enter up to 2200 characters."
+    NOTICE = "Enter up to 2200 characters."
     POST_NOTE = "Post note"
     CANCEL = "Cancel"
     ADDED_A_NOTE_SUFFIX = "added a note:"
-    NO_NOTES = "There are no notes on this application"
+    NO_NOTES = "There are no notes."
 
 
 class GoodsCategories:
