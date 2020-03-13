@@ -30,8 +30,8 @@ def get_sites(request, organisation_id, convert_to_options=False, exclude: list 
                     [
                         address.get("address_line_1"),
                         address.get("address_line_2"),
-                        address.get("postcode"),
                         address.get("city"),
+                        address.get("postcode"),
                         address.get("country").get("name"),
                     ],
                 )
