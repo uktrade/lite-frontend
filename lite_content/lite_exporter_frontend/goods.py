@@ -44,7 +44,7 @@ class GoodsList:
 
     class Documents:
         TITLE = "Documents"
-        NO_DOCUMENT_ATTACHED = "There are no documents"
+        NO_DOCUMENT_ATTACHED = "There are no documents."
         NAME = "File"
         DESCRIPTION = "Description"
         UPLOADED_BY = "Uploaded by"
