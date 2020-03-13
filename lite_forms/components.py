@@ -262,7 +262,12 @@ class Checkboxes(_Component):
         empty_notice: str = "No items",
         show_select_links: bool = False,
     ):
-        super().__init__(name, title, description, accessible_description, optional, classes)
+        super().__init__(name=name,
+                         title=title,
+                         description=description,
+                         accessible_description=accessible_description,
+                         optional=optional,
+                         classes=classes)
         self.options = options
         self.empty_notice = empty_notice
         self.show_select_links = show_select_links
