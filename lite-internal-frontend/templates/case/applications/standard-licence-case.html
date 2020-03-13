@@ -42,6 +42,34 @@
 				<p>{{ case.application.updated_at|str_date }}</p>
 			</div>
 		</div>
+		<div class="govuk-grid-row">
+			<div class="govuk-grid-column-one-quarter">
+				<p class="app-case-board__heading">{% lcs 'cases.ApplicationPage.EndUseDetails.INFORMED_TO_APPLY_TITLE' %}</p>
+				<p>{{ case.application.is_military_end_use_controls|friendly_boolean }}</p>
+				<p>{{ case.application.military_end_use_controls_ref|default:"" }}</p>
+			</div>
+			<div class="govuk-grid-column-one-quarter">
+				<p class="app-case-board__heading">{% lcs 'cases.ApplicationPage.EndUseDetails.INFORMED_WMD_TITLE' %}</p>
+				<p>{{ case.application.is_informed_wmd|friendly_boolean }}</p>
+				<p>{{ case.application.informed_wmd_ref|default:"" }}</p>
+			</div>
+			<div class="govuk-grid-column-one-quarter">
+				<p class="app-case-board__heading">{% lcs 'cases.ApplicationPage.EndUseDetails.SUSPECTED_WMD_TITLE' %}</p>
+				<p>{{ case.application.is_suspected_wmd|friendly_boolean }}</p>
+				<p>{{ case.application.suspected_wmd_ref|default:"" }}</p>
+			</div>
+		</div>
+		<div class="govuk-grid-row">
+			<div class="govuk-grid-column-one-quarter">
+				<p class="app-case-board__heading">{% lcs 'cases.ApplicationPage.EndUseDetails.EU_MILITARY_TITLE' %}</p>
+				<p>{{ case.application.is_eu_military|friendly_boolean }}</p>
+			</div>
+			<div class="govuk-grid-column-one-quarter">
+				<p class="app-case-board__heading">{% lcs 'cases.ApplicationPage.EndUseDetails.COMPLIANT_LIMITATIONS_EU_TITLE' %}</p>
+				<p>{{ case.application.is_compliant_limitations_eu|friendly_boolean_or_default_na }}</p>
+				<p>{{ case.application.compliant_limitations_eu_ref|default:"" }}</p>
+			</div>
+		</div>
 	</div>
 
 	<div class="govuk-accordion app-accordion" data-module="govuk-accordion" id="accordion-default">

@@ -20,10 +20,10 @@ def verify_registered_organisation(driver, context):
     assert functions.element_with_css_selector_exists(driver, ".lite-info-bar")
     OrganisationsPage(driver).search_for_org_in_filter(context.organisation_name)
     row = OrganisationPage(driver).get_organisation_row()
-    assert context.organisation_name == row["name"]
-    assert context.eori == row["eori-number"]
-    assert context.sic == row["sic-number"]
-    assert context.vat == row["vat-number"]
+    assert context.organisation_name in row["name"]
+    assert context.eori in row["eori-number"]
+    assert context.sic in row["sic-number"]
+    assert context.vat in row["vat-number"]
 
 
 @then("organisation is edited")
@@ -32,10 +32,10 @@ def verify_edited_organisation(driver, context):
     # Assert that the success info bar is visible
     OrganisationsPage(driver).search_for_org_in_filter(context.organisation_name)
     row = OrganisationPage(driver).get_organisation_row()
-    assert context.organisation_name == row["name"]
-    assert context.eori == row["eori-number"]
-    assert context.sic == row["sic-number"]
-    assert context.vat == row["vat-number"]
+    assert context.organisation_name in row["name"]
+    assert context.eori in row["eori-number"]
+    assert context.sic in row["sic-number"]
+    assert context.vat in row["vat-number"]
 
 
 @then("individual organisation is registered")
@@ -45,8 +45,8 @@ def verify_registered_individual_organisation(driver, context):
     assert functions.element_with_css_selector_exists(driver, ".lite-info-bar")
     OrganisationsPage(driver).search_for_org_in_filter(context.organisation_name)
     row = OrganisationPage(driver).get_organisation_row()
-    assert context.organisation_name == row["name"]
-    assert context.eori == row["eori-number"]
+    assert context.organisation_name in row["name"]
+    assert context.eori in row["eori-number"]
 
 
 @then("HMRC organisation is registered")
