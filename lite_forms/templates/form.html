@@ -69,7 +69,7 @@
 		<span class="govuk-caption-xl">{{ page.caption }}</span>
 	{% endif %}
 
-	<legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+	<legend class="govuk-fieldset__legend {{ title|heading_class }}">
 		<h1 class="govuk-fieldset__heading">
 			{% if page.single_form_element %}
 				<label for="{{ page.single_form_element.name }}">

@@ -33,13 +33,16 @@ def key_value(dictionary, key):
 
 @register.filter
 def key_in_array(data, key):
-    if not data:
+    if data is None:
         return False
 
     if isinstance(data, str):
-        if key == data:
+        if str(key) == data:
             return True
         return False
+
+    if isinstance(data, bool) and isinstance(key, bool):
+        return data == key
 
     if isinstance(data, bool):
         return data
@@ -120,3 +123,11 @@ def get(value, arg):
 @mark_safe
 def markdown(text):
     return convert_to_markdown(text)
+
+
+@register.filter
+def heading_class(text):
+    if text and len(text) < 150:
+        return "govuk-fieldset__legend--xl"
+
+    return "govuk-fieldset__legend--l"

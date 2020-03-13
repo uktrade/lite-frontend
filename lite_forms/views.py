@@ -43,7 +43,15 @@ class FormView(TemplateView, ABC):
     success_url: str = ""
 
     def get_data(self):
-        return self.data
+        data = getattr(self, "data", {})
+        if data:
+            for key in data:
+                if data[key] == "True" or data[key] == "true":
+                    data[key] = True
+                if data[key] == "False" or data[key] == "false":
+                    data[key] = False
+
+        return data
 
     def get_action(self):
         if not self.action:
@@ -61,7 +69,15 @@ class FormView(TemplateView, ABC):
         return self.success_url
 
     def get_validated_data(self):
-        return self._validated_data
+        data = getattr(self, "_validated_data", {}).copy()
+
+        for key in data:
+            if data[key] == "True" or data[key] == "true":
+                data[key] = True
+            if data[key] == "False" or data[key] == "false":
+                data[key] = False
+
+        return data
 
     def init(self, request, **kwargs):
         raise NotImplementedError("init function not implemented")
@@ -217,9 +233,13 @@ class SummaryListFormView(FormView):
                 data[key] = "Yes"
             elif data[key] is False:
                 data[key] = "No"
+            elif isinstance(data[key], dict):
+                if "key" in data[key] and "value" in data[key]:
+                    data[key] = data[key]["value"]
         return data
 
     def generate_summary_list(self):
+        self.init(self.request, **self.kwargs)
         data = self.clean_data(self.get_validated_data())
         context = {
             "forms": self.get_forms(),
@@ -250,68 +270,19 @@ class SummaryListFormView(FormView):
         self.init(request, **kwargs)
         self._validated_data = request.POST.copy()
         action = self.get_validated_data()[ACTION]
+        form_pk = str(self.get_validated_data().get("form_pk", ""))
+        post_errors = None
+
+        post_function = getattr(self, f"post_form_{form_pk}", None)
+        if post_function:
+            post_errors = post_function()
 
         if self.validate_only_until_final_submission:
             self._validated_data[VALIDATE_ONLY] = True
 
-        if "form_pk" in self.get_validated_data():
-            form = copy.deepcopy(
-                next(
-                    form for form in self.get_forms().forms if str(form.pk) == str(self.get_validated_data()["form_pk"])
-                )
-            )
-
-            # Add form fields to validated_data if they dont exist
-            for component in get_all_form_components(form):
-                if component.name not in self._validated_data:
-                    self._validated_data[component.name] = ""
-
-            if action == Actions.SUBMIT or action == Actions.RETURN:
-                validated_data = validate_data_unknown(
-                    self.get_object_pk(), self.get_action(), request, nest_data(self.get_validated_data())
-                )
-
-                errors = validated_data.get("errors")
-
-                if errors:
-                    errors = flatten_data(validated_data["errors"])
-                    errors = remove_unused_errors(errors, form)
-                if errors:
-                    insert_hidden_fields(self.get_validated_data(), form)
-
-                    if action == Actions.RETURN:
-                        form = convert_form_to_summary_list_instance(form)
-
-                    return form_page(
-                        request,
-                        form,
-                        data=self.get_validated_data(),
-                        errors=errors,
-                        extra_data={"form_pk": form.pk, **self.additional_context},
-                    )
-
-                if action != Actions.RETURN:
-                    next_form = get_next_form(form.pk, self.get_forms())
-
-                    if next_form:
-                        insert_hidden_fields(self.get_validated_data(), next_form)
-
-                        return form_page(
-                            request,
-                            next_form,
-                            data=self.get_validated_data(),
-                            extra_data={"form_pk": next_form.pk, **self.additional_context},
-                        )
-            elif action == Actions.CHANGE:
-                insert_hidden_fields(self.get_validated_data(), form)
-                return form_page(
-                    request,
-                    convert_form_to_summary_list_instance(form),
-                    data=self.get_validated_data(),
-                    extra_data={"form_pk": form.pk, **self.additional_context},
-                )
-
-        if action == Actions.FINISH:
+        if form_pk:
+            return self.get_next_form_page(form_pk, action, request, post_errors)
+        elif action == Actions.FINISH:
             self._validated_data = nest_data(self.get_validated_data())
             self._validated_data[VALIDATE_ONLY] = False
 
@@ -321,5 +292,62 @@ class SummaryListFormView(FormView):
 
             if "errors" not in validated_data:
                 return redirect(self.get_success_url())
+
+        return self.generate_summary_list()
+
+    def get_next_form_page(self, form_pk, action, request, post_errors):
+        form = copy.deepcopy(next(form for form in self.get_forms().forms if str(form.pk) == form_pk))
+
+        # Add form fields to validated_data if they dont exist
+        for component in get_all_form_components(form):
+            if component.name not in self._validated_data:
+                self._validated_data[component.name] = ""
+
+        if action == Actions.SUBMIT or action == Actions.RETURN:
+            validated_data = validate_data_unknown(
+                self.get_object_pk(), self.get_action(), request, nest_data(self.get_validated_data())
+            )
+            validated_data["errors"] = validated_data.get("errors", {})
+            errors = validated_data["errors"]
+            if post_errors:
+                errors.update(post_errors)
+
+            if errors:
+                errors = flatten_data(validated_data["errors"])
+                errors = remove_unused_errors(errors, form)
+            if errors:
+                insert_hidden_fields(self.get_validated_data(), form)
+
+                if action == Actions.RETURN:
+                    form = convert_form_to_summary_list_instance(form)
+
+                return form_page(
+                    request,
+                    form,
+                    data=self.get_validated_data(),
+                    errors=errors,
+                    extra_data={"form_pk": form.pk, **self.additional_context},
+                )
+
+            if action != Actions.RETURN:
+                next_form = get_next_form(form.pk, self.get_forms())
+
+                if next_form:
+                    insert_hidden_fields(self.get_validated_data(), next_form)
+
+                    return form_page(
+                        request,
+                        next_form,
+                        data=self.get_validated_data(),
+                        extra_data={"form_pk": next_form.pk, **self.additional_context},
+                    )
+        elif action == Actions.CHANGE:
+            insert_hidden_fields(self.get_validated_data(), form)
+            return form_page(
+                request,
+                convert_form_to_summary_list_instance(form),
+                data=self.get_validated_data(),
+                extra_data={"form_pk": form.pk, **self.additional_context},
+            )
 
         return self.generate_summary_list()
