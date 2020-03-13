@@ -56,6 +56,15 @@ class Applications:
             body={"types": types},
         )
 
+    def add_end_use_details(self, draft_id, details=None):
+        details = details or self.request_data["end_use_details"]
+        self.api_client.make_request(
+            method="PUT",
+            url="/applications/" + draft_id + "/",
+            headers=self.api_client.exporter_headers,
+            body={**details},
+        )
+
     def add_draft(
         self,
         draft=None,
@@ -70,6 +79,7 @@ class Applications:
         third_party=None,
         has_third_party=True,
         f680_clearance_types=None,
+        end_use_details=None,
     ):
         draft_id = self.create_draft(draft=draft)
         if has_location:
@@ -100,6 +110,9 @@ class Applications:
         if f680_clearance_types:
             self.add_f680_clearance_types(draft_id=draft_id, types=f680_clearance_types)
 
+        if end_use_details:
+            self.add_end_use_details(draft_id=draft_id, details=end_use_details)
+
         additional_document_id = self.add_additional_document(draft_id=draft_id)
 
         self._assert_all_documents_are_processed(
@@ -120,12 +133,13 @@ class Applications:
 
         return draft_id
 
-    def add_open_draft(self, draft=None):
+    def add_open_draft(self, draft=None, end_use_details=None):
         draft_id = self.create_draft(draft)
         self.api_client.add_to_context("open_draft_id", draft_id)
         self.add_site(draft_id)
         self.add_countries(draft_id)
         self.goods.add_open_draft_good(draft_id)
+        self.add_end_use_details(draft_id, end_use_details)
 
         return draft_id
 
@@ -153,6 +167,7 @@ class Applications:
 
     def add_copied_application(self, draft_id, data):
         response = self.copy_application(draft_id, data)
+        self.add_end_use_details(response["data"])
         self.submit_application(response["data"])
         self.api_client.add_to_context("application_id", response["data"])
         self.api_client.add_to_context("case_id", response["data"])

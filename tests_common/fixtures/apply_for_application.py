@@ -73,6 +73,12 @@ def apply_for_standard_application(driver, api_client_config, context):
             "website": fake.uri(),
             "type": "third_party",
         },
+        end_use_details={
+            "is_military_end_use_controls": False,
+            "is_informed_wmd": False,
+            "is_suspected_wmd": False,
+            "is_eu_military": False,
+        },
     )
     lite_client.applications.submit_application(draft_id)
     save_application_data_to_context(lite_client, context)
@@ -150,7 +156,8 @@ def apply_for_open_application(driver, api_client_config, context):
             "export_type": "permanent",
             "have_you_been_informed": "yes",
             "reference_number_on_information_form": "1234",
-        }
+        },
+        end_use_details={"is_military_end_use_controls": False, "is_informed_wmd": False, "is_suspected_wmd": False},
     )
     lite_client.applications.submit_application(draft_id)
     save_application_data_to_context(lite_client, context)

@@ -144,5 +144,11 @@ def build_request_data(exporter_user, gov_user):
             "first_exhibition_date": "3000-02-01",
             "required_by_date": "3000-01-01",
         },
+        "end_use_details": {
+            "is_military_end_use_controls": False,
+            "is_informed_wmd": False,
+            "is_suspected_wmd": False,
+            "is_eu_military": False,
+        },
     }
     return request_data
