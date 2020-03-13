@@ -17,12 +17,6 @@ QUEUE_ALL_CASES = "All cases"
 
 CASE_CHANGES = "See what has changed"
 
-USERS_LIST_PAGE_EDIT = "Edit"
-
-USER_PROFILE_PAGE_EDIT = "Edit"
-USER_DEACTIVATE = "Deactivate"
-USER_REACTIVATE = "Reactivate"
-
 # Generate Document
 CHOOSE_TEMPLATE_TITLE = "Select a template"
 CHOOSE_TEMPLATE_BUTTON = CONTINUE
@@ -89,15 +83,6 @@ DOCUMENT_TEMPLATES_TITLE = "Document templates"
 
 REGISTER_BUSINESS_FIRST_AND_LAST_NAME = "First and last name"
 
-USER_ADD_TITLE = "Add user"
-USER_EMAIL_QUESTION = "Email address"
-USER_TEAM_QUESTION = "Team"
-USER_ROLE_QUESTION = "Role"
-USER_ADD_FORM_BACK_TO_USERS = "Back to users"
-USER_EDIT_TITLE = "Edit user"
-USER_EDIT_FORM_BACK_TO_USER = "Back to user"
-USER_EDIT_FORM_SAVE = "Save"
-
 
 class Common:
     SERVICE_NAME = "LITE Internal"
@@ -139,11 +124,6 @@ class Authentication:
     class UserDoesNotExist:
         DESCRIPTION = "You are not registered to use this system"
         TITLE = "User not found"
-
-
-class Users:
-    DESCRIPTION = "Team level users can manage and view team user accounts."
-    INVITE = "Invite a new user"
 
 
 class UpdateUser:
