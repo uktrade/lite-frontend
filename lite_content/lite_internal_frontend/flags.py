@@ -4,6 +4,7 @@ class FlagsList:
     CREATE_BUTTON = "Create a flag"
     NO_CONTENT_NOTICE = "There are no registered flags at the moment."
     SUCCESS_MESSAGE = "Flag created successfully"
+    INCLUDE_DEACTIVATED = "Include deactivated"
 
     class Table:
         NAME = "Name"
