@@ -173,7 +173,7 @@ def find_paginated_item_by_id(id, driver):
             element_is_found = element_to_find[0]
             break
         elif current_page == PAGE_LIMIT:
-            assert False, f"Item couldn't be found across {current_page} pages"
+            assert False, f"'{id}' couldn't be found across {current_page} pages"
         else:
             current_page += 1
             try:
@@ -181,7 +181,7 @@ def find_paginated_item_by_id(id, driver):
             except NoSuchElementException:
                 pass
     driver.set_timeout_to(10)
-    assert element_is_found, f"Item couldn't be found across {current_page} pages"
+    assert element_is_found, f"'{id}' couldn't be found across {current_page} pages"
     return element_is_found
 
 
