@@ -7,3 +7,23 @@ class TeamsPage:
         NAME = "Name"
         ACTIONS = "Actions"
         EDIT = "Edit"
+
+
+class AddTeamForm:
+    BACK_LINK = "Back to " + TeamsPage.TITLE.lower()
+    TITLE = "Add team"
+    DESCRIPTION = ""
+
+    class Name:
+        TITLE = "Name"
+        DESCRIPTION = ""
+
+
+class EditTeamForm:
+    BACK_LINK = "Back to " + TeamsPage.TITLE.lower()
+    TITLE = "Add team"
+    DESCRIPTION = ""
+
+    class Name:
+        TITLE = "Name"
+        DESCRIPTION = ""
