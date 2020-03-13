@@ -4,6 +4,7 @@ import os
 from faker import Faker  # noqa
 from pytest_bdd import given, when, then, parsers
 
+from ui_automation_tests.pages.end_use_details_form_page import EndUseDetailsFormPage
 from ui_automation_tests.pages.add_end_user_pages import AddEndUserPages
 from ui_automation_tests.pages.application_edit_type_page import ApplicationEditTypePage
 from ui_automation_tests.pages.application_page import ApplicationPage
@@ -194,6 +195,68 @@ def add_new_party(driver, type, name, website, address, country, context):  # no
     context.address_end_user = address
     add_end_user_pages.enter_country(country)
     functions.click_submit(driver)
+
+
+@when(parsers.parse('I click on the "{section}" section'))  # noqa
+def go_to_task_list_section(driver, section):  # noqa
+    TaskListPage(driver).click_on_task_list_section(section)
+
+
+@when(parsers.parse('I answer "{choice}" for informed by ECJU to apply'))  # noqa
+def military_end_use_details(driver, choice):  # noqa
+    end_use_details = EndUseDetailsFormPage(driver)
+    if choice == "Yes":
+        end_use_details.answer_military_end_use_controls(True, fake.ean(length=13))
+    else:
+        end_use_details.answer_military_end_use_controls(False)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I answer "{choice}" for informed by ECJU about WMD use'))  # noqa
+def informed_wmd_end_use_details(driver, choice):  # noqa
+    end_use_details = EndUseDetailsFormPage(driver)
+    if choice == "Yes":
+        end_use_details.answer_is_informed_wmd(True, fake.ean(length=13))
+    else:
+        end_use_details.answer_is_informed_wmd(False)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I answer "{choice}" for suspected WMD use'))  # noqa
+def suspected_wmd_end_use_details(driver, choice):  # noqa
+    end_use_details = EndUseDetailsFormPage(driver)
+    if choice == "Yes":
+        end_use_details.answer_is_suspected_wmd(True, fake.sentence(nb_words=30))
+    else:
+        end_use_details.answer_is_suspected_wmd(False)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I answer "{choice}" for products received under transfer licence from the EU'))  # noqa
+def eu_military_end_use_details(driver, choice):  # noqa
+    end_use_details = EndUseDetailsFormPage(driver)
+    if choice == "Yes":
+        end_use_details.answer_is_eu_military(True)
+    else:
+        end_use_details.answer_is_eu_military(False)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I answer "{choice}" for compliance with the terms of export from the EU'))  # noqa
+def eu_compliant_limitations_end_use_details(driver, choice):  # noqa
+    end_use_details = EndUseDetailsFormPage(driver)
+    if choice == "Yes":
+        end_use_details.answer_is_compliant_limitations_eu(True)
+    else:
+        end_use_details.answer_is_compliant_limitations_eu(False, fake.sentence(nb_words=30))
+    functions.click_submit(driver)
+
+
+@when(parsers.parse("I save and continue on the summary page"))  # noqa
+def save_continue_summary_list(driver):  # noqa
+    element = driver.find_element_by_css_selector("button[value='finish']")
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    driver.execute_script("arguments[0].click();", element)
 
 
 @when(parsers.parse('I select "{choice}" for where my goods are located'))  # noqa
@@ -501,11 +564,6 @@ def enter_exhibition_details(driver, name):  # noqa
     exhibition_details_page.enter_exhibition_start_date("1", "1", "2100")
     exhibition_details_page.enter_exhibition_required_by_date("1", "1", "2100")
     functions.click_submit(driver)
-
-
-@when(parsers.parse('I click on the "{section}" section'))  # noqa
-def go_to_task_list_section(driver, section):  # noqa
-    TaskListPage(driver).click_on_task_list_section(section)
 
 
 @then(parsers.parse('The "{section}" section is set to status "{status}"'))  # noqa

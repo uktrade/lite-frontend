@@ -80,6 +80,7 @@ def _convert_gifting_clearance(application, editable=False):
 def _convert_standard_application(application, editable=False):
     return {
         applications.ApplicationSummaryPage.GOODS: _convert_goods(application["goods"]),
+        applications.ApplicationSummaryPage.END_USE_DETAILS: _get_end_use_details(application),
         applications.ApplicationSummaryPage.GOODS_LOCATIONS: _convert_goods_locations(application["goods_locations"]),
         applications.ApplicationSummaryPage.END_USER: convert_party(application["end_user"], application, editable),
         applications.ApplicationSummaryPage.ULTIMATE_END_USERS: [
@@ -101,6 +102,7 @@ def _convert_standard_application(application, editable=False):
 def _convert_open_application(application, editable=False):
     return {
         applications.ApplicationSummaryPage.GOODS: _convert_goods_types(application["goods_types"]),
+        applications.ApplicationSummaryPage.END_USE_DETAILS: _get_end_use_details(application),
         applications.ApplicationSummaryPage.GOODS_LOCATIONS: _convert_goods_locations(application["goods_locations"]),
         applications.ApplicationSummaryPage.COUNTRIES: _convert_countries(application["destinations"]["data"]),
         applications.ApplicationSummaryPage.SUPPORTING_DOCUMENTATION: _get_supporting_documentation(
@@ -180,6 +182,35 @@ def _convert_goods_types(goods_types):
 
 def _convert_countries(countries):
     return [{"Name": country["name"]} for country in countries]
+
+
+def _get_end_use_details(application):
+    fields = [
+        (
+            "is_military_end_use_controls",
+            "military_end_use_controls_ref",
+            applications.EndUseDetails.CheckYourAnswers.INFORMED_TO_APPLY_TITLE,
+        ),
+        ("is_informed_wmd", "informed_wmd_ref", applications.EndUseDetails.CheckYourAnswers.INFORMED_WMD_TITLE),
+        ("is_suspected_wmd", "suspected_wmd_ref", applications.EndUseDetails.CheckYourAnswers.SUSPECTED_WMD_TITLE),
+        ("is_eu_military", "", applications.EndUseDetails.CheckYourAnswers.EU_MILITARY_TITLE),
+        (
+            "is_compliant_limitations_eu",
+            "compliant_limitations_eu_ref",
+            applications.EndUseDetails.CheckYourAnswers.COMPLIANT_LIMITATIONS_EU_TITLE,
+        ),
+    ]
+
+    values_to_print = []
+    for main_field, ref_field, display_string in fields:
+        ds = {}
+        if application.get(main_field) is not None:
+            ds["Description"] = display_string
+            ds["Answer"] = friendly_boolean(application.get(main_field)) + NEWLINE + (application.get(ref_field) or "")
+        if ds:
+            values_to_print.append(ds)
+
+    return values_to_print
 
 
 def convert_party(party, application, editable):

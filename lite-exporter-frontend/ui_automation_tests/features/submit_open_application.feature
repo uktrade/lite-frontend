@@ -13,6 +13,11 @@ Feature: I want to indicate the open licence I want
     And I select the site at position "1"
     And I click continue
     And I click the back link
+    And I click on the "end_use_details" section
+    And I answer "Yes" for informed by ECJU to apply
+    And I answer "No" for informed by ECJU about WMD use
+    And I answer "Yes" for suspected WMD use
+    And I save and continue on the summary page
     And I click on the "goods" section
     And I add a goods type with description "Sniper" controlled "Yes" control code "ML1a" incorporated "Yes"
     Then I see my goods type added at position "1" with a description and a control code

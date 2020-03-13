@@ -46,3 +46,13 @@ def get_ultimate_end_users_section(request, application):
             break
 
     return ultimate_end_users, ultimate_end_users_documents_complete
+
+
+def get_end_use_details(application, is_standard_application=False):
+    fields = ["is_military_end_use_controls", "is_informed_wmd", "is_suspected_wmd"]
+    if is_standard_application:
+        fields.append("is_eu_military")
+    for field in fields:
+        if application[field] is None:
+            return False
+    return True

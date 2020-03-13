@@ -13,6 +13,7 @@ from applications.views import (
     goods_types,
     f680_details,
     clearance,
+    end_use_details,
 )
 
 app_name = "applications"
@@ -152,6 +153,8 @@ urlpatterns = [
         documents.DeleteDocument.as_view(),
         name="consignee_delete_document",
     ),
+    # End use details
+    path("<uuid:pk>/end-use-details/", end_use_details.EndUseDetails.as_view(), name="end_use_details"),
     # Ultimate end users
     path("<uuid:pk>/ultimate-end-users/", ultimate_end_users.UltimateEndUsers.as_view(), name="ultimate_end_users"),
     path(

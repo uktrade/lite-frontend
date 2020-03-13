@@ -51,7 +51,7 @@
 				{# Exhibition clearance types #}
 				{% if application_type|application_type_in_list:"EXHIBITION" and edit_type != "minor_edit" %}
 					{% url 'applications:exhibition_details' application.id as exhibition_details_url %}
-					{% include "includes/task-list-item.html" with id="exhibition-details" title=strings.DETAILS url=exhibition_details_url status=application.title|task_list_item_status description=application.title%}
+					{% include "includes/task-list-item.html" with id="exhibition-details" title=strings.DETAILS url=exhibition_details_url status=application.title|task_list_item_status description=application.title %}
 				{% elif application_type|application_type_in_list:"EXHIBITION" %}
 					{% url 'applications:exhibition_details' application.id as exhibition_details_url %}
 					{% include "includes/task-list-item.html" with id="exhibition-details" title=strings.DETAILS url=exhibition_details_url status=application.title|task_list_item_status description=application.title disabled=True %}
@@ -59,7 +59,7 @@
 
 				{# F680 clearance types #}
 				{% if application_type|application_type_in_list:"F680" %}
-					{%  if not is_editing or edit_type == 'major_edit' %}
+					{% if not is_editing or edit_type == 'major_edit' %}
 						{% url 'applications:f680_details' application.id as f680_details_url %}
 						{% tld f680detail 'f680detail' 'f680details' as f680_details %}
 						{% include "includes/task-list-item.html" with id='types' title=strings.F680_DETAILS url=f680_details_url status=application.types|task_list_item_status description=f680_details %}
@@ -87,6 +87,14 @@
 					{% include "includes/task-list-item.html" with id='goods' title=strings.GOODS url=goods_url status=goods|task_list_item_status description=goods_description %}
 				{% endif %}
 
+				{# End use details #}
+				{% if application_type|application_type_in_list:"HAS_LICENCE_TYPE" %}
+					{% if not is_editing or edit_type == 'major_edit' %}
+						{% url 'applications:end_use_details' application.id as end_use_details_url %}
+						{% include "includes/task-list-item.html" with id='end_use_details' status=end_use_details|task_list_item_status title=strings.END_USE_DETAILS url=end_use_details_url %}
+					{% endif %}
+				{% endif %}
+
 				{# Location #}
 				{% if application_type|application_type_in_list:"HAS_LOCATIONS" %}
 					{% url 'applications:location' application.id as goods_url %}
@@ -109,7 +117,7 @@
 
 				{# End User #}
 				{% if application_type|application_type_in_list:"HAS_END_USER" %}
-					{%  if not is_editing or edit_type == 'major_edit' %}
+					{% if not is_editing or edit_type == 'major_edit' %}
 						{% url 'applications:end_user' application.id as end_user_url %}
 						{% include "includes/task-list-item.html" with id="end_user" title=strings.END_USER url=end_user_url status=application.end_user|get_parties_status optional=application_type|application_type_in_list:"F680" %}
 					{% endif %}

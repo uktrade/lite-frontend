@@ -52,3 +52,7 @@ class Application(Munch):
             is_editing = self.status == "submitted" or self.status == APPLICANT_EDITING
             if is_editing:
                 return self.status != "submitted"
+
+    @property
+    def is_eu_military(self):
+        return self.get("is_eu_military", False)
