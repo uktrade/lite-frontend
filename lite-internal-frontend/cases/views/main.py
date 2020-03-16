@@ -155,11 +155,11 @@ class ViewCase(TemplateView):
         }
 
         if case_sub_type == CaseType.END_USER_ADVISORY.value:
-            return render(request, "case/queries/end_user_advisory.html", context)
+            return render(request, "case/queries/end-user-advisory.html", context)
         elif case_sub_type == CaseType.GOODS.value:
             context["good"] = case["query"]["good"]
             context["verified"] = case["query"]["good"]["status"]["key"] == "verified"
-            return render(request, "case/queries/goods_query_case.html", context)
+            return render(request, "case/queries/goods-query-case.html", context)
         elif case_sub_type == CaseType.HMRC.value:
             context["total_goods_value"] = _get_total_goods_value(case)
             return render(request, "case/queries/hmrc-case.html", context)

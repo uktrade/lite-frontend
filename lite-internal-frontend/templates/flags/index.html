@@ -5,85 +5,75 @@
 {% block body %}
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
-			<h2 class="govuk-heading-l">{% lcs 'Flags.TITLE' %}</h2>
+			<h1 class="govuk-heading-l">
+				{% block title %}
+					{% lcs 'flags.FlagsList.TITLE' %}
+				{% endblock %}
+			</h1>
 			<p class="govuk-caption-m">
-				{% lcs 'Flags.DESCRIPTION' %}
+				{% lcs 'flags.FlagsList.DESCRIPTION' %}
 			</p>
 		</div>
 		<div class="lite-app-bar__controls">
 			<a href="{% url 'flags:add' %}" class="govuk-button" draggable="false" role="button" id="add-a-flag-button">
-				{% lcs 'Flags.CREATE' %}
+				{% lcs 'flags.FlagsList.CREATE_BUTTON' %}
 			</a>
 		</div>
 	</div>
 
-	{% if status == 'active' or status == 'all' %}
-		<div class="govuk-grid-row">
-			<div class="govuk-grid-column-one-third lite-filters">
-				<div class="lite-filter-box">
-					<h4 class="govuk-heading-s">Filter</h4>
-					{% if status == 'active' %}
-						<a href="{% url 'flags:flags' 'all' %}" class="govuk-button govuk-button--secondary" draggable="false" role="button" style="width: 100%; margin: 0;">
-							Include deactivated
-						</a>
-					{% elif status == 'all' %}
-						<a href="{% url 'flags:flags' 'active' %}" class="govuk-button govuk-button--secondary" draggable="false" role="button" style="width: 100%; margin: 0;">
-							Hide deactivated
-						</a>
-					{% endif %}
-				</div>
-			</div>
+	{% include "filters.html" %}
 
-		<div class="govuk-grid-column-two-thirds">
-		{% endif %}
-
-			{% if data.flags|length %}
-				<table class="govuk-table">
-					<thead class="govuk-table__head">
-						<tr class="govuk-table__row">
-							<th class="govuk-table__header" scope="col">Name</th>
-							<th class="govuk-table__header" scope="col">Level</th>
-		                    <th class="govuk-table__header" scope="col">Status</th>
-							<th class="govuk-table__header" scope="col">Actions</th>
-						</tr>
-					</thead>
-					<tbody class="govuk-table__body">
-						{% for flag in data.flags %}
-							<tr class="govuk-table__row">
-								<td class="govuk-table__cell">
-									<a href="{% url 'flags:flag' flag.id %}" style="margin: 0; font-weight: bold; text-decoration: none;" class="govuk-link govuk-link--no-visited-state">
-										{{ flag.name|default:"Untitled" }}
-									</a>
-									<p class="lite-hint" style="margin: 0;">{{ flag.team.name }}</p>
-								</td>
-		                        <td class="govuk-table__cell">
-		                            {{ flag.level }}
-		                        </td>
-		                        <td class="govuk-table__cell">
-		                            {{ flag.status }}
-		                        </td>
-								<td class="govuk-table__cell">
-									{% if user_data.user.team.id == flag.team.id %}
+	{% if data.flags %}
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="col">{% lcs 'flags.FlagsList.Table.NAME' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'flags.FlagsList.Table.TEAM' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'flags.FlagsList.Table.LEVEL' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'flags.FlagsList.Table.STATUS' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'flags.FlagsList.Table.ACTIONS' %}</th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				{% for flag in data.flags %}
+					<tr class="govuk-table__row">
+						<td class="govuk-table__cell">
+							<a href="{% url 'flags:flag' flag.id %}" class="govuk-link govuk-link--no-visited-state">
+								{{ flag.name }}
+							</a>
+						</td>
+						<td class="govuk-table__cell">
+							{{ flag.team.name }}
+						</td>
+						<td class="govuk-table__cell">
+							{{ flag.level }}
+						</td>
+						<td class="govuk-table__cell">
+							{{ flag.status }}
+						</td>
+						<td class="govuk-table__cell govuk-table__cell--tight">
+							{% if user_data.user.team.id == flag.team.id %}
+								<ul class="govuk-table__cell__actions-list">
+									<li class="govuk-table__cell__actions-list-item">
 										{% if flag.status == 'Active' %}
-											<a href="{% url 'flags:change_status' flag.id 'deactivate' %}" role="button" draggable="false" class="govuk-link govuk-link--no-visited-state govuk-!-margin-right-2">Deactivate</a>
+											<a href="{% url 'flags:change_status' flag.id 'deactivate' %}" role="button" draggable="false" class="govuk-link govuk-link--no-visited-state">{% lcs 'flags.FlagsList.Table.DEACTIVATE' %}</a>
 										{% elif flag.status == 'Deactivated' %}
-											<a href="{% url 'flags:change_status' flag.id 'reactivate' %}" role="button" draggable="false" class="govuk-link govuk-link--no-visited-state govuk-!-margin-right-2">Reactivate</a>
+											<a href="{% url 'flags:change_status' flag.id 'reactivate' %}" role="button" draggable="false" class="govuk-link govuk-link--no-visited-state">{% lcs 'flags.FlagsList.Table.REACTIVATE' %}</a>
 										{% endif %}
-										<a href="{% url 'flags:edit' flag.id %}" style="margin: 10;" class="govuk-link govuk-link--no-visited-state">Edit</a>
-									{% else %}
-		                                None
-		                            {% endif %}
-								</td>
-							</tr>
-						{% endfor %}
-					</tbody>
-				</table>
-			{% else %}
-				<p class="govuk-caption-l">There are no registered flags at the moment.</p>
-			{% endif %}
-
-		{% if status == 'active' or status == 'all' %}
-			</div>
-		</div>
+									</li>
+									<li class="govuk-table__cell__actions-list-item">
+										<a href="{% url 'flags:edit' flag.id %}" class="govuk-link govuk-link--no-visited-state">{% lcs 'flags.FlagsList.Table.EDIT' %}</a>
+									</li>
+								</ul>
+							{% else %}
+								{{ None|default_na }}
+							{% endif %}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		{% include "includes/notice.html" with text='flags.FlagsList.NO_CONTENT_NOTICE' %}
 	{% endif %}
 {% endblock %}

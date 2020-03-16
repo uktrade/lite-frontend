@@ -16,11 +16,14 @@ Feature:  I want to create and deactivate case flags
   Scenario: Deactivate and reactivate a flag
     Given I sign in to SSO or am signed into SSO
     When I go to flags
+    And I show filters
     And I click include deactivated
     And I count the number of active flags
     And I deactivate the first active flag
+    And I show filters
     And I click include deactivated
     Then I see one less active flags
     When I reactivate the first deactivated flag
+    And I show filters
     And I click include deactivated
     Then I see the original number of active flags

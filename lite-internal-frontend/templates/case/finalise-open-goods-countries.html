@@ -5,113 +5,108 @@
 {% endblock %}
 
 {% block body %}
+	<form action="{% url 'cases:finalise_goods_countries' case.id %}" method="post">
+		{% csrf_token %}
 
+		<h1 class="govuk-heading-l">{% lcs 'cases.GoodsDecisionMatrixPage.Actions.SELECT_DECISION' %}</h1>
 
-<form action="{% url 'cases:finalise_goods_countries' case.id %}" method="post">
-
-	{% csrf_token %}
-
-	<h1 class="govuk-heading-l">{% lcs 'cases.GoodsDecisionMatrixPage.Actions.SELECT_DECISION' %}</h1>
-
-	{% if errors %}
-		<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
-			<h2 class="govuk-error-summary__title" id="error-summary-title">
-				{% lcs 'cases.GoodsDecisionMatrixPage.ERROR' %}
-			</h2>
-			<div class="govuk-error-summary__body">
-				<ul class="govuk-list govuk-error-summary__list">
-					<li>
-						<a href="#{{ errors|get_first_country_from_first_good }}">{% lcs 'cases.GoodsDecisionMatrixPage.Actions.SELECT_DECISION' %}</a>
-					</li>
-				</ul>
+		{% if errors %}
+			<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+				<h2 class="govuk-error-summary__title" id="error-summary-title">
+					{% lcs 'cases.GoodsDecisionMatrixPage.ERROR' %}
+				</h2>
+				<div class="govuk-error-summary__body">
+					<ul class="govuk-list govuk-error-summary__list">
+						<li>
+							<a href="#{{ errors|get_first_country_from_first_good }}">{% lcs 'cases.GoodsDecisionMatrixPage.Actions.SELECT_DECISION' %}</a>
+						</li>
+					</ul>
+				</div>
 			</div>
-		</div>
-	{% endif %}
+		{% endif %}
 
-	<table class="govuk-table">
-		<thead class="govuk-table__head">
-			<tr class="govuk-table__row">
-				<th class="govuk-table__header">{% lcs 'cases.GoodsDecisionMatrixPage.Table.GOOD_TITLE' %}</th>
-				<th class="govuk-table__header">{% lcs 'cases.GoodsDecisionMatrixPage.Table.COUNTRIES_TITLE' %}</th>
-				<th class="govuk-table__header">{% lcs 'cases.GoodsDecisionMatrixPage.Table.APPROVE_TITLE' %}</th>
-                {% if case.application.case_type.sub_type.key == 'open' %}
-				    <th class="govuk-table__header">{% lcs 'cases.GoodsDecisionMatrixPage.Table.REJECT_TITLE' %}</th>
-                {% else %}
-				    <th class="govuk-table__header">{% lcs 'cases.GoodsDecisionMatrixPage.Table.REFUSE_TITLE' %}</th>
-                {% endif %}
-                <th class="govuk-table__header">{% lcs 'cases.GoodsDecisionMatrixPage.Table.NLR_TITLE' %}</th>
-			</tr>
-		</thead>
-
-		<tbody class="govuk-table__body">
-            {% lcs 'cases.GoodsDecisionMatrixPage.NO_ADVICE_DEFAULT' as NO_ADVICE_DEFAULT%}
-			{% for good in case.application.goods_types %}
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
-					<td class="govuk-table__cell">
-                        {{ good.control_code|default:good.description }}
-                        {% if good.advice.value == 'Refuse' and case.application.case_type.sub_type.key == 'open' %}
-                            <span style="opacity: 0.7">{% lcs 'cases.GoodsDecisionMatrixPage.REFUSE_ADVICE_TAG'%}</span>
-                        {% else %}
-                            <span style="opacity: 0.7">({{ good.advice.value|default:NO_ADVICE_DEFAULT }})</span></td>
-                        {%  endif %}
-					<td class="govuk-table__cell">
-						{% for country in good.countries %}
-							<div class="{% if good.id in errors %}{% if country.id in errors|key_value:good.id %}govuk-form-group--error govuk-error-message{% endif %}{% endif %}" style="margin-bottom: 25px;">
-								{{ country.name }}
-                                {% if country.advice.value == 'Refuse' and case.application.case_type.sub_type.key == 'open' %}
-                                    <span style="opacity: 0.7">{% lcs 'cases.GoodsDecisionMatrixPage.REFUSE_ADVICE_TAG'%}</span>
-                                {% else %}
-                                    <span style="opacity: 0.7">({{ country.advice.value|default:NO_ADVICE_DEFAULT }})</span>
-                                {%  endif %}
-							</div>
-						{% endfor %}
-					</td>
-					{% for decision in decisions %}
+					<th class="govuk-table__header">{% lcs 'cases.GoodsDecisionMatrixPage.Table.GOOD_TITLE' %}</th>
+					<th class="govuk-table__header">{% lcs 'cases.GoodsDecisionMatrixPage.Table.COUNTRIES_TITLE' %}</th>
+					<th class="govuk-table__header">{% lcs 'cases.GoodsDecisionMatrixPage.Table.APPROVE_TITLE' %}</th>
+					{% if case.application.case_type.sub_type.key == 'open' %}
+						<th class="govuk-table__header">{% lcs 'cases.GoodsDecisionMatrixPage.Table.REJECT_TITLE' %}</th>
+					{% else %}
+						<th class="govuk-table__header">{% lcs 'cases.GoodsDecisionMatrixPage.Table.REFUSE_TITLE' %}</th>
+					{% endif %}
+					<th class="govuk-table__header">{% lcs 'cases.GoodsDecisionMatrixPage.Table.NLR_TITLE' %}</th>
+				</tr>
+			</thead>
+
+			<tbody class="govuk-table__body">
+				{% lcs 'cases.GoodsDecisionMatrixPage.NO_ADVICE_DEFAULT' as NO_ADVICE_DEFAULT%}
+				{% for good in case.application.goods_types %}
+					<tr class="govuk-table__row">
+						<td class="govuk-table__cell">
+							{{ good.control_code|default:good.description }}
+							{% if good.advice.value == 'Refuse' and case.application.case_type.sub_type.key == 'open' %}
+								<span>{% lcs 'cases.GoodsDecisionMatrixPage.REFUSE_ADVICE_TAG'%}</span>
+							{% else %}
+								<span>({{ good.advice.value|default:NO_ADVICE_DEFAULT }})</span></td>
+							{%  endif %}
 						<td class="govuk-table__cell">
 							{% for country in good.countries %}
-								<div class="govuk-radios govuk-radios--small" style="padding-bottom: 50px">
-									<div class="govuk-radios__item">
-										<input class="govuk-radios__input" type="radio" name="{{ good.id }}.{{ country.id }}" id="{{ decision }}.{{ good.id }}.{{ country.id }}" value="{{ decision }}"
-                                            {% for data in good_countries %}
-                                                {% if good.id == data.good and country.id == data.country %}
-                                                    {% if decision == data.decision or decision == data.decision.key %}
-                                                        checked
-                                                    {% endif %}
-                                                {% endif %}
-                                            {% endfor %} >
-										<label class="govuk-label govuk-radios__label
-                                            {% if good.id in errors %}
-                                                {% if country.id in errors|key_value:good.id %}
-                                                    govuk-radios__label--error
-                                                {% endif %}
-                                            {% endif %}" for="{{ decision }}.{{ good.id }}.{{ country.id }}">
-											<span class="govuk-visually-hidden">
-												{% if decision == "approve" %}
-													{% lcs 'cases.GoodsDecisionMatrixPage.Table.APPROVE_TITLE' %}
-												{% elif decision == "refuse"%}
-													{% lcs 'cases.GoodsDecisionMatrixPage.Table.REFUSE_TITLE' %}
-												{% elif decision == "no_licence_required" %}
-													{% lcs 'cases.GoodsDecisionMatrixPage.Table.HIDDEN_NLR_TITLE' %}
-												{% endif %} {{ good.control_code }}
-											</span>
-										</label>
-									</div>
+								<div class="{% if good.id in errors %}{% if country.id in errors|key_value:good.id %}govuk-form-group--error govuk-error-message{% endif %}{% endif %}">
+									{{ country.name }}
+									{% if country.advice.value == 'Refuse' and case.application.case_type.sub_type.key == 'open' %}
+										<span>{% lcs 'cases.GoodsDecisionMatrixPage.REFUSE_ADVICE_TAG'%}</span>
+									{% else %}
+										<span>({{ country.advice.value|default:NO_ADVICE_DEFAULT }})</span>
+									{%  endif %}
 								</div>
 							{% endfor %}
 						</td>
-					{% endfor %}
-				</tr>
-			{% endfor %}
-		</tbody>
-	</table>
+						{% for decision in decisions %}
+							<td class="govuk-table__cell">
+								{% for country in good.countries %}
+									<div class="govuk-radios govuk-radios--small">
+										<div class="govuk-radios__item">
+											<input class="govuk-radios__input" type="radio" name="{{ good.id }}.{{ country.id }}" id="{{ decision }}.{{ good.id }}.{{ country.id }}" value="{{ decision }}"
+												{% for data in good_countries %}
+													{% if good.id == data.good and country.id == data.country %}
+														{% if decision == data.decision or decision == data.decision.key %}
+															checked
+														{% endif %}
+													{% endif %}
+												{% endfor %} >
+											<label class="govuk-label govuk-radios__label
+												{% if good.id in errors %}
+													{% if country.id in errors|key_value:good.id %}
+														govuk-radios__label--error
+													{% endif %}
+												{% endif %}" for="{{ decision }}.{{ good.id }}.{{ country.id }}">
+												<span class="govuk-visually-hidden">
+													{% if decision == "approve" %}
+														{% lcs 'cases.GoodsDecisionMatrixPage.Table.APPROVE_TITLE' %}
+													{% elif decision == "refuse"%}
+														{% lcs 'cases.GoodsDecisionMatrixPage.Table.REFUSE_TITLE' %}
+													{% elif decision == "no_licence_required" %}
+														{% lcs 'cases.GoodsDecisionMatrixPage.Table.HIDDEN_NLR_TITLE' %}
+													{% endif %} {{ good.control_code }}
+												</span>
+											</label>
+										</div>
+									</div>
+								{% endfor %}
+							</td>
+						{% endfor %}
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
 
-	<button id="button-finalise" type="submit" name="action" value="submit" class="govuk-button" data-module="govuk-button" style="margin-right: 15px">
-		{% lcs 'cases.GoodsDecisionMatrixPage.Actions.FINALISE_BUTTON' %}
-	</button>
-    <button id="button-save" type="submit" name="action" value="save" class="govuk-button govuk-button--secondary">
-        {% lcs 'cases.GoodsDecisionMatrixPage.Actions.SAVE_BUTTON' %}
-	</button>
-
-</form>
-
+		<button id="button-finalise" type="submit" name="action" value="submit" class="govuk-button" data-module="govuk-button">
+			{% lcs 'cases.GoodsDecisionMatrixPage.Actions.FINALISE_BUTTON' %}
+		</button>
+		<button id="button-save" type="submit" name="action" value="save" class="govuk-button govuk-button--secondary">
+			{% lcs 'cases.GoodsDecisionMatrixPage.Actions.SAVE_BUTTON' %}
+		</button>
+	</form>
 {% endblock %}

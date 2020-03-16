@@ -5,7 +5,6 @@
 {% block back_link %}{% endblock %}
 
 {% block body %}
-
 	{% include 'includes/messages.html' %}
 
 	<div class="lite-app-bar">
@@ -28,7 +27,7 @@
 			</thead>
 			<tbody class="govuk-table__body">
 				{% for organisation in data.results %}
-					<tr class="govuk-table__row" style="vertical-align: top;">
+					<tr class="govuk-table__row">
 						<td class="govuk-table__cell">
 							<a class="govuk-link" href="{% url 'organisations:organisation' organisation.id %}">{{ organisation.name }}</a>
 						</td>
@@ -39,5 +38,4 @@
 	{% else %}
 		<p class="govuk-caption-l">There are no registered organisations at the moment.</p>
 	{% endif %}
-
 {% endblock %}

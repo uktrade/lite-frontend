@@ -1,112 +1,113 @@
 {% extends 'layouts/two-pane.html' %}
 
 {% block back_link %}
-    {% if organisation.type.key == 'hmrc' %}
-        <a href="{% url 'organisations:hmrc' %}" class="govuk-back-link">
-            {% lcs "organisations.OrganisationPage.Actions.BACK_TO_HMRC" %}
-        </a>
-    {% else %}
-        <a href="{% url 'organisations:organisations' %}" class="govuk-back-link">
-           {% lcs "organisations.OrganisationPage.Actions.BACK_TO_ORGS" %}
-        </a>
-    {% endif %}
-
+	{% if organisation.type.key == 'hmrc' %}
+		<a href="{% url 'organisations:hmrc' %}" class="govuk-back-link">
+			{% lcs "organisations.OrganisationPage.Actions.BACK_TO_HMRC" %}
+		</a>
+	{% else %}
+		<a href="{% url 'organisations:organisations' %}" class="govuk-back-link">
+			{% lcs "organisations.OrganisationPage.Actions.BACK_TO_ORGS" %}
+		</a>
+	{% endif %}
 {% endblock %}
 
 {% block two_thirds %}
 	<div class="lite-app-bar">
-    <h1 class="govuk-heading-l">{{ title }}</h1>
-	<div class="lite-app-bar__controls">
-		{% if can_manage_organisations %}
-			<a href="{% url 'organisations:edit' organisation.id %}" type="submit" class="govuk-button" id="button-edit-organisation">
-				{% lcs "organisations.OrganisationPage.Actions.EDIT" %}
-			</a>
-		{% endif %}
-	</div>
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">{{ title }}</h1>
+		</div>
+		<div class="lite-app-bar__controls">
+			{% if can_manage_organisations %}
+				<a href="{% url 'organisations:edit' organisation.id %}" type="submit" class="govuk-button" id="button-edit-organisation">
+					{% lcs "organisations.OrganisationPage.Actions.EDIT" %}
+				</a>
+			{% endif %}
+		</div>
 	</div>
 
-    <dl class="govuk-summary-list">
-        {% if organisation.eori_number %}
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    {% lcs "organisations.OrganisationPage.Fields.EORI_NUMBER" %}
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    {{ organisation.eori_number }}
-                </dd>
-            </div>
-        {% endif %}
-        {% if organisation.sic_number %}
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    {% lcs "organisations.OrganisationPage.Fields.SIC_NUMBER" %}
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    {{ organisation.sic_number }}
-                </dd>
-            </div>
-        {% endif %}
-        {% if organisation.vat_number %}
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    {% lcs "organisations.OrganisationPage.Fields.VAT_NUMBER" %}
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    {{ organisation.vat_number }}
-                </dd>
-            </div>
-        {% endif %}
-        {% if organisation.registration_number %}
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                   {% lcs "organisations.OrganisationPage.Fields.COMPANY_REG_NUMBER" %}
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    {{ organisation.registration_number }}
-                </dd>
-            </div>
-        {% endif %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                {% lcs "organisations.OrganisationPage.Fields.CREATED_AT" %}
-            </dt>
-            <dd class="govuk-summary-list__value">
-                {{ organisation.created_at|str_date }}
-            </dd>
-        </div>
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                {% lcs "organisations.OrganisationPage.Fields.ADDRESS" %}
-            </dt>
-            <dd class="govuk-summary-list__value">
-                {{ organisation.primary_site.address.address_line_1 }}<br/>
+	<dl class="govuk-summary-list">
+		{% if organisation.eori_number %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs "organisations.OrganisationPage.Fields.EORI_NUMBER" %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ organisation.eori_number }}
+				</dd>
+			</div>
+		{% endif %}
+		{% if organisation.sic_number %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs "organisations.OrganisationPage.Fields.SIC_NUMBER" %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ organisation.sic_number }}
+				</dd>
+			</div>
+		{% endif %}
+		{% if organisation.vat_number %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs "organisations.OrganisationPage.Fields.VAT_NUMBER" %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ organisation.vat_number }}
+				</dd>
+			</div>
+		{% endif %}
+		{% if organisation.registration_number %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs "organisations.OrganisationPage.Fields.COMPANY_REG_NUMBER" %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ organisation.registration_number }}
+				</dd>
+			</div>
+		{% endif %}
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs "organisations.OrganisationPage.Fields.CREATED_AT" %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ organisation.created_at|str_date }}
+			</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs "organisations.OrganisationPage.Fields.ADDRESS" %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ organisation.primary_site.address.address_line_1 }}<br/>
 					{% if organisation.primary_site.address.address_line_2 %}
 						{{ organisation.primary_site.address.address_line_2 }}<br/>
 					{% endif %}
 					{{ organisation.primary_site.address.city }}<br/>
 					{{ organisation.primary_site.address.postcode }}<br/>
 					{{ organisation.primary_site.address.country.name }}
-            </dd>
-        </div>
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                {% lcs "organisations.OrganisationPage.Fields.TYPE" %}
-            </dt>
-            <dd class="govuk-summary-list__value">
-                {{ organisation.type.value }}
-            </dd>
-        </div>
+			</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs "organisations.OrganisationPage.Fields.TYPE" %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ organisation.type.value }}
+			</dd>
+		</div>
 		<div class="govuk-summary-list__row">
 			<dt class="govuk-summary-list__key">
 				{% lcs "organisations.OrganisationPage.Fields.STATUS" %}
-            </dt>
-            <dd class="govuk-summary-list__value">
+			</dt>
+			<dd class="govuk-summary-list__value">
 				<strong class="govuk-tag {% if organisation.status.key == 'in_review' %}govuk-tag--blue{% endif %}">
 					{{ organisation.status.value }}
 				</strong>
 			</dd>
 		</div>
-    </dl>
+	</dl>
 
 	<div id="flags-organisation" class="app-flags">
 		{% for flag in organisation.flags %}
@@ -143,7 +144,7 @@
 			</thead>
 			<tbody class="govuk-table__head">
 				{% for site in sites %}
-					<tr class="govuk-table__row" style="vertical-align: top;">
+					<tr class="govuk-table__row">
 						<td class="govuk-table__cell">
 							{{ site.name }}
 						</td>

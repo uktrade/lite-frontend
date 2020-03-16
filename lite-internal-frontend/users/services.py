@@ -42,7 +42,7 @@ def get_gov_users(request, params=None, convert_to_options=False):
 
 def get_gov_user(request, pk=None):
     if pk:
-        data = get(request, GOV_USERS_URL + pk)
+        data = get(request, GOV_USERS_URL + str(pk))
     else:
         data = get(request, GOV_USERS_URL + "me/")
     return data.json(), data.status_code
@@ -62,7 +62,7 @@ def post_gov_users(request, json):
 
 
 def put_gov_user(request, pk, json):
-    data = put(request, GOV_USERS_URL + pk + "/", json)
+    data = put(request, GOV_USERS_URL + str(pk) + "/", json)
     return data.json(), data.status_code
 
 

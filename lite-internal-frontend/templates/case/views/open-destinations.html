@@ -4,7 +4,7 @@
 		<thead class="govuk-table__head">
 			<tr class="govuk-table__row">
 				<th class="govuk-table__header" scope="col">Country</th>
-				<th class="govuk-table__header" style="width: 350px;">Advice</th>
+				<th class="govuk-table__header">Advice</th>
 			</tr>
 		</thead>
 		<tbody class="govuk-table__body">
@@ -15,21 +15,21 @@
 							{% if show_checkboxes %}<div class="govuk-checkboxes__item">
 							<input class="govuk-checkboxes__input" type="checkbox" name="countries" value="{{ country.id }}" id="{{ country.id }}"> {% endif %}
 							<label class="govuk-label {% if show_checkboxes %}govuk-checkboxes__label{% endif %}" for="{{ country.id }}">{{ country.name }}
-                                <span class="app-country-tag" style="margin-right: 10px">
-                                    {{ country.id }}
-                                </span>
-                                {% for good in case.application.goods_types %}
-                                    {% if good.countries %}
-                                        {% if country in good.countries %}
-                                            {% if good.control_code %}
-                                                <span class="app-country-tag app-country-tag--orange">{{ good.control_code }}</span>
-                                            {% endif %}
-                                        {% endif %}
-                                    {% else %}
-                                        <span class="app-country-tag app-country-tag--orange">{{ good.control_code }}</span>
-                                    {% endif %}
-                                {% endfor %}
-                            </label>
+								<span class="app-country-tag">
+									{{ country.id }}
+								</span>
+								{% for good in case.application.goods_types %}
+									{% if good.countries %}
+										{% if country in good.countries %}
+											{% if good.control_code %}
+												<span class="app-country-tag app-country-tag--orange">{{ good.control_code }}</span>
+											{% endif %}
+										{% endif %}
+									{% else %}
+										<span class="app-country-tag app-country-tag--orange">{{ good.control_code }}</span>
+									{% endif %}
+								{% endfor %}
+							</label>
 						{% if show_checkboxes %}</div>{% endif %}
 						</div>
 					</td>
@@ -53,21 +53,21 @@
 						{% if show_checkboxes %}<div class="govuk-checkboxes__item">
 							<input class="govuk-checkboxes__input" type="checkbox" name="countries" value="{{ country.id }}" id="{{ country.id }}"> {% endif %}
 							<label class="govuk-label {% if show_checkboxes %}govuk-checkboxes__label{% endif %}" for="{{ country.id }}">{{ country.name }}
-                                <span class="app-country-tag" style="margin-right: 10px">
-                                    {{ country.id }}
-                                </span>
-                                {% for good in case.application.goods_types %}
-                                    {% if good.countries %}
-                                        {% if country in good.countries %}
-                                            {% if good.control_code %}
-                                                <span class="app-country-tag app-country-tag--orange">{{ good.control_code }}</span>
-                                            {% endif %}
-                                        {% endif %}
-                                    {% elif good.control_code %}
-                                        <span class="app-country-tag app-country-tag--orange">{{ good.control_code }}</span>
-                                    {% endif %}
-                                {% endfor %}
-                            </label>
+								<span class="app-country-tag">
+									{{ country.id }}
+								</span>
+								{% for good in case.application.goods_types %}
+									{% if good.countries %}
+										{% if country in good.countries %}
+											{% if good.control_code %}
+												<span class="app-country-tag app-country-tag--orange">{{ good.control_code }}</span>
+											{% endif %}
+										{% endif %}
+									{% elif good.control_code %}
+										<span class="app-country-tag app-country-tag--orange">{{ good.control_code }}</span>
+									{% endif %}
+								{% endfor %}
+							</label>
 						{% if show_checkboxes %}</div>{% endif %}
 					</div>
 				{% endfor %}

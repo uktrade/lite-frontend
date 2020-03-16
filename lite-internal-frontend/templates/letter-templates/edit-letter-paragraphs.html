@@ -7,14 +7,13 @@
 {% endblock %}
 
 {% block body %}
-
 	<legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
-        <h1 class="govuk-fieldset__heading">
-            {% block title %}{% lcs 'LetterTemplates.EditParagraph.TITLE' %}{% endblock %}
-        </h1>
-    </legend>
+		<h1 class="govuk-fieldset__heading">
+			{% block title %}{% lcs 'LetterTemplates.EditParagraph.TITLE' %}{% endblock %}
+		</h1>
+	</legend>
 
-	<span class="govuk-hint" style="margin: 30px 0;">
+	<span class="govuk-hint">
 		{% lcs 'LetterTemplates.EditParagraph.HINT' %}
 	</span>
 
@@ -48,7 +47,6 @@
 		</div>
 		<button type="submit" name="action" value="submit" class="govuk-button">{% lcs 'LetterTemplates.EditParagraph.SAVE_BUTTON' %}</button>
 	</form>
-
 {% endblock %}
 
 {% block javascript %}

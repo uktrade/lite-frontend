@@ -10,12 +10,12 @@ Feature: I want to add a team
     When I go to teams
     And I add a team called BlueOcean
     Then I see the team in the team list
-    When I click on my team
+    When I click on the team BlueOcean
     Then I see my teams user list with user "not added"
     When I go to users
     And I click edit for my user
     And I select my newly created team
-    And I click on my team
+    And I click on the team BlueOcean
     Then I see my teams user list with user "added"
     When I click edit for my user
     And I select Admin team

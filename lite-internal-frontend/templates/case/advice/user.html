@@ -14,38 +14,35 @@
 	</h1>
 
 	<form method="post">
-
 		{% csrf_token %}
 
 		<!-- Tab bar -->
-		<div style="display: grid; grid-template-columns: 1fr auto; grid-gap: 30px;">
+		<div>
 			<div class="lite-tabs--fade">
 				<div class="lite-tabs">
 					<a href="{% url 'cases:user_advice_view' case.id %}" class="lite-tabs__tab lite-tabs__tab--selected" id="user_advice">User Advice</a>
-                    <a href="{% url 'cases:team_advice_view' case.id %}" class="lite-tabs__tab" id="team_advice">Team Advice</a>
-                    <a href="{% url 'cases:final_advice_view' case.id %}" class="lite-tabs__tab" id="final_advice">Final Advice</a>
+					<a href="{% url 'cases:team_advice_view' case.id %}" class="lite-tabs__tab" id="team_advice">Team Advice</a>
+					<a href="{% url 'cases:final_advice_view' case.id %}" class="lite-tabs__tab" id="final_advice">Final Advice</a>
 				</div>
 			</div>
-            {% if not case.has_advice.my_team %}
-                {% if not case.has_advice.final %}
-                    {% if not status_is_terminal %}
-                        <button id="button-give-advice" type="submit" class="govuk-button" data-module="govuk-button">
-                            {% lcs 'GIVE_OR_CHANGE_ADVICE' %}
-                        </button>
-                    {% endif %}
-                {% endif %}
-            {% endif %}
+			{% if not case.has_advice.my_team %}
+				{% if not case.has_advice.final %}
+					{% if not status_is_terminal %}
+						<button id="button-give-advice" type="submit" class="govuk-button" data-module="govuk-button">
+							{% lcs 'GIVE_OR_CHANGE_ADVICE' %}
+						</button>
+					{% endif %}
+				{% endif %}
+			{% endif %}
 		</div>
 
 		<!-- Conditional error wrapper -->
-        {% if case.has_advice.my_team or case.has_advice.final or status_is_terminal %}
-            {% include 'case/views/advice-view.html' with show_advice=True %}
-        {% else %}
-            {% include 'case/views/advice-view.html' with show_checkboxes=True show_advice=True %}
-        {% endif %}
-
+		{% if case.has_advice.my_team or case.has_advice.final or status_is_terminal %}
+			{% include 'case/views/advice-view.html' with show_advice=True %}
+		{% else %}
+			{% include 'case/views/advice-view.html' with show_checkboxes=True show_advice=True %}
+		{% endif %}
 	</form>
-
 {% endblock %}
 
 {% block javascript %}

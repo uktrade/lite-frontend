@@ -3,33 +3,17 @@ from core.services import get_countries
 from flags.services import get_goods_flags, get_destination_flags, get_cases_flags
 from lite_content.lite_internal_frontend import strings
 from django.urls import reverse_lazy
+
+from lite_content.lite_internal_frontend.flags import CreateFlagForm, EditFlagForm
 from lite_forms.components import TextInput, Select, Option, BackLink, Form, FormGroup, RadioButtons, AutocompleteInput
 from lite_forms.generators import confirm_form
 
-_name = TextInput(title="Name", name="name")
-
-_level = Select(
-    name="level",
-    options=[
-        Option("Case", "Case"),
-        Option("Organisation", "Organisation"),
-        Option("Destination", "Destination"),
-        Option("Good", "Good"),
-    ],
-    title="Level",
-)
-
-_back_link = BackLink("Back to Flags", reverse_lazy("flags:flags"))
-
-
-def add_flag_form():
-    return Form(
-        title=strings.Flags.CREATE, questions=[_name, _level,], back_link=_back_link, default_button_name="Create"
-    )
-
-
-def edit_flag_form():
-    return Form(title="Edit Flag", questions=[_name,], back_link=_back_link)
+options = [
+    Option("Case", "Case"),
+    Option("Organisation", "Organisation"),
+    Option("Destination", "Destination"),
+    Option("Good", "Good"),
+]
 
 
 _levels = [
@@ -37,6 +21,33 @@ _levels = [
     Option(key="Destination", value=strings.FlaggingRules.Create.Type.DESTINATION),
     Option(key="Case", value=strings.FlaggingRules.Create.Type.APPLICATION),
 ]
+
+
+def add_flag_form():
+    return Form(
+        title=CreateFlagForm.TITLE,
+        description=CreateFlagForm.DESCRIPTION,
+        questions=[
+            TextInput(title=CreateFlagForm.Name.TITLE, description=CreateFlagForm.Name.DESCRIPTION, name="name"),
+            Select(
+                title=CreateFlagForm.Level.TITLE,
+                description=CreateFlagForm.Level.DESCRIPTION,
+                name="level",
+                options=options,
+            ),
+        ],
+        default_button_name=CreateFlagForm.SUBMIT_BUTTON,
+        back_link=BackLink(CreateFlagForm.BACK_LINK, reverse_lazy("flags:flags")),
+    )
+
+
+def edit_flag_form():
+    return Form(
+        title=EditFlagForm.TITLE,
+        questions=[TextInput(title=EditFlagForm.Name.TITLE, description=EditFlagForm.Name.DESCRIPTION, name="name")],
+        back_link=BackLink(EditFlagForm.BACK_LINK, reverse_lazy("flags:flags")),
+        default_button_name=EditFlagForm.SUBMIT_BUTTON,
+    )
 
 
 def select_flagging_rule_type():

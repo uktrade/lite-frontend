@@ -1,73 +1,104 @@
 {% extends 'layouts/two-pane.html' %}
 
 {% block back_link %}
-	<a href="{% url 'users:users' %}" class="govuk-back-link">Back to Users</a>
+	<a href="{% url 'users:users' %}" id="back-link" class="govuk-back-link">
+		{% lcs 'users.UserProfile.BACK_LINK' %}
+	</a>
 {% endblock %}
 
 {% block two_thirds %}
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
-			<h2 class="govuk-heading-l">
-				{% block title %}{{ data.user.first_name }} {{ data.user.last_name }}{% endblock %}
-			</h2>
+			<h1 class="govuk-heading-xl">
+				{% block title %}
+					{% if data.user.first_name %}
+						{{ data.user.first_name }} {{ data.user.last_name }}
+					{% else %}
+						{{ data.user.email }}
+					{% endif %}
+				{% endblock %}
+			</h1>
 		</div>
 		<div class="lite-app-bar__controls">
-            {% if super_user %}
-                <a href="{% url 'users:edit' data.user.id %}" type="submit" class="govuk-button" id="edit_button">
-                    {% lcs 'USER_PROFILE_PAGE_EDIT' %}
-                </a>
-            {% elif not data.user.role.id == super_user_role_id %}
-                <a href="{% url 'users:edit' data.user.id %}" type="submit" class="govuk-button" id="edit_button">
-                    {% lcs 'USER_PROFILE_PAGE_EDIT' %}
-                </a>
-            {% endif %}
-            {% if can_deactivate %}
-                {% if request.user.lite_api_user_id|stringformat:"s" != data.user.id|stringformat:"s" %}
-                    {% if data.user.status == 'Active' %}
-                        <a href="{% url 'users:change_status' data.user.id 'deactivate' %}" role="button" draggable="false" class="govuk-button govuk-button--warning govuk-!-margin-right-2">
-                            {% lcs 'USER_DEACTIVATE' %}
-                        </a>
-                    {% elif data.user.status == 'Deactivated' %}
-                        <a href="{% url 'users:change_status' data.user.id 'reactivate' %}" role="button" draggable="false" class="govuk-button govuk-!-margin-right-2">
-                            {% lcs 'USER_REACTIVATE' %}
-                        </a>
-                    {% endif %}
-                {% endif %}
-            {% endif %}
+			{% if can_deactivate %}
+				{% if request.user.lite_api_user_id|stringformat:"s" != data.user.id|stringformat:"s" %}
+					{% if data.user.status == 'Active' %}
+						<a id="button-deactivate-user" href="{% url 'users:change_status' data.user.id 'deactivate' %}" role="button" draggable="false" class="govuk-button govuk-button--secondary">
+							{% lcs 'users.UserProfile.DEACTIVATE_BUTTON' %}
+						</a>
+					{% elif data.user.status == 'Deactivated' %}
+						<a id="button-reactivate-user" href="{% url 'users:change_status' data.user.id 'reactivate' %}" role="button" draggable="false" class="govuk-button govuk-button--secondary">
+							{% lcs 'users.UserProfile.REACTIVATE_BUTTON' %}
+						</a>
+					{% endif %}
+				{% endif %}
+			{% endif %}
 		</div>
 	</div>
 
 	<dl class="govuk-summary-list">
+		{% if data.user.first_name %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs 'users.UserProfile.SummaryList.FIRST_NAME' %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ data.user.first_name }}
+				</dd>
+				<dd class="govuk-summary-list__actions"></dd>
+			</div>
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs 'users.UserProfile.SummaryList.LAST_NAME' %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ data.user.last_name }}
+				</dd>
+				<dd class="govuk-summary-list__actions"></dd>
+			</div>
+		{% endif %}
 		<div class="govuk-summary-list__row">
 			<dt class="govuk-summary-list__key">
-				First Name
-			</dt>
-			<dd class="govuk-summary-list__value">
-				{{ data.user.first_name }}
-			</dd>
-		</div>
-		<div class="govuk-summary-list__row">
-			<dt class="govuk-summary-list__key">
-				Last Name
-			</dt>
-			<dd class="govuk-summary-list__value">
-				{{ data.user.last_name }}
-			</dd>
-		</div>
-		<div class="govuk-summary-list__row">
-			<dt class="govuk-summary-list__key">
-				Email
+				{% lcs 'users.UserProfile.SummaryList.EMAIL' %}
 			</dt>
 			<dd class="govuk-summary-list__value">
 				{{ data.user.email }}
 			</dd>
+			<dd class="govuk-summary-list__actions">
+				<a id="link-edit-email"" href="{% url 'users:edit' data.user.id %}#email" class="govuk-link govuk-link--no-visited-state">
+					{% lcs 'users.UserProfile.SummaryList.CHANGE' %}
+					<span class="govuk-visually-hidden">{% lcs 'users.UserProfile.SummaryList.EMAIL' %}</span>
+				</a>
+			</dd>
 		</div>
 		<div class="govuk-summary-list__row">
 			<dt class="govuk-summary-list__key">
-				Team
+				{% lcs 'users.UserProfile.SummaryList.TEAM' %}
 			</dt>
 			<dd class="govuk-summary-list__value">
 				<a href="{% url 'teams:team' data.user.team.id %}" class="govuk-link govuk-link--no-visited-state">{{ data.user.team.name }}</a>
+			</dd>
+			<dd class="govuk-summary-list__actions">
+				<a id="link-edit-team" href="{% url 'users:edit' data.user.id %}#team" class="govuk-link govuk-link--no-visited-state">
+					{% lcs 'users.UserProfile.SummaryList.CHANGE' %}
+					<span class="govuk-visually-hidden">{% lcs 'users.UserProfile.SummaryList.TEAM' %}</span>
+				</a>
+			</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs 'users.UserProfile.SummaryList.ROLE' %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ data.user.role.name }}
+			</dd>
+			<dd class="govuk-summary-list__actions">
+				{% if can_edit_role %}
+					<a id="link-edit-role" href="{% url 'users:edit' data.user.id %}#role" class="govuk-link govuk-link--no-visited-state">
+						{% lcs 'users.UserProfile.SummaryList.CHANGE' %}
+						<span class="govuk-visually-hidden">{% lcs 'users.UserProfile.SummaryList.ROLE' %}</span>
+					</a>
+				{% endif %}
 			</dd>
 		</div>
 	</dl>

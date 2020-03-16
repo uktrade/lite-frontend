@@ -3,7 +3,6 @@
 {% block back_link %}{% endblock %}
 
 {% block two_thirds %}
-
 	<h1 class="govuk-heading-l">{% lcs 'cases.GradingResponseOverview.TITLE' %}</h1>
 
 	<p class="govuk-body-m">{% lcs 'cases.GradingResponseOverview.WARNING' %}</p>
@@ -84,11 +83,11 @@
 				<div class="app-pv-grading-inputs">
 					<div class="govuk-form-group">
 						<p class="govuk-caption-m">{% lcs 'cases.GradingResponseOverview.Response.PREFIX' %}</p>
-						<p class="govuk-body-m">{{data.prefix|default_na}}</p>
+						<p class="govuk-body-m">{{ data.prefix|default_na }}</p>
 					</div>
 					<div class="govuk-form-group">
 						<p class="govuk-caption-m">{% lcs 'cases.GradingResponseOverview.Response.GRADING' %}</p>
-						<p class="govuk-body-m">{{data.grading|display_grading}}</p>
+						<p class="govuk-body-m">{{ data.grading|display_grading }}</p>
 					</div>
 					<div class="govuk-form-group">
 						<p class="govuk-caption-m">{% lcs 'cases.GradingResponseOverview.Response.SUFFIX' %}</p>
@@ -110,5 +109,4 @@
 			<button type="submit" id="change-response" name="action" value="change" class="govuk-button govuk-button--secondary">{% lcs 'cases.GradingResponseOverview.CHANGE' %}</button>
 		</div>
 	</form>
-
 {% endblock %}

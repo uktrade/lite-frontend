@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.http import Http404
 from django.shortcuts import redirect
 from django.shortcuts import render
@@ -29,7 +30,8 @@ from flags.services import (
     post_flagging_rules,
 )
 from flags.services import get_flags, post_flags, get_flag, put_flag
-from lite_content.lite_internal_frontend import strings
+from lite_content.lite_internal_frontend import strings, flags
+from lite_content.lite_internal_frontend.flags import UpdateFlag
 from lite_forms.components import Option, FiltersBar, Select, Checkboxes
 from lite_forms.generators import form_page
 from lite_forms.views import MultiFormView, SingleFormView
@@ -42,50 +44,55 @@ class FlagsList(TemplateView):
         data, _ = get_flags(request)
         user_data, _ = get_gov_user(request, str(request.user.lite_api_user_id))
 
-        status = kwargs.get("status", "active")
+        status = request.GET.get("status", "active")
 
         if status == "active":
             status = "no_deactivated"
-            flags = []
+            flags_data = []
             for flag in data["flags"]:
                 if flag["status"] == "Deactivated":
                     status = "active"
                 if flag["status"] == "Active":
-                    flags.append(flag)
-            data["flags"] = flags
+                    flags_data.append(flag)
+            data["flags"] = flags_data
+
+        filters = FiltersBar(
+            [
+                Checkboxes(
+                    name="status",
+                    options=[Option("deactivated", flags.FlagsList.INCLUDE_DEACTIVATED)],
+                    classes=["govuk-checkboxes--small"],
+                ),
+            ]
+        )
 
         context = {
             "data": data,
             "status": status,
-            "title": "Flags",
             "user_data": user_data,
+            "filters": filters,
         }
         return render(request, "flags/index.html", context)
 
 
-class AddFlag(TemplateView):
-    def get(self, request, **kwargs):
-        return form_page(request, add_flag_form())
+class AddFlag(SingleFormView):
+    def init(self, request, **kwargs):
+        self.form = add_flag_form()
+        self.action = post_flags
 
-    def post(self, request, **kwargs):
-        response, status_code = post_flags(request, request.POST)
-        if status_code != 201:
-            return form_page(request, add_flag_form(), data=request.POST, errors=response.get("errors"))
-
-        return redirect(reverse_lazy("flags:flags"))
+    def get_success_url(self):
+        messages.success(self.request, flags.FlagsList.SUCCESS_MESSAGE)
+        return reverse("flags:flags")
 
 
-class EditFlag(TemplateView):
-    def get(self, request, **kwargs):
-        data, _ = get_flag(request, str(kwargs["pk"]))
-        return form_page(request, edit_flag_form(), data=data["flag"])
-
-    def post(self, request, **kwargs):
-        response, status_code = put_flag(request, str(kwargs["pk"]), request.POST)
-        if status_code != 200:
-            return form_page(request, edit_flag_form(), data=request.POST, errors=response.get("errors"))
-
-        return redirect(reverse_lazy("flags:flags"))
+class EditFlag(SingleFormView):
+    def init(self, request, **kwargs):
+        self.object_pk = str(kwargs["pk"])
+        flag, _ = get_flag(request, self.object_pk)
+        self.form = edit_flag_form()
+        self.data = flag["flag"]
+        self.action = put_flag
+        self.success_url = reverse("flags:flags")
 
 
 class ViewFlag(TemplateView):
@@ -105,10 +112,10 @@ class ChangeFlagStatus(TemplateView):
             raise Http404
 
         if status == "deactivate":
-            description = strings.Flags.UpdateFlag.Status.DEACTIVATE_WARNING
+            description = UpdateFlag.Status.DEACTIVATE_WARNING
 
         if status == "reactivate":
-            description = strings.Flags.UpdateFlag.Status.REACTIVATE_WARNING
+            description = UpdateFlag.Status.REACTIVATE_WARNING
 
         context = {
             "title": "Are you sure you want to {} this flag?".format(status),
@@ -116,7 +123,7 @@ class ChangeFlagStatus(TemplateView):
             "user_id": str(kwargs["pk"]),
             "status": status,
         }
-        return render(request, "flags/change_status.html", context)
+        return render(request, "flags/change-status.html", context)
 
     def post(self, request, **kwargs):
         status = kwargs["status"]
@@ -269,7 +276,7 @@ class ManageFlagRules(TemplateView):
             "filters": filters,
             "params_str": convert_dict_to_query_params(params),
         }
-        return render(request, "flags/flagging_rules_list.html", context)
+        return render(request, "flags/flagging-rules-list.html", context)
 
 
 class CreateFlagRules(MultiFormView):

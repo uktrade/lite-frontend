@@ -3,69 +3,66 @@
 {% block back_link %}{% endblock %}
 
 {% block body %}
+	{% include 'includes/messages.html' %}
+
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
-			<h1 class="govuk-heading-l">{{ title }}</h1>
-			<p class="govuk-caption-m">
-				{% lcs 'Users.DESCRIPTION' %}
-			</p>
+			<h1 class="govuk-heading-l">
+				{% block title %}
+					{% lcs 'users.UsersPage.TITLE' %}
+				{% endblock %}
+			</h1>
 		</div>
 		<div class="lite-app-bar__controls">
 			<a id="button-manage-roles" href="{% url 'users:roles' %}" class="govuk-button govuk-button--secondary" draggable="false" role="button">
-				{% lcs 'users.ManagePage.MANAGE_ROLES' %}
+				{% lcs 'users.UsersPage.MANAGE_ROLES_BUTTON' %}
 			</a>
-			<a id="button-invite-user" href="{% url 'users:add' %}" class="govuk-button" draggable="false" role="button">
-				{% lcs 'Users.INVITE' %}
+			<a id="button-add-user" href="{% url 'users:add' %}" class="govuk-button" draggable="false" role="button">
+				{% lcs 'users.UsersPage.INVITE_BUTTON' %}
 			</a>
 		</div>
 	</div>
 
 	{% include "filters.html" %}
 
-    <table class="govuk-table">
-        <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
-                <th class="govuk-table__header" scope="col">Name</th>
-                <th class="govuk-table__header" scope="col">Email</th>
-                <th class="govuk-table__header" scope="col">Team</th>
-                <th class="govuk-table__header" scope="col">Role</th>
-                <th class="govuk-table__header" scope="col">Status</th>
-                <th class="govuk-table__header" scope="col"></th>
-            </tr>
-        </thead>
-        <tbody class="govuk-table__body">
-            {% for user in data.results %}
-                <tr class="govuk-table__row" id="row-{{ forloop.counter }}">
-                    <td class="govuk-table__cell">
+	<table class="govuk-table">
+		<thead class="govuk-table__head">
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header" scope="col">{% lcs 'users.UsersPage.Table.NAME' %}</th>
+				<th class="govuk-table__header" scope="col">{% lcs 'users.UsersPage.Table.EMAIL' %}</th>
+				<th class="govuk-table__header" scope="col">{% lcs 'users.UsersPage.Table.TEAM' %}</th>
+				<th class="govuk-table__header" scope="col">{% lcs 'users.UsersPage.Table.ROLE' %}</th>
+				<th class="govuk-table__header" scope="col">{% lcs 'users.UsersPage.Table.STATUS' %}</th>
+				<th class="govuk-table__header" scope="col">{% lcs 'users.UsersPage.Table.ACTIONS' %}</th>
+			</tr>
+		</thead>
+		<tbody class="govuk-table__body">
+			{% for user in data.results %}
+				<tr class="govuk-table__row" id="row-{{ forloop.counter }}">
+					<td class="govuk-table__header" scope="row">
 						{% if user.first_name %}
-							<a href="{% url 'users:user' user.id %}" class="govuk-link govuk-link--no-visited-state">
-								{{ user.first_name }} {{ user.last_name }}
-							</a>
+							{{ user.first_name }} {{ user.last_name }}
 						{% else %}
-							<strong class="govuk-tag govuk-phase-banner__content__tag ">
-								{% lcs 'users.ManagePage.PENDING' %}
+							<strong class="govuk-tag govuk-tag--blue">
+								{% lcs 'users.UsersPage.Table.PENDING' %}
 							</strong>
 						{% endif %}
-                    </td>
-                    <td class="govuk-table__cell" id="{{ user.email }}">{{ user.email }}</td>
-                    <td class="govuk-table__cell">
-                        <a href="{% url 'teams:team' user.team.id %}" class="govuk-link govuk-link--no-visited-state">
-                            {{ user.team.name }}
-                        </a>
-                    </td>
-                    <td class="govuk-table__cell">{{ user.role.name }}</td>
-                    <td class="govuk-table__cell">{{ user.status }}</td>
-                    <td class="govuk-table__cell">
-                        {% if super_user or not user.role.name == 'Super User' %}
-                            <a href="{% url 'users:edit' user.id %}" class="govuk-link govuk-link--no-visited-state" id="edit-{{ user.email }}">
-                                {% lcs 'USERS_LIST_PAGE_EDIT' %}
-                            </a>
-						{% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+					</td>
+					<td class="govuk-table__cell" id="{{ user.email }}">{{ user.email }}</td>
+					<td class="govuk-table__cell">
+						<a href="{% url 'teams:team' user.team.id %}" class="govuk-link govuk-link--no-visited-state">
+							{{ user.team.name }}
+						</a>
+					</td>
+					<td class="govuk-table__cell">{{ user.role.name }}</td>
+					<td class="govuk-table__cell">{{ user.status }}</td>
+					<td class="govuk-table__cell">
+						<a id="link-{{ user.email }}" href="{% url 'users:user' user.id %}" class="govuk-link govuk-link--no-visited-state">{% lcs 'users.UsersPage.Table.VIEW' %}</a>
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
 
 	{% include "includes/pagination.html" %}
 {% endblock %}

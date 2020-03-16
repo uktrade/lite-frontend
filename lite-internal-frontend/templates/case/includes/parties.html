@@ -1,146 +1,146 @@
 <table class="govuk-table" id="table-entities">
-    <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header">
-                <button id="link-select-all-destinations" type="button" name="button" class="lite-button-checkbox" title="{% lcs 'cases.ApplicationPage.Parties.SELECT_ALL' %}"></button>
-            </th>
-            <th scope="col" class="govuk-table__header"></th>
-            <th scope="col" class="govuk-table__header govuk-!-width-one-third">{% lcs 'cases.ApplicationPage.Parties.NAME' %}</th>
+	<thead class="govuk-table__head">
+		<tr class="govuk-table__row">
+			<th scope="col" class="govuk-table__header">
+				<button id="link-select-all-destinations" type="button" name="button" class="lite-button-checkbox" title="{% lcs 'cases.ApplicationPage.Parties.SELECT_ALL' %}"></button>
+			</th>
+			<th scope="col" class="govuk-table__header"></th>
+			<th scope="col" class="govuk-table__header govuk-!-width-one-third">{% lcs 'cases.ApplicationPage.Parties.NAME' %}</th>
 			{% if case.application.case_type.sub_type.key == "f680_clearance" %}
 				<th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs 'cases.ApplicationPage.Parties.CLEARANCE_LEVEL' %}</th>
 			{% endif %}
 			<th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs 'cases.ApplicationPage.Parties.DESCRIPTORS' %}</th>
-            <th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs 'cases.ApplicationPage.Parties.ADDRESS' %}</th>
-            <th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs 'cases.ApplicationPage.Parties.TYPE' %}</th>
-            <th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs 'cases.ApplicationPage.Parties.WEBSITE' %}</th>
-            <th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs 'cases.ApplicationPage.Parties.DOCUMENT' %}</th>
-            <th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs 'cases.ApplicationPage.Destinations.FLAGS_TABLE_HEADER' %}</th>
-        </tr>
-    </thead>
-    <tbody class="govuk-table__body">
-        <tr class="govuk-table__row">
-            <td></td>
-            <th scope="row" class="govuk-table__header">{% lcs 'cases.StandardApplication.LICENSEE' %}</th>
-            <td class="govuk-table__cell">{{ case.application.organisation.name }}</td>
+			<th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs 'cases.ApplicationPage.Parties.ADDRESS' %}</th>
+			<th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs 'cases.ApplicationPage.Parties.TYPE' %}</th>
+			<th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs 'cases.ApplicationPage.Parties.WEBSITE' %}</th>
+			<th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs 'cases.ApplicationPage.Parties.DOCUMENT' %}</th>
+			<th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs 'cases.ApplicationPage.Destinations.FLAGS_TABLE_HEADER' %}</th>
+		</tr>
+	</thead>
+	<tbody class="govuk-table__body">
+		<tr class="govuk-table__row">
+			<td></td>
+			<th scope="row" class="govuk-table__header">{% lcs 'cases.StandardApplication.LICENSEE' %}</th>
+			<td class="govuk-table__cell">{{ case.application.organisation.name }}</td>
 			{% if case.application.case_type.sub_type.key == "f680_clearance" %}
 				<td class="govuk-table__cell">{{ none|default_na }}</td>
 			{% endif %}
-            <td class="govuk-table__cell">{{ none|default_na }}</td>
+			<td class="govuk-table__cell">{{ none|default_na }}</td>
 			<td class="govuk-table__cell">{{ case.application.organisation.primary_site|get_address }}</td>
-            <td class="govuk-table__cell">{{ none|default_na }}</td>
-            <td class="govuk-table__cell">{{ none|default_na }}</td>
-            <td class="govuk-table__cell">{{ none|default_na }}</td>
-            <td class="govuk-table__cell">{{ none|default_na }}</td>
-        </tr>
-        <tr class="govuk-table__row">
-            {% if case.application.end_user %}
-                <td class="govuk-table__cell govuk-table__cell--checkbox">
-                    <input class="govuk-checkboxes__input" type="checkbox" name="destinations" value="{{ case.application.end_user.id }}" id="{{ case.application.end_user.id }}">
-                    <label class="govuk-label govuk-checkboxes__label" for="{{ case.application.end_user.id }}"></label>
-                </td>
-                <th scope="row" class="govuk-table__header">{% lcs 'cases.StandardApplication.END_USER' %}</th>
-                <td class="govuk-table__cell">{{ case.application.end_user.name }}</td>
+			<td class="govuk-table__cell">{{ none|default_na }}</td>
+			<td class="govuk-table__cell">{{ none|default_na }}</td>
+			<td class="govuk-table__cell">{{ none|default_na }}</td>
+			<td class="govuk-table__cell">{{ none|default_na }}</td>
+		</tr>
+		<tr class="govuk-table__row">
+			{% if case.application.end_user %}
+				<td class="govuk-table__cell govuk-table__cell--checkbox">
+					<input class="govuk-checkboxes__input" type="checkbox" name="destinations" value="{{ case.application.end_user.id }}" id="{{ case.application.end_user.id }}">
+					<label class="govuk-label govuk-checkboxes__label" for="{{ case.application.end_user.id }}"></label>
+				</td>
+				<th scope="row" class="govuk-table__header">{% lcs 'cases.StandardApplication.END_USER' %}</th>
+				<td class="govuk-table__cell">{{ case.application.end_user.name }}</td>
 				{% if case.application.case_type.sub_type.key == "f680_clearance" %}
 					<td class="govuk-table__cell">{{ case.application.end_user.clearance_level.value|default_na }}</td>
 				{% endif %}
 				<td class="govuk-table__cell">{{ case.application.end_user.descriptors|default_na }}</td>
-                <td class="govuk-table__cell">{{ case.application.end_user|get_address }}</td>
-                <td class="govuk-table__cell">{{ case.application.end_user.sub_type.value }}</td>
-                <td class="govuk-table__cell">{{ case.application.end_user.website|linkify }}</td>
-                <td id="end_user_document" class="govuk-table__cell">
-                    <a href="{% url 'cases:document' case.id case.application.end_user.document.id %}">
-                        {{ case.application.end_user.document.name }}
-                    </a>
-                </td>
-                <td class="govuk-table__cell">
-                    {% for flag in case.application.end_user.flags %}
-                        {{ flag.name }}<br>
-                    {% endfor %}
-                </td>
-            {% endif %}
-        </tr>
-        <tr class="govuk-table__row">
-            {% if case.application.consignee %}
-                <td class="govuk-table__cell govuk-table__cell--checkbox">
-                    <input class="govuk-checkboxes__input" type="checkbox" name="destinations" value="{{ case.application.consignee.id }}" id="{{ case.application.consignee.id }}">
-                    <label class="govuk-label govuk-checkboxes__label" for="{{ case.application.consignee.id }}"></label>
-                </td>
-                <th scope="row" class="govuk-table__header">{% lcs 'cases.StandardApplication.CONSIGNEE' %}</th>
-                <td class="govuk-table__cell">{{ case.application.consignee.name }}</td>
+				<td class="govuk-table__cell">{{ case.application.end_user|get_address }}</td>
+				<td class="govuk-table__cell">{{ case.application.end_user.sub_type.value }}</td>
+				<td class="govuk-table__cell">{{ case.application.end_user.website|linkify }}</td>
+				<td id="end_user_document" class="govuk-table__cell">
+					<a href="{% url 'cases:document' case.id case.application.end_user.document.id %}">
+						{{ case.application.end_user.document.name }}
+					</a>
+				</td>
+				<td class="govuk-table__cell">
+					{% for flag in case.application.end_user.flags %}
+						{{ flag.name }}<br>
+					{% endfor %}
+				</td>
+			{% endif %}
+		</tr>
+		<tr class="govuk-table__row">
+			{% if case.application.consignee %}
+				<td class="govuk-table__cell govuk-table__cell--checkbox">
+					<input class="govuk-checkboxes__input" type="checkbox" name="destinations" value="{{ case.application.consignee.id }}" id="{{ case.application.consignee.id }}">
+					<label class="govuk-label govuk-checkboxes__label" for="{{ case.application.consignee.id }}"></label>
+				</td>
+				<th scope="row" class="govuk-table__header">{% lcs 'cases.StandardApplication.CONSIGNEE' %}</th>
+				<td class="govuk-table__cell">{{ case.application.consignee.name }}</td>
 				{% if case.application.case_type.sub_type.key == "f680_clearance" %}
 					<td class="govuk-table__cell">{{ case.application.consignee.clearance_level.value|default_na }}</td>
 				{% endif %}
 				<td class="govuk-table__cell">{{ case.application.consignee.descriptors|default_na }}</td>
-                <td class="govuk-table__cell">{{ case.application.consignee|get_address }}</td>
-                <td class="govuk-table__cell">{{ case.application.consignee.sub_type.value }}</td>
-                <td class="govuk-table__cell">{{ case.application.consignee.website|linkify }}</td>
-                <td class="govuk-table__cell">
-                    <a href="{% url 'cases:document' case.id case.application.consignee.document.id %}">
-                        {{ case.application.consignee.document.name }}
-                    </a>
-                </td>
-                <td class="govuk-table__cell">
-                    {% for flag in case.application.consignee.flags %}
-                        {{ flag.name }}<br>
-                    {% endfor %}
-                </td>
-            {% endif %}
-        </tr>
-        {% for ultimate_end_user in case.application.ultimate_end_users %}
-            <tr class="govuk-table__row">
-                <td class="govuk-table__cell govuk-table__cell--checkbox">
-                    <input class="govuk-checkboxes__input" type="checkbox" name="destinations" value="{{ ultimate_end_user.id }}" id="{{ ultimate_end_user.id }}">
-                    <label class="govuk-label govuk-checkboxes__label" for="{{ ultimate_end_user.id }}"></label>
-                </td>
-                <th scope="row" class="govuk-table__header">{% lcs 'cases.StandardApplication.ULTIMATE_END_USER' %}</th>
-                <td class="govuk-table__cell">{{ ultimate_end_user.name }}</td>
+				<td class="govuk-table__cell">{{ case.application.consignee|get_address }}</td>
+				<td class="govuk-table__cell">{{ case.application.consignee.sub_type.value }}</td>
+				<td class="govuk-table__cell">{{ case.application.consignee.website|linkify }}</td>
+				<td class="govuk-table__cell">
+					<a href="{% url 'cases:document' case.id case.application.consignee.document.id %}">
+						{{ case.application.consignee.document.name }}
+					</a>
+				</td>
+				<td class="govuk-table__cell">
+					{% for flag in case.application.consignee.flags %}
+						{{ flag.name }}<br>
+					{% endfor %}
+				</td>
+			{% endif %}
+		</tr>
+		{% for ultimate_end_user in case.application.ultimate_end_users %}
+			<tr class="govuk-table__row">
+				<td class="govuk-table__cell govuk-table__cell--checkbox">
+					<input class="govuk-checkboxes__input" type="checkbox" name="destinations" value="{{ ultimate_end_user.id }}" id="{{ ultimate_end_user.id }}">
+					<label class="govuk-label govuk-checkboxes__label" for="{{ ultimate_end_user.id }}"></label>
+				</td>
+				<th scope="row" class="govuk-table__header">{% lcs 'cases.StandardApplication.ULTIMATE_END_USER' %}</th>
+				<td class="govuk-table__cell">{{ ultimate_end_user.name }}</td>
 				{% if case.application.case_type.sub_type.key == "f680_clearance" %}
 					<td class="govuk-table__cell">{{ ultimate_end_user.clearance_level.value|default_na }}</td>
 				{% endif %}
 				<td class="govuk-table__cell">{{ ultimate_end_user.descriptors|default_na }}</td>
-                <td class="govuk-table__cell">{{ ultimate_end_user|get_address }}</td>
-                <td class="govuk-table__cell">{{ ultimate_end_user.sub_type.value }}</td>
-                <td class="govuk-table__cell">{{ ultimate_end_user.website|linkify }}</td>
-                <td class="govuk-table__cell">
-                    <a href="{% url 'cases:document' case.id ultimate_end_user.document.id %}">
-                        {{ ultimate_end_user.document.name }}
-                    </a>
-                </td>
-                <td class="govuk-table__cell">
-                    {% for flag in ultimate_end_user.flags %}
-                        {{ flag.name }}<br>
-                    {% endfor %}
-                </td>
-            </tr>
-        {% endfor %}
-        {% for party in case.application.third_parties %}
-            <tr class="govuk-table__row">
-                <td class="govuk-table__cell govuk-table__cell--checkbox">
-                    <input class="govuk-checkboxes__input" type="checkbox" name="destinations" value="{{ party.id }}" id="{{ party.id }}">
-                    <label class="govuk-label govuk-checkboxes__label" for="{{ party.id }}"></label>
-                </td>
-                <th scope="row" class="govuk-table__header">{% lcs 'cases.StandardApplication.THIRD_PARTY' %}</th>
-                <td class="govuk-table__cell">{{ party.name }}</td>
+				<td class="govuk-table__cell">{{ ultimate_end_user|get_address }}</td>
+				<td class="govuk-table__cell">{{ ultimate_end_user.sub_type.value }}</td>
+				<td class="govuk-table__cell">{{ ultimate_end_user.website|linkify }}</td>
+				<td class="govuk-table__cell">
+					<a href="{% url 'cases:document' case.id ultimate_end_user.document.id %}">
+						{{ ultimate_end_user.document.name }}
+					</a>
+				</td>
+				<td class="govuk-table__cell">
+					{% for flag in ultimate_end_user.flags %}
+						{{ flag.name }}<br>
+					{% endfor %}
+				</td>
+			</tr>
+		{% endfor %}
+		{% for party in case.application.third_parties %}
+			<tr class="govuk-table__row">
+				<td class="govuk-table__cell govuk-table__cell--checkbox">
+					<input class="govuk-checkboxes__input" type="checkbox" name="destinations" value="{{ party.id }}" id="{{ party.id }}">
+					<label class="govuk-label govuk-checkboxes__label" for="{{ party.id }}"></label>
+				</td>
+				<th scope="row" class="govuk-table__header">{% lcs 'cases.StandardApplication.THIRD_PARTY' %}</th>
+				<td class="govuk-table__cell">{{ party.name }}</td>
 				{% if case.application.case_type.sub_type.key == "f680_clearance" %}
 					<td class="govuk-table__cell">{{ party.clearance_level.value|default_na }}</td>
 				{% endif %}
 				<td class="govuk-table__cell">{{ party.descriptors|default_na }}</td>
-                <td class="govuk-table__cell">{{ party|get_address }}</td>
-                <td class="govuk-table__cell">{{ party.sub_type.value }} ({% lcs 'cases.ApplicationPage.ThirdParty.ROLE' %}{{ party.role.value  }})</td>
-                <td class="govuk-table__cell">{{ party.website|linkify }}</td>
-                <td class="govuk-table__cell">
+				<td class="govuk-table__cell">{{ party|get_address }}</td>
+				<td class="govuk-table__cell">{{ party.sub_type.value }} ({% lcs 'cases.ApplicationPage.ThirdParty.ROLE' %}{{ party.role.value  }})</td>
+				<td class="govuk-table__cell">{{ party.website|linkify }}</td>
+				<td class="govuk-table__cell">
 					{% if party.document %}
 						<a href="{% url 'cases:document' case.id party.document.id %}">
 							{{ party.document.name }}
 						</a>
 					{% endif %}
-                </td>
-                <td class="govuk-table__cell">
-                    {% for flag in party.flags %}
-                        {{ flag.name }}<br>
-                    {% endfor %}
-                </td>
-            </tr>
-        {% endfor %}
-    </tbody>
+				</td>
+				<td class="govuk-table__cell">
+					{% for flag in party.flags %}
+						{{ flag.name }}<br>
+					{% endfor %}
+				</td>
+			</tr>
+		{% endfor %}
+	</tbody>
 </table>

@@ -14,19 +14,18 @@
 	</h1>
 
 	<form method="post">
-
 		{% csrf_token %}
 
 		<!-- Tab bar -->
-		<div style="display: grid; grid-template-columns: 1fr auto; grid-gap: 30px;">
+		<div>
 			<div class="lite-tabs--fade">
 				<div class="lite-tabs">
 					<a href="{% url 'cases:user_advice_view' case.id %}" class="lite-tabs__tab" id="user_advice">{% lcs 'cases.ViewAdvicePage.USER_ADVICE' %}</a>
-                    <a href="{% url 'cases:team_advice_view' case.id %}" class="lite-tabs__tab" id="team_advice">{% lcs 'cases.ViewAdvicePage.TEAM_ADVICE' %}</a>
-                    <a href="{% url 'cases:final_advice_view' case.id %}" class="lite-tabs__tab lite-tabs__tab--selected" id="final_advice">{% lcs 'cases.ViewAdvicePage.FINAL_ADVICE' %}</a>
+					<a href="{% url 'cases:team_advice_view' case.id %}" class="lite-tabs__tab" id="team_advice">{% lcs 'cases.ViewAdvicePage.TEAM_ADVICE' %}</a>
+					<a href="{% url 'cases:final_advice_view' case.id %}" class="lite-tabs__tab lite-tabs__tab--selected" id="final_advice">{% lcs 'cases.ViewAdvicePage.FINAL_ADVICE' %}</a>
 				</div>
 			</div>
-            {% if not status_is_terminal and permitted_to_give_final_advice %}
+			{% if not status_is_terminal and permitted_to_give_final_advice %}
 				{% if case.has_advice.team %}
 					{% if all_advice|length %}
 						<div>
@@ -54,22 +53,20 @@
 						</a>
 					{% endif %}
 				{% endif %}
-            {% endif %}
+			{% endif %}
 		</div>
 
 		<!-- Conditional error wrapper -->
-        {% if not case.has_advice.team %}
-            {% include 'case/views/advice-view.html' with show_advice=True %}
-        {% elif case.application.status == 'finalised' %}
-            {% include 'case/views/advice-view.html' with show_advice=True %}
-        {% elif all_advice|length and permitted_to_give_final_advice %}
-            {% include 'case/views/advice-view.html' with show_checkboxes=True show_advice=True %}
-        {% else %}
-            {% include 'case/views/advice-view.html' with show_advice=True %}
-        {% endif %}
-
+		{% if not case.has_advice.team %}
+			{% include 'case/views/advice-view.html' with show_advice=True %}
+		{% elif case.application.status == 'finalised' %}
+			{% include 'case/views/advice-view.html' with show_advice=True %}
+		{% elif all_advice|length and permitted_to_give_final_advice %}
+			{% include 'case/views/advice-view.html' with show_checkboxes=True show_advice=True %}
+		{% else %}
+			{% include 'case/views/advice-view.html' with show_advice=True %}
+		{% endif %}
 	</form>
-
 {% endblock %}
 
 {% block javascript %}

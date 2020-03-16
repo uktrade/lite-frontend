@@ -14,19 +14,23 @@ def add_role(request: HttpRequest):
         questions=[
             TextInput(title=AddRoleForm.ROLE_NAME, name="name"),
             Checkboxes(
-                name="permissions",
+                name="permissions[]",
                 options=get_permissions(request, True),
                 title=AddRoleForm.PERMISSION_CHECKBOXES_TITLE,
                 description=AddRoleForm.PERMISSION_CHECKBOXES_DESCRIPTION,
+                optional=True,
+                classes=["govuk-checkboxes--small"],
             ),
             Checkboxes(
-                name="statuses",
+                name="statuses[]",
                 options=get_statuses(request, True),
                 title=AddRoleForm.STATUSES_CHECKBOXES_TITLE,
                 description=AddRoleForm.STATUSES_CHECKBOXES_DESCRIPTION,
+                optional=True,
+                classes=["govuk-checkboxes--small"],
             ),
         ],
-        back_link=BackLink(AddRoleForm.BACK_TO_ROLES, reverse_lazy("users:roles")),
+        back_link=BackLink(AddRoleForm.BACK_LINK, reverse_lazy("users:roles")),
         default_button_name=AddRoleForm.FORM_CREATE,
     )
 
@@ -38,18 +42,22 @@ def edit_role(request: HttpRequest):
         questions=[
             TextInput(title=EditRoleForm.ROLE_NAME, name="name"),
             Checkboxes(
-                name="permissions",
+                name="permissions[]",
                 options=get_permissions(request, True),
                 title=EditRoleForm.PERMISSION_CHECKBOXES_TITLE,
                 description=EditRoleForm.PERMISSION_CHECKBOXES_DESCRIPTION,
+                optional=True,
+                classes=["govuk-checkboxes--small"],
             ),
             Checkboxes(
-                name="statuses",
+                name="statuses[]",
                 options=get_statuses(request, True),
                 title=AddRoleForm.STATUSES_CHECKBOXES_TITLE,
                 description=AddRoleForm.STATUSES_CHECKBOXES_DESCRIPTION,
+                optional=True,
+                classes=["govuk-checkboxes--small"],
             ),
         ],
-        back_link=BackLink(EditRoleForm.BACK_TO_ROLES, reverse_lazy("users:roles")),
+        back_link=BackLink(EditRoleForm.BACK_LINK, reverse_lazy("users:roles")),
         default_button_name=EditRoleForm.FORM_CREATE,
     )

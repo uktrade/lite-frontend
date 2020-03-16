@@ -4,7 +4,7 @@
 	<div class="app-letter-preview__container">
 		<div class="lite-app-bar">
 			<div class="lite-app-bar__content">
-				<h2 class="govuk-heading-l">{% block title %}{% lcs 'LetterTemplates.Preview.TITLE' %}{% endblock %}</h2>
+				<h1 class="govuk-heading-l">{% block title %}{% lcs 'LetterTemplates.Preview.TITLE' %}{% endblock %}</h1>
 			</div>
 			<div class="lite-app-bar__controls">
 				<form action="{% url 'letter_templates:create' %}" method="post">

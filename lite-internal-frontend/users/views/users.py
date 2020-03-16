@@ -1,13 +1,15 @@
-from core.helpers import convert_dict_to_query_params
-from lite_content.lite_internal_frontend import strings
+from django.contrib import messages
 from django.http import Http404
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView
 
 from conf.constants import SUPER_USER_ROLE_ID, UserStatuses
+from core.helpers import convert_dict_to_query_params
+from lite_content.lite_internal_frontend import strings
+from lite_content.lite_internal_frontend.users import UsersPage
 from lite_forms.components import FiltersBar, Select, Option
-from lite_forms.generators import form_page
+from lite_forms.views import SingleFormView
 from users.forms.users import add_user_form, edit_user_form
 from users.services import (
     get_gov_users,
@@ -37,28 +39,23 @@ class UsersList(TemplateView):
 
         context = {
             "data": data,
-            "title": "Users",
             "super_user": super_user,
             "status": status,
             "page": params.pop("page"),
             "params_str": convert_dict_to_query_params(params),
             "filters": filters,
         }
-
         return render(request, "users/index.html", context)
 
 
-class AddUser(TemplateView):
-    def get(self, request, **kwargs):
-        return form_page(request, add_user_form(request))
+class AddUser(SingleFormView):
+    def init(self, request, **kwargs):
+        self.form = add_user_form(request)
+        self.action = post_gov_users
 
-    def post(self, request, **kwargs):
-        response, status_code = post_gov_users(request, request.POST)
-
-        if status_code != 201:
-            return form_page(request, add_user_form(request), data=request.POST, errors=response.get("errors"))
-
-        return redirect(reverse_lazy("users:users"))
+    def get_success_url(self):
+        messages.success(self.request, UsersPage.INVITE_SUCCESSFUL_BANNER)
+        return reverse("users:users")
 
 
 class ViewUser(TemplateView):
@@ -67,12 +64,14 @@ class ViewUser(TemplateView):
         request_user, _ = get_gov_user(request, str(request.user.lite_api_user_id))
         super_user = is_super_user(request_user)
         can_deactivate = not is_super_user(data)
+        can_edit_role = data["user"]["id"] != request.user.lite_api_user_id
 
         context = {
             "data": data,
             "super_user": super_user,
             "super_user_role_id": SUPER_USER_ROLE_ID,
             "can_deactivate": can_deactivate,
+            "can_edit_role": can_edit_role,
         }
         return render(request, "users/profile.html", context)
 
@@ -83,26 +82,16 @@ class ViewProfile(TemplateView):
         return redirect(reverse_lazy("users:user", kwargs={"pk": user.id}))
 
 
-class EditUser(TemplateView):
-    def get(self, request, **kwargs):
-        user, _ = get_gov_user(request, str(kwargs["pk"]))
-        can_edit_role = user["user"]["id"] != request.user.lite_api_user_id
-        return form_page(request, edit_user_form(request, str(kwargs["pk"]), can_edit_role), data=user["user"])
-
-    def post(self, request, **kwargs):
-        response, status_code = put_gov_user(request, str(kwargs["pk"]), request.POST)
-        user, _ = get_gov_user(request, str(kwargs["pk"]))
-        can_edit_role = user["user"]["id"] != request.user.lite_api_user_id
-
-        if status_code != 200:
-            return form_page(
-                request,
-                edit_user_form(request, str(kwargs["pk"]), can_edit_role),
-                data=request.POST,
-                errors=response.get("errors"),
-            )
-
-        return redirect(reverse_lazy("users:users"))
+class EditUser(SingleFormView):
+    def init(self, request, **kwargs):
+        self.object_pk = kwargs["pk"]
+        user, _ = get_gov_user(request, self.object_pk)
+        user = user["user"]
+        can_edit_role = user["id"] != request.user.lite_api_user_id
+        self.form = edit_user_form(request, user, can_edit_role)
+        self.data = user
+        self.action = put_gov_user
+        self.success_url = reverse("users:user", kwargs={"pk": self.object_pk})
 
 
 class ChangeUserStatus(TemplateView):
@@ -125,7 +114,7 @@ class ChangeUserStatus(TemplateView):
             "user_id": str(kwargs["pk"]),
             "status": status,
         }
-        return render(request, "users/change_status.html", context)
+        return render(request, "users/change-status.html", context)
 
     def post(self, request, **kwargs):
         status = kwargs["status"]

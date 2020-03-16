@@ -6,18 +6,18 @@
 
 {% block body %}
 	<div class="lite-app-bar">
-        <div class="lite-app-bar__content">
-            <h1 class="govuk-heading-l">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">
 				{% block title %}
 					{% lcs 'cases.CaseDocumentsPage.ATTACH' %}
 				{% endblock %}
 			</h1>
-        </div>
+		</div>
 		<div class="lite-app-bar__controls">
 			<a id="button-attach-document" role="button" draggable="false" class="govuk-button {% if documents %}govuk-button--secondary{% endif %}" href="{% url 'cases:attach_documents' case.id %}">
 				{% lcs 'cases.CaseDocumentsPage.ATTACH' %}
 			</a>
-            <a role="button" draggable="false" class="govuk-button {% if documents %}govuk-button--secondary{% endif %}" href="{% url 'cases:generate_document' case.id %}">
+			<a role="button" draggable="false" class="govuk-button {% if documents %}govuk-button--secondary{% endif %}" href="{% url 'cases:generate_document' case.id %}">
 				{% lcs 'cases.CaseDocumentsPage.GENERATE' %}
 			</a>
 		</div>
@@ -29,30 +29,30 @@
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
 					<th scope="col" class="govuk-table__header">{% lcs 'cases.AdditionalDocumentsPage.Table.NAME_COLUMN' %}</th>
-                    <th scope="col" class="govuk-table__header">{% lcs 'cases.AdditionalDocumentsPage.Table.DOCUMENT_TYPE_COLUMN' %}</th>
+					<th scope="col" class="govuk-table__header">{% lcs 'cases.AdditionalDocumentsPage.Table.DOCUMENT_TYPE_COLUMN' %}</th>
 					<th scope="col" class="govuk-table__header">{% lcs 'cases.AdditionalDocumentsPage.Table.DESCRIPTION_COLUMN' %}</th>
 					<th scope="col" class="govuk-table__header">{% lcs 'cases.AdditionalDocumentsPage.Table.USER_COLUMN' %}</th>
-                    <th scope="col" class="govuk-table__header">{% lcs 'cases.AdditionalDocumentsPage.Table.DATE_COLUMN' %}</th>
+					<th scope="col" class="govuk-table__header">{% lcs 'cases.AdditionalDocumentsPage.Table.DATE_COLUMN' %}</th>
 					<th scope="col" class="govuk-table__header"></th>
-                    <th scope="col" class="govuk-table__header"></th>
+					<th scope="col" class="govuk-table__header"></th>
 				</tr>
 			</thead>
 			<tbody class="govuk-table__body">
 				{% for document in case_documents %}
 					<tr class="govuk-table__row">
 						<th scope="row" class="govuk-table__header">{{ document.name }}</th>
-                        <td class="govuk-table__cell">{{ document.type.value }}</td>
+						<td class="govuk-table__cell">{{ document.type.value }}</td>
 						<td class="govuk-table__cell">{{ document.description }}</td>
 						<td class="govuk-table__cell">{{ document.user.first_name }} {{ document.user.last_name }}</td>
-                        <td class="govuk-table__cell">{{ document.created_at|str_date }}</td>
-                        <td class="govuk-table__cell">
-                            {% if document.type.key == generated_document_key %}
-                                <form method="get" action="{% url "cases:generate_document_regenerate" case.id document.id %}">
-                                    {% csrf_token %}
-                                    <button id="regenerate" type="submit" class="lite-button--link">{% lcs 'cases.AdditionalDocumentsPage.Document.REGENERATE_LINK' %}</button>
-                                </form>
-                            {% endif %}
-                        </td>
+						<td class="govuk-table__cell">{{ document.created_at|str_date }}</td>
+						<td class="govuk-table__cell">
+							{% if document.type.key == generated_document_key %}
+								<form method="get" action="{% url "cases:generate_document_regenerate" case.id document.id %}">
+									{% csrf_token %}
+									<button id="regenerate" type="submit" class="lite-button--link">{% lcs 'cases.AdditionalDocumentsPage.Document.REGENERATE_LINK' %}</button>
+								</form>
+							{% endif %}
+						</td>
 						<td class="govuk-table__cell">
 							{% if document.safe == True %}
 								<a id="link-download" class="govuk-link lite-link--icon govuk-link--no-visited-state" href="{% url 'cases:document' case.id document.metadata_id %}">

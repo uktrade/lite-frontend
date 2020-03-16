@@ -13,7 +13,7 @@ class LetterTemplatesList(TemplateView):
         params = {"page": int(request.GET.get("page", 1))}
         data, _ = get_letter_templates(request, convert_dict_to_query_params(params))
         context = {"data": data, "page": params.pop("page")}
-        return render(request, "letter_templates/letter_templates.html", context)
+        return render(request, "letter-templates/letter-templates.html", context)
 
 
 class LetterTemplateDetail(TemplateView):
@@ -26,4 +26,4 @@ class LetterTemplateDetail(TemplateView):
             "preview": response["preview"],
             "activity": response.get("activity", []),
         }
-        return render(request, "letter_templates/letter_template.html", context)
+        return render(request, "letter-templates/letter-template.html", context)

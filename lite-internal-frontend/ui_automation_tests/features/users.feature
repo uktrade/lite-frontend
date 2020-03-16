@@ -28,4 +28,4 @@ Feature: I want to test users
     When I go to users
     And I add a new user
     And I edit new user
-    Then I see new user
+    Then the user's profile is updated

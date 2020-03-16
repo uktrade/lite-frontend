@@ -50,15 +50,15 @@
 					</div>
 					{% if deactivated_picklist_items %}
 						<div>
-							<h4 class="govuk-heading-s" style="{% if active_picklist_items %}margin-top: 60px;{% endif %} margin-bottom: 15px;">Deactivated</h4>
-							<hr class="lite-horizontal-separator" style="margin-top: 0;">
+							<h4 class="govuk-heading-s">Deactivated</h4>
+							<hr class="lite-horizontal-separator">
 							{% for picklist_item in deactivated_picklist_items %}
 								{% include 'includes/picklist-item.html' %}
 							{% endfor %}
 						</div>
 					{% endif %}
 				{% else %}
-					<p class="govuk-caption-l" style="margin-top: 10px;"></p>
+					<p class="govuk-caption-l"></p>
 					{% include "includes/information-text.html" with text="There aren't any items in this picklist" %}
 				{% endif %}
 			</div>

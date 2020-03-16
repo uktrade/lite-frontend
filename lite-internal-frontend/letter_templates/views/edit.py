@@ -73,7 +73,7 @@ class EditParagraphs(TemplateView):
         letter_paragraphs = self.sort_letter_paragraphs(letter_paragraphs, letter_template["letter_paragraphs"])
 
         context = {"letter_template": letter_template, "letter_paragraphs": letter_paragraphs}
-        return render(request, "letter_templates/edit_letter_paragraphs.html", context)
+        return render(request, "letter-templates/edit-letter-paragraphs.html", context)
 
     @staticmethod
     def sort_letter_paragraphs(paragraphs, ids):
@@ -92,7 +92,7 @@ class EditParagraphs(TemplateView):
             ],
             "existing_letter_paragraphs": existing_paragraphs,
         }
-        return render(request, "letter_templates/add_letter_paragraphs.html", context)
+        return render(request, "letter-templates/add-letter-paragraphs.html", context)
 
     def post(self, request, **kwargs):
         letter_template_id = str(kwargs["pk"])

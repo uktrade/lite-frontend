@@ -18,56 +18,56 @@
 		{% csrf_token %}
 
 		<!-- Tab bar -->
-		<div style="display: grid; grid-template-columns: 1fr auto; grid-gap: 30px;">
+		<div>
 			<div class="lite-tabs--fade">
 				<div class="lite-tabs">
-                    <a href="{% url 'cases:user_advice_view' case.id %}" class="lite-tabs__tab" id="user_advice">{% lcs 'cases.ViewAdvicePage.USER_ADVICE' %}</a>
+					<a href="{% url 'cases:user_advice_view' case.id %}" class="lite-tabs__tab" id="user_advice">{% lcs 'cases.ViewAdvicePage.USER_ADVICE' %}</a>
 					<a href="{% url 'cases:team_advice_view' case.id %}" class="lite-tabs__tab lite-tabs__tab--selected" id="team_advice">{% lcs 'cases.ViewAdvicePage.TEAM_ADVICE' %}</a>
 					<a href="{% url 'cases:final_advice_view' case.id %}" class="lite-tabs__tab" id="final_advice">{% lcs 'cases.ViewAdvicePage.FINAL_ADVICE' %}</a>
 				</div>
 			</div>
-            {% if can_create_and_edit_advice and is_user_team and not case.has_advice.final %}
-                {% if all_advice|length %}
-                    <div>
-                        <button id="button-give-advice" name="action" value="give-advice" type="submit" class="govuk-button" data-module="govuk-button">
-                            {% lcs 'cases.ApplicationPage.ADVICE' %}
-                        </button>
-                        <button id="button-clear-advice" name="action" value="delete" type="submit" class="govuk-button" data-module="govuk-button">
-                            {% lcs 'CLEAR_ADVICE' %}
-                        </button>
-                    </div>
-                {% else %}
-                    {% if not status_is_terminal %}
-                        <a class="govuk-button" href="{% url 'cases:coalesce_user_advice' case.id %}" class="lite-tabs__tab" id="combine_advice_button">
-                            {% lcs 'COMBINE_USER_ADVICE' %}
-                        </a>
-                    {% endif %}
-                {% endif %}
-            {% endif %}
+			{% if can_create_and_edit_advice and is_user_team and not case.has_advice.final %}
+				{% if all_advice|length %}
+					<div>
+						<button id="button-give-advice" name="action" value="give-advice" type="submit" class="govuk-button" data-module="govuk-button">
+							{% lcs 'cases.ApplicationPage.ADVICE' %}
+						</button>
+						<button id="button-clear-advice" name="action" value="delete" type="submit" class="govuk-button" data-module="govuk-button">
+							{% lcs 'CLEAR_ADVICE' %}
+						</button>
+					</div>
+				{% else %}
+					{% if not status_is_terminal %}
+						<a class="govuk-button" href="{% url 'cases:coalesce_user_advice' case.id %}" class="lite-tabs__tab" id="combine_advice_button">
+							{% lcs 'COMBINE_USER_ADVICE' %}
+						</a>
+					{% endif %}
+				{% endif %}
+			{% endif %}
 		</div>
 
-        <div class="govuk-heading-m">
-            Team<br>
-            <select id="team" name="team" class="govuk-select {% if error %}govuk-select--error{% endif %}" style="min-width: 300px;">
-                {% for team_choice in teams %}
-                    <option value="{{ team_choice.id }}" {% if team_choice|key_in_array:team.id %}selected{% endif %}>{{ team_choice.name }}</option>
-                {% endfor %}
-            </select>
-            <button class="govuk-button" name="action" value="team" type="submit">Change team</button>
-        </div>
+		<div class="govuk-heading-m">
+			Team<br>
+			<select id="team" name="team" class="govuk-select {% if error %}govuk-select--error{% endif %}">
+				{% for team_choice in teams %}
+					<option value="{{ team_choice.id }}" {% if team_choice|key_in_array:team.id %}selected{% endif %}>{{ team_choice.name }}</option>
+				{% endfor %}
+			</select>
+			<button class="govuk-button" name="action" value="team" type="submit">Change team</button>
+		</div>
 
 		<!-- Conditional error wrapper -->
 		{% if case.has_advice.final %}
-            {% include 'case/views/advice-view.html' with show_advice=True %}
-        {% elif all_advice|length and can_manage_team_advice %}
-            {% if is_user_team %}
-                {% include 'case/views/advice-view.html' with show_checkboxes=True show_advice=True %}
-            {% else %}
-                {% include 'case/views/advice-view.html' with show_advice=True %}
-            {% endif %}
-        {% else %}
-            {% include 'case/views/advice-view.html' with show_advice=True %}
-        {% endif %}
+			{% include 'case/views/advice-view.html' with show_advice=True %}
+		{% elif all_advice|length and can_manage_team_advice %}
+			{% if is_user_team %}
+				{% include 'case/views/advice-view.html' with show_checkboxes=True show_advice=True %}
+			{% else %}
+				{% include 'case/views/advice-view.html' with show_advice=True %}
+			{% endif %}
+		{% else %}
+			{% include 'case/views/advice-view.html' with show_advice=True %}
+		{% endif %}
 	</form>
 {% endblock %}
 

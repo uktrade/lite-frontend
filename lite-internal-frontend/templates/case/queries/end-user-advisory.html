@@ -1,0 +1,140 @@
+{% extends 'layouts/case.html' %}
+
+{% load static %}
+
+{% block details %}
+	<div class="govuk-!-width-two-thirds">
+		<dl class="govuk-summary-list">
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs 'cases.EndUserAdvisoriesPage.Details.NAME' %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ case.query.end_user.name }}
+				</dd>
+			</div>
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs 'cases.EndUserAdvisoriesPage.Details.TYPE' %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ case.query.end_user.sub_type.value }}
+				</dd>
+			</div>
+			{% if case.query.end_user.sub_type.key == 'individual' %}
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'cases.EndUserAdvisoriesPage.Details.EMAIL' %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{{ case.query.contact_email }}
+					</dd>
+				</div>
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'cases.EndUserAdvisoriesPage.Details.TELEPHONE' %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{{ case.query.contact_telephone }}
+					</dd>
+				</div>
+			{% endif %}
+			{% if case.query.end_user.sub_type.key == 'commercial' %}
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'cases.EndUserAdvisoriesPage.Details.NATURE_OF_BUSINESS' %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{{ case.query.nature_of_business }}
+					</dd>
+				</div>
+			{% endif %}
+			{% if case.query.end_user.sub_type.key != 'individual' %}
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'cases.EndUserAdvisoriesPage.Details.PRIMARY_CONTACT_NAME' %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{{ case.query.contact_name }}
+					</dd>
+				</div>
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'cases.EndUserAdvisoriesPage.Details.PRIMARY_CONTACT_JOB' %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{{ case.query.contact_job_title }}
+					</dd>
+				</div>
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'cases.EndUserAdvisoriesPage.Details.PRIMARY_CONTACT_EMAIL' %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{{ case.query.contact_email }}
+					</dd>
+				</div>
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'cases.EndUserAdvisoriesPage.Details.PRIMARY_CONTACT_TELEPHONE' %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{{ case.query.contact_telephone }}
+					</dd>
+				</div>
+			{% endif %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs 'cases.EndUserAdvisoriesPage.Details.ADDRESS' %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ case.query.end_user.address }}<br>{{ case.query.end_user.country.name }}
+				</dd>
+			</div>
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs 'cases.EndUserAdvisoriesPage.Details.WEBSITE' %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{% if case.query.end_user.website %}
+						<a class="govuk-link" href="{{ case.query.end_user.website }}">{{ case.query.end_user.website }}</a>
+					{% else %}
+						N/A
+					{% endif %}
+				</dd>
+			</div>
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs 'cases.EndUserAdvisoriesPage.Details.REASONING' %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ case.query.reasoning|default_na }}
+				</dd>
+			</div>
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs 'cases.EndUserAdvisoriesPage.Details.NOTES' %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ case.query.note|default_na }}
+				</dd>
+			</div>
+		</dl>
+
+
+		<div class="app-flags" id="application-destination-flags">
+			{% for flag in case.query.end_user.flags %}
+				<div class="app-flag" id="{{ flag.name }}">
+					{{ flag.name }}
+				</div>
+			{% endfor %}
+			<a class="app-flag app-flag--action" href="{% url 'cases:assign_flags' case.id %}?level=destinations&items={{ case.query.end_user.id }}&origin=case">
+				{% lcs 'cases.EndUserAdvisoriesPage.EDIT_DESTINATION_FLAGS' %}
+			</a>
+		</div>
+
+		<br><br>
+
+		{% include "case/views/activity.html" %}
+	</div>
+{% endblock %}

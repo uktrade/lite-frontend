@@ -1,10 +1,12 @@
-from teams.services import get_team, get_teams, post_teams, update_team, get_users_by_team
-from teams import forms
-
-from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
+from django.contrib import messages
+from django.shortcuts import render
+from django.urls import reverse
 from django.views.generic import TemplateView
 
+from lite_content.lite_internal_frontend.teams import TeamsPage
+from lite_forms.views import SingleFormView
+from teams.forms import add_team_form, edit_team_form
+from teams.services import get_team, get_teams, post_teams, get_users_by_team, put_team
 from users.services import get_gov_user
 
 
@@ -22,7 +24,7 @@ class Team(TemplateView):
             "title": "Users - " + team["team"]["name"],
             "users": users["users"],
         }
-        return render(request, "teams/own_team.html", context)
+        return render(request, "teams/own-team.html", context)
 
 
 class TeamsList(TemplateView):
@@ -31,27 +33,18 @@ class TeamsList(TemplateView):
 
         context = {
             "data": data,
-            "title": "Teams",
         }
         return render(request, "teams/index.html", context)
 
 
-class AddTeam(TemplateView):
-    def get(self, request, **kwargs):
-        context = {
-            "title": "Add Team",
-            "page": forms.form,
-        }
-        return render(request, "form.html", context)
+class AddTeam(SingleFormView):
+    def init(self, request, **kwargs):
+        self.form = add_team_form()
+        self.action = post_teams
 
-    def post(self, request, **kwargs):
-        data, status_code = post_teams(request, request.POST)
-
-        if status_code == 400:
-            context = {"title": "Add Team", "page": forms.form, "data": request.POST, "errors": data.get("errors")}
-            return render(request, "form.html", context)
-
-        return redirect(reverse_lazy("teams:teams"))
+    def get_success_url(self):
+        messages.success(self.request, TeamsPage.SUCCESS_MESSAGE)
+        return reverse("teams:teams")
 
 
 class TeamDetail(TemplateView):
@@ -59,6 +52,7 @@ class TeamDetail(TemplateView):
         data, _ = get_team(request, str(kwargs["pk"]))
         title = data["team"]["name"]
         data, _ = get_users_by_team(request, str(kwargs["pk"]))
+
         context = {
             "title": title,
             "users": data["users"],
@@ -66,20 +60,11 @@ class TeamDetail(TemplateView):
         return render(request, "teams/team.html", context)
 
 
-class EditTeam(TemplateView):
-    def get(self, request, **kwargs):
-        data, _ = get_team(request, str(kwargs["pk"]))
-        context = {
-            "data": data.get("team"),
-            "title": "Edit Team",
-            "page": forms.edit_form,
-        }
-        return render(request, "form.html", context)
-
-    def post(self, request, **kwargs):
-        data, status_code = update_team(request, str(kwargs["pk"]), request.POST)
-        if status_code == 400:
-            context = {"title": "Add Team", "page": forms.form, "data": request.POST, "errors": data.get("errors")}
-            return render(request, "form.html", context)
-
-        return redirect(reverse_lazy("teams:teams"))
+class EditTeam(SingleFormView):
+    def init(self, request, **kwargs):
+        self.object_pk = kwargs["pk"]
+        team, _ = get_team(request, self.object_pk)
+        self.form = edit_team_form()
+        self.data = team["team"]
+        self.action = put_team
+        self.success_url = reverse("teams:teams")

@@ -3,42 +3,49 @@
 {% load svg %}
 
 {% block back_link %}
-	<a href="{% url 'users:users' %}" class="govuk-back-link">Back to Users</a>
+	<a href="{% url 'users:users' %}" class="govuk-back-link">
+		{% lcs 'roles.ManageRolesPage.BACK_LINK' %}
+	</a>
 {% endblock %}
 
 {% block body %}
-
+	{% include 'includes/messages.html' %}
+	
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
-			<h2 class="govuk-heading-l">{{ title }}</h2>
+			<h1 class="govuk-heading-l">
+				{% block title %}
+					{% lcs 'roles.ManageRolesPage.TITLE' %}
+				{% endblock %}
+			</h1>
 			<p class="govuk-caption-m">
 				{% lcs 'roles.ManageRolesPage.DESCRIPTION' %}
 			</p>
 		</div>
-        {% if 'ADMINISTER_ROLES' in user_permissions %}
-            <div class="lite-app-bar__controls">
-                <a id="button_add_role" href="{% url 'users:add_role' %}" class="govuk-button" draggable="false" role="button">
-                    {% lcs 'roles.ManageRolesPage.ADD_BUTTON' %}
-                </a>
-            </div>
-        {% endif %}
+		{% if 'ADMINISTER_ROLES' in user_permissions %}
+			<div class="lite-app-bar__controls">
+				<a id="button_add_role" href="{% url 'users:add_role' %}" class="govuk-button" draggable="false" role="button">
+					{% lcs 'roles.ManageRolesPage.ADD_BUTTON' %}
+				</a>
+			</div>
+		{% endif %}
 	</div>
 
-    <table class="govuk-table">
-        <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
-                <th class="govuk-table__header" scope="col"> {% lcs 'roles.ManageRolesPage.Table.HEADER' %} </th>
-                <th class="govuk-table__header" scope="col"> {% lcs 'roles.ManageRolesPage.Table.PERMISSIONS_TITLE' %} </th>
-                <th class="govuk-table__header" scope="col"></th>
-            </tr>
-        </thead>
-        <tbody class="govuk-table__body">
-            {% for role in roles %}
-                <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">
+	<table class="govuk-table">
+		<thead class="govuk-table__head">
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header" scope="col">{% lcs 'roles.ManageRolesPage.Table.HEADER' %}</th>
+				<th class="govuk-table__header" scope="col">{% lcs 'roles.ManageRolesPage.Table.PERMISSIONS_TITLE' %}</th>
+				<th class="govuk-table__header" scope="col">{% lcs 'roles.ManageRolesPage.Table.ACTIONS' %}</th>
+			</tr>
+		</thead>
+		<tbody class="govuk-table__body">
+			{% for role in roles %}
+				<tr class="govuk-table__row">
+					<td class="govuk-table__cell">
 						{{ role.name }}
-                    </td>
-                    <td class="govuk-table__cell">
+					</td>
+					<td class="govuk-table__cell">
 						<ul class="lite-tick-cross-list">
 							{% for permission in all_permissions %}
 								<li>
@@ -59,18 +66,17 @@
 							{% endfor %}
 						</ul>
 					</td>
-                    <td class="govuk-table__cell">
-                        {% if not role.id == super_user_role_id %}
-                            {% if 'ADMINISTER_ROLES' in user_permissions %}
-                                {% if role.id != user_role_id %}
-                                    <a href="{% url 'users:edit_role' role.id %}" class="govuk-link govuk-link--no-visited-state"> {% lcs 'roles.ManageRolesPage.Table.EDIT_BUTTON' %} </a>
-                                {% endif %}
-                            {% endif %}
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
+					<td class="govuk-table__cell">
+						{% if not role.id == super_user_role_id %}
+							{% if 'ADMINISTER_ROLES' in user_permissions %}
+								{% if role.id != user_role_id %}
+									<a href="{% url 'users:edit_role' role.id %}" class="govuk-link govuk-link--no-visited-state">{% lcs 'roles.ManageRolesPage.Table.EDIT' %}</a>
+								{% endif %}
+							{% endif %}
+						{% endif %}
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
 {% endblock %}

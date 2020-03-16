@@ -4,167 +4,150 @@ $default-size: 0.3em;
 $label-font-size: $default-size * 0.4;
 $label-font-size-redo: $default-size * 4;
 $top: $label-font-size-redo * 0.65;
-
 // -- mixins
 @mixin size($width, $height) {
-  height: $height;
-  width: $width;
+	height: $height;
+	width: $width;
 }
-
-
 @mixin colour($color) {
-  .pie {
-    .half-circle {
-      border-color: $color;
-    }
-  }
+	.pie {
+		.half-circle {
+			border-color: $color;
+		}
+	}
 }
-
 @mixin draw-progress($progress) {
-  .pie {
-    .left-side {
-      transform: rotate($progress * 3.6deg);
-    }
+	.pie {
+		.left-side {
+			transform: rotate($progress * 3.6deg);
+		}
+		@if $progress <= 50 {
+			.right-side {
+				display: none;
+			}
+		} @else {
+			clip: rect(auto, auto, auto, auto);
 
-    @if $progress <= 50 {
-      .right-side {
-        display: none;
-      }
-    } @else {
-      clip: rect(auto, auto, auto, auto);
-
-      .right-side {
-        transform: rotate(180deg);
-      }
-    }
-  }
-}
-
-@mixin draw-progress--solid($progress, $color, $bg-color) {
-  background: linear-gradient(to right, $color 50%, $bg-color 50%);
-
-  &:before {
-    @if $progress <= 50 {
-      background: $bg-color;
-      transform: rotate((100 - (50 - $progress)) / 100 * 360deg * -1);
-    } @else {
-      background: $color;
-      transform: rotate((100 - $progress) / 100 * 360deg);
-    }
-  }
+			.right-side {
+				transform: rotate(180deg);
+			}
+		}
+	}
 }
 
 // -- selectors
 .pie-wrapper {
-  *,
-  *:before,
-  *:after {
-    box-sizing: border-box;
-  }
+	*,
+	*:after,
+	*:before {
+		box-sizing: border-box;
+	}
+	@include size($default-size, $default-size);
+	float: left;
+	margin: 10px;
+	position: relative;
+	font-size: 8em;
+	z-index: 0;
 
-  @include size($default-size, $default-size);
-  float: left;
-  margin: 10px;
-  position: relative;
-  font-size: 8em;
+	&:after {
+		content: "";
+		position: absolute;
+		top: 1px;
+		left: 1px;
+		right: 1px;
+		bottom: 1px;
+		border: 3px solid govuk-colour("light-grey");
+		border-radius: 100%;
+		z-index: -1;
+	}
 
-  &:nth-child(3n + 1) {
-    clear: both;
-  }
+	&:nth-child(3n + 1) {
+		clear: both;
+	}
 
-  .pie {
-    @include size(100%, 100%);
-    clip: rect(0, $default-size, $default-size, $default-size / 2);
-    left: 0;
-    position: absolute;
-    top: 0;
+	.pie {
+		@include size(100%, 100%);
+		clip: rect(0, $default-size, $default-size, $default-size / 2);
+		left: 0;
+		position: absolute;
+		top: 0;
 
-    .half-circle {
-      @include size(100%, 100%);
-      border: ($default-size / 10) solid #3498db;
-      border-radius: 50%;
-      clip: rect(0, $default-size / 2, $default-size, 0);
-      left: 0;
-      position: absolute;
-      top: 0;
-    }
-  }
+		.half-circle {
+			@include size(100%, 100%);
+			border: ($default-size / 7.5) solid #3498db;
+			border-radius: 50%;
+			clip: rect(0, $default-size / 2, $default-size, 0);
+			left: 0;
+			position: absolute;
+			top: 0;
+		}
+	}
 
-  .label {
-    background: none;
-    border-radius: 50%;
-    bottom: $label-font-size-redo / 10;
-    color: black;
-    cursor: default;
-    display: block;
-    font-size: $label-font-size;
-    left: $label-font-size-redo / 10;
-    line-height: $label-font-size-redo * .70;
-    position: absolute;
-    right: $label-font-size-redo / 10;
-    text-align: center;
-    top: $top;
-  }
+	.label {
+		@include govuk-font($size: 19, $weight: bold);
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 
-  .shadow {
-    @include size(100%, 100%);
-    border: $default-size / 10 solid govuk-colour("light-grey");
-    border-radius: 50%;
-  }
+	&.progress-0 {
+		@include draw-progress(0);
+	}
 
-  &.progress-0 {
-    @include draw-progress(0);
-  }
+	&.progress-10 {
+		@include draw-progress(10);
+	}
 
-  &.progress-10 {
-    @include draw-progress(10);
-  }
+	&.progress-20 {
+		@include draw-progress(20);
+	}
 
-  &.progress-20 {
-    @include draw-progress(20);
-  }
+	&.progress-30 {
+		@include draw-progress(30);
+	}
 
-  &.progress-30 {
-    @include draw-progress(30);
-  }
+	&.progress-40 {
+		@include draw-progress(40);
+	}
 
-  &.progress-40 {
-    @include draw-progress(40);
-  }
+	&.progress-50 {
+		@include draw-progress(50);
+	}
 
-  &.progress-50 {
-    @include draw-progress(50);
-  }
+	&.progress-60 {
+		@include draw-progress(60);
+	}
 
-  &.progress-60 {
-    @include draw-progress(60);
-  }
+	&.progress-70 {
+		@include draw-progress(70);
+	}
 
-  &.progress-70 {
-    @include draw-progress(70);
-  }
+	&.progress-80 {
+		@include draw-progress(80);
+	}
 
-  &.progress-80 {
-    @include draw-progress(80);
-  }
+	&.progress-90 {
+		@include draw-progress(90);
+	}
 
-  &.progress-90 {
-    @include draw-progress(90);
-  }
+	&.progress-100 {
+		@include draw-progress(100);
+	}
 
-  &.progress-100 {
-    @include draw-progress(100);
-  }
+	&.green {
+		@include colour(govuk-colour("green"));
+	}
 
-  &.green {
-    @include colour(govuk-colour("green"));
-  }
+	&.yellow {
+		@include colour(govuk-colour("yellow"));
+	}
 
-  &.yellow {
-    @include colour(govuk-colour("yellow"));
-  }
-
-  &.red {
-    @include colour(govuk-colour("red"));
-  }
+	&.red {
+		@include colour(govuk-colour("red"));
+	}
 }

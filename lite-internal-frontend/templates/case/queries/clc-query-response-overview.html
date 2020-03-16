@@ -3,10 +3,9 @@
 {% block back_link %}{% endblock %}
 
 {% block two_thirds %}
+	<h1 class="govuk-heading-l">{% lcs 'cases.ClcResponseOverview.TITLE' %}</h1>
 
-	<h2 class="govuk-heading-l">{% lcs 'cases.ClcResponseOverview.TITLE' %}</h2>
-
-    <p class="govuk-body-m">{% lcs 'cases.ClcResponseOverview.WARNING' %}</p>
+	<p class="govuk-body-m">{% lcs 'cases.ClcResponseOverview.WARNING' %}</p>
 
 	<br>
 
@@ -112,5 +111,4 @@
 			<button type="submit" id="change-response" name="action" value="change" class="govuk-button govuk-button--secondary">{% lcs 'cases.ClcResponseOverview.CHANGE' %}</button>
 		</div>
 	</form>
-
 {% endblock %}

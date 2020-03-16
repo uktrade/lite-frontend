@@ -1,15 +1,19 @@
 {% extends 'layouts/base.html' %}
 
-{% load humanize %}
-
 {% block back_link %}{% endblock %}
 
 {% block body %}
 	<div class="lite-app-bar">
-		<h2 class="govuk-heading-l">{% lcs 'Queues.QueueList.PAGE_HEADING' %}</h2>
-		<div class="lite-app-bar--right">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">
+				{% block title %}
+					{% lcs 'queues.QueuesList.TITLE' %}
+				{% endblock %}
+			</h1>
+		</div>
+		<div class="lite-app-bar__controls">
 			<a href="{% url 'queues:add' %}" class="govuk-button" draggable="false" role="button">
-				Add a Queue
+				{% lcs 'queues.QueuesList.CREATE_QUEUE_BUTTON' %}
 			</a>
 		</div>
 	</div>
@@ -18,33 +22,34 @@
 		<table class="govuk-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
-					<th class="govuk-table__header" scope="col">Name</th>
-					<th class="govuk-table__header" scope="col">Team</th>
-					<th class="govuk-table__header" scope="col">Actions</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'queues.QueuesList.Table.NAME' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'queues.QueuesList.Table.TEAM' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'queues.QueuesList.Table.ACTIONS' %}</th>
 				</tr>
 			</thead>
 			<tbody class="govuk-table__body">
 				{% for queue in queues %}
-					<tr class="govuk-table__row" style="vertical-align: top;">
+					<tr class="govuk-table__row">
 						<td class="govuk-table__cell">
-							{{ queue.name|default:"Untitled" }}
+							{{ queue.name }}
 						</td>
 						<td class="govuk-table__cell">
-							{{ queue.team.name|default:"Untitled" }}
+							{{ queue.team.name }}
 						</td>
 						<td class="govuk-table__cell">
 							{% if user_data.user.team.id == queue.team.id %}
-								<a href="{% url 'queues:edit' queue.id %}" style="margin: 0;" class="govuk-link govuk-link--no-visited-state">Edit</a>
+								<a href="{% url 'queues:edit' queue.id %}" class="govuk-link govuk-link--no-visited-state">
+									{% lcs 'queues.QueuesList.Table.EDIT' %}
+								</a>
 							{% else %}
-                                				None
-                            				{% endif %}
+								{{ None|default_na }}
+							{% endif %}
 						</td>
 					</tr>
 				{% endfor %}
 			</tbody>
 		</table>
 	{% else %}
-		<p class="govuk-caption-l">There are no registered queues at the moment.</p>
+		{% include "includes/notice.html" with text='queues.QueuesList.NO_CONTENT_NOTICE' %}
 	{% endif %}
-
 {% endblock %}

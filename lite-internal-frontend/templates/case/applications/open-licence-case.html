@@ -111,10 +111,10 @@
 									<td class="govuk-table__cell">{{ good.control_code|default_na }}</td>
 									<td class="govuk-table__cell">{{ good.is_good_incorporated|friendly_boolean }}</td>
 									<td class="govuk-table__cell">
-					                    {% for flag in good.flags %}
-					                        {{ flag.name }}<br>
-					                    {% endfor %}
-					                </td>
+										{% for flag in good.flags %}
+											{{ flag.name }}<br>
+										{% endfor %}
+									</td>
 									<td class="govuk-table__cell">
 										<a onclick="return openTableFold(this);">
 											{% svg 'chevron' %}

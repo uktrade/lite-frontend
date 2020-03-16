@@ -1,5 +1,6 @@
 from pytest_bdd import when, then, scenarios
 import shared.tools.helpers as utils
+from pages.flagging_rules_pages import FlaggingRulePages
 from pages.shared import Shared
 
 from pages.flags_pages import FlagsPages
@@ -37,11 +38,8 @@ def deactivate_first_active_flag(driver):
 
 @when("I click include deactivated")
 def click_include_deactivated(driver):
-    flags = FlagsPages(driver)
-    driver.set_timeout_to(0)
-    if flags.is_include_deactivated_button_displayed():
-        flags.click_include_deactivated_flags()
-    driver.set_timeout_to_10_seconds()
+    FlaggingRulePages(driver).click_include_deactivated()
+    FlaggingRulePages(driver).click_apply_filters_button()
 
 
 @then("I see one less active flags")

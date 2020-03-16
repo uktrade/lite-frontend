@@ -29,7 +29,7 @@
 	</dl>
 
 	<div class="lite-user-profile-container">
-		<a href="{% url 'flags:edit' data.flag.id %}" style="margin: 0;" class="govuk-button govuk-button--secondary">Edit</a>
+		<a href="{% url 'flags:edit' data.flag.id %}" class="govuk-button govuk-button--secondary">Edit</a>
 		{% if data.flag.status == 'Active' %}
 			<a href="{% url 'flags:change_status' data.flag.id 'deactivate' %}" role="button" draggable="false" class="govuk-button govuk-button--warning govuk-!-margin-right-2">Deactivate</a>
 		{% elif data.flag.status == 'Deactivated' %}

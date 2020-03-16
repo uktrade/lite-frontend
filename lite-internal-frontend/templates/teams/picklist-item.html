@@ -7,57 +7,55 @@
 {% endblock %}
 
 {% block body %}
-
-<div class="lite-app-bar">
-	<div class="lite-app-bar__content">
-		<h1 class="govuk-heading-l">{{ picklist_item.name }}</h1>
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">{{ picklist_item.name }}</h1>
+		</div>
+		<div class="lite-app-bar__controls">
+			<a href="{% url 'picklists:edit' picklist_item.id %}" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+				Edit item
+			</a>
+		</div>
 	</div>
-	<div class="lite-app-bar__controls">
-		<a href="{% url 'picklists:edit' picklist_item.id %}" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
-			Edit item
-		</a>
-	</div>
-</div>
 
-{% if picklist_item.status.key == 'deactivated' %}
-	<p class="lite-tag lite-tag--small" style="margin-bottom: 30px;">Deactivated</p>
-{% endif %}
-
-<p class="govuk-body">
-	<span class="govuk-caption-m" style="display: inline;">Created by</span>
-	<a class="govuk-link govuk-link--no-visited-state" href="{% url 'teams:team' picklist_item.team %}">{{ picklist_item.team_name }}</a>
-	<span class="govuk-caption-m" style="display: inline; margin: 0 2px;">-</span>
-	<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type={{ picklist_item.type.key }}">{{ picklist_item.type.value }}</a>
-	<span class="govuk-caption-m" style="display: inline;">- Last updated</span>
-	<span class="govuk-visually-hidden"> on </span>
-	{{ picklist_item.updated_at|str_date }}
-</p>
-
-<br>
-
-<p class="govuk-body" style="line-height: 1.8; max-width: 700px; white-space: normal; word-wrap: break-word;">
-	{% if picklist_item.type.key == "letter_paragraph" %}
-		{{ picklist_item.text|variable_highlight|linebreaksbr }}
-	{% else %}
-		{{ picklist_item.text|linebreaksbr }}
+	{% if picklist_item.status.key == 'deactivated' %}
+		<p class="lite-tag lite-tag--small">Deactivated</p>
 	{% endif %}
-</p>
 
-{% if activity %}
-    <div class="govuk-accordion app-accordion" data-module="govuk-accordion" id="accordion-default">
-        <div class="govuk-accordion__section">
-            <div class="govuk-accordion__section-header">
-                <h2 class="govuk-accordion__section-heading">
-                    <span class="govuk-accordion__section-button" id="accordion-default-heading">
-                        {% lcs 'CASE_ENTITIES_ACTIVITY' %}
-                    </span>
-                </h2>
-            </div>
-            <div id="accordion-default-content" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading">
-                {% include "includes/audit-trail.html" %}
-            </div>
-        </div>
-    </div>
-{% endif %}
+	<p class="govuk-body">
+		<span class="govuk-caption-m">Created by</span>
+		<a class="govuk-link govuk-link--no-visited-state" href="{% url 'teams:team' picklist_item.team %}">{{ picklist_item.team_name }}</a>
+		<span class="govuk-caption-m">-</span>
+		<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type={{ picklist_item.type.key }}">{{ picklist_item.type.value }}</a>
+		<span class="govuk-caption-m">- Last updated</span>
+		<span class="govuk-visually-hidden"> on </span>
+		{{ picklist_item.updated_at|str_date }}
+	</p>
 
+	<br>
+
+	<p class="govuk-body">
+		{% if picklist_item.type.key == "letter_paragraph" %}
+			{{ picklist_item.text|variable_highlight|linebreaksbr }}
+		{% else %}
+			{{ picklist_item.text|linebreaksbr }}
+		{% endif %}
+	</p>
+
+	{% if activity %}
+		<div class="govuk-accordion app-accordion" data-module="govuk-accordion" id="accordion-default">
+			<div class="govuk-accordion__section">
+				<div class="govuk-accordion__section-header">
+					<h2 class="govuk-accordion__section-heading">
+						<span class="govuk-accordion__section-button" id="accordion-default-heading">
+							{% lcs 'CASE_ENTITIES_ACTIVITY' %}
+						</span>
+					</h2>
+				</div>
+				<div id="accordion-default-content" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading">
+					{% include "includes/audit-trail.html" %}
+				</div>
+			</div>
+		</div>
+	{% endif %}
 {% endblock %}

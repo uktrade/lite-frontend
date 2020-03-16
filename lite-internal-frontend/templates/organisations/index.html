@@ -45,7 +45,7 @@
 								{{ organisation.name|highlight_text:search_term }}
 							</a>
 						</td>
-                        <td class="govuk-table__cell" id="type">
+						<td class="govuk-table__cell" id="type">
 							<span class="govuk-table__header" aria-hidden="true">
 								{% lcs "organisations.OrganisationsPage.Table.TYPE" %}
 							</span>
@@ -81,8 +81,8 @@
 				{% endfor %}
 			</tbody>
 		</table>
-        {% if data.total_pages > 1 %}
-	        {% include "includes/pagination.html" %}
+		{% if data.total_pages > 1 %}
+			{% include "includes/pagination.html" %}
 		{% endif %}
 	{% else %}
 		{% include "includes/notice.html" with text="organisations.OrganisationsPage.ACTIVE_FILTER_NO_ORGANISATIONS" %}

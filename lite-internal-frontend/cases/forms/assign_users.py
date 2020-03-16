@@ -5,7 +5,7 @@ from lite_forms.styles import ButtonStyle
 from lite_content.lite_internal_frontend.strings import cases
 from django.http import HttpRequest
 from lite_forms.components import Checkboxes, Filter, Form, RadioButtons, Button, HiddenField
-from teams.services import get_users_teams
+from teams.services import get_users_team_queues
 
 from users.services import get_gov_users
 
@@ -55,7 +55,7 @@ def assign_user_and_work_queue(request):
 
 
 def users_team_queues(request, case_pk, user_pk):
-    queues = get_users_teams(request, user_pk, True)
+    queues = get_users_team_queues(request, user_pk, True)
     return Form(
         title=cases.Manage.AssignUserAndQueue.QUEUE_TITLE,
         description=cases.Manage.AssignUserAndQueue.QUEUE_DESCRIPTION,

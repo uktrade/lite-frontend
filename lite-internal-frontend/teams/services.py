@@ -18,7 +18,7 @@ def get_teams(request, converted_to_options=False):
     return data.json(), data.status_code
 
 
-def get_users_teams(request, user, convert_to_options=True):
+def get_users_team_queues(request, user, convert_to_options=True):
     data = get(request, "/users/" + user + "/team-queues/").json()
     if convert_to_options:
         return [Option(key=queue[0], value=queue[1], description=None) for queue in data["queues"]]
@@ -31,12 +31,12 @@ def post_teams(request, json):
 
 
 def get_team(request, pk):
-    data = get(request, TEAMS_URL + pk)
+    data = get(request, TEAMS_URL + str(pk))
     return data.json(), data.status_code
 
 
-def update_team(request, pk, json):
-    data = put(request, TEAMS_URL + pk + "/", json)
+def put_team(request, pk, json):
+    data = put(request, TEAMS_URL + str(pk) + "/", json)
     return data.json(), data.status_code
 
 

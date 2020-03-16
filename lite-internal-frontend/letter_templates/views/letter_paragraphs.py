@@ -12,7 +12,7 @@ def get_order_paragraphs_page(request, template_content):
     letter_paragraphs = get_letter_paragraphs(request, template_content["letter_paragraphs"])
     return render(
         request,
-        "letter_templates/order_letter_paragraphs.html",
+        "letter-templates/order-letter-paragraphs.html",
         {
             "letter_paragraphs": letter_paragraphs,
             "name": template_content["name"],
@@ -45,7 +45,7 @@ class LetterParagraphs(TemplateView):
             ],
             "existing_letter_paragraphs": template_content["letter_paragraphs"],
         }
-        return render(request, "letter_templates/add_letter_paragraphs.html", context)
+        return render(request, "letter-templates/add-letter-paragraphs.html", context)
 
     def _preview(self, request, template_content):
         """
@@ -58,7 +58,7 @@ class LetterParagraphs(TemplateView):
             return self._error_page()
         return render(
             request,
-            "letter_templates/preview.html",
+            "letter-templates/preview.html",
             {
                 "preview": preview["preview"],
                 "name": template_content["name"],

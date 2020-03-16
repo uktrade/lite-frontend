@@ -11,8 +11,8 @@
 			<a href="{% url 'picklists:picklists' %}" class="lite-tabs__tab">Picklists</a>
 		</div>
 		<div class="lite-tabs__controls">
-			<a id="button-invite-user" href="{% url 'users:add' %}" class="govuk-button" draggable="false" role="button">
-				{% lcs 'Users.INVITE' %}
+			<a id="button-add-user" href="{% url 'users:add' %}" class="govuk-button" draggable="false" role="button">
+				{% lcs 'users.UsersPage.INVITE_BUTTON' %}
 			</a>
 		</div>
 	</div>
@@ -24,30 +24,26 @@
 					<th class="govuk-table__header" scope="col">Name</th>
 					<th class="govuk-table__header" scope="col">Email</th>
 					<th class="govuk-table__header" scope="col">Status</th>
-                    <th class="govuk-table__header" scope="col"></th>
 				</tr>
 			</thead>
 			<tbody class="govuk-table__body">
 				{% for user in users %}
-                <tr class="govuk-table__row" {% if not user.first_name %}style="background-color: rgba(40, 161, 151, 0.025);"{% endif %}>
-                    <td class="govuk-table__cell">
+				<tr class="govuk-table__row">
+					<td class="govuk-table__cell">
 						{% if user.first_name %}
-							<a href="{% url 'users:user' user.id %}" style="margin: 0;" class="govuk-link govuk-link--no-visited-state">
+							<a href="{% url 'users:user' user.id %}" class="govuk-link govuk-link--no-visited-state">
 								{{ user.first_name }} {{ user.last_name }}
 							</a>
 						{% else %}
-							<strong class="govuk-tag govuk-phase-banner__content__tag ">
+							<strong class="govuk-tag govuk-tag--blue">
 								Pending
 							</strong>
 						{% endif %}
-                    </td>
-                    <td class="govuk-table__cell">{{ user.email }}</td>
-                    <td class="govuk-table__cell">{{ user.status }}</td>
-                    <td class="govuk-table__cell">
-                        <a href="{% url 'users:edit' user.id %}" style="margin: 0;" class="govuk-link govuk-link--no-visited-state">Edit</a>
-                    </td>
-                </tr>
-            {% endfor %}
+					</td>
+					<td class="govuk-table__cell">{{ user.email }}</td>
+					<td class="govuk-table__cell">{{ user.status }}</td>
+				</tr>
+			{% endfor %}
 			</tbody>
 		</table>
 	{% else %}

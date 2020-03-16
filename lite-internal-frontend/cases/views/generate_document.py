@@ -123,7 +123,7 @@ class PreviewDocument(TemplateView):
 
         return render(
             request,
-            "generated_documents/preview.html",
+            "generated-documents/preview.html",
             {"preview": preview["preview"], TEXT: text, "pk": case_id, "tpk": template_id},
         )
 

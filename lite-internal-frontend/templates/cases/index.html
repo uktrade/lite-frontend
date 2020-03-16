@@ -34,7 +34,7 @@
 	<div class="app-dropdown__container" id="queues">
 		<div class="app-dropdown__list">
 			{% for queue in data.results.queues %}
-			<a href="?queue_id={{queue.id}}" id="{{ queue.name }}" class="app-dropdown__item {% if queue.id == data.results.queue.id %}app-dropdown__item--selected{% endif %}">
+			<a href="?queue_id={{ queue.id }}" id="{{ queue.name }}" class="app-dropdown__item {% if queue.id == data.results.queue.id %}app-dropdown__item--selected{% endif %}">
 				{{ queue.name }}
 				<span class="app-dropdown__item__count">{{ queue.case_count }}</span>
 			</a>
@@ -53,15 +53,15 @@
 						<th class="cases-table__header cases-table__cell--checkbox">
 							<button id="button-select-all" type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
 						</th>
-						<th class="cases-table__header" style="width: 50px;" scope="col"></th>
 						<th class="cases-table__header" scope="col"></th>
 						<th class="cases-table__header" scope="col"></th>
-						<th class="cases-table__header" style="width: 225px;" scope="col">Case</th>
-						<th class="cases-table__header" style="width: 1fr;" scope="col">Assignees</th>
-						<th class="cases-table__header" style="width: 125px;" scope="col">Type</th>
-						<th class="cases-table__header" style="width: 125px;" scope="col">Queue</th>
-						<th class="cases-table__header" style="width: 200px;" scope="col">Flags</th>
-						<th class="cases-table__header" style="width: 125px;" scope="col">
+						<th class="cases-table__header" scope="col"></th>
+						<th class="cases-table__header" scope="col">Case</th>
+						<th class="cases-table__header" scope="col">Assignees</th>
+						<th class="cases-table__header" scope="col">Type</th>
+						<th class="cases-table__header" scope="col">Queue</th>
+						<th class="cases-table__header" scope="col">Flags</th>
+						<th class="cases-table__header" scope="col">
 							<a href="{% url 'cases:cases' %}?{{ params_str }}&sort={{ 'status'|table_sort_text:params }}" id="sort-status" class="app-table__sortable-header {{ 'status'|table_sort:params }}">
 								{% lcs 'cases.CasesListPage.STATUS' %}
 								{% svg 'chevron' %}
@@ -90,12 +90,11 @@
 							<td class="cases-table__cell">
 								{% if case.sla_remaining_days != None %}
 									<div class="pie-wrapper progress-{{ case|get_sla_percentage }} {{ case.sla_remaining_days|get_sla_ring_colour }}" id="sla">
-									  <span class="label"><strong>{{ case.sla_days }}</strong></span>
-									  <div class="pie">
-										<div class="left-side half-circle"></div>
-										<div class="right-side half-circle"></div>
-									  </div>
-									  <div class="shadow"></div>
+										<span class="label">{{ case.sla_days }}</span>
+										<div class="pie">
+											<div class="left-side half-circle"></div>
+											<div class="right-side half-circle"></div>
+										</div>
 									</div>
 								{% endif %}
 							</td>
@@ -116,10 +115,10 @@
 								{% endif %}
 							</td>
 							<td class="cases-table__cell">
-								<a class="govuk-link govuk-!-font-weight-bold" href="{% url 'cases:case' case.id %}?queue_id={{data.results.queue.id}}&queue_name={{data.results.queue.name}}">
+								<a class="govuk-link govuk-!-font-weight-bold" href="{% url 'cases:case' case.id %}?queue_id={{ data.results.queue.id }}&queue_name={{ data.results.queue.name }}">
 									{{ case.reference_code }}
 								</a>
-								<p class="govuk-body" style="opacity: .7; magin: 0;">
+								<p class="govuk-body">
 									{{ case.organisation }}
 								</p>
 							</td>
@@ -127,7 +126,7 @@
 								{% for user in case.users|slice:":3" %}
 									<div>
 										{% if data.results.is_system_queue %}
-											<span style="opacity: 0.6;">{{ user.queue }}:</span>
+											<span>{{ user.queue }}:</span>
 										{% endif %}
 										{% if user.first_name %}
 											{{ user.first_name }} {{ user.last_name }}
@@ -135,7 +134,7 @@
 											{{ user.email }}
 										{% endif %}
 										<span class="lite-hint app-expanded-row__item--invert">
-											{% if case.users|length > 3 and forloop.counter == 3 %} (3 of {{case.users|length}}){% endif %}
+											{% if case.users|length > 3 and forloop.counter == 3 %} (3 of {{ case.users|length }}){% endif %}
 										</span>
 									</div>
 								{% empty %}
@@ -144,7 +143,7 @@
 								{% for user in case.users|slice:"3:" %}
 									<div class="app-expanded-row__item">
 										{% if data.results.is_system_queue %}
-											<span style="opacity: 0.6;">{{ user.queue }}:</span>
+											<span>{{ user.queue }}:</span>
 										{% endif %}
 										{% if user.first_name %}
 											{{ user.first_name }} {{ user.last_name }}
@@ -162,7 +161,7 @@
 									<div>
 										{{ queue_name }}
 										<span class="lite-hint app-expanded-row__item--invert">
-											{% if case.queue_names|length > 3 and forloop.counter == 3 %} (3 of {{case.queue_names|length}}){% endif %}
+											{% if case.queue_names|length > 3 and forloop.counter == 3 %} (3 of {{ case.queue_names|length }}){% endif %}
 										</span>
 									</div>
 								{% endfor %}
@@ -175,7 +174,7 @@
 									<div>
 										{{ flag.name }}
 										<span class="lite-hint app-expanded-row__item--invert">
-											{% if case.flags|length > 3 and forloop.counter == 3 %} (3 of {{case.flags|length}}){% endif %}
+											{% if case.flags|length > 3 and forloop.counter == 3 %} (3 of {{ case.flags|length }}){% endif %}
 										</span>
 									</div>
 								{% endfor %}
@@ -225,10 +224,10 @@
 
 	<script nonce="{{ request.csp_nonce }}">
 		tippy('.app-cases__row__attention-needed', {
-		  content: "{% lcs 'cases.CasesListPage.NOT_UPDATED_RECENTLY' %}"
+			content: "{% lcs 'cases.CasesListPage.NOT_UPDATED_RECENTLY' %}"
 		});
 		tippy('.app-cases__row__ecju-query', {
-		  content: "{% lcs 'cases.CasesListPage.OPEN_TEAM_ECJU' %}"
+			content: "{% lcs 'cases.CasesListPage.OPEN_TEAM_ECJU' %}"
 		});
 
 		function toggleDropdown() {
