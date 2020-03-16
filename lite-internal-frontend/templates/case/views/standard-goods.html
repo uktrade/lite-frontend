@@ -4,9 +4,11 @@
 <table class="govuk-table" id="goods">
 	<thead class="govuk-table__head">
 		<tr class="govuk-table__row">
-			<th scope="col" class="govuk-table__header">
-				<button type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
-			</th>
+			{% if show_checkboxes %}
+				<th scope="col" class="govuk-table__header">
+					<button type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
+				</th>
+			{% endif %}
 			<th class="govuk-table__header" scope="col">{% lcs 'cases.ApplicationPage.Goods.Table.CLC' %}</th>
 			<th class="govuk-table__header" scope="col">{% lcs 'cases.ApplicationPage.Goods.Table.DESCRIPTION' %}</th>
 			<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.Goods.Table.VALUE' %}</th>
@@ -21,12 +23,14 @@
 	<tbody class="govuk-table__body">
 		{% for good_on_application in case.application.goods %}
 			<tr class="govuk-table__row">
-				<td class="govuk-table__cell govuk-table__cell--checkbox">
-					<div class="govuk-checkboxes govuk-checkboxes--small">
-						<input class="govuk-checkboxes__input" type="checkbox" name="goods" value="{{ good_on_application.good.id }}" id="{{ good_on_application.good.id }}">
-						<label class="govuk-label {% if show_checkboxes %}govuk-checkboxes__label{% endif %}" for="{{ good_on_application.good.id }}"></label>
-					</div>
-				</td>
+				{% if show_checkboxes %}
+					<td class="govuk-table__cell govuk-table__cell--checkbox">
+						<div class="govuk-checkboxes govuk-checkboxes--small">
+							<input class="govuk-checkboxes__input" type="checkbox" name="goods" value="{{ good_on_application.good.id }}" id="{{ good_on_application.good.id }}">
+							<label class="govuk-label {% if show_checkboxes %}govuk-checkboxes__label{% endif %}" for="{{ good_on_application.good.id }}"></label>
+						</div>
+					</td>
+				{% endif %}
 				<td class="govuk-table__cell">
 					{{ good_on_application.good.control_code|default_na }}
 				</td>

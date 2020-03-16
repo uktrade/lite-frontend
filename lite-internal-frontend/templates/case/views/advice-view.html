@@ -3,9 +3,7 @@
 		{% include 'case/views/open-goods.html' %}
 		{% include 'case/views/open-destinations.html' %}
 	{% elif case.application.case_type.sub_type.key != 'hmrc' %}
-		{% if not status_is_terminal %}
-			{% include 'case/views/standard-goods.html' %}
-		{% endif %}
+		{% include 'case/views/standard-goods.html' %}
 		{% include 'case/views/standard-destinations.html' %}
 	{% endif %}
 </div>

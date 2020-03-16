@@ -37,7 +37,7 @@
 						</button>
 					</div>
 				{% else %}
-					{% if not status_is_terminal %}
+					{% if not status_is_terminal and case.has_advice.user %}
 						<a class="govuk-button" href="{% url 'cases:coalesce_user_advice' case.id %}" class="lite-tabs__tab" id="combine_advice_button">
 							{% lcs 'COMBINE_USER_ADVICE' %}
 						</a>
