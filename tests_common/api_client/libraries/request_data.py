@@ -68,7 +68,7 @@ def build_picklist_data(name, text, type, proviso=None):
 def build_request_data(exporter_user, gov_user):
     exporter = build_user(exporter_user)
     request_data = {
-        "organisation": build_organisation_with_user(exporter, "commercial", "Square Is Circle Ltd"),
+        "organisation": build_organisation_with_user(exporter, "commercial", "Archway Communications"),
         # Please leave this as HMRC as tests depend on this being HMRC.
         "organisation_for_switching_organisations": build_organisation_with_user(
             exporter, "hmrc", "HMRC Wayne Enterprises"
@@ -138,6 +138,7 @@ def build_request_data(exporter_user, gov_user):
             "email": exporter["email"],
             "user_profile": {"first_name": "Bruce", "last_name": "Wayne"},
             "sites": {},
+            "role": "00000000-0000-0000-0000-000000000003",
         },
         "exhibition_details": {
             "title": fake.bs(),
