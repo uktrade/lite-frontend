@@ -31,7 +31,7 @@ def is_military_end_use_controls_form():
                         value="Yes",
                         components=[
                             TextInput(
-                                title="",
+                                title=EndUseDetails.REFERENCE,
                                 description=EndUseDetails.REFERENCE_ECJU_LETTER,
                                 name="military_end_use_controls_ref",
                                 optional=False,
@@ -61,7 +61,7 @@ def is_informed_wmd_form():
                         value="Yes",
                         components=[
                             TextInput(
-                                title="",
+                                title=EndUseDetails.REFERENCE,
                                 description=EndUseDetails.REFERENCE_ECJU_LETTER,
                                 name="informed_wmd_ref",
                                 optional=False,
