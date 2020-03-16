@@ -561,6 +561,7 @@ class GoodsCategories:
 
 
 class EndUseDetails:
+    REFERENCE = "Reference"
     REFERENCE_ECJU_LETTER = "This reference is on the ECJU letter"
     NOTICE = "You can enter up to 2200 characters."
     PROVIDE_DETAILS = "Provide details"
