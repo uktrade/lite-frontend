@@ -2,10 +2,12 @@ from lite_content.lite_internal_frontend import (  # noqa
     cases,  # noqa
     letter_templates,  # noqa
     roles,  # noqa
+    flags,  # noqa
     organisations,  # noqa
     generic,  # noqa
     users,  # noqa
     teams,  # noqa
+    queues,  # noqa
 )  # noqa
 
 # Buttons
@@ -16,12 +18,6 @@ NOT_APPLICABLE = "N/A"
 QUEUE_ALL_CASES = "All cases"
 
 CASE_CHANGES = "See what has changed"
-
-USERS_LIST_PAGE_EDIT = "Edit"
-
-USER_PROFILE_PAGE_EDIT = "Edit"
-USER_DEACTIVATE = "Deactivate"
-USER_REACTIVATE = "Reactivate"
 
 # Generate Document
 CHOOSE_TEMPLATE_TITLE = "Select a template"
@@ -89,15 +85,6 @@ DOCUMENT_TEMPLATES_TITLE = "Document templates"
 
 REGISTER_BUSINESS_FIRST_AND_LAST_NAME = "First and last name"
 
-USER_ADD_TITLE = "Add user"
-USER_EMAIL_QUESTION = "Email address"
-USER_TEAM_QUESTION = "Team"
-USER_ROLE_QUESTION = "Role"
-USER_ADD_FORM_BACK_TO_USERS = "Back to users"
-USER_EDIT_TITLE = "Edit user"
-USER_EDIT_FORM_BACK_TO_USER = "Back to user"
-USER_EDIT_FORM_SAVE = "Save"
-
 
 class Common:
     SERVICE_NAME = "LITE Internal"
@@ -141,11 +128,6 @@ class Authentication:
         TITLE = "User not found"
 
 
-class Users:
-    DESCRIPTION = "Team level users can manage and view team user accounts."
-    INVITE = "Invite a new user"
-
-
 class UpdateUser:
     class Status:
         DEACTIVATE_WARNING = "This user will no longer be able to sign in or perform tasks"
@@ -155,45 +137,6 @@ class UpdateUser:
 class Activity:
     ADDED_AN_ECJU_QUERY = " added an ECJU query:"
     ADDED_A_CASE_NOTE = " added a case note:"
-
-
-class Queues:
-    class QueueList:
-        COLUMN_HEADING_ACTIONS = "Actions"
-        COLUMN_HEADING_NAME = "Queue name"
-        COLUMN_HEADING_TEAM = "Team name"
-        PAGE_HEADING = "My work queues"
-
-    class QueueAdd:
-        TITLE = "Add queue"
-        DESCRIPTION = ""
-        BACK = "Back to queue"
-
-        class Name:
-            TITLE = "Name"
-            DESCRIPTION = ""
-
-    class QueueEdit:
-        TITLE = "Edit queue"
-        DESCRIPTION = ""
-        BACK = "Back to queue"
-
-        class Name:
-            TITLE = "Name"
-            DESCRIPTION = ""
-
-
-class Flags:
-    CREATE = "Create a flag"
-    DESCRIPTION = "Flags are a simple way to tag cases, organisations, destinations and goods."
-    TITLE = "Flags"
-
-    class UpdateFlag:
-        class Status:
-            DEACTIVATE_HEADING = "Are you sure you want to deactivate this flag?"
-            DEACTIVATE_WARNING = "This flag will no longer be able to be used unless it's reactivated"
-            REACTIVATE_HEADING = "Are you sure you want to reactivate this flag?"
-            REACTIVATE_WARNING = "This flag will be able to be used unless it's deactivated again"
 
 
 class FlaggingRules:
