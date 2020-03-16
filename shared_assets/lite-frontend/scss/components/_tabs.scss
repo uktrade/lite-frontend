@@ -50,8 +50,7 @@
 	@include govuk-font($size: 16, $weight: bold);
 	display: inline-block;
 	line-height: 40px!important;
-	margin-right: 25px;
-	margin-bottom: 30px;
+	margin: 0 govuk-spacing(5) govuk-spacing(6) 0;
 	border-bottom: 2px solid transparent;
 	color: $govuk-secondary-text-colour;
 	cursor: pointer;
@@ -60,6 +59,10 @@
 
 	&:hover {
 		border-bottom: 2px solid $govuk-secondary-text-colour;
+	}
+
+	&:focus {
+		@include govuk-focused-text;
 	}
 
 	.lite-notification-bubble {
