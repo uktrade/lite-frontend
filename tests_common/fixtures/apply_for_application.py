@@ -82,6 +82,7 @@ def apply_for_standard_application(driver, api_client_config, context):
     )
     lite_client.applications.submit_application(draft_id)
     save_application_data_to_context(lite_client, context)
+    context.good_id = lite_client.context.get("good_id")
     timer.print_time("apply_for_standard_application")
 
 

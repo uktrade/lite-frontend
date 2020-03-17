@@ -75,9 +75,23 @@ class Cases:
     def finalise_case(self, draft_id, action):
         response = self.api_client.make_request(
             method="PUT",
-            url="/applications/" + draft_id + "/finalise/",
+            url="/applications/" + draft_id + "/final-decision/",
             headers=self.api_client.gov_headers,
             body={"action": action},
+        )
+
+        return response.status_code
+
+    def create_user_advice(self, case_id, data):
+        response = self.api_client.make_request(
+            method="POST", url="/cases/" + case_id + "/user-advice/", headers=self.api_client.gov_headers, body=data,
+        )
+
+        return response.status_code
+
+    def create_team_advice(self, case_id, data):
+        response = self.api_client.make_request(
+            method="POST", url="/cases/" + case_id + "/team-advice/", headers=self.api_client.gov_headers, body=data,
         )
 
         return response.status_code

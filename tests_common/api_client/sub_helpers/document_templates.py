@@ -7,12 +7,14 @@ class DocumentTemplates:
         self.api_client = api_client
         self.request_data = request_data
 
-    def add_template(self, seed_picklist):
+    def add_template(self, seed_picklist, advice_type=None):
         template_data = self.api_client.request_data["document_template"]
         template_data["layout"] = self.get_layouts()[0]["id"]
         paragraph = seed_picklist.add_letter_paragraph_picklist()
         template_data["letter_paragraphs"] = [paragraph["id"]]
         template_data["name"] = "0000" + helpers.get_formatted_date_time_m_d_h_s()
+        if advice_type:
+            template_data["decisions"] = advice_type
         template = self.api_client.make_request(
             method="POST", url="/letter-templates/", headers=self.api_client.gov_headers, body=template_data,
         ).json()
