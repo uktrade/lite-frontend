@@ -563,7 +563,7 @@ class GoodsCategories:
 class EndUseDetails:
     REFERENCE = "Reference"
     REFERENCE_ECJU_LETTER = "This reference is on the ECJU letter"
-    NOTICE = "You can enter up to 2200 characters."
+    NOTICE = "Enter up to 2,200 characters"
     PROVIDE_DETAILS = "Provide details"
     EU_MILITARY_PROVIDE_DETAILS = "If no, provide details (optional)"
 
@@ -592,14 +592,12 @@ class EndUseDetails:
     )
 
     class EndUseDetailsSummaryList:
-        TITLE = "WMD end use summary list"
+        TITLE = "End use summary list"
         INFORMED_TO_APPLY = "Informed by ECJU to apply for a licence"
-        INFORMED_WMD = "Informed by ECJU that the products may be used in weapons of mass destruction"
-        SUSPECTED_WMD = "You suspect the products may be used in weapons of mass destruction"
-        EU_MILITARY = "Products received under a transfer licence from an EU member state"
-        COMPLIANT_LIMITATIONS_EU = (
-            "Compliant with terms of export limitations or obtained consent from originating EU member state"
-        )
+        INFORMED_WMD = "Informed by ECJU that products may be used in WMD"
+        SUSPECTED_WMD = "You suspect products may be used in WMD"
+        EU_MILITARY = "Products received under a transfer licence"
+        COMPLIANT_LIMITATIONS_EU = "Compliant with terms of export limitations or obtained consent"
 
     class CheckYourAnswers:
         INFORMED_TO_APPLY_TITLE = "Informed to apply"
