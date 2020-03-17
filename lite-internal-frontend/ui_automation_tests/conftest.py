@@ -95,7 +95,7 @@ def pytest_exception_interact(node, report):
 
 
 @when("I go to the case")  # noqa
-def i_go_to_the_case(driver, context, internal_url):
+def i_go_to_the_case(driver, context, internal_url):  # noqa
     driver.get(internal_url.rstrip("/") + "/cases/" + context.case_id)
 
 
@@ -282,41 +282,41 @@ def status_has_been_changed_in_header(driver, context, internal_info):  # noqa
 
 
 @given("I create a clc query")  # noqa
-def create_clc_query(driver, apply_for_clc_query, context):
+def create_clc_query(driver, apply_for_clc_query, context):  # noqa
     pass
 
 
 @when(parsers.parse('filter status has been changed to "{status}"'))  # noqa
-def filter_status_change(driver, context, status):
+def filter_status_change(driver, context, status):  # noqa
     CaseListPage(driver).select_filter_status_from_dropdown(status)
     CaseListPage(driver).click_apply_filters_button()
 
 
 @when(parsers.parse('I change the user filter to "{status}"'))  # noqa
-def filter_status_change(driver, context, status):
+def filter_status_change(driver, context, status):  # noqa
     CaseListPage(driver).select_filter_user_status_from_dropdown(status)
     CaseListPage(driver).click_apply_filters_button()
 
 
 @when("I go to the case list page")  # noqa
-def case_list_page(driver, internal_url):
+def case_list_page(driver, internal_url):  # noqa
     driver.get(internal_url.rstrip("/") + "/cases/")
 
 
 @then("I should see my case in the cases list")  # noqa
-def case_in_cases_list(driver, context):
+def case_in_cases_list(driver, context):  # noqa
     assert paginated_item_exists(context.case_id, driver)
     context.case_row = CaseListPage(driver).get_case_row(context.case_id)
     assert context.reference_code in context.case_row.text
 
 
 @then("I should see my case SLA")  # noqa
-def case_sla(driver, context):
+def case_sla(driver, context):  # noqa
     assert CaseListPage(driver).get_case_row_sla(context.case_row) == "0"
 
 
 @then("I see the case page")  # noqa
-def i_see_the_case_page(driver, context):
+def i_see_the_case_page(driver, context):  # noqa
     assert driver.find_element_by_id(ApplicationPage.HEADING_ID).text == context.reference_code
 
 
@@ -326,7 +326,7 @@ def go_to_users(driver, sso_sign_in, internal_url):  # noqa
 
 
 @given("an Exhibition Clearance is created")  # noqa
-def an_exhibition_clearance_is_created(driver, apply_for_exhibition_clearance):
+def an_exhibition_clearance_is_created(driver, apply_for_exhibition_clearance):  # noqa
     pass
 
 
