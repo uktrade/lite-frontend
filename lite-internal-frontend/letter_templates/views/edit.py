@@ -25,7 +25,7 @@ class EditTemplate(TemplateView):
         letter_template_case_types = [case_type["reference"]["key"] for case_type in letter_template_case_types]
         letter_template.update(case_types=letter_template_case_types)
 
-        letter_template_decisions = [decision["key"] for decision in letter_template_decisions]
+        letter_template_decisions = [decision["name"]["key"] for decision in letter_template_decisions]
         letter_template.update(decisions=letter_template_decisions)
 
         case_type_options = [Option(option["key"], option["value"]) for option in get_case_types(request)]

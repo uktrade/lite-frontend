@@ -94,18 +94,6 @@ def go_to_final_advice(driver):
     page.go_to_final_advice()
 
 
-@when("I combine all advice")
-def combine_all_advice(driver):
-    page = GiveAdvicePages(driver)
-    page.combine_advice()
-
-
-@when("I finalise the licence")
-def finalise(driver):
-    page = GiveAdvicePages(driver)
-    page.finalise()
-
-
 @when("I finalise the goods and countries")
 def finalise_goods_and_countries(driver):
     page = GiveAdvicePages(driver)

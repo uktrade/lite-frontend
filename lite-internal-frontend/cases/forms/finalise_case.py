@@ -17,7 +17,7 @@ def approve_licence_form(case_id, is_open_licence, duration, editable_duration):
                 editable_duration,
                 TextInput(
                     title=cases.FinaliseLicenceForm.DURATION_TITLE,
-                    name="licence_duration",
+                    name="duration",
                     description=cases.FinaliseLicenceForm.DURATION_DESCRIPTION,
                 ),
                 Label(text=f"Duration: {duration} months"),

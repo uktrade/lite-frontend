@@ -1,13 +1,12 @@
+from datetime import date
+from http import HTTPStatus
+
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
 
 from cases.constants import CaseType
-
-from datetime import date
-
 from cases.forms.finalise_case import approve_licence_form, deny_licence_form
-
 from cases.services import (
     post_user_case_advice,
     get_user_case_advice,
@@ -26,6 +25,9 @@ from cases.services import (
     _generate_data_and_keys,
     _generate_post_data_and_errors,
     get_application_default_duration,
+    grant_licence,
+    get_final_decision_documents,
+    get_licence,
 )
 from cases.views_helpers import (
     get_case_advice,
@@ -37,6 +39,7 @@ from cases.views_helpers import (
 )
 from conf.constants import DECISIONS_LIST, Permission
 from core import helpers
+from lite_content.lite_internal_frontend.cases import GenerateFinalDecisionDocumentsPage
 from lite_forms.generators import form_page, error_page
 
 
@@ -323,13 +326,18 @@ class Finalise(TemplateView):
 
         for item in data:
             if item[search_key]["key"] == "approve" or item[search_key]["key"] == "proviso":
+                # Redirect if licence already exists
+                _, status_code = get_licence(request, str(kwargs["pk"]))
+                if status_code == HTTPStatus.OK:
+                    return redirect(reverse_lazy("cases:finalise_documents", kwargs={"pk": str(kwargs["pk"])}))
+
                 today = date.today()
 
                 form_data = {
                     "day": today.day,
                     "month": today.month,
                     "year": today.year,
-                    "licence_duration": duration,
+                    "duration": duration,
                 }
                 form = approve_licence_form(
                     case_id=case_id,
@@ -363,4 +371,31 @@ class Finalise(TemplateView):
             )
             return form_page(request, form, data=data, errors=res.json()["errors"])
 
-        return redirect(reverse_lazy("cases:case", kwargs={"pk": case["id"]}))
+        return redirect(reverse_lazy("cases:finalise_documents", kwargs={"pk": case["id"]}))
+
+
+class FinaliseGenerateDocuments(TemplateView):
+    @staticmethod
+    def get_page(request, pk, errors=None):
+        decisions, _ = get_final_decision_documents(request, str(pk))
+        decisions = decisions["documents"]
+        can_submit = all([decision.get("document") for decision in decisions.values()])
+
+        context = {
+            "case_id": str(pk),
+            "title": GenerateFinalDecisionDocumentsPage.TITLE,
+            "can_submit": can_submit,
+            "decisions": decisions,
+            "errors": errors,
+        }
+        return render(request, "case/views/finalise-generate-documents.html", context)
+
+    def get(self, request, pk):
+        return self.get_page(request, pk)
+
+    def post(self, request, pk):
+        data, status_code = grant_licence(request, str(pk))
+        if status_code != HTTPStatus.CREATED:
+            return self.get_page(request, pk, errors=data["errors"])
+        else:
+            return redirect(reverse_lazy("cases:case", kwargs={"pk": pk}))

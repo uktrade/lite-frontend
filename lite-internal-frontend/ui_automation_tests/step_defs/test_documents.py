@@ -9,12 +9,6 @@ from ui_automation_tests.pages.documents_page import DocumentsPage
 scenarios("../features/documents.feature", strict_gherkin=False)
 
 
-@when("I click on the Documents button")
-def click_documents(driver):
-    application_page = ApplicationPage(driver)
-    application_page.click_documents_button()
-
-
 @when("I click on the Attach Document button")
 def click_attach_documents(driver):
     documents_page = DocumentsPage(driver)

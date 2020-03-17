@@ -7,7 +7,7 @@ class GiveAdvicePages(BasePage):
     ADVICE_CHECKBOX_OPTION = "type-"  # ID
     IMPORT_ADVICE_LINK = "link-import-"  # ID
     PICKLIST_ITEM_TEXT = ".app-picklist-picker__item p"  # CSS
-    DURATION_TEXT = "licence_duration"
+    DURATION_TEXT = "duration"
     ADDITIONAL_NOTES = "textarea-note"  # ID
     TEAM_ADVICE = "team_advice"
     FINAL_ADVICE = "final_advice"

@@ -40,9 +40,9 @@
 			<tbody class="govuk-table__body">
 				{% for document in case_documents %}
 					<tr class="govuk-table__row">
-						<th scope="row" class="govuk-table__header">{{ document.name }}</th>
-						<td class="govuk-table__cell">{{ document.type.value }}</td>
-						<td class="govuk-table__cell">{{ document.description }}</td>
+						<th scope="row" class="govuk-table__header" id="document-name">{{ document.name }}</th>
+						<td class="govuk-table__cell" id="document-type">{{ document.type.value }}</td>
+						<td class="govuk-table__cell" id="document-description">{{ document.description }}</td>
 						<td class="govuk-table__cell">{{ document.user.first_name }} {{ document.user.last_name }}</td>
 						<td class="govuk-table__cell">{{ document.created_at|str_date }}</td>
 						<td class="govuk-table__cell">

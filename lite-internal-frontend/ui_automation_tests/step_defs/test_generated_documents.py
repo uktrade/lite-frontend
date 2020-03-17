@@ -17,12 +17,6 @@ def click_generated_documents(driver, context):
     ApplicationPage(driver).click_generate_document_button()
 
 
-@when("I select the template previously created")
-def selected_created_template(driver, context):
-    GeneratedDocument(driver).click_letter_template(context.document_template_id)
-    Shared(driver).click_submit()
-
-
 @when("I add a paragraph to the document")
 def add_paragraph(driver, context):
     generated_document_page = GeneratedDocument(driver)

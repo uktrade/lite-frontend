@@ -40,6 +40,34 @@ urlpatterns = [
         "<uuid:pk>/finalise-goods-countries/", advice.FinaliseGoodsCountries.as_view(), name="finalise_goods_countries"
     ),
     path("<uuid:pk>/finalise/", advice.Finalise.as_view(), name="finalise"),
+    path(
+        "<uuid:pk>/finalise/generate-documents/", advice.FinaliseGenerateDocuments.as_view(), name="finalise_documents"
+    ),
+    path(
+        "<uuid:pk>/finalise/<str:decision_key>/generate-document/select-template/",
+        generate_document.SelectTemplateFinalAdvice.as_view(),
+        name="finalise_document_template",
+    ),
+    path(
+        "<uuid:pk>/finalise/<str:decision_key>/generate-document/<uuid:tpk>/edit/",
+        generate_document.EditTextFinalAdvice.as_view(),
+        name="finalise_document_edit_text",
+    ),
+    path(
+        "<uuid:pk>/finalise/<str:decision_key>/generate-document/<uuid:tpk>/add-paragraphs/",
+        generate_document.AddDocumentParagraphsFinalAdvice.as_view(),
+        name="finalise_document_add_paragraphs",
+    ),
+    path(
+        "<uuid:pk>/finalise/<str:decision_key>/generate-document/<uuid:tpk>/preview/",
+        generate_document.PreviewDocument.as_view(),
+        name="finalise_document_preview",
+    ),
+    path(
+        "<uuid:pk>/finalise/<str:decision_key>/generate-document/<uuid:tpk>/create/",
+        generate_document.CreateDocumentFinalAdvice.as_view(),
+        name="finalise_document_create",
+    ),
     path("<uuid:pk>/ecju-queries/", ecju.ViewEcjuQueries.as_view(), name="ecju_queries"),
     path("<uuid:pk>/ecju-queries/add", ecju.CreateEcjuQuery.as_view(), name="ecju_queries_add"),
     path("<uuid:pk>/respond-to-clc-query/", goods_query.RespondCLCQuery.as_view(), name="respond_to_clc_query"),

@@ -95,7 +95,7 @@ def edit_template_name_and_layout(driver, context):
     letter_template = LetterTemplates(driver)
     letter_template.click_edit_template_button()
     letter_template.enter_template_name(context.document_template_name)
-    letter_template.select_which_type_of_cases_template_can_apply_to(["Goods Query"])
+    letter_template.select_which_type_of_cases_template_can_apply_to(["MOD F680 Clearance"])
     Shared(driver).click_submit()
 
 

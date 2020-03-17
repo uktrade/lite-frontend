@@ -35,7 +35,7 @@
 				<div class="govuk-grid-column-one-third">
 					<h4 class="govuk-heading-s">{% lcs 'LetterTemplates.LetterTemplate.DECISIONS_TITLE' %}</h4>
 					<p class="govuk-label" id="decisions">
-						{% for decision in letter_template.decisions %}{% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}{{ decision.value }}{% endfor %}
+						{% for decision in letter_template.decisions %}{% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}{{ decision.name.value }}{% endfor %}
 					</p>
 				</div>
 			</div>

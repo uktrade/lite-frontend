@@ -24,6 +24,8 @@ from ui_automation_tests.fixtures.add_a_picklist import (  # noqa
     add_a_standard_advice_picklist,
     add_a_report_summary_picklist,
 )
+from ui_automation_tests.pages.generate_document_page import GeneratedDocument
+from ui_automation_tests.pages.give_advice_pages import GiveAdvicePages
 from ui_automation_tests.shared.fixtures.apply_for_application import *  # noqa
 from ui_automation_tests.shared.fixtures.driver import driver  # noqa
 from ui_automation_tests.shared.fixtures.sso_sign_in import sso_sign_in  # noqa
@@ -328,6 +330,28 @@ def go_to_users(driver, sso_sign_in, internal_url):  # noqa
 @given("an Exhibition Clearance is created")  # noqa
 def an_exhibition_clearance_is_created(driver, apply_for_exhibition_clearance):  # noqa
     pass
+
+
+@when("I combine all advice")  # noqa
+def combine_all_advice(driver):  # noqa
+    GiveAdvicePages(driver).combine_advice()
+
+
+@when("I finalise the advice")  # noqa
+def finalise(driver):  # noqa
+    GiveAdvicePages(driver).finalise()
+
+
+@when("I select the template previously created")  # noqa
+def selected_created_template(driver, context):  # noqa
+    GeneratedDocument(driver).click_letter_template(context.document_template_id)
+    Shared(driver).click_submit()
+
+
+@when("I click on the Documents button")  # noqa
+def click_documents(driver):  # noqa
+    application_page = ApplicationPage(driver)
+    application_page.click_documents_button()
 
 
 @when("I add a flag at level Case")  # noqa

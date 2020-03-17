@@ -1,0 +1,84 @@
+{% extends 'layouts/base.html' %}
+
+{% block back_link %}{% endblock %}
+
+{% block body %}
+	<h1 class="govuk-heading-l">{{ title }}</h1>
+
+	{% if errors %}
+		<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" data-module="govuk-error-summary">
+			<h2 class="govuk-error-summary__title">
+				{% lcs 'cases.GenerateFinalDecisionDocumentsPage.ERRORS_TITLE' %}
+			</h2>
+			<div class="govuk-error-summary__body">
+				<ul class="govuk-list govuk-error-summary__list">
+					<li>
+						{{ errors }}
+					</li>
+				</ul>
+			</div>
+		</div>
+	{% endif %}
+
+	<table class="govuk-table">
+		<thead class="govuk-table__head">
+			<tr class="govuk-table__row">
+				<th scope="col" class="govuk-table__header">{% lcs 'cases.GenerateFinalDecisionDocumentsPage.Table.NAME_COLUMN' %}</th>
+				<th scope="col" class="govuk-table__header">{% lcs 'cases.GenerateFinalDecisionDocumentsPage.Table.STATUS_COLUMN' %}</th>
+				<th scope="col" class="govuk-table__header">{% lcs 'cases.GenerateFinalDecisionDocumentsPage.Table.USER_COLUMN' %}</th>
+				<th scope="col" class="govuk-table__header">{% lcs 'cases.GenerateFinalDecisionDocumentsPage.Table.DATE_COLUMN' %}</th>
+				<th scope="col" class="govuk-table__header">{% lcs 'cases.GenerateFinalDecisionDocumentsPage.Table.ACTIONS_COLUMN' %}</th>
+				<th scope="col" class="govuk-table__header"></th>
+			</tr>
+		</thead>
+		<tbody class="govuk-table__body">
+			{% for decision, data in decisions.items %}
+				<tr class="govuk-table__row" id="decision-{{ decision }}">
+					<th scope="row" class="govuk-table__header">{{ data.value }}</th>
+					{% if data.document %}
+						<td class="govuk-table__cell">
+							<div id="status-{{ decision }}" data-status="done" class="lite-tag lite-tag--blue">
+								{% lcs 'cases.GenerateFinalDecisionDocumentsPage.DONE_STATUS' %}
+							</div>
+						</td>
+						<td class="govuk-table__cell">{{ data.document.user.first_name }} {{ data.document.user.last_name }}</td>
+						<td class="govuk-table__cell">{{ data.document.created_at|str_date }}</td>
+						<td class="govuk-table__cell">
+							<a href="{% url "cases:finalise_document_template" case_id decision %}" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+								{% lcs 'cases.GenerateFinalDecisionDocumentsPage.RE_CREATE_DOCUMENT' %}
+							</a>
+						</td>
+						<td class="govuk-table__cell">
+							<a class="govuk-link" href="{% url 'cases:document' case_id data.document.id %}">
+								{% lcs 'cases.GenerateFinalDecisionDocumentsPage.VIEW_DOCUMENT' %}
+							</a>
+						</td>
+					{% else %}
+						<td class="govuk-table__cell">
+							<div id="status-{{ decision }}" data-status="not-started" class="lite-tag lite-tag--hollow">
+								{% lcs 'cases.GenerateFinalDecisionDocumentsPage.NOT_STARTED_STATUS' %}
+							</div>
+						</td>
+						<td class="govuk-table__cell"></td>
+						<td class="govuk-table__cell"></td>
+						<td class="govuk-table__cell">
+							<a href="{% url "cases:finalise_document_template" case_id decision %}" class="govuk-button" data-module="govuk-button" id="generate-document-{{ decision }}">
+								{% lcs 'cases.GenerateFinalDecisionDocumentsPage.ADD_DOCUMENT' %}
+							</a>
+						</td>
+						<td class="govuk-table__cell"></td>
+					{% endif %}
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+	{% if can_submit %}
+		<form action="{% url "cases:finalise_documents" case_id %}" method="post">
+			{% csrf_token %}
+			<button type="submit" class="govuk-button" data-module="govuk-button">
+				{% lcs 'cases.GenerateFinalDecisionDocumentsPage.SUBMIT' %}
+			</button>
+		</form>
+	{% endif %}
+{% endblock %}

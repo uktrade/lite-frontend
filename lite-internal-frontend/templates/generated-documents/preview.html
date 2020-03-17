@@ -7,10 +7,14 @@
 				<h1 class="govuk-heading-l">{% block title %}{% lcs 'cases.ApplicationPage.Actions.GENERATE_DOCUMENT' %}{% endblock %}</h1>
 			</div>
 			<div class="lite-app-bar__controls">
-				<form action="{% url 'cases:generate_document_create' pk tpk %}" method="post">
-					{% csrf_token %}
-					<input name="text" type="hidden" value="{{ text }}">
-					<button class="govuk-button" type="submit">{% lcs 'letter_templates.LetterTemplatesPage.PickTemplate.BUTTON' %}</button>
+				{% if kwargs.decision_key %}
+					<form action="{% url 'cases:finalise_document_create' kwargs.pk kwargs.decision_key kwargs.tpk %}" method="post">
+				{% else %}
+					<form action="{% url 'cases:generate_document_create' kwargs.pk kwargs.tpk %}" method="post">
+				{% endif %}
+				{% csrf_token %}
+				<input name="text" type="hidden" value="{{ text }}">
+				<button class="govuk-button" type="submit">{% lcs 'letter_templates.LetterTemplatesPage.PickTemplate.BUTTON' %}</button>
 				</form>
 			</div>
 		</div>
