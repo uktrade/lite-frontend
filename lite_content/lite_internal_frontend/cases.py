@@ -619,3 +619,21 @@ class ViewAdvicePage:
         WEBSITE_COLUMN = "Website"
         DOCUMENT_COLUMN = "Document"
         ADVICE_COLUMN = "Advice"
+
+
+class GenerateFinalDecisionDocumentsPage:
+    TITLE = "Generate Decision Documents"
+    ERRORS_TITLE = "Errors"
+    DONE_STATUS = "Done"
+    NOT_STARTED_STATUS = "Not started"
+    ADD_DOCUMENT = "Generate"
+    RE_CREATE_DOCUMENT = "Regenerate"
+    VIEW_DOCUMENT = "View"
+    SUBMIT = "Confirm Documents"
+
+    class Table:
+        NAME_COLUMN = "Name"
+        STATUS_COLUMN = "Status"
+        USER_COLUMN = "Added by"
+        DATE_COLUMN = "Date"
+        ACTIONS_COLUMN = "Actions"
