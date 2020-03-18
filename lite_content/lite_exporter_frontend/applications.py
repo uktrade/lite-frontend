@@ -569,7 +569,7 @@ class EndUseDetails:
 
     INFORMED_TO_APPLY = (
         "Have you received a letter from ECJU informing you that the products "
-        "require a license to export or are controlled under the military end use controls?"
+        "require a licence to export or are controlled under the military end use controls?"
     )
     INFORMED_WMD = (
         "Have you been informed by ECJU that the products are or may be intended, wholly or in part, "
