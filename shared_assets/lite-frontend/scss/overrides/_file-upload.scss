@@ -91,6 +91,19 @@
 .app-documents__item-preview {
 	position: relative;
 	margin-right: govuk-spacing(3);
+
+	span {
+		@include govuk-font($size: 14, $weight: bold);
+		position: absolute;
+		top: 17px;
+		left: 17px;
+		right: 17px;
+		text-transform: uppercase;
+		text-align: center;
+		letter-spacing: 1px;
+		line-height: 22px!important;
+		color: govuk-colour("white");
+	}
 }
 
 .app-documents__item-preview svg {
@@ -99,24 +112,4 @@
 
 .app-documents__item-preview svg * {
 	fill: govuk-colour("mid-grey");
-}
-
-.app-documents__item-preview::after {
-	font-family: -apple-system, BlinkMacSystemFont, Arial, Sans-Serif;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	font-weight: 700;
-	font-size: 16px;
-	font-size: 0.8rem;
-	line-height: 1.25;
-	content: "PDF";
-	position: absolute;
-	top: 17px;
-	left: 17px;
-	right: 17px;
-	text-align: center;
-	line-height: 32px !important;
-	letter-spacing: 1px;
-	text-transform: uppercase;
-	color: white;
 }
