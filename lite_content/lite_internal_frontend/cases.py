@@ -39,6 +39,7 @@ class ApplicationPage:
         ADVICE = "View advice"
         GENERATE_DOCUMENT = "Generate document"
         USER_WORK_QUEUE = "Assign user"
+        ADDITIONAL_CONTACTS = "Additional contacts"
 
     class Goods:
         MISSING_DOCUMENT_REASON_PREFIX = "No document given: "
@@ -619,6 +620,47 @@ class ViewAdvicePage:
         WEBSITE_COLUMN = "Website"
         DOCUMENT_COLUMN = "Document"
         ADVICE_COLUMN = "Advice"
+
+
+class AdditionalContacts:
+    TITLE = "Additional contacts"
+    ADD_A_CONTACT = "Add a contact"
+    NO_CONTENT_NOTICE = "There aren't any additional contacts on this case"
+    SUCCESS_MESSAGE = "Contact added successfully"
+
+    class Table:
+        NAME = "Name"
+        ADDRESS = "Address"
+        EMAIL = "Email"
+        PHONE_NUMBER = "Phone number"
+        DETAILS = "Details"
+
+
+class AddAdditionalContact:
+    BACK_LINK = "Back to " + AdditionalContacts.TITLE.lower()
+    TITLE = "Add a contact to this case"
+    DESCRIPTION = ""
+    SUBMIT_BUTTON = "Save and continue"
+
+    class Name:
+        TITLE = "Full name"
+        DESCRIPTION = ""
+
+    class Email:
+        TITLE = "Email address"
+        DESCRIPTION = ""
+
+    class PhoneNumber:
+        TITLE = "Phone number"
+        DESCRIPTION = "For international numbers include the country code"
+
+    class Details:
+        TITLE = "Information about the contact"
+        DESCRIPTION = ""
+
+    class Address:
+        TITLE = "Address"
+        DESCRIPTION = ""
 
 
 class GenerateFinalDecisionDocumentsPage:

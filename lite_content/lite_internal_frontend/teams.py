@@ -9,6 +9,24 @@ class TeamsPage:
         EDIT = "Edit"
 
 
+class TeamPage:
+    BACK_LINK = "Back to " + TeamsPage.TITLE.lower()
+    ADD_A_MEMBER_BUTTON = "Add a member"
+    NO_CONTENT_NOTICE = "This team doesn't have any members"
+
+    class Tabs:
+        MEMBERS = "Members"
+        PICKLISTS = "Picklists"
+
+    class Table:
+        NAME = "Name"
+        EMAIL = "Email"
+        STATUS = "Status"
+        PENDING = "Pending"
+        ACTIONS = "Actions"
+        VIEW = "View"
+
+
 class AddTeamForm:
     BACK_LINK = "Back to " + TeamsPage.TITLE.lower()
     TITLE = "Add team"
