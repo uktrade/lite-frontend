@@ -32,9 +32,9 @@ def driver(request, api_client_config):
 
 def create_selenium_chrome_driver(chrome_options, request):
     if str(os.environ.get("ENVIRONMENT")) == "None":
-        driver = webdriver.Chrome("chromedriver", options=chrome_options)
+        driver = webdriver.Chrome("chromedriver", options=chrome_options)  # noqa
     else:
-        driver = webdriver.Chrome(options=chrome_options)
+        driver = webdriver.Chrome(options=chrome_options)  # noqa
     driver.set_timeout_to = types.MethodType(set_timeout_to, driver)
     driver.set_timeout_to_10_seconds = types.MethodType(set_timeout_to_10_seconds, driver)
     driver.get("about:blank")
