@@ -28,7 +28,7 @@
 					</a>
 				{% endif %}
 				{# Using licence_duration to check that there is a licence to surrender #}
-				{% if application.licence_duration %}
+				{% if application.licence.duration %}
 					<a href="{% url 'applications:surrender' application.id %}" id="button-surrender-application" class="govuk-button govuk-button--secondary">
 						{% lcs 'applications.ApplicationSummaryPage.Buttons.SURRENDER_APPLICATION_BUTTON' %}
 					</a>

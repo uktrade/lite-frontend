@@ -11,6 +11,7 @@ APPLICATION_COPY_URL = "/copy/"
 CASES_URL = "/cases/"
 GOODS_URL = "/goods/"
 CLEARANCE = "/clearance/"
+END_USE_DETAILS_URL = "/end-use-details/"
 DOCUMENTS_URL = "/documents/"
 PARTIES_URL = "/parties/"
 DOCUMENT_URL = "/document/"
@@ -95,6 +96,7 @@ CASE_SECTIONS = {
     "HAS_THIRD_PARTIES": [STANDARD, F680, GIFTING],
     "HAS_OPTIONAL_NOTE": [HMRC],
     "HAS_NOTES": [STANDARD, OPEN, EXHIBITION, F680, GIFTING],
+    "HAS_END_USE_DETAILS": [STANDARD, OPEN, F680],
 }
 
 PERMANENT = "permanent"

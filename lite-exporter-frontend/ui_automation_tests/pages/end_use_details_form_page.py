@@ -4,6 +4,7 @@ from ui_automation_tests.shared.BasePage import BasePage
 class EndUseDetailsFormPage(BasePage):
     INPUT_FIELD_CLASS = "govuk-input"
 
+    INTENDED_END_USE_ID = "intended_end_use"
     COMPLIANT_LIMITATIONS_EU_REF_ID = "compliant_limitations_eu_ref"
     SUSPECTED_WMD_REF_ID = "suspected_wmd_ref"
 
@@ -17,6 +18,9 @@ class EndUseDetailsFormPage(BasePage):
         ref_field = self.driver.find_element_by_class_name(self.INPUT_FIELD_CLASS)
         ref_field.clear()
         ref_field.send_keys(ref_number)
+
+    def answer_intended_end_use_details(self, details):
+        self.enter_additional_details(self.INTENDED_END_USE_ID, details)
 
     def enter_additional_details(self, field_id, details):
         self.driver.execute_script(f'document.getElementById("{field_id}").value = "{details[:-1]}"')

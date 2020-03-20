@@ -1,5 +1,6 @@
 from pytest_bdd import scenarios, then, when, parsers, given
 
+from ui_automation_tests.shared.tools.utils import get_lite_client
 from ui_automation_tests.pages.application_page import ApplicationPage
 from ui_automation_tests.pages.submitted_applications_page import SubmittedApplicationsPages
 from ui_automation_tests.shared.functions import element_with_id_exists
@@ -65,3 +66,15 @@ def edit_button_not_present(driver):
 @given("The application has been approved")
 def approve_application(approve_case):
     pass
+
+
+@given("An approval decision document has been generated")
+def approval_decision(context, api_client_config, add_a_document_template):
+    lite_client = get_lite_client(context, api_client_config)
+    lite_client.cases.add_generated_document(context.case_id, context.document_template_id, advice_type="approve")
+
+
+@given("The licence is finalised")
+def finalise_licence(context, api_client_config):
+    lite_client = get_lite_client(context, api_client_config)
+    lite_client.cases.finalise_licence(context.case_id)

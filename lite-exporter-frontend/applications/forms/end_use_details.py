@@ -1,25 +1,54 @@
-from conf.constants import STANDARD
-from lite_content.lite_exporter_frontend.applications import EndUseDetails
+from conf.constants import STANDARD, OPEN
+from lite_content.lite_exporter_frontend import generic
+from lite_content.lite_exporter_frontend.applications import (
+    EndUseDetails,
+    StandardApplicationTaskList,
+    OpenApplicationTaskList,
+)
 from lite_forms.components import Form, RadioButtons, FormGroup, Option, TextInput, TextArea
 from lite_forms.helpers import conditional
 
 
 def end_use_details_form(application, request):
     is_eu_military = request.POST.get("is_eu_military", "").lower() == "true" or application.is_eu_military
+    caption = ""
+
+    if application.sub_type == STANDARD:
+        caption = StandardApplicationTaskList.END_USE_DETAILS
+    elif application.sub_type == OPEN:
+        caption = OpenApplicationTaskList.END_USE_DETAILS
 
     return FormGroup(
         [
-            is_military_end_use_controls_form(),
-            is_informed_wmd_form(),
-            is_suspected_wmd_form(),
-            conditional(application.sub_type == STANDARD, is_eu_military_form()),
-            conditional(is_eu_military, is_compliant_limitations_eu_form()),
+            intended_end_use_form(caption),
+            is_military_end_use_controls_form(caption),
+            is_informed_wmd_form(caption),
+            is_suspected_wmd_form(caption),
+            conditional(application.sub_type == STANDARD, is_eu_military_form(caption)),
+            conditional(is_eu_military, is_compliant_limitations_eu_form(caption)),
         ]
     )
 
 
-def is_military_end_use_controls_form():
+def intended_end_use_form(caption):
     return Form(
+        caption=caption,
+        title=EndUseDetails.INTENDED_END_USE,
+        questions=[
+            TextArea(
+                name="intended_end_use",
+                short_title=EndUseDetails.EndUseDetailsSummaryList.INTENDED_END_USE,
+                extras={"max_length": 2200},
+                optional=False,
+            )
+        ],
+        default_button_name=generic.SAVE_AND_CONTINUE,
+    )
+
+
+def is_military_end_use_controls_form(caption):
+    return Form(
+        caption=caption,
         title=EndUseDetails.INFORMED_TO_APPLY,
         questions=[
             RadioButtons(
@@ -43,12 +72,13 @@ def is_military_end_use_controls_form():
                 classes=["govuk-radios--inline"],
             )
         ],
-        default_button_name="Save and continue",
+        default_button_name=generic.SAVE_AND_CONTINUE,
     )
 
 
-def is_informed_wmd_form():
+def is_informed_wmd_form(caption):
     return Form(
+        caption=caption,
         title=EndUseDetails.INFORMED_WMD,
         questions=[
             RadioButtons(
@@ -73,12 +103,13 @@ def is_informed_wmd_form():
                 classes=["govuk-radios--inline"],
             )
         ],
-        default_button_name="Save and continue",
+        default_button_name=generic.SAVE_AND_CONTINUE,
     )
 
 
-def is_suspected_wmd_form():
+def is_suspected_wmd_form(caption):
     return Form(
+        caption=caption,
         title=EndUseDetails.SUSPECTED_WMD,
         questions=[
             RadioButtons(
@@ -104,12 +135,13 @@ def is_suspected_wmd_form():
                 classes=["govuk-radios--inline"],
             )
         ],
-        default_button_name="Save and continue",
+        default_button_name=generic.SAVE_AND_CONTINUE,
     )
 
 
-def is_eu_military_form():
+def is_eu_military_form(caption):
     return Form(
+        caption=caption,
         title=EndUseDetails.EU_MILITARY,
         questions=[
             RadioButtons(
@@ -120,12 +152,13 @@ def is_eu_military_form():
                 classes=["govuk-radios--inline"],
             )
         ],
-        default_button_name="Save and continue",
+        default_button_name=generic.SAVE_AND_CONTINUE,
     )
 
 
-def is_compliant_limitations_eu_form():
+def is_compliant_limitations_eu_form(caption):
     return Form(
+        caption=caption,
         title=EndUseDetails.IS_COMPLIANT_LIMITATIONS_EU,
         questions=[
             RadioButtons(
@@ -150,5 +183,5 @@ def is_compliant_limitations_eu_form():
                 classes=["govuk-radios--inline"],
             )
         ],
-        default_button_name="Save and continue",
+        default_button_name=generic.SAVE_AND_CONTINUE,
     )

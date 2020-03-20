@@ -1,13 +1,13 @@
-from pytest_bdd import when, scenarios, then
+from pytest_bdd import when, scenarios, then, given
 
 from ui_automation_tests.pages.application_page import ApplicationPage
 
 scenarios("../features/generated_documents.feature", strict_gherkin=False)
 
 
-@when("I go to the recently created application with a Generated Document attached")
-def click_on_an_application(driver, exporter_url, context, apply_for_standard_application, add_a_generated_document):
-    driver.get(exporter_url.rstrip("/") + "/applications/" + context.app_id)
+@given("A document has been generated for my application")
+def click_on_an_application(add_a_generated_document):
+    pass
 
 
 @when("I click the Generated Documents tab")  # noqa

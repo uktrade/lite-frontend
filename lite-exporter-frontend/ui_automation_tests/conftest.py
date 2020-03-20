@@ -202,6 +202,13 @@ def go_to_task_list_section(driver, section):  # noqa
     TaskListPage(driver).click_on_task_list_section(section)
 
 
+@when(parsers.parse("I provide details of the intended end use of the products"))  # noqa
+def intended_end_use_details(driver):  # noqa
+    end_use_details = EndUseDetailsFormPage(driver)
+    end_use_details.answer_intended_end_use_details(fake.sentence(nb_words=30))
+    functions.click_submit(driver)
+
+
 @when(parsers.parse('I answer "{choice}" for informed by ECJU to apply'))  # noqa
 def military_end_use_details(driver, choice):  # noqa
     end_use_details = EndUseDetailsFormPage(driver)

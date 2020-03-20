@@ -21,6 +21,8 @@ Feature: I want to be able to withdraw an active application
       Given I go to exporter homepage and choose Test Org
       And I create a standard application via api
       And The application has been approved
+      And An approval decision document has been generated
+      And The licence is finalised
       When I go to application previously created
       And I click the button 'Surrender Application'
       Then I should see a confirmation page

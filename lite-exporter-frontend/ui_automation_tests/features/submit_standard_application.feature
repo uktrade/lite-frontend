@@ -21,6 +21,7 @@ Feature: I want to indicate the standard licence I want
     And I click continue
     And I click the back link
     And I click on the "end_use_details" section
+    And I provide details of the intended end use of the products
     And I answer "Yes" for informed by ECJU to apply
     And I answer "No" for informed by ECJU about WMD use
     And I answer "Yes" for suspected WMD use
@@ -82,6 +83,7 @@ Feature: I want to indicate the standard licence I want
     Then download link is present
     When I click the back link
     And I click on the "end_use_details" section
+    And I provide details of the intended end use of the products
     And I answer "No" for informed by ECJU to apply
     And I answer "Yes" for informed by ECJU about WMD use
     And I answer "No" for suspected WMD use
@@ -127,6 +129,7 @@ Feature: I want to indicate the standard licence I want
     And I fill in new external location form with name: "32 Lime Street", address: "London" and country: "Ukraine" and continue
     And I click the back link
     And I click on the "end_use_details" section
+    And I provide details of the intended end use of the products
     And I answer "Yes" for informed by ECJU to apply
     And I answer "No" for informed by ECJU about WMD use
     And I answer "Yes" for suspected WMD use
