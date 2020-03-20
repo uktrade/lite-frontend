@@ -1,0 +1,64 @@
+{% extends 'layouts/base.html' %}
+
+{% block back_link %}
+	{% include "case/views/includes/breadcrumbs.html" with text='cases.AdditionalContacts.TITLE' %}
+{% endblock %}
+
+{% block title %}
+	{% lcs 'cases.AdditionalContacts.TITLE' %} - {{ case.reference_code }}
+{% endblock %}
+
+{% block body %}
+	{% include 'includes/messages.html' %}
+
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">{% lcs 'cases.AdditionalContacts.TITLE' %}</h1>
+		</div>
+		<div class="lite-app-bar__controls">
+			{% govuk_link_button id='add-a-contact' text='cases.AdditionalContacts.ADD_A_CONTACT' url='cases:add_additional_contact' url_param=case.id %}
+		</div>
+	</div>
+
+	{% if additional_contacts %}
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th scope="col" class="govuk-table__header">{% lcs 'cases.AdditionalContacts.Table.DETAILS' %}</th>
+					<th scope="col" class="govuk-table__header">{% lcs 'cases.AdditionalContacts.Table.NAME' %}</th>
+					<th scope="col" class="govuk-table__header">{% lcs 'cases.AdditionalContacts.Table.ADDRESS' %}</th>
+					<th scope="col" class="govuk-table__header">{% lcs 'cases.AdditionalContacts.Table.EMAIL' %}</th>
+					<th scope="col" class="govuk-table__header">{% lcs 'cases.AdditionalContacts.Table.PHONE_NUMBER' %}</th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				{% for contact in additional_contacts %}
+					<tr class="govuk-table__row">
+						<td scope="row" class="govuk-table__header">
+							<span class="govuk-table__header" aria-hidden="true">{% lcs 'cases.AdditionalContacts.Table.DETAILS' %}</span>
+							{{ contact.details }}
+						</td>
+						<td class="govuk-table__cell">
+							<span class="govuk-table__header" aria-hidden="true">{% lcs 'cases.AdditionalContacts.Table.NAME' %}</span>
+							{{ contact.name }}
+						</td>
+						<td class="govuk-table__cell">
+							<span class="govuk-table__header" aria-hidden="true">{% lcs 'cases.AdditionalContacts.Table.ADDRESS' %}</span>
+							{{ contact|get_address|linebreaksbr }}
+						</td>
+						<td class="govuk-table__cell">
+							<span class="govuk-table__header" aria-hidden="true">{% lcs 'cases.AdditionalContacts.Table.EMAIL' %}</span>
+							{{ contact.email }}
+						</td>
+						<td class="govuk-table__cell">
+							<span class="govuk-table__header" aria-hidden="true">{% lcs 'cases.AdditionalContacts.Table.PHONE_NUMBER' %}</span>
+							{{ contact.phone_number }}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		{% include "includes/notice.html" with text='cases.AdditionalContacts.NO_CONTENT_NOTICE' %}
+	{% endif %}
+{% endblock %}

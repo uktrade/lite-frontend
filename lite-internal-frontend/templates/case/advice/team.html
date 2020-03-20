@@ -6,43 +6,44 @@
 	{% include "case/views/includes/breadcrumbs.html" with text="cases.ApplicationPage.Actions.ADVICE" %}
 {% endblock %}
 
+{% block title %}
+	{% lcs 'cases.ViewAdvicePage.TEAM_ADVICE' %} -
+	{% lcs 'cases.ApplicationPage.Actions.ADVICE' %}
+{% endblock %}
+
 {% block body %}
 	{% include 'includes/messages.html' %}
 
-	<h1 class="govuk-heading-xl">
+	<h1 class="govuk-heading-l">
 		{% lcs 'cases.ApplicationPage.Actions.ADVICE' %}
 	</h1>
 
 	<form method="post">
-
 		{% csrf_token %}
 
-		<!-- Tab bar -->
-		<div>
-			<div class="lite-tabs--fade">
-				<div class="lite-tabs">
-					<a href="{% url 'cases:user_advice_view' case.id %}" class="lite-tabs__tab" id="user_advice">{% lcs 'cases.ViewAdvicePage.USER_ADVICE' %}</a>
-					<a href="{% url 'cases:team_advice_view' case.id %}" class="lite-tabs__tab lite-tabs__tab--selected" id="team_advice">{% lcs 'cases.ViewAdvicePage.TEAM_ADVICE' %}</a>
-					<a href="{% url 'cases:final_advice_view' case.id %}" class="lite-tabs__tab" id="final_advice">{% lcs 'cases.ViewAdvicePage.FINAL_ADVICE' %}</a>
-				</div>
+		<div class="lite-tabs__container">
+			<div class="lite-tabs">
+				<a href="{% url 'cases:user_advice_view' case.id %}" class="lite-tabs__tab" id="user_advice">{% lcs 'cases.ViewAdvicePage.USER_ADVICE' %}</a>
+				<a href="{% url 'cases:team_advice_view' case.id %}" class="lite-tabs__tab lite-tabs__tab--selected" id="team_advice">{% lcs 'cases.ViewAdvicePage.TEAM_ADVICE' %}</a>
+				<a href="{% url 'cases:final_advice_view' case.id %}" class="lite-tabs__tab" id="final_advice">{% lcs 'cases.ViewAdvicePage.FINAL_ADVICE' %}</a>
 			</div>
 			{% if can_create_and_edit_advice and is_user_team and not case.has_advice.final %}
-				{% if all_advice|length %}
-					<div>
-						<button id="button-give-advice" name="action" value="give-advice" type="submit" class="govuk-button" data-module="govuk-button">
-							{% lcs 'cases.ApplicationPage.ADVICE' %}
-						</button>
-						<button id="button-clear-advice" name="action" value="delete" type="submit" class="govuk-button" data-module="govuk-button">
-							{% lcs 'CLEAR_ADVICE' %}
-						</button>
-					</div>
-				{% else %}
-					{% if not status_is_terminal and case.has_advice.user %}
-						<a class="govuk-button" href="{% url 'cases:coalesce_user_advice' case.id %}" class="lite-tabs__tab" id="combine_advice_button">
-							{% lcs 'COMBINE_USER_ADVICE' %}
-						</a>
+				<div class="lite-tabs__controls">
+					{% if all_advice|length %}
+							<button id="button-give-advice" name="action" value="give-advice" type="submit" class="govuk-button" data-module="govuk-button">
+								{% lcs 'cases.ApplicationPage.ADVICE' %}
+							</button>
+							<button id="button-clear-advice" name="action" value="delete" type="submit" class="govuk-button" data-module="govuk-button">
+								{% lcs 'CLEAR_ADVICE' %}
+							</button>
+					{% else %}
+						{% if not status_is_terminal and case.has_advice.user %}
+							<a class="govuk-button" href="{% url 'cases:coalesce_user_advice' case.id %}" class="lite-tabs__tab" id="combine_advice_button">
+								{% lcs 'COMBINE_USER_ADVICE' %}
+							</a>
+						{% endif %}
 					{% endif %}
-				{% endif %}
+				</div>
 			{% endif %}
 		</div>
 

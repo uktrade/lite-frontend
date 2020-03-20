@@ -41,16 +41,20 @@ def respond_to_clc_query_form(request, case):
                 title=cases.RespondClCQueryForm.Controlled.TITLE,
                 name="is_good_controlled",
                 options=[
-                    Option(key="yes", value=cases.RespondClCQueryForm.Controlled.YES, show_pane="pane_control_code"),
+                    Option(
+                        key="yes",
+                        value=cases.RespondClCQueryForm.Controlled.YES,
+                        components=[
+                            control_list_entry_question(
+                                control_list_entries=get_control_list_entries(None, convert_to_options=True),
+                                title=cases.RespondClCQueryForm.CONTROL_LIST_ENTRY,
+                                name="control_code",
+                                inset_text=False,
+                            ),
+                        ],
+                    ),
                     Option(key="no", value=cases.RespondClCQueryForm.Controlled.NO),
                 ],
-                classes=["govuk-radios--inline"],
-            ),
-            control_list_entry_question(
-                control_list_entries=get_control_list_entries(None, convert_to_options=True),
-                title=cases.RespondClCQueryForm.CONTROL_LIST_ENTRY,
-                name="control_code",
-                inset_text=False,
             ),
             RadioButtons(
                 title=cases.RespondClCQueryForm.ReportSummary.TITLE,

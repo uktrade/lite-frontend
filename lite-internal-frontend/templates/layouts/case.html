@@ -57,6 +57,9 @@
 						{% lcs 'cases.ApplicationPage.Actions.ADVICE' %}
 					</a>
 				{% endif %}
+				<a role="button" draggable="false" class="govuk-button" id="link-additional-contacts" href="{% url 'cases:additional_contacts' case.id %}">
+					{% lcs 'cases.ApplicationPage.Actions.ADDITIONAL_CONTACTS' %}
+				</a>
 				<a role="button" draggable="false" class="govuk-button" id="generate-document" href="{% url 'cases:generate_document' case.id %}">
 					{% lcs 'cases.ApplicationPage.Actions.GENERATE_DOCUMENT' %}
 				</a>

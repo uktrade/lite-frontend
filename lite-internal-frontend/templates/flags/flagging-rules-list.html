@@ -5,7 +5,11 @@
 {% block body %}
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
-			<h1 class="govuk-heading-l">{% lcs 'FlaggingRules.TITLE' %}</h1>
+			<h1 class="govuk-heading-l">
+				{% block title %}
+					{% lcs 'FlaggingRules.TITLE' %}
+				{% endblock %}
+			</h1>
 			<p class="govuk-caption-m">
 				{% lcs 'FlaggingRules.DESCRIPTION' %}
 			</p>

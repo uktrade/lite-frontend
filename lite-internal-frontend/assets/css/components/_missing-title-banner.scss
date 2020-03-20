@@ -1,0 +1,57 @@
+.app-missing-title-banner {
+	@include govuk-font($size: 19);
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	background-color: $govuk-error-colour;
+	padding: govuk-spacing(3) 0;
+	color: govuk-colour("white");
+	z-index: 1;
+
+	&::after {
+		content: "";
+		position: absolute;
+		left: 0;
+		bottom: - govuk-spacing(1);
+		right: 0;
+		height: govuk-spacing(1);
+		background: repeating-linear-gradient(
+		  45deg,
+		  govuk-colour("yellow"),
+		  govuk-colour("yellow") 10px,
+		  govuk-colour("black") 10px,
+		  govuk-colour("black") 20px
+		);
+	}
+}
+
+.app-missing-title-banner__heading {
+	@include govuk-font($size: 24, $weight: bold);
+	color: govuk-colour("white");
+	margin: 0 0 govuk-spacing(2) 0;
+}
+
+.app-missing-title-banner__code {
+	position: relative;
+	font-family: monospace;
+	color: govuk-colour("dark-grey");
+	z-index: 0;
+	margin: 0 govuk-spacing(2);
+
+	&::before {
+		content: "";
+		position: absolute;
+		top: - govuk-spacing(1);
+		left: - govuk-spacing(1);
+		right: - govuk-spacing(1);
+		bottom: - govuk-spacing(1);
+		background-color: govuk-colour("white");
+		z-index: -1;
+	}
+}
+
+.app-missing-title-banner__code--tint {
+	color: govuk-colour("black");
+	margin: 0 4px;
+}

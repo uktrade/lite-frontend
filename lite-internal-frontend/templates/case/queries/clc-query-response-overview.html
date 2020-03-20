@@ -59,7 +59,7 @@
 					<div>
 						<a href="#" class="govuk-link govuk-body-m">
 							{% if document.safe == True %}
-								<a class="govuk-link lite-link--icon govuk-link--no-visited-state" href="{% url 'cases:document' case.id document.id %}">
+								<a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' case.id document.id %}">
 									<span class="govuk-visually-hidden">{% lcs 'cases.ClcResponseOverview.Details.Documents.DOWNLOAD' %}</span> {{ document.name }}
 								</a>
 							{% elif document.safe == False %}

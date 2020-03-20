@@ -6,16 +6,17 @@ class Shared(BasePage):
 
     SUBMIT_BUTTON = '.govuk-button[type*="submit"]'  # CSS
     ERROR_MESSAGE = ".govuk-error-message"  # CSS
-    LITE_TABLE = ".govuk-table"  # CSS
-    LITE_TABLE_BODY = ".govuk-table__body"  # CSS
-    LITE_TABLE_ROW = ".govuk-table__body .govuk-table__row"  # CSS
-    LITE_TABLE_CELL = ".govuk-table__body .govuk-table__cell"  # CSS
+    TABLE_CSS = ".govuk-table"  # CSS
+    TABLE_BODY_CSS = ".govuk-table__body"  # CSS
+    TABLE_ROW_CSS = ".govuk-table__body .govuk-table__row"  # CSS
+    TABLE_CELL_CSS = ".govuk-table__body .govuk-table__cell"  # CSS
     GOVUK_CAPTION = ".govuk-caption-l"  # CSS
     BODY = "body"  # CSS
     LINKS_IN_TABLE = ".govuk-table td a"
     ROWS_IN_CASES_TABLE = ".govuk-table__body .govuk-table__row"  # CSS
     LINKS_IN_LITE_TABLE = ".govuk-table__cell a"  # CSS
     INFO_BAR = ".lite-info-bar"  # CSS
+    LITE_NOTICE_SELECTOR = ".lite-information-text__text"
 
     def click_submit(self):
         self.driver.find_element_by_css_selector(self.SUBMIT_BUTTON).click()
@@ -30,10 +31,10 @@ class Shared(BasePage):
         return self.driver.find_element_by_css_selector(self.GOVUK_CAPTION).text
 
     def get_text_of_table(self):
-        return self.driver.find_element_by_css_selector(self.LITE_TABLE).text
+        return self.driver.find_element_by_css_selector(self.TABLE_CSS).text
 
     def get_text_of_lite_table_body(self):
-        return self.driver.find_element_by_css_selector(self.LITE_TABLE_BODY).text
+        return self.driver.find_element_by_css_selector(self.TABLE_BODY_CSS).text
 
     def get_links_in_cells_in_table(self):
         return self.driver.find_elements_by_css_selector(self.LINKS_IN_TABLE)
@@ -45,20 +46,20 @@ class Shared(BasePage):
         return self.driver.find_elements_by_css_selector(self.ROWS_IN_CASES_TABLE)[int(index)].text
 
     def get_cells_in_lite_table(self):
-        return self.driver.find_elements_by_css_selector(self.LITE_TABLE_CELL)
+        return self.driver.find_elements_by_css_selector(self.TABLE_CELL_CSS)
 
     def get_rows_in_lite_table(self):
-        return self.driver.find_elements_by_css_selector(self.LITE_TABLE_ROW)
+        return self.driver.find_elements_by_css_selector(self.TABLE_ROW_CSS)
 
     def get_first_row_of_gov_uk_table(self):
-        return self.driver.find_elements_by_css_selector(self.LITE_TABLE_ROW)[0]
+        return self.driver.find_elements_by_css_selector(self.TABLE_ROW_CSS)[0]
 
     def get_links_in_lite_table(self):
         return self.driver.find_elements_by_css_selector(self.LINKS_IN_LITE_TABLE)
 
     def scroll_to_bottom_row(self):
         # Requires that each row have the ID 'row-x' where x is it's index starting from 1
-        edit_buttons = self.driver.find_elements_by_css_selector(self.LITE_TABLE_ROW)
+        edit_buttons = self.driver.find_elements_by_css_selector(self.TABLE_ROW_CSS)
         row_index = str(len(edit_buttons))
         scroll_to_element_by_id(self.driver, "row-" + row_index)
 

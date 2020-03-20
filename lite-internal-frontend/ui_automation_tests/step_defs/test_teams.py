@@ -3,6 +3,7 @@ import shared.tools.helpers as utils
 from pages.shared import Shared
 from pages.teams_pages import TeamsPages
 from pages.users_page import UsersPage
+from shared import functions
 
 scenarios("../features/teams.feature", strict_gherkin=False)
 
@@ -74,6 +75,6 @@ def see_team_user_added(driver, added_not_added, context, internal_info):
         assert internal_info["email"] in table, "User is not displayed in team list"
         assert "Active" in table, "User is not displayed in team list"
     elif added_not_added == "not added":
-        assert (
-            Shared(driver).get_text_of_caption() == "You don't have any users at the moment."
+        assert functions.element_with_css_selector_exists(
+            driver, Shared(driver).LITE_NOTICE_SELECTOR
         ), "Users are potentially displayed for a just created Team List"

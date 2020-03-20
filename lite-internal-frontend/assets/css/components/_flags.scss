@@ -37,14 +37,12 @@
 	@include govuk-font($size: 16, $weight: bold);
 	position: relative;
 	background-color: govuk-colour("light-grey");
+	border-left: 2px solid govuk-colour("black");
 	color: govuk-colour("black");
-	letter-spacing: 1px;
-	text-transform: uppercase;
 	line-height: 40px!important;
 	padding: 0 govuk-spacing(3);
 	margin-right: govuk-spacing(2);
 	margin-bottom: govuk-spacing(2);
-	box-shadow: 0 2px 0 govuk-shade(govuk-colour("white"), 10%);
 
 	&--action {
 		position: relative;
@@ -59,7 +57,7 @@
 		font-size: 16px;
 		text-decoration: underline;
 		background-color: transparent;
-		box-shadow: none;
+		border-left: none;
 		padding: 0;
 		margin-left: govuk-spacing(2);
 

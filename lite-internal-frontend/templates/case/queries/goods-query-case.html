@@ -186,7 +186,7 @@
 						</dt>
 						<dd class="govuk-summary-list__value">
 							{% if document.safe == True %}
-								<a class="govuk-link lite-link--icon govuk-link--no-visited-state" href="{% url 'cases:document' case.id document.id %}">
+								<a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' case.id document.id %}">
 									{% lcs 'cases.ClcQuery.GoodDetails.Documents.DOWNLOAD' %}
 								</a>
 							{% elif document.safe == False %}

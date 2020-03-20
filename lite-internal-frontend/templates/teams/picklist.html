@@ -2,13 +2,17 @@
 
 {% block back_link %}{% endblock %}
 
+{% block title %}
+	{% lcs 'teams.TeamPage.Tabs.PICKLISTS' %} - {{ team.name }}
+{% endblock %}
+
 {% block body %}
 	<h1 class="govuk-heading-l">{{ team.name }}</h1>
 
 	<div class="lite-tabs__container">
 		<div class="lite-tabs">
-			<a href="{% url 'teams:team' %}" class="lite-tabs__tab">Users</a>
-			<a href="{% url 'picklists:picklists' %}" class="lite-tabs__tab lite-tabs__tab--selected">Picklists</a>
+			<a href="{% url 'teams:team' %}" class="lite-tabs__tab">{% lcs 'teams.TeamPage.Tabs.MEMBERS' %}</a>
+			<p class="lite-tabs__tab lite-tabs__tab--selected">{% lcs 'teams.TeamPage.Tabs.PICKLISTS' %}</p>
 		</div>
 		<div class="lite-tabs__controls">
 			<a href="{% url 'picklists:add' %}?type={{ type }}" role="button" draggable="false" class="govuk-button" data-module="govuk-button">

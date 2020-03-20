@@ -44,6 +44,7 @@ class ApplicationPage(BasePage):
     LINK_ORGANISATION_ID = "link-organisation"
     EDIT_GOODS_FLAGS = "button-edit-goods-flags"  # ID
     CASE_OFFICER_ID = "case-officer"  # ID
+    LINK_ADDITIONAL_CONTACTS_ID = "link-additional-contacts"
     ASSIGN_USER_ID = "assign-user"
     EXPAND_FLAGS_PARTIAL_ID = "expand-flags-"
     ASSIGNED_USERS_ID = "assigned_users"
@@ -102,7 +103,13 @@ class ApplicationPage(BasePage):
         scroll_to_element_by_id(self.driver, self.CASE_OFFICER_ID)
         self.driver.find_element_by_id(self.CASE_OFFICER_ID).click()
 
+    def click_additional_contacts_link(self):
+        self.click_drop_down()
+        scroll_to_element_by_id(self.driver, self.LINK_ADDITIONAL_CONTACTS_ID)
+        self.driver.find_element_by_id(self.LINK_ADDITIONAL_CONTACTS_ID).click()
+
     def click_drop_down(self):
+        # This is going to be removed as part of the case refactor
         self.driver.find_element_by_css_selector(self.ACTIONS_DROPDOWN).click()
 
     def select_status(self, status):
@@ -211,6 +218,9 @@ class ApplicationPage(BasePage):
 
     def get_case_officer_element(self):
         return self.driver.find_element_by_id(self.CASE_OFFICER_ID)
+
+    def get_additional_contacts_element(self):
+        return self.driver.find_element_by_id(self.LINK_ADDITIONAL_CONTACTS_ID)
 
     def get_assign_user_element(self):
         return self.driver.find_element_by_id(self.ASSIGN_USER_ID)

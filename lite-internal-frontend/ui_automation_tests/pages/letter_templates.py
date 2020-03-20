@@ -104,4 +104,4 @@ class LetterTemplates(BasePage):
         return self.driver.find_element_by_id(self.PARAGRAPH_TEXT_LIST).text
 
     def get_template_table_text(self):
-        return get_text_of_multi_page_table(Shared.LITE_TABLE, self.driver)
+        return get_text_of_multi_page_table(Shared.TABLE_CSS, self.driver)

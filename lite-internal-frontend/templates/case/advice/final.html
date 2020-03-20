@@ -6,29 +6,31 @@
 	{% include "case/views/includes/breadcrumbs.html" with text="cases.ApplicationPage.Actions.ADVICE" %}
 {% endblock %}
 
+{% block title %}
+	{% lcs 'cases.ViewAdvicePage.FINAL_ADVICE' %} -
+	{% lcs 'cases.ApplicationPage.Actions.ADVICE' %}
+{% endblock %}
+
 {% block body %}
 	{% include 'includes/messages.html' %}
 
-	<h1 class="govuk-heading-xl">
+	<h1 class="govuk-heading-l">
 		{% lcs 'cases.ApplicationPage.Actions.ADVICE' %}
 	</h1>
 
 	<form method="post">
 		{% csrf_token %}
 
-		<!-- Tab bar -->
-		<div>
-			<div class="lite-tabs--fade">
-				<div class="lite-tabs">
-					<a href="{% url 'cases:user_advice_view' case.id %}" class="lite-tabs__tab" id="user_advice">{% lcs 'cases.ViewAdvicePage.USER_ADVICE' %}</a>
-					<a href="{% url 'cases:team_advice_view' case.id %}" class="lite-tabs__tab" id="team_advice">{% lcs 'cases.ViewAdvicePage.TEAM_ADVICE' %}</a>
-					<a href="{% url 'cases:final_advice_view' case.id %}" class="lite-tabs__tab lite-tabs__tab--selected" id="final_advice">{% lcs 'cases.ViewAdvicePage.FINAL_ADVICE' %}</a>
-				</div>
+		<div class="lite-tabs__container">
+			<div class="lite-tabs">
+				<a href="{% url 'cases:user_advice_view' case.id %}" class="lite-tabs__tab" id="user_advice">{% lcs 'cases.ViewAdvicePage.USER_ADVICE' %}</a>
+				<a href="{% url 'cases:team_advice_view' case.id %}" class="lite-tabs__tab" id="team_advice">{% lcs 'cases.ViewAdvicePage.TEAM_ADVICE' %}</a>
+				<p class="lite-tabs__tab lite-tabs__tab--selected" id="final_advice">{% lcs 'cases.ViewAdvicePage.FINAL_ADVICE' %}</p>
 			</div>
 			{% if not status_is_terminal and permitted_to_give_final_advice %}
 				{% if case.has_advice.team %}
-					{% if all_advice|length %}
-						<div>
+					<div class="lite-tabs__controls">
+						{% if all_advice|length %}
 							<button id="button-give-advice" name="action" value="give-advice" type="submit" class="govuk-button" data-module="govuk-button">
 								{% lcs 'cases.ViewAdvicePage.Actions.GIVE_OR_CHANGE' %}
 							</button>
@@ -46,12 +48,12 @@
 									</a>
 								{% endif %}
 							{% endif %}
-						</div>
-					{% else %}
-						<a class="govuk-button" href="{% url 'cases:coalesce_team_advice' case.id %}" class="lite-tabs__tab" id="combine_advice_button">
-							{% lcs 'cases.ViewAdvicePage.Actions.COMBINE_TEAM_ADVICE' %}
-						</a>
-					{% endif %}
+						{% else %}
+							<a class="govuk-button" href="{% url 'cases:coalesce_team_advice' case.id %}" class="lite-tabs__tab" id="combine_advice_button">
+								{% lcs 'cases.ViewAdvicePage.Actions.COMBINE_TEAM_ADVICE' %}
+							</a>
+						{% endif %}
+					</div>
 				{% endif %}
 			{% endif %}
 		</div>

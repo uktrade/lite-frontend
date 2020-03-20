@@ -76,17 +76,11 @@
 			margin: 0;
 
 			.govuk-table__head {
-				// position: sticky;
-				// top: 60px;
-				// background-color: govuk-colour("light-grey");
-
 				th {
 					@include govuk-font($size: 16, $weight: bold);
 					@include govuk-responsive-margin(2, "bottom");
 					color: govuk-colour("dark-grey");
 					margin-top: 0;
-					text-transform: uppercase;
-					letter-spacing: 1px;
 				}
 			}
 

@@ -419,3 +419,13 @@ def put_case_officer(request, pk, user_pk):
 def delete_case_officer(request, pk):
     data = delete(request, CASE_URL + pk + CASE_OFFICER_URL)
     return data, data.status_code
+
+
+def get_case_additional_contacts(request, pk):
+    response = get(request, CASE_URL + str(pk) + "/additional-contacts/")
+    return response.json()
+
+
+def post_case_additional_contacts(request, pk, json):
+    response = post(request, CASE_URL + str(pk) + "/additional-contacts/", json=json)
+    return response.json(), response.status_code
