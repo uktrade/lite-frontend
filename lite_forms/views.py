@@ -2,6 +2,7 @@ import copy
 from abc import ABC
 from typing import List
 
+from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.views.generic import TemplateView
 
@@ -41,6 +42,7 @@ class FormView(TemplateView, ABC):
     action: callable = None
     object_pk = None
     success_url: str = ""
+    success_message: str = ""
 
     def get_data(self):
         data = getattr(self, "data", {})
@@ -130,6 +132,9 @@ class SingleFormView(FormView):
             )
 
         self._validated_data = validated_data
+
+        if self.success_message:
+            messages.success(self.request, self.success_message)
 
         if self.redirect:
             return redirect(self.get_success_url())

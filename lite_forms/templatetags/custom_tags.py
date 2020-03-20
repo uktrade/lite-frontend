@@ -1,6 +1,8 @@
 from django.template.defaulttags import register
+from django.urls import reverse
 from django.utils.safestring import mark_safe
 
+from core.builtins.custom_tags import get_const_string
 from lite_forms.helpers import convert_to_markdown, flatten_data
 
 
@@ -131,3 +133,13 @@ def heading_class(text):
         return "govuk-fieldset__legend--xl"
 
     return "govuk-fieldset__legend--l"
+
+
+@register.simple_tag
+@mark_safe
+def govuk_link_button(text, url, url_param=None, id="", classes=""):
+    text = get_const_string(text)
+    url = reverse(url, args=[url_param] if url_param else [])
+    id = f'id="button-{id}"' if id else ""
+
+    return f'<a {id} href="{url}" role="button" draggable="false" class="govuk-button {classes}" data-module="govuk-button">{text}</a>'
