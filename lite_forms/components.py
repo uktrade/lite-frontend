@@ -446,6 +446,7 @@ class TextArea(_Component):
         self,
         name: str,
         title: str = "",
+        short_title: str = None,
         description: str = "",
         accessible_description: str = None,
         optional: bool = False,
@@ -455,6 +456,7 @@ class TextArea(_Component):
         super().__init__(
             name=name,
             title=title,
+            short_title=short_title,
             description=description,
             accessible_description=accessible_description,
             optional=optional,
