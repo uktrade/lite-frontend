@@ -138,3 +138,4 @@ class SystemTeamsID(Enum):
 
 class CaseType:
     EXHIBITION = "exhibition_clearance"
+    F680 = "f680_clearance"

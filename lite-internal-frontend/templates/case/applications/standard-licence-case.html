@@ -42,34 +42,6 @@
 				<p>{{ case.application.updated_at|str_date }}</p>
 			</div>
 		</div>
-		<div class="govuk-grid-row">
-			<div class="govuk-grid-column-one-quarter">
-				<p class="app-case-board__heading">{% lcs 'cases.ApplicationPage.EndUseDetails.INFORMED_TO_APPLY_TITLE' %}</p>
-				<p>{{ case.application.is_military_end_use_controls|friendly_boolean }}</p>
-				<p>{{ case.application.military_end_use_controls_ref|default:"" }}</p>
-			</div>
-			<div class="govuk-grid-column-one-quarter">
-				<p class="app-case-board__heading">{% lcs 'cases.ApplicationPage.EndUseDetails.INFORMED_WMD_TITLE' %}</p>
-				<p>{{ case.application.is_informed_wmd|friendly_boolean }}</p>
-				<p>{{ case.application.informed_wmd_ref|default:"" }}</p>
-			</div>
-			<div class="govuk-grid-column-one-quarter">
-				<p class="app-case-board__heading">{% lcs 'cases.ApplicationPage.EndUseDetails.SUSPECTED_WMD_TITLE' %}</p>
-				<p>{{ case.application.is_suspected_wmd|friendly_boolean }}</p>
-				<p>{{ case.application.suspected_wmd_ref|default:"" }}</p>
-			</div>
-		</div>
-		<div class="govuk-grid-row">
-			<div class="govuk-grid-column-one-quarter">
-				<p class="app-case-board__heading">{% lcs 'cases.ApplicationPage.EndUseDetails.EU_MILITARY_TITLE' %}</p>
-				<p>{{ case.application.is_eu_military|friendly_boolean }}</p>
-			</div>
-			<div class="govuk-grid-column-one-quarter">
-				<p class="app-case-board__heading">{% lcs 'cases.ApplicationPage.EndUseDetails.COMPLIANT_LIMITATIONS_EU_TITLE' %}</p>
-				<p>{{ case.application.is_compliant_limitations_eu|friendly_boolean_or_default_na }}</p>
-				<p>{{ case.application.compliant_limitations_eu_ref|default:"" }}</p>
-			</div>
-		</div>
 	</div>
 
 	<div class="govuk-accordion app-accordion" data-module="govuk-accordion" id="accordion-default">
@@ -189,6 +161,100 @@
 								<th scope="row" class="govuk-table__header">{{ location.name }}</th>
 								<td class="govuk-table__cell">{{ location|get_address }}</td>
 							{% endfor %}
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<!-- End Use Details -->
+		<div class="govuk-accordion__section">
+			<div class="govuk-accordion__section-header">
+				<h2 class="govuk-accordion__section-heading">
+					<span class="govuk-accordion__section-button" id="accordion-default-heading-3">
+						{% lcs 'cases.ApplicationPage.EndUseDetails.TITLE' %}
+					</span>
+				</h2>
+			</div>
+			<div id="accordion-end-use-details-content" class="govuk-accordion__section-content" aria-labelledby="accordion-end-use-details">
+				<table class="govuk-table" id="end-use-details">
+					<thead class="govuk-table__head">
+						<tr class="govuk-table__row">
+							<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.EndUseDetails.NUMBER_COLUMN' %}</th>
+							<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.EndUseDetails.DESCRIPTION_COLUMN' %}</th>
+							<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.EndUseDetails.ANSWER_COLUMN' %}</th>
+						</tr>
+					</thead>
+					<tbody class="govuk-table__body">
+						<tr class="govuk-table__row">
+							<td class="govuk-table__cell govuk-table__cell--line-number">
+								1.
+							</td>
+							<td class="govuk-table__cell govuk-!-font-weight-bold">
+								{% lcs 'cases.ApplicationPage.EndUseDetails.INTENDED_END_USE_TITLE' %}
+							</td>
+							<td class="govuk-table__cell">
+								{{ case.application.intended_end_use|default:"" }}
+							</td>
+						</tr>
+						<tr class="govuk-table__row">
+							<td class="govuk-table__cell govuk-table__cell--line-number">
+								2.
+							</td>
+							<td class="govuk-table__cell govuk-!-font-weight-bold">
+								{% lcs 'cases.ApplicationPage.EndUseDetails.INFORMED_TO_APPLY_TITLE' %}
+							</td>
+							<td class="govuk-table__cell">
+								{{ case.application.is_military_end_use_controls|friendly_boolean }}<br>
+								{{ case.application.military_end_use_controls_ref|default:"" }}
+							</td>
+						</tr>
+						<tr class="govuk-table__row">
+							<td class="govuk-table__cell govuk-table__cell--line-number">
+								3.
+							</td>
+							<td class="govuk-table__cell govuk-!-font-weight-bold">
+								{% lcs 'cases.ApplicationPage.EndUseDetails.INFORMED_WMD_TITLE' %}
+							</td>
+							<td class="govuk-table__cell">
+								{{ case.application.is_informed_wmd|friendly_boolean }}<br>
+								{{ case.application.informed_wmd_ref|default:"" }}
+							</td>
+						</tr>
+						<tr class="govuk-table__row">
+							<td class="govuk-table__cell govuk-table__cell--line-number">
+								4.
+							</td>
+							<td class="govuk-table__cell govuk-!-font-weight-bold">
+								{% lcs 'cases.ApplicationPage.EndUseDetails.SUSPECTED_WMD_TITLE' %}
+							</td>
+							<td class="govuk-table__cell">
+								{{ case.application.is_suspected_wmd|friendly_boolean }}<br>
+								{{ case.application.suspected_wmd_ref|default:"" }}
+							</td>
+						</tr>
+						<tr class="govuk-table__row">
+							<td class="govuk-table__cell govuk-table__cell--line-number">
+								5.
+							</td>
+							<td class="govuk-table__cell govuk-!-font-weight-bold">
+								{% lcs 'cases.ApplicationPage.EndUseDetails.EU_MILITARY_TITLE' %}
+							</td>
+							<td class="govuk-table__cell">
+								{{ case.application.is_eu_military|friendly_boolean }}
+							</td>
+						</tr>
+						<tr class="govuk-table__row">
+							<td class="govuk-table__cell govuk-table__cell--line-number">
+								6.
+							</td>
+							<td class="govuk-table__cell govuk-!-font-weight-bold">
+								{% lcs 'cases.ApplicationPage.EndUseDetails.COMPLIANT_LIMITATIONS_EU_TITLE' %}
+							</td>
+							<td class="govuk-table__cell">
+								{{ case.application.is_compliant_limitations_eu|friendly_boolean_or_default_na }}<br>
+								{{ case.application.compliant_limitations_eu_ref|default:"" }}
+							</td>
 						</tr>
 					</tbody>
 				</table>

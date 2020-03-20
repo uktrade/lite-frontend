@@ -216,6 +216,43 @@
 			</div>
 		{% endif %}
 
+		<!-- End Use Details -->
+		{% if case.case_type.sub_type.key|is_f680 %}
+			<div class="govuk-accordion__section">
+				<div class="govuk-accordion__section-header">
+					<h2 class="govuk-accordion__section-heading">
+						<span class="govuk-accordion__section-button" id="accordion-default-heading-3">
+							{% lcs 'cases.ApplicationPage.EndUseDetails.TITLE' %}
+						</span>
+					</h2>
+				</div>
+				<div id="accordion-end-use-details-content" class="govuk-accordion__section-content" aria-labelledby="accordion-end-use-details">
+					<table class="govuk-table" id="end-use-details">
+						<thead class="govuk-table__head">
+							<tr class="govuk-table__row">
+								<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.EndUseDetails.NUMBER_COLUMN' %}</th>
+								<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.EndUseDetails.DESCRIPTION_COLUMN' %}</th>
+								<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.EndUseDetails.ANSWER_COLUMN' %}</th>
+							</tr>
+						</thead>
+						<tbody class="govuk-table__body">
+							<tr class="govuk-table__row">
+								<td class="govuk-table__cell govuk-table__cell--line-number">
+									1.
+								</td>
+								<td class="govuk-table__cell govuk-!-font-weight-bold">
+									{% lcs 'cases.ApplicationPage.EndUseDetails.INTENDED_END_USE_TITLE' %}
+								</td>
+								<td class="govuk-table__cell">
+									{{ case.application.intended_end_use|default:"" }}
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		{% endif %}
+
 		<!-- Parties -->
 		<div class="govuk-accordion__section">
 			<div class="govuk-accordion__section-header">

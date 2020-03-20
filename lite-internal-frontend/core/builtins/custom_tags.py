@@ -347,8 +347,12 @@ def get_sla_ring_colour(remaining_days):
 
 @register.filter()
 def is_exhibition(case_type):
-    result = True if case_type == CaseType.EXHIBITION else False
-    return result
+    return case_type == CaseType.EXHIBITION
+
+
+@register.filter()
+def is_f680(case_type):
+    return case_type == CaseType.F680
 
 
 @register.simple_tag
