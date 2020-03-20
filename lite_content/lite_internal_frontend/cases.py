@@ -104,6 +104,11 @@ class ApplicationPage:
     COPY_OF_LABEL = "Copied from:"
 
     class EndUseDetails:
+        TITLE = "End use details"
+        NUMBER_COLUMN = "#"
+        DESCRIPTION_COLUMN = "Description"
+        ANSWER_COLUMN = "Answer"
+        INTENDED_END_USE_TITLE = "Intended end use"
         INFORMED_TO_APPLY_TITLE = "Informed to apply"
         INFORMED_WMD_TITLE = "Informed WMD"
         SUSPECTED_WMD_TITLE = "Suspect WMD"

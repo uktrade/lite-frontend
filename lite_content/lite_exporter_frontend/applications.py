@@ -407,6 +407,7 @@ class F680ClearanceTaskList:
     THIRD_PARTIES = "Third parties"
     NOTES = "Notes"
     CLEARANCE = "Security grading"
+    END_USE_DETAILS = "End use details"
 
 
 class EditApplicationPage:
@@ -567,6 +568,7 @@ class EndUseDetails:
     PROVIDE_DETAILS = "Provide details"
     EU_MILITARY_PROVIDE_DETAILS = "If no, provide details (optional)"
 
+    INTENDED_END_USE = "Provide details of the intended end use of the products"
     INFORMED_TO_APPLY = (
         "Have you received a letter from ECJU informing you that the products "
         "require a licence to export or are controlled under the military end use controls?"
@@ -593,6 +595,7 @@ class EndUseDetails:
 
     class EndUseDetailsSummaryList:
         TITLE = "End use summary list"
+        INTENDED_END_USE = "Intended end use of the products"
         INFORMED_TO_APPLY = "Informed by ECJU to apply for a licence"
         INFORMED_WMD = "Informed by ECJU that products may be used in WMD"
         SUSPECTED_WMD = "You suspect products may be used in WMD"
@@ -600,6 +603,7 @@ class EndUseDetails:
         COMPLIANT_LIMITATIONS_EU = "Compliant with terms of export limitations or obtained consent"
 
     class CheckYourAnswers:
+        INTENDED_END_USE_TITLE = "Intended end use"
         INFORMED_TO_APPLY_TITLE = "Informed to apply"
         INFORMED_WMD_TITLE = "Informed WMD"
         SUSPECTED_WMD_TITLE = "Suspect WMD"
