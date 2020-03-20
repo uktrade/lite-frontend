@@ -1,7 +1,9 @@
 .lite-autocomplete__wrapper {
 	position: relative;
+	display: block;
 	background-color: govuk-colour("white");
-	max-width: 38ex + 3ex;
+    box-sizing: border-box;
+	width: 100%;
 }
 
 .lite-autocomplete__hint,
@@ -10,12 +12,14 @@
 	border: 2px solid #0B0C0C;
 	border-radius: 0;
 	/* Safari 10 on iOS adds implicit border rounding. */
+	display: block!important;
 	box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 	margin-bottom: 0;
 	/* BUG: Safari 10 on macOS seems to add an implicit margin. */
 	width: 100%;
+	max-width: 38ex + 3ex;
 	height: 40px!important;
 }
 
@@ -63,8 +67,8 @@
 	max-height: 342px;
 	overflow-x: hidden;
 	padding: 0;
-	width: 100%;
 	width: calc(100% - 4px);
+	max-width: 38ex + 3ex;
 }
 
 .lite-autocomplete__menu--visible {
