@@ -56,11 +56,10 @@ class Applications:
             body={"types": types},
         )
 
-    def add_end_use_details(self, draft_id, details=None):
-        details = details or self.request_data["end_use_details"]
+    def add_end_use_details(self, draft_id, details):
         self.api_client.make_request(
             method="PUT",
-            url="/applications/" + draft_id + "/",
+            url="/applications/" + draft_id + "/end-use-details/",
             headers=self.api_client.exporter_headers,
             body={**details},
         )
@@ -165,9 +164,9 @@ class Applications:
         )
         return response.json()
 
-    def add_copied_application(self, draft_id, data):
-        response = self.copy_application(draft_id, data)
-        self.add_end_use_details(response["data"])
+    def add_copied_open_application(self, draft_id, app_name, end_use_details):
+        response = self.copy_application(draft_id, app_name)
+        self.add_end_use_details(response["data"], details=end_use_details)
         self.submit_application(response["data"])
         self.api_client.add_to_context("application_id", response["data"])
         self.api_client.add_to_context("case_id", response["data"])

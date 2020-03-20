@@ -1,3 +1,6 @@
+import datetime
+
+
 class Cases:
     def __init__(self, api_client, request_data, **kwargs):
         super().__init__(**kwargs)
@@ -52,14 +55,24 @@ class Cases:
             method="PUT", url="/applications/" + app_id + "/", headers=self.api_client.exporter_headers, body=data,
         )
 
-    def add_generated_document(self, case_id, template_id):
+    def add_generated_document(self, case_id, template_id, advice_type=None):
         generated_document = self.api_client.make_request(
             method="POST",
             url="/cases/" + case_id + "/generated-documents/",
             headers=self.api_client.gov_headers,
-            body={"template": template_id, "text": "random text"},
+            body={
+                "template": template_id,
+                "text": "random text",
+                "visible_to_exporter": True,
+                "advice_type": advice_type,
+            },
         ).json()["generated_document"]
         self.api_client.add_to_context("generated_document", generated_document)
+
+    def finalise_licence(self, case_id):
+        self.api_client.make_request(
+            method="PUT", url="/cases/" + case_id + "/finalise/", headers=self.api_client.gov_headers, body={},
+        ).json()
 
     def manage_case_status(self, draft_id):
         draft_id_to_change = draft_id or self.api_client.context["draft_id"]
@@ -73,11 +86,12 @@ class Cases:
         return response.status_code
 
     def finalise_case(self, draft_id, action):
+        date = datetime.datetime.now()
         response = self.api_client.make_request(
             method="PUT",
             url="/applications/" + draft_id + "/final-decision/",
             headers=self.api_client.gov_headers,
-            body={"action": action},
+            body={"action": action, "day": date.day, "month": date.month, "year": date.year},
         )
 
         return response.status_code

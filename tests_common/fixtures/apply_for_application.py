@@ -74,6 +74,7 @@ def apply_for_standard_application(driver, api_client_config, context):
             "type": "third_party",
         },
         end_use_details={
+            "intended_end_use": "intended end use",
             "is_military_end_use_controls": False,
             "is_informed_wmd": False,
             "is_suspected_wmd": False,
@@ -158,7 +159,12 @@ def apply_for_open_application(driver, api_client_config, context):
             "have_you_been_informed": "yes",
             "reference_number_on_information_form": "1234",
         },
-        end_use_details={"is_military_end_use_controls": False, "is_informed_wmd": False, "is_suspected_wmd": False},
+        end_use_details={
+            "intended_end_use": "intended end use",
+            "is_military_end_use_controls": False,
+            "is_informed_wmd": False,
+            "is_suspected_wmd": False,
+        },
     )
     lite_client.applications.submit_application(draft_id)
     save_application_data_to_context(lite_client, context)
@@ -221,6 +227,7 @@ def _apply_for_mod_clearance(
         has_third_party=has_third_party,
         has_location=has_location,
         f680_clearance_types=["market_survey"] if type == "f680" else None,
+        end_use_details={"intended_end_use": "intended end use"} if type == "f680" else None,
     )
     if type == "exhc":
         lite_client.applications.post_exhibition_details(draft_id=draft_id, data=None)
