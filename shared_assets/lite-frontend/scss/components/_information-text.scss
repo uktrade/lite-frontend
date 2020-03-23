@@ -35,7 +35,6 @@
 	&--small {
 		.lite-information-text__icon {
 			@include govuk-font($size: 16);
-			background: $govuk-secondary-text-colour;
 			width: 22px;
 			height: 22px;
 			margin-right: govuk-spacing(2);
@@ -43,7 +42,6 @@
 
 		.lite-information-text__text {
 			line-height: 22px!important;
-			color: $govuk-secondary-text-colour;
 		}
 	}
 }
