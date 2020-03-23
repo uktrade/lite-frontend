@@ -1,6 +1,5 @@
 .lite-information-text {
 	$size: 36px;
-	$color: govuk-colour("black");
 	display: flex;
 
 	&__icon {
@@ -8,7 +7,7 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		background: $color;
+		background: $govuk-text-colour;
 		color: govuk-colour("white");
 		width: $size;
 		height: $size;
@@ -21,7 +20,7 @@
 		display: inline-block;
 		line-height: $size!important;
 		margin: 0;
-		color: $color;
+		color: $govuk-text-colour;
 	}
 
 	&__help {
@@ -31,5 +30,20 @@
 		margin-top: govuk-spacing(3);
 		max-width: 85%;
 		line-height: 1.66;
+	}
+
+	&--small {
+		.lite-information-text__icon {
+			@include govuk-font($size: 16);
+			background: $govuk-secondary-text-colour;
+			width: 22px;
+			height: 22px;
+			margin-right: govuk-spacing(2);
+		}
+
+		.lite-information-text__text {
+			line-height: 22px!important;
+			color: $govuk-secondary-text-colour;
+		}
 	}
 }
