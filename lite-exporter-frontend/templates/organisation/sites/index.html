@@ -40,7 +40,7 @@
 						{{ site.address.postcode }}<br/>
 						{{ site.address.country.name }}
 					</td>
-					<td class="govuk-table__cell">{{ site.users|length }} member{{ site.users|pluralize }}</td>
+					<td class="govuk-table__cell">{{ site.users }} member{{ site.users|pluralize }}</td>
 					<td class="govuk-table__cell govuk-table__cell--numeric">
 						<a id="link-view-site-{{ site.id }}" href="{% url 'organisation:sites:site' site.id %}" class="govuk-link govuk-link--no-visited-state">View</a>
 					</td>
