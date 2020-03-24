@@ -17,3 +17,12 @@ class Queues:
         return self.api_client.make_request(method="GET", url="/queues/", headers=self.api_client.gov_headers).json()[
             "queues"
         ]
+
+    def case_assignment(self, queue_pk, case_pk, users):
+        data = {"case_assignments": [{"case_id": case_pk, "users": users}]}
+        self.api_client.make_request(
+            method="PUT",
+            url="/queues/" + queue_pk + "/case-assignments/",
+            headers=self.api_client.gov_headers,
+            body=data,
+        )
