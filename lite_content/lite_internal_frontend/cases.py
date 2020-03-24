@@ -102,6 +102,7 @@ class ApplicationPage:
     NO_USERS_ASSIGNED = "No users assigned"
     NO_QUEUES_ASSIGNED = "No queues assigned"
     COPY_OF_LABEL = "Copied from:"
+    DONE_WITH_CASE = "I'm done"
 
     class EndUseDetails:
         TITLE = "End use details"
@@ -684,3 +685,10 @@ class GenerateFinalDecisionDocumentsPage:
         USER_COLUMN = "Added by"
         DATE_COLUMN = "Date"
         ACTIONS_COLUMN = "Actions"
+
+
+class DoneWithCaseOnQueueForm:
+    TITLE = "Unassign queues"
+    CHECKBOX_TITLE = ""
+    CHECKBOX_DESCRIPTION = "Select which queues you are done with this case on"
+    SUBMIT = "Submit"
