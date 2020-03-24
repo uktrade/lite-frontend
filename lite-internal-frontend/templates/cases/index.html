@@ -115,7 +115,7 @@
 								{% endif %}
 							</td>
 							<td class="cases-table__cell">
-								<a class="govuk-link govuk-!-font-weight-bold" href="{% url 'cases:case' case.id %}?queue_id={{ data.results.queue.id }}&queue_name={{ data.results.queue.name }}">
+								<a class="govuk-link govuk-!-font-weight-bold" id="case-{{ case.id }}" href="{% url 'cases:case' case.id %}?queue_id={{ data.results.queue.id }}&queue_name={{ data.results.queue.name }}">
 									{{ case.reference_code }}
 								</a>
 								<p class="govuk-body">

@@ -6,7 +6,6 @@ from cases.forms.assign_users import assign_users_form
 from lite_forms.generators import form_page, error_page
 from lite_forms.views import SingleFormView
 from queues.forms import edit_queue_form, new_queue_form
-from queues.helpers import get_assigned_users_from_cases
 from queues.services import (
     get_queue,
     get_queues,
@@ -63,7 +62,9 @@ class CaseAssignments(TemplateView):
             return error_page(request, "Invalid case selection")
 
         # Get assigned users
-        assigned_users = get_assigned_users_from_cases(case_ids, case_assignments["case_assignments"])
+        assigned_users = [
+            assignment["user"] for assignment in case_assignments["case_assignments"] if assignment["case"] in case_ids
+        ]
         return form_page(
             request,
             assign_users_form(request, user_data["user"]["team"]["id"], queue["queue"], len(case_ids) > 1),
@@ -79,7 +80,8 @@ class CaseAssignments(TemplateView):
         case_ids = request.GET.get("cases").split(",")
         user_data, _ = get_gov_user(request, str(request.user.lite_api_user_id))
 
-        data = {"case_assignments": []}
+        # Any assignments not selected should be removed (hence clear_existing_assignments)
+        data = {"case_assignments": [], "remove_existing_assignments": True}
 
         # Append case and users to case assignments
         for case_id in case_ids:

@@ -14,6 +14,7 @@ from cases.forms.additional_contacts import add_additional_contact_form
 from cases.forms.assign_users import assign_case_officer_form, assign_user_and_work_queue, users_team_queues
 from cases.forms.attach_documents import attach_documents_form
 from cases.forms.change_status import change_status_form
+from cases.forms.done_with_case import done_with_case_form
 from cases.forms.move_case import move_case_form
 from cases.helpers import get_updated_cases_banner_queue_id
 from cases.services import (
@@ -28,12 +29,14 @@ from cases.services import (
     get_case_officer,
     put_case_officer,
     delete_case_officer,
+    put_unassign_queues,
+    get_user_case_queues,
     get_case_additional_contacts,
     post_case_additional_contacts,
 )
 from cases.services import post_case_documents, get_case_documents, get_document
 from conf import settings
-from conf.constants import ALL_CASES_QUEUE_ID, GENERATED_DOCUMENT
+from conf.constants import ALL_CASES_QUEUE_ID, GENERATED_DOCUMENT, Statuses
 from conf.settings import AWS_STORAGE_BUCKET_NAME
 from core.helpers import convert_dict_to_query_params
 from core.services import get_status_properties, get_user_permissions, get_permissible_statuses
@@ -43,7 +46,7 @@ from lite_forms.components import FiltersBar, AutocompleteInput, Option, HiddenF
 from lite_forms.generators import error_page, form_page
 from lite_forms.helpers import conditional
 from lite_forms.views import SingleFormView
-from queues.services import get_cases_search_data, put_queue_single_case_assignment
+from queues.services import get_cases_search_data, put_queue_single_case_assignment, get_queue
 from users.services import get_gov_user_from_form_selection
 
 
@@ -142,11 +145,25 @@ class ViewCase(TemplateView):
         case = get_case(request, case_id)
         case_type = case["case_type"]["type"]["key"]
         case_sub_type = case["case_type"]["sub_type"]["key"]
+        user_assigned_queues, _ = get_user_case_queues(request, case_id)
+        queue_id = request.GET.get("queue_id")
+        is_system_queue = True
+
+        if queue_id:
+            queue = get_queue(request, queue_id)
+            if queue.get("queue"):
+                is_system_queue = queue["queue"].get("is_system_queue", True)
 
         if "application" in case:
             status_props, _ = get_status_properties(request, case["application"]["status"]["key"])
+            can_set_done = (
+                not status_props["is_terminal"] and case["application"]["status"]["key"] != Statuses.APPLICANT_EDITING
+            )
         else:
             status_props, _ = get_status_properties(request, case["query"]["status"]["key"])
+            can_set_done = (
+                not status_props["is_terminal"] and case["query"]["status"]["key"] != Statuses.APPLICANT_EDITING
+            )
 
         context = {
             "activity": get_activity(request, case_id),
@@ -155,6 +172,9 @@ class ViewCase(TemplateView):
             "permissible_statuses": get_permissible_statuses(request, case_type),
             "status_is_read_only": status_props["is_read_only"],
             "status_is_terminal": status_props["is_terminal"],
+            "user_assigned_queues": user_assigned_queues["queues"],
+            "can_set_done": can_set_done,
+            "is_system_queue": is_system_queue,
         }
 
         if case_sub_type == CaseType.END_USER_ADVISORY.value:
@@ -203,6 +223,28 @@ class ViewCase(TemplateView):
             return error_page(request, error)
 
         return redirect(reverse("cases:case", kwargs={"pk": case_id}) + "#case_notes")
+
+
+class CaseProcessedByUser(SingleFormView):
+    def init(self, request, **kwargs):
+        self.object_pk = str(kwargs["pk"])
+        self.action = put_unassign_queues
+        self.form = done_with_case_form(request, self.object_pk)
+
+    def get_success_url(self):
+        queue_id = self.request.GET.get("queue_id")
+        if queue_id:
+            return reverse_lazy("cases:cases") + "?queue_id=" + queue_id
+        else:
+            return reverse_lazy("cases:cases")
+
+
+class CaseProcessedByUserForQueue(TemplateView):
+    def get(self, request, pk, queue_id):
+        data, status_code = put_unassign_queues(request, str(pk), {"queues": [str(queue_id)]})
+        if status_code != HTTPStatus.OK:
+            return error_page(request, description=data["errors"]["queues"][0],)
+        return redirect(reverse_lazy("cases:cases") + "?queue_id=" + str(queue_id))
 
 
 class ViewAdvice(TemplateView):

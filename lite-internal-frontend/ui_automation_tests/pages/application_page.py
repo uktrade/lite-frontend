@@ -53,6 +53,8 @@ class ApplicationPage(BasePage):
     CASE_COPY_OF_ID = "case-copy-of"
     TYPE_OF_CASE = "case-type"  # ID
     DESTINATION_CHECKBOX = "destinations"  # NAME
+    IM_DONE_BUTTON_ID = "done"
+    CASE_LINK_PARTIAL_ID = "case-"
 
     def get_case_copy_of_field_href(self):
         return self.driver.find_element_by_id(self.CASE_COPY_OF_ID).get_attribute("href")
@@ -254,3 +256,9 @@ class ApplicationPage(BasePage):
         self.click_drop_down()
         scroll_to_element_by_id(self.driver, self.ASSIGN_USER_ID)
         self.driver.find_element_by_id(self.ASSIGN_USER_ID).click()
+
+    def click_im_done_button(self):
+        self.driver.find_element_by_id(self.IM_DONE_BUTTON_ID).click()
+
+    def click_on_case_link(self, case_id):
+        self.driver.find_element_by_id(self.CASE_LINK_PARTIAL_ID + case_id).click()

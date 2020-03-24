@@ -3,10 +3,11 @@ from pages.case_list_page import CaseListPage
 from pages.shared import Shared
 
 from ui_automation_tests.pages.application_page import ApplicationPage
+from ui_automation_tests.pages.unassign_queue_page import UnassignQueuePage
 from ui_automation_tests.shared import functions
 
 from ui_automation_tests.pages.assign_user_page import AssignUserPage
-from ui_automation_tests.shared.tools.helpers import get_formatted_date_time_m_d_h_s
+from ui_automation_tests.shared.tools.helpers import get_formatted_date_time_m_d_h_s, paginated_item_exists
 from ui_automation_tests.shared.tools.utils import get_lite_client
 
 scenarios("../features/assign_users_to_queue.feature", strict_gherkin=False)
@@ -134,6 +135,7 @@ def create_queue(context, api_client_config):
     lite_client = get_lite_client(context, api_client_config)
     lite_client.queues.add_queue("queue" + get_formatted_date_time_m_d_h_s())
     context.queue_name = lite_client.context["queue_name"]
+    context.queue_id = lite_client.context["queue_id"]
 
 
 @then("I see a user is assigned")
@@ -145,3 +147,36 @@ def case_officer_is_set(driver, internal_info):
 def i_click_assign_user_button(driver):
     application_page = ApplicationPage(driver)
     application_page.click_assign_user_button()
+
+
+@given("I am assigned to this case on my new queue")
+def assign_users_to_queue(context, api_client_config):
+    get_lite_client(context, api_client_config).queues.case_assignment(
+        context.queue_id, context.case_id, [context.gov_user_id]
+    )
+
+
+@when("I click I'm done")
+def im_done_button(driver):
+    ApplicationPage(driver).click_im_done_button()
+
+
+@when("I unassign myself from my newly created work queue")
+def unassign_queue(driver, context):
+    UnassignQueuePage(driver).check_unassign_checkbox(context.queue_name)
+    functions.click_submit(driver)
+
+
+@when("I go to my work queue")
+def work_queue(driver, context, internal_url):
+    driver.get(internal_url.rstrip("/") + "/cases/?queue_id=" + context.queue_id)
+
+
+@then("My case is not in the queue")
+def no_cases_in_queue(driver, context):
+    assert paginated_item_exists(context.case_id, driver, False)
+
+
+@when("I click on my case")
+def click_on_case(driver, context):
+    ApplicationPage(driver).click_on_case_link(context.case_id)

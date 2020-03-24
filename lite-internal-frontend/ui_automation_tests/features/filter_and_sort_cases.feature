@@ -22,7 +22,7 @@ Feature: I want to filter and sort cases on a queue
     When I show filters
     When filter case type has been changed to "Goods Query"
     Then "1" cases are shown
-    When filter status has been changed to "Submitted"
+    When filter status has been changed to "CLC review"
     Then "1" cases are shown
     When I click clear filters
     Then "2" cases are shown
@@ -33,8 +33,8 @@ Feature: I want to filter and sort cases on a queue
     And I click on new queue in dropdown
     And I sort cases by status
     Then "2" cases are shown
-    Then the case at index "0" has the status of "Submitted"
-    And the case at index "1" has the status of "Under review"
+    Then the case at index "0" has the status of "Under review"
+    And the case at index "1" has the status of "CLC review"
     When I show filters
     And I click filter to show cases with open team ecju queries
     Then "2" cases are shown
