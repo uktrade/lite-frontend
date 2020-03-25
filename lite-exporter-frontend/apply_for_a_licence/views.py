@@ -44,8 +44,11 @@ class TranshipmentQuestions(MultiFormView):
 
 class MODClearanceQuestions(MultiFormView):
     def init(self, request, **kwargs):
-        self.forms = MOD_questions()
+        self.forms = MOD_questions(None)
         self.action = post_applications
+
+    def on_submission(self, request, **kwargs):
+        self.forms = MOD_questions(request.POST.copy().get("application_type"))
 
     def get_success_url(self):
         pk = self.get_validated_data()["id"]

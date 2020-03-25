@@ -238,7 +238,7 @@ def attach_documents_form(back_link):
         title=AttachDocumentForm.TITLE,
         description=AttachDocumentForm.DESCRIPTION,
         questions=[
-            FileUpload("document"),
+            FileUpload(),
             TextArea(
                 title=AttachDocumentForm.Description.TITLE,
                 optional=True,

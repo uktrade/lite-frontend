@@ -1,14 +1,14 @@
 from pytest_bdd import scenarios, when, parsers, then
 
+import ui_automation_tests.shared.tools.helpers as utils
 from ui_automation_tests.pages.add_end_user_pages import AddEndUserPages
-from ui_automation_tests.pages.exporter_hub_page import ExporterHubPage
-from ui_automation_tests.pages.shared import Shared
 from ui_automation_tests.pages.apply_for_a_licence_page import ApplyForALicencePage
+from ui_automation_tests.pages.exporter_hub_page import ExporterHubPage
+from ui_automation_tests.pages.f680_additional_information_page import F680AdditionalInformationPage
 from ui_automation_tests.pages.mod_clearances.ExhibitionClearanceGood import ExhibitionClearanceGoodPage
 from ui_automation_tests.pages.shared import Shared
 from ui_automation_tests.pages.standard_application.goods import StandardApplicationGoodsPage
 from ui_automation_tests.shared import functions
-import ui_automation_tests.shared.tools.helpers as utils
 
 scenarios("../features/submit_mod_application.feature", strict_gherkin=False)
 
@@ -29,6 +29,11 @@ def i_add_a_exhibition_style_good_on_application(driver, context):  # noqa
     context.good_type = "equipment"
     ExhibitionClearanceGoodPage(driver).click_good_type(context.good_type)
     functions.click_submit(driver)
+
+
+@when("I add additional information to the application")  # noqa
+def i_add_additonal_information_to_the_application(driver, context):  # noqa
+    pass
 
 
 @then("the good is added to the Exhibition Clearance")  # noqa
@@ -84,3 +89,17 @@ def add_new_end_user_with_clearance(driver, type, name, website, clearance, addr
     context.address_end_user = address
     add_end_user_pages.enter_country(country)
     functions.click_submit(driver)
+
+
+@when("I add additional information")
+def add_new_additional_information(driver, context):  # noqa
+    page = F680AdditionalInformationPage(driver, "submit")
+    page.enter_no_date()
+    page.enter_foreign_technology()
+    page.enter_locally_manufactured()
+    page.enter_mtcr_type()
+    page.enter_electronic_warfare_requirement()
+    page.enter_uk_service_equipment()
+    page.enter_uk_service_equipment_type()
+    page.enter_prospect_value()
+    functions.click_submit(driver, button_value="finish")

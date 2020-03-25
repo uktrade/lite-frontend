@@ -9,7 +9,7 @@ def attach_document_form(application_id, strings, back_link):
     return Form(
         strings.TITLE,
         strings.DESCRIPTION,
-        [FileUpload("document"), TextArea(title=strings.DESCRIPTION_FIELD_TITLE, optional=True, name="description")],
+        [FileUpload(), TextArea(title=strings.DESCRIPTION_FIELD_TITLE, optional=True, name="description")],
         back_link=BackLink(strings.BACK, reverse_lazy(back_link, kwargs={"pk": application_id})),
         footer_label=Label(
             'Or <a id="return_to_application" href="'

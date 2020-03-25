@@ -2,7 +2,7 @@ from ui_automation_tests.shared.BasePage import BasePage
 
 
 class AttachDocumentPage(BasePage):
-    FILE = "document"  # ID
+    FILE = "file"  # ID
     DESCRIPTION = "description"  # ID
     LINK_SKIP_UPLOAD_ID = "return_to_application"
 

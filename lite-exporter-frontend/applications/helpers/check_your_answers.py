@@ -54,6 +54,7 @@ def _convert_exhibition_clearance(application, editable=False):
 def _convert_f680_clearance(application, editable=False):
     return {
         applications.ApplicationSummaryPage.GOODS: _convert_goods(application["goods"]),
+        applications.ApplicationSummaryPage.ADDITIONAL_INFORMATION: _get_additional_information(application),
         applications.ApplicationSummaryPage.END_USE_DETAILS: _get_end_use_details(application),
         applications.ApplicationSummaryPage.END_USER: convert_party(application["end_user"], application, editable),
         applications.ApplicationSummaryPage.THIRD_PARTIES: [
@@ -183,6 +184,42 @@ def _convert_goods_types(goods_types):
 
 def _convert_countries(countries):
     return [{"Name": country["name"]} for country in countries]
+
+
+def _get_additional_information(application):
+    field_titles = {
+        "electronic_warfare_requirement": applications.AdditionalInformation.ELECTRONIC_WARFARE_REQUIREMENT,
+        "expedited": applications.AdditionalInformation.EXPEDITED,
+        "expedited_date": applications.AdditionalInformation.EXPEDITED_DATE,
+        "foreign_technology": applications.AdditionalInformation.FOREIGN_TECHNOLOGY,
+        "foreign_technology_type": applications.AdditionalInformation.FOREIGN_TECHNOLOGY_TYPE,
+        "locally_manufactured": applications.AdditionalInformation.LOCALLY_MANUFACTURED,
+        "mtcr_type": applications.AdditionalInformation.MTCR_TYPE,
+        "uk_service_equipment": applications.AdditionalInformation.UK_SERVICE_EQUIPMENT,
+        "uk_service_equipment_type": applications.AdditionalInformation.UK_SERVICE_EQUIPMENT_TYPE,
+        "value": applications.AdditionalInformation.VALUE,
+    }
+
+    values_to_print = []
+    for field, title in field_titles.items():
+        value = application.get(field)
+        if value is not None:
+            values_to_print.append(
+                {
+                    "Description": title,
+                    "Answer": (
+                        friendly_boolean(value) + NEWLINE + application.get(f"{field}_description")
+                        if isinstance(value, bool) and application.get(f"{field}_description") is not None
+                        else friendly_boolean(value)
+                        if isinstance(value, bool)
+                        else value["value"]
+                        if isinstance(value, dict)
+                        else value
+                    ),
+                }
+            )
+
+    return values_to_print
 
 
 def _get_end_use_details(application):

@@ -4,7 +4,6 @@ from django.http import StreamingHttpResponse
 from s3chunkuploader.file_handler import s3_client
 
 from applications.helpers.date_fields import format_date_fields
-from core.objects import Application
 from conf.client import get, post, put, delete
 from conf.constants import (
     ACTIVITY_URL,
@@ -30,6 +29,7 @@ from conf.constants import (
 )
 from conf.settings import AWS_STORAGE_BUCKET_NAME, STREAMING_CHUNK_SIZE
 from core.helpers import remove_prefix, convert_parameters_to_query_params, add_validate_only_to_data
+from core.objects import Application
 
 
 def get_applications(request, page: int = 1, submitted: bool = True):
@@ -261,7 +261,6 @@ def add_document_data(request):
         return None, "No files attached"
     if len(files) != 1:
         return None, "Multiple files attached"
-
     file = files[0]
     try:
         original_name = file.original_name
