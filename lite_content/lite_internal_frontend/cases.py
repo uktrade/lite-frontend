@@ -431,6 +431,7 @@ class EcjuQueries:
     CLOSED = "Closed queries"
     OPEN = "Open queries"
     TITLE = "ECJU queries"
+    BACK_TO_CHOOSE_TYPE_FORM = "select query type"
 
     class AddQuery:
         ADD_BUTTON_LABEL = "Add an ECJU query"
@@ -443,6 +444,8 @@ class EcjuQueries:
         )
         DROPDOWN_TITLE = "Ask a question"
         TITLE = "Write or edit your question"
+        CHOOSE_TYPE = "Select the type of your ECJU query"
+        SELECT_A_TYPE = "Select one type of query"
 
 
 class Advice:

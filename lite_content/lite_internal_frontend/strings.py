@@ -8,6 +8,7 @@ from lite_content.lite_internal_frontend import (  # noqa
     users,  # noqa
     teams,  # noqa
     queues,  # noqa
+    picklists,  # noqa
 )  # noqa
 
 # Buttons
