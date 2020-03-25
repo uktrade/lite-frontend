@@ -7,7 +7,7 @@ def attach_documents_form(case_url):
         cases.Manage.Documents.AttachDocuments.TITLE,
         cases.Manage.Documents.AttachDocuments.DESCRIPTION,
         [
-            FileUpload("documents"),
+            FileUpload(),
             TextArea(
                 title=cases.Manage.Documents.AttachDocuments.DESCRIPTION_FIELD_TITLE,
                 optional=True,

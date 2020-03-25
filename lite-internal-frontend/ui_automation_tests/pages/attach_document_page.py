@@ -2,7 +2,7 @@ from shared.BasePage import BasePage
 
 
 class AttachDocumentPage(BasePage):
-    FILE = "documents"  # id
+    FILE = "file"  # id
     DESCRIPTION = "description"  # id
     SUBMIT_BTN = '.govuk-button[value="submit"]'  # css
 
