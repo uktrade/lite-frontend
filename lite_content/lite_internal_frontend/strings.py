@@ -254,6 +254,7 @@ class LetterTemplates:
         LAYOUT_TITLE = "Layout"
         RESTRICTED_TITLE = "Restricted to"
         DECISIONS_TITLE = "Decisions"
+        VISIBLE_TO_EXPORTER_TITLE = "Visible to exporter"
 
     class EditLetterTemplate:
         BUTTON_NAME = "Save"
@@ -302,6 +303,13 @@ class LetterTemplates:
 
         class Decisions:
             TITLE = "Decisions (optional)"
+
+        class VisibleToExporter:
+            TITLE = "Visible to exporter"
+            DESCRIPTION = "Should documents created with this template be visible to exporters?"
+            YES_OPTION = "Yes"
+            NO_OPTION = "No"
+            BUTTON = "Continue"
 
         class Layout:
             CONTINUE_BUTTON = "Continue"

@@ -164,6 +164,7 @@ class AdditionalDocumentsPage:
         DESCRIPTION_COLUMN = "Description"
         USER_COLUMN = "Added by"
         DATE_COLUMN = "Date"
+        VISIBLE_TO_EXPORTER_COLUMN = "Visible to exporter"
 
     class Document:
         DOWNLOAD_LINK = "Download"
