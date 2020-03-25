@@ -178,6 +178,7 @@ def _apply_for_mod_clearance(
     lite_client = get_lite_client(context, api_client_config)
     lite_client.api_client.auth_exporter_user(lite_client.context["org_id"])
     context.app_name = fake.bs()
+
     draft_id = lite_client.applications.add_draft(
         draft={
             "name": context.app_name,
@@ -227,6 +228,18 @@ def _apply_for_mod_clearance(
         has_third_party=has_third_party,
         has_location=has_location,
         f680_clearance_types=["market_survey"] if type == "f680" else None,
+        additional_information={
+            "expedited": False,
+            "mtcr_type": "mtcr_category_2",
+            "foreign_technology": False,
+            "locally_manufactured": False,
+            "uk_service_equipment": False,
+            "uk_service_equipment_type": "mod_funded",
+            "electronic_warfare_requirement": False,
+            "prospect_value": 100.0,
+        }
+        if type == "f680"
+        else None,
         end_use_details={"intended_end_use": "intended end use"} if type == "f680" else None,
     )
     if type == "exhc":

@@ -56,6 +56,11 @@ class Applications:
             body={"types": types},
         )
 
+    def add_additional_information(self, draft_id, json):
+        self.api_client.make_request(
+            method="PUT", url=f"/applications/{draft_id}/", headers=self.api_client.exporter_headers, body=json,
+        )
+
     def add_end_use_details(self, draft_id, details):
         self.api_client.make_request(
             method="PUT",
@@ -79,6 +84,7 @@ class Applications:
         has_third_party=True,
         f680_clearance_types=None,
         end_use_details=None,
+        additional_information=None,
     ):
         draft_id = self.create_draft(draft=draft)
         if has_location:
@@ -108,6 +114,9 @@ class Applications:
 
         if f680_clearance_types:
             self.add_f680_clearance_types(draft_id=draft_id, types=f680_clearance_types)
+
+        if additional_information:
+            self.add_additional_information(draft_id=draft_id, json=additional_information)
 
         if end_use_details:
             self.add_end_use_details(draft_id=draft_id, details=end_use_details)

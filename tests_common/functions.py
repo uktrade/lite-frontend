@@ -7,8 +7,8 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from .tools.utils import set_timeout_to, set_timeout_to_10_seconds
 
 
-def click_submit(driver: WebDriver):
-    element = driver.find_element_by_css_selector("button[value='submit']")
+def click_submit(driver: WebDriver, button_value="submit"):
+    element = driver.find_element_by_css_selector(f"button[value='{button_value}']")
     driver.execute_script("arguments[0].scrollIntoView();", element)
     driver.execute_script("arguments[0].click();", element)
 
@@ -35,3 +35,7 @@ def send_keys_to_autocomplete(driver: WebDriver, element_id: str, keys: str):
     # Tab away from element and wait
     element.send_keys(Keys.TAB)
     time.sleep(1)
+
+
+def enter_value(driver: WebDriver, element_id, value):
+    driver.find_element_by_id(element_id).send_keys(value)
