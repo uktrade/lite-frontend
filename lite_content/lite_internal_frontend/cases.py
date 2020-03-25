@@ -116,6 +116,18 @@ class ApplicationPage:
         EU_MILITARY_TITLE = "EU transfer licence"
         COMPLIANT_LIMITATIONS_EU_TITLE = "Complied to terms"
 
+    class AdditionalInformation:
+        TITLE = "Additional Information"
+        NUMBER_COLUMN = "#"
+        DESCRIPTION_COLUMN = "Description"
+        ANSWER_COLUMN = "Answer"
+        ELECTRONIC_WARFARE_REQUIREMENT = "Electronic warfare requirement"
+        EXPEDITED = "Expedited"
+        FOREIGN_TECHNOLOGY = "Foreign Technology"
+        LOCALLY_MANUFACTURED = "Locally manufactured"
+        MTCR_TYPE = "MTCR type"
+        VALUE = "Export Value"
+
     class Details:
         DETAILS = "Exhibition details"
 

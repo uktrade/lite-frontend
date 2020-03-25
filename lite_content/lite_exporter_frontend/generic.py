@@ -8,6 +8,7 @@ CONTINUE = "Continue"
 SAVE_AND_CONTINUE = "Save and continue"
 SAVE_AND_RETURN = "Save and return to application overview"
 VIEW = "View"
+CONFIRM_AND_CONTINUE = "Confirm and continue"
 
 DESCRIPTION = "Description"
 PART_NUMBER = "Part number"

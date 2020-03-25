@@ -116,6 +116,7 @@ class GeneratedDocuments:
 
 
 class ApplicationSummaryPage:
+    ADDITIONAL_INFORMATION = "Additional information"
     CLEARANCE_LEVEL = "Security grading"
     F680_CLEARANCE_TYPES = "Clearance types"
     REFERENCE_CODE = "ECJU reference"
@@ -300,6 +301,25 @@ class TranshipmentQuestions:
 
 
 class MODQuestions:
+    class ConfirmationStatement:
+        TITLE = "MOD Form 680 confirmation statement"
+        DESCRIPTION = (
+            "UK companies need MOD Form 680 (F680) approval to release information or equipment classified "
+            "OFFICIAL-SENSITIVE and above to foreign entities.\n"
+            "Some materials classified OFFICIAL need F680 approval, but only if there’s information or equipment "
+            "connected with the release that holds a higher classification. An F680 is not required where both the "
+            "equipment and information intended for release is classified OFFICIAL. This process also applies to MOD "
+            "agencies and other parts of the MOD.\n"
+            "To get this clearance, you must complete this form, the main purpose of which is to help prevent "
+            "unauthorised disclosure of classified information and equipment.\n"
+            "Where any activities detailed in the application involve the export or transfer of controlled "
+            "technology to an overseas end user, the export or transfer is subject to UK export controls. You need "
+            "to apply for an export licence in addition to obtaining F680 clearance.\n"
+            "F680 applications are limited to a maximum of 20 combined end users and destinations. However, there’s "
+            "the facility to copy applications. Further information can be found in the guidance notes.\n"
+            "No information above OFFICIAL-SENSITIVE should be entered or uploaded using this application"
+        )
+
     class WhatAreYouApplyingFor:
         TITLE = "Select the type of MOD clearance you need"
         DESCRIPTION = ""
@@ -397,9 +417,13 @@ class GiftingClearanceTaskList:
 
 class F680ClearanceTaskList:
     ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
+    SAVE_AND_RETURN = "Save and return to application overview"
+    NOTICE_TITLE = ""
+    NOTICE_TEXT = ""
     NEW_TITLE = "MOD Form 680 application"
     EDIT_TITLE = "Edit the application"
     F680_DETAILS = "Clearance types"
+    ADDITIONAL_INFORMATION = "Additional information"
     GOODS = "Products"
     GOODS_LOCATION = "Locations"
     END_USER = "End user"
@@ -408,6 +432,52 @@ class F680ClearanceTaskList:
     NOTES = "Notes"
     CLEARANCE = "Security grading"
     END_USE_DETAILS = "End use details"
+
+
+class F680Questions:
+    CAPTION = "F680 Additional Information"
+
+    class Expedited:
+        TITLE = "Do you need the F680 clearance in less than 30 days due to exceptional circumstances?"
+        DATE = "Date you need the licence"
+
+    class ForeignTechnology:
+        TITLE = "Is there any foreign technology or information involved in the release?"
+        DESCRIPTION = "Include written release agreements or clearances from the originating nations"
+        PROVIDE_DETAILS = "Provide details"
+
+    class LocallyManufactured:
+        TITLE = "Is local assembly or manufacture required?"
+        PROVIDE_DETAILS = "Provide details"
+
+    class MtcrType:
+        TITLE = "Do you believe the products are rated under the Missile Technology Control Regime (MTCR)"
+
+        class Categories:
+            ONE = "Yes, Category 1"
+            TWO = "Yes, Category 2"
+            NO = "No"
+            I_DONT_KNOW = "I don't know"
+
+    class EWRequirement:
+        TITLE = "Is there is a requirement to release UK MOD owned electronic warfare (EW) data or information in support of this export"
+        ATTACHMENT = (
+            "You need to complete part A of the MOD EW Data Release Capture Form "
+            "and attach it to the application in the supporting documents section."
+        )
+
+    class UKServiceEquipment:
+        TITLE = "Is the equipment or a version of it due to enter service with the UK armed forces?"
+        TYPE = "Select how the product is funded"
+        PROVIDE_DETAILS_OPTIONAL = "Provide details (optional)"
+
+        class Types:
+            MOD_FUNDED = "MOD funded"
+            MOD_VENTURE_FUNDED = "Part MOD funded / part private venture"
+            PRIVATE_VENTURE = "Private venture"
+
+    class ProspectValue:
+        TITLE = "What is the total value of prospect?"
 
 
 class EditApplicationPage:
@@ -559,6 +629,22 @@ class GoodsCategories:
     TITLE = "Do any products on the application fall into any of these categories?"
     DESCRIPTION = ""
     ERROR = "You can't change product categories while doing a minor edit"
+
+
+class AdditionalInformation:
+    ELECTRONIC_WARFARE_REQUIREMENT = "Has electronic warfare requirement"
+    EXPEDITED = "Is expedited"
+    EXPEDITED_DATE = "Expedited date"
+    FOREIGN_TECHNOLOGY = "Has foreign technology"
+    FOREIGN_TECHNOLOGY_DESCRIPTION = "Foreign technology description"
+    FOREIGN_TECHNOLOGY_TYPE = "Foreign technology type"
+    LOCALLY_MANUFACTURED = "Is locally manufactured"
+    LOCALLY_MANUFACTURED_DESCRIPTION = "Locally manufactured description"
+    MTCR_TYPE = "MTCR type"
+    UK_SERVICE_EQUIPMENT = "Has UK service equipment"
+    UK_SERVICE_EQUIPMENT_DESCRIPTION = "UK service equipment description"
+    UK_SERVICE_EQUIPMENT_TYPE = "UK service equipment type"
+    VALUE = "Value"
 
 
 class EndUseDetails:
