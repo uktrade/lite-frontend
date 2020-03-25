@@ -1,5 +1,4 @@
 ---
 applications:
-  -
-    buildpack:
+  - buildpacks: 
       - python_buildpack
