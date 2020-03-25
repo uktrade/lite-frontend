@@ -81,7 +81,6 @@
 				</div>
 			</div>
 		{% endif %}
-
 		<!-- Goods -->
 		<div class="govuk-accordion__section">
 			<div class="govuk-accordion__section-header">
@@ -184,6 +183,51 @@
 				</form>
 			</div>
 		</div>
+
+		<!-- Additional Information -->
+		{% if case.case_type.sub_type.key|is_f680 %}
+			<div class="govuk-accordion__section">
+				<div class="govuk-accordion__section-header">
+					<h2 class="govuk-accordion__section-heading">
+						<span class="govuk-accordion__section-button" id="accordion-default-heading-3">
+							{% lcs 'cases.ApplicationPage.AdditionalInformation.TITLE' %}
+						</span>
+					</h2>
+				</div>
+				<div id="accordion-additional-information-content" class="govuk-accordion__section-content" aria-labelledby="accordion-additional-information-details">
+					<table class="govuk-table" id="additional-information">
+						<thead class="govuk-table__head">
+							<tr class="govuk-table__row">
+								<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.AdditionalInformation.NUMBER_COLUMN' %}</th>
+								<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.AdditionalInformation.DESCRIPTION_COLUMN' %}</th>
+								<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.AdditionalInformation.ANSWER_COLUMN' %}</th>
+							</tr>
+						</thead>
+						<tbody class="govuk-table__body">
+							{% for info in case.application.additional_information %}
+								<tr class="govuk-table__row">
+									<td class="govuk-table__cell govuk-table__cell--line-number">
+										{{ info.Number }}
+									</td>
+									<td class="govuk-table__cell govuk-!-font-weight-bold">
+										{{ info.Description }}
+									</td>
+									<td class="govuk-table__cell">
+										{{ info.Answer|default:"" }}
+										{% if info.SubAnswer %}
+											<br>
+											{{ info.SubAnswer }}
+										{% endif %}
+									</td>
+
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		{% endif %}
+
 
 		<!-- Goods location -->
 		{% if case.application.goods_locations %}

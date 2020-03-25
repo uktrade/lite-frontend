@@ -20,7 +20,7 @@ pytest-xdist = "~=1.31"
 raven = "<6.11"
 
 [packages]
-bleach = "<3.2"
+bleach = ">=3.1.2"
 boto3 = "~=1.11"
 Django = "~=2.2"
 django-compressor = "~=2.2"

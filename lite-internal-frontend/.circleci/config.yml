@@ -15,7 +15,6 @@ jobs:
     working_directory: ~/lite-internal-frontend
 
     steps:
-      - jq/install
 
       - checkout
       - run:
