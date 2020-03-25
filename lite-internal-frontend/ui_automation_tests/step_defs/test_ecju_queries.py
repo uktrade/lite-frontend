@@ -26,8 +26,19 @@ def i_click_ecju_queries_button(driver):
 
 @when("I click Add an ECJU Query")
 def i_click_add_an_ecju_query(driver):
+    Shared(driver).click_submit()
+
+
+@when("I click Choose an ECJU Query Type")
+def i_click_choose_ecju_query_type(driver):
     ecju_queries_pages = EcjuQueriesPages(driver)
-    ecju_queries_pages.click_add_an_ecju_query_btn()
+    ecju_queries_pages.click_choose_an_ecju_query_type_btn()
+
+
+@when("I select standard ECJU Query for my query type")
+def i_select_standard_ecju_query(driver):
+    ecju_queries_page = EcjuQueriesPages(driver)
+    ecju_queries_page.click_standard_ecju_query()
 
 
 @when("I select a standard ECJU picklist question")
@@ -81,7 +92,7 @@ def i_click_yes(driver):
 @then("the new ECJU Query is visible in the list")
 def the_new_ecju_query_is_visible_in_the_list(driver, context):
     ecju_queries_pages = EcjuQueriesPages(driver)
-    assert context.ecju_question in ecju_queries_pages.get_open_query_questions()
+    assert context.ecju_question in str(ecju_queries_pages.get_open_query_questions())
 
 
 @then("the ECJU Query creation is visible in the case timeline")

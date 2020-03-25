@@ -73,6 +73,7 @@ urlpatterns = [
         name="finalise_document_create",
     ),
     path("<uuid:pk>/ecju-queries/", ecju.ViewEcjuQueries.as_view(), name="ecju_queries"),
+    path("<uuid:pk>/ecju-queries/choose-type", ecju.ChooseECJUQueryType.as_view(), name="choose_ecju_query_type"),
     path("<uuid:pk>/ecju-queries/add", ecju.CreateEcjuQuery.as_view(), name="ecju_queries_add"),
     path("<uuid:pk>/respond-to-clc-query/", goods_query.RespondCLCQuery.as_view(), name="respond_to_clc_query"),
     path(

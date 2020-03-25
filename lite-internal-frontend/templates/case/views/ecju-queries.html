@@ -14,7 +14,7 @@
 			</h1>
 		</div>
 		<div class="lite-app-bar__controls">
-			<a role="button" draggable="false" class="govuk-button {% if documents %}govuk-button--secondary{% endif %}" href="{% url 'cases:ecju_queries_add' case.id %}">
+			<a role="button" draggable="false" class="govuk-button {% if documents %}govuk-button--secondary{% endif %}" href="{% url 'cases:choose_ecju_query_type' case.id %}">
 				{% lcs 'cases.EcjuQueries.AddQuery.ADD_BUTTON_LABEL' %}
 			</a>
 		</div>
@@ -37,14 +37,14 @@
 						</div>
 						<div class="govuk-accordion__section-content">
 							<p class='govuk-body' id="open-question-full">
-								{{ query.question }}
+								{{ query.question }} - {{ query.query_type.value }}
 							</p>
 						</div>
 					</div>
 				{% else %}
 					<div class="govuk-accordion__section-header">
 						<span class="govuk-accordion__section-button" id="open-question">
-							{{ query.question }}
+							{{ query.question }} - {{ query.query_type.value }}
 						</span>
 						<p class="govuk-label"><b>{{ query.raised_by_user_name }}</b>: {{ query.created_at|str_date }}</p>
 					</div>

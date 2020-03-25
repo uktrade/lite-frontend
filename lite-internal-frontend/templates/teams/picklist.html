@@ -25,22 +25,28 @@
 		<div class="govuk-grid-column-one-quarter">
 			<ul class="lite-subnav">
 				<li class="lite-subnav__link {{ 'proviso'|add_subnav_selected_class:request.get_full_path }}">
-					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=proviso">Provisos</a>
+					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=proviso">{% lcs 'picklists.PicklistCategory.PROVISO' %}</a>
 				</li>
 				<li class="lite-subnav__link {{ 'ecju_query'|add_subnav_selected_class:request.get_full_path }}">
-					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=ecju_query">ECJU Queries</a>
+					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=ecju_query">{% lcs 'picklists.PicklistCategory.STANDARD_ECJU_QUERIES' %}</a>
+				</li>
+				<li class="lite-subnav__link {{ 'pre_visit_questionnaire'|add_subnav_selected_class:request.get_full_path }}">
+					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=pre_visit_questionnaire">{% lcs 'picklists.PicklistCategory.PRE_VISIT_QUESTIONNAIRES' %}</a>
+				</li>
+				<li class="lite-subnav__link {{ 'compliance_actions'|add_subnav_selected_class:request.get_full_path }}">
+					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=compliance_actions">{% lcs 'picklists.PicklistCategory.COMPLIANCE_ACTIONS' %}</a>
 				</li>
 				<li class="lite-subnav__link {{ 'letter_paragraph'|add_subnav_selected_class:request.get_full_path }}">
-					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=letter_paragraph">Letter Paragraphs</a>
+					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=letter_paragraph">{% lcs 'picklists.PicklistCategory.LETTER_PARAGRAPHS' %}</a>
 				</li>
 				<li class="lite-subnav__link {{ 'report_summary'|add_subnav_selected_class:request.get_full_path }}">
-					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=report_summary">Report Summaries</a>
+					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=report_summary">{% lcs 'picklists.PicklistCategory.REPORT_SUMMARIES' %}</a>
 				</li>
 				<li class="lite-subnav__link {{ 'standard_advice'|add_subnav_selected_class:request.get_full_path }}">
-					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=standard_advice">Standard Advice</a>
+					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=standard_advice">{% lcs 'picklists.PicklistCategory.STANDARD_ADVICE' %}</a>
 				</li>
 				<li class="lite-subnav__link {{ 'footnotes'|add_subnav_selected_class:request.get_full_path }}">
-					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=footnotes">Footnotes</a>
+					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=footnotes">{% lcs 'picklists.PicklistCategory.FOOTNOTES' %}</a>
 				</li>
 			</ul>
 		</div>
