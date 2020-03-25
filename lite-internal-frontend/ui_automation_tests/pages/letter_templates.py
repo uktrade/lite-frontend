@@ -15,6 +15,7 @@ class LetterTemplates(BasePage):
     PREVIEW = "preview"  # ID
     DRAG_DROP_LIST = "standard-advice-list"  # ID
     PREVIEW_PARAGRAPHS = "paragraph-list"  # ID
+    VISIBLE_TO_EXPORTER_PARTIAL_ID = "visible_to_exporter-"
 
     # Template page
     TEMPLATE_TITLE = "title"  # ID
@@ -44,6 +45,9 @@ class LetterTemplates(BasePage):
     def select_which_type_of_decisions_template_can_apply_to(self, id_selectors):
         for id_selector in id_selectors:
             self.driver.find_element_by_id(id_selector).click()
+
+    def select_visible_to_exporter(self, value):
+        self.driver.find_element_by_id(self.VISIBLE_TO_EXPORTER_PARTIAL_ID + value).click()
 
     def click_licence_layout(self, template_id):
         self.driver.find_element_by_id(template_id).click()

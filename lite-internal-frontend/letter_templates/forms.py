@@ -10,6 +10,7 @@ from lite_forms.components import (
     Checkboxes,
     Option,
     RadioButtonsImage,
+    RadioButtons,
 )
 
 from letter_templates.services import get_letter_layouts
@@ -86,6 +87,24 @@ def add_letter_template(request):
                     ],
                     default_button_name=strings.LetterTemplates.AddLetterTemplate.CaseTypes.CONTINUE_BUTTON,
                 ),
+            ),
+            Form(
+                title=strings.LetterTemplates.AddLetterTemplate.VisibleToExporter.TITLE,
+                description=strings.LetterTemplates.AddLetterTemplate.VisibleToExporter.DESCRIPTION,
+                questions=[
+                    RadioButtons(
+                        name="visible_to_exporter",
+                        options=[
+                            Option(
+                                key=True, value=strings.LetterTemplates.AddLetterTemplate.VisibleToExporter.YES_OPTION
+                            ),
+                            Option(
+                                key=False, value=strings.LetterTemplates.AddLetterTemplate.VisibleToExporter.NO_OPTION
+                            ),
+                        ],
+                    ),
+                ],
+                default_button_name=strings.LetterTemplates.AddLetterTemplate.VisibleToExporter.BUTTON,
             ),
             Form(
                 title=strings.LetterTemplates.AddLetterTemplate.Layout.TITLE,

@@ -33,6 +33,7 @@
 					<th scope="col" class="govuk-table__header">{% lcs 'cases.AdditionalDocumentsPage.Table.DESCRIPTION_COLUMN' %}</th>
 					<th scope="col" class="govuk-table__header">{% lcs 'cases.AdditionalDocumentsPage.Table.USER_COLUMN' %}</th>
 					<th scope="col" class="govuk-table__header">{% lcs 'cases.AdditionalDocumentsPage.Table.DATE_COLUMN' %}</th>
+					<th scope="col" class="govuk-table__header">{% lcs 'cases.AdditionalDocumentsPage.Table.VISIBLE_TO_EXPORTER_COLUMN' %}</th>
 					<th scope="col" class="govuk-table__header">Actions</th>
 				</tr>
 			</thead>
@@ -44,6 +45,7 @@
 						<td class="govuk-table__cell" id="document-description">{{ document.description }}</td>
 						<td class="govuk-table__cell">{{ document.user.first_name }} {{ document.user.last_name }}</td>
 						<td class="govuk-table__cell">{{ document.created_at|str_date }}</td>
+						<td class="govuk-table__cell">{{ document.visible_to_exporter|friendly_boolean }}</td>
 						<td class="govuk-table__cell">
 							<ul class="govuk-table__cell__actions-list">
 								{% if document.type.key == generated_document_key %}

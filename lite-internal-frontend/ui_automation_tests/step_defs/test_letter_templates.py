@@ -6,6 +6,7 @@ from pages.application_page import ApplicationPage
 from pages.letter_templates import LetterTemplates
 from pages.shared import Shared
 from ui_automation_tests.fixtures.add_a_document_template import get_paragraph_text
+from ui_automation_tests.shared import functions
 
 scenarios("../features/letter_templates.feature", strict_gherkin=False)
 
@@ -17,18 +18,26 @@ def add_letter_paragraph_picklist(add_a_letter_paragraph_picklist):
 
 @when("I create a letter template for a document")
 def create_letter_template(driver, context, get_template_id):
-    LetterTemplates(driver).click_create_a_template()
+    template_page = LetterTemplates(driver)
+    template_page.click_create_a_template()
+
     context.template_name = "000 Template " + utils.get_formatted_date_time_m_d_h_s()
-    LetterTemplates(driver).enter_template_name(context.template_name)
-    Shared(driver).click_submit()
-    LetterTemplates(driver).select_which_type_of_cases_template_can_apply_to(
+    template_page.enter_template_name(context.template_name)
+    functions.click_submit(driver)
+
+    template_page.select_which_type_of_cases_template_can_apply_to(
         ["Standard Individual Export Licence", "Open Individual Export Licence"]
     )
-    Shared(driver).click_submit()
-    LetterTemplates(driver).select_which_type_of_decisions_template_can_apply_to(["Approve", "Proviso"])
-    Shared(driver).click_submit()
-    LetterTemplates(driver).click_licence_layout(get_template_id)
-    Shared(driver).click_submit()
+    functions.click_submit(driver)
+
+    template_page.select_which_type_of_decisions_template_can_apply_to(["Approve", "Proviso"])
+    functions.click_submit(driver)
+
+    template_page.select_visible_to_exporter("True")
+    functions.click_submit(driver)
+
+    template_page.click_licence_layout(get_template_id)
+    functions.click_submit(driver)
 
 
 @when("I add a letter paragraph to template")

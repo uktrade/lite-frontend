@@ -13,6 +13,7 @@ def get_template_content(request):
     return {
         "name": data.get("name"),
         "layout": layout,
+        "visible_to_exporter": data.get("visible_to_exporter"),
         "case_types": data.getlist("case_types[]"),
         "decisions": data.getlist("decisions[]"),
         "action": data.get("action"),

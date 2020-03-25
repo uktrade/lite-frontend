@@ -48,6 +48,10 @@
 					<h4 class="govuk-heading-s">{% lcs 'LetterTemplates.LetterTemplate.LAST_UPDATE_TITLE' %}</h4>
 					<p class="govuk-label" id="last_updated">{{ letter_template.updated_at|str_date }}</p>
 				</div>
+				<div class="govuk-grid-column-one-third">
+					<h4 class="govuk-heading-s">{% lcs 'LetterTemplates.LetterTemplate.VISIBLE_TO_EXPORTER_TITLE' %}</h4>
+					<p class="govuk-label" id="last_updated">{{ letter_template.visible_to_exporter|friendly_boolean }}</p>
+				</div>
 			</div>
 		</div>
 

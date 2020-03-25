@@ -17,6 +17,7 @@ def get_order_paragraphs_page(request, template_content):
             "letter_paragraphs": letter_paragraphs,
             "name": template_content["name"],
             "layout": template_content["layout"],
+            "visible_to_exporter": template_content["visible_to_exporter"],
             "case_types": template_content["case_types"],
             "decisions": template_content["decisions"],
         },
@@ -36,6 +37,7 @@ class LetterParagraphs(TemplateView):
         context = {
             "name": template_content["name"],
             "layout": template_content["layout"],
+            "visible_to_exporter": template_content["visible_to_exporter"],
             "case_types": template_content["case_types"],
             "decisions": template_content["decisions"],
             "letter_paragraphs": [
@@ -63,6 +65,7 @@ class LetterParagraphs(TemplateView):
                 "preview": preview["preview"],
                 "name": template_content["name"],
                 "layout": template_content["layout"],
+                "visible_to_exporter": template_content["visible_to_exporter"],
                 "case_types": template_content["case_types"],
                 "decisions": template_content["decisions"],
                 "letter_paragraphs": template_content["letter_paragraphs"],

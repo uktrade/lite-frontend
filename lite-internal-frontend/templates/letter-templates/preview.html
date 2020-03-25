@@ -17,6 +17,7 @@
 						{% hidden_field 'decisions[]' decision %}
 					{% endfor %}
 					{% hidden_field 'layout' layout.id %}
+					{% hidden_field 'visible_to_exporter' visible_to_exporter %}
 					{% for letter_paragraph in letter_paragraphs %}
 						{% hidden_field 'letter_paragraphs' letter_paragraph %}
 					{% endfor %}
