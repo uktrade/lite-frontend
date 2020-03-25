@@ -63,7 +63,7 @@
 		{% elif question.input_type == "select" %}
 			{% include "components/select.html" with component=question data=data|key_value:question.name error=errors|key_value:question.name %}
 		{% elif question.input_type == "file_upload" %}
-			{% include "components/file_upload.html" with name=question.name value=question.name %}
+			{% include "components/file_upload.html" with name=question.name value=question.name data=data|key_value:question.name %}
 		{% elif question.input_type == "multi_file_upload" %}
 			{% include "components/multi_file_upload.html" with component=question data=data|key_value:question.name %}
 		{% elif question.input_type == "quantity_input" %}

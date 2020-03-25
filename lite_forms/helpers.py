@@ -166,13 +166,15 @@ def handle_lists(data):
 def get_all_form_components(form: Form):
     components = []
     for component in form.questions:
-        components.append(component)
+        if component and hasattr(component, "name"):
+            components.append(component)
 
         if getattr(component, "options", None):
             for option in component.options:
                 if option.components:
                     for _component in option.components:
-                        components.append(_component)
+                        if _component and hasattr(_component, "name"):
+                            components.append(_component)
 
     return components
 
@@ -180,7 +182,6 @@ def get_all_form_components(form: Form):
 def convert_form_to_summary_list_instance(form: Form):
     form.buttons[0].value = "Save and return"
     form.buttons[0].action = "return"
-    form.caption = ""
     return form
 
 

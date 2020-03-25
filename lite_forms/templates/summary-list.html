@@ -34,8 +34,10 @@
 								{% endif %}
 							{% endif %}
 						</dt>
-						<dd class="govuk-summary-list__value"">
-							{% if pretty_data|component_name:component %}
+						<dd class="govuk-summary-list__value">
+							{% if component.input_type == "file_upload" %}
+								You uploaded {{ pretty_data|component_name:component }}
+							{% elif pretty_data|component_name:component %}
 								<span style="white-space: pre;">{{ pretty_data|component_name:component }}</span>
 							{% else %}
 								{{ data|component_name:component }}
@@ -54,14 +56,14 @@
 							{% endfor %}
 						</dd>
 						<dd class="govuk-summary-list__actions">
-							<form action="#{{ component.name }}" method="post">
+							<form action="?form_pk={{ form.pk }}#{{ component.name }}" method="post">
 								{% csrf_token %}
 								{% for key, value in data.items %}
-									{% hidden_field key value %}
+									{% dict_hidden_field key value %}
 								{% endfor %}
-								{% hidden_field '_action' 'change' %}
-								{% hidden_field 'form_pk' form.pk %}
-								<button class="lite-button--link" type="submit">
+								{% dict_hidden_field '_action' 'change' %}
+								{% dict_hidden_field 'form_pk' form.pk %}
+								<button id="{{ component.name }}" class="lite-button--link" type="submit">
 									Change <span class="govuk-visually-hidden">{{ component.short_title|default:component.title }}</span>
 								</button>
 							</form>
@@ -80,7 +82,7 @@
 		<form method="post" {% if last.single_form_element and not notice_title %}class="govuk-!-margin-top-8"{% endif %}>
 			{% csrf_token %}
 			{% for key, value in data.items %}
-				{% hidden_field key value %}
+				{% dict_hidden_field key value %}
 			{% endfor %}
 			<button name="_action" value="finish" type="submit" class="govuk-button" data-module="govuk-button">
 				{{ button }}

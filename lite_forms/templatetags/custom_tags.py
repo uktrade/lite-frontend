@@ -1,3 +1,6 @@
+import json
+from json import JSONDecodeError
+
 from django.template.defaulttags import register
 from django.urls import reverse
 from django.utils.safestring import mark_safe
@@ -30,7 +33,15 @@ def key_value(dictionary, key):
     except AttributeError:
         pass
 
-    return dictionary.get(key)
+    value = dictionary.get(key)
+
+    try:
+        if isinstance(value, str):
+            value = json.loads(value)
+    except JSONDecodeError:
+        pass
+
+    return value
 
 
 @register.filter
@@ -84,11 +95,13 @@ def prefix_dots(text):
 
 @register.simple_tag
 @mark_safe
-def hidden_field(key, value):
+def dict_hidden_field(key, value):
     """
     Generates a hidden field from the given key and value
     """
-    return f'<input type="hidden" name="{key}" value="{value}">'
+    if isinstance(value, dict):
+        value = json.dumps(value)
+    return f"<input type='hidden' name='{key}' value='{value}'>"
 
 
 @register.filter
@@ -133,6 +146,11 @@ def heading_class(text):
         return "govuk-fieldset__legend--xl"
 
     return "govuk-fieldset__legend--l"
+
+
+@register.filter
+def file_type(file_name):
+    return file_name.split(".")[-1]
 
 
 @register.simple_tag

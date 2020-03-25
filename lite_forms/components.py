@@ -402,7 +402,7 @@ class Heading:
 class FileUpload(_Component):
     def __init__(
         self,
-        name: str,
+        name: str = "file",
         title: str = "",
         description: str = "",
         accessible_description: str = None,

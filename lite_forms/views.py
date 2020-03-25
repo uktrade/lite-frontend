@@ -4,7 +4,10 @@ from typing import List
 
 from django.contrib import messages
 from django.shortcuts import redirect, render
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.views.generic import TemplateView
+from s3chunkuploader.file_handler import S3FileUploadHandler
 
 from lite_forms.components import FormGroup, Form
 from lite_forms.generators import form_page
@@ -46,13 +49,14 @@ class FormView(TemplateView, ABC):
 
     def get_data(self):
         data = getattr(self, "data", {})
-        if data:
-            for key in data:
-                if data[key] == "True" or data[key] == "true":
-                    data[key] = True
-                if data[key] == "False" or data[key] == "false":
-                    data[key] = False
-
+        # if data:
+        #     for key in data:
+        #         if data[key] == "True" or data[key] == "true":
+        #             data[key] = True
+        #         elif data[key] == "False" or data[key] == "false":
+        #             data[key] = False
+        #         elif data[key] == "None":
+        #             data[key] = None
         return data
 
     def get_action(self):
@@ -73,11 +77,13 @@ class FormView(TemplateView, ABC):
     def get_validated_data(self):
         data = getattr(self, "_validated_data", {}).copy()
 
-        for key in data:
-            if data[key] == "True" or data[key] == "true":
-                data[key] = True
-            if data[key] == "False" or data[key] == "false":
-                data[key] = False
+        # for key in data:
+        #     if data[key] == "True" or data[key] == "true":
+        #         data[key] = True
+        #     elif data[key] == "False" or data[key] == "false":
+        #         data[key] = False
+        #     elif data[key] == "None":
+        #         data[key] = None
 
         return data
 
@@ -191,6 +197,33 @@ class MultiFormView(FormView):
         return redirect(self.get_success_url())
 
 
+class FormS3FileUploadHandler(S3FileUploadHandler):
+    def __init__(self, form_pks: List, *args, **kwargs):
+        super(FormS3FileUploadHandler, self).__init__(*args, **kwargs)
+        self.form_pks = form_pks
+
+    def new_file(self, *args, **kwargs):
+        if not int(dict(self.request.GET)["form_pk"][0]) in self.form_pks:
+            return
+        super().new_file(*args, **kwargs)
+
+    def receive_data_chunk(self, raw_data, start):
+        """
+        Receive a single file chunk from the browser
+        and add it to the executor
+        """
+        super().receive_data_chunk(raw_data, start)
+
+    def file_complete(self, file_size):
+        """
+        Triggered when the last chuck of the file is received and handled.
+        """
+        return super().file_complete(file_size)
+
+    def abort(self, exception):
+        super().abort(exception)
+
+
 class SummaryListFormView(FormView):
     """
     TODO
@@ -263,7 +296,7 @@ class SummaryListFormView(FormView):
         self.init(request, **kwargs)
 
         if self.data:
-            self._validated_data = self.data
+            self._validated_data = self.data.copy()
             return self.generate_summary_list()
 
         form = self.get_forms().forms[0]
@@ -271,7 +304,7 @@ class SummaryListFormView(FormView):
             request, form, data=self.get_data(), extra_data={"form_pk": form.pk, **self.additional_context}
         )
 
-    def post(self, request, **kwargs):
+    def _post(self, request, **kwargs):
         self.init(request, **kwargs)
         self._validated_data = request.POST.copy()
         action = self.get_validated_data()[ACTION]
@@ -280,7 +313,7 @@ class SummaryListFormView(FormView):
 
         post_function = getattr(self, f"post_form_{form_pk}", None)
         if post_function:
-            post_errors = post_function()
+            post_errors = post_function(request, **kwargs)
 
         if self.validate_only_until_final_submission:
             self._validated_data[VALIDATE_ONLY] = True
@@ -298,11 +331,21 @@ class SummaryListFormView(FormView):
             if "errors" not in validated_data:
                 return redirect(self.get_success_url())
 
-        return self.generate_summary_list()
+        if self.validate_only_until_final_submission:
+            return self.generate_summary_list()
+        return redirect(request.path)
+
+    def post(self, request, **kwargs):
+        return self._post(request, **kwargs)
+
+    csrf_protected_method = method_decorator(csrf_protect)
+
+    @csrf_protected_method
+    def post_with_protection(self, request, **kwargs):
+        return self._post(request, **kwargs)
 
     def get_next_form_page(self, form_pk, action, request, post_errors):
         form = copy.deepcopy(next(form for form in self.get_forms().forms if str(form.pk) == form_pk))
-
         # Add form fields to validated_data if they dont exist
         for component in get_all_form_components(form):
             if component.name not in self._validated_data:
@@ -355,4 +398,23 @@ class SummaryListFormView(FormView):
                 extra_data={"form_pk": form.pk, **self.additional_context},
             )
 
-        return self.generate_summary_list()
+        if self.validate_only_until_final_submission:
+            return self.generate_summary_list()
+        return redirect(request.path)
+
+    @csrf_exempt
+    def dispatch(self, request, *args, **kwargs):
+        forms = [4]
+        self.request.upload_handlers.insert(0, FormS3FileUploadHandler(forms, request))
+
+        if request.method.lower() in self.http_method_names:
+            if request.method.lower() == "post":
+                if request.POST.get("form_pk") and int(request.POST.get("form_pk")) in forms:
+                    return self.post(request, **kwargs)
+                else:
+                    return self.post_with_protection(request, **kwargs)
+            else:
+                return self.get(request, **kwargs)
+
+        handler = self.http_method_not_allowed
+        return handler(request, *args, **kwargs)

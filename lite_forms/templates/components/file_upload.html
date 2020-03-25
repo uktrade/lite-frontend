@@ -1,1 +1,67 @@
-<input id="{{ name }}" type="file" name="file" />
+{% if data %}
+	<span class="govuk-hint">Uploaded file:</span>
+	<div class="lite-file-upload__uploaded-file">
+		<div class="app-documents__item">
+			<div class="app-documents__item-preview">
+				<svg width="100px" height="140px" viewbox="0 0 100 140" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+					<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+						<rect id="Rectangle" fill="#000000" x="12" y="58" width="10" height="10"></rect>
+						<rect id="Rectangle-Copy" fill="#000000" x="32" y="58" width="56" height="10"></rect>
+						<rect id="Rectangle-Copy-4" fill="#000000" x="12" y="78" width="10" height="10"></rect>
+						<rect id="Rectangle-Copy-3" fill="#000000" x="32" y="78" width="36" height="10"></rect>
+						<rect id="Rectangle-Copy-7" fill="#000000" x="12" y="98" width="10" height="10"></rect>
+						<rect id="Rectangle-Copy-6" fill="#000000" x="32" y="98" width="56" height="10"></rect>
+						<rect id="Rectangle-Copy-12" fill="#000000" x="12" y="118" width="10" height="10"></rect>
+						<rect id="Rectangle-Copy-11" fill="#000000" x="32" y="118" width="46" height="10"></rect>
+						<rect id="Rectangle" fill="#000000" x="12" y="12" width="76" height="30"></rect>
+					</g>
+				</svg>
+				<span>
+					{{ data|file_type }}
+				</span>
+			</div>
+			<div class="app-documents__item-details">
+				<a class="govuk-body govuk-link govuk-link--no-visited-state" href="#">{{ data }}</a>
+			</div>
+		</div>
+	</div>
+	<span class="govuk-hint">You can replace the uploaded file below:</span>
+{% endif %}
+<input id="{{ name }}" type="file" name="{{ name }}" />
+<script type="text/javascript">
+    $("#{{ name }}").wrap( "<label class='lite-file-upload' tabindex='0'></label>" );
+    $("#{{ name }}").after("<span>Drag and drop your document here or <span class='lite-file-upload__link'>click to browse</span></span>");
+
+    document.addEventListener('keypress', (event) => {
+        if(event.keyCode == '32'){
+            if (document.activeElement.tagName.toLowerCase() == "label") {
+                event.preventDefault();
+                $("#{{ name }}").click();
+            }
+        }
+    });
+
+	$(document).ready(function(){
+	    $(window).on('dragenter', function(){
+	        $(this).preventDefault();
+	    });
+		$('.lite-file-upload').bind('dragover', function(){
+	        $(this).addClass('lite-file-upload--drag-over');
+	    });
+	    $('.lite-file-upload').bind('dragleave', function(){
+	        $(this).removeClass('lite-file-upload--drag-over');
+	    });
+	});
+
+	$(".lite-file-upload").on("dragover drop", function(e) {
+	    e.preventDefault();
+	}).on("drop", function(e) {
+	    $("input[type='file']").prop("files", e.originalEvent.dataTransfer.files)
+        $('.lite-file-upload').removeClass('lite-file-upload--drag-over');
+	});
+
+    $( "input[type=file]" ).change(function() {
+        fileName = $( this ).val().split('\\').pop();
+        $( "input[type=file]" ).next().html(fileName + "<br><span class='lite-file-upload__or-label'>Drag and drop your document here or <span class='lite-file-upload__link'>click to browse</span> to replace it</span>");
+    });
+</script>

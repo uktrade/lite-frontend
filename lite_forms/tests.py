@@ -124,7 +124,7 @@ class FormTests(TestCase):
     def test_convert_form_to_summary_list_instance(self):
         form = Form(title="I Am Easy to Find", caption="The National", default_button_name="Rylan")
         form = convert_form_to_summary_list_instance(form)
-        self.assertEqual(form.caption, "")
+        self.assertEqual(form.caption, "The National")
         self.assertEqual(form.buttons[0].value, "Save and return")
         self.assertEqual(form.buttons[0].action, "return")
 
