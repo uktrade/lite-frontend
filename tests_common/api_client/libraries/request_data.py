@@ -117,7 +117,7 @@ def build_request_data(exporter_user, gov_user):
         "add_exhibition_good": {"good_id": "", "item_type": "video"},
         "case_note": {"text": fake.bs(), "is_visible_to_exporter": True},
         "edit_case_app": {"name": fake.bs()},
-        "ecju_query": {"question": fake.bs() + "?"},
+        "ecju_query": {"question": fake.bs() + "?", "query_type": "standard_advice"},
         "ecju_query_picklist": {"name": fake.bs(), "text": fake.bs() + "?", "type": "ecju_query",},
         "flag": {"team": "00000000-0000-0000-0000-000000000001"},
         "not_sure_details": {"not_sure_details_details": fake.bs(), "not_sure_details_control_code": "ML1a"},
