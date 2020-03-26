@@ -1,3 +1,8 @@
+VIEW = "View"
+CHANGE = "Change"
+EDIT = "Edit"
+
+
 class Filters:
     SHOW_FILTERS_LINK = "Show filters"
     HIDE_FILTERS_LINK = "Hide filters"

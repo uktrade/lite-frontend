@@ -65,7 +65,7 @@ class SetCaseFlagsForm:
 
 class SetGenericFlagsForm:
     TITLE = "Set flags"
-    DESCRIPTION = "Select all flags that you want to set on this case."
+    DESCRIPTION = "Select all flags that you want to set."
     BACK = "Back to "
 
     class Filter:

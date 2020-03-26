@@ -8,6 +8,7 @@ CONTINUE = "Continue"
 SAVE_AND_CONTINUE = "Save and continue"
 SAVE_AND_RETURN = "Save and return to application overview"
 VIEW = "View"
+CHANGE = "Change"
 CONFIRM_AND_CONTINUE = "Confirm and continue"
 
 DESCRIPTION = "Description"
@@ -44,3 +45,13 @@ class Filters:
 
 class Checkboxes:
     SELECT_DESELECT_ALL = "Select all/Deselect all"
+
+
+class Address:
+    ADDRESS = "Address"
+    ADDRESS_LINE_1 = "Building and street"
+    ADDRESS_LINE_2 = ""
+    TOWN = "Town or city"
+    COUNTY = "County or state"
+    POSTAL_CODE = "Postcode"
+    COUNTRY = "Country"

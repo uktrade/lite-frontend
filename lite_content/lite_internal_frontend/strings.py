@@ -84,43 +84,9 @@ CLEAR_ADVICE = "Clear advice"
 
 DOCUMENT_TEMPLATES_TITLE = "Document templates"
 
-REGISTER_BUSINESS_FIRST_AND_LAST_NAME = "First and last name"
-
 
 class Common:
     SERVICE_NAME = "LITE Internal"
-
-
-class RegisterBusiness:
-    COMMERCIAL_OR_PRIVATE_INDIVIDUAL = "Commercial or private individual?"
-    CREATE_ADMIN = "Create an admin for this organisation"
-    CREATE_DEFAULT_SITE = "Create a default site for this exporter"
-    CRN = "Company registration number (CRN)"
-    CRN_DESCRIPTION = "8 numbers, or 2 letters followed by 6 numbers."
-    DEFAULT_USER = "This will be the default user for this organisation."
-    EMAIL = "Email"
-    EORI_NUMBER = "European Union registration and identification number (EORI)"
-    FIRST_NAME = "First name"
-    GO_HOME = "Go home"
-    GO_TO_COMPANIES = "Go to organisation list"
-    LAST_NAME = "Last name"
-    NAME = "Name of organisation"
-    NAME_OF_SITE = "Name of site"
-    REGISTER_COMMERCIAL_TITLE = "Register an organisation"
-    REGISTER_INDIVIDUAL_TITLE = "Register a private individual"
-    EDIT_COMMERCIAL_TITLE = "Edit an organisation"
-    EDIT_INDIVIDUAL_TITLE = "Edit a private individual"
-    REGISTRATION_COMPLETE = "Registration complete"
-    SUCCESSFULLY_REGISTERED = " Successfully registered"
-    WHERE_IS_THE_EXPORTER_BASED = "Where is the exporter based?"
-
-    class UkVatNumber:
-        DESCRIPTION = "9 digits long, with the first 2 letters indicating the country code of the registered business."
-        TITLE = "UK VAT number"
-
-    class SicNumber:
-        DESCRIPTION = "Classifies industries by a 4 digit code."
-        TITLE = "SIC number"
 
 
 class Authentication:

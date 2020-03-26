@@ -57,6 +57,16 @@ class RegisterAnOrganisation:
         COMMERCIAL_DESCRIPTION = "Select this if you want to register an organisation that will be exporting"
         INDIVIDUAL = "Private individual"
         INDIVIDUAL_DESCRIPTION = "Select this if you're a private individual that will be exporting alone"
+        ERROR = "Select the type of organisation you're registering for"
+
+    class WhereIsYourOrganisationBased:
+        TITLE = "Where is your organisation based?"
+        DESCRIPTION = ""
+        IN_THE_UK = "In the United Kingdom"
+        IN_THE_UK_DESCRIPTION = ""
+        OUTSIDE_THE_UK = "Outside of the United Kingdom"
+        OUTSIDE_THE_UK_DESCRIPTION = ""
+        ERROR = "Select a location"
 
     class Commercial:
         TITLE = "Register a commercial organisation"
@@ -101,8 +111,10 @@ class RegisterAnOrganisation:
         VAT_NUMBER_SHORT_TITLE = "UK VAT number"
 
     class Headquarters:
-        TITLE = "Where is your organisation based?"
-        TITLE_INDIVIDUAL = "Where are you based?"
+        TITLE = "Where in the United Kingdom is your organisation based?"
+        TITLE_FOREIGN = "Where is your organisation based?"
+        TITLE_INDIVIDUAL = "Where in the United Kingdom are you based?"
+        TITLE_INDIVIDUAL_FOREIGN = "Where are you based?"
         DESCRIPTION = ""
         NAME = "Name of headquarters"
         NAME_DESCRIPTION = ""

@@ -36,15 +36,6 @@ EDIT_APPLICATION_DONE = "Done"
 HOME = "Home"
 
 
-class Address:
-    ADDRESS_LINE_1 = "Building and street"
-    ADDRESS_LINE_2 = ""
-    TOWN = "Town or city"
-    COUNTY = "County or state"
-    POSTAL_CODE = "Postcode"
-    COUNTRY = "Country"
-
-
 class Applications:
     NO_APPLICATIONS = "You haven't applied for any licences."
 
@@ -318,12 +309,6 @@ class HelpAddress:
     POSTCODE = "SW1A 2AW"
     TELEPHONE_NUMBER = "Phone: 020 7215 4594"
     TITLE = "ECJU (Export Control Joint Unit)"
-
-
-class Sites:
-    CREATE = "Add a site"
-    DESCRIPTION = "Sites are locations where your organisation conducts business."
-    TITLE = "Sites"
 
 
 class AdditionalDocuments:
