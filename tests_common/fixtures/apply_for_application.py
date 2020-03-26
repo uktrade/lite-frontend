@@ -80,6 +80,7 @@ def apply_for_standard_application(driver, api_client_config, context):
             "is_suspected_wmd": False,
             "is_eu_military": False,
         },
+        route_of_goods={"is_shipped_waybill_or_lading": True},
     )
     lite_client.applications.submit_application(draft_id)
     save_application_data_to_context(lite_client, context)
@@ -165,6 +166,7 @@ def apply_for_open_application(driver, api_client_config, context):
             "is_informed_wmd": False,
             "is_suspected_wmd": False,
         },
+        route_of_goods={"is_shipped_waybill_or_lading": True},
     )
     lite_client.applications.submit_application(draft_id)
     save_application_data_to_context(lite_client, context)

@@ -69,6 +69,14 @@ class Applications:
             body={**details},
         )
 
+    def add_route_of_goods(self, draft_id, route_of_goods):
+        self.api_client.make_request(
+            method="PUT",
+            url="/applications/" + draft_id + "/route-of-goods/",
+            headers=self.api_client.exporter_headers,
+            body={**route_of_goods},
+        )
+
     def add_draft(
         self,
         draft=None,
@@ -84,6 +92,7 @@ class Applications:
         has_third_party=True,
         f680_clearance_types=None,
         end_use_details=None,
+        route_of_goods=None,
         additional_information=None,
     ):
         draft_id = self.create_draft(draft=draft)
@@ -121,6 +130,9 @@ class Applications:
         if end_use_details:
             self.add_end_use_details(draft_id=draft_id, details=end_use_details)
 
+        if route_of_goods:
+            self.add_route_of_goods(draft_id=draft_id, route_of_goods=route_of_goods)
+
         additional_document_id = self.add_additional_document(draft_id=draft_id)
 
         self._assert_all_documents_are_processed(
@@ -141,13 +153,14 @@ class Applications:
 
         return draft_id
 
-    def add_open_draft(self, draft=None, end_use_details=None):
+    def add_open_draft(self, draft=None, end_use_details=None, route_of_goods=None):
         draft_id = self.create_draft(draft)
         self.api_client.add_to_context("open_draft_id", draft_id)
         self.add_site(draft_id)
         self.add_countries(draft_id)
         self.goods.add_open_draft_good(draft_id)
         self.add_end_use_details(draft_id, end_use_details)
+        self.add_route_of_goods(draft_id, route_of_goods=route_of_goods)
 
         return draft_id
 
@@ -173,9 +186,10 @@ class Applications:
         )
         return response.json()
 
-    def add_copied_open_application(self, draft_id, app_name, end_use_details):
+    def add_copied_open_application(self, draft_id, app_name, end_use_details, route_of_goods):
         response = self.copy_application(draft_id, app_name)
         self.add_end_use_details(response["data"], details=end_use_details)
+        self.add_route_of_goods(response["data"], route_of_goods)
         self.submit_application(response["data"])
         self.api_client.add_to_context("application_id", response["data"])
         self.api_client.add_to_context("case_id", response["data"])
