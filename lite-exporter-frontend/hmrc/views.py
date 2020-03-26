@@ -1,8 +1,10 @@
+from http import HTTPStatus
+
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
-from applications.forms.hmrc import confirm_organisation_form
+from applications.forms.hmrc import confirm_organisation_form, reference_name_form
 from applications.services import post_applications
 from conf.constants import CaseTypes
 from core.helpers import convert_dict_to_query_params
@@ -47,9 +49,17 @@ class SelectAnOrganisation(TemplateView):
                 # Return an error if the user hasn't selected an organisation
                 return self.get(request, show_error=True, *args, **kwargs)
         else:
-            # Create a draft HMRC application
-            data = {"name": "HMRC query", "application_type": CaseTypes.CRE, "organisation": organisation}
+            return redirect(reverse_lazy("hmrc:reference_name", kwargs={"org_id": organisation}))
 
-            response, _ = post_applications(request, data)
 
+class ReferenceName(TemplateView):
+    def get(self, request, org_id):
+        return form_page(request, reference_name_form())
+
+    def post(self, request, org_id):
+        data = {"name": request.POST["name"], "application_type": CaseTypes.CRE, "organisation": str(org_id)}
+        response, status_code = post_applications(request, data)
+        if status_code != HTTPStatus.CREATED:
+            return form_page(request, reference_name_form(), errors=response.get("errors"))
+        else:
             return redirect(reverse_lazy("applications:task_list", kwargs={"pk": response["id"]}))

@@ -15,8 +15,6 @@ jobs:
     working_directory: ~/lite-exporter-frontend
 
     steps:
-      - jq/install
-
       - checkout
       - run:
           name: Git submodule checkout
