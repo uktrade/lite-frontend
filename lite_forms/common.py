@@ -17,7 +17,7 @@ def address_questions(countries, prefix="address."):
     ]
 
 
-def foreign_address_questions(countries, prefix="foreign_address."):
+def foreign_address_questions(countries, prefix="address."):
     return [
         TextArea(title="Address", name=prefix + "address", classes=["govuk-input--width-20"], rows=6),
         conditional(countries, country_question(countries, prefix)),
