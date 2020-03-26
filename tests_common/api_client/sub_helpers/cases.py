@@ -12,7 +12,7 @@ class Cases:
         case_id = case_id or self.api_client.context["case_id"]
         self.api_client.make_request(
             method="PUT",
-            url="/cases/" + case_id + "/",
+            url="/cases/" + case_id + "/queues/",
             headers=self.api_client.gov_headers,
             body={"queues": [queue_id]},
         )
