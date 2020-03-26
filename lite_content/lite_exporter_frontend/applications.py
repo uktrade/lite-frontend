@@ -146,6 +146,7 @@ class ApplicationSummaryPage:
     COPIED = "Copied"
     CLEARANCE = "Security grading"
     END_USE_DETAILS = "End use details"
+    ROUTE_OF_GOODS = "Route of products"
 
     class Sections:
         COMPLETED_TAG = "Saved"
@@ -695,3 +696,9 @@ class EndUseDetails:
         SUSPECTED_WMD_TITLE = "Suspect WMD"
         EU_MILITARY_TITLE = "EU transfer licence"
         COMPLIANT_LIMITATIONS_EU_TITLE = "Complied to terms"
+
+
+class RouteOfGoods:
+    TITLE = "Are the products being shipped on an air waybill or bill of lading?"
+    NO_ANSWER_DESCRIPTION = "Provide details of the route of the products"
+    SAVE_BUTTON = "Save"

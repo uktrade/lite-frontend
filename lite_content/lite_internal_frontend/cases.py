@@ -128,6 +128,12 @@ class ApplicationPage:
         MTCR_TYPE = "MTCR type"
         VALUE = "Export Value"
 
+    class RouteOfGoods:
+        TITLE = "Route of products"
+        DESCRIPTION_COLUMN = "Description"
+        ANSWER_COLUMN = "Answer"
+        SHIPPED_TITLE = "Shipped waybill or lading"
+
     class Details:
         DETAILS = "Exhibition details"
 
