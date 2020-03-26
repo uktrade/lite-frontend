@@ -698,6 +698,13 @@ class EndUseDetails:
         COMPLIANT_LIMITATIONS_EU_TITLE = "Complied to terms"
 
 
+class HMRCQuery:
+    class InitialQuestions:
+        REFERENCE_NAME_TITLE = "Name the query"
+        REFERENCE_NAME_DESCRIPTION = "Give the query a reference name so you can refer back to it when needed."
+        REFERENCE_NAME_BUTTON = "Continue"
+
+
 class RouteOfGoods:
     TITLE = "Are the products being shipped on an air waybill or bill of lading?"
     NO_ANSWER_DESCRIPTION = "Provide details of the route of the products"
