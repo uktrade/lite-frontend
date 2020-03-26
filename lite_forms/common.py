@@ -1,4 +1,5 @@
-from lite_forms.components import TextInput, ControlListEntryInput, AutocompleteInput
+from lite_forms.components import TextInput, ControlListEntryInput, AutocompleteInput, TextArea
+from lite_forms.helpers import conditional
 
 
 def country_question(countries, prefix="address."):
@@ -12,7 +13,14 @@ def address_questions(countries, prefix="address."):
         TextInput(title="Town or city", name=prefix + "city"),
         TextInput(title="County or state", name=prefix + "region"),
         TextInput(title="Postcode", name=prefix + "postcode"),
-        country_question(countries, prefix),
+        conditional(countries, country_question(countries, prefix)),
+    ]
+
+
+def foreign_address_questions(countries, prefix="foreign_address."):
+    return [
+        TextArea(title="Address", name=prefix + "address", classes=["govuk-input--width-20"], rows=6),
+        conditional(countries, country_question(countries, prefix)),
     ]
 
 

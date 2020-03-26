@@ -84,9 +84,13 @@
 			{% for key, value in data.items %}
 				{% dict_hidden_field key value %}
 			{% endfor %}
-			<button name="_action" value="finish" type="submit" class="govuk-button" data-module="govuk-button">
+			<button name="_action" value="finish" type="submit" class="govuk-button govuk-!-margin-bottom-3" data-module="govuk-button">
 				{{ button }}
 			</button>
 		</form>
 	{% endwith %}
+
+	{% if cancel_link_text and cancel_link_url %}
+		<p class="govuk-hint">{{ cancel_link_prefix }} <a href="{{ cancel_link_url }}" class="govuk-link govuk-link--no-visited-state">{{ cancel_link_text }}</a>.</p>
+	{% endif %}
 {% endblock %}

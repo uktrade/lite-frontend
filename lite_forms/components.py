@@ -201,6 +201,21 @@ class TextInput(_Component):
         self.input_type = "text_input"
 
 
+class EmailInput(_Component):
+    def __init__(
+        self,
+        name: str,
+        title: str = "",
+        description: str = "",
+        short_title: str = None,
+        accessible_description: str = None,
+        optional: bool = False,
+        classes: Optional[List] = None,
+    ):
+        super().__init__(name, title, description, short_title, accessible_description, optional, classes)
+        self.input_type = "email_input"
+
+
 class NumberInput(_Component):
     def __init__(
         self,
@@ -452,6 +467,7 @@ class TextArea(_Component):
         optional: bool = False,
         classes: Optional[List] = None,
         extras: Optional[List] = None,
+        rows: int = 10,
     ):
         super().__init__(
             name=name,
@@ -463,6 +479,7 @@ class TextArea(_Component):
             classes=classes,
             extras=extras,
         )
+        self.rows = rows
         self.input_type = "textarea"
 
 

@@ -194,6 +194,9 @@ class MultiFormView(FormView):
 
         self._validated_data = data
 
+        if self.success_message:
+            messages.success(self.request, self.success_message)
+
         return redirect(self.get_success_url())
 
 
@@ -241,6 +244,9 @@ class SummaryListFormView(FormView):
     hide_components: List = None
     validate_only_until_final_submission = True
     additional_context: dict = {}
+    cancel_link_prefix = "or "
+    cancel_link_text = ""
+    cancel_link_url = ""
 
     def get_forms(self):
         if not self.forms:
@@ -288,6 +294,9 @@ class SummaryListFormView(FormView):
             "notice_title": self.summary_list_notice_title,
             "notice": self.summary_list_notice_text,
             "hide_components": self.hide_components if self.hide_components else {},
+            "cancel_link_prefix": self.cancel_link_prefix,
+            "cancel_link_text": self.cancel_link_text,
+            "cancel_link_url": self.cancel_link_url,
             **self.additional_context,
         }
         return render(self.request, "summary-list.html", context)

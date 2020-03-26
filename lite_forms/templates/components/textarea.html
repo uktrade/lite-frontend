@@ -1,9 +1,8 @@
 <div data-module="character-count" data-maxlength="{{ extras.max_length }}">
-	<textarea class="govuk-textarea js-character-count {% if error %}govuk-textarea--error{% endif %}"
+	<textarea class="govuk-textarea js-character-count {% for class in component.classes %}{{ class }} {% endfor %} {% if error %}govuk-textarea--error{% endif %}"
 		  id="{{ name }}"
 		  name="{{ name }}"
-		  rows="10"
-		  cols="40"
+		  rows="{{ component.rows }}"
           {% if extras.max_length %}
               maxlength="{{ extras.max_length }}"
           {% endif %}>{{ value }}</textarea>
