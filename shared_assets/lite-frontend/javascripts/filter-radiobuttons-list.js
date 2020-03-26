@@ -65,3 +65,17 @@ function addCheckedCheckboxesToList() {
 }
 
 addCheckedCheckboxesToList();
+
+var mark = function() {
+	var keyword = $("#filter-box").val();
+
+	// Remove previous marked elements and mark
+	// the new keyword inside the context
+	$(".govuk-radios__label").unmark({
+		done: function() {
+			$(".govuk-radios__label").mark(keyword, {"className": "lite-highlight"});
+		}
+	});
+};
+
+$("#filter-box").on("input", mark);
