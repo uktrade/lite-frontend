@@ -22,7 +22,7 @@ from cases.services import (
     post_case_notes,
     put_application_status,
     get_activity,
-    put_case,
+    put_case_queues,
     put_end_user_advisory_query,
     _get_total_goods_value,
     put_goods_query_status,
@@ -341,7 +341,7 @@ class MoveCase(SingleFormView):
         case = get_case(request, self.object_pk)
         self.data = case
         self.form = move_case_form(request, case)
-        self.action = put_case
+        self.action = put_case_queues
 
     def get_success_url(self):
         messages.success(self.request, cases.Manage.MoveCase.SUCCESS_MESSAGE)

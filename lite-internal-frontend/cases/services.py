@@ -34,6 +34,7 @@ from conf.constants import (
     PV_GRADING_RESPONSE_URL,
     DECISIONS_URL,
     FINALISE_CASE_URL,
+    QUEUES_URL,
 )
 
 
@@ -49,8 +50,9 @@ def get_case(request, pk):
     return data.json()["case"]
 
 
-def put_case(request, pk, json):
-    data = put(request, CASE_URL + str(pk), json)
+# Case Queues
+def put_case_queues(request, pk, json):
+    data = put(request, CASE_URL + str(pk) + QUEUES_URL, json)
     return data.json(), data.status_code
 
 
