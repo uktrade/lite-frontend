@@ -21,7 +21,9 @@ def copy_open_app(driver, apply_for_open_application, api_client_config, context
         "is_informed_wmd": False,
         "is_suspected_wmd": False,
     }
-    lite_client.applications.add_copied_open_application(context.app_id, app_name, end_use_details)
+    route_of_goods = {"is_shipped_waybill_or_lading": True}
+
+    lite_client.applications.add_copied_open_application(context.app_id, app_name, end_use_details, route_of_goods)
     context.old_app_id = context.app_id
     context.app_id = lite_client.context["application_id"]
     context.case_id = lite_client.context["application_id"]

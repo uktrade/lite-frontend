@@ -261,6 +261,38 @@
 			</div>
 		</div>
 
+		<!-- Route of goods -->
+		<div class="govuk-accordion__section">
+			<div class="govuk-accordion__section-header">
+				<h2 class="govuk-accordion__section-heading">
+					<span class="govuk-accordion__section-button" id="accordion-default-heading-3">
+						{% lcs 'cases.ApplicationPage.RouteOfGoods.TITLE' %}
+					</span>
+				</h2>
+			</div>
+			<div id="accordion-route-of-goods-content" class="govuk-accordion__section-content" aria-labelledby="accordion-route-of-goods">
+				<table class="govuk-table" id="route-of-goods">
+					<thead class="govuk-table__head">
+						<tr class="govuk-table__row">
+							<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.RouteOfGoods.DESCRIPTION_COLUMN' %}</th>
+							<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.RouteOfGoods.ANSWER_COLUMN' %}</th>
+						</tr>
+					</thead>
+					<tbody class="govuk-table__body">
+						<tr class="govuk-table__row">
+							<td class="govuk-table__cell govuk-!-font-weight-bold">
+								{% lcs 'cases.ApplicationPage.RouteOfGoods.SHIPPED_TITLE' %}
+							</td>
+							<td class="govuk-table__cell">
+								{{ case.application.is_shipped_waybill_or_lading|friendly_boolean }} <br>
+								{{ case.application.non_waybill_or_lading_route_details|default:"" }}
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
 		<!-- Parties -->
 		<div class="govuk-accordion__section">
 			<div class="govuk-accordion__section-header">
