@@ -83,6 +83,7 @@ def _convert_standard_application(application, editable=False):
     return {
         applications.ApplicationSummaryPage.GOODS: _convert_goods(application["goods"]),
         applications.ApplicationSummaryPage.END_USE_DETAILS: _get_end_use_details(application),
+        applications.ApplicationSummaryPage.ROUTE_OF_GOODS: _get_route_of_goods(application),
         applications.ApplicationSummaryPage.GOODS_LOCATIONS: _convert_goods_locations(application["goods_locations"]),
         applications.ApplicationSummaryPage.END_USER: convert_party(application["end_user"], application, editable),
         applications.ApplicationSummaryPage.ULTIMATE_END_USERS: [
@@ -105,6 +106,7 @@ def _convert_open_application(application, editable=False):
     return {
         applications.ApplicationSummaryPage.GOODS: _convert_goods_types(application["goods_types"]),
         applications.ApplicationSummaryPage.END_USE_DETAILS: _get_end_use_details(application),
+        applications.ApplicationSummaryPage.ROUTE_OF_GOODS: _get_route_of_goods(application),
         applications.ApplicationSummaryPage.GOODS_LOCATIONS: _convert_goods_locations(application["goods_locations"]),
         applications.ApplicationSummaryPage.COUNTRIES: _convert_countries(application["destinations"]["data"]),
         applications.ApplicationSummaryPage.SUPPORTING_DOCUMENTATION: _get_supporting_documentation(
@@ -184,6 +186,17 @@ def _convert_goods_types(goods_types):
 
 def _convert_countries(countries):
     return [{"Name": country["name"]} for country in countries]
+
+
+def _get_route_of_goods(application):
+    return [
+        {
+            "Description": "Shipped air waybill or lading",
+            "Answer": friendly_boolean(application.get("is_shipped_waybill_or_lading"))
+            + NEWLINE
+            + (application.get("non_waybill_or_lading_route_details") or ""),
+        }
+    ]
 
 
 def _get_additional_information(application):

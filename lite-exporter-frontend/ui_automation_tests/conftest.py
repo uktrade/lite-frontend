@@ -4,6 +4,7 @@ import os
 from faker import Faker  # noqa
 from pytest_bdd import given, when, then, parsers
 
+from ui_automation_tests.pages.route_of_goods_form_page import RouteOfGoodsFormPage
 from ui_automation_tests.pages.end_use_details_form_page import EndUseDetailsFormPage
 from ui_automation_tests.pages.add_end_user_pages import AddEndUserPages
 from ui_automation_tests.pages.application_edit_type_page import ApplicationEditTypePage
@@ -257,6 +258,15 @@ def eu_compliant_limitations_end_use_details(driver, choice):  # noqa
     else:
         end_use_details.answer_is_compliant_limitations_eu(False, fake.sentence(nb_words=30))
     functions.click_submit(driver)
+
+
+@when(parsers.parse('I answer "{choice}" for shipping air waybill or lading'))  # noqa
+def route_of_goods(driver, choice):  # noqa
+    route_of_goods = RouteOfGoodsFormPage(driver)
+    if choice == "No":
+        route_of_goods.answer_route_of_goods_question(True, "Not shipped air waybill.")
+    else:
+        route_of_goods.answer_route_of_goods_question(False)
 
 
 @when(parsers.parse("I save and continue on the summary page"))  # noqa

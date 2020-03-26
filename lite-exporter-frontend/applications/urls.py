@@ -15,6 +15,7 @@ from applications.views import (
     clearance,
     questions,
     end_use_details,
+    route_of_goods,
 )
 
 app_name = "applications"
@@ -157,6 +158,7 @@ urlpatterns = [
     ),
     # End use details
     path("<uuid:pk>/end-use-details/", end_use_details.EndUseDetails.as_view(), name="end_use_details"),
+    path("<uuid:pk>/route-of-goods/", route_of_goods.RouteOfGoods.as_view(), name="route_of_goods"),
     # Ultimate end users
     path("<uuid:pk>/ultimate-end-users/", ultimate_end_users.UltimateEndUsers.as_view(), name="ultimate_end_users"),
     path(
