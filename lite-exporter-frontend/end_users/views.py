@@ -28,7 +28,7 @@ from end_users.services import get_end_user_advisories, post_end_user_advisories
 
 class EndUsersList(TemplateView):
     def get(self, request, **kwargs):
-        end_users = get_end_user_advisories(request)
+        end_users = get_end_user_advisories(request, request.GET.get("page", 1))
 
         context = {
             "end_users": end_users,

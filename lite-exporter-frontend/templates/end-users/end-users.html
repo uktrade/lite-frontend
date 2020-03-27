@@ -33,7 +33,7 @@
 				</tr>
 			</thead>
 			<tbody class="govuk-table__body">
-				{% for advisory in end_users %}
+				{% for advisory in end_users.results %}
 					<tr id={{ advisory.id }} class="govuk-table__row">
 						<td class="govuk-table__cell">
 							<a id="advisory-details-link" class="govuk-link govuk-link--no-visited-state app-icon-label" href="{% url 'end_users:end_user' pk=advisory.id %}">
@@ -71,4 +71,6 @@
 	{% else %}
 		{% include "includes/notice.html" with text="end_users.EndUsersPage.NO_CONTENT_NOTICE" %}
 	{% endif %}
+
+	{% include "includes/pagination.html" with data=end_users %}
 {% endblock %}

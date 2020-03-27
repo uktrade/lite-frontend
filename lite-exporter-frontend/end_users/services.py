@@ -12,9 +12,9 @@ def get_end_user_advisory(request, pk):
         return None, None
 
 
-def get_end_user_advisories(request):
-    data = get(request, END_USER_ADVISORIES_URL)
-    return data.json().get("end_user_advisories") if data.status_code == HTTPStatus.OK else None
+def get_end_user_advisories(request, page):
+    data = get(request, END_USER_ADVISORIES_URL + "?page=" + str(page))
+    return data.json()
 
 
 def post_end_user_advisories(request, json):

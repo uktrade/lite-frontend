@@ -1,5 +1,6 @@
 from ui_automation_tests.pages.shared import Shared
 from ui_automation_tests.shared.BasePage import BasePage
+from ui_automation_tests.shared.tools.helpers import find_paginated_item_by_id
 
 
 class EndUserAdvisoryPage(BasePage):
@@ -16,6 +17,7 @@ class EndUserAdvisoryPage(BasePage):
         end_user_advisory.find_element_by_id(self.ADVISORY_DETAILS_LINK).click()
 
     def is_end_user_advisory_displayed_with_notification(self, end_user_advisory_id):
+        find_paginated_item_by_id(end_user_advisory_id, self.driver)
         end_user_advisory = self.driver.find_element_by_id(end_user_advisory_id)
         return len(end_user_advisory.find_elements_by_css_selector(Shared.NOTIFICATION)) > 0
 
