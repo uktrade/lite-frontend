@@ -68,7 +68,7 @@ class Organisations:
             method="GET",
             url="/organisations/" + org_id + "/users/?disable_pagination=True",
             headers=self.api_client.gov_headers,
-        ).json()["users"]
+        ).json()
         user = next((item for item in users if item["email"] == self.request_data["export_user"]["email"]), None)
         return user
 
