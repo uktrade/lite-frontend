@@ -9,9 +9,12 @@
 				<a class="govuk-breadcrumbs__link" href="/">{{ SERVICE_NAME }}</a>
 			</li>
 			{% if USER_PERMISSIONS.ADMINISTER_USERS in signed_in_user.role.permissions %}
-				<li class="govuk-breadcrumbs__list-item">
-					<a class="govuk-breadcrumbs__link" href="{% url 'organisation:members:members' %}">{% lcs 'core.HubPage.ORGANISATION' %}</a>
-				</li>
+			<li class="govuk-breadcrumbs__list-item">
+				<a class="govuk-breadcrumbs__link" href="{% url 'organisation:members:members' %}">{% lcs 'core.HubPage.ORGANISATION' %}</a>
+			</li>
+			<li class="govuk-breadcrumbs__list-item">
+				{% if profile.first_name %}{{ profile.first_name }} {{ profile.last_name }}{% else %}{{ profile.email }}{% endif %}
+			</li>
 			{% endif %}
 		</ol>
 	</div>
@@ -131,17 +134,22 @@
 					{{ site.name }}
 				</dd>
 				<dd class="govuk-summary-list__value govuk-hint">
-					{{ site.address.address_line_1 }}<br/>
-					{% if site.address.address_line_2 %}
-						{{ site.address.address_line_2 }}<br/>
+					{% if site.address.address_line_1 %}
+						{{ site.address.address_line_1 }}<br/>
+						{% if site.address.address_line_2 %}
+							{{ site.address.address_line_2 }}<br/>
+						{% endif %}
+						{{ site.address.city }}<br/>
+						{{ site.address.postcode }}<br/>
+						{{ site.address.country.name }}
+					{% else %}
+						{{ site.address.address }}<br/>
+						{{ site.address.country.name }}
 					{% endif %}
-					{{ site.address.city }}<br/>
-					{{ site.address.postcode }}<br/>
-					{{ site.address.country.name }}
 				</dd>
 				<dd class="govuk-summary-list__actions">
-					<a class="govuk-link" href="{% url 'organisation:sites:site' site.id %}">
-						View
+					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisation:sites:site' site.id %}?return_to={{ request.path }}">
+						{% lcs 'generic.VIEW' %} <span class="govuk-visually-hidden">{{ site.name }} site</span>
 					</a>
 				</dd>
 			</div>

@@ -10,12 +10,10 @@ Feature: I  want to add and rename my sites
     When I click on the manage my organisation link
     And I click sites link
     And I click new site
-    And I enter in text for new site " " "4 Privet Drive" "SU1 1BB" "Surrey" "Surrey" and "Ukraine"
-    And I click continue
-    Then I see sites list
-    When I click the first view link
-    And I click the edit button
-    And I clear the fields for the site
-    And I enter in text for new site "edited" "4 Privet Drive" "SU1 1BB" "Surrey" "Surrey" and "Ukraine"
-    And I click continue
-    Then I see last site name as edited
+    And I specify that my site is in the United Kingdom
+    And I enter in the site details
+    And I assign all users
+    Then the site is created
+    When I click the change name link
+    And I change the site name
+    Then the site is updated

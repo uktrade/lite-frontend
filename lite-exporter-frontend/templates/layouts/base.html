@@ -30,6 +30,7 @@
 	<meta property="og:image" content="{% static 'images/govuk-opengraph-image.png' %}">
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="{% static 'javascripts/mark.js' %}"></script>
 
 	{% block head %}{% endblock %}
 </head>
@@ -104,9 +105,13 @@
 					</span>
 				</p>
 			</div>
-			{% block back_link %}
-				<a href="#" id="back-link" class="govuk-back-link">Back</a>
-			{% endblock %}
+			{% if request.GET|get:'return_to' %}
+				<a href="{{ request.GET|get:'return_to' }}" id="back-link" class="govuk-back-link">{% lcs 'generic.BACK' %}</a>
+			{% else %}
+				{% block back_link %}
+					<a href="#" id="back-link" class="govuk-back-link">{% lcs 'generic.BACK' %}</a>
+				{% endblock %}
+			{% endif %}
 		</section>
 		<main class="govuk-main-wrapper " id="main-content" role="main">
 			{% block body %}{% endblock %}

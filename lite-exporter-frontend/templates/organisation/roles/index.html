@@ -24,7 +24,7 @@
 		<tbody class="govuk-table__body">
 			{% for role in roles %}
 				<tr class="govuk-table__row">
-					<td class="govuk-table__cell">
+					<td class="govuk-table__header" scope="row">
 						{{ role.name }}
 					</td>
 					<td class="govuk-table__cell">
@@ -52,7 +52,9 @@
 						{% if not role.id in immutable_roles %}
 							{% if 'EXPORTER_ADMINISTER_ROLES' in user_permissions %}
 								{% if role.id != user_role_id %}
-									<a href="{% url 'organisation:roles:edit' role.id %}" class="govuk-link govuk-link--no-visited-state">{% lcs "roles.ManageRolesPage.Table.EDIT_ROLE" %}</a>
+									<a href="{% url 'organisation:roles:edit' role.id %}" class="govuk-link govuk-link--no-visited-state">
+										{% lcs "roles.ManageRolesPage.Table.EDIT_ROLE" %} <span class="govuk-visually-hidden">{{ role.name }} role</span>
+									</a>
 								{% endif %}
 							{% endif %}
 						{% endif %}

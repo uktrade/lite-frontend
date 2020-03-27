@@ -12,7 +12,7 @@ from conf.constants import (
     GIFTING,
     F680,
 )
-from core.builtins.custom_tags import default_na, friendly_boolean, pluralise_unit, date_display
+from core.builtins.custom_tags import default_na, friendly_boolean, pluralise_unit, date_display, get_address
 from core.helpers import convert_to_link
 from lite_content.lite_exporter_frontend import applications
 from lite_content.lite_exporter_frontend.strings import Parties
@@ -293,7 +293,7 @@ def convert_party(party, application, editable):
         "Type": party["sub_type"]["value"],
         "Clearance level": None,
         "Descriptors": party.get("descriptors"),
-        "Address": party["address"] + NEWLINE + party["country"]["name"],
+        "Address": get_address(party),
         "Website": convert_to_link(party["website"]),
         "Document": document,
     }
@@ -314,28 +314,10 @@ def _convert_goods_locations(goods_locations):
         return
 
     if goods_locations["type"] == "sites":
-        return [
-            {
-                "Site": site["name"],
-                "Address": site["address"]["address_line_1"]
-                + NEWLINE
-                + (site["address"]["address_line_2"] + NEWLINE if site["address"]["address_line_2"] else "")
-                + site["address"]["city"]
-                + NEWLINE
-                + site["address"]["region"]
-                + NEWLINE
-                + site["address"]["postcode"]
-                + NEWLINE
-                + site["address"]["country"]["name"],
-            }
-            for site in goods_locations["data"]
-        ]
+        return [{"Site": site["name"], "Address": get_address(site)} for site in goods_locations["data"]]
     else:
         return [
-            {
-                "Name": external_location["name"],
-                "Address": external_location["address"] + NEWLINE + external_location["country"]["name"],
-            }
+            {"Name": external_location["name"], "Address": get_address(external_location),}
             for external_location in goods_locations["data"]
         ]
 

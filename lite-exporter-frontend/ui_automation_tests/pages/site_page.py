@@ -2,7 +2,7 @@ from ui_automation_tests.shared.BasePage import BasePage
 
 
 class SitePage(BasePage):
-    BUTTON_EDIT_ID = "button-edit"
+    LINK_CHANGE_NAME_ID = "link-change-name"
 
-    def click_edit_button(self):
-        self.driver.find_element_by_id(self.BUTTON_EDIT_ID).click()
+    def click_change_name_link(self):
+        self.driver.find_element_by_id(self.LINK_CHANGE_NAME_ID).click()

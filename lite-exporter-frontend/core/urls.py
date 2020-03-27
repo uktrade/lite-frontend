@@ -17,6 +17,8 @@ urlpatterns = [
         name="register_an_organisation_confirm",
     ),
     path(
-        "register-an-organisation/<str:type>/", views.RegisterAnOrganisation.as_view(), name="register_an_organisation"
+        "register-an-organisation/<str:type>/<str:location>/",
+        views.RegisterAnOrganisation.as_view(),
+        name="register_an_organisation",
     ),
 ]

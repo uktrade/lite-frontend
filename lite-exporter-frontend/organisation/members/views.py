@@ -19,7 +19,7 @@ class Members(OrganisationView):
     def get_additional_context(self):
         status = self.request.GET.get("status", "active")
         params = {"page": int(self.request.GET.get("page", 1)), "status": status}
-        data, _ = get_organisation_users(self.request, str(self.request.user.organisation), params)
+        users = get_organisation_users(self.request, str(self.request.user.organisation), params)
         statuses = [
             Option(option["key"], option["value"])
             for option in [{"key": "active", "value": "Active"}, {"key": "", "value": "All"}]
@@ -28,7 +28,7 @@ class Members(OrganisationView):
 
         return {
             "status": status,
-            "data": data,
+            "data": users,
             "page": params.pop("page"),
             "params_str": convert_dict_to_query_params(params),
             "filters": filters,
@@ -46,6 +46,7 @@ class ViewUser(TemplateView):
     def get(self, request, **kwargs):
         request_user = get_organisation_user(request, str(request.user.organisation), str(kwargs["pk"]))
         user = get_user(request)
+
         is_request_user_super_user = is_super_user(request_user)
         is_user_super_user = is_super_user(user)
         is_self_editing = user["id"] == request_user["id"]
@@ -121,7 +122,7 @@ class ChangeUserStatus(TemplateView):
 class AssignSites(SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
-        self.data = get_user(request, self.object_pk)
+        self.data = get_user(request, self.object_pk)["user"]
         self.form = assign_sites(request)
         self.action = put_assign_sites
         self.success_url = reverse_lazy("organisation:members:user", kwargs={"pk": self.object_pk})

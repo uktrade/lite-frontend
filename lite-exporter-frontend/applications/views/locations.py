@@ -79,7 +79,7 @@ class ExistingSites(SingleFormView):
         self.object_pk = kwargs["pk"]
         application = get_application(request, self.object_pk)
 
-        if application.status == "submitted" and not application["sites"]:
+        if application.status == "submitted" and not application["goods_locations"]["type"] == "sites":
             raise Http404
 
         self.data, _ = get_sites_on_draft(request, self.object_pk)

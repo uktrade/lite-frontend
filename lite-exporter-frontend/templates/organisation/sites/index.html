@@ -2,7 +2,7 @@
 
 {% block controls %}
 	<a id="button-add-site" href="{% url 'organisation:sites:new' %}" class="govuk-button" draggable="false" role="button">
-		{% lcs 'Sites.CREATE' %}
+		{% lcs 'sites.SitesPage.ADD_A_SITE_BUTTON' %}
 	</a>
 {% endblock %}
 
@@ -11,38 +11,45 @@
 		<thead class="govuk-table__head">
 			<tr class="govuk-table__row">
 				<th class="govuk-table__header">
-					Name
+					{% lcs 'sites.SitesPage.Table.NAME' %}
 				</th>
 				<th class="govuk-table__header">
-					Address
+					{% lcs 'sites.SitesPage.Table.ADDRESS' %}
 				</th>
 				<th class="govuk-table__header">
-					Members
+					{% lcs 'sites.SitesPage.Table.MEMBERS' %}
 				</th>
 				<th class="govuk-table__header"></th>
 			</tr>
 		</thead>
-		<tbody class="govuk-table__head">
+		<tbody class="govuk-table__body">
 			{% for site in sites %}
 				<tr class="govuk-table__row">
-					<td class="govuk-table__cell">
+					<td class="govuk-table__header" scope="row">
 						{{ site.name }}
 						{% if site.id == organisation.primary_site.id %}
 							<span class="govuk-hint">(primary site)</span>
 						{% endif %}
 					</td>
 					<td class="govuk-table__cell">
-						{{ site.address.address_line_1 }}<br/>
-						{% if site.address.address_line_2 %}
-							{{ site.address.address_line_2 }}<br/>
+						{% if site.address.address_line_1 %}
+							{{ site.address.address_line_1 }}<br/>
+							{% if site.address.address_line_2 %}
+								{{ site.address.address_line_2 }}<br/>
+							{% endif %}
+							{{ site.address.city }}<br/>
+							{{ site.address.postcode }}<br/>
+							{{ site.address.country.name }}
+						{% else %}
+							{{ site.address.address }}<br/>
+							{{ site.address.country.name }}
 						{% endif %}
-						{{ site.address.city }}<br/>
-						{{ site.address.postcode }}<br/>
-						{{ site.address.country.name }}
 					</td>
-					<td class="govuk-table__cell">{{ site.users }} member{{ site.users|pluralize }}</td>
+					<td class="govuk-table__cell">{{ site.assigned_users_count }} member{{ site.assigned_users_count|pluralize }}</td>
 					<td class="govuk-table__cell govuk-table__cell--numeric">
-						<a id="link-view-site-{{ site.id }}" href="{% url 'organisation:sites:site' site.id %}" class="govuk-link govuk-link--no-visited-state">View</a>
+						<a id="link-view-site-{{ site.id }}" href="{% url 'organisation:sites:site' site.id %}" class="govuk-link govuk-link--no-visited-state">
+							{% lcs 'generic.VIEW' %} <span class="govuk-visually-hidden">{{ site.name }} site</span>
+						</a>
 					</td>
 				</tr>
 			{% endfor %}

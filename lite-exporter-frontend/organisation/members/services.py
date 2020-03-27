@@ -7,7 +7,7 @@ def get_user(request, pk=None):
         data = get(request, USERS_URL + str(pk))
     else:
         data = get(request, USERS_URL + "me/")
-    return data.json()["user"]
+    return data.json()
 
 
 def get_users(request):

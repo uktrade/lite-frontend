@@ -2,7 +2,7 @@ from core.helpers import str_date_only
 from core.services import get_countries
 from lite_content.lite_exporter_frontend import generic
 from lite_content.lite_exporter_frontend.core import StartPage, RegisterAnOrganisation
-from lite_forms.common import address_questions
+from lite_forms.common import address_questions, foreign_address_questions
 from lite_forms.components import (
     RadioButtons,
     Option,
@@ -13,6 +13,7 @@ from lite_forms.components import (
     BackLink,
     Label,
     List,
+    HiddenField,
 )
 from lite_forms.helpers import conditional
 from lite_forms.styles import ButtonStyle
@@ -36,6 +37,8 @@ def select_your_organisation_form(organisations):
 
 
 def register_triage():
+    from core.views import RegisterAnOrganisationTriage
+
     return FormGroup(
         [
             Form(
@@ -54,7 +57,7 @@ def register_triage():
             Form(
                 title=RegisterAnOrganisation.CommercialOrIndividual.TITLE,
                 description=RegisterAnOrganisation.CommercialOrIndividual.DESCRIPTION,
-                caption="Step 1 of 3",
+                caption="Step 1 of 4",
                 questions=[
                     RadioButtons(
                         name="type",
@@ -74,39 +77,81 @@ def register_triage():
                 ],
                 default_button_name=generic.CONTINUE,
             ),
+            Form(
+                title=RegisterAnOrganisation.WhereIsYourOrganisationBased.TITLE,
+                description=RegisterAnOrganisation.WhereIsYourOrganisationBased.DESCRIPTION,
+                caption="Step 2 of 4",
+                questions=[
+                    RadioButtons(
+                        name="location",
+                        options=[
+                            Option(
+                                key=RegisterAnOrganisationTriage.Locations.UNITED_KINGDOM,
+                                value=RegisterAnOrganisation.WhereIsYourOrganisationBased.IN_THE_UK,
+                                description=RegisterAnOrganisation.WhereIsYourOrganisationBased.IN_THE_UK_DESCRIPTION,
+                            ),
+                            Option(
+                                key=RegisterAnOrganisationTriage.Locations.ABROAD,
+                                value=RegisterAnOrganisation.WhereIsYourOrganisationBased.OUTSIDE_THE_UK,
+                                description=RegisterAnOrganisation.WhereIsYourOrganisationBased.OUTSIDE_THE_UK_DESCRIPTION,
+                            ),
+                        ],
+                    )
+                ],
+                default_button_name=generic.CONTINUE,
+            ),
         ]
     )
 
 
-def site_form(is_individual):
+def site_form(is_individual, location):
+    from core.views import RegisterAnOrganisationTriage
+
+    is_in_uk = location == RegisterAnOrganisationTriage.Locations.UNITED_KINGDOM
+
     return Form(
         title=conditional(
             not is_individual,
-            RegisterAnOrganisation.Headquarters.TITLE,
-            RegisterAnOrganisation.Headquarters.TITLE_INDIVIDUAL,
+            conditional(
+                is_in_uk, RegisterAnOrganisation.Headquarters.TITLE, RegisterAnOrganisation.Headquarters.TITLE_FOREIGN,
+            ),
+            conditional(
+                is_in_uk,
+                RegisterAnOrganisation.Headquarters.TITLE_INDIVIDUAL,
+                RegisterAnOrganisation.Headquarters.TITLE_INDIVIDUAL_FOREIGN,
+            ),
         ),
         description=RegisterAnOrganisation.Headquarters.DESCRIPTION,
-        caption="Step 3 of 3",
+        caption="Step 4 of 4",
         questions=[
             TextInput(
                 title=RegisterAnOrganisation.Headquarters.NAME,
                 description=RegisterAnOrganisation.Headquarters.NAME_DESCRIPTION,
                 name="site.name",
             ),
-            *address_questions(get_countries(None, True), "site.address."),
+            *conditional(
+                is_in_uk,
+                address_questions(None, "site.address."),
+                foreign_address_questions(get_countries(None, True, ["GB"]), "site.address."),
+            ),
         ],
         default_button_name=generic.CONTINUE,
     )
 
 
-def register_a_commercial_organisation_group():
+def register_a_commercial_organisation_group(location):
+    from core.views import RegisterAnOrganisationTriage
+
+    is_in_uk = location == RegisterAnOrganisationTriage.Locations.UNITED_KINGDOM
+
     return FormGroup(
         [
             Form(
                 title=RegisterAnOrganisation.Commercial.TITLE,
                 description=RegisterAnOrganisation.Commercial.DESCRIPTION,
-                caption="Step 2 of 3",
+                caption="Step 3 of 4",
                 questions=[
+                    HiddenField("location", location),
                     TextInput(
                         title=RegisterAnOrganisation.Commercial.NAME,
                         description=RegisterAnOrganisation.Commercial.NAME_DESCRIPTION,
@@ -117,41 +162,50 @@ def register_a_commercial_organisation_group():
                         description=RegisterAnOrganisation.Commercial.EORI_NUMBER_DESCRIPTION,
                         short_title=RegisterAnOrganisation.Commercial.EORI_NUMBER_SHORT_TITLE,
                         name="eori_number",
+                        optional=not is_in_uk,
                     ),
                     TextInput(
                         title=RegisterAnOrganisation.Commercial.SIC_NUMBER,
                         description=RegisterAnOrganisation.Commercial.SIC_NUMBER_DESCRIPTION,
                         short_title=RegisterAnOrganisation.Commercial.SIC_NUMBER_SHORT_TITLE,
                         name="sic_number",
+                        optional=not is_in_uk,
                     ),
                     TextInput(
                         title=RegisterAnOrganisation.Commercial.VAT_NUMBER,
                         description=RegisterAnOrganisation.Commercial.VAT_NUMBER_DESCRIPTION,
                         short_title=RegisterAnOrganisation.Commercial.VAT_NUMBER_SHORT_TITLE,
                         name="vat_number",
+                        optional=not is_in_uk,
                     ),
                     TextInput(
                         title=RegisterAnOrganisation.Commercial.CRN_NUMBER,
                         description=RegisterAnOrganisation.Commercial.CRN_NUMBER_DESCRIPTION,
                         short_title=RegisterAnOrganisation.Commercial.CRN_NUMBER_SHORT_TITLE,
                         name="registration_number",
+                        optional=not is_in_uk,
                     ),
                 ],
                 default_button_name=generic.CONTINUE,
             ),
-            site_form(False),
+            site_form(False, location),
         ]
     )
 
 
-def register_an_individual_group():
+def register_an_individual_group(location):
+    from core.views import RegisterAnOrganisationTriage
+
+    is_in_uk = location == RegisterAnOrganisationTriage.Locations.UNITED_KINGDOM
+
     return FormGroup(
         [
             Form(
                 title=RegisterAnOrganisation.Individual.TITLE,
                 description=RegisterAnOrganisation.Individual.DESCRIPTION,
-                caption="Step 2 of 3",
+                caption="Step 3 of 4",
                 questions=[
+                    HiddenField("location", location),
                     TextInput(
                         title=RegisterAnOrganisation.Individual.NAME,
                         description=RegisterAnOrganisation.Individual.NAME_DESCRIPTION,
@@ -162,6 +216,7 @@ def register_an_individual_group():
                         description=RegisterAnOrganisation.Individual.EORI_NUMBER_DESCRIPTION,
                         short_title=RegisterAnOrganisation.Individual.EORI_NUMBER_SHORT_TITLE,
                         name="eori_number",
+                        optional=not is_in_uk,
                     ),
                     TextInput(
                         title=RegisterAnOrganisation.Individual.VAT_NUMBER,
@@ -173,6 +228,6 @@ def register_an_individual_group():
                 ],
                 default_button_name=generic.CONTINUE,
             ),
-            site_form(True),
+            site_form(True, location),
         ]
     )

@@ -44,6 +44,21 @@ def put(request, appended_address: str, json):
     )
 
 
+def patch(request, appended_address: str, json):
+    if not appended_address.endswith("/"):
+        appended_address = appended_address + "/"
+
+    return requests.patch(
+        env("LITE_API_URL") + appended_address,
+        json=json,
+        headers={
+            "EXPORTER-USER-TOKEN": str(request.user.user_token),
+            "X-Correlation-Id": str(request.correlation),
+            "ORGANISATION-ID": str(request.user.organisation),
+        },
+    )
+
+
 def delete(request, appended_address):
     return requests.delete(
         env("LITE_API_URL") + appended_address,

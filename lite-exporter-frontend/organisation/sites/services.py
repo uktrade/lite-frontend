@@ -1,7 +1,10 @@
-from conf.client import get, post, put
+from http import HTTPStatus
+
+from conf.client import get, post, put, patch
 from conf.constants import SITES_URL, ORGANISATIONS_URL, NEWLINE, USERS_URL
 from core.helpers import convert_value_to_query_param
 from lite_content.lite_exporter_frontend import strings
+from lite_content.lite_exporter_frontend.sites import AddSiteForm
 from lite_forms.components import Option
 
 
@@ -28,6 +31,7 @@ def get_sites(request, organisation_id, convert_to_options=False, exclude: list 
                 filter(
                     None,
                     [
+                        address.get("address"),
                         address.get("address_line_1"),
                         address.get("address_line_2"),
                         address.get("city"),
@@ -46,16 +50,19 @@ def get_sites(request, organisation_id, convert_to_options=False, exclude: list 
 
 def get_site(request, organisation_id, pk):
     data = get(request, ORGANISATIONS_URL + str(organisation_id) + SITES_URL + str(pk))
-    return data.json()["site"]
+    return data.json()
 
 
-def put_site(request, organisation_id, pk, json):
-    data = put(request, ORGANISATIONS_URL + organisation_id + SITES_URL + pk + "/", json=json)
-    return data.json(), data.status_code
+def update_site(request, pk, json):
+    response = patch(request, ORGANISATIONS_URL + str(request.user.organisation) + SITES_URL + str(pk) + "/", json=json)
+    return response.json(), response.status_code
 
 
 def post_sites(request, organisation_id, json):
-    data = post(request, ORGANISATIONS_URL + organisation_id + SITES_URL, json)
+    if "location" not in json:
+        return {"errors": {"location": [AddSiteForm.WhereIsYourSiteBased.ERROR]}}, HTTPStatus.BAD_REQUEST
+
+    data = post(request, ORGANISATIONS_URL + str(organisation_id) + SITES_URL, json)
     return data.json(), data.status_code
 
 

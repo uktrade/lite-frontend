@@ -55,16 +55,9 @@
 				{% for location in application.goods_locations.data %}
 					{% if application.goods_locations.type == 'sites' %}
 						<tr class="govuk-table__row">
-							<td class="govuk-table__cell">{{ location.name }}</td>
+							<td class="govuk-table__header" scope="row">{{ location.name }}</td>
 							<td class="govuk-table__cell">
-								{{ location.address.address_line_1 }}<br>
-								{% if location.address.address_line_2 %}
-									{{ location.address.address_line_2 }}<br>
-								{% endif %}
-								{{ location.address.city }}<br>
-								{{ location.address.region }}<br>
-								{{ location.address.postcode }}<br>
-								{{ location.country.country.name }}
+								{{ location|get_address }}
 							</td>
 						</tr>
 					{% else %}

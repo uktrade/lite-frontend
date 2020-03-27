@@ -63,18 +63,26 @@
 				{% lcs 'organisation.Details.PRIMARY_SITE' %}
 			</dt>
 			<dd class="govuk-summary-list__value">
-				{{ organisation.primary_site.name }}<br/>
-				{{ organisation.primary_site.address.address_line_1 }}<br/>
-				{% if organisation.primary_site.address.address_line_2 %}
-					{{ organisation.primary_site.address.address_line_2 }}<br/>
-				{% endif %}
-				{{ organisation.primary_site.address.city }}<br/>
-				{{ organisation.primary_site.address.postcode }}<br/>
-				{{ organisation.primary_site.address.country.name }}
+				{{ organisation.primary_site.name }}<br>
+				<span class="govuk-hint">
+					{% if organisation.primary_site.address.address_line_1 %}
+						{{ organisation.primary_site.address.address_line_1 }}<br/>
+						{% if organisation.primary_site.address.address_line_2 %}
+							{{ organisation.primary_site.address.address_line_2 }}<br/>
+						{% endif %}
+						{{ organisation.primary_site.address.city }}<br/>
+						{{ organisation.primary_site.address.postcode }}<br/>
+						{{ organisation.primary_site.address.country.name }}
+					{% else %}
+						{{ organisation.primary_site.address.address }}<br/>
+						{{ organisation.primary_site.address.country.name }}
+					{% endif %}
+				</span>
 			</dd>
 			<dt class="govuk-summary-list__actions">
-				<a href="{% url 'organisation:sites:site' organisation.primary_site.id %}" class="govuk-link govuk-link--no-visited-state">
+				<a href="{% url 'organisation:sites:site' organisation.primary_site.id %}?return_to={{ request.path }}" class="govuk-link govuk-link--no-visited-state">
 					{% lcs 'generic.VIEW' %}
+					<span class="govuk-visually-hidden"> {% lcs 'organisation.Details.PRIMARY_SITE' %}</span>
 				</a>
 			</dt>
 		</div>

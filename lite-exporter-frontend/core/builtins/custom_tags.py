@@ -333,3 +333,36 @@ def join_key_value_list(_list, _join=", "):
 @register.filter()
 def equals(ob1, ob2):
     return ob1 == ob2
+
+
+@register.filter()
+def get_address(data):
+    """
+    Returns a correctly formatted address
+    such as 10 Downing St, London, Westminster, SW1A 2AA, United Kingdom
+    from {'address': {'address_line_1': '10 Downing St', ...}
+    or {'address': '10 Downing St ...', 'country': {'name': United Kingdom'}}
+    """
+    if data:
+        address = data["address"]
+
+        if isinstance(address, str):
+            return address + ", " + data["country"]["name"]
+
+        if "address_line_1" in address:
+            address = [
+                address["address_line_1"],
+                address["address_line_2"],
+                address["city"],
+                address["region"],
+                address["postcode"],
+                address["country"]["name"],
+            ]
+        else:
+            address = [
+                address["address"],
+                address["country"]["name"],
+            ]
+
+        return ", ".join([x for x in address if x])
+    return ""
