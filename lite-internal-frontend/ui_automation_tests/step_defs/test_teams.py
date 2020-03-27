@@ -1,8 +1,8 @@
 from pytest_bdd import when, then, parsers, scenarios
+
 import shared.tools.helpers as utils
 from pages.shared import Shared
 from pages.teams_pages import TeamsPages
-from pages.users_page import UsersPage
 from shared import functions
 
 scenarios("../features/teams.feature", strict_gherkin=False)

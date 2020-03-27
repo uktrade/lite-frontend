@@ -204,7 +204,7 @@ class AssignFlags(TemplateView):
         elif self.level == FlagLevels.CASES:
             obj = {"case": get_case(request, self.objects[0])}
         elif self.level == FlagLevels.ORGANISATIONS:
-            obj, _ = get_organisation(request, self.objects[0])
+            obj = get_organisation(request, self.objects[0])
             object_flags = obj.get("flags")
         elif self.level == FlagLevels.DESTINATIONS:
             obj = get_destination(request, self.objects[0])

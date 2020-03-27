@@ -6,6 +6,7 @@ from conf.constants import Permission
 from core.helpers import has_permission
 from lite_content.lite_internal_frontend import strings
 from lite_content.lite_internal_frontend.flags import FlagsList
+from lite_content.lite_internal_frontend.organisations import OrganisationsPage
 from lite_content.lite_internal_frontend.queues import QueuesList
 from lite_content.lite_internal_frontend.users import UsersPage
 from lite_forms.helpers import conditional
@@ -23,7 +24,11 @@ def lite_menu(request):
     try:
         pages = [
             {"title": "Cases", "url": reverse_lazy("cases:cases"), "icon": "menu/cases"},
-            {"title": "Organisations", "url": reverse_lazy("organisations:organisations"), "icon": "menu/businesses"},
+            {
+                "title": OrganisationsPage.TITLE,
+                "url": reverse_lazy("organisations:organisations"),
+                "icon": "menu/businesses",
+            },
             {"title": "Teams", "url": reverse_lazy("teams:teams"), "icon": "menu/teams"},
             {"title": "My Team", "url": reverse_lazy("teams:team"), "icon": "menu/teams"},
             {"title": QueuesList.TITLE, "url": reverse_lazy("queues:queues"), "icon": "menu/queues"},
@@ -37,7 +42,6 @@ def lite_menu(request):
                     "icon": "menu/letter_templates",
                 },
             ),
-            {"title": "HMRC", "url": reverse_lazy("organisations:hmrc"), "icon": "menu/businesses"},
             conditional(
                 has_permission(request, Permission.MANAGE_FLAGGING_RULES),
                 {"title": "Flagging rules", "url": reverse_lazy("flags:flagging_rules"), "icon": "menu/flags"},

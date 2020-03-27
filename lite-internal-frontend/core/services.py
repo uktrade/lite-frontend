@@ -50,8 +50,14 @@ def get_denial_reasons(request, convert_to_options=True, group=True):
         return converted, status_code
 
 
-def get_countries(request, convert_to_options=False):
-    data = get(request, COUNTRIES_URL)
+def get_countries(request, convert_to_options=False, exclude: list = None):
+    """
+    Returns a list of GOV.UK countries and territories
+    param exclude: Takes a list of country codes and excludes them
+    """
+    from core.helpers import convert_value_to_query_param
+
+    data = get(request, COUNTRIES_URL + "?" + convert_value_to_query_param("exclude", exclude))
 
     if convert_to_options:
         converted_units = []

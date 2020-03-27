@@ -208,7 +208,7 @@ def default_na(value):
     """
     Returns N/A if the parameter given is none
     """
-    if value is not None:
+    if value is not None and len(value):
         return value
     else:
         return mark_safe(f'<span class="lite-hint">{strings.NOT_APPLICABLE}</span>')  # nosec
@@ -228,14 +228,21 @@ def get_address(data):
         if isinstance(address, str):
             return address + ", " + data["country"]["name"]
 
-        address = [
-            address["address_line_1"],
-            address["address_line_2"],
-            address["city"],
-            address["region"],
-            address["postcode"],
-            address["country"]["name"],
-        ]
+        if "address_line_1" in address:
+            address = [
+                address["address_line_1"],
+                address["address_line_2"],
+                address["city"],
+                address["region"],
+                address["postcode"],
+                address["country"]["name"],
+            ]
+        else:
+            address = [
+                address["address"],
+                address["country"]["name"],
+            ]
+
         return ", ".join([x for x in address if x])
     return ""
 
@@ -376,3 +383,8 @@ def missing_title():
         "</div>"
         "</div>"
     )
+
+
+@register.filter()
+def equals(ob1, ob2):
+    return ob1 == ob2

@@ -24,7 +24,7 @@ Feature: I want to add a company to LITE
   @LT_1008_register_hmrc_organisation @regression
   Scenario: Registering an HMRC organisation
     Given I sign in to SSO or am signed into SSO
-    When I go to HMRC
+    When I go to organisations
     And I add a new HMRC organisation
     And I go to organisations
     Then HMRC organisation is registered

@@ -46,3 +46,24 @@ def decorate_patterns_with_permission(patterns, permission: Permission):
         pattern._callback = _wrap_with_permission(permission, callback)
         decorated_patterns.append(pattern)
     return decorated_patterns
+
+
+def convert_value_to_query_param(key: str, value):
+    """
+    Convert key/value pairs to a string suitable for query parameters
+    eg {'type': 'organisation'} becomes type=organisation
+    eg {'type': ['organisation', 'organisation']} becomes type=organisation&type=organisation
+    """
+    if value is None:
+        return ""
+
+    if isinstance(value, list):
+        return_value = ""
+        for item in value:
+            if not return_value:
+                return_value = return_value + key + "=" + item
+            else:
+                return_value = return_value + "&" + key + "=" + item
+        return return_value
+
+    return key + "=" + str(value)

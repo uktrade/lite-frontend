@@ -14,9 +14,8 @@
 			</h1>
 		</div>
 		<div class="lite-app-bar__controls">
-			<a id="button-register-organisation" href="{% url 'organisations:register' %}" class="govuk-button" draggable="false" role="button">
-				{% lcs "organisations.OrganisationsPage.ADD_BUTTON" %}
-			</a>
+			{% govuk_link_button id='register-hmrc-organisation' text='organisations.OrganisationsPage.ADD_HMRC_BUTTON' url='organisations:register_hmrc' %}
+			{% govuk_link_button id='register-organisation' text='organisations.OrganisationsPage.ADD_BUTTON' url='organisations:register' %}
 		</div>
 	</div>
 
@@ -41,7 +40,7 @@
 							<span class="govuk-table__header" aria-hidden="true">
 								{% lcs "organisations.OrganisationsPage.Table.NAME" %}
 							</span>
-							<a class="govuk-link" href="{% url 'organisations:organisation' organisation.id %}">
+							<a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisations:organisation' organisation.id %}">
 								{{ organisation.name|highlight_text:search_term }}
 							</a>
 						</td>
@@ -73,17 +72,13 @@
 							<span class="govuk-table__header" aria-hidden="true">
 								{% lcs "organisations.OrganisationsPage.Table.STATUS" %}
 							</span>
-							<strong class="govuk-tag {% if organisation.status.key == 'in_review' %}govuk-tag--blue{% endif %}">
-								{{ organisation.status.value }}
-							</strong>
+							{{ organisation.status.value }}
 						</td>
 					</tr>
 				{% endfor %}
 			</tbody>
 		</table>
-		{% if data.total_pages > 1 %}
-			{% include "includes/pagination.html" %}
-		{% endif %}
+		{% include "includes/pagination.html" %}
 	{% else %}
 		{% include "includes/notice.html" with text="organisations.OrganisationsPage.ACTIVE_FILTER_NO_ORGANISATIONS" %}
 	{% endif %}

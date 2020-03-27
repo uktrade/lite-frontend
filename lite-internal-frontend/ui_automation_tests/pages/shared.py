@@ -7,6 +7,7 @@ class Shared(BasePage):
     SUBMIT_BUTTON = '.govuk-button[type*="submit"]'  # CSS
     ERROR_MESSAGE = ".govuk-error-message"  # CSS
     TABLE_CSS = ".govuk-table"  # CSS
+    SUMMARY_LIST_CSS = ".govuk-summary-list"  # CSS
     TABLE_BODY_CSS = ".govuk-table__body"  # CSS
     TABLE_ROW_CSS = ".govuk-table__body .govuk-table__row"  # CSS
     TABLE_CELL_CSS = ".govuk-table__body .govuk-table__cell"  # CSS
@@ -32,6 +33,9 @@ class Shared(BasePage):
 
     def get_text_of_table(self):
         return self.driver.find_element_by_css_selector(self.TABLE_CSS).text
+
+    def get_text_of_summary_list(self):
+        return self.driver.find_element_by_css_selector(self.SUMMARY_LIST_CSS).text
 
     def get_text_of_lite_table_body(self):
         return self.driver.find_element_by_css_selector(self.TABLE_BODY_CSS).text

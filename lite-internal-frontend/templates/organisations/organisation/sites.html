@@ -1,0 +1,37 @@
+{% extends 'organisations/organisation/base.html' %}
+
+{% block contents %}
+	{% if sites %}
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="col">{% lcs "organisations.OrganisationPage.Sites.Table.NAME" %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs "organisations.OrganisationPage.Sites.Table.ADDRESS" %}</th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				{% for site in sites %}
+					<tr class="govuk-table__row">
+						<td class="govuk-table__header" scope="row">
+							{{ site.name }}
+						</td>
+						<td class="govuk-table__cell">
+							{% if site.address.address_line_1 %}
+								{{ site.address.address_line_1 }}<br/>
+								{% if site.address.address_line_2 %}
+									{{ site.address.address_line_2 }}<br/>
+								{% endif %}
+								{{ site.address.city }}<br/>
+								{{ site.address.postcode }}<br/>
+								{{ site.address.country.name }}
+							{% else %}
+								{{ site.address.address }}<br/>
+								{{ site.address.country.name }}
+							{% endif %}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% endif %}
+{% endblock %}

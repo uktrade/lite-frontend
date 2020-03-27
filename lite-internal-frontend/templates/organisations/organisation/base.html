@@ -1,0 +1,41 @@
+{% extends 'layouts/base.html' %}
+
+{% block back_link %}
+	<a href="{% url 'organisations:organisations' %}" class="govuk-back-link">
+		{% lcs "organisations.OrganisationPage.BACK_LINK" %}
+	</a>
+{% endblock %}
+
+{% block title %}
+	{% for tab in tabs %}
+		{% if tab.url == request.path %}
+			{{ tab.name }}
+		{% endif %}
+	{% endfor %} - {{ organisation.name }}
+{% endblock %}
+
+{% block body %}
+	<h1 class="govuk-heading-l">
+		{{ organisation.name }}
+	</h1>
+
+	<div class="lite-tabs__container">
+		<div class="lite-tabs">
+			{% for tab in tabs %}
+				{% if tab %}
+					{% with tab.url|equals:request.path as selected %}
+						<{%if selected %}p{% else %}a href="{{ tab.url }}"{% endif %} id="{{ tab.id }}" class="lite-tabs__tab {% if tab.url == request.path %}lite-tabs__tab--selected{% endif %}" id="tab-members">
+							{{ tab.name }}
+						</{%if selected %}p{% else %}a{% endif %}>
+					{% endwith %}
+				{% endif %}
+			{% endfor %}
+		</div>
+		<div class="lite-tabs__controls">
+			{% block controls %}
+			{% endblock %}
+		</div>
+	</div>
+
+	{% block contents %}{% endblock %}
+{% endblock %}

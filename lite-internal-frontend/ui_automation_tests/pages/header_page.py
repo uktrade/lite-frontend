@@ -6,7 +6,6 @@ class HeaderPage(BasePage):
     MENU_BUTTON = "lite-user-menu-button"  # ID
     ORGANISATIONS_LINK = "a[href*='/organisations/']"  # CSS
     TEMPLATES_LINK = "a[href*='/document-templates/']"  # CSS
-    HMRC_LINK = "a[href*='/hmrc/']"  # CSS
     TEAMS_LINK = "a[href*='/teams/']"  # CSS
     USERS_LINK = "a[href*='/users/']"  # CSS
     FLAGS_LINK = "a[href*='/flags/']"  # CSS
@@ -23,9 +22,6 @@ class HeaderPage(BasePage):
 
     def click_letters(self):
         self.driver.find_element_by_css_selector(self.TEMPLATES_LINK).click()
-
-    def click_hmrc(self):
-        self.driver.find_element_by_css_selector(self.HMRC_LINK).click()
 
     def click_teams(self):
         self.driver.find_element_by_css_selector(self.TEAMS_LINK).click()

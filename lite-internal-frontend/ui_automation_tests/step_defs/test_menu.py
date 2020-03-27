@@ -63,11 +63,3 @@ def go_to_letters(driver):
     header = HeaderPage(driver)
     header.click_lite_menu()
     header.click_letters()
-
-
-@when("I go to HMRC via menu")
-def i_go_to_hmrc(driver, context):
-    header = HeaderPage(driver)
-    header.click_lite_menu()
-    header.click_hmrc()
-    context.org_registered_status = False
