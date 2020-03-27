@@ -188,13 +188,17 @@ class ViewCase(TemplateView):
         case_type = case["case_type"]["type"]["key"]
         case_sub_type = case["case_type"]["sub_type"]["key"]
         user_assigned_queues, _ = get_user_case_queues(request, case_id)
+        queue = None
         queue_id = request.GET.get("queue_id")
         is_system_queue = True
 
         if queue_id:
             queue = get_queue(request, queue_id)
             if queue.get("queue"):
-                is_system_queue = queue["queue"].get("is_system_queue", True)
+                queue = queue["queue"]
+                is_system_queue = queue.get("is_system_queue", True)
+            else:
+                queue = None
 
         if "application" in case:
             status_props, _ = get_status_properties(request, case["application"]["status"]["key"])
@@ -210,6 +214,7 @@ class ViewCase(TemplateView):
         context = {
             "activity": get_activity(request, case_id),
             "case": case,
+            "queue": queue,
             "permissions": get_user_permissions(request),
             "permissible_statuses": get_permissible_statuses(request, case_type),
             "status_is_read_only": status_props["is_read_only"],
