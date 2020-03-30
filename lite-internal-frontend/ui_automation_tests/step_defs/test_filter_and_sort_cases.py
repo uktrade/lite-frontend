@@ -2,7 +2,6 @@ from pytest_bdd import given, when, then, parsers, scenarios
 
 from pages.queues_pages import QueuesPages
 from shared.tools.helpers import get_formatted_date_time_m_d_h_s
-from shared.tools.utils import get_lite_client
 from pages.shared import Shared
 
 from shared.tools.wait import wait_until_page_is_loaded
@@ -12,22 +11,19 @@ scenarios("../features/filter_and_sort_cases.feature", strict_gherkin=False)
 
 
 @given("a queue has been created")
-def create_queue(context, api_client_config):
-    lite_client = get_lite_client(context, api_client_config)
-    lite_client.queues.add_queue("queue" + get_formatted_date_time_m_d_h_s())
-    context.queue_name = lite_client.context["queue_name"]
+def create_queue(context, api_test_client):
+    api_test_client.queues.add_queue("queue" + get_formatted_date_time_m_d_h_s())
+    context.queue_name = api_test_client.context["queue_name"]
 
 
 @given("case has been moved to new Queue")
-def assign_case_to_queue(context, api_client_config):
-    lite_client = get_lite_client(context, api_client_config)
-    lite_client.cases.assign_case_to_queue()
+def assign_case_to_queue(api_test_client):
+    api_test_client.cases.assign_case_to_queue()
 
 
 @when("case has been moved to new Queue")
-def assign_case_to_queue_when(context, api_client_config):
-    lite_client = get_lite_client(context, api_client_config)
-    lite_client.cases.assign_case_to_queue()
+def assign_case_to_queue_when(api_test_client):
+    api_test_client.cases.assign_case_to_queue()
 
 
 @then(parsers.parse('"{number}" cases are shown'))

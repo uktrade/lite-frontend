@@ -102,9 +102,9 @@ def the_ecju_query_creation_is_visible_in_the_case_timeline(driver, context):
 
 
 @when("I create a response to the ECJU query")
-def i_create_a_response_to_an_ecju(driver, context):
+def i_create_a_response_to_an_ecju(driver, context, api_test_client):
     context.ecju_response = str(uuid4())
-    context.api.ecju_queries.add_ecju_response(question=context.ecju_question, response=context.ecju_response)
+    api_test_client.ecju_queries.add_ecju_response(question=context.ecju_question, response=context.ecju_response)
     driver.refresh()
 
 

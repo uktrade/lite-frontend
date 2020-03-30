@@ -2,7 +2,6 @@ from pytest_bdd import then, scenarios, when, given
 
 from pages.application_page import ApplicationPage
 from pages.case_list_page import CaseListPage
-from shared.tools.utils import get_lite_client
 import shared.tools.helpers as utils
 
 from ui_automation_tests.shared import functions
@@ -18,23 +17,20 @@ def assert_party_data(table, headings, values):
 
 
 @given("I am an assigned user for the case")
-def i_am_an_assigned_user_for_the_case(driver, context, api_client_config):
-    lite_client = get_lite_client(context, api_client_config)
-    lite_client.queues.add_queue("User Amendment Queue Testing" + str(utils.get_formatted_date_time_d_h_m_s()))
-    lite_client.cases.assign_case_to_queue(context.app_id, lite_client.context["queue_id"])
-    lite_client.cases.assign_case_to_user(context.app_id, lite_client.context["queue_id"], context.gov_user_id)
+def i_am_an_assigned_user_for_the_case(context, api_test_client):
+    api_test_client.queues.add_queue("User Amendment Queue Testing" + str(utils.get_formatted_date_time_d_h_m_s()))
+    api_test_client.cases.assign_case_to_queue(context.app_id, api_test_client.context["queue_id"])
+    api_test_client.cases.assign_case_to_user(context.app_id, api_test_client.context["queue_id"], context.gov_user_id)
 
 
 @given("the exporter user has edited the case")
-def exporter_user_has_edited_case(driver, context, api_client_config):
-    lite_client = get_lite_client(context, api_client_config)
-    lite_client.cases.edit_case(context.app_id)
+def exporter_user_has_edited_case(context, api_test_client):
+    api_test_client.cases.edit_case(context.app_id)
 
 
 @given("the exporter has deleted the third party")
-def exporter_has_deleted_end_user(driver, context, api_client_config):
-    lite_client = get_lite_client(context, api_client_config)
-    lite_client.applications.parties.delete_party(draft_id=context.app_id, party=context.third_party)
+def exporter_has_deleted_end_user(context, api_test_client):
+    api_test_client.applications.parties.delete_party(draft_id=context.app_id, party=context.third_party)
 
 
 @when("I click on the exporter amendments banner")
@@ -50,14 +46,12 @@ def i_can_see_the_case_on_the_exporter_amendments_queue(driver, context):
 
 
 @then("I see that changes have been made to the case")
-def changes_have_been_made_to_case(driver, context, exporter_info, api_client_config):
+def changes_have_been_made_to_case(driver, context, api_test_client):
     app_page = ApplicationPage(driver)
     case_notification_anchor = app_page.get_case_notification_anchor()
 
-    lite_client = get_lite_client(context, api_client_config)
-
     last_exporter_case_activity_id = app_page.get_case_activity_id_by_audit_text(
-        context.app_name, lite_client.context["edit_case_app"]["name"]
+        context.app_name, api_test_client.context["edit_case_app"]["name"]
     )
     expected_anchor_href = driver.current_url + "#" + last_exporter_case_activity_id
 
@@ -132,15 +126,14 @@ def i_see_third_party_on_page(driver, context):
 
 
 @then("I see an inactive party on page")
-def i_see_inactive_party_on_page(driver, context, api_client_config):
-    lite_client = get_lite_client(context, api_client_config)
+def i_see_inactive_party_on_page(driver, api_test_client):
     table = ApplicationPage(driver).get_text_of_inactive_entities_table()
     headings = ["NAME", "TYPE", "WEBSITE", "ADDRESS", "DOCUMENT"]
     values = [
-        lite_client.context["inactive_party"]["sub_type"]["value"],
-        lite_client.context["inactive_party"]["name"],
-        lite_client.context["inactive_party"]["website"],
-        lite_client.context["inactive_party"]["address"],
-        lite_client.context["inactive_party"]["country"]["name"],
+        api_test_client.context["inactive_party"]["sub_type"]["value"],
+        api_test_client.context["inactive_party"]["name"],
+        api_test_client.context["inactive_party"]["website"],
+        api_test_client.context["inactive_party"]["address"],
+        api_test_client.context["inactive_party"]["country"]["name"],
     ]
     assert_party_data(table, headings, values)

@@ -109,12 +109,12 @@ def edit_template_name_and_layout(driver, context):
 
 
 @when("I edit my template paragraphs")
-def edit_template_paragraphs(driver, context, api_client_config):
+def edit_template_paragraphs(driver, context, api_test_client):
     letter_template = LetterTemplates(driver)
     letter_template.click_edit_paragraphs_button()
     letter_template.click_add_paragraph_link()
     paragraph_id = letter_template.get_add_paragraph_button()
-    context.document_template_paragraph_text.append(get_paragraph_text(context, api_client_config, paragraph_id))
+    context.document_template_paragraph_text.append(get_paragraph_text(api_test_client, paragraph_id))
     Shared(driver).click_submit()
 
 

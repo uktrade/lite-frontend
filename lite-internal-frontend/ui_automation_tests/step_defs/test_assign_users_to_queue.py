@@ -8,7 +8,6 @@ from ui_automation_tests.shared import functions
 
 from ui_automation_tests.pages.assign_user_page import AssignUserPage
 from ui_automation_tests.shared.tools.helpers import get_formatted_date_time_m_d_h_s, paginated_item_exists
-from ui_automation_tests.shared.tools.utils import get_lite_client
 
 scenarios("../features/assign_users_to_queue.feature", strict_gherkin=False)
 
@@ -131,11 +130,10 @@ def click_user_and_assign(driver):
 
 
 @given("a new queue has been created")
-def create_queue(context, api_client_config):
-    lite_client = get_lite_client(context, api_client_config)
-    lite_client.queues.add_queue("queue" + get_formatted_date_time_m_d_h_s())
-    context.queue_name = lite_client.context["queue_name"]
-    context.queue_id = lite_client.context["queue_id"]
+def create_queue(context, api_test_client):
+    api_test_client.queues.add_queue("queue" + get_formatted_date_time_m_d_h_s())
+    context.queue_name = api_test_client.context["queue_name"]
+    context.queue_id = api_test_client.context["queue_id"]
 
 
 @then("I see a user is assigned")
@@ -150,10 +148,8 @@ def i_click_assign_user_button(driver):
 
 
 @given("I am assigned to this case on my new queue")
-def assign_users_to_queue(context, api_client_config):
-    get_lite_client(context, api_client_config).queues.case_assignment(
-        context.queue_id, context.case_id, [context.gov_user_id]
-    )
+def assign_users_to_queue(context, api_test_client):
+    api_test_client.queues.case_assignment(context.queue_id, context.case_id, [context.gov_user_id])
 
 
 @when("I click I'm done")

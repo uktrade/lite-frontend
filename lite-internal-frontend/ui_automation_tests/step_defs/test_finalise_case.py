@@ -8,15 +8,12 @@ from ui_automation_tests.pages.documents_page import DocumentsPage
 from ui_automation_tests.pages.generate_decision_documents_page import GeneratedDecisionDocuments
 from ui_automation_tests.pages.give_advice_pages import GiveAdvicePages
 from ui_automation_tests.shared.functions import click_submit
-from ui_automation_tests.shared.tools.utils import get_lite_client
 
 scenarios("../features/finalise_case.feature", strict_gherkin=False)
 
 
 @given(parsers.parse('I "{decision}" all elements of the application at user and team level'))
-def approve_application_objects(context, api_client_config, decision):
-    lite_client = get_lite_client(context, api_client_config)  # noqa
-
+def approve_application_objects(context, api_test_client, decision):
     context.advice_type = decision
     text = "abc"
     note = ""
@@ -26,15 +23,14 @@ def approve_application_objects(context, api_client_config, decision):
         {"type": context.advice_type, "text": text, "note": note, "good": context.good_id},
     ]
 
-    lite_client.cases.create_user_advice(context.case_id, data)
-    lite_client.cases.create_team_advice(context.case_id, data)
+    api_test_client.cases.create_user_advice(context.case_id, data)
+    api_test_client.cases.create_team_advice(context.case_id, data)
 
 
 @given("A template exists for the appropriate decision")
-def template_with_decision(context, api_client_config):
-    lite_client = get_lite_client(context, api_client_config)  # noqa
-    document_template = lite_client.document_templates.add_template(
-        lite_client.picklists, advice_type=[context.advice_type]
+def template_with_decision(context, api_test_client):
+    document_template = api_test_client.document_templates.add_template(
+        api_test_client.picklists, advice_type=[context.advice_type]
     )
     context.document_template_id = document_template["id"]
     context.document_template_name = document_template["name"]
