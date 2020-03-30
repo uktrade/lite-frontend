@@ -9,7 +9,6 @@ from ui_automation_tests.pages.shared import Shared
 from ui_automation_tests.shared import functions
 from ui_automation_tests.shared.tools.helpers import paginated_item_exists
 from ui_automation_tests.shared.tools.helpers import scroll_to_element_by_id
-from ui_automation_tests.shared.tools.utils import get_lite_client
 
 scenarios("../features/members.feature", strict_gherkin=False)
 
@@ -57,9 +56,8 @@ def user_reactivate(driver):
 
 
 @when("I change what sites they're assigned to")
-def change_members_role(driver, context, api_client_config):
-    lite_client = get_lite_client(context, api_client_config=api_client_config)
-    site = lite_client.organisations.add_site(context.org_id)
+def change_members_role(driver, context, api_test_client):
+    site = api_test_client.organisations.add_site(context.org_id)
 
     MemberPage(driver).click_assign_sites_button()
 
