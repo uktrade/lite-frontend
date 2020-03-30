@@ -3,7 +3,7 @@ from faker import Faker
 
 fake = Faker()
 
-from ..tools.utils import get_lite_client, Timer
+from ..tools.utils import Timer
 
 
 def save_application_data_to_context(lite_client, context):
@@ -17,14 +17,13 @@ def save_application_data_to_context(lite_client, context):
 
 
 @fixture
-def apply_for_standard_application(driver, api_client_config, context):
+def apply_for_standard_application(api_test_client, context):
     timer = Timer()
-    lite_client = get_lite_client(context, api_client_config)
-    lite_client.api_client.auth_exporter_user(lite_client.context["org_id"])
+    api_test_client.api_client.auth_exporter_user(api_test_client.context["org_id"])
     context.app_name = fake.bs()
     context.good_value = 1.21
 
-    draft_id = lite_client.applications.add_draft(
+    draft_id = api_test_client.applications.add_draft(
         draft={
             "name": context.app_name,
             "application_type": "siel",
@@ -82,45 +81,41 @@ def apply_for_standard_application(driver, api_client_config, context):
         },
         route_of_goods={"is_shipped_waybill_or_lading": True},
     )
-    lite_client.applications.submit_application(draft_id)
-    save_application_data_to_context(lite_client, context)
-    context.good_id = lite_client.context.get("good_id")
+    api_test_client.applications.submit_application(draft_id)
+    save_application_data_to_context(api_test_client, context)
+    context.good_id = api_test_client.context.get("good_id")
     timer.print_time("apply_for_standard_application")
 
 
 @fixture(scope="module")
-def add_an_ecju_query(driver, api_client_config, context):
-    lite_client = get_lite_client(context, api_client_config)
-    lite_client.api_client.auth_exporter_user(lite_client.context["org_id"])
-    lite_client.ecju_queries.add_ecju_query(context.case_id)
+def add_an_ecju_query(api_test_client, context):
+    api_test_client.api_client.auth_exporter_user(api_test_client.context["org_id"])
+    api_test_client.ecju_queries.add_ecju_query(context.case_id)
 
 
 @fixture(scope="function")
-def apply_for_clc_query(driver, api_client_config, context):
-    lite_client = get_lite_client(context, api_client_config)
-    lite_client.api_client.auth_exporter_user(lite_client.context["org_id"])
-    lite_client.goods_queries.add_goods_clc_query(lite_client.goods)
-    context.clc_case_id = lite_client.context["case_id"]
+def apply_for_clc_query(api_test_client, context):
+    api_test_client.api_client.auth_exporter_user(api_test_client.context["org_id"])
+    api_test_client.goods_queries.add_goods_clc_query(api_test_client.goods)
+    context.clc_case_id = api_test_client.context["case_id"]
 
 
 @fixture(scope="function")
-def apply_for_grading_query(driver, api_client_config, context):
-    lite_client = get_lite_client(context, api_client_config)
-    lite_client.api_client.auth_exporter_user(lite_client.context["org_id"])
-    lite_client.goods_queries.add_goods_grading_query(lite_client.goods)
-    context.clc_case_id = lite_client.context["case_id"]
+def apply_for_grading_query(api_test_client, context):
+    api_test_client.api_client.auth_exporter_user(api_test_client.context["org_id"])
+    api_test_client.goods_queries.add_goods_grading_query(api_test_client.goods)
+    context.clc_case_id = api_test_client.context["case_id"]
 
 
 # The below is currently not used due to bug LT-1808 but willl need to be used for internal HMRC tests when fixed.
 @fixture(scope="function")
-def apply_for_hmrc_query(driver, api_client_config, context):
-    lite_client = get_lite_client(context, api_client_config)
-    lite_client.api_client.auth_exporter_user(lite_client.context["hmrc_org_id"])
-    draft_id = lite_client.applications.add_hmrc_draft(
+def apply_for_hmrc_query(api_test_client, context):
+    api_test_client.api_client.auth_exporter_user(api_test_client.context["hmrc_org_id"])
+    draft_id = api_test_client.applications.add_hmrc_draft(
         draft={
             "application_type": "cre",
-            "organisation": lite_client.context["org_id"],
-            "hmrc_organisation": lite_client.context["hmrc_org_id"],
+            "organisation": api_test_client.context["org_id"],
+            "hmrc_organisation": api_test_client.context["hmrc_org_id"],
         },
         end_user={
             "name": fake.name(),
@@ -131,28 +126,26 @@ def apply_for_hmrc_query(driver, api_client_config, context):
             "type": "end_user",
         },
     )
-    lite_client.applications.submit_application(draft_id)
-    context.case_id = lite_client.context["case_id"]
+    api_test_client.applications.submit_application(draft_id)
+    context.case_id = api_test_client.context["case_id"]
 
 
 @fixture(scope="module")
-def apply_for_eua_query(driver, api_client_config, context):
-    lite_client = get_lite_client(context, api_client_config)
-    lite_client.api_client.auth_exporter_user(lite_client.context["org_id"])
-    lite_client.parties.add_eua_query()
-    context.eua_id = lite_client.context["end_user_advisory_id"]
-    context.eua_reference_code = lite_client.context["end_user_advisory_reference_code"]
+def apply_for_eua_query(driver, api_test_client, context):
+    api_test_client.api_client.auth_exporter_user(api_test_client.context["org_id"])
+    api_test_client.parties.add_eua_query()
+    context.eua_id = api_test_client.context["end_user_advisory_id"]
+    context.eua_reference_code = api_test_client.context["end_user_advisory_reference_code"]
 
 
 @fixture(scope="module")
-def apply_for_open_application(driver, api_client_config, context):
+def apply_for_open_application(api_test_client, context):
     timer = Timer()
-    lite_client = get_lite_client(context, api_client_config)
-    lite_client.api_client.auth_exporter_user(lite_client.context["org_id"])
+    api_test_client.api_client.auth_exporter_user(api_test_client.context["org_id"])
 
     context.app_name = fake.bs()
 
-    draft_id = lite_client.applications.add_open_draft(
+    draft_id = api_test_client.applications.add_open_draft(
         draft={
             "name": context.app_name,
             "application_type": "oiel",
@@ -168,20 +161,19 @@ def apply_for_open_application(driver, api_client_config, context):
         },
         route_of_goods={"is_shipped_waybill_or_lading": True},
     )
-    lite_client.applications.submit_application(draft_id)
-    save_application_data_to_context(lite_client, context)
-    context.country = lite_client.context["country"]
+    api_test_client.applications.submit_application(draft_id)
+    save_application_data_to_context(api_test_client, context)
+    context.country = api_test_client.context["country"]
     timer.print_time("apply_for_open_application")
 
 
 def _apply_for_mod_clearance(
-    type, has_end_user, has_consignee, has_ultimate_end_user, has_third_party, has_location, api_client_config, context
+    type, has_end_user, has_consignee, has_ultimate_end_user, has_third_party, has_location, api_test_client, context
 ):
-    lite_client = get_lite_client(context, api_client_config)
-    lite_client.api_client.auth_exporter_user(lite_client.context["org_id"])
+    api_test_client.api_client.auth_exporter_user(api_test_client.context["org_id"])
     context.app_name = fake.bs()
 
-    draft_id = lite_client.applications.add_draft(
+    draft_id = api_test_client.applications.add_draft(
         draft={
             "name": context.app_name,
             "application_type": type,
@@ -245,13 +237,13 @@ def _apply_for_mod_clearance(
         end_use_details={"intended_end_use": "intended end use"} if type == "f680" else None,
     )
     if type == "exhc":
-        lite_client.applications.post_exhibition_details(draft_id=draft_id, data=None)
-    lite_client.applications.submit_application(draft_id)
-    save_application_data_to_context(lite_client, context)
+        api_test_client.applications.post_exhibition_details(draft_id=draft_id, data=None)
+    api_test_client.applications.submit_application(draft_id)
+    save_application_data_to_context(api_test_client, context)
 
 
 @fixture(scope="module")
-def apply_for_exhibition_clearance(driver, api_client_config, context):
+def apply_for_exhibition_clearance(driver, api_test_client, context):
     _apply_for_mod_clearance(
         type="exhc",
         has_consignee=False,
@@ -259,13 +251,13 @@ def apply_for_exhibition_clearance(driver, api_client_config, context):
         has_end_user=False,
         has_third_party=False,
         has_location=False,
-        api_client_config=api_client_config,
+        api_test_client=api_test_client,
         context=context,
     )
 
 
 @fixture(scope="module")
-def apply_for_f680_clearance(driver, api_client_config, context):
+def apply_for_f680_clearance(driver, api_test_client, context):
     _apply_for_mod_clearance(
         type="f680",
         has_end_user=True,
@@ -273,13 +265,13 @@ def apply_for_f680_clearance(driver, api_client_config, context):
         has_consignee=False,
         has_ultimate_end_user=False,
         has_location=False,
-        api_client_config=api_client_config,
+        api_test_client=api_test_client,
         context=context,
     )
 
 
 @fixture(scope="module")
-def apply_for_gifting_clearance(driver, api_client_config, context):
+def apply_for_gifting_clearance(driver, api_test_client, context):
     _apply_for_mod_clearance(
         type="gift",
         has_end_user=True,
@@ -287,6 +279,6 @@ def apply_for_gifting_clearance(driver, api_client_config, context):
         has_consignee=False,
         has_ultimate_end_user=False,
         has_location=False,
-        api_client_config=api_client_config,
+        api_test_client=api_test_client,
         context=context,
     )

@@ -1,7 +1,5 @@
 from time import time
 
-from ..api_client.test_helper import build_test_helper
-
 
 class Timer:
     def __init__(self):
@@ -35,8 +33,3 @@ def set_timeout_to(self, seconds: int):
 
 def set_timeout_to_10_seconds(self):
     self.set_timeout_to(10)
-
-
-# TODO: returns the helper not the client - needs fixing as this could be confusing
-def get_lite_client(context, api_client_config):
-    return get_or_create_attr(context, "api", build_test_helper(api_client_config["the_client"]))

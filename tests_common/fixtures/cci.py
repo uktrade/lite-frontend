@@ -70,8 +70,8 @@ def create_browserstack_driver(bs_username, bs_access_key):
     )
 
 
-def enable_browser_stack(request, api_client_config):
-    client = api_client_config["the_client"]
+def enable_browser_stack(request, api_test_client):
+    client = api_test_client["the_client"]
 
     test_hosts = list(TEST_HOSTS.replace("${ENVIRONMENT}", ENVIRONMENT).split(","))
     for host in test_hosts:

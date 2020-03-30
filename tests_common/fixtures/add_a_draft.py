@@ -1,8 +1,6 @@
 from pytest import fixture
 
-from ..tools.utils import get_lite_client
-
 
 @fixture(scope="function")
-def add_a_draft(context, api_client_config):
-    context.draft_id = get_lite_client(context, api_client_config).applications.create_draft()
+def add_a_draft(context, api_test_client):
+    context.draft_id = api_test_client.applications.create_draft()
