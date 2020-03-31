@@ -261,6 +261,68 @@
 			</div>
 		</div>
 
+		<!-- Temporary export details -->
+		{% if case.application.export_type.value == 'Temporary' %}
+			<div class="govuk-accordion__section">
+				<div class="govuk-accordion__section-header">
+					<h2 class="govuk-accordion__section-heading">
+						<span class="govuk-accordion__section-button" id="accordion-default-heading-3">
+							{% lcs 'cases.ApplicationPage.TemporaryExportDetails.TITLE' %}
+						</span>
+					</h2>
+				</div>
+				<div id="accordion-temporary-export-details" class="govuk-accordion__section-content" aria-labelledby="accordion-temporary-export-details">
+					<table class="govuk-table" id="temporary-export-details">
+						<thead class="govuk-table__head">
+							<tr class="govuk-table__row">
+								<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.TemporaryExportDetails.NUMBER_COLUMN' %}</th>
+								<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.TemporaryExportDetails.DESCRIPTION_COLUMN' %}</th>
+								<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.TemporaryExportDetails.ANSWER_COLUMN' %}</th>
+							</tr>
+						</thead>
+						<tbody class="govuk-table__body">
+							<tr class="govuk-table__row">
+								<td class="govuk-table__cell govuk-table__cell--line-number">
+									1.
+								</td>
+								<td class="govuk-table__cell govuk-!-font-weight-bold">
+									{% lcs 'cases.ApplicationPage.TemporaryExportDetails.TEMPORARY_EXPORT_DETAILS_TITLE' %}
+								</td>
+								<td class="govuk-table__cell">
+									{{ case.application.temp_export_details|default:"" }}
+								</td>
+							</tr>
+
+							<tr class="govuk-table__row">
+								<td class="govuk-table__cell govuk-table__cell--line-number">
+									2
+								</td>
+								<td class="govuk-table__cell govuk-!-font-weight-bold">
+									{% lcs 'cases.ApplicationPage.TemporaryExportDetails.PRODUCTS_UNDER_DIRECT_CONTROL_TITLE' %}
+								</td>
+								<td class="govuk-table__cell">
+									{{ case.application.is_temp_direct_control|friendly_boolean }}<br>
+									{{ case.application.temp_direct_control_details|default:"" }}
+								</td>
+							</tr>
+
+							<tr class="govuk-table__row">
+								<td class="govuk-table__cell govuk-table__cell--line-number">
+									3.
+								</td>
+								<td class="govuk-table__cell govuk-!-font-weight-bold">
+									{% lcs 'cases.ApplicationPage.TemporaryExportDetails.PROPOSED_RETURN_DATE_TITLE' %}
+								</td>
+								<td class="govuk-table__cell">
+									{{ case.application.proposed_return_date|str_date_only }}<br>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		{% endif %}
+
 		<!-- Route of goods -->
 		<div class="govuk-accordion__section">
 			<div class="govuk-accordion__section-header">
