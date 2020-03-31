@@ -369,6 +369,7 @@ class Option:
         img_url=None,
         auto_check=True,
         components=None,
+        test_id=None,
     ):
         from lite_forms.helpers import convert_to_markdown
 
@@ -380,6 +381,7 @@ class Option:
         self.show_or = show_or
         self.img_url = img_url
         self.components = components
+        self.test_id = test_id
 
 
 class Group:
