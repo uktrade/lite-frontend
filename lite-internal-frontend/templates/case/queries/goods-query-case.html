@@ -22,6 +22,8 @@
 		</div>
 	{% endif %}
 
+	{% include 'case/views/query-information-board.html' %}
+
 	{% if case.query.clc_responded or case.query.pv_grading_responded %}
 		<div class="govuk-!-width-two-thirds">
 			<div class="app-panel app-panel--info">
