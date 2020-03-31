@@ -507,6 +507,7 @@ class DateInput:
         self,
         prefix: str,
         title: str = "",
+        short_title: str = None,
         description: str = "",
         name: str = None,
         optional: bool = None,
@@ -523,6 +524,7 @@ class DateInput:
         self.classes = classes
         self.extras = extras
         self.input_type = "date"
+        self.short_title = short_title
 
 
 class Summary:
