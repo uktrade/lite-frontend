@@ -12,6 +12,7 @@ CASES_URL = "/cases/"
 GOODS_URL = "/goods/"
 CLEARANCE = "/clearance/"
 END_USE_DETAILS_URL = "/end-use-details/"
+TEMPORARY_EXPORT_DETAILS_URL = "/temporary-export-details/"
 DOCUMENTS_URL = "/documents/"
 PARTIES_URL = "/parties/"
 DOCUMENT_URL = "/document/"
@@ -101,6 +102,7 @@ CASE_SECTIONS = {
 }
 
 PERMANENT = "permanent"
+TEMPORARY = "temporary"
 
 APPLICANT_EDITING = "applicant_editing"
 

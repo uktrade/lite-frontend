@@ -69,6 +69,7 @@ class EndUseDetails(TemplateView):
         summary_list_form_view.action = put_end_use_details
         summary_list_form_view.success_url = self.success_url
         summary_list_form_view.data = self._parse_end_use_details()
+        summary_list_form_view.validate_only_until_final_submission = False
 
         return summary_list_form_view
 

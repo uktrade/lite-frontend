@@ -4,6 +4,7 @@ import os
 from faker import Faker  # noqa
 from pytest_bdd import given, when, then, parsers
 
+from ui_automation_tests.pages.temporary_export_details_form_page import TemporaryExportDetailsFormPage
 from ui_automation_tests.pages.route_of_goods_form_page import RouteOfGoodsFormPage
 from ui_automation_tests.pages.end_use_details_form_page import EndUseDetailsFormPage
 from ui_automation_tests.pages.add_end_user_pages import AddEndUserPages
@@ -275,6 +276,30 @@ def save_continue_summary_list(driver):  # noqa
     element = driver.find_element_by_css_selector("button[value='finish']")
     driver.execute_script("arguments[0].scrollIntoView();", element)
     driver.execute_script("arguments[0].click();", element)
+
+
+@when("I provide details of why my export is temporary")  # noqa
+def enter_temporary_export_details(driver):  # noqa
+    temporary_export_details = TemporaryExportDetailsFormPage(driver)
+    temporary_export_details.answer_temp_export_details(fake.sentence(nb_words=30))
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I answer "{choice}" for whether the products remain under my direct control'))  # noqa
+def temporary_export_direct_control(driver, choice):  # noqa
+    temporary_export_details = TemporaryExportDetailsFormPage(driver)
+    if choice == "Yes":
+        temporary_export_details.answer_is_temp_direct_control(True)
+    else:
+        temporary_export_details.answer_is_temp_direct_control(False, fake.sentence(nb_words=30))
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I enter the date "{day}", "{month}", "{year}" when the products will return to the UK'))  # noqa
+def enter_proposed_return_date(driver, day, month, year):  # noqa
+    temporary_export_details = TemporaryExportDetailsFormPage(driver)
+    temporary_export_details.proposed_return_date(day, month, year)
+    functions.click_submit(driver)
 
 
 @when(parsers.parse('I select "{choice}" for where my goods are located'))  # noqa

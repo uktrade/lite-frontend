@@ -90,14 +90,14 @@ def see_all_or_no_selected(driver, assigned_or_unassigned):
         assert countries_page.all_deselected()
 
 
-@when("I create an open application")  # noqa
-def create_open_app(driver, context):  # noqa
+@when(parsers.parse('I create an open application of a "{export_type}" export type'))  # noqa
+def create_open_app(driver, export_type, context):  # noqa
     ExporterHubPage(driver).click_apply_for_a_licence()
     ApplyForALicencePage(driver).select_licence_type("export_licence")
     functions.click_submit(driver)
     enter_type_of_application(driver, "oiel", context)
     enter_application_name(driver, context)
-    enter_permanent_or_temporary(driver, "permanent", context)
+    enter_permanent_or_temporary(driver, export_type, context)
 
 
 @given("I create an open application via api")

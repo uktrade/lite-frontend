@@ -64,3 +64,15 @@ def get_route_of_goods(application):
     if application.get("is_shipped_waybill_or_lading") is None:
         return False
     return True
+
+
+def get_temporary_export_details(application):
+    fields = [
+        "temp_export_details",
+        "is_temp_direct_control",
+        "proposed_return_date",
+    ]
+    for field in fields:
+        if application.get(field) is None:
+            return False
+    return True

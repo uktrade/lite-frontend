@@ -112,6 +112,16 @@
 					{% endif %}
 				{% endif %}
 
+				{# Temporary Export Details #}
+				{% if application_type|application_type_in_list:"HAS_LICENCE_TYPE" %}
+					{% if application.export_type.value == 'Temporary' %}
+						{% if not is_editing or edit_type == 'major_edit' %}
+							{% url 'applications:temporary_export_details' application.id as temporary_export_details_url %}
+							{% include "includes/task-list-item.html" with id='temporary_export_details' status=temporary_export_details|task_list_item_status title=strings.TEMPORARY_EXPORT_DETAILS url=temporary_export_details_url %}
+						{% endif %}
+					{% endif %}
+				{% endif %}
+
 				{# Location #}
 				{% if application_type|application_type_in_list:"HAS_LOCATIONS" %}
 					{% url 'applications:location' application.id as goods_url %}
