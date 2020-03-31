@@ -39,7 +39,7 @@ class AddTeamForm:
 
 class EditTeamForm:
     BACK_LINK = "Back to " + TeamsPage.TITLE.lower()
-    TITLE = "Add team"
+    TITLE = "Edit team"
     DESCRIPTION = ""
 
     class Name:

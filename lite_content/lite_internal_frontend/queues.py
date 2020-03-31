@@ -1,6 +1,6 @@
 class QueuesList:
-    TITLE = "My work queues"
-    CREATE_QUEUE_BUTTON = "Create a queue"
+    TITLE = "Manage queues"
+    CREATE_QUEUE_BUTTON = "Add a queue"
     NO_CONTENT_NOTICE = "There are no registered queues at the moment."
 
     class Table:
@@ -8,12 +8,13 @@ class QueuesList:
         TEAM = "Team"
         ACTIONS = "Actions"
         EDIT = "Edit"
+        VIEW_CASES = "View cases"
 
 
 class AddQueueForm:
-    TITLE = "Add queue"
+    TITLE = "Add a queue"
     DESCRIPTION = ""
-    BACK = "Back to queue"
+    BACK = "Back to queues"
 
     class Name:
         TITLE = "Name"
@@ -23,7 +24,7 @@ class AddQueueForm:
 class EditQueueForm:
     TITLE = "Edit queue"
     DESCRIPTION = ""
-    BACK = "Back to queue"
+    BACK = "Back to queues"
 
     class Name:
         TITLE = "Name"
