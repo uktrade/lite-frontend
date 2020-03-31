@@ -145,5 +145,6 @@ def build_request_data(exporter_user, gov_user):
             "first_exhibition_date": "3000-02-01",
             "required_by_date": "3000-01-01",
         },
+        "declaration": {"submit_declaration": True, "agreed_to_foi": True, "agreed_to_declaration": True},
     }
     return request_data

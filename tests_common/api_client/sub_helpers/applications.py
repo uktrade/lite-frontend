@@ -166,9 +166,11 @@ class Applications:
 
     def submit_application(self, draft_id=None):
         draft_id_to_submit = draft_id or self.api_client.context["draft_id"]
+        body = self.request_data["declaration"]
         response = self.api_client.make_request(
             method="PUT",
             url="/applications/" + draft_id_to_submit + "/submit/",
+            body=body,
             headers=self.api_client.exporter_headers,
         )
         data = response.json()
