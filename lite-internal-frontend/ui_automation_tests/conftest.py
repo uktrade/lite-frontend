@@ -98,7 +98,7 @@ def pytest_exception_interact(node, report):
 
 @when("I go to the case")  # noqa
 def i_go_to_the_case(driver, context, internal_url):  # noqa
-    driver.get(internal_url.rstrip("/") + "/cases/" + context.case_id)
+    driver.get(internal_url.rstrip("/") + "/queues/00000000-0000-0000-0000-000000000001/cases/" + context.case_id)
 
 
 @when("I go to the internal homepage")  # noqa
@@ -118,12 +118,12 @@ def sign_into_sso(driver, sso_sign_in):  # noqa
 
 @when("I go to application previously created")  # noqa
 def click_on_created_application(driver, context, internal_url):  # noqa
-    driver.get(internal_url.rstrip("/") + "/cases/" + context.case_id)
+    driver.get(internal_url.rstrip("/") + "/queues/00000000-0000-0000-0000-000000000001/cases/" + context.case_id)
 
 
 @when("I go to open application previously created")  # noqa
 def click_on_created_application(driver, context, internal_url):  # noqa
-    driver.get(internal_url.rstrip("/") + "/cases/" + context.case_id)
+    driver.get(internal_url.rstrip("/") + "/queues/00000000-0000-0000-0000-000000000001/cases/" + context.case_id)
 
 
 @given("I create standard application or standard application has been previously created")  # noqa
@@ -162,7 +162,8 @@ def select_status_save(driver, status, context):  # noqa
 
 
 @when("I click on new queue in dropdown")  # noqa
-def new_queue_shown_in_dropdown(driver, context):  # noqa
+@when("I click on edited queue in dropdown")  # noqa
+def queue_shown_in_dropdown(driver, context):  # noqa
     CaseListPage(driver).click_on_queue_name(context.queue_name)
 
 
@@ -171,14 +172,9 @@ def system_queue_shown_in_dropdown(driver, queue_name):  # noqa
     CaseListPage(driver).click_on_queue_name(queue_name)
 
 
-@when("I enter in queue name Review")  # noqa
-def add_a_queue(driver, context, add_queue):  # noqa
-    pass
-
-
 @when("I go to queues")  # noqa
 def go_to_queues(driver, internal_url):  # noqa
-    driver.get(internal_url.rstrip("/") + "/queues/")
+    driver.get(internal_url.rstrip("/") + "/queues/manage/")
 
 
 @when("I add case to newly created queue")  # noqa
@@ -302,7 +298,7 @@ def filter_status_change(driver, context, status):  # noqa
 
 @when("I go to the case list page")  # noqa
 def case_list_page(driver, internal_url):  # noqa
-    driver.get(internal_url.rstrip("/") + "/cases/")
+    driver.get(internal_url.rstrip("/") + "/queues/00000000-0000-0000-0000-000000000001/")
 
 
 @then("I should see my case in the cases list")  # noqa

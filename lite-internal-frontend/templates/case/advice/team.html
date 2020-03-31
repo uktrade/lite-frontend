@@ -23,9 +23,9 @@
 
 		<div class="lite-tabs__container">
 			<div class="lite-tabs">
-				<a href="{% url 'cases:user_advice_view' case.id %}" class="lite-tabs__tab" id="user_advice">{% lcs 'cases.ViewAdvicePage.USER_ADVICE' %}</a>
-				<a href="{% url 'cases:team_advice_view' case.id %}" class="lite-tabs__tab lite-tabs__tab--selected" id="team_advice">{% lcs 'cases.ViewAdvicePage.TEAM_ADVICE' %}</a>
-				<a href="{% url 'cases:final_advice_view' case.id %}" class="lite-tabs__tab" id="final_advice">{% lcs 'cases.ViewAdvicePage.FINAL_ADVICE' %}</a>
+				<a href="{% url 'cases:user_advice_view' queue.id case.id %}" class="lite-tabs__tab" id="user_advice">{% lcs 'cases.ViewAdvicePage.USER_ADVICE' %}</a>
+				<a href="{% url 'cases:team_advice_view' queue.id case.id %}" class="lite-tabs__tab lite-tabs__tab--selected" id="team_advice">{% lcs 'cases.ViewAdvicePage.TEAM_ADVICE' %}</a>
+				<a href="{% url 'cases:final_advice_view' queue.id case.id %}" class="lite-tabs__tab" id="final_advice">{% lcs 'cases.ViewAdvicePage.FINAL_ADVICE' %}</a>
 			</div>
 			{% if can_create_and_edit_advice and is_user_team and not case.has_advice.final %}
 				<div class="lite-tabs__controls">
@@ -38,7 +38,7 @@
 							</button>
 					{% else %}
 						{% if not status_is_terminal and case.has_advice.user %}
-							<a class="govuk-button" href="{% url 'cases:coalesce_user_advice' case.id %}" class="lite-tabs__tab" id="combine_advice_button">
+							<a class="govuk-button" href="{% url 'cases:coalesce_user_advice' queue.id case.id %}" class="lite-tabs__tab" id="combine_advice_button">
 								{% lcs 'COMBINE_USER_ADVICE' %}
 							</a>
 						{% endif %}

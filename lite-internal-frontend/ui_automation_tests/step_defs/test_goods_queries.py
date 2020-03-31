@@ -30,7 +30,7 @@ def check_case_closed(driver):
 
 @when("I go to goods query previously created")  # noqa
 def click_on_created_application(driver, context, internal_url):
-    driver.get(internal_url.rstrip("/") + "/cases/" + context.clc_case_id)
+    driver.get(internal_url.rstrip("/") + "/queues/00000000-0000-0000-0000-000000000001/cases/" + context.clc_case_id)
 
 
 @given("I create a grading query")  # noqa

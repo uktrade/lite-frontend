@@ -1,8 +1,4 @@
-from django.shortcuts import render, redirect
-
-
-def hub(request):
-    return redirect("/cases/")
+from django.shortcuts import render
 
 
 def menu(request):

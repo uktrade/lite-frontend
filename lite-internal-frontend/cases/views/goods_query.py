@@ -22,11 +22,11 @@ class RespondCLCQuery(TemplateView):
     def dispatch(self, request, *args, **kwargs):
         case_id = str(kwargs["pk"])
         self.case = get_case(request, case_id)
-        self.form = respond_to_clc_query_form(request, self.case)
+        self.form = respond_to_clc_query_form(request, kwargs["queue_pk"], self.case)
 
         permissions = get_user_permissions(request)
         if "REVIEW_GOODS" not in permissions:
-            return redirect(reverse_lazy("cases:case", kwargs={"pk": case_id}))
+            return redirect(reverse_lazy("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": case_id}))
 
         return super(RespondCLCQuery, self).dispatch(request, *args, **kwargs)
 
@@ -56,7 +56,7 @@ class RespondCLCQuery(TemplateView):
         # If validate only is removed (therefore the user is on the overview page
         # already) go back to the case and show a success message
         if not request.POST.get("validate_only"):
-            return redirect(reverse_lazy("cases:case", kwargs={"pk": self.case["id"]}))
+            return redirect(reverse_lazy("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.case["id"]}))
 
         response_data = response_data["control_list_classification_query"]
 
@@ -93,11 +93,11 @@ class RespondPVGradingQuery(TemplateView):
     def dispatch(self, request, *args, **kwargs):
         case_id = str(kwargs["pk"])
         self.case = get_case(request, case_id)
-        self.form = respond_to_grading_query_form(self.case)
+        self.form = respond_to_grading_query_form(kwargs["queue_pk"], self.case)
 
         permissions = get_user_permissions(request)
         if Permission.RESPOND_PV_GRADING.value not in permissions:
-            return redirect(reverse_lazy("cases:case", kwargs={"pk": case_id}))
+            return redirect(reverse_lazy("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": case_id}))
 
         return super(RespondPVGradingQuery, self).dispatch(request, *args, **kwargs)
 
@@ -127,7 +127,7 @@ class RespondPVGradingQuery(TemplateView):
             return response
 
         if not request.POST.get("validate_only"):
-            return redirect(reverse_lazy("cases:case", kwargs={"pk": self.case["id"]}))
+            return redirect(reverse_lazy("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.case["id"]}))
 
         response_data = response_data["pv_grading_query"]
 

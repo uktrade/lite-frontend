@@ -21,22 +21,26 @@ class ReviewGoods(TemplateView):
             params["goods"] = request.GET.getlist("goods")
             params["level"] = "goods"
             post_url = "?" + convert_dict_to_query_params(params)
-            return redirect(reverse_lazy("cases:assign_flags", kwargs={"pk": case_id}) + post_url)
+            return redirect(
+                reverse_lazy("cases:assign_flags", kwargs={"queue_pk": kwargs["queue_pk"], "pk": case_id}) + post_url
+            )
 
         permissions = get_user_permissions(request)
         if "REVIEW_GOODS" not in permissions:
-            return redirect(reverse_lazy("cases:case", kwargs={"pk": case_id}))
+            return redirect(reverse_lazy("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": case_id}))
 
         goods_pk_list = request.GET.getlist("items", request.GET.getlist("goods"))
         goods = []
 
         if not goods_pk_list:
-            return redirect(reverse_lazy("cases:case", kwargs={"pk": case_id}))
+            return redirect(reverse_lazy("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": case_id}))
 
         case = get_case(request, case_id)
 
-        edit_flags_url = reverse_lazy("cases:assign_flags", kwargs={"pk": case_id})
-        review_goods_clc_url = reverse_lazy("cases:review_goods_clc", kwargs={"pk": case_id})
+        edit_flags_url = reverse_lazy("cases:assign_flags", kwargs={"queue_pk": kwargs["queue_pk"], "pk": case_id})
+        review_goods_clc_url = reverse_lazy(
+            "cases:review_goods_clc", kwargs={"queue_pk": kwargs["queue_pk"], "pk": case_id}
+        )
         parameters = {"level": "goods", "origin": "review_goods", "goods": goods_pk_list}
         goods_postfix_url = "?" + convert_dict_to_query_params(parameters)
         case_type = case["application"]["case_type"]["sub_type"]["key"]
@@ -76,14 +80,17 @@ class ReviewGoodsClc(TemplateView):
 
         permissions = get_user_permissions(request)
         if "REVIEW_GOODS" not in permissions:
-            return redirect(reverse_lazy("cases:case", kwargs={"pk": self.case_id}))
+            return redirect(reverse_lazy("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.case_id}))
 
         self.goods = request.GET.getlist("items", request.GET.getlist("goods"))
 
         parameters = {"goods": self.goods}
         goods_postfix_url = "?" + convert_dict_to_query_params(parameters)
 
-        self.back_link = reverse_lazy("cases:review_goods", kwargs={"pk": self.case_id}) + goods_postfix_url
+        self.back_link = (
+            reverse_lazy("cases:review_goods", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.case_id})
+            + goods_postfix_url
+        )
 
         return super(ReviewGoodsClc, self).dispatch(request, *args, **kwargs)
 

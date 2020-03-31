@@ -11,7 +11,7 @@ def done_with_case_form(request, case_pk):
         questions=[
             Checkboxes(
                 name="queues[]",
-                options=[Option(queue["id"], queue["name"]) for queue in queues["queues"]],
+                options=[Option(queue["id"], queue["name"]) for queue in queues],
                 title=DoneWithCaseOnQueueForm.CHECKBOX_TITLE,
                 description=DoneWithCaseOnQueueForm.CHECKBOX_DESCRIPTION,
                 optional=False,

@@ -23,8 +23,8 @@
 
 		<div class="lite-tabs__container">
 			<div class="lite-tabs">
-				<a href="{% url 'cases:user_advice_view' case.id %}" class="lite-tabs__tab" id="user_advice">{% lcs 'cases.ViewAdvicePage.USER_ADVICE' %}</a>
-				<a href="{% url 'cases:team_advice_view' case.id %}" class="lite-tabs__tab" id="team_advice">{% lcs 'cases.ViewAdvicePage.TEAM_ADVICE' %}</a>
+				<a href="{% url 'cases:user_advice_view' queue.id case.id %}" class="lite-tabs__tab" id="user_advice">{% lcs 'cases.ViewAdvicePage.USER_ADVICE' %}</a>
+				<a href="{% url 'cases:team_advice_view' queue.id case.id %}" class="lite-tabs__tab" id="team_advice">{% lcs 'cases.ViewAdvicePage.TEAM_ADVICE' %}</a>
 				<p class="lite-tabs__tab lite-tabs__tab--selected" id="final_advice">{% lcs 'cases.ViewAdvicePage.FINAL_ADVICE' %}</p>
 			</div>
 			{% if not status_is_terminal and permitted_to_give_final_advice %}
@@ -39,17 +39,17 @@
 							</button>
 							{% if can_advice_be_finalised %}
 								{% if case.application.case_type.sub_type.key == 'open' %}
-									<a class="govuk-button"  href="{% url 'cases:finalise_goods_countries' case.id %}" id="finalise_button">
+									<a class="govuk-button"  href="{% url 'cases:finalise_goods_countries' queue.id case.id %}" id="finalise_button">
 										{% lcs 'cases.ViewAdvicePage.Actions.FINALISED_GOODS_AND_COUNTRIES' %}
 									</a>
 								{% else %}
-									<a class="govuk-button"  href="{% url 'cases:finalise' case.id %}" id="finalise_button">
+									<a class="govuk-button"  href="{% url 'cases:finalise' queue.id case.id %}" id="finalise_button">
 										{% lcs 'cases.ViewAdvicePage.Actions.FINALISE' %}
 									</a>
 								{% endif %}
 							{% endif %}
 						{% else %}
-							<a class="govuk-button" href="{% url 'cases:coalesce_team_advice' case.id %}" class="lite-tabs__tab" id="combine_advice_button">
+							<a class="govuk-button" href="{% url 'cases:coalesce_team_advice' queue.id case.id %}" class="lite-tabs__tab" id="combine_advice_button">
 								{% lcs 'cases.ViewAdvicePage.Actions.COMBINE_TEAM_ADVICE' %}
 							</a>
 						{% endif %}

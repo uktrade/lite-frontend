@@ -37,7 +37,7 @@
 					</td>
 					<td class="govuk-table__cell">
 					{% if end_user.document.safe == True %}
-						<a class="govuk-link" id="end_user_document" href="{% url 'cases:document' case.id end_user.document.id %}">
+						<a class="govuk-link" id="end_user_document" href="{% url 'cases:document' queue.id case.id end_user.document.id %}">
 							{% lcs 'cases.Manage.Documents.DOWNLOAD_DOCUMENT' %}
 						</a>
 					{% endif %}
@@ -94,7 +94,7 @@
 					</td>
 					<td class="govuk-table__cell">
 					{% if consignee.document.safe == True %}
-						<a class="govuk-link" id="consignee_document" href="{% url 'cases:document' case.id consignee.document.id %}">
+						<a class="govuk-link" id="consignee_document" href="{% url 'cases:document' queue.id case.id consignee.document.id %}">
 							{% lcs 'cases.Manage.Documents.DOWNLOAD_DOCUMENT' %}
 						</a>
 					{% endif %}
@@ -152,7 +152,7 @@
 						</td>
 						<td class="govuk-table__cell">
 						{% if ultimate_end_user.document.safe == True %}
-							<a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' case.id ultimate_end_user.document.id %}">
+							<a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' queue.id case.id ultimate_end_user.document.id %}">
 								<span class="govuk-visually-hidden">{% lcs 'cases.Manage.Documents.DOWNLOAD_DOCUMENT' %}</span>
 								{{ ultimate_end_user.document.name }}<br>
 							</a>
@@ -216,7 +216,7 @@
 						</td>
 						<td class="govuk-table__cell">
 						{% if third_party.document.safe == True %}
-							<a class="govuk-link govuk-link--no-visited-state" id="third_party_document" href="{% url 'cases:document' case.id third_party.document.id %}">
+							<a class="govuk-link govuk-link--no-visited-state" id="third_party_document" href="{% url 'cases:document' queue.id case.id third_party.document.id %}">
 								<span class="govuk-visually-hidden">{% lcs 'cases.Manage.Documents.DOWNLOAD_DOCUMENT' %}</span>
 								{{ third_party.document.name }}<br>
 							</a>

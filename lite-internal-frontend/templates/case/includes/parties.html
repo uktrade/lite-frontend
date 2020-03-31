@@ -48,7 +48,7 @@
 				<td class="govuk-table__cell">{{ case.application.end_user.sub_type.value }}</td>
 				<td class="govuk-table__cell">{{ case.application.end_user.website|linkify }}</td>
 				<td id="end_user_document" class="govuk-table__cell">
-					<a href="{% url 'cases:document' case.id case.application.end_user.document.id %}">
+					<a href="{% url 'cases:document' queue.id case.id case.application.end_user.document.id %}">
 						{{ case.application.end_user.document.name }}
 					</a>
 				</td>
@@ -75,7 +75,7 @@
 				<td class="govuk-table__cell">{{ case.application.consignee.sub_type.value }}</td>
 				<td class="govuk-table__cell">{{ case.application.consignee.website|linkify }}</td>
 				<td class="govuk-table__cell">
-					<a href="{% url 'cases:document' case.id case.application.consignee.document.id %}">
+					<a href="{% url 'cases:document' queue.id case.id case.application.consignee.document.id %}">
 						{{ case.application.consignee.document.name }}
 					</a>
 				</td>
@@ -102,7 +102,7 @@
 				<td class="govuk-table__cell">{{ ultimate_end_user.sub_type.value }}</td>
 				<td class="govuk-table__cell">{{ ultimate_end_user.website|linkify }}</td>
 				<td class="govuk-table__cell">
-					<a href="{% url 'cases:document' case.id ultimate_end_user.document.id %}">
+					<a href="{% url 'cases:document' queue.id case.id ultimate_end_user.document.id %}">
 						{{ ultimate_end_user.document.name }}
 					</a>
 				</td>
@@ -130,7 +130,7 @@
 				<td class="govuk-table__cell">{{ party.website|linkify }}</td>
 				<td class="govuk-table__cell">
 					{% if party.document %}
-						<a href="{% url 'cases:document' case.id party.document.id %}">
+						<a href="{% url 'cases:document' queue.id case.id party.document.id %}">
 							{{ party.document.name }}
 						</a>
 					{% endif %}

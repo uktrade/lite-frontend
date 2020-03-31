@@ -33,7 +33,6 @@ SECRET_KEY = env("DJANGO_SECRET_KEY")
 DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = json.loads(env("ALLOWED_HOSTS")) if env("ALLOWED_HOSTS") else []
-# Application definition
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -79,6 +78,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "conf.context_processors.current_queue",
                 "conf.context_processors.export_vars",
                 "conf.context_processors.lite_menu",
             ],

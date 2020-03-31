@@ -94,7 +94,7 @@ class GiveUserAdviceDetail(TemplateView):
         return super(GiveUserAdviceDetail, self).dispatch(request, *args, **kwargs)
 
     def post(self, request, **kwargs):
-        return post_advice_details(post_user_case_advice, request, self.case, self.form, "user")
+        return post_advice_details(post_user_case_advice, request, self.case, self.form, "user", **kwargs)
 
 
 class CoalesceUserAdvice(TemplateView):
@@ -105,7 +105,7 @@ class CoalesceUserAdvice(TemplateView):
     def get(self, request, **kwargs):
         case_id = str(kwargs["pk"])
         coalesce_user_advice(request, case_id)
-        return redirect(reverse("cases:team_advice_view", kwargs={"pk": case_id}))
+        return redirect(reverse("cases:team_advice_view", kwargs={"queue_pk": kwargs["queue_pk"], "pk": case_id}))
 
 
 class ViewTeamAdvice(TemplateView):
@@ -169,7 +169,7 @@ class GiveTeamAdviceDetail(TemplateView):
         return super(GiveTeamAdviceDetail, self).dispatch(request, *args, **kwargs)
 
     def post(self, request, **kwargs):
-        return post_advice_details(post_team_case_advice, request, self.case, self.form, "team")
+        return post_advice_details(post_team_case_advice, request, self.case, self.form, "team", **kwargs)
 
 
 class CoalesceTeamAdvice(TemplateView):
@@ -180,7 +180,7 @@ class CoalesceTeamAdvice(TemplateView):
     def get(self, request, **kwargs):
         case_id = str(kwargs["pk"])
         coalesce_team_advice(request, case_id)
-        return redirect(reverse("cases:final_advice_view", kwargs={"pk": case_id}))
+        return redirect(reverse("cases:final_advice_view", kwargs={"queue_pk": kwargs["queue_pk"], "pk": case_id}))
 
 
 class ViewFinalAdvice(TemplateView):
@@ -205,7 +205,9 @@ class ViewFinalAdvice(TemplateView):
         if request.POST.get("action") == "delete":
             clear_final_advice(request, self.case.get("id"))
 
-            return redirect(reverse("cases:final_advice_view", kwargs={"pk": self.case.get("id")}))
+            return redirect(
+                reverse("cases:final_advice_view", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.case.get("id")})
+            )
 
         return render_form_page(get_final_case_advice, request, self.case, self.form)
 
@@ -239,7 +241,7 @@ class GiveFinalAdviceDetail(TemplateView):
         return super(GiveFinalAdviceDetail, self).dispatch(request, *args, **kwargs)
 
     def post(self, request, **kwargs):
-        return post_advice_details(post_final_case_advice, request, self.case, self.form, "final")
+        return post_advice_details(post_final_case_advice, request, self.case, self.form, "final", **kwargs)
 
 
 class FinaliseGoodsCountries(TemplateView):
@@ -329,7 +331,11 @@ class Finalise(TemplateView):
                 # Redirect if licence already exists
                 _, status_code = get_licence(request, str(kwargs["pk"]))
                 if status_code == HTTPStatus.OK:
-                    return redirect(reverse_lazy("cases:finalise_documents", kwargs={"pk": str(kwargs["pk"])}))
+                    return redirect(
+                        reverse_lazy(
+                            "cases:finalise_documents", kwargs={"queue_pk": kwargs["queue_pk"], "pk": str(kwargs["pk"])}
+                        )
+                    )
 
                 today = date.today()
 
@@ -340,6 +346,7 @@ class Finalise(TemplateView):
                     "duration": duration,
                 }
                 form = approve_licence_form(
+                    queue_pk=kwargs["queue_pk"],
                     case_id=case_id,
                     is_open_licence=is_open_licence,
                     duration=duration,
@@ -347,7 +354,7 @@ class Finalise(TemplateView):
                 )
                 return form_page(request, form, data=form_data)
 
-        return form_page(request, deny_licence_form(case_id, is_open_licence))
+        return form_page(request, deny_licence_form(kwargs["queue_pk"], case_id, is_open_licence))
 
     def post(self, request, *args, **kwargs):
         case = get_case(request, str(kwargs["pk"]))
@@ -364,6 +371,7 @@ class Finalise(TemplateView):
 
         if res.status_code == 400:
             form = approve_licence_form(
+                queue_pk=kwargs["queue_pk"],
                 case_id=case["id"],
                 is_open_licence=is_open_licence,
                 duration=data.get("licence_duration") or get_application_default_duration(request, str(kwargs["pk"])),
@@ -371,7 +379,9 @@ class Finalise(TemplateView):
             )
             return form_page(request, form, data=data, errors=res.json()["errors"])
 
-        return redirect(reverse_lazy("cases:finalise_documents", kwargs={"pk": case["id"]}))
+        return redirect(
+            reverse_lazy("cases:finalise_documents", kwargs={"queue_pk": kwargs["queue_pk"], "pk": case["id"]})
+        )
 
 
 class FinaliseGenerateDocuments(TemplateView):
@@ -390,12 +400,12 @@ class FinaliseGenerateDocuments(TemplateView):
         }
         return render(request, "case/views/finalise-generate-documents.html", context)
 
-    def get(self, request, pk):
+    def get(self, request, pk, **kwargs):
         return self.get_page(request, pk)
 
-    def post(self, request, pk):
+    def post(self, request, pk, **kwargs):
         data, status_code = grant_licence(request, str(pk))
         if status_code != HTTPStatus.CREATED:
             return self.get_page(request, pk, errors=data["errors"])
         else:
-            return redirect(reverse_lazy("cases:case", kwargs={"pk": pk}))
+            return redirect(reverse_lazy("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": pk}))

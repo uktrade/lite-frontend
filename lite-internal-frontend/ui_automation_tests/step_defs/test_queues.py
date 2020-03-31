@@ -7,6 +7,11 @@ from pages.shared import Shared
 scenarios("../features/queues.feature", strict_gherkin=False)
 
 
+@when("I add a new queue called Review")  # noqa
+def add_a_queue(driver, context, add_queue):  # noqa
+    pass
+
+
 @when("I edit the new queue")
 def click_on_edit_queue(driver, context):
     queues = QueuesPages(driver)
@@ -14,8 +19,8 @@ def click_on_edit_queue(driver, context):
         Shared(driver).get_rows_in_lite_table(), context.queue_name, complete_match=False
     )
     queues.click_queue_edit_button(no)
-    context.edited_queue_name = str(context.queue_name)[:12] + "edited"
-    QueuesPages(driver).enter_queue_name(context.edited_queue_name)
+    context.queue_name = str(context.queue_name)[:12] + "edited"
+    QueuesPages(driver).enter_queue_name(context.queue_name)
     Shared(driver).click_submit()
 
 
@@ -26,7 +31,7 @@ def see_queue_in_queue_list(driver, context):
 
 @then("I see the edited queue")
 def see_edited_queue_in_queue_list(driver, context):
-    assert context.edited_queue_name in Shared(driver).get_text_of_body()
+    assert context.queue_name in Shared(driver).get_text_of_body()
 
 
 @then("I dont see previously created application")

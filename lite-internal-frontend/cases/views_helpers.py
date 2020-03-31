@@ -168,7 +168,7 @@ def post_advice(get_advice, request, case, form, user_team_final, team=None):
     return render(request, form, context)
 
 
-def post_advice_details(post_case_advice, request, case, form, user_team_final):
+def post_advice_details(post_case_advice, request, case, form, user_team_final, **kwargs):
     """
     :param post_case_advice: This is a service method to post the advice for a particular level
     :param case: The case DTO returned by the API
@@ -211,7 +211,11 @@ def post_advice_details(post_case_advice, request, case, form, user_team_final):
     # Add success message
     messages.success(request, "Your advice has been posted successfully")
 
-    return redirect(reverse_lazy("cases:" + user_team_final + "_advice_view", kwargs={"pk": case.get("id")}))
+    return redirect(
+        reverse_lazy(
+            "cases:" + user_team_final + "_advice_view", kwargs={"queue_pk": kwargs["queue_pk"], "pk": case.get("id")}
+        )
+    )
 
 
 def give_advice_dispatch(user_team_final, request, **kwargs):
@@ -219,8 +223,12 @@ def give_advice_dispatch(user_team_final, request, **kwargs):
     Returns the case and the form for the level of the advice to be used in the end points
     """
     case = get_case(request, str(kwargs["pk"]))
-    post_endpoint = reverse_lazy("cases:give_" + user_team_final + "_advice", kwargs={"pk": str(kwargs["pk"])})
-    back_endpoint = reverse_lazy("cases:" + user_team_final + "_advice_view", kwargs={"pk": str(kwargs["pk"])})
+    post_endpoint = reverse_lazy(
+        "cases:give_" + user_team_final + "_advice", kwargs={"queue_pk": kwargs["queue_pk"], "pk": str(kwargs["pk"])}
+    )
+    back_endpoint = reverse_lazy(
+        "cases:" + user_team_final + "_advice_view", kwargs={"queue_pk": kwargs["queue_pk"], "pk": str(kwargs["pk"])}
+    )
     form = advice_recommendation_form(post_endpoint, back_endpoint, case["application"]["case_type"]["sub_type"]["key"])
 
     if user_team_final == "team":

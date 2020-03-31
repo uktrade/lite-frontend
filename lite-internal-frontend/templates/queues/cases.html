@@ -4,9 +4,13 @@
 
 {% block back_link %}{% endblock %}
 
+{% block title %}
+	{{ queue.name }}
+{% endblock %}
+
 {% block body %}
 	{% if updated_cases_banner_queue_id %}
-		<a id="exporter-amendments-banner" class="lite-info-bar lite-info-bar--link lite-info-bar--no-animation" href="?queue_id={{ updated_cases_banner_queue_id }}">
+		<a id="exporter-amendments-banner" class="lite-info-bar lite-info-bar--link lite-info-bar--no-animation" href="{% url 'queues:cases' updated_cases_banner_queue_id %}">
 			{% lcs 'cases.CasesListPage.EXPORTER_AMENDMENTS_BANNER' %}
 		</a>
 	{% endif %}
@@ -34,7 +38,7 @@
 	<div class="app-dropdown__container" id="queues">
 		<div class="app-dropdown__list">
 			{% for queue in data.results.queues %}
-			<a href="?queue_id={{ queue.id }}" id="{{ queue.name }}" class="app-dropdown__item {% if queue.id == data.results.queue.id %}app-dropdown__item--selected{% endif %}">
+			<a href="{% url 'queues:cases' queue.id %}" id="{{ queue.name }}" class="app-dropdown__item {% if queue.id == data.results.queue.id %}app-dropdown__item--selected{% endif %}">
 				{{ queue.name }}
 				<span class="app-dropdown__item__count">{{ queue.case_count }}</span>
 			</a>
@@ -46,7 +50,7 @@
 
 	<form id="cases-form" method="post">
 		{% csrf_token %}
-		{% if data.results.cases|length %}
+		{% if data.results.cases %}
 			<table class="govuk-table">
 				<thead class="govuk-table__head">
 					<tr class="govuk-table__row">
@@ -62,7 +66,7 @@
 						<th class="cases-table__header" scope="col">Queue</th>
 						<th class="cases-table__header" scope="col">Flags</th>
 						<th class="cases-table__header" scope="col">
-							<a href="{% url 'cases:cases' %}?{{ params_str }}&sort={{ 'status'|table_sort_text:params }}" id="sort-status" class="app-table__sortable-header {{ 'status'|table_sort:params }}">
+							<a href="{% url 'queues:cases' queue.id %}?{{ params_str }}&sort={{ 'status'|table_sort_text:params }}" id="sort-status" class="app-table__sortable-header {{ 'status'|table_sort:params }}">
 								{% lcs 'cases.CasesListPage.STATUS' %}
 								{% svg 'chevron' %}
 							</a>
@@ -115,7 +119,7 @@
 								{% endif %}
 							</td>
 							<td class="cases-table__cell">
-								<a class="govuk-link govuk-!-font-weight-bold" id="case-{{ case.id }}" href="{% url 'cases:case' case.id %}?queue_id={{ data.results.queue.id }}&queue_name={{ data.results.queue.name }}">
+								<a class="govuk-link govuk-!-font-weight-bold" id="case-{{ case.id }}" href="{% url 'cases:case' queue.id case.id %}">
 									{{ case.reference_code }}
 								</a>
 								<p class="govuk-body">
@@ -198,16 +202,7 @@
 					{% endfor %}
 				</tbody>
 			</table>
-			{% if data.total_pages > 1 %}
-				<br>
-				<div class="lite-pagination__container ">
-					{% for i in data.total_pages|times %}
-						<a href="{% url 'cases:cases' %}?{{ params_str }}&page={{ i }}" class="lite-pagination__item {% if page == i %}lite-pagination__item--selected{% endif %}" id="page-{{ i }}">
-							{{ i }}
-						</a>
-					{% endfor %}
-				</div>
-			{% endif %}
+			{% include "includes/pagination.html" %}
 		{% else %}
 			{% if params.case_type or params.status or params.case_officer or params.assigned_user %}
 				{% include "includes/notice.html" with text="cases.CasesListPage.ACTIVE_FILTER_NO_CASES" %}

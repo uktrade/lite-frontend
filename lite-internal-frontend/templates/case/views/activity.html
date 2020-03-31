@@ -16,7 +16,7 @@
 				</div>
 			</div>
 			<div class="lite-case-note__controls-buttons">
-				<a id="link-case-note-cancel" href="{% url 'cases:case' case.id %}" class="govuk-link govuk-link--no-visited-state" type="button" draggable="false">
+				<a id="link-case-note-cancel" href="{% url 'cases:case' queue.id case.id %}" class="govuk-link govuk-link--no-visited-state" type="button" draggable="false">
 					{% lcs 'cases.Tabs.Activity.CANCEL_POST' %}
 				</a>
 				<button id="button-case-note-post" class="govuk-button" type="submit">

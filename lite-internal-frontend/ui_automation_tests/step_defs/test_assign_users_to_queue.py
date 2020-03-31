@@ -165,7 +165,7 @@ def unassign_queue(driver, context):
 
 @when("I go to my work queue")
 def work_queue(driver, context, internal_url):
-    driver.get(internal_url.rstrip("/") + "/cases/?queue_id=" + context.queue_id)
+    driver.get(internal_url.rstrip("/") + "/queues/" + context.queue_id)
 
 
 @then("My case is not in the queue")

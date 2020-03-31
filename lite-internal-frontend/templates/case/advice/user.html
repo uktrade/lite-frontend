@@ -24,8 +24,8 @@
 		<div class="lite-tabs__container">
 			<div class="lite-tabs">
 				<p class="lite-tabs__tab lite-tabs__tab--selected" id="user_advice">{% lcs 'cases.ViewAdvicePage.USER_ADVICE' %}</p>
-				<a href="{% url 'cases:team_advice_view' case.id %}" class="lite-tabs__tab" id="team_advice">{% lcs 'cases.ViewAdvicePage.TEAM_ADVICE' %}</a>
-				<a href="{% url 'cases:final_advice_view' case.id %}" class="lite-tabs__tab" id="final_advice">{% lcs 'cases.ViewAdvicePage.FINAL_ADVICE' %}</a>
+				<a href="{% url 'cases:team_advice_view' queue.id case.id %}" class="lite-tabs__tab" id="team_advice">{% lcs 'cases.ViewAdvicePage.TEAM_ADVICE' %}</a>
+				<a href="{% url 'cases:final_advice_view' queue.id case.id %}" class="lite-tabs__tab" id="final_advice">{% lcs 'cases.ViewAdvicePage.FINAL_ADVICE' %}</a>
 			</div>
 			{% if not case.has_advice.my_team %}
 				{% if not case.has_advice.final %}

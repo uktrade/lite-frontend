@@ -3,7 +3,7 @@
 {% load humanize %}
 
 {% block back_link %}
-	<a href="{% url 'cases:case' case_id %}" class="govuk-back-link">
+	<a href="{% url 'cases:case' queue.id case_id %}" class="govuk-back-link">
 		{% lcs 'cases.ReviewGoodsSummary.BACK_LINK' %}
 	</a>
 {% endblock %}

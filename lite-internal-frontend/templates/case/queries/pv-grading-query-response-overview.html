@@ -7,7 +7,7 @@
 
 	<p class="govuk-body-m">{% lcs 'cases.GradingResponseOverview.WARNING' %}</p>
 
-	<form action="{% url 'cases:respond_to_pv_grading_query' case.id %}" method="post">
+	<form action="{% url 'cases:respond_to_pv_grading_query' queue.id case.id %}" method="post">
 
 		{% hidden_field 'prefix' data.prefix %}
 		{% hidden_field 'grading' data.grading%}
@@ -59,7 +59,7 @@
 					<div>
 						<a href="#" class="govuk-link govuk-body-m">
 							{% if document.safe == True %}
-								<a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' case.id document.id %}">
+								<a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' queue.id case.id document.id %}">
 									<span class="govuk-visually-hidden">{% lcs 'cases.ClcResponseOverview.Details.Documents.DOWNLOAD' %}</span> {{ document.name }}
 								</a>
 							{% elif document.safe == False %}

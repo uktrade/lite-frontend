@@ -5,7 +5,7 @@ urlpatterns = [
     path("", include("core.urls")),
     path("admin/", admin.site.urls),
     path("auth/", include("auth.urls")),
-    path("cases/", include("cases.urls")),
+    path("queues/<uuid:queue_pk>/cases/<uuid:pk>/", include("cases.urls")),
     path("flags/", include("flags.urls")),
     path("document-templates/", include("letter_templates.urls")),
     path("organisations/", include("organisations.urls")),

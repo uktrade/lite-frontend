@@ -130,7 +130,7 @@
 					{{ flag.name }}
 				</div>
 			{% endfor %}
-			<a class="app-flag app-flag--action" href="{% url 'cases:assign_flags' case.id %}?level=destinations&items={{ case.query.end_user.id }}&origin=case">
+			<a class="app-flag app-flag--action" href="{% url 'cases:assign_flags' queue.id case.id %}?level=destinations&items={{ case.query.end_user.id }}&origin=case">
 				{% lcs 'cases.EndUserAdvisoriesPage.EDIT_DESTINATION_FLAGS' %}
 			</a>
 		</div>

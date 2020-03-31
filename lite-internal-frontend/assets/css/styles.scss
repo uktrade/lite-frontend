@@ -2,7 +2,6 @@
 $lite-transition-speed: 0.3s !default;
 $govuk-page-width: 1200px !default;
 $govuk-root-font-size: 18px !default;
-// $govuk-brand-colour: #cf102d;
 $govuk-font-family: -apple-system, BlinkMacSystemFont, Arial, Sans-Serif;
 
 @import "../shared/node_modules/govuk-frontend/govuk/all"; // GOV.UK Design System
@@ -14,3 +13,12 @@ $govuk-font-family: -apple-system, BlinkMacSystemFont, Arial, Sans-Serif;
 @import "placeholder";
 // Temporary file for odd bits of SCSS
 // Will be cleaned up every story
+
+.govuk-header {
+	border-bottom-color: $govuk-brand-colour;
+}
+
+.govuk-header__container {
+	border-bottom: none;
+	margin-bottom: 0;
+}

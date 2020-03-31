@@ -18,7 +18,7 @@
 				</td>
 				<td class="govuk-table__cell">
 					{% if supporting_documentation.safe == True %}
-					<a class="govuk-link govuk-link--no-visited-state" id="supporting-documentation" href="{% url 'cases:document' case.id supporting_documentation.id %}">
+					<a class="govuk-link govuk-link--no-visited-state" id="supporting-documentation" href="{% url 'cases:document' queue.id case.id supporting_documentation.id %}">
 						<span class="govuk-visually-hidden">{% lcs 'cases.Manage.Documents.DOWNLOAD_DOCUMENT' %}</span>
 						{{ supporting_documentation.name }}<br>
 					</a>

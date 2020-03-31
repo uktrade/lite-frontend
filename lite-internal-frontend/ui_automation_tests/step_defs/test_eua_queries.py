@@ -41,4 +41,4 @@ def flags_are_available(driver):
 
 @when("I go to end user advisory previously created")  # noqa
 def click_on_created_eua(driver, context, internal_url):  # noqa
-    driver.get(internal_url.rstrip("/") + "/cases/" + context.eua_id)
+    driver.get(internal_url.rstrip("/") + "/queues/00000000-0000-0000-0000-000000000001/cases/" + context.eua_id)

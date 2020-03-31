@@ -40,7 +40,9 @@ class PickTemplateView(TemplateView):
         if self.decision:
             params["decision"] = kwargs.get("decision_key")
         templates, _ = get_letter_templates(request, convert_dict_to_query_params(params))
-        back_link = BackLink(text=self.back_text, url=reverse_lazy(self.back_url, kwargs={"pk": pk}),)
+        back_link = BackLink(
+            text=self.back_text, url=reverse_lazy(self.back_url, kwargs={"queue_pk": kwargs["queue_pk"], "pk": pk}),
+        )
         return form_page(
             request, select_template_form(templates["results"], templates["total_pages"], pk, back_link=back_link)
         )
@@ -99,7 +101,7 @@ class EditDocumentTextView(SingleFormView):
             self.data = {TEXT: document[TEXT]}
             backlink = BackLink(
                 text=GenerateDocumentsPage.EditTextForm.BACK_LINK_REGENERATE,
-                url=reverse_lazy("cases:documents", kwargs={"pk": case_id}),
+                url=reverse_lazy("cases:documents", kwargs={"queue_pk": kwargs["queue_pk"], "pk": case_id}),
             )
 
         # if not returning to this page from adding paragraphs (going to page first time) get template text
@@ -133,15 +135,20 @@ class EditTextFinalAdvice(EditDocumentTextView):
 
 
 class RegenerateExistingDocument(TemplateView):
-    def get(self, request, pk, dpk):
+    def get(self, request, queue_pk, pk, dpk):
         case_id = str(pk)
         document_id = str(dpk)
         document, status_code = get_generated_document(request, case_id, document_id)
         if status_code != HTTPStatus.OK:
-            return redirect(reverse_lazy("cases:documents", kwargs={"pk": case_id}))
+            return redirect(
+                reverse_lazy("cases:documents", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": case_id})
+            )
 
         return redirect(
-            reverse_lazy("cases:generate_document_edit", kwargs={"pk": case_id, "tpk": document["template"]})
+            reverse_lazy(
+                "cases:generate_document_edit",
+                kwargs={"queue_pk": queue_pk, "pk": case_id, "tpk": document["template"]},
+            )
             + "?document_id="
             + document_id
         )
@@ -194,7 +201,7 @@ class PreviewDocument(TemplateView):
 
 
 class CreateDocument(TemplateView):
-    def post(self, request, pk, tpk):
+    def post(self, request, queue_pk, pk, tpk):
         text = request.POST.get(TEXT)
         if not text:
             return generate_document_error_page()
@@ -205,11 +212,11 @@ class CreateDocument(TemplateView):
         if status_code != HTTPStatus.CREATED:
             return generate_document_error_page()
         else:
-            return redirect(reverse_lazy("cases:documents", kwargs={"pk": str(pk)}))
+            return redirect(reverse_lazy("cases:documents", kwargs={"queue_pk": queue_pk, "pk": str(pk)}))
 
 
 class CreateDocumentFinalAdvice(TemplateView):
-    def post(self, request, pk, decision_key, tpk):
+    def post(self, request, queue_pk, pk, decision_key, tpk):
         text = request.POST.get(TEXT)
         if not text:
             return generate_document_error_page()
@@ -222,4 +229,4 @@ class CreateDocumentFinalAdvice(TemplateView):
         if status_code != HTTPStatus.CREATED:
             return generate_document_error_page()
         else:
-            return redirect(reverse_lazy("cases:finalise_documents", kwargs={"pk": str(pk)}))
+            return redirect(reverse_lazy("cases:finalise_documents", kwargs={"queue_pk": queue_pk, "pk": pk}))

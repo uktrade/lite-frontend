@@ -13,17 +13,17 @@ scenarios("../features/additional_contacts.feature", strict_gherkin=False)
 
 
 @when("I click on the additional contacts button")
-def click_post_note(driver, context):
+def i_click_additional_contacts_button(driver, context):
     ApplicationPage(driver).click_additional_contacts_link()
 
 
 @when("I click the add button")
-def click_post_note(driver, context):
+def i_click_the_add_button(driver, context):
     AdditionalContactsPage(driver).click_add_button()
 
 
 @when("I fill in the details and submit")
-def click_post_note(driver, context):
+def i_fill_in_the_details_and_submit(driver, context):
     additional_contacts_page = AdditionalContactsPage(driver)
     context.additional_contact_email = fake.email()
 
@@ -38,5 +38,5 @@ def click_post_note(driver, context):
 
 
 @then("I can see the new contact in the list")
-def click_post_note(driver, context):
+def i_can_see_the_new_contact_in_the_list(driver, context):
     assert context.additional_contact_email in Shared(driver).get_text_of_table()

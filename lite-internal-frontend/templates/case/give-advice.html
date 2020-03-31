@@ -35,11 +35,11 @@
 	{% endif %}
 
 	{% if level == 'user' %}
-		<form action="{% url 'cases:give_user_advice_detail' case.id type %}" method="post">
+		<form action="{% url 'cases:give_user_advice_detail' queue.id case.id type %}" method="post">
 	{% elif level == 'team' %}
-		<form action="{% url 'cases:give_team_advice_detail' case.id type %}" method="post">
+		<form action="{% url 'cases:give_team_advice_detail' queue.id case.id type %}" method="post">
 	{% elif level == 'final' %}
-		<form action="{% url 'cases:give_final_advice_detail' case.id type %}" method="post">
+		<form action="{% url 'cases:give_final_advice_detail' queue.id case.id type %}" method="post">
 	{% endif %}
 
 		{% csrf_token %}

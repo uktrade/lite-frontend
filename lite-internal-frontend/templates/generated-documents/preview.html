@@ -8,9 +8,9 @@
 			</div>
 			<div class="lite-app-bar__controls">
 				{% if kwargs.decision_key %}
-					<form action="{% url 'cases:finalise_document_create' kwargs.pk kwargs.decision_key kwargs.tpk %}" method="post">
+					<form action="{% url 'cases:finalise_document_create' queue.id kwargs.pk kwargs.decision_key kwargs.tpk %}" method="post">
 				{% else %}
-					<form action="{% url 'cases:generate_document_create' kwargs.pk kwargs.tpk %}" method="post">
+					<form action="{% url 'cases:generate_document_create' queue.id kwargs.pk kwargs.tpk %}" method="post">
 				{% endif %}
 				{% csrf_token %}
 				<input name="text" type="hidden" value="{{ text }}">

@@ -1,11 +1,11 @@
 {% extends 'layouts/base.html' %}
 
 {% block back_link %}
-	<a href="{% url 'cases:final_advice_view' case.id %}" class="govuk-back-link">{% lcs 'cases.GoodsDecisionMatrixPage.Actions.BACK_TO_FINAL_ADVICE' %}</a>
+	<a href="{% url 'cases:final_advice_view' queue.id case.id %}" class="govuk-back-link">{% lcs 'cases.GoodsDecisionMatrixPage.Actions.BACK_TO_FINAL_ADVICE' %}</a>
 {% endblock %}
 
 {% block body %}
-	<form action="{% url 'cases:finalise_goods_countries' case.id %}" method="post">
+	<form action="{% url 'cases:finalise_goods_countries' queue.id case.id %}" method="post">
 		{% csrf_token %}
 
 		<h1 class="govuk-heading-l">{% lcs 'cases.GoodsDecisionMatrixPage.Actions.SELECT_DECISION' %}</h1>

@@ -9,7 +9,7 @@ def new_queue_form():
         title=AddQueueForm.TITLE,
         description=AddQueueForm.DESCRIPTION,
         questions=[TextInput(title=AddQueueForm.Name.TITLE, description=AddQueueForm.Name.DESCRIPTION, name="name",)],
-        back_link=BackLink(AddQueueForm.BACK, reverse_lazy("queues:queues")),
+        back_link=BackLink(AddQueueForm.BACK, reverse_lazy("queues:manage")),
     )
 
 
@@ -18,5 +18,5 @@ def edit_queue_form():
         title=EditQueueForm.TITLE,
         description=EditQueueForm.DESCRIPTION,
         questions=[TextInput(title=EditQueueForm.Name.TITLE, description=EditQueueForm.Name.DESCRIPTION, name="name",)],
-        back_link=BackLink(EditQueueForm.BACK, reverse_lazy("queues:queues")),
+        back_link=BackLink(EditQueueForm.BACK, reverse_lazy("queues:manage")),
     )

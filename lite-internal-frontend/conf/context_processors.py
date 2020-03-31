@@ -10,6 +10,16 @@ from lite_content.lite_internal_frontend.organisations import OrganisationsPage
 from lite_content.lite_internal_frontend.queues import QueuesList
 from lite_content.lite_internal_frontend.users import UsersPage
 from lite_forms.helpers import conditional
+from queues.services import get_queue
+
+
+def current_queue(request):
+    if "queue_pk" in getattr(request.resolver_match, "kwargs", {}):
+        queue_pk = request.resolver_match.kwargs["queue_pk"]
+        queue = get_queue(request, queue_pk)
+        return {"queue": queue}
+
+    return {}
 
 
 def export_vars(request):
@@ -23,7 +33,7 @@ def export_vars(request):
 def lite_menu(request):
     try:
         pages = [
-            {"title": "Cases", "url": reverse_lazy("cases:cases"), "icon": "menu/cases"},
+            {"title": "Cases", "url": reverse_lazy("core:index"), "icon": "menu/cases"},
             {
                 "title": OrganisationsPage.TITLE,
                 "url": reverse_lazy("organisations:organisations"),
@@ -31,7 +41,7 @@ def lite_menu(request):
             },
             {"title": "Teams", "url": reverse_lazy("teams:teams"), "icon": "menu/teams"},
             {"title": "My Team", "url": reverse_lazy("teams:team"), "icon": "menu/teams"},
-            {"title": QueuesList.TITLE, "url": reverse_lazy("queues:queues"), "icon": "menu/queues"},
+            {"title": QueuesList.TITLE, "url": reverse_lazy("queues:manage"), "icon": "menu/queues"},
             {"title": UsersPage.TITLE, "url": reverse_lazy("users:users"), "icon": "menu/users"},
             {"title": FlagsList.TITLE, "url": reverse_lazy("flags:flags"), "icon": "menu/flags"},
             conditional(

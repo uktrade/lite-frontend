@@ -28,56 +28,50 @@
 		<div class="lite-app-bar__controls">
 			<div class="govuk-!-margin-right-3">
 				{% if can_set_done %}
-					{% if user_assigned_queues and is_system_queue %}
-						<a role="button" draggable="false" id="done" class="govuk-button" href="{% url 'cases:done' case.id %}?queue_id={{ request.GET.queue_id }}">
-							{% lcs 'cases.ApplicationPage.DONE_WITH_CASE' %}
-						</a>
-					{% elif request.GET.queue_id and not is_system_queue %}
-						<a role="button" draggable="false" id="done" class="govuk-button" href="{% url 'cases:done_for_queue' case.id request.GET.queue_id %}">
-							{% lcs 'cases.ApplicationPage.DONE_WITH_CASE' %}
-						</a>
-					{% endif %}
+					{% make_list queue.id case.id as done_params %}
+					{% govuk_link_button id='done' text='cases.ApplicationPage.DONE_WITH_CASE' url='cases:done' url_param=done_params %}
 				{% endif %}
+
 				{% block additional_controls %}
 				{% endblock %}
 			</div>
 			<div id="actions-list" class="lite-more-actions__container">
-				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:documents' case.id %}">
+				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:documents' queue.id case.id %}">
 					{% lcs 'cases.ApplicationPage.Actions.DOCUMENT' %}
 				</a>
-				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:ecju_queries' case.id %}">
+				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:ecju_queries' queue.id case.id %}">
 					{% lcs 'cases.ApplicationPage.Actions.ECJU' %}
 				</a>
-				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:move' case.id %}">
+				<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:move' queue.id case.id %}">
 					{% lcs 'cases.ApplicationPage.Actions.MOVE' %}
 				</a>
 				{% if permissible_statuses %}
 					{% if not status_is_terminal or 'REOPEN_CLOSED_CASES' in permissions %}
-						<a role="button" draggable="false" class="govuk-button" id="change-status" href="{% url 'cases:manage' case.id %}">
+						<a role="button" draggable="false" class="govuk-button" id="change-status" href="{% url 'cases:manage' queue.id case.id %}">
 							{% lcs 'cases.ApplicationPage.Actions.CHANGE_STATUS' %}
 						</a>
 					{% endif %}
 				{% endif %}
 				{% if permissions|key_in_array:'MAKE_FINAL_DECISIONS' %}
-					<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:decide' case.id %}">
+					<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:decide' queue.id case.id %}">
 						{% lcs 'cases.ApplicationPage.Actions.DECISION' %}
 					</a>
 				{% endif %}
 				{% if not case.case_type.sub_type.key == "goods" and not case.case_type.sub_type.key == "end_user_advisory" and not case.case_type.sub_type.key == "hmrc"%}
-					<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:user_advice_view' case.id %}">
+					<a role="button" draggable="false" class="govuk-button" href="{% url 'cases:user_advice_view' queue.id case.id %}">
 						{% lcs 'cases.ApplicationPage.Actions.ADVICE' %}
 					</a>
 				{% endif %}
-				<a role="button" draggable="false" class="govuk-button" id="link-additional-contacts" href="{% url 'cases:additional_contacts' case.id %}">
+				<a role="button" draggable="false" class="govuk-button" id="link-additional-contacts" href="{% url 'cases:additional_contacts' queue.id case.id %}">
 					{% lcs 'cases.ApplicationPage.Actions.ADDITIONAL_CONTACTS' %}
 				</a>
-				<a role="button" draggable="false" class="govuk-button" id="generate-document" href="{% url 'cases:generate_document' case.id %}">
+				<a role="button" draggable="false" class="govuk-button" id="generate-document" href="{% url 'cases:generate_document' queue.id case.id %}">
 					{% lcs 'cases.ApplicationPage.Actions.GENERATE_DOCUMENT' %}
 				</a>
-				<a role="button" draggable="false" class="govuk-button" id="case-officer" href="{% url 'cases:case_officer' case.id %}">
+				<a role="button" draggable="false" class="govuk-button" id="case-officer" href="{% url 'cases:case_officer' queue.id case.id %}">
 					{% lcs 'cases.ApplicationPage.Actions.CASE_OFFICER' %}
 				</a>
-				<a role="button" draggable="false" class="govuk-button" id="assign-user" href="{% url 'cases:assign_user' case.id %}">
+				<a role="button" draggable="false" class="govuk-button" id="assign-user" href="{% url 'cases:assign_user' queue.id case.id %}">
 					{% lcs 'cases.ApplicationPage.Actions.USER_WORK_QUEUE' %}
 				</a>
 			</div>
@@ -91,7 +85,7 @@
 	{% endif %}
 
 	{% if case.copy_of %}
-		<p class="govuk-caption-m">{% lcs 'cases.ApplicationPage.COPY_OF_LABEL' %}<a class="govuk-link govuk-link--no-visited-state" id="case-copy-of" href="{% url 'cases:case' case.copy_of.id %}">{{ case.copy_of.reference_code }}</a></p>
+		<p class="govuk-caption-m">{% lcs 'cases.ApplicationPage.COPY_OF_LABEL' %}<a class="govuk-link govuk-link--no-visited-state" id="case-copy-of" href="{% url 'cases:case' queue.id case.copy_of.id %}">{{ case.copy_of.reference_code }}</a></p>
 	{% endif %}
 
 	<div class="govuk-!-margin-bottom-6" id="case_queues">
@@ -123,7 +117,7 @@
 				{{ flag.name }}
 			</div>
 		{% endfor %}
-		<a href="{% url 'cases:assign_flags' case.id %}?level=cases&items={{ case.id }}" id="application-edit-case-flags" class="app-flag app-flag--action">
+		<a href="{% url 'cases:assign_flags' queue.id case.id %}?level=cases&items={{ case.id }}" id="application-edit-case-flags" class="app-flag app-flag--action">
 			{% if case.flags %}
 				{% lcs 'EDIT_CASE_FLAGS' %}
 			{% else %}

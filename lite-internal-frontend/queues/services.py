@@ -1,3 +1,4 @@
+from core.helpers import convert_dict_to_query_params
 from lite_content.lite_internal_frontend.users import AssignUserPage
 from lite_forms.components import Option
 
@@ -24,32 +25,13 @@ def post_queues(request, json):
     return data.json(), data.status_code
 
 
-def get_queue(request, pk, case_type=None, status=None, sort=None):
-    filter_and_sort = []
-
-    if case_type:
-        filter_and_sort.append("case_type=" + case_type)
-
-    if status:
-        filter_and_sort.append("status=" + status)
-
-    if sort:
-        sort_json = sort.split("-")
-        import json
-
-        if len(sort_json) == 2:
-            sort = json.dumps({sort_json[0]: sort_json[1]})
-            filter_and_sort.append("sort=" + sort)
-
-    filter_and_sort = "?" + "&".join(filter_and_sort) if len(filter_and_sort) > 0 else ""
-
-    data = get(request, QUEUES_URL + str(pk) + filter_and_sort)
-
+def get_queue(request, pk):
+    data = get(request, QUEUES_URL + str(pk))
     return data.json()
 
 
-def get_cases_search_data(request, params):
-    data = get(request, CASE_URL + "?" + params)
+def get_cases_search_data(request, queue_pk, params):
+    data = get(request, CASE_URL + "?queue_id=" + str(queue_pk) + "&" + convert_dict_to_query_params(params))
     return data.json()
 
 

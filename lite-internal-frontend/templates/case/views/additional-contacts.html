@@ -16,7 +16,8 @@
 			<h1 class="govuk-heading-l">{% lcs 'cases.AdditionalContacts.TITLE' %}</h1>
 		</div>
 		<div class="lite-app-bar__controls">
-			{% govuk_link_button id='add-a-contact' text='cases.AdditionalContacts.ADD_A_CONTACT' url='cases:add_additional_contact' url_param=case.id %}
+			{% make_list queue.id case.id as button_params %}
+			{% govuk_link_button id='add-a-contact' text='cases.AdditionalContacts.ADD_A_CONTACT' url='cases:add_additional_contact' url_param=button_params %}
 		</div>
 	</div>
 

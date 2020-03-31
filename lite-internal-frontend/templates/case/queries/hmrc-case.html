@@ -27,7 +27,7 @@
 	{% endif %}
 
 	<!-- Goods -->
-	<form action="{% url 'cases:review_goods' case.id %}" method="get">
+	<form action="{% url 'cases:review_goods' queue.id case.id %}" method="get">
 		{% if 'REVIEW_GOODS' in permissions and not status_is_terminal %}
 			<button id="button-review-goods" name="action" value="review-goods" class="govuk-button" data-module="govuk-button">
 				{% lcs 'cases.HMRCPage.Good.REVIEW_GOODS' %}
@@ -127,7 +127,7 @@
 					</td>
 					<td class="govuk-table__cell">
 						{% if supporting_documentation.safe == True %}
-						<a class="govuk-link govuk-link--no-visited-state" id="supporting_documentation-{{ supporting_documentation.id }}" href="{% url 'cases:document' case.id supporting_documentation.id %}">
+						<a class="govuk-link govuk-link--no-visited-state" id="supporting_documentation-{{ supporting_documentation.id }}" href="{% url 'cases:document' queue.id case.id supporting_documentation.id %}">
 							<span class="govuk-visually-hidden">{% lcs 'cases.Manage.Documents.DOWNLOAD_DOCUMENT' %}</span>
 							{{ supporting_documentation.name }}<br>
 						</a>

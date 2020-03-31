@@ -12,9 +12,7 @@
 			</h1>
 		</div>
 		<div class="lite-app-bar__controls">
-			<a href="{% url 'queues:add' %}" class="govuk-button" draggable="false" role="button">
-				{% lcs 'queues.QueuesList.CREATE_QUEUE_BUTTON' %}
-			</a>
+			{% govuk_link_button id='add-a-queue' text='queues.QueuesList.CREATE_QUEUE_BUTTON' url='queues:add' %}
 		</div>
 	</div>
 
@@ -37,13 +35,16 @@
 							{{ queue.team.name }}
 						</td>
 						<td class="govuk-table__cell">
-							{% if user_data.user.team.id == queue.team.id %}
-								<a href="{% url 'queues:edit' queue.id %}" class="govuk-link govuk-link--no-visited-state">
-									{% lcs 'queues.QueuesList.Table.EDIT' %}
-								</a>
-							{% else %}
-								{{ None|default_na }}
-							{% endif %}
+							<ul class="govuk-table__cell__actions-list">
+								<li class="govuk-table__cell__actions-list-item">
+									<a href="{% url 'queues:cases' queue.id %}" class="govuk-link govuk-link--no-visited-state">{% lcs 'queues.QueuesList.Table.VIEW_CASES' %}</a>
+								</li>
+								{% if user_data.user.team.id == queue.team.id %}
+									<li class="govuk-table__cell__actions-list-item">
+										<a href="{% url 'queues:edit' queue.id %}" class="govuk-link govuk-link--no-visited-state">{% lcs 'queues.QueuesList.Table.EDIT' %}</a>
+									</li>
+								{% endif %}
+							</ul>
 						</td>
 					</tr>
 				{% endfor %}

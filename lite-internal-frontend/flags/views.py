@@ -36,6 +36,7 @@ from lite_forms.components import Option, FiltersBar, Select, Checkboxes
 from lite_forms.generators import form_page
 from lite_forms.views import MultiFormView, SingleFormView
 from organisations.services import get_organisation
+from queues.services import get_queue
 from users.services import get_gov_user
 
 
@@ -151,11 +152,11 @@ class AssignFlags(TemplateView):
 
         self.level = request.GET.get("level")
 
-        kwargs = {"pk": self.objects[0]} if self.level == "organisations" else {"pk": str(kwargs["pk"])}
+        pks = {"pk": self.objects[0]} if self.level == "organisations" else {"pk": str(kwargs["pk"])}
         origin = request.GET.get("origin", "case")
 
         if origin == "good":
-            kwargs["good_pk"] = self.objects[0]
+            pks["good_pk"] = self.objects[0]
 
         # Retrieve the list of flags depending on type
         if self.level == FlagLevels.CASES:
@@ -169,9 +170,9 @@ class AssignFlags(TemplateView):
             flags = get_destination_flags(request)
 
         self.url = (
-            reverse("organisations:organisation", kwargs=kwargs)
+            reverse("organisations:organisation", kwargs=pks)
             if self.level == "organisations"
-            else reverse("cases:" + origin, kwargs=kwargs)
+            else reverse("cases:" + origin, kwargs={"queue_pk": kwargs["queue_pk"], "pk": kwargs["pk"]})
         )
 
         # Perform pre-population of the flags if there is only one object to be flagged
@@ -191,7 +192,7 @@ class AssignFlags(TemplateView):
 
         if self.level == FlagLevels.CASES:
             case = get_case(request, kwargs["pk"])
-            self.form = set_case_flags_form(flags, case)
+            self.form = set_case_flags_form(get_queue(request, kwargs["queue_pk"]), flags, case)
 
         return super(AssignFlags, self).dispatch(request, *args, **kwargs)
 

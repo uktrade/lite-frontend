@@ -22,7 +22,7 @@ def flags_form(flags, level, origin, url):
     )
 
 
-def set_case_flags_form(flags, case):
+def set_case_flags_form(queue, flags, case):
     return Form(
         title=SetCaseFlagsForm.TITLE,
         description=SetCaseFlagsForm.DESCRIPTION,
@@ -37,5 +37,5 @@ def set_case_flags_form(flags, case):
             ),
         ],
         javascript_imports=["/assets/javascripts/filter-checkbox-list.js"],
-        back_link=case_view_breadcrumbs(case, SetCaseFlagsForm.TITLE),
+        back_link=case_view_breadcrumbs(queue, case, SetCaseFlagsForm.TITLE),
     )

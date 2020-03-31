@@ -15,10 +15,10 @@
 			<p class="govuk-caption-m">{% lcs 'cases.Manage.Documents.DESCRIPTION' %}</p>
 		</div>
 		<div class="lite-app-bar__controls">
-			<a id="button-attach-document" role="button" draggable="false" class="govuk-button {% if documents %}govuk-button--secondary{% endif %}" href="{% url 'cases:attach_documents' case.id %}">
+			<a id="button-attach-document" role="button" draggable="false" class="govuk-button {% if documents %}govuk-button--secondary{% endif %}" href="{% url 'cases:attach_documents' queue.id case.id %}">
 				{% lcs 'cases.CaseDocumentsPage.ATTACH' %}
 			</a>
-			<a role="button" draggable="false" class="govuk-button {% if documents %}govuk-button--secondary{% endif %}" href="{% url 'cases:generate_document' case.id %}">
+			<a role="button" draggable="false" class="govuk-button {% if documents %}govuk-button--secondary{% endif %}" href="{% url 'cases:generate_document' queue.id case.id %}">
 				{% lcs 'cases.CaseDocumentsPage.GENERATE' %}
 			</a>
 		</div>
@@ -50,7 +50,7 @@
 							<ul class="govuk-table__cell__actions-list">
 								{% if document.type.key == generated_document_key %}
 									<li class="govuk-table__cell__actions-list-item">
-										<form method="get" action="{% url "cases:generate_document_regenerate" case.id document.id %}">
+										<form method="get" action="{% url 'cases:generate_document_regenerate' queue.id case.id document.id %}">
 											{% csrf_token %}
 											<button id="regenerate" type="submit" class="lite-button--link">{% lcs 'cases.AdditionalDocumentsPage.Document.REGENERATE_LINK' %}</button>
 										</form>
@@ -59,7 +59,7 @@
 							</ul>
 							<ul class="govuk-table__cell__actions-list">
 								{% if document.safe == True %}
-									<a id="link-download" class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' case.id document.metadata_id %}">
+									<a id="link-download" class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' queue.id case.id document.metadata_id %}">
 										{% lcs 'cases.AdditionalDocumentsPage.Document.DOWNLOAD_LINK' %}
 									</a>
 								{% elif document.safe == False %}

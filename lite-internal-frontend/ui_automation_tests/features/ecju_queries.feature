@@ -4,7 +4,6 @@ Feature: I want to create ECJU queries
   I want to raise a query to an exporter about their case
   So that I can ask them for additional information or to correct an issue with the case they have submitted
 
-
   @LT_1192_add @regression @LT_1493_query
   Scenario: Add an ECJU Query to a case
     Given I sign in to SSO or am signed into SSO
@@ -33,7 +32,6 @@ Feature: I want to create ECJU queries
     Then the new ECJU Query is visible in the list
     When I click the case breadcrumb
     Then the ECJU Query creation is visible in the case timeline
-
 
   @LT_1320_view_response_to_ecju @smoke @LT_1493_query
   Scenario: Add an ECJU Query and respond and view response

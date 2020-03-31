@@ -9,7 +9,7 @@
 
 	<br>
 
-	<form action="{% url 'cases:respond_to_clc_query' case.id %}" method="post">
+	<form action="{% url 'cases:respond_to_clc_query' queue.id case.id %}" method="post">
 
 		{% hidden_field 'is_good_controlled' data.is_good_controlled %}
 		{% hidden_field 'control_code' data.control_code%}
@@ -59,7 +59,7 @@
 					<div>
 						<a href="#" class="govuk-link govuk-body-m">
 							{% if document.safe == True %}
-								<a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' case.id document.id %}">
+								<a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' queue.id case.id document.id %}">
 									<span class="govuk-visually-hidden">{% lcs 'cases.ClcResponseOverview.Details.Documents.DOWNLOAD' %}</span> {{ document.name }}
 								</a>
 							{% elif document.safe == False %}

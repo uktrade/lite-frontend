@@ -14,7 +14,7 @@
 			</h1>
 		</div>
 		<div class="lite-app-bar__controls">
-			<a role="button" draggable="false" class="govuk-button {% if documents %}govuk-button--secondary{% endif %}" href="{% url 'cases:choose_ecju_query_type' case.id %}">
+			<a role="button" draggable="false" class="govuk-button {% if documents %}govuk-button--secondary{% endif %}" href="{% url 'cases:choose_ecju_query_type' queue.id case.id %}">
 				{% lcs 'cases.EcjuQueries.AddQuery.ADD_BUTTON_LABEL' %}
 			</a>
 		</div>

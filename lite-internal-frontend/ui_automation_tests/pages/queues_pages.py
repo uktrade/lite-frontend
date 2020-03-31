@@ -7,7 +7,7 @@ class QueuesPages(BasePage):
     NO_CASES_TEXT = ".lite-information-text__text"  # CSS
     QUEUE_CHECKBOXES = ".govuk-checkboxes .govuk-checkboxes__input"  # CSS
     TABLE_ROWS = ".govuk-table__body .govuk-table__row"  # CSS
-    QUEUES_EDIT_LINK = '.govuk-link[href*="queues"]'
+    LINK_EDIT_SELECTOR = '.govuk-link[href*="edit"]'
 
     def enter_queue_name(self, text):
         self.driver.find_element_by_id(self.ADD_QUEUE_TEXT_FIELD).clear()
@@ -23,12 +23,7 @@ class QueuesPages(BasePage):
         page_number = 1
         while no == 0:
             page_number += 1
-            next_page = url
-
-            if "queue_id" not in url:
-                next_page = url + "?queue_id=00000000-0000-0000-0000-000000000001"
-
-            next_page = next_page + "&page=" + str(page_number)
+            next_page = url + "&page=" + str(page_number)
 
             self.driver.get(next_page)
             no = len(self.driver.find_elements_by_css_selector("[href*='" + app_id + "']"))
@@ -39,7 +34,7 @@ class QueuesPages(BasePage):
 
     def click_queue_edit_button(self, num):
         self.driver.find_elements_by_css_selector(self.TABLE_ROWS)[num].find_element_by_css_selector(
-            self.QUEUES_EDIT_LINK
+            self.LINK_EDIT_SELECTOR
         ).click()
 
     def get_number_of_selected_queues(self):

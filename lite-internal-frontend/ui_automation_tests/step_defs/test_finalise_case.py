@@ -38,7 +38,12 @@ def template_with_decision(context, api_test_client):
 
 @when("I go to the final advice page by url")
 def final_advice_page(driver, context, internal_url):
-    driver.get(internal_url.rstrip("/") + "/cases/" + context.case_id + "/final-advice-view/")
+    driver.get(
+        internal_url.rstrip("/")
+        + "/queues/00000000-0000-0000-0000-000000000001/cases/"
+        + context.case_id
+        + "/final-advice-view/"
+    )
 
 
 @when("I click continue on the licence page")

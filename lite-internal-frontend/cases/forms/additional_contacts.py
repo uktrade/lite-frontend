@@ -6,7 +6,7 @@ from lite_forms.common import country_question
 from lite_forms.components import Form, TextInput, TextArea, BackLink
 
 
-def add_additional_contact_form(request, case_id):
+def add_additional_contact_form(request, queue_id, case_id):
     return Form(
         title=AddAdditionalContact.TITLE,
         description=AddAdditionalContact.DESCRIPTION,
@@ -31,7 +31,8 @@ def add_additional_contact_form(request, case_id):
             ),
         ],
         back_link=BackLink(
-            AddAdditionalContact.BACK_LINK, reverse_lazy("cases:additional_contacts", kwargs={"pk": case_id})
+            AddAdditionalContact.BACK_LINK,
+            reverse_lazy("cases:additional_contacts", kwargs={"queue_pk": queue_id, "pk": case_id}),
         ),
         default_button_name=AddAdditionalContact.SUBMIT_BUTTON,
     )

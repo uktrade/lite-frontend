@@ -13,4 +13,6 @@ class AssignDestinationFlags(TemplateView):
         params["items"] = request.GET.getlist("destinations")
         params["level"] = "destinations"
         post_url = "?" + convert_dict_to_query_params(params)
-        return redirect(reverse_lazy("cases:assign_flags", kwargs={"pk": case_id}) + post_url)
+        return redirect(
+            reverse_lazy("cases:assign_flags", kwargs={"queue_pk": kwargs["queue_pk"], "pk": case_id}) + post_url
+        )

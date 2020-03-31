@@ -59,7 +59,7 @@ def put_case_queues(request, pk, json):
 # Queue assignment actions
 def get_user_case_queues(request, pk):
     data = get(request, CASE_URL + str(pk) + "/assigned-queues/")
-    return data.json(), data.status_code
+    return data.json()["queues"], data.status_code
 
 
 def put_unassign_queues(request, pk, json):
