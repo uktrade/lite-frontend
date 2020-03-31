@@ -13,6 +13,7 @@ from applications.forms.common import (
     application_success_page,
     application_copy_form,
     exhibition_details_form,
+    declaration_form,
 )
 from applications.helpers.check_your_answers import convert_application_to_check_your_answers
 from applications.helpers.summaries import draft_summary
@@ -38,7 +39,7 @@ from applications.services import (
     copy_application,
     post_exhibition,
 )
-from conf.constants import HMRC, APPLICANT_EDITING
+from conf.constants import HMRC, APPLICANT_EDITING, NotificationType
 from core.helpers import str_to_bool, convert_dict_to_query_params
 from core.services import get_organisation
 from lite_content.lite_exporter_frontend import strings
@@ -128,14 +129,19 @@ class ApplicationTaskList(TemplateView):
     def post(self, request, **kwargs):
         application_id = str(kwargs["pk"])
         application = get_application(request, str(kwargs["pk"]))
+
         data, status_code = submit_application(request, application_id)
 
         if status_code != HTTPStatus.OK:
             return get_application_task_list(request, application, errors=data.get("errors"))
 
-        # Redirect to the success page to prevent the user going back after the Post
-        # Follows this pattern: https://en.wikipedia.org/wiki/Post/Redirect/Get
-        return HttpResponseRedirect(reverse_lazy("applications:success_page", kwargs={"pk": application_id}))
+        if application.sub_type not in [HMRC, NotificationType.EUA, NotificationType.GOODS]:
+            # All other application types require agreement to the declaration
+            return HttpResponseRedirect(reverse_lazy("applications:declaration", kwargs={"pk": application_id}))
+        else:
+            # Redirect to the success page to prevent the user going back after the Post
+            # Follows this pattern: https://en.wikipedia.org/wiki/Post/Redirect/Get
+            return HttpResponseRedirect(reverse_lazy("applications:success_page", kwargs={"pk": application_id}))
 
 
 class ApplicationDetail(TemplateView):
@@ -390,3 +396,13 @@ class ExhibitionDetail(SingleFormView):
 
     def get_success_url(self):
         return reverse_lazy("applications:task_list", kwargs={"pk": self.object_pk})
+
+
+class ApplicationDeclaration(SingleFormView):
+    def init(self, request, **kwargs):
+        self.object_pk = kwargs["pk"]
+        self.form = declaration_form(self.object_pk)
+        self.action = submit_application
+
+    def get_success_url(self):
+        return reverse_lazy("applications:success_page", kwargs={"pk": self.object_pk})

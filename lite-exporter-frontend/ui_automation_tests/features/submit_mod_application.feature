@@ -23,6 +23,7 @@ Feature: I want to create MOD Licence Applications
     And I add a good to the Exhibition Clearance
     Then the good is added to the Exhibition Clearance
     When I submit the application
+    And I agree to the declaration
     Then application is submitted
     When I go to exporter homepage
     And I click on applications
@@ -53,6 +54,7 @@ Feature: I want to create MOD Licence Applications
     Then download link is present
     When I click the back link
     And I submit the application
+    And I agree to the declaration
     Then application is submitted
     When I go to exporter homepage
     And I click on applications
@@ -73,6 +75,7 @@ Feature: I want to create MOD Licence Applications
     Then download link is present
     When I click the back link
     And I submit the application
+    And I agree to the declaration
     Then application is submitted
     When I go to exporter homepage
     And I click on applications

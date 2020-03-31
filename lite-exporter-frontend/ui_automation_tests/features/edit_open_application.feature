@@ -17,6 +17,7 @@ Feature: I want to be able to edit and update an active application
     When I add a goods type with description "Sniper" controlled "Yes" control code "ML1a" incorporated "Yes"
     And I click the back link
     And I submit the application
+    And I agree to the declaration
     And I go to application previously created
     And I click on activity tab
     Then "updated the status to: submitted" is shown as position "1" in the audit trail

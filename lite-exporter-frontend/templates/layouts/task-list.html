@@ -27,12 +27,14 @@
 			</h2>
 			<div class="govuk-error-summary__body">
 				<ul class="govuk-list govuk-error-summary__list">
-					{% for key, value in errors.items %}
-						<li>
-							<a href="#{{ key }}">
-								{{ value }}
-							</a>
-						</li>
+					{% for key, values in errors.items %}
+						{% for value in values %}
+							<li>
+								<a href="#{{ key }}">
+									{{ value }}
+								</a>
+							</li>
+						{% endfor %}
 					{% endfor %}
 				</ul>
 			</div>

@@ -47,6 +47,7 @@ Feature: I want to be able to edit and update an active application
     And I enter a licence name
     Then I see my edited reference name
     When I submit the application
+    And I agree to the declaration
     And I go to application previously created
     And I click on activity tab
     Then "updated the status to: submitted" is shown as position "1" in the audit trail

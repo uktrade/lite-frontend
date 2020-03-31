@@ -80,8 +80,9 @@ def delete_application(request, pk):
     return data.json(), data.status_code
 
 
-def submit_application(request, pk):
-    data = put(request, APPLICATIONS_URL + str(pk) + APPLICATION_SUBMIT_URL, json={})
+def submit_application(request, pk, json=None):
+    json = json or {}
+    data = put(request, APPLICATIONS_URL + str(pk) + APPLICATION_SUBMIT_URL, json=json)
     return data.json(), data.status_code
 
 

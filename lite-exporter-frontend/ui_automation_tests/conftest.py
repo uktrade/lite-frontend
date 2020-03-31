@@ -9,6 +9,7 @@ from ui_automation_tests.pages.end_use_details_form_page import EndUseDetailsFor
 from ui_automation_tests.pages.add_end_user_pages import AddEndUserPages
 from ui_automation_tests.pages.application_edit_type_page import ApplicationEditTypePage
 from ui_automation_tests.pages.application_page import ApplicationPage
+from ui_automation_tests.pages.generic_application.declaration import DeclarationPage
 from ui_automation_tests.pages.open_application.add_goods_type import OpenApplicationAddGoodsType
 from ui_automation_tests.pages.respond_to_ecju_query_page import RespondToEcjuQueryPage
 from ui_automation_tests.pages.submitted_applications_page import SubmittedApplicationsPages
@@ -321,9 +322,7 @@ def application_is_submitted(driver, context):  # noqa
 
 @when("I submit the application")  # noqa
 def submit_the_application(driver, context):  # noqa
-    apply = ApplyForALicencePage(driver)
     functions.click_submit(driver)
-    assert apply.is_success_panel_present()
     context.time_date_submitted = datetime.datetime.now().strftime("%I:%M%p").lstrip("0").replace(
         " 0", " "
     ).lower() + datetime.datetime.now().strftime(" %d %B %Y")
@@ -596,3 +595,11 @@ def get_file_upload_path(filename):  # noqa
             os.path.join(os.path.dirname(__file__), os.pardir, "ui_automation_tests/resources", filename)
         )
     return file_to_upload_abs_path
+
+
+@when("I agree to the declaration")
+def agree_to_the_declaration(driver):  # noqa
+    declaration_page = DeclarationPage(driver)
+    declaration_page.agree_to_foi()
+    declaration_page.agree_to_declaration(driver)
+    functions.click_submit(driver)
