@@ -10,6 +10,7 @@ from lite_content.lite_exporter_frontend import (  # noqa
     hub,  # noqa
     generic,  # noqa
     organisation,  # noqa
+    declaration,  # noqa
 )  # noqa
 
 # Generic (used as defaults in forms)
