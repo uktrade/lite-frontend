@@ -154,10 +154,17 @@ def file_type(file_name):
 
 
 @register.simple_tag
+def make_list(*args):
+    return args
+
+
+@register.simple_tag
 @mark_safe
 def govuk_link_button(text, url, url_param=None, id="", classes=""):
     text = get_const_string(text)
-    url = reverse(url, args=[url_param] if url_param else [])
+    if isinstance(url_param, str):
+        url_param = [url_param]
+    url = reverse(url, args=url_param if url_param else [])
     id = f'id="button-{id}"' if id else ""
 
     return f'<a {id} href="{url}" role="button" draggable="false" class="govuk-button {classes}" data-module="govuk-button">{text}</a>'
