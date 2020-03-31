@@ -147,6 +147,7 @@ class ApplicationSummaryPage:
     CLEARANCE = "Security grading"
     END_USE_DETAILS = "End use details"
     ROUTE_OF_GOODS = "Route of products"
+    TEMPORARY_EXPORT_DETAILS = "Temporary export details"
 
     class Sections:
         COMPLETED_TAG = "Saved"
@@ -360,6 +361,7 @@ class StandardApplicationTaskList:
     SUPPORTING_DOCUMENTS = "Supporting documents"
     THIRD_PARTIES = "Third parties"
     END_USE_DETAILS = "End use details"
+    TEMPORARY_EXPORT_DETAILS = "Temporary export details"
     NOTES = "Notes"
 
 
@@ -373,6 +375,7 @@ class OpenApplicationTaskList:
     COUNTRIES_WHERE_EACH_GOOD_IS_GOING = "Product destinations"
     SUPPORTING_DOCUMENTS = "Supporting documents"
     END_USE_DETAILS = "End use details"
+    TEMPORARY_EXPORT_DETAILS = "Temporary export details"
     NOTES = "Notes"
 
 
@@ -696,6 +699,29 @@ class EndUseDetails:
         SUSPECTED_WMD_TITLE = "Suspect WMD"
         EU_MILITARY_TITLE = "EU transfer licence"
         COMPLIANT_LIMITATIONS_EU_TITLE = "Complied to terms"
+
+
+class TemporaryExportDetails:
+    TEMPORARY_EXPORT_DETAILS_CAPTION = "Temporary export details"
+    PROPOSED_DATE_HINT = "For example, 12 11 2020"
+
+    TEMPORARY_EXPORT_DETAILS = "Provide details of why the export is temporary"
+    PRODUCTS_UNDER_DIRECT_CONTROL = "Will the products remain under your direct control while overseas?"
+    PRODUCTS_UNDER_DIRECT_CONTROL_DETAILS = (
+        "Provide details of who will be in control of the products while overseas and their relationship to you"
+    )
+    PROPOSED_RETURN_DATE = "Proposed date the products will return to the UK"
+
+    class SummaryList:
+        TITLE = "Temporary export details summary list"
+        TEMPORARY_EXPORT_DETAILS = "Temporary export details"
+        PRODUCTS_UNDER_DIRECT_CONTROL = "Products remaining under your direct control"
+        PROPOSED_RETURN_DATE = "Date products returning to the UK"
+
+    class CheckYourAnswers:
+        TEMPORARY_EXPORT_DETAILS = "Temporary export details"
+        PRODUCTS_UNDER_DIRECT_CONTROL = "Products remaining under your direct control"
+        PROPOSED_RETURN_DATE = "Date products returning to the UK"
 
 
 class HMRCQuery:

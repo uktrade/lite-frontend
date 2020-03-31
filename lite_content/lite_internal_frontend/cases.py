@@ -116,6 +116,15 @@ class ApplicationPage:
         EU_MILITARY_TITLE = "EU transfer licence"
         COMPLIANT_LIMITATIONS_EU_TITLE = "Complied to terms"
 
+    class TemporaryExportDetails:
+        TITLE = "Temporary export details"
+        NUMBER_COLUMN = "#"
+        DESCRIPTION_COLUMN = "Description"
+        ANSWER_COLUMN = "Answer"
+        TEMPORARY_EXPORT_DETAILS_TITLE = "Temporary export details"
+        PRODUCTS_UNDER_DIRECT_CONTROL_TITLE = "Products remaining under direct control"
+        PROPOSED_RETURN_DATE_TITLE = "Date products returning to the UK"
+
     class AdditionalInformation:
         TITLE = "Additional Information"
         NUMBER_COLUMN = "#"
