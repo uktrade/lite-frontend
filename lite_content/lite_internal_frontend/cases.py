@@ -144,6 +144,12 @@ class ApplicationPage:
             REASON_FOR_CLEARANCE = "Reason for clearance"
 
 
+class QueryPage:
+    CREATED_AT_SUMMARY = "Created at"
+    UPDATED_AT_SUMMARY = "Updated at"
+    STATUS_SUMMARY = "Status"
+
+
 class GenerateDocumentsPage:
     TITLE = "Generate document"
     ERROR = "Document generation is not available at this time"
