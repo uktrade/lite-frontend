@@ -1,3 +1,5 @@
+import logging
+
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseServerError
@@ -31,6 +33,8 @@ class AuthCallbackView(View):
     """
 
     def get(self, request, *args, **kwargs):
+        logging.info("Login callback received from GREAT SSO")
+
         auth_code = request.GET.get("code", None)
 
         if not auth_code:
