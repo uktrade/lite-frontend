@@ -46,6 +46,12 @@
 		@include govuk-media-query($from: desktop) {
 			grid-template-columns: 1fr 1fr 1fr 1fr;
 		}
+
+		.govuk-checkboxes__label {
+			&::before {
+				background: govuk-colour("white");
+			}
+		}
 	}
 
 	&:before {
