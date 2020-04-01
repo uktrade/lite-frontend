@@ -2,6 +2,7 @@ from pytest import fixture
 
 from ..api_client.api_client import ApiClient
 from ..api_client.libraries.request_data import build_request_data
+from ..api_client.sub_helpers.users import post_user_to_great_sso
 from ..api_client.test_helper import build_test_helper
 from ..tools.utils import get_or_create_attr
 
@@ -16,16 +17,12 @@ def context(request):
 
 @fixture(scope="session")
 def exporter_info(request, environment):
-    exporter_sso_email = environment("TEST_EXPORTER_SSO_EMAIL")
-    name = environment("TEST_EXPORTER_SSO_NAME")
-    first_name, last_name = name.split(" ")
-    exporter_sso_password = environment("TEST_EXPORTER_SSO_PASSWORD")
-
+    response = post_user_to_great_sso()
     return {
-        "email": exporter_sso_email,
-        "password": exporter_sso_password,
-        "first_name": first_name,
-        "last_name": last_name,
+        "email": response["email"],
+        "password": response["password"],
+        "first_name": response["first_name"],
+        "last_name": response["last_name"],
     }
 
 

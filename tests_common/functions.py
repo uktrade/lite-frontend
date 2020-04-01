@@ -13,6 +13,12 @@ def click_submit(driver: WebDriver, button_value="submit"):
     driver.execute_script("arguments[0].click();", element)
 
 
+def click_finish_button(driver: WebDriver):
+    element = driver.find_element_by_css_selector("button[value='finish']")
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    driver.execute_script("arguments[0].click();", element)
+
+
 def click_back_link(driver: WebDriver):
     driver.find_element_by_id("back-link").click()
 
