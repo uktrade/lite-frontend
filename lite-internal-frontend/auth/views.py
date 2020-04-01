@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseBadRequest, HttpResponseServerError
 from django.shortcuts import redirect
@@ -26,6 +28,7 @@ class AuthView(RedirectView):
 
 class AuthCallbackView(View):
     def get(self, request, *args, **kwargs):
+        logging.info("Login callback received from Staff SSO")
 
         auth_code = request.GET.get("code", None)
 

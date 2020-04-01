@@ -50,6 +50,7 @@ class LoggingMiddleware:
         start = time.time()
         request.correlation = uuid.uuid4().hex
         data = {
+            "user": request.user.lite_api_user_id if hasattr(request.user, "lite_api_user_id") else None,
             "message": "liteolog internal",
             "corrID": request.correlation,
             "type": "http request",
