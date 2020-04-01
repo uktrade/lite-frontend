@@ -78,6 +78,7 @@
 }
 
 .lite-filter-toggle-link {
+	@include govuk-font($size: 19);
 	@include govuk-responsive-margin(6, "bottom");
 	display: inline-block;
 	text-decoration: none;
