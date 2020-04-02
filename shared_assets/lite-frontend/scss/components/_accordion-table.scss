@@ -39,6 +39,14 @@
 			transform: scaleY(-1);
 		}
 	}
+
+	.app-expanded-row__item {
+		display: none;
+	}
+
+	.app-expanded-row__item--invert {
+		display: inline-block;
+	}
 }
 
 .lite-accordian-table__cell,
