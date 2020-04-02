@@ -122,19 +122,23 @@ class EndUser:
         VIRUS_INFECTED = "Virus infected"
 
         class AttachDocuments:
-            TITLE = "Attach a completed end user form"
+            TITLE = "Attach end user documents"
             DESCRIPTION = (
-                "You must attach a completed [end user undertaking "
-                "(EUU)](https://www.gov.uk/government/publications/end-user-undertaking-euu-form) "
-                "or [stockist undertaking (SU)](https://www.gov.uk/government/publications/stockist-undertaking-su-form). "
-                "You can upload it later if you haven’t received the completed form from the end "
-                "user.\n\nThe file must be smaller than 100MB."
+                "You must attach:\n\n- You must attach a completed [end user undertaking"
+                "(EUU)](https://www.gov.uk/government/publications/end-user-undertaking-euu-form) or "
+                "[stockist undertaking (SU)](https://www.gov.uk/government/publications/stockist-undertaking-su-form). "
+                "completed by the end user or stockist\n\n- a letterhead as proof of the end user or stockist\n\nIf the "
+                "end user is a government organisation, instead of an EUU or SU you can attach a government purchase "
+                "order. The purchase order must identify you as the applicant, any consignees, the products and "
+                "respective quantities.\n\nIf any of the information provided by the end user is not in English, "
+                "attach a translation.\n\nYou can attach the documents later if you haven’t received them from the end "
+                "user.\n\nThe files must be smaller than 100MB."
             )
             DESCRIPTION_FIELD_TITLE = "Description"
             BACK = "Back to the application overview"
             # Partial strings below
             SAVE_AND_RETURN_LATER = "save and return to the application overview"
-            ATTACH_LATER = " to upload a document later."
+            ATTACH_LATER = " to upload documents later."
 
 
 class UltimateEndUser:
