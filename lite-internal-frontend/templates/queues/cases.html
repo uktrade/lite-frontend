@@ -38,10 +38,10 @@
 	<div class="app-dropdown__container" id="queues">
 		<div class="app-dropdown__list">
 			{% for queue in data.results.queues %}
-			<a href="{% url 'queues:cases' queue.id %}" id="{{ queue.name }}" class="app-dropdown__item {% if queue.id == data.results.queue.id %}app-dropdown__item--selected{% endif %}">
-				{{ queue.name }}
-				<span class="app-dropdown__item__count">{{ queue.case_count }}</span>
-			</a>
+				<a href="{% url 'queues:cases' queue.id %}" id="{{ queue.name }}" class="app-dropdown__item {% if queue.id == data.results.queue.id %}app-dropdown__item--selected{% endif %}">
+					{{ queue.name }}
+					<span class="app-dropdown__item__count">{{ queue.case_count }}</span>
+				</a>
 			{% endfor %}
 		</div>
 	</div>
@@ -111,7 +111,7 @@
 							</td>
 							<td class="cases-table__cell">
 								{% if data.results.is_work_queue %}
-									{% if case.open_team_ecju_queries %}
+									{% if case.has_open_ecju_queries %}
 										<div class="govuk-!-margin-right-3 govuk-!-margin-top-2 app-cases__row__ecju-query">
 											{% svg 'ecju-query' %}
 										</div>
@@ -127,15 +127,15 @@
 								</p>
 							</td>
 							<td class="cases-table__cell">
-								{% for user in case.users|slice:":3" %}
+								{% for assignment in case.assignments|slice:":3" %}
 									<div>
 										{% if data.results.is_system_queue %}
-											<span>{{ user.queue }}:</span>
+											<span>{{ assignment.queue.name }}:</span>
 										{% endif %}
-										{% if user.first_name %}
-											{{ user.first_name }} {{ user.last_name }}
+										{% if assignment.user.first_name %}
+											{{ assignment.user.first_name }} {{ assignment.user.last_name }}
 										{% else %}
-											{{ user.email }}
+											{{ assignment.user.email }}
 										{% endif %}
 										<span class="lite-hint app-expanded-row__item--invert">
 											{% if case.users|length > 3 and forloop.counter == 3 %} (3 of {{ case.users|length }}){% endif %}
@@ -144,15 +144,15 @@
 								{% empty %}
 									<span class="lite-hint">No users assigned</span>
 								{% endfor %}
-								{% for user in case.users|slice:"3:" %}
+								{% for assignment in case.assignment|slice:"3:" %}
 									<div class="app-expanded-row__item">
 										{% if data.results.is_system_queue %}
-											<span>{{ user.queue }}:</span>
+											<span>{{ assignment.user.queue }}:</span>
 										{% endif %}
-										{% if user.first_name %}
-											{{ user.first_name }} {{ user.last_name }}
+										{% if assignment.user.first_name %}
+											{{ assignment.user.first_name }} {{ assignment.user.last_name }}
 										{% else %}
-											{{ user.email }}
+											{{ assignment.user.email }}
 										{% endif %}
 									</div>
 								{% endfor %}
@@ -161,16 +161,16 @@
 								{{ case.case_type.sub_type.value }}
 							</td>
 							<td class="cases-table__cell">
-								{% for queue_name in case.queue_names|slice:":3" %}
+								{% for queue in case.queues|slice:":3" %}
 									<div>
-										{{ queue_name }}
+										{{ queue.name }}
 										<span class="lite-hint app-expanded-row__item--invert">
-											{% if case.queue_names|length > 3 and forloop.counter == 3 %} (3 of {{ case.queue_names|length }}){% endif %}
+											{% if case.queues|length > 3 and forloop.counter == 3 %} (3 of {{ case.queues|length }}){% endif %}
 										</span>
 									</div>
 								{% endfor %}
-								{% for queue_name in case.queue_names|slice:"3:" %}
-									<div class="app-expanded-row__item">{{ queue_name }}</div>
+								{% for queue in case.queues|slice:"3:" %}
+									<div class="app-expanded-row__item">{{ queue.name }}</div>
 								{% endfor %}
 							</td>
 							<td class="cases-table__cell">
