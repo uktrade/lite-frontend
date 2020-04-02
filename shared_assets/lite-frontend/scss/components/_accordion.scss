@@ -99,3 +99,11 @@
 		}
 	}
 }
+
+.app-expanded-row__item {
+    display: none;
+}
+
+.app-expanded-row__item--invert {
+    display: inline-block;
+}
