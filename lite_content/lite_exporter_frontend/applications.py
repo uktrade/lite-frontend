@@ -674,7 +674,7 @@ class EndUseDetails:
         "or any purpose connected with missiles capable of delivering these weapons?"
     )
     EU_MILITARY = (
-        "Have you received European military products under a transfer licence from an EU member state "
+        "Have you received European military products under a transfer licence from a European Union member state "
         "that have export limitations attached to them?"
     )
     IS_COMPLIANT_LIMITATIONS_EU = (
