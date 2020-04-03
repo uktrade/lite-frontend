@@ -178,7 +178,7 @@
 
 	</form>
 
-	<div id="modal-proviso-picker">
+	<div id="modal-proviso-picker" class="govuk-visually-hidden">
 		{% if proviso_picklist %}
 			<div id="picklist-proviso" class="app-picklist-picker__container">
 				{% for item in proviso_picklist %}
@@ -195,7 +195,7 @@
 		{% endif %}
 	</div>
 
-	<div id="modal-advice-picker">
+	<div id="modal-advice-picker" class="govuk-visually-hidden">
 		{% if advice_picklist %}
 			<div id="picklist-advice" class="app-picklist-picker__container">
 				{% for item in advice_picklist %}
