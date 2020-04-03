@@ -128,6 +128,7 @@ def apply_for_hmrc_query(api_test_client, context):
     )
     api_test_client.applications.submit_application(draft_id)
     context.case_id = api_test_client.context["case_id"]
+    context.reference_code = api_test_client.context["reference_code"]
 
 
 @fixture(scope="module")
