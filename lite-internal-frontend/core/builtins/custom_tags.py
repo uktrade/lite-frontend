@@ -330,26 +330,50 @@ def is_system_team(id: str):
 
 @register.filter()
 def get_sla_percentage(case):
-    if case["sla_remaining_days"] <= 0:
+    remaining_days = case["sla_remaining_days"]
+
+    if remaining_days <= 0:
         return "100"
     else:
-        percentage = (case["sla_days"] / (case["sla_days"] + case["sla_remaining_days"])) * 100
-        # Round up to nearest 10
-        if percentage == 0:
-            return "10"
-        else:
-            percentage = math.ceil(percentage / 10) * 10
-            return str(percentage)
+        return _round_percentage((case["sla_days"] / (case["sla_days"] + case["sla_remaining_days"])) * 100)
 
 
 @register.filter()
-def get_sla_ring_colour(remaining_days):
+def get_sla_hours_percentage(case):
+    sla_hours_since_raised = case["sla_hours_since_raised"]
+    return _round_percentage((sla_hours_since_raised / 48) * 100)
+
+
+def _round_percentage(percentage):
+    # Round up to nearest 10
+    if percentage == 0:
+        return "10"
+    elif percentage >= 100:
+        return "100"
+    else:
+        return str(math.ceil(percentage / 10) * 10)
+
+
+@register.filter()
+def get_sla_ring_colour(case):
+    remaining_days = case["sla_remaining_days"]
+
     if remaining_days > 5:
         return "green"
     elif remaining_days >= 0:
         return "yellow"
     else:
         return "red"
+
+
+@register.filter()
+def get_sla_hours_ring_colour(case):
+    sla_hours_since_raised = case["sla_hours_since_raised"]
+
+    if sla_hours_since_raised >= 48:
+        return "red"
+    else:
+        return "yellow"
 
 
 @register.filter()
