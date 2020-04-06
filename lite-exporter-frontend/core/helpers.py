@@ -40,13 +40,16 @@ def str_date_only(value):
 def generate_notification_string(notifications, case_types):
     notification_count = notifications["notifications"]
     notification_count_sum = sum([count for case_type, count in notification_count.items() if case_type in case_types])
+    return generate_notification_total_string(notification_count_sum)
 
-    if not notification_count_sum:
+
+def generate_notification_total_string(notification_count):
+    if not notification_count:
         return ""
-    elif notification_count_sum:
-        return f"You have {notification_count_sum} new notification"
+    elif notification_count == 1:
+        return f"You have {notification_count} new notification"
     else:
-        return f"You have {notification_count_sum} new notifications"
+        return f"You have {notification_count} new notifications"
 
 
 def convert_value_to_query_param(key: str, value):

@@ -34,6 +34,7 @@ MANAGE_STATUS_URL = "/status/"
 DOCUMENT_SENSITIVITY_URL = "/document-sensitivity/"
 EXISTING_PARTIES_URL = "/existing-parties"
 COUNTRIES_URL = "/countries/"
+LICENCES_URL = "/licences/"
 
 # Queries URLs
 QUERIES_URL = "/queries/"

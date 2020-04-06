@@ -123,6 +123,16 @@ def standard_application_exists(apply_for_standard_application):  # noqa
     pass
 
 
+@given("I create an open application via api")  # noqa
+def open_application_exists(apply_for_open_application):  # noqa
+    pass
+
+
+@given("an Exhibition Clearance is created")  # noqa
+def an_exhibition_clearance_is_created(driver, apply_for_exhibition_clearance):  # noqa
+    pass
+
+
 @when("I go to application previously created")  # noqa
 def click_on_an_application(driver, exporter_url, context):  # noqa
     driver.get(exporter_url.rstrip("/") + "/applications/" + context.app_id)

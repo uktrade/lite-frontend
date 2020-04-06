@@ -4,6 +4,5 @@ from . import views
 
 app_name = "licences"
 urlpatterns = [
-    # ex: /
-    path("", views.index, name="licences"),
+    path("", views.ApplicationsList.as_view(), name="licences"),
 ]

@@ -100,11 +100,6 @@ def create_open_app(driver, export_type, context):  # noqa
     enter_permanent_or_temporary(driver, export_type, context)
 
 
-@given("I create an open application via api")
-def open_application_exists(apply_for_open_application):
-    pass
-
-
 @when("I remove a good type from the application")
 def i_remove_a_good_from_the_application(driver):
     remove_good_link = StandardApplicationGoodsPage(driver).find_remove_goods_type_link()

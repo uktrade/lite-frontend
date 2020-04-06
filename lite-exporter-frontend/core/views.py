@@ -13,7 +13,7 @@ from core.forms import (
     register_triage,
     register_an_individual_group,
 )
-from core.helpers import Section, Tile, generate_notification_string
+from core.helpers import Section, Tile, generate_notification_string, generate_notification_total_string
 from core.services import (
     get_notifications,
     get_organisation,
@@ -87,6 +87,12 @@ class Home(TemplateView):
                             strings.hub.Tiles.END_USER_ADVISORIES,
                             generate_notification_string(notifications, case_types=[NotificationType.EUA]),
                             reverse_lazy("end_users:end_users"),
+                        ),
+                        Tile(
+                            strings.hub.Tiles.LICENCES,
+                            # TODO Get notification total
+                            generate_notification_total_string(0),
+                            reverse_lazy("licences:licences"),
                         ),
                     ],
                 ),

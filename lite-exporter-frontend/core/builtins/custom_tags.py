@@ -366,3 +366,11 @@ def get_address(data):
 
         return ", ".join([x for x in address if x])
     return ""
+
+
+@register.filter()
+def abbreviate_string(string, length):
+    if len(str(string)) <= length:
+        return string
+    else:
+        return str(string)[:length] + "..."
