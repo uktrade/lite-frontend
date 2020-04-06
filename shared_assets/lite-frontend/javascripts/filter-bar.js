@@ -7,9 +7,8 @@ $('#filters input, #filters select').each(function() {
 		&& $(this).val() != 'Select'
 		&& $(this).val() != 'blank'
 		&& $(this).attr('type') != 'hidden'
-		&& $(this).attr('type') != 'checkbox'
-		|| ($(this).attr('type') == 'checkbox' && $(this).checked)
-	){
+		&& ($(this).attr('type') != 'checkbox' || $(this).attr('type') == 'checkbox' && $(this).attr('checked')))
+	{
 		$('#filters').show();
 		$('#show-filters-link').hide();
 		$('#hide-filters-link').show();
