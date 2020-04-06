@@ -364,12 +364,12 @@ class Option:
         key,
         value,
         description=None,
-        show_pane=None,
         show_or=False,
         img_url=None,
         auto_check=True,
         components=None,
         test_id=None,
+        classes: Optional[List] = None,
     ):
         from lite_forms.helpers import convert_to_markdown
 
@@ -377,11 +377,11 @@ class Option:
         self.key = key
         self.value = value
         self.description = convert_to_markdown(description)
-        self.show_pane = show_pane  # DEPRECATED, use components instead
         self.show_or = show_or
         self.img_url = img_url
         self.components = components
         self.test_id = test_id
+        self.classes = classes
 
 
 class Group:

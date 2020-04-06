@@ -158,6 +158,19 @@ def make_list(*args):
     return args
 
 
+@register.filter
+def pagination_params(url, page):
+    import urllib.parse as urlparse
+    from urllib.parse import urlencode
+
+    url_parts = list(urlparse.urlparse(url))
+    query = dict(urlparse.parse_qsl(url_parts[4]))
+    query.update({"page": page})
+    url_parts[4] = urlencode(query)
+
+    return urlparse.urlunparse(url_parts)
+
+
 @register.simple_tag
 @mark_safe
 def govuk_link_button(text, url, url_param=None, id="", classes=""):

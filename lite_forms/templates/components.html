@@ -55,7 +55,7 @@
 		{% elif question.input_type == "textarea" %}
 			{% include "components/textarea.html" with component=question name=question.name extras=question.extras value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
 		{% elif question.input_type == "number_input" %}
-			{% include "components/number.html" with name=question.name value=question.name %}
+			{% include "components/number.html" with component=question name=question.name value=data|key_value:question.name error=errors|key_value:question.name %}
 		{% elif question.input_type == "radiobuttons" %}
 			{% include "components/radiobuttons.html" with component=question data=data|key_value:question.name component_data=data %}
         {% elif question.input_type == "radiobuttons_image" %}
