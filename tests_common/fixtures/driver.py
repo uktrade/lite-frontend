@@ -8,9 +8,9 @@ from ..tools.utils import set_timeout_to_10_seconds, set_timeout_to
 
 
 @fixture(scope="session", autouse=True)
-def driver(request, api_test_client):
+def driver(request, api_client):
     if os.getenv("TEST_TYPE_BROWSER_STACK", "False") == "True":
-        driver = enable_browser_stack(request, api_test_client)
+        driver = enable_browser_stack(request)
         return driver
 
     browser = request.config.getoption("--driver")

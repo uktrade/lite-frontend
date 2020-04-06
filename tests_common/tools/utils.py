@@ -1,5 +1,7 @@
 from time import time
 
+from ..api_client.test_helper import TestHelper
+
 
 class Timer:
     def __init__(self):
@@ -33,3 +35,18 @@ def set_timeout_to(self, seconds: int):
 
 def set_timeout_to_10_seconds(self):
     self.set_timeout_to(10)
+
+
+def build_test_helper(api_client):
+    test_helper = TestHelper(api_client)
+
+    if not test_helper.api_client.headers_initialised:
+        test_helper.api_client.auth_gov_user()
+        test_helper.organisations.setup_org()
+        test_helper.organisations.setup_org_for_switching_organisations()
+        test_helper.api_client.auth_exporter_user()
+        test_helper.api_client.headers_initialised = True
+
+    test_helper.goods.add_good()
+
+    return test_helper

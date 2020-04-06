@@ -1,6 +1,5 @@
 import os
 from selenium import webdriver
-from http import HTTPStatus
 
 
 class Logging:
@@ -70,17 +69,7 @@ def create_browserstack_driver(bs_username, bs_access_key):
     )
 
 
-def enable_browser_stack(request, api_test_client):
-    client = api_test_client["the_client"]
-
-    test_hosts = list(TEST_HOSTS.replace("${ENVIRONMENT}", ENVIRONMENT).split(","))
-    for host in test_hosts:
-        logging.debug(f"Allowing test runner access to {host}")
-        client.auth_basic(AUTH_USER_NAME, AUTH_USER_PASSWORD)
-        response = client.session.request("GET", f"https://{host}{ENDPOINT}")
-        assert response.status_code == HTTPStatus.OK
-        assert response.text == "ok"
-
+def enable_browser_stack(request):
     driver = create_browserstack_driver(BROWSER_STACK_USERNAME, BROWSER_STACK_ACCESS_KEY)
 
     def timeout_shim(self, time=0):

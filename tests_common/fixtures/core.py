@@ -1,10 +1,26 @@
+import os
+from http import HTTPStatus
 from pytest import fixture
 
 from ..api_client.api_client import ApiClient
 from ..api_client.libraries.request_data import build_request_data
 from ..api_client.sub_helpers.users import post_user_to_great_sso
-from ..api_client.test_helper import build_test_helper
-from ..tools.utils import get_or_create_attr
+from ..tools.utils import get_or_create_attr, build_test_helper
+
+AUTH_USER_NAME = os.environ.get("AUTH_USER_NAME")
+AUTH_USER_PASSWORD = os.environ.get("AUTH_USER_PASSWORD")
+ENDPOINT = os.environ.get("ENDPOINT")
+ENVIRONMENT = os.environ.get("ENVIRONMENT")
+TEST_HOSTS = os.environ.get("BROWSER_HOSTS")
+
+
+class Logging:
+    @staticmethod
+    def debug(debug_str):
+        print(debug_str)
+
+
+logging = Logging()
 
 
 @fixture(scope="session")
@@ -43,10 +59,23 @@ def internal_info(request, environment):
 
 
 @fixture(scope="session")
-def api_test_client(request, exporter_info, internal_info):
+def api_client(request, exporter_info, internal_info):
     api_url = request.config.getoption("--lite_api_url")
     base_url = api_url.rstrip("/")
     request_data = build_request_data(exporter_user=exporter_info, gov_user=internal_info)
     api_client = ApiClient(base_url, request_data, {})
+    if os.getenv("TEST_TYPE_BROWSER_STACK", "False") == "True":
+        test_hosts = list(TEST_HOSTS.replace("${ENVIRONMENT}", ENVIRONMENT).split(","))
+        for host in test_hosts:
+            logging.debug(f"Allowing test runner access to {host}")
+            api_client.auth_basic(AUTH_USER_NAME, AUTH_USER_PASSWORD)
+            response = api_client.session.request("GET", f"https://{host}{ENDPOINT}")
+            assert response.status_code == HTTPStatus.OK
+            assert response.text == "ok"
 
-    return get_or_create_attr(context, "api", build_test_helper(api_client))
+    return get_or_create_attr(context, "api_client", api_client)
+
+
+@fixture(scope="session")
+def api_test_client(api_client):
+    return get_or_create_attr(context, "api_test_client", build_test_helper(api_client))

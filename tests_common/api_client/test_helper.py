@@ -47,23 +47,3 @@ class TestHelper:
             documents=self.documents,
             request_data=request_data,
         )
-
-
-def build_test_helper(config):
-    test_helper = TestHelper(config)
-    _seed_essential_data(test_helper)
-    return test_helper
-
-
-def _seed_essential_data(test_helper):
-    if not test_helper.api_client.headers_initialised:
-        _initialise_headers(test_helper)
-    test_helper.goods.add_good()
-
-
-def _initialise_headers(test_helper):
-    test_helper.api_client.auth_gov_user()
-    test_helper.organisations.setup_org()
-    test_helper.organisations.setup_org_for_switching_organisations()
-    test_helper.api_client.auth_exporter_user()
-    test_helper.api_client.headers_initialised = True
