@@ -51,6 +51,7 @@ from ui_automation_tests.shared.fixtures.core import (  # noqa
     context,
     exporter_info,
     internal_info,
+    api_client,
     api_test_client,
 )
 from ui_automation_tests.shared.fixtures.urls import exporter_url, api_url  # noqa
