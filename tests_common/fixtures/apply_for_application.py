@@ -81,9 +81,10 @@ def apply_for_standard_application(api_test_client, context):
         },
         route_of_goods={"is_shipped_waybill_or_lading": True},
     )
-    api_test_client.applications.submit_application(draft_id)
+    data = api_test_client.applications.submit_application(draft_id)
     save_application_data_to_context(api_test_client, context)
     context.good_id = api_test_client.context.get("good_id")
+    context.good = data["application"]["goods"][0]
     timer.print_time("apply_for_standard_application")
 
 
@@ -162,9 +163,10 @@ def apply_for_open_application(api_test_client, context):
         },
         route_of_goods={"is_shipped_waybill_or_lading": True},
     )
-    api_test_client.applications.submit_application(draft_id)
+    data = api_test_client.applications.submit_application(draft_id)
     save_application_data_to_context(api_test_client, context)
     context.country = api_test_client.context["country"]
+    context.goods_type = data["application"]["goods_types"][0]
     timer.print_time("apply_for_open_application")
 
 
@@ -239,8 +241,9 @@ def _apply_for_mod_clearance(
     )
     if type == "exhc":
         api_test_client.applications.post_exhibition_details(draft_id=draft_id, data=None)
-    api_test_client.applications.submit_application(draft_id)
+    data = api_test_client.applications.submit_application(draft_id)
     save_application_data_to_context(api_test_client, context)
+    context.good = data["application"]["goods"][0]
 
 
 @fixture(scope="module")

@@ -70,9 +70,10 @@ class Cases:
         self.api_client.add_to_context("generated_document", generated_document)
 
     def finalise_licence(self, case_id):
-        self.api_client.make_request(
+        licence = self.api_client.make_request(
             method="PUT", url="/cases/" + case_id + "/finalise/", headers=self.api_client.gov_headers, body={},
-        ).json()
+        ).json()["licence"]
+        self.api_client.add_to_context("licence", licence)
 
     def manage_case_status(self, draft_id):
         draft_id_to_change = draft_id or self.api_client.context["draft_id"]
@@ -97,15 +98,16 @@ class Cases:
         return response.status_code
 
     def create_user_advice(self, case_id, data):
-        response = self.api_client.make_request(
+        self.api_client.make_request(
             method="POST", url="/cases/" + case_id + "/user-advice/", headers=self.api_client.gov_headers, body=data,
         )
 
-        return response.status_code
-
     def create_team_advice(self, case_id, data):
-        response = self.api_client.make_request(
+        self.api_client.make_request(
             method="POST", url="/cases/" + case_id + "/team-advice/", headers=self.api_client.gov_headers, body=data,
         )
 
-        return response.status_code
+    def create_final_advice(self, case_id, data):
+        self.api_client.make_request(
+            method="POST", url="/cases/" + case_id + "/final-advice/", headers=self.api_client.gov_headers, body=data,
+        )

@@ -7,13 +7,15 @@ class DocumentTemplates:
         self.api_client = api_client
         self.request_data = request_data
 
-    def add_template(self, seed_picklist, advice_type=None):
+    def add_template(self, seed_picklist, advice_type=None, case_types=None):
         template_data = self.api_client.request_data["document_template"]
         template_data["layout"] = self.get_layouts()[0]["id"]
         paragraph = seed_picklist.add_letter_paragraph_picklist()
         template_data["letter_paragraphs"] = [paragraph["id"]]
         template_data["name"] = "0000" + helpers.get_formatted_date_time_m_d_h_s()
         template_data["visible_to_exporter"] = True
+        if case_types:
+            template_data["case_types"] = case_types
         if advice_type:
             template_data["decisions"] = advice_type
         template = self.api_client.make_request(
