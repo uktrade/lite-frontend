@@ -11,6 +11,7 @@ from lite_content.lite_exporter_frontend import (  # noqa
     generic,  # noqa
     organisation,  # noqa
     declaration,  # noqa
+    licences,  # noqa
 )  # noqa
 
 # Generic (used as defaults in forms)

@@ -11,3 +11,4 @@ class Tiles:
     GOODS = "Product list"
     SITES = "Manage my sites"
     END_USER_ADVISORIES = "End user advisories"
+    LICENCES = "My Licences"
