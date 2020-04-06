@@ -19,7 +19,7 @@
 						{% if component.title %}
 							<label class="lite-filter-bar__label" for="{{ component.name }}"><span>{% lcs 'generic.Filters.FILTER_BY_PREFIX' %}</span> {{ component.title }}</label>
 						{% endif %}
-						{% include "components/"|add:component.input_type|add:".html" with component=component data=request.GET|get:component.name name=component.name value=request.GET|get:component.name %}
+						{% include "components/"|add:component.input_type|add:".html" with component=component data=request.GET|get:component.name name=component.name value=request.GET|get:component.name|default:"" %}
 					</div>
 				{% else %}
 					<input type="hidden" name="{{ component.name }}" value="{{ component.value }}">
