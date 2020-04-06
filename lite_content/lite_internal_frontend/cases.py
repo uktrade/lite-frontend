@@ -109,12 +109,12 @@ class ApplicationPage:
         NUMBER_COLUMN = "#"
         DESCRIPTION_COLUMN = "Description"
         ANSWER_COLUMN = "Answer"
-        INTENDED_END_USE_TITLE = "Intended end use"
-        INFORMED_TO_APPLY_TITLE = "Informed to apply"
-        INFORMED_WMD_TITLE = "Informed WMD"
-        SUSPECTED_WMD_TITLE = "Suspect WMD"
-        EU_MILITARY_TITLE = "EU transfer licence"
-        COMPLIANT_LIMITATIONS_EU_TITLE = "Complied to terms"
+        INTENDED_END_USE_TITLE = "Intended end use of the products"
+        INFORMED_TO_APPLY_TITLE = "Informed by ECJU to apply for a licence"
+        INFORMED_WMD_TITLE = "Informed by ECJU that products may be used in WMD"
+        SUSPECTED_WMD_TITLE = "Exporter suspects products may be used in WMD"
+        EU_MILITARY_TITLE = "European military products received under a transfer licence"
+        COMPLIANT_LIMITATIONS_EU_TITLE = "Exporter compliant with terms of export limitations or obtained consent"
 
     class TemporaryExportDetails:
         TITLE = "Temporary export details"
