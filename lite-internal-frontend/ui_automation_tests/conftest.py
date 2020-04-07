@@ -34,6 +34,7 @@ from ui_automation_tests.shared.fixtures.core import (  # noqa
     api_test_client,
     exporter_info,
     internal_info,
+    api_client,
 )
 from ui_automation_tests.shared.fixtures.urls import internal_url, sso_sign_in_url, api_url  # noqa
 
