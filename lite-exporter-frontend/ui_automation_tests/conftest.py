@@ -145,11 +145,6 @@ def i_click_edit_application(driver):  # noqa
 
 @given("I go to exporter homepage and choose Test Org")  # noqa
 def go_to_exporter(driver, register_organisation, sso_sign_in, exporter_url, context):  # noqa
-    if "pick-organisation" not in driver.current_url:
-        driver.get(exporter_url.rstrip("/") + "/auth/logout")
-        if "accounts/logout" in driver.current_url:
-            driver.find_element_by_css_selector("[action='/sso/accounts/logout/'] button").click()
-            driver.get(exporter_url)
     if "pick-organisation" in driver.current_url:
         no = utils.get_element_index_by_text(Shared(driver).get_radio_buttons_elements(), context.org_name)
         Shared(driver).click_on_radio_buttons(no)

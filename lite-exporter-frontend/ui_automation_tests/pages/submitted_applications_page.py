@@ -39,6 +39,7 @@ class SubmittedApplicationsPages(BasePage):
         First asserts that the list of notes on the page is correct
         Then asserts that each case note exists
         """
+        self.driver.refresh()
         case_notes = self.driver.find_elements_by_class_name(self.CASE_NOTE_CLASS)
         assert len(case_notes) == len(notes)
 

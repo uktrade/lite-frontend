@@ -55,13 +55,18 @@ def register(driver):
     functions.click_finish_button(driver)
 
 
-@when("I go to exporter homepage having logged out")  # noqa
+@when("I sign as user without an organisation registered")  # noqa
 def go_to_exporter_when(driver, exporter_url, context):  # noqa
-    driver.get(exporter_url.rstrip("/") + "/auth/logout")
-    if "accounts/logout" in driver.current_url:
-        driver.find_element_by_css_selector("[action='/sso/accounts/logout/'] button").click()
     driver.get(exporter_url)
     StartPage(driver).try_click_sign_in_button()
 
     if "login" in driver.current_url:
         GreatSigninPage(driver).sign_in(context.newly_registered_email, context.newly_registered_password)
+
+
+@given("I am not logged in")
+def not_logged_in(exporter_url, driver):
+    driver.get(exporter_url.rstrip("/") + "/auth/logout")
+    if "accounts/logout" in driver.current_url:
+        driver.find_element_by_css_selector("[action='/sso/accounts/logout/'] button").click()
+        driver.get(exporter_url)

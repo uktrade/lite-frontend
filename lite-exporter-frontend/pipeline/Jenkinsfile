@@ -76,6 +76,10 @@ spec:
                         if [ $? -eq 0 ]
                         then
                              py.test -k 'regression'  --reruns 1 --ignore=core --disable-pytest-warnings --alluredir=ui_automation_tests/allure-results
+                             if [ $? -eq 0 ]
+                             then
+                                    py.test -k 'final'  --reruns 1 --ignore=core --disable-pytest-warnings --alluredir=ui_automation_tests/allure-results
+                             fi
                         fi
                     fi
                 '''

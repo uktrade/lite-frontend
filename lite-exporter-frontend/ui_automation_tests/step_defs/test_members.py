@@ -7,7 +7,7 @@ from ui_automation_tests.pages.member_page import MemberPage
 from ui_automation_tests.pages.members_page import MembersPage
 from ui_automation_tests.pages.shared import Shared
 from ui_automation_tests.shared import functions
-from ui_automation_tests.shared.tools.helpers import paginated_item_exists
+from ui_automation_tests.shared.tools.helpers import paginated_item_exists, highlight
 from ui_automation_tests.shared.tools.helpers import scroll_to_element_by_id
 
 scenarios("../features/members.feature", strict_gherkin=False)
@@ -26,7 +26,8 @@ def add_member(driver, context):
     add_member_page.enter_email(email)
 
     add_member_page.check_all_sites()
-    functions.click_submit(driver)
+    scroll_to_element_by_id(driver, "button-Save")
+    driver.find_element_by_id("button-Save").click()
 
 
 @when("I select the member that was just added")
