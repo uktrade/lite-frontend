@@ -5,7 +5,17 @@ from lite_content.lite_internal_frontend import strings
 from django.urls import reverse_lazy
 
 from lite_content.lite_internal_frontend.flags import CreateFlagForm, EditFlagForm
-from lite_forms.components import TextInput, Select, Option, BackLink, Form, FormGroup, RadioButtons, AutocompleteInput
+from lite_content.lite_internal_frontend.strings import FlaggingRules
+from lite_forms.components import (
+    TextInput,
+    Select,
+    Option,
+    BackLink,
+    Form,
+    FormGroup,
+    RadioButtons,
+    AutocompleteInput,
+)
 from lite_forms.generators import confirm_form
 
 options = [
@@ -63,10 +73,20 @@ def select_condition_and_flag(request, type: str):
     title = ""
     condition = []
     flags = []
+    is_for_verified_goods_only = None
+
     if type == "Good":
         title = strings.FlaggingRules.Create.Condition_and_flag.GOOD_TITLE
         condition = TextInput(title=strings.FlaggingRules.Create.Condition_and_flag.GOOD, name="matching_value",)
         flags = get_goods_flags(request=request, convert_to_options=True)
+        is_for_verified_goods_only = RadioButtons(
+            name="is_for_verified_goods_only",
+            options=[
+                Option(key=True, value=FlaggingRules.Create.Condition_and_flag.YES_OPTION),
+                Option(key=False, value=FlaggingRules.Create.Condition_and_flag.NO_OPTION),
+            ],
+            title=FlaggingRules.Create.Condition_and_flag.GOODS_QUESTION,
+        )
     elif type == "Destination":
         title = strings.FlaggingRules.Create.Condition_and_flag.DESTINATION_TITLE
         condition = AutocompleteInput(
@@ -90,6 +110,7 @@ def select_condition_and_flag(request, type: str):
         questions=[
             condition,
             Select(title=strings.FlaggingRules.Create.Condition_and_flag.FLAG, name="flag", options=flags),
+            is_for_verified_goods_only,
         ],
     )
 

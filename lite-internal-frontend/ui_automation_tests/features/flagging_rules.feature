@@ -13,7 +13,7 @@ Feature: I want to add case-level flags to a case and view them
     Then I see the flagging rule in the flag list
     When I add a flag at level Good
     And I go to flagging rules list
-    And I add a flagging rule of type "Good", with condition "Ml1a", and flag
+    And I add a goods flagging rule with condition "Ml1a", flag and answer "True" for only apply to verified goods
     Then I see the flagging rule in the flag list
     When I add a flag at level Destination
     And I go to flagging rules list

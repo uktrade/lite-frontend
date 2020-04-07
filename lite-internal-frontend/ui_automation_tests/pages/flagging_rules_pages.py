@@ -50,6 +50,12 @@ class FlaggingRulePages(BasePage):
         select = Select(self.driver.find_element_by_id(self.MATCHING_VALUE_ID))
         select.select_by_value(case_type)
 
+    def select_is_for_verified_goods_only(self, answer):
+        if answer == "True":
+            self.driver.find_element_by_css_selector("[id$=-True]").click()
+        else:
+            self.driver.find_element_by_css_selector("[id$=-False]").click()
+
     def click_on_deactivate_flag(self, element):
         element.find_element_by_css_selector(self.DEACTIVATE_FLAG_BUTTON).click()
 
