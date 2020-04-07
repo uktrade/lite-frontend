@@ -11,5 +11,5 @@ class Flags:
         data["level"] = level
         flag = self.api_client.make_request(
             method="POST", url="/flags/", headers=self.api_client.gov_headers, body=data,
-        ).json()["flag"]
+        ).json()
         self.api_client.add_to_context("flag_id", flag["id"])

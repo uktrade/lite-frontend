@@ -43,5 +43,6 @@ def send_keys_to_autocomplete(driver: WebDriver, element_id: str, keys: str):
     time.sleep(1)
 
 
-def enter_value(driver: WebDriver, element_id, value):
-    driver.find_element_by_id(element_id).send_keys(value)
+def try_open_filters(driver: WebDriver):
+    if not driver.find_element_by_class_name("lite-filter-bar").is_displayed():
+        driver.find_element_by_id("show-filters-link").click()

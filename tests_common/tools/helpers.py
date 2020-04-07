@@ -7,7 +7,6 @@ from allure import attach, attachment_type
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
 
 now = datetime.now().isoformat()
@@ -148,7 +147,7 @@ def get_unformatted_date_time():
 
 
 def get_formatted_date_time_d_h_m_s():
-    return datetime.now().strftime(" %d%H%M%S")
+    return str(datetime.now().strftime(" %d%H%M%S"))
 
 
 def page_is_ready(driver):
@@ -157,11 +156,6 @@ def page_is_ready(driver):
 
 def menu_is_visible(driver):
     return driver.find_element_by_css_selector(".lite-menu--visible").is_displayed()
-
-
-def select_visible_text_from_dropdown(element, text):
-    select = Select(element)
-    select.select_by_visible_text(text)
 
 
 def find_paginated_item_by_id(id, driver):
