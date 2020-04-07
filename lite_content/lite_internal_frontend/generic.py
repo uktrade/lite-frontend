@@ -1,6 +1,7 @@
 VIEW = "View"
 CHANGE = "Change"
 EDIT = "Edit"
+NO_FLAGS_SET = "No flags set"
 
 
 class Filters:

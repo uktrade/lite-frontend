@@ -34,10 +34,6 @@ ORGANISATION_EDIT_FLAGS = "Edit organisation flags"
 # HMRC Organisation
 HMRC_ORGANISATION_CREATION_SUCCESS = "The HMRC organisation was created successfully"
 
-# Flags
-SET_CASE_FLAGS = "Set case flags"
-EDIT_CASE_FLAGS = "Edit case flags"
-
 # Case
 CASE_GOODS = "Goods"
 CASE_ENTITIES_NONE = "No inactive case entities"

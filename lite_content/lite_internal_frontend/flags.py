@@ -4,7 +4,7 @@ class FlagsList:
     CREATE_BUTTON = "Create a flag"
     NO_CONTENT_NOTICE = "There are no registered flags at the moment."
     SUCCESS_MESSAGE = "Flag created successfully"
-    INCLUDE_DEACTIVATED = "Include deactivated"
+    SHOW_DEACTIVATED_FLAGS = "Only show deactivated flags"
 
     class Table:
         NAME = "Name"
@@ -31,6 +31,18 @@ class CreateFlagForm:
         TITLE = "Level"
         DESCRIPTION = ""
 
+    class Colour:
+        TITLE = "Colour"
+        DESCRIPTION = "You can help convey information through use of colour"
+
+    class Label:
+        TITLE = "Colour meaning"
+        DESCRIPTION = "We'll show this value when you hover over the flag to provide more information"
+
+    class Priority:
+        TITLE = "Priority"
+        DESCRIPTION = "This relates to the ordering of the flag. 0 is the highest."
+
 
 class EditFlagForm:
     BACK_LINK = "Back to " + FlagsList.TITLE.lower()
@@ -41,6 +53,18 @@ class EditFlagForm:
     class Name:
         TITLE = "Name"
         DESCRIPTION = ""
+
+    class Colour:
+        TITLE = "Colour"
+        DESCRIPTION = "You can help convey information through use of colour"
+
+    class Label:
+        TITLE = "Colour meaning"
+        DESCRIPTION = "We'll show this value when you hover over the flag to provide more information"
+
+    class Priority:
+        TITLE = "Priority"
+        DESCRIPTION = "This relates to the ordering of the flag. 0 is the highest."
 
 
 class UpdateFlag:
