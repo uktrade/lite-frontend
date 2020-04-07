@@ -6,7 +6,7 @@ from flags.views import AssignFlags
 app_name = "cases"
 
 urlpatterns = [
-    path("", main.ViewCase.as_view(), name="case"),
+    path("", main.ViewCase.as_view(), name="case", kwargs={"disable_queue_lookup": True}),
     path("done/", main.CaseImDoneView.as_view(), name="done"),
     path("change-status/", main.ChangeStatus.as_view(), name="manage"),
     path("move/", main.MoveCase.as_view(), name="move"),

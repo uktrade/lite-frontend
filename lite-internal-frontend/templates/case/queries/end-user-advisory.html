@@ -125,12 +125,8 @@
 
 
 		<div class="app-flags" id="application-destination-flags">
-			{% for flag in case.query.end_user.flags %}
-				<div class="app-flag" id="{{ flag.name }}">
-					{{ flag.name }}
-				</div>
-			{% endfor %}
-			<a class="app-flag app-flag--action" href="{% url 'cases:assign_flags' queue.id case.id %}?level=destinations&items={{ case.query.end_user.id }}&origin=case">
+			{% include 'includes/flags.html' with flags=case.query.end_user.flags list=True %}
+			<a class="govuk-link" href="{% url 'cases:assign_flags' queue.id case.id %}?level=destinations&items={{ case.query.end_user.id }}&origin=case">
 				{% lcs 'cases.EndUserAdvisoriesPage.EDIT_DESTINATION_FLAGS' %}
 			</a>
 		</div>

@@ -120,17 +120,7 @@
 				{% lcs 'organisations.OrganisationPage.Details.SummaryList.FLAGS' %}
 			</dt>
 			<dd id="flags-organisation" class="govuk-summary-list__value">
-				{% if organisation.flags %}
-					<div class="app-flags">
-						{% for flag in organisation.flags %}
-							<div class="app-flag" id="{{ flag.name }}">
-								{{ flag.name }}
-							</div>
-						{% endfor %}
-					</div>
-				{% else %}
-					{% include "includes/notice.html" with text='organisations.OrganisationPage.NO_FLAGS_NOTICE' small=True %}
-				{% endif %}
+				{% include "includes/flags.html" with flags=organisation.flags no_content='organisations.OrganisationPage.NO_FLAGS_NOTICE' %}
 			</dd>
 			<dd class="govuk-summary-list__actions">
 				{% if not hide_creation_link %}

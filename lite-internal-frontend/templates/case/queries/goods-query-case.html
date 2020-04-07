@@ -76,6 +76,7 @@
 				<dd class="govuk-summary-list__value">
 					{{ good.description }}
 				</dd>
+				<dd class="govuk-summary-list__actions"></dd>
 			</div>
 			<div class="govuk-summary-list__row">
 				<dt class="govuk-summary-list__key">
@@ -84,13 +85,17 @@
 				<dd class="govuk-summary-list__value">
 					{{ good.part_number|default:"Not set" }}
 				</dd>
+				<dd class="govuk-summary-list__actions"></dd>
 			</div>
 			<div class="govuk-summary-list__row">
 				<dt class="govuk-summary-list__key">
 					{% lcs 'cases.ClcQuery.GoodDetails.Details.FLAGS' %}
 				</dt>
 				<dd class="govuk-summary-list__value">
-					{% include 'case/views/goods-flags.html' with origin='case' %}
+					{% include 'includes/flags.html' with flags=good.flags %}
+				</dd>
+				<dd class="govuk-summary-list__actions">
+					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:assign_flags' queue.id case.id %}?level=goods&items={{ good.id }}&origin=case">{% lcs 'generic.CHANGE' %}</a>
 				</dd>
 			</div>
 		</dl>

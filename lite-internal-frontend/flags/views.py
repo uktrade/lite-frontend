@@ -1,4 +1,3 @@
-from django.contrib import messages
 from django.http import Http404
 from django.shortcuts import redirect
 from django.shortcuts import render
@@ -18,6 +17,7 @@ from flags.forms import (
     select_condition_and_flag,
     _levels,
     deactivate_or_activate_flagging_rule_form,
+    level_options,
 )
 from flags.services import (
     get_cases_flags,
@@ -29,39 +29,32 @@ from flags.services import (
     get_flagging_rule,
     post_flagging_rules,
 )
-from flags.services import get_flags, post_flags, get_flag, put_flag
+from flags.services import get_flags, post_flags, get_flag, update_flag
 from lite_content.lite_internal_frontend import strings, flags
 from lite_content.lite_internal_frontend.flags import UpdateFlag
-from lite_forms.components import Option, FiltersBar, Select, Checkboxes
+from lite_forms.components import Option, FiltersBar, Select, Checkboxes, TextInput
 from lite_forms.generators import form_page
 from lite_forms.views import MultiFormView, SingleFormView
 from organisations.services import get_organisation
 from queues.services import get_queue
+from teams.services import get_teams
 from users.services import get_gov_user
 
 
 class FlagsList(TemplateView):
     def get(self, request, **kwargs):
-        data, _ = get_flags(request)
+        data = get_flags(request, **request.GET)
         user_data, _ = get_gov_user(request, str(request.user.lite_api_user_id))
-
-        status = request.GET.get("status", "active")
-
-        if status == "active":
-            status = "no_deactivated"
-            flags_data = []
-            for flag in data["flags"]:
-                if flag["status"] == "Deactivated":
-                    status = "active"
-                if flag["status"] == "Active":
-                    flags_data.append(flag)
-            data["flags"] = flags_data
 
         filters = FiltersBar(
             [
+                TextInput(name="name", title="name"),
+                Select(name="level", title="level", options=level_options),
+                TextInput(name="priority", title="priority"),
+                Select(name="team", title="team", options=get_teams(request, True)),
                 Checkboxes(
-                    name="status",
-                    options=[Option("deactivated", flags.FlagsList.INCLUDE_DEACTIVATED)],
+                    name="only_show_deactivated",
+                    options=[Option(True, flags.FlagsList.SHOW_DEACTIVATED_FLAGS)],
                     classes=["govuk-checkboxes--small"],
                 ),
             ]
@@ -69,7 +62,6 @@ class FlagsList(TemplateView):
 
         context = {
             "data": data,
-            "status": status,
             "user_data": user_data,
             "filters": filters,
         }
@@ -80,28 +72,19 @@ class AddFlag(SingleFormView):
     def init(self, request, **kwargs):
         self.form = add_flag_form()
         self.action = post_flags
-
-    def get_success_url(self):
-        messages.success(self.request, flags.FlagsList.SUCCESS_MESSAGE)
-        return reverse("flags:flags")
+        self.data = {"colour": "default", "priority": 0}
+        self.success_message = flags.FlagsList.SUCCESS_MESSAGE
+        self.success_url = reverse("flags:flags")
 
 
 class EditFlag(SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = str(kwargs["pk"])
-        flag, _ = get_flag(request, self.object_pk)
+        flag = get_flag(request, self.object_pk)
         self.form = edit_flag_form()
-        self.data = flag["flag"]
-        self.action = put_flag
+        self.data = flag
+        self.action = update_flag
         self.success_url = reverse("flags:flags")
-
-
-class ViewFlag(TemplateView):
-    def get(self, request, **kwargs):
-        data, _ = get_flag(request, str(kwargs["pk"]))
-
-        context = {"data": data, "title": data["flag"]["name"]}
-        return render(request, "flags/profile.html", context)
 
 
 class ChangeFlagStatus(TemplateView):
@@ -132,7 +115,7 @@ class ChangeFlagStatus(TemplateView):
         if status != "deactivate" and status != "reactivate":
             raise Http404
 
-        put_flag(request, str(kwargs["pk"]), json={"status": request.POST["status"]})
+        update_flag(request, str(kwargs["pk"]), json={"status": request.POST["status"]})
 
         return redirect(reverse_lazy("flags:flags"))
 

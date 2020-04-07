@@ -107,7 +107,7 @@ def get_status_properties(request, status):
 
 # Permissions
 def get_user_permissions(request, with_team=False):
-    user, _ = get_gov_user(request, str(request.user.lite_api_user_id))
+    user, _ = get_gov_user(request)
     if with_team:
         return user["user"]["role"]["permissions"], user["user"]["team"]
     return user["user"]["role"]["permissions"]

@@ -149,7 +149,7 @@ def i_click_continue(driver):  # noqa
 
 @when("I go to flags")  # noqa
 def go_to_flags(driver, internal_url):  # noqa
-    driver.get(internal_url.rstrip("/") + "/flags")
+    driver.get(internal_url.rstrip("/") + "/flags/")
 
 
 @when("I click progress application")  # noqa

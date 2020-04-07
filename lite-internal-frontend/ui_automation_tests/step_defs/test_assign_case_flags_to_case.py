@@ -1,6 +1,7 @@
 from pytest_bdd import when, then, scenarios
 
 from pages.application_page import ApplicationPage
+from pages.shared import Shared
 
 scenarios("../features/assign_case_flags_to_case.feature", strict_gherkin=False)
 
@@ -24,9 +25,7 @@ def click_edit_goods_flags_link(driver):
 
 @then("The previously created flag is assigned to the case")
 def assert_flag_is_assigned(driver, context):
-    application_page = ApplicationPage(driver)
-    exists = application_page.is_flag_applied(context.flag_name)
-    assert exists is True
+    assert Shared(driver).is_flag_applied(context.flag_name)
 
 
 @then("the previously created goods flag is assigned to the case")

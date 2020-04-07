@@ -1,5 +1,5 @@
-from shared.tools.helpers import scroll_to_element_by_id
 from shared.BasePage import BasePage
+from shared.tools.helpers import scroll_to_element_by_id
 
 
 class Shared(BasePage):
@@ -69,3 +69,10 @@ class Shared(BasePage):
 
     def get_text_of_info_bar(self):
         return self.driver.find_element_by_css_selector(self.INFO_BAR).text
+
+    def is_flag_applied(self, flag_name: str, parent_selector: str = ""):
+        flags = self.driver.find_elements_by_css_selector(parent_selector + ".app-flag")
+
+        for flag in flags:
+            if flag_name.lower() in flag.text.lower():
+                return True

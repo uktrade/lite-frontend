@@ -211,7 +211,7 @@ def default_na(value):
     if value is not None and len(value):
         return value
     else:
-        return mark_safe(f'<span class="lite-hint">{strings.NOT_APPLICABLE}</span>')  # nosec
+        return mark_safe(f'<span class="govuk-hint govuk-!-margin-0">{strings.NOT_APPLICABLE}</span>')  # nosec
 
 
 @register.filter()
@@ -398,7 +398,7 @@ def missing_title():
     return (
         "</title>"
         "</head>"
-        '<body style="margin-top: 75px;">'
+        '<body style="margin-top: 73px;">'
         '<div class="app-missing-title-banner">'
         '<div class="govuk-width-container">'
         '<h2 class="app-missing-title-banner__heading">You need to set a title!</h2>'

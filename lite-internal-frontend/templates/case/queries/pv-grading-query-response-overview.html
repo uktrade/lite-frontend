@@ -31,20 +31,14 @@
 
 			<div class="app-summary-list__item">
 				<p class="govuk-caption-m">{% lcs 'cases.GradingResponseOverview.Details.Flags.FLAGS' %}</p>
-				<div class="app-flags">
-					{% for flag in case.query.good.flags %}
-						<div class="app-flag" id="{{ flag.name }}">
-							{{ flag.name }}
-						</div>
-					{% endfor %}
-					<button class="lite-button--link" type="submit" name="action" value="set-flags">
-						{% if case.query.good.flags %}
-							{% lcs 'cases.GradingResponseOverview.Details.Flags.EDIT' %}
-						{% else %}
-							{% lcs 'cases.GradingResponseOverview.Details.Flags.SET' %}
-						{% endif %}
-					</button>
-				</div>
+				{% include 'includes/flags.html' with flags=case.query.good.flags list=True %}
+				<button class="lite-button--link" type="submit" name="action" value="set-flags">
+					{% if case.query.good.flags %}
+						{% lcs 'cases.GradingResponseOverview.Details.Flags.EDIT' %}
+					{% else %}
+						{% lcs 'cases.GradingResponseOverview.Details.Flags.SET' %}
+					{% endif %}
+				</button>
 			</div>
 
 			<p class="govuk-heading-s">{% lcs 'cases.GradingResponseOverview.Details.CONTROL_HEADING' %}</p>

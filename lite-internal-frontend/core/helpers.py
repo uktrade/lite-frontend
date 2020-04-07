@@ -14,6 +14,17 @@ def convert_dict_to_query_params(dictionary):
     return "&".join(items)
 
 
+def convert_parameters_to_query_params(dictionary: dict):
+    """
+    Given a dictionary of parameters, convert to a query param string
+    Removes request object and deletes empty keys
+    """
+    if "request" in dictionary:
+        del dictionary["request"]
+
+    return "?" + convert_dict_to_query_params({key: value for key, value in dictionary.items() if value is not None})
+
+
 def get_params_if_exist(request, keys, json=None):
     params = json if json else dict()
     for key in keys:

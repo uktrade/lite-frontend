@@ -74,7 +74,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I click continue
 
   @LT_966_refusal_flags @regression
-  Scenario: Test that refusal advice is given correctly
+  Scenario: Refusal advice is given correctly
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
     When I go to application previously created

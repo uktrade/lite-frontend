@@ -67,10 +67,10 @@ class AddPicklistItem(SingleFormView):
     def init(self, request, **kwargs):
         self.action = validate_and_post_picklist_item
         countries, _ = get_countries(request)
-        flags, _ = get_flags(request)
+        flags = get_flags(request)
         denial_reasons, _ = get_denial_reasons(request, False, False)
 
-        self.context = {**countries, **flags, **denial_reasons}
+        self.context = {**countries, **{"flags": flags}, **denial_reasons}
         self.success_url = reverse_lazy("picklists:picklists") + "?type=" + self.request.GET.get("type")
 
     def get_form(self):
@@ -87,10 +87,10 @@ class EditPicklistItem(SingleFormView):
         self.action = validate_and_put_picklist_item
         self.success_url = reverse_lazy("picklists:picklist_item", kwargs={"pk": self.object_pk})
         countries, _ = get_countries(request)
-        flags, _ = get_flags(request)
+        flags = get_flags(request)
         denial_reasons, _ = get_denial_reasons(request, False, False)
 
-        self.context = {**countries, **flags, **denial_reasons}
+        self.context = {**countries, **{"flags": flags}, **denial_reasons}
 
     def get_form(self):
         if self.object["type"]["key"] == "letter_paragraph":

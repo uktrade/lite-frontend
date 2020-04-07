@@ -11,7 +11,6 @@
 {% block body %}
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
-			<p class="govuk-caption-m">{{ case.application.case_type.sub_type.value }}</p>
 			<h1 class="govuk-heading-l">{% lcs 'cases.ReviewGoodsSummary.HEADING' %}</h1>
 		</div>
 		<div class="lite-app-bar__controls">
@@ -21,16 +20,11 @@
 		</div>
 	</div>
 
-	<div class="app-flags" id="application-case-flags">
-		{% for flag in case.flags %}
-			<div class="app-flag" id="{{ flag.name }}">
-				{{ flag.name }}
-			</div>
-		{% endfor %}
-		<a href="{{ edit_flags_url }}" id="button-edit-goods-flags" class="app-flag app-flag--action">
-			{% lcs 'cases.ReviewGoodsSummary.SET_FLAGS' %}
-		</a>
-	</div>
+	{% include 'includes/flags.html' with flags=case.flags %}
+
+	<a href="{{ edit_flags_url }}" id="button-edit-goods-flags" class="app-flag app-flag--action">
+		{% lcs 'cases.ReviewGoodsSummary.SET_FLAGS' %}
+	</a>
 
 	<!-- Goods -->
 	<table class="govuk-table" id="goods">
@@ -55,7 +49,7 @@
 						{% if good.report_summary %}
 							{{ good.report_summary }}
 						{% else %}
-							<span class="lite-hint">{% lcs 'cases.ReviewGoodsSummary.NotSet.REPORT_SUMMARY' %}</span>
+							<span class="govuk-hint">{% lcs 'cases.ReviewGoodsSummary.NotSet.REPORT_SUMMARY' %}</span>
 						{% endif %}
 					</td>
 					<td class="govuk-table__cell">{{ good.is_good_controlled.value|friendly_boolean }}</td>
@@ -64,20 +58,14 @@
 						{% if good.comment %}
 							{{ good.comment}}
 						{% else %}
-							<span class="lite-hint">{% lcs 'cases.ReviewGoodsSummary.NotSet.COMMENT' %}</span>
+							<span class="govuk-hint">{% lcs 'cases.ReviewGoodsSummary.NotSet.COMMENT' %}</span>
 						{% endif %}
 					</td>
 					{% if case_sub_type.key == "standard" %}
 						<td class="govuk-table__cell">{{ good.quantity }} {{ good.unit.value }}/£{{ good.value }}</td>
 					{% endif %}
 					<td class="govuk-table__cell">
-						{% if good.flags %}
-							{% for flag in good.flags %}
-								{{ flag.name}} <br>
-							{% endfor %}
-						{% else %}
-							<span class="lite-hint">{% lcs 'cases.ReviewGoodsSummary.NotSet.FLAGS' %}</span>
-						{% endif %}
+						{% include 'includes/flags.html' with flags=good.flags %}
 					</td>
 				</tr>
 			{% endfor %}

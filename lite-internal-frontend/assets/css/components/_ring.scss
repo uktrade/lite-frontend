@@ -44,7 +44,6 @@ $top: $label-font-size-redo * 0.65;
 	}
 	@include size($default-size, $default-size);
 	float: left;
-	margin: 10px;
 	position: relative;
 	font-size: 8em;
 	z-index: 0;

@@ -33,12 +33,6 @@ def check_status_has_changed(driver):
     assert "closed" in ApplicationPage(driver).get_text_of_case_note_subject(0)
 
 
-@then("I should see flags can be added")
-def flags_are_available(driver):
-    application_page = ApplicationPage(driver)
-    assert application_page.get_case_flag_element()
-
-
 @when("I go to end user advisory previously created")  # noqa
 def click_on_created_eua(driver, context, internal_url):  # noqa
     driver.get(internal_url.rstrip("/") + "/queues/00000000-0000-0000-0000-000000000001/cases/" + context.eua_id)

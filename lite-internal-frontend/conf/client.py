@@ -36,6 +36,18 @@ def put(request, appended_address: str, json):
     )
 
 
+def patch(request, appended_address: str, json):
+    # PATCH requires a trailing slash
+    if not appended_address.endswith("/"):
+        appended_address += "/"
+
+    return requests.patch(
+        env("LITE_API_URL") + appended_address,
+        json=json,
+        headers={"GOV-USER-TOKEN": str(request.user.user_token), "X-Correlation-Id": str(request.correlation)},
+    )
+
+
 def delete(request, appended_address):
     return requests.delete(
         env("LITE_API_URL") + appended_address,

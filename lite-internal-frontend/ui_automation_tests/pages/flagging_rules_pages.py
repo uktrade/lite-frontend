@@ -40,8 +40,7 @@ class FlaggingRulePages(BasePage):
         self.driver.find_element_by_id(self.MATCHING_VALUE_ID).send_keys(text)
 
     def select_flag(self, flag):
-        select = Select(self.driver.find_element_by_id(self.SELECT_FLAG_ID))
-        select.select_by_visible_text(flag)
+        Select(self.driver.find_element_by_id(self.SELECT_FLAG_ID)).select_by_visible_text(flag)
 
     def enter_country(self, country):
         functions.send_keys_to_autocomplete(self.driver, self.MATCHING_VALUE_ID, country)

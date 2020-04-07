@@ -160,9 +160,7 @@
 											{% lcs 'cases.ApplicationPage.Goods.MISSING_DOCUMENT_REASON_PREFIX' %}{{ good_on_application.good.missing_document_reason.value }}
 										{% endif %}
 									<td class="govuk-table__cell">
-										{% for flag in good_on_application.flags %}
-											{{ flag.name }}<br>
-										{% endfor %}
+										{% include 'includes/flags.html' with flags=good_on_application.flags list=True %}
 									</td>
 									{% if show_advice %}
 										<td class="govuk-table__cell">

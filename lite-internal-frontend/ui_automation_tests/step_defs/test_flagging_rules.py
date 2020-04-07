@@ -73,7 +73,7 @@ def edit_flagging_rule(driver, context, condition):
     if type == "Case":
         flagging_rules_page.select_case_type(condition)
     elif type == "Destination":
-        flagging_rules_page.select_country(condition)
+        flagging_rules_page.enter_country(condition)
     elif type == "Good":
         flagging_rules_page.enter_control_list(condition)
 

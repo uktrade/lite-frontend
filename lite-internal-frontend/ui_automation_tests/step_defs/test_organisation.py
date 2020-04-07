@@ -1,5 +1,6 @@
 from pytest_bdd import scenarios, when, then
 
+import pages.shared
 from pages.organisation_page import OrganisationPage
 from pages.organisations_form_page import OrganisationsFormPage
 from pages.organisations_page import OrganisationsPage
@@ -87,7 +88,7 @@ def i_choose_to_add_a_new_hmrc_organisation(driver, context):
 
 @then("the previously created organisations flag is assigned")  # noqa
 def assert_flag_is_assigned(driver, context):
-    assert OrganisationPage(driver).is_organisation_flag_applied(context.flag_name)
+    assert Shared(driver).is_flag_applied(context.flag_name)
 
 
 @when("I go to organisations")

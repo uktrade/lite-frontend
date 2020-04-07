@@ -14,7 +14,8 @@ from queues.services import get_queue
 
 
 def current_queue(request):
-    if "queue_pk" in getattr(request.resolver_match, "kwargs", {}):
+    kwargs = getattr(request.resolver_match, "kwargs", {})
+    if "queue_pk" in kwargs and "disable_queue_lookup" not in kwargs:
         queue_pk = request.resolver_match.kwargs["queue_pk"]
         queue = get_queue(request, queue_pk)
         return {"queue": queue}

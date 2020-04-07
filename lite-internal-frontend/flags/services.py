@@ -1,20 +1,25 @@
 import functools
 
-from lite_forms.components import Option
-
-from conf.client import get, post, put
+from conf.client import get, post, put, patch
 from conf.constants import FLAGS_URL, FLAGGING_RULES
+from core.helpers import convert_parameters_to_query_params
+from lite_forms.components import Option
+from users.services import get_gov_user
 
 
-def get_flags(request):
-    data = get(request, FLAGS_URL)
-    return data.json(), data.status_code
+def get_flags(request, page=1, name=None, level=None, priority=None, only_show_deactivated=False, team=None):
+    data = get(request, FLAGS_URL + convert_parameters_to_query_params(locals()))
+    return data.json()
 
 
 def _get_team_flags(level, request, convert_to_options=False, include_deactivated=False):
-    data = get(request, f"{FLAGS_URL}?level={level}&team=True&include_deactivated={include_deactivated}").json()[
-        "flags"
-    ]
+    user, _ = get_gov_user(request)
+    team_pk = user["user"]["team"]["id"]
+    data = get(
+        request,
+        f"{FLAGS_URL}?level={level}&team={team_pk}&include_deactivated={include_deactivated}&disable_pagination=True",
+    ).json()
+
     if convert_to_options:
         return [Option(key=flag["id"], value=flag["name"]) for flag in data]
 
@@ -34,11 +39,11 @@ def post_flags(request, json):
 
 def get_flag(request, pk):
     data = get(request, FLAGS_URL + pk)
-    return data.json(), data.status_code
+    return data.json()
 
 
-def put_flag(request, pk, json):
-    data = put(request, FLAGS_URL + pk + "/", json)
+def update_flag(request, pk, json):
+    data = patch(request, FLAGS_URL + pk + "/", json)
     return data.json(), data.status_code
 
 

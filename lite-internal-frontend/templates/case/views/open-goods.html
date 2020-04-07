@@ -48,11 +48,7 @@
 					{{ good.is_good_controlled|friendly_boolean }}
 				</td>
 				<td class="govuk-table__cell">
-					{% if good.flags %}
-						{% for flag in good.flags %}
-							{{ flag.name }}<br>
-						{% endfor %}
-					{% endif %}
+					{% include 'includes/flags.html' with flags=good.flags list=True %}
 				</td>
 				{% if show_advice %}
 					<td class="govuk-table__cell">

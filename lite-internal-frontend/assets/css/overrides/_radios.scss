@@ -1,0 +1,99 @@
+.js-enabled {
+	.app-radios--flag-colours {
+		.govuk-radios__item {
+			label {
+				padding: 0;
+				margin-right: govuk-spacing(2);
+
+				span {
+					display: none;
+				}
+			}
+		}
+	}
+}
+
+.app-radios--flag-colours {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	margin-bottom:  - govuk-spacing(3);
+
+	.govuk-radios__item {
+		margin-bottom: govuk-spacing(3);
+
+		label {
+			&::before {
+				background: govuk-colour("dark-grey");
+			}
+
+			&::after {
+				top: 8px;
+				left: 8px;
+				bottom: 8px;
+				width: 20px;
+				background: govuk-colour("white");
+				border-color: govuk-colour("black");
+				border-radius: 100%;
+				border-width: 2px;
+				height: auto;
+			}
+		}
+	}
+
+	.app-radios__item {
+		&--red {
+			label::before {
+				background: govuk-colour("red");
+			}
+		}
+
+		&--yellow {
+			label::before {
+				background: govuk-colour("yellow");
+			}
+		}
+
+		&--green {
+			label::before {
+				background: govuk-colour("green");
+			}
+		}
+
+		&--blue {
+			label::before {
+				background: govuk-colour("blue");
+			}
+		}
+
+		&--purple {
+			label::before {
+				background: govuk-colour("purple");
+			}
+		}
+
+		&--orange {
+			label::before {
+				background: govuk-colour("orange");
+			}
+		}
+
+		&--brown {
+			label::before {
+				background: govuk-colour("brown");
+			}
+		}
+
+		&--turquoise {
+			label::before {
+				background: govuk-colour("turquoise");
+			}
+		}
+
+		&--pink {
+			label::before {
+				background: govuk-colour("pink");
+			}
+		}
+	}
+}

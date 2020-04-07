@@ -1,72 +1,95 @@
 .app-flags {
-	display: flex;
-	align-items: center;
-	justify-content: flex-start;
-	flex-wrap: wrap;
-	margin-bottom: govuk-spacing(4);
+	padding: 0;
+	display: grid;
+	grid-gap: govuk-spacing(2);
+	margin-bottom: govuk-spacing(6);
 
-	& > a:only-child {
-		padding: 0;
+	@for $i from 2 through 10 {
+		&[min-width~="#{$i * 200}"]) {
+			grid-template-columns: repeat(#{$i}, 1fr)
+		}
+	}
+
+	&--list {
+		display: block;
+		grid-template-columns: 1fr;
+		width: 100%;
 		margin: 0;
-		line-height: normal!important;
-		margin-bottom: govuk-spacing(2);
-	}
-}
 
-.app-flags--alt {
-	.app-flag {
-		background-color: govuk-shade(govuk-colour("light-grey"), 5%)!important;
-		box-shadow: 0 2px 0 govuk-shade(govuk-colour("light-grey"), 15%)!important;
-		padding: 0 govuk-spacing(2);
-		line-height: 32px!important;
-	}
-}
+		.app-flag {
+			display: flex;
+			justify-content: flex-start;
+			text-align: left;
+			padding: 0 govuk-spacing(2);
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			width: 100%;
+			margin-bottom: govuk-spacing(2);
 
-.govuk-table__row-asd {
-	background-color: govuk-colour("light-grey");
-	margin-top: -2px;
-	padding-top: 0!important;
-	transform: translateY(-2px);
-
-	.govuk-table__cell {
-		padding-top: 0!important;
+			&:last-of-type {
+				margin-bottom: 0;
+			}
+		}
 	}
 }
 
 .app-flag {
 	@include govuk-font($size: 16, $weight: bold);
 	position: relative;
-	background-color: govuk-colour("light-grey");
-	border-left: 2px solid govuk-colour("black");
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background-color: govuk-shade(govuk-colour("light-grey"), 2.5);
+	border-left: 3px solid currentColor;
 	color: govuk-colour("black");
-	line-height: 40px!important;
+	min-height: 40px!important;
 	padding: 0 govuk-spacing(3);
-	margin-right: govuk-spacing(2);
-	margin-bottom: govuk-spacing(2);
+	min-width: 42px;
+	box-sizing: border-box;
 
-	&--action {
-		position: relative;
-		text-decoration: none;
-		border-radius: 0;
-		outline: 0;
-		-webkit-appearance: none;
-		color: $govuk-link-colour;
-		font-weight: normal;
-		text-transform: none;
-		letter-spacing: normal;
-		font-size: 16px;
-		text-decoration: underline;
-		background-color: transparent;
-		border-left: none;
-		padding: 0;
-		margin-left: govuk-spacing(2);
+	&--yellow {
+		background: govuk-tint(govuk-colour("yellow"), 80);
+		color: govuk-shade(govuk-colour("yellow"), 30);
+	}
 
-		&:hover {
-			color: $govuk-link-hover-colour;
-		}
+	&--blue {
+		background: govuk-tint(govuk-colour("blue"), 85);
+		color: govuk-colour("blue");
+	}
 
-		&:active {
-			color: $govuk-link-active-colour;
-		}
+	&--purple {
+		background: govuk-tint(govuk-colour("purple"), 85);
+		color: govuk-colour("purple");
+	}
+
+	&--pink {
+		background: govuk-tint(govuk-colour("pink"), 85);
+		color: govuk-colour("pink");
+	}
+
+	&--red {
+		background: govuk-tint(govuk-colour("red"), 85);
+		color: govuk-colour("red");
+	}
+
+	&--green {
+		background: govuk-tint(govuk-colour("green"), 85);
+		color: govuk-colour("green");
+	}
+
+	&--orange {
+		background: govuk-tint(govuk-colour("orange"), 85);
+		color: saturate(govuk-shade(govuk-colour("orange"), 15), 10);
+	}
+
+	&--turquoise {
+		background: govuk-tint(govuk-colour("turquoise"), 85);
+		color: govuk-colour("turquoise");
+	}
+
+	&--brown {
+		background: govuk-tint(govuk-colour("brown"), 85);
+		color: govuk-colour("brown");
 	}
 }

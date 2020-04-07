@@ -3,6 +3,8 @@
 {% block back_link %}{% endblock %}
 
 {% block body %}
+	{% include 'includes/messages.html' %}
+
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
 			<h1 class="govuk-heading-l">
@@ -10,59 +12,65 @@
 					{% lcs 'flags.FlagsList.TITLE' %}
 				{% endblock %}
 			</h1>
-			<p class="govuk-caption-m">
+			<p class="govuk-caption-m govuk-!-margin-bottom-6">
 				{% lcs 'flags.FlagsList.DESCRIPTION' %}
 			</p>
 		</div>
 		<div class="lite-app-bar__controls">
-			<a href="{% url 'flags:add' %}" class="govuk-button" draggable="false" role="button" id="add-a-flag-button">
-				{% lcs 'flags.FlagsList.CREATE_BUTTON' %}
-			</a>
+			{% govuk_link_button id='add-a-flag' text='flags.FlagsList.CREATE_BUTTON' url='flags:add' %}
 		</div>
 	</div>
 
 	{% include "filters.html" %}
 
-	{% if data.flags %}
-		<table class="govuk-table">
+	{% if data.results %}
+		<table class="govuk-table govuk-table--middle-vertical-align">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" scope="col">{% lcs 'flags.FlagsList.Table.NAME' %}</th>
-					<th class="govuk-table__header" scope="col">{% lcs 'flags.FlagsList.Table.TEAM' %}</th>
 					<th class="govuk-table__header" scope="col">{% lcs 'flags.FlagsList.Table.LEVEL' %}</th>
-					<th class="govuk-table__header" scope="col">{% lcs 'flags.FlagsList.Table.STATUS' %}</th>
+					<th class="govuk-table__header" scope="col">Label</th>
+					<th class="govuk-table__header" scope="col">Priority</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'flags.FlagsList.Table.TEAM' %}</th>
 					<th class="govuk-table__header" scope="col">{% lcs 'flags.FlagsList.Table.ACTIONS' %}</th>
 				</tr>
 			</thead>
 			<tbody class="govuk-table__body">
-				{% for flag in data.flags %}
+				{% for flag in data.results %}
 					<tr class="govuk-table__row">
-						<td class="govuk-table__cell">
-							<a href="{% url 'flags:flag' flag.id %}" class="govuk-link govuk-link--no-visited-state">
+						<td class="govuk-table__cell" scope="row">
+							<span class="app-flag app-flag--{{ flag.colour }} govuk-!-margin-0">
 								{{ flag.name }}
-							</a>
-						</td>
-						<td class="govuk-table__cell">
-							{{ flag.team.name }}
+							</span>
 						</td>
 						<td class="govuk-table__cell">
 							{{ flag.level }}
 						</td>
 						<td class="govuk-table__cell">
-							{{ flag.status }}
+							{{ flag.label }}
+						</td>
+						<td class="govuk-table__cell">
+							{{ flag.priority }}
+						</td>
+						<td class="govuk-table__cell">
+							<a class="govuk-link govuk-link--no-visited-state" href="{% url 'teams:team' flag.team.id %}">
+								<span class="govuk-visually-hidden">Open flag team</span> {{ flag.team.name }}
+							</a>
 						</td>
 						<td class="govuk-table__cell govuk-table__cell--tight">
 							{% if user_data.user.team.id == flag.team.id %}
 								<ul class="govuk-table__cell__actions-list">
 									<li class="govuk-table__cell__actions-list-item">
 										{% if flag.status == 'Active' %}
-											<a href="{% url 'flags:change_status' flag.id 'deactivate' %}" role="button" draggable="false" class="govuk-link govuk-link--no-visited-state">{% lcs 'flags.FlagsList.Table.DEACTIVATE' %}</a>
+											<a href="{% url 'flags:change_status' flag.id 'deactivate' %}" class="govuk-link govuk-link--no-visited-state">{% lcs 'flags.FlagsList.Table.DEACTIVATE' %}<span class="govuk-visually-hidden"> flag {{ flag.name }}</span></a>
 										{% elif flag.status == 'Deactivated' %}
-											<a href="{% url 'flags:change_status' flag.id 'reactivate' %}" role="button" draggable="false" class="govuk-link govuk-link--no-visited-state">{% lcs 'flags.FlagsList.Table.REACTIVATE' %}</a>
+											<a href="{% url 'flags:change_status' flag.id 'reactivate' %}" class="govuk-link govuk-link--no-visited-state">{% lcs 'flags.FlagsList.Table.REACTIVATE' %}<span class="govuk-visually-hidden"> flag {{ flag.name }}</span></a>
 										{% endif %}
 									</li>
 									<li class="govuk-table__cell__actions-list-item">
-										<a href="{% url 'flags:edit' flag.id %}" class="govuk-link govuk-link--no-visited-state">{% lcs 'flags.FlagsList.Table.EDIT' %}</a>
+										<a href="{% url 'flags:edit' flag.id %}" class="govuk-link govuk-link--no-visited-state">
+											{% lcs 'flags.FlagsList.Table.EDIT' %} <span class="govuk-visually-hidden"> flag {{ flag.name }}</span>
+										</a>
 									</li>
 								</ul>
 							{% else %}
@@ -73,6 +81,8 @@
 				{% endfor %}
 			</tbody>
 		</table>
+
+		{% include "includes/pagination.html" %}
 	{% else %}
 		{% include "includes/notice.html" with text='flags.FlagsList.NO_CONTENT_NOTICE' %}
 	{% endif %}

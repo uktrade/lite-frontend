@@ -62,11 +62,7 @@
 						<td class="govuk-table__cell govuk-table__cell--line-number">{{ forloop.counter }}.</td>
 						<td class="govuk-table__cell" aria-hidden="true">{{ good.description }}</td>
 						<td class="govuk-table__cell">
-							{% if good.flags %}
-								{% for flag in good.flags %}
-									{{ flag.name }}<br>
-								{% endfor %}
-							{% endif %}
+							{% include 'includes/flags.html' with flags=good.flags list=True %}
 						</td>
 					</tr>
 				{% endfor %}

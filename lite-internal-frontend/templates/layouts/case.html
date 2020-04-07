@@ -111,28 +111,13 @@
 		{% endfor %}
 	</div>
 
-	<div class="app-flags" id="application-case-flags">
-		{% for flag in case.flags %}
-			<div class="app-flag" id="{{ flag.name }}">
-				{{ flag.name }}
-			</div>
-		{% endfor %}
-		<a href="{% url 'cases:assign_flags' queue.id case.id %}?level=cases&items={{ case.id }}" id="application-edit-case-flags" class="app-flag app-flag--action">
-			{% if case.flags %}
-				{% lcs 'EDIT_CASE_FLAGS' %}
-			{% else %}
-				{% lcs 'SET_CASE_FLAGS' %}
-			{% endif %}
-		</a>
-	</div>
+	<h2 class="govuk-heading-s">Case flags <a class="govuk-link govuk-link--no-visited-state govuk-!-margin-left-9" href="{% url 'cases:assign_flags' queue.id case.id %}?level=cases&items={{ case.id }}" id="application-edit-case-flags">Change case flags</a></h2>
 
-	<div class="app-flags" id="application-all-flags">
-		{% for flag in case.all_flags %}
-			<div class="app-flag" id="{{ flag.name }}">
-				{{ flag.name }}
-			</div>
-		{% endfor %}
-	</div>
+	{% include "includes/flags.html" with flags=case.flags %}
+
+	<h2 class="govuk-heading-s">All flags</h2>
+
+	{% include "includes/flags.html" with flags=case.all_flags %}
 
 	{% block details %}{% endblock %}
 {% endblock %}
