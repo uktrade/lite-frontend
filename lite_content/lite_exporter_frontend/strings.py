@@ -127,7 +127,7 @@ class EndUser:
             DESCRIPTION = (
                 "You must attach:\n\n- You must attach a completed [end user undertaking"
                 "(EUU)](https://www.gov.uk/government/publications/end-user-undertaking-euu-form) or "
-                "[stockist undertaking (SU)](https://www.gov.uk/government/publications/stockist-undertaking-su-form). "
+                "[stockist undertaking (SU)](https://www.gov.uk/government/publications/stockist-undertaking-su-form) "
                 "completed by the end user or stockist\n\n- a letterhead as proof of the end user or stockist\n\nIf the "
                 "end user is a government organisation, instead of an EUU or SU you can attach a government purchase "
                 "order. The purchase order must identify you as the applicant, any consignees, the products and "
