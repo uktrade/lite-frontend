@@ -150,6 +150,10 @@ class FlaggingRules:
 
             FLAG = "Flag"
 
+            GOODS_QUESTION = "Must this rule only apply to verified goods?"
+            YES_OPTION = "Yes"
+            NO_OPTION = "No"
+
     class Status:
         DEACTIVATE_HEADING = "Are you sure you want to deactivate this flagging rule?"
         DEACTIVATE_WARNING = "This flagging rule will no longer be able to be used unless it's reactivated"
