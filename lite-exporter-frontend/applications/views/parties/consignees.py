@@ -26,7 +26,7 @@ class Consignee(TemplateView):
                     editable=application["status"]["value"] == "draft",
                 ),
             }
-            return render(request, "applications/check-your-answer.html", context)
+            return render(request, "applications/end-user.html", context)
         else:
             return redirect(reverse_lazy("applications:add_consignee", kwargs={"pk": application_id}))
 

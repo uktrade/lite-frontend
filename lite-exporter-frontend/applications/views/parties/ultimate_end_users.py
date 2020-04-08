@@ -2,7 +2,6 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 
 from applications.forms.parties import new_party_form_group
-from applications.helpers.validate_status import check_all_parties_have_a_document
 from applications.services import (
     get_application,
     get_ultimate_end_users,
@@ -23,7 +22,6 @@ class UltimateEndUsers(TemplateView):
         context = {
             "application": application,
             "ultimate_end_users": ultimate_end_users,
-            "show_warning": check_all_parties_have_a_document(ultimate_end_users) == "in_progress",
         }
         return render(request, "applications/parties/ultimate-end-users.html", context)
 

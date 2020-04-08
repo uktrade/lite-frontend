@@ -146,27 +146,31 @@
 				{% if application_type|application_type_in_list:"HAS_END_USER" %}
 					{% if not is_editing or edit_type == 'major_edit' %}
 						{% url 'applications:end_user' application.id as end_user_url %}
-						{% include "includes/task-list-item.html" with id="end_user" title=strings.END_USER url=end_user_url status=application.end_user|get_parties_status optional=application_type|application_type_in_list:"F680" %}
+						{% if application.export_type.value == 'Permanent' %}
+							{% include "includes/task-list-item.html" with id="end_user" title=strings.END_USER url=end_user_url status=application.end_user|get_parties_status %}
+						{% else %}
+							{% include "includes/task-list-item.html" with id="end_user" title=strings.END_USER url=end_user_url status=application.end_user|get_parties_status_optional_documents optional=application_type|application_type_in_list:"F680" %}
+						{% endif %}
 					{% endif %}
 				{% endif %}
 
 				{# Ultimate End Users #}
 				{% if application_type|application_type_in_list:"HAS_ULTIMATE_END_USERS" and ultimate_end_users_required %}
 					{% url 'applications:ultimate_end_users' application.id as ultimate_end_user_url %}
-					{% include "includes/task-list-item.html" with id="ultimate-end-users" title=strings.ULTIMATE_END_USERS url=ultimate_end_user_url status=application.ultimate_end_users|get_parties_status %}
+					{% include "includes/task-list-item.html" with id="ultimate-end-users" title=strings.ULTIMATE_END_USERS url=ultimate_end_user_url status=application.ultimate_end_users|get_parties_status_optional_documents %}
 				{% endif %}
 
 				{# Consignee #}
 				{% if application_type|application_type_in_list:"HAS_CONSIGNEE" %}
 					{% url 'applications:consignee' application.id as consignee_url %}
-					{% include "includes/task-list-item.html" with id="consignee" title=strings.CONSIGNEE url=consignee_url status=application.consignee|get_parties_status %}
+					{% include "includes/task-list-item.html" with id="consignee" title=strings.CONSIGNEE url=consignee_url status=application.consignee|get_parties_status_optional_documents %}
 				{% endif %}
 
 				{# Third Parties #}
 				{% if application_type|application_type_in_list:"HAS_THIRD_PARTIES" %}
 					{% url 'applications:third_parties' application.id as third_parties_url %}
 					{% tld third_parties 'third party' 'third parties' as third_parties_description %}
-					{% include "includes/task-list-item.html" with id='third-parties' title=strings.THIRD_PARTIES url=third_parties_url status=application.third_parties|get_parties_status description=third_parties_description optional=True %}
+					{% include "includes/task-list-item.html" with id='third-parties' title=strings.THIRD_PARTIES url=third_parties_url status=application.third_parties|get_parties_status_optional_documents description=third_parties_description optional=True %}
 				{% endif %}
 
 				{# Additional Documents #}

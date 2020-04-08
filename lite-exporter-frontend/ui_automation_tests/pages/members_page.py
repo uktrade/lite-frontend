@@ -1,10 +1,10 @@
-from ui_automation_tests.shared.BasePage import BasePage
+from selenium.webdriver.support.select import Select
 
-from ui_automation_tests.shared.tools.helpers import select_visible_text_from_dropdown, find_paginated_item_by_id
+from ui_automation_tests.shared.BasePage import BasePage
+from ui_automation_tests.shared.tools.helpers import find_paginated_item_by_id
 
 
 class MembersPage(BasePage):
-
     LINK_VIEW_ID_PREFIX = "link-view-"
     BUTTON_ADD_A_MEMBER_ID = "button-add-a-member"
     BUTTON_APPLY_FILTER_ID = "button-apply-filters"
@@ -22,7 +22,8 @@ class MembersPage(BasePage):
         self.driver.find_element_by_id(self.FILTERS_LINK_ID).click()
 
     def select_filter_status_from_dropdown(self, status):
-        select_visible_text_from_dropdown(self.driver.find_element_by_id(self.STATUS_ID), status)
+        select = Select(self.driver.find_element_by_id(self.STATUS_ID))
+        select.select_by_visible_text(status)
 
     def click_apply_filters_button(self):
         self.driver.find_element_by_id(self.BUTTON_APPLY_FILTER_ID).click()

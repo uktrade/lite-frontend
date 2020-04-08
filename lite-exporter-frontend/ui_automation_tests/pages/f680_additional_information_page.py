@@ -69,7 +69,7 @@ class F680AdditionalInformationPage(BasePage):
         functions.click_submit(self.driver, self.submit_button_value)
 
     def enter_prospect_value(self, value="100.00"):
-        functions.enter_value(self.driver, element_id=self.PROSPECT_VALUE_SELECTOR_ID, value=value)
+        self.driver.find_element_by_id(self.PROSPECT_VALUE_SELECTOR_ID).send_keys(value)
         functions.click_submit(self.driver, self.submit_button_value)
 
     def click_expedited(self):

@@ -3,7 +3,7 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
 from applications.forms.parties import new_party_form_group
-from applications.helpers.check_your_answers import convert_party
+from applications.helpers.check_your_answers import convert_party, is_application_export_type_permanent
 from applications.services import get_application, post_party, validate_party, delete_party
 from applications.views.parties.base import AddParty, SetParty, DeleteParty, CopyParties, CopyAndSetParty
 from lite_content.lite_exporter_frontend.applications import EndUserForm, EndUserPage
@@ -13,6 +13,7 @@ class EndUser(TemplateView):
     def get(self, request, **kwargs):
         application_id = str(kwargs["pk"])
         application = get_application(request, application_id)
+        is_permanent_app = is_application_export_type_permanent(application)
         if application["end_user"]:
             kwargs = {"pk": application_id, "obj_pk": application["end_user"]["id"]}
             context = {
@@ -25,10 +26,10 @@ class EndUser(TemplateView):
                     application=application,
                     editable=application["status"]["value"] == "draft",
                 ),
-                "highlight": ["Document"] if not application["end_user"]["document"] else {},
+                "highlight": ["Document"] if (is_permanent_app and not application["end_user"]["document"]) else {},
             }
 
-            return render(request, "applications/check-your-answer.html", context)
+            return render(request, "applications/end-user.html", context)
         else:
             return redirect(reverse_lazy("applications:add_end_user", kwargs={"pk": application_id}))
 

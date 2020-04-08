@@ -12,6 +12,7 @@ from lite_content.lite_exporter_frontend import strings
 def document_switch(path):
     if "ultimate-end-user" in path:
         return {
+            "optional": True,
             "attach": post_party_document,
             "download": get_party_document,
             "delete": delete_party_document,
@@ -20,6 +21,7 @@ def document_switch(path):
         }
     elif "end-user" in path:
         return {
+            "optional": True,
             "attach": post_party_document,
             "download": get_party_document,
             "delete": delete_party_document,
@@ -28,6 +30,7 @@ def document_switch(path):
         }
     elif "consignee" in path:
         return {
+            "optional": True,
             "attach": post_party_document,
             "download": get_party_document,
             "delete": delete_party_document,
@@ -36,6 +39,7 @@ def document_switch(path):
         }
     elif "third-parties" in path:
         return {
+            "optional": True,
             "attach": post_party_document,
             "download": get_party_document,
             "delete": delete_party_document,
@@ -44,6 +48,7 @@ def document_switch(path):
         }
     elif "additional-document" in path:
         return {
+            "optional": False,
             "attach": post_additional_document,
             "download": get_additional_document,
             "delete": delete_additional_party_document,

@@ -15,5 +15,5 @@ Feature: I want to add a note to an application and view notes
     And I see the new reference code added
     And The "goods" section is set to status "done"
     And The "end_user" section is set to status "in-progress"
-    And The "consignee" section is set to status "in-progress"
+    And The "consignee" section is set to status "done"
     And The "supporting-documents" section is set to status "other"

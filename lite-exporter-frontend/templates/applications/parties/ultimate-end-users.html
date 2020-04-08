@@ -53,7 +53,7 @@
 						<td class="govuk-table__cell">{{ ultimate_end_user.website|default_na }}</td>
 						<td class="govuk-table__cell">{{ ultimate_end_user.address }}</td>
 						<td class="govuk-table__cell">{{ ultimate_end_user.country.name }}</td>
-						<td class="govuk-table__cell {% if not ultimate_end_user.document %}govuk-summary-list__key--highlight{% endif %}">
+						<td class="govuk-table__cell">
 						{% if ultimate_end_user.document %}
 							{% if ultimate_end_user.document.safe == True %}
 								<a href="{% url 'applications:ultimate_end_user_download_document' application.id ultimate_end_user.id %}" id="document_download" class='govuk-link govuk-link--no-visited-state'>

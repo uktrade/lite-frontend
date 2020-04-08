@@ -310,6 +310,19 @@ def get_parties_status(parties):
 
 
 @register.filter()
+def get_parties_status_optional_documents(parties):
+    if not parties:
+        return NOT_STARTED
+
+    if isinstance(parties, list):
+        for party in parties:
+            if not party:
+                return NOT_STARTED
+
+    return DONE
+
+
+@register.filter()
 def requires_ultimate_end_users(goods):
     ultimate_end_users_required = False
 
