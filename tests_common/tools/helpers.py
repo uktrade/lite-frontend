@@ -34,8 +34,8 @@ def screen_path():
     return screen_dir
 
 
-def save_screenshot(driver, _):
-    driver.get_screenshot_as_file(path.join(screen_path(), now + ".png"))
+def save_screenshot(driver, name):
+    driver.get_screenshot_as_file(path.join(screen_path(), str(name) + now + ".png"))
     attach(
         driver.get_screenshot_as_png(), now, attachment_type=attachment_type.PNG,
     )
