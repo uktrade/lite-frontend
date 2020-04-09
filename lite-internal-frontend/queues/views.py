@@ -59,7 +59,7 @@ class Cases(TemplateView):
         filters = data["results"]["filters"]
         statuses = [Option(option["key"], option["value"]) for option in filters["statuses"]]
         case_types = [Option(option["key"], option["value"]) for option in filters["case_types"]]
-        gov_users = [Option(option["key"], option["value"]) for option in filters["gov_users"]]
+        gov_users = [Option(option["id"], option["full_name"]) for option in filters["gov_users"]]
 
         filters = FiltersBar(
             [
