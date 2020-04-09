@@ -79,10 +79,10 @@ def licence_audit(driver, context):
 @then("The case is finalised and a document is created in the audits")
 def licence_audit(driver, context):
     case_page = ApplicationPage(driver)
-    document_audit = case_page.get_text_of_audit_trail_item(0)
+    finalised_audit = case_page.get_text_of_audit_trail_item(0)
+    assert "finalised" in finalised_audit
+    document_audit = case_page.get_text_of_audit_trail_item(1)
     assert context.document_template_name in document_audit
-    status_audit = case_page.get_text_of_audit_trail_item(1)
-    assert "finalised" in status_audit
 
 
 @then("The generated decision document is visible")
