@@ -110,8 +110,11 @@ def pytest_addoption(parser):
 
 def pytest_exception_interact(node, report):
     if node and report.failed:
-        class_name = node._nodeid.replace(".py::", "_class_")
-        name = "{0}_{1}".format(class_name, "error")
+        class_name = (
+            node._nodeid.replace(".py::", "").replace("ui_automation_tests/step_defs/", "").replace("step_defs", "")
+        )
+        name = "{0}_{1}".format(class_name, "").replace("/", "").replace("test", "_test")
+        print(name)
         try:
             utils.save_screenshot(node.funcargs.get("driver"), name)
         except Exception:  # noqa
