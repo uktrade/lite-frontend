@@ -15,6 +15,7 @@ class SitesPage:
 class SitePage:
     PRIMARY_SITE_DETAIL = "This is your organisation's primary site."
     MEMBERS = "Members"
+    ADMIN_MEMBERS = "Admin Members"
 
     class SummaryList:
         NAME = "Name"
