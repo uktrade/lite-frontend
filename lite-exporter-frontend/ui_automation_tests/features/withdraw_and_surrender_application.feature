@@ -17,7 +17,7 @@ Feature: I want to be able to withdraw an active application
       Then the case note text area is not present
 
   @LT_979_surrender_application @regression
-    Scenario: Surrender a application
+    Scenario: Surrender an application
       Given I go to exporter homepage and choose Test Org
       And I create a standard application via api
       And The application has been approved

@@ -78,33 +78,24 @@
 				{% if user.is_authenticated %}
 					<div id="lite-user-menu">
 						<a href="{% url 'auth:logout' %}" class="lite-user-menu-button" id="link-sign-out">Sign out</a>
-						{% if not user_in_limbo %}
-							<div class="lite-user-menu-divider"></div>
-							<a class="lite-user-menu-button" href="{% url 'organisation:members:profile' %}">
-								{{ user.first_name }}
-								<div class="lite-user-menu-button--user">
-									{% svg 'user' %}
-								</div>
-							</a>
-						{% endif %}
 					</div>
 				{% endif %}
 			</div>
 		</header>
 	{% endblock %}
 
+	{% if not user_in_limbo %}
+		<div class="govuk-width-container">
+			{% block navigation %}
+				<div class="app-navigation govuk-body-s govuk-!-margin-0" role="navigation">
+					<a href="{% url 'core:home' %}" class="home-link">{% lcs 'hub.Navigation.ACCOUNT_HOME' %}</a>
+				</div>
+			{% endblock %}
+		</div>
+	{% endif %}
+
 	<div class="govuk-width-container">
 		<section aria-label="banner">
-			<div class="govuk-phase-banner">
-				<p class="govuk-phase-banner__content">
-					<strong class="govuk-tag govuk-phase-banner__content__tag ">
-						alpha
-					</strong>
-					<span class="govuk-phase-banner__text">
-						This is a new service – your <a class="govuk-link" href="{{ FEEDBACK_URL }}">feedback</a> will help us to improve it.
-					</span>
-				</p>
-			</div>
 			{% if request.GET|get:'return_to' %}
 				<a href="{{ request.GET|get:'return_to' }}" id="back-link" class="govuk-back-link">{% lcs 'generic.BACK' %}</a>
 			{% else %}

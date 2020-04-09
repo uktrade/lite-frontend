@@ -1,35 +1,140 @@
 {% extends 'layouts/base.html' %}
 
 {% block title %}
-	Exporter hub
+	{% lcs 'hub.TITLE' %}
 {% endblock %}
 
 {% block header_title %}{% endblock %}
 
 {% block back_link %}{% endblock %}
 
+{% block navigation %}
+	<div class="app-navigation govuk-body-s govuk-!-margin-0" role="navigation">
+		<a href="{% url 'core:home' %}" class="home-link">{% lcs 'hub.Navigation.ACCOUNT_HOME' %}</a>
+		{% if 'ADMINISTER_USERS' in user_permissions %}
+			<a href="{% url 'organisation:members:members' %}" class="nav-item" id="link-profile">{% lcs 'hub.Navigation.YOUR_ACCOUNT' %}</a>
+		{% endif %}
+	</div>
+{% endblock %}
+
 {% block body %}
-	<h1 class="govuk-heading-xl govuk-!-margin-bottom-4">
+	<span class="govuk-caption-xl">
+		{% lcs 'hub.Header.ACCOUNT_HOME' %}
+	</span>
+	<h1 class="govuk-heading-xl govuk-!-margin-bottom-5">
 		{{ organisation.name }}
 	</h1>
 
 	{% if user_data.organisations|length > 1 %}
 		<div class="govuk-!-margin-bottom-6">
-			<a class="govuk-link govuk-link--no-visited-state govuk-!-font-size-16" href="{% url 'core:pick_organisation' %}" id="switch-link">Switch organisation</a>
+			<a class="govuk-link govuk-link--no-visited-state govuk-!-font-size-19" href="{% url 'core:pick_organisation' %}" id="switch-link">{% lcs 'hub.Header.SWITCH_ORG' %}</a>
 		</div>
 	{% endif %}
 
-	{% for section in sections %}
+	{% if organisation.type.key != 'hmrc' %}
+		{# First section #}
 		<section class="govuk-form-group">
-			<h3 class="govuk-heading-m">{{ section.title }}</h3>
 			<div class="app-tiles">
-				{% for tile in section.tiles %}
-					<a href="{{ tile.url }}" class="app-tile" role="button" draggable="false">
-						<h4>{{ tile.title }}</h4>
-						<p>{{ tile.description }}</p>
+				{# Apply tile #}
+				<div class="app-tile">
+					<a href="{% url 'apply_for_a_licence:start' %}" role="button" draggable="false" class="app-tile__link app-tile__heading" id="link-apply">
+						{% lcs 'hub.Tiles.APPLY_FOR_LICENCE' %}
 					</a>
-				{% endfor %}
+					<p>{% lcs 'hub.Tiles.Apply.APPLY_FOR' %}</p>
+					<ul class="govuk-list govuk-list--bullet govuk-!-font-size-16">
+						<li>{% lcs 'hub.Tiles.Apply.EXPORT_LICENCES' %}</li>
+						<li>{% lcs 'hub.Tiles.Apply.TRANSHIPMENT_LICENCES' %}</li>
+						<li>{% lcs 'hub.Tiles.Apply.TRADE_CONTROL_LICENCES' %}</li>
+						<li>{% lcs 'hub.Tiles.Apply.MOD_CLEARANCES' %}</li>
+					</ul>
+					<p>{% lcs 'hub.Tiles.Apply.REGISTER_OGEL' %}</p>
+				</div>
+				{# Applications tile #}
+				{% if existing.applications %}
+					<div class="app-tile">
+						<a href="{% url 'applications:applications' %}" role="button" draggable="false" class="app-tile__link app-tile__heading" id="link-applications">
+							{% lcs 'hub.Tiles.APPLICATIONS' %}{% if notifications.notifications.application %}<span id="applications-notifications" class="lite-notification-bubble">{{ notifications.notifications.application }}</span>
+							{% endif %}
+						</a>
+
+						<p>{% lcs 'hub.Tiles.Applications.CHECK_PROGRESS' %}</p>
+						<p>{% lcs 'hub.Tiles.Applications.EDIT_APPLICATIONS' %}</p>
+					</div>
+				{% endif %}
+
+				{% if existing.licences %}
+					{# View and manage licences tile #}
+					<div class="app-tile">
+						<a href="{% url 'licences:licences' %}" role="button" draggable="false" class="app-tile__link app-tile__heading" id="link-licences">
+							{% lcs 'hub.Tiles.VIEW_AND_MANAGE_LICENCES' %}
+						</a>
+						<p>{% lcs 'hub.Tiles.Licences.DESCRIPTION' %}</p>
+					</div>
+				{% endif %}
 			</div>
 		</section>
-	{% endfor %}
+
+		{# Second section #}
+		<section class="govuk-form-group">
+			<div class="app-tiles">
+				{# Product list tile #}
+				<div class="app-tile">
+					<a href="{% url 'goods:goods' %}" role="button" draggable="false" class="app-tile__link app-tile__heading" id="link-products">
+						{% lcs 'hub.Tiles.GOODS' %}{% if notifications.notifications.goods %}<span class="lite-notification-bubble" id="product-notifications">{{ notifications.notifications.goods }}</span>
+					{% endif %}
+					</a>
+
+					<p>{% lcs 'hub.Tiles.ProductList.MANAGE_PRODUCTS' %}</p>
+					<p>{% lcs 'hub.Tiles.ProductList.PRODUCTS_INCLUDE' %}</p>
+					<a href="{% url 'goods:add' %}" class="govuk-link govuk-link--no-visited-state" role="button" draggable="false">
+						{% lcs 'hub.Tiles.ProductList.CLC_LINK' %}
+					</a>
+					<br>
+					<a href="{% url 'goods:add' %}" class="govuk-link govuk-link--no-visited-state" role="button" draggable="false">
+						{% lcs 'hub.Tiles.ProductList.GRADING_LINK' %}
+					</a>
+				</div>
+
+				{# End user query tile #}
+				<div class="app-tile">
+					<a href="{% url 'end_users:end_users' %}" role="button" draggable="false" class="app-tile__link app-tile__heading" id="link-eua">
+						{% lcs 'hub.Tiles.END_USER_ADVISORIES' %}{% if notifications.notifications.end_user_advisory %}<span class="lite-notification-bubble" id="eua-notifications">{{ notifications.notifications.end_user_advisory }}</span>
+					{% endif %}
+					</a>
+
+					<p>{% lcs 'hub.Tiles.EUA.ASK_FOR_ADVICE' %}</p>
+				</div>
+			</div>
+		</section>
+	{% else %}
+
+		<section class="govuk-form-group">
+			<div class="app-tiles">
+				{# Make a customs enquiry tile #}
+				<div class="app-tile">
+					<a href="{% url 'hmrc:raise_a_query' %}" role="button" draggable="false" class="app-tile__link app-tile__heading" id="link-hmrc-query">
+						{% lcs 'hub.Tiles.CustomsEnquiry.MAKE_ENQUIRY' %}
+					</a>
+					<p>
+						<a href="{% url "applications:applications" %}?submitted=False" class="govuk-link govuk-link--no-visited-state" role="button" draggable="false">
+							{% lcs 'hub.Tiles.CustomsEnquiry.DRAFT_LINK' %}
+						</a>
+					</p>
+
+
+				</div>
+
+			{% if existing.queries %}
+				{# Check progress tile #}
+				<div class="app-tile">
+					<a href="{% url 'applications:applications' %}" role="button" draggable="false" class="app-tile__link app-tile__heading">
+						{% lcs 'hub.Tiles.CheckProgress.TITLE' %}
+					</a>
+					<p>{% lcs 'hub.Tiles.CheckProgress.VIEW_STATUS' %}</p>
+				</div>
+			{% endif %}
+
+			</div>
+		</section>
+	{% endif %}
 {% endblock %}

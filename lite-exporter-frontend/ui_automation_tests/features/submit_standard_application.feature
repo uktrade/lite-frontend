@@ -104,6 +104,7 @@ Feature: I want to indicate the standard licence I want
     When I click the back link
     And I submit the application
     And I agree to the declaration
+    When I go to exporter homepage
     And I click on applications
     Then I see submitted application
 

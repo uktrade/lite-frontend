@@ -11,14 +11,13 @@ scenarios("../features/notifications.feature", strict_gherkin=False)
 def application_exists_case_note_added(apply_for_standard_application, api_test_client, context, driver):
     api_test_client.ecju_queries.add_ecju_query(context.case_id)
     api_test_client.cases.add_case_note(context, context.case_id)
-    context.number_of_notifications = Hub(driver).return_number_of_notifications()
 
 
 @then("I can see a notification in application tile")
 def notification_exists(driver, context):
     # Creating an application creates an ecju-query attached to it,
     # and we add a case_note, should expect 2 new notifications
-    assert "You have" in Hub(driver).get_text_of_application_tile()
+    assert Hub(driver).notification_bubble_exists()
     context.number_of_notifications = Hub(driver).return_number_of_notifications()
 
 

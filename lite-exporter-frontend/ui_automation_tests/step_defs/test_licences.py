@@ -6,29 +6,11 @@ from ui_automation_tests.shared.tools.helpers import find_paginated_item_by_id
 scenarios("../features/licences.feature", strict_gherkin=False)
 
 
-@given(parsers.parse('I create "{decision}" final advice'))
-def final_advice(context, decision, api_test_client):
-    api_test_client.cases.create_final_advice(
-        context.case_id, [{"type": decision, "text": "abc", "note": "", "good": context.good["good"]["id"]}]
-    )
-
-
 @given(parsers.parse('I create "{decision}" final advice for open application'))
 def final_advice_open(context, decision, api_test_client):
     api_test_client.cases.create_final_advice(
         context.case_id, [{"type": decision, "text": "abc", "note": "", "goods_type": context.goods_type["id"]}]
     )
-
-
-@given(parsers.parse('I create a licence for my application with "{decision}" decision document'))
-def create_licence(context, decision, api_test_client):
-    document_template = api_test_client.document_templates.add_template(
-        api_test_client.picklists, case_types=["oiel", "siel", "exhc"]
-    )
-    api_test_client.cases.add_generated_document(context.case_id, document_template["id"], decision)
-    api_test_client.cases.finalise_case(context.case_id, "approve")
-    api_test_client.cases.finalise_licence(context.case_id)
-    context.licence = api_test_client.context["licence"]
 
 
 @when("I go to the licences page")

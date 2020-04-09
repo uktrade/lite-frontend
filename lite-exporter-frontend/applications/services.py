@@ -44,6 +44,15 @@ def get_applications(request, page: int = 1, submitted: bool = True):
     return data.json()
 
 
+def has_existing_applications_and_licences(request):
+    """
+    Returns if an hmrc org has any submitted queries
+    Returns if a standard org has any applications & licences
+    """
+    data = get(request, APPLICATIONS_URL + "existing/")
+    return data.json()
+
+
 def get_application(request, pk) -> Application:
     data = get(request, APPLICATIONS_URL + str(pk))
     return Application(data.json())

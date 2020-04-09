@@ -648,3 +648,26 @@ def agree_to_the_declaration(driver):  # noqa
     declaration_page.agree_to_foi()
     declaration_page.agree_to_declaration(driver)
     functions.click_submit(driver)
+
+
+@when("I click on the my licences link")  # noqa
+def click_licences_link(driver):  # noqa
+    ExporterHubPage(driver).click_licences()
+
+
+@given(parsers.parse('I create "{decision}" final advice'))  # noqa
+def final_advice(context, decision, api_test_client):  # noqa
+    api_test_client.cases.create_final_advice(
+        context.case_id, [{"type": decision, "text": "abc", "note": "", "good": context.good["good"]["id"]}]
+    )
+
+
+@given(parsers.parse('I create a licence for my application with "{decision}" decision document'))  # noqa
+def create_licence(context, decision, api_test_client):  # noqa
+    document_template = api_test_client.document_templates.add_template(
+        api_test_client.picklists, case_types=["oiel", "siel", "exhc"]
+    )
+    api_test_client.cases.add_generated_document(context.case_id, document_template["id"], decision)
+    api_test_client.cases.finalise_case(context.case_id, "approve")
+    api_test_client.cases.finalise_licence(context.case_id)
+    context.licence = api_test_client.context["licence"]

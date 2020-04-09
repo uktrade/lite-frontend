@@ -2,31 +2,35 @@ from ui_automation_tests.shared.BasePage import BasePage
 
 
 class ExporterHubPage(BasePage):
-    APPLY_FOR_A_LICENCE_BTN = "a[href*='/apply-for-a-licence/']"
-    APPLICATIONS_BTN = "a[href*='/applications/']"
-    MY_GOODS_BTN = "a[href*='/goods/']"
-    TILE_MANAGE_MY_ORGANISATION_SELECTOR = "a[href='/organisation/']"
-    END_USER_ADVISORY_TILE = "a[href*='/end-users/']"
-    RAISE_HMRC_QUERY_BTN = "a[href*='/raise-a-query/"
+    BUTTON_APPLY_FOR_A_LICENCE_ID = "link-apply"
+    BUTTON_APPLICATIONS_ID = "link-applications"
+    BUTTON_PRODUCTS_ID = "link-products"
+    BUTTON_PROFILE_ID = "link-profile"
+    BUTTON_EUA_ID = "link-eua"
+    BUTTON_LICENCES_ID = "link-licences"
+    BUTTON_HMRC_QUERY_ID = "link-hmrc-query"
     USER_PROFILE_BTN = "a[href*='/users/profile/']"
 
     def click_apply_for_a_licence(self):
-        self.driver.find_element_by_css_selector(self.APPLY_FOR_A_LICENCE_BTN).click()
+        self.driver.find_element_by_id(self.BUTTON_APPLY_FOR_A_LICENCE_ID).click()
 
     def click_raise_hmrc_query(self):
-        self.driver.find_element_by_css_selector(self.RAISE_HMRC_QUERY_BTN).click()
+        self.driver.find_element_by_id(self.BUTTON_HMRC_QUERY_ID).click()
 
     def click_applications(self):
-        self.driver.find_element_by_css_selector(self.APPLICATIONS_BTN).click()
+        self.driver.find_element_by_id(self.BUTTON_APPLICATIONS_ID).click()
 
     def click_end_user_advisories(self):
-        self.driver.find_element_by_css_selector(self.END_USER_ADVISORY_TILE).click()
+        self.driver.find_element_by_id(self.BUTTON_EUA_ID).click()
 
     def click_my_goods(self):
-        self.driver.find_element_by_css_selector(self.MY_GOODS_BTN).click()
+        self.driver.find_element_by_id(self.BUTTON_PRODUCTS_ID).click()
+
+    def click_licences(self):
+        self.driver.find_element_by_id(self.BUTTON_LICENCES_ID).click()
 
     def click_manage_my_organisation_tile(self):
-        self.driver.find_element_by_css_selector(self.TILE_MANAGE_MY_ORGANISATION_SELECTOR).click()
+        self.driver.find_element_by_id(self.BUTTON_PROFILE_ID).click()
 
     def click_user_profile(self):
         self.driver.find_element_by_css_selector(self.USER_PROFILE_BTN).click()

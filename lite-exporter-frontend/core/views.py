@@ -5,15 +5,15 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView
 
+from applications.services import has_existing_applications_and_licences
 from auth.services import authenticate_exporter_user
-from conf.constants import Permissions, NotificationType, NEWLINE
+from conf.constants import NEWLINE
 from core.forms import (
     select_your_organisation_form,
     register_a_commercial_organisation_group,
     register_triage,
     register_an_individual_group,
 )
-from core.helpers import Section, Tile, generate_notification_string, generate_notification_total_string
 from core.services import (
     get_notifications,
     get_organisation,
@@ -22,7 +22,7 @@ from core.services import (
     register_private_individual,
 )
 from core.validators import validate_register_organisation_triage
-from lite_content.lite_exporter_frontend import strings, generic
+from lite_content.lite_exporter_frontend import generic
 from lite_forms.components import BackLink
 from lite_forms.generators import form_page, success_page
 from lite_forms.helpers import conditional
@@ -41,79 +41,16 @@ class Home(TemplateView):
         except (JSONDecodeError, TypeError, KeyError):
             return redirect("auth:login")
 
-        if Permissions.ADMINISTER_USERS in user_permissions:
-            manage_organisation_section_link = reverse_lazy("organisation:organisation")
-            title = strings.core.HubPage.ORGANISATION
-        else:
-            manage_organisation_section_link = None
-
         organisation = get_organisation(request, str(request.user.organisation))
         notifications, _ = get_notifications(request)
-
-        if organisation.get("type").get("key") == "hmrc":
-            sections = [
-                Section("", [Tile(strings.hub.Tiles.CUSTOMS_ENQUIRY, "", reverse_lazy("hmrc:raise_a_query")),]),
-                Section(
-                    strings.hub.Header.MANAGE,
-                    [
-                        Tile(strings.hub.Tiles.APPLICATIONS, "", reverse_lazy("applications:applications"),),
-                        Tile(
-                            strings.hub.Tiles.DRAFTS,
-                            "",
-                            reverse_lazy("applications:applications") + "?submitted=False",
-                        ),
-                    ],
-                ),
-            ]
-        else:
-            sections = [
-                Section(
-                    "", [Tile(strings.hub.Tiles.APPLY_FOR_LICENCE, "", reverse_lazy("apply_for_a_licence:start"))],
-                ),
-                Section(
-                    strings.hub.Header.MANAGE,
-                    [
-                        Tile(
-                            strings.hub.Tiles.APPLICATIONS,
-                            generate_notification_string(notifications, case_types=[NotificationType.APPLICATION]),
-                            reverse_lazy("applications:applications"),
-                        ),
-                        Tile(
-                            strings.hub.Tiles.GOODS,
-                            generate_notification_string(notifications, case_types=[NotificationType.GOODS]),
-                            reverse_lazy("goods:goods"),
-                        ),
-                        Tile(
-                            strings.hub.Tiles.END_USER_ADVISORIES,
-                            generate_notification_string(notifications, case_types=[NotificationType.EUA]),
-                            reverse_lazy("end_users:end_users"),
-                        ),
-                        Tile(
-                            strings.hub.Tiles.LICENCES,
-                            # TODO Get notification total
-                            generate_notification_total_string(0),
-                            reverse_lazy("licences:licences"),
-                        ),
-                    ],
-                ),
-            ]
-
-            if organisation.get("type").get("key") == "individual":
-                sections[1].tiles.append(Tile(strings.hub.Tiles.SITES, "", reverse_lazy("organisation:sites:sites")))
-            elif manage_organisation_section_link:
-                number_permissions = 0
-                for permission in user_permissions:
-                    if permission in Permissions.MANAGE_ORGANISATION_PERMISSIONS:
-                        number_permissions += 1
-                if number_permissions > 1:
-                    title = strings.core.HubPage.ORGANISATION
-                sections[1].tiles.append(Tile(title, "", manage_organisation_section_link))
+        existing = has_existing_applications_and_licences(request)
 
         context = {
             "organisation": organisation,
-            "sections": sections,
             "user_data": user,
             "notifications": notifications,
+            "existing": existing,
+            "user_permissions": user_permissions,
         }
 
         return render(request, "core/hub.html", context)
