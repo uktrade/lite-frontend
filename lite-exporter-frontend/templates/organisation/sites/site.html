@@ -142,4 +142,31 @@
 			</div>
 		{% endfor %}
 	</dl>
+
+	<hr class="lite-horizontal-separator">
+
+	<h2 class="govuk-heading-m">{% lcs "sites.SitePage.ADMIN_MEMBERS" %}</h2>
+	<dl class="govuk-summary-list govuk-summary-list--no-border">
+		{% for user in site.admin_users %}
+			<div class="govuk-summary-list__row">
+				<dd class="govuk-summary-list__key">
+					{% if user.first_name %}
+						<span class="govuk-!-font-weight-bold">{{ user.first_name }} {{ user.last_name }}</span>
+					{% else %}
+						<strong class="govuk-tag govuk-tag--blue">
+							{% lcs 'users.UsersPage.USER_PENDING' %}
+						</strong>
+					{% endif %}
+				</dd>
+				<dd class="govuk-summary-list__value govuk-hint">
+					{{ user.email }}
+				</dd>
+				<dd class="govuk-summary-list__actions">
+					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisation:members:user' user.id %}?return_to={{ request.path }}">
+						{% lcs 'generic.VIEW' %} <span class="govuk-visually-hidden">{% if user.first_name %}{{ user.first_name }} {{ user.last_name }}'s{% else %}{{ user.email }}{% endif %} profile</span>
+					</a>
+				</dd>
+			</div>
+		{% endfor %}
+	</dl>
 {% endblock %}

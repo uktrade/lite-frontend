@@ -13,7 +13,7 @@ class Sites(OrganisationView):
     template_name = "sites/index"
 
     def get_additional_context(self):
-        return {"sites": get_sites(self.request, self.organisation_id)}
+        return {"sites": get_sites(self.request, self.organisation_id, get_total_users=True)}
 
 
 class NewSite(MultiFormView):
