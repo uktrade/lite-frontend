@@ -2,6 +2,7 @@ class LicencesList:
     NO_CONTENT_NOTICE = "No Licences found"
     TITLE = "Licences"
     DOWNLOAD_HIDDEN_TEXT = "Download file"
+    BREADCRUMB = "My Licences"
 
     class Tabs:
         LICENCE = "Licences"
