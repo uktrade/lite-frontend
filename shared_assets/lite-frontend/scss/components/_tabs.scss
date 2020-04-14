@@ -63,6 +63,7 @@
 
 	&:focus {
 		@include govuk-focused-text;
+		border-bottom-color: currentColor;
 	}
 
 	.lite-notification-bubble {
