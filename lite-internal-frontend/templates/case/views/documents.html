@@ -60,7 +60,7 @@
 							<ul class="govuk-table__cell__actions-list">
 								{% if document.safe == True %}
 									<a id="link-download" class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' queue.id case.id document.metadata_id %}">
-										{% lcs 'cases.AdditionalDocumentsPage.Document.DOWNLOAD_LINK' %}
+										<span class="govuk-visually-hidden">{% lcs 'cases.AdditionalDocumentsPage.Document.DOWNLOAD_LINK' %}</span> {{ document.name }}
 									</a>
 								{% elif document.safe == False %}
 									<p class="govuk-label">{% lcs 'cases.AdditionalDocumentsPage.Document.INFECTED_LABEL' %}</p>

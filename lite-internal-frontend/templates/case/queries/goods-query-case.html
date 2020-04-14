@@ -194,7 +194,7 @@
 						<dd class="govuk-summary-list__value">
 							{% if document.safe == True %}
 								<a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' queue.id case.id document.id %}">
-									{% lcs 'cases.ClcQuery.GoodDetails.Documents.DOWNLOAD' %}
+									<span class="govuk-visually-hidden">{% lcs 'cases.ClcQuery.GoodDetails.Documents.DOWNLOAD' %}</span> {{ document.name }}
 								</a>
 							{% elif document.safe == False %}
 								{% lcs 'cases.Manage.Documents.VIRUS_INFECTED' %}

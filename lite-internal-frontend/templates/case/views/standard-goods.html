@@ -44,7 +44,7 @@
 						{% for document in good_on_application.good.documents %}
 							{% if document.safe == True %}
 								<a class="govuk-link govuk-link--no-visited-state" id="good_document" href="{% url 'cases:document' queue.id case.id document.id %}">
-									{% lcs 'cases.Manage.Documents.DOWNLOAD_DOCUMENT' %}
+									<span class="govuk-visually-hidden">{% lcs 'cases.Manage.Documents.DOWNLOAD_DOCUMENT' %}</span> {{ document.name }}
 								</a>
 							{% endif %}
 						{% endfor %}
@@ -70,4 +70,3 @@
 {% if case.case_type.sub_type.key != 'exhibition_clearance' %}
 	<p class="govuk-body govuk-!-margin-top-3 govuk-!-font-weight-bold">{% lcs 'STANDARD_CASE_TOTAL_VALUE' %} £{{ total_goods_value|intcomma }}</p>
 {% endif %}
-

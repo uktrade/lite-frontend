@@ -38,7 +38,7 @@
 					<td class="govuk-table__cell">
 					{% if end_user.document.safe == True %}
 						<a class="govuk-link" id="end_user_document" href="{% url 'cases:document' queue.id case.id end_user.document.id %}">
-							{% lcs 'cases.Manage.Documents.DOWNLOAD_DOCUMENT' %}
+							<span class="govuk-visually-hidden">{% lcs 'cases.Manage.Documents.DOWNLOAD_DOCUMENT' %}</span> {{ end_user.document.name }}
 						</a>
 					{% endif %}
 					</td>
@@ -95,7 +95,7 @@
 					<td class="govuk-table__cell">
 					{% if consignee.document.safe == True %}
 						<a class="govuk-link" id="consignee_document" href="{% url 'cases:document' queue.id case.id consignee.document.id %}">
-							{% lcs 'cases.Manage.Documents.DOWNLOAD_DOCUMENT' %}
+							<span class="govuk-visually-hidden">{% lcs 'cases.Manage.Documents.DOWNLOAD_DOCUMENT' %}</span> {{ consignee.document.name }}
 						</a>
 					{% endif %}
 					</td>

@@ -108,7 +108,7 @@
 											{% for document in good_on_application.good.documents %}
 												{% if document.safe == True %}
 													<a class="govuk-link govuk-link--no-visited-state" id="good_document" href="{% url 'cases:document' queue.id case.id document.id %}">
-														{% lcs 'cases.Manage.Documents.DOWNLOAD_DOCUMENT' %}
+														<span class="govuk-visually-hidden">{% lcs 'cases.Manage.Documents.DOWNLOAD_DOCUMENT' %}</span> {{ document.name }}
 													</a>
 												{% endif %}
 											{% endfor %}
