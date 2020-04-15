@@ -10,6 +10,16 @@
 	padding: 0;
 }
 
+.lite-link--definition {
+	@extend .govuk-link;
+	@extend .govuk-link--no-visited-state;
+	@include govuk-font($size: 19);
+	margin: 0;
+	padding: 0;
+	border-bottom: 1px dashed currentColor;
+	text-decoration: none;
+}
+
 .lite-link--icon {
 	@extend .govuk-link--no-visited-state;
 	@include govuk-font($size: 19);
