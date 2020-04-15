@@ -1,3 +1,4 @@
+import logging
 import os
 from http import HTTPStatus
 from pytest import fixture
@@ -12,15 +13,6 @@ AUTH_USER_PASSWORD = os.environ.get("AUTH_USER_PASSWORD")
 ENDPOINT = os.environ.get("ENDPOINT")
 ENVIRONMENT = os.environ.get("ENVIRONMENT")
 TEST_HOSTS = os.environ.get("BROWSER_HOSTS")
-
-
-class Logging:
-    @staticmethod
-    def debug(debug_str):
-        print(debug_str)
-
-
-logging = Logging()
 
 
 @fixture(scope="session")
@@ -67,7 +59,7 @@ def api_client(request, exporter_info, internal_info):
     if os.getenv("TEST_TYPE_BROWSER_STACK", "False") == "True":
         test_hosts = list(TEST_HOSTS.replace("${ENVIRONMENT}", ENVIRONMENT).split(","))
         for host in test_hosts:
-            logging.debug(f"Allowing test runner access to {host}")
+            logging.debug("Allowing test runner access to %s", host)
             api_client.auth_basic(AUTH_USER_NAME, AUTH_USER_PASSWORD)
             response = api_client.session.request("GET", f"https://{host}{ENDPOINT}")
             assert response.status_code == HTTPStatus.OK

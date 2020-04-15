@@ -11,6 +11,10 @@ from ..tools.utils import set_timeout_to_10_seconds, set_timeout_to
 def driver(request, api_client):
     if os.getenv("TEST_TYPE_BROWSER_STACK", "False") == "True":
         driver = enable_browser_stack(request)
+        print(
+            "Browser stack is running at https://automate.browserstack.com/dashboard/v2/builds/1a806eccbeccef94d17f35c360bb475d04949e21/sessions/"
+            + driver.session_id
+        )
         return driver
 
     browser = request.config.getoption("--driver")
