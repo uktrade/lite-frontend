@@ -150,38 +150,6 @@ class FormTests(TestCase):
         self.assertEqual(len(form.questions), 1)
 
 
-class TestSubmitPagedFormTestCase(TestCase):
-    def setUp(self):
-        self.request_factory = RequestFactory()
-
-    def test_expect_many_values(self):
-        """
-        Ensure submit_paged_form handles a field which expects many values.
-        """
-        request = self.request_factory.post(
-            "/thing",
-            (
-                "key_a=a&key_a=b&key_a=c&"
-                "key_b=d&key_b=e&key_b=f&"
-                "key_c=g&"
-                "key_d=h&"
-                "form_pk=0&"
-                "csrfmiddlewaretoken=bar"
-            ),
-            content_type="application/x-www-form-urlencoded",
-        )
-        forms = FormGroup([Form(questions=[]), Form(questions=[]), Form(questions=[]),])
-
-        def handle_post(request, data):
-            return data, HTTPStatus.OK
-
-        form, data = submit_paged_form(request, forms, handle_post, expect_many_values=["key_a", "key_c", "key_e"])
-
-        self.assertEqual(
-            data, {"key_a": ["a", "b", "c"], "key_b": "f", "key_c": ["g"], "key_d": "h", "key_e": None,},
-        )
-
-
 class TemplateTagsTestCase(TestCase):
     def test_prefix_dots(self):
         self.assertEqual("nodots", prefix_dots("nodots"))

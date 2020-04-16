@@ -44,7 +44,14 @@ def remove_unused_errors(errors, form: Form):
         return {}
 
     for component in get_all_form_components(form):
-        if hasattr(component, "name") and errors.get(component.name):
+        # we look at [:-2] since checkboxes are lists that are named like "field[]", and we don't have "[]" in the api
+        if (
+            hasattr(component, "input_type")
+            and component.input_type == "checkboxes"
+            and errors.get(component.name[:-2])
+        ):
+            cleaned_errors[component.name[:-2]] = errors.get(component.name[:-2])
+        elif hasattr(component, "name") and errors.get(component.name):
             cleaned_errors[component.name] = errors.get(component.name)
 
     return cleaned_errors
@@ -148,7 +155,6 @@ def handle_lists(data):
     We indicate which components return a list by [] appended at the end of its name
     """
     temp_data = {}
-    lists = []
 
     # If a key ends with [] remove the two characters, and instead
     # of doing a get() to get its values use a getlist() which returns all
@@ -156,11 +162,10 @@ def handle_lists(data):
     for key in data.keys():
         if key.endswith("[]"):
             temp_data[key[:-2]] = data.getlist(key)
-            lists.append(key[:-2])
         else:
             temp_data[key] = data.get(key)
 
-    return temp_data, lists
+    return temp_data
 
 
 def get_all_form_components(form: Form):

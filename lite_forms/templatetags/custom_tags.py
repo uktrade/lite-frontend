@@ -101,6 +101,11 @@ def dict_hidden_field(key, value):
     """
     if isinstance(value, dict):
         value = json.dumps(value)
+    if isinstance(value, list):
+        str = ""
+        for item in value:
+            str += f"<input type='hidden' name='{key}[]' value='{item}'>"
+        return str
     return f"<input type='hidden' name='{key}' value='{value}'>"
 
 

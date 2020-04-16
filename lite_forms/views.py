@@ -125,7 +125,7 @@ class SingleFormView(FormView):
         data = self.on_submission(request, **kwargs)
 
         # Handle lists (such as checkboxes)
-        data, _ = handle_lists(data)
+        data = handle_lists(data)
 
         if self.get_object_pk():
             validated_data, _ = self.get_action()(request, self.get_object_pk(), data)  # noqa

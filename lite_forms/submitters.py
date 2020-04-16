@@ -42,8 +42,11 @@ def submit_single_form(request, form: Form, action: Callable, object_pk=None, ov
     return None, validated_data
 
 
-def _prepare_data(request, inject_data, expect_many_values):
+def _prepare_data(request, inject_data):
     data = request.POST.copy()
+
+    # Handle lists (such as checkboxes)
+    data = handle_lists(data)
 
     if inject_data:
         data = dict(list(inject_data.items()) + list(data.items()))
@@ -54,26 +57,12 @@ def _prepare_data(request, inject_data, expect_many_values):
     if "csrfmiddlewaretoken" in data:
         del data["csrfmiddlewaretoken"]
 
-    # expect_many_values is DEPRECATED
-    # Ensure data which is expected to have multiple values.
-    for many_value_key in expect_many_values:
-        data[many_value_key] = request.POST.getlist(many_value_key)
-
-    # Handle lists (such as checkboxes)
-    data, lists = handle_lists(data)
-
     # Post the data to the validator and check for errors
-    return data, nest_data(data), lists
+    return data, nest_data(data)
 
 
 def submit_paged_form(  # noqa
-    request,
-    form_group: FormGroup,
-    action: Callable,
-    object_pk=None,
-    inject_data=None,
-    expect_many_values=None,
-    additional_context: dict = None,
+    request, form_group: FormGroup, action: Callable, object_pk=None, inject_data=None, additional_context: dict = None,
 ):
     """
     Function to handle the submission of the data from one form in a sequence of forms (a FormGroup).
@@ -82,16 +71,13 @@ def submit_paged_form(  # noqa
     :param action: The callback action to be invoked here to submit the form's data
     :param object_pk: Entity primary key to be supplied with the submission, if any
     :param inject_data: Additional data to be added to the supplied request's data before submitting
-    :param expect_many_values: List of the data keys whose values contain multiple values
     :param additional_context: Adds additional items to context for form
     :return: The next form page to display
     """
     if additional_context is None:
         additional_context = {}
-    if expect_many_values is None:
-        expect_many_values = []
 
-    data, nested_data, lists = _prepare_data(request, inject_data, expect_many_values)
+    data, nested_data = _prepare_data(request, inject_data)
 
     form_pk = request.POST.get("form_pk")
     previous_form = get_previous_form(form_pk, form_group)
@@ -99,8 +85,6 @@ def submit_paged_form(  # noqa
     next_form = get_next_form(form_pk, form_group)
 
     if data.get("_action") and data.get("_action") == "back":
-        data = request.POST.copy()
-        del data["form_pk"]
         return (
             form_page(
                 request, previous_form, data=data, extra_data={"form_pk": previous_form.pk, **additional_context},
@@ -135,7 +119,11 @@ def submit_paged_form(  # noqa
                         continue
 
             if not exists:
-                current_form.questions.insert(0, HiddenField(key, value))
+                if isinstance(value, list):
+                    for sub_value in value:
+                        current_form.questions.insert(0, HiddenField(key + "[]", sub_value))
+                else:
+                    current_form.questions.insert(0, HiddenField(key, value))
 
         return (
             form_page(
@@ -155,16 +143,9 @@ def submit_paged_form(  # noqa
     # Add existing post data to new form as hidden fields
     for key, value in data.items():
         # If the keys value is a list, insert each individually
-        if key in lists:
+        if isinstance(value, list):
             for sub_value in value:
                 next_form.questions.insert(0, HiddenField(key + "[]", sub_value))
-        elif key in expect_many_values:
-            # Deprecated - add [] after your components name
-            if value:
-                for sub_value in value:
-                    next_form.questions.insert(0, HiddenField(key, sub_value))
-            else:
-                next_form.questions.insert(0, HiddenField(key, []))
         else:
             next_form.questions.insert(0, HiddenField(key, value))
 
