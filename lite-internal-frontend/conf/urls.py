@@ -13,4 +13,5 @@ urlpatterns = [
     path("team/picklists/", include("picklists.urls")),
     path("team", include("teams.urls")),
     path("users/", include("users.urls")),
+    path("routing-rules/", include("routing_rules.urls")),
 ]

@@ -45,7 +45,7 @@ from pages.case_list_page import CaseListPage
 from pages.application_page import ApplicationPage
 from pages.queues_pages import QueuesPages
 
-from ui_automation_tests.shared.tools.helpers import paginated_item_exists
+from ui_automation_tests.shared.tools.helpers import paginated_item_exists, get_formatted_date_time_m_d_h_s
 
 
 def pytest_addoption(parser):
@@ -375,3 +375,10 @@ def add_a_flag(driver, add_destination_flag):  # noqa
 @when("I add a flag at level Organisation")  # noqa
 def add_a_flag(driver, add_organisation_flag):  # noqa
     pass
+
+
+@given("a new queue has been created")  # noqa
+def create_queue(context, api_test_client):  # noqa
+    api_test_client.queues.add_queue("queue" + get_formatted_date_time_m_d_h_s())
+    context.queue_name = api_test_client.context["queue_name"]
+    context.queue_id = api_test_client.context["queue_id"]

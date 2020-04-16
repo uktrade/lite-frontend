@@ -7,7 +7,7 @@ from ui_automation_tests.pages.unassign_queue_page import UnassignQueuePage
 from ui_automation_tests.shared import functions
 
 from ui_automation_tests.pages.assign_user_page import AssignUserPage
-from ui_automation_tests.shared.tools.helpers import get_formatted_date_time_m_d_h_s, paginated_item_exists
+from ui_automation_tests.shared.tools.helpers import paginated_item_exists
 
 scenarios("../features/assign_users_to_queue.feature", strict_gherkin=False)
 
@@ -127,13 +127,6 @@ def click_user_and_assign(driver):
     assign_user_page = AssignUserPage(driver)
     assign_user_page.select_first_radio_button()
     functions.click_submit(driver)
-
-
-@given("a new queue has been created")
-def create_queue(context, api_test_client):
-    api_test_client.queues.add_queue("queue" + get_formatted_date_time_m_d_h_s())
-    context.queue_name = api_test_client.context["queue_name"]
-    context.queue_id = api_test_client.context["queue_id"]
 
 
 @then("I see a user is assigned")
