@@ -9,6 +9,7 @@ from lite_content.lite_internal_frontend import (  # noqa
     teams,  # noqa
     queues,  # noqa
     picklists,  # noqa
+    routing_rules,  # noqa
 )  # noqa
 
 # Buttons
