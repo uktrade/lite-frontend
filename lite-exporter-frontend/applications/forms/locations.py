@@ -68,7 +68,7 @@ def add_external_location():
 
 def new_location_form(application_type):
     exclude = []
-    if application_type == CaseTypes.SITL:
+    if application_type in [CaseTypes.SITL, CaseTypes.SICL, CaseTypes.OICL]:
         exclude.append("GB")
 
     countries = get_countries(None, True, exclude)
@@ -95,7 +95,7 @@ def new_location_form(application_type):
 
 def external_locations_form(request, application_type):
     exclude = []
-    if application_type == CaseTypes.SITL:
+    if application_type in [CaseTypes.SITL, CaseTypes.SICL, CaseTypes.OICL]:
         exclude.append("GB")
 
     return Form(
@@ -114,14 +114,14 @@ def external_locations_form(request, application_type):
 
 def sites_form(request, application_type):
     exclude = []
-    if application_type == CaseTypes.SITL:
+    if application_type in [CaseTypes.SITL, CaseTypes.SICL, CaseTypes.OICL]:
         exclude.append("GB")
 
     return Form(
         title="Select locations",
         questions=[
             Filter(),
-            Checkboxes(name="sites[]", options=get_sites(request, request.user.organisation, True, exclude)),
+            Checkboxes(name="sites[]", options=get_sites(request, request.user.organisation, True, False, exclude)),
         ],
         javascript_imports=["/assets/javascripts/filter-checkbox-list.js"],
         default_button_name=generic.SAVE_AND_CONTINUE,

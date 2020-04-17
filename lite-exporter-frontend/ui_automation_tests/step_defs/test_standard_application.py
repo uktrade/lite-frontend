@@ -255,3 +255,17 @@ def create_standard_individual_transhipment_application(driver, context):  # noq
     ApplyForALicencePage(driver).select_goods_categories()
     functions.click_submit(driver)
     enter_export_licence(driver, "yes", "123456", context)
+
+
+@when("I create a standard individual trade control draft application")  # noqa
+def create_standard_individual_trade_control_application(driver, context):  # noqa
+    ExporterHubPage(driver).click_apply_for_a_licence()
+    apply_for_licence_page = ApplyForALicencePage(driver)
+    apply_for_licence_page.select_licence_type("trade_control_licence")
+    functions.click_submit(driver)
+
+    enter_type_of_application(driver, "sicl", context)
+    enter_application_name(driver, context)
+
+    apply_for_licence_page.select_trade_control_activity()
+    apply_for_licence_page.select_trade_control_product_category()

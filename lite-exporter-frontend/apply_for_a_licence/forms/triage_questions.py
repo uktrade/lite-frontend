@@ -1,6 +1,7 @@
 from django.urls import reverse_lazy
 
 from applications.forms.edit import goods_categories, reference_name_form, told_by_an_official_form
+from apply_for_a_licence.forms.trade_control_licence import application_type_form, activity_form, product_category_form
 from conf.constants import CaseTypes
 from lite_content.lite_exporter_frontend import generic
 from lite_content.lite_exporter_frontend.applications import (
@@ -9,7 +10,16 @@ from lite_content.lite_exporter_frontend.applications import (
     MODQuestions,
     TranshipmentQuestions,
 )
-from lite_forms.components import Form, RadioButtons, Option, Breadcrumbs, BackLink, FormGroup, DetailComponent, Label
+from lite_forms.components import (
+    Form,
+    RadioButtons,
+    Option,
+    Breadcrumbs,
+    BackLink,
+    FormGroup,
+    DetailComponent,
+    Label,
+)
 from lite_forms.helpers import conditional
 
 
@@ -32,7 +42,7 @@ def opening_question():
                         description=InitialApplicationQuestionsForms.OpeningQuestion.LicenceTypes.TRANSHIPMENT_LICENCE_DESCRIPTION,
                     ),
                     Option(
-                        key="export_licence",
+                        key="trade_control_licence",
                         value=InitialApplicationQuestionsForms.OpeningQuestion.LicenceTypes.TRADE_CONTROL_LICENCE_TITLE,
                         description=InitialApplicationQuestionsForms.OpeningQuestion.LicenceTypes.TRADE_CONTROL_LICENCE_DESCRIPTION,
                     ),
@@ -105,6 +115,12 @@ def export_licence_questions(application_type):
             ),
             *conditional(application_type == CaseTypes.SIEL, [goods_categories(), told_by_an_official_form()], []),
         ]
+    )
+
+
+def trade_control_licence_questions(request):
+    return FormGroup(
+        [application_type_form(), reference_name_form(), activity_form(request), product_category_form(request)]
     )
 
 

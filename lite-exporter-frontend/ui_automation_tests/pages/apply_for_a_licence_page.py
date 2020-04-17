@@ -3,7 +3,6 @@ from ui_automation_tests.shared.BasePage import BasePage
 
 
 class ApplyForALicencePage(BasePage):
-
     NAME_OR_REFERENCE_INPUT_ID = "name"
     LICENCE_TYPE_PARTIAL_ID = "licence_type-"
     MOD_APPLICATION_TYPE_PARTIAL_ID = "application_type-"
@@ -15,6 +14,9 @@ class ApplyForALicencePage(BasePage):
     SUCCESS_BANNER_CLASS = ".govuk-panel--confirmation"
     CHECKBOXES_GOODS_CATEGORIES_NAME = "goods_categories[]"
     F680_CLEARANCE_TYPE_CHECKBOXES_NAME = "types[]"
+    TRADE_CONTROL_ACTIVITY_OTHER_ID = "trade_control_activity-other"
+    TRADE_CONTROL_ACTIVITY_OTHER_DETAILS_ID = "trade_control_activity_other"
+    TRADE_CONTROL_PRODUCT_CATEGORY_A_ID = "Category A"
 
     def enter_name_or_reference_for_application(self, name):
         element = self.driver.find_element_by_id(self.NAME_OR_REFERENCE_INPUT_ID)
@@ -57,3 +59,13 @@ class ApplyForALicencePage(BasePage):
 
     def is_success_panel_present(self):
         return len(self.driver.find_elements_by_css_selector(self.SUCCESS_BANNER_CLASS)) > 0
+
+    def select_trade_control_activity(self):
+        self.driver.find_element_by_id(self.TRADE_CONTROL_ACTIVITY_OTHER_ID).click()
+        self.driver.find_element_by_id(self.TRADE_CONTROL_ACTIVITY_OTHER_DETAILS_ID).clear()
+        self.driver.find_element_by_id(self.TRADE_CONTROL_ACTIVITY_OTHER_DETAILS_ID).send_keys("Other")
+        functions.click_submit(self.driver)
+
+    def select_trade_control_product_category(self):
+        self.driver.find_element_by_id(self.TRADE_CONTROL_PRODUCT_CATEGORY_A_ID).click()
+        functions.click_submit(self.driver)

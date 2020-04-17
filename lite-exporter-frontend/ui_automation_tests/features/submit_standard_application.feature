@@ -215,3 +215,10 @@ Feature: I want to indicate the standard licence I want
     When I go to exporter homepage
     And I click on applications
     Then I see submitted application
+
+
+  @LT_1331_standard_individual_trade_control_application @regression
+  Scenario: Apply for a standard individual trade control licence draft
+    Given I go to exporter homepage and choose Test Org
+    When I create a standard individual trade control draft application
+    Then I can see the sections "reference-name, goods, end_use_details, route_of_goods, location, end_user, consignee, third-parties, supporting-documents, notes" are on the task list

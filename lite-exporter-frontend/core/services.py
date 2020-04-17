@@ -20,6 +20,8 @@ from conf.constants import (
     PV_GRADINGS_URL,
     ITEM_TYPES_URL,
     STATIC_F680_CLEARANCE_TYPES_URL,
+    STATIC_TRADE_CONTROL_ACTIVITIES,
+    STATIC_TRADE_CONTROL_PRODUCT_CATEGORIES,
 )
 from lite_forms.generators import error_page
 
@@ -210,6 +212,18 @@ def get_control_list_entries(request, convert_to_options=False, converted_contro
 def get_f680_clearance_types(request):
     data = get(request, STATIC_F680_CLEARANCE_TYPES_URL)
     return data.json().get("types")
+
+
+# Trade control activities
+def get_trade_control_activities(request):
+    data = get(request, STATIC_TRADE_CONTROL_ACTIVITIES)
+    return data.json().get("activities")
+
+
+# Trade control product categories
+def get_trade_control_product_categories(request):
+    data = get(request, STATIC_TRADE_CONTROL_PRODUCT_CATEGORIES)
+    return data.json().get("product_categories")
 
 
 # PV gradings

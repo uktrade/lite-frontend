@@ -75,6 +75,26 @@
 					</dd>
 				</div>
 			{% endif %}
+			{% if application.trade_control_activity %}
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'applications.ApplicationSummaryPage.TRADE_CONTROL_ACTIVITY' %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{{ application.trade_control_activity.value }}
+					</dd>
+				</div>
+			{% endif %}
+			{% if application.trade_control_product_categories %}
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'applications.ApplicationSummaryPage.TRADE_CONTROL_PRODUCT_CATEGORY' %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{{ application.trade_control_product_categories|join_key_value_list }}
+					</dd>
+				</div>
+			{% endif %}
 			{% if application.clearance_level %}
 				<div class="govuk-summary-list__row">
 					<dt class="govuk-summary-list__key">

@@ -1,5 +1,4 @@
-from applications.forms.edit import told_by_an_official_form
-from apply_for_a_licence.forms import reference_name_form
+from applications.forms.edit import told_by_an_official_form, reference_name_form
 from conf.constants import STANDARD
 from lite_content.lite_exporter_frontend import strings
 from django.urls import reverse_lazy

@@ -30,7 +30,7 @@
 			<ul class="lite-task-list__items {% if is_editing %}govuk-!-padding-0{% endif %}">
 				{% url 'applications:edit_reference_name' application.id as reference_name_url %}
 				{% include "includes/task-list-item.html" with id='reference-name' title=strings.ENTER_A_REFERENCE_NAME_SHORT_TITLE url=reference_name_url status="done" description=application.name %}
-				{% if application_type|application_type_in_list:"HAS_TOLD_BY_OFFICIAL" %}
+				{% if application_type|application_type_in_list:"HAS_TOLD_BY_OFFICIAL" and application.have_you_been_informed != None %}
 					{% url 'applications:edit_told_by_an_official' application.id as told_by_an_official_url %}
 					{% include "includes/task-list-item.html" with id="told-by-an-official" title=strings.END_USE_CONTROL url=told_by_an_official_url status="done" description=reference_number_description %}
 				{% endif %}
