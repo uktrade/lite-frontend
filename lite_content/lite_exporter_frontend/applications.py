@@ -148,6 +148,8 @@ class ApplicationSummaryPage:
     END_USE_DETAILS = "End use details"
     ROUTE_OF_GOODS = "Route of products"
     TEMPORARY_EXPORT_DETAILS = "Temporary export details"
+    TRADE_CONTROL_ACTIVITY = "Type of activity"
+    TRADE_CONTROL_PRODUCT_CATEGORY = "Product category"
 
     class Sections:
         COMPLETED_TAG = "Saved"
@@ -229,6 +231,7 @@ class InitialApplicationQuestionsForms:
                 "Select if you're shipping something from overseas through the UK on to another country."
                 " If the products will be in the UK for 30 days or more, apply for an export licence."
             )
+
             TRADE_CONTROL_LICENCE_TITLE = "Trade control licence"
             TRADE_CONTROL_LICENCE_DESCRIPTION = (
                 "Select if you’re arranging or brokering the sale or movement of controlled military products "
@@ -274,6 +277,36 @@ class ExportLicenceQuestions:
         DESCRIPTION = "You may know this as an 'end use control'."
         WHAT_WAS_THE_REFERENCE_CODE_TITLE = "Reference number"
         WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION = "The reference number is on the official letter or email."
+
+
+class TradeControlLicenceQuestions:
+    class TradeControlLicenceQuestion:
+        TITLE = "Select the type of trade control licence you need"
+        DESCRIPTION = ""
+        BACK = "Back"
+        STANDARD_LICENCE = "Standard licence"
+        STANDARD_LICENCE_DESCRIPTION = "Select a standard licence for a set quantity and set value of products."
+        OPEN_LICENCE = "Open licence"
+        OPEN_LICENCE_DESCRIPTION = (
+            "Select an open licence for multiple shipments of specific products to specific countries. "
+            "Open licences cover long term projects and repeat business."
+        )
+
+    class ControlActivity:
+        TITLE = "Select the type of trade control activity you're providing"
+        DESCRIPTION = ""
+        OTHER_DESCRIPTION = "Provide details"
+
+    class ProductCategory:
+        TITLE = "Select a trade control product category"
+        DESCRIPTION = (
+            "Find out about [trade control product categories]("
+            "https://www.gov.uk/guidance/export-controls-military-goods-software-and-technology#trade"
+            "-controls-and-arranging-sales-or-movements)."
+        )
+        CATEGORY_A_HINT = "This is a hint for Category A"
+        CATEGORY_B_HINT = "This is a hint for Category B"
+        CATEGORY_C_HINT = "This is a hint for Category C"
 
 
 class TranshipmentQuestions:
