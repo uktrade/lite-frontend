@@ -42,6 +42,18 @@
 				<p>{{ case.application.updated_at|str_date }}</p>
 			</div>
 		</div>
+		{% if case.case_type.reference.key == 'sicl' %}
+			<div class="govuk-grid-row">
+				<div class="govuk-grid-column-one-quarter">
+					<p class="app-case-board__heading">{% lcs 'CASE_INFO_TRADE_CONTROL_ACTIVITY' %}</p>
+					<p>{{ case.application.trade_control_activity.value }}</p>
+				</div>
+				<div class="govuk-grid-column-one-quarter">
+					<p class="app-case-board__heading">{% lcs 'CASE_INFO_TRADE_CONTROL_PRODUCT_CATEGORY' %}</p>
+					<p>{{ case.application.trade_control_product_categories|join_key_value_list }}</p>
+				</div>
+			</div>
+		{%  endif %}
 	</div>
 
 	<div class="govuk-accordion app-accordion" data-module="govuk-accordion" id="accordion-default">
