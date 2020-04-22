@@ -86,16 +86,18 @@ class Cases:
 
         return response.status_code
 
-    def finalise_case(self, draft_id, action):
+    def finalise_case(self, draft_id, action, additional_data=None):
         date = datetime.datetime.now()
-        response = self.api_client.make_request(
+        data = {"action": action, "day": date.day, "month": date.month, "year": date.year}
+        if additional_data:
+            data.update(additional_data)
+
+        self.api_client.make_request(
             method="PUT",
             url="/applications/" + draft_id + "/final-decision/",
             headers=self.api_client.gov_headers,
-            body={"action": action, "day": date.day, "month": date.month, "year": date.year},
+            body=data,
         )
-
-        return response.status_code
 
     def create_user_advice(self, case_id, data):
         self.api_client.make_request(

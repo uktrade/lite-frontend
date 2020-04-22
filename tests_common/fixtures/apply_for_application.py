@@ -84,7 +84,7 @@ def apply_for_standard_application(api_test_client, context):
     data = api_test_client.applications.submit_application(draft_id)
     save_application_data_to_context(api_test_client, context)
     context.good_id = api_test_client.context.get("good_id")
-    context.good = data["application"]["goods"][0]
+    context.goods = data["application"]["goods"]
     timer.print_time("apply_for_standard_application")
 
 
@@ -243,7 +243,7 @@ def _apply_for_mod_clearance(
         api_test_client.applications.post_exhibition_details(draft_id=draft_id, data=None)
     data = api_test_client.applications.submit_application(draft_id)
     save_application_data_to_context(api_test_client, context)
-    context.good = data["application"]["goods"][0]
+    context.goods = data["application"]["goods"]
 
 
 @fixture(scope="module")
