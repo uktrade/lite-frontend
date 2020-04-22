@@ -1,0 +1,192 @@
+{% extends 'layouts/base.html' %}
+
+{% load humanize %}
+
+{% block body %}
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l" id="heading">
+				{% block title %}
+					{% if licence.application.case_type.sub_type.key == "standard" or licence.application.case_type.sub_type.key == "open" %}
+						{% lcs "licences.LicencePage.LICENCE_TITLE" %} {{ licence.application.reference_code }}
+					{% else %}
+						{% lcs "licences.LicencePage.CLEARANCE_TITLE" %} {{ licence.application.reference_code }}
+					{% endif %}
+				{% endblock %}
+			</h1>
+			<h2 class="govuk-heading-m">{{ licence.application.case_type.sub_type.value }}</h2>
+		</div>
+	</div>
+
+	<div class="govuk-grid-row">
+		<dl class="govuk-summary-list govuk-summary-list--no-border govuk-grid-column-two-thirds">
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs "licences.LicencePage.Summary.REFERENCE" %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					<a href="{% url 'applications:application' licence.application.id %}?return_to={{ request.path }}" class="govuk-link govuk-link--no-visited-state">{{ licence.application.name }}</a>
+				</dd>
+			</div>
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs "licences.LicencePage.Summary.LICENCE_DOCUMENT" %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{% for document in licence.application.documents %}
+						{% if document.advice_type.key == "approve" %}
+							<span class="govuk-visually-hidden">{% lcs "licences.LicencesList.DOWNLOAD_HIDDEN_TEXT" %}</span>
+							<a href="{% url 'applications:download_generated_document' document.id licence.application.id %}" class="govuk-button" id="licence-document-download">{% lcs "licences.LicencePage.Summary.DOWNLOAD_LICENCE_DOCUMENT" %}</a>
+						{% endif %}
+					{% endfor %}
+				</dd>
+			</div>
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs "licences.LicencePage.Summary.STATUS" %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ licence.application.status.value }}
+				</dd>
+			</div>
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs "licences.LicencePage.Summary.START_DATE" %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ licence.start_date|str_date_only }}
+				</dd>
+			</div>
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs "licences.LicencePage.Summary.END_DATE" %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ licence.start_date|add_months:licence.duration }}
+				</dd>
+			</div>
+			{% if licence.application.destinations %}
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs "licences.LicencePage.Summary.DESTINATION" %}
+					</dt>
+					<dd class="govuk-summary-list__value" id="destination">
+						{% for destination in licence.application.destinations %}
+							{{ destination.country.name }}{% if not forloop.last %},{% endif %}
+						{% endfor %}
+					</dd>
+				</div>
+			{% endif %}
+			{% if licence.application.end_user %}
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs "licences.LicencePage.Summary.END_USER" %}
+					</dt>
+					<dd class="govuk-summary-list__value" id="end-user">
+						{{ licence.application.end_user.party.name }}<br>
+						{{ licence.application.end_user.party.address }}<br>
+						{{ licence.application.end_user.party.country.name }}<br>
+						<a href="{% url 'applications:end_user_download_document' licence.application.id licence.application.end_user.party.id %}" class="govuk-link govuk-link--no-visited-state">{{ licence.application.end_user.party.document.name }}</a>
+					</dd>
+				</div>
+			{% endif %}
+			{% if licence.application.ultimate_end_users %}
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs "licences.LicencePage.Summary.ULTIMATE_END_USERS" %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{% for user in licence.application.ultimate_end_users %}
+							{{ user.party.name }}<br>
+							{{ user.party.address }}<br>
+							{{ user.party.country.name }}<br>
+							<a href="{% url 'applications:ultimate_end_user_download_document' licence.application.id user.party.id %}" class="govuk-link govuk-link--no-visited-state">{{ user.party.document.name }}</a>
+						{% endfor %}
+					</dd>
+				</div>
+			{% endif %}
+			{% if licence.application.consignee %}
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs "licences.LicencePage.Summary.CONSIGNEE" %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{{ licence.application.consignee.party.name }}<br>
+						{{ licence.application.consignee.party.address }}<br>
+						{{ licence.application.consignee.party.country.name }}<br>
+						<a href="{% url 'applications:consignee_download_document' licence.application.id licence.application.consignee.party.id %}" class="govuk-link govuk-link--no-visited-state">{{ licence.application.consignee.party.document.name }}</a>
+					</dd>
+				</div>
+			{% endif %}
+			{% if licence.application.third_parties %}
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs "licences.LicencePage.Summary.THIRD_PARTIES" %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{% for user in licence.application.third_parties %}
+							{{ user.party.role.value }}<br>
+							{{ user.party.name }}<br>
+							{{ user.party.address }}<br>
+							{{ user.party.country.name }}<br>
+							<a href="{% url 'applications:third_party_download_document' licence.application.id user.party.id %}" class="govuk-link govuk-link--no-visited-state">{{ user.party.document.name }}</a><br>
+						{% endfor %}
+					</dd>
+				</div>
+			{% endif %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs "licences.LicencePage.Summary.SUPPORTING_DOCUMENTS" %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{% for document in licence.application.documents %}
+						<a href="{% url 'applications:download_generated_document' document.id licence.application.id %}" class="govuk-link govuk-link--no-visited-state" id="generated-document-download">{{ document.name }}</a><br>
+					{% endfor %}
+				</dd>
+			</div>
+		</dl>
+	</div>
+
+	<table class="govuk-table">
+		<thead class="govuk-table__head">
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header" scope="col">{% lcs "licences.LicencePage.GoodsTable.DETAILS" %}</th>
+				{% if licence.application.goods.0.quantity %}
+					<th class="govuk-table__header" scope="col">{% lcs "licences.LicencePage.GoodsTable.APPLIED_FOR" %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs "licences.LicencePage.GoodsTable.LICENCED" %}</th>
+				{% endif %}
+				{% if licence.application.goods.0.usage != None and licence.application.case_type.sub_type.key == "standard" or licence.application.case_type.sub_type.key == "open" %}
+					<th class="govuk-table__header" scope="col">{% lcs "licences.LicencePage.GoodsTable.USAGE" %}</th>
+				{% endif %}
+			</tr>
+		</thead>
+		<tbody class="govuk-table__body">
+			{% for good in licence.application.goods %}
+					<tr class="govuk-table__row" id="good-row">
+						<td class="govuk-table__cell">
+							{% if good.good %}
+								{{ good.good.control_code }}<br>
+								{{ good.good.description }}
+							{% else %}
+								{{ good.control_code }}<br>
+								{{ good.description }}
+							{% endif %}
+						</td>
+						{% if licence.application.goods.0.quantity %}
+							<td class="govuk-table__cell">
+								{{ good.quantity|floatformat|intcomma }} {{ good.unit.value }}
+							</td>
+							<td class="govuk-table__cell">
+								{{ good.licenced_quantity|floatformat|intcomma }} {{ good.unit.value }} (£{{ good.licenced_value|floatformat:2|intcomma }})
+							</td>
+						{% endif %}
+						{% if licence.application.goods.0.usage != None and licence.application.case_type.sub_type.key == "standard" or licence.application.case_type.sub_type.key == "open" %}
+							<td class="govuk-table__cell" id="usage">
+								{{ good.usage|floatformat|intcomma }} {% if good.unit %} {{ good.unit.value }} {% endif %}
+							</td>
+						{% endif %}
+					</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% endblock %}

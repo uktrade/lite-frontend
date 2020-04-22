@@ -658,7 +658,7 @@ def click_licences_link(driver):  # noqa
 @given(parsers.parse('I create "{decision}" final advice'))  # noqa
 def final_advice(context, decision, api_test_client):  # noqa
     api_test_client.cases.create_final_advice(
-        context.case_id, [{"type": decision, "text": "abc", "note": "", "good": context.good["good"]["id"]}]
+        context.case_id, [{"type": decision, "text": "abc", "note": "", "good": context.goods[0]["good"]["id"]}]
     )
 
 
@@ -669,6 +669,25 @@ def create_licence(context, decision, api_test_client):  # noqa
     )
     api_test_client.cases.add_generated_document(context.case_id, document_template["id"], decision)
     api_test_client.cases.finalise_case(context.case_id, "approve")
+    api_test_client.cases.finalise_licence(context.case_id)
+    context.licence = api_test_client.context["licence"]
+
+
+@given(
+    parsers.parse('I create a licence for my application with "{decision}" decision document and good decisions')
+)  # noqa
+def create_licence_with_licenced_goods(context, decision, api_test_client):  # noqa
+    document_template = api_test_client.document_templates.add_template(
+        api_test_client.picklists, case_types=["oiel", "siel", "exhc"]
+    )
+    api_test_client.cases.add_generated_document(context.case_id, document_template["id"], decision)
+
+    additional_data = {}
+    for good in context.goods:
+        additional_data[f"quantity-{good['id']}"] = good["quantity"]
+        additional_data[f"value-{good['id']}"] = round(float(good["value"]) * good["quantity"], 2)
+
+    api_test_client.cases.finalise_case(context.case_id, "approve", additional_data)
     api_test_client.cases.finalise_licence(context.case_id)
     context.licence = api_test_client.context["licence"]
 

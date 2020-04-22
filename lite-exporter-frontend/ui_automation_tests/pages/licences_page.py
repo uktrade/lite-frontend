@@ -3,6 +3,7 @@ from ui_automation_tests.shared.BasePage import BasePage
 
 class LicencesPage(BasePage):
     LICENCE_ROW_PARTIAL_ID = "licence-"
+    VIEW_LICENCE_PARTIAL_ID = "view-"
     EXPAND_LICENCE_ROW_PARTIAL_ID = "expand-"
     CLEARANCES_TAB_ID = "clearances-tab"
     NLR_TAB_ID = "nlrs-tab"
@@ -16,3 +17,6 @@ class LicencesPage(BasePage):
 
     def click_nlr_tab(self):
         self.driver.find_element_by_id(self.NLR_TAB_ID).click()
+
+    def click_licence(self, id):
+        self.driver.find_element_by_id(self.VIEW_LICENCE_PARTIAL_ID + id).click()

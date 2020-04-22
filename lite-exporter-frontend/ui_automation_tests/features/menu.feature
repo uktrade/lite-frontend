@@ -6,7 +6,7 @@ Feature: Go to each item from the homepage
     Given I go to exporter homepage and choose Test Org
     And I create a standard application via api
     And I create "approve" final advice
-    And I create a licence for my application with "approve" decision document
+    And I create a licence for my application with "approve" decision document and good decisions
     When I refresh the page
     Then the log out link is displayed
     When I click on applications

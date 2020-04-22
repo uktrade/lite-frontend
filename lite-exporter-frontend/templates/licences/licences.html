@@ -22,9 +22,6 @@
 				<a id="clearances-tab" href="{% url 'licences:licences' %}?licence_type=clearance" class="lite-tabs__tab lite-tabs__tab{% if licence_type == "clearance" %}--selected{% endif %}">
 					{% lcs "licences.LicencesList.Tabs.CLEARANCE" %}
 				</a>
-				<a id="nlrs-tab" href="{% url 'licences:licences' %}?licence_type=nlr" class="lite-tabs__tab lite-tabs__tab{% if licence_type == "nlr" %}--selected{% endif %}">
-					{% lcs "licences.LicencesList.Tabs.NLR" %}
-				</a>
 			{% endwith %}
 		</div>
 	</div>
@@ -57,7 +54,7 @@
 							<span class="govuk-table__header" aria-hidden="true">
 								{% lcs "licences.LicencesList.Table.LICENCE_COLUMN" %}
 							</span>
-							{{ licence.application.reference_code }}
+							<a href="{% url 'licences:licence' licence.id %}" id="view-{{ licence.id }}" class="govuk-link govuk-link--no-visited-state">{{ licence.application.reference_code }}</a>
 						</td>
 						<td class="govuk-table__cell">
 							<span class="govuk-table__header" aria-hidden="true">

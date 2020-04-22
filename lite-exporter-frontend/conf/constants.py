@@ -1,4 +1,7 @@
 ISO8601_FMT = "%Y-%m-%dT%H:%M:%S.%fZ"
+DATE_FORMAT = "%Y-%m-%d"
+PAGE_DATE_FORMAT = "%d %B %Y"
+TIMEZONE = "Europe/London"
 NEWLINE = "\n"
 
 # URLs

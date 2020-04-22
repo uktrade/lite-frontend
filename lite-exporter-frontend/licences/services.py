@@ -8,3 +8,8 @@ def get_licences(
 ):
     data = get(request, LICENCES_URL + convert_parameters_to_query_params(locals()))
     return data.json()
+
+
+def get_licence(request, pk):
+    data = get(request, LICENCES_URL + str(pk) + "/")
+    return data.json(), data.status_code

@@ -1,13 +1,17 @@
+from http import HTTPStatus
+
+from django.http import Http404
 from django.shortcuts import render
 from django.views.generic import TemplateView
 
 from core.services import get_control_list_entries, get_countries
-from licences.services import get_licences
-from lite_content.lite_exporter_frontend.licences import LicencesList
+from licences.services import get_licences, get_licence
+from lite_content.lite_exporter_frontend.licences import LicencesList, LicencePage
 from lite_forms.components import FiltersBar, TextInput, HiddenField, Select, Checkboxes, Option
+from lite_forms.generators import error_page
 
 
-class ApplicationsList(TemplateView):
+class Licences(TemplateView):
     def get(self, request, **kwargs):
         page = int(request.GET.get("page", 1))
         licence_type = request.GET.get("licence_type")
@@ -45,3 +49,13 @@ class ApplicationsList(TemplateView):
             "row_limit": 3,
         }
         return render(request, "licences/licences.html", context)
+
+
+class Licence(TemplateView):
+    def get(self, request, pk):
+        licence, status_code = get_licence(request, pk)
+        if status_code == HTTPStatus.NOT_FOUND:
+            return Http404
+        elif status_code != HTTPStatus.OK:
+            return error_page(request, LicencePage.ERROR)
+        return render(request, "licences/licence.html", {"licence": licence})
