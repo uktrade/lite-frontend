@@ -7,6 +7,8 @@ from pages.give_advice_pages import GiveAdvicePages
 from pages.record_decision_page import RecordDecision
 from pages.shared import Shared
 
+from ui_automation_tests.pages.grant_licence_page import GrantLicencePage
+
 scenarios("../features/give_advice.feature", strict_gherkin=False)
 
 
@@ -114,13 +116,13 @@ def select_approve_for_all(driver):
 
 @then("Todays date and duration is filled in")
 def todays_date_is_filled_in(driver):
-    date_in_form = GiveAdvicePages(driver).get_date_in_date_entry()
+    date_in_form = GrantLicencePage(driver).get_date_in_date_entry()
     today = date.today()
     assert today.day == int(date_in_form["day"])
     assert today.month == int(date_in_form["month"])
     assert today.year == int(date_in_form["year"])
 
-    duration_in_form = GiveAdvicePages(driver).get_duration_in_finalise_view()
+    duration_in_form = GrantLicencePage(driver).get_duration_in_finalise_view()
 
     assert int(duration_in_form) > 0
 

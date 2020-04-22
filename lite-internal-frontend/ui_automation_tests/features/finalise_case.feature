@@ -13,7 +13,8 @@ Feature: I want to finalise a case
     When I go to the final advice page by url
     And I combine all advice
     And I finalise the advice
-    And I click continue on the licence page
+    Then I see the applied for goods details on the licence page
+    When I click continue
     Then I see the final advice documents page
     And The decision row status is "not-started"
     When I generate a document for the decision

@@ -7,7 +7,6 @@ class GiveAdvicePages(BasePage):
     ADVICE_CHECKBOX_OPTION = "type-"  # ID
     IMPORT_ADVICE_LINK = "link-import-"  # ID
     PICKLIST_ITEM_TEXT = ".app-picklist-picker__item p"  # CSS
-    DURATION_TEXT = "duration"
     ADDITIONAL_NOTES = "textarea-note"  # ID
     TEAM_ADVICE = "team_advice"
     FINAL_ADVICE = "final_advice"
@@ -18,9 +17,6 @@ class GiveAdvicePages(BasePage):
     FINALISE_GOODS_AND_COUNTRIES_BUTTON = "finalise_button"
     CLEARANCE_LEVEL_DROPDOWN_ID = "pv_grading"
     RADIO_INPUT_APPROVE = '.govuk-radios input[value="approve"]'
-    DAY = "day"
-    MONTH = "month"
-    YEAR = "year"
 
     def click_on_advice_option(self, option):
         self.driver.find_element_by_id(self.ADVICE_CHECKBOX_OPTION + option).click()
@@ -60,16 +56,6 @@ class GiveAdvicePages(BasePage):
         elements = self.driver.find_elements_by_css_selector(self.RADIO_INPUT_APPROVE)
         for element in elements:
             self.driver.execute_script("arguments[0].click();", element)
-
-    def get_date_in_date_entry(self):
-        return {
-            "day": self.driver.find_element_by_id(self.DAY).get_attribute("value"),
-            "month": self.driver.find_element_by_id(self.MONTH).get_attribute("value"),
-            "year": self.driver.find_element_by_id(self.YEAR).get_attribute("value"),
-        }
-
-    def get_duration_in_finalise_view(self):
-        return self.driver.find_element_by_id(self.DURATION_TEXT).get_attribute("value")
 
     def checkbox_present(self):
         return len(self.driver.find_elements_by_css_selector(".input"))

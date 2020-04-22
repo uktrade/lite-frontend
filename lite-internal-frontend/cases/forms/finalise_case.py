@@ -1,10 +1,10 @@
 from django.urls import reverse_lazy
-from lite_forms.components import Form, TextInput, BackLink, DateInput, Label, HiddenField
+from lite_forms.components import Form, TextInput, BackLink, DateInput, Label, HiddenField, Custom
 from lite_forms.helpers import conditional
 from lite_content.lite_internal_frontend import cases
 
 
-def approve_licence_form(queue_pk, case_id, is_open_licence, duration, editable_duration):
+def approve_licence_form(queue_pk, case_id, is_open_licence, duration, editable_duration, goods):
     return Form(
         title=cases.FinaliseLicenceForm.APPROVE_TITLE,
         questions=[
@@ -23,6 +23,7 @@ def approve_licence_form(queue_pk, case_id, is_open_licence, duration, editable_
                 Label(text=f"Duration: {duration} months"),
             ),
             HiddenField(name="action", value="approve"),
+            conditional(goods, Custom("case/components/goods-licence-list.html", data=goods,)),
         ],
         back_link=conditional(
             is_open_licence,

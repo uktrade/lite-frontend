@@ -74,6 +74,11 @@ def put_application_status(request, pk, json):
     return data.json(), data.status_code
 
 
+def get_finalise_application_goods(request, pk):
+    data = get(request, f"{APPLICATIONS_URL}{pk}{FINAL_DECISION_URL}")
+    return data.json(), data.status_code
+
+
 def finalise_application(request, pk, json):
     return put(request, f"{APPLICATIONS_URL}{pk}{FINAL_DECISION_URL}", json)
 

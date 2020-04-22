@@ -422,3 +422,8 @@ def join_list(_list, _join=", "):
 def join_key_value_list(_list, _join=", "):
     _list = [x["value"] for x in _list]
     return join_list(_list, _join)
+
+
+@register.filter
+def multiply(value, arg):
+    return float(value) * float(arg)

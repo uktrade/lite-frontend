@@ -7,6 +7,7 @@ from ui_automation_tests.pages.application_page import ApplicationPage
 from ui_automation_tests.pages.documents_page import DocumentsPage
 from ui_automation_tests.pages.generate_decision_documents_page import GeneratedDecisionDocuments
 from ui_automation_tests.pages.give_advice_pages import GiveAdvicePages
+from ui_automation_tests.pages.grant_licence_page import GrantLicencePage
 from ui_automation_tests.shared.functions import click_submit
 
 scenarios("../features/finalise_case.feature", strict_gherkin=False)
@@ -46,14 +47,6 @@ def final_advice_page(driver, context, internal_url):
     )
 
 
-@when("I click continue on the licence page")
-def continue_licence_page(driver, context):
-    page = GiveAdvicePages(driver)
-    context.licence_duration = page.get_duration_in_finalise_view()
-    context.licence_start_date = datetime.now().strftime(DATE_FORMAT)
-    click_submit(driver)
-
-
 @then("I see the final advice documents page")
 def final_advice_documents_page(driver, context):
     assert GeneratedDecisionDocuments(driver).decision_row_exists(context.advice_type)
@@ -90,3 +83,15 @@ def generated_decision_document(driver, context):
     documents_page = DocumentsPage(driver)
     assert context.document_template_name in documents_page.get_document_filename_at_position(0)
     assert documents_page.get_document_type_at_position(0) == "Generated"
+
+
+@then("I see the applied for goods details on the licence page")
+def applied_for_goods_details(driver, context):
+    page = GrantLicencePage(driver)
+    good_on_app_id = context.goods[0]["id"]
+    assert context.goods[0]["quantity"] == float(page.get_good_quantity(good_on_app_id))
+    assert round(float(context.goods[0]["value"]) * context.goods[0]["quantity"], 2) == float(
+        page.get_good_value(good_on_app_id)
+    )
+    context.licence_duration = page.get_duration_in_finalise_view()
+    context.licence_start_date = datetime.now().strftime(DATE_FORMAT)
