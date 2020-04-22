@@ -598,3 +598,10 @@ class Link:
 class FiltersBar:
     def __init__(self, filters: list):
         self.filters = filters
+
+
+class Custom:
+    def __init__(self, template, data=None):
+        self.input_type = "custom"
+        self.data = data
+        self.template = template
