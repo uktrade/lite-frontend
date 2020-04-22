@@ -45,6 +45,7 @@ def create_selenium_chrome_driver(chrome_options, request):
     driver.set_timeout_to(10)
 
     def fin():
+        driver.close()
         driver.quit()
 
     request.addfinalizer(fin)
