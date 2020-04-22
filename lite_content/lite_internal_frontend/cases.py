@@ -45,7 +45,7 @@ class ApplicationPage:
         MISSING_DOCUMENT_REASON_PREFIX = "No document given: "
         TITLE = "Products"
         CASE_GOODS_LOCATION = "Products location"
-        OPEN_CASE_GOODS_LOCATION = "Countries"
+        OPEN_CASE_GOODS_LOCATION = "Destinations"
         CASE_GOODS_LOCATION_NAME = "Name"
         CASE_GOODS_LOCATION_ADDRESS = "Address"
 
@@ -564,7 +564,7 @@ class GoodsDecisionMatrixPage:
 
     class Table:
         GOOD_TITLE = "Goods"
-        COUNTRIES_TITLE = "Countries"
+        COUNTRIES_TITLE = "Destinations"
         APPROVE_TITLE = "Approve"
         REJECT_TITLE = "Reject"
         REFUSE_TITLE = "Refuse"
@@ -582,7 +582,7 @@ class FinaliseLicenceForm:
 
     class Actions:
         BACK_TO_ADVICE_BUTTON = "Back to final advice"
-        BACK_TO_DECISION_MATRIX_BUTTON = "Back to finalise goods and countries"
+        BACK_TO_DECISION_MATRIX_BUTTON = "Back to finalise goods and destinations"
 
 
 class AdviceRecommendationForm:
@@ -623,7 +623,7 @@ class ViewAdvicePage:
     class Actions:
         GIVE_OR_CHANGE = "Give or change advice"
         CLEAR = "Clear advice"
-        FINALISED_GOODS_AND_COUNTRIES = "Finalise goods and countries"
+        FINALISED_GOODS_AND_COUNTRIES = "Finalise goods and destinations"
         FINALISE = "Finalise"
         COMBINE_TEAM_ADVICE = "Combine all team advice"
 

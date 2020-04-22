@@ -38,7 +38,7 @@ class GoodsList:
         QUANTITY = "Quantity"
         VALUE = "Value"
         INCORPORATED = "Incorporated"
-        COUNTRIES = "Countries"
+        COUNTRIES = "Destinations"
         STATUS = "Status"
         PRODUCT_TYPE = "Product type"
 
@@ -370,8 +370,8 @@ class NewLocationForm:
 
 class GoodsCountriesMatrix:
     BACK = "Back to application overview"
-    TITLE = "Select the countries each product is going to"
-    ERROR = "Select at least 1 country for each product"
+    TITLE = "Select the destinations each product is going to"
+    ERROR = "Select at least 1 destination for each product"
     THIS_IS_OPTIONAL = ""
     SELECT_ALL = "Select all"
     DESELECT_ALL = "Deselect all"

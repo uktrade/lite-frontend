@@ -14,8 +14,8 @@ class Navigation:
 
 class Tiles:
     APPLY_FOR_LICENCE = "Apply"
-    APPLICATIONS = "Applications"
-    VIEW_AND_MANAGE_LICENCES = "View and manage licences and clearances"
+    APPLICATIONS = "Check progress"
+    VIEW_AND_MANAGE_LICENCES = "Licences and clearances"
     GOODS = "Product list"
     END_USER_ADVISORIES = "End user advisories"
 
@@ -23,18 +23,17 @@ class Tiles:
     class Apply:
         APPLY_FOR = "Apply for:"
         EXPORT_LICENCES = "export licences"
-        TRANSHIPMENT_LICENCES = "transhipment licences"
         TRADE_CONTROL_LICENCES = "trade control licences"
+        TRANSHIPMENT_LICENCES = "transhipment licences"
         MOD_CLEARANCES = "MOD clearances"
         REGISTER_OGEL = "Register for open general export licences (OGELs)."
 
     class Applications:
-        CHECK_PROGRESS = "Check the progress of submitted applications and registrations."
+        CHECK_PROGRESS = "View the status of submitted applications and registrations."
         EDIT_APPLICATIONS = "Edit, withdraw or copy applications."
 
     class Licences:
-        # Blank for now for Anthony to add to tile later
-        DESCRIPTION = ""
+        DESCRIPTION = "View and manage your licences and clearances, including NLRs and unsuccessful applications."
 
     class ProductList:
         MANAGE_PRODUCTS = "View and manage your organisation's product database."
@@ -43,7 +42,10 @@ class Tiles:
         GRADING_LINK = "Apply for a security grading"
 
     class EUA:
-        ASK_FOR_ADVICE = "Ask for advice about any overseas company, government or individual in your export."
+        ASK_FOR_ADVICE = (
+            "Ask for advice about ann overseas organisation, government or individual in your export of products "
+            "that are not controlled."
+        )
 
     # HMRC Dashboard
     class CustomsEnquiry:

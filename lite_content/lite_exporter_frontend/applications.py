@@ -139,7 +139,7 @@ class ApplicationSummaryPage:
     EXHIBITION_DETAILS = "Exhibition details"
     GOODS_CATEGORIES = "Products"
     GOODS = "Products"
-    COUNTRIES = "Countries"
+    COUNTRIES = "Destinations"
     ON_BEHALF_OF = "Exporter"
     OPTIONAL_NOTE = "Notes"
     COPY_REFERENCE_CODE = "Copy ECJU reference"
@@ -262,7 +262,7 @@ class ExportLicenceQuestions:
         STANDARD_LICENCE_DESCRIPTION = "Select a standard licence for a set quantity and set value of products."
         OPEN_LICENCE = "Open licence"
         OPEN_LICENCE_DESCRIPTION = (
-            "Select an open licence for multiple shipments of specific products to specific countries. "
+            "Select an open licence for multiple shipments of specific products to specific destinations. "
             "Open licences cover long term projects and repeat business."
         )
 
@@ -276,7 +276,9 @@ class ExportLicenceQuestions:
         TITLE = "Have you received a letter or email from Border Force or HMRC informing you to apply for a licence?"
         DESCRIPTION = "You may know this as an 'end use control'."
         WHAT_WAS_THE_REFERENCE_CODE_TITLE = "Reference number"
-        WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION = "The reference number is on the official letter or email."
+        WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION = (
+            "For example, CRE/2020/1234567. The reference number is on the letter or email."
+        )
 
 
 class TradeControlLicenceQuestions:
@@ -288,7 +290,7 @@ class TradeControlLicenceQuestions:
         STANDARD_LICENCE_DESCRIPTION = "Select a standard licence for a set quantity and set value of products."
         OPEN_LICENCE = "Open licence"
         OPEN_LICENCE_DESCRIPTION = (
-            "Select an open licence for multiple shipments of specific products to specific countries. "
+            "Select an open licence for multiple shipments of specific products to specific destinations. "
             "Open licences cover long term projects and repeat business."
         )
 
@@ -318,7 +320,7 @@ class TranshipmentQuestions:
         STANDARD_LICENCE_DESCRIPTION = "Select a standard licence for a set quantity and set value of products."
         OPEN_LICENCE = "Open licence"
         OPEN_LICENCE_DESCRIPTION = (
-            "Select an open licence for multiple shipments of specific products to specific countries. "
+            "Select an open licence for multiple shipments of specific products to specific destinations. "
             "Open licences cover long term projects and repeat business."
         )
 
@@ -376,7 +378,7 @@ class MODQuestions:
 
 
 class DestinationForm:
-    TITLE = "Where are the products going?"
+    TITLE = "Select where the products are going"
     DESCRIPTION = ""
 
 
@@ -404,7 +406,7 @@ class OpenApplicationTaskList:
     EDIT_TITLE = "Edit the application"
     GOODS = "Products"
     GOODS_LOCATION = "Locations"
-    GOODS_DESTINATION = "Countries"
+    GOODS_DESTINATION = "Destinations"
     COUNTRIES_WHERE_EACH_GOOD_IS_GOING = "Product destinations"
     SUPPORTING_DOCUMENTS = "Supporting documents"
     END_USE_DETAILS = "End use details"

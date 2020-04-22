@@ -47,7 +47,10 @@ class Documents:
 
 class CreateGoodsTypeForm:
     TITLE = "Add a product to your application"
-    DESCRIPTION = ""
+    DESCRIPTION = (
+            "Start with the product name to make it easier to find the product when needed. Include the commodity code "
+            "if you know it."
+        )
 
     class Description:
         TITLE = "Description"

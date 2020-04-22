@@ -257,8 +257,8 @@ class Licences:
             )
 
     class Countries:
-        DESCRIPTION = "Select all countries that apply."
-        TITLE = "Where are the products going?"
+        DESCRIPTION = "Select all the destinations that apply."
+        TITLE = "Select where the products are going"
 
 
 class Misc:

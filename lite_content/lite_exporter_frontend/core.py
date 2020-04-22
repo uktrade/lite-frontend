@@ -21,10 +21,10 @@ class StartPage:
     SIGN_IN_BUTTON = "Sign in with"
     SIGN_IN_BUTTON_SUFFIX = "GREAT"
     OR = "or"
-    REGISTER_ACCOUNT_LINK = "register an account"
+    REGISTER_ACCOUNT_LINK = "set up an account"
     NOTICE = (
-        "There are different services if you want to export "
-        "[drugs and medicines](https://www.gov.uk/guidance/export-drugs-and-medicines-special-rules), "
+        "There are different services if you want to "
+        "[export drugs and medicines](https://www.gov.uk/guidance/export-drugs-and-medicines-special-rules), "
         "[export fine art](https://www.artscouncil.org.uk/export-controls/export-licensing) "
         "or [export livestock](https://www.gov.uk/guidance/export-livestock-and-poultry)"
     )
@@ -74,14 +74,11 @@ class RegisterAnOrganisation:
         NAME = "Name of organisation"
         NAME_DESCRIPTION = ""
         EORI_NUMBER = "European Union registration and identification number (EORI)"
-        EORI_NUMBER_DESCRIPTION = (
-            "If you don't have a EORI number you can apply for one on [GOV.UK](https://www.gov.uk/eori)."
-        )
+        EORI_NUMBER_DESCRIPTION = "[Get an EORI number](https://www.gov.uk/eori) if you don't have one."
         EORI_NUMBER_SHORT_TITLE = "EORI number"
         SIC_NUMBER = "SIC number"
         SIC_NUMBER_DESCRIPTION = (
-            "If you don't know your SIC number you can find it on "
-            "[GOV.UK](https://www.gov.uk/government/publications/standard-industria"
+            "[Find your SIC number](https://www.gov.uk/government/publications/standard-industria"
             "l-classification-of-economic-activities-sic)."
         )
         SIC_NUMBER_SHORT_TITLE = "SIC number"
@@ -100,9 +97,7 @@ class RegisterAnOrganisation:
         NAME = "First and last name"
         NAME_DESCRIPTION = ""
         EORI_NUMBER = "European Union registration and identification number (EORI)"
-        EORI_NUMBER_DESCRIPTION = (
-            "If you don't have a EORI number you can apply for one on [GOV.UK](https://www.gov.uk/eori)."
-        )
+        EORI_NUMBER_DESCRIPTION = "[Get an EORI number](https://www.gov.uk/eori) if you don't have one."
         EORI_NUMBER_SHORT_TITLE = "EORI number"
         VAT_NUMBER = "UK VAT number"
         VAT_NUMBER_DESCRIPTION = (
