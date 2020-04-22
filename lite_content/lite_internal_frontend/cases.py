@@ -579,6 +579,15 @@ class FinaliseLicenceForm:
     DATE_TITLE = "Licence start date"
     DURATION_DESCRIPTION = "This must be a whole number of months, such as 12"
     DURATION_TITLE = "How long will it last?"
+    GOODS_ERROR = "Approved goods could not be fetched"
+
+    class GoodsTable:
+        CLC_COLUMN = "CLC"
+        DESCRIPTION_COLUMN = "Description"
+        DECISION_COLUMN = "Decision"
+        LICENCED_QTY_COLUMN = "Licensed quantity"
+        LICENCED_VALUE_COLUMN = "Licensed value"
+        APPLIED_FOR_TEXT = "Applied for "
 
     class Actions:
         BACK_TO_ADVICE_BUTTON = "Back to final advice"
