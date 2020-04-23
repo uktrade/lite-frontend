@@ -1,9 +1,15 @@
 {% extends 'layouts/base.html' %}
 
 {% block back_link %}
-	<a href="{% url 'applications:applications' %}" id="back-link" class="govuk-back-link">
-		{% lcs "applications.ApplicationPage.BACK" %}
-	</a>
+	{% if summary_page %}
+		<a href="{% url 'applications:task_list' case_id %}" id="back-link" class="govuk-back-link">
+			{% lcs "applications.ApplicationPage.Summary.BACK" %}
+		</a>
+	{% else %}
+		<a href="{% url 'applications:applications' %}" id="back-link" class="govuk-back-link">
+			{% lcs "applications.ApplicationPage.BACK" %}
+		</a>
+	{% endif %}
 {% endblock %}
 
 {% block body %}
@@ -11,38 +17,44 @@
 		<div class="lite-app-bar__content">
 			<h1 class="govuk-heading-l">
 				{% block title %}
-					{{ application.name|default:application.reference_code }}
+					{% if summary_page %}
+						{% lcs 'applications.ApplicationPage.Summary.TITLE' %}
+					{% else %}
+						{{ application.name|default:application.reference_code }}
+					{% endif %}
 				{% endblock %}
 			</h1>
 		</div>
-		<div class="lite-app-bar__controls">
-			{% if application.case_type.sub_type.key != 'hmrc' %}
-				{%  if not status_is_terminal %}
-					<a href="{% url 'applications:withdraw' application.id %}" id="button-withdraw-application" class="govuk-button govuk-button--secondary">
-						{% lcs 'applications.ApplicationSummaryPage.Buttons.WITHDRAW_ACCESS_BUTTON' %}
+		{% if not summary_page %}
+			<div class="lite-app-bar__controls">
+				{% if application.case_type.sub_type.key != 'hmrc' %}
+					{%  if not status_is_terminal %}
+						<a href="{% url 'applications:withdraw' application.id %}" id="button-withdraw-application" class="govuk-button govuk-button--secondary">
+							{% lcs 'applications.ApplicationSummaryPage.Buttons.WITHDRAW_ACCESS_BUTTON' %}
+						</a>
+					{% endif %}
+					{%  if not status_is_read_only %}
+						<a href="{% url 'applications:edit_type' application.id %}" id="button-edit-application" class="govuk-button govuk-button--secondary">
+							{% lcs 'applications.ApplicationSummaryPage.Buttons.EDIT_APPLICATION_BUTTON' %}
+						</a>
+					{% endif %}
+					{# Using licence_duration to check that there is a licence to surrender #}
+					{% if application.licence.duration %}
+						<a href="{% url 'applications:surrender' application.id %}" id="button-surrender-application" class="govuk-button govuk-button--secondary">
+							{% lcs 'applications.ApplicationSummaryPage.Buttons.SURRENDER_APPLICATION_BUTTON' %}
+						</a>
+					{% endif %}
+					<a class="govuk-button govuk-button--secondary" id="button-copy-application" href="{% url 'applications:copy' application.id %}">
+						{% lcs 'applications.ApplicationSummaryPage.Buttons.COPY_APPLICATION_BUTTON' %}
 					</a>
 				{% endif %}
-				{%  if not status_is_read_only %}
-					<a href="{% url 'applications:edit_type' application.id %}" id="button-edit-application" class="govuk-button govuk-button--secondary">
-						{% lcs 'applications.ApplicationSummaryPage.Buttons.EDIT_APPLICATION_BUTTON' %}
-					</a>
-				{% endif %}
-				{# Using licence_duration to check that there is a licence to surrender #}
-				{% if application.licence.duration %}
-					<a href="{% url 'applications:surrender' application.id %}" id="button-surrender-application" class="govuk-button govuk-button--secondary">
-						{% lcs 'applications.ApplicationSummaryPage.Buttons.SURRENDER_APPLICATION_BUTTON' %}
-					</a>
-				{% endif %}
-				<a class="govuk-button govuk-button--secondary" id="button-copy-application" href="{% url 'applications:copy' application.id %}">
-					{% lcs 'applications.ApplicationSummaryPage.Buttons.COPY_APPLICATION_BUTTON' %}
-				</a>
-			{% endif %}
-		</div>
+			</div>
+		{% endif %}
 	</div>
 
 	<div class="govuk-grid-row">
 		<dl class="govuk-summary-list govuk-summary-list--no-border govuk-grid-column-two-thirds">
-			{% if not application.case_type.sub_type.key == "hmrc" %}
+			{% if not application.case_type.sub_type.key == "hmrc" and type != "summary"%}
 				<div class="govuk-summary-list__row">
 					<dt class="govuk-summary-list__key">
 						{% lcs 'applications.ApplicationSummaryPage.REFERENCE_CODE' %}
@@ -50,21 +62,49 @@
 					<dd class="govuk-summary-list__value" id="summary-list-reference-code">
 						{{ application.reference_code }}
 					</dd>
-					<dd class="govuk-summary-list__actions">
-						<button class="lite-button--link lite-js-only" href="#" id="button-copy-reference-code">
-							{% lcs "applications.ApplicationSummaryPage.COPY_REFERENCE_CODE" %}
-						</button>
-					</dd>
+					{% if not summary_page %}
+						<dd class="govuk-summary-list__actions">
+							<button class="lite-button--link lite-js-only" href="#" id="button-copy-reference-code">
+								{% lcs "applications.ApplicationSummaryPage.COPY_REFERENCE_CODE" %}
+							</button>
+						</dd>
+					{% endif %}
 				</div>
+			{% endif %}
+			{% if summary_page %}
+				<dt class="govuk-summary-list__key">
+					{% if application.case_type.sub_type.key == 'hmrc' %}
+						{% lcs 'applications.ApplicationPage.Summary.QUERY' %}
+					{% else %}
+						{% lcs 'applications.ApplicationPage.Summary.LICENCE' %}
+					{% endif %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ application_type }}
+				</dd>
 			{% endif %}
 			<div class="govuk-summary-list__row">
 				<dt class="govuk-summary-list__key">
-					{% lcs 'applications.ApplicationSummaryPage.TYPE' %}
+					{% if summary_page %}
+						{% lcs 'applications.ApplicationPage.Summary.TYPE' %}
+					{% else %}
+						{% lcs 'applications.ApplicationSummaryPage.TYPE' %}
+					{% endif %}
 				</dt>
 				<dd class="govuk-summary-list__value">
 					{{ application.case_type.sub_type.value }}
 				</dd>
 			</div>
+			{% if summary_page %}
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'applications.ApplicationPage.Summary.NAME_OF_APPLICATION' %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{{ application.name|default:application.reference_code }}
+					</dd>
+				</div>
+			{% endif %}
 			{% if application.export_type %}
 				<div class="govuk-summary-list__row">
 					<dt class="govuk-summary-list__key">
@@ -75,25 +115,45 @@
 					</dd>
 				</div>
 			{% endif %}
-			{% if application.trade_control_activity %}
+			{% if summary_page and application.case_type.sub_type.key == 'standard'%}
 				<div class="govuk-summary-list__row">
 					<dt class="govuk-summary-list__key">
-						{% lcs 'applications.ApplicationSummaryPage.TRADE_CONTROL_ACTIVITY' %}
+						{% lcs 'applications.ApplicationPage.Summary.GOODS_CATEGORIES' %}
 					</dt>
 					<dd class="govuk-summary-list__value">
-						{{ application.trade_control_activity.value }}
+						{{ goods_categories.0|default_na }}
+					</dd>
+				</div>
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'applications.ApplicationPage.Summary.END_USER_CONTROL' %}
+					</dt>
+					<dd class="govuk-summary-list__value" id="summary-list-reference-code">
+						{{ reference_code }}
 					</dd>
 				</div>
 			{% endif %}
-			{% if application.trade_control_product_categories %}
-				<div class="govuk-summary-list__row">
-					<dt class="govuk-summary-list__key">
-						{% lcs 'applications.ApplicationSummaryPage.TRADE_CONTROL_PRODUCT_CATEGORY' %}
-					</dt>
-					<dd class="govuk-summary-list__value">
-						{{ application.trade_control_product_categories|join_key_value_list }}
-					</dd>
-				</div>
+			{% if application.case_type.reference.key == "sicl" %}
+				{% if application.trade_control_activity %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							{% lcs 'applications.ApplicationSummaryPage.TRADE_CONTROL_ACTIVITY' %}
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ application.trade_control_activity.value }}
+						</dd>
+					</div>
+				{% endif %}
+				{% if application.trade_control_product_categories %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							{% lcs 'applications.ApplicationSummaryPage.TRADE_CONTROL_PRODUCT_CATEGORY' %}
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ application.trade_control_product_categories|join_key_value_list }}
+						</dd>
+					</div>
+				{% endif %}
 			{% endif %}
 			{% if application.clearance_level %}
 				<div class="govuk-summary-list__row">
@@ -117,134 +177,78 @@
 					</dd>
 				</div>
 			{% endif %}
-			<div class="govuk-summary-list__row">
-				<dt class="govuk-summary-list__key">
-					{% lcs 'applications.ApplicationSummaryPage.STATUS' %}
-				</dt>
-				<dd id="label-application-status" class="govuk-summary-list__value">
-					{{ application.status.value }}
-				</dd>
-			</div>
-			<div class="govuk-summary-list__row">
-				<dt class="govuk-summary-list__key">
-					{% lcs 'applications.ApplicationSummaryPage.CASE_OFFICER' %}
-				</dt>
-				<dd class="govuk-summary-list__value">
-					{% if application.case_officer.first_name %}
-						{{ application.case_officer.first_name }} {{ application.case_officer.last_name }}
-					{% else %}
-						{% lcs 'applications.ApplicationSummaryPage.NO_ASSIGNED_CASE_OFFICER' %}
-					{% endif %}
-				</dd>
-			</div>
-			<div class="govuk-summary-list__row">
-				<dt class="govuk-summary-list__key">
-					{% lcs 'applications.ApplicationSummaryPage.SUBMITTED_AT' %}
-				</dt>
-				<dd class="govuk-summary-list__value">
-					{{ application.submitted_at|str_date }}
-				</dd>
-			</div>
+			{% if not summary_page %}
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'applications.ApplicationSummaryPage.STATUS' %}
+					</dt>
+					<dd id="label-application-status" class="govuk-summary-list__value">
+						{{ application.status.value }}
+					</dd>
+				</div>
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'applications.ApplicationSummaryPage.CASE_OFFICER' %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{% if application.case_officer.first_name %}
+							{{ application.case_officer.first_name }} {{ application.case_officer.last_name }}
+						{% else %}
+							{% lcs 'applications.ApplicationSummaryPage.NO_ASSIGNED_CASE_OFFICER' %}
+						{% endif %}
+					</dd>
+				</div>
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'applications.ApplicationSummaryPage.SUBMITTED_AT' %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{{ application.submitted_at|str_date }}
+					</dd>
+				</div>
+			{% endif %}
 		</dl>
 	</div>
-	<div class="lite-tabs__container">
-		<div class="lite-tabs">
-			<a href="{% url 'applications:application' application.id %}" class="lite-tabs__tab {% if not type %}lite-tabs__tab--selected{% endif %}" id="link-details">
-			{% lcs 'applications.ApplicationSummaryPage.Tabs.DETAILS' %}
-			</a>
-			{% if application.case_type.sub_type.key != 'hmrc' %}
-				<a href="{% url 'applications:application' application.id 'case-notes' %}" class="lite-tabs__tab {% if type == 'case-notes' %}lite-tabs__tab--selected{% endif %}" id="link-case-notes">
-					{% lcs 'applications.ApplicationSummaryPage.Tabs.NOTES' %}
-					{% if application.exporter_user_notification_count.casenote %}
-						<div class="lite-notification-bubble">
-							{{ application.exporter_user_notification_count.casenote }}
-						</div>
-					{% endif %}
+	{% if not summary_page %}
+		<div class="lite-tabs__container">
+			<div class="lite-tabs">
+				<a href="{% url 'applications:application' application.id %}" class="lite-tabs__tab {% if not type %}lite-tabs__tab--selected{% endif %}" id="link-details">
+				{% lcs 'applications.ApplicationSummaryPage.Tabs.DETAILS' %}
 				</a>
-				<a href="{% url 'applications:application' application.id 'ecju-queries' %}" class="lite-tabs__tab {% if type == 'ecju-queries' %}lite-tabs__tab--selected{% endif %}" id="link-ecju-queries">
-					{% lcs 'applications.ApplicationSummaryPage.Tabs.ECJU_QUERIES' %}
-					{% if application.exporter_user_notification_count.ecjuquery %}
-						<div class="lite-notification-bubble">
-							{{ application.exporter_user_notification_count.ecjuquery }}
-						</div>
-					{% endif %}
-				</a>
-			{% endif %}
-			<a href="{% url 'applications:application' application.id 'generated-documents' %}" class="lite-tabs__tab {% if type == 'generated-documents' %}lite-tabs__tab--selected{% endif %}" id="link-generated-documents">
-				{% lcs 'applications.ApplicationSummaryPage.Tabs.GENERATED_DOCUMENTS' %}
-				{% if application.exporter_user_notification_count.generatedcasedocument %}
-					<div class="lite-notification-bubble">
-						{{ application.exporter_user_notification_count.generatedcasedocument }}
-					</div>
-				{% endif %}
-			</a>
-			<a href="{% url 'applications:application' application.id 'activity' %}" class="lite-tabs__tab {% if type == 'activity' %}lite-tabs__tab--selected{% endif %}" id="link-activity">
-				{% lcs 'applications.ApplicationSummaryPage.Tabs.ACTIVITY' %}
-			</a>
-		</div>
-	</div>
-	{% if not type %}
-		{% for key, value in answers.items %}
-			<h2 class="govuk-heading-m">{{ key }}</h2>
-			<div>
-				{% if not value %}
-					<p class="govuk-caption-m">{% lcs "applications.ApplicationPage.NO_INFORMATION_PROVIDED" %}</p>
-				{% elif value|classname == 'str' %}
-					<dl class="govuk-summary-list">
-						<div class="govuk-summary-list__row">
-							<dd class="govuk-summary-list__value">
-								{{ value }}
-							</dd>
-						</div>
-					</dl>
-				{% elif value|classname == 'dict' %}
-					<dl class="govuk-summary-list">
-						{% for key, value in value.items %}
-							<div class="govuk-summary-list__row">
-								<dt class="govuk-summary-list__key">
-									{{ key }}
-								</dt>
-								<dd class="govuk-summary-list__value">
-									{{ value|linebreaksbr|default_na }}
-								</dd>
+				{% if application.case_type.sub_type.key != 'hmrc' %}
+					<a href="{% url 'applications:application' application.id 'case-notes' %}" class="lite-tabs__tab {% if type == 'case-notes' %}lite-tabs__tab--selected{% endif %}" id="link-case-notes">
+						{% lcs 'applications.ApplicationSummaryPage.Tabs.NOTES' %}
+						{% if application.exporter_user_notification_count.casenote %}
+							<div class="lite-notification-bubble">
+								{{ application.exporter_user_notification_count.casenote }}
 							</div>
-						{% endfor %}
-					</dl>
-				{% elif value|classname == 'list' %}
-					<table class="govuk-table">
-						<thead class="govuk-table__head">
-							<tr class="govuk-table__row">
-								<th scope="col" class="govuk-table__header">#</th>
-								{% for key, value in value.0.items %}
-									<th scope="col" class="govuk-table__header">{{ key }}</th>
-								{% endfor %}
-							</tr>
-						</thead>
-						<tbody class="govuk-table__body">
-							{% for item in value %}
-								<tr class="govuk-table__row">
-									<td scope="col" class="govuk-table__cell govuk-table__cell--line-number">{{ forloop.counter }}.</td>
-									{% for key, value in item.items %}
-										<td class="govuk-table__cell">{{ value|linebreaksbr|default_na }}</td>
-									{% endfor %}
-								</tr>
-							{% endfor %}
-						</tbody>
-					</table>
+						{% endif %}
+					</a>
+					<a href="{% url 'applications:application' application.id 'ecju-queries' %}" class="lite-tabs__tab {% if type == 'ecju-queries' %}lite-tabs__tab--selected{% endif %}" id="link-ecju-queries">
+						{% lcs 'applications.ApplicationSummaryPage.Tabs.ECJU_QUERIES' %}
+						{% if application.exporter_user_notification_count.ecjuquery %}
+							<div class="lite-notification-bubble">
+								{{ application.exporter_user_notification_count.ecjuquery }}
+							</div>
+						{% endif %}
+					</a>
 				{% endif %}
+				<a href="{% url 'applications:application' application.id 'generated-documents' %}" class="lite-tabs__tab {% if type == 'generated-documents' %}lite-tabs__tab--selected{% endif %}" id="link-generated-documents">
+					{% lcs 'applications.ApplicationSummaryPage.Tabs.GENERATED_DOCUMENTS' %}
+					{% if application.exporter_user_notification_count.generatedcasedocument %}
+						<div class="lite-notification-bubble">
+							{{ application.exporter_user_notification_count.generatedcasedocument }}
+						</div>
+					{% endif %}
+				</a>
+				<a href="{% url 'applications:application' application.id 'activity' %}" class="lite-tabs__tab {% if type == 'activity' %}lite-tabs__tab--selected{% endif %}" id="link-activity">
+					{% lcs 'applications.ApplicationSummaryPage.Tabs.ACTIVITY' %}
+				</a>
 			</div>
-			<hr class="app-check-your-answers-separator">
-		{% endfor %}
-	{% elif type == 'case-notes' %}
-		{% url "applications:application" application.id "case-notes" as post_url %}
-		{% include "includes/case-notes.html" with post_url=post_url %}
-	{% elif type == 'ecju-queries' %}
-		{% include "applications/tabs/ecju-queries.html" %}
-	{% elif type == 'generated-documents' %}
-		{% include "core/ecju-generated-documents.html" %}
-	{% elif type == 'activity' %}
-		{% include "applications/tabs/activity.html" %}
+		</div>
 	{% endif %}
+
+	{% include "applications/summary.html" %}
 {% endblock %}
 
 {% block javascript %}

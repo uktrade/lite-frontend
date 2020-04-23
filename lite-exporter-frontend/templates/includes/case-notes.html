@@ -5,13 +5,13 @@
 		{% csrf_token %}
 		{% if not status_is_terminal %}
 			<label class="govuk-label" for="input-case-note">{% lcs 'applications.CaseNotes.TITLE' %}</label>
-			{% if error %}
+			{% if errors %}
 				<span id="error-case-note" for="input-case-note" class="govuk-error-message">
 					<span class="govuk-visually-hidden">Error:</span>
-					{{ error }}
+					{{ errors }}
 				</span>
 			{% endif %}
-			<div class="lite-case-note__container {% if error %}lite-case-note__container--error{% endif %}">
+			<div class="lite-case-note__container {% if errors %}lite-case-note__container--error{% endif %}">
 				<textarea id="input-case-note" name="text" cols="80" class="lite-case-note__textarea">{{ text }}</textarea>
 				<div class="lite-case-note__controls">
 					<p id="input-case-note-warning" class="govuk-hint govuk-character-count__message" aria-live="polite">

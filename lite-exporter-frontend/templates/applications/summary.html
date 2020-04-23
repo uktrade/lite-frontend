@@ -1,0 +1,103 @@
+{% if not type %}
+	{% for key, value in answers.items %}
+		<h2 class="govuk-heading-m">{{ key }}</h2>
+		<div>
+			{% if not value %}
+				<p class="govuk-caption-m">{% lcs "applications.ApplicationPage.NO_INFORMATION_PROVIDED" %}</p>
+			{% elif value|classname == 'str' %}
+				<dl class="govuk-summary-list">
+					<div class="govuk-summary-list__row">
+						<dd class="govuk-summary-list__value">
+							{{ value }}
+						</dd>
+					</div>
+				</dl>
+			{% elif value|classname == 'dict' %}
+				<dl class="govuk-summary-list">
+					{% for key, value in value.items %}
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								{{ key }}
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{{ value|linebreaksbr|default_na }}
+							</dd>
+						</div>
+					{% endfor %}
+				</dl>
+			{% elif value|classname == 'list' %}
+				<table class="govuk-table">
+					<thead class="govuk-table__head">
+						<tr class="govuk-table__row">
+							<th scope="col" class="govuk-table__header">#</th>
+							{% for key, value in value.0.items %}
+								<th scope="col" class="govuk-table__header">{{ key }}</th>
+							{% endfor %}
+						</tr>
+					</thead>
+					<tbody class="govuk-table__body">
+						{% for item in value %}
+							<tr class="govuk-table__row">
+								<td class="govuk-table__cell govuk-table__cell--line-number">{{ forloop.counter }}.</td>
+								{% for key, value in item.items %}
+									<td class="govuk-table__cell">{{ value|linebreaksbr|default_na }}</td>
+								{% endfor %}
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			{% endif %}
+		</div>
+		<hr class="app-check-your-answers-separator">
+	{% endfor %}
+{% elif type == 'case-notes' %}
+	{% url "applications:application" application.id "case-notes" as post_url %}
+	{% include "includes/case-notes.html" with post_url=post_url %}
+{% elif type == 'ecju-queries' %}
+	{% include "applications/tabs/ecju-queries.html" %}
+{% elif type == 'generated-documents' %}
+	{% include "core/ecju-generated-documents.html" %}
+{% elif type == 'activity' %}
+	{% include "applications/tabs/activity.html" %}
+{% endif %}
+
+{% if summary_page %}
+	{% if application.case_type.sub_type.key != "hmrc" %}
+		<h2 class="govuk-heading-m">{% lcs "applications.ApplicationPage.Summary.Notes.TITLE" %}</h2>
+		{% if notes %}
+			<table class="govuk-table">
+				<thead class="govuk-table__head">
+					<tr class="govuk-table__row">
+						<th scope="col" class="govuk-table__header">#</th>
+						<th scope="col" class="govuk-table__header">{% lcs "applications.ApplicationPage.Summary.Notes.USER" %}</th>
+						<th scope="col" class="govuk-table__header">{% lcs "applications.ApplicationPage.Summary.Notes.NOTE" %}</th>
+					</tr>
+				</thead>
+				<tbody class="govuk-table__body">
+					{% for item in notes %}
+						<tr class="govuk-table__row">
+							<td class="govuk-table__cell govuk-table__cell--line-number">{{ forloop.counter }}.</td>
+							<td class="govuk-table__cell">{{ item.user.first_name }} {{ item.user.last_name }}</td>
+							<td class="govuk-table__cell">{{ item.text|linebreaksbr|default_na }}</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		{% else %}
+			<p class="govuk-caption-m">{% lcs "applications.ApplicationPage.NO_INFORMATION_PROVIDED" %}</p>
+		{% endif %}
+	{% endif %}
+	<hr class="app-check-your-answers-separator">
+
+	<form method="post">
+		{% csrf_token %}
+		<button type="submit" value="submit" class="govuk-button" data-prevent-double-click="true">
+			{% if application.case_type.sub_type.key == 'hmrc' %}
+				{% lcs "applications.ApplicationPage.Summary.SUBMIT" %}
+			{% else %}
+				{% lcs "applications.ApplicationPage.Summary.CONTINUE" %}
+			{% endif %}
+		</button>
+	</form>
+{% endif %}
+

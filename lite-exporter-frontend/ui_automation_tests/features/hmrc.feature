@@ -24,4 +24,5 @@ Feature: I want to be able to perform actions as a HMRC user
     And I leave a note for the "reasoning"
     And I click continue
     When I submit the application
+    And I click continue
     Then application is submitted

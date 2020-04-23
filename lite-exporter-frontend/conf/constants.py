@@ -1,3 +1,5 @@
+from lite_content.lite_exporter_frontend import applications
+
 ISO8601_FMT = "%Y-%m-%dT%H:%M:%S.%fZ"
 DATE_FORMAT = "%Y-%m-%d"
 PAGE_DATE_FORMAT = "%d %B %Y"
@@ -137,3 +139,13 @@ class NotificationType:
     APPLICATION = "application"
     GOODS = "goods"
     EUA = "end_user_advisory"
+
+
+APPLICATION_TYPE_STRINGS = {
+    STANDARD: applications.ApplicationPage.Summary.Licence.STANDARD,
+    HMRC: applications.ApplicationPage.Summary.Licence.HMRC,
+    OPEN: applications.ApplicationPage.Summary.Licence.OPEN,
+    GIFTING: applications.ApplicationPage.Summary.Licence.GIFTING,
+    F680: applications.ApplicationPage.Summary.Licence.F680,
+    EXHIBITION: applications.ApplicationPage.Summary.Licence.EXHIBITION,
+}
