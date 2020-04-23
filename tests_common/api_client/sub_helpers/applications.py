@@ -164,9 +164,9 @@ class Applications:
 
         return draft_id
 
-    def submit_application(self, draft_id=None):
+    def submit_application(self, draft_id=None, is_hmrc=None):
         draft_id_to_submit = draft_id or self.api_client.context["draft_id"]
-        body = self.request_data["declaration"]
+        body = {"submit_hmrc": True} if is_hmrc else self.request_data["declaration"]
         response = self.api_client.make_request(
             method="PUT",
             url="/applications/" + draft_id_to_submit + "/submit/",
