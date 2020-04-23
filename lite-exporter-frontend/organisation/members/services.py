@@ -10,11 +10,6 @@ def get_user(request, pk=None):
     return data.json()
 
 
-def get_users(request):
-    data = get(request, USERS_URL)
-    return data.json(), data.status_code
-
-
 def post_users(request, json):
     data = post(request, USERS_URL, json)
     return data.json(), data.status_code
