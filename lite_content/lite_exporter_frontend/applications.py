@@ -137,7 +137,7 @@ class ApplicationSummaryPage:
     GOODS_DEPARTED = "Goods have left the UK"
     SUPPORTING_DOCUMENTATION = "Supporting documents"
     EXHIBITION_DETAILS = "Exhibition details"
-    GOODS_CATEGORIES = "Products"
+    GOODS_CATEGORIES = "Products category"
     GOODS = "Products"
     COUNTRIES = "Destinations"
     ON_BEHALF_OF = "Exporter"
@@ -596,6 +596,33 @@ class ApplicationsList:
 class ApplicationPage:
     BACK = "Back to applications"
     NO_INFORMATION_PROVIDED = "No information added to this section."
+
+    class Summary:
+        TITLE = "Check your answers before submitting your application"
+        BACK = "Back to Task List"
+        SUBMIT = "Accept and Send"
+        CONTINUE = "Continue"
+        LICENCE = "Licence"
+        QUERY = "Query"
+        TYPE = "Type"
+        NAME_OF_APPLICATION = "Name of application"
+        GOODS_CATEGORIES = "Application includes"
+        END_USER_CONTROL = "End user control"
+
+        class Licence:
+            STANDARD = "Standard Individual Export Licence"
+            HMRC = "HMRC Enquiry"
+            OPEN = "Open Individual Export Licence"
+            GIFTING = "Gifting"
+            F680 = "F680"
+            EXHIBITION = "Exhibition Clearance"
+            TRANSHIPMENT = "Transhipment Licence"
+            TRADE_CONTROL = "Standard Trade Control Licence"
+
+        class Notes:
+            TITLE = "Notes"
+            USER = "User"
+            NOTE = "Note"
 
 
 class ThirdPartiesPage:

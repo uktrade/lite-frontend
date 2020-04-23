@@ -1,4 +1,5 @@
 class Declaration:
+    BACK = "Back to application summary"
     TITLE = "Declaration"
     PARAGRAPH_ONE = (
         "It’s an offence to make any statement or furnish any document or information which, "
