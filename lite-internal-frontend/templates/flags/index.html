@@ -82,7 +82,7 @@
 			</tbody>
 		</table>
 
-		{% include "includes/pagination.html" %}
+		{% pagination %}
 	{% else %}
 		{% include "includes/notice.html" with text='flags.FlagsList.NO_CONTENT_NOTICE' %}
 	{% endif %}

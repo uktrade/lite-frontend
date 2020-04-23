@@ -47,7 +47,8 @@
 				{% endfor %}
 			</tbody>
 		</table>
-		{% include "includes/pagination.html" with data=data %}
+
+		{% pagination %}
 	{% else %}
 		{% lcs 'letter_templates.LetterTemplatesPage.NONE_FOUND' as text %}
 		{% include "includes/information-text.html" with text=text  %}

@@ -1,9 +1,0 @@
-{% if data.total_pages > 1 %}
-	<div class="lite-pagination__container">
-		{% for i in data.total_pages|times %}
-			<a href="{{ CURRENT_PATH|pagination_params:i }}" class="lite-pagination__item {% if request.GET.page|default:1|stringformat:"s" == i|stringformat:"s" %}lite-pagination__item--selected{% endif %}" id="page-{{ i }}">
-				{{ i }}
-			</a>
-		{% endfor %}
-	</div>
-{% endif %}

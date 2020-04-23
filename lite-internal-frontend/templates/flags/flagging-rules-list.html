@@ -72,14 +72,6 @@
 			{% endfor %}
 		</tbody>
 	</table>
-	{% if data.total_pages > 1 %}
-		<br>
-		<div class="lite-pagination__container ">
-			{% for i in data.total_pages|times %}
-				<a href="{% url 'flags:flagging_rules' %}?{{ params_str }}&page={{ i }}" class="lite-pagination__item {% if page == i %}lite-pagination__item--selected{% endif %}" id="page-{{ i }}">
-					{{ i }}
-				</a>
-			{% endfor %}
-		</div>
-	{% endif %}
+
+	{% pagination %}
 {% endblock %}

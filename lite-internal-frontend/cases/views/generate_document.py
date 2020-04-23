@@ -43,9 +43,7 @@ class PickTemplateView(TemplateView):
         back_link = BackLink(
             text=self.back_text, url=reverse_lazy(self.back_url, kwargs={"queue_pk": kwargs["queue_pk"], "pk": pk}),
         )
-        return form_page(
-            request, select_template_form(templates["results"], templates["total_pages"], pk, back_link=back_link)
-        )
+        return form_page(request, select_template_form(templates["results"], templates, pk, back_link=back_link))
 
     def post(self, request, **kwargs):
         template_id = request.POST.get("template")

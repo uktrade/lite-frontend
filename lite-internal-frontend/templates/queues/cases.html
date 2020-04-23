@@ -210,7 +210,8 @@
 					{% endfor %}
 				</tbody>
 			</table>
-			{% include "includes/pagination.html" %}
+
+			{% pagination %}
 		{% else %}
 			{% if params.case_type or params.status or params.case_officer or params.assigned_user %}
 				{% include "includes/notice.html" with text="cases.CasesListPage.ACTIVE_FILTER_NO_CASES" %}

@@ -78,7 +78,8 @@
 				{% endfor %}
 			</tbody>
 		</table>
-		{% include "includes/pagination.html" %}
+		
+		{% pagination %}
 	{% else %}
 		{% include "includes/notice.html" with text="organisations.OrganisationsPage.ACTIVE_FILTER_NO_ORGANISATIONS" %}
 	{% endif %}

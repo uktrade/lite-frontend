@@ -108,17 +108,9 @@
 				{% endfor %}
 			</tbody>
 		</table>
+		
+		{% pagination %}
 	{% else %}
 		{% include "includes/notice.html" with text='routing_rules.RoutingRulesList.NO_CONTENT_NOTICE' %}
-	{% endif %}
-	{% if data.total_pages > 1 %}
-		<br>
-		<div class="lite-pagination__container ">
-			{% for i in data.total_pages|times %}
-				<a href="{% url 'routing_rules:list' %}?{{ params_str }}&page={{ i }}" class="lite-pagination__item {% if page == i %}lite-pagination__item--selected{% endif %}" id="page-{{ i }}">
-					{{ i }}
-				</a>
-			{% endfor %}
-		</div>
 	{% endif %}
 {% endblock %}
