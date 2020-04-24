@@ -39,6 +39,7 @@ class ApplicationPage:
         ADVICE = "View advice"
         GENERATE_DOCUMENT = "Generate document"
         USER_WORK_QUEUE = "Assign user"
+        RERUN_ROUTING_RULES = "Rerun routing rules"
         ADDITIONAL_CONTACTS = "Additional contacts"
 
     class Goods:
@@ -534,6 +535,13 @@ class Manage:
         DESCRIPTION = ""
         DELETE_BUTTON = "Unassign existing case officer only"
         SUBMIT_BUTTON = "Submit"
+
+    class RerunRoutingRules:
+        TITLE = "Do you want to rerun routing rules?"
+        BACKLINK = "Back to case"
+        YES = "Yes"
+        NO = "Cancel"
+        SUBMIT_BUTTON = "Continue"
 
 
 class Tabs:
