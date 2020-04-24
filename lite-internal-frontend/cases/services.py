@@ -448,3 +448,8 @@ def get_case_additional_contacts(request, pk):
 def post_case_additional_contacts(request, pk, json):
     response = post(request, CASE_URL + str(pk) + "/additional-contacts/", json=json)
     return response.json(), response.status_code
+
+
+def put_rerun_case_routing_rules(request, pk, json):
+    response = put(request, CASE_URL + str(pk) + "/rerun-routing-rules/", json={})
+    return response.json(), response.status_code

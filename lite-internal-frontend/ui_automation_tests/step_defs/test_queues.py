@@ -43,12 +43,13 @@ def dont_see_queue_in_queue_list(driver, context):
     driver.set_timeout_to_10_seconds()
 
 
-@then(parsers.parse('I see "{num}" queue checkboxes selected'))
+@then(parsers.parse('I see at least "{num}" queue checkboxes selected'))
 def see_number_of_checkboxes_selected(driver, context, num):
     ApplicationPage(driver).click_move_case_button()
-    assert QueuesPages(driver).get_number_of_selected_queues() == int(num)
+    # May be more queues due to case routing automation
+    assert QueuesPages(driver).get_number_of_selected_queues() >= int(num)
 
 
 @then("queue change is in audit trail")
 def queue_change_in_audit(driver, context):
-    assert "moved the case to: " + context.queue_name in ApplicationPage(driver).get_text_of_audit_trail_item(0)
+    assert "moved the case to " + context.queue_name in ApplicationPage(driver).get_text_of_audit_trail_item(0)

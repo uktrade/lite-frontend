@@ -24,7 +24,7 @@ Feature: I want to define new work queues and the teams they belong to
     And I add a new queue called Review
     And I go to application previously created
     And I add case to newly created queue
-    Then I see "1" queue checkboxes selected
+    Then I see at least "1" queue checkboxes selected
     When I go to the internal homepage
     And I click on new queue in dropdown
     Then I see previously created application

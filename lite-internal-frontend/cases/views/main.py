@@ -10,6 +10,7 @@ from django.views.generic import TemplateView
 from s3chunkuploader.file_handler import S3FileUploadHandler, s3_client
 
 from cases.constants import CaseType
+from cases.forms.Rerun_routing_rules import rerun_routing_rules_confirmation_form
 from cases.forms.additional_contacts import add_additional_contact_form
 from cases.forms.assign_users import assign_case_officer_form, assign_user_and_work_queue, users_team_queues
 from cases.forms.attach_documents import attach_documents_form
@@ -32,6 +33,7 @@ from cases.services import (
     get_user_case_queues,
     get_case_additional_contacts,
     post_case_additional_contacts,
+    put_rerun_case_routing_rules,
 )
 from cases.services import post_case_documents, get_case_documents, get_document
 from conf import settings
@@ -419,3 +421,28 @@ class UserTeamQueue(SingleFormView):
 
     def get_success_url(self):
         return reverse_lazy("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk})
+
+
+class RerunRoutingRules(SingleFormView):
+    def init(self, request, **kwargs):
+        self.action = put_rerun_case_routing_rules
+        self.object_pk = kwargs["pk"]
+        self.form = rerun_routing_rules_confirmation_form()
+        self.success_url = reverse_lazy(
+            "cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk}
+        )
+
+    def post(self, request, **kwargs):
+        self.init(request, **kwargs)
+        if not request.POST.get("confirm"):
+            return form_page(
+                request,
+                self.get_form(),
+                data=self.get_data(),
+                errors={"confirm": ["select an option"]},
+                extra_data=self.context,
+            )
+        elif request.POST.get("confirm") == "no":
+            return redirect(self.success_url)
+
+        return super(RerunRoutingRules, self).post(request, **kwargs)

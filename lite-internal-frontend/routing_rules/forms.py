@@ -92,12 +92,7 @@ def select_country(request):
 def select_team_member(request, team_id):
     return Form(
         title=Forms.USER,
-        questions=[
-            RadioButtons(
-                name="user",
-                options=[Option(user["id"], user["email"]) for user in get_users_by_team(request, team_id)[0]["users"]],
-            )
-        ],
+        questions=[RadioButtons(name="user", options=get_users_by_team(request, team_id, convert_to_options=True),)],
     )
 
 

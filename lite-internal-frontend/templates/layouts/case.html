@@ -74,6 +74,9 @@
 				<a role="button" draggable="false" class="govuk-button" id="assign-user" href="{% url 'cases:assign_user' queue.id case.id %}">
 					{% lcs 'cases.ApplicationPage.Actions.USER_WORK_QUEUE' %}
 				</a>
+				<a role="button" draggable="false" class="govuk-button" id="rerun-routing-rules" href="{% url 'cases:rerun_routing_rules' queue.id case.id %}">
+					{% lcs 'cases.ApplicationPage.Actions.RERUN_ROUTING_RULES' %}
+				</a>
 			</div>
 		</div>
 	</div>

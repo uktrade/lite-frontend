@@ -2,6 +2,7 @@ from pytest_bdd import when, then, scenarios, parsers
 import shared.tools.helpers as utils
 from pages.shared import Shared
 
+from ui_automation_tests.pages.application_page import ApplicationPage
 from ui_automation_tests.pages.routing_rules_pages import RoutingRulesPage
 from ui_automation_tests.shared import functions
 
@@ -44,6 +45,20 @@ def create_routing_rule(driver, context, tier, case_status):
     functions.click_submit(driver)
 
 
+@when(
+    parsers.parse(
+        'I add a routing rule of tier "{tier}", a status of "{case_status}", my queue, and no additional rules'
+    )
+)
+def create_routing_rule(driver, context, tier, case_status):
+    routing_rules_page = RoutingRulesPage(driver)
+    routing_rules_page.create_new_routing_rule()
+    routing_rules_page.initial_details_form(
+        tier=tier, case_status=case_status, queue=context.queue_name, additional_rules=False
+    )
+    functions.click_submit(driver)
+
+
 @when(parsers.parse('I edit my routing rule with tier "{tier}", a status of "{case_status}", and no additional rules'))
 def edit_flagging_rule(driver, context, tier, case_status):
     routing_rules_page = RoutingRulesPage(driver)
@@ -70,3 +85,16 @@ def deactivate_rule(driver, context):
     routing_rules_page.click_on_deactivate_rule(row)
     routing_rules_page.click_confirm_deactivate_activate()
     functions.click_submit(driver)
+
+
+@when("I click to rerun routing rules, and confirm")
+def rerun_routing_rules(driver):
+    application_page = ApplicationPage(driver)
+    application_page.click_rerun_routing_rules()
+    application_page.click_confirm_rerun_routing_rules()
+    functions.click_submit(driver)
+
+
+@then("I see my queue in assigned queues")
+def i_see_my_queue_in_queues_to_the_case_on_page(driver, context):
+    assert context.queue_name in ApplicationPage(driver).get_case_queues().text

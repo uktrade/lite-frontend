@@ -258,24 +258,24 @@ def enter_response(driver, controlled, control_list_entry, report, comment):  # 
 def status_has_been_changed_in_header(driver, context, internal_info):  # noqa
     application_page = ApplicationPage(driver)
     if context.status.lower() == "under review":
-        assert "updated the status to: " + "Under review" in application_page.get_text_of_audit_trail_item(
-            0
+        assert (
+            "Under review" in application_page.get_text_of_audit_trail()
         ), "status has not been shown as approved in audit trail"
     elif context.status.lower() == "withdrawn":
-        assert "updated the status to: " + context.status in application_page.get_text_of_audit_trail_item(
-            0
+        assert (
+            context.status in application_page.get_text_of_audit_trail()
         ), "status has not been shown as approved in audit trail"
     elif context.status.lower() == "pv grading review":
-        assert "updated the status to: " + context.status in application_page.get_text_of_audit_trail_item(
-            0
+        assert (
+            context.status in application_page.get_text_of_audit_trail()
         ), "status has not been shown as approved in audit trail"
     elif context.status.lower() == "clc review":
-        assert "updated the status to: " + context.status in application_page.get_text_of_audit_trail_item(
-            0
+        assert (
+            context.status in application_page.get_text_of_audit_trail()
         ), "status has not been shown as approved in audit trail"
     else:
-        assert "updated the status to " + context.status.lower() in application_page.get_text_of_audit_trail_item(
-            0
+        assert (
+            context.status.lower() in application_page.get_text_of_audit_trail()
         ), "status has not been shown as approved in audit trail"
 
     assert utils.search_for_correct_date_regex_in_element(

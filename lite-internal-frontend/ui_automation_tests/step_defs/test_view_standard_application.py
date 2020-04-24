@@ -107,7 +107,7 @@ def i_see_assigned_users_to_the_case_on_page(driver, context):
 
 
 @then("I see assigned queues")
-def i_see_assigned_users_to_the_case_on_page(driver, context):
+def i_see_assigned_queues_to_the_case_on_page(driver, context):
     assert functions.element_with_id_exists(driver, ApplicationPage(driver).CASE_QUEUES_ID)
 
 

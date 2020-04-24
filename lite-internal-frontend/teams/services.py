@@ -40,6 +40,8 @@ def put_team(request, pk, json):
     return data.json(), data.status_code
 
 
-def get_users_by_team(request, pk):
+def get_users_by_team(request, pk, convert_to_options=False):
     data = get(request, TEAMS_URL + pk + "/users")
+    if convert_to_options:
+        return [Option(user["id"], user["email"]) for user in data.json()["users"] if user["email"]]
     return data.json(), data.status_code
