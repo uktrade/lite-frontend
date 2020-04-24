@@ -15,7 +15,7 @@ from cases.validators import validate_query_type_question
 from lite_forms.components import Option, HiddenField
 from lite_forms.generators import form_page, error_page
 from lite_forms.views import SingleFormView
-from picklists.services import get_picklists, get_picklist_item
+from picklists.services import get_picklists_for_input, get_picklist_item
 
 
 class ViewEcjuQueries(TemplateView):
@@ -76,8 +76,7 @@ class CreateEcjuQuery(TemplateView):
         """
         case_id = str(kwargs["pk"])
         query_type = request.GET.get("query_type")
-        picklists = get_picklists(request, query_type, False)
-        picklists = picklists.get("picklist_items")
+        picklists = get_picklists_for_input(request, query_type, False)
         picklist_choices = [Option(self.NEW_QUESTION_DDL_ID, "Write a new question")] + [
             Option(picklist.get("id"), picklist.get("name")) for picklist in picklists
         ]

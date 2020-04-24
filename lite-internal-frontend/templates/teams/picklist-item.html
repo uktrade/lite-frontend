@@ -24,7 +24,7 @@
 
 	<p class="govuk-body">
 		<span class="govuk-caption-m">Created by</span>
-		<a class="govuk-link govuk-link--no-visited-state" href="{% url 'teams:team' picklist_item.team %}">{{ picklist_item.team_name }}</a>
+		<a class="govuk-link govuk-link--no-visited-state" href="{% url 'teams:team' picklist_item.team.id %}">{{ picklist_item.team.name }}</a>
 		<span class="govuk-caption-m">-</span>
 		<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type={{ picklist_item.type.key }}">{{ picklist_item.type.value }}</a>
 		<span class="govuk-caption-m">- Last updated</span>

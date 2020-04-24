@@ -19,7 +19,7 @@ from lite_forms.components import (
 from lite_forms.styles import HeadingStyle
 
 from core.services import get_control_list_entries, get_gov_pv_gradings
-from picklists.services import get_picklists
+from picklists.services import get_picklists_for_input
 
 
 def respond_to_clc_query_form(request, queue_pk, case):
@@ -59,7 +59,7 @@ def respond_to_clc_query_form(request, queue_pk, case):
             RadioButtons(
                 title=cases.RespondClCQueryForm.ReportSummary.TITLE,
                 name="report_summary",
-                options=get_picklists(request, "report_summary", convert_to_options=True, include_none=True),
+                options=get_picklists_for_input(request, "report_summary", convert_to_options=True, include_none=True),
                 description=cases.RespondClCQueryForm.ReportSummary.DESCRIPTION,
                 classes=["test"],
             ),

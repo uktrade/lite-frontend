@@ -18,8 +18,8 @@ def get_letter_paragraphs(request, ids: list):
     if not ids:
         return []
 
-    data = get(request, PICKLIST_URL + "?type=letter_paragraph" + "&ids=" + ",".join(ids))
-    letter_paragraphs = data.json()["picklist_items"]
+    data = get(request, PICKLIST_URL + "?type=letter_paragraph&disable_pagination=True" + "&ids=" + ",".join(ids))
+    letter_paragraphs = data.json()["results"]
     return sort_letter_paragraphs(letter_paragraphs, ids)
 
 

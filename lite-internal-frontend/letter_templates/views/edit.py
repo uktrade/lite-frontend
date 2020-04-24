@@ -13,7 +13,7 @@ from letter_templates.services import (
     put_letter_template,
     get_letter_paragraphs,
 )
-from picklists.services import get_picklists
+from picklists.services import get_picklists_for_input
 
 
 class EditTemplate(TemplateView):
@@ -83,12 +83,10 @@ class EditParagraphs(TemplateView):
 
     @staticmethod
     def _add_letter_paragraph(request, existing_paragraphs):
-        all_letter_paragraphs = get_picklists(request, "letter_paragraph")
+        all_letter_paragraphs = get_picklists_for_input(request, "letter_paragraph")
         context = {
             "letter_paragraphs": [
-                paragraph
-                for paragraph in all_letter_paragraphs["picklist_items"]
-                if paragraph["id"] not in existing_paragraphs
+                paragraph for paragraph in all_letter_paragraphs if paragraph["id"] not in existing_paragraphs
             ],
             "existing_letter_paragraphs": existing_paragraphs,
         }
