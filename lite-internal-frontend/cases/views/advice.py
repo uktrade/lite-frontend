@@ -326,14 +326,14 @@ class Finalise(TemplateView):
         case = get_case(request, str(kwargs["pk"]))
         case_type = case["application"]["case_type"]["sub_type"]["key"]
 
-        if case_type == CaseType.STANDARD.value or case_type == CaseType.EXHIBITION.value:
-            advice, _ = get_final_case_advice(request, str(kwargs["pk"]))
-            items = [item["type"]["key"] for item in advice["advice"]]
-            is_open_licence = False
-        else:
+        if case_type == CaseType.OPEN.value:
             data = get_good_countries_decisions(request, str(kwargs["pk"]))["data"]
             items = [item["decision"]["key"] for item in data]
             is_open_licence = True
+        else:
+            advice, _ = get_final_case_advice(request, str(kwargs["pk"]))
+            items = [item["type"]["key"] for item in advice["advice"]]
+            is_open_licence = False
 
         case_id = case["id"]
         duration = get_application_default_duration(request, str(kwargs["pk"]))
