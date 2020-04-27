@@ -1,4 +1,4 @@
-from pytest_bdd import then, scenarios, when, given
+from pytest_bdd import then, scenarios, when, given, parsers
 
 from pages.application_page import ApplicationPage
 from pages.case_list_page import CaseListPage
@@ -137,3 +137,8 @@ def i_see_inactive_party_on_page(driver, api_test_client):
         api_test_client.context["inactive_party"]["country"]["name"],
     ]
     assert_party_data(table, headings, values)
+
+
+@given(parsers.parse('the status is set to "{status}"'))
+def set_status(api_test_client, context, status):
+    api_test_client.applications.set_status(context.app_id, status)

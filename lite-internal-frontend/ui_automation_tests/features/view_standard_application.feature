@@ -8,6 +8,8 @@ Feature: I want to view the case details of a case
   Scenario: Gov user can see all parties on the case
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
+    # Ensure the application is in a submitted state in case workflow has been run
+    And the status is set to "submitted"
     When I go to the case list page
     Then I should see my case in the cases list
     And I should see my case SLA
@@ -24,6 +26,8 @@ Feature: I want to view the case details of a case
   Scenario: Gov user can see exporter has made changes to case
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
+    # Ensure the application is in a submitted state in case workflow has been run
+    And the status is set to "submitted"
     And I am an assigned user for the case
     And the exporter user has edited the case
     When I go to the internal homepage
