@@ -1,3 +1,8 @@
+from faker import Faker
+
+fake = Faker()
+
+
 class Goods:
     def __init__(self, api_client, documents, request_data, **kwargs):
         super().__init__(**kwargs)
@@ -58,6 +63,15 @@ class Goods:
         self.api_client.make_request(
             method="POST",
             url="/applications/" + draft_id + "/goodstypes/",
+            headers=self.api_client.exporter_headers,
+            body=data,
+        )
+
+    def add_hmrc_goods_type(self, hmrc_draft_id):
+        data = {"description": fake.bs()}
+        self.api_client.make_request(
+            method="POST",
+            url="/applications/" + hmrc_draft_id + "/goodstypes/",
             headers=self.api_client.exporter_headers,
             body=data,
         )

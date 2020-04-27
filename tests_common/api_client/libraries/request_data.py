@@ -33,11 +33,11 @@ def build_organisation_with_user(exporter, type, name):
     }
 
 
-def build_good(description, control_code="ML1a", part_number="1234"):
+def build_good(description, control_list_entry="ML1a", part_number="1234"):
     return {
         "description": description,
         "is_good_controlled": "yes",
-        "control_code": control_code,
+        "control_list_entries": [control_list_entry],
         "part_number": part_number,
         "validate_only": False,
         "is_pv_graded": "no",
@@ -97,17 +97,18 @@ def build_request_data(exporter_user, gov_user):
         "clc_good": {
             "description": fake.bs(),
             "is_good_controlled": "unsure",
-            "control_code": "ML1a",
+            "control_list_entries": [],
             "is_good_incorporated": True,
             "part_number": fake.ean(length=8),
             "validate_only": False,
             "details": fake.bs(),
             "is_pv_graded": "no",
+            "status": "query",
         },
         "grading_good": {
             "description": fake.bs(),
             "is_good_controlled": "yes",
-            "control_code": "ML1a",
+            "control_list_entries": ["ML1a"],
             "is_good_incorporated": True,
             "part_number": fake.ean(length=8),
             "validate_only": False,
@@ -129,7 +130,7 @@ def build_request_data(exporter_user, gov_user):
         "good_type": {
             "description": fake.bs(),
             "is_good_controlled": True,
-            "control_code": "ML1a",
+            "control_list_entries": ["ML1a"],
             "is_good_incorporated": True,
             "content_type": "draft",
         },

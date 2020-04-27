@@ -1,8 +1,9 @@
 import time
+from typing import List
 
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
-
 
 from .tools.utils import set_timeout_to, set_timeout_to_10_seconds
 
@@ -43,6 +44,28 @@ def send_keys_to_autocomplete(driver: WebDriver, element_id: str, keys: str):
     time.sleep(1)
 
 
+def send_tokens_to_token_bar(driver: WebDriver, element_selector: str, tokens: List[str]):
+    element = driver.find_element_by_css_selector(element_selector)
+
+    for token in tokens:
+        element.send_keys(token)
+        element.send_keys(Keys.ENTER)
+
+    # Tab away from element and wait
+    element.send_keys(Keys.TAB)
+    time.sleep(1)
+
+
 def try_open_filters(driver: WebDriver):
     if not driver.find_element_by_class_name("lite-filter-bar").is_displayed():
         driver.find_element_by_id("show-filters-link").click()
+
+
+def get_table_rows(driver: WebDriver, table_selector: str = "table", raise_exception_if_empty=False):
+    selector = f"{table_selector} tbody tr"
+    rows = driver.find_elements_by_css_selector(selector)
+
+    if raise_exception_if_empty and not rows:
+        raise NoSuchElementException(f"No rows returned with selector: {selector}")
+
+    return rows
