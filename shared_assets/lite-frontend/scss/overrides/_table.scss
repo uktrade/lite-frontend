@@ -52,6 +52,9 @@
 }
 
 .govuk-table__cell__actions-list {
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	width: 100%;
 	margin: 0; // Reset default user agent styles
 	padding: 0; // Reset default user agent styles
