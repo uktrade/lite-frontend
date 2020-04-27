@@ -17,7 +17,7 @@ from conf.constants import (
     APPLICATION_TYPE_STRINGS,
 )
 from core.builtins.custom_tags import default_na, friendly_boolean, pluralise_unit, date_display, get_address
-from core.helpers import convert_to_link
+from core.helpers import convert_to_link, convert_control_list_entries
 from lite_content.lite_exporter_frontend import applications
 from lite_content.lite_exporter_frontend.strings import Parties
 from lite_forms.helpers import conditional
@@ -173,7 +173,7 @@ def _convert_goods(goods, is_exhibition=False):
             "Description": good["good"]["description"],
             "Part number": default_na(good["good"]["part_number"]),
             "Controlled": friendly_boolean(good["good"]["is_good_controlled"]),
-            "CLC": default_na(good["good"]["control_code"]),
+            "Control list entries": convert_control_list_entries(good["good"]["control_list_entries"]),
         }
         if is_exhibition:
             goods_dict["Product type"] = good["other_item_type"] if good["other_item_type"] else good["item_type"]
@@ -204,7 +204,7 @@ def _convert_goods_types(goods_types):
         {
             "Description": good["description"],
             "Controlled": friendly_boolean(good["is_good_controlled"]),
-            "CLC": default_na(good["control_code"]),
+            "Control list entries": convert_control_list_entries(good["control_list_entries"]),
         }
         for good in goods_types
     ]

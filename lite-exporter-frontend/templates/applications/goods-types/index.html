@@ -30,7 +30,7 @@
 	</div>
 
 	{% if goods %}
-		<table class="govuk-table lite-responsive-table">
+		<table class="govuk-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
 					<th scope="col" class="govuk-table__header">#</th>
@@ -52,22 +52,22 @@
 							{{ forloop.counter }}.
 						</td>
 						<td class="govuk-table__cell">
-							<span class="lite-responsive-table__header">{% lcs "goods_types.Variables.DESCRIPTION" %}</span>
-							{{ good_on_application.description }}
+							<span class="govuk-table__header">{% lcs "goods_types.Variables.DESCRIPTION" %}</span>
+							<span data-max-length="200">{{ good_on_application.description }}</span>
 						</td>
 						{% if application.case_type.sub_type.key != 'hmrc' %}
 							<td class="govuk-table__cell">
-								<span class="lite-responsive-table__header">{% lcs "goods_types.Variables.CONTROL_LIST_ENTRY" %}</span>
-								{{ good_on_application.control_code|default_na }}
+								<span class="govuk-table__header">Control list entries</span>
+								{% include 'includes/control-list-entries.html' with control_list_entries=good_on_application.control_list_entries %}
 							</td>
 							<td class="govuk-table__cell">
-								<span class="lite-responsive-table__header">{% lcs "goods_types.Variables.INCORPORATED" %}</span>
+								<span class="govuk-table__header">{% lcs "goods_types.Variables.INCORPORATED" %}</span>
 								{{ good_on_application.is_good_incorporated|friendly_boolean }}
 							</td>
 						{% endif %}
 						{% if application.case_type.sub_type.key == 'hmrc' %}
 							<td class="govuk-table__cell">
-								<span class="lite-responsive-table__header">{% lcs "goods_types.Document.TITLE" %}</span>
+								<span class="govuk-table__header">{% lcs "goods_types.Document.TITLE" %}</span>
 								{% if good_on_application.document %}
 									{%  if good_on_application.document.safe == True %}
 										<a href="{% url 'applications:goods_type_download_document' application.id good_on_application.id %}" id="document_download" class='govuk-link govuk-link--no-visited-state'>

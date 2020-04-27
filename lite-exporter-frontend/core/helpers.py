@@ -4,6 +4,7 @@ from typing import List
 
 from django.template.defaultfilters import safe
 from django.templatetags.tz import do_timezone
+from django.utils.safestring import mark_safe
 
 from conf import decorators
 from conf.constants import ISO8601_FMT
@@ -158,3 +159,22 @@ def add_validate_only_to_data(data):
     data["validate_only"] = True
 
     return data
+
+
+def convert_control_list_entries(control_list_entries):
+    return default_na(
+        mark_safe(  # nosec
+            ", ".join(
+                [
+                    "<span data-definition-title='"
+                    + clc["rating"]
+                    + "' data-definition-text='"
+                    + clc["text"]
+                    + "'>"
+                    + clc["rating"]
+                    + "</span>"
+                    for clc in control_list_entries
+                ]
+            )
+        )
+    )

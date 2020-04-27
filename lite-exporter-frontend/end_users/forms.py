@@ -1,5 +1,6 @@
 from django.urls import reverse_lazy
 
+from core.services import get_countries
 from lite_content.lite_exporter_frontend import strings
 from lite_forms.common import country_question
 from lite_forms.components import (
@@ -15,8 +16,6 @@ from lite_forms.components import (
 )
 from lite_forms.generators import success_page, confirm_form
 from lite_forms.helpers import conditional
-
-from core.services import get_countries
 
 
 def apply_for_an_end_user_advisory_form(individual, commercial):

@@ -10,11 +10,10 @@ from django.template.defaultfilters import stringfilter, safe
 from django.templatetags.tz import do_timezone
 from django.utils.safestring import mark_safe
 
+from applications.constants import F680
 from conf.constants import CASE_SECTIONS, DATE_FORMAT, PAGE_DATE_FORMAT, TIMEZONE
 from conf.constants import ISO8601_FMT, NOT_STARTED, DONE, IN_PROGRESS
-
 from lite_content.lite_exporter_frontend import strings
-from applications.constants import F680
 
 register = template.Library()
 STRING_NOT_FOUND_ERROR = "STRING_NOT_FOUND"
@@ -157,7 +156,7 @@ def default_na(value):
     if value:
         return value
     else:
-        return mark_safe('<span class="lite-hint">N/A</span>')  # nosec
+        return mark_safe('<span class="govuk-hint govuk-!-margin-0">N/A</span>')  # nosec
 
 
 @register.filter()
@@ -299,6 +298,10 @@ def date_display(value):
         "November",
         "December",
     ]
+
+    # A date without the two '-' delimiters is not a full/valid date
+    if value.count("-") < 2:
+        return
 
     year, month, day = value.split("-")
     month = months[(int(month) - 1)]

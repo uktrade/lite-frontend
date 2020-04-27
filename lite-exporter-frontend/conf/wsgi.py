@@ -1,9 +1,8 @@
 import os
+from functools import wraps
 
 from django.core.wsgi import get_wsgi_application
 from gunicorn.http.wsgi import Response
-from functools import wraps
-
 from whitenoise import WhiteNoise
 
 

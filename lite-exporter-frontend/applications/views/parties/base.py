@@ -9,6 +9,7 @@ from applications.services import get_application, get_existing_parties, copy_pa
 from conf.constants import F680
 from core.services import get_pv_gradings
 from lite_content.lite_exporter_frontend.applications import AddPartyForm, CopyExistingPartyPage
+from lite_forms.components import FiltersBar, TextInput
 from lite_forms.generators import form_page, error_page
 from lite_forms.views import MultiFormView
 
@@ -111,10 +112,18 @@ class CopyParties(TemplateView):
             country=request.GET.get("country"),
         )
 
+        filters = FiltersBar(
+            [
+                TextInput(title="name", name="name"),
+                TextInput(title="address", name="address"),
+                TextInput(title="country", name="country"),
+            ]
+        )
+
         context = {
             "title": CopyExistingPartyPage.TITLE,
             "back_url": self.back_url,
-            "filters": ["Name", "Address", "Country"],
+            "filters": filters,
             "draft_id": application_id,
             "data": parties,
             "url": self.copy_url,

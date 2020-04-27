@@ -2,9 +2,9 @@ from django.urls import reverse_lazy
 
 from conf.constants import SUPER_USER_ROLE_ID, DEFAULT_USER_ROLE_ID
 from lite_forms.views import SingleFormView
+from organisation.members.services import get_user
 from organisation.roles.forms import add_role
 from organisation.roles.services import get_roles, get_permissions, post_role, put_role, get_role
-from organisation.members.services import get_user
 from organisation.views import OrganisationView
 
 

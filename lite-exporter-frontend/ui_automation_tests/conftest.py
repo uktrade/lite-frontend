@@ -504,7 +504,7 @@ def click_my_end_user_advisory_link(driver):  # noqa
 def add_new_goods_type(driver, description, controlled, control_code, incorporated, context):  # noqa
     OpenApplicationAddGoodsType(driver).enter_description(description)
     OpenApplicationAddGoodsType(driver).select_is_your_good_controlled(controlled)
-    OpenApplicationAddGoodsType(driver).enter_control_code(control_code)
+    OpenApplicationAddGoodsType(driver).enter_control_list_entry(control_code)
     OpenApplicationAddGoodsType(driver).select_is_your_good_incorporated(incorporated)
 
     context.good_description = description

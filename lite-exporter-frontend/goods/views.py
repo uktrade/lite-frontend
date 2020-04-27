@@ -17,8 +17,6 @@ from applications.services import (
     get_status_properties,
     get_case_generated_documents,
 )
-from core.helpers import convert_dict_to_query_params
-from core.services import get_control_list_entry
 from goods.forms import (
     attach_documents_form,
     respond_to_query_form,
@@ -27,7 +25,8 @@ from goods.forms import (
     document_grading_form,
     raise_a_goods_query,
     add_good_form_group,
-    edit_good_form_group,
+    edit_good_detail_form,
+    edit_grading_form,
 )
 from goods.services import (
     get_goods,
@@ -43,42 +42,42 @@ from goods.services import (
     post_good_document_sensitivity,
     validate_good,
     post_good_with_pv_grading,
-    validate_edit_good,
-    edit_good_with_pv_grading,
+    edit_good_pv_grading,
 )
-from lite_content.lite_exporter_frontend.goods import AttachDocumentForm
-from lite_forms.views import SingleFormView, MultiFormView
 from lite_content.lite_exporter_frontend import strings, goods
-from lite_forms.components import HiddenField, BackLink
+from lite_content.lite_exporter_frontend.goods import AttachDocumentForm
+from lite_forms.components import HiddenField, BackLink, FiltersBar, TextInput
 from lite_forms.generators import error_page, form_page
+from lite_forms.views import SingleFormView, MultiFormView
 
 
 class Goods(TemplateView):
     def get(self, request, **kwargs):
         description = request.GET.get("description", "").strip()
         part_number = request.GET.get("part_number", "").strip()
-        control_rating = request.GET.get("control_rating", "").strip()
+        control_list_entry = request.GET.get("control_list_entry", "").strip()
 
-        filtered = True if (description or part_number or control_rating) else False
+        filters = FiltersBar(
+            [
+                TextInput(title="description", name="description"),
+                TextInput(title="control list entry", name="control_list_entry"),
+                TextInput(title="part number", name="part_number"),
+            ]
+        )
 
         params = {
             "page": int(request.GET.get("page", 1)),
             "description": description,
             "part_number": part_number,
-            "control_rating": control_rating,
+            "control_list_entry": control_list_entry,
         }
 
-        goods = get_goods(request, **params)
-
         context = {
-            "goods": goods,
+            "goods": get_goods(request, **params),
             "description": description,
             "part_number": part_number,
-            "control_code": control_rating,
-            "filtered": filtered,
-            "params": params,
-            "page": params.pop("page"),
-            "params_str": convert_dict_to_query_params(params),
+            "control_list_entry": control_list_entry,
+            "filters": filters,
         }
         return render(request, "goods/goods.html", context)
 
@@ -106,16 +105,10 @@ class GoodsDetail(TemplateView):
     def get(self, request, **kwargs):
         documents = get_good_documents(request, str(self.good_id))
 
-        # Add the good's control list entry text if possible
-        control_list_entry_text = ""
-        if self.good["control_code"] and self.good["status"]["key"] != "query":
-            control_list_entry_text = get_control_list_entry(request, self.good["control_code"])["text"]
-
         context = {
             "good": self.good,
             "documents": documents,
             "type": self.view_type,
-            "control_list_entry_text": control_list_entry_text,
             "error": kwargs.get("error"),
             "text": kwargs.get("text", ""),
         }
@@ -189,22 +182,22 @@ class RaiseGoodsQuery(SingleFormView):
         self.success_url = reverse_lazy("goods:good", kwargs={"pk": self.object_pk})
 
 
-class EditGood(MultiFormView):
-    actions = [validate_edit_good, edit_good, edit_good_with_pv_grading]
-
+class EditGood(SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = str(kwargs["pk"])
         self.data = get_good(request, self.object_pk)[0]
-        self.forms = edit_good_form_group(self.object_pk)
+        self.form = edit_good_detail_form(self.object_pk)
         self.action = edit_good
+        self.success_url = reverse_lazy("goods:good", kwargs={"pk": self.object_pk})
 
-    def on_submission(self, request, **kwargs):
-        is_pv_graded = request.POST.copy().get("is_pv_graded", "").lower() == "yes"
-        self.forms = edit_good_form_group(self.object_pk, is_pv_graded)
-        if int(self.request.POST.get("form_pk")) == 1:
-            self.action = self.actions[2]
-        elif (int(self.request.POST.get("form_pk")) == 0) and is_pv_graded:
-            self.action = self.actions[0]
+
+class EditGrading(SingleFormView):
+    def init(self, request, **kwargs):
+        self.object_pk = str(kwargs["pk"])
+        self.data = get_good(request, self.object_pk)[0]
+        self.form = edit_grading_form(self.object_pk)
+        self.action = edit_good_pv_grading
+        self.success_url = reverse_lazy("goods:good", kwargs={"pk": self.object_pk})
 
     def get_data(self):
         data = self.data

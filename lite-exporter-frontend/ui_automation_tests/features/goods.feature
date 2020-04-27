@@ -12,7 +12,7 @@ Feature: I want to edit and remove goods on the goods list
     And I add a good with description "123 pistol" part number "321" controlled "Yes" control code "ML1a" and graded "yes"
     And I add the goods grading with prefix "abc" grading "nato_restricted" suffix "def" issuing authority "NATO" reference "12345" Date of issue "10-05-2015"
     Then I see good in goods list
-    When I edit a good to description "edited" part number "321" controlled "Yes" control code "ML1a" and graded "no"
+    When I edit the good to description "edited" part number "321" controlled "Yes" and control list entry "ML1a"
     Then I see my edited good details in the good page
     When I delete my good
     Then my good is no longer in the goods list

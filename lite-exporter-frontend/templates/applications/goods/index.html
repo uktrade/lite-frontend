@@ -50,7 +50,7 @@
 							{% if good_on_application.good.status.key == 'verified' %}<span class="app-verified__symbol">{% svg 'verified' %}</span><span class="govuk-visually-hidden"> (Verified product)</span>{% endif %}
 						</td>
 						<td class="govuk-table__cell">
-							{{ good_on_application.good.control_code|default_na }}
+							{% include 'includes/control-list-entries.html' with control_list_entries=good_on_application.good.control_list_entries %}
 						</td>
 						<td class="govuk-table__cell">
 							{{ good_on_application.good.part_number|default_na }}

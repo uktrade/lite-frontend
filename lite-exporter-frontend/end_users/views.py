@@ -3,11 +3,6 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, RedirectView
 
-from lite_content.lite_exporter_frontend import strings
-from lite_forms.components import HiddenField
-from lite_forms.generators import form_page, error_page
-from lite_forms.submitters import submit_paged_form
-
 from applications.services import (
     get_case_notes,
     get_application_ecju_queries,
@@ -24,6 +19,10 @@ from end_users.forms import (
     ecju_query_respond_confirmation_form,
 )
 from end_users.services import get_end_user_advisories, post_end_user_advisories, get_end_user_advisory
+from lite_content.lite_exporter_frontend import strings
+from lite_forms.components import HiddenField
+from lite_forms.generators import form_page, error_page
+from lite_forms.submitters import submit_paged_form
 
 
 class EndUsersList(TemplateView):

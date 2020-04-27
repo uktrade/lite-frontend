@@ -87,7 +87,7 @@
 				{% endfor %}
 			</tbody>
 		</table>
-		{% include "includes/pagination.html" with data=applications %}
+		{% pagination with data=applications %}
 	{% else %}
 		{% include "includes/notice.html" with text="applications.ApplicationsList.NO_DRAFTS_CONTENT_NOTICE" %}
 	{% endif %}

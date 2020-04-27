@@ -43,7 +43,7 @@ class TestCustomTags(TestCase):
         self.assertEqual(actual_value, expected_value)
 
     def test_default_na_without_value(self):
-        expected_value = '<span class="lite-hint">N/A</span>'
+        expected_value = '<span class="govuk-hint govuk-!-margin-0">N/A</span>'
         actual_value = ct.default_na(None)
 
         self.assertEqual(actual_value, expected_value)

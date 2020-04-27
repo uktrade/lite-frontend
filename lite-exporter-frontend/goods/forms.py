@@ -1,5 +1,9 @@
 from django.urls import reverse, reverse_lazy
 
+from core.services import get_control_list_entries
+from core.services import get_pv_gradings
+from goods.helpers import good_summary
+from goods.services import get_document_missing_reasons
 from lite_content.lite_exporter_frontend import generic
 from lite_content.lite_exporter_frontend.goods import (
     CreateGoodForm,
@@ -11,12 +15,7 @@ from lite_content.lite_exporter_frontend.goods import (
     GoodsList,
     GoodGradingForm,
 )
-
-from core.services import get_control_list_entries
-from core.services import get_pv_gradings
-from goods.helpers import good_summary
-from goods.services import get_document_missing_reasons
-from lite_forms.common import control_list_entry_question
+from lite_forms.common import control_list_entries_question
 from lite_forms.components import (
     Form,
     TextArea,
@@ -63,12 +62,10 @@ def add_goods_questions(application_pk=None):
                         key="yes",
                         value=CreateGoodForm.IsControlled.YES,
                         components=[
-                            control_list_entry_question(
+                            control_list_entries_question(
                                 control_list_entries=get_control_list_entries(None, convert_to_options=True),
                                 title=CreateGoodForm.ControlListEntry.TITLE,
                                 description=CreateGoodForm.ControlListEntry.DESCRIPTION,
-                                name="control_code",
-                                inset_text=False,
                             ),
                         ],
                     ),
@@ -104,6 +101,23 @@ def add_goods_questions(application_pk=None):
     )
 
 
+def edit_grading_form(good_id):
+    return Form(
+        title=CreateGoodForm.IsGraded.TITLE,
+        description="",
+        questions=[
+            RadioButtons(
+                name="is_pv_graded",
+                options=[
+                    Option(key="yes", value=CreateGoodForm.IsGraded.YES, components=pv_details_form().questions),
+                    Option(key="no", value=CreateGoodForm.IsGraded.NO),
+                ],
+            )
+        ],
+        back_link=BackLink(CreateGoodForm.BACK_BUTTON, reverse_lazy("goods:good", kwargs={"pk": good_id})),
+    )
+
+
 def pv_details_form():
     return Form(
         title=GoodGradingForm.TITLE,
@@ -111,7 +125,6 @@ def pv_details_form():
         questions=[
             Heading("PV grading", HeadingStyle.M),
             Group(
-                name="grading",
                 components=[
                     TextInput(title=GoodGradingForm.PREFIX, name="prefix", optional=True),
                     Select(
@@ -160,46 +173,19 @@ def edit_good_detail_form(good_id):
                         key="yes",
                         value=EditGoodForm.IsControlled.YES,
                         components=[
-                            control_list_entry_question(
+                            control_list_entries_question(
                                 control_list_entries=get_control_list_entries(None, convert_to_options=True),
                                 title=EditGoodForm.ControlListEntry.TITLE,
                                 description=EditGoodForm.ControlListEntry.DESCRIPTION,
-                                name="control_code",
-                                inset_text=False,
                             ),
                         ],
                     ),
                     Option(key="no", value=EditGoodForm.IsControlled.NO),
-                    Option(key="unsure", value=EditGoodForm.IsControlled.UNSURE),
                 ],
-            ),
-            RadioButtons(
-                title=CreateGoodForm.IsGraded.TITLE,
-                description=CreateGoodForm.IsGraded.DESCRIPTION,
-                name="is_pv_graded",
-                options=[
-                    Option(key="yes", value=CreateGoodForm.IsGraded.YES),
-                    Option(key="no", value=CreateGoodForm.IsGraded.NO),
-                    Option(key="grading_required", value=CreateGoodForm.IsGraded.RAISE_QUERY),
-                ],
-            ),
-        ],
-        buttons=[
-            Button(EditGoodForm.Buttons.SAVE, "submit", ButtonStyle.DEFAULT),
-            Button(
-                value=EditGoodForm.Buttons.DELETE,
-                action="",
-                style=ButtonStyle.WARNING,
-                link=reverse_lazy("goods:delete", kwargs={"pk": good_id}),
-                float_right=True,
             ),
         ],
         back_link=BackLink(CreateGoodForm.BACK_BUTTON, reverse_lazy("goods:good", kwargs={"pk": good_id})),
     )
-
-
-def edit_good_form_group(good_id, is_pv_graded: bool = None):
-    return FormGroup([edit_good_detail_form(good_id), conditional(is_pv_graded, pv_details_form())])
 
 
 def document_grading_form(request, good_id):
@@ -335,7 +321,7 @@ def delete_good_form(good):
                 value=EditGoodForm.DeleteConfirmationForm.NO,
                 action="",
                 style=ButtonStyle.SECONDARY,
-                link=reverse_lazy("goods:edit", kwargs={"pk": good["id"]}),
+                link=reverse_lazy("goods:good", kwargs={"pk": good["id"]}),
             ),
         ],
     )

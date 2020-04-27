@@ -1,5 +1,6 @@
 from selenium.webdriver.support.select import Select
 
+from ui_automation_tests.shared import functions
 from ui_automation_tests.shared.BasePage import BasePage
 
 
@@ -17,7 +18,7 @@ class AddGoodPage(BasePage):
     PART_NUMBER = "part_number"  # ID
     IS_CONTROLLED = "is_good_controlled-"  # Partial ID
     IS_PV_GRADED = "is_pv_graded-"
-    CONTROL_CODE = "control_code"  # ID
+    TOKEN_BAR_CONTROL_LIST_ENTRIES_SELECTOR = "#pane_control_list_entries .tokenfield-input"
     DESCRIPTION = "description"  # ID
 
     # Not sure form
@@ -36,13 +37,10 @@ class AddGoodPage(BasePage):
         # The only options accepted here are 'yes', 'no' and 'grading_required'
         self.driver.find_element_by_id(self.IS_PV_GRADED + option.lower()).click()
 
-    def enter_control_code(self, code):
-        control_code_tb = self.driver.find_element_by_id(self.CONTROL_CODE)
-        control_code_tb.clear()
-        control_code_tb.send_keys(code)
-
-        # This is done as control code textbox needs to lose focus
-        self.driver.find_element_by_id(self.DESCRIPTION).click()
+    def enter_control_list_entries(self, control_list_entry: str):
+        functions.send_tokens_to_token_bar(
+            self.driver, self.TOKEN_BAR_CONTROL_LIST_ENTRIES_SELECTOR, [control_list_entry]
+        )
 
     def enter_control_code_unsure(self, code):
         control_code_tb = self.driver.find_element_by_id(self.UNSURE_CLC_CODE)

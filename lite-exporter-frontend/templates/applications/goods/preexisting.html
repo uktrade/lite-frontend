@@ -10,51 +10,16 @@
 	<h1 class="govuk-heading-l">{% block title %}{% lcs 'goods.AddPreexistingGoodToApplicationForm.TITLE' %}{% endblock %}</h1>
 
 	{% if data or description or part_number or control_code %}
-		<div class="lite-js-only">
-			<a href="#" id="show-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
-				{% svg 'plus' %}
-				Show filters
-			</a>
-			<a href="#" id="hide-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
-				{% svg 'minus' %}
-				Hide filters
-			</a>
-		</div>
 
-		<div id="filters" class="govuk-grid-row lite-filter-bar">
-			<form method="get">
-				<div class="govuk-grid-column-one-quarter">
-					<label class="govuk-label" for="description">
-						Description
-					</label>
-					<input class="govuk-input" id="description" name="description" type="text" autocomplete="off" autocorrect="off"  value="{{ description }}">
-				</div>
-				<div class="govuk-grid-column-one-quarter">
-					<label class="govuk-label" for="part_number">
-						Part number
-					</label>
-					<input class="govuk-input" id="part_number" name="part_number" type="text" autocomplete="off" autocorrect="off"  value="{{ part_number }}">
-				</div>
-				<div class="govuk-grid-column-one-quarter">
-					<label class="govuk-label" for="control_rating">
-						Control list classification
-					</label>
-					<input class="govuk-input" id="control_rating" name="control_rating" type="text" autocomplete="off" autocorrect="off"  value="{{ control_code }}">
-				</div>
-				<div class="govuk-grid-column-one-quarter">
-					<label class="govuk-label"></label>
-					<button type="submit" class="govuk-button" id="button-apply-filters">Apply filters</button>
-				</div>
-			</form>
-		</div>
+		{% include 'filters.html' %}
 
 		{% if data %}
 			<table class="govuk-table">
 				<thead class="govuk-table__head">
 					<tr class="govuk-table__row">
-						<th scope="col" class="govuk-table__header">Description</th>
-						<th scope="col" class="govuk-table__header">Part number</th>
-						<th scope="col" class="govuk-table__header">CLC</th>
+						<th scope="col" class="govuk-table__header">{% lcs 'goods.AddPreexistingGoodToApplicationForm.Table.DESCRIPTION' %}</th>
+						<th scope="col" class="govuk-table__header">{% lcs 'goods.AddPreexistingGoodToApplicationForm.Table.PART_NUMBER' %}</th>
+						<th scope="col" class="govuk-table__header">{% lcs 'goods.AddPreexistingGoodToApplicationForm.Table.CONTROL_LIST_ENTRIES' %}</th>
 						<th scope="col" class="govuk-table__header"></th>
 					</tr>
 				</thead>
@@ -69,7 +34,7 @@
 								{{ good.part_number|highlight_text:part_number|default_na }}
 							</td>
 							<td class="govuk-table__cell" id="good-control_code">
-								{{ good.control_code|highlight_text:control_code|default_na }}
+								{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}
 							</td>
 							<td class="govuk-table__cell lite-!-text-align-right">
 								<a href="{% url 'applications:add_good_to_application' draft_id good.id %}" id="add-to-application" class="govuk-link govuk-link--no-visited-state" draggable="false">
@@ -80,7 +45,7 @@
 					{% endfor %}
 				</tbody>
 			</table>
-			{% include "includes/pagination.html" with data=data %}
+			{% pagination %}
 		{% else %}
 			<div class="lite-information-text">
 				<span class="lite-information-text__icon" aria-hidden="true">!</span>
@@ -99,8 +64,4 @@
 			</p>
 		</div>
 	{% endif %}
-{% endblock %}
-
-{% block javascript %}
-	<script src="{% static 'javascripts/filter-bar.js' %}"></script>
 {% endblock %}

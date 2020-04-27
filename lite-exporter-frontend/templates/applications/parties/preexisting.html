@@ -13,7 +13,7 @@
 		{% endblock %}
 	</h1>
 
-	{% include "includes/filter.html" with filters=filters %}
+	{% include "filters.html" %}
 
 	{% if data.results %}
 		<p class="govuk-hint">{{ data.count }}{% lcs 'applications.CopyExistingPartyPage.RESULTS' %}</p>
@@ -59,7 +59,7 @@
 				{% endfor %}
 			</tbody>
 		</table>
-		{% include "includes/pagination.html" with data=data %}
+		{% pagination %}
 	{% else %}
 		<h2 class="govuk-heading-m">{% lcs 'applications.CopyExistingPartyPage.NONE_FOUND' %}</h2>
 	{% endif %}

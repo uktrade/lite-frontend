@@ -1,7 +1,7 @@
 from conf.constants import HMRC
 from core.services import get_control_list_entries
 from lite_content.lite_exporter_frontend.goods_types import CreateGoodsTypeForm
-from lite_forms.common import control_list_entry_question
+from lite_forms.common import control_list_entries_question
 from lite_forms.components import TextArea, RadioButtons, Option, Form
 from lite_forms.helpers import conditional
 
@@ -24,10 +24,8 @@ def goods_type_form(application_type: str):
                                 key="yes",
                                 value=CreateGoodsTypeForm.IsControlled.YES,
                                 components=[
-                                    control_list_entry_question(
+                                    control_list_entries_question(
                                         control_list_entries=get_control_list_entries(None, convert_to_options=True),
-                                        name="control_code",
-                                        inset_text=False,
                                     ),
                                 ],
                             ),

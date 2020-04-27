@@ -1,5 +1,6 @@
 from http import HTTPStatus
 
+from applications.helpers.date_fields import format_date
 from conf.client import get, post, put, delete
 from conf.constants import (
     GOODS_URL,
@@ -13,10 +14,11 @@ from conf.constants import (
 )
 from core.helpers import convert_parameters_to_query_params
 from core.services import get_document_download_stream
-from goods.helpers import process_pv_grading_for_post
 
 
-def get_goods(request, page: int = 1, description=None, part_number=None, control_rating=None, for_application=None):
+def get_goods(
+    request, page: int = 1, description=None, part_number=None, control_list_entry=None, for_application=None
+):
     data = get(request, GOODS_URL + convert_parameters_to_query_params(locals()))
     return data.json()
 
@@ -37,15 +39,22 @@ def validate_good(request, json):
     post_data = json
     post_data["validate_only"] = True
 
-    data = post_goods(request, post_data)
-    return data
+    return post_goods(request, post_data)
 
 
 def post_good_with_pv_grading(request, json):
-    post_data = process_pv_grading_for_post(json)
+    date_of_issue = format_date(json, "date_of_issue")
 
-    data = post_goods(request, post_data)
-    return data
+    json["pv_grading_details"] = {
+        "grading": json["grading"],
+        "custom_grading": json["custom_grading"],
+        "prefix": json["prefix"],
+        "suffix": json["suffix"],
+        "issuing_authority": json["issuing_authority"],
+        "reference": json["reference"],
+        "date_of_issue": date_of_issue,
+    }
+    return post_goods(request, json)
 
 
 def edit_good(request, pk, json):
@@ -53,18 +62,20 @@ def edit_good(request, pk, json):
     return data.json(), data.status_code
 
 
-def validate_edit_good(request, pk, json):
-    post_data = json
-
-    post_data["validate_only"] = True
-    return edit_good(request, pk, post_data)
-
-
-def edit_good_with_pv_grading(request, pk, json):
-    post_data = process_pv_grading_for_post(json)
-
-    data = edit_good(request, pk, post_data)
-    return data
+def edit_good_pv_grading(request, pk, json):
+    json = {
+        "is_pv_graded": json["is_pv_graded"],
+        "pv_grading_details": {
+            "grading": json["grading"],
+            "custom_grading": json["custom_grading"],
+            "prefix": json["prefix"],
+            "suffix": json["suffix"],
+            "issuing_authority": json["issuing_authority"],
+            "reference": json["reference"],
+            "date_of_issue": format_date(json, "date_of_issue"),
+        },
+    }
+    return edit_good(request, pk, json)
 
 
 def delete_good(request, pk):

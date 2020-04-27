@@ -7,15 +7,12 @@ Feature: I want to search for goods in my goods list to add to an in progress ap
   @LT_1450_filters @regression
   Scenario: Search for goods by filters in goods list
     Given I go to exporter homepage and choose Test Org
-    When I create a good of description "Test apple123", control code "ML4" and part number "5678" if it does not exist
-    And I create a good of description "Test apple123", control code "ML4" and part number "1234" if it does not exist
-    And I create a good of description "Test apple123", control code "ML5" and part number "9012" if it does not exist
+    When I create a good
     And I click on goods link
-    And I filter by description "Test apple123" and click filter
-    And I filter by control list entry "ML4" and click filter
-    And I filter by part number "5678" and click filter
-    Then All goods have description "Test apple123"
-    And All goods have control code "ML4"
-    And All goods have part number "5678"
-    # Only 1 good matches all 3 criteria
-    Then "1" goods are found
+    And I filter by the good's description and click filter
+    Then all goods have the description
+    When I filter by the good's control list entry and click filter
+    Then all goods have the control list entry
+    When I filter by the good's part number and click filter
+    Then all goods have the part number
+    And only one good matches the filters

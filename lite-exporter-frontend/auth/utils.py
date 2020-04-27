@@ -4,7 +4,6 @@ from urllib.parse import urljoin
 from django.conf import settings
 from django.shortcuts import redirect
 from django.urls import reverse
-
 from requests_oauthlib import OAuth2Session
 
 from conf.settings import env

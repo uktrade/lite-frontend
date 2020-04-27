@@ -8,6 +8,11 @@ $govuk-page-width: 1200px !default;
 	display: none;
 }
 
+.govuk-table__cell {
+	word-break: break-all!important;
+	max-width: 25vw;
+}
+
 .govuk-summary-list__key--highlight {
 	border-left: govuk-spacing(1) solid govuk-colour("orange");
 	padding-left: govuk-spacing(3);
@@ -50,8 +55,8 @@ $govuk-page-width: 1200px !default;
 
 .app-verified__symbol {
 	display: inline-block;
-	margin-left: govuk-spacing(1);
 	margin-top: 1px;
+	margin-right: govuk-spacing(1);
 
 	svg {
 		width: 16px;

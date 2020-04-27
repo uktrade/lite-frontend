@@ -10,7 +10,6 @@ from applications.helpers.task_list_sections import (
 )
 from applications.services import (
     get_application_countries,
-    get_application_goods_types,
     get_application_goods,
     get_additional_documents,
 )
@@ -83,7 +82,7 @@ def get_application_task_list(request, application, errors=None):
     elif application_type == OPEN:
         context["countries"] = get_application_countries(request, application["id"])
         context["end_use_details"] = get_end_use_details(application)
-        context["goodstypes"] = get_application_goods_types(request, application["id"])
+        context["goodstypes"] = application["goods_types"]
         if _is_application_export_type_temporary(application):
             context["temporary_export_details"] = get_temporary_export_details(application)
         if application.get("goods_types"):

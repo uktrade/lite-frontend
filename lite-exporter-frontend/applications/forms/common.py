@@ -1,8 +1,8 @@
+from django.urls import reverse_lazy
+
 from applications.forms.edit import told_by_an_official_form, reference_name_form
 from conf.constants import STANDARD
 from lite_content.lite_exporter_frontend import strings
-from django.urls import reverse_lazy
-
 from lite_content.lite_exporter_frontend.applications import ApplicationSuccessPage
 from lite_forms.components import (
     HiddenField,
