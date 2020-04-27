@@ -22,12 +22,6 @@ QUEUE_ALL_CASES = "All cases"
 
 CASE_CHANGES = "See what has changed"
 
-# Generate Document
-CHOOSE_TEMPLATE_TITLE = "Select a template"
-CHOOSE_TEMPLATE_BUTTON = CONTINUE
-PREVIEW_DOCUMENT_TITLE = "Preview"
-PREVIEW_DOCUMENT_BUTTON = SAVE
-
 # Organisation
 ORGANISATION_CREATION_SUCCESS = "The organisation was created successfully"
 ORGANISATION_SET_FLAGS = "Set flags on this organisation"
