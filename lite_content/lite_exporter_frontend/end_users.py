@@ -7,6 +7,7 @@ class EndUsersPage:
     NEW_END_USER_ADVISORY_BUTTON = "New end user advisory"
     NO_CONTENT_NOTICE = "There are no end user advisories."
     NOTIFICATIONS = "Notifications"
+    COPY_END_USER = "Copy"
 
 
 class AttachDocumentPage:

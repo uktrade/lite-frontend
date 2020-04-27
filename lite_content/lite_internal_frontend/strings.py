@@ -5,6 +5,7 @@ from lite_content.lite_internal_frontend import (  # noqa
     flags,  # noqa
     organisations,  # noqa
     generic,  # noqa
+    goods,  # noqa
     users,  # noqa
     teams,  # noqa
     queues,  # noqa

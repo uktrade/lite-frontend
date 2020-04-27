@@ -5,13 +5,6 @@ from lite_content.lite_exporter_frontend.generic import PERMISSION_FINDER_LINK
 class GoodsList:
     TITLE = "Product list"
     CREATE_GOOD = "Add a product"
-    GOOD = "Product"
-    VERIFIED = "ECJU has verified this product"
-    EDIT_GOOD_LINK = "Edit product"
-    IN_REVIEW = "ECJU is currently reviewing this product."
-
-    YOUR_GOOD = "Product"
-    NO_LONGER_CAN_BE_CHANGED = "This product has been used on an application so can’t be edited."
 
     class Count:
         ORGANISATION_ZERO = "Your organisation has no products listed."
@@ -32,7 +25,7 @@ class GoodsList:
 
     class Table:
         DESCRIPTION = generic.DESCRIPTION
-        CONTROL_LIST_ENTRY = "CLC"
+        CONTROL_LIST_ENTRY = "Control list entries"
         IS_GOOD_CONTROLLED = "Controlled"
         PART_NUMBER = generic.PART_NUMBER
         QUANTITY = "Quantity"
@@ -48,6 +41,54 @@ class GoodsList:
         NAME = "File"
         DESCRIPTION = "Description"
         UPLOADED_BY = "Uploaded by"
+
+
+class GoodPage:
+    TITLE = "Product"
+    DELETE_GOOD = "Delete product"
+    YOUR_QUERY_HEADING = "Your query"
+    VERIFIED = "ECJU has verified this product based on the information provided"
+    IN_REVIEW = "ECJU is currently reviewing this product."
+    YOUR_GOOD = "Product"
+    NO_LONGER_CAN_BE_CHANGED = "This product has been used on an application so can’t be edited."
+
+    class Tabs:
+        DETAILS = "Details"
+        NOTES = "Notes"
+        ECJU_QUERIES = "ECJU queries"
+        GENERATED_DOCUMENTS = "ECJU documents"
+
+    class Query:
+        TITLE = "Product query"
+        CASE_OFFICER = "Case officer"
+        NO_ASSIGNED_CASE_OFFICER = "Not assigned"
+        REFERENCE = "ECJU reference"
+        CLC_RAISED_REASONS = "CLC query reasons"
+        GRADING_RAISED_REASONS = "Grading query reasons"
+
+    class Document:
+        DOWNLOAD = generic.Document.DOWNLOAD
+        DELETE = generic.Document.DELETE
+        PROCESSING = generic.Document.PROCESSING
+        ATTACH = generic.Document.ATTACH
+        REMOVE = generic.Document.REMOVE
+
+    class RaiseQuery:
+        PREFIX = "If you're not sure it's a controlled product, "
+        LINK = "raise a control list classification query"
+        SUFFIX = "."
+
+    class Table:
+        DESCRIPTION = "Description"
+        IS_GOOD_CONTROLLED = "Controlled"
+        CONTROL_LIST_ENTRY = "CLC"
+
+        class Grading:
+            IS_GRADED = "Security graded"
+            GRADING = "Grade"
+            REFERENCE = "Reference"
+            ISSUING_AUTHORITY = "Issuing authority"
+            DATE_OF_ISSUE = "Date of issue"
 
 
 class DocumentSensitivityForm:
@@ -108,8 +149,8 @@ class CreateGoodForm:
         UNSURE = "I don't know, raise a control list classification (CLC) query"
 
     class ControlListEntry:
-        TITLE = "Control list classification (CLC)"
-        DESCRIPTION = "For example, ML1a."
+        TITLE = "Control list entries"
+        DESCRIPTION = "Type to get suggestions. For example, ML1a."
 
     class IsGraded:
         TITLE = "Does the product have a security grading?"
@@ -192,8 +233,8 @@ class EditGoodForm:
         UNSURE = "I don't know, raise a control list classification (CLC) query"
 
     class ControlListEntry:
-        TITLE = "Control list classification (CLC)"
-        DESCRIPTION = "For example, ML1a."
+        TITLE = "Control list entries"
+        DESCRIPTION = "Type to get suggestions. For example, ML1a."
 
     class Incorporated:
         TITLE = "Will the product be incorporated into another product?"
@@ -246,48 +287,6 @@ class RespondToQueryForm:
         NO = "Cancel and change the response"
 
 
-class GoodPage:
-    YOUR_QUERY_HEADING = "Your query"
-
-    class Tabs:
-        DETAILS = "Details"
-        NOTES = "Notes"
-        ECJU_QUERIES = "ECJU queries"
-        GENERATED_DOCUMENTS = "ECJU documents"
-
-    class Query:
-        TITLE = "Product query"
-        CASE_OFFICER = "Case officer"
-        NO_ASSIGNED_CASE_OFFICER = "Not assigned"
-        REFERENCE = "ECJU reference"
-        CLC_RAISED_REASONS = "CLC query reasons"
-        GRADING_RAISED_REASONS = "Grading query reasons"
-
-    class Document:
-        DOWNLOAD = generic.Document.DOWNLOAD
-        DELETE = generic.Document.DELETE
-        PROCESSING = generic.Document.PROCESSING
-        ATTACH = generic.Document.ATTACH
-        REMOVE = generic.Document.REMOVE
-
-    class RaiseQuery:
-        PREFIX = "If you're not sure it's a controlled product, "
-        LINK = "raise a control list classification query"
-        SUFFIX = "."
-
-    class Table:
-        DESCRIPTION = "Description"
-        IS_GOOD_CONTROLLED = "Controlled"
-        CONTROL_LIST_ENTRY = "CLC"
-
-        class Grading:
-            IS_GRADED = "Security graded"
-            GRADING = "Grade"
-            REFERENCE = "Reference"
-            ISSUING_AUTHORITY = "Issuing authority"
-            DATE_OF_ISSUE = "Date of issue"
-
-
 class AddGoodToApplicationForm:
     TITLE = "Quantity and value of the product"
     DESCRIPTION = ""
@@ -324,6 +323,11 @@ class AddGoodToApplicationForm:
 
 class AddPreexistingGoodToApplicationForm:
     TITLE = "Add a product from your product list"
+
+    class Table:
+        DESCRIPTION = "Description"
+        PART_NUMBER = "Part number"
+        CONTROL_LIST_ENTRIES = "Control list entries"
 
 
 class ViewGoodOnApplicationPage:

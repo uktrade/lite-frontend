@@ -12,7 +12,7 @@ class OverviewPage:
 
 class Variables:
     DESCRIPTION = generic.DESCRIPTION
-    CONTROL_LIST_ENTRY = "CLC"
+    CONTROL_LIST_ENTRY = "Control list entries"
     INCORPORATED = generic.INCORPORATED
     REMOVE_GOODS_TYPE = "Remove"
 

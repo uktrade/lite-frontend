@@ -407,7 +407,7 @@ class RespondClCQueryForm:
 
     class Summary:
         DESCRIPTION = "Description"
-        CONTROL_LIST_ENTRY = "Control list classification"
+        CONTROL_LIST_ENTRIES = "Control list entries"
         NO_CONTROL_LIST_ENTRY = "N/A"
 
     class Controlled:
