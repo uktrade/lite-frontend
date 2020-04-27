@@ -4,6 +4,8 @@ from pages.application_page import ApplicationPage
 from pages.queues_pages import QueuesPages
 from pages.shared import Shared
 
+from ui_automation_tests.shared.tools.helpers import find_paginated_item_by_id
+
 scenarios("../features/queues.feature", strict_gherkin=False)
 
 
@@ -24,14 +26,10 @@ def click_on_edit_queue(driver, context):
     Shared(driver).click_submit()
 
 
-@then("I see the new queue")
+@then("I see my queue")
 def see_queue_in_queue_list(driver, context):
-    assert context.queue_name in Shared(driver).get_text_of_body()
-
-
-@then("I see the edited queue")
-def see_edited_queue_in_queue_list(driver, context):
-    assert context.queue_name in Shared(driver).get_text_of_body()
+    assert find_paginated_item_by_id(context.queue_name, driver)
+    assert context.queue_name in QueuesPages(driver).get_row_text(context.queue_name)
 
 
 @then("I dont see previously created application")

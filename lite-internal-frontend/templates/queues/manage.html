@@ -16,7 +16,7 @@
 		</div>
 	</div>
 
-	{% if queues %}
+	{% if data.results %}
 		<table class="govuk-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
@@ -26,8 +26,8 @@
 				</tr>
 			</thead>
 			<tbody class="govuk-table__body">
-				{% for queue in queues %}
-					<tr class="govuk-table__row">
+				{% for queue in data.results %}
+					<tr class="govuk-table__row" id="{{ queue.name }}">
 						<td class="govuk-table__cell">
 							{{ queue.name }}
 						</td>
@@ -50,6 +50,7 @@
 				{% endfor %}
 			</tbody>
 		</table>
+		{% pagination %}
 	{% else %}
 		{% include "includes/notice.html" with text='queues.QueuesList.NO_CONTENT_NOTICE' %}
 	{% endif %}

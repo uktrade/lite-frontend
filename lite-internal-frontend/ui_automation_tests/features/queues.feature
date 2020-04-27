@@ -4,15 +4,14 @@ Feature: I want to define new work queues and the teams they belong to
   I want to be able to define new work queues and the department they belong to
   So that new government departments and teams within departments which require their own work queues can easily have one
 
-
   @LT_919_add @regression
   Scenario: Add and edit a queue
     Given I sign in to SSO or am signed into SSO
     When I go to queues
     And I add a new queue called Review
-    Then I see the new queue
+    Then I see my queue
     When I edit the new queue
-    Then I see the edited queue
+    Then I see my queue
     When I go to the internal homepage
     And I click on edited queue in dropdown
 

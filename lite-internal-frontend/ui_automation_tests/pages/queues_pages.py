@@ -44,3 +44,6 @@ class QueuesPages(BasePage):
             if element.is_selected():
                 no += 1
         return no
+
+    def get_row_text(self, id):
+        return self.driver.find_element_by_id(id).text

@@ -7,17 +7,13 @@ from conf.constants import QUEUES_URL, CASE_URL
 from http import HTTPStatus
 
 
-def get_queues(request, convert_to_options=False):
-    data = get(request, QUEUES_URL)
+def get_queues(request, disable_pagination=True, page=1, convert_to_options=False):
+    data = get(request, QUEUES_URL + f"?page={page}&disable_pagination={disable_pagination}").json()
+
     if convert_to_options:
-        converted = []
-
-        for queue in data.json().get("queues"):
-            converted.append(Option(queue.get("id"), queue.get("name"), description=queue.get("team").get("name")))
-
-        return converted
-
-    return data.json()["queues"]
+        return [Option(queue.get("id"), queue.get("name"), description=queue.get("team").get("name")) for queue in data]
+    else:
+        return data
 
 
 def post_queues(request, json):
