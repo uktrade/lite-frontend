@@ -76,12 +76,12 @@ class RegisterAnOrganisation:
         EORI_NUMBER = "European Union registration and identification number (EORI)"
         EORI_NUMBER_DESCRIPTION = "[Get an EORI number](https://www.gov.uk/eori) if you don't have one."
         EORI_NUMBER_SHORT_TITLE = "EORI number"
-        SIC_NUMBER = "SIC number"
+        SIC_NUMBER = "SIC code"
         SIC_NUMBER_DESCRIPTION = (
-            "[Find your SIC number](https://www.gov.uk/government/publications/standard-industria"
+            "[Find your SIC code](https://www.gov.uk/government/publications/standard-industria"
             "l-classification-of-economic-activities-sic)."
         )
-        SIC_NUMBER_SHORT_TITLE = "SIC number"
+        SIC_NUMBER_SHORT_TITLE = "SIC code"
         VAT_NUMBER = "UK VAT number"
         VAT_NUMBER_DESCRIPTION = (
             "9 digits long, with the first 2 letters indicating the country code of the registered business."

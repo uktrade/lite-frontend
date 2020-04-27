@@ -43,7 +43,7 @@ class Tiles:
 
     class EUA:
         ASK_FOR_ADVICE = (
-            "Ask for advice about ann overseas organisation, government or individual in your export of products "
+            "Ask for advice about an overseas organisation, government or individual in your export of products "
             "that are not controlled."
         )
 

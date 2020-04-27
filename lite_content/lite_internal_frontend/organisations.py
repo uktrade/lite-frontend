@@ -8,7 +8,7 @@ class OrganisationsPage:
         NAME = "Name"
         TYPE = "Type"
         EORI_NUMBER = "EORI number"
-        SIC_NUMBER = "SIC number"
+        SIC_NUMBER = "SIC code"
         VAT_NUMBER = "VAT number"
         STATUS = "Status"
         EDIT = "Edit"
@@ -36,7 +36,7 @@ class OrganisationPage:
             FIRST_AND_LAST_NAME = "First and last name"
             NAME = "Name"
             EORI_NUMBER = "EORI number"
-            SIC_NUMBER = "SIC number"
+            SIC_NUMBER = "SIC code"
             VAT_NUMBER = "UK VAT number"
             COMPANY_REG_NUMBER = "Company registration number"
             CREATED_AT = "Created at"
@@ -109,7 +109,7 @@ class RegisterAnOrganisation:
         DESCRIPTION = "9 digits long, with the first 2 letters indicating the country code of the registered business."
 
     class SicNumber:
-        TITLE = "SIC number"
+        TITLE = "Standard industrial classification (SIC) code"
         DESCRIPTION = "Classifies industries by a 4 digit code."
 
 
@@ -141,7 +141,7 @@ class EditCommercialOrganisationPage(EditOrganisationPage):
         DESCRIPTION = "9 digits long, with the first 2 letters indicating the country code of the registered business."
 
     class SICNumber:
-        TITLE = "SIC number"
+        TITLE = "Standard industrial classification (SIC) code"
         DESCRIPTION = "Classifies industries by a 4 digit code."
 
 
