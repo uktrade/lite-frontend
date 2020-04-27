@@ -237,3 +237,11 @@ class Applications:
             headers=self.api_client.exporter_headers,
             body=data,
         )
+
+    def set_status(self, application_id, status):
+        self.api_client.make_request(
+            method="PUT",
+            url="/applications/" + application_id + "/status/",
+            headers=self.api_client.gov_headers,
+            body={"status": status},
+        )
