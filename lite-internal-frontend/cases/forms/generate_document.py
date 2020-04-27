@@ -8,7 +8,7 @@ from lite_forms.components import Form, RadioButtonsImage, Option, BackLink, Che
 ADD_PARAGRAPH_KEY = "add_paragraphs"
 
 
-def select_template_form(templates, total_pages, case_id, back_link):
+def select_template_form(templates, total_pages, back_link):
     return Form(
         title=letter_templates.LetterTemplatesPage.PickTemplate.TITLE,
         questions=[
