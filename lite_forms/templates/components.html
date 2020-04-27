@@ -78,14 +78,20 @@
 			{% include "components/list.html" with component=question %}
 		{% elif question.input_type == "label" %}
 			{% include "components/label.html" with component=question %}
-        {% elif question.input_type == "control_list_entry" %}
-			{% include "components/control_list_entry.html" with component=question value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
+        {% elif question.input_type == "token_bar" %}
+			{% include "components/token-bar.html" with component=question value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
         {% elif question.input_type == "markdown" %}
 			{% include "components/markdown.html" with variables=question.variables name=question.name value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
 		{% elif question.input_type == "link" %}
 			{% include "components/link.html" with component=question %}
 		{% elif question.input_type == "autocomplete" %}
 			{% include "components/autocomplete.html" with component=question value=data|key_value:question.name|default:'' data=question.data %}
+		{% elif question.input_type == "group" %}
+			<div id="pane_{{ question.name }}" class="{% for class in question.classes %}{{ class }} {% endfor %}">
+				{% for question in question.components %}
+					{% include "components.html" with question=question errors=errors %}
+				{% endfor %}
+			</div>
 		{% elif question.input_type == "custom" %}
 			{% include question.template with data=question.data %}
 		{% endif %}

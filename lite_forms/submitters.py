@@ -1,5 +1,7 @@
 from typing import Callable
 
+from django.http import QueryDict
+
 from lite_forms.components import HiddenField, Form, FormGroup
 from lite_forms.generators import form_page
 from lite_forms.helpers import (
@@ -45,11 +47,15 @@ def submit_single_form(request, form: Form, action: Callable, object_pk=None, ov
 def _prepare_data(request, inject_data):
     data = request.POST.copy()
 
+    if data and inject_data:
+        for key, value in data.items():
+            inject_data[key] = value
+
+        data = QueryDict("", mutable=True)
+        data.update(inject_data)
+
     # Handle lists (such as checkboxes)
     data = handle_lists(data)
-
-    if inject_data:
-        data = dict(list(inject_data.items()) + list(data.items()))
 
     # Remove form_pk and CSRF from POST data as the new form will replace them
     if "form_pk" in data:

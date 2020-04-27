@@ -1,13 +1,11 @@
-<div data-module="character-count" data-maxlength="{{ extras.max_length }}">
-	<textarea class="govuk-textarea js-character-count {% for class in component.classes %}{{ class }} {% endfor %} {% if error %}govuk-textarea--error{% endif %}"
+<div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="{{ extras.max_length }}">
+	<textarea class="govuk-textarea govuk-js-character-count {% for class in component.classes %}{{ class }} {% endfor %} {% if error %}govuk-textarea--error{% endif %}"
 		  id="{{ name }}"
 		  name="{{ name }}"
 		  rows="{{ component.rows }}"
-          {% if extras.max_length %}
-              maxlength="{{ extras.max_length }}"
-          {% endif %}>{{ value }}</textarea>
+		  aria-describedby="{{ name }}-info {{ name }}-hint">{{ value }}</textarea>
 	{% if extras.max_length %}
-		<span id="{{ name }}-info" class="govuk-hint govuk-character-count__message" aria-live="polite" style="margin-top: -10px;">
+		<span id="{{ name }}-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
 			Enter up to {{ extras.max_length }} characters
 		</span>
 	{% endif %}

@@ -76,15 +76,6 @@ class FormView(TemplateView, ABC):
 
     def get_validated_data(self):
         data = getattr(self, "_validated_data", {}).copy()
-
-        # for key in data:
-        #     if data[key] == "True" or data[key] == "true":
-        #         data[key] = True
-        #     elif data[key] == "False" or data[key] == "false":
-        #         data[key] = False
-        #     elif data[key] == "None":
-        #         data[key] = None
-
         return data
 
     def init(self, request, **kwargs):
@@ -178,7 +169,6 @@ class MultiFormView(FormView):
     def post(self, request, **kwargs):
         self.init(request, **kwargs)
         self.on_submission(request, **kwargs)
-
         response, data = submit_paged_form(
             request,
             self.get_forms(),

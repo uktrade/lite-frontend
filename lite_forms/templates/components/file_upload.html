@@ -28,7 +28,7 @@
 	<span class="govuk-hint">You can replace the uploaded file below:</span>
 {% endif %}
 <input id="{{ name }}" type="file" name="{{ name }}" />
-<script type="text/javascript">
+<script type="text/javascript" nonce="{{ request.csp_nonce }}">
     $("#{{ name }}").wrap( "<label class='lite-file-upload' tabindex='0'></label>" );
     $("#{{ name }}").after("<span>Drag and drop your document here or <span class='lite-file-upload__link'>click to browse</span></span>");
 

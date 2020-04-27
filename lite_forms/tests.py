@@ -1,7 +1,4 @@
-from http import HTTPStatus
 from unittest import TestCase
-
-from django.test.client import RequestFactory
 
 from lite_forms.components import (
     Form,
@@ -13,7 +10,6 @@ from lite_forms.components import (
     HelpSection,
     Option,
     DateInput,
-    ControlListEntryInput,
     BackLink,
     HiddenField,
     NumberInput,
@@ -30,7 +26,6 @@ from lite_forms.helpers import (
     get_all_form_components,
     insert_hidden_fields,
 )
-from lite_forms.submitters import submit_paged_form
 from lite_forms.templatetags import custom_tags
 from lite_forms.templatetags.custom_tags import prefix_dots
 
@@ -194,10 +189,6 @@ class MarkdownTest(TestCase):
     def test_date_input(self):
         date = DateInput(prefix="Date", description=self.markdown_description)
         self.assertEqual(date.description, self.html_description)
-
-    def test_control_list_entry_input(self):
-        clc = ControlListEntryInput(name="abc", options=[], description=self.markdown_description)
-        self.assertEqual(clc.description, self.html_description)
 
 
 class SingleQuestionFormAccessibilityTest(TestCase):

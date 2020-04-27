@@ -389,9 +389,8 @@ class Group:
     Groups components together inside of a div
     """
 
-    def __init__(self, name, components, classes):
+    def __init__(self, components, classes):
         self.input_type = "group"
-        self.name = name
         self.components = components
         self.classes = classes
 
@@ -551,7 +550,7 @@ class List:
         self.input_type = "list"
 
 
-class ControlListEntryInput:
+class TokenBar:
     def __init__(
         self,
         name: str,
@@ -561,6 +560,11 @@ class ControlListEntryInput:
         optional: bool = False,
         classes: [] = None,
     ):
+        """
+        TokenBar allows for input of complex pieces of information in compact form,
+        such as an entity (person, place, or thing) or text. They enable user input and
+        verify that input by converting text into chips.
+        """
         from lite_forms.helpers import convert_to_markdown
 
         self.name = name
@@ -569,14 +573,18 @@ class ControlListEntryInput:
         self.options = options
         self.optional = optional
         self.classes = classes
-        self.input_type = "control_list_entry"
+        self.input_type = "token_bar"
 
 
 class AutocompleteInput:
-    def __init__(self, name: str, options: List, title: str = ""):
+    def __init__(
+        self, name: str, options: List, title: str = "", description: str = "", classes: Optional[List] = None
+    ):
         self.name = name
-        self.options = options
         self.title = title
+        self.description = description
+        self.options = options
+        self.classes = classes
         self.input_type = "autocomplete"
 
 

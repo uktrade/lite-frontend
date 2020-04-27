@@ -155,6 +155,13 @@ def heading_class(text):
 
 @register.filter
 def file_type(file_name):
+    """
+    Returns the file type from a complete file name
+    If the file doesn't have a file type, return "file"
+    """
+    if "." not in file_name:
+        return "file"
+
     return file_name.split(".")[-1]
 
 
@@ -189,7 +196,7 @@ def govuk_link_button(text, url, url_param=None, id="", classes=""):
 
 
 @register.inclusion_tag("components/pagination.html", takes_context=True)
-def pagination(context, data=None):
+def pagination(context, *args, **kwargs):
     class PageItem:
         def __init__(self, number, url, selected=False):
             self.number = number
@@ -202,8 +209,10 @@ def pagination(context, data=None):
             self.text = text
             self.type = "page_ellipsis"
 
-    if not data:
+    if "data" not in kwargs:
         data = context["data"] if "data" in context else context
+    else:
+        data = kwargs["data"]
 
     # If the data provided isn't
     if not data or "total_pages" not in data:
