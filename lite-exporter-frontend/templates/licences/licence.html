@@ -165,10 +165,12 @@
 					<tr class="govuk-table__row" id="good-row">
 						<td class="govuk-table__cell">
 							{% if good.good %}
-								{{ good.good.control_code }}<br>
+								{% include 'includes/control-list-entries.html' with control_list_entries=good.good.control_list_entries %}
+								<br>
 								{{ good.good.description }}
 							{% else %}
-								{{ good.control_code }}<br>
+								{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}
+								<br>
 								{{ good.description }}
 							{% endif %}
 						</td>
