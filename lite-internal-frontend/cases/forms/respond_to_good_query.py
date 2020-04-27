@@ -2,7 +2,7 @@ from django.template.defaultfilters import default
 from django.urls import reverse_lazy
 
 from lite_content.lite_internal_frontend import cases
-from lite_forms.common import control_list_entry_question
+from lite_forms.common import control_list_entries_question
 from lite_forms.components import (
     Form,
     BackLink,
@@ -30,8 +30,8 @@ def respond_to_clc_query_form(request, queue_pk, case):
             Summary(
                 values={
                     cases.RespondClCQueryForm.Summary.DESCRIPTION: case["query"]["good"]["description"],
-                    cases.RespondClCQueryForm.Summary.CONTROL_LIST_ENTRY: default(
-                        case["query"]["good"].get("control_code"),
+                    cases.RespondClCQueryForm.Summary.CONTROL_LIST_ENTRIES: default(
+                        case["query"]["good"].get("control_list_entries"),
                         cases.RespondClCQueryForm.Summary.NO_CONTROL_LIST_ENTRY,
                     ),
                 },
@@ -45,11 +45,9 @@ def respond_to_clc_query_form(request, queue_pk, case):
                         key="yes",
                         value=cases.RespondClCQueryForm.Controlled.YES,
                         components=[
-                            control_list_entry_question(
+                            control_list_entries_question(
                                 control_list_entries=get_control_list_entries(None, convert_to_options=True),
                                 title=cases.RespondClCQueryForm.CONTROL_LIST_ENTRY,
-                                name="control_code",
-                                inset_text=False,
                             ),
                         ],
                     ),
@@ -61,7 +59,6 @@ def respond_to_clc_query_form(request, queue_pk, case):
                 name="report_summary",
                 options=get_picklists_for_input(request, "report_summary", convert_to_options=True, include_none=True),
                 description=cases.RespondClCQueryForm.ReportSummary.DESCRIPTION,
-                classes=["test"],
             ),
             TextArea(
                 title=cases.RespondClCQueryForm.COMMENT, name="comment", optional=True, extras={"max_length": 500,}
@@ -83,7 +80,6 @@ def respond_to_grading_query_form(queue_pk, case):
             Heading(case["reference_code"], HeadingStyle.S),
             Summary(values={"Description": case["query"]["good"]["description"]}, classes=["app-inset-text"],),
             Group(
-                name="grading",
                 components=[
                     TextInput(title=cases.RespondGradingQueryForm.Grading.PREFIX, name="prefix", optional=True),
                     Select(

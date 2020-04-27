@@ -45,7 +45,7 @@
 				{% for good in case.application.goods_types %}
 					<tr class="govuk-table__row">
 						<td class="govuk-table__cell">
-							{{ good.control_code|default:good.description }}
+							{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}
 							{% if good.advice.value == 'Refuse' and case.application.case_type.sub_type.key == 'open' %}
 								<span>{% lcs 'cases.GoodsDecisionMatrixPage.REFUSE_ADVICE_TAG'%}</span>
 							{% else %}
@@ -89,7 +89,8 @@
 														{% lcs 'cases.GoodsDecisionMatrixPage.Table.REFUSE_TITLE' %}
 													{% elif decision == "no_licence_required" %}
 														{% lcs 'cases.GoodsDecisionMatrixPage.Table.HIDDEN_NLR_TITLE' %}
-													{% endif %} {{ good.control_code }}
+													{% endif %}
+													{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}
 												</span>
 											</label>
 										</div>

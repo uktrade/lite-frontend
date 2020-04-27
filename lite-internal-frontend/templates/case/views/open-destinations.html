@@ -21,12 +21,10 @@
 								{% for good in case.application.goods_types %}
 									{% if good.countries %}
 										{% if country in good.countries %}
-											{% if good.control_code %}
-												<span class="app-country-tag app-country-tag--orange">{{ good.control_code }}</span>
-											{% endif %}
+											{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}
 										{% endif %}
 									{% else %}
-										<span class="app-country-tag app-country-tag--orange">{{ good.control_code }}</span>
+										{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}
 									{% endif %}
 								{% endfor %}
 							</label>
@@ -59,12 +57,12 @@
 								{% for good in case.application.goods_types %}
 									{% if good.countries %}
 										{% if country in good.countries %}
-											{% if good.control_code %}
-												<span class="app-country-tag app-country-tag--orange">{{ good.control_code }}</span>
-											{% endif %}
+											{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}
 										{% endif %}
-									{% elif good.control_code %}
-										<span class="app-country-tag app-country-tag--orange">{{ good.control_code }}</span>
+									{% elif good.control_list_entries %}
+										<span class="app-country-tag app-country-tag--orange">
+											{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}
+										</span>
 									{% endif %}
 								{% endfor %}
 							</label>

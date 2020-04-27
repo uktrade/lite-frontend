@@ -89,6 +89,10 @@ def get_application_default_duration(request, pk):
 
 # Goods Queries
 def put_goods_query_clc(request, pk, json):
+    # This is a workaround due to RespondCLCQuery not using a SingleFormView
+    if "control_list_entries[]" in json:
+        json["control_list_entries"] = json.getlist("control_list_entries[]")
+
     data = put(request, GOODS_QUERIES_URL + pk + CLC_RESPONSE_URL, json)
     return data.json(), data.status_code
 
@@ -304,7 +308,9 @@ def get_good(request, pk):
 
 def get_goods_type(request, pk):
     data = get(request, GOODS_TYPE_URL + pk)
-    return data.json(), data.status_code
+    # API doesn't structure the endpoints in a way that flags (currently) works,
+    # so wrap data in dictionary
+    return {"good": data.json()}, data.status_code
 
 
 def post_goods_control_code(request, case_id, json):

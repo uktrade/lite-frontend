@@ -26,7 +26,7 @@ def get_picklists_for_input(
         options = []
 
         if include_none:
-            options.append(Option(None, "None", "None"))
+            options.append(Option(None, "None"))
 
         for item in data:
             options.append(Option(item["id"], item["name"], item["text"]))

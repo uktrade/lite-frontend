@@ -110,7 +110,7 @@ class ReviewGoodsClc(TemplateView):
             for good in self.goods[1:]:
                 good_data = get_good_func(request, good)[0]["good"]
                 if (
-                    initial_good["control_code"] != good_data["control_code"]
+                    initial_good["control_list_entries"] != good_data["control_list_entries"]
                     or initial_good["is_good_controlled"] != good_data["is_good_controlled"]
                     or initial_good["comment"] != good_data["comment"]
                     or initial_good["report_summary"] != good_data["report_summary"]
@@ -124,7 +124,7 @@ class ReviewGoodsClc(TemplateView):
         form_data = {
             "objects": self.goods,
             "comment": request.POST.get("comment"),
-            "control_code": request.POST.get("control_code", None),
+            "control_list_entries": request.POST.getlist("control_list_entries[]", []),
             "is_good_controlled": request.POST.get("is_good_controlled"),
         }
 

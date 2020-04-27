@@ -62,7 +62,7 @@ class RespondCLCQuery(TemplateView):
 
         # Remove validate only key and go to overview page
         if response_data["is_good_controlled"] == "no":
-            response_data.pop("control_code")
+            response_data.pop("control_list_entries[]")
 
         context = {
             "data": response_data,
@@ -77,7 +77,7 @@ class RespondCLCQuery(TemplateView):
     def display_flag_form(self, request):
         form = flags_form(flags=get_goods_flags(request, True), level=FlagLevels.GOODS, origin="response", url="#")
 
-        hidden_fields = ["is_good_controlled", "control_code", "report_summary", "comment"]
+        hidden_fields = ["is_good_controlled", "control_list_entries", "report_summary", "comment"]
 
         for field in hidden_fields:
             form.questions.append(HiddenField(field, request.POST[field]))

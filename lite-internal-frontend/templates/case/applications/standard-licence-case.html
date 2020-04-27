@@ -108,7 +108,7 @@
 										{{ forloop.counter }}.
 									</td>
 									<td class="govuk-table__cell">
-										{{ good_on_application.good.control_code|default_na }}
+										{% include 'includes/control-list-entries.html' with control_list_entries=good_on_application.good.control_list_entries %}
 									</td>
 									<td class="govuk-table__cell">
 										{{ good_on_application.good.description }}

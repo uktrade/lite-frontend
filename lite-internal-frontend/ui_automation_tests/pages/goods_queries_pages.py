@@ -1,3 +1,4 @@
+from shared import functions
 from shared.BasePage import BasePage
 from selenium.webdriver.support.ui import Select
 
@@ -5,7 +6,7 @@ from selenium.webdriver.support.ui import Select
 class GoodsQueriesPages(BasePage):
     SUBMIT_RESPONSE_BUTTON_ID = "submit-response"  # ID
     CONTROL_RESPONSE = "is_good_controlled-"  # ID
-    CONTROL_LIST_ENTRY = "control_code"  # ID
+    TOKEN_BAR_CONTROL_LIST_ENTRIES_SELECTOR = "#pane_control_list_entries .tokenfield-input"
     REPORT_SUMMARY = "report_summary"  # Name
     COMMENT = "comment"  # ID
     CASE_CLOSE_INFO_BAR_ID = "closed"  # CSS
@@ -29,8 +30,7 @@ class GoodsQueriesPages(BasePage):
         self.driver.find_element_by_id(self.CONTROL_RESPONSE + answer).click()
 
     def type_in_to_control_list_entry(self, code):
-        self.driver.find_element_by_id(self.CONTROL_LIST_ENTRY).clear()
-        self.driver.find_element_by_id(self.CONTROL_LIST_ENTRY).send_keys(code)
+        functions.send_tokens_to_token_bar(self.driver, self.TOKEN_BAR_CONTROL_LIST_ENTRIES_SELECTOR, [code])
 
     def choose_report_summary(self, num):
         element = self.driver.find_elements_by_name(self.REPORT_SUMMARY)[int(num)]

@@ -103,7 +103,9 @@
 									</td>
 									<td class="govuk-table__cell">{{ good.description }}</td>
 									<td class="govuk-table__cell">{{ good.is_good_controlled|friendly_boolean }}</td>
-									<td class="govuk-table__cell">{{ good.control_code|default_na }}</td>
+									<td class="govuk-table__cell">
+										{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}
+									</td>
 									<td class="govuk-table__cell">{{ good.is_good_incorporated|friendly_boolean }}</td>
 									<td class="govuk-table__cell">
 										{% include 'includes/flags.html' with flags=good.flags list=True %}
@@ -339,7 +341,7 @@
 									{% for good in case.application.goods_types %}
 										{% for good_country in good.countries %}
 											{% if good_country.id == country.id %}
-												{% if good.control_code %}
+												{% if good.control_list_entries %}
 													<span class="app-country-tag app-country-tag--orange">{{ good.description }}</span>
 												{% endif %}
 											{% endif %}

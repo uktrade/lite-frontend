@@ -30,11 +30,7 @@
 					{% if show_checkboxes %}</div>{% endif %}
 				</td>
 				<td class="govuk-table__cell">
-					{% if good.control_code %}
-						<span class="app-country-tag app-country-tag--orange">{{ good.control_code }}</span></td>
-					{% else %}
-						None
-					{% endif %}
+					{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}
 				<td class="govuk-table__cell">
 					{% for country in good.countries %}
 						<span class="app-country-tag">{{ country.id }}</span>
