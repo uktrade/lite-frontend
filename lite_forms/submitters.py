@@ -47,15 +47,15 @@ def submit_single_form(request, form: Form, action: Callable, object_pk=None, ov
 def _prepare_data(request, inject_data):
     data = request.POST.copy()
 
+    # Handle lists (such as checkboxes)
+    data = handle_lists(data)
+
     if data and inject_data:
         for key, value in data.items():
             inject_data[key] = value
 
         data = QueryDict("", mutable=True)
         data.update(inject_data)
-
-    # Handle lists (such as checkboxes)
-    data = handle_lists(data)
 
     # Remove form_pk and CSRF from POST data as the new form will replace them
     if "form_pk" in data:
@@ -147,7 +147,8 @@ def submit_paged_form(  # noqa
         return None, validated_data
 
     # Add existing post data to new form as hidden fields
-    for key, value in data.items():
+    post_data, _ = _prepare_data(request, {})
+    for key, value in post_data.items():
         # If the keys value is a list, insert each individually
         if isinstance(value, list):
             for sub_value in value:
