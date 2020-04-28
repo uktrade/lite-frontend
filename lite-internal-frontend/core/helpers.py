@@ -1,3 +1,5 @@
+from typing import List
+
 from conf import decorators
 from conf.constants import Permission
 from core.services import get_user_permissions
@@ -38,8 +40,19 @@ def has_permission(request, permission: Permission):
     """
     Returns true if the user has a given permission, else false
     """
+    return has_permissions(request, [permission])
+
+
+def has_permissions(request, permissions: List[Permission]):
+    """
+    Returns true if the user has the given permissions, else false
+    """
     user_permissions = get_user_permissions(request)
-    return permission.value in user_permissions
+    return_value = True
+    for permission in permissions:
+        if permission.value not in user_permissions:
+            return_value = False
+    return return_value
 
 
 def decorate_patterns_with_permission(patterns, permission: Permission):

@@ -1,5 +1,6 @@
 from pytest_bdd import when, then, scenarios, parsers
 import ui_automation_tests.shared.tools.helpers as utils
+from conf.constants import SystemTeamsID
 
 from ui_automation_tests.pages.application_page import ApplicationPage
 from ui_automation_tests.pages.routing_rules_pages import RoutingRulesPage
@@ -20,12 +21,14 @@ def see_flag_in_list(driver, context):
 
 @when(
     parsers.parse(
-        'I add a routing rule of tier "{tier}", a status of "{case_status}", my queue, and all additional rules'
+        'I add a routing rule of tier "{tier}", a status of "{case_status}", my queue, and all additional rules for my team'
     )
 )
 def create_routing_rule(driver, context, tier, case_status):
     routing_rules_page = RoutingRulesPage(driver)
     routing_rules_page.create_new_routing_rule()
+    routing_rules_page.select_team(SystemTeamsID.ADMIN.value)
+    functions.click_submit(driver)
     routing_rules_page.initial_details_form(
         tier=tier, case_status=case_status, queue=context.queue_name, additional_rules=True
     )
@@ -46,12 +49,14 @@ def create_routing_rule(driver, context, tier, case_status):
 
 @when(
     parsers.parse(
-        'I add a routing rule of tier "{tier}", a status of "{case_status}", my queue, and no additional rules'
+        'I add a routing rule of tier "{tier}", a status of "{case_status}", my queue, and no additional rules for my team'
     )
 )
 def create_routing_rule(driver, context, tier, case_status):
     routing_rules_page = RoutingRulesPage(driver)
     routing_rules_page.create_new_routing_rule()
+    routing_rules_page.select_team(SystemTeamsID.ADMIN.value)
+    functions.click_submit(driver)
     routing_rules_page.initial_details_form(
         tier=tier, case_status=case_status, queue=context.queue_name, additional_rules=False
     )

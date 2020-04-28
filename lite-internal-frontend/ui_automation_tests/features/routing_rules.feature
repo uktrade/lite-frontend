@@ -9,7 +9,7 @@ Feature: I want to have cases be automatically routed to relevant work queues an
     And a new queue has been created
     When I add a flag at level Case
     And I go to routing rules list
-    And I add a routing rule of tier "5", a status of "Submitted", my queue, and all additional rules
+    And I add a routing rule of tier "5", a status of "Submitted", my queue, and all additional rules for my team
     Then I see the routing rule in the rule list
 
 
@@ -19,7 +19,7 @@ Feature: I want to have cases be automatically routed to relevant work queues an
     And a new queue has been created
     When I add a flag at level Case
     And I go to routing rules list
-    And I add a routing rule of tier "5", a status of "Submitted", my queue, and all additional rules
+    And I add a routing rule of tier "5", a status of "Submitted", my queue, and all additional rules for my team
     Then I see the routing rule in the rule list
     When I edit my routing rule with tier "10", a status of "Finalised", and no additional rules
     Then I see the routing rule in the list as "Active" and tier "10"
@@ -27,12 +27,12 @@ Feature: I want to have cases be automatically routed to relevant work queues an
     Then I see the routing rule in the list as "Deactivated" and tier "10"
 
   @LT_2109_routing_rules_automation @regression
-   Scenario: Deactivate, Activate, Edit a routing rule
+   Scenario: Routing rule automation
     Given I sign in to SSO or am signed into SSO
     And an Exhibition Clearance is created
     And a new queue has been created
     When I go to routing rules list
-    And I add a routing rule of tier "1", a status of "Submitted", my queue, and no additional rules
+    And I add a routing rule of tier "1", a status of "Submitted", my queue, and no additional rules for my team
     And I go to application previously created
     And I click progress application
     And I select status "Submitted" and save

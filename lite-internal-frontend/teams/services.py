@@ -45,3 +45,11 @@ def get_users_by_team(request, pk, convert_to_options=False):
     if convert_to_options:
         return [Option(user["id"], user["email"]) for user in data.json()["users"] if user["email"]]
     return data.json(), data.status_code
+
+
+def get_team_queues(request, pk, convert_to_options=False, ignore_pagination=False):
+    post_fix = "?disable_pagination=True" if ignore_pagination else ""
+    data = get(request, TEAMS_URL + pk + "/queues/" + post_fix)
+    if convert_to_options:
+        return [Option(key=queue["id"], value=queue["name"], description=None) for queue in data.json()]
+    return data.json()

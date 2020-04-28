@@ -20,7 +20,7 @@ def _remove_none_from_post_data_additional_rules_list(json):
     """
     data = json
     additional_rules = json.get("additional_rules", None)
-    if "None" in additional_rules:
+    if additional_rules and "None" in additional_rules:
         new_additional_rules = []
         for rule in additional_rules:
             if rule != "None":

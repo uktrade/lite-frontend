@@ -3,7 +3,7 @@ import os
 from django.urls import reverse_lazy
 
 from conf.constants import Permission
-from core.helpers import has_permission
+from core.services import get_user_permissions
 from lite_content.lite_internal_frontend import strings
 from lite_content.lite_internal_frontend.flags import FlagsList
 from lite_content.lite_internal_frontend.organisations import OrganisationsPage
@@ -33,6 +33,7 @@ def export_vars(request):
 
 def lite_menu(request):
     try:
+        permissions = get_user_permissions(request)
         pages = [
             {"title": "Cases", "url": reverse_lazy("core:index"), "icon": "menu/cases"},
             {
@@ -46,7 +47,7 @@ def lite_menu(request):
             {"title": UsersPage.TITLE, "url": reverse_lazy("users:users"), "icon": "menu/users"},
             {"title": FlagsList.TITLE, "url": reverse_lazy("flags:flags"), "icon": "menu/flags"},
             conditional(
-                has_permission(request, Permission.CONFIGURE_TEMPLATES),
+                Permission.CONFIGURE_TEMPLATES.value in permissions,
                 {
                     "title": strings.DOCUMENT_TEMPLATES_TITLE,
                     "url": reverse_lazy("letter_templates:letter_templates"),
@@ -54,11 +55,12 @@ def lite_menu(request):
                 },
             ),
             conditional(
-                has_permission(request, Permission.MANAGE_FLAGGING_RULES),
+                Permission.MANAGE_FLAGGING_RULES.value in permissions,
                 {"title": "Flagging rules", "url": reverse_lazy("flags:flagging_rules"), "icon": "menu/flags"},
             ),
             conditional(
-                has_permission(request, Permission.MANAGE_TEAM_ROUTING_RULES),
+                Permission.MANAGE_TEAM_ROUTING_RULES.value in permissions
+                or Permission.MANAGE_ALL_ROUTING_RULES.value in permissions,
                 {"title": "Routing rules", "url": reverse_lazy("routing_rules:list"), "icon": "menu/flags"},
             ),
         ]
@@ -66,5 +68,4 @@ def lite_menu(request):
         # Tests dont provide a user which causes has_permission to error,
         # so return an empty pages list so tests work
         pages = []
-
     return {"LITE_MENU": [x for x in pages if x is not None]}

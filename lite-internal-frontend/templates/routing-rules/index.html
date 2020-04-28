@@ -63,7 +63,11 @@
 						<td class="govuk-table__cell">
 							{% if rule.flags %}
 								{% for flag in rule.flags %}
-									{{ flag.name }}
+									{% if flag.status == "Active" %}
+										{{ flag.name }}
+									{% else %}
+										<div class="app-routing-rule__item--deactivated">{{ flag.name }}</div>
+									{% endif %}
 									<br>
 								{% endfor %}
 							{% else %}
@@ -77,7 +81,15 @@
 							{{ rule.queue.name }}
 						</td>
 						<td class="govuk-table__cell">
-							{{ rule.user.email|default:"Not set" }}
+						{% if rule.user %}
+							{% if rule.user.status == "Active" %}
+								{{ rule.user.email }}
+							{% else %}
+								<div class="app-routing-rule__item--deactivated">{{ rule.user.email }}</div>
+							{% endif %}
+						{% else %}
+							Not set
+						{% endif %}
 						</td>
 						<td class="govuk-table__cell">
 							{% if rule.active %}

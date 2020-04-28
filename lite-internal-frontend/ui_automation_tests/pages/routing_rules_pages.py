@@ -19,6 +19,7 @@ class RoutingRulesPage(BasePage):
     SELECT_FLAG_ID = "flag"
     CHECKBOX_AND_LABEL = ".govuk-checkboxes__item"
     RADIO_BUTTONS = ".govuk-radios__input"
+    TEAM_ID_PREFIX = "team-"
 
     def create_new_routing_rule(self):
         self.driver.find_element_by_id(self.BTN_CREATE_NEW_ROUTING_RULE_ID).click()
@@ -93,3 +94,6 @@ class RoutingRulesPage(BasePage):
 
     def edit_row_by_queue_id(self, queue_id):
         self.find_row_by_queue_id(queue_id).find_element_by_id(self.EDIT_ROUTING_RULE_BUTTON_ID).click()
+
+    def select_team(self, team_id):
+        self.driver.find_element_by_id(self.TEAM_ID_PREFIX + team_id).click()

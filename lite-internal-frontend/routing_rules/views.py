@@ -73,10 +73,14 @@ class RoutingRulesList(TemplateView):
 
 class CreateRoutingRule(MultiFormView):
     def init(self, request, **kwargs):
-        if request.method == "POST":
-            self.forms = routing_rule_form_group(request, request.POST.getlist("additional_rules[]"))
-        else:
-            self.forms = routing_rule_form_group(request, list())
+        select_team = has_permission(request, Permission.MANAGE_ALL_ROUTING_RULES)
+        team_id = request.POST.get("team", get_gov_user(request)[0]["user"]["team"]["id"])
+        self.forms = routing_rule_form_group(
+            request=request,
+            additional_rules=request.POST.getlist("additional_rules[]", ()),
+            team_id=team_id,
+            select_team=select_team,
+        )
         self.success_url = reverse("routing_rules:list")
         self.action = post_routing_rule
 
@@ -112,9 +116,13 @@ class ChangeRoutingRuleActiveStatus(SingleFormView):
 
 class EditRoutingRules(MultiFormView):
     def init(self, request, **kwargs):
+        self.object_pk = kwargs["pk"]
+        self.data = get_routing_rule(request, self.object_pk)[0]
+        team_id = self.data["team"]
+
         if request.method == "POST":
             additional_rules = request.POST.getlist("additional_rules[]", [])
-            self.forms = routing_rule_form_group(request, additional_rules, is_editing=True)
+            self.forms = routing_rule_form_group(request, additional_rules, team_id, is_editing=True)
 
             # we only want to update the data during the last form post
             if (len(self.get_forms().forms) - 1) == int(request.POST.get("form_pk", 0)):
@@ -123,9 +131,7 @@ class EditRoutingRules(MultiFormView):
                 self.action = validate_put_routing_rule
 
         else:
-            self.forms = routing_rule_form_group(request, list(), is_editing=True)
+            self.forms = routing_rule_form_group(request, list(), team_id, is_editing=True)
             self.action = put_routing_rule
 
-        self.object_pk = kwargs["pk"]
-        self.data = get_routing_rule(request, self.object_pk)[0]
         self.success_url = reverse_lazy("routing_rules:list")
