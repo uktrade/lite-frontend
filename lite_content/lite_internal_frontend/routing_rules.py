@@ -40,6 +40,7 @@ class Forms:
     CREATE_TITLE = "Create a new routing rule"
     EDIT_TITLE = "Edit the routing rule"
     CASE_STATUS = "Select a case status"
+    TEAM = "Select a team to create routing rules for"
     QUEUE = "Select a team work queue"
     TIER = "Enter a tier number"
     ADDITIONAL_RULES = "Select the combination of options you need to create the case routing rule"
@@ -55,13 +56,13 @@ CONFIRM_FORM_ERROR = "Select to confirm or not"
 
 class DeactivateForm:
     TITLE = "Are you sure you want to deactivate this routing rule?"
-    DESCRIPTION = "you are deactivating the routing rule"
-    YES_LABEL = "deactivate this routing rule"
+    DESCRIPTION = "You are deactivating the routing rule"
+    YES_LABEL = "Deactivate this routing rule"
     NO_LABEL = "Cancel"
 
 
 class ActivateForm:
     TITLE = "Are you sure you want to activate this routing rule?"
-    DESCRIPTION = "you are deactivating the routing rule"
-    YES_LABEL = "activate this routing rule"
+    DESCRIPTION = "You are deactivating the routing rule"
+    YES_LABEL = "Activate this routing rule"
     NO_LABEL = "Cancel"
