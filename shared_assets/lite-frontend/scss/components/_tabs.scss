@@ -49,7 +49,7 @@
 .lite-tabs__tab {
 	@include govuk-font($size: 16, $weight: bold);
 	display: inline-block;
-	line-height: 40px!important;
+	padding: govuk-spacing(3) 0;
 	margin: 0 govuk-spacing(5) govuk-spacing(6) 0;
 	border-bottom: 2px solid transparent;
 	color: $govuk-secondary-text-colour;
@@ -77,6 +77,6 @@
 
 .lite-tabs__tab--selected {
 	border-bottom: 2px solid $govuk-link-colour!important;
-	color: govuk-colour("black");
+	color: $govuk-text-colour;
 	cursor: default!important;
 }
