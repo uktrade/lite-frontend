@@ -17,12 +17,18 @@ class Members(OrganisationView):
     template_name = "members/index"
 
     def get_additional_context(self):
-        status = self.request.GET.get("status", "active")
-        params = {"page": int(self.request.GET.get("page", 1)), "status": status}
+        status = self.request.GET.get("status")
+        params = {"page": int(self.request.GET.get("page", 1))}
+        if status:
+            params["status"] = status
         users = get_organisation_users(self.request, str(self.request.user.organisation), params)
         statuses = [
             Option(option["key"], option["value"])
-            for option in [{"key": "active", "value": "Active"}, {"key": "", "value": "All"}]
+            for option in [
+                {"key": "active", "value": "Active"},
+                {"key": "deactivated", "value": "Deactivated"},
+                {"key": "", "value": "All"},
+            ]
         ]
         filters = FiltersBar([Select(name="status", title="status", options=statuses)])
 
