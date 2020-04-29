@@ -176,7 +176,7 @@ def get_all_form_components(form: Form):
 
         if getattr(component, "options", None):
             for option in component.options:
-                if option.components:
+                if option and option.components:
                     for _component in option.components:
                         if _component and hasattr(_component, "name"):
                             components.append(_component)
