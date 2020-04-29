@@ -8,6 +8,7 @@ Feature: I want to be able to edit and update an active application
   Scenario: Edit a standard application
     Given I go to exporter homepage and choose Test Org
     And I create a standard application via api
+    # Ensure automation doesn't move application to non-editable state
     And the status is set to "submitted"
     When I go to application previously created
     And I click edit application
@@ -41,6 +42,7 @@ Feature: I want to be able to edit and update an active application
   Scenario: Edit a standard application with audit
     Given I go to exporter homepage and choose Test Org
     And I create a standard application via api
+    # Ensure automation doesn't move application to non-editable state
     And the status is set to "submitted"
     When I go to application previously created
     And I click edit application

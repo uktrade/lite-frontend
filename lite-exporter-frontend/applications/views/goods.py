@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
@@ -26,7 +28,6 @@ from goods.services import (
     validate_good,
     post_good_with_pv_grading,
 )
-from lite_content.lite_exporter_frontend import strings
 from lite_forms.components import FiltersBar, TextInput
 from lite_forms.generators import error_page, form_page
 from lite_forms.views import SingleFormView, MultiFormView
@@ -150,8 +151,9 @@ class AttachDocument(TemplateView):
         if error:
             return error_page(request, error)
 
-        if "errors" in post_good_documents(request, good_id, data):
-            return error_page(request, strings.goods.AttachDocumentPage.UPLOAD_FAILURE_ERROR)
+        data, status_code = post_good_documents(request, good_id, data)
+        if status_code != HTTPStatus.CREATED:
+            return error_page(request, data["errors"]["file"])
 
         return redirect(
             reverse_lazy("applications:add_good_to_application", kwargs={"pk": draft_id, "good_pk": good_id})
