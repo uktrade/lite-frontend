@@ -47,7 +47,7 @@ class wait_for_page_load_after_action(object):
 def create_browserstack_driver(bs_username, bs_access_key):
     desired_cap = {
         "browser": "Chrome",
-        "browser_version": "80.0",
+        "browser_version": "81.0",
         "browserstack.video": os.getenv("HAS_VIDEO"),
         "os": "OS X",
         "os_version": "High Sierra",
