@@ -637,6 +637,10 @@ class ViewAdvicePage:
     TEAM_ADVICE = "Team advice"
     FINAL_ADVICE = "Final advice"
 
+    class WarningBanner:
+        HIDDEN_TEXT = "Warning"
+        BLOCKING_FLAGS = "This application is blocked by the following flags: "
+
     class Actions:
         GIVE_OR_CHANGE = "Give or change advice"
         CLEAR = "Clear advice"

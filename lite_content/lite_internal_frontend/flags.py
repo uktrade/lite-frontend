@@ -10,6 +10,9 @@ class FlagsList:
         NAME = "Name"
         TEAM = "Team"
         LEVEL = "Level"
+        LABEL = "Label"
+        PRIORITY = "Priority"
+        BLOCKS_APPROVAL = "Blocks Approval"
         STATUS = "Status"
         ACTIONS = "Actions"
         REACTIVATE = "Reactivate"
@@ -43,6 +46,11 @@ class CreateFlagForm:
         TITLE = "Priority"
         DESCRIPTION = "This relates to the ordering of the flag. 0 is the highest."
 
+    class BlocksApproval:
+        TITLE = "Blocks application approval"
+        YES = "Yes"
+        NO = "No"
+
 
 class EditFlagForm:
     BACK_LINK = "Back to " + FlagsList.TITLE.lower()
@@ -65,6 +73,11 @@ class EditFlagForm:
     class Priority:
         TITLE = "Priority"
         DESCRIPTION = "This relates to the ordering of the flag. 0 is the highest."
+
+    class BlocksApproval:
+        TITLE = "Blocks application approval"
+        YES = "Yes"
+        NO = "No"
 
 
 class UpdateFlag:
