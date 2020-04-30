@@ -16,7 +16,8 @@ $('[data-max-length]').each(function() {
 
     if (originalText.length != shrunkText.length) {
         $(this).text(shrunkText + "...");
-        $(this).append("<a href='#' class='govuk-link govuk-link--no-visited-state govuk-!-margin-left-2' data-more-text='" + originalText + "'>More</a>");
+        var $more = $("<a href='#' class='govuk-link govuk-link--no-visited-state govuk-!-margin-left-2'>More</a>").appendTo($(this));
+        $more.attr("data-more-text", originalText);
     }
 });
 
