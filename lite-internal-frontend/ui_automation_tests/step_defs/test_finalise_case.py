@@ -13,40 +13,6 @@ from ui_automation_tests.shared.functions import click_submit
 scenarios("../features/finalise_case.feature", strict_gherkin=False)
 
 
-@given(parsers.parse('I "{decision}" all elements of the application at user and team level'))
-def approve_application_objects(context, api_test_client, decision):
-    context.advice_type = decision
-    text = "abc"
-    note = ""
-    data = [
-        {"type": context.advice_type, "text": text, "note": note, "end_user": context.end_user["id"]},
-        {"type": context.advice_type, "text": text, "note": note, "consignee": context.consignee["id"]},
-        {"type": context.advice_type, "text": text, "note": note, "good": context.good_id},
-    ]
-
-    api_test_client.cases.create_user_advice(context.case_id, data)
-    api_test_client.cases.create_team_advice(context.case_id, data)
-
-
-@given("A template exists for the appropriate decision")
-def template_with_decision(context, api_test_client):
-    document_template = api_test_client.document_templates.add_template(
-        api_test_client.picklists, advice_type=[context.advice_type]
-    )
-    context.document_template_id = document_template["id"]
-    context.document_template_name = document_template["name"]
-
-
-@when("I go to the final advice page by url")
-def final_advice_page(driver, context, internal_url):
-    driver.get(
-        internal_url.rstrip("/")
-        + "/queues/00000000-0000-0000-0000-000000000001/cases/"
-        + context.case_id
-        + "/final-advice-view/"
-    )
-
-
 @then("I see the final advice documents page")
 def final_advice_documents_page(driver, context):
     assert GeneratedDecisionDocuments(driver).decision_row_exists(context.advice_type)

@@ -2,6 +2,8 @@ from selenium.webdriver.support.select import Select
 
 from shared.BasePage import BasePage
 
+from ui_automation_tests.shared.functions import element_with_id_exists
+
 
 class GiveAdvicePages(BasePage):
     ADVICE_CHECKBOX_OPTION = "type-"  # ID
@@ -17,6 +19,7 @@ class GiveAdvicePages(BasePage):
     FINALISE_GOODS_AND_COUNTRIES_BUTTON = "finalise_button"
     CLEARANCE_LEVEL_DROPDOWN_ID = "pv_grading"
     RADIO_INPUT_APPROVE = '.govuk-radios input[value="approve"]'
+    BLOCKING_FLAGS_WARNING_ID = "blocking_flags"
 
     def click_on_advice_option(self, option):
         self.driver.find_element_by_id(self.ADVICE_CHECKBOX_OPTION + option).click()
@@ -49,6 +52,9 @@ class GiveAdvicePages(BasePage):
     def finalise(self):
         self.driver.find_element_by_id(self.FINALISE_BUTTON).click()
 
+    def can_finalise(self):
+        return element_with_id_exists(self.driver, self.FINALISE_BUTTON)
+
     def finalise_goods_and_countries(self):
         self.driver.find_element_by_id(self.FINALISE_GOODS_AND_COUNTRIES_BUTTON).click()
 
@@ -69,3 +75,6 @@ class GiveAdvicePages(BasePage):
     def select_clearance_grading(self, clearance_level):
         clearance_level_dropdown = Select(self.driver.find_element_by_id(self.CLEARANCE_LEVEL_DROPDOWN_ID))
         clearance_level_dropdown.select_by_visible_text(clearance_level)
+
+    def get_blocking_flags_text(self):
+        return self.driver.find_element_by_id(self.BLOCKING_FLAGS_WARNING_ID).text

@@ -1,9 +1,9 @@
+from django.urls import reverse_lazy
+
 from cases.services import get_case_types
 from core.services import get_countries
 from flags.services import get_goods_flags, get_destination_flags, get_cases_flags
 from lite_content.lite_internal_frontend import strings
-from django.urls import reverse_lazy
-
 from lite_content.lite_internal_frontend.flags import CreateFlagForm, EditFlagForm
 from lite_content.lite_internal_frontend.strings import FlaggingRules
 from lite_forms.components import (
@@ -68,6 +68,14 @@ def add_flag_form():
             NumberInput(
                 name="priority", title=CreateFlagForm.Priority.TITLE, description=CreateFlagForm.Priority.DESCRIPTION
             ),
+            RadioButtons(
+                name="blocks_approval",
+                title=CreateFlagForm.BlocksApproval.TITLE,
+                options=[
+                    Option(True, CreateFlagForm.BlocksApproval.YES),
+                    Option(False, CreateFlagForm.BlocksApproval.NO),
+                ],
+            ),
         ],
         default_button_name=CreateFlagForm.SUBMIT_BUTTON,
         back_link=BackLink(CreateFlagForm.BACK_LINK, reverse_lazy("flags:flags")),
@@ -101,6 +109,11 @@ def edit_flag_form():
             TextInput(name="label", title=EditFlagForm.Label.TITLE, description=EditFlagForm.Label.DESCRIPTION),
             NumberInput(
                 name="priority", title=EditFlagForm.Priority.TITLE, description=EditFlagForm.Priority.DESCRIPTION
+            ),
+            RadioButtons(
+                name="blocks_approval",
+                title=EditFlagForm.BlocksApproval.TITLE,
+                options=[Option(True, EditFlagForm.BlocksApproval.YES), Option(False, EditFlagForm.BlocksApproval.NO),],
             ),
         ],
         back_link=BackLink(EditFlagForm.BACK_LINK, reverse_lazy("flags:flags")),

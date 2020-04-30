@@ -9,7 +9,6 @@ from conf.constants import (
     ACTIVITY_URL,
     DOCUMENTS_URL,
     END_USER_ADVISORY_URL,
-    CASE_FLAGS_URL,
     ECJU_QUERIES_URL,
     GOOD_URL,
     FLAGS_URL,
@@ -121,12 +120,6 @@ def get_case_notes(request, pk):
 
 def post_case_notes(request, pk, json):
     data = post(request, CASE_URL + pk + CASE_NOTES_URL, json)
-    return data.json(), data.status_code
-
-
-# Case Flags
-def put_case_flags(request, pk, flags):
-    data = put(request, CASE_URL + pk + CASE_FLAGS_URL, flags)
     return data.json(), data.status_code
 
 
@@ -459,3 +452,10 @@ def post_case_additional_contacts(request, pk, json):
 def put_rerun_case_routing_rules(request, pk, json):
     response = put(request, CASE_URL + str(pk) + "/rerun-routing-rules/", json={})
     return response.json(), response.status_code
+
+
+def get_blocking_flags(request, case_pk):
+    data = get(
+        request, FLAGS_URL + f"?case={case_pk}&only_show_deactivated=False&blocks_approval=True&disable_pagination=True"
+    )
+    return data.json()

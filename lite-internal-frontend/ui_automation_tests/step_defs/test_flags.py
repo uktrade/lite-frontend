@@ -1,4 +1,4 @@
-from pytest_bdd import when, then, scenarios
+from pytest_bdd import when, then, scenarios, parsers
 
 import shared.tools.helpers as utils
 from pages.add_edit_flag import AddEditFlagPage
@@ -6,11 +6,13 @@ from pages.flags_list_page import FlagsListPage
 from pages.shared import Shared
 from shared import functions
 
+from ui_automation_tests.pages.give_advice_pages import GiveAdvicePages
+
 scenarios("../features/flags.feature", strict_gherkin=False)
 
 
-@when("I add a new flag")
-def add_flag(driver, context):
+@when(parsers.parse('I add a new flag with blocking approval set to "{blocks_approval}"'))
+def add_flag(driver, context, blocks_approval):
     add_edit_flag_page = AddEditFlagPage(driver)
     context.flag_name = "UAE" + utils.get_formatted_date_time_d_h_m_s()
 
@@ -21,6 +23,7 @@ def add_flag(driver, context):
     add_edit_flag_page.select_colour("orange")
     add_edit_flag_page.enter_label("Easy to Find")
     add_edit_flag_page.enter_priority(0)
+    add_edit_flag_page.enter_blocking_approval(blocks_approval)
 
     Shared(driver).click_submit()
 
@@ -61,3 +64,10 @@ def only_show_deactivated_flags(driver, context):
 def reactivate_flag(driver, context):
     FlagsListPage(driver).click_reactivate_link()
     functions.click_submit(driver, "Active")
+
+
+@then("I cannot finalise the case due to the blocking flag")
+def cannot_finalise_blocking_flag(driver, context):
+    final_advice = GiveAdvicePages(driver)
+    assert not final_advice.can_finalise()
+    assert context.flag_name in final_advice.get_blocking_flags_text()

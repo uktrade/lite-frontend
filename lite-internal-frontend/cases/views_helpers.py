@@ -8,8 +8,13 @@ from lite_forms.generators import error_page, form_page
 
 from cases.forms.advice import advice_recommendation_form
 from cases.helpers import check_matching_advice, add_hidden_advice_data, clean_advice
-from cases.services import get_case, _get_total_goods_value
-from core.services import get_denial_reasons, get_user_permissions, get_status_properties, get_pv_gradings
+from cases.services import get_case, _get_total_goods_value, get_blocking_flags
+from core.services import (
+    get_denial_reasons,
+    get_user_permissions,
+    get_status_properties,
+    get_pv_gradings,
+)
 from picklists.services import get_picklists_for_input
 from teams.services import get_teams
 from users.services import get_gov_user
@@ -56,6 +61,13 @@ def get_case_advice(get_advice, request, case, advice_level, team=None):
 
     context["status_is_read_only"] = status_props["is_read_only"]
     context["status_is_terminal"] = status_props["is_terminal"]
+
+    if (
+        any([given_advice["type"]["key"] in ["approve", "proviso"] for given_advice in advice["advice"]])
+        and advice_level == "final"
+    ):
+        # Get blocking flags if finalising & has approval advice
+        context["blocking_flags"] = get_blocking_flags(request, case["id"])
 
     return render(request, f"case/advice/{advice_level}.html", context)
 

@@ -1,4 +1,4 @@
-tippy('.govuk-radios__input', {
+tippy('.app-radios--flag-colours .govuk-radios__input', {
     content(reference) {
         return reference.getAttribute('data-presentation-value');
     },
