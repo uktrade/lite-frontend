@@ -10,7 +10,7 @@
 		right: 0;
 		bottom: 0;
 		width: 20px;
-		background: linear-gradient(90deg, rgba(white, 0%), govuk-colour("white"));
+		background: linear-gradient(90deg, rgba($govuk-body-background-colour, 0%), $govuk-body-background-colour);
 		pointer-events: none;
 	}
 }
@@ -31,7 +31,7 @@
 		left: - 20px;
 		bottom: 0;
 		width: 20px;
-		background: linear-gradient(90deg, rgba(white, 0%), govuk-colour("white"));
+		background: linear-gradient(90deg, rgba($govuk-body-background-colour, 0%), $govuk-body-background-colour);
 		pointer-events: none;
 		z-index: 1;
 	}
