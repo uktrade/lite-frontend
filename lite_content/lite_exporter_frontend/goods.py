@@ -387,6 +387,11 @@ class GoodsLocationPage:
     SELECT_SITES_BUTTON = "Add sites"
 
 
+class GoodsTypeAllDestinationsPage:
+    DESTINATIONS_TITLE = "Destinations"
+    DESTINATIONS_DESCRIPTION_MEDIA_OIEL = "These are the destinations you can export to with a media OIEL."
+
+
 class GoodsPage:
     NOTIFICATIONS = "Notifications"
 

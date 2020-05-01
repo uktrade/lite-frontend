@@ -150,6 +150,7 @@ class ApplicationSummaryPage:
     TEMPORARY_EXPORT_DETAILS = "Temporary export details"
     TRADE_CONTROL_ACTIVITY = "Type of activity"
     TRADE_CONTROL_PRODUCT_CATEGORY = "Product category"
+    OPEN_LICENCE_TYPE = "Type of open licence"
 
     class Sections:
         COMPLETED_TAG = "Saved"
@@ -279,6 +280,14 @@ class ExportLicenceQuestions:
         WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION = (
             "For example, CRE/2020/1234567. The reference number is on the letter or email."
         )
+
+    class OpenLicenceCategoryQuestion:
+        TITLE = "Select the type of open licence you need"
+        MILITARY = "Military or dual use"
+        CRYPTOGRAPHIC = "Cryptographic"
+        MEDIA = "Media"
+        UK_CONTINENTAL_SHELF = "UK continental shelf"
+        DEALER = "Dealer"
 
 
 class TradeControlLicenceQuestions:
