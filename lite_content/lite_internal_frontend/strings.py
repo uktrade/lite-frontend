@@ -34,7 +34,7 @@ HMRC_ORGANISATION_CREATION_SUCCESS = "The HMRC organisation was created successf
 CASE_GOODS = "Goods"
 CASE_ENTITIES_NONE = "No inactive case entities"
 CASE_ENTITIES_ACTIVITY = "Activity"
-CASE_PARTIES_LICENSEE = "Licensee"
+CASE_PARTIES_LICENSEE = "Applicant"
 
 CASE_INFO_TYPE = "Type"
 CASE_INFO_ORGANISATION = "Organisation"

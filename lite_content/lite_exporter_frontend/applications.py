@@ -608,24 +608,24 @@ class ApplicationPage:
 
     class Summary:
         TITLE = "Check your answers before submitting your application"
-        BACK = "Back to Task List"
-        SUBMIT = "Accept and Send"
+        BACK = "Back to application overview"
+        SUBMIT = "Accept and send"
         CONTINUE = "Continue"
         LICENCE = "Licence"
         QUERY = "Query"
         TYPE = "Type"
-        NAME_OF_APPLICATION = "Name of application"
-        GOODS_CATEGORIES = "Application includes"
-        END_USER_CONTROL = "End user control"
+        NAME_OF_APPLICATION = "Reference name"
+        GOODS_CATEGORIES = "Firearms"
+        END_USER_CONTROL = "Informed to apply"
 
         class Licence:
             STANDARD = "Standard Individual Export Licence"
-            HMRC = "HMRC Enquiry"
+            HMRC = "Customs enquiry"
             OPEN = "Open Individual Export Licence"
-            GIFTING = "Gifting"
-            F680 = "F680"
-            EXHIBITION = "Exhibition Clearance"
-            TRANSHIPMENT = "Transhipment Licence"
+            GIFTING = "Gifting clearance"
+            F680 = "MOD Form 680"
+            EXHIBITION = "Exhibition clearance"
+            TRANSHIPMENT = "Transhipment licence"
             TRADE_CONTROL = "Standard Trade Control Licence"
 
         class Notes:
@@ -708,17 +708,17 @@ class GoodsCategories:
 
 class AdditionalInformation:
     ELECTRONIC_WARFARE_REQUIREMENT = "Has electronic warfare requirement"
-    EXPEDITED = "Is expedited"
+    EXPEDITED = "Express clearance"
     EXPEDITED_DATE = "Expedited date"
-    FOREIGN_TECHNOLOGY = "Has foreign technology"
+    FOREIGN_TECHNOLOGY = "Foreign technology"
     FOREIGN_TECHNOLOGY_DESCRIPTION = "Foreign technology description"
     FOREIGN_TECHNOLOGY_TYPE = "Foreign technology type"
-    LOCALLY_MANUFACTURED = "Is locally manufactured"
+    LOCALLY_MANUFACTURED = "Requires local manufacture or assembly"
     LOCALLY_MANUFACTURED_DESCRIPTION = "Locally manufactured description"
     MTCR_TYPE = "MTCR type"
-    UK_SERVICE_EQUIPMENT = "Has UK service equipment"
+    UK_SERVICE_EQUIPMENT = "In service or due in service (UK armed forces)"
     UK_SERVICE_EQUIPMENT_DESCRIPTION = "UK service equipment description"
-    UK_SERVICE_EQUIPMENT_TYPE = "UK service equipment type"
+    UK_SERVICE_EQUIPMENT_TYPE = "How funded"
     VALUE = "Value"
 
 

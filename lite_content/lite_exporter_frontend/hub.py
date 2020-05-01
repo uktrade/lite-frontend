@@ -26,7 +26,7 @@ class Tiles:
         TRADE_CONTROL_LICENCES = "trade control licences"
         TRANSHIPMENT_LICENCES = "transhipment licences"
         MOD_CLEARANCES = "MOD clearances"
-        REGISTER_OGEL = "Register for open general export licences (OGELs)."
+        REGISTER_OGEL = "Register for open general licences (OGLs)."
 
     class Applications:
         CHECK_PROGRESS = "View the status of submitted applications and registrations."

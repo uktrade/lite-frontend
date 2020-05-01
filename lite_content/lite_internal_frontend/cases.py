@@ -276,7 +276,7 @@ class CaseOfficerPage:
 
 
 class StandardApplication:
-    LICENSEE = "Licensee"
+    LICENSEE = "Applicant"
     END_USER = "End user"
     CONSIGNEE = "Consignee"
     ULTIMATE_END_USER = "Ultimate recipient"

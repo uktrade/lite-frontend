@@ -1,5 +1,5 @@
 class Declaration:
-    BACK = "Back to application summary"
+    BACK = "Back to check your answers"
     TITLE = "Declaration"
     PARAGRAPH_ONE = (
         "It’s an offence to make any statement or furnish any document or information which, "
@@ -24,7 +24,7 @@ class Declaration:
         "your views into account we cannot guarantee that the information will not be disclosed in "
         "compliance with FOIA. "
     )
-    BUTTON_TITLE = "Save and continue"
+    BUTTON_TITLE = "Accept and submit"
     RADIO_TITLE = "Please confirm that you’ve read the terms and conditions of the licence for which you are applying."
     AGREE_TO_DECLARATION = "I have read and agreed to the terms and conditions of the licence I am applying for"
 
