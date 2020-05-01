@@ -3,6 +3,8 @@ from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView, RedirectView
 
+from conf.constants import Permission
+from core.services import get_user_permissions
 from lite_content.lite_internal_frontend.teams import TeamsPage
 from lite_forms.views import SingleFormView
 from teams.forms import add_team_form, edit_team_form
@@ -36,6 +38,7 @@ class TeamDetail(TemplateView):
             "team": team["team"],
             "users": users["users"],
             "is_user_in_team": user["user"]["team"]["id"] == team["team"]["id"],
+            "can_manage_picklists": Permission.MANAGE_PICKLISTS.value in get_user_permissions(request),
         }
         return render(request, "teams/team.html", context)
 

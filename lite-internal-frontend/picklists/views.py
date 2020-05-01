@@ -3,7 +3,8 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
-from core.services import get_countries, get_denial_reasons
+from conf.constants import Permission
+from core.services import get_countries, get_denial_reasons, get_user_permissions
 from flags.services import get_flags
 from lite_forms.generators import form_page
 from lite_forms.views import SingleFormView
@@ -26,6 +27,10 @@ class Picklists(TemplateView):
         """
         Return a list of picklists and show all the relevant items
         """
+        # Ensure user has permission to see this page (redirect to team page if not)
+        if Permission.MANAGE_PICKLISTS.value not in get_user_permissions(request):
+            return redirect(reverse_lazy("teams:team"))
+
         # Ensure that the page has a type
         picklist_type = request.GET.get("type")
         if not picklist_type:
@@ -50,6 +55,10 @@ class Picklists(TemplateView):
 
 class ViewPicklistItem(TemplateView):
     def get(self, request, **kwargs):
+        # Ensure user has permission to see this page (redirect to team page if not)
+        if Permission.MANAGE_PICKLISTS.value not in get_user_permissions(request):
+            return redirect(reverse_lazy("teams:team"))
+
         picklist_item = get_picklist_item(request, str(kwargs["pk"]))
 
         context = {
@@ -62,6 +71,10 @@ class ViewPicklistItem(TemplateView):
 
 class AddPicklistItem(SingleFormView):
     def init(self, request, **kwargs):
+        # Ensure user has permission to see this page (redirect to team page if not)
+        if Permission.MANAGE_PICKLISTS.value not in get_user_permissions(request):
+            return redirect(reverse_lazy("teams:team"))
+
         self.action = validate_and_post_picklist_item
         countries, _ = get_countries(request)
         flags = get_flags(request)
@@ -79,6 +92,10 @@ class AddPicklistItem(SingleFormView):
 
 class EditPicklistItem(SingleFormView):
     def init(self, request, **kwargs):
+        # Ensure user has permission to see this page (redirect to team page if not)
+        if Permission.MANAGE_PICKLISTS.value not in get_user_permissions(request):
+            return redirect(reverse_lazy("teams:team"))
+
         self.object_pk = kwargs["pk"]
         self.object = get_picklist_item(request, self.object_pk)
         self.action = validate_and_put_picklist_item
@@ -102,6 +119,10 @@ class DeactivatePicklistItem(TemplateView):
     form = None
 
     def dispatch(self, request, *args, **kwargs):
+        # Ensure user has permission to see this page (redirect to team page if not)
+        if Permission.MANAGE_PICKLISTS.value not in get_user_permissions(request):
+            return redirect(reverse_lazy("teams:team"))
+
         self.picklist_item_id = str(kwargs["pk"])
         self.picklist_item = get_picklist_item(request, self.picklist_item_id)
         self.form = deactivate_picklist_item(self.picklist_item)
@@ -127,6 +148,10 @@ class ReactivatePicklistItem(TemplateView):
     form = None
 
     def dispatch(self, request, *args, **kwargs):
+        # Ensure user has permission to see this page (redirect to team page if not)
+        if Permission.MANAGE_PICKLISTS.value not in get_user_permissions(request):
+            return redirect(reverse_lazy("teams:team"))
+
         self.picklist_item_id = str(kwargs["pk"])
         self.picklist_item = get_picklist_item(request, self.picklist_item_id)
         self.form = reactivate_picklist_item(self.picklist_item)
