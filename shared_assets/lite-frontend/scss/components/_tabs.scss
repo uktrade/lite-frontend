@@ -86,6 +86,8 @@
 
 	&--selected {
 		color: $govuk-text-colour;
+		border-bottom-color: transparent!important;
+		cursor: default!important;
 	}
 }
 
@@ -95,8 +97,7 @@
 
 .lite-tabs__tab-group {
 	display: inline-block;
-	border-left: 0px solid govuk-colour("light-grey");
-	border-right: 0px solid govuk-colour("light-grey");
+	position: relative;
 	padding: 0;
 	margin-right: 0;
    	transition: .2s ease;
@@ -105,6 +106,19 @@
 	max-width: 0;
 	pointer-events: none;
 
+	&::after {
+		content: "";
+		position: absolute;
+		top: govuk-spacing(5);
+		bottom: govuk-spacing(5);
+		left: 0;
+		right: 0;
+		border-left: 2px solid govuk-colour("mid-grey");
+		border-right: 2px solid govuk-colour("mid-grey");
+		transition: inherit;
+		pointer-events: none;
+	}
+
 	&--visible {
 		max-width: none;
 		opacity: 1;
@@ -112,8 +126,11 @@
 		margin-right: govuk-spacing(5);
 		padding: 0 govuk-spacing(5);
 		pointer-events: all;
-		border-left-width: 2px;
-		border-right-width: 2px;
+
+		&::after {
+			top: govuk-spacing(1);
+			bottom: govuk-spacing(1);
+		}
 	}
 
 	.lite-tabs__tab:last-of-type {
