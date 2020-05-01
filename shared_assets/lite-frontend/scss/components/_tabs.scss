@@ -80,3 +80,43 @@
 	color: $govuk-text-colour;
 	cursor: default!important;
 }
+
+.lite-tabs__tab-parent {
+	@extend .lite-tabs__tab;
+
+	&--selected {
+		color: $govuk-text-colour;
+	}
+}
+
+.lite-tabs__container--fade > *:link {
+	opacity: .5;
+}
+
+.lite-tabs__tab-group {
+	display: inline-block;
+	border-left: 0px solid govuk-colour("light-grey");
+	border-right: 0px solid govuk-colour("light-grey");
+	padding: 0;
+	margin-right: 0;
+   	transition: .2s ease;
+	transform: translateX(-30px);
+	opacity: 0;
+	max-width: 0;
+	pointer-events: none;
+
+	&--visible {
+		max-width: none;
+		opacity: 1;
+		transform: translateX(0px);
+		margin-right: govuk-spacing(5);
+		padding: 0 govuk-spacing(5);
+		pointer-events: all;
+		border-left-width: 2px;
+		border-right-width: 2px;
+	}
+
+	.lite-tabs__tab:last-of-type {
+		margin-right: 0;
+	}
+}
