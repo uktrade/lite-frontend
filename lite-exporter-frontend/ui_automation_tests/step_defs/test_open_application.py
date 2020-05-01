@@ -7,6 +7,7 @@ from ui_automation_tests.conftest import (
     enter_type_of_application,
     enter_application_name,
     enter_permanent_or_temporary,
+    choose_open_licence_category,
 )
 from ui_automation_tests.pages.apply_for_a_licence_page import ApplyForALicencePage
 from ui_automation_tests.pages.open_application.countries import OpenApplicationCountriesPage
@@ -27,10 +28,24 @@ def i_see_the_goods_types_list(driver, position, context):
     assert context.control_code in good_type
 
 
+@then(parsers.parse("I see a list of the preselected media products"))
+def i_see_the_goods_types_list(driver, context):
+    goods_type_page = OpenApplicationGoodsTypesPage(driver)
+    goods_types = goods_type_page.get_number_of_goods()
+    assert len(goods_types) == 7
+
+
 @then("I should see a list of countries")
 def i_should_see_a_list_of_countries(driver):
     application_countries_list = OpenApplicationCountriesPage(driver)
     page_countries = application_countries_list.get_countries_names()
+    assert len(page_countries) == 274
+
+
+@then("I should see a list of all countries that have been preselected")
+def i_should_see_a_list_of_countries(driver):
+    application_countries_list = OpenApplicationCountriesPage(driver)
+    page_countries = application_countries_list.get_static_destinations_list()
     assert len(page_countries) == 274
 
 
@@ -97,7 +112,18 @@ def create_open_app(driver, export_type, context):  # noqa
     functions.click_submit(driver)
     enter_type_of_application(driver, "oiel", context)
     enter_application_name(driver, context)
+    choose_open_licence_category(driver, "dealer", context)
     enter_permanent_or_temporary(driver, export_type, context)
+
+
+@when(parsers.parse('I create an open application for an export licence of the "{licence_type}" licence type'))  # noqa
+def create_open_app_of_specific_type(driver, licence_type, context):  # noqa
+    ExporterHubPage(driver).click_apply_for_a_licence()
+    ApplyForALicencePage(driver).select_licence_type("export_licence")
+    functions.click_submit(driver)
+    enter_type_of_application(driver, "oiel", context)
+    enter_application_name(driver, context)
+    choose_open_licence_category(driver, licence_type, context)
 
 
 @when("I remove a good type from the application")

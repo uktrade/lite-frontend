@@ -18,6 +18,8 @@ class ApplyForALicencePage(BasePage):
     TRADE_CONTROL_ACTIVITY_OTHER_DETAILS_ID = "trade_control_activity_other"
     TRADE_CONTROL_PRODUCT_CATEGORY_A_ID = "Category A"
 
+    OIEL_EXPORT_TYPE_RADIO_BUTTON_ID = "goodstype_category-"
+
     def enter_name_or_reference_for_application(self, name):
         element = self.driver.find_element_by_id(self.NAME_OR_REFERENCE_INPUT_ID)
         element.clear()
@@ -68,4 +70,8 @@ class ApplyForALicencePage(BasePage):
 
     def select_trade_control_product_category(self):
         self.driver.find_element_by_id(self.TRADE_CONTROL_PRODUCT_CATEGORY_A_ID).click()
+        functions.click_submit(self.driver)
+
+    def select_open_licence_category(self, category):
+        self.driver.find_element_by_id(self.OIEL_EXPORT_TYPE_RADIO_BUTTON_ID + category).click()
         functions.click_submit(self.driver)

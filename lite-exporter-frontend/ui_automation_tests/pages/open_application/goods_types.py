@@ -20,3 +20,6 @@ class OpenApplicationGoodsTypesPage(BasePage):
             return self.driver.find_element_by_css_selector(self.REMOVE_GOODS_TYPE_LINK)
         except NoSuchElementException:
             return None
+
+    def get_number_of_goods(self):
+        return self.driver.find_elements_by_css_selector(self.GOODS_TYPE_INFO)

@@ -12,20 +12,24 @@
 			<h1 class="govuk-heading-l">
 				{% block title %}{% lcs "goods_types.OverviewPage.TITLE" %}{% endblock%}
 			</h1>
-			{% if goods %}
-				<p class="govuk-body-m">You've added {{ goods|length|apnumber }} product{{ goods|pluralize }}.</p>
+			{% if not is_application_open_media %}
+				{% if goods %}
+					<p class="govuk-body-m">You've added {{ goods|length|apnumber }} product{{ goods|pluralize }}.</p>
+				{% endif %}
 			{% endif %}
 		</div>
 		{% if application.status.key in 'applicant_editing,draft' %}
-		<div class="lite-app-bar__controls">
-			<a id="button-add-good" href="{% url 'applications:add_goods_type' application.id %}?next={% url 'applications:goods_types' application.id %}" role='button' draggable='false' class='govuk-button'>
-				{% if goods %}
-					{% lcs "goods_types.OverviewPage.ADD_ANOTHER_GOODS_TYPE_BUTTON" %}
-				{% else %}
-					{% lcs "goods_types.OverviewPage.ADD_GOODS_TYPE_BUTTON" %}
-				{% endif %}
-			</a>
-		</div>
+			{% if not is_application_open_media %}
+			<div class="lite-app-bar__controls">
+				<a id="button-add-good" href="{% url 'applications:add_goods_type' application.id %}?next={% url 'applications:goods_types' application.id %}" role='button' draggable='false' class='govuk-button'>
+						{% if goods %}
+							{% lcs "goods_types.OverviewPage.ADD_ANOTHER_GOODS_TYPE_BUTTON" %}
+						{% else %}
+							{% lcs "goods_types.OverviewPage.ADD_GOODS_TYPE_BUTTON" %}
+						{% endif %}
+				</a>
+			</div>
+			{% endif %}
 		{% endif %}
 	</div>
 
@@ -37,7 +41,9 @@
 					<th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs "goods_types.Variables.DESCRIPTION" %}</th>
 					{% if application.case_type.sub_type.key != 'hmrc' %}
 						<th scope="col" class="govuk-table__header">{% lcs "goods_types.Variables.CONTROL_LIST_ENTRY" %}</th>
-						<th scope="col" class="govuk-table__header">{% lcs "goods_types.Variables.INCORPORATED" %}</th>
+						{% if not is_application_open_media %}
+							<th scope="col" class="govuk-table__header">{% lcs "goods_types.Variables.INCORPORATED" %}</th>
+						{% endif %}
 					{% endif %}
 					{% if application.case_type.sub_type.key == 'hmrc' %}
 						<th scope="col" class="govuk-table__header">{% lcs "goods_types.Document.TITLE" %}</th>
@@ -60,10 +66,12 @@
 								<span class="govuk-table__header">Control list entries</span>
 								{% include 'includes/control-list-entries.html' with control_list_entries=good_on_application.control_list_entries %}
 							</td>
-							<td class="govuk-table__cell">
-								<span class="govuk-table__header">{% lcs "goods_types.Variables.INCORPORATED" %}</span>
-								{{ good_on_application.is_good_incorporated|friendly_boolean }}
-							</td>
+							{% if not is_application_open_media %}
+								<td class="govuk-table__cell">
+									<span class="govuk-table__header">{% lcs "goods_types.Variables.INCORPORATED" %}</span>
+									{{ good_on_application.is_good_incorporated|friendly_boolean }}
+								</td>
+							{% endif %}
 						{% endif %}
 						{% if application.case_type.sub_type.key == 'hmrc' %}
 							<td class="govuk-table__cell">
@@ -87,11 +95,13 @@
 								{% endif %}
 							</td>
 						{% endif %}
-						<td class="govuk-table__cell govuk-table__cell--numeric" scope="row">
-							<a class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:remove_goods_type' application.id good_on_application.id %}">
-								<span>{% lcs "goods_types.Variables.REMOVE_GOODS_TYPE" %}</span>
-							</a>
-						</td>
+						{% if not is_application_open_media %}
+							<td class="govuk-table__cell govuk-table__cell--numeric" scope="row">
+								<a class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:remove_goods_type' application.id good_on_application.id %}">
+									<span>{% lcs "goods_types.Variables.REMOVE_GOODS_TYPE" %}</span>
+								</a>
+							</td>
+						{% endif %}
 					</tr>
 				{% endfor %}
 			</tbody>

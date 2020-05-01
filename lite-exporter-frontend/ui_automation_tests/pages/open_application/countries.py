@@ -9,6 +9,8 @@ class OpenApplicationCountriesPage(BasePage):
     COUNTRIES_LIST_SELECTOR = ".govuk-checkboxes"
     LINK_SELECT_ALL_ID = "link-select-all"
 
+    STATIC_DESTINATIONS_LIST_SELECTOR = ".govuk-list"
+
     def get_countries_names(self):
         countries_names = []
         for country in self.driver.find_elements_by_css_selector(self.COUNTRIES_LABELS):
@@ -33,3 +35,10 @@ class OpenApplicationCountriesPage(BasePage):
             return len(self.driver.find_elements_by_css_selector("input[type='checkbox']:checked"))
         else:
             return len(self.driver.find_elements_by_css_selector(self.CHECKBOX_COUNTRIES_SELECTOR))
+
+    def get_static_destinations_list(self):
+        countries_names = []
+        country_list_element = self.driver.find_element_by_css_selector(self.STATIC_DESTINATIONS_LIST_SELECTOR)
+        for country in country_list_element.find_elements_by_tag_name("li"):
+            countries_names.append(country.text)
+        return countries_names

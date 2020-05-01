@@ -131,14 +131,20 @@
 
 				{# Countries #}
 				{% if application_type|application_type_in_list:"HAS_COUNTRIES" %}
-					{% url 'applications:countries' application.id as countries_url %}
-					{% tld countries 'country' 'countries' as countries_description %}
+					{% if application.goodstype_category.key == "media" %}
+						{% url 'applications:static_destinations' application.id as countries_url %}
+					{% else %}
+						{% url 'applications:countries' application.id as countries_url %}
+						{% tld countries 'country' 'countries' as countries_description %}
+					{% endif %}
 					{% include "includes/task-list-item.html" with id="countries" title=strings.GOODS_DESTINATION url=countries_url status=countries|task_list_item_status description=countries_description %}
 
-					{% if goodstypes and countries and edit_type != "minor_edit" %}
-						{% url 'applications:goods_countries' application.id as countries_matrix_url %}
-						{% tld destinations 'destination' 'destinations' as destinations_description %}
-						{% include "includes/task-list-item.html" with id="countries-matrix" title=strings.COUNTRIES_WHERE_EACH_GOOD_IS_GOING url=countries_matrix_url status=destinations|task_list_item_status optional=True description=destinations_description %}
+					{% if not application.goodstype_category.key == "media" %}
+						{% if goodstypes and countries and edit_type != "minor_edit" %}
+							{% url 'applications:goods_countries' application.id as countries_matrix_url %}
+							{% tld destinations 'destination' 'destinations' as destinations_description %}
+							{% include "includes/task-list-item.html" with id="countries-matrix" title=strings.COUNTRIES_WHERE_EACH_GOOD_IS_GOING url=countries_matrix_url status=destinations|task_list_item_status optional=True description=destinations_description %}
+						{% endif %}
 					{% endif %}
 				{% endif %}
 

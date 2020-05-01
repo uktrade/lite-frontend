@@ -64,7 +64,7 @@ def opening_question():
     )
 
 
-def export_licence_questions(application_type):
+def export_licence_questions(application_type, goodstype_category=None):
     return FormGroup(
         [
             Form(
@@ -97,24 +97,55 @@ def export_licence_questions(application_type):
                 ),
             ),
             reference_name_form(),
-            Form(
-                title=ExportLicenceQuestions.ExportType.TITLE,
-                description=ExportLicenceQuestions.ExportType.DESCRIPTION,
-                questions=[
-                    RadioButtons(
-                        name="export_type",
-                        options=[
-                            Option("temporary", ExportLicenceQuestions.ExportType.TEMPORARY),
-                            Option("permanent", ExportLicenceQuestions.ExportType.PERMANENT),
+            *conditional(application_type == CaseTypes.OIEL, [goodstype_category_form()], []),
+            *conditional(
+                goodstype_category != "media",
+                [
+                    Form(
+                        title=ExportLicenceQuestions.ExportType.TITLE,
+                        description=ExportLicenceQuestions.ExportType.DESCRIPTION,
+                        questions=[
+                            RadioButtons(
+                                name="export_type",
+                                options=[
+                                    Option("temporary", ExportLicenceQuestions.ExportType.TEMPORARY),
+                                    Option("permanent", ExportLicenceQuestions.ExportType.PERMANENT),
+                                ],
+                            ),
                         ],
+                        default_button_name=generic.CONTINUE
+                        if application_type == CaseTypes.SIEL
+                        else generic.SAVE_AND_CONTINUE,
                     ),
                 ],
-                default_button_name=generic.CONTINUE
-                if application_type == CaseTypes.SIEL
-                else generic.SAVE_AND_CONTINUE,
+                [],
             ),
             *conditional(application_type == CaseTypes.SIEL, [goods_categories(), told_by_an_official_form()], []),
         ]
+    )
+
+
+def goodstype_category_form(application_id=None):
+    return Form(
+        title=ExportLicenceQuestions.OpenLicenceCategoryQuestion.TITLE,
+        questions=[
+            RadioButtons(
+                name="goodstype_category",
+                options=[
+                    Option(key="military", value=ExportLicenceQuestions.OpenLicenceCategoryQuestion.MILITARY,),
+                    Option(
+                        key="cryptographic", value=ExportLicenceQuestions.OpenLicenceCategoryQuestion.CRYPTOGRAPHIC,
+                    ),
+                    Option(key="media", value=ExportLicenceQuestions.OpenLicenceCategoryQuestion.MEDIA,),
+                    Option(
+                        key="uk_continental_shelf",
+                        value=ExportLicenceQuestions.OpenLicenceCategoryQuestion.UK_CONTINENTAL_SHELF,
+                    ),
+                    Option(key="dealer", value=ExportLicenceQuestions.OpenLicenceCategoryQuestion.DEALER,),
+                ],
+            )
+        ],
+        default_button_name=conditional(application_id, generic.SAVE_AND_RETURN, generic.CONTINUE),
     )
 
 

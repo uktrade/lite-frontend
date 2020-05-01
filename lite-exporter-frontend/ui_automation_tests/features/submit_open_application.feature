@@ -94,3 +94,40 @@ Feature: I want to indicate the open licence I want
     When I go to exporter homepage
     And I click on applications
     Then I see submitted application
+
+  @LT_1230_open_application_export_licence_media_type @regression
+  Scenario: Submit open application for an export licence of the media type
+    Given I go to exporter homepage and choose Test Org
+    When I create an open application for an export licence of the "media" licence type
+    And I click on the "location" section
+    And I select "organisation" for where my goods are located
+    And I select the site at position "1"
+    And I click continue
+    And I click the back link
+    And I click on the "end_use_details" section
+    And I provide details of the intended end use of the products
+    And I answer "Yes" for informed by ECJU to apply
+    And I answer "No" for informed by ECJU about WMD use
+    And I answer "Yes" for suspected WMD use
+    And I save and continue on the summary page
+    And I click on the "route_of_goods" section
+    And I answer "Yes" for shipping air waybill or lading
+    And I click continue
+    And I click on the "temporary_export_details" section
+    And I provide details of why my export is temporary
+    And I answer "No" for whether the products remain under my direct control
+    And I enter the date "11", "05", "2027" when the products will return to the UK
+    And I save and continue on the summary page
+    And I click on the "countries" section
+    Then I should see a list of all countries that have been preselected
+    When I click the back link
+    And I click on the "goods" section
+    Then I see a list of the preselected media products
+    When I click the back link
+    And I submit the application
+    And I click continue
+    And I agree to the declaration
+    Then application is submitted
+    When I go to exporter homepage
+    And I click on applications
+    Then I see submitted application

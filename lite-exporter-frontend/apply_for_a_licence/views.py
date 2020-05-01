@@ -28,7 +28,8 @@ class ExportLicenceQuestions(MultiFormView):
         self.action = post_applications
 
     def on_submission(self, request, **kwargs):
-        self.forms = export_licence_questions(request.POST.copy().get("application_type"))
+        copied_req = request.POST.copy()
+        self.forms = export_licence_questions(copied_req.get("application_type"), copied_req.get("goodstype_category"))
 
     def get_success_url(self):
         pk = self.get_validated_data()["id"]

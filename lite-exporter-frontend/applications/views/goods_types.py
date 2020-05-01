@@ -20,13 +20,18 @@ class GoodsTypeList(TemplateView):
     def get(self, request, **kwargs):
         application_id = str(kwargs["pk"])
         application = get_application(request, application_id)
+        is_application_open_media = False
 
         if not application["goods_types"]:
             return redirect(reverse_lazy("applications:add_goods_type", kwargs={"pk": application_id}))
 
+        if application.get("goodstype_category"):
+            is_application_open_media = application.get("goodstype_category").get("key") == "media"
+
         context = {
             "application": application,
             "goods": application["goods_types"],
+            "is_application_open_media": is_application_open_media,
         }
         return render(request, "applications/goods-types/index.html", context)
 

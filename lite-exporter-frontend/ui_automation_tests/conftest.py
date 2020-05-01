@@ -173,6 +173,12 @@ def enter_application_name(driver, context):  # noqa
     functions.click_submit(driver)
 
 
+def choose_open_licence_category(driver, type_of_oiel, context):  # noqa
+    # Values allowed: cryptographic, media, military, uk_continental_shelf, dealer
+    apply = ApplyForALicencePage(driver)
+    apply.select_open_licence_category(type_of_oiel)
+
+
 def enter_type_of_application(driver, _type, context):  # noqa
     context.type = _type
     # type needs to be standard or open
