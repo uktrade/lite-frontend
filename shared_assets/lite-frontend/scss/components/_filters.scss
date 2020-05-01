@@ -69,11 +69,15 @@
 		z-index: -1;
 	}
 
-	input, select {
+	.govuk-select {
 		width: 100%;
 		display: block;
 		margin-right: 0;
 		max-width: 100%;
+	}
+
+	.govuk-date-input {
+	    width: 100%;
 	}
 
 	.govuk-grid-column-one-quarter:not(:first-child):not(:last-child) {
