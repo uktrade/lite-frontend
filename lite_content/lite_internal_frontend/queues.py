@@ -6,6 +6,7 @@ class QueuesList:
     class Table:
         NAME = "Name"
         TEAM = "Team"
+        COUNTERSIGNING_QUEUE = "Countersigning queue"
         ACTIONS = "Actions"
         EDIT = "Edit"
         VIEW_CASES = "View cases"
@@ -20,6 +21,10 @@ class AddQueueForm:
         TITLE = "Name"
         DESCRIPTION = ""
 
+    class CountersigningQueue:
+        TITLE = "Countersigning queue"
+        DESCRIPTION = ""
+
 
 class EditQueueForm:
     TITLE = "Edit queue"
@@ -28,4 +33,8 @@ class EditQueueForm:
 
     class Name:
         TITLE = "Name"
+        DESCRIPTION = ""
+
+    class CountersigningQueue:
+        TITLE = "Countersigning queue"
         DESCRIPTION = ""
