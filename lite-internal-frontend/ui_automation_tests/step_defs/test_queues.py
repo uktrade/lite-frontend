@@ -14,6 +14,11 @@ def add_a_queue(driver, context, add_queue):  # noqa
     pass
 
 
+@when("I go to the countersigning queue")
+def go_to_countersigning_queue(driver, context, internal_url):
+    driver.get(internal_url.rstrip("/") + "/queues/" + context.countersigning_queue_id)
+
+
 @when("I edit the new queue")
 def click_on_edit_queue(driver, context):
     queues = QueuesPages(driver)
@@ -26,10 +31,29 @@ def click_on_edit_queue(driver, context):
     Shared(driver).click_submit()
 
 
+@when("I edit the new queue with a countersigning queue")
+def edit_queue_with_countersigning(driver, context):
+    queues = QueuesPages(driver)
+    no = utils.get_element_index_by_text(
+        Shared(driver).get_rows_in_lite_table(), context.queue_name, complete_match=False
+    )
+    queues.click_queue_edit_button(no)
+    QueuesPages(driver).select_countersigning_queue(context.countersigning_queue_name)
+    Shared(driver).click_submit()
+
+
 @then("I see my queue")
 def see_queue_in_queue_list(driver, context):
     assert find_paginated_item_by_id(context.queue_name, driver)
     assert context.queue_name in QueuesPages(driver).get_row_text(context.queue_name)
+
+
+@then("I see my queue in the list with a countersigning queue")
+def see_queue_in_queue_list_with_countersigning_queue(driver, context):
+    assert find_paginated_item_by_id(context.queue_name, driver)
+    row = QueuesPages(driver).get_row_text(context.queue_name)
+    assert context.countersigning_queue_name in row
+    assert context.countersigning_queue_name in row
 
 
 @then("I dont see previously created application")
@@ -51,3 +75,8 @@ def see_number_of_checkboxes_selected(driver, context, num):
 @then("queue change is in audit trail")
 def queue_change_in_audit(driver, context):
     assert "moved the case to " + context.queue_name in ApplicationPage(driver).get_text_of_audit_trail_item(0)
+
+
+@when("I go to application previously created for my queue")
+def go_to_case_for_queue(driver, context, internal_url):
+    driver.get(internal_url.rstrip("/") + "/queues/" + context.queue_id + "/cases/" + context.case_id)

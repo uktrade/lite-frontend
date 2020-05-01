@@ -1,3 +1,4 @@
+from selenium.webdriver.support.select import Select
 from shared.BasePage import BasePage
 
 
@@ -8,6 +9,7 @@ class QueuesPages(BasePage):
     QUEUE_CHECKBOXES = ".govuk-checkboxes .govuk-checkboxes__input"  # CSS
     TABLE_ROWS = ".govuk-table__body .govuk-table__row"  # CSS
     LINK_EDIT_SELECTOR = '.govuk-link[href*="edit"]'
+    SELECT_COUNTERSIGNING_QUEUE_ID = "countersigning_queue"
 
     def enter_queue_name(self, text):
         self.driver.find_element_by_id(self.ADD_QUEUE_TEXT_FIELD).clear()
@@ -47,3 +49,6 @@ class QueuesPages(BasePage):
 
     def get_row_text(self, id):
         return self.driver.find_element_by_id(id).text
+
+    def select_countersigning_queue(self, queue_name):
+        Select(self.driver.find_element_by_id(self.SELECT_COUNTERSIGNING_QUEUE_ID)).select_by_visible_text(queue_name)

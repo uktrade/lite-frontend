@@ -145,25 +145,10 @@ def assign_users_to_queue(context, api_test_client):
     api_test_client.queues.case_assignment(context.queue_id, context.case_id, [context.gov_user_id])
 
 
-@when("I click I'm done")
-def im_done_button(driver):
-    ApplicationPage(driver).click_im_done_button()
-
-
 @when("I unassign myself from my newly created work queue")
 def unassign_queue(driver, context):
     UnassignQueuePage(driver).check_unassign_checkbox(context.queue_name)
     functions.click_submit(driver)
-
-
-@when("I go to my work queue")
-def work_queue(driver, context, internal_url):
-    driver.get(internal_url.rstrip("/") + "/queues/" + context.queue_id)
-
-
-@then("My case is not in the queue")
-def no_cases_in_queue(driver, context):
-    assert paginated_item_exists(context.case_id, driver, False)
 
 
 @when("I click on my case")

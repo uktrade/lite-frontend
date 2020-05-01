@@ -22,6 +22,7 @@
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" scope="col">{% lcs 'queues.QueuesList.Table.NAME' %}</th>
 					<th class="govuk-table__header" scope="col">{% lcs 'queues.QueuesList.Table.TEAM' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'queues.QueuesList.Table.COUNTERSIGNING_QUEUE' %}</th>
 					<th class="govuk-table__header" scope="col">{% lcs 'queues.QueuesList.Table.ACTIONS' %}</th>
 				</tr>
 			</thead>
@@ -33,6 +34,9 @@
 						</td>
 						<td class="govuk-table__cell">
 							{{ queue.team.name }}
+						</td>
+						<td class="govuk-table__cell">
+							{{ queue.countersigning_queue.name|default_na }}
 						</td>
 						<td class="govuk-table__cell">
 							<ul class="govuk-table__cell__actions-list">

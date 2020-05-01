@@ -1,4 +1,4 @@
-from core.helpers import convert_dict_to_query_params
+from core.helpers import convert_dict_to_query_params, convert_parameters_to_query_params
 from lite_content.lite_internal_frontend.users import AssignUserPage
 from lite_forms.components import Option
 
@@ -7,8 +7,8 @@ from conf.constants import QUEUES_URL, CASE_URL
 from http import HTTPStatus
 
 
-def get_queues(request, disable_pagination=True, page=1, convert_to_options=False):
-    data = get(request, QUEUES_URL + f"?page={page}&disable_pagination={disable_pagination}").json()
+def get_queues(request, disable_pagination=True, page=1, convert_to_options=False, users_team_first=False):
+    data = get(request, QUEUES_URL + convert_parameters_to_query_params(locals())).json()
 
     if convert_to_options:
         return [Option(queue.get("id"), queue.get("name"), description=queue.get("team").get("name")) for queue in data]

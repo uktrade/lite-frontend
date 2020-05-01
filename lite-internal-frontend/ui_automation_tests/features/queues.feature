@@ -51,3 +51,23 @@ Feature: I want to define new work queues and the teams they belong to
     And I go to the internal homepage
     And I click on the "Open cases" queue in dropdown
     Then I dont see previously created application
+
+  @LT_1299_countersigning_queues_working @regression
+  Scenario: Finish with a team queue and have countersigning queue automatically apply
+    Given I sign in to SSO or am signed into SSO
+    And I create open application or open application has been previously created
+    And a queue has been created
+    And a new countersigning queue has been created
+    When I go to queues
+    Then I see my queue
+    When I edit the new queue with a countersigning queue
+    Then I see my queue in the list with a countersigning queue
+    When I go to application previously created
+    And I add case to newly created queue
+    And I go to application previously created for my queue
+    And I click I'm done
+    And I go to my work queue
+    Then My case is not in the queue
+    When I go to the countersigning queue
+    Then I should see my case in the cases list
+

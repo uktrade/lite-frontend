@@ -10,12 +10,6 @@ from ui_automation_tests.pages.case_list_page import CaseListPage
 scenarios("../features/filter_and_sort_cases.feature", strict_gherkin=False)
 
 
-@given("a queue has been created")
-def create_queue(context, api_test_client):
-    api_test_client.queues.add_queue("queue" + get_formatted_date_time_m_d_h_s())
-    context.queue_name = api_test_client.context["queue_name"]
-
-
 @given("case has been moved to new Queue")
 def assign_case_to_queue(api_test_client):
     api_test_client.cases.assign_case_to_queue()

@@ -384,6 +384,35 @@ def create_queue(context, api_test_client):  # noqa
     context.queue_id = api_test_client.context["queue_id"]
 
 
+@given("a new countersigning queue has been created")  # noqa
+def create_countersigning_queue(context, api_test_client):  # noqa
+    api_test_client.queues.add_queue("countersigningqueue" + get_formatted_date_time_m_d_h_s())
+    context.countersigning_queue_name = api_test_client.context["queue_name"]
+    context.countersigning_queue_id = api_test_client.context["queue_id"]
+
+
+@when("I click I'm done")  # noqa
+def im_done_button(driver):  # noqa
+    ApplicationPage(driver).click_im_done_button()
+
+
+@when("I go to my work queue")  # noqa
+def work_queue(driver, context, internal_url):  # noqa
+    driver.get(internal_url.rstrip("/") + "/queues/" + context.queue_id)
+
+
+@then("My case is not in the queue")  # noqa
+def no_cases_in_queue(driver, context):  # noqa
+    assert paginated_item_exists(context.case_id, driver, False)
+
+
+@given("a queue has been created")  # noqa
+def create_queue(context, api_test_client):  # noqa
+    api_test_client.queues.add_queue("queue" + get_formatted_date_time_m_d_h_s())
+    context.queue_id = api_test_client.context["queue_id"]
+    context.queue_name = api_test_client.context["queue_name"]
+
+
 @given(parsers.parse('I "{decision}" all elements of the application at user and team level'))  # noqa
 def approve_application_objects(context, api_test_client, decision):  # noqa
     context.advice_type = decision

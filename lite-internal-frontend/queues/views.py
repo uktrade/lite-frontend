@@ -124,7 +124,7 @@ class QueuesList(TemplateView):
 
 class AddQueue(SingleFormView):
     def init(self, request, **kwargs):
-        self.form = new_queue_form()
+        self.form = new_queue_form(request)
         self.action = post_queues
         self.success_url = reverse_lazy("queues:manage")
 
@@ -133,7 +133,7 @@ class EditQueue(SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.data = get_queue(request, self.object_pk)
-        self.form = edit_queue_form()
+        self.form = edit_queue_form(request, self.object_pk)
         self.action = put_queue
         self.success_url = reverse_lazy("queues:manage")
 
