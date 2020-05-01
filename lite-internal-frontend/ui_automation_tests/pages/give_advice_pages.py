@@ -14,9 +14,9 @@ class GiveAdvicePages(BasePage):
     FINAL_ADVICE = "final_advice"
     COMBINE_ADVICE_BUTTON = "combine_advice_button"
     CLEAR_ADVICE_BUTTON = "button-clear-advice"
-    FINALISE_BUTTON = "finalise_button"
+    FINALISE_BUTTON = "button-finalise"
     GIVE_OR_CHANGE_ADVICE_BUTTON = "button-give-advice"
-    FINALISE_GOODS_AND_COUNTRIES_BUTTON = "finalise_button"
+    FINALISE_GOODS_AND_COUNTRIES_BUTTON = "button-finalise"
     CLEARANCE_LEVEL_DROPDOWN_ID = "pv_grading"
     RADIO_INPUT_APPROVE = '.govuk-radios input[value="approve"]'
     BLOCKING_FLAGS_WARNING_ID = "blocking_flags"

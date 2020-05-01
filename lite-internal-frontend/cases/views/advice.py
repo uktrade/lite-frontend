@@ -326,7 +326,7 @@ class Finalise(TemplateView):
         case = get_case(request, str(kwargs["pk"]))
         case_type = case["application"]["case_type"]["sub_type"]["key"]
 
-        if case_type == CaseType.OPEN.value:
+        if case_type == CaseType.OPEN.value and case["application"]["goodstype_category"]["key"] != "media":
             data = get_good_countries_decisions(request, str(kwargs["pk"]))["data"]
             items = [item["decision"]["key"] for item in data]
             is_open_licence = True
