@@ -101,5 +101,19 @@
 				{% endif %}
 			</dd>
 		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs 'users.UserProfile.SummaryList.DEFAULT_QUEUE' %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ data.user.default_queue.name }}
+			</dd>
+			<dd class="govuk-summary-list__actions">
+				<a id="link-edit-default-queue" href="{% url 'users:edit' data.user.id %}#default_queue" class="govuk-link govuk-link--no-visited-state">
+					{% lcs 'users.UserProfile.SummaryList.CHANGE' %}
+					<span class="govuk-visually-hidden">{% lcs 'users.UserProfile.SummaryList.DEFAULT_QUEUE' %}</span>
+				</a>
+			</dd>
+		</div>
 	</dl>
 {% endblock %}

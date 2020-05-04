@@ -70,6 +70,7 @@ class AuthCallbackView(View):
 
         # create the user
         user = authenticate(request)
+        user.default_queue = response["default_queue"]
         user.user_token = response["token"]
         user.lite_api_user_id = response["lite_api_user_id"]
         user.save()

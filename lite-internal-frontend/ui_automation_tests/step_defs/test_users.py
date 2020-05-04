@@ -18,6 +18,7 @@ def add_user(driver, context):
     user_page.enter_email(context.added_email)
     user_page.select_option_from_team_drop_down_by_visible_text("Admin")
     user_page.select_option_from_role_drop_down_by_visible_text("Default")
+    user_page.select_option_from_default_queue_drop_down_by_visible_text("All cases")
     functions.click_submit(driver)
 
 
@@ -57,6 +58,7 @@ def edit_user(driver, context):
 
     user_page.select_option_from_team_drop_down_by_value()
     user_page.select_option_from_role_drop_down_by_visible_text("Default")
+    user_page.select_option_from_default_queue_drop_down_by_visible_text("All cases")
 
     functions.click_submit(driver)
 

@@ -10,6 +10,7 @@ class UsersPage(BasePage):
     EMAIL = "email"
     TEAM = "team"
     ROLE = "role"
+    QUEUE = "default_queue"
     LINK_CHANGE_EMAIL_ID = "link-edit-email"
     BUTTON_DEACTIVATE_USER_ID = "button-deactivate-user"
     BUTTON_REACTIVATE_USER_ID = "button-reactivate-user"
@@ -29,6 +30,10 @@ class UsersPage(BasePage):
 
     def select_option_from_role_drop_down_by_visible_text(self, value):
         select = Select(self.driver.find_element_by_id(self.ROLE))
+        select.select_by_visible_text(value)
+
+    def select_option_from_default_queue_drop_down_by_visible_text(self, value):
+        select = Select(self.driver.find_element_by_id(self.QUEUE))
         select.select_by_visible_text(value)
 
     def select_option_from_team_drop_down_by_value(self):

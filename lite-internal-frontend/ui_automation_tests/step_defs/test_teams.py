@@ -22,12 +22,14 @@ def click_on_my_team(driver, context):
 @when("I select my newly created team")
 def select_team(driver, context):
     TeamsPages(driver).select_team_from_dropdown(context.team_name)
+    TeamsPages(driver).select_default_queue_from_dropdown("All cases")
     Shared(driver).click_submit()
 
 
 @when("I select Admin team")
-def select_team(driver):
+def select_team_and_default_queue(driver):
     TeamsPages(driver).select_team_from_dropdown("Admin")
+    TeamsPages(driver).select_default_queue_from_dropdown("All cases")
     Shared(driver).click_submit()
 
 

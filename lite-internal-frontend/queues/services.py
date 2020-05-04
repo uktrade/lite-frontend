@@ -7,11 +7,25 @@ from conf.constants import QUEUES_URL, CASE_URL
 from http import HTTPStatus
 
 
-def get_queues(request, disable_pagination=True, page=1, convert_to_options=False, users_team_first=False):
+def get_queues(
+    request, disable_pagination=True, page=1, convert_to_options=False, users_team_first=False, include_system=False
+):
     data = get(request, QUEUES_URL + convert_parameters_to_query_params(locals())).json()
 
     if convert_to_options:
-        return [Option(queue.get("id"), queue.get("name"), description=queue.get("team").get("name")) for queue in data]
+        options = []
+
+        for queue in data:
+            option = Option(queue.get("id"), queue.get("name"))
+
+            queue_team = queue.get("team")
+            if queue_team:
+                option.description = queue_team.get("name")
+                option.data_attribute = queue_team.get("id")
+
+            options.append(option)
+
+        return options
     else:
         return data
 

@@ -32,7 +32,7 @@ class Cases(TemplateView):
         case_type = request.GET.get("case_type")
         status = request.GET.get("status")
         sort = request.GET.get("sort")
-        queue_pk = kwargs["queue_pk"]
+        queue_pk = kwargs.get("queue_pk") or request.user.default_queue
         case_officer = request.GET.get("case_officer")
         assigned_user = request.GET.get("assigned_user")
         hidden = request.GET.get("hidden")

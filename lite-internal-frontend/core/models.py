@@ -4,6 +4,8 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from conf.constants import ALL_CASES_QUEUE_ID
+
 
 class CustomUserManager(BaseUserManager):
     use_in_migrations = True
@@ -43,6 +45,7 @@ class User(AbstractUser):
     email = models.EmailField(default=None, blank=True, unique=True)
     first_name = models.CharField(max_length=30, blank=True, default=None, null=True)
     last_name = models.CharField(max_length=150, blank=True, default=None, null=True)
+    default_queue = models.UUIDField(default=uuid.UUID(ALL_CASES_QUEUE_ID), null=False)
     user_token = models.TextField(default=None, blank=True, null=True)
     lite_api_user_id = models.TextField(default=None, blank=True, null=True)
 
