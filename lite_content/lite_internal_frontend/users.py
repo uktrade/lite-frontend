@@ -28,6 +28,7 @@ class UserProfile:
         TEAM = "Team"
         ROLE = "Role"
         CHANGE = "Change"
+        DEFAULT_QUEUE = "Default queue"
 
 
 class AddUserForm:
@@ -46,6 +47,10 @@ class AddUserForm:
         TITLE = "Role"
         DESCRIPTION = ""
 
+    class DefaultQueue:
+        TITLE = "Default queue"
+        DESCRIPTION = ""
+
 
 class EditUserForm:
     BACK_LINK = "Back to {0} {1}"
@@ -62,6 +67,10 @@ class EditUserForm:
 
     class Role:
         TITLE = "Role"
+        DESCRIPTION = ""
+
+    class DefaultQueue:
+        TITLE = "Default queue"
         DESCRIPTION = ""
 
 
