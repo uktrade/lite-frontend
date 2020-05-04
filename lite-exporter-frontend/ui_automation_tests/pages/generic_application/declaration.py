@@ -11,6 +11,6 @@ class DeclarationPage(BasePage):
         self.driver.find_element_by_id(self.FOI_ID).click()
 
     def agree_to_declaration(self, driver):
-        element = driver.find_element_by_css_selector("input[test-id='" + self.DECLARATION_ID + "']")
+        element = driver.find_element_by_css_selector("input[data-attribute='" + self.DECLARATION_ID + "']")
         driver.execute_script("arguments[0].scrollIntoView();", element)
         driver.execute_script("arguments[0].click();", element)
