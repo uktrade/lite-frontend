@@ -64,6 +64,7 @@ class FlagsList(TemplateView):
             "data": data,
             "user_data": user_data,
             "filters": filters,
+            "can_change_flag_status": Permission.ACTIVATE_FLAGS.value in get_user_permissions(request),
         }
         return render(request, "flags/index.html", context)
 

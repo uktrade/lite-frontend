@@ -62,7 +62,7 @@
 							</a>
 						</td>
 						<td class="govuk-table__cell govuk-table__cell--tight">
-							{% if user_data.user.team.id == flag.team.id %}
+							{% if user_data.user.team.id == flag.team.id and can_change_flag_status %}
 								<ul class="govuk-table__cell__actions-list">
 									<li class="govuk-table__cell__actions-list-item">
 										{% if flag.status == 'Active' %}
@@ -77,6 +77,10 @@
 										</a>
 									</li>
 								</ul>
+							{% elif user_data.user.team.id == flag.team.id %}
+								<a href="{% url 'flags:edit' flag.id %}" class="govuk-link govuk-link--no-visited-state">
+									{% lcs 'flags.FlagsList.Table.EDIT' %} <span class="govuk-visually-hidden"> flag {{ flag.name }}</span>
+								</a>
 							{% else %}
 								{{ None|default_na }}
 							{% endif %}
