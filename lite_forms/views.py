@@ -103,6 +103,10 @@ class SingleFormView(FormView):
     def on_submission(self, request, **kwargs):
         return request.POST.copy()
 
+    def post_success_step(self):
+        if self.success_message:
+            messages.success(self.request, self.success_message)
+
     def get(self, request, **kwargs):
         override_return = self.init(request, **kwargs)  # noqa
         if override_return:
@@ -130,8 +134,7 @@ class SingleFormView(FormView):
 
         self._validated_data = validated_data
 
-        if self.success_message:
-            messages.success(self.request, self.success_message)
+        self.post_success_step()
 
         if self.redirect:
             return redirect(self.get_success_url())
@@ -159,6 +162,10 @@ class MultiFormView(FormView):
     def on_submission(self, request, **kwargs):
         pass
 
+    def post_success_step(self):
+        if self.success_message:
+            messages.success(self.request, self.success_message)
+
     def get(self, request, **kwargs):
         self.init(request, **kwargs)
         form = self.get_forms().forms[0]
@@ -184,8 +191,7 @@ class MultiFormView(FormView):
 
         self._validated_data = data
 
-        if self.success_message:
-            messages.success(self.request, self.success_message)
+        self.post_success_step()
 
         return redirect(self.get_success_url())
 
