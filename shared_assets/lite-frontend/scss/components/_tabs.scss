@@ -95,6 +95,20 @@
 	opacity: .5;
 }
 
+.js-disabled {
+	.lite-tabs__tab-parent {
+		display: none;
+	}
+
+	.lite-tabs__tab-group {
+		transform: translateX(0px);
+		opacity: 1!important;
+		max-width: none;
+		pointer-events: all;
+		margin-right: govuk-spacing(5);
+	}
+}
+
 .lite-tabs__tab-group {
 	display: inline-block;
 	position: relative;
