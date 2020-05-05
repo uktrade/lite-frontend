@@ -613,3 +613,10 @@ class Custom:
         self.input_type = "custom"
         self.data = data
         self.template = template
+
+
+class WarningBanner:
+    def __init__(self, id, text):
+        self.input_type = "warning"
+        self.id = id
+        self.text = text
