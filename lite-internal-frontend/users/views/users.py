@@ -22,8 +22,10 @@ from users.services import (
 
 class UsersList(TemplateView):
     def get(self, request, **kwargs):
-        status = request.GET.get("status", "active")
-        params = {"page": int(request.GET.get("page", 1)), "status": status}
+        status = self.request.GET.get("status")
+        params = {"page": int(self.request.GET.get("page", 1))}
+        if status:
+            params["status"] = status
 
         data, _ = get_gov_users(request, params)
 
@@ -32,7 +34,11 @@ class UsersList(TemplateView):
 
         statuses = [
             Option(option["key"], option["value"])
-            for option in [{"key": "active", "value": UserStatuses.ACTIVE}, {"key": "", "value": "All"}]
+            for option in [
+                {"key": "active", "value": UserStatuses.ACTIVE},
+                {"key": "deactivated", "value": UserStatuses.DEACTIVATED},
+                {"key": "", "value": "All"},
+            ]
         ]  # TODO[future]: filters in API?
 
         filters = FiltersBar([Select(name="status", title="status", options=statuses)])
