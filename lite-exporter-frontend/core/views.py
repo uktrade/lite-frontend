@@ -65,9 +65,6 @@ class PickOrganisation(TemplateView):
         self.organisations = user["organisations"]
         self.form = select_your_organisation_form(self.organisations)
 
-        if len(self.organisations) == 1:
-            raise Http404()
-
         return super(PickOrganisation, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, **kwargs):
@@ -171,7 +168,7 @@ class RegisterAnOrganisation(SummaryListFormView):
 
 class RegisterAnOrganisationConfirmation(TemplateView):
     def get(self, request, *args, **kwargs):
-        organisation = get_user(request)["organisations"][0]
+        organisation = get_user(request, params={"in_review": True})["organisations"][0]
         organisation_name = organisation["name"]
         organisation_status = organisation["status"]["key"]
 
