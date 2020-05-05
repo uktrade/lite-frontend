@@ -142,7 +142,7 @@ def build_request_data(exporter_user, gov_user):
         "document_template": {"case_types": ["siel", "oiel"]},
         "export_user": {
             "email": exporter["email"],
-            "user_profile": {"first_name": "Bruce", "last_name": "Wayne"},
+            "user_profile": {"first_name": exporter["first_name"], "last_name": exporter["last_name"]},
             "sites": {},
             "role": "00000000-0000-0000-0000-000000000003",
         },
