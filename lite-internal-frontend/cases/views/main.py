@@ -34,6 +34,7 @@ from cases.services import (
     get_case_additional_contacts,
     post_case_additional_contacts,
     put_rerun_case_routing_rules,
+    get_activity_filters,
 )
 from cases.services import post_case_documents, get_case_documents, get_document
 from conf import settings
@@ -43,6 +44,7 @@ from core.builtins.custom_tags import friendly_boolean
 from core.services import get_status_properties, get_user_permissions, get_permissible_statuses
 from lite_content.lite_exporter_frontend import applications
 from lite_content.lite_internal_frontend import cases
+from lite_forms.components import FiltersBar, Select, Option, DateInput
 from lite_forms.generators import error_page, form_page
 from lite_forms.views import SingleFormView
 from queues.services import put_queue_single_case_assignment, get_queue
@@ -113,8 +115,40 @@ class ViewCase(TemplateView):
 
         can_set_done = can_set_done and (is_system_queue and user_assigned_queues) or not is_system_queue
 
+        activity_filters = get_activity_filters(request, case_id)
+
+        def make_options(values):
+            return [Option(option["key"], option["value"]) for option in values]
+
+        filters = FiltersBar(
+            [
+                Select(
+                    title=cases.ApplicationPage.ActivityFilters.USER,
+                    name="user_id",
+                    options=make_options(activity_filters["users"]),
+                ),
+                Select(
+                    title=cases.ApplicationPage.ActivityFilters.TEAM,
+                    name="team_id",
+                    options=make_options(activity_filters["teams"]),
+                ),
+                Select(
+                    title=cases.ApplicationPage.ActivityFilters.USER_TYPE,
+                    name="user_type",
+                    options=make_options(activity_filters["user_types"]),
+                ),
+                Select(
+                    title=cases.ApplicationPage.ActivityFilters.ACTIVITY_TYPE,
+                    name="activity_type",
+                    options=make_options(activity_filters["activity_types"]),
+                ),
+                DateInput(title=cases.ApplicationPage.ActivityFilters.DATE_FROM, prefix="from_"),
+                DateInput(title=cases.ApplicationPage.ActivityFilters.DATE_TO, prefix="to_"),
+            ]
+        )
+
         context = {
-            "activity": get_activity(request, case_id),
+            "activity": get_activity(request, case_id, activity_filters=request.GET),
             "case": case,
             "queue": queue,
             "permissions": get_user_permissions(request),
@@ -122,6 +156,7 @@ class ViewCase(TemplateView):
             "status_is_read_only": status_props["is_read_only"],
             "status_is_terminal": status_props["is_terminal"],
             "can_set_done": can_set_done,
+            "filters": filters,
         }
 
         if case_sub_type == CaseType.END_USER_ADVISORY.value:

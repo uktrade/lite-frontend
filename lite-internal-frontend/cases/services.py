@@ -7,6 +7,7 @@ from conf.constants import (
     CASE_NOTES_URL,
     APPLICATIONS_URL,
     ACTIVITY_URL,
+    ACTIVITY_FILTERS_URL,
     DOCUMENTS_URL,
     END_USER_ADVISORY_URL,
     ECJU_QUERIES_URL,
@@ -124,9 +125,18 @@ def post_case_notes(request, pk, json):
 
 
 # Activity
-def get_activity(request, pk):
-    data = get(request, CASE_URL + pk + ACTIVITY_URL + "?fields=status,flags")
+def get_activity(request, pk, activity_filters=None):
+    url = CASE_URL + pk + ACTIVITY_URL
+    if activity_filters:
+        params = convert_parameters_to_query_params(activity_filters)
+        url = url + params
+    data = get(request, url)
     return data.json()["activity"]
+
+
+def get_activity_filters(request, pk):
+    data = get(request, CASE_URL + pk + ACTIVITY_FILTERS_URL)
+    return data.json()["filters"]
 
 
 # Case Documents

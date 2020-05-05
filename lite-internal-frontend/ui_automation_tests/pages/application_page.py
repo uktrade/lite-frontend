@@ -1,6 +1,7 @@
-from selenium.webdriver.support.ui import Select
 import time
 
+from selenium.webdriver.support.ui import Select
+from shared import functions
 from shared.BasePage import BasePage
 from shared.tools.helpers import scroll_to_element_by_id
 
@@ -56,6 +57,8 @@ class ApplicationPage(BasePage):
     DESTINATION_CHECKBOX = "destinations"  # NAME
     BUTTON_IM_DONE_ID = "button-done"
     CASE_LINK_PARTIAL_ID = "case-"
+    BUTTON_APPLY_FILTER_ID = "button-apply-filters"
+    USER_TYPE_ID = "user_type"
 
     def get_case_copy_of_field_href(self):
         return self.driver.find_element_by_id(self.CASE_COPY_OF_ID).get_attribute("href")
@@ -274,3 +277,15 @@ class ApplicationPage(BasePage):
 
     def get_case_queues(self):
         return self.driver.find_element_by_id(self.CASE_QUEUES_ID)
+
+    def select_filter_user_type_from_dropdown(self, user_type):
+        functions.try_open_filters(self.driver)
+        select = Select(self.driver.find_element_by_id(self.USER_TYPE_ID))
+        select.select_by_visible_text(user_type)
+        self.driver.find_element_by_id(self.BUTTON_APPLY_FILTER_ID).click()
+
+    def get_text_of_first_audit_trail_item(self):
+        return self.driver.find_elements_by_css_selector(self.AUDIT_TRAIL_ITEM)[-1].text
+
+    def get_audit_elements(self):
+        return self.driver.find_elements_by_css_selector(self.AUDIT_TRAIL_ITEM)

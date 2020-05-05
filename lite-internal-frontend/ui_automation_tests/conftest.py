@@ -455,3 +455,24 @@ def click_edit_case_flags_link(driver):  # noqa
 @then("The previously created flag is assigned to the case")  # noqa
 def assert_flag_is_assigned(driver, context):  # noqa
     assert Shared(driver).is_flag_applied(context.flag_name)
+
+
+@when(parsers.parse('filter user_type has been changed to "{user_type}"'))  # noqa
+def filter_status_change(driver, user_type):  # noqa
+    page = ApplicationPage(driver)
+    page.select_filter_user_type_from_dropdown(user_type)
+
+
+@then("exporter is at the first audit in the trail")  # noqa
+def exporter_first_audit_in_trail(driver, exporter_info):  # noqa
+    first_audit = ApplicationPage(driver).get_text_of_first_audit_trail_item()
+    assert f"{exporter_info['first_name']}" in first_audit
+    assert f"{exporter_info['last_name']}" in first_audit
+
+
+@then("exporter is not in the audit trail")  # noqa
+def exporter_is_not_in_audit_trail(driver, exporter_info):  # noqa
+    audits = ApplicationPage(driver).get_audit_elements()
+    for audit in list(audits):
+        assert f"{exporter_info['first_name']}" not in audit.text
+        assert f"{exporter_info['last_name']}" not in audit.text
