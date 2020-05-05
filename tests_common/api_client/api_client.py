@@ -9,6 +9,7 @@ class ApiClient:
         self.session = Session()
         self.gov_headers = {"content-type": "application/json"}
         self.exporter_headers = {"content-type": "application/json"}
+        self.anonymous_headers = {"content-type": "application/json"}
         self.headers_initialised = False
 
     def auth_basic(self, user_name, user_password):

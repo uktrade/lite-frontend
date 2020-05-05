@@ -33,6 +33,19 @@ def build_organisation_with_user(exporter, type, name):
     }
 
 
+def build_organisation(name, type, address):
+    return {
+        "name": name,
+        "type": type,
+        "eori_number": "1234567890AAA",
+        "sic_number": "12345",
+        "vat_number": "GB1234567",
+        "registration_number": "09876543",
+        "user": {"email": "name@example.com"},
+        "site": {"name": "site", "address": {"address_line_1": address}},
+    }
+
+
 def build_good(description, control_list_entry="ML1a", part_number="1234"):
     return {
         "description": description,

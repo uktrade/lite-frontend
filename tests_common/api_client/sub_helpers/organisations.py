@@ -78,6 +78,11 @@ class Organisations:
             method="POST", url="/organisations/", body=data, headers=self.api_client.gov_headers,
         ).json()
 
+    def anonymous_user_create_org(self, data):
+        return self.api_client.make_request(
+            method="POST", url="/organisations/", body=data, headers=self.api_client.anonymous_headers,
+        ).json()
+
     def get_org_primary_site_id(self, org_id):
         organisation = self.api_client.make_request(
             method="GET", url="/organisations/" + org_id, headers=self.api_client.gov_headers,
