@@ -4,6 +4,11 @@ class OrganisationsPage:
     ADD_HMRC_BUTTON = "Add an HMRC organisation"
     ACTIVE_FILTER_NO_ORGANISATIONS = "No organisations match your filters"
 
+    class Tabs:
+        ACTIVE = "Active"
+        IN_REVIEW = "In review"
+        REJECTED = "Rejected"
+
     class Table:
         NAME = "Name"
         TYPE = "Type"
@@ -26,6 +31,7 @@ class OrganisationsPage:
 class OrganisationPage:
     BACK_LINK = "Back to " + OrganisationsPage.TITLE.lower()
     NO_FLAGS_NOTICE = "There aren't any flags"
+    REVIEW_BUTTON = "Review"
 
     class Details:
         TITLE = "Details"
@@ -157,3 +163,21 @@ class EditIndividualOrganisationPage(EditOrganisationPage):
     class VATNumber:
         TITLE = "UK VAT number"
         DESCRIPTION = "9 digits long, with the first 2 letters indicating the country code of the registered business."
+
+
+class ReviewOrganisationPage:
+    TITLE = "Review Organisation"
+    DECISION_TITLE = "Final decision"
+    APPROVE_OPTION = "Approve"
+    REJECT_OPTION = "Reject"
+    WARNING_BANNER = "There are existing organisations with matching: "
+
+    class Summary:
+        NAME = "Name"
+        TYPE = "Type"
+        EORI = "EORI Number"
+        SIC = "SIC Code"
+        VAT = "VAT Number"
+        REGISTRATION = "Registration Number"
+        SITE_NAME = "Primary Site Name"
+        SITE_ADDRESS = "Primary Site Address"
