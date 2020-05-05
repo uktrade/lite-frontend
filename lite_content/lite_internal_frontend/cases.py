@@ -153,6 +153,15 @@ class ApplicationPage:
             FIRST_EXHIBITION_DATE = "First exhibition date"
             REASON_FOR_CLEARANCE = "Reason for clearance"
 
+    class ActivityFilters:
+        USER = "user"
+        TEAM = "team"
+        USER_TYPE = "user type"
+        ACTIVITY_TYPE = "activity Type"
+        DATE_FROM = "date from"
+        DATE_TO = "date to"
+        NO_ACTIVITIES = "No activities match your filters"
+
 
 class QueryPage:
     CREATED_AT_SUMMARY = "Created at"
