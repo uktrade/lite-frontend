@@ -44,3 +44,37 @@ Feature: I want to add a company to LITE
     When I go to the internal homepage
     Then I see previously created application
     And I see the added flags on the queue
+
+  @LT_1105_review_and_approve_an_organisation @regression
+  Scenario: Review and approve an organisation
+    Given I sign in to SSO or am signed into SSO
+    And an anonymous user applies for an organisation
+    When I go to organisations
+    And I go to the in review tab
+    Then the organisation previously created is in the list
+    When I click the organisation
+    And I click review
+    Then I should see a summary of organisation details
+    When I approve the organisation
+    Then the organisation should be set to "Active"
+    When I go to organisations
+    And I go to the active tab
+    Then the organisation previously created is in the list
+    # Check user gets a warning if a matching organisation exists
+    When an organisation matching the existing organisation is created
+    And I go to the organisation
+    And I click review
+    Then I should be warned that this organisation matches an existing one
+
+  @LT_1105_review_and_reject_an_organisation @regression
+  Scenario: Review and reject an organisation
+    Given I sign in to SSO or am signed into SSO
+    And an anonymous user applies for an organisation
+    When I go to organisations
+    And I go to the in review tab
+    Then the organisation previously created is in the list
+    When I click the organisation
+    And I click review
+    Then I should see a summary of organisation details
+    When I reject the organisation
+    Then the organisation should be set to "Rejected"

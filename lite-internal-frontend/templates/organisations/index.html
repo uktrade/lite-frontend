@@ -21,6 +21,14 @@
 
 	{% include "filters.html" %}
 
+	<div class="lite-tabs__container">
+		<div class="lite-tabs">
+			<a href="?status=active" id="active" class="lite-tabs__tab {% if tab == "active" %}lite-tabs__tab--selected{% endif %}">{% lcs "organisations.OrganisationsPage.Tabs.ACTIVE" %}</a>
+			<a href="?status=in_review" id="in_review" class="lite-tabs__tab {% if tab == "in_review" %}lite-tabs__tab--selected{% endif %}">{% lcs "organisations.OrganisationsPage.Tabs.IN_REVIEW" %} {% if in_review_total %}<div class="lite-notification-bubble">{{ in_review_total }}</div>{% endif %}</a>
+			<a href="?status=rejected" id="rejected" class="lite-tabs__tab {% if tab == "rejected" %}lite-tabs__tab--selected{% endif %}">{% lcs "organisations.OrganisationsPage.Tabs.REJECTED" %}</a>
+		</div>
+	</div>
+
 	{% if data.results %}
 		<table class="govuk-table">
 			<thead class="govuk-table__head">

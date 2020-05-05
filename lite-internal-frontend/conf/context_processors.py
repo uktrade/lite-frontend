@@ -3,7 +3,7 @@ import os
 from django.urls import reverse_lazy
 
 from conf.constants import Permission
-from core.services import get_user_permissions
+from core.services import get_user_permissions, get_menu_notifications
 from lite_content.lite_internal_frontend import strings
 from lite_content.lite_internal_frontend.flags import FlagsList
 from lite_content.lite_internal_frontend.organisations import OrganisationsPage
@@ -32,14 +32,19 @@ def export_vars(request):
 
 
 def lite_menu(request):
+    has_notifications = False
     try:
         permissions = get_user_permissions(request)
+        notifications = get_menu_notifications(request)
+        notification_data = notifications["notifications"]
+        has_notifications = notifications["has_notifications"]
         pages = [
             {"title": "Cases", "url": reverse_lazy("core:index"), "icon": "menu/cases"},
             {
                 "title": OrganisationsPage.TITLE,
                 "url": reverse_lazy("organisations:organisations"),
                 "icon": "menu/businesses",
+                "notifications": notification_data.get("organisations"),
             },
             {"title": "Teams", "url": reverse_lazy("teams:teams"), "icon": "menu/teams"},
             {"title": "My Team", "url": reverse_lazy("teams:team"), "icon": "menu/teams"},
@@ -68,4 +73,4 @@ def lite_menu(request):
         # Tests dont provide a user which causes has_permission to error,
         # so return an empty pages list so tests work
         pages = []
-    return {"LITE_MENU": [x for x in pages if x is not None]}
+    return {"LITE_MENU": [x for x in pages if x is not None], "MENU_NOTIFICATIONS": has_notifications}

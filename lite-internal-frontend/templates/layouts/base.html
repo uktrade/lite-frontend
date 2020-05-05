@@ -77,13 +77,13 @@
 
 					<div id="lite-menu-wrapper">
 						<a id="lite-user-menu-button" class="lite-user-menu-button" onclick="toggleLITEMenu();return false;" href="/menu/" title="Open Menu" accesskey="m">
-							{% svg 'menu' %}
+							{% svg 'menu' %} {% if MENU_NOTIFICATIONS %}<span class="app-header__link__bubble--small"></span>{% endif %}
 						</a>
 						<div id="lite-menu">
 							{% for item in LITE_MENU %}
 								<a href="{{ item.url }}" class="lite-menu-item {{ item.url|add_selected_class:request.path }}">
 									<div class="icon">
-										{% svg item.icon %}
+										{% svg item.icon %} {% if item.notifications %}<span class="app-header__link__bubble">{{ item.notifications }}</span>{% endif %}
 									</div>
 									{{ item.title }}
 								</a>

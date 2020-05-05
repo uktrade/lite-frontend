@@ -19,7 +19,7 @@
 		{{ organisation.name }}
 	</h1>
 
-	<div class="lite-tabs__container">
+	<div class="lite-tabs__container govuk-!-width-two-thirds">
 		<div class="lite-tabs">
 			{% for tab in tabs %}
 				{% if tab %}
@@ -33,6 +33,11 @@
 		</div>
 		<div class="lite-tabs__controls">
 			{% block controls %}
+				{% if organisation.status.key == "in_review" and can_manage_organisations %}
+					<a role="button" draggable="false" class="govuk-button" id="review" href="{% url 'organisations:organisation_review' organisation.id %}">
+						{% lcs "organisations.OrganisationPage.REVIEW_BUTTON" %}
+					</a>
+				{% endif %}
 			{% endblock %}
 		</div>
 	</div>

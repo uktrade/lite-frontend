@@ -8,6 +8,7 @@ app_name = "organisations"
 urlpatterns = [
     path("", views.OrganisationList.as_view(), name="organisations"),
     path("<uuid:pk>/", views.OrganisationDetails.as_view(), name="organisation"),
+    path("<uuid:pk>/review/", views.OrganisationReview.as_view(), name="organisation_review"),
     path("<uuid:pk>/members/", views.OrganisationMembers.as_view(), name="organisation_members"),
     path("<uuid:pk>/sites/", views.OrganisationSites.as_view(), name="organisation_sites"),
     path("<uuid:pk>/assign-flags/", AssignFlags.as_view(), name="assign_flags"),

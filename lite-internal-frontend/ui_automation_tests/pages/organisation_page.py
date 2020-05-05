@@ -7,6 +7,11 @@ class OrganisationPage(BasePage):
 
     LINK_ORGANISATION_FLAGS_ID = "link-organisation-flags"
     LINK_EDIT_ORGANISATION_ID = "link-edit-organisation"
+    REVIEW_ORGANISATION_BUTTON_ID = "review"
+    ORGANISATION_SUMMARY_CSS_SELECTOR = ".govuk-summary-list"
+    REVIEW_PARTIAL_ID = "status-"
+    ORGANISATION_STATUS_ID = "status"
+    WARNING_BANNER_ID = "org_warning"
 
     def click_edit_organisation_flags(self):
         self.driver.find_element_by_id(self.LINK_ORGANISATION_FLAGS_ID).click()
@@ -28,3 +33,21 @@ class OrganisationPage(BasePage):
             "sic-number": row.find_element_by_id("sic-number").text,
             "vat-number": row.find_element_by_id("vat-number").text,
         }
+
+    def click_review_organisation(self):
+        self.driver.find_element_by_id(self.REVIEW_ORGANISATION_BUTTON_ID).click()
+
+    def get_organisation_summary(self):
+        return self.driver.find_element_by_css_selector(self.ORGANISATION_SUMMARY_CSS_SELECTOR).text
+
+    def select_approve_organisation(self):
+        self.driver.find_element_by_id(self.REVIEW_PARTIAL_ID + "active").click()
+
+    def select_reject_organisation(self):
+        self.driver.find_element_by_id(self.REVIEW_PARTIAL_ID + "rejected").click()
+
+    def get_status(self):
+        return self.driver.find_element_by_id(self.ORGANISATION_STATUS_ID).text
+
+    def get_warning(self):
+        return self.driver.find_element_by_id(self.WARNING_BANNER_ID).text

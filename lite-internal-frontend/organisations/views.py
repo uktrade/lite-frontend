@@ -5,16 +5,17 @@ from django.views.generic import TemplateView
 from conf.constants import Permission
 from core.helpers import convert_dict_to_query_params
 from core.objects import Tab
-from core.services import get_user_permissions
+from core.services import get_user_permissions, get_menu_notifications
 from lite_content.lite_internal_frontend import strings
 from lite_content.lite_internal_frontend.organisations import OrganisationsPage, OrganisationPage
-from lite_forms.components import FiltersBar, TextInput, Select, Option
+from lite_forms.components import FiltersBar, TextInput, Select, Option, HiddenField
 from lite_forms.views import MultiFormView, SingleFormView
 from organisations.forms import (
     register_organisation_forms,
     register_hmrc_organisation_forms,
     edit_commercial_form,
     edit_individual_form,
+    review_organisation_form,
 )
 from organisations.services import (
     get_organisations,
@@ -24,6 +25,7 @@ from organisations.services import (
     put_organisation,
     get_organisation_members,
     post_hmrc_organisations,
+    put_organisation_status,
 )
 
 
@@ -36,7 +38,7 @@ class OrganisationList(TemplateView):
         search_term = request.GET.get("search_term", "").strip()
         org_type = request.GET.get("org_type", "").strip()
 
-        params = {"page": int(request.GET.get("page", 1))}
+        params = {"page": int(request.GET.get("page", 1)), "status": request.GET.get("status", "active")}
         if search_term:
             params["search_term"] = search_term
         if org_type:
@@ -56,6 +58,7 @@ class OrganisationList(TemplateView):
                         Option("hmrc", OrganisationsPage.Filters.Types.HMRC),
                     ],
                 ),
+                HiddenField(name="status", value=params["status"]),
             ]
         )
 
@@ -65,6 +68,8 @@ class OrganisationList(TemplateView):
             "params_str": convert_dict_to_query_params(params),
             "filters": filters,
             "search_term": params.get("search_term", ""),
+            "tab": params.get("status"),
+            "in_review_total": get_menu_notifications(request)["notifications"].get("organisations"),
             "can_manage_organisations": Permission.MANAGE_ORGANISATIONS.value in get_user_permissions(request),
         }
         return render(request, "organisations/index.html", context)
@@ -84,6 +89,7 @@ class OrganisationView(TemplateView):
 
         context = {
             "organisation": self.organisation,
+            "can_manage_organisations": Permission.MANAGE_ORGANISATIONS.value in get_user_permissions(request),
             "tabs": [
                 Tab(
                     "details",
@@ -108,6 +114,14 @@ class OrganisationView(TemplateView):
 
 class OrganisationDetails(OrganisationView):
     template_name = "details"
+
+
+class OrganisationReview(SingleFormView):
+    def init(self, request, **kwargs):
+        self.object_pk = kwargs["pk"]
+        self.action = put_organisation_status
+        self.form = review_organisation_form(request, self.object_pk)
+        self.success_url = reverse_lazy("organisations:organisation", kwargs={"pk": self.object_pk})
 
 
 class OrganisationMembers(OrganisationView):

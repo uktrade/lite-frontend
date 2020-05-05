@@ -49,6 +49,7 @@
 	a {
 		@include govuk-link-common;
 		@include govuk-font($size: 14, $weight: bold);
+		position: relative;
 		color: govuk-colour("dark-grey");
 		text-decoration: none;
 		width: 105px;
