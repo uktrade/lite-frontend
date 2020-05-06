@@ -24,6 +24,12 @@
 	}
 }
 
+.govuk-table__cell--radio {
+	// Style a table cell so that a radiobutton
+	// fits in it correctly
+	@extend .govuk-radios--small;
+}
+
 .govuk-table__cell--nowrap {
 	white-space: nowrap;
 	overflow: hidden;
