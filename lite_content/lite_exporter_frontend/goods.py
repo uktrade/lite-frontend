@@ -390,6 +390,8 @@ class GoodsLocationPage:
 class GoodsTypeAllDestinationsPage:
     DESTINATIONS_TITLE = "Destinations"
     DESTINATIONS_DESCRIPTION_MEDIA_OIEL = "These are the destinations you can export to with a media OIEL."
+    DESTINATIONS_DESCRIPTION = "These are the destinations you can export to with a "
+    UK_CONTINENTAL_SHELF_DESCRIPTION = "The UK continental shelf includes parts of the North Sea, the North Atlantic, the Irish Sea and the English Channel."
 
 
 class GoodsPage:

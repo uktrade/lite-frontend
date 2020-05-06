@@ -421,6 +421,7 @@ class OpenApplicationTaskList:
     END_USE_DETAILS = "End use details"
     TEMPORARY_EXPORT_DETAILS = "Temporary export details"
     NOTES = "Notes"
+    THIRD_PARTIES = "Third parties"
 
 
 class HMRCApplicationTaskList:
