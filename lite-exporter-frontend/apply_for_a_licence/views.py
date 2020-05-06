@@ -9,6 +9,7 @@ from apply_for_a_licence.forms.triage_questions import (
     trade_control_licence_questions,
 )
 from apply_for_a_licence.validators import validate_opening_question
+from conf.constants import PERMANENT
 from lite_forms.views import SingleFormView, MultiFormView
 
 
@@ -50,6 +51,7 @@ class TranshipmentQuestions(MultiFormView):
     def init(self, request, **kwargs):
         self.forms = transhipment_questions()
         self.action = post_applications
+        self.data = {"export_type": PERMANENT}
 
     def get_success_url(self):
         pk = self.get_validated_data()["id"]

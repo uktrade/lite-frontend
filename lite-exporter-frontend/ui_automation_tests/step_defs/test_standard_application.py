@@ -251,7 +251,6 @@ def create_standard_individual_transhipment_application(driver, context):  # noq
     functions.click_submit(driver)
     enter_type_of_application(driver, "sitl", context)
     enter_application_name(driver, context)
-    enter_permanent_or_temporary(driver, "permanent", context)
     ApplyForALicencePage(driver).select_goods_categories()
     functions.click_submit(driver)
     enter_export_licence(driver, "yes", "123456", context)

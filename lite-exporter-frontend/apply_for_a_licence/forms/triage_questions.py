@@ -179,20 +179,6 @@ def transhipment_questions():
                 ),
             ),
             reference_name_form(),
-            Form(
-                title=ExportLicenceQuestions.ExportType.TITLE,
-                description=ExportLicenceQuestions.ExportType.DESCRIPTION,
-                questions=[
-                    RadioButtons(
-                        name="export_type",
-                        options=[
-                            Option("temporary", ExportLicenceQuestions.ExportType.TEMPORARY),
-                            Option("permanent", ExportLicenceQuestions.ExportType.PERMANENT),
-                        ],
-                    ),
-                ],
-                default_button_name=generic.CONTINUE,
-            ),
             goods_categories(),
             told_by_an_official_form(),
         ]
