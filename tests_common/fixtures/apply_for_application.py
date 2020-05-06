@@ -154,7 +154,7 @@ def apply_for_open_application(api_test_client, context):
             "export_type": "permanent",
             "have_you_been_informed": "yes",
             "reference_number_on_information_form": "1234",
-            "goodstype_category": "dealer",
+            "goodstype_category": "military",
         },
         end_use_details={
             "intended_end_use": "intended end use",
