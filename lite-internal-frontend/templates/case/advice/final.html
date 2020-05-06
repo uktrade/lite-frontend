@@ -40,7 +40,7 @@
 							{% if can_advice_be_finalised and not blocking_flags %}
 								{% make_list queue.id case.id as button_params %}
 								{% if case.application.case_type.sub_type.key == 'open' %}
-									{% if case.application.goodstype_category.key == 'media' %}
+									{% if is_case_oiel_final_advice_only %}
 										{% govuk_link_button id='finalise' text='cases.ViewAdvicePage.Actions.FINALISE' url='cases:finalise' url_param=button_params %}
 									{% else %}
 										{% govuk_link_button id='finalise' text='cases.ViewAdvicePage.Actions.FINALISED_GOODS_AND_COUNTRIES' url='cases:finalise_goods_countries' url_param=button_params %}

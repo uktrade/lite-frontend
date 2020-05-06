@@ -325,15 +325,23 @@ class Finalise(TemplateView):
     def get(self, request, *args, **kwargs):
         case = get_case(request, str(kwargs["pk"]))
         case_type = case["application"]["case_type"]["sub_type"]["key"]
+        is_case_oiel_final_advice_only = False
+        if "goodstype_category" in case["application"]:
+            is_case_oiel_final_advice_only = case["application"]["goodstype_category"]["key"] in [
+                "media",
+                "cryptographic",
+                "dealer",
+                "uk_continental_shelf",
+            ]
 
-        if case_type == CaseType.OPEN.value and case["application"]["goodstype_category"]["key"] != "media":
+        if case_type == CaseType.OPEN.value and not is_case_oiel_final_advice_only:
             data = get_good_countries_decisions(request, str(kwargs["pk"]))["data"]
             items = [item["decision"]["key"] for item in data]
             is_open_licence = True
         else:
             advice, _ = get_final_case_advice(request, str(kwargs["pk"]))
             items = [item["type"]["key"] for item in advice["advice"]]
-            is_open_licence = False
+            is_open_licence = case_type == CaseType.OPEN.value
 
         case_id = case["id"]
         duration = get_application_default_duration(request, str(kwargs["pk"]))

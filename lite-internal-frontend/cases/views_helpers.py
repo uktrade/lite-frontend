@@ -69,6 +69,15 @@ def get_case_advice(get_advice, request, case, advice_level, team=None):
         # Get blocking flags if finalising & has approval advice
         context["blocking_flags"] = get_blocking_flags(request, case["id"])
 
+    context["is_case_oiel_final_advice_only"] = False
+    if "goodstype_category" in case["application"]:
+        context["is_case_oiel_final_advice_only"] = case["application"]["goodstype_category"]["key"] in [
+            "media",
+            "cryptographic",
+            "dealer",
+            "uk_continental_shelf",
+        ]
+
     return render(request, f"case/advice/{advice_level}.html", context)
 
 

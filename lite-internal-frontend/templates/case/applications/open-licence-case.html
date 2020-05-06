@@ -27,7 +27,11 @@
 		<div class="govuk-grid-row">
 			<div class="govuk-grid-column-one-quarter">
 				<p class="app-case-board__heading">{% lcs 'CASE_INFO_TYPE' %}</p>
-				<p>{{ case.application.case_type.sub_type.value }}</p>
+				<p>{{ case.application.case_type.sub_type.value }}
+				{% if case.application.goodstype_category.key %}
+					- {{ case.application.goodstype_category.value }}
+				{% endif %}
+				</p>
 			</div>
 			<div class="govuk-grid-column-one-quarter">
 				<p class="app-case-board__heading">{% lcs 'CASE_INFO_EXPORT_TYPE' %}</p>
@@ -140,75 +144,77 @@
 		</div>
 
 		<!-- End Use Details -->
-		<div class="govuk-accordion__section">
-			<div class="govuk-accordion__section-header">
-				<h2 class="govuk-accordion__section-heading">
-					<span class="govuk-accordion__section-button" id="accordion-default-heading-3">
-						{% lcs 'cases.ApplicationPage.EndUseDetails.TITLE' %}
-					</span>
-				</h2>
+		{% if case.application.goodstype_category.key != 'cryptographic' %}
+			<div class="govuk-accordion__section">
+				<div class="govuk-accordion__section-header">
+					<h2 class="govuk-accordion__section-heading">
+						<span class="govuk-accordion__section-button" id="accordion-default-heading-3">
+							{% lcs 'cases.ApplicationPage.EndUseDetails.TITLE' %}
+						</span>
+					</h2>
+				</div>
+				<div id="accordion-end-use-details-content" class="govuk-accordion__section-content" aria-labelledby="accordion-end-use-details">
+					<table class="govuk-table" id="end-use-details">
+						<thead class="govuk-table__head">
+							<tr class="govuk-table__row">
+								<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.EndUseDetails.NUMBER_COLUMN' %}</th>
+								<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.EndUseDetails.DESCRIPTION_COLUMN' %}</th>
+								<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.EndUseDetails.ANSWER_COLUMN' %}</th>
+							</tr>
+						</thead>
+						<tbody class="govuk-table__body">
+							<tr class="govuk-table__row">
+								<td class="govuk-table__cell govuk-table__cell--line-number">
+									1.
+								</td>
+								<td class="govuk-table__cell govuk-!-font-weight-bold">
+									{% lcs 'cases.ApplicationPage.EndUseDetails.INTENDED_END_USE_TITLE' %}
+								</td>
+								<td class="govuk-table__cell">
+									{{ case.application.intended_end_use|default:"" }}
+								</td>
+							</tr>
+							<tr class="govuk-table__row">
+								<td class="govuk-table__cell govuk-table__cell--line-number">
+									2.
+								</td>
+								<td class="govuk-table__cell govuk-!-font-weight-bold">
+									{% lcs 'cases.ApplicationPage.EndUseDetails.INFORMED_TO_APPLY_TITLE' %}
+								</td>
+								<td class="govuk-table__cell">
+									{{ case.application.is_military_end_use_controls|friendly_boolean }}<br>
+									{{ case.application.military_end_use_controls_ref|default:"" }}
+								</td>
+							</tr>
+							<tr class="govuk-table__row">
+								<td class="govuk-table__cell govuk-table__cell--line-number">
+									3.
+								</td>
+								<td class="govuk-table__cell govuk-!-font-weight-bold">
+									{% lcs 'cases.ApplicationPage.EndUseDetails.INFORMED_WMD_TITLE' %}
+								</td>
+								<td class="govuk-table__cell">
+									{{ case.application.is_informed_wmd|friendly_boolean }}<br>
+									{{ case.application.informed_wmd_ref|default:"" }}
+								</td>
+							</tr>
+							<tr class="govuk-table__row">
+								<td class="govuk-table__cell govuk-table__cell--line-number">
+									4.
+								</td>
+								<td class="govuk-table__cell govuk-!-font-weight-bold">
+									{% lcs 'cases.ApplicationPage.EndUseDetails.SUSPECTED_WMD_TITLE' %}
+								</td>
+								<td class="govuk-table__cell">
+									{{ case.application.is_suspected_wmd|friendly_boolean }}<br>
+									{{ case.application.suspected_wmd_ref|default:"" }}
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 			</div>
-			<div id="accordion-end-use-details-content" class="govuk-accordion__section-content" aria-labelledby="accordion-end-use-details">
-				<table class="govuk-table" id="end-use-details">
-					<thead class="govuk-table__head">
-						<tr class="govuk-table__row">
-							<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.EndUseDetails.NUMBER_COLUMN' %}</th>
-							<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.EndUseDetails.DESCRIPTION_COLUMN' %}</th>
-							<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.EndUseDetails.ANSWER_COLUMN' %}</th>
-						</tr>
-					</thead>
-					<tbody class="govuk-table__body">
-						<tr class="govuk-table__row">
-							<td class="govuk-table__cell govuk-table__cell--line-number">
-								1.
-							</td>
-							<td class="govuk-table__cell govuk-!-font-weight-bold">
-								{% lcs 'cases.ApplicationPage.EndUseDetails.INTENDED_END_USE_TITLE' %}
-							</td>
-							<td class="govuk-table__cell">
-								{{ case.application.intended_end_use|default:"" }}
-							</td>
-						</tr>
-						<tr class="govuk-table__row">
-							<td class="govuk-table__cell govuk-table__cell--line-number">
-								2.
-							</td>
-							<td class="govuk-table__cell govuk-!-font-weight-bold">
-								{% lcs 'cases.ApplicationPage.EndUseDetails.INFORMED_TO_APPLY_TITLE' %}
-							</td>
-							<td class="govuk-table__cell">
-								{{ case.application.is_military_end_use_controls|friendly_boolean }}<br>
-								{{ case.application.military_end_use_controls_ref|default:"" }}
-							</td>
-						</tr>
-						<tr class="govuk-table__row">
-							<td class="govuk-table__cell govuk-table__cell--line-number">
-								3.
-							</td>
-							<td class="govuk-table__cell govuk-!-font-weight-bold">
-								{% lcs 'cases.ApplicationPage.EndUseDetails.INFORMED_WMD_TITLE' %}
-							</td>
-							<td class="govuk-table__cell">
-								{{ case.application.is_informed_wmd|friendly_boolean }}<br>
-								{{ case.application.informed_wmd_ref|default:"" }}
-							</td>
-						</tr>
-						<tr class="govuk-table__row">
-							<td class="govuk-table__cell govuk-table__cell--line-number">
-								4.
-							</td>
-							<td class="govuk-table__cell govuk-!-font-weight-bold">
-								{% lcs 'cases.ApplicationPage.EndUseDetails.SUSPECTED_WMD_TITLE' %}
-							</td>
-							<td class="govuk-table__cell">
-								{{ case.application.is_suspected_wmd|friendly_boolean }}<br>
-								{{ case.application.suspected_wmd_ref|default:"" }}
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
+		{% endif %}
 
 		<!-- Temporary export details -->
 		{% if case.application.export_type.value == 'Temporary' %}
@@ -272,37 +278,60 @@
 			</div>
 		{% endif %}
 
+		{% if case.application.goodstype_category.key == 'cryptographic' %}
+			<!-- Parties -->
+			<div class="govuk-accordion__section">
+				<div class="govuk-accordion__section-header">
+					<h2 class="govuk-accordion__section-heading">
+						<span class="govuk-accordion__section-button" id="accordion-default-heading-3">
+							{% lcs 'cases.ApplicationPage.Parties.ENTITIES_INVOLVED' %}
+						</span>
+					</h2>
+				</div>
+				<div id="accordion-default-content-3" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-3">
+					<form action="{% url 'cases:assign_destination_flags' queue.id case.id %}" method="get">
+					<button id="button-edit-destinations-flags" class="govuk-button" data-module="govuk-button">
+						{% lcs 'cases.ApplicationPage.EDIT_DESTINATION_FLAGS' %}
+					</button>
+					{% include "case/includes/parties.html" %}
+				</form>
+				</div>
+			</div>
+		{% endif %}
+
 		<!-- Route of goods -->
-		<div class="govuk-accordion__section">
-			<div class="govuk-accordion__section-header">
-				<h2 class="govuk-accordion__section-heading">
-					<span class="govuk-accordion__section-button" id="accordion-default-heading-3">
-						{% lcs 'cases.ApplicationPage.RouteOfGoods.TITLE' %}
-					</span>
-				</h2>
+		{% if case.application.goodstype_category.key != 'cryptographic' %}
+			<div class="govuk-accordion__section">
+				<div class="govuk-accordion__section-header">
+					<h2 class="govuk-accordion__section-heading">
+						<span class="govuk-accordion__section-button" id="accordion-default-heading-3">
+							{% lcs 'cases.ApplicationPage.RouteOfGoods.TITLE' %}
+						</span>
+					</h2>
+				</div>
+				<div id="accordion-route-of-goods-content" class="govuk-accordion__section-content" aria-labelledby="accordion-route-of-goods">
+					<table class="govuk-table" id="route-of-goods">
+						<thead class="govuk-table__head">
+							<tr class="govuk-table__row">
+								<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.RouteOfGoods.DESCRIPTION_COLUMN' %}</th>
+								<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.RouteOfGoods.ANSWER_COLUMN' %}</th>
+							</tr>
+						</thead>
+						<tbody class="govuk-table__body">
+							<tr class="govuk-table__row">
+								<td class="govuk-table__cell govuk-!-font-weight-bold">
+									{% lcs 'cases.ApplicationPage.RouteOfGoods.SHIPPED_TITLE' %}
+								</td>
+								<td class="govuk-table__cell">
+									{{ case.application.is_shipped_waybill_or_lading|friendly_boolean }} <br>
+									{{ case.application.non_waybill_or_lading_route_details|default:"" }}
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 			</div>
-			<div id="accordion-route-of-goods-content" class="govuk-accordion__section-content" aria-labelledby="accordion-route-of-goods">
-				<table class="govuk-table" id="route-of-goods">
-					<thead class="govuk-table__head">
-						<tr class="govuk-table__row">
-							<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.RouteOfGoods.DESCRIPTION_COLUMN' %}</th>
-							<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.RouteOfGoods.ANSWER_COLUMN' %}</th>
-						</tr>
-					</thead>
-					<tbody class="govuk-table__body">
-						<tr class="govuk-table__row">
-							<td class="govuk-table__cell govuk-!-font-weight-bold">
-								{% lcs 'cases.ApplicationPage.RouteOfGoods.SHIPPED_TITLE' %}
-							</td>
-							<td class="govuk-table__cell">
-								{{ case.application.is_shipped_waybill_or_lading|friendly_boolean }} <br>
-								{{ case.application.non_waybill_or_lading_route_details|default:"" }}
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
+		{% endif %}
 
 		<!-- Countries -->
 		<div class="govuk-accordion__section">
@@ -360,18 +389,20 @@
 		</div>
 
 		<!-- Supporting documentation -->
-		<div class="govuk-accordion__section">
-			<div class="govuk-accordion__section-header">
-				<h2 class="govuk-accordion__section-heading">
-					<span class="govuk-accordion__section-button" id="accordion-default-heading-3">
-						{% lcs 'SUPPORTING_DOCUMENTATION_TITLE' %}
-					</span>
-				</h2>
+		{% if case.application.goodstype_category.key != 'cryptographic' %}
+			<div class="govuk-accordion__section">
+				<div class="govuk-accordion__section-header">
+					<h2 class="govuk-accordion__section-heading">
+						<span class="govuk-accordion__section-button" id="accordion-default-heading-3">
+							{% lcs 'SUPPORTING_DOCUMENTATION_TITLE' %}
+						</span>
+					</h2>
+				</div>
+				<div id="accordion-default-content-3" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-3">
+					{% include 'case/includes/other-documents.html' %}
+				</div>
 			</div>
-			<div id="accordion-default-content-3" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-3">
-				{% include 'case/includes/other-documents.html' %}
-			</div>
-		</div>
+		{% endif %}
 
 		<!-- Activity -->
 		<div class="govuk-accordion__section">
