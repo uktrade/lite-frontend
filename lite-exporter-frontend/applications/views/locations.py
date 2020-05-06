@@ -126,8 +126,20 @@ class Countries(SingleFormView):
 
 
 class StaticDestinations(TemplateView):
-    # To be used for OIEL Media where all countries are preselected and non-modifiable by the user
+    # To be used for OIELs where all countries are preselected and non-modifiable by the user
     def get(self, request, **kwargs):
         application_id = str(kwargs["pk"])
-        context = {"application_id": application_id, "countries": get_application_countries(request, application_id)}
+        application = get_application(request, application_id)
+        goodstype_category = None
+
+        if application.get("goodstype_category"):
+            goodstype_category = application.get("goodstype_category").get("key")
+            goodstype_category_label = application.get("goodstype_category").get("value")
+
+        context = {
+            "application_id": application_id,
+            "countries": get_application_countries(request, application_id),
+            "goodstype_category": goodstype_category,
+            "goodstype_category_label": goodstype_category_label,
+        }
         return render(request, "applications/goods-locations/static-all-destinations.html", context)

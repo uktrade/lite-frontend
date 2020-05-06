@@ -14,7 +14,7 @@
 	</div>
 
 	<p class="govuk-body">
-		{% lcs 'goods.GoodsTypeAllDestinationsPage.DESTINATIONS_DESCRIPTION_MEDIA_OIEL' %}
+		{% lcs 'goods.GoodsTypeAllDestinationsPage.DESTINATIONS_DESCRIPTION' %} {{ goodstype_category_label }} OIEL.
 	</p>
 
 	<ul class="govuk-list">
@@ -22,4 +22,7 @@
 			<li>{{ country.name }}</li>
 		{% endfor %}
 	</ul>
+	{% if goodstype_category == 'uk_continental_shelf' %}
+		<p class="govuk-hint">{% lcs 'goods.GoodsTypeAllDestinationsPage.UK_CONTINENTAL_SHELF_DESCRIPTION' %}</p>
+	{% endif %}
 {% endblock %}

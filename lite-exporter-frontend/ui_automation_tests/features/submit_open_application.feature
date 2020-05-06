@@ -131,3 +131,54 @@ Feature: I want to indicate the open licence I want
     When I go to exporter homepage
     And I click on applications
     Then I see submitted application
+
+  @LT_2061_open_application_export_licence_cryptographic_type @regression
+  Scenario: Submit open application for an export licence of the cryptographic type
+    Given I go to exporter homepage and choose Test Org
+    When I create an open application for an export licence of the "cryptographic" licence type
+    And I click on the "countries" section
+    Then I should see a list of the countries permitted for a cryptographic OIEL
+    When I click the back link
+    And I click on the "goods" section
+    Then I see a list of the preselected cryptographic products
+    When I click the back link
+    And I submit the application
+    And I click continue
+    And I agree to the declaration
+    Then application is submitted
+    When I go to exporter homepage
+    And I click on applications
+    Then I see submitted application
+
+  @LT_1270_open_application_export_licence_uk_continental_shelf @regression
+  Scenario: Submit open application for an export licence to the UK Continental Shelf
+    Given I go to exporter homepage and choose Test Org
+    When I create an open application for an export licence of the "uk_continental_shelf" licence type
+    And I click on the "location" section
+    And I select "organisation" for where my goods are located
+    And I select the site at position "1"
+    And I click continue
+    And I click the back link
+    And I click on the "end_use_details" section
+    And I provide details of the intended end use of the products
+    And I answer "Yes" for informed by ECJU to apply
+    And I answer "No" for informed by ECJU about WMD use
+    And I answer "Yes" for suspected WMD use
+    And I save and continue on the summary page
+    And I click on the "route_of_goods" section
+    And I answer "Yes" for shipping air waybill or lading
+    And I click continue
+    And I click on the "goods" section
+    And I add a goods type with description "Sniper" controlled "Yes" control code "ML1a" incorporated "Yes"
+    Then I see my goods type added at position "1" with a description and a control code
+    When I click the back link
+    And I click on the "countries" section
+    Then I should see the UK Continental Shelf as the only permitted destination
+    When I click the back link
+    And I submit the application
+    And I click continue
+    And I agree to the declaration
+    Then application is submitted
+    When I go to exporter homepage
+    And I click on applications
+    Then I see submitted application
