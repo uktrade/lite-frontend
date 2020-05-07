@@ -91,6 +91,16 @@ def submit_paged_form(  # noqa
     next_form = get_next_form(form_pk, form_group)
 
     if data.get("_action") and data.get("_action") == "back":
+        # Add existing post data to previous form as hidden fields
+        post_data, _ = _prepare_data(request, {})
+        for key, value in post_data.items():
+            # If the keys value is a list, insert each individually
+            if isinstance(value, list):
+                for sub_value in value:
+                    previous_form.questions.insert(0, HiddenField(key + "[]", sub_value))
+            else:
+                previous_form.questions.insert(0, HiddenField(key, value))
+
         return (
             form_page(
                 request, previous_form, data=data, extra_data={"form_pk": previous_form.pk, **additional_context},
