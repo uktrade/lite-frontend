@@ -32,7 +32,7 @@ def _letter_layout_options():
 
 def add_letter_template(request):
     possible_case_types = get_case_types(request, type_only=False)
-    chosen_case_types = request.POST.getlist("case_types")
+    chosen_case_types = request.POST.getlist("case_types[]")
     is_application_case_types_only = CaseType.HMRC_REFERENCE.value not in chosen_case_types
 
     if is_application_case_types_only:
