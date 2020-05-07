@@ -73,6 +73,33 @@
 		line-height: 18px!important;
 		border-bottom-width: 0;
 	}
+
+	&-notification {
+		@include govuk-font($size: 16, $weight: bold);
+		position: relative;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		margin-left: govuk-spacing(1);
+		color: govuk-colour("white");
+		text-decoration: underline!important;
+		text-decoration-color: transparent!important;
+		z-index: 0;
+		min-width: 10px;
+		padding: 0 govuk-spacing(1);
+
+		&::after {
+			content: "";
+			position: absolute;
+			top: -2px;
+			bottom: -2px;
+			left: 0;
+			right: 0;
+			z-index: -1;
+			background-color: govuk-colour("red");
+			border-radius: 10px;
+		}
+	}
 }
 
 .lite-tabs__tab--selected {
