@@ -153,14 +153,24 @@ class Applications:
 
         return draft_id
 
-    def add_open_draft(self, draft=None, end_use_details=None, route_of_goods=None):
+    def add_open_draft(self, draft=None, end_use_details=None, route_of_goods=None, ultimate_end_user=None):
         draft_id = self.create_draft(draft)
         self.api_client.add_to_context("open_draft_id", draft_id)
+        parties = []
+        parties.append(
+            self.parties.add_party(request_data_key="ultimate_end_user", draft_id=draft_id, party=ultimate_end_user)
+        )
         self.add_site(draft_id)
         self.add_countries(draft_id)
         self.goods.add_open_draft_good(draft_id)
         self.add_end_use_details(draft_id, end_use_details)
         self.add_route_of_goods(draft_id, route_of_goods=route_of_goods)
+
+        additional_document_id = self.add_additional_document(draft_id=draft_id)
+
+        self._assert_all_documents_are_processed(
+            draft_id=draft_id, parties=parties, additional_document_id=additional_document_id,
+        )
 
         return draft_id
 
