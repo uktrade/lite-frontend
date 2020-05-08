@@ -703,9 +703,12 @@ class CaseNotes:
 
 
 class GoodsCategories:
-    TITLE = "Do any products on the application fall into any of these categories?"
+    TITLE = "Are any of the products on the application firearms?"
     DESCRIPTION = ""
-    ERROR = "You can't change product categories while doing a minor edit"
+    ERROR = (
+        "You can't change your answer to this question while doing a minor edit. You need to start a new application"
+    )
+    GOODS_CATEGORIES = "Contains firearm products"
 
 
 class AdditionalInformation:
