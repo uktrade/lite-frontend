@@ -9,6 +9,7 @@ from ui_automation_tests.conftest import (
     enter_application_name,
     enter_permanent_or_temporary,
     choose_open_licence_category,
+    answer_firearms_question,
 )
 from ui_automation_tests.pages.apply_for_a_licence_page import ApplyForALicencePage
 from ui_automation_tests.pages.open_application.countries import OpenApplicationCountriesPage
@@ -138,6 +139,7 @@ def create_open_app(driver, export_type, context):  # noqa
     choose_open_licence_category(driver, "military", context)
     enter_permanent_or_temporary(driver, export_type, context)
     enter_application_name(driver, context)
+    answer_firearms_question(driver)
 
 
 @when(parsers.parse('I create an open application for an export licence of the "{licence_type}" licence type'))  # noqa
@@ -147,9 +149,13 @@ def create_open_app_of_specific_type(driver, licence_type, context):  # noqa
     functions.click_submit(driver)
     enter_type_of_application(driver, "oiel", context)
     choose_open_licence_category(driver, licence_type, context)
+
     if licence_type in ["military", "uk_continental_shelf"]:
         enter_permanent_or_temporary(driver, "permanent", context)
+
     enter_application_name(driver, context)
+    if licence_type in ["military", "uk_continental_shelf"]:
+        answer_firearms_question(driver)
 
 
 @when("I click on the add button")

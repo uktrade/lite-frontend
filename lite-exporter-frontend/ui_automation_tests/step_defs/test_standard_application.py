@@ -7,6 +7,7 @@ from ui_automation_tests.conftest import (
     enter_export_licence,
     enter_case_note_text,
     click_post_note,
+    answer_firearms_question,
 )
 from ui_automation_tests.pages.add_new_external_location_form_page import AddNewExternalLocationFormPage
 from ui_automation_tests.pages.apply_for_a_licence_page import ApplyForALicencePage
@@ -180,11 +181,8 @@ def create_standard_application(driver, export_type, context):  # noqa
     enter_type_of_application(driver, "siel", context)
     enter_permanent_or_temporary(driver, export_type, context)
     enter_application_name(driver, context)
-    apply = ApplyForALicencePage(driver)
-    assert len(driver.find_elements_by_name(apply.CHECKBOXES_GOODS_CATEGORIES_NAME)) == 4
-    apply.select_goods_categories()
-    functions.click_submit(driver)
     enter_export_licence(driver, "yes", "123456", context)
+    answer_firearms_question(driver)
 
 
 @then("I see the application overview")  # noqa
@@ -251,9 +249,8 @@ def create_standard_individual_transhipment_application(driver, context):  # noq
     functions.click_submit(driver)
     enter_type_of_application(driver, "sitl", context)
     enter_application_name(driver, context)
-    ApplyForALicencePage(driver).select_goods_categories()
-    functions.click_submit(driver)
     enter_export_licence(driver, "yes", "123456", context)
+    answer_firearms_question(driver)
 
 
 @when("I create a standard individual trade control draft application")  # noqa

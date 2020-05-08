@@ -195,6 +195,12 @@ def enter_permanent_or_temporary(driver, permanent_or_temporary, context):  # no
     functions.click_submit(driver)
 
 
+def answer_firearms_question(driver):  # noqa
+    apply = ApplyForALicencePage(driver)
+    apply.select_firearms_yes()
+    functions.click_submit(driver)
+
+
 def enter_export_licence(driver, yes_or_no, reference, context):  # noqa
     apply = ApplyForALicencePage(driver)
     apply.click_export_licence_yes_or_no(yes_or_no)

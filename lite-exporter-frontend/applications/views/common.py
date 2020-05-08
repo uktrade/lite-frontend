@@ -17,7 +17,6 @@ from applications.forms.common import (
 )
 from applications.helpers.check_your_answers import (
     convert_application_to_check_your_answers,
-    _convert_goods_categories,
     get_application_type_string,
 )
 from applications.helpers.summaries import draft_summary
@@ -233,7 +232,6 @@ class ApplicationSummary(TemplateView):
             context["notes"] = get_case_notes(request, self.case_id)["case_notes"]
             if self.application.sub_type == STANDARD:
                 context["reference_code"] = get_reference_number_description(self.application)
-                context["goods_categories"] = _convert_goods_categories(self.application["goods_categories"])
 
         return render(request, "applications/application.html", context)
 

@@ -1,6 +1,7 @@
 from django.urls import reverse_lazy
 
 from applications.services import post_applications
+
 from apply_for_a_licence.forms.triage_questions import (
     opening_question,
     export_licence_questions,

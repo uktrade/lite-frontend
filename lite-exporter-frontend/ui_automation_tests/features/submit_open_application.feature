@@ -130,6 +130,7 @@ Feature: I want to indicate the open licence I want
     And I click on applications
     Then I see submitted application
 
+
   @LT_2061_open_application_export_licence_cryptographic_type @regression
   Scenario: Submit open application for an export licence of the cryptographic type
     Given I go to exporter homepage and choose Test Org

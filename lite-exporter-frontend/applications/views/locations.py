@@ -142,4 +142,5 @@ class StaticDestinations(TemplateView):
             "goodstype_category": goodstype_category,
             "goodstype_category_label": goodstype_category_label,
         }
+
         return render(request, "applications/goods-locations/static-all-destinations.html", context)
