@@ -30,6 +30,7 @@ def apply_for_standard_application(api_test_client, context):
             "export_type": "permanent",
             "have_you_been_informed": "yes",
             "reference_number_on_information_form": "1234",
+            "contains_firearm_goods": True,
         },
         good={
             "good_id": "",
@@ -155,6 +156,7 @@ def apply_for_open_application(api_test_client, context):
             "have_you_been_informed": "yes",
             "reference_number_on_information_form": "1234",
             "goodstype_category": "military",
+            "contains_firearm_goods": True,
         },
         end_use_details={
             "intended_end_use": "intended end use",

@@ -93,6 +93,7 @@ def build_request_data(exporter_user, gov_user):
             "export_type": "permanent",
             "have_you_been_informed": "yes",
             "reference_number_on_information_form": fake.ean(length=8),
+            "contains_firearm_goods": True,
         },
         "gov_user": build_user(gov_user),
         "end-user": build_party(fake.name(), "government", fake.url(), "end_user"),
