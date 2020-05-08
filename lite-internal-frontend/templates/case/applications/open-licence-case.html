@@ -388,6 +388,41 @@
 			</div>
 		</div>
 
+		{% if case.application.goodstype_category.key == "military" %}
+			<!-- Parties -->
+			<div class="govuk-accordion__section">
+				<div class="govuk-accordion__section-header">
+					<h2 class="govuk-accordion__section-heading">
+						<span class="govuk-accordion__section-button" id="accordion-default-heading-3">
+							{% lcs 'cases.ApplicationPage.Parties.ENTITIES_INVOLVED' %}
+						</span>
+					</h2>
+				</div>
+				<div id="accordion-default-content-3" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-3">
+					<form action="{% url 'cases:assign_destination_flags' queue.id case.id %}" method="get">
+					<button id="button-edit-destinations-flags" class="govuk-button" data-module="govuk-button">
+						{% lcs 'cases.ApplicationPage.EDIT_DESTINATION_FLAGS' %}
+					</button>
+					{% include "case/includes/parties.html" %}
+				</form>
+				</div>
+			</div>
+
+			<!-- Inactive Parties -->
+			<div class="govuk-accordion__section">
+				<div class="govuk-accordion__section-header">
+					<h2 class="govuk-accordion__section-heading">
+						<span class="govuk-accordion__section-button" id="accordion-default-heading-3">
+							{% lcs 'cases.ApplicationPage.Parties.ENTITIES_DELETED' %}
+						</span>
+					</h2>
+				</div>
+				<div id="accordion-default-content-3" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-3">
+					{% include "case/includes/inactive-parties.html" %}
+				</div>
+			</div>
+		{% endif %}
+
 		<!-- Supporting documentation -->
 		{% if case.application.goodstype_category.key != 'cryptographic' %}
 			<div class="govuk-accordion__section">
