@@ -226,9 +226,9 @@ class ApplicationSummary(TemplateView):
             "application": self.application,
             "answers": {**convert_application_to_check_your_answers(self.application, summary=True)},
             "summary_page": True,
+            "application_type": get_application_type_string(self.application),
         }
 
-        context["application_type"] = get_application_type_string(self.application)
         if self.application.sub_type != HMRC:
             context["notes"] = get_case_notes(request, self.case_id)["case_notes"]
             if self.application.sub_type == STANDARD:

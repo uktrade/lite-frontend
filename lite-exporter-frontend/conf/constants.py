@@ -101,7 +101,7 @@ CASE_SECTIONS = {
     "HAS_LOCATIONS": [STANDARD, OPEN, HMRC, EXHIBITION],
     "HAS_COUNTRIES": OPEN,
     "HAS_END_USER": [STANDARD, F680, GIFTING],
-    "HAS_ULTIMATE_END_USERS": [STANDARD, HMRC],
+    "HAS_ULTIMATE_END_USERS": [STANDARD, HMRC, OPEN],
     "HAS_CONSIGNEE": [STANDARD, HMRC],
     "HAS_THIRD_PARTIES": [STANDARD, F680, GIFTING],
     "HAS_OPTIONAL_NOTE": [HMRC],
@@ -149,3 +149,11 @@ APPLICATION_TYPE_STRINGS = {
     F680: applications.ApplicationPage.Summary.Licence.F680,
     EXHIBITION: applications.ApplicationPage.Summary.Licence.EXHIBITION,
 }
+
+
+class GoodsTypeCategory:
+    MILITARY = "military"
+    CRYPTOGRAPHIC = "cryptographic"
+    MEDIA = "media"
+    UK_CONTINENTAL_SHELF = "uk_continental_shelf"
+    DEALER = "dealer"

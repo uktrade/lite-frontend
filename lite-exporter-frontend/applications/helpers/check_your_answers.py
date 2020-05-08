@@ -15,6 +15,7 @@ from conf.constants import (
     PERMANENT,
     CaseTypes,
     APPLICATION_TYPE_STRINGS,
+    GoodsTypeCategory,
 )
 from core.builtins.custom_tags import default_na, friendly_boolean, pluralise_unit, date_display, get_address
 from core.helpers import convert_to_link, convert_control_list_entries
@@ -147,6 +148,16 @@ def _convert_open_application(application, editable=False):
             else {}
         ),
         applications.ApplicationSummaryPage.COUNTRIES: _convert_countries(application["destinations"]["data"]),
+        **(
+            {
+                applications.ApplicationSummaryPage.ULTIMATE_END_USERS: [
+                    convert_party(party, application, editable) for party in application["ultimate_end_users"]
+                ],
+            }
+            if has_incorporated_goods_types(application)
+            and application["goodstype_category"]["key"] == GoodsTypeCategory.MILITARY
+            else {}
+        ),
         applications.ApplicationSummaryPage.SUPPORTING_DOCUMENTATION: _get_supporting_documentation(
             application["additional_documents"], application["id"]
         ),
@@ -466,6 +477,14 @@ def is_application_export_type_permanent(application):
 def has_incorporated_goods(application):
     for good in application["goods"]:
         if good["is_good_incorporated"]:
+            return True
+
+    return False
+
+
+def has_incorporated_goods_types(application):
+    for goods_type in application["goods_types"]:
+        if goods_type["is_good_incorporated"]:
             return True
 
     return False
