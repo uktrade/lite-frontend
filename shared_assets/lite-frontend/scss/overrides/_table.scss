@@ -11,15 +11,26 @@
 	width: 24px!important;
 	margin: 0;
 
+	.govuk-checkboxes__input {
+		pointer-events: none;
+	}
+
 	.govuk-checkboxes__label {
-		padding: 0!important !important;
+		padding: 0!important;
+		display: block;
+		width: 24px;
+		height: 24px;
 
 		&::before {
-			top: 10px;
+			top: 9px;
 		}
 
 		&::after {
-			top: 17px;
+			top: 16px;
+		}
+
+		&:hover::before {
+			box-shadow: 0 0 0 8px govuk-colour("mid-grey");
 		}
 	}
 }
@@ -81,6 +92,10 @@ td {
 	.govuk-table__header {
 		display: none;
 	}
+}
+
+.lite-table__cell--middle-align {
+	vertical-align: middle;
 }
 
 @include govuk-media-query($until: tablet) {
