@@ -297,3 +297,86 @@ def apply_for_gifting_clearance(driver, api_test_client, context):
         api_test_client=api_test_client,
         context=context,
     )
+
+
+@fixture
+def apply_for_trade_control_application(api_test_client, context):
+    timer = Timer()
+    api_test_client.api_client.auth_exporter_user(api_test_client.context["org_id"])
+    context.app_name = fake.bs()
+    context.good_value = 1.21
+
+    draft_id = api_test_client.applications.add_draft(
+        draft={
+            "name": context.app_name,
+            "application_type": "sicl",
+            "export_type": "permanent",
+            "have_you_been_informed": "yes",
+            "reference_number_on_information_form": "1234",
+            "trade_control_activity": "transfer_of_goods",
+            "trade_control_product_categories": ["category_a"],
+        },
+        good={
+            "good_id": "",
+            "quantity": 1234,
+            "unit": "MTR",
+            "value": context.good_value,
+            "is_good_incorporated": True,
+            "is_good_pv_graded": "no",
+        },
+        end_user={
+            "name": fake.name(),
+            "address": fake.street_address() + fake.state() + fake.postcode(),
+            "country": "GB",
+            "sub_type": "government",
+            "website": fake.uri(),
+            "type": "end_user",
+        },
+        ultimate_end_user={
+            "name": fake.name(),
+            "address": fake.street_address() + fake.state() + fake.postcode(),
+            "country": "GB",
+            "sub_type": "commercial",
+            "website": fake.uri(),
+            "type": "ultimate_end_user",
+        },
+        consignee={
+            "name": fake.name(),
+            "address": fake.street_address() + fake.state() + fake.postcode(),
+            "country": "GB",
+            "sub_type": "government",
+            "website": fake.uri(),
+            "type": "consignee",
+        },
+        third_party={
+            "name": fake.name(),
+            "address": fake.street_address() + fake.state() + fake.postcode(),
+            "country": "UA",
+            "sub_type": "government",
+            "role": "agent",
+            "website": fake.uri(),
+            "type": "third_party",
+        },
+        end_use_details={
+            "intended_end_use": "intended end use",
+            "is_military_end_use_controls": False,
+            "is_informed_wmd": False,
+            "is_suspected_wmd": False,
+            "is_eu_military": False,
+        },
+        route_of_goods={"is_shipped_waybill_or_lading": True},
+        external_location={
+            "name": fake.name(),
+            "address": fake.street_address(),
+            "country": "FR",
+            "location_type": "land_based",
+            "application_type": "sicl",
+        },
+        has_location=False,
+        has_external_location=True,
+    )
+    data = api_test_client.applications.submit_application(draft_id)
+    save_application_data_to_context(api_test_client, context)
+    context.good_id = api_test_client.context.get("good_id")
+    context.goods = data["application"]["goods"]
+    timer.print_time("apply_for_standard_application")

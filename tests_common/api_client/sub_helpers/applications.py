@@ -2,13 +2,14 @@ from ...tools.wait import wait_for_function
 
 
 class Applications:
-    def __init__(self, api_client, documents, parties, goods, request_data, **kwargs):
+    def __init__(self, api_client, documents, parties, goods, organisations, request_data, **kwargs):
         super().__init__(**kwargs)
         self.api_client = api_client
         self.request_data = request_data
         self.parties = parties
         self.goods = goods
         self.documents = documents
+        self.organisations = organisations
 
     def create_draft(self, draft=None):
         data = draft or self.request_data["application"]
@@ -36,16 +37,28 @@ class Applications:
         self.api_client.add_to_context("additional_document", additional_document_metadata)
         return self.api_client.context["additional_document"]["document"]["id"]
 
-    def add_site(self, draft_id, is_hmrc=False):
-        if is_hmrc:
-            primary_site_id_key = "hmrc_primary_site_id"
-        else:
-            primary_site_id_key = "primary_site_id"
+    def add_site(self, draft_id, is_hmrc=False, site_id=None):
+        if not site_id:
+            if is_hmrc:
+                primary_site_id_key = "hmrc_primary_site_id"
+            else:
+                primary_site_id_key = "primary_site_id"
+
+            site_id = self.api_client.context[primary_site_id_key]
+
         self.api_client.make_request(
             method="POST",
             url="/applications/" + draft_id + "/sites/",
             headers=self.api_client.exporter_headers,
-            body={"sites": [self.api_client.context[primary_site_id_key]]},
+            body={"sites": [site_id]},
+        )
+
+    def add_external_site(self, draft_id, site_id):
+        self.api_client.make_request(
+            method="POST",
+            url="/applications/" + draft_id + "/external_locations/",
+            headers=self.api_client.exporter_headers,
+            body={"external_locations": [site_id]},
         )
 
     def add_f680_clearance_types(self, draft_id, types):
@@ -87,6 +100,7 @@ class Applications:
         ultimate_end_user=None,
         has_consignee=True,
         has_location=True,
+        has_external_location=False,
         consignee=None,
         third_party=None,
         has_third_party=True,
@@ -94,10 +108,17 @@ class Applications:
         end_use_details=None,
         route_of_goods=None,
         additional_information=None,
+        external_location=None,
     ):
         draft_id = self.create_draft(draft=draft)
         if has_location:
             self.add_site(draft_id=draft_id)
+
+        if has_external_location:
+            site = self.organisations.add_external_site(
+                organisation_id=self.api_client.context["org_id"], data=external_location
+            )
+            self.add_external_site(site_id=site["id"], draft_id=draft_id)
 
         if draft["application_type"] != "exhc":
             self.goods.add_good_to_draft(draft_id=draft_id, good=good)

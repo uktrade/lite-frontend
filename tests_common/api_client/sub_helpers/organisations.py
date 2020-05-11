@@ -89,21 +89,32 @@ class Organisations:
         ).json()
         return organisation["primary_site"]["id"]
 
-    def add_site(self, organisation_id=None):
+    def add_site(self, organisation_id=None, data=None):
         organisation_id = organisation_id or self.request_data["organisation"]["id"]
-        data = {
-            "name": strip_special_characters(fake.company()) + get_current_date_time(),
-            "address": {
-                "address_line_1": fake.street_address(),
-                "city": fake.city(),
-                "postcode": fake.postcode(),
-                "region": fake.state(),
-                "country": "GB",
-            },
-        }
+        if not data:
+            data = {
+                "name": strip_special_characters(fake.company()) + get_current_date_time(),
+                "address": {
+                    "address_line_1": fake.street_address(),
+                    "city": fake.city(),
+                    "postcode": fake.postcode(),
+                    "region": fake.state(),
+                    "country": "GB",
+                },
+            }
         return self.api_client.make_request(
             method="POST",
             url=f"/organisations/{organisation_id}/sites/",
             headers=self.api_client.exporter_headers,
             body=data,
         ).json()["site"]
+
+    def add_external_site(self, data, organisation_id=None):
+        organisation_id = organisation_id or self.request_data["organisation"]["id"]
+
+        return self.api_client.make_request(
+            method="POST",
+            url=f"/organisations/{organisation_id}/external_locations/",
+            headers=self.api_client.exporter_headers,
+            body=data,
+        ).json()["external_location"]

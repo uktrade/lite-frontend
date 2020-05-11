@@ -46,4 +46,5 @@ class TestHelper:
             api_client=self.api_client,
             documents=self.documents,
             request_data=request_data,
+            organisations=self.organisations,
         )
