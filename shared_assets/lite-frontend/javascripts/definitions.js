@@ -11,8 +11,8 @@ $.fn.changeElementType = function(newType) {
 };
 
 $('[data-max-length]').each(function() {
-    var originalText = $(this).text();
-    var shrunkText = $(this).text().substring(0, $(this).data("max-length"));
+    var originalText = $(this).html();
+    var shrunkText = $(this).html().substring(0, $(this).data("max-length"));
 
     if (originalText.length != shrunkText.length) {
         $(this).text(shrunkText + "...");
@@ -22,7 +22,7 @@ $('[data-max-length]').each(function() {
 });
 
 $('[data-more-text]').click(function() {
-    $(this).parent().text($(this).data("more-text"));
+    $(this).parent().html($(this).data("more-text"));
     return false;
 })
 
