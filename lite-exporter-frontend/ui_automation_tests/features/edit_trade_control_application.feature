@@ -5,9 +5,9 @@ Feature: I want to be able to edit and update an active application
   So that any additional information and/or corrected details can be updated on my application
 
   @LT_998_edit_standard_application_slow @regression
-  Scenario: Edit a standard application
+  Scenario: Edit a trade control application
     Given I go to exporter homepage and choose Test Org
-    And I create a standard application via api
+    And I create a trade control application via api
     # Ensure automation doesn't move application to non-editable state
     And the status is set to "submitted"
     When I go to application previously created
@@ -16,10 +16,11 @@ Feature: I want to be able to edit and update an active application
     And I click on the "reference-name" section
     And I enter a licence name
     Then I see my edited reference name
-    When I click on the "told-by-an-official" section
-    When I change my reference number
-    Then I see my edited reference number
-    When I click on the "goods" section
+    When I click on the "location" section
+    And I remove a location from the application
+    Then the location has been removed from the application
+    When I click the back link
+    And I click on the "goods" section
     And I remove a good from the application
     Then the good has been removed from the application
     When I click the back link
@@ -37,23 +38,3 @@ Feature: I want to be able to edit and update an active application
     And I confirm I want to delete the document
     And I click the back link
     Then the document has been removed from the application
-
-  @LT_998_edit_standard_application_fast @regression
-  Scenario: Edit a standard application with audit
-    Given I go to exporter homepage and choose Test Org
-    And I create a standard application via api
-    # Ensure automation doesn't move application to non-editable state
-    And the status is set to "submitted"
-    When I go to application previously created
-    And I click edit application
-    And I choose to make major edits
-    And I click on the "reference-name" section
-    And I enter a licence name
-    Then I see my edited reference name
-    When I submit the application
-    And I click continue
-    And I agree to the declaration
-    And I go to application previously created
-    And I click on activity tab
-    Then "updated the status to: submitted" is shown as position "1" in the audit trail
-    And "updated the application name" is shown as position "2" in the audit trail

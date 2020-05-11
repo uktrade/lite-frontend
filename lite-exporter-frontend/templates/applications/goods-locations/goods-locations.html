@@ -33,7 +33,7 @@
 				<a href="{% url 'applications:add_preexisting_external_location' application.id %}" class="govuk-button">
 					{% lcs 'Goods.LocationLists.FIND_ADDRESS_BUTTON' %}
 				</a>
-				<a href="{% url 'applications:add_external_location' application.id %}" class="govuk-button">
+				<a href="{% url 'applications:add_external_location' application.id %}?return_to_link={{ CURRENT_PATH }}" class="govuk-button">
 					{% lcs 'Goods.LocationLists.ADD_ADDRESS_BUTTON' %}
 				</a>
 			{% endif %}
@@ -70,7 +70,7 @@
 							{% if application.goods_locations.type == 'external_locations' %}
 								<td class="govuk-table__cell govuk-table__cell--numeric">
 									{% if not draft.status.value or draft.status.key == 'applicant_editing' or data.external_locations|length > 1 %}
-										<a class="govuk-link" href="{% url 'applications:remove_external_location' application.id location.id %}">
+										<a class="govuk-link" id="remove-link" href="{% url 'applications:remove_external_location' application.id location.id %}">
 											Remove
 										</a>
 									{% endif %}

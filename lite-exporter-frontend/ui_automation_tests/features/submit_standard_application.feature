@@ -226,3 +226,12 @@ Feature: I want to indicate the standard licence I want
     Given I go to exporter homepage and choose Test Org
     When I create a standard individual trade control draft application
     Then I can see the sections "reference-name, goods, end_use_details, route_of_goods, location, end_user, consignee, third-parties, supporting-documents, notes" are on the task list
+    When I click on the "location" section
+    And I select "external" for where my goods are located
+    And I select "new" for whether or not I want a new or existing location to be added
+    And I select a location type of "sea_based"
+    And I fill in new external location form with name: "32 Lime Street", address: "London" and no country and continue
+    And I click on add new address
+    And I select a location type of "land_based"
+    And I fill in new external location form with name: "32 Lime Street", address: "London" and country: "Ukraine" and continue
+    Then I see "2" locations

@@ -1,10 +1,21 @@
 from applications.components import back_to_task_list
-from conf.constants import HMRC, CaseTypes
+from conf.constants import HMRC, CaseTypes, LocationType
 from core.services import get_countries, get_external_locations
 from lite_content.lite_exporter_frontend import goods, strings, generic
-from lite_content.lite_exporter_frontend.goods import NewLocationForm
+from lite_content.lite_exporter_frontend.goods import NewLocationForm, LocationTypeForm
 from lite_forms.common import country_question
-from lite_forms.components import Form, RadioButtons, Option, TextArea, Filter, Checkboxes, TextInput
+from lite_forms.components import (
+    Form,
+    RadioButtons,
+    Option,
+    TextArea,
+    Filter,
+    Checkboxes,
+    TextInput,
+    FormGroup,
+    HiddenField,
+    BackLink,
+)
 from lite_forms.helpers import conditional
 from organisation.sites.services import get_sites
 
@@ -50,7 +61,7 @@ def which_location_form(application_id, application_type):
     )
 
 
-def add_external_location():
+def add_external_location(request):
     return Form(
         title=goods.GoodsLocationForm.EXTERNAL_LOCATION_TITLE,
         questions=[
@@ -63,10 +74,43 @@ def add_external_location():
             )
         ],
         default_button_name=strings.CONTINUE,
+        back_link=BackLink(url=request.GET.get("return_to_link")),
     )
 
 
-def new_location_form(application_type):
+def new_external_location_form(request, application_type=None, location_type=None):
+    return FormGroup(
+        forms=[
+            conditional(
+                (application_type in [CaseTypes.SICL, CaseTypes.OICL]), location_type_form(request, application_type),
+            ),
+            new_location_form(application_type, location_type),
+        ]
+    )
+
+
+def location_type_form(request, application_type=None):
+    return Form(
+        title=LocationTypeForm.TITLE,
+        description=LocationTypeForm.DESCRIPTION,
+        questions=[
+            HiddenField("application_type", application_type),
+            RadioButtons(
+                name="location_type",
+                title="",
+                options=[
+                    Option(key="land_based", value=LocationTypeForm.LAND_BASED),
+                    Option(key="sea_based", value=LocationTypeForm.SEA_BASED),
+                ],
+                classes=["govuk-radios--inline"],
+            ),
+        ],
+        default_button_name=LocationTypeForm.CONTINUE,
+        back_link=BackLink(url=request.GET.get("return_to_link")),
+    )
+
+
+def new_location_form(application_type, location_type):
     exclude = []
     if application_type in [CaseTypes.SITL, CaseTypes.SICL, CaseTypes.OICL]:
         exclude.append("GB")
@@ -77,17 +121,26 @@ def new_location_form(application_type):
         title=NewLocationForm.TITLE,
         description=NewLocationForm.DESCRIPTION,
         questions=[
+            HiddenField(name="external_locations", value=""),
             TextInput(name="name", title=NewLocationForm.Name.TITLE),
             TextArea(
                 name="address",
-                title=NewLocationForm.Address.TITLE,
+                title=conditional(
+                    location_type == LocationType.SEA_BASED,
+                    NewLocationForm.Address.SEA_BASED_TITLE,
+                    NewLocationForm.Address.TITLE,
+                ),
                 description=conditional(
                     application_type == CaseTypes.SITL,
                     NewLocationForm.Address.SITL_DESCRIPTION,
-                    NewLocationForm.Address.DESCRIPTION,
+                    conditional(
+                        location_type == LocationType.SEA_BASED,
+                        NewLocationForm.Address.SEA_BASED_DESCRIPTION,
+                        NewLocationForm.Address.DESCRIPTION,
+                    ),
                 ),
             ),
-            country_question(prefix="", countries=countries),
+            conditional(location_type != LocationType.SEA_BASED, country_question(prefix="", countries=countries),),
         ],
         default_button_name=strings.SAVE_AND_CONTINUE,
     )
@@ -104,7 +157,9 @@ def external_locations_form(request, application_type):
             Filter(),
             Checkboxes(
                 name="external_locations[]",
-                options=get_external_locations(request, str(request.user.organisation), True, exclude),
+                options=get_external_locations(
+                    request, str(request.user.organisation), True, exclude, application_type
+                ),
             ),
         ],
         javascript_imports=["/assets/javascripts/filter-checkbox-list.js"],

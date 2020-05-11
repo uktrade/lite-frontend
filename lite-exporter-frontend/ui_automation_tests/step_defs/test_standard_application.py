@@ -12,6 +12,7 @@ from ui_automation_tests.conftest import (
 from ui_automation_tests.pages.add_new_external_location_form_page import AddNewExternalLocationFormPage
 from ui_automation_tests.pages.apply_for_a_licence_page import ApplyForALicencePage
 from ui_automation_tests.pages.exporter_hub_page import ExporterHubPage
+from ui_automation_tests.pages.location_type_page import LocationTypeFormPage
 from ui_automation_tests.pages.submitted_applications_page import SubmittedApplicationsPages
 from ui_automation_tests.pages.which_location_form_page import WhichLocationFormPage
 from ui_automation_tests.pages.add_end_user_pages import AddEndUserPages
@@ -219,6 +220,12 @@ def choose_location_type(driver, choice):  # noqa
     functions.click_submit(driver)
 
 
+@when(parsers.parse('I select a location type of "{location_type}"'))  # noqa
+def choose_location_type(driver, location_type):  # noqa
+    LocationTypeFormPage(driver).click_on_location_type_radiobutton(location_type)
+    functions.click_submit(driver)
+
+
 @when(  # noqa
     parsers.parse(
         'I fill in new external location form with name: "{name}", address: "{address}" and country: "{country}" and continue'
@@ -232,14 +239,16 @@ def add_new_external_location(driver, name, address, country):  # noqa
     functions.click_submit(driver)
 
 
-@then("I see my edited reference number")
-def assert_ref_num(driver):  # noqa
-    assert "12345678" in driver.find_element_by_css_selector(".lite-task-list").text
-
-
-@when("I change my reference number")
-def change_ref_num(driver, context):  # noqa
-    enter_export_licence(driver, "yes", "12345678", context)
+@when(  # noqa
+    parsers.parse(
+        'I fill in new external location form with name: "{name}", address: "{address}" and no country and continue'
+    )
+)
+def add_new_external_location_without_country(driver, name, address):  # noqa
+    add_new_external_location_form_page = AddNewExternalLocationFormPage(driver)
+    add_new_external_location_form_page.enter_external_location_name(name)
+    add_new_external_location_form_page.enter_external_location_address(address)
+    functions.click_submit(driver)
 
 
 @when("I create a standard individual transhipment application")  # noqa
@@ -259,9 +268,7 @@ def create_standard_individual_trade_control_application(driver, context):  # no
     apply_for_licence_page = ApplyForALicencePage(driver)
     apply_for_licence_page.select_licence_type("trade_control_licence")
     functions.click_submit(driver)
-
     enter_type_of_application(driver, "sicl", context)
     enter_application_name(driver, context)
-
     apply_for_licence_page.select_trade_control_activity()
     apply_for_licence_page.select_trade_control_product_category()

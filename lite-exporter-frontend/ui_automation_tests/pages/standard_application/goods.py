@@ -15,6 +15,7 @@ class StandardApplicationGoodsPage(BasePage):
     ADD_TO_APPLICATION_ID = "add-to-application"
     REMOVE_GOOD_LINK = "a[href*='good-on-application']"
     REMOVE_GOODS_TYPE_LINK = "a[href*='goods-types/remove']"
+    REMOVE_LOCATION_LINK = "remove-link"
 
     def click_add_new_good_button(self):
         self.driver.find_element_by_id(self.BUTTON_ADD_NEW_GOOD_ID).click()
@@ -38,6 +39,9 @@ class StandardApplicationGoodsPage(BasePage):
     def get_remove_good_link(self):
         return self.driver.find_element_by_css_selector(self.REMOVE_GOOD_LINK)
 
+    def get_remove_location_link(self):
+        return self.driver.find_element_by_id(self.REMOVE_LOCATION_LINK)
+
     def find_remove_goods_type_link(self):
         try:
             return self.driver.find_element_by_css_selector(self.REMOVE_GOODS_TYPE_LINK)
@@ -46,3 +50,9 @@ class StandardApplicationGoodsPage(BasePage):
 
     def goods_exist_on_the_application(self):
         return functions.element_with_css_selector_exists(self.driver, self.REMOVE_GOOD_LINK)
+
+    def find_remove_location_link(self):
+        try:
+            return self.driver.find_element_by_id(self.REMOVE_LOCATION_LINK)
+        except NoSuchElementException:
+            return None

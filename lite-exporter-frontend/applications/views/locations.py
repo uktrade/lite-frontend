@@ -6,11 +6,11 @@ from django.views.generic import TemplateView
 from applications.forms.countries import countries_form
 from applications.forms.locations import (
     which_location_form,
-    new_location_form,
     external_locations_form,
     add_external_location,
     Locations,
     sites_form,
+    new_external_location_form,
 )
 from applications.helpers.validators import validate_external_location_choice, validate_and_update_goods_location_choice
 from applications.services import get_application, get_application_countries, post_application_countries
@@ -22,7 +22,7 @@ from core.services import (
     post_external_locations_on_draft,
     delete_external_locations_from_draft,
 )
-from lite_forms.views import SingleFormView
+from lite_forms.views import SingleFormView, MultiFormView
 
 
 class GoodsLocation(TemplateView):
@@ -53,7 +53,11 @@ class EditGoodsLocation(SingleFormView):
     def get_success_url(self):
         choice = self.get_validated_data()["choice"]
         if choice == Locations.EXTERNAL:
-            return reverse_lazy("applications:select_add_external_location", kwargs={"pk": self.object_pk})
+            return (
+                reverse_lazy("applications:select_add_external_location", kwargs={"pk": self.object_pk})
+                + "?return_to_link="
+                + self.request.get_full_path()
+            )
         elif choice == Locations.ORGANISATION:
             return reverse_lazy("applications:existing_sites", kwargs={"pk": self.object_pk})
         elif choice == Locations.DEPARTED:
@@ -63,13 +67,17 @@ class EditGoodsLocation(SingleFormView):
 class SelectAddExternalLocation(SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
-        self.form = add_external_location()
+        self.form = add_external_location(request)
         self.action = validate_external_location_choice
 
     def get_success_url(self):
         choice = self.get_validated_data()["choice"]
         if choice == "new":
-            return reverse_lazy("applications:add_external_location", kwargs={"pk": self.object_pk})
+            return (
+                reverse_lazy("applications:add_external_location", kwargs={"pk": self.object_pk})
+                + "?return_to_link="
+                + self.request.get_full_path()
+            )
         else:
             return reverse_lazy("applications:add_preexisting_external_location", kwargs={"pk": self.object_pk})
 
@@ -88,11 +96,12 @@ class ExistingSites(SingleFormView):
         self.success_url = reverse_lazy("applications:location", kwargs={"pk": self.object_pk})
 
 
-class AddExternalLocation(SingleFormView):
+class AddExternalLocation(MultiFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         application = get_application(request, self.object_pk)
-        self.form = new_location_form(application.type_reference)
+        location_type = request.POST.get("location_type", None)
+        self.forms = new_external_location_form(request, application.type_reference, location_type)
         self.action = post_external_locations
         self.success_url = reverse_lazy("applications:location", kwargs={"pk": self.object_pk})
 

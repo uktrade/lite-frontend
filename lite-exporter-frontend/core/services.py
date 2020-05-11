@@ -79,10 +79,16 @@ def post_sites_on_draft(request, pk, json):
     return data.json(), data.status_code
 
 
-def get_external_locations(request, pk, convert_to_options=False, exclude: list = None):
+def get_external_locations(request, pk, convert_to_options=False, exclude: list = None, application_type: str = None):
     data = get(
         request,
-        ORGANISATIONS_URL + str(pk) + EXTERNAL_LOCATIONS_URL + "?" + convert_value_to_query_param("exclude", exclude),
+        ORGANISATIONS_URL
+        + str(pk)
+        + EXTERNAL_LOCATIONS_URL
+        + "?"
+        + convert_value_to_query_param("exclude", exclude)
+        + "&"
+        + convert_value_to_query_param("application_type", application_type),
     )
 
     if convert_to_options:
@@ -92,7 +98,9 @@ def get_external_locations(request, pk, convert_to_options=False, exclude: list 
             external_location_id = external_location.get("id")
             external_location_name = external_location.get("name")
             external_location_address = (
-                external_location.get("address") + NEWLINE + external_location.get("country").get("name")
+                (external_location.get("address") + NEWLINE + external_location.get("country").get("name"))
+                if external_location.get("country")
+                else external_location.get("address")
             )
 
             external_locations_options.append(

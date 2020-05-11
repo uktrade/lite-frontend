@@ -720,3 +720,13 @@ def sections_did_not_appear_on_task_list(driver, sections):  # noqa
 @given(parsers.parse('the status is set to "{status}"'))  # noqa
 def set_status(api_test_client, context, status):  # noqa
     api_test_client.applications.set_status(context.app_id, status)
+
+
+@then("I see my edited reference number")
+def assert_ref_num(driver):  # noqa
+    assert "12345678" in driver.find_element_by_css_selector(".lite-task-list").text
+
+
+@when("I change my reference number")
+def change_ref_num(driver, context):  # noqa
+    enter_export_licence(driver, "yes", "12345678", context)
