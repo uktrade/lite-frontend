@@ -224,9 +224,13 @@ def get_address(data):
     """
     if data and "address" in data:
         address = data["address"]
+        country = data.get("country")
 
         if isinstance(address, str):
-            return address + ", " + data["country"]["name"]
+            if country:
+                return address + ", " + country["name"]
+            else:
+                return address
 
         if "address_line_1" in address:
             address = [
@@ -235,13 +239,14 @@ def get_address(data):
                 address["city"],
                 address["region"],
                 address["postcode"],
-                address["country"]["name"],
             ]
         else:
             address = [
                 address["address"],
-                address["country"]["name"],
             ]
+
+        if country:
+            address.append(country["name"])
 
         return ", ".join([x for x in address if x])
     return ""
