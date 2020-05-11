@@ -365,11 +365,21 @@ class NewLocationForm:
 
     class Address:
         TITLE = "Address"
+        SEA_BASED_TITLE = "Enter an address or coordinates"
         DESCRIPTION = ""
         SITL_DESCRIPTION = "If you're unsure of the exact location of where your goods are, explain why."
+        SEA_BASED_DESCRIPTION = "For example,\n Platform in international waters,\n 15N, 30E or 15 10.234, 30 -23.456."
 
     class Country:
         TITLE = "Country"
+
+
+class LocationTypeForm:
+    TITLE = "Select a location type"
+    DESCRIPTION = ""
+    CONTINUE = "Continue"
+    LAND_BASED = "Land based"
+    SEA_BASED = "Vessel (sea) based"
 
 
 class GoodsCountriesMatrix:
