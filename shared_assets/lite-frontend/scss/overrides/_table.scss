@@ -11,8 +11,8 @@
 	width: 24px!important;
 	margin: 0;
 
-	.govuk-checkboxes__input {
-		pointer-events: none;
+	div:hover .govuk-checkboxes__label::before {
+		box-shadow: 0 0 0 8px govuk-colour("mid-grey");
 	}
 
 	.govuk-checkboxes__label {
@@ -27,10 +27,6 @@
 
 		&::after {
 			top: 16px;
-		}
-
-		&:hover::before {
-			box-shadow: 0 0 0 8px govuk-colour("mid-grey");
 		}
 	}
 }
