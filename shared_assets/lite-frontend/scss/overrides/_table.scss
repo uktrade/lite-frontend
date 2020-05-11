@@ -20,13 +20,16 @@
 		display: block;
 		width: 24px;
 		height: 24px;
+		color: transparent;
 
 		&::before {
 			top: 9px;
+			border-color: $govuk-text-colour;
 		}
 
 		&::after {
 			top: 16px;
+			border-color: $govuk-text-colour;
 		}
 	}
 }
