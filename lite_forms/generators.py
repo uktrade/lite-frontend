@@ -84,6 +84,7 @@ def confirm_form(
     no_label="No",
     submit_button_text="Submit",
     side_by_side=False,
+    container="two-pane",
 ):
     inputs = [
         conditional(summary is not None, summary),
@@ -101,4 +102,5 @@ def confirm_form(
         questions=inputs,
         back_link=BackLink(back_link_text, back_url),
         default_button_name=submit_button_text,
+        container=container,
     )

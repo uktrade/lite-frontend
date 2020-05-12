@@ -12,9 +12,9 @@
 						<span>{{ item.value }}</span>
 					</label>
 					{% if item.description %}
-						<label class="govuk-hint govuk-radios__hint">
+						<p class="govuk-hint govuk-radios__hint govuk-!-margin-top-0" style="max-width: 700px;" data-max-length="200">
 							{{ item.description|safe|linebreaksbr }}
-						</label>
+						</p>
 					{% endif %}
 				</div>
 			{% endif %}

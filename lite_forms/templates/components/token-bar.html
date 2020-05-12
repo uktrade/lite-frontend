@@ -2,11 +2,13 @@
 
 <noscript><p class="govuk-label">Separate items with a space.</p></noscript>
 
-<input class="govuk-input" type="text" name="{{ component.name }}" value="{{ TO_DO }}" id="token-bar-{{ component.name }}">
+<div class="{% for class in component.classes %}{{ class }}{% endfor %}">
+	<input class="govuk-input" type="text" name="{{ component.name }}" value="{{ TO_DO }}" id="token-bar-{{ component.name }}">
+</div>
 
 <script src="{% static 'javascripts/tokenfield.min.js' %}"></script>
 <script type="text/javascript" nonce="{{ request.csp_nonce }}">
-	var items = [{% for option in component.options %}{id: '{{ option.key }}', name: '{{ option.value }}'}, {% endfor %}];
+	var items = [{% for option in component.options %}{id: '{{ option.key }}', name: '{{ option.value }}', classes: [{% for class in option.classes %}'{{ class }}', {% endfor %}]}, {% endfor %}];
 	var tokenField = new Tokenfield({
 		el: document.getElementById("token-bar-{{ component.name }}"),
 		items: items,
@@ -16,7 +18,8 @@
 		addItemsOnPaste: true,
 		minChars: 1,
 		itemName: '{{ component.name }}',
-		setItems: [{% for option in value %}{id: '{{ option.rating }}', name: '{{ option.rating }}'}, {% endfor %}]
+		setItems: [{% for option in value %}{id: '{{ option.key }}', name: '{{ option.value }}', classes: [{% for class in option.classes %}'{{ class }}', {% endfor %}]},, {% endfor %}]
 	});
+
 	$("#token-bar-{{ component.name }}").remove();
 </script>

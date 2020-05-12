@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 from lite_forms.styles import ButtonStyle
 
@@ -131,6 +131,7 @@ class Form:
         default_button_style=ButtonStyle.DEFAULT,
         back_link=BackLink(),
         post_url=None,
+        container: str = "two-pane",
     ):
         from lite_forms.helpers import convert_to_markdown, heading_used_as_label
 
@@ -147,14 +148,16 @@ class Form:
         self.javascript_imports = javascript_imports
         self.post_url = post_url
         self.single_form_element = heading_used_as_label(questions)
+        self.container = container
 
 
 class DetailComponent:
-    def __init__(self, title, description):
+    def __init__(self, title, description="", components=None):
         from lite_forms.helpers import convert_to_markdown
 
         self.title = title
         self.description = convert_to_markdown(description)
+        self.components = components
         self.input_type = "detail"
 
 
@@ -379,7 +382,7 @@ class Option:
         self.description = convert_to_markdown(description)
         self.show_or = show_or
         self.img_url = img_url
-        self.components = components
+        self.components = [component for component in components if component] if components else []
         self.data_attribute = data_attribute
         self.classes = classes
 
@@ -389,7 +392,7 @@ class Group:
     Groups components together inside of a div
     """
 
-    def __init__(self, components, classes):
+    def __init__(self, components, classes=None):
         self.input_type = "group"
         self.components = components
         self.classes = classes
@@ -467,8 +470,9 @@ class TextArea(_Component):
         accessible_description: str = None,
         optional: bool = False,
         classes: Optional[List] = None,
-        extras: Optional[List] = None,
+        extras: Optional[Dict] = None,
         rows: int = 10,
+        data_attributes: Optional[Dict] = None,
     ):
         super().__init__(
             name=name,
@@ -481,6 +485,7 @@ class TextArea(_Component):
             extras=extras,
         )
         self.rows = rows
+        self.data_attributes = data_attributes
         self.input_type = "textarea"
 
 
@@ -572,7 +577,7 @@ class TokenBar:
         self.description = convert_to_markdown(description)
         self.options = options
         self.optional = optional
-        self.classes = classes
+        self.classes = classes if classes else ["tokenfield-container"]
         self.input_type = "token_bar"
 
 

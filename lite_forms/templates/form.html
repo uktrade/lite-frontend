@@ -1,4 +1,4 @@
-{% extends 'layouts/two-pane.html' %}
+{% extends 'layouts/'|add:page.container|add:'.html' %}
 
 {% load custom_tags %}
 
@@ -95,7 +95,7 @@
 			{% if question.input_type == "html_block"  %}
 				{{ question.html|safe }}
 			{% elif question.input_type == "detail"  %}
-				{% include "components/details.html" with title=question.title description=question.description %}
+				{% include "components/details.html" with component=question %}
 			{% elif question.input_type == "heading" %}
 				{% include "components/heading.html" with text=question.text %}
 			{% else %}
@@ -161,7 +161,10 @@
 			{% endif %}
 		</aside>
 	{% endfor %}
+{% endblock %}
 
+{% block javascript %}
+	{{ block.super }}
 	{% for url in page.javascript_imports %}
 		<script src="{{ url }}"></script>
 	{% endfor %}

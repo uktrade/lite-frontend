@@ -103,6 +103,9 @@ class SingleFormView(FormView):
     def on_submission(self, request, **kwargs):
         return request.POST.copy()
 
+    def clean_data(self, data):
+        return data
+
     def post_success_step(self):
         if self.success_message:
             messages.success(self.request, self.success_message)
@@ -122,10 +125,12 @@ class SingleFormView(FormView):
         # Handle lists (such as checkboxes)
         data = handle_lists(data)
 
+        self._validated_data = data
+
         if self.get_object_pk():
-            validated_data, _ = self.get_action()(request, self.get_object_pk(), data)  # noqa
+            validated_data, _ = self.get_action()(request, self.get_object_pk(), self.clean_data(data.copy()))  # noqa
         else:
-            validated_data, _ = self.get_action()(request, data)  # noqa
+            validated_data, _ = self.get_action()(request, self.clean_data(data.copy()))  # noqa
 
         if "errors" in validated_data:
             return form_page(

@@ -93,6 +93,14 @@ def prefix_dots(text):
     return text.replace(".", r"\\.")
 
 
+@register.filter
+def replace_spaces(text):
+    """
+    Replace spaces with a dash.
+    """
+    return text.replace(" ", "-")
+
+
 @register.simple_tag
 @mark_safe
 def dict_hidden_field(key, value):
@@ -136,7 +144,7 @@ def date_join(data, prefix):
 
 @register.filter
 def get(value, arg):
-    return value.get(arg, "")
+    return value.get(arg, "") if value else None
 
 
 @register.filter
@@ -185,14 +193,24 @@ def pagination_params(url, page):
 
 @register.simple_tag
 @mark_safe
-def govuk_link_button(text, url, url_param=None, id="", classes=""):
+def govuk_link_button(text, url, url_param=None, id="", classes="", query_params="", show_chevron=False):
     text = get_const_string(text)
     if isinstance(url_param, str):
         url_param = [url_param]
     url = reverse(url, args=url_param if url_param else [])
     id = f'id="button-{id}"' if id else ""
+    chevron = ""
+    if show_chevron:
+        chevron = (
+            '<svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="13" height="15" '
+            'viewBox="0 0 33 43" aria-hidden="true" focusable="false">'
+            '<path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" /></svg>'
+        )
 
-    return f'<a {id} href="{url}" role="button" draggable="false" class="govuk-button {classes}" data-module="govuk-button">{text}</a>'
+    return (
+        f'<a {id} href="{url}{query_params}" role="button" draggable="false" class="govuk-button {classes}" '
+        f'data-module="govuk-button">{text}{chevron}</a>'
+    )
 
 
 @register.inclusion_tag("components/pagination.html", takes_context=True)
