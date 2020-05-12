@@ -1,4 +1,5 @@
 from lite_content.lite_internal_frontend import (  # noqa
+    advice,  # noqa
     cases,  # noqa
     letter_templates,  # noqa
     roles,  # noqa
@@ -20,7 +21,6 @@ NOT_APPLICABLE = "N/A"
 
 QUEUE_ALL_CASES = "All cases"
 
-CASE_CHANGES = "See what has changed"
 
 # Organisation
 ORGANISATION_CREATION_SUCCESS = "The organisation was created successfully"
@@ -29,30 +29,6 @@ ORGANISATION_EDIT_FLAGS = "Edit organisation flags"
 
 # HMRC Organisation
 HMRC_ORGANISATION_CREATION_SUCCESS = "The HMRC organisation was created successfully"
-
-# Case
-CASE_GOODS = "Goods"
-CASE_ENTITIES_NONE = "No inactive case entities"
-CASE_ENTITIES_ACTIVITY = "Activity"
-CASE_PARTIES_LICENSEE = "Applicant"
-
-CASE_INFO_TYPE = "Type"
-CASE_INFO_ORGANISATION = "Organisation"
-CASE_INFO_STATUS = "Status"
-CASE_INFO_ACTIVITY = "Activity"
-CASE_INFO_SUBMITTED_AT = "Submitted at"
-CASE_INFO_REFERENCE_NUMBER = "Reference number"
-CASE_INFO_EXPORT_TYPE = "Export type"
-CASE_INFO_USAGE = "Usage"
-CASE_INFO_LAST_UPDATED = "Last updated"
-CASE_INFO_TRADE_CONTROL_ACTIVITY = "Type of activity"
-CASE_INFO_TRADE_CONTROL_PRODUCT_CATEGORY = "Product category"
-
-CASE_COUNTRIES = "Countries"
-CASE_COUNTRIES_GREEN_LIST = "Green list"
-CASE_DESTINATIONS_HEADER = "Destinations"
-
-CASE_ACTIVITY_HEADING = "Activity"
 
 # Good
 GOOD_DESCRIPTION = "Description"
@@ -69,12 +45,6 @@ SUPPORTING_DOCUMENTATION_NAME = "Name"
 SUPPORTING_DOCUMENTATION_DESCRIPTION = "Description"
 SUPPORTING_DOCUMENTATION_DOCUMENT = "Document"
 SUPPORTING_DOCUMENTATION_NO_DOCUMENTATION = "No supporting documents"
-
-INACTIVE_ENTITIES = "No supporting documents"
-
-COMBINE_USER_ADVICE = "Combine all user advice"
-GIVE_OR_CHANGE_ADVICE = "Give or change advice"
-CLEAR_ADVICE = "Clear advice"
 
 DOCUMENT_TEMPLATES_TITLE = "Document templates"
 

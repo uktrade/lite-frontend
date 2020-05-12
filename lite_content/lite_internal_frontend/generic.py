@@ -1,7 +1,9 @@
 VIEW = "View"
 CHANGE = "Change"
 EDIT = "Edit"
+CONTINUE = "Continue"
 NO_FLAGS_SET = "No flags set"
+ACTIVITY = "Activity"
 
 
 class Filters:

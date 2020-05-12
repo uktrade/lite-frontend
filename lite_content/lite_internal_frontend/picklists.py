@@ -1,3 +1,7 @@
+class PicklistPicker:
+    NO_CONTENT_NOTICE = "There aren't any items in this picklist"
+
+
 class NewPicklistForm:
     ECJU_QUERY = "Create an ECJU query"
     PRE_VISIT_QUESTIONNAIRE = "Create a Pre-Visit Questionnaire Question (ECJU Query)"

@@ -17,10 +17,122 @@ class CasesListPage:
         HIDDEN = "Show cases with open enquiries by your team"
 
 
-class CaseDocumentsPage:
-    BACK_LINK = "Back to case"
-    ATTACH = "Attach document"
-    GENERATE = "Generate document"
+class CasePage:
+    IM_DONE_BUTTON = "I'm done"
+
+    class Pills:
+        class Goods:
+            GOOD = "good"
+
+        class Destinations:
+            DESTINATION = "destination"
+
+        class Flags:
+            FLAG = "flag"
+
+        class CaseOfficer:
+            CASE_OFFICER = "Case officer"
+            ASSIGNED_USERS = "Assigned users"
+            NO_CASE_OFFICER = "No case officer assigned"
+            NO_USERS_ASSIGNED = "No users assigned"
+
+        class Status:
+            TITLE = "Latest status change"
+            NOTICE = "This isn't available here."
+
+    class Tabs:
+        DETAILS = "Details"
+        ADVICE_AND_DECISION = "Advice and decision"
+        USER_ADVICE = "User advice"
+        TEAM_ADVICE = "Team advice"
+        FINAL_ADVICE = "Final decision"
+        ECJU_QUERIES = "ECJU queries"
+        DOCUMENTS = "Documents"
+        ADDITIONAL_CONTACTS = "Additional contacts"
+        CASE_NOTES_AND_TIMELINE = "Case notes and timeline"
+
+    class DetailsTab:
+        EXPORTER_REFERENCE = "Exporter reference"
+        SUBMITTED_AT = "Submitted at"
+        STATUS = "Status"
+        ASSIGNED_QUEUES = "Assigned queues"
+        TYPE = "Type"
+        LAST_UPDATED = "Last updated"
+        CASE_OFFICER = "Case officer"
+        ASSIGNED_USERS = "Assigned users"
+        COPY_OF = "Copy of"
+        RAISED_BY = "Raised by"
+        EXPORT_TYPE = "Export type"
+        SECURITY_GRADING = "Security grading"
+        GOODS_CATEGORY = "Goods category"
+        CLEARANCE_TYPES = "Clearance types"
+        NO_QUEUES_ASSIGNED = "Not assigned to any queues"
+        NO_USERS_ASSIGNED = "No users assigned"
+        NO_CASE_OFFICER = "Not assigned"
+
+        class Goods:
+            TITLE = "good"
+            TITLE_PLURAL = "goods"
+
+            class Table:
+                DESCRIPTION = "Description"
+                CONTROLLED = "Controlled"
+                CONTROL_LIST_ENTRIES = "Control list entries"
+                INCORPORATED = "Incorporated"
+
+        class Destinations:
+            TITLE = "destination"
+            TITLE_PLURAL = "destinations"
+
+            class Table:
+                COUNTRY = "Country"
+                COUNTRY_CODE = "Country code"
+
+        class EndUseDetails:
+            TITLE = "End use details"
+
+            class Table:
+                DESCRIPTION = "Description"
+                ANSWER = "Answer"
+
+        class RouteOfGoods:
+            TITLE = "Route of goods"
+
+            class Table:
+                DESCRIPTION = "Description"
+                ANSWER = "Answer"
+
+        class SupportingDocumentation:
+            TITLE = "Supporting documentation"
+
+            class Table:
+                pass
+                # NEED TO DO! REMIND ME!
+
+    class DocumentsTab:
+        ATTACH_DOCUMENT_BUTTON = "Attach document"
+        GENERATE_DOCUMENT_BUTTON = "Generate document"
+        NO_CONTENT_NOTICE = "No documents have been uploaded to this case"
+
+    class AdditionalContactsTab:
+        ADD_A_CONTACT_BUTTON = "Add a contact"
+        NO_CONTENT_NOTICE = "There aren't any additional contacts on this case"
+        SUCCESS_MESSAGE = "Contact added successfully"
+
+        class Table:
+            NAME = "Name"
+            ADDRESS = "Address"
+            EMAIL = "Email"
+            PHONE_NUMBER = "Phone number"
+            DETAILS = "Details"
+
+    class CaseNotesAndTimeline:
+        ADD_CASE_NOTE_LABEL = "Add case note"
+        ADD_CASE_NOTE_DESCRIPTION = "You can enter up to 2200 characters"
+        MAKE_VISIBLE_TO_EXPORTER = "Make visible to exporter"
+        WARNING = "This note will be visible to the exporter, are you sure you wish to continue?"
+        CANCEL = "Cancel"
+        POST_NOTE = "Post note"
 
 
 class ApplicationPage:
@@ -92,9 +204,9 @@ class ApplicationPage:
     class ThirdParty:
         ROLE = "Role: "
 
-    EDIT_FLAGS = "Edit products flags"
+    EDIT_FLAGS = "Edit goods flags"
     EDIT_DESTINATION_FLAGS = "Edit destination flags"
-    REVIEW_GOODS = "Review products"
+    REVIEW_GOODS = "Review goods"
     ADVICE = "Give or change advice"
     RESPOND_BUTTON = "Respond to query"
     CLOSED = "This case is closed"
@@ -406,18 +518,28 @@ class GradingResponseOverview:
         COMMENT = "Comment (optional)"
 
 
-class RespondClCQueryForm:
-    TITLE = "Respond to CLC query"
-    BUTTON = "Continue to overview"
-    BACK = "Back to case"
+class ChangeStatusPage:
+    TITLE = "Change case status"
+    DESCRIPTION = ""
+    SUCCESS_MESSAGE = "Case status successfully changed"
 
-    CONTROL_LIST_ENTRY = "What is the correct control list classification?"
-    COMMENT = "Goods comment (optional)"
+
+class CLCReviewGoods:
+    TITLE = "Respond to query"
+    DESCRIPTION = "You won't be able to change this once you've submitted."
+    SUCCESS_MESSAGE = "Reviewed successfully"
+    HEADING = "Query"
+    YOUR_RESPONSE = "Your response"
+    CONTROL_LIST_ENTRY = "What are the correct control list entries for this good?"
+    COMMENT = "Explain why you're making this decision (optional)"
+    SUBMIT_BUTTON = "Submit"
 
     class Summary:
-        DESCRIPTION = "Description"
-        CONTROL_LIST_ENTRIES = "Control list entries"
-        NO_CONTROL_LIST_ENTRY = "N/A"
+        DESCRIPTION = "Description of goods"
+        PART_NUMBER = "Part number"
+        IS_THIS_GOOD_CONTROLLED = "Is this good controlled?"
+        CONTROL_LIST_ENTRIES = "What do you think the control list entry is?"
+        EXPLANATION = "Why do you think this?"
 
     class Controlled:
         TITLE = "Is this good controlled?"
@@ -425,16 +547,25 @@ class RespondClCQueryForm:
         NO = "No"
 
     class ReportSummary:
-        TITLE = "Which report summary would you like to use? (optional)"
-        DESCRIPTION = "You only need to do this if the good is controlled"
+        TITLE = "Which report summary is applicable to this good?"
 
 
-class RespondGradingQueryForm:
+class PVGradingForm:
     TITLE = "Respond to PV grading request"
-    BUTTON = "Continue to overview"
+    DESCRIPTION = "You won't be able to change this once you've submitted."
+    SUBMIT_BUTTON = "Submit"
+    SUCCESS_MESSAGE = "Reviewed successfully"
     BACK = "Back to case"
+    HEADING = "Query"
+    YOUR_RESPONSE = "Your response"
+    COMMENT = "Explain why you're making this decision (optional)"
 
-    COMMENT = "Comment"
+    class Summary:
+        DESCRIPTION = "Description of goods"
+        PART_NUMBER = "Part number"
+        IS_THIS_GOOD_CONTROLLED = "Is this good controlled?"
+        CONTROL_LIST_ENTRIES = "What do you think the control list entry is?"
+        EXPLANATION = "Why do you think this?"
 
     class Grading:
         PREFIX = "Prefix"
@@ -442,54 +573,27 @@ class RespondGradingQueryForm:
         SUFFIX = "Suffix"
 
 
-class ChangeStatusPage:
-    TITLE = "Change case status"
-    DESCRIPTION = ""
-    SUCCESS_MESSAGE = "Case status successfully changed"
-
-
-class ReviewGoodsSummary:
-    BACK_LINK = "Back to case"
-    HEADING = "Review goods"
-    REVIEW_BUTTON = "Review and confirm goods"
-    SET_FLAGS = "Set goods flags"
-
-    class Table:
-        DESCRIPTION = "Description"
-        REPORT_SUMMARY = "Report summary"
-        CONTROLLED = "Controlled"
-        CONTROL_LIST_ENTRY = "Control list classification"
-        GOODS_COMMENT = "Goods comment"
-        FLAGS = "Flags"
-        QUANTITY_VALUE = "Quantity & value"
-
-    class NotSet:
-        REPORT_SUMMARY = "Not Set"
-        COMMENT = "Not Set"
-        FLAGS = "None Set"
-
-
 class EcjuQueries:
-    BACK_TO_CASE = "Back to case"
     CASE_HAS_NO_QUERIES = "This case has no ECJU queries"
     CLOSED = "Closed queries"
+    CLOSED_DESCRIPTION = "Queries are automatically closed when the exporter responds to them."
     OPEN = "Open queries"
-    TITLE = "ECJU queries"
-    BACK_TO_CHOOSE_TYPE_FORM = "select query type"
+    CREATED_AT = "Created at"
+
+    class Queries:
+        ECJU_QUERY = "Standard query"
+        PRE_VISIT_QUESTIONNAIRE = "Pre-visit questionnaire query"
+        COMPLIANCE_ACTION = "Compliance query"
 
     class AddQuery:
         ADD_BUTTON_LABEL = "Add an ECJU query"
+        TITLE_PREFIX = "New "
         DESCRIPTION = (
             "Enter a full description. If your question is related to goods, then include technical"
             " details if appropriate."
         )
-        DROPDOWN_DESCRIPTION = (
-            "You can:<ul><li>write a new question, or</li><li>choose a question from a list</li></ul>"
-        )
-        DROPDOWN_TITLE = "Ask a question"
-        TITLE = "Write or edit your question"
-        CHOOSE_TYPE = "Select the type of your ECJU query"
-        SELECT_A_TYPE = "Select one type of query"
+        SELECT_A_TYPE = "Select a type of query"
+        SUBMIT = "Send"
 
 
 class Advice:
@@ -540,10 +644,10 @@ class Manage:
         SUBMIT_BUTTON = "Submit"
 
     class AssignCaseOfficer:
-        TITLE = "Assign a case officer"
+        TITLE = "Assign case officer"
         DESCRIPTION = ""
-        DELETE_BUTTON = "Unassign existing case officer only"
-        SUBMIT_BUTTON = "Submit"
+        DELETE_BUTTON = "Unassign existing case officer"
+        SUBMIT_BUTTON = "Assign"
 
     class RerunRoutingRules:
         TITLE = "Do you want to rerun routing rules?"
@@ -553,164 +657,14 @@ class Manage:
         SUBMIT_BUTTON = "Continue"
 
 
-class Tabs:
-    class Activity:
-        TITLE = "Add case note"
-        CHARACTER_LIMIT_2200 = "Enter up to 2200 characters"
-        CANCEL_POST = "Cancel"
-        POST = "Post note"
-        MAKE_VISIBLE_TO_EXPORTER = "Make visible to exporter"
-
-
 class ReviewGoodsForm:
     BACK_LINK = "Back to review goods"
     CONFIRM_BUTTON = "Add to case"
     HEADING = "Check control list classification and add report summary"
 
 
-class GoodsDecisionMatrixPage:
-    ERROR = "There is a problem"
-    NO_ADVICE_DEFAULT = "No advice"
-    REFUSE_ADVICE_TAG = "(Reject)"
-
-    class Actions:
-        BACK_TO_FINAL_ADVICE = "Back to final advice"
-        SELECT_DECISION = "Select a decision for each good and country combination"
-        FINALISE_BUTTON = "Finalise"
-        SAVE_BUTTON = "Save"
-
-    class Table:
-        GOOD_TITLE = "Goods"
-        COUNTRIES_TITLE = "Destinations"
-        APPROVE_TITLE = "Approve"
-        REJECT_TITLE = "Reject"
-        REFUSE_TITLE = "Refuse"
-        NLR_TITLE = "No licence required"
-        HIDDEN_NLR_TITLE = "No licence required for"
-
-
-class FinaliseLicenceForm:
-    APPROVE_TITLE = "Approve"
-    FINALISE_TITLE = "Finalise"
-    DATE_DESCRIPTION = "For example, 27 3 2019"
-    DATE_TITLE = "Licence start date"
-    DURATION_DESCRIPTION = "This must be a whole number of months, such as 12"
-    DURATION_TITLE = "How long will it last?"
-    GOODS_ERROR = "Approved goods could not be fetched"
-
-    class GoodsTable:
-        CLC_COLUMN = "CLC"
-        DESCRIPTION_COLUMN = "Description"
-        DECISION_COLUMN = "Decision"
-        LICENCED_QTY_COLUMN = "Licensed quantity"
-        LICENCED_VALUE_COLUMN = "Licensed value"
-        APPLIED_FOR_TEXT = "Applied for "
-
-    class Actions:
-        BACK_TO_ADVICE_BUTTON = "Back to final advice"
-        BACK_TO_DECISION_MATRIX_BUTTON = "Back to finalise goods and destinations"
-
-
-class AdviceRecommendationForm:
-    TITLE = "What do you advise?"
-    DESCRIPTION = "You can advise to:"
-
-    class Actions:
-        CONTINUE_BUTTON = "Continue"
-        BACK_BUTTON = "Back to advice"
-
-    class RadioButtons:
-        GRANT = "Grant the licence"
-        PROVISO = "Add a proviso"
-        NLR = "Tell the applicant they do not need a licence"
-        NOT_APPLICABLE = "Not applicable"
-        REJECT = "Reject the licence"
-        REFUSE = "Refuse the licence"
-
-
-class AdvicePage:
-    PROVISO_TITLE = "Proviso"
-    DENIAL_REASONS_TITLE = "Denial reasons"
-    REASON_FOR_ADVICE_TITLE = "Reason for this advice"
-    NOTE_TO_APPLICANT_TITLE = "Note to applicant"
-    GRADING_TITLE = "Grading"
-
-    class Table:
-        REJECT = "Reject"
-        ADVICE_BY = "advice by"
-        AT = "at"
-
-
-class ViewAdvicePage:
-    USER_ADVICE = "User advice"
-    TEAM_ADVICE = "Team advice"
-    FINAL_ADVICE = "Final advice"
-
-    class WarningBanner:
-        HIDDEN_TEXT = "Warning"
-        BLOCKING_FLAGS = "This application is blocked by the following flags: "
-
-    class Actions:
-        GIVE_OR_CHANGE = "Give or change advice"
-        CLEAR = "Clear advice"
-        FINALISED_GOODS_AND_COUNTRIES = "Finalise goods and destinations"
-        FINALISE = "Finalise"
-        COMBINE_TEAM_ADVICE = "Combine all team advice"
-
-    class EndUserTable:
-        HEADING = "End user"
-        NAME_COLUMN = "Name"
-        TYPE_COLUMN = "Type"
-        ADDRESS_COLUMN = "Address"
-        WEBSITE_COLUMN = "Website"
-        DOCUMENT_COLUMN = "Document"
-        ADVICE_COLUMN = "Advice"
-
-    class ConsigneeTable:
-        HEADING = "Consignee"
-        NAME_COLUMN = "Name"
-        TYPE_COLUMN = "Type"
-        ADDRESS_COLUMN = "Address"
-        WEBSITE_COLUMN = "Website"
-        DOCUMENT_COLUMN = "Document"
-        ADVICE_COLUMN = "Advice"
-
-    class UltimateEndUserTable:
-        HEADING = "Ultimate recipient"
-        NAME_COLUMN = "Name"
-        TYPE_COLUMN = "Type"
-        ADDRESS_COLUMN = "Address"
-        WEBSITE_COLUMN = "Website"
-        DOCUMENT_COLUMN = "Document"
-        ADVICE_COLUMN = "Advice"
-
-    class ThirdPartyTable:
-        HEADING = "Third parties"
-        NAME_COLUMN = "Name"
-        TYPE_COLUMN = "Type"
-        ROLE_COLUMN = "Role"
-        ADDRESS_COLUMN = "Address"
-        WEBSITE_COLUMN = "Website"
-        DOCUMENT_COLUMN = "Document"
-        ADVICE_COLUMN = "Advice"
-
-
-class AdditionalContacts:
-    TITLE = "Additional contacts"
-    ADD_A_CONTACT = "Add a contact"
-    NO_CONTENT_NOTICE = "There aren't any additional contacts on this case"
-    SUCCESS_MESSAGE = "Contact added successfully"
-
-    class Table:
-        NAME = "Name"
-        ADDRESS = "Address"
-        EMAIL = "Email"
-        PHONE_NUMBER = "Phone number"
-        DETAILS = "Details"
-
-
 class AddAdditionalContact:
-    BACK_LINK = "Back to " + AdditionalContacts.TITLE.lower()
+    BACK_LINK = "Back to " + CasePage.Tabs.ADDITIONAL_CONTACTS.lower()
     TITLE = "Add a contact to this case"
     DESCRIPTION = ""
     SUBMIT_BUTTON = "Save and continue"

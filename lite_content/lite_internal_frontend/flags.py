@@ -88,26 +88,43 @@ class UpdateFlag:
         REACTIVATE_WARNING = "This flag will be able to be used unless it's deactivated again"
 
 
-class SetCaseFlagsForm:
-    TITLE = "Set case flags"
-    DESCRIPTION = "Select all flags that you want to set on this case."
+class SetFlagsForm:
+    class Cases:
+        TITLE = "Set case flags"
+        DESCRIPTION = "Select all flags that you want to set on this case."
+        SUBMIT_BUTTON = "Set flags"
+        SUCCESS_MESSAGE = "Flags set successfully on case"
+        FILTER = "Filter"
 
-    class Filter:
-        PLACEHOLDER = "Filter flags"
+        class Note:
+            TITLE = "Specify why you're changing this case's flags (optional)"
 
-    class Note:
-        TITLE = "Note"
-        DESCRIPTION = "Provide reasons for editing the flags on this case"
+    class Organisations:
+        TITLE = "Set organisation flags"
+        DESCRIPTION = "Select all flags that you want to set on this organisation."
+        SUBMIT_BUTTON = "Set flags"
+        SUCCESS_MESSAGE = "Flags set successfully on organisation"
+        FILTER = "Filter"
 
+        class Note:
+            TITLE = "Specify why you're changing this organisation's flags (optional)"
 
-class SetGenericFlagsForm:
-    TITLE = "Set flags"
-    DESCRIPTION = "Select all flags that you want to set."
-    BACK = "Back to "
+    class Goods:
+        TITLE = "Set goods flags"
+        DESCRIPTION = "Select all flags that you want to set on these goods."
+        SUBMIT_BUTTON = "Set flags"
+        SUCCESS_MESSAGE = "Flags set successfully on good(s)"
+        FILTER = "Filter"
 
-    class Filter:
-        PLACEHOLDER = "Filter flags"
+        class Note:
+            TITLE = "Specify why you're changing the flags (optional)"
 
-    class Note:
-        TITLE = "Note"
-        DESCRIPTION = "Provide reasons for editing the flags on these "
+    class Destinations:
+        TITLE = "Set destination flags"
+        DESCRIPTION = "Select all flags that you want to set on these destinations."
+        SUBMIT_BUTTON = "Set flags"
+        SUCCESS_MESSAGE = "Flags set successfully on destination(s)"
+        FILTER = "Filter"
+
+        class Note:
+            TITLE = "Specify why you're changing the flags (optional)"
