@@ -35,17 +35,19 @@
 	list-style-type: none;
 }
 
-.tokenfield .tokenfield-set > ul > li {
-	@include govuk-font($size: 19, $line-height: 1);
-	position: relative;
-	display: inline-block;
-	padding: govuk-spacing(1) govuk-spacing(6) govuk-spacing(1) govuk-spacing(2);
-	cursor: pointer;
-	background-color: govuk-colour("light-grey");
-	color: $govuk-text-colour;
-	border-bottom: 2px solid govuk-colour("mid-grey");
-	margin-bottom: govuk-spacing(1);
-	margin-right: govuk-spacing(1);
+.tokenfield-container {
+	.tokenfield .tokenfield-set > ul > li {
+		@include govuk-font($size: 19, $line-height: 1);
+		position: relative;
+		display: inline-block;
+		padding: govuk-spacing(1) govuk-spacing(6) govuk-spacing(1) govuk-spacing(2);
+		cursor: pointer;
+		background-color: govuk-colour("light-grey");
+		color: $govuk-text-colour;
+		border-bottom: 2px solid govuk-colour("mid-grey");
+		margin-bottom: govuk-spacing(1);
+		margin-right: govuk-spacing(1);
+	}
 }
 
 .tokenfield .tokenfield-set > ul > li .item-remove {

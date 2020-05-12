@@ -11,17 +11,18 @@ $.fn.changeElementType = function(newType) {
 };
 
 $('[data-max-length]').each(function() {
-    var originalText = $(this).text();
-    var shrunkText = $(this).text().substring(0, $(this).data("max-length"));
+    var originalText = $(this).html();
+    var shrunkText = $(this).html().substring(0, $(this).data("max-length"));
 
     if (originalText.length != shrunkText.length) {
         $(this).text(shrunkText + "...");
-        $(this).append("<a href='#' class='govuk-link govuk-link--no-visited-state govuk-!-margin-left-2' data-more-text='" + originalText + "'>More</a>");
+        var $more = $("<a href='#' class='govuk-link govuk-link--no-visited-state govuk-!-margin-left-2'>More</a>").appendTo($(this));
+        $more.attr("data-more-text", originalText);
     }
 });
 
 $('[data-more-text]').click(function() {
-    $(this).parent().text($(this).data("more-text"));
+    $(this).parent().html($(this).data("more-text"));
     return false;
 })
 
