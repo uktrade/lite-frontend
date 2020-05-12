@@ -44,6 +44,7 @@ def create_selenium_chrome_driver(chrome_options, request):
     driver.set_timeout_to_10_seconds = types.MethodType(set_timeout_to_10_seconds, driver)
     driver.get("about:blank")
     driver.set_timeout_to(10)
+    driver.maximize_window()
 
     def fin():
         driver.close()

@@ -69,3 +69,7 @@ def get_table_rows(driver: WebDriver, table_selector: str = "table", raise_excep
         raise NoSuchElementException(f"No rows returned with selector: {selector}")
 
     return rows
+
+
+def click_next_page(driver: WebDriver):
+    driver.find_element_by_id("link-next-page").click()

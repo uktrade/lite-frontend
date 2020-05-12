@@ -124,7 +124,25 @@ def get_element_index_by_text(elements, text: str, complete_match=True):
     return -1
 
 
+def get_coordinates_of_element_by_id(driver, selector):
+    return driver.find_element_by_id(selector).location
+
+
+def get_size_of_element_by_id(driver, selector):
+    return driver.find_element_by_id(selector).size
+
+
+def scroll_to_element_below_header_by_id(driver, selector):
+    size_of_header = get_size_of_element_by_id(driver, "app-header")
+    location_of_wanted_element = get_coordinates_of_element_by_id(driver, selector)
+    required_height = location_of_wanted_element["y"] - size_of_header["height"]
+    driver.execute_script(
+        "window.scrollTo(" + str(location_of_wanted_element["x"]) + ", " + str(required_height) + ");"
+    )
+
+
 def scroll_to_element_by_id(driver, element_id):
+    driver.execute_script("document.getElementById('" + element_id + "').scrollIntoView(true);")
     driver.execute_script("document.getElementById('" + element_id + "').scrollIntoView(true);")
 
 
@@ -152,10 +170,6 @@ def get_formatted_date_time_d_h_m_s():
 
 def page_is_ready(driver):
     return driver.execute_script("return document.readyState") == "complete"
-
-
-def menu_is_visible(driver):
-    return driver.find_element_by_css_selector(".lite-menu--visible").is_displayed()
 
 
 def find_paginated_item_by_id(id, driver):
