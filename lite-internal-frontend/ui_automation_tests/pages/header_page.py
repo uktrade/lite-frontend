@@ -1,9 +1,9 @@
 from shared.BasePage import BasePage
-from shared.tools.wait import wait_until_page_is_loaded, wait_until_menu_is_visible
+from shared.tools.wait import wait_until_page_is_loaded
 
 
 class HeaderPage(BasePage):
-    MENU_BUTTON = "lite-user-menu-button"  # ID
+    MENU_BUTTON = "link-menu"  # ID
     ORGANISATIONS_LINK = "a[href*='/organisations/']"  # CSS
     TEMPLATES_LINK = "a[href*='/document-templates/']"  # CSS
     TEAMS_LINK = "a[href*='/teams/']"  # CSS
@@ -15,7 +15,6 @@ class HeaderPage(BasePage):
     def click_lite_menu(self):
         wait_until_page_is_loaded(self.driver)
         self.driver.find_element_by_id(self.MENU_BUTTON).click()
-        wait_until_menu_is_visible(self.driver)
 
     def click_organisations(self):
         self.driver.find_element_by_css_selector(self.ORGANISATIONS_LINK).click()

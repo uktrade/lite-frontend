@@ -11,6 +11,7 @@ class AdditionalContactsPage(BasePage):
     AUTOCOMPLETE_COUNTRY_ID = "country"
     INPUT_EMAIL_ID = "email"
     INPUT_PHONE_NUMBER_ID = "phone_number"
+    ADDITIONAL_CONTACTS_TABLE = "table-additional-contacts"  # ID
 
     def enter_details(self, text):
         self.driver.find_element_by_id(self.INPUT_DETAILS_ID).send_keys(text)
@@ -32,3 +33,6 @@ class AdditionalContactsPage(BasePage):
 
     def click_add_button(self):
         self.driver.find_element_by_id(self.BUTTON_ADD_A_CONTACT_ID).click()
+
+    def get_text_of_added_additional_contacts(self):
+        return self.driver.find_element_by_id(self.ADDITIONAL_CONTACTS_TABLE).text

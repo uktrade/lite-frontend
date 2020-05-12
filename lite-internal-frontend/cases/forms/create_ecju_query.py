@@ -1,55 +1,62 @@
+from django.urls import reverse
+
+from core.components import PicklistPicker
+from lite_content.lite_internal_frontend import generic
+from lite_content.lite_internal_frontend.cases import EcjuQueries
 from lite_content.lite_internal_frontend.strings import cases
-from lite_forms.components import Form, BackLink, TextArea, HiddenField, RadioButtons
-from lite_forms.generators import confirm_form
+from lite_forms.components import Form, BackLink, TextArea, RadioButtons, FormGroup, Option
+from picklists.services import get_picklists_for_input
 
 
-def choose_picklist_type_form(options, case_url):
-    return Form(
-        title=cases.EcjuQueries.AddQuery.CHOOSE_TYPE,
-        questions=[RadioButtons(name="ecju_query_type", options=options)],
-        back_link=BackLink("Back to " + cases.EcjuQueries.TITLE, case_url),
-    )
+class ECJUQueryTypes:
+    ECJU_QUERY = "ecju_query"
+    PRE_VISIT_QUESTIONNAIRE = "pre_visit_questionnaire"
+    COMPLIANCE_ACTION = "compliance_actions"
+
+    choices = [
+        (ECJU_QUERY, EcjuQueries.Queries.ECJU_QUERY),
+        (PRE_VISIT_QUESTIONNAIRE, EcjuQueries.Queries.PRE_VISIT_QUESTIONNAIRE),
+        (COMPLIANCE_ACTION, EcjuQueries.Queries.COMPLIANCE_ACTION),
+    ]
+
+    @classmethod
+    def get_text(cls, choice):
+        for key, value in cls.choices:
+            if key == choice:
+                return value
+        return ""
 
 
-def choose_ecju_query_type_form(case_url, picklists):
-    return Form(
-        title=cases.EcjuQueries.AddQuery.DROPDOWN_TITLE,
-        questions=[
-            RadioButtons(
-                description=cases.EcjuQueries.AddQuery.DROPDOWN_DESCRIPTION, name="picklist", options=picklists,
+def new_ecju_query_form(request, queue_pk, pk):
+    query_type = request.POST.get("query_type", "")
+    return FormGroup(
+        [
+            Form(
+                title=cases.EcjuQueries.AddQuery.SELECT_A_TYPE,
+                questions=[
+                    RadioButtons(
+                        name="query_type", options=[Option(choice[0], choice[1]) for choice in ECJUQueryTypes.choices],
+                    )
+                ],
+                back_link=BackLink(
+                    url=reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": pk, "tab": "ecju-queries"})
+                ),
+                default_button_name=generic.CONTINUE,
+                container="case",
             ),
-            HiddenField(name="form_name", value="ecju_query_type_select"),
-        ],
-        back_link=BackLink("Back to " + cases.EcjuQueries.BACK_TO_CHOOSE_TYPE_FORM, case_url),
-        default_button_name="Continue",
-    )
-
-
-def create_ecju_query_write_or_edit_form(choose_picklist_url):
-    return Form(
-        title=cases.EcjuQueries.AddQuery.TITLE,
-        questions=[
-            TextArea(
-                title="",
-                description=cases.EcjuQueries.AddQuery.DESCRIPTION,
-                name="question",
-                extras={"max_length": 5000,},
+            Form(
+                title=EcjuQueries.AddQuery.TITLE_PREFIX + ECJUQueryTypes.get_text(query_type).lower(),
+                questions=[
+                    TextArea(
+                        description=cases.EcjuQueries.AddQuery.DESCRIPTION,
+                        name="question",
+                        extras={"max_length": 5000,},
+                        data_attributes={"picklist-picker": query_type},
+                    ),
+                    PicklistPicker(target="question", items=get_picklists_for_input(request, query_type)),
+                ],
+                default_button_name=cases.EcjuQueries.AddQuery.SUBMIT,
+                container="case",
             ),
-            HiddenField(name="form_name", value="ecju_query_write_or_edit_question"),
-        ],
-        back_link=BackLink("Back to " + cases.EcjuQueries.AddQuery.DROPDOWN_TITLE, choose_picklist_url),
-        default_button_name="Continue",
-    )
-
-
-def create_ecju_create_confirmation_form():
-    return confirm_form(
-        title="Do you want to send your question?",
-        confirmation_name="ecju_query_confirmation",
-        back_link_text="Back to " + cases.EcjuQueries.AddQuery.TITLE,
-        back_url="#",
-        yes_label="Yes, send the question",
-        no_label="No, edit the question",
-        submit_button_text="Continue",
-        hidden_field="ecju_query_create_confirmation",
+        ]
     )

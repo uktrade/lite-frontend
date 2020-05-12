@@ -11,9 +11,13 @@
 {% endblock %}
 
 {% block body %}
-	<h1 class="govuk-heading-l">
-		{{ team.name }}
-	</h1>
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">
+				{{ team.name }}
+			</h1>
+		</div>
+	</div>
 
 	{% if is_user_in_team %}
 		<div class="lite-tabs__container">

@@ -31,5 +31,4 @@ Feature: I want to create and deactivate flags
     And I select previously created flag
     Then The previously created flag is assigned to the case
     When I go to the final advice page by url
-    And I combine all advice
     Then I cannot finalise the case due to the blocking flag

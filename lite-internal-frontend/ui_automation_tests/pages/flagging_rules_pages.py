@@ -12,7 +12,7 @@ class FlaggingRulePages(BasePage):
     MATCHING_VALUE_ID = "matching_value"
     SELECT_FLAG_ID = "flag"
     BTN_CREATE_NEW_FLAGGING_RULE = "add-a-flag-button"
-    INCLUDE_DEACTIVATED = "Include deactivated"
+    INCLUDE_DEACTIVATED = "Include-deactivated"
     BUTTON_APPLY_FILTERS_ID = "button-apply-filters"
     REACTIVATE_FLAG_BUTTON = "a[href*='/Active/']"  # CSS
     DEACTIVATE_FLAG_BUTTON = "a[href*='/Deactivated/']"  # CSS

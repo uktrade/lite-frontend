@@ -1,12 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="34px" height="40px" viewBox="0 0 34 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 52.6 (67491) - http://www.bohemiancoding.com/sketch -->
-    <title>cases</title>
-    <desc>Created with Sketch.</desc>
-    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g fill="#000000">
-            <path d="M26,8 L8,8 L8,32 L0,32 L0,0 L26,0 L26,8 Z" fill-opacity="0.5"></path>
-            <rect x="8" y="8" width="26" height="32"></rect>
-        </g>
-    </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><rect x="64" y="176" width="384" height="256" rx="28.87" ry="28.87" style="fill:none;stroke:#000;stroke-linejoin:round;stroke-width:32px"/><line x1="144" y1="80" x2="368" y2="80" style="stroke:#000;stroke-linecap:round;stroke-miterlimit:10;stroke-width:32px"/><line x1="112" y1="128" x2="400" y2="128" style="stroke:#000;stroke-linecap:round;stroke-miterlimit:10;stroke-width:32px"/></svg>

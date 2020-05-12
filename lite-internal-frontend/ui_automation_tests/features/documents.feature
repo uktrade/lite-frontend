@@ -9,7 +9,7 @@ So that it is recorded against the case and available for other case workers to 
     Given I sign in to SSO or am signed into SSO
     And I create open application or open application has been previously created
     When I go to application previously created
-    And I click on the Documents button
+    And I go to the documents tab
     And I click on the Attach Document button
     And I upload file "file_for_doc_upload_test_1.txt" with description "Doesnt matter really"
     And I click on the Attach Document button

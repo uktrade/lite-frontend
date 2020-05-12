@@ -1,0 +1,64 @@
+<div id="{{ component.target }}-picklist-picker" class="app-hidden">
+	{% if component.data %}
+		<div id="picklist-{{ component.target }}" class="app-picklist-picker__container">
+			{% for item in component.data %}
+				<a onclick="return showPreviewModal(this, '#{{ component.target }}')" data-title="{{ item.name }}" data-text="{{ item.text }}" data-last-updated="{{ item.updated_at|str_date }}" class="app-picklist-picker__item">
+					<h4 class="govuk-heading-s">{{ item.name }}</h4>
+					<p class="govuk-caption-m">
+						{{ item.text|slice:":100" }}
+					</p>
+				</a>
+			{% endfor %}
+		</div>
+	{% else %}
+		{% include "includes/notice.html" with text='picklists.PicklistPicker.NO_CONTENT_NOTICE' %}
+	{% endif %}
+</div>
+
+<script>
+	$('#{{ component.target }}').closest( ".govuk-form-group" ).prepend('<a id="link-{{ component.target }}-picklist-picker" onclick="return show{{ component.target }}Modal()" href="#" class="govuk-link govuk-link--no-visited-state app-picklist-picker-heading__link">' +
+											'<svg width="13px" height="13px" viewBox="0 0 13 13" version="1.1">' +
+												'<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">' +
+													'<rect id="Rectangle" fill="#000000" x="6" y="0" width="1" height="13"></rect>' +
+													'<rect id="Rectangle-Copy" fill="#000000" transform="translate(6.500000, 6.500000) rotate(90.000000) translate(-6.500000, -6.500000) " x="6" y="0" width="1" height="13"></rect>' +
+												'</g>' +
+											'</svg>' +
+											'Add a picklist item' +
+										'</a>');
+
+	function show{{ component.target }}Modal() {
+		LITECommon.Modal.showModal('Select a picklist item', $( '#{{ component.target }}-picklist-picker' ).html(), false, true, {maxWidth: '450px'});
+		return false;
+	};
+
+	function showPreviewModal(item, textarea) {
+		var title = $(item).data( 'title' );
+		var text = $('<div>').text($(item).data( 'text' )).html();
+		var lastUpdated = $(item).data( 'last-updated' );
+		var textareaId = textarea.substring(1, textarea.length);
+
+		var previewHtml = '<div class="app-picklist-picker-preview">' +
+								'<div class="app-picklist-picker-preview__text">' +
+								'<p id="picker-preview-text" class="govuk-body-m">' + text + '</p>' +
+								'<p class="govuk-caption-m">Last updated ' + lastUpdated + '</p>' +
+							'</div>' +
+							'<div class="app-picklist-picker-preview__controls">' +
+								'<button id="button-submit-' + textareaId + '" onclick="setTextareaValue(\'' + textarea + '\');" type="submit" class="govuk-button" data-module="govuk-button">' +
+									'Use template' +
+								'</button>' +
+							'</div>' +
+						'</div>'
+
+		LITECommon.Modal.showModal(title, previewHtml, false, true);
+		return false;
+	};
+
+	function setTextareaValue(textarea) {
+		if ($(textarea).val()) {
+			$(textarea).val($(textarea).val() + "\n\n" + $('#picker-preview-text').text()).keyup();
+		} else {
+			$(textarea).val($('#picker-preview-text').text()).keyup();
+		}
+		LITECommon.Modal.closeAllModals();
+	}
+</script>

@@ -1,6 +1,6 @@
-from cases.constants import CaseType
-from lite_forms.components import Option, Checkboxes
+from collections import defaultdict
 
+from cases.constants import CaseType
 from conf.client import get
 from conf.constants import (
     DENIAL_REASONS_URL,
@@ -14,40 +14,25 @@ from conf.constants import (
     GOODS_QUERY_STATUSES,
     PV_GRADINGS_URL,
 )
+from lite_forms.components import Option
 from users.services import get_gov_user
 
 
-def get_denial_reasons(request, convert_to_options=True, group=True):
-    data = get(request, DENIAL_REASONS_URL)
-    status_code = data.status_code
-    data = data.json()
-
-    if not group:
-        return data, status_code
-
-    converted = {}
-
-    for denial_reason in data.get("denial_reasons"):
-        item_id = denial_reason["id"]
-
-        if not converted.get(item_id[0]):
-            converted[item_id[0]] = []
-
-        converted[item_id[0]].append(item_id)
+def get_denial_reasons(request, convert_to_options=False, group=False):
+    data = get(request, DENIAL_REASONS_URL).json()["denial_reasons"]
 
     if convert_to_options:
-        questions = []
-        for _, value in converted.items():
-            options = []
+        options = [Option(denial_reason["id"], denial_reason["id"]) for denial_reason in data]
 
-            for item in value:
-                options.append(Option(item, item))
+        if group:
+            return_dict = defaultdict(list)
+            for item in options:
+                return_dict[item.key[0]].append(item)
+            return dict(return_dict)
 
-            questions.append(Checkboxes("reasons", options, description=""))
+        return options
 
-        return questions
-    else:
-        return converted, status_code
+    return data
 
 
 def get_countries(request, convert_to_options=False, exclude: list = None):
@@ -147,8 +132,16 @@ def get_gov_pv_gradings(request, convert_to_options=False):
     return pv_gradings
 
 
-def get_pv_gradings(request):
+def get_pv_gradings(request, convert_to_options=False):
     pv_gradings = get(request, PV_GRADINGS_URL).json().get("pv_gradings")
+
+    if convert_to_options:
+        converted_units = []
+        for pv_grading_entry in pv_gradings:
+            for key in pv_grading_entry:
+                converted_units.append(Option(key=key, value=pv_grading_entry[key]))
+        return converted_units
+
     return pv_gradings
 
 

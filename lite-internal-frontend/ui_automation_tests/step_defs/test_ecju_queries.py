@@ -3,13 +3,12 @@ from uuid import uuid4
 from pytest_bdd import when, then, scenarios, given
 
 from pages.application_page import ApplicationPage
+from pages.case_page import CasePage, CaseTabs
 from pages.ecju_queries_pages import EcjuQueriesPages
-from pages.shared import Shared
 from shared import functions
+from shared.tools.helpers import scroll_to_element_below_header_by_id
 
 scenarios("../features/ecju_queries.feature", strict_gherkin=False)
-
-NEW_QUESTION_DROP_DOWN_TEXT = "Write a new question"
 
 
 @given("I create an ecju query picklist")
@@ -18,87 +17,40 @@ def i_create_an_ecju_query_picklist(context, add_an_ecju_query_picklist):
     context.ecju_query_picklist_question_text = add_an_ecju_query_picklist["text"]
 
 
-@when("I click the ECJU Queries button")
-def i_click_ecju_queries_button(driver):
-    application_page = ApplicationPage(driver)
-    application_page.click_ecju_queries_button()
+@when("I go to the ECJU queries tab")
+def i_go_to_the_ecju_queries_tab(driver):
+    CasePage(driver).change_tab(CaseTabs.ECJU_QUERIES)
 
 
-@when("I click Add an ECJU Query")
+@when("I click new query")
 def i_click_add_an_ecju_query(driver):
-    Shared(driver).click_submit()
-
-
-@when("I click Choose an ECJU Query Type")
-def i_click_choose_ecju_query_type(driver):
-    ecju_queries_pages = EcjuQueriesPages(driver)
-    ecju_queries_pages.click_choose_an_ecju_query_type_btn()
+    EcjuQueriesPages(driver).click_new_query_button()
 
 
 @when("I select standard ECJU Query for my query type")
 def i_select_standard_ecju_query(driver):
-    ecju_queries_page = EcjuQueriesPages(driver)
-    ecju_queries_page.click_standard_ecju_query()
+    EcjuQueriesPages(driver).click_standard_ecju_query()
+    functions.click_submit(driver)
 
 
-@when("I select a standard ECJU picklist question")
-def i_select_standard_picklist_question(driver, context):
-    ecju_queries_pages = EcjuQueriesPages(driver)
-    ecju_queries_pages.select_ecju_query_type(context.ecju_query_picklist_name)
-
-
-@then("the question text area contains expected text")
-def the_question_text_area_contains_expected_text(driver, context):
-    assert context.ecju_query_picklist_question_text == EcjuQueriesPages(driver).get_question_text()
-
-
-@when("I Select Write a new question")
-def i_select_write_a_new_question(driver):
-    ecju_queries_pages = EcjuQueriesPages(driver)
-    ecju_queries_pages.select_ecju_query_type(NEW_QUESTION_DROP_DOWN_TEXT)
-
-
-@then("the question text area is empty")
-def the_question_text_area_is_empty(driver):
-    driver.set_timeout_to(0)
-    assert not EcjuQueriesPages(driver).get_question_text()
-    driver.set_timeout_to(10)
-
-
-@when("I enter text in the question text area")
+@when("I enter in my query text")
 def i_enter_text_in_the_question_text_area(driver, context):
     ecju_queries_pages = EcjuQueriesPages(driver)
     context.ecju_question = str(uuid4())
     ecju_queries_pages.enter_question_text(context.ecju_question)
-
-
-@when("I click No")
-def i_click_no(driver):
-    ecju_queries_pages = EcjuQueriesPages(driver)
-    ecju_queries_pages.click_confirm_query_create_no()
-
-
-@then("the question text area contains previously entered text")
-def the_question_text_area_contains_expected_text(driver, context):
-    assert context.ecju_question == EcjuQueriesPages(driver).get_question_text()
-
-
-@when("I click Yes")
-def i_click_yes(driver):
-    ecju_queries_pages = EcjuQueriesPages(driver)
-    ecju_queries_pages.click_confirm_query_create_yes()
+    functions.click_submit(driver)
 
 
 @then("the new ECJU Query is visible in the list")
 def the_new_ecju_query_is_visible_in_the_list(driver, context):
-    ecju_queries_pages = EcjuQueriesPages(driver)
-    assert context.ecju_question in str(ecju_queries_pages.get_open_query_questions())
+    assert context.ecju_question in EcjuQueriesPages(driver).get_open_queries_text()
 
 
 @then("the ECJU Query creation is visible in the case timeline")
-def the_ecju_query_creation_is_visible_in_the_case_timeline(driver, context):
-    application_page = ApplicationPage(driver)
-    assert context.ecju_question in application_page.get_text_of_audit_trail_item(0)
+def the_ecju_query_creation_is_visible_in_the_case_timeline(driver, context, internal_url):
+    case_page = CasePage(driver)
+    ApplicationPage(driver).go_to_cases_activity_tab(internal_url, context)
+    assert context.ecju_question in case_page.get_audit_trail_text()
 
 
 @when("I create a response to the ECJU query")
@@ -110,16 +62,5 @@ def i_create_a_response_to_an_ecju(driver, context, api_test_client):
 
 @then("the ECJU Query is in the closed list")
 def ecju_query_in_closed_list(driver, context):
-    ecju_page = EcjuQueriesPages(driver)
-    assert context.ecju_response in ecju_page.get_closed_query_answers()
-    assert context.ecju_question in ecju_page.get_closed_query_questions()
-
-
-@when("I click back")  # noqa
-def i_click_back(driver):
-    functions.click_back_link(driver)
-
-
-@when("I click the case breadcrumb")  # noqa
-def i_click_back_the_case_breadcrumb(driver):
-    driver.find_element_by_id("link-back-to-case").click()
+    CasePage(driver).change_tab(CaseTabs.ECJU_QUERIES)
+    assert context.ecju_question in EcjuQueriesPages(driver).get_closed_queries_text()

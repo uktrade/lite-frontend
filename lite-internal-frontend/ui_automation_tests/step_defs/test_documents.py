@@ -30,8 +30,8 @@ def upload_a_file(driver, filename, description):
 @then(parsers.parse('file "{filename}" with description "{description}" is on position "{position}"'))
 def check_file2_is_uploaded(driver, filename, description, position):
     documents_page = DocumentsPage(driver)
-    assert documents_page.get_document_filename_at_position(int(position)) == filename, filename + " is not uploaded"
-    assert documents_page.get_document_description_at_position(int(position)) == description, (
+    assert filename in documents_page.get_document_filename_at_position(int(position)), filename + " is not uploaded"
+    assert description in documents_page.get_document_description_at_position(int(position)), (
         description + " is not uploaded"
     )
 

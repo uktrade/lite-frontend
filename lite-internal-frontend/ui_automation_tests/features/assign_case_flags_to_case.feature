@@ -23,9 +23,9 @@ Feature: I want to add case-level flags to a case and view them
     And I create standard application or standard application has been previously created
     When I add a flag at level Good
     And I go to application previously created
-    And I click edit goods flags link
+    And I click edit flags on the first good
     And I select previously created flag
-    Then the previously created goods flag is assigned to the case
+    Then the previously created goods flag is assigned to the good
     When I go to the internal homepage
     Then I see previously created application
     And I see the added flags on the queue
@@ -36,7 +36,7 @@ Feature: I want to add case-level flags to a case and view them
     And I create open application or open application has been previously created
     When I add a flag at level Good
     And I go to application previously created
-    And I click edit goods flags link
+    And I click edit flags on the first good
     And I select previously created flag
     And I add a flag at level Case
     And I go to application previously created
@@ -44,7 +44,7 @@ Feature: I want to add case-level flags to a case and view them
     And I select previously created flag
     And I add a flag at level Destination
     And I go to application previously created
-    And I click edit destination flags link
+    And I click edit flags on the first destination
     And I select previously created flag
     And I add a flag at level Organisation
     And I go to application previously created
@@ -56,4 +56,3 @@ Feature: I want to add case-level flags to a case and view them
     Then I see 3 flags for the case
     When I click the expand flags dropdown
     Then I see all flags for the case
-

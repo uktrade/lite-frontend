@@ -4,19 +4,18 @@ import datetime
 import json
 import math
 import re
-import warnings
+from collections import Counter, OrderedDict
 from html import escape
 
 from django import template
-from django.template.defaultfilters import stringfilter, safe
+from django.template.defaultfilters import stringfilter, safe, capfirst
 from django.templatetags.tz import do_timezone
 from django.utils.safestring import mark_safe
 
 from conf import settings
 from conf.constants import ISO8601_FMT, DATE_FORMAT
-
-from lite_content.lite_internal_frontend import strings
 from conf.constants import SystemTeamsID, CaseType
+from lite_content.lite_internal_frontend import strings
 
 register = template.Library()
 STRING_NOT_FOUND_ERROR = "STRING_NOT_FOUND"
@@ -46,7 +45,6 @@ def get_const_string(value):
             # Search the object for the next property in `nested_properties_list`
             return get(object, nested_properties_list[1:])
 
-    warnings.warn("Reference constants from strings directly, only use LCS in HTML files", Warning)
     path = value.split(".")
     try:
         # Get initial object from strings.py (may return AttributeError)
@@ -59,13 +57,16 @@ def get_const_string(value):
 @register.filter
 @stringfilter
 def str_date(value):
-    return_value = do_timezone(datetime.datetime.strptime(value, ISO8601_FMT), "Europe/London")
-    return (
-        return_value.strftime("%-I:%M")
-        + return_value.strftime("%p").lower()
-        + " "
-        + return_value.strftime("%d %B " "%Y")
-    )
+    try:
+        return_value = do_timezone(datetime.datetime.strptime(value, ISO8601_FMT), "Europe/London")
+        return (
+            return_value.strftime("%-I:%M")
+            + return_value.strftime("%p").lower()
+            + " "
+            + return_value.strftime("%d %B " "%Y")
+        )
+    except ValueError:
+        return
 
 
 @register.filter
@@ -419,6 +420,58 @@ def equals(ob1, ob2):
     return ob1 == ob2
 
 
+@register.filter()
+def not_equals(ob1, ob2):
+    return ob1 != ob2
+
+
+@register.filter()
+@mark_safe
+def aurora(flags):
+    """
+    Generates a radial gradient background from a list of flags
+    """
+    colours = {
+        "default": "#626a6e",
+        "red": "#d4351c",
+        "orange": "#f47738",
+        "blue": "#1d70b8",
+        "yellow": "#FED90C",
+        "green": "#00703c",
+        "pink": "#d53880",
+        "purple": "#4c2c92",
+        "brown": "#b58840",
+        "turquoise": "#28a197",
+    }
+
+    bucket = [colours[flag["colour"]] for flag in flags]
+
+    if len(set(bucket)) != len(bucket):
+        bucket = list(OrderedDict.fromkeys(item for items, c in Counter(bucket).most_common() for item in [items] * c))
+
+    if not bucket:
+        return
+
+    while len(bucket) < 4:
+        bucket.extend(bucket)
+
+    gradients = [
+        f"radial-gradient(ellipse at top left, {bucket[0]}, transparent)",
+        f"radial-gradient(ellipse at top right, {bucket[1]}, transparent)",
+        f"radial-gradient(ellipse at bottom left, {bucket[2]}, transparent)",
+        f"radial-gradient(ellipse at bottom right, {bucket[3]}, transparent)",
+    ]
+
+    return 'style="background: ' + ",".join(gradients) + '"'
+
+
+@register.filter()
+def multiply(num1, num2):
+    if not num1:
+        return 0
+    return float(num1) * float(num2)
+
+
 def join_list(_list, _join=", "):
     return _join.join(_list)
 
@@ -429,6 +482,49 @@ def join_key_value_list(_list, _join=", "):
     return join_list(_list, _join)
 
 
-@register.filter
-def multiply(value, arg):
-    return float(value) * float(arg)
+@register.filter()
+def filter_advice_by_user(advice, id):
+    return_list = []
+
+    for advice in advice:
+        if advice["user"]["id"] == id:
+            return_list.append(advice)
+
+    return return_list
+
+
+@register.filter()
+def filter_advice_by_id(advice, id):
+    return_list = []
+
+    for advice in advice:
+        for key in ["good", "goods_type", "country", "end_user", "ultimate_end_user", "consignee", "third_party"]:
+            if key in advice and advice[key] == id:
+                return_list.append(advice)
+
+    return return_list
+
+
+@register.filter()
+def filter_advice_by_level(advice, level):
+    return [advice for advice in advice if advice["level"] == level]
+
+
+@register.filter()
+def sentence_case(text):
+    return capfirst(text).replace("_", " ")
+
+
+@register.filter()
+def goods_value(goods):
+    total_value = 0
+
+    for good in goods:
+        total_value += float(good.get("value", 0))
+
+    return total_value
+
+
+@register.filter()
+def latest_status_change(activity):
+    return next((item for item in activity if "updated the status" in item["text"]), None)

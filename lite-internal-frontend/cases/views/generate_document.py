@@ -5,22 +5,20 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
-from cases.helpers import generate_document_error_page
-from lite_forms.components import BackLink
-
-from cases.forms.generate_document import select_template_form, edit_document_text_form, add_paragraphs_form
+from cases.forms.generate_document import select_template_form, edit_document_text_form
+from cases.helpers.helpers import generate_document_error_page
 from cases.services import (
     post_generated_document,
     get_generated_document_preview,
     get_generated_document,
+    get_case,
 )
 from core.helpers import convert_dict_to_query_params
 from letter_templates.services import get_letter_templates, get_letter_template
 from lite_content.lite_internal_frontend.cases import GenerateDocumentsPage
+from lite_forms.components import BackLink
 from lite_forms.generators import form_page
 from lite_forms.views import SingleFormView
-from picklists.services import get_picklists_for_input
-
 
 TEXT = "text"
 
@@ -35,16 +33,18 @@ class PickTemplateView(TemplateView):
 
     def get(self, request, **kwargs):
         pk = kwargs["pk"]
+        case = get_case(request, pk)
         page = request.GET.get("page", 1)
         params = {"case": pk, "page": page}
         if self.decision:
             params["decision"] = kwargs.get("decision_key")
         templates, _ = get_letter_templates(request, convert_dict_to_query_params(params))
-        back_link = BackLink(
-            text=self.back_text, url=reverse_lazy(self.back_url, kwargs={"queue_pk": kwargs["queue_pk"], "pk": pk}),
-        )
+        back_link = BackLink(url=reverse_lazy(self.back_url, kwargs={"queue_pk": kwargs["queue_pk"], "pk": pk}))
         return form_page(
-            request, select_template_form(templates["results"], templates, back_link=back_link), data=templates
+            request,
+            select_template_form(templates["results"], templates, back_link=back_link),
+            data=templates,
+            extra_data={"case": case},
         )
 
     def post(self, request, **kwargs):
@@ -75,12 +75,11 @@ class SelectTemplateFinalAdvice(PickTemplateView):
 
 
 class EditDocumentTextView(SingleFormView):
-    def __init__(self, back_url, post_url, back_text, add_paragraphs_url):
+    def __init__(self, back_url, post_url, back_text):
         super().__init__()
         self.back_url = back_url
         self.post_url = post_url
         self.back_text = back_text
-        self.add_paragraphs_url = add_paragraphs_url
 
     @staticmethod
     def _convert_text_list_to_str(request, json):
@@ -101,7 +100,9 @@ class EditDocumentTextView(SingleFormView):
             self.data = {TEXT: document[TEXT]}
             backlink = BackLink(
                 text=GenerateDocumentsPage.EditTextForm.BACK_LINK_REGENERATE,
-                url=reverse_lazy("cases:documents", kwargs={"queue_pk": kwargs["queue_pk"], "pk": case_id}),
+                url=reverse_lazy(
+                    "cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": case_id, "tab": "documents"}
+                ),
             )
 
         # if not returning to this page from adding paragraphs (going to page first time) get template text
@@ -111,7 +112,7 @@ class EditDocumentTextView(SingleFormView):
             )[0][TEXT]
             self.data = {TEXT: paragraph_text}
 
-        self.form = edit_document_text_form(backlink, kwargs, self.post_url, self.add_paragraphs_url)
+        self.form = edit_document_text_form(request, backlink, kwargs, self.post_url)
         self.redirect = False
         self.action = self._convert_text_list_to_str
 
@@ -121,8 +122,7 @@ class EditDocumentText(EditDocumentTextView):
         back_url = "cases:generate_document"
         post_url = "cases:generate_document_preview"
         back_text = GenerateDocumentsPage.EditTextForm.BACK_LINK
-        add_paragraphs_url = "cases:generate_document_add_paragraphs"
-        super().__init__(back_url, post_url, back_text, add_paragraphs_url)
+        super().__init__(back_url, post_url, back_text)
 
 
 class EditTextFinalAdvice(EditDocumentTextView):
@@ -130,8 +130,7 @@ class EditTextFinalAdvice(EditDocumentTextView):
         back_url = "cases:finalise_document_template"
         post_url = "cases:finalise_document_preview"
         back_text = GenerateDocumentsPage.EditTextForm.BACK_LINK
-        add_paragraphs_url = "cases:finalise_document_add_paragraphs"
-        super().__init__(back_url, post_url, back_text, add_paragraphs_url)
+        super().__init__(back_url, post_url, back_text)
 
 
 class RegenerateExistingDocument(TemplateView):
@@ -141,7 +140,9 @@ class RegenerateExistingDocument(TemplateView):
         document, status_code = get_generated_document(request, case_id, document_id)
         if status_code != HTTPStatus.OK:
             return redirect(
-                reverse_lazy("cases:documents", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": case_id})
+                reverse_lazy(
+                    "cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": case_id, "tab": "documents"}
+                )
             )
 
         return redirect(
@@ -152,34 +153,6 @@ class RegenerateExistingDocument(TemplateView):
             + "?document_id="
             + document_id
         )
-
-
-class AddDocumentParagraphsView(SingleFormView):
-    def __init__(self, back_url):
-        super().__init__()
-        self.back_url = back_url
-
-    @staticmethod
-    def _get_form_data(request, json):
-        return json, HTTPStatus.OK
-
-    def init(self, request, **kwargs):
-        letter_paragraphs = get_picklists_for_input(request, "letter_paragraph")
-        self.form = add_paragraphs_form(letter_paragraphs, request.POST[TEXT], kwargs, self.back_url)
-        self.redirect = False
-        self.action = self._get_form_data
-
-
-class AddDocumentParagraphs(AddDocumentParagraphsView):
-    def __init__(self):
-        back_url = "cases:generate_document_edit"
-        super().__init__(back_url)
-
-
-class AddDocumentParagraphsFinalAdvice(AddDocumentParagraphsView):
-    def __init__(self):
-        back_url = "cases:finalise_document_edit_text"
-        super().__init__(back_url)
 
 
 class PreviewDocument(TemplateView):
@@ -212,7 +185,9 @@ class CreateDocument(TemplateView):
         if status_code != HTTPStatus.CREATED:
             return generate_document_error_page()
         else:
-            return redirect(reverse_lazy("cases:documents", kwargs={"queue_pk": queue_pk, "pk": str(pk)}))
+            return redirect(
+                reverse_lazy("cases:case", kwargs={"queue_pk": queue_pk, "pk": str(pk), "tab": "documents"})
+            )
 
 
 class CreateDocumentFinalAdvice(TemplateView):

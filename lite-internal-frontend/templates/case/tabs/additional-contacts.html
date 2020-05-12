@@ -1,0 +1,44 @@
+{% make_list queue.id case.id as button_params %}
+{% govuk_link_button id='add-a-contact' text='cases.CasePage.AdditionalContactsTab.ADD_A_CONTACT_BUTTON' url='cases:add_additional_contact' url_param=button_params %}
+
+{% if additional_contacts %}
+	<table id="table-additional-contacts" class="govuk-table">
+		<thead class="govuk-table__head">
+			<tr class="govuk-table__row">
+				<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.AdditionalContactsTab.Table.DETAILS' %}</th>
+				<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.AdditionalContactsTab.Table.NAME' %}</th>
+				<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.AdditionalContactsTab.Table.ADDRESS' %}</th>
+				<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.AdditionalContactsTab.Table.EMAIL' %}</th>
+				<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.AdditionalContactsTab.Table.PHONE_NUMBER' %}</th>
+			</tr>
+		</thead>
+		<tbody class="govuk-table__body">
+			{% for contact in additional_contacts %}
+				<tr class="govuk-table__row">
+					<td scope="row" class="govuk-table__header">
+						<span class="govuk-table__header" aria-hidden="true">{% lcs 'cases.CasePage.AdditionalContactsTab.Table.DETAILS' %}</span>
+						{{ contact.details }}
+					</td>
+					<td class="govuk-table__cell">
+						<span class="govuk-table__header" aria-hidden="true">{% lcs 'cases.CasePage.AdditionalContactsTab.Table.NAME' %}</span>
+						{{ contact.name }}
+					</td>
+					<td class="govuk-table__cell">
+						<span class="govuk-table__header" aria-hidden="true">{% lcs 'cases.CasePage.AdditionalContactsTab.Table.ADDRESS' %}</span>
+						{{ contact|get_address|linebreaksbr }}
+					</td>
+					<td class="govuk-table__cell">
+						<span class="govuk-table__header" aria-hidden="true">{% lcs 'cases.CasePage.AdditionalContactsTab.Table.EMAIL' %}</span>
+						{{ contact.email }}
+					</td>
+					<td class="govuk-table__cell">
+						<span class="govuk-table__header" aria-hidden="true">{% lcs 'cases.CasePage.AdditionalContactsTab.Table.PHONE_NUMBER' %}</span>
+						{{ contact.phone_number }}
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% else %}
+	{% include "includes/notice.html" with text='cases.CasePage.AdditionalContactsTab.NO_CONTENT_NOTICE' %}
+{% endif %}

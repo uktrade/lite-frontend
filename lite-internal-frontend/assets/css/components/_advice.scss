@@ -1,34 +1,111 @@
-.app-advice {
+.app-advice__container {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-gap: govuk-spacing(6);
+	padding: 0;
+	margin: 0;
+	list-style-type: none;
+}
+
+.app-advice__item {
+	@include govuk-font($size: 16, $line-height: 1.4);
+	background-color: govuk-colour("light-grey");
+	box-sizing: border-box;
+	padding: govuk-spacing(4);
+	color: $govuk-text-colour;
+	border-top: 3px solid govuk-colour("mid-grey");
+
+	div {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		grid-gap: govuk-spacing(2) govuk-spacing(3);
+	}
+
+	&--approve, &--proviso {
+		border-top-color: govuk-colour("green");
+	}
+
+	&--refuse {
+		border-top-color: govuk-colour("red");
+	}
+
 	* {
 		white-space: normal;
 		word-wrap: break-word;
 		word-break: break-all;
+		margin: 0;
+
+		&:last-of-type {
+			margin-bottom: 0;
+		}
+	}
+
+	&__advice-type {
+		font-weight: bold;
+		margin: 0;
+		padding: 0;
+		margin-bottom: govuk-spacing(4)!important;
+		text-transform: uppercase;
+		letter-spacing: 1px;
+	}
+
+	&__denial-reasons {
+		padding: 0;
+		display: inline-flex;
+		list-style-type: none;
+
+		li {
+			margin-right: govuk-spacing(1);
+		}
 	}
 
 	&__user {
-		* {
-			margin: 0 0 govuk-spacing(2);
-		}
+		font-weight: normal;
+		letter-spacing: normal;
+		text-transform: none;
+		display: inline;
+		word-break: normal!important;
 	}
 
-	&__details {
-		padding: govuk-spacing(2);
-		background-color: govuk-colour("light-grey");
-		border: 2px solid darken(govuk-colour("light-grey"), 2%);
-		margin-bottom: govuk-spacing(6);
+	&__heading {
+		font-weight: bold;
 
-		* {
-			font-size: 16px;
-		}
-
-		.govuk-heading-s {
-			margin-bottom: 0;
+		span {
+			font-weight: normal!important;
 		}
 	}
+}
 
-	&:last-of-type {
-		.app-advice__details {
-			margin-bottom: 0;
-		}
+.app-advice__checkboxes .govuk-form-group {
+	margin-bottom: govuk-spacing(3);
+}
+
+.app-advice_app-bar {
+	display: flex;
+	justify-content: space-between;
+}
+
+.app-advice__disabled-buttons {
+	pointer-events: none;
+
+	.govuk-button {
+		opacity: .5;
 	}
+}
+
+.app-advice__sticky-table-cell__container {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 100%;
+	padding: 9px 0;
+}
+
+.app-advice__sticky-table-cell {
+	display: block;
+	position: sticky;
+	top: 100px;
+	margin: 9px 0;
 }

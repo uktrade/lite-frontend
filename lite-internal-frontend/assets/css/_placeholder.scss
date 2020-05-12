@@ -1,3 +1,7 @@
+.app-hidden {
+    display: none;
+}
+
 .app-expanded-row__item {
     display: none;
 }
@@ -6,127 +10,7 @@
     display: block;
 }
 
-.app-panel {
-	background-color: govuk-colour("light-grey");
-	padding: govuk-spacing(6);
-	margin-bottom: govuk-spacing(6);
-
-	&--info {
-		border-left: 5px solid $govuk-brand-colour;
-	}
-
-	hr {
-		@extend .lite-horizontal-separator;
-		background-color: govuk-colour("black");
-		opacity: .05;
-	}
-
-	.govuk-body-m:last-of-type {
-		margin-bottom: 0;
-		padding-bottom: 0;
-	}
-}
-
-.app-inset-text {
-	border-left: govuk-spacing(1) solid govuk-colour("mid-grey");
-	padding: govuk-spacing(3) govuk-spacing(5);
-}
-
-.app-summary-list {
-	margin-bottom: govuk-spacing(6);
-
-	&__item {
-		margin-bottom: govuk-spacing(6);
-
-		&:last-of-type {
-			margin-bottom: 0;
-		}
-
-		p {
-			margin: 0;
-		}
-
-		.govuk-caption-m {
-			margin-bottom: 10px;
-		}
-	}
-}
-
-.app-wrappable-list {
-	display: flex;
-	flex-wrap: wrap;
-	margin-bottom: govuk-spacing(6);
-	margin-right: - govuk-spacing(6);
-
-	&__group {
-		flex: 1;
-		min-width: 25%;
-
-		@media (max-width: 700px) {
-			min-width: 50%;
-		}
-
-		@media (max-width: 400px) {
-			min-width: 100%;
-		}
-	}
-
-	&__item {
-		position: relative;
-		display: block;
-
-		&:after {
-			content: "";
-			position: absolute;
-			left: 0;
-			right: govuk-spacing(6);
-			bottom: -2px;
-			height: 2px;
-			background-color: darken(govuk-colour("light-grey"), 2%);
-		}
-
-		.govuk-label {
-			line-height: 46px;
-		}
-
-		.govuk-checkboxes__item {
-			display: inline-block;
-			clear: none!important;
-			float: none!important;
-			margin-top: 10px;
-		}
-
-		.govuk-checkboxes__label {
-			line-height: inherit;
-		}
-	}
-}
-
 .app-letter-preview__page {
 	font-family: $govuk-font-family;
 	font-size: 18px;
-}
-
-.app-header__link__bubble {
-   position: absolute;
-   color: govuk-colour("white") !important;
-   top: 0;
-   right: 0;
-   background: govuk-colour("red");
-   border-radius: 50px;
-   width: govuk-spacing(4);
-   line-height: govuk-spacing(4);
-   height: govuk-spacing(4);
-}
-
-.app-header__link__bubble--small {
-   position: absolute;
-   color: govuk-colour("white") !important;
-   top: 0;
-   right: 0;
-   background: govuk-colour("red");
-   border-radius: 50px;
-   width: govuk-spacing(2);
-   line-height: govuk-spacing(2);
-   height: govuk-spacing(2);
 }

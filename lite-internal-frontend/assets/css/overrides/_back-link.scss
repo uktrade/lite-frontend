@@ -48,7 +48,7 @@ $chevron-border-colour: $govuk-text-colour;
 	transform: rotate(225deg);
 	border: solid;
 	border-width: $chevron-border-width $chevron-border-width 0 0;
-	border-color: $chevron-border-colour;
+	border-color: currentColor;
     clip-path: none;
 	// Fall back to a less than sign for IE8
 	@include govuk-if-ie8 {
@@ -56,7 +56,7 @@ $chevron-border-colour: $govuk-text-colour;
 		width: auto;
 		height: auto;
 		border: 0;
-		color: $chevron-border-colour;
+		color: currentColor;
 		// IE8 doesn't seem to like rendering pseudo-elements using @font-faces,
 		// so fall back to using another sans-serif font to render the chevron.
 		font-family: Arial, sans-serif;
@@ -70,4 +70,28 @@ $chevron-border-colour: $govuk-text-colour;
 	right: 0;
 	bottom: -14px;
 	left: 0;
+}
+
+.app-back-link-container {
+	position: relative;
+
+	* {
+		color: govuk-colour("white")!important;
+	}
+
+	&::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 50%;
+		width: 100vw;
+		transform: translateX(-50%);
+		bottom: 0;
+		background: govuk-shade($govuk-brand-colour, 20%);
+	}
+}
+
+.lite-back-link-button {
+	border: none!important;
+	text-decoration: underline;
 }

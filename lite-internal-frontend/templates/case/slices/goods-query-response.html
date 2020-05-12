@@ -1,0 +1,71 @@
+{% if case.data.clc_responded %}
+	<div class="app-case__slice--inset">
+		<h2 class="govuk-heading-m">{% lcs 'cases.ClcQuery.Verified.Clc.TITLE' %} outcome</h2>
+
+		<dl class="app-case__summary-list">
+			<div class="app-case__summary-list__row">
+				<dt class="app-case__summary-list__key">
+					{% lcs 'cases.ClcQuery.Verified.Clc.CONTROLLED' %}
+				</dt>
+				<dd class="app-case__summary-list__value">
+					{{ case.query.good.is_good_controlled.value }}
+				</dd>
+			</div>
+			<div class="app-case__summary-list__row">
+				<dt class="app-case__summary-list__key">
+					{% lcs 'cases.ClcQuery.Verified.Clc.CONTROL_CODE' %}
+				</dt>
+				<dd class="app-case__summary-list__value">
+					<div class="govuk-!-margin-bottom-6">
+						{% include 'includes/control-list-entries.html' with control_list_entries=case.data.good.control_list_entries %}
+					</div>
+				</dd>
+			</div>
+			<div class="app-case__summary-list__row">
+				<dt class="app-case__summary-list__key">
+					{% lcs 'cases.ClcQuery.Verified.Clc.REPORT' %}
+				</dt>
+				<dd class="app-case__summary-list__value">
+					{{ case.data.good.report_summary|default_na }}
+				</dd>
+			</div>
+			<div class="app-case__summary-list__row">
+				<dt class="app-case__summary-list__key">
+					{% lcs 'cases.ClcQuery.Verified.Clc.COMMENT' %}
+				</dt>
+				<dd class="app-case__summary-list__value">
+					{{ case.data.good.comment|default_na }}
+				</dd>
+			</div>
+		</dl>
+	</div>
+{% endif %}
+
+{% if case.data.pv_grading_responded %}
+	<div class="app-case__slice--inset">
+		<h2 class="govuk-heading-m">{% lcs 'cases.ClcQuery.Verified.PvGrading.TITLE' %} outcome</h2>
+
+		<dl class="app-case__summary-list">
+			<div class="app-case__summary-list__row">
+				<dt class="app-case__summary-list__key">
+					{% lcs 'cases.ClcQuery.Verified.PvGrading.GRADING' %}
+				</dt>
+				<dd class="app-case__summary-list__value">
+					<p class="govuk-body-m">
+						{{ case.query.good.pv_grading_details.prefix }}
+						{{ case.query.good.pv_grading_details.grading.value }}
+						{{ case.query.good.pv_grading_details.suffix }}
+					</p>
+				</dd>
+			</div>
+			<div class="app-case__summary-list__row">
+				<dt class="app-case__summary-list__key">
+					{% lcs 'cases.ClcQuery.Verified.PvGrading.COMMENT' %}
+				</dt>
+				<dd class="app-case__summary-list__value">
+					{{ case.query.good.grading_comment|default_na }}
+				</dd>
+			</div>
+		</dl>
+	</div>
+{% endif %}

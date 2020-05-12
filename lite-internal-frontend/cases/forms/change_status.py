@@ -1,6 +1,7 @@
-from cases.helpers import case_view_breadcrumbs
+from django.urls import reverse
+
 from lite_content.lite_internal_frontend import cases
-from lite_forms.components import Form, Option, Select
+from lite_forms.components import Form, Option, Select, BackLink
 
 
 def change_status_form(queue, case, statuses):
@@ -14,5 +15,6 @@ def change_status_form(queue, case, statuses):
                 include_default_select=False,
             )
         ],
-        back_link=case_view_breadcrumbs(queue, case, cases.ChangeStatusPage.TITLE),
+        back_link=BackLink(url=reverse("cases:case", kwargs={"queue_pk": queue["id"], "pk": case["id"]})),
+        container="case",
     )

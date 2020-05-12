@@ -1,0 +1,55 @@
+<table class="govuk-table">
+	<thead class="govuk-table__head">
+		<tr class="govuk-table__row">
+			<th class="govuk-table__header" scope="col">#</th>
+			<th class="govuk-table__header" scope="col">Question</th>
+			<th class="govuk-table__header" scope="col">Answer</th>
+		</tr>
+	</thead>
+	<tbody class="govuk-table__body">
+		<tr class="govuk-table__row">
+			<td class="govuk-table__cell govuk-table__cell--line-number">1.</td>
+			<th class="govuk-table__header" scope="row">Has electronic warfare requirement</th>
+			<td class="govuk-table__cell">{{ case.data.electronic_warfare_requirement|friendly_boolean }}</td>
+		</tr>
+		<tr class="govuk-table__row">
+			<td class="govuk-table__cell govuk-table__cell--line-number">2.</td>
+			<th class="govuk-table__header" scope="row">Is expedited</th>
+			<td class="govuk-table__cell">
+				<p class="govuk-body govuk-!-margin-bottom-1">{{ case.data.expedited|friendly_boolean }}</p>
+				<p class="govuk-hint govuk-!-margin-0">{{ case.data.expedited_date }}</p>
+			</td>
+		</tr>
+		<tr class="govuk-table__row">
+			<td class="govuk-table__cell govuk-table__cell--line-number">3.</td>
+			<th class="govuk-table__header" scope="row">Has foreign technology</th>
+			<td class="govuk-table__cell">
+				<p class="govuk-body govuk-!-margin-bottom-1">{{ case.data.foreign_technology|friendly_boolean }}</p>
+				<p class="govuk-hint govuk-!-margin-0" data-max-length="200">{{ case.data.foreign_technology_description }}</p>
+			</td>
+		</tr>
+		<tr class="govuk-table__row">
+			<td class="govuk-table__cell govuk-table__cell--line-number">4.</td>
+			<th class="govuk-table__header" scope="row">Is locally manufactured</th>
+			<td class="govuk-table__cell">
+				<p class="govuk-body govuk-!-margin-bottom-1">{{ case.data.locally_manufactured|friendly_boolean }}</p>
+				<p class="govuk-hint govuk-!-margin-0" data-max-length="200">{{ case.data.locally_manufactured_description }}</p>
+			</td>
+		</tr>
+		<tr class="govuk-table__row">
+			<td class="govuk-table__cell govuk-table__cell--line-number">5.</td>
+			<th class="govuk-table__header" scope="row">MTCR type</th>
+			<td class="govuk-table__cell">{{ case.data.mtcr_type.value }}</td>
+		</tr>
+		<tr class="govuk-table__row">
+			<td class="govuk-table__cell govuk-table__cell--line-number">6.</td>
+			<th class="govuk-table__header" scope="row">Has UK service equipment</th>
+			<td class="govuk-table__cell">{{ case.data.electronic_warfare_requirement|friendly_boolean }}</td>
+		</tr>
+		<tr class="govuk-table__row">
+			<td class="govuk-table__cell govuk-table__cell--line-number">7.</td>
+			<th class="govuk-table__header" scope="row">UK service equipment type</th>
+			<td class="govuk-table__cell">{{ case.data.uk_service_equipment_type.value }}</td>
+		</tr>
+	</tbody>
+</table>

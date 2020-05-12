@@ -1,8 +1,8 @@
 from django.http import HttpRequest
+from django.urls import reverse
 
-from cases.helpers import case_view_breadcrumbs
 from lite_content.lite_internal_frontend.cases import Manage
-from lite_forms.components import Form, Checkboxes, Filter
+from lite_forms.components import Form, Checkboxes, Filter, BackLink
 from queues.services import get_queues
 
 
@@ -12,5 +12,6 @@ def move_case_form(request: HttpRequest, queue, case: dict):
         Manage.MoveCase.DESCRIPTION,
         [Filter(), Checkboxes("queues[]", get_queues(request, convert_to_options=True))],
         javascript_imports=["/assets/javascripts/filter-checkbox-list.js"],
-        back_link=case_view_breadcrumbs(queue, case, Manage.MoveCase.TITLE),
+        back_link=BackLink(url=reverse("cases:case", kwargs={"queue_pk": queue["id"], "pk": case["id"]})),
+        container="case",
     )

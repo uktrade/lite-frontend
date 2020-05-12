@@ -1,0 +1,131 @@
+{% if not is_terminal %}
+	{% if case.data.clc_responded == False and 'REVIEW_GOODS' in permissions or case.data.pv_grading_responded == False and 'RESPOND_PV_GRADING' in permissions %}
+		<div class="app-case__slice__controls">
+			{% if case.data.clc_responded == False and 'REVIEW_GOODS' in permissions and not is_terminal %}
+				<a role="button" draggable="false" id="clc-button-respond" class="govuk-button" href="{% url 'cases:respond_to_clc_query' queue.id case.id %}">
+					{% lcs 'cases.ClcQuery.Actions.RESPOND_CLC' %}
+				</a>
+			{% endif %}
+			{% if case.data.pv_grading_responded == False and 'RESPOND_PV_GRADING' in permissions %}
+				<a role="button" draggable="false" id="grading-button-respond" class="govuk-button" href="{% url 'cases:respond_to_pv_grading_query' queue.id case.id %}">
+					{% lcs 'cases.ClcQuery.Actions.RESPOND_GRADING' %}
+				</a>
+			{% endif %}
+		</div>
+	{% endif %}
+{% endif %}
+
+<dl class="app-case__summary-list">
+	<div class="app-case__summary-list__row">
+		<dt class="app-case__summary-list__key">
+			{% lcs 'cases.ClcQuery.GoodDetails.Details.DESCRIPTION' %}
+		</dt>
+		<dd class="app-case__summary-list__value">
+			{{ case.query.good.description }}
+		</dd>
+	</div>
+	<div class="app-case__summary-list__row">
+		<dt class="app-case__summary-list__key">
+			{% lcs 'cases.ClcQuery.GoodDetails.Details.PART_NUMBER' %}
+		</dt>
+		<dd class="app-case__summary-list__value">
+			{{ case.query.good.part_number|default_na }}
+		</dd>
+	</div>
+	<div class="app-case__summary-list__row">
+		<dt class="app-case__summary-list__key">
+			{% if case.data.good.is_good_controlled != 'Unsure' %}
+				{% lcs 'cases.ClcQuery.GoodDetails.Clc.CONTROL_CODE' %}
+			{% else %}
+				{% lcs 'cases.ClcQuery.GoodDetails.Clc.EXPECTED_CONTROL_CODE' %}
+			{% endif %}
+		</dt>
+		<dd class="app-case__summary-list__value">
+			{% include 'includes/control-list-entries.html' with control_list_entries=case.data.good.control_list_entries %}
+		</dd>
+	</div>
+	{% if case.data.good.is_good_controlled.key == "unsure" %}
+		<div class="app-case__summary-list__row">
+			<dt class="app-case__summary-list__key">
+				{% lcs 'cases.ClcQuery.GoodDetails.Clc.REASON' %}
+			</dt>
+			<dd class="app-case__summary-list__value">
+				{{ case.data.clc_raised_reasons|default_na }}
+			</dd>
+		</div>
+	{% endif %}
+</dl>
+
+<br><br><br><br>
+
+{% if case.query.good.is_pv_graded.key == "yes" %}
+	<h2 class="govuk-heading-m">{% lcs 'cases.ClcQuery.GoodDetails.Grading.TITLE' %}</h2>
+	<dl class="app-case__summary-list">
+		{% if case.data.pv_grading_responded %}
+			<div class="app-case__summary-list__row">
+				<dt class="app-case__summary-list__key">
+					{% lcs 'cases.ClcQuery.GoodDetails.Grading.COMMENTS' %}
+				</dt>
+				<dd class="app-case__summary-list__value">
+					{{ case.data.pv_grading_raised_reasons|default_na }}
+				</dd>
+			</div>
+		{% elif case.data.good.pv_grading_details %}
+			<div class="app-case__summary-list__row">
+				<dt class="app-case__summary-list__key">
+					{% lcs 'cases.ClcQuery.GoodDetails.Grading.GRADING' %}
+				</dt>
+				<dd class="app-case__summary-list__value">
+					{{ case.query.good.pv_grading_details.prefix }}
+					{{ case.query.good.pv_grading_details.grading.value }}
+					{{ case.query.good.pv_grading_details.suffix }}
+				</dd>
+			</div>
+			{% if not case.data.pv_grading_responded %}
+				<div class="app-case__summary-list__row">
+					<dt class="app-case__summary-list__key">
+						{% lcs 'cases.ClcQuery.GoodDetails.Grading.ISSUING_AUTHORITY' %}
+					</dt>
+					<dd class="app-case__summary-list__value">
+						{{ case.query.good.pv_grading_details.issuing_authority }}
+					</dd>
+				</div>
+				<div class="app-case__summary-list__row">
+					<dt class="app-case__summary-list__key">
+						{% lcs 'cases.ClcQuery.GoodDetails.Grading.REFERENCE' %}
+					</dt>
+					<dd class="app-case__summary-list__value">
+						{{ case.query.good.pv_grading_details.reference }}
+					</dd>
+				</div>
+				<div class="app-case__summary-list__row">
+					<dt class="app-case__summary-list__key">
+						{% lcs 'cases.ClcQuery.GoodDetails.Grading.DATE_OF_ISSUE' %}
+					</dt>
+					<dd class="app-case__summary-list__value">
+						{{ case.query.good.pv_grading_details.date_of_issue }}
+					</dd>
+				</div>
+			{% endif %}
+		{% endif %}
+	</dl>
+{% endif %}
+
+<h2 class="govuk-heading-m">{% lcs 'cases.ClcQuery.GoodDetails.Documents.TITLE' %}</h2>
+{% if case.data.good.documents %}
+	<dl class="app-case__summary-list">
+		{% for document in case.data.good.documents %}
+			{% if document.safe == True %}
+				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' queue.id case.id document.id %}">
+					<span class="govuk-visually-hidden">{% lcs 'cases.ClcQuery.GoodDetails.Documents.DOWNLOAD' %}</span> {{ document.name }}
+				</a>
+			{% elif document.safe == False %}
+				{% lcs 'cases.Manage.Documents.VIRUS_INFECTED' %}
+			{% else %}
+				{% lcs 'cases.Manage.Documents.PROCESSING' %}
+			{% endif %}
+		{% endfor %}
+	</dl>
+{% else %}
+	{% include "includes/notice.html" with text='This good has no documents attached' %}
+{% endif %}

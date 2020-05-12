@@ -1,8 +1,7 @@
 from pytest_bdd import when, then, scenarios, given, parsers
+
 from pages.goods_queries_pages import GoodsQueriesPages
 from pages.shared import Shared
-
-from ui_automation_tests.shared.tools.helpers import scroll_to_element_by_id
 
 scenarios("../features/goods_queries.feature", strict_gherkin=False)
 
@@ -15,12 +14,6 @@ def respond_to_query(driver):
 @when("I click Respond to grading query")
 def respond_to_query(driver):
     GoodsQueriesPages(driver).click_respond_to_grading_query()
-
-
-@when("I submit response")
-def submit_response(driver):
-    scroll_to_element_by_id(driver, GoodsQueriesPages.SUBMIT_RESPONSE_BUTTON_ID)
-    GoodsQueriesPages(driver).click_overview_submit()
 
 
 @then("I see case is closed")
@@ -40,7 +33,7 @@ def create_grading_query(driver, apply_for_grading_query, context):
 
 @when(  # noqa
     parsers.parse(
-        'I respond prefix "{prefix}", select "{grading}", suffix "{suffix}", comment "{comment}", and click continue'
+        'I respond prefix "{prefix}", select "{grading}", suffix "{suffix}", comment "{comment}", and click submit'
     )  # noqa
 )  # noqa
 def enter_response(driver, prefix, grading, suffix, comment):  # noqa

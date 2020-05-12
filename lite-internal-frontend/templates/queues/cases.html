@@ -16,17 +16,11 @@
 	{% endif %}
 
 	<div class="lite-app-bar">
-		<form method="get" class="app-dropdown__select">
-			<select class="govuk-select" name="queue_id">
-				{% for queue in data.results.queues %}
-					<option value="{{ queue.id }}" {% if queue.id == data.results.queue.id %}selected{% endif %}>{{ queue.name }}</option>
-				{% endfor %}
-			</select>
-			<button type="submit" class="govuk-button">{% lcs 'cases.CasesListPage.GO_TO_QUEUE' %}</button>
-		</form>
-		<a id="queue-title" href="#" class="govuk-heading-l app-dropdown__heading" onclick="toggleDropdown()">
-			{{ data.results.queue.name }}
-		</a>
+		<div class="lite-app-bar__content">
+			<a tabindex="0" id="link-queue" href="{% url 'queues:manage' %}" class="app-dropdown__heading">
+				{{ data.results.queue.name }}<span class="govuk-visually-hidden"> - Click to change queue</span>
+			</a>
+		</div>
 		{% if not data.results.is_system_queue %}
 			<div class="lite-app-bar__controls">
 				<button id="assign-users-button" form="cases-form" type="submit" class="govuk-button govuk-button--secondary">{% lcs 'cases.CasesListPage.ASSIGN_USERS' %}</button>
@@ -34,16 +28,19 @@
 		{% endif %}
 	</div>
 
-	<div class="app-dropdown__background" onclick="toggleDropdown()"></div>
-	<div class="app-dropdown__container" id="queues">
-		<div class="app-dropdown__list">
-			{% for queue in data.results.queues %}
-				<a href="{% url 'queues:cases' queue.id %}" id="{{ queue.name }}" class="app-dropdown__item {% if queue.id == data.results.queue.id %}app-dropdown__item--selected{% endif %}">
-					{{ queue.name }}
-					<span class="app-dropdown__item__count">{{ queue.case_count }}</span>
-				</a>
-			{% endfor %}
+	<div id="queues" class="app-hidden">
+		<div class="app-menu__search">
+			<div>
+				{% svg 'search' %}
+			</div>
+			<input type="text" id="filter-queues">
 		</div>
+		{% for queue in data.results.queues %}
+			<a href="{% url 'queues:cases' queue.id %}" id="{{ queue.name }}" class="app-menu__item app-menu__item--subtitle {% if queue.id == data.results.queue.id %}app-menu__item--selected{% endif %}">
+				{{ queue.name }}
+				<span class="app-menu__item-subtitle">{{ queue.case_count }}</span>
+			</a>
+		{% endfor %}
 	</div>
 
 	{% include "filters.html" %}
@@ -227,18 +224,50 @@
 	<script src="{% static 'javascripts/select-buttons.js' %}"></script>
 
 	<script nonce="{{ request.csp_nonce }}">
+		$("#filter-queues").on('input', function() {
+			txt = $("#filter-queues").val();
+			anyVisible = false;
+			$('#queues a').hide();
+			$("#queues > span").hide();
+			$('#queues a').each(function(){
+				if ($(this).text().toUpperCase().indexOf(txt.toUpperCase()) != -1){
+					$(this).show();
+					anyVisible = true;
+				}
+			});
+
+			// var content_height = $('#queues').height();
+			// $('.queue-selector ').css("height", content_height);
+
+			if (!anyVisible) {
+				$("#queues > span").show()
+			}
+		});
+
+		$("#link-queue").removeAttr("href");
+		const queuesMenu = document.getElementById('queues');
+		queuesMenu.style.display = 'block';
+		tippy("#link-queue", {
+			content: queuesMenu,
+			allowHTML: true,
+			interactive: true,
+			animation: 'scale-subtle',
+			trigger: 'click',
+			theme: 'light',
+			placement: 'bottom-start',
+			arrow: null,
+			onShown(instance) {
+				$("#filter-queues").val("")
+				$("#filter-queues").focus()
+			},
+		});
+
 		tippy('.app-cases__row__attention-needed', {
 			content: "{% lcs 'cases.CasesListPage.NOT_UPDATED_RECENTLY' %}"
 		});
 		tippy('.app-cases__row__ecju-query', {
 			content: "{% lcs 'cases.CasesListPage.OPEN_TEAM_ECJU' %}"
 		});
-
-		function toggleDropdown() {
-			$(".app-dropdown-background").toggle();
-			$("#queues").toggleClass('app-dropdown__container--visible');
-			$("#queue-title").toggleClass("app-dropdown__heading--flipped");
-		}
 
 		function setAssignUsersAbility() {
 			// Disable the assign users button unless a checkbox is selected

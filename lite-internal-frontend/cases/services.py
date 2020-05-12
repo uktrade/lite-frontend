@@ -1,6 +1,6 @@
 from _decimal import Decimal
 
-from cases.helpers import clean_advice
+from cases.objects import Case
 from conf.client import post, get, put, delete
 from conf.constants import (
     CASE_URL,
@@ -19,7 +19,6 @@ from conf.constants import (
     TEAM_ADVICE_URL,
     FINAL_ADVICE_URL,
     VIEW_TEAM_ADVICE_URL,
-    VIEW_FINAL_ADVICE_URL,
     GOOD_CLC_REVIEW_URL,
     MANAGE_STATUS_URL,
     FINAL_DECISION_URL,
@@ -48,7 +47,7 @@ def get_case_types(request, type_only=True):
 # Case
 def get_case(request, pk):
     data = get(request, CASE_URL + str(pk))
-    return data.json()["case"]
+    return Case(data.json()["case"])
 
 
 # Case Queues
@@ -92,19 +91,18 @@ def put_goods_query_clc(request, pk, json):
     # This is a workaround due to RespondCLCQuery not using a SingleFormView
     if "control_list_entries[]" in json:
         json["control_list_entries"] = json.getlist("control_list_entries[]")
-
-    data = put(request, GOODS_QUERIES_URL + pk + CLC_RESPONSE_URL, json)
-    return data.json(), data.status_code
+    response = put(request, GOODS_QUERIES_URL + str(pk) + CLC_RESPONSE_URL, json)
+    return response.json(), response.status_code
 
 
 def put_goods_query_pv_grading(request, pk, json):
-    data = put(request, GOODS_QUERIES_URL + pk + PV_GRADING_RESPONSE_URL, json)
-    return data.json(), data.status_code
+    response = put(request, GOODS_QUERIES_URL + str(pk) + PV_GRADING_RESPONSE_URL, json)
+    return response.json(), response.status_code
 
 
 def put_goods_query_status(request, pk, json):
-    data = put(request, GOODS_QUERIES_URL + pk + MANAGE_STATUS_URL, json)
-    return data.json(), data.status_code
+    response = put(request, GOODS_QUERIES_URL + str(pk) + MANAGE_STATUS_URL, json)
+    return response.json(), response.status_code
 
 
 # EUA Queries
@@ -181,18 +179,13 @@ def clear_team_advice(request, case_pk):
     return data.json(), data.status_code
 
 
-def get_final_case_advice(request, case_pk):
-    data = get(request, CASE_URL + case_pk + VIEW_FINAL_ADVICE_URL)
-    return data.json(), data.status_code
-
-
 def get_final_decision_documents(request, case_pk):
-    data = get(request, CASE_URL + case_pk + "/final-advice-documents/")
+    data = get(request, CASE_URL + str(case_pk) + "/final-advice-documents/")
     return data.json(), data.status_code
 
 
-def grant_licence(request, case_pk):
-    data = put(request, CASE_URL + case_pk + FINALISE_CASE_URL, {})
+def grant_licence(request, case_pk, _):
+    data = put(request, CASE_URL + str(case_pk) + FINALISE_CASE_URL, {})
     return data.json(), data.status_code
 
 
@@ -211,81 +204,29 @@ def clear_final_advice(request, case_pk):
     return data.json(), data.status_code
 
 
-def return_non_empty(data):
-    for item in data:
-        if item:
-            return item
-
-
-def build_case_advice(key, value, base_data):
-    data = base_data.copy()
-    data[key] = value
-    return data
-
-
-def prepare_data_for_advice(json):
-    json = clean_advice(json)
-
-    # Split the json data into multiple
-    base_data = {"type": json["type"], "text": json["advice"], "note": json["note"]}
-
-    if json.get("type") == "refuse":
-        base_data["denial_reasons"] = json["denial_reasons"]
-
-    if json.get("type") == "proviso":
-        base_data["proviso"] = json["proviso"]
-
-    if json.get("pv_grading"):
-        base_data["pv_grading"] = json["pv_grading"]
-
-    new_data = []
-    single_cases = ["end_user", "consignee"]
-    multiple_cases = {
-        "ultimate_end_users": "ultimate_end_user",
-        "third_parties": "third_party",
-        "countries": "country",
-        "goods": "good",
-        "goods_types": "goods_type",
-    }
-
-    for entity_name in single_cases:
-        if json.get(entity_name):
-            new_data.append(build_case_advice(entity_name, json.get(entity_name), base_data))
-
-    for entity_name, entity_name_singular in multiple_cases.items():
-        if json.get(entity_name):
-            for entity in json.get(entity_name, []):
-                new_data.append(build_case_advice(entity_name_singular, entity, base_data))
-
-    return new_data
-
-
 def get_good_countries_decisions(request, case_pk):
-    data = get(request, CASE_URL + case_pk + "/goods-countries-decisions/")
+    data = get(request, CASE_URL + str(case_pk) + "/goods-countries-decisions/")
     return data.json()
 
 
-def post_good_countries_decisions(request, case_pk, json):
-    data = post(request, CASE_URL + case_pk + "/goods-countries-decisions/", json)
-    return data.json(), data.status_code
+def post_good_countries_decisions(request, pk, json):
+    response = post(request, CASE_URL + str(pk) + "/goods-countries-decisions/", json)
+    return response.json(), response.status_code
 
 
-def post_user_case_advice(request, case_pk, json):
-    new_data = prepare_data_for_advice(json)
-    data = post(request, CASE_URL + case_pk + USER_ADVICE_URL, new_data)
-    return data.json(), data.status_code
+def post_user_case_advice(request, pk, json):
+    response = post(request, CASE_URL + str(pk) + USER_ADVICE_URL, json)
+    return response.json(), response.status_code
 
 
-def post_team_case_advice(request, case_pk, json):
-    new_data = prepare_data_for_advice(json)
-    data = post(request, CASE_URL + case_pk + TEAM_ADVICE_URL, new_data)
-    return data.json(), data.status_code
+def post_team_case_advice(request, pk, json):
+    response = post(request, CASE_URL + str(pk) + TEAM_ADVICE_URL, json)
+    return response.json(), response.status_code
 
 
-def post_final_case_advice(request, case_pk, json):
-    new_data = prepare_data_for_advice(json)
-    data = post(request, CASE_URL + case_pk + FINAL_ADVICE_URL, new_data)
-    return data.json(), data.status_code
+def post_final_case_advice(request, pk, json):
+    response = post(request, CASE_URL + str(pk) + FINAL_ADVICE_URL, json)
+    return response.json(), response.status_code
 
 
 def get_document(request, pk):
@@ -300,8 +241,8 @@ def get_ecju_queries(request, pk):
 
 
 def post_ecju_query(request, pk, json):
-    data = post(request, CASE_URL + pk + ECJU_QUERIES_URL, json)
-    return data.json(), data.status_code
+    response = post(request, CASE_URL + str(pk) + ECJU_QUERIES_URL, json)
+    return response.json(), response.status_code
 
 
 def get_good(request, pk):
@@ -316,10 +257,16 @@ def get_goods_type(request, pk):
     return {"good": data.json()}, data.status_code
 
 
-def post_goods_control_code(request, case_id, json):
-    # Data will only be passed back when a error is thrown with status code of 400, as such it is not split here.
-    response = post(request, GOOD_CLC_REVIEW_URL + case_id + "/", json)
-    return response
+def post_review_goods(request, case_id, json):
+    json = {
+        "objects": request.GET.getlist("goods", request.GET.getlist("goods_types")),
+        "comment": request.POST.get("comment"),
+        "control_list_entries": request.POST.getlist("control_list_entries[]", []),
+        "is_good_controlled": request.POST.get("is_good_controlled"),
+        "report_summary": request.POST.get("report_summary"),
+    }
+    response = post(request, GOOD_CLC_REVIEW_URL + str(case_id) + "/", json)
+    return response.json(), response.status_code
 
 
 # Good Flags
@@ -337,49 +284,6 @@ def get_flags_for_team_of_level(request, level, team_id, include_system_flags=Fa
 def put_flag_assignments(request, json):
     data = put(request, ASSIGN_FLAGS_URL, json)
     return data.json(), data.status_code
-
-
-def _generate_data_and_keys(request, pk):
-    case = get_case(request, pk)
-    case_advice, _ = get_final_case_advice(request, pk)
-
-    # The keys are each relevant good-country pairing in the format good_id.country_id
-    keys = []
-    # Builds form page data structure
-    # For each good in the case
-    for good in case["application"]["goods_types"]:
-        # Match the goods with the goods in advice for that case
-        # and attach the advice value to the good
-        for advice in case_advice["advice"]:
-            if advice["goods_type"] == good["id"]:
-                good["advice"] = advice["type"]
-                break
-        # If the good has countries attached to it as destinations
-        # We do the same with the countries and their advice
-        if good["countries"]:
-            for country in good["countries"]:
-                keys.append(str(good["id"]) + "." + country["id"])
-                for advice in case_advice["advice"]:
-                    if advice["country"] == country["id"]:
-                        country["advice"] = advice["type"]
-                        break
-        # If the good has no countries:
-        else:
-            good["countries"] = []
-            # We attach all countries from the case
-            # And then attach the advice as before
-            for country in case["application"]["destinations"]["data"]:
-                good["countries"].append(country)
-                keys.append(str(good["id"]) + "." + country["id"])
-                for advice in case_advice["advice"]:
-                    if advice["country"] == country["id"]:
-                        country["advice"] = advice["type"]
-                        break
-    data = get_good_countries_decisions(request, pk)
-    if "detail" in data:
-        raise PermissionError
-
-    return case, data, keys
 
 
 def _generate_post_data_and_errors(keys, request_data, action):
@@ -434,19 +338,14 @@ def get_destination(request, pk):
     return data.json()
 
 
-def get_case_officer(request, pk):
-    data = get(request, CASE_URL + pk + CASE_OFFICER_URL)
-    return data.json()["case_officer"], data.status_code
+def put_case_officer(request, pk, json):
+    data = put(request, CASE_URL + str(pk) + CASE_OFFICER_URL, json)
+    return data.json(), data.status_code
 
 
-def put_case_officer(request, pk, user_pk):
-    data = put(request, CASE_URL + pk + CASE_OFFICER_URL, json={"gov_user_pk": user_pk})
-    return data, data.status_code
-
-
-def delete_case_officer(request, pk):
-    data = delete(request, CASE_URL + pk + CASE_OFFICER_URL)
-    return data, data.status_code
+def delete_case_officer(request, pk, *args):
+    data = delete(request, CASE_URL + str(pk) + CASE_OFFICER_URL)
+    return data.json(), data.status_code
 
 
 def get_case_additional_contacts(request, pk):

@@ -11,17 +11,16 @@ Feature: I want to respond to clc queries
     And I create a clc query
     When I go to goods query previously created
     And I click Respond to clc query
-    And I respond "yes", "ML1a", "1", "Because the good is controlled" and click continue
-    And I submit response
-    When I click progress application
+    And I respond "yes", "ML1a", "1", "Because the good is controlled" and click submit
+    When I click change status
     And I select status "Closed" and save
     Then I see case is closed
-    When I click progress application
+    When I click change status
     And I select status "Withdrawn" and save
-    Then the status has been changed in the application
-    When I click progress application
+    Then the status has been changed in the clc query
+    When I click change status
     And I select status "CLC review" and save
-    Then the status has been changed in the application
+    Then the status has been changed in the clc query
 
   @LT_1528_respond @pv_grading @smoke
   Scenario: respond to a grading type of query
@@ -30,14 +29,13 @@ Feature: I want to respond to clc queries
     And I create a grading query
     When I go to goods query previously created
     And I click Respond to grading query
-    And I respond prefix "abc", select "UK official", suffix "123", comment "This is my review", and click continue
-    And I submit response
-    When I click progress application
+    And I respond prefix "abc", select "UK official", suffix "123", comment "This is my review", and click submit
+    When I click change status
     And I select status "Closed" and save
     Then I see case is closed
-    When I click progress application
+    When I click change status
     And I select status "Withdrawn" and save
-    Then the status has been changed in the application
-    When I click progress application
+    Then the status has been changed in the clc query
+    When I click change status
     And I select status "PV grading review" and save
-    Then the status has been changed in the application
+    Then the status has been changed in the clc query

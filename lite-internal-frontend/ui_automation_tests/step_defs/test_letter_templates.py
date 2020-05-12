@@ -26,7 +26,7 @@ def create_letter_template(driver, context, get_template_id):
     functions.click_submit(driver)
 
     template_page.select_which_type_of_cases_template_can_apply_to(
-        ["Standard Individual Export Licence", "Open Individual Export Licence"]
+        ["Standard-Individual-Export-Licence", "Open-Individual-Export-Licence"]
     )
     functions.click_submit(driver)
 
@@ -104,7 +104,7 @@ def edit_template_name_and_layout(driver, context):
     letter_template = LetterTemplates(driver)
     letter_template.click_edit_template_button()
     letter_template.enter_template_name(context.document_template_name)
-    letter_template.select_which_type_of_cases_template_can_apply_to(["MOD F680 Clearance"])
+    letter_template.select_which_type_of_cases_template_can_apply_to(["MOD-F680-Clearance"])
     Shared(driver).click_submit()
 
 

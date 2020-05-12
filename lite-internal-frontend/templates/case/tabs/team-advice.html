@@ -1,0 +1,33 @@
+{% load static %}
+
+<form id="form-team-advice" action="{% url 'cases:team_advice_view' queue.id case.id %}" method="post">
+	{% csrf_token %}
+</form>
+
+<form action="{% url 'cases:give_advice' queue.id case.id 'team-advice' %}" method="get">
+	<div class="app-advice_app-bar">
+		<div class="lite-buttons-row {% if current_advice_level != 'team' %}app-advice__disabled-buttons{% endif %}">
+			<div data-enable-on-checkboxes="#table-goods-team-advice, #table-destinations-team-advice" class="lite-buttons-row lite-!-display-inline">
+				<button id="button-give-team-advice" name="action" value="give-advice" type="submit" class="govuk-button" data-module="govuk-button">
+					{% lcs 'advice.TeamAdvicePage.GIVE_CHANGE_ADVICE_BUTTON' %}
+				</button>
+			</div>
+			<button form="form-team-advice" id="button-clear-tema-advice" name="action" value="delete" type="submit" class="govuk-button" data-module="govuk-button">
+				{% lcs 'advice.TeamAdvicePage.CLEAR_ADVICE_BUTTON' %}
+			</button>
+		</div>
+
+		<div class="{% if current_advice_level != 'team' %}app-advice__disabled-buttons{% endif %}">
+			<a class="govuk-button" href="{% url 'cases:coalesce_team_advice' queue.id case.id %}" id="button-combine-team-advice">
+				{% lcs 'advice.TeamAdvicePage.CONTINUE_BUTTON' %}
+				<svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="13" height="15" viewBox="0 0 33 43" aria-hidden="true" focusable="false">
+					<path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
+				</svg>
+			</a>
+		</div>
+	</div>
+
+	{% include 'case/slices/goods.html' with hide_controls=True show_advice=True level='team' hide_checkboxes=current_advice_level|not_equals:'team' %}
+
+	{% include 'case/slices/destinations.html' with hide_controls=True show_advice=True level='team' hide_checkboxes=current_advice_level|not_equals:'team' %}
+</form>

@@ -34,7 +34,7 @@ Feature: I want to have cases be automatically routed to relevant work queues an
     When I go to routing rules list
     And I add a routing rule of tier "1", a status of "Submitted", my queue, and no additional rules for my team
     And I go to application previously created
-    And I click progress application
+    And I click change status
     And I select status "Submitted" and save
     And I click to rerun routing rules, and confirm
     Then I see my queue in assigned queues

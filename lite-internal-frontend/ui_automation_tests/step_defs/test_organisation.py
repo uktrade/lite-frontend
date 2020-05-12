@@ -1,14 +1,13 @@
+from faker import Faker
 from pytest_bdd import scenarios, when, then, given, parsers
 
-import pages.shared
+from pages.case_page import CasePage
 from pages.organisation_page import OrganisationPage
 from pages.organisations_form_page import OrganisationsFormPage
 from pages.organisations_page import OrganisationsPage
 from pages.shared import Shared
 from shared import functions
 from shared.tools.wait import wait_until_page_is_loaded
-from faker import Faker
-
 from ui_automation_tests.shared.api_client.libraries.request_data import build_organisation
 from ui_automation_tests.shared.functions import click_submit
 from ui_automation_tests.shared.tools.helpers import get_current_date_time, find_paginated_item_by_id
@@ -22,7 +21,7 @@ fake = Faker()
 def verify_registered_organisation(driver, context):
     wait_until_page_is_loaded(driver)
     # Assert that the success info bar is visible
-    assert functions.element_with_css_selector_exists(driver, ".lite-info-bar")
+    assert functions.element_with_css_selector_exists(driver, Shared(driver).SNACKBAR_SELECTOR)
     OrganisationsPage(driver).search_for_org_in_filter(context.organisation_name)
     row = OrganisationPage(driver).get_organisation_row()
     assert context.organisation_name in row["name"]
@@ -44,7 +43,7 @@ def verify_edited_organisation(driver, context):
 def verify_registered_individual_organisation(driver, context):
     wait_until_page_is_loaded(driver)
     # Assert that the success info bar is visible
-    assert functions.element_with_css_selector_exists(driver, ".lite-info-bar")
+    assert functions.element_with_css_selector_exists(driver, Shared(driver).SNACKBAR_SELECTOR)
     OrganisationsPage(driver).search_for_org_in_filter(context.organisation_name)
     row = OrganisationPage(driver).get_organisation_row()
     assert context.organisation_name in row["name"]
@@ -92,7 +91,7 @@ def i_choose_to_add_a_new_hmrc_organisation(driver, context):
 
 @then("the previously created organisations flag is assigned")  # noqa
 def assert_flag_is_assigned(driver, context):
-    assert Shared(driver).is_flag_applied(context.flag_name)
+    assert Shared(driver).is_flag_applied(context.flag_name), "Flag " + context.flag_name + " is not applied"
 
 
 @when("I go to organisations")
@@ -192,3 +191,8 @@ def organisation_warning(driver):
     matching_fields = ["Name", "EORI Number", "Registration Number", "Address"]
     for field in matching_fields:
         assert field in warning, "Missing field in organisation review warning"
+
+
+@then("the previously created organisations flag is assigned to the case")
+def step_impl(driver, context):
+    assert CasePage(driver).is_flag_applied(context.flag_name), "Flag " + context.flag_name + " is not applied"

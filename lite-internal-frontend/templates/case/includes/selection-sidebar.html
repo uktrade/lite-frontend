@@ -1,0 +1,32 @@
+{% if goods %}
+	<h3 class="govuk-heading-s">{{ goods|length }} good{{ goods|pluralize }}</h3>
+	<ul class="govuk-list govuk-list--number">
+		{% for good in goods %}
+			<li class="govuk-!-margin-bottom-3">
+				<span data-max-length="200">
+					{% if good.description %}
+						{{ good.description }}
+					{% else %}
+						{{ good.good.description }}
+					{% endif %}
+				</span>
+			</li>
+		{% endfor %}
+	</ul>
+{% endif %}
+
+{% if destinations %}
+	<h3 class="govuk-heading-s">{{ destinations|length }} destination{{ destinations|pluralize }}</h3>
+	<ul class="govuk-list govuk-list--number">
+		{% for destination in destinations %}
+			<li class="govuk-!-margin-bottom-3">
+				{% if destination.address %}
+					<p class="govuk-!-margin-0">{{ destination.name }} <span class="govuk-hint govuk-!-margin-0 lite-!-display-inline">({{ destination.type|sentence_case }})</span></p>
+					<p class="govuk-hint govuk-!-margin-0">{{ destination|get_address }}</p>
+				{% else %}
+					{{ destination.name }}
+				{% endif %}
+			</li>
+		{% endfor %}
+	</ul>
+{% endif %}

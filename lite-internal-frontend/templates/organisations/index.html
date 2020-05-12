@@ -3,8 +3,6 @@
 {% block back_link %}{% endblock %}
 
 {% block body %}
-	{% include 'includes/messages.html' %}
-
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
 			<h1 class="govuk-heading-l">
@@ -86,7 +84,7 @@
 				{% endfor %}
 			</tbody>
 		</table>
-		
+
 		{% pagination %}
 	{% else %}
 		{% include "includes/notice.html" with text="organisations.OrganisationsPage.ACTIVE_FILTER_NO_ORGANISATIONS" %}

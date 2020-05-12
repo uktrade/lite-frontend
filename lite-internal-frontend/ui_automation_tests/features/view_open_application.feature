@@ -10,6 +10,7 @@ Feature: View an Open Applications
     And I should see my case SLA
     When I go to the case
     Then I see the case page
+    When I go to the activity tab
     When filter user_type has been changed to "Exporter"
     Then exporter is at the first audit in the trail
     When filter user_type has been changed to "Internal"

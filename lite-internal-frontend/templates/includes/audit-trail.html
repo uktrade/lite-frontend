@@ -1,5 +1,4 @@
-<div class="app-activity__list">
-	{% include "filters.html" %}
+<div id="audit-trail" class="app-activity__list">
 	{% if activity %}
 		{% for audit in activity %}
 			<div id="case-activity-{{ audit.id }}" class="app-activity__item">

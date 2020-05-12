@@ -40,7 +40,7 @@ Feature: I want to add a company to LITE
     And I select previously created flag
     Then the previously created organisations flag is assigned
     When I go to open application previously created
-    Then the previously created organisations flag is assigned
+    Then the previously created organisations flag is assigned to the case
     When I go to the internal homepage
     Then I see previously created application
     And I see the added flags on the queue

@@ -12,9 +12,8 @@ Feature: I want to review, amend where required and confirm the goods ratings an
     And I create report summary picklist
     When I go to application previously created
     And I select goods and click review
-    And I click on add report summary
-    And I respond "yes", "ML4b1", "1", "Because the good is controlled" and click continue
-    Then the control list is present on goods review page
+    And I respond "yes", "ML4b1", "1", "Because the good is controlled" and click submit
+    Then the control list is present on the case page
 
   @LT_1629 @smoke
   Scenario: Review goods On Open Application
@@ -23,6 +22,5 @@ Feature: I want to review, amend where required and confirm the goods ratings an
     And I create report summary picklist
     When I go to application previously created
     And I select goods and click review
-    And I click on add report summary
-    And I respond "True", "ML4b1", "1", "Because the good is controlled" and click continue
-    Then the control list is present on goods review page
+    And I respond "True", "ML4b1", "1", "Because the good is controlled" and click submit
+    Then the control list is present on the case page

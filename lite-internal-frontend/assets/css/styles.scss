@@ -1,8 +1,9 @@
 // Set defaults
 $lite-transition-speed: 0.3s !default;
-$govuk-page-width: 1400px !default;
+$govuk-page-width: 2000px !default;
 $govuk-root-font-size: 19px !default;
-$govuk-font-family: -apple-system, BlinkMacSystemFont, Arial, Sans-Serif;
+$govuk-font-family: Segoe UI, -apple-system, BlinkMacSystemFont, Arial, Sans-Serif;
+$govuk-brand-colour: #31363F !default;
 
 @import "../shared/node_modules/govuk-frontend/govuk/all"; // GOV.UK Design System
 @import "../shared/lite-frontend/scss/all"; // LITE Shared Assets
@@ -13,12 +14,3 @@ $govuk-font-family: -apple-system, BlinkMacSystemFont, Arial, Sans-Serif;
 @import "placeholder";
 // Temporary file for odd bits of SCSS
 // Will be cleaned up every story
-
-.govuk-header {
-	border-bottom-color: $govuk-brand-colour;
-}
-
-.govuk-header__container {
-	border-bottom: none;
-	margin-bottom: 0;
-}

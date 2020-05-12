@@ -1,0 +1,34 @@
+<tr class="govuk-table__row">
+	{% if not hide_checkboxes %}<td class="govuk-table__cell"></td>{% endif %}
+	<td class="govuk-table__cell"></td>
+	<td class="govuk-table__cell govuk-!-padding-top-0" colspan="10">
+		<ol class="app-advice__container">
+			{% for advice in case.advice|filter_advice_by_level:level|filter_advice_by_id:id %}
+				<li class="app-advice__item app-advice__item--{{ advice.type.value|lower }}">
+					<p class="app-advice__item__advice-type">{{ advice.type.value }} <span class="app-advice__item__user">{% lcs 'advice.AdvicePage.BY_PREFIX' %}{{ advice.user.first_name }} {{ advice.user.last_name }} {% if advice.team %}({{ advice.team.name }}){% endif %}</span></p>
+					<div>
+						{% if advice.type.key == 'proviso' %}
+							<p class="app-advice__item__heading">{% lcs 'advice.AdvicePage.PROVISO' %}</p>
+							<p data-max-length="300">{{ advice.proviso|linebreaksbr }}</p>
+						{% elif advice.type.key == 'refuse' %}
+							<p class="app-advice__item__heading">{% lcs 'advice.AdvicePage.DENIAL_REASONS' %}</p>
+							<ol class="app-advice__item__denial-reasons">
+								{% for denial_reason in advice.denial_reasons %}
+									<li>{{ denial_reason }}{% if not forloop.last %}, {% endif %}</li>
+								{% endfor %}
+							</ol>
+						{% endif %}
+						<p class="app-advice__item__heading">{% lcs 'advice.AdvicePage.TEXT' %}</p>
+						<p data-max-length="300">{{ advice.text|linebreaksbr }}</p>
+						{% if advice.note %}
+							<p class="app-advice__item__heading">{% lcs 'advice.AdvicePage.NOTE' %}</p>
+							<p data-max-length="300">{{ advice.note|linebreaksbr }}</p>
+						{% endif %}
+					</div>
+				</li>
+			{% empty %}
+				<p class="govuk-hint govuk-!-margin-0">{% lcs 'advice.AdvicePage.NO_ADVICE' %}</p>
+			{% endfor %}
+		</ol>
+	</td>
+</tr>

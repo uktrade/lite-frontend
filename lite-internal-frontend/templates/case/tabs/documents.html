@@ -1,0 +1,47 @@
+{% load svg %}
+
+<div class="lite-buttons-row">
+	<a id="button-attach-document" role="button" draggable="false" class="govuk-button" href="{% url 'cases:attach_documents' queue.id case.id %}">
+		{% lcs 'cases.CasePage.DocumentsTab.ATTACH_DOCUMENT_BUTTON' %}
+	</a>
+	<a id="button-generate-document" role="button" draggable="false" class="govuk-button" href="{% url 'cases:generate_document' queue.id case.id %}">
+		{% lcs 'cases.CasePage.DocumentsTab.GENERATE_DOCUMENT_BUTTON' %}
+	</a>
+</div>
+
+{% if case_documents %}
+	<ol class="app-documents__list">
+		{% for document in case_documents %}
+			<li class="app-documents__item">
+				<div class="app-documents__item-preview">
+					{% svg 'document' %}
+					<span>
+						{{ document.name|file_type }}
+					</span>
+				</div>
+				<div class="app-documents__item-details">
+					<a class="govuk-link--no-visited-state" {% if document.safe == True %}href="{% url 'cases:document' queue.id case.id document.metadata_id %}"{% endif %}>{{ document.name }}</a>
+					<p id="document-type" class="govuk-hint">{% if document.visible_to_exporter %}Visible to exporter - {% endif %}{{ document.type.value }} by {{ document.user.first_name }} {{ document.user.last_name }} at {{ document.created_at|str_date }}</p>
+					{% if document.description %}
+						<p class="govuk-body">
+							{{ document.description }}
+						</p>
+					{% endif %}
+					{% if document.type.key == generated_document_key %}
+						<form method="get" action="{% url 'cases:generate_document_regenerate' queue.id case.id document.id %}">
+							{% csrf_token %}
+							<button id="regenerate" type="submit" class="lite-button--link">{% lcs 'cases.AdditionalDocumentsPage.Document.REGENERATE_LINK' %}</button>
+						</form>
+					{% endif %}
+					{% if document.safe == False %}
+						<p class="govuk-label">{% lcs 'cases.AdditionalDocumentsPage.Document.INFECTED_LABEL' %}</p>
+					{% elif document.safe is None %}
+						<p class="govuk-label">{% lcs 'cases.AdditionalDocumentsPage.Document.PROCESSING_LABEL' %}</p>
+					{% endif %}
+				</div>
+			</li>
+		{% endfor %}
+	</ol>
+{% else %}
+	{% include 'includes/notice.html' with text='cases.CasePage.DocumentsTab.NO_CONTENT_NOTICE' %}
+{% endif %}

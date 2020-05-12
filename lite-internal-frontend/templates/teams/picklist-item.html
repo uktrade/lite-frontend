@@ -23,11 +23,11 @@
 	{% endif %}
 
 	<p class="govuk-body">
-		<span class="govuk-caption-m">Created by</span>
-		<a class="govuk-link govuk-link--no-visited-state" href="{% url 'teams:team' picklist_item.team.id %}">{{ picklist_item.team.name }}</a>
-		<span class="govuk-caption-m">-</span>
-		<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type={{ picklist_item.type.key }}">{{ picklist_item.type.value }}</a>
-		<span class="govuk-caption-m">- Last updated</span>
+		<span class="govuk-caption-m lite-!-display-inline">Created by</span>
+		<a class="govuk-link govuk-link--no-visited-state lite-!-display-inline" href="{% url 'teams:team' picklist_item.team.id %}">{{ picklist_item.team.name }}</a>
+		<span class="govuk-caption-m lite-!-display-inline">-</span>
+		<a class="govuk-link govuk-link--no-visited-state lite-!-display-inline" href="{% url 'picklists:picklists' %}?type={{ picklist_item.type.key }}">{{ picklist_item.type.value }}</a>
+		<span class="govuk-caption-m lite-!-display-inline">- Last updated</span>
 		<span class="govuk-visually-hidden"> on </span>
 		{{ picklist_item.updated_at|str_date }}
 	</p>
@@ -48,7 +48,7 @@
 				<div class="govuk-accordion__section-header">
 					<h2 class="govuk-accordion__section-heading">
 						<span class="govuk-accordion__section-button" id="accordion-default-heading">
-							{% lcs 'CASE_ENTITIES_ACTIVITY' %}
+							{% lcs 'generic.ACTIVITY' %}
 						</span>
 					</h2>
 				</div>

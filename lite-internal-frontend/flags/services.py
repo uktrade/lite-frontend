@@ -21,15 +21,18 @@ def _get_team_flags(level, request, convert_to_options=False, include_deactivate
     ).json()
 
     if convert_to_options:
-        return [Option(key=flag["id"], value=flag["name"]) for flag in data]
+        return [
+            Option(key=flag["id"], value=flag["name"], classes=["app-flag", "app-flag--" + flag["colour"]])
+            for flag in data
+        ]
 
     return data
 
 
-get_cases_flags = functools.partial(_get_team_flags, "Case")
-get_goods_flags = functools.partial(_get_team_flags, "Good")
-get_organisation_flags = functools.partial(_get_team_flags, "Organisation")
-get_destination_flags = functools.partial(_get_team_flags, "Destination")
+get_cases_flags = functools.partial(_get_team_flags, "Case", convert_to_options=True)
+get_goods_flags = functools.partial(_get_team_flags, "Good", convert_to_options=True)
+get_organisation_flags = functools.partial(_get_team_flags, "Organisation", convert_to_options=True)
+get_destination_flags = functools.partial(_get_team_flags, "Destination", convert_to_options=True)
 
 
 def post_flags(request, json):

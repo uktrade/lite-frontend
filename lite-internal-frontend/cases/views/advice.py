@@ -1,17 +1,19 @@
+from collections import defaultdict
 from datetime import date
 from http import HTTPStatus
 
-from django.shortcuts import redirect, render
+from django.contrib import messages
+from django.http import Http404
+from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
 
 from cases.constants import CaseType
+from cases.forms.advice import give_advice_form, finalise_goods_countries_form, generate_documents_form
 from cases.forms.finalise_case import approve_licence_form, deny_licence_form
+from cases.helpers.advice import get_param_destinations, get_param_goods, flatten_advice_data, prepare_data_for_advice
 from cases.services import (
     post_user_case_advice,
-    get_user_case_advice,
-    get_team_case_advice,
-    get_final_case_advice,
     coalesce_user_advice,
     coalesce_team_advice,
     post_team_case_advice,
@@ -20,159 +22,105 @@ from cases.services import (
     clear_final_advice,
     get_case,
     finalise_application,
-    post_good_countries_decisions,
     get_good_countries_decisions,
-    _generate_data_and_keys,
-    _generate_post_data_and_errors,
     get_application_default_duration,
     grant_licence,
     get_final_decision_documents,
     get_licence,
     get_finalise_application_goods,
+    post_good_countries_decisions,
 )
-from cases.views_helpers import (
-    get_case_advice,
-    render_form_page,
-    post_advice,
-    post_advice_details,
-    give_advice_detail_dispatch,
-    give_advice_dispatch,
-)
-from conf.constants import DECISIONS_LIST, Permission
+from conf.constants import Permission
 from core import helpers
-from lite_content.lite_internal_frontend.cases import GenerateFinalDecisionDocumentsPage, FinaliseLicenceForm
+from core.builtins.custom_tags import filter_advice_by_level
+from core.services import get_denial_reasons
+from lite_content.lite_internal_frontend.advice import FinaliseLicenceForm
 from lite_forms.generators import form_page, error_page
+from lite_forms.views import SingleFormView
 
 
-class ViewUserAdvice(TemplateView):
-    """
-    View advice at a user level and select advice to edit
-    """
+class GiveAdvice(SingleFormView):
+    def init(self, request, **kwargs):
+        self.object_pk = kwargs["pk"]
+        self.case = get_case(request, self.object_pk)
+        self.tab = kwargs["tab"]
+        self.data = flatten_advice_data(
+            request,
+            self.case,
+            [*get_param_goods(request, self.case), *get_param_destinations(request, self.case)],
+            self.tab,
+        )
+        self.form = give_advice_form(
+            request,
+            self.case,
+            self.tab,
+            kwargs["queue_pk"],
+            get_denial_reasons(request, True, True),
+            show_warning=not self.data,
+        )
+        self.context = {
+            "case": self.case,
+            "goods": get_param_goods(request, self.case),
+            "destinations": get_param_destinations(request, self.case),
+        }
+        self.success_message = "Advice posted successfully"
+        self.success_url = reverse(
+            "cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.object_pk, "tab": self.tab}
+        )
 
-    case = None
-    form = None
+        if self.tab not in ["user-advice", "team-advice", "final-advice"]:
+            raise Http404
 
-    def dispatch(self, request, *args, **kwargs):
-        self.case, self.form = give_advice_dispatch("user", request, **kwargs)
-        return super(ViewUserAdvice, self).dispatch(request, *args, **kwargs)
+    def clean_data(self, data):
+        data["good"] = self.request.GET.getlist("goods")
+        data["goods_type"] = self.request.GET.getlist("goods_types")
+        data["country"] = self.request.GET.getlist("countries")
+        data["ultimate_end_user"] = self.request.GET.getlist("ultimate_end_user")
+        data["consignee"] = self.request.GET.get("consignee")
+        data["end_user"] = self.request.GET.get("end_user")
+        data["denial_reasons"] = self.request.POST.getlist("denial_reasons[]", [])
 
-    def get(self, request, **kwargs):
-        """
-        Show all advice that has been given for a case
-        """
-        return get_case_advice(get_user_case_advice, request, self.case, "user")
+        return prepare_data_for_advice(data)
 
-    def post(self, request, **kwargs):
-        return render_form_page(get_user_case_advice, request, self.case, self.form)
-
-
-class GiveUserAdvice(TemplateView):
-    """
-    Select the type of advice
-    """
-
-    case = None
-    form = None
-
-    def dispatch(self, request, *args, **kwargs):
-        self.case, self.form = give_advice_dispatch("user", request, **kwargs)
-        return super(GiveUserAdvice, self).dispatch(request, *args, **kwargs)
-
-    def post(self, request, **kwargs):
-        return post_advice(get_user_case_advice, request, self.case, self.form, "user")
-
-
-class GiveUserAdviceDetail(TemplateView):
-    """
-    Give details on the selection and send the data to the API
-    """
-
-    case = None
-    form = "case/give-advice.html"
-
-    def dispatch(self, request, *args, **kwargs):
-        self.case = give_advice_detail_dispatch(request, **kwargs)
-        return super(GiveUserAdviceDetail, self).dispatch(request, *args, **kwargs)
-
-    def post(self, request, **kwargs):
-        return post_advice_details(post_user_case_advice, request, self.case, self.form, "user", **kwargs)
+    def get_action(self):
+        if self.tab == "user-advice":
+            return post_user_case_advice
+        elif self.tab == "team-advice":
+            return post_team_case_advice
+        elif self.tab == "final-advice":
+            return post_final_case_advice
 
 
 class CoalesceUserAdvice(TemplateView):
     """
-    Group all of a user's team's user level advice in a team advie for the user's team
+    Group all of a user's team's user level advice in a team advice for the user's team
     """
 
-    def get(self, request, **kwargs):
+    def post(self, request, **kwargs):
         case_id = str(kwargs["pk"])
         coalesce_user_advice(request, case_id)
-        return redirect(reverse("cases:team_advice_view", kwargs={"queue_pk": kwargs["queue_pk"], "pk": case_id}))
+        messages.success(self.request, "User advice combined successfully")
+        return redirect(
+            reverse("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": case_id, "tab": "team-advice"})
+        )
 
 
-class ViewTeamAdvice(TemplateView):
+class ClearTeamAdvice(TemplateView):
     """
-    View the user's team's team level advice or another team's, edit and clear the user's team's team level advice
+    Clear the user's team's team level advice
     """
-
-    case = None
-    form = None
-    team = None
-
-    def dispatch(self, request, *args, **kwargs):
-        self.case, self.form, self.team = give_advice_dispatch("team", request, **kwargs)
-        return super(ViewTeamAdvice, self).dispatch(request, *args, **kwargs)
-
-    def get(self, request, **kwargs):
-        """
-        Show all team advice given for a case
-        """
-        return get_case_advice(get_team_case_advice, request, self.case, "team", self.team)
 
     def post(self, request, **kwargs):
+        case = get_case(request, kwargs["pk"])
+
         if request.POST.get("action") == "delete":
-            clear_team_advice(request, self.case.get("id"))
+            clear_team_advice(request, case.get("id"))
+
+            messages.success(self.request, "Team advice cleared successfully")
 
             return redirect(
-                reverse("cases:team_advice_view", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.case.get("id")})
+                reverse("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": kwargs["pk"], "tab": "team-advice"})
             )
-
-        elif request.POST.get("action") == "team":
-            return get_case_advice(get_team_case_advice, request, self.case, "team", {"id": request.POST.get("team")})
-
-        return render_form_page(get_team_case_advice, request, self.case, self.form, self.team)
-
-
-class GiveTeamAdvice(TemplateView):
-    """
-    Select the type of advice
-    """
-
-    case = None
-    form = None
-    team = None
-
-    def dispatch(self, request, *args, **kwargs):
-        self.case, self.form, self.team = give_advice_dispatch("team", request, **kwargs)
-        return super(GiveTeamAdvice, self).dispatch(request, *args, **kwargs)
-
-    def post(self, request, **kwargs):
-        return post_advice(get_team_case_advice, request, self.case, self.form, "team", self.team)
-
-
-class GiveTeamAdviceDetail(TemplateView):
-    """
-    Post the advice details to the API
-    """
-
-    case = None
-    form = "case/give-advice.html"
-
-    def dispatch(self, request, *args, **kwargs):
-        self.case = give_advice_detail_dispatch(request, **kwargs)
-        return super(GiveTeamAdviceDetail, self).dispatch(request, *args, **kwargs)
-
-    def post(self, request, **kwargs):
-        return post_advice_details(post_team_case_advice, request, self.case, self.form, "team", **kwargs)
 
 
 class CoalesceTeamAdvice(TemplateView):
@@ -183,128 +131,67 @@ class CoalesceTeamAdvice(TemplateView):
     def get(self, request, **kwargs):
         case_id = str(kwargs["pk"])
         coalesce_team_advice(request, case_id)
-        return redirect(reverse("cases:final_advice_view", kwargs={"queue_pk": kwargs["queue_pk"], "pk": case_id}))
+        messages.success(self.request, "Team advice combined successfully")
+        return redirect(
+            reverse("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": kwargs["pk"], "tab": "final-advice"})
+        )
 
 
-class ViewFinalAdvice(TemplateView):
+class ClearFinalAdvice(TemplateView):
     """
-    View, clear and edit final advice
+    Clear final advice
     """
-
-    case = None
-    form = None
-
-    def dispatch(self, request, *args, **kwargs):
-        self.case, self.form = give_advice_dispatch("final", request, **kwargs)
-        return super(ViewFinalAdvice, self).dispatch(request, *args, **kwargs)
-
-    def get(self, request, **kwargs):
-        """
-        Show all final advice given for a case
-        """
-        return get_case_advice(get_final_case_advice, request, self.case, "final")
 
     def post(self, request, **kwargs):
+        case = get_case(request, kwargs["pk"])
+
         if request.POST.get("action") == "delete":
-            clear_final_advice(request, self.case.get("id"))
+            clear_final_advice(request, case.get("id"))
 
-            return redirect(
-                reverse("cases:final_advice_view", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.case.get("id")})
-            )
+        messages.success(self.request, "Final advice cleared successfully")
 
-        return render_form_page(get_final_case_advice, request, self.case, self.form)
-
-
-class GiveFinalAdvice(TemplateView):
-    """
-    Select advice type
-    """
-
-    case = None
-    form = None
-
-    def dispatch(self, request, *args, **kwargs):
-        self.case, self.form = give_advice_dispatch("final", request, **kwargs)
-        return super(GiveFinalAdvice, self).dispatch(request, *args, **kwargs)
-
-    def post(self, request, **kwargs):
-        return post_advice(get_final_case_advice, request, self.case, self.form, "final")
+        return redirect(
+            reverse("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": kwargs["pk"], "tab": "final-advice"})
+        )
 
 
-class GiveFinalAdviceDetail(TemplateView):
-    """
-    Post the advice details to the API
-    """
+def create_mapping(goods):
+    return_dict = defaultdict(list)
 
-    case = None
-    form = "case/give-advice.html"
+    for good in goods:
+        for country in good["countries"]:
+            return_dict[good].append(country)
 
-    def dispatch(self, request, *args, **kwargs):
-        self.case = give_advice_detail_dispatch(request, **kwargs)
-        return super(GiveFinalAdviceDetail, self).dispatch(request, *args, **kwargs)
-
-    def post(self, request, **kwargs):
-        return post_advice_details(post_final_case_advice, request, self.case, self.form, "final", **kwargs)
+    return return_dict
 
 
-class FinaliseGoodsCountries(TemplateView):
-    def get(self, request, *args, **kwargs):
-        try:
-            case, data, _ = _generate_data_and_keys(request, str(kwargs["pk"]))
-        except PermissionError:
-            return error_page(request, "You do not have permission.")
-
-        context = {
-            "title": "Finalise goods and countries",
+class FinaliseGoodsCountries(SingleFormView):
+    def init(self, request, **kwargs):
+        self.object_pk = kwargs["pk"]
+        case = get_case(request, self.object_pk)
+        self.context = {
             "case": case,
-            "good_countries": data["data"],
-            "decisions": DECISIONS_LIST,
         }
-        return render(request, "case/finalise-open-goods-countries.html", context)
+        self.form = finalise_goods_countries_form(**kwargs)
+        self.action = post_good_countries_decisions
+        self.success_url = reverse_lazy("cases:finalise", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.object_pk})
 
-    def post(self, request, *args, **kwargs):
-        try:
-            case, data, keys = _generate_data_and_keys(request, str(kwargs["pk"]))
-        except PermissionError:
-            return error_page(request, "You do not have permission.")
+    def clean_data(self, data):
+        selection = {"good_countries": []}
+        data.pop("csrfmiddlewaretoken")
+        data.pop("_action")
 
-        request_data = request.POST.copy()
-        request_data.pop("csrfmiddlewaretoken")
-        selection = {}
-        action = request_data.pop("action")[0]
-
-        selection["good_countries"] = []
-        for key, value in request_data.items():
+        for key, value in data.items():
             selection["good_countries"].append(
-                {"case": str(kwargs["pk"]), "good": key.split(".")[0], "country": key.split(".")[1], "decision": value}
+                {
+                    "case": str(self.kwargs["pk"]),
+                    "good": key.split(".")[0],
+                    "country": key.split(".")[1],
+                    "decision": value,
+                }
             )
 
-        context = {
-            "title": "Finalise goods and countries",
-            "case": case,
-            "decisions": DECISIONS_LIST,
-            "good_countries": data["data"],
-            "errors": {},
-        }
-
-        post_data, errors = _generate_post_data_and_errors(keys, request_data, action)
-
-        # If errors, return page
-        if errors:
-            context["errors"] = errors
-            context["good_countries"] = post_data
-            return render(request, "case/finalise-open-goods-countries.html", context)
-
-        data, _ = post_good_countries_decisions(request, str(kwargs["pk"]), selection)
-
-        if action == "save":
-            context["good_countries"] = data["data"]
-            return render(request, "case/finalise-open-goods-countries.html", context)
-        elif "errors" in data:
-            context["error"] = data.get("errors")
-            return render(request, "case/finalise-open-goods-countries.html", context)
-
-        return redirect(reverse_lazy("cases:finalise", kwargs={"queue_pk": kwargs["queue_pk"], "pk": kwargs["pk"]}))
+        return selection
 
 
 class Finalise(TemplateView):
@@ -339,8 +226,8 @@ class Finalise(TemplateView):
             items = [item["decision"]["key"] for item in data]
             is_open_licence = True
         else:
-            advice, _ = get_final_case_advice(request, str(kwargs["pk"]))
-            items = [item["type"]["key"] for item in advice["advice"]]
+            advice = filter_advice_by_level(case["advice"], "final")
+            items = [item["type"]["key"] for item in advice]
             is_open_licence = case_type == CaseType.OPEN.value
 
         case_id = case["id"]
@@ -372,7 +259,7 @@ class Finalise(TemplateView):
                 editable_duration=helpers.has_permission(request, Permission.MANAGE_LICENCE_DURATION),
                 goods=self._get_goods(request, str(kwargs["pk"]), case_type),
             )
-            return form_page(request, form, data=form_data)
+            return form_page(request, form, data=form_data, extra_data={"case": case})
         else:
             return form_page(request, deny_licence_form(kwargs["queue_pk"], case_id, is_open_licence))
 
@@ -399,35 +286,27 @@ class Finalise(TemplateView):
                 editable_duration=has_permission,
                 goods=self._get_goods(request, str(kwargs["pk"]), case_type),
             )
-            return form_page(request, form, data=data, errors=res.json()["errors"])
+            return form_page(request, form, data=data, errors=res.json()["errors"], extra_data={"case": case})
 
         return redirect(
             reverse_lazy("cases:finalise_documents", kwargs={"queue_pk": kwargs["queue_pk"], "pk": case["id"]})
         )
 
 
-class FinaliseGenerateDocuments(TemplateView):
-    @staticmethod
-    def get_page(request, pk, errors=None):
-        decisions, _ = get_final_decision_documents(request, str(pk))
+class FinaliseGenerateDocuments(SingleFormView):
+    def init(self, request, **kwargs):
+        self.object_pk = kwargs["pk"]
+        case = get_case(request, self.object_pk)
+        self.form = generate_documents_form()
+        decisions, _ = get_final_decision_documents(request, self.object_pk)
         decisions = decisions["documents"]
         can_submit = all([decision.get("document") for decision in decisions.values()])
-
-        context = {
-            "case_id": str(pk),
-            "title": GenerateFinalDecisionDocumentsPage.TITLE,
+        self.context = {
+            "case": case,
             "can_submit": can_submit,
             "decisions": decisions,
-            "errors": errors,
         }
-        return render(request, "case/views/finalise-generate-documents.html", context)
-
-    def get(self, request, pk, **kwargs):
-        return self.get_page(request, pk)
-
-    def post(self, request, pk, **kwargs):
-        data, status_code = grant_licence(request, str(pk))
-        if status_code != HTTPStatus.CREATED:
-            return self.get_page(request, pk, errors=data["errors"])
-        else:
-            return redirect(reverse_lazy("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": pk}))
+        self.action = grant_licence
+        self.success_url = reverse_lazy(
+            "cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.object_pk, "tab": "final-advice"}
+        )

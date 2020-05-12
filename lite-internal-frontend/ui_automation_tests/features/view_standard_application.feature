@@ -14,10 +14,7 @@ Feature: I want to view the case details of a case
     Then I should see my case in the cases list
     And I should see my case SLA
     When I go to application previously created
-    Then I see an end user
-    And I see an ultimate end user
-    And I see a third party
-    And I see a consignee
+    Then I see the application destinations
     Given the exporter has deleted the third party
     When I go to application previously created
     Then I see an inactive party on page
@@ -35,6 +32,3 @@ Feature: I want to view the case details of a case
     Then I can see the case on the exporter amendments queue
     When I go to application previously created
     Then I see that changes have been made to the case
-    When I go to application previously created
-    Then I see assigned queues
-    And I see assigned users

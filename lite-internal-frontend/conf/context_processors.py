@@ -56,7 +56,7 @@ def lite_menu(request):
                 {
                     "title": strings.DOCUMENT_TEMPLATES_TITLE,
                     "url": reverse_lazy("letter_templates:letter_templates"),
-                    "icon": "menu/letter_templates",
+                    "icon": "menu/letter-templates",
                 },
             ),
             conditional(
@@ -66,7 +66,7 @@ def lite_menu(request):
             conditional(
                 Permission.MANAGE_TEAM_ROUTING_RULES.value in permissions
                 or Permission.MANAGE_ALL_ROUTING_RULES.value in permissions,
-                {"title": "Routing rules", "url": reverse_lazy("routing_rules:list"), "icon": "menu/flags"},
+                {"title": "Routing rules", "url": reverse_lazy("routing_rules:list"), "icon": "menu/routing-rules"},
             ),
         ]
     except AttributeError:

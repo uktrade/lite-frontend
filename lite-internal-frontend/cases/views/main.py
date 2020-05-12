@@ -10,13 +10,15 @@ from django.views.generic import TemplateView
 from s3chunkuploader.file_handler import S3FileUploadHandler, s3_client
 
 from cases.constants import CaseType
-from cases.forms.Rerun_routing_rules import rerun_routing_rules_confirmation_form
 from cases.forms.additional_contacts import add_additional_contact_form
 from cases.forms.assign_users import assign_case_officer_form, assign_user_and_work_queue, users_team_queues
 from cases.forms.attach_documents import attach_documents_form
 from cases.forms.change_status import change_status_form
 from cases.forms.done_with_case import done_with_case_form
 from cases.forms.move_case import move_case_form
+from cases.forms.rerun_routing_rules import rerun_routing_rules_confirmation_form
+from cases.helpers.advice import get_advice_additional_context
+from cases.helpers.case import CaseView, Tabs, Slices
 from cases.services import (
     get_case,
     post_case_notes,
@@ -24,190 +26,114 @@ from cases.services import (
     get_activity,
     put_case_queues,
     put_end_user_advisory_query,
-    _get_total_goods_value,
     put_goods_query_status,
-    get_case_officer,
     put_case_officer,
     delete_case_officer,
     put_unassign_queues,
-    get_user_case_queues,
-    get_case_additional_contacts,
     post_case_additional_contacts,
     put_rerun_case_routing_rules,
-    get_activity_filters,
 )
-from cases.services import post_case_documents, get_case_documents, get_document
+from cases.services import post_case_documents, get_document
 from conf import settings
-from conf.constants import GENERATED_DOCUMENT, Statuses
 from conf.settings import AWS_STORAGE_BUCKET_NAME
-from core.builtins.custom_tags import friendly_boolean
-from core.services import get_status_properties, get_user_permissions, get_permissible_statuses
-from lite_content.lite_exporter_frontend import applications
+from core.services import get_user_permissions, get_permissible_statuses
 from lite_content.lite_internal_frontend import cases
-from lite_forms.components import FiltersBar, Select, Option, DateInput
 from lite_forms.generators import error_page, form_page
+from lite_forms.helpers import conditional
 from lite_forms.views import SingleFormView
 from queues.services import put_queue_single_case_assignment, get_queue
 from users.services import get_gov_user_from_form_selection
 
 
-def get_additional_information(case):
-    """
-    Returns an additional information component to be rendered by templates.
-    """
-    field_titles = {
-        "electronic_warfare_requirement": applications.AdditionalInformation.ELECTRONIC_WARFARE_REQUIREMENT,
-        "expedited": applications.AdditionalInformation.EXPEDITED,
-        "expedited_date": applications.AdditionalInformation.EXPEDITED_DATE,
-        "foreign_technology": applications.AdditionalInformation.FOREIGN_TECHNOLOGY,
-        "foreign_technology_type": applications.AdditionalInformation.FOREIGN_TECHNOLOGY_TYPE,
-        "locally_manufactured": applications.AdditionalInformation.LOCALLY_MANUFACTURED,
-        "mtcr_type": applications.AdditionalInformation.MTCR_TYPE,
-        "uk_service_equipment": applications.AdditionalInformation.UK_SERVICE_EQUIPMENT,
-        "uk_service_equipment_type": applications.AdditionalInformation.UK_SERVICE_EQUIPMENT_TYPE,
-        "value": applications.AdditionalInformation.VALUE,
-    }
+class CaseDetail(CaseView):
+    def get_open_application(self):
+        self.tabs = [Tabs.ADVICE]
+        self.slices = [
+            Slices.GOODS,
+            Slices.DESTINATIONS,
+            conditional(self.case.data["inactive_parties"], Slices.DELETED_ENTITIES),
+            Slices.LOCATIONS,
+            Slices.END_USE_DETAILS,
+            Slices.ROUTE_OF_GOODS,
+            Slices.SUPPORTING_DOCUMENTS,
+        ]
 
-    values_to_print = []
-
-    for field, title in field_titles.items():
-        value = case.get(field)
-        if value is not None:
-            values_to_print.append(
-                {
-                    "Number": len(values_to_print) + 1,
-                    "Description": title,
-                    "Answer": (
-                        friendly_boolean(value)
-                        if isinstance(value, bool)
-                        else value["value"]
-                        if isinstance(value, dict)
-                        else value
-                    ),
-                    "SubAnswer": case.get(f"{field}_description") if case.get(field) is True else None,
-                }
-            )
-
-    return values_to_print
-
-
-class ViewCase(TemplateView):
-    def get(self, request, **kwargs):
-        case_id = str(kwargs["pk"])
-        case = get_case(request, case_id)
-        case_type = case["case_type"]["type"]["key"]
-        case_sub_type = case["case_type"]["sub_type"]["key"]
-        user_assigned_queues, _ = get_user_case_queues(request, case_id)
-        queue_id = kwargs["queue_pk"]
-        queue = get_queue(request, queue_id)
-        is_system_queue = queue["is_system_queue"]
-
-        if "application" in case:
-            status_props, _ = get_status_properties(request, case["application"]["status"]["key"])
-            can_set_done = (
-                not status_props["is_terminal"] and case["application"]["status"]["key"] != Statuses.APPLICANT_EDITING
-            )
-        else:
-            status_props, _ = get_status_properties(request, case["query"]["status"]["key"])
-            can_set_done = (
-                not status_props["is_terminal"] and case["query"]["status"]["key"] != Statuses.APPLICANT_EDITING
-            )
-
-        can_set_done = can_set_done and (is_system_queue and user_assigned_queues) or not is_system_queue
-
-        activity_filters = get_activity_filters(request, case_id)
-
-        def make_options(values):
-            return [Option(option["key"], option["value"]) for option in values]
-
-        filters = FiltersBar(
-            [
-                Select(
-                    title=cases.ApplicationPage.ActivityFilters.USER,
-                    name="user_id",
-                    options=make_options(activity_filters["users"]),
-                ),
-                Select(
-                    title=cases.ApplicationPage.ActivityFilters.TEAM,
-                    name="team_id",
-                    options=make_options(activity_filters["teams"]),
-                ),
-                Select(
-                    title=cases.ApplicationPage.ActivityFilters.USER_TYPE,
-                    name="user_type",
-                    options=make_options(activity_filters["user_types"]),
-                ),
-                Select(
-                    title=cases.ApplicationPage.ActivityFilters.ACTIVITY_TYPE,
-                    name="activity_type",
-                    options=make_options(activity_filters["activity_types"]),
-                ),
-                DateInput(title=cases.ApplicationPage.ActivityFilters.DATE_FROM, prefix="from_"),
-                DateInput(title=cases.ApplicationPage.ActivityFilters.DATE_TO, prefix="to_"),
-            ]
-        )
-
-        context = {
-            "activity": get_activity(request, case_id, activity_filters=request.GET),
-            "case": case,
-            "queue": queue,
-            "permissions": get_user_permissions(request),
-            "permissible_statuses": get_permissible_statuses(request, case_type),
-            "status_is_read_only": status_props["is_read_only"],
-            "status_is_terminal": status_props["is_terminal"],
-            "can_set_done": can_set_done,
-            "filters": filters,
+        self.additional_context = {
+            **get_advice_additional_context(self.request, self.case, self.permissions),
+            "is_case_oiel_final_advice_only": False,
         }
+        if "goodstype_category" in self.case.data:
+            self.additional_context["is_case_oiel_final_advice_only"] = self.case.data["goodstype_category"]["key"] in [
+                "media",
+                "cryptographic",
+                "dealer",
+                "uk_continental_shelf",
+            ]
 
-        if case_sub_type == CaseType.END_USER_ADVISORY.value:
-            return render(request, "case/queries/end-user-advisory.html", context)
-        elif case_sub_type == CaseType.GOODS.value:
-            context["good"] = case["query"]["good"]
-            context["verified"] = case["query"]["good"]["status"]["key"] == "verified"
-            return render(request, "case/queries/goods-query-case.html", context)
-        elif case_sub_type == CaseType.HMRC.value:
-            context["total_goods_value"] = _get_total_goods_value(case)
-            return render(request, "case/queries/hmrc-case.html", context)
-        elif case_sub_type in [
-            CaseType.EXHIBITION.value,
-            CaseType.F680.value,
-            CaseType.GIFTING.value,
-        ]:
-            if case_sub_type != CaseType.EXHIBITION.value:
-                context["total_goods_value"] = _get_total_goods_value(case)
-            if case_sub_type == CaseType.F680.value:
-                context["case"]["application"]["additional_information"] = get_additional_information(
-                    case["application"]
-                )
-            return render(request, "case/applications/mod-clearance.html", context)
-        elif case_type == CaseType.APPLICATION.value:
-            context["total_goods_value"] = _get_total_goods_value(case)
-            if case_sub_type == CaseType.OPEN.value:
-                return render(request, "case/applications/open-licence-case.html", context)
-            elif case_sub_type == CaseType.STANDARD.value:
-                return render(request, "case/applications/standard-licence-case.html", context)
-        raise Exception("Invalid case_sub_type: {}".format(case_sub_type))
+    def get_standard_application(self):
+        self.tabs = [Tabs.ADVICE]
+        self.slices = [
+            Slices.GOODS,
+            Slices.DESTINATIONS,
+            conditional(self.case.data["inactive_parties"], Slices.DELETED_ENTITIES),
+            Slices.LOCATIONS,
+            Slices.SUPPORTING_DOCUMENTS,
+        ]
+        self.additional_context = get_advice_additional_context(self.request, self.case, self.permissions)
 
+    def get_hmrc_application(self):
+        self.slices = [
+            Slices.HMRC_NOTE,
+            Slices.GOODS,
+            Slices.DESTINATIONS,
+            Slices.LOCATIONS,
+            Slices.SUPPORTING_DOCUMENTS,
+        ]
+
+    def get_exhibition_clearance_application(self):
+        self.tabs = [Tabs.ADVICE]
+        self.slices = [
+            Slices.EXHIBITION_DETAILS,
+            Slices.GOODS,
+            Slices.LOCATIONS,
+            Slices.SUPPORTING_DOCUMENTS,
+        ]
+        self.additional_context = get_advice_additional_context(self.request, self.case, self.permissions)
+
+    def get_gifting_clearance_application(self):
+        self.tabs = [Tabs.ADVICE]
+        self.slices = [Slices.GOODS, Slices.DESTINATIONS, Slices.LOCATIONS, Slices.SUPPORTING_DOCUMENTS]
+
+    def get_f680_clearance_application(self):
+        self.tabs = [Tabs.ADVICE]
+        self.slices = [
+            Slices.GOODS,
+            Slices.DESTINATIONS,
+            Slices.F680_DETAILS,
+            Slices.END_USE_DETAILS,
+            Slices.SUPPORTING_DOCUMENTS,
+        ]
+
+    def get_end_user_advisory_query(self):
+        self.slices = [Slices.END_USER_ADVISORY]
+
+    def get_goods_query(self):
+        self.slices = [Slices.GOODS_QUERY]
+        if self.case.data["clc_responded"] or self.case.data["pv_grading_responded"]:
+            self.slices.insert(0, Slices.GOODS_QUERY_RESPONSE)
+
+
+class CaseNotes(TemplateView):
     def post(self, request, **kwargs):
         case_id = str(kwargs["pk"])
         response, status_code = post_case_notes(request, case_id, request.POST)
 
         if status_code != 201:
+            return error_page(request, response.get("errors")["text"][0])
 
-            errors = response.get("errors")
-            if errors.get("text"):
-                error = errors.get("text")[0]
-                error = error.replace("This field", "Case note")
-                error = error.replace("this field", "the case note")  # TODO: Move to API
-
-            else:
-                error_list = []
-                for key in errors:
-                    error_list.append("{field}: {error}".format(field=key, error=errors[key][0]))
-                error = "\n".join(error_list)
-            return error_page(request, error)
-
-        return redirect(reverse("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": case_id}) + "#case_notes")
+        return redirect(
+            reverse("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": case_id, "tab": "activity"})
+        )
 
 
 class CaseImDoneView(TemplateView):
@@ -266,6 +192,7 @@ class ChangeStatus(SingleFormView):
         permissible_statuses = get_permissible_statuses(request, self.case_type)
         self.data = case["application"] if "application" in case else case["query"]
         self.form = change_status_form(get_queue(request, kwargs["queue_pk"]), case, permissible_statuses)
+        self.context = {"case": case}
 
     def get_action(self):
         if (
@@ -291,26 +218,11 @@ class MoveCase(SingleFormView):
         self.data = case
         self.form = move_case_form(request, get_queue(request, kwargs["queue_pk"]), case)
         self.action = put_case_queues
-
-    def get_success_url(self):
-        messages.success(self.request, cases.Manage.MoveCase.SUCCESS_MESSAGE)
-        return reverse_lazy("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk})
-
-
-class AdditionalContacts(TemplateView):
-    def get(self, request, **kwargs):
-        """
-        List all documents belonging to a case
-        """
-        case_id = str(kwargs["pk"])
-        case = get_case(request, case_id)
-        additional_contacts = get_case_additional_contacts(request, case_id)
-
-        context = {
-            "case": case,
-            "additional_contacts": additional_contacts,
-        }
-        return render(request, "case/views/additional-contacts.html", context)
+        self.context = {"case": case}
+        self.success_message = cases.Manage.MoveCase.SUCCESS_MESSAGE
+        self.success_url = reverse_lazy(
+            "cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk}
+        )
 
 
 class AddAnAdditionalContact(SingleFormView):
@@ -318,39 +230,25 @@ class AddAnAdditionalContact(SingleFormView):
         self.object_pk = kwargs["pk"]
         self.form = add_additional_contact_form(request, self.kwargs["queue_pk"], self.object_pk)
         self.action = post_case_additional_contacts
-        self.success_message = cases.AdditionalContacts.SUCCESS_MESSAGE
+        self.success_message = cases.CasePage.AdditionalContactsTab.SUCCESS_MESSAGE
+        self.context = {"case": get_case(request, self.object_pk)}
         self.success_url = reverse(
-            "cases:additional_contacts", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk}
+            "cases:case",
+            kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk, "tab": "additional-contacts"},
         )
-
-
-class Documents(TemplateView):
-    def get(self, request, **kwargs):
-        """
-        List all documents belonging to a case
-        """
-        case_id = str(kwargs["pk"])
-        case = get_case(request, case_id)
-        case_documents, _ = get_case_documents(request, case_id)
-
-        context = {
-            "title": cases.Manage.Documents.TITLE,
-            "case": case,
-            "case_documents": case_documents["documents"],
-            "generated_document_key": GENERATED_DOCUMENT,
-        }
-        return render(request, "case/views/documents.html", context)
 
 
 @method_decorator(csrf_exempt, "dispatch")
 class AttachDocuments(TemplateView):
     def get(self, request, **kwargs):
         case_id = str(kwargs["pk"])
-        get_case(request, case_id)
+        case = get_case(request, case_id)
 
-        form = attach_documents_form(reverse("cases:documents", kwargs={"queue_pk": kwargs["queue_pk"], "pk": case_id}))
+        form = attach_documents_form(
+            reverse("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": case_id, "tab": "documents"})
+        )
 
-        return form_page(request, form, extra_data={"case_id": case_id})
+        return form_page(request, form, extra_data={"case_id": case_id, "case": case})
 
     @csrf_exempt
     def post(self, request, **kwargs):
@@ -378,7 +276,9 @@ class AttachDocuments(TemplateView):
         if "errors" in case_documents:
             return error_page(None, "We had an issue uploading your files. Try again later.")
 
-        return redirect(reverse("cases:documents", kwargs={"queue_pk": kwargs["queue_pk"], "pk": case_id}))
+        return redirect(
+            reverse("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": case_id, "tab": "documents"})
+        )
 
 
 class Document(TemplateView):
@@ -404,40 +304,33 @@ class Document(TemplateView):
         return response
 
 
-class CaseOfficer(TemplateView):
-    def get(self, request, **kwargs):
-        case_id = str(kwargs["pk"])
-        return form_page(request, assign_case_officer_form(request, get_case_officer(request, case_id)[0]),)
+class CaseOfficer(SingleFormView):
+    def init(self, request, **kwargs):
+        self.object_pk = kwargs["pk"]
+        case = get_case(request, self.object_pk)
+        self.data = {"gov_user_pk": case.case_officer.get("id")}
+        self.form = assign_case_officer_form(request, case.case_officer)
+        self.context = {"case": case}
+        self.success_url = reverse("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk})
 
-    def post(self, request, **kwargs):
-        case_id = str(kwargs["pk"])
-        user_id = request.POST.get("user")
-        action = request.POST.get("_action")
+    def get_action(self):
+        action = self.get_validated_data().get("_action")
 
         if action == "delete":
-            response, status_code = delete_case_officer(request, case_id)
+            self.success_message = "Case officer removed"
+            return delete_case_officer
         else:
-            response, status_code = put_case_officer(request, case_id, user_id)
-
-        if status_code != HTTPStatus.NO_CONTENT:
-            return form_page(
-                request,
-                assign_case_officer_form(request, get_case_officer(request, case_id)[0]),
-                errors=response.json()["errors"],
-            )
-
-        return redirect(reverse_lazy("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": case_id}))
+            self.success_message = "Case officer set successfully"
+            return put_case_officer
 
 
 class UserWorkQueue(SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
+        case = get_case(request, self.object_pk)
         self.form = assign_user_and_work_queue(request)
         self.action = get_gov_user_from_form_selection
-
-    @staticmethod
-    def _get_form_data(_, __, json):
-        return json, HTTPStatus.OK
+        self.context = {"case": case}
 
     def get_success_url(self):
         user_id = self.get_validated_data().get("user").get("id")
@@ -451,8 +344,10 @@ class UserTeamQueue(SingleFormView):
     def init(self, request, **kwargs):
         user_pk = str(kwargs["user_pk"])
         self.object_pk = kwargs["pk"]
+        case = get_case(request, self.object_pk)
         self.form = users_team_queues(request, str(kwargs["pk"]), user_pk)
         self.action = put_queue_single_case_assignment
+        self.context = {"case": case}
 
     def get_success_url(self):
         return reverse_lazy("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk})
@@ -462,6 +357,8 @@ class RerunRoutingRules(SingleFormView):
     def init(self, request, **kwargs):
         self.action = put_rerun_case_routing_rules
         self.object_pk = kwargs["pk"]
+        case = get_case(request, self.object_pk)
+        self.context = {"case": case}
         self.form = rerun_routing_rules_confirmation_form()
         self.success_url = reverse_lazy(
             "cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk}

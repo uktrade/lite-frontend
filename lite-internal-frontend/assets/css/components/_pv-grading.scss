@@ -3,5 +3,9 @@
 		display: grid;
 		grid-template-columns: 1fr 1fr 1fr!important;
 		grid-gap: govuk-spacing(6);
+
+		.govuk-form-group {
+			margin: 0;
+		}
 	}
 }

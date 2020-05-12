@@ -9,9 +9,9 @@
 	&:before {
 		content: "";
 		position: absolute;
-		top: 0;
-		bottom: - govuk-spacing(2);
-		left: 9px;
+		top: 20px;
+		bottom: -20px;
+		left: 0;
 		width: 2px;
 		background-color: govuk-colour("mid-grey");
 	}
@@ -19,25 +19,16 @@
 	&:after {
 		content: "";
 		position: absolute;
-		top: 12px;
+		top: 20px;
 		left: 0;
 		width: 16px;
-		height: 16px;
-		background-color: govuk-colour("white");
-		border: 2px solid govuk-colour("mid-grey");
-		border-radius: 100%;
-	}
-
-	&:first-of-type {
-		&:before {
-			top: 15px;
-		}
+		height: 2px;
+		background-color: govuk-colour("mid-grey");
 	}
 
 	&:last-of-type {
 		&:before {
-			height: 15px;
-			bottom: auto;
+			display: none;
 		}
 	}
 
@@ -64,6 +55,7 @@
 	line-height: 1.5;
 	margin: 15px 0 20px;
 	word-break: break-all;
+	max-width: 600px;
 	@extend %govuk-body-m;
 
 	&--exporter {

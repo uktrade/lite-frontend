@@ -15,7 +15,7 @@ def get_teams(request, converted_to_options=False):
 
         return converted_units
 
-    return data.json(), data.status_code
+    return data.json()["teams"]
 
 
 def get_users_team_queues(request, user, convert_to_options=True):

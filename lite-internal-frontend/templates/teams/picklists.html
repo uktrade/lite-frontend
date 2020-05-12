@@ -7,7 +7,13 @@
 {% endblock %}
 
 {% block body %}
-	<h1 class="govuk-heading-l">{{ team.name }}</h1>
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">
+				{{ team.name }}
+			</h1>
+		</div>
+	</div>
 
 	<div class="lite-tabs__container">
 		<div class="lite-tabs">
@@ -69,7 +75,7 @@
 					{% endif %}
 				{% else %}
 					<p class="govuk-caption-l"></p>
-					{% include "includes/information-text.html" with text="There aren't any items in this picklist" %}
+					{% include "includes/notice.html" with text='picklists.PicklistPicker.NO_CONTENT_NOTICE' %}
 				{% endif %}
 			</div>
 			{% pagination %}

@@ -2,8 +2,8 @@ from django.urls import reverse_lazy
 
 from core.services import get_countries
 from lite_content.lite_internal_frontend.cases import AddAdditionalContact
-from lite_forms.common import country_question
-from lite_forms.components import Form, TextInput, TextArea, BackLink
+from lite_forms.common import foreign_address_questions
+from lite_forms.components import Form, TextInput, BackLink
 
 
 def add_additional_contact_form(request, queue_id, case_id):
@@ -17,12 +17,7 @@ def add_additional_contact_form(request, queue_id, case_id):
                 name="details",
             ),
             TextInput(title=AddAdditionalContact.Name.TITLE, name="name"),
-            TextArea(
-                title=AddAdditionalContact.Address.TITLE,
-                description=AddAdditionalContact.Address.DESCRIPTION,
-                name="address",
-            ),
-            country_question(get_countries(request, True), ""),
+            *foreign_address_questions(get_countries(request, True), ""),
             TextInput(title=AddAdditionalContact.Email.TITLE, name="email"),
             TextInput(
                 title=AddAdditionalContact.PhoneNumber.TITLE,
@@ -32,7 +27,8 @@ def add_additional_contact_form(request, queue_id, case_id):
         ],
         back_link=BackLink(
             AddAdditionalContact.BACK_LINK,
-            reverse_lazy("cases:additional_contacts", kwargs={"queue_pk": queue_id, "pk": case_id}),
+            reverse_lazy("cases:case", kwargs={"queue_pk": queue_id, "pk": case_id, "tab": "additional-contacts"}),
         ),
         default_button_name=AddAdditionalContact.SUBMIT_BUTTON,
+        container="case",
     )

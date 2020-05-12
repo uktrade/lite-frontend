@@ -4,7 +4,7 @@ from cases.services import get_case_types
 from core.services import get_countries
 from flags.services import get_goods_flags, get_destination_flags, get_cases_flags
 from lite_content.lite_internal_frontend import strings
-from lite_content.lite_internal_frontend.flags import CreateFlagForm, EditFlagForm
+from lite_content.lite_internal_frontend.flags import CreateFlagForm, EditFlagForm, SetFlagsForm
 from lite_content.lite_internal_frontend.strings import FlaggingRules
 from lite_forms.components import (
     TextInput,
@@ -16,6 +16,11 @@ from lite_forms.components import (
     RadioButtons,
     AutocompleteInput,
     NumberInput,
+    DetailComponent,
+    TextArea,
+    Checkboxes,
+    HelpSection,
+    Filter,
 )
 from lite_forms.generators import confirm_form
 
@@ -140,7 +145,7 @@ def select_condition_and_flag(request, type: str):
     if type == "Good":
         title = strings.FlaggingRules.Create.Condition_and_flag.GOOD_TITLE
         condition = TextInput(title=strings.FlaggingRules.Create.Condition_and_flag.GOOD, name="matching_value",)
-        flags = get_goods_flags(request=request, convert_to_options=True)
+        flags = get_goods_flags(request=request)
         is_for_verified_goods_only = RadioButtons(
             name="is_for_verified_goods_only",
             options=[
@@ -156,7 +161,7 @@ def select_condition_and_flag(request, type: str):
             name="matching_value",
             options=get_countries(request, convert_to_options=True),
         )
-        flags = get_destination_flags(request=request, convert_to_options=True)
+        flags = get_destination_flags(request=request)
     elif type == "Case":
         title = strings.FlaggingRules.Create.Condition_and_flag.APPLICATION_TITLE
         case_type_options = [Option(option["key"], option["value"]) for option in get_case_types(request)]
@@ -165,7 +170,7 @@ def select_condition_and_flag(request, type: str):
             name="matching_value",
             options=case_type_options,
         )
-        flags = get_cases_flags(request=request, convert_to_options=True)
+        flags = get_cases_flags(request=request)
 
     return Form(
         title=title,
@@ -192,3 +197,26 @@ def deactivate_or_activate_flagging_rule_form(title, description, confirm_text, 
         hidden_field=status,
         confirmation_name="confirm",
     )
+
+
+def set_flags_form(flags, level, show_case_header=False, show_sidebar=False):
+    form = Form(
+        title=getattr(SetFlagsForm, level).TITLE,
+        description=getattr(SetFlagsForm, level).DESCRIPTION,
+        questions=[
+            Filter(placeholder=getattr(SetFlagsForm, level).FILTER),
+            Checkboxes(name="flags[]", options=flags),
+            DetailComponent(
+                title=getattr(SetFlagsForm, level).Note.TITLE,
+                components=[TextArea(name="note", optional=True, classes=["govuk-!-margin-0"]),],
+            ),
+        ],
+        javascript_imports=["/assets/javascripts/filter-checkbox-list.js"],
+        default_button_name=getattr(SetFlagsForm, level).SUBMIT_BUTTON,
+        container="case" if show_case_header else "two-pane",
+    )
+
+    if show_sidebar:
+        form.helpers = [HelpSection("Setting flags on:", "", includes="case/includes/selection-sidebar.html")]
+
+    return form

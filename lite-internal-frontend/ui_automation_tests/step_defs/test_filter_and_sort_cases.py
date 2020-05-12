@@ -1,9 +1,7 @@
 from pytest_bdd import given, when, then, parsers, scenarios
 
 from pages.queues_pages import QueuesPages
-from shared.tools.helpers import get_formatted_date_time_m_d_h_s
 from pages.shared import Shared
-
 from shared.tools.wait import wait_until_page_is_loaded
 from ui_automation_tests.pages.case_list_page import CaseListPage
 

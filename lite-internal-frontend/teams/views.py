@@ -14,7 +14,7 @@ from users.services import get_gov_user
 
 class TeamsList(TemplateView):
     def get(self, request, **kwargs):
-        data, _ = get_teams(request)
+        data = get_teams(request)
 
         context = {
             "data": data,

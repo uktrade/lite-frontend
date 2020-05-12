@@ -1,6 +1,7 @@
 from pytest_bdd import when, then, scenarios, parsers
 import ui_automation_tests.shared.tools.helpers as utils
 from conf.constants import SystemTeamsID
+from pages.case_page import CasePage
 
 from ui_automation_tests.pages.application_page import ApplicationPage
 from ui_automation_tests.pages.routing_rules_pages import RoutingRulesPage
@@ -34,7 +35,7 @@ def create_routing_rule(driver, context, tier, case_status):
     )
     functions.click_submit(driver)
 
-    routing_rules_page.select_case_type_by_text("Standard Individual Export Licence")
+    routing_rules_page.select_case_type_by_text("Standard-Individual-Export-Licence")
     functions.click_submit(driver)
 
     routing_rules_page.select_flag(context.flag_name)
@@ -94,7 +95,7 @@ def deactivate_rule(driver, context):
 @when("I click to rerun routing rules, and confirm")
 def rerun_routing_rules(driver):
     application_page = ApplicationPage(driver)
-    application_page.click_rerun_routing_rules()
+    CasePage(driver).click_rerun_routing_rules()
     application_page.click_confirm_rerun_routing_rules()
     functions.click_submit(driver)
 

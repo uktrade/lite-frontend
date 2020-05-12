@@ -1,7 +1,5 @@
 preview = $( '#paragraph-list' );
 
-console.log('wha!');
-
 $( '#standard-advice-list' ).sortable({
 	stop: function(event, ui) {
 		preview.empty();

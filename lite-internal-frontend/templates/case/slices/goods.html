@@ -1,0 +1,143 @@
+{% load humanize %}
+
+<h2 class="govuk-heading-m">{{ case.goods|length }} good{{ case.goods|pluralize }}</h2>
+
+{% if not hide_controls %}
+	<form method="get">
+		<div class="lite-buttons-row" data-enable-on-checkboxes="#table-goods">
+			{% if 'REVIEW_GOODS' in permissions and not is_terminal %}
+				<button id="button-review-goods" formaction="{% url 'cases:review_goods' queue.id case.id %}" name="action" value="review-goods" class="govuk-button" data-module="govuk-button">
+					{% lcs 'cases.ApplicationPage.REVIEW_GOODS' %}
+				</button>
+			{% endif %}
+			<button id="button-edit-goods-flags" formaction="{% url 'cases:assign_flags' queue.id case.id %}" class="govuk-button" data-module="govuk-button">
+				{% lcs 'cases.ApplicationPage.EDIT_FLAGS' %}
+			</button>
+		</div>
+{% endif %}
+
+<table id="table-goods{% if show_advice %}-{{ level }}-advice{% endif %}" class="govuk-table">
+	{% if case.application.goods %}
+		<thead class="govuk-table__head">
+			<tr class="govuk-table__row">
+				{% if not hide_checkboxes %}
+					<th scope="col" class="govuk-table__header">
+						<button id="link-select-all-goods" type="button" name="button" class="lite-button-checkbox" title="{% lcs 'cases.ApplicationPage.Parties.SELECT_ALL' %}"></button>
+					</th>
+				{% endif %}
+				<th scope="col" class="govuk-table__header">#</th>
+				<th scope="col" class="govuk-table__header">Description</th>
+				<th scope="col" class="govuk-table__header">Value</th>
+				<th scope="col" class="govuk-table__header">Controlled</th>
+				<th scope="col" class="govuk-table__header">Control list entries</th>
+				<th scope="col" class="govuk-table__header">Incorporated</th>
+				<th scope="col" class="govuk-table__header">Document</th>
+				<th scope="col" class="govuk-table__header">Flags</th>
+			</tr>
+		</thead>
+		<tbody class="govuk-table__body">
+			{% for good in case.application.goods %}
+				<tr class="govuk-table__row">
+					{% if not hide_checkboxes %}
+						<td class="govuk-table__cell govuk-table__cell--checkbox {% if show_advice %}lite-!-no-border{% endif %}">
+							<div>
+								<input class="govuk-checkboxes__input" type="checkbox" name="goods" value="{{ good.good.id }}" id="{{ good.id }}">
+								<label class="govuk-label govuk-checkboxes__label" for="{{ good.good.id }}">{{ forloop.counter }}</label>
+							</div>
+						</td>
+					{% endif %}
+					<td class="govuk-table__cell govuk-table__cell--line-number {% if show_advice %}lite-!-no-border{% endif %}">{{ forloop.counter }}.</td>
+					<td class="govuk-table__cell govuk-table__cell--max-width-400 {% if show_advice %}lite-!-no-border{% endif %}">
+						<span data-max-length="200">{{ good.good.description }}</span>
+					</td>
+					<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">{{ good.quantity }} {{ good.unit.value }}/£{{ good.value|intcomma }}</td>
+					<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">{{ good.good.is_good_controlled.value }}</td>
+					<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+						{% include 'includes/control-list-entries.html' with control_list_entries=good.good.control_list_entries %}
+					</td>
+					<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">{{ good.is_good_incorporated|friendly_boolean }}</td>
+					<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+						{% if good.good.documents %}
+							{% for document in good.good.documents %}
+								{% if document.safe == True %}
+									<a class="govuk-link govuk-link--no-visited-state" id="good_document" href="{% url 'cases:document' queue.id case.id document.id %}">
+										<span class="govuk-visually-hidden">{% lcs 'cases.Manage.Documents.DOWNLOAD_DOCUMENT' %}</span> {{ document.name }}
+									</a>
+								{% endif %}
+							{% endfor %}
+						{% else %}
+							{% lcs 'cases.ApplicationPage.Goods.MISSING_DOCUMENT_REASON_PREFIX' %}{{ good.good.missing_document_reason.value }}
+						{% endif %}
+					</td>
+					<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+						{% include 'includes/flags.html' with flags=good.flags list=True %}
+					</td>
+				</tr>
+				{% if show_advice %}
+					{% include 'includes/advice.html' with id=good.good.id %}
+				{% endif %}
+			{% endfor %}
+		</tbody>
+	{% elif case.application.goods_types %}
+		<thead class="govuk-table__head">
+			<tr class="govuk-table__row">
+				{% if not hide_checkboxes %}
+					<th scope="col" class="govuk-table__header">
+						<button id="link-select-all-goods" type="button" name="button" class="lite-button-checkbox" title="{% lcs 'cases.ApplicationPage.Parties.SELECT_ALL' %}"></button>
+					</th>
+				{% endif %}
+				<th scope="col" class="govuk-table__header">#</th>
+				<th scope="col" class="govuk-table__header">Description</th>
+				<th scope="col" class="govuk-table__header">Controlled</th>
+				<th scope="col" class="govuk-table__header">Control list entries</th>
+				<th scope="col" class="govuk-table__header">Incorporated</th>
+				<th scope="col" class="govuk-table__header">Countries</th>
+				<th scope="col" class="govuk-table__header">Flags</th>
+			</tr>
+		</thead>
+		<tbody class="govuk-table__body">
+			{% for good in case.application.goods_types %}
+				<tr class="govuk-table__row">
+					{% if not hide_checkboxes %}
+						<td class="govuk-table__cell govuk-table__cell--checkbox {% if show_advice %}lite-!-no-border{% endif %}">
+							<div>
+								<input class="govuk-checkboxes__input" type="checkbox" name="goods_types" value="{{ good.id }}" id="{{ good.id }}">
+								<label class="govuk-label govuk-checkboxes__label" for="{{ good.id }}">{{ forloop.counter }}</label>
+							</div>
+						</td>
+					{% endif %}
+					<td class="govuk-table__cell govuk-table__cell--line-number {% if show_advice %}lite-!-no-border{% endif %}">{{ forloop.counter }}.</td>
+					<td class="govuk-table__cell govuk-table__cell--max-width-400 {% if show_advice %}lite-!-no-border{% endif %}">
+						<span data-max-length="200">{{ good.description }}</span>
+					</td>
+					<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">{{ good.is_good_controlled|friendly_boolean }}</td>
+					<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+						{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}
+					</td>
+					<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">{{ good.is_good_incorporated|friendly_boolean }}</td>
+					<td class="govuk-table__cell govuk-table__cell--max-width-300 {% if show_advice %}lite-!-no-border{% endif %}">
+						<span data-max-length="200">
+							{% for country in good.countries %}
+								{{ country.name }}{% if not forloop.last %}, {% endif %}
+							{% endfor %}
+						</span>
+					</td>
+					<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+						{% include 'includes/flags.html' with flags=good.flags list=True %}
+					</td>
+				</tr>
+				{% if show_advice %}
+					{% include 'includes/advice.html' with id=good.id %}
+				{% endif %}
+			{% endfor %}
+		</tbody>
+	{% endif %}
+</table>
+
+{% if case.case_type.sub_type.key != 'exhibition_clearance' and case.goods|goods_value %}
+	<p class="govuk-body govuk-!-margin-top-3 govuk-!-font-weight-bold">{% lcs 'STANDARD_CASE_TOTAL_VALUE' %} £{{ case.goods|goods_value|intcomma }}</p>
+{% endif %}
+
+{% if not hide_controls %}
+	</form>
+{% endif %}

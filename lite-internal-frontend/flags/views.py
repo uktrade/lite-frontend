@@ -1,3 +1,5 @@
+import functools
+
 from django.http import Http404
 from django.shortcuts import redirect
 from django.shortcuts import render
@@ -5,11 +7,12 @@ from django.urls import reverse
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
-from cases.forms.flags import flags_form, set_case_flags_form
-from cases.services import put_flag_assignments, get_good, get_goods_type, get_case, get_destination
-from conf.constants import FlagLevels, Permission
+from cases.helpers.advice import get_param_goods, get_param_destinations
+from cases.services import put_flag_assignments, get_case
+from conf.constants import Permission
 from core.helpers import convert_dict_to_query_params, get_params_if_exist
 from core.services import get_user_permissions
+from flags.enums import FlagLevel
 from flags.forms import (
     add_flag_form,
     edit_flag_form,
@@ -18,25 +21,26 @@ from flags.forms import (
     _levels,
     deactivate_or_activate_flagging_rule_form,
     level_options,
+    set_flags_form,
 )
+from flags.helpers import get_matching_flags
 from flags.services import (
-    get_cases_flags,
-    get_goods_flags,
-    get_organisation_flags,
-    get_destination_flags,
     get_flagging_rules,
     put_flagging_rule,
     get_flagging_rule,
     post_flagging_rules,
+    get_cases_flags,
+    get_organisation_flags,
+    get_goods_flags,
+    get_destination_flags,
 )
 from flags.services import get_flags, post_flags, get_flag, update_flag
 from lite_content.lite_internal_frontend import strings, flags
-from lite_content.lite_internal_frontend.flags import UpdateFlag
-from lite_forms.components import Option, FiltersBar, Select, Checkboxes, TextInput
+from lite_content.lite_internal_frontend.flags import UpdateFlag, SetFlagsForm
+from lite_forms.components import Option, FiltersBar, Select, Checkboxes, TextInput, BackLink
 from lite_forms.generators import form_page
 from lite_forms.views import MultiFormView, SingleFormView
 from organisations.services import get_organisation
-from queues.services import get_queue
 from teams.services import get_teams
 from users.services import get_gov_user
 
@@ -119,113 +123,6 @@ class ChangeFlagStatus(TemplateView):
         update_flag(request, str(kwargs["pk"]), json={"status": request.POST["status"]})
 
         return redirect(reverse_lazy("flags:flags"))
-
-
-class AssignFlags(TemplateView):
-    objects = None
-    form = None
-    selected_flags = None
-    url = None
-    level = None
-
-    def dispatch(self, request, *args, **kwargs):
-        self.objects = request.GET.getlist("items", request.GET.getlist("goods"))
-
-        if not self.objects:
-            raise Http404
-
-        self.level = request.GET.get("level")
-
-        pks = {"pk": self.objects[0]} if self.level == "organisations" else {"pk": str(kwargs["pk"])}
-        origin = request.GET.get("origin", "case")
-
-        if origin == "good":
-            pks["good_pk"] = self.objects[0]
-
-        # Retrieve the list of flags depending on type
-        if self.level == FlagLevels.CASES:
-            flags = get_cases_flags(request)
-        elif self.level == FlagLevels.GOODS:
-            flags = get_goods_flags(request)
-        elif self.level == FlagLevels.ORGANISATIONS:
-            flags = get_organisation_flags(request)
-            origin = "organisation"
-        elif self.level == FlagLevels.DESTINATIONS:
-            flags = get_destination_flags(request)
-
-        self.url = (
-            reverse("organisations:organisation", kwargs=pks)
-            if self.level == "organisations"
-            else reverse("cases:" + origin, kwargs={"queue_pk": kwargs["queue_pk"], "pk": kwargs["pk"]})
-        )
-
-        # Perform pre-population of the flags if there is only one object to be flagged
-        if len(self.objects) == 1:
-            self._single_item_processing(request, flags)
-
-        if origin == "review_goods":
-            origin = "review good"
-            parameters = {"goods": self.objects}
-            objects_url_suffix = "?" + convert_dict_to_query_params(parameters)
-
-            self.url += objects_url_suffix
-
-        flags = [Option(flag["id"], flag["name"]) for flag in flags]
-
-        self.form = flags_form(flags=flags, level=self.level, origin=origin, url=self.url)
-
-        if self.level == FlagLevels.CASES:
-            case = get_case(request, kwargs["pk"])
-            self.form = set_case_flags_form(get_queue(request, kwargs["queue_pk"]), flags, case)
-
-        return super(AssignFlags, self).dispatch(request, *args, **kwargs)
-
-    def _single_item_processing(self, request, flags):
-        object_flags = None
-        if self.level == FlagLevels.GOODS:
-            obj, status_code = get_good(request, self.objects[0])
-            if status_code == 404:
-                obj, _ = get_goods_type(request, self.objects[0])
-        elif self.level == FlagLevels.CASES:
-            obj = {"case": get_case(request, self.objects[0])}
-        elif self.level == FlagLevels.ORGANISATIONS:
-            obj = get_organisation(request, self.objects[0])
-            object_flags = obj.get("flags")
-        elif self.level == FlagLevels.DESTINATIONS:
-            obj = get_destination(request, self.objects[0])
-
-        # Fetches existing flags on the object
-        if self.level != "organisations":
-            object_flags = obj.get(self.level[:-1]).get("flags")
-
-        flags_list = []
-        for flag in flags:
-            for object_flag in object_flags:
-
-                # If flag is both on the object and available to the user, show that it is already set
-                if flag["id"] in object_flag["id"]:
-                    flags_list.append(flag["id"])
-                    break
-
-        self.selected_flags = {"flags": flags_list}
-
-    def get(self, request, **kwargs):
-        return form_page(request, self.form, data=self.selected_flags)
-
-    def post(self, request, **kwargs):
-        data = {
-            "level": self.level,
-            "objects": self.objects,
-            "flags": request.POST.getlist("flags"),
-            "note": request.POST.get("note"),
-        }
-
-        response, _ = put_flag_assignments(request, data)
-
-        if "errors" in response:
-            return form_page(request, self.form, data=request.POST, errors=response["errors"])
-
-        return redirect(self.url)
 
 
 class ManageFlagRules(TemplateView):
@@ -329,3 +226,99 @@ class ChangeFlaggingRuleStatus(SingleFormView):
             return redirect(self.success_url)
 
         return super(ChangeFlaggingRuleStatus, self).post(request, **kwargs)
+
+
+def perform_action(level, request, pk, json):
+    data = {
+        "level": level,
+        "objects": [
+            x
+            for x in [
+                request.GET.get("case"),
+                request.GET.get("organisation"),
+                *request.GET.getlist("goods"),
+                *request.GET.getlist("goods_types"),
+                *request.GET.getlist("countries"),
+                request.GET.get("end_user"),
+                request.GET.get("consignee"),
+                *request.GET.getlist("third_party"),
+                *request.GET.getlist("ultimate_end_user"),
+            ]
+            if x
+        ],
+        "flags": json.get("flags", []),
+        "note": json.get("note"),
+    }
+    return put_flag_assignments(request, data)
+
+
+class AssignFlags(SingleFormView):
+    def init(self, request, **kwargs):
+        self.object_pk = kwargs["pk"]
+        self.level = self.get_level()
+        flags = self.get_potential_flags()
+        self.success_message = getattr(SetFlagsForm, self.level).SUCCESS_MESSAGE
+
+        if self.level == FlagLevel.ORGANISATIONS:
+            self.context = {"organisation": "123"}
+            self.form = set_flags_form(flags, self.level)
+            self.form.back_link = BackLink(url=reverse("organisations:organisation", kwargs={"pk": self.object_pk}))
+        else:
+            self.case = get_case(request, self.object_pk)
+            self.context = {"case": self.case, "hide_flags_row": True}
+            show_sidebar = False
+
+            if self.level == FlagLevel.GOODS or self.level == FlagLevel.DESTINATIONS:
+                show_sidebar = True
+                self.context["goods"] = get_param_goods(self.request, self.case)
+                self.context["destinations"] = get_param_destinations(self.request, self.case)
+
+            self.form = set_flags_form(flags, self.level, show_case_header=True, show_sidebar=show_sidebar)
+            self.form.back_link = BackLink(
+                url=reverse("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.object_pk})
+            )
+
+        self.data = {"flags": self.get_object_flags()}
+
+    def get_level(self):
+        if self.request.GET.get("case"):
+            return FlagLevel.CASES
+        elif self.request.GET.get("organisation"):
+            return FlagLevel.ORGANISATIONS
+        elif self.request.GET.get("goods") or self.request.GET.get("goods_types"):
+            return FlagLevel.GOODS
+        else:
+            return FlagLevel.DESTINATIONS
+
+    def get_object_flags(self):
+        if self.level == FlagLevel.CASES:
+            return get_case(self.request, self.object_pk)["flags"]
+        elif self.level == FlagLevel.ORGANISATIONS:
+            return get_organisation(self.request, self.object_pk)["flags"]
+        elif self.level == FlagLevel.GOODS:
+            goods = get_param_goods(self.request, self.case)
+            return get_matching_flags(goods)
+        elif self.level == FlagLevel.DESTINATIONS:
+            destinations = get_param_destinations(self.request, self.case)
+            return get_matching_flags(destinations)
+
+    def get_potential_flags(self):
+        if self.level == FlagLevel.CASES:
+            return get_cases_flags(self.request)
+        elif self.level == FlagLevel.ORGANISATIONS:
+            return get_organisation_flags(self.request)
+        elif self.level == FlagLevel.GOODS:
+            return get_goods_flags(self.request)
+        elif self.level == FlagLevel.DESTINATIONS:
+            return get_destination_flags(self.request)
+
+    def get_action(self):
+        return functools.partial(perform_action, self.level)
+
+    def get_success_url(self):
+        if self.request.GET.get("return_to"):
+            return self.request.GET.get("return_to")
+        elif self.level == FlagLevel.ORGANISATIONS:
+            return reverse("organisations:organisation", kwargs={"pk": self.object_pk})
+        else:
+            return reverse("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk})

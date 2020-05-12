@@ -11,7 +11,7 @@ class RolesPages(BasePage):
         self.driver.find_element_by_id(self.ADD_ROLE_TEXT_FIELD).send_keys(text)
 
     def select_permissions(self, value):
-        self.driver.find_element_by_id(value).click()
+        self.driver.find_element_by_id(value.replace(" ", "-")).click()
 
     def click_add_a_role_button(self):
         self.driver.find_element_by_id(self.ADD_ROLE).click()

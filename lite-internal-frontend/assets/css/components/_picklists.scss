@@ -116,8 +116,11 @@
 	}
 
 	&__link {
+		display: inline-block;
 		text-decoration: none;
-		border-bottom: 1px solid transparent;
+		border-bottom: 1px solid currentColor;
+		margin-bottom: govuk-spacing(3);
+		line-height: 30px;
 
 		&:hover {
 			border-color: currentColor;
@@ -125,10 +128,7 @@
 
 		svg {
 			display: inline-block;
-			max-width: 13px;
-			max-height: 13px;
-			margin-right: 4px;
-			top: -50px;
+			margin-right: govuk-spacing(2);
 
 			* {
 				fill: currentColor;

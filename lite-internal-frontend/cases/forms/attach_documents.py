@@ -16,4 +16,5 @@ def attach_documents_form(case_url):
             ),
         ],
         back_link=BackLink(cases.Manage.Documents.AttachDocuments.BACK_TO_CASE_DOCUMENTS, case_url),
+        container="case",
     )

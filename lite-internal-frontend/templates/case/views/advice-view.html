@@ -1,9 +1,0 @@
-<div class="govuk-form-group">
-	{% if case.application.case_type.sub_type.key == 'open' %}
-		{% include 'case/views/open-goods.html' %}
-		{% include 'case/views/open-destinations.html' %}
-	{% elif case.application.case_type.sub_type.key != 'hmrc' %}
-		{% include 'case/views/standard-goods.html' %}
-		{% include 'case/views/standard-destinations.html' %}
-	{% endif %}
-</div>

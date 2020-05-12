@@ -3,8 +3,6 @@
 {% block back_link %}{% endblock %}
 
 {% block body %}
-	{% include 'includes/messages.html' %}
-
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
 			<h1 class="govuk-heading-l">
@@ -28,7 +26,7 @@
 			</tr>
 		</thead>
 		<tbody class="govuk-table__body">
-			{% for team in data.teams %}
+			{% for team in data %}
 				<tr class="govuk-table__row" id="row-{{ forloop.counter }}">
 					<td class="govuk-table__cell">
 						<span class="govuk-table__header" aria-hidden="true">{% lcs 'teams.TeamsPage.Table.NAME' %}</span>

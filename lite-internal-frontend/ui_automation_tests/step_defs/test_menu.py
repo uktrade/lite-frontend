@@ -8,7 +8,7 @@ scenarios("../features/menu.feature", strict_gherkin=False)
 @then("the log out link is displayed")
 def success(driver):
     assert driver.find_element_by_id(
-        "link-log-out"
+        "link-sign-out"
     ).is_displayed(), "Log out button is displayed. User may have the service unavailable screen."
 
 

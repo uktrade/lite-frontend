@@ -35,7 +35,7 @@ Feature: I want to define new work queues and the teams they belong to
     Given I sign in to SSO or am signed into SSO
     And I create open application or open application has been previously created
     When I go to application previously created
-    And I click progress application
+    And I click change status
     And I select status "Withdrawn" and save
     And I go to the internal homepage
     And I click on the "All cases" queue in dropdown
@@ -46,7 +46,7 @@ Feature: I want to define new work queues and the teams they belong to
     Given I sign in to SSO or am signed into SSO
     And I create open application or open application has been previously created
     When I go to application previously created
-    And I click progress application
+    And I click change status
     And I select status "Withdrawn" and save
     And I go to the internal homepage
     And I click on the "Open cases" queue in dropdown

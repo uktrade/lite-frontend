@@ -13,6 +13,10 @@
 	}
 }
 
+.govuk-radios--small .govuk-radios__hint {
+	pointer-events: all;
+}
+
 .app-radios--flag-colours {
 	display: flex;
 	align-items: center;

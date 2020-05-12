@@ -24,7 +24,7 @@
 			{% for tab in tabs %}
 				{% if tab %}
 					{% with tab.url|equals:request.path as selected %}
-						<{%if selected %}p{% else %}a href="{{ tab.url }}"{% endif %} id="{{ tab.id }}" class="lite-tabs__tab {% if tab.url == request.path %}lite-tabs__tab--selected{% endif %}" id="tab-members">
+						<{%if selected %}p{% else %}a href="{{ tab.url }}?return_to={{ request.GET|get:'return_to'|default:'' }}&return_to_text={{ request.GET|get:'return_to_text'|default:'' }}"{% endif %} id="{{ tab.id }}" class="lite-tabs__tab {% if tab.url == request.path %}lite-tabs__tab--selected{% endif %}">
 							{{ tab.name }}
 						</{%if selected %}p{% else %}a{% endif %}>
 					{% endwith %}

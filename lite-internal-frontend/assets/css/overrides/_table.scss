@@ -9,6 +9,20 @@
 	}
 }
 
-.govuk-table__header, .govuk-table__cell {
-	border-bottom: 2px solid govuk-shade(govuk-colour("white"), 10%);
+.govuk-table__row {
+	.govuk-table__header, .govuk-table__cell {
+		border-bottom: 2px solid govuk-shade(govuk-colour("white"), 10%);
+	}
+}
+
+@for $i from 1 through 10 {
+	.govuk-table__cell--min-width-#{$i * 100} {
+		min-width: #{$i * 100}px;
+	}
+}
+
+@for $i from 1 through 10 {
+	.govuk-table__cell--max-width-#{$i * 100} {
+		max-width: #{$i * 100}px;
+	}
 }

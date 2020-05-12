@@ -1,4 +1,6 @@
 from selenium.webdriver.support.select import Select
+
+from shared import functions
 from shared.BasePage import BasePage
 
 
@@ -19,15 +21,9 @@ class QueuesPages(BasePage):
         self.driver.find_element_by_css_selector(self.ADD_QUEUE_BUTTON).click()
 
     def is_case_on_the_list(self, app_id):
-        self.driver.set_timeout_to(0)
         no = len(self.driver.find_elements_by_css_selector('[href*="' + app_id + '"]'))
-        url = self.driver.current_url
-        page_number = 1
         while no == 0:
-            page_number += 1
-            next_page = url + "&page=" + str(page_number)
-
-            self.driver.get(next_page)
+            functions.click_next_page(self.driver)
             no = len(self.driver.find_elements_by_css_selector("[href*='" + app_id + "']"))
         return no
 

@@ -4,7 +4,7 @@ from shared.BasePage import BasePage
 class AssignUserPage(BasePage):
     VISIBLE_CHOICES_EMAILS = ".govuk-radios__item.visible .govuk-hint"
     VISIBLE_CHOICE_BUTTON = ".govuk-radios__item.visible .govuk-radios__input"
-    ASSIGNED_USER_ID = "assigned_users"
+    ASSIGNED_USER_ID = "assigned-users"
     TEXTAREA_SEARCH_ID = "filter-box"
 
     def select_first_radio_button(self):

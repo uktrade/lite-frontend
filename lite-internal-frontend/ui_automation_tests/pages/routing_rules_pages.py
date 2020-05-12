@@ -71,7 +71,7 @@ class RoutingRulesPage(BasePage):
         self.driver.find_element_by_id(text).click()
 
     def select_flag(self, flag_name):
-        self.driver.find_element_by_id(flag_name).click()
+        self.driver.find_element_by_id(flag_name.replace(" ", "-")).click()
 
     def enter_country(self, country):
         functions.send_keys_to_autocomplete(self.driver, self.TEXT_COUNTRY_ID, country)

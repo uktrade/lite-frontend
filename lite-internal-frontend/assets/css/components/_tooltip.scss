@@ -6,6 +6,7 @@ $tooltip-background-colour: govuk-colour("black");
     color: govuk-colour("white");
     border-radius: 0;
     filter: drop-shadow(0 2px 5px rgba(black, 0.3));
+    max-width: none !important;
 }
 
 .tippy-box[data-placement^='top'] > .tippy-arrow::before {
@@ -15,3 +16,33 @@ $tooltip-background-colour: govuk-colour("black");
 .tippy-box[data-placement^='bottom'] > .tippy-arrow::before {
     border-bottom-color: $tooltip-background-colour;
 }
+
+[data-tippy-root] {
+    max-width: 500px!important;
+}
+
+.tippy-box[data-theme~='light'] {
+    background-color: govuk-colour("white");
+    color: $govuk-text-colour;
+    box-shadow: 0 0 2px rgba(mix(govuk-colour("black"), $govuk-brand-colour, 80%), 0.1), 0 2px 5px rgba(mix(govuk-colour("black"), $govuk-brand-colour, 80%), 0.05), 0 20px 100px rgba(mix(govuk-colour("black"), $govuk-brand-colour, 80%), 0.3);
+    outline: none;
+    padding: 0;
+
+    .tippy-content {
+        max-height: 500px;
+        overflow-y: scroll;
+        min-width: 260px;
+        box-sizing: border-box;
+        padding: 0;
+    }
+}
+
+.tippy-box[data-theme~='light'][data-placement^='top'] > .tippy-arrow::before {
+    border-top-color: govuk-colour("white");
+}
+
+.tippy-box[data-theme~='light'][data-placement^='bottom'] > .tippy-arrow::before {
+    border-bottom-color: govuk-colour("white");
+}
+
+.tippy-box[data-animation=scale-subtle][data-placement^=top]{transform-origin:bottom}.tippy-box[data-animation=scale-subtle][data-placement^=bottom]{transform-origin:top}.tippy-box[data-animation=scale-subtle][data-placement^=left]{transform-origin:right}.tippy-box[data-animation=scale-subtle][data-placement^=right]{transform-origin:left}.tippy-box[data-animation=scale-subtle][data-state=hidden]{transform:scale(.8);opacity:0}

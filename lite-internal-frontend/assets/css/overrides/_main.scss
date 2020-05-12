@@ -1,3 +1,14 @@
-.lite-main-wrapper--case {
-	padding-top: govuk-spacing(3);
+.govuk-main-wrapper {
+	padding: govuk-spacing(6) 0;
+}
+
+.app-template__case-body {
+	.govuk-main-wrapper {
+		padding-top: 0;
+		min-height: calc(100vh - 200px);
+	}
+}
+
+.lite-app-bar {
+	margin-top: - govuk-spacing(6);
 }

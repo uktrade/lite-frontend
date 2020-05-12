@@ -2,8 +2,11 @@ import os
 from django.conf import settings
 from pytest_bdd import given, when, then, parsers
 
+from pages.advice import UserAdvicePage, FinalAdvicePage, TeamAdvicePage
+from pages.case_page import CasePage, CaseTabs
 from pages.goods_queries_pages import GoodsQueriesPages  # noqa
 from pages.organisation_page import OrganisationPage
+from shared import functions
 
 from ui_automation_tests.fixtures.env import environment  # noqa
 from ui_automation_tests.fixtures.add_a_flag import (  # noqa
@@ -25,7 +28,6 @@ from ui_automation_tests.fixtures.add_a_picklist import (  # noqa
     add_a_report_summary_picklist,
 )
 from ui_automation_tests.pages.generate_document_page import GeneratedDocument
-from ui_automation_tests.pages.give_advice_pages import GiveAdvicePages
 from ui_automation_tests.shared.fixtures.apply_for_application import *  # noqa
 from ui_automation_tests.shared.fixtures.driver import driver  # noqa
 from ui_automation_tests.shared.fixtures.sso_sign_in import sso_sign_in  # noqa
@@ -153,10 +155,11 @@ def go_to_flags(driver, internal_url):  # noqa
     driver.get(internal_url.rstrip("/") + "/flags/")
 
 
-@when("I click progress application")  # noqa
+@when("I click change status")  # noqa
 def click_post_note(driver):  # noqa
-    application_page = ApplicationPage(driver)
-    application_page.click_progress_application()
+    case_page = CasePage(driver)
+    case_page.change_tab(CaseTabs.DETAILS)
+    case_page.click_change_status()
 
 
 @when(parsers.parse('I select status "{status}" and save'))  # noqa
@@ -187,17 +190,15 @@ def go_to_queues(driver, internal_url):  # noqa
 @when("I add case to newly created queue")  # noqa
 def move_case_to_new_queue(driver, context):  # noqa
     ApplicationPage(driver).click_move_case_button()
-    if not driver.find_element_by_id(context.queue_name).is_selected():
-        driver.find_element_by_id(context.queue_name).click()
+    if not driver.find_element_by_id(context.queue_name.replace(" ", "-")).is_selected():
+        driver.find_element_by_id(context.queue_name.replace(" ", "-")).click()
     Shared(driver).click_submit()
 
 
 @when("I select previously created flag")  # noqa
 def assign_flags_to_case(driver, context):  # noqa
-    case_flags_pages = CaseFlagsPages(driver)
-    case_flags_pages.select_flag(context.flag_name)
-    shared = Shared(driver)
-    shared.click_submit()
+    CaseFlagsPages(driver).select_flag(context.flag_name)
+    functions.click_submit(driver)
 
 
 @given("I create report summary picklist")  # noqa
@@ -241,9 +242,7 @@ def go_to_users(driver, sso_sign_in, internal_url):  # noqa
 
 
 @when(  # noqa
-    parsers.parse(
-        'I respond "{controlled}", "{control_list_entry}", "{report}", "{comment}" and click continue'
-    )  # noqa
+    parsers.parse('I respond "{controlled}", "{control_list_entry}", "{report}", "{comment}" and click submit')  # noqa
 )  # noqa
 def enter_response(driver, controlled, control_list_entry, report, comment):  # noqa
     clc_query_page = GoodsQueriesPages(driver)
@@ -255,35 +254,23 @@ def enter_response(driver, controlled, control_list_entry, report, comment):  # 
 
 
 @then("the status has been changed in the application")  # noqa
-def status_has_been_changed_in_header(driver, context, internal_info):  # noqa
-    application_page = ApplicationPage(driver)
-    if context.status.lower() == "under review":
-        assert (
-            "Under review" in application_page.get_text_of_audit_trail()
-        ), "status has not been shown as approved in audit trail"
-    elif context.status.lower() == "withdrawn":
-        assert (
-            context.status in application_page.get_text_of_audit_trail()
-        ), "status has not been shown as approved in audit trail"
-    elif context.status.lower() == "pv grading review":
-        assert (
-            context.status in application_page.get_text_of_audit_trail()
-        ), "status has not been shown as approved in audit trail"
-    elif context.status.lower() == "clc review":
-        assert (
-            context.status in application_page.get_text_of_audit_trail()
-        ), "status has not been shown as approved in audit trail"
-    else:
-        assert (
-            context.status.lower() in application_page.get_text_of_audit_trail()
-        ), "status has not been shown as approved in audit trail"
+def audit_trail_updated(driver, context, internal_info, internal_url):  # noqa
+    case_page = CasePage(driver)
+    ApplicationPage(driver).go_to_cases_activity_tab(internal_url, context)
 
-    assert utils.search_for_correct_date_regex_in_element(
-        application_page.get_text_of_activity_dates(0)
-    ), "date is not displayed after status change"
-    # assert (
-    #     application_page.get_text_of_activity_users(0) == internal_info["name"]
-    # ), "user who has made the status change has not been displayed correctly"
+    assert (
+        context.status.lower() in case_page.get_audit_trail_text().lower()
+    ), "status has not been shown as approved in audit trail"
+
+
+@then("the status has been changed in the clc query")  # noqa
+def audit_trail_updated(driver, context, internal_info, internal_url):  # noqa
+    case_page = CasePage(driver)
+    ApplicationPage(driver).go_to_cases_activity_tab_for_clc(internal_url, context)
+
+    assert (
+        context.status.lower() in case_page.get_audit_trail_text().lower()
+    ), "status has not been shown as approved in audit trail"
 
 
 @given("I create a clc query")  # noqa
@@ -322,7 +309,7 @@ def case_sla(driver, context):  # noqa
 
 @then("I see the case page")  # noqa
 def i_see_the_case_page(driver, context):  # noqa
-    assert driver.find_element_by_id(ApplicationPage.HEADING_ID).text == context.reference_code
+    assert context.reference_code in driver.find_element_by_id(ApplicationPage.HEADING_ID).text
 
 
 @when("I go to users")  # noqa
@@ -335,26 +322,33 @@ def an_exhibition_clearance_is_created(driver, apply_for_exhibition_clearance): 
     pass
 
 
-@when("I combine all advice")  # noqa
+@when("I combine all user advice")  # noqa
 def combine_all_advice(driver):  # noqa
-    GiveAdvicePages(driver).combine_advice()
+    UserAdvicePage(driver).click_combine_advice()
+
+
+@when("I combine all team advice")  # noqa
+def combine_all_advice(driver):  # noqa
+    TeamAdvicePage(driver).click_combine_advice()
 
 
 @when("I finalise the advice")  # noqa
 def finalise(driver):  # noqa
-    GiveAdvicePages(driver).finalise()
+    CasePage(driver).change_tab(CaseTabs.FINAL_ADVICE)
+    FinalAdvicePage(driver).click_finalise()
 
 
 @when("I select the template previously created")  # noqa
 def selected_created_template(driver, context):  # noqa
+    driver.refresh()
+    Shared(driver).set_header_to_not_stick()
     GeneratedDocument(driver).click_letter_template(context.document_template_id)
     Shared(driver).click_submit()
 
 
-@when("I click on the Documents button")  # noqa
+@when("I go to the documents tab")  # noqa
 def click_documents(driver):  # noqa
-    application_page = ApplicationPage(driver)
-    application_page.click_documents_button()
+    CasePage(driver).change_tab(CaseTabs.DOCUMENTS)
 
 
 @when("I add a flag at level Case")  # noqa
@@ -437,42 +431,48 @@ def template_with_decision(context, api_test_client):  # noqa
     context.document_template_name = document_template["name"]
 
 
+@when("I go to the team advice page by url")  # noqa
+def final_advice_page(driver, context, internal_url):  # noqa
+    driver.get(
+        internal_url.rstrip("/")
+        + "/queues/00000000-0000-0000-0000-000000000001/cases/"
+        + context.case_id
+        + "/team-advice/"
+    )
+
+
+@when("I go to the user advice page by url")  # noqa
+def final_advice_page(driver, context, internal_url):  # noqa
+    driver.get(
+        internal_url.rstrip("/")
+        + "/queues/00000000-0000-0000-0000-000000000001/cases/"
+        + context.case_id
+        + "/user-advice/"
+    )
+
+
 @when("I go to the final advice page by url")  # noqa
 def final_advice_page(driver, context, internal_url):  # noqa
     driver.get(
         internal_url.rstrip("/")
         + "/queues/00000000-0000-0000-0000-000000000001/cases/"
         + context.case_id
-        + "/final-advice-view/"
+        + "/final-advice/"
     )
 
 
 @when("I click edit flags link")  # noqa
 def click_edit_case_flags_link(driver):  # noqa
-    ApplicationPage(driver).click_edit_case_flags()
+    CasePage(driver).click_change_case_flags()
 
 
 @then("The previously created flag is assigned to the case")  # noqa
 def assert_flag_is_assigned(driver, context):  # noqa
-    assert Shared(driver).is_flag_applied(context.flag_name)
+    assert CasePage(driver).is_flag_applied(context.flag_name), (
+        "Flag " + context.flag_name + " is not applied to the case"
+    )
 
 
-@when(parsers.parse('filter user_type has been changed to "{user_type}"'))  # noqa
-def filter_status_change(driver, user_type):  # noqa
-    page = ApplicationPage(driver)
-    page.select_filter_user_type_from_dropdown(user_type)
-
-
-@then("exporter is at the first audit in the trail")  # noqa
-def exporter_first_audit_in_trail(driver, exporter_info):  # noqa
-    first_audit = ApplicationPage(driver).get_text_of_first_audit_trail_item()
-    assert f"{exporter_info['first_name']}" in first_audit
-    assert f"{exporter_info['last_name']}" in first_audit
-
-
-@then("exporter is not in the audit trail")  # noqa
-def exporter_is_not_in_audit_trail(driver, exporter_info):  # noqa
-    audits = ApplicationPage(driver).get_audit_elements()
-    for audit in list(audits):
-        assert f"{exporter_info['first_name']}" not in audit.text
-        assert f"{exporter_info['last_name']}" not in audit.text
+@given(parsers.parse('the status is set to "{status}"'))  # noqa
+def set_status(api_test_client, context, status):  # noqa
+    api_test_client.applications.set_status(context.app_id, status)

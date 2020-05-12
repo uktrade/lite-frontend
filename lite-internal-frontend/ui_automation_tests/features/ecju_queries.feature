@@ -10,45 +10,11 @@ Feature: I want to create ECJU queries
     And I create open application or open application has been previously created
     And I create an ecju query picklist
     When I go to application previously created
-    And I click the ECJU Queries button
-    And I click Choose an ECJU Query Type
+    And I go to the ECJU queries tab
+    And I click new query
     And I select standard ECJU Query for my query type
-    And I click Add an ECJU Query
-    And I select a standard ECJU picklist question
-    And I click continue
-    Then the question text area contains expected text
-    When I click back
-    And I Select Write a new question
-    And I click continue
-    Then the question text area is empty
-    When I enter text in the question text area
-    And I click continue
-    And I click No
-    And I click continue
-    Then the question text area contains previously entered text
-    When I click continue
-    And I click Yes
-    And I click continue
+    And I enter in my query text
     Then the new ECJU Query is visible in the list
-    When I click the case breadcrumb
-    Then the ECJU Query creation is visible in the case timeline
-
-  @LT_1320_view_response_to_ecju @smoke @LT_1493_query
-  Scenario: Add an ECJU Query and respond and view response
-    Given I sign in to SSO or am signed into SSO
-    And I create open application or open application has been previously created
-    And I create an ecju query picklist
-    When I go to application previously created
-    And I click the ECJU Queries button
-    And I click Choose an ECJU Query Type
-    And I select standard ECJU Query for my query type
-    And I click Add an ECJU Query
-    And I Select Write a new question
-    And I click continue
-    And I enter text in the question text area
-    And I click continue
-    And I click Yes
-    And I click continue
-    Then the new ECJU Query is visible in the list
+    And the ECJU Query creation is visible in the case timeline
     When I create a response to the ECJU query
     Then the ECJU Query is in the closed list

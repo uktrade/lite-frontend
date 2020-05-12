@@ -1,13 +1,12 @@
 from pytest_bdd import when, then, parsers, scenarios, given
-from pages.case_list_page import CaseListPage
-from pages.shared import Shared
 
+from pages.case_list_page import CaseListPage
+from pages.case_page import CasePage
+from pages.shared import Shared
 from ui_automation_tests.pages.application_page import ApplicationPage
+from ui_automation_tests.pages.assign_user_page import AssignUserPage
 from ui_automation_tests.pages.unassign_queue_page import UnassignQueuePage
 from ui_automation_tests.shared import functions
-
-from ui_automation_tests.pages.assign_user_page import AssignUserPage
-from ui_automation_tests.shared.tools.helpers import paginated_item_exists
 
 scenarios("../features/assign_users_to_queue.feature", strict_gherkin=False)
 
@@ -136,8 +135,7 @@ def case_officer_is_set(driver, internal_info):
 
 @when("I click assign user Button")  # noqa
 def i_click_assign_user_button(driver):
-    application_page = ApplicationPage(driver)
-    application_page.click_assign_user_button()
+    CasePage(driver).click_assign_users()
 
 
 @given("I am assigned to this case on my new queue")

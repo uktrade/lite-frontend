@@ -44,7 +44,7 @@
 	{% block head %}{% endblock %}
 </head>
 
-<body class="govuk-template__body ">
+<body class="govuk-template__body js-disabled {% block body_classes %}{% endblock %}">
 	<noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ ENVIRONMENT_VARIABLES.GOOGLE_ANALYTICS_KEY }}"
 	height="0" width="0"></iframe></noscript>
 
@@ -54,102 +54,89 @@
 			document.body.className + ' js-enabled' :
 			'js-enabled'
 		);
+		document.body.classList.remove("js-disabled");
 	</script>
 
-	{% block header %}
 	<a href="#main-content" class="govuk-skip-link">Skip to main content</a>
-	<header class="govuk-header " role="banner" data-module="header">
-		<div class="govuk-header__container govuk-width-container">
-
-			<div class="govuk-header__logo">
-				<a href="/" class="govuk-header__link govuk-header__link--homepage">
-					{% lcs 'Common.SERVICE_NAME' %}
-				</a>
-			</div>
-
-			{% if user and user.lite_api_user_id %}
-				<div id="lite-user-menu">
-					<a href="{% url 'auth:logout' %}" class="lite-user-menu-button" id="link-log-out">
-						Log out
-					</a>
-
-					<div class="lite-user-menu-divider"></div>
-
-					<div id="lite-menu-wrapper">
-						<a id="lite-user-menu-button" class="lite-user-menu-button" onclick="toggleLITEMenu();return false;" href="/menu/" title="Open Menu" accesskey="m">
-							{% svg 'menu' %} {% if MENU_NOTIFICATIONS %}<span class="app-header__link__bubble--small"></span>{% endif %}
-						</a>
-						<div id="lite-menu">
-							{% for item in LITE_MENU %}
-								<a href="{{ item.url }}" class="lite-menu-item {{ item.url|add_selected_class:request.path }}">
-									<div class="icon">
-										{% svg item.icon %} {% if item.notifications %}<span class="app-header__link__bubble">{{ item.notifications }}</span>{% endif %}
-									</div>
-									{{ item.title }}
-								</a>
-							{% endfor %}
-						</div>
-					</div>
-
-					<div class="lite-user-menu-divider"></div>
-
-					<a class="lite-user-menu-button" href="{% url 'users:user' user.lite_api_user_id %}">
-						{{ user.first_name }}
-						<div class="lite-user-menu-button--user">
-							{% svg 'user' %}
-						</div>
-					</a>
-				</div>
-			{% endif %}
-
+	<header class="app-header" role="banner" data-module="header">
+		<div class="app-header__container govuk-width-container">
+			<a class="app-header__link" href="{% url 'core:index' %}" data-tooltip="Go home">
+				{% svg 'crest' %}
+				Licensing for International Trade and Enterprise <span class="govuk-tag govuk-!-margin-left-3">Alpha</span>
+			</a>
+			<span></span>
+			<a id="link-sign-out" class="app-header__link" href="{% url 'auth:logout' %}" data-tooltip="Sign out of LITE">
+				Sign out
+			</a>
+			<span class="app-header__separator"></span>
+			<a id="link-menu" tabindex="0" class="app-header__link" href="{% url 'core:menu' %}" data-tooltip="Show menu">
+				{% svg 'menu' %}
+				{% if MENU_NOTIFICATIONS %}<span class="app-header__link-bubble"></span>{% endif %}
+			</a>
+			<span class="app-header__separator"></span>
+			<a id="link-profile" class="app-header__link" href="{% url 'users:profile' %}" data-tooltip="View profile">
+				{{ request.user.first_name }}
+				{% svg 'user' %}
+			</a>
 		</div>
 	</header>
+
+	{% block messages %}
+		{% include 'includes/messages.html' %}
 	{% endblock %}
 
-	<div id="lite-menu-background" onclick="toggleLITEMenu()"></div>
+	{% block header %}
+		<div class="govuk-width-container app-back-link-container">
+			<section role="banner" data-module="header">
+				{% if request.GET|get:'return_to' %}
+					<a href="{{ request.GET|get:'return_to' }}" id="back-link" class="govuk-back-link">Back {% if request.GET|get:'return_to_text' %}to {{ request.GET|get:'return_to_text' }}{% endif %}</a>
+				{% else %}
+					{% block back_link %}
+						<a href="#" id="back-link" class="govuk-back-link">Back</a>
+					{% endblock %}
+				{% endif %}
+			</section>
+		</div>
+	{% endblock %}
 
 	<div class="govuk-width-container">
-		<section title="banner">
-			<div class="govuk-phase-banner">
-				<p class="govuk-phase-banner__content">
-					<strong class="govuk-tag govuk-phase-banner__content__tag ">
-						alpha
-					</strong>
-					<span class="govuk-phase-banner__text">
-						This is a new service – your <a class="govuk-link" href="{{ site.feedbackUrl }}">feedback</a> will help us to improve it.
-					</span>
-				</p>
-			</div>
-			{% block back_link %}
-				<a href="#" class="govuk-back-link lite-js-only">Back</a>
-			{% endblock %}
-		</section>
-
-		<main class="govuk-main-wrapper {% block body_classes %}{% endblock %}" id="main-content" role="main">
+		<main class="govuk-main-wrapper" id="main-content" role="main">
 			{% block body %}{% endblock %}
 		</main>
 	</div>
 
+	<div id="lite-menu" class="app-menu app-hidden">
+		{% for item in LITE_MENU %}
+			<a class="app-menu__item app-menu__item--icon-subtitle {% if item.url == CURRENT_PATH %}app-menu__item--selected{% endif %}" href="{{ item.url }}">
+				<div class="app-menu__icon">
+					{% svg item.icon %}
+				</div>
+				{{ item.title }}
+				{% if item.notifications %}<span class="app-menu__item-notification">{{ item.notifications }}</span>{% endif %}
+			</a>
+		{% endfor %}
+	</div>
+
 	{% block footer %}
-	<footer class="govuk-footer " role="contentinfo">
-		<div class="govuk-width-container ">
-			<div class="govuk-footer__meta">
-				<div class="govuk-footer__meta-item govuk-footer__meta-item--grow"></div>
-				<div class="govuk-footer__meta-item">
-					<a class="govuk-footer__link govuk-footer__copyright-logo" href="https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/">© Crown copyright</a>
+		<footer class="app-footer" role="contentinfo">
+			<div class="govuk-width-container app-footer__container">
+				<div>
+					{% svg 'crest' %}
+					Department for International Trade
+				</div>
+				<div>
+					© Crown copyright
 				</div>
 			</div>
-		</div>
-	</footer>
+		</footer>
 	{% endblock %}
 
 	<script src="{% static 'all.js' %}"></script>
 	<script src="{% static 'javascripts/modal.js' %}"></script>
 	<script src="{% static 'javascripts/definitions.js' %}"></script>
 	<script src="{% static 'javascripts/helpers.js' %}"></script>
+	<script src="{% static 'javascripts/generic.js' %}"></script>
 	<script src="{% static 'javascripts/back-link.js' %}"></script>
-	<script src="{% static 'javascripts/ResizeSensor.js' %}"></script>
-	<script src="{% static 'javascripts/ElementQueries.js' %}"></script>
 
 	<script nonce="{{ request.csp_nonce }}">
 		window.GOVUKFrontend.initAll()
@@ -158,10 +145,24 @@
 	{% block javascript %}{% endblock %}
 
 	<script nonce="{{ request.csp_nonce }}" type="text/javascript">
-		function toggleLITEMenu() {
-			$('#lite-menu-background').toggle();
-			$('#lite-menu').toggleClass('lite-menu--visible');
-		}
+		$("#link-menu").removeAttr("href");
+		tippy("*[data-tooltip]", {
+			content(reference) {
+				return reference.getAttribute('data-tooltip');
+			},
+			animation: 'scale-subtle',
+		});
+
+		const menu = document.getElementById('lite-menu');
+		menu.style.display = 'block';
+		tippy("#link-menu", {
+			content: menu,
+			allowHTML: true,
+			interactive: true,
+			animation: 'scale-subtle',
+			trigger: 'click',
+			theme: 'light',
+		});
 
 		tippy('.app-flag--label', {
 			content(reference) {

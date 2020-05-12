@@ -1,12 +1,11 @@
+from django.http import HttpRequest
+
 from conf.constants import UserStatuses
 from lite_content.lite_internal_frontend import strings
-from lite_forms.styles import ButtonStyle
-
 from lite_content.lite_internal_frontend.strings import cases
-from django.http import HttpRequest
 from lite_forms.components import Checkboxes, Filter, Form, RadioButtons, Button, HiddenField
+from lite_forms.styles import ButtonStyle
 from teams.services import get_users_team_queues
-
 from users.services import get_gov_users
 
 
@@ -36,9 +35,10 @@ def assign_case_officer_form(request: HttpRequest, existing_officer):
     return Form(
         title=cases.Manage.AssignCaseOfficer.TITLE,
         description=cases.Manage.AssignCaseOfficer.DESCRIPTION,
-        questions=[Filter(), RadioButtons("user", users)],
+        questions=[Filter(), RadioButtons("gov_user_pk", users)],
         buttons=buttons,
         javascript_imports=["/assets/javascripts/filter-radiobuttons-list.js"],
+        container="case",
     )
 
 
@@ -51,6 +51,7 @@ def assign_user_and_work_queue(request):
         questions=[Filter(), RadioButtons("user", users)],
         default_button_name=strings.CONTINUE,
         javascript_imports=["/assets/javascripts/filter-radiobuttons-list.js"],
+        container="case",
     )
 
 
@@ -66,4 +67,5 @@ def users_team_queues(request, case_pk, user_pk):
             HiddenField("case_pk", case_pk),
         ],
         javascript_imports=["/assets/javascripts/filter-radiobuttons-list.js"],
+        container="case",
     )

@@ -27,7 +27,7 @@ Feature: I want to filter and sort cases on a queue
     When I click clear filters
     Then "2" cases are shown
     When I go to application previously created
-    And I click progress application
+    And I click change status
     And I select status "Under review" and save
     And I go to the internal homepage
     And I click on new queue in dropdown
@@ -38,15 +38,6 @@ Feature: I want to filter and sort cases on a queue
     When I show filters
     And I click filter to show cases with open team ecju queries
     Then "1" cases are shown
-
-#  @LT_914_sort_all_cases @regression
-#  Scenario: Sort all cases
-#    Given I sign in to SSO or am signed into SSO
-#    And I create open application or open application has been previously created
-#    And I go to internal homepage
-#    When I click on the "All cases" queue in dropdown
-#    And I sort cases by status
-#    Then the case at index "0" has the status of "Submitted"
 
   @LT_914_filter_and_sort @regression
   Scenario: I can show and hide filters

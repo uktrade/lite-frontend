@@ -120,11 +120,11 @@
 				{% lcs 'organisations.OrganisationPage.Details.SummaryList.FLAGS' %}
 			</dt>
 			<dd id="flags-organisation" class="govuk-summary-list__value">
-				{% include "includes/flags.html" with flags=organisation.flags no_content='organisations.OrganisationPage.NO_FLAGS_NOTICE' %}
+				{% include "includes/flags.html" with flags=organisation.flags no_content='organisations.OrganisationPage.NO_FLAGS_NOTICE' list=True %}
 			</dd>
 			<dd class="govuk-summary-list__actions">
 				{% if not hide_creation_link %}
-					<a id="link-organisation-flags" class="govuk-link govuk-link--no-visited-state" href="{% url 'organisations:assign_flags' organisation.id %}?level=organisations&items={{ organisation.id }}">
+					<a id="link-organisation-flags" class="govuk-link govuk-link--no-visited-state" href="{% url 'organisations:assign_flags' organisation.id %}?organisation={{ organisation.id }}">
 						{% lcs 'generic.CHANGE' %}
 					</a>
 				{% endif %}

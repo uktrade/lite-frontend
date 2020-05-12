@@ -38,7 +38,7 @@ def deactivate_user(driver, context):
 def dont_see_user(driver, context):
     driver.set_timeout_to(0)
     assert utils.paginated_item_exists("link-" + context.added_email, driver, exists=False), "Item could be found"
-    driver.set_timeout_to(10)
+    driver.set_timeout_to_10_seconds()
 
 
 @when("I reactivate new user")
