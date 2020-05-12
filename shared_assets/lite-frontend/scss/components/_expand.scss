@@ -1,0 +1,32 @@
+.lite-expand__base-controls {
+	display: inline-flex;
+	justify-content: flex-end;
+	// margin-top: - govuk-spacing(9);
+	float: right;
+
+	a {
+		@extend .govuk-link;
+		@extend .govuk-link--no-visited-state;
+		@include govuk-font($size: 19);
+		@include govuk-responsive-margin(6, "bottom");
+		display: inline-block;
+		text-decoration: none;
+		border-bottom: 1px solid currentColor;
+		padding-bottom: govuk-spacing(1);
+
+		&:first-of-type {
+			margin-right: govuk-spacing(3);
+		}
+
+		svg {
+			color: inherit;
+			max-width: 13px;
+			max-height: 13px;
+			margin-right: 3px;
+
+			* {
+				fill: currentColor;
+			}
+		}
+	}
+}
