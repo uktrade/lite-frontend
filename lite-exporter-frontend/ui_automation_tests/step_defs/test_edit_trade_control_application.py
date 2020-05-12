@@ -2,8 +2,6 @@ from pytest_bdd import scenarios, given, when, then
 
 from ui_automation_tests.pages.standard_application.goods import StandardApplicationGoodsPage
 from ui_automation_tests.shared.fixtures.apply_for_application import apply_for_trade_control_application
-from ui_automation_tests.pages.f680_additional_information_page import F680AdditionalInformationPage
-from ui_automation_tests.shared import functions
 
 scenarios("../features/edit_trade_control_application.feature", strict_gherkin=False)
 
