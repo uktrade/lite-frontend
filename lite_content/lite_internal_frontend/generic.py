@@ -14,5 +14,9 @@ class Filters:
     FILTER_BY_PREFIX = "Filter by"
 
 
+class NoticeComponent:
+    INFORMATION = "Information"
+
+
 class Checkboxes:
     SELECT_DESELECT_ALL = "Select all/Deselect all"

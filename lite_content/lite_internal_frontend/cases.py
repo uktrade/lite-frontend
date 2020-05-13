@@ -7,6 +7,23 @@ class CasesListPage:
     STATUS = "Status"
     NOT_UPDATED_RECENTLY = "This case has not been updated in over 5 days"
     OPEN_TEAM_ECJU = "This case contains open enquiries by your team"
+    OPEN_ALL = "Open all"
+    CLOSE_ALL = "Close all"
+
+    class Table:
+        SLA = "SLA"
+        INFORMATION = "Information"
+        CASE = "Case"
+        ASSIGNEES = "Assignees"
+        GOODS = "Goods"
+        DESTINATIONS = "Destinations"
+        FLAGS = "Flags"
+
+    class NoContent:
+        NO_GOODS_FLAGS = "No good flags set"
+        NO_DESTINATION_FLAGS = "No destination flags set"
+        NO_FLAGS = "No flags set"
+        NO_USERS_ASSIGNED = "No users assigned"
 
     class Filters:
         CASE_TYPE = "type"
@@ -269,7 +286,7 @@ class ApplicationPage:
         USER = "user"
         TEAM = "team"
         USER_TYPE = "user type"
-        ACTIVITY_TYPE = "activity Type"
+        ACTIVITY_TYPE = "activity type"
         DATE_FROM = "date from"
         DATE_TO = "date to"
         NO_ACTIVITIES = "No activities match your filters"
