@@ -96,7 +96,7 @@ class GoodsDetail(TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         self.good_id = str(kwargs["pk"])
-        self.good = get_good(request, self.good_id)[0]
+        self.good = get_good(request, self.good_id, full_detail=True)[0]
         self.view_type = kwargs["type"]
 
         if self.view_type not in ["case-notes", "ecju-queries", "ecju-generated-documents"]:
@@ -142,7 +142,7 @@ class GoodsDetail(TemplateView):
             return Http404
 
         good_id = kwargs["pk"]
-        data, _ = get_good(request, str(good_id))
+        data, _ = get_good(request, str(good_id), full_detail=True)
 
         response, _ = post_case_notes(request, data["case_id"], request.POST)
 
@@ -214,7 +214,7 @@ class EditGrading(SingleFormView):
         return data
 
     def get_success_url(self):
-        good = get_good(self.request, self.object_pk)[0]
+        good = get_good(self.request, self.object_pk, full_detail=True)[0]
 
         raise_a_clc_query = "unsure" == good["is_good_controlled"]["key"]
         raise_a_pv_query = "grading_required" == good["is_pv_graded"]["key"]
@@ -311,12 +311,11 @@ class DeleteDocument(TemplateView):
         good_id = str(kwargs["pk"])
         file_pk = str(kwargs["file_pk"])
 
-        good, _ = get_good(request, good_id)
         document = get_good_document(request, good_id, file_pk)
 
         context = {
             "title": goods.DeleteGoodDocumentPage.TITLE,
-            "good": good,
+            "good_id": good_id,
             "document": document,
         }
         return render(request, "goods/delete-document.html", context)
@@ -341,7 +340,7 @@ class RespondToQuery(TemplateView):
         self.good_id = str(kwargs["pk"])
         self.ecju_query_id = str(kwargs["query_pk"])
 
-        good, _ = get_good(request, self.good_id)
+        good, _ = get_good(request, self.good_id, full_detail=True)
         self.clc_query_case_id = good["case_id"]
         self.ecju_query = get_ecju_query(request, self.clc_query_case_id, self.ecju_query_id)
 

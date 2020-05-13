@@ -17,12 +17,12 @@ from lite_forms.components import (
 )
 
 
-def exhibition_good_on_application_form(request, good, application_id):
+def exhibition_good_on_application_form(request, good_id, application_id):
     return Form(
         title=AddGoodToApplicationForm.Exhibition.TITLE,
         description=AddGoodToApplicationForm.Exhibition.DESCRIPTION,
         questions=[
-            HiddenField(name="good_id", value=good.get("id")),
+            HiddenField(name="good_id", value=good_id),
             RadioButtons(title="", description="", name="item_type", options=get_item_types(request)),
         ],
         back_link=BackLink(
@@ -34,7 +34,7 @@ def exhibition_good_on_application_form(request, good, application_id):
 
 def good_on_application_form(request, good, sub_case_type, application_id):
     if sub_case_type["key"] == EXHIBITION:
-        return exhibition_good_on_application_form(request, good, application_id)
+        return exhibition_good_on_application_form(request, good.get("id"), application_id)
     else:
         return Form(
             title=AddGoodToApplicationForm.TITLE,

@@ -56,8 +56,8 @@
 							{{ good.description|highlight_text:description }}
 						</td>
 						<td class="govuk-table__cell govuk-table__cell--tight">
-							{% if good.query.exporter_user_notification_count.total %}
-								<span class="lite-notification-bubble">{{ good.query.exporter_user_notification_count.total }} <span class="govuk-visually-hidden"> {% lcs "goods.GoodsPage.NOTIFICATIONS" %}</span></span>
+							{% if good.exporter_user_notification_count %}
+								<span class="lite-notification-bubble">{{ good.exporter_user_notification_count }} <span class="govuk-visually-hidden"> {% lcs "goods.GoodsPage.NOTIFICATIONS" %}</span></span>
 							{% endif %}
 						</td>
 						<td class="govuk-table__cell" id="good-control_code">

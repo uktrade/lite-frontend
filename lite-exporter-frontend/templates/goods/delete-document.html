@@ -3,7 +3,7 @@
 {% load svg %}
 
 {% block back_link %}
-	<a href="{% url 'goods:good_detail' good.id "case-notes" %}" id="back-link" class="govuk-back-link">{% lcs "goods.DeleteGoodDocumentPage.BACK" %}</a>
+	<a href="{% url 'goods:good_detail' good_id "case-notes" %}" id="back-link" class="govuk-back-link">{% lcs "goods.DeleteGoodDocumentPage.BACK" %}</a>
 {% endblock %}
 
 {% block body %}
@@ -48,7 +48,7 @@
 	</div>
 
 	<div class="buttons-row">
-	<form method="post" action="{% url 'goods:delete_document' good.id document.id %}">
+	<form method="post" action="{% url 'goods:delete_document' good_id document.id %}">
 		{% csrf_token %}
 		<button type="submit" class="govuk-button govuk-button--warning govuk-!-margin-right-2">{% lcs "goods.DeleteGoodDocumentPage.BUTTON" %}</button>
 	</form>

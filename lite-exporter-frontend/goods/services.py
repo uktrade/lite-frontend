@@ -23,8 +23,8 @@ def get_goods(
     return data.json()
 
 
-def get_good(request, pk):
-    data = get(request, GOODS_URL + str(pk))
+def get_good(request, pk, full_detail=False):
+    data = get(request, GOODS_URL + str(pk) + convert_parameters_to_query_params(locals()))
     return data.json().get("good"), data.status_code
 
 
