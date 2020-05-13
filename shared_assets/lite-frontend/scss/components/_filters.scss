@@ -31,20 +31,12 @@
 
 	&__components {
 		display: grid;
-		grid-template-columns: 1fr;
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 		grid-gap: govuk-spacing(3);
 		margin-bottom: govuk-spacing(3);
 
-		@include govuk-media-query($until: desktop) {
-			grid-template-columns: 1fr 1fr 1fr;
-		}
-
-		@include govuk-media-query($until: tablet) {
-			grid-template-columns: 1fr;
-		}
-
-		@include govuk-media-query($from: desktop) {
-			grid-template-columns: 1fr 1fr 1fr 1fr;
+		div {
+			background: red;
 		}
 
 		.govuk-checkboxes__label {
@@ -69,15 +61,40 @@
 		z-index: -1;
 	}
 
+	.lite-autocomplete__input {
+		max-width: 100%!important;
+	}
+
 	.govuk-select {
 		width: 100%;
 		display: block;
 		margin-right: 0;
-		max-width: 100%;
+		max-width: 100%!important;
+	}
+
+	input {
+		background-color: govuk-colour("white");
 	}
 
 	.govuk-date-input {
 		width: 100%;
+	}
+
+	.govuk-date-input {
+		display: grid;
+		grid-template-columns: 1fr 1fr 2fr;
+
+		.govuk-date-input__item:last-of-type {
+			margin-right: 0;
+		}
+
+		.govuk-input--width-2, .govuk-input--width-3 {
+			max-width: 100%;
+		}
+	}
+
+	.govuk-input--width-20 {
+		max-width: 100%;
 	}
 
 	.govuk-grid-column-one-quarter:not(:first-child):not(:last-child) {
