@@ -1,0 +1,55 @@
+.lite-expand__base-controls {
+	display: inline-flex;
+	justify-content: flex-end;
+	float: right;
+
+	.lite-expand__base-control {
+		@extend .govuk-link;
+		@extend .govuk-link--no-visited-state;
+		@include govuk-font($size: 19);
+		@include govuk-responsive-margin(6, "bottom");
+		display: inline-block;
+		text-decoration: none;
+		border-bottom: 1px solid currentColor;
+		padding-bottom: govuk-spacing(1);
+
+		span:first-of-type {
+			display: inline-block;
+		}
+
+		span:last-of-type {
+			display: none;
+		}
+
+		svg {
+			color: inherit;
+			max-width: 13px;
+			max-height: 13px;
+			margin-left: 3px;
+
+			* {
+				fill: currentColor;
+			}
+		}
+
+		&--open {
+			svg {
+				transform: scaleY(-1);
+			}
+
+			span:first-of-type {
+				display: none;
+			}
+
+			span:last-of-type {
+				display: inline-block;
+			}
+		}
+	}
+}
+
+.lite-expand__control {
+	&--open {
+		transform: scaleY(-1);
+	}
+}

@@ -35,13 +35,13 @@
 	align-items: flex-start;
 	justify-content: center;
 
+	&:last-child {
+		margin-left: 0;
+	}
+
 	& > * {
 		margin-left: govuk-spacing(4);
 		display: block;
-
-		&:first-of-type {
-			margin-left: 0;
-		}
 
 		@include govuk-media-query($until: tablet) {
 			margin-left: 0;
