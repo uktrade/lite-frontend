@@ -3,7 +3,7 @@
 	justify-content: flex-end;
 	float: right;
 
-	a {
+	.lite-expand__base-control {
 		@extend .govuk-link;
 		@extend .govuk-link--no-visited-state;
 		@include govuk-font($size: 19);
@@ -12,6 +12,14 @@
 		text-decoration: none;
 		border-bottom: 1px solid currentColor;
 		padding-bottom: govuk-spacing(1);
+
+		span:first-of-type {
+			display: inline-block;
+		}
+
+		span:last-of-type {
+			display: none;
+		}
 
 		svg {
 			color: inherit;
@@ -23,5 +31,25 @@
 				fill: currentColor;
 			}
 		}
+
+		&--open {
+			svg {
+				transform: scaleY(-1);
+			}
+
+			span:first-of-type {
+				display: none;
+			}
+
+			span:last-of-type {
+				display: inline-block;
+			}
+		}
+	}
+}
+
+.lite-expand__control {
+	&--open {
+		transform: scaleY(-1);
 	}
 }
