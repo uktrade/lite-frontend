@@ -528,3 +528,8 @@ def goods_value(goods):
 @register.filter()
 def latest_status_change(activity):
     return next((item for item in activity if "updated the status" in item["text"]), None)
+
+
+@register.filter()
+def filter_flags_by_level(flags, level):
+    return [flag for flag in flags if flag["level"] == level]

@@ -1,0 +1,18 @@
+.app-information-bar {
+	position: relative;
+	color: transparent;
+	margin: 0;
+	width: govuk-spacing(8) * 2;
+	overflow: hidden;
+	white-space: nowrap;
+
+	&::after {
+		content: "";
+		position: absolute;
+		top: calc(50% - 1.5px);
+		left: 0;
+		right: 0;
+		height: 4px;
+		background: govuk-shade(govuk-colour("white"), 10%);
+	}
+}

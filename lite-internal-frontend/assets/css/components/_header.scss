@@ -36,6 +36,10 @@ $header-link-active-colour: $govuk-focus-colour;
 		z-index: -1;
 	}
 
+	.govuk-tag {
+		line-height: 1.2!important;
+	}
+
 	&-bubble {
 		position: absolute;
 		top: 10px;

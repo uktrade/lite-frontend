@@ -5,9 +5,8 @@ from django.views.generic import TemplateView
 from cases.forms.assign_users import assign_users_form
 from cases.helpers.helpers import get_updated_cases_banner_queue_id
 from conf.constants import ALL_CASES_QUEUE_ID
-from core.helpers import convert_dict_to_query_params
 from lite_content.lite_internal_frontend.cases import CasesListPage
-from lite_forms.components import HiddenField, FiltersBar, Option, AutocompleteInput, Checkboxes, Select
+from lite_forms.components import FiltersBar, Option, AutocompleteInput, Checkboxes, Select
 from lite_forms.generators import error_page, form_page
 from lite_forms.helpers import conditional
 from lite_forms.views import SingleFormView
@@ -31,7 +30,6 @@ class Cases(TemplateView):
         """
         case_type = request.GET.get("case_type")
         status = request.GET.get("status")
-        sort = request.GET.get("sort")
         queue_pk = kwargs.get("queue_pk") or request.user.default_queue
         case_officer = request.GET.get("case_officer")
         assigned_user = request.GET.get("assigned_user")
@@ -39,8 +37,6 @@ class Cases(TemplateView):
 
         # Page parameters
         params = {"page": int(request.GET.get("page", 1))}
-        if sort:
-            params["sort"] = sort
         if status:
             params["status"] = status
         if case_type:
@@ -63,7 +59,6 @@ class Cases(TemplateView):
 
         filters = FiltersBar(
             [
-                conditional(queue_pk, HiddenField(name="queue_id", value=queue_pk)),
                 Select(name="case_type", title=CasesListPage.Filters.CASE_TYPE, options=case_types),
                 Select(name="status", title=CasesListPage.Filters.CASE_STATUS, options=statuses),
                 AutocompleteInput(
@@ -90,9 +85,6 @@ class Cases(TemplateView):
         context = {
             "data": data,
             "queue": data["results"]["queue"],
-            "page": params.pop("page"),
-            "params": params,
-            "params_str": convert_dict_to_query_params(params),
             "updated_cases_banner_queue_id": updated_cases_banner_queue_id,
             "filters": filters,
             "is_all_cases_queue": queue_pk == ALL_CASES_QUEUE_ID,

@@ -33,9 +33,6 @@ class CaseListPage(BasePage):
     # Queue dropdown
     LINK_CHANGE_QUEUE_ID = "link-queue"
 
-    # Sort headings
-    SORT_STATUS = "sort-status"  # ID
-
     # Notification for updated cases
     EXPORTER_AMENDMENTS_BANNER = "exporter-amendments-banner"  # ID
 
@@ -123,9 +120,6 @@ class CaseListPage(BasePage):
 
     def select_filter_case_type_from_dropdown(self, status):
         Select(self.driver.find_element_by_id(self.CASE_TYPE_DROPDOWN)).select_by_visible_text(status)
-
-    def sort_by_status(self):
-        self.driver.find_element_by_id(self.SORT_STATUS).click()
 
     def click_on_exporter_amendments_banner(self):
         self.driver.find_element_by_id(self.EXPORTER_AMENDMENTS_BANNER).click()

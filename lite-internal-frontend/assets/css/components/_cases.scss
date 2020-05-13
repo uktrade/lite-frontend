@@ -33,128 +33,48 @@
     @include govuk-font($size: 36, $weight: bold);
 }
 
-.app-cases__row__attention-needed {
-    position: relative;
-    @include govuk-font($size: 16, $weight: bold, $line-height: 24px);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
-    color: govuk-colour("black");
-    z-index: 0;
-    padding-top: 2px;
-    text-shadow: 0 1px 0 govuk-colour("white");
-    cursor: default;
-
-    &::after {
-        @include govuk-shape-arrow($direction: up, $base: 24px);
-        position: absolute;
-        content: "";
-        top: 2px;
-        left: 0;
-        border-color: govuk-colour("yellow");
-        z-index: -1;
-    }
-}
-
-.cases-table__header {
-    @extend .govuk-table__header;
-	line-height: 40px;
-	padding: 0;
-	border-bottom: 2px solid govuk-colour("light-grey");
-}
-
-.cases-table__cell {
-    @extend .govuk-table__cell;
-	border-bottom: 2px solid govuk-colour("light-grey");
-	margin: 0;
-    vertical-align: top;
-	padding: govuk-spacing(3) govuk-spacing(4) 0 0;
-
-    &--tight {
-        padding-right: 0!important;
+.app-cases__row {
+    &__vertical-column {
+        display: flex;
+        flex-direction: column;
     }
 
-    &--nowrap {
-        white-space: nowrap;
+    &__icon {
+        width: 22px;
+        max-height: 22px;
+        margin-bottom: govuk-spacing(2);
+
+        svg {
+            width: 22px;
+            max-height: 22px;
+
+            * {
+                fill: currentColor;
+            }
+        }
     }
-}
 
-.cases-table__cell--checkbox {
-	@extend .govuk-checkboxes--small;
-	width: 40px!important;
-	padding: 0;
-	margin: 0;
+    &__attention-needed {
+        position: relative;
+        @include govuk-font($size: 16, $weight: bold, $line-height: 24px);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: $govuk-body-background-colour;
+        z-index: 0;
+        cursor: default;
+        padding-top: 2px;
 
-	.govuk-checkboxes__label {
-		padding: 0!important;
-	}
-}
-
-.app-table__sortable-header {
-	color: govuk-colour("black")!important;
-	text-decoration: none!important;
-
-	&:hover {
-		border-bottom: 2px solid currentColor;
-
-		svg {
-			opacity: 1;
-		}
-	}
-
-	&:active {
-		color: govuk-colour("black");
-	}
-
-	&:focus {
-		@include govuk-focused-text;
-	}
-
-	svg {
-		color: inherit;
-		fill: currentColor;
-		max-width: 14px;
-		opacity: 0;
-
-		* {
-			fill: inherit;
-		}
-	}
-
-	&--active {
-		color: $govuk-link-colour;
-
-		&:hover {
-			color: darken($govuk-link-colour, 10%);
-		}
-
-		&:active {
-			color: darken($govuk-link-colour, 20%);
-		}
-
-		svg {
-			opacity: 1;
-		}
-	}
-
-	&--active-desc {
-		color: $govuk-link-colour;
-
-		&:hover {
-			color: darken($govuk-link-colour, 10%);
-		}
-
-		&:active {
-			color: darken($govuk-link-colour, 20%);
-		}
-
-		svg {
-			opacity: 1;
-			transform: scaleY(-1);
-		}
-	}
+        &::after {
+            @include govuk-shape-arrow($direction: up, $base: 22px);
+            position: absolute;
+            content: "";
+            top: 0;
+            left: 0;
+            border-color: $govuk-text-colour;
+            z-index: -1;
+        }
+    }
 }
 
 $case-header-color: $govuk-brand-colour;

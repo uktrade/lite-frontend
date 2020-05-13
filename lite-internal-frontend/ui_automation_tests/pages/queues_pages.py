@@ -27,8 +27,8 @@ class QueuesPages(BasePage):
             no = len(self.driver.find_elements_by_css_selector("[href*='" + app_id + "']"))
         return no
 
-    def get_no_cases_text(self):
-        return self.driver.find_element_by_css_selector(self.NO_CASES_TEXT).text
+    def is_no_cases_notice_displayed(self):
+        return self.driver.find_element_by_css_selector(self.NO_CASES_TEXT).is_displayed()
 
     def click_queue_edit_button(self, num):
         self.driver.find_elements_by_css_selector(self.TABLE_ROWS)[num].find_element_by_css_selector(
