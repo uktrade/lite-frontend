@@ -35,10 +35,6 @@
 		grid-gap: govuk-spacing(3);
 		margin-bottom: govuk-spacing(3);
 
-		div {
-			background: red;
-		}
-
 		.govuk-checkboxes__label {
 			&::before {
 				background: govuk-colour("white");
