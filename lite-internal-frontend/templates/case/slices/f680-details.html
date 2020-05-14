@@ -1,3 +1,5 @@
+{% load humanize %}
+
 <table class="govuk-table">
 	<thead class="govuk-table__head">
 		<tr class="govuk-table__row">
@@ -44,12 +46,20 @@
 		<tr class="govuk-table__row">
 			<td class="govuk-table__cell govuk-table__cell--line-number">6.</td>
 			<th class="govuk-table__header" scope="row">Has UK service equipment</th>
-			<td class="govuk-table__cell">{{ case.data.electronic_warfare_requirement|friendly_boolean }}</td>
+			<td class="govuk-table__cell">{{ case.data.uk_service_equipment|friendly_boolean }}</td>
 		</tr>
 		<tr class="govuk-table__row">
 			<td class="govuk-table__cell govuk-table__cell--line-number">7.</td>
-			<th class="govuk-table__header" scope="row">UK service equipment type</th>
-			<td class="govuk-table__cell">{{ case.data.uk_service_equipment_type.value }}</td>
+			<th class="govuk-table__header" scope="row">UK service equipment</th>
+			<td class="govuk-table__cell">
+				<p class="govuk-body govuk-!-margin-0">{{ case.data.uk_service_equipment_type.value }}</p>
+				<p class="govuk-hint govuk-!-margin-0" data-max-length="200">{{ case.data.uk_service_equipment_description }}</p>
+			</td>
+		</tr>
+		<tr class="govuk-table__row">
+			<td class="govuk-table__cell govuk-table__cell--line-number">8.</td>
+			<th class="govuk-table__header" scope="row">Prospect value</th>
+			<td class="govuk-table__cell">£{{ case.data.prospect_value|intcomma }}</td>
 		</tr>
 	</tbody>
 </table>

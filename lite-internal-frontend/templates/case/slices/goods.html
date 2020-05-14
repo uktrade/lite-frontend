@@ -27,7 +27,12 @@
 				{% endif %}
 				<th scope="col" class="govuk-table__header">#</th>
 				<th scope="col" class="govuk-table__header">Description</th>
-				<th scope="col" class="govuk-table__header">Value</th>
+				{% if case.goods.0.item_type %}
+					<th scope="col" class="govuk-table__header">Type</th>
+				{% endif %}
+				{% if case.goods.0.value %}
+					<th scope="col" class="govuk-table__header">Value</th>
+				{% endif %}
 				<th scope="col" class="govuk-table__header">Controlled</th>
 				<th scope="col" class="govuk-table__header">Control list entries</th>
 				<th scope="col" class="govuk-table__header">Incorporated</th>
@@ -50,7 +55,17 @@
 					<td class="govuk-table__cell govuk-table__cell--max-width-400 {% if show_advice %}lite-!-no-border{% endif %}">
 						<span data-max-length="200">{{ good.good.description }}</span>
 					</td>
-					<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">{{ good.quantity }} {{ good.unit.value }}/£{{ good.value|intcomma }}</td>
+					{% if case.goods.0.item_type %}
+						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+							<p class="govuk-body govuk-!-margin-0">{{ good.item_type|sentence_case }}</p>
+							{% if good.other_item_type %}
+								<p class="govuk-hint govuk-!-margin-top-2">{{ good.other_item_type }}</p>
+							{% endif %}
+						</td>
+					{% endif %}
+					{% if case.goods.0.value %}
+						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">{{ good.quantity }} {{ good.unit.value }}/£{{ good.value|intcomma }}</td>
+					{% endif %}
 					<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">{{ good.good.is_good_controlled.value }}</td>
 					<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
 						{% include 'includes/control-list-entries.html' with control_list_entries=good.good.control_list_entries %}

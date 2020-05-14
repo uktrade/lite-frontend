@@ -100,6 +100,17 @@ $case-header-text-colour: govuk-colour("white");
     padding: govuk-spacing(6) 0;
     z-index: 10;
 
+    #heading-reference-code a {
+        color: govuk-colour("white")!important;
+        text-decoration: none;
+
+        &:link {
+            &:hover {
+                border-bottom: 2px solid currentColor;
+            }
+        }
+    }
+
     &__sections {
         display: grid;
         grid-template-columns: 1fr auto;

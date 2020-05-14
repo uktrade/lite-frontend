@@ -26,7 +26,7 @@
 						</li>
 					</ol>
 					<h1 id="heading-reference-code" class="app-case-header__heading">
-						{{ case.reference_code }} <a id="link-organisation" class="app-case-header__link govuk-!-margin-left-2" href="{% url 'organisations:organisation' case.organisation.id %}?return_to={{ CURRENT_PATH }}&return_to_text={{ case.reference_code }}">{{ case.organisation.name }}</a>
+						<a {% if page %}href="{% url 'cases:case' queue.id case.id %}"{% endif %}>{{ case.reference_code }}</a> <a id="link-organisation" class="app-case-header__link govuk-!-margin-left-2" href="{% url 'organisations:organisation' case.organisation.id %}?return_to={{ CURRENT_PATH }}&return_to_text={{ case.reference_code }}">{{ case.organisation.name }}</a>
 					</h1>
 				</div>
 				<div class="app-case-header__controls">
@@ -134,7 +134,18 @@
 			{% if request.GET|get:'return_to' %}
 				<a class="app-case__form-wrapper__back-link" id="back-link" href="{{ request.GET|get:'return_to' }}">Back {% if request.GET|get:'return_to_text' %}to {{ request.GET|get:'return_to_text' }}{% endif %}</a>
 			{% elif page.back_link %}
-				<a class="app-case__form-wrapper__back-link" id="back-link" href="{{ page.back_link.url }}">{{ page.back_link.text }}</a>
+				{% if not form_pk or form_pk == 0 %}
+					<a class="app-case__form-wrapper__back-link" id="back-link" href="{{ page.back_link.url }}">{{ page.back_link.text }}</a>
+				{% else %}
+					<form method="post">
+						{% csrf_token %}
+						{% dict_hidden_field 'form_pk' form_pk %}
+						{% for key, value in data.items %}
+							{% dict_hidden_field key value %}
+						{% endfor %}
+						<button class="lite-back-link-button app-case__form-wrapper__back-link" role="link" id="back-link" type="submit" name="_action" value="back" action="back">{{ page.back_link.text }}</button>
+					</form>
+				{% endif %}
 			{% endif %}
 
 			<div class="govuk-grid-row">
@@ -170,6 +181,12 @@
 		window.addEventListener('scroll', function (e) {
 			var scrollPosition = window.scrollY;
 
+			if (scrollPosition > 10) {
+				$("#case-flags").css({"pointer-events": "none"});
+			} else {
+				$("#case-flags").css({"pointer-events": "all"});
+			}
+
 			if (scrollPosition > 80) {
 				$("#tab-bar").addClass("app-case-tab-bar--float");
 			} else {
@@ -179,7 +196,7 @@
 			var padding = Math.max(15, 30 - (scrollPosition / 3));
 			var paddingFlags = Math.max(20 - scrollPosition, -38);  // 38 is the height of the shrunk case header
 			$(".app-case-tab-bar").css({"padding-top": Math.max(0, 20 - (scrollPosition / 2))});
-			$(".app-case-tab-bar .lite-tabs__tab").css({"padding-top": Math.max(15, Math.min(20, 15 + (scrollPosition / 2))), "padding-bottom": Math.max(15, Math.min(20, 15 + (scrollPosition / 2)))});
+			$(".app-case-tab-bar .lite-tabs__tab, .app-case-tab-bar .lite-tabs__tab-parent ").css({"padding-top": Math.max(15, Math.min(20, 15 + (scrollPosition / 2))), "padding-bottom": Math.max(15, Math.min(20, 15 + (scrollPosition / 2)))});
 			$(".app-case-header").css({"padding-top": padding, "padding-bottom": padding});
 			$(".app-case-header__breadcrumbs-list").css({"opacity": 1 - (scrollPosition / 10), "transform": "translateY(" + -(30 - padding) + "px)", "margin-top": -(30 - padding) + "px", "margin-bottom": -(20 - padding) + "px"});
 			$("#case-flags").css({"opacity": 1 - (scrollPosition / 10), "transform": "translateY(" + -(30 - padding) + "px)", "margin-top": paddingFlags + "px"});

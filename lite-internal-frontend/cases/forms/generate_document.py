@@ -37,4 +37,5 @@ def edit_document_text_form(request, backlink, kwargs, post_url):
         default_button_name=GenerateDocumentsPage.EditTextForm.BUTTON,
         back_link=backlink,
         post_url=reverse_lazy(post_url, kwargs=kwargs),
+        container="case",
     )

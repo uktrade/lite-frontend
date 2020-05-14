@@ -93,6 +93,7 @@ class EditDocumentTextView(SingleFormView):
         back_link_kwargs = kwargs.copy()
         back_link_kwargs.pop("tpk", None)
         backlink = BackLink(text=self.back_text, url=reverse_lazy(self.back_url, kwargs=back_link_kwargs),)
+        case = get_case(request, case_id)
 
         # If regenerating, get existing text for a given document ID
         if "document_id" in request.GET:
@@ -112,6 +113,7 @@ class EditDocumentTextView(SingleFormView):
             )[0][TEXT]
             self.data = {TEXT: paragraph_text}
 
+        self.context = {"case": case}
         self.form = edit_document_text_form(request, backlink, kwargs, self.post_url)
         self.redirect = False
         self.action = self._convert_text_list_to_str
