@@ -32,7 +32,9 @@ class EditTemplate(TemplateView):
         decision_options = [Option(decision["key"], decision["value"]) for decision in get_decisions(request)[0]]
 
         return form_page(
-            request, edit_letter_template(letter_template, case_type_options, decision_options), data=letter_template
+            request,
+            edit_letter_template(request, letter_template, case_type_options, decision_options),
+            data=letter_template,
         )
 
     @staticmethod
@@ -50,7 +52,7 @@ class EditTemplate(TemplateView):
 
         next_form, _ = submit_single_form(
             request,
-            edit_letter_template(letter_template, case_type_options, decision_options),
+            edit_letter_template(request, letter_template, case_type_options, decision_options),
             put_letter_template,
             object_pk=letter_template_id,
             override_data=edited_letter_template_data,

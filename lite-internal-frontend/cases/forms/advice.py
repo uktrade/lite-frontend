@@ -51,7 +51,7 @@ def give_advice_form(request, case: Case, tab, queue_pk, denial_reasons, show_wa
                                 Select(
                                     name="pv_grading_approve",
                                     title=advice.GiveOrChangeAdvicePage.GRADING_TITLE,
-                                    options=get_pv_gradings(request=None, convert_to_options=True),
+                                    options=get_pv_gradings(request, convert_to_options=True),
                                 ),
                             )
                         ],
@@ -65,7 +65,7 @@ def give_advice_form(request, case: Case, tab, queue_pk, denial_reasons, show_wa
                                 Select(
                                     name="pv_grading_proviso",
                                     title=advice.GiveOrChangeAdvicePage.GRADING_TITLE,
-                                    options=get_pv_gradings(request=None, convert_to_options=True),
+                                    options=get_pv_gradings(request, convert_to_options=True),
                                 ),
                             ),
                             TextArea(

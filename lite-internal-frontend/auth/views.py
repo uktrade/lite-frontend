@@ -59,7 +59,7 @@ class AuthCallbackView(View):
 
         profile = get_profile(get_client(self.request))
 
-        response, status_code = authenticate_gov_user(profile)
+        response, status_code = authenticate_gov_user(request, profile)
         if status_code != 200:
             return error_page(
                 None,

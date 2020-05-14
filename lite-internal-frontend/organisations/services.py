@@ -34,12 +34,12 @@ def post_hmrc_organisations(request, json):
 def put_organisation(request, pk, json):
     if "status" in json:
         del json["status"]
-    data = put(request=request, appended_address=ORGANISATIONS_URL + str(pk) + "/", json=json)
+    data = put(request, ORGANISATIONS_URL + str(pk) + "/", json)
     return data.json(), data.status_code
 
 
 def put_organisation_status(request, pk, json):
-    data = put(request=request, appended_address=ORGANISATIONS_URL + str(pk) + ORGANISATION_STATUS_URL, json=json)
+    data = put(request, ORGANISATIONS_URL + str(pk) + ORGANISATION_STATUS_URL, json)
     return data.json(), data.status_code
 
 

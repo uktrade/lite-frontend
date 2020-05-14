@@ -24,12 +24,12 @@ def get_letter_paragraphs(request, ids: list):
 
 
 def get_letter_template(request, pk, params=""):
-    data = get(request, LETTER_TEMPLATES_URL + pk + "?" + params)
+    data = get(request, LETTER_TEMPLATES_URL + pk + "/?" + params)
     return data.json(), data.status_code
 
 
 def put_letter_template(request, pk, json):
-    data = put(request, LETTER_TEMPLATES_URL + pk, json)
+    data = put(request, LETTER_TEMPLATES_URL + pk + "/", json)
     return data.json(), data.status_code
 
 

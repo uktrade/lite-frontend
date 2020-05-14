@@ -17,9 +17,9 @@ from letter_templates.services import get_letter_layouts
 from lite_forms.helpers import conditional
 
 
-def _letter_layout_options():
+def _letter_layout_options(request):
     options = []
-    for letter_layout in get_letter_layouts():
+    for letter_layout in get_letter_layouts(request):
         filename = letter_layout["filename"]
         options.append(
             Option(
@@ -108,14 +108,14 @@ def add_letter_template(request):
             ),
             Form(
                 title=strings.LetterTemplates.AddLetterTemplate.Layout.TITLE,
-                questions=[RadioButtonsImage(name="layout", options=_letter_layout_options())],
+                questions=[RadioButtonsImage(name="layout", options=_letter_layout_options(request))],
                 default_button_name=strings.LetterTemplates.AddLetterTemplate.Layout.CONTINUE_BUTTON,
             ),
         ]
     )
 
 
-def edit_letter_template(letter_template, case_type_options, decision_options):
+def edit_letter_template(request, letter_template, case_type_options, decision_options):
     return Form(
         title=strings.LetterTemplates.EditLetterTemplate.TITLE % letter_template["name"],
         questions=[
@@ -140,7 +140,7 @@ def edit_letter_template(letter_template, case_type_options, decision_options):
             RadioButtonsImage(
                 title=strings.LetterTemplates.EditLetterTemplate.Layout.TITLE,
                 name="layout",
-                options=_letter_layout_options(),
+                options=_letter_layout_options(request),
             ),
         ],
         back_link=BackLink(

@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate, login
 
 from raven.contrib.django.raven_compat.models import client
 from auth.utils import get_client, AUTHORISATION_URL, TOKEN_URL, TOKEN_SESSION_KEY
+from lite_forms.generators import error_page
 
 
 class AuthView(RedirectView):
@@ -57,3 +58,7 @@ class AuthCallbackView(View):
             login(request, user)
 
         return redirect(getattr(settings, "LOGIN_REDIRECT_URL", "/"))
+
+
+def handler403(request, exception):
+    return error_page(None, title="Forbidden", description=exception, show_back_link=False)

@@ -15,3 +15,5 @@ urlpatterns = [
     path("users/", include("users.urls")),
     path("routing-rules/", include("routing_rules.urls")),
 ]
+
+handler403 = "conf.views.handler403"

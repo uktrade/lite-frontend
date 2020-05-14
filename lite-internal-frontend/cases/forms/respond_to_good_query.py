@@ -56,7 +56,7 @@ def respond_to_clc_query_form(request, queue_pk, case):
                         value=CLCReviewGoods.Controlled.YES,
                         components=[
                             control_list_entries_question(
-                                control_list_entries=get_control_list_entries(None, convert_to_options=True),
+                                control_list_entries=get_control_list_entries(request, convert_to_options=True),
                                 title=CLCReviewGoods.CONTROL_LIST_ENTRY,
                             ),
                             RadioButtons(
@@ -79,8 +79,8 @@ def respond_to_clc_query_form(request, queue_pk, case):
     )
 
 
-def respond_to_grading_query_form(queue_pk, case):
-    pv_gradings = get_gov_pv_gradings(request=None, convert_to_options=True)
+def respond_to_grading_query_form(request, queue_pk, case):
+    pv_gradings = get_gov_pv_gradings(request, convert_to_options=True)
     return Form(
         title=PVGradingForm.TITLE,
         description=PVGradingForm.DESCRIPTION,

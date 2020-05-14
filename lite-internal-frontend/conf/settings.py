@@ -21,6 +21,7 @@ env = Env(
     CSP_SCRIPT_SRC=(tuple, ("'self'",)),
     CSP_FONT_SRC=(tuple, ("'self'",)),
     CSP_REPORT_ONLY=(bool, False),
+    HAWK_AUTHENTICATION_ENABLED=(bool, False),
 )
 
 # Quick-start development settings - unsuitable for production
@@ -98,6 +99,8 @@ AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
     "auth.backends.AuthbrokerBackend",
 ]
+
+HAWK_AUTHENTICATION_ENABLED = env("HAWK_AUTHENTICATION_ENABLED")
 
 LOGIN_URL = reverse_lazy("auth:login")
 
@@ -187,7 +190,7 @@ MAX_UPLOAD_SIZE = 100 * 1024 * 1024
 
 if "test" in sys.argv:
     DATABASES = {
-        "default": {"ENGINE": "django.db.backends.sqlite3", "NAME": "mydatabase",},
+        "default": {"ENGINE": "django.db.backends.sqlite3", "NAME": "mydatabase"},
     }
 else:
     DATABASES = {

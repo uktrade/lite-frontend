@@ -1,4 +1,5 @@
 from _decimal import Decimal
+from urllib.parse import quote
 
 from cases.objects import Case
 from conf.client import post, get, put, delete
@@ -324,6 +325,7 @@ def post_generated_document(request, pk, json):
 
 
 def get_generated_document_preview(request, pk, tpk, text):
+    text = quote(text)
     data = get(request, CASE_URL + pk + GENERATED_DOCUMENTS_PREVIEW_URL + "?template=" + tpk + "&text=" + text)
     return data.json(), data.status_code
 
@@ -354,12 +356,12 @@ def get_case_additional_contacts(request, pk):
 
 
 def post_case_additional_contacts(request, pk, json):
-    response = post(request, CASE_URL + str(pk) + "/additional-contacts/", json=json)
+    response = post(request, CASE_URL + str(pk) + "/additional-contacts/", json)
     return response.json(), response.status_code
 
 
 def put_rerun_case_routing_rules(request, pk, json):
-    response = put(request, CASE_URL + str(pk) + "/rerun-routing-rules/", json={})
+    response = put(request, CASE_URL + str(pk) + "/rerun-routing-rules/", {})
     return response.json(), response.status_code
 
 

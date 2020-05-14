@@ -86,7 +86,7 @@ def register_organisation_forms(request):
                 default_button_name=strings.CONTINUE,
             ),
             conditional(is_individual, register_individual_form(in_uk), register_commercial_form(in_uk)),
-            create_default_site_form(in_uk),
+            create_default_site_form(request, in_uk),
             conditional(not is_individual, create_admin_user_form(),),
         ],
         show_progress_indicators=True,
@@ -158,7 +158,7 @@ def register_commercial_form(in_uk):
     )
 
 
-def create_default_site_form(in_uk):
+def create_default_site_form(request, in_uk):
     return Form(
         title=RegisterAnOrganisation.CREATE_DEFAULT_SITE,
         questions=[
@@ -167,7 +167,7 @@ def create_default_site_form(in_uk):
             *conditional(
                 in_uk,
                 address_questions(None, "site.address."),
-                foreign_address_questions(get_countries(None, True, ["GB"]), "site.address."),
+                foreign_address_questions(get_countries(request, True, ["GB"]), "site.address."),
             ),
         ],
         default_button_name=strings.CONTINUE,

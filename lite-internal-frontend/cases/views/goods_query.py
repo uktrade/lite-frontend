@@ -28,7 +28,7 @@ class RespondPVGradingQuery(SingleFormView):
         self.object_pk = kwargs["pk"]
         case = get_case(request, self.object_pk)
         self.context = {"case": case}
-        self.form = respond_to_grading_query_form(kwargs["queue_pk"], case)
+        self.form = respond_to_grading_query_form(request, kwargs["queue_pk"], case)
         self.action = put_goods_query_pv_grading
         self.success_url = reverse("cases:case", kwargs=kwargs)
         self.success_message = PVGradingForm.SUCCESS_MESSAGE
