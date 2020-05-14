@@ -59,6 +59,8 @@ def send_tokens_to_token_bar(driver: WebDriver, element_selector: str, tokens: L
 def try_open_filters(driver: WebDriver):
     if not driver.find_element_by_class_name("lite-filter-bar").is_displayed():
         driver.find_element_by_id("show-filters-link").click()
+        # Delay is necessary as driver can fail to click filters
+        time.sleep(0.5)
 
 
 def get_table_rows(driver: WebDriver, table_selector: str = "table", raise_exception_if_empty=False):

@@ -16,7 +16,7 @@ def save_application_data_to_context(lite_client, context):
     context.ultimate_end_user = lite_client.context.get("ultimate_end_user")
 
 
-@fixture
+@fixture(scope="function")
 def apply_for_standard_application(api_test_client, context):
     timer = Timer()
     api_test_client.api_client.auth_exporter_user(api_test_client.context["org_id"])

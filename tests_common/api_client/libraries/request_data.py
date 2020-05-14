@@ -1,3 +1,5 @@
+import random
+
 from faker import Faker
 
 fake = Faker()
@@ -78,6 +80,10 @@ def build_picklist_data(name, text, type, proviso=None):
     return picklist
 
 
+def random_colour():
+    return random.choice(["red", "orange", "blue", "yellow", "green", "pink", "purple", "brown", "turquoise"])
+
+
 def build_request_data(exporter_user, gov_user):
     exporter = build_user(exporter_user)
     request_data = {
@@ -135,7 +141,7 @@ def build_request_data(exporter_user, gov_user):
         "ecju_query": {"question": fake.bs() + "?", "query_type": "ecju_query"},
         "ecju_query_picklist": {"name": fake.bs(), "text": fake.bs() + "?", "type": "ecju_query",},
         "flag": {
-            "colour": "turquoise",
+            "colour": random_colour(),
             "label": "Test label",
             "priority": 0,
             "team": "00000000-0000-0000-0000-000000000001",
