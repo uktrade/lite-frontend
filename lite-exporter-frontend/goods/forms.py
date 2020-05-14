@@ -40,7 +40,7 @@ from lite_forms.helpers import conditional
 from lite_forms.styles import ButtonStyle, HeadingStyle
 
 
-def add_goods_questions(application_pk=None):
+def add_goods_questions(request, application_pk=None):
     return Form(
         title=conditional(application_pk, CreateGoodForm.TITLE_APPLICATION, CreateGoodForm.TITLE_GOODS_LIST),
         questions=[
@@ -63,7 +63,7 @@ def add_goods_questions(application_pk=None):
                         value=CreateGoodForm.IsControlled.YES,
                         components=[
                             control_list_entries_question(
-                                control_list_entries=get_control_list_entries(None, convert_to_options=True),
+                                control_list_entries=get_control_list_entries(request, convert_to_options=True),
                                 title=CreateGoodForm.ControlListEntry.TITLE,
                                 description=CreateGoodForm.ControlListEntry.DESCRIPTION,
                             ),
@@ -101,7 +101,7 @@ def add_goods_questions(application_pk=None):
     )
 
 
-def edit_grading_form(good_id):
+def edit_grading_form(request, good_id):
     return Form(
         title=CreateGoodForm.IsGraded.TITLE,
         description="",
@@ -109,7 +109,7 @@ def edit_grading_form(good_id):
             RadioButtons(
                 name="is_pv_graded",
                 options=[
-                    Option(key="yes", value=CreateGoodForm.IsGraded.YES, components=pv_details_form().questions),
+                    Option(key="yes", value=CreateGoodForm.IsGraded.YES, components=pv_details_form(request).questions),
                     Option(key="no", value=CreateGoodForm.IsGraded.NO),
                 ],
             )
@@ -118,7 +118,7 @@ def edit_grading_form(good_id):
     )
 
 
-def pv_details_form():
+def pv_details_form(request):
     return Form(
         title=GoodGradingForm.TITLE,
         description=GoodGradingForm.DESCRIPTION,
@@ -128,7 +128,7 @@ def pv_details_form():
                 components=[
                     TextInput(title=GoodGradingForm.PREFIX, name="prefix", optional=True),
                     Select(
-                        options=get_pv_gradings(request=None, convert_to_options=True),
+                        options=get_pv_gradings(request, convert_to_options=True),
                         title=GoodGradingForm.GRADING,
                         name="grading",
                         optional=True,
@@ -148,11 +148,11 @@ def pv_details_form():
     )
 
 
-def add_good_form_group(is_pv_graded: bool = None, draft_pk: str = None):
-    return FormGroup([add_goods_questions(draft_pk), conditional(is_pv_graded, pv_details_form())])
+def add_good_form_group(request, is_pv_graded: bool = None, draft_pk: str = None):
+    return FormGroup([add_goods_questions(request, draft_pk), conditional(is_pv_graded, pv_details_form(request))])
 
 
-def edit_good_detail_form(good_id):
+def edit_good_detail_form(request, good_id):
     return Form(
         title=EditGoodForm.TITLE,
         description=EditGoodForm.DESCRIPTION,
@@ -174,7 +174,7 @@ def edit_good_detail_form(good_id):
                         value=EditGoodForm.IsControlled.YES,
                         components=[
                             control_list_entries_question(
-                                control_list_entries=get_control_list_entries(None, convert_to_options=True),
+                                control_list_entries=get_control_list_entries(request, convert_to_options=True),
                                 title=EditGoodForm.ControlListEntry.TITLE,
                                 description=EditGoodForm.ControlListEntry.DESCRIPTION,
                             ),

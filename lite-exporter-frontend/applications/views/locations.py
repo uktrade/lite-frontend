@@ -129,7 +129,7 @@ class Countries(SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.data = {"countries": get_application_countries(request, self.object_pk)}
-        self.form = countries_form(self.object_pk)
+        self.form = countries_form(request, self.object_pk)
         self.action = post_application_countries
         self.success_url = reverse_lazy("applications:task_list", kwargs={"pk": self.object_pk})
 

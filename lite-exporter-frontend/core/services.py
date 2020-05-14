@@ -267,7 +267,7 @@ def get_document_download_stream(request, url):
 def _register_organisation(request, json, _type):
     data = {
         "type": _type,
-        "user": {"email": request.user.email,},
+        "user": {"email": request.user.email},
     }
     response = post(request, ORGANISATIONS_URL, {**json, **data})
     return response.json(), response.status_code

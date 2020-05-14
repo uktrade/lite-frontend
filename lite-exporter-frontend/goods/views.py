@@ -156,12 +156,12 @@ class AddGood(MultiFormView):
     actions = [validate_good, post_goods, post_good_with_pv_grading]
 
     def init(self, request, **kwargs):
-        self.forms = add_good_form_group()
+        self.forms = add_good_form_group(request)
         self.action = post_goods
 
     def on_submission(self, request, **kwargs):
         is_pv_graded = request.POST.copy().get("is_pv_graded", "").lower() == "yes"
-        self.forms = add_good_form_group(is_pv_graded)
+        self.forms = add_good_form_group(request, is_pv_graded)
         if int(self.request.POST.get("form_pk")) == 1:
             self.action = self.actions[2]
         elif (int(self.request.POST.get("form_pk")) == 0) and is_pv_graded:
@@ -188,7 +188,7 @@ class EditGood(SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = str(kwargs["pk"])
         self.data = get_good(request, self.object_pk)[0]
-        self.form = edit_good_detail_form(self.object_pk)
+        self.form = edit_good_detail_form(request, self.object_pk)
         self.action = edit_good
         self.success_url = reverse_lazy("goods:good", kwargs={"pk": self.object_pk})
 
@@ -197,7 +197,7 @@ class EditGrading(SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = str(kwargs["pk"])
         self.data = get_good(request, self.object_pk)[0]
-        self.form = edit_grading_form(self.object_pk)
+        self.form = edit_grading_form(request, self.object_pk)
         self.action = edit_good_pv_grading
         self.success_url = reverse_lazy("goods:good", kwargs={"pk": self.object_pk})
 

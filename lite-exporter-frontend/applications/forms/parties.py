@@ -55,10 +55,13 @@ def party_website_form(title, button):
     return Form(title=title, questions=[TextInput("website")], default_button_name=button,)
 
 
-def party_address_form(title, button):
+def party_address_form(request, title, button):
     return Form(
         title=title,
-        questions=[TextArea("address", "Address"), country_question(countries=get_countries(None, True), prefix=""),],
+        questions=[
+            TextArea("address", "Address"),
+            country_question(countries=get_countries(request, True), prefix=""),
+        ],
         default_button_name=button,
     )
 
@@ -89,7 +92,7 @@ def clearance_level_forms(options, button):
     return [party_clearance_level_form(options, button), party_descriptor_form(button, optional=True)]
 
 
-def new_party_form_group(application, strings, back_url, clearance_options=None):
+def new_party_form_group(request, application, strings, back_url, clearance_options=None):
     back_link = BackLink(PartyTypeForm.BACK_LINK, reverse_lazy(back_url, kwargs={"pk": application["id"]}))
 
     forms = [
@@ -101,6 +104,6 @@ def new_party_form_group(application, strings, back_url, clearance_options=None)
     if clearance_options:
         forms.extend(clearance_level_forms(clearance_options, strings.BUTTON))
 
-    forms.append(party_address_form(strings.ADDRESS_FORM_TITLE, strings.SUBMIT_BUTTON))
+    forms.append(party_address_form(request, strings.ADDRESS_FORM_TITLE, strings.SUBMIT_BUTTON))
 
     return FormGroup(forms)

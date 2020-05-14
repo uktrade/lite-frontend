@@ -98,14 +98,10 @@ class RegisterAnOrganisationTriage(MultiFormView):
         self.action = validate_register_organisation_triage
         self.additional_context = {"user_in_limbo": True}
 
-        try:
-            organisation = get_user(request)["organisations"][0]
-            if organisation:
-                raise Http404
-        except JSONDecodeError:
-            pass
-
         if not request.user.is_authenticated:
+            raise Http404
+
+        if request.user.user_token and get_user(request)["organisations"]:
             raise Http404
 
     def get_success_url(self):
@@ -121,22 +117,18 @@ class RegisterAnOrganisation(SummaryListFormView):
         location = self.kwargs["location"]
 
         self.forms = (
-            register_a_commercial_organisation_group(location)
+            register_a_commercial_organisation_group(request, location)
             if _type == "commercial"
-            else register_an_individual_group(location)
+            else register_an_individual_group(request, location)
         )
         self.action = register_commercial_organisation if _type == "commercial" else register_private_individual
         self.hide_components = ["site.address.address_line_2"]
         self.additional_context = {"user_in_limbo": True}
 
-        try:
-            organisation = get_user(request)["organisations"][0]
-            if organisation:
-                raise Http404
-        except JSONDecodeError:
-            pass
-
         if not request.user.is_authenticated:
+            raise Http404
+
+        if request.user.user_token and get_user(request)["organisations"]:
             raise Http404
 
     def prettify_data(self, data):
@@ -155,10 +147,11 @@ class RegisterAnOrganisation(SummaryListFormView):
     def get_success_url(self):
         # Update the signed in user's details so they can make validated API calls
         response, _ = authenticate_exporter_user(
+            self.request,
             {
                 "email": self.request.user.email,
                 "user_profile": {"first_name": self.request.user.first_name, "last_name": self.request.user.last_name},
-            }
+            },
         )
         self.request.user.user_token = response["token"]
         self.request.user.lite_api_user_id = response["lite_api_user_id"]

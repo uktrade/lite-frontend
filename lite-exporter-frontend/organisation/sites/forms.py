@@ -63,7 +63,7 @@ def new_site_forms(request):
                         HeadingStyle.M,
                     ),
                     *conditional(
-                        in_uk, address_questions(None), foreign_address_questions(get_countries(None, True, ["GB"])),
+                        in_uk, address_questions(None), foreign_address_questions(get_countries(request, True, ["GB"])),
                     ),
                     HiddenField("validate_only", True),
                 ],

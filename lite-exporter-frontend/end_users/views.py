@@ -69,7 +69,7 @@ class CopyAdvisory(TemplateView):
             commercial = True
             self.data["nature_of_business"] = query["nature_of_business"]
 
-        self.forms = copy_end_user_advisory_form(individual, commercial)
+        self.forms = copy_end_user_advisory_form(request, individual, commercial)
 
         # Add the existing end user type as a hidden field to preserve its data
         self.forms.forms[0].questions.append(HiddenField("end_user.sub_type", query["end_user"]["sub_type"]["key"]))
@@ -89,13 +89,12 @@ class CopyAdvisory(TemplateView):
 
 
 class ApplyForAnAdvisory(TemplateView):
-
     forms = None
 
     def dispatch(self, request, *args, **kwargs):
         individual = request.POST.get("end_user.sub_type") == "individual"
         commercial = request.POST.get("end_user.sub_type") == "commercial"
-        self.forms = apply_for_an_end_user_advisory_form(individual, commercial)
+        self.forms = apply_for_an_end_user_advisory_form(request, individual, commercial)
 
         return super(ApplyForAnAdvisory, self).dispatch(request, *args, **kwargs)
 

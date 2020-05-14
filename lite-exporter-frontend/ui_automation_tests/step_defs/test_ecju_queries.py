@@ -1,6 +1,5 @@
-from pytest_bdd import when, then, scenarios
+from pytest_bdd import when, scenarios
 
-from ui_automation_tests.pages.shared import Shared
 
 scenarios("../features/ecju_queries.feature", strict_gherkin=False)
 

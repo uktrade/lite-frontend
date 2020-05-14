@@ -169,7 +169,7 @@ def convert_control_list_entries(control_list_entries):
                     "<span data-definition-title='"
                     + clc["rating"]
                     + "' data-definition-text='"
-                    + clc["text"]
+                    + clc.get("text", "")
                     + "'>"
                     + clc["rating"]
                     + "</span>"

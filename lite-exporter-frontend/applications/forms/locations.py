@@ -84,7 +84,7 @@ def new_external_location_form(request, application_type=None, location_type=Non
             conditional(
                 (application_type in [CaseTypes.SICL, CaseTypes.OICL]), location_type_form(request, application_type),
             ),
-            new_location_form(application_type, location_type),
+            new_location_form(request, application_type, location_type),
         ]
     )
 
@@ -110,12 +110,12 @@ def location_type_form(request, application_type=None):
     )
 
 
-def new_location_form(application_type, location_type):
+def new_location_form(request, application_type, location_type):
     exclude = []
     if application_type in [CaseTypes.SITL, CaseTypes.SICL, CaseTypes.OICL]:
         exclude.append("GB")
 
-    countries = get_countries(None, True, exclude)
+    countries = get_countries(request, True, exclude)
 
     return Form(
         title=NewLocationForm.TITLE,
@@ -140,7 +140,7 @@ def new_location_form(application_type, location_type):
                     ),
                 ),
             ),
-            conditional(location_type != LocationType.SEA_BASED, country_question(prefix="", countries=countries),),
+            conditional(location_type != LocationType.SEA_BASED, country_question(prefix="", countries=countries)),
         ],
         default_button_name=strings.SAVE_AND_CONTINUE,
     )

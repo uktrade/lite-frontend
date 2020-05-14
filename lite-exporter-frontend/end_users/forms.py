@@ -18,7 +18,7 @@ from lite_forms.generators import success_page, confirm_form
 from lite_forms.helpers import conditional
 
 
-def apply_for_an_end_user_advisory_form(individual, commercial):
+def apply_for_an_end_user_advisory_form(request, individual, commercial):
     return FormGroup(
         [
             Form(
@@ -71,7 +71,7 @@ def apply_for_an_end_user_advisory_form(individual, commercial):
                         "receiving the products.",
                         name="end_user.address",
                     ),
-                    country_question(countries=get_countries(None, True), prefix="end_user."),
+                    country_question(countries=get_countries(request, True), prefix="end_user."),
                     HiddenField("validate_only", True),
                 ],
                 default_button_name="Continue",
@@ -100,7 +100,7 @@ def apply_for_an_end_user_advisory_form(individual, commercial):
     )
 
 
-def copy_end_user_advisory_form(individual, commercial):
+def copy_end_user_advisory_form(request, individual, commercial):
     return FormGroup(
         [
             Form(
@@ -123,7 +123,7 @@ def copy_end_user_advisory_form(individual, commercial):
                         "receiving the products",
                         name="end_user.address",
                     ),
-                    country_question(countries=get_countries(None, True), prefix="end_user."),
+                    country_question(countries=get_countries(request, True), prefix="end_user."),
                     HiddenField("validate_only", True),
                 ],
                 back_link=BackLink(

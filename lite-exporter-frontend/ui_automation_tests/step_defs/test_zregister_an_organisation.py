@@ -17,12 +17,12 @@ def success(driver):
 @given("I register but I don't belong to an organisation")
 def new_log_in(context):
     response = post_user_to_great_sso()
-    context.newly_registered_email = (response["email"],)
-    context.newly_registered_password = (response["password"],)
+    context.newly_registered_email = response["email"]
+    context.newly_registered_password = response["password"]
 
 
 @when("I register a new commercial organisation")
-def register(driver):
+def register_commercial(driver):
     register = RegisterOrganisation(driver)
     register.click_create_an_account_button()
     register.select_commercial_or_individual_organisation("commercial")
@@ -41,7 +41,7 @@ def register(driver):
 
 
 @when("I register a new individual organisation")
-def register(driver):
+def register_individual(driver):
     register = RegisterOrganisation(driver)
     register.click_create_an_account_button()
     register.select_commercial_or_individual_organisation("individual")

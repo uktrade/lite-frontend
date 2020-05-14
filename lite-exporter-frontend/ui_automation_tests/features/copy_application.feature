@@ -5,7 +5,7 @@ Feature: I want to add a note to an application and view notes
   So that I can record my findings and comments and others users can see these
 
   @LT_972_copy_standard @regression
-  Scenario: Add a copy a standard application
+  Scenario: Add and copy a standard application
     Given I go to exporter homepage and choose Test Org
     And I create a standard application via api
     When I go to application previously created

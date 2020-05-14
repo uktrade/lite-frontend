@@ -37,7 +37,7 @@ GENERATED_DOCUMENTS_URL = "/generated-documents/"
 ADDITIONAL_DOCUMENT_URL = "/documents/"
 MANAGE_STATUS_URL = "/status/"
 DOCUMENT_SENSITIVITY_URL = "/document-sensitivity/"
-EXISTING_PARTIES_URL = "/existing-parties"
+EXISTING_PARTIES_URL = "/existing-parties/"
 COUNTRIES_URL = "/countries/"
 LICENCES_URL = "/licences/"
 

@@ -64,38 +64,36 @@ class AuthCallbackView(View):
 
         profile = get_profile(get_client(self.request))
 
-        response, status_code = authenticate_exporter_user(profile)
+        response, status_code = authenticate_exporter_user(request, profile)
+
         user = authenticate(request)
-        bypass = False
+        login(request, user)
+
         if status_code == 200:
             user.user_token = response["token"]
             user.first_name = response["first_name"]
             user.last_name = response["last_name"]
             user.lite_api_user_id = response["lite_api_user_id"]
+            user.organisation = None
+            user.save()
         else:
-            bypass = True
-        user.organisation = None
-        user.save()
+            user.organisation = None
+            user.save()
+            return redirect("core:register_an_organisation_triage")
 
-        if user is not None:
-            login(request, user)
+        user_dict = get_user(request)
 
-            if bypass:
-                return redirect("core:register_an_organisation_triage")
-
-            user_dict = get_user(request)
-
-            if len(user_dict["organisations"]) == 0:
-                return redirect("core:register_an_organisation_triage")
-            elif len(user_dict["organisations"]) == 1:
-                organisation = user_dict["organisations"][0]
-                if organisation["status"]["key"] != "in_review":
-                    user.organisation = user_dict["organisations"][0]["id"]
-                    user.save()
-                else:
-                    return redirect("core:register_an_organisation_confirm")
-            elif len(user_dict["organisations"]) > 1:
-                return redirect("core:pick_organisation")
+        if len(user_dict["organisations"]) == 0:
+            return redirect("core:register_an_organisation_triage")
+        elif len(user_dict["organisations"]) == 1:
+            organisation = user_dict["organisations"][0]
+            if organisation["status"]["key"] != "in_review":
+                user.organisation = user_dict["organisations"][0]["id"]
+                user.save()
+            else:
+                return redirect("core:register_an_organisation_confirm")
+        elif len(user_dict["organisations"]) > 1:
+            return redirect("core:pick_organisation")
 
         return redirect(getattr(settings, "LOGIN_REDIRECT_URL", "/"))
 

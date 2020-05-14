@@ -6,7 +6,7 @@ from lite_forms.components import TextArea, RadioButtons, Option, Form
 from lite_forms.helpers import conditional
 
 
-def goods_type_form(application_type: str):
+def goods_type_form(request, application_type: str):
     return Form(
         title=CreateGoodsTypeForm.TITLE,
         description=CreateGoodsTypeForm.DESCRIPTION,
@@ -25,7 +25,7 @@ def goods_type_form(application_type: str):
                                 value=CreateGoodsTypeForm.IsControlled.YES,
                                 components=[
                                     control_list_entries_question(
-                                        control_list_entries=get_control_list_entries(None, convert_to_options=True),
+                                        control_list_entries=get_control_list_entries(request, convert_to_options=True),
                                     ),
                                 ],
                             ),

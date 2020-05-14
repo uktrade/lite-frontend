@@ -25,6 +25,7 @@ env = Env(
     CSP_CONNECT_SRC=(list, []),
     CSP_INCLUDE_NONCE_IN=(list, []),
     CSP_REPORT_ONLY=(bool, True),
+    HAWK_AUTHENTICATION_ENABLED=(bool, False),
 )
 
 # Quick-start development settings - unsuitable for production
@@ -97,6 +98,8 @@ AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
     "auth.backends.AuthbrokerBackend",
 ]
+
+HAWK_AUTHENTICATION_ENABLED = env("HAWK_AUTHENTICATION_ENABLED")
 
 LOGIN_URL = reverse_lazy("auth:login")
 LOGIN_REDIRECT_URL = reverse_lazy("core:home")

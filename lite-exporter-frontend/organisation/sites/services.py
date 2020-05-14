@@ -60,7 +60,9 @@ def get_site(request, organisation_id, pk):
 
 
 def update_site(request, pk, json):
-    response = patch(request, ORGANISATIONS_URL + str(request.user.organisation) + SITES_URL + str(pk) + "/", json=json)
+    response = patch(
+        request, ORGANISATIONS_URL + str(request.user.organisation) + SITES_URL + str(pk) + "/", request_data=json
+    )
     return response.json(), response.status_code
 
 
