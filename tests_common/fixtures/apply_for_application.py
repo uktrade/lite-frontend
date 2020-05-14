@@ -42,7 +42,7 @@ def apply_for_standard_application(api_test_client, context):
         },
         end_user={
             "name": fake.name(),
-            "address": fake.street_address() + fake.state() + fake.postcode(),
+            "address": fake.street_address() + ", " + fake.state() + ", " + fake.postcode(),
             "country": "GB",
             "sub_type": "government",
             "website": fake.uri(),
@@ -50,7 +50,7 @@ def apply_for_standard_application(api_test_client, context):
         },
         ultimate_end_user={
             "name": fake.name(),
-            "address": fake.street_address() + fake.state() + fake.postcode(),
+            "address": fake.street_address() + ", " + fake.state() + ", " + fake.postcode(),
             "country": "GB",
             "sub_type": "commercial",
             "website": fake.uri(),
@@ -58,7 +58,7 @@ def apply_for_standard_application(api_test_client, context):
         },
         consignee={
             "name": fake.name(),
-            "address": fake.street_address() + fake.state() + fake.postcode(),
+            "address": fake.street_address() + ", " + fake.state() + ", " + fake.postcode(),
             "country": "GB",
             "sub_type": "government",
             "website": fake.uri(),
@@ -66,7 +66,7 @@ def apply_for_standard_application(api_test_client, context):
         },
         third_party={
             "name": fake.name(),
-            "address": fake.street_address() + fake.state() + fake.postcode(),
+            "address": fake.street_address() + ", " + fake.state() + ", " + fake.postcode(),
             "country": "UA",
             "sub_type": "government",
             "role": "agent",
