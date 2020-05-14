@@ -1,3 +1,4 @@
+from shared import functions
 from shared.BasePage import BasePage
 
 
@@ -16,7 +17,7 @@ class OrganisationsPage(BasePage):
         self.driver.find_element_by_id(self.BUTTON_REGISTER_HMRC_ORGANISATION_ID).click()
 
     def search_for_org_in_filter(self, org_name):
-        self.driver.find_element_by_id("show-filters-link").click()
+        functions.try_open_filters(self.driver)
         self.driver.find_element_by_id(self.INPUT_SEARCH_TERM_ID).send_keys(org_name)
         self.driver.find_element_by_id("button-apply-filters").click()
 

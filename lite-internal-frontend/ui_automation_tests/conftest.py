@@ -340,8 +340,6 @@ def finalise(driver):  # noqa
 
 @when("I select the template previously created")  # noqa
 def selected_created_template(driver, context):  # noqa
-    driver.refresh()
-    Shared(driver).set_header_to_not_stick()
     GeneratedDocument(driver).click_letter_template(context.document_template_id)
     Shared(driver).click_submit()
 

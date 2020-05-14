@@ -20,7 +20,6 @@ def i_create_an_proviso_picklist(context, add_a_proviso_picklist):
 
 @when(parsers.parse('I select decision "{number}"'))
 def select_decision(driver, number, context):
-    Shared(driver).set_header_to_not_stick()
     record = RecordDecision(driver)
     record.click_on_decision_number(number)
     context.advice_data.append(number)

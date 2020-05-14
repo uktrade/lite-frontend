@@ -16,7 +16,7 @@ def click_edit_destination_flags_link(driver):
 @when("I click edit flags on the first good")
 def click_edit_goods_flags_link(driver):
     case_page = CasePage(driver)
-    case_page.select_good(0)
+    case_page.select_first_good()
     case_page.click_edit_goods_flags()
 
 

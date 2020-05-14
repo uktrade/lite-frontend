@@ -1,4 +1,3 @@
-import time
 from shared import functions
 from shared.BasePage import BasePage
 from selenium.webdriver.support.ui import Select
@@ -29,8 +28,6 @@ class GoodsQueriesPages(BasePage):
 
     # Response Page
     def click_is_good_controlled(self, answer):
-        time.sleep(1)
-        scroll_to_element_below_header_by_id(self.driver, self.CONTROL_RESPONSE + answer)
         self.driver.find_element_by_id(self.CONTROL_RESPONSE + answer).click()
 
     def type_in_to_control_list_entry(self, code):

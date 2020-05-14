@@ -41,6 +41,7 @@ class CasePage(BasePage):
         self.driver.find_element_by_id(self.LINK_CHANGE_CASE_FLAGS_ID).click()
 
     def click_assign_case_officer(self):
+        scroll_to_element_below_header_by_id(self.driver, self.LINK_ASSIGN_CASE_OFFICER_ID)
         self.driver.find_element_by_id(self.LINK_ASSIGN_CASE_OFFICER_ID).click()
 
     def click_assign_users(self):
@@ -56,12 +57,8 @@ class CasePage(BasePage):
     def get_goods(self):
         return self.driver.find_elements_by_css_selector(f"#{self.TABLE_GOODS_ID} {Shared(self.driver).TABLE_ROW_CSS}")
 
-    def select_good(self, index):
-        self.driver.find_elements_by_css_selector(f"#{self.TABLE_GOODS_ID} {selectors.CHECKBOX}")[index].click()
-
-    def select_goods(self):
-        for good in self.driver.find_elements_by_css_selector(f"#{self.TABLE_GOODS_ID} {selectors.CHECKBOX}"):
-            good.click()
+    def select_first_good(self):
+        self.driver.find_element_by_css_selector(f"#{self.TABLE_GOODS_ID} {selectors.CHECKBOX}").click()
 
     def get_goods_text(self):
         return self.driver.find_element_by_id(self.TABLE_GOODS_ID).text
@@ -86,6 +83,7 @@ class CasePage(BasePage):
 
     def is_flag_applied(self, flag_name):
         self.driver.find_element_by_id("candy-flags").click()
+        # TODO Make this an implicit wait!
         time.sleep(0.5)
         return flag_name in self.driver.find_element_by_id("popup-flags").text
 

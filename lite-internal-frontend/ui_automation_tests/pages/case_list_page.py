@@ -3,6 +3,7 @@ import time
 import shared.tools.helpers as utils
 from selenium.webdriver.support.select import Select
 from shared.BasePage import BasePage
+from shared.tools.helpers import scroll_to_element_by_id
 from pages.shared import Shared
 
 
@@ -108,6 +109,7 @@ class CaseListPage(BasePage):
 
     def click_on_queue_name(self, queue_name):
         self.click_on_queue_title()
+        # TODO Make this an implicit wait!
         time.sleep(0.5)
         self.search_for_queue(queue_name)
         self.driver.find_element_by_id(queue_name).click()
@@ -116,6 +118,7 @@ class CaseListPage(BasePage):
         Select(self.driver.find_element_by_id(self.STATUS_DROPDOWN)).select_by_visible_text(status)
 
     def select_filter_user_status_from_dropdown(self, status):
+        scroll_to_element_by_id(self.driver, self.USER_STATUS_DROPDOWN_ID)
         Select(self.driver.find_element_by_id(self.USER_STATUS_DROPDOWN_ID)).select_by_visible_text(status)
 
     def select_filter_case_type_from_dropdown(self, status):

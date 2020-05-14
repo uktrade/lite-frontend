@@ -3,7 +3,6 @@ from pytest_bdd import scenarios, when, given, then, parsers
 from pages.case_page import CasePage, CaseTabs
 from ui_automation_tests.pages.application_page import ApplicationPage
 from ui_automation_tests.pages.generate_document_page import GeneratedDocument
-from ui_automation_tests.pages.shared import Shared
 
 scenarios("../features/generated_documents.feature", strict_gherkin=False)
 

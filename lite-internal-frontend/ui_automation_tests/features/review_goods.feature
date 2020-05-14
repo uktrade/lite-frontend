@@ -11,7 +11,7 @@ Feature: I want to review, amend where required and confirm the goods ratings an
     And I create standard application or standard application has been previously created
     And I create report summary picklist
     When I go to application previously created
-    And I select goods and click review
+    And I select good and click review
     And I respond "yes", "ML4b1", "1", "Because the good is controlled" and click submit
     Then the control list is present on the case page
 
@@ -21,6 +21,6 @@ Feature: I want to review, amend where required and confirm the goods ratings an
     And I create open application or open application has been previously created
     And I create report summary picklist
     When I go to application previously created
-    And I select goods and click review
+    And I select good and click review
     And I respond "True", "ML4b1", "1", "Because the good is controlled" and click submit
     Then the control list is present on the case page
