@@ -88,7 +88,10 @@
 			</div>
 			{% if not hide_flags_row %}
 				<div class="app-case__flags-bar" id="case-flags">
-					{% include 'includes/flags.html' with flags=case.all_flags|slice:6 show_change_link=True %}
+					<div class="app-case__flags-wrapper">
+						{% include 'includes/flags.html' with flags=case.all_flags show_change_link=True %}
+					</div>
+					<a id="link-change-flags" href="{% url 'cases:assign_flags' queue.id case.id %}?&case={{ case.id }}&return_to={{ CURRENT_PATH }}">{% lcs 'generic.CHANGE' %}</a>
 				</div>
 			{% endif %}
 		</div>
@@ -177,6 +180,14 @@
 			hideOnClick: false,
 			interactiveBorder: 15,
 		});
+
+		var width = 0;
+		$('.app-case__flags-wrapper .app-flag').each(function() {
+			width += $(this).outerWidth( true );
+		});
+		if (width > $('.app-case__flags-wrapper .app-flags').outerWidth(true)) {
+			$('.app-case__flags-wrapper').addClass('app-case__flags-wrapper--fade');
+		}
 
 		window.addEventListener('scroll', function (e) {
 			var scrollPosition = window.scrollY;
