@@ -212,7 +212,7 @@ def _convert_goods(goods, is_exhibition=False):
         goods_dict = {
             "Description": good["good"]["description"],
             "Part number": default_na(good["good"]["part_number"]),
-            "Controlled": friendly_boolean(good["good"]["is_good_controlled"]),
+            "Controlled": good["good"]["is_good_controlled"]["value"],
             "Control list entries": convert_control_list_entries(good["good"]["control_list_entries"]),
         }
         if is_exhibition:
