@@ -71,7 +71,7 @@ class Cases:
 
     def finalise_licence(self, case_id):
         licence = self.api_client.make_request(
-            method="PUT", url="/cases/" + case_id + "/finalise/", headers=self.api_client.gov_headers, body={},
+            method="PUT", url="/cases/" + case_id + "/finalise/", headers=self.api_client.gov_headers,
         ).json()["licence"]
         self.api_client.add_to_context("licence", licence)
 

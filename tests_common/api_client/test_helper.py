@@ -17,9 +17,6 @@ class TestHelper:
     """
     Contains a collection of test helper classes, grouped by functional area, with each class containing
     required logic wrapping calls to various LITE API endpoints.
-
-    Generic request_data is automatically built.  If customisation of request_data is required,
-    this is possible by constructing individual sub-helpers directly and passing the custom request data to them.
     """
 
     def __init__(self, api):

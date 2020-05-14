@@ -17,7 +17,9 @@ class Documents:
         return response
 
     def _get_or_create_test_document(self):
-        response = self.api_client.make_request(method="GET", url="/static/upload-document-for-tests/", headers=None)
+        response = self.api_client.make_request(
+            method="GET", url="/static/upload-document-for-tests/", headers=self.api_client.exporter_headers
+        )
 
         if response.status_code == 200:
             return response.json()["s3_key"]
