@@ -11,8 +11,8 @@ from conf.constants import (
     STATUS_PROPERTIES_URL,
     GOV_PV_GRADINGS_URL,
     Statuses,
-    GOODS_QUERY_STATUSES,
     PV_GRADINGS_URL,
+    BASE_QUERY_STATUSES,
 )
 from lite_forms.components import Option
 from users.services import get_gov_user
@@ -66,21 +66,46 @@ def get_statuses(request, convert_to_options=False):
     return data.json()["statuses"], data.status_code
 
 
-def get_permissible_statuses(request, case_type):
+def get_permissible_statuses(request, case):
     """ Get a list of case statuses permissible for the user's role. """
     user, _ = get_gov_user(request, str(request.user.lite_api_user_id))
     user_permissible_statuses = user["user"]["role"]["statuses"]
     statuses, _ = get_statuses(request)
+    case_sub_type = case["case_type"]["sub_type"]["key"]
+    case_type = case["case_type"]["type"]["key"]
 
     if case_type == CaseType.APPLICATION.value:
         case_type_applicable_statuses = [
             status
             for status in statuses
             if status["key"]
-            not in [Statuses.APPLICANT_EDITING, Statuses.CLOSED, Statuses.FINALISED, Statuses.REGISTERED]
+            not in [
+                Statuses.APPLICANT_EDITING,
+                Statuses.CLOSED,
+                Statuses.FINALISED,
+                Statuses.REGISTERED,
+                Statuses.CLC,
+                Statuses.PV,
+            ]
         ]
     else:
-        case_type_applicable_statuses = [status for status in statuses if status["key"] in GOODS_QUERY_STATUSES]
+        if case_sub_type == CaseType.END_USER_ADVISORY.value:
+            case_type_applicable_statuses = [status for status in statuses if status["key"] in BASE_QUERY_STATUSES]
+        else:
+            # if the query is not an end user advisory, then check if CLC/PV statuses are required
+            goods_query_status_keys = BASE_QUERY_STATUSES.copy()
+
+            if case["query"]["clc_responded"] is not None:
+                goods_query_status_keys.insert(1, Statuses.CLC)
+
+            if case["query"]["pv_grading_responded"] is not None:
+                # add PV status into the correct location
+                if case["query"]["clc_responded"] is not None:
+                    goods_query_status_keys.insert(2, Statuses.PV)
+                else:
+                    goods_query_status_keys.insert(1, Statuses.PV)
+
+            case_type_applicable_statuses = [status for status in statuses if status["key"] in goods_query_status_keys]
 
     return [status for status in case_type_applicable_statuses if status in user_permissible_statuses]
 

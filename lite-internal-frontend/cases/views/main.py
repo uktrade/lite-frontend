@@ -191,7 +191,7 @@ class ChangeStatus(SingleFormView):
         case = get_case(request, self.object_pk)
         self.case_type = case["case_type"]["type"]["key"]
         self.case_sub_type = case["case_type"]["sub_type"]["key"]
-        permissible_statuses = get_permissible_statuses(request, self.case_type)
+        permissible_statuses = get_permissible_statuses(request, case)
         self.data = case["application"] if "application" in case else case["query"]
         self.form = change_status_form(get_queue(request, kwargs["queue_pk"]), case, permissible_statuses)
         self.context = {"case": case}

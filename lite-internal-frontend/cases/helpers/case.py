@@ -135,7 +135,7 @@ class CaseView(TemplateView):
             and (self.queue["is_system_queue"] and user_assigned_queues)
             or not self.queue["is_system_queue"],
             "generated_document_key": GENERATED_DOCUMENT,
-            "permissible_statuses": get_permissible_statuses(self.request, self.case["case_type"]),
+            "permissible_statuses": get_permissible_statuses(self.request, self.case),
             "filters": get_timeline_filters(self.request, self.case_id),
             "is_terminal": status_props["is_terminal"],
             "is_read_only": status_props["is_read_only"],

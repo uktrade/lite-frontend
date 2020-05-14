@@ -138,7 +138,7 @@ class UserStatuses:
     DEACTIVATED = "Deactivated"
 
 
-GOODS_QUERY_STATUSES = [Statuses.CLOSED, Statuses.SUBMITTED, Statuses.WITHDRAWN, Statuses.CLC, Statuses.PV]
+BASE_QUERY_STATUSES = [Statuses.SUBMITTED, Statuses.CLOSED, Statuses.WITHDRAWN]
 
 
 class SystemTeamsID(Enum):

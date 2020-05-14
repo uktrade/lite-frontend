@@ -6,6 +6,8 @@ from shared import functions
 from shared.BasePage import BasePage
 from shared.tools.helpers import scroll_to_element_by_id
 
+from ui_automation_tests.shared.tools.helpers import scroll_to_element_below_header_by_id
+
 
 class ApplicationPage(BasePage):
     ACTIONS_LIST_CONTAINER_ID = "actions-list"  # ID
@@ -101,6 +103,7 @@ class ApplicationPage(BasePage):
         self.driver.find_element_by_id(self.GENERATE_DOCUMENTS_BTN).click()
 
     def select_status(self, status):
+        scroll_to_element_below_header_by_id(self.driver, self.STATUS)
         case_status_dropdown = Select(self.driver.find_element_by_id(self.STATUS))
         case_status_dropdown.select_by_visible_text(status)
 
