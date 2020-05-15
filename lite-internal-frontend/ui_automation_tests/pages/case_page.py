@@ -2,7 +2,7 @@ import time
 from pages.shared import Shared
 from shared import selectors
 from shared.BasePage import BasePage
-from shared.tools.helpers import scroll_to_element_below_header_by_id
+from shared.tools.helpers import scroll_to_element_by_id, scroll_to_element_below_header_by_id
 
 
 class CaseTabs:
@@ -58,6 +58,7 @@ class CasePage(BasePage):
         return self.driver.find_elements_by_css_selector(f"#{self.TABLE_GOODS_ID} {Shared(self.driver).TABLE_ROW_CSS}")
 
     def select_first_good(self):
+        scroll_to_element_by_id(self.driver, self.TABLE_GOODS_ID)
         self.driver.find_element_by_css_selector(f"#{self.TABLE_GOODS_ID} {selectors.CHECKBOX}").click()
 
     def get_goods_text(self):
