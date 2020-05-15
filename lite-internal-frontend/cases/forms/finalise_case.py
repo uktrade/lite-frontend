@@ -34,7 +34,7 @@ def approve_licence_form(queue_pk, case_id, is_open_licence, duration, editable_
                 text=lite_content.lite_internal_frontend.advice.FinaliseLicenceForm.Actions.BACK_TO_DECISION_MATRIX_BUTTON,
             ),
             BackLink(
-                url=reverse_lazy("cases:final_advice_view", kwargs={"queue_pk": queue_pk, "pk": case_id}),
+                url=reverse_lazy("cases:case", kwargs={"queue_pk": queue_pk, "pk": case_id, "tab": "final-advice"}),
                 text=lite_content.lite_internal_frontend.advice.FinaliseLicenceForm.Actions.BACK_TO_ADVICE_BUTTON,
             ),
         ),

@@ -2,7 +2,7 @@ from datetime import date
 
 from pytest_bdd import when, then, parsers, scenarios, given
 
-from pages.advice import UserAdvicePage, FinalAdvicePage, TeamAdvicePage
+from pages.advice import UserAdvicePage, FinalAdvicePage, TeamAdvicePage, BaseAdvicePage
 from pages.case_page import CasePage, CaseTabs
 from pages.give_advice_pages import GiveAdvicePages
 from pages.record_decision_page import RecordDecision
@@ -163,3 +163,18 @@ def dont_see_clearance_level(driver):
 @when(parsers.parse('I select "{clearance_level}" clearance level'))
 def select_clearance_level(driver, clearance_level):
     GiveAdvicePages(driver).select_clearance_grading(clearance_level)
+
+
+@when("I go to grouped view")
+def go_to_grouped_view(driver):
+    BaseAdvicePage(driver).click_grouped_view_button()
+
+
+@when(parsers.parse('I select all items in the "{group}" grouped view'))
+def select_all_items_in_group(driver, group):
+    UserAdvicePage(driver).click_grouped_view_checkboxes(group)
+
+
+@when("I click give advice")
+def click_give_advice(driver):
+    UserAdvicePage(driver).click_give_advice()

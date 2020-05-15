@@ -22,7 +22,9 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I click continue
     Then I see my advice has been posted successfully
     And I see added advice in the same amount of places
-    When I select all items in the user advice view
+    When I go to grouped view
+    And I select all items in the "proviso" grouped view
+    And I click give advice
     And I choose to 'proviso' the licence
     Then I see the fields pre-populated with the proviso and advice picklist items
 

@@ -292,6 +292,10 @@ $case-header-text-colour: govuk-colour("white");
     padding-top: 20px;
     margin-bottom: govuk-spacing(6);
 
+    .lite-tabs__container::after {
+        bottom: 2px;
+    }
+
     .lite-tabs__tab {
         margin-bottom: 0;
     }
@@ -300,6 +304,10 @@ $case-header-text-colour: govuk-colour("white");
         display: flex;
         align-items: center;
         justify-content: center;
+
+        &::after {
+            bottom: 2px;
+        }
     }
 
     &::before {

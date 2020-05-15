@@ -1,20 +1,34 @@
-{% load static %}
+{% load static svg %}
 
-<form id="form-final-advice" action="{% url 'cases:final_advice_view' queue.id case.id %}" method="post">
+<form id="form-final-advice" action="{% url 'cases:final_advice_view' queue.id case.id %}{{ CURRENT_PATH_ONLY_PARAMS }}" method="post">
 	{% csrf_token %}
 </form>
 
-<form action="{% url 'cases:give_advice' queue.id case.id 'final-advice' %}" method="get">
+<form id="form-final-advice-container" action="{% url 'cases:give_advice' queue.id case.id 'final-advice' %}" method="get">
+	{% hidden_field 'grouped-advice-view' request.GET|get:'grouped-advice-view' %}
 	<div class="app-advice_app-bar">
-		<div class="lite-buttons-row {% if current_advice_level != 'final' %}app-advice__disabled-buttons{% endif %}">
-			<div data-enable-on-checkboxes="#table-goods-final-advice, #table-destinations-final-advice" class="lite-buttons-row lite-!-display-inline">
-				<button id="button-give-final-advice" name="action" value="give-advice" type="submit" class="govuk-button" data-module="govuk-button">
-					{% lcs 'advice.FinalAdvicePage.GIVE_CHANGE_ADVICE_BUTTON' %}
+		<div class="lite-buttons-row">
+			{% if not request.GET|get:'grouped-advice-view' == 'True' %}
+				<a href="?grouped-advice-view=True" class="govuk-button govuk-button--secondary app-button--icon">
+					{% svg 'grouped-view' %}
+					Grouped view
+				</a>
+			{% else %}
+				<a href="?grouped-advice-view=False" class="govuk-button govuk-button--secondary app-button--icon">
+					{% svg 'list-view' %}
+					List view
+				</a>
+			{% endif %}
+			<div class="lite-!-display-inline lite-buttons-row {% if current_advice_level != 'final' %}app-advice__disabled-buttons{% endif %}">
+				<div data-enable-on-checkboxes="#form-final-advice-container" class="lite-buttons-row lite-!-display-inline">
+					<button id="button-give-final-advice" name="action" value="give-advice" type="submit" class="govuk-button" data-module="govuk-button">
+						{% lcs 'advice.FinalAdvicePage.GIVE_CHANGE_ADVICE_BUTTON' %}
+					</button>
+				</div>
+				<button form="form-final-advice" id="button-clear-final-advice" name="action" value="delete" type="submit" class="govuk-button {% if not case.advice|filter_advice_by_level:'final' %}govuk-button--disabled{% endif %}" data-module="govuk-button">
+					{% lcs 'advice.FinalAdvicePage.CLEAR_ADVICE_BUTTON' %}
 				</button>
 			</div>
-			<button form="form-final-advice" id="button-clear-final-advice" name="action" value="delete" type="submit" class="govuk-button {% if not case.advice|filter_advice_by_level:'final' %}govuk-button--disabled{% endif %}" data-module="govuk-button">
-				{% lcs 'advice.FinalAdvicePage.CLEAR_ADVICE_BUTTON' %}
-			</button>
 		</div>
 
 		<div class="{% if not can_finalise %}app-advice__disabled-buttons{% endif %}">
@@ -42,7 +56,5 @@
 		</div>
 	{% endif %}
 
-	{% include 'case/slices/goods.html' with hide_controls=True show_advice=True level='final' hide_checkboxes=current_advice_level|not_equals:'final' %}
-
-	{% include 'case/slices/destinations.html' with hide_controls=True show_advice=True level='final' hide_checkboxes=current_advice_level|not_equals:'final' %}
+	{% include 'case/includes/advice.html' with level='final' %}
 </form>

@@ -64,8 +64,10 @@ class GiveAdvice(SingleFormView):
             "destinations": get_param_destinations(request, self.case),
         }
         self.success_message = "Advice posted successfully"
-        self.success_url = reverse(
-            "cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.object_pk, "tab": self.tab}
+        self.success_url = (
+            reverse("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.object_pk, "tab": self.tab})
+            + "?grouped-advice-view="
+            + request.GET.get("grouped-advice-view", "")
         )
 
         if self.tab not in ["user-advice", "team-advice", "final-advice"]:
@@ -75,6 +77,7 @@ class GiveAdvice(SingleFormView):
         data["good"] = self.request.GET.getlist("goods")
         data["goods_type"] = self.request.GET.getlist("goods_types")
         data["country"] = self.request.GET.getlist("countries")
+        data["third_party"] = self.request.GET.getlist("third_party")
         data["ultimate_end_user"] = self.request.GET.getlist("ultimate_end_user")
         data["consignee"] = self.request.GET.get("consignee")
         data["end_user"] = self.request.GET.get("end_user")
@@ -102,6 +105,8 @@ class CoalesceUserAdvice(TemplateView):
         messages.success(self.request, "User advice combined successfully")
         return redirect(
             reverse("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": case_id, "tab": "team-advice"})
+            + "?grouped-advice-view="
+            + request.GET.get("grouped-advice-view", "")
         )
 
 
@@ -120,6 +125,8 @@ class ClearTeamAdvice(TemplateView):
 
             return redirect(
                 reverse("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": kwargs["pk"], "tab": "team-advice"})
+                + "?grouped-advice-view="
+                + request.GET.get("grouped-advice-view", "")
             )
 
 
@@ -134,6 +141,8 @@ class CoalesceTeamAdvice(TemplateView):
         messages.success(self.request, "Team advice combined successfully")
         return redirect(
             reverse("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": kwargs["pk"], "tab": "final-advice"})
+            + "?grouped-advice-view="
+            + request.GET.get("grouped-advice-view", "")
         )
 
 
@@ -152,6 +161,8 @@ class ClearFinalAdvice(TemplateView):
 
         return redirect(
             reverse("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": kwargs["pk"], "tab": "final-advice"})
+            + "?grouped-advice-view="
+            + request.GET.get("grouped-advice-view", "")
         )
 
 

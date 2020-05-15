@@ -1,3 +1,6 @@
+import json
+from base64 import b64encode
+from collections import OrderedDict
 from typing import List, Dict
 
 from cases.objects import Case
@@ -158,3 +161,24 @@ def build_case_advice(key, value, base_data):
             del data[entity]
 
     return data
+
+
+def convert_advice_item_to_base64(advice_item):
+    """
+    Given an advice item, convert it to base64 suitable for comparisons
+    """
+    fields = [
+        advice_item.get("denial_reasons", ""),
+        advice_item.get("proviso", "").lower().replace(" ", ""),
+        advice_item["text"].lower().replace(" ", ""),
+        advice_item["note"].lower().replace(" ", ""),
+        advice_item["type"],
+        advice_item["level"],
+    ]
+
+    return b64encode(bytes(json.dumps(fields), "utf-8")).decode("utf-8")
+
+
+def order_grouped_advice(grouped_advice):
+    order = ["conflicting", "approve", "proviso", "no_licence_required", "not_applicable", "refuse", "no_advice"]
+    return OrderedDict(sorted(grouped_advice.items(), key=lambda t: order.index(t[1]["type"]["key"])))

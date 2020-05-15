@@ -1,0 +1,82 @@
+{% if not request.GET|get:'grouped-advice-view' == 'True' %}
+	<div>
+		{% include 'case/slices/goods.html' with hide_controls=True show_advice=True level=level hide_checkboxes=current_advice_level|not_equals:level %}
+		{% include 'case/slices/destinations.html' with hide_controls=True show_advice=True level=level hide_checkboxes=current_advice_level|not_equals:level %}
+	</div>
+{% else %}
+	<div>
+		{% for advice in case.advice|filter_advice_by_level:level|distinct_advice:case|values %}
+			<div class="app-grouped-advice app-grouped-advice--{{ advice.type.key }}">
+				<h2 class="app-grouped-advice__heading">
+					{% if not current_advice_level|not_equals:level %}
+						<button id="button-select-all-{{ advice.id }}" type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
+					{% endif %}
+					<label for="button-select-all-{{ advice.id }}">{{ advice.type.value }}</label>
+				</h2>
+
+				<div class="app-grouped-advice__content">
+					{% if advice.type.key != 'no_advice' %}
+						<div class="app-grouped-advice__summary-list">
+							{% if advice.type.key == 'proviso' %}
+								<div class="app-grouped-advice__summary-list-item">
+									<p>{% lcs 'advice.AdvicePage.PROVISO' %}</p>
+									<p data-max-length="300">{{ advice.proviso|linebreaksbr }}</p>
+								</div>
+							{% elif advice.type.key == 'refuse' %}
+								<div class="app-grouped-advice__summary-list-item">
+									<p>{% lcs 'advice.AdvicePage.DENIAL_REASONS' %}</p>
+									<ol class="app-grouped-advice__summary-list-items">
+										{% for denial_reason in advice.denial_reasons %}
+											<li>{{ denial_reason }}{% if not forloop.last %}, {% endif %}</li>
+										{% endfor %}
+									</ol>
+								</div>
+							{% endif %}
+							<div class="app-grouped-advice__summary-list-item">
+								<p>{% lcs 'advice.AdvicePage.TEXT' %}</p>
+								<p data-max-length="400">{{ advice.text|linebreaksbr }}</p>
+							</div>
+							{% if advice.note %}
+								<div class="app-grouped-advice__summary-list-item">
+									<p>{% lcs 'advice.AdvicePage.NOTE' %}</p>
+									<p data-max-length="400">{{ advice.note|linebreaksbr }}</p>
+								</div>
+							{% endif %}
+						</div>
+					{% endif %}
+
+					{% if advice.goods|length %}
+						<div>
+							{% include 'case/slices/goods.html' with goods=advice.goods hide_controls=True %}
+						</div>
+					{% endif %}
+
+					{% if advice.destinations|length %}
+						<div>
+							{% include 'case/slices/destinations.html' with destinations=advice.destinations hide_controls=True %}
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+
+	<script type="text/javascript">
+		$(".app-grouped-advice__heading .lite-button-checkbox").unbind('click').click(function() {
+			var $container = $(this).parent().parent();
+
+			if ($container.find('input:checkbox:checked').length == $container.find('input:checkbox').length) {
+				$container.find('input:checkbox').prop('checked', false).change();
+				$(this).removeClass( 'lite-button-checkbox--checked' );
+			} else {
+				$container.find('input:checkbox').prop('checked', true).change();
+				$(this).addClass( 'lite-button-checkbox--checked' );
+			}
+
+			// Force Webkit to repaint the button
+			// DON'T REMOVE!
+			$(this).css('display', 'none').height();
+			$(this).css('display', 'block');
+		});
+	</script>
+{% endif %}

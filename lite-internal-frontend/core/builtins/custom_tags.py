@@ -506,6 +506,77 @@ def filter_advice_by_id(advice, id):
 
 
 @register.filter()
+def distinct_advice(advice_list, case):
+    from cases.helpers.advice import convert_advice_item_to_base64, order_grouped_advice
+
+    return_value = {}
+
+    for advice_item in advice_list:
+        # Goods
+        advice_item["token"] = convert_advice_item_to_base64(advice_item)
+
+        good = advice_item.get("good") or advice_item.get("goods_type")
+        case_good = None
+        for item in case.goods:
+            if "good" in item:
+                if item["good"]["id"] == good:
+                    case_good = item
+            else:
+                if item["id"] == good:
+                    case_good = item
+
+        # Destinations
+        destination_fields = [
+            advice_item.get("ultimate_end_user"),
+            advice_item.get("country"),
+            advice_item.get("third_party"),
+            advice_item.get("end_user"),
+            advice_item.get("consignee"),
+        ]
+        destination = next((destination for destination in destination_fields if destination), None)
+        case_destination = next(
+            (case_destination for case_destination in case.destinations if case_destination["id"] == destination), None
+        )
+
+        if not advice_item["token"] in return_value:
+            advice_item["goods"] = []
+            advice_item["destinations"] = []
+            return_value[advice_item["token"]] = advice_item
+
+        if case_good:
+            return_value[advice_item["token"]]["goods"].append(case_good)
+        if case_destination:
+            return_value[advice_item["token"]]["destinations"].append(case_destination)
+
+    # Add goods/destinations that have no advice
+    no_advice_goods = []
+    no_advice_destinations = []
+
+    for good in case.goods:
+        if not filter_advice_by_id(advice_list, good.get("good", good).get("id")):
+            no_advice_goods.append(good)
+
+    for destination in case.destinations:
+        if not filter_advice_by_id(advice_list, destination["id"]):
+            no_advice_destinations.append(destination)
+
+    if no_advice_goods or no_advice_destinations:
+        return_value["no_advice"] = {
+            "id": "no_advice",
+            "type": {"key": "no_advice", "value": "No advice"},
+            "goods": no_advice_goods,
+            "destinations": no_advice_destinations,
+        }
+
+    return order_grouped_advice(return_value)
+
+
+@register.filter()
+def values(dictionary):
+    return dictionary.values()
+
+
+@register.filter()
 def filter_advice_by_level(advice, level):
     return [advice for advice in advice if advice["level"] == level]
 

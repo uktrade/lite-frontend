@@ -8,6 +8,13 @@ class BaseAdvicePage(BasePage):
     TABLE_GOODS_ID = None
     TABLE_DESTINATIONS_ID = None
     BUTTON_GIVE_ADVICE_ID = None
+    BUTTON_GROUPED_VIEW_ID = "button-grouped-view"
+
+    def click_give_advice(self):
+        self.driver.find_element_by_id(self.BUTTON_GIVE_ADVICE_ID).click()
+
+    def click_grouped_view_button(self):
+        self.driver.find_element_by_id(self.BUTTON_GROUPED_VIEW_ID).click()
 
     def click_on_all_checkboxes(self):
         elements = self.driver.find_elements_by_css_selector(f"#{self.TABLE_GOODS_ID} {selectors.CHECKBOX}")
@@ -34,6 +41,12 @@ class UserAdvicePage(BaseAdvicePage):
 
     def click_combine_advice(self):
         self.driver.find_element_by_id(self.BUTTON_COALESCE_ID).click()
+
+    def click_grouped_view_checkboxes(self, group):
+        for checkbox in self.driver.find_elements_by_css_selector(
+            f"#form-user-advice-container .app-grouped-advice--{group} .app-grouped-advice__heading .lite-button-checkbox"
+        ):
+            checkbox.click()
 
 
 class TeamAdvicePage(BaseAdvicePage):

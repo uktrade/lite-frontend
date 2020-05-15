@@ -1,5 +1,7 @@
-{% make_list queue.id case.id as button_params %}
-{% govuk_link_button id='new-query' text='cases.EcjuQueries.AddQuery.ADD_BUTTON_LABEL' url='cases:new_ecju_query' url_param=button_params %}
+<div class="lite-buttons-row">
+	{% make_list queue.id case.id as button_params %}
+	{% govuk_link_button id='new-query' text='cases.EcjuQueries.AddQuery.ADD_BUTTON_LABEL' url='cases:new_ecju_query' url_param=button_params %}
+</div>
 
 {% if open_ecju_queries %}
 	<h3 class="govuk-heading-m">{% lcs 'cases.EcjuQueries.OPEN' %}</h3>

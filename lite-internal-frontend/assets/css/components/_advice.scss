@@ -109,3 +109,98 @@
 	top: 100px;
 	margin: 9px 0;
 }
+
+.app-grouped-advice {
+	position: relative;
+	margin-bottom: govuk-spacing(9);
+
+	&::before {
+		content: "";
+		position: absolute;
+		top: 24px + govuk-spacing(4);
+		bottom: 0;
+		left: 9px;
+		width: 4px;
+		background-color: $govuk-border-colour;
+	}
+
+	&--approve::before, &--proviso::before {
+		background-color: govuk-colour("green");
+	}
+
+	&--refuse::before {
+		background-color: govuk-colour("red");
+	}
+
+	&__heading {
+		@include govuk-font($size: 24, $weight: bold);
+		display: flex;
+		margin-top: 0;
+		margin-bottom: govuk-spacing(4);
+
+		label {
+			cursor: pointer;
+		}
+
+		button {
+			margin-right: govuk-spacing(3);
+		}
+	}
+
+	&__content {
+		margin-left: 10px;
+		padding: govuk-spacing(0) govuk-spacing(6);
+
+		& > * {
+			margin-bottom: govuk-spacing(6);
+
+			&:last-of-type {
+				margin-bottom: 0;
+
+				table {
+					margin-bottom: 0;
+				}
+			}
+		}
+
+		table {
+			.govuk-table__cell--checkbox {
+				display: none;
+			}
+		}
+	}
+
+	&__summary-list {
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr;
+		grid-gap: govuk-spacing(3);
+		padding: govuk-spacing(5);
+		background-color: govuk-colour("light-grey");
+
+		&-item {
+			p {
+				margin: 0;
+			}
+
+			& > *:first-child {
+				@include govuk-font($size: 19, $weight: bold);
+				margin-bottom: govuk-spacing(1);
+			}
+
+			& > *:last-child {
+				@include govuk-font($size: 19);
+			}
+		}
+
+		&-items {
+			padding: 0;
+			display: inline-flex;
+			list-style-type: none;
+			margin: 0;
+
+			li {
+				margin-right: govuk-spacing(1);
+			}
+		}
+	}
+}
