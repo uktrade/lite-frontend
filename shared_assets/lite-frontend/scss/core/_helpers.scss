@@ -83,3 +83,9 @@
 .lite-\!-no-border {
 	border-bottom: 2px solid govuk-colour("white")!important;
 }
+
+@for $i from 1 through 9 {
+	.lite-\!-margin-top--#{$i} {
+		margin-top: - govuk-spacing($i);
+	}
+}
