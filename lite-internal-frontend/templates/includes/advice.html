@@ -24,6 +24,10 @@
 							<p class="app-advice__item__heading">{% lcs 'advice.AdvicePage.NOTE' %}</p>
 							<p data-max-length="300">{{ advice.note|linebreaksbr }}</p>
 						{% endif %}
+						{% if advice.footnote %}
+							<p class="app-advice__item__heading">Footnote</p>
+							<p>{{ advice.footnote|linebreaksbr }}</p>
+						{% endif %}
 					</div>
 				</li>
 			{% empty %}

@@ -10,6 +10,9 @@ class GiveAdvicePages(BasePage):
     TEXTAREA_NOTES_ID = "note"
     CLEARANCE_LEVEL_DROPDOWN_ID = "pv_grading_proviso"
     RADIO_INPUT_APPROVE = '.govuk-radios input[value="approve"]'
+    FOOTNOTE_REQUIRED_YES_RADIO_ID = "footnote_required-True"
+    FOOTNOTE_REQUIRED_NO_RADIO_ID = "footnote_required-False"
+    FOOTNOTE_TEXTBOX_ID = "footnote"
 
     def click_on_advice_option(self, option):
         self.driver.find_element_by_id(self.ADVICE_CHECKBOX_OPTION + option).click()
@@ -41,3 +44,14 @@ class GiveAdvicePages(BasePage):
 
     def select_clearance_grading(self, clearance_level):
         Select(self.driver.find_element_by_id(self.CLEARANCE_LEVEL_DROPDOWN_ID)).select_by_visible_text(clearance_level)
+
+    def select_footnote_required(self):
+        self.driver.find_element_by_id(self.FOOTNOTE_REQUIRED_YES_RADIO_ID).click()
+
+    def select_footnote_not_required(self):
+        self.driver.find_element_by_id(self.FOOTNOTE_REQUIRED_NO_RADIO_ID).click()
+
+    def enter_footnote(self, text):
+        footnote_textbox = self.driver.find_element_by_id(self.FOOTNOTE_TEXTBOX_ID)
+        footnote_textbox.clear()
+        footnote_textbox.send_keys(text)

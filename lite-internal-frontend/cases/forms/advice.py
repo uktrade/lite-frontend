@@ -2,7 +2,9 @@ from django.urls import reverse
 
 from cases.constants import CaseType
 from cases.objects import Case
+from conf.constants import Permission
 from core.components import PicklistPicker
+from core.helpers import has_permission
 from core.services import get_pv_gradings
 from lite_content.lite_internal_frontend import advice
 from lite_content.lite_internal_frontend.advice import GoodsDecisionMatrixPage, GenerateGoodsDecisionForm
@@ -117,6 +119,24 @@ def give_advice_form(request, case: Case, tab, queue_pk, denial_reasons, show_wa
                 optional=True,
                 extras={"max_length": 200},
                 name="note",
+            ),
+            conditional(
+                has_permission(request, Permission.MAINTAIN_FOOTNOTES) and tab != "final-advice",
+                RadioButtons(
+                    title=advice.GiveOrChangeAdvicePage.FootNote.FOOTNOTE_REQUIRED,
+                    name="footnote_required",
+                    options=[
+                        Option(
+                            True,
+                            advice.GiveOrChangeAdvicePage.FootNote.YES_OPTION,
+                            components=[
+                                TextArea(name="footnote"),
+                                PicklistPicker(target="footnote", items=get_picklists_for_input(request, "footnotes")),
+                            ],
+                        ),
+                        Option(False, advice.GiveOrChangeAdvicePage.FootNote.NO_OPTION),
+                    ],
+                ),
             ),
         ],
         default_button_name=advice.GiveOrChangeAdvicePage.Actions.CONTINUE_BUTTON,

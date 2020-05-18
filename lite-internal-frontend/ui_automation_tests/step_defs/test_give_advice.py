@@ -58,6 +58,19 @@ def write_note_text_field(driver, text, context):
     context.advice_data.append(text)
 
 
+@when(parsers.parse("I select that a footnote is required with the note '{text}'"))
+def write_note_text_field(driver, text, context):
+    give_advice_page = GiveAdvicePages(driver)
+    give_advice_page.select_footnote_required()
+    give_advice_page.enter_footnote(text)
+    context.advice_data.append(text)
+
+
+@when(parsers.parse("I select that a footnote is not required"))
+def write_note_text_field(driver, text, context):
+    GiveAdvicePages(driver).select_footnote_not_required()
+
+
 @then("I see the fields pre-populated with the proviso and advice picklist items")
 def i_see_fields_prepopulated(driver, context):
     text = driver.find_element_by_id("text").text

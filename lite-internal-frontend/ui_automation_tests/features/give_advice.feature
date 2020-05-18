@@ -19,6 +19,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I import text from the 'proviso' picklist
     And I import text from the 'text' picklist
     And I write 'We will get back to you in three weeks' in the note text field
+    And I select that a footnote is required with the note 'I believe the items are good, but have concerns about the country'
     And I click continue
     Then I see my advice has been posted successfully
     And I see added advice in the same amount of places
@@ -44,6 +45,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Then I dont see clearance level
     When I import text from the 'text' picklist
     And I write 'We will get back to you in three weeks' in the note text field
+    And I select that a footnote is not required
     And I click continue
     Then I see my advice has been posted successfully
     When I combine all user advice
@@ -65,6 +67,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I choose to 'approve' the licence
     And I import text from the 'text' picklist
     And I write 'We will get back to you in three weeks' in the note text field
+    And I select that a footnote is not required
     And I click continue
     When I combine all user advice
     And I combine all team advice
@@ -84,6 +87,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I select decision "2b"
     And I import text from the 'text' picklist
     And I write 'We will get back to you in three weeks' in the note text field
+    And I select that a footnote is required with the note 'These classification of items can not go to the countries selected'
     And I click continue
     Then I see my advice has been posted successfully
     And I see added advice in the same amount of places

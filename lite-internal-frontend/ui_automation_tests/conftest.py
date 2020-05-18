@@ -410,10 +410,29 @@ def approve_application_objects(context, api_test_client, decision):  # noqa
     context.advice_type = decision
     text = "abc"
     note = ""
+    footnote_required = "False"
     data = [
-        {"type": context.advice_type, "text": text, "note": note, "end_user": context.end_user["id"]},
-        {"type": context.advice_type, "text": text, "note": note, "consignee": context.consignee["id"]},
-        {"type": context.advice_type, "text": text, "note": note, "good": context.good_id},
+        {
+            "type": context.advice_type,
+            "text": text,
+            "note": note,
+            "end_user": context.end_user["id"],
+            "footnote_required": footnote_required,
+        },
+        {
+            "type": context.advice_type,
+            "text": text,
+            "note": note,
+            "consignee": context.consignee["id"],
+            "footnote_required": footnote_required,
+        },
+        {
+            "type": context.advice_type,
+            "text": text,
+            "note": note,
+            "good": context.good_id,
+            "footnote_required": footnote_required,
+        },
     ]
 
     api_test_client.cases.create_user_advice(context.case_id, data)
