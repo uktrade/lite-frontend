@@ -1,7 +1,7 @@
 {% if not request.GET|get:'grouped-advice-view' == 'True' %}
 	<div>
-		{% include 'case/slices/goods.html' with hide_controls=True show_advice=True level=level hide_checkboxes=current_advice_level|not_equals:level %}
-		{% include 'case/slices/destinations.html' with hide_controls=True show_advice=True level=level hide_checkboxes=current_advice_level|not_equals:level %}
+		{% include 'case/slices/goods.html' with hide_controls=True show_advice=True level=level hide_checkboxes=current_advice_level|not_equals:level hide_status=True %}
+		{% include 'case/slices/destinations.html' with hide_controls=True show_advice=True level=level hide_checkboxes=current_advice_level|not_equals:level hide_status=True %}
 	</div>
 {% else %}
 	<div>
@@ -47,13 +47,13 @@
 
 					{% if advice.goods|length %}
 						<div>
-							{% include 'case/slices/goods.html' with goods=advice.goods hide_controls=True %}
+							{% include 'case/slices/goods.html' with goods=advice.goods hide_controls=True hide_status=True %}
 						</div>
 					{% endif %}
 
 					{% if advice.destinations|length %}
 						<div>
-							{% include 'case/slices/destinations.html' with destinations=advice.destinations hide_controls=True %}
+							{% include 'case/slices/destinations.html' with destinations=advice.destinations hide_controls=True hide_status=True %}
 						</div>
 					{% endif %}
 				</div>
