@@ -192,6 +192,12 @@ class EditGood(SingleFormView):
         self.action = edit_good
         self.success_url = reverse_lazy("goods:good", kwargs={"pk": self.object_pk})
 
+    def get_data(self):
+        self.data["control_list_entries"] = [
+            {"key": clc["rating"], "value": clc["rating"]} for clc in self.data["control_list_entries"]
+        ]
+        return self.data
+
 
 class EditGrading(SingleFormView):
     def init(self, request, **kwargs):
