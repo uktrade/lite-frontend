@@ -32,6 +32,26 @@ $('[data-definition-title]').each(function() {
 });
 
 $('[data-definition-title]').click(function() {
-    LITECommon.Modal.showModal($(this).data("definition-title"), $(this).data("definition-text"), false, true, {maxWidth: '500px'});
+    var subtitle = $(this).data("definition-subtitle");
+    var text = $(this).data("definition-text");
+    var list = $(this).data("definition-list").split(",");
+    var htmlList = "<ol class='govuk-list govuk-list--number'>";
+
+    for (i = 0; i < list.length; i++) {
+        htmlList += "<li>" + list[i] + "</li>";
+    }
+
+    htmlList = htmlList + "</ol>";
+
+    if (subtitle) {
+        subtitle = "<p class='govuk-heading-s'>" + subtitle + "</p>";
+        if (text) {
+            text = subtitle + text;
+        } else {
+            htmlList = subtitle + htmlList;
+        }
+    }
+
+    LITECommon.Modal.showModal($(this).data("definition-title"), text || htmlList, false, true, {maxWidth: '500px'});
     return false;
 })
