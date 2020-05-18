@@ -52,6 +52,7 @@ class Slices:
     GOODS_QUERY_RESPONSE = Slice("goods-query-response")
     HMRC_NOTE = Slice("hmrc-note", "HMRC note")
     END_USER_ADVISORY = Slice("end-user-advisory", "End user details")
+    TEMPORARY_EXPORT_DETAILS = Slice("temporary-export-details", "Temporary export details")
 
 
 def get_timeline_filters(request, case_id):

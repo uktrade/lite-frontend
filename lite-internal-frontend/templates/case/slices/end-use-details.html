@@ -15,7 +15,7 @@
 				{% lcs 'cases.ApplicationPage.EndUseDetails.INTENDED_END_USE_TITLE' %}
 			</td>
 			<td class="govuk-table__cell">
-				<p data-max-length="200">{{ case.application.intended_end_use }}</p>
+				<span data-max-length="200">{{ case.application.intended_end_use }}</span>
 			</td>
 		</tr>
 		{% if case.sub_type == "standard" or case.sub_type == "open" %}

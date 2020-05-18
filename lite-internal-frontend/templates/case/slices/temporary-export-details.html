@@ -15,10 +15,9 @@
 				{% lcs 'cases.ApplicationPage.TemporaryExportDetails.TEMPORARY_EXPORT_DETAILS_TITLE' %}
 			</td>
 			<td class="govuk-table__cell">
-				{{ case.application.temp_export_details|default:"" }}
+				{{ case.data.temp_export_details|default_na }}
 			</td>
 		</tr>
-
 		<tr class="govuk-table__row">
 			<td class="govuk-table__cell govuk-table__cell--line-number">
 				2.
@@ -27,11 +26,12 @@
 				{% lcs 'cases.ApplicationPage.TemporaryExportDetails.PRODUCTS_UNDER_DIRECT_CONTROL_TITLE' %}
 			</td>
 			<td class="govuk-table__cell">
-				{{ case.application.is_temp_direct_control|friendly_boolean }}<br>
-				{{ case.application.temp_direct_control_details|default:"" }}
+				<p class="govuk-body govuk-!-margin-0">{{ case.data.is_temp_direct_control|friendly_boolean }}</p>
+				{% if case.data.temp_direct_control_details %}
+					<p class="govuk-hint govuk-!-margin-0 govuk-!-margin-0">{{ case.data.temp_direct_control_details }}</p>
+				{% endif %}
 			</td>
 		</tr>
-
 		<tr class="govuk-table__row">
 			<td class="govuk-table__cell govuk-table__cell--line-number">
 				3.
@@ -40,7 +40,7 @@
 				{% lcs 'cases.ApplicationPage.TemporaryExportDetails.PROPOSED_RETURN_DATE_TITLE' %}
 			</td>
 			<td class="govuk-table__cell">
-				{{ case.application.proposed_return_date|str_date_only }}<br>
+				{{ case.data.proposed_return_date|str_date_only }}
 			</td>
 		</tr>
 	</tbody>
