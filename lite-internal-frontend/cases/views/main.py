@@ -85,7 +85,7 @@ class CaseDetail(CaseView):
 
     def get_hmrc_application(self):
         self.slices = [
-            Slices.HMRC_NOTE,
+            conditional(self.case.data["reasoning"], Slices.HMRC_NOTE),
             Slices.GOODS,
             Slices.DESTINATIONS,
             Slices.LOCATIONS,

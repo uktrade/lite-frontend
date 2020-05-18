@@ -9,12 +9,12 @@
 			</tr>
 		</thead>
 		<tbody class="govuk-table__body">
-			<tr class="govuk-table__row">
-				{% for location in case.data.goods_locations.data %}
+			{% for location in case.data.goods_locations.data %}
+				<tr class="govuk-table__row">
 					<th scope="row" class="govuk-table__header">{{ location.name }}</th>
 					<td class="govuk-table__cell">{{ location|get_address }}</td>
-				{% endfor %}
-			</tr>
+				</tr>
+			{% endfor %}
 		</tbody>
 	</table>
 {% endif %}

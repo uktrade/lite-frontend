@@ -113,11 +113,11 @@ class CaseView(TemplateView):
         return {
             "tabs": [
                 Tabs.DETAILS,
-                *self.tabs,
                 Tabs.ADDITIONAL_CONTACTS,
                 Tabs.ECJU_QUERIES,
                 Tabs.DOCUMENTS,
                 activity_tab,
+                *self.tabs,
             ],
             "current_tab": self.kwargs["tab"],
             "slices": [Slices.SUMMARY, *self.slices],
