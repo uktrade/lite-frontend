@@ -38,7 +38,7 @@
 							{% if component.input_type == "file_upload" %}
 								You uploaded {{ pretty_data|component_name:component }}
 							{% elif pretty_data|component_name:component %}
-								<span style="white-space: pre;">{{ pretty_data|component_name:component }}</span>
+								<span style="white-space: pre-line;">{{ pretty_data|component_name:component }}</span>
 							{% else %}
 								{{ data|component_name:component }}
 							{% endif %}
@@ -47,7 +47,7 @@
 									{% if pretty_data|component_name:component == option.key or data|component_name:component == option.key %}
 										<br>
 										{% if pretty_data|component_name:inner_component %}
-											<span class="govuk-hint" style="white-space: pre;">{{ pretty_data|component_name:inner_component }}</span>
+											<span class="govuk-hint" style="white-space: pre-line;">{{ pretty_data|component_name:inner_component }}</span>
 										{% else %}
 											<span class="govuk-hint">{{ data|component_name:inner_component }}</span>
 										{% endif %}
