@@ -53,6 +53,11 @@ class GiveOrChangeAdvicePage:
         REJECT = "Reject the licence"
         REFUSE = "Refuse the licence"
 
+    class FootNote:
+        FOOTNOTE_REQUIRED = "Is a footnote required?"
+        YES_OPTION = "Yes"
+        NO_OPTION = "No"
+
 
 class GenerateGoodsDecisionForm:
     TITLE = "Generate decision documents"
