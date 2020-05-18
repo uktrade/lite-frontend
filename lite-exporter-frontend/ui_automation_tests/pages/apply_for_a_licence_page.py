@@ -15,7 +15,7 @@ class ApplyForALicencePage(BasePage):
     F680_CLEARANCE_TYPE_CHECKBOXES_NAME = "types[]"
     TRADE_CONTROL_ACTIVITY_OTHER_ID = "trade_control_activity-other"
     TRADE_CONTROL_ACTIVITY_OTHER_DETAILS_ID = "trade_control_activity_other"
-    TRADE_CONTROL_PRODUCT_CATEGORY_A_ID = "Category A"
+    TRADE_CONTROL_PRODUCT_CATEGORY_A_ID = "Category-A"
 
     OIEL_EXPORT_TYPE_RADIO_BUTTON_ID = "goodstype_category-"
 

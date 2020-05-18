@@ -9,6 +9,6 @@ Feature: I want to create roles
     Given I go to exporter homepage and choose Test Org
     When I click on the manage my organisation link
     And I go to manage roles
-    And I add a new role called "Supervisor" with permission to "Administer users"
+    And I add a new role called "Supervisor" with permission to "Administer-users"
     And I edit my role
     Then I see the role in the roles list
