@@ -112,7 +112,10 @@ class RegisterAnOrganisation:
 
     class UkVatNumber:
         TITLE = "UK VAT number"
-        DESCRIPTION = "9 digits long, with the first 2 letters indicating the country code of the registered business."
+        DESCRIPTION = (
+            "Standard VAT registration numbers start with the country code 'GB' followed by 9 digits, for example "
+            "GB999 9999 73."
+        )
 
     class SicNumber:
         TITLE = "Standard industrial classification (SIC) code"
@@ -144,7 +147,10 @@ class EditCommercialOrganisationPage(EditOrganisationPage):
 
     class VATNumber:
         TITLE = "UK VAT number"
-        DESCRIPTION = "9 digits long, with the first 2 letters indicating the country code of the registered business."
+        DESCRIPTION = (
+            "Standard VAT registration numbers start with the country code 'GB' followed by 9 digits, for example "
+            "GB999 9999 73."
+        )
 
     class SICNumber:
         TITLE = "Standard industrial classification (SIC) code"
@@ -162,7 +168,10 @@ class EditIndividualOrganisationPage(EditOrganisationPage):
 
     class VATNumber:
         TITLE = "UK VAT number"
-        DESCRIPTION = "9 digits long, with the first 2 letters indicating the country code of the registered business."
+        DESCRIPTION = (
+            "Standard VAT registration numbers start with the country code 'GB' followed by 9 digits, for example "
+            "GB999 9999 73."
+        )
 
 
 class ReviewOrganisationPage:

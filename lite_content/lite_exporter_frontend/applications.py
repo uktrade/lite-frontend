@@ -224,7 +224,7 @@ class InitialApplicationQuestionsForms:
             EXPORT_LICENCE_TITLE = "Export licence"
             EXPORT_LICENCE_DESCRIPTION = (
                 "Select if you’re sending products from the UK to another country. You need an export licence "
-                "before you provide access to technology, software or data."
+                "before you provide access to controlled technology, software or data."
             )
 
             TRANSHIPMENT_LICENCE_TITLE = "Transhipment licence"
@@ -259,12 +259,14 @@ class ExportLicenceQuestions:
         TITLE = "Select the type of export licence you need"
         DESCRIPTION = ""
         BACK = "Back"
-        STANDARD_LICENCE = "Standard licence"
-        STANDARD_LICENCE_DESCRIPTION = "Select a standard licence for a set quantity and set value of products."
-        OPEN_LICENCE = "Open licence"
+        STANDARD_LICENCE = "Standard Individual Export Licence (SIEL)"
+        STANDARD_LICENCE_DESCRIPTION = (
+            "Select to apply for a licence to export a set quantity and set value of products to 1 destination."
+        )
+        OPEN_LICENCE = "Open Individual Export Licence (OIEL)"
         OPEN_LICENCE_DESCRIPTION = (
-            "Select an open licence for multiple shipments of specific products to specific destinations. "
-            "Open licences cover long term projects and repeat business."
+            "Select to apply for a licence to export multiple shipments of specific products to specific destinations. "
+            "OIELs cover long term projects and repeat business."
         )
 
     class ExportType:
@@ -351,7 +353,7 @@ class MODQuestions:
         TITLE = "MOD Form 680 confirmation statement"
         DESCRIPTION = (
             "UK companies need MOD Form 680 (F680) approval to release information or equipment classified "
-            "OFFICIAL-SENSITIVE and above to foreign entities.\n"
+            "OFFICIAL-SENSITIVE or above to foreign entities.\n"
             "Some materials classified OFFICIAL need F680 approval, but only if there’s information or equipment "
             "connected with the release that holds a higher classification. An F680 is not required where both the "
             "equipment and information intended for release is classified OFFICIAL. This process also applies to MOD "
@@ -374,7 +376,7 @@ class MODQuestions:
         PERMISSION_TITLE = "MOD Form 680"
         PERMISSION_DESCRIPTION = (
             "Select an F680 approval if you need to release equipment or information with a classification of "
-            "OFFICIAL-SENSITIVE or above to any foreign entity overseas or demonstrate it to them in the UK."
+            "above OFFICIAL-SENSITIVE to any foreign entity overseas or demonstrate it to them in the UK."
         )
 
         EXHIBITION_CLEARANCE_TITLE = "Exhibition clearance"
@@ -627,7 +629,7 @@ class ApplicationPage:
             GIFTING = "Gifting clearance"
             F680 = "MOD Form 680"
             EXHIBITION = "Exhibition clearance"
-            TRANSHIPMENT = "Transhipment licence"
+            TRANSHIPMENT = "Transhipment Licence"
             TRADE_CONTROL = "Standard Trade Control Licence"
 
         class Notes:

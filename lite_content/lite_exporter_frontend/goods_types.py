@@ -34,8 +34,7 @@ class Documents:
         BUTTON = "Attach document"
         DELETE_ERROR = "We had an issue deleting your files. Try again later."
         DESCRIPTION = (
-            "Do not attach a document that\u2019s OFFICIAL-SENSITIVE or above.\n\nThe file must be"
-            " smaller than 100MB."
+            "Do not attach a document that's above OFFICIAL-SENSITIVE.\n\nThe file must be smaller than 100MB."
         )
         DESCRIPTION_FIELD_DETAILS = ""
         DESCRIPTION_FIELD_TITLE = "Description"

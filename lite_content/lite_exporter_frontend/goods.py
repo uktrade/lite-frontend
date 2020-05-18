@@ -96,7 +96,7 @@ class DocumentSensitivityForm:
     DESCRIPTION = (
         "I have a document for my product.\nDocumentation should be specifications, datasheets, sales brochures, "
         "drawings or anything else that fully details what the product is and what it's designed to do.\n\n"
-        "The document is below OFFICIAL-SENSITIVE."
+        "The document is not above OFFICIAL-SENSITIVE."
     )
     ECJU_HELPLINE = (
         "**<noscript>If the answer is No;</noscript>**\n\nContact ECJU to arrange a more secure way to send "
@@ -260,7 +260,7 @@ class AttachDocumentForm:
     DESCRIPTION = (
         "Documentation could be specifications, datasheets, sales brochures, drawings "
         "or anything else that fully details what the product is and what it's designed to do."
-        "\n\nDo not attach a document that’s OFFICIAL-SENSITIVE or above. "
+        "\n\nDo not attach a document that’s above OFFICIAL-SENSITIVE. "
         "\n\nThe file must be smaller than 100MB."
     )
     BUTTON = "Save"
