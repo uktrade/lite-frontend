@@ -33,6 +33,11 @@ class CasesListPage:
         NOT_ASSIGNED = "Not assigned"
         HIDDEN = "Show cases with open enquiries by your team"
 
+    class EnforcementXML:
+        EXPORT_BUTTON = "Export EU XML"
+        NO_CASES = "No matching cases found"
+        GENERIC_ERROR = "An error occurred when generating XML for this queue."
+
 
 class CasePage:
     IM_DONE_BUTTON = "I'm done"
