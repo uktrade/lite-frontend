@@ -76,11 +76,24 @@
 		width: 100%;
 	}
 
+	.govuk-form-group {
+        margin-bottom: 0;
+    }
+
+    .govuk-details {
+        margin-bottom: govuk-spacing(2);
+    }
+
+    .lite-filter-bar__components {
+        margin-top: govuk-spacing(3);
+    }
+
 	.govuk-date-input {
 		display: grid;
-		grid-template-columns: 1fr 1fr 2fr;
+		grid-template-columns: 1fr 1fr 1fr;
+		grid-gap: govuk-spacing(3);
 
-		.govuk-date-input__item:last-of-type {
+		.govuk-date-input__item {
 			margin-right: 0;
 		}
 
@@ -88,6 +101,15 @@
 			max-width: 100%;
 		}
 	}
+
+	.tokenfield {
+       min-height: 40px;
+       padding: 2px 5px 0 5px;
+    }
+
+    .tokenfield-set-item {
+        margin-bottom: 2px;
+    }
 
 	.govuk-input--width-20 {
 		max-width: 100%;
