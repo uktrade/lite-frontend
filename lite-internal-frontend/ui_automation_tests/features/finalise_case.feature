@@ -8,6 +8,7 @@ Feature: I want to finalise a case
   Scenario: Finalise and approve a case
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
+    And all flags are removed
     And the status is set to "submitted"
     And I "approve" all elements of the application at user and team level
     And A template exists for the appropriate decision
@@ -34,6 +35,7 @@ Feature: I want to finalise a case
   Scenario: Finalise and refuse a case
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
+    And all flags are removed
     And the status is set to "submitted"
     And I "refuse" all elements of the application at user and team level
     And A template exists for the appropriate decision

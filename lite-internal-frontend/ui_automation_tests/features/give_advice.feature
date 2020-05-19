@@ -29,11 +29,11 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I choose to 'proviso' the licence
     Then I see the fields pre-populated with the proviso and advice picklist items
 
-
   @LT_1115_grant @smoke
   Scenario: Finalise a licence
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
+    And all flags are removed
     And I create a proviso picklist
     And I create a standard advice picklist
     And the status is set to "submitted"
@@ -53,11 +53,11 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I finalise the advice
     Then today's date and duration is filled in
 
-
   @LT_1334_finalise_goods_countries_matrix @regression
   Scenario: Finalise goods and countries
     Given I sign in to SSO or am signed into SSO
     And I create open application or open application has been previously created
+    And all flags are removed
     And I create a proviso picklist
     And I create a standard advice picklist
     And the status is set to "submitted"
@@ -94,7 +94,6 @@ Feature: I want to record my user advice and any comments and conditions relatin
     When I combine all user advice
     And I go to application previously created
     Then I see refusal flag is attached
-
 
   @LT_920_cannot_give_advice_terminal_case @regression
   Scenario: Cannot give advice on a case in terminal state

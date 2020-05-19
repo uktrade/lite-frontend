@@ -40,6 +40,9 @@ class CaseListPage(BasePage):
     # SLA
     SLA_ID = "sla"
 
+    # Enforcement
+    EXPORT_ENFORCEMENT_XML_BUTTON_ID = "export-xml"
+
     def search_pages_for_id(self, id):
         is_present = len(self.driver.find_elements_by_link_text(id))
         number_of_pages = len(self.driver.find_elements_by_css_selector(".lite-pagination__item"))
@@ -141,3 +144,6 @@ class CaseListPage(BasePage):
 
     def click_checkbox_to_show_team_ecju_query(self):
         return self.driver.find_element_by_id(self.SHOW_TEAM_ECJU).click()
+
+    def click_export_enforcement_xml(self):
+        self.driver.find_element_by_id(self.EXPORT_ENFORCEMENT_XML_BUTTON_ID).click()

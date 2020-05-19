@@ -22,8 +22,13 @@
 			</a>
 		</div>
 		{% if not data.results.is_system_queue %}
-			<div class="lite-app-bar__controls" data-enable-on-checkboxes="#table-cases">
-				<button id="assign-users-button" form="cases-form" type="submit" class="govuk-button govuk-button--secondary">{% lcs 'cases.CasesListPage.ASSIGN_USERS' %}</button>
+			<div class="lite-app-bar__controls lite-buttons-row" >
+				<div data-enable-on-checkboxes="#table-cases">
+					<button id="assign-users-button" form="cases-form" type="submit" class="govuk-button govuk-button--secondary">{% lcs 'cases.CasesListPage.ASSIGN_USERS' %}</button>
+				</div>
+				{% if enforcement_check and data.results.cases %}
+					<a id="export-xml" class="govuk-button govuk-button--secondary" href="{% url 'queues:enforcement_xml_export' queue.id %}" draggable="false" role="button">{% lcs 'cases.CasesListPage.EnforcementXML.EXPORT_BUTTON' %}</a>
+				{% endif %}
 			</div>
 		{% endif %}
 	</div>
