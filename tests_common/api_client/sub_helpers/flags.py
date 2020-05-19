@@ -14,3 +14,13 @@ class Flags:
             method="POST", url="/flags/", headers=self.api_client.gov_headers, body=data,
         ).json()
         self.api_client.add_to_context("flag_id", flag["id"])
+
+    def assign_case_flags(self, case_pk, flags):
+        data = {
+            "level": "Cases",
+            "objects": [case_pk],
+            "flags": flags,
+        }
+        self.api_client.make_request(
+            method="PUT", url="/flags/assign/", headers=self.api_client.gov_headers, body=data,
+        )
