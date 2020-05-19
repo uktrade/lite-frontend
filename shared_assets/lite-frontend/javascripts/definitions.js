@@ -34,11 +34,16 @@ $('[data-definition-title]').each(function() {
 $('[data-definition-title]').click(function() {
     var subtitle = $(this).data("definition-subtitle");
     var text = $(this).data("definition-text");
-    var list = $(this).data("definition-list").split(",");
+    var list = $(this).data("definition-list");
+    if (list) {
+        list = list.split(",")
+    }
     var htmlList = "<ol class='govuk-list govuk-list--number'>";
 
-    for (i = 0; i < list.length; i++) {
-        htmlList += "<li>" + list[i] + "</li>";
+    if (list) {
+        for (i = 0; i < list.length; i++) {
+            htmlList += "<li>" + list[i] + "</li>";
+        }
     }
 
     htmlList = htmlList + "</ol>";
