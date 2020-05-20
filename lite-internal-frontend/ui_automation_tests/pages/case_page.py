@@ -2,7 +2,7 @@ import time
 from pages.shared import Shared
 from shared import selectors
 from shared.BasePage import BasePage
-from shared.tools.helpers import scroll_to_element_by_id, scroll_to_element_below_header_by_id
+from shared.tools.helpers import scroll_to_element_by_id
 
 
 class CaseTabs:
@@ -41,11 +41,11 @@ class CasePage(BasePage):
         self.driver.find_element_by_id(self.LINK_CHANGE_CASE_FLAGS_ID).click()
 
     def click_assign_case_officer(self):
-        scroll_to_element_below_header_by_id(self.driver, self.LINK_ASSIGN_CASE_OFFICER_ID)
+        scroll_to_element_by_id(self.driver, self.LINK_ASSIGN_CASE_OFFICER_ID)
         self.driver.find_element_by_id(self.LINK_ASSIGN_CASE_OFFICER_ID).click()
 
     def click_assign_users(self):
-        scroll_to_element_below_header_by_id(self.driver, self.LINK_ASSIGN_USERS_ID)
+        scroll_to_element_by_id(self.driver, self.LINK_ASSIGN_USERS_ID)
         self.driver.find_element_by_id(self.LINK_ASSIGN_USERS_ID).click()
 
     def click_change_status(self):
