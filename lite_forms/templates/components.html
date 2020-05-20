@@ -42,8 +42,8 @@
 
 	<!-- Import component based on input_type -->
 	<div class="govuk-form-group">
-        {% if question.input_type == "hidden" %}
-			<input type="hidden" name="{{ question.name }}" value="{{ question.value }}">
+		{% if question.input_type == "hidden" %}
+			{% dict_hidden_field question.name question.value %}
 		{% elif question.input_type == "text_input" %}
 			{% include "components/text_input.html" with component=question name=question.name value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
 		{% elif question.input_type == "email_input" %}
@@ -58,7 +58,7 @@
 			{% include "components/number.html" with component=question name=question.name value=data|key_value:question.name error=errors|key_value:question.name %}
 		{% elif question.input_type == "radiobuttons" %}
 			{% include "components/radiobuttons.html" with component=question data=data|key_value:question.name component_data=data %}
-        {% elif question.input_type == "radiobuttons_image" %}
+		{% elif question.input_type == "radiobuttons_image" %}
 			{% include "components/radiobuttons_image.html" with component=question radiobuttons_data=data|key_value:question.name %}
 		{% elif question.input_type == "checkboxes" %}
 			{% include "components/checkboxes.html" with component=question data=data|key_value:question.name %}
@@ -72,15 +72,15 @@
 			{% include "components/quantity.html" with name=question.name value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
 		{% elif question.input_type == "date" %}
 			{% include "components/date.html" with component=question data=data|date_join:question.prefix|default:'' errors=errors %}
-        {% elif question.input_type == "summary" %}
+		{% elif question.input_type == "summary" %}
 			{% include "components/summary.html" with component=question %}
 		{% elif question.input_type == "list" %}
 			{% include "components/list.html" with component=question %}
 		{% elif question.input_type == "label" %}
 			{% include "components/label.html" with component=question %}
-        {% elif question.input_type == "token_bar" %}
+		{% elif question.input_type == "token_bar" %}
 			{% include "components/token-bar.html" with component=question value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
-        {% elif question.input_type == "markdown" %}
+		{% elif question.input_type == "markdown" %}
 			{% include "components/markdown.html" with variables=question.variables name=question.name value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
 		{% elif question.input_type == "link" %}
 			{% include "components/link.html" with component=question %}
