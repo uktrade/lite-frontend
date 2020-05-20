@@ -1,6 +1,6 @@
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from shared import functions
+from ui_automation_tests.shared import functions
 
 
 class BasePage:
