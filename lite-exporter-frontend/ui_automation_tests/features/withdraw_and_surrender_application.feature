@@ -20,6 +20,7 @@ Feature: I want to be able to withdraw an active application
     Scenario: Surrender an application
       Given I go to exporter homepage and choose Test Org
       And I create a standard application via api
+      And I remove the flags
       And I create "approve" final advice
       And I create a licence for my application with "approve" decision document and good decisions
       When I go to application previously created

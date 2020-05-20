@@ -5,6 +5,7 @@ Feature: Go to each item from the homepage
   Scenario: Go to each item from the homepage
     Given I go to exporter homepage and choose Test Org
     And I create a standard application via api
+    And I remove the flags
     And I create "approve" final advice
     And I create a licence for my application with "approve" decision document and good decisions
     When I refresh the page

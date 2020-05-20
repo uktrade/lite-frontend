@@ -1,35 +1,52 @@
 import datetime
 import os
+
 from django.conf import settings
 from faker import Faker  # noqa
 from pytest_bdd import given, when, then, parsers
 
-from ui_automation_tests.pages.temporary_export_details_form_page import TemporaryExportDetailsFormPage
-from ui_automation_tests.pages.route_of_goods_form_page import RouteOfGoodsFormPage
-from ui_automation_tests.pages.end_use_details_form_page import EndUseDetailsFormPage
-from ui_automation_tests.pages.add_end_user_pages import AddEndUserPages
-from ui_automation_tests.pages.application_edit_type_page import ApplicationEditTypePage
-from ui_automation_tests.pages.application_page import ApplicationPage
-from ui_automation_tests.pages.generic_application.declaration import DeclarationPage
-from ui_automation_tests.pages.open_application.add_goods_type import OpenApplicationAddGoodsType
-from ui_automation_tests.pages.respond_to_ecju_query_page import RespondToEcjuQueryPage
-from ui_automation_tests.pages.submitted_applications_page import SubmittedApplicationsPages
-from ui_automation_tests.pages.standard_application.good_details import StandardApplicationGoodDetails
-from ui_automation_tests.pages.standard_application.goods import StandardApplicationGoodsPage
-from ui_automation_tests.shared import functions
-from ui_automation_tests.shared.tools.wait import wait_for_download_button_on_exporter_main_content
-
+import ui_automation_tests.shared.tools.helpers as utils
+from ui_automation_tests.fixtures.add_end_user_advisory import add_end_user_advisory  # noqa
+from ui_automation_tests.fixtures.add_goods_query import add_goods_clc_query  # noqa
+from ui_automation_tests.fixtures.add_party import add_end_user_to_application  # noqa
 from ui_automation_tests.fixtures.env import environment  # noqa
+from ui_automation_tests.fixtures.manage_case import manage_case_status_to_withdrawn, approve_case  # noqa
 from ui_automation_tests.fixtures.register_organisation import (  # noqa
     register_organisation,
     register_organisation_for_switching_organisation,
 )
-from ui_automation_tests.fixtures.add_party import add_end_user_to_application  # noqa
-from ui_automation_tests.fixtures.add_goods_query import add_goods_clc_query  # noqa
-from ui_automation_tests.fixtures.add_end_user_advisory import add_end_user_advisory  # noqa
 from ui_automation_tests.fixtures.sso_sign_in import sso_sign_in  # noqa
-from ui_automation_tests.fixtures.manage_case import manage_case_status_to_withdrawn, approve_case  # noqa
+from ui_automation_tests.pages.add_end_user_pages import AddEndUserPages
+from ui_automation_tests.pages.application_edit_type_page import ApplicationEditTypePage
+from ui_automation_tests.pages.application_page import ApplicationPage
+from ui_automation_tests.pages.apply_for_a_licence_page import ApplyForALicencePage
+from ui_automation_tests.pages.attach_document_page import AttachDocumentPage
+from ui_automation_tests.pages.end_use_details_form_page import EndUseDetailsFormPage
+from ui_automation_tests.pages.exporter_hub_page import ExporterHubPage
+from ui_automation_tests.pages.generic_application.additional_documents import AdditionalDocumentsPage
+from ui_automation_tests.pages.generic_application.declaration import DeclarationPage
+from ui_automation_tests.pages.generic_application.task_list import TaskListPage
+from ui_automation_tests.pages.hub_page import Hub
 from ui_automation_tests.pages.mod_clearances.ExhibitionClearanceDetails import ExhibitionClearanceDetailsPage
+from ui_automation_tests.pages.open_application.add_goods_type import OpenApplicationAddGoodsType
+from ui_automation_tests.pages.respond_to_ecju_query_page import RespondToEcjuQueryPage
+from ui_automation_tests.pages.route_of_goods_form_page import RouteOfGoodsFormPage
+from ui_automation_tests.pages.shared import Shared
+from ui_automation_tests.pages.sites_page import SitesPage
+from ui_automation_tests.pages.standard_application.good_details import StandardApplicationGoodDetails
+from ui_automation_tests.pages.standard_application.goods import StandardApplicationGoodsPage
+from ui_automation_tests.pages.submitted_applications_page import SubmittedApplicationsPages
+from ui_automation_tests.pages.temporary_export_details_form_page import TemporaryExportDetailsFormPage
+from ui_automation_tests.pages.which_location_form_page import WhichLocationFormPage
+from ui_automation_tests.shared import functions
+from ui_automation_tests.shared.fixtures.add_a_document_template import (  # noqa
+    add_a_document_template,
+    get_paragraph_text,
+    get_template_id,
+    get_licence_template_id,
+)
+from ui_automation_tests.shared.fixtures.add_a_draft import add_a_draft  # noqa
+from ui_automation_tests.shared.fixtures.add_a_generated_document import add_a_generated_document  # noqa
 from ui_automation_tests.shared.fixtures.apply_for_application import (  # noqa
     apply_for_standard_application,
     add_an_ecju_query,
@@ -39,15 +56,6 @@ from ui_automation_tests.shared.fixtures.apply_for_application import (  # noqa
     apply_for_gifting_clearance,
     apply_for_trade_control_application,
 )
-from ui_automation_tests.shared.fixtures.add_a_draft import add_a_draft  # noqa
-from ui_automation_tests.shared.fixtures.add_a_document_template import (  # noqa
-    add_a_document_template,
-    get_paragraph_text,
-    get_template_id,
-    get_licence_template_id,
-)
-from ui_automation_tests.shared.fixtures.add_a_generated_document import add_a_generated_document  # noqa
-from ui_automation_tests.shared.fixtures.driver import driver  # noqa
 from ui_automation_tests.shared.fixtures.core import (  # noqa
     context,
     exporter_info,
@@ -55,18 +63,9 @@ from ui_automation_tests.shared.fixtures.core import (  # noqa
     api_client,
     api_test_client,
 )
+from ui_automation_tests.shared.fixtures.driver import driver  # noqa
 from ui_automation_tests.shared.fixtures.urls import exporter_url, api_url  # noqa
-
-import ui_automation_tests.shared.tools.helpers as utils
-from ui_automation_tests.pages.generic_application.task_list import TaskListPage
-from ui_automation_tests.pages.generic_application.additional_documents import AdditionalDocumentsPage
-from ui_automation_tests.pages.apply_for_a_licence_page import ApplyForALicencePage
-from ui_automation_tests.pages.attach_document_page import AttachDocumentPage
-from ui_automation_tests.pages.exporter_hub_page import ExporterHubPage
-from ui_automation_tests.pages.hub_page import Hub
-from ui_automation_tests.pages.shared import Shared
-from ui_automation_tests.pages.sites_page import SitesPage
-from ui_automation_tests.pages.which_location_form_page import WhichLocationFormPage
+from ui_automation_tests.shared.tools.wait import wait_for_download_button_on_exporter_main_content
 
 strict_gherkin = False
 fake = Faker()
@@ -672,6 +671,11 @@ def final_advice(context, decision, api_test_client):  # noqa
     api_test_client.cases.create_final_advice(
         context.case_id, [{"type": decision, "text": "abc", "note": "", "good": context.goods[0]["good"]["id"]}]
     )
+
+
+@given("I remove the flags")  # noqa
+def i_remove_all_flags(context, api_test_client):  # noqa
+    api_test_client.flags.assign_case_flags(context.case_id, [])
 
 
 @given(parsers.parse('I create a licence for my application with "{decision}" decision document'))  # noqa
