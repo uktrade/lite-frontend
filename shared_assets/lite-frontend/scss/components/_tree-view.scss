@@ -3,7 +3,7 @@
 }
 
 .lite-tree-view__root {
-	margin-bottom: govuk-spacing(2);
+	padding: 0;
 
 	&[open] {
 		& > .lite-tree-view__summary::after {
@@ -31,6 +31,7 @@
 		@extend .govuk-checkboxes--small;
 		display: block;
 		margin-right: govuk-spacing(4);
+		margin-bottom: 0;
 
 		.govuk-checkboxes__label::before {
 			background-color: $govuk-body-background-colour;
@@ -76,5 +77,7 @@
 		position: relative;
 		@extend .govuk-checkboxes--small;
 		display: block;
+		margin-bottom: 0;
+		min-height: 44px;
 	}
 }
