@@ -3,9 +3,12 @@ import logging
 
 import requests
 from django.contrib.auth.models import AnonymousUser
+from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from mohawk import Sender
+from mohawk.exc import AlreadyProcessed
 
+from conf import settings
 from conf.settings import HAWK_AUTHENTICATION_ENABLED, env
 
 
@@ -122,7 +125,25 @@ def _get_hawk_sender(url, method, content_type, content):
         method,
         content_type=content_type,
         content=content,
+        seen_nonce=_seen_nonce,
     )
+
+
+def _seen_nonce(access_key_id, nonce, timestamp):
+    """
+    Returns if the passed access_key_id/nonce combination has been
+    used before
+    """
+
+    cache_key = f"hawk:{access_key_id}:{nonce}"
+
+    # cache.add only adds key if it isn't present
+    seen_cache_key = not cache.add(cache_key, True, timeout=settings.HAWK_RECEIVER_NONCE_EXPIRY_SECONDS)
+
+    if seen_cache_key:
+        raise AlreadyProcessed(f"Already seen nonce {nonce}")
+
+    return seen_cache_key
 
 
 def _verify_api_response(response, sender):
