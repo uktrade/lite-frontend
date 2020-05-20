@@ -125,15 +125,15 @@ class EndUser:
         class AttachDocuments:
             TITLE = "Attach end user documents"
             DESCRIPTION = (
-                "You must attach:\n\n- You must attach a completed [end user undertaking"
+                "You must attach:\n\n- a completed [end user undertaking"
                 "(EUU)](https://www.gov.uk/government/publications/end-user-undertaking-euu-form) or "
                 "[stockist undertaking (SU)](https://www.gov.uk/government/publications/stockist-undertaking-su-form) "
                 "completed by the end user or stockist\n- a letterhead as proof of the end user or stockist\n\nIf the "
                 "end user is a government organisation, instead of an EUU or SU you can attach a government purchase "
                 "order. The purchase order must identify you as the applicant, any consignees, the products and "
                 "respective quantities.\n\nIf any of the information provided by the end user is not in English, "
-                "attach a translation.\n\nYou can attach the documents later if you haven’t received them from the end "
-                "user.\n\nThe files must be smaller than 100MB."
+                "attach a translation.\n\nIf you haven’t received the completed undertakings from the end user, you "
+                "can attach them later before you submit the application.\n\nThe files must be smaller than 100MB."
             )
             DESCRIPTION_FIELD_TITLE = "Description"
             BACK = "Back to the application overview"
