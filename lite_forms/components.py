@@ -511,6 +511,7 @@ class DateInput:
         self,
         prefix: str,
         title: str = "",
+        inline_title: bool = False,
         short_title: str = None,
         description: str = "",
         name: str = None,
@@ -529,6 +530,7 @@ class DateInput:
         self.extras = extras
         self.input_type = "date"
         self.short_title = short_title
+        self.inline_title = inline_title
 
 
 class Summary:
@@ -578,7 +580,7 @@ class TokenBar:
         self.options = options
         self.optional = optional
         self.classes = classes if classes else ["tokenfield-container"]
-        self.input_type = "token_bar"
+        self.input_type = "token-bar"
 
 
 class AutocompleteInput:
@@ -609,8 +611,9 @@ class Link:
 
 
 class FiltersBar:
-    def __init__(self, filters: list):
+    def __init__(self, filters: List, advanced_filters: Optional[List] = None):
         self.filters = filters
+        self.advanced_filters = advanced_filters
 
 
 class Custom:

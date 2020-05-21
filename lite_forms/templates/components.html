@@ -78,7 +78,7 @@
 			{% include "components/list.html" with component=question %}
 		{% elif question.input_type == "label" %}
 			{% include "components/label.html" with component=question %}
-		{% elif question.input_type == "token_bar" %}
+        {% elif question.input_type == "token-bar" %}
 			{% include "components/token-bar.html" with component=question value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
 		{% elif question.input_type == "markdown" %}
 			{% include "components/markdown.html" with variables=question.variables name=question.name value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
