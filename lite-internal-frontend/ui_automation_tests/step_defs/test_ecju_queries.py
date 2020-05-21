@@ -8,6 +8,8 @@ from pages.ecju_queries_pages import EcjuQueriesPages
 from shared import functions
 from shared.tools.helpers import scroll_to_element_below_header_by_id
 
+from ui_automation_tests.pages.shared import Shared
+
 scenarios("../features/ecju_queries.feature", strict_gherkin=False)
 
 
@@ -48,9 +50,8 @@ def the_new_ecju_query_is_visible_in_the_list(driver, context):
 
 @then("the ECJU Query creation is visible in the case timeline")
 def the_ecju_query_creation_is_visible_in_the_case_timeline(driver, context, internal_url):
-    case_page = CasePage(driver)
     ApplicationPage(driver).go_to_cases_activity_tab(internal_url, context)
-    assert context.ecju_question in case_page.get_audit_trail_text()
+    assert context.ecju_question in Shared(driver).get_audit_trail_text()
 
 
 @when("I create a response to the ECJU query")

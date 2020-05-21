@@ -2,6 +2,7 @@ from pytest_bdd import then, scenarios, given, when
 
 from pages.case_page import CasePage, CaseTabs
 from ui_automation_tests.pages.application_page import ApplicationPage
+from ui_automation_tests.pages.shared import Shared
 
 scenarios("../features/eua_queries.feature", strict_gherkin=False)
 
@@ -18,9 +19,8 @@ def case_notes_are_available(driver):
 
 @then("the status has been changed in the end user advisory")
 def check_status_has_changed(driver, internal_url, context):
-    case_page = CasePage(driver)
     ApplicationPage(driver).go_to_cases_activity_tab_for_eua(internal_url, context)
-    assert "closed" in case_page.get_audit_trail_text().lower()
+    assert "closed" in Shared(driver).get_audit_trail_text().lower()
 
 
 @when("I go to end user advisory previously created")  # noqa

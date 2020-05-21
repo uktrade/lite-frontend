@@ -18,6 +18,7 @@ class Shared(BasePage):
     LINKS_IN_LITE_TABLE = ".govuk-table__cell a"  # CSS
     SNACKBAR_SELECTOR = ".app-snackbar"
     LITE_NOTICE_SELECTOR = ".lite-information-text__text"
+    AUDIT_TRAIL_ID = "audit-trail"
 
     def click_submit(self):
         self.driver.find_element_by_css_selector(self.SUBMIT_BUTTON).click()
@@ -79,3 +80,6 @@ class Shared(BasePage):
 
     def set_header_to_not_stick(self):
         self.driver.execute_script("document.getElementById('app-header').style.position = 'relative';")
+
+    def get_audit_trail_text(self):
+        return self.driver.find_element_by_id(self.AUDIT_TRAIL_ID).text

@@ -26,6 +26,7 @@ from organisations.services import (
     get_organisation_members,
     post_hmrc_organisations,
     put_organisation_status,
+    get_organisation_activity,
 )
 
 
@@ -107,6 +108,7 @@ class OrganisationView(TemplateView):
                     reverse_lazy("organisations:organisation_sites", kwargs={"pk": self.organisation_id}),
                 ),
             ],
+            "activity": get_organisation_activity(request, self.organisation_id),
         }
         context.update(self.get_additional_context())
         return render(request, f"organisations/organisation/{self.template_name}.html", context)
@@ -168,7 +170,11 @@ class EditOrganisation(SingleFormView):
             Permission.MANAGE_ORGANISATIONS.value in user_permissions
             and Permission.REOPEN_CLOSED_CASES.value in user_permissions
         )
-        are_fields_optional = "address" in self.data["primary_site"]["address"].get("address_line_1")
+        if self.data["primary_site"]["address"].get("address_line_1"):
+            are_fields_optional = "address" in self.data["primary_site"]["address"].get("address_line_1")
+        else:
+            are_fields_optional = self.data["primary_site"]["address"]
+
         form = edit_commercial_form if self.data["type"]["key"] == "commercial" else edit_individual_form
 
         return form(self.data, permission_to_edit_org_name, are_fields_optional)

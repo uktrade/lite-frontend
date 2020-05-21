@@ -39,6 +39,22 @@ def verify_edited_organisation(driver, context):
     assert context.vat in body
 
 
+@then(parsers.parse('the "{audit_type}" organisation appears in the audit trail'))
+def verify_organisation_audit(driver, context, audit_type):
+    body = Shared(driver).get_audit_trail_text()
+    if audit_type == "updated":
+        assert context.old_organisation_name in body
+    assert context.organisation_name in body
+    assert audit_type in body
+
+
+@then(parsers.parse('the "{audit_type}" flag appears in the audit trail'))
+def verify_organisation_flag_audit(driver, context, audit_type):
+    body = Shared(driver).get_audit_trail_text()
+    assert context.flag_name in body
+    assert audit_type in body
+
+
 @then("individual organisation is registered")
 def verify_registered_individual_organisation(driver, context):
     wait_until_page_is_loaded(driver)
@@ -51,8 +67,8 @@ def verify_registered_individual_organisation(driver, context):
 
 @then("HMRC organisation is registered")
 def verify_hmrc_registered_organisation(driver, context):
-    OrganisationsPage(driver).search_for_org_in_filter(context.hmrc_org_name)
-    assert context.hmrc_org_name in Shared(driver).get_text_of_lite_table_body()
+    OrganisationsPage(driver).search_for_org_in_filter(context.organisation_name)
+    assert context.organisation_name in Shared(driver).get_text_of_lite_table_body()
 
 
 @when("I add a new commercial organisation")
@@ -81,9 +97,9 @@ def i_choose_to_add_a_new_individual_organisation(driver, context):
 @when("I add a new HMRC organisation")
 def i_choose_to_add_a_new_hmrc_organisation(driver, context):
     OrganisationsPage(driver).click_new_hmrc_organisation_button()
-    context.hmrc_org_name = fake.company() + " " + fake.company_suffix()
+    context.organisation_name = fake.company() + " " + fake.company_suffix()
     organisations_form_page = OrganisationsFormPage(driver)
-    organisations_form_page.enter_name(context.hmrc_org_name)
+    organisations_form_page.enter_name(context.organisation_name)
     organisations_form_page.enter_site_details(context, "united_kingdom")
     context.email = fake.free_email()
     organisations_form_page.enter_email(context.email)

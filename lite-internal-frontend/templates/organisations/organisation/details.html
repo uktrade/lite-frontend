@@ -36,9 +36,11 @@
 				<dd class="govuk-summary-list__value">
 					{{ organisation.sic_number }}
 				</dd>
-				<dd class="govuk-summary-list__actions">
-					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisations:edit' organisation.id %}#sic_number">{% lcs 'generic.CHANGE' %}</a>
-				</dd>
+				{% if organisation.type.key != "hmrc" %}
+					<dd class="govuk-summary-list__actions">
+						<a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisations:edit' organisation.id %}#sic_number">{% lcs 'generic.CHANGE' %}</a>
+					</dd>
+				{% endif %}
 			</div>
 		{% endif %}
 		<div class="govuk-summary-list__row">
@@ -60,9 +62,11 @@
 				<dd class="govuk-summary-list__value">
 					{{ organisation.registration_number }}
 				</dd>
-				<dd class="govuk-summary-list__actions">
-					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisations:edit' organisation.id %}#registration_number">{% lcs 'generic.CHANGE' %}</a>
-				</dd>
+				{% if organisation.type.key != "hmrc" %}
+					<dd class="govuk-summary-list__actions">
+						<a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisations:edit' organisation.id %}#registration_number">{% lcs 'generic.CHANGE' %}</a>
+					</dd>
+				{% endif %}
 			</div>
 		{% endif %}
 		<div class="govuk-summary-list__row">
@@ -131,4 +135,7 @@
 			</dd>
 		</div>
 	</dl>
+	{% if activity %}
+		{% include "includes/audit-trail.html" %}
+	{% endif %}
 {% endblock %}

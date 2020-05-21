@@ -85,6 +85,8 @@ class OrganisationsFormPage(BasePage):
         functions.click_submit(self.driver)
 
     def fill_in_company_info_page_1(self, context):
+        if hasattr(context, "organisation_name"):
+            context.old_organisation_name = context.organisation_name
         context.organisation_name = fake.company() + " " + fake.company_suffix()
         self.enter_name(context.organisation_name)
         context.eori = "12345"

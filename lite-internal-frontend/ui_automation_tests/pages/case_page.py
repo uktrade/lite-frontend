@@ -21,8 +21,6 @@ class CasePage(BasePage):
     TABLE_DESTINATIONS_ID = "table-destinations"
     TABLE_DELETED_ENTITIES_ID = "table-inactive-entities"
 
-    AUDIT_TRAIL_ID = "audit-trail"
-
     BUTTON_RERUN_ROUTING_RULES_ID = "button-rerun-routing-rules"
     BUTTON_SET_GOODS_FLAGS_ID = "button-edit-goods-flags"
     BUTTON_SET_DESTINATIONS_FLAGS_ID = "button-edit-destinations-flags"
@@ -78,9 +76,6 @@ class CasePage(BasePage):
     def select_destinations(self):
         for destination in self.driver.find_elements_by_css_selector(self.TABLE_DESTINATIONS_ID + selectors.CHECKBOX):
             destination.click()
-
-    def get_audit_trail_text(self):
-        return self.driver.find_element_by_id(self.AUDIT_TRAIL_ID).text
 
     def is_flag_applied(self, flag_name):
         self.driver.find_element_by_id("candy-flags").click()

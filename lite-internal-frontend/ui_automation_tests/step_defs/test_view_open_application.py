@@ -3,6 +3,8 @@ from pytest_bdd import scenarios, when, parsers, then
 from pages.application_page import ApplicationPage
 from pages.case_page import CasePage, CaseTabs
 
+from ui_automation_tests.pages.shared import Shared
+
 scenarios("../features/view_open_application.feature", strict_gherkin=False)
 
 
@@ -19,13 +21,13 @@ def filter_status_change(driver, user_type):  # noqa
 
 @then("exporter is at the first audit in the trail")  # noqa
 def exporter_first_audit_in_trail(driver, exporter_info):  # noqa
-    first_audit = CasePage(driver).get_audit_trail_text()
+    first_audit = Shared(driver).get_audit_trail_text()
     assert f"{exporter_info['first_name']}" in first_audit
     assert f"{exporter_info['last_name']}" in first_audit
 
 
 @then("exporter is not in the audit trail")  # noqa
 def exporter_is_not_in_audit_trail(driver, exporter_info):  # noqa
-    audit = CasePage(driver).get_audit_trail_text()
+    audit = Shared(driver).get_audit_trail_text()
     assert f"{exporter_info['first_name']}" not in audit
     assert f"{exporter_info['last_name']}" not in audit

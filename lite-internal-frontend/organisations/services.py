@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
 from conf.client import get, post, put
-from conf.constants import ORGANISATIONS_URL, SITES_URL, USERS_URL, ORGANISATION_STATUS_URL
+from conf.constants import ORGANISATIONS_URL, SITES_URL, USERS_URL, ORGANISATION_STATUS_URL, ACTIVITY_URL
 from lite_content.lite_internal_frontend.organisations import RegisterAnOrganisation
 
 
@@ -61,3 +61,9 @@ def get_organisation_members(request, pk):
 def get_organisation_matching_details(request, pk):
     data = get(request, ORGANISATIONS_URL + str(pk) + "/matching_details/")
     return data.json()["matching_properties"]
+
+
+def get_organisation_activity(request, pk):
+    url = ORGANISATIONS_URL + str(pk) + ACTIVITY_URL
+    data = get(request, url)
+    return data.json()["activity"]
