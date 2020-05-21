@@ -3,6 +3,7 @@ from _decimal import Decimal
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.urls import reverse_lazy
 
+from applications.helpers.countries import ContractTypes
 from conf.constants import (
     NEWLINE,
     STANDARD,
@@ -137,10 +138,14 @@ def _convert_open_application(application, editable=False):
         applications.ApplicationSummaryPage.GOODS: _convert_goods_types(application["goods_types"]),
         **(
             {applications.ApplicationSummaryPage.END_USE_DETAILS: _get_end_use_details(application),}
-            if not is_application_oiel_cryptographic(application)
+            if not is_application_oiel_of_type("cryptographic", application)
             else {}
         ),
-        applications.ApplicationSummaryPage.ROUTE_OF_GOODS: _get_route_of_goods(application),
+        **(
+            {applications.ApplicationSummaryPage.ROUTE_OF_GOODS: _get_route_of_goods(application),}
+            if not is_application_oiel_of_type("cryptographic", application)
+            else {}
+        ),
         **(
             {applications.ApplicationSummaryPage.TEMPORARY_EXPORT_DETAILS: _get_temporary_export_details(application),}
             if _is_application_export_type_temporary(application)
@@ -152,7 +157,7 @@ def _convert_open_application(application, editable=False):
                     application["goods_locations"]
                 ),
             }
-            if not is_application_oiel_cryptographic(application)
+            if not is_application_oiel_of_type("cryptographic", application)
             else {}
         ),
         applications.ApplicationSummaryPage.COUNTRIES: _convert_countries(application["destinations"]["data"]),
@@ -175,7 +180,7 @@ def _convert_open_application(application, editable=False):
                     convert_party(party, application, editable) for party in application["third_parties"]
                 ],
             }
-            if is_application_oiel_cryptographic(application)
+            if is_application_oiel_of_type("cryptographic", application)
             else {}
         ),
     }
@@ -251,7 +256,25 @@ def _convert_goods_types(goods_types):
 
 
 def _convert_countries(countries):
-    return [{"Name": country["name"]} for country in countries]
+    return [
+        {"Name": country["country"]["name"], "Contract types": convert_country_contract_types(country)}
+        if country["contract_types"]
+        else {"Name": country["country"]["name"]}
+        for country in countries
+    ]
+
+
+def convert_country_contract_types(country):
+    return default_na(
+        NEWLINE.join(
+            [
+                ContractTypes.get_str_representation(ContractTypes(contract_type))
+                if contract_type != "other_contract_type"
+                else "Other contract type - " + country["other_contract_type_text"]
+                for contract_type in country["contract_types"]
+            ]
+        )
+    )
 
 
 def _get_route_of_goods(application):
@@ -507,11 +530,11 @@ def has_incorporated_goods_types(application):
     return False
 
 
-def is_application_oiel_cryptographic(application):
+def is_application_oiel_of_type(oiel_type, application):
     return (
         False
         if not application.get("goodstype_category")
-        else (application.get("goodstype_category").get("key") == "cryptographic")
+        else (application.get("goodstype_category").get("key") == oiel_type)
     )
 
 

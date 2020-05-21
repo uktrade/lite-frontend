@@ -30,6 +30,10 @@ Feature: I want to indicate the open licence I want
     Then I should see a list of countries
     When I click select all countries
     And I click continue
+    And I select that I want to add the same sectors and contract types to all countries
+    And I select contract types for all countries
+    Then I should see all countries and the chosen contract types on the destination summary list
+    When I click continue
     Then I can see the sections "ultimate-end-users" are on the task list
     When I click on the "ultimate-end-users" section
     And I click on the add button
@@ -79,6 +83,10 @@ Feature: I want to indicate the open licence I want
     Then all checkboxes are selected
     When I search for country "Canada"
     Then only "Canada" is displayed in country list
+    When I click continue
+    And I select that I want to add the same sectors and contract types to all countries
+    And I select contract types for all countries
+    Then I should see all countries and the chosen contract types on the destination summary list
     When I click continue
     And I click on the "countries-matrix" section
     When I "unassign" all countries to all goods with link
@@ -173,7 +181,10 @@ Feature: I want to indicate the open licence I want
     When I click the back link
     And I click on the "countries" section
     Then I should see the UK Continental Shelf as the only permitted destination
-    When I click the back link
+    When I click continue
+    And I select contract types for all countries
+    Then I should see the UK Continental Shelf as the only destination and the chosen contract types on the destination summary list
+    When I click continue
     And I submit the application
     And I click continue
     And I agree to the declaration

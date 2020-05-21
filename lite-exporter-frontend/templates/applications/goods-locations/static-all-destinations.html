@@ -25,5 +25,15 @@
 
 	{% if goodstype_category == 'uk_continental_shelf' %}
 		<p class="govuk-hint">{% lcs 'goods.GoodsTypeAllDestinationsPage.UK_CONTINENTAL_SHELF_DESCRIPTION' %}</p>
+
+		<div class="govuk-form-group">
+			<div class="lite-buttons-row">
+				<form action="{% url 'applications:add_contract_type' application_id 'UKCS' %}">
+					<button type="submit" name="_action" value="submit" id="button-save-continue" class="govuk-button">
+						{% lcs 'applications.DestinationsSummaryList.SAVE_AND_CONTINUE' %}
+					</button>
+				</form>
+			</div>
+		</div>
 	{% endif %}
 {% endblock %}

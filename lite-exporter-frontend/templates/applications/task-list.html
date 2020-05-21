@@ -142,7 +142,19 @@
 				{% if application_type|application_type_in_list:"HAS_COUNTRIES" %}
 					{% if oiel_noneditable_countries %}
 						{% url 'applications:static_destinations' application.id as countries_url %}
-					{% else %}
+						{% if is_uk_continental_shelf_application %}
+							{% if not countries_missing_contract_types %}
+								{% url 'applications:countries_summary' application.id as countries_url %}
+							{% endif %}
+						{% endif %}
+					{% elif is_oicl_appplication or is_military_dual_use_application %}
+						{% if not countries %}
+							{% url 'applications:countries' application.id as countries_url %}
+						{% else %}
+							{% url 'applications:countries_summary' application.id as countries_url %}
+						{% endif %}
+						{% tld countries 'country' 'countries' as countries_description %}
+					{% else  %}
 						{% url 'applications:countries' application.id as countries_url %}
 						{% tld countries 'country' 'countries' as countries_description %}
 					{% endif %}

@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from applications.forms.locations import Locations
 from applications.services import set_application_status, delete_application, put_application
-from lite_content.lite_exporter_frontend import strings, goods
+from lite_content.lite_exporter_frontend import applications, goods, strings
 
 
 def validate_withdraw_application(request, pk, json):
@@ -55,3 +55,13 @@ def validate_external_location_choice(_request, _pk, json):
         return json, HTTPStatus.OK
 
     return {"errors": {"choice": [goods.GoodsLocationForm.ERROR]}}, HTTPStatus.BAD_REQUEST
+
+
+def validate_contract_type_countries_choice(_request, _pk, json):
+    if json.get("choice"):
+        return json, HTTPStatus.OK
+
+    return (
+        {"errors": {"choice": [applications.ContractTypes.ChooseContractTypeForm.ERROR]}},
+        HTTPStatus.BAD_REQUEST,
+    )

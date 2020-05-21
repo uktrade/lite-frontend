@@ -110,6 +110,21 @@ urlpatterns = [
     ),
     path("<uuid:pk>/goods-locations/countries/", locations.Countries.as_view(), name="countries"),
     path("<uuid:pk>/goods-locations/destinations/", locations.StaticDestinations.as_view(), name="static_destinations"),
+    path(
+        "<uuid:pk>/goods-locations/countries/contract-types/select/",
+        locations.ChooseContractType.as_view(),
+        name="choose_contract_type",
+    ),
+    path(
+        "<uuid:pk>/goods-locations/countries/contract-types/add/<str:country>/",
+        locations.AddContractTypes.as_view(),
+        name="add_contract_type",
+    ),
+    path(
+        "<uuid:pk>/goods-locations/countries/contract-types/summary/",
+        locations.CountriesAndContractTypesSummary.as_view(),
+        name="countries_summary",
+    ),
     # End User
     path("<uuid:pk>/end-user/", end_users.EndUser.as_view(), name="end_user"),
     path("<uuid:pk>/end-user/add/", end_users.AddEndUser.as_view(), name="add_end_user"),

@@ -1,6 +1,10 @@
 from pytest_bdd import scenarios, when, then, parsers, given
 
 import ui_automation_tests.shared.tools.helpers as utils
+from ui_automation_tests.pages.open_application.country_contract_types import OpenApplicationCountryContractTypes
+from ui_automation_tests.pages.open_application.country_contract_types_summary import (
+    OpenApplicationCountryContractTypesSummaryPage,
+)
 from ui_automation_tests.pages.exporter_hub_page import ExporterHubPage
 from ui_automation_tests.pages.generic_application.ultimate_end_users import GenericApplicationUltimateEndUsers
 from ui_automation_tests.shared import functions
@@ -104,6 +108,52 @@ def select_all_countries(driver):
 def all_selected(driver):
     page = OpenApplicationCountriesPage(driver)
     assert page.get_number_of_checkboxes(checked=False) == page.get_number_of_checkboxes(checked=True)
+
+
+@when("I select that I want to add the same sectors and contract types to all countries")
+def select_yes_to_all_countries_with_the_same_contract_types(driver):
+    OpenApplicationCountryContractTypes(driver).select_same_contract_types_for_all_countries_radio_button()
+
+
+@when("I select contract types for all countries")
+def select_contract_types_for_all_countries(driver, context):
+    page = OpenApplicationCountryContractTypes(driver)
+    context.contract_types = [
+        {"id": "Navy", "value": "Navy"},
+        {
+            "id": "Aircraft-manufacturers,-maintainers-or-operators",
+            "value": "Aircraft manufacturers, maintainers or operators",
+        },
+        {"id": "Pharmaceutical-or-medical", "value": "Pharmaceutical or medical"},
+    ]
+    page.select_contract_type(context.contract_types[0]["id"])
+    page.select_contract_type(context.contract_types[1]["id"])
+    page.select_contract_type(context.contract_types[2]["id"])
+    page.select_other_contract_type_and_fill_in_details()
+    functions.click_submit(driver)
+
+
+@then("I should see all countries and the chosen contract types on the destination summary list")
+def i_should_see_destinations_summary_countries_contract_types(driver, context):
+    page = OpenApplicationCountryContractTypesSummaryPage(driver)
+    countries_and_contract_types = page.get_countries_with_respective_contract_types()
+    assert len(countries_and_contract_types) == 274
+    for country_with_contract_types in countries_and_contract_types:
+        for contract_type in context.contract_types:
+            assert contract_type["value"] in country_with_contract_types[1]
+
+
+@then(
+    "I should see the UK Continental Shelf as the only destination and the chosen contract types on the destination summary list"
+)
+def i_should_see_destinations_summary_uk_continental_shelf_contract_types(driver, context):
+    page = OpenApplicationCountryContractTypesSummaryPage(driver)
+    countries_and_contract_types = page.get_countries_with_respective_contract_types()
+    assert len(countries_and_contract_types) == 1
+    assert countries_and_contract_types[0][0] == "UK Continental Shelf"
+    for country_with_contract_types in countries_and_contract_types:
+        for contract_type in context.contract_types:
+            assert contract_type["value"] in country_with_contract_types[1]
 
 
 @when(parsers.parse('I "{assign_or_unassign}" all countries to all goods with link'))

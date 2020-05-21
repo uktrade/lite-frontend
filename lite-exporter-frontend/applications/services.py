@@ -27,6 +27,8 @@ from conf.constants import (
     APPLICATION_COPY_URL,
     END_USE_DETAILS_URL,
     TEMPORARY_EXPORT_DETAILS_URL,
+    CONTRACT_TYPES_URL,
+    CONTRACT_TYPES_COUNTRIES,
 )
 from conf.settings import AWS_STORAGE_BUCKET_NAME, STREAMING_CHUNK_SIZE
 from core.helpers import remove_prefix, convert_parameters_to_query_params, add_validate_only_to_data
@@ -140,11 +142,21 @@ def get_data_from_post_good_on_app(json):
 # Countries
 def get_application_countries(request, pk):
     data = get(request, APPLICATIONS_URL + str(pk) + COUNTRIES_URL)
-    return data.json()["countries"]
+    return [country_entry["country"] for country_entry in data.json()["countries"]]
+
+
+def get_application_countries_and_contract_types(request, pk):
+    data = get(request, APPLICATIONS_URL + str(pk) + CONTRACT_TYPES_COUNTRIES)
+    return data.json()
 
 
 def post_application_countries(request, pk, json):
     data = post(request, APPLICATIONS_URL + str(pk) + COUNTRIES_URL, json)
+    return data.json(), data.status_code
+
+
+def put_contract_type_for_country(request, pk, json):
+    data = put(request, APPLICATIONS_URL + str(pk) + CONTRACT_TYPES_URL, json)
     return data.json(), data.status_code
 
 

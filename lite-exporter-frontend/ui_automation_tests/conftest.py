@@ -498,7 +498,7 @@ def activity_tab(driver):  # noqa
 
 @then(parsers.parse('"{expected_text}" is shown as position "{no}" in the audit trail'))  # noqa
 def latest_audit_trail(driver, expected_text, no):  # noqa
-    assert expected_text in ApplicationPage(driver).get_text_of_audit_trail_item(int(no) - 1)
+    assert expected_text.lower() in ApplicationPage(driver).get_text_of_audit_trail_item(int(no) - 1).lower()
 
 
 @when("I click on end user advisories")  # noqa

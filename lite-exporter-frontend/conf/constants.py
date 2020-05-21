@@ -40,6 +40,8 @@ DOCUMENT_SENSITIVITY_URL = "/document-sensitivity/"
 EXISTING_PARTIES_URL = "/existing-parties/"
 COUNTRIES_URL = "/countries/"
 LICENCES_URL = "/licences/"
+CONTRACT_TYPES_URL = "/contract-types/"
+CONTRACT_TYPES_COUNTRIES = "/countries-contract-types/"
 
 # Queries URLs
 QUERIES_URL = "/queries/"
