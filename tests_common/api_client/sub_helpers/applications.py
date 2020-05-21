@@ -29,6 +29,14 @@ class Applications:
         )
         self.api_client.add_to_context("country", {"code": "US", "name": "United States"})
 
+    def add_contract_types_for_country(self, draft_id):
+        self.api_client.make_request(
+            method="PUT",
+            url="/applications/" + draft_id + "/contract-types/",
+            headers=self.api_client.exporter_headers,
+            body={"countries": ["US"], "contract_types": ["air_force", "aircraft_manufacturers"]},
+        )
+
     def add_additional_document(self, draft_id):
         url = "/applications/" + draft_id + "/documents/"
         additional_document_metadata = self.documents.add_document(
@@ -183,6 +191,7 @@ class Applications:
         )
         self.add_site(draft_id)
         self.add_countries(draft_id)
+        self.add_contract_types_for_country(draft_id)
         self.goods.add_open_draft_good(draft_id)
         self.add_end_use_details(draft_id, end_use_details)
         self.add_route_of_goods(draft_id, route_of_goods=route_of_goods)
