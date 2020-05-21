@@ -5,6 +5,7 @@ from django.views.generic import TemplateView
 
 from conf.constants import Permission
 from core.services import get_countries, get_denial_reasons, get_user_permissions
+from flags.enums import FlagStatus
 from flags.services import get_flags
 from lite_forms.generators import form_page
 from lite_forms.views import SingleFormView
@@ -77,7 +78,7 @@ class AddPicklistItem(SingleFormView):
 
         self.action = validate_and_post_picklist_item
         countries, _ = get_countries(request)
-        flags = get_flags(request)
+        flags = get_flags(request, status=FlagStatus.ACTIVE.value)
         denial_reasons = get_denial_reasons(request, False)
 
         self.context = {**countries, "flags": flags, "denial_reasons": denial_reasons}
@@ -101,7 +102,7 @@ class EditPicklistItem(SingleFormView):
         self.action = validate_and_put_picklist_item
         self.success_url = reverse_lazy("picklists:picklist_item", kwargs={"pk": self.object_pk})
         countries, _ = get_countries(request)
-        flags = get_flags(request)
+        flags = get_flags(request, status=FlagStatus.ACTIVE.value)
         denial_reasons = get_denial_reasons(request)
 
         self.context = {**countries, "flags": flags, "denial_reasons": denial_reasons}

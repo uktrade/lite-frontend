@@ -21,6 +21,7 @@ class CaseListPage(BasePage):
     # Filters
     BUTTON_APPLY_FILTERS = "button-apply-filters"  # ID
     BUTTON_CLEAR_FILTERS = "button-clear-filters"  # ID
+    LINK_ADVANCED_FILTERS = "advanced-filters-link"  # ID
     LINK_SHOW_FILTERS = "show-filters-link"  # ID
     LINK_HIDE_FILTERS = "hide-filters-link"  # ID
     FILTER_BAR = "lite-filter-bar"  # Class
@@ -33,6 +34,45 @@ class CaseListPage(BasePage):
     QUEUE_SEARCH_BOX = "filter-queues"
     # Queue dropdown
     LINK_CHANGE_QUEUE_ID = "link-queue"
+
+    # Advanced filters
+    CASE_REFERENCE_ID = "case_reference"
+    ORGANISATION_NAME_ID = "organisation_name"
+    EXPORTER_APPLICATION_REFERENCE_ID = "exporter_application_reference"
+    FINAL_ADVICE_TYPE_ID = "final_advice_type"
+    TEAM_ADVICE_TYPE_ID = "team_advice_type"
+    MAX_SLA_DAYS_REMAINING_ID = "max_sla_days_remaining"
+    MIN_SLA_DAYS_REMAINING_ID = "min_sla_days_remaining"
+    SUBMITTED_FROM_DAY_ID = "submitted_from_day"
+    SUBMITTED_FROM_MONTH_ID = "submitted_from_month"
+    SUBMITTED_FROM_YEAR_ID = "submitted_from_year"
+    SUBMITTED_TO_DAY_ID = "submitted_to_day"
+    SUBMITTED_TO_MONTH_ID = "submitted_to_month"
+    SUBMITTED_TO_YEAR_ID = "submitted_to_year"
+    PARTY_NAME_ID = "party_name"
+    PARTY_ADDRESS_ID = "party_address"
+    GOODS_RELATED_DESCRIPTION_ID = "goods_related_description"
+    CONTROL_LIST_ENTRY_ID = "control_list_entry"
+
+    ADVANCED_FILTERS = [
+        CASE_REFERENCE_ID,
+        ORGANISATION_NAME_ID,
+        EXPORTER_APPLICATION_REFERENCE_ID,
+        FINAL_ADVICE_TYPE_ID,
+        TEAM_ADVICE_TYPE_ID,
+        MAX_SLA_DAYS_REMAINING_ID,
+        MIN_SLA_DAYS_REMAINING_ID,
+        SUBMITTED_FROM_DAY_ID,
+        SUBMITTED_FROM_MONTH_ID,
+        SUBMITTED_FROM_YEAR_ID,
+        SUBMITTED_TO_DAY_ID,
+        SUBMITTED_TO_MONTH_ID,
+        SUBMITTED_TO_YEAR_ID,
+        PARTY_NAME_ID,
+        PARTY_ADDRESS_ID,
+        GOODS_RELATED_DESCRIPTION_ID,
+        CONTROL_LIST_ENTRY_ID,
+    ]
 
     # Notification for updated cases
     EXPORTER_AMENDMENTS_BANNER = "exporter-amendments-banner"  # ID
@@ -95,6 +135,9 @@ class CaseListPage(BasePage):
     def click_clear_filters_button(self):
         self.driver.find_element_by_id(self.BUTTON_CLEAR_FILTERS).click()
 
+    def click_advanced_filters_button(self):
+        self.driver.find_element_by_id(self.LINK_ADVANCED_FILTERS).click()
+
     def click_show_filters_link(self):
         self.driver.find_element_by_id(self.LINK_SHOW_FILTERS).click()
 
@@ -138,6 +181,22 @@ class CaseListPage(BasePage):
 
     def get_case_row(self, case_id):
         return self.driver.find_element_by_id(case_id)
+
+    def assert_all_advanced_filters_available(self):
+        for advanced_filter in self.ADVANCED_FILTERS:
+            assert self.driver.find_element_by_id(advanced_filter)
+
+    def filter_by_exporter_application_reference(self, exporter_application_reference):
+        self.driver.find_element_by_id(self.EXPORTER_APPLICATION_REFERENCE_ID)
+        self.driver.find_element_by_id(self.EXPORTER_APPLICATION_REFERENCE_ID).send_keys(exporter_application_reference)
+
+    def filter_by_goods_related_description(self, goods_related_description):
+        self.driver.find_element_by_id(self.GOODS_RELATED_DESCRIPTION_ID)
+        self.driver.find_element_by_id(self.GOODS_RELATED_DESCRIPTION_ID).send_keys(goods_related_description)
+
+    def filter_by_organisation_name(self, org_name):
+        self.driver.find_element_by_id(self.ORGANISATION_NAME_ID)
+        self.driver.find_element_by_id(self.ORGANISATION_NAME_ID).send_keys(org_name)
 
     def get_case_row_sla(self, row):
         return row.find_element_by_id(self.SLA_ID).text

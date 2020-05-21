@@ -12,7 +12,7 @@ from cases.services import put_flag_assignments, get_case
 from conf.constants import Permission
 from core.helpers import convert_dict_to_query_params, get_params_if_exist
 from core.services import get_user_permissions
-from flags.enums import FlagLevel
+from flags.enums import FlagLevel, FlagStatus
 from flags.forms import (
     add_flag_form,
     edit_flag_form,
@@ -47,7 +47,9 @@ from users.services import get_gov_user
 
 class FlagsList(TemplateView):
     def get(self, request, **kwargs):
-        data = get_flags(request, **request.GET)
+        params = request.GET.copy()
+        params["status"] = params.get("status", FlagStatus.ACTIVE.value)
+        data = get_flags(request, **params)
         user_data, _ = get_gov_user(request, str(request.user.lite_api_user_id))
 
         filters = FiltersBar(
@@ -57,8 +59,8 @@ class FlagsList(TemplateView):
                 TextInput(name="priority", title="priority"),
                 Select(name="team", title="team", options=get_teams(request, True)),
                 Checkboxes(
-                    name="only_show_deactivated",
-                    options=[Option(True, flags.FlagsList.SHOW_DEACTIVATED_FLAGS)],
+                    name="status",
+                    options=[Option(FlagStatus.DEACTIVATED.value, flags.FlagsList.SHOW_DEACTIVATED_FLAGS)],
                     classes=["govuk-checkboxes--small"],
                 ),
             ]

@@ -5,7 +5,7 @@ from shared.BasePage import BasePage
 class FlagsListPage(BasePage):
     BUTTON_ADD_FLAG_ID = "button-add-a-flag"
     INPUT_NAME_FILTER_ID = "name"
-    CHECKBOX_ONLY_SHOW_DEACTIVATED_NAME = "only_show_deactivated"
+    CHECKBOX_ONLY_SHOW_DEACTIVATED_NAME = "status"
 
     def click_add_a_flag_button(self):
         self.driver.find_element_by_id(self.BUTTON_ADD_FLAG_ID).click()

@@ -83,8 +83,8 @@ def get_timeline_filters(request, case_id):
                 name="activity_type",
                 options=make_options(activity_filters["activity_types"]),
             ),
-            DateInput(title=cases.ApplicationPage.ActivityFilters.DATE_FROM, prefix="from_"),
-            DateInput(title=cases.ApplicationPage.ActivityFilters.DATE_TO, prefix="to_"),
+            DateInput(title=cases.ApplicationPage.ActivityFilters.DATE_FROM, prefix="from_", inline_title=True),
+            DateInput(title=cases.ApplicationPage.ActivityFilters.DATE_TO, prefix="to_", inline_title=True),
         ]
     )
 

@@ -37,7 +37,7 @@ from conf.constants import (
     QUEUES_URL,
 )
 from core.helpers import convert_parameters_to_query_params
-
+from flags.enums import FlagStatus
 
 # Case types
 def get_case_types(request, type_only=True):
@@ -367,6 +367,7 @@ def put_rerun_case_routing_rules(request, pk, json):
 
 def get_blocking_flags(request, case_pk):
     data = get(
-        request, FLAGS_URL + f"?case={case_pk}&only_show_deactivated=False&blocks_approval=True&disable_pagination=True"
+        request,
+        FLAGS_URL + f"?case={case_pk}&status={FlagStatus.ACTIVE.value}&blocks_approval=True&disable_pagination=True",
     )
     return data.json()
