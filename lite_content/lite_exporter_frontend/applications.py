@@ -393,6 +393,54 @@ class DestinationForm:
     DESCRIPTION = ""
 
 
+class ContractTypes:
+    NUCLEAR_RELATED = "Nuclear-related (trigger list items)"
+    NAVY = "Navy"
+    ARMY = "Army"
+    AIR_FORCE = "Air force"
+    POLICE = "Police"
+    MINISTRY_OF_INTERIOR = "Ministry of Interior (or equivalent)"
+    OTHER_SECURITY_FORCES = "Other security forces"
+    COMPANIES_NUCLEAR_RELATED = "Companies requesting Nuclear Trigger List items"
+    MARITIME_ANTI_PIRACY = "Maritime anti-piracy"
+    AIRCRAFT_MANUFACTURERS = "Aircraft manufacturers, maintainers or operators"
+    REGISTERED_FIREARM_DEALERS = "Registered firearm dealers"
+    OIL_AND_GAS_INDUSTRY = "Oil and gas industry"
+    PHARMACEUTICAL_OR_MEDICAL = "Pharmaceutical or medical"
+    MEDIA = "Media"
+    PRIVATE_MILITARY = "Private military or security companies (including security transportation)"
+    EDUCATION = "Education (e.g. schools, colleges and universities)"
+    FOR_THE_EXPORTERS_OWN_USE = "For the exporters own use"
+    OTHER = "Other - specify below"
+
+    class ChooseContractTypeForm:
+        TITLE = "Do you want to add the same sectors and contract types to all the countries you selected?"
+        DESCRIPTION = "Examples of sectors and contract types are ‘army’, ‘registered firearm dealers’ and ‘for the exporters own use’."
+
+        ALL_COUNTRIES_OPTION = "Yes"
+        EACH_COUNTRY_INDIVIDUALLY_OPTION = "No, each country needs a different combination"
+        ERROR = "Select yes to add the same sectors and contract types to all the countries you selected"
+
+    class AddContractTypesForm:
+        TITLE = "Select the sectors and contract types for "
+        DESCRIPTION = ""
+
+        PROVIDE_DETAILS = "Provide details if other"
+
+    class Variables:
+        ALL_COUNTRIES_CHOSEN = "all"
+
+
+class DestinationsSummaryList:
+    DESTINATIONS_SUMMARY_LIST_TITLE = "Destination summary list"
+    OTHER_SECTOR_CONTRACT_TYPE = "Other sector or contract type"
+
+    CHANGE_COUNTRIES = "Change countries"
+    CHANGE_SECTORS_AND_CONTRACT_TYPES = "Change"
+    SAVE_AND_RETURN = "Save and return to application overview"
+    SAVE_AND_CONTINUE = "Save and continue"
+
+
 class StandardApplicationTaskList:
     ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
     NEW_TITLE = "Standard Individual Export Licence application"
