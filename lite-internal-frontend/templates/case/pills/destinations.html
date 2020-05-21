@@ -8,7 +8,7 @@
 				<p class="govuk-!-margin-0">{{ destination.name }} <span class="govuk-hint govuk-!-margin-0 lite-!-display-inline">({{ destination.type|sentence_case }})</span></p>
 				<p class="govuk-hint govuk-!-margin-0">{{ destination|get_address }}</p>
 			{% else %}
-				{{ destination.name }}
+				{{ destination.country.name }}
 			{% endif %}
 		</li>
 	{% endfor %}

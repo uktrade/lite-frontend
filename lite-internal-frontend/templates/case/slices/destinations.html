@@ -82,19 +82,19 @@
 							{% if not hide_checkboxes %}
 								<td class="govuk-table__cell govuk-table__cell--checkbox {% if show_advice %}lite-!-no-border{% endif %}">
 									<div>
-										<input class="govuk-checkboxes__input" type="checkbox" name="countries" value="{{ destination.id }}" id="{{ destination.id }}">
-										<label class="govuk-label govuk-checkboxes__label" for="{{ destination.id }}">{{ destination.name }}</label>
+										<input class="govuk-checkboxes__input" type="checkbox" name="countries" value="{{ destination.country.id }}" id="{{ destination.country.id }}">
+										<label class="govuk-label govuk-checkboxes__label" for="{{ destination.country.id }}">{{ destination.country.name }}</label>
 									</div>
 								</td>
 							{% endif %}
 							<td class="govuk-table__cell govuk-table__cell--line-number {% if show_advice %}lite-!-no-border{% endif %}">{{ forloop.counter }}.</td>
-							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">{{ destination.name }}</td>
-							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">{{ destination.id }}</td>
+							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">{{ destination.country.name }}</td>
+							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">{{ destination.country.id }}</td>
 							<td class="govuk-table__cell govuk-table__cell--max-width-400 {% if show_advice %}lite-!-no-border{% endif %}">
 								<span data-max-length="100">
 									{% for good in case.goods %}
 										{% for good_country in good.countries %}
-											{% if good_country.id == destination.id %}
+											{% if good_country.id == destination.country.id %}
 												{{ forloop.counter }}. {{ good.description }}
 											{% endif %}
 										{% endfor %}
@@ -102,6 +102,9 @@
 								</span>
 							</td>
 							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+								{% if destination.country.flags or not destination.flags %}
+									{% include 'includes/flags.html' with flags=destination.country.flags list=True %} <br>
+								{% endif %}
 								{% include 'includes/flags.html' with flags=destination.flags list=True %}
 							</td>
 						</tr>
