@@ -92,11 +92,10 @@ class GoodPage:
 
 
 class DocumentSensitivityForm:
-    TITLE = "Does the product documentation meet the following criteria?"
+    TITLE = "Do you have a document for the product and is the document rated OFFICIAL-SENSITIVE or below?"
     DESCRIPTION = (
-        "I have a document for my product.\nDocumentation should be specifications, datasheets, sales brochures, "
-        "drawings or anything else that fully details what the product is and what it's designed to do.\n\n"
-        "The document is not above OFFICIAL-SENSITIVE."
+        "Documentation should be specifications, datasheets, sales brochures, drawings or anything else that fully "
+        "details what the product is and what it's designed to do."
     )
     ECJU_HELPLINE = (
         "**<noscript>If the answer is No;</noscript>**\n\nContact ECJU to arrange a more secure way to send "
