@@ -35,7 +35,7 @@
 					<th class="govuk-table__header" scope="col">{% lcs 'applications.ThirdPartiesPage.Variables.ADDRESS' %}</th>
 					<th class="govuk-table__header" scope="col">{% lcs 'applications.ThirdPartiesPage.Variables.COUNTRY' %}</th>
 					<th class="govuk-table__header" scope="col">{% lcs 'applications.ThirdPartiesPage.Variables.DOCUMENT' %}</th>
-					<th class="govuk-table__header" scope="col"></th>
+					<th class="govuk-table__cell--nowrap" scope="col"></th>
 				</tr>
 			</thead>
 			<tbody class="govuk-table__body">
@@ -71,7 +71,7 @@
 							{% lcs 'generic.Document.ATTACH' %}
 						</a>
 					{% endif %}
-					<td class="govuk-table__cell govuk-table__cell--numeric">
+					<td class="govuk-table__cell--nowrap govuk-table__cell--numeric">
 						<a href="{% url 'applications:remove_third_party' application.id third_party.id %}" class="govuk-link">
 							{% lcs 'generic.Document.REMOVE' %}
 						</a>
