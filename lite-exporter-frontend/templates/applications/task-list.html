@@ -12,7 +12,7 @@
 
 {% block subtitle %}
 	{% if application_type|application_type_in_list:"HAS_LICENCE_TYPE" %}
-			{% if is_editing %}Licence type: {{ application.application_type.value }} - {% endif %}
+			{% if is_editing %}Licence type: {{ licence_type }} - {% endif %}
 			Export type: {{ application.export_type.value }}
 			{% if application.goodstype_category.key %}
 				<br> OIEL Type: {{ application.goodstype_category.value }}

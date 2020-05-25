@@ -18,13 +18,15 @@
 			</h1>
 		</div>
 		<div class="lite-app-bar__controls">
-			<a href="{% url 'applications:edit_location' application.id %}" class="govuk-button govuk-button--secondary">
-				{% if application.goods_locations.type == 'sites' %}
-					Change to external locations
-				{% else %}
-					Change to sites
-				{% endif %}
-			</a>
+			{% if is_application_draft_or_major_edit  %}
+				<a href="{% url 'applications:edit_location' application.id %}" class="govuk-button govuk-button--secondary">
+					{% if application.goods_locations.type == 'sites' %}
+						Change to external locations
+					{% else %}
+						Change to sites
+					{% endif %}
+				</a>
+			{% endif %}
 			{% if application.goods_locations.type == 'sites' %}
 				<a href="{% url 'applications:existing_sites' application.id %}" class="govuk-button">
 					{% lcs 'goods.GoodsLocationPage.SELECT_SITES_BUTTON' %}

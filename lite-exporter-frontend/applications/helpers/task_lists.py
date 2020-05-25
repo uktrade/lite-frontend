@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 from applications.constants import OielLicenceTypes
-from applications.helpers.check_your_answers import _is_application_export_type_temporary
+from applications.helpers.check_your_answers import _is_application_export_type_temporary, get_application_type_string
 from applications.helpers.task_list_sections import (
     get_reference_number_description,
     get_edit_type,
@@ -14,7 +14,17 @@ from applications.services import (
     get_additional_documents,
     get_application_countries_and_contract_types,
 )
-from conf.constants import HMRC, OPEN, STANDARD, EXHIBITION, F680, GIFTING, Permissions, GoodsTypeCategory, CaseTypes
+from conf.constants import (
+    HMRC,
+    OPEN,
+    STANDARD,
+    EXHIBITION,
+    F680,
+    GIFTING,
+    Permissions,
+    GoodsTypeCategory,
+    CaseTypes,
+)
 from core.services import get_sites_on_draft, get_external_locations_on_draft
 from lite_content.lite_exporter_frontend.strings import applications
 from organisation.roles.services import get_user_permissions
@@ -53,6 +63,7 @@ def get_application_task_list(request, application, errors=None):
         "application_type": application_type,
         "is_editing": is_editing,
         "edit_type": edit_type,
+        "licence_type": get_application_type_string(application),
         "errors": errors,
     }
 
