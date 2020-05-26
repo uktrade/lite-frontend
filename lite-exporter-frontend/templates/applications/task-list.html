@@ -170,14 +170,16 @@
 				{% endif %}
 
 				{# End User #}
-				{% if application_type|application_type_in_list:"HAS_END_USER" %}
+				{% if application_type|application_type_in_list:"HAS_END_USER" or application.type_reference|application_type_in_list:"HAS_END_USER" or application.goodstype_category.key|application_type_in_list:"HAS_END_USER_OPEN_APP"%}
 					{% if not is_crypto_application %}
 						{% if not is_editing or edit_type == 'major_edit' %}
 							{% url 'applications:end_user' application.id as end_user_url %}
-							{% if application.export_type.value == 'Permanent' %}
+							{% if application.export_type.value == 'Permanent' and application.sub_type == 'standard' %}
 								{% include "includes/task-list-item.html" with id="end_user" title=strings.END_USER url=end_user_url status=application.end_user|get_parties_status %}
-							{% else %}
-								{% include "includes/task-list-item.html" with id="end_user" title=strings.END_USER url=end_user_url status=application.end_user|get_parties_status_optional_documents optional=application_type|application_type_in_list:"F680" %}
+							{% elif application.sub_type == 'open' and end_user_mandatory %}
+								{% include "includes/task-list-item.html" with id="end_user" title=strings.END_USER url=end_user_url status=application.end_user|get_parties_status_optional_documents %}
+							{% else  %}
+								{% include "includes/task-list-item.html" with id="end_user" title=strings.END_USER url=end_user_url status=application.end_user|get_parties_status_optional_documents optional=application_type|application_type_in_list:"END_USERS_OPTIONAL" %}
 							{% endif %}
 						{% endif %}
 					{% endif %}

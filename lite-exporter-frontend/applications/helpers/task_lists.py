@@ -107,15 +107,24 @@ def get_application_task_list(request, application, errors=None):
             context["is_uk_continental_shelf_application"] = (
                 goodstype_category == GoodsTypeCategory.UK_CONTINENTAL_SHELF
             )
+            countries_and_contract_types = get_application_countries_and_contract_types(request, application["id"])[
+                "countries"
+            ]
             if context["is_uk_continental_shelf_application"]:
                 context["countries_missing_contract_types"] = [
-                    entry["country_id"]
-                    for entry in get_application_countries_and_contract_types(request, application["id"])["countries"]
-                    if not entry["contract_types"]
+                    entry["country_id"] for entry in countries_and_contract_types if not entry["contract_types"]
                 ]
             context["is_crypto_application"] = goodstype_category == GoodsTypeCategory.CRYPTOGRAPHIC
             context["is_military_dual_use_application"] = goodstype_category == GoodsTypeCategory.MILITARY
             context["oiel_noneditable_countries"] = OielLicenceTypes.is_non_editable_country(goodstype_category)
+
+        # Check if contract types include 'nuclear_related' and set attribute end_user_mandatory
+        contract_types = []
+        for country in countries_and_contract_types:
+            if country["contract_types"]:
+                contract_types.extend(country["contract_types"].split(","))
+
+        context["end_user_mandatory"] = "nuclear_related" in set(contract_types)
 
     if not application_type == OPEN:
         context["goods"] = get_application_goods(request, application["id"])

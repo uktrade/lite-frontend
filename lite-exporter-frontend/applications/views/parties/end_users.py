@@ -6,6 +6,7 @@ from applications.forms.parties import new_party_form_group
 from applications.helpers.check_your_answers import convert_party, is_application_export_type_permanent
 from applications.services import get_application, post_party, validate_party, delete_party
 from applications.views.parties.base import AddParty, SetParty, DeleteParty, CopyParties, CopyAndSetParty
+from conf.constants import OPEN
 from lite_content.lite_exporter_frontend.applications import EndUserForm, EndUserPage
 
 
@@ -26,7 +27,9 @@ class EndUser(TemplateView):
                     application=application,
                     editable=application["status"]["value"] == "draft",
                 ),
-                "highlight": ["Document"] if (is_permanent_app and not application["end_user"]["document"]) else {},
+                "highlight": ["Document"]
+                if (is_permanent_app and application.sub_type != OPEN and not application["end_user"]["document"])
+                else {},
             }
 
             return render(request, "applications/end-user.html", context)
@@ -52,6 +55,14 @@ class SetEndUser(SetParty):
             validate_action=validate_party,
         )
 
+    def get_success_url(self):
+        if self.application.sub_type == OPEN:
+            return reverse_lazy("applications:end_user", kwargs={"pk": self.object_pk})
+        else:
+            return reverse_lazy(
+                self.url, kwargs={"pk": self.object_pk, "obj_pk": self.get_validated_data()[self.party_type]["id"]}
+            )
+
 
 class RemoveEndUser(DeleteParty):
     def __init__(self):
@@ -76,6 +87,14 @@ class CopyEndUser(CopyAndSetParty):
             validate_action=validate_party,
             post_action=post_party,
         )
+
+    def get_success_url(self):
+        if self.application.sub_type == OPEN:
+            return reverse_lazy("applications:end_user", kwargs={"pk": self.object_pk})
+        else:
+            return reverse_lazy(
+                self.url, kwargs={"pk": self.object_pk, "obj_pk": self.get_validated_data()[self.party_type]["id"]}
+            )
 
 
 class EditEndUser(CopyAndSetParty):

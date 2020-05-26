@@ -88,6 +88,14 @@ class CaseTypes:
     EUA = "eua"
 
 
+class GoodsTypeCategory:
+    MILITARY = "military"
+    CRYPTOGRAPHIC = "cryptographic"
+    MEDIA = "media"
+    UK_CONTINENTAL_SHELF = "uk_continental_shelf"
+    DEALER = "dealer"
+
+
 # Case type task list sections
 CASE_SECTIONS = {
     "HMRC": HMRC,
@@ -102,13 +110,15 @@ CASE_SECTIONS = {
     "HAS_GOODS_TYPES": [OPEN, HMRC],
     "HAS_LOCATIONS": [STANDARD, OPEN, HMRC, EXHIBITION],
     "HAS_COUNTRIES": OPEN,
-    "HAS_END_USER": [STANDARD, F680, GIFTING],
+    "HAS_END_USER": [STANDARD, F680, GIFTING, CaseTypes.OICL],
+    "HAS_END_USER_OPEN_APP": [GoodsTypeCategory.MILITARY, GoodsTypeCategory.UK_CONTINENTAL_SHELF],
     "HAS_ULTIMATE_END_USERS": [STANDARD, HMRC, OPEN],
     "HAS_CONSIGNEE": [STANDARD, HMRC],
     "HAS_THIRD_PARTIES": [STANDARD, F680, GIFTING],
     "HAS_OPTIONAL_NOTE": [HMRC],
     "HAS_NOTES": [STANDARD, OPEN, EXHIBITION, F680, GIFTING],
     "HAS_END_USE_DETAILS": [STANDARD, OPEN, F680],
+    "END_USERS_OPTIONAL": [F680, OPEN],
 }
 
 PERMANENT = "permanent"
@@ -156,11 +166,3 @@ APPLICATION_TYPE_STRINGS = {
 class LocationType:
     SEA_BASED = "sea_based"
     LAND_BASED = "land_based"
-
-
-class GoodsTypeCategory:
-    MILITARY = "military"
-    CRYPTOGRAPHIC = "cryptographic"
-    MEDIA = "media"
-    UK_CONTINENTAL_SHELF = "uk_continental_shelf"
-    DEALER = "dealer"

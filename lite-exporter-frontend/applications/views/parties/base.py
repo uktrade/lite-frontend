@@ -52,14 +52,17 @@ class SetParty(MultiFormView):
         self.action = None
         self.post_action = post_action
         self.validate_action = validate_action
+        self.application = None
 
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
-        application = get_application(request, self.object_pk)
-        has_clearance = application["case_type"]["sub_type"]["key"] == F680
+        self.application = get_application(request, self.object_pk)
+        has_clearance = self.application["case_type"]["sub_type"]["key"] == F680
         clearance_options = get_pv_gradings(request, convert_to_options=True) if has_clearance else None
 
-        self.forms = self.form(request, application, self.strings, self.back_url, clearance_options=clearance_options)
+        self.forms = self.form(
+            request, self.application, self.strings, self.back_url, clearance_options=clearance_options
+        )
         self.data = {"type": self.party_type}
 
     def get_success_url(self):
@@ -136,10 +139,12 @@ class CopyParties(TemplateView):
 class CopyAndSetParty(SetParty):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
-        application = get_application(request, self.object_pk)
+        self.application = get_application(request, self.object_pk)
         self.data = copy_party(request=request, pk=self.object_pk, party_pk=kwargs["obj_pk"])
         self.data["type"] = self.party_type
 
-        has_clearance = application["case_type"]["sub_type"]["key"] == F680
+        has_clearance = self.application["case_type"]["sub_type"]["key"] == F680
         clearance_options = get_pv_gradings(request, convert_to_options=True) if has_clearance else None
-        self.forms = self.form(request, application, self.strings, self.back_url, clearance_options=clearance_options)
+        self.forms = self.form(
+            request, self.application, self.strings, self.back_url, clearance_options=clearance_options
+        )

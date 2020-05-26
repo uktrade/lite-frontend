@@ -160,6 +160,15 @@ def _convert_open_application(application, editable=False):
             if not is_application_oiel_of_type("cryptographic", application)
             else {}
         ),
+        **(
+            {
+                applications.ApplicationSummaryPage.END_USER: [
+                    convert_party(application["end_user"], application, editable)
+                ],
+            }
+            if is_open_application_with_end_user(application)
+            else {}
+        ),
         applications.ApplicationSummaryPage.COUNTRIES: _convert_countries(application["destinations"]["data"]),
         **(
             {
@@ -403,18 +412,6 @@ def convert_party(party, application, editable):
 
     has_clearance = application["case_type"]["sub_type"]["key"] == F680
 
-    document_type = party["type"] if party["type"] != "end_user" else "end-user"
-
-    if party.get("document"):
-        document = _convert_document(party, document_type, application["id"], editable)
-    else:
-        document = convert_to_link(
-            reverse_lazy(
-                f"applications:{party['type']}_attach_document", kwargs={"pk": application["id"], "obj_pk": party["id"]}
-            ),
-            "Attach document",
-        )
-
     data = {
         "Name": party["name"],
         "Type": party["sub_type"]["value"],
@@ -422,8 +419,22 @@ def convert_party(party, application, editable):
         "Descriptors": party.get("descriptors"),
         "Address": get_address(party),
         "Website": convert_to_link(party["website"]),
-        "Document": document,
     }
+
+    if application["case_type"]["sub_type"]["key"] != OPEN:
+        if party.get("document"):
+            document_type = party["type"] if party["type"] != "end_user" else "end-user"
+            document = _convert_document(party, document_type, application["id"], editable)
+        else:
+            document = convert_to_link(
+                reverse_lazy(
+                    f"applications:{party['type']}_attach_document",
+                    kwargs={"pk": application["id"], "obj_pk": party["id"]},
+                ),
+                "Attach document",
+            )
+
+        data["Document"] = document
 
     if has_clearance:
         data["Clearance level"] = party["clearance_level"].get("value") if party["clearance_level"] else None
@@ -536,6 +547,16 @@ def is_application_oiel_of_type(oiel_type, application):
         if not application.get("goodstype_category")
         else (application.get("goodstype_category").get("key") == oiel_type)
     )
+
+
+def is_open_application_with_end_user(application):
+    if application.end_user:
+        if application.type_reference == application.type_reference or application.goodstype_category["key"] in [
+            GoodsTypeCategory.MILITARY,
+            GoodsTypeCategory.UK_CONTINENTAL_SHELF,
+        ]:
+            return True
+    return False
 
 
 def _convert_goods_categories(goods_categories):
