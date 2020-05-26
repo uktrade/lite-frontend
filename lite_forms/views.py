@@ -49,14 +49,6 @@ class FormView(TemplateView, ABC):
 
     def get_data(self):
         data = getattr(self, "data", {})
-        # if data:
-        #     for key in data:
-        #         if data[key] == "True" or data[key] == "true":
-        #             data[key] = True
-        #         elif data[key] == "False" or data[key] == "false":
-        #             data[key] = False
-        #         elif data[key] == "None":
-        #             data[key] = None
         return data
 
     def get_action(self):
@@ -230,7 +222,7 @@ class FormS3FileUploadHandler(S3FileUploadHandler):
 
 class SummaryListFormView(FormView):
     """
-    TODO
+    Multi form group with a summary list at the end of the flow.
     """
 
     forms: FormGroup = None
@@ -241,6 +233,7 @@ class SummaryListFormView(FormView):
         "By submitting this notification you are confirming that, "
         "to the best of your knowledge, the details you are providing are correct."
     )
+    hide_titles = False
     _validated_data = {}
     hide_components: List = None
     validate_only_until_final_submission = True
@@ -298,6 +291,7 @@ class SummaryListFormView(FormView):
             "cancel_link_prefix": self.cancel_link_prefix,
             "cancel_link_text": self.cancel_link_text,
             "cancel_link_url": self.cancel_link_url,
+            "hide_titles": self.hide_titles,
             **self.additional_context,
         }
         return render(self.request, "summary-list.html", context)
@@ -317,6 +311,8 @@ class SummaryListFormView(FormView):
     def _post(self, request, **kwargs):
         self.init(request, **kwargs)
         self._validated_data = request.POST.copy()
+        self._validated_data = handle_lists(self._validated_data)
+
         action = self.get_validated_data()[ACTION]
         form_pk = str(self.get_validated_data().get("form_pk", ""))
         post_errors = None
@@ -339,10 +335,14 @@ class SummaryListFormView(FormView):
             )
 
             if "errors" not in validated_data:
+                if self.success_message:
+                    messages.success(self.request, self.success_message)
+
                 return redirect(self.get_success_url())
 
         if self.validate_only_until_final_submission:
             return self.generate_summary_list()
+
         return redirect(request.path)
 
     def post(self, request, **kwargs):
@@ -356,9 +356,10 @@ class SummaryListFormView(FormView):
 
     def get_next_form_page(self, form_pk, action, request, post_errors):
         form = copy.deepcopy(next(form for form in self.get_forms().forms if str(form.pk) == form_pk))
+
         # Add form fields to validated_data if they dont exist
         for component in get_all_form_components(form):
-            if component.name not in self._validated_data:
+            if component.name not in self._validated_data and component.name[:-2] not in self._validated_data:
                 self._validated_data[component.name] = ""
 
         if action == Actions.SUBMIT or action == Actions.RETURN:
@@ -410,6 +411,7 @@ class SummaryListFormView(FormView):
 
         if self.validate_only_until_final_submission:
             return self.generate_summary_list()
+
         return redirect(request.path)
 
     @csrf_exempt

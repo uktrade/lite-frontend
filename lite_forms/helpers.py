@@ -3,7 +3,7 @@ from collections.abc import MutableMapping
 
 from markdown import markdown
 
-from lite_forms.components import FormGroup, Form, HiddenField
+from lite_forms.components import FormGroup, Form, HiddenField, TreeNode
 
 
 def get_form_by_pk(form_pk, form_group: FormGroup):
@@ -45,9 +45,10 @@ def remove_unused_errors(errors, form: Form):
 
     for component in get_all_form_components(form):
         # we look at [:-2] since checkboxes are lists that are named like "field[]", and we don't have "[]" in the api
+        list_components = ["checkboxes", "tree-view"]
         if (
             hasattr(component, "input_type")
-            and component.input_type == "checkboxes"
+            and component.input_type in list_components
             and errors.get(component.name[:-2])
         ):
             cleaned_errors[component.name[:-2]] = errors.get(component.name[:-2])
@@ -192,7 +193,16 @@ def convert_form_to_summary_list_instance(form: Form):
 
 def insert_hidden_fields(data: dict, form: Form):
     for key, value in data.items():
-        form.questions.insert(0, HiddenField(key, value))
+        add = True
+
+        # Only add hidden fields if the data isn't already being passed through a component
+        for question in form.questions:
+            if hasattr(question, "name"):
+                if question.name == key or question.name[:-2] == key:
+                    add = False
+
+        if add:
+            form.questions.insert(0, HiddenField(key, value))
 
 
 def validate_data_unknown(object_pk, action, request, validated_data):
@@ -202,3 +212,25 @@ def validate_data_unknown(object_pk, action, request, validated_data):
         return_value = action(request, validated_data)  # noqa
 
     return return_value[0]
+
+
+def convert_list_to_tree(items, key="key", value="value", children="children", exclude=None):
+    return_value = []
+
+    for item in items:
+        node = TreeNode(item[key], item[value])
+        if children in item:
+            node.children = convert_list_to_tree(item[children], key, value, children, exclude)
+        if not item.get(exclude):
+            return_value.append(node)
+
+    return return_value
+
+
+def convert_dictionary_to_tree(dictionary, key="key", value="value", children="children", exclude=None):
+    return_value = []
+
+    for group, values in dictionary.items():
+        return_value.append(TreeNode("", group, convert_list_to_tree(values, key, value, children, exclude)))
+
+    return return_value

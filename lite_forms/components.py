@@ -273,6 +273,7 @@ class Checkboxes(_Component):
         name: str,
         options: [],
         title: str = "",
+        short_title: str = "",
         description: str = "",
         accessible_description: str = None,
         optional: bool = False,
@@ -283,6 +284,7 @@ class Checkboxes(_Component):
         super().__init__(
             name=name,
             title=title,
+            short_title=short_title,
             description=description,
             accessible_description=accessible_description,
             optional=optional,
@@ -539,6 +541,22 @@ class Summary:
         self.classes = classes
         self.extras = extras
         self.input_type = "summary"
+
+
+class TreeNode:
+    def __init__(self, key, value, children=None):
+        self.key = key
+        self.value = value
+        self.children = children if children else []
+
+
+class TreeView:
+    def __init__(self, name, data: List, title="", short_title=""):
+        self.title = title
+        self.short_title = short_title or title
+        self.name = name
+        self.data = TreeNode("", "", data)
+        self.input_type = "tree-view"
 
 
 class List:

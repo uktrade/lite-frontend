@@ -1,0 +1,19 @@
+{% for node in tree_data.children %}
+	{% if node.children %}
+		<details class="lite-tree-view__root">
+			<summary class="lite-tree-view__summary">
+	{% endif %}
+	<div class="govuk-checkboxes__item">
+		<input class="govuk-checkboxes__input" {% if data|item_with_rating_exists:node.key %}checked{% endif %} id="node-{% if node.key %}{{ node.key }}{% else %}{{ node.value|replace_spaces }}{% endif %}" type="checkbox" {% if node.key %}name="{{ component.name }}" value="{{ node.key }}"{% endif %}>
+		<label class="govuk-label govuk-checkboxes__label" for="node-{% if node.key %}{{ node.key }}{% else %}{{ node.value|replace_spaces }}{% endif %}">
+			{{ node.value }}
+		</label>
+	</div>
+	{% if node.children %}
+			</summary>
+			<div class="lite-tree-view__children">
+				{% include 'components/node.html' with tree_data=node component=component %}
+			</div>
+		</details>
+	{% endif %}
+{% endfor %}

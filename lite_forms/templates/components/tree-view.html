@@ -1,0 +1,44 @@
+<div class="lite-tree-view">
+	{% include 'components/node.html' with data=data|key_value:component.name tree_data=component.data component=component %}
+</div>
+
+<script type="text/javascript">
+	function updateCheckboxes($checkbox) {
+		$checkbox.parents(".lite-tree-view__root").each(function() {
+			var $summary = $(this).find("> .lite-tree-view__summary .govuk-checkboxes__input");
+			var $siblings = $(this).find("> .lite-tree-view__children");
+
+			if ($siblings.find('input:checkbox:checked').length == $siblings.find('input:checkbox').length) {
+				$summary.prop('checked', true);
+				$summary.prop('indeterminate', false);
+			} else if ($siblings.find('input:checkbox:checked').length) {
+				$summary.prop('checked', false);
+				$summary.prop('indeterminate', true);
+			} else {
+				$summary.prop('checked', false);
+				$summary.prop('indeterminate', false);
+			}
+		});
+	}
+
+	$(".lite-tree-view__summary .govuk-checkboxes__input").click(function() {
+		var $parentSummary = $(this).parents(".lite-tree-view__summary").next();
+
+		if ($parentSummary.find('input:checkbox:checked').length == $parentSummary.find('input:checkbox').length) {
+			$parentSummary.find(".govuk-checkboxes__input").prop('checked', false);
+			$parentSummary.find(".govuk-checkboxes__input").prop('indeterminate', false);
+		} else {
+			$parentSummary.find(".govuk-checkboxes__input").prop('checked', true);
+			$parentSummary.find(".govuk-checkboxes__input").prop('indeterminate', false);
+		}
+
+		updateCheckboxes($(this));
+	});
+
+	$(".lite-tree-view__children > .govuk-checkboxes__item .govuk-checkboxes__input").click(function() {
+		updateCheckboxes($(this));
+	});
+
+	updateCheckboxes($(".lite-tree-view__root:first-of-type .lite-tree-view__summary:first-of-type .govuk-checkboxes__input:first-of-type"));
+</script>
+

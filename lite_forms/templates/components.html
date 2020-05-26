@@ -1,4 +1,4 @@
-<div id="pane_{{ question.name }}" class="govuk-form-group
+<div id="pane_{{ question.name }}" class="govuk-form-group {% if question.input_type == "hidden" %}govuk-visually-hidden{% endif %}
 			{% if errors|key_value:question.name %}
 					govuk-form-group--error
 			{% endif %}
@@ -86,6 +86,8 @@
 			{% include "components/link.html" with component=question %}
 		{% elif question.input_type == "warning" %}
 			{% include "components/warning.html" with component=question %}
+		{% elif question.input_type == "tree-view" %}
+			{% include "components/tree-view.html" with component=question %}
 		{% elif question.input_type == "autocomplete" %}
 			{% include "components/autocomplete.html" with component=question value=data|key_value:question.name|default:'' data=question.data %}
 		{% elif question.input_type == "group" %}

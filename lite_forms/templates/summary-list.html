@@ -10,10 +10,10 @@
 	</h1>
 
 	{% for form in forms.forms %}
-		{% if not form.single_form_element  %}
+		{% if not form.single_form_element and not hide_titles %}
 			<h2 class="govuk-heading-m">{{ form.title }}</h2>
 		{% endif %}
-		<dl class="govuk-summary-list govuk-!-margin-bottom-{% if form.single_form_element %}0{% else %}9{% endif %}">
+		<dl class="govuk-summary-list govuk-!-margin-bottom-{% if form.single_form_element or hide_titles %}0{% else %}9{% endif %}">
 			{% for component in form.questions %}
 				{% if component|has_attribute:'name' and component.input_type != 'hidden' and component.name not in hide_components %}
 					<div class="govuk-summary-list__row">
@@ -75,9 +75,13 @@
 	{% endfor %}
 
 	{% with forms.forms|last as last %}
-		<h2 class="govuk-heading-m {% if last.single_form_element %}govuk-!-margin-top-4{% endif %}">{{ notice_title }}</h2>
+		{% if notice_title %}
+			<h2 class="govuk-heading-m {% if last.single_form_element %}govuk-!-margin-top-4{% endif %}">{{ notice_title }}</h2>
+		{% endif %}
 
-		<p class="govuk-body">{{ notice }}</p>
+		{% if notice %}
+			<p class="govuk-body">{{ notice }}</p>
+		{% endif %}
 
 		<form method="post" {% if last.single_form_element and not notice_title %}class="govuk-!-margin-top-8"{% endif %}>
 			{% csrf_token %}
