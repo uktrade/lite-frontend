@@ -4,6 +4,7 @@ EDIT = "Edit"
 CONTINUE = "Continue"
 NO_FLAGS_SET = "No flags set"
 ACTIVITY = "Activity"
+SAVE_AND_RETURN = "Save and return"
 
 
 class Filters:

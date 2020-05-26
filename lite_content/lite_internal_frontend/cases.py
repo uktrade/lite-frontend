@@ -63,6 +63,7 @@ class CasesListPage:
 
 class CasePage:
     IM_DONE_BUTTON = "I'm done"
+    EDIT_FLAGS_LINK = "Edit <!--case--> flags"
 
     class Pills:
         class Goods:

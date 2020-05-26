@@ -2,6 +2,7 @@ from lite_content.lite_internal_frontend import (  # noqa
     advice,  # noqa
     cases,  # noqa
     letter_templates,  # noqa
+    open_general_licences,  # noqa
     roles,  # noqa
     flags,  # noqa
     organisations,  # noqa
