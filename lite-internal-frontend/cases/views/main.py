@@ -51,6 +51,7 @@ class CaseDetail(CaseView):
         self.slices = [
             Slices.GOODS,
             Slices.DESTINATIONS,
+            Slices.OPEN_APP_PARTIES,
             conditional(self.case.data["inactive_parties"], Slices.DELETED_ENTITIES),
             Slices.LOCATIONS,
             *conditional(

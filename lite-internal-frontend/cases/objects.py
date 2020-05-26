@@ -1,5 +1,8 @@
 from munch import Munch
 
+from cases.constants import CaseType
+from conf.constants import GoodsTypeCategory
+
 
 class Slice:
     def __init__(self, file, title=None):
@@ -57,6 +60,20 @@ class Case(Munch):
                 destinations += self.data.get("third_parties")
 
         return destinations
+
+    @property
+    def open_app_parties(self):
+        parties = []
+        if self.data["case_type"]["sub_type"]["key"] == CaseType.OPEN.value:
+            if self.data.get("end_user"):
+                parties.append(self.data.get("end_user"))
+            if (
+                self.data.get("ultimate_end_users")
+                and self.data["goodstype_category"]["key"] == GoodsTypeCategory.MILITARY
+            ):
+                parties.extend(self.data.get("ultimate_end_users"))
+
+        return parties
 
     @property
     def case_officer(self):
