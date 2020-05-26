@@ -473,6 +473,7 @@ class OpenApplicationTaskList:
     NOTES = "Notes"
     ULTIMATE_END_USERS = "Ultimate recipients"
     THIRD_PARTIES = "Third parties"
+    END_USER = "End user"
 
 
 class HMRCApplicationTaskList:

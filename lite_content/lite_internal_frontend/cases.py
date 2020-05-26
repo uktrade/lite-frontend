@@ -222,6 +222,7 @@ class ApplicationPage:
         FLAGS_TABLE_HEADER = "Flags"
 
     class Parties:
+        TITLE = "Entity"
         SELECT_ALL = "Select all/Deselect all"
         NAME = "Name"
         CLEARANCE_LEVEL = "Clearance"
@@ -233,6 +234,8 @@ class ApplicationPage:
         ENTITIES_INVOLVED = "Entities involved"
         NO_INACTIVE_CASES = "No inactive case entities"
         ENTITIES_DELETED = "Entities deleted by exporter"
+        BUSINESS = "Business"
+        FLAGS = "Flags"
 
     class EndUser:
         NO_END_USER = "The applicant is editing the end user."
