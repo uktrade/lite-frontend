@@ -2,7 +2,7 @@ import time
 
 from selenium.webdriver.support.ui import Select
 
-from shared import functions
+from shared import functions, selectors
 from shared.BasePage import BasePage
 from shared.tools.helpers import scroll_to_element_by_id
 
@@ -54,7 +54,6 @@ class ApplicationPage(BasePage):
     TYPE_OF_CASE = "case-type"  # ID
     BUTTON_IM_DONE_ID = "button-done"
     CASE_LINK_PARTIAL_ID = "case-"
-    BUTTON_APPLY_FILTER_ID = "button-apply-filters"
     USER_TYPE_ID = "user_type"
     CASE_NOTES_AND_ACTIVITY_TAB = "tab-activity"  # ID
     TABLE_GOODS_ID = "table-goods"
@@ -235,7 +234,7 @@ class ApplicationPage(BasePage):
         functions.try_open_filters(self.driver)
         select = Select(self.driver.find_element_by_id(self.USER_TYPE_ID))
         select.select_by_visible_text(user_type)
-        self.driver.find_element_by_id(self.BUTTON_APPLY_FILTER_ID).click()
+        self.driver.find_element_by_css_selector(selectors.BUTTON_APPLY_FILTERS).click()
 
     def get_text_of_first_audit_trail_item(self):
         return self.driver.find_elements_by_css_selector(self.AUDIT_TRAIL_ITEM)[-1].text

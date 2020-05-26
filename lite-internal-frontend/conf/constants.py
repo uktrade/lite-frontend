@@ -40,6 +40,7 @@ GOV_USERS_ROLES_URL = "/gov-users/roles/"
 GOV_USERS_PERMISSIONS_URL = "/gov-users/permissions/"
 NOTIFICATIONS_URL = "/gov-users/notifications/"
 FLAGS_URL = "/flags/"
+OPEN_GENERAL_LICENCES_URL = "/open-general-licences/"
 ASSIGN_FLAGS_URL = FLAGS_URL + "assign/"
 FLAGGING_RULES = FLAGS_URL + "rules/"
 FLAGS_CASE_LEVEL_FOR_TEAM = "/flags/?level=Case&team=True"
@@ -115,6 +116,7 @@ class Permission(Enum):
     MANAGE_PICKLISTS = "MANAGE_PICKLISTS"
     ENFORCEMENT_CHECK = "ENFORCEMENT_CHECK"
     MAINTAIN_FOOTNOTES = "MAINTAIN_FOOTNOTES"
+    MAINTAIN_OGL = "MAINTAIN_OGL"
 
 
 class FlagLevels:

@@ -2,6 +2,8 @@ import time
 
 import shared.tools.helpers as utils
 from selenium.webdriver.support.select import Select
+
+from shared import selectors
 from shared.BasePage import BasePage
 from shared.tools.helpers import scroll_to_element_by_id
 from pages.shared import Shared
@@ -19,7 +21,6 @@ class CaseListPage(BasePage):
     BUTTON_ASSIGN_USERS = "assign-users-button"  # ID
 
     # Filters
-    BUTTON_APPLY_FILTERS = "button-apply-filters"  # ID
     BUTTON_CLEAR_FILTERS = "button-clear-filters"  # ID
     LINK_ADVANCED_FILTERS = "advanced-filters-link"  # ID
     LINK_SHOW_FILTERS = "show-filters-link"  # ID
@@ -130,7 +131,7 @@ class CaseListPage(BasePage):
         return elements[no].is_displayed()
 
     def click_apply_filters_button(self):
-        self.driver.find_element_by_id(self.BUTTON_APPLY_FILTERS).click()
+        self.driver.find_element_by_css_selector(selectors.BUTTON_APPLY_FILTERS).click()
 
     def click_clear_filters_button(self):
         self.driver.find_element_by_id(self.BUTTON_CLEAR_FILTERS).click()

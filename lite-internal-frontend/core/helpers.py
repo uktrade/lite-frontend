@@ -1,8 +1,10 @@
+from collections import defaultdict
 from typing import List
 
 from conf import decorators
 from conf.constants import Permission
 from core.services import get_user_permissions
+from lite_forms.components import FiltersBar, Option, Select, DateInput
 
 
 def convert_dict_to_query_params(dictionary):
@@ -91,3 +93,44 @@ def convert_value_to_query_param(key: str, value):
         return return_value
 
     return key + "=" + str(value)
+
+
+def group_control_list_entries_by_category(control_list_entries):
+    dictionary = defaultdict(list)
+
+    for control_list_entry in control_list_entries:
+        dictionary[control_list_entry["category"]].append(control_list_entry)
+
+    return dictionary
+
+
+def generate_activity_filters(activity_filters, string_class):
+    def make_options(values):
+        return [Option(option["key"], option["value"]) for option in values]
+
+    return FiltersBar(
+        [
+            Select(
+                title=string_class.ActivityFilters.USER,
+                name="user_id",
+                options=make_options(activity_filters["users"]),
+            ),
+            Select(
+                title=string_class.ActivityFilters.TEAM,
+                name="team_id",
+                options=make_options(activity_filters["teams"]),
+            ),
+            Select(
+                title=string_class.ActivityFilters.USER_TYPE,
+                name="user_type",
+                options=make_options(activity_filters["user_types"]),
+            ),
+            Select(
+                title=string_class.ActivityFilters.ACTIVITY_TYPE,
+                name="activity_type",
+                options=make_options(activity_filters["activity_types"]),
+            ),
+            DateInput(title=string_class.ActivityFilters.DATE_FROM, prefix="from_", inline_title=True),
+            DateInput(title=string_class.ActivityFilters.DATE_TO, prefix="to_", inline_title=True),
+        ]
+    )

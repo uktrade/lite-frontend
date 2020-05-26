@@ -29,8 +29,13 @@
     }
 }
 
+.govuk-caption-xl {
+    @include govuk-font($size: 24);
+}
+
 .govuk-heading-xl, .govuk-fieldset__legend--xl {
     @include govuk-font($size: 36, $weight: bold);
+    margin-bottom: govuk-spacing(6);
 }
 
 .app-cases__row {

@@ -17,8 +17,6 @@
 		</div>
 	</div>
 
-	{% include "filters.html" %}
-
 	<div class="lite-tabs__container">
 		<div class="lite-tabs">
 			<a href="?status=active" id="active" class="lite-tabs__tab {% if tab == "active" %}lite-tabs__tab--selected{% endif %}">{% lcs "organisations.OrganisationsPage.Tabs.ACTIVE" %}</a>
@@ -26,6 +24,8 @@
 			<a href="?status=rejected" id="rejected" class="lite-tabs__tab {% if tab == "rejected" %}lite-tabs__tab--selected{% endif %}">{% lcs "organisations.OrganisationsPage.Tabs.REJECTED" %}</a>
 		</div>
 	</div>
+
+	{% include "filters.html" %}
 
 	{% if data.results %}
 		<table class="govuk-table">

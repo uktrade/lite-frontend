@@ -89,9 +89,13 @@
 			{% if not hide_flags_row %}
 				<div class="app-case__flags-bar" id="case-flags">
 					<div class="app-case__flags-wrapper">
-						{% include 'includes/flags.html' with flags=case.all_flags show_change_link=True %}
+						{% if case.all_flags %}
+							{% include 'includes/flags.html' with flags=case.all_flags show_change_link=True %}
+						{% endif %}
 					</div>
-					<a id="link-change-flags" href="{% url 'cases:assign_flags' queue.id case.id %}?&case={{ case.id }}&return_to={{ CURRENT_PATH }}">{% lcs 'generic.CHANGE' %}</a>
+					<a id="link-change-flags" href="{% url 'cases:assign_flags' queue.id case.id %}?&case={{ case.id }}&return_to={{ CURRENT_PATH }}">
+						{% lcs 'cases.CasePage.EDIT_FLAGS_LINK' %}
+					</a>
 				</div>
 			{% endif %}
 		</div>

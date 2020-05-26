@@ -48,13 +48,15 @@
 		{% endfor %}
 	</div>
 
-	<div class="lite-js-only lite-expand__base-controls">
-		<a id="link-open-all-table-folds" href="#" onclick="toggleTableFold()" class="lite-expand__base-control">
-			<span>{% lcs 'cases.CasesListPage.OPEN_ALL' %}</span>
-			<span>{% lcs 'cases.CasesListPage.CLOSE_ALL' %}</span>
-			{% svg 'chevron-light' %}
-		</a>
-	</div>
+	{% if data.results.cases %}
+		<div class="lite-js-only lite-expand__base-controls">
+			<a id="link-open-all-table-folds" href="#" onclick="toggleTableFold()" class="lite-expand__base-control">
+				<span>{% lcs 'cases.CasesListPage.OPEN_ALL' %}</span>
+				<span>{% lcs 'cases.CasesListPage.CLOSE_ALL' %}</span>
+				{% svg 'chevron-light' %}
+			</a>
+		</div>
+	{% endif %}
 
 	{% include "filters.html" %}
 

@@ -1,0 +1,171 @@
+{% extends 'layouts/base.html' %}
+
+{% load humanize %}
+
+{% block back_link %}
+	<a href="{% url 'open_general_licences:open_general_licences' %}" class="govuk-back-link">
+		{% lcs 'open_general_licences.Detail.BACK_LINK' %}
+	</a>
+{% endblock %}
+
+{% block body %}
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">
+				{% block title %}
+					{{ open_general_licence.name }}
+				{% endblock %}
+			</h1>
+		</div>
+	</div>
+
+	<dl class="govuk-summary-list govuk-summary-list--no-border govuk-!-width-two-thirds">
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs 'open_general_licences.Detail.SummaryList.NAME' %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ open_general_licence.name }}
+			</dd>
+			<dd class="govuk-summary-list__actions">
+				<a id="link-change-name" class="govuk-link" href="{% url 'open_general_licences:edit' open_general_licence.id DETAILS %}#name">
+					{% lcs 'generic.CHANGE' %}
+					<span class="govuk-visually-hidden"> {% lcs 'open_general_licences.Detail.SummaryList.NAME' %}</span>
+				</a>
+			</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs 'open_general_licences.Detail.SummaryList.TYPE' %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ open_general_licence.case_type.reference.value }}
+			</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs 'open_general_licences.Detail.SummaryList.DESCRIPTION' %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				<span data-max-length="1000">{{ open_general_licence.description }}</span>
+			</dd>
+			<dd class="govuk-summary-list__actions">
+				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'open_general_licences:edit' open_general_licence.id DETAILS %}#description">
+					{% lcs 'generic.CHANGE' %}
+					<span class="govuk-visually-hidden"> {% lcs 'open_general_licences.Detail.SummaryList.DESCRIPTION' %}</span>
+				</a>
+			</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs 'open_general_licences.Detail.SummaryList.LINK' %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ open_general_licence.url|linkify }}
+			</dd>
+			<dd class="govuk-summary-list__actions">
+				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'open_general_licences:edit' open_general_licence.id DETAILS %}#url">
+					{% lcs 'generic.CHANGE' %}
+					<span class="govuk-visually-hidden"> {% lcs 'open_general_licences.Detail.SummaryList.LINK' %}</span>
+				</a>
+			</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs 'open_general_licences.Detail.SummaryList.REGISTRATION_REQUIRED' %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ open_general_licence.registration_required|friendly_boolean }}
+			</dd>
+			<dd class="govuk-summary-list__actions">
+				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'open_general_licences:edit' open_general_licence.id DETAILS %}#requires_registration">
+					{% lcs 'generic.CHANGE' %}
+					<span class="govuk-visually-hidden"> {% lcs 'open_general_licences.Detail.SummaryList.REGISTRATION_REQUIRED' %}</span>
+				</a>
+			</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs 'open_general_licences.Detail.SummaryList.STATUS' %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ open_general_licence.status.value }}
+			</dd>
+			<dd class="govuk-summary-list__actions">
+				{% if open_general_licence.status.key == 'active' %}
+					<a id="link-deactivate" href="{% url 'open_general_licences:change_status' open_general_licence.id 'deactivate' %}" class="govuk-link govuk-link--no-visited-state">
+						{% lcs 'open_general_licences.Detail.SummaryList.DEACTIVATE_LINK' %}
+					</a>
+				{% else %}
+					<a href="{% url 'open_general_licences:change_status' open_general_licence.id 'reactivate' %}" class="govuk-link govuk-link--no-visited-state">
+						{% lcs 'open_general_licences.Detail.SummaryList.REACTIVATE_LINK' %}
+					</a>
+				{% endif %}
+			</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{{ open_general_licence.control_list_entries|lcsp:'open_general_licences.Detail.SummaryList.CONTROL_LIST_ENTRIES' }}
+			</dt>
+			<dd class="govuk-summary-list__value govuk-!-padding-bottom-0">
+				<ul class="govuk-list govuk-list--number">
+					{% for control_list_entry in open_general_licence.control_list_entries %}
+						<li>
+							<span data-definition-title="{{ control_list_entry.rating }}" data-definition-text="{{ control_list_entry.text }}">
+								{{ control_list_entry.rating }}
+							</span>
+						</li>
+					{% endfor %}
+				</ul>
+			</dd>
+			<dd class="govuk-summary-list__actions">
+				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'open_general_licences:edit' open_general_licence.id CONTROL_LIST_ENTRIES %}">
+					{% lcs 'generic.CHANGE' %}
+					<span class="govuk-visually-hidden"> {{ open_general_licence.control_list_entries|lcsp:'open_general_licences.Detail.SummaryList.CONTROL_LIST_ENTRIES' }}</span>
+				</a>
+			</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{{ open_general_licence.countries|lcsp:'open_general_licences.Detail.SummaryList.COUNTRIES' }}
+			</dt>
+			<dd class="govuk-summary-list__value govuk-!-padding-bottom-0">
+				<ul class="govuk-list govuk-list--number">
+					{% for country in open_general_licence.countries %}
+						<li>{{ country.name }}</li>
+					{% endfor %}
+				</ul>
+			</dd>
+			<dd class="govuk-summary-list__actions">
+				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'open_general_licences:edit' open_general_licence.id COUNTRIES %}">
+					{% lcs 'generic.CHANGE' %}
+					<span class="govuk-visually-hidden"> {{ open_general_licence.countries|lcsp:'open_general_licences.Detail.SummaryList.COUNTRIES' }}</span>
+				</a>
+			</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs 'open_general_licences.Detail.SummaryList.CREATED_AT' %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ open_general_licence.created_at|str_date }}
+			</dd>
+		</div>
+		{% if open_general_licence.created_at != open_general_licence.updated_at %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs 'open_general_licences.Detail.SummaryList.UPDATED_AT' %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ open_general_licence.updated_at|str_date }}
+				</dd>
+			</div>
+		{% endif %}
+	</dl>
+
+	<h2 class="govuk-heading-m">{% lcs 'open_general_licences.Detail.ACTIVITY' %}</h2>
+
+	{% include "filters.html" %}
+
+	{% include 'includes/audit-trail.html' %}
+{% endblock %}

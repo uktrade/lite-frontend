@@ -124,14 +124,18 @@ def get_user_permissions(request, with_team=False):
 
 
 # Control List Entries
-def get_control_list_entries(request, convert_to_options=False):
+def get_control_list_entries(request, convert_to_options=False, converted_control_list_entries_cache=[]):  # noqa
+    """
+    Preliminary caching mechanism, requires service restart to repopulate control list entries
+    """
     if convert_to_options:
-        data = get(request, CONTROL_LIST_ENTRIES_URL + "?flatten=True")
+        if converted_control_list_entries_cache:
+            return converted_control_list_entries_cache
+        else:
+            data = get(request, CONTROL_LIST_ENTRIES_URL)
 
-        converted_units = []
-
-        for control_list_entry in data.json()["control_list_entries"]:
-            converted_units.append(
+        for control_list_entry in data.json().get("control_list_entries"):
+            converted_control_list_entries_cache.append(
                 Option(
                     key=control_list_entry["rating"],
                     value=control_list_entry["rating"],
@@ -139,10 +143,10 @@ def get_control_list_entries(request, convert_to_options=False):
                 )
             )
 
-        return converted_units
+        return converted_control_list_entries_cache
 
-    data = get(request, CONTROL_LIST_ENTRIES_URL)
-    return data.json()["control_list_entries"]
+    response = get(request, CONTROL_LIST_ENTRIES_URL + "?group=True")
+    return response.json()["control_list_entries"]
 
 
 def get_gov_pv_gradings(request, convert_to_options=False):

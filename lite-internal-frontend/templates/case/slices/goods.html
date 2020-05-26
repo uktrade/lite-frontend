@@ -91,10 +91,14 @@
 						</td>
 						{% if not hide_status %}
 							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
-								<div class="lite-vertical-align">
-									{% svg 'verified' %}
-									<span class="govuk-!-margin-left-1">{{ good.good.status.value }}</span>
-								</div>
+								{% if good.good.status.key == 'verified' %}
+									<div class="lite-vertical-align">
+										{% svg 'verified' %}
+										<span class="govuk-!-margin-left-1">{{ good.good.status.value }}</span>
+									</div>
+								{% else %}
+									{{ good.good.status.value }}
+								{% endif %}
 							</td>
 							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
 								{% if good.good.report_summary %}
