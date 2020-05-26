@@ -67,8 +67,8 @@
 							</a>
 						</td>
 						<td class="govuk-table__cell">
-							{% if application.exporter_user_notification_count.total %}
-								<span class="lite-notification-bubble">{{ application.exporter_user_notification_count.total }} <span class="govuk-visually-hidden"> {% lcs "applications.ApplicationsList.NOTIFICATIONS_SUFFIX" %}</span></span>
+							{% if application.exporter_user_notification_count %}
+								<span class="lite-notification-bubble">{{ application.exporter_user_notification_count }} <span class="govuk-visually-hidden"> {% lcs "applications.ApplicationsList.NOTIFICATIONS_SUFFIX" %}</span></span>
 							{% endif %}
 						</td>
 						{% if organisation.type.key != 'hmrc' %}
