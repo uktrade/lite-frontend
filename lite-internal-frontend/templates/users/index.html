@@ -52,7 +52,7 @@
 							{{ user.team.name }}
 						</a>
 					</td>
-					<td class="govuk-table__cell">{{ user.role.name }}</td>
+					<td class="govuk-table__cell">{{ user.role_name }}</td>
 					<td class="govuk-table__cell">{{ user.status }}</td>
 					<td class="govuk-table__cell">
 						<a id="link-{{ user.email }}" href="{% url 'users:user' user.id %}" class="govuk-link govuk-link--no-visited-state">{% lcs 'users.UsersPage.Table.VIEW' %}</a>
