@@ -47,6 +47,29 @@
 	word-break: break-all;
 }
 
+.govuk-table__cell--border {
+	position: relative;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	word-break: break-all;
+	padding-right: govuk-spacing(1);
+
+	&::after {
+		content: "";
+		position: absolute;
+		top: 8px;
+		right: 0;
+		width: 1px;
+		height: 25px;
+		background: $govuk-border-colour;
+	}
+}
+
+.govuk-table__cell--border-side {
+	padding-left: govuk-spacing(3);
+}
+
 .govuk-table__cell--tight {
 	white-space: nowrap;
 	overflow: hidden;
