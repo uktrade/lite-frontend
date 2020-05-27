@@ -2,9 +2,9 @@ $( '.lite-button-checkbox' ).click(function() {
 	$table = $(this).closest('table');
 
 	if ($table.find('input:checkbox:checked').length == $table.find('input:checkbox').length) {
-		$table.find('input:checkbox').prop('checked', false);
+		$table.find('input:checkbox').prop('checked', false).change();
 	} else {
-		$table.find('input:checkbox').prop('checked', true);
+		$table.find('input:checkbox').prop('checked', true).change();
 	}
 
 	setSelectButtonsState();

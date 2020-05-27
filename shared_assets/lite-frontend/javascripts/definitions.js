@@ -11,17 +11,18 @@ $.fn.changeElementType = function(newType) {
 };
 
 $('[data-max-length]').each(function() {
-    var originalText = $(this).text();
-    var shrunkText = $(this).text().substring(0, $(this).data("max-length"));
+    var originalText = $(this).html();
+    var shrunkText = $(this).html().substring(0, $(this).data("max-length"));
 
     if (originalText.length != shrunkText.length) {
         $(this).text(shrunkText + "...");
-        $(this).append("<a href='#' class='govuk-link govuk-link--no-visited-state govuk-!-margin-left-2' data-more-text='" + originalText + "'>More</a>");
+        var $more = $("<a href='#' class='govuk-link govuk-link--no-visited-state govuk-!-margin-left-2'>More</a>").appendTo($(this));
+        $more.attr("data-more-text", originalText);
     }
 });
 
 $('[data-more-text]').click(function() {
-    $(this).parent().text($(this).data("more-text"));
+    $(this).parent().html($(this).data("more-text"));
     return false;
 })
 
@@ -31,6 +32,31 @@ $('[data-definition-title]').each(function() {
 });
 
 $('[data-definition-title]').click(function() {
-    LITECommon.Modal.showModal($(this).data("definition-title"), $(this).data("definition-text"), false, true, {maxWidth: '500px'});
+    var subtitle = $(this).data("definition-subtitle");
+    var text = $(this).data("definition-text");
+    var list = $(this).data("definition-list");
+    if (list) {
+        list = list.split(",")
+    }
+    var htmlList = "<ol class='govuk-list govuk-list--number'>";
+
+    if (list) {
+        for (i = 0; i < list.length; i++) {
+            htmlList += "<li>" + list[i] + "</li>";
+        }
+    }
+
+    htmlList = htmlList + "</ol>";
+
+    if (subtitle) {
+        subtitle = "<p class='govuk-heading-s'>" + subtitle + "</p>";
+        if (text) {
+            text = subtitle + text;
+        } else {
+            htmlList = subtitle + htmlList;
+        }
+    }
+
+    LITECommon.Modal.showModal($(this).data("definition-title"), text || htmlList, false, true, {maxWidth: '500px'});
     return false;
 })
