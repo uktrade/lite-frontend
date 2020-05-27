@@ -49,7 +49,7 @@ class RegisterOrganisation(BasePage):
         self.driver.find_element_by_id(self.SIC_ID).send_keys(randint(10000, 99999))
 
     def enter_random_vat_number(self):
-        self.driver.find_element_by_id(self.VAT_ID).send_keys("GB" + str(randint(1000000, 9999999)))
+        self.driver.find_element_by_id(self.VAT_ID).send_keys("GB" + str(randint(100000000, 999999999)))
 
     def enter_random_registration_number(self):
         self.driver.find_element_by_id(self.REG_ID).send_keys(randint(10000000, 99999999))
