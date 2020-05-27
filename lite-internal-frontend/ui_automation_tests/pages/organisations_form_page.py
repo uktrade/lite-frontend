@@ -93,7 +93,7 @@ class OrganisationsFormPage(BasePage):
         self.enter_eori_number(context.eori)
         context.sic = "12345"
         self.enter_sic_number(context.sic)
-        context.vat = "GB1234567"
+        context.vat = "GB123456789"
         self.enter_vat_number(context.vat)
         self.enter_registration_number(12345678)
         functions.click_submit(self.driver)
