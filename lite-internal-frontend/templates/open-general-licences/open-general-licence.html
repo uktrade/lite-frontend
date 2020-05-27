@@ -29,8 +29,7 @@
 			</dd>
 			<dd class="govuk-summary-list__actions">
 				<a id="link-change-name" class="govuk-link" href="{% url 'open_general_licences:edit' open_general_licence.id DETAILS %}#name">
-					{% lcs 'generic.CHANGE' %}
-					<span class="govuk-visually-hidden"> {% lcs 'open_general_licences.Detail.SummaryList.NAME' %}</span>
+					{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden"> {% lcs 'open_general_licences.Detail.SummaryList.NAME' %}</span>
 				</a>
 			</dd>
 		</div>
@@ -51,8 +50,7 @@
 			</dd>
 			<dd class="govuk-summary-list__actions">
 				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'open_general_licences:edit' open_general_licence.id DETAILS %}#description">
-					{% lcs 'generic.CHANGE' %}
-					<span class="govuk-visually-hidden"> {% lcs 'open_general_licences.Detail.SummaryList.DESCRIPTION' %}</span>
+					{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden"> {% lcs 'open_general_licences.Detail.SummaryList.DESCRIPTION' %}</span>
 				</a>
 			</dd>
 		</div>
@@ -65,8 +63,7 @@
 			</dd>
 			<dd class="govuk-summary-list__actions">
 				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'open_general_licences:edit' open_general_licence.id DETAILS %}#url">
-					{% lcs 'generic.CHANGE' %}
-					<span class="govuk-visually-hidden"> {% lcs 'open_general_licences.Detail.SummaryList.LINK' %}</span>
+					{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden"> {% lcs 'open_general_licences.Detail.SummaryList.LINK' %}</span>
 				</a>
 			</dd>
 		</div>
@@ -79,8 +76,7 @@
 			</dd>
 			<dd class="govuk-summary-list__actions">
 				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'open_general_licences:edit' open_general_licence.id DETAILS %}#requires_registration">
-					{% lcs 'generic.CHANGE' %}
-					<span class="govuk-visually-hidden"> {% lcs 'open_general_licences.Detail.SummaryList.REGISTRATION_REQUIRED' %}</span>
+					{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden"> {% lcs 'open_general_licences.Detail.SummaryList.REGISTRATION_REQUIRED' %}</span>
 				</a>
 			</dd>
 		</div>
@@ -120,8 +116,7 @@
 			</dd>
 			<dd class="govuk-summary-list__actions">
 				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'open_general_licences:edit' open_general_licence.id CONTROL_LIST_ENTRIES %}">
-					{% lcs 'generic.CHANGE' %}
-					<span class="govuk-visually-hidden"> {{ open_general_licence.control_list_entries|lcsp:'open_general_licences.Detail.SummaryList.CONTROL_LIST_ENTRIES' }}</span>
+					{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden"> {{ open_general_licence.control_list_entries|lcsp:'open_general_licences.Detail.SummaryList.CONTROL_LIST_ENTRIES' }}</span>
 				</a>
 			</dd>
 		</div>
@@ -138,8 +133,7 @@
 			</dd>
 			<dd class="govuk-summary-list__actions">
 				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'open_general_licences:edit' open_general_licence.id COUNTRIES %}">
-					{% lcs 'generic.CHANGE' %}
-					<span class="govuk-visually-hidden"> {{ open_general_licence.countries|lcsp:'open_general_licences.Detail.SummaryList.COUNTRIES' }}</span>
+					{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden"> {{ open_general_licence.countries|lcsp:'open_general_licences.Detail.SummaryList.COUNTRIES' }}</span>
 				</a>
 			</dd>
 		</div>

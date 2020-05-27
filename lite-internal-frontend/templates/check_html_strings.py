@@ -2,7 +2,7 @@ import importlib
 import os
 import re
 
-LCS_PATTERN = "{% lcs '(.*)' %}"
+LCS_PATTERN = "{% lcs '(.*?)' %}"
 
 
 def check_string_for_occurance(module, string):
