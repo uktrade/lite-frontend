@@ -41,8 +41,7 @@
 			</dd>
 			<dd class="govuk-summary-list__actions">
 				<a id="link-change-name" href="{% url 'organisation:sites:edit_name' site.id %}#name" class="govuk-link govuk-link--no-visited-state">
-					{% lcs 'generic.CHANGE' %}
-					<span class="govuk-visually-hidden">{% lcs "sites.SitePage.SummaryList.NAME" %}</span>
+					{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "sites.SitePage.SummaryList.NAME" %}</span>
 				</a>
 			</dd>
 		</div>
