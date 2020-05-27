@@ -1,7 +1,7 @@
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from ui_automation_tests.shared import functions
-from ui_automation_tests.shared.BasePage import BasePage
+from ui_automation_tests.pages.BasePage import BasePage
 
 
 class F680AdditionalInformationPage(BasePage):
