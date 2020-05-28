@@ -317,9 +317,31 @@ class TradeControlLicenceQuestions:
             "https://www.gov.uk/guidance/export-controls-military-goods-software-and-technology#trade"
             "-controls-and-arranging-sales-or-movements)."
         )
-        CATEGORY_A_HINT = "This is a hint for Category A"
-        CATEGORY_B_HINT = "This is a hint for Category B"
-        CATEGORY_C_HINT = "This is a hint for Category C"
+        CATEGORY_A_HINT = (
+            "Category A products are specified in [Part 1 of Schedule 1 of the Export Control Order 2008, as amended]("
+            "http://www.legislation.gov.uk/uksi/2008/3231/schedule/1/made).\n"
+            "Certain security and paramilitary police equipment, restraints specially designed for restraining human "
+            "beings, and portable devices designed or modified for the purpose of riot control or self-protection by "
+            "the administration of an electric shock and components specially designed or modified for the devices "
+            "mentioned above and handheld, spiked batons and cluster munitions, explosive submunitions and explosive "
+            "bomblets."
+        )
+        CATEGORY_B_HINT = (
+            "Category B products are specified in [Part 2 of Schedule 1 of the Export Control Order 2008, as amended]("
+            "http://www.legislation.gov.uk/uksi/2014/702/article/2/made).\n"
+            "Small arms and light weapons within ML1 and ML2. Accessories and ammunition for small arms and light "
+            "weapons within ML1 and ML2. Light weapons within ML4. Ammunition for light weapons within ML4. Hand "
+            "grenades. Man-portable air defence systems (MANPADS) missiles for them, associated equipment and their "
+            "specially designed components, long-range missiles. Anti-vehicle landmines. Components for Category B "
+            "products."
+        )
+        CATEGORY_C_HINT = (
+            "Category C products are all other military products not specified in Schedule 1 of the Export Control "
+            "Order 2008, as amended.\n"
+            "Military products not otherwise specified. Portable devices for the purpose of riot control or "
+            "self-protection by the administration or dissemination of an incapacitating chemical substance. Pelargonic "
+            "acid vanillylamide and oleoresin capsicum."
+        )
 
 
 class TranshipmentQuestions:
