@@ -259,6 +259,12 @@ class ExportLicenceQuestions:
         TITLE = "Select the type of export licence you need"
         DESCRIPTION = ""
         BACK = "Back"
+        OPEN_GENERAL_EXPORT_LICENCE = "Open General Export Licence (OGEL)"
+        OPEN_GENERAL_EXPORT_LICENCE_DESCRIPTION = (
+            "Select to register a pre-published licence with set terms "
+            "and conditions. Being an OGEL holder can benefit your business "
+            "by saving time and money."
+        )
         STANDARD_LICENCE = "Standard Individual Export Licence (SIEL)"
         STANDARD_LICENCE_DESCRIPTION = (
             "Select to apply for a licence to export a set quantity and set value of products to 1 destination."
@@ -292,11 +298,72 @@ class ExportLicenceQuestions:
         DEALER = "Dealer"
 
 
+class OpenGeneralLicenceQuestions:
+    class ControlListEntry:
+        TITLE = "Enter the control list entry which best fits this product"
+        DESCRIPTION = ""
+        ERROR = "Enter a control list entry"
+
+    class Country:
+        TITLE = "Enter the product's final destination"
+        DESCRIPTION = ""
+        ERROR = "Enter a country"
+
+    class OpenGeneralLicences:
+        TITLE = "Available {}s"
+        DESCRIPTION = "These are the {}s described by **{}** being exported to **{}**."
+        HELP_TEXT = "Select the option which best matches your product and requirements."
+        NONE_OF_THE_ABOVE = "None of the above"
+        ERROR = "Select a licence (if applicable)"
+
+    class OpenGeneralLicenceDetail:
+        CAPTION = "Applying for"
+
+        class Summary:
+            DESCRIPTION = "Description"
+            CONTROL_LIST_ENTRIES = "Control list entries"
+            COUNTRIES = "Countries"
+            READ_MORE_LINK = "Read more"
+            HEADING = "Before you continue"
+
+        class Notice:
+            POINTS = [
+                "Get someone who knows the technical details of your item to help you check the choices "
+                "you've made against the technical specifications of your item.",
+                "If you think that the control list entry is wrong, we recommend going back through the process "
+                "with someone who knows the technical details of your item.",
+                "If you have consulted and used the right information, and you believe this is the correct "
+                "control list entry then you should proceed to register for the open general licence.",
+            ]
+            WARNING_TITLE = (
+                "<!--Warning:--> You should read the licence in full and confirm you can comply with the "
+                "conditions before registering for an open export licence. If you export controlled "
+                "products without the correct export licence you could:"
+            )
+            WARNING_POINTS = ["have your products seized", "face a fine", "serve up to 10 years in prison"]
+
+    class NoOpenGeneralLicencesAvailable:
+        TITLE = "No {}s available"
+        DESCRIPTION = ""
+        INFORMATION = (
+            "There aren't any {}s described by **{}** being exported to **{}**. \nYou'll need to apply "
+            "for a licence if you wish to export your products."
+        )
+        APPLY_FOR_A_LICENCE_LINK = "Apply for a licence"
+        RETURN_TO_ACCOUNT_HOME_LINK = "Return to account home"
+
+
 class TradeControlLicenceQuestions:
     class TradeControlLicenceQuestion:
         TITLE = "Select the type of trade control licence you need"
         DESCRIPTION = ""
         BACK = "Back"
+        OPEN_GENERAL_TRADE_CONTROL_LICENCE = "Open General Trade Control Licence (OGTCL)"
+        OPEN_GENERAL_TRADE_CONTROL_LICENCE_DESCRIPTION = (
+            "Select to register a pre-published licence with set terms "
+            "and conditions. Being an OGTCL holder can benefit your "
+            "business by saving time and money."
+        )
         STANDARD_LICENCE = "Standard licence"
         STANDARD_LICENCE_DESCRIPTION = "Select a standard licence for a set quantity and set value of products."
         OPEN_LICENCE = "Open licence"
@@ -349,8 +416,16 @@ class TranshipmentQuestions:
         TITLE = "Select the type of transhipment licence you need"
         DESCRIPTION = ""
         BACK = "Back"
-        STANDARD_LICENCE = "Standard licence"
-        STANDARD_LICENCE_DESCRIPTION = "Select a standard licence for a set quantity and set value of products."
+        OPEN_GENERAL_TRANSHIPMENT_LICENCE = "Open General Transhipment Licence (OGTL)"
+        OPEN_GENERAL_TRANSHIPMENT_LICENCE_DESCRIPTION = (
+            "Select to register a pre-published licence with set terms "
+            "and conditions. Being an OGTL holder can benefit your "
+            "business by saving time and money."
+        )
+        STANDARD_LICENCE = "Standard Transhipment Licence"
+        STANDARD_LICENCE_DESCRIPTION = (
+            "Select a standard transhipment licence for a set quantity and set value of products."
+        )
         OPEN_LICENCE = "Open licence"
         OPEN_LICENCE_DESCRIPTION = (
             "Select an open licence for multiple shipments of specific products to specific destinations. "
