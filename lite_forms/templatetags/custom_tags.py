@@ -47,7 +47,7 @@ def key_value(dictionary, key):
 @register.filter
 def has_components(component_options):
     for item in component_options:
-        if item.components:
+        if getattr(item, "components", None):
             return True
 
 
