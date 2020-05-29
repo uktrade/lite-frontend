@@ -46,6 +46,7 @@ class GiveOrChangeAdvicePage:
         BACK_BUTTON = "Back to advice"
 
     class RadioButtons:
+        DESCRIPTION = "If you choose to refuse the licence, you must provide a reason for this decision"
         GRANT = "Grant the licence"
         PROVISO = "Add a proviso"
         NLR = "Tell the applicant they do not need a licence"
