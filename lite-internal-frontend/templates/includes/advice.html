@@ -19,7 +19,7 @@
 							</ol>
 						{% endif %}
 						<p class="app-advice__item__heading">{% lcs 'advice.AdvicePage.TEXT' %}</p>
-						<p data-max-length="300">{{ advice.text|linebreaksbr }}</p>
+						<p data-max-length="300">{{ advice.text|linebreaksbr|default_na }}</p>
 						{% if advice.note %}
 							<p class="app-advice__item__heading">{% lcs 'advice.AdvicePage.NOTE' %}</p>
 							<p data-max-length="300">{{ advice.note|linebreaksbr }}</p>

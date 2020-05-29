@@ -12,7 +12,7 @@
 			<th scope="row" class="govuk-table__header">{{ case.application.title }}</th>
 			<td class="govuk-table__cell">{{ case.application.required_by_date|str_date_only }}</td>
 			<td class="govuk-table__cell">{{ case.application.first_exhibition_date|str_date_only }}</td>
-			<td class="govuk-table__cell">{{ case.application.reason_for_clearance|default_na  }}</td>
+			<td class="govuk-table__cell lite-!-word-break">{{ case.application.reason_for_clearance|default_na  }}</td>
 		</tr>
 	</tbody>
 </table>

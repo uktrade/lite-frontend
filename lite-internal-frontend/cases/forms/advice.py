@@ -43,6 +43,7 @@ def give_advice_form(request, case: Case, tab, queue_pk, denial_reasons, show_wa
             ),
             RadioButtons(
                 name="type",
+                description="<noscript>" + advice.GiveOrChangeAdvicePage.RadioButtons.DESCRIPTION + "</noscript>",
                 options=[
                     Option(
                         key="approve",
@@ -150,6 +151,7 @@ def give_advice_form(request, case: Case, tab, queue_pk, denial_reasons, show_wa
                 advice.GiveOrChangeAdvicePage.GIVING_ADVICE_ON, "", includes="case/includes/selection-sidebar.html"
             )
         ],
+        javascript_imports=["/assets/javascripts/advice.js"],
     )
 
 
