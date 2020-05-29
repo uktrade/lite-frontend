@@ -112,8 +112,8 @@ LITECommon.Modal = {
 
 		// If anything other than the modal gets focus (eg tabbing from address bar), force focus into the modal
 		$('body>*[id!=' + LITECommon.Modal.overlayID + ']').on('focusin.LITECommon.Modal', function(event) {
-			LITECommon.Modal.focusOnFirstElement();
-			event.stopPropagation();
+			// LITECommon.Modal.focusOnFirstElement();
+			// event.stopPropagation();
 		});
 	},
 

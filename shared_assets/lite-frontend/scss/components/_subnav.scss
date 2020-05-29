@@ -2,13 +2,7 @@
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
-
-	hr {
-		display: block;
-		height: 2px;
-		background-color: govuk-colour("mid-grey");
-		border: none;
-	}
+	padding-right: govuk-spacing(3);
 }
 
 .lite-subnav__link {
@@ -16,31 +10,42 @@
 	display: block;
 
 	& > a {
-		line-height: 45px;
+		@include govuk-font($size: 16, $weight: bold, $line-height: 1.5);
+		display: inline-flex;
+		justify-content: flex-start;
+		align-items: center;
 		text-decoration: none;
+		padding: govuk-spacing(2) 0;
+		box-sizing: border-box;
+		color: $govuk-secondary-text-colour;
+		min-height: 44px;
 
-		&:hover {
-			text-decoration: underline;
-			&:after {
-				background-color: govuk-colour("mid-grey");
-			}
+		&:hover:after {
+			background-color: $govuk-secondary-text-colour;
+		}
+
+		&:focus {
+			@include govuk-focused-text;
 		}
 
 		&:after {
 			content: "";
 			position: absolute;
-			top: 8px;
-			left: -16px;
-			bottom: 8px;
-			width: 4px;
+			top: 6px;
+			left: - govuk-spacing(3);
+			bottom: 6px;
+			width: 2px;
 		}
 	}
 }
 
 .lite-subnav__link--selected {
-	font-weight: bold;
+	a {
+		color: $govuk-text-colour!important;
+		pointer-events: none;
 
-	& > a:after {
-		background-color: $govuk-link-colour!important;
+		&:after {
+			background-color: $govuk-link-colour!important;
+		}
 	}
 }
