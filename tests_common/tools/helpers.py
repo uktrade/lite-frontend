@@ -215,6 +215,28 @@ def paginated_item_exists(item_id, driver, exists=True):
     return bool(element_is_found) == exists
 
 
+def paginated_item_exists_by_css(css, driver, exists=True):
+    driver.set_timeout_to(0)
+    current_page = 1
+    while True:
+        element_to_find = driver.find_elements_by_css_selector(css)
+        if element_to_find:
+            element_is_found = element_to_find[0]
+            break
+        elif current_page == PAGE_LIMIT:
+            element_is_found = False
+            break
+        else:
+            current_page += 1
+            try:
+                driver.find_element_by_id(f"page-{current_page}").click()
+            except NoSuchElementException:
+                element_is_found = False
+                break
+    driver.set_timeout_to(10)
+    return bool(element_is_found) == exists
+
+
 def find_paginated_item_by_link_text(link_text, driver):
     driver.set_timeout_to(0)
     current_page = 1
