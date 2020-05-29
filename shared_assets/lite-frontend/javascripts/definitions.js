@@ -15,7 +15,7 @@ $('[data-max-length]').each(function() {
     var shrunkText = $(this).html().substring(0, $(this).data("max-length"));
 
     if (originalText.length != shrunkText.length) {
-        $(this).text(shrunkText + "...");
+        $(this).html(shrunkText + "...");
         var $more = $("<a href='#' class='govuk-link govuk-link--no-visited-state govuk-!-margin-left-2'>More</a>").appendTo($(this));
         $more.attr("data-more-text", originalText);
     }
