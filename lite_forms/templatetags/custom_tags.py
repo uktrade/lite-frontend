@@ -45,6 +45,13 @@ def key_value(dictionary, key):
 
 
 @register.filter
+def has_components(component_options):
+    for item in component_options:
+        if item.components:
+            return True
+
+
+@register.filter
 def key_in_array(data, key):
     if data is None:
         return False

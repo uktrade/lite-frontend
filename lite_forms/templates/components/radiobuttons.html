@@ -1,5 +1,5 @@
 {% if component.options %}
-    <div class="govuk-radios {% for class in component.classes %}{{ class }} {% endfor %}" data-module="govuk-radios">
+    <div class="govuk-radios {% for class in component.classes %}{{ class }} {% endfor %} {% if component.options|has_components %}govuk-radios--conditional{% endif %}" data-module="govuk-radios">
         {% for item in component.options %}
             {% if item.show_or %}
                 <div class="govuk-radios__divider">or</div>
