@@ -4,7 +4,7 @@ Feature: I want to raise an End User advisory enquiry to check if a particular e
   I want to raise an End User advisory enquiry for a particular end user/ultimate end user
   So that I can be advised whether or not the person I am seeking to export my goods is a suitable end user for export
 
-  @LT_1007 @LT_1483 @smoke
+  @LT_1007 @LT_1483 @regression
   Scenario: create an end user advisory and copy an existing end user advisory
     Given I go to exporter homepage and choose Test Org
     When I click on end user advisories

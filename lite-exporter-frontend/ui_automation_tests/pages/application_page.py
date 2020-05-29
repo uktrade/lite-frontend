@@ -19,6 +19,7 @@ class ApplicationPage(BasePage):
     ECJU_QUERIES_CLOSED = "closed-ecju-query"  # ID
     LINK_EDIT_APPLICATION = "a[href*='/edit-type/']"
     AUDIT_TRAIL_ITEM = ".app-activity__item"  # CSS
+    CASE_BUTTONS = ".lite-app-bar__controls"  # CSS
 
     def click_withdraw_application_button(self):
         self.driver.find_element_by_id(self.BUTTON_WITHDRAW_APPLICATION_ID).click()
@@ -69,3 +70,6 @@ class ApplicationPage(BasePage):
 
     def get_text_of_audit_trail_item(self, no):
         return self.driver.find_elements_by_css_selector(self.AUDIT_TRAIL_ITEM)[no].text
+
+    def get_text_of_case_buttons(self):
+        return self.driver.find_element_by_css_selector(self.CASE_BUTTONS).text

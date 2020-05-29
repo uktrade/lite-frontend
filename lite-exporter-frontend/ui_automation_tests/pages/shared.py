@@ -11,6 +11,7 @@ class Shared(BasePage):
     GOV_TABLE_CELL_LINKS = ".govuk-table__cell a"
     GOV_TABLE_CELL = ".govuk-table__cell"
     NOTIFICATION = ".lite-notification-bubble"  # CSS
+    MAIN_CONTENT_ID = "main-content"
 
     def get_text_of_error_messages(self):
         return self.driver.find_element_by_css_selector(self.ERROR_MESSAGES).text
@@ -50,3 +51,6 @@ class Shared(BasePage):
 
     def get_text_of_govuk_table_body(self):
         return self.driver.find_element_by_css_selector(self.GOV_TABLE_BODY).text
+
+    def get_text_of_main_content(self):
+        return self.driver.find_element_by_id(self.MAIN_CONTENT_ID).text

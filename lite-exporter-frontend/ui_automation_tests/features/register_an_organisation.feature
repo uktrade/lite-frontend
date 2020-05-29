@@ -4,9 +4,7 @@ Feature: I want to register an organisation
   I want to register an organisation
   So that I can export my products in the future
 
-
-  #NOTE : These are tagged with @final because they need to get run at the end.
-  @LT_1024_register_an_organisation @final
+  @LT_1024_register_an_organisation @regression
   Scenario: Register a commercial organisation
     Given I am not logged in
     And I register but I don't belong to an organisation
@@ -15,7 +13,7 @@ Feature: I want to register an organisation
     Then I should see a success page
 
 
-  @LT_1024_register_an_individual_organisation @final
+  @LT_1024_register_an_individual_organisation @regression
   Scenario: Register a individual organisation
     Given I am not logged in
     And I register but I don't belong to an organisation

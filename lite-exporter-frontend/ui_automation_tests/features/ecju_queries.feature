@@ -3,7 +3,7 @@ Feature: As a logged in exporter
 I want to see when there are ECJU queries (RFIs) relating to my applications, queries and licences and be able to respond
 So that I can quickly identify where action is required by me and respond to any queries
 
-  @LT_996_application @smoke
+  @LT_996_application @regression
   Scenario: view and respond to a ecju query in an application
     Given I go to exporter homepage and choose Test Org
     When I go to the recently created application with ecju query

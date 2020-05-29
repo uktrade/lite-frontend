@@ -4,13 +4,16 @@ Feature: I want to edit and remove goods on the goods list
   I want to add edit and remove goods on my goods list
   So that I can ensure the correct goods are listed on my goods list
 
-  @LT_928_edit @smoke
+  @LT_928_edit @regression
   Scenario: Add, edit and delete good
     Given I go to exporter homepage and choose Test Org
     When I click on goods link
     And I click add a good button
     And I add a good with description "123 pistol" part number "321" controlled "Yes" control code "ML1a" and graded "yes"
     And I add the goods grading with prefix "abc" grading "nato_restricted" suffix "def" issuing authority "NATO" reference "12345" Date of issue "10-05-2015"
+    And I confirm I can upload a document
+    And I upload file "file_for_doc_upload_test_1.txt" with description "This is a file I want to upload to show."
+    And I get the goods ID
     Then I see good in goods list
     When I edit the good to description "edited" part number "321" controlled "Yes" and control list entry "ML1a"
     Then I see my edited good details in the good page

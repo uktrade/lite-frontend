@@ -11,7 +11,7 @@ Feature: I want to indicate the standard licence I want
     Then I see the application overview
     When I delete the application
 
-  @LT_1091_standard @setup @smoke
+  @LT_1091_standard @setup @regression
   Scenario: Submit standard application
     Given I go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type

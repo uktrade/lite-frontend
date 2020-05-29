@@ -618,9 +618,7 @@ def no_documents_are_left_on_the_application(driver):  # noqa
 
 @when("I remove an additional document")
 def i_remove_an_additional_document(driver):  # noqa
-    driver.set_timeout_to(0)
     remove_additional_document_link = AdditionalDocumentsPage(driver).find_remove_additional_document_link()
-    driver.set_timeout_to(10)
     driver.execute_script("arguments[0].click();", remove_additional_document_link)
 
 

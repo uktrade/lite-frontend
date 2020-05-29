@@ -1,8 +1,7 @@
-from pytest_bdd import scenarios, then, when, parsers, given
+from pytest_bdd import scenarios, then, when, parsers
 
+from ui_automation_tests.pages.shared import Shared
 from ui_automation_tests.pages.application_page import ApplicationPage
-from ui_automation_tests.pages.submitted_applications_page import SubmittedApplicationsPages
-from ui_automation_tests.shared.functions import element_with_id_exists
 
 scenarios("../features/withdraw_and_surrender_application.feature", strict_gherkin=False)
 
@@ -36,27 +35,27 @@ def the_application_will_have_status(driver, status):
 
 @then("I won't be able to see the withdraw button")
 def i_wont_be_able_to_see_the_withdraw_button(driver):
-    driver.set_timeout_to(0)
-    assert not element_with_id_exists(driver, ApplicationPage.BUTTON_WITHDRAW_APPLICATION_ID)
-    driver.set_timeout_to(10)
+    text = ApplicationPage(driver).get_text_of_case_buttons()
+    assert "withdraw" not in text.lower()
+    assert "copy" in text.lower()
 
 
 @then("I won't be able to see the surrender button")
 def i_wont_be_able_to_see_the_surrender_button(driver):
-    driver.set_timeout_to(0)
-    assert not element_with_id_exists(driver, ApplicationPage.BUTTON_SURRENDER_APPLICATION_ID)
-    driver.set_timeout_to(10)
+    text = ApplicationPage(driver).get_text_of_case_buttons()
+    assert "surrender" not in text.lower()
+    assert "copy" in text.lower()
 
 
 @then("the edit application button is not present")
 def edit_button_not_present(driver):
-    driver.set_timeout_to(0)
-    assert len((ApplicationPage(driver).find_edit_application_button())) == 0
-    driver.set_timeout_to(10)
+    text = ApplicationPage(driver).get_text_of_case_buttons()
+    assert "edit" not in text.lower()
 
 
 @then("the case note text area is not present")
 def edit_button_not_present(driver):
-    driver.set_timeout_to(0)
-    assert len((SubmittedApplicationsPages(driver).find_case_note_text_area())) == 0
-    driver.set_timeout_to(10)
+    text = Shared(driver).get_text_of_main_content()
+    assert "post note" not in text.lower()
+    assert "cancel" not in text.lower()
+    assert "add a note" not in text.lower()

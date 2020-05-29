@@ -25,6 +25,7 @@ def assert_good_is_in_list(driver, context, exporter_url):
     assert context.good_description in goods_row
     assert context.part in goods_row
     assert context.control_code in goods_row
+    assert utils.paginated_item_exists_by_css("[href*='goods/" + context.good_id_from_url + "']", driver)
 
 
 @then("I see the good is in a query")
@@ -68,9 +69,7 @@ def delete_my_good_in_list(driver, context):
 
 @then("my good is no longer in the goods list")
 def good_is_no_longer_in_list(driver, context):
-    driver.set_timeout_to(0)
-    assert len(driver.find_elements_by_id("delete-" + context.good_id_from_url)) == 0
-    driver.set_timeout_to(10)
+    assert context.good_description not in Shared(driver).get_text_of_gov_table()
 
 
 @then("I see my edited good details in the good page")
@@ -81,13 +80,6 @@ def click_on_draft_good(driver, context, exporter_url):
     assert "edited" in text
     assert "Yes" in text
     assert "321" in text
-
-
-@then("I see there are no goods on the application")
-def i_see_there_are_no_goods_on_the_application(driver):
-    driver.set_timeout_to(0)
-    assert StandardApplicationGoodsPage(driver).get_goods_count() == 0
-    driver.set_timeout_to(10)
 
 
 @when("I click Add a new good")
@@ -235,8 +227,6 @@ def add_new_good(driver, description, part, controlled, control_code, graded, co
         add_goods_page.enter_part_number(good_part)
     if controlled.lower() == "yes":
         add_goods_page.enter_control_list_entries(control_code)
-    if good_part_needed:
-        context.good_id_from_url = driver.current_url.split("/goods/")[1].split("/")[0]
     add_goods_page.select_is_your_good_graded(graded)
     functions.click_submit(driver)
 
@@ -257,3 +247,8 @@ def add_good_grading(driver, prefix, grading, suffix, issuing_authority, referen
     date = date_of_issue.split("-")
     goods_grading_page.enter_date_of_issue(date[0], date[1], date[2])
     functions.click_submit(driver)
+
+
+@when("I get the goods ID")
+def get_id(driver, context):
+    context.good_id_from_url = driver.current_url.split("/goods/")[1].split("/")[0]

@@ -7,7 +7,7 @@ from ui_automation_tests.pages.member_page import MemberPage
 from ui_automation_tests.pages.members_page import MembersPage
 from ui_automation_tests.pages.shared import Shared
 from ui_automation_tests.shared import functions
-from ui_automation_tests.shared.tools.helpers import paginated_item_exists, highlight
+from ui_automation_tests.shared.tools.helpers import paginated_item_exists, highlight, get_text_of_multi_page_table
 from ui_automation_tests.shared.tools.helpers import scroll_to_element_by_id
 
 scenarios("../features/members.feature", strict_gherkin=False)
@@ -104,9 +104,8 @@ def see_new_user(driver, context):
 
 @then("I do not see the new member")
 def do_not_see_new_user(driver, context):
-    driver.set_timeout_to(0)
-    assert paginated_item_exists(context.email_to_search, driver, exists=False), "Item couldn't be found"
-    driver.set_timeout_to(10)
+    text = get_text_of_multi_page_table(".govuk-table", driver)
+    assert context.email_to_search not in text
 
 
 @when("I go back to the members page")
