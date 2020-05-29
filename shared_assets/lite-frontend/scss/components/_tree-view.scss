@@ -1,3 +1,10 @@
+// Size of chevron (excluding border)
+$chevron-size: 8px;
+// Size of chevron border
+$chevron-border-width: 2px;
+// Colour of chevron
+$chevron-border-colour: $govuk-text-colour;
+
 .lite-tree-view {
 	position: relative;
 }
@@ -7,7 +14,8 @@
 
 	&[open] {
 		& > .lite-tree-view__summary::after {
-			transform: scaleY(-1);
+			transform: rotate(315deg);
+			top: calc(50% - 2.5px);
 		}
 	}
 }
@@ -48,15 +56,18 @@
 
 	&::after {
 		content: "";
+		display: block;
+		// Vertically align with the parent element
 		position: absolute;
-		top: 10px;
+		top: calc(50% - 7.5px);
 		right: 0;
-		width: 18px;
-		height: 18px;
-		background-image: url("/assets/images/chevron-inverted.svg");
-		background-position: center;
-		background-repeat: no-repeat;
-		background-size: contain;
+		width: $chevron-size;
+		height: $chevron-size;
+		transform: rotate(135deg);
+		border: solid;
+		border-width: $chevron-border-width $chevron-border-width 0 0;
+		border-color: $chevron-border-colour;
+		clip-path: none;
 	}
 }
 // Remove the default details marker so we can style our own consistently and
