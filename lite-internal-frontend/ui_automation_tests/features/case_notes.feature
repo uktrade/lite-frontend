@@ -33,7 +33,7 @@ Feature: I want to add an internal note to a case and view notes
     And I click cancel button
     Then entered text is no longer in case note field
 
-  @LT_912_add_external @smoke
+  @LT_912_add_external @regression
   Scenario: Add a new exporter visible case note
     Given I sign in to SSO or am signed into SSO
     And I create open application or open application has been previously created

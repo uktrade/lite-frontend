@@ -5,7 +5,7 @@ Feature: I want standard picklists
   And activate/deactivate items on these picklists
   So that I can make it easier for other government users to quickly apply any relevant conditions to their approval recommendations
 
-  @LT_1077_add_edit @smoke
+  @LT_1077_add_edit @regression
   Scenario: Add and edit a picklist item with context variables
     Given I sign in to SSO or am signed into SSO
     When I go to My Team

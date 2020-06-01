@@ -15,7 +15,7 @@ Feature: I want to define new work queues and the teams they belong to
     When I go to the internal homepage
     And I click on edited queue in dropdown
 
-  @LT_1125_move_cases @smoke
+  @LT_1125_move_cases @regression
   Scenario: Move case to new queue and remove from new queue
     Given I sign in to SSO or am signed into SSO
     And I create open application or open application has been previously created

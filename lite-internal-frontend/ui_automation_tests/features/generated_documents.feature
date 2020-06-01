@@ -4,7 +4,7 @@ As a logged in government user
 I want to select a template to generate a document to the applicant on a case
 So that I can easily and quickly generate different types of standard document to send to the applicant
 
-  @LT_1028_generate_document @smoke
+  @LT_1028_generate_document @regression
   Scenario: Generate a document for a case
     Given I sign in to SSO or am signed into SSO
     And I create open application or open application has been previously created

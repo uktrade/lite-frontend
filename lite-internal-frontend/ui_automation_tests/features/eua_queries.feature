@@ -4,7 +4,7 @@ Feature: I want to respond to an End User Advisory query
   I want to respond to an End User Advisory query
   So that I can inform an exporter whether or not an entity is a suitable end user for a potential export licence
 
-  @LT_1474_respond @smoke
+  @LT_1474_respond @regression
   Scenario: I want to check that the functionality of other cases exists
     Given I sign in to SSO or am signed into SSO
     And I create eua query or eua query has been previously created

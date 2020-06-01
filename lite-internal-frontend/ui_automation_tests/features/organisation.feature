@@ -4,7 +4,7 @@ Feature: I want to add a company to LITE
   I want to add a new company to LITE
   So that the new company can make applications
 
-  @LT_934_register_commercial_organisation @smoke
+  @LT_934_register_commercial_organisation @regression
   Scenario: Registering a commercial organisation
     Given I sign in to SSO or am signed into SSO
     When I go to organisations

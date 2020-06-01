@@ -14,7 +14,7 @@ Feature: I want to assign one or more specific users to a case in a work queue
 #    And I go to the internal homepage
 #    And I click on the added queue in dropdown
 #
-#  @LT_947_select_all @smoke
+#  @LT_947_select_all @regression
 #  Scenario: Select all cases and deselect, Add user to case
 #    When I click select all cases checkbox
 #    Then assign users button is "enabled"

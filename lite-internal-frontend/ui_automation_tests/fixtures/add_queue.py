@@ -4,7 +4,7 @@ from pages.queues_pages import QueuesPages
 from pages.shared import Shared
 
 
-@fixture(scope="session")
+@fixture(scope="function")
 def add_queue(driver, request, api_url, context):
     QueuesPages(driver).click_add_a_queue_button()
     extra_string = str(utils.get_formatted_date_time_d_h_m_s())

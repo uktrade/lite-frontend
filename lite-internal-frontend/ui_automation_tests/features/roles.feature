@@ -4,7 +4,7 @@ Feature: I want to create roles
   I want to create roles with permissions
   So that I can restrict access to functionality
 
-  @LT_1127_edit @smoke
+  @LT_1127_edit @regression
   Scenario: Edit a role
     Given I sign in to SSO or am signed into SSO
     When I go to users

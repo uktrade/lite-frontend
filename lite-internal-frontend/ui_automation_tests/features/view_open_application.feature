@@ -1,7 +1,7 @@
 @all @open
 Feature: View an Open Applications
 
-  @smoke @open_application
+  @regression @open_application
   Scenario: View an Open Application
     Given I sign in to SSO or am signed into SSO
     And I create open application or open application has been previously created

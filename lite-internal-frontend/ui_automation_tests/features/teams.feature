@@ -20,7 +20,7 @@ Feature: I want to add a team
     When I click edit for my user
     And I select Admin team
 
-  @LT_930_edit @smoke
+  @LT_930_edit @regression
   Scenario: Edit a team
     Given I sign in to SSO or am signed into SSO
     When I go to teams

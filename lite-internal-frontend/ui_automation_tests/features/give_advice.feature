@@ -29,7 +29,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I choose to 'proviso' the licence
     Then I see the fields pre-populated with the proviso and advice picklist items
 
-  @LT_1115_grant @smoke
+  @LT_1115_grant @regression
   Scenario: Finalise a licence
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created

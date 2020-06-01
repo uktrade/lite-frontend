@@ -16,10 +16,10 @@ pytest-html = "~=2.0"
 selenium = "~=3.141"
 prospector = "==1.2.0"
 pytest-rerunfailures = "~=8.0"
-pytest-xdist = "~=1.31"
 raven = "<6.11"
 directory-sso-api-client = "~=6.3"
 envparse = "~=0.2"
+pytest-xdist = "==1.32.0"
 
 [packages]
 bleach = ">=3.1.4"

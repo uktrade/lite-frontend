@@ -1,7 +1,7 @@
 @all @MOD
 Feature: View an MOD Clearance
 
-  @smoke @exhibition_view
+  @regression @exhibition_view
   Scenario: View an Exhibition Clearance
     Given I sign in to SSO or am signed into SSO
     And an Exhibition Clearance is created
