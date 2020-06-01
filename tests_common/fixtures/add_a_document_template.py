@@ -1,7 +1,7 @@
 from pytest import fixture
 
 
-@fixture(scope="module")
+@fixture(scope="function")
 def add_a_document_template(context, api_test_client):
     document_template = api_test_client.document_templates.add_template(api_test_client.picklists)
     context.document_template_id = document_template["id"]
@@ -15,11 +15,11 @@ def get_paragraph_text(api_test_client, paragraph_id):
     return api_test_client.document_templates.get_paragraph(paragraph_id)["text"]
 
 
-@fixture(scope="session")
+@fixture(scope="function")
 def get_template_id(api_test_client):
     return api_test_client.document_templates.get_layouts()[0]["id"]
 
 
-@fixture(scope="session")
+@fixture(scope="function")
 def get_licence_template_id(api_test_client):
     return api_test_client.document_templates.get_layouts()[1]["id"]
