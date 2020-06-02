@@ -2,7 +2,7 @@
 	@extend .govuk-back-link;
 	@include appearance(none);
 	border: none;
-	border-bottom: 1px solid govuk-colour("black");
+	text-decoration: underline;
 	outline: none;
 	background: none;
 	padding: 0 0 0 14px;
