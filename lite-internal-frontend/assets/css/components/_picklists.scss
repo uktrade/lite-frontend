@@ -1,43 +1,44 @@
+$picklist-max-width: 800px;
+
 .app-picklist-picker__container {
 	min-height: 400px;
-	max-height: 400px;
-	overflow-y: scroll;
-	-webkit-overflow-scrolling: touch;
 	margin-left: - govuk-spacing(6);
 	margin-right: - govuk-spacing(6);
-	margin-bottom: - govuk-spacing(6);
 	padding-top: 2px;
+	transition: opacity .3s ease;
+}
+
+.app-picklist-picker__container--loading {
+	opacity: .25;
+}
+
+.app-picklist-picker__no-results {
+	@include govuk-font($size: 19);
+	color: $govuk-secondary-text-colour;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	pointer-events: none;
+	visibility: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.app-picklist-item__link {
+	@extend .govuk-link;
+	@extend .govuk-link--no-visited-state;
+	@include govuk-font($size: 24);
+	display: inline-block;
+	margin-bottom: govuk-spacing(3);
 }
 
 .app-picklist-item__text {
-	position: relative;
-	display: block;
-	max-height: 200px;
-	padding-bottom: govuk-spacing(1);
-	margin-bottom: govuk-spacing(6);
-	border-bottom: 2px solid govuk-colour("mid-grey");
-	overflow: hidden;
-
-	&:last-of-type {
-		border-bottom-color: transparent;
-	}
-
-	& > p {
-		display: block;
-		line-height: 1.66;
-		white-space: normal;
-		word-wrap: break-word;
-	}
-
-	&:after {
-		content: "";
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		background: linear-gradient(rgba(govuk-colour("white"), 0) 30px, govuk-colour("white") 90%);
-	}
+	@include govuk-font($size: 19, $line-height: 1.5);
+	white-space: normal;
+	word-wrap: break-word;
 }
 
 .app-picklist-picker__item {
@@ -128,13 +129,19 @@
 
 		svg {
 			display: inline-block;
-			margin-right: govuk-spacing(2);
+			margin-right: govuk-spacing(1);
 
 			* {
 				fill: currentColor;
 			}
 		}
 	}
+}
+
+.app-picklist__text {
+	@include govuk-font($size: 19, $line-height: 1.5);
+	margin: 0;
+	max-width: $picklist-max-width;
 }
 
 .app-picklist-picker-preview {
@@ -163,5 +170,27 @@
 		justify-content: flex-end;
 		border-top: 2px solid govuk-colour("light-grey");
 		padding-top: govuk-spacing(6);
+	}
+}
+
+.app-picklists__container {
+	display: block;
+	max-width: $picklist-max-width;
+	margin: auto;
+}
+
+.app-picklists__list {
+	padding: 0;
+	margin: 0;
+	list-style-type: none;
+
+	&-item {
+		border-bottom: 2px solid govuk-colour("light-grey");
+		padding-bottom: govuk-spacing(6);
+		margin-bottom: govuk-spacing(6);
+
+		&:last-of-type {
+			border-bottom-color: transparent;
+		}
 	}
 }

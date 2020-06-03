@@ -1,6 +1,7 @@
 from django.urls import reverse_lazy
 
 from core.builtins.custom_tags import default_na
+from core.components import PicklistPicker
 from core.services import get_control_list_entries, get_gov_pv_gradings
 from lite_content.lite_internal_frontend.cases import CLCReviewGoods, PVGradingForm
 from lite_forms.common import control_list_entries_question
@@ -18,7 +19,7 @@ from lite_forms.components import (
     DetailComponent,
 )
 from lite_forms.styles import HeadingStyle
-from picklists.services import get_picklists_for_input
+from picklists.enums import PicklistCategories
 
 
 def respond_to_clc_query_form(request, queue_pk, case):
@@ -59,10 +60,12 @@ def respond_to_clc_query_form(request, queue_pk, case):
                                 control_list_entries=get_control_list_entries(request, convert_to_options=True),
                                 title=CLCReviewGoods.CONTROL_LIST_ENTRY,
                             ),
-                            RadioButtons(
+                            PicklistPicker(
+                                target="report_summary",
                                 title=CLCReviewGoods.ReportSummary.TITLE,
-                                name="report_summary",
-                                options=get_picklists_for_input(request, "report_summary", convert_to_options=True),
+                                description=CLCReviewGoods.ReportSummary.DESCRIPTION,
+                                type=PicklistCategories.report_summary.key,
+                                set_text=False,
                             ),
                         ],
                     ),

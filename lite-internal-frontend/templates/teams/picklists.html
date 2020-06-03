@@ -1,5 +1,7 @@
 {% extends 'layouts/base.html' %}
 
+{% load humanize %}
+
 {% block back_link %}{% endblock %}
 
 {% block title %}
@@ -21,64 +23,53 @@
 			<p class="lite-tabs__tab lite-tabs__tab--selected">{% lcs 'teams.TeamPage.Tabs.PICKLISTS' %}</p>
 		</div>
 		<div class="lite-tabs__controls">
-			<a href="{% url 'picklists:add' %}?type={{ type }}" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
-				Add an item
-			</a>
+			{% govuk_link_button text='picklists.Picklists.ADD_BUTTON' url='picklists:add' query_params='?type='|add:type id='new-picklist-item' %}
 		</div>
 	</div>
+
+	{% if data.count %}
+		<p class="lite-filters__hint-text">{{ data.count }} {{ data.count|lcsp:'picklists.Picklists.ITEMS_COUNT' }}</p>
+	{% endif %}
+
+	{% include 'filters.html' %}
 
 	<div class="govuk-grid-row">
 		<div class="govuk-grid-column-one-quarter">
 			<ul class="lite-subnav">
-				<li class="lite-subnav__link {{ 'proviso'|add_subnav_selected_class:request.get_full_path }}">
-					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=proviso">{% lcs 'picklists.PicklistCategory.PROVISO' %}</a>
-				</li>
-				<li class="lite-subnav__link {{ 'ecju_query'|add_subnav_selected_class:request.get_full_path }}">
-					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=ecju_query">{% lcs 'picklists.PicklistCategory.STANDARD_ECJU_QUERIES' %}</a>
-				</li>
-				<li class="lite-subnav__link {{ 'pre_visit_questionnaire'|add_subnav_selected_class:request.get_full_path }}">
-					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=pre_visit_questionnaire">{% lcs 'picklists.PicklistCategory.PRE_VISIT_QUESTIONNAIRES' %}</a>
-				</li>
-				<li class="lite-subnav__link {{ 'compliance_actions'|add_subnav_selected_class:request.get_full_path }}">
-					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=compliance_actions">{% lcs 'picklists.PicklistCategory.COMPLIANCE_ACTIONS' %}</a>
-				</li>
-				<li class="lite-subnav__link {{ 'letter_paragraph'|add_subnav_selected_class:request.get_full_path }}">
-					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=letter_paragraph">{% lcs 'picklists.PicklistCategory.LETTER_PARAGRAPHS' %}</a>
-				</li>
-				<li class="lite-subnav__link {{ 'report_summary'|add_subnav_selected_class:request.get_full_path }}">
-					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=report_summary">{% lcs 'picklists.PicklistCategory.REPORT_SUMMARIES' %}</a>
-				</li>
-				<li class="lite-subnav__link {{ 'standard_advice'|add_subnav_selected_class:request.get_full_path }}">
-					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=standard_advice">{% lcs 'picklists.PicklistCategory.STANDARD_ADVICE' %}</a>
-				</li>
-				<li class="lite-subnav__link {{ 'footnotes'|add_subnav_selected_class:request.get_full_path }}">
-					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type=footnotes">{% lcs 'picklists.PicklistCategory.FOOTNOTES' %}</a>
-				</li>
+				{% for category in picklist_categories %}
+					<li class="lite-subnav__link {% if type == category.key %}lite-subnav__link--selected{% endif %}">
+						<a id="link-picklist-{{ category.key }}" href="{% url 'picklists:picklists' %}?type={{ category.key }}">
+							{{ category.name }}
+						</a>
+					</li>
+				{% endfor %}
 			</ul>
 		</div>
 		<div class="govuk-grid-column-three-quarters">
-			<div>
+			<div class="app-picklists__container">
 				{% if active_picklist_items or deactivated_picklist_items %}
-					<div>
+					<ol class="app-picklists__list">
 						{% for picklist_item in active_picklist_items %}
 							{% include 'includes/picklist-item.html' %}
 						{% endfor %}
-					</div>
+					</ol>
 					{% if deactivated_picklist_items %}
 						<div>
 							<h4 class="govuk-heading-s">Deactivated</h4>
 							<hr class="lite-horizontal-separator">
-							{% for picklist_item in deactivated_picklist_items %}
-								{% include 'includes/picklist-item.html' %}
-							{% endfor %}
+							<ol class="app-picklists__list">
+								{% for picklist_item in deactivated_picklist_items %}
+									{% include 'includes/picklist-item.html' %}
+								{% endfor %}
+							</ol>
 						</div>
 					{% endif %}
 				{% else %}
-					<p class="govuk-caption-l"></p>
-					{% include "includes/notice.html" with text='picklists.PicklistPicker.NO_CONTENT_NOTICE' %}
+					{% include 'includes/notice.html' with text='picklists.PicklistPicker.NO_CONTENT_NOTICE' %}
 				{% endif %}
+
+				{% pagination %}
 			</div>
-			{% pagination %}
 		</div>
 	</div>
 {% endblock %}

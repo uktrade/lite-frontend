@@ -1,19 +1,21 @@
 {% load variable_highlight %}
 
-<h4 class="govuk-heading-s"><a href="{% url 'picklists:picklist_item' picklist_item.id %}" class="govuk-link govuk-link--no-visited-state">{{ picklist_item.name }}</a></h4>
-<p class="govuk-body-m">
-	<span class="govuk-caption-m lite-!-display-inline">Created by</span>
-	<a class="govuk-link govuk-link--no-visited-state lite-!-display-inline" href="{% url 'teams:team' picklist_item.team.id %}">{{ picklist_item.team.name }}</a>
-	<span class="govuk-caption-m lite-!-display-inline">- Last updated</span>
-	<span class="govuk-visually-hidden"> on </span>
-	{{ picklist_item.updated_at|str_date }}
-</p>
-<div class="app-picklist-item__text">
-	<p class="govuk-body-m">
-		{% if picklist_item.type.key == "letter_paragraph" %}
-			{{ picklist_item.text|variable_highlight|linebreaksbr }}
-		{% else %}
-			{{ picklist_item.text|linebreaksbr }}
-		{% endif %}
+<li class="app-picklists__list-item">
+	<a href="{% url 'picklists:picklist_item' picklist_item.id %}" class="app-picklist-item__link">
+		{{ picklist_item.name|highlight_text:name }}
+	</a>
+	<p class="govuk-hint govuk-!-margin-top-0 govuk-!-margin-bottom-3">
+		Created by
+		<a class="govuk-link govuk-link--no-visited-state" href="{% url 'teams:team' picklist_item.team.id %}">{{ picklist_item.team.name }}</a>
+		- Last updated <span class="govuk-visually-hidden"> on </span> {{ picklist_item.updated_at|str_date }}
 	</p>
-</div>
+	<div class="app-picklist-item__text">
+		<span data-max-length="700">
+			{% if picklist_item.type.key == "letter_paragraph" %}
+				{{ picklist_item.text|variable_highlight|linebreaksbr }}
+			{% else %}
+				{{ picklist_item.text|linebreaksbr }}
+			{% endif %}
+		</span>
+	</div>
+</li>

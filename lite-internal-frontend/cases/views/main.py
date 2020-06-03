@@ -122,7 +122,7 @@ class CaseDetail(CaseView):
         ]
 
     def get_end_user_advisory_query(self):
-        self.slices = [Slices.END_USER_ADVISORY]
+        self.slices = [Slices.END_USER_DETAILS]
 
     def get_goods_query(self):
         self.slices = [Slices.GOODS_QUERY]

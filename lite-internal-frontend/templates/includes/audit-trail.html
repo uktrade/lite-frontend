@@ -3,7 +3,10 @@
 		{% for audit in activity %}
 			<div id="case-activity-{{ audit.id }}" class="app-activity__item">
 				<p class="govuk-body">
-					<span class="user">{{ audit.user.first_name }} {{ audit.user.last_name }}</span> {{ audit.text }}
+					<span class="user">{{ audit.user.first_name }} {{ audit.user.last_name }}</span>
+					<span data-max-length="400">
+						{{ audit.text }}
+					</span>
 				</p>
 				{% if audit.additional_text %}
 					<div class="app-activity__additional-text">

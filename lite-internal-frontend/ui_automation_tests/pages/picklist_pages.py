@@ -7,12 +7,11 @@ class PicklistPages(BasePage):
     PICKLIST_ADD_BUTTON = '.govuk-button[href*="add"]'  # css
     PICKLIST_DEACTIVATE_BUTTON = '.govuk-button[href*="deactivate"]'  # css
     PICKLIST_REACTIVATE_BUTTON = '.govuk-button[href*="reactivate"]'  # css
-    PICKLIST_TYPE_SUB_NAV = '.govuk-link[href*="type='  # css
+    LINK_PICKLIST_TYPE_SUB_NAV_ID_PREFIX = "link-picklist-"
     PICKLIST_PAGE_BODY = ".govuk-main-wrapper"  # css
     PICKLIST_NAME_FIELD = "name"  # name
     PICKLIST_DESCRIPTION_FIELD = "text"  # name
-    PICKLIST_NAMES_IN_LIST = "h4 a"  # css
-    PICKLIST_LIST_NAME = ".govuk-heading-s"  # css
+    PICKLIST_LIST_NAME = ".app-picklist-item__link"  # css
     PICKLIST_LIST_DESCRIPTION = ".app-picklist-item__text"  # css
     ERRORS = ".govuk-error-summary__list"  # css
     CONTEXT_SUGGESTIONS_OVERLAY = ".tribute-container"  # css
@@ -31,7 +30,7 @@ class PicklistPages(BasePage):
         self.driver.find_element_by_css_selector(self.PICKLIST_REACTIVATE_BUTTON).click()
 
     def click_on_picklist_type_sub_nav(self, type):
-        self.driver.find_element_by_css_selector(self.PICKLIST_TYPE_SUB_NAV + type + '"]').click()
+        self.driver.find_element_by_id(self.LINK_PICKLIST_TYPE_SUB_NAV_ID_PREFIX + type).click()
 
     def click_on_picklist_add_button(self):
         self.driver.find_element_by_css_selector(self.PICKLIST_ADD_BUTTON).click()
@@ -56,7 +55,7 @@ class PicklistPages(BasePage):
         self.driver.find_element_by_name(self.PICKLIST_DESCRIPTION_FIELD).clear()
 
     def get_elements_of_picklist_names_in_list(self):
-        return self.driver.find_elements_by_css_selector(self.PICKLIST_NAMES_IN_LIST)
+        return self.driver.find_elements_by_css_selector(self.PICKLIST_LIST_NAME)
 
     def context_suggestions_are_displayed(self):
         return self.driver.find_element_by_css_selector(self.CONTEXT_SUGGESTIONS_OVERLAY).is_displayed()

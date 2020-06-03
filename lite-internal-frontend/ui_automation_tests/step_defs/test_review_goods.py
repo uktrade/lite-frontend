@@ -20,7 +20,7 @@ def click_continue(driver, controlled, control_list_entry, report, comment, cont
     query_page.click_is_good_controlled(controlled)
     query_page.type_in_to_control_list_entry(control_list_entry)
     context.goods_control_list_entry = control_list_entry
-    query_page.choose_report_summary(report)
+    query_page.choose_report_summary()
     context.report = report
     query_page.enter_a_comment(comment)
     context.comment = comment

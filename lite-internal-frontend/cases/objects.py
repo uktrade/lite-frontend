@@ -35,6 +35,10 @@ class Case(Munch):
         return self["case_type"]["sub_type"]["key"]
 
     @property
+    def reference(self):
+        return self["case_type"]["reference"]["key"]
+
+    @property
     def goods(self):
         if "goods" not in self.data and "goods_types" not in self.data:
             return []
@@ -44,9 +48,9 @@ class Case(Munch):
     @property
     def destinations(self):
         if "destinations" not in self.data:
-            return []
-
-        destinations = self.data["destinations"]["data"]
+            destinations = [self.data.get("end_user")]
+        else:
+            destinations = self.data["destinations"]["data"]
 
         # Some apps return just the end user (as type dict) in destinations,
         # so we need to add the other destinations

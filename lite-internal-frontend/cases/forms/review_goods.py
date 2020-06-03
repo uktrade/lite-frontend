@@ -1,12 +1,13 @@
 from django.urls import reverse
 
+from core.components import PicklistPicker
 from core.services import get_control_list_entries
 from lite_content.lite_internal_frontend import goods
 from lite_content.lite_internal_frontend.strings import cases
 from lite_forms.common import control_list_entries_question
 from lite_forms.components import Form, RadioButtons, Option, TextArea, DetailComponent, HelpSection, BackLink
 from lite_forms.helpers import conditional
-from picklists.services import get_picklists_for_input
+from picklists.enums import PicklistCategories
 
 
 def review_goods_form(request, is_goods_type, **kwargs):
@@ -25,10 +26,12 @@ def review_goods_form(request, is_goods_type, **kwargs):
                                 control_list_entries=get_control_list_entries(request, convert_to_options=True),
                                 title=goods.ReviewGoods.ControlListEntries.TITLE,
                             ),
-                            RadioButtons(
+                            PicklistPicker(
+                                target="report_summary",
                                 title=goods.ReviewGoods.ReportSummary.TITLE,
-                                name="report_summary",
-                                options=get_picklists_for_input(request, "report_summary", convert_to_options=True),
+                                description=goods.ReviewGoods.ReportSummary.DESCRIPTION,
+                                type=PicklistCategories.report_summary.key,
+                                set_text=False,
                             ),
                         ],
                     ),

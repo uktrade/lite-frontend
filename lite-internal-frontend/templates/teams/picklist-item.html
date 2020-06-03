@@ -1,4 +1,4 @@
-{% extends 'layouts/base.html' %}
+{% extends 'layouts/two-pane.html' %}
 
 {% load variable_highlight %}
 
@@ -6,10 +6,12 @@
 	<a href="{% url 'picklists:picklists' %}?type={{ picklist_item.type.key }}" class="govuk-back-link">Back to picklist</a>
 {% endblock %}
 
-{% block body %}
+{% block full_width %}
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
-			<h1 class="govuk-heading-l">{{ picklist_item.name }}</h1>
+			<h1 class="govuk-heading-l">
+				{{ picklist_item.name }}
+			</h1>
 		</div>
 		<div class="lite-app-bar__controls">
 			<a href="{% url 'picklists:edit' picklist_item.id %}" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
@@ -19,43 +21,33 @@
 	</div>
 
 	{% if picklist_item.status.key == 'deactivated' %}
-		<p class="lite-tag lite-tag--small">Deactivated</p>
+		<p class="govuk-tag govuk-tag--grey govuk-!-margin-bottom-5">
+			{{ picklist_item.status.key }}
+		</p>
 	{% endif %}
+{% endblock %}
 
-	<p class="govuk-body">
-		<span class="govuk-caption-m lite-!-display-inline">Created by</span>
-		<a class="govuk-link govuk-link--no-visited-state lite-!-display-inline" href="{% url 'teams:team' picklist_item.team.id %}">{{ picklist_item.team.name }}</a>
-		<span class="govuk-caption-m lite-!-display-inline">-</span>
-		<a class="govuk-link govuk-link--no-visited-state lite-!-display-inline" href="{% url 'picklists:picklists' %}?type={{ picklist_item.type.key }}">{{ picklist_item.type.value }}</a>
-		<span class="govuk-caption-m lite-!-display-inline">- Last updated</span>
-		<span class="govuk-visually-hidden"> on </span>
-		{{ picklist_item.updated_at|str_date }}
+{% block two_thirds %}
+	<p class="govuk-hint govuk-!-margin-top-0 govuk-!-margin-bottom-4">
+		Created by
+		<a class="govuk-link govuk-link--no-visited-state" href="{% url 'teams:team' picklist_item.team.id %}">{{ picklist_item.team.name }}</a>
+		-
+		<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type={{ picklist_item.type.key }}">{{ picklist_item.type.value }}</a>
+		- Last updated <span class="govuk-visually-hidden"> on </span> {{ picklist_item.updated_at|str_date }}
 	</p>
 
-	<br>
-
-	<p class="govuk-body">
+	<p class="app-picklist__text govuk-!-margin-bottom-6">
 		{% if picklist_item.type.key == "letter_paragraph" %}
 			{{ picklist_item.text|variable_highlight|linebreaksbr }}
 		{% else %}
 			{{ picklist_item.text|linebreaksbr }}
 		{% endif %}
 	</p>
+{% endblock %}
 
+{% block one_third %}
 	{% if activity %}
-		<div class="govuk-accordion app-accordion" data-module="govuk-accordion" id="accordion-default">
-			<div class="govuk-accordion__section">
-				<div class="govuk-accordion__section-header">
-					<h2 class="govuk-accordion__section-heading">
-						<span class="govuk-accordion__section-button" id="accordion-default-heading">
-							{% lcs 'generic.ACTIVITY' %}
-						</span>
-					</h2>
-				</div>
-				<div id="accordion-default-content" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading">
-					{% include "includes/audit-trail.html" %}
-				</div>
-			</div>
-		</div>
+		<h2 class="govuk-heading-m">{% lcs 'generic.ACTIVITY' %}</h2>
+		{% include "includes/audit-trail.html" %}
 	{% endif %}
 {% endblock %}

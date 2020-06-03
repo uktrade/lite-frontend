@@ -1,9 +1,10 @@
-import time
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support.wait import WebDriverWait
 
 from shared import functions
 from shared.BasePage import BasePage
-from selenium.webdriver.support.ui import Select
-
 from shared.tools.helpers import scroll_to_element_below_header_by_id
 
 
@@ -19,6 +20,9 @@ class GoodsQueriesPages(BasePage):
     PREFIX_ID = "prefix"
     SUFFIX_ID = "suffix"
     GRADING_ID = "grading"
+    LINK_REPORT_SUMMARY_PICKLIST_PICKER_ID = "link-report_summary-picklist-picker"
+    LINK_PICKLIST_PICKER_ITEM_CLASS = "app-picklist-picker__item"
+    BUTTON_SUBMIT_REPORT_SUMMARY_ID = "button-submit-report_summary"
 
     def click_respond_to_clc_query(self):
         scroll_to_element_below_header_by_id(self.driver, self.BUTTON_CLC_RESPOND_ID)
@@ -28,18 +32,18 @@ class GoodsQueriesPages(BasePage):
         scroll_to_element_below_header_by_id(self.driver, self.BUTTON_GRADING_RESPOND_ID)
         self.driver.find_element_by_id(self.BUTTON_GRADING_RESPOND_ID).click()
 
-    # Response Page
     def click_is_good_controlled(self, answer):
-        # TODO Remove the sleep
-        self.driver.find_element_by_id(self.CONTROL_RESPONSE + answer).click()
-        time.sleep(0.5)
+        WebDriverWait(self.driver, 10).until(
+            expected_conditions.presence_of_element_located((By.ID, self.CONTROL_RESPONSE + answer))
+        ).click()
 
     def type_in_to_control_list_entry(self, code):
         functions.send_tokens_to_token_bar(self.driver, self.TOKEN_BAR_CONTROL_LIST_ENTRIES_SELECTOR, [code])
 
-    def choose_report_summary(self, num):
-        element = self.driver.find_elements_by_name(self.REPORT_SUMMARY)[int(num)]
-        self.driver.execute_script("arguments[0].click();", element)
+    def choose_report_summary(self):
+        self.driver.find_element_by_id(self.LINK_REPORT_SUMMARY_PICKLIST_PICKER_ID).click()
+        self.driver.find_elements_by_class_name(self.LINK_PICKLIST_PICKER_ITEM_CLASS)[0].click()
+        self.driver.find_element_by_id(self.BUTTON_SUBMIT_REPORT_SUMMARY_ID).click()
 
     def enter_a_comment(self, comment):
         self.driver.find_element_by_class_name("govuk-details__summary-text").click()

@@ -170,6 +170,9 @@ STATICFILES_FINDERS = (
     "sass_processor.finders.CssFinder",
 )
 
+# Cache static files
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"
+
 SASS_PROCESSOR_ENABLED = True
 
 # File Upload
@@ -217,6 +220,7 @@ LOGGING = {
 SECURE_BROWSER_XSS_FILTER = not DEBUG
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_HTTPONLY = not DEBUG
 SECURE_CONTENT_TYPE_NOSNIFF = not DEBUG
 
 # Content Security Policy

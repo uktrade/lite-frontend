@@ -11,9 +11,17 @@ def add_picklist_item_form(picklist_type):
     return Form(
         title=getattr(picklists.NewPicklistForm, picklist_type.upper()),
         questions=[
-            TextInput(title=picklists.NewPicklistForm.Name.TITLE, name="name"),
+            TextInput(
+                title=picklists.NewPicklistForm.Name.TITLE, name="name", classes=["govuk-!-width-three-quarters"]
+            ),
             HiddenField("type", picklist_type),
-            TextArea(title=picklists.NewPicklistForm.Text.TITLE, name="text", extras={"max_length": 5000,}),
+            TextArea(
+                title=picklists.NewPicklistForm.Text.TITLE,
+                name="text",
+                rows=20,
+                extras={"max_length": 5000,},
+                classes=["govuk-!-width-three-quarters"],
+            ),
         ],
         back_link=BackLink(
             picklists.NewPicklistForm.BACK_LINK, reverse_lazy("picklists:picklists") + f"?type={picklist_type}"

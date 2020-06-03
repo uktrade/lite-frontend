@@ -1,57 +1,150 @@
+{% load svg %}
+
 <div id="{{ component.target }}-picklist-picker" class="app-hidden">
-	{% if component.data %}
-		<div id="picklist-{{ component.target }}" class="app-picklist-picker__container">
-			{% for item in component.data %}
-				<a onclick="return showPreviewModal(this, '#{{ component.target }}')" data-title="{{ item.name }}" data-text="{{ item.text }}" data-last-updated="{{ item.updated_at|str_date }}" class="app-picklist-picker__item">
-					<h4 class="govuk-heading-s">{{ item.name }}</h4>
-					<p class="govuk-caption-m">
-						{{ item.text|slice:":100" }}
-					</p>
-				</a>
-			{% endfor %}
-		</div>
-	{% else %}
-		{% include "includes/notice.html" with text='picklists.PicklistPicker.NO_CONTENT_NOTICE' %}
-	{% endif %}
+	<div class="lite-search__container govuk-!-margin-bottom-3">
+		<input type="search" class="govuk-input app-picklist__search-input" id="{{ component.target }}-filter-box" placeholder="{{ placeholder }}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+		<button class="lite-search__button lite-search__button--instant-search" type="submit">
+			{% svg 'search' %}
+			<span>Search</span>
+		</button>
+	</div>
+	<div id="{{ component.target }}-picklist-picker__container" class="app-picklist-picker__container"></div>
+	<div class="app-picklist-picker__no-results">
+		There aren't any results.
+	</div>
+	<div class="lite-pagination__container govuk-!-margin-top-5 app-hidden">
+		<a id="link-previous-page" href="#" class="lite-pagination__navigation-link">
+			{% svg 'previous' %}
+			<span>Previous page</span>
+		</a>
+		<span></span>
+		<a id="link-next-page" href="#" class="lite-pagination__navigation-link">
+			<span>Next page</span>
+			{% svg 'next' %}
+		</a>
+	</div>
 </div>
 
+{% if not component.set_text %}
+	{% with component.target|add:'_text' as component_text %}
+		<a id="link-{{ component.target }}-picklist-picker" data-picklist-target="{{ component.target }}" data-picklist-set-text="false" href="#" class="govuk-link govuk-link--no-visited-state app-picklist-picker-heading__link {% if value|get:component_text %}app-hidden{% endif %}">
+			{% svg 'plus' %}
+			Use {{ component.type|sentence_case|lower }} from picklist
+		</a>
+		<a id="link-{{ component.target }}-picklist-picker-change" data-picklist-target="{{ component.target }}" data-picklist-set-text="false" href="#" class="govuk-link govuk-link--no-visited-state app-picklist-picker-heading__link {% if not value|get:component_text %}app-hidden{% endif %}">
+			Change {{ component.type|sentence_case|lower }}
+		</a>
+		<input type="hidden" id="{{ component.target }}-input" name="{{ component.target }}" value="{{ value|get:component.target }}">
+		<div id="{{ component.target }}-text" class="govuk-inset-text govuk-!-margin-top-0 {% if not value|get:component_text %}app-hidden{% endif %}">
+			{{ value|get:component_text }}
+		</div>
+	{% endwith %}
+{% endif %}
+
 <script>
-	$('#{{ component.target }}').closest( ".govuk-form-group" ).prepend('<a id="link-{{ component.target }}-picklist-picker" onclick="return show{{ component.target }}Modal()" href="#" class="govuk-link govuk-link--no-visited-state app-picklist-picker-heading__link">' +
-											'<svg width="13px" height="13px" viewBox="0 0 13 13" version="1.1">' +
-												'<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">' +
-													'<rect id="Rectangle" fill="#000000" x="6" y="0" width="1" height="13"></rect>' +
-													'<rect id="Rectangle-Copy" fill="#000000" transform="translate(6.500000, 6.500000) rotate(90.000000) translate(-6.500000, -6.500000) " x="6" y="0" width="1" height="13"></rect>' +
-												'</g>' +
-											'</svg>' +
-											'Add a picklist item' +
-										'</a>');
+	$('#{{ component.target }}').closest( ".govuk-form-group" ).prepend(`
+		<a data-picklist-target="{{ component.target }}" id="link-{{ component.target }}-picklist-picker" href="#" class="govuk-link govuk-link--no-visited-state app-picklist-picker-heading__link">
+			{% svg 'plus' %}
+			Add {{ component.type|sentence_case|lower }} from picklist
+		</a>`);
 
-	function show{{ component.target }}Modal() {
+	$("a[data-picklist-target={{ component.target }}]").click(function() {
 		LITECommon.Modal.showModal('Select a picklist item', $( '#{{ component.target }}-picklist-picker' ).html(), false, true, {maxWidth: '450px'});
+		filter{{ component.target }}PicklistItems("{{ component.set_text|lower }}");
+		$(".lite-modal .app-picklist__search-input").on('input propertychange paste', function() {
+			$(".lite-modal #{{ component.target }}-picklist-picker__container").addClass("app-picklist-picker__container--loading");
+			filter{{ component.target }}PicklistItems("{{ component.set_text|lower }}", $(this).val());
+		});
 		return false;
-	};
+	});
 
-	function showPreviewModal(item, textarea) {
+	function filter{{ component.target }}PicklistItems(setText, filter, page) {
+		if (!filter) {
+			filter = ""
+		}
+		if (!page) {
+			page = 1;
+		}
+		$.get("{% url 'picklists:picklists_json' %}?type={{ component.type }}&page=" + page + "&name=" + filter, function(data) {
+			$(".lite-modal #{{ component.target }}-picklist-picker__container").empty();
+			$(".lite-modal #{{ component.target }}-picklist-picker__container").removeClass("app-picklist-picker__container--loading");
+
+			if (data.total_pages == 0 || data.count <= 25) {
+				$(".lite-modal .lite-pagination__container").addClass("app-hidden");
+			} else {
+				$(".lite-modal .lite-pagination__container").removeClass("app-hidden");
+			}
+
+			if (page == 1) {
+				$(".lite-modal #link-previous-page").addClass("lite-pagination__navigation-link--disabled");
+			} else {
+				$(".lite-modal #link-previous-page").removeClass("lite-pagination__navigation-link--disabled");
+				$(".lite-modal #link-previous-page").unbind("click").click(function() {
+					filter{{ component.target }}PicklistItems(setText, filter, page - 1);
+				});
+			}
+
+			if (page == data.total_pages) {
+				$(".lite-modal #link-next-page").addClass("lite-pagination__navigation-link--disabled");
+			} else {
+				$(".lite-modal #link-next-page").removeClass("lite-pagination__navigation-link--disabled");
+				$(".lite-modal #link-next-page").unbind("click").click(function() {
+					filter{{ component.target }}PicklistItems(setText, filter, page + 1);
+				});
+			}
+
+			$.each(data.results, function(i, item) {
+				var html = `
+						<div id="${item.id}" onclick="return showPreviewModal(this, '#{{ component.target }}', ${setText})" data-id="${item.id}" data-target="{{ component.target }}" data-title="${item.name}" data-text="${item.text}" data-last-updated="${item.updated_at}" class="app-picklist-picker__item">
+							<h4 class="govuk-heading-s">${item.name}</h4>
+							<p class="govuk-caption-m">
+								${item.text}
+							</p>
+						</div>
+					`
+				$(".lite-modal #{{ component.target }}-picklist-picker__container").append(html)
+			});
+			notice = $(".lite-modal #{{ component.target }}-picklist-picker__container").next();
+			if (data.results.length == 0) {
+				notice.css({"visibility": "visible"});
+			} else {
+				notice.css({"visibility": "hidden"});
+			}
+		});
+	}
+
+	function showPreviewModal(item, textarea, setText) {
 		var title = $(item).data( 'title' );
 		var text = $('<div>').text($(item).data( 'text' )).html();
 		var lastUpdated = $(item).data( 'last-updated' );
 		var textareaId = textarea.substring(1, textarea.length);
-
-		var previewHtml = '<div class="app-picklist-picker-preview">' +
-								'<div class="app-picklist-picker-preview__text">' +
-								'<p id="picker-preview-text" class="govuk-body-m">' + text + '</p>' +
-								'<p class="govuk-caption-m">Last updated ' + lastUpdated + '</p>' +
-							'</div>' +
-							'<div class="app-picklist-picker-preview__controls">' +
-								'<button id="button-submit-' + textareaId + '" onclick="setTextareaValue(\'' + textarea + '\');" type="submit" class="govuk-button" data-module="govuk-button">' +
-									'Use template' +
-								'</button>' +
-							'</div>' +
-						'</div>'
+		var addText = setText ? "Add" : "Set";
+		var onclick = setText ? `onclick="setTextareaValue('${textarea}');"` : `onclick="setId('${$(item).attr("id")}');"`;
+		var previewHtml = `<div class="app-picklist-picker-preview">
+								<div class="app-picklist-picker-preview__text">
+								<p id="picker-preview-text" class="govuk-body-m">${text}</p>
+								<p class="govuk-caption-m">Last updated ${lastUpdated}</p>
+							</div>
+							<div class="app-picklist-picker-preview__controls">
+								<button id="button-submit-${textareaId}" ${onclick} type="submit" class="govuk-button" data-module="govuk-button">
+									${addText}
+								</button>
+							</div>
+						</div>`
 
 		LITECommon.Modal.showModal(title, previewHtml, false, true);
 		return false;
 	};
+
+	function setId(itemId) {
+		var item = $("#" + itemId);
+		var target =  item.data("target")
+		$("#" + target + "-text").text(item.data("text")).removeClass("app-hidden");;
+		$("#" + target + "-input").val(item.data("id"));
+		$("#link-" + target + "-picklist-picker").hide();
+		$("#link-" + target + "-picklist-picker-change").removeClass("app-hidden");
+		LITECommon.Modal.closeAllModals();
+	}
 
 	function setTextareaValue(textarea) {
 		if ($(textarea).val()) {

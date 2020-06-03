@@ -81,6 +81,31 @@ def get_advice_additional_context(request, case, permissions):
     }
 
 
+def same_value(dicts, key):
+    original_value = dicts[0][key]
+
+    for dict in dicts:
+        if dict[key] != original_value:
+            return
+
+    return original_value
+
+
+def flatten_goods_data(items: List[Dict]):
+    if not items:
+        return
+
+    if "good" in items[0]:
+        items = [x["good"] for x in items]
+
+    is_good_controlled = same_value(items, "is_good_controlled")
+    control_list_entries = [
+        {"key": clc["rating"], "value": clc["rating"]} for clc in same_value(items, "control_list_entries")
+    ]
+
+    return {"is_good_controlled": is_good_controlled, "control_list_entries": control_list_entries}
+
+
 def flatten_advice_data(request, case: Case, items: List[Dict], level):
     keys = ["proviso", "denial_reasons", "note", "text", "type"]
 

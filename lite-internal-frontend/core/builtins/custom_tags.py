@@ -64,8 +64,9 @@ def pluralize_lcs(items, string):
     CONTROL_LIST_ENTRIES = "Control list entry/Control list entries"
     """
     strings = get_const_string(string).split("/")
+    count = items if isinstance(items, int) else len(items) if items else 0
 
-    if items and len(items) == 1:
+    if count == 1:
         return strings[0]
     else:
         return strings[1]
@@ -133,14 +134,6 @@ def table_sort_text(key, actual_sort):
 
     if key in actual_sort:
         return "-" + key
-
-
-@register.filter()
-def add_subnav_selected_class(key, url):
-    if key in url:
-        return "lite-subnav__link--selected"
-
-    return ""
 
 
 @register.filter()
@@ -621,18 +614,3 @@ def latest_status_change(activity):
 @register.filter()
 def filter_flags_by_level(flags, level):
     return [flag for flag in flags if flag["level"] == level]
-
-
-@register.filter()
-def item_with_rating_exists(items, rating):
-    if not items:
-        return
-
-    for item in items:
-        if isinstance(item, str):
-            if item == rating:
-                return True
-
-        if isinstance(item, dict):
-            if item["rating"] == rating:
-                return True

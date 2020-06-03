@@ -92,14 +92,14 @@ class EditDocumentTextView(SingleFormView):
         # Remove tpk ID kwarg
         back_link_kwargs = kwargs.copy()
         back_link_kwargs.pop("tpk", None)
-        backlink = BackLink(text=self.back_text, url=reverse_lazy(self.back_url, kwargs=back_link_kwargs),)
+        back_link = BackLink(text=self.back_text, url=reverse_lazy(self.back_url, kwargs=back_link_kwargs),)
         case = get_case(request, case_id)
 
         # If regenerating, get existing text for a given document ID
         if "document_id" in request.GET:
             document, _ = get_generated_document(request, case_id, request.GET["document_id"])
             self.data = {TEXT: document[TEXT]}
-            backlink = BackLink(
+            back_link = BackLink(
                 text=GenerateDocumentsPage.EditTextForm.BACK_LINK_REGENERATE,
                 url=reverse_lazy(
                     "cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": case_id, "tab": "documents"}
@@ -114,7 +114,7 @@ class EditDocumentTextView(SingleFormView):
             self.data = {TEXT: paragraph_text}
 
         self.context = {"case": case}
-        self.form = edit_document_text_form(request, backlink, kwargs, self.post_url)
+        self.form = edit_document_text_form(back_link, kwargs, self.post_url)
         self.redirect = False
         self.action = self._convert_text_list_to_str
 
