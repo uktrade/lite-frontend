@@ -97,7 +97,7 @@
 				{% endfor %}
 			</div>
 		{% elif question.input_type == "custom" %}
-			{% include question.template with component=question data=question.data %}
+			{% include question.template with component=question data=question.data value=data %}
 		{% endif %}
 	</div>
 </div>

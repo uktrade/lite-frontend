@@ -198,6 +198,21 @@ def pagination_params(url, page):
     return urlparse.urlunparse(url_parts)
 
 
+@register.filter()
+def item_with_rating_exists(items, rating):
+    if not items:
+        return
+
+    for item in items:
+        if isinstance(item, str):
+            if item == rating:
+                return True
+
+        if isinstance(item, dict):
+            if item["rating"] == rating:
+                return True
+
+
 @register.simple_tag
 @mark_safe
 def govuk_link_button(text, url, url_param=None, id="", classes="", query_params="", show_chevron=False):

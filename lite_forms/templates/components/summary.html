@@ -5,7 +5,7 @@
                 {{ key }}
             </dt>
             <dd class="govuk-summary-list__value">
-                {{ value }}
+                <span data-max-length="300">{{ value|markdown }}</span>
             </dd>
         </div>
     {% endfor %}

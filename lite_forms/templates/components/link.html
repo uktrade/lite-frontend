@@ -1,5 +1,5 @@
 {% if component.form_action %}
-<button id={{ component.name }} name={{ component.name }} class="lite-button--link" type="submit" formaction="{{ component.address }}">{{ component.text }}</button>
+	<button id="{{ component.name }}" name="{{ component.name }}" class="lite-button--link {% for class in component.classes %}{{ class }} {% endfor %}" type="submit" formaction="{{ component.address }}">{{ component.text }}</button>
 {% else %}
-<a id={{ component.name }} name={{ component.name }} class="govuk-link" href="{{ component.address }}">{{ component.text }}</a>
+	<a id="{{ component.name }}" name="{{ component.name }}" class="govuk-link {% for class in component.classes %}{{ class }} {% endfor %}" href="{{ component.address }}">{{ component.text }}</a>
 {% endif %}
