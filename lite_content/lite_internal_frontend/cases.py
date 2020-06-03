@@ -91,10 +91,10 @@ class CasePage:
         USER_ADVICE = "User advice"
         TEAM_ADVICE = "Team advice"
         FINAL_ADVICE = "Final decision"
-        ECJU_QUERIES = "ECJU queries"
+        ECJU_QUERIES = "Queries"
         DOCUMENTS = "Documents"
-        ADDITIONAL_CONTACTS = "Additional contacts"
-        CASE_NOTES_AND_TIMELINE = "Case notes and timeline"
+        ADDITIONAL_CONTACTS = "Contacts"
+        CASE_NOTES_AND_TIMELINE = "Notes and timeline"
 
     class DetailsTab:
         EXPORTER_REFERENCE = "Exporter reference"
@@ -114,6 +114,8 @@ class CasePage:
         NO_QUEUES_ASSIGNED = "Not assigned to any queues"
         NO_USERS_ASSIGNED = "No users assigned"
         NO_CASE_OFFICER = "Not assigned"
+        TRADE_CONTROL_ACTIVITY = "Trade control activity"
+        TRADE_CONTROL_ACTIVITY_CATEGORIES = "Trade control activity categories"
 
         class Goods:
             TITLE = "good"
@@ -596,6 +598,7 @@ class CLCReviewGoods:
 
     class ReportSummary:
         TITLE = "Which report summary is applicable to this good?"
+        DESCRIPTION = ""
 
 
 class PVGradingForm:
@@ -706,9 +709,8 @@ class Manage:
 
 
 class ReviewGoodsForm:
-    BACK_LINK = "Back to review goods"
-    CONFIRM_BUTTON = "Add to case"
-    HEADING = "Check control list classification and add report summary"
+    CONFIRM_BUTTON = "Confirm"
+    HEADING = "Review goods"
 
 
 class AddAdditionalContact:

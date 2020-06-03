@@ -6,8 +6,8 @@ class ReviewGoods:
         TITLE = "What are the correct control list entries?"
 
     class ReportSummary:
-        TITLE = "Which report summary would you like to use?"
-        DESCRIPTION = "Select none if the goods aren't controlled"
+        TITLE = "Report summary"
+        DESCRIPTION = ""
 
     class Comment:
         TITLE = "Explain why you're making this decision (optional)"

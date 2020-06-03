@@ -1,3 +1,8 @@
+class Picklists:
+    ADD_BUTTON = "Add an item"
+    ITEMS_COUNT = "item in total/items in total"
+
+
 class PicklistPicker:
     NO_CONTENT_NOTICE = "There aren't any items in this picklist"
 
