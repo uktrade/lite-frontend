@@ -483,7 +483,7 @@ def click_edit_case_flags_link(driver):  # noqa
 
 @then("The previously created flag is assigned to the case")  # noqa
 def assert_flag_is_assigned(driver, context):  # noqa
-    assert CasePage(driver).is_flag_applied(context.flag_name), (
+    assert CasePage(driver).is_flag_in_applied_flags_list(context.flag_name), (
         "Flag " + context.flag_name + " is not applied to the case"
     )
 
@@ -501,3 +501,8 @@ def assign_case_to_queue(api_test_client):  # noqa
 @given("all flags are removed")  # noqa
 def remove_all_flags(context, api_test_client):  # noqa
     api_test_client.flags.assign_case_flags(context.case_id, [])
+
+
+@when("I add a new queue called Review")  # noqa
+def add_a_queue(driver, context, add_queue):  # noqa
+    pass

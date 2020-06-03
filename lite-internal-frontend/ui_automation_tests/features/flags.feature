@@ -29,6 +29,7 @@ Feature: I want to create and deactivate flags
     When I go to application previously created
     And I click edit flags link
     And I select previously created flag
+    And I click edit flags link
     Then The previously created flag is assigned to the case
     When I go to the final advice page by url
     Then I cannot finalise the case due to the blocking flag

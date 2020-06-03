@@ -10,11 +10,6 @@ from ui_automation_tests.shared.tools.helpers import find_paginated_item_by_id
 scenarios("../features/queues.feature", strict_gherkin=False)
 
 
-@when("I add a new queue called Review")  # noqa
-def add_a_queue(driver, context, add_queue):  # noqa
-    pass
-
-
 @when("I go to the countersigning queue")
 def go_to_countersigning_queue(driver, context, internal_url):
     driver.get(internal_url.rstrip("/") + "/queues/" + context.countersigning_queue_id)

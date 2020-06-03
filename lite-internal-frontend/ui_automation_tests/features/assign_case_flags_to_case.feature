@@ -12,6 +12,7 @@ Feature: I want to add case-level flags to a case and view them
     And I go to application previously created
     And I click edit flags link
     And I select previously created flag
+    And I click edit flags link
     Then The previously created flag is assigned to the case
     When I go to the internal homepage
     Then I see previously created application

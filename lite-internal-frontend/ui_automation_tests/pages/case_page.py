@@ -83,6 +83,10 @@ class CasePage(BasePage):
         time.sleep(0.5)
         return flag_name in self.driver.find_element_by_id("popup-flags").text
 
+    def is_flag_in_applied_flags_list(self, flag_name):
+        text = self.driver.find_element_by_id("checkbox-counter").text
+        return flag_name in text
+
     def is_goods_flag_applied(self, flag_name):
         return flag_name in self.driver.find_element_by_id(self.TABLE_GOODS_ID).text
 

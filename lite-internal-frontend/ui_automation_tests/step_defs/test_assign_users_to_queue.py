@@ -19,7 +19,7 @@ def click_checkbox_for_application(driver, internal_url, context):
 
 @when("I select user to assign SSO users name")
 def assign_user_to_case(driver, internal_info, context):
-    driver.find_element_by_id(internal_info["name"]).click()
+    driver.find_element_by_id(internal_info["name"].replace(" ", "-")).click()
     context.user_name = internal_info["name"]
     Shared(driver).click_submit()
 
