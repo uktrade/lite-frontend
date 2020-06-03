@@ -89,20 +89,20 @@ def apply_for_standard_application(api_test_client, context):
     timer.print_time("apply_for_standard_application")
 
 
-@fixture(scope="function")
+@fixture(scope="module")
 def add_an_ecju_query(api_test_client, context):
     api_test_client.api_client.auth_exporter_user(api_test_client.context["org_id"])
     api_test_client.ecju_queries.add_ecju_query(context.case_id)
 
 
-@fixture(scope="function")
+@fixture(scope="module")
 def apply_for_clc_query(api_test_client, context):
     api_test_client.api_client.auth_exporter_user(api_test_client.context["org_id"])
     api_test_client.goods_queries.add_goods_clc_query(api_test_client.goods)
     context.clc_case_id = api_test_client.context["case_id"]
 
 
-@fixture(scope="function")
+@fixture(scope="module")
 def apply_for_grading_query(api_test_client, context):
     api_test_client.api_client.auth_exporter_user(api_test_client.context["org_id"])
     api_test_client.goods_queries.add_goods_grading_query(api_test_client.goods)
@@ -110,7 +110,7 @@ def apply_for_grading_query(api_test_client, context):
 
 
 # The below is currently not used due to bug LT-1808 but willl need to be used for internal HMRC tests when fixed.
-@fixture(scope="function")
+@fixture(scope="module")
 def apply_for_hmrc_query(api_test_client, context):
     api_test_client.api_client.auth_exporter_user(api_test_client.context["hmrc_org_id"])
     draft_id = api_test_client.applications.add_hmrc_draft(
@@ -133,7 +133,7 @@ def apply_for_hmrc_query(api_test_client, context):
     context.reference_code = api_test_client.context["reference_code"]
 
 
-@fixture(scope="function")
+@fixture(scope="module")
 def apply_for_eua_query(driver, api_test_client, context):
     api_test_client.api_client.auth_exporter_user(api_test_client.context["org_id"])
     api_test_client.parties.add_eua_query()
@@ -141,7 +141,7 @@ def apply_for_eua_query(driver, api_test_client, context):
     context.eua_reference_code = api_test_client.context["end_user_advisory_reference_code"]
 
 
-@fixture(scope="function")
+@fixture(scope="module")
 def apply_for_open_application(api_test_client, context):
     timer = Timer()
     api_test_client.api_client.auth_exporter_user(api_test_client.context["org_id"])
@@ -257,7 +257,7 @@ def _apply_for_mod_clearance(
     context.goods = data["application"]["goods"]
 
 
-@fixture(scope="function")
+@fixture(scope="module")
 def apply_for_exhibition_clearance(driver, api_test_client, context):
     _apply_for_mod_clearance(
         type="exhc",
@@ -271,7 +271,7 @@ def apply_for_exhibition_clearance(driver, api_test_client, context):
     )
 
 
-@fixture(scope="function")
+@fixture(scope="module")
 def apply_for_f680_clearance(driver, api_test_client, context):
     _apply_for_mod_clearance(
         type="f680",
@@ -285,7 +285,7 @@ def apply_for_f680_clearance(driver, api_test_client, context):
     )
 
 
-@fixture(scope="function")
+@fixture(scope="module")
 def apply_for_gifting_clearance(driver, api_test_client, context):
     _apply_for_mod_clearance(
         type="gift",
@@ -299,7 +299,7 @@ def apply_for_gifting_clearance(driver, api_test_client, context):
     )
 
 
-@fixture(scope="function")
+@fixture(scope="module")
 def apply_for_trade_control_application(api_test_client, context):
     timer = Timer()
     api_test_client.api_client.auth_exporter_user(api_test_client.context["org_id"])
