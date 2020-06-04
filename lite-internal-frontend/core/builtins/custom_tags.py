@@ -614,3 +614,27 @@ def latest_status_change(activity):
 @register.filter()
 def filter_flags_by_level(flags, level):
     return [flag for flag in flags if flag["level"] == level]
+
+
+@register.filter()
+def get_goods_linked_to_destination_as_list(goods, country_id):
+    """
+    Instead of iterating over each goods list of countries without the ability to break loops in django templating.
+    This function will make a match for which goods are being exported to the country supplied,
+        and return the list of goods
+    :param goods: list of goods on the application
+    :param country_id: id of country we are interested in
+    :return: list of goods that go to destination
+    """
+    item_number = 1
+    list_of_goods = []
+    for good in goods:
+        for country in good["countries"]:
+            if country["id"] == country_id:
+                list_of_goods.append(f"{item_number}. {good['description']}")
+                item_number += 1
+                break
+        else:
+            break
+
+    return list_of_goods

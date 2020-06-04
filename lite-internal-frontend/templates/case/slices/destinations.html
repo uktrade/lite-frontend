@@ -92,12 +92,8 @@
 							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">{{ destination.country.id }}</td>
 							<td class="govuk-table__cell govuk-table__cell--max-width-400 {% if show_advice %}lite-!-no-border{% endif %}">
 								<span data-max-length="100">
-									{% for good in case.goods %}
-										{% for good_country in good.countries %}
-											{% if good_country.id == destination.country.id %}
-												{{ forloop.counter }}. {{ good.description }}
-											{% endif %}
-										{% endfor %}
+									{% for good in case.goods|get_goods_linked_to_destination_as_list:destination.country.id %}
+										{{ good }}
 									{% endfor %}
 								</span>
 							</td>
