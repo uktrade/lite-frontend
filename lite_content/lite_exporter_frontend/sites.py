@@ -10,6 +10,7 @@ class SitesPage:
         ADDRESS = "Address"
         MEMBERS = "Members"
         ACTIONS = "Actions"
+        RECORDS_HELD_HERE = "Site where records held"
 
 
 class SitePage:
@@ -19,6 +20,8 @@ class SitePage:
 
     class SummaryList:
         NAME = "Name"
+        SITE = "Records held here"
+        SITE_ALREADY_USED_ON_APPLICATION_NOTICE = "This site has been used on an application so can’t be edited."
 
 
 class AddSiteForm:
@@ -47,3 +50,14 @@ class AddSiteForm:
             "You can still assign users later."
         )
         FILTER = "Filter users"
+
+    class SiteRecords:
+        DESCRIPTION = "ECJU uses this for compliance visits."
+
+        class SiteInUK:
+            TITLE = "Are the records for licences registered to this site held here?"
+            NO_RECORDS_HELD_ELSEWHERE = "No, company records are held at another site"
+            SITE_NOT_LISTED = "If the site isn't listed, you need to add the site from your account dashboard."
+
+        class SiteNotInUK:
+            TITLE = "Select the site that holds the licence records for the non-UK based site you’re adding"
