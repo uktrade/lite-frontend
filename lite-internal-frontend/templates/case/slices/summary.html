@@ -49,6 +49,16 @@
 			</dd>
 		</div>
 	{% endif %}
+	{% if case.data.submitted_by %}
+		<div class="app-case__summary-list__row">
+			<dt class="app-case__summary-list__key">
+				{% lcs 'cases.CasePage.DetailsTab.SUBMITTED_BY' %}
+			</dt>
+			<dd class="app-case__summary-list__value">
+				{{ case.data.submitted_by }}
+			</dd>
+		</div>
+	{% endif %}
 	<div class="app-case__summary-list__row">
 		<dt class="app-case__summary-list__key">
 			{% lcs 'cases.CasePage.DetailsTab.STATUS' %}
