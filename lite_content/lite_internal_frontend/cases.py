@@ -99,6 +99,7 @@ class CasePage:
     class DetailsTab:
         EXPORTER_REFERENCE = "Exporter reference"
         SUBMITTED_AT = "Submitted at"
+        SUBMITTED_BY = "Submitted by"
         STATUS = "Status"
         ASSIGNED_QUEUES = "Assigned queues"
         TYPE = "Type"
