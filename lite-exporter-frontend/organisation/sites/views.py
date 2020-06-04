@@ -4,7 +4,7 @@ from django.views.generic import TemplateView
 
 from core.services import get_organisation
 from lite_forms.views import MultiFormView, SingleFormView
-from organisation.sites.forms import new_site_forms, edit_site_name_form
+from organisation.sites.forms import new_site_forms, edit_site_name_form, site_records_location
 from organisation.sites.services import get_site, post_sites, update_site, get_sites
 from organisation.views import OrganisationView
 
@@ -46,5 +46,15 @@ class EditSiteName(SingleFormView):
         site = get_site(request, request.user.organisation, self.object_pk)
         self.data = site
         self.form = edit_site_name_form(site)
+        self.action = update_site
+        self.success_url = reverse("organisation:sites:site", kwargs={"pk": self.object_pk})
+
+
+class EditSiteRecordsLocation(SingleFormView):
+    def init(self, request, **kwargs):
+        self.object_pk = kwargs["pk"]
+        site = get_site(request, request.user.organisation, self.object_pk)
+        in_uk = site["address"]["country"]["id"] == "GB"
+        self.form = site_records_location(request, in_uk=in_uk, is_editing=True)
         self.action = update_site
         self.success_url = reverse("organisation:sites:site", kwargs={"pk": self.object_pk})

@@ -12,6 +12,7 @@ Feature: I  want to add and rename my sites
     And I click new site
     And I specify that my site is in the United Kingdom
     And I enter in the site details
+    And I select that the records for licences are held at this site
     And I assign all users
     Then the site is created
     When I click the change name link

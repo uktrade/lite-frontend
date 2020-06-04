@@ -16,9 +16,11 @@ from lite_forms.components import (
     HiddenField,
     Checkboxes,
     Filter,
+    Label,
 )
 from lite_forms.helpers import conditional
 from lite_forms.styles import HeadingStyle
+from organisation.sites.services import get_sites, filter_sites_in_the_uk
 
 
 def new_site_forms(request):
@@ -27,7 +29,7 @@ def new_site_forms(request):
     return FormGroup(
         [
             Form(
-                caption="Step 1 of 3",
+                caption="Step 1 of 4",
                 title=AddSiteForm.WhereIsYourSiteBased.TITLE,
                 description=AddSiteForm.WhereIsYourSiteBased.DESCRIPTION,
                 questions=[
@@ -51,7 +53,7 @@ def new_site_forms(request):
                 back_link=BackLink(AddSiteForm.BACK_LINK, reverse_lazy("organisation:sites:sites")),
             ),
             Form(
-                caption="Step 2 of 3",
+                caption="Step 2 of 4",
                 title=AddSiteForm.Details.TITLE,
                 description=AddSiteForm.Details.DESCRIPTION,
                 questions=[
@@ -69,8 +71,9 @@ def new_site_forms(request):
                 ],
                 default_button_name=generic.CONTINUE,
             ),
+            site_records_location(request, in_uk),
             Form(
-                caption="Step 3 of 3",
+                caption="Step 4 of 4",
                 title=AddSiteForm.AssignUsers.TITLE,
                 description=AddSiteForm.AssignUsers.DESCRIPTION,
                 questions=[
@@ -101,4 +104,71 @@ def edit_site_name_form(site):
             strings.sites.SitesPage.BACK_TO + site["name"],
             reverse_lazy("organisation:sites:site", kwargs={"pk": site["id"]}),
         ),
+    )
+
+
+def site_records_location(request, in_uk=True, is_editing=False):
+    return Form(
+        caption="" if is_editing else "Step 3 of 4",
+        title=strings.sites.AddSiteForm.SiteRecords.SiteInUK.TITLE
+        if in_uk
+        else strings.sites.AddSiteForm.SiteRecords.SiteNotInUK.TITLE,
+        description=strings.sites.AddSiteForm.SiteRecords.DESCRIPTION,
+        questions=[
+            *conditional(
+                in_uk,
+                [
+                    RadioButtons(
+                        name="site_records_stored_here",
+                        options=[
+                            Option(key=True, value=strings.YES),
+                            Option(
+                                key=False,
+                                value=strings.sites.AddSiteForm.SiteRecords.SiteInUK.NO_RECORDS_HELD_ELSEWHERE,
+                                components=[
+                                    RadioButtons(
+                                        name="site_records_located_at",
+                                        options=[
+                                            Option(site["id"], site["name"])
+                                            for site in filter_sites_in_the_uk(
+                                                get_sites(request, request.user.organisation)
+                                            )
+                                        ],
+                                    ),
+                                    Label(
+                                        'If the site isn\'t listed, you need to <a id="site-dashboard" href="'
+                                        + str(reverse_lazy("organisation:sites:sites"))
+                                        + '" class="govuk-link govuk-link--no-visited-state">'
+                                        + "add the site"
+                                        + "</a> "
+                                        + "from your account dashboard."
+                                    ),
+                                ],
+                            ),
+                        ],
+                    ),
+                ],
+                [
+                    HiddenField("site_records_stored_here", False),
+                    Label(
+                        'If the site isn\'t listed, you need to <a id="site-dashboard" href="'
+                        + str(reverse_lazy("organisation:sites:sites"))
+                        + '" class="govuk-link govuk-link--no-visited-state">'
+                        + "add the site"
+                        + "</a> "
+                        + "from your account dashboard."
+                    ),
+                    RadioButtons(
+                        name="site_records_located_at",
+                        options=[
+                            Option(site["id"], site["name"])
+                            for site in filter_sites_in_the_uk(get_sites(request, request.user.organisation))
+                        ],
+                    ),
+                ],
+            ),
+            HiddenField("validate_only", True),
+            HiddenField("records_located_step", True),
+        ],
+        default_button_name=generic.CONTINUE,
     )

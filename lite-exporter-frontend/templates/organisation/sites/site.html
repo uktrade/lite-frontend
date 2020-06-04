@@ -17,6 +17,11 @@
 {% endblock %}
 
 {% block full_width %}
+	{% if site.is_used_on_application %}
+		<div class="lite-info-bar lite-info-bar--no-animation">
+			{% lcs "sites.SitePage.SummaryList.SITE_ALREADY_USED_ON_APPLICATION_NOTICE" %}
+		</div>
+	{% endif %}
 	<h1 class="govuk-heading-xl">
 		{% block title %}
 			{{ site.name }}
@@ -39,11 +44,14 @@
 			<dd class="govuk-summary-list__value">
 				{{ site.name }}
 			</dd>
-			<dd class="govuk-summary-list__actions">
-				<a id="link-change-name" href="{% url 'organisation:sites:edit_name' site.id %}#name" class="govuk-link govuk-link--no-visited-state">
-					{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "sites.SitePage.SummaryList.NAME" %}</span>
-				</a>
-			</dd>
+			{% if not site.is_used_on_application %}
+				<dd class="govuk-summary-list__actions">
+					<a id="link-change-name" href="{% url 'organisation:sites:edit_name' site.id %}#name" class="govuk-link govuk-link--no-visited-state">
+						{% lcs 'generic.CHANGE' %}
+						<span class="govuk-visually-hidden">{% lcs "sites.SitePage.SummaryList.NAME" %}</span>
+					</a>
+				</dd>
+			{% endif %}
 		</div>
 		{% if site.address.address_line_1 %}
 			<div class="govuk-summary-list__row">
@@ -113,6 +121,22 @@
 				</dd>
 			</div>
 		{% endif %}
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs "sites.SitePage.SummaryList.SITE" %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ site.site_records_located_at_name|default_na  }}
+			</dd>
+			{% if not site.is_used_on_application %}
+				<dd class="govuk-summary-list__actions">
+					<a id="link-change_site_records_location" href="{% url 'organisation:sites:edit_site_records_location' site.id %}" class="govuk-link govuk-link--no-visited-state">
+						{% lcs 'generic.CHANGE' %}
+						<span class="govuk-visually-hidden">{% lcs "sites.SitePage.SummaryList.NAME" %}</span>
+					</a>
+				</dd>
+			{% endif %}
+		</div>
 	</dl>
 
 	<hr class="lite-horizontal-separator">

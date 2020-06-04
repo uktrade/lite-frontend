@@ -40,6 +40,12 @@ def new_sites_info(driver, context):
     functions.click_submit(driver)
 
 
+@when("I select that the records for licences are held at this site")
+def site_records_held_at_the_same_site(driver):
+    NewSite(driver).click_same_site_as_site_where_records_located_at()
+    functions.click_submit(driver)
+
+
 @when("I assign all users")
 def assign_all_users(driver, context):
     NewSite(driver).click_all_users()

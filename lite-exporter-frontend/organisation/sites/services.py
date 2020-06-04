@@ -54,6 +54,14 @@ def get_sites(request, organisation_id, convert_to_options=False, get_total_user
     return data
 
 
+def filter_sites_in_the_uk(sites):
+    uk_sites = []
+    for site in sites:
+        if site["address"]["country"]["id"] == "GB":
+            uk_sites.append(site)
+    return uk_sites
+
+
 def get_site(request, organisation_id, pk):
     data = get(request, ORGANISATIONS_URL + str(organisation_id) + SITES_URL + str(pk))
     return data.json()
