@@ -27,6 +27,7 @@ from organisations.services import (
     post_hmrc_organisations,
     put_organisation_status,
     get_organisation_activity,
+    get_site_activity,
 )
 
 
@@ -137,7 +138,10 @@ class OrganisationSites(OrganisationView):
     template_name = "sites"
 
     def get_additional_context(self):
-        return {"sites": get_organisation_sites(self.request, self.organisation_id)}
+        return {
+            "sites": get_organisation_sites(self.request, self.organisation_id),
+            "activity": get_site_activity(self.request, self.organisation_id),
+        }
 
 
 class RegisterOrganisation(MultiFormView):

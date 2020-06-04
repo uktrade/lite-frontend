@@ -33,5 +33,8 @@
 				{% endfor %}
 			</tbody>
 		</table>
+		{% if activity %}
+			{% include "includes/audit-trail.html" %}
+		{% endif %}
 	{% endif %}
 {% endblock %}

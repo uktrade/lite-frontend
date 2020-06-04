@@ -69,7 +69,7 @@
 							</td>
 						{% endif %}
 						{% if case.goods.0.value %}
-							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">{{ good.quantity }} {{ good.unit.value }}/£{{ good.value|intcomma }}</td>
+							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">{{ good.quantity }} {{ good.unit.value }}, £{{ good.value|intcomma }}</td>
 						{% endif %}
 						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">{{ good.good.is_good_controlled.value }}</td>
 						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
