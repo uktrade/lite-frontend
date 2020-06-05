@@ -42,6 +42,7 @@ COUNTRIES_URL = "/countries/"
 LICENCES_URL = "/licences/"
 CONTRACT_TYPES_URL = "/contract-types/"
 CONTRACT_TYPES_COUNTRIES = "/countries-contract-types/"
+OPEN_GENERAL_LICENCES_URL = "/open-general-licences/"
 
 # Queries URLs
 QUERIES_URL = "/queries/"
@@ -76,6 +77,8 @@ F680 = "f680_clearance"
 class CaseTypes:
     OIEL = "oiel"
     OGEL = "ogel"
+    OGTL = "ogtl"
+    OGTCL = "ogtcl"
     OICL = "oicl"
     SIEL = "siel"
     SICL = "sicl"

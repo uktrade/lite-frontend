@@ -64,7 +64,7 @@ def opening_question():
     )
 
 
-def export_licence_questions(application_type, goodstype_category=None):
+def export_licence_questions(request, application_type, goodstype_category=None):
     should_display_firearms_question = application_type == CaseTypes.SIEL or goodstype_category in [
         GoodsTypeCategory.MILITARY,
         GoodsTypeCategory.UK_CONTINENTAL_SHELF,
@@ -79,6 +79,11 @@ def export_licence_questions(application_type, goodstype_category=None):
                     RadioButtons(
                         name="application_type",
                         options=[
+                            Option(
+                                key=CaseTypes.OGEL,
+                                value=ExportLicenceQuestions.ExportLicenceQuestion.OPEN_GENERAL_EXPORT_LICENCE,
+                                description=ExportLicenceQuestions.ExportLicenceQuestion.OPEN_GENERAL_EXPORT_LICENCE_DESCRIPTION,
+                            ),
                             Option(
                                 key=CaseTypes.SIEL,
                                 value=ExportLicenceQuestions.ExportLicenceQuestion.STANDARD_LICENCE,
@@ -103,7 +108,7 @@ def export_licence_questions(application_type, goodstype_category=None):
             ),
             *conditional(application_type == CaseTypes.OIEL, [goodstype_category_form()], []),
             *conditional(
-                goodstype_category not in ["media", "cryptographic"],
+                application_type != CaseTypes.OGEL and goodstype_category not in ["media", "cryptographic"],
                 [
                     Form(
                         title=ExportLicenceQuestions.ExportType.TITLE,
@@ -124,7 +129,7 @@ def export_licence_questions(application_type, goodstype_category=None):
                 ],
                 [],
             ),
-            reference_name_form(),
+            *conditional(application_type != CaseTypes.OGEL, [reference_name_form()], []),
             *conditional(application_type == CaseTypes.SIEL, [told_by_an_official_form()], []),
             *conditional(should_display_firearms_question, [firearms_form()], []),
         ]
@@ -157,11 +162,18 @@ def goodstype_category_form(application_id=None):
 
 def trade_control_licence_questions(request):
     return FormGroup(
-        [application_type_form(), reference_name_form(), activity_form(request), product_category_form(request)]
+        [
+            application_type_form(),
+            *conditional(
+                request.POST.get("application_type") != CaseTypes.OGTCL,
+                [reference_name_form(), activity_form(request), product_category_form(request)],
+                [],
+            ),
+        ]
     )
 
 
-def transhipment_questions():
+def transhipment_questions(request):
     return FormGroup(
         [
             Form(
@@ -171,6 +183,11 @@ def transhipment_questions():
                     RadioButtons(
                         name="application_type",
                         options=[
+                            Option(
+                                key=CaseTypes.OGTL,
+                                value=TranshipmentQuestions.TranshipmentLicenceQuestion.OPEN_GENERAL_TRANSHIPMENT_LICENCE,
+                                description=TranshipmentQuestions.TranshipmentLicenceQuestion.OPEN_GENERAL_TRANSHIPMENT_LICENCE_DESCRIPTION,
+                            ),
                             Option(
                                 key=CaseTypes.SITL,
                                 value=TranshipmentQuestions.TranshipmentLicenceQuestion.STANDARD_LICENCE,
@@ -184,9 +201,11 @@ def transhipment_questions():
                     TranshipmentQuestions.TranshipmentLicenceQuestion.BACK, reverse_lazy("apply_for_a_licence:start")
                 ),
             ),
-            reference_name_form(),
-            told_by_an_official_form(),
-            firearms_form(),
+            *conditional(
+                request.POST.get("application_type") != CaseTypes.OGTL,
+                [reference_name_form(), told_by_an_official_form(), firearms_form()],
+                [],
+            ),
         ]
     )
 

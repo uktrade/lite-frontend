@@ -16,6 +16,11 @@ def application_type_form():
                 name="application_type",
                 options=[
                     Option(
+                        key=CaseTypes.OGTCL,
+                        value=TradeControlLicenceQuestions.TradeControlLicenceQuestion.OPEN_GENERAL_TRADE_CONTROL_LICENCE,
+                        description=TradeControlLicenceQuestions.TradeControlLicenceQuestion.OPEN_GENERAL_TRADE_CONTROL_LICENCE_DESCRIPTION,
+                    ),
+                    Option(
                         key=CaseTypes.SICL,
                         value=TradeControlLicenceQuestions.TradeControlLicenceQuestion.STANDARD_LICENCE,
                         description=TradeControlLicenceQuestions.TradeControlLicenceQuestion.STANDARD_LICENCE_DESCRIPTION,

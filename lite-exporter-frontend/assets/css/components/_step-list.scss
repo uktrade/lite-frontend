@@ -1,0 +1,38 @@
+$icon-size: 40px;
+
+.app-step-list {
+	counter-reset: circle-step-list-counter;
+	list-style-type: none;
+	padding-left: 0;
+	margin-left: 0;
+
+	p {
+		margin-top: 0;
+	}
+
+	& > li {
+		@include govuk-font($size: 19);
+		@include govuk-text-colour;
+		position: relative;
+		padding-left: 55px;
+		padding-top: 8px;
+		margin-bottom: govuk-spacing(4);
+
+		&:before {
+			@include govuk-font($size: 19, $weight: bold);
+			display: inline-block;
+			border-radius: 50%;
+			content: counter(circle-step-list-counter);
+			counter-increment: circle-step-list-counter;
+			position: absolute;
+			top: 0;
+			left: 0;
+			background: $govuk-text-colour;
+			color: $govuk-body-background-colour;
+			width: $icon-size;
+			height: $icon-size;
+			line-height: $icon-size!important;
+			text-align: center;
+		}
+	}
+}

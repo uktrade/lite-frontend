@@ -80,6 +80,11 @@ def put_end_use_details(request, pk, json):
     return data.json(), data.status_code
 
 
+def post_open_general_licences_applications(_, json):
+    # Placeholder for LT-2110
+    return json, 200
+
+
 def put_temporary_export_details(request, pk, json):
     if "year" in json and "month" in json and "day" in json:
         json["proposed_return_date"] = create_formatted_date_from_components(json)

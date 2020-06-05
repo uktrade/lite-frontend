@@ -1,0 +1,6 @@
+<ol class="app-step-list">
+	{% lcs 'applications.OpenGeneralLicenceQuestions.OpenGeneralLicenceDetail.Notice.POINTS' as points %}
+	{% for point in points %}
+		<li>{{ point }}</li>
+	{% endfor %}
+</ol>

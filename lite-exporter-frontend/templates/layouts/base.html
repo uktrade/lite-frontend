@@ -12,9 +12,9 @@
 
 	<link rel="shortcut icon" sizes="16x16 32x32 48x48" href="{% static 'images/favicon.ico' %}" type="image/x-icon" />
 	<link rel="mask-icon" href="{% static 'images/govuk-mask-icon.svg' %}" color="#0b0c0c">
-	<link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/govuk-apple-touch-icon.png-180x180.png' %}">
-	<link rel="apple-touch-icon" sizes="167x167" href="{% static 'images/govuk-apple-touch-icon.png-167x167.png' %}">
-	<link rel="apple-touch-icon" sizes="152x152" href="{% static 'images/govuk-apple-touch-icon.png-152x152.png' %}">
+	<link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/govuk-apple-touch-icon-180x180.png' %}">
+	<link rel="apple-touch-icon" sizes="167x167" href="{% static 'images/govuk-apple-touch-icon-167x167.png' %}">
+	<link rel="apple-touch-icon" sizes="152x152" href="{% static 'images/govuk-apple-touch-icon-152x152.png' %}">
 	<link rel="apple-touch-icon" href="{% static 'images/govuk-apple-touch-icon.png' %}">
 
 	<link href="{% sass_src 'css/styles.scss' %}" rel="stylesheet" type="text/css" />
@@ -29,7 +29,7 @@
 
 	<meta property="og:image" content="{% static 'images/govuk-opengraph-image.png' %}">
 
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="{% static 'javascripts/jquery.min.js' %}"></script>
 	<script src="{% static 'javascripts/mark.js' %}"></script>
 
 	{% block head %}{% endblock %}

@@ -1,0 +1,42 @@
+$icon-size: 40px;
+
+.app-ogl-warning {
+	@include govuk-font($size: 19, $weight: bold);
+	color: govuk-colour("white")!important;
+	padding: govuk-spacing(3);
+	padding-left: govuk-spacing(6) + $icon-size;
+	display: block;
+	position: relative;
+	box-sizing: border-box;
+	width: 100%;
+	margin-bottom: govuk-spacing(6);
+	background: govuk-colour("red");
+
+	&:after {
+		@include govuk-font($size: 24, $weight: bold);
+		content: "!";
+		background: govuk-colour("white");
+		width: $icon-size;
+		height: $icon-size;
+		line-height: $icon-size!important;
+		position: absolute;
+		top: govuk-spacing(3);
+		left: govuk-spacing(3);
+		color: govuk-colour("red");
+		text-align: center;
+		border-radius: 50%;
+	}
+
+	.govuk-list {
+		color: govuk-colour("white");
+		margin-top: govuk-spacing(2);
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	.list:last-child {
+		margin-bottom: 0;
+	}
+}

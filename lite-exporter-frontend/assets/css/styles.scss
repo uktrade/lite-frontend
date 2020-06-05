@@ -3,6 +3,7 @@ $govuk-page-width: 1200px !default;
 @import "../shared/node_modules/govuk-frontend/govuk/all"; // GOV.UK Design System
 @import "../shared/lite-frontend/scss/all"; // LITE Design System
 @import "components/all"; // Local assets
+@import "overrides/all";
 
 .hidden .js-enabled{
 	display: none;
