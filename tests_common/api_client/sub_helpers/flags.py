@@ -14,6 +14,13 @@ class Flags:
             method="POST", url="/flags/", headers=self.api_client.gov_headers, body=data,
         ).json()
         self.api_client.add_to_context("flag_id", flag["id"])
+        return flag
+
+    def get_list_of_flags(self):
+        flags = self.api_client.make_request(
+            method="GET", url="/flags/?disable_pagination=True", headers=self.api_client.gov_headers,
+        ).json()
+        return flags
 
     def assign_case_flags(self, case_pk, flags):
         data = {
