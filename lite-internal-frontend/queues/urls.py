@@ -12,4 +12,5 @@ urlpatterns = [
     path("<uuid:pk>/edit/", views.EditQueue.as_view(), name="edit"),
     path("<uuid:pk>/case-assignments/", views.CaseAssignments.as_view(), name="case_assignments"),
     path("<uuid:pk>/enforcement-xml-export/", views.EnforcementXMLExport.as_view(), name="enforcement_xml_export"),
+    path("<uuid:pk>/enforcement-xml-import/", views.EnforcementXMLImport.as_view(), name="enforcement_xml_import"),
 ]

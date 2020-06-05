@@ -27,7 +27,8 @@
 					<button id="assign-users-button" form="cases-form" type="submit" class="govuk-button govuk-button--secondary">{% lcs 'cases.CasesListPage.ASSIGN_USERS' %}</button>
 				</div>
 				{% if enforcement_check and data.results.cases %}
-					<a id="export-xml" class="govuk-button govuk-button--secondary" href="{% url 'queues:enforcement_xml_export' queue.id %}" draggable="false" role="button">{% lcs 'cases.CasesListPage.EnforcementXML.EXPORT_BUTTON' %}</a>
+					{% govuk_link_button id='export-xml' classes='govuk-button--secondary' text='cases.CasesListPage.EnforcementXML.EXPORT_BUTTON' url='queues:enforcement_xml_export' url_param=queue.id %}
+					{% govuk_link_button id='import-xml' classes='govuk-button--secondary' text='cases.CasesListPage.EnforcementXML.IMPORT_BUTTON' url='queues:enforcement_xml_import' url_param=queue.id %}
 				{% endif %}
 			</div>
 		{% endif %}

@@ -4,8 +4,9 @@ from urllib import parse
 from django.http import HttpResponse
 
 from conf.client import get, post, put
-from conf.constants import QUEUES_URL, CASE_URL
+from conf.constants import QUEUES_URL, CASE_URL, ENFORCEMENT_URL, ENFORCEMENT_XML_MAX_FILE_SIZE
 from core.helpers import convert_parameters_to_query_params
+from lite_content.lite_internal_frontend.cases import UploadEnforcementXML
 from lite_content.lite_internal_frontend.users import AssignUserPage
 from lite_forms.components import Option
 
@@ -74,7 +75,7 @@ def put_queue_single_case_assignment(request, pk, json):
 
 
 def get_enforcement_xml(request, queue_pk):
-    data = get(request, CASE_URL + "enforcement-check/" + str(queue_pk))
+    data = get(request, ENFORCEMENT_URL + str(queue_pk))
 
     # Check if XML
     if data.headers._store["content-type"][1] == "text/xml":
@@ -83,3 +84,21 @@ def get_enforcement_xml(request, queue_pk):
         return response, data.status_code
     else:
         return None, data.status_code
+
+
+def post_enforcement_xml(request, queue_pk, json):
+    if len(request.FILES) == 0:
+        return {"errors": {"file": [UploadEnforcementXML.Errors.NO_FILE]}}, HTTPStatus.BAD_REQUEST
+    if len(request.FILES) != 1:
+        return {"errors": {"file": [UploadEnforcementXML.Errors.MULTIPLE_FILES]}}, HTTPStatus.BAD_REQUEST
+    if request.FILES["file"].size > ENFORCEMENT_XML_MAX_FILE_SIZE:
+        return {"errors": {"file": [UploadEnforcementXML.Errors.FILE_TOO_LARGE]}}, HTTPStatus.BAD_REQUEST
+
+    try:
+        file = request.FILES.pop("file")[0]
+        file_format = {"file": file.read().decode("utf-8")}
+    except Exception:  # noqa
+        return {"errors": {"file": [UploadEnforcementXML.Errors.FILE_READ]}}, HTTPStatus.BAD_REQUEST
+
+    data = post(request, ENFORCEMENT_URL + str(queue_pk), file_format)
+    return data.json(), data.status_code
