@@ -318,6 +318,9 @@ class OpenGeneralLicenceQuestions:
 
     class OpenGeneralLicenceDetail:
         CAPTION = "Applying for"
+        NO_REGISTRATION_REQUIRED = (
+            "This {} doesn't require registration, however make sure you still meet the requirements:"
+        )
 
         class Summary:
             DESCRIPTION = "Description"
