@@ -49,6 +49,10 @@
 }
 
 .lite-expand__control {
+	* {
+		fill: currentColor;
+	}
+	
 	&--open {
 		transform: scaleY(-1);
 	}
