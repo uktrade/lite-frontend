@@ -57,8 +57,11 @@ class CasesListPage:
 
     class EnforcementXML:
         EXPORT_BUTTON = "Export EU XML"
-        NO_CASES = "No matching cases found"
-        GENERIC_ERROR = "An error occurred when generating XML for this queue."
+        IMPORT_BUTTON = "Import EU XML"
+
+        class Export:
+            NO_CASES = "No matching cases found"
+            GENERIC_ERROR = "An error occurred when generating XML for this queue."
 
 
 class CasePage:
@@ -764,3 +767,16 @@ class DoneWithCaseOnQueueForm:
     CHECKBOX_TITLE = ""
     CHECKBOX_DESCRIPTION = "Select which queues you are done with this case on"
     SUBMIT = "Submit"
+
+
+class UploadEnforcementXML:
+    TITLE = "Upload the enforcement XML"
+    DESCRIPTION = ""
+    BACK_LINK = "Back to queue"
+    SUCCESS_BANNER = "Enforcement XML successfully uploaded and processed"
+
+    class Errors:
+        NO_FILE = "You must attach an XML file"
+        MULTIPLE_FILES = "You cannot upload multiple files"
+        FILE_TOO_LARGE = "You cannot upload an XML larger than 1MB"
+        FILE_READ = "Could not read the file. Please ensure the file you attach is an XML"
