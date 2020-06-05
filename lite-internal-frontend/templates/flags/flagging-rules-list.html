@@ -36,14 +36,14 @@
 		</thead>
 		<tbody class="govuk-table__body">
 			{% for flagging_rule in data.results %}
-				<tr class="govuk-table__row">
+				<tr class="govuk-table__row" id="{{ flagging_rule.flag }}">
 					<td class="govuk-table__cell">
 						{{ flagging_rule.team.name }}
 					</td>
 					<td class="govuk-table__cell">
 						{{ flagging_rule.level }}
 					</td>
-					<td class="govuk-table__cell" id="{{ flagging_rule.flag }}">
+					<td class="govuk-table__cell">
 						{{ flagging_rule.flag_name }}
 					</td>
 					<td class="govuk-table__cell">

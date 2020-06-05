@@ -180,7 +180,7 @@
 									<p class="app-information-bar">{% lcs 'cases.CasesListPage.NoContent.NO_DESTINATION_FLAGS' %}</p>
 								{% endif %}
 							</td>
-							<td class="govuk-table__cell">
+							<td class="govuk-table__cell" id="flags-{{ case.id }}">
 								{% if case.flags %}
 									{% include 'includes/flags.html' with flags=case.flags|slice:':3' list=True classes='app-expanded-row__item--invert' %}
 									<span class="govuk-hint govuk-!-margin-top-2 govuk-!-margin-bottom-2 app-expanded-row__item--invert">

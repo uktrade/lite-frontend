@@ -18,6 +18,7 @@ Feature: I want to create and deactivate flags
     When I reactivate the flag
     Then I see the flag in the flag list
 
+
   @LT_1277_approval_blocking_flag @regression
   Scenario: Create an approval blocking flag
     Given I sign in to SSO or am signed into SSO
@@ -28,7 +29,7 @@ Feature: I want to create and deactivate flags
     Then I see the flag in the flag list
     When I go to application previously created
     And I click edit flags link
-    And I select previously created flag
+    And I select a previously created flag
     And I click edit flags link
     Then The previously created flag is assigned to the case
     When I go to the final advice page by url

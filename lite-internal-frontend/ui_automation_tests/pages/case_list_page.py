@@ -188,8 +188,10 @@ class CaseListPage(BasePage):
             assert self.driver.find_element_by_id(advanced_filter)
 
     def filter_by_exporter_application_reference(self, exporter_application_reference):
-        self.driver.find_element_by_id(self.EXPORTER_APPLICATION_REFERENCE_ID)
         self.driver.find_element_by_id(self.EXPORTER_APPLICATION_REFERENCE_ID).send_keys(exporter_application_reference)
+
+    def filter_by_case_reference(self, case_reference):
+        self.driver.find_element_by_id(self.CASE_REFERENCE_ID).send_keys(case_reference)
 
     def filter_by_goods_related_description(self, goods_related_description):
         self.driver.find_element_by_id(self.GOODS_RELATED_DESCRIPTION_ID)

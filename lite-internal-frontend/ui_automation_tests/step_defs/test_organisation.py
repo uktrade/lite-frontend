@@ -48,13 +48,6 @@ def verify_organisation_audit(driver, context, audit_type):
     assert audit_type in body
 
 
-@then(parsers.parse('the "{audit_type}" flag appears in the audit trail'))
-def verify_organisation_flag_audit(driver, context, audit_type):
-    body = Shared(driver).get_audit_trail_text()
-    assert context.flag_name in body
-    assert audit_type in body
-
-
 @then("individual organisation is registered")
 def verify_registered_individual_organisation(driver, context):
     wait_until_page_is_loaded(driver)

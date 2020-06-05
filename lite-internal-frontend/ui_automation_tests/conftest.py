@@ -14,6 +14,7 @@ from ui_automation_tests.fixtures.add_a_flag import (  # noqa
     add_good_flag,
     add_organisation_flag,
     add_destination_flag,
+    get_flag_of_level,
 )
 from ui_automation_tests.fixtures.add_queue import add_queue  # noqa
 from ui_automation_tests.fixtures.add_a_document_template import (  # noqa
@@ -45,7 +46,6 @@ from pages.assign_flags_to_case import CaseFlagsPages
 from pages.shared import Shared
 from pages.case_list_page import CaseListPage
 from pages.application_page import ApplicationPage
-from pages.queues_pages import QueuesPages
 
 from ui_automation_tests.shared.tools.helpers import paginated_item_exists, get_formatted_date_time_m_d_h_s
 
@@ -195,7 +195,7 @@ def move_case_to_new_queue(driver, context):  # noqa
     Shared(driver).click_submit()
 
 
-@when("I select previously created flag")  # noqa
+@when("I select a previously created flag")  # noqa
 def assign_flags_to_case(driver, context):  # noqa
     CaseFlagsPages(driver).select_flag(context.flag_name)
     functions.click_submit(driver)
@@ -216,9 +216,11 @@ def added_flags_on_queue(driver, context):  # noqa
 
 @then("I see previously created application")  # noqa
 def see_queue_in_queue_list(driver, context):  # noqa
-    assert QueuesPages(driver).is_case_on_the_list(context.case_id) == 1, (
-        "previously created application is not displayed " + context.case_id
-    )
+    case_page = CaseListPage(driver)
+    case_page.click_show_filters_link()
+    case_page.filter_by_case_reference(context.reference_code)
+    case_page.click_apply_filters_button()
+    assert driver.find_element_by_id(context.case_id).is_displayed()
 
 
 @when("I go to the organisation which submitted the case")  # noqa
