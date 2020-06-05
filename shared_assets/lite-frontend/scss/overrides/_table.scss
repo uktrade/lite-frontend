@@ -76,6 +76,10 @@
 	text-overflow: ellipsis;
 	word-break: break-all;
 	width: 10px;
+
+	@include govuk-media-query($until: tablet) {
+		width: auto;
+	}
 }
 
 .govuk-table__header--tight {
@@ -138,16 +142,23 @@ td {
 			box-shadow: 0 2px 0 0 govuk-colour("mid-grey");
 
 			td {
-				display: flex; // For browsers that don't support flexbox
-				justify-content: space-between;
-				align-items: center;
+				display: flex;
+				justify-content: flex-start;
+				align-items: space-between;
+				flex-direction: column;
 				padding: govuk-spacing(2) govuk-spacing(3)!important;
 				min-height: 30px;
+				border-bottom: none!important;
 
 				.govuk-table__header {
 					display: inline-block;
-					border-bottom: none;
+					border-bottom: none!important;
 					padding: 0;
+					margin-bottom: govuk-spacing(2);
+				}
+
+				.govuk-tag--grey {
+					background: govuk-colour("white");
 				}
 			}
 		}
