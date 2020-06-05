@@ -16,6 +16,18 @@
 							{{ item.description|safe|linebreaksbr }}
 						</p>
 					{% endif %}
+					{% if item.more_information %}
+						<details class="govuk-details govuk-!-margin-left-3" data-module="govuk-details">
+							<summary class="govuk-details__summary">
+								<span class="govuk-details__summary-text">
+									More information <span class="govuk-visually-hidden">about {{ item.value }}</span>
+								</span>
+							</summary>
+							<div class="govuk-details__text">
+								{{ item.more_information }}
+							</div>
+						</details>
+					{% endif %}
 				</div>
 			{% endif %}
             {% if item.components %}

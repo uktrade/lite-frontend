@@ -375,6 +375,7 @@ class Option:
         components=None,
         data_attribute=None,
         classes: Optional[List] = None,
+        more_information: str = None,
     ):
         from lite_forms.helpers import convert_to_markdown
 
@@ -387,6 +388,7 @@ class Option:
         self.components = [component for component in components if component] if components else []
         self.data_attribute = data_attribute
         self.classes = classes
+        self.more_information = more_information
 
 
 class Group:
