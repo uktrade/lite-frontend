@@ -5,6 +5,22 @@
 {% endblock %}
 
 {% block body %}
+	{% if errors %}
+		<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+			<h2 class="govuk-error-summary__title" id="error-summary-title">
+				{% lcs "THERE_IS_A_PROBLEM" %}
+			</h2>
+			<div class="govuk-error-summary__body">
+				<ul class="govuk-list govuk-error-summary__list">
+					<li>
+						{% for error in errors %}
+							<a href="#">{{ error }}</a>
+						{% endfor %}
+					</li>
+				</ul>
+			</div>
+		</div>
+	{% endif %}
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
 			<h1 class="govuk-heading-l">

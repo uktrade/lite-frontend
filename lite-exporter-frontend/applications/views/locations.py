@@ -41,22 +41,26 @@ from lite_content.lite_exporter_frontend.applications import ContractTypes
 from lite_forms.views import SingleFormView, MultiFormView
 
 
+def get_locations_page(request, application_id, **kwargs):
+    application = get_application(request, application_id)
+
+    if not application["goods_locations"]:
+        return redirect(reverse_lazy("applications:edit_location", kwargs={"pk": application_id}))
+
+    context = {
+        "application": application,
+        "is_application_draft_or_major_edit": application["status"]["key"] in [APPLICANT_EDITING, "draft"],
+    }
+
+    if kwargs.get("errors"):
+        context["errors"] = kwargs["errors"]
+
+    return render(request, "applications/goods-locations/goods-locations.html", context,)
+
+
 class GoodsLocation(TemplateView):
     def get(self, request, **kwargs):
-        application_id = str(kwargs["pk"])
-        application = get_application(request, application_id)
-
-        if not application["goods_locations"]:
-            return redirect(reverse_lazy("applications:edit_location", kwargs={"pk": application_id}))
-
-        return render(
-            request,
-            "applications/goods-locations/goods-locations.html",
-            {
-                "application": application,
-                "is_application_draft_or_major_edit": application["status"]["key"] in [APPLICANT_EDITING, "draft"],
-            },
-        )
+        return get_locations_page(request, application_id=kwargs["pk"])
 
 
 class EditGoodsLocation(SingleFormView):
@@ -133,9 +137,17 @@ class RemoveExternalLocation(TemplateView):
     def get(self, request, **kwargs):
         draft_id = str(kwargs["pk"])
         ext_loc_id = str(kwargs["ext_loc_pk"])
-        delete_external_locations_from_draft(request, draft_id, ext_loc_id)
+        data, _ = delete_external_locations_from_draft(request, draft_id, ext_loc_id)
 
-        return redirect(reverse_lazy("applications:location", kwargs={"pk": draft_id}))
+        parameters = {
+            "request": request,
+            "application_id": draft_id,
+        }
+
+        if data.get("errors"):
+            parameters["errors"] = data["errors"]["external_locations"]
+
+        return get_locations_page(**parameters)
 
 
 class AddExistingExternalLocation(SingleFormView):
