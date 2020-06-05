@@ -12,7 +12,13 @@ from lite_forms.components import Option
 
 
 def get_queues(
-    request, disable_pagination=True, page=1, convert_to_options=False, users_team_first=False, include_system=False
+    request,
+    disable_pagination=True,
+    page=1,
+    convert_to_options=False,
+    users_team_first=False,
+    include_system=False,
+    name=None,
 ):
     data = get(request, QUEUES_URL + convert_parameters_to_query_params(locals())).json()
 

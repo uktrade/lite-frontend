@@ -12,6 +12,7 @@ from cases.helpers.helpers import get_updated_cases_banner_queue_id
 from conf.constants import ALL_CASES_QUEUE_ID, Permission
 from core.services import get_user_permissions
 from lite_content.lite_internal_frontend.cases import CasesListPage, UploadEnforcementXML
+from lite_forms.components import TextInput, FiltersBar
 from lite_forms.generators import error_page, form_page
 from lite_forms.views import SingleFormView
 from queues.forms import new_queue_form, edit_queue_form
@@ -74,12 +75,16 @@ class Cases(TemplateView):
 class QueuesList(TemplateView):
     def get(self, request, **kwargs):
         page = request.GET.get("page", 1)
-        queues = get_queues(request, page=page, disable_pagination=False)
+        name = request.GET.get("name")
+        queues = get_queues(request, page=page, disable_pagination=False, name=name)
         user_data, _ = get_gov_user(request, str(request.user.lite_api_user_id))
+
+        filters = FiltersBar([TextInput(name="name", title="name"),])
 
         context = {
             "data": queues,
             "user_data": user_data,
+            "filters": filters,
         }
         return render(request, "queues/manage.html", context)
 

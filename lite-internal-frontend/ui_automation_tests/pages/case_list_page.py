@@ -82,7 +82,7 @@ class CaseListPage(BasePage):
     SLA_ID = "sla"
 
     # Enforcement
-    EXPORT_ENFORCEMENT_XML_BUTTON_ID = "export-xml"
+    EXPORT_ENFORCEMENT_XML_BUTTON_ID = "button-export-xml"
 
     def search_pages_for_id(self, id):
         is_present = len(self.driver.find_elements_by_link_text(id))
