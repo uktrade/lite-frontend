@@ -49,10 +49,26 @@
 }
 
 .lite-expand__control {
-	* {
-		fill: currentColor;
+	color: $govuk-text-colour;
+	display: inline-block;
+	cursor: pointer;
+
+	&:focus {
+		background: $govuk-focus-colour;
+		color: $govuk-focus-text-colour;
+		outline: 3px solid $govuk-focus-colour;
 	}
-	
+
+	svg {
+		display: inline-block;
+		width: 20px;
+		height: 12px;
+
+		* {
+			fill: currentColor;
+		}
+	}
+
 	&--open {
 		transform: scaleY(-1);
 	}
