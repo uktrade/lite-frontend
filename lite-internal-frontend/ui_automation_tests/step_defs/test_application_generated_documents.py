@@ -61,7 +61,7 @@ def generated_document(driver, context):
 def both_generated_documents(driver, context):
     documents = GeneratedDocument(driver).get_documents()
 
-    for document in GeneratedDocument(driver).get_documents():
+    for document in [documents[0], documents[1]]:
         assert context.document_template_name in document.text
         assert "Generated" in document.text
         assert GeneratedDocument(driver).check_download_link_is_present(document)

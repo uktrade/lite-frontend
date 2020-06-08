@@ -21,7 +21,7 @@
 				</div>
 				<div class="app-documents__item-details">
 					<a class="govuk-link--no-visited-state" {% if document.safe == True %}href="{% url 'cases:document' queue.id case.id document.metadata_id %}"{% endif %}>{{ document.name }}</a>
-					<p id="document-type" class="govuk-hint">{% if document.visible_to_exporter %}Visible to exporter - {% endif %}{{ document.type.value }} by {{ document.user.first_name }} {{ document.user.last_name }} at {{ document.created_at|str_date }}</p>
+					<p id="document-type" class="govuk-hint">{% if document.visible_to_exporter %}Visible to exporter - {% endif %}{{ document.type.value }}{% if document.type.value != "Auto Generated" %} by {{ document.user.first_name }} {{ document.user.last_name }}{% endif %} at {{ document.created_at|str_date }}</p>
 					{% if document.description %}
 						<p class="govuk-body">
 							{{ document.description }}
