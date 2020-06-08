@@ -29,12 +29,6 @@ def i_click_add_an_ecju_query(driver):
     EcjuQueriesPages(driver).click_new_query_button()
 
 
-@when("I select standard ECJU Query for my query type")
-def i_select_standard_ecju_query(driver):
-    EcjuQueriesPages(driver).click_standard_ecju_query()
-    functions.click_submit(driver)
-
-
 @when("I enter in my query text")
 def i_enter_text_in_the_question_text_area(driver, context):
     ecju_queries_pages = EcjuQueriesPages(driver)

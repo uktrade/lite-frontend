@@ -12,7 +12,6 @@ Feature: I want to create ECJU queries
     When I go to application previously created
     And I go to the ECJU queries tab
     And I click new query
-    And I select standard ECJU Query for my query type
     And I enter in my query text
     Then the new ECJU Query is visible in the list
     And the ECJU Query creation is visible in the case timeline

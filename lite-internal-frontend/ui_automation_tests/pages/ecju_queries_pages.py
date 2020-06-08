@@ -3,16 +3,12 @@ from shared.BasePage import BasePage
 
 class EcjuQueriesPages(BasePage):
     BUTTON_NEW_QUERY_ID = "button-new-query"
-    RADIO_STANDARD_ECJU_QUERY_ID = "query_type-ecju_query"
     TEXTAREA_QUESTION_ID = "question"
     OPEN_QUERIES_ID = "open-queries"
     CLOSED_QUERIES_ID = "closed-queries"
 
     def enter_question_text(self, text):
         self.driver.find_element_by_id(self.TEXTAREA_QUESTION_ID).send_keys(text)
-
-    def click_standard_ecju_query(self):
-        self.driver.find_element_by_id(self.RADIO_STANDARD_ECJU_QUERY_ID).click()
 
     def click_new_query_button(self):
         self.driver.find_element_by_id(self.BUTTON_NEW_QUERY_ID).click()
