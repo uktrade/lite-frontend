@@ -1,11 +1,14 @@
+from http import HTTPStatus
+
 from core.helpers import convert_parameters_to_query_params
+from lite_content.lite_internal_frontend.picklists import Picklists
 from lite_forms.components import Option
 
 from conf.client import get, post, put
 from conf.constants import PICKLIST_URL
 
 
-def get_picklists_list(request, type, page=1, name=None, disable_pagination=False):
+def get_picklists_list(request, type, page=1, name=None, disable_pagination=False, show_deactivated=True):
     response = get(request, PICKLIST_URL + convert_parameters_to_query_params(locals()))
     return response.json()
 
@@ -43,6 +46,13 @@ def get_picklist_item(request, pk):
 
 
 def put_picklist_item(request, pk, json):
-    data = put(request, PICKLIST_URL + str(pk) + "/", json)
-
+    data = put(request, PICKLIST_URL + str(pk), json)
     return data.json(), data.status_code
+
+
+def set_picklist_item_status(request, pk, json):
+    if "status" not in json:
+        return {"errors": {"response": [Picklists.SELECT_OPTION]}}, HTTPStatus.BAD_REQUEST
+
+    response = put(request, PICKLIST_URL + str(pk), json)
+    return response.json(), response.status_code

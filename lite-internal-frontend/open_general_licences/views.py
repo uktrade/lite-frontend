@@ -136,14 +136,15 @@ class ChangeStatusView(SingleFormView):
             if self.kwargs["status"] == "reactivate"
             else open_general_licences_strings.Deactivate
         )
-        self.success_message = self.strings.SUCCESS_MESSAGE
+        if request.POST.get("response") == "yes":
+            self.success_message = self.strings.SUCCESS_MESSAGE
 
     def get_form(self):
         return confirm_form(
             title=self.strings.TITLE.format(self.object["name"]),
             description=self.strings.DESCRIPTION,
             back_link_text=self.strings.BACK_LINK.format(self.object["name"]),
-            back_url=reverse("open_general_licences:open_general_licence", kwargs={"pk": self.object_pk}),
+            back_url=self.success_url,
             yes_label=self.strings.YES,
             no_label=self.strings.NO,
             side_by_side=True,

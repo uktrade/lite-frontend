@@ -15,15 +15,15 @@ def i_go_to_picklists_tab(driver):
 
 @when("I deactivate my picklist")
 def deactivate_picklist(driver):
-    PicklistPages(driver).click_on_picklist_edit_button()
     PicklistPages(driver).click_on_picklist_deactivate_button()
+    PicklistPages(driver).select_yes_radiobutton()
     Shared(driver).click_submit()
 
 
 @when("I reactivate my picklist")
 def reactivate_picklist(driver):
-    PicklistPages(driver).click_on_picklist_edit_button()
     PicklistPages(driver).click_on_picklist_reactivate_button()
+    PicklistPages(driver).select_yes_radiobutton()
     Shared(driver).click_submit()
 
 

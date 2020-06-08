@@ -14,9 +14,16 @@
 			</h1>
 		</div>
 		<div class="lite-app-bar__controls">
-			<a href="{% url 'picklists:edit' picklist_item.id %}" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
-				Edit item
-			</a>
+			<div class="lite-buttons-row">
+				{% if picklist_item.status.key == 'active' %}
+					{% make_list picklist_item.id 'deactivate' as button_params %}
+					{% govuk_link_button id='deactivate' text='picklists.PicklistItem.DEACTIVATE_BUTTON' url='picklists:change_status' url_param=button_params classes='govuk-button--secondary' %}
+				{% else %}
+					{% make_list picklist_item.id 'reactivate' as button_params %}
+					{% govuk_link_button id='reactivate' text='picklists.PicklistItem.REACTIVATE_BUTTON' url='picklists:change_status' url_param=button_params classes='govuk-button--secondary' %}
+				{% endif %}
+				{% govuk_link_button id='edit' text='picklists.PicklistItem.EDIT_BUTTON' url='picklists:edit' url_param=picklist_item.id classes='govuk-button--secondary' %}
+			</div>
 		</div>
 	</div>
 

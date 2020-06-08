@@ -3,10 +3,10 @@ from shared.BasePage import BasePage
 
 class PicklistPages(BasePage):
     PICKLIST_TAB = '.lite-tabs__tab[href*="picklists"]'  # css
-    PICKLIST_EDIT_BUTTON = '.govuk-button[href*="edit"]'  # css
-    PICKLIST_ADD_BUTTON = '.govuk-button[href*="add"]'  # css
-    PICKLIST_DEACTIVATE_BUTTON = '.govuk-button[href*="deactivate"]'  # css
-    PICKLIST_REACTIVATE_BUTTON = '.govuk-button[href*="reactivate"]'  # css
+    BUTTON_EDIT_ID = "button-edit"
+    BUTTON_ADD_ID = "button-new-picklist-item"
+    BUTTON_DEACTIVATE_ID = "button-deactivate"
+    BUTTON_REACTIVATE_ID = "button-reactivate"
     LINK_PICKLIST_TYPE_SUB_NAV_ID_PREFIX = "link-picklist-"
     PICKLIST_PAGE_BODY = ".govuk-main-wrapper"  # css
     PICKLIST_NAME_FIELD = "name"  # name
@@ -16,24 +16,25 @@ class PicklistPages(BasePage):
     ERRORS = ".govuk-error-summary__list"  # css
     CONTEXT_SUGGESTIONS_OVERLAY = ".tribute-container"  # css
     CONTEXT_SUGGESTION = ".tribute-container .highlight"  # css
+    RADIO_YES_ID = "response-yes"
 
     def click_on_picklist_tab(self):
         self.driver.find_element_by_css_selector(self.PICKLIST_TAB).click()
 
     def click_on_picklist_edit_button(self):
-        self.driver.find_element_by_css_selector(self.PICKLIST_EDIT_BUTTON).click()
+        self.driver.find_element_by_id(self.BUTTON_EDIT_ID).click()
 
     def click_on_picklist_deactivate_button(self):
-        self.driver.find_element_by_css_selector(self.PICKLIST_DEACTIVATE_BUTTON).click()
+        self.driver.find_element_by_id(self.BUTTON_DEACTIVATE_ID).click()
 
     def click_on_picklist_reactivate_button(self):
-        self.driver.find_element_by_css_selector(self.PICKLIST_REACTIVATE_BUTTON).click()
+        self.driver.find_element_by_id(self.BUTTON_REACTIVATE_ID).click()
 
     def click_on_picklist_type_sub_nav(self, type):
         self.driver.find_element_by_id(self.LINK_PICKLIST_TYPE_SUB_NAV_ID_PREFIX + type).click()
 
     def click_on_picklist_add_button(self):
-        self.driver.find_element_by_css_selector(self.PICKLIST_ADD_BUTTON).click()
+        self.driver.find_element_by_id(self.BUTTON_ADD_ID).click()
 
     def get_text_of_picklist_page_body(self):
         return self.driver.find_element_by_css_selector(self.PICKLIST_PAGE_BODY).text
@@ -68,3 +69,6 @@ class PicklistPages(BasePage):
 
     def get_errors(self):
         return self.driver.find_element_by_css_selector(self.ERRORS).text
+
+    def select_yes_radiobutton(self):
+        self.driver.find_element_by_id(self.RADIO_YES_ID).click()

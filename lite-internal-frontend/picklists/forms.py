@@ -3,7 +3,6 @@ from django.urls import reverse_lazy
 from letter_templates.context_variables import get_sample_context_variables
 from lite_content.lite_internal_frontend import picklists
 from lite_forms.components import TextInput, TextArea, Form, Button, MarkdownArea, HiddenField, BackLink, HelpSection
-from lite_forms.helpers import conditional
 from lite_forms.styles import ButtonStyle
 
 
@@ -30,21 +29,6 @@ def add_picklist_item_form(picklist_type):
 
 
 def edit_picklist_item_form(picklist_item):
-    deactivate_button = Button(
-        value="Deactivate",
-        action="",
-        style=ButtonStyle.WARNING,
-        link=reverse_lazy("picklists:deactivate", kwargs={"pk": picklist_item["id"]}),
-        float_right=True,
-    )
-    activate_button = Button(
-        value="Reactivate",
-        action="",
-        style=ButtonStyle.SECONDARY,
-        link=reverse_lazy("picklists:reactivate", kwargs={"pk": picklist_item["id"]}),
-        float_right=True,
-    )
-
     return Form(
         title="Edit " + picklist_item["name"],
         questions=[
@@ -56,10 +40,7 @@ def edit_picklist_item_form(picklist_item):
             "Back to " + picklist_item["name"],
             reverse_lazy("picklists:picklist_item", kwargs={"pk": picklist_item["id"]}),
         ),
-        buttons=[
-            Button("Save", "submit", ButtonStyle.DEFAULT),
-            conditional(picklist_item["status"]["key"] == "deactivated", activate_button, deactivate_button),
-        ],
+        default_button_name="Save",
     )
 
 
