@@ -12,7 +12,7 @@ class DocumentTemplates:
         template_data["layout"] = self.get_layouts()[0]["id"]
         paragraph = seed_picklist.add_letter_paragraph_picklist()
         template_data["letter_paragraphs"] = [paragraph["id"]]
-        template_data["name"] = "0000" + helpers.get_formatted_date_time_m_d_h_s()
+        template_data["name"] = "z" + helpers.get_formatted_date_time_y_m_d_h_s()
         template_data["visible_to_exporter"] = True
         if case_types:
             template_data["case_types"] = case_types

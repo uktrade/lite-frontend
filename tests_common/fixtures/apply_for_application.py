@@ -95,18 +95,18 @@ def add_an_ecju_query(api_test_client, context):
     api_test_client.ecju_queries.add_ecju_query(context.case_id)
 
 
-@fixture(scope="module")
+@fixture(scope="function")
 def apply_for_clc_query(api_test_client, context):
     api_test_client.api_client.auth_exporter_user(api_test_client.context["org_id"])
     api_test_client.goods_queries.add_goods_clc_query(api_test_client.goods)
     context.clc_case_id = api_test_client.context["case_id"]
 
 
-@fixture(scope="module")
+@fixture(scope="function")
 def apply_for_grading_query(api_test_client, context):
     api_test_client.api_client.auth_exporter_user(api_test_client.context["org_id"])
     api_test_client.goods_queries.add_goods_grading_query(api_test_client.goods)
-    context.clc_case_id = api_test_client.context["case_id"]
+    context.pv_case_id = api_test_client.context["case_id"]
 
 
 # The below is currently not used due to bug LT-1808 but willl need to be used for internal HMRC tests when fixed.

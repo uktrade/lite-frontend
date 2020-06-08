@@ -2,11 +2,9 @@ from time import sleep
 
 from ..tools.helpers import page_is_ready
 
-# How many attempts to wait for the function to return True
-timeout_limit = 60
 # How frequently in seconds the function should be checked
 function_retry_interval = 1
-TIMEOUT_LIMIT = 60  # How many attempts to wait for the function to return True
+TIMEOUT_LIMIT = 90  # How many attempts to wait for the function to return True
 FUNCTION_RETRY_INTERVAL = 1  # How frequently in seconds the function should be checked
 
 
