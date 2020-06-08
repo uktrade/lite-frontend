@@ -1,3 +1,4 @@
+from shared import functions, selectors
 from shared.BasePage import BasePage
 from shared.tools.helpers import scroll_to_element_by_id
 
@@ -19,6 +20,8 @@ class Shared(BasePage):
     SNACKBAR_SELECTOR = ".app-snackbar"
     LITE_NOTICE_SELECTOR = ".lite-information-text__text"
     AUDIT_TRAIL_ID = "audit-trail"
+    INPUT_NAME_FILTER_ID = "name"
+    CASES_FORM_ID = "cases-form"
 
     def click_submit(self):
         self.driver.find_element_by_css_selector(self.SUBMIT_BUTTON).click()
@@ -40,6 +43,9 @@ class Shared(BasePage):
 
     def get_text_of_lite_table_body(self):
         return self.driver.find_element_by_css_selector(self.TABLE_BODY_CSS).text
+
+    def get_text_of_cases_form(self):
+        return self.driver.find_element_by_id(self.CASES_FORM_ID).text
 
     def get_links_in_cells_in_table(self):
         return self.driver.find_elements_by_css_selector(self.LINKS_IN_TABLE)
@@ -83,3 +89,16 @@ class Shared(BasePage):
 
     def get_audit_trail_text(self):
         return self.driver.find_element_by_id(self.AUDIT_TRAIL_ID).text
+
+    def go_to_last_page(self):
+        self.driver.set_timeout_to(0)
+        size = len(self.driver.find_elements_by_css_selector(".lite-pagination__list-item"))
+        if size > 0:
+            self.driver.find_elements_by_css_selector(".lite-pagination__list-item")[size - 1].click()
+        self.driver.set_timeout_to_10_seconds()
+
+    def filter_by_name(self, name):
+        functions.try_open_filters(self.driver)
+        self.driver.find_element_by_id(self.INPUT_NAME_FILTER_ID).clear()
+        self.driver.find_element_by_id(self.INPUT_NAME_FILTER_ID).send_keys(name)
+        self.driver.find_element_by_css_selector(selectors.BUTTON_APPLY_FILTERS).click()

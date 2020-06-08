@@ -21,7 +21,7 @@ def create_letter_template(driver, context, get_template_id):
     template_page = LetterTemplates(driver)
     template_page.click_create_a_template()
 
-    context.template_name = "000 Template " + utils.get_formatted_date_time_m_d_h_s()
+    context.template_name = "Template " + utils.get_formatted_date_time_y_m_d_h_s()
     template_page.enter_template_name(context.template_name)
     functions.click_submit(driver)
 
@@ -60,6 +60,7 @@ def picklist_in_template(driver, context):
 
 @then("I see my template in the table")
 def templates_in_table(driver, context):
+    Shared(driver).filter_by_name(context.template_name)
     assert context.template_name in LetterTemplates(driver).get_template_table_text()
 
 

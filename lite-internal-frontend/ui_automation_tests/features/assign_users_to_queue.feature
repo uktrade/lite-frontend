@@ -10,7 +10,7 @@ Feature: I want to assign one or more specific users to a case in a work queue
     Given I sign in to SSO or am signed into SSO
     And I create open application or open application has been previously created
     When I go to queues
-    And I add a new queue called Review
+    And I add a new queue
     And I go to application previously created
     And I add case to newly created queue
     And I go to the internal homepage
@@ -38,7 +38,7 @@ Feature: I want to assign one or more specific users to a case in a work queue
     Given I sign in to SSO or am signed into SSO
     And I create open application or open application has been previously created
     When I go to queues
-    And I add a new queue called Review
+    And I add a new queue
     And I go to application previously created
     And I add case to newly created queue
     And I go to the internal homepage
@@ -51,7 +51,7 @@ Feature: I want to assign one or more specific users to a case in a work queue
   @LT_1295_assign_user_to_case_and_queue @regression
   Scenario: Assign a user via a case
     Given I sign in to SSO or am signed into SSO
-    And a new queue has been created
+    And a queue has been created
     And I create open application or open application has been previously created
     When I go to application previously created
     And I click assign user Button
@@ -65,7 +65,7 @@ Feature: I want to assign one or more specific users to a case in a work queue
   @LT_1264_unassign_user_from_case_on_system_queue @regression
    Scenario: Unassign user from a case when visiting from a system queue
     Given I sign in to SSO or am signed into SSO
-    And a new queue has been created
+    And a queue has been created
     And I create open application or open application has been previously created
     And I am assigned to this case on my new queue
     When I go to application previously created
@@ -78,7 +78,7 @@ Feature: I want to assign one or more specific users to a case in a work queue
   @LT_1264_unassign_user_from_case_on_work_queue @regression
    Scenario: Unassign user from a case when visiting from a work queue
     Given I sign in to SSO or am signed into SSO
-    And a new queue has been created
+    And a queue has been created
     And I create open application or open application has been previously created
     And I am assigned to this case on my new queue
     When I go to my work queue
@@ -90,7 +90,7 @@ Feature: I want to assign one or more specific users to a case in a work queue
   @LT_1264_mark_done_when_not_assigned_from_work_queue @regression
    Scenario: Done on case without being assigned when accessing from a work queue
     Given I sign in to SSO or am signed into SSO
-    And a new queue has been created
+    And a queue has been created
     And I create open application or open application has been previously created
     When I go to application previously created
     And I add case to newly created queue

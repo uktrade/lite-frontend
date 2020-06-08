@@ -44,7 +44,7 @@ def edit_existing_flag(driver, context):
 
 @then("I see the flag in the flag list")
 def i_see_flag_in_list(driver, context):
-    FlagsListPage(driver).filter_by_name(context.flag_name)
+    Shared(driver).filter_by_name(context.flag_name)
     assert context.flag_name in Shared(driver).get_text_of_table()
 
 

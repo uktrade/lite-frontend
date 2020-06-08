@@ -65,11 +65,10 @@ def create_flagging_rule(driver, context, type, condition):
 @when(parsers.parse('I edit my "{type}" flagging rule with condition "{condition}"'))
 def edit_flagging_rule(driver, context, condition):
     flagging_rules_page = FlaggingRulePages(driver)
+    row = driver.find_element_by_id(context.flag_id)
 
     # select edit for my flagging rule
-    utils.find_paginated_item_by_id(context.flag_id, driver).find_element_by_xpath("..").find_element_by_link_text(
-        "Edit"
-    ).click()
+    flagging_rules_page.click_on_edit_for_element(row)
 
     if type == "Case":
         flagging_rules_page.select_case_type(condition)
@@ -83,7 +82,7 @@ def edit_flagging_rule(driver, context, condition):
 
 @then(parsers.parse('I see the flagging rule in the list as "{status}"'))
 def create_flagging_rule(driver, context, status):
-    assert status in utils.find_paginated_item_by_id(context.flag_id, driver).find_element_by_xpath("..").text
+    assert status in driver.find_element_by_id(context.flag_id).text
 
 
 @when("I deactivate all my new flagging rules")
@@ -101,6 +100,6 @@ def add_all_flags(api_test_client, context):
     levels = ["Case", "Good", "Destination"]
     flags = {}
     for level in levels:
-        flag = api_test_client.flags.add_flag(level + utils.get_formatted_date_time_m_d_h_s(), level)
+        flag = api_test_client.flags.add_flag(level + utils.get_formatted_date_time_y_m_d_h_s(), level)
         flags[level] = {"id": flag["id"], "name": flag["name"]}
     context.flags = flags

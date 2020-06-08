@@ -8,7 +8,7 @@ Feature: I want to define new work queues and the teams they belong to
   Scenario: Add and edit a queue
     Given I sign in to SSO or am signed into SSO
     When I go to queues
-    And I add a new queue called Review
+    And I add a new queue
     Then I see my queue
     When I edit the new queue
     Then I see my queue
@@ -20,7 +20,7 @@ Feature: I want to define new work queues and the teams they belong to
     Given I sign in to SSO or am signed into SSO
     And I create open application or open application has been previously created
     When I go to queues
-    And I add a new queue called Review
+    And I add a new queue
     And I go to application previously created
     And I add case to newly created queue
     Then I see at least "1" queue checkboxes selected

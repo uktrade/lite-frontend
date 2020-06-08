@@ -26,3 +26,13 @@ Feature: I want to add case-level flags to a case and view them
     And I see added flags to case
     When I go to application previously created
     Then I see added flags to case in case view
+    #rollback
+    When I go to application previously created
+    And I click edit flags on the first good
+    And I deselect a "Good" flag
+    And I click edit flags link
+    And I deselect a "Case" flag
+    And I click edit flags on the first destination
+    And I deselect a "Destination" flag
+    And I go to application previously created
+    And I go to the organisation which submitted the case

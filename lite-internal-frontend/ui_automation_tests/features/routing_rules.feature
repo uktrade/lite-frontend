@@ -6,7 +6,7 @@ Feature: I want to have cases be automatically routed to relevant work queues an
   @LT_1063_create @regression
   Scenario: Create routing rule
     Given I sign in to SSO or am signed into SSO
-    And a new queue has been created
+    And a queue has been created
     When I add a flag at level Case
     And I go to routing rules list
     And I add a routing rule of tier "5", a status of "Submitted", my queue, and all additional rules for my team
@@ -20,7 +20,7 @@ Feature: I want to have cases be automatically routed to relevant work queues an
    Scenario: Routing rule automation
     Given I sign in to SSO or am signed into SSO
     And an Exhibition Clearance is created
-    And a new queue has been created
+    And a queue has been created
     When I go to routing rules list
     And I add a routing rule of tier "1", a status of "Submitted", my queue, and no additional rules for my team
     And I go to application previously created

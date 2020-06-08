@@ -1,7 +1,5 @@
 from shared.BasePage import BasePage
 
-from ui_automation_tests.shared.tools.helpers import paginated_item_exists
-
 
 class OrganisationPage(BasePage):
 
@@ -21,7 +19,6 @@ class OrganisationPage(BasePage):
 
     def get_organisation_row(self, organisation_id=None):
         if organisation_id:
-            paginated_item_exists(organisation_id, self.driver)
             row = self.driver.find_element_by_id(organisation_id)
         else:
             row = self.driver.find_element_by_css_selector(".govuk-table__body .govuk-table__row")

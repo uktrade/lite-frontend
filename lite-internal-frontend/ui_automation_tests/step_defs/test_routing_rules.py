@@ -2,6 +2,7 @@ from pytest_bdd import when, then, scenarios, parsers
 import ui_automation_tests.shared.tools.helpers as utils
 from conf.constants import SystemTeamsID
 from pages.case_page import CasePage
+from shared import selectors
 
 from ui_automation_tests.pages.application_page import ApplicationPage
 from ui_automation_tests.pages.routing_rules_pages import RoutingRulesPage
@@ -17,7 +18,8 @@ def go_to_routing_rules(driver, sso_sign_in, internal_url):
 
 @then("I see the routing rule in the rule list")
 def see_flag_in_list(driver, context):
-    assert utils.find_paginated_item_by_id(context.queue_id, driver)
+    RoutingRulesPage(driver).filter_by_queue_name(context.queue_name)
+    assert driver.find_element_by_id(context.queue_id).is_displayed()
 
 
 @when(
@@ -67,6 +69,7 @@ def create_routing_rule(driver, context, tier, case_status):
 @when(parsers.parse('I edit my routing rule with tier "{tier}", a status of "{case_status}", and no additional rules'))
 def edit_flagging_rule(driver, context, tier, case_status):
     routing_rules_page = RoutingRulesPage(driver)
+    routing_rules_page.filter_by_queue_name(context.queue_name)
     routing_rules_page.edit_row_by_queue_id(context.queue_id)
 
     routing_rules_page.initial_details_form(
@@ -77,7 +80,9 @@ def edit_flagging_rule(driver, context, tier, case_status):
 
 @then(parsers.parse('I see the routing rule in the list as "{status}" and tier "{tier}"'))
 def routing_rule_status(driver, context, status, tier):
-    text = RoutingRulesPage(driver).find_row_by_queue_id(context.queue_id).text
+    routing_rules_page = RoutingRulesPage(driver)
+    routing_rules_page.filter_by_queue_name(context.queue_name)
+    text = routing_rules_page.find_row_by_queue_id(context.queue_id).text
     assert status in text
     assert tier in text
 
@@ -85,7 +90,7 @@ def routing_rule_status(driver, context, status, tier):
 @when("I deactivate my routing rule")
 def deactivate_rule(driver, context):
     routing_rules_page = RoutingRulesPage(driver)
-
+    routing_rules_page.filter_by_queue_name(context.queue_name)
     row = routing_rules_page.find_row_by_queue_id(context.queue_id)
     routing_rules_page.click_on_deactivate_rule(row)
     routing_rules_page.click_confirm_deactivate_activate()

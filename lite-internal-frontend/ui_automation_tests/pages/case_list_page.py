@@ -100,18 +100,12 @@ class CaseListPage(BasePage):
                 is_present = len(self.driver.find_elements_by_link_text(id))
 
     def click_on_case_checkbox(self, case_id):
-        self.driver.set_timeout_to(1)
-        self.search_pages_for_id(case_id)
-        self.driver.set_timeout_to_10_seconds()
         self.driver.find_element_by_css_selector(self.CHECKBOX_CASE + case_id + "']").click()
 
     def click_on_assign_users_button(self):
         self.driver.find_element_by_id(self.BUTTON_ASSIGN_USERS).click()
 
     def get_text_of_assignees(self, driver, case_id):
-        self.driver.set_timeout_to(1)
-        self.search_pages_for_id(case_id)
-        self.driver.set_timeout_to_10_seconds()
         elements = Shared(driver).get_rows_in_lite_table()
         no = utils.get_element_index_by_text(elements, case_id)
         return elements[no].text

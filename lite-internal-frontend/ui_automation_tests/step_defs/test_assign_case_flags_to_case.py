@@ -67,7 +67,7 @@ def get_all_flags(api_test_client, context):
     for level in levels:
         flag = get_flag_of_level(all_flags, level)
         if not flag:
-            flag = api_test_client.flags.add_flag(level + utils.get_formatted_date_time_m_d_h_s(), level)
+            flag = api_test_client.flags.add_flag(level + utils.get_formatted_date_time_y_m_d_h_s(), level)
         flags[level] = {"id": flag["id"], "name": flag["name"]}
     context.flags = flags
 
@@ -75,4 +75,10 @@ def get_all_flags(api_test_client, context):
 @when(parsers.parse('I select a "{level}" flag'))  # noqa
 def assign_flags_to_case(driver, context, level):  # noqa
     CaseFlagsPages(driver).select_flag(context.flags[level]["name"])
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I deselect a "{level}" flag'))  # noqa
+def assign_flags_to_case(driver, context, level):  # noqa
+    CaseFlagsPages(driver).deselect_flag(context.flags[level]["name"])
     functions.click_submit(driver)

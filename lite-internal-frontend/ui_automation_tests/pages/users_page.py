@@ -1,7 +1,7 @@
 from selenium.webdriver.support.ui import Select
 
+from shared import functions, selectors
 from ui_automation_tests.shared.BasePage import BasePage
-import ui_automation_tests.shared.tools.helpers as utils
 
 
 class UsersPage(BasePage):
@@ -16,6 +16,8 @@ class UsersPage(BasePage):
     BUTTON_REACTIVATE_USER_ID = "button-reactivate-user"
     DEACTIVATE_ARE_YOU_SURE_BUTTON_ID = "deactivated_button"
     REACTIVATE_ARE_YOU_SURE_BUTTON_ID = "reactivated_button"
+    INPUT_EMAIL_FILTER_ID = "email"
+    LINK_ID = "link-"
 
     def click_add_a_user_button(self):
         self.driver.find_element_by_id(self.BUTTON_ADD_USER_ID).click()
@@ -55,7 +57,15 @@ class UsersPage(BasePage):
         self.driver.find_element_by_id(self.REACTIVATE_ARE_YOU_SURE_BUTTON_ID).click()
 
     def go_to_user_page(self, context):
+        self.filter_by_email(context.added_email)
         element_id = "link-" + context.added_email
-        utils.find_paginated_item_by_id(element_id, self.driver)
-        utils.scroll_to_element_by_id(self.driver, element_id)
         self.driver.find_element_by_id(element_id).click()
+
+    def filter_by_email(self, name):
+        functions.try_open_filters(self.driver)
+        self.driver.find_element_by_id(self.INPUT_EMAIL_FILTER_ID).clear()
+        self.driver.find_element_by_id(self.INPUT_EMAIL_FILTER_ID).send_keys(name)
+        self.driver.find_element_by_css_selector(selectors.BUTTON_APPLY_FILTERS).click()
+
+    def is_user_email_displayed(self, email):
+        return self.driver.find_element_by_id(self.LINK_ID + email).is_displayed()

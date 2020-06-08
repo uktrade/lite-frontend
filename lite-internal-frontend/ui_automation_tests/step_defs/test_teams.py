@@ -15,7 +15,6 @@ def go_to_teams(driver, sso_sign_in, internal_url):
 
 @when("I click on the team BlueOcean")
 def click_on_my_team(driver, context):
-    utils.find_paginated_item_by_link_text(context.team_name, driver)
     driver.find_element_by_link_text(context.team_name).click()
 
 
@@ -35,8 +34,7 @@ def select_team_and_default_queue(driver):
 
 @when("I click edit for my user")
 def click_edit_for_my_user(driver, internal_info):
-    utils.find_paginated_item_by_id("link-" + internal_info["email"], driver)
-    driver.find_element_by_id("link-" + internal_info["email"]).click()
+    driver.find_element_by_id("link-profile").click()
     driver.find_element_by_id("link-edit-team").click()
 
 
@@ -45,7 +43,7 @@ def add_a_team_blue_ocean(driver, context):
     teams_pages = TeamsPages(driver)
     shared = Shared(driver)
     teams_pages.click_add_a_team_button()
-    context.team_name = "BlueOcean" + str(utils.get_unformatted_date_time())
+    context.team_name = "BlueOcean" + str(utils.get_formatted_date_time_y_m_d_h_s())
     teams_pages.enter_team_name(context.team_name)
     shared.click_submit()
 
@@ -70,10 +68,7 @@ def see_team_in_list(driver, context):
 @then(parsers.parse('I see my teams user list with user "{added_not_added}"'))
 def see_team_user_added(driver, added_not_added, context, internal_info):
     if added_not_added == "added":
-        utils.find_paginated_item_by_id(internal_info["email"], driver)
         table = Shared(driver).get_text_of_lite_table_body()
-        # Test commented out until bug LT-2136 is fixed
-        # assert internal_info["name"] in table, "User is not displayed in team list"
         assert internal_info["email"] in table, "User is not displayed in team list"
         assert "Active" in table, "User is not displayed in team list"
     elif added_not_added == "not added":

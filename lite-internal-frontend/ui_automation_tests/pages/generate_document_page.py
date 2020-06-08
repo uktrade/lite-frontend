@@ -1,5 +1,5 @@
+from pages.shared import Shared
 from ui_automation_tests.shared.BasePage import BasePage
-from ui_automation_tests.shared.tools.helpers import find_paginated_item_by_id
 
 
 class GeneratedDocument(BasePage):
@@ -18,7 +18,8 @@ class GeneratedDocument(BasePage):
         return self.get_documents()[0]
 
     def click_letter_template(self, document_template_name):
-        find_paginated_item_by_id(document_template_name, self.driver).click()
+        Shared(self.driver).go_to_last_page()
+        self.driver.find_element_by_id(document_template_name).click()
 
     def preview_is_shown(self):
         return self.driver.find_element_by_id(self.PREVIEW).is_displayed()

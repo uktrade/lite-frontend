@@ -9,7 +9,6 @@ Feature: I want to test users
     And I show filters
     And I change the user filter to "Active"
     Then I see new user
-
     When I deactivate new user
     And I show filters
     And I change the user filter to "Active"

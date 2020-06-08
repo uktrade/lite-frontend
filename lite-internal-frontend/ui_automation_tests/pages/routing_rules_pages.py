@@ -1,8 +1,9 @@
 from selenium.webdriver.support.select import Select
+
+from shared import selectors
 from shared.BasePage import BasePage
 
 from ui_automation_tests.shared import functions
-import shared.tools.helpers as utils
 
 
 class RoutingRulesPage(BasePage):
@@ -90,10 +91,15 @@ class RoutingRulesPage(BasePage):
 
     def find_row_by_queue_id(self, queue_id):
         # the queue_id is assigned to a td, and we need the tr, so xpath is used to get the parent element.
-        return utils.find_paginated_item_by_id(queue_id, self.driver).find_element_by_xpath("..")
+        return self.driver.find_element_by_id(queue_id).find_element_by_xpath("..")
 
     def edit_row_by_queue_id(self, queue_id):
         self.find_row_by_queue_id(queue_id).find_element_by_id(self.EDIT_ROUTING_RULE_BUTTON_ID).click()
 
     def select_team(self, team_id):
         self.driver.find_element_by_id(self.TEAM_ID_PREFIX + team_id).click()
+
+    def filter_by_queue_name(self, queue_name):
+        functions.try_open_filters(self.driver)
+        self.driver.find_element_by_id("queue").send_keys(queue_name)
+        self.driver.find_element_by_css_selector(selectors.BUTTON_APPLY_FILTERS).click()
