@@ -38,7 +38,7 @@ class PickTemplateView(TemplateView):
         params = {"case": pk, "page": page}
         if self.decision:
             params["decision"] = kwargs.get("decision_key")
-        templates, _ = get_letter_templates(request, convert_dict_to_query_params(params))
+        templates, _ = get_letter_templates(request, "?" + convert_dict_to_query_params(params))
         back_link = BackLink(url=reverse_lazy(self.back_url, kwargs={"queue_pk": kwargs["queue_pk"], "pk": pk}))
         return form_page(
             request,
