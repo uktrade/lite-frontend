@@ -101,5 +101,5 @@ class RoutingRulesPage(BasePage):
 
     def filter_by_queue_name(self, queue_name):
         functions.try_open_filters(self.driver)
-        self.driver.find_element_by_id("queue").send_keys(queue_name)
+        functions.send_keys_to_autocomplete(self.driver, "queue", queue_name)
         self.driver.find_element_by_css_selector(selectors.BUTTON_APPLY_FILTERS).click()

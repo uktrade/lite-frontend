@@ -66,8 +66,6 @@ class OrganisationList(TemplateView):
 
         context = {
             "data": organisations,
-            "page": params.pop("page"),
-            "params_str": convert_dict_to_query_params(params),
             "filters": filters,
             "search_term": params.get("search_term", ""),
             "tab": params.get("status"),

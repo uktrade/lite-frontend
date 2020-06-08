@@ -1,5 +1,6 @@
 from pytest_bdd import when, then, scenarios, given, parsers
 
+from pages.application_page import ApplicationPage
 from pages.goods_queries_pages import GoodsQueriesPages
 from pages.shared import Shared
 
@@ -26,6 +27,11 @@ def click_on_created_application(driver, context, internal_url):
     driver.get(internal_url.rstrip("/") + "/queues/00000000-0000-0000-0000-000000000001/cases/" + context.clc_case_id)
 
 
+@when("I go to pv goods query previously created")  # noqa
+def click_on_created_application(driver, context, internal_url):
+    driver.get(internal_url.rstrip("/") + "/queues/00000000-0000-0000-0000-000000000001/cases/" + context.pv_case_id)
+
+
 @given("I create a grading query")  # noqa
 def create_grading_query(driver, apply_for_grading_query, context):
     pass
@@ -43,3 +49,12 @@ def enter_response(driver, prefix, grading, suffix, comment):  # noqa
     clc_query_page.enter_a_suffix(suffix)
     clc_query_page.enter_a_comment(comment)
     Shared(driver).click_submit()
+
+
+@then("the status has been changed in the pv query")  # noqa
+def audit_trail_updated(driver, context, internal_info, internal_url):  # noqa
+    ApplicationPage(driver).go_to_cases_activity_tab_for_pv(internal_url, context)
+
+    assert (
+        context.status.lower() in Shared(driver).get_audit_trail_text().lower()
+    ), "status has not been shown as approved in audit trail"

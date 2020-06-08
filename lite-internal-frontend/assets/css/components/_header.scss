@@ -10,6 +10,10 @@ $header-link-active-colour: $govuk-focus-colour;
 	display: grid;
 	grid-template-columns: auto 1fr auto auto auto auto auto;
 	grid-gap: govuk-spacing(4);
+
+	@include govuk-media-query($until: tablet) {
+		grid-gap: govuk-spacing(3);
+	}
 }
 
 .app-header__link {
@@ -25,6 +29,10 @@ $header-link-active-colour: $govuk-focus-colour;
 	min-height: 50px;
 	z-index: 0;
 	cursor: pointer;
+
+	@include govuk-media-query($until: tablet) {
+		@include govuk-font($size: 19);
+	}
 
 	&::before {
 		content: "";
@@ -94,6 +102,12 @@ $header-link-active-colour: $govuk-focus-colour;
 			width: 32px;
 			height: 32px;
 			margin-right: govuk-spacing(3);
+		}
+
+		@include govuk-media-query($until: tablet) {
+			svg {
+				margin-right: 0;
+			}
 		}
 	}
 

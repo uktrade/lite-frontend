@@ -62,7 +62,9 @@
 		<div class="app-header__container govuk-width-container">
 			<a class="app-header__link" href="{% url 'core:index' %}" data-tooltip="Go home">
 				{% svg 'crest' %}
-				Licensing for International Trade and Enterprise <span class="govuk-tag govuk-!-margin-left-3">Alpha</span>
+				<span class="lite-mobile-hide">
+					Licensing for International Trade and Enterprise <span class="govuk-tag govuk-!-margin-left-3">Alpha</span>
+				</span>
 			</a>
 			<span></span>
 			<a id="link-sign-out" class="app-header__link" href="{% url 'auth:logout' %}" data-tooltip="Sign out of LITE">

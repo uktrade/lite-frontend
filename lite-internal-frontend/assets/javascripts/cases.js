@@ -25,6 +25,5 @@ function toggleTableFold() {
 	}
 
 	updateTableFoldControl();
-
 	return false;
 }

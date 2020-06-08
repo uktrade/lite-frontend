@@ -80,6 +80,7 @@ def add_flag_form():
                     Option(True, CreateFlagForm.BlocksApproval.YES),
                     Option(False, CreateFlagForm.BlocksApproval.NO),
                 ],
+                classes=["govuk-radios--inline"],
             ),
         ],
         default_button_name=CreateFlagForm.SUBMIT_BUTTON,

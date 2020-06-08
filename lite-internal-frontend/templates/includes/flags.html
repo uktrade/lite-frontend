@@ -1,4 +1,4 @@
-{% if flags or show_change_link %}
+{% if flags %}
 	<ul class="app-flags {% if list %}app-flags--list{% endif %} {{ classes }}">
 		{% for flag in flags %}
 			<li data-label="{{ flag.label }}" class="app-flag {% if flag.label %}app-flag--label{% endif %} app-flag--{{ flag.colour }}"><span class="govuk-visually-hidden">{{ flag.label }}</span> {{ flag.name }}</li>

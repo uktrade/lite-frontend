@@ -8,6 +8,7 @@ from lite_content.lite_internal_frontend import strings, open_general_licences
 from lite_content.lite_internal_frontend.flags import FlagsList
 from lite_content.lite_internal_frontend.organisations import OrganisationsPage
 from lite_content.lite_internal_frontend.queues import QueuesList
+from lite_content.lite_internal_frontend.teams import TeamsPage
 from lite_content.lite_internal_frontend.users import UsersPage
 from lite_forms.helpers import conditional
 from queues.services import get_queue
@@ -49,7 +50,7 @@ def lite_menu(request):
                 "icon": "menu/businesses",
                 "notifications": notification_data.get("organisations"),
             },
-            {"title": "Teams", "url": reverse_lazy("teams:teams"), "icon": "menu/teams"},
+            {"title": TeamsPage.TITLE, "url": reverse_lazy("teams:teams"), "icon": "menu/teams"},
             {"title": "My Team", "url": reverse_lazy("teams:team"), "icon": "menu/teams"},
             {"title": QueuesList.TITLE, "url": reverse_lazy("queues:manage"), "icon": "menu/queues"},
             {"title": UsersPage.TITLE, "url": reverse_lazy("users:users"), "icon": "menu/users"},

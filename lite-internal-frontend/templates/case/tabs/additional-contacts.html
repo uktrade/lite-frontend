@@ -1,5 +1,7 @@
-{% make_list queue.id case.id as button_params %}
-{% govuk_link_button id='add-a-contact' text='cases.CasePage.AdditionalContactsTab.ADD_A_CONTACT_BUTTON' url='cases:add_additional_contact' url_param=button_params %}
+<div class="lite-buttons-row">
+	{% make_list queue.id case.id as button_params %}
+	{% govuk_link_button id='add-a-contact' text='cases.CasePage.AdditionalContactsTab.ADD_A_CONTACT_BUTTON' url='cases:add_additional_contact' url_param=button_params %}
+</div>
 
 {% if additional_contacts %}
 	<table id="table-additional-contacts" class="govuk-table">
