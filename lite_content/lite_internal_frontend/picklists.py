@@ -1,6 +1,13 @@
 class Picklists:
     ADD_BUTTON = "Add an item"
     ITEMS_COUNT = "item in total/items in total"
+    SELECT_OPTION = "Select an option"
+
+
+class PicklistItem:
+    EDIT_BUTTON = "Edit item"
+    DEACTIVATE_BUTTON = "Deactivate item"
+    REACTIVATE_BUTTON = "Reactivate item"
 
 
 class PicklistPicker:
@@ -25,6 +32,30 @@ class NewPicklistForm:
 
     class Text:
         TITLE = "Text"
+
+
+class EditPicklistItemForm:
+    SUCCESS_MESSAGE = "Picklist item updated successfully"
+
+
+class ReactivatePicklistItem:
+    TITLE = "Are you sure you want to reactivate {}?"
+    DESCRIPTION = "This will allow internal users to use this picklist item. You can change this in the future"
+    BACK_LINK = "Back to {}"
+    YES = "Yes"
+    NO = "No"
+    SUBMIT_BUTTON = "Submit"
+    SUCCESS_MESSAGE = "Picklist item reactivated successfully"
+
+
+class DeactivatePicklistItem:
+    TITLE = "Are you sure you want to deactivate {}?"
+    DESCRIPTION = "This will prevent internal users from using this picklist item. You can change this in the future"
+    BACK_LINK = "Back to {}"
+    YES = "Yes"
+    NO = "No"
+    SUBMIT_BUTTON = "Submit"
+    SUCCESS_MESSAGE = "Picklist item deactivated successfully"
 
 
 class PicklistCategory:
