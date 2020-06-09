@@ -8,13 +8,20 @@
 	{{ queue.name }}
 {% endblock %}
 
-{% block body %}
+{% block messages %}
+	{{ block.super }}
+	
 	{% if updated_cases_banner_queue_id %}
-		<a id="exporter-amendments-banner" class="lite-info-bar lite-info-bar--link lite-info-bar--no-animation" href="{% url 'queues:cases' updated_cases_banner_queue_id %}">
-			{% lcs 'cases.CasesListPage.EXPORTER_AMENDMENTS_BANNER' %}
+		<a id="banner-exporter-amendments" class="govuk-width-container app-snackbar app-snackbar--no-animation" href="{% url 'queues:cases' updated_cases_banner_queue_id %}">
+			<div class="app-snackbar__content">
+				<div class="app-snackbar__icon"></div>
+				{% lcs 'cases.CasesListPage.EXPORTER_AMENDMENTS_BANNER' %}
+			</div>
 		</a>
 	{% endif %}
+{% endblock %}
 
+{% block body %}
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
 			<a tabindex="0" id="link-queue" href="{% url 'queues:manage' %}" class="app-dropdown__heading">

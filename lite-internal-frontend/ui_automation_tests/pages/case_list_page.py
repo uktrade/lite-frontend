@@ -76,7 +76,7 @@ class CaseListPage(BasePage):
     ]
 
     # Notification for updated cases
-    EXPORTER_AMENDMENTS_BANNER = "exporter-amendments-banner"  # ID
+    BANNER_EXPORTER_AMENDMENTS_ID = "banner-exporter-amendments"
 
     # SLA
     SLA_ID = "sla"
@@ -166,7 +166,7 @@ class CaseListPage(BasePage):
         Select(self.driver.find_element_by_id(self.CASE_TYPE_DROPDOWN)).select_by_visible_text(status)
 
     def click_on_exporter_amendments_banner(self):
-        self.driver.find_element_by_id(self.EXPORTER_AMENDMENTS_BANNER).click()
+        self.driver.find_element_by_id(self.BANNER_EXPORTER_AMENDMENTS_ID).click()
 
     def enter_assigned_user_filter_text(self, text):
         self.driver.find_element_by_id(self.INPUT_ASSIGNED_USER_ID).send_keys(text)

@@ -1,5 +1,6 @@
 .app-snackbar {
 	@include govuk-font($size: 19, $weight: bold);
+	display: block;
 	position: relative;
 	background-color: govuk-colour("blue");
 	color: govuk-colour("white");
@@ -13,6 +14,12 @@
 		animation-duration: 0.3s;
 		animation-fill-mode: both;
 		transform-origin: 50% 0;
+	}
+
+	&--no-animation {
+		.app-snackbar__content {
+			animation-duration: 0s;
+		}
 	}
 
 	&__icon {
