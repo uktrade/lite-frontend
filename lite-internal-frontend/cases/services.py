@@ -1,5 +1,4 @@
 from _decimal import Decimal
-from urllib.parse import quote
 
 from cases.objects import Case
 from conf.client import post, get, put, delete
@@ -35,9 +34,11 @@ from conf.constants import (
     DECISIONS_URL,
     FINALISE_CASE_URL,
     QUEUES_URL,
+    APPLICANT_URL,
 )
 from core.helpers import convert_parameters_to_query_params
 from flags.enums import FlagStatus
+
 
 # Case types
 def get_case_types(request, type_only=True):
@@ -324,9 +325,9 @@ def post_generated_document(request, pk, json):
     return data.status_code
 
 
-def get_generated_document_preview(request, pk, tpk, text):
-    text = quote(text)
-    data = get(request, CASE_URL + pk + GENERATED_DOCUMENTS_PREVIEW_URL + "?template=" + tpk + "&text=" + text)
+def get_generated_document_preview(request, pk, template, text, addressee):
+    params = convert_parameters_to_query_params(locals())
+    data = get(request, CASE_URL + pk + GENERATED_DOCUMENTS_PREVIEW_URL + params)
     return data.json(), data.status_code
 
 
@@ -348,6 +349,11 @@ def put_case_officer(request, pk, json):
 def delete_case_officer(request, pk, *args):
     data = delete(request, CASE_URL + str(pk) + CASE_OFFICER_URL)
     return data.json(), data.status_code
+
+
+def get_case_applicant(request, pk):
+    response = get(request, CASE_URL + str(pk) + APPLICANT_URL)
+    return response.json()
 
 
 def get_case_additional_contacts(request, pk):

@@ -4,7 +4,7 @@
 	<a id="button-attach-document" role="button" draggable="false" class="govuk-button" href="{% url 'cases:attach_documents' queue.id case.id %}">
 		{% lcs 'cases.CasePage.DocumentsTab.ATTACH_DOCUMENT_BUTTON' %}
 	</a>
-	<a id="button-generate-document" role="button" draggable="false" class="govuk-button" href="{% url 'cases:generate_document' queue.id case.id %}?return_to={{ CURRENT_PATH }}">
+	<a id="button-generate-document" role="button" draggable="false" class="govuk-button" href="{% url 'cases:generate_document' queue.id case.id %}">
 		{% lcs 'cases.CasePage.DocumentsTab.GENERATE_DOCUMENT_BUTTON' %}
 	</a>
 </div>

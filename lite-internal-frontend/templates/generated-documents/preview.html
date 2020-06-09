@@ -14,6 +14,7 @@
 				{% endif %}
 				{% csrf_token %}
 				<input name="text" type="hidden" value="{{ text }}">
+				<input name="addressee" type="hidden" value="{{ addressee }}">
 				<button class="govuk-button" type="submit">{% lcs 'letter_templates.LetterTemplatesPage.PickTemplate.BUTTON' %}</button>
 				</form>
 			</div>

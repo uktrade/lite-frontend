@@ -1,5 +1,6 @@
 from pages.shared import Shared
 from ui_automation_tests.shared.BasePage import BasePage
+from ui_automation_tests.shared.tools.helpers import find_paginated_item_by_id
 
 
 class GeneratedDocument(BasePage):
@@ -10,6 +11,7 @@ class GeneratedDocument(BasePage):
     PARAGRAPH_CHECKBOXES = ".govuk-checkboxes__input"  # CSS
     LINK_REGENERATE_ID = "regenerate"
     DOCUMENT_CLASS = "app-documents__item"
+    ADDRESSEE_PARTIAL_ID = "addressee-"
 
     def get_documents(self):
         return self.driver.find_elements_by_class_name(self.DOCUMENT_CLASS)
@@ -21,10 +23,16 @@ class GeneratedDocument(BasePage):
         Shared(self.driver).go_to_last_page()
         self.driver.find_element_by_id(document_template_name).click()
 
+    def select_addressee(self, id):
+        find_paginated_item_by_id(self.ADDRESSEE_PARTIAL_ID + id, self.driver).click()
+
     def preview_is_shown(self):
         return self.driver.find_element_by_id(self.PREVIEW).is_displayed()
 
-    def get_document_text_in_preview(self):
+    def get_document_preview_text(self):
+        return self.driver.find_element_by_id(self.PREVIEW).text
+
+    def get_document_paragraph_text_in_preview(self):
         return self.driver.find_element_by_id(self.PARAGRAPHS).text
 
     def check_download_link_is_present(self, document):

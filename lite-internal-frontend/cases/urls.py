@@ -23,14 +23,9 @@ urlpatterns = [
     path("finalise/", advice.Finalise.as_view(), name="finalise"),
     path("finalise/generate-documents/", advice.FinaliseGenerateDocuments.as_view(), name="finalise_documents"),
     path(
-        "finalise/<str:decision_key>/generate-document/select-template/",
-        generate_document.SelectTemplateFinalAdvice.as_view(),
+        "finalise/<str:decision_key>/generate-document/",
+        generate_document.GenerateDecisionDocument.as_view(),
         name="finalise_document_template",
-    ),
-    path(
-        "finalise/<str:decision_key>/generate-document/<uuid:tpk>/edit/",
-        generate_document.EditTextFinalAdvice.as_view(),
-        name="finalise_document_edit_text",
     ),
     path(
         "finalise/<str:decision_key>/generate-document/<uuid:tpk>/preview/",
@@ -48,12 +43,7 @@ urlpatterns = [
         "respond-to-pv-grading-query/", goods_query.RespondPVGradingQuery.as_view(), name="respond_to_pv_grading_query",
     ),
     path("review-goods/", goods.ReviewGoods.as_view(), name="review_goods"),
-    path("generate-document/", generate_document.SelectTemplate.as_view(), name="generate_document"),
-    path(
-        "generate-document/<uuid:tpk>/edit/",
-        generate_document.EditDocumentText.as_view(),
-        name="generate_document_edit",
-    ),
+    path("generate-document/", generate_document.GenerateDocument.as_view(), name="generate_document"),
     path(
         "generate-document/<uuid:dpk>/",
         generate_document.RegenerateExistingDocument.as_view(),

@@ -68,6 +68,7 @@ FINALISE_CASE_URL = "/finalise/"
 ROUTING_RULES_URL = "/routing-rules/"
 ROUTING_RULES_STATUS_URL = "/status/"
 ENFORCEMENT_URL = CASE_URL + "enforcement-check/"
+APPLICANT_URL = "/applicant/"
 
 # Static URLs
 STATIC_URL = "/static/"
