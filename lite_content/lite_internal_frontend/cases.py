@@ -342,6 +342,16 @@ class GenerateDocumentsPage:
     class SelectTemplateForm:
         BACK_LINK = "Back to case documents"
 
+    class AddresseeForm:
+        TITLE = "Select Addressee"
+        DESCRIPTION = ""
+
+        class Table:
+            NAME_COLUMN = "Name"
+            ADDRESS_COLUMN = "Address"
+            EMAIL_COLUMN = "Email"
+            PHONE_COLUMN = "Phone number"
+
     class EditTextForm:
         HEADING = "Edit text"
         BACK_LINK = "Back to templates"
