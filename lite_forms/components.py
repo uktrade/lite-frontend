@@ -338,10 +338,8 @@ class RadioButtonsImage(RadioButtons):
         optional: bool = False,
         classes: Optional[List] = None,
         empty_notice: str = "No items",
-        total_pages: int = 1,
     ):
         super().__init__(name, options, title, description, accessible_description, optional, classes, empty_notice)
-        self.total_pages = total_pages
         self.input_type = "radiobuttons_image"
 
 
