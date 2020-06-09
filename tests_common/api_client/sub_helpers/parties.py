@@ -38,3 +38,11 @@ class Parties:
             name="Party document",
             description="Test party document",
         )
+
+    def add_additional_contact(self, draft_id, data):
+        return self.api_client.make_request(
+            method="POST",
+            url=f"/cases/{draft_id}/additional-contacts/",
+            headers=self.api_client.gov_headers,
+            body=data,
+        ).json()

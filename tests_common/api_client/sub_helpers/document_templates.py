@@ -9,7 +9,7 @@ class DocumentTemplates:
 
     def add_template(self, seed_picklist, advice_type=None, case_types=None):
         template_data = self.api_client.request_data["document_template"]
-        template_data["layout"] = self.get_layouts()[0]["id"]
+        template_data["layout"] = "00000000-0000-0000-0000-000000000004"
         paragraph = seed_picklist.add_letter_paragraph_picklist()
         template_data["letter_paragraphs"] = [paragraph["id"]]
         template_data["name"] = "z" + helpers.get_formatted_date_time_y_m_d_h_s()
