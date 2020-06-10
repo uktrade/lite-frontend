@@ -6,7 +6,7 @@ scenarios("../features/edit_trade_control_application.feature", strict_gherkin=F
 
 
 @given("I create a trade control application via api")  # noqa
-def trade_control_application_exists(apply_for_trade_control_application):  # noqa
+def trade_control_application_exists(apply_for_standard_trade_control_application):  # noqa
     pass
 
 
