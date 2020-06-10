@@ -104,3 +104,8 @@ def i_see_my_queue_in_queues_to_the_case_on_page(driver, context):
 @when("I filter by my routing rule queue")
 def filter_by_routing_rule_queue(driver, context):
     RoutingRulesPage(driver).filter_by_queue_name(context.queue_name)
+
+
+@when("I add a flag at level Case")  # noqa
+def add_a_case_flag(driver, add_case_flag):  # noqa
+    pass

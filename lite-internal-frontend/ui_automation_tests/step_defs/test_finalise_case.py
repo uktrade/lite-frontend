@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pytest_bdd import scenarios, when, then, parsers
+from pytest_bdd import scenarios, when, then, parsers, given
 
 from conf.constants import DATE_FORMAT
 from pages.case_page import CasePage, CaseTabs
@@ -62,3 +62,22 @@ def applied_for_goods_details(driver, context):
     )
     context.licence_duration = page.get_duration_in_finalise_view()
     context.licence_start_date = datetime.now().strftime(DATE_FORMAT)
+
+
+@given("A template exists for the appropriate decision")  # noqa
+def template_with_decision(context, api_test_client):  # noqa
+    document_template = api_test_client.document_templates.add_template(
+        api_test_client.picklists, advice_type=[context.advice_type]
+    )
+    context.document_template_id = document_template["id"]
+    context.document_template_name = document_template["name"]
+
+
+@when("I go to the team advice page by url")  # noqa
+def final_advice_page(driver, context, internal_url):  # noqa
+    driver.get(
+        internal_url.rstrip("/")
+        + "/queues/00000000-0000-0000-0000-000000000001/cases/"
+        + context.case_id
+        + "/team-advice/"
+    )

@@ -2,11 +2,9 @@ import os
 from django.conf import settings
 from pytest_bdd import given, when, then, parsers
 
-from pages.advice import UserAdvicePage, FinalAdvicePage, TeamAdvicePage
+from pages.advice import FinalAdvicePage, TeamAdvicePage
 from pages.case_page import CasePage, CaseTabs
-from pages.goods_queries_pages import GoodsQueriesPages  # noqa
-from pages.organisation_page import OrganisationPage
-from shared import functions
+from pages.goods_queries_pages import GoodsQueriesPages
 
 from ui_automation_tests.fixtures.env import environment  # noqa
 from ui_automation_tests.fixtures.add_a_flag import (  # noqa
@@ -42,7 +40,6 @@ from ui_automation_tests.shared.fixtures.core import (  # noqa
 from ui_automation_tests.shared.fixtures.urls import internal_url, sso_sign_in_url, api_url  # noqa
 
 import shared.tools.helpers as utils
-from pages.assign_flags_to_case import CaseFlagsPages
 from pages.shared import Shared
 from pages.case_list_page import CaseListPage
 from pages.application_page import ApplicationPage
@@ -105,11 +102,6 @@ def pytest_exception_interact(node, report):
             pass
 
 
-@when("I go to the case")  # noqa
-def i_go_to_the_case(driver, context, internal_url):  # noqa
-    driver.get(internal_url.rstrip("/") + "/queues/00000000-0000-0000-0000-000000000001/cases/" + context.case_id)
-
-
 @when("I go to the internal homepage")  # noqa
 def when_go_to_internal_homepage(driver, internal_url):  # noqa
     driver.get(internal_url)
@@ -130,11 +122,6 @@ def click_on_created_application(driver, context, internal_url):  # noqa
     driver.get(internal_url.rstrip("/") + "/queues/00000000-0000-0000-0000-000000000001/cases/" + context.case_id)
 
 
-@when("I go to open application previously created")  # noqa
-def click_on_created_application(driver, context, internal_url):  # noqa
-    driver.get(internal_url.rstrip("/") + "/queues/00000000-0000-0000-0000-000000000001/cases/" + context.case_id)
-
-
 @given("I create standard application or standard application has been previously created")  # noqa
 def create_app(driver, apply_for_standard_application):  # noqa
     pass
@@ -148,11 +135,6 @@ def create_open_app(driver, apply_for_open_application):  # noqa
 @when("I click continue")  # noqa
 def i_click_continue(driver):  # noqa
     Shared(driver).click_submit()
-
-
-@when("I go to flags")  # noqa
-def go_to_flags(driver, internal_url):  # noqa
-    driver.get(internal_url.rstrip("/") + "/flags/")
 
 
 @when("I click change status")  # noqa
@@ -177,11 +159,6 @@ def queue_shown_in_dropdown(driver, context):  # noqa
     CaseListPage(driver).click_on_queue_name(context.queue_name)
 
 
-@when(parsers.parse('I click on the "{queue_name}" queue in dropdown'))  # noqa
-def system_queue_shown_in_dropdown(driver, queue_name):  # noqa
-    CaseListPage(driver).click_on_queue_name(queue_name)
-
-
 @when("I go to queues")  # noqa
 def go_to_queues(driver, internal_url):  # noqa
     driver.get(internal_url.rstrip("/") + "/queues/manage/")
@@ -195,23 +172,9 @@ def move_case_to_new_queue(driver, context):  # noqa
     Shared(driver).click_submit()
 
 
-@when("I select a previously created flag")  # noqa
-def assign_flags_to_case(driver, context):  # noqa
-    CaseFlagsPages(driver).select_flag(context.flag_name)
-    functions.click_submit(driver)
-
-
 @given("I create report summary picklist")  # noqa
 def add_report_summary_picklist(add_a_report_summary_picklist):  # noqa
     pass
-
-
-@then("I see the added flags on the queue")  # noqa
-def added_flags_on_queue(driver, context):  # noqa
-    case_row = driver.find_element_by_id(context.case_id)
-    if "(3 of " in case_row.text:
-        ApplicationPage(driver).click_expand_flags(context.case_id)
-    assert context.flag_name in case_row.text
 
 
 @then("I see previously created application")  # noqa
@@ -221,16 +184,6 @@ def see_queue_in_queue_list(driver, context):  # noqa
     case_page.filter_by_case_reference(context.reference_code)
     case_page.click_apply_filters_button()
     assert driver.find_element_by_id(context.case_id).is_displayed()
-
-
-@when("I go to the organisation which submitted the case")  # noqa
-def go_to_the_organisation_which_submitted_the_case(driver):  # noqa
-    ApplicationPage(driver).go_to_organisation()
-
-
-@when("I click the edit flags link")  # noqa
-def go_to_edit_flags(driver):  # noqa
-    OrganisationPage(driver).click_edit_organisation_flags()
 
 
 @when("I show filters")  # noqa
@@ -243,51 +196,9 @@ def go_to_users(driver, sso_sign_in, internal_url):  # noqa
     driver.get(internal_url.rstrip("/") + "/users/")
 
 
-@when(  # noqa
-    parsers.parse('I respond "{controlled}", "{control_list_entry}", "{report}", "{comment}" and click submit')  # noqa
-)  # noqa
-def enter_response(driver, controlled, control_list_entry, report, comment):  # noqa
-    clc_query_page = GoodsQueriesPages(driver)
-    clc_query_page.click_is_good_controlled(controlled)
-    clc_query_page.type_in_to_control_list_entry(control_list_entry)
-    clc_query_page.choose_report_summary()
-    clc_query_page.enter_a_comment(controlled)
-    Shared(driver).click_submit()
-
-
-@then("the status has been changed in the application")  # noqa
-def audit_trail_updated(driver, context, internal_info, internal_url):  # noqa
-    ApplicationPage(driver).go_to_cases_activity_tab(internal_url, context)
-
-    assert (
-        context.status.lower() in Shared(driver).get_audit_trail_text().lower()
-    ), "status has not been shown as approved in audit trail"
-
-
-@then("the status has been changed in the clc query")  # noqa
-def audit_trail_updated(driver, context, internal_info, internal_url):  # noqa
-    ApplicationPage(driver).go_to_cases_activity_tab_for_clc(internal_url, context)
-
-    assert (
-        context.status.lower() in Shared(driver).get_audit_trail_text().lower()
-    ), "status has not been shown as approved in audit trail"
-
-
 @given("I create a clc query")  # noqa
 def create_clc_query(driver, apply_for_clc_query, context):  # noqa
     pass
-
-
-@when(parsers.parse('filter status has been changed to "{status}"'))  # noqa
-def filter_status_change(driver, context, status):  # noqa
-    CaseListPage(driver).select_filter_status_from_dropdown(status)
-    CaseListPage(driver).click_apply_filters_button()
-
-
-@when(parsers.parse('I change the user filter to "{status}"'))  # noqa
-def filter_status_change(driver, context, status):  # noqa
-    CaseListPage(driver).select_filter_user_status_from_dropdown(status)
-    CaseListPage(driver).click_apply_filters_button()
 
 
 @when("I go to the case list page")  # noqa
@@ -321,11 +232,6 @@ def an_exhibition_clearance_is_created(driver, apply_for_exhibition_clearance): 
     pass
 
 
-@when("I combine all user advice")  # noqa
-def combine_all_advice(driver):  # noqa
-    UserAdvicePage(driver).click_combine_advice()
-
-
 @when("I combine all team advice")  # noqa
 def combine_all_advice(driver):  # noqa
     TeamAdvicePage(driver).click_combine_advice()
@@ -346,33 +252,6 @@ def selected_created_template(driver, context):  # noqa
 @when("I go to the documents tab")  # noqa
 def click_documents(driver):  # noqa
     CasePage(driver).change_tab(CaseTabs.DOCUMENTS)
-
-
-@when("I add a flag at level Case")  # noqa
-def add_a_case_flag(driver, add_case_flag):  # noqa
-    pass
-
-
-@when("I add a flag at level Good")  # noqa
-def add_a_flag(driver, add_good_flag):  # noqa
-    pass
-
-
-@when("I add a flag at level Destination")  # noqa
-def add_a_flag(driver, add_destination_flag):  # noqa
-    pass
-
-
-@when("I add a flag at level Organisation")  # noqa
-def add_a_flag(driver, add_organisation_flag):  # noqa
-    pass
-
-
-@given("a new countersigning queue has been created")  # noqa
-def create_countersigning_queue(context, api_test_client):  # noqa
-    api_test_client.queues.add_queue("countersigningqueue" + get_formatted_date_time_y_m_d_h_s())
-    context.countersigning_queue_name = api_test_client.context["queue_name"]
-    context.countersigning_queue_id = api_test_client.context["queue_id"]
 
 
 @when("I click I'm done")  # noqa
@@ -431,35 +310,6 @@ def approve_application_objects(context, api_test_client, decision):  # noqa
     api_test_client.cases.create_team_advice(context.case_id, data)
 
 
-@given("A template exists for the appropriate decision")  # noqa
-def template_with_decision(context, api_test_client):  # noqa
-    document_template = api_test_client.document_templates.add_template(
-        api_test_client.picklists, advice_type=[context.advice_type]
-    )
-    context.document_template_id = document_template["id"]
-    context.document_template_name = document_template["name"]
-
-
-@when("I go to the team advice page by url")  # noqa
-def final_advice_page(driver, context, internal_url):  # noqa
-    driver.get(
-        internal_url.rstrip("/")
-        + "/queues/00000000-0000-0000-0000-000000000001/cases/"
-        + context.case_id
-        + "/team-advice/"
-    )
-
-
-@when("I go to the user advice page by url")  # noqa
-def final_advice_page(driver, context, internal_url):  # noqa
-    driver.get(
-        internal_url.rstrip("/")
-        + "/queues/00000000-0000-0000-0000-000000000001/cases/"
-        + context.case_id
-        + "/user-advice/"
-    )
-
-
 @when("I go to the final advice page by url")  # noqa
 def final_advice_page(driver, context, internal_url):  # noqa
     driver.get(
@@ -473,13 +323,6 @@ def final_advice_page(driver, context, internal_url):  # noqa
 @when("I click edit flags link")  # noqa
 def click_edit_case_flags_link(driver):  # noqa
     CasePage(driver).click_change_case_flags()
-
-
-@then("The previously created flag is assigned to the case")  # noqa
-def assert_flag_is_assigned(driver, context):  # noqa
-    assert CasePage(driver).is_flag_in_applied_flags_list(context.flag_name), (
-        "Flag " + context.flag_name + " is not applied to the case"
-    )
 
 
 @given(parsers.parse('the status is set to "{status}"'))  # noqa
@@ -508,3 +351,18 @@ def generated_document(driver, context):  # noqa
 
     assert "Application Form" in latest_document.text
     assert GeneratedDocument(driver).check_download_link_is_present(latest_document)
+
+
+@when(
+    parsers.parse('I respond "{controlled}", "{control_list_entry}", "{report}", "{comment}" and click submit')
+)  # noqa
+def click_continue(driver, controlled, control_list_entry, report, comment, context):  # noqa
+    query_page = GoodsQueriesPages(driver)
+    query_page.click_is_good_controlled(controlled)
+    query_page.type_in_to_control_list_entry(control_list_entry)
+    context.goods_control_list_entry = control_list_entry
+    query_page.choose_report_summary()
+    context.report = report
+    query_page.enter_a_comment(comment)
+    context.comment = comment
+    Shared(driver).click_submit()

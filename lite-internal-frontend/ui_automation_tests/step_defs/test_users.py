@@ -1,7 +1,8 @@
 from faker import Faker
-from pytest_bdd import scenarios, when, then, given
+from pytest_bdd import scenarios, when, then, given, parsers
 from selenium.common.exceptions import NoSuchElementException
 
+from pages.case_list_page import CaseListPage
 from pages.users_page import UsersPage
 
 from ui_automation_tests.shared import functions
@@ -78,3 +79,9 @@ def go_to_users(driver, sso_sign_in, internal_url):  # noqa
 @then("the user's profile is updated")
 def users_profile_is_updated(driver, context):
     assert driver.find_element_by_tag_name("h1").text == context.added_email
+
+
+@when(parsers.parse('I change the user filter to "{status}"'))  # noqa
+def filter_status_change(driver, context, status):  # noqa
+    CaseListPage(driver).select_filter_user_status_from_dropdown(status)
+    CaseListPage(driver).click_apply_filters_button()

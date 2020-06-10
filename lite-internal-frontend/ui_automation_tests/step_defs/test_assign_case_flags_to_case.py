@@ -5,6 +5,7 @@ from pages.application_page import ApplicationPage
 from pages.assign_flags_to_case import CaseFlagsPages
 from pages.case_page import CasePage
 import shared.tools.helpers as utils
+from pages.organisation_page import OrganisationPage
 from pages.shared import Shared
 from shared import functions
 
@@ -83,3 +84,13 @@ def assign_flags_to_case(driver, context, level):  # noqa
 def assign_flags_to_case(driver, context, level):  # noqa
     CaseFlagsPages(driver).deselect_flag(context.flags[level]["name"])
     functions.click_submit(driver)
+
+
+@when("I go to the organisation which submitted the case")  # noqa
+def go_to_the_organisation_which_submitted_the_case(driver):  # noqa
+    ApplicationPage(driver).go_to_organisation()
+
+
+@when("I click the edit flags link")  # noqa
+def go_to_edit_flags(driver):  # noqa
+    OrganisationPage(driver).click_edit_organisation_flags()

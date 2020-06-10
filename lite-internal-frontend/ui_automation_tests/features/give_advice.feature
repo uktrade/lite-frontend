@@ -61,7 +61,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I create a proviso picklist
     And I create a standard advice picklist
     And the status is set to "submitted"
-    When I go to open application previously created
+    When I go to application previously created
     And I click on the user advice tab
     And I select all items in the user advice view
     And I choose to 'approve' the licence

@@ -191,3 +191,8 @@ def select_all_items_in_group(driver, group):
 @when("I click give advice")
 def click_give_advice(driver):
     UserAdvicePage(driver).click_give_advice()
+
+
+@when("I combine all user advice")  # noqa
+def combine_all_advice(driver):  # noqa
+    UserAdvicePage(driver).click_combine_advice()

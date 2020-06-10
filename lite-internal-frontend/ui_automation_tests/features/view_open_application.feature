@@ -8,7 +8,7 @@ Feature: View an Open Applications
     When I go to the case list page
     Then I should see my case in the cases list
     And I should see my case SLA
-    When I go to the case
+    When I go to application previously created
     Then I see the case page
     When I go to the activity tab
     When filter user_type has been changed to "Exporter"

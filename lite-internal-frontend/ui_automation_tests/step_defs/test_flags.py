@@ -3,6 +3,8 @@ from pytest_bdd import when, then, scenarios, parsers
 import shared.tools.helpers as utils
 from pages.add_edit_flag import AddEditFlagPage
 from pages.advice import FinalAdvicePage
+from pages.assign_flags_to_case import CaseFlagsPages
+from pages.case_page import CasePage
 from pages.flags_list_page import FlagsListPage
 from pages.shared import Shared
 from shared import functions
@@ -70,3 +72,21 @@ def cannot_finalise_blocking_flag(driver, context):
     final_advice = FinalAdvicePage(driver)
     assert not final_advice.can_finalise()
     assert context.flag_name in final_advice.get_blocking_flags_text()
+
+
+@when("I go to flags")  # noqa
+def go_to_flags(driver, internal_url):  # noqa
+    driver.get(internal_url.rstrip("/") + "/flags/")
+
+
+@when("I select a previously created flag")  # noqa
+def assign_flags_to_case(driver, context):  # noqa
+    CaseFlagsPages(driver).select_flag(context.flag_name)
+    functions.click_submit(driver)
+
+
+@then("The previously created flag is assigned to the case")  # noqa
+def assert_flag_is_assigned(driver, context):  # noqa
+    assert CasePage(driver).is_flag_in_applied_flags_list(context.flag_name), (
+        "Flag " + context.flag_name + " is not applied to the case"
+    )

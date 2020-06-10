@@ -1,6 +1,7 @@
-from pytest_bdd import when, then, parsers, scenarios
+from pytest_bdd import when, then, parsers, scenarios, given
 import shared.tools.helpers as utils
 from pages.application_page import ApplicationPage
+from pages.case_list_page import CaseListPage
 from pages.queues_pages import QueuesPages
 from pages.shared import Shared
 
@@ -76,3 +77,15 @@ def queue_change_in_audit(driver, context, internal_url):
 @when("I go to application previously created for my queue")
 def go_to_case_for_queue(driver, context, internal_url):
     driver.get(internal_url.rstrip("/") + "/queues/" + context.queue_id + "/cases/" + context.case_id)
+
+
+@when(parsers.parse('I click on the "{queue_name}" queue in dropdown'))  # noqa
+def system_queue_shown_in_dropdown(driver, queue_name):  # noqa
+    CaseListPage(driver).click_on_queue_name(queue_name)
+
+
+@given("a new countersigning queue has been created")  # noqa
+def create_countersigning_queue(context, api_test_client):  # noqa
+    api_test_client.queues.add_queue("countersigningqueue" + utils.get_formatted_date_time_y_m_d_h_s())
+    context.countersigning_queue_name = api_test_client.context["queue_name"]
+    context.countersigning_queue_id = api_test_client.context["queue_id"]
