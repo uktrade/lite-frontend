@@ -96,6 +96,7 @@ class CaseDetail(CaseView):
             Slices.LOCATIONS,
             Slices.SUPPORTING_DOCUMENTS,
         ]
+        self.additional_context = get_advice_additional_context(self.request, self.case, self.permissions)
 
     def get_exhibition_clearance_application(self):
         self.tabs = [Tabs.ADVICE]
@@ -110,6 +111,7 @@ class CaseDetail(CaseView):
     def get_gifting_clearance_application(self):
         self.tabs = [Tabs.ADVICE]
         self.slices = [Slices.GOODS, Slices.DESTINATIONS, Slices.LOCATIONS, Slices.SUPPORTING_DOCUMENTS]
+        self.additional_context = get_advice_additional_context(self.request, self.case, self.permissions)
 
     def get_f680_clearance_application(self):
         self.tabs = [Tabs.ADVICE]
@@ -120,6 +122,7 @@ class CaseDetail(CaseView):
             Slices.END_USE_DETAILS,
             Slices.SUPPORTING_DOCUMENTS,
         ]
+        self.additional_context = get_advice_additional_context(self.request, self.case, self.permissions)
 
     def get_end_user_advisory_query(self):
         self.slices = [Slices.END_USER_DETAILS]
