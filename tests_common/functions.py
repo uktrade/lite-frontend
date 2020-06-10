@@ -5,7 +5,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from .tools.utils import set_timeout_to, set_timeout_to_10_seconds
+from .tools.utils import set_timeout_to
 
 
 def click_submit(driver: WebDriver, button_value="submit"):
@@ -27,7 +27,7 @@ def click_back_link(driver: WebDriver):
 def element_with_css_selector_exists(driver: WebDriver, css_selector: str) -> bool:
     set_timeout_to(driver, 0)
     return_value = len(driver.find_elements_by_css_selector(css_selector)) != 0
-    set_timeout_to_10_seconds(driver)
+    set_timeout_to(driver, 10)
     return return_value
 
 
