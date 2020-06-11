@@ -1,6 +1,4 @@
-.lite-panel--confirmation {
-	color: govuk-colour("white");
-	background: $govuk-brand-colour;
+.govuk-panel {
 	padding: govuk-spacing(6);
 	text-align: left;
 
@@ -9,8 +7,12 @@
 	}
 
 	.govuk-panel__body {
-		@include govuk-font($size: 24);
+		@include govuk-font($size: 24, $line-height: 1.66);
 	}
+}
+
+.lite-panel--confirmation {
+	background: govuk-colour("blue");
 
 	.lite-panel__status {
 		display: grid;
@@ -69,7 +71,7 @@
 		width: 100%;
 		opacity: 1;
 	}
-	
+
 	100% {
 		width: 100%;
 		opacity: 0;
