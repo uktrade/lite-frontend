@@ -59,6 +59,18 @@
 	display: none;
 }
 
+@include govuk-media-query($until: tablet) {
+	.lite-mobile-hide {
+		display: none;
+	}
+}
+
+@media (max-width: 1100px) {
+	.lite-tablet-hide {
+		display: none;
+	}
+}
+
 .lite-\!-text-decoration-none {
 	text-decoration: none;
 }

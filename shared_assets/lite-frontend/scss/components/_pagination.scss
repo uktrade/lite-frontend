@@ -1,9 +1,9 @@
 $item-size: govuk-spacing(7);
 
 .lite-pagination__container {
-	display: grid;
-	grid-template-columns: auto 1fr auto;
-	grid-gap: govuk-spacing(6);
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
 }
 
 .lite-pagination__navigation-link {
@@ -23,8 +23,10 @@ $item-size: govuk-spacing(7);
 	}
 
 	svg {
-		width: 20px;
-		height: 20px;
+		min-width: 20px;
+		min-height: 20px;
+		max-width: 20px;
+		max-height: 20px;
 		color: inherit;
 
 		* {
@@ -55,10 +57,15 @@ $item-size: govuk-spacing(7);
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	flex-wrap: wrap;
 	margin: 0;
 	padding: 0;
 	list-style-type: none;
 	margin-right: govuk-spacing(6);  // Visually center the list
+
+	@include govuk-media-query($until: tablet) {
+		display: none;
+	}
 }
 
 .lite-pagination__list-item {
