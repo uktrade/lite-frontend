@@ -62,7 +62,7 @@
 					</div>
 				{% endif %}
 
-				{% if existing.licences %}
+				{% if existing.licences or existing.nlrs %}
 					{# View and manage licences tile #}
 					<div class="app-tile">
 						<a href="{% url 'licences:licences' %}" role="button" draggable="false" class="app-tile__link app-tile__heading" id="link-licences">

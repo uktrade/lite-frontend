@@ -46,7 +46,7 @@ def get_applications(request, page: int = 1, submitted: bool = True):
     return data.json()
 
 
-def has_existing_applications_and_licences(request):
+def has_existing_applications_and_licences_and_nlrs(request):
     """
     Returns if an hmrc org has any submitted queries
     Returns if a standard org has any applications & licences

@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView
 
-from applications.services import has_existing_applications_and_licences
+from applications.services import has_existing_applications_and_licences_and_nlrs
 from auth.services import authenticate_exporter_user
 from conf.constants import NEWLINE
 from core.forms import (
@@ -43,7 +43,7 @@ class Home(TemplateView):
 
         organisation = get_organisation(request, str(request.user.organisation))
         notifications, _ = get_notifications(request)
-        existing = has_existing_applications_and_licences(request)
+        existing = has_existing_applications_and_licences_and_nlrs(request)
 
         context = {
             "organisation": organisation,

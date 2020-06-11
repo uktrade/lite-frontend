@@ -22,10 +22,8 @@
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" scope="col">{% lcs "licences.LicencesList.Table.APPLICATION_COLUMN" %}</th>
-					<th class="govuk-table__header" scope="col">{% lcs "licences.LicencesList.Table.LICENCE_COLUMN" %}</th>
 					<th class="govuk-table__header govuk-!-width-one-third" scope="col">{% lcs "licences.LicencesList.Table.GOODS_COLUMN" %}</th>
 					<th class="govuk-table__header govuk-!-width-one-third" scope="col">{% lcs "licences.LicencesList.Table.DESTINATION_COLUMN" %}</th>
-					<th class="govuk-table__header" scope="col">{% lcs "licences.LicencesList.Table.STATUS_COLUMN" %}</th>
 					<th class="govuk-table__header" scope="col">{% lcs "licences.LicencesList.Table.DOCUMENTS_COLUMN" %}</th>
 					<th class="govuk-table__header" scope="col"></th>
 				</tr>
@@ -37,34 +35,28 @@
 							<span class="govuk-table__header" aria-hidden="true">
 								{% lcs "licences.LicencesList.Table.APPLICATION_COLUMN" %}
 							</span>
-							<a href="{% url 'applications:application' licence.application.id %}?return_to={% url 'licences:licences' %}" class="govuk-link govuk-link--no-visited-state">{{ licence.application.name|abbreviate_string:40 }}</a>
-						</td>
-						<td class="govuk-table__cell">
-							<span class="govuk-table__header" aria-hidden="true">
-								{% lcs "licences.LicencesList.Table.LICENCE_COLUMN" %}
-							</span>
-							<a href="{% url 'licences:licence' licence.id %}" id="view-{{ licence.id }}" class="govuk-link govuk-link--no-visited-state">{{ licence.application.reference_code }}</a>
+							<a href="{% url 'applications:application' licence.case_id %}?return_to={% url 'licences:licences' %}" class="govuk-link govuk-link--no-visited-state">{{ licence.case_reference|abbreviate_string:40 }}</a>
 						</td>
 						<td class="govuk-table__cell">
 							<span class="govuk-table__header" aria-hidden="true">
 								{% lcs "licences.LicencesList.Table.GOODS_COLUMN" %}
 							</span>
-							{% for good in licence.application.goods|slice:":3" %}
+							{% for good in licence.goods|slice:":3" %}
 								<div class="app-expanded-row__item--invert">
 									{% if good.good %}
 										{{ forloop.counter }}. {% include 'includes/control-list-entries.html' with control_list_entries=good.good.control_list_entries %}: {{ good.good.description|abbreviate_string:30 }}
 									{% else %}
 										{{ forloop.counter }}. {% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}: {{ good.description|abbreviate_string:30 }}
 									{% endif %}
-									{% if licence.application.goods|length > row_limit and forloop.counter == row_limit %}
+									{% if licence.goods|length > row_limit and forloop.counter == row_limit %}
 										<br>
 										<span class="govuk-hint govuk-!-margin-0">
-											({{ row_limit }} of {{ licence.application.goods|length }})
+											({{ row_limit }} of {{ licence.goods|length }})
 										</span>
 									{% endif %}
 								</div>
 							{% endfor %}
-							{% for good in licence.application.goods %}
+							{% for good in licence.goods %}
 								<div class="app-expanded-row__item">
 									{% if good.good %}
 										{{ forloop.counter }}. {% include 'includes/control-list-entries.html' with control_list_entries=good.good.control_list_entries %}: {{ good.good.description }}
@@ -78,37 +70,29 @@
 							<span class="govuk-table__header" aria-hidden="true">
 								{% lcs "licences.LicencesList.Table.DESTINATION_COLUMN" %}
 							</span>
-							{% for destination in licence.application.destinations|slice:":3" %}
+							{% for destination in licence.destinations|slice:":3" %}
 								<div class="app-expanded-row__item--invert">
-									{{ destination.country.name }}{% if destination.name %} - {{ destination.name|abbreviate_string:10 }}{% endif %}
-									{% if licence.application.destinations|length > row_limit and forloop.counter == row_limit %}
+									{{ destination.country_name }}{% if destination.party_name %} - {{ destination.party_name }}{% endif %}
+									{% if licence.destinations|length > row_limit and forloop.counter == row_limit %}
 										<br>
 										<span class="govuk-hint govuk-!-margin-0">
-											({{ row_limit }} of {{ licence.application.destinations|length }})
+											({{ row_limit }} of {{ licence.destinations|length }})
 										</span>
 									{% endif %}
 								</div>
 							{% endfor %}
-							{% for destination in licence.application.destinations %}
+							{% for destination in licence.destinations %}
 								<div class="app-expanded-row__item">
-									{{ destination.country.name }}{% if destination.name %} - {{ destination.name }}{% endif %}
+									{{ destination.country_name }}{% if destination.party_name %} - {{ destination.party_name }}{% endif %}
 								</div>
 							{% endfor %}
-						</td>
-						<td class="govuk-table__cell">
-							<span class="govuk-table__header" aria-hidden="true">
-								{% lcs "licences.LicencesList.Table.STATUS_COLUMN" %}
-							</span>
-							{{ licence.application.status.value }}
 						</td>
 						<td class="govuk-table__cell">
 							<span class="govuk-table__header" aria-hidden="true">
 								{% lcs "licences.LicencesList.Table.DOCUMENTS_COLUMN" %}
 							</span>
-							{% for document in licence.application.documents %}
-								<span class="govuk-visually-hidden">{% lcs "licences.LicencesList.DOWNLOAD_HIDDEN_TEXT" %}</span>
-								<a href="{% url 'applications:download_generated_document' document.id licence.application.id %}" class="govuk-link govuk-link--no-visited-state" id="document-download">{{ document.advice_type.value }}.pdf</a>
-							{% endfor %}
+							<span class="govuk-visually-hidden">{% lcs "licences.LicencesList.DOWNLOAD_HIDDEN_TEXT" %}</span>
+							<a href="{% url 'applications:download_generated_document' licence.id licence.case_id %}" class="govuk-link govuk-link--no-visited-state" id="document-download">{{ licence.advice_type }}.pdf</a>
 						</td>
 						<td>
 							<a id="expand-{{ licence.id }}" class="lite-accordian-table__chevron">

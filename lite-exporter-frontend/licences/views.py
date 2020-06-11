@@ -4,16 +4,18 @@ from django.http import Http404
 from django.shortcuts import render
 from django.views.generic import TemplateView
 
+from conf.constants import LicenceType
 from core.services import get_control_list_entries, get_countries
 from licences.services import get_licences, get_licence
 from lite_content.lite_exporter_frontend.licences import LicencesList, LicencePage
 from lite_forms.components import FiltersBar, TextInput, HiddenField, Select, Checkboxes, Option
 from lite_forms.generators import error_page
+from lite_forms.helpers import conditional
 
 
 class Licences(TemplateView):
     def get(self, request, **kwargs):
-        page = int(request.GET.get("page", 1))
+        page_no = int(request.GET.get("page", 1))
         licence_type = request.GET.get("licence_type")
 
         licences = get_licences(request, **request.GET)
@@ -32,23 +34,32 @@ class Licences(TemplateView):
                     options=get_countries(request, convert_to_options=True),
                 ),
                 TextInput(name="end_user", title=LicencesList.Filters.DESTINATION_NAME,),
-                Checkboxes(
-                    name="active_only",
-                    options=[Option(key=True, value=LicencesList.Filters.ACTIVE)],
-                    classes=["govuk-checkboxes--small"],
+                conditional(
+                    licence_type != LicenceType.NLR,
+                    Checkboxes(
+                        name="active_only",
+                        options=[Option(key=True, value=LicencesList.Filters.ACTIVE)],
+                        classes=["govuk-checkboxes--small"],
+                    ),
                 ),
                 HiddenField(name="licence_type", value=licence_type),
-                HiddenField(name="page", value=page),
+                HiddenField(name="page", value=page_no),
             ]
         )
 
         context = {
             "licences": licences,
-            "page": page,
+            "page": page_no,
             "filters": filters,
             "row_limit": 3,
         }
-        return render(request, "licences/licences.html", context)
+
+        if licence_type == LicenceType.NLR:
+            page = "licences/nlrs.html"
+        else:
+            page = "licences/licences.html"
+
+        return render(request, page, context)
 
 
 class Licence(TemplateView):

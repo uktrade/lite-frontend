@@ -48,6 +48,18 @@ def clearances_tab(driver):
     LicencesPage(driver).click_clearances_tab()
 
 
+@when("I click on the NLR tab")
+def nlrs_tab(driver):
+    LicencesPage(driver).click_nlr_tab()
+
+
+@then("I see my nlr document")
+def nlr_document_visible(context, driver):
+    find_paginated_item_by_id(LicencesPage.LICENCE_ROW_PARTIAL_ID + context.generated_document, driver)
+    row = LicencesPage(driver).licence_row_properties(context.generated_document)
+    assert context.reference_code in row
+
+
 @then("I see my exhibition licence")
 def exhibition_licence_row(context, driver):
     find_paginated_item_by_id(LicencesPage.LICENCE_ROW_PARTIAL_ID + context.licence, driver)
