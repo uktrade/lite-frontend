@@ -133,6 +133,7 @@ td {
 		tr {
 			display: block;
 			margin-bottom: govuk-spacing(3) + 2px;
+			padding: govuk-spacing(3);
 
 			&:last-child {
 				margin-bottom: 0;
@@ -141,12 +142,12 @@ td {
 			background-color: govuk-colour("light-grey");
 			box-shadow: 0 2px 0 0 govuk-colour("mid-grey");
 
-			td {
+			th, td {
 				display: flex;
 				justify-content: flex-start;
 				align-items: space-between;
 				flex-direction: column;
-				padding: govuk-spacing(2) govuk-spacing(3)!important;
+				padding: govuk-spacing(1) 0!important;
 				border-bottom: none!important;
 
 				.govuk-table__header {

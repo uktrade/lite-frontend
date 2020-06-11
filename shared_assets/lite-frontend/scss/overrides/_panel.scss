@@ -1,5 +1,5 @@
 .govuk-panel {
-	padding: govuk-spacing(6);
+	@include govuk-responsive-padding(6);
 	text-align: left;
 
 	.govuk-panel__title {
