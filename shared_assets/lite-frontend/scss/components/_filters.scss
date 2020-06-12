@@ -1,7 +1,36 @@
 .lite-filters__hint-text {
 	@extend .govuk-hint;
+	position: relative;
 	float: right;
 	margin-top: 0px;
+
+	@include govuk-media-query($until: desktop) {
+		float: none;
+		margin-bottom: govuk-spacing(6);
+	}
+
+	&--warning {
+		@include govuk-font($size: 19, $weight: bold);
+		color: $govuk-text-colour;
+
+		@include govuk-media-query($until: desktop) {
+			margin-left: 40px;
+		}
+
+		&::after {
+			@include govuk-font($size: 19, $weight: bold);
+			content: "!";
+			position: absolute;
+			top: -3px;
+			left: -40px;
+			width: 30px;
+			line-height: 30px!important;
+			text-align: center;
+			background: $govuk-text-colour;
+			color: $govuk-body-background-colour;
+			border-radius: 100%;
+		}
+	}
 }
 
 .lite-filter-bar {
