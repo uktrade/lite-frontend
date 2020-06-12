@@ -122,6 +122,12 @@
 
 	.lite-filter-bar__components {
 		margin-top: govuk-spacing(3);
+
+		& > div {
+			display: flex;
+			justify-content: flex-end;
+			flex-direction: column;
+		}
 	}
 
 	.govuk-date-input {
