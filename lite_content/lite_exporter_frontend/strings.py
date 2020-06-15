@@ -1,5 +1,6 @@
 from lite_content.lite_exporter_frontend import (  # noqa
     applications,  # noqa
+    compliance,  # noqa
     goods,  # noqa
     goods_types,  # noqa
     roles,  # noqa

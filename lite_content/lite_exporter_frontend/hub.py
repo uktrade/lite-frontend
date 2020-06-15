@@ -18,6 +18,8 @@ class Tiles:
     VIEW_AND_MANAGE_LICENCES = "Licences and clearances"
     GOODS = "Product list"
     END_USER_ADVISORIES = "End user advisories"
+    OPEN_LICENCE_RETURNS = "Open licence returns"
+    COMPLIANCE_HEADING = "Compliance and annual returns"
 
     # Standard dashboard
     class Apply:
@@ -55,3 +57,9 @@ class Tiles:
     class CheckProgress:
         TITLE = "Check progress"
         VIEW_STATUS = "View the status of your enquiries."
+
+    # Compliance
+    class OpenLicenceReturns:
+        DESCRIPTION = "View and manage your open licence returns"
+        ADD_LINK = "Submit"
+        VIEW_LINK = "View licence returns"
