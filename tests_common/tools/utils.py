@@ -1,3 +1,4 @@
+import os
 from time import time
 
 from ..api_client.test_helper import TestHelper
@@ -50,3 +51,13 @@ def build_test_helper(api_client):
     test_helper.goods.add_good()
 
     return test_helper
+
+
+def get_temporary_file_path(filename):
+    return os.path.abspath(filename)
+
+
+def create_temporary_file(filename, text):
+    file_path = get_temporary_file_path(filename)
+    with open(file_path, "w+") as file:
+        file.write(text)
