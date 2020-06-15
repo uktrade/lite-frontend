@@ -8,7 +8,10 @@ def get_flag_of_level(flags, level):
             [
                 item
                 for item in flags
-                if item["level"] == level and item["status"] == "Active" and item["team"]["name"] == "Admin"
+                if item["level"] == level
+                and item["status"] == "Active"
+                and item["team"]["name"] == "Admin"
+                and item["blocks_approval"] is not True
             ]
         ),
         None,
