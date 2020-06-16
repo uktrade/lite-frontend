@@ -27,10 +27,10 @@
 }
 
 .lite-horizontal-separator {
+	@include govuk-responsive-margin(6, "bottom");
 	display: block;
 	height: 2px;
 	background: govuk-colour("light-grey");
-	margin: govuk-spacing(1) 0 govuk-spacing(6);
 	border: none;
 }
 
