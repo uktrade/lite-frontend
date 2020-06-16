@@ -61,7 +61,7 @@
 
 @include govuk-media-query($until: tablet) {
 	.lite-mobile-hide {
-		display: none;
+		display: none!important;
 	}
 }
 
