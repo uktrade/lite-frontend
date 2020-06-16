@@ -12,7 +12,7 @@
             <div class="govuk-checkboxes__item">
                 <input {% if item.auto_check and data|key_in_array:item.key %}checked{% endif %} class="govuk-checkboxes__input" data-attribute="{{ item.data_attribute }}" id="{{ item.value|replace_spaces }}" name="{{ component.name }}" type="checkbox" value="{{ item.key }}">
                 <label class="govuk-label govuk-checkboxes__label" for="{{ item.value|replace_spaces }}">
-                    {{ item.value }}
+                    <span class="{% for class in item.classes %}{{ class }} {% endfor %}">{{ item.value }}</span>
                 </label>
                 {% if item.description %}
                     <label class="govuk-hint govuk-checkboxes__hint">
