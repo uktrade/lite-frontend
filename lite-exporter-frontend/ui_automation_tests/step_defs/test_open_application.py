@@ -1,6 +1,7 @@
-from pytest_bdd import scenarios, when, then, parsers, given
+from pytest_bdd import scenarios, when, then, parsers
 
 import ui_automation_tests.shared.tools.helpers as utils
+from ui_automation_tests.pages.generic_application.task_list import TaskListPage
 from ui_automation_tests.pages.open_application.country_contract_types import OpenApplicationCountryContractTypes
 from ui_automation_tests.pages.open_application.country_contract_types_summary import (
     OpenApplicationCountryContractTypesSummaryPage,
@@ -222,3 +223,10 @@ def i_remove_a_good_from_the_application(driver):
 @then("no goods types are left on the application")
 def no_goods_types_are_left_on_the_application(driver):
     assert (OpenApplicationGoodsTypesPage(driver).find_remove_goods_type_link(), None)
+
+
+@then(parsers.parse('I cannot see the sections "{sections}"'))  # noqa
+def sections_did_not_appear_on_task_list(driver, sections):  # noqa
+    sections = sections.split(", ")
+    for section in sections:
+        assert TaskListPage(driver).get_section(section) is None

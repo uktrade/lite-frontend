@@ -12,7 +12,7 @@ Feature: I want to indicate the standard licence I want
     When I delete the application
 
   @LT_1091_standard @setup @regression
-  Scenario: Submit standard application
+  Scenario: Submit standard application permanent
     Given I go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type
     And I click on the "location" section
@@ -173,7 +173,7 @@ Feature: I want to indicate the standard licence I want
     Then I see submitted application
 
   @LT_1758_standard_temporary_application_with_temporary_export_details @regression
-  Scenario: Submit standard application
+  Scenario: Submit standard application temporary
     Given I go to exporter homepage and choose Test Org
     When I create a standard application of a "temporary" export type
     And I click on the "location" section

@@ -86,15 +86,14 @@ def change_members_role(driver):
 
 @when("I show filters")
 def show_filters(driver):
-    members_page = MembersPage(driver)
-    members_page.click_show_filters_link()
+    Shared(driver).click_show_filters_link()
 
 
 @when(parsers.parse('filter status has been changed to "{status}"'))  # noqa
 def filter_status_change(driver, status):
     members_page = MembersPage(driver)
     members_page.select_filter_status_from_dropdown(status)
-    members_page.click_apply_filters_button()
+    Shared(driver).click_apply_filters_button()
 
 
 @then("I see the new member")

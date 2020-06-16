@@ -1,9 +1,9 @@
 from django.contrib.humanize.templatetags.humanize import intcomma
 from pytest_bdd import scenarios, given, parsers, when, then
 
+from ui_automation_tests.pages.shared import Shared
 from ui_automation_tests.pages.licence_page import LicencePage
 from ui_automation_tests.pages.licences_page import LicencesPage
-from ui_automation_tests.shared.tools.helpers import find_paginated_item_by_id
 
 scenarios("../features/licences.feature", strict_gherkin=False)
 
@@ -15,7 +15,7 @@ def licences_page(driver, exporter_url):
 
 @then("I see my standard licence")
 def standard_licence_row(context, driver):
-    find_paginated_item_by_id(LicencesPage.LICENCE_ROW_PARTIAL_ID + context.licence, driver)
+    Shared(driver).filter_by_reference_number(context.reference_code)
     row = LicencesPage(driver).licence_row_properties(context.licence)
     assert context.reference_code in row
     assert ", ".join(x["rating"] for x in context.goods[0]["good"]["control_list_entries"]) in row
@@ -27,7 +27,7 @@ def standard_licence_row(context, driver):
 
 @then("I see my open licence")
 def open_licence_row(context, driver):
-    find_paginated_item_by_id(LicencesPage.LICENCE_ROW_PARTIAL_ID + context.licence, driver)
+    Shared(driver).filter_by_reference_number(context.reference_code)
     row = LicencesPage(driver).licence_row_properties(context.licence)
     assert context.reference_code in row
     assert ", ".join(x["rating"] for x in context.goods_type["control_list_entries"]) in row
@@ -48,14 +48,14 @@ def nlrs_tab(driver):
 
 @then("I see my nlr document")
 def nlr_document_visible(context, driver):
-    find_paginated_item_by_id(LicencesPage.LICENCE_ROW_PARTIAL_ID + context.generated_document, driver)
+    Shared(driver).filter_by_reference_number(context.reference_code)
     row = LicencesPage(driver).licence_row_properties(context.generated_document)
     assert context.reference_code in row
 
 
 @then("I see my exhibition licence")
 def exhibition_licence_row(context, driver):
-    find_paginated_item_by_id(LicencesPage.LICENCE_ROW_PARTIAL_ID + context.licence, driver)
+    Shared(driver).filter_by_reference_number(context.reference_code)
     row = LicencesPage(driver).licence_row_properties(context.licence)
     assert context.reference_code in row
     assert ", ".join(x["rating"] for x in context.goods[0]["good"]["control_list_entries"]) in row
@@ -104,3 +104,8 @@ def exhibition_licence_details(driver, context):
         ", ".join(x["rating"] for x in context.goods[0]["good"]["control_list_entries"])
         in LicencePage(driver).get_good_row()
     )
+
+
+@given("an Exhibition Clearance is created")  # noqa
+def an_exhibition_clearance_is_created(driver, apply_for_exhibition_clearance):  # noqa
+    pass

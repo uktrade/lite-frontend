@@ -25,7 +25,7 @@ def assert_good_is_in_list(driver, context, exporter_url):
     assert context.good_description in goods_row
     assert context.part in goods_row
     assert context.control_code in goods_row
-    assert utils.paginated_item_exists_by_css("[href*='goods/" + context.good_id_from_url + "']", driver)
+    assert driver.find_element_by_css_selector("[href*='goods/" + context.good_id_from_url + "']").is_displayed()
 
 
 @then("I see the good is in a query")

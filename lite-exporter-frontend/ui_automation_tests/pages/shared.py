@@ -12,6 +12,9 @@ class Shared(BasePage):
     GOV_TABLE_CELL = ".govuk-table__cell"
     NOTIFICATION = ".lite-notification-bubble"  # CSS
     MAIN_CONTENT_ID = "main-content"
+    FILTERS_LINK_ID = "show-filters-link"
+    BUTTON_APPLY_FILTER_ID = "button-apply-filters"
+    REFERENCE_ID = "reference"
 
     def get_text_of_error_messages(self):
         return self.driver.find_element_by_css_selector(self.ERROR_MESSAGES).text
@@ -54,3 +57,14 @@ class Shared(BasePage):
 
     def get_text_of_main_content(self):
         return self.driver.find_element_by_id(self.MAIN_CONTENT_ID).text
+
+    def click_show_filters_link(self):
+        self.driver.find_element_by_id(self.FILTERS_LINK_ID).click()
+
+    def filter_by_reference_number(self, reference_number):
+        self.click_show_filters_link()
+        self.driver.find_element_by_id(self.REFERENCE_ID).send_keys(reference_number)
+        self.click_apply_filters_button()
+
+    def click_apply_filters_button(self):
+        self.driver.find_element_by_id(self.BUTTON_APPLY_FILTER_ID).click()

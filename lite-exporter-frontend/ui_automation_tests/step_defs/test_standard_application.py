@@ -1,5 +1,6 @@
 from pytest_bdd import scenarios, when, then, parsers, given
 
+from ui_automation_tests.pages.end_use_details_form_page import EndUseDetailsFormPage
 from ui_automation_tests.conftest import (
     enter_type_of_application,
     enter_application_name,
@@ -272,3 +273,33 @@ def create_standard_individual_trade_control_application(driver, context):  # no
     enter_application_name(driver, context)
     apply_for_licence_page.select_trade_control_activity()
     apply_for_licence_page.select_trade_control_product_category()
+
+
+@when("I change my reference number")
+def change_ref_num(driver, context):  # noqa
+    enter_export_licence(driver, "yes", "12345678", context)
+
+
+@then("I see my edited reference number")
+def assert_ref_num(driver):  # noqa
+    assert "12345678" in driver.find_element_by_css_selector(".lite-task-list").text
+
+
+@when(parsers.parse('I answer "{choice}" for compliance with the terms of export from the EU'))  # noqa
+def eu_compliant_limitations_end_use_details(driver, choice):  # noqa
+    end_use_details = EndUseDetailsFormPage(driver)
+    if choice == "Yes":
+        end_use_details.answer_is_compliant_limitations_eu(True)
+    else:
+        end_use_details.answer_is_compliant_limitations_eu(False, fake.sentence(nb_words=30))
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I answer "{choice}" for products received under transfer licence from the EU'))  # noqa
+def eu_military_end_use_details(driver, choice):  # noqa
+    end_use_details = EndUseDetailsFormPage(driver)
+    if choice == "Yes":
+        end_use_details.answer_is_eu_military(True)
+    else:
+        end_use_details.answer_is_eu_military(False)
+    functions.click_submit(driver)
