@@ -9,6 +9,7 @@ class ExporterHubPage(BasePage):
     BUTTON_EUA_ID = "link-eua"
     BUTTON_LICENCES_ID = "link-licences"
     BUTTON_HMRC_QUERY_ID = "link-hmrc-query"
+    BUTTON_OPEN_LICENCE_RETURNS_ID = "link-open-licence-returns"
     USER_PROFILE_BTN = "a[href*='/users/profile/']"
 
     def click_apply_for_a_licence(self):
@@ -34,3 +35,6 @@ class ExporterHubPage(BasePage):
 
     def click_user_profile(self):
         self.driver.find_element_by_css_selector(self.USER_PROFILE_BTN).click()
+
+    def click_open_licence_returns(self):
+        self.driver.find_element_by_id(self.BUTTON_OPEN_LICENCE_RETURNS_ID).click()

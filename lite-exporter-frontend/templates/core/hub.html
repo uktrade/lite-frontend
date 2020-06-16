@@ -137,4 +137,26 @@
 			</div>
 		</section>
 	{% endif %}
+
+	{% if organisation.type.key != 'hmrc' %}
+		<h2 class="govuk-heading-m govuk-!-margin-bottom-5">{% lcs 'hub.Tiles.COMPLIANCE_HEADING' %}</h2>
+		<section class="govuk-form-group">
+			<div class="app-tiles">
+				{# Open licence returns tile #}
+				<div class="app-tile">
+					<a href="{% url 'compliance:open_licence_returns_list' %}" class="app-tile__link app-tile__heading" id="link-open-licence-returns">
+						{% lcs 'hub.Tiles.OPEN_LICENCE_RETURNS' %}
+					</a>
+					<p>{% lcs 'hub.Tiles.OpenLicenceReturns.DESCRIPTION' %}</p>
+					<a href="{% url 'compliance:add_open_licence_return' %}" class="govuk-link govuk-link--no-visited-state">
+						{% lcs 'hub.Tiles.OpenLicenceReturns.ADD_LINK' %}
+					</a>
+					<br>
+					<a href="{% url 'compliance:open_licence_returns_list' %}" class="govuk-link govuk-link--no-visited-state">
+						{% lcs 'hub.Tiles.OpenLicenceReturns.VIEW_LINK' %}
+					</a>
+				</div>
+			</div>
+		</section>
+	{% endif %}
 {% endblock %}

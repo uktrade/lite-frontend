@@ -1,0 +1,28 @@
+.app-spreadsheet {
+	@include govuk-font($size: 19);
+	@include govuk-text-colour;
+	width: 100%;
+	@include govuk-responsive-margin(6, "bottom");
+	border-spacing: 0;
+	border-collapse: collapse;
+}
+
+.app-spreadsheet__head {
+	.app-spreadsheet__header {
+		border-bottom-width: 0;
+	}
+}
+
+.app-spreadsheet__cell,
+.app-spreadsheet__header {
+	padding: govuk-spacing(2);
+	border: 1px solid govuk-colour("mid-grey");
+	text-align: left;
+	vertical-align: center;
+}
+
+.app-spreadsheet__header {
+	@include govuk-typography-weight-bold;
+	text-align: center;
+	background-color: govuk-colour("light-grey");
+}

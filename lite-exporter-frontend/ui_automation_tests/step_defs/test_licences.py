@@ -8,13 +8,6 @@ from ui_automation_tests.shared.tools.helpers import find_paginated_item_by_id
 scenarios("../features/licences.feature", strict_gherkin=False)
 
 
-@given(parsers.parse('I create "{decision}" final advice for open application'))
-def final_advice_open(context, decision, api_test_client):
-    api_test_client.cases.create_final_advice(
-        context.case_id, [{"type": decision, "text": "abc", "note": "", "goods_type": context.goods_type["id"]}]
-    )
-
-
 @when("I go to the licences page")
 def licences_page(driver, exporter_url):
     driver.get(exporter_url.rstrip("/") + "/licences/")

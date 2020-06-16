@@ -735,3 +735,10 @@ def assert_ref_num(driver):  # noqa
 @when("I change my reference number")
 def change_ref_num(driver, context):  # noqa
     enter_export_licence(driver, "yes", "12345678", context)
+
+
+@given(parsers.parse('I create "{decision}" final advice for open application'))  # noqa
+def final_advice_open(context, decision, api_test_client):  # noqa
+    api_test_client.cases.create_final_advice(
+        context.case_id, [{"type": decision, "text": "abc", "note": "", "goods_type": context.goods_type["id"]}]
+    )
