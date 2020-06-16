@@ -32,7 +32,11 @@ def _get_team_flags(level, request, convert_to_options=False, include_deactivate
 
     if convert_to_options:
         return [
-            Option(key=flag["id"], value=flag["name"], classes=["app-flag", "app-flag--" + flag["colour"]])
+            Option(
+                key=flag["id"],
+                value=flag["name"],
+                classes=["app-flag", "app-flag--checkbox", "app-flag--" + flag["colour"]],
+            )
             for flag in data
         ]
 

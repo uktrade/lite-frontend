@@ -71,6 +71,10 @@ $flag-border-width: 3px;
 		background: currentColor;
 	}
 
+	&--checkbox {
+		margin-top: -5px;
+	}
+
 	&--yellow {
 		background: govuk-tint(govuk-colour("yellow"), 75);
 		color: govuk-shade(govuk-colour("yellow"), 55);
