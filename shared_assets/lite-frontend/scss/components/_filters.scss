@@ -67,7 +67,7 @@
 
 	&__components {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+		grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 		grid-gap: govuk-spacing(3);
 		margin-bottom: govuk-spacing(3);
 
