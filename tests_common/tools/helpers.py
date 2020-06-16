@@ -241,44 +241,6 @@ def paginated_item_exists_by_css(css, driver, exists=True):
     return bool(element_is_found) == exists
 
 
-def find_paginated_item_by_link_text(link_text, driver):
-    driver.set_timeout_to(0)
-    current_page = 1
-    while True:
-        element_to_find = driver.find_elements_by_link_text(link_text)
-        if element_to_find:
-            element_is_found = element_to_find[0]
-            break
-        elif current_page == PAGE_LIMIT:
-            assert False, f"Item couldn't be found across {current_page} pages"
-        else:
-            current_page += 1
-            driver.find_element_by_id(f"page-{current_page}").click()
-    driver.set_timeout_to(10)
-    assert element_is_found, f"Item couldn't be found across {current_page} pages"
-    return element_is_found
-
-
-def paginated_search(driver, func: callable):
-    """
-    Calls a given function on every page until the function returns true or we run out of pages.
-    This is useful if you want to run a custom check for element(s) across a paginated page
-    """
-    driver.set_timeout_to(0)
-    success = False
-    current_page = 1
-    while True:
-        result = func
-        if result:
-            success = True
-            break
-        else:
-            current_page += 1
-            driver.find_element_by_id(f"page-{current_page}").click()
-    driver.set_timeout_to(10)
-    return success
-
-
 def get_text_of_multi_page_table(css_selector, driver):
     driver.set_timeout_to(0)
     text = ""
