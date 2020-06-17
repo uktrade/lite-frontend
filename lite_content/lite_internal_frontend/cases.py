@@ -80,8 +80,10 @@ class CasePage:
 
         class CaseOfficer:
             CASE_OFFICER = "Case officer"
+            INSPECTOR = "Inspector"
             ASSIGNED_USERS = "Assigned users"
             NO_CASE_OFFICER = "No case officer assigned"
+            NO_INSPECTOR = "No inspector assigned"
             NO_USERS_ASSIGNED = "No users assigned"
 
         class Status:
@@ -98,6 +100,7 @@ class CasePage:
         DOCUMENTS = "Documents"
         ADDITIONAL_CONTACTS = "Contacts"
         CASE_NOTES_AND_TIMELINE = "Notes and timeline"
+        LICENCES = "Licences"
 
     class DetailsTab:
         EXPORTER_REFERENCE = "Exporter reference"
@@ -120,6 +123,8 @@ class CasePage:
         NO_CASE_OFFICER = "Not assigned"
         TRADE_CONTROL_ACTIVITY = "Trade control activity"
         TRADE_CONTROL_ACTIVITY_CATEGORIES = "Trade control activity categories"
+        INSPECTOR = "Inspector"
+        ADDRESS = "Address"
 
         class Goods:
             TITLE = "good"
@@ -184,6 +189,12 @@ class CasePage:
         WARNING = "This note will be visible to the exporter, are you sure you wish to continue?"
         CANCEL = "Cancel"
         POST_NOTE = "Post note"
+
+    class ComplianceLicencesTab:
+        LICENCE_NUMBER = "Licence number"
+        LICENCE_STATUS = "Licence status"
+        LICENCE_FLAGS = "Flags"
+        NO_LICENCES_NOTICE = "No Licences found"
 
 
 class ApplicationPage:
@@ -713,6 +724,8 @@ class Manage:
         DESCRIPTION = ""
         DELETE_BUTTON = "Unassign existing case officer"
         SUBMIT_BUTTON = "Assign"
+        INSPECTOR_TITLE = "Assign inspector"
+        DELETE_INSPECTOR_BUTTON = "Unassign existing inspector"
 
     class RerunRoutingRules:
         TITLE = "Do you want to rerun routing rules?"
