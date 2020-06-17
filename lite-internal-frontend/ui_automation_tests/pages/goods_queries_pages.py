@@ -7,6 +7,8 @@ from shared import functions
 from shared.BasePage import BasePage
 from shared.tools.helpers import scroll_to_element_below_header_by_id
 
+from ui_automation_tests.shared.tools.helpers import scroll_to_element_by_id
+
 
 class GoodsQueriesPages(BasePage):
     CONTROL_RESPONSE = "is_good_controlled-"  # ID
@@ -50,6 +52,7 @@ class GoodsQueriesPages(BasePage):
         if self.driver.find_element_by_class_name("govuk-details").get_attribute("open") is None:
             self.driver.find_element_by_class_name("govuk-details__summary-text").click()
         self.driver.set_timeout_to(10)
+        scroll_to_element_by_id(self.driver, self.COMMENT)
         self.driver.find_element_by_id(self.COMMENT).send_keys(comment)
 
     def enter_a_prefix(self, prefix):

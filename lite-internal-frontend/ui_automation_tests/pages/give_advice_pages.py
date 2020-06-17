@@ -9,7 +9,7 @@ class GiveAdvicePages(BasePage):
     PICKLIST_ITEM_TEXT = ".lite-modal-content .app-picklist-picker__item"  # CSS
     TEXTAREA_NOTES_ID = "note"
     CLEARANCE_LEVEL_DROPDOWN_ID = "pv_grading_proviso"
-    RADIO_INPUT_APPROVE = '.govuk-radios input[value="approve"]'
+    APPROVE_RADIO_ID = "approve."
     FOOTNOTE_REQUIRED_YES_RADIO_ID = "footnote_required-True"
     FOOTNOTE_REQUIRED_NO_RADIO_ID = "footnote_required-False"
     FOOTNOTE_TEXTBOX_ID = "footnote"
@@ -31,10 +31,8 @@ class GiveAdvicePages(BasePage):
     def type_in_additional_note_text_field(self, text):
         return self.driver.find_element_by_id(self.TEXTAREA_NOTES_ID).send_keys(text)
 
-    def select_approve_for_all(self):
-        elements = self.driver.find_elements_by_css_selector(self.RADIO_INPUT_APPROVE)
-        for element in elements:
-            self.driver.execute_script("arguments[0].click();", element)
+    def select_approve_for_good_country(self, good_id, country_code):
+        self.driver.find_element_by_id(self.APPROVE_RADIO_ID + good_id + "." + country_code).click()
 
     def checkbox_present(self):
         return len(self.driver.find_elements_by_css_selector(".input"))

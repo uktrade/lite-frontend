@@ -26,7 +26,11 @@ from ui_automation_tests.fixtures.add_a_picklist import (  # noqa
     add_a_standard_advice_picklist,
     add_a_report_summary_picklist,
 )
+from ui_automation_tests.pages.advice import UserAdvicePage
 from ui_automation_tests.pages.generate_document_page import GeneratedDocument
+from ui_automation_tests.pages.give_advice_pages import GiveAdvicePages
+from ui_automation_tests.pages.letter_templates import LetterTemplates
+from ui_automation_tests.shared import functions
 from ui_automation_tests.shared.fixtures.apply_for_application import *  # noqa
 from ui_automation_tests.shared.fixtures.driver import driver  # noqa
 from ui_automation_tests.shared.fixtures.sso_sign_in import sso_sign_in  # noqa
@@ -366,3 +370,127 @@ def click_continue(driver, controlled, control_list_entry, report, comment, cont
     query_page.enter_a_comment(comment)
     context.comment = comment
     Shared(driver).click_submit()
+
+
+@then("the status has been changed in the application")  # noqa
+def audit_trail_updated(driver, context, internal_info, internal_url):  # noqa
+    ApplicationPage(driver).go_to_cases_activity_tab(internal_url, context)
+
+    assert (
+        context.status.lower() in Shared(driver).get_audit_trail_text().lower()
+    ), "status has not been shown as approved in audit trail"
+
+
+@given("I create a proviso picklist")  # noqa
+def i_create_an_proviso_picklist(context, add_a_proviso_picklist):  # noqa
+    context.proviso_picklist_name = add_a_proviso_picklist["name"]
+    context.proviso_picklist_question_text = add_a_proviso_picklist["text"]
+
+
+@given("I create a standard advice picklist")  # noqa
+def i_create_an_standard_advice_picklist(context, add_a_standard_advice_picklist):  # noqa
+    context.standard_advice_query_picklist_name = add_a_standard_advice_picklist["name"]
+    context.standard_advice_query_picklist_question_text = add_a_standard_advice_picklist["text"]
+
+
+@when("I click on the user advice tab")  # noqa
+def i_click_on_view_advice(driver, context):  # noqa
+    CasePage(driver).change_tab(CaseTabs.USER_ADVICE)
+
+
+@when("I select all items in the user advice view")  # noqa
+def click_items_in_advice_view(driver, context):  # noqa
+    context.number_of_advice_items_clicked = UserAdvicePage(driver).click_on_all_checkboxes()
+
+
+@when(parsers.parse("I choose to '{option}' the licence"))  # noqa
+def choose_advice_option(driver, option, context):  # noqa
+    GiveAdvicePages(driver).click_on_advice_option(option)
+    context.advice_data = []
+
+
+@when(parsers.parse("I import text from the '{option}' picklist"))  # noqa
+def import_text_advice(driver, option, context):  # noqa
+    GiveAdvicePages(driver).click_on_import_link(option)
+    text = GiveAdvicePages(driver).get_text_of_picklist_item()
+    context.advice_data.append(text)
+    GiveAdvicePages(driver).click_on_picklist_item(option)
+
+
+@when(parsers.parse("I write '{text}' in the note text field"))  # noqa
+def write_note_text_field(driver, text, context):  # noqa
+    GiveAdvicePages(driver).type_in_additional_note_text_field(text)
+    context.advice_data.append(text)
+
+
+@when(parsers.parse("I select that a footnote is not required"))  # noqa
+def write_note_text_field(driver, text, context):  # noqa
+    GiveAdvicePages(driver).select_footnote_not_required()
+
+
+@when("I combine all user advice")  # noqa
+def combine_all_advice(driver):  # noqa
+    UserAdvicePage(driver).click_combine_advice()
+
+
+@when("I finalise the goods and countries")  # noqa
+def finalise_goods_and_countries(driver):  # noqa
+    FinalAdvicePage(driver).click_finalise()
+
+
+@when("I select approve for all combinations of goods and countries")  # noqa
+def select_approve_for_all(driver, context):  # noqa
+    page = GiveAdvicePages(driver)
+    page.select_approve_for_good_country(context.goods_type["id"], context.country["code"])
+
+
+@given("I create a letter paragraph picklist")  # noqa
+def add_letter_paragraph_picklist(add_a_letter_paragraph_picklist):  # noqa
+    pass
+
+
+@when("I go to letters")  # noqa
+def i_go_to_letters(driver, internal_url):  # noqa
+    driver.get(internal_url.rstrip("/") + "/document-templates")
+
+
+@when("I create a letter template for a document")  # noqa
+def create_letter_template(driver, context, get_template_id):  # noqa
+    template_page = LetterTemplates(driver)
+    template_page.click_create_a_template()
+
+    context.template_name = "Template " + utils.get_formatted_date_time_y_m_d_h_s()
+    template_page.enter_template_name(context.template_name)
+    functions.click_submit(driver)
+
+    template_page.select_which_type_of_cases_template_can_apply_to(
+        ["Standard-Individual-Export-Licence", "Open-Individual-Export-Licence"]
+    )
+    functions.click_submit(driver)
+
+    template_page.select_which_type_of_decisions_template_can_apply_to(["Approve", "Proviso"])
+    functions.click_submit(driver)
+
+    template_page.select_visible_to_exporter("True")
+    functions.click_submit(driver)
+
+    template_page.click_licence_layout(get_template_id)
+    functions.click_submit(driver)
+
+
+@when("I add a letter paragraph to template")  # noqa
+def add_two_letter_paragraphs(driver, context):  # noqa
+    letter_template = LetterTemplates(driver)
+    letter_template.click_add_letter_paragraph()
+    context.letter_paragraph_name = letter_template.add_letter_paragraph()
+    letter_template.click_add_letter_paragraphs()
+
+
+@when("I preview template")  # noqa
+def preview_template(driver):  # noqa
+    LetterTemplates(driver).click_create_preview_button()
+
+
+@when("I apply filters")  # noqa
+def i_apply_filters(driver, context):  # noqa
+    CaseListPage(driver).click_apply_filters_button()

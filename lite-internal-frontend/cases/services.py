@@ -35,6 +35,8 @@ from conf.constants import (
     FINALISE_CASE_URL,
     QUEUES_URL,
     APPLICANT_URL,
+    COMPLIANCE_URL,
+    COMPLIANCE_LICENCES_URL,
 )
 from core.helpers import convert_parameters_to_query_params
 from flags.enums import FlagStatus
@@ -104,6 +106,11 @@ def put_goods_query_pv_grading(request, pk, json):
 
 def put_goods_query_status(request, pk, json):
     response = put(request, GOODS_QUERIES_URL + str(pk) + MANAGE_STATUS_URL, json)
+    return response.json(), response.status_code
+
+
+def put_compliance_status(request, pk, json):
+    response = put(request, COMPLIANCE_URL + str(pk) + MANAGE_STATUS_URL, json)
     return response.json(), response.status_code
 
 
@@ -376,4 +383,9 @@ def get_blocking_flags(request, case_pk):
         request,
         FLAGS_URL + f"?case={case_pk}&status={FlagStatus.ACTIVE.value}&blocks_approval=True&disable_pagination=True",
     )
+    return data.json()
+
+
+def get_compliance_licences(request, case_id, reference, page):
+    data = get(request, COMPLIANCE_URL + case_id + COMPLIANCE_LICENCES_URL + f"?reference={reference}&page={page}",)
     return data.json()

@@ -19,12 +19,15 @@ Feature: I want to filter cases on a queue
     Then the filters are shown
     When filter status has been changed to "Finalised"
     Then there are no cases shown
+    When I show filters
     When I click clear filters
     When I show filters
     When filter case type has been changed to "Goods Query"
     Then "1" cases are shown
+    When I show filters
     When filter status has been changed to "CLC review"
     Then "1" cases are shown
+    When I show filters
     When I click clear filters
     Then "2" cases are shown
     When I go to application previously created

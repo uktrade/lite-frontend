@@ -14,6 +14,7 @@ class CaseTabs:
     ECJU_QUERIES = "ecju-queries"
     DOCUMENTS = "documents"
     ACTIVITY = "activity"
+    COMPLIANCE_LICENCES = "compliance-licences"
 
 
 class CasePage(BasePage):

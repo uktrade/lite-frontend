@@ -75,11 +75,6 @@ def i_filter_by_goods_related_description(driver, context):
     CaseListPage(driver).filter_by_organisation_name(context.org_name)
 
 
-@when("I apply filters")
-def i_apply_filters(driver, context):
-    CaseListPage(driver).click_apply_filters_button()
-
-
 @when(parsers.parse('filter status has been changed to "{status}"'))  # noqa
 def filter_status_change(driver, context, status):  # noqa
     CaseListPage(driver).select_filter_status_from_dropdown(status)

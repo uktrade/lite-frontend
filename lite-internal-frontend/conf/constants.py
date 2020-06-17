@@ -69,6 +69,8 @@ ROUTING_RULES_URL = "/routing-rules/"
 ROUTING_RULES_STATUS_URL = "/status/"
 ENFORCEMENT_URL = CASE_URL + "enforcement-check/"
 APPLICANT_URL = "/applicant/"
+COMPLIANCE_URL = "/compliance/"
+COMPLIANCE_LICENCES_URL = "/licences/"
 
 # Static URLs
 STATIC_URL = "/static/"
@@ -140,6 +142,7 @@ class Statuses:
     WITHDRAWN = "withdrawn"
     CLC = "clc_review"
     PV = "pv_review"
+    OPEN = "open"
 
 
 class UserStatuses:

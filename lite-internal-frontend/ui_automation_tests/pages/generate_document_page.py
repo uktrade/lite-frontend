@@ -12,6 +12,8 @@ class GeneratedDocument(BasePage):
     LINK_REGENERATE_ID = "regenerate"
     DOCUMENT_CLASS = "app-documents__item"
     ADDRESSEE_PARTIAL_ID = "addressee-"
+    GENERATE_DECISION_DOCUMENT_BUTTON_ID = "generate-document-approve"
+    DOCUMENT_TEMPLATE_CSS = ".govuk-label"
 
     def get_documents(self):
         return self.driver.find_elements_by_class_name(self.DOCUMENT_CLASS)
@@ -51,3 +53,9 @@ class GeneratedDocument(BasePage):
 
     def click_regenerate_button(self):
         self.driver.find_element_by_id(self.LINK_REGENERATE_ID).click()
+
+    def select_generate_document(self):
+        self.driver.find_element_by_id(self.GENERATE_DECISION_DOCUMENT_BUTTON_ID).click()
+
+    def select_document_template(self):
+        self.driver.find_element_by_css_selector(self.DOCUMENT_TEMPLATE_CSS).click()

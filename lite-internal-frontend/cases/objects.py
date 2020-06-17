@@ -15,8 +15,10 @@ class Case(Munch):
     def data(self):
         if "application" in self:
             return self["application"]
-        else:
+        elif "query" in self:
             return self["query"]
+        else:
+            return self["compliance"]
 
     @property
     def organisation(self):

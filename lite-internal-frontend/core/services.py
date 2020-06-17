@@ -88,6 +88,10 @@ def get_permissible_statuses(request, case):
                 Statuses.PV,
             ]
         ]
+    elif case_type == CaseType.COMPLIANCE.value:
+        case_type_applicable_statuses = [
+            status for status in statuses if status["key"] in [Statuses.OPEN, Statuses.CLOSED,]
+        ]
     else:
         if case_sub_type == CaseType.END_USER_ADVISORY.value:
             case_type_applicable_statuses = [status for status in statuses if status["key"] in BASE_QUERY_STATUSES]

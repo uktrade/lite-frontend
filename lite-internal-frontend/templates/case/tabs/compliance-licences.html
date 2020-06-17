@@ -1,0 +1,35 @@
+{% include "filters.html" with filters=licences_filters%}
+
+{% if data.results %}
+	<table id="table-compliance-licences" class="govuk-table">
+		<thead class="govuk-table__head">
+			<tr class="govuk-table__row">
+				<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.ComplianceLicencesTab.LICENCE_NUMBER' %}</th>
+				<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.ComplianceLicencesTab.LICENCE_STATUS' %}</th>
+				<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.ComplianceLicencesTab.LICENCE_FLAGS' %}</th>
+			</tr>
+		</thead>
+		<tbody class="govuk-table__body">
+			{% for licence in data.results %}
+				<tr class="govuk-table__row">
+					<td class="govuk-table__cell govuk-table__cell--tight">
+						<a href="{% url 'cases:case' queue.id licence.id %}" class="govuk-link govuk-link--no-visited-state">
+							{{ licence.reference_code }}
+						</a>
+					</td>
+					<td class="govuk-table__cell govuk-table__cell--tight">
+						{{ licence.status.value }}
+					</td>
+					<td class="govuk-table__cell govuk-table__cell--tight">
+						{% include 'includes/flags.html' with flags=licence.flags list=True %}
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% else %}
+	{% include "includes/notice.html" with text="cases.CasePage.ComplianceLicencesTab.NO_LICENCES_NOTICE" %}
+{% endif %}
+
+
+{% pagination %}

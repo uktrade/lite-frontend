@@ -13,6 +13,7 @@ class CaseType(Enum):
     EXHIBITION = "exhibition_clearance"
     GIFTING = "gifting_clearance"
     F680 = "f680_clearance"
+    COMPLIANCE = "compliance"
 
     @classmethod
     def is_mod(cls, case_type):

@@ -1,5 +1,9 @@
 <div class="app-menu__header">
-	{% lcs 'cases.CasePage.Pills.CaseOfficer.CASE_OFFICER' %}
+	{% if case.case_type.reference.key == "comp" %}
+		{% lcs 'cases.CasePage.Pills.CaseOfficer.INSPECTOR' %}
+	{% else %}
+		{% lcs 'cases.CasePage.Pills.CaseOfficer.CASE_OFFICER' %}
+	{% endif %}
 </div>
 {% if case.case_officer %}
 	<a href="{% url 'users:user' case.case_officer.id %}?return_to={{ CURRENT_PATH }}" class="app-menu__item">
@@ -11,7 +15,11 @@
 	</a>
 {% else %}
 	<span class="app-menu__hint">
-		{% lcs 'cases.CasePage.Pills.CaseOfficer.NO_CASE_OFFICER' %}
+		{% if case.case_type.reference.key == "comp" %}
+			{% lcs 'cases.CasePage.Pills.CaseOfficer.NO_INSPECTOR' %}
+		{% else %}
+			{% lcs 'cases.CasePage.Pills.CaseOfficer.NO_CASE_OFFICER' %}
+		{% endif %}
 	</span>
 {% endif %}
 <div class="app-menu__header">

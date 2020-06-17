@@ -1,13 +1,24 @@
 <dl class="app-case__summary-list">
-	{% if case.data.name %}
-		<div class="app-case__summary-list__row">
-			<dt class="app-case__summary-list__key">
-				{% lcs 'cases.CasePage.DetailsTab.EXPORTER_REFERENCE' %}
-			</dt>
-			<dd class="app-case__summary-list__value">
-				{{ case.data.name }}
-			</dd>
-		</div>
+	{% if case.data.name and not case.case_type.reference.key == "comp" %}
+			<div class="app-case__summary-list__row">
+				<dt class="app-case__summary-list__key">
+					{% lcs 'cases.CasePage.DetailsTab.EXPORTER_REFERENCE' %}
+				</dt>
+				<dd class="app-case__summary-list__value">
+					{{ case.data.name }}
+				</dd>
+			</div>
+	{% endif %}
+	{% if case.case_type.reference.key == "comp" %}
+			<div class="app-case__summary-list__row">
+				<dt class="app-case__summary-list__key">
+					{% lcs 'cases.CasePage.DetailsTab.ADDRESS' %}
+				</dt>
+				<dd class="app-case__summary-list__value">
+					{{ case.compliance.site_name }}<br>
+					{{ case.compliance|get_address }}
+				</dd>
+			</div>
 	{% endif %}
 	{% if case.copy_of %}
 		<div class="app-case__summary-list__row">
@@ -39,7 +50,7 @@
 			</dd>
 		</div>
 	{% endif %}
-	{% if case.data.submitted_at %}
+	{% if case.data.submitted_at and not case.case_type.reference.key == "comp" %}
 		<div class="app-case__summary-list__row">
 			<dt class="app-case__summary-list__key">
 				{% lcs 'cases.CasePage.DetailsTab.SUBMITTED_AT' %}
@@ -49,7 +60,7 @@
 			</dd>
 		</div>
 	{% endif %}
-	{% if case.data.submitted_by %}
+	{% if case.data.submitted_by and not case.case_type.reference.key == "comp" %}
 		<div class="app-case__summary-list__row">
 			<dt class="app-case__summary-list__key">
 				{% lcs 'cases.CasePage.DetailsTab.SUBMITTED_BY' %}
@@ -99,25 +110,31 @@
 			</a>
 		</dd>
 	</div>
+	{% if not case.case_type.reference.key == "comp" %}
+		<div class="app-case__summary-list__row">
+			<dt class="app-case__summary-list__key">
+				{% lcs 'cases.CasePage.DetailsTab.TYPE' %}
+			</dt>
+			<dd class="app-case__summary-list__value">
+				{{ case.case_type.reference.value }}
+			</dd>
+		</div>
+		<div class="app-case__summary-list__row">
+			<dt class="app-case__summary-list__key">
+				{% lcs 'cases.CasePage.DetailsTab.LAST_UPDATED' %}
+			</dt>
+			<dd class="app-case__summary-list__value">
+				{{ case.data.updated_at|str_date }}
+			</dd>
+		</div>
+	{% endif %}
 	<div class="app-case__summary-list__row">
 		<dt class="app-case__summary-list__key">
-			{% lcs 'cases.CasePage.DetailsTab.TYPE' %}
-		</dt>
-		<dd class="app-case__summary-list__value">
-			{{ case.case_type.reference.value }}
-		</dd>
-	</div>
-	<div class="app-case__summary-list__row">
-		<dt class="app-case__summary-list__key">
-			{% lcs 'cases.CasePage.DetailsTab.LAST_UPDATED' %}
-		</dt>
-		<dd class="app-case__summary-list__value">
-			{{ case.data.updated_at|str_date }}
-		</dd>
-	</div>
-	<div class="app-case__summary-list__row">
-		<dt class="app-case__summary-list__key">
-			{% lcs 'cases.CasePage.DetailsTab.CASE_OFFICER' %}
+			{% if case.case_type.reference.key == "comp" %}
+				{% lcs 'cases.CasePage.DetailsTab.INSPECTOR' %}
+			{% else %}
+				{% lcs 'cases.CasePage.DetailsTab.CASE_OFFICER' %}
+			{% endif %}
 		</dt>
 		<dd class="app-case__summary-list__value">
 			{% if case.case_officer %}

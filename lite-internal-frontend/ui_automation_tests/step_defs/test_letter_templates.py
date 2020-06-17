@@ -11,48 +11,6 @@ from ui_automation_tests.shared import functions
 scenarios("../features/letter_templates.feature", strict_gherkin=False)
 
 
-@given("I create a letter paragraph picklist")
-def add_letter_paragraph_picklist(add_a_letter_paragraph_picklist):
-    pass
-
-
-@when("I create a letter template for a document")
-def create_letter_template(driver, context, get_template_id):
-    template_page = LetterTemplates(driver)
-    template_page.click_create_a_template()
-
-    context.template_name = "Template " + utils.get_formatted_date_time_y_m_d_h_s()
-    template_page.enter_template_name(context.template_name)
-    functions.click_submit(driver)
-
-    template_page.select_which_type_of_cases_template_can_apply_to(
-        ["Standard-Individual-Export-Licence", "Open-Individual-Export-Licence"]
-    )
-    functions.click_submit(driver)
-
-    template_page.select_which_type_of_decisions_template_can_apply_to(["Approve", "Proviso"])
-    functions.click_submit(driver)
-
-    template_page.select_visible_to_exporter("True")
-    functions.click_submit(driver)
-
-    template_page.click_licence_layout(get_template_id)
-    functions.click_submit(driver)
-
-
-@when("I add a letter paragraph to template")
-def add_two_letter_paragraphs(driver, context):
-    letter_template = LetterTemplates(driver)
-    letter_template.click_add_letter_paragraph()
-    context.letter_paragraph_name = letter_template.add_letter_paragraph()
-    letter_template.click_add_letter_paragraphs()
-
-
-@when("I preview template")
-def preview_template(driver):
-    LetterTemplates(driver).click_create_preview_button()
-
-
 @then("my picklist is in template")
 def picklist_in_template(driver, context):
     assert context.picklist_text in LetterTemplates(driver).get_text_in_template()
@@ -129,8 +87,3 @@ def template_paragraphs_have_been_edited(driver, context):
 @then(parsers.parse('"{expected_text}" is shown as position "{no}" in the audit trail'))
 def latest_audit_trail(driver, expected_text, no):
     assert expected_text in ApplicationPage(driver).get_text_of_audit_trail_item(int(no) - 1)
-
-
-@when("I go to letters")
-def i_go_to_letters(driver, internal_url):
-    driver.get(internal_url.rstrip("/") + "/document-templates")
