@@ -113,3 +113,9 @@ class Cases:
         self.api_client.make_request(
             method="POST", url="/cases/" + case_id + "/final-advice/", headers=self.api_client.gov_headers, body=data,
         )
+
+    def get_compliance_id_for_case(self, case_id):
+        case = self.api_client.make_request(
+            method="GET", url="/compliance/case/" + case_id, headers=self.api_client.gov_headers
+        ).json()
+        return case["ids"]
