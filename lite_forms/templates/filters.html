@@ -10,7 +10,7 @@
 		{% lcs 'generic.Filters.HIDE_FILTERS_LINK' %}
 	</a>
 </div>
-<form id="filters" method="get">
+<form method="get">
 	<div class="lite-filter-bar">
 		<div class="lite-filter-bar__components">
 			{% for component in filters.filters %}
@@ -50,7 +50,7 @@
 				</details>
 			{% endif %}
 		<div class="lite-filter-bar__buttons">
-			<button type="submit" form="filters" class="govuk-button" id="button-apply-filters">
+			<button type="submit" class="govuk-button" id="button-apply-filters">
 				{% lcs 'generic.Filters.APPLY_FILTERS_BUTTON' %}
 			</button>
 			<a href="?{% for component in filters.filters %}{% if component.input_type == "hidden" %}{{ component.name }}={{ component.value }}&{% endif %}{% endfor %}" class="govuk-button govuk-button--secondary govuk-button--secondary-white" id="button-clear-filters">
