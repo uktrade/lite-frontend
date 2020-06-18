@@ -3,6 +3,10 @@
 	display: grid;
 	grid-template-columns: 1fr auto;
 
+	@include govuk-media-query($until: tablet) {
+		grid-template-columns: 1fr!important;
+	}
+
 	&::after {
 		content: "";
 		position: absolute;
@@ -19,9 +23,15 @@
 	position: relative;
 	z-index: 1;
 
-	& > * {
-		margin: 0;
-		margin-left: govuk-spacing(3);
+	@include govuk-media-query($until: tablet) {
+		margin-left: 0!important;
+	}
+
+	@include govuk-media-query($from: tablet) {
+		& > * {
+			margin: 0;
+			margin-left: govuk-spacing(3);
+		}
 	}
 
 	&::after {
@@ -56,6 +66,11 @@
 	cursor: pointer;
 	white-space: nowrap;
 	text-decoration: none!important;
+
+	@include govuk-media-query($until: tablet) {
+		margin-right: govuk-spacing(3);
+		margin-bottom: govuk-spacing(3);
+	}
 
 	&:hover {
 		border-bottom: 2px solid $govuk-secondary-text-colour;

@@ -133,6 +133,7 @@ td {
 		tr {
 			display: block;
 			margin-bottom: govuk-spacing(3) + 2px;
+			padding: govuk-spacing(3);
 
 			&:last-child {
 				margin-bottom: 0;
@@ -141,19 +142,22 @@ td {
 			background-color: govuk-colour("light-grey");
 			box-shadow: 0 2px 0 0 govuk-colour("mid-grey");
 
-			td {
-				display: flex;
-				justify-content: flex-start;
-				align-items: space-between;
-				flex-direction: column;
-				padding: govuk-spacing(2) govuk-spacing(3)!important;
+			th, td {
+				display: block;
+				padding-top: 0!important;
+				padding-right: 0;
 				border-bottom: none!important;
+				word-break: break-all;
 
 				.govuk-table__header {
-					display: inline-block;
+					display: block;
 					border-bottom: none!important;
 					padding: 0;
 					margin-bottom: govuk-spacing(2);
+				}
+
+				&:last-of-type {
+					padding-bottom: 0;
 				}
 
 				.govuk-tag--grey {
