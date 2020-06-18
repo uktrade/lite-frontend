@@ -87,3 +87,13 @@ def template_paragraphs_have_been_edited(driver, context):
 @then(parsers.parse('"{expected_text}" is shown as position "{no}" in the audit trail'))
 def latest_audit_trail(driver, expected_text, no):
     assert expected_text in ApplicationPage(driver).get_text_of_audit_trail_item(int(no) - 1)
+
+
+@when("I go to letters")
+def i_go_to_letters(driver, internal_url):
+    driver.get(internal_url.rstrip("/") + "/document-templates")
+
+
+@when("I click done")
+def click_done(driver):
+    LetterTemplates(driver).click_done_button()

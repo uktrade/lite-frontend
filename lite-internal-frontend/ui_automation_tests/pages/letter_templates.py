@@ -15,6 +15,7 @@ class LetterTemplates(BasePage):
     DRAG_DROP_LIST = "standard-advice-list"  # ID
     PREVIEW_PARAGRAPHS = "paragraph-list"  # ID
     VISIBLE_TO_EXPORTER_PARTIAL_ID = "visible_to_exporter-"
+    DONE_BUTTON_ID = "done"
 
     # Template page
     TEMPLATE_TITLE = "title"  # ID
@@ -109,3 +110,6 @@ class LetterTemplates(BasePage):
 
     def get_template_table_text(self):
         return Shared(self.driver).get_text_of_lite_table_body()
+
+    def click_done_button(self):
+        self.driver.find_element_by_id(self.DONE_BUTTON_ID).click()

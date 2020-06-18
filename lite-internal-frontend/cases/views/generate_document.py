@@ -124,10 +124,7 @@ class PreviewDocument(TemplateView):
         template_id = str(kwargs["tpk"])
         case_id = str(kwargs["pk"])
         addressee = request.POST.get("addressee", "")
-
         text = request.POST.get(TEXT)
-        if not text:
-            return generate_document_error_page()
 
         preview, status_code = get_generated_document_preview(
             request, case_id, template=template_id, text=quote(text), addressee=addressee
@@ -145,9 +142,6 @@ class PreviewDocument(TemplateView):
 class CreateDocument(TemplateView):
     def post(self, request, queue_pk, pk, tpk):
         text = request.POST.get(TEXT)
-        if not text:
-            return generate_document_error_page()
-
         status_code = post_generated_document(
             request,
             str(pk),
@@ -164,9 +158,6 @@ class CreateDocument(TemplateView):
 class CreateDocumentFinalAdvice(TemplateView):
     def post(self, request, queue_pk, pk, decision_key, tpk):
         text = request.POST.get(TEXT)
-        if not text:
-            return generate_document_error_page()
-
         status_code = post_generated_document(
             request,
             str(pk),

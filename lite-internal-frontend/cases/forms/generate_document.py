@@ -1,8 +1,9 @@
 from django.urls import reverse_lazy
 
+from lite_content.lite_internal_frontend import picklists
 from lite_content.lite_internal_frontend.cases import GenerateDocumentsPage
 from lite_content.lite_internal_frontend.strings import letter_templates
-from lite_forms.components import Form, RadioButtonsImage, Option, BackLink, TextArea, Custom
+from lite_forms.components import Form, RadioButtonsImage, Option, BackLink, TextArea, Custom, HelpSection
 
 
 def select_template_form(templates, back_url):
@@ -43,5 +44,6 @@ def edit_document_text_form(kwargs, post_url):
         questions=[TextArea(name="text", extras={"max_length": 5000}),],
         default_button_name=GenerateDocumentsPage.EditTextForm.BUTTON,
         post_url=reverse_lazy(post_url, kwargs=kwargs),
+        helpers=[HelpSection(picklists.NewPicklistForm.HELP, None, "teams/markdown-help.html")],
         container="case",
     )

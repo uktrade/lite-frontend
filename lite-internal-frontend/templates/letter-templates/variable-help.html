@@ -1,0 +1,52 @@
+{% extends 'layouts/base.html' %}
+
+{% block back_link %}{% endblock %}
+
+{% block body %}
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">
+				{% block title %}
+					{% lcs 'letter_templates.VariableHelpPage.TITLE' %}
+				{% endblock %}
+			</h1>
+		</div>
+	</div>
+
+	<div class="govuk-grid-row">
+		<div class="govuk-grid-column-one-quarter lite-sticky-box">
+			<ul class="lite-subnav">
+				{% for section in contents %}
+					<li class="lite-subnav__link">
+						<a href="#{{ section }}">
+							{{ section|format_heading }}
+						</a>
+					</li>
+				{% endfor %}
+			</ul>
+		</div>
+		<div class="govuk-grid-column-three-quarters">
+			{% for key, value in sections.items %}
+				<h2 class="govuk-heading-m" id="{{ key }}">{{ key|format_heading }}</h2>
+				<table class="govuk-table">
+					<thead class="govuk-table__head">
+						<tr class="govuk-table__row">
+							<th scope="col" class="govuk-table__header govuk-!-width-one-quarter">{% lcs 'letter_templates.VariableHelpPage.DETAIL_COLUMN' %}</th>
+							<th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs 'letter_templates.VariableHelpPage.PATH_COLUMN' %}</th>
+							<th scope="col" class="govuk-table__header govuk-!-width-one-quarter">{% lcs 'letter_templates.VariableHelpPage.EXAMPLE_COLUMN' %}</th>
+						</tr>
+					</thead>
+					<tbody class="govuk-table__body">
+						{% for row in value %}
+							<tr class="govuk-table__row">
+								{% for cell in row %}
+									<td class="govuk-table__cell">{{ cell|linebreaksbr }}</td>
+								{% endfor %}
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			{% endfor %}
+		</div>
+	</div>
+{% endblock %}

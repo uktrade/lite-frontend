@@ -1,7 +1,8 @@
 from lite_content.lite_internal_frontend import strings
 from django.contrib import messages
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.views.generic import TemplateView
+
 from lite_forms.generators import form_page, error_page
 from lite_forms.submitters import submit_paged_form
 
@@ -48,3 +49,23 @@ class Create(TemplateView):
             return error_page(None, "; ".join(error_messages))
 
         return redirect("letter_templates:letter_templates")
+
+
+class VariableHelp(TemplateView):
+    @staticmethod
+    def _get_table_text(text):
+        """
+        Handles the Enum format in VariableHelpPageTables.
+        Converts the markdown table formatting into nested lists for rendering.
+        For example; "Item1|abc|123 \n Item2|def|456" becomes [["Item1","abc","123"], ["Item2","def","456"]]
+        """
+        rows = [item.strip().replace("\\n", "\n") for item in text.split("\n") if item.strip()]
+        return [row.split("|") for row in rows]
+
+    def get(self, request, **kwargs):
+        tables = {
+            table.name: self._get_table_text(table.value) for table in strings.letter_templates.VariableHelpPageTables
+        }
+
+        context = {"sections": tables, "contents": strings.letter_templates.VariableHelpPage.CONTENTS}
+        return render(request, "letter-templates/variable-help.html", context)

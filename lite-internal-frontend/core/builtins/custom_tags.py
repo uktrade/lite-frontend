@@ -597,6 +597,11 @@ def sentence_case(text):
 
 
 @register.filter()
+def format_heading(text):
+    return text.replace("_", " ")
+
+
+@register.filter()
 def goods_value(goods):
     total_value = 0
 

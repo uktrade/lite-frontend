@@ -67,10 +67,6 @@ class EditTemplate(TemplateView):
 class EditParagraphs(TemplateView):
     def get(self, request, **kwargs):
         letter_template = get_letter_template(request, str(kwargs["pk"]))[0]["template"]
-
-        if kwargs.get("override_paragraphs"):
-            letter_template["letter_paragraphs"] = kwargs.get("override_paragraphs")
-
         letter_paragraphs = get_letter_paragraphs(request, letter_template["letter_paragraphs"])
         letter_paragraphs = self.sort_letter_paragraphs(letter_paragraphs, letter_template["letter_paragraphs"])
 
@@ -97,20 +93,14 @@ class EditParagraphs(TemplateView):
     def post(self, request, **kwargs):
         letter_template_id = str(kwargs["pk"])
         action = request.POST.get("action")
-        existing_paragraphs = request.POST.getlist("letter_paragraphs")
+        paragraphs = request.POST.getlist("letter_paragraphs")
 
         if action == "add_letter_paragraph":
-            return self._add_letter_paragraph(request, existing_paragraphs)
-
-        elif action == "return_to_preview":
-            return self.get(request, override_paragraphs=request.POST.getlist("letter_paragraphs"), **kwargs)
+            return self._add_letter_paragraph(request, paragraphs)
 
         elif "delete" in action:
             pk_to_delete = action.split(".")[1]
-            existing_paragraphs.remove(pk_to_delete)
-            return self.get(request, override_paragraphs=existing_paragraphs, **kwargs)
+            paragraphs.remove(pk_to_delete)
 
-        put_letter_template(
-            request, letter_template_id, {"letter_paragraphs": request.POST.getlist("letter_paragraphs")}
-        )
-        return redirect(reverse("letter_templates:letter_template", kwargs={"pk": letter_template_id}))
+        put_letter_template(request, letter_template_id, {"letter_paragraphs": paragraphs})
+        return self.get(request, **kwargs)

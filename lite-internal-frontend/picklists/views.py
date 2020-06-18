@@ -22,8 +22,13 @@ from picklists.forms import (
     edit_picklist_item_form,
     edit_letter_paragraph_form,
 )
-from picklists.services import get_picklist_item, get_picklists_list, set_picklist_item_status
-from picklists.validators import validate_and_post_picklist_item, validate_and_put_picklist_item
+from picklists.services import (
+    get_picklist_item,
+    get_picklists_list,
+    set_picklist_item_status,
+    post_picklist_item,
+    put_picklist_item,
+)
 from teams.services import get_team
 from users.services import get_gov_user
 
@@ -90,7 +95,7 @@ class ViewPicklistItem(TemplateView):
 
 class AddPicklistItem(SingleFormView):
     def init(self, request, **kwargs):
-        self.action = validate_and_post_picklist_item
+        self.action = post_picklist_item
         countries, _ = get_countries(request)
         flags = get_flags(request, status=FlagStatus.ACTIVE.value)
         denial_reasons = get_denial_reasons(request, False)
@@ -110,7 +115,7 @@ class EditPicklistItem(SingleFormView):
         self.object_pk = kwargs["pk"]
         self.object = get_picklist_item(request, self.object_pk)
         self.data = self.object
-        self.action = validate_and_put_picklist_item
+        self.action = put_picklist_item
         self.success_url = reverse_lazy("picklists:picklist_item", kwargs={"pk": self.object_pk})
         self.success_message = EditPicklistItemForm.SUCCESS_MESSAGE
         countries, _ = get_countries(request)

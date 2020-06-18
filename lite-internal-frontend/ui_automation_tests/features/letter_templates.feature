@@ -33,6 +33,6 @@ So that I can create standard letters used by case workers and they can be updat
     And "to" is shown as position "2" in the audit trail
     When I edit my template paragraphs
     Then The template paragraphs have been edited
-    When I click continue
+    When I click done
     Then The paragraph text is present
     And "updated letter paragraphs from" is shown as position "1" in the audit trail

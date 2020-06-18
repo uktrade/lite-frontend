@@ -45,7 +45,7 @@
 				{% endfor %}
 			</div>
 		</div>
-		<button type="submit" name="action" value="submit" class="govuk-button">{% lcs 'LetterTemplates.EditParagraph.SAVE_BUTTON' %}</button>
+		<a id="done" class="govuk-button" href="{% url 'letter_templates:letter_template' letter_template.id %}">{% lcs 'LetterTemplates.EditParagraph.SAVE_BUTTON' %}</a>
 	</form>
 {% endblock %}
 

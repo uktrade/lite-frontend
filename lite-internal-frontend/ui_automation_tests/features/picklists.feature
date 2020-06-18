@@ -6,20 +6,13 @@ Feature: I want standard picklists
   So that I can make it easier for other government users to quickly apply any relevant conditions to their approval recommendations
 
   @LT_1077_add_edit @regression
-  Scenario: Add and edit a picklist item with context variables
+  Scenario: Add and edit a letter paragraph
     Given I sign in to SSO or am signed into SSO
     When I go to My Team
     And I go to picklists tab
     And I go to "letter_paragraph" picklist
     And I click add a new picklist
-    And I add a new picklist item with "name" and "description {{ fake_variable }}"
-    And I click continue
-    Then An invalid variable error for "fake_variable" is shown
-    When I clear the picklist name and description
     And I add a new picklist item with "name" and "description"
-    And I type {{ into the description
-    Then I am given context variable suggestions
-    When I click a suggested context variable
     And I click continue
     Then I see my new picklist item in the list
     When I click on my picklist item

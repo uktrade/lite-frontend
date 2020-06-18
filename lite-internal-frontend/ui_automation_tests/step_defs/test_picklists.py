@@ -49,7 +49,6 @@ def see_new_picklist(driver, context):
     latest_picklist_description = picklist_page.get_latest_picklist_description()
     assert context.picklist_name in latest_picklist_name, "picklist name is not in column"
     assert context.picklist_description in latest_picklist_description, "picklist description is not in column"
-    assert context.prompted_context_variable in latest_picklist_description, "picklist context variable not in column"
 
 
 @when("I click on my picklist item")
@@ -83,23 +82,6 @@ def i_see_my_picklist_page(driver, context, status):
     assert context.picklist_type.lower().replace("_", " ") in body.lower().replace(
         "_", " "
     ), "picklist type is not displayed"
-
-
-@when("I type {{ into the description")
-def type_context_variable_start(driver, context):
-    PicklistPages(driver).type_into_picklist_description(" {")
-
-
-@then("I am given context variable suggestions")
-def context_variable_overlay(driver):
-    assert PicklistPages(driver).context_suggestions_are_displayed(), "Context variable suggestion list didn't appear"
-
-
-@when("I click a suggested context variable")
-def context_variable_option(driver, context):
-    picklist_page = PicklistPages(driver)
-    context.prompted_context_variable = picklist_page.get_context_suggestion_variable_name().split("\n")[0]
-    picklist_page.click_context_suggestion()
 
 
 @when("I click add a new picklist")
