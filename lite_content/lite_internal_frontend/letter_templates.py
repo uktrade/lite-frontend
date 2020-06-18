@@ -51,7 +51,7 @@ class VariableHelpPageTables(Enum):
     # The name of the variable defines the name of the table
 
     Addressee = """
-        Name (default is the case submitter)|{{ addressee.name }}|Anthony Lord
+        Name|{{ addressee.name }}|Anthony Lord (default is the submitter)
         Email address|{{ addressee.email }}|anthony@testemail.co.uk
         Address (only if an addressee is selected)|{{ addressee.address }}|
         Phone number (only if an addressee is selected)|{{ addressee.phone_number }}|020 7946 0001
@@ -68,19 +68,19 @@ class VariableHelpPageTables(Enum):
         Postcode|{{ organisation.primary_site.postcode }}|
         City|{{ organisation.primary_site.city }}|
         Region|{{ organisation.primary_site.region }}|
-        Country|{{ organisation.primary_site.country.name }}|
+        Country|{{ organisation.primary_site.country.name }}|United Kingdom
         Country code|{{ organisation.primary_site.country.code }}|
     """
 
     Case_and_licence_details = """
         Reference|{{ case_reference }}|GBSIEL/2020/0000001/P
         Type|{{ case_type.type }}|‘Application’ or ‘Query’
-        Licence or clearance category|{{ case_type.sub_type }}|‘Standard’, ‘Open’, ‘HMRC’, ‘Exhibition clearance’
-        Licence or clearance type|{{ case_type.reference }}|‘OIEL’, ‘OGEL’, ‘SIEL’
-        Date document generated|{{ current_date }}|01 June 2020
-        Time document generated|{{ current_time }}|10:00
-        Start date|{{ licence.start_date }}|01 June 2020
-        End date|{{ licence.end_date }}|01 June 2020
+        Licence or clearance category|{{ case_type.sub_type }}|‘Standard’, ‘Open’, ‘HMRC’, or ‘Exhibition clearance’
+        Licence or clearance type|{{ case_type.reference }}|‘OIEL’, ‘OGEL’, or ‘SIEL’
+        Date document generated|{{ current_date }}|20 June 2020
+        Time document generated|{{ current_time }}|‘10:30’ or ‘14:55’
+        Start date|{{ licence.start_date }}|20 June 2020
+        End date|{{ licence.end_date }}|20 June 2020
         Duration|{{ licence.duration }}|24
     """
 
@@ -99,109 +99,109 @@ class VariableHelpPageTables(Enum):
 
     Standard_applications = """
         Export type|{{ details.export_type }}|‘Permanent’ or ‘Temporary’
-        |{{ details.reference_number_on_information_form }}|
-        |{{ details.has_been_informed }}|
-        |{{ details.contains_firearm_goods }}|‘Yes’ or ‘No’
-        |{{ details.shipped_waybill_or_lading }}|‘Yes’ or ‘No’
-        |{{ details.non_waybill_or_lading_route_details }}|
-        |{{ details.proposed_return_date }}|
-        |{{ details.trade_control_activity }}|
-        |{{ details.trade_control_activity_other }}|
-        |{{ details.trade_control_product_categories }}|
-        |{{ details.goodstype_category }}|
-        |{{ details.temporary_export_details.temp_export_details }}|
-        |{{ details.temporary_export_details.is_temp_direct_control }}|‘Yes’ or ‘No’
-        |{{ details.temporary_export_details.temp_direct_control_details }}|
-        |{{ details.temporary_export_details.proposed_return_date }}|
-        Goods descriptions|{{ goods.all.description }}|
-        |{{ goods.all.control_list_entries }}|
-        |{{ goods.all.applied_for_value }}|
-        |{{ goods.all.applied_for_quantity }}|
-        |{{ goods.all.is_controlled }}|
-        |{{ goods.all.is_incorporated }}|
-        |{{ goods.all.part_number }}|
+        Informed by Border Force or HMRC to apply|{{ details.has_been_informed }}|‘Yes’ or ‘No’
+        Reference number on letter from Border Force or HMRC|{{ details.reference_number_on_information_form }}|CRE/2020/1234567
+        If firearms included on application|{{ details.contains_firearm_goods }}|‘Yes’ or ‘No’
+        If goods shipped on an air waybill or bill of lading|{{ details.shipped_waybill_or_lading }}|‘Yes’ or ‘No’
+        Details of the route of the goods|{{ details.non_waybill_or_lading_route_details }}|
+        Proposed return date|{{ details.proposed_return_date }}|20 June 2020
+        Trade control activity|{{ details.trade_control_activity }}|
+        Other trade control activity|{{ details.trade_control_activity_other }}|
+        Trade control product category|{{ details.trade_control_product_categories }}|
+        Goods type category|{{ details.goodstype_category }}|
+        Reason it’s a temporary export|{{ details.temporary_export_details.temp_export_details }}|As entered by applicant 
+        Goods to remain under exporters direct control|{{ details.temporary_export_details.is_temp_direct_control }}|‘Yes’ or ‘No’
+        Details of who will be in control of the products|{{ details.temporary_export_details.temp_direct_control_details }}|As entered by applicant
+        Proposed date the goods to return to the UK|{{ details.temporary_export_details.proposed_return_date }}|20 June 2020
+        Goods descriptions|{{ goods.all.description }}|As entered by applicant
+        Control list entries|{{ goods.all.control_list_entries }}|‘ML1a’ or ‘1D101’
+        Total value of the goods|{{ goods.all.applied_for_value }}|
+        Quantity of goods|{{ goods.all.applied_for_quantity }}|
+        If the goods are controlled|{{ goods.all.is_controlled }}|‘Yes’ or ‘No’
+        If the goods are to be incorporated|{{ goods.all.is_incorporated }}|
+        Part number|{{ goods.all.part_number }}|As entered by applicant
     """
 
     Open_applications = """
-        |{{ details.export_type }}|
-        |{{ details.reference_number_on_information_form }}|
-        |{{ details.has_been_informed }}|
-        |{{ details.contains_firearm_goods }}|‘Yes’ or ‘No’
-        |{{ details.shipped_waybill_or_lading }}|‘Yes’ or ‘No’
-        |{{ details.non_waybill_or_lading_route_details }}|
-        |{{ details.proposed_return_date }}|
-        |{{ details.trade_control_activity }}|
-        |{{ details.trade_control_activity_other }}|
-        |{{ details.trade_control_product_categories }}|
-        |{{ details.goodstype_category }}|
-        |{{ details.temporary_export_details.temp_export_details }}|
-        |{{ details.temporary_export_details.is_temp_direct_control }}|‘Yes’ or ‘No’
-        |{{ details.temporary_export_details.temp_direct_control_details }}|
-        |{{ details.temporary_export_details.proposed_return_date }}|
-        |{{ goods.all.description }}|
-        |{{ goods.all.control_list_entries }}|
-        |{{ goods.all.is_controlled }}|‘Yes’ or ‘No’
+        Export type|{{ details.export_type }}|‘Permanent’ or ‘Temporary’
+        Informed by Border Force or HMRC to apply|{{ details.has_been_informed }}|‘Yes’ or ‘No’
+        Reference number on letter from Border Force or HMRC|{{ details.reference_number_on_information_form }}|
+        If firearms included on application|{{ details.contains_firearm_goods }}|‘Yes’ or ‘No’
+        If goods shipped on an air waybill or bill of lading|{{ details.shipped_waybill_or_lading }}|‘Yes’ or ‘No’
+        Details of the route of the goods|{{ details.non_waybill_or_lading_route_details }}|As entered by applicant
+        Proposed return date|{{ details.proposed_return_date }}|20 June 2020
+        Trade control activity|{{ details.trade_control_activity }}|
+        Other trade control activity|{{ details.trade_control_activity_other }}|
+        Trade control product category|{{ details.trade_control_product_categories }}|
+        Goods type category|{{ details.goodstype_category }}|
+        Reason it’s a temporary export|{{ details.temporary_export_details.temp_export_details }}|As entered by applicant
+        Goods to remain under exporters direct control|{{ details.temporary_export_details.is_temp_direct_control }}|‘Yes’ or ‘No’
+        Details of who will be in control of the products|{{ details.temporary_export_details.temp_direct_control_details }}|As entered by applicant
+        Proposed date the goods to return to the UK|{{ details.temporary_export_details.proposed_return_date }}|20 June 2020
+        Goods descriptions|{{ goods.all.description }}|As entered by applicant
+        Control list entries|{{ goods.all.control_list_entries }}|‘ML1a’ or ‘1D101’
+        If the goods are controlled|{{ goods.all.is_controlled }}|‘Yes’ or ‘No’
         |{{ goods.countries.country_a.description }}|
         |{{ goods.countries.country_a.control_list_entries }}|
-        Destination country|{{ destinations.country.name }}|
-        |{{ destinations.country.code }}|
-        Sector and contract types|{{ destinations.contract_types }}|
-        |{{ destinations.other_contract_type }}|
+        Destination country|{{ destinations.country.name }}|‘Abu Dhabi’ or ‘Zimbabwe’
+        Country code|{{ destinations.country.code }}|
+        Sector and contract types|{{ destinations.contract_types }}|‘Nuclear-related (trigger list items)’ or ‘Army’
+        Other sector and contract type|{{ destinations.other_contract_type }}|As entered by applicant
     """
 
     Customs_query = """
-        |{{ details.query_reason }}|
-        |{{ details.have_goods_departed }}|‘Yes’ or ‘No’
+        Query details|{{ details.query_reason }}|As entered by applicant
+        If goods have departed UK|{{ details.have_goods_departed }}|‘Yes’ or ‘No’
     """
 
-    Exhibition_query = """
-        |{{ details.exhibition_title }}|
-        |{{ details.first_exhibition_date }}|
-        |{{ details.required_by_date }}|
-        |{{ details.reason_for_clearance }}|
+    Exhibition_clearance = """
+        Exhibition name|{{ details.exhibition_title }}|As entered by applicant
+        Exhibition start date|{{ details.first_exhibition_date }}|20 June 2020
+        Date the clearance is needed|{{ details.required_by_date }}|20 June 2020
+        Details as to why clearance is needed by this date|{{ details.reason_for_clearance }}|As entered by applicant
         Goods type|{{ goods.item_type }}|
-        |{{ goods.other_item_type }}|
+        Other goods type|{{ goods.other_item_type }}|
     """
 
     F680_clearance = """
-        |{{ details.clearance_types }}|
-        |{{ details.expedited }}|‘Yes’ or ‘No’
-        |{{ details.expedited_date }}|
-        |{{ details.foreign_technology }}|‘Yes’ or ‘No’
-        |{{ details.foreign_technology_description }}|
-        |{{ details.locally_manufactured }}|‘Yes’ or ‘No’
-        |{{ details.locally_manufactured_description }}|
-        |{{ details.mtcr_type }}|
-        |{{ details.electronic_warfare_requirement }}|‘Yes’ or ‘No’
-        |{{ details.uk_service_equipment }}|‘Yes’ or ‘No’
-        |{{ details.uk_service_equipment_description }}|
-        |{{ details.uk_service_equipment_type }}|
-        |{{ details.prospect_value }}|
-        |{{ details.clearance_level }}|
-        |{{ end_user.clearance_level }}|
-        |{{ end_user.descriptors }}|
+        Clearance type|{{ details.clearance_types }}|‘Market survey’, ‘Initial discussions and promotions’, ‘Demonstration in the UK to overseas customers’, ‘Demonstration overseas’, ‘Training’ or ‘Through life support’
+        Expedited|{{ details.expedited }}|‘Yes’ or ‘No’
+        Date the clearance is needed|{{ details.expedited_date }}|20 June 2020
+        If there’s any foreign technology or information involved|{{ details.foreign_technology }}|‘Yes’ or ‘No’
+        Details of foreign technology or information|{{ details.foreign_technology_description }}|As entered by applicant
+        If local assembly or manufacture is required|{{ details.locally_manufactured }}|‘Yes’ or ‘No’
+        Details of local assembly or manufacture|{{ details.locally_manufactured_description }}|As entered by applicant
+        Goods are rated under MTCR|{{ details.mtcr_type }}|‘Yes, Category 1’, Yes, Category 2’, ‘No’ or ‘I don’t know’
+        If there’s a requirement to release UK MOD owned EW data or information|{{ details.electronic_warfare_requirement }}|‘Yes’ or ‘No’
+        If the goods are due to enter service with the UK armed forces|{{ details.uk_service_equipment }}|‘Yes’ or ‘No’
+        Details of goods entering service with the UK armed forces|{{ details.uk_service_equipment_description }}|As entered by applicant
+        How the goods are funded|{{ details.uk_service_equipment_type }}|‘MOD funded’, ‘Part MOD funded / part private venture’ or ‘Private venture’
+        Total value of prospect|{{ details.prospect_value }}|
+        Clearance level|{{ details.clearance_level }}|‘UK TOP SECRET’, ‘NATO CONFIDENTIAL’ or ‘OCCAR UNCLASSIFIED’
+        End user clearance level|{{ end_user.clearance_level }}|‘UK TOP SECRET’, ‘NATO CONFIDENTIAL’ or ‘OCCAR UNCLASSIFIED’
+        Descriptors, caveats and codewords|{{ end_user.descriptors }}|As entered by applicant
     """
 
     End_user_advisory_query = """
-        |{{ details.note }}|
-        |{{ details.query_reason }}|
-        |{{ details.nature_of_business }}|
-        |{{ details.contact_name }}|
-        |{{ details.contact_email }}|
-        |{{ details.contact_job_title }}|
-        |{{ details.contact_telephone }}|
+        Notes|{{ details.note }}|
+        Reason for the query|{{ details.query_reason }}|
+        Nature of the business|{{ details.nature_of_business }}|
+        Contact name|{{ details.contact_name }}|Anthony Lord
+        Contact email|{{ details.contact_email }}|anthony@testemail.co.uk
+        Contact job title|{{ details.contact_job_title }}|Product owner
+        Contact phone number|{{ details.contact_telephone }}|020 7946 0001
     """
 
     Goods_query = """
-        |{{ details.control_list_entry }}|
-        |{{ details.clc_raised_reasons }}|
-        |{{ details.pv_grading_raised_reasons }}|
-        |{{ details.good.description }}|
-        |{{ details.good.control_list_entries }}|
-        |{{ details.good.is_controlled }}|
-        |{{ details.good.part_number }}|
-        |{{ details.clc_responded }}|‘Yes’ or ‘No’
-        |{{ details.pv_grading_responded }}|‘Yes’ or ‘No’
+        Proposed control list entry|{{ details.control_list_entry }}|‘ML1a’ or ‘1D101’
+        Details for CLC query|{{ details.clc_raised_reasons }}|As entered by applicant
+        Details for PV grading application|{{ details.pv_grading_raised_reasons }}|As entered by applicant
+        Goods description|{{ details.good.description }}|As entered by applicant
+        Control list entry|{{ details.good.control_list_entries }}|‘ML1a’ or ‘1D101’
+        If good is controlled|{{ details.good.is_controlled }}|‘Yes’, ‘No’ or ‘Don’t know’
+        Part number|{{ details.good.part_number }}|As entered by applicant
+        If responded to CLC query|{{ details.clc_responded }}|‘Yes’ or ‘No’
+        If responded to PV grading|{{ details.pv_grading_responded }}|‘Yes’ or ‘No’
     """
 
     End_user = """
