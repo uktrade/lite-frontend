@@ -1,7 +1,5 @@
-from _decimal import Decimal
-
 from cases.objects import Case
-from conf.client import post, get, put, delete
+from conf.client import post, get, put, delete, patch
 from conf.constants import (
     CASE_URL,
     CASE_NOTES_URL,
@@ -9,7 +7,6 @@ from conf.constants import (
     ACTIVITY_URL,
     ACTIVITY_FILTERS_URL,
     DOCUMENTS_URL,
-    END_USER_ADVISORY_URL,
     ECJU_QUERIES_URL,
     GOOD_URL,
     FLAGS_URL,
@@ -50,8 +47,13 @@ def get_case_types(request, type_only=True):
 
 # Case
 def get_case(request, pk):
-    data = get(request, CASE_URL + str(pk))
-    return Case(data.json()["case"])
+    response = get(request, CASE_URL + str(pk))
+    return Case(response.json()["case"])
+
+
+def patch_case(request, pk, json):
+    response = patch(request, CASE_URL + str(pk), json)
+    return response.json(), response.status_code
 
 
 # Case Queues
@@ -104,20 +106,9 @@ def put_goods_query_pv_grading(request, pk, json):
     return response.json(), response.status_code
 
 
-def put_goods_query_status(request, pk, json):
-    response = put(request, GOODS_QUERIES_URL + str(pk) + MANAGE_STATUS_URL, json)
-    return response.json(), response.status_code
-
-
 def put_compliance_status(request, pk, json):
     response = put(request, COMPLIANCE_URL + str(pk) + MANAGE_STATUS_URL, json)
     return response.json(), response.status_code
-
-
-# EUA Queries
-def put_end_user_advisory_query(request, pk, json):
-    data = put(request, END_USER_ADVISORY_URL + str(pk), json)
-    return data.json(), data.status_code
 
 
 # Case Notes
@@ -309,15 +300,6 @@ def _generate_post_data_and_errors(keys, request_data, action):
         else:
             post_data.append({"good": good_pk, "country": country_pk, "decision": request_data.get(key)})
     return post_data, errors
-
-
-def _get_total_goods_value(case):
-    total_value = 0
-    for good in case.get("application").get("goods", []):
-        # conditional, as some case types e.g. exhibition clearances don't contain a value.
-        if good.get("value"):
-            total_value += Decimal(good["value"]).quantize(Decimal(".01"))
-    return total_value
 
 
 # Letter template decisions

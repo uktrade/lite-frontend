@@ -1,0 +1,6 @@
+<div class="app-menu__header">
+	{{ case.data.open_general_licence.name }}
+</div>
+<p class="govuk-body govuk-!-margin-bottom-0 govuk-!-margin-left-3 govuk-!-margin-right-3">{{ case.data.open_general_licence.description }}</p>
+{% lcs 'cases.CasePage.Pills.OpenGeneralLicence.READ_ON_GOVUK_LINK' as text %}
+<p class="govuk-body govuk-!-margin-3">{{ case.data.open_general_licence.url|linkify:text }}</p>

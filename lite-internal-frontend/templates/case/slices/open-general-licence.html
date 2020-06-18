@@ -1,0 +1,73 @@
+<h2 class="govuk-heading-m">{% lcs 'cases.CasePage.DetailsTab.Site.TITLE' %}</h2>
+<dl class="app-case__summary-list govuk-!-margin-bottom-9">
+	<div class="app-case__summary-list__row">
+		<dt class="app-case__summary-list__key">
+			{% lcs 'cases.CasePage.DetailsTab.Site.NAME' %}
+		</dt>
+		<dd class="app-case__summary-list__value">
+			{{ case.data.site.name }}
+		</dd>
+	</div>
+	<div class="app-case__summary-list__row">
+		<dt class="app-case__summary-list__key">
+			{% lcs 'cases.CasePage.DetailsTab.Site.ADDRESS' %}
+		</dt>
+		<dd class="app-case__summary-list__value">
+			{{ case.data.site|get_address }}
+		</dd>
+	</div>
+</dl>
+
+<h2 class="govuk-heading-m">{{ case.case_type.reference.value }}</h2>
+<dl class="app-case__summary-list govuk-!-margin-bottom-9">
+	<div class="app-case__summary-list__row">
+		<dt class="app-case__summary-list__key">
+			{% lcs 'cases.CasePage.DetailsTab.OpenGeneralLicence.NAME' %}
+		</dt>
+		<dd class="app-case__summary-list__value">
+			{{ case.data.open_general_licence.name }}
+		</dd>
+	</div>
+	<div class="app-case__summary-list__row">
+		<dt class="app-case__summary-list__key">
+			{% lcs 'cases.CasePage.DetailsTab.OpenGeneralLicence.DESCRIPTION' %}
+		</dt>
+		<dd class="app-case__summary-list__value">
+			{{ case.data.open_general_licence.description }}
+		</dd>
+	</div>
+	<div class="app-case__summary-list__row">
+		<dt class="app-case__summary-list__key">
+			{% lcs 'cases.CasePage.DetailsTab.OpenGeneralLicence.CONTROL_LIST_ENTRIES' %}
+		</dt>
+		<dd class="app-case__summary-list__value">
+			<span data-definition-title="{{ case.data.open_general_licence.case_type.reference.value }} ({{ case.data.open_general_licence.name }})" data-definition-subtitle="{{ case.data.open_general_licence.control_list_entries|length }} control list entr{{ case.data.open_general_licence.control_list_entries|pluralize:'y,ies' }}" data-definition-list="{% for clc in case.data.open_general_licence.control_list_entries %}{{ clc.rating }}{% if not forloop.last %}, {% endif %}{% endfor %}">
+				{{ case.data.open_general_licence.control_list_entries|length }}
+				{{ case.data.open_general_licence.control_list_entries|lcsp:'open_general_licences.List.Table.CONTROL_LIST_ENTRIES' }}
+			</span>
+		</dd>
+	</div>
+	<div class="app-case__summary-list__row">
+		<dt class="app-case__summary-list__key">
+			{% lcs 'cases.CasePage.DetailsTab.OpenGeneralLicence.COUNTRIES' %}
+		</dt>
+		<dd class="app-case__summary-list__value">
+			<span data-definition-title="{{ case.data.open_general_licence.case_type.reference.value }} ({{ case.data.open_general_licence.name }})" data-definition-subtitle="{{ case.data.open_general_licence.countries|length }} countr{{ case.data.open_general_licence.countries|pluralize:'y,ies' }}" data-definition-list="{% for country in case.data.open_general_licence.countries %}{{ country.name }}{% if not forloop.last %}, {% endif %}{% endfor %}">
+				{{ case.data.open_general_licence.countries|length }}
+				{{ case.data.open_general_licence.countries|lcsp:'open_general_licences.List.Table.COUNTRIES' }}
+			</span>
+		</dd>
+	</div>
+	<div class="app-case__summary-list__row">
+		<dt class="app-case__summary-list__key">
+			{% lcs 'cases.CasePage.DetailsTab.OpenGeneralLicence.MORE_INFORMATION' %}
+		</dt>
+		<dd class="app-case__summary-list__value">
+			{{ case.data.open_general_licence.url|linkify }}
+		</dd>
+	</div>
+</dl>
+
+<a class="govuk-link govuk-link--no-visited-state" href="{% url 'open_general_licences:open_general_licence' case.data.open_general_licence.id %}?return_to={{ CURRENT_PATH }}&return_to_text={{ case.reference_code }}">
+	{% lcs 'cases.CasePage.DetailsTab.OpenGeneralLicence.VIEW_ON_LITE_LINK' %}
+</a>

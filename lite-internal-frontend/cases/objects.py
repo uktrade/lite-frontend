@@ -12,15 +12,6 @@ class Slice:
 
 class Case(Munch):
     @property
-    def data(self):
-        if "application" in self:
-            return self["application"]
-        elif "query" in self:
-            return self["query"]
-        else:
-            return self["compliance"]
-
-    @property
     def organisation(self):
         return self.data["organisation"]
 
@@ -50,7 +41,9 @@ class Case(Munch):
     @property
     def destinations(self):
         if "destinations" not in self.data:
-            destinations = [self.data.get("end_user")]
+            destinations = []
+            if self.data.get("end_user"):
+                destinations = [self.data.get("end_user")]
         else:
             destinations = self.data["destinations"]["data"]
 

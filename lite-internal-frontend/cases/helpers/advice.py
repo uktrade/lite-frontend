@@ -67,7 +67,7 @@ def get_advice_additional_context(request, case, permissions):
             current_advice_level = None
 
     if filter_advice_by_level(case["advice"], "final") and _check_user_permitted_to_give_final_advice(
-        case["application"]["case_type"]["sub_type"]["key"], permissions
+        case.data["case_type"]["sub_type"]["key"], permissions
     ):
         current_advice_level = "final"
 

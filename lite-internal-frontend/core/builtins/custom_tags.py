@@ -278,7 +278,10 @@ def linkify(address, name=None):
     address = escape(address)
     name = escape(name)
 
-    return safe(f'<a href="{address}" class="govuk-link govuk-link--no-visited-state">{name}</a>')
+    return safe(
+        f'<a href="{address}" rel="noreferrer noopener" target="_blank" class="govuk-link govuk-link--no-visited-state">{name} '
+        f'<span class="govuk-visually-hidden">(opens in new tab)</span></a>'
+    )
 
 
 @register.filter

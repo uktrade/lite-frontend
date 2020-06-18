@@ -30,13 +30,11 @@ def respond_to_clc_query_form(request, queue_pk, case):
             Heading(CLCReviewGoods.HEADING, HeadingStyle.S),
             Summary(
                 values={
-                    CLCReviewGoods.Summary.DESCRIPTION: case["query"]["good"]["description"],
-                    CLCReviewGoods.Summary.PART_NUMBER: default_na(case["query"]["good"]["part_number"]),
-                    CLCReviewGoods.Summary.IS_THIS_GOOD_CONTROLLED: case["query"]["good"]["is_good_controlled"][
-                        "value"
-                    ],
-                    CLCReviewGoods.Summary.CONTROL_LIST_ENTRIES: case["query"]["clc_control_list_entry"],
-                    CLCReviewGoods.Summary.EXPLANATION: case["query"]["clc_raised_reasons"],
+                    CLCReviewGoods.Summary.DESCRIPTION: case.data["good"]["description"],
+                    CLCReviewGoods.Summary.PART_NUMBER: default_na(case.data["good"]["part_number"]),
+                    CLCReviewGoods.Summary.IS_THIS_GOOD_CONTROLLED: case.data["good"]["is_good_controlled"]["value"],
+                    CLCReviewGoods.Summary.CONTROL_LIST_ENTRIES: case.data["clc_control_list_entry"],
+                    CLCReviewGoods.Summary.EXPLANATION: case.data["clc_raised_reasons"],
                 },
                 classes=[
                     "govuk-inset-text",
@@ -91,11 +89,11 @@ def respond_to_grading_query_form(request, queue_pk, case):
             Heading(PVGradingForm.HEADING, HeadingStyle.S),
             Summary(
                 values={
-                    PVGradingForm.Summary.DESCRIPTION: case["query"]["good"]["description"],
-                    PVGradingForm.Summary.PART_NUMBER: default_na(case["query"]["good"]["part_number"]),
-                    PVGradingForm.Summary.IS_THIS_GOOD_CONTROLLED: case["query"]["good"]["is_good_controlled"]["value"],
-                    PVGradingForm.Summary.CONTROL_LIST_ENTRIES: case["query"]["clc_control_list_entry"],
-                    PVGradingForm.Summary.EXPLANATION: case["query"]["clc_raised_reasons"],
+                    PVGradingForm.Summary.DESCRIPTION: case.data["good"]["description"],
+                    PVGradingForm.Summary.PART_NUMBER: default_na(case.data["good"]["part_number"]),
+                    PVGradingForm.Summary.IS_THIS_GOOD_CONTROLLED: case.data["good"]["is_good_controlled"]["value"],
+                    PVGradingForm.Summary.CONTROL_LIST_ENTRIES: case.data["clc_control_list_entry"],
+                    PVGradingForm.Summary.EXPLANATION: case.data["clc_raised_reasons"],
                 },
                 classes=[
                     "govuk-inset-text",

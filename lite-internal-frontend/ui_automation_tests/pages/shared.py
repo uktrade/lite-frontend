@@ -22,6 +22,7 @@ class Shared(BasePage):
     AUDIT_TRAIL_ID = "audit-trail"
     INPUT_NAME_FILTER_ID = "name"
     CASES_FORM_ID = "cases-form"
+    FIRST_LINK_IN_ROW = ".govuk-table__row .govuk-link"
 
     def click_submit(self):
         self.driver.find_element_by_css_selector(self.SUBMIT_BUTTON).click()
@@ -102,3 +103,6 @@ class Shared(BasePage):
         self.driver.find_element_by_id(self.INPUT_NAME_FILTER_ID).clear()
         self.driver.find_element_by_id(self.INPUT_NAME_FILTER_ID).send_keys(name)
         self.driver.find_element_by_css_selector(selectors.BUTTON_APPLY_FILTERS).click()
+
+    def click_first_link_in_row(self):
+        self.driver.find_element_by_css_selector(self.FIRST_LINK_IN_ROW).click()

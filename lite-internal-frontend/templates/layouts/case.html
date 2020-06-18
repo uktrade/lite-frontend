@@ -49,6 +49,14 @@
 								{% include 'case/pills/destinations.html' %}
 							</div>
 						{% endif %}
+						{% if case.data.open_general_licence %}
+							<span id="candy-open-general-licences" class="app-case-header__candy">
+								{{ case.case_type.reference.value }}
+							</span>
+							<div id="popup-open-general-licences" class="app-case-header__candy__popup">
+								{% include 'case/pills/open-general-licence.html' %}
+							</div>
+						{% endif %}
 						<span id="candy-flags" class="app-case-header__candy">
 							{% svg 'menu/flags' %}
 							{{ case.all_flags|length }}

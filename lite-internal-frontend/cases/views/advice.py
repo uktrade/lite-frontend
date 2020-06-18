@@ -223,10 +223,10 @@ class Finalise(TemplateView):
 
     def get(self, request, *args, **kwargs):
         case = get_case(request, str(kwargs["pk"]))
-        case_type = case["application"]["case_type"]["sub_type"]["key"]
+        case_type = case.data["case_type"]["sub_type"]["key"]
         is_case_oiel_final_advice_only = False
-        if "goodstype_category" in case["application"]:
-            is_case_oiel_final_advice_only = case["application"]["goodstype_category"]["key"] in [
+        if "goodstype_category" in case.data:
+            is_case_oiel_final_advice_only = case.data["goodstype_category"]["key"] in [
                 "media",
                 "cryptographic",
                 "dealer",
@@ -277,8 +277,8 @@ class Finalise(TemplateView):
 
     def post(self, request, *args, **kwargs):
         case = get_case(request, str(kwargs["pk"]))
-        is_open_licence = case["application"]["case_type"]["sub_type"]["key"] == CaseType.OPEN.value
-        application_id = case.get("application").get("id")
+        is_open_licence = case.data["case_type"]["sub_type"]["key"] == CaseType.OPEN.value
+        application_id = case.data.get("id")
         data = request.POST.copy()
 
         has_permission = helpers.has_permission(request, Permission.MANAGE_LICENCE_DURATION)
@@ -289,7 +289,7 @@ class Finalise(TemplateView):
             return error_page(request, "You do not have permission.")
 
         if res.status_code == HTTPStatus.BAD_REQUEST:
-            case_type = case["application"]["case_type"]["sub_type"]["key"]
+            case_type = case.data["case_type"]["sub_type"]["key"]
             form = approve_licence_form(
                 queue_pk=kwargs["queue_pk"],
                 case_id=case["id"],

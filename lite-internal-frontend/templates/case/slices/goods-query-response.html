@@ -8,7 +8,7 @@
 					{% lcs 'cases.ClcQuery.Verified.Clc.CONTROLLED' %}
 				</dt>
 				<dd class="app-case__summary-list__value">
-					{{ case.query.good.is_good_controlled.value }}
+					{{ case.data.good.is_good_controlled.value }}
 				</dd>
 			</div>
 			<div class="app-case__summary-list__row">
@@ -52,9 +52,9 @@
 				</dt>
 				<dd class="app-case__summary-list__value">
 					<p class="govuk-body-m">
-						{{ case.query.good.pv_grading_details.prefix }}
-						{{ case.query.good.pv_grading_details.grading.value }}
-						{{ case.query.good.pv_grading_details.suffix }}
+						{{ case.data.good.pv_grading_details.prefix }}
+						{{ case.data.good.pv_grading_details.grading.value }}
+						{{ case.data.good.pv_grading_details.suffix }}
 					</p>
 				</dd>
 			</div>
@@ -63,7 +63,7 @@
 					{% lcs 'cases.ClcQuery.Verified.PvGrading.COMMENT' %}
 				</dt>
 				<dd class="app-case__summary-list__value">
-					{{ case.query.good.grading_comment|default_na }}
+					{{ case.data.good.grading_comment|default_na }}
 				</dd>
 			</div>
 		</dl>

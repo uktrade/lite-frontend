@@ -21,7 +21,7 @@
 			{% lcs 'cases.ClcQuery.GoodDetails.Details.DESCRIPTION' %}
 		</dt>
 		<dd class="app-case__summary-list__value">
-			{{ case.query.good.description }}
+			{{ case.data.good.description }}
 		</dd>
 	</div>
 	<div class="app-case__summary-list__row">
@@ -29,7 +29,7 @@
 			{% lcs 'cases.ClcQuery.GoodDetails.Details.PART_NUMBER' %}
 		</dt>
 		<dd class="app-case__summary-list__value">
-			{{ case.query.good.part_number|default_na }}
+			{{ case.data.good.part_number|default_na }}
 		</dd>
 	</div>
 	<div class="app-case__summary-list__row">
@@ -58,7 +58,7 @@
 
 <br><br><br><br>
 
-{% if case.query.good.is_pv_graded.key == "yes" %}
+{% if case.data.good.is_pv_graded.key == "yes" %}
 	<h2 class="govuk-heading-m">{% lcs 'cases.ClcQuery.GoodDetails.Grading.TITLE' %}</h2>
 	<dl class="app-case__summary-list">
 		{% if case.data.pv_grading_responded %}
@@ -76,9 +76,9 @@
 					{% lcs 'cases.ClcQuery.GoodDetails.Grading.GRADING' %}
 				</dt>
 				<dd class="app-case__summary-list__value">
-					{{ case.query.good.pv_grading_details.prefix }}
-					{{ case.query.good.pv_grading_details.grading.value }}
-					{{ case.query.good.pv_grading_details.suffix }}
+					{{ case.data.good.pv_grading_details.prefix }}
+					{{ case.data.good.pv_grading_details.grading.value }}
+					{{ case.data.good.pv_grading_details.suffix }}
 				</dd>
 			</div>
 			{% if not case.data.pv_grading_responded %}
@@ -87,7 +87,7 @@
 						{% lcs 'cases.ClcQuery.GoodDetails.Grading.ISSUING_AUTHORITY' %}
 					</dt>
 					<dd class="app-case__summary-list__value">
-						{{ case.query.good.pv_grading_details.issuing_authority }}
+						{{ case.data.good.pv_grading_details.issuing_authority }}
 					</dd>
 				</div>
 				<div class="app-case__summary-list__row">
@@ -95,7 +95,7 @@
 						{% lcs 'cases.ClcQuery.GoodDetails.Grading.REFERENCE' %}
 					</dt>
 					<dd class="app-case__summary-list__value">
-						{{ case.query.good.pv_grading_details.reference }}
+						{{ case.data.good.pv_grading_details.reference }}
 					</dd>
 				</div>
 				<div class="app-case__summary-list__row">
@@ -103,7 +103,7 @@
 						{% lcs 'cases.ClcQuery.GoodDetails.Grading.DATE_OF_ISSUE' %}
 					</dt>
 					<dd class="app-case__summary-list__value">
-						{{ case.query.good.pv_grading_details.date_of_issue }}
+						{{ case.data.good.pv_grading_details.date_of_issue }}
 					</dd>
 				</div>
 			{% endif %}

@@ -88,29 +88,43 @@ def get_permissible_statuses(request, case):
                 Statuses.PV,
             ]
         ]
-    elif case_type == CaseType.COMPLIANCE.value:
-        case_type_applicable_statuses = [
-            status for status in statuses if status["key"] in [Statuses.OPEN, Statuses.CLOSED,]
-        ]
-    else:
+    elif case_type == CaseType.QUERY.value:
         if case_sub_type == CaseType.END_USER_ADVISORY.value:
             case_type_applicable_statuses = [status for status in statuses if status["key"] in BASE_QUERY_STATUSES]
         else:
             # if the query is not an end user advisory, then check if CLC/PV statuses are required
             goods_query_status_keys = BASE_QUERY_STATUSES.copy()
 
-            if case["query"]["clc_responded"] is not None:
+            if case.data["clc_responded"] is not None:
                 goods_query_status_keys.insert(1, Statuses.CLC)
 
-            if case["query"]["pv_grading_responded"] is not None:
+            if case.data["pv_grading_responded"] is not None:
                 # add PV status into the correct location
-                if case["query"]["clc_responded"] is not None:
+                if case.data["clc_responded"] is not None:
                     goods_query_status_keys.insert(2, Statuses.PV)
                 else:
                     goods_query_status_keys.insert(1, Statuses.PV)
 
             case_type_applicable_statuses = [status for status in statuses if status["key"] in goods_query_status_keys]
-
+    elif case_type == CaseType.COMPLIANCE.value:
+        case_type_applicable_statuses = [
+            status for status in statuses if status["key"] in [Statuses.OPEN, Statuses.CLOSED,]
+        ]
+    elif case_type == CaseType.REGISTRATION.value:
+        case_type_applicable_statuses = [
+            status
+            for status in statuses
+            if status["key"]
+            in [
+                Statuses.FINALISED,
+                Statuses.REGISTERED,
+                Statuses.UNDER_ECJU_REVIEW,
+                Statuses.REVOKED,
+                Statuses.SUSPENDED,
+                Statuses.SURRENDERED,
+                Statuses.DEREGISTERED,
+            ]
+        ]
     return [status for status in case_type_applicable_statuses if status in user_permissible_statuses]
 
 

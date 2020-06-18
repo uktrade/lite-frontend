@@ -3,6 +3,8 @@ from enum import Enum
 
 class CaseType(Enum):
     APPLICATION = "application"
+    QUERY = "query"
+    REGISTRATION = "registration"
     STANDARD = "standard"
     OPEN = "open"
     HMRC = "hmrc"

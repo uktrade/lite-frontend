@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
 
+from cases.helpers.ecju_queries import get_ecju_queries
 from cases.objects import Slice, Case
 from cases.services import (
     get_case,
@@ -10,13 +11,11 @@ from cases.services import (
     get_activity,
     get_activity_filters,
 )
-from cases.helpers.ecju_queries import get_ecju_queries
-from conf.constants import Statuses, GENERATED_DOCUMENT
+from conf.constants import GENERATED_DOCUMENT, Statuses
 from core.helpers import generate_activity_filters
 from core.objects import Tab, TabCollection
 from core.services import get_user_permissions, get_status_properties, get_permissible_statuses
-from lite_content.lite_internal_frontend.cases import CasePage
-from lite_content.lite_internal_frontend.cases import ApplicationPage
+from lite_content.lite_internal_frontend.cases import CasePage, ApplicationPage
 from queues.services import get_queue
 
 
@@ -55,6 +54,7 @@ class Slices:
     END_USER_DETAILS = Slice("end-user-details", "End user details")
     TEMPORARY_EXPORT_DETAILS = Slice("temporary-export-details", "Temporary export details")
     OPEN_APP_PARTIES = Slice("open-app-parties")
+    OPEN_GENERAL_LICENCE = Slice("open-general-licence")
     COMPLIANCE_LICENCES = Slice("compliance-licences")
 
 

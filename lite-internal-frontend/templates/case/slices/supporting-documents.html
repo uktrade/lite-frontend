@@ -1,4 +1,4 @@
-{% if case.application.additional_documents %}
+{% if case.data.additional_documents %}
 	<table class="govuk-table">
 		<thead class="govuk-table__head">
 			<tr class="govuk-table__row">
@@ -10,7 +10,7 @@
 			</tr>
 		</thead>
 		<tbody class="govuk-table__body">
-			{% for supporting_documentation in case.application.additional_documents %}
+			{% for supporting_documentation in case.data.additional_documents %}
 			<tr class="govuk-table__row">
 				<td class="govuk-table__cell govuk-table__cell--line-number">{{ forloop.counter }}.</td>
 				<td class="govuk-table__cell">{{ supporting_documentation.name }}</td>
