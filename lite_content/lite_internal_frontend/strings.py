@@ -155,7 +155,7 @@ class LetterTemplates:
         ADD_LINK = "Add another letter paragraph"
         HINT = "Drag and drop letter paragraphs to reorder."
         REMOVE_BUTTON = "Remove letter paragraph from template"
-        SAVE_BUTTON = "Save"
+        SAVE_BUTTON = "Done"
         TITLE = "Edit letter paragraphs"
 
     class OrderParagraph:
