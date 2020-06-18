@@ -1,25 +1,21 @@
 TITLE = "Exporter hub"
 ACCOUNT = "Export control account"
-
-
-class Header:
-    ACCOUNT_HOME = "Account home"
-    SWITCH_ORG = "Switch organisation"
+ACCOUNT_HOME = "Account home"
+SWITCH_ORG = "Switch organisation <!--from -->"
 
 
 class Navigation:
-    ACCOUNT_HOME = "Account home"
     YOUR_ACCOUNT = "Manage your organisation and personal details"
 
 
 class Tiles:
-    APPLY_FOR_LICENCE = "Apply"
-    APPLICATIONS = "Check progress"
-    VIEW_AND_MANAGE_LICENCES = "Licences and clearances"
-    GOODS = "Product list"
-    END_USER_ADVISORIES = "End user advisories"
-    OPEN_LICENCE_RETURNS = "Open licence returns"
-    COMPLIANCE_HEADING = "Compliance and annual returns"
+    APPLY_FOR_LICENCE = "Apply <!--Apply for a licence or clearance, or register for an OGL-->"
+    APPLICATIONS = "Check progress <!--of your applications-->"
+    VIEW_AND_MANAGE_LICENCES = "<!--View your--> Licences and clearances"
+    GOODS = "<!--View your--> Product list"
+    END_USER_ADVISORIES = "<!--View your--> End user advisories"
+    OPEN_LICENCE_RETURNS = "<!--View your--> Open licence returns"
+    COMPLIANCE_HEADING = "<!--View your--> Compliance and annual returns"
 
     # Standard dashboard
     class Apply:

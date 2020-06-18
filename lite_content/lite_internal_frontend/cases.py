@@ -151,6 +151,19 @@ class CasePage:
                 DESCRIPTION = "Description"
                 ANSWER = "Answer"
 
+        class Site:
+            TITLE = "Site"
+            NAME = "Name"
+            ADDRESS = "Address"
+
+        class OpenGeneralLicence:
+            NAME = "Name"
+            DESCRIPTION = "Description"
+            CONTROL_LIST_ENTRIES = "Control list entries"
+            COUNTRIES = "Countries"
+            MORE_INFORMATION = "More information"
+            VIEW_ON_LITE_LINK = "View on LITE"
+
         class RouteOfGoods:
             TITLE = "Route of goods"
 

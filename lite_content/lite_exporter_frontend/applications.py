@@ -309,6 +309,11 @@ class OpenGeneralLicenceQuestions:
         DESCRIPTION = ""
         ERROR = "Enter a country"
 
+    class Conditions:
+        READ = "I confirm that I've read the licence conditions in full"
+        COMPLY = "I confirm that my export complies with the licence's conditions in full"
+        ERROR = "Confirm conditions"
+
     class OpenGeneralLicences:
         TITLE = "Available {}s"
         DESCRIPTION = "These are the {}s described by **{}** being exported to **{}**."
@@ -746,8 +751,8 @@ class ApplicationsList:
     RAISE_A_QUERY_BUTTON = "Raise a query"
     APPLY_FOR_A_LICENCE_BUTTON = "Apply for a licence"
     REFRESH_BUTTON = "Refresh"
-    IN_PROGRESS_TAB = "Submitted"
-    DRAFTS_TAB = "Drafts"
+    IN_PROGRESS_TAB = "<!--View -->Submitted<!-- applications-->"
+    DRAFTS_TAB = "<!--View -->Drafts"
     NOTIFICATIONS_SUFFIX = "notifications"
     NO_CONTENT_NOTICE = "There are no applications in progress."
     NO_DRAFTS_CONTENT_NOTICE = "There are no draft applications."
