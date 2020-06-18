@@ -495,16 +495,14 @@ class MarkdownArea(TextArea):
     def __init__(
         self,
         name: str,
-        variables: List,
         title: str = "",
         description: str = "",
         accessible_description: str = None,
         optional: bool = False,
         classes: Optional[List] = None,
-        extras: Optional[List] = None,
+        extras: Optional[Dict] = None,
     ):
         super().__init__(name, title, description, accessible_description, optional, classes, extras)
-        self.variables = variables
         self.input_type = "markdown"
 
 

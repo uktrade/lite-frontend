@@ -24,20 +24,6 @@
 
 {% block javascript %}
 	<script type="text/javascript" src="{% static 'javascripts/highlight-tags.js' %}"></script>
-	<script type="text/javascript" src="{% static 'javascripts/tribute.min.js' %}"></script>
-	<script type="text/javascript">
-		var data = {{ variables|safe }};
-		var id = '{{ name }}';
-		var trigger = "{";
-
-		var tribute = new Tribute({
-			values: data,
-			trigger: trigger,
-			fillAttr: 'representation',
-		});
-
-		tribute.attach(document.getElementById(id));
-	</script>
 
 	<script type="text/javascript">
 		$('#{{ name }}').highlightWithinTextarea({
@@ -119,7 +105,7 @@
 		}
 
 		$("#button-format-bold").click(function() {
-			replaceSelectedText("*");
+			replaceSelectedText("**");
 		});
 
 		$("#button-format-italic").click(function() {
@@ -129,3 +115,4 @@
 		$('#{{ name }}').highlightWithinTextarea('update');
 	</script>
 {% endblock %}
+
