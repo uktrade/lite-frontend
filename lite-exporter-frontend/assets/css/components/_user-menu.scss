@@ -1,80 +1,21 @@
-#lite-user-menu {
-	@include govuk-responsive-margin(2, "bottom");
-	height: 30px;
-	display: flex;
-	justify-content: flex-end;
-	align-items: center;
-
-	@include mq ($from: desktop) {
-		width: 25%;
-		float: right;
-		vertical-align: top;
-	}
+.govuk-header__link--service-name {
+	margin-bottom: 0;
 }
 
-.govuk-header__logo {
-	@include mq ($from: desktop) {
-		width: 25%;
-		padding-right: 0;
-	}
+.app-header__link--sign-out {
+	text-align: right;
+	font-weight: bold;
+	margin-top: 2px;
+	white-space: nowrap;
 }
 
 .govuk-header__content {
-	@include mq ($from: desktop) {
-		width: 50%;
-		padding-left: 0;
-		float: left;
-		text-align: center;
-	}
-}
-
-.lite-user-menu-button {
-	@include govuk-link-common;
-	@include govuk-font($size: 14, $weight: bold);
-	color: white;
 	display: flex;
 	align-items: center;
-	justify-content: center;
-	min-width: 26px;
-	height: 26px;
-	text-decoration: none;
-	line-height: 26px!important;
+	justify-content: space-between;
+	min-height: 30px;
 
-	&:hover {
-		text-decoration: underline;
+	@include govuk-media-query($until: desktop) {
+		margin-bottom: govuk-spacing(2);
 	}
-
-	&:active {
-		text-decoration: underline;
-	}
-
-	&:focus {
-		color: $govuk-focus-text-colour!important;
-		outline: 6px solid $govuk-focus-colour;
-		background-color: $govuk-focus-colour;
-	}
-
-	svg {
-		width: 24px;
-		height: 24px;
-
-		* {
-			fill: currentColor;
-		}
-	}
-}
-
-.lite-user-menu-button--user {
-	width: 24px;
-	height: 24px;
-	border-radius: 100%;
-	margin-left: govuk-spacing(3);
-	overflow: hidden;
-}
-
-.lite-user-menu-divider {
-	height: 100%;
-	width: 2px;
-	background: govuk-colour("dark-grey");
-	margin: 0 govuk-spacing(3);
 }

@@ -13,37 +13,28 @@
 		</div>
 	</div>
 
-	{% include "licences/includes/tabs.html" %}
+	{% include 'includes/tabs.html' %}
 
-	{% include "filters.html" %}
+	{% include 'filters.html' %}
 
-	{% if licences.results %}
+	{% if data.results %}
 		<table class="govuk-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
-					<th class="govuk-table__header" scope="col">{% lcs "licences.LicencesList.Table.APPLICATION_COLUMN" %}</th>
-					<th class="govuk-table__header" scope="col">{% lcs "licences.LicencesList.Table.LICENCE_COLUMN" %}</th>
-					<th class="govuk-table__header govuk-!-width-one-third" scope="col">{% lcs "licences.LicencesList.Table.GOODS_COLUMN" %}</th>
-					<th class="govuk-table__header govuk-!-width-one-third" scope="col">{% lcs "licences.LicencesList.Table.DESTINATION_COLUMN" %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs "licences.LicencesList.Table.REFERENCE_COLUMN" %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs "licences.LicencesList.Table.GOODS_COLUMN" %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs "licences.LicencesList.Table.DESTINATION_COLUMN" %}</th>
 					<th class="govuk-table__header" scope="col">{% lcs "licences.LicencesList.Table.STATUS_COLUMN" %}</th>
 					<th class="govuk-table__header" scope="col">{% lcs "licences.LicencesList.Table.DOCUMENTS_COLUMN" %}</th>
-					<th class="govuk-table__header" scope="col"></th>
+					<th class="govuk-table__header lite-mobile-hide" scope="col"></th>
 				</tr>
 			</thead>
 			<tbody class="govuk-table__body">
-				{% for licence in licences.results %}
+				{% for licence in data.results %}
 					<tr class="govuk-table__row lite-accordian-table__row" id="licence-{{ licence.id }}">
 						<td class="govuk-table__cell">
-							<span class="govuk-table__header" aria-hidden="true">
-								{% lcs "licences.LicencesList.Table.APPLICATION_COLUMN" %}
-							</span>
-							<a href="{% url 'applications:application' licence.application.id %}?return_to={% url 'licences:licences' %}" class="govuk-link govuk-link--no-visited-state">{{ licence.application.name|abbreviate_string:40 }}</a>
-						</td>
-						<td class="govuk-table__cell">
-							<span class="govuk-table__header" aria-hidden="true">
-								{% lcs "licences.LicencesList.Table.LICENCE_COLUMN" %}
-							</span>
-							<a href="{% url 'licences:licence' licence.id %}" id="view-{{ licence.id }}" class="govuk-link govuk-link--no-visited-state">{{ licence.application.reference_code }}</a>
+							<a href="{% url 'licences:licence' licence.id %}" id="view-{{ licence.id }}" class="govuk-link govuk-link--no-visited-state govuk-!-margin-right-3">{{ licence.application.reference_code|highlight_text:reference }}</a>
+							<p class="govuk-!-font-size-16 govuk-!-margin-top-1 govuk-!-margin-bottom-0 govuk-!-margin-right-3">{{ licence.application.name|highlight_text:reference }}</p>
 						</td>
 						<td class="govuk-table__cell">
 							<span class="govuk-table__header" aria-hidden="true">
@@ -52,9 +43,9 @@
 							{% for good in licence.application.goods|slice:":3" %}
 								<div class="app-expanded-row__item--invert">
 									{% if good.good %}
-										{{ forloop.counter }}. {% include 'includes/control-list-entries.html' with control_list_entries=good.good.control_list_entries %}: {{ good.good.description|abbreviate_string:30 }}
+										{{ forloop.counter }}. {% include 'includes/control-list-entries.html' with control_list_entries=good.good.control_list_entries %}: {{ good.good.description }}
 									{% else %}
-										{{ forloop.counter }}. {% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}: {{ good.description|abbreviate_string:30 }}
+										{{ forloop.counter }}. {% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}: {{ good.description }}
 									{% endif %}
 									{% if licence.application.goods|length > row_limit and forloop.counter == row_limit %}
 										<br>
@@ -67,9 +58,9 @@
 							{% for good in licence.application.goods %}
 								<div class="app-expanded-row__item">
 									{% if good.good %}
-										{{ forloop.counter }}. {% include 'includes/control-list-entries.html' with control_list_entries=good.good.control_list_entries %}: {{ good.good.description }}
+										{{ forloop.counter }}. {% include 'includes/control-list-entries.html' with control_list_entries=good.good.control_list_entries %}: {{ good.good.description|abbreviate_string:50 }}
 									{% else %}
-										{{ forloop.counter }}. {% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}: {{ good.description }}
+										{{ forloop.counter }}. {% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}: {{ good.description|abbreviate_string:50 }}
 									{% endif %}
 								</div>
 							{% endfor %}
@@ -80,7 +71,7 @@
 							</span>
 							{% for destination in licence.application.destinations|slice:":3" %}
 								<div class="app-expanded-row__item--invert">
-									{{ destination.country.name }}{% if destination.name %} - {{ destination.name|abbreviate_string:10 }}{% endif %}
+									{% if destination.name %}{{ destination.name }} - {% endif %}{{ destination.country.name }}
 									{% if licence.application.destinations|length > row_limit and forloop.counter == row_limit %}
 										<br>
 										<span class="govuk-hint govuk-!-margin-0">
@@ -91,15 +82,12 @@
 							{% endfor %}
 							{% for destination in licence.application.destinations %}
 								<div class="app-expanded-row__item">
-									{{ destination.country.name }}{% if destination.name %} - {{ destination.name }}{% endif %}
+									{% if destination.name %}{{ destination.name }} - {% endif %}{{ destination.country.name }}
 								</div>
 							{% endfor %}
 						</td>
 						<td class="govuk-table__cell">
-							<span class="govuk-table__header" aria-hidden="true">
-								{% lcs "licences.LicencesList.Table.STATUS_COLUMN" %}
-							</span>
-							{{ licence.application.status.value }}
+							<span class="lite-mobile-tag">{{ licence.application.status.value }}</span>
 						</td>
 						<td class="govuk-table__cell">
 							<span class="govuk-table__header" aria-hidden="true">
@@ -110,8 +98,8 @@
 								<a href="{% url 'applications:download_generated_document' document.id licence.application.id %}" class="govuk-link govuk-link--no-visited-state" id="document-download">{{ document.advice_type.value }}.pdf</a>
 							{% endfor %}
 						</td>
-						<td>
-							<a id="expand-{{ licence.id }}" class="lite-accordian-table__chevron">
+						<td class="govuk-table__cell govuk-table__cell--tight lite-mobile-hide">
+							<a href="#" id="expand-{{ licence.id }}" class="lite-accordian-table__chevron">
 								{% svg 'chevron' %}
 							</a>
 						</td>
@@ -120,7 +108,7 @@
 			</tbody>
 		</table>
 
-		{% pagination with data=licences %}
+		{% pagination %}
 	{% else %}
 		{% include "includes/notice.html" with text="licences.LicencesList.NO_CONTENT_NOTICE" %}
 	{% endif %}

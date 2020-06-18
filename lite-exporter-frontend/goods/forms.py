@@ -232,7 +232,7 @@ def attach_documents_form(back_link):
                 extras={"max_length": 280},
             ),
         ],
-        buttons=[Button(AttachDocumentForm.BUTTON, "submit", disable_double_click=True)],
+        buttons=[Button(AttachDocumentForm.BUTTON, "submit")],
         back_link=back_link,
     )
 

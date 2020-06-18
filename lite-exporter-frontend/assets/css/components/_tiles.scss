@@ -9,23 +9,20 @@
 	@include govuk-media-query($from: desktop) {
 		grid-template-columns: 1fr 1fr 1fr!important;
 	}
-	width: 100%;
-	grid-gap: (govuk-spacing(3) + 4px) govuk-spacing(3);
+	grid-gap: govuk-spacing(3) govuk-spacing(3);
+	margin-bottom: govuk-spacing(3);
 }
 
 .app-tile {
+	@include govuk-responsive-padding(5);
 	background-color: govuk-colour("light-grey");
-	padding: govuk-spacing(5) govuk-spacing(5) govuk-spacing(3);
-	border-top: 4px solid $govuk-brand-colour;
+	border-top: govuk-spacing(1) solid $govuk-brand-colour;
 	box-sizing: border-box;
-	@include govuk-media-query($from: tablet) {
-		min-height: 150px;
-	}
-	padding-right: govuk-spacing(8);
-	min-height: 200px!important;
+	padding-bottom: 0!important;
 
-	@include govuk-font($size: 16);
-		color: $govuk-brand-colour!important;
+	& > * {
+		margin-bottom: govuk-spacing(3)!important;
+	}
 
 	.lite-notification-bubble {
 		@include govuk-font($size: 14, $weight: bold);
@@ -33,53 +30,24 @@
 		text-decoration: none !important;
 		display: inline-block;
 		margin-left: govuk-spacing(1);
-
-	}
-
-	p,li {
-		color: $govuk-text-colour!important;
 	}
 
 	.app-tile__heading {
+		@extend .govuk-link;
+		@extend .govuk-link--no-visited-state;
 		@include govuk-font($size: 19, $weight: bold);
-		margin-bottom: govuk-spacing(1);
+		display: inline-block;
 		text-decoration: underline;
-		margin-right: govuk-spacing(1);
+	}
+
+	.app-tile__body {
+		@include govuk-font($size: 16, $line-height: 1.5);
+		margin: 0;
+		padding: 0;
 	}
 
 	.app-tile__link {
 		@extend .govuk-link;
 		@extend .govuk-link--no-visited-state;
-	}
-}
-
-
-.app-navigation {
-    position: relative;
-    border-bottom: 1px solid govuk-colour("mid-grey");
-    width: 100%;
-    display: flex;
-	justify-content: space-between;
-}
-
-.home-link {
-    color: $govuk-text-colour !important;
-    display: inline-block;
-    padding: govuk-spacing(2) govuk-spacing(0) govuk-spacing(1) govuk-spacing(0);
-    text-decoration: none;
-	border-bottom: 4px solid transparent;
-	&:hover {
-		border-bottom: 4px solid govuk-colour("mid-grey");
-	}
-}
-
-.nav-item {
-    color: $govuk-text-colour;
-	display: inline-block;
-	padding: govuk-spacing(2) govuk-spacing(0) govuk-spacing(1) govuk-spacing(0);
-	text-decoration: none;
-	border-bottom: 4px solid transparent;
-	&:hover {
-		border-bottom: 4px solid govuk-colour("mid-grey");
 	}
 }

@@ -13,29 +13,29 @@
 		</div>
 	</div>
 
-	{% include "licences/includes/tabs.html" %}
+	{% include 'includes/tabs.html' %}
 
 	{% include "filters.html" %}
 
-	{% if licences.results %}
+	{% if data.results %}
 		<table class="govuk-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
-					<th class="govuk-table__header" scope="col">{% lcs "licences.LicencesList.Table.APPLICATION_COLUMN" %}</th>
-					<th class="govuk-table__header govuk-!-width-one-third" scope="col">{% lcs "licences.LicencesList.Table.GOODS_COLUMN" %}</th>
-					<th class="govuk-table__header govuk-!-width-one-third" scope="col">{% lcs "licences.LicencesList.Table.DESTINATION_COLUMN" %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs "licences.LicencesList.Table.REFERENCE_COLUMN" %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs "licences.LicencesList.Table.GOODS_COLUMN" %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs "licences.LicencesList.Table.DESTINATION_COLUMN" %}</th>
 					<th class="govuk-table__header" scope="col">{% lcs "licences.LicencesList.Table.DOCUMENTS_COLUMN" %}</th>
 					<th class="govuk-table__header" scope="col"></th>
 				</tr>
 			</thead>
 			<tbody class="govuk-table__body">
-				{% for licence in licences.results %}
+				{% for licence in data.results %}
 					<tr class="govuk-table__row lite-accordian-table__row" id="licence-{{ licence.id }}">
 						<td class="govuk-table__cell">
 							<span class="govuk-table__header" aria-hidden="true">
 								{% lcs "licences.LicencesList.Table.APPLICATION_COLUMN" %}
 							</span>
-							<a href="{% url 'applications:application' licence.case_id %}?return_to={% url 'licences:licences' %}" class="govuk-link govuk-link--no-visited-state">{{ licence.case_reference|abbreviate_string:40 }}</a>
+							<a href="{% url 'applications:application' licence.case_id %}?return_to={% url 'licences:licences' %}" class="govuk-link govuk-link--no-visited-state">{{ licence.case_reference }}</a>
 						</td>
 						<td class="govuk-table__cell">
 							<span class="govuk-table__header" aria-hidden="true">
@@ -94,7 +94,7 @@
 							<span class="govuk-visually-hidden">{% lcs "licences.LicencesList.DOWNLOAD_HIDDEN_TEXT" %}</span>
 							<a href="{% url 'applications:download_generated_document' licence.id licence.case_id %}" class="govuk-link govuk-link--no-visited-state" id="document-download">{{ licence.advice_type }}.pdf</a>
 						</td>
-						<td>
+						<td class="govuk-table__cell govuk-table__cell--tight">
 							<a id="expand-{{ licence.id }}" class="lite-accordian-table__chevron">
 								{% svg 'chevron' %}
 							</a>
@@ -104,7 +104,7 @@
 			</tbody>
 		</table>
 
-		{% pagination with data=licences %}
+		{% pagination %}
 	{% else %}
 		{% include "includes/notice.html" with text="licences.LicencesList.NO_CONTENT_NOTICE" %}
 	{% endif %}

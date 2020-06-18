@@ -19,6 +19,7 @@ from conf.constants import (
     STATIC_TRADE_CONTROL_ACTIVITIES,
     STATIC_TRADE_CONTROL_PRODUCT_CATEGORIES,
     OPEN_GENERAL_LICENCES_URL,
+    LICENCES_OPEN_GENERAL_POST_URL,
 )
 from core.helpers import convert_parameters_to_query_params, convert_value_to_query_param
 from lite_content.lite_exporter_frontend.generic import Document
@@ -285,13 +286,20 @@ def register_private_individual(request, json):
     return _register_organisation(request, json, "individual")
 
 
-def get_open_general_licences(request, convert_to_options=False, case_type=None, control_list_entry=None, country=None):
-    data = get(
-        request,
-        OPEN_GENERAL_LICENCES_URL
-        + f"?disable_pagination={convert_to_options}&registration_required=True&case_type={case_type}"
-        f"&control_list_entry={control_list_entry}&country={country}",
-    ).json()
+def get_open_general_licences(
+    request,
+    convert_to_options=False,
+    name=None,
+    site=None,
+    status=None,
+    case_type=None,
+    control_list_entry=None,
+    country=None,
+    registered=False,
+    disable_pagination=True,
+    active_only=None,
+):
+    data = get(request, OPEN_GENERAL_LICENCES_URL + convert_parameters_to_query_params(locals())).json()
 
     if convert_to_options:
         return [
@@ -308,3 +316,8 @@ def get_open_general_licences(request, convert_to_options=False, case_type=None,
 
 def get_open_general_licence(request, pk):
     return get(request, OPEN_GENERAL_LICENCES_URL + str(pk)).json()
+
+
+def post_open_general_licence_cases(request, json):
+    data = post(request, LICENCES_OPEN_GENERAL_POST_URL, json)
+    return data.json(), data.status_code

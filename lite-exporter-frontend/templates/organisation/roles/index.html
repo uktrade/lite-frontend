@@ -4,11 +4,9 @@
 
 {% block controls %}
 	{% if can_administer_roles %}
-		<div class="lite-tabs__controls">
-			<a id="button-add-role" href="{% url 'organisation:roles:new' %}" class="govuk-button" draggable="false" role="button">
-				{% lcs 'roles.ManageRolesPage.ADD_BUTTON' %}
-			</a>
-		</div>
+		<a id="button-add-role" href="{% url 'organisation:roles:new' %}" class="govuk-button" draggable="false" role="button">
+			{% lcs 'roles.ManageRolesPage.ADD_BUTTON' %}
+		</a>
 	{% endif %}
 {% endblock %}
 

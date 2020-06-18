@@ -22,7 +22,8 @@ class Hub(BasePage):
 
     def return_number_of_notifications(self):
         text_of_new_notifications = self.driver.find_element_by_id(self.TILE_APPLICATIONS_ID).text
-        return int(text_of_new_notifications)
+        # Returns (n notifications) so filter just to return the digits
+        return int("".join(filter(str.isdigit, text_of_new_notifications)))
 
     def notification_bubble_exists(self):
         notification_exists = self.driver.find_element_by_id(self.TILE_APPLICATIONS_ID).is_displayed()

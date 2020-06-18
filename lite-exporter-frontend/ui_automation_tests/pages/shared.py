@@ -2,7 +2,7 @@ from ui_automation_tests.pages.BasePage import BasePage
 
 
 class Shared(BasePage):
-    HEADING = ".govuk-heading-xl"  # CSS
+    ORG_NAME_HEADING_ID = "org_name"
     RADIO_BUTTONS = ".govuk-radios__label"  # CSS
     ERROR_MESSAGES = ".govuk-error-summary__body"
     GOV_TABLE_BODY = ".govuk-table__body"
@@ -28,8 +28,8 @@ class Shared(BasePage):
     def get_table_rows(self):
         return self.driver.find_elements_by_css_selector(self.GOV_TABLE_ROW)
 
-    def get_text_of_heading(self):
-        return self.driver.find_element_by_css_selector(self.HEADING).text
+    def get_text_of_organisation_heading(self):
+        return self.driver.find_element_by_id(self.ORG_NAME_HEADING_ID).text
 
     def get_radio_buttons_elements(self):
         return self.driver.find_elements_by_css_selector(self.RADIO_BUTTONS)

@@ -1,3 +1,6 @@
+from lite_forms.components import Option
+
+
 class OpenGeneralExportLicenceTypes:
     class OpenGeneralLicenceType:
         def __init__(self, id, name, acronym):
@@ -22,6 +25,10 @@ class OpenGeneralExportLicenceTypes:
             cls.open_general_trade_control_licence,
             cls.open_general_transhipment_licence,
         ]
+
+    @classmethod
+    def as_options(cls):
+        return [Option(key=ogl.id, value=f"{ogl.name} ({ogl.acronym})") for ogl in cls.all()]
 
     @classmethod
     def get_by_acronym(cls, acronym):

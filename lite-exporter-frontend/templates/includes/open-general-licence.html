@@ -1,0 +1,26 @@
+<h2 class="govuk-heading-m govuk-!-margin-top-6">{% lcs 'licences.OpenGeneralLicencesList.Table.CAPTION' %}</h2>
+<table class="govuk-table">
+	<thead class="govuk-table__head">
+		<tr class="govuk-table__row">
+			<th scope="col" class="govuk-table__header">
+				{% lcs 'licences.OpenGeneralLicencesList.Table.REFERENCE' %}
+			</th>
+			<th scope="col" class="govuk-table__header">
+				{% lcs 'licences.OpenGeneralLicencesList.Table.SITE' %}
+			</th>
+		</tr>
+	</thead>
+	<tbody class="govuk-table__body">
+		{% for registration in licence.registrations %}
+			<tr class="govuk-table__row">
+				<th scope="row" class="govuk-table__header">
+					{{ registration.reference_code }}
+				</th>
+				<td class="govuk-table__cell">
+					{{ registration.site.name }}<br>
+					<span class="govuk-hint govuk-!-margin-0">{{ registration.site|get_address }}</span>
+				</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>

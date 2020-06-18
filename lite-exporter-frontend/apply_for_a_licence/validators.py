@@ -23,6 +23,12 @@ def validate_open_general_licences(_, json):
     if not json.get("country"):
         return ({"errors": {"country": [OpenGeneralLicenceQuestions.Country.ERROR]}}, HTTPStatus.BAD_REQUEST)
 
+    if not len(json.get("confirmation", [])) == 2:
+        return (
+            {"errors": {"confirmation": [OpenGeneralLicenceQuestions.Conditions.ERROR]}},
+            HTTPStatus.BAD_REQUEST,
+        )
+
     if not hasattr(json.get("open_general_licence"), "__len__"):
         return (
             {"errors": {"open_general_licence": [OpenGeneralLicenceQuestions.OpenGeneralLicences.ERROR]}},

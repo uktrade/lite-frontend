@@ -1,0 +1,9 @@
+<div class="lite-tabs__container">
+	<div class="lite-tabs">
+		{% for tab in tabs %}
+			<a id="tab-{{ tab.id }}" href="{{ tab.url }}" class="lite-tabs__tab {% if tab.id == selected_tab %}lite-tabs__tab--selected{% endif %}">
+				<span class="govuk-visually-hidden">View </span> {{ tab.name }}
+			</a>
+		{% endfor %}
+	</div>
+</div>

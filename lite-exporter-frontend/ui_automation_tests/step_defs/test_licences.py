@@ -1,5 +1,5 @@
 from django.contrib.humanize.templatetags.humanize import intcomma
-from pytest_bdd import scenarios, given, parsers, when, then
+from pytest_bdd import scenarios, given, when, then
 
 from ui_automation_tests.pages.shared import Shared
 from ui_automation_tests.pages.licence_page import LicencePage

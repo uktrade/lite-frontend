@@ -5,7 +5,7 @@
 				{{ title }}
 			</span>
 		{% else %}
-			<a id="{{ id }}" href="{{ url }}" class="govuk-link govuk-link--no-visited-state">
+			<a id="{{ id }}" href="{{ url }}" class="govuk-link govuk-link--no-visited-state" aria-label="{{ title }} ({{ status|sentence_case }})">
 				{{ title }}
 			</a>
 		{% endif %}

@@ -5,8 +5,8 @@ class LicencesPage(BasePage):
     LICENCE_ROW_PARTIAL_ID = "licence-"
     VIEW_LICENCE_PARTIAL_ID = "view-"
     EXPAND_LICENCE_ROW_PARTIAL_ID = "expand-"
-    CLEARANCES_TAB_ID = "clearances-tab"
-    NLR_TAB_ID = "nlrs-tab"
+    CLEARANCES_TAB_ID = "tab-clearances"
+    NLR_TAB_ID = "tab-no_licence_required"
 
     def licence_row_properties(self, id):
         self.driver.find_element_by_id(self.EXPAND_LICENCE_ROW_PARTIAL_ID + id).click()

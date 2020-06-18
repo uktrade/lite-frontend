@@ -1,6 +1,8 @@
 {% extends 'layouts/base.html' %}
 
-{% block back_link %}{% endblock %}
+{% block back_link %}
+	{% include 'includes/breadcrumbs.html' with title='hub.Navigation.YOUR_ACCOUNT' %}
+{% endblock %}
 
 {% block title %}
 	{% for tab in tabs %}
@@ -11,17 +13,17 @@
 {% endblock %}
 
 {% block body %}
-	<span class="govuk-caption-xl">
+	<span class="govuk-caption-l">
 		{{ organisation.name }}
 	</span>
-	<h1 class="govuk-heading-l">{{ user.first_name }} {{ user.last_name }}</h1>
+	<h1 class="govuk-heading-l">{% lcs 'hub.Navigation.YOUR_ACCOUNT' %}</h1>
 
 	<div class="lite-tabs__container">
 		<div class="lite-tabs">
 			{% for tab in tabs %}
 				{% if tab %}
 					{% with tab.url|equals:request.path as selected %}
-						<{%if selected %}p{% else %}a href="{{ tab.url }}"{% endif %} id="{{ tab.id }}" class="lite-tabs__tab {% if tab.url == request.path %}lite-tabs__tab--selected{% endif %}" id="tab-members">
+						<{%if selected %}p{% else %}a href="{{ tab.url }}"{% endif %} id="tab-{{ tab.id }}" class="lite-tabs__tab {% if tab.url == request.path %}lite-tabs__tab--selected{% endif %}" id="tab-members">
 							{{ tab.name }}
 						</{%if selected %}p{% else %}a{% endif %}>
 					{% endwith %}

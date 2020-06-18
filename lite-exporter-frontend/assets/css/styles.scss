@@ -5,13 +5,8 @@ $govuk-page-width: 1200px !default;
 @import "components/all"; // Local assets
 @import "overrides/all";
 
-.hidden .js-enabled{
+.hidden .js-enabled {
 	display: none;
-}
-
-.govuk-table__cell {
-	word-break: break-all!important;
-	max-width: 25vw;
 }
 
 .govuk-summary-list__key--highlight {

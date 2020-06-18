@@ -1,11 +1,9 @@
 {% extends 'organisation/base.html' %}
 
 {% block controls %}
-	<div class="lite-tabs__controls">
-		<a href="{% url 'organisation:members:add' %}" id="button-add-a-member" class="govuk-button" draggable="false" role="button">
-			Add a member
-		</a>
-	</div>
+	<a href="{% url 'organisation:members:add' %}" id="button-add-a-member" class="govuk-button" draggable="false" role="button">
+		Add a member
+	</a>
 {% endblock %}
 
 {% block contents %}

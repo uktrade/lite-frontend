@@ -42,6 +42,7 @@ DOCUMENT_SENSITIVITY_URL = "/document-sensitivity/"
 EXISTING_PARTIES_URL = "/existing-parties/"
 COUNTRIES_URL = "/countries/"
 LICENCES_URL = "/licences/"
+LICENCES_OPEN_GENERAL_POST_URL = "/licences/open-general-licences/"
 NLR_URL = "nlrs/"
 CONTRACT_TYPES_URL = "/contract-types/"
 CONTRACT_TYPES_COUNTRIES = "/countries-contract-types/"
@@ -173,9 +174,3 @@ APPLICATION_TYPE_STRINGS = {
 class LocationType:
     SEA_BASED = "sea_based"
     LAND_BASED = "land_based"
-
-
-class LicenceType:
-    APPLICATION = "application"
-    CLEARANCE = "clearance"
-    NLR = "nlr"

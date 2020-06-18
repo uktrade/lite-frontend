@@ -1,9 +1,10 @@
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 
 from apply_for_a_licence.enums import OpenGeneralExportLicenceTypes
 from core.services import get_control_list_entries, get_countries, get_open_general_licences, get_open_general_licence
 from lite_content.lite_exporter_frontend import generic
-from lite_content.lite_exporter_frontend.applications import OpenGeneralLicenceQuestions
+from lite_content.lite_exporter_frontend.applications import OpenGeneralLicenceQuestions, ApplicationSuccessPage
+from lite_content.lite_exporter_frontend.licences import OpenGeneralLicenceRegistration
 from lite_forms.components import (
     FormGroup,
     Form,
@@ -17,7 +18,11 @@ from lite_forms.components import (
     Summary,
     BackLink,
     WarningBanner,
+    HiddenField,
+    Button,
+    Checkboxes,
 )
+from lite_forms.generators import success_page
 from lite_forms.helpers import conditional
 from lite_forms.styles import HeadingStyle
 
@@ -60,6 +65,7 @@ def open_general_licence_forms(request, **kwargs):
         case_type=open_general_licence_type.id,
         control_list_entry=request.POST.get("control_list_entry"),
         country=request.POST.get("country"),
+        status="active",
     )
     selected_open_general_licence = {}
     if request.POST.get("open_general_licence"):
@@ -134,6 +140,7 @@ def open_general_licence_forms(request, **kwargs):
                                 ),
                             ),
                         ),
+                        HiddenField("application_type", open_general_licence_type.acronym.lower()),
                         Summary(
                             {
                                 OpenGeneralLicenceQuestions.OpenGeneralLicenceDetail.Summary.DESCRIPTION: selected_open_general_licence.get(
@@ -160,14 +167,45 @@ def open_general_licence_forms(request, **kwargs):
                                 ),
                                 Custom("components/ogl-step-list.html"),
                                 Custom("components/ogl-warning.html"),
+                                Checkboxes(
+                                    name="confirmation[]",
+                                    options=[
+                                        Option("read", OpenGeneralLicenceQuestions.Conditions.READ),
+                                        Option("comply", OpenGeneralLicenceQuestions.Conditions.COMPLY),
+                                    ],
+                                ),
                             ],
                             [],
                         ),
                     ],
-                    # Submit button removed as it doesn't do anything until LT-2110
-                    buttons=[],
+                    buttons=[
+                        conditional(
+                            selected_open_general_licence.get("registration_required"), Button("Register", "submit"),
+                        )
+                    ],
                 ),
                 no_open_general_licence_form(open_general_licence_type, selected_entry, selected_country),
             ),
         ]
+    )
+
+
+def open_general_licence_submit_success_page(request, **kwargs):
+    open_general_licence = get_open_general_licence(request, kwargs["pk"])
+    return success_page(
+        request=request,
+        title=OpenGeneralLicenceRegistration.TITLE,
+        secondary_title=OpenGeneralLicenceRegistration.SECONDARY_TITLE.format(
+            open_general_licence["case_type"]["reference"]["value"], open_general_licence["name"]
+        ),
+        description=ApplicationSuccessPage.DESCRIPTION,
+        what_happens_next=[],
+        includes="includes/open-general-licence.html",
+        additional_context={"licence": open_general_licence},
+        links={
+            OpenGeneralLicenceRegistration.Links.VIEW_OGLS_LINK: reverse_lazy("licences:licences")
+            + "?licence_type=open_general_licences",
+            OpenGeneralLicenceRegistration.Links.APPLY_AGAIN: reverse_lazy("apply_for_a_licence:start"),
+            OpenGeneralLicenceRegistration.Links.RETURN_TO_DASHBOARD: reverse_lazy("core:home"),
+        },
     )

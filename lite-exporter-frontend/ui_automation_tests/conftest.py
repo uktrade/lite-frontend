@@ -55,6 +55,7 @@ from ui_automation_tests.shared.fixtures.apply_for_application import (  # noqa
     apply_for_f680_clearance,
     apply_for_gifting_clearance,
     apply_for_standard_trade_control_application,
+    apply_for_ogel,
 )
 from ui_automation_tests.shared.fixtures.core import (  # noqa
     context,
@@ -144,7 +145,7 @@ def go_to_exporter(driver, register_organisation, sso_sign_in, exporter_url, con
         no = utils.get_element_index_by_text(Shared(driver).get_radio_buttons_elements(), context.org_name)
         Shared(driver).click_on_radio_buttons(no)
         functions.click_submit(driver)
-    elif Shared(driver).get_text_of_heading() != context.org_name:
+    elif Shared(driver).get_text_of_organisation_heading() != context.org_name:
         Hub(driver).click_switch_link()
         no = utils.get_element_index_by_text(Shared(driver).get_radio_buttons_elements(), context.org_name)
         Shared(driver).click_on_radio_buttons(no)
@@ -686,6 +687,21 @@ def sections_appear_on_task_list(driver, sections):  # noqa
 @given(parsers.parse('the status is set to "{status}"'))  # noqa
 def set_status(api_test_client, context, status):  # noqa
     api_test_client.applications.set_status(context.app_id, status)
+
+
+@then("I see my edited reference number")
+def assert_ref_num(driver):  # noqa
+    assert "12345678" in driver.find_element_by_css_selector(".lite-task-list").text
+
+
+@when("I change my reference number")
+def change_ref_num(driver, context):  # noqa
+    enter_export_licence(driver, "yes", "12345678", context)
+
+
+@when("I go to the licences page")
+def licences_page(driver, exporter_url):  # noqa
+    driver.get(exporter_url.rstrip("/") + "/licences/")
 
 
 @given(parsers.parse('I create "{decision}" final advice for open application'))  # noqa
