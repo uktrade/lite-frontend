@@ -159,7 +159,8 @@ class MarkdownTest(TestCase):
         super().setUp()
         self.markdown_description = "Please **Click** this [link](https://www.gov.uk/)"
         self.html_description = (
-            "Please <strong>Click</strong> this <a class='govuk-link' href=\"https://www.gov.uk/\">link</a>"
+            'Please <strong>Click</strong> this <a class="govuk-link govuk-link--no-visited-state" '
+            'rel="noreferrer noopener" target="_blank" href="https://www.gov.uk/">link</a>'
         )
 
     def test_generic_component(self):
