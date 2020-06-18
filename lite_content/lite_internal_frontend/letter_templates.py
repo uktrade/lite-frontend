@@ -164,7 +164,8 @@ class VariableHelpPageTables(Enum):
     """
 
     F680_clearance = """
-        Clearance type|{{ details.clearance_types }}|‘Market survey’, ‘Initial discussions and promotions’, ‘Demonstration in the UK to overseas customers’, ‘Demonstration overseas’, ‘Training’ or ‘Through life support’
+        Clearance type|{{ details.clearance_types }}|‘Market survey’, ‘Initial discussions and promotions’, 
+        ‘Demonstration in the UK to overseas customers’, ‘Demonstration overseas’, ‘Training’ or ‘Through life support’
         Expedited|{{ details.expedited }}|‘Yes’ or ‘No’
         Date the clearance is needed|{{ details.expedited_date }}|20 June 2020
         If there’s any foreign technology or information involved|{{ details.foreign_technology }}|‘Yes’ or ‘No’
