@@ -144,7 +144,9 @@ def convert_to_markdown(text):
         # Replace leading (<p>) & trailing (</p>) p tags as they are not needed
         text = text.replace("<p>", "")
         text = text.replace("</p>", "")
-        text = text.replace("<a", "<a class='govuk-link'")
+        text = text.replace(
+            "<a", '<a class="govuk-link govuk-link--no-visited-state" rel="noreferrer noopener" target="_blank"'
+        )
         return text
     else:
         return None

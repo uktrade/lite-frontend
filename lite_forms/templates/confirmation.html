@@ -12,7 +12,7 @@
 			{{ title }}
 		</h1>
 		<div class="govuk-panel__body">
-			{{ secondary_title }}
+			{{ secondary_title|markdown }}
 		</div>
         {% if animated %}
             <div class="lite-panel__status">
@@ -31,6 +31,12 @@
             </div>
         {% endif %}
 	</div>
+
+	{% if includes %}
+		<div class="{% if request.GET.animate %}lite-confirmation-details-delay{% endif %}">
+			{% include includes %}
+		</div>
+	{% endif %}
 
 	<div class="{% if request.GET.animate %}lite-confirmation-details-delay{% endif %}">
 		<p class="govuk-body">{{ description }}</p>
