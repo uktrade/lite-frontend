@@ -513,7 +513,7 @@ def _convert_attachable_document(address, attach_address, document, editable):
 def get_total_goods_value(goods: list):
     total_value = 0
     for good in goods:
-        total_value += Decimal(good["value"]).quantize(Decimal(".01"))
+        total_value += Decimal(good["value"])
     return total_value
 
 
