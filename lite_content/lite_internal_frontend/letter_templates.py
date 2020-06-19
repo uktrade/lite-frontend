@@ -206,12 +206,12 @@ class VariableHelpPageTables(Enum):
     """
 
     End_user = """
-        |{{ end_user.name }}|
-        |{{ end_user.type }}|
-        |{{ end_user.address }}|
-        |{{ end_user.country.name }}|
-        |{{ end_user.country.code }}|
-        |{{ end_user.website }}|
+        Name|{{ end_user.name }}|
+        Type|{{ end_user.type }}|
+        Address|{{ end_user.address }}|
+        Country|{{ end_user.country.name }}|
+        Country code|{{ end_user.country.code }}|
+        Website|{{ end_user.website }}|
     """
 
     Consignee = """
