@@ -149,10 +149,12 @@ def _seen_nonce(access_key_id, nonce, timestamp):
 
 def _verify_api_response(response, sender):
     try:
+        # To handle StreamingHttpResponses such as document downloads
+        # we validate the response using the content-disposition (which includes the filename)
+        # For all normal HTTPResponses we use the response content.
+        content = response.headers.get("content-disposition") or response.content
         sender.accept_response(
-            response.headers["server-authorization"],
-            content=response.content,
-            content_type=response.headers["Content-Type"],
+            response.headers["server-authorization"], content=content, content_type=response.headers["Content-Type"],
         )
     except Exception as exc:  # noqa
         if "server-authorization" not in response.headers:
