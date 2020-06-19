@@ -12,6 +12,7 @@ class Parties:
         ).json()["end_user_advisory"]
         self.api_client.add_to_context("end_user_advisory_id", str(data["id"]))
         self.api_client.add_to_context("end_user_advisory_reference_code", str(data["reference_code"]))
+        self.api_client.add_to_context("end_user_advisory_name", str(data["end_user"]["name"]))
 
     def add_party(self, draft_id, request_data_key, party=None):
         party_data = party or self.request_data[request_data_key if request_data_key != "end_user" else "end-user"]
