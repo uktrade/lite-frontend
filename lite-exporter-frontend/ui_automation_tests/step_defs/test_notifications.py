@@ -8,7 +8,7 @@ scenarios("../features/notifications.feature", strict_gherkin=False)
 
 
 @given("an application exists and a case note has been added via internal gov site")
-def application_exists_case_note_added(apply_for_standard_application, api_test_client, context, driver):
+def application_exists_case_note_added(apply_for_open_application, api_test_client, context, driver):
     api_test_client.ecju_queries.add_ecju_query(context.case_id)
     api_test_client.cases.add_case_note(context, context.case_id)
 
