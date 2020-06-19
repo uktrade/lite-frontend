@@ -164,14 +164,6 @@ def apply_for_open_application(api_test_client, context):
             "is_informed_wmd": False,
             "is_suspected_wmd": False,
         },
-        ultimate_end_user={
-            "name": fake.name(),
-            "address": fake.street_address() + fake.state() + fake.postcode(),
-            "country": "GB",
-            "sub_type": "commercial",
-            "website": fake.uri(),
-            "type": "ultimate_end_user",
-        },
         route_of_goods={"is_shipped_waybill_or_lading": True},
     )
     data = api_test_client.applications.submit_application(draft_id)
