@@ -1,5 +1,6 @@
 from ui_automation_tests.shared import functions
 from ui_automation_tests.pages.BasePage import BasePage
+from ui_automation_tests.shared.functions import element_with_css_selector_exists
 
 
 class AddEndUserAdvisoryPages(BasePage):
@@ -12,6 +13,9 @@ class AddEndUserAdvisoryPages(BasePage):
     PRIMARY_CONTACT_NAME = "contact_name"  # ID
     PRIMARY_CONTACT_TELEPHONE = "contact_telephone"  # ID
     PRIMARY_CONTACT_JOB_TITLE = "contact_job_title"  # ID
+
+    DETAIL_BODY_CSS_SELECTOR = ".govuk-panel__body"
+    SUCCESS_PANEL_CSS_SELECTOR = ".govuk-panel--confirmation"
 
     def enter_name(self, name, prefix=""):
         name_tb = self.driver.find_element_by_id(prefix + "name")
@@ -61,3 +65,9 @@ class AddEndUserAdvisoryPages(BasePage):
     def enter_primary_contact_telephone(self, primary_contact_telephone):
         primary_contact_telephone_tb = self.driver.find_element_by_id(self.PRIMARY_CONTACT_TELEPHONE)
         primary_contact_telephone_tb.send_keys(primary_contact_telephone)
+
+    def get_ecju_reference_from_success_banner(self):
+        return self.driver.find_element_by_css_selector(self.DETAIL_BODY_CSS_SELECTOR).text.split(": ")[1]
+
+    def success_panel_is_present(self):
+        return element_with_css_selector_exists(self.driver, self.SUCCESS_PANEL_CSS_SELECTOR)

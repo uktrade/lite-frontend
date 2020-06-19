@@ -477,8 +477,7 @@ def latest_audit_trail(driver, expected_text, no):  # noqa
 
 @when("I click on end user advisories")  # noqa
 def click_my_end_user_advisory_link(driver):  # noqa
-    exporter_hub = ExporterHubPage(driver)
-    exporter_hub.click_end_user_advisories()
+    ExporterHubPage(driver).click_end_user_advisories()
 
 
 @when(  # noqa

@@ -12,8 +12,8 @@ def get_end_user_advisory(request, pk):
         return None, None
 
 
-def get_end_user_advisories(request, page):
-    data = get(request, END_USER_ADVISORIES_URL + "?page=" + str(page))
+def get_end_user_advisories(request, params):
+    data = get(request, END_USER_ADVISORIES_URL + params)
     return data.json()
 
 

@@ -20,6 +20,8 @@
 		</div>
 	</div>
 
+	{% include "filters.html" %}
+
 	{% if end_users.results %}
 		<table class="govuk-table">
 			<thead class="govuk-table__head">
@@ -65,7 +67,7 @@
 							{{ advisory.reference_code }}
 						</td>
 						<td class="govuk-table__cell">
-							<a class="govuk-link govuk-link--no-visited-state" href="{% url 'end_users:copy' advisory.id %}">{% lcs "end_users.EndUsersPage.COPY_END_USER" %}</a>
+							<a class="govuk-link govuk-link--no-visited-state" id="copy" href="{% url 'end_users:copy' advisory.id %}">{% lcs "end_users.EndUsersPage.COPY_END_USER" %}</a>
 						</td>
 					</tr>
 				{% endfor %}

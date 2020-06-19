@@ -11,6 +11,7 @@ from applications.services import (
     put_ecju_query,
     get_case_generated_documents,
 )
+from core.helpers import convert_parameters_to_query_params
 from end_users.forms import (
     apply_for_an_end_user_advisory_form,
     copy_end_user_advisory_form,
@@ -20,16 +21,22 @@ from end_users.forms import (
 )
 from end_users.services import get_end_user_advisories, post_end_user_advisories, get_end_user_advisory
 from lite_content.lite_exporter_frontend import strings
-from lite_forms.components import HiddenField
+from lite_forms.components import HiddenField, FiltersBar, TextInput
 from lite_forms.generators import form_page, error_page
 from lite_forms.submitters import submit_paged_form
 
 
 class EndUsersList(TemplateView):
     def get(self, request, **kwargs):
-        end_users = get_end_user_advisories(request, request.GET.get("page", 1))
+        params = convert_parameters_to_query_params(
+            {"page": request.GET.get("page", 1), "name": request.GET.get("name")}
+        )
+        end_users = get_end_user_advisories(request, params)
+
+        filters = FiltersBar([TextInput(title="name", name="name"),])
 
         context = {
+            "filters": filters,
             "end_users": end_users,
         }
         return render(request, "end-users/end-users.html", context)
