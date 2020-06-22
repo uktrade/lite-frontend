@@ -92,7 +92,10 @@ def _convert_standard_application(application, editable=False, is_summary=False)
             if application.case_type["reference"]["key"] in [CaseTypes.SIEL, CaseTypes.SITL]
             else {}
         ),
-        applications.ApplicationSummaryPage.GOODS: _convert_goods(application["goods"]),
+        convert_to_link(
+            reverse_lazy(f"applications:good_detail_summary", kwargs={"pk": application["id"]}),
+            applications.ApplicationSummaryPage.GOODS,
+        ): _convert_goods(application["goods"]),
         applications.ApplicationSummaryPage.END_USE_DETAILS: _get_end_use_details(application),
         applications.ApplicationSummaryPage.ROUTE_OF_GOODS: _get_route_of_goods(application),
         **(

@@ -16,9 +16,13 @@ from applications.services import (
     delete_application_preexisting_good,
     add_document_data,
 )
-from conf.constants import EXHIBITION
+from conf.constants import EXHIBITION, APPLICANT_EDITING
 from core.helpers import convert_dict_to_query_params
-from goods.forms import document_grading_form, attach_documents_form, add_good_form_group
+from goods.forms import (
+    document_grading_form,
+    attach_documents_form,
+    add_good_form_group,
+)
 from goods.services import (
     get_goods,
     get_good,
@@ -26,7 +30,6 @@ from goods.services import (
     post_good_documents,
     post_good_document_sensitivity,
     validate_good,
-    post_good_with_pv_grading,
 )
 from lite_forms.components import FiltersBar, TextInput
 from lite_forms.generators import error_page, form_page
@@ -93,25 +96,25 @@ class ExistingGoodsList(TemplateView):
 
 
 class AddGood(MultiFormView):
-    actions = [validate_good, post_goods, post_good_with_pv_grading]
-
     def init(self, request, **kwargs):
         self.draft_pk = str(kwargs["pk"])
         self.forms = add_good_form_group(request, draft_pk=self.draft_pk)
-        self.action = post_goods
+        self.action = validate_good
 
     def on_submission(self, request, **kwargs):
-        self.draft_pk = str(kwargs["pk"])
-        is_pv_graded = request.POST.copy().get("is_pv_graded", "").lower() == "yes"
+        is_pv_graded = request.POST.get("is_pv_graded", "") == "yes"
         self.forms = add_good_form_group(request, is_pv_graded, draft_pk=self.draft_pk)
-        if int(self.request.POST.get("form_pk")) == 1:
-            self.action = self.actions[2]
-        elif (int(self.request.POST.get("form_pk")) == 0) and is_pv_graded:
-            self.action = self.actions[0]
+
+        if is_pv_graded:
+            if int(self.request.POST.get("form_pk")) == 5:
+                self.action = post_goods
+        else:
+            if int(self.request.POST.get("form_pk")) == 4:
+                self.action = post_goods
 
     def get_success_url(self):
         return reverse_lazy(
-            "applications:add_document",
+            "applications:add_good_summary",
             kwargs={"pk": self.draft_pk, "good_pk": self.get_validated_data()["good"]["id"]},
         )
 
@@ -181,3 +184,27 @@ class RemovePreexistingGood(TemplateView):
             return error_page(request, "Unexpected error removing product")
 
         return redirect(reverse_lazy("applications:goods", kwargs={"pk": application_id}))
+
+
+class GoodsDetailSummaryCheckYourAnswers(TemplateView):
+    def get(self, request, **kwargs):
+        application_id = str(kwargs["pk"])
+        application = get_application(request, application_id)
+
+        context = {
+            "application_id": application_id,
+            "goods": application["goods"],
+            "application_status_draft": application["status"]["key"] in ["draft", APPLICANT_EDITING],
+        }
+        return render(request, "applications/goods/goods-detail-summary.html", context)
+
+
+class AddGoodsSummary(TemplateView):
+    def get(self, request, **kwargs):
+        application_id = str(kwargs["pk"])
+        good_id = str(kwargs["good_pk"])
+        good = get_good(request, good_id, full_detail=True)[0]
+
+        context = {"good": good, "application_id": application_id, "good_id": good_id}
+
+        return render(request, "applications/goods/add-good-detail-summary.html", context)

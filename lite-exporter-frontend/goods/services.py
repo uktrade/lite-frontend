@@ -11,6 +11,7 @@ from conf.constants import (
     CASES_URL,
     ADDITIONAL_DOCUMENT_URL,
     DOWNLOAD_URL,
+    GOODS_DETAILS_URL,
 )
 from core.helpers import convert_parameters_to_query_params
 from core.services import get_document_download_stream
@@ -28,10 +29,29 @@ def get_good(request, pk, full_detail=False):
     return data.json().get("good"), data.status_code
 
 
+def get_good_details(request, pk):
+    data = get(request, GOODS_URL + str(pk) + GOODS_DETAILS_URL + convert_parameters_to_query_params(locals()))
+    return data.json().get("good"), data.status_code
+
+
 def post_goods(request, json):
+    if "is_pv_graded" in json and json["is_pv_graded"] == "yes":
+        if "reference" in json:
+            json["pv_grading_details"] = {
+                "grading": json["grading"],
+                "custom_grading": json["custom_grading"],
+                "prefix": json["prefix"],
+                "suffix": json["suffix"],
+                "issuing_authority": json["issuing_authority"],
+                "reference": json["reference"],
+                "date_of_issue": format_date(json, "date_of_issue"),
+            }
+
     data = post(request, GOODS_URL, json)
+
     if data.status_code == HTTPStatus.OK:
         data.json().get("good"), data.status_code
+
     return data.json(), data.status_code
 
 
@@ -42,23 +62,13 @@ def validate_good(request, json):
     return post_goods(request, post_data)
 
 
-def post_good_with_pv_grading(request, json):
-    date_of_issue = format_date(json, "date_of_issue")
-
-    json["pv_grading_details"] = {
-        "grading": json["grading"],
-        "custom_grading": json["custom_grading"],
-        "prefix": json["prefix"],
-        "suffix": json["suffix"],
-        "issuing_authority": json["issuing_authority"],
-        "reference": json["reference"],
-        "date_of_issue": date_of_issue,
-    }
-    return post_goods(request, json)
-
-
 def edit_good(request, pk, json):
     data = put(request, GOODS_URL + pk + "/", json)
+    return data.json(), data.status_code
+
+
+def edit_good_details(request, pk, json):
+    data = put(request, GOODS_URL + pk + GOODS_DETAILS_URL, json)
     return data.json(), data.status_code
 
 

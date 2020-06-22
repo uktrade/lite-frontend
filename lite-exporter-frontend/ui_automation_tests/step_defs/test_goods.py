@@ -2,6 +2,8 @@ import os
 
 from pytest_bdd import scenarios, when, then, parsers
 
+from ui_automation_tests.shared.tools import helpers
+from ui_automation_tests.pages.add_goods_details import AddGoodDetails
 from ui_automation_tests.pages.add_goods_grading_page import AddGoodGradingPage
 from ui_automation_tests.conftest import get_file_upload_path
 from ui_automation_tests.pages.add_goods_page import AddGoodPage
@@ -48,7 +50,7 @@ def edit_good(driver, description, part, controlled, control_list_entry, context
     goods_list.click_view_good(0)
 
     goods_page = GoodsPage(driver)
-    goods_page.click_on_goods_edit_link()
+    goods_page.click_on_goods_description_edit_link()
 
     context.edited_description = context.good_description + " " + description
     add_goods_page.enter_description_of_goods(context.edited_description)
@@ -56,6 +58,28 @@ def edit_good(driver, description, part, controlled, control_list_entry, context
     add_goods_page.select_is_your_good_controlled(controlled)
     add_goods_page.enter_control_list_entries(control_list_entry)
 
+    functions.click_submit(driver)
+
+
+@when(  # noqa
+    parsers.parse(
+        'I edit the good details to military use "{military_use}" component "{component}" information security "{infosec}"'
+    )
+)
+def edit_good_details(driver, military_use, component, infosec, context):  # noqa
+    goods_page = GoodsPage(driver)
+    good_details_page = AddGoodDetails(driver)
+
+    goods_page.click_on_good_edit_military_use_link()
+    good_details_page.select_is_product_for_military_use(military_use)
+    functions.click_submit(driver)
+
+    goods_page.click_on_good_edit_is_component_link()
+    good_details_page.select_is_product_a_component(component)
+    functions.click_submit(driver)
+
+    goods_page.click_on_good_edit_uses_information_security_link()
+    good_details_page.does_product_employ_information_security(infosec)
     functions.click_submit(driver)
 
 
@@ -80,6 +104,13 @@ def click_on_draft_good(driver, context, exporter_url):
     assert "edited" in text
     assert "Yes" in text
     assert "321" in text
+    elements = driver.find_elements_by_css_selector(".govuk-summary-list__row")
+    military_use_row_text = helpers.get_element_row_text_from_table(elements, "Military use")
+    component_row_text = helpers.get_element_row_text_from_table(elements, "Component")
+    infosec_row_text = helpers.get_element_row_text_from_table(elements, "Information security features")
+    assert "Yes, designed specifically for military use" in military_use_row_text
+    assert "Yes, it's designed specially for hardware" in component_row_text
+    assert "No" in infosec_row_text
 
 
 @when("I click Add a new good")
@@ -246,6 +277,28 @@ def add_good_grading(driver, prefix, grading, suffix, issuing_authority, referen
     goods_grading_page.enter_reference(reference)
     date = date_of_issue.split("-")
     goods_grading_page.enter_date_of_issue(date[0], date[1], date[2])
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I select product category "{category}" for a good'))  # noqa
+def select_product_category(driver, category, context):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.select_product_category(category)
+    functions.click_submit(driver)
+
+
+@when(  # noqa
+    parsers.parse(
+        'I specify the good details military use "{military_use}" component "{component}" and information security "{infosec}"'
+    )
+)
+def add_good_details(driver, military_use, component, infosec, context):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.select_is_product_for_military_use(military_use)
+    functions.click_submit(driver)
+    good_details_page.select_is_product_a_component(component)
+    functions.click_submit(driver)
+    good_details_page.does_product_employ_information_security(infosec)
     functions.click_submit(driver)
 
 

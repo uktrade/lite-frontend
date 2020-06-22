@@ -1,0 +1,140 @@
+{% extends 'layouts/base.html' %}
+
+{% block back_link %}
+{% endblock %}
+
+{% block body %}
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">
+				{% block title %} {% lcs 'Goods.AddGoodSummary.TITLE' %} {% endblock %}
+			</h1>
+		</div>
+	</div>
+
+	<dl class="govuk-summary-list" id="good-detail-summary">
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs 'Goods.AddGoodSummary.CATEGORY' %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ good.item_category.value }}
+			</dd>
+			<dd class="govuk-summary-list__actions"></dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs "Goods.AddGoodSummary.DESCRIPTION" %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ good.description }}
+			</dd>
+			<dd class="govuk-summary-list__actions">
+				{% if good.status.key == 'draft' %}
+					<a id="change-good-description" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:edit_good' application_id good.id %}#description">Change</a>
+				{% endif %}
+			</dd>
+		</div>
+
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs 'Goods.AddGoodSummary.PART_NUMBER' %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ good.part_number|default_na }}
+			</dd>
+			<dd class="govuk-summary-list__actions">
+				{% if good.status.key == 'draft' %}
+					<a id="change-part-number" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:edit_good' application_id good.id %}#part_number">Change</a>
+				{% endif %}
+			</dd>
+		</div>
+
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs 'Goods.AddGoodSummary.CLC' %}
+			</dt>
+			{% if good.control_list_entries %}
+				<dd class="govuk-summary-list__value">
+					{{ good.control_list_entries|display_clc_ratings }}
+				</dd>
+			{% else %}
+				<dd class="govuk-summary-list__value">
+					{{ good.control_list_entries|default_na }}
+				</dd>
+			{% endif %}
+			<dd class="govuk-summary-list__actions">
+				{% if good.status.key == 'draft' %}
+					<a id="change-good-controlled" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:edit_good' application_id good.id %}#pane_is_good_controlled">Change</a>
+				{% endif %}
+			</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs 'Goods.AddGoodSummary.SECURITY_GRADING' %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ good.is_pv_graded.value }}
+			</dd>
+			<dd class="govuk-summary-list__actions">
+				{% if good.status.key == 'draft' %}
+					<a id="change-good-grading" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:edit_grading' application_id good.id %}">Change</a>
+				{% endif %}
+			</dd>
+		</div>
+
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs "Goods.AddGoodSummary.MILITARY_USE" %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ good.is_military_use.value|default_na }}
+				{% if good.modified_military_use_details %}
+					<span class="govuk-hint"> {{ good.modified_military_use_details }} </span>
+				{% endif %}
+			</dd>
+			<dd class="govuk-summary-list__actions">
+				{% if good.status.key == 'draft' %}
+					<a id="change-good-details" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:good_military_use' application_id good.id %}">Change</a>
+				{% endif %}
+			</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs "Goods.AddGoodSummary.COMPONENT" %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ good.is_component.value|default_na }}
+				{% if good.component_details %}
+					<span class="govuk-hint"> {{ good.component_details }} </span>
+				{% endif %}
+			</dd>
+			<dd class="govuk-summary-list__actions">
+				{% if good.status.key == 'draft' %}
+					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:good_component' application_id good.id %}">Change</a>
+				{% endif %}
+			</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs "Goods.AddGoodSummary.INFORMATION_SECURITY_FEATURES" %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{% if good.uses_information_security is not None %}
+					{{ good.uses_information_security|friendly_boolean }}
+				{% else %}
+					{{ good.uses_information_security|default_na }}
+				{% endif %}
+				{% if good.information_security_details %}
+					<span class="govuk-hint"> {{ good.information_security_details }} </span>
+				{% endif %}
+			</dd>
+			<dd class="govuk-summary-list__actions">
+				{% if good.status.key == 'draft' %}
+					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:good_information_security' application_id good.id %}">Change</a>
+				{% endif %}
+			</dd>
+		</div>
+	</dl>
+	<a class="govuk-button" id="button-attach-document" href="{% url 'applications:add_document' application_id good_id %}">{% lcs "Goods.AddGoodSummary.SAVE_AND_CONTINUE_BUTTON" %}</a>
+{% endblock %}

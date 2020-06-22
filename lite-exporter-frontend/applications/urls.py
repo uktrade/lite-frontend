@@ -17,7 +17,9 @@ from applications.views import (
     route_of_goods,
     temporary_export_details,
 )
+from applications.views.goods import AddGoodsSummary, GoodsDetailSummaryCheckYourAnswers
 from applications.views.parties import consignees, end_users, third_parties, ultimate_end_users
+from goods.views import EditGood, EditGrading, GoodMilitaryUse, GoodComponent, GoodInformationSecurity
 
 app_name = "applications"
 urlpatterns = [
@@ -44,6 +46,20 @@ urlpatterns = [
     # Goods
     path("<uuid:pk>/goods/", goods.ApplicationGoodsList.as_view(), name="goods"),
     path("<uuid:pk>/goods/add-new/", goods.AddGood.as_view(), name="new_good"),
+    path("<uuid:pk>/goods/<uuid:good_pk>/edit-military-use/", GoodMilitaryUse.as_view(), name="good_military_use"),
+    path("<uuid:pk>/goods/<uuid:good_pk>/edit-good-component/", GoodComponent.as_view(), name="good_component"),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/edit-information-security/",
+        GoodInformationSecurity.as_view(),
+        name="good_information_security",
+    ),
+    path(
+        "<uuid:pk>/goods/add-new/<uuid:good_pk>/good-detail-summary/",
+        AddGoodsSummary.as_view(),
+        name="add_good_summary",
+    ),
+    path("<uuid:pk>/goods/add-new/<uuid:good_pk>/edit-good/", EditGood.as_view(), name="edit_good"),
+    path("<uuid:pk>/goods/add-new/<uuid:good_pk>/edit-grading/", EditGrading.as_view(), name="edit_grading"),
     path(
         "<uuid:pk>/goods/add-new/<uuid:good_pk>/add-document/",
         goods.CheckDocumentGrading.as_view(),
@@ -287,6 +303,7 @@ urlpatterns = [
         name="download_generated_document",
     ),
     path("<uuid:pk>/clearance/", clearance.SetClearanceLevel.as_view(), name="clearance_level"),
+    path("<uuid:pk>/good-detail-summary/", GoodsDetailSummaryCheckYourAnswers.as_view(), name="good_detail_summary"),
     # This HAS to be at the bottom, otherwise it will swallow other url calls
     path("<uuid:pk>/", common.ApplicationDetail.as_view(), name="application"),
     path("<uuid:pk>/exhibition-details/", common.ExhibitionDetail.as_view(), name="exhibition_details"),

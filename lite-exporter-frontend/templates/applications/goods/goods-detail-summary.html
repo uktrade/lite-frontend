@@ -1,0 +1,143 @@
+{% extends 'layouts/base.html' %}
+
+{% block back_link %}
+	<a href="{% if application_status_draft %} {% url 'applications:summary' application_id %} {% else %} {% url 'applications:application' application_id %} {% endif %}" id="back-link" class="govuk-back-link">{% lcs 'goods.GoodsDetailSummary.BACK_BUTTON' %}</a>
+{% endblock %}
+
+{% block body %}
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">
+				{% block title %} {% lcs 'goods.GoodsDetailSummary.TITLE' %} {% endblock %}
+			</h1>
+		</div>
+	</div>
+
+	{% if goods %}
+		{% for good in goods %}
+			<h2 class="govuk-heading-m"> {% lcs 'goods.GoodsDetailSummary.HEADING' %} {{ forloop.counter }} </h2>
+			<dl class="govuk-summary-list" id="good-detail-summary{{ forloop.counter }}">
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'goods.GoodsDetailSummary.SELECT_CATEGORY' %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{{ good.good.item_category.value }}
+					</dd>
+				</div>
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs "goods.GoodPage.Table.DESCRIPTION" %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{{ good.good.description }}
+					</dd>
+				</div>
+
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'goods.GoodsDetailSummary.PART_NUMBER' %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{{ good.good.part_number|default_na }}
+					</dd>
+				</div>
+
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'goods.GoodsDetailSummary.CONTROLLED' %}
+					</dt>
+					{% if good.good.control_list_entries %}
+						<dd class="govuk-summary-list__value">
+							{{ good.good.control_list_entries|display_clc_ratings }}
+						</dd>
+					{% else %}
+						<dd class="govuk-summary-list__value">
+							{{ good.good.control_list_entries|default_na }}
+						</dd>
+					{% endif %}
+				</div>
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'goods.GoodsDetailSummary.GRADED' %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{% if good.good.pv_grading_details %}
+							{% lcs 'goods.GoodsDetailSummary.PV_GRADING_YES' %}
+						{% else %}
+							{% lcs 'goods.GoodsDetailSummary.PV_GRADING_NO' %}
+						{% endif %}
+					</dd>
+				</div>
+
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'goods.GoodsDetailSummary.MILITARY' %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{{ good.good.is_military_use.value }}
+						{% if good.good.modified_military_use_details %}
+							<span class="govuk-hint"> {{ good.good.modified_military_use_details }} </span>
+						{% endif %}
+					</dd>
+				</div>
+
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'goods.GoodsDetailSummary.COMPONENT' %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{{ good.good.is_component.value|default_na }}
+						{% if good.good.component_details %}
+							<span class="govuk-hint"> {{ good.good.component_details }} </span>
+						{% endif %}
+					</dd>
+				</div>
+
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'goods.GoodsDetailSummary.DESIGNED_FOR_INFORMATION_SECURITY' %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{% if good.good.uses_information_security is not None %}
+							{{ good.good.uses_information_security|friendly_boolean }}
+						{% else %}
+							{{ good.good.uses_information_security|default_na }}
+						{% endif %}
+						{% if good.good.information_security_details %}
+							<span class="govuk-hint"> {{ good.good.information_security_details }} </span>
+						{% endif %}
+					</dd>
+				</div>
+
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'goods.GoodsDetailSummary.INCORPORATED' %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{{ good.good.is_good_incorporated|friendly_boolean|default_na }}
+					</dd>
+				</div>
+
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs "goods.GoodsDetailSummary.DOCUMENTS" %}
+					</dt>
+
+					{% if good.good.missing_document_reason %}
+						<dd class="govuk-summary-list__value">
+							{{ good.good.missing_document_reason.value }}
+						</dd>
+					{% else %}
+						<dd class="govuk-summary-list__value">
+							{% for document in good.good.documents %}
+								<a {% if document.safe == True %}href="{% url 'goods:document' pk=good.good.id file_pk=document.id %}"{% endif %} class="govuk-link--no-visited-state">{{ document.name }}</a><br>
+							{% endfor %}
+						</dd>
+					{% endif %}
+				</div>
+			</dl>
+		{% endfor %}
+
+	{% endif %}
+{% endblock %}

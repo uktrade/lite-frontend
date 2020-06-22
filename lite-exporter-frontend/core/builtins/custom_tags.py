@@ -459,3 +459,9 @@ def index(string, index):
 @register.filter
 def subtract(integer, value):
     return int(integer) - value
+
+
+@register.filter()
+def display_clc_ratings(control_list_entries):
+    ratings = [item["rating"] for item in control_list_entries]
+    return ", ".join(ratings)

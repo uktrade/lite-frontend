@@ -40,6 +40,135 @@ from lite_forms.helpers import conditional
 from lite_forms.styles import ButtonStyle, HeadingStyle
 
 
+def product_category_form(request):
+    return Form(
+        title=CreateGoodForm.ProductCategory.TITLE,
+        questions=[
+            RadioButtons(
+                title="",
+                name="item_category",
+                options=[
+                    Option(key="group1_platform", value=CreateGoodForm.ProductCategory.GROUP1_PLATFORM),
+                    Option(key="group1_device", value=CreateGoodForm.ProductCategory.GROUP1_DEVICE),
+                    Option(key="group1_components", value=CreateGoodForm.ProductCategory.GROUP1_COMPONENTS),
+                    Option(key="group1_materials", value=CreateGoodForm.ProductCategory.GROUP1_MATERIALS),
+                    Option(key="group2_firearms", value=CreateGoodForm.ProductCategory.GROUP2_FIREARMS),
+                    Option(key="group3_software", value=CreateGoodForm.ProductCategory.GROUP3_SOFTWARE),
+                    Option(key="group3_technology", value=CreateGoodForm.ProductCategory.GROUP3_TECHNOLOGY),
+                ],
+            )
+        ],
+    )
+
+
+def product_military_use_form(request):
+    return Form(
+        title=CreateGoodForm.MilitaryUse.TITLE,
+        questions=[
+            RadioButtons(
+                title="",
+                name="is_military_use",
+                options=[
+                    Option(key="yes_designed", value=CreateGoodForm.MilitaryUse.YES_DESIGNED),
+                    Option(
+                        key="yes_modified",
+                        value=CreateGoodForm.MilitaryUse.YES_MODIFIED,
+                        components=[
+                            TextArea(
+                                title=CreateGoodForm.MilitaryUse.MODIFIED_MILITARY_USE_DETAILS,
+                                description="",
+                                name="modified_military_use_details",
+                                optional=False,
+                            ),
+                        ],
+                    ),
+                    Option(key="no", value=CreateGoodForm.MilitaryUse.NO),
+                ],
+            )
+        ],
+    )
+
+
+def product_component_form(request):
+    return Form(
+        title=CreateGoodForm.ProductComponent.TITLE,
+        questions=[
+            HiddenField("is_component_step", True),
+            RadioButtons(
+                title="",
+                name="is_component",
+                options=[
+                    Option(
+                        key="yes_designed",
+                        value=CreateGoodForm.ProductComponent.YES_DESIGNED,
+                        components=[
+                            TextArea(
+                                title=CreateGoodForm.ProductComponent.DESIGNED_DETAILS,
+                                description="",
+                                name="designed_details",
+                                optional=False,
+                            ),
+                        ],
+                    ),
+                    Option(
+                        key="yes_modified",
+                        value=CreateGoodForm.ProductComponent.YES_MODIFIED,
+                        components=[
+                            TextArea(
+                                title=CreateGoodForm.ProductComponent.MODIFIED_DETAILS,
+                                description="",
+                                name="modified_details",
+                                optional=False,
+                            ),
+                        ],
+                    ),
+                    Option(
+                        key="yes_general",
+                        value=CreateGoodForm.ProductComponent.YES_GENERAL_PURPOSE,
+                        components=[
+                            TextArea(
+                                title=CreateGoodForm.ProductComponent.GENERAL_DETAILS,
+                                description="",
+                                name="general_details",
+                                optional=False,
+                            ),
+                        ],
+                    ),
+                    Option(key="no", value=CreateGoodForm.ProductComponent.NO),
+                ],
+            ),
+        ],
+    )
+
+
+def product_uses_information_security(request):
+    return Form(
+        title=CreateGoodForm.ProductInformationSecurity.TITLE,
+        questions=[
+            HiddenField("is_information_security_step", True),
+            RadioButtons(
+                title="",
+                name="uses_information_security",
+                options=[
+                    Option(
+                        key=True,
+                        value="Yes",
+                        components=[
+                            TextArea(
+                                title=CreateGoodForm.ProductInformationSecurity.INFORMATION_SECURITY_DETAILS,
+                                description="",
+                                name="information_security_details",
+                                optional=True,
+                            ),
+                        ],
+                    ),
+                    Option(key=False, value=CreateGoodForm.ProductInformationSecurity.NO),
+                ],
+            ),
+        ],
+    )
+
+
 def add_goods_questions(request, application_pk=None):
     return Form(
         title=conditional(application_pk, CreateGoodForm.TITLE_APPLICATION, CreateGoodForm.TITLE_GOODS_LIST),
@@ -149,7 +278,16 @@ def pv_details_form(request):
 
 
 def add_good_form_group(request, is_pv_graded: bool = None, draft_pk: str = None):
-    return FormGroup([add_goods_questions(request, draft_pk), conditional(is_pv_graded, pv_details_form(request))])
+    return FormGroup(
+        [
+            product_category_form(request),
+            add_goods_questions(request, draft_pk),
+            conditional(is_pv_graded, pv_details_form(request)),
+            product_military_use_form(request),
+            product_component_form(request),
+            product_uses_information_security(request),
+        ]
+    )
 
 
 def edit_good_detail_form(request, good_id):
