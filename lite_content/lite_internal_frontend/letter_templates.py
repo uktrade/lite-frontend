@@ -159,8 +159,8 @@ class VariableHelpPageTables(Enum):
         Exhibition start date|{{ details.first_exhibition_date }}|20 June 2020
         Date the clearance is needed|{{ details.required_by_date }}|20 June 2020
         Details as to why clearance is needed by this date|{{ details.reason_for_clearance }}|As entered by applicant
-        Goods type|{{ goods.item_type }}|
-        Other goods type|{{ goods.other_item_type }}|
+        Goods type|{ % for good in goods.all %} \\n {{good.item_type}} \\n {% endfor %}|
+        Other goods type|{ % for good in goods.all %} \\n {{good.other_item_type}} \\n {% endfor %}|
     """
 
     F680_clearance = """
@@ -323,72 +323,70 @@ class VariableHelpPageTables(Enum):
     """
 
     Goods = """
-        |{% for good in goods.all %} \\n {{ good.description }} \\n {% endfor %}|
-        |{% for good in goods.all %} \\n {% for clc in good.control_list_entries %} \\n {{ clc }} \\n {% endfor %} \\n {% endfor %}|
-        |{% for good in goods.all %} \\n {{ good.applied_for_value }} \\n {% endfor %}|
-        |{% for good in goods.all %} \\n {{ good.applied_for_quantity }} \\n {% endfor %}|
-        |{% for good in goods.all %} \\n {{ good.is_controlled }} \\n {% endfor %}|‘Yes’ or ‘No’
-        |{% for good in goods.all %} \\n {{ good.is_incorporated }} \\n {% endfor %}|‘Yes’ or ‘No’
-        |{% for good in goods.all %} \\n {{ good.part_number }} \\n {% endfor %}|
-        (Exhibition clearance only)|{% for good in goods.all %} \\n {{ good.item_type }} \\n {% endfor %}|
-        (Exhibition clearance only)|{% for good in goods.all %} \\n {{ good.other_item_type }} \\n {% endfor %}|
+        Goods description|{% for good in goods.all %} \\n {{ good.description }} \\n {% endfor %}|As entered by applicant
+        Control list entry|{% for good in goods.all %} \\n {% for clc in good.control_list_entries %} \\n {{ clc }} \\n {% endfor %} \\n {% endfor %}|‘ML1a’ or ‘1D101’
+        Value applied for|{% for good in goods.all %} \\n {{ good.applied_for_value }} \\n {% endfor %}|
+        Quantity applied for|{% for good in goods.all %} \\n {{ good.applied_for_quantity }} \\n {% endfor %}|
+        Value approved|{% for good in goods.all %} \\n {{ good.is_controlled }} \\n {% endfor %}|‘Yes’ or ‘No’
+        Quantity approved|{% for good in goods.all %} \\n {{ good.is_incorporated }} \\n {% endfor %}|‘Yes’ or ‘No’
+        Part number|{% for good in goods.all %} \\n {{ good.part_number }} \\n {% endfor %}|As entered by applicant
     """
 
     Approved_goods = """
-        |{% for good in goods.approved %} \\n {{ good.description }} \\n {% endfor %}|
-        |{% for good in goods.all %} \\n {% for clc in good.control_list_entries %} \\n {{ clc }} \\n {% endfor %} \\n {% endfor %}|
-        |{% for good in goods.approved %} \\n {{ good.applied_for_value }} \\n {% endfor %}|
-        |{% for good in goods.approved %} \\n {{ good.applied_for_quantity }} \\n {% endfor %}|
-        |{% for good in goods.approved %} \\n {{ good.value }} \\n {% endfor %}|
-        |{% for good in goods.approved %} \\n {{ good.quantity }} \\n {% endfor %}|
-        |{% for good in goods.approved %} \\n {{ good.is_controlled }} \\n {% endfor %}|‘Yes’ or ‘No’
-        |{% for good in goods.approved %} \\n {{ good.is_incorporated }} \\n {% endfor %}|‘Yes’ or ‘No’
-        |{% for good in goods.approved %} \\n {{ good.part_number }} \\n {% endfor %}|
-        |{% for good in goods.approved %} \\n {{ good.reason }} \\n {% endfor %}|
-        |{% for good in goods.approved %} \\n {{ good.note }} \\n {% endfor %}|
-        |{% for good in goods.approved %} \\n {{ good.proviso_reason }} \\n {% endfor %}|
+        Goods description|{% for good in goods.approved %} \\n {{ good.description }} \\n {% endfor %}|As entered by applicant
+        Control list entry|{% for good in goods.all %} \\n {% for clc in good.control_list_entries %} \\n {{ clc }} \\n {% endfor %} \\n {% endfor %}|‘ML1a’ or ‘1D101’
+        Value applied for|{% for good in goods.approved %} \\n {{ good.applied_for_value }} \\n {% endfor %}|
+        Quantity applied for|{% for good in goods.approved %} \\n {{ good.applied_for_quantity }} \\n {% endfor %}|
+        Value approved|{% for good in goods.approved %} \\n {{ good.value }} \\n {% endfor %}|‘Yes’ or ‘No’
+        Quantity approved|{% for good in goods.approved %} \\n {{ good.quantity }} \\n {% endfor %}|‘Yes’ or ‘No’
+        If good is controlled|{% for good in goods.approved %} \\n {{ good.is_controlled }} \\n {% endfor %}|‘Yes’ or ‘No’
+        If the good is to be incorporated|{% for good in goods.approved %} \\n {{ good.is_incorporated }} \\n {% endfor %}|‘Yes’ or ‘No’
+        Part number|{% for good in goods.approved %} \\n {{ good.part_number }} \\n {% endfor %}|As entered by applicant
+        Reason approved|{% for good in goods.approved %} \\n {{ good.reason }} \\n {% endfor %}|
+        Note|{% for good in goods.approved %} \\n {{ good.note }} \\n {% endfor %}|
+        Proviso reason|{% for good in goods.approved %} \\n {{ good.proviso_reason }} \\n {% endfor %}|
     """
 
     Refused_goods = """
-        |{% for good in goods.refused %} \\n {{ good.description }} \\n {% endfor %}|
-        |{% for good in goods.all %} \\n {% for clc in good.control_list_entries %} \\n {{ clc }} \\n {% endfor %} \\n {% endfor %}|
-        |{% for good in goods.refused %} \\n {{ good.applied_for_value }} \\n {% endfor %}|
-        |{% for good in goods.refused %} \\n {{ good.applied_for_quantity }} \\n {% endfor %}|
-        |{% for good in goods.refused %} \\n {{ good.is_controlled }} \\n {% endfor %}|‘Yes’ or ‘No’
-        |{% for good in goods.refused %} \\n {{ good.is_incorporated }} \\n {% endfor %}|‘Yes’ or ‘No’
-        |{% for good in goods.refused %} \\n {{ good.part_number }} \\n {% endfor %}|
-        |{% for good in goods.refused %} \\n {{ good.reason }} \\n {% endfor %}|
-        |{% for good in goods.refused %} \\n {{ good.note }} \\n {% endfor %}|
+        Goods description|{% for good in goods.refused %} \\n {{ good.description }} \\n {% endfor %}|As entered by applicant
+        Control list entry|{% for good in goods.all %} \\n {% for clc in good.control_list_entries %} \\n {{ clc }} \\n {% endfor %} \\n {% endfor %}|‘ML1a’ or ‘1D101’
+        Value applied for|{% for good in goods.refused %} \\n {{ good.applied_for_value }} \\n {% endfor %}|
+        Quantity applied for|{% for good in goods.refused %} \\n {{ good.applied_for_quantity }} \\n {% endfor %}|
+        If good is controlled|{% for good in goods.refused %} \\n {{ good.is_controlled }} \\n {% endfor %}|‘Yes’ or ‘No’
+        If the good is to be incorporated|{% for good in goods.refused %} \\n {{ good.is_incorporated }} \\n {% endfor %}|‘Yes’ or ‘No’
+        Part number|{% for good in goods.refused %} \\n {{ good.part_number }} \\n {% endfor %}|As entered by applicant
+        Refusal reason|{% for good in goods.refused %} \\n {{ good.reason }} \\n {% endfor %}|
+        Note|{% for good in goods.refused %} \\n {{ good.note }} \\n {% endfor %}|
     """
 
     NLR_goods = """
-        |{% for good in goods.no_licence_required %} \\n {{ good.description }} \\n {% endfor %}|
-        |{% for good in goods.all %} \\n {% for clc in good.control_list_entries %} \\n {{ clc }} \\n {% endfor %} \\n {% endfor %}|
-        |{% for good in goods.no_licence_required %} \\n {{ good.applied_for_value }} \\n {% endfor %}|
-        |{% for good in goods.no_licence_required %} \\n {{ good.applied_for_quantity }} \\n {% endfor %}|
-        |{% for good in goods.no_licence_required %} \\n {{ good.is_controlled }} \\n {% endfor %}|‘Yes’ or ‘No’
-        |{% for good in goods.no_licence_required %} \\n {{ good.is_incorporated }} \\n {% endfor %}|‘Yes’ or ‘No’
-        |{% for good in goods.no_licence_required %} \\n {{ good.part_number }} \\n {% endfor %}|
-        |{% for good in goods.no_licence_required %} \\n {{ good.reason }} \\n {% endfor %}|
-        |{% for good in goods.no_licence_required %} \\n {{ good.note }} \\n {% endfor %}|
+        Goods description|{% for good in goods.no_licence_required %} \\n {{ good.description }} \\n {% endfor %}|As entered by applicant
+        Control list entry|{% for good in goods.all %} \\n {% for clc in good.control_list_entries %} \\n {{ clc }} \\n {% endfor %} \\n {% endfor %}|‘ML1a’ or ‘1D101’
+        Value applied for|{% for good in goods.no_licence_required %} \\n {{ good.applied_for_value }} \\n {% endfor %}|
+        Quantity applied for|{% for good in goods.no_licence_required %} \\n {{ good.applied_for_quantity }} \\n {% endfor %}|
+        If good is controlled|{% for good in goods.no_licence_required %} \\n {{ good.is_controlled }} \\n {% endfor %}|‘Yes’ or ‘No’
+        If the good is to be incorporated|{% for good in goods.no_licence_required %} \\n {{ good.is_incorporated }} \\n {% endfor %}|‘Yes’ or ‘No’
+        Part number|{% for good in goods.no_licence_required %} \\n {{ good.part_number }} \\n {% endfor %}|As entered by applicant
+        NLR reason|{% for good in goods.no_licence_required %} \\n {{ good.reason }} \\n {% endfor %}|
+        Note|{% for good in goods.no_licence_required %} \\n {{ good.note }} \\n {% endfor %}|
     """
 
     ECJU_query = """
-        |{% for ecju_query in ecju_queries %} \\n {{ ecju_query.question.text }} \\n {% endfor %}|
-        |{% for ecju_query in ecju_queries %} \\n {{ ecju_query.question.user }} \\n {% endfor %}|
-        |{% for ecju_query in ecju_queries %} \\n {{ ecju_query.question.date }} \\n {% endfor %}|
-        |{% for ecju_query in ecju_queries %} \\n {{ ecju_query.question.time }} \\n {% endfor %}|
-        |{% for ecju_query in ecju_queries %} \\n {{ ecju_query.response.text }} \\n {% endfor %}|
-        |{% for ecju_query in ecju_queries %} \\n {{ ecju_query.response.user }} \\n {% endfor %}|
-        |{% for ecju_query in ecju_queries %} \\n {{ ecju_query.response.date }} \\n {% endfor %}|
-        |{% for ecju_query in ecju_queries %} \\n {{ ecju_query.response.time }} \\n {% endfor %}|
+        Question asked|{% for ecju_query in ecju_queries %} \\n {{ ecju_query.question.text }} \\n {% endfor %}|
+        User that asked the question|{% for ecju_query in ecju_queries %} \\n {{ ecju_query.question.user }} \\n {% endfor %}|
+        Date asked|{% for ecju_query in ecju_queries %} \\n {{ ecju_query.question.date }} \\n {% endfor %}|20 June 2020
+        Time asked|{% for ecju_query in ecju_queries %} \\n {{ ecju_query.question.time }} \\n {% endfor %}|‘10:30’ or ‘14:55’
+        Answer to the question|{% for ecju_query in ecju_queries %} \\n {{ ecju_query.response.text }} \\n {% endfor %}|
+        User that answered|{% for ecju_query in ecju_queries %} \\n {{ ecju_query.response.user }} \\n {% endfor %}|
+        Date responded|{% for ecju_query in ecju_queries %} \\n {{ ecju_query.response.date }} \\n {% endfor %}|20 June 2020
+        Time responded|{% for ecju_query in ecju_queries %} \\n {{ ecju_query.response.time }} \\n {% endfor %}|‘10:30’ or ‘14:55’
     """
 
     Notes = """
-        |{% for note in notes %} \\n {{ note.text }} \\n {% endfor %}|
-        |{% for note in notes %} \\n {{ note.user }} \\n {% endfor %}|
-        |{% for note in notes %} \\n {{ note.date }} \\n {% endfor %}|
-        |{% for note in notes %} \\n {{ note.time }} \\n {% endfor %}|
+        Note text|{% for note in notes %} \\n {{ note.text }} \\n {% endfor %}|
+        User that added the note|{% for note in notes %} \\n {{ note.user }} \\n {% endfor %}|
+        Date of note|{% for note in notes %} \\n {{ note.date }} \\n {% endfor %}|20 June 2020
+        Time of note|{% for note in notes %} \\n {{ note.time }} \\n {% endfor %}|‘10:30’ or ‘14:55’
     """
 
     Sites = """
@@ -397,20 +395,20 @@ class VariableHelpPageTables(Enum):
         {{ sites.address_line_1 }}|{% for site in sites %} \\n {{ site.address_line_2 }} \\n {% endfor %}|
         Postcode|{% for site in sites %} \\n {{ site.postcode }} \\n {% endfor %}|
         City|{% for site in sites %} \\n {{ site.city }} \\n {% endfor %}|
-        |{% for site in sites %} \\n {{ site.region }} \\n {% endfor %}|
-        |{% for site in sites %} \\n {{ site.country.name }} \\n {% endfor %}|
-        |{% for site in sites %} \\n {{ site.country. }} \\n {% endfor %}|
-        |{% for site in sites %} \\n {{ site.code }} \\n {% endfor %}|
+        Region|{% for site in sites %} \\n {{ site.region }} \\n {% endfor %}|
+        Country name|{% for site in sites %} \\n {{ site.country.name }} \\n {% endfor %}|
+        Country|{% for site in sites %} \\n {{ site.country. }} \\n {% endfor %}|‘United Kingdom’
+        Country code|{% for site in sites %} \\n {{ site.code }} \\n {% endfor %}|
     """
 
     External_locations = """
-        |{% for external_location in external_locations %} \\n {{ external_location.name }} \\n {% endfor %}|
-        |{% for external_location in external_locations %} \\n {{ external_location.address }} \\n {% endfor %}|
-        |{% for external_location in external_locations %} \\n {{ external_location.country.name }} \\n {% endfor %}|
-        |{% for external_location in external_locations %} \\n {{ external_location.country.code }} \\n {% endfor %}|
+        Name|{% for external_location in external_locations %} \\n {{ external_location.name }} \\n {% endfor %}|
+        Address|{% for external_location in external_locations %} \\n {{ external_location.address }} \\n {% endfor %}|
+        Country|{% for external_location in external_locations %} \\n {{ external_location.country.name }} \\n {% endfor %}|‘Abu Dhabi’ or ‘Zimbabwe’
+        Country code|{% for external_location in external_locations %} \\n {{ external_location.country.code }} \\n {% endfor %}|
     """
 
     Documents = """
-        |{% for document in documents %} \\n {{ document.name }} \\n {% endfor %}|
-        |{% for document in documents %} \\n {{ document.description }} \\n {% endfor %}|
+        Name|{% for document in documents %} \\n {{ document.name }} \\n {% endfor %}|
+        Description of document|{% for document in documents %} \\n {{ document.description }} \\n {% endfor %}|
     """
