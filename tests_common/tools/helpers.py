@@ -265,3 +265,8 @@ def get_current_date_time(format_date_time=True):
     if not format_date_time:
         return date_time
     return strip_special_characters(str(date_time))
+
+
+def get_element_row_text_from_table(elements, text_to_search_on):
+    element_index = get_element_index_by_text(elements, text_to_search_on, complete_match=False)
+    return elements[element_index].text

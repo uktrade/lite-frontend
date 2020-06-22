@@ -39,6 +39,12 @@ def apply_for_standard_application(api_test_client, context):
             "value": context.good_value,
             "is_good_incorporated": True,
             "is_good_pv_graded": "no",
+            "item_category": "group1_components",
+            "is_military_use": "yes_designed",
+            "is_component": "yes_modified",
+            "component_details": "modified component details",
+            "uses_information_security": True,
+            "information_security_details": "details about security",
         },
         end_user={
             "name": fake.name(),

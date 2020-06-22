@@ -56,6 +56,10 @@ def build_good(description, control_list_entry="ML1a", part_number="1234"):
         "part_number": part_number,
         "validate_only": False,
         "is_pv_graded": "no",
+        "item_category": "group1_device",
+        "is_military_use": "yes_designed",
+        "is_component": "no",
+        "uses_information_security": True,
     }
 
 
@@ -123,6 +127,10 @@ def build_request_data(exporter_user, gov_user):
             "validate_only": False,
             "details": fake.bs(),
             "is_pv_graded": "no",
+            "item_category": "group1_device",
+            "is_military_use": "yes_designed",
+            "is_component": "no",
+            "uses_information_security": False,
             "status": "query",
         },
         "grading_good": {
@@ -134,6 +142,11 @@ def build_request_data(exporter_user, gov_user):
             "validate_only": False,
             "details": fake.bs(),
             "is_pv_graded": "grading_required",
+            "item_category": "group1_device",
+            "is_military_use": "yes_designed",
+            "is_component": "no",
+            "uses_information_security": False,
+            "status": "query",
         },
         "add_exhibition_good": {"good_id": "", "item_type": "video"},
         "case_note": {"text": fake.bs(), "is_visible_to_exporter": True},
