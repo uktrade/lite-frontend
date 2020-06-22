@@ -206,120 +206,120 @@ class VariableHelpPageTables(Enum):
     """
 
     End_user = """
-        Name|{{ end_user.name }}|
-        Type|{{ end_user.type }}|
-        Address|{{ end_user.address }}|
-        Country|{{ end_user.country.name }}|
+        Name|{{ end_user.name }}|Anthony Lord
+        Type|{{ end_user.type }}|‘Government organisation’, ‘Commercial organisation’, ‘An individual’ or ‘Other’
+        Address|{{ end_user.address }}|As entered by applicant
+        Country|{{ end_user.country.name }}|‘Abu Dhabi’ or ‘Zimbabwe’
         Country code|{{ end_user.country.code }}|
         Website|{{ end_user.website }}|
     """
 
     Consignee = """
-        |{{ consignee.name }}|
-        |{{ consignee.type }}|
-        |{{ consignee.address }}|
-        |{{ consignee.country.name }}|
-        |{{ consignee.country.code }}|
-        |{{ consignee.website }}|
+        Name|{{ consignee.name }}|Anthony Lord
+        Type|{{ consignee.type }}|‘Government organisation’, ‘Commercial organisation’, ‘An individual’ or ‘Other’
+        Address|{{ consignee.address }}|As entered by applicant
+        Country|{{ consignee.country.name }}|‘Abu Dhabi’ or ‘Zimbabwe’
+        Country code|{{ consignee.country.code }}|
+        Website|{{ consignee.website }}|
     """
 
     Ultimate_recipient = """
-        |{{ ultimate_end_users.name }}|
-        |{{ ultimate_end_users.type }}|
-        |{{ ultimate_end_users.address }}|
-        |{{ ultimate_end_users.country.name }}|
-        |{{ ultimate_end_users.country.code }}|
-        |{{ ultimate_end_users.website }}|
+        Name|{{ ultimate_end_users.name }}|Anthony Lord
+        Type|{{ ultimate_end_users.type }}|‘Government organisation’, ‘Commercial organisation’, ‘An individual’ or ‘Other’
+        Address|{{ ultimate_end_users.address }}|As entered by applicant
+        Country|{{ ultimate_end_users.country.name }}|‘Abu Dhabi’ or ‘Zimbabwe’
+        Country code|{{ ultimate_end_users.country.code }}|
+        Website|{{ ultimate_end_users.website }}|
     """
 
     Third_parties = """
-        |{% for third_party in third_parties.all %} \\n {{ third_party.name }} \\n {% endfor %}|
-        |{% for third_party in third_parties.all %} \\n {{ third_party.type }} \\n {% endfor %}|
-        |{% for third_party in third_parties.all %} \\n {{ third_party.address }} \\n {% endfor %}|
-        |{% for third_party in third_parties.all %} \\n {{ third_party.country.name }} \\n {% endfor %}|
-        |{% for third_party in third_parties.all %} \\n {{ third_party.country.code }} \\n {% endfor %}|
-        |{% for third_party in third_parties.all %} \\n {{ third_party.website }} \\n {% endfor %}|
-        |{% for third_party in third_parties.all %} \\n {{ third_party.descriptors }} \\n {% endfor %}|
+        Name|{% for third_party in third_parties.all %} \\n {{ third_party.name }} \\n {% endfor %}|
+        Type|{% for third_party in third_parties.all %} \\n {{ third_party.type }} \\n {% endfor %}|
+        Address|{% for third_party in third_parties.all %} \\n {{ third_party.address }} \\n {% endfor %}|
+        Country|{% for third_party in third_parties.all %} \\n {{ third_party.country.name }} \\n {% endfor %}|
+        Country code|{% for third_party in third_parties.all %} \\n {{ third_party.country.code }} \\n {% endfor %}|
+        Website|{% for third_party in third_parties.all %} \\n {{ third_party.website }} \\n {% endfor %}|
+        Descriptors, caveats and codewords|{% for third_party in third_parties.all %} \\n {{ third_party.descriptors }} \\n {% endfor %}|
     """
 
     Third_party_agent_and_broker = """
-        |{% for third_party in third_parties.agent %} \\n {{ third_party.name }} \\n {% endfor %}|
-        |{% for third_party in third_parties.agent %} \\n {{ third_party.type }} \\n {% endfor %}|
-        |{% for third_party in third_parties.agent %} \\n {{ third_party.address }} \\n {% endfor %}|
-        |{% for third_party in third_parties.agent %} \\n {{ third_party.country.name }} \\n {% endfor %}|
-        |{% for third_party in third_parties.agent %} \\n {{ third_party.country.code }} \\n {% endfor %}|
-        |{% for third_party in third_parties.agent %} \\n {{ third_party.website }} \\n {% endfor %}|
-        |{% for third_party in third_parties.agent %} \\n {{ third_party.descriptors }} \\n {% endfor %}|
+        Name|{% for third_party in third_parties.agent %} \\n {{ third_party.name }} \\n {% endfor %}|
+        Type|{% for third_party in third_parties.agent %} \\n {{ third_party.type }} \\n {% endfor %}|
+        Address|{% for third_party in third_parties.agent %} \\n {{ third_party.address }} \\n {% endfor %}|
+        Country|{% for third_party in third_parties.agent %} \\n {{ third_party.country.name }} \\n {% endfor %}|
+        Country code|{% for third_party in third_parties.agent %} \\n {{ third_party.country.code }} \\n {% endfor %}|
+        Website|{% for third_party in third_parties.agent %} \\n {{ third_party.website }} \\n {% endfor %}|
+        Descriptors, caveats and codewords|{% for third_party in third_parties.agent %} \\n {{ third_party.descriptors }} \\n {% endfor %}|
     """
 
     Third_party_intermediate_consignee = """
-        |{% for third_party in third_parties.intermediate_consignee %} \\n {{ third_party.name }} \\n {% endfor %}|
-        |{% for third_party in third_parties.intermediate_consignee %} \\n {{ third_party.type }} \\n {% endfor %}|
-        |{% for third_party in third_parties.intermediate_consignee %} \\n {{ third_party.address }} \\n {% endfor %}|
-        |{% for third_party in third_parties.intermediate_consignee %} \\n {{ third_party.country.name }} \\n {% endfor %}|
-        |{% for third_party in third_parties.intermediate_consignee %} \\n {{ third_party.country.code }} \\n {% endfor %}|
-        |{% for third_party in third_parties.intermediate_consignee %} \\n {{ third_party.website }} \\n {% endfor %}|
-        |{% for third_party in third_parties.intermediate_consignee %} \\n {{ third_party.descriptors }} \\n {% endfor %}|
+        Name|{% for third_party in third_parties.intermediate_consignee %} \\n {{ third_party.name }} \\n {% endfor %}|
+        Type|{% for third_party in third_parties.intermediate_consignee %} \\n {{ third_party.type }} \\n {% endfor %}|
+        Address|{% for third_party in third_parties.intermediate_consignee %} \\n {{ third_party.address }} \\n {% endfor %}|
+        Country|{% for third_party in third_parties.intermediate_consignee %} \\n {{ third_party.country.name }} \\n {% endfor %}|
+        Country code|{% for third_party in third_parties.intermediate_consignee %} \\n {{ third_party.country.code }} \\n {% endfor %}|
+        Website|{% for third_party in third_parties.intermediate_consignee %} \\n {{ third_party.website }} \\n {% endfor %}|
+        Descriptors, caveats and codewords|{% for third_party in third_parties.intermediate_consignee %} \\n {{ third_party.descriptors }} \\n {% endfor %}|
     """  # noqa
 
     Third_party_additional_end_user = """
-        |{% for third_party in third_parties.additional_end_user %} \\n {{ third_party.name }} \\n {% endfor %}|
-        |{% for third_party in third_parties.additional_end_user %} \\n {{ third_party.type }} \\n {% endfor %}|
-        |{% for third_party in third_parties.additional_end_user %} \\n {{ third_party.address }} \\n {% endfor %}|
-        |{% for third_party in third_parties.additional_end_user %} \\n {{ third_party.country.name }} \\n {% endfor %}|
-        |{% for third_party in third_parties.additional_end_user %} \\n {{ third_party.country.code }} \\n {% endfor %}|
-        |{% for third_party in third_parties.additional_end_user %} \\n {{ third_party.website }} \\n {% endfor %}|
-        |{% for third_party in third_parties.additional_end_user %} \\n {{ third_party.descriptors }} \\n {% endfor %}|
+        Name|{% for third_party in third_parties.additional_end_user %} \\n {{ third_party.name }} \\n {% endfor %}|
+        Type|{% for third_party in third_parties.additional_end_user %} \\n {{ third_party.type }} \\n {% endfor %}|
+        Address|{% for third_party in third_parties.additional_end_user %} \\n {{ third_party.address }} \\n {% endfor %}|
+        Country|{% for third_party in third_parties.additional_end_user %} \\n {{ third_party.country.name }} \\n {% endfor %}|
+        Country code|{% for third_party in third_parties.additional_end_user %} \\n {{ third_party.country.code }} \\n {% endfor %}|
+        Website|{% for third_party in third_parties.additional_end_user %} \\n {{ third_party.website }} \\n {% endfor %}|
+        Descriptors, caveats and codewords|{% for third_party in third_parties.additional_end_user %} \\n {{ third_party.descriptors }} \\n {% endfor %}|
     """
 
     Third_party_authorised_submitter = """
-        |{% for third_party in third_parties.submitter %} \\n {{ third_party.name }} \\n {% endfor %}|
-        |{% for third_party in third_parties.submitter %} \\n {{ third_party.type }} \\n {% endfor %}|
-        |{% for third_party in third_parties.submitter %} \\n {{ third_party.address }} \\n {% endfor %}|
-        |{% for third_party in third_parties.submitter %} \\n {{ third_party.country.name }} \\n {% endfor %}|
-        |{% for third_party in third_parties.submitter %} \\n {{ third_party.country.code }} \\n {% endfor %}|
-        |{% for third_party in third_parties.submitter %} \\n {{ third_party.website }} \\n {% endfor %}|
-        |{% for third_party in third_parties.submitter %} \\n {{ third_party.descriptors }} \\n {% endfor %}|
+        Name|{% for third_party in third_parties.submitter %} \\n {{ third_party.name }} \\n {% endfor %}|
+        Type|{% for third_party in third_parties.submitter %} \\n {{ third_party.type }} \\n {% endfor %}|
+        Address|{% for third_party in third_parties.submitter %} \\n {{ third_party.address }} \\n {% endfor %}|
+        Country|{% for third_party in third_parties.submitter %} \\n {{ third_party.country.name }} \\n {% endfor %}|
+        Country code|{% for third_party in third_parties.submitter %} \\n {{ third_party.country.code }} \\n {% endfor %}|
+        Website|{% for third_party in third_parties.submitter %} \\n {{ third_party.website }} \\n {% endfor %}|
+        Descriptors, caveats and codewords|{% for third_party in third_parties.submitter %} \\n {{ third_party.descriptors }} \\n {% endfor %}|
     """
 
     Third_party_consultant = """
-        |{% for third_party in third_parties.consultant %} \\n {{ third_party.name }} \\n {% endfor %}|
-        |{% for third_party in third_parties.consultant %} \\n {{ third_party.type }} \\n {% endfor %}|
-        |{% for third_party in third_parties.consultant %} \\n {{ third_party.address }} \\n {% endfor %}|
-        |{% for third_party in third_parties.consultant %} \\n {{ third_party.country.name }} \\n {% endfor %}|
-        |{% for third_party in third_parties.consultant %} \\n {{ third_party.country.code }} \\n {% endfor %}|
-        |{% for third_party in third_parties.consultant %} \\n {{ third_party.website }} \\n {% endfor %}|
-        |{% for third_party in third_parties.consultant %} \\n {{ third_party.descriptors }} \\n {% endfor %}|
+        Name|{% for third_party in third_parties.consultant %} \\n {{ third_party.name }} \\n {% endfor %}|
+        Type|{% for third_party in third_parties.consultant %} \\n {{ third_party.type }} \\n {% endfor %}|
+        Address|{% for third_party in third_parties.consultant %} \\n {{ third_party.address }} \\n {% endfor %}|
+        Country|{% for third_party in third_parties.consultant %} \\n {{ third_party.country.name }} \\n {% endfor %}|
+        Country code|{% for third_party in third_parties.consultant %} \\n {{ third_party.country.code }} \\n {% endfor %}|
+        Website|{% for third_party in third_parties.consultant %} \\n {{ third_party.website }} \\n {% endfor %}|
+        Descriptors, caveats and codewords|{% for third_party in third_parties.consultant %} \\n {{ third_party.descriptors }} \\n {% endfor %}|
     """
 
     Third_party_contact = """
-        |{% for third_party in third_parties.contact %} \\n {{ third_party.name }} \\n {% endfor %}|
-        |{% for third_party in third_parties.contact %} \\n {{ third_party.type }} \\n {% endfor %}|
-        |{% for third_party in third_parties.contact %} \\n {{ third_party.address }} \\n {% endfor %}|
-        |{% for third_party in third_parties.contact %} \\n {{ third_party.country.name }} \\n {% endfor %}|
-        |{% for third_party in third_parties.contact %} \\n {{ third_party.country.code }} \\n {% endfor %}|
-        |{% for third_party in third_parties.contact %} \\n {{ third_party.website }} \\n {% endfor %}|
-        |{% for third_party in third_parties.contact %} \\n {{ third_party.descriptors }} \\n {% endfor %}|
+        Name|{% for third_party in third_parties.contact %} \\n {{ third_party.name }} \\n {% endfor %}|
+        Type|{% for third_party in third_parties.contact %} \\n {{ third_party.type }} \\n {% endfor %}|
+        Address|{% for third_party in third_parties.contact %} \\n {{ third_party.address }} \\n {% endfor %}|
+        Country|{% for third_party in third_parties.contact %} \\n {{ third_party.country.name }} \\n {% endfor %}|
+        Country code|{% for third_party in third_parties.contact %} \\n {{ third_party.country.code }} \\n {% endfor %}|
+        Website|{% for third_party in third_parties.contact %} \\n {{ third_party.website }} \\n {% endfor %}|
+        Descriptors, caveats and codewords|{% for third_party in third_parties.contact %} \\n {{ third_party.descriptors }} \\n {% endfor %}|
     """
 
     Third_party_exporter = """
-        |{% for third_party in third_parties.exporter %} \\n {{ third_party.name }} \\n {% endfor %}|
-        |{% for third_party in third_parties.exporter %} \\n {{ third_party.type }} \\n {% endfor %}|
-        |{% for third_party in third_parties.exporter %} \\n {{ third_party.address }} \\n {% endfor %}|
-        |{% for third_party in third_parties.exporter %} \\n {{ third_party.country.name }} \\n {% endfor %}|
-        |{% for third_party in third_parties.exporter %} \\n {{ third_party.country.code }} \\n {% endfor %}|
-        |{% for third_party in third_parties.exporter %} \\n {{ third_party.website }} \\n {% endfor %}|
-        |{% for third_party in third_parties.exporter %} \\n {{ third_party.descriptors }} \\n {% endfor %}|
+        Name|{% for third_party in third_parties.exporter %} \\n {{ third_party.name }} \\n {% endfor %}|
+        Type|{% for third_party in third_parties.exporter %} \\n {{ third_party.type }} \\n {% endfor %}|
+        Address|{% for third_party in third_parties.exporter %} \\n {{ third_party.address }} \\n {% endfor %}|
+        Country|{% for third_party in third_parties.exporter %} \\n {{ third_party.country.name }} \\n {% endfor %}|
+        Country code|{% for third_party in third_parties.exporter %} \\n {{ third_party.country.code }} \\n {% endfor %}|
+        Website|{% for third_party in third_parties.exporter %} \\n {{ third_party.website }} \\n {% endfor %}|
+        Descriptors, caveats and codewords|{% for third_party in third_parties.exporter %} \\n {{ third_party.descriptors }} \\n {% endfor %}|
     """
 
     Third_party_other = """
-        |{% for third_party in third_parties.exporter %} \\n {{ third_party.name }} \\n {% endfor %}|
-        |{% for third_party in third_parties.exporter %} \\n {{ third_party.type }} \\n {% endfor %}|
-        |{% for third_party in third_parties.exporter %} \\n {{ third_party.address }} \\n {% endfor %}|
-        |{% for third_party in third_parties.exporter %} \\n {{ third_party.country.name }} \\n {% endfor %}|
-        |{% for third_party in third_parties.exporter %} \\n {{ third_party.country.code }} \\n {% endfor %}|
-        |{% for third_party in third_parties.exporter %} \\n {{ third_party.website }} \\n {% endfor %}|
-        |{% for third_party in third_parties.exporter %} \\n {{ third_party.descriptors }} \\n {% endfor %}|
+        Name|{% for third_party in third_parties.exporter %} \\n {{ third_party.name }} \\n {% endfor %}|
+        Type|{% for third_party in third_parties.exporter %} \\n {{ third_party.type }} \\n {% endfor %}|
+        Address|{% for third_party in third_parties.exporter %} \\n {{ third_party.address }} \\n {% endfor %}|
+        Country|{% for third_party in third_parties.exporter %} \\n {{ third_party.country.name }} \\n {% endfor %}|
+        Country code|{% for third_party in third_parties.exporter %} \\n {{ third_party.country.code }} \\n {% endfor %}|
+        Website|{% for third_party in third_parties.exporter %} \\n {{ third_party.website }} \\n {% endfor %}|
+        Descriptors, caveats and codewords|{% for third_party in third_parties.exporter %} \\n {{ third_party.descriptors }} \\n {% endfor %}|
     """
 
     Goods = """
@@ -362,15 +362,15 @@ class VariableHelpPageTables(Enum):
     """
 
     NLR_goods = """
-        |{% for good in goods.nlr %} \\n {{ good.description }} \\n {% endfor %}|
+        |{% for good in goods.no_licence_required %} \\n {{ good.description }} \\n {% endfor %}|
         |{% for good in goods.all %} \\n {% for clc in good.control_list_entries %} \\n {{ clc }} \\n {% endfor %} \\n {% endfor %}|
-        |{% for good in goods.nlr %} \\n {{ good.applied_for_value }} \\n {% endfor %}|
-        |{% for good in goods.nlr %} \\n {{ good.applied_for_quantity }} \\n {% endfor %}|
-        |{% for good in goods.nlr %} \\n {{ good.is_controlled }} \\n {% endfor %}|‘Yes’ or ‘No’
-        |{% for good in goods.nlr %} \\n {{ good.is_incorporated }} \\n {% endfor %}|‘Yes’ or ‘No’
-        |{% for good in goods.nlr %} \\n {{ good.part_number }} \\n {% endfor %}|
-        |{% for good in goods.nlr %} \\n {{ good.reason }} \\n {% endfor %}|
-        |{% for good in goods.nlr %} \\n {{ good.note }} \\n {% endfor %}|
+        |{% for good in goods.no_licence_required %} \\n {{ good.applied_for_value }} \\n {% endfor %}|
+        |{% for good in goods.no_licence_required %} \\n {{ good.applied_for_quantity }} \\n {% endfor %}|
+        |{% for good in goods.no_licence_required %} \\n {{ good.is_controlled }} \\n {% endfor %}|‘Yes’ or ‘No’
+        |{% for good in goods.no_licence_required %} \\n {{ good.is_incorporated }} \\n {% endfor %}|‘Yes’ or ‘No’
+        |{% for good in goods.no_licence_required %} \\n {{ good.part_number }} \\n {% endfor %}|
+        |{% for good in goods.no_licence_required %} \\n {{ good.reason }} \\n {% endfor %}|
+        |{% for good in goods.no_licence_required %} \\n {{ good.note }} \\n {% endfor %}|
     """
 
     ECJU_query = """
