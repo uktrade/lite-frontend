@@ -330,7 +330,7 @@ class VariableHelpPageTables(Enum):
         Value approved|{% for good in goods.all %} \\n {{ good.is_controlled }} \\n {% endfor %}|‘Yes’ or ‘No’
         Quantity approved|{% for good in goods.all %} \\n {{ good.is_incorporated }} \\n {% endfor %}|‘Yes’ or ‘No’
         Part number|{% for good in goods.all %} \\n {{ good.part_number }} \\n {% endfor %}|As entered by applicant
-    """
+    """  # noqa
 
     Approved_goods = """
         Goods description|{% for good in goods.approved %} \\n {{ good.description }} \\n {% endfor %}|As entered by applicant
@@ -345,7 +345,7 @@ class VariableHelpPageTables(Enum):
         Reason approved|{% for good in goods.approved %} \\n {{ good.reason }} \\n {% endfor %}|
         Note|{% for good in goods.approved %} \\n {{ good.note }} \\n {% endfor %}|
         Proviso reason|{% for good in goods.approved %} \\n {{ good.proviso_reason }} \\n {% endfor %}|
-    """
+    """  # noqa
 
     Refused_goods = """
         Goods description|{% for good in goods.refused %} \\n {{ good.description }} \\n {% endfor %}|As entered by applicant
@@ -357,7 +357,7 @@ class VariableHelpPageTables(Enum):
         Part number|{% for good in goods.refused %} \\n {{ good.part_number }} \\n {% endfor %}|As entered by applicant
         Refusal reason|{% for good in goods.refused %} \\n {{ good.reason }} \\n {% endfor %}|
         Note|{% for good in goods.refused %} \\n {{ good.note }} \\n {% endfor %}|
-    """
+    """  # noqa
 
     NLR_goods = """
         Goods description|{% for good in goods.no_licence_required %} \\n {{ good.description }} \\n {% endfor %}|As entered by applicant
@@ -369,7 +369,7 @@ class VariableHelpPageTables(Enum):
         Part number|{% for good in goods.no_licence_required %} \\n {{ good.part_number }} \\n {% endfor %}|As entered by applicant
         NLR reason|{% for good in goods.no_licence_required %} \\n {{ good.reason }} \\n {% endfor %}|
         Note|{% for good in goods.no_licence_required %} \\n {{ good.note }} \\n {% endfor %}|
-    """
+    """  # noqa
 
     ECJU_query = """
         Question asked|{% for ecju_query in ecju_queries %} \\n {{ ecju_query.question.text }} \\n {% endfor %}|

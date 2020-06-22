@@ -139,6 +139,7 @@ class ApplicationSummaryPage:
     EXHIBITION_DETAILS = "Exhibition details"
     GOODS_CATEGORIES = "Products category"
     GOODS = "Products"
+    GOOD_DETAILS = "Product details"
     COUNTRIES = "Destinations"
     ON_BEHALF_OF = "Exporter"
     OPTIONAL_NOTE = "Notes"

@@ -82,6 +82,10 @@ class GoodPage:
         DESCRIPTION = "Description"
         IS_GOOD_CONTROLLED = "Controlled"
         CONTROL_LIST_ENTRY = "CLC"
+        CATEGORY = "Category"
+        MILITARY_USE = "Military use"
+        COMPONENT = "Component"
+        INFORMATION_SECURITY_FEATURES = "Information security features"
 
         class Grading:
             IS_GRADED = "Security graded"
@@ -163,6 +167,38 @@ class CreateGoodForm:
 
     class PartNumber:
         TITLE = generic.PART_NUMBER
+
+    class ProductCategory:
+        TITLE = "Select a product category"
+        GROUP1_PLATFORM = "Platform, vehicle, system or machine"
+        GROUP1_DEVICE = "Device, equipment or object"
+        GROUP1_COMPONENTS = "Components, modules or accessories of something"
+        GROUP1_MATERIALS = "Materials or substances"
+        GROUP2_FIREARMS = "Firearms"
+        GROUP3_SOFTWARE = "Software"
+        GROUP3_TECHNOLOGY = "Technology"
+
+    class MilitaryUse:
+        TITLE = "Is the product for military use?"
+        YES_DESIGNED = "Yes, designed specifically for military use"
+        YES_MODIFIED = "Yes, modified for military use"
+        MODIFIED_MILITARY_USE_DETAILS = "Provide details of the modifications"
+        NO = "No"
+
+    class ProductComponent:
+        TITLE = "Is the product a component?"
+        YES_DESIGNED = "Yes, it's designed specially for hardware"
+        YES_MODIFIED = "Yes, it's been modified for hardware"
+        YES_GENERAL_PURPOSE = "Yes, it's a general purpose component"
+        NO = "No"
+        DESIGNED_DETAILS = "Provide details of the hardware"
+        MODIFIED_DETAILS = "Provide details of the modifications and the hardware"
+        GENERAL_DETAILS = "Provide details of the types of applications it's intended to be used in"
+
+    class ProductInformationSecurity:
+        TITLE = "Is the product designed to employ 'information security' features?"
+        INFORMATION_SECURITY_DETAILS = "Provide details of the information security features"
+        NO = "No"
 
 
 class GoodGradingForm:
@@ -405,6 +441,24 @@ class GoodsTypeAllDestinationsPage:
 
 class GoodsPage:
     NOTIFICATIONS = "Notifications"
+
+
+class GoodsDetailSummary:
+    TITLE = "Products"
+    HEADING = "Product"
+    SELECT_CATEGORY = "Select a product category"
+    DESCRIPTION = "Description"
+    PART_NUMBER = "Part number"
+    CONTROLLED = "Is the product on the control list?"
+    GRADED = "Does the product have a security grading?"
+    MILITARY = "Is the product for military use?"
+    COMPONENT = "Is the product a component?"
+    DESIGNED_FOR_INFORMATION_SECURITY = "Is the product designed to employ 'information security' features?"
+    DOCUMENTS = "Product documentation"
+    BACK_BUTTON = "Back to check your answers page"
+    PV_GRADING_YES = "Yes"
+    PV_GRADING_NO = "No"
+    INCORPORATED = "Incorporated"
 
 
 class AttachDocumentPage:

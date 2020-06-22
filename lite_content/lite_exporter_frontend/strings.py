@@ -272,6 +272,19 @@ class Goods:
         BUTTON = "Add a product from your product list"
         TITLE = "Add a product from your product list"
 
+    class AddGoodSummary:
+        TITLE = "Product summary"
+        CATEGORY = "Category"
+        DESCRIPTION = "Description"
+        PART_NUMBER = "Part number"
+        CLC = "CLC"
+        SECURITY_GRADING = "Security grading"
+        MILITARY_USE = "Military use"
+        COMPONENT = "Component"
+        INFORMATION_SECURITY_FEATURES = "Information security features"
+
+        SAVE_AND_CONTINUE_BUTTON = "Save and continue"
+
     class Documents:
         BUTTON = "Documents"
         DESCRIPTION = ""
