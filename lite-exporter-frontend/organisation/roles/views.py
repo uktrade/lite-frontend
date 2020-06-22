@@ -14,7 +14,7 @@ class Roles(OrganisationView):
     def get_additional_context(self):
         user = get_user(self.request)
         user_role_id = user["role"]["id"]
-        roles = get_roles(self.request, self.organisation_id)
+        roles = get_roles(self.request, self.organisation_id, page=self.request.GET.get("page", 1))
         all_permissions = get_permissions(self.request)
 
         return {

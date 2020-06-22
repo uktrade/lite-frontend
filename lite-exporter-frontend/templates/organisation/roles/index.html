@@ -20,8 +20,8 @@
 			</tr>
 		</thead>
 		<tbody class="govuk-table__body">
-			{% for role in roles %}
-				<tr class="govuk-table__row">
+			{% for role in roles.results %}
+				<tr class="govuk-table__row" id="role-{{ role.name }}">
 					<td class="govuk-table__header" scope="row">
 						{{ role.name }}
 					</td>
@@ -50,7 +50,7 @@
 						{% if not role.id in immutable_roles %}
 							{% if 'EXPORTER_ADMINISTER_ROLES' in user_permissions %}
 								{% if role.id != user_role_id %}
-									<a href="{% url 'organisation:roles:edit' role.id %}" class="govuk-link govuk-link--no-visited-state">
+									<a href="{% url 'organisation:roles:edit' role.id %}" class="govuk-link govuk-link--no-visited-state" id="edit-{{ role.name }}">
 										{% lcs "roles.ManageRolesPage.Table.EDIT_ROLE" %} <span class="govuk-visually-hidden">{{ role.name }} role</span>
 									</a>
 								{% endif %}
@@ -61,4 +61,5 @@
 			{% endfor %}
 		</tbody>
 	</table>
+	{% pagination with data=roles %}
 {% endblock %}

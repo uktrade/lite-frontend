@@ -4,8 +4,11 @@ from lite_forms.components import Option
 from organisation.members.services import get_user
 
 
-def get_roles(request, organisation_id, convert_to_options=False):
-    data = get(request, ORGANISATIONS_URL + str(organisation_id) + ROLES_URL).json()["results"]
+def get_roles(request, organisation_id, convert_to_options=False, page=1):
+    data = get(
+        request,
+        ORGANISATIONS_URL + str(organisation_id) + ROLES_URL + f"?disable_pagination={convert_to_options}&page={page}",
+    ).json()
 
     if convert_to_options:
         converted = []
