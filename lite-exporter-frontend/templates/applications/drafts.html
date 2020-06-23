@@ -41,14 +41,14 @@
 						{% lcs 'applications.ApplicationsSummaryPage.NAME' %}
 					</th>
 					<th class="govuk-table__header" scope="col">{% lcs "applications.ApplicationsSummaryPage.TYPE" %}</th>
-					<th class="govuk-table__header">
-						{% lcs "applications.ApplicationsSummaryPage.CREATED_AT" %}
-					</th>
 					{% if organisation.type.key != 'hmrc' %}
 						<th class="govuk-table__header govuk-table__cell--nowrap">
 							{% lcs "applications.ApplicationsSummaryPage.EXPORT_TYPE" %}
 						</th>
 					{% endif %}
+					<th class="govuk-table__header">
+						{% lcs "applications.ApplicationsSummaryPage.CREATED_AT" %}
+					</th>
 					<th class="govuk-table__header govuk-table__header--tight">
 						Actions
 					</th>
@@ -65,14 +65,14 @@
 						<td class="govuk-table__cell">
 							{{ draft.case_type.sub_type.value }}
 						</td>
-						<td class="govuk-table__cell govuk-table__cell--nowrap">
-							{{ draft.updated_at|str_date }}
-						</td>
 						{% if organisation.type.key != 'hmrc' %}
 							<td class="govuk-table__cell">
 								{{ draft.export_type.value|default_na }}
 							</td>
 						{% endif %}
+						<td class="govuk-table__cell govuk-table__cell--nowrap">
+							{{ draft.updated_at|str_date }}
+						</td>
 						<td class="govuk-table__cell govuk-table__cell--tight">
 							<ul class="govuk-table__cell__actions-list">
 								<li class="govuk-table__cell__actions-list-item">
