@@ -4,7 +4,6 @@
 		<option value="{{ item.key }}" {% if value == item.key %}selected{% endif %}>{{ item.value }}</option>
 	{% endfor %}
 </select>
-<script type="text/javascript" src="/assets/javascripts/accessible-autocomplete.min.js"></script>
 <script type="text/javascript" nonce="{{ request.csp_nonce }}">
 	accessibleAutocomplete.enhanceSelectElement({
 		defaultValue: '',
