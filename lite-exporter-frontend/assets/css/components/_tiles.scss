@@ -15,13 +15,17 @@
 
 .app-tile {
 	@include govuk-responsive-padding(5);
+	@include govuk-responsive-padding(2, "bottom");
 	background-color: govuk-colour("light-grey");
 	border-top: govuk-spacing(1) solid $govuk-brand-colour;
 	box-sizing: border-box;
-	padding-bottom: 0!important;
 
 	& > * {
 		margin-bottom: govuk-spacing(3)!important;
+
+		@include govuk-media-query($until: tablet) {
+			margin-bottom: govuk-spacing(1)!important;
+		}
 	}
 
 	.lite-notification-bubble {
@@ -30,6 +34,10 @@
 		text-decoration: none !important;
 		display: inline-block;
 		margin-left: govuk-spacing(1);
+		min-width: 22px;
+		width: auto;
+		box-sizing: border-box;
+		padding: 0 govuk-spacing(1);
 	}
 
 	.app-tile__heading {
@@ -38,6 +46,12 @@
 		@include govuk-font($size: 19, $weight: bold);
 		display: inline-block;
 		text-decoration: underline;
+
+		p {
+			display: inline-block;
+			margin: 0;
+			text-decoration: inherit;
+		}
 	}
 
 	.app-tile__body {
