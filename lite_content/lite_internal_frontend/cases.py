@@ -816,3 +816,11 @@ class UploadEnforcementXML:
         MULTIPLE_FILES = "You cannot upload multiple files"
         FILE_TOO_LARGE = "You cannot upload an XML larger than 1MB"
         FILE_READ = "Could not read the file. Please ensure the file you attach is an XML"
+
+
+class OpenLicenceReturns:
+    NO_CONTENT_NOTICE = "There are no open licence returns."
+    TITLE = "Open licence returns"
+    FILE_NAME = "File name"
+    YEAR_COMPLETED = "Year completed"
+    ADDED = "Added"
