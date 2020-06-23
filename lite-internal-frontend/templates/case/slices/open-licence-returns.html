@@ -1,0 +1,32 @@
+{% with case.data.open_licence_returns as open_licence_returns %}
+	{% if open_licence_returns %}
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="col">{% lcs 'cases.OpenLicenceReturns.FILE_NAME' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'cases.OpenLicenceReturns.YEAR_COMPLETED' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'cases.OpenLicenceReturns.ADDED'%}</th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				{% for return in open_licence_returns %}
+					<tr id={{ return.id }} class="govuk-table__row">
+						<td class="govuk-table__cell">
+							<a class="govuk-link govuk-link--no-visited-state app-icon-label" href="{% url 'compliance:open_licence_returns_download' return.id %}">
+								{{ return.year }}OpenLicenceReturns.csv
+							</a>
+						</td>
+						<td class="govuk-table__cell">
+							{{ return.year }}
+						</td>
+						<td class="govuk-table__cell">
+							{{ return.created_at|str_date }}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		{% include "includes/notice.html" with text="cases.OpenLicenceReturns.NO_CONTENT_NOTICE" %}
+	{% endif %}
+{% endwith %}

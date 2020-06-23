@@ -71,6 +71,7 @@ ENFORCEMENT_URL = CASE_URL + "enforcement-check/"
 APPLICANT_URL = "/applicant/"
 COMPLIANCE_URL = "/compliance/"
 COMPLIANCE_LICENCES_URL = "/licences/"
+OPEN_LICENCE_RETURNS_URL = "/compliance/open-licence-returns/"
 
 # Static URLs
 STATIC_URL = "/static/"

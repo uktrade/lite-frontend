@@ -15,6 +15,7 @@ urlpatterns = [
     path("team", include("teams.urls")),
     path("users/", include("users.urls")),
     path("routing-rules/", include("routing_rules.urls")),
+    path("compliance/", include("compliance.urls")),
 ]
 
 handler403 = "conf.views.handler403"

@@ -15,8 +15,8 @@
 					{% lcs 'cases.CasePage.DetailsTab.ADDRESS' %}
 				</dt>
 				<dd class="app-case__summary-list__value">
-					{{ case.compliance.site_name }}<br>
-					{{ case.compliance|get_address }}
+					{{ case.data.site_name }}<br>
+					{{ case.data|get_address }}
 				</dd>
 			</div>
 	{% endif %}
@@ -148,7 +148,6 @@
 	{% endif %}
 	<div class="app-case__summary-list__row">
 		<dt class="app-case__summary-list__key">
-			{% lcs 'cases.CasePage.DetailsTab.CASE_OFFICER' %}
 			{% if case.case_type.reference.key == "comp" %}
 				{% lcs 'cases.CasePage.DetailsTab.INSPECTOR' %}
 			{% else %}
