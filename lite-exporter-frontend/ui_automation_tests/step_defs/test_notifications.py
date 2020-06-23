@@ -1,4 +1,4 @@
-from pytest_bdd import scenarios, given, when, then
+from pytest_bdd import scenarios, given, when, then, parsers
 
 from ui_automation_tests.pages.hub_page import Hub
 from ui_automation_tests.pages.shared import Shared
@@ -7,18 +7,10 @@ from ui_automation_tests.shared.tools import helpers
 scenarios("../features/notifications.feature", strict_gherkin=False)
 
 
-@given("an application exists and a case note has been added via internal gov site")
+@given("an application exists a case note and an ecju query have been added via internal gov site")
 def application_exists_case_note_added(apply_for_open_application, api_test_client, context, driver):
     api_test_client.ecju_queries.add_ecju_query(context.case_id)
     api_test_client.cases.add_case_note(context, context.case_id)
-
-
-@then("I can see a notification in application tile")
-def notification_exists(driver, context):
-    # Creating an application creates an ecju-query attached to it,
-    # and we add a case_note, should expect 2 new notifications
-    assert Hub(driver).notification_bubble_exists()
-    context.number_of_notifications = Hub(driver).return_number_of_notifications()
 
 
 @when("I click on my application")
@@ -28,11 +20,11 @@ def click_on_application(driver, context):
     elements[no].click()
 
 
-@then("I see a notification on application list")
-def notification_on_application_list(driver, context):
+@then(parsers.parse('I see "{num}" notifications on application list'))
+def notification_on_application_list(driver, context, num):
     elements = driver.find_elements_by_css_selector(".govuk-table__row")
     no = helpers.get_element_index_by_text(elements, context.app_name, complete_match=False)
-    assert elements[no].find_element_by_css_selector(Shared(driver).NOTIFICATION).is_displayed()
+    assert num in elements[no].find_element_by_css_selector(Shared(driver).NOTIFICATION).text
 
 
 @then("I can see the internally added note")
