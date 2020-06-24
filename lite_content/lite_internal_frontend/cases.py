@@ -86,6 +86,9 @@ class CasePage:
             NO_INSPECTOR = "No inspector assigned"
             NO_USERS_ASSIGNED = "No users assigned"
 
+        class OpenGeneralLicence:
+            READ_ON_GOVUK_LINK = "Read on GOV.UK"
+
         class Status:
             TITLE = "Latest status change"
             NOTICE = "This isn't available here."
@@ -153,8 +156,9 @@ class CasePage:
 
         class Site:
             TITLE = "Site"
-            NAME = "Name"
-            ADDRESS = "Address"
+            DETAILS = "Details"
+            RECORDS_HELD_AT = "Records held at"
+            RECORDS_HELD_ON_SITE = "Records held on site"
 
         class OpenGeneralLicence:
             NAME = "Name"

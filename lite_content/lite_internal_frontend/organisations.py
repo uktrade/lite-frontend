@@ -35,7 +35,7 @@ class OrganisationPage:
 
     class Details:
         TITLE = "Details"
-        EDIT_BUTTON = "Edit"
+        ACTIVITY = "Activity"
 
         class SummaryList:
             PRIMARY_SITE = "Primary site"
@@ -53,10 +53,13 @@ class OrganisationPage:
 
     class Sites:
         TITLE = "Sites"
+        ACTIVITY = "Sites activity"
 
         class Table:
             NAME = "Name"
             ADDRESS = "Address"
+            RECORDS_HELD_AT = "Records held at"
+            RECORDS_HELD_ON_SITE = "Records held on site"
 
     class Members:
         TITLE = "Members"
