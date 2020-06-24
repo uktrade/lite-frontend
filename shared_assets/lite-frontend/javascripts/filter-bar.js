@@ -1,6 +1,9 @@
-
 $(".lite-filter-bar").each(function() {
 	var $filters = $(this).parent();
+	$filters.hide();
+	$filters.prev().find("#show-filters-link").show();
+	$filters.prev().find("#hide-filters-link").hide();
+
 	$(this).find("input, select").each(function() {
 		if ($(this).val() != ''
 			&& $(this).val() != 'Select'
@@ -11,11 +14,6 @@ $(".lite-filter-bar").each(function() {
 			$filters.show();
 			$filters.prev().find("#show-filters-link").hide();
 			$filters.prev().find("#hide-filters-link").show();
-		}
-		else {
-			$filters.hide();
-			$filters.prev().find("#show-filters-link").show();
-			$filters.prev().find("#hide-filters-link").hide();
 		}
 	});
 });
