@@ -135,7 +135,9 @@
 			</dd>
 		</div>
 	</dl>
+
 	{% if activity %}
+		<h2 class="govuk-heading-m govuk-!-margin-top-9">{% lcs 'organisations.OrganisationPage.Details.ACTIVITY' %}</h2>
 		{% include "includes/audit-trail.html" %}
 	{% endif %}
 {% endblock %}

@@ -26,3 +26,15 @@
 		max-width: #{$i * 100}px;
 	}
 }
+
+.govuk-table__row:target {
+	animation-name: app-target-animation;
+	animation-duration: 0.3s;
+	animation-fill-mode: both;
+}
+
+@keyframes app-target-animation {
+	100% {
+		background-color: govuk-tint(govuk-colour("yellow"), 80%);
+	}
+}

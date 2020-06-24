@@ -237,6 +237,9 @@ def get_address(data):
         address = data["address"]
         country = data.get("country")
 
+        if "country" in address:
+            country = address.get("country")
+
         if isinstance(address, str):
             if country:
                 return address + ", " + country["name"]

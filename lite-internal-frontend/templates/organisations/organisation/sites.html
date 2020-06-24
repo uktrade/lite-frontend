@@ -5,36 +5,37 @@
 		<table class="govuk-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
-					<th class="govuk-table__header" scope="col">{% lcs "organisations.OrganisationPage.Sites.Table.NAME" %}</th>
-					<th class="govuk-table__header" scope="col">{% lcs "organisations.OrganisationPage.Sites.Table.ADDRESS" %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'organisations.OrganisationPage.Sites.Table.NAME' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'organisations.OrganisationPage.Sites.Table.ADDRESS' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'organisations.OrganisationPage.Sites.Table.RECORDS_HELD_AT' %}</th>
 				</tr>
 			</thead>
 			<tbody class="govuk-table__body">
 				{% for site in sites %}
-					<tr class="govuk-table__row">
+					<tr class="govuk-table__row" id="{{ site.id }}">
 						<td class="govuk-table__header" scope="row">
 							{{ site.name }}
 						</td>
 						<td class="govuk-table__cell">
-							{% if site.address.address_line_1 %}
-								{{ site.address.address_line_1 }}<br/>
-								{% if site.address.address_line_2 %}
-									{{ site.address.address_line_2 }}<br/>
-								{% endif %}
-								{{ site.address.city }}<br/>
-								{{ site.address.postcode }}<br/>
-								{{ site.address.country.name }}
+							<span class="govuk-table__header" aria-hidden="true">{% lcs 'organisations.OrganisationPage.Sites.Table.ADDRESS' %}</span>
+							{{ site|get_address }}
+						</td>
+						<td class="govuk-table__cell">
+							<span class="govuk-table__header" aria-hidden="true">{% lcs 'organisations.OrganisationPage.Sites.Table.RECORDS_HELD_AT' %}</span>
+							{% if site.id != site.records_located_at.id %}
+								<a class="govuk-link govuk-link--no-visited-state" href="#{{ site.records_located_at.id }}">{{ site.records_located_at.name }}</a>
 							{% else %}
-								{{ site.address.address }}<br/>
-								{{ site.address.country.name }}
+								<span class="govuk-hint govuk-!-margin-0">{% lcs 'organisations.OrganisationPage.Sites.Table.RECORDS_HELD_ON_SITE' %}</span>
 							{% endif %}
 						</td>
 					</tr>
 				{% endfor %}
 			</tbody>
 		</table>
+
 		{% if activity %}
-			{% include "includes/audit-trail.html" %}
+			<h2 class="govuk-heading-m govuk-!-margin-top-9">{% lcs 'organisations.OrganisationPage.Sites.ACTIVITY' %}</h2>
+			{% include 'includes/audit-trail.html' %}
 		{% endif %}
 	{% endif %}
 {% endblock %}
