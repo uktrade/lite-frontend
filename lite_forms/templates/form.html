@@ -42,7 +42,6 @@
 {% endblock %}
 
 {% block two_thirds %}
-
 	<!-- Error Summary -->
 	{% if errors %}
 		<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
@@ -65,33 +64,33 @@
 		</div>
 	{% endif %}
 
-	{% if page.caption %}
-		<span class="govuk-caption-xl">{{ page.caption }}</span>
-	{% endif %}
-
-	{% if page.single_form_element.input_type == 'radiobuttons' or page.single_form_element.input_type == 'checkboxes' %}
-		 <fieldset class="govuk-fieldset" aria-describedby="changed-name-hint">
-	{% endif %}
-	<legend class="govuk-fieldset__legend {{ title|heading_class }}">
-		<h1 class="govuk-fieldset__heading">
-			{% if page.single_form_element %}
-				<label for="{{ page.single_form_element.name }}">
-					{{ page.title }}
-				</label>
-			{% else %}
-				{{ page.title }}
-			{% endif %}
-		</h1>
-	</legend>
-
-	{% if page.description %}
-		<span id="span-{{ page.single_form_element.name }}-hint" class="govuk-hint" style="display: block; margin: 0 0 15px 0;">
-			{{ page.description|safe|linebreaksbr }}
-		</span>
-	{% endif %}
-
 	<!-- Questions -->
 	<form novalidate {% if page.post_url %}action="{{ page.post_url }}"{% endif %} method="post" enctype="multipart/form-data">
+		{% if page.caption %}
+			<span class="govuk-caption-xl">{{ page.caption }}</span>
+		{% endif %}
+
+		{% if page.single_form_element.input_type == 'radiobuttons' or page.single_form_element.input_type == 'checkboxes' %}
+			 <fieldset class="govuk-fieldset" aria-describedby="changed-name-hint">
+		{% endif %}
+		<legend class="govuk-fieldset__legend {{ title|heading_class }}">
+			<h1 class="govuk-fieldset__heading">
+				{% if page.single_form_element %}
+					<label for="{{ page.single_form_element.name }}">
+						{{ page.title }}
+					</label>
+				{% else %}
+					{{ page.title }}
+				{% endif %}
+			</h1>
+		</legend>
+
+		{% if page.description %}
+			<span id="span-{{ page.single_form_element.name }}-hint" class="govuk-hint" style="display: block; margin: 0 0 15px 0;">
+				{{ page.description|safe|linebreaksbr }}
+			</span>
+		{% endif %}
+
 		{% csrf_token %}
 
 		{% for question in page.questions %}
@@ -111,47 +110,46 @@
 				{% else %}
 					{% include "components.html" with question=question errors=errors %}
 				{% endif %}
+			{% endif %}
+		{% endfor %}
+
+		{% if page.single_form_element.input_type == 'radiobuttons' or page.single_form_element.input_type == 'checkboxes' %}
+			 </fieldset>
 		{% endif %}
-	{% endfor %}
 
-	{% if page.single_form_element.input_type == 'radiobuttons' or page.single_form_element.input_type == 'checkboxes' %}
-		 </fieldset>
-	{% endif %}
-
-	<!-- Buttons -->
-	<div class="govuk-form-group">
-		<div class="lite-buttons-row">
-			{% for button in page.buttons %}
-				{% if button %}
-					{% if button.link %}
-						<a href="{{ button.link }}" role="button" draggable="false" data-module="govuk-button" class="{{ button.style }}" {% if button.float_right %}style="float: right;"{% endif %}>{{ button.value }}</a>
-					{% else %}
-						<button type="submit" name="_action" value="{{ button.action }}" id="button-{{ button.id }}" class="{{ button.style }}"
-							{% if button.float_right %}style="float: right;"{% endif %}
-							data-module="govuk-button"
-							data-prevent-double-click="true"
-							action="submit">
-							{{ button.value }}
-							{% if 'start' in button.style %}
-								<svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19" viewBox="0 0 33 40" role="presentation" focusable="false">
-									<path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
-								</svg>
-							{% endif %}
-						</button>
+		<!-- Buttons -->
+		<div class="govuk-form-group">
+			<div class="lite-buttons-row">
+				{% for button in page.buttons %}
+					{% if button %}
+						{% if button.link %}
+							<a href="{{ button.link }}" role="button" draggable="false" data-module="govuk-button" class="{{ button.style }}" {% if button.float_right %}style="float: right;"{% endif %}>{{ button.value }}</a>
+						{% else %}
+							<button type="submit" name="_action" value="{{ button.action }}" id="button-{{ button.id }}" class="{{ button.style }}"
+								{% if button.float_right %}style="float: right;"{% endif %}
+								data-module="govuk-button"
+								data-prevent-double-click="true"
+								action="submit">
+								{{ button.value }}
+								{% if 'start' in button.style %}
+									<svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19" viewBox="0 0 33 40" role="presentation" focusable="false">
+										<path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
+									</svg>
+								{% endif %}
+							</button>
+						{% endif %}
 					{% endif %}
-				{% endif %}
-			{% endfor %}
+				{% endfor %}
+			</div>
+
+			<!-- Footer Label -->
+			{% if page.footer_label %}
+				{% include "components/label.html" with component=page.footer_label %}
+			{% endif %}
 		</div>
-
-		<!-- Footer Label -->
-		{% if page.footer_label %}
-			{% include "components/label.html" with component=page.footer_label %}
-		{% endif %}
-	</div>
-
-</form>
-
+	</form>
 {% endblock %}
+
 {% block one_third %}
 	{% for helper in page.helpers %}
 		<aside class="lite-related-items" role="complementary">
