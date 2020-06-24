@@ -10,7 +10,7 @@
 
 {% block messages %}
 	{{ block.super }}
-	
+
 	{% if updated_cases_banner_queue_id %}
 		<a id="banner-exporter-amendments" class="govuk-width-container app-snackbar app-snackbar--no-animation" href="{% url 'queues:cases' updated_cases_banner_queue_id %}">
 			<div class="app-snackbar__content">
@@ -24,9 +24,11 @@
 {% block body %}
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
-			<a tabindex="0" id="link-queue" href="{% url 'queues:manage' %}" class="app-dropdown__heading">
-				{{ data.results.queue.name }}<span class="govuk-visually-hidden"> - Click to change queue</span>
-			</a>
+			<h1 class="govuk-heading-l">
+				<a tabindex="0" id="link-queue" href="{% url 'queues:manage' %}" class="app-dropdown__heading">
+					{{ data.results.queue.name }}<span class="govuk-visually-hidden"> (Click to change queue)</span>
+				</a>
+			</h1>
 		</div>
 		{% if not data.results.is_system_queue %}
 			<div class="lite-app-bar__controls lite-buttons-row" >
@@ -143,7 +145,7 @@
 							</td>
 							<td class="govuk-table__cell">
 								<a class="govuk-link govuk-link--no-visited-state" id="case-{{ case.id }}" href="{% url 'cases:case' queue.id case.id %}">
-									{{ case.reference_code }}
+									{{ case.reference_code|highlight_text:reference }}
 								</a>
 								<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">
 									{{ case.organisation.name }} <span class="govuk-hint lite-!-display-inline">/ {{ case.organisation.primary_site.address.city|default:case.organisation.primary_site.address.country.name }}</span>
@@ -205,6 +207,7 @@
 							</td>
 							<td class="govuk-table__cell govuk-table__cell--tight lite-mobile-hide">
 								<a href="#" class="lite-expand__control" id="expand-flags-{{ case.id }}" onclick="return openTableFold(this);">
+									<span class="govuk-visually-hidden">Expand {{ case.reference_code }} row</span>
 									{% if case.flags|length > 3 or case.users|length > 3 or case.queue_names|length > 3 %}
 										{% svg 'chevron' %}
 									{% endif %}

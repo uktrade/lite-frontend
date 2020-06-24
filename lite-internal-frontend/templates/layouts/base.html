@@ -38,7 +38,7 @@
 	<meta property="og:image" content="/assets/images/govuk-opengraph-image.png">
 
 	<script src="{% static 'javascripts/jquery.min.js' %}"></script>
-
+	<script type="text/javascript" src="/assets/javascripts/accessible-autocomplete.min.js"></script>
 	{% block head %}{% endblock %}
 </head>
 
@@ -61,7 +61,7 @@
 			<a class="app-header__link" href="{% url 'core:index' %}" data-tooltip="Go home">
 				{% svg 'crest' %}
 				<span class="lite-mobile-hide">
-					Licensing for International Trade and Enterprise <span class="govuk-tag govuk-!-margin-left-3">Alpha</span>
+					Licensing for International Trade and Enterprise <span class="govuk-tag lite-tablet-hide govuk-!-margin-left-3">Alpha</span>
 				</span>
 			</a>
 			<span></span>

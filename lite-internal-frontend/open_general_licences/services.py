@@ -7,7 +7,7 @@ from lite_content.lite_internal_frontend import open_general_licences
 
 
 def get_open_general_licences(
-    request, page=1, name=None, case_type=None, control_list_entry=None, country=None, status=None
+    request, page=1, name=None, case_type=None, control_list_entry=None, country=None, status="active"
 ):
     return get(request, OPEN_GENERAL_LICENCES_URL + convert_parameters_to_query_params(locals())).json()
 

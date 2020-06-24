@@ -8,3 +8,7 @@
 		padding-right: govuk-spacing(2);
 	}
 }
+
+.govuk-input::placeholder {
+	color: $govuk-secondary-text-colour;
+}
