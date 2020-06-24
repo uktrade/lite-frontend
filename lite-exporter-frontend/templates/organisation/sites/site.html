@@ -126,7 +126,7 @@
 				{% lcs "sites.SitePage.SummaryList.SITE" %}
 			</dt>
 			<dd class="govuk-summary-list__value">
-				{{ site.site_records_located_at_name|default_na  }}
+				{{ site.records_located_at.name|default_na  }}
 			</dd>
 			{% if not site.is_used_on_application %}
 				<dd class="govuk-summary-list__actions">

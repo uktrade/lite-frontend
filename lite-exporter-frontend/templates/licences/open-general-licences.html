@@ -64,7 +64,7 @@
 									<li>
 										{% lcs 'licences.OpenGeneralLicencesList.DOCUMENTATION_HELD_AT' %}
 										{% for registration in licence.registrations %}
-											{% if registration.site.site_records_located_at_name %}
+											{% if registration.site.records_located_at.name %}
 												{{ registration.site.name }}
 											{% endif %}
 										{% endfor %}

@@ -48,7 +48,7 @@
 							{{ site.address.country.name }}
 						{% endif %}
 					</td>
-					<td class="govuk-table__cell">{{ site.site_records_located_at_name|default_na }}</td>
+					<td class="govuk-table__cell">{{ site.records_located_at.name|default_na }}</td>
 					<td class="govuk-table__cell">{{ site.assigned_users_count }} member{{ site.assigned_users_count|pluralize }}</td>
 					<td class="govuk-table__cell govuk-table__cell--numeric">
 						<a id="link-view-site-{{ site.id }}" href="{% url 'organisation:sites:site' site.id %}" class="govuk-link govuk-link--no-visited-state">
