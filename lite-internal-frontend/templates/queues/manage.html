@@ -42,10 +42,10 @@
 						</td>
 						<td class="govuk-table__cell">
 							<ul class="govuk-table__cell__actions-list">
-								<li class="govuk-table__cell__actions-list-item">
-									<a href="{% url 'queues:cases' queue.id %}" class="govuk-link govuk-link--no-visited-state">{% lcs 'queues.QueuesList.Table.VIEW_CASES' %}</a>
-								</li>
 								{% if user_data.user.team.id == queue.team.id %}
+									<li class="govuk-table__cell__actions-list-item">
+										<a href="{% url 'queues:cases' queue.id %}" class="govuk-link govuk-link--no-visited-state">{% lcs 'queues.QueuesList.Table.VIEW_CASES' %}</a>
+									</li>
 									<li class="govuk-table__cell__actions-list-item">
 										<a href="{% url 'queues:edit' queue.id %}" class="govuk-link govuk-link--no-visited-state">{% lcs 'queues.QueuesList.Table.EDIT' %}</a>
 									</li>
