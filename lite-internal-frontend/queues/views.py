@@ -86,6 +86,7 @@ class QueuesList(TemplateView):
             "data": queues,
             "user_data": user_data,
             "filters": filters,
+            "name": name,
         }
         return render(request, "queues/manage.html", context)
 

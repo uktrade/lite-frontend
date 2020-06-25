@@ -16,7 +16,7 @@
 		</div>
 	</div>
 
-	{% include "filters.html" %}
+	{% include 'filters.html' %}
 
 	{% if data.results %}
 		<table class="govuk-table">
@@ -32,7 +32,7 @@
 				{% for queue in data.results %}
 					<tr class="govuk-table__row" id="{{ queue.name }}">
 						<td class="govuk-table__cell">
-							{{ queue.name }}
+							{{ queue.name|highlight_text:name }}
 						</td>
 						<td class="govuk-table__cell">
 							{{ queue.team.name }}
@@ -44,10 +44,14 @@
 							<ul class="govuk-table__cell__actions-list">
 								{% if user_data.user.team.id == queue.team.id %}
 									<li class="govuk-table__cell__actions-list-item">
-										<a href="{% url 'queues:cases' queue.id %}" class="govuk-link govuk-link--no-visited-state">{% lcs 'queues.QueuesList.Table.VIEW_CASES' %}</a>
+										<a href="{% url 'queues:cases' queue.id %}" class="govuk-link govuk-link--no-visited-state">
+											{% lcs 'queues.QueuesList.Table.VIEW_CASES' %}
+										</a>
 									</li>
 									<li class="govuk-table__cell__actions-list-item">
-										<a href="{% url 'queues:edit' queue.id %}" class="govuk-link govuk-link--no-visited-state">{% lcs 'queues.QueuesList.Table.EDIT' %}</a>
+										<a href="{% url 'queues:edit' queue.id %}" class="govuk-link govuk-link--no-visited-state">
+											{% lcs 'queues.QueuesList.Table.EDIT' %} <span class="govuk-visually-hidden">{{ queue.name }}</span>
+										</a>
 									</li>
 								{% endif %}
 							</ul>
@@ -56,8 +60,9 @@
 				{% endfor %}
 			</tbody>
 		</table>
+
 		{% pagination %}
 	{% else %}
-		{% include "includes/notice.html" with text='queues.QueuesList.NO_CONTENT_NOTICE' %}
+		{% include 'includes/notice.html' with text='queues.QueuesList.NO_CONTENT_NOTICE' %}
 	{% endif %}
 {% endblock %}
