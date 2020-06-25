@@ -4,26 +4,29 @@
 		<option value="{{ item.key }}" {% if value == item.key %}selected{% endif %}>{{ item.value }}</option>
 	{% endfor %}
 </select>
-<script type="text/javascript" nonce="{{ request.csp_nonce }}">
-	accessibleAutocomplete.enhanceSelectElement({
-		defaultValue: '',
-		displayMenu: 'overlay',
-		selectElement: document.querySelector('#{{ component.name|prefix_dots }}'),
-		cssNamespace: 'lite-autocomplete',
-		onConfirm: (val) => {
-			if (val && $("#{{ component.name|prefix_dots }}").val()) {
-				$("#{{ component.name|prefix_dots }}-select option").filter(function() {
-				  return $(this).text() != val;
-				}).prop('selected', false);
-				$("#{{ component.name|prefix_dots }}-select option").filter(function() {
-				  return $(this).text() == val;
-				}).prop('selected', true);
 
-			} else if (val == undefined && $("#{{ component.name|prefix_dots }}").val() == "") {
-				$("#{{ component.name|prefix_dots }}-select option").filter(function() {
-				  return $(this).text() != val;
-				}).prop('selected', false);
+<script type="text/javascript" nonce="{{ request.csp_nonce }}">
+	$(document).ready(function() {
+		accessibleAutocomplete.enhanceSelectElement({
+			defaultValue: '',
+			displayMenu: 'overlay',
+			selectElement: document.querySelector('#{{ component.name|prefix_dots }}'),
+			cssNamespace: 'lite-autocomplete',
+			onConfirm: (val) => {
+				if (val && $("#{{ component.name|prefix_dots }}").val()) {
+					$("#{{ component.name|prefix_dots }}-select option").filter(function() {
+					  return $(this).text() != val;
+					}).prop('selected', false);
+					$("#{{ component.name|prefix_dots }}-select option").filter(function() {
+					  return $(this).text() == val;
+					}).prop('selected', true);
+
+				} else if (val == undefined && $("#{{ component.name|prefix_dots }}").val() == "") {
+					$("#{{ component.name|prefix_dots }}-select option").filter(function() {
+					  return $(this).text() != val;
+					}).prop('selected', false);
+				}
 			}
-		}
+		});
 	});
 </script>

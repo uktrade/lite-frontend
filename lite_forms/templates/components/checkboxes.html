@@ -1,5 +1,3 @@
-{% load static %}
-
 {% if component.options %}
 	{% if component.show_select_links %}
 		<div class="lite-buttons-row govuk-body govuk-!-margin-bottom-6 lite-js-only">
@@ -22,9 +20,6 @@
             </div>
         {% endfor %}
     </div>
-
-	<script src="{% static 'javascripts/helpers.js' %}"></script>
-	<script src="{% static 'javascripts/select-links.js' %}"></script>
 {% else %}
     <div class="lite-information-text">
         <span class="lite-information-text__icon" aria-hidden="true">!</span>

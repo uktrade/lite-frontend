@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Set
 
 from lite_forms.styles import ButtonStyle
 
@@ -118,7 +118,7 @@ class Form:
         buttons=None,
         helpers=None,
         footer_label: Label = None,
-        javascript_imports=None,
+        javascript_imports: Optional[Set[str]] = None,
         default_button_name="Save",
         default_button_style=ButtonStyle.DEFAULT,
         back_link=BackLink(),
@@ -137,10 +137,16 @@ class Form:
         self.back_link = back_link
         if self.buttons is None:
             self.buttons = [Button(default_button_name, "submit", style=default_button_style)]
-        self.javascript_imports = javascript_imports
+        self.javascript_imports = javascript_imports or set()
         self.post_url = post_url
         self.single_form_element = heading_used_as_label(questions)
         self.container = container
+        from lite_forms.helpers import get_all_form_components
+
+        if self.questions:
+            for component in get_all_form_components(self):
+                for item in getattr(component, "javascript_imports", []):
+                    self.javascript_imports.add(item)
 
 
 class DetailComponent:
@@ -272,6 +278,7 @@ class Checkboxes(_Component):
         classes: Optional[List] = None,
         empty_notice: str = "No items",
         show_select_links: bool = False,
+        filterable: bool = False,
     ):
         super().__init__(
             name=name,
@@ -286,6 +293,9 @@ class Checkboxes(_Component):
         self.empty_notice = empty_notice
         self.show_select_links = show_select_links
         self.input_type = "checkboxes"
+        self.javascript_imports = ["/javascripts/select-links.js"]
+        if filterable:
+            self.javascript_imports.append("/javascripts/filter-checkbox-list.js")
 
 
 class RadioButtons(_Component):
@@ -306,11 +316,15 @@ class RadioButtons(_Component):
         optional: bool = False,
         classes: Optional[List] = None,
         empty_notice: str = "No items",
+        filterable: bool = False,
     ):
         super().__init__(name, title, description, short_title, accessible_description, optional, classes)
         self.options = options
         self.empty_notice = empty_notice
         self.input_type = "radiobuttons"
+        self.javascript_imports = []
+        if filterable:
+            self.javascript_imports.append("/javascripts/filter-radiobuttons-list.js")
 
 
 class RadioButtonsImage(RadioButtons):
@@ -589,6 +603,7 @@ class TokenBar:
         self.optional = optional
         self.classes = classes if classes else ["tokenfield-container"]
         self.input_type = "token-bar"
+        self.javascript_imports = ["/javascripts/tokenfield.min.js"]
 
 
 class AutocompleteInput:
@@ -601,6 +616,7 @@ class AutocompleteInput:
         self.options = options
         self.classes = classes
         self.input_type = "autocomplete"
+        self.javascript_imports = ["/javascripts/accessible-autocomplete.min.js"]
 
 
 class Link:
@@ -620,8 +636,12 @@ class Link:
 
 class FiltersBar:
     def __init__(self, filters: List, advanced_filters: Optional[List] = None):
-        self.filters = filters
-        self.advanced_filters = advanced_filters
+        self.filters = filters or []
+        self.advanced_filters = advanced_filters or []
+        self.javascript_imports = {"/javascripts/filter-bar.js"}
+        for component in [*self.filters, *self.advanced_filters]:
+            for item in getattr(component, "javascript_imports", []):
+                self.javascript_imports.add(item)
 
 
 class Custom:

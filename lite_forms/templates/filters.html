@@ -60,4 +60,6 @@
 	</div>
 </form>
 
-<script src="{% static 'javascripts/filter-bar.js' %}"></script>
+{% for url in filters.javascript_imports %}
+	<script src="/assets{{ url }}"></script>
+{% endfor %}
