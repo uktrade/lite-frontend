@@ -20,7 +20,7 @@ class Ogel:
                 "control_list_entries": ["ML1a"],
                 "countries": ["GB"],
                 "url": "https://www.gov.uk/government/publications/open-general-export-licence-military-goods-government-or-nato-end-use--6",
-                "description": "random",
+                "description": fake.paragraph(),
                 "registration_required": True,
                 "case_type": "00000000-0000-0000-0000-000000000002",
             },
