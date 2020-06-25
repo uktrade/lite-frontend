@@ -1,11 +1,9 @@
-from pytest_bdd import then, scenarios, when, given, parsers
+from pytest_bdd import then, scenarios, when, given
 
+import shared.tools.helpers as utils
 from pages.application_page import ApplicationPage
 from pages.case_list_page import CaseListPage
-import shared.tools.helpers as utils
 from pages.case_page import CasePage
-
-from ui_automation_tests.shared import functions
 
 scenarios("../features/view_standard_application.feature", strict_gherkin=False)
 

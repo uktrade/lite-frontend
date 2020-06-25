@@ -1,6 +1,6 @@
 from datetime import date
 
-from pytest_bdd import when, then, parsers, scenarios, given
+from pytest_bdd import when, then, parsers, scenarios
 
 from pages.advice import UserAdvicePage, FinalAdvicePage, TeamAdvicePage, BaseAdvicePage
 from pages.case_page import CasePage, CaseTabs

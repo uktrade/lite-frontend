@@ -23,7 +23,6 @@ class CaseListPage(BasePage):
     # Filters
     BUTTON_CLEAR_FILTERS = "button-clear-filters"  # ID
     LINK_ADVANCED_FILTERS = "advanced-filters-link"  # ID
-    LINK_SHOW_FILTERS = "show-filters-link"  # ID
     LINK_HIDE_FILTERS = "hide-filters-link"  # ID
     FILTER_BAR = "lite-filter-bar"  # Class
     USER_STATUS_DROPDOWN_ID = "status"
@@ -132,9 +131,6 @@ class CaseListPage(BasePage):
 
     def click_advanced_filters_button(self):
         self.driver.find_element_by_id(self.LINK_ADVANCED_FILTERS).click()
-
-    def click_show_filters_link(self):
-        self.driver.find_element_by_id(self.LINK_SHOW_FILTERS).click()
 
     def click_hide_filters_link(self):
         self.driver.find_element_by_id(self.LINK_HIDE_FILTERS).click()

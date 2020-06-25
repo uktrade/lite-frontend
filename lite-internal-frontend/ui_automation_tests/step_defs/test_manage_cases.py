@@ -1,6 +1,3 @@
-from pytest_bdd import scenarios, then
-
-from pages.application_page import ApplicationPage
-from pages.shared import Shared
+from pytest_bdd import scenarios
 
 scenarios("../features/manage_cases.feature", strict_gherkin=False)

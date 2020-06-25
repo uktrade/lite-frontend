@@ -1,8 +1,6 @@
 from pytest_bdd import scenarios, when, parsers, then
 
 from pages.application_page import ApplicationPage
-from pages.case_page import CasePage, CaseTabs
-
 from ui_automation_tests.pages.shared import Shared
 
 scenarios("../features/view_open_application.feature", strict_gherkin=False)

@@ -1,9 +1,7 @@
-from pages.case_page import CasePage
-from pages.goods_queries_pages import GoodsQueriesPages
-from pytest_bdd import when, then, scenarios, parsers
-from pages.application_page import ApplicationPage
-from pages.shared import Shared
+from pytest_bdd import when, then, scenarios
 
+from pages.application_page import ApplicationPage
+from pages.case_page import CasePage
 
 scenarios("../features/review_goods.feature", strict_gherkin=False)
 

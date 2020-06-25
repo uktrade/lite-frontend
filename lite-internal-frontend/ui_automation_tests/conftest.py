@@ -184,15 +184,15 @@ def add_report_summary_picklist(add_a_report_summary_picklist):  # noqa
 @then("I see previously created application")  # noqa
 def see_queue_in_queue_list(driver, context):  # noqa
     case_page = CaseListPage(driver)
-    case_page.click_show_filters_link()
+    functions.try_open_filters(driver)
     case_page.filter_by_case_reference(context.reference_code)
     case_page.click_apply_filters_button()
     assert driver.find_element_by_id(context.case_id).is_displayed()
 
 
 @when("I show filters")  # noqa
-def i_show_filters(driver, context):  # noqa
-    CaseListPage(driver).click_show_filters_link()
+def i_show_filters(driver):  # noqa
+    functions.try_open_filters(driver)
 
 
 @when("I go to users")  # noqa

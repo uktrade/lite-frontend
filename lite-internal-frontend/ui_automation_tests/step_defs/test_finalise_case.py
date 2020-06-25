@@ -3,7 +3,6 @@ from datetime import datetime
 from pytest_bdd import scenarios, when, then, parsers, given
 
 from conf.constants import DATE_FORMAT
-from pages.case_page import CasePage, CaseTabs
 from ui_automation_tests.pages.application_page import ApplicationPage
 from ui_automation_tests.pages.documents_page import DocumentsPage
 from ui_automation_tests.pages.generate_decision_documents_page import GeneratedDecisionDocuments

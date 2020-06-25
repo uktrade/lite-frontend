@@ -1,6 +1,5 @@
 from pytest_bdd import then, scenarios, given, when
 
-from pages.case_page import CasePage, CaseTabs
 from ui_automation_tests.pages.application_page import ApplicationPage
 from ui_automation_tests.pages.shared import Shared
 

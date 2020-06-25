@@ -1,12 +1,11 @@
 import uuid
 
 from pytest_bdd import scenarios, when, then, given, parsers
-import shared.tools.helpers as utils
+
 from pages.application_page import ApplicationPage
 from pages.letter_templates import LetterTemplates
 from pages.shared import Shared
 from ui_automation_tests.fixtures.add_a_document_template import get_paragraph_text
-from ui_automation_tests.shared import functions
 
 scenarios("../features/letter_templates.feature", strict_gherkin=False)
 

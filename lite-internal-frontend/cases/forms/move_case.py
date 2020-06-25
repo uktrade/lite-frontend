@@ -10,8 +10,7 @@ def move_case_form(request: HttpRequest, queue, case: dict):
     return Form(
         Manage.MoveCase.TITLE,
         Manage.MoveCase.DESCRIPTION,
-        [Filter(), Checkboxes("queues[]", get_queues(request, convert_to_options=True))],
-        javascript_imports=["/assets/javascripts/filter-checkbox-list.js"],
+        [Filter(), Checkboxes("queues[]", get_queues(request, convert_to_options=True), filterable=True)],
         back_link=BackLink(url=reverse("cases:case", kwargs={"queue_pk": queue["id"], "pk": case["id"]})),
         container="case",
     )

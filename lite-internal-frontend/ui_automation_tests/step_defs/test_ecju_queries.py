@@ -6,8 +6,6 @@ from pages.application_page import ApplicationPage
 from pages.case_page import CasePage, CaseTabs
 from pages.ecju_queries_pages import EcjuQueriesPages
 from shared import functions
-from shared.tools.helpers import scroll_to_element_below_header_by_id
-
 from ui_automation_tests.pages.shared import Shared
 
 scenarios("../features/ecju_queries.feature", strict_gherkin=False)

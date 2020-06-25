@@ -40,14 +40,14 @@ def user_is_not_on_case_list(driver, context):
 
 @when("I filter assigned user by Not Assigned")
 def i_filter_case_officer_by_not_assigned(driver):
-    CaseListPage(driver).click_show_filters_link()
+    functions.try_open_filters(driver)
     CaseListPage(driver).enter_assigned_user_filter_text("Not assigned")
     CaseListPage(driver).click_apply_filters_button()
 
 
 @when("I filter assigned user by SSO users name")
 def i_filter_case_officer_by_not_assigned(driver, context):
-    CaseListPage(driver).click_show_filters_link()
+    functions.try_open_filters(driver)
     CaseListPage(driver).enter_assigned_user_filter_text(context.user_name)
     CaseListPage(driver).click_apply_filters_button()
 

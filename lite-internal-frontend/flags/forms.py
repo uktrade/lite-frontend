@@ -85,7 +85,7 @@ def add_flag_form():
         ],
         default_button_name=CreateFlagForm.SUBMIT_BUTTON,
         back_link=BackLink(CreateFlagForm.BACK_LINK, reverse_lazy("flags:flags")),
-        javascript_imports=["/assets/javascripts/add-edit-flags.js"],
+        javascript_imports={"/javascripts/add-edit-flags.js"},
     )
 
 
@@ -124,7 +124,7 @@ def edit_flag_form():
         ],
         back_link=BackLink(EditFlagForm.BACK_LINK, reverse_lazy("flags:flags")),
         default_button_name=EditFlagForm.SUBMIT_BUTTON,
-        javascript_imports=["/assets/javascripts/add-edit-flags.js"],
+        javascript_imports={"/javascripts/add-edit-flags.js"},
     )
 
 
@@ -206,13 +206,12 @@ def set_flags_form(flags, level, show_case_header=False, show_sidebar=False):
         description=getattr(SetFlagsForm, level).DESCRIPTION,
         questions=[
             Filter(placeholder=getattr(SetFlagsForm, level).FILTER),
-            Checkboxes(name="flags[]", options=flags),
+            Checkboxes(name="flags[]", options=flags, filterable=True),
             DetailComponent(
                 title=getattr(SetFlagsForm, level).Note.TITLE,
                 components=[TextArea(name="note", optional=True, classes=["govuk-!-margin-0"]),],
             ),
         ],
-        javascript_imports=["/assets/javascripts/filter-checkbox-list.js"],
         default_button_name=getattr(SetFlagsForm, level).SUBMIT_BUTTON,
         container="case" if show_case_header else "two-pane",
     )

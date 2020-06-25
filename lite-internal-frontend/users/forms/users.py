@@ -33,7 +33,7 @@ def add_user_form(request):
             ),
         ],
         back_link=BackLink(AddUserForm.BACK_LINK, reverse_lazy("users:users")),
-        javascript_imports=["/assets/javascripts/filter-default-queue-list.js"],
+        javascript_imports={"/javascripts/filter-default-queue-list.js"},
     )
 
 
@@ -69,5 +69,5 @@ def edit_user_form(request, user, can_edit_role: bool):
             reverse_lazy("users:user", kwargs={"pk": user["id"]}),
         ),
         default_button_name=EditUserForm.SUBMIT_BUTTON,
-        javascript_imports=["/assets/javascripts/filter-default-queue-list.js"],
+        javascript_imports={"/javascripts/filter-default-queue-list.js"},
     )

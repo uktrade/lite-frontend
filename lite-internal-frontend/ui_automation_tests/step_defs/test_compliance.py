@@ -1,16 +1,9 @@
-from datetime import date
+from pytest_bdd import when, then, scenarios
 
-from pytest_bdd import when, then, parsers, scenarios, given
-
-from pages.advice import UserAdvicePage, FinalAdvicePage, TeamAdvicePage, BaseAdvicePage
 from pages.case_page import CasePage, CaseTabs
-from pages.give_advice_pages import GiveAdvicePages
-from pages.record_decision_page import RecordDecision
 from pages.shared import Shared
-
 from ui_automation_tests.pages.compliance_pages import CompliancePages
 from ui_automation_tests.pages.generate_document_page import GeneratedDocument
-from ui_automation_tests.pages.grant_licence_page import GrantLicencePage
 
 scenarios("../features/compliance.feature", strict_gherkin=False)
 
