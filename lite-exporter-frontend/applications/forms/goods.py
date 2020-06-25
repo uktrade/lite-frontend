@@ -73,5 +73,5 @@ def good_on_application_form(request, good, sub_case_type, application_id):
                 strings.BACK_TO_APPLICATION,
                 reverse_lazy("applications:preexisting_good", kwargs={"pk": application_id}),
             ),
-            javascript_imports=["/assets/javascripts/add_good.js"],
+            javascript_imports={"/javascripts/add-good.js"},
         )

@@ -86,10 +86,10 @@ def new_site_forms(request):
                             {"disable_pagination": True, "exclude_permission": Permissions.ADMINISTER_SITES},
                             True,
                         ),
+                        filterable=True,
                     ),
                     HiddenField("validate_only", False),
                 ],
-                javascript_imports=["/assets/javascripts/filter-checkbox-list.js"],
                 default_button_name=generic.SAVE_AND_CONTINUE,
             ),
         ]

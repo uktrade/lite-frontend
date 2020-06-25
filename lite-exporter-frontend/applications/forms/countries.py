@@ -17,9 +17,9 @@ def countries_form(request, application_id):
                 options=get_countries(request, True),
                 classes=["govuk-checkboxes--small"],
                 show_select_links=True,
+                filterable=True,
             ),
         ],
-        javascript_imports=["/assets/javascripts/filter-checkbox-list.js"],
         default_button_name=strings.SAVE_AND_CONTINUE,
         back_link=back_to_task_list(application_id),
     )
@@ -55,9 +55,9 @@ def contract_type_per_country_form(current_country, country_name):
                     Option(key=key.value, value=ContractTypes.get_str_representation(key)) for key in ContractTypes
                 ],
                 classes=["govuk-checkboxes--small"],
+                filterable=True,
             ),
             TextInput(name="other_contract_type_text", title=contractTypeStrings.AddContractTypesForm.PROVIDE_DETAILS),
         ],
-        javascript_imports=["/assets/javascripts/filter-checkbox-list.js"],
         default_button_name=strings.SAVE_AND_CONTINUE,
     )

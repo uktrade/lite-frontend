@@ -160,9 +160,9 @@ def external_locations_form(request, application_type):
                 options=get_external_locations(
                     request, str(request.user.organisation), True, exclude, application_type
                 ),
+                filterable=True,
             ),
         ],
-        javascript_imports=["/assets/javascripts/filter-checkbox-list.js"],
         default_button_name=strings.SAVE_AND_CONTINUE,
     )
 
@@ -176,8 +176,11 @@ def sites_form(request, application_type):
         title="Select locations",
         questions=[
             Filter(),
-            Checkboxes(name="sites[]", options=get_sites(request, request.user.organisation, True, False, exclude)),
+            Checkboxes(
+                name="sites[]",
+                options=get_sites(request, request.user.organisation, True, False, exclude),
+                filterable=True,
+            ),
         ],
-        javascript_imports=["/assets/javascripts/filter-checkbox-list.js"],
         default_button_name=generic.SAVE_AND_CONTINUE,
     )
