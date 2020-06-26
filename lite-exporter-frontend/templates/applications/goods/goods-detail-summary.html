@@ -70,6 +70,17 @@
 					</dd>
 				</div>
 
+				{% if good.good.item_category.key in 'group3_software,group3_technology' %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							{% lcs "goods.GoodsDetailSummary.PURPOSE_SOFTWARE_TECHNOLOGY" %}
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ good.good.software_or_technology_details|default_na }}
+						</dd>
+					</div>
+				{% endif %}
+
 				<div class="govuk-summary-list__row">
 					<dt class="govuk-summary-list__key">
 						{% lcs 'goods.GoodsDetailSummary.MILITARY' %}
@@ -82,17 +93,19 @@
 					</dd>
 				</div>
 
-				<div class="govuk-summary-list__row">
-					<dt class="govuk-summary-list__key">
-						{% lcs 'goods.GoodsDetailSummary.COMPONENT' %}
-					</dt>
-					<dd class="govuk-summary-list__value">
-						{{ good.good.is_component.value|default_na }}
-						{% if good.good.component_details %}
-							<span class="govuk-hint"> {{ good.good.component_details }} </span>
-						{% endif %}
-					</dd>
-				</div>
+				{% if good.item_category.key not in 'group3_software,group3_technology' %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							{% lcs 'goods.GoodsDetailSummary.COMPONENT' %}
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ good.good.is_component.value|default_na }}
+							{% if good.good.component_details %}
+								<span class="govuk-hint"> {{ good.good.component_details }} </span>
+							{% endif %}
+						</dd>
+					</div>
+				{% endif %}
 
 				<div class="govuk-summary-list__row">
 					<dt class="govuk-summary-list__key">

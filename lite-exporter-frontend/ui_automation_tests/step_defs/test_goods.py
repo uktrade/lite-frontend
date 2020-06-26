@@ -63,10 +63,10 @@ def edit_good(driver, description, part, controlled, control_list_entry, context
 
 @when(  # noqa
     parsers.parse(
-        'I edit the good details to military use "{military_use}" component "{component}" information security "{infosec}"'
+        'I edit the "{category}" good details to military use "{military_use}" component "{component}" information security "{infosec}"'
     )
 )
-def edit_good_details(driver, military_use, component, infosec, context):  # noqa
+def edit_good_details(driver, category, military_use, component, infosec, context):  # noqa
     goods_page = GoodsPage(driver)
     good_details_page = AddGoodDetails(driver)
 
@@ -74,9 +74,10 @@ def edit_good_details(driver, military_use, component, infosec, context):  # noq
     good_details_page.select_is_product_for_military_use(military_use)
     functions.click_submit(driver)
 
-    goods_page.click_on_good_edit_is_component_link()
-    good_details_page.select_is_product_a_component(component)
-    functions.click_submit(driver)
+    if category == "category 1":
+        goods_page.click_on_good_edit_is_component_link()
+        good_details_page.select_is_product_a_component(component)
+        functions.click_submit(driver)
 
     goods_page.click_on_good_edit_uses_information_security_link()
     good_details_page.does_product_employ_information_security(infosec)
@@ -108,9 +109,13 @@ def click_on_draft_good(driver, context, exporter_url):
     military_use_row_text = helpers.get_element_row_text_from_table(elements, "Military use")
     component_row_text = helpers.get_element_row_text_from_table(elements, "Component")
     infosec_row_text = helpers.get_element_row_text_from_table(elements, "Information security features")
-    assert "Yes, designed specifically for military use" in military_use_row_text
-    assert "Yes, it's designed specially for hardware" in component_row_text
+    software_technology_details_row_text = helpers.get_element_row_text_from_table(elements, "Purpose")
+    assert "Yes, specially designed for military use" in military_use_row_text
+    if component_row_text:
+        assert "Yes, it's designed specially for hardware" in component_row_text
     assert "No" in infosec_row_text
+    if software_technology_details_row_text:
+        assert "edited software purpose" in software_technology_details_row_text
 
 
 @when("I click Add a new good")
@@ -289,16 +294,34 @@ def select_product_category(driver, category, context):  # noqa
 
 @when(  # noqa
     parsers.parse(
-        'I specify the good details military use "{military_use}" component "{component}" and information security "{infosec}"'
+        'I specify the "{category}" good details military use "{military_use}" component "{component}" and information security "{infosec}"'
     )
 )
-def add_good_details(driver, military_use, component, infosec, context):  # noqa
+def add_good_details(driver, category, military_use, component, infosec, context):  # noqa
     good_details_page = AddGoodDetails(driver)
     good_details_page.select_is_product_for_military_use(military_use)
     functions.click_submit(driver)
-    good_details_page.select_is_product_a_component(component)
-    functions.click_submit(driver)
+    if category == "category 1":
+        good_details_page.select_is_product_a_component(component)
+        functions.click_submit(driver)
     good_details_page.does_product_employ_information_security(infosec)
+    functions.click_submit(driver)
+
+
+@when("I specify software and technology purpose details for a good that is in those categories")  # noqa
+def add_good_software_technology_purpose_details(driver):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.enter_software_technology_purpose_details()
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I edit the software and technology purpose details for a good to "{edited_details}"'))  # noqa
+def add_good_software_technology_purpose_details(driver, edited_details, context):  # noqa
+    goods_page = GoodsPage(driver)
+    good_details_page = AddGoodDetails(driver)
+
+    goods_page.click_on_good_edit_software_technology_details()
+    good_details_page.enter_software_technology_purpose_details(text=edited_details)
     functions.click_submit(driver)
 
 

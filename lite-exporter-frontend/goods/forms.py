@@ -2,7 +2,7 @@ from django.urls import reverse, reverse_lazy
 
 from core.services import get_control_list_entries
 from core.services import get_pv_gradings
-from goods.helpers import good_summary
+from goods.helpers import good_summary, get_category_display_string
 from goods.services import get_document_missing_reasons
 from lite_content.lite_exporter_frontend import generic
 from lite_content.lite_exporter_frontend.goods import (
@@ -61,10 +61,24 @@ def product_category_form(request):
     )
 
 
+def software_technology_details_form(request, item_category=None):
+    category = get_category_display_string(
+        request.POST.get("item_category", "") if not item_category else item_category
+    )
+    return Form(
+        title=CreateGoodForm.TechnologySoftware.TITLE + category,
+        questions=[
+            HiddenField("is_software_or_technology_step", True),
+            TextArea(title="", description="", name="software_or_technology_details", optional=False,),
+        ],
+    )
+
+
 def product_military_use_form(request):
     return Form(
         title=CreateGoodForm.MilitaryUse.TITLE,
         questions=[
+            HiddenField("is_military_use_step", True),
             RadioButtons(
                 title="",
                 name="is_military_use",
@@ -84,7 +98,7 @@ def product_military_use_form(request):
                     ),
                     Option(key="no", value=CreateGoodForm.MilitaryUse.NO),
                 ],
-            )
+            ),
         ],
     )
 
@@ -277,14 +291,15 @@ def pv_details_form(request):
     )
 
 
-def add_good_form_group(request, is_pv_graded: bool = None, draft_pk: str = None):
+def add_good_form_group(request, is_pv_graded: bool = None, is_software_technology: bool = None, draft_pk: str = None):
     return FormGroup(
         [
             product_category_form(request),
             add_goods_questions(request, draft_pk),
             conditional(is_pv_graded, pv_details_form(request)),
+            conditional(is_software_technology, software_technology_details_form(request)),
             product_military_use_form(request),
-            product_component_form(request),
+            conditional(not is_software_technology, product_component_form(request)),
             product_uses_information_security(request),
         ]
     )

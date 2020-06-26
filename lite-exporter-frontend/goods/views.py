@@ -32,6 +32,7 @@ from goods.forms import (
     product_military_use_form,
     product_component_form,
     product_uses_information_security,
+    software_technology_details_form,
 )
 from goods.helpers import COMPONENT_SELECTION_TO_DETAIL_FIELD_MAP, return_to_good_summary
 from goods.services import (
@@ -163,18 +164,56 @@ class AddGood(MultiFormView):
         self.action = validate_good
 
     def on_submission(self, request, **kwargs):
-        is_pv_graded = request.POST.copy().get("is_pv_graded", "").lower() == "yes"
-        self.forms = add_good_form_group(request, is_pv_graded)
+        copied_request = request.POST.copy()
+        is_pv_graded = copied_request.get("is_pv_graded", "").lower() == "yes"
+        is_software_technology = copied_request.get("item_category") in ["group3_software", "group3_technology"]
+        self.forms = add_good_form_group(request, is_pv_graded, is_software_technology)
 
         if is_pv_graded:
+            # post on step 5 in both software/technology and group 1
             if int(self.request.POST.get("form_pk")) == 5:
                 self.action = post_goods
         else:
+            # post on step 4 in both software/technology and group 1
             if int(self.request.POST.get("form_pk")) == 4:
                 self.action = post_goods
 
     def get_success_url(self):
         return reverse_lazy("goods:add_document", kwargs={"pk": self.get_validated_data()["good"]["id"]})
+
+
+class GoodSoftwareTechnology(SingleFormView):
+    application_id = None
+
+    def init(self, request, **kwargs):
+        if "good_pk" in kwargs:
+            # coming from the application
+            self.object_pk = str(kwargs["good_pk"])
+            self.application_id = str(kwargs["pk"])
+        else:
+            self.object_pk = str(kwargs["pk"])
+        self.data = get_good_details(request, self.object_pk)[0]
+        self.form = software_technology_details_form(request, self.data.get("item_category"))
+        self.action = edit_good_details
+
+    def get_data(self):
+        return {
+            "software_or_technology_details": self.data.get("software_or_technology_details"),
+        }
+
+    def get_success_url(self):
+        good = get_good(self.request, self.object_pk, full_detail=True)[0]
+        # Next question military use
+        if not good.get("is_military_use"):
+            if "good_pk" in self.kwargs:
+                return reverse_lazy(
+                    "applications:good_military_use", kwargs={"pk": self.application_id, "good_pk": self.object_pk}
+                )
+            else:
+                return reverse_lazy("goods:good_military_use", kwargs={"pk": self.object_pk})
+        # Edit
+        else:
+            return return_to_good_summary(self.kwargs, self.application_id, self.object_pk)
 
 
 class GoodMilitaryUse(SingleFormView):
@@ -200,8 +239,19 @@ class GoodMilitaryUse(SingleFormView):
 
     def get_success_url(self):
         good = get_good(self.request, self.object_pk, full_detail=True)[0]
-        # Next question good component
-        if not good.get("is_component"):
+        is_software_technology = good.get("item_category")["key"] in ["group3_software", "group3_technology"]
+        # Next question information security if good is software/hardware
+        if is_software_technology:
+            if good.get("uses_information_security") is None:
+                if "good_pk" in self.kwargs:
+                    return reverse_lazy(
+                        "applications:good_information_security",
+                        kwargs={"pk": self.application_id, "good_pk": self.object_pk},
+                    )
+                else:
+                    return reverse_lazy("goods:good_information_security", kwargs={"pk": self.object_pk})
+        # Next question good component if good is in category 1
+        if not good.get("is_component") and not is_software_technology:
             if "good_pk" in self.kwargs:
                 return reverse_lazy(
                     "applications:good_component", kwargs={"pk": self.application_id, "good_pk": self.object_pk}

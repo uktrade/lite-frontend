@@ -39,6 +39,9 @@ class AddGoodDetails(BasePage):
     INFORMATION_SECURITY_DETAILS_TEXTAREA_ID = "information_security_details"
     INFORMATION_SECURITY_NO_ID = INFORMATION_SECURITY_PREFIX + "False"
 
+    # Software/Technology details for category 3 goods
+    SOFTWARE_OR_TECHNOLOGY_DETAILS_TEXTAREA_ID = "software_or_technology_details"
+
     def select_product_category(self, category):
         # Accept categories "one", "two", "three-software", "three-technology" and match with an id accordingly
         if category == "two":
@@ -47,8 +50,7 @@ class AddGoodDetails(BasePage):
             self.driver.find_element_by_id(self.GROUP3_SOFTWARE_ID).click()
         if category == "three-technology":
             self.driver.find_element_by_id(self.GROUP3_TECHNOLOGY_ID).click()
-        else:
-            # default to category one
+        if category == "one":
             self.driver.find_element_by_id(self.GROUP1_DEVICE_ID).click()
 
     def select_is_product_for_military_use(self, option):
@@ -87,3 +89,11 @@ class AddGoodDetails(BasePage):
         details_element = self.driver.find_element_by_id(related_details_field_id)
         details_element.clear()
         details_element.send_keys(details)
+
+    def enter_software_technology_purpose_details(self, text=None):
+        if not text:
+            self.enter_related_field_details(self.SOFTWARE_OR_TECHNOLOGY_DETAILS_TEXTAREA_ID)
+        else:
+            details_element = self.driver.find_element_by_id(self.SOFTWARE_OR_TECHNOLOGY_DETAILS_TEXTAREA_ID)
+            details_element.clear()
+            details_element.send_keys(text)

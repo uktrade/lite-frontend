@@ -7,6 +7,7 @@ urlpatterns = [
     path("", views.Goods.as_view(), name="goods"),
     path("add/", views.AddGood.as_view(), name="add"),
     path("<uuid:pk>/edit/", views.EditGood.as_view(), name="edit"),
+    path("<uuid:pk>/software-technology/", views.GoodSoftwareTechnology.as_view(), name="good_software_technology"),
     path("<uuid:pk>/military-use/", views.GoodMilitaryUse.as_view(), name="good_military_use"),
     path("<uuid:pk>/good-component/", views.GoodComponent.as_view(), name="good_component"),
     path("<uuid:pk>/information-security/", views.GoodInformationSecurity.as_view(), name="good_information_security"),
