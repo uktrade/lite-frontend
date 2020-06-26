@@ -15,7 +15,6 @@ from lite_forms.components import (
     Heading,
     Label,
     Link,
-    Summary,
     BackLink,
     WarningBanner,
     HiddenField,
@@ -25,6 +24,7 @@ from lite_forms.components import (
 from lite_forms.generators import success_page
 from lite_forms.helpers import conditional
 from lite_forms.styles import HeadingStyle
+from organisation.sites.services import get_sites
 
 
 def no_open_general_licence_form(open_general_licence_type, selected_entry, selected_country):
@@ -67,6 +67,7 @@ def open_general_licence_forms(request, **kwargs):
         country=request.POST.get("country"),
         status="active",
     )
+    sites = get_sites(request, request.user.organisation, True)
     selected_open_general_licence = {}
     if request.POST.get("open_general_licence"):
         selected_open_general_licence = get_open_general_licence(request, request.POST.get("open_general_licence"))
@@ -100,13 +101,15 @@ def open_general_licence_forms(request, **kwargs):
                         title=OpenGeneralLicenceQuestions.OpenGeneralLicences.TITLE.format(
                             open_general_licence_type.name.lower()
                         ),
-                        description=OpenGeneralLicenceQuestions.OpenGeneralLicences.DESCRIPTION.format(
-                            open_general_licence_type.name.lower(), selected_entry, selected_country
-                        ),
                         questions=[
+                            Label(
+                                OpenGeneralLicenceQuestions.OpenGeneralLicences.DESCRIPTION.format(
+                                    open_general_licence_type.name.lower(), selected_entry, selected_country
+                                )
+                            ),
+                            Label(OpenGeneralLicenceQuestions.OpenGeneralLicences.HELP_TEXT),
                             RadioButtons(
                                 name="open_general_licence",
-                                description=OpenGeneralLicenceQuestions.OpenGeneralLicences.HELP_TEXT,
                                 options=[
                                     *open_general_licences,
                                     Option(
@@ -115,7 +118,7 @@ def open_general_licence_forms(request, **kwargs):
                                         show_or=True,
                                     ),
                                 ],
-                            )
+                            ),
                         ],
                         default_button_name=generic.CONTINUE,
                     )
@@ -141,31 +144,16 @@ def open_general_licence_forms(request, **kwargs):
                             ),
                         ),
                         HiddenField("application_type", open_general_licence_type.acronym.lower()),
-                        Summary(
-                            {
-                                OpenGeneralLicenceQuestions.OpenGeneralLicenceDetail.Summary.DESCRIPTION: selected_open_general_licence.get(
-                                    "description"
-                                ),
-                                OpenGeneralLicenceQuestions.OpenGeneralLicenceDetail.Summary.CONTROL_LIST_ENTRIES: ", ".join(
-                                    [x["rating"] for x in selected_open_general_licence.get("control_list_entries", [])]
-                                ),
-                                OpenGeneralLicenceQuestions.OpenGeneralLicenceDetail.Summary.COUNTRIES: ", ".join(
-                                    [x["name"] for x in selected_open_general_licence.get("countries", [])]
-                                ),
-                                OpenGeneralLicenceQuestions.OpenGeneralLicenceDetail.Summary.READ_MORE_LINK: "["
-                                + selected_open_general_licence.get("url", "")
-                                + "]("
-                                + selected_open_general_licence.get("url", "")
-                                + ")",
-                            }
-                        ),
                         *conditional(
                             selected_open_general_licence.get("registration_required"),
                             [
                                 Heading(
                                     OpenGeneralLicenceQuestions.OpenGeneralLicenceDetail.Summary.HEADING, HeadingStyle.S
                                 ),
-                                Custom("components/ogl-step-list.html"),
+                                Custom(
+                                    "components/ogl-step-list.html",
+                                    data={**selected_open_general_licence, "sites": sites},
+                                ),
                                 Custom("components/ogl-warning.html"),
                                 Checkboxes(
                                     name="confirmation[]",

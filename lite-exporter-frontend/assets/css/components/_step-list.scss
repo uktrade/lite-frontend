@@ -6,10 +6,6 @@ $icon-size: 40px;
 	padding-left: 0;
 	margin-left: 0;
 
-	p {
-		margin-top: 0;
-	}
-
 	& > li {
 		@include govuk-font($size: 19);
 		@include govuk-text-colour;
@@ -17,6 +13,11 @@ $icon-size: 40px;
 		padding-left: 55px;
 		padding-top: 8px;
 		margin-bottom: govuk-spacing(4);
+
+		& > p {
+			font-weight: bold;
+			margin-top: 0;
+		}
 
 		&:before {
 			@include govuk-font($size: 19, $weight: bold);

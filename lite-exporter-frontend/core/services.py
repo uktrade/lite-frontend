@@ -22,6 +22,7 @@ from conf.constants import (
     LICENCES_OPEN_GENERAL_POST_URL,
 )
 from core.helpers import convert_parameters_to_query_params, convert_value_to_query_param
+from lite_content.lite_exporter_frontend.applications import OpenGeneralLicenceQuestions
 from lite_content.lite_exporter_frontend.generic import Document
 from lite_forms.components import Option, TextArea
 from lite_forms.generators import error_page
@@ -304,9 +305,13 @@ def get_open_general_licences(
     if convert_to_options:
         return [
             Option(
-                ogl["id"],
-                ogl["case_type"]["reference"]["value"] + " (" + ogl["name"] + ")",
+                key=ogl["id"],
+                value=ogl["case_type"]["reference"]["value"] + " (" + ogl["name"] + ")",
+                tag=OpenGeneralLicenceQuestions.OpenGeneralLicences.ALREADY_REGISTERED
+                if ogl["registrations"]
+                else None,
                 more_information=ogl["description"],
+                disabled=bool(len(ogl["registrations"])),
             )
             for ogl in data
         ]

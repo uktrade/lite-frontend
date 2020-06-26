@@ -1,6 +1,52 @@
-<ol class="app-step-list">
-	{% lcs 'applications.OpenGeneralLicenceQuestions.OpenGeneralLicenceDetail.Notice.POINTS' as points %}
-	{% for point in points %}
-		<li>{{ point }}</li>
-	{% endfor %}
+<ol class="app-step-list govuk-!-margin-bottom-9">
+	<li>
+		<p>{% lcs 'applications.OpenGeneralLicenceQuestions.OpenGeneralLicenceDetail.Points.FIRST_POINT' %}</p>
+		<dl class="govuk-summary-list govuk-summary-list--no-border">
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs 'applications.OpenGeneralLicenceQuestions.OpenGeneralLicenceDetail.Summary.DESCRIPTION' %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ data.description }}
+				</dd>
+			</div>
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs 'applications.OpenGeneralLicenceQuestions.OpenGeneralLicenceDetail.Summary.CONTROL_LIST_ENTRIES' %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{% include 'includes/control-list-entries.html' with control_list_entries=data.control_list_entries %}
+				</dd>
+			</div>
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs 'applications.OpenGeneralLicenceQuestions.OpenGeneralLicenceDetail.Summary.COUNTRIES' %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{% for country in data.countries %}
+						{{ country.name }}{% if not forloop.last %}, {% endif %}
+					{% endfor %}
+				</dd>
+			</div>
+		</dl>
+	</li>
+	<li>
+		<p>{% lcs 'applications.OpenGeneralLicenceQuestions.OpenGeneralLicenceDetail.Points.SECOND_POINT' %}</p>
+		<span>{{ data.url|linkify }}</span>
+	</li>
+	<li>
+		<p>{% lcs 'applications.OpenGeneralLicenceQuestions.OpenGeneralLicenceDetail.Points.THIRD_POINT' %}</p>
+		<ol class="govuk-list govuk-list--number">
+			{% for site in data.sites %}
+				<li>
+					{{ site.value }}
+					<p class="govuk-hint govuk-!-margin-top-0">{{ site.description|safe }}</p>
+				</li>
+			{% endfor %}
+		</ol>
+		<span class="govuk-hint">
+			{% lcs 'applications.OpenGeneralLicenceQuestions.OpenGeneralLicenceDetail.Points.THIRD_POINT_NOTICE' as notice %}
+			{{ notice|markdown }}
+		</span>
+	</li>
 </ol>
