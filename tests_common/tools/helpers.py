@@ -269,4 +269,6 @@ def get_current_date_time(format_date_time=True):
 
 def get_element_row_text_from_table(elements, text_to_search_on):
     element_index = get_element_index_by_text(elements, text_to_search_on, complete_match=False)
-    return elements[element_index].text
+    # Element index -1 means an element with the given text was not found
+    if element_index != -1:
+        return elements[element_index].text
