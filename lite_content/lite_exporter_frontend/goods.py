@@ -86,6 +86,7 @@ class GoodPage:
         MILITARY_USE = "Military use"
         COMPONENT = "Component"
         INFORMATION_SECURITY_FEATURES = "Information security features"
+        PURPOSE_SOFTWARE_TECHNOLOGY = "Purpose"
 
         class Grading:
             IS_GRADED = "Security graded"
@@ -180,7 +181,7 @@ class CreateGoodForm:
 
     class MilitaryUse:
         TITLE = "Is the product for military use?"
-        YES_DESIGNED = "Yes, designed specifically for military use"
+        YES_DESIGNED = "Yes, specially designed for military use"
         YES_MODIFIED = "Yes, modified for military use"
         MODIFIED_MILITARY_USE_DETAILS = "Provide details of the modifications"
         NO = "No"
@@ -199,6 +200,9 @@ class CreateGoodForm:
         TITLE = "Is the product designed to employ 'information security' features?"
         INFORMATION_SECURITY_DETAILS = "Provide details of the information security features"
         NO = "No"
+
+    class TechnologySoftware:
+        TITLE = "Describe the purpose of the "
 
 
 class GoodGradingForm:
@@ -459,6 +463,7 @@ class GoodsDetailSummary:
     PV_GRADING_YES = "Yes"
     PV_GRADING_NO = "No"
     INCORPORATED = "Incorporated"
+    PURPOSE_SOFTWARE_TECHNOLOGY = "Purpose"
 
 
 class AttachDocumentPage:
