@@ -516,4 +516,5 @@ def apply_for_ogel(api_test_client, context):
 def apply_for_ogel_application(api_test_client, context):
     # TODO change the response of this endpoint to return cases that are created.
     # Then, use these ids to check that the correct cases have loaded.
-    api_test_client.ogel.add_ogel_application(context.ogel_id)
+    response = api_test_client.ogel.add_ogel_application(context.ogel_id)
+    context.ogel_case_id = response

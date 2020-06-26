@@ -119,3 +119,8 @@ class Cases:
             method="GET", url="/compliance/case/" + case_id, headers=self.api_client.gov_headers
         ).json()
         return case["ids"]
+
+    def get_case_info(self, case_id):
+        return self.api_client.make_request(
+            method="GET", url="/cases/" + case_id + "/", headers=self.api_client.gov_headers
+        ).json()["case"]

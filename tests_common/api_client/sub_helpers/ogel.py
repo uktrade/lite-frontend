@@ -27,9 +27,10 @@ class Ogel:
         ).json()["id"]
 
     def add_ogel_application(self, ogel_id):
-        return self.api_client.make_request(
+        response = self.api_client.make_request(
             method="POST",
             url="/licences/open-general-licences/",
             headers=self.api_client.exporter_headers,
             body={"open_general_licence": ogel_id,},
         ).json()
+        return response["registrations"][0]
