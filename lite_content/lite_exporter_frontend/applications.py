@@ -301,7 +301,7 @@ class ExportLicenceQuestions:
 
 class OpenGeneralLicenceQuestions:
     class ControlListEntry:
-        TITLE = "Enter the control list entry which best fits this product"
+        TITLE = "Enter the control list entry which matches your product"
         DESCRIPTION = ""
         ERROR = "Enter a control list entry"
 
@@ -321,29 +321,30 @@ class OpenGeneralLicenceQuestions:
         HELP_TEXT = "Select the option which best matches your product and requirements."
         NONE_OF_THE_ABOVE = "None of the above"
         ERROR = "Select a licence (if applicable)"
+        ALREADY_REGISTERED = "Already registered"
 
     class OpenGeneralLicenceDetail:
-        CAPTION = "Applying for"
+        CAPTION = "Registering for"
         NO_REGISTRATION_REQUIRED = (
-            "This {} doesn't require registration, however make sure you still meet the requirements:"
+            "This {} doesn't require registration, however make sure you still meet the requirements."
         )
+
+        class Points:
+            FIRST_POINT = "Ensure this open general licence is appropriate for your needs"
+            SECOND_POINT = "Read the full text of the open general licence"
+            THIRD_POINT = "Check that this open general licence is appropriate for your sites"
+            THIRD_POINT_NOTICE = (
+                "If a site isn't listed, you can [add a site](/organisation/sites/new/) from your account home. Adding a site now means "
+                "you'll have to start from the beginning to register this open general licence."
+            )
 
         class Summary:
             DESCRIPTION = "Description"
             CONTROL_LIST_ENTRIES = "Control list entries"
             COUNTRIES = "Countries"
-            READ_MORE_LINK = "Read more"
             HEADING = "Before you continue"
 
         class Notice:
-            POINTS = [
-                "Get someone who knows the technical details of your item to help you check the choices "
-                "you've made against the technical specifications of your item.",
-                "If you think that the control list entry is wrong, we recommend going back through the process "
-                "with someone who knows the technical details of your item.",
-                "If you have consulted and used the right information, and you believe this is the correct "
-                "control list entry then you should proceed to register for the open general licence.",
-            ]
             WARNING_TITLE = (
                 "<!--Warning:--> You should read the licence in full and confirm you can comply with the "
                 "conditions before registering for an open export licence. If you export controlled "
