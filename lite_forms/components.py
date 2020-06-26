@@ -380,6 +380,8 @@ class Option:
         data_attribute=None,
         classes: Optional[List] = None,
         more_information: str = None,
+        tag: str = None,
+        disabled: bool = False,
     ):
         from lite_forms.helpers import convert_to_markdown
 
@@ -393,6 +395,8 @@ class Option:
         self.data_attribute = data_attribute
         self.classes = classes
         self.more_information = more_information
+        self.tag = tag
+        self.disabled = disabled
 
 
 class Group:
