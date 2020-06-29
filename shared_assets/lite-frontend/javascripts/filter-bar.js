@@ -14,6 +14,7 @@ $(".lite-filter-bar").each(function() {
 			$filters.show();
 			$filters.prev().find("#show-filters-link").hide();
 			$filters.prev().find("#hide-filters-link").show();
+			$(this).parents(".govuk-details").attr('open', '');
 		}
 	});
 });
