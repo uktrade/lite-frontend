@@ -106,6 +106,7 @@ class CasePage:
         LICENCES = "Licences"
 
     class DetailsTab:
+        ADMINISTRATIVE_CENTRE = "Administrative Centre"
         EXPORTER_REFERENCE = "Exporter reference"
         SUBMITTED_AT = "Submitted at"
         SUBMITTED_BY = "Submitted by"
@@ -182,6 +183,59 @@ class CasePage:
                 pass
                 # NEED TO DO! REMIND ME!
 
+        class VisitReports:
+            ADD = "Add a visit report"
+            NO_VISIT_REPORTS = "There are no visit reports"
+            REPORT_REFERENCE = "Report reference"
+            VISIT_DATE = "Visit date"
+            INSPECTOR = "Inspector"
+            FLAGS = "Flags"
+
+        class ComplianceVisitDetails:
+            class VisitReportDetails:
+                TITLE = "Visit report details"
+                VISIT_TYPE = "Visit type"
+                VISIT_DATE = "Visit date"
+                OVERALL_RISK = "Overall risk value"
+                LICENCE_RISK = "Licence risk value"
+                EDIT = "Edit"
+
+            class PeoplePresent:
+                TITLE = "People present"
+                NAME = "Name"
+                JOB_TITLE = "Job title"
+                ADD = "Add"
+                EDIT = "Edit"
+                REMOVE = "Remove"
+                NO_PEOPLE_PRESENT = "There are no people present added"
+                ADD_A_PERSON = "Add a person"
+
+            class Overview:
+                TITLE = "Overview"
+                EDIT = "Edit"
+
+            class Inspection:
+                TITLE = "Inspection"
+                EDIT = "Edit"
+
+            class ComplianceWithLicences:
+                TITLE = "Compliance with licences"
+                OVERVIEW = "Overview"
+                RISK_VALUE = "Risk value"
+                EDIT = "Edit"
+
+            class KnowledgeOfIndividuals:
+                TITLE = "Knowledge and Understanding demonstrated by key export individuals at meeting"
+                OVERVIEW = "Overview"
+                RISK_VALUE = "Risk value"
+                EDIT = "Edit"
+
+            class KnowledgeOfControlledProducts:
+                TITLE = "Knowledge of controlled items in their business' products"
+                OVERVIEW = "Overview"
+                RISK_VALUE = "Risk value"
+                EDIT = "Edit"
+
     class DocumentsTab:
         ATTACH_DOCUMENT_BUTTON = "Attach document"
         GENERATE_DOCUMENT_BUTTON = "Generate document"
@@ -212,6 +266,9 @@ class CasePage:
         LICENCE_STATUS = "Licence status"
         LICENCE_FLAGS = "Flags"
         NO_LICENCES_NOTICE = "No Licences found"
+
+    class LicenceFilters:
+        REFERENCE = "Reference"
 
 
 class ApplicationPage:
@@ -680,6 +737,9 @@ class EcjuQueries:
 
     class AddQuery:
         ADD_BUTTON_LABEL = "Add an ECJU query"
+        ADD_PRE_VISIT_QUESTIONNAIRE = "Add pre visit questionnaire"
+        COMPLIANCE_ACTIONS = "Add compliance actions"
+
         TITLE_PREFIX = "New "
         DESCRIPTION = (
             "Enter a full description. If your question is related to goods, then include technical"
@@ -828,3 +888,45 @@ class OpenLicenceReturns:
     FILE_NAME = "File name"
     YEAR_COMPLETED = "Year completed"
     ADDED = "Added"
+
+
+class ComplianceForms:
+    class VisitReport:
+        TITLE = "Visit report details"
+        VISIT_TYPE = "Visit type"
+        VISIT_DATE = "Visit date"
+        VISIT_DATE_DESCRIPTION = "For example, 12 3 2020"
+        OVERALL_RISK_VALUE = "Overall risk value"
+        LICENCE_RISK_VALUE = "Licence risk value"
+
+    class PeoplePresent:
+        TITLE = "People present"
+        NAME = "Name"
+        JOB_TITLE = "Job title"
+        DESCRIPTION = "Describes who the Compliance Inspector conducted the visit with from the exporting"
+        " organisation - it may be referenced in a document."
+        SUCCESS = "People present updated successfully"
+
+    class Overview:
+        TITLE = "Overview"
+
+    class Inspection:
+        TITLE = "Inspection"
+
+    class ComplianceWithLicence:
+        TITLE = "Compliance with licence"
+        DESCRIPTION = (
+            "If you have actions and recommendations for the organisation, you need to add them to the query section."
+        )
+        OVERVIEW = "Overview"
+        RISK_VALUE = "Risk value"
+
+    class KnowledgeOfPeople:
+        TITLE = "Knowledge and Understanding demonstrated by key export individuals at meeting"
+        OVERVIEW = "Overview"
+        RISK_VALUE = "Risk value"
+
+    class KnowledgeOfProducts:
+        TITLE = "Knowledge of controlled items in their business' products"
+        OVERVIEW = "Overview"
+        RISK_VALUE = "Risk value"
