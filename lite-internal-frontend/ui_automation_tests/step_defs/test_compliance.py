@@ -1,9 +1,12 @@
+import datetime
+
+from django.templatetags.tz import do_timezone
 from pytest_bdd import when, then, parsers, scenarios
 
 from pages.case_page import CasePage, CaseTabs
 from pages.shared import Shared
 
-from core.builtins.custom_tags import str_date_only
+from conf.constants import DATE_FORMAT
 from ui_automation_tests.pages.compliance_pages import CompliancePages
 from ui_automation_tests.pages.ecju_queries_pages import EcjuQueriesPages
 from ui_automation_tests.pages.generate_document_page import GeneratedDocument
@@ -72,14 +75,17 @@ def add_visit_report_details(driver, context, visit_type, visit_date, overall_ri
 @then("I see the visit report details in details and the banner")
 def see_visit_report_details(driver, context):
     compliance_page = CompliancePages(driver)
+    visit_date = do_timezone(datetime.datetime.strptime(context.visit_date, DATE_FORMAT), "Europe/London").strftime(
+        "%d %B %Y"
+    )
     assert context.visit_type in compliance_page.get_visit_type()
-    assert str_date_only(context.visit_date) in compliance_page.get_visit_date()
+    assert visit_date in compliance_page.get_visit_date()
     assert context.overall_risk in compliance_page.get_overall_risk()
     assert context.licence_risk in compliance_page.get_licence_risk()
 
     # Banner details
     assert context.visit_type in compliance_page.get_compliance_banner_details()
-    assert str_date_only(context.visit_date) in compliance_page.get_compliance_banner_details()
+    assert visit_date in compliance_page.get_compliance_banner_details()
 
 
 @when(parsers.parse("I add person present '{name}' who works as '{job}'"))
