@@ -141,14 +141,29 @@ class CaseDetail(CaseView):
     def get_open_registration(self):
         self.slices = [Slices.OPEN_GENERAL_LICENCE]
 
-    def get_compliance(self):
-        self.slices = [Slices.OPEN_LICENCE_RETURNS]
+    def get_compliance_site(self):
         self.tabs = self.get_tabs()
         self.tabs.insert(1, Tabs.COMPLIANCE_LICENCES)
-        filters = FiltersBar([TextInput(name="reference", title="Reference"),])
+        self.slices = [Slices.COMPLIANCE_VISITS, Slices.OPEN_LICENCE_RETURNS]
+        filters = FiltersBar([TextInput(name="reference", title=cases.CasePage.LicenceFilters.REFERENCE),])
         self.additional_context = {
             "data": get_compliance_licences(
-                self.request, self.case.id, self.request.GET.get("reference", ""), self.request.GET.get("page", 1)
+                self.request, self.case.id, self.request.GET.get("reference", ""), self.request.GET.get("page", 1),
+            ),
+            "licences_filters": filters,
+        }
+
+    def get_compliance_visit(self):
+        self.tabs = self.get_tabs()
+        self.tabs.insert(1, Tabs.COMPLIANCE_LICENCES)
+        self.slices = [Slices.COMPLIANCE_VISIT_DETAILS]
+        filters = FiltersBar([TextInput(name="reference", title=cases.CasePage.LicenceFilters.REFERENCE),])
+        self.additional_context = {
+            "data": get_compliance_licences(
+                self.request,
+                self.case.data["site_case_id"],
+                self.request.GET.get("reference", ""),
+                self.request.GET.get("page", 1),
             ),
             "licences_filters": filters,
         }

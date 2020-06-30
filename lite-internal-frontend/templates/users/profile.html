@@ -67,7 +67,7 @@
 				{{ data.user.email }}
 			</dd>
 			<dd class="govuk-summary-list__actions">
-				<a id="link-edit-email"" href="{% url 'users:edit' data.user.id %}#email" class="govuk-link govuk-link--no-visited-state">
+				<a id="link-edit-email" href="{% url 'users:edit' data.user.id %}#email" class="govuk-link govuk-link--no-visited-state">
 					{% lcs 'users.UserProfile.SummaryList.CHANGE' %}
 					<span class="govuk-visually-hidden">{% lcs 'users.UserProfile.SummaryList.EMAIL' %}</span>
 				</a>

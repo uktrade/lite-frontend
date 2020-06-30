@@ -1,0 +1,70 @@
+{% load svg %}
+
+<table id="table-people-present" class="govuk-table">
+	<thead class="govuk-table__head">
+		<tr class="govuk-table__row">
+			<th scope="col" class="govuk-table__header">#</th>
+			<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.PeoplePresent.NAME' %}</th>
+			<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.PeoplePresent.JOB_TITLE' %}</th>
+			<th scope="col" class="govuk-table__header"></th>
+		</tr>
+	</thead>
+	<tbody id="tbody-people" class="govuk-table__body">
+		{% for person in value.people_present %}
+			{% include 'includes/person-row.html' %}
+		{% endfor %}
+	</tbody>
+</table>
+
+<button id="button-add-person" type="button" name="button" class="lite-button--link app-picklist-picker-heading__link">
+	{% svg 'plus' %}
+	{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.PeoplePresent.ADD_A_PERSON' %}
+</button>
+
+<script type="text/javascript" nonce="{{ request.csp_nonce }}">
+	{% if not value.people_present %}
+		$("#table-people-present").hide();
+	{% else %}
+		updateRowIndexes();
+	{% endif %}
+
+	$("#button-add-person").click(function() {
+		var html = $(`{% include 'includes/person-row.html' %}`);
+		$("#tbody-people").append(html);
+		$("#table-people-present").show();
+		$(".lite-information-text").remove();
+		html.find(".govuk-table__cell:nth-of-type(2) .govuk-input").focus();
+		updateRowIndexes();
+	});
+
+	function removeRow(element) {
+		$(element).parents(".govuk-table__row").remove();
+		tryShowNoContentNotice();
+		updateRowIndexes();
+		return false;
+	}
+
+	function tryShowNoContentNotice() {
+		if ($("#tbody-people").children().length == 0) {
+			$("table").hide();
+		}
+	}
+
+	function updateRowIndexes() {
+		var index = 1;
+		$("#tbody-people .govuk-table__row").each(function() {
+			$(this).children().eq(0).text(index + ".");
+			$(this).children().eq(1).find('label').attr("for", "name-" + index);
+			$(this).children().eq(1).find('input').attr("id", "name-" + index);
+			$(this).children().eq(2).find('label').attr("for", "job-title-" + index);
+			$(this).children().eq(2).find('input').attr("id", "job-title-" + index);
+			$(this).children().eq(3).find('a').attr("id", "link-remove-row-" + index);
+			index ++;
+		});
+
+		// Update link text to be more descriptive for screenreaders eg 'Remove John Smith'
+		$("#tbody-people .govuk-table__cell:nth-of-type(2) .govuk-input").unbind().change(function() {
+			$(this).parents(".govuk-table__row").find(".govuk-table__cell:last-of-type a").html("Remove <span class='govuk-visually-hidden'>" + $(this).val() + "</span>")
+		});
+	}
+</script>

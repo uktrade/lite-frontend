@@ -134,3 +134,14 @@ def generate_activity_filters(activity_filters, string_class):
             DateInput(title=string_class.ActivityFilters.DATE_TO, prefix="to_", inline_title=True),
         ]
     )
+
+
+def format_date(data, date_field):
+    year = data.get(date_field + "year", "")
+    month = data.get(date_field + "month", "")
+    if len(month) == 1:
+        month = "0" + month
+    day = data.get(date_field + "day", "")
+    if len(day) == 1:
+        day = "0" + day
+    return f"{year}-{month}-{day}" if year or month or day else None

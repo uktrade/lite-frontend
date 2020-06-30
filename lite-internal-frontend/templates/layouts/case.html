@@ -26,7 +26,7 @@
 						</li>
 					</ol>
 					<h1 id="heading-reference-code" class="app-case-header__heading">
-						<a {% if page %}href="{% url 'cases:case' queue.id case.id %}"{% endif %}>{{ case.reference_code }}</a> <a id="link-organisation" class="app-case-header__link govuk-!-margin-left-2" href="{% url 'organisations:organisation' case.organisation.id %}?return_to={{ CURRENT_PATH }}&return_to_text={{ case.reference_code }}">{{ case.organisation.name }}</a>
+						<a {% if page %}href="{% url 'cases:case' queue.id case.id %}"{% endif %} id="reference-code">{{ case.reference_code }}</a> <a id="link-organisation" class="app-case-header__link govuk-!-margin-left-2" href="{% url 'organisations:organisation' case.organisation.id %}?return_to={{ CURRENT_PATH }}&return_to_text={{ case.reference_code }}">{{ case.organisation.name }}</a>
 					</h1>
 				</div>
 				<div class="app-case-header__controls">
@@ -50,11 +50,19 @@
 							</div>
 						{% endif %}
 						{% if case.data.open_general_licence %}
-							<span id="candy-open-general-licences" class="app-case-header__candy">
+							<span id="candy-open-general-licence" class="app-case-header__candy">
 								{{ case.case_type.reference.value }}
 							</span>
-							<div id="popup-open-general-licences" class="app-case-header__candy__popup">
+							<div id="popup-open-general-licence" class="app-case-header__candy__popup">
 								{% include 'case/pills/open-general-licence.html' %}
+							</div>
+						{% endif %}
+						{% if case.data.visit_date or case.data.visit_type %}
+							<span id="candy-visit-date" class="app-case-header__candy">
+								{{ case.data.visit_type.value|default:"" }} <span class="govuk-!-margin-left-1 govuk-!-font-weight-bold">{{ case.data.visit_date|str_date_only|default:"" }}</span>
+							</span>
+							<div id="popup-visit-date" class="app-case-header__candy__popup">
+								{% include 'case/pills/visit-date.html' %}
 							</div>
 						{% endif %}
 						<span id="candy-flags" class="app-case-header__candy">

@@ -25,11 +25,11 @@ class ECJUQueryTypes:
         return ""
 
 
-def new_ecju_query_form(queue_pk, pk):
+def new_ecju_query_form(queue_pk, pk, query_type):
     return Form(
-        title=EcjuQueries.AddQuery.TITLE_PREFIX + ECJUQueryTypes.get_text(ECJUQueryTypes.ECJU_QUERY).lower(),
+        title=EcjuQueries.AddQuery.TITLE_PREFIX + ECJUQueryTypes.get_text(query_type).lower(),
         questions=[
-            HiddenField("query_type", ECJUQueryTypes.ECJU_QUERY),
+            HiddenField("query_type", query_type),
             TextArea(
                 description=cases.EcjuQueries.AddQuery.DESCRIPTION, name="question", extras={"max_length": 5000,},
             ),

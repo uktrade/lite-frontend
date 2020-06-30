@@ -1,6 +1,6 @@
 from django.urls import path
 
-from cases.views import main, advice, generate_document, ecju, goods_query, goods
+from cases.views import main, advice, generate_document, ecju, goods_query, goods, compliance
 from flags.views import AssignFlags
 
 app_name = "cases"
@@ -63,6 +63,16 @@ urlpatterns = [
     path("assign-user/", main.UserWorkQueue.as_view(), name="assign_user"),
     path("assign-user-queue/<uuid:user_pk>/", main.UserTeamQueue.as_view(), name="assign_user_queue"),
     path("rerun-routing-rules/", main.RerunRoutingRules.as_view(), name="rerun_routing_rules",),
+    # compliance
+    path("create-visit-report/", compliance.CreateVisitReport.as_view(), name="create_visit_report"),
+    path("visit-report/", compliance.VisitReportDetails.as_view(), name="visit_report"),
+    path("people-present/", compliance.PeoplePresent.as_view(), name="people_present"),
+    path("overview/", compliance.Overview.as_view(), name="overview"),
+    path("inspection/", compliance.Inspection.as_view(), name="inspection"),
+    path("compliance-licence/", compliance.ComplianceWithLicences.as_view(), name="compliance_with_licences"),
+    path("knowledge-people/", compliance.KnowledgePeople.as_view(), name="knowledge_of_people"),
+    path("knowledge-products/", compliance.KnowledgeProduct.as_view(), name="knowledge_of_products"),
+    # tabs
     path("<str:tab>/", main.CaseDetail.as_view(), name="case", kwargs={"disable_queue_lookup": True}),
     path("<str:tab>/give-advice/", advice.GiveAdvice.as_view(), name="give_advice"),
 ]
