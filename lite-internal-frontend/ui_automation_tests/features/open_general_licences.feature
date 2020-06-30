@@ -27,7 +27,5 @@ Feature: I want to add open general licences
     Given I sign in to SSO or am signed into SSO
     And an ogel licence has been added
     And an ogel application has been added
-    When I go to the internal homepage
-    And I filter by OGEL type
-    And I click on first case
+    When I go to ogel site registration case automatically created
     Then I see OGEL case

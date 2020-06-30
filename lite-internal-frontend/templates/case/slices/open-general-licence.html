@@ -4,7 +4,7 @@
 		<dt class="app-case__summary-list__key">
 			{% lcs 'cases.CasePage.DetailsTab.Site.DETAILS' %}
 		</dt>
-		<dd class="app-case__summary-list__value">
+		<dd class="app-case__summary-list__value" id="ogel_site">
 			<a href="{% url 'organisations:organisation_sites' case.data.organisation.id %}?return_to={{ CURRENT_PATH }}&return_to_text={{ case.reference_code }}#{{ case.data.site.id }}" class="govuk-link govuk-link--no-visited-state govuk-body govuk-!-margin-0">
 				{{ case.data.site.name }}
 			</a>
