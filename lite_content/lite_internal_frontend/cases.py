@@ -7,6 +7,7 @@ class CasesListPage:
     STATUS = "Status"
     NOT_UPDATED_RECENTLY = "This case has not been updated in over 5 days"
     OPEN_TEAM_ECJU = "This case contains open enquiries by your team"
+    FUTURE_REVIEW_DATE = "This case has a next review date set in the future"
     OPEN_ALL = "Open all"
     CLOSE_ALL = "Close all"
 
@@ -31,7 +32,7 @@ class CasesListPage:
         CASE_OFFICER = "case officer"
         ASSIGNED_USER = "assigned user"
         NOT_ASSIGNED = "Not assigned"
-        HIDDEN = "Show cases with open enquiries by your team"
+        HIDDEN = "Show hidden cases, including cases with open ECJU queries."
         EXPORTER_APPLICATION_REFERENCE = "exporter application reference"
         ORGANISATION_NAME = "organisation name"
         EXPORTER_SITE_NAME = "exporter site name"
@@ -129,6 +130,8 @@ class CasePage:
         TRADE_CONTROL_ACTIVITY_CATEGORIES = "Trade control activity categories"
         INSPECTOR = "Inspector"
         ADDRESS = "Address"
+        NEXT_REVIEW_DATE = "Next review date"
+        NO_NEXT_REVIEW_DATE = "No review date set"
 
         class Goods:
             TITLE = "good"
@@ -810,6 +813,10 @@ class Manage:
         YES = "Yes"
         NO = "Cancel"
         SUBMIT_BUTTON = "Continue"
+
+    class SetNextReviewDate:
+        TITLE = "Set next review date"
+        DESCRIPTION = "For example, 12 11 2020"
 
 
 class ReviewGoodsForm:
