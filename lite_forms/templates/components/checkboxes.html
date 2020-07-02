@@ -8,7 +8,7 @@
     <div class="govuk-checkboxes {% for class in component.classes %}{{ class }} {% endfor %}">
         {% for item in component.options %}
             <div class="govuk-checkboxes__item">
-                <input {% if item.auto_check and data|key_in_array:item.key %}checked{% endif %} class="govuk-checkboxes__input" data-attribute="{{ item.data_attribute }}" id="{{ item.value|replace_spaces }}" name="{{ component.name }}" type="checkbox" value="{{ item.key }}">
+                <input {% if item.auto_check and data|key_in_array:item.key %}checked{% endif %} class="govuk-checkboxes__input" data-attribute="{{ item.data_attribute }}" id="{% if item.id %}{{ item.id }}{% else %}{{ item.value|replace_spaces }}{% endif %}" name="{{ component.name }}" type="checkbox" value="{{ item.key }}">
                 <label class="govuk-label govuk-checkboxes__label" for="{{ item.value|replace_spaces }}">
                     <span class="{% for class in item.classes %}{{ class }} {% endfor %}">{{ item.value }}</span>
                 </label>

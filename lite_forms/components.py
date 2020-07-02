@@ -382,6 +382,7 @@ class Option:
         more_information: str = None,
         tag: str = None,
         disabled: bool = False,
+        id=None,
     ):
         from lite_forms.helpers import convert_to_markdown
 
@@ -397,6 +398,7 @@ class Option:
         self.more_information = more_information
         self.tag = tag
         self.disabled = disabled
+        self.id = id
 
 
 class Group:
