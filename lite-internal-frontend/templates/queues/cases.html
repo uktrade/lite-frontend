@@ -141,6 +141,11 @@
 											</div>
 										{% endif %}
 									{% endif %}
+									{% if case.has_future_review_date and data.results.is_work_queue %}
+										<div data-tooltip="{% lcs 'cases.CasesListPage.FUTURE_REVIEW_DATE' %}" class="app-cases__row__icon">
+											{% svg 'eye' %}
+										</div>
+									{% endif %}
 								</div>
 							</td>
 							<td class="govuk-table__cell">

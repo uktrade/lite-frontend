@@ -1,9 +1,11 @@
+import datetime
 from http import HTTPStatus
 
 from django.contrib import messages
 from django.http import StreamingHttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
@@ -16,6 +18,7 @@ from cases.forms.attach_documents import attach_documents_form
 from cases.forms.change_status import change_status_form
 from cases.forms.done_with_case import done_with_case_form
 from cases.forms.move_case import move_case_form
+from cases.forms.next_review_date import set_next_review_date_form
 from cases.forms.rerun_routing_rules import rerun_routing_rules_confirmation_form
 from cases.helpers.advice import get_advice_additional_context
 from cases.helpers.case import CaseView, Tabs, Slices
@@ -31,6 +34,7 @@ from cases.services import (
     put_rerun_case_routing_rules,
     patch_case,
     put_application_status,
+    put_next_review_date,
 )
 from cases.services import post_case_documents, get_document
 from compliance.services import get_compliance_licences
@@ -197,7 +201,14 @@ class CaseImDoneView(TemplateView):
 
     def get(self, request, **kwargs):
         if self.is_system_queue:
-            return form_page(request, done_with_case_form(request, self.case_pk))
+            case = get_case(request, self.case_pk)
+            has_review_date = (
+                True
+                if case.next_review_date
+                and datetime.datetime.strptime(case.next_review_date, "%Y-%m-%d").date() > timezone.now().date()
+                else False
+            )
+            return form_page(request, done_with_case_form(request, self.case_pk, has_review_date))
         else:
             data, status_code = put_unassign_queues(request, self.case_pk, {"queues": [str(self.queue_pk)]})
             if status_code != HTTPStatus.OK:
@@ -362,15 +373,23 @@ class CaseOfficer(SingleFormView):
         )
         self.context = {"case": case}
         self.success_url = reverse("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk})
+        self.get_action()
 
     def get_action(self):
         action = self.get_validated_data().get("_action")
+        case_type = self.context["case"]["case_type"]["type"]["key"]
 
         if action == "delete":
-            self.success_message = "Case officer removed"
+            self.success_message = (
+                "Inspector removed" if case_type == CaseType.COMPLIANCE.value else "Case officer removed"
+            )
             return delete_case_officer
         else:
-            self.success_message = "Case officer set successfully"
+            self.success_message = (
+                "Inspector set successfully"
+                if case_type == CaseType.COMPLIANCE.value
+                else "Case officer set successfully"
+            )
             return put_case_officer
 
 
@@ -428,3 +447,27 @@ class RerunRoutingRules(SingleFormView):
             return redirect(self.success_url)
 
         return super(RerunRoutingRules, self).post(request, **kwargs)
+
+
+class NextReviewDate(SingleFormView):
+    def init(self, request, **kwargs):
+        self.object_pk = kwargs["pk"]
+        self.data = get_case(request, self.object_pk)
+        self.form = set_next_review_date_form(self.kwargs["queue_pk"], self.object_pk,)
+        self.success_url = reverse("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk})
+
+    def get_action(self):
+        action = self.get_validated_data().get("_action")
+
+        if action == "submit":
+            self.success_message = "Next review date set successfully"
+            return put_next_review_date
+
+    def get_data(self):
+        data = self.data
+        date_fields = ["next_review_date"]
+        for field in date_fields:
+            if data.get(field, False):
+                date_split = data[field].split("-")
+                data[field + "year"], data[field + "month"], data[field + "day"] = date_split
+        return data

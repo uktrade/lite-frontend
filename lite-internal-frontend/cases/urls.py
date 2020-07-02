@@ -60,6 +60,7 @@ urlpatterns = [
         name="generate_document_create",
     ),
     path("case-officer/", main.CaseOfficer.as_view(), name="case_officer"),
+    path("review-date/", main.NextReviewDate.as_view(), name="review_date"),
     path("assign-user/", main.UserWorkQueue.as_view(), name="assign_user"),
     path("assign-user-queue/<uuid:user_pk>/", main.UserTeamQueue.as_view(), name="assign_user_queue"),
     path("rerun-routing-rules/", main.RerunRoutingRules.as_view(), name="rerun_routing_rules",),

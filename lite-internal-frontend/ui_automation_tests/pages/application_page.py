@@ -58,6 +58,9 @@ class ApplicationPage(BasePage):
     CASE_NOTES_AND_ACTIVITY_TAB = "tab-activity"  # ID
     TABLE_GOODS_ID = "table-goods"
     TABLE_DESTINATIONS_ID = "table-destinations"
+    NEXT_REVIEW_DATE_DAY_ID = "next_review_dateday"
+    NEXT_REVIEW_DATE_MONTH_ID = "next_review_datemonth"
+    NEXT_REVIEW_DATE_YEAR_ID = "next_review_dateyear"
 
     def get_case_copy_of_field_href(self):
         return self.driver.find_element_by_id(self.CASE_COPY_OF_ID).get_attribute("href")
@@ -70,6 +73,16 @@ class ApplicationPage(BasePage):
     def enter_case_note(self, text):
         self.driver.execute_script(f'document.getElementById("{self.INPUT_CASE_NOTE_ID}").value = "{text[:-1]}"')
         self.driver.find_element_by_id(self.INPUT_CASE_NOTE_ID).send_keys(text[-1:])
+
+    def set_next_review_date(self, day, month, year, context):
+        self.driver.find_element_by_id(self.NEXT_REVIEW_DATE_DAY_ID).clear()
+        self.driver.find_element_by_id(self.NEXT_REVIEW_DATE_DAY_ID).send_keys(day)
+        self.driver.find_element_by_id(self.NEXT_REVIEW_DATE_MONTH_ID).clear()
+        self.driver.find_element_by_id(self.NEXT_REVIEW_DATE_MONTH_ID).send_keys(month)
+        self.driver.find_element_by_id(self.NEXT_REVIEW_DATE_YEAR_ID).clear()
+        self.driver.find_element_by_id(self.NEXT_REVIEW_DATE_YEAR_ID).send_keys(year)
+
+        context.next_review_date = f"{year}-{month}-{day}"
 
     def get_text_of_case_note_field(self):
         return self.driver.find_element_by_id(self.INPUT_CASE_NOTE_ID).text

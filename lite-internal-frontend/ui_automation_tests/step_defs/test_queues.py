@@ -51,15 +51,6 @@ def see_queue_in_queue_list_with_countersigning_queue(driver, context):
     assert context.countersigning_queue_name in row
 
 
-@then("I dont see previously created application")
-def dont_see_queue_in_queue_list(driver, context):
-    driver.set_timeout_to(0)
-    if len(driver.find_elements_by_css_selector(".lite-information-text__text")) != 1:
-        assert context.app_id not in driver.find_element_by_css_selector(".govuk-table").text
-        assert context.case_id not in driver.find_element_by_css_selector(".govuk-table").text
-    driver.set_timeout_to_10_seconds()
-
-
 @then(parsers.parse('I see at least "{num}" queue checkboxes selected'))
 def see_number_of_checkboxes_selected(driver, context, num):
     ApplicationPage(driver).click_move_case_button()

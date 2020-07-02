@@ -51,7 +51,7 @@ def case_filters_bar(request, case_data) -> FiltersBar:
                 case_data["results"]["is_work_queue"],
                 Checkboxes(
                     name="hidden",
-                    options=[Option("true", CasesListPage.Filters.HIDDEN)],
+                    options=[Option("true", CasesListPage.Filters.HIDDEN, id="show-hidden-cases")],
                     classes=["govuk-checkboxes--small"],
                 ),
             ),

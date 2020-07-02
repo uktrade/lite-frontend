@@ -237,4 +237,7 @@
 	</script>
 	<script src="{% static 'javascripts/select-buttons.js' %}"></script>
 	<script src="{% static 'javascripts/modal.js' %}"></script>
+	{% if has_future_next_review_date %}
+		<script src="{% static  '/javascripts/assign_queue.js' %}"></script>
+	{% endif %}
 {% endblock %}

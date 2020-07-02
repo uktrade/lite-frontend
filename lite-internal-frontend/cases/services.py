@@ -33,6 +33,7 @@ from conf.constants import (
     QUEUES_URL,
     APPLICANT_URL,
     COMPLIANCE_URL,
+    NEXT_REVIEW_DATE_URL,
     COMPLIANCE_LICENCES_URL,
     COMPLIANCE_SITE_URL,
     COMPLIANCE_VISIT_URL,
@@ -340,6 +341,13 @@ def put_case_officer(request, pk, json):
 
 def delete_case_officer(request, pk, *args):
     data = delete(request, CASE_URL + str(pk) + CASE_OFFICER_URL)
+    return data.json(), data.status_code
+
+
+def put_next_review_date(request, pk, json):
+    if "next_review_dateday" in json:
+        json["next_review_date"] = format_date(json, "next_review_date")
+    data = put(request, CASE_URL + str(pk) + NEXT_REVIEW_DATE_URL, json)
     return data.json(), data.status_code
 
 
