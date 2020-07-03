@@ -10,9 +10,11 @@ $( '.lite-button-checkbox' ).click(function() {
 	setSelectButtonsState();
 });
 
-$( 'input:checkbox' ).change(function() {
-	setSelectButtonsState();
-});
+function setCheckboxEvent() {
+	$( 'input:checkbox' ).change(function() {
+		setSelectButtonsState();
+	});
+}
 
 function setSelectButtonsState() {
 	$( 'table' ).each(function(i, obj) {
@@ -31,4 +33,5 @@ function setSelectButtonsState() {
 	});
 }
 
+setCheckboxEvent();
 setSelectButtonsState();
