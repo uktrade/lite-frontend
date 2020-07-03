@@ -11,8 +11,19 @@
 	width: 24px!important;
 	margin: 0;
 
+	@include govuk-media-query($until: tablet) {
+		margin-top: -5px;
+		margin-right: -10px;
+		display: inline-block;
+
+		& + .govuk-table__cell {
+			display: inline-block;
+		}
+	}
+
 	div:hover .govuk-checkboxes__label::before {
 		box-shadow: 0 0 0 8px govuk-colour("mid-grey");
+		background-color: govuk-colour("white");
 	}
 
 	.govuk-checkboxes__label {
