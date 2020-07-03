@@ -47,12 +47,52 @@ def post_goods(request, json):
                 "date_of_issue": format_date(json, "date_of_issue"),
             }
 
+    if "item_category" in json and json["item_category"] == "group2_firearms":
+        add_firearm_details_to_data(json)
+
     data = post(request, GOODS_URL, json)
 
     if data.status_code == HTTPStatus.OK:
         data.json().get("good"), data.status_code
 
     return data.json(), data.status_code
+
+
+def add_firearm_details_to_data(json):
+    """
+    Return a firearm_details dictionary to be used when creating/editing a group 2 firearm good
+    Mutable - items in firearm_details are removed from the original json (duplicates)
+    """
+    firearm_details = {}
+    if "product_type_step" in json:
+        # parent component doesnt get sent when empty unlike the remaining form fields
+        firearm_details["type"] = json.get("type")
+    if "firearm_ammunition_step" in json:
+        firearm_details["year_of_manufacture"] = json.get("year_of_manufacture")
+        firearm_details["calibre"] = json.get("calibre")
+        del json["year_of_manufacture"]
+        del json["calibre"]
+    if "section_certificate_step" in json:
+        # parent component doesnt get sent when empty unlike the remaining form fields
+        firearm_details["is_covered_by_firearm_act_section_one_two_or_five"] = json.get(
+            "is_covered_by_firearm_act_section_one_two_or_five", ""
+        )
+        firearm_details["section_certificate_number"] = json.get("section_certificate_number")
+        formatted_section_certificate_date = format_date(json, "section_certificate_date_of_expiry")
+        firearm_details["section_certificate_date_of_expiry"] = (
+            formatted_section_certificate_date if formatted_section_certificate_date != "--" else None
+        )
+        del json["section_certificate_number"]
+    if "identification_markings_step" in json:
+        # parent component doesnt get sent when empty unlike the remaining form fields
+        firearm_details["has_identification_markings"] = json.get("has_identification_markings", "")
+        firearm_details["identification_markings_details"] = json.get("identification_markings_details")
+        firearm_details["no_identification_markings_details"] = json.get("no_identification_markings_details")
+        del json["identification_markings_details"]
+        del json["no_identification_markings_details"]
+
+    json["firearm_details"] = firearm_details
+    return json
 
 
 def validate_good(request, json):
@@ -70,6 +110,11 @@ def edit_good(request, pk, json):
 def edit_good_details(request, pk, json):
     data = put(request, GOODS_URL + pk + GOODS_DETAILS_URL, json)
     return data.json(), data.status_code
+
+
+def edit_good_firearm_details(request, pk, json):
+    add_firearm_details_to_data(json)
+    return edit_good_details(request, pk, json)
 
 
 def edit_good_pv_grading(request, pk, json):

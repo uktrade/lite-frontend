@@ -8,6 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from s3chunkuploader.file_handler import S3FileUploadHandler
 
+from applications.helpers.date_fields import split_date_into_components
 from applications.services import (
     get_application_ecju_queries,
     get_case_notes,
@@ -33,6 +34,10 @@ from goods.forms import (
     product_component_form,
     product_uses_information_security,
     software_technology_details_form,
+    group_two_product_type_form,
+    firearm_ammunition_details_form,
+    firearms_act_confirmation_form,
+    identification_markings_form,
 )
 from goods.helpers import COMPONENT_SELECTION_TO_DETAIL_FIELD_MAP, return_to_good_summary
 from goods.services import (
@@ -51,6 +56,7 @@ from goods.services import (
     edit_good_pv_grading,
     edit_good_details,
     get_good_details,
+    edit_good_firearm_details,
 )
 from lite_content.lite_exporter_frontend import strings, goods
 from lite_content.lite_exporter_frontend.goods import AttachDocumentForm
@@ -167,16 +173,14 @@ class AddGood(MultiFormView):
         copied_request = request.POST.copy()
         is_pv_graded = copied_request.get("is_pv_graded", "").lower() == "yes"
         is_software_technology = copied_request.get("item_category") in ["group3_software", "group3_technology"]
-        self.forms = add_good_form_group(request, is_pv_graded, is_software_technology)
+        is_firearms = copied_request.get("item_category") == "group2_firearms"
+        self.forms = add_good_form_group(request, is_pv_graded, is_software_technology, is_firearms)
 
-        if is_pv_graded:
-            # post on step 5 in both software/technology and group 1
-            if int(self.request.POST.get("form_pk")) == 5:
-                self.action = post_goods
-        else:
-            # post on step 4 in both software/technology and group 1
-            if int(self.request.POST.get("form_pk")) == 4:
-                self.action = post_goods
+        # we require the form index of the last form in the group, not the total number
+        number_of_forms = len(self.forms.get_forms()) - 1
+
+        if int(self.request.POST.get("form_pk")) == number_of_forms:
+            self.action = post_goods
 
     def get_success_url(self):
         return reverse_lazy("goods:add_document", kwargs={"pk": self.get_validated_data()["good"]["id"]})
@@ -414,6 +418,136 @@ class EditGrading(SingleFormView):
             return reverse_lazy("goods:add_document", kwargs={"pk": self.object_pk})
         elif raise_a_clc_query or raise_a_pv_query:
             return reverse_lazy("goods:raise_goods_query", kwargs={"pk": self.object_pk})
+        else:
+            return reverse_lazy("goods:good", kwargs={"pk": self.object_pk})
+
+
+class EditFirearmProductType(SingleFormView):
+    application_id = None
+
+    def init(self, request, **kwargs):
+        if "good_pk" in kwargs:
+            # coming from the application
+            self.object_pk = str(kwargs["good_pk"])
+            self.application_id = str(kwargs["pk"])
+        else:
+            self.object_pk = str(kwargs["pk"])
+        self.data = get_good_details(request, self.object_pk)[0]["firearm_details"]
+        self.form = group_two_product_type_form()
+        self.action = edit_good_firearm_details
+
+    def get_success_url(self):
+        # Next question firearm and ammunition details
+        if not self.data.get("year_of_manufacture") or not self.data.get("calibre"):
+            if "good_pk" in self.kwargs:
+                return reverse_lazy(
+                    "applications:ammunition", kwargs={"pk": self.application_id, "good_pk": self.object_pk}
+                )
+            else:
+                return reverse_lazy("goods:ammunition", kwargs={"pk": self.object_pk})
+        # Edit
+        else:
+            return return_to_good_summary(self.kwargs, self.application_id, self.object_pk)
+
+
+class EditAmmunition(SingleFormView):
+    application_id = None
+
+    def init(self, request, **kwargs):
+        if "good_pk" in kwargs:
+            # coming from the application
+            self.object_pk = str(kwargs["good_pk"])
+            self.application_id = str(kwargs["pk"])
+        else:
+            self.object_pk = str(kwargs["pk"])
+        self.data = get_good_details(request, self.object_pk)[0]["firearm_details"]
+        self.form = firearm_ammunition_details_form()
+        self.action = edit_good_firearm_details
+
+    def get_success_url(self):
+        # Next question is_covered_by_firearm_act_section_one_two_or_five - boolean
+        if self.data.get("is_covered_by_firearm_act_section_one_two_or_five") is None:
+            if "good_pk" in self.kwargs:
+                return reverse_lazy(
+                    "applications:firearms_act", kwargs={"pk": self.application_id, "good_pk": self.object_pk}
+                )
+            else:
+                return reverse_lazy("goods:firearms_act", kwargs={"pk": self.object_pk})
+        # Edit
+        else:
+            return return_to_good_summary(self.kwargs, self.application_id, self.object_pk)
+
+
+class EditFirearmActDetails(SingleFormView):
+    application_id = None
+
+    def init(self, request, **kwargs):
+        if "good_pk" in kwargs:
+            # coming from the application
+            self.object_pk = str(kwargs["good_pk"])
+            self.application_id = str(kwargs["pk"])
+        else:
+            self.object_pk = str(kwargs["pk"])
+        self.data = get_good_details(request, self.object_pk)[0]["firearm_details"]
+        self.form = firearms_act_confirmation_form()
+        self.action = edit_good_firearm_details
+
+    def get_data(self):
+        if self.data:
+            new_data = {
+                "section_certificate_number": self.data.get("section_certificate_number"),
+                "is_covered_by_firearm_act_section_one_two_or_five": self.data.get(
+                    "is_covered_by_firearm_act_section_one_two_or_five"
+                ),
+            }
+            # Get the certificate date split into components to display on the form
+            certificate_date_of_expiry = self.data.get("section_certificate_date_of_expiry")
+            if certificate_date_of_expiry:
+                date_prefix = "section_certificate_date_of_expiry"
+                # Pre-populate the date fields
+                (
+                    new_data[date_prefix + "year"],
+                    new_data[date_prefix + "month"],
+                    new_data[date_prefix + "day"],
+                ) = split_date_into_components(certificate_date_of_expiry, "-")
+
+            return new_data
+
+    def get_success_url(self):
+        # Next question identification markings - boolean
+        if self.data.get("has_identification_markings") is None:
+            if "good_pk" in self.kwargs:
+                return reverse_lazy(
+                    "applications:identification_markings",
+                    kwargs={"pk": self.application_id, "good_pk": self.object_pk},
+                )
+            else:
+                return reverse_lazy("goods:identification_markings", kwargs={"pk": self.object_pk})
+        # Edit
+        else:
+            return return_to_good_summary(self.kwargs, self.application_id, self.object_pk)
+
+
+class EditIdentificationMarkings(SingleFormView):
+    application_id = None
+
+    def init(self, request, **kwargs):
+        if "good_pk" in kwargs:
+            # coming from the application
+            self.object_pk = str(kwargs["good_pk"])
+            self.application_id = str(kwargs["pk"])
+        else:
+            self.object_pk = str(kwargs["pk"])
+        self.data = get_good_details(request, self.object_pk)[0]["firearm_details"]
+        self.form = identification_markings_form()
+        self.action = edit_good_firearm_details
+
+    def get_success_url(self):
+        # Return to the application add good summary if adding/editing good from the application
+        if "good_pk" in self.kwargs:
+            return reverse_lazy(
+                "applications:add_good_summary", kwargs={"pk": self.application_id, "good_pk": self.object_pk}
+            )
         else:
             return reverse_lazy("goods:good", kwargs={"pk": self.object_pk})
 

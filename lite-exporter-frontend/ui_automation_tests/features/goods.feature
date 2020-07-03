@@ -71,3 +71,22 @@ Feature: I want to edit and remove goods on the goods list
     Then I see my edited good details in the good page
     When I delete my good
     Then my good is no longer in the goods list
+
+  @LT_2351_add_firearm_category_two_good_and_edit @regression
+  Scenario: Add, edit and delete firearm good
+    Given I go to exporter homepage and choose Test Org
+    When I click on goods link
+    And I click add a good button
+    And I select product category "two" for a good
+    And I add a good with description "9mm barrel" part number "321" controlled "Yes" control code "ML1a" and graded "yes"
+    And I add the goods grading with prefix "abc" grading "uk_official" suffix "def" issuing authority "MoD" reference "12345" Date of issue "10-05-2015"
+    And I specify the firearm good details type "firearm" year of manufacture, calibre, firearms act applicable "No" and identification markings "No"
+    And I confirm I can upload a document
+    And I upload file "file_for_doc_upload_test_1.txt" with description "This is a file I want to upload to show."
+    And I get the goods ID
+    Then I see good in goods list
+    When I edit the good to description "edited" part number "321" controlled "Yes" and control list entry "ML1a"
+    And I edit the firearm good details to type "components_for_firearm" firearms act applicable "Yes" and identification markings "Yes"
+    Then I see my edited good details in the good page
+    When I delete my good
+    Then my good is no longer in the goods list

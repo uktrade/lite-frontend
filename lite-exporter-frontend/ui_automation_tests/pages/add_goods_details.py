@@ -42,6 +42,35 @@ class AddGoodDetails(BasePage):
     # Software/Technology details for category 3 goods
     SOFTWARE_OR_TECHNOLOGY_DETAILS_TEXTAREA_ID = "software_or_technology_details"
 
+    # Firearms - Product type
+    FIREARM_TYPE_PREFIX = "type-"
+    FIREARM_TYPE_FIREARM_ID = FIREARM_TYPE_PREFIX + "firearms"
+    FIREARM_TYPE_FIREARM_COMPONENT_ID = FIREARM_TYPE_PREFIX + "components_for_firearms"
+    FIREARM_TYPE_AMMUNITION_ID = FIREARM_TYPE_PREFIX + "ammunition"
+    FIREARM_TYPE_AMMUNITION_COMPONENT_ID = FIREARM_TYPE_PREFIX + "components_for_ammunition"
+
+    # Firearms - Firearms and ammunition details
+    FIREARM_YEAR_OF_MANUFACTURE_TEXTFIELD_ID = "year_of_manufacture"
+    FIREARM_CALIBRE_TEXTFIELD_ID = "calibre"
+
+    # Firearms - Firearms act sections 1,2,5 applicable
+    FIREARMS_ACT_PREFIX = "is_covered_by_firearm_act_section_one_two_or_five-"
+    FIREARMS_ACT_YES_ID = FIREARMS_ACT_PREFIX + "True"
+    FIREARMS_ACT_NO_ID = FIREARMS_ACT_PREFIX + "False"
+    SECTION_CERTIFICATE_NUMBER_TEXTFIELD_ID = "section_certificate_number"
+
+    CERTIFICATE_EXPIRY_DATE_PREFIX = "section_certificate_date_of_expiry"
+    CERTIFICATE_EXPIRY_DATE_DAY_ID = CERTIFICATE_EXPIRY_DATE_PREFIX + "day"
+    CERTIFICATE_EXPIRY_DATE_MONTH_ID = CERTIFICATE_EXPIRY_DATE_PREFIX + "month"
+    CERTIFICATE_EXPIRY_DATE_YEAR_ID = CERTIFICATE_EXPIRY_DATE_PREFIX + "year"
+
+    # Firearms - identification markings
+    FIREARMS_IDENTIFICATION_MARKINGS_PREFIX = "has_identification_markings-"
+    FIREARMS_IDENTIFICATION_MARKINGS_YES_ID = FIREARMS_IDENTIFICATION_MARKINGS_PREFIX + "True"
+    FIREARMS_IDENTIFICATION_MARKINGS_NO_ID = FIREARMS_IDENTIFICATION_MARKINGS_PREFIX + "False"
+    FIREARMS_IDENTIFICATION_MARKINGS_DETAILS_TEXTAREA_ID = "identification_markings_details"
+    FIREARMS_NO_IDENTIFICATION_MARKINGS_DETAILS_TEXTAREA_ID = "no_identification_markings_details"
+
     def select_product_category(self, category):
         # Accept categories "one", "two", "three-software", "three-technology" and match with an id accordingly
         if category == "two":
@@ -84,8 +113,11 @@ class AddGoodDetails(BasePage):
         if option == "No":
             self.driver.find_element_by_id(self.INFORMATION_SECURITY_NO_ID).click()
 
-    def enter_related_field_details(self, related_details_field_id):
-        details = fake.sentence(nb_words=5)
+    def enter_related_field_details(self, related_details_field_id, text=None):
+        if not text:
+            details = fake.sentence(nb_words=5)
+        else:
+            details = text
         details_element = self.driver.find_element_by_id(related_details_field_id)
         details_element.clear()
         details_element.send_keys(details)
@@ -97,3 +129,41 @@ class AddGoodDetails(BasePage):
             details_element = self.driver.find_element_by_id(self.SOFTWARE_OR_TECHNOLOGY_DETAILS_TEXTAREA_ID)
             details_element.clear()
             details_element.send_keys(text)
+
+    def select_firearm_product_type(self, option):
+        """ Only applicable to firearm goods """
+        if option == "firearm":
+            self.driver.find_element_by_id(self.FIREARM_TYPE_FIREARM_ID).click()
+        if option == "components_for_firearm":
+            self.driver.find_element_by_id(self.FIREARM_TYPE_FIREARM_COMPONENT_ID).click()
+        if option == "ammunition":
+            self.driver.find_element_by_id(self.FIREARM_TYPE_AMMUNITION_ID).click()
+        if option == "component_for_ammunition":
+            self.driver.find_element_by_id(self.FIREARM_TYPE_AMMUNITION_COMPONENT_ID).click()
+
+    def enter_year_of_manufacture(self):
+        self.enter_related_field_details(self.FIREARM_YEAR_OF_MANUFACTURE_TEXTFIELD_ID, text="2004")
+
+    def enter_calibre(self):
+        self.enter_related_field_details(self.FIREARM_CALIBRE_TEXTFIELD_ID, text=".99mm")
+
+    def select_do_firearms_act_sections_apply(self, option):
+        if option == "Yes":
+            self.driver.find_element_by_id(self.FIREARMS_ACT_YES_ID).click()
+            self.enter_related_field_details(self.SECTION_CERTIFICATE_NUMBER_TEXTFIELD_ID, text=fake.ean(length=13))
+            self.enter_certificate_expiry_date("03", "8", "2027")
+        if option == "No":
+            self.driver.find_element_by_id(self.FIREARMS_ACT_NO_ID).click()
+
+    def enter_certificate_expiry_date(self, day, month, year):
+        self.driver.find_element_by_id(self.CERTIFICATE_EXPIRY_DATE_DAY_ID).send_keys(day)
+        self.driver.find_element_by_id(self.CERTIFICATE_EXPIRY_DATE_MONTH_ID).send_keys(month)
+        self.driver.find_element_by_id(self.CERTIFICATE_EXPIRY_DATE_YEAR_ID).send_keys(year)
+
+    def does_firearm_have_identification_markings(self, has_markings):
+        if has_markings == "Yes":
+            self.driver.find_element_by_id(self.FIREARMS_IDENTIFICATION_MARKINGS_YES_ID).click()
+            self.enter_related_field_details(self.FIREARMS_IDENTIFICATION_MARKINGS_DETAILS_TEXTAREA_ID)
+        if has_markings == "No":
+            self.driver.find_element_by_id(self.FIREARMS_IDENTIFICATION_MARKINGS_NO_ID).click()
+            self.enter_related_field_details(self.FIREARMS_NO_IDENTIFICATION_MARKINGS_DETAILS_TEXTAREA_ID)

@@ -26,6 +26,10 @@ from goods.views import (
     GoodComponent,
     GoodInformationSecurity,
     GoodSoftwareTechnology,
+    EditFirearmProductType,
+    EditAmmunition,
+    EditFirearmActDetails,
+    EditIdentificationMarkings,
 )
 
 app_name = "applications"
@@ -64,6 +68,24 @@ urlpatterns = [
         "<uuid:pk>/goods/<uuid:good_pk>/edit-information-security/",
         GoodInformationSecurity.as_view(),
         name="good_information_security",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/type/",
+        EditFirearmProductType.as_view(),
+        name="firearm_type",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/ammunition/", EditAmmunition.as_view(), name="ammunition"
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/firearms-act/",
+        EditFirearmActDetails.as_view(),
+        name="firearms_act",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/identification_markings/",
+        EditIdentificationMarkings.as_view(),
+        name="identification_markings",
     ),
     path(
         "<uuid:pk>/goods/add-new/<uuid:good_pk>/good-detail-summary/",

@@ -110,12 +110,30 @@ def click_on_draft_good(driver, context, exporter_url):
     component_row_text = helpers.get_element_row_text_from_table(elements, "Component")
     infosec_row_text = helpers.get_element_row_text_from_table(elements, "Information security features")
     software_technology_details_row_text = helpers.get_element_row_text_from_table(elements, "Purpose")
-    assert "Yes, specially designed for military use" in military_use_row_text
-    if component_row_text:
-        assert "Yes, it's designed specially for hardware" in component_row_text
-    assert "No" in infosec_row_text
-    if software_technology_details_row_text:
-        assert "edited software purpose" in software_technology_details_row_text
+    category_row_text = helpers.get_element_row_text_from_table(elements, "Category")
+    firearm_product_type_row_text = helpers.get_element_row_text_from_table(elements, "Product type")
+    firearm_firearms_act_row_text = helpers.get_element_row_text_from_table(
+        elements, "Covered by the Firearms Act 1968"
+    )
+    firearm_identification_markings_row_text = helpers.get_element_row_text_from_table(
+        elements, "Identification markings"
+    )
+    firearm_year_of_manufacture_row_text = helpers.get_element_row_text_from_table(elements, "Year of manufacture")
+    firearm_calibre_row_text = helpers.get_element_row_text_from_table(elements, "Calibre")
+    if "Firearms" not in category_row_text:
+        assert "Yes, specially designed for military use" in military_use_row_text
+        if component_row_text:
+            assert "Yes, it's designed specially for hardware" in component_row_text
+        assert "No" in infosec_row_text
+        if software_technology_details_row_text:
+            assert "edited software purpose" in software_technology_details_row_text
+    if "Firearms" in category_row_text:
+        assert "Components for firearms" in firearm_product_type_row_text
+        assert "2004" in firearm_year_of_manufacture_row_text
+        assert ".99mm" in firearm_calibre_row_text
+        assert "Yes - certificate number" in firearm_firearms_act_row_text
+        assert "expires on 3 August 2027" in firearm_firearms_act_row_text
+        assert "Yes" in firearm_identification_markings_row_text
 
 
 @when("I click Add a new good")
@@ -305,6 +323,46 @@ def add_good_details(driver, category, military_use, component, infosec, context
         good_details_page.select_is_product_a_component(component)
         functions.click_submit(driver)
     good_details_page.does_product_employ_information_security(infosec)
+    functions.click_submit(driver)
+
+
+@when(  # noqa
+    parsers.parse(
+        'I specify the firearm good details type "{product_type}" year of manufacture, calibre, firearms act applicable "{firearms_act}" and identification markings "{has_markings}"'
+    )
+)
+def add_firearm_good_details(driver, product_type, firearms_act, has_markings, context):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.select_firearm_product_type(product_type)
+    functions.click_submit(driver)
+    good_details_page.enter_year_of_manufacture()
+    good_details_page.enter_calibre()
+    functions.click_submit(driver)
+    good_details_page.select_do_firearms_act_sections_apply(firearms_act)
+    functions.click_submit(driver)
+    good_details_page.does_firearm_have_identification_markings(has_markings)
+    functions.click_submit(driver)
+
+
+@when(  # noqa
+    parsers.parse(
+        'I edit the firearm good details to type "{product_type}" firearms act applicable "{firearms_act}" and identification markings "{has_markings}"'
+    )
+)
+def edit_good_details(driver, product_type, firearms_act, has_markings, context):  # noqa
+    goods_page = GoodsPage(driver)
+    good_details_page = AddGoodDetails(driver)
+
+    goods_page.click_on_firearm_good_edit_product_type_link()
+    good_details_page.select_firearm_product_type(product_type)
+    functions.click_submit(driver)
+
+    goods_page.click_on_firearm_good_edit_firearms_act_sections_applicable_link()
+    good_details_page.select_do_firearms_act_sections_apply(firearms_act)
+    functions.click_submit(driver)
+
+    goods_page.click_on_firearm_good_edit_identification_markings_link()
+    good_details_page.does_firearm_have_identification_markings(has_markings)
     functions.click_submit(driver)
 
 

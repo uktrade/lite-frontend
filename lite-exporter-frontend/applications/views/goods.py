@@ -105,16 +105,16 @@ class AddGood(MultiFormView):
         copied_request = request.POST.copy()
         is_pv_graded = copied_request.get("is_pv_graded", "") == "yes"
         is_software_technology = copied_request.get("item_category") in ["group3_software", "group3_technology"]
-        self.forms = add_good_form_group(request, is_pv_graded, is_software_technology, draft_pk=self.draft_pk)
+        is_firearms = copied_request.get("item_category") == "group2_firearms"
+        self.forms = add_good_form_group(
+            request, is_pv_graded, is_software_technology, is_firearms, draft_pk=self.draft_pk
+        )
 
-        if is_pv_graded:
-            # post on step 5 in both software/technology and group 1
-            if int(self.request.POST.get("form_pk")) == 5:
-                self.action = post_goods
-        else:
-            # post on step 4 in both software/technology and group 1
-            if int(self.request.POST.get("form_pk")) == 4:
-                self.action = post_goods
+        # we require the form index of the last form in the group, not the total number
+        number_of_forms = len(self.forms.get_forms()) - 1
+
+        if int(self.request.POST.get("form_pk")) == number_of_forms:
+            self.action = post_goods
 
     def get_success_url(self):
         return reverse_lazy(

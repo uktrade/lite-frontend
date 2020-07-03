@@ -1,5 +1,6 @@
 from django.urls import reverse, reverse_lazy
 
+from core.builtins.custom_tags import linkify
 from core.services import get_control_list_entries
 from core.services import get_pv_gradings
 from goods.helpers import good_summary, get_category_display_string
@@ -291,16 +292,39 @@ def pv_details_form(request):
     )
 
 
-def add_good_form_group(request, is_pv_graded: bool = None, is_software_technology: bool = None, draft_pk: str = None):
+def add_good_form_group(
+    request,
+    is_pv_graded: bool = None,
+    is_software_technology: bool = None,
+    is_firearms: bool = None,
+    draft_pk: str = None,
+):
     return FormGroup(
         [
             product_category_form(request),
             add_goods_questions(request, draft_pk),
             conditional(is_pv_graded, pv_details_form(request)),
             conditional(is_software_technology, software_technology_details_form(request)),
-            product_military_use_form(request),
-            conditional(not is_software_technology, product_component_form(request)),
-            product_uses_information_security(request),
+            conditional(not is_firearms, product_military_use_form(request)),
+            conditional(not is_software_technology and not is_firearms, product_component_form(request)),
+            conditional(not is_firearms, product_uses_information_security(request)),
+            conditional(is_firearms, group_two_product_type_form()),
+            conditional(is_firearms, firearm_ammunition_details_form()),
+            conditional(is_firearms, firearms_act_confirmation_form()),
+            conditional(is_firearms, identification_markings_form()),
+        ]
+    )
+
+
+def add_firearm_good_form_group(request, is_pv_graded: bool = None, draft_pk: str = None):
+    return FormGroup(
+        [
+            add_goods_questions(request, draft_pk),
+            conditional(is_pv_graded, pv_details_form(request)),
+            group_two_product_type_form(),
+            firearm_ammunition_details_form(),
+            firearms_act_confirmation_form(),
+            identification_markings_form(),
         ]
     )
 
@@ -475,6 +499,147 @@ def delete_good_form(good):
                 action="",
                 style=ButtonStyle.SECONDARY,
                 link=reverse_lazy("goods:good", kwargs={"pk": good["id"]}),
+            ),
+        ],
+    )
+
+
+def group_two_product_type_form():
+    return Form(
+        title=CreateGoodForm.FirearmGood.ProductType.TITLE,
+        questions=[
+            HiddenField("product_type_step", True),
+            RadioButtons(
+                title="",
+                name="type",
+                options=[
+                    Option(key="firearms", value=CreateGoodForm.FirearmGood.ProductType.FIREARM),
+                    Option(
+                        key="components_for_firearms",
+                        value=CreateGoodForm.FirearmGood.ProductType.COMPONENTS_FOR_FIREARM,
+                    ),
+                    Option(key="ammunition", value=CreateGoodForm.FirearmGood.ProductType.AMMUNITION),
+                    Option(
+                        key="components_for_ammunition",
+                        value=CreateGoodForm.FirearmGood.ProductType.COMPONENTS_FOR_AMMUNITION,
+                    ),
+                ],
+            ),
+        ],
+    )
+
+
+def firearm_ammunition_details_form():
+    return Form(
+        title=CreateGoodForm.FirearmGood.FirearmsAmmunitionDetails.TITLE,
+        questions=[
+            HiddenField("firearm_ammunition_step", True),
+            TextInput(
+                title=CreateGoodForm.FirearmGood.FirearmsAmmunitionDetails.YEAR_OF_MANUFACTURE,
+                description="",
+                name="year_of_manufacture",
+                optional=False,
+            ),
+            TextInput(
+                title=CreateGoodForm.FirearmGood.FirearmsAmmunitionDetails.CALIBRE,
+                description="",
+                name="calibre",
+                optional=False,
+            ),
+        ],
+    )
+
+
+def firearms_act_confirmation_form():
+    return Form(
+        title=CreateGoodForm.FirearmGood.FirearmsActCertificate.TITLE,
+        questions=[
+            HiddenField("section_certificate_step", True),
+            Label(CreateGoodForm.FirearmGood.FirearmsActCertificate.FIREARMS_ACT),
+            Label(
+                id="section-1-link",
+                text=linkify(
+                    CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_ONE_LINK,
+                    name=CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_ONE,
+                ),
+            ),
+            Label(
+                id="section-2-link",
+                text=linkify(
+                    CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_TWO_LINK,
+                    name=CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_TWO,
+                ),
+            ),
+            Label(
+                id="section-5-link",
+                text=linkify(
+                    CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_FIVE_LINK,
+                    name=CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_FIVE,
+                ),
+            ),
+            RadioButtons(
+                title="",
+                name="is_covered_by_firearm_act_section_one_two_or_five",
+                options=[
+                    Option(
+                        key=True,
+                        value=CreateGoodForm.FirearmGood.FirearmsActCertificate.YES,
+                        components=[
+                            TextInput(
+                                title=CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_CERTIFICATE_NUMBER,
+                                description="",
+                                name="section_certificate_number",
+                                optional=False,
+                            ),
+                            DateInput(
+                                title=CreateGoodForm.FirearmGood.FirearmsActCertificate.EXPIRY_DATE,
+                                description=CreateGoodForm.FirearmGood.FirearmsActCertificate.EXPIRY_DATE_HINT,
+                                prefix="section_certificate_date_of_expiry",
+                                name="section_certificate_date_of_expiry",
+                            ),
+                        ],
+                    ),
+                    Option(key=False, value=CreateGoodForm.FirearmGood.FirearmsActCertificate.NO),
+                ],
+            ),
+        ],
+    )
+
+
+def identification_markings_form():
+    return Form(
+        title=CreateGoodForm.FirearmGood.IdentificationMarkings.TITLE,
+        questions=[
+            HiddenField("identification_markings_step", True),
+            RadioButtons(
+                title="",
+                name="has_identification_markings",
+                options=[
+                    Option(
+                        key=True,
+                        value=CreateGoodForm.FirearmGood.IdentificationMarkings.YES,
+                        components=[
+                            TextArea(
+                                title=CreateGoodForm.FirearmGood.IdentificationMarkings.MARKINGS_DETAILS,
+                                description="",
+                                name="identification_markings_details",
+                                optional=False,
+                            ),
+                        ],
+                    ),
+                    Option(
+                        key=False,
+                        value=CreateGoodForm.FirearmGood.IdentificationMarkings.NO,
+                        components=[
+                            TextArea(
+                                title=CreateGoodForm.FirearmGood.IdentificationMarkings.NO_MARKINGS_DETAILS,
+                                description="",
+                                name="no_identification_markings_details",
+                                optional=False,
+                            )
+                        ],
+                    ),
+                ],
             ),
         ],
     )
