@@ -95,6 +95,13 @@ class GoodPage:
             ISSUING_AUTHORITY = "Issuing authority"
             DATE_OF_ISSUE = "Date of issue"
 
+        class FirearmDetails:
+            PRODUCT_TYPE = "Product type"
+            YEAR_OF_MANUFACTURE = "Year of manufacture"
+            CALIBRE = "Calibre"
+            COVERED_BY_THE_FIREARMS_ACT_1968 = "Covered by the Firearms Act 1968"
+            IDENTIFICATION_MARKINGS = "Identification markings"
+
 
 class DocumentSensitivityForm:
     TITLE = "Do you have a document for the product and is the document rated OFFICIAL-SENSITIVE or below?"
@@ -203,6 +210,43 @@ class CreateGoodForm:
 
     class TechnologySoftware:
         TITLE = "Describe the purpose of the "
+
+    class FirearmGood:
+        class ProductType:
+            TITLE = "Select the type of product"
+            FIREARM = "Firearm"
+            COMPONENTS_FOR_FIREARM = "Component for a firearm"
+            AMMUNITION = "Ammunition"
+            COMPONENTS_FOR_AMMUNITION = "Component for ammunition"
+
+        class FirearmsAmmunitionDetails:
+            TITLE = "Firearms and ammunition details"
+            YEAR_OF_MANUFACTURE = "Year of manufacture"
+            CALIBRE = "Enter the calibre"
+
+        class FirearmsActCertificate:
+            TITLE = "Is the product covered by Section 1, Section 2 or Section 5 of the Firearms Act 1968?"
+
+            FIREARMS_ACT = "Firearms Act 1968:"
+            SECTION_ONE = "Section 1 (opens in new tab)"
+            SECTION_ONE_LINK = "http://www.legislation.gov.uk/ukpga/1968/27/section/1"
+            SECTION_TWO = "Section 2 (opens in new tab)"
+            SECTION_TWO_LINK = "http://www.legislation.gov.uk/ukpga/1968/27/section/2"
+            SECTION_FIVE = "Section 5 (opens in new tab)"
+            SECTION_FIVE_LINK = "http://www.legislation.gov.uk/ukpga/1968/27/section/5"
+
+            SECTION_CERTIFICATE_NUMBER = "Section certificate number"
+            EXPIRY_DATE = "Expiry date"
+            EXPIRY_DATE_HINT = "For example, 12 11 2022"
+            YES = "Yes"
+            NO = "No"
+
+        class IdentificationMarkings:
+            TITLE = "Does the product have identification markings?"
+            MARKINGS_DETAILS = "Provide the identification markings"
+            NO_MARKINGS_DETAILS = "Explain why there are no identification markings"
+            YES = "Yes"
+            NO = "No"
 
 
 class GoodGradingForm:
@@ -464,6 +508,13 @@ class GoodsDetailSummary:
     PV_GRADING_NO = "No"
     INCORPORATED = "Incorporated"
     PURPOSE_SOFTWARE_TECHNOLOGY = "Purpose"
+
+    class FirearmDetails:
+        PRODUCT_TYPE = "Product type"
+        YEAR_OF_MANUFACTURE = "Year of manufacture"
+        CALIBRE = "Calibre"
+        COVERED_BY_THE_FIREARMS_ACT_1968 = "Covered by the Firearms Act 1968"
+        IDENTIFICATION_MARKINGS = "Identification markings"
 
 
 class AttachDocumentPage:
