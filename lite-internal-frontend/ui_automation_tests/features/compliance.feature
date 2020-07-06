@@ -40,9 +40,6 @@ Feature: I want to generate and view compliance cases on approval and proviso of
     And I search for the finalised licence
     And I apply filters
     Then I see my previously created licence
-
-  @regression @LT_1122
-  Scenario: Create compliance visit case and respond to basic details
     When I go to the compliance case created
     And I click add a visit report
     Then I am on a compliance visit case
@@ -62,6 +59,4 @@ Feature: I want to generate and view compliance cases on approval and proviso of
     Then I see knowledge of controlled product details
     When I go to the ECJU queries tab
     Then I see different ecju query buttons
-
-
-
+    
