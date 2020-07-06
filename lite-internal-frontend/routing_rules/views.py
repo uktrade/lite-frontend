@@ -27,9 +27,10 @@ from users.services import get_gov_user
 
 class RoutingRulesList(TemplateView):
     def get(self, request, **kwargs):
-        params = {"page": int(request.GET.get("page", 1))}
-        params = get_params_if_exist(request, ["case_status", "team", "queue", "tier", "only_active"], params)
-
+        params = {
+            "page": int(request.GET.get("page", 1)),
+            **get_params_if_exist(request, ["case_status", "team", "queue", "tier", "only_active"]),
+        }
         data, _ = get_routing_rules(request, convert_dict_to_query_params(params))
 
         user_data, _ = get_gov_user(request, str(request.user.lite_api_user_id))
@@ -38,7 +39,7 @@ class RoutingRulesList(TemplateView):
 
         filters = FiltersBar(
             [
-                Select(title=Filter.CASE_STATUS, name="case_status", options=get_statuses(request, True),),
+                Select(title=Filter.CASE_STATUS, name="case_status", options=get_statuses(request, True)),
                 *conditional(
                     has_permission(request, Permission.MANAGE_ALL_ROUTING_RULES),
                     [
