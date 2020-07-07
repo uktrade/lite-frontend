@@ -6,27 +6,35 @@
 </select>
 
 <script type="text/javascript" nonce="{{ request.csp_nonce }}">
-	$(document).ready(function() {
-		accessibleAutocomplete.enhanceSelectElement({
-			defaultValue: '',
-			displayMenu: 'overlay',
-			selectElement: document.querySelector('#{{ component.name|prefix_dots }}'),
-			cssNamespace: 'lite-autocomplete',
-			onConfirm: (val) => {
-				if (val && $("#{{ component.name|prefix_dots }}").val()) {
-					$("#{{ component.name|prefix_dots }}-select option").filter(function() {
-					  return $(this).text() != val;
-					}).prop('selected', false);
-					$("#{{ component.name|prefix_dots }}-select option").filter(function() {
-					  return $(this).text() == val;
-					}).prop('selected', true);
+	{% if component.deferred %}
+		function loadAutoCompletes() {
+	{% else %}
+		$(document).ready(function() {
+	{% endif %}
+			accessibleAutocomplete.enhanceSelectElement({
+				defaultValue: '',
+				displayMenu: 'overlay',
+				selectElement: document.querySelector('#{{ component.name|prefix_dots }}'),
+				cssNamespace: 'lite-autocomplete',
+				onConfirm: (val) => {
+					if (val && $("#{{ component.name|prefix_dots }}").val()) {
+						$("#{{ component.name|prefix_dots }}-select option").filter(function() {
+						  return $(this).text() != val;
+						}).prop('selected', false);
+						$("#{{ component.name|prefix_dots }}-select option").filter(function() {
+						  return $(this).text() == val;
+						}).prop('selected', true);
 
-				} else if (val == undefined && $("#{{ component.name|prefix_dots }}").val() == "") {
-					$("#{{ component.name|prefix_dots }}-select option").filter(function() {
-					  return $(this).text() != val;
-					}).prop('selected', false);
+					} else if (val == undefined && $("#{{ component.name|prefix_dots }}").val() == "") {
+						$("#{{ component.name|prefix_dots }}-select option").filter(function() {
+						  return $(this).text() != val;
+						}).prop('selected', false);
+					}
 				}
-			}
+			});
+	{% if component.deferred %}
+		}
+	{% else %}
 		});
-	});
+	{% endif %}
 </script>

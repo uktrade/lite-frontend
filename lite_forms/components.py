@@ -614,13 +614,20 @@ class TokenBar:
 
 class AutocompleteInput:
     def __init__(
-        self, name: str, options: List, title: str = "", description: str = "", classes: Optional[List] = None
+        self,
+        name: str,
+        options: List,
+        title: str = "",
+        description: str = "",
+        classes: Optional[List] = None,
+        deferred: bool = False,
     ):
         self.name = name
         self.title = title
         self.description = description
         self.options = options
         self.classes = classes
+        self.deferred = deferred
         self.input_type = "autocomplete"
         self.javascript_imports = ["/javascripts/accessible-autocomplete.min.js"]
 
