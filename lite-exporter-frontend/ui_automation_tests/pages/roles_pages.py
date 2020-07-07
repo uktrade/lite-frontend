@@ -1,4 +1,4 @@
-from ui_automation_tests.shared.BasePage import BasePage
+from ui_automation_tests.pages.BasePage import BasePage
 from ui_automation_tests.shared.tools.helpers import find_paginated_item_by_id
 
 

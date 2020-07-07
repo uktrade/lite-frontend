@@ -26,7 +26,7 @@ class OgelPage(BasePage):
         functions.try_open_filters(self.driver)
         self.driver.find_element_by_id(self.FILTER_NAME_ID).clear()
         self.driver.find_element_by_id(self.FILTER_NAME_ID).send_keys(name)
-        functions.apply_filters(self.driver)
+        functions.click_apply_filters(self.driver)
 
     def click_ogel_tab(self):
         self.driver.find_element_by_id(self.OGEL_TAB).click()
