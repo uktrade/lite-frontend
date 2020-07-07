@@ -56,7 +56,7 @@ def send_tokens_to_token_bar(driver: WebDriver, element_selector: str, tokens: L
     time.sleep(1)
 
 
-def apply_filters(driver: WebDriver):
+def click_apply_filters(driver: WebDriver):
     driver.find_element_by_id("button-apply-filters").click()
 
 

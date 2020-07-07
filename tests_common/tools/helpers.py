@@ -147,7 +147,6 @@ def scroll_to_element_below_header_by_id(driver, selector):
 
 def scroll_to_element_by_id(driver, element_id):
     driver.execute_script("document.getElementById('" + element_id + "').scrollIntoView(true);")
-    driver.execute_script("document.getElementById('" + element_id + "').scrollIntoView(true);")
 
 
 def search_for_correct_date_regex_in_element(element):
