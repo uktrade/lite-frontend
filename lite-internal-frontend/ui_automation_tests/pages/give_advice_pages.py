@@ -1,6 +1,6 @@
 from selenium.webdriver.support.select import Select
 
-from shared.BasePage import BasePage
+from pages.BasePage import BasePage
 from shared.tools.helpers import scroll_to_element_below_header_by_id
 
 

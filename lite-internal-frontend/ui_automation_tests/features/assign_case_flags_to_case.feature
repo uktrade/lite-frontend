@@ -21,9 +21,6 @@ Feature: I want to add case-level flags to a case and view them
     And I click the edit flags link
     And I select a "Organisation" flag
     Then the "added" flag appears in the audit trail
-    When I go to the internal homepage
-    Then I see previously created application
-    And I see added flags to case
     When I go to application previously created
     Then I see added flags to case in case view
     #rollback

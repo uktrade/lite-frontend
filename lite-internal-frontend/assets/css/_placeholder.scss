@@ -1,13 +1,17 @@
 .app-hidden {
-    display: none;
+	display: none;
+}
+
+.app-hidden--force {
+	display: none!important;
 }
 
 .app-expanded-row__item {
-    display: none;
+	display: none;
 }
 
 .app-expanded-row__item--invert {
-    display: block;
+	display: block;
 }
 
 .app-letter-preview__page {

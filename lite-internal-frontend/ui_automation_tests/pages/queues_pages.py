@@ -1,7 +1,7 @@
 from selenium.webdriver.support.select import Select
 
 from shared import functions
-from shared.BasePage import BasePage
+from pages.BasePage import BasePage
 
 
 class QueuesPages(BasePage):

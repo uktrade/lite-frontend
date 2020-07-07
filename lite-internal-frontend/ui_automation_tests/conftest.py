@@ -186,13 +186,13 @@ def see_queue_in_queue_list(driver, context):  # noqa
     case_page = CaseListPage(driver)
     functions.try_open_filters(driver)
     case_page.filter_by_case_reference(context.reference_code)
-    case_page.click_apply_filters_button()
+    functions.click_apply_filters(driver)
     assert driver.find_element_by_id(context.case_id).is_displayed()
 
 
 @when("I show filters")  # noqa
 def i_show_filters(driver):  # noqa
-    functions.try_open_filters(driver)
+    Shared(driver).try_open_filters()
 
 
 @when("I go to users")  # noqa
@@ -268,8 +268,8 @@ def work_queue(driver, context, internal_url):  # noqa
     driver.get(internal_url.rstrip("/") + "/queues/" + context.queue_id)
 
 
-@then("My case is not in the queue")  # noqa
-def no_cases_in_queue(driver, context):  # noqa
+@then("my case is not in the queue")  # noqa
+def my_case_not_in_queue(driver, context):  # noqa
     assert context.case_id not in Shared(driver).get_text_of_cases_form()
 
 
@@ -493,7 +493,7 @@ def preview_template(driver):  # noqa
 
 @when("I apply filters")  # noqa
 def i_apply_filters(driver, context):  # noqa
-    CaseListPage(driver).click_apply_filters_button()
+    functions.click_apply_filters(driver)
 
 
 @then("I dont see previously created application")  # noqa

@@ -147,13 +147,6 @@
 
 	<script nonce="{{ request.csp_nonce }}" type="text/javascript">
 		$("#link-menu").removeAttr("href");
-		tippy("*[data-tooltip]", {
-			content(reference) {
-				return reference.getAttribute('data-tooltip');
-			},
-			animation: 'scale-subtle',
-		});
-
 		const menu = document.getElementById('lite-menu');
 		menu.style.display = 'block';
 		tippy("#link-menu", {
@@ -166,11 +159,23 @@
 			placement: 'bottom'
 		});
 
-		tippy('.app-flag--label', {
-			content(reference) {
-				return reference.getAttribute('data-label');
-			},
-		});
+		function setTooltips() {
+			tippy("*[data-tooltip]", {
+				content(reference) {
+					return reference.getAttribute('data-tooltip');
+				},
+				allowHTML: true,
+				animation: 'scale-subtle',
+			});
+
+			tippy('.app-flag--label', {
+				content(reference) {
+					return reference.getAttribute('data-label');
+				},
+			});
+		}
+
+		setTooltips();
 	</script>
 
 </body>

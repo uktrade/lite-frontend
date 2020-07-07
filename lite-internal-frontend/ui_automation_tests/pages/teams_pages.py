@@ -1,5 +1,5 @@
 from pages.users_page import UsersPage
-from shared.BasePage import BasePage
+from pages.BasePage import BasePage
 
 
 class TeamsPages(BasePage):

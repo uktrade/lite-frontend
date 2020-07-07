@@ -2,7 +2,6 @@ from __future__ import division
 
 import datetime
 import json
-import math
 import re
 from collections import Counter, OrderedDict
 from html import escape
@@ -349,54 +348,6 @@ def display_grading(text: str):
 def is_system_team(id: str):
     ids = [team_id.value for team_id in SystemTeamsID]
     return id in ids
-
-
-@register.filter()
-def get_sla_percentage(case):
-    remaining_days = case["sla_remaining_days"]
-
-    if remaining_days <= 0:
-        return "100"
-    else:
-        return _round_percentage((case["sla_days"] / (case["sla_days"] + case["sla_remaining_days"])) * 100)
-
-
-@register.filter()
-def get_sla_hours_percentage(case):
-    sla_hours_since_raised = case["sla_hours_since_raised"]
-    return _round_percentage((sla_hours_since_raised / 48) * 100)
-
-
-def _round_percentage(percentage):
-    # Round up to nearest 10
-    if percentage == 0:
-        return "10"
-    elif percentage >= 100:
-        return "100"
-    else:
-        return str(math.ceil(percentage / 10) * 10)
-
-
-@register.filter()
-def get_sla_ring_colour(case):
-    remaining_days = case["sla_remaining_days"]
-
-    if remaining_days > 5:
-        return "green"
-    elif remaining_days >= 0:
-        return "yellow"
-    else:
-        return "red"
-
-
-@register.filter()
-def get_sla_hours_ring_colour(case):
-    sla_hours_since_raised = case["sla_hours_since_raised"]
-
-    if sla_hours_since_raised >= 48:
-        return "red"
-    else:
-        return "yellow"
 
 
 @register.filter()

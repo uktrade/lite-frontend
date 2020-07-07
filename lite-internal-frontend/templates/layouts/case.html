@@ -187,7 +187,6 @@
 {% block javascript %}
 	<script type="text/javascript">
 		$(".app-case-header__candy__popup").show();
-
 		tippy(".app-case-header__candy", {
 			content(reference) {
 				return document.getElementById($("#" + reference.getAttribute("id")).next().attr("id"));

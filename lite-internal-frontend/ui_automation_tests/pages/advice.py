@@ -1,7 +1,7 @@
 from selenium.common.exceptions import WebDriverException
 
 from shared import selectors
-from shared.BasePage import BasePage
+from pages.BasePage import BasePage
 
 
 class BaseAdvicePage(BasePage):

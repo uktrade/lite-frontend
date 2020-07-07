@@ -1,33 +1,16 @@
-.app-flags-selector .tokenfield {
-	max-width: none;
-	align-items: flex-start;
-	cursor: text;
-	padding: govuk-spacing(2);
-	padding-bottom: 0;
-
-	.app-flag {
-		padding-right: govuk-spacing(6);
-		margin-right: govuk-spacing(2);
-		margin-bottom: govuk-spacing(2);
-	}
-
-	.tokenfield-input {
-		line-height: 26px!important;
-		padding: 6px 0 10px 0;
-	}
-}
-
 .app-flags {
 	padding: 0;
 	display: flex;
-	margin: 0;
-	margin-bottom: govuk-spacing(6);
+	margin: 0 0 govuk-spacing(6);
 
 	&--list {
 		display: block;
 		grid-template-columns: 1fr;
 		width: 100%;
 		margin: 0;
+		min-width: 200px;
+		width: 200px;
+		max-width: 200px;
 
 		.app-flag {
 			display: flex;
@@ -41,11 +24,30 @@
 			&:last-of-type {
 				margin-bottom: 0;
 			}
+
+			&::after {
+				content: "";
+				position: absolute;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				width: govuk-spacing(6);
+				background: inherit;
+				-webkit-mask-image: linear-gradient(to right, transparent 0%, black 80%);
+				mask-image: linear-gradient(to right, transparent 0%, black 80%);
+			}
 		}
 	}
 }
-
+@keyframes load-flag {
+	from {
+		opacity: 0;
+		transform: scaleX(0.8) scaleY(0.5) translateY(-10px);
+		margin-bottom: -30px;
+	}
+}
 $flag-border-width: 3px;
+
 .app-flag {
 	@include govuk-font($size: 16, $weight: bold);
 	position: relative;
@@ -61,7 +63,7 @@ $flag-border-width: 3px;
 	margin-right: govuk-spacing(2);
 	margin-bottom: govuk-spacing(2);
 
-	&::after {
+	&::before {
 		content: "";
 		position: absolute;
 		top: $flag-border-width;
@@ -69,6 +71,10 @@ $flag-border-width: 3px;
 		bottom: $flag-border-width;
 		width: $flag-border-width;
 		background: currentColor;
+	}
+
+	&--animate {
+		animation: load-flag .2s;
 	}
 
 	&--checkbox {
@@ -118,5 +124,44 @@ $flag-border-width: 3px;
 	&--brown {
 		background: govuk-tint(govuk-colour("brown"), 85);
 		color: govuk-colour("brown");
+	}
+}
+
+.app-flags__expander {
+	@include appearance(none);
+	@include govuk-font($size: 16);
+	color: $govuk-secondary-text-colour;
+	background-color: transparent;
+	outline: 0;
+	border: 0;
+	padding: govuk-spacing(1) 0;
+	margin: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-bottom: 2px solid transparent;
+	cursor: pointer;
+
+	&:hover {
+		border-bottom-color: currentColor;
+	}
+
+	&:active {
+		color: $govuk-text-colour;
+		border-bottom-color: $govuk-text-colour;
+	}
+
+	&:focus {
+		@include govuk-focused-text;
+	}
+
+	svg {
+		height: 8px;
+		margin-top: 2px;
+		margin-right: govuk-spacing(1);
+
+		* {
+			fill: currentColor;
+		}
 	}
 }

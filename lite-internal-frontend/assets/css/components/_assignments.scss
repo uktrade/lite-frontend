@@ -1,0 +1,80 @@
+$app-assignment-item-size: 35px;
+
+.app-assignments__container {
+	@include govuk-font($size: 16);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-wrap: nowrap;
+	padding: 0;
+	margin: 0;
+}
+
+.app-assignments__list {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	margin-right: govuk-spacing(1);
+}
+
+.app-assignments__item {
+	display: inline-block;
+	transition: .2s ease;
+	box-sizing: border-box;
+	background-color: govuk-colour("mid-grey");
+	border: 2px solid $govuk-body-background-colour;
+	border-radius: $app-assignment-item-size;
+
+	&:not(:first-child) {
+    	margin-left: - 6px;
+	}
+
+	&:not(:last-child) {
+    	a {
+			padding-right: 2px;
+		}
+	}
+
+	&:hover {
+		transform: translateY(-5px);
+		z-index: 1!important;
+		background-color: $govuk-link-colour;
+
+		a {
+			padding-right: 0!important;
+		}
+	}
+
+	&-link {
+		@include govuk-font($size: 14);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: $app-assignment-item-size;
+		height: $app-assignment-item-size;
+		cursor: pointer;
+		color: $govuk-body-background-colour!important;
+		text-transform: uppercase;
+		text-decoration: none;
+		transition: .2s ease;
+		box-sizing: border-box;
+		border-radius: inherit;
+
+		&:focus {
+			@include govuk-focused-text;
+			color: $govuk-focus-text-colour!important;
+		}
+	}
+}
+
+.app-assignments__link {
+	border-bottom: 1px dashed currentColor;
+	padding-bottom: 3px;
+	margin: 0;
+	white-space: nowrap;
+	margin-right: govuk-spacing(3);
+	cursor: default!important;
+}

@@ -1,5 +1,5 @@
 from shared import functions
-from shared.BasePage import BasePage
+from pages.BasePage import BasePage
 
 
 class AdditionalContactsPage(BasePage):

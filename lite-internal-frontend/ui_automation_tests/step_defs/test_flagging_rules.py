@@ -1,6 +1,7 @@
 from pytest_bdd import when, then, scenarios, parsers, given
 import shared.tools.helpers as utils
 from pages.shared import Shared
+from shared import functions
 
 from ui_automation_tests.pages.flagging_rules_pages import FlaggingRulePages
 
@@ -21,7 +22,7 @@ def see_flag_in_list(driver, context, status):
 @when("I click include deactivated")
 def click_include_deactivated(driver):
     FlaggingRulePages(driver).click_include_deactivated()
-    FlaggingRulePages(driver).click_apply_filters_button()
+    functions.click_apply_filters(driver)
 
 
 @when(

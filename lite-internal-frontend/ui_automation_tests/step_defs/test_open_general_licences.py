@@ -1,3 +1,4 @@
+from faker import Faker
 from pytest_bdd import scenarios, when, then, given
 
 from pages.application_page import ApplicationPage
@@ -9,9 +10,7 @@ from pages.open_general_licences_pages import (
     OpenGeneralLicencesDeactivatePage,
     OpenGeneralLicencesCasePage,
 )
-from pages.shared import Shared
 from shared import functions
-from faker import Faker
 
 scenarios("../features/open_general_licences.feature", strict_gherkin=False)
 
@@ -132,10 +131,9 @@ def ogel_application_created(apply_for_ogel_application):  # noqa
 
 @when("I filter by OGEL type")
 def filter_by_ogel(driver):
-    case = CaseListPage(driver)
     functions.try_open_filters(driver)
-    case.select_filter_case_type_from_dropdown("Open General Export Licence")
-    case.click_apply_filters_button()
+    CaseListPage(driver).select_filter_case_type_from_dropdown("Open General Export Licence")
+    functions.click_apply_filters(driver)
 
 
 @then("I see OGEL case")

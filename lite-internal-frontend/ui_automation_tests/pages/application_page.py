@@ -2,10 +2,9 @@ import time
 
 from selenium.webdriver.support.ui import Select
 
-from shared import functions, selectors
-from shared.BasePage import BasePage
+from shared import functions
+from pages.BasePage import BasePage
 from shared.tools.helpers import scroll_to_element_by_id
-
 from ui_automation_tests.shared.tools.helpers import scroll_to_element_below_header_by_id
 
 
@@ -46,7 +45,7 @@ class ApplicationPage(BasePage):
     EDIT_GOODS_FLAGS = "button-edit-goods-flags"  # ID
     CASE_OFFICER_CSS = ".govuk-link[href*='case-officer']"  # CSS
     ASSIGN_USER_ID = "assign-user"
-    EXPAND_FLAGS_PARTIAL_ID = "expand-flags-"
+    EXPAND_FLAGS_CSS = ".app-flags__expander"
     ASSIGNED_USERS_ID = "assigned-users"
     CASE_QUEUES_ID = "assigned-queues"
     HMRC_GOODS_LOCATION = "hmrc-goods-location"
@@ -224,8 +223,8 @@ class ApplicationPage(BasePage):
             )
         )
 
-    def click_expand_flags(self, case_id):
-        self.driver.find_element_by_id(self.EXPAND_FLAGS_PARTIAL_ID + case_id).click()
+    def click_expand_flags(self, element, num):
+        element.self.driver.find_elements_by_css_selector(self.EXPAND_FLAGS_CSS)[num].click()
 
     def get_type_of_case_from_page(self):
         return self.driver.find_element_by_id(self.TYPE_OF_CASE).text
@@ -247,7 +246,7 @@ class ApplicationPage(BasePage):
         functions.try_open_filters(self.driver)
         select = Select(self.driver.find_element_by_id(self.USER_TYPE_ID))
         select.select_by_visible_text(user_type)
-        self.driver.find_element_by_css_selector(selectors.BUTTON_APPLY_FILTERS).click()
+        functions.click_apply_filters(self.driver)
 
     def get_text_of_first_audit_trail_item(self):
         return self.driver.find_elements_by_css_selector(self.AUDIT_TRAIL_ITEM)[-1].text

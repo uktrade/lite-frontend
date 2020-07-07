@@ -87,7 +87,7 @@ def users_profile_is_updated(driver, context):
 @when(parsers.parse('I change the user filter to "{status}"'))  # noqa
 def filter_status_change(driver, context, status):  # noqa
     CaseListPage(driver).select_filter_user_status_from_dropdown(status)
-    CaseListPage(driver).click_apply_filters_button()
+    functions.click_apply_filters(driver)
 
 
 @when("I go to teams")

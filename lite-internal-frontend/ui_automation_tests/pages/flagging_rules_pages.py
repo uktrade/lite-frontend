@@ -1,8 +1,6 @@
 from selenium.webdriver.support.select import Select
 
-from shared import selectors
-from shared.BasePage import BasePage
-
+from pages.BasePage import BasePage
 from ui_automation_tests.shared import functions
 
 
@@ -22,9 +20,6 @@ class FlaggingRulePages(BasePage):
 
     def click_include_deactivated(self):
         self.driver.find_element_by_id(self.INCLUDE_DEACTIVATED).click()
-
-    def click_apply_filters_button(self):
-        self.driver.find_element_by_css_selector(selectors.BUTTON_APPLY_FILTERS).click()
 
     def create_new_flagging_rule(self):
         self.driver.find_element_by_id(self.BTN_CREATE_NEW_FLAGGING_RULE).click()

@@ -70,10 +70,10 @@ parameters
                     sh "py.test -k '${env.TESTS_TO_RUN}' -n '${env.NO_OF_PARALLEL_RUNNERS}' --dist=loadfile --ignore=core --disable-pytest-warnings --alluredir=ui_automation_tests/allure-results"
                 } else {
                     sh """
-                    py.test -k 'smoke' --reruns 1 --ignore=core --disable-pytest-warnings --alluredir=ui_automation_tests/allure-results
+                    py.test -k 'smoke' --reruns '${env.NO_OF_RERUNS}' --ignore=core --disable-pytest-warnings --alluredir=ui_automation_tests/allure-results
                     if [ \$? -eq 0 ]
                     then
-                         py.test -k 'regression' -n '${env.NO_OF_PARALLEL_RUNNERS}' --dist=loadfile --reruns 2 --ignore=core --disable-pytest-warnings --alluredir=ui_automation_tests/allure-results
+                         py.test -k 'regression' -n '${env.NO_OF_PARALLEL_RUNNERS}' --dist=loadfile --reruns '${env.NO_OF_RERUNS}' --ignore=core --disable-pytest-warnings --alluredir=ui_automation_tests/allure-results
                     fi
                     """
                 }

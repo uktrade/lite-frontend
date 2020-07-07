@@ -1,7 +1,7 @@
-from shared.BasePage import BasePage
-from shared import functions
 from faker import Faker
 
+from shared import functions
+from pages.BasePage import BasePage
 
 fake = Faker()
 

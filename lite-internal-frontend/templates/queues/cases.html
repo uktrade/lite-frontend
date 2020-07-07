@@ -10,15 +10,12 @@
 
 {% block messages %}
 	{{ block.super }}
-
-	{% if updated_cases_banner_queue_id %}
-		<a id="banner-exporter-amendments" class="govuk-width-container app-snackbar app-snackbar--no-animation" href="{% url 'queues:cases' updated_cases_banner_queue_id %}">
-			<div class="app-snackbar__content">
-				<div class="app-snackbar__icon"></div>
-				{% lcs 'cases.CasesListPage.EXPORTER_AMENDMENTS_BANNER' %}
-			</div>
-		</a>
-	{% endif %}
+	<a id="banner-exporter-amendments" class="app-hidden govuk-width-container app-snackbar app-snackbar--no-animation" href="{% url 'queues:cases' updated_cases_banner_queue_id %}">
+		<div class="app-snackbar__content">
+			<div class="app-snackbar__icon"></div>
+			{% lcs 'cases.CasesListPage.EXPORTER_AMENDMENTS_BANNER' %}
+		</div>
+	</a>
 {% endblock %}
 
 {% block body %}
@@ -26,16 +23,16 @@
 		<div class="lite-app-bar__content">
 			<h1 class="govuk-heading-l">
 				<a tabindex="0" id="link-queue" href="{% url 'queues:manage' %}" class="app-dropdown__heading">
-					{{ data.results.queue.name }}<span class="govuk-visually-hidden"> (Click to change queue)</span>
+					{{ queue.name }}<span class="govuk-visually-hidden"> (Click to change queue)</span>
 				</a>
 			</h1>
 		</div>
-		{% if not data.results.is_system_queue %}
+		{% if not queue.is_system_queue %}
 			<div class="lite-app-bar__controls lite-buttons-row" >
 				<div data-enable-on-checkboxes="#table-cases">
-					<button id="assign-users-button" form="cases-form" type="submit" class="govuk-button govuk-button--secondary">{% lcs 'cases.CasesListPage.ASSIGN_USERS' %}</button>
+					<button id="assign-users-button" form="form-cases" type="submit" class="govuk-button govuk-button--secondary">{% lcs 'cases.CasesListPage.ASSIGN_USERS' %}</button>
 				</div>
-				{% if enforcement_check and data.results.cases %}
+				{% if enforcement_check %}
 					{% govuk_link_button id='export-xml' classes='govuk-button--secondary' text='cases.CasesListPage.EnforcementXML.EXPORT_BUTTON' url='queues:enforcement_xml_export' url_param=queue.id %}
 					{% govuk_link_button id='import-xml' classes='govuk-button--secondary' text='cases.CasesListPage.EnforcementXML.IMPORT_BUTTON' url='queues:enforcement_xml_import' url_param=queue.id %}
 				{% endif %}
@@ -50,187 +47,85 @@
 			</div>
 			<input type="text" id="filter-queues">
 		</div>
-		{% for queue in data.results.queues %}
-			<a href="{% url 'queues:cases' queue.id %}" id="{{ queue.name }}" class="app-menu__item app-menu__item--subtitle {% if queue.id == data.results.queue.id %}app-menu__item--selected{% endif %}">
-				{{ queue.name }}
-				<span class="app-menu__item-subtitle">{{ queue.case_count }}</span>
-			</a>
-		{% endfor %}
 	</div>
 
-	{% if data.results.cases %}
-		<div class="lite-mobile-hide">
-			<div class="lite-js-only lite-expand__base-controls">
-				<a id="link-open-all-table-folds" href="#" onclick="toggleTableFold()" class="lite-expand__base-control">
-					<span>{% lcs 'cases.CasesListPage.OPEN_ALL' %}</span>
-					<span>{% lcs 'cases.CasesListPage.CLOSE_ALL' %}</span>
-					{% svg 'chevron-light' %}
-				</a>
-			</div>
-		</div>
-	{% endif %}
+	<p id="text-case-count" class="lite-filters__hint-text app-hidden"></p>
 
-	{% include "filters.html" %}
+	{% include 'filters.html' %}
 
-	<form id="cases-form" method="post">
+	<table id="table-placeholder" class="govuk-table app-table--skeleton">
+		<thead class="govuk-table__head">
+			<tr class="govuk-table__row">
+				{% if not queue.is_system_queue %}
+					<th class="govuk-table__header govuk-table__cell--tight">
+						<div class="app-table__row__checkbox--skeleton"></div>
+					</th>
+				{% endif %}
+				<th class="govuk-table__header govuk-table__cell--tight" scope="col"><span class="govuk-visually-hidden">{% lcs 'cases.CasesListPage.Table.SLA' %}</span></th>
+				<th class="govuk-table__header app-table__header--skeleton" scope="col">{% lcs 'cases.CasesListPage.Table.CASE' %}</th>
+				<th class="govuk-table__header app-table__header--skeleton" scope="col">{% lcs 'cases.CasesListPage.Table.ASSIGNEES' %}</th>
+				<th class="govuk-table__header app-table__header--skeleton lite-tablet-hide" scope="col">{% lcs 'cases.CasesListPage.Table.GOODS' %}</th>
+				<th class="govuk-table__header app-table__header--skeleton lite-tablet-hide" scope="col">{% lcs 'cases.CasesListPage.Table.DESTINATIONS' %}</th>
+				<th class="govuk-table__header app-table__header--skeleton" scope="col">{% lcs 'cases.CasesListPage.Table.FLAGS' %}</th>
+				<th class="govuk-table__header" scope="col"></th>
+			</tr>
+		</thead>
+		<tbody class="govuk-table__body" id="tbody-placeholder">
+			{% for i in '0123456789'|make_list %}
+				<tr class="govuk-table__row app-table__row--skeleton">
+					{% if not queue.is_system_queue %}
+						<td class="govuk-table__cell">
+							<div class="app-table__row__checkbox--skeleton"></div>
+						</td>
+					{% endif %}
+					<td class="govuk-table__cell govuk-table__cell--tight">
+						<div class="app-table__row__sla--skeleton"></div>
+					</td>
+					{# Empty paragraphs are intentional to show skeleton loading #}
+					<td class="govuk-table__cell">
+						<p></p>
+						<p></p>
+						<p></p>
+						<p></p>
+					</td>
+					<td class="govuk-table__cell">
+						<p></p>
+					</td>
+					<td class="govuk-table__cell">
+						<p></p>
+					</td>
+					<td class="govuk-table__cell">
+						<p></p>
+					</td>
+					<td class="govuk-table__cell">
+						<p></p>
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+	<form id="form-cases" method="post">
 		{% csrf_token %}
-		{% if data.results.cases %}
-			<table id="table-cases" class="govuk-table">
-				<thead class="govuk-table__head">
-					<tr class="govuk-table__row">
-						{% if not data.results.is_system_queue %}
-							<th class="govuk-table__header govuk-table__cell--checkbox">
-								<button id="button-select-all" type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
-							</th>
-						{% endif %}
-						<th class="govuk-table__header" scope="col"><span class="govuk-visually-hidden">{% lcs 'cases.CasesListPage.Table.SLA' %}</span></th>
-						<th class="govuk-table__header" scope="col"><span class="govuk-visually-hidden">{% lcs 'cases.CasesListPage.Table.INFORMATION' %}</span></th>
-						<th class="govuk-table__header" scope="col">{% lcs 'cases.CasesListPage.Table.CASE' %}</th>
-						<th class="govuk-table__header" scope="col">{% lcs 'cases.CasesListPage.Table.ASSIGNEES' %}</th>
-						<th class="govuk-table__header lite-tablet-hide" scope="col">{% lcs 'cases.CasesListPage.Table.GOODS' %}</th>
-						<th class="govuk-table__header lite-tablet-hide" scope="col">{% lcs 'cases.CasesListPage.Table.DESTINATIONS' %}</th>
-						<th class="govuk-table__header" scope="col">{% lcs 'cases.CasesListPage.Table.FLAGS' %}</th>
-						<th class="govuk-table__header" scope="col"></th>
-					</tr>
-				</thead>
-				<tbody class="govuk-table__body">
-					{% for case in data.results.cases %}
-						<tr class="govuk-table__row" id="{{ case.id }}">
-							{% if not data.results.is_system_queue %}
-								<td class="govuk-table__cell govuk-table__cell--checkbox">
-									<div>
-										<input class="govuk-checkboxes__input" type="checkbox" name="cases" value="{{ case.id }}">
-										<label class="govuk-label govuk-checkboxes__label">
-											<span class="govuk-visually-hidden">{{ case.reference_code }}</span>
-										</label>
-									</div>
-								</td>
-							{% endif %}
-							<td class="govuk-table__cell govuk-table__cell--tight">
-								{% if case.sla_hours_since_raised != None or case.sla_remaining_days != None %}
-									{% if case.sla_hours_since_raised != None and case.case_type.sub_type.key == 'hmrc'%}
-										<div class="pie-wrapper progress-{{ case|get_sla_hours_percentage }} {{ case|get_sla_hours_ring_colour }}" id="sla">
-											<span class="label">{{ case.sla_hours_since_raised }}</span>
-											<div class="pie">
-												<div class="left-side half-circle"></div>
-												<div class="right-side half-circle"></div>
-											</div>
-										</div>
-									{% elif case.sla_remaining_days != None and case.case_type.sub_type.key != 'hmrc'%}
-										<div class="pie-wrapper progress-{{ case|get_sla_percentage }} {{ case|get_sla_ring_colour }}" id="sla">
-											<span class="label">{{ case.sla_days }}</span>
-											<div class="pie">
-												<div class="left-side half-circle"></div>
-												<div class="right-side half-circle"></div>
-											</div>
-										</div>
-									{% endif %}
-								{% endif %}
-							</td>
-							<td class="govuk-table__cell govuk-table__cell--tight lite-mobile-hide">
-								<div class="app-cases__row__vertical-column">
-									{% if not case.is_recently_updated and not is_all_cases_queue %}
-										<span data-tooltip="{% lcs 'cases.CasesListPage.NOT_UPDATED_RECENTLY' %}" class="app-cases__row__icon app-cases__row__attention-needed">
-											!
-										</span>
-									{% endif %}
-									{% if data.results.is_work_queue %}
-										{% if case.has_open_ecju_queries %}
-											<div data-tooltip="{% lcs 'cases.CasesListPage.OPEN_TEAM_ECJU' %}" class="app-cases__row__icon">
-												{% svg 'ecju-query' %}
-											</div>
-										{% endif %}
-									{% endif %}
-									{% if case.has_future_review_date and data.results.is_work_queue %}
-										<div data-tooltip="{% lcs 'cases.CasesListPage.FUTURE_REVIEW_DATE' %}" class="app-cases__row__icon">
-											{% svg 'eye' %}
-										</div>
-									{% endif %}
-								</div>
-							</td>
-							<td class="govuk-table__cell">
-								<a class="govuk-link govuk-link--no-visited-state" id="case-{{ case.id }}" href="{% url 'cases:case' queue.id case.id %}">
-									{{ case.reference_code|highlight_text:reference }}
-								</a>
-								<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">
-									{{ case.organisation.name }} <span class="govuk-hint lite-!-display-inline">/ {{ case.organisation.primary_site.address.city|default:case.organisation.primary_site.address.country.name }}</span>
-								</p>
-								{% if case.organisation.primary_site.address.postcode %}
-									<p class="govuk-hint govuk-!-margin-0 govuk-!-margin-top-2">{{ case.organisation.primary_site.address.postcode }}</p>
-								{% endif %}
-								<p class="govuk-tag govuk-tag--grey govuk-!-margin-0 govuk-!-margin-top-2">{{ case.status.value }}</p>
-							</td>
-							<td class="govuk-table__cell lite-mobile-hide">
-								{% if case.assignments %}
-									<ol class="govuk-list">
-										{% for assignment in case.assignments|slice:":3" %}
-											<li>{{ assignment.user|username }}</li>
-										{% endfor %}
-									</ol>
-								{% else %}
-									<p class="app-information-bar">{% lcs 'cases.CasesListPage.NoContent.NO_USERS_ASSIGNED' %}</p>
-								{% endif %}
-							</td>
-							<td class="govuk-table__cell lite-tablet-hide">
-								{% if case.flags|filter_flags_by_level:'Good' %}
-									{% include 'includes/flags.html' with flags=case.flags|filter_flags_by_level:'Good'|slice:':3' list=True classes='app-expanded-row__item--invert' %}
-									<span class="govuk-hint govuk-!-margin-top-2 govuk-!-margin-bottom-2 app-expanded-row__item--invert">
-										{% if case.flags|filter_flags_by_level:'Good'|length > 3 %}(3 of {{ case.flags|filter_flags_by_level:'Good'|length }}){% endif %}
-									</span>
-									<div class="app-expanded-row__item govuk-!-margin-bottom-2">
-										{% include 'includes/flags.html' with flags=case.flags|filter_flags_by_level:'Good' list=True %}
-									</div>
-								{% else %}
-									<p class="app-information-bar">{% lcs 'cases.CasesListPage.NoContent.NO_GOODS_FLAGS' %}</p>
-								{% endif %}
-							</td>
-							<td class="govuk-table__cell lite-tablet-hide">
-								{% if case.flags|filter_flags_by_level:'Destination' %}
-									{% include 'includes/flags.html' with flags=case.flags|filter_flags_by_level:'Destination'|slice:':3' list=True classes='app-expanded-row__item--invert' %}
-									<span class="govuk-hint govuk-!-margin-top-2 govuk-!-margin-bottom-2 app-expanded-row__item--invert">
-										{% if case.flags|filter_flags_by_level:'Destination'|length > 3 %}(3 of {{ case.flags|filter_flags_by_level:'Destination'|length }}){% endif %}
-									</span>
-									<div class="app-expanded-row__item govuk-!-margin-bottom-2">
-										{% include 'includes/flags.html' with flags=case.flags|filter_flags_by_level:'Destination' list=True %}
-									</div>
-								{% else %}
-									<p class="app-information-bar">{% lcs 'cases.CasesListPage.NoContent.NO_DESTINATION_FLAGS' %}</p>
-								{% endif %}
-							</td>
-							<td class="govuk-table__cell lite-mobile-hide" id="flags-{{ case.id }}">
-								{% if case.flags %}
-									{% include 'includes/flags.html' with flags=case.flags|slice:':3' list=True classes='app-expanded-row__item--invert' %}
-									<span class="govuk-hint govuk-!-margin-top-2 govuk-!-margin-bottom-2 app-expanded-row__item--invert">
-										{% if case.flags|length > 3 %}(3 of {{ case.flags|length }}){% endif %}
-									</span>
-									<div class="app-expanded-row__item govuk-!-margin-bottom-2">
-										{% include 'includes/flags.html' with flags=case.flags list=True %}
-									</div>
-								{% else %}
-									<p class="app-information-bar">{% lcs 'cases.CasesListPage.NoContent.NO_FLAGS' %}</p>
-								{% endif %}
-							</td>
-							<td class="govuk-table__cell govuk-table__cell--tight lite-mobile-hide">
-								<a href="#" class="lite-expand__control" id="expand-flags-{{ case.id }}" onclick="return openTableFold(this);">
-									<span class="govuk-visually-hidden">Expand {{ case.reference_code }} row</span>
-									{% if case.flags|length > 3 or case.users|length > 3 or case.queue_names|length > 3 %}
-										{% svg 'chevron' %}
-									{% endif %}
-								</a>
-							</td>
-						</tr>
-					{% endfor %}
-				</tbody>
-			</table>
-
-			{% pagination %}
-		{% else %}
-			{% if params.case_type or params.status or params.case_officer or params.assigned_user %}
-				{% include "includes/notice.html" with text='cases.CasesListPage.ACTIVE_FILTER_NO_CASES' %}
-			{% else %}
-				{% include "includes/notice.html" with text='cases.CasesListPage.NO_CASES' %}
-			{% endif %}
-		{% endif %}
+		<table id="table-cases" class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					{% if not queue.is_system_queue %}
+						<th class="govuk-table__header govuk-table__cell--checkbox">
+							<button id="button-select-all" type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
+						</th>
+					{% endif %}
+					<th class="govuk-table__header govuk-table__cell--tight" scope="col"><span class="govuk-visually-hidden">{% lcs 'cases.CasesListPage.Table.SLA' %}</span></th>
+					<th class="govuk-table__header app-table__header--skeleton" scope="col">{% lcs 'cases.CasesListPage.Table.CASE' %}</th>
+					<th class="govuk-table__header app-table__header--skeleton" scope="col">{% lcs 'cases.CasesListPage.Table.ASSIGNEES' %}</th>
+					<th class="govuk-table__header app-table__header--skeleton lite-tablet-hide" width="15%" scope="col">Flags</th>
+					<th class="govuk-table__header app-table__header--skeleton lite-tablet-hide" width="15%" scope="col">{% lcs 'cases.CasesListPage.Table.GOODS' %}</th>
+					<th class="govuk-table__header app-table__header--skeleton lite-tablet-hide" width="15%" scope="col">{% lcs 'cases.CasesListPage.Table.DESTINATIONS' %}</th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body" id="tbody-main">
+			</tbody>
+		</table>
 	</form>
 {% endblock %}
 
@@ -239,6 +134,123 @@
 	<script src="{% static 'javascripts/select-buttons.js' %}"></script>
 
 	<script nonce="{{ request.csp_nonce }}">
+		var params = `{{ params }}`;
+		var previousSVG = `{% svg 'previous' %}`;
+		var nextSVG = `{% svg 'next' %}`;
+		var chevron = `{% svg 'chevron' %}`;
+		var noCases = `{% include "includes/notice.html" with text='cases.CasesListPage.NO_CASES' %}`;
+
+		$("#table-cases").hide();
+		$.get("{% url 'core:cases' queue.id %}{{ params }}", function(data) {
+			$("#table-placeholder").remove();
+			$("#text-case-count").removeClass("app-hidden").fadeIn(100).text(data.count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " cases");
+
+			if (data.total_pages > 1) {
+				generatePagination({{ request.GET.page|default:1 }}, data.total_pages);
+			}
+
+			$.each(data.results.queues, function(i, item) {
+				if (item.id == "{{ updated_cases_banner_queue_id }}" && item.case_count) {
+					$("#banner-exporter-amendments").removeClass("app-hidden");
+				}
+
+				var html = `
+					<a href="/queues/${item.id}/" id="${item.id}" class="app-menu__item app-menu__item--subtitle ${(item.id == '{{ queue.id }}' ? 'app-menu__item--selected' : '')}">
+						${item.name}
+						<span class="app-menu__item-subtitle">${item.case_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</span>
+					</a>
+				`;
+				$("#queues").append(html);
+			});
+			generateQueuesMenu();
+			if (data.results.cases.length) {
+				$("#table-cases").fadeIn(100);
+				$.each(data.results.cases, function(i, item) {
+					var html = `
+						<tr class="govuk-table__row" id="${item.id}">
+							{% if not queue.is_system_queue %}
+								<td class="govuk-table__cell govuk-table__cell--checkbox">
+									<div>
+										<input class="govuk-checkboxes__input" type="checkbox" name="cases" value="${item.id}">
+										<label class="govuk-label govuk-checkboxes__label" for="${item.id}">
+											<span class="govuk-visually-hidden"></span>
+										</label>
+									</div>
+								</td>
+							{% endif %}
+							<td class="govuk-table__cell govuk-table__cell--tight">
+								<div class="app-cases__row__vertical-column">
+									${generateSLA(item)}
+									{% if not is_all_cases_queue %}
+										${(!item.is_recently_updated ? `
+											<span data-tooltip="{% lcs 'cases.CasesListPage.NOT_UPDATED_RECENTLY' %}" class="app-cases__row__icon app-cases__row__attention-needed">
+												!
+											</span>
+											`: ``)}
+									{% endif %}
+									${(data.results.is_work_queue && item.has_open_ecju_queries ? `
+										<div data-tooltip="{% lcs 'cases.CasesListPage.OPEN_TEAM_ECJU' %}" class="app-cases__row__icon">
+											{% svg 'ecju-query' %}
+										</div>
+										` : ``)}
+									${(data.results.is_work_queue && item.next_review_date ? `
+										<div data-tooltip="The next review is on ${item.next_review_date}" class="app-cases__row__icon">
+											{% svg 'eye' %}
+										</div>
+										` : ``)}
+								</div>
+							</td>
+							<td class="govuk-table__cell">
+								<a class="govuk-link govuk-link--no-visited-state" id="case-${item.id}" href="/queues/{{ queue.id }}/cases/${item.id}/">
+									<span class="govuk-visually-hidden">View</span> ${item.reference_code}
+								</a>
+								<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">
+									${item.organisation.name} <span class="govuk-hint lite-!-display-inline">/ ${item.organisation.primary_site.address.city }</span>
+								</p>
+								<p class="govuk-hint govuk-!-margin-0 govuk-!-margin-top-2">${item.organisation.primary_site.address.postcode }</p>
+								<p class="govuk-tag govuk-tag--grey govuk-!-margin-0 govuk-!-margin-top-2">${item.status.value }</p>
+							</td>
+							<td class="govuk-table__cell lite-mobile-hide">
+								${generateAssignments(item.assignments)}
+							</td>
+							<td class="govuk-table__cell lite-tablet-hide">
+								${generateFlags(item.flags)}
+							</td>
+							<td class="govuk-table__cell lite-tablet-hide">
+								${generateFlags(item.goods_flags)}
+							</td>
+							<td class="govuk-table__cell lite-tablet-hide">
+								${generateFlags(item.destinations_flags)}
+							</td>
+						</tr>
+					`
+					$("#tbody-main").append(html);
+				});
+			} else {
+				$("#table-cases").before(noCases);
+			}
+			$.each(data.results.filters.statuses, function(i, item) {
+				$("#status").append(`<option value="${item.key}" ${(item.key == "{{ case_officer }}" ? "selected" : "")}>${item.value}</option>`)
+			});
+			$.each(data.results.filters.case_types, function(i, item) {
+				$("#case_type").append(`<option value="${item.key}" ${(item.key == "{{ case_type }}" ? "selected" : "")}>${item.value}</option>`)
+			});
+			$.each(data.results.filters.gov_users, function(i, item) {
+				$("#case_officer").append(`<option value="${item.id}" ${(item.id == "{{ case_officer }}" ? "selected" : "")}>${item.full_name}</option>`)
+				$("#assigned_user").append(`<option value="${item.id}" ${(item.id == "{{ assigned_user }}" ? "selected" : "")}>${item.full_name}</option>`)
+			});
+			$.each(data.results.filters.advice_types, function(i, item) {
+				$("#team_advice_type").append(`<option value="${item.key}" ${(item.key == "{{ team_advice_type }}" ? "selected" : "")}>${item.value}</option>`)
+				$("#final_advice_type").append(`<option value="${item.key}" ${(item.key == "{{ final_advice_type }}" ? "selected" : "")}>${item.value}</option>`)
+			});
+			setTooltips();
+			setCheckboxEvent();
+			setSelectButtonsState();
+			loadAutoCompletes();
+			tryShowFilterBar();
+			setEnableOnCheckboxes();
+		});
+
 		$("#filter-queues").on('input', function() {
 			txt = $("#filter-queues").val();
 			anyVisible = false;
@@ -257,21 +269,24 @@
 		});
 
 		$("#link-queue").removeAttr("href");
-		const queuesMenu = document.getElementById('queues');
-		queuesMenu.style.display = 'block';
-		tippy("#link-queue", {
-			content: queuesMenu,
-			allowHTML: true,
-			interactive: true,
-			animation: 'scale-subtle',
-			trigger: 'click',
-			theme: 'light',
-			placement: 'bottom-start',
-			arrow: null,
-			onShown(instance) {
-				$("#filter-queues").val("")
-				$("#filter-queues").focus()
-			},
-		});
+
+		function generateQueuesMenu() {
+			const queuesMenu = document.getElementById('queues');
+			queuesMenu.style.display = 'block';
+			tippy("#link-queue", {
+				content: queuesMenu,
+				allowHTML: true,
+				interactive: true,
+				animation: 'scale-subtle',
+				trigger: 'click',
+				theme: 'light',
+				placement: 'bottom-start',
+				arrow: null,
+				onShown(instance) {
+					$("#filter-queues").val("")
+					$("#filter-queues").focus()
+				},
+			});
+		}
 	</script>
 {% endblock %}

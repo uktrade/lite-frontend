@@ -31,21 +31,6 @@ def assert_flag_is_assigned(driver, context):
     assert CasePage(driver).is_goods_flag_applied(context.flag_name)
 
 
-@when("I click the expand flags dropdown")  # noqa
-def click_chevron(driver, context):
-    ApplicationPage(driver).click_expand_flags(context.case_id)
-
-
-@then("I see added flags to case")
-def i_see_added_flags(context, driver):
-    case_row = driver.find_element_by_id(context.case_id)
-    if "(3 of " in case_row.text:
-        ApplicationPage(driver).click_expand_flags(context.case_id)
-    text = driver.find_element_by_id("flags-" + context.case_id).text
-    for level in context.flags:
-        assert context.flags[level]["name"] in text
-
-
 @then(parsers.parse('the "{audit_type}" flag appears in the audit trail'))
 def verify_organisation_flag_audit(driver, context, audit_type):
     body = Shared(driver).get_audit_trail_text()

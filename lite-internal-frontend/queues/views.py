@@ -8,8 +8,8 @@ from django.views.generic import TemplateView
 from cases.forms.assign_users import assign_users_form
 from cases.forms.attach_documents import upload_document_form
 from cases.helpers.filters import case_filters_bar
-from cases.helpers.helpers import get_updated_cases_banner_queue_id
-from conf.constants import ALL_CASES_QUEUE_ID, Permission
+from conf.constants import ALL_CASES_QUEUE_ID, Permission, UPDATED_CASES_QUEUE_ID
+from core.helpers import convert_parameters_to_query_params
 from core.services import get_user_permissions
 from lite_content.lite_internal_frontend.cases import CasesListPage, UploadEnforcementXML
 from lite_forms.components import TextInput, FiltersBar
@@ -18,7 +18,6 @@ from lite_forms.views import SingleFormView
 from queues.forms import new_queue_form, edit_queue_form
 from queues.services import (
     get_queues,
-    get_cases_search_data,
     post_queues,
     get_queue,
     put_queue,
@@ -33,35 +32,23 @@ from users.services import get_gov_user
 class Cases(TemplateView):
     def get(self, request, **kwargs):
         """
-        Show a list of cases pertaining to that queue.
+        Show a list of cases pertaining to the given queue
         """
         queue_pk = kwargs.get("queue_pk") or request.user.default_queue
-        hidden = request.GET.get("hidden")
-
-        # Page parameters
-        params = {"page": int(request.GET.get("page", 1))}
-        for key, value in request.GET.items():
-            if key != "flags[]":
-                params[key] = value
-
-        params["flags"] = request.GET.getlist("flags[]", [])
-
-        if hidden:
-            params["hidden"] = hidden
-
-        data = get_cases_search_data(request, queue_pk, params)
-        updated_cases_banner_queue_id = get_updated_cases_banner_queue_id(queue_pk, data["results"]["queues"])
+        queue = get_queue(request, queue_pk)
 
         context = {
-            "data": data,
-            "queue": data["results"]["queue"],
-            "updated_cases_banner_queue_id": updated_cases_banner_queue_id,
-            "filters": case_filters_bar(request, data),
+            "queue": queue,  # Used for showing current queue
+            "filters": case_filters_bar(request, queue),
+            "params": convert_parameters_to_query_params(request.GET),  # Used for passing params to JS
+            "case_officer": request.GET.get("case_officer"),  # Used for reading params dynamically
+            "assigned_user": request.GET.get("assigned_user"),  # ""
+            "team_advice_type": request.GET.get("team_advice_type"),  # ""
+            "final_advice_type": request.GET.get("final_advice_type"),  # ""
             "is_all_cases_queue": queue_pk == ALL_CASES_QUEUE_ID,
             "enforcement_check": Permission.ENFORCEMENT_CHECK.value in get_user_permissions(request),
-            "reference": request.GET.get("case_reference", ""),
+            "updated_cases_banner_queue_id": UPDATED_CASES_QUEUE_ID,
         }
-
         return render(request, "queues/cases.html", context)
 
     def post(self, request, **kwargs):

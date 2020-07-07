@@ -3,11 +3,10 @@ from datetime import datetime
 from pytest_bdd import scenarios, when, parsers, then
 
 from pages.application_page import ApplicationPage
-from pages.case_page import CasePage, CaseTabs
-
+from pages.case_page import CasePage
+from shared import functions
 from ui_automation_tests.pages.case_list_page import CaseListPage
 from ui_automation_tests.pages.shared import Shared
-from ui_automation_tests.shared import functions
 
 scenarios("../features/view_open_application.feature", strict_gherkin=False)
 
@@ -69,5 +68,5 @@ def see_queue_in_queue_list(driver, context):  # noqa
     functions.try_open_filters(driver)
     case_page.click_checkbox_to_show_team_ecju_query_and_hidden_cases()
     case_page.filter_by_case_reference(context.reference_code)
-    case_page.click_apply_filters_button()
+    functions.click_apply_filters(driver)
     assert driver.find_element_by_id(context.case_id).is_displayed()

@@ -1,7 +1,7 @@
 from selenium.webdriver.support.ui import Select
 
-from shared import functions, selectors
-from ui_automation_tests.shared.BasePage import BasePage
+from shared import functions
+from pages.BasePage import BasePage
 
 
 class UsersPage(BasePage):
@@ -65,7 +65,7 @@ class UsersPage(BasePage):
         functions.try_open_filters(self.driver)
         self.driver.find_element_by_id(self.INPUT_EMAIL_FILTER_ID).clear()
         self.driver.find_element_by_id(self.INPUT_EMAIL_FILTER_ID).send_keys(name)
-        self.driver.find_element_by_css_selector(selectors.BUTTON_APPLY_FILTERS).click()
+        functions.click_apply_filters(self.driver)
 
     def is_user_email_displayed(self, email):
         return self.driver.find_element_by_id(self.LINK_ID + email).is_displayed()

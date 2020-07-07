@@ -1,5 +1,5 @@
-from shared import functions, selectors
-from shared.BasePage import BasePage
+from shared import functions
+from pages.BasePage import BasePage
 
 
 class FlagsListPage(BasePage):
@@ -15,7 +15,7 @@ class FlagsListPage(BasePage):
     def click_only_show_deactivated(self):
         functions.try_open_filters(self.driver)
         self.driver.find_element_by_name(self.CHECKBOX_ONLY_SHOW_DEACTIVATED_NAME).click()
-        self.driver.find_element_by_css_selector(selectors.BUTTON_APPLY_FILTERS).click()
+        functions.click_apply_filters(self.driver)
 
     def click_deactivate_link(self):
         self.driver.find_element_by_partial_link_text("Deactivate").click()

@@ -1,5 +1,5 @@
-from shared import functions, selectors
-from shared.BasePage import BasePage
+from shared import functions
+from pages.BasePage import BasePage
 
 
 class OrganisationsPage(BasePage):
@@ -20,7 +20,7 @@ class OrganisationsPage(BasePage):
     def search_for_org_in_filter(self, org_name):
         functions.try_open_filters(self.driver)
         self.driver.find_element_by_id(self.INPUT_SEARCH_TERM_ID).send_keys(org_name)
-        self.driver.find_element_by_css_selector(selectors.BUTTON_APPLY_FILTERS).click()
+        functions.click_apply_filters(self.driver)
 
     def click_organisation(self, name):
         self.driver.find_element_by_link_text(name).click()

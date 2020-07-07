@@ -1,4 +1,4 @@
-from shared.BasePage import BasePage
+from pages.BasePage import BasePage
 
 from ui_automation_tests.pages.shared import Shared
 

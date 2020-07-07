@@ -1,4 +1,4 @@
-from ui_automation_tests.shared.BasePage import BasePage
+from pages.BasePage import BasePage
 from ui_automation_tests.shared.functions import element_with_id_exists
 
 

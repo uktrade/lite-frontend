@@ -1,5 +1,5 @@
 from shared import selectors
-from shared.BasePage import BasePage
+from pages.BasePage import BasePage
 
 
 class CaseFlagsPages(BasePage):

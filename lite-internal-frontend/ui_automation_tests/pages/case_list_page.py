@@ -1,16 +1,16 @@
 import time
 
-import shared.tools.helpers as utils
+from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.select import Select
 
-from shared import selectors
-from shared.BasePage import BasePage
-from shared.tools.helpers import scroll_to_element_by_id
+import shared.tools.helpers as utils
+from pages.BasePage import BasePage
 from pages.shared import Shared
+from shared import functions
+from shared.tools.helpers import scroll_to_element_by_id
 
 
 class CaseListPage(BasePage):
-
     # Table
     CASES_TABLE_ROW = ".govuk-table__row"  # CSS
     CHECKBOX_CASE = ".govuk-checkboxes__input[value='"  # CSS
@@ -78,7 +78,7 @@ class CaseListPage(BasePage):
     BANNER_EXPORTER_AMENDMENTS_ID = "banner-exporter-amendments"
 
     # SLA
-    SLA_ID = "sla"
+    SLA_CLASS = "app-sla__container"
 
     # Enforcement
     EXPORT_ENFORCEMENT_XML_BUTTON_ID = "button-export-xml"
@@ -104,10 +104,15 @@ class CaseListPage(BasePage):
     def click_on_assign_users_button(self):
         self.driver.find_element_by_id(self.BUTTON_ASSIGN_USERS).click()
 
+    def has_assignees(self, driver, case_id):
+        elements = Shared(driver).get_rows_in_lite_table()
+        no = utils.get_element_index_by_text(elements, case_id)
+        return len(elements[no].find_elements_by_css_selector(".app-assignments__container")) != 0
+
     def get_text_of_assignees(self, driver, case_id):
         elements = Shared(driver).get_rows_in_lite_table()
         no = utils.get_element_index_by_text(elements, case_id)
-        return elements[no].text
+        return elements[no].find_element_by_css_selector(".app-assignments__container").text
 
     def click_select_all_checkbox(self):
         self.driver.find_element_by_id(self.CHECKBOX_SELECT_ALL).click()
@@ -122,9 +127,6 @@ class CaseListPage(BasePage):
         elements = self.driver.find_elements_by_css_selector(self.CASES_TABLE_ROW)
         no = utils.get_element_index_by_text(elements, case_id, complete_match=False)
         return elements[no].is_displayed()
-
-    def click_apply_filters_button(self):
-        self.driver.find_element_by_css_selector(selectors.BUTTON_APPLY_FILTERS).click()
 
     def click_clear_filters_button(self):
         self.driver.find_element_by_id(self.BUTTON_CLEAR_FILTERS).click()
@@ -149,7 +151,7 @@ class CaseListPage(BasePage):
         # TODO Make this an implicit wait!
         time.sleep(0.5)
         self.search_for_queue(queue_name)
-        self.driver.find_element_by_id(queue_name).click()
+        self.driver.find_elements_by_css_selector('#queues .app-menu__item:not([style="display: none;"])')[0].click()
 
     def select_filter_status_from_dropdown(self, status):
         Select(self.driver.find_element_by_id(self.STATUS_DROPDOWN)).select_by_visible_text(status)
@@ -165,7 +167,8 @@ class CaseListPage(BasePage):
         self.driver.find_element_by_id(self.BANNER_EXPORTER_AMENDMENTS_ID).click()
 
     def enter_assigned_user_filter_text(self, text):
-        self.driver.find_element_by_id(self.INPUT_ASSIGNED_USER_ID).send_keys(text)
+        self.driver.find_element_by_id(self.INPUT_ASSIGNED_USER_ID).clear()
+        functions.send_keys_to_autocomplete(self.driver, self.INPUT_ASSIGNED_USER_ID, text)
 
     def enter_name_to_filter_search_box(self, text):
         self.driver.find_element_by_id(self.FILTER_SEARCH_BOX).send_keys(text)
@@ -191,8 +194,8 @@ class CaseListPage(BasePage):
         self.driver.find_element_by_id(self.ORGANISATION_NAME_ID)
         self.driver.find_element_by_id(self.ORGANISATION_NAME_ID).send_keys(org_name)
 
-    def get_case_row_sla(self, row):
-        return row.find_element_by_id(self.SLA_ID).text
+    def get_case_row_sla(self, row: WebElement):
+        return row.find_element_by_class_name(self.SLA_CLASS).text
 
     def click_checkbox_to_show_team_ecju_query_and_hidden_cases(self):
         return self.driver.find_element_by_id(self.SHOW_TEAM_ECJU_AND_HIDDEN_CASES).click()
