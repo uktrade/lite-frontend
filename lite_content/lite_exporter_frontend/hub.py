@@ -2,6 +2,7 @@ TITLE = "Exporter hub"
 ACCOUNT = "Export control account"
 ACCOUNT_HOME = "Account home"
 SWITCH_ORG = "Switch organisation <!--from -->"
+SIGNATURE_GUIDANCE = "Guidance on LITE document digital signatures"
 
 
 class Navigation:

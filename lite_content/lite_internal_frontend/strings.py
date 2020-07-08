@@ -190,6 +190,7 @@ class LetterTemplates:
         RESTRICTED_TITLE = "Restricted to"
         DECISIONS_TITLE = "Decisions"
         VISIBLE_TO_EXPORTER_TITLE = "Visible to exporter"
+        DIGITAL_SIGNATURE_TITLE = "Has a digital signature"
 
     class EditLetterTemplate:
         BUTTON_NAME = "Save"
@@ -213,6 +214,12 @@ class LetterTemplates:
         class Decisions:
             TITLE = "Decisions (optional)"
             DESCRIPTION = "Select the decisions that apply to your template"
+
+        class IncludeSignature:
+            TITLE = "Add a digital signature to the template?"
+            DESCRIPTION = ""
+            YES_OPTION = "Yes"
+            NO_OPTION = "No"
 
         class Layout:
             TITLE = "Choose a layout"
@@ -242,6 +249,13 @@ class LetterTemplates:
         class VisibleToExporter:
             TITLE = "Visible to exporter"
             DESCRIPTION = "Should documents created with this template be visible to exporters?"
+            YES_OPTION = "Yes"
+            NO_OPTION = "No"
+            BUTTON = "Continue"
+
+        class IncludeSignature:
+            TITLE = "Add a digital signature to the template?"
+            DESCRIPTION = ""
             YES_OPTION = "Yes"
             NO_OPTION = "No"
             BUTTON = "Continue"
