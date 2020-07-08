@@ -13,6 +13,7 @@ from lite_content.lite_exporter_frontend import (  # noqa
     organisation,  # noqa
     declaration,  # noqa
     licences,  # noqa
+    ecju_queries,  # noqa
 )  # noqa
 
 # Generic (used as defaults in forms)

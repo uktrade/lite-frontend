@@ -59,3 +59,7 @@ class Tiles:
         DESCRIPTION = "View and manage your open licence returns"
         ADD_LINK = "Submit"
         VIEW_LINK = "View licence returns"
+
+    class Compliance:
+        TITLE = "Compliance"
+        DESCRIPTION = "View and manage your compliance visits"

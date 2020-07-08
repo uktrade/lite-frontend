@@ -77,3 +77,50 @@ class OpenReturnsForm:
         DESCRIPTION = ""
         OPEN_LICENCE_RETURNS_LINK = "View open licence returns"
         HOME_LINK = "Return to your export control account dashboard"
+
+
+class ComplianceSiteCaseList:
+    TITLE = "Compliance"
+    NONE_NOTICE = "There are no compliance's required for your organisation"
+
+    class Table:
+        REFERENCE = "Reference number"
+        SITE = "Site name"
+        ADDRESS = "Address"
+        NEXT_VISIT = "Next visit"
+
+
+class ComplianceSiteCase:
+    BACK_LINK = "Back to compliance list"
+    PRIMARY_SITE = "This is your organisation's primary site"
+
+    class Tabs:
+        DETAILS = "Details"
+        ECJU_QUERIES = "ECJU queries"
+        VISITS = "Visits"
+        NOTES = "Notes"
+        GENERATED_DOCUMENTS = "Generated documents"
+
+    class Summary:
+        VISIT_DATE = "Visit Date"
+        SITE_NAME = "Site Name"
+        STREET = "Building and street"
+        CITY = "Town or city"
+        COUNTY = "County or state"
+        POSTCODE = "Postcode"
+        COUNTRY = "Country"
+
+    class Visits:
+        REFERENCE = "Reference number"
+        DATE = "Date"
+        INSPECTOR = "Inspector's name"
+
+        NO_VISITS = "No visits have been planned yet"
+
+
+class ComplianceVisitCase:
+    BACK_LINK = "Back to compliance"
+
+    class Tabs:
+        ECJU_QUERIES = "ECJU queries"
+        GENERATED_DOCUMENTS = "Generated documents"
