@@ -3,6 +3,7 @@ from datetime import datetime
 from pytest_bdd import given, when, then, scenarios
 
 from ui_automation_tests.pages.attach_document_page import AttachDocumentPage
+from ui_automation_tests.pages.compliance_pages import CompliancePages
 from ui_automation_tests.pages.exporter_hub_page import ExporterHubPage
 from ui_automation_tests.pages.open_licence_returns_page import OpenLicenceReturnsPage
 from ui_automation_tests.pages.shared import Shared
@@ -17,6 +18,12 @@ def create_open_licence_return(context):
     context.open_licence_csv_filename = "open_licence_returns.csv"
     text = f"\n{context.reference_code},a,b,c,d"
     create_temporary_file(context.open_licence_csv_filename, text)
+
+
+@given("I create a visit case for the linked compliance case")
+def create_visit_case(context, decision, api_test_client):
+    context.comp_site_case_id = api_test_client.cases.get_compliance_id_for_case(context.case_id)[0]
+    context.visit_case_id = api_test_client.cases.create_compliance_visit_case(context.comp_site_case_id)
 
 
 @when("I complete an open licence return")
@@ -52,3 +59,43 @@ def see_open_licence_entry(driver, context):
     top_row = Shared(driver).get_table_row(1)
     assert top_row.get_attribute("id") == context.open_licence_returns_id
     assert context.open_licence_return_year in top_row.text
+
+
+@when("I view my organisations compliance section")
+def view_compliance_tile(driver):
+    ExporterHubPage(driver).click_compliance()
+
+
+@then("I can see the compliance case in the list of cases")
+def case_in_compliance_list(driver, context):
+    assert CompliancePages(driver).find_paginated_compliance_site_case_row(context.comp_site_case_id)
+
+
+@when("I view the compliance case")
+def view_compliance_case(driver, context):
+    CompliancePages(driver).view_compliance_case(context.comp_site_case_id)
+
+
+@then("I can see the contents of the compliance case")
+def all_tabs_are_visible(driver):
+    page = CompliancePages(driver)
+    assert page.details_tab()
+    assert page.ecju_queries_tab()
+    assert page.notes_tab()
+    assert page.generated_documents_tab()
+    assert page.visits_tab()
+
+
+@then("I can see one visit case is created")
+def visit_case_created(driver, context):
+    page = CompliancePages(driver)
+    page.visits_tab().click()
+    assert page.find_paginated_compliance_visit_case(context.visit_case_id)
+
+
+@then("I view the visit case where I can see a smaller set of tabs are visible")
+def view_visit_case_and_check_tabs(driver, context):
+    page = CompliancePages(driver)
+    page.view_visit_case(context.visit_case_id)
+    assert page.ecju_queries_tab()
+    assert page.generated_documents_tab()

@@ -54,7 +54,7 @@
 	{% url "applications:application" application.id "case-notes" as post_url %}
 	{% include "includes/case-notes.html" with post_url=post_url %}
 {% elif type == 'ecju-queries' %}
-	{% include "applications/tabs/ecju-queries.html" %}
+	{% include "includes/ecju-queries.html" with object_type="application" case_id=application.id %}
 {% elif type == 'generated-documents' %}
 	{% include "core/ecju-generated-documents.html" %}
 {% elif type == 'activity' %}

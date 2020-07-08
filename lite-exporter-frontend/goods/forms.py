@@ -12,7 +12,6 @@ from lite_content.lite_exporter_frontend.goods import (
     EditGoodForm,
     DocumentSensitivityForm,
     AttachDocumentForm,
-    RespondToQueryForm,
     GoodsList,
     GoodGradingForm,
 )
@@ -25,7 +24,6 @@ from lite_forms.components import (
     BackLink,
     FileUpload,
     TextInput,
-    HTMLBlock,
     HiddenField,
     Button,
     DateInput,
@@ -36,7 +34,6 @@ from lite_forms.components import (
     FormGroup,
     Heading,
 )
-from lite_forms.generators import confirm_form
 from lite_forms.helpers import conditional
 from lite_forms.styles import ButtonStyle, HeadingStyle
 
@@ -447,44 +444,6 @@ def raise_a_goods_query(good_id, raise_a_clc: bool, raise_a_pv: bool):
         questions=questions,
         back_link=BackLink(GoodsQueryForm.BACK_LINK, reverse("goods:good", kwargs={"pk": good_id})),
         default_button_name="Save",
-    )
-
-
-def respond_to_query_form(good_id, ecju_query):
-    return Form(
-        title=RespondToQueryForm.TITLE,
-        description="",
-        questions=[
-            HTMLBlock(
-                '<div class="app-ecju-query__text" style="display: block; max-width: 100%;">'
-                + ecju_query["question"]
-                + "</div><br><br>"
-            ),
-            TextArea(
-                name="response",
-                title=RespondToQueryForm.Response.TITLE,
-                description=RespondToQueryForm.Response.DESCRIPTION,
-                extras={"max_length": 2200},
-            ),
-            HiddenField(name="form_name", value="respond_to_query"),
-        ],
-        back_link=BackLink(
-            RespondToQueryForm.BACK_LINK,
-            reverse_lazy("goods:good_detail", kwargs={"pk": good_id, "type": "ecju-queries"}),
-        ),
-        default_button_name=RespondToQueryForm.BUTTON,
-    )
-
-
-def ecju_query_respond_confirmation_form(edit_response_url):
-    return confirm_form(
-        title=RespondToQueryForm.ConfirmationForm.TITLE,
-        confirmation_name="confirm_response",
-        hidden_field="ecju_query_response_confirmation",
-        yes_label=RespondToQueryForm.ConfirmationForm.YES,
-        no_label=RespondToQueryForm.ConfirmationForm.NO,
-        back_link_text=RespondToQueryForm.ConfirmationForm.BACK_LINK,
-        back_url=edit_response_url,
     )
 
 

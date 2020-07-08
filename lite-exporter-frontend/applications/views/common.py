@@ -7,8 +7,6 @@ from django.views.generic import TemplateView
 
 from applications.forms.application_actions import withdraw_application_confirmation, surrender_application_confirmation
 from applications.forms.common import (
-    respond_to_query_form,
-    ecju_query_respond_confirmation_form,
     edit_type_form,
     application_success_page,
     application_copy_form,
@@ -33,8 +31,6 @@ from applications.services import (
     get_case_notes,
     get_case_generated_documents,
     get_application_ecju_queries,
-    get_ecju_query,
-    put_ecju_query,
     post_case_notes,
     submit_application,
     get_application,
@@ -47,9 +43,8 @@ from conf.constants import HMRC, APPLICANT_EDITING, NotificationType, STANDARD
 from core.helpers import str_to_bool, convert_dict_to_query_params
 from core.services import get_organisation
 from lite_content.lite_exporter_frontend import strings
-from lite_forms.components import HiddenField
 from lite_forms.generators import confirm_form
-from lite_forms.generators import error_page, form_page
+from lite_forms.generators import form_page
 from lite_forms.views import SingleFormView, MultiFormView
 
 
@@ -246,91 +241,6 @@ class ApplicationSummary(TemplateView):
             return HttpResponseRedirect(reverse_lazy("applications:success_page", kwargs={"pk": self.application_id}))
         else:
             return HttpResponseRedirect(reverse_lazy("applications:declaration", kwargs={"pk": self.application_id}))
-
-
-class RespondToQuery(TemplateView):
-    application_id = None
-    ecju_query_id = None
-    ecju_query = None
-
-    def dispatch(self, request, *args, **kwargs):
-        self.application_id = str(kwargs["pk"])
-        self.ecju_query_id = str(kwargs["query_pk"])
-        self.ecju_query = get_ecju_query(request, str(kwargs["pk"]), str(kwargs["query_pk"]))
-
-        if self.ecju_query["response"]:
-            return redirect(
-                reverse_lazy("applications:application", kwargs={"pk": self.application_id, "type": "ecju-queries"})
-            )
-
-        return super(RespondToQuery, self).dispatch(request, *args, **kwargs)
-
-    def get(self, request, **kwargs):
-        """
-        Will get a text area form for the user to respond to the ecju_query
-        """
-        return form_page(request, respond_to_query_form(self.application_id, self.ecju_query))
-
-    def post(self, request, **kwargs):
-        """
-        will determine what form the user is on:
-        if the user is on the input form will then will determine if data is valid, and move user to confirmation form
-        else will allow the user to confirm they wish to respond and post data if accepted.
-        """
-        form_name = request.POST.get("form_name")
-
-        if form_name == "respond_to_query":
-            # Post the form data to API for validation only
-            data = {"response": request.POST.get("response"), "validate_only": True}
-            response, status_code = put_ecju_query(request, self.application_id, self.ecju_query_id, data)
-
-            if status_code != HTTPStatus.OK:
-                errors = response.get("errors")
-                errors = {error: message for error, message in errors.items()}
-                form = respond_to_query_form(self.application_id, self.ecju_query)
-                data = {"response": request.POST.get("response")}
-                return form_page(request, form, data=data, errors=errors)
-            else:
-                form = ecju_query_respond_confirmation_form(
-                    reverse_lazy(
-                        "applications:respond_to_query",
-                        kwargs={"pk": self.application_id, "query_pk": self.ecju_query_id},
-                    )
-                )
-                form.questions.append(HiddenField("response", request.POST.get("response")))
-                return form_page(request, form)
-        elif form_name == "ecju_query_response_confirmation":
-            if request.POST.get("confirm_response") == "yes":
-                data, status_code = put_ecju_query(request, self.application_id, self.ecju_query_id, request.POST)
-
-                if "errors" in data:
-                    return form_page(
-                        request,
-                        respond_to_query_form(self.application_id, self.ecju_query),
-                        data=request.POST,
-                        errors=data["errors"],
-                    )
-
-                return redirect(
-                    reverse_lazy("applications:application", kwargs={"pk": self.application_id, "type": "ecju-queries"})
-                )
-            elif request.POST.get("confirm_response") == "no":
-                return form_page(
-                    request, respond_to_query_form(self.application_id, self.ecju_query), data=request.POST
-                )
-            else:
-                error = {"required": ["This field is required"]}
-                form = ecju_query_respond_confirmation_form(
-                    reverse_lazy(
-                        "applications:respond_to_query",
-                        kwargs={"pk": self.application_id, "query_pk": self.ecju_query_id},
-                    )
-                )
-                form.questions.append(HiddenField("response", request.POST.get("response")))
-                return form_page(request, form, errors=error)
-        else:
-            # Submitted data does not contain an expected form field - return an error
-            return error_page(request, strings.applications.AttachDocumentPage.UPLOAD_GENERIC_ERROR)
 
 
 class WithdrawApplication(SingleFormView):

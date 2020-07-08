@@ -323,6 +323,10 @@ def date_display(value):
         "December",
     ]
 
+    # ensure that the value given exists, and is not none type
+    if not value:
+        return
+
     # A date without the two '-' delimiters is not a full/valid date
     if value.count("-") < 2:
         return

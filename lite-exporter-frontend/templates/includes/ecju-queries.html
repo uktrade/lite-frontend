@@ -10,7 +10,16 @@
 				<p class="app-ecju-query__date">
 					<span class="govuk-visually-hidden">Created at </span>{{ ecju_query.created_at|str_date }}
 				</p>
-				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'end_users:respond_to_query' end_user_advisory.id ecju_query.id %}">Respond to query</a>
+				{% if object_type == "good" %}
+					{% url 'ecju_queries:respond_to_query_extra' ecju_query.id object_type good.id case_id as url%}
+					<a class="govuk-link govuk-link--no-visited-state" href={{ url }}>Respond to query</a>
+				{% elif object_type == "compliance-visit" %}
+					{% url 'ecju_queries:respond_to_query_extra' ecju_query.id object_type site_case_id case_id as url%}
+					<a class="govuk-link govuk-link--no-visited-state" href={{ url }}>Respond to query</a>
+				{% else %}
+					{% url 'ecju_queries:respond_to_query' ecju_query.id object_type case_id as url%}
+					<a class="govuk-link govuk-link--no-visited-state" href={{ url }}>Respond to query</a>
+				{% endif %}
 			</div>
 		</div>
 		<hr class="lite-horizontal-separator">
@@ -35,14 +44,14 @@
 			<div class="app-ecju-query__item app-ecju-query__item--right">
 				<p class="app-ecju-query__heading">
 					<a href="{% url "organisation:members:user" ecju_query.responded_by_user.id %}" class="govuk-link govuk-link--no-visited-state">
-						{{ ecju_query.responded_by_user.first_name }} {{ ecju_query.responded_by_user.last_name }}
+						{{ ecju_query.responded_by_user.name }}
 					</a>
 				</p>
 				<div class="app-ecju-query__text">
 					{{ ecju_query.response }}
 				</div>
 				<p class="app-ecju-query__date">
-					<span class="govuk-visually-hidden">Created at </span>{{ ecju_query.responded_at|str_date }}
+					<span class="govuk-visually-hidden">Responded at </span>{{ ecju_query.responded_at|str_date }}
 				</p>
 			</div>
 		</div>
@@ -55,7 +64,7 @@
 		<span class="lite-information-text__icon" aria-hidden="true">!</span>
 		<p class="lite-information-text__text">
 			<span class="govuk-visually-hidden">Information</span>
-			{% lcs 'EcjuQueries.NONE_END_USER_ADVISORY' %}
+			{% lcs 'EcjuQueries.NONE_APPLICATION' %}
 		</p>
 	</div>
 {% endif %}

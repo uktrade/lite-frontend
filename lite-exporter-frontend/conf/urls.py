@@ -10,6 +10,7 @@ urlpatterns = [
     path("goods/", include("goods.urls")),
     path("licences/", include("licences.urls")),
     path("organisation/", include("organisation.urls")),
+    path("ecju-queries/", include("ecju_queries.urls")),
     path("", include("hmrc.urls")),
 ]
 

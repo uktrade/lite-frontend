@@ -1,0 +1,54 @@
+{% extends 'layouts/base.html' %}
+
+{% block back_link %}
+	{% include 'includes/breadcrumbs.html' with title='hub.Tiles.Compliance.TITLE' %}
+{% endblock %}
+
+{% block body %}
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">
+				{% block title %}
+					{% lcs "compliance.ComplianceSiteCaseList.TITLE" %}
+				{% endblock %}
+			</h1>
+		</div>
+	</div>
+
+	{% if compliance.results %}
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="col">{% lcs "compliance.ComplianceSiteCaseList.Table.REFERENCE" %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs "compliance.ComplianceSiteCaseList.Table.SITE" %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs "compliance.ComplianceSiteCaseList.Table.ADDRESS" %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs "compliance.ComplianceSiteCaseList.Table.NEXT_VISIT" %}</th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				{% for compliance_case in compliance.results %}
+					<tr id={{ compliance_case.id }} class="govuk-table__row">
+						<td class="govuk-table__cell">
+							<a class="govuk-link govuk-link--no-visited-state app-icon-label" href="{% url 'compliance:compliance_site_details' compliance_case.id "details" %}" id="case-{{ compliance_case.id }}">
+								{{ compliance_case.reference_code }}
+							</a>
+							{% if compliance_case.exporter_user_notification_count %}<span class="lite-notification-bubble" id="eua-notifications"><span class="govuk-visually-hidden"> (</span>{{ compliance_case.exporter_user_notification_count }}<span class="govuk-visually-hidden"> notifications)</span></span>{% endif %}
+						</td>
+						<td class="govuk-table__cell">
+							{{ compliance_case.site_name }}
+						</td>
+						<td class="govuk-table__cell">
+							{{ compliance_case|get_address }}
+						</td>
+						<td class="govuk-table__cell">
+							{{ compliance_case.review_date|date_display|default:"Not set" }}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		{% pagination with data=compliance %}
+	{% else %}
+		{% include "includes/notice.html" with text="compliance.ComplianceSiteCaseList.NONE_NOTICE" %}
+	{% endif %}
+{% endblock %}

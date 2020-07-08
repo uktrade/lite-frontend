@@ -191,7 +191,7 @@
 				{% url "end_users:end_user_detail" end_user_advisory.id "case-notes" as post_url %}
 				{% include "includes/case-notes.html" %}
 			{% elif type == 'ecju-queries'%}
-				{% include "end-users/tabs/ecju-queries.html" %}
+				{% include "includes/ecju-queries.html" with object_type="end-user-advisory" case_id=end_user_advisory.id %}
 			{% elif type == 'ecju-generated-documents'%}
 				{% include "core/ecju-generated-documents.html" %}
 			{% endif %}

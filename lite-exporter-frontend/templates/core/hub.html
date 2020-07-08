@@ -126,6 +126,14 @@
 	{% if organisation.type.key != 'hmrc' %}
 		<h2 class="govuk-heading-m govuk-!-margin-top-6 govuk-!-margin-bottom-3">{% lcs 'hub.Tiles.COMPLIANCE_HEADING' %}</h2>
 		<section class="app-tiles">
+			{# Compliance licence tile #}
+			<div class="app-tile">
+				<a href="{% url 'compliance:compliance_list' %}" class="app-tile__heading" id="link-compliance">
+					{% lcs 'hub.Tiles.Compliance.TITLE' %}
+					{% if notifications.notifications.compliance %}<span class="lite-notification-bubble" id="eua-notifications"><span class="govuk-visually-hidden"> (</span>{{ notifications.notifications.compliance }}<span class="govuk-visually-hidden"> notifications)</span></span>{% endif %}
+				</a>
+				<p class="app-tile__body">{% lcs 'hub.Tiles.Compliance.DESCRIPTION' %}</p>
+			</div>
 			{# Open licence returns tile #}
 			<div class="app-tile">
 				<a href="{% url 'compliance:open_licence_returns_list' %}" class="app-tile__heading" id="link-open-licence-returns">

@@ -3,11 +3,36 @@ from http import HTTPStatus
 from django.http import HttpResponse
 
 from conf.client import post, get
-from conf.constants import MAX_OPEN_LICENCE_RETURNS_FILE_SIZE, OPEN_LICENCE_RETURNS_URL
+from conf.constants import (
+    MAX_OPEN_LICENCE_RETURNS_FILE_SIZE,
+    OPEN_LICENCE_RETURNS_URL,
+    COMPLIANCE_EXPORTER_URL,
+    VISIT_URL,
+)
 from lite_content.lite_exporter_frontend.compliance import OpenReturnsForm
 
 
 FILENAME = "OpenLicenceReturns.csv"
+
+
+def get_compliance_list(request):
+    data = get(request, COMPLIANCE_EXPORTER_URL + f"?page={request.GET.get('page', 1)}")
+    return data.json()
+
+
+def get_compliance_detail(request, pk):
+    data = get(request, COMPLIANCE_EXPORTER_URL + str(pk) + "/")
+    return data.json()
+
+
+def get_case_visit_reports(request, pk):
+    data = get(request, COMPLIANCE_EXPORTER_URL + str(pk) + "/" + VISIT_URL)
+    return data.json()
+
+
+def get_case_visit_report(request, pk):
+    data = get(request, f"{COMPLIANCE_EXPORTER_URL}{VISIT_URL}{str(pk)}/")
+    return data.json()
 
 
 def get_open_licence_returns(request):

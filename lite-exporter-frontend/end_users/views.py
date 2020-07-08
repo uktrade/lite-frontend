@@ -7,8 +7,6 @@ from applications.services import (
     get_case_notes,
     get_application_ecju_queries,
     post_case_notes,
-    get_ecju_query,
-    put_ecju_query,
     get_case_generated_documents,
 )
 from core.helpers import convert_parameters_to_query_params
@@ -16,13 +14,10 @@ from end_users.forms import (
     apply_for_an_end_user_advisory_form,
     copy_end_user_advisory_form,
     end_user_advisory_success_page,
-    respond_to_query_form,
-    ecju_query_respond_confirmation_form,
 )
 from end_users.services import get_end_user_advisories, post_end_user_advisories, get_end_user_advisory
-from lite_content.lite_exporter_frontend import strings
 from lite_forms.components import HiddenField, FiltersBar, TextInput
-from lite_forms.generators import form_page, error_page
+from lite_forms.generators import form_page
 from lite_forms.submitters import submit_paged_form
 
 
@@ -171,98 +166,3 @@ class EndUserDetail(TemplateView):
         return redirect(
             reverse_lazy("end_users:end_user_detail", kwargs={"pk": self.end_user_advisory_id, "type": "case-notes"})
         )
-
-
-class RespondToQuery(TemplateView):
-    end_user_advisory_id = None
-    end_user_advisory = None
-    view_type = None
-    case_id = None
-    ecju_query_id = None
-    ecju_query = None
-
-    def dispatch(self, request, *args, **kwargs):
-        self.end_user_advisory_id = str(kwargs["pk"])
-        self.end_user_advisory, self.case_id = get_end_user_advisory(request, self.end_user_advisory_id)
-
-        self.ecju_query_id = str(kwargs["query_pk"])
-        self.ecju_query = get_ecju_query(request, self.case_id, self.ecju_query_id)
-
-        # If an ecju query is already responded to, return user to end_user_advisory_page
-        if self.ecju_query["response"]:
-            return redirect(
-                reverse_lazy(
-                    "end_users:end_user_detail", kwargs={"pk": self.end_user_advisory_id, "type": "ecju-queries"}
-                )
-            )
-
-        return super(RespondToQuery, self).dispatch(request, *args, **kwargs)
-
-    def get(self, request, **kwargs):
-        """
-        Will get a text area form for the user to respond to the ecju_query
-        """
-        return form_page(request, respond_to_query_form(self.end_user_advisory_id, self.ecju_query))
-
-    def post(self, request, **kwargs):
-        """
-        will determine what form the user is on:
-        if the user is on the input form will then will determine if data is valid, and move user to confirmation form
-        else will allow the user to confirm they wish to respond and post data if accepted.
-        """
-        form_name = request.POST.get("form_name")
-
-        if form_name == "respond_to_query":
-            # Post the form data to API for validation only
-            data = {"response": request.POST.get("response"), "validate_only": True}
-            response, status_code = put_ecju_query(request, self.case_id, self.ecju_query_id, data)
-
-            if status_code != 200:
-                errors = response.get("errors")
-                errors = {error: message for error, message in errors.items()}
-                form = respond_to_query_form(self.end_user_advisory_id, self.ecju_query)
-                data = {"response": request.POST.get("response")}
-                return form_page(request, form, data=data, errors=errors)
-            else:
-                form = ecju_query_respond_confirmation_form(
-                    reverse_lazy(
-                        "end_users:respond_to_query",
-                        kwargs={"pk": self.end_user_advisory_id, "query_pk": self.ecju_query_id},
-                    )
-                )
-                form.questions.append(HiddenField("response", request.POST.get("response")))
-                return form_page(request, form)
-        elif form_name == "ecju_query_response_confirmation":
-            if request.POST.get("confirm_response") == "yes":
-                data, status_code = put_ecju_query(request, self.case_id, self.ecju_query_id, request.POST)
-                if "errors" in data:
-                    return form_page(
-                        request,
-                        respond_to_query_form(self.end_user_advisory_id, self.ecju_query),
-                        data=request.POST,
-                        errors=data["errors"],
-                    )
-
-                return redirect(
-                    reverse_lazy(
-                        "end_users:end_user_detail", kwargs={"pk": self.end_user_advisory_id, "type": "ecju-queries"}
-                    )
-                )
-
-            elif request.POST.get("confirm_response") == "no":
-                return form_page(
-                    request, respond_to_query_form(self.end_user_advisory_id, self.ecju_query), data=request.POST
-                )
-            else:
-                error = {"required": ["Select yes to confirm you want to send the response"]}
-                form = ecju_query_respond_confirmation_form(
-                    reverse_lazy(
-                        "end_users:respond_to_query",
-                        kwargs={"pk": self.end_user_advisory_id, "query_pk": self.ecju_query_id},
-                    )
-                )
-                form.questions.append(HiddenField("response", request.POST.get("response")))
-                return form_page(request, form, errors=error)
-        else:
-            # Submitted data does not contain an expected form field - return an error
-            return error_page(request, strings.end_users.AttachDocumentPage.UPLOAD_GENERIC_ERROR)
