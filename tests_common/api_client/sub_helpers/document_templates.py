@@ -14,6 +14,7 @@ class DocumentTemplates:
         template_data["letter_paragraphs"] = [paragraph["id"]]
         template_data["name"] = "z" + helpers.get_formatted_date_time_y_m_d_h_s()
         template_data["visible_to_exporter"] = True
+        template_data["include_digital_signature"] = False
         if case_types:
             template_data["case_types"] = case_types
         if advice_type:
