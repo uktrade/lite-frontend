@@ -120,6 +120,14 @@ class Cases:
         ).json()
         return case["ids"]
 
+    def create_compliance_visit_case(self, complaince_site_case_id):
+        case = self.api_client.make_request(
+            method="POST",
+            url=f"/compliance/site/{complaince_site_case_id}/visit/",
+            headers=self.api_client.gov_headers,
+        ).json()["data"]
+        return case["id"]
+
     def get_case_info(self, case_id):
         return self.api_client.make_request(
             method="GET", url="/cases/" + case_id + "/", headers=self.api_client.gov_headers
