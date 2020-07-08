@@ -69,11 +69,12 @@ class Cases:
         ).json()["generated_document"]
         self.api_client.add_to_context("generated_document", generated_document)
 
-    def finalise_licence(self, case_id):
-        licence = self.api_client.make_request(
+    def finalise_licence(self, case_id, save_licence=True):
+        response = self.api_client.make_request(
             method="PUT", url="/cases/" + case_id + "/finalise/", headers=self.api_client.gov_headers,
-        ).json()["licence"]
-        self.api_client.add_to_context("licence", licence)
+        ).json()
+        if save_licence:
+            self.api_client.add_to_context("licence", response["licence"])
 
     def manage_case_status(self, draft_id):
         draft_id_to_change = draft_id or self.api_client.context["draft_id"]
