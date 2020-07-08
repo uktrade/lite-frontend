@@ -106,6 +106,13 @@ class CasePage:
         CASE_NOTES_AND_TIMELINE = "Notes and timeline"
         LICENCES = "Licences"
 
+    class LicencesTab:
+        REFERENCE_COLUMN = "Licence"
+        PRODUCTS_COLUMN = "Products"
+        USAGE_COLUMN = "Usage"
+        STATUS_COLUMN = "Status"
+        NO_CONTENT_NOTICE = "No licences on application"
+
     class DetailsTab:
         ADMINISTRATIVE_CENTRE = "Administrative Centre"
         EXPORTER_REFERENCE = "Exporter reference"

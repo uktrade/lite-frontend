@@ -62,6 +62,7 @@ class GiveOrChangeAdvicePage:
 
 class GenerateGoodsDecisionForm:
     TITLE = "Generate decision documents"
+    BUTTON = "Save and publish to exporter"
 
 
 class GoodsDecisionMatrixPage:
@@ -92,6 +93,9 @@ class FinaliseLicenceForm:
         LICENCED_QTY_COLUMN = "Licensed quantity"
         LICENCED_VALUE_COLUMN = "Licensed value"
         APPLIED_FOR_TEXT = "Applied for "
+        PREVIOUSLY_LICENCED = "Previously licenced "
+        USAGE = "Used "
+        PROVISO_TEXT = "Proviso notes;"
 
     class Actions:
         BACK_TO_ADVICE_BUTTON = "Back to final advice"
