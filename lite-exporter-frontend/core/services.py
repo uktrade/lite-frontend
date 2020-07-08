@@ -1,7 +1,7 @@
 from http import HTTPStatus
 from urllib.parse import urlencode
 
-from django.http import StreamingHttpResponse
+from django.http import StreamingHttpResponse, HttpResponse
 
 from conf.client import get, post, put, delete
 from conf.constants import (
@@ -326,3 +326,10 @@ def get_open_general_licence(request, pk):
 def post_open_general_licence_cases(request, json):
     data = post(request, LICENCES_OPEN_GENERAL_POST_URL, json)
     return data.json(), data.status_code
+
+
+def get_signature_certificate(request):
+    certificate = get(request, "/documents/certificate/")
+    response = HttpResponse(certificate.content, content_type=certificate.headers["Content-Type"])
+    response["Content-Disposition"] = certificate.headers["Content-Disposition"]
+    return response

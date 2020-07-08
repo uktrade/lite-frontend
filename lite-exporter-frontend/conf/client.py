@@ -149,10 +149,17 @@ def _seen_nonce(access_key_id, nonce, timestamp):
 
 def _verify_api_response(response, sender):
     try:
-        # To handle StreamingHttpResponses such as document downloads
+        # For all normal HTTPResponses and Document Signing Certifications we use the response content.
+        # For StreamingHttpResponses, such as document downloads,
         # we validate the response using the content-disposition (which includes the filename)
-        # For all normal HTTPResponses we use the response content.
-        content = response.headers.get("content-disposition") or response.content
+        if (
+            response.headers["Content-Type"] == "application/x-x509-ca-cert"
+            or "content-disposition" not in response.headers
+        ):
+            content = response.content
+        else:
+            content = response.headers.get("content-disposition")
+
         sender.accept_response(
             response.headers["server-authorization"], content=content, content_type=response.headers["Content-Type"],
         )

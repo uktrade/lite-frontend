@@ -21,4 +21,6 @@ urlpatterns = [
         views.RegisterAnOrganisation.as_view(),
         name="register_an_organisation",
     ),
+    path("signature-help/", views.SignatureHelp.as_view(), name="signature_help"),
+    path("certificate/", views.CertificateDownload.as_view(), name="certificate"),
 ]

@@ -20,6 +20,7 @@ from core.services import (
     get_country,
     register_commercial_organisation,
     register_private_individual,
+    get_signature_certificate,
 )
 from core.validators import validate_register_organisation_triage
 from lite_content.lite_exporter_frontend import generic
@@ -184,3 +185,13 @@ class RegisterAnOrganisationConfirmation(TemplateView):
             animated=True,
             additional_context={"user_in_limbo": True},
         )
+
+
+class SignatureHelp(TemplateView):
+    def get(self, request, *args, **kwargs):
+        return render(request, "core/signature-help.html", {})
+
+
+class CertificateDownload(TemplateView):
+    def get(self, request, *args, **kwargs):
+        return get_signature_certificate(request)
