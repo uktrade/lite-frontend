@@ -474,6 +474,9 @@ def create_letter_template(driver, context, get_template_id):  # noqa
     template_page.select_visible_to_exporter("True")
     functions.click_submit(driver)
 
+    template_page.select_has_signature("False")
+    functions.click_submit(driver)
+
     template_page.click_licence_layout(get_template_id)
     functions.click_submit(driver)
 

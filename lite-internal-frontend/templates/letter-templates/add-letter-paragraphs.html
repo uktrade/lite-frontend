@@ -23,7 +23,7 @@
 			{% endfor %}
 			{% hidden_field 'layout' layout.id %}
 			{% hidden_field 'visible_to_exporter' visible_to_exporter %}
-
+			{% hidden_field 'include_digital_signature' include_digital_signature %}
 			{% for letter_paragraph in existing_letter_paragraphs %}
 				{% hidden_field 'letter_paragraphs' letter_paragraph %}
 			{% endfor %}

@@ -40,17 +40,21 @@
 				</div>
 			</div>
 			<div class="govuk-grid-row">
-				<div class="govuk-grid-column-one-third">
+				<div class="govuk-grid-column-one-quarter">
 					<h4 class="govuk-heading-s">{% lcs 'LetterTemplates.LetterTemplate.CREATED_TITLE' %}</h4>
 					<p class="govuk-label" id="created_at">{{ letter_template.created_at|str_date }}</p>
 				</div>
-				<div class="govuk-grid-column-one-third">
+				<div class="govuk-grid-column-one-quarter">
 					<h4 class="govuk-heading-s">{% lcs 'LetterTemplates.LetterTemplate.LAST_UPDATE_TITLE' %}</h4>
 					<p class="govuk-label" id="last_updated">{{ letter_template.updated_at|str_date }}</p>
 				</div>
-				<div class="govuk-grid-column-one-third">
+				<div class="govuk-grid-column-one-quarter">
 					<h4 class="govuk-heading-s">{% lcs 'LetterTemplates.LetterTemplate.VISIBLE_TO_EXPORTER_TITLE' %}</h4>
 					<p class="govuk-label" id="last_updated">{{ letter_template.visible_to_exporter|friendly_boolean }}</p>
+				</div>
+				<div class="govuk-grid-column-one-quarter">
+					<h4 class="govuk-heading-s">{% lcs 'LetterTemplates.LetterTemplate.DIGITAL_SIGNATURE_TITLE' %}</h4>
+					<p class="govuk-label" id="digital_signature">{{ letter_template.include_digital_signature|friendly_boolean }}</p>
 				</div>
 			</div>
 		</div>

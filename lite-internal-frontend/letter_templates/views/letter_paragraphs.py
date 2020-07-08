@@ -18,6 +18,7 @@ def get_order_paragraphs_page(request, template_content):
             "name": template_content["name"],
             "layout": template_content["layout"],
             "visible_to_exporter": template_content["visible_to_exporter"],
+            "include_digital_signature": template_content["include_digital_signature"],
             "case_types": template_content["case_types"],
             "decisions": template_content["decisions"],
         },
@@ -38,6 +39,7 @@ class LetterParagraphs(TemplateView):
             "name": template_content["name"],
             "layout": template_content["layout"],
             "visible_to_exporter": template_content["visible_to_exporter"],
+            "include_digital_signature": template_content["include_digital_signature"],
             "case_types": template_content["case_types"],
             "decisions": template_content["decisions"],
             "letter_paragraphs": [
@@ -66,6 +68,7 @@ class LetterParagraphs(TemplateView):
                 "name": template_content["name"],
                 "layout": template_content["layout"],
                 "visible_to_exporter": template_content["visible_to_exporter"],
+                "include_digital_signature": template_content["include_digital_signature"],
                 "case_types": template_content["case_types"],
                 "decisions": template_content["decisions"],
                 "letter_paragraphs": template_content["letter_paragraphs"],

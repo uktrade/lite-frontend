@@ -14,6 +14,7 @@ def get_template_content(request):
         "name": data.get("name"),
         "layout": layout,
         "visible_to_exporter": data.get("visible_to_exporter"),
+        "include_digital_signature": data.get("include_digital_signature"),
         "case_types": data.getlist("case_types[]"),
         "decisions": data.getlist("decisions[]"),
         "action": data.get("action"),

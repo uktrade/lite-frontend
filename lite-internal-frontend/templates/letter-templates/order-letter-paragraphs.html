@@ -14,6 +14,7 @@
 		{% endfor %}
 		{% hidden_field 'layout' layout.id %}
 		{% hidden_field 'visible_to_exporter' visible_to_exporter %}
+		{% hidden_field 'include_digital_signature' include_digital_signature %}
 		<div class="lite-app-bar">
 			<div class="lite-app-bar__content">
 				<h1 class="govuk-heading-l">{% block title %}{% lcs 'LetterTemplates.OrderParagraph.TITLE' %}{% endblock %}</h1>

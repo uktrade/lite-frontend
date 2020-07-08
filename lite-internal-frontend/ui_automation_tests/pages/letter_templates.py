@@ -15,6 +15,7 @@ class LetterTemplates(BasePage):
     DRAG_DROP_LIST = "standard-advice-list"  # ID
     PREVIEW_PARAGRAPHS = "paragraph-list"  # ID
     VISIBLE_TO_EXPORTER_PARTIAL_ID = "visible_to_exporter-"
+    HAS_SIGNATURE_PARTIAL_ID = "include_digital_signature-"
     DONE_BUTTON_ID = "done"
 
     # Template page
@@ -48,6 +49,9 @@ class LetterTemplates(BasePage):
 
     def select_visible_to_exporter(self, value):
         self.driver.find_element_by_id(self.VISIBLE_TO_EXPORTER_PARTIAL_ID + value).click()
+
+    def select_has_signature(self, value):
+        self.driver.find_element_by_id(self.HAS_SIGNATURE_PARTIAL_ID + value).click()
 
     def click_licence_layout(self, template_id):
         self.driver.find_element_by_id(template_id).click()
