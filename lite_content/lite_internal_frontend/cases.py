@@ -276,6 +276,8 @@ class CasePage:
         LICENCE_STATUS = "Licence status"
         LICENCE_FLAGS = "Flags"
         NO_LICENCES_NOTICE = "No Licences found"
+        RETURN_COMPLETED = "Return completed"
+        OLR_NOT_APPLICABLE = "N/A"
 
     class LicenceFilters:
         REFERENCE = "Reference"
