@@ -23,7 +23,7 @@
 					<p class="govuk-body govuk-!-font-weight-bold">{{ good.advice.type.value }}</p>
 					<p>{{ good.advice.text }}<br></p>
 					{% if good.advice.proviso %}
-						<p>Proviso</p>
+						<p>{% lcs 'advice.FinaliseLicenceForm.GoodsTable.PROVISO_TEXT' %}</p>
 						{{ good.advice.proviso }}
 					{% endif %}
 				</td>

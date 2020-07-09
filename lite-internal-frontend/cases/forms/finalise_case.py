@@ -5,7 +5,7 @@ from lite_forms.components import Form, TextInput, BackLink, DateInput, Label, H
 from lite_forms.helpers import conditional
 
 
-def approve_licence_form(queue_pk, case_id, is_open_licence, duration, editable_duration, goods):
+def approve_licence_form(queue_pk, case_id, is_open_licence, editable_duration, goods, goods_html):
     return Form(
         title=lite_content.lite_internal_frontend.advice.FinaliseLicenceForm.APPROVE_TITLE,
         questions=[
@@ -21,10 +21,9 @@ def approve_licence_form(queue_pk, case_id, is_open_licence, duration, editable_
                     name="duration",
                     description=lite_content.lite_internal_frontend.advice.FinaliseLicenceForm.DURATION_DESCRIPTION,
                 ),
-                Label(text=f"Duration: {duration} months"),
             ),
             HiddenField(name="action", value="approve"),
-            conditional(goods, Custom("components/goods-licence-list.html", data=goods,)),
+            conditional(goods, Custom(goods_html, data=goods,)),
         ],
         container="case",
         back_link=conditional(

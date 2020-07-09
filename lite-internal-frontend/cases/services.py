@@ -14,6 +14,7 @@ from conf.constants import (
     GOODS_TYPE_URL,
     USER_ADVICE_URL,
     TEAM_ADVICE_URL,
+    LICENCES_URL,
     FINAL_ADVICE_URL,
     VIEW_TEAM_ADVICE_URL,
     GOOD_CLC_REVIEW_URL,
@@ -194,7 +195,7 @@ def grant_licence(request, case_pk, _):
 
 
 def get_licence(request, case_pk):
-    data = get(request, CASE_URL + case_pk + FINALISE_CASE_URL)
+    data = get(request, CASE_URL + case_pk + LICENCES_URL)
     return data.json(), data.status_code
 
 

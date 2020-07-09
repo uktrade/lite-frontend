@@ -36,6 +36,7 @@ CASE_DENIAL_REASONS_URL = "/denial-reasons/"
 SITES_URL = "/sites/"
 USERS_URL = "/users/"
 TEAMS_URL = "/teams/"
+LICENCES_URL = "/licences/"
 QUEUES_URL = "/queues/"
 AUTHENTICATION_URL = "/gov-users/authenticate/"
 GOV_USERS_URL = "/gov-users/"
@@ -138,32 +139,9 @@ class FlagLevels:
     DESTINATIONS = "destinations"
 
 
-class Statuses:
-    APPLICANT_EDITING = "applicant_editing"
-    CLOSED = "closed"
-    FINALISED = "finalised"
-    REGISTERED = "registered"
-    SUBMITTED = "submitted"
-    WITHDRAWN = "withdrawn"
-    CLC = "clc_review"
-    PV = "pv_review"
-    UNDER_ECJU_REVIEW = "under_ecju_review"
-    REVOKED = "revoked"
-    SUSPENDED = "suspended"
-    SURRENDERED = "surrendered"
-    DEREGISTERED = "deregistered"
-    OPEN = "open"
-    UNDER_INTERNAL_REVIEW = "under_internal_review"
-    RETURN_TO_INSPECTOR = "return_to_inspector"
-    AWAITING_EXPORTER_RESPONSE = "awaiting_exporter_response"
-
-
 class UserStatuses:
     ACTIVE = "Active"
     DEACTIVATED = "Deactivated"
-
-
-BASE_QUERY_STATUSES = [Statuses.SUBMITTED, Statuses.CLOSED, Statuses.WITHDRAWN]
 
 
 class SystemTeamsID(Enum):

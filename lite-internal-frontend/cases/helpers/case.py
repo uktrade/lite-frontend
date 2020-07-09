@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.utils import timezone
 from django.views.generic import TemplateView
 
+from cases.constants import CaseStatusEnum
 from cases.helpers.ecju_queries import get_ecju_queries
 from cases.objects import Slice, Case
 from cases.services import (
@@ -14,7 +15,7 @@ from cases.services import (
     get_activity,
     get_activity_filters,
 )
-from conf.constants import GENERATED_DOCUMENT, Statuses
+from conf.constants import GENERATED_DOCUMENT
 from core.helpers import generate_activity_filters
 from core.objects import Tab, TabCollection
 from core.services import get_user_permissions, get_status_properties, get_permissible_statuses
@@ -26,6 +27,7 @@ from queues.services import get_queue
 class Tabs:
     DETAILS = Tab("details", CasePage.Tabs.DETAILS, "details")
     DOCUMENTS = Tab("documents", CasePage.Tabs.DOCUMENTS, "documents")
+    LICENCES = Tab("licences", CasePage.Tabs.LICENCES, "licences")
     ADDITIONAL_CONTACTS = Tab("additional-contacts", CasePage.Tabs.ADDITIONAL_CONTACTS, "additional-contacts")
     ECJU_QUERIES = Tab("ecju-queries", CasePage.Tabs.ECJU_QUERIES, "ecju-queries")
     ACTIVITY = Tab("activity", CasePage.Tabs.CASE_NOTES_AND_TIMELINE, "activity")
@@ -83,7 +85,9 @@ class CaseView(TemplateView):
         open_ecju_queries, closed_ecju_queries = get_ecju_queries(self.request, self.case_id)
         user_assigned_queues = get_user_case_queues(self.request, self.case_id)[0]
         status_props, _ = get_status_properties(self.request, self.case.data["status"]["key"])
-        can_set_done = not status_props["is_terminal"] and self.case.data["status"]["key"] != Statuses.APPLICANT_EDITING
+        can_set_done = (
+            not status_props["is_terminal"] and self.case.data["status"]["key"] != CaseStatusEnum.APPLICANT_EDITING
+        )
         future_next_review_date = (
             True
             if self.case.next_review_date
@@ -135,10 +139,15 @@ class CaseView(TemplateView):
         activity_tab = Tabs.ACTIVITY
         activity_tab.count = "!" if self.case["audit_notification"] else None
 
-        return [
+        tabs = [
             Tabs.DETAILS,
             Tabs.ADDITIONAL_CONTACTS,
             Tabs.ECJU_QUERIES,
             Tabs.DOCUMENTS,
             activity_tab,
         ]
+
+        if "licences" in self.case:
+            tabs.insert(1, Tabs.LICENCES)
+
+        return tabs

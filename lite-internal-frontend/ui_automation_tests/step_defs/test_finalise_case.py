@@ -26,12 +26,12 @@ def decision_row_status(driver, context, status):
     assert GeneratedDecisionDocuments(driver).get_section_status(context.advice_type) == status
 
 
-@then("The licence information is in the latest audit")
+@then("The licence information is in the second audit")
 def licence_audit(driver, context, internal_url):
     ApplicationPage(driver).go_to_cases_activity_tab(internal_url, context)
-    latest_audit = ApplicationPage(driver).get_text_of_audit_trail_item(0)
-    assert context.licence_duration in latest_audit
-    assert context.licence_start_date in latest_audit
+    second_audit = ApplicationPage(driver).get_text_of_audit_trail_item(1)
+    assert context.licence_duration in second_audit
+    assert context.licence_start_date in second_audit
 
 
 @then("The case is finalised and a document is created in the audits")

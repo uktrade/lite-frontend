@@ -440,6 +440,15 @@ def multiply(num1, num2):
     return float(num1) * float(num2)
 
 
+@register.filter()
+def subtract(num1, num2):
+    if not num1:
+        return 0
+    if not num2:
+        return num1
+    return num1 - num2
+
+
 def join_list(_list, _join=", "):
     return _join.join(_list)
 
