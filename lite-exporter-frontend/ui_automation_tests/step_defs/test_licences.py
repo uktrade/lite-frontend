@@ -22,7 +22,7 @@ def standard_licence_row(context, driver):
     assert context.goods[0]["good"]["description"] in row
     assert context.end_user["country"]["name"] in row
     assert context.end_user["name"] in row
-    assert "Finalised" in row
+    assert "Issued" in row
 
 
 @then("I see my open licence")
@@ -33,7 +33,7 @@ def open_licence_row(context, driver):
     assert ", ".join(x["rating"] for x in context.goods_type["control_list_entries"]) in row
     assert context.goods_type["description"] in row
     assert context.country["name"] in row
-    assert "Finalised" in row
+    assert "Issued" in row
 
 
 @when("I click on the clearances tab")
@@ -60,7 +60,7 @@ def exhibition_licence_row(context, driver):
     assert context.reference_code in row
     assert ", ".join(x["rating"] for x in context.goods[0]["good"]["control_list_entries"]) in row
     assert context.goods[0]["good"]["description"] in row
-    assert "Finalised" in row
+    assert "Issued" in row
 
 
 @when("I view my licence")

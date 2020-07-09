@@ -46,7 +46,7 @@ Feature: I want to be able to view licences as an exporter user
     And I create a standard application via api
     And I remove the flags
     And I create "no_licence_required" final advice
-    And I create a licence for my application with "no_licence_required" decision document
+    And I finalise my NLR decision
     When I go to the licences page
     And I click on the NLR tab
     Then I see my nlr document

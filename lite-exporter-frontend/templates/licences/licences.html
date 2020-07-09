@@ -33,29 +33,29 @@
 				{% for licence in data.results %}
 					<tr class="govuk-table__row lite-accordian-table__row" id="licence-{{ licence.id }}">
 						<td class="govuk-table__cell">
-							<a href="{% url 'licences:licence' licence.id %}" id="view-{{ licence.id }}" class="govuk-link govuk-link--no-visited-state govuk-!-margin-right-3">{{ licence.application.reference_code|highlight_text:reference }}</a>
+							<a href="{% url 'licences:licence' licence.id %}" id="view-{{ licence.id }}" class="govuk-link govuk-link--no-visited-state govuk-!-margin-right-3">{{ licence.reference_code|highlight_text:reference }}</a>
 							<p class="govuk-!-font-size-16 govuk-!-margin-top-1 govuk-!-margin-bottom-0 govuk-!-margin-right-3">{{ licence.application.name|highlight_text:reference }}</p>
 						</td>
 						<td class="govuk-table__cell">
 							<span class="govuk-table__header" aria-hidden="true">
 								{% lcs "licences.LicencesList.Table.GOODS_COLUMN" %}
 							</span>
-							{% for good in licence.application.goods|slice:":3" %}
+							{% for good in licence.goods|slice:":3" %}
 								<div class="app-expanded-row__item--invert">
 									{% if good.good %}
 										{{ forloop.counter }}. {% include 'includes/control-list-entries.html' with control_list_entries=good.good.control_list_entries %}: {{ good.good.description }}
 									{% else %}
 										{{ forloop.counter }}. {% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}: {{ good.description }}
 									{% endif %}
-									{% if licence.application.goods|length > row_limit and forloop.counter == row_limit %}
+									{% if licence.goods|length > row_limit and forloop.counter == row_limit %}
 										<br>
 										<span class="govuk-hint govuk-!-margin-0">
-											({{ row_limit }} of {{ licence.application.goods|length }})
+											({{ row_limit }} of {{ licence.goods|length }})
 										</span>
 									{% endif %}
 								</div>
 							{% endfor %}
-							{% for good in licence.application.goods %}
+							{% for good in licence.goods %}
 								<div class="app-expanded-row__item">
 									{% if good.good %}
 										{{ forloop.counter }}. {% include 'includes/control-list-entries.html' with control_list_entries=good.good.control_list_entries %}: {{ good.good.description|abbreviate_string:50 }}
@@ -87,7 +87,7 @@
 							{% endfor %}
 						</td>
 						<td class="govuk-table__cell">
-							<span class="lite-mobile-tag">{{ licence.application.status.value }}</span>
+							<span class="lite-mobile-tag">{{ licence.status.value }}</span>
 						</td>
 						<td class="govuk-table__cell">
 							<span class="govuk-table__header" aria-hidden="true">
