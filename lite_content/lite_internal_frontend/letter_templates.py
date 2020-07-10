@@ -101,7 +101,6 @@ class VariableHelpPageTables(Enum):
         Export type|{{ details.export_type }}|‘Permanent’ or ‘Temporary’
         Informed by Border Force or HMRC to apply|{{ details.has_been_informed }}|‘Yes’ or ‘No’
         Reference number on letter from Border Force or HMRC|{{ details.reference_number_on_information_form }}|CRE/2020/1234567
-        If firearms included on application|{{ details.contains_firearm_goods }}|‘Yes’ or ‘No’
         If goods shipped on an air waybill or bill of lading|{{ details.shipped_waybill_or_lading }}|‘Yes’ or ‘No’
         Details of the route of the goods|{{ details.non_waybill_or_lading_route_details }}|
         Proposed return date|{{ details.proposed_return_date }}|20 June 2020
