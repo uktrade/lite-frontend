@@ -65,7 +65,7 @@ def opening_question():
 
 
 def export_licence_questions(request, application_type, goodstype_category=None):
-    should_display_firearms_question = application_type == CaseTypes.SIEL or goodstype_category in [
+    should_display_firearms_question = goodstype_category in [
         GoodsTypeCategory.MILITARY,
         GoodsTypeCategory.UK_CONTINENTAL_SHELF,
     ]
@@ -203,7 +203,7 @@ def transhipment_questions(request):
             ),
             *conditional(
                 request.POST.get("application_type") != CaseTypes.OGTL,
-                [reference_name_form(), told_by_an_official_form(), firearms_form()],
+                [reference_name_form(), told_by_an_official_form()],
                 [],
             ),
         ]

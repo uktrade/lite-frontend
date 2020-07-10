@@ -87,11 +87,6 @@ def _convert_gifting_clearance(application, editable=False):
 
 def _convert_standard_application(application, editable=False, is_summary=False):
     converted_app = {
-        **(
-            {applications.ApplicationSummaryPage.GOODS_CATEGORIES: _get_goods_categories(application),}
-            if application.case_type["reference"]["key"] in [CaseTypes.SIEL, CaseTypes.SITL]
-            else {}
-        ),
         convert_to_link(
             reverse_lazy(f"applications:good_detail_summary", kwargs={"pk": application["id"]}),
             applications.ApplicationSummaryPage.GOODS,
@@ -122,9 +117,6 @@ def _convert_standard_application(application, editable=False, is_summary=False)
             application["additional_documents"], application["id"]
         ),
     }
-
-    if application.case_type["reference"]["key"] in [CaseTypes.SIEL, CaseTypes.SITL]:
-        converted_app[applications.ApplicationSummaryPage.GOODS_CATEGORIES] = _get_goods_categories(application)
 
     return converted_app
 
