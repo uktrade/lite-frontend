@@ -15,6 +15,7 @@ Feature: I want to view the case details of a case
     And I should see my case SLA
     When I go to application previously created
     Then I see the application destinations
+    And I should see the view link displayed against a good
     Given the exporter has deleted the third party
     When I go to application previously created
     Then I see an inactive party on page

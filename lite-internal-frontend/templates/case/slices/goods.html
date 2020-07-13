@@ -43,6 +43,7 @@
 						<th scope="col" class="govuk-table__header">ARS</th>
 					{% endif %}
 					<th scope="col" class="govuk-table__header">Flags</th>
+					<th scope="col" class="govuk-table__header"></th>
 				</tr>
 			</thead>
 			<tbody class="govuk-table__body">
@@ -112,6 +113,9 @@
 						{% endif %}
 						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
 							{% include 'includes/flags.html' with flags=good.flags list=True %}
+						</td>
+						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}" id="view-good-details">
+							<a class="govuk-link govuk-link--no-visited-state" href="#" onclick="return openGoodModal('{{ good.good.id }}', '{{ good.good.description }}')">View</a>
 						</td>
 					</tr>
 					{% if show_advice %}

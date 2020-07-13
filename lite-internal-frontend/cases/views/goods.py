@@ -1,9 +1,10 @@
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.urls import reverse_lazy, reverse
+from django.views.generic import TemplateView
 
 from cases.forms.review_goods import review_goods_form
 from cases.helpers.advice import get_param_goods, flatten_goods_data
-from cases.services import get_case, post_review_goods
+from cases.services import get_case, post_review_goods, get_good
 from conf.constants import Permission
 from core.helpers import has_permission
 from lite_forms.views import SingleFormView
@@ -21,3 +22,10 @@ class ReviewGoods(SingleFormView):
 
         if not has_permission(request, Permission.REVIEW_GOODS):
             return redirect(reverse_lazy("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.object_pk}))
+
+
+class GoodDetails(TemplateView):
+    def get(self, request, **kwargs):
+        good_id = str(kwargs["good_pk"])
+        good = get_good(request, good_id)[0]["good"]
+        return render(request, "case/popups/good.html", {"good": good})

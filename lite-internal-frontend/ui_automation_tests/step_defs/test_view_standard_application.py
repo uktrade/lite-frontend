@@ -1,9 +1,8 @@
-from pytest_bdd import then, scenarios, when, given
-
 import shared.tools.helpers as utils
 from pages.application_page import ApplicationPage
 from pages.case_list_page import CaseListPage
 from pages.case_page import CasePage
+from pytest_bdd import then, scenarios, when, given
 
 scenarios("../features/view_standard_application.feature", strict_gherkin=False)
 
@@ -49,6 +48,15 @@ def i_see_destinations(driver, context):
 
     for destination in destinations:
         assert destination["name"] in destinations_table_text
+
+
+@then("I should see the view link displayed against a good")  # noqa
+def i_see_good_details_view_link(driver, context):  # noqa
+    goods = CasePage(driver).get_goods()
+    for good in goods:
+        view_link_table_cell = good.find_element_by_css_selector("td#view-good-details")
+        if view_link_table_cell:
+            assert "View" in view_link_table_cell.text
 
 
 @then("I see an inactive party on page")

@@ -1,0 +1,19 @@
+{% load sass_tags static svg %}
+<!DOCTYPE html>
+<html lang="en" class="govuk-template">
+	<head>
+		<meta charset="utf-8" />
+		<title>Good</title>
+		<link href="{% sass_src 'css/styles.scss' %}" rel="stylesheet" type="text/css" />
+		<script src="{% static 'javascripts/jquery.min.js' %}"></script>
+	</head>
+	<body class="app-popup">
+		<main role="main">
+			<div class="app-popup__content" id="main-content">
+				{% block body %}{% endblock %}
+			</div>
+		</main>
+		<script src="{% static 'javascripts/jquery.min.js' %}"></script>
+		<script src="{% static 'javascripts/definitions.js' %}"></script>
+	</body>
+</html>
