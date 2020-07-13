@@ -1,7 +1,6 @@
 from selenium.common.exceptions import NoSuchElementException
 
 from ui_automation_tests.pages.BasePage import BasePage
-from ui_automation_tests.shared.tools.utils import set_timeout_to
 
 
 class GreatSigninPage(BasePage):
@@ -26,9 +25,9 @@ class GreatSigninPage(BasePage):
 
     def handle_accept_cookies_popup(self):
         try:
-            set_timeout_to(self.driver, 0)
+            self.driver.implicitly_wait(0)
             self.driver.find_element_by_link_text(self.ACCEPT_COOKIES_TEXT).click()
-            set_timeout_to(self.driver, 10)
+            self.driver.implicitly_wait(10)
         except NoSuchElementException:
             pass
 

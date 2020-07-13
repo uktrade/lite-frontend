@@ -3,6 +3,7 @@ import os
 
 from django.conf import settings
 from faker import Faker  # noqa
+import logging
 from pytest_bdd import given, when, then, parsers
 
 import ui_automation_tests.shared.tools.helpers as utils
@@ -112,11 +113,11 @@ def pytest_exception_interact(node, report):
             node._nodeid.replace(".py::", "").replace("ui_automation_tests/step_defs/", "").replace("step_defs", "")
         )
         name = "{0}_{1}".format(class_name, "").replace("/", "").replace("test", "_test")
-        print(name)
+        logging.info("Test that has failed is file: %s", name)
         try:
             utils.save_screenshot(node.funcargs.get("driver"), name)
-        except Exception:  # noqa
-            pass
+        except Exception as e:  # noqa
+            logging.error("Screenshot failed to be taken %e", e)
 
 
 @given("I create a standard application via api")  # noqa
