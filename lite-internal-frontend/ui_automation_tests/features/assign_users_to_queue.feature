@@ -84,6 +84,8 @@ Feature: I want to assign one or more specific users to a case in a work queue
     And I click on my case
     Then I see a user is assigned
     When I click I'm done
+    And I unassign myself from all queues
+    And I go to my work queue
     Then my case is not in the queue
 
   @LT_1264_mark_done_when_not_assigned_from_work_queue @regression
@@ -96,4 +98,6 @@ Feature: I want to assign one or more specific users to a case in a work queue
     And I go to my work queue
     And I click on my case
     And I click I'm done
+    And I unassign myself from all queues
+    And I go to my work queue
     Then my case is not in the queue

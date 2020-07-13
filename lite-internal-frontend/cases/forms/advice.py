@@ -25,6 +25,7 @@ from lite_forms.components import (
     Group,
     Custom,
     Select,
+    DetailComponent,
 )
 from lite_forms.helpers import conditional
 from picklists.enums import PicklistCategories
@@ -162,8 +163,18 @@ def give_advice_form(request, case: Case, tab, queue_pk, denial_reasons, show_wa
 
 def generate_documents_form():
     return Form(
-        GenerateGoodsDecisionForm.TITLE,
-        questions=[Custom("components/finalise-generate-documents.html")],
+        title=GenerateGoodsDecisionForm.TITLE,
+        questions=[
+            Custom("components/finalise-generate-documents.html"),
+            DetailComponent(
+                title=GenerateGoodsDecisionForm.NOTE,
+                components=[
+                    TextArea(
+                        title=GenerateGoodsDecisionForm.NOTE_DESCRIPTION, name="note", classes=["govuk-!-margin-0"]
+                    ),
+                ],
+            ),
+        ],
         container="case",
         default_button_name=GenerateGoodsDecisionForm.BUTTON,
     )

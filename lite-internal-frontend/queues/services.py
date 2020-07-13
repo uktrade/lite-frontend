@@ -61,19 +61,26 @@ def put_queue(request, pk, json):
 
 
 def get_queue_case_assignments(request, pk):
-    data = get(request, QUEUES_URL + pk + "/case-assignments/")
+    data = get(request, QUEUES_URL + str(pk) + "/case-assignments/")
     return data.json(), data.status_code
 
 
-def put_queue_case_assignments(request, pk, json):
-    data = put(request, QUEUES_URL + str(pk) + "/case-assignments/", json)
-    return data.json(), data.status_code
+def put_queue_case_assignments(request, pk, _):
+    case_ids = request.GET.getlist("cases")
+    json = {"case_assignments": [], "remove_existing_assignments": True, "note": request.POST.get("note")}
+    for case_id in case_ids:
+        json["case_assignments"].append({"case_id": case_id, "users": request.POST.getlist("users")})
+    response = put(request, QUEUES_URL + str(pk) + "/case-assignments/", json)
+    return response.json(), response.status_code
 
 
 def put_queue_single_case_assignment(request, pk, json):
     queue = json.get("queue")
     if queue:
-        json = {"case_assignments": [{"case_id": json.get("case_pk"), "users": [json.get("user_pk")]}]}
+        json = {
+            "case_assignments": [{"case_id": json.get("case_pk"), "users": [json.get("user_pk")]}],
+            "note": json.get("note"),
+        }
         data = put(request, QUEUES_URL + queue + "/case-assignments/", json)
         return data.json(), data.status_code
     else:

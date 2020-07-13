@@ -138,6 +138,12 @@ def assign_users_to_queue(context, api_test_client):
     api_test_client.queues.case_assignment(context.queue_id, context.case_id, [context.gov_user_id])
 
 
+@when("I unassign myself from all queues")
+def unassign_from_all_queues(driver, context):
+    UnassignQueuePage(driver).check_all_checkbxes()
+    functions.click_submit(driver)
+
+
 @when("I unassign myself from my newly created work queue")
 def unassign_queue(driver, context):
     UnassignQueuePage(driver).check_unassign_checkbox(context.queue_name.replace(" ", "-"))

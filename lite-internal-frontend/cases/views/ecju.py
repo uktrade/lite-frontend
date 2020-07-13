@@ -10,7 +10,7 @@ class NewECJUQueryView(SingleFormView):
         query_type = request.GET.get("query_type", ECJUQueryTypes.ECJU_QUERY)
         self.object_pk = kwargs["pk"]
         self.context = {"case": get_case(request, self.object_pk)}
-        self.form = new_ecju_query_form(kwargs["pk"], self.object_pk, query_type)
+        self.form = new_ecju_query_form(kwargs["queue_pk"], self.object_pk, query_type)
         self.action = post_ecju_query
         self.success_message = "ECJU query sent successfully"
         self.success_url = reverse(

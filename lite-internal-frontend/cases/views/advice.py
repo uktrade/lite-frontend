@@ -36,7 +36,7 @@ from cases.services import (
 )
 from core.builtins.custom_tags import filter_advice_by_level
 from core.services import get_denial_reasons
-from lite_content.lite_internal_frontend.advice import FinaliseLicenceForm
+from lite_content.lite_internal_frontend.advice import FinaliseLicenceForm, GenerateGoodsDecisionForm
 from lite_forms.generators import form_page, error_page
 from lite_forms.views import SingleFormView
 
@@ -304,6 +304,5 @@ class FinaliseGenerateDocuments(SingleFormView):
             "decisions": decisions,
         }
         self.action = grant_licence
-        self.success_url = reverse_lazy(
-            "cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.object_pk, "tab": "final-advice"}
-        )
+        self.success_message = GenerateGoodsDecisionForm.SUCCESS_MESSAGE
+        self.success_url = reverse_lazy("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.object_pk})

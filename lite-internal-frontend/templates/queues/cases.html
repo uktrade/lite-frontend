@@ -105,8 +105,7 @@
 		</tbody>
 	</table>
 
-	<form id="form-cases" method="post">
-		{% csrf_token %}
+	<form id="form-cases" method="get" action="{% url 'queues:case_assignments' queue.id %}">
 		<table id="table-cases" class="govuk-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">

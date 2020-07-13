@@ -48,15 +48,13 @@
 }
 
 .app-activity__additional-text {
+	@include govuk-font($size: 19, $line-height: 1.66)
 	position: relative;
-	padding: govuk-spacing(4) govuk-spacing(4) 15px;
+	padding: govuk-spacing(4) govuk-spacing(4) govuk-spacing(3);
 	background-color: govuk-colour("light-grey");
 	border: 2px solid darken(govuk-colour("light-grey"), 3%);
-	line-height: 1.5;
-	margin: 15px 0 20px;
-	word-break: break-all;
+	margin: govuk-spacing(3) 0 govuk-spacing(4);
 	max-width: 600px;
-	@extend %govuk-body-m;
 
 	&--exporter {
 		background-color: rgba(govuk-colour("blue"), 0.1);

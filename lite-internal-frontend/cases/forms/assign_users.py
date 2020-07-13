@@ -4,7 +4,17 @@ from django.urls import reverse
 from conf.constants import UserStatuses
 from lite_content.lite_internal_frontend import strings
 from lite_content.lite_internal_frontend.strings import cases
-from lite_forms.components import Checkboxes, Filter, Form, RadioButtons, Button, HiddenField, BackLink
+from lite_forms.components import (
+    Checkboxes,
+    Filter,
+    Form,
+    RadioButtons,
+    Button,
+    HiddenField,
+    BackLink,
+    DetailComponent,
+    TextArea,
+)
 from lite_forms.helpers import conditional
 from lite_forms.styles import ButtonStyle
 from teams.services import get_users_team_queues
@@ -19,6 +29,9 @@ def assign_users_form(request: HttpRequest, team_id, queue, multiple: bool):
         questions=[
             Filter(),
             Checkboxes("users", options=get_gov_users(request, params, convert_to_options=True,), filterable=True),
+            DetailComponent(
+                title=cases.Manage.AssignUsers.NOTE, components=[TextArea(name="note", classes=["govuk-!-margin-0"]),],
+            ),
         ],
         caption=queue["name"],
         default_button_name=cases.Manage.AssignUsers.BUTTON,
@@ -77,6 +90,10 @@ def users_team_queues(request, case_pk, user_pk):
             RadioButtons("queue", queues, filterable=True),
             HiddenField("user_pk", user_pk),
             HiddenField("case_pk", case_pk),
+            DetailComponent(
+                title=cases.Manage.AssignUserAndQueue.NOTE,
+                components=[TextArea(name="note", classes=["govuk-!-margin-0"]),],
+            ),
         ],
         container="case",
     )

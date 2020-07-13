@@ -22,7 +22,8 @@ def get_gov_users(request, params=None, convert_to_options=False):
     if convert_to_options:
         converted = []
 
-        for user in data.json()["results"]:
+        # Hide users without emails (eg system users)
+        for user in [user for user in data.json()["results"] if user["email"]]:
             first_name = user.get("first_name")
             last_name = user.get("last_name")
             email = user.get("email")
