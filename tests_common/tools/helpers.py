@@ -176,7 +176,7 @@ def page_is_ready(driver):
 
 
 def find_paginated_item_by_id(id, driver):
-    driver.set_timeout_to(0)
+    driver.implicitly_wait(0)
     current_page = 1
     while True:
         element_to_find = driver.find_elements_by_id(id)
@@ -191,13 +191,13 @@ def find_paginated_item_by_id(id, driver):
                 driver.find_element_by_id(f"page-{current_page}").click()
             except NoSuchElementException:
                 pass
-    driver.set_timeout_to(10)
+    driver.implicitly_wait(10)
     assert element_is_found, f"'{id}' couldn't be found across {current_page} pages"
     return element_is_found
 
 
 def paginated_item_exists(item_id, driver, exists=True):
-    driver.set_timeout_to(0)
+    driver.implicitly_wait(0)
     current_page = 1
     while True:
         element_to_find = driver.find_elements_by_id(item_id)
@@ -214,12 +214,12 @@ def paginated_item_exists(item_id, driver, exists=True):
             except NoSuchElementException:
                 element_is_found = False
                 break
-    driver.set_timeout_to(10)
+    driver.implicitly_wait(10)
     return bool(element_is_found) == exists
 
 
 def paginated_item_exists_by_css(css, driver, exists=True):
-    driver.set_timeout_to(0)
+    driver.implicitly_wait(0)
     current_page = 1
     while True:
         element_to_find = driver.find_elements_by_css_selector(css)
@@ -236,12 +236,12 @@ def paginated_item_exists_by_css(css, driver, exists=True):
             except NoSuchElementException:
                 element_is_found = False
                 break
-    driver.set_timeout_to(10)
+    driver.implicitly_wait(10)
     return bool(element_is_found) == exists
 
 
 def get_text_of_multi_page_table(css_selector, driver):
-    driver.set_timeout_to(0)
+    driver.implicitly_wait(0)
     text = ""
     current_page = 1
     while True:
@@ -251,7 +251,7 @@ def get_text_of_multi_page_table(css_selector, driver):
             driver.find_element_by_id(f"page-{current_page}").click()
         except NoSuchElementException:
             break
-    driver.set_timeout_to(10)
+    driver.implicitly_wait(10)
     return text
 
 

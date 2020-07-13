@@ -30,14 +30,6 @@ def get_or_create_attr(obj, attr: str, fn):
     return getattr(obj, attr)
 
 
-def set_timeout_to(self, seconds: int):
-    self.implicitly_wait(seconds)
-
-
-def set_timeout_to_10_seconds(self):
-    self.set_timeout_to(10)
-
-
 def build_test_helper(api_client):
     test_helper = TestHelper(api_client)
 

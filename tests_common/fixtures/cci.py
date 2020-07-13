@@ -47,7 +47,7 @@ class wait_for_page_load_after_action(object):
 def create_browserstack_driver(bs_username, bs_access_key):
     desired_cap = {
         "browser": "Chrome",
-        "browser_version": "81.0",
+        "browser_version": "83.0",
         "browserstack.video": os.getenv("HAS_VIDEO"),
         "os": "OS X",
         "os_version": "High Sierra",
@@ -67,22 +67,12 @@ def create_browserstack_driver(bs_username, bs_access_key):
 def enable_browser_stack(request):
     driver = create_browserstack_driver(BROWSER_STACK_USERNAME, BROWSER_STACK_ACCESS_KEY)
 
-    def timeout_shim(self, time=0):
-        logging.debug("WARNING: set_timeout_to (%s) called and will do nothing", time)
-
-    driver.set_timeout_to = timeout_shim
-
     browser_hosts = list(BROWSER_HOSTS.replace("${ENVIRONMENT}", ENVIRONMENT).split(","))
     for host in browser_hosts:
         logging.debug("Allowing browser access to %s", host)
         url = f"https://{AUTH_USER_NAME}:{AUTH_USER_PASSWORD}@{host}{ENDPOINT}"
         with wait_for_page_load_after_action(driver):
             driver.get(url)
+            driver.maximize_window()
             assert "Access Denied" not in driver.page_source
-
-    def fin():
-        driver.close()
-        driver.quit()
-
-    request.addfinalizer(fin)
     return driver
