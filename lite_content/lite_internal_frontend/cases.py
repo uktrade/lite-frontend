@@ -683,6 +683,7 @@ class ChangeStatusPage:
     TITLE = "Change case status"
     DESCRIPTION = ""
     SUCCESS_MESSAGE = "Case status successfully changed"
+    NOTE = "Explain why you're making this decision (optional)"
 
 
 class CLCReviewGoods:
@@ -793,19 +794,24 @@ class Manage:
         TITLE = "Where do you want to move this case?"
         DESCRIPTION = ""
         SUCCESS_MESSAGE = "Case moved successfully"
+        NOTE = "Explain why you're making this decision (optional)"
 
     class AssignUsers:
         DESCRIPTION = ""
         MULTIPLE_TITLE = "Which users do you want to assign to these cases?"
         MULTIPLE_WARNING = "Users already assigned to these cases will be overwritten."
         TITLE = "Which users do you want to assign to this case?"
-        BUTTON = "Continue"
+        NOTE = "Explain why you're making this decision (optional)"
+        BUTTON = "Save and return"
+        SUCCESS_MESSAGE = "Case assigned successfully"
+        SUCCESS_MULTI_MESSAGE = "Cases assigned successfully"
 
     class AssignUserAndQueue:
         USER_TITLE = "Select the user you want to assign the case to"
         USER_DESCRIPTION = ""
         QUEUE_TITLE = "Select a team queue to add the case to"
         QUEUE_DESCRIPTION = ""
+        NOTE = "Explain why you're making this decision (optional)"
         SUBMIT_BUTTON = "Submit"
 
     class AssignCaseOfficer:
@@ -882,7 +888,9 @@ class DoneWithCaseOnQueueForm:
     TITLE = "Unassign queues"
     CHECKBOX_TITLE = ""
     CHECKBOX_DESCRIPTION = "Select which queues you are done with this case on"
+    NOTE = "Explain why you're making this decision (optional)"
     SUBMIT = "Submit"
+    SUCCESS_MESSAGE = "Done with case {}"
 
 
 class UploadEnforcementXML:

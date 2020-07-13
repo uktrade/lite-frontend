@@ -62,6 +62,9 @@ class GiveOrChangeAdvicePage:
 
 class GenerateGoodsDecisionForm:
     TITLE = "Generate decision documents"
+    NOTE = "Explain why you're making this decision (optional)"
+    NOTE_DESCRIPTION = "Do this once you've generated your documents"
+    SUCCESS_MESSAGE = "Case finalised"
     BUTTON = "Save and publish to exporter"
 
 
