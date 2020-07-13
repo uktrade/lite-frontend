@@ -18,11 +18,6 @@ def num_cases_appear(driver, context, number):
     assert int(number) == Shared(driver).get_number_of_rows_in_lite_table(), "incorrect number of cases are shown"
 
 
-@when("I click clear filters")
-def i_click_clear_filters(driver, context):
-    CaseListPage(driver).click_clear_filters_button()
-
-
 @when("I hide filters")
 def i_hide_filters(driver, context):
     CaseListPage(driver).click_hide_filters_link()
@@ -45,7 +40,7 @@ def filter_status_change(driver, context, case_type):  # noqa
 
 
 @when("I click filter to show cases with open team ecju queries")  # noqa
-def i_show_filters(driver, context):  # noqa
+def filter_by_ecju(driver, context):  # noqa
     CaseListPage(driver).click_checkbox_to_show_team_ecju_query_and_hidden_cases()
     functions.click_apply_filters(driver)
 

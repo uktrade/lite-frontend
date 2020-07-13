@@ -26,7 +26,7 @@ class CaseOfficerPage(BasePage):
         return self.driver.find_element_by_id(self.CURRENT_CASE_OFFICER_LINK_ID).text
 
     def get_size_of_current_case_officer_link(self):
-        self.driver.set_timeout_to(0)
+        self.driver.implicitly_wait(0)
         size = len(self.driver.find_elements_by_id(self.CURRENT_CASE_OFFICER_LINK_ID))
-        self.driver.set_timeout_to_10_seconds()
+        self.driver.implicitly_wait(10)
         return size

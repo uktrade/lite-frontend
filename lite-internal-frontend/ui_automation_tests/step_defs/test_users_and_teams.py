@@ -43,13 +43,13 @@ def deactivate_user(driver, context):
 @then("I dont see new user")
 def dont_see_user(driver, context):
     users_page = UsersPage(driver)
-    driver.set_timeout_to(0)
+    driver.implicitly_wait(0)
     users_page.filter_by_email(context.added_email)
     try:
         users_page.is_user_email_displayed(context.added_email)
     except NoSuchElementException:
         pass
-    driver.set_timeout_to_10_seconds()
+    driver.implicitly_wait(10)
 
 
 @when("I reactivate new user")

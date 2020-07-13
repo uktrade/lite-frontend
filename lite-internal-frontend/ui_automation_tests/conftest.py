@@ -1,3 +1,4 @@
+import logging
 import os
 from django.conf import settings
 from pytest_bdd import given, when, then, parsers
@@ -98,12 +99,15 @@ def pytest_addoption(parser):
 # Create driver and url command line adoption
 def pytest_exception_interact(node, report):
     if node and report.failed:
-        class_name = node._nodeid.replace(".py::", "_class_")
-        name = " {0}_{1}".format(class_name, "error")
+        class_name = (
+            node._nodeid.replace(".py::", "").replace("ui_automation_tests/step_defs/", "").replace("step_defs", "")
+        )
+        name = "{0}_{1}".format(class_name, "").replace("/", "").replace("test", "_test")
+        logging.info("Test that has failed is file: %s", name)
         try:
             utils.save_screenshot(node.funcargs.get("driver"), name)
-        except Exception:  # noqa
-            pass
+        except Exception as e:  # noqa
+            logging.error("Screenshot failed to be taken %e", e)
 
 
 @when("I go to the internal homepage")  # noqa
@@ -183,6 +187,9 @@ def add_report_summary_picklist(add_a_report_summary_picklist):  # noqa
 
 @then("I see previously created application")  # noqa
 def see_queue_in_queue_list(driver, context):  # noqa
+    case_page = CaseListPage(driver)
+    functions.try_open_filters(driver)
+    case_page.click_clear_filters_button()
     case_page = CaseListPage(driver)
     functions.try_open_filters(driver)
     case_page.filter_by_case_reference(context.reference_code)
@@ -501,8 +508,13 @@ def i_apply_filters(driver, context):  # noqa
 
 @then("I dont see previously created application")  # noqa
 def dont_see_queue_in_queue_list(driver, context):  # noqa
-    driver.set_timeout_to(0)
-    if len(driver.find_elements_by_css_selector(".lite-information-text__text")) != 1:
-        assert context.app_id not in driver.find_element_by_css_selector(".govuk-table").text
-        assert context.case_id not in driver.find_element_by_css_selector(".govuk-table").text
-    driver.set_timeout_to_10_seconds()
+    case_page = CaseListPage(driver)
+    functions.try_open_filters(driver)
+    case_page.filter_by_case_reference(context.reference_code)
+    functions.click_apply_filters(driver)
+    assert context.reference_code not in driver.find_element_by_id("main-content").text
+
+
+@when("I click clear filters")  # noqa
+def i_click_clear_filters(driver, context):  # noqa
+    CaseListPage(driver).click_clear_filters_button()
