@@ -25,17 +25,15 @@
 					</td>
 					<td class="govuk-table__cell govuk-table__cell--tight">
 						{% if licence.case_type.sub_type.key == "open" %}
-							<ul class="lite-tick-cross-list">
-								{% if licence.has_open_licence_returns %}
-									<li class="lite-tick-cross lite-tick-cross--tick">
-										{% svg 'tick' %}
-									</li>
-								{% else %}
-									<li class="lite-tick-cross lite-tick-cross--cross">
-										{% svg 'cross' %}
-									</li>
-								{% endif %}
-							</ul>
+							{% if licence.has_open_licence_returns %}
+								<span class="lite-tick-cross lite-tick-cross--tick" role="img" aria-label="Completed annual return">
+									{% svg 'tick' %}
+								</span>
+							{% else %}
+								<span class="lite-tick-cross lite-tick-cross--cross" role="img" aria-label="Outstanding annual return">
+									{% svg 'cross' %}
+								</span>
+							{% endif %}
 						{% else %}
 							<span class="govuk-hint govuk-!-margin-0">{% lcs 'cases.CasePage.ComplianceLicencesTab.OLR_NOT_APPLICABLE' %}</span>
 						{% endif %}

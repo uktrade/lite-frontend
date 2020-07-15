@@ -147,7 +147,4 @@ class CaseView(TemplateView):
             activity_tab,
         ]
 
-        if "licences" in self.case:
-            tabs.insert(1, Tabs.LICENCES)
-
         return tabs

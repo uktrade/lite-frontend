@@ -141,7 +141,7 @@
 					<div class="lite-tabs__controls">
 						{% make_list queue.id case.id as button_params %}
 						{% govuk_link_button id='rerun-routing-rules' text='cases.ApplicationPage.Actions.RERUN_ROUTING_RULES' url='cases:rerun_routing_rules' url_param=button_params query_params='?return_to='|add:CURRENT_PATH classes='govuk-button--secondary' %}
-						{% if can_set_done %}
+						{% if can_set_done and case.case_type.reference.key != "comp_c" %}
 							{% govuk_link_button id='done' text='cases.ApplicationPage.DONE_WITH_CASE' url='cases:done' url_param=button_params classes='govuk-button--secondary' %}
 						{% endif %}
 					</div>
