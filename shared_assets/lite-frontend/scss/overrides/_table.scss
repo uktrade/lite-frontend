@@ -10,6 +10,7 @@
 	position: relative;
 	width: 24px!important;
 	margin: 0;
+	margin-bottom: govuk-spacing(3);
 
 	@include govuk-media-query($until: tablet) {
 		margin-top: -5px;
@@ -36,6 +37,7 @@
 		&::before {
 			top: 9px;
 			border-color: $govuk-text-colour;
+			background: white;
 		}
 
 		&::after {

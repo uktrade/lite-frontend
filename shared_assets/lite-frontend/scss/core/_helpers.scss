@@ -35,6 +35,7 @@
 }
 
 .lite-buttons-row {
+	width: 100%;
 	margin-bottom: govuk-spacing(6);
 
 	& > * {
@@ -46,9 +47,15 @@
 		}
 	}
 	@include govuk-media-query($until: tablet) {
+		margin-bottom: govuk-spacing(3);
+
 		* {
 			margin-left: 0!important;
 			margin-bottom: govuk-spacing(3);
+
+			&:last-child {
+				margin-bottom: 0;
+			}
 		}
 	}
 }
