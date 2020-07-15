@@ -16,6 +16,7 @@ env = Env(
     ALLOWED_HOSTS=(str, ""),
     DEBUG=(bool, False),
     LOG_LEVEL=(str, "INFO"),
+    SECURE_HSTS_ENABLED=(bool, False),
     CSP_DEFAULT_SRC=(tuple, ("'self'",)),
     CSP_STYLE_SRC=(tuple, ("'self'",)),
     CSP_SCRIPT_SRC=(tuple, ("'self'",)),
@@ -217,26 +218,30 @@ LOGGING = {
     "loggers": {"": {"handlers": ["console"], "level": env("LOG_LEVEL").upper(),},},
 }
 
-# Security settings
+LOGOUT_URL = env("AUTHBROKER_URL") + "/logout/"
 
-# Enable security features in hosted environments.
+# Enable security features in hosted environments
+
+SECURE_HSTS_ENABLED = env("SECURE_HSTS_ENABLED")
+SECURE_HSTS_SECONDS = 60 * 60 * 24 * 365 if SECURE_HSTS_ENABLED else None  # 1 year
 SECURE_BROWSER_XSS_FILTER = not DEBUG
-SESSION_COOKIE_SECURE = not DEBUG
-CSRF_COOKIE_SECURE = not DEBUG
-CSRF_COOKIE_HTTPONLY = not DEBUG
 SECURE_CONTENT_TYPE_NOSNIFF = not DEBUG
 
+SESSION_COOKIE_SECURE = not DEBUG
+SESSION_EXPIRE_SECONDS = env("SESSION_EXPIRE_SECONDS", default=60 * 60)
+
+CSRF_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_HTTPONLY = not DEBUG
+
+X_FRAME_OPTIONS = "SAMEORIGIN"
+
 # Content Security Policy
+
 CSP_DEFAULT_SRC = env("CSP_DEFAULT_SRC")
 CSP_STYLE_SRC = env("CSP_STYLE_SRC")
 CSP_SCRIPT_SRC = env("CSP_SCRIPT_SRC")
 CSP_FONT_SRC = env("CSP_FONT_SRC")
 CSP_REPORT_ONLY = env("CSP_REPORT_ONLY")
-
-# Session timeout
-SESSION_EXPIRE_SECONDS = env("SESSION_EXPIRE_SECONDS", default=60 * 60)
-
-LOGOUT_URL = env("AUTHBROKER_URL") + "/logout/"
 
 # The maximum number of parameters that may be received via GET or POST
 # before a SuspiciousOperation (TooManyFields) is raised.

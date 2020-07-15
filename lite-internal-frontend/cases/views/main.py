@@ -200,7 +200,7 @@ class ImDoneView(SingleFormView):
             case.next_review_date
             and datetime.datetime.strptime(case.next_review_date, "%Y-%m-%d").date() > timezone.now().date()
         )
-        self.form = done_with_case_form(request, self.object_pk, has_review_date)
+        self.form = done_with_case_form(request, kwargs["queue_pk"], self.object_pk, has_review_date)
         self.action = put_unassign_queues
         self.success_url = reverse_lazy("queues:cases", kwargs={"queue_pk": kwargs["queue_pk"]})
         self.success_message = DoneWithCaseOnQueueForm.SUCCESS_MESSAGE.format(case.reference_code)

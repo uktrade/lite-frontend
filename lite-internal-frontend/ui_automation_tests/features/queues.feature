@@ -66,6 +66,7 @@ Feature: I want to define new work queues and the teams they belong to
     And I add case to newly created queue
     And I go to application previously created for my queue
     And I click I'm done
+    And I click continue
     And I go to my work queue
     Then my case is not in the queue
     When I go to the countersigning queue

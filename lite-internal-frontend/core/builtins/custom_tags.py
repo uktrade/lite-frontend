@@ -13,7 +13,7 @@ from django.utils.safestring import mark_safe
 
 from conf import settings
 from conf.constants import ISO8601_FMT, DATE_FORMAT
-from conf.constants import SystemTeamsID, CaseType
+from conf.constants import SystemTeamsID
 from lite_content.lite_internal_frontend import strings
 
 register = template.Library()
@@ -94,56 +94,6 @@ def str_date_only(value):
         return date_str.strftime("%d %B %Y")
 
 
-@register.filter()
-def reference_code(value):
-    value = str(value)
-    return value[:5] + "-" + value[5:]
-
-
-@register.filter()
-def add_selected_class(key, url):
-    if key == url:
-        return "lite-menu-item--selected"
-
-    return ""
-
-
-@register.filter()
-def table_sort(key, actual_sort):
-    actual_sort = actual_sort.get("sort")
-
-    if not actual_sort:
-        return ""
-
-    if actual_sort == key:
-        return "lite-cases-table__heading--active"
-
-    if "-" + key in actual_sort:
-        return "lite-cases-table__heading--active-desc"
-
-
-@register.filter()
-def table_sort_text(key, actual_sort):
-    actual_sort = actual_sort.get("sort")
-
-    if not actual_sort:
-        return key
-
-    if "-" + key in actual_sort:
-        return ""
-
-    if key in actual_sort:
-        return "-" + key
-
-
-@register.filter()
-def group_list(items, split):
-    """
-    Groups items in a list based on a specified size
-    """
-    return [items[x : x + split] for x in range(0, len(items), split)]
-
-
 @register.filter
 @mark_safe
 def pretty_json(value):
@@ -151,27 +101,6 @@ def pretty_json(value):
     Pretty print JSON - for development purposes only.
     """
     return "<pre>" + json.dumps(value, indent=4) + "</pre>"
-
-
-@register.filter(name="times")
-def times(number):
-    return [x + 1 for x in range(number)]
-
-
-def replace_all(text, old, new):
-    while old in text:
-        text = text.replace(old, new)
-    return text
-
-
-@register.filter(name="old_character")
-def old_character(text, old_char):
-    return replace_all(text, old_char, "$$")
-
-
-@register.filter(name="new_character")
-def new_character(text, new_char):
-    return replace_all(text, "$$", new_char)
 
 
 @register.simple_tag
@@ -192,21 +121,6 @@ def friendly_boolean(boolean):
         return "Yes"
     else:
         return "No"
-
-
-@register.filter()
-def get_first_country_from_first_good(dictionary: dict):
-    """
-    Returns the first key in a dictionary
-    """
-    return list(dictionary)[0] + "." + next(iter(dictionary.values()))[0]
-
-
-@register.filter()
-def get_end_user(application: dict):
-    if application.get("end_user"):
-        return application.get("end_user")
-    return application.get("destinations").get("data")
 
 
 @register.filter()
@@ -336,28 +250,9 @@ def get_party_type(party):
 
 
 @register.filter()
-def display_grading(text: str):
-    value = text.split("_")
-    if len(value):
-        return f"{value[0].upper()} {' '.join(value[1:]).title()}"
-
-    return text
-
-
-@register.filter()
 def is_system_team(id: str):
     ids = [team_id.value for team_id in SystemTeamsID]
     return id in ids
-
-
-@register.filter()
-def is_exhibition(case_type):
-    return case_type == CaseType.EXHIBITION
-
-
-@register.filter()
-def is_f680(case_type):
-    return case_type == CaseType.F680
 
 
 @register.simple_tag
@@ -447,16 +342,6 @@ def subtract(num1, num2):
     if not num2:
         return num1
     return num1 - num2
-
-
-def join_list(_list, _join=", "):
-    return _join.join(_list)
-
-
-@register.filter()
-def join_key_value_list(_list, _join=", "):
-    _list = [x["value"] for x in _list]
-    return join_list(_list, _join)
 
 
 @register.filter()

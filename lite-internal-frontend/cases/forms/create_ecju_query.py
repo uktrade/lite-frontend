@@ -33,7 +33,7 @@ def new_ecju_query_form(queue_pk, pk, query_type):
             TextArea(
                 description=cases.EcjuQueries.AddQuery.DESCRIPTION, name="question", extras={"max_length": 5000,},
             ),
-            PicklistPicker(target="question", type=ECJUQueryTypes.ECJU_QUERY),
+            PicklistPicker(target="question", type=query_type),
         ],
         back_link=BackLink(url=reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": pk, "tab": "ecju-queries"})),
         default_button_name=cases.EcjuQueries.AddQuery.SUBMIT,

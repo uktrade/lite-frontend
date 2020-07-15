@@ -59,10 +59,12 @@
 						{% endif %}
 						<td class="govuk-table__cell govuk-table__cell--line-number {% if show_advice %}lite-!-no-border{% endif %}">{{ forloop.counter }}.</td>
 						<td class="govuk-table__cell govuk-table__cell--max-width-400 {% if show_advice %}lite-!-no-border{% endif %}">
+							<span class="govuk-table__header" aria-hidden="false">Description</span>
 							<span data-max-length="200">{{ good.good.description }}</span>
 						</td>
 						{% if case.goods.0.item_type %}
 							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+								<span class="govuk-table__header" aria-hidden="false">Type</span>
 								<p class="govuk-body govuk-!-margin-0">{{ good.item_type|sentence_case }}</p>
 								{% if good.other_item_type %}
 									<p class="govuk-hint govuk-!-margin-top-2">{{ good.other_item_type }}</p>
@@ -70,14 +72,25 @@
 							</td>
 						{% endif %}
 						{% if case.goods.0.value %}
-							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">{{ good.quantity }} {{ good.unit.value }}, £{{ good.value|intcomma }}</td>
+							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+								<span class="govuk-table__header" aria-hidden="false">Value</span>
+								{{ good.quantity }} {{ good.unit.value }}, £{{ good.value|intcomma }}
+							</td>
 						{% endif %}
-						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">{{ good.good.is_good_controlled.value }}</td>
 						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+							<span class="govuk-table__header" aria-hidden="false">Controlled</span>
+							{{ good.good.is_good_controlled.value }}
+						</td>
+						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+							<span class="govuk-table__header" aria-hidden="false">Control list entries</span>
 							{% include 'includes/control-list-entries.html' with control_list_entries=good.good.control_list_entries %}
 						</td>
-						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">{{ good.is_good_incorporated|friendly_boolean }}</td>
 						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+							<span class="govuk-table__header" aria-hidden="false">Incorporated</span>
+							{{ good.is_good_incorporated|friendly_boolean }}
+						</td>
+						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+							<span class="govuk-table__header" aria-hidden="false">Documents</span>
 							{% if good.good.documents %}
 								{% for document in good.good.documents %}
 									{% if document.safe == True %}
@@ -92,6 +105,7 @@
 						</td>
 						{% if not hide_status %}
 							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+								<span class="govuk-table__header" aria-hidden="false">Status</span>
 								{% if good.good.status.key == 'verified' %}
 									<div class="lite-vertical-align">
 										{% svg 'verified' %}
@@ -102,6 +116,7 @@
 								{% endif %}
 							</td>
 							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+								<span class="govuk-table__header" aria-hidden="false">Report summary</span>
 								{% if good.good.report_summary %}
 									<span data-definition-title="Report summary" data-definition-text="{{ good.good.report_summary }}{% if good.good.comment %}<br><br><b>Comment</b><br><br>{{ good.good.comment }}{% endif %}">
 										{% lcs 'generic.VIEW' %}
@@ -112,6 +127,7 @@
 							</td>
 						{% endif %}
 						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+							<span class="govuk-table__header" aria-hidden="false">Flags</span>
 							{% include 'includes/flags.html' with flags=good.flags list=True %}
 						</td>
 						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}" id="view-good-details">
@@ -154,16 +170,27 @@
 								</div>
 							</td>
 						{% endif %}
-						<td class="govuk-table__cell govuk-table__cell--line-number {% if show_advice %}lite-!-no-border{% endif %}">{{ forloop.counter }}.</td>
+						<td aria-hidden="true" class="govuk-table__cell govuk-table__cell--line-number {% if show_advice %}lite-!-no-border{% endif %}">
+							{{ forloop.counter }}.
+						</td>
 						<td class="govuk-table__cell govuk-table__cell--max-width-400 {% if show_advice %}lite-!-no-border{% endif %}">
+							<span aria-hidden="true" class="govuk-table__header">Description</span>
 							<span data-max-length="200">{{ good.description }}</span>
 						</td>
-						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">{{ good.is_good_controlled|friendly_boolean }}</td>
 						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+							<span aria-hidden="true" class="govuk-table__header">Controlled</span>
+							{{ good.is_good_controlled|friendly_boolean }}
+						</td>
+						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+							<span aria-hidden="true" class="govuk-table__header">Control list entries</span>
 							{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}
 						</td>
-						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">{{ good.is_good_incorporated|friendly_boolean }}</td>
+						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+							<span aria-hidden="true" class="govuk-table__header">Incorporated</span>
+							{{ good.is_good_incorporated|friendly_boolean }}
+						</td>
 						<td class="govuk-table__cell govuk-table__cell--max-width-300 {% if show_advice %}lite-!-no-border{% endif %}">
+							<span aria-hidden="true" class="govuk-table__header">Countries</span>
 							<span data-max-length="200">
 								{% for country in good.countries %}
 									{{ country.name }}{% if not forloop.last %}, {% endif %}
@@ -172,6 +199,7 @@
 						</td>
 						{% if not hide_status %}
 							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+								<span aria-hidden="true" class="govuk-table__header">Report summary</span>
 								{% if good.report_summary %}
 									<span data-definition-title="Report summary" data-definition-text="{{ good.report_summary }}{% if good.comment %}<br><br><b>Comment</b><br><br>{{ good.comment }}{% endif %}">
 										{% lcs 'generic.VIEW' %}
@@ -182,6 +210,7 @@
 							</td>
 						{% endif %}
 						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+							<span aria-hidden="true" class="govuk-table__header">Flags</span>
 							{% include 'includes/flags.html' with flags=good.flags list=True %}
 						</td>
 					</tr>

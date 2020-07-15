@@ -15,11 +15,16 @@
 		color: $govuk-text-colour;
 	}
 
+	&__actions {
+		@include govuk-font($size: 19);
+	}
+
 	&__value {
 		@include govuk-font($size: 19);
 		color: $govuk-text-colour;
 
 		span {
+			@include govuk-font($size: 19);
 			word-break: break-all;
 		}
 	}
@@ -336,6 +341,14 @@ $case-header-text-colour: govuk-colour("white");
 	z-index: 0;
 	padding-top: 20px;
 	margin-bottom: govuk-spacing(6);
+
+	@include govuk-media-query($until: tablet) {
+		margin-bottom: 0;
+
+		.lite-tabs__controls {
+			margin-top: govuk-spacing(3);
+		}
+	}
 
 	.lite-tabs__container::after {
 		bottom: 2px;

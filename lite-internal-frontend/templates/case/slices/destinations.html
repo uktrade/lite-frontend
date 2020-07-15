@@ -40,12 +40,28 @@
 									</div>
 								</td>
 							{% endif %}
-							<th scope="row" class="govuk-table__header {% if show_advice %}lite-!-no-border{% endif %}">{{ destination.type|sentence_case }}</th>
-							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">{{ destination.name }}</td>
-							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">{{ destination|get_address }}</td>
-							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">{{ destination.sub_type.value }}</td>
-							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">{{ destination.website|linkify }}</td>
+							<th scope="row" class="govuk-table__header {% if show_advice %}lite-!-no-border{% endif %}">
+								<span aria-hidden="false" class="govuk-table__header">Type</span>
+								{{ destination.type|sentence_case }}
+							</th>
 							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+								<span aria-hidden="false" class="govuk-table__header">Name</span>
+								{{ destination.name }}
+							</td>
+							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+								<span aria-hidden="false" class="govuk-table__header">Address</span>
+								{{ destination|get_address }}
+							</td>
+							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+								<span aria-hidden="false" class="govuk-table__header">Business</span>
+								{{ destination.sub_type.value }}
+							</td>
+							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+								<span aria-hidden="false" class="govuk-table__header">Website</span>
+								{{ destination.website|linkify }}
+							</td>
+							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+								<span aria-hidden="false" class="govuk-table__header">Documents</span>
 								{% if destination.document %}
 									<a id="link-{{ destination.type}}-download" class="govuk-link" href="{% url 'cases:document' queue.id case.id destination.document.id %}">
 										{{ destination.document.name }}
@@ -53,6 +69,7 @@
 								{% endif %}
 							</td>
 							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+								<span aria-hidden="false" class="govuk-table__header">Flags</span>
 								{% include 'includes/flags.html' with flags=destination.flags list=True %}
 							</td>
 						</tr>
@@ -88,9 +105,16 @@
 								</td>
 							{% endif %}
 							<td class="govuk-table__cell govuk-table__cell--line-number {% if show_advice %}lite-!-no-border{% endif %}">{{ forloop.counter }}.</td>
-							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">{{ destination.country.name }}</td>
-							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">{{ destination.country.id }}</td>
+							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+								<span aria-hidden="false" class="govuk-table__header">Country</span>
+								{{ destination.country.name }}
+							</td>
+							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+								<span aria-hidden="false" class="govuk-table__header">Country code</span>
+								{{ destination.country.id }}
+							</td>
 							<td class="govuk-table__cell govuk-table__cell--max-width-400 {% if show_advice %}lite-!-no-border{% endif %}">
+								<span aria-hidden="false" class="govuk-table__header">Goods</span>
 								<span data-max-length="100">
 									{% for good in case.goods|get_goods_linked_to_destination_as_list:destination.country.id %}
 										{{ good }}
@@ -98,6 +122,7 @@
 								</span>
 							</td>
 							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+								<span aria-hidden="false" class="govuk-table__header">Flags</span>
 								{% if destination.country.flags or not destination.flags %}
 									{% include 'includes/flags.html' with flags=destination.country.flags list=True %} <br>
 								{% endif %}
