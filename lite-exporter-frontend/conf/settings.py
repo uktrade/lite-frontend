@@ -16,6 +16,7 @@ env = Env(
     ALLOWED_HOSTS=(str, ""),
     DEBUG=(bool, False),
     LOG_LEVEL=(str, "INFO"),
+    SECURE_HSTS_ENABLED=(bool, False),
     CSP_DEFAULT_SRC=(list, []),
     CSP_STYLE_SRC=(list, []),
     CSP_SCRIPT_SRC=(list, []),
@@ -212,12 +213,17 @@ LOGGING = {
 
 # Security settings
 
-# Enable security features in hosted environments.
+SECURE_HSTS_ENABLED = env("SECURE_HSTS_ENABLED")
+SECURE_HSTS_SECONDS = 60 * 60 * 24 * 365 if SECURE_HSTS_ENABLED else None  # 1 year
 SECURE_BROWSER_XSS_FILTER = not DEBUG
+
 SESSION_COOKIE_SECURE = not DEBUG
+SECURE_CONTENT_TYPE_NOSNIFF = not DEBUG
+
 CSRF_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_HTTPONLY = not DEBUG
-SECURE_CONTENT_TYPE_NOSNIFF = not DEBUG
+
+X_FRAME_OPTIONS = "SAMEORIGIN"
 
 # Content Security Policy
 CSP_DEFAULT_SRC = env("CSP_DEFAULT_SRC")

@@ -5,15 +5,11 @@
 {% endblock %}
 
 {% block body %}
-	<div class="lite-app-bar">
-		<div class="lite-app-bar__content">
-			<h1 class="govuk-heading-l">
-				{% block title %}
-					{% lcs "compliance.ComplianceSiteCaseList.TITLE" %}
-				{% endblock %}
-			</h1>
-		</div>
-	</div>
+	<h1 class="govuk-heading-l">
+		{% block title %}
+			{% lcs "compliance.ComplianceSiteCaseList.TITLE" %}
+		{% endblock %}
+	</h1>
 
 	{% if compliance.results %}
 		<table class="govuk-table">
