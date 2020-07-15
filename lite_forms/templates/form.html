@@ -71,7 +71,7 @@
 		{% endif %}
 
 		{% if page.single_form_element.input_type == 'radiobuttons' or page.single_form_element.input_type == 'checkboxes' %}
-			 <fieldset class="govuk-fieldset" aria-describedby="changed-name-hint">
+			 <fieldset class="govuk-fieldset" {% if page.description %}aria-describedby="span-{{ page.single_form_element.name }}-hint"{% endif %}>
 		{% endif %}
 		<legend class="govuk-fieldset__legend {{ title|heading_class }}">
 			<h1 class="govuk-fieldset__heading">
