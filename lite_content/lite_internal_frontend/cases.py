@@ -280,7 +280,7 @@ class CasePage:
         OLR_NOT_APPLICABLE = "N/A"
 
     class LicenceFilters:
-        REFERENCE = "Reference"
+        REFERENCE = "reference"
 
 
 class ApplicationPage:
