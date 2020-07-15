@@ -886,6 +886,7 @@ class GenerateFinalDecisionDocumentsPage:
 
 class DoneWithCaseOnQueueForm:
     TITLE = "Unassign queues"
+    TITLE_SINGULAR = "Unassign {}"
     CHECKBOX_TITLE = ""
     CHECKBOX_DESCRIPTION = "Select which queues you are done with this case on"
     NOTE = "Explain why you're making this decision (optional)"
