@@ -321,7 +321,7 @@ class OpenGeneralLicenceQuestions:
         HELP_TEXT = "Select the option which best matches your product and requirements."
         NONE_OF_THE_ABOVE = "None of the above"
         ERROR = "Select a licence (if applicable)"
-        ALREADY_REGISTERED = "Already registered"
+        ALREADY_REGISTERED = "Previously registered"
 
     class OpenGeneralLicenceDetail:
         CAPTION = "Registering for"
