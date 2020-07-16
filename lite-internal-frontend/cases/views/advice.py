@@ -33,6 +33,7 @@ from cases.services import (
     get_licence,
     get_finalise_application_goods,
     post_good_countries_decisions,
+    get_open_licence_decision,
 )
 from core.builtins.custom_tags import filter_advice_by_level
 from core.services import get_denial_reasons
@@ -182,30 +183,14 @@ def create_mapping(goods):
 class FinaliseGoodsCountries(SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
-        case = get_case(request, self.object_pk)
         self.context = {
-            "case": case,
+            "case": get_case(request, self.object_pk),
+            "goods_type_country_decisions": get_good_countries_decisions(request, self.object_pk),
+            "decisions": {"approve": "Approve", "refuse": "Reject"},
         }
-        self.form = finalise_goods_countries_form(**kwargs)
+        self.form = finalise_goods_countries_form(kwargs["pk"], kwargs["queue_pk"])
         self.action = post_good_countries_decisions
         self.success_url = reverse_lazy("cases:finalise", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.object_pk})
-
-    def clean_data(self, data):
-        selection = {"good_countries": []}
-        data.pop("csrfmiddlewaretoken")
-        data.pop("_action")
-
-        for key, value in data.items():
-            selection["good_countries"].append(
-                {
-                    "case": str(self.kwargs["pk"]),
-                    "good": key.split(".")[0],
-                    "country": key.split(".")[1],
-                    "decision": value,
-                }
-            )
-
-        return selection
 
 
 class Finalise(TemplateView):
@@ -236,15 +221,15 @@ class Finalise(TemplateView):
             ]
 
         if case_type == CaseType.OPEN.value and not is_case_oiel_final_advice_only:
-            data = get_good_countries_decisions(request, str(kwargs["pk"]))["data"]
-            items = [item["decision"]["key"] for item in data]
+            approve = get_open_licence_decision(request, str(kwargs["pk"])) == "approve"
         else:
             advice = filter_advice_by_level(case["advice"], "final")
             items = [item["type"]["key"] for item in advice]
+            approve = "approve" in items or "proviso" in items
 
         case_id = case["id"]
 
-        if "approve" in items or "proviso" in items:
+        if approve:
             licence_data, _ = get_licence(request, str(kwargs["pk"]))
             licence = licence_data.get("licence")
             # If there are licenced goods, we want to use the reissue goods flow.

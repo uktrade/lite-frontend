@@ -130,7 +130,7 @@
 							</td>
 						</tr>
 						{% if show_advice %}
-							{% include 'includes/advice.html' with id=destination.id %}
+							{% include 'includes/advice.html' with id=destination.country.id %}
 						{% endif %}
 					{% endfor %}
 				</tbody>

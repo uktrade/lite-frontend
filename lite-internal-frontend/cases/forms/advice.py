@@ -180,14 +180,12 @@ def generate_documents_form():
     )
 
 
-def finalise_goods_countries_form(**kwargs):
+def finalise_goods_countries_form(case_pk, queue_pk):
     return Form(
         title=GoodsDecisionMatrixPage.TITLE,
         questions=[Custom("components/finalise-goods-countries-table.html")],
         back_link=BackLink(
-            url=reverse(
-                "cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": kwargs["pk"], "tab": "final-advice"}
-            )
+            url=reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": case_pk, "tab": "final-advice"})
         ),
         container="case",
     )

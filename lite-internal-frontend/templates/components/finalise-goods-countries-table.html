@@ -1,52 +1,84 @@
+{% if goods_type_country_decisions.approved %}
 <table class="govuk-table">
 	<thead class="govuk-table__head">
 		<tr class="govuk-table__row">
 			<th class="govuk-table__header" scope="col">{% lcs 'advice.GoodsDecisionMatrixPage.Table.GOODS' %}</th>
 			<th class="govuk-table__header" scope="col">{% lcs 'advice.GoodsDecisionMatrixPage.Table.DESTINATIONS' %}</th>
-			<th class="govuk-table__header" scope="col" colspan="3">{% lcs 'advice.GoodsDecisionMatrixPage.Table.DECISION' %}</th>
+			<th class="govuk-table__header" scope="col">{% lcs 'advice.GoodsDecisionMatrixPage.Table.DECISION' %}</th>
 		</tr>
 	</thead>
 	<tbody class="govuk-table__body">
-		{% for good in case.goods %}
-			<tr class="govuk-table__row">
-				<th class="govuk-table__cell--min-width-200 govuk-table__cell lite-!-position-relative govuk-!-padding-right-3" rowspan="{{ good.countries|length|add:1 }}" scope="row">
-					<div class="app-advice__sticky-table-cell__container">
-						<div class="app-advice__sticky-table-cell">
-							{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}
-							<span class="govuk-hint govuk-!-font-weight-regular govuk-!-margin-0 lite-!-display-inline">
-								{% for advice in case.advice|filter_advice_by_level:'final'|filter_advice_by_id:good.id %}
-									({{ advice.type.value }})
-								{% endfor %}
-							</span>
-						</div>
-					</div>
-				</th>
-
-				{% for country in good.countries %}
-					<tr class="govuk-table__row">
-						<td class="govuk-table__cell--min-width-200 govuk-table__cell lite-table__cell--middle-align">
-							{{ country.name }}
-							<span class="govuk-hint govuk-!-font-weight-regular govuk-!-margin-0 lite-!-display-inline">
-								{% for advice in case.advice|filter_advice_by_level:'final'|filter_advice_by_id:country.id %}
-									({{ advice.type.value }})
-								{% endfor %}
-							</span>
+		{% for goods_type in goods_type_country_decisions.approved %}
+			{% for country in goods_type.countries %}
+				<tr class="govuk-table__row" id="decision-{{ goods_type.id }}">
+					{% if forloop.counter == 1 %}
+						<td class="govuk-table__cell" rowspan="{{ goods_type.countries|length }}">
+							{% include 'includes/control-list-entries.html' with control_list_entries=goods_type.control_list_entries %} ({{ goods_type.decision }})
+							<br>
+							{{ goods_type.description }}
 						</td>
-
-						{% make_list 'approve' 'refuse' 'no_licence_required' as decisions %}
-						{% for decision in decisions %}
-							<td class="govuk-table__cell govuk-table__cell--radio">
-								<div class="govuk-radios__item">
-									<input class="govuk-radios__input" type="radio" name="{{ good.id }}.{{ country.id }}" id="{{ decision }}.{{ good.id }}.{{ country.id }}" value="{{ decision }}">
-									<label class="govuk-label govuk-radios__label" for="{{ decision }}.{{ good.id }}.{{ country.id }}">
-										{{ decision|sentence_case }}
-									</label>
-								</div>
-							</td>
+					{% endif %}
+					<td class="govuk-table__cell">
+						{{ country.name }} ({{ country.decision }})
+					</td>
+					<td class="govuk-table__cell govuk-table__cell--radio">
+						{% for key, value in decisions.items %}
+							<div class="govuk-radios__item">
+								<input class="govuk-radios__input" type="radio" name="{{ goods_type.id }}.{{ country.id }}" id="{{ key }}-{{ goods_type.id }}.{{ country.id }}" value="{{ key }}" {% if country.value == key %}checked{% endif %}>
+								<label class="govuk-label govuk-radios__label" for="{{ key }}-{{ goods_type.id }}.{{ country.id }}">
+									{{ value }}
+								</label>
+							</div>
 						{% endfor %}
-					</tr>
-				{% endfor %}
-			</tr>
+					</td>
+				</tr>
+			{% endfor %}
 		{% endfor %}
 	</tbody>
 </table>
+{% else %}
+<p class="govuk-body">{% lcs 'advice.GoodsDecisionMatrixPage.NO_RESULTS' %}</p>
+{% endif %}
+
+<h1 class="govuk-heading-l">{% lcs 'advice.GoodsDecisionMatrixPage.REFUSED_TITLE' %}</h1>
+{% if goods_type_country_decisions.refused %}
+<table class="govuk-table">
+	<thead class="govuk-table__head">
+		<tr class="govuk-table__row">
+			<th class="govuk-table__header" scope="col">{% lcs 'advice.GoodsDecisionMatrixPage.Table.GOODS' %}</th>
+			<th class="govuk-table__header" scope="col">{% lcs 'advice.GoodsDecisionMatrixPage.Table.DESTINATIONS' %}</th>
+			<th class="govuk-table__header" scope="col">{% lcs 'advice.GoodsDecisionMatrixPage.Table.DECISION' %}</th>
+		</tr>
+	</thead>
+	<tbody class="govuk-table__body">
+		{% for goods_type in goods_type_country_decisions.refused %}
+			{% for country in goods_type.countries %}
+				<tr class="govuk-table__row" id="refused-{{ goods_type.id }}">
+					{% if forloop.counter == 1 %}
+						<td class="govuk-table__cell" rowspan="{{ goods_type.countries|length }}">
+							{% include 'includes/control-list-entries.html' with control_list_entries=goods_type.control_list_entries %} ({{ goods_type.decision }})
+							<br>
+							{{ goods_type.description }}
+						</td>
+					{% endif %}
+					<td class="govuk-table__cell">
+						{{ country.name }} ({{ country.decision }})
+					</td>
+					<td class="govuk-table__cell govuk-table__cell--radio">
+						{% for decision in decisions %}
+							<div class="govuk-radios__item">
+								<input class="govuk-radios__input" type="radio" name="" id="{{ goods_type.id }}.{{ country.id }}" value="{{ decision }}" disabled {% if decision == "refuse" %}checked{% endif %}>
+								<label class="govuk-label govuk-radios__label" for="{{ goods_type.id }}.{{ country.id }}">
+									{{ decision|sentence_case }}
+								</label>
+							</div>
+						{% endfor %}
+					</td>
+				</tr>
+			{% endfor %}
+		{% endfor %}
+	</tbody>
+</table>
+{% else %}
+<p class="govuk-body">{% lcs 'advice.GoodsDecisionMatrixPage.NO_RESULTS' %}</p>
+{% endif %}

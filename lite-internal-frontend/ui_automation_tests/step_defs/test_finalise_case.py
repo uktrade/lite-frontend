@@ -1,11 +1,12 @@
-from datetime import datetime
+from datetime import datetime, date
 
-from pytest_bdd import scenarios, when, then, parsers, given
+from pytest_bdd import scenarios, when, then, parsers
 
 from conf.constants import DATE_FORMAT
 from ui_automation_tests.pages.application_page import ApplicationPage
 from ui_automation_tests.pages.documents_page import DocumentsPage
 from ui_automation_tests.pages.generate_decision_documents_page import GeneratedDecisionDocuments
+from ui_automation_tests.pages.good_country_matrix_page import GoodCountryMatrixPage
 from ui_automation_tests.pages.grant_licence_page import GrantLicencePage
 
 scenarios("../features/finalise_case.feature", strict_gherkin=False)
@@ -16,22 +17,9 @@ def final_advice_documents_page(driver, context):
     assert GeneratedDecisionDocuments(driver).decision_row_exists(context.advice_type)
 
 
-@when("I generate a document for the decision")
-def generate_document(driver, context):
-    GeneratedDecisionDocuments(driver).click_generate_decision_document(context.advice_type)
-
-
 @then(parsers.parse('The decision row status is "{status}"'))
 def decision_row_status(driver, context, status):
     assert GeneratedDecisionDocuments(driver).get_section_status(context.advice_type) == status
-
-
-@then("The licence information is in the second audit")
-def licence_audit(driver, context, internal_url):
-    ApplicationPage(driver).go_to_cases_activity_tab(internal_url, context)
-    second_audit = ApplicationPage(driver).get_text_of_audit_trail_item(1)
-    assert context.licence_duration in second_audit
-    assert context.licence_start_date in second_audit
 
 
 @then("The case is finalised and a document is created in the audits")
@@ -59,17 +47,13 @@ def applied_for_goods_details(driver, context):
     assert round(float(context.goods[0]["value"]) * context.goods[0]["quantity"], 2) == float(
         page.get_good_value(good_on_app_id)
     )
+    date_in_form = GrantLicencePage(driver).get_date_in_date_entry()
+    today = date.today()
+    assert today.day == int(date_in_form["day"])
+    assert today.month == int(date_in_form["month"])
+    assert today.year == int(date_in_form["year"])
     context.licence_duration = page.get_duration_in_finalise_view()
     context.licence_start_date = datetime.now().strftime(DATE_FORMAT)
-
-
-@given("A template exists for the appropriate decision")  # noqa
-def template_with_decision(context, api_test_client):  # noqa
-    document_template = api_test_client.document_templates.add_template(
-        api_test_client.picklists, advice_type=[context.advice_type]
-    )
-    context.document_template_id = document_template["id"]
-    context.document_template_name = document_template["name"]
 
 
 @when("I go to the team advice page by url")  # noqa
@@ -80,3 +64,19 @@ def final_advice_page(driver, context, internal_url):  # noqa
         + context.case_id
         + "/team-advice/"
     )
+
+
+@then("I see the good country combination")
+def approvable_good_country_combination(driver, context):
+    row = GoodCountryMatrixPage(driver).get_enabled_good_country_decision_row(context.goods_type["id"])
+    assert context.goods_type["description"] in row
+    assert context.goods_type["control_list_entries"][0]["rating"] in row
+    assert context.country["name"] in row
+
+
+@then("I see the refused good country combination")
+def refused_good_country_combination(driver, context):
+    row = GoodCountryMatrixPage(driver).get_refused_good_country_decision_row(context.goods_type["id"])
+    assert context.goods_type["description"] in row
+    assert context.goods_type["control_list_entries"][0]["rating"] in row
+    assert context.country["name"] in row
