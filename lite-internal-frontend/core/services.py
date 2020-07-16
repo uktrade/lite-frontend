@@ -73,26 +73,20 @@ def get_permissible_statuses(request, case):
     case_type = case["case_type"]["type"]["key"]
 
     if case_type == CaseType.APPLICATION.value:
-        if case_sub_type == CaseType.HMRC.value:
-            case_type_applicable_statuses = [
-                status
-                for status in statuses
-                if status["key"] in [CaseStatusEnum.SUBMITTED, CaseStatusEnum.RESUBMITTED, CaseStatusEnum.CLOSED]
+        case_type_applicable_statuses = [
+            status
+            for status in statuses
+            if status["key"]
+            not in [
+                CaseStatusEnum.APPLICANT_EDITING,
+                CaseStatusEnum.CLOSED,
+                CaseStatusEnum.FINALISED,
+                CaseStatusEnum.REGISTERED,
+                CaseStatusEnum.CLC,
+                CaseStatusEnum.PV,
+                CaseStatusEnum.SURRENDERED,
             ]
-        else:
-            case_type_applicable_statuses = [
-                status
-                for status in statuses
-                if status["key"]
-                not in [
-                    CaseStatusEnum.APPLICANT_EDITING,
-                    CaseStatusEnum.CLOSED,
-                    CaseStatusEnum.FINALISED,
-                    CaseStatusEnum.REGISTERED,
-                    CaseStatusEnum.CLC,
-                    CaseStatusEnum.PV,
-                ]
-            ]
+        ]
     elif case_type == CaseType.QUERY.value:
         if case_sub_type == CaseType.END_USER_ADVISORY.value:
             case_type_applicable_statuses = [
