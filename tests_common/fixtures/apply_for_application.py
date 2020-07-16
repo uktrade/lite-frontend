@@ -146,7 +146,7 @@ def apply_for_eua_query(driver, api_test_client, context):
     context.eua_reference_code = api_test_client.context["end_user_advisory_reference_code"]
 
 
-@fixture(scope="module")
+@fixture(scope="function")
 def apply_for_open_application(api_test_client, context):
     timer = Timer()
     api_test_client.api_client.auth_exporter_user(api_test_client.context["org_id"])
