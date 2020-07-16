@@ -35,7 +35,6 @@
 }
 
 .lite-buttons-row {
-	width: 100%;
 	margin-bottom: govuk-spacing(6);
 
 	& > * {
@@ -47,6 +46,7 @@
 		}
 	}
 	@include govuk-media-query($until: tablet) {
+		width: 100%;
 		margin-bottom: govuk-spacing(3);
 
 		* {
