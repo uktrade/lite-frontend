@@ -69,10 +69,9 @@ class GenerateGoodsDecisionForm:
 
 
 class GoodsDecisionMatrixPage:
-    ERROR = "There is a problem"
-    NO_ADVICE_DEFAULT = "No advice"
-    REFUSE_ADVICE_TAG = "(Reject)"
     TITLE = "Select a decision for each good and country combination"
+    REFUSED_TITLE = "Previously rejected at final decision level"
+    NO_RESULTS = "No applicable goods/countries combinations"
 
     class Table:
         GOODS = "Goods"
