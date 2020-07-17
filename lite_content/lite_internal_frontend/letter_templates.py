@@ -5,6 +5,7 @@ class LetterTemplatesPage:
     class PickTemplate:
         TITLE = "Select a template"
         BUTTON = "Continue"
+        NO_TEMPLATE_SELECTED = "Select a template"
 
     class Preview:
         TITLE = "Preview"

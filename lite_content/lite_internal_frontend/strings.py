@@ -150,6 +150,7 @@ class LetterTemplates:
         ADD_BUTTON = "Add items"
         HINT = "Select letter paragraphs to use in your template."
         TITLE = "Add letter paragraphs"
+        NO_LETTER_PARAGRAPHS = "There aren't any letter paragraphs left to add"
 
     class EditParagraph:
         ADD_LINK = "Add another letter paragraph"
