@@ -14,7 +14,7 @@ def countries_form(request, application_id):
             Filter(),
             Checkboxes(
                 name="countries[]",
-                options=get_countries(request, True),
+                options=get_countries(request, True, ["GB"]),
                 classes=["govuk-checkboxes--small"],
                 show_select_links=True,
                 filterable=True,

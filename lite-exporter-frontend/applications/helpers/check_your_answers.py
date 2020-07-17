@@ -227,6 +227,7 @@ def _convert_goods(goods, is_exhibition=False):
         if is_exhibition:
             goods_dict["Product type"] = good["other_item_type"] if good["other_item_type"] else good["item_type"]
         else:
+            goods_dict["Incorporated"] = friendly_boolean(good["is_good_incorporated"])
             goods_dict["Quantity"] = (
                 intcomma(good["quantity"]) + " " + pluralise_unit(good["unit"]["value"], good["quantity"])
             )
@@ -254,6 +255,7 @@ def _convert_goods_types(goods_types):
             "Description": good["description"],
             "Controlled": friendly_boolean(good["is_good_controlled"]),
             "Control list entries": convert_control_list_entries(good["control_list_entries"]),
+            "Incorporated": friendly_boolean(good["is_good_incorporated"]),
         }
         for good in goods_types
     ]

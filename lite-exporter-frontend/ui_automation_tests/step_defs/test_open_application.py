@@ -53,14 +53,16 @@ def i_see_the_goods_types_list_cryptographic_oiel(driver, context):
 def i_should_see_a_list_of_countries(driver):
     application_countries_list = OpenApplicationCountriesPage(driver)
     page_countries = application_countries_list.get_countries_names()
-    assert len(page_countries) == 274
+    assert len(page_countries) == 273
+    assert "United Kingdom" not in page_countries
 
 
 @then("I should see a list of all countries that have been preselected")
 def i_should_see_a_list_of_countries(driver):
     application_countries_list = OpenApplicationCountriesPage(driver)
     page_countries = application_countries_list.get_static_destinations_list()
-    assert len(page_countries) == 274
+    assert len(page_countries) == 273
+    assert "United Kingdom" not in page_countries
 
 
 @then("I should see a list of the countries permitted for a cryptographic OIEL")
@@ -138,7 +140,8 @@ def select_contract_types_for_all_countries(driver, context):
 def i_should_see_destinations_summary_countries_contract_types(driver, context):
     page = OpenApplicationCountryContractTypesSummaryPage(driver)
     countries_and_contract_types = page.get_countries_with_respective_contract_types()
-    assert len(countries_and_contract_types) == 274
+    assert len(countries_and_contract_types) == 273
+    assert "United Kingdom" not in countries_and_contract_types
     for country_with_contract_types in countries_and_contract_types:
         for contract_type in context.contract_types:
             assert contract_type["value"] in country_with_contract_types[1]
