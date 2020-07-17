@@ -157,7 +157,7 @@ class MultiFormView(FormView):
         super().init(request, **kwargs)
 
     def on_submission(self, request, **kwargs):
-        pass
+        return
 
     def post_success_step(self):
         if self.success_message:
@@ -172,7 +172,11 @@ class MultiFormView(FormView):
 
     def post(self, request, **kwargs):
         self.init(request, **kwargs)
-        self.on_submission(request, **kwargs)
+        submission = self.on_submission(request, **kwargs)  # noqa
+
+        if submission:
+            return redirect(submission)
+
         response, data = submit_paged_form(
             request,
             self.get_forms(),

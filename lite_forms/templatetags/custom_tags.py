@@ -105,6 +105,9 @@ def replace_spaces(text):
     """
     Replace spaces with a dash.
     """
+    if not isinstance(text, str):
+        return text
+
     return text.replace(" ", "-")
 
 
