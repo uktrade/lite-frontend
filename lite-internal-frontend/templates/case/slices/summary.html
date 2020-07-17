@@ -179,7 +179,7 @@
 				<ol class="govuk-list govuk-!-margin-0">
 					{% for user in users %}
 						<li>
-							<a href="{% url 'users:user' user.id %}?return_to={{ CURRENT_PATH }}&return_to_text={{ case.reference_code }}" class="govuk-link govuk-link--no-visited-state">{{ user.first_name }} {{ user.last_name }}</a>
+							<a href="{% url 'users:user' user.id %}?return_to={{ CURRENT_PATH }}&return_to_text={{ case.reference_code }}" class="govuk-link govuk-link--no-visited-state">{{ user|username }}</a>
 						</li>
 					{% endfor %}
 				</ol>

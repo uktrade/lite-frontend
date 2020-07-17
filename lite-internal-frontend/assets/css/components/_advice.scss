@@ -83,6 +83,12 @@
 .app-advice_app-bar {
 	display: flex;
 	justify-content: space-between;
+
+	@include govuk-media-query($from: mobile) {
+		.lite-buttons-row {
+			width: auto;
+		}
+	}
 }
 
 .app-advice__disabled-buttons {

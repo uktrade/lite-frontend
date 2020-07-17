@@ -134,7 +134,7 @@ def assign_users_to_queue(context, api_test_client):
 
 @when("I unassign myself from all queues")
 def unassign_from_all_queues(driver, context):
-    UnassignQueuePage(driver).check_all_checkbxes()
+    UnassignQueuePage(driver).check_all_checkboxes()
     functions.click_submit(driver)
 
 

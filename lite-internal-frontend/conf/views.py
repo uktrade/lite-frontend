@@ -1,12 +1,13 @@
-from django.views.generic.base import RedirectView, View
-from django.shortcuts import redirect
-from django.http import HttpResponseBadRequest, HttpResponseServerError
 from django.conf import settings
 from django.contrib.auth import authenticate, login
-
+from django.http import HttpResponseBadRequest, HttpResponseServerError
+from django.shortcuts import redirect, render
+from django.views.generic.base import RedirectView, View
 from raven.contrib.django.raven_compat.models import client
+
 from auth.utils import get_client, AUTHORISATION_URL, TOKEN_URL, TOKEN_SESSION_KEY
-from lite_forms.generators import error_page
+from conf.context_processors import lite_menu
+from lite_content.lite_internal_frontend.core import get_human_readable_exception
 
 
 class AuthView(RedirectView):
@@ -60,5 +61,22 @@ class AuthCallbackView(View):
         return redirect(getattr(settings, "LOGIN_REDIRECT_URL", "/"))
 
 
-def handler403(request, exception):
-    return error_page(None, title="Forbidden", description=exception, show_back_link=False)
+def _error(request, status_code):
+    return render(
+        request,
+        template_name="core/error.html",
+        context={**get_human_readable_exception(status_code), **lite_menu(request)},
+        status=status_code,
+    )
+
+
+def error_403(request, exception):
+    return _error(request, 403)
+
+
+def error_404(request, exception):
+    return _error(request, 404)
+
+
+def error_500(request):
+    return _error(request, 500)

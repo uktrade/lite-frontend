@@ -363,7 +363,7 @@ class UserWorkQueue(SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         case = get_case(request, self.object_pk)
-        self.form = assign_user_and_work_queue(request)
+        self.form = assign_user_and_work_queue(request, kwargs["queue_pk"], self.object_pk)
         self.action = get_gov_user_from_form_selection
         self.context = {"case": case}
 
@@ -380,7 +380,7 @@ class UserTeamQueue(SingleFormView):
         user_pk = str(kwargs["user_pk"])
         self.object_pk = kwargs["pk"]
         case = get_case(request, self.object_pk)
-        self.form = users_team_queues(request, str(kwargs["pk"]), user_pk)
+        self.form = users_team_queues(request, kwargs["queue_pk"], self.object_pk, user_pk)
         self.action = put_queue_single_case_assignment
         self.context = {"case": case}
 

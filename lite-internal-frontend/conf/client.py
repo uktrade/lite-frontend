@@ -103,7 +103,7 @@ def _build_absolute_uri(appended_address):
 
 
 def _get_headers(request, sender=None, content_type=None):
-    headers = {"X-Correlation-Id": str(request.correlation)}
+    headers = {"X-Correlation-Id": str(request.correlation if hasattr(request, "correlation") else "")}
 
     if sender:
         headers["content-type"] = sender.req_resource.content_type

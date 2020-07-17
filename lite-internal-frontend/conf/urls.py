@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.urls import include, path
 
+from conf import views
+
 urlpatterns = [
     path("", include("core.urls")),
     path("admin/", admin.site.urls),
@@ -18,4 +20,6 @@ urlpatterns = [
     path("compliance/", include("compliance.urls")),
 ]
 
-handler403 = "conf.views.handler403"
+handler403 = views.error_403
+handler404 = views.error_404
+handler500 = views.error_500
