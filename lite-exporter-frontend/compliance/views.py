@@ -42,7 +42,7 @@ class ComplianceSiteDetails(TemplateView):
             generated_documents, _ = get_case_generated_documents(request, str(pk))
             data["generated_documents"] = generated_documents["results"]
         elif tab == "visit-reports":
-            data["visit_reports"] = get_case_visit_reports(request, str(pk))
+            data["visit_reports"] = get_case_visit_reports(request, str(pk), request.GET.get("page"))
 
         if kwargs.get("errors"):
             data["errors"] = kwargs["errors"]

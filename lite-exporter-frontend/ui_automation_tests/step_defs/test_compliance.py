@@ -90,7 +90,7 @@ def all_tabs_are_visible(driver):
 def visit_case_created(driver, context):
     page = CompliancePages(driver)
     page.visits_tab().click()
-    assert page.find_paginated_compliance_visit_case(context.visit_case_id)
+    assert page.find_paginated_compliance_visit_case("visit-" + context.visit_case_id)
 
 
 @then("I view the visit case where I can see a smaller set of tabs are visible")

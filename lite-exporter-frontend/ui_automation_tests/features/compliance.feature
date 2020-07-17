@@ -12,20 +12,13 @@ Feature: Compliance
     And I create "approve" final advice for open application
     And I create a licence for my application with "approve" decision document
     And I produce an open licence CSV with for my licence
+    And I create a visit case for the linked compliance case
     When I complete an open licence return
     Then I see the success page
     When I go to my open licence returns
     Then I see my open licence return is the latest entry
-
-  @LT_865_view_compliance_case_details @regression
-  Scenario: View details on a compliance case
-    Given I go to exporter homepage and choose Test Org
-    And I create an open application via api
-    And I remove the flags
-    And I create "approve" final advice for open application
-    And I create a licence for my application with "approve" decision document
-    And I create a visit case for the linked compliance case
-    When I view my organisations compliance section
+    When I go to exporter homepage
+    And I view my organisations compliance section
     Then I can see the compliance case in the list of cases
     When I view the compliance case
     Then I can see the contents of the compliance case

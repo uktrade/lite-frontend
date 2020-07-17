@@ -9,6 +9,7 @@ from conf.constants import (
     COMPLIANCE_EXPORTER_URL,
     VISIT_URL,
 )
+from core.helpers import convert_parameters_to_query_params
 from lite_content.lite_exporter_frontend.compliance import OpenReturnsForm
 
 
@@ -25,8 +26,10 @@ def get_compliance_detail(request, pk):
     return data.json()
 
 
-def get_case_visit_reports(request, pk):
-    data = get(request, COMPLIANCE_EXPORTER_URL + str(pk) + "/" + VISIT_URL)
+def get_case_visit_reports(request, pk, page=1):
+    data = get(
+        request, COMPLIANCE_EXPORTER_URL + str(pk) + "/" + VISIT_URL + convert_parameters_to_query_params(locals())
+    )
     return data.json()
 
 
