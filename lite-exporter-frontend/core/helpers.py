@@ -117,13 +117,6 @@ def remove_prefix(json, prefix):
     return post_data
 
 
-def println(content=None, no=1):
-    print("\n" * no)
-    if content:
-        print(content)
-        print("\n" * no)
-
-
 def has_permission(request, permission):
     """
     Returns true if the user has a given permission, else false

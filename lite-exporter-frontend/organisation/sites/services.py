@@ -8,7 +8,9 @@ from lite_content.lite_exporter_frontend.sites import AddSiteForm
 from lite_forms.components import Option
 
 
-def get_sites(request, organisation_id, convert_to_options=False, get_total_users=False, exclude: list = None):
+def get_sites(
+    request, organisation_id, convert_to_options=False, get_total_users=False, exclude: list = None, postcode=None
+):
     data = get(
         request,
         ORGANISATIONS_URL
@@ -17,7 +19,9 @@ def get_sites(request, organisation_id, convert_to_options=False, get_total_user
         + "?"
         + convert_value_to_query_param("exclude", exclude)
         + "&"
-        + convert_value_to_query_param("get_total_users", get_total_users),
+        + convert_value_to_query_param("get_total_users", get_total_users)
+        + "&"
+        + convert_value_to_query_param("postcode", postcode),
     ).json()["sites"]
 
     primary_site = " " + strings.sites.SitesPage.PRIMARY_SITE
@@ -75,6 +79,12 @@ def update_site(request, pk, json):
 
 
 def post_sites(request, organisation_id, json):
+    if json.get("are_you_sure", True) == "None":
+        return (
+            {"errors": {"are_you_sure": [AddSiteForm.WhereIsYourSiteBased.EXISTING_SITE_ERROR]}},
+            HTTPStatus.BAD_REQUEST,
+        )
+
     if "location" not in json:
         return {"errors": {"location": [AddSiteForm.WhereIsYourSiteBased.ERROR]}}, HTTPStatus.BAD_REQUEST
 

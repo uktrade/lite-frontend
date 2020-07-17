@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import TemplateView
 
+from core.helpers import str_to_bool
 from core.services import get_organisation
 from lite_forms.views import MultiFormView, SingleFormView
 from organisation.sites.forms import new_site_forms, edit_site_name_form, site_records_location
@@ -21,6 +22,12 @@ class NewSite(MultiFormView):
         self.object_pk = request.user.organisation
         self.forms = new_site_forms(request)
         self.action = post_sites
+
+    def on_submission(self, request, **kwargs):
+        # Take the user out of the journey if they say no to continuing with a site
+        # that has a postcode which already exists
+        if request.POST.get("are_you_sure") != "None" and str_to_bool(request.POST.get("are_you_sure", True)) is False:
+            return reverse("organisation:sites:sites")
 
     def get_success_url(self):
         pk = self.get_validated_data()["site"]["id"]

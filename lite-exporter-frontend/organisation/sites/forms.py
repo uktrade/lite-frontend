@@ -25,6 +25,9 @@ from organisation.sites.services import get_sites, filter_sites_in_the_uk
 
 def new_site_forms(request):
     in_uk = request.POST.get("location", "").lower() == "united_kingdom"
+    sites = []
+    if request.POST.get("address.postcode"):
+        sites = get_sites(request, request.user.organisation, postcode=request.POST.get("address.postcode"))
 
     return FormGroup(
         [
@@ -70,6 +73,22 @@ def new_site_forms(request):
                     HiddenField("validate_only", True),
                 ],
                 default_button_name=generic.CONTINUE,
+            ),
+            conditional(
+                sites,
+                Form(
+                    title=AddSiteForm.Postcode.TITLE,
+                    description=AddSiteForm.Postcode.DESCRIPTION.format(", ".join(site["name"] for site in sites)),
+                    questions=[
+                        HiddenField(name="are_you_sure", value=None),
+                        RadioButtons(
+                            name="are_you_sure",
+                            title=AddSiteForm.Postcode.CONTROL_TITLE,
+                            options=[Option(True, AddSiteForm.Postcode.YES), Option(False, AddSiteForm.Postcode.NO),],
+                        ),
+                    ],
+                    default_button_name=generic.CONTINUE,
+                ),
             ),
             site_records_location(request, in_uk),
             Form(
