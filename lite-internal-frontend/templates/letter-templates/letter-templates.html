@@ -50,7 +50,6 @@
 
 		{% pagination %}
 	{% else %}
-		{% lcs 'letter_templates.LetterTemplatesPage.NONE_FOUND' as text %}
-		{% include "includes/notice.html" with text=text  %}
+		{% include "includes/notice.html" with text='letter_templates.LetterTemplatesPage.NONE_FOUND'  %}
 	{% endif %}
 {% endblock %}

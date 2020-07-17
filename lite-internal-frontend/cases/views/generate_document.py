@@ -17,6 +17,7 @@ from cases.services import (
 )
 from core.helpers import convert_dict_to_query_params
 from letter_templates.services import get_letter_template, get_letter_templates
+from lite_content.lite_internal_frontend import letter_templates
 from lite_forms.components import FormGroup
 from lite_forms.views import SingleFormView, MultiFormView
 
@@ -33,6 +34,11 @@ class GenerateDocument(MultiFormView):
 
     @staticmethod
     def _validate(request, pk, json):
+        if not json.get(TEMPLATE):
+            return (
+                {"errors": {TEMPLATE: [letter_templates.LetterTemplatesPage.PickTemplate.NO_TEMPLATE_SELECTED]}},
+                HTTPStatus.BAD_REQUEST,
+            )
         return json, HTTPStatus.OK
 
     def get_forms(self):
