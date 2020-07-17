@@ -8,13 +8,13 @@ def get_human_readable_exception(status_code):
     data = {
         404: {
             "title": "Page not found",
-            "description": "If you entered a web address, check it is correct.\n\n"
-            "If you pasted the web address, check you copied the entire address.\n\n"
-            "You can browse from the [homepage](/) to find the information you need.\n\n" + support_text,
+            "description": "If you entered a web address, check it is correct.\n\n\n\n"
+            "If you pasted the web address, check you copied the entire address.\n\n\n\n"
+            "You can browse from the [homepage](/) to find the information you need.\n\n\n\n" + support_text,
         },
         "generic": {
             "title": "Sorry, there is a problem with the service",
-            "description": "Try again later.\n\n" + support_text,
+            "description": "Try again later.\n\n\n\n" + support_text,
         },
     }
 
