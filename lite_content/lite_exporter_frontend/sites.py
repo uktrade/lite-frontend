@@ -34,6 +34,7 @@ class AddSiteForm:
         IN_THE_UK_DESCRIPTION = ""
         OUTSIDE_THE_UK = "Outside of the United Kingdom"
         OUTSIDE_THE_UK_DESCRIPTION = ""
+        EXISTING_SITE_ERROR = "Select an option"
         ERROR = "Select a location"
 
     class Details:
@@ -42,6 +43,13 @@ class AddSiteForm:
         NAME = "Name"
         ADDRESS_HEADER_UK = "Where in the United Kingdom is your site based?"
         ADDRESS_HEADER_ABROAD = "Where is your site based?"
+
+    class Postcode:
+        TITLE = "There's already a site registered with this postcode"
+        DESCRIPTION = "This postcode is already registered for {}. You should not add this site unless it is a different site at the same postcode."
+        CONTROL_TITLE = "Are you sure you want to continue?"
+        YES = "Yes, continue"
+        NO = "No"
 
     class AssignUsers:
         TITLE = "Assign users to the site (optional)"
