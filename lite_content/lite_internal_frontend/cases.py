@@ -784,10 +784,10 @@ class Manage:
         class AttachDocuments:
             BACK_TO_CASE_DOCUMENTS = "Back to case documents"
             BUTTON = "Attach document"
-            DESCRIPTION = "Files must be smaller than 100MB"
+            DESCRIPTION = "Files must be smaller than 50MB"
             DESCRIPTION_FIELD_DETAILS = "optional"
             DESCRIPTION_FIELD_TITLE = "Document description"
-            FILE_TOO_LARGE = "The selected file must be smaller than 100MB"
+            FILE_TOO_LARGE = "The selected file must be smaller than 50MB"
             TITLE = "Attach a document to this case"
 
     class MoveCase:

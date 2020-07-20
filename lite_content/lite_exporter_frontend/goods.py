@@ -344,7 +344,7 @@ class AttachDocumentForm:
         "Documentation could be specifications, datasheets, sales brochures, drawings "
         "or anything else that fully details what the product is and what it's designed to do."
         "\n\nDo not attach a document that’s above OFFICIAL-SENSITIVE. "
-        "\n\nThe file must be smaller than 100MB."
+        "\n\nThe file must be smaller than 50MB."
     )
     BUTTON = "Save"
     BACK_FORM_LINK = "Back"

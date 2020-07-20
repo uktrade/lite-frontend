@@ -135,7 +135,7 @@ class EndUser:
                 "order. The purchase order must identify you as the applicant, any consignees, the products and "
                 "respective quantities.\n\nIf any of the information provided by the end user is not in English, "
                 "attach a translation.\n\nIf you haven’t received the completed undertakings from the end user, you "
-                "can attach them later before you submit the application.\n\nThe files must be smaller than 100MB."
+                "can attach them later before you submit the application.\n\nThe files must be smaller than 50MB."
             )
             DESCRIPTION_FIELD_TITLE = "Description"
             BACK = "Back to the application overview"
@@ -160,7 +160,7 @@ class UltimateEndUser:
         class AttachDocuments:
             TITLE = "Attach a document"
             DESCRIPTION = (
-                "Do not attach a document that's above OFFICIAL-SENSITIVE.\n\nThe file must be smaller than 100MB."
+                "Do not attach a document that's above OFFICIAL-SENSITIVE.\n\nThe file must be smaller than 50MB."
             )
             DESCRIPTION_FIELD_TITLE = "Description"
             BACK = "Back to ultimate recipients"
@@ -187,7 +187,7 @@ class Consignee:
         class AttachDocuments:
             TITLE = "Attach a document"
             DESCRIPTION = (
-                "Do not attach a document that's above OFFICIAL-SENSITIVE.\n\nThe file must be smaller than 100MB."
+                "Do not attach a document that's above OFFICIAL-SENSITIVE.\n\nThe file must be smaller than 50MB."
             )
             DESCRIPTION_FIELD_TITLE = "Description"
             BACK = "Back to the application overview"
@@ -217,7 +217,7 @@ class ThirdParties:
         class AttachDocuments:
             TITLE = "Attach a document"
             DESCRIPTION = (
-                "Do not attach a document that's above OFFICIAL-SENSITIVE.\n\nThe file must be smaller than 100MB."
+                "Do not attach a document that's above OFFICIAL-SENSITIVE.\n\nThe file must be smaller than 50MB."
             )
             DESCRIPTION_FIELD_TITLE = "Description"
             BACK = "Back to third parties overview"
@@ -309,11 +309,11 @@ class Goods:
             DESCRIPTION = (
                 "You need to attach a document to this product so you can include the product on an"
                 " application or raise a CLC query.\n\nDo not attach a document that's OFFICIAL-SENSITIVE"
-                " or above.\n\nThe file must be smaller than 100MB."
+                " or above.\n\nThe file must be smaller than 50MB."
             )
             DESCRIPTION_FIELD_DETAILS = ""
             DESCRIPTION_FIELD_TITLE = "Description"
-            FILE_TOO_LARGE = "The selected file must be smaller than 100MB"
+            FILE_TOO_LARGE = "The selected file must be smaller than 50MB"
             TITLE = "Attach a document"
 
     class LocationQuestions:
@@ -357,7 +357,7 @@ class AdditionalDocuments:
         class AttachDocuments:
             TITLE = "Attach a supporting document"
             DESCRIPTION = (
-                "Do not attach a document that's above OFFICIAL-SENSITIVE.\n\nThe file must be smaller than 100MB."
+                "Do not attach a document that's above OFFICIAL-SENSITIVE.\n\nThe file must be smaller than 50MB."
             )
             DESCRIPTION_FIELD_TITLE = "Description"
             BACK = "Back to supporting documents"

@@ -33,13 +33,11 @@ class Documents:
         BACK_TO_APPLICATION_OVERVIEW = "Back to additional documents overview"
         BUTTON = "Attach document"
         DELETE_ERROR = "We had an issue deleting your files. Try again later."
-        DESCRIPTION = (
-            "Do not attach a document that's above OFFICIAL-SENSITIVE.\n\nThe file must be smaller than 100MB."
-        )
+        DESCRIPTION = "Do not attach a document that's above OFFICIAL-SENSITIVE.\n\nThe file must be smaller than 50MB."
         DESCRIPTION_FIELD_DETAILS = ""
         DESCRIPTION_FIELD_TITLE = "Description"
         DOWNLOAD_ERROR = "We had an issue downloading your file. Try again later."
-        FILE_TOO_LARGE = "The selected file must be smaller than 100MB"
+        FILE_TOO_LARGE = "The selected file must be smaller than 50MB"
         TITLE = "Upload a document to support your product (optional)"
         UPLOAD_ERROR = "We had an issue uploading your files. Try again later."
 
