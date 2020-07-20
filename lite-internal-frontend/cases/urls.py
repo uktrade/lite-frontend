@@ -64,6 +64,7 @@ urlpatterns = [
     path("assign-user/", main.UserWorkQueue.as_view(), name="assign_user"),
     path("assign-user-queue/<uuid:user_pk>/", main.UserTeamQueue.as_view(), name="assign_user_queue"),
     path("rerun-routing-rules/", main.RerunRoutingRules.as_view(), name="rerun_routing_rules",),
+    path("reissue-ogel/", main.ReissueOGEL.as_view(), name="reissue_ogel",),
     path("good/<uuid:good_pk>/", goods.GoodDetails.as_view(), name="good"),
     # Compliance
     path("create-visit-report/", compliance.CreateVisitReport.as_view(), name="create_visit_report"),

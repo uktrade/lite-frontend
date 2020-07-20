@@ -1,6 +1,8 @@
 from shared import functions
 from pages.BasePage import BasePage
 
+from ui_automation_tests.shared.functions import element_with_id_exists
+
 
 class OpenGeneralLicencesListPage(BasePage):
     BUTTON_NEW_OGL_ID = "button-new-ogl"
@@ -80,6 +82,8 @@ class OpenGeneralLicencesDeactivatePage(BasePage):
 class OpenGeneralLicencesCasePage(BasePage):
     HEADING = ".govuk-heading-m"
     SITE_ID = "ogel_site"
+    REISSUE_BUTTON_ID = "button-reissue-ogel"
+    CONFIRMATION_YES_RADIO_ID = "confirm-yes"
 
     def get_text_of_first_heading(self):
         return self.driver.find_elements_by_css_selector(self.HEADING)[0].text
@@ -89,3 +93,12 @@ class OpenGeneralLicencesCasePage(BasePage):
 
     def get_text_of_site(self):
         return self.driver.find_element_by_id(self.SITE_ID).text
+
+    def reissue_button_is_present(self):
+        return element_with_id_exists(self.driver, self.REISSUE_BUTTON_ID)
+
+    def click_reissue_button(self):
+        self.driver.find_element_by_id(self.REISSUE_BUTTON_ID).click()
+
+    def accept_reissue_confirmation(self):
+        self.driver.find_element_by_id(self.CONFIRMATION_YES_RADIO_ID).click()

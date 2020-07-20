@@ -12,6 +12,9 @@ from pages.open_general_licences_pages import (
 )
 from shared import functions
 
+from ui_automation_tests.pages.case_page import CasePage, CaseTabs
+from ui_automation_tests.pages.shared import Shared
+
 scenarios("../features/open_general_licences.feature", strict_gherkin=False)
 
 
@@ -148,3 +151,22 @@ def see_ogel(driver, context, api_test_client):
 @when("I go to ogel site registration case automatically created")  # noqa
 def click_on_created_ogel_app(driver, context, internal_url):  # noqa
     driver.get(internal_url.rstrip("/") + "/queues/00000000-0000-0000-0000-000000000001/cases/" + context.ogel_case_id)
+
+
+@then("I see the reissue button")
+def see_reissue_button(driver):
+    assert OpenGeneralLicencesCasePage(driver).reissue_button_is_present()
+
+
+@when("I reissue the ogel")
+def click_reissue_button(driver, context):
+    ogl_page = OpenGeneralLicencesCasePage(driver)
+    ogl_page.click_reissue_button()
+    ogl_page.accept_reissue_confirmation()
+    functions.click_submit(driver)
+
+
+@then("the ogel is reissued")
+def case_is_finalised(driver):
+    CasePage(driver).change_tab(CaseTabs.ACTIVITY)
+    assert "reissued" in Shared(driver).get_audit_trail_text()

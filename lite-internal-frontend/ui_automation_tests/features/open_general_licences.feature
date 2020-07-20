@@ -21,7 +21,6 @@ Feature: I want to add open general licences
     When I deactivate the open general licence
     Then I see the updated open general export licence
 
-
   @lt_1470_open_general_licences @regression
   Scenario: Add an open general licence application and view it
     Given I sign in to SSO or am signed into SSO
@@ -29,3 +28,9 @@ Feature: I want to add open general licences
     And an ogel application has been added
     When I go to ogel site registration case automatically created
     Then I see OGEL case
+    # Cancel & Reissue
+    When I click change status
+    And I select status "Suspended" and save
+    Then I see the reissue button
+    When I reissue the ogel
+    Then the ogel is reissued

@@ -356,6 +356,11 @@ def put_rerun_case_routing_rules(request, pk, json):
     return response.json(), response.status_code
 
 
+def reissue_ogel(request, pk, json):
+    response = post(request, CASE_URL + str(pk) + "/reissue-ogel/", {})
+    return response.json(), response.status_code
+
+
 def get_blocking_flags(request, case_pk):
     data = get(
         request,
