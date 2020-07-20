@@ -219,8 +219,8 @@ def get_third_parties(request, pk):
 
 
 # Existing Parties
-def get_existing_parties(request, pk, name=None, address=None, country=None, page=1):
-    params = {"name": name, "address": address, "country": country, "page": page}
+def get_existing_parties(request, pk, name=None, address=None, country=None, party_type=None, page=1):
+    params = {"name": name, "address": address, "country": country, "party_type": party_type, "page": page}
     params = convert_parameters_to_query_params(params)
     data = get(request, APPLICATIONS_URL + str(pk) + EXISTING_PARTIES_URL + params)
     return data.json(), data.status_code
