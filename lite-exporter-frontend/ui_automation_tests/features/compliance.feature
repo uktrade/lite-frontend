@@ -11,8 +11,8 @@ Feature: Compliance
     And I remove the flags
     And I create "approve" final advice for open application
     And I create a licence for my application with "approve" decision document
-    And I produce an open licence CSV with for my licence
     And I create a visit case for the linked compliance case
+    And I produce an open licence CSV with for my licence
     When I complete an open licence return
     Then I see the success page
     When I go to my open licence returns

@@ -197,6 +197,67 @@
 					</dd>
 				</div>
 
+				{% if good.good.pv_grading_details %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							{% lcs 'goods.GoodGradingForm.PREFIX' %}
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ good.good.pv_grading_details.prefix|default_na }}
+						</dd>
+					</div>
+
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							{% lcs 'goods.GoodGradingForm.GRADING' %}
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{% if good.good.pv_grading_details.grading %}
+								{{ good.good.pv_grading_details.grading.value }}
+							{% else %}
+								{{ good.good.pv_grading_details.custom_grading }}
+							{% endif %}
+						</dd>
+					</div>
+
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							{% lcs 'goods.GoodGradingForm.SUFFIX' %}
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ good.good.pv_grading_details.suffix|default_na }}
+						</dd>
+					</div>
+
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							{% lcs 'goods.GoodGradingForm.ISSUING_AUTHORITY' %}
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ good.good.pv_grading_details.issuing_authority }}
+						</dd>
+					</div>
+
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							{% lcs 'goods.GoodGradingForm.REFERENCE' %}
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ good.good.pv_grading_details.reference }}
+						</dd>
+					</div>
+
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							{% lcs 'goods.GoodGradingForm.DATE_OF_ISSUE' %}
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ good.good.pv_grading_details.date_of_issue|str_date_only }}
+						</dd>
+					</div>
+
+				{% endif %}
+
 				<div class="govuk-summary-list__row">
 					<dt class="govuk-summary-list__key">
 						{% lcs "goods.GoodsDetailSummary.DOCUMENTS" %}

@@ -6,6 +6,7 @@ from django.urls import reverse_lazy
 from environ import Env
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 ENV_FILE = os.path.join(BASE_DIR, ".env")
@@ -28,6 +29,9 @@ env = Env(
     CSP_REPORT_ONLY=(bool, True),
     HAWK_AUTHENTICATION_ENABLED=(bool, False),
 )
+
+
+DEBUG_PROPAGATE_EXCEPTIONS = True
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
@@ -187,7 +191,7 @@ S3_PREFIX_QUERY_PARAM_NAME = ""
 S3_DOWNLOAD_LINK_EXPIRY_SECONDS = 180
 STREAMING_CHUNK_SIZE = 8192
 S3_MIN_PART_SIZE = 5 * 1024 * 1024
-MAX_UPLOAD_SIZE = 100 * 1024 * 1024
+MAX_UPLOAD_SIZE = 50 * 1024 * 1024
 
 
 # Database
