@@ -1,4 +1,5 @@
 import json
+from html import escape
 from json import JSONDecodeError
 
 from django.template.defaulttags import register
@@ -120,11 +121,11 @@ def dict_hidden_field(key, value):
     if isinstance(value, dict):
         value = json.dumps(value)
     if isinstance(value, list):
-        str = ""
+        final_str = ""
         for item in value:
-            str += f"<input type='hidden' name='{key}[]' value='{item}'>"
-        return str
-    return f"<input type='hidden' name='{key}' value='{value}'>"
+            final_str += f"<input type='hidden' name='{key}[]' value='{escape(str(item))}'>"
+        return final_str
+    return f"<input type='hidden' name='{key}' value='{escape(str(value))}'>"
 
 
 @register.filter
