@@ -157,6 +157,16 @@ class CasePage:
             class Table:
                 COUNTRY = "Country"
                 COUNTRY_CODE = "Country code"
+                GOODS = "Goods"
+                TYPE = "Type"
+                NAME = "Name"
+                CLEARANCE = "Clearance"
+                DESCRIPTORS = "Descriptors"
+                ADDRESS = "Address"
+                BUSINESS = "Business"
+                WEBSITE = "Website"
+                DOCUMENTS = "Documents"
+                FLAGS = "Flags"
 
         class EndUseDetails:
             TITLE = "End use details"
