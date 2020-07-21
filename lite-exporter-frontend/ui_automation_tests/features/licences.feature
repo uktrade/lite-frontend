@@ -20,7 +20,7 @@ Feature: I want to be able to view licences as an exporter user
     And I create an open application via api
     And I remove the flags
     And I create "approve" final advice for open application
-    And I create a licence for my application with "approve" decision document
+    And I create a licence for my open application with "approve" decision document
     When I go to the licences page
     Then I see my open licence
     When I view my licence

@@ -661,6 +661,23 @@ def create_licence(context, decision, api_test_client):  # noqa
         context.licence = api_test_client.context["licence"]
 
 
+@given(parsers.parse('I create a licence for my open application with "{decision}" decision document'))  # noqa
+def create_open_licence(context, decision, api_test_client):  # noqa
+    document_template = api_test_client.document_templates.add_template(api_test_client.picklists, case_types=["oiel"])
+
+    api_test_client.cases.add_good_country_decisions(
+        context.case_id, {f"{context.goods_type['id']}.{context.country['code']}": "approve"}
+    )
+    api_test_client.cases.finalise_case(context.case_id, "approve")
+
+    api_test_client.cases.add_generated_document(context.case_id, document_template["id"], decision)
+    context.generated_document = api_test_client.context["generated_document"]
+
+    if decision != "no_licence_required":
+        api_test_client.cases.finalise_licence(context.case_id)
+        context.licence = api_test_client.context["licence"]
+
+
 @given("I finalise my NLR decision")  # noqa
 def finalise_case_with_nlr_decision(context, api_test_client):  # noqa
     document_template = api_test_client.document_templates.add_template(
@@ -719,5 +736,9 @@ def licences_page(driver, exporter_url):  # noqa
 @given(parsers.parse('I create "{decision}" final advice for open application'))  # noqa
 def final_advice_open(context, decision, api_test_client):  # noqa
     api_test_client.cases.create_final_advice(
-        context.case_id, [{"type": decision, "text": "abc", "note": "", "goods_type": context.goods_type["id"]}]
+        context.case_id,
+        [
+            {"type": decision, "text": "abc", "note": "", "goods_type": context.goods_type["id"]},
+            {"type": decision, "text": "abc", "note": "", "country": context.country["code"]},
+        ],
     )
