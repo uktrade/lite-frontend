@@ -5,7 +5,7 @@
 		<ol class="app-advice__container">
 			{% for advice in case.advice|filter_advice_by_level:level|filter_advice_by_id:id %}
 				<li class="app-advice__item app-advice__item--{{ advice.type.value|lower }}">
-					<p class="app-advice__item__advice-type">{{ advice.type.value }} <span class="app-advice__item__user">{% lcs 'advice.AdvicePage.BY_PREFIX' %}{{ advice.user.first_name }} {{ advice.user.last_name }} {% if advice.team %}({{ advice.team.name }}){% endif %}</span></p>
+					<p class="app-advice__item__advice-type">{{ advice.type.value }} <span class="app-advice__item__user">{% lcs 'advice.AdvicePage.BY_PREFIX' %}{{ advice.user.first_name }} {{ advice.user.last_name }} ({{ advice.user.team.name }})</span></p>
 					<div>
 						{% if advice.type.key == 'proviso' %}
 							<p class="app-advice__item__heading">{% lcs 'advice.AdvicePage.PROVISO' %}</p>
