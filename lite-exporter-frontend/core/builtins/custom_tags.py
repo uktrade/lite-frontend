@@ -465,3 +465,11 @@ def subtract(integer, value):
 def display_clc_ratings(control_list_entries):
     ratings = [item["rating"] for item in control_list_entries]
     return ", ".join(ratings)
+
+
+@register.filter()
+def list_has_property(items, attribute):
+    for item in items:
+        if attribute in item and item.get(attribute):
+            return True
+    return False
