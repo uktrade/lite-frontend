@@ -9,9 +9,13 @@ class AuthbrokerBackend:
         if not has_valid_token(client):
             return
 
+        profile = get_profile(client)
+
+        if not profile.get("user_profile"):
+            return
+
         User = get_user_model()
 
-        profile = get_profile(client)
         user, created = User.objects.get_or_create(
             email=profile["email"],
             defaults={
