@@ -82,6 +82,13 @@
 											{% lcs "goods_types.Document.DOWNLOAD" %}
 										</a>
 										<br/>
+									{% elif good_on_application.document.safe == False %}
+										{% lcs "goods_types.Document.VIRUS" %}
+										<br/>
+										<a href="{% url 'applications:goods_type_attach_document' application.id good_on_application.id %}" id="attach_doc" class='govuk-link govuk-link--no-visited-state'>
+											{% lcs "goods_types.Document.ATTACH" %}
+										</a>
+										<br/>
 										<a href="{% url 'applications:goods_type_delete_document' application.id good_on_application.id %}" id="document_delete" class='govuk-link govuk-link--no-visited-state'>
 											{% lcs "goods_types.Document.DELETE" %}
 										</a>

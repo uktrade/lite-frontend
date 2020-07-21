@@ -482,7 +482,9 @@ def _convert_document(party, document_type, application_id, editable):
         return "Processing"
 
     if not document["safe"]:
-        return convert_to_link(f"/applications/{application_id}/{document_type}/document/attach", "Attach another")
+        return convert_to_link(
+            f"/applications/{application_id}/{document_type}/{party['id']}/document/attach/", Parties.Documents.VIRUS
+        )
 
     if editable:
         return convert_to_link(

@@ -3,7 +3,7 @@ from http import HTTPStatus
 from inspect import signature
 
 from django.shortcuts import redirect
-from django.urls import reverse
+from django.urls import reverse, NoReverseMatch
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
@@ -33,7 +33,12 @@ def get_homepage(request, draft_id, obj_pk=None):
     data = {"pk": draft_id}
     if obj_pk:
         data["obj_pk"] = obj_pk
-    return redirect(reverse(document_switch(request.path)["homepage"], kwargs=data))
+
+    try:
+        url = reverse(document_switch(request.path)["homepage"], kwargs=data)
+    except NoReverseMatch:
+        url = reverse(document_switch(request.path)["homepage"], kwargs={"pk": draft_id})
+    return redirect(url)
 
 
 def get_delete_confirmation_page(path, pk):

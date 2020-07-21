@@ -460,16 +460,15 @@
 								{{ document.description }}
 							</p>
 						{% endif %}
-						{% if document.safe == True %}
-							{% if good.status.key == 'draft' %}
-								<a href="{% url 'goods:delete_document' good.id document.id %}" class="govuk-link govuk-!-font-size-16 govuk-!-margin-top-2">
-									{% lcs "goods.GoodPage.Document.DELETE" %}
-								</a>
-							{% endif%}
-						{% elif document.safe == False %}
+						{% if document.safe == False %}
 							<p class="govuk-label">{% lcs 'Goods.Documents.VIRUS_INFECTED' %}</p>
-						{% else %}
+						{% elif not document.safe %}
 							<p class="govuk-label">{% lcs 'Goods.Documents.PROCESSING' %}</p>
+						{% endif %}
+						{% if good.status.key == 'draft' %}
+							<a href="{% url 'goods:delete_document' good.id document.id %}" class="govuk-link govuk-!-font-size-16 govuk-!-margin-top-2">
+								{% lcs "goods.GoodPage.Document.DELETE" %}
+							</a>
 						{% endif %}
 					</div>
 				</li>
