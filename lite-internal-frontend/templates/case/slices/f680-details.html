@@ -18,24 +18,34 @@
 			<td class="govuk-table__cell govuk-table__cell--line-number">2.</td>
 			<th class="govuk-table__header" scope="row">Is expedited</th>
 			<td class="govuk-table__cell">
-				<p class="govuk-body govuk-!-margin-bottom-1">{{ case.data.expedited|friendly_boolean }}</p>
-				<p class="govuk-hint govuk-!-margin-0">{{ case.data.expedited_date }}</p>
+				<p class="govuk-body govuk-!-margin-0">{{ case.data.expedited|friendly_boolean }}</p>
+				{% if case.data.expedited_date %}
+					<p class="govuk-hint govuk-!-margin-top-1 govuk-!-margin-bottom-0">{{ case.data.expedited_date }}</p>
+				{% endif %}
 			</td>
 		</tr>
 		<tr class="govuk-table__row">
 			<td class="govuk-table__cell govuk-table__cell--line-number">3.</td>
 			<th class="govuk-table__header" scope="row">Has foreign technology</th>
 			<td class="govuk-table__cell">
-				<p class="govuk-body govuk-!-margin-bottom-1">{{ case.data.foreign_technology|friendly_boolean }}</p>
-				<p class="govuk-hint govuk-!-margin-0" data-max-length="200">{{ case.data.foreign_technology_description }}</p>
+				<p class="govuk-body govuk-!-margin-0">{{ case.data.foreign_technology|friendly_boolean }}</p>
+				{% if case.data.foreign_technology_description %}
+					<p class="govuk-hint govuk-!-margin-top-1 govuk-!-margin-bottom-0">
+						{{ case.data.foreign_technology_description }}
+					</p>
+				{% endif %}
 			</td>
 		</tr>
 		<tr class="govuk-table__row">
 			<td class="govuk-table__cell govuk-table__cell--line-number">4.</td>
 			<th class="govuk-table__header" scope="row">Is locally manufactured</th>
 			<td class="govuk-table__cell">
-				<p class="govuk-body govuk-!-margin-bottom-1">{{ case.data.locally_manufactured|friendly_boolean }}</p>
-				<p class="govuk-hint govuk-!-margin-0" data-max-length="200">{{ case.data.locally_manufactured_description }}</p>
+				<p class="govuk-body govuk-!-margin-0">{{ case.data.locally_manufactured|friendly_boolean }}</p>
+				{% if case.data.locally_manufactured_description %}
+					<p class="govuk-hint govuk-!-margin-top-1 govuk-!-margin-bottom-0" data-max-length="200">
+						{{ case.data.locally_manufactured_description }}
+					</p>
+				{% endif %}
 			</td>
 		</tr>
 		<tr class="govuk-table__row">
@@ -53,7 +63,11 @@
 			<th class="govuk-table__header" scope="row">UK service equipment</th>
 			<td class="govuk-table__cell">
 				<p class="govuk-body govuk-!-margin-0">{{ case.data.uk_service_equipment_type.value }}</p>
-				<p class="govuk-hint govuk-!-margin-0" data-max-length="200">{{ case.data.uk_service_equipment_description }}</p>
+				{% if case.data.uk_service_equipment_description %}
+					<p class="govuk-hint govuk-!-margin-top-1 govuk-!-margin-bottom-0" data-max-length="200">
+						{{ case.data.uk_service_equipment_description }}
+					</p>
+				{% endif %}
 			</td>
 		</tr>
 		<tr class="govuk-table__row">

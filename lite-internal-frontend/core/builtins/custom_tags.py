@@ -495,3 +495,11 @@ def get_goods_linked_to_destination_as_list(goods, country_id):
             break
 
     return list_of_goods
+
+
+@register.filter()
+def list_has_property(items, attribute):
+    for item in items:
+        if attribute in item and item.get(attribute):
+            return True
+    return False

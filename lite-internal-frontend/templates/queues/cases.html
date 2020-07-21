@@ -187,7 +187,7 @@
 											</span>
 											`: ``)}
 									{% endif %}
-									${(data.results.is_work_queue && item.has_open_ecju_queries ? `
+									${(data.results.is_work_queue && item.has_open_queries ? `
 										<div data-tooltip="{% lcs 'cases.CasesListPage.OPEN_TEAM_ECJU' %}" class="app-cases__row__icon">
 											{% svg 'ecju-query' %}
 										</div>

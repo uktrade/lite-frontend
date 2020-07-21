@@ -279,7 +279,7 @@ class FinaliseGenerateDocuments(SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         case = get_case(request, self.object_pk)
-        self.form = generate_documents_form()
+        self.form = generate_documents_form(kwargs["queue_pk"], self.object_pk)
         decisions, _ = get_final_decision_documents(request, self.object_pk)
         decisions = decisions["documents"]
         can_submit = all([decision.get("document") for decision in decisions.values()])

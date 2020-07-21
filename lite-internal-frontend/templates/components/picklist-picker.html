@@ -26,19 +26,17 @@
 </div>
 
 {% if not component.set_text %}
-	{% with component.target|add:'_text' as component_text %}
-		<a id="link-{{ component.target }}-picklist-picker" data-picklist-target="{{ component.target }}" data-picklist-set-text="false" href="#" class="govuk-link govuk-link--no-visited-state app-picklist-picker-heading__link {% if value|get:component_text %}app-hidden{% endif %}">
-			{% svg 'plus' %}
-			Use {{ component.type|sentence_case|lower }} from picklist
-		</a>
-		<a id="link-{{ component.target }}-picklist-picker-change" data-picklist-target="{{ component.target }}" data-picklist-set-text="false" href="#" class="govuk-link govuk-link--no-visited-state app-picklist-picker-heading__link {% if not value|get:component_text %}app-hidden{% endif %}">
-			Change {{ component.type|sentence_case|lower }}
-		</a>
-		<input type="hidden" id="{{ component.target }}-input" name="{{ component.target }}" value="{{ value|get:component.target }}">
-		<div id="{{ component.target }}-text" class="govuk-inset-text govuk-!-margin-top-0 {% if not value|get:component_text %}app-hidden{% endif %}">
-			{{ value|get:component_text }}
-		</div>
-	{% endwith %}
+	<a id="link-{{ component.target }}-picklist-picker" data-picklist-target="{{ component.target }}" data-picklist-set-text="false" href="#" class="govuk-link govuk-link--no-visited-state app-picklist-picker-heading__link {% if value|get:component.target %}app-hidden{% endif %}">
+		{% svg 'plus' %}
+		Use {{ component.type|sentence_case|lower }} from picklist
+	</a>
+	<a id="link-{{ component.target }}-picklist-picker-change" data-picklist-target="{{ component.target }}" data-picklist-set-text="false" href="#" class="govuk-link govuk-link--no-visited-state app-picklist-picker-heading__link {% if not value|get:component.target %}app-hidden{% endif %}">
+		Change {{ component.type|sentence_case|lower }}
+	</a>
+	<input type="hidden" id="{{ component.target }}-input" name="{{ component.target }}" value="{% if value|get:component.target %}{{ value|get:component.target }}{% endif %}">
+	<div id="{{ component.target }}-text" class="govuk-inset-text govuk-!-margin-top-0 {% if not value|get:component.target %}app-hidden{% endif %}">
+		{{ value|get:component.target }}
+	</div>
 {% endif %}
 
 <script>
@@ -140,7 +138,7 @@
 		var item = $("#" + itemId);
 		var target =  item.data("target")
 		$("#" + target + "-text").text(item.data("text")).removeClass("app-hidden");;
-		$("#" + target + "-input").val(item.data("id"));
+		$("#" + target + "-input").val(item.data("text"));
 		$("#link-" + target + "-picklist-picker").hide();
 		$("#link-" + target + "-picklist-picker-change").removeClass("app-hidden");
 		LITECommon.Modal.closeAllModals();
