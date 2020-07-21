@@ -24,6 +24,7 @@ class Document:
     PROCESSING = generic.Document.PROCESSING
     ATTACH = generic.Document.ATTACH
     REMOVE = generic.Document.REMOVE
+    VIRUS = "Document processing failed. Attach another"
 
 
 class Documents:
