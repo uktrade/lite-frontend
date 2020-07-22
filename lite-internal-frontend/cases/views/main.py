@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
-from s3chunkuploader.file_handler import s3_client
+from s3chunkuploader.file_handler import s3_client, S3FileUploadHandler
 
 from cases.constants import CaseType
 from cases.forms.additional_contacts import add_additional_contact_form
@@ -277,6 +277,7 @@ class AttachDocuments(TemplateView):
 
     @csrf_exempt
     def post(self, request, **kwargs):
+        self.request.upload_handlers.insert(0, S3FileUploadHandler(request))
         case_id = str(kwargs["pk"])
         data = []
 
