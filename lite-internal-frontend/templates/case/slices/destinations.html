@@ -113,7 +113,7 @@
 				<tbody class="govuk-table__body">
 					{% for destination in destinations %}
 						<tr class="govuk-table__row">
-							{% if not hide_checkboxes %}
+							{% if not hide_checkboxes and destination.country.id != "UKCS" %}
 								<td class="govuk-table__cell govuk-table__cell--checkbox {% if show_advice %}lite-!-no-border{% endif %}">
 									<div>
 										<input class="govuk-checkboxes__input" type="checkbox" name="countries" value="{{ destination.country.id }}" id="{{ destination.country.id }}">

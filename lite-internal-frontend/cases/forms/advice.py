@@ -21,7 +21,6 @@ from lite_forms.components import (
     TextArea,
     Checkboxes,
     HelpSection,
-    HTMLBlock,
     Group,
     Custom,
     Select,
@@ -31,22 +30,10 @@ from lite_forms.helpers import conditional
 from picklists.enums import PicklistCategories
 
 
-def give_advice_form(request, case: Case, tab, queue_pk, denial_reasons, show_warning=False):
+def give_advice_form(request, case: Case, tab, queue_pk, denial_reasons):
     return Form(
         title=advice.GiveOrChangeAdvicePage.TITLE,
         questions=[
-            conditional(
-                show_warning,
-                HTMLBlock(
-                    "<div class='govuk-warning-text'>"
-                    + "<span class='govuk-warning-text__icon' aria-hidden='true'>!</span>"
-                    + "<strong class='govuk-warning-text__text'>"
-                    + "<span class='govuk-warning-text__assistive'>Warning</span>"
-                    + advice.GiveOrChangeAdvicePage.WARNING
-                    + "</strong>"
-                    + "</div>"
-                ),
-            ),
             RadioButtons(
                 name="type",
                 description="<noscript>" + advice.GiveOrChangeAdvicePage.RadioButtons.DESCRIPTION + "</noscript>",

@@ -10,7 +10,7 @@ Feature: I want to add case-level flags to a case and view them
     And I create all types of flag except organisation
     When I go to flagging rules list
     And I add a flagging rule of type "Case", with condition "oiel", and flag
-    And I add a goods flagging rule with condition "Ml1a", flag and answer "True" for only apply to verified goods
+    And I add a goods flagging rule with condition "ML1a", flag and answer "True" for only apply to verified goods
     And I add a flagging rule of type "Destination", with condition "China", and flag
     Then I see the flagging rules in the flag list as "Active"
     When I deactivate all my new flagging rules
