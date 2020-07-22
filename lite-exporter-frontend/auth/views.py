@@ -80,7 +80,7 @@ class AuthCallbackView(View):
             user.lite_api_user_id = response["lite_api_user_id"]
             user.organisation = None
             user.save()
-        elif status_code == 403:
+        elif status_code == 401:
             user.organisation = None
             user.save()
             return redirect("core:register_an_organisation_triage")
