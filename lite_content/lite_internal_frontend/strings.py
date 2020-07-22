@@ -109,7 +109,7 @@ class FlaggingRules:
             DESTINATION_TITLE = "Select a country and flag"
             APPLICATION_TITLE = "Select a application type and flag"
 
-            GOOD = "Control list classification"
+            GOOD = "Control list classification (case sensitive)"
             DESTINATION = "Country"
             APPLICATION = "Application type"
 
