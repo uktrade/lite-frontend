@@ -24,9 +24,8 @@ def templates_in_table(driver, context):
 @then("I see the drag and drop page")
 def see_drag_and_drop_page(driver, context):
     letter_template = LetterTemplates(driver)
-    context.picklist_text = letter_template.get_text_of_paragraphs_in_preview()
-    assert "app-sortable ui-sortable" in letter_template.get_class_name_of_drag_and_drop_list()
-    assert context.letter_paragraph_name in letter_template.get_drag_and_drop_list_name()
+    assert context.letter_paragraph_name in letter_template.get_paragraph_drag_and_drop_list_text()
+    context.picklist_text = letter_template.get_paragraph_drag_and_drop_list_paragraph_text()
 
 
 @given("I create a document template")
@@ -78,7 +77,7 @@ def edit_template_paragraphs(driver, context, api_test_client):
 
 @then("The template paragraphs have been edited")
 def template_paragraphs_have_been_edited(driver, context):
-    paragraphs_text_list = LetterTemplates(driver).get_list_of_letter_paragraphs()
+    paragraphs_text_list = LetterTemplates(driver).get_paragraph_drag_and_drop_list_paragraph_text()
     for text in context.document_template_paragraph_text:
         assert text in paragraphs_text_list
 

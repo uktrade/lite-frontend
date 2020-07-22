@@ -9,35 +9,25 @@
 	@include govuk-font($size: 19);
 	@include govuk-responsive-margin(3, "bottom");
 	position: relative;
-	background-color: govuk-colour("light-grey");
+	width: 40%;
 	padding: govuk-spacing(3) govuk-spacing(4);
 	transition: box-shadow .2s ease, transform .2s ease, opacity .2s ease;
 	box-sizing: border-box;
-	display: grid;
+	display: inline-block;
 	grid-template-columns: 1fr auto;
 	grid-gap: govuk-spacing(4);
 	cursor: move;
 	line-height: 30px!important;
 
-	svg {
-		min-width: 22px;
-		margin-top: px;
+	&--paragraph-box{
+		@extend .app-letter-generator__picklist-item;
+		background-color: govuk-colour("light-grey");
 
-		* {
-			fill: govuk-colour("mid-grey");
+		&::after {
+			@include fill-pseudo();
+			border: 2px solid rgba(govuk-colour("mid-grey"), 0.1);
+			pointer-events: none;
 		}
-	}
-
-	&:hover {
-		svg * {
-			fill: govuk-colour("dark-grey");
-		}
-	}
-
-	&::after {
-		@include fill-pseudo();
-		border: 2px solid rgba(govuk-colour("mid-grey"), 0.1);
-		pointer-events: none;
 	}
 
 	button {
@@ -50,6 +40,7 @@
 		padding: 0;
 		height: 30px;
 		line-height: 30px;
+		float: right;
 
 		&:hover {
 			text-decoration: underline;

@@ -12,8 +12,8 @@ class LetterTemplates(BasePage):
     ADD_LETTER_PARAGRAPHS_BUTTON = '[value="return_to_preview"]'  # CSS
     PREVIEW_BUTTON = "button-preview"  # ID
     PREVIEW = "preview"  # ID
-    DRAG_DROP_LIST = "standard-advice-list"  # ID
-    PREVIEW_PARAGRAPHS = "paragraph-list"  # ID
+    DRAG_DROP_LIST = "paragraphlist"  # ID
+    DRAG_DROP_LIST_PARAGRAPH_TEXT = "paragraph-text"  # ID
     VISIBLE_TO_EXPORTER_PARTIAL_ID = "visible_to_exporter-"
     HAS_SIGNATURE_PARTIAL_ID = "include_digital_signature-"
     DONE_BUTTON_ID = "done"
@@ -27,7 +27,6 @@ class LetterTemplates(BasePage):
     EDIT_PARAGRAPHS_BUTTON = "edit_template_paragraphs"  # ID
     ADD_PARAGRAPH_LINK = "add_paragraph"  # ID
     PARAGRAPH_CHECKBOXES_LIST = ".govuk-checkboxes__input"  # CSS
-    PARAGRAPH_TEXT_LIST = "paragraph-list"  # ID
 
     def click_create_a_template(self):
         self.driver.find_element_by_id(self.CREATE_TEMPLATE_BUTTON).click()
@@ -69,13 +68,10 @@ class LetterTemplates(BasePage):
     def get_text_in_template(self):
         return self.driver.find_element_by_id(self.PREVIEW).text
 
-    def get_text_of_paragraphs_in_preview(self):
-        return self.driver.find_element_by_id(self.PREVIEW_PARAGRAPHS).text
+    def get_paragraph_drag_and_drop_list_paragraph_text(self):
+        return self.driver.find_element_by_id(self.DRAG_DROP_LIST_PARAGRAPH_TEXT).text
 
-    def get_class_name_of_drag_and_drop_list(self):
-        return self.driver.find_element_by_id(self.DRAG_DROP_LIST).get_attribute("class")
-
-    def get_drag_and_drop_list_name(self):
+    def get_paragraph_drag_and_drop_list_text(self):
         return self.driver.find_element_by_id(self.DRAG_DROP_LIST).text
 
     def click_letter_template(self, document_template_name):
@@ -108,9 +104,6 @@ class LetterTemplates(BasePage):
         id = paragraph.get_attribute("value")
         paragraph.click()
         return id
-
-    def get_list_of_letter_paragraphs(self):
-        return self.driver.find_element_by_id(self.PARAGRAPH_TEXT_LIST).text
 
     def get_template_table_text(self):
         return Shared(self.driver).get_text_of_lite_table_body()

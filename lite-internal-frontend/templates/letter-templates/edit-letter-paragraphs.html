@@ -18,38 +18,40 @@
 	</span>
 
 	<form method="post">
-		<div class="app-letter-generator__container">
-			<div class="app-letter-generator__controls">
-				{% csrf_token %}
-				<div id="standard-advice-list" class="app-sortable">
-					{% for letter_paragraph in letter_paragraphs %}
-						<div class="app-letter-generator__picklist-item" data-id="{{ letter_paragraph.id }}" data-text="{{ letter_paragraph.text }}">
-							{% hidden_field 'letter_paragraphs' letter_paragraph.id %}
-							<p class="app-letter-generator__picklist-item-text">{{ letter_paragraph.name }}</p>
+		{% csrf_token %}
+		<div>
+			<button class="lite-button--link" type="submit" name="action" id="add_paragraph" value="add_letter_paragraph">
+				{% lcs 'LetterTemplates.EditParagraph.ADD_LINK' %}
+			</button>
+		</div>
+		<br>
+
+		<div id="paragraphlist">
+			{% for letter_paragraph in letter_paragraphs %}
+				<div>
+					<div class="app-letter-generator__picklist-item--paragraph-box" data-id="{{ letter_paragraph.id }}">
+						{% hidden_field 'letter_paragraphs' letter_paragraph.id %}
+						<span class="app-letter-generator__picklist-item-text">
+							{{ letter_paragraph.name }}
 							<button type="submit" name="action" value="delete.{{ letter_paragraph.id }}">
-								<span class="govuk-visually-hidden">{% lcs 'LetterTemplates.EditParagraph.REMOVE_BUTTON' %}</span>
+								<span class="govuk-visually-hidden">{% lcs 'LetterTemplates.OrderParagraph.REMOVE_BUTTON' %}</span>
 								✕
 							</button>
-						</div>
-					{% endfor %}
+						</span>
+					</div>
+					<div class="app-letter-generator__picklist-item" id="paragraph-text">
+						{{ letter_paragraph.text }}
+					</div>
 				</div>
-				<br>
-				<button class="lite-button--link" type="submit" name="action" id="add_paragraph" value="add_letter_paragraph">{% lcs 'LetterTemplates.EditParagraph.ADD_LINK' %}</button>
-				<br>
-				<br>
-				<br>
-			</div>
-			<div id="paragraph-list" class="govuk-body">
-				{% for letter_paragraph in letter_paragraphs %}
-					<p id="{{ letter_paragraph.id }}">{{ letter_paragraph.text }}</p>
-				{% endfor %}
-			</div>
+			{% endfor %}
 		</div>
-		<a id="done" class="govuk-button" href="{% url 'letter_templates:letter_template' letter_template.id %}">{% lcs 'LetterTemplates.EditParagraph.SAVE_BUTTON' %}</a>
+		<button id="done" class="govuk-button" name="action" value="edit" type="submit">
+			{% lcs 'LetterTemplates.EditParagraph.SAVE_BUTTON' %}
+		</button>
 	</form>
 {% endblock %}
 
 {% block javascript %}
-	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script src="{% static 'javascripts/sortable.min.js' %}"></script>
 	<script src="{% static 'javascripts/letter-template-generator.js' %}"></script>
 {% endblock %}

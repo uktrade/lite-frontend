@@ -103,4 +103,8 @@ class EditParagraphs(TemplateView):
             paragraphs.remove(pk_to_delete)
 
         put_letter_template(request, letter_template_id, {"letter_paragraphs": paragraphs})
-        return self.get(request, **kwargs)
+
+        if "edit" in action:
+            return redirect(reverse("letter_templates:letter_template", kwargs={"pk": letter_template_id}))
+        else:
+            return self.get(request, **kwargs)
