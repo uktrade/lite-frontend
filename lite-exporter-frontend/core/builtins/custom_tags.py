@@ -12,7 +12,7 @@ from django.templatetags.tz import do_timezone
 from django.utils.safestring import mark_safe
 
 from applications.constants import F680
-from conf.constants import CASE_SECTIONS, DATE_FORMAT, PAGE_DATE_FORMAT, TIMEZONE
+from conf.constants import CASE_SECTIONS, DATE_FORMAT, PAGE_DATE_FORMAT, TIMEZONE, STANDARD, OPEN
 from conf.constants import ISO8601_FMT, NOT_STARTED, DONE, IN_PROGRESS
 from lite_content.lite_exporter_frontend import strings
 
@@ -359,6 +359,24 @@ def get_parties_status(parties):
             return IN_PROGRESS
 
     return DONE
+
+
+@register.filter()
+def get_end_use_details_status(application):
+    fields = ["intended_end_use"]
+    if application.sub_type in [STANDARD, OPEN]:
+        fields += ["is_military_end_use_controls", "is_informed_wmd", "is_suspected_wmd"]
+        if application.sub_type == STANDARD:
+            fields.append("is_eu_military")
+
+    end_use_detail_field_data = [application.get(field) for field in fields]
+
+    if all(end_use_detail_field_data):
+        return DONE
+    elif any(end_use_detail_field_data):
+        return IN_PROGRESS
+    else:
+        return NOT_STARTED
 
 
 @register.filter()

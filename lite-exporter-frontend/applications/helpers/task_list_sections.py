@@ -1,5 +1,5 @@
 from applications.services import get_party_document, get_ultimate_end_users
-from conf.constants import APPLICANT_EDITING, STANDARD, OPEN
+from conf.constants import APPLICANT_EDITING
 
 
 def get_reference_number_description(application):
@@ -46,18 +46,6 @@ def get_ultimate_end_users_section(request, application):
             break
 
     return ultimate_end_users, ultimate_end_users_documents_complete
-
-
-def get_end_use_details(application):
-    fields = ["intended_end_use"]
-    if application.sub_type in [STANDARD, OPEN]:
-        fields += ["is_military_end_use_controls", "is_informed_wmd", "is_suspected_wmd"]
-        if application.sub_type == STANDARD:
-            fields.append("is_eu_military")
-    for field in fields:
-        if application.get(field) is None:
-            return False
-    return True
 
 
 def get_route_of_goods(application):

@@ -103,7 +103,7 @@
 					{% if not is_crypto_application %}
 						{% if not is_editing or edit_type == 'major_edit' %}
 							{% url 'applications:end_use_details' application.id as end_use_details_url %}
-							{% include "includes/task-list-item.html" with id='end_use_details' status=end_use_details|task_list_item_status title=strings.END_USE_DETAILS url=end_use_details_url %}
+							{% include "includes/task-list-item.html" with id='end_use_details' status=application|get_end_use_details_status title=strings.END_USE_DETAILS url=end_use_details_url %}
 						{% endif %}
 					{% endif %}
 				{% endif %}
