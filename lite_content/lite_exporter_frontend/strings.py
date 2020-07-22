@@ -98,6 +98,7 @@ class Parties:
         DELETE = "Delete"
         DOWNLOAD = "Download"
         ATTACH = "Attach document"
+        VIRUS = "Document processing failed. Attach another"
 
     class Clearance:
         class Level:
@@ -304,7 +305,7 @@ class Goods:
         VIRUS_INFECTED = "The selected file contains a virus"
 
         class AttachDocuments:
-            BACK_TO_GOOD = "Back to product"
+            BACK = "Back to product"
             BUTTON = "Add a document"
             DESCRIPTION = (
                 "You need to attach a document to this product so you can include the product on an"
@@ -313,6 +314,8 @@ class Goods:
             )
             DESCRIPTION_FIELD_DETAILS = ""
             DESCRIPTION_FIELD_TITLE = "Description"
+            SAVE_AND_RETURN_LATER = "save and return to the application overview"
+            ATTACH_LATER = " to upload a document later."
             FILE_TOO_LARGE = "The selected file must be smaller than 50MB"
             TITLE = "Attach a document"
 
@@ -341,6 +344,11 @@ class AdditionalDocuments:
     ADD = "Add a document"
     NO_RESULTS = "There are no supporting documents on the application"
     TITLE = "Supporting documents"
+    BACK = "Back to application overview"
+    NAME_COLUMN = "Document"
+    DESCRIPTION_COLUMN = "Description"
+    MESSAGE_COLUMN = ""
+    ACTIONS_COLUMN = ""
 
     class Documents:
         ATTACH_LATER = ""
@@ -348,6 +356,7 @@ class AdditionalDocuments:
         DELETE_DOCUMENT = "Delete"
         DESCRIPTION = "This is the document that has been uploaded for this draft."
         DOWNLOAD_DOCUMENT = "Download"
+        VIRUS = "Document processing failed. Attach another."
         END_USER_HAS_NO_DOCUMENTS = "There are no documents attached"
         PROCESSING = "Processing"
         SAVE_AND_RETURN_LATER = "save and return to the application overview"
