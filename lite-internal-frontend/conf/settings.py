@@ -181,10 +181,6 @@ SASS_PROCESSOR_ENABLED = True
 
 # File Upload
 # https://github.com/uktrade/s3chunkuploader
-AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY")
-AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")
-AWS_REGION = env("AWS_REGION")
 S3_DOCUMENT_ROOT_DIRECTORY = ""
 S3_APPEND_DATETIME_ON_UPLOAD = True
 S3_PREFIX_QUERY_PARAM_NAME = ""
@@ -192,6 +188,24 @@ S3_DOWNLOAD_LINK_EXPIRY_SECONDS = 180
 STREAMING_CHUNK_SIZE = 8192
 S3_MIN_PART_SIZE = 5 * 1024 * 1024
 MAX_UPLOAD_SIZE = 50 * 1024 * 1024
+
+# AWS
+VCAP_SERVICES = env.json("VCAP_SERVICES", {})
+
+if VCAP_SERVICES:
+    if "aws-s3-bucket" not in VCAP_SERVICES:
+        raise Exception("S3 Bucket not bound to environment")
+
+    aws_credentials = VCAP_SERVICES["aws-s3-bucket"][0]["credentials"]
+    AWS_ACCESS_KEY_ID = aws_credentials["aws_access_key_id"]
+    AWS_SECRET_ACCESS_KEY = aws_credentials["aws_secret_access_key"]
+    AWS_REGION = aws_credentials["aws_region"]
+    AWS_STORAGE_BUCKET_NAME = aws_credentials["bucket_name"]
+else:
+    AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY")
+    AWS_REGION = env("AWS_REGION")
+    AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
