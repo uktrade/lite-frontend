@@ -22,10 +22,10 @@ class RoutingRulesList:
 
 
 class Filter:
-    CASE_STATUS = "Case Status"
-    TEAM = "Team"
-    QUEUE = "Queue"
-    TIER = "Tier number"
+    CASE_STATUS = "case status"
+    TEAM = "team"
+    QUEUE = "queue"
+    TIER = "tier number"
     ACTIVE_ONLY = "Only show active rules"
 
 
