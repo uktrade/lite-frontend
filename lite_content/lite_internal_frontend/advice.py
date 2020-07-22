@@ -82,6 +82,8 @@ class GoodsDecisionMatrixPage:
 class FinaliseLicenceForm:
     APPROVE_TITLE = "Approve"
     FINALISE_TITLE = "Finalise"
+    REFUSE_DESCRIPTION = "You'll be denying the case"
+    NLR_DESCRIPTION = "You'll be informing the exporter that no licence is required"
     DATE_DESCRIPTION = "For example, 27 3 2019"
     DATE_TITLE = "Licence start date"
     DURATION_DESCRIPTION = "This must be a whole number of months, such as 12"
