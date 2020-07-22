@@ -129,3 +129,7 @@ class SignatureHelp:
     After this, whenever you view a signed DIT document from this site, you will see a banner indicating that the document has come from a trusted source.
     """  # noqa
     DOWNLOAD_BUTTON = "Download certificate"
+
+
+class Errors:
+    PERMISSION_DENIED = "You do not have permission to access this resource"
