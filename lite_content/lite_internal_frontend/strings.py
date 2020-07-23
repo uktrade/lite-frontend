@@ -78,7 +78,7 @@ class FlaggingRules:
 
     class List:
         class Filter:
-            Type = "Type"
+            Type = "type"
             MY_TEAM_ONLY = "Only show my team"
             INCLUDE_DEACTIVATED = "Include deactivated"
 

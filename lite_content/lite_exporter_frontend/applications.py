@@ -31,9 +31,9 @@ class CopyExistingPartyPage:
 
     class Table:
         NAME_COLUMN = "Name"
+        ROLE_COLUMN = "Role"
         TYPE_COLUMN = "Type"
         ADDRESS_COLUMN = "Address"
-        COUNTRY_COLUMN = "Country"
         WEBSITE_COLUMN = "Website"
 
 

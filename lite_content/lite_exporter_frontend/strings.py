@@ -106,8 +106,7 @@ class Parties:
             DESCRIPTION = ""
 
         class Descriptors:
-            TITLE = "Descriptors, caveats or codewords"
-            TITLE_OPTIONAL = "Descriptors, caveats or codewords (optional)"
+            TITLE = "Descriptors, caveats or codewords (optional)"
             DESCRIPTION = ""
 
 

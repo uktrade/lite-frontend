@@ -29,7 +29,7 @@ class Filter:
     ACTIVE_ONLY = "Only show active rules"
 
 
-class Additional_rules:
+class AdditionalRules:
     CASE_TYPES = "Case Types"
     FLAGS = "Flags"
     COUNTRY = "Country"
