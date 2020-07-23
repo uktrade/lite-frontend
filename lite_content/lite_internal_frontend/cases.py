@@ -309,7 +309,7 @@ class ApplicationPage:
         ADVICE = "View advice"
         GENERATE_DOCUMENT = "Generate document"
         USER_WORK_QUEUE = "Assign user"
-        REISSUE_OGEL = "Reissue OGEL"
+        REISSUE_OGL = "Reissue OGL"
         RERUN_ROUTING_RULES = "Rerun routing rules"
         ADDITIONAL_CONTACTS = "Additional contacts"
 
@@ -840,14 +840,14 @@ class Manage:
         NO = "Cancel"
         SUBMIT_BUTTON = "Continue"
 
-    class ReissueOGEL:
-        TITLE = "Do you want to reissue this OGEL?"
-        DESCRIPTION = "Doing so will allow the exporter to resume using this OGEL"
-        BACK = "Back to case"
+    class ReissueOGL:
+        TITLE = "Are you sure you want to reissue this open general licence?"
+        DESCRIPTION = "Doing so will allow the exporter to resume using this open general licence"
         YES = "Yes"
         NO = "No"
         SUBMIT = "Submit"
         ERROR = "Select an option"
+        NOTE = "Explain why you're making this decision (optional)"
 
     class SetNextReviewDate:
         TITLE = "Set next review date"
