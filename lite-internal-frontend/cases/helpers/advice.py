@@ -208,11 +208,11 @@ def convert_advice_item_to_base64(advice_item):
     """
     fields = [
         advice_item.get("denial_reasons", ""),
-        advice_item.get("proviso", "").lower().replace(" ", ""),
-        advice_item["text"].lower().replace(" ", ""),
-        advice_item["note"].lower().replace(" ", ""),
-        advice_item["type"],
-        advice_item["level"],
+        (advice_item.get("proviso") or "").lower().replace(" ", ""),
+        (advice_item.get("text") or "").lower().replace(" ", ""),
+        (advice_item.get("note") or "").lower().replace(" ", ""),
+        advice_item.get("type"),
+        advice_item.get("level"),
     ]
 
     return b64encode(bytes(json.dumps(fields), "utf-8")).decode("utf-8")
