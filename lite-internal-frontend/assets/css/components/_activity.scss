@@ -53,7 +53,7 @@
 }
 
 .app-activity__additional-text {
-	@include govuk-font($size: 19, $line-height: 1.66)
+	@include govuk-font($size: 19, $line-height: 1.66);
 	position: relative;
 	padding: govuk-spacing(4) govuk-spacing(4) govuk-spacing(3);
 	background-color: govuk-colour("light-grey");

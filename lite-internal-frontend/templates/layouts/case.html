@@ -141,8 +141,10 @@
 					<div class="lite-tabs__controls">
 						<div class="lite-buttons-row">
 							{% make_list queue.id case.id as button_params %}
-							{% if case.case_type.reference.key == "ogel" and case.status == "revoked" or case.status == "suspended" %}
-								{% govuk_link_button id='reissue-ogel' text='cases.ApplicationPage.Actions.REISSUE_OGEL' url='cases:reissue_ogel' url_param=button_params query_params='?return_to='|add:CURRENT_PATH %}
+							{% if case.reference == "ogel" or case.reference == "ogtl" or case.reference == "ogtcl" %}
+								{% if case.status == "revoked" or case.status == "suspended" %}
+									{% govuk_link_button id='reissue-ogl' text='cases.ApplicationPage.Actions.REISSUE_OGL' url='cases:reissue_ogl' url_param=button_params query_params='?return_to='|add:CURRENT_PATH %}
+								{% endif %}
 							{% endif %}
 							{% govuk_link_button id='rerun-routing-rules' text='cases.ApplicationPage.Actions.RERUN_ROUTING_RULES' url='cases:rerun_routing_rules' url_param=button_params query_params='?return_to='|add:CURRENT_PATH classes='govuk-button--secondary' %}
 							{% if can_set_done and case.case_type.reference.key != "comp_c" %}

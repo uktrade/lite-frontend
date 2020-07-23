@@ -18,7 +18,7 @@ from cases.forms.change_status import change_status_form
 from cases.forms.done_with_case import done_with_case_form
 from cases.forms.move_case import move_case_form
 from cases.forms.next_review_date import set_next_review_date_form
-from cases.forms.reissue_ogel_form import reissue_ogel_confirmation_form
+from cases.forms.reissue_ogl_form import reissue_ogl_confirmation_form
 from cases.forms.rerun_routing_rules import rerun_routing_rules_confirmation_form
 from cases.helpers.advice import get_advice_additional_context
 from cases.helpers.case import CaseView, Tabs, Slices
@@ -34,7 +34,7 @@ from cases.services import (
     patch_case,
     put_application_status,
     put_next_review_date,
-    reissue_ogel,
+    reissue_ogl,
 )
 from cases.services import post_case_documents, get_document
 from compliance.services import get_compliance_licences
@@ -410,13 +410,13 @@ class RerunRoutingRules(SingleFormView):
         return super(RerunRoutingRules, self).post(request, **kwargs)
 
 
-class ReissueOGEL(SingleFormView):
+class ReissueOGL(SingleFormView):
     def init(self, request, **kwargs):
-        self.action = reissue_ogel
+        self.action = reissue_ogl
         self.object_pk = kwargs["pk"]
         case = get_case(request, self.object_pk)
         self.context = {"case": case}
-        self.form = reissue_ogel_confirmation_form(self.object_pk, self.kwargs["queue_pk"])
+        self.form = reissue_ogl_confirmation_form(self.object_pk, self.kwargs["queue_pk"])
         self.success_url = reverse_lazy(
             "cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk}
         )
@@ -428,13 +428,13 @@ class ReissueOGEL(SingleFormView):
                 request,
                 self.get_form(),
                 data=self.get_data(),
-                errors={"confirm": [Manage.ReissueOGEL.ERROR]},
+                errors={"confirm": [Manage.ReissueOGL.ERROR]},
                 extra_data=self.context,
             )
-        elif request.POST.get("confirm") == "no":
+        elif request.POST.get("confirm") == "False":
             return redirect(self.success_url)
 
-        return super(ReissueOGEL, self).post(request, **kwargs)
+        return super(ReissueOGL, self).post(request, **kwargs)
 
 
 class NextReviewDate(SingleFormView):

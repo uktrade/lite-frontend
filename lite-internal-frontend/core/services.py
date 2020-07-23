@@ -131,7 +131,6 @@ def get_permissible_statuses(request, case):
             for status in statuses
             if status["key"]
             in [
-                CaseStatusEnum.FINALISED,
                 CaseStatusEnum.REGISTERED,
                 CaseStatusEnum.UNDER_ECJU_REVIEW,
                 CaseStatusEnum.REVOKED,
