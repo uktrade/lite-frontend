@@ -36,8 +36,13 @@
 		color: govuk-colour("turquoise");
 	}
 
-	.user {
+	&__user {
 		font-weight: 600;
+	}
+
+	&__user--link {
+		@extend .govuk-link;
+		@extend .govuk-link--no-visited-state;
 	}
 
 	.govuk-body {

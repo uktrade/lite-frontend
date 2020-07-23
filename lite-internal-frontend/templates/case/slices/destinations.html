@@ -25,7 +25,7 @@
 						{% if destinations|list_has_property:'clearance_level' %}
 							<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.CLEARANCE' %}</th>
 						{% endif %}
-						{% if destinations|list_has_property:'descriptors'  %}
+						{% if destinations|list_has_property:'descriptors' %}
 							<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.DESCRIPTORS' %}</th>
 						{% endif %}
 						<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.ADDRESS' %}</th>
@@ -48,6 +48,15 @@
 							{% endif %}
 							<th scope="row" class="govuk-table__header {% if show_advice %}lite-!-no-border{% endif %}">
 								{{ destination.type|sentence_case }}
+								{% if destination.role.key != "other" or destination.role_other %}
+									<p class="govuk-hint govuk-!-margin-top-2 govuk-!-margin-bottom-0">
+										{% if destination.role_other %}
+											{{ destination.role_other }}
+										{% else %}
+											{{ destination.role.value }}
+										{% endif %}
+									</p>
+								{% endif %}
 							</th>
 							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
 								<span aria-hidden="false" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.NAME' %}</span>
@@ -71,7 +80,11 @@
 							</td>
 							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
 								<span aria-hidden="false" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.BUSINESS' %}</span>
-								{{ destination.sub_type.value }}
+								{% if destination.sub_type_other %}
+									{{ destination.sub_type_other }}
+								{% else %}
+									{{ destination.sub_type.value }}
+								{% endif %}
 							</td>
 							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
 								<span aria-hidden="false" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.WEBSITE' %}</span>

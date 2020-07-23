@@ -10,12 +10,14 @@
 
 {% block messages %}
 	{{ block.super }}
-	<a id="banner-exporter-amendments" class="app-hidden govuk-width-container app-snackbar app-snackbar--no-animation" href="{% url 'queues:cases' updated_cases_banner_queue_id %}">
-		<div class="app-snackbar__content">
-			<div class="app-snackbar__icon"></div>
-			{% lcs 'cases.CasesListPage.EXPORTER_AMENDMENTS_BANNER' %}
-		</div>
-	</a>
+	{% if queue.id != updated_cases_banner_queue_id %}
+		<a id="banner-exporter-amendments" class="app-hidden govuk-width-container app-snackbar app-snackbar--no-animation" href="{% url 'queues:cases' updated_cases_banner_queue_id %}">
+			<div class="app-snackbar__content">
+				<div class="app-snackbar__icon"></div>
+				{% lcs 'cases.CasesListPage.EXPORTER_AMENDMENTS_BANNER' %}
+			</div>
+		</a>
+	{% endif %}
 {% endblock %}
 
 {% block body %}

@@ -3,7 +3,11 @@
 		{% for audit in activity %}
 			<div id="case-activity-{{ audit.id }}" class="app-activity__item">
 				<p class="govuk-body">
-					<span class="user">{{ audit.user.first_name }} {{ audit.user.last_name }}</span>
+					{% if audit.user.type == 'exporter' %}
+						<span class="app-activity__item__user">{{ audit.user.first_name }} {{ audit.user.last_name }}</span>
+					{% else %}
+						<a href="{% url 'users:user' audit.user.id %}" class="app-activity__item__user app-activity__item__user--link">{{ audit.user.first_name }} {{ audit.user.last_name }}</a>
+					{% endif %}
 					<span data-max-length="400">
 						{{ audit.text }}
 					</span>

@@ -3,7 +3,7 @@ from django.urls import reverse_lazy
 from cases.services import get_case_types, get_flags_for_team_of_level
 from core.services import get_statuses, get_countries
 from lite_content.lite_internal_frontend.routing_rules import (
-    Additional_rules,
+    AdditionalRules,
     DeactivateForm,
     ActivateForm,
     Forms,
@@ -25,10 +25,10 @@ from lite_forms.helpers import conditional
 from teams.services import get_users_by_team, get_teams, get_team_queues
 
 additional_rules = [
-    Option("case_types", Additional_rules.CASE_TYPES),
-    Option("flags", Additional_rules.FLAGS),
-    Option("country", Additional_rules.COUNTRY),
-    Option("users", Additional_rules.USERS),
+    Option("case_types", AdditionalRules.CASE_TYPES),
+    Option("flags", AdditionalRules.FLAGS),
+    Option("country", AdditionalRules.COUNTRY),
+    Option("users", AdditionalRules.USERS),
 ]
 
 
