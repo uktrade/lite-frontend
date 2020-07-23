@@ -219,7 +219,7 @@
 
 				{% if application_type|application_type_in_list:"HAS_NOTES" %}
 					{% url 'applications:notes' application.id as notes_url %}
-					{% include "includes/task-list-item.html" with id="notes" title=strings.NOTES url=notes_url optional=True %}
+					{% include "includes/task-list-item.html" with id="notes" title=strings.NOTES url=notes_url status=notes|task_list_item_status optional=True %}
 				{% endif %}
 
 				{% if can_submit %}

@@ -46,7 +46,7 @@
 	</div>
 
 	<!-- Notify the user if their good has a special status -->
-	{% if good.status.key == 'query' %}
+	{% if good.status.key == 'query' and good.is_pv_graded.key == "grading_required" and good.case_status.key == "pv_review" %}
 		<div class="govuk-inset-text govuk-!-margin-top-0">
 			{% lcs 'goods.GoodPage.IN_REVIEW' %}
 		</div>

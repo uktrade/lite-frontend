@@ -28,7 +28,7 @@
 				{% include "includes/task-list-item.html" with title=strings.THIRD_PARTIES url=third_parties_url status=application.third_parties|task_list_item_status optional=True %}
 
 				{% url 'applications:consignee' application.id as consignee_url %}
-				{% include "includes/task-list-item.html" with title=strings.CONSIGNEE url=consignee_url status=application.consignee|get_parties_status optional=True %}
+				{% include "includes/task-list-item.html" with title=strings.CONSIGNEE url=consignee_url status=application.consignee|get_parties_status_optional_documents optional=True %}
 
 				{% url 'applications:additional_documents' application.id as supporting_documentation_url %}
 				{% include "includes/task-list-item.html" with title=strings.SUPPORTING_DOCUMENTS url=supporting_documentation_url status=application.supporting_documentation|task_list_item_status optional=True %}
