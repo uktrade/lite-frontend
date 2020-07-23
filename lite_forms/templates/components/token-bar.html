@@ -18,7 +18,7 @@
 			addItemsOnPaste: true,
 			minChars: 1,
 			itemName: '{{ component.name }}',
-			setItems: [{% for option in value %}{id: '{{ option.key }}', name: '{{ option.value }}', classes: [{% for class in option.classes %}'{{ class }}', {% endfor %}]},, {% endfor %}]
+			setItems: [{% for option in value|unique_list %}{id: '{{ option.key|default:option }}', name: '{{ option.value|default:option }}', classes: [{% for class in option.classes %}'{{ class }}', {% endfor %}]},, {% endfor %}]
 		});
 
 		$("#token-bar-{{ component.name }}").remove();
