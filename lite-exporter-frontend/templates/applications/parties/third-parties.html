@@ -44,14 +44,26 @@
 				{% for third_party in third_parties %}
 					<tr class="govuk-table__row">
 						<td class="govuk-table__cell">{{ third_party.name }}</td>
-						<td class="govuk-table__cell">{{ third_party.sub_type.value }}</td>
+						<td class="govuk-table__cell">
+							{% if third_party.sub_type_other %}
+								{{ third_party.sub_type_other }}
+							{% else %}
+								{{ third_party.sub_type.value }}
+							{% endif %}
+						</td>
 						{% if has_clearance %}
 							<td class="govuk-table__cell">{{ third_party.clearance_level.value|default_na }}</td>
 						{% endif %}
 						{% if third_parties|list_has_property:'descriptors' %}
 							<td class="govuk-table__cell">{{ third_party.descriptors|default_na }}</td>
 						{% endif %}
-						<td class="govuk-table__cell">{{ third_party.role.value }}</td>
+						<td class="govuk-table__cell">
+							{% if third_party.role_other %}
+								{{ third_party.role_other }}
+							{% else %}
+								{{ third_party.role.value }}
+							{% endif %}
+						</td>
 						<td class="govuk-table__cell">{{ third_party.website|default_na }}</td>
 						<td class="govuk-table__cell">{{ third_party.address }}</td>
 						<td class="govuk-table__cell">{{ third_party.country.name }}</td>

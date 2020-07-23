@@ -69,7 +69,6 @@ def is_military_end_use_controls_form(caption):
                     ),
                     Option(key=False, value="No"),
                 ],
-                classes=["govuk-radios--inline"],
             )
         ],
         default_button_name=generic.SAVE_AND_CONTINUE,
@@ -147,9 +146,7 @@ def is_eu_military_form(caption):
             RadioButtons(
                 name="is_eu_military",
                 short_title=EndUseDetails.EndUseDetailsSummaryList.EU_MILITARY,
-                title="",
                 options=[Option(key=True, value="Yes"), Option(key=False, value="No")],
-                classes=["govuk-radios--inline"],
             )
         ],
         default_button_name=generic.SAVE_AND_CONTINUE,

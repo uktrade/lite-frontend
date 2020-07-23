@@ -13,17 +13,20 @@
 		{% endblock %}
 	</h1>
 
-	{% include "filters.html" %}
+	<p class="lite-filters__hint-text">{{ data.count }}{% lcs 'applications.CopyExistingPartyPage.RESULTS' %}</p>
+
+	{% include 'filters.html' %}
 
 	{% if data.results %}
-		<p class="govuk-hint">{{ data.count }}{% lcs 'applications.CopyExistingPartyPage.RESULTS' %}</p>
 		<table class="govuk-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
 					<th scope="col" class="govuk-table__header">{% lcs 'applications.CopyExistingPartyPage.Table.NAME_COLUMN' %}</th>
+					{% if data.results|list_has_property:'role' %}
+						<th scope="col" class="govuk-table__header">{% lcs 'applications.CopyExistingPartyPage.Table.ROLE_COLUMN' %}</th>
+					{% endif %}
 					<th scope="col" class="govuk-table__header">{% lcs 'applications.CopyExistingPartyPage.Table.TYPE_COLUMN' %}</th>
 					<th scope="col" class="govuk-table__header">{% lcs 'applications.CopyExistingPartyPage.Table.ADDRESS_COLUMN' %}</th>
-					<th scope="col" class="govuk-table__header">{% lcs 'applications.CopyExistingPartyPage.Table.COUNTRY_COLUMN' %}</th>
 					<th scope="col" class="govuk-table__header">{% lcs 'applications.CopyExistingPartyPage.Table.WEBSITE_COLUMN' %}</th>
 					<th scope="col" class="govuk-table__header"></th>
 				</tr>
@@ -34,19 +37,29 @@
 						<td class="govuk-table__cell">
 							{{ party.name }}
 						</td>
+						{% if data.results|list_has_property:'role' %}
+							<td class="govuk-table__cell">
+								{% if party.role_other %}
+									{{ party.role_other }}
+								{% else %}
+									{{ party.role.value }}
+								{% endif %}
+							</td>
+						{% endif %}
 						<td class="govuk-table__cell">
-							{{ party.sub_type.value }}
+							{% if party.sub_type_other %}
+								{{ party.sub_type_other }}
+							{% else %}
+								{{ party.sub_type.value }}
+							{% endif %}
 						</td>
 						<td class="govuk-table__cell">
-							{{ party.address }}
+							{{ party|get_address }}
 						</td>
 						<td class="govuk-table__cell">
-							{{ party.country.name }}
+							{{ party.website|linkify:'Link' }}
 						</td>
 						<td class="govuk-table__cell">
-							{{ party.website|linkify }}
-						</td>
-						<td class="govuk-table__cell lite-!-text-align-right">
 							<form action="{% url url draft_id party.id %}" method="get">
 								{% csrf_token %}
 								<input type="hidden" name="form_pk" value="0">

@@ -411,12 +411,15 @@ def convert_party(party, application, editable):
 
     data = {
         "Name": party["name"],
-        "Type": party["sub_type"]["value"],
+        "Type": party["sub_type_other"] if party["sub_type_other"] else party["sub_type"]["value"],
         "Clearance level": None,
         "Descriptors": party.get("descriptors"),
         "Address": get_address(party),
         "Website": convert_to_link(party["website"]),
     }
+
+    if party["type"] == "third_party":
+        data["Role"] = party.get("role_other") if party.get("role_other") else party.get("role").get("value")
 
     if application["case_type"]["sub_type"]["key"] != OPEN:
         if party.get("document"):

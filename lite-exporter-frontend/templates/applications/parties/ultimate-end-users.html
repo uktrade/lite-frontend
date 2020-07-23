@@ -49,22 +49,33 @@
 				{% for ultimate_end_user in ultimate_end_users %}
 					<tr class="govuk-table__row">
 						<td class="govuk-table__cell">{{ ultimate_end_user.name }}</td>
-						<td class="govuk-table__cell">{{ ultimate_end_user.sub_type.value }}</td>
+						<td class="govuk-table__cell">
+							{% if ultimate_end_user.sub_type_other %}
+								{{ ultimate_end_user.sub_type_other }}
+							{% else %}
+								{{ ultimate_end_user.sub_type.value }}
+							{% endif %}
+						</td>
 						<td class="govuk-table__cell">{{ ultimate_end_user.website|default_na }}</td>
 						<td class="govuk-table__cell">{{ ultimate_end_user.address }}</td>
 						<td class="govuk-table__cell">{{ ultimate_end_user.country.name }}</td>
 						<td class="govuk-table__cell">
 						{% if ultimate_end_user.document %}
 							{% if ultimate_end_user.document.safe == True %}
-								<a href="{% url 'applications:ultimate_end_user_download_document' application.id ultimate_end_user.id %}" id="document_download" class='govuk-link govuk-link--no-visited-state'>
-									{% lcs "applications.UltimateEndUsersPage.Document.DOWNLOAD" %}
-								</a>
-								<br/>
-								{%  if application.status.value == "draft" %}
-									<a href="{% url 'applications:ultimate_end_user_delete_document' application.id ultimate_end_user.id %}" id="document_delete" class='govuk-link govuk-link--no-visited-state'>
-										{% lcs "applications.UltimateEndUsersPage.Document.DELETE" %}
-									</a>
-								{% endif %}
+								<ul class="govuk-table__cell__actions-list">
+									<li class="govuk-table__cell__actions-list-item">
+										<a href="{% url 'applications:ultimate_end_user_download_document' application.id ultimate_end_user.id %}" id="document_download" class='govuk-link govuk-link--no-visited-state'>
+											{% lcs "applications.UltimateEndUsersPage.Document.DOWNLOAD" %}
+										</a>
+									</li>
+									{% if application.status.value == "draft" %}
+										<li class="govuk-table__cell__actions-list-item">
+											<a href="{% url 'applications:ultimate_end_user_delete_document' application.id ultimate_end_user.id %}" id="document_delete" class='govuk-link govuk-link--no-visited-state'>
+												{% lcs "applications.UltimateEndUsersPage.Document.DELETE" %}
+											</a>
+										</li>
+									{% endif %}
+								</ul>
 							{% else %}
 								{% lcs "applications.UltimateEndUsersPage.Document.PROCESSING" %}
 							{% endif %}
@@ -74,7 +85,7 @@
 							</a>
 						{% endif %}
 						</td>
-						<td class="govuk-table__cell">
+						<td class="govuk-table__cell govuk-table__cell--nowrap govuk-table__cell--numeric">
 							<a href="{% url 'applications:remove_ultimate_end_user' application.id ultimate_end_user.id %}" class="govuk-link">
 								{% lcs "applications.UltimateEndUsersPage.Document.REMOVE" %}
 							</a>

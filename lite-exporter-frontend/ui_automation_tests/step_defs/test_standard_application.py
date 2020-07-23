@@ -122,7 +122,7 @@ def copy_existing_party_yes(driver):
 
 @then("I can select the existing party in the table")
 def party_table(driver, context):
-    text = [context.end_user[key] for key in ["name", "address", "website"]]
+    text = [context.end_user[key] for key in ["name", "address"]]
     text.append(context.end_user["country"]["name"])
     row = Shared(driver).get_table_row(1)
 

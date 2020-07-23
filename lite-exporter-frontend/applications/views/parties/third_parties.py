@@ -44,9 +44,7 @@ class SetThirdParty(SetParty):
         application = get_application(request, self.object_pk)
         has_clearance = application["case_type"]["sub_type"]["key"] == F680
         if not has_clearance:
-            self.forms = self.form(
-                request, application, self.strings, self.back_url, sub_type=self.request.POST.get("sub_type")
-            )
+            self.forms = self.form(request, application, self.strings, self.back_url)
 
         if int(self.request.POST.get("form_pk")) == len(self.forms.forms) - 1:
             self.action = self.post_action
@@ -82,9 +80,7 @@ class CopyThirdParty(CopyAndSetParty):
         application = get_application(request, self.object_pk)
         has_clearance = application["case_type"]["sub_type"]["key"] == F680
         if not has_clearance:
-            self.forms = self.form(
-                request, application, self.strings, self.back_url, sub_type=self.request.POST.get("sub_type")
-            )
+            self.forms = self.form(request, application, self.strings, self.back_url)
 
         if int(self.request.POST.get("form_pk")) == len(self.forms.forms) - 1:
             self.action = self.post_action
