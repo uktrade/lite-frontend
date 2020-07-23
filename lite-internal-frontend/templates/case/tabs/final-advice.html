@@ -34,11 +34,7 @@
 		<div class="{% if not can_finalise %}app-advice__disabled-buttons{% endif %}">
 			{% make_list queue.id case.id as button_params %}
 			{% if case.data.case_type.sub_type.key == 'open' %}
-				{% if is_case_oiel_final_advice_only %}
-					{% govuk_link_button id='finalise' text='advice.FinalAdvicePage.FINALISE_BUTTON' url='cases:finalise' url_param=button_params show_chevron=True %}
-				{% else %}
-					{% govuk_link_button id='finalise' text='advice.FinalAdvicePage.FINALISED_GOODS_AND_COUNTRIES_BUTTON' url='cases:finalise_goods_countries' url_param=button_params show_chevron=True %}
-				{% endif %}
+				{% govuk_link_button id='finalise' text='advice.FinalAdvicePage.FINALISED_GOODS_AND_COUNTRIES_BUTTON' url='cases:finalise_goods_countries' url_param=button_params show_chevron=True %}
 			{% else %}
 				{% govuk_link_button id='finalise' text='advice.FinalAdvicePage.FINALISE_BUTTON' url='cases:finalise' url_param=button_params show_chevron=True %}
 			{% endif %}

@@ -206,16 +206,8 @@ class Finalise(TemplateView):
     def get(self, request, *args, **kwargs):
         case = get_case(request, str(kwargs["pk"]))
         case_type = case.data["case_type"]["sub_type"]["key"]
-        is_case_oiel_final_advice_only = False
-        if "goodstype_category" in case.data:
-            is_case_oiel_final_advice_only = case.data["goodstype_category"]["key"] in [
-                "media",
-                "cryptographic",
-                "dealer",
-                "uk_continental_shelf",
-            ]
 
-        if case_type == CaseType.OPEN.value and not is_case_oiel_final_advice_only:
+        if case_type == CaseType.OPEN.value:
             approve = get_open_licence_decision(request, str(kwargs["pk"])) == "approve"
             nlr = False
         else:
