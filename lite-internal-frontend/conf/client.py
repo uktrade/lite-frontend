@@ -23,7 +23,6 @@ def get(request, appended_address):
         _verify_api_response(response, sender)
     else:
         response = requests.get(url=url, headers=_get_headers(request, content_type="application/json"))
-
     return response
 
 

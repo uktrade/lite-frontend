@@ -175,7 +175,7 @@ STATICFILES_FINDERS = (
 )
 
 # Cache static files
-STATICFILES_STORAGE = "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"
+STATICFILES_STORAGE = env.str("STATICFILES_STORAGE", "django.contrib.staticfiles.storage.ManifestStaticFilesStorage")
 
 SASS_PROCESSOR_ENABLED = True
 

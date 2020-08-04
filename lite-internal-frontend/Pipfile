@@ -20,6 +20,9 @@ raven = "<6.11"
 directory-sso-api-client = "~=6.3"
 envparse = "~=0.2"
 pytest-xdist = "==1.32.0"
+pytest-django = "~=3.9"
+pytest-env = "~=0.6"
+requests-mock = "~=1.8"
 
 [packages]
 bleach = ">=3.1.4"

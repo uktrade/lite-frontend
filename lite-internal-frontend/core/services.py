@@ -57,7 +57,6 @@ def get_countries(request, convert_to_options=False, exclude: list = None):
 def get_statuses(request, convert_to_options=False):
     """ Get static list of case statuses. """
     data = get(request, STATUSES_URL)
-
     if convert_to_options:
         return [Option(key=item["id"], value=item["value"]) for item in data.json().get("statuses")]
 
@@ -66,6 +65,7 @@ def get_statuses(request, convert_to_options=False):
 
 def get_permissible_statuses(request, case):
     """ Get a list of case statuses permissible for the user's role. """
+
     user, _ = get_gov_user(request, str(request.user.lite_api_user_id))
     user_permissible_statuses = user["user"]["role"]["statuses"]
     statuses, _ = get_statuses(request)

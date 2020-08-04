@@ -3,7 +3,8 @@
 		{% for audit in activity %}
 			<div id="case-activity-{{ audit.id }}" class="app-activity__item">
 				<p class="govuk-body">
-					{% if audit.user.type == 'exporter' or audit.user.type == 'system' %}
+					{# user not guaranteed to have id e.g, in case of system user #}
+					{% if audit.user.type == 'exporter' or not audit.user.id %}
 						<span class="app-activity__item__user">{{ audit.user.first_name }} {{ audit.user.last_name }}</span>
 					{% else %}
 						<a href="{% url 'users:user' audit.user.id %}" class="app-activity__item__user app-activity__item__user--link">{{ audit.user.first_name }} {{ audit.user.last_name }}</a>

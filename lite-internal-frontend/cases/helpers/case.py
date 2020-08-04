@@ -94,7 +94,6 @@ class CaseView(TemplateView):
             and datetime.datetime.strptime(self.case.next_review_date, "%Y-%m-%d").date() > timezone.now().date()
             else False
         )
-
         return {
             "tabs": self.tabs if self.tabs else self.get_tabs(),
             "current_tab": self.kwargs["tab"],
@@ -126,13 +125,13 @@ class CaseView(TemplateView):
         self.case = get_case(request, self.case_id)
         self.queue_id = kwargs["queue_pk"]
         self.queue = get_queue(request, self.queue_id)
+
         self.permissions = get_user_permissions(self.request)
 
         if hasattr(self, "get_" + self.case.sub_type + "_" + self.case.type):
             getattr(self, "get_" + self.case.sub_type + "_" + self.case.type)()
         else:
             getattr(self, "get_" + self.case.sub_type)()
-
         return render(request, "case/case.html", self.get_context())
 
     def get_tabs(self):
