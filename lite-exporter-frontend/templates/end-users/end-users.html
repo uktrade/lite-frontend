@@ -1,0 +1,81 @@
+{% extends 'layouts/base.html' %}
+
+{% block back_link %}
+	{% include 'includes/breadcrumbs.html' with title='end_users.EndUsersPage.TITLE' %}
+{% endblock %}
+
+{% block body %}
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">
+				{% block title %}
+					{% lcs 'end_users.EndUsersPage.TITLE' %}
+				{% endblock %}
+			</h1>
+		</div>
+		<div class="lite-app-bar__controls">
+			<a href="{% url 'end_users:apply' %}" class="govuk-button" draggable="false" role="button" id="apply">
+				{% lcs "end_users.EndUsersPage.NEW_END_USER_ADVISORY_BUTTON" %}
+			</a>
+		</div>
+	</div>
+
+	{% include "filters.html" %}
+
+	{% if end_users.results %}
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="col">{% lcs "end_users.EndUserPage.Variables.NAME" %}</th>
+					<th class="govuk-table__header" scope="col"></th>
+					<th class="govuk-table__header" scope="col">{% lcs "end_users.EndUserPage.Variables.TYPE" %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs "end_users.EndUserPage.Variables.ADDRESS" %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs "end_users.EndUserPage.Variables.WEBSITE" %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs "end_users.EndUserPage.Variables.REFERENCE" %}</th>
+					<th class="govuk-table__header" scope="col"></th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				{% for advisory in end_users.results %}
+					<tr id={{ advisory.id }} class="govuk-table__row">
+						<td class="govuk-table__cell">
+							<a id="advisory-details-link" class="govuk-link govuk-link--no-visited-state app-icon-label" href="{% url 'end_users:end_user' pk=advisory.id %}">
+								{{ advisory.end_user.name }}
+							</a>
+						</td>
+						<td class="govuk-table__cell govuk-table__cell--tight">
+							{% if advisory.exporter_user_notification_count %}
+								<span class="lite-notification-bubble">{{ advisory.exporter_user_notification_count }} <span class="govuk-visually-hidden"> {% lcs "end_users.EndUsersPage.NOTIFICATIONS" %}</span></span>
+							{% endif %}
+						</td>
+						<td class="govuk-table__cell">
+							{{ advisory.end_user.sub_type.value }}
+						</td>
+						<td class="govuk-table__cell">
+							{{ advisory.end_user.address }}, {{ advisory.end_user.country.name }}
+						</td>
+						<td class="govuk-table__cell">
+							{% if advisory.end_user.website %}
+								<a class="govuk-link" href="{{ advisory.end_user.website }}">
+									{{ advisory.end_user.website|default_na }}
+								</a>
+							{% else %}
+								{{ advisory.end_user.website|default_na }}
+							{% endif %}
+						</td>
+						<td class="govuk-table__cell">
+							{{ advisory.reference_code }}
+						</td>
+						<td class="govuk-table__cell">
+							<a class="govuk-link govuk-link--no-visited-state" id="copy" href="{% url 'end_users:copy' advisory.id %}">{% lcs "end_users.EndUsersPage.COPY_END_USER" %}</a>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		{% include "includes/notice.html" with text="end_users.EndUsersPage.NO_CONTENT_NOTICE" %}
+	{% endif %}
+
+	{% pagination with data=end_users %}
+{% endblock %}

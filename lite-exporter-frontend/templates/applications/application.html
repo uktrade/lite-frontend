@@ -1,0 +1,272 @@
+{% extends 'layouts/base.html' %}
+
+{% block back_link %}
+	{% if summary_page %}
+		<a href="{% url 'applications:task_list' case_id %}" id="back-link" class="govuk-back-link">
+			{% lcs "applications.ApplicationPage.Summary.BACK" %}
+		</a>
+	{% else %}
+		<a href="{% url 'applications:applications' %}" id="back-link" class="govuk-back-link">
+			{% lcs "applications.ApplicationPage.BACK" %}
+		</a>
+	{% endif %}
+{% endblock %}
+
+{% block body %}
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">
+				{% block title %}
+					{% if summary_page %}
+						{% lcs 'applications.ApplicationPage.Summary.TITLE' %}
+					{% else %}
+						{{ application.name|default:application.reference_code }}
+					{% endif %}
+				{% endblock %}
+			</h1>
+		</div>
+		{% if not summary_page %}
+			<div class="lite-app-bar__controls">
+				{% if application.case_type.sub_type.key != 'hmrc' %}
+					{%  if not status_is_terminal %}
+						<a href="{% url 'applications:withdraw' application.id %}" id="button-withdraw-application" class="govuk-button govuk-button--secondary">
+							{% lcs 'applications.ApplicationSummaryPage.Buttons.WITHDRAW_ACCESS_BUTTON' %}
+						</a>
+					{% endif %}
+					{%  if not status_is_read_only %}
+						<a href="{% url 'applications:edit_type' application.id %}" id="button-edit-application" class="govuk-button govuk-button--secondary">
+							{% lcs 'applications.ApplicationSummaryPage.Buttons.EDIT_APPLICATION_BUTTON' %}
+						</a>
+					{% endif %}
+					{# Using licence_duration to check that there is a licence to surrender #}
+					{% if application.licence.status.key != "surrendered" %}
+						<a href="{% url 'applications:surrender' application.id %}" id="button-surrender-application" class="govuk-button govuk-button--secondary">
+							{% lcs 'applications.ApplicationSummaryPage.Buttons.SURRENDER_APPLICATION_BUTTON' %}
+						</a>
+					{% endif %}
+					<a class="govuk-button govuk-button--secondary" id="button-copy-application" href="{% url 'applications:copy' application.id %}">
+						{% lcs 'applications.ApplicationSummaryPage.Buttons.COPY_APPLICATION_BUTTON' %}
+					</a>
+				{% endif %}
+			</div>
+		{% endif %}
+	</div>
+
+	<div class="govuk-grid-row">
+		<dl class="govuk-summary-list govuk-summary-list--no-border govuk-grid-column-two-thirds">
+			{% if not application.case_type.sub_type.key == "hmrc" and type != "summary"%}
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'applications.ApplicationSummaryPage.REFERENCE_CODE' %}
+					</dt>
+					<dd class="govuk-summary-list__value" id="summary-list-reference-code">
+						{{ application.reference_code }}
+					</dd>
+					{% if not summary_page %}
+						<dd class="govuk-summary-list__actions">
+							<button class="lite-button--link lite-js-only" href="#" id="button-copy-reference-code">
+								{% lcs "applications.ApplicationSummaryPage.COPY_REFERENCE_CODE" %}
+							</button>
+						</dd>
+					{% endif %}
+				</div>
+			{% endif %}
+			{% if summary_page %}
+				<dt class="govuk-summary-list__key">
+					{% if application.case_type.sub_type.key == 'hmrc' %}
+						{% lcs 'applications.ApplicationPage.Summary.QUERY' %}
+					{% else %}
+						{% lcs 'applications.ApplicationPage.Summary.LICENCE' %}
+					{% endif %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ application_type }}
+				</dd>
+			{% endif %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% if summary_page %}
+						{% lcs 'applications.ApplicationPage.Summary.TYPE' %}
+					{% else %}
+						{% lcs 'applications.ApplicationSummaryPage.TYPE' %}
+					{% endif %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ application.case_type.sub_type.value }}
+				</dd>
+			</div>
+			{% if application.goodstype_category.key %}
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'applications.ApplicationSummaryPage.OPEN_LICENCE_TYPE' %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{{ application.goodstype_category.value }}
+					</dd>
+				</div>
+			{% endif %}
+			{% if summary_page %}
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'applications.ApplicationPage.Summary.NAME_OF_APPLICATION' %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{{ application.name|default:application.reference_code }}
+					</dd>
+				</div>
+			{% endif %}
+			{% if application.export_type %}
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'applications.ApplicationSummaryPage.EXPORT_TYPE' %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{{ application.export_type.value }}
+					</dd>
+				</div>
+			{% endif %}
+			{% if summary_page and application.case_type.sub_type.key == 'standard'%}
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'applications.ApplicationPage.Summary.END_USER_CONTROL' %}
+					</dt>
+					<dd class="govuk-summary-list__value" id="summary-list-reference-code">
+						{{ reference_code }}
+					</dd>
+				</div>
+			{% endif %}
+			{% if application.case_type.reference.key == "sicl" %}
+				{% if application.trade_control_activity %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							{% lcs 'applications.ApplicationSummaryPage.TRADE_CONTROL_ACTIVITY' %}
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ application.trade_control_activity.value }}
+						</dd>
+					</div>
+				{% endif %}
+				{% if application.trade_control_product_categories %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							{% lcs 'applications.ApplicationSummaryPage.TRADE_CONTROL_PRODUCT_CATEGORY' %}
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ application.trade_control_product_categories|join_key_value_list }}
+						</dd>
+					</div>
+				{% endif %}
+			{% endif %}
+			{% if application.clearance_level %}
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'applications.ApplicationSummaryPage.CLEARANCE_LEVEL' %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{{ application.clearance_level.value }}
+					</dd>
+				</div>
+			{% endif %}
+			{% if application.types %}
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'applications.ApplicationSummaryPage.F680_CLEARANCE_TYPES' %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{% for clearance_type in application.types %}
+							<p>{{ clearance_type.name.value|default_na }}</p>
+						{% endfor %}
+					</dd>
+				</div>
+			{% endif %}
+			{% if not summary_page %}
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'applications.ApplicationSummaryPage.STATUS' %}
+					</dt>
+					<dd id="label-application-status" class="govuk-summary-list__value">
+						{{ application.status.value }}
+					</dd>
+				</div>
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'applications.ApplicationSummaryPage.CASE_OFFICER' %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{% if application.case_officer.first_name %}
+							{{ application.case_officer.first_name }} {{ application.case_officer.last_name }}
+						{% else %}
+							{% lcs 'applications.ApplicationSummaryPage.NO_ASSIGNED_CASE_OFFICER' %}
+						{% endif %}
+					</dd>
+				</div>
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs 'applications.ApplicationSummaryPage.SUBMITTED_AT' %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{{ application.submitted_at|str_date }}
+					</dd>
+				</div>
+			{% endif %}
+		</dl>
+	</div>
+	{% if not summary_page %}
+		<div class="lite-tabs__container">
+			<div class="lite-tabs">
+				<a href="{% url 'applications:application' application.id %}" class="lite-tabs__tab {% if not type %}lite-tabs__tab--selected{% endif %}" id="link-details">
+				{% lcs 'applications.ApplicationSummaryPage.Tabs.DETAILS' %}
+				</a>
+				{% if application.case_type.sub_type.key != 'hmrc' %}
+					<a href="{% url 'applications:application' application.id 'case-notes' %}" class="lite-tabs__tab {% if type == 'case-notes' %}lite-tabs__tab--selected{% endif %}" id="link-case-notes">
+						{% lcs 'applications.ApplicationSummaryPage.Tabs.NOTES' %}
+						{% if application.exporter_user_notification_count.casenote %}
+							<div class="lite-notification-bubble">
+								{{ application.exporter_user_notification_count.casenote }}
+							</div>
+						{% endif %}
+					</a>
+					<a href="{% url 'applications:application' application.id 'ecju-queries' %}" class="lite-tabs__tab {% if type == 'ecju-queries' %}lite-tabs__tab--selected{% endif %}" id="link-ecju-queries">
+						{% lcs 'applications.ApplicationSummaryPage.Tabs.ECJU_QUERIES' %}
+						{% if application.exporter_user_notification_count.ecjuquery %}
+							<div class="lite-notification-bubble">
+								{{ application.exporter_user_notification_count.ecjuquery }}
+							</div>
+						{% endif %}
+					</a>
+				{% endif %}
+				<a href="{% url 'applications:application' application.id 'generated-documents' %}" class="lite-tabs__tab {% if type == 'generated-documents' %}lite-tabs__tab--selected{% endif %}" id="link-generated-documents">
+					{% lcs 'applications.ApplicationSummaryPage.Tabs.GENERATED_DOCUMENTS' %}
+					{% if application.exporter_user_notification_count.generatedcasedocument %}
+						<div class="lite-notification-bubble">
+							{{ application.exporter_user_notification_count.generatedcasedocument }}
+						</div>
+					{% endif %}
+				</a>
+				<a href="{% url 'applications:application' application.id 'activity' %}" class="lite-tabs__tab {% if type == 'activity' %}lite-tabs__tab--selected{% endif %}" id="link-activity">
+					{% lcs 'applications.ApplicationSummaryPage.Tabs.ACTIVITY' %}
+				</a>
+			</div>
+		</div>
+	{% endif %}
+
+	{% include "applications/summary.html" %}
+{% endblock %}
+
+{% block javascript %}
+	<script type="text/javascript" nonce="{{ request.csp_nonce }}">
+		function textToClipboard() {
+			var dummy = document.createElement("textarea");
+			document.body.appendChild(dummy);
+			dummy.value = "{{ application.reference_code }}";
+			dummy.select();
+			document.execCommand("copy");
+			document.body.removeChild(dummy);
+			$("#button-copy-reference-code").css({opacity: 0}).text("{% lcs "applications.ApplicationSummaryPage.COPIED" %}").animate({opacity: 1}, 250);
+		}
+
+		$("#button-copy-reference-code").click(function() {
+			textToClipboard();
+		});
+	</script>
+{% endblock %}

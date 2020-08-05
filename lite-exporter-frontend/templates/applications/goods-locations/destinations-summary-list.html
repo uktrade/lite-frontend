@@ -1,0 +1,57 @@
+{% extends 'layouts/two-pane.html' %}
+
+{% block back_link %}
+{% endblock %}
+
+{% block full_width %}
+	<h1 class="govuk-heading-xl">
+		{% block title %}
+			{% lcs 'applications.DestinationsSummaryList.DESTINATIONS_SUMMARY_LIST_TITLE' %}
+		{% endblock %}
+	</h1>
+
+	{% if not is_application_oiel_continental_shelf %}
+		<div class="govuk-body-s">
+			<a href="{% url 'applications:countries' application_id %}" id="edit-countries" class="govuk-link govuk-link--no-visited-state govuk-!-font-size-19">Change countries</a>
+		</div>
+	{% endif %}
+
+	<dl class="govuk-summary-list govuk-!-margin-bottom-9">
+		{% for country in countries %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{{ country.country_name }}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{% for contract_type in country.contract_types %}
+						{% if contract_type %}
+							{{ contract_type }}
+						{% endif %}
+						<br>
+					{% endfor %}
+					{% if country.other_contract_type_text %}
+						{% lcs 'applications.DestinationsSummaryList.OTHER_SECTOR_CONTRACT_TYPE' %}
+						<span class="govuk-hint">({{ country.other_contract_type_text }})</span>
+					{% endif %}
+				</dd>
+				{% if is_application_draft_or_major_edit  %}
+					<dd class="govuk-summary-list__actions">
+						<a href="{% url 'applications:add_contract_type' application_id country.country_id %}" id="edit-contract-type-{{ country.country_id }}" class="govuk-link">{% lcs 'applications.DestinationsSummaryList.CHANGE_SECTORS_AND_CONTRACT_TYPES' %}</a>
+					</dd>
+				{% endif %}
+			</div>
+		{% endfor %}
+	</dl>
+
+	<div class="govuk-form-group">
+		<div class="lite-buttons-row">
+			<form action="{% url 'applications:task_list' application_id %}">
+				<button type="submit" name="_action" value="submit" id="button-save-continue" class="govuk-button">
+					{% lcs 'applications.DestinationsSummaryList.SAVE_AND_CONTINUE' %}
+				</button>
+			</form>
+			<br>
+		</div>
+		<a href="{% url 'applications:task_list' application_id %}" id="back-link-task-list" class="govuk-link govuk-link--no-visited-state govuk-!-font-size-19">{% lcs 'applications.DestinationsSummaryList.SAVE_AND_RETURN' %}</a>
+	</div>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'layouts/two-pane.html' %}
+
+{% block two_thirds %}
+	<h1 class="govuk-heading-xl">
+		{% block title %}Service currently unavailable{% endblock %}
+	</h1>
+	<p class="govuk-body">
+		Please try again later.
+	</p>
+	<p class="govuk-body">
+		Contact <a class="govuk-link" href="mailto:">support</a> for help.
+	</p>
+{% endblock %}

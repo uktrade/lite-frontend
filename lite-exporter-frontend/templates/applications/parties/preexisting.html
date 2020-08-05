@@ -1,0 +1,79 @@
+{% extends 'layouts/base.html' %}
+
+{% block back_link %}
+	<a href="{% url back_url draft_id %}" id="back-link" class="govuk-back-link">
+		{% lcs 'applications.CopyExistingPartyPage.BACK_LINK' %}
+	</a>
+{% endblock%}
+
+{% block body %}
+	<h1 class="govuk-heading-l">
+		{% block title %}
+			{% lcs 'applications.CopyExistingPartyPage.TITLE' %}
+		{% endblock %}
+	</h1>
+
+	<p class="lite-filters__hint-text">{{ data.count }}{% lcs 'applications.CopyExistingPartyPage.RESULTS' %}</p>
+
+	{% include 'filters.html' %}
+
+	{% if data.results %}
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th scope="col" class="govuk-table__header">{% lcs 'applications.CopyExistingPartyPage.Table.NAME_COLUMN' %}</th>
+					{% if data.results|list_has_property:'role' %}
+						<th scope="col" class="govuk-table__header">{% lcs 'applications.CopyExistingPartyPage.Table.ROLE_COLUMN' %}</th>
+					{% endif %}
+					<th scope="col" class="govuk-table__header">{% lcs 'applications.CopyExistingPartyPage.Table.TYPE_COLUMN' %}</th>
+					<th scope="col" class="govuk-table__header">{% lcs 'applications.CopyExistingPartyPage.Table.ADDRESS_COLUMN' %}</th>
+					<th scope="col" class="govuk-table__header">{% lcs 'applications.CopyExistingPartyPage.Table.WEBSITE_COLUMN' %}</th>
+					<th scope="col" class="govuk-table__header"></th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				{% for party in data.results %}
+					<tr class="govuk-table__row">
+						<td class="govuk-table__cell">
+							{{ party.name }}
+						</td>
+						{% if data.results|list_has_property:'role' %}
+							<td class="govuk-table__cell">
+								{% if party.role_other %}
+									{{ party.role_other }}
+								{% else %}
+									{{ party.role.value }}
+								{% endif %}
+							</td>
+						{% endif %}
+						<td class="govuk-table__cell">
+							{% if party.sub_type_other %}
+								{{ party.sub_type_other }}
+							{% else %}
+								{{ party.sub_type.value }}
+							{% endif %}
+						</td>
+						<td class="govuk-table__cell">
+							{{ party|get_address }}
+						</td>
+						<td class="govuk-table__cell">
+							{{ party.website|linkify:'Link' }}
+						</td>
+						<td class="govuk-table__cell">
+							<form action="{% url url draft_id party.id %}" method="get">
+								{% csrf_token %}
+								<input type="hidden" name="form_pk" value="0">
+								<button type="submit" class="lite-button--link" id="copy">
+									{% lcs 'applications.CopyExistingPartyPage.ADD_BUTTON' %}
+								</button>
+							</form>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		{% pagination %}
+	{% else %}
+		<h2 class="govuk-heading-m">{% lcs 'applications.CopyExistingPartyPage.NONE_FOUND' %}</h2>
+	{% endif %}
+{% endblock %}

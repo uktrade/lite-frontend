@@ -1,0 +1,162 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}
+	{% lcs 'hub.ACCOUNT_HOME' %}
+{% endblock %}
+
+{% block header_title %}<span></span>{% endblock %}
+
+{% block back_link %}{% endblock %}
+
+{% block body %}
+	<span class="govuk-caption-l">
+		{% lcs 'hub.ACCOUNT_HOME' %}
+	</span>
+	<h1 class="govuk-heading-l govuk-!-margin-bottom-5" id="org_name">
+		{{ organisation.name }}
+	</h1>
+
+	<div class="govuk-hint govuk-!-font-size-19 govuk-!-margin-bottom-6">
+		{% if 'ADMINISTER_USERS' in user_permissions %}
+			<a href="{% url 'organisation:members:members' %}" class="govuk-link govuk-link--no-visited-state" id="link-profile">{% lcs 'hub.Navigation.YOUR_ACCOUNT' %}</a>
+		{% endif %}
+		{% if 'ADMINISTER_USERS' in user_permissions or user_data.organisations|length > 1 %}
+			<span class="govuk-!-margin-left-1 govuk-!-margin-right-1">–</span>
+		{% endif %}
+		{% if user_data.organisations|length > 1 %}
+			<a class="govuk-link govuk-link--no-visited-state" href="{% url 'core:pick_organisation' %}" id="switch-link">
+				{% lcs 'hub.SWITCH_ORG' %} <span class="govuk-visually-hidden">{{ organisation.name }}</span>
+			</a>
+		{% endif %}
+	</div>
+
+	<div class="govuk-hint govuk-!-font-size-19 govuk-!-margin-bottom-6">
+		<a href="{% url 'core:signature_help' %}" class="govuk-link govuk-link--no-visited-state">{% lcs 'hub.SIGNATURE_GUIDANCE' %}</a>
+	</div>
+
+	{% if organisation.type.key != 'hmrc' %}
+		<section class="app-tiles">
+			{# Apply tile #}
+			<div class="app-tile">
+				<a href="{% url 'apply_for_a_licence:start' %}" class="app-tile__heading" id="link-apply">
+					{% lcs 'hub.Tiles.APPLY_FOR_LICENCE' %}
+				</a>
+				<p class="app-tile__body">{% lcs 'hub.Tiles.Apply.APPLY_FOR' %}</p>
+				<ul class="govuk-list govuk-list--bullet govuk-!-font-size-16">
+					<li>{% lcs 'hub.Tiles.Apply.EXPORT_LICENCES' %}</li>
+					<li>{% lcs 'hub.Tiles.Apply.TRANSHIPMENT_LICENCES' %}</li>
+					<li>{% lcs 'hub.Tiles.Apply.TRADE_CONTROL_LICENCES' %}</li>
+					<li>{% lcs 'hub.Tiles.Apply.MOD_CLEARANCES' %}</li>
+				</ul>
+				<p class="app-tile__body">{% lcs 'hub.Tiles.Apply.REGISTER_OGEL' %}</p>
+			</div>
+
+			{# Applications tile #}
+			{% if existing.applications %}
+				<div class="app-tile">
+					<a href="{% url 'applications:applications' %}" class="app-tile__heading" id="link-applications">
+						<p>{% lcs 'hub.Tiles.APPLICATIONS' %}</p>{% if notifications.notifications.application %}<span id="applications-notifications" class="lite-notification-bubble"><span class="govuk-visually-hidden"> (</span>{{ notifications.notifications.application }} <span class="govuk-visually-hidden">notifications)</span></span>{% endif %}
+					</a>
+					<p class="app-tile__body">{% lcs 'hub.Tiles.Applications.CHECK_PROGRESS' %}</p>
+					<p class="app-tile__body">{% lcs 'hub.Tiles.Applications.EDIT_APPLICATIONS' %}</p>
+				</div>
+			{% endif %}
+
+			{# View and manage licences tile #}
+			<div class="app-tile">
+				<a href="{% url 'licences:licences' %}" class="app-tile__heading" id="link-licences">
+					{% lcs 'hub.Tiles.VIEW_AND_MANAGE_LICENCES' %}
+				</a>
+				<p class="app-tile__body">{% lcs 'hub.Tiles.Licences.DESCRIPTION' %}</p>
+			</div>
+		</section>
+
+		<section class="app-tiles">
+			{# Product list tile #}
+			<div class="app-tile">
+				<a href="{% url 'goods:goods' %}" class="app-tile__heading" id="link-products">
+					{% lcs 'hub.Tiles.GOODS' %}{% if notifications.notifications.goods %}<span class="lite-notification-bubble" id="product-notifications"><span class="govuk-visually-hidden"> (</span>{{ notifications.notifications.goods }}</span><span class="govuk-visually-hidden"> notifications)</span>{% endif %}
+				</a>
+				<p class="app-tile__body">{% lcs 'hub.Tiles.ProductList.MANAGE_PRODUCTS' %}</p>
+				<p class="app-tile__body">{% lcs 'hub.Tiles.ProductList.PRODUCTS_INCLUDE' %}</p>
+				<ol class="govuk-list govuk-!-font-size-16">
+					<li>
+						<a href="{% url 'goods:add' %}" class="govuk-link govuk-link--no-visited-state">
+							{% lcs 'hub.Tiles.ProductList.CLC_LINK' %}
+						</a>
+					</li>
+					<li>
+						<a href="{% url 'goods:add' %}" class="govuk-link govuk-link--no-visited-state">
+							{% lcs 'hub.Tiles.ProductList.GRADING_LINK' %}
+						</a>
+					</li>
+				</ol>
+			</div>
+
+			{# End user query tile #}
+			<div class="app-tile">
+				<a href="{% url 'end_users:end_users' %}" class="app-tile__heading" id="link-eua">
+					{% lcs 'hub.Tiles.END_USER_ADVISORIES' %}{% if notifications.notifications.end_user_advisory %}<span class="lite-notification-bubble" id="eua-notifications"><span class="govuk-visually-hidden"> (</span>{{ notifications.notifications.end_user_advisory }}<span class="govuk-visually-hidden"> notifications)</span></span>{% endif %}
+				</a>
+				<p class="app-tile__body">{% lcs 'hub.Tiles.EUA.ASK_FOR_ADVICE' %}</p>
+			</div>
+		</section>
+	{% else %}
+		<section class="app-tiles">
+			{# Make a customs enquiry tile #}
+			<div class="app-tile">
+				<a href="{% url 'hmrc:raise_a_query' %}" class="app-tile__heading" id="link-hmrc-query">
+					{% lcs 'hub.Tiles.CustomsEnquiry.MAKE_ENQUIRY' %}
+				</a>
+				<p class="app-tile__body">
+					<a href="{% url 'applications:applications' %}?submitted=False" class="govuk-link govuk-link--no-visited-state">
+						{% lcs 'hub.Tiles.CustomsEnquiry.DRAFT_LINK' %}
+					</a>
+				</p>
+			</div>
+
+			{% if existing.queries %}
+				{# Check progress tile #}
+				<div class="app-tile">
+					<a href="{% url 'applications:applications' %}" class="app-tile__heading">
+						{% lcs 'hub.Tiles.CheckProgress.TITLE' %}
+					</a>
+					<p class="app-tile__body">{% lcs 'hub.Tiles.CheckProgress.VIEW_STATUS' %}</p>
+				</div>
+			{% endif %}
+		</section>
+	{% endif %}
+
+	{% if organisation.type.key != 'hmrc' %}
+		<h2 class="govuk-heading-m govuk-!-margin-top-6 govuk-!-margin-bottom-3">{% lcs 'hub.Tiles.COMPLIANCE_HEADING' %}</h2>
+		<section class="app-tiles">
+			{# Compliance licence tile #}
+			<div class="app-tile">
+				<a href="{% url 'compliance:compliance_list' %}" class="app-tile__heading" id="link-compliance">
+					{% lcs 'hub.Tiles.Compliance.TITLE' %}
+					{% if notifications.notifications.compliance %}<span class="lite-notification-bubble" id="eua-notifications"><span class="govuk-visually-hidden"> (</span>{{ notifications.notifications.compliance }}<span class="govuk-visually-hidden"> notifications)</span></span>{% endif %}
+				</a>
+				<p class="app-tile__body">{% lcs 'hub.Tiles.Compliance.DESCRIPTION' %}</p>
+			</div>
+			{# Open licence returns tile #}
+			<div class="app-tile">
+				<a href="{% url 'compliance:open_licence_returns_list' %}" class="app-tile__heading" id="link-open-licence-returns">
+					{% lcs 'hub.Tiles.OPEN_LICENCE_RETURNS' %}
+				</a>
+				<p class="app-tile__body">{% lcs 'hub.Tiles.OpenLicenceReturns.DESCRIPTION' %}</p>
+				<ol class="govuk-list govuk-!-font-size-16">
+					<li>
+						<a href="{% url 'compliance:add_open_licence_return' %}" class="govuk-link govuk-link--no-visited-state">
+							{% lcs 'hub.Tiles.OpenLicenceReturns.ADD_LINK' %}
+						</a>
+					</li>
+					<li>
+						<a href="{% url 'compliance:open_licence_returns_list' %}" class="govuk-link govuk-link--no-visited-state">
+							{% lcs 'hub.Tiles.OpenLicenceReturns.VIEW_LINK' %}
+						</a>
+					</li>
+				</ol>
+			</div>
+		</section>
+	{% endif %}
+{% endblock %}

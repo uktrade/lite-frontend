@@ -1,0 +1,38 @@
+<li class="lite-task-list__item">
+	<div class="lite-task-list__item-header">
+		{% if disabled %}
+			<span id="{{ id }}">
+				{{ title }}
+			</span>
+		{% else %}
+			<a id="{{ id }}" href="{{ url }}" class="govuk-link govuk-link--no-visited-state" aria-label="{{ title }} ({{ status|sentence_case }})">
+				{{ title }}
+			</a>
+		{% endif %}
+		{% if not hide_tag %}
+			{% if status == 'done' %}
+				<div id="{{ id }}-status" data-status="done" class="lite-tag lite-tag--blue">
+					{% lcs 'DONE' %}
+				</div>
+			{% elif status == 'in_progress' %}
+				<div id="{{ id }}-status" data-status="in-progress" class="lite-tag lite-tag--orange">
+					{% lcs 'IN_PROGRESS' %}
+				</div>
+			{% else %}
+				<div id="{{ id }}-status" data-status="other" class="lite-tag lite-tag--hollow">
+					<span class="govuk-visually-hidden">{% lcs 'THIS_SECTION_IS' %}</span>
+					{% if optional %}
+						{% lcs 'OPTIONAL' %}
+					{% else %}
+						{% lcs 'NOT_STARTED' %}
+					{% endif %}
+				</div>
+			{% endif %}
+		{% endif %}
+	</div>
+	{% if description %}
+		<div class="lite-task-list__item-details">
+			<p class="govuk-caption-m">{{ description }}</p>
+		</div>
+	{% endif %}
+</li>

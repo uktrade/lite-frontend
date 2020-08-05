@@ -1,0 +1,38 @@
+<table class="app-spreadsheet">
+	<caption class="govuk-visually-hidden">
+		Example
+	</caption>
+	<thead class="app-spreadsheet__head">
+		<tr class="app-spreadsheet__row">
+			<th scope="col" class="app-spreadsheet__header" width="">
+			</th>
+			{% for column in columns %}
+				<th scope="col" class="app-spreadsheet__header">
+					{% with forloop.counter|subtract:1 as index %}
+						{{ 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'|index:index }}
+					{% endwith %}
+				</th>
+			{% endfor %}
+		</tr>
+	</thead>
+	<tbody class="app-spreadsheet__body">
+		<tr class="app-spreadsheet__row">
+			<td class="app-spreadsheet__header">
+				1
+			</td>
+			{% for column in columns %}
+				<td class="app-spreadsheet__cell" scope="col">{{ column }}</td>
+			{% endfor %}
+		</tr>
+		<tr class="app-spreadsheet__row">
+			{% for row in rows %}
+				<td class="app-spreadsheet__header">
+					{{ forloop.counter|add:1 }}
+				</td>
+				{% for cell in row %}
+					<td class="app-spreadsheet__cell">{{ cell }}</td>
+				{% endfor %}
+			{% endfor %}
+		</tr>
+	</tbody>
+</table>

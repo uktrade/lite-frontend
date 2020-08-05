@@ -1,0 +1,250 @@
+{% extends 'layouts/task-list.html' %}
+
+{% block title %}
+	{% if application|application_type_in_list:"HMRC" %}
+		Raise a query on behalf of {{ application.organisation.name }}
+	{% elif edit_type %}
+		{{ strings.EDIT_TITLE }}
+	{% else %}
+		{{ application.case_type.reference.value }}
+	{% endif %}
+{% endblock %}
+
+{% block subtitle %}
+	{% if application_type|application_type_in_list:"HAS_LICENCE_TYPE" %}
+			{% if is_editing %}Licence type: {{ licence_type }} - {% endif %}
+			Export type: {{ application.export_type.value }}
+			{% if application.goodstype_category.key %}
+				<br> OIEL Type: {{ application.goodstype_category.value }}
+			{% endif %}
+	{% endif %}
+{% endblock %}
+
+{% block tasks %}
+	<ol class="lite-task-list">
+		<li>
+			<h2 class="lite-task-list__section">
+				{% if is_editing %}
+					{% lcs 'applications.EditApplicationPage.InitialTaskSection.EDITING' %}
+				{% else %}
+					<span class="lite-task-list__section-number">1. </span>{% lcs 'applications.EditApplicationPage.InitialTaskSection.TITLE' %}
+				{% endif %}
+			</h2>
+			<ul class="lite-task-list__items {% if is_editing %}govuk-!-padding-0{% endif %}">
+				{% url 'applications:edit_reference_name' application.id as reference_name_url %}
+				{% include "includes/task-list-item.html" with id='reference-name' title=strings.ENTER_A_REFERENCE_NAME_SHORT_TITLE url=reference_name_url status="done" description=application.name %}
+				{% if application_type|application_type_in_list:"HAS_TOLD_BY_OFFICIAL" and application.have_you_been_informed != None %}
+					{% url 'applications:edit_told_by_an_official' application.id as told_by_an_official_url %}
+					{% include "includes/task-list-item.html" with id="told-by-an-official" title=strings.END_USE_CONTROL url=told_by_an_official_url status="done" description=reference_number_description %}
+				{% endif %}
+			</ul>
+		</li>
+	</ol>
+
+	<ol class="lite-task-list">
+		<li>
+			<h2 class="lite-task-list__section">
+				{% if is_editing %}
+					{% lcs 'applications.EditApplicationPage.MainTaskSection.EDITING' %}
+				{% else %}
+					<span class="lite-task-list__section-number">2. </span>{% lcs 'applications.EditApplicationPage.MainTaskSection.TITLE' %}
+				{% endif %}
+			</h2>
+			<ul class="lite-task-list__items {% if is_editing %}govuk-!-padding-0{% endif %}">
+				{# Exhibition clearance types #}
+				{% if application_type|application_type_in_list:"EXHIBITION" and edit_type != "minor_edit" %}
+					{% url 'applications:exhibition_details' application.id as exhibition_details_url %}
+					{% include "includes/task-list-item.html" with id="exhibition-details" title=strings.DETAILS url=exhibition_details_url status=application.title|task_list_item_status description=application.title %}
+				{% elif application_type|application_type_in_list:"EXHIBITION" %}
+					{% url 'applications:exhibition_details' application.id as exhibition_details_url %}
+					{% include "includes/task-list-item.html" with id="exhibition-details" title=strings.DETAILS url=exhibition_details_url status=application.title|task_list_item_status description=application.title disabled=True %}
+				{% endif %}
+
+				{# F680 clearance types #}
+				{% if application_type|application_type_in_list:"F680" %}
+					{% if not is_editing or edit_type == 'major_edit' %}
+						{% url 'applications:f680_details' application.id as f680_details_url %}
+						{% tld f680detail 'f680detail' 'f680details' as f680_details %}
+						{% include "includes/task-list-item.html" with id='types' title=strings.F680_DETAILS url=f680_details_url status=application.types|task_list_item_status description=f680_details %}
+					{% endif %}
+				{% endif %}
+
+				{# Additional Information #}
+				{% if not is_editing or edit_type == 'major_edit' %}
+					{% if application_type|application_type_in_list:"HAS_F680_ADDITIONAL_INFORMATION" %}
+						{% url 'applications:questions' application.id as questions_url %}
+						{% include "includes/task-list-item.html" with id='additional_information' title=strings.ADDITIONAL_INFORMATION url=questions_url status=application|task_list_additional_information_status %}
+					{% endif %}
+				{% endif %}
+
+				{# Clearance Level #}
+				{% if application_type|application_type_in_list:"HAS_CLEARANCE_LEVEL" %}
+					{% url 'applications:clearance_level' application.id as clearance_url %}
+					{% tld clearance 'clearance' 'clearances' as clearance_level %}
+					{% include "includes/task-list-item.html" with id='clearance' title=strings.CLEARANCE url=clearance_url status=application.clearance_level|task_list_item_status description=clearance_description %}
+				{% endif %}
+
+				{# Good types #}
+				{% if application_type|application_type_in_list:"HAS_GOODS_TYPES" %}
+					{% url 'applications:goods_types' application.id as goods_url %}
+					{% tld goodstypes 'product' 'products' as goods_description %}
+					{% include "includes/task-list-item.html" with id='goods' title=strings.GOODS url=goods_url status=goodstypes|task_list_item_status description=goods_description %}
+				{% endif %}
+
+				{# Goods #}
+				{% if application_type|application_type_in_list:"HAS_GOODS" %}
+					{% url 'applications:goods' application.id as goods_url %}
+					{% tld goods 'product' 'products' as goods_description %}
+					{% include "includes/task-list-item.html" with id='goods' title=strings.GOODS url=goods_url status=goods|task_list_item_status description=goods_description %}
+				{% endif %}
+
+				{# End use details #}
+				{% if application_type|application_type_in_list:"HAS_END_USE_DETAILS" %}
+					{% if not is_crypto_application %}
+						{% if not is_editing or edit_type == 'major_edit' %}
+							{% url 'applications:end_use_details' application.id as end_use_details_url %}
+							{% include "includes/task-list-item.html" with id='end_use_details' status=application|get_end_use_details_status title=strings.END_USE_DETAILS url=end_use_details_url %}
+						{% endif %}
+					{% endif %}
+				{% endif %}
+
+
+				{# Route of goods #}
+				{% if application_type|application_type_in_list:"HAS_LICENCE_TYPE" %}
+					{% if not is_crypto_application %}
+						{% if not is_editing or edit_type == 'major_edit' %}
+							{% url 'applications:route_of_goods' application.id as route_of_goods_url %}
+							{% include "includes/task-list-item.html" with id='route_of_goods' title="Route of goods" status=route_of_goods|task_list_item_status url=route_of_goods_url %}
+						{% endif %}
+					{% endif %}
+				{% endif %}
+
+				{# Temporary Export Details #}
+				{% if application_type|application_type_in_list:"HAS_LICENCE_TYPE" %}
+					{% if application.export_type.value == 'Temporary' %}
+						{% if not is_editing or edit_type == 'major_edit' %}
+							{% url 'applications:temporary_export_details' application.id as temporary_export_details_url %}
+							{% include "includes/task-list-item.html" with id='temporary_export_details' status=temporary_export_details|task_list_item_status title=strings.TEMPORARY_EXPORT_DETAILS url=temporary_export_details_url %}
+						{% endif %}
+					{% endif %}
+				{% endif %}
+
+				{# Location #}
+				{% if application_type|application_type_in_list:"HAS_LOCATIONS" %}
+					{% if not is_crypto_application %}
+						{% url 'applications:location' application.id as goods_url %}
+						{% tld locations 'location' 'locations' as location_description %}
+						{% include "includes/task-list-item.html" with id='location' title=strings.GOODS_LOCATION url=goods_url status=locations|task_list_item_status description=location_description %}
+					{% endif %}
+				{% endif %}
+
+				{# Countries #}
+				{% if application_type|application_type_in_list:"HAS_COUNTRIES" %}
+					{% if oiel_noneditable_countries %}
+						{% url 'applications:static_destinations' application.id as countries_url %}
+						{% if is_uk_continental_shelf_application %}
+							{% if not countries_missing_contract_types %}
+								{% url 'applications:countries_summary' application.id as countries_url %}
+							{% endif %}
+						{% endif %}
+					{% elif is_oicl_appplication or is_military_dual_use_application %}
+						{% if not countries %}
+							{% url 'applications:countries' application.id as countries_url %}
+						{% else %}
+							{% url 'applications:countries_summary' application.id as countries_url %}
+						{% endif %}
+						{% tld countries 'country' 'countries' as countries_description %}
+					{% else  %}
+						{% url 'applications:countries' application.id as countries_url %}
+						{% tld countries 'country' 'countries' as countries_description %}
+					{% endif %}
+					{% include "includes/task-list-item.html" with id="countries" title=strings.GOODS_DESTINATION url=countries_url status=countries|task_list_item_status description=countries_description %}
+
+					{% if not oiel_noneditable_countries %}
+						{% if goodstypes and countries and edit_type != "minor_edit" %}
+							{% url 'applications:goods_countries' application.id as countries_matrix_url %}
+							{% tld destinations 'destination' 'destinations' as destinations_description %}
+							{% include "includes/task-list-item.html" with id="countries-matrix" title=strings.COUNTRIES_WHERE_EACH_GOOD_IS_GOING url=countries_matrix_url status=destinations|task_list_item_status optional=True description=destinations_description %}
+						{% endif %}
+					{% endif %}
+				{% endif %}
+
+				{# End User #}
+				{% if application_type|application_type_in_list:"HAS_END_USER" or application.type_reference|application_type_in_list:"HAS_END_USER" or application.goodstype_category.key|application_type_in_list:"HAS_END_USER_OPEN_APP"%}
+					{% if not is_crypto_application %}
+						{% if not is_editing or edit_type == 'major_edit' %}
+							{% url 'applications:end_user' application.id as end_user_url %}
+							{% if application.export_type.value == 'Permanent' and application.sub_type == 'standard' %}
+								{% include "includes/task-list-item.html" with id="end_user" title=strings.END_USER url=end_user_url status=application.end_user|get_parties_status %}
+							{% elif application.sub_type == 'open' and end_user_mandatory %}
+								{% include "includes/task-list-item.html" with id="end_user" title=strings.END_USER url=end_user_url status=application.end_user|get_parties_status_optional_documents %}
+							{% else  %}
+								{% include "includes/task-list-item.html" with id="end_user" title=strings.END_USER url=end_user_url status=application.end_user|get_parties_status_optional_documents optional=application_type|application_type_in_list:"END_USERS_OPTIONAL" %}
+							{% endif %}
+						{% endif %}
+					{% endif %}
+				{% endif %}
+
+				{# Ultimate End Users #}
+				{% if application_type|application_type_in_list:"HAS_ULTIMATE_END_USERS" and ultimate_end_users_required %}
+					{% url 'applications:ultimate_end_users' application.id as ultimate_end_user_url %}
+					{% include "includes/task-list-item.html" with id="ultimate-end-users" title=strings.ULTIMATE_END_USERS url=ultimate_end_user_url status=application.ultimate_end_users|get_parties_status_optional_documents %}
+				{% endif %}
+
+				{# Consignee #}
+				{% if application_type|application_type_in_list:"HAS_CONSIGNEE" %}
+					{% url 'applications:consignee' application.id as consignee_url %}
+					{% include "includes/task-list-item.html" with id="consignee" title=strings.CONSIGNEE url=consignee_url status=application.consignee|get_parties_status_optional_documents %}
+				{% endif %}
+
+				{# Third Parties #}
+				{% if application_type|application_type_in_list:"HAS_THIRD_PARTIES" or is_crypto_application %}
+					{% url 'applications:third_parties' application.id as third_parties_url %}
+					{% tld third_parties 'third party' 'third parties' as third_parties_description %}
+					{% include "includes/task-list-item.html" with id='third-parties' title=strings.THIRD_PARTIES url=third_parties_url status=application.third_parties|get_parties_status_optional_documents description=third_parties_description optional=True %}
+				{% endif %}
+
+				{# Additional Documents #}
+				{% if not is_crypto_application %}
+					{% url 'applications:additional_documents' application.id as supporting_documents_url %}
+					{% tld supporting_documents 'document' 'documents' as supporting_documents_description %}
+					{% include "includes/task-list-item.html" with id="supporting-documents" title=strings.SUPPORTING_DOCUMENTS url=supporting_documents_url status=supporting_documents|task_list_item_status description=supporting_documents_description optional=True %}
+				{% endif %}
+
+				{# Optional Note #}
+				{% if application_type|application_type_in_list:"HAS_OPTIONAL_NOTE" %}
+					{% url 'applications:optional_note' application.id as optional_note_url %}
+					{% include "includes/task-list-item.html" with id="reasoning" title=strings.REASON_FOR_QUERY url=optional_note_url status=application.reasoning|task_list_item_status optional=True %}
+				{% endif %}
+
+				{% if application_type|application_type_in_list:"HAS_NOTES" %}
+					{% url 'applications:notes' application.id as notes_url %}
+					{% include "includes/task-list-item.html" with id="notes" title=strings.NOTES url=notes_url status=notes|task_list_item_status optional=True %}
+				{% endif %}
+
+				{% if can_submit %}
+					<li>
+						<br><br>
+						<div class="app-submit-bar">
+							<form method="post">
+								{% csrf_token %}
+								{% if application.status.key in 'applicant_editing,draft' %}
+									<button type="submit" value="submit" class="govuk-button" data-prevent-double-click="true">{% lcs 'applications.EditApplicationPage.SUBMIT' %}</button>
+								{% else %}
+									<a href="{% url 'applications:application' application.id %}" class="govuk-button" draggable="false" role="button">{% lcs 'applications.EditApplicationPage.DONE' %}</a>
+								{% endif %}
+							</form>
+							{% if application.status.key == 'draft' %}
+								<div class="lite-vertical-align">
+									<a id="link-delete-draft" href="{% url 'applications:delete' application.id %}?return_to={{ CURRENT_PATH }}" class="govuk-link--no-visited-state">
+										{% lcs 'applications.EditApplicationPage.DRAFT_DELETE_LINK' %}
+									</a>
+								</div>
+							{% endif %}
+						</div>
+					</li>
+				{% endif %}
+			</ul>
+		</li>
+	</ol>
+{% endblock %}
