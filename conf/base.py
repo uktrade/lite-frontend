@@ -36,8 +36,6 @@ SESSION_COOKIE_NAME = env.str("SESSION_COOKIE_NAME", default="exporter")
 # messages
 MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
 
-
-
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 
@@ -47,7 +45,6 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",},
 ]
-
 
 
 # Internationalization
@@ -153,6 +150,10 @@ else:
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
+
+DATABASES = {
+    'default': env.db('DATABASE_URL')
+}
 
 if "test" in sys.argv:
     DATABASES = {

@@ -7,10 +7,6 @@ from conf.base import *
 
 ROOT_URLCONF = 'exporter.urls'
 
-DATABASES = {
-    'default': env.db('DATABASE_URL_EXPORTER')
-}
-
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -20,7 +16,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "sass_processor",
     "django.contrib.humanize",
-    "exporter.core.apps.CoreConfig",
+    "exporter.core",
     "svg",
     "lite_forms",
 ]
@@ -62,3 +58,13 @@ TEMPLATES = [
 
 LOGIN_REDIRECT_URL = reverse_lazy("core:home")
 LOGOUT_URL = f"{AUTHBROKER_URL}/sso/accounts/logout/?next="
+
+LITE_API_URL = env.str("LITE_API_URL")
+
+PERMISSIONS_FINDER_URL = env.str("PERMISSIONS_FINDER_URL")
+
+TOKEN_SESSION_KEY = env.str("TOKEN_SESSION_KEY")
+
+FEEDBACK_URL = env.str("FEEDBACK_URL")
+INTERNAL_FRONTEND_URL = env.str("INTERNAL_FRONTEND_URL")
+GOOGLE_ANALYTICS_KEY = env.str("GOOGLE_ANALYTICS_KEY")

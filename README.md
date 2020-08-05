@@ -2,7 +2,7 @@
 Frontend for LITE
 
 
-## Internal
+## Caseworker
 
 ```
 PIPENV_DOTENV_LOCATION=caseworker.env pipenv run ./manage.py runserver localhost:8200

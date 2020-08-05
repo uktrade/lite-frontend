@@ -1,12 +1,15 @@
-[submodule "lite-internal-frontend/lite-content"]
-	path = lite-internal-frontend/lite_content
+[submodule "caseworker/lite-content"]
+	path = caseworker/lite_content
 	url = git@github.com:uktrade/lite-content.git
-[submodule "lite-internal-frontend/ui_automation_tests/shared"]
-	path = lite-internal-frontend/ui_automation_tests/shared
+[submodule "caseworker/ui_automation_tests/shared"]
+	path = caseworker/ui_automation_tests/shared
 	url = git@github.com:uktrade/lite-tests-common.git
-[submodule "lite-exporter-frontend/lite-content"]
-	path = lite-exporter-frontend/lite_content
+[submodule "exporter/lite-content"]
+	path = exporter/lite_content
 	url = git@github.com:uktrade/lite-content.git
-[submodule "lite-exporter-frontend/ui_automation_tests/shared"]
-	path = lite-exporter-frontend/ui_automation_tests/shared
+[submodule "exporter/ui_automation_tests/shared"]
+	path = exporter/ui_automation_tests/shared
 	url = git@github.com:uktrade/lite-tests-common.git
+[submodule "lite_content"]
+	path = lite_content
+	url = git@github.com:uktrade/lite-content.git

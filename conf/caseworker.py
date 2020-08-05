@@ -7,10 +7,6 @@ from conf.base import *
 
 ROOT_URLCONF = 'caseworker.urls'
 
-DATABASES = {
-    'default': env.db('DATABASE_URL_CASEWORKER')
-}
-
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
