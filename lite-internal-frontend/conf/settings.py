@@ -4,6 +4,8 @@ import sys
 
 from django.urls import reverse_lazy
 from environ import Env
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -23,6 +25,11 @@ env = Env(
     CSP_FONT_SRC=(tuple, ("'self'",)),
     CSP_REPORT_ONLY=(bool, False),
     HAWK_AUTHENTICATION_ENABLED=(bool, False),
+    LITE_SPIRE_ARCHIVE_CLIENT_BASE_URL=str,
+    LITE_SPIRE_ARCHIVE_CLIENT_HAWK_SECRET=str,
+    LITE_SPIRE_ARCHIVE_CLIENT_HAWK_SENDER_ID=(str, "lite-internal-frontend"),
+    LITE_SPIRE_ARCHIVE_CLIENT_DEFAULT_TIMEOUT=(int, 2000),
+    LITE_SPIRE_ARCHIVE_EXAMPLE_ORGANISATION_ID=int,
 )
 
 # Quick-start development settings - unsuitable for production
@@ -46,6 +53,7 @@ INSTALLED_APPS = [
     "sass_processor",
     "django.contrib.humanize",
     "core",
+    "spire",
     "svg",
     "lite_forms",
     "letter_templates",
@@ -261,3 +269,35 @@ CSP_REPORT_ONLY = env("CSP_REPORT_ONLY")
 # before a SuspiciousOperation (TooManyFields) is raised.
 # Increased due to potential of selecting all control list entries
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 3500
+
+# LITE SPIRE archive API client
+LITE_SPIRE_ARCHIVE_CLIENT_BASE_URL = env("LITE_SPIRE_ARCHIVE_CLIENT_BASE_URL")
+LITE_SPIRE_ARCHIVE_CLIENT_HAWK_SECRET = env("LITE_SPIRE_ARCHIVE_CLIENT_HAWK_SECRET")
+LITE_SPIRE_ARCHIVE_CLIENT_HAWK_SENDER_ID = env("LITE_SPIRE_ARCHIVE_CLIENT_HAWK_SENDER_ID")
+LITE_SPIRE_ARCHIVE_CLIENT_DEFAULT_TIMEOUT = env("LITE_SPIRE_ARCHIVE_CLIENT_DEFAULT_TIMEOUT")
+LITE_SPIRE_ARCHIVE_EXAMPLE_ORGANISATION_ID = env("LITE_SPIRE_ARCHIVE_EXAMPLE_ORGANISATION_ID")
+
+
+# Application Performance Monitoring
+if env.str("ELASTIC_APM_SERVER_URL", ""):
+    ELASTIC_APM = {
+        "SERVICE_NAME": env.str("ELASTIC_APM_SERVICE_NAME", "lite-internal-frontend"),
+        "SECRET_TOKEN": env.str("ELASTIC_APM_SECRET_TOKEN"),
+        "SERVER_URL": env.str("ELASTIC_APM_SERVER_URL"),
+        "ENVIRONMENT": env.str("SENTRY_ENVIRONMENT"),
+        "DEBUG": DEBUG,
+    }
+    INSTALLED_APPS.append("elasticapm.contrib.django")
+
+
+# Sentry
+if env.str("SENTRY_DSN", ""):
+    sentry_sdk.init(
+        dsn=env.str("SENTRY_DSN"),
+        environment=env.str("SENTRY_ENVIRONMENT"),
+        integrations=[DjangoIntegration()],
+        send_default_pii=True,
+    )
+
+# Feature flags
+FEATURE_SPIRE_SEARCH_ON = env.bool("FEATURE_SPIRE_SEARCH_ON", False)

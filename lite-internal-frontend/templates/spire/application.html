@@ -1,0 +1,28 @@
+{% extends 'layouts/base.html' %}
+
+{% load pprint_dict from spire_tags %}
+
+{% block back_link %}{% endblock %}
+
+{% block title %}SPIRE application details{% endblock %}
+
+{% block body %}
+	<div class="lite-app-bar govuk-!-margin-bottom-6">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">{{ application.application_type_formatted }} {{ application.application_ref }}</h1>
+		</div>
+	</div>
+
+	<div class="lite-gutter">
+			{% include "spire/application_body.html" %}
+
+		<div class="govuk-!-padding-top-6 govuk-!-padding-bottom-6">
+			<h2 class="govuk-heading-l" id="raw-details">Raw details</h2>
+			<details>
+				<summary>View raw details</summary>
+				<pre><code>{{ application|pprint_dict}}</code></pre>
+			</details>
+		</div>
+	</div>
+
+{% endblock %}
