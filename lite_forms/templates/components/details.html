@@ -1,0 +1,17 @@
+<details class="govuk-details">
+	<summary class="govuk-details__summary">
+		<span class="govuk-details__summary-text">
+			{{ question.title }}
+		</span>
+	</summary>
+	<div class="govuk-details__text">
+		{% if question.description %}
+			{{ question.description|safe }}
+		{% endif %}
+		{% if question.components %}
+			{% for component in question.components %}
+				{% include "components.html" with question=component errors=errors %}
+			{% endfor %}
+		{% endif %}
+	</div>
+</details>

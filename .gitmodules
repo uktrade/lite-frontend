@@ -7,9 +7,6 @@
 [submodule "lite-internal-frontend/ui_automation_tests/shared"]
 	path = lite-internal-frontend/ui_automation_tests/shared
 	url = git@github.com:uktrade/lite-tests-common.git
-[submodule "lite-internal-frontend/lite_forms"]
-	path = lite-internal-frontend/lite_forms
-	url = git@github.com:uktrade/lite-forms.git
 [submodule "lite-exporter-frontend/lite-content"]
 	path = lite-exporter-frontend/lite_content
 	url = git@github.com:uktrade/lite-content.git
@@ -19,6 +16,3 @@
 [submodule "lite-exporter-frontend/ui_automation_tests/shared"]
 	path = lite-exporter-frontend/ui_automation_tests/shared
 	url = git@github.com:uktrade/lite-tests-common.git
-[submodule "lite-exporter-frontend/lite_forms"]
-	path = lite-exporter-frontend/lite_forms
-	url = git@github.com:uktrade/lite-forms.git

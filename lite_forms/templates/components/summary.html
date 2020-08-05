@@ -1,0 +1,12 @@
+<dl class="govuk-summary-list {% for class in component.classes %}{{ class }} {% endfor %}">
+    {% for key, value in component.values.items %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                {{ key }}
+            </dt>
+            <dd class="govuk-summary-list__value">
+                <span data-max-length="300">{{ value|markdown }}</span>
+            </dd>
+        </div>
+    {% endfor %}
+</dl>
