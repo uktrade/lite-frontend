@@ -5,11 +5,11 @@ Frontend for LITE
 ## Internal
 
 ```
-python3 ./manage.perver localhost:8200 --settings=conf.caseworker
+PIPENV_DOTENV_LOCATION=caseworker.env pipenv run ./manage.py runserver localhost:8200
 ```
 
 ## Exporter
 
 ```
-python3 ./manage.perver localhost:8300 --settings=conf.exporter
+PIPENV_DOTENV_LOCATION=exporter.env pipenv run ./manage.py runserver localhost:8300
 ```
