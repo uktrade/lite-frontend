@@ -1,0 +1,174 @@
+{% with destinations=destinations|default:case.destinations %}
+	{% if destinations %}
+		<h2 class="govuk-heading-m">{{ destinations|length }} destination{{ destinations|pluralize }}</h2>
+
+		{% if not hide_controls %}
+			<form action="{% url 'cases:assign_flags' queue.id case.id %}" method="get" data-enable-on-checkboxes="#table-destinations">
+				<div class="lite-buttons-row">
+					<button id="button-edit-destinations-flags" class="govuk-button" data-module="govuk-button">
+						{% lcs 'cases.ApplicationPage.EDIT_DESTINATION_FLAGS' %}
+					</button>
+				</div>
+		{% endif %}
+
+		<table id="table-destinations{% if show_advice %}-{{ level }}-advice{% endif %}" class="govuk-table">
+			{% if "website" in destinations.0 %}
+				<thead class="govuk-table__head">
+					<tr class="govuk-table__row">
+						{% if not hide_checkboxes %}
+							<th scope="col" class="govuk-table__header govuk-table__cell--checkbox">
+								<button id="link-select-all-destinations" type="button" name="button" class="lite-button-checkbox" title="{% lcs 'cases.ApplicationPage.Parties.SELECT_ALL' %}"></button>
+							</th>
+						{% endif %}
+						<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.TYPE' %}</th>
+						<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.NAME' %}</th>
+						{% if destinations|list_has_property:'clearance_level' %}
+							<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.CLEARANCE' %}</th>
+						{% endif %}
+						{% if destinations|list_has_property:'descriptors' %}
+							<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.DESCRIPTORS' %}</th>
+						{% endif %}
+						<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.ADDRESS' %}</th>
+						<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.BUSINESS' %}</th>
+						<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.WEBSITE' %}</th>
+						<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.DOCUMENTS' %}</th>
+						<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.FLAGS' %}</th>
+					</tr>
+				</thead>
+				<tbody class="govuk-table__body">
+					{% for destination in destinations %}
+						<tr class="govuk-table__row">
+							{% if not hide_checkboxes %}
+								<td class="govuk-table__cell govuk-table__cell--checkbox {% if show_advice %}lite-!-no-border{% endif %}">
+									<div>
+										<input class="govuk-checkboxes__input" type="checkbox" name="{{ destination.type }}" value="{{ destination.id }}" id="{{ destination.id }}">
+										<label class="govuk-label govuk-checkboxes__label" for="{{ destination.id }}">{{ destination.type|sentence_case }}</label>
+									</div>
+								</td>
+							{% endif %}
+							<th scope="row" class="govuk-table__header {% if show_advice %}lite-!-no-border{% endif %}">
+								{{ destination.type|sentence_case }}
+								{% if destination.role.key != "other" or destination.role_other %}
+									<p class="govuk-hint govuk-!-margin-top-2 govuk-!-margin-bottom-0">
+										{% if destination.role_other %}
+											{{ destination.role_other }}
+										{% else %}
+											{{ destination.role.value }}
+										{% endif %}
+									</p>
+								{% endif %}
+							</th>
+							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+								<span aria-hidden="false" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.NAME' %}</span>
+								{{ destination.name }}
+							</td>
+							{% if destinations|list_has_property:'clearance_level' %}
+								<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+									<span aria-hidden="false" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.CLEARANCE' %}</span>
+									{{ destination.clearance_level.value }}
+								</td>
+							{% endif %}
+							{% if destinations|list_has_property:'descriptors' %}
+								<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+									<span aria-hidden="false" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.DESCRIPTORS' %}</span>
+									{{ destination.descriptors|default_na }}
+								</td>
+							{% endif %}
+							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+								<span aria-hidden="false" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.ADDRESS' %}</span>
+								{{ destination|get_address }}
+							</td>
+							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+								<span aria-hidden="false" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.BUSINESS' %}</span>
+								{% if destination.sub_type_other %}
+									{{ destination.sub_type_other }}
+								{% else %}
+									{{ destination.sub_type.value }}
+								{% endif %}
+							</td>
+							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+								<span aria-hidden="false" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.WEBSITE' %}</span>
+								{{ destination.website|linkify }}
+							</td>
+							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+								<span aria-hidden="false" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.DOCUMENTS' %}</span>
+								{% if destination.document %}
+									<a id="link-{{ destination.type}}-download" class="govuk-link" href="{% url 'cases:document' queue.id case.id destination.document.id %}">
+										{{ destination.document.name }}
+									</a>
+								{% endif %}
+							</td>
+							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+								<span aria-hidden="false" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.FLAGS' %}</span>
+								{% include 'includes/flags.html' with flags=destination.flags list=True %}
+							</td>
+						</tr>
+						{% if show_advice %}
+							{% include 'includes/advice.html' with id=destination.id %}
+						{% endif %}
+					{% endfor %}
+				</tbody>
+			{% else %}
+				<thead class="govuk-table__head">
+					<tr class="govuk-table__row">
+						{% if not hide_checkboxes %}
+							<th scope="col" class="govuk-table__header govuk-table__cell--checkbox">
+								<button id="link-select-all-destinations" type="button" name="button" class="lite-button-checkbox" title="{% lcs 'cases.ApplicationPage.Parties.SELECT_ALL' %}"></button>
+							</th>
+						{% endif %}
+						<th scope="col" class="govuk-table__header">#</th>
+						<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.COUNTRY' %}</th>
+						<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.COUNTRY_CODE' %}</th>
+						<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.GOODS' %}</th>
+						<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.FLAGS' %}</th>
+					</tr>
+				</thead>
+				<tbody class="govuk-table__body">
+					{% for destination in destinations %}
+						<tr class="govuk-table__row">
+							{% if not hide_checkboxes %}
+								<td class="govuk-table__cell govuk-table__cell--checkbox {% if show_advice %}lite-!-no-border{% endif %}">
+									<div>
+										<input class="govuk-checkboxes__input" type="checkbox" name="countries" value="{{ destination.country.id }}" id="{{ destination.country.id }}">
+										<label class="govuk-label govuk-checkboxes__label" for="{{ destination.country.id }}">{{ destination.country.name }}</label>
+									</div>
+								</td>
+							{% endif %}
+							<td class="govuk-table__cell govuk-table__cell--line-number {% if show_advice %}lite-!-no-border{% endif %}">{{ forloop.counter }}.</td>
+							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+								<span aria-hidden="false" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.COUNTRY' %}</span>
+								{{ destination.country.name }}
+							</td>
+							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+								<span aria-hidden="false" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.COUNTRY_CODE' %}</span>
+								{{ destination.country.id }}
+							</td>
+							<td class="govuk-table__cell govuk-table__cell--max-width-400 {% if show_advice %}lite-!-no-border{% endif %}">
+								<span aria-hidden="false" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.GOODS' %}</span>
+								<span data-max-length="100">
+									{% for good in case.goods|get_goods_linked_to_destination_as_list:destination.country.id %}
+										{{ good }}
+									{% endfor %}
+								</span>
+							</td>
+							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+								<span aria-hidden="false" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.FLAGS' %}</span>
+								{% if destination.country.flags or not destination.flags %}
+									{% include 'includes/flags.html' with flags=destination.country.flags list=True %} <br>
+								{% endif %}
+								{% include 'includes/flags.html' with flags=destination.flags list=True %}
+							</td>
+						</tr>
+						{% if show_advice %}
+							{% include 'includes/advice.html' with id=destination.country.id %}
+						{% endif %}
+					{% endfor %}
+				</tbody>
+			{% endif %}
+		</table>
+
+		{% if not hide_controls %}
+			</form>
+		{% endif %}
+	{% endif %}
+{% endwith %}

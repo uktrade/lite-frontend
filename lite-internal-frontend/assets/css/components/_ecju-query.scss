@@ -1,0 +1,61 @@
+$text-margin: govuk-spacing(3);
+
+.app-ecju-query {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: govuk-spacing(6);
+
+    &__item {
+        margin-bottom: govuk-spacing(6);
+
+        &--right {
+            display: flex;
+            align-items: flex-end;
+            flex-direction: column;
+        }
+
+        &--new {
+            border-left: 4px solid $govuk-brand-colour;
+            padding-left: govuk-spacing(6);
+
+            .app-ecju-query__heading {
+                &::before {
+                    content: "";
+                    display: inline-block;
+                    width: 10px;
+                    height: 10px;
+                    background-color: govuk-colour("red");
+                    border-radius: 5px;
+                    margin-bottom: 2px;
+                    margin-right: 10px;
+                }
+            }
+        }
+    }
+
+    &__heading {
+        @include govuk-font($size: 19, $weight: bold);
+
+        margin-top: 0;
+        margin-bottom: $text-margin;
+        max-width: 500px;
+    }
+
+    &__date {
+        @include govuk-font($size: 16);
+
+        margin-top: $text-margin;
+        color: govuk-colour("dark-grey");
+    }
+
+    &__text {
+        @include govuk-font($size: 19);
+
+        display: inline-block;
+        background-color: govuk-colour("light-grey");
+        border: 2px solid darken(govuk-colour("light-grey"), 2%);
+        padding: govuk-spacing(4);
+        max-width: 500px;
+        word-break: break-all;
+    }
+}

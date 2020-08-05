@@ -1,0 +1,32 @@
+{% extends 'organisations/organisation/base.html' %}
+
+{% block contents %}
+	{% if members %}
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="col">{% lcs 'organisations.OrganisationPage.Members.Table.NAME' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'organisations.OrganisationPage.Members.Table.EMAIL' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'organisations.OrganisationPage.Members.Table.ROLE' %}</th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				{% for member in members %}
+					<tr class="govuk-table__row">
+						<td class="govuk-table__header" scope="row">
+							{% if member.first_name %}
+								{{ member.first_name }} {{ member.last_name }}
+							{% else %}
+								<strong class="govuk-tag govuk-tag--blue">
+									{% lcs 'users.UsersPage.Table.PENDING' %}
+								</strong>
+							{% endif %}
+						</td>
+						<td class="govuk-table__cell">{{ member.email }}</td>
+						<td class="govuk-table__cell">{{ member.role_name }}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% endif %}
+{% endblock %}

@@ -1,0 +1,34 @@
+<dl class="govuk-summary-list govuk-summary-list--no-border govuk-!-margin-top-3 govuk-!-margin-left-4 govuk-!-margin-right-4 govuk-!-margin-bottom-2">
+	<div class="govuk-summary-list__row">
+		<dt class="govuk-summary-list__key">
+			{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.VisitReportDetails.VISIT_TYPE' %}
+		</dt>
+		<dd class="govuk-summary-list__value">
+			{{ case.data.visit_type.value|default:"Not set" }}
+		</dd>
+	</div>
+	<div class="govuk-summary-list__row">
+		<dt class="govuk-summary-list__key">
+			{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.VisitReportDetails.VISIT_DATE' %}
+		</dt>
+		<dd class="govuk-summary-list__value">
+			{{ case.data.visit_date|str_date_only }}
+		</dd>
+	</div>
+	<div class="govuk-summary-list__row">
+		<dt class="govuk-summary-list__key">
+			{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.VisitReportDetails.OVERALL_RISK' %}
+		</dt>
+		<dd class="govuk-summary-list__value">
+			{{ case.data.overall_risk_value.value|default:"Not set" }}
+		</dd>
+	</div>
+	<div class="govuk-summary-list__row">
+		<dt class="govuk-summary-list__key">
+			{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.VisitReportDetails.LICENCE_RISK' %}
+		</dt>
+		<dd class="govuk-summary-list__value">
+			{{ case.data.licence_risk_value|default:"Not set" }}
+		</dd>
+	</div>
+</dl>

@@ -1,0 +1,21 @@
+{% load variable_highlight %}
+
+<li class="app-picklists__list-item">
+	<a href="{% url 'picklists:picklist_item' picklist_item.id %}" class="app-picklist-item__link">
+		{{ picklist_item.name|highlight_text:name }}
+	</a>
+	<p class="govuk-hint govuk-!-margin-top-0 govuk-!-margin-bottom-3">
+		Created by
+		<a class="govuk-link govuk-link--no-visited-state" href="{% url 'teams:team' picklist_item.team.id %}">{{ picklist_item.team.name }}</a>
+		- Last updated <span class="govuk-visually-hidden"> on </span> {{ picklist_item.updated_at|str_date }}
+	</p>
+	<div class="app-picklist-item__text">
+		<span data-max-length="700">
+			{% if picklist_item.type.key == "letter_paragraph" %}
+				{{ picklist_item.text|variable_highlight|linebreaksbr }}
+			{% else %}
+				{{ picklist_item.text|linebreaksbr }}
+			{% endif %}
+		</span>
+	</div>
+</li>

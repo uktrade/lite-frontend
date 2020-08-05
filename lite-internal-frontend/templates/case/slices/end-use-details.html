@@ -1,0 +1,93 @@
+<table class="govuk-table" id="end-use-details">
+	<thead class="govuk-table__head">
+		<tr class="govuk-table__row">
+			<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.EndUseDetails.NUMBER_COLUMN' %}</th>
+			<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.EndUseDetails.DESCRIPTION_COLUMN' %}</th>
+			<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.EndUseDetails.ANSWER_COLUMN' %}</th>
+		</tr>
+	</thead>
+	<tbody class="govuk-table__body">
+		<tr class="govuk-table__row">
+			<td class="govuk-table__cell govuk-table__cell--line-number">
+				1.
+			</td>
+			<td class="govuk-table__cell govuk-!-font-weight-bold">
+				{% lcs 'cases.ApplicationPage.EndUseDetails.INTENDED_END_USE_TITLE' %}
+			</td>
+			<td class="govuk-table__cell">
+				<span data-max-length="200">{{ case.data.intended_end_use }}</span>
+			</td>
+		</tr>
+		{% if case.sub_type == "standard" or case.sub_type == "open" %}
+			<tr class="govuk-table__row">
+				<td class="govuk-table__cell govuk-table__cell--line-number">
+					2.
+				</td>
+				<td class="govuk-table__cell govuk-!-font-weight-bold">
+					{% lcs 'cases.ApplicationPage.EndUseDetails.INFORMED_TO_APPLY_TITLE' %}
+				</td>
+				<td class="govuk-table__cell">
+					<p class="govuk-body govuk-!-margin-0">{{ case.data.is_military_end_use_controls|friendly_boolean }}</p>
+					{% if case.data.is_military_end_use_controls %}
+						<p class="govuk-hint govuk-!-margin-0 govuk-!-margin-top-1" data-max-length="200">{{ case.data.military_end_use_controls_ref }}</p>
+					{% endif %}
+				</td>
+			</tr>
+			<tr class="govuk-table__row">
+				<td class="govuk-table__cell govuk-table__cell--line-number">
+					3.
+				</td>
+				<td class="govuk-table__cell govuk-!-font-weight-bold">
+					{% lcs 'cases.ApplicationPage.EndUseDetails.INFORMED_WMD_TITLE' %}
+				</td>
+				<td class="govuk-table__cell">
+					<p class="govuk-body govuk-!-margin-0">{{ case.data.is_informed_wmd|friendly_boolean }}</p>
+					{% if case.data.is_informed_wmd %}
+						<p class="govuk-hint govuk-!-margin-0 govuk-!-margin-top-1" data-max-length="200">{{ case.data.informed_wmd_ref }}</p>
+					{% endif %}
+				</td>
+			</tr>
+			<tr class="govuk-table__row">
+				<td class="govuk-table__cell govuk-table__cell--line-number">
+					4.
+				</td>
+				<td class="govuk-table__cell govuk-!-font-weight-bold">
+					{% lcs 'cases.ApplicationPage.EndUseDetails.SUSPECTED_WMD_TITLE' %}
+				</td>
+				<td class="govuk-table__cell">
+					<p class="govuk-body govuk-!-margin-0">{{ case.data.is_suspected_wmd|friendly_boolean }}</p>
+					{% if case.data.is_suspected_wmd %}
+						<p class="govuk-hint govuk-!-margin-0 govuk-!-margin-top-1" data-max-length="200">{{ case.data.suspected_wmd_ref }}</p>
+					{% endif %}
+				</td>
+			</tr>
+			{% if case.sub_type == "standard" %}
+				<tr class="govuk-table__row">
+					<td class="govuk-table__cell govuk-table__cell--line-number">
+						5.
+					</td>
+					<td class="govuk-table__cell govuk-!-font-weight-bold">
+						{% lcs 'cases.ApplicationPage.EndUseDetails.EU_MILITARY_TITLE' %}
+					</td>
+					<td class="govuk-table__cell">
+						{{ case.data.is_eu_military|friendly_boolean }}
+					</td>
+				</tr>
+				<tr class="govuk-table__row">
+					<td class="govuk-table__cell govuk-table__cell--line-number">
+						6.
+					</td>
+					<td class="govuk-table__cell govuk-!-font-weight-bold">
+						{% lcs 'cases.ApplicationPage.EndUseDetails.COMPLIANT_LIMITATIONS_EU_TITLE' %}
+					</td>
+					<td class="govuk-table__cell">
+						<p class="govuk-body govuk-!-margin-0">{{ case.data.is_compliant_limitations_eu|friendly_boolean_or_default_na }}</p>
+						{% if case.data.is_compliant_limitations_eu %}
+							<p class="govuk-hint govuk-!-margin-0 govuk-!-margin-top-1" data-max-length="200">{{ case.data.compliant_limitations_eu_ref }}</p>
+						{% endif %}
+					</td>
+				</tr>
+			{% endif %}
+		{% endif %}
+	</tbody>
+</table>

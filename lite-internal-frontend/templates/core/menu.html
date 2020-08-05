@@ -1,0 +1,15 @@
+{% extends 'layouts/base.html' %}
+
+{% block body %}
+	<h1 class="govuk-heading-xl">Menu</h1>
+	<ul class="govuk-list">
+		{% for item in LITE_MENU %}
+			<li>
+				<a href="{{ item.url }}" class="govuk-link govuk-!-font-size-24 govuk-link--no-visited-state">
+					Go to {{ item.title }}
+				</a>
+			</li>
+			<br/>
+		{% endfor %}
+	</ul>
+{% endblock %}

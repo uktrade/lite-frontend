@@ -1,0 +1,91 @@
+{% extends 'layouts/base.html' %}
+
+{% block back_link %}
+	<a href="{% url 'letter_templates:letter_templates' %}" class="govuk-back-link">{% lcs 'LetterTemplates.LetterTemplate.BACK_LINK' %}</a>
+{% endblock %}
+
+{% block body %}
+	<div class="app-letter-preview__container">
+		<div class="lite-app-bar">
+			<div class="lite-app-bar__content">
+				<h1 class="govuk-heading-l" id="title">
+					{% block title %}{{ letter_template.name }}{% endblock %}
+				</h1>
+			</div>
+			<div class="lite-app-bar__controls">
+				<a id="edit_template" href="{% url 'letter_templates:edit' letter_template.id %}" class="govuk-button govuk-button--secondary">{% lcs 'LetterTemplates.LetterTemplate.EDIT_BUTTON' %}</a>
+				<a id="edit_template_paragraphs" href="{% url 'letter_templates:edit_letter_paragraphs' letter_template.id %}" class="govuk-button govuk-button--secondary">{% lcs 'LetterTemplates.LetterTemplate.EDIT_PARAGRAPH_BUTTON' %}</a>
+			</div>
+		</div>
+
+		<div class="lite-information-board">
+			<div class="govuk-grid-row">
+				<div class="govuk-grid-column-one-third">
+					<h4 class="govuk-heading-s">{% lcs 'LetterTemplates.LetterTemplate.LAYOUT_TITLE' %}</h4>
+					<p class="govuk-label" id="layout">
+						{{ letter_template.layout.name }}
+					</p>
+				</div>
+				<div class="govuk-grid-column-one-third">
+					<h4 class="govuk-heading-s">{% lcs 'LetterTemplates.LetterTemplate.RESTRICTED_TITLE' %}</h4>
+					<p class="govuk-label" id="case_types">
+						{% for case_type in letter_template.case_types %}{% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}{{ case_type.reference.key|upper }}{% endfor %}
+					</p>
+				</div>
+				<div class="govuk-grid-column-one-third">
+					<h4 class="govuk-heading-s">{% lcs 'LetterTemplates.LetterTemplate.DECISIONS_TITLE' %}</h4>
+					<p class="govuk-label" id="decisions">
+						{% for decision in letter_template.decisions %}{% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}{{ decision.name.value }}{% endfor %}
+					</p>
+				</div>
+			</div>
+			<div class="govuk-grid-row">
+				<div class="govuk-grid-column-one-quarter">
+					<h4 class="govuk-heading-s">{% lcs 'LetterTemplates.LetterTemplate.CREATED_TITLE' %}</h4>
+					<p class="govuk-label" id="created_at">{{ letter_template.created_at|str_date }}</p>
+				</div>
+				<div class="govuk-grid-column-one-quarter">
+					<h4 class="govuk-heading-s">{% lcs 'LetterTemplates.LetterTemplate.LAST_UPDATE_TITLE' %}</h4>
+					<p class="govuk-label" id="last_updated">{{ letter_template.updated_at|str_date }}</p>
+				</div>
+				<div class="govuk-grid-column-one-quarter">
+					<h4 class="govuk-heading-s">{% lcs 'LetterTemplates.LetterTemplate.VISIBLE_TO_EXPORTER_TITLE' %}</h4>
+					<p class="govuk-label" id="last_updated">{{ letter_template.visible_to_exporter|friendly_boolean }}</p>
+				</div>
+				<div class="govuk-grid-column-one-quarter">
+					<h4 class="govuk-heading-s">{% lcs 'LetterTemplates.LetterTemplate.DIGITAL_SIGNATURE_TITLE' %}</h4>
+					<p class="govuk-label" id="digital_signature">{{ letter_template.include_digital_signature|friendly_boolean }}</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="app-letter-preview__page" id="preview">
+			{{ preview|safe }}
+		</div>
+
+		<br><br>
+
+		<!-- Activity -->
+		{% if activity %}
+			<h3 class="govuk-heading-m">
+				{% lcs 'generic.ACTIVITY' %}
+			</h3>
+
+			<div class="app-activity__list">
+				{% for audit in activity %}
+					<div id="case-activity-{{ audit.id }}" class="app-activity__item">
+						<p class="govuk-body">
+							<span class="user">{{ audit.user.first_name }} {{ audit.user.last_name }}</span> {{ audit.text }}
+						</p>
+						{% if audit.additional_text %}
+							<div class="app-activity__additional-text">
+								{{ audit.additional_text }}
+							</div>
+						{% endif %}
+						<p class="govuk-hint govuk-!-font-size-16">{{ audit.created_at|str_date }}</p>
+					</div>
+				{% endfor %}
+			</div>
+		{% endif %}
+	</div>
+{% endblock %}

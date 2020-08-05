@@ -1,0 +1,43 @@
+<table class="govuk-table">
+	<thead class="govuk-table__head">
+		<tr class="govuk-table__row">
+			<th class="govuk-table__header" scope="col"></th>
+			<th class="govuk-table__header" scope="col">{% lcs 'cases.GenerateDocumentsPage.AddresseeForm.Table.NAME_COLUMN' %}</th>
+			<th class="govuk-table__header" scope="col">{% lcs 'cases.GenerateDocumentsPage.AddresseeForm.Table.ADDRESS_COLUMN' %}</th>
+			<th class="govuk-table__header" scope="col">{% lcs 'cases.GenerateDocumentsPage.AddresseeForm.Table.EMAIL_COLUMN' %}</th>
+			<th class="govuk-table__header" scope="col">{% lcs 'cases.GenerateDocumentsPage.AddresseeForm.Table.PHONE_COLUMN' %}</th>
+		</tr>
+	</thead>
+	<tbody class="govuk-table__body">
+		<tr class="govuk-table__row">
+			<td class="govuk-table__cell">
+				<div class="govuk-radios__item">
+					<input class="govuk-radios__input" type="radio" name="addressee" id="addressee-applicant" value="" checked>
+					<label class="govuk-label govuk-radios__label" for="applicant">
+						<span class="govuk-visually-hidden">{{ applicant.name }}</span>
+					</label>
+				</div>
+			</td>
+			<td class="govuk-table__cell">{{ applicant.name }}</td>
+			<td class="govuk-table__cell"></td>
+			<td class="govuk-table__cell">{{ applicant.email }}</td>
+			<td class="govuk-table__cell"></td>
+		</tr>
+		{% for contact in contacts %}
+			<tr class="govuk-table__row">
+				<td class="govuk-table__cell">
+					<div class="govuk-radios__item">
+						<input class="govuk-radios__input" type="radio" name="addressee" id="addressee-{{ contact.id }}" value="{{ contact.id }}">
+						<label class="govuk-label govuk-radios__label" for="{{ contact.id }}">
+							<span class="govuk-visually-hidden">{{ contact.name }}</span>
+						</label>
+					</div>
+				</td>
+				<td class="govuk-table__cell">{{ contact.name }}</td>
+				<td class="govuk-table__cell">{{ contact.address|linebreaksbr }}</td>
+				<td class="govuk-table__cell">{{ contact.email }}</td>
+				<td class="govuk-table__cell">{{ contact.phone_number }}</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>

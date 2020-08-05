@@ -1,0 +1,293 @@
+{% extends 'layouts/base.html' %}
+
+{% load svg static %}
+
+{% block back_link %}{% endblock %}
+
+{% block title %}
+	{{ queue.name }}
+{% endblock %}
+
+{% block messages %}
+	{{ block.super }}
+	{% if queue.id != updated_cases_banner_queue_id %}
+		<a id="banner-exporter-amendments" class="app-hidden govuk-width-container app-snackbar app-snackbar--no-animation" href="{% url 'queues:cases' updated_cases_banner_queue_id %}">
+			<div class="app-snackbar__content">
+				<div class="app-snackbar__icon"></div>
+				{% lcs 'cases.CasesListPage.EXPORTER_AMENDMENTS_BANNER' %}
+			</div>
+		</a>
+	{% endif %}
+{% endblock %}
+
+{% block body %}
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">
+				<a tabindex="0" id="link-queue" href="{% url 'queues:manage' %}" class="app-dropdown__heading">
+					{{ queue.name }}<span class="govuk-visually-hidden"> (Click to change queue)</span>
+				</a>
+			</h1>
+		</div>
+		{% if not queue.is_system_queue %}
+			<div class="lite-app-bar__controls lite-buttons-row" >
+				<div data-enable-on-checkboxes="#table-cases">
+					<button id="assign-users-button" form="form-cases" type="submit" class="govuk-button govuk-button--secondary">{% lcs 'cases.CasesListPage.ASSIGN_USERS' %}</button>
+				</div>
+				{% if enforcement_check %}
+					{% govuk_link_button id='export-xml' classes='govuk-button--secondary' text='cases.CasesListPage.EnforcementXML.EXPORT_BUTTON' url='queues:enforcement_xml_export' url_param=queue.id %}
+					{% govuk_link_button id='import-xml' classes='govuk-button--secondary' text='cases.CasesListPage.EnforcementXML.IMPORT_BUTTON' url='queues:enforcement_xml_import' url_param=queue.id %}
+				{% endif %}
+			</div>
+		{% endif %}
+	</div>
+
+	<div id="queues" class="app-hidden">
+		<div class="app-menu__search">
+			<div>
+				{% svg 'search' %}
+			</div>
+			<input type="text" id="filter-queues">
+		</div>
+	</div>
+
+	<p id="text-case-count" class="lite-filters__hint-text app-hidden"></p>
+
+	{% include 'filters.html' %}
+
+	<table id="table-placeholder" class="govuk-table app-table--skeleton">
+		<thead class="govuk-table__head">
+			<tr class="govuk-table__row">
+				{% if not queue.is_system_queue %}
+					<th class="govuk-table__header govuk-table__cell--tight">
+						<div class="app-table__row__checkbox--skeleton"></div>
+					</th>
+				{% endif %}
+				<th class="govuk-table__header govuk-table__cell--tight" scope="col"><span class="govuk-visually-hidden">{% lcs 'cases.CasesListPage.Table.SLA' %}</span></th>
+				<th class="govuk-table__header app-table__header--skeleton" scope="col">{% lcs 'cases.CasesListPage.Table.CASE' %}</th>
+				<th class="govuk-table__header app-table__header--skeleton" scope="col">{% lcs 'cases.CasesListPage.Table.ASSIGNEES' %}</th>
+				<th class="govuk-table__header app-table__header--skeleton lite-tablet-hide" scope="col">{% lcs 'cases.CasesListPage.Table.GOODS' %}</th>
+				<th class="govuk-table__header app-table__header--skeleton lite-tablet-hide" scope="col">{% lcs 'cases.CasesListPage.Table.DESTINATIONS' %}</th>
+				<th class="govuk-table__header app-table__header--skeleton" scope="col">{% lcs 'cases.CasesListPage.Table.FLAGS' %}</th>
+				<th class="govuk-table__header" scope="col"></th>
+			</tr>
+		</thead>
+		<tbody class="govuk-table__body" id="tbody-placeholder">
+			{% for i in '0123456789'|make_list %}
+				<tr class="govuk-table__row app-table__row--skeleton">
+					{% if not queue.is_system_queue %}
+						<td class="govuk-table__cell">
+							<div class="app-table__row__checkbox--skeleton"></div>
+						</td>
+					{% endif %}
+					<td class="govuk-table__cell govuk-table__cell--tight">
+						<div class="app-table__row__sla--skeleton"></div>
+					</td>
+					{# Empty paragraphs are intentional to show skeleton loading #}
+					<td class="govuk-table__cell">
+						<p></p>
+						<p></p>
+						<p></p>
+						<p></p>
+					</td>
+					<td class="govuk-table__cell">
+						<p></p>
+					</td>
+					<td class="govuk-table__cell">
+						<p></p>
+					</td>
+					<td class="govuk-table__cell">
+						<p></p>
+					</td>
+					<td class="govuk-table__cell">
+						<p></p>
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+	<form id="form-cases" method="get" action="{% url 'queues:case_assignments' queue.id %}">
+		<table id="table-cases" class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					{% if not queue.is_system_queue %}
+						<th class="govuk-table__header govuk-table__cell--checkbox">
+							<button id="button-select-all" type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
+						</th>
+					{% endif %}
+					<th class="govuk-table__header govuk-table__cell--tight" scope="col"><span class="govuk-visually-hidden">{% lcs 'cases.CasesListPage.Table.SLA' %}</span></th>
+					<th class="govuk-table__header app-table__header--skeleton" scope="col">{% lcs 'cases.CasesListPage.Table.CASE' %}</th>
+					<th class="govuk-table__header app-table__header--skeleton" scope="col">{% lcs 'cases.CasesListPage.Table.ASSIGNEES' %}</th>
+					<th class="govuk-table__header app-table__header--skeleton lite-tablet-hide" width="15%" scope="col">Flags</th>
+					<th class="govuk-table__header app-table__header--skeleton lite-tablet-hide" width="15%" scope="col">{% lcs 'cases.CasesListPage.Table.GOODS' %}</th>
+					<th class="govuk-table__header app-table__header--skeleton lite-tablet-hide" width="15%" scope="col">{% lcs 'cases.CasesListPage.Table.DESTINATIONS' %}</th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body" id="tbody-main">
+			</tbody>
+		</table>
+	</form>
+{% endblock %}
+
+{% block javascript %}
+	<script src="{% static 'javascripts/cases.js' %}"></script>
+	<script src="{% static 'javascripts/select-buttons.js' %}"></script>
+
+	<script nonce="{{ request.csp_nonce }}">
+		var params = `{{ params }}`;
+		var previousSVG = `{% svg 'previous' %}`;
+		var nextSVG = `{% svg 'next' %}`;
+		var chevron = `{% svg 'chevron' %}`;
+		var noCases = `{% include "includes/notice.html" with text='cases.CasesListPage.NO_CASES' %}`;
+
+		$("#table-cases").hide();
+		$.get("{% url 'core:cases' queue.id %}{{ params }}", function(data) {
+			$("#table-placeholder").remove();
+			$("#text-case-count").removeClass("app-hidden").fadeIn(100).text(data.count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " cases");
+
+			if (data.total_pages > 1) {
+				generatePagination({{ request.GET.page|default:1 }}, data.total_pages);
+			}
+
+			$.each(data.results.queues, function(i, item) {
+				if (item.id == "{{ updated_cases_banner_queue_id }}" && item.case_count) {
+					$("#banner-exporter-amendments").removeClass("app-hidden");
+				}
+
+				var html = `
+					<a href="/queues/${item.id}/" id="${item.id}" class="app-menu__item app-menu__item--subtitle ${(item.id == '{{ queue.id }}' ? 'app-menu__item--selected' : '')}">
+						${item.name}
+						<span class="app-menu__item-subtitle">${item.case_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</span>
+					</a>
+				`;
+				$("#queues").append(html);
+			});
+			generateQueuesMenu();
+			if (data.results.cases.length) {
+				$("#table-cases").fadeIn(100);
+				$.each(data.results.cases, function(i, item) {
+					var html = `
+						<tr class="govuk-table__row" id="${item.id}">
+							{% if not queue.is_system_queue %}
+								<td class="govuk-table__cell govuk-table__cell--checkbox">
+									<div>
+										<input class="govuk-checkboxes__input" type="checkbox" name="cases" value="${item.id}">
+										<label class="govuk-label govuk-checkboxes__label" for="${item.id}">
+											<span class="govuk-visually-hidden"></span>
+										</label>
+									</div>
+								</td>
+							{% endif %}
+							<td class="govuk-table__cell govuk-table__cell--tight">
+								<div class="app-cases__row__vertical-column">
+									${generateSLA(item)}
+									{% if not is_all_cases_queue %}
+										${(!item.is_recently_updated ? `
+											<span data-tooltip="{% lcs 'cases.CasesListPage.NOT_UPDATED_RECENTLY' %}" class="app-cases__row__icon app-cases__row__attention-needed">
+												!
+											</span>
+											`: ``)}
+									{% endif %}
+									${(data.results.is_work_queue && item.has_open_queries ? `
+										<div data-tooltip="{% lcs 'cases.CasesListPage.OPEN_TEAM_ECJU' %}" class="app-cases__row__icon">
+											{% svg 'ecju-query' %}
+										</div>
+										` : ``)}
+									${(data.results.is_work_queue && item.next_review_date ? `
+										<div data-tooltip="The next review is on ${item.next_review_date}" class="app-cases__row__icon">
+											{% svg 'eye' %}
+										</div>
+										` : ``)}
+								</div>
+							</td>
+							<td class="govuk-table__cell">
+								<a class="govuk-link govuk-link--no-visited-state" id="case-${item.id}" href="/queues/{{ queue.id }}/cases/${item.id}/">
+									<span class="govuk-visually-hidden">View</span> ${item.reference_code}
+								</a>
+								<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">
+									${item.organisation.name} <span class="govuk-hint lite-!-display-inline">/ ${item.organisation.primary_site.address.city }</span>
+								</p>
+								<p class="govuk-hint govuk-!-margin-0 govuk-!-margin-top-2">${item.organisation.primary_site.address.postcode }</p>
+								<p class="govuk-tag govuk-tag--grey govuk-!-margin-0 govuk-!-margin-top-2">${item.status.value }</p>
+							</td>
+							<td class="govuk-table__cell lite-mobile-hide">
+								${generateAssignments(item.assignments)}
+							</td>
+							<td class="govuk-table__cell lite-tablet-hide">
+								${generateFlags(item.flags)}
+							</td>
+							<td class="govuk-table__cell lite-tablet-hide">
+								${generateFlags(item.goods_flags)}
+							</td>
+							<td class="govuk-table__cell lite-tablet-hide">
+								${generateFlags(item.destinations_flags)}
+							</td>
+						</tr>
+					`
+					$("#tbody-main").append(html);
+				});
+			} else {
+				$("#table-cases").before(noCases);
+			}
+			$.each(data.results.filters.statuses, function(i, item) {
+				$("#status").append(`<option value="${item.key}" ${(item.key == "{{ case_officer }}" ? "selected" : "")}>${item.value}</option>`)
+			});
+			$.each(data.results.filters.case_types, function(i, item) {
+				$("#case_type").append(`<option value="${item.key}" ${(item.key == "{{ case_type }}" ? "selected" : "")}>${item.value}</option>`)
+			});
+			$.each(data.results.filters.gov_users, function(i, item) {
+				$("#case_officer").append(`<option value="${item.id}" ${(item.id == "{{ case_officer }}" ? "selected" : "")}>${item.full_name}</option>`)
+				$("#assigned_user").append(`<option value="${item.id}" ${(item.id == "{{ assigned_user }}" ? "selected" : "")}>${item.full_name}</option>`)
+			});
+			$.each(data.results.filters.advice_types, function(i, item) {
+				$("#team_advice_type").append(`<option value="${item.key}" ${(item.key == "{{ team_advice_type }}" ? "selected" : "")}>${item.value}</option>`)
+				$("#final_advice_type").append(`<option value="${item.key}" ${(item.key == "{{ final_advice_type }}" ? "selected" : "")}>${item.value}</option>`)
+			});
+			setTooltips();
+			setCheckboxEvent();
+			setSelectButtonsState();
+			loadAutoCompletes();
+			tryShowFilterBar();
+			setEnableOnCheckboxes();
+		});
+
+		$("#filter-queues").on('input', function() {
+			txt = $("#filter-queues").val();
+			anyVisible = false;
+			$('#queues a').hide();
+			$("#queues > span").hide();
+			$('#queues a').each(function(){
+				if ($(this).text().toUpperCase().indexOf(txt.toUpperCase()) != -1){
+					$(this).show();
+					anyVisible = true;
+				}
+			});
+
+			if (!anyVisible) {
+				$("#queues > span").show()
+			}
+		});
+
+		$("#link-queue").removeAttr("href");
+
+		function generateQueuesMenu() {
+			const queuesMenu = document.getElementById('queues');
+			queuesMenu.style.display = 'block';
+			tippy("#link-queue", {
+				content: queuesMenu,
+				allowHTML: true,
+				interactive: true,
+				animation: 'scale-subtle',
+				trigger: 'click',
+				theme: 'light',
+				placement: 'bottom-start',
+				arrow: null,
+				onShown(instance) {
+					$("#filter-queues").val("")
+					$("#filter-queues").focus()
+				},
+			});
+		}
+	</script>
+{% endblock %}

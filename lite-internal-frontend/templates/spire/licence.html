@@ -1,0 +1,38 @@
+{% extends 'layouts/base.html' %}
+
+{% load parse_date pprint_dict from spire_tags %}
+
+{% block back_link %}{% endblock %}
+
+{% block title %}SPIRE license details{% endblock %}
+
+
+{% block body %}
+	<div class="lite-app-bar govuk-!-margin-bottom-6">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">{{ licence.document_instance.document_data.licence_title }} {{ licence.licence.licence_ref }}</h1>
+		</div>
+	</div>
+
+	<div class="lite-gutter">
+		{% with application_type=licence.document_instance.data.application_type %}
+			{% with application_sub_type=licence.document_instance.data.application_sub_type %}
+				{% if application_type == 'SIEL' %}
+					{% include "spire/licence_body_SIEL.html" %}
+				{% elif application_type == 'OIEL'%}
+					{% include "spire/licence_body_OIEL.html" %}
+				{% endif %}
+			{% endwith %}
+		{% endwith %}
+
+		<div class="govuk-!-padding-top-6 govuk-!-padding-bottom-6">
+			
+			<h2 class="govuk-heading-l" id="raw-details">Raw details</h2>
+			<details>
+				<summary>View raw details</summary>
+				<pre><code>{{ licence|pprint_dict}}</code></pre>
+			</details>
+		</div>
+	</div>
+
+{% endblock %}

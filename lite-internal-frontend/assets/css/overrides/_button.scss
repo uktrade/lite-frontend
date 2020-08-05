@@ -1,0 +1,16 @@
+.app-button--icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	color: $govuk-text-colour;
+
+	svg {
+		width: 15px;
+		height: 15px;
+		margin-right: govuk-spacing(2);
+
+		* {
+			fill: currentColor;
+		}
+	}
+}

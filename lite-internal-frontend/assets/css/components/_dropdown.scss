@@ -1,0 +1,50 @@
+.app-dropdown__heading {
+	@include govuk-font($size: 36, $weight: bold);
+	@extend .govuk-link;
+	@extend .govuk-link--no-visited-state;
+	position: relative;
+	cursor: pointer;
+	margin-bottom: govuk-spacing(6)!important;
+	padding-right: 35px;
+	text-decoration: underline;
+}
+
+.js-enabled {
+	.app-dropdown__heading {
+		color: govuk-colour("white");
+		text-decoration: none;
+
+		&:hover {
+			text-decoration: underline;
+		}
+
+		&:active, &:focus {
+			text-decoration: none!important;
+			color: govuk-colour("black");
+			&:after {
+				background-image: url("/assets/images/chevron-inverted.svg");
+			}
+		}
+
+		&:after {
+			content: "";
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			right: 0;
+			width: 25px;
+			background-image: url("/assets/images/chevron.svg");
+			background-position: center;
+			background-repeat: no-repeat;
+			background-size: contain;
+		}
+	}
+}
+
+.app-dropdown__heading--flipped {
+	z-index: 15;
+
+	&:after {
+		transform: rotate(180deg);
+	}
+}

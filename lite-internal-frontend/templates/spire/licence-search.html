@@ -1,0 +1,66 @@
+{% extends 'layouts/base.html' %}
+
+{% load parse_date from spire_tags %}
+
+{% block back_link %}{% endblock %}
+
+{% block title %}SPIRE license search{% endblock %}
+
+{% block body %}
+	<div class="lite-app-bar govuk-!-margin-bottom-0">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">SPIRE licence search</h1>
+		</div>
+	</div>
+	<form method="get">
+		<div class="lite-filter-bar govuk-!-margin-top-0">
+			<div class="lite-filter-bar__components">
+				{{ form.as_p }}
+			</div>
+			<div class="lite-filter-bar__buttons">
+				<button type="submit" class="govuk-button">{% lcs 'generic.Filters.APPLY_FILTERS_BUTTON' %}</button>
+				<a href="?" class="govuk-button govuk-button--secondary govuk-button--secondary-white" id="button-clear-filters">
+					{% lcs 'generic.Filters.CLEAR_FILTERS_BUTTON' %}
+				</a>
+			</div>
+		</div>
+		{% if results %}
+			<table class="govuk-table">
+				<thead class="govuk-table__head">
+					<tr class="govuk-table__row">
+						<th class="govuk-table__header" scope="col">Licence</th>
+						<th class="govuk-table__header" scope="col">Licensee</th>
+						<th class="govuk-table__header" scope="col">Spire ref/Applicant ref</th>
+						<th class="govuk-table__header" scope="col">Submitted date</th>
+						<th class="govuk-table__header" scope="col">Case status</th>
+					</tr>
+				</thead>
+				<tbody class="govuk-table__body">
+					{% for licence in results %}
+						<tr class="govuk-table__row">
+							<td class="govuk-table__cell">
+								<a href="{% url 'spire:licence-detail' id=licence.id %}" class="govuk-link">{{ licence.licence.licence_ref }}</a>
+								<p class="govuk-!-margin-bottom-0 govuk-!-margin-top-1">
+									{{ licence.document_instance.data.application_type }}
+								{% if licence.document_instance.data.application_sub_type %}
+									({{ licence.document_instance.data.application_sub_type|title }})
+								</p>
+								{% endif %}
+							</td>
+							<td class="govuk-table__cell">{{ licence.document_instance.data.exporter_name }}</td>
+							<td class="govuk-table__cell">
+								<p class="govuk-!-margin-top-0">{{ licence.licence.licence_ref }}</p>
+								<p class="govuk-!-margin-bottom-0 govuk-!-margin-top-1">{{ licence.document_instance.data.company_ref }}</p>
+							</td>
+							<td class="govuk-table__cell">{{ licence.document_instance.data.submitted_date|parse_date|date:"d M Y" }}</td>
+							<td class="govuk-table__cell">
+								<p class="govuk-!-margin-top-0">{{ licence.licence.licence_status|title }}</p>
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			{% pagination %}
+		{% endif %}
+	</form>
+{% endblock %}

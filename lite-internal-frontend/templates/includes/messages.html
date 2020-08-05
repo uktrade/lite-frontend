@@ -1,0 +1,12 @@
+{% for message in messages %}
+	<div class="govuk-width-container app-snackbar app-snackbar--success {% if message.tags %}app-snackbar--{{ message.tags }}{% endif %}">
+		<div class="app-snackbar__content">
+			<div class="app-snackbar__icon"></div>
+			{{ message }}
+			<a class="app-snackbar__close-link" href=".">
+				<span class="govuk-visually-hidden">Close information bar</span>
+				✕
+			</a>
+		</div>
+	</div>
+{% endfor %}

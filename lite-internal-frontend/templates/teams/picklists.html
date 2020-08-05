@@ -1,0 +1,75 @@
+{% extends 'layouts/base.html' %}
+
+{% load humanize %}
+
+{% block back_link %}{% endblock %}
+
+{% block title %}
+	{% lcs 'teams.TeamPage.Tabs.PICKLISTS' %} - {{ team.name }}
+{% endblock %}
+
+{% block body %}
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">
+				{{ team.name }}
+			</h1>
+		</div>
+	</div>
+
+	<div class="lite-tabs__container">
+		<div class="lite-tabs">
+			<a href="{% url 'teams:team' %}" class="lite-tabs__tab">{% lcs 'teams.TeamPage.Tabs.MEMBERS' %}</a>
+			<p class="lite-tabs__tab lite-tabs__tab--selected">{% lcs 'teams.TeamPage.Tabs.PICKLISTS' %}</p>
+		</div>
+		<div class="lite-tabs__controls">
+			{% govuk_link_button text='picklists.Picklists.ADD_BUTTON' url='picklists:add' query_params='?type='|add:type id='new-picklist-item' %}
+		</div>
+	</div>
+
+	{% if data.count %}
+		<p class="lite-filters__hint-text">{{ data.count }} {{ data.count|lcsp:'picklists.Picklists.ITEMS_COUNT' }}</p>
+	{% endif %}
+
+	{% include 'filters.html' %}
+
+	<div class="govuk-grid-row">
+		<div class="govuk-grid-column-one-quarter">
+			<ul class="lite-subnav">
+				{% for category in picklist_categories %}
+					<li class="lite-subnav__link {% if type == category.key %}lite-subnav__link--selected{% endif %}">
+						<a id="link-picklist-{{ category.key }}" href="{% url 'picklists:picklists' %}?type={{ category.key }}">
+							{{ category.name }}
+						</a>
+					</li>
+				{% endfor %}
+			</ul>
+		</div>
+		<div class="govuk-grid-column-three-quarters">
+			<div class="app-picklists__container">
+				{% if active_picklist_items or deactivated_picklist_items %}
+					<ol class="app-picklists__list">
+						{% for picklist_item in active_picklist_items %}
+							{% include 'includes/picklist-item.html' %}
+						{% endfor %}
+					</ol>
+					{% if deactivated_picklist_items %}
+						<div>
+							<h4 class="govuk-heading-s">Deactivated</h4>
+							<hr class="lite-horizontal-separator">
+							<ol class="app-picklists__list">
+								{% for picklist_item in deactivated_picklist_items %}
+									{% include 'includes/picklist-item.html' %}
+								{% endfor %}
+							</ol>
+						</div>
+					{% endif %}
+				{% else %}
+					{% include 'includes/notice.html' with text='picklists.PicklistPicker.NO_CONTENT_NOTICE' %}
+				{% endif %}
+
+				{% pagination %}
+			</div>
+		</div>
+	</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+.app-hidden {
+	display: none;
+}
+
+.app-hidden--force {
+	display: none!important;
+}
+
+.app-expanded-row__item {
+	display: none;
+}
+
+.app-expanded-row__item--invert {
+	display: block;
+}
+
+.app-letter-preview__page {
+	font-family: $govuk-font-family;
+	font-size: 18px;
+}
+
+.lite-gutter {
+	width: 1024px; margin-left: auto; margin-right: auto;
+}

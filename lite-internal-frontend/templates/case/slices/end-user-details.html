@@ -1,0 +1,112 @@
+<dl class="app-case__summary-list">
+	<div class="app-case__summary-list__row">
+		<dt class="app-case__summary-list__key">
+			{% lcs 'cases.EndUserAdvisoriesPage.Details.NAME' %}
+		</dt>
+		<dd class="app-case__summary-list__value">
+			{{ case.data.end_user.name }}
+		</dd>
+	</div>
+	<div class="app-case__summary-list__row">
+		<dt class="app-case__summary-list__key">
+			{% lcs 'cases.EndUserAdvisoriesPage.Details.TYPE' %}
+		</dt>
+		<dd class="app-case__summary-list__value">
+			{{ case.data.end_user.sub_type.value }}
+		</dd>
+	</div>
+	{% if case.data.end_user.sub_type.key == 'individual' %}
+		<div class="app-case__summary-list__row">
+			<dt class="app-case__summary-list__key">
+				{% lcs 'cases.EndUserAdvisoriesPage.Details.EMAIL' %}
+			</dt>
+			<dd class="app-case__summary-list__value">
+				{{ case.data.contact_email }}
+			</dd>
+		</div>
+		<div class="app-case__summary-list__row">
+			<dt class="app-case__summary-list__key">
+				{% lcs 'cases.EndUserAdvisoriesPage.Details.TELEPHONE' %}
+			</dt>
+			<dd class="app-case__summary-list__value">
+				{{ case.data.contact_telephone }}
+			</dd>
+		</div>
+	{% endif %}
+	{% if case.data.end_user.sub_type.key == 'commercial' %}
+		<div class="app-case__summary-list__row">
+			<dt class="app-case__summary-list__key">
+				{% lcs 'cases.EndUserAdvisoriesPage.Details.NATURE_OF_BUSINESS' %}
+			</dt>
+			<dd class="app-case__summary-list__value">
+				{{ case.data.nature_of_business }}
+			</dd>
+		</div>
+	{% endif %}
+	{% if case.data.end_user.sub_type.key != 'individual' and case.data.contact_email %}
+		<div class="app-case__summary-list__row">
+			<dt class="app-case__summary-list__key">
+				{% lcs 'cases.EndUserAdvisoriesPage.Details.PRIMARY_CONTACT_NAME' %}
+			</dt>
+			<dd class="app-case__summary-list__value">
+				{{ case.data.contact_name }}
+			</dd>
+		</div>
+		<div class="app-case__summary-list__row">
+			<dt class="app-case__summary-list__key">
+				{% lcs 'cases.EndUserAdvisoriesPage.Details.PRIMARY_CONTACT_JOB' %}
+			</dt>
+			<dd class="app-case__summary-list__value">
+				{{ case.data.contact_job_title }}
+			</dd>
+		</div>
+		<div class="app-case__summary-list__row">
+			<dt class="app-case__summary-list__key">
+				{% lcs 'cases.EndUserAdvisoriesPage.Details.PRIMARY_CONTACT_EMAIL' %}
+			</dt>
+			<dd class="app-case__summary-list__value">
+				<a class="govuk-link" href="mailto:{{ case.data.contact_email }}">{{ case.data.contact_email }}</a>
+			</dd>
+		</div>
+		<div class="app-case__summary-list__row">
+			<dt class="app-case__summary-list__key">
+				{% lcs 'cases.EndUserAdvisoriesPage.Details.PRIMARY_CONTACT_TELEPHONE' %}
+			</dt>
+			<dd class="app-case__summary-list__value">
+				{{ case.data.contact_telephone }}
+			</dd>
+		</div>
+	{% endif %}
+	<div class="app-case__summary-list__row">
+		<dt class="app-case__summary-list__key">
+			{% lcs 'cases.EndUserAdvisoriesPage.Details.ADDRESS' %}
+		</dt>
+		<dd class="app-case__summary-list__value">
+			{{ case.data.end_user|get_address }}
+		</dd>
+	</div>
+	<div class="app-case__summary-list__row">
+		<dt class="app-case__summary-list__key">
+			{% lcs 'cases.EndUserAdvisoriesPage.Details.WEBSITE' %}
+		</dt>
+		<dd class="app-case__summary-list__value">
+			{{ case.data.end_user.website|linkify }}
+		</dd>
+	</div>
+	<div class="app-case__summary-list__row">
+		<dt class="app-case__summary-list__key">
+			{% lcs 'cases.EndUserAdvisoriesPage.Details.REASONING' %}
+		</dt>
+		<dd class="app-case__summary-list__value">
+			{{ case.data.reasoning|default_na }}
+		</dd>
+	</div>
+	<div class="app-case__summary-list__row">
+		<dt class="app-case__summary-list__key">
+			{% lcs 'cases.EndUserAdvisoriesPage.Details.NOTES' %}
+		</dt>
+		<dd class="app-case__summary-list__value">
+			{{ case.data.note|default_na }}
+		</dd>
+	</div>
+</dl>

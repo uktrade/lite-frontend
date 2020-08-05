@@ -1,0 +1,84 @@
+{% load static %}
+
+<a id="link-help-formatting" class="app-markdown__help-link" href="#">
+	Help with formatting
+</a>
+<a id="link-help-variables" class="app-markdown__help-link" href="{% url 'letter_templates:variable_help' %}" target="_blank">
+	What variables can I use to personalise my text?
+</a>
+
+<br>
+
+<h3 class="govuk-heading-m">Personalisation</h3>
+
+<p class="govuk-body govuk-!-margin-bottom-2">Use double brackets to personalise your text:</p>
+
+<p class="govuk-inset-text govuk-inset-text--slim govuk-!-margin-top-0">
+	{% verbatim %}
+		Hello <span class="lite-highlight lite-highlight--blue">{{ applicant.name }}</span>, your reference is <span class="lite-highlight lite-highlight--blue">{{ refence_number }}</span>
+	{% endverbatim %}</p>
+
+<p class="govuk-body govuk-!-margin-bottom-2">Use magic brackets to have conditional content:</p>
+
+<p class="govuk-inset-text govuk-inset-text--slim govuk-!-margin-top-0">
+	{% verbatim %}
+		<span class="lite-highlight lite-highlight--purple">{% if case.is_finalised %}</span><br>
+		<span class="govuk-!-margin-left-4">Your application has been approved...</span><br>
+		<span class="lite-highlight lite-highlight--purple">{% endif %}</span>
+	{% endverbatim %}
+</p>
+
+<p class="govuk-body govuk-!-margin-bottom-2">You can also use magic brackets to have looping content:</p>
+
+<p class="govuk-inset-text govuk-inset-text--slim govuk-!-margin-top-0">
+	{% verbatim %}
+	<span class="lite-highlight lite-highlight--purple">{% for flag in case.flags %}</span><br>
+	<span class="lite-highlight lite-highlight--blue govuk-!-margin-left-4">{{ flag.name }}</span><br>
+	<span class="lite-highlight lite-highlight--purple">{% endfor %}</span>
+	{% endverbatim %}
+</p>
+
+<div id="modal-help-formatting" class="govuk-visually-hidden">
+	<p class="govuk-body">To add a title, use a hash:</p>
+
+	<p class="govuk-inset-text govuk-inset-text--slim govuk-!-margin-top-0"># This is a title</p>
+
+	<p class="govuk-body">To make bullet points, use asterisks:</p>
+
+	<p class="govuk-inset-text govuk-inset-text--slim govuk-!-margin-top-0">
+		* point 1<br>
+		* point 2<br>
+		* point 3
+	</p>
+
+	<p class="govuk-body">To add a horizontal line, use three dashes:</p>
+
+	<p class="govuk-inset-text govuk-inset-text--slim govuk-!-margin-top-0">
+		First paragraph
+		<br>
+		<span>---</span>
+		<br>
+		Second paragraph
+	</p>
+</div>
+
+<script src="{% static 'javascripts/modal.js' %}"></script>
+<script type="text/javascript">
+	$("#tab-contents > div").hide();
+	$("#tab-contents > div:first-of-type").show();
+
+	function changeTab(element, index) {
+		$(".lite-tabs__tab--selected").removeClass("lite-tabs__tab--selected");
+		$(element).addClass("lite-tabs__tab--selected");
+		$("#tab-contents > div").hide();
+		$("#tab-contents > div:nth-of-type(" + index + ")").show();
+		return false;
+	}
+
+	$("#link-help-formatting").click(function() {
+		LITECommon.Modal.showModal('Help with formatting', $('#modal-help-formatting').html(), false, true, {
+			maxWidth: '500px'
+		});
+		return false;
+	});
+</script>

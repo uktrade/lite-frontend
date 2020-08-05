@@ -1,0 +1,38 @@
+.tribute-container {
+	@extend .govuk-label;
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: auto;
+	max-height: 300px;
+	max-width: 1000px;
+	overflow: auto;
+	display: block;
+	z-index: 999999;
+	border-style: solid;
+    border-width: 2px;
+	ul {
+		margin: 0;
+		margin-top: 2px;
+		padding: 0;
+		list-style: none;
+		background: white;
+	}
+	li {
+		padding: 5px 5px;
+		cursor: pointer;
+		span {
+			font-weight: bold;
+		}
+	}
+	li.highlight {
+		background: govuk-colour("blue");
+		color: white;
+	}
+	li.no-match {
+		cursor: default;
+	}
+	.menu-highlighted {
+		font-weight: bold;
+	}
+}

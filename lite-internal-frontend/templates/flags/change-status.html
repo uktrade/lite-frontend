@@ -1,0 +1,17 @@
+{% extends "layouts/two-pane.html" %}
+
+{% block two_thirds %}
+	<h1 class="govuk-heading-l">{{ title }}</h1>
+	<p class="govuk-caption-m govuk-!-margin-bottom-5">{{ description }}</p>
+	<form method="post">
+		<div class="lite-buttons-row">
+			{% if status == 'reactivate' %}
+				<button type="submit" name="status" value="Active" class="govuk-button">Reactivate Flag</button>
+			{% else %}
+				<button type="submit" name="status" value="Deactivated" class="govuk-button govuk-button--warning">Deactivate Flag</button>
+			{% endif %}
+			<a href="{% url 'flags:flags' %}" role="button" draggable="false" class="govuk-button govuk-button--secondary">Cancel</a>
+			{% csrf_token %}
+		</div>
+	</form>
+{% endblock %}

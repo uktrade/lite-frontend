@@ -1,0 +1,143 @@
+{% extends 'organisations/organisation/base.html' %}
+
+{% block contents %}
+	<dl class="govuk-summary-list govuk-summary-list--no-border govuk-!-width-two-thirds">
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% if organisation.type.key == 'individual' %}
+					{% lcs 'organisations.OrganisationPage.Details.SummaryList.FIRST_AND_LAST_NAME' %}
+				{% else %}
+					{% lcs 'organisations.OrganisationPage.Details.SummaryList.NAME' %}
+				{% endif %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ organisation.name }}
+			</dd>
+			<dd class="govuk-summary-list__actions">
+				<a id="link-edit-organisation" class="govuk-link govuk-link--no-visited-state" href="{% url 'organisations:edit' organisation.id %}#name">{% lcs 'generic.CHANGE' %}</a>
+			</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs 'organisations.OrganisationPage.Details.SummaryList.EORI_NUMBER' %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ organisation.eori_number|default_na }}
+			</dd>
+			<dd class="govuk-summary-list__actions">
+				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisations:edit' organisation.id %}#eori_number">{% lcs 'generic.CHANGE' %}</a>
+			</dd>
+		</div>
+		{% if organisation.sic_number %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs 'organisations.OrganisationPage.Details.SummaryList.SIC_NUMBER' %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ organisation.sic_number }}
+				</dd>
+				{% if organisation.type.key != "hmrc" %}
+					<dd class="govuk-summary-list__actions">
+						<a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisations:edit' organisation.id %}#sic_number">{% lcs 'generic.CHANGE' %}</a>
+					</dd>
+				{% endif %}
+			</div>
+		{% endif %}
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs 'organisations.OrganisationPage.Details.SummaryList.VAT_NUMBER' %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ organisation.vat_number|default_na }}
+			</dd>
+			<dd class="govuk-summary-list__actions">
+				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisations:edit' organisation.id %}#vat_number">{% lcs 'generic.CHANGE' %}</a>
+			</dd>
+		</div>
+		{% if organisation.registration_number %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs 'organisations.OrganisationPage.Details.SummaryList.COMPANY_REG_NUMBER' %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ organisation.registration_number }}
+				</dd>
+				{% if organisation.type.key != "hmrc" %}
+					<dd class="govuk-summary-list__actions">
+						<a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisations:edit' organisation.id %}#registration_number">{% lcs 'generic.CHANGE' %}</a>
+					</dd>
+				{% endif %}
+			</div>
+		{% endif %}
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs 'organisations.OrganisationPage.Details.SummaryList.CREATED_AT' %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ organisation.created_at|str_date }}
+			</dd>
+			<dd class="govuk-summary-list__actions"></dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs 'organisations.OrganisationPage.Details.SummaryList.PRIMARY_SITE' %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ organisation.primary_site.name }}
+				<span class="govuk-hint">
+					{% if organisation.primary_site.address.address_line_1 %}
+						{{ organisation.primary_site.address.address_line_1 }}<br/>
+						{% if organisation.primary_site.address.address_line_2 %}
+							{{ organisation.primary_site.address.address_line_2 }}<br/>
+						{% endif %}
+						{{ organisation.primary_site.address.city }}<br/>
+						{{ organisation.primary_site.address.postcode }}<br/>
+						{{ organisation.primary_site.address.country.name }}
+					{% else %}
+						{{ organisation.primary_site.address.address }}
+						{{ organisation.primary_site.address.country.name }}
+					{% endif %}
+				</span>
+			</dd>
+			<dd class="govuk-summary-list__actions"></dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs 'organisations.OrganisationPage.Details.SummaryList.TYPE' %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ organisation.type.value }}
+			</dd>
+			<dd class="govuk-summary-list__actions"></dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs 'organisations.OrganisationPage.Details.SummaryList.STATUS' %}
+			</dt>
+			<dd class="govuk-summary-list__value" id="status">
+				{{ organisation.status.value }}
+			</dd>
+			<dd class="govuk-summary-list__actions"></dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs 'organisations.OrganisationPage.Details.SummaryList.FLAGS' %}
+			</dt>
+			<dd id="flags-organisation" class="govuk-summary-list__value">
+				{% include "includes/flags.html" with flags=organisation.flags no_content='organisations.OrganisationPage.NO_FLAGS_NOTICE' list=True %}
+			</dd>
+			<dd class="govuk-summary-list__actions">
+				{% if not hide_creation_link %}
+					<a id="link-organisation-flags" class="govuk-link govuk-link--no-visited-state" href="{% url 'organisations:assign_flags' organisation.id %}?organisation={{ organisation.id }}">
+						{% lcs 'generic.CHANGE' %}
+					</a>
+				{% endif %}
+			</dd>
+		</div>
+	</dl>
+
+	{% if activity %}
+		<h2 class="govuk-heading-m govuk-!-margin-top-9">{% lcs 'organisations.OrganisationPage.Details.ACTIVITY' %}</h2>
+		{% include "includes/audit-trail.html" %}
+	{% endif %}
+{% endblock %}

@@ -1,0 +1,279 @@
+{% extends 'layouts/base.html' %}
+
+{% load svg static %}
+
+{% block body_classes %}app-template__case-body{% endblock %}
+
+{% block title %}
+	{{ case.reference_code }} - {{ case.organisation.name }}
+{% endblock %}
+
+{% block header %}
+	{% if case.status == 'closed' %}
+		<div id="banner-case-closed" class="app-case__finalised-case-banner">
+			This case is closed
+		</div>
+	{% endif %}
+
+	<div class="app-case-header__container" id="app-header">
+		<div class="app-case-header__aurora" {{ case.all_flags|aurora }}></div>
+		<div class="app-case-header">
+			<div class="app-case-header__sections">
+				<div class="app-case-header__content">
+					<ol class="app-case-header__breadcrumbs-list">
+						<li class="app-case-header__breadcrumbs-list-item">
+							<a class="app-case-header__breadcrumbs-link" href="{% url 'queues:cases' queue.id %}">{{ queue.name }}</a>
+						</li>
+					</ol>
+					<h1 id="heading-reference-code" class="app-case-header__heading">
+						<a {% if page %}href="{% url 'cases:case' queue.id case.id %}"{% endif %} id="reference-code">{{ case.reference_code }}</a> <a id="link-organisation" class="app-case-header__link govuk-!-margin-left-2" href="{% url 'organisations:organisation' case.organisation.id %}?return_to={{ CURRENT_PATH }}&return_to_text={{ case.reference_code }}">{{ case.organisation.name }}</a>
+					</h1>
+				</div>
+				<div class="app-case-header__controls">
+					<div class="app-case-header__candy-bar">
+						{% if case.goods %}
+							<span id="candy-goods" class="app-case-header__candy">
+								{% svg 'goods' %}
+								{{ case.goods|length }}
+							</span>
+							<div id="popup-goods" class="app-case-header__candy__popup">
+								{% include 'case/pills/goods.html' %}
+							</div>
+						{% endif %}
+						{% if case.destinations %}
+							<span id="candy-destinations" class="app-case-header__candy">
+								{% svg 'globe' %}
+								{{ case.destinations|length }}
+							</span>
+							<div id="popup-destinations" class="app-case-header__candy__popup">
+								{% include 'case/pills/destinations.html' %}
+							</div>
+						{% endif %}
+						{% if case.data.open_general_licence %}
+							<span id="candy-open-general-licence" class="app-case-header__candy">
+								{{ case.case_type.reference.value }}
+							</span>
+							<div id="popup-open-general-licence" class="app-case-header__candy__popup">
+								{% include 'case/pills/open-general-licence.html' %}
+							</div>
+						{% endif %}
+						{% if case.data.visit_date or case.data.visit_type %}
+							<span id="candy-visit-date" class="app-case-header__candy">
+								{{ case.data.visit_type.value|default:"" }} <span class="govuk-!-margin-left-1 govuk-!-font-weight-bold">{{ case.data.visit_date|str_date_only|default:"" }}</span>
+							</span>
+							<div id="popup-visit-date" class="app-case-header__candy__popup">
+								{% include 'case/pills/visit-date.html' %}
+							</div>
+						{% endif %}
+						<span id="candy-flags" class="app-case-header__candy">
+							{% svg 'menu/flags' %}
+							{{ case.all_flags|length }}
+						</span>
+						<div id="popup-flags" class="app-case-header__candy__popup">
+							{% include 'case/pills/flags.html' %}
+						</div>
+					</div>
+
+					<div class="app-case-header__candy-bar">
+						<span id="candy-case-officer" class="app-case-header__candy">
+							{% svg 'menu/users' %}
+							{% if case.case_officer %}
+								{% if case.case_officer.first_name %}
+									{{ case.case_officer.first_name }} {{ case.case_officer.last_name }}
+								{% else %}
+									{{ case.case_officer.email }}
+								{% endif %}
+							{% else %}
+								Not assigned
+							{% endif %}
+						</span>
+						<div id="popup-case-officer" class="app-case-header__candy__popup">
+							{% include 'case/pills/case-officer.html' %}
+						</div>
+					</div>
+
+					<div class="app-case-header__candy-bar">
+						<span id="candy-status" class="app-case-header__candy">
+							{{ case.data.status.value }}
+						</span>
+						<div id="popup-status" class="app-case-header__candy__popup">
+							{% include 'case/pills/status.html' %}
+						</div>
+					</div>
+				</div>
+			</div>
+			{% if not hide_flags_row %}
+				<div class="app-case__flags-bar" id="case-flags">
+					<div class="app-case__flags-wrapper">
+						{% if case.all_flags %}
+							{% include 'includes/flags.html' with flags=case.all_flags|slice:25 show_change_link=True %}
+						{% endif %}
+					</div>
+					<a id="link-change-flags" href="{% url 'cases:assign_flags' queue.id case.id %}?&case={{ case.id }}&return_to={{ CURRENT_PATH }}">
+						{% lcs 'cases.CasePage.EDIT_FLAGS_LINK' %}
+					</a>
+				</div>
+			{% endif %}
+		</div>
+		{% if tabs %}
+			<div id="tab-bar" class="app-case-tab-bar">
+				<div class="govuk-width-container lite-tabs__container">
+					<div class="lite-tabs {% for tab in tabs %}{% for tab in tab.children %}{% if tab.url == current_tab %}lite-tabs__container--fade{% endif %}{% endfor %}{% endfor %}">
+						{% for tab in tabs %}
+							{% if tab.url %}
+								<a id="{{ tab.id }}" href="{% url 'cases:case' queue.id case.id tab.url %}{{ CURRENT_PATH_ONLY_PARAMS }}" class="lite-tabs__tab {% if tab.url == current_tab %}lite-tabs__tab--selected{% endif %}">
+									{{ tab.name }} {% if tab.count %}<span class="lite-tabs__tab-notification">{{ tab.count }}</span>{% endif %}
+								</a>
+							{% else %}
+								<a id="{{ tab.id }}" class="lite-tabs__tab-parent {% for tab in tab.children %}{% if tab.url == current_tab %}lite-tabs__tab-parent--selected{% endif %}{% endfor %}">
+									{{ tab.name }}
+								</a>
+								<div class="lite-tabs__tab-group {% for tab in tab.children %}{% if tab.url == current_tab %}lite-tabs__tab-group--visible{% endif %}{% endfor %}" id="{{ tab.id }}-children">
+									{% for tab in tab.children %}
+										<a id="{{ tab.id }}" href="{% url 'cases:case' queue.id case.id tab.url %}{{ CURRENT_PATH_ONLY_PARAMS }}" class="lite-tabs__tab {% if tab.url == current_tab %}lite-tabs__tab--selected{% endif %}">
+											{{ tab.name }}
+										</a>
+									{% endfor %}
+								</div>
+							{% endif %}
+						{% endfor %}
+					</div>
+					<div class="lite-tabs__controls">
+						<div class="lite-buttons-row">
+							{% make_list queue.id case.id as button_params %}
+							{% if case.reference == "ogel" or case.reference == "ogtl" or case.reference == "ogtcl" %}
+								{% if case.status == "revoked" or case.status == "suspended" %}
+									{% govuk_link_button id='reissue-ogl' text='cases.ApplicationPage.Actions.REISSUE_OGL' url='cases:reissue_ogl' url_param=button_params query_params='?return_to='|add:CURRENT_PATH %}
+								{% endif %}
+							{% endif %}
+							{% govuk_link_button id='rerun-routing-rules' text='cases.ApplicationPage.Actions.RERUN_ROUTING_RULES' url='cases:rerun_routing_rules' url_param=button_params query_params='?return_to='|add:CURRENT_PATH classes='govuk-button--secondary' %}
+							{% if can_set_done and case.case_type.reference.key != "comp_c" %}
+								{% govuk_link_button id='done' text='cases.ApplicationPage.DONE_WITH_CASE' url='cases:done' url_param=button_params classes='govuk-button--secondary' %}
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
+		{% endif %}
+	</div>
+{% endblock %}
+
+{% block body %}
+	{% block details %}
+		<div class="app-case__form-wrapper">
+			{% if request.GET|get:'return_to' %}
+				<a class="app-case__form-wrapper__back-link" id="back-link" href="{{ request.GET|get:'return_to' }}">Back {% if request.GET|get:'return_to_text' %}to {{ request.GET|get:'return_to_text' }}{% endif %}</a>
+			{% elif page.back_link %}
+				{% if not form_pk or form_pk == 0 %}
+					<a class="app-case__form-wrapper__back-link" id="back-link" href="{{ page.back_link.url }}">{{ page.back_link.text }}</a>
+				{% else %}
+					<form method="post">
+						{% csrf_token %}
+						{% dict_hidden_field 'form_pk' form_pk %}
+						{% for key, value in data.items %}
+							{% dict_hidden_field key value %}
+						{% endfor %}
+						<button class="lite-back-link-button app-case__form-wrapper__back-link" role="link" id="back-link" type="submit" name="_action" value="back" action="back">{{ page.back_link.text }}</button>
+					</form>
+				{% endif %}
+			{% endif %}
+
+			<div class="govuk-grid-row">
+				<div class="govuk-grid-column-two-thirds">
+					{% block two_thirds %}{% endblock %}
+				</div>
+
+				<div class="govuk-grid-column-one-third">
+					{% block one_third %}{% endblock %}
+				</div>
+			</div>
+		</div>
+	{% endblock %}
+{% endblock %}
+
+{% block javascript %}
+	<script type="text/javascript">
+		$(".app-case-header__candy__popup").show();
+
+		const popupCenter = ({url, title, w, h}) => {
+			// Fixes dual-screen position                             Most browsers      Firefox
+			const dualScreenLeft = window.screenLeft !==  undefined ? window.screenLeft : window.screenX;
+			const dualScreenTop = window.screenTop !==  undefined   ? window.screenTop  : window.screenY;
+
+			const width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
+			const height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
+
+			const systemZoom = width / window.screen.availWidth;
+			const left = (width - w) / 2 / systemZoom + dualScreenLeft
+			const top = (height - h) / 2 / systemZoom + dualScreenTop
+			const newWindow = window.open(url, title,
+				`
+				scrollbars=yes,
+				width=${w / systemZoom},
+				height=${h / systemZoom},
+				top=${top},
+				left=${left}
+				`
+			)
+
+			if (window.focus) newWindow.focus();
+		}
+
+		function openGoodModal(goodId, goodTitle) {
+			popupCenter({url: `/queues/{{ queue.id }}/cases/{{ case.id }}/good/${goodId}/`, title: goodTitle, w: 300, h: 500});
+			return false;
+		}
+
+		tippy(".app-case-header__candy", {
+			content(reference) {
+				return document.getElementById($("#" + reference.getAttribute("id")).next().attr("id"));
+			},
+			allowHTML: true,
+			interactive: true,
+			animation: 'scale-subtle',
+			theme: 'light',
+			placement: 'bottom',
+			hideOnClick: false,
+			interactiveBorder: 15,
+		});
+
+		var width = 0;
+		$('.app-case__flags-wrapper .app-flag').each(function() {
+			width += $(this).outerWidth( true );
+		});
+		if (width > $('.app-case__flags-wrapper .app-flags').outerWidth(true)) {
+			$('.app-case__flags-wrapper').addClass('app-case__flags-wrapper--fade');
+		}
+
+		window.addEventListener('scroll', function (e) {
+			if (window.innerWidth > 600) {
+				var scrollPosition = window.scrollY;
+
+				if (scrollPosition > 10) {
+					$("#case-flags").css({"pointer-events": "none"});
+				} else {
+					$("#case-flags").css({"pointer-events": "all"});
+				}
+
+				if (scrollPosition > 80) {
+					$("#tab-bar").addClass("app-case-tab-bar--float");
+				} else {
+					$("#tab-bar").removeClass("app-case-tab-bar--float");
+				}
+
+				var padding = Math.max(15, 30 - (scrollPosition / 3));
+				var paddingFlags = Math.max(20 - scrollPosition, -38);  // 38 is the height of the shrunk case header
+				$(".app-case-tab-bar").css({"padding-top": Math.max(0, 20 - (scrollPosition / 2))});
+				$(".app-case-tab-bar .lite-tabs__tab, .app-case-tab-bar .lite-tabs__tab-parent ").css({"padding-top": Math.max(15, Math.min(20, 15 + (scrollPosition / 2))), "padding-bottom": Math.max(15, Math.min(20, 15 + (scrollPosition / 2)))});
+				$(".app-case-header").css({"padding-top": padding, "padding-bottom": padding});
+				$(".app-case-header__breadcrumbs-list").css({"opacity": 1 - (scrollPosition / 10), "transform": "translateY(" + -(30 - padding) + "px)", "margin-top": -(30 - padding) + "px", "margin-bottom": -(20 - padding) + "px"});
+				$("#case-flags").css({"opacity": 1 - (scrollPosition / 10), "transform": "translateY(" + -(30 - padding) + "px)", "margin-top": paddingFlags + "px"});
+			}
+		});
+	</script>
+	<script src="{% static 'javascripts/select-buttons.js' %}"></script>
+	<script src="{% static 'javascripts/modal.js' %}"></script>
+	{% if has_future_next_review_date and not is_system_queue %}
+		<script src="{% static 'javascripts/assign_queue.js' %}"></script>
+	{% endif %}
+{% endblock %}
