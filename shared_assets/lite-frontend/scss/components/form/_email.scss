@@ -1,0 +1,19 @@
+.lite-email-panel {
+	position: relative;
+	box-sizing: border-box;
+	max-width: 50ex;
+	overflow: hidden;
+	display: none;
+	white-space: nowrap;
+	padding: govuk-spacing(2) govuk-spacing(3);
+
+	&::after {
+		content: "";
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		width: govuk-spacing(6);
+		background: linear-gradient(90deg, rgba(govuk-colour("white"), 0), govuk-colour("white"));
+	}
+}

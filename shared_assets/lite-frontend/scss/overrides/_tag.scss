@@ -1,0 +1,8 @@
+.govuk-tag {
+	@include govuk-font($size: 14, $weight: bold);
+	line-height: 1.25!important;
+
+	&--grey {
+		color: govuk-colour("black");
+	}
+}

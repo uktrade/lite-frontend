@@ -1,0 +1,77 @@
+.lite-button-checkbox {
+	@include appearance(none);
+	display: block;
+	position: relative;
+	width: 24px!important;
+	height: 24px!important;
+	background: govuk-colour("white");
+	color: currentColor;
+	border: $govuk-border-width-form-element solid currentColor;
+	margin: 0;
+	padding: 0;
+	outline: none;
+	cursor: pointer;
+	box-sizing: border-box;
+	overflow: hidden;
+
+	&:hover {
+		box-shadow: 0 0 0 ($govuk-hover-width - $govuk-border-width-form-element) $govuk-hover-colour;
+	}
+
+	&:focus {
+		border-width: 4px;
+		box-shadow: 0 0 0 $govuk-focus-width $govuk-focus-colour!important;
+		color: govuk-colour("black");
+
+		&--checked {
+
+		}
+	}
+
+	&::after {
+		content: "";
+		position: absolute;
+		display: none;
+	}
+
+	&--checked {
+		&::after {
+			display: block;
+			transform: rotate(-45deg);
+
+			border: solid;
+			// Fix bug in IE11 caused by transform rotate (-45deg).
+			// See: alphagov/govuk_elements/issues/518
+			border-top-color: transparent;
+
+			color: currentColor;
+
+			top: 5px;
+			left: 4px;
+			width: 9px;
+			height: 3.5px;
+			border-width: 0 0 3px 3px;
+		}
+
+		&:focus::after {
+			top: 3px!important;
+			left: 2px!important;
+		}
+	}
+
+	&--indeterminate {
+		&::after {
+			display: block;
+			width: 12px;
+			height: 3px;
+			top: 8px;
+			left: 4px;
+			background-color: currentColor;
+		}
+
+		&:focus::after {
+			top: 6px!important;
+			left: 2px!important;
+		}
+	}
+}

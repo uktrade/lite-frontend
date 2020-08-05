@@ -1,0 +1,12 @@
+.lite-notification-bubble {
+	@include govuk-font($size: 14, $weight: bold);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 1000px;
+	background-color: govuk-colour("red");
+	color: govuk-colour("white");
+	text-align: center;
+	width: 22px;
+	line-height: 22px!important;
+}

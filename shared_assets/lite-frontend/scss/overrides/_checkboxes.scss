@@ -1,0 +1,33 @@
+.govuk-checkboxes__input:indeterminate + .govuk-checkboxes__label::after {
+	// Add indeterminate state as GOV.UK Frontend lacks it
+	transform: rotate(0);
+	width: 12px;
+	height: 3px!important;
+	top: 18px;
+	opacity: 1;
+	border: none;
+	background-color: currentColor;
+}
+
+.govuk-checkboxes--inline {
+	display: flex;
+
+	.govuk-checkboxes__label {
+		text-align: center;
+		padding-left: 0;
+		padding-right: govuk-spacing(4);
+	}
+}
+
+.govuk-checkboxes__label--error {
+	// Add an error state to checkboxes as GOV.UK Frontend lacks it
+	color: $govuk-error-colour;
+
+	&::before {
+		border-width: $govuk-border-width-form-element-error;
+	}
+
+	&::after {
+		color: govuk-colour("black");
+	}
+}

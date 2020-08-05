@@ -1,0 +1,44 @@
+.lite-currency-input {
+	position: relative;
+
+	&:focus-within .lite-currency-input__symbol {
+		border-width: 4px;
+	}
+
+	&:focus-within .lite-currency--error {
+		background-color: $govuk-input-border-colour;
+		border-color: $govuk-input-border-colour;
+	}
+}
+
+.lite-currency-input__symbol {
+	@include govuk-font(19);
+	position: absolute;
+	left: 0;
+	top: 0;
+	padding: 8px 10px;
+	height: 40px;
+	box-sizing: border-box;
+	background-color: govuk-colour('mid-grey');
+	border: $govuk-border-width-form-element solid $govuk-input-border-colour;
+	width: 40px;
+	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.lite-currency--error {
+	background-color: $govuk-error-colour;
+	color: govuk-colour("white");
+	border-color: $govuk-error-colour;
+	font-weight: bold;
+}
+
+.lite-currency-input input {
+	padding-left: govuk-spacing(8) - 4px;
+}
+
+.lite-currency-input__input--right-aligned {
+	text-align: right;
+}
