@@ -1,0 +1,68 @@
+{% extends 'layouts/base.html' %}
+
+{% block back_link %}{% endblock %}
+
+{% block body %}
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">
+				{% block title %}
+					{% lcs 'queues.QueuesList.TITLE' %}
+				{% endblock %}
+			</h1>
+		</div>
+		<div class="lite-app-bar__controls">
+			{% govuk_link_button id='add-a-queue' text='queues.QueuesList.CREATE_QUEUE_BUTTON' url='queues:add' %}
+		</div>
+	</div>
+
+	{% include 'filters.html' %}
+
+	{% if data.results %}
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="col">{% lcs 'queues.QueuesList.Table.NAME' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'queues.QueuesList.Table.TEAM' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'queues.QueuesList.Table.COUNTERSIGNING_QUEUE' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'queues.QueuesList.Table.ACTIONS' %}</th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				{% for queue in data.results %}
+					<tr class="govuk-table__row" id="{{ queue.name }}">
+						<td class="govuk-table__cell">
+							{{ queue.name|highlight_text:name }}
+						</td>
+						<td class="govuk-table__cell">
+							{{ queue.team.name }}
+						</td>
+						<td class="govuk-table__cell">
+							{{ queue.countersigning_queue.name|default_na }}
+						</td>
+						<td class="govuk-table__cell">
+							<ul class="govuk-table__cell__actions-list">
+								{% if user_data.user.team.id == queue.team.id %}
+									<li class="govuk-table__cell__actions-list-item">
+										<a href="{% url 'queues:cases' queue.id %}" class="govuk-link govuk-link--no-visited-state">
+											{% lcs 'queues.QueuesList.Table.VIEW_CASES' %}
+										</a>
+									</li>
+									<li class="govuk-table__cell__actions-list-item">
+										<a href="{% url 'queues:edit' queue.id %}" class="govuk-link govuk-link--no-visited-state">
+											{% lcs 'queues.QueuesList.Table.EDIT' %} <span class="govuk-visually-hidden">{{ queue.name }}</span>
+										</a>
+									</li>
+								{% endif %}
+							</ul>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+		{% pagination %}
+	{% else %}
+		{% include 'includes/notice.html' with text='queues.QueuesList.NO_CONTENT_NOTICE' %}
+	{% endif %}
+{% endblock %}

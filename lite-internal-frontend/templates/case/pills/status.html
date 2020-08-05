@@ -1,0 +1,13 @@
+{% if activity and activity|latest_status_change %}
+	<div class="app-menu__header">
+		{% lcs 'cases.CasePage.Pills.Status.TITLE' %}
+	</div>
+	<div class="govuk-!-margin-left-3 govuk-!-margin-right-3">
+		<p class="govuk-body govuk-!-margin-top-1">{{ activity|latest_status_change|get:'user'|get:'first_name' }} {{ activity|latest_status_change|get:'user'|get:'last_name' }} {{ activity|latest_status_change|get:'text' }}</p>
+		<p class="govuk-hint">{{ activity|latest_status_change|get:'created_at'|str_date }}</p>
+	</div>
+{% else %}
+	<p class="govuk-hint govuk-!-margin-left-3 govuk-!-margin-right-3">
+		{% lcs 'cases.CasePage.Pills.Status.NOTICE' %}
+	</p>
+{% endif %}

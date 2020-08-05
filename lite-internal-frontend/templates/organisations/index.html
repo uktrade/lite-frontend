@@ -1,0 +1,85 @@
+{% extends 'layouts/base.html' %}
+
+{% block back_link %}{% endblock %}
+
+{% block body %}
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">
+				{% block title %}
+					{% lcs "organisations.OrganisationsPage.TITLE" %}
+				{% endblock %}
+			</h1>
+		</div>
+		<div class="lite-app-bar__controls">
+			{% govuk_link_button id='register-hmrc-organisation' text='organisations.OrganisationsPage.ADD_HMRC_BUTTON' url='organisations:register_hmrc' %}
+			{% govuk_link_button id='register-organisation' text='organisations.OrganisationsPage.ADD_BUTTON' url='organisations:register' %}
+		</div>
+	</div>
+
+	<div class="lite-tabs__container">
+		<div class="lite-tabs">
+			<a href="?status=active" id="active" class="lite-tabs__tab {% if tab == "active" %}lite-tabs__tab--selected{% endif %}">{% lcs "organisations.OrganisationsPage.Tabs.ACTIVE" %}</a>
+			<a href="?status=in_review" id="in_review" class="lite-tabs__tab {% if tab == "in_review" %}lite-tabs__tab--selected{% endif %}">{% lcs "organisations.OrganisationsPage.Tabs.IN_REVIEW" %} {% if in_review_total %}<div class="lite-notification-bubble">{{ in_review_total }}</div>{% endif %}</a>
+			<a href="?status=rejected" id="rejected" class="lite-tabs__tab {% if tab == "rejected" %}lite-tabs__tab--selected{% endif %}">{% lcs "organisations.OrganisationsPage.Tabs.REJECTED" %}</a>
+		</div>
+	</div>
+
+	{% include "filters.html" %}
+
+	{% if data.results %}
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="col">{% lcs "organisations.OrganisationsPage.Table.NAME" %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs "organisations.OrganisationsPage.Table.TYPE" %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs "organisations.OrganisationsPage.Table.EORI_NUMBER" %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs "organisations.OrganisationsPage.Table.SIC_NUMBER" %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs "organisations.OrganisationsPage.Table.VAT_NUMBER" %}</th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				{% for organisation in data.results %}
+					<tr class="govuk-table__row" id="{{ organisation.id }}">
+						<td class="govuk-table__cell" id="name">
+							<span class="govuk-table__header" aria-hidden="true">
+								{% lcs "organisations.OrganisationsPage.Table.NAME" %}
+							</span>
+							<a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisations:organisation' organisation.id %}">
+								{{ organisation.name|highlight_text:search_term }}
+							</a>
+						</td>
+						<td class="govuk-table__cell" id="type">
+							<span class="govuk-table__header" aria-hidden="true">
+								{% lcs "organisations.OrganisationsPage.Table.TYPE" %}
+							</span>
+							{{ organisation.type.value }}
+						</td>
+						<td class="govuk-table__cell" id="eori-number">
+							<span class="govuk-table__header" aria-hidden="true">
+								{% lcs "organisations.OrganisationsPage.Table.EORI_NUMBER" %}
+							</span>
+							{{ organisation.eori_number|default_na }}
+						</td>
+						<td class="govuk-table__cell" id="sic-number">
+							<span class="govuk-table__header" aria-hidden="true">
+								{% lcs "organisations.OrganisationsPage.Table.SIC_NUMBER" %}
+							</span>
+							{{ organisation.sic_number|default_na }}
+						</td>
+						<td class="govuk-table__cell" id="vat-number">
+							<span class="govuk-table__header" aria-hidden="true">
+								{% lcs "organisations.OrganisationsPage.Table.VAT_NUMBER" %}
+							</span>
+							{{ organisation.vat_number|default_na }}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+		{% pagination %}
+	{% else %}
+		{% include "includes/notice.html" with text="organisations.OrganisationsPage.ACTIVE_FILTER_NO_ORGANISATIONS" %}
+	{% endif %}
+{% endblock %}

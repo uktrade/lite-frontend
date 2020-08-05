@@ -1,0 +1,51 @@
+{% load static %}
+
+<div class="govuk-grid-row">
+	<form action="{% url 'cases:case_notes' queue.id case.id %}" method="post" onSubmit="return confirmVisible()" class="govuk-grid-column-one-half">
+		{% csrf_token %}
+		<label class="govuk-label" for="input-case-note">
+			{% lcs 'cases.CasePage.CaseNotesAndTimeline.ADD_CASE_NOTE_LABEL' %}
+		</label>
+		<p id="input-case-note-warning" class="govuk-hint govuk-character-count__message" aria-live="polite">
+			{% lcs 'cases.CasePage.CaseNotesAndTimeline.ADD_CASE_NOTE_DESCRIPTION' %}
+		</p>
+		<div class="lite-case-note__container">
+			<textarea id="input-case-note" name="text" cols="80" class="lite-case-note__textarea"></textarea>
+			<div class="lite-case-note__controls">
+				<div class="govuk-checkboxes govuk-checkboxes--small">
+					<div class="govuk-checkboxes__item">
+						<input class="govuk-checkboxes__input" type="checkbox" id="is_visible_to_exporter" name="is_visible_to_exporter" value="True">
+						<label class="govuk-label govuk-checkboxes__label" for="is_visible_to_exporter">
+							{% lcs 'cases.CasePage.CaseNotesAndTimeline.MAKE_VISIBLE_TO_EXPORTER' %}
+						</label>
+					</div>
+				</div>
+				<div class="lite-case-note__controls-buttons">
+					<a id="link-case-note-cancel" href="{% url 'cases:case' queue.id case.id %}" class="govuk-link govuk-link--no-visited-state" type="button" draggable="false">
+						{% lcs 'cases.CasePage.CaseNotesAndTimeline.CANCEL' %}
+					</a>
+					<button id="button-case-note-post" class="govuk-button" type="submit">
+						{% lcs 'cases.CasePage.CaseNotesAndTimeline.POST_NOTE' %}
+					</button>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
+
+{% include "filters.html" %}
+
+{% include "includes/audit-trail.html" %}
+
+<script src="{% static 'javascripts/helpers.js' %}"></script>
+<script src="{% static 'javascripts/pluralize.js' %}"></script>
+<script src="{% static 'javascripts/case-notes.js' %}"></script>
+<script nonce="{{ request.csp_nonce }}">
+	function confirmVisible() {
+		let is_visible_for_exporter = document.getElementById('is_visible_to_exporter')
+		if (is_visible_for_exporter.checked) {
+			return confirm("{% lcs 'cases.CasePage.CaseNotesAndTimeline.WARNING' %}")
+		}
+		return true;
+	}
+</script>

@@ -1,0 +1,119 @@
+{% extends 'layouts/base.html' %}
+
+{% load humanize %}
+
+{% block back_link %}
+	<a href="{% url 'applications:task_list' application.id %}" id="back-link" class="govuk-back-link">{% lcs "goods_types.OverviewPage.BACK" %}</a>
+{% endblock %}
+
+{% block body %}
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">
+				{% block title %}{% lcs "goods_types.OverviewPage.TITLE" %}{% endblock%}
+			</h1>
+			{% if not are_goods_noneditable %}
+				{% if goods %}
+					<p class="govuk-body-m">You've added {{ goods|length|apnumber }} product{{ goods|pluralize }}.</p>
+				{% endif %}
+			{% endif %}
+		</div>
+		{% if application.status.key in 'applicant_editing,draft' %}
+			{% if not are_goods_noneditable %}
+			<div class="lite-app-bar__controls">
+				<a id="button-add-good" href="{% url 'applications:add_goods_type' application.id %}?next={% url 'applications:goods_types' application.id %}" role='button' draggable='false' class='govuk-button'>
+						{% if goods %}
+							{% lcs "goods_types.OverviewPage.ADD_ANOTHER_GOODS_TYPE_BUTTON" %}
+						{% else %}
+							{% lcs "goods_types.OverviewPage.ADD_GOODS_TYPE_BUTTON" %}
+						{% endif %}
+				</a>
+			</div>
+			{% endif %}
+		{% endif %}
+	</div>
+
+	{% if goods %}
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th scope="col" class="govuk-table__header">#</th>
+					<th scope="col" class="govuk-table__header govuk-!-width-one-half">{% lcs "goods_types.Variables.DESCRIPTION" %}</th>
+					{% if application.case_type.sub_type.key != 'hmrc' %}
+						<th scope="col" class="govuk-table__header">{% lcs "goods_types.Variables.CONTROL_LIST_ENTRY" %}</th>
+						{% if not are_goods_noneditable %}
+							<th scope="col" class="govuk-table__header">{% lcs "goods_types.Variables.INCORPORATED" %}</th>
+						{% endif %}
+					{% endif %}
+					{% if application.case_type.sub_type.key == 'hmrc' %}
+						<th scope="col" class="govuk-table__header">{% lcs "goods_types.Document.TITLE" %}</th>
+					{% endif %}
+					<th scope="col" class="govuk-table__header"></th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				{% for good_on_application in goods %}
+					<tr class="govuk-table__row">
+						<td class="govuk-table__cell govuk-table__cell--line-number">
+							{{ forloop.counter }}.
+						</td>
+						<td class="govuk-table__cell">
+							<span class="govuk-table__header">{% lcs "goods_types.Variables.DESCRIPTION" %}</span>
+							<span data-max-length="200">{{ good_on_application.description }}</span>
+						</td>
+						{% if application.case_type.sub_type.key != 'hmrc' %}
+							<td class="govuk-table__cell">
+								<span class="govuk-table__header">Control list entries</span>
+								{% include 'includes/control-list-entries.html' with control_list_entries=good_on_application.control_list_entries %}
+							</td>
+							{% if not are_goods_noneditable %}
+								<td class="govuk-table__cell">
+									<span class="govuk-table__header">{% lcs "goods_types.Variables.INCORPORATED" %}</span>
+									{{ good_on_application.is_good_incorporated|friendly_boolean }}
+								</td>
+							{% endif %}
+						{% endif %}
+						{% if application.case_type.sub_type.key == 'hmrc' %}
+							<td class="govuk-table__cell">
+								<span class="govuk-table__header">{% lcs "goods_types.Document.TITLE" %}</span>
+								{% if good_on_application.document %}
+									{%  if good_on_application.document.safe == True %}
+										<a href="{% url 'applications:goods_type_download_document' application.id good_on_application.id %}" id="document_download" class='govuk-link govuk-link--no-visited-state'>
+											{% lcs "goods_types.Document.DOWNLOAD" %}
+										</a>
+										<br/>
+									{% elif good_on_application.document.safe == False %}
+										{% lcs "goods_types.Document.VIRUS" %}
+										<br/>
+										<a href="{% url 'applications:goods_type_attach_document' application.id good_on_application.id %}" id="attach_doc" class='govuk-link govuk-link--no-visited-state'>
+											{% lcs "goods_types.Document.ATTACH" %}
+										</a>
+										<br/>
+										<a href="{% url 'applications:goods_type_delete_document' application.id good_on_application.id %}" id="document_delete" class='govuk-link govuk-link--no-visited-state'>
+											{% lcs "goods_types.Document.DELETE" %}
+										</a>
+									{% else %}
+										{% lcs "goods_types.Document.PROCESSING" %}
+									{% endif %}
+								{% else %}
+									<a href="{% url 'applications:goods_type_attach_document' application.id good_on_application.id %}" id="attach_doc" class='govuk-link govuk-link--no-visited-state'>
+										{% lcs "goods_types.Document.ATTACH" %}
+									</a>
+								{% endif %}
+							</td>
+						{% endif %}
+						{% if not are_goods_noneditable %}
+							<td class="govuk-table__cell govuk-table__cell--numeric" scope="row">
+								<a class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:remove_goods_type' application.id good_on_application.id %}">
+									<span>{% lcs "goods_types.Variables.REMOVE_GOODS_TYPE" %}</span>
+								</a>
+							</td>
+						{% endif %}
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		{% include "includes/notice.html" with text="goods.GoodsList.Overview.NO_GOODS" %}
+	{% endif %}
+{% endblock %}

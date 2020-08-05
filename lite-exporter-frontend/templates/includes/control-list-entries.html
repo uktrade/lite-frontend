@@ -1,0 +1,9 @@
+{% with control_list_entry as control_list_entry %}
+	<ol class="lite-inline-list">
+		{% for item in control_list_entries %}
+			<li><span data-definition-title="{{ item.rating }}" data-definition-text="{{ item.text }}">{{ item.rating|highlight_text:control_list_entry|default:"" }}</span>{% if not forloop.last %}, {% endif %}</li>
+		{% empty %}
+			{{ None|default_na }}
+		{% endfor %}
+	</ol>
+{% endwith %}

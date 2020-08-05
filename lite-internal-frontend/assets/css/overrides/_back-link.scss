@@ -1,0 +1,22 @@
+.app-back-link-container {
+	position: relative;
+
+	.govuk-back-link {
+		color: govuk-colour("white")!important;
+
+		&::before {
+			border-color: currentColor;
+		}
+	}
+
+	&::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 50%;
+		width: 100vw;
+		transform: translateX(-50%);
+		bottom: 0;
+		background: govuk-shade($govuk-brand-colour, 20%);
+	}
+}

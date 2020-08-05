@@ -1,0 +1,57 @@
+{% extends 'layouts/base.html' %}
+
+{% load static %}
+
+{% block back_link %}
+	<a href="{% url 'letter_templates:letter_template' letter_template.id %}" class="govuk-back-link">Back to {{ letter_template.name }}</a>
+{% endblock %}
+
+{% block body %}
+	<legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+		<h1 class="govuk-fieldset__heading">
+			{% block title %}{% lcs 'LetterTemplates.EditParagraph.TITLE' %}{% endblock %}
+		</h1>
+	</legend>
+
+	<span class="govuk-hint">
+		{% lcs 'LetterTemplates.EditParagraph.HINT' %}
+	</span>
+
+	<form method="post">
+		{% csrf_token %}
+		<div>
+			<button class="lite-button--link" type="submit" name="action" id="add_paragraph" value="add_letter_paragraph">
+				{% lcs 'LetterTemplates.EditParagraph.ADD_LINK' %}
+			</button>
+		</div>
+		<br>
+
+		<div id="paragraphlist">
+			{% for letter_paragraph in letter_paragraphs %}
+				<div>
+					<div class="app-letter-generator__picklist-item--paragraph-box" data-id="{{ letter_paragraph.id }}">
+						{% hidden_field 'letter_paragraphs' letter_paragraph.id %}
+						<span class="app-letter-generator__picklist-item-text">
+							{{ letter_paragraph.name }}
+							<button type="submit" name="action" value="delete.{{ letter_paragraph.id }}">
+								<span class="govuk-visually-hidden">{% lcs 'LetterTemplates.OrderParagraph.REMOVE_BUTTON' %}</span>
+								✕
+							</button>
+						</span>
+					</div>
+					<div class="app-letter-generator__picklist-item" id="paragraph-text">
+						{{ letter_paragraph.text }}
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+		<button id="done" class="govuk-button" name="action" value="edit" type="submit">
+			{% lcs 'LetterTemplates.EditParagraph.SAVE_BUTTON' %}
+		</button>
+	</form>
+{% endblock %}
+
+{% block javascript %}
+	<script src="{% static 'javascripts/sortable.min.js' %}"></script>
+	<script src="{% static 'javascripts/letter-template-generator.js' %}"></script>
+{% endblock %}

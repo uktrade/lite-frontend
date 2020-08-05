@@ -1,0 +1,277 @@
+<dl class="app-case__summary-list">
+	{% if case.case_type.reference.key == "comp_v" %}
+		<div class="app-case__summary-list__row">
+			<dt class="app-case__summary-list__key">
+				{% lcs 'cases.CasePage.DetailsTab.ADMINISTRATIVE_CENTRE' %}
+			</dt>
+			<dd class="app-case__summary-list__value">
+				<a class="govuk-link govuk-link--no-visited-state" id="site_case" href="{% url 'cases:case' queue.id case.data.site_case_id %}">
+					{{ case.data.site_case_reference_code }}
+				</a>
+			</dd>
+		</div>
+	{% endif %}
+	{% if case.data.name and not case.case_type.reference.key in "comp_c,comp_v" %}
+		<div class="app-case__summary-list__row">
+			<dt class="app-case__summary-list__key">
+				{% lcs 'cases.CasePage.DetailsTab.EXPORTER_REFERENCE' %}
+			</dt>
+			<dd class="app-case__summary-list__value">
+				{{ case.data.name }}
+			</dd>
+		</div>
+	{% endif %}
+	{% if case.case_type.reference.key in "comp_c,comp_v" %}
+		<div class="app-case__summary-list__row">
+			<dt class="app-case__summary-list__key">
+				{% lcs 'cases.CasePage.DetailsTab.ADDRESS' %}
+			</dt>
+			<dd class="app-case__summary-list__value">
+				{{ case.data.site_name }}<br>
+				{{ case.data|get_address }}
+			</dd>
+		</div>
+	{% endif %}
+	{% if case.copy_of %}
+		<div class="app-case__summary-list__row">
+			<dt class="app-case__summary-list__key">
+				{% lcs 'cases.CasePage.DetailsTab.COPY_OF' %}
+			</dt>
+			<dd class="app-case__summary-list__value">
+				<a class="govuk-link govuk-link--no-visited-state" id="link-case-copy-of" href="{% url 'cases:case' queue.id case.copy_of.id %}">{{ case.copy_of.reference_code }}</a>
+			</dd>
+		</div>
+	{% endif %}
+	{% if case.data.hmrc_organisation %}
+		<div class="app-case__summary-list__row">
+			<dt class="app-case__summary-list__key">
+				{% lcs 'cases.CasePage.DetailsTab.RAISED_BY' %}
+			</dt>
+			<dd class="app-case__summary-list__value">
+				<a id="hmrc_organisation" class="govuk-link govuk-link--no-visited-state" href="{% url 'organisations:organisation' case.data.hmrc_organisation.id %}?return_to={{ CURRENT_PATH }}&return_to_text={{ case.reference_code }}">{{ case.data.hmrc_organisation.name }}</a>
+			</dd>
+		</div>
+	{% endif %}
+	{% if case.data.export_type %}
+		<div class="app-case__summary-list__row">
+			<dt class="app-case__summary-list__key">
+				{% lcs 'cases.CasePage.DetailsTab.EXPORT_TYPE' %}
+			</dt>
+			<dd class="app-case__summary-list__value">
+				{{ case.data.export_type.value }}
+			</dd>
+		</div>
+	{% endif %}
+	{% if case.data.submitted_at and not case.case_type.reference.key in "comp_c,comp_v" %}
+		<div class="app-case__summary-list__row">
+			<dt class="app-case__summary-list__key">
+				{% lcs 'cases.CasePage.DetailsTab.SUBMITTED_AT' %}
+			</dt>
+			<dd class="app-case__summary-list__value">
+				{{ case.data.submitted_at|str_date }}
+			</dd>
+		</div>
+	{% endif %}
+	{% if case.data.submitted_by and not case.case_type.reference.key in "comp_c,comp_v" %}
+		<div class="app-case__summary-list__row">
+			<dt class="app-case__summary-list__key">
+				{% lcs 'cases.CasePage.DetailsTab.SUBMITTED_BY' %}
+			</dt>
+			<dd class="app-case__summary-list__value">
+				{{ case.data.submitted_by }}
+			</dd>
+		</div>
+	{% endif %}
+	<div class="app-case__summary-list__row">
+		<dt class="app-case__summary-list__key">
+			{% lcs 'cases.CasePage.DetailsTab.STATUS' %}
+		</dt>
+		<dd class="app-case__summary-list__value">
+			{{ case.data.status.value }}
+		</dd>
+		<dd class="app-case__summary-list__actions">
+			{% if permissible_statuses %}
+				{% if not is_terminal or 'REOPEN_CLOSED_CASES' in permissions %}
+					<a id="link-change-status" class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:manage' queue.id case.id %}">
+						{% lcs 'generic.CHANGE' %}
+					</a>
+				{% endif %}
+			{% endif %}
+		</dd>
+	</div>
+	<div class="app-case__summary-list__row">
+		<dt class="app-case__summary-list__key">
+			{% lcs 'cases.CasePage.DetailsTab.ASSIGNED_QUEUES' %}
+		</dt>
+		<dd class="app-case__summary-list__value">
+			{% if case.queue_names %}
+				<ol id="assigned-queues" class="govuk-list govuk-!-margin-0">
+					{% for queue_name in case.queue_names %}
+						<li>{{ queue_name }}</li>
+					{% endfor %}
+				</ol>
+			{% else %}
+				<span class="govuk-hint govuk-!-margin-0">
+					{% lcs 'cases.CasePage.DetailsTab.NO_QUEUES_ASSIGNED' %}
+				</span>
+			{% endif %}
+		</dd>
+		<dd class="app-case__summary-list__actions">
+			<a id="link-change-queues" class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:move' queue.id case.id %}">
+				{% lcs 'generic.CHANGE' %}
+			</a>
+		</dd>
+	</div>
+	{% if not case.case_type.reference.key in "comp_c,comp_v" %}
+		<div class="app-case__summary-list__row">
+			<dt class="app-case__summary-list__key">
+				{% lcs 'cases.CasePage.DetailsTab.TYPE' %}
+			</dt>
+			<dd class="app-case__summary-list__value">
+				{{ case.case_type.reference.value }}
+			</dd>
+		</div>
+	{% endif %}
+	{% if case.data.updated_at and not case.case_type.reference.key in "comp_c,comp_v" %}
+		<div class="app-case__summary-list__row">
+			<dt class="app-case__summary-list__key">
+				{% lcs 'cases.CasePage.DetailsTab.LAST_UPDATED' %}
+			</dt>
+			<dd class="app-case__summary-list__value">
+				{{ case.data.updated_at|str_date }}
+			</dd>
+		</div>
+	{% endif %}
+	<div class="app-case__summary-list__row">
+		<dt class="app-case__summary-list__key">
+			{% if case.case_type.reference.key in "comp_c,comp_v" %}
+				{% lcs 'cases.CasePage.DetailsTab.INSPECTOR' %}
+			{% else %}
+				{% lcs 'cases.CasePage.DetailsTab.CASE_OFFICER' %}
+			{% endif %}
+		</dt>
+		<dd class="app-case__summary-list__value">
+			{% if case.case_officer %}
+				<a id="link-case-officer" class="govuk-link govuk-link--no-visited-state" href="{% url 'users:user' case.case_officer.id %}?return_to={{ CURRENT_PATH }}&return_to_text={{ case.reference_code }}">
+					{{ case.case_officer|username }}
+				</a>
+			{% else %}
+				<span class="govuk-hint govuk-!-margin-0">
+					{% lcs 'cases.CasePage.DetailsTab.NO_CASE_OFFICER' %}
+				</span>
+			{% endif %}
+		</dd>
+		<dd class="app-case__summary-list__actions">
+			{% if not is_terminal %}
+				<a id="link-change-case-officer" class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:case_officer' queue.id case.id %}">
+					{% lcs 'generic.CHANGE' %}
+				</a>
+			{% endif %}
+		</dd>
+	</div>
+	<div class="app-case__summary-list__row">
+		<dt class="app-case__summary-list__key">
+			{% lcs 'cases.CasePage.DetailsTab.ASSIGNED_USERS' %}
+		</dt>
+		<dd id="assigned-users" class="app-case__summary-list__value">
+			{% for queue_name, users in case.assigned_users.items %}
+				<span class="govuk-label">{{ queue_name }}</span>
+				<ol class="govuk-list govuk-!-margin-0">
+					{% for user in users %}
+						<li>
+							<a href="{% url 'users:user' user.id %}?return_to={{ CURRENT_PATH }}&return_to_text={{ case.reference_code }}" class="govuk-link govuk-link--no-visited-state">{{ user|username }}</a>
+						</li>
+					{% endfor %}
+				</ol>
+			{% empty %}
+				<span class="govuk-hint govuk-!-margin-0">
+					{% lcs 'cases.CasePage.DetailsTab.NO_USERS_ASSIGNED' %}
+				</span>
+			{% endfor %}
+		</dd>
+		<dd class="app-case__summary-list__actions">
+			<a id="link-change-assigned-users" class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:assign_user' queue.id case.id %}">
+				{% lcs 'generic.CHANGE' %}
+			</a>
+		</dd>
+	</div>
+	<div class="app-case__summary-list__row">
+		<dt class="app-case__summary-list__key">
+			{% lcs 'cases.CasePage.DetailsTab.NEXT_REVIEW_DATE' %}
+		</dt>
+		<dd class="app-case__summary-list__value" id="next-review-date">
+			{% if case.next_review_date %}
+				{{ case.next_review_date|str_date_only }}
+			{% else %}
+				<span class="govuk-hint govuk-!-margin-0">
+					{% lcs 'cases.CasePage.DetailsTab.NO_NEXT_REVIEW_DATE' %}
+				</span>
+			{% endif %}
+		</dd>
+		<dd class="app-case__summary-list__actions">
+			{% if not is_terminal %}
+				<a id="link-change-review-date" class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:review_date' queue.id case.id %}">
+					{% lcs 'generic.CHANGE' %}
+				</a>
+			{% endif %}
+		</dd>
+	</div>
+	{% if case.data.case_type.sub_type.key == 'f680_clearance' %}
+		<div class="app-case__summary-list__row">
+			<dt class="app-case__summary-list__key">
+				{% lcs 'cases.CasePage.DetailsTab.SECURITY_GRADING' %}
+			</dt>
+			<dd class="app-case__summary-list__value">
+				{{ case.data.clearance_level.value }}
+			</dd>
+		</div>
+		<div class="app-case__summary-list__row">
+			<dt class="app-case__summary-list__key">
+				{% lcs 'cases.CasePage.DetailsTab.CLEARANCE_TYPES' %}
+			</dt>
+			<dd class="app-case__summary-list__value">
+				{% if case.data.types %}
+					<ol class="govuk-list govuk-!-margin-0">
+						{% for clearance_type in case.data.types %}
+							<li>{{ clearance_type.name.value|default_na }}</li>
+						{% endfor %}
+					</ol>
+				{% endif %}
+			</dd>
+		</div>
+	{% endif %}
+	{% if case.data.goodstype_category %}
+		<div class="app-case__summary-list__row">
+			<dt class="app-case__summary-list__key">
+				{% lcs 'cases.CasePage.DetailsTab.GOODS_CATEGORY' %}
+			</dt>
+			<dd class="app-case__summary-list__value">
+				{{ case.data.goodstype_category.value }}
+			</dd>
+		</div>
+	{% endif %}
+	{% if case.data.trade_control_activity and case.case_type.reference.key == "oicl" or  case.case_type.reference.key == "sicl" %}
+		<div class="app-case__summary-list__row">
+			<dt class="app-case__summary-list__key">
+				{% lcs 'cases.CasePage.DetailsTab.TRADE_CONTROL_ACTIVITY' %}
+			</dt>
+			<dd class="app-case__summary-list__value">
+				{{ case.data.trade_control_activity.value }}
+			</dd>
+		</div>
+	{% endif %}
+	{% if case.data.trade_control_product_categories %}
+		<div class="app-case__summary-list__row">
+			<dt class="app-case__summary-list__key">
+				{% lcs 'cases.CasePage.DetailsTab.TRADE_CONTROL_ACTIVITY_CATEGORIES' %}
+			</dt>
+			<dd class="app-case__summary-list__value">
+				<ol class="govuk-list govuk-!-margin-0">
+					{% for category in case.data.trade_control_product_categories %}
+						<li>{{ category.value }}</li>
+					{% endfor %}
+				</ol>
+			</dd>
+		</div>
+	{% endif %}
+</dl>

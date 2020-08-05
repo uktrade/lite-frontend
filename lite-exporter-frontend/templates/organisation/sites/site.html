@@ -1,0 +1,195 @@
+{% extends 'layouts/two-pane.html' %}
+
+{% block back_link %}
+	<div class="govuk-breadcrumbs">
+		<ol class="govuk-breadcrumbs__list">
+			<li class="govuk-breadcrumbs__list-item">
+				<a class="govuk-breadcrumbs__link" href="/">{% lcs 'hub.ACCOUNT_HOME' %}</a>
+			</li>
+			<li class="govuk-breadcrumbs__list-item">
+				<a class="govuk-breadcrumbs__link" href="{% url 'organisation:sites:sites' %}">{% lcs 'core.HubPage.ORGANISATION' %}</a>
+			</li>
+			<li class="govuk-breadcrumbs__list-item">
+				{{ site.name }}
+			</li>
+		</ol>
+	</div>
+{% endblock %}
+
+{% block full_width %}
+	{% if site.is_used_on_application %}
+		<div class="lite-info-bar lite-info-bar--no-animation">
+			{% lcs "sites.SitePage.SummaryList.SITE_ALREADY_USED_ON_APPLICATION_NOTICE" %}
+		</div>
+	{% endif %}
+	<h1 class="govuk-heading-xl">
+		{% block title %}
+			{{ site.name }}
+		{% endblock %}
+	</h1>
+{% endblock %}
+
+{% block two_thirds %}
+	{% if site.id == organisation.primary_site.id %}
+		<div class="govuk-!-margin-bottom-8">
+			<span class="govuk-inset-text">{% lcs "sites.SitePage.PRIMARY_SITE_DETAIL" %}</span>
+		</div>
+	{% endif %}
+
+	<dl class="govuk-summary-list govuk-summary-list--no-border">
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs "sites.SitePage.SummaryList.NAME" %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ site.name }}
+			</dd>
+			{% if not site.is_used_on_application %}
+				<dd class="govuk-summary-list__actions">
+					<a id="link-change-name" href="{% url 'organisation:sites:edit_name' site.id %}#name" class="govuk-link govuk-link--no-visited-state">
+						{% lcs 'generic.CHANGE' %}
+						<span class="govuk-visually-hidden">{% lcs "sites.SitePage.SummaryList.NAME" %}</span>
+					</a>
+				</dd>
+			{% endif %}
+		</div>
+		{% if site.address.address_line_1 %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs "generic.Address.ADDRESS_LINE_1" %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ site.address.address_line_1 }}
+				</dd>
+				<dd class="govuk-summary-list__actions"></dd>
+			</div>
+			{% if site.address.address_line_2 %}
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key"></dt>
+					<dd class="govuk-summary-list__value">
+						{{ site.address.address_line_2 }}
+					</dd>
+				</div>
+			{% endif %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs "generic.Address.TOWN" %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ site.address.city }}
+				</dd>
+			</div>
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs "generic.Address.COUNTY" %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ site.address.region }}
+				</dd>
+			</div>
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs "generic.Address.POSTAL_CODE" %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ site.address.postcode }}
+				</dd>
+			</div>
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs "generic.Address.COUNTRY" %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ site.address.country.name }}
+				</dd>
+			</div>
+		{% else %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs "generic.Address.ADDRESS" %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ site.address.address }}
+				</dd>
+			</div>
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs "generic.Address.COUNTRY" %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ site.address.country.name }}
+				</dd>
+			</div>
+		{% endif %}
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs "sites.SitePage.SummaryList.SITE" %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ site.records_located_at.name|default_na  }}
+			</dd>
+			{% if not site.is_used_on_application %}
+				<dd class="govuk-summary-list__actions">
+					<a id="link-change_site_records_location" href="{% url 'organisation:sites:edit_site_records_location' site.id %}" class="govuk-link govuk-link--no-visited-state">
+						{% lcs 'generic.CHANGE' %}
+						<span class="govuk-visually-hidden">{% lcs "sites.SitePage.SummaryList.NAME" %}</span>
+					</a>
+				</dd>
+			{% endif %}
+		</div>
+	</dl>
+
+	<hr class="lite-horizontal-separator">
+
+	<h2 class="govuk-heading-m">{% lcs "sites.SitePage.MEMBERS" %}</h2>
+	<dl class="govuk-summary-list govuk-summary-list--no-border">
+		{% for user in site.users %}
+			<div class="govuk-summary-list__row">
+				<dd class="govuk-summary-list__key">
+					{% if user.first_name %}
+						<span class="govuk-!-font-weight-bold">{{ user.first_name }} {{ user.last_name }}</span>
+					{% else %}
+						<strong class="govuk-tag govuk-tag--blue">
+							{% lcs 'users.UsersPage.USER_PENDING' %}
+						</strong>
+					{% endif %}
+				</dd>
+				<dd class="govuk-summary-list__value govuk-hint">
+					{{ user.email }}
+				</dd>
+				<dd class="govuk-summary-list__actions">
+					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisation:members:user' user.id %}?return_to={{ request.path }}">
+						{% lcs 'generic.VIEW' %} <span class="govuk-visually-hidden">{% if user.first_name %}{{ user.first_name }} {{ user.last_name }}'s{% else %}{{ user.email }}{% endif %} profile</span>
+					</a>
+				</dd>
+			</div>
+		{% endfor %}
+	</dl>
+
+	<hr class="lite-horizontal-separator">
+
+	<h2 class="govuk-heading-m">{% lcs "sites.SitePage.ADMIN_MEMBERS" %}</h2>
+	<dl class="govuk-summary-list govuk-summary-list--no-border">
+		{% for user in site.admin_users %}
+			<div class="govuk-summary-list__row">
+				<dd class="govuk-summary-list__key">
+					{% if user.first_name %}
+						<span class="govuk-!-font-weight-bold">{{ user.first_name }} {{ user.last_name }}</span>
+					{% else %}
+						<strong class="govuk-tag govuk-tag--blue">
+							{% lcs 'users.UsersPage.USER_PENDING' %}
+						</strong>
+					{% endif %}
+				</dd>
+				<dd class="govuk-summary-list__value govuk-hint">
+					{{ user.email }}
+				</dd>
+				<dd class="govuk-summary-list__actions">
+					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisation:members:user' user.id %}?return_to={{ request.path }}">
+						{% lcs 'generic.VIEW' %} <span class="govuk-visually-hidden">{% if user.first_name %}{{ user.first_name }} {{ user.last_name }}'s{% else %}{{ user.email }}{% endif %} profile</span>
+					</a>
+				</dd>
+			</div>
+		{% endfor %}
+	</dl>
+{% endblock %}

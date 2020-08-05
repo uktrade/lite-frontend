@@ -1,0 +1,3 @@
+This file #2 is used for testing document upload functionality. It serves no other purpose.
+
+This file does NOT contain a virus. The eicar.txt file, if it exists, does.

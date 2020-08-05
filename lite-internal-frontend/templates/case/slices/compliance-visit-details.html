@@ -1,0 +1,164 @@
+<h2 class="govuk-heading-m">
+	{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.VisitReportDetails.TITLE' %}
+	<a class="govuk-link govuk-link--no-visited-state govuk-!-margin-left-6 govuk-!-font-size-19" href="{% url 'cases:visit_report' queue.id case.id %}" id="edit-visit-report-details">
+		{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.VisitReportDetails.EDIT' %}
+	</a>
+</h2>
+<dl class="app-case__summary-list">
+	<div class="app-case__summary-list__row">
+		<dt class="app-case__summary-list__key">
+			{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.VisitReportDetails.VISIT_TYPE' %}
+		</dt>
+		<dd class="app-case__summary-list__value" id="visit_type">
+			{{ case.data.visit_type.value|default:"Not set"}}
+		</dd>
+	</div>
+	<div class="app-case__summary-list__row">
+		<dt class="app-case__summary-list__key">
+			{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.VisitReportDetails.VISIT_DATE' %}
+		</dt>
+		<dd class="app-case__summary-list__value" id="visit_date">
+			{{ case.data.visit_date|str_date_only|default:"Not set"}}
+		</dd>
+	</div>
+	<div class="app-case__summary-list__row">
+		<dt class="app-case__summary-list__key">
+			{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.VisitReportDetails.OVERALL_RISK' %}
+		</dt>
+		<dd class="app-case__summary-list__value" id="overall_risk_value">
+			{{ case.data.overall_risk_value.value|default:"Not set"}}
+		</dd>
+	</div>
+	<div class="app-case__summary-list__row">
+		<dt class="app-case__summary-list__key">
+			{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.VisitReportDetails.LICENCE_RISK' %}
+		</dt>
+		<dd class="app-case__summary-list__value" id="licence_risk_value">
+			{{ case.data.licence_risk_value|default:"Not set"}}
+		</dd>
+	</div>
+</dl>
+<div class="app-case-separator"></div>
+
+<h2 class="govuk-heading-m">
+	{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.PeoplePresent.TITLE' %}
+	<a class="govuk-link govuk-link--no-visited-state govuk-!-margin-left-6 govuk-!-font-size-19" href="{% url 'cases:people_present' queue.id case.id %}" id="add-people-present">
+		{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.PeoplePresent.ADD' %}
+	</a>
+</h2>
+{% if case.data.people_present %}
+	<table class="govuk-table govuk-!-width-three-quarters">
+		<thead class="govuk-table__head">
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header" scope="col">{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.PeoplePresent.NAME' %}</th>
+				<th class="govuk-table__header" scope="col">{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.PeoplePresent.JOB_TITLE' %}</th>
+			</tr>
+		</thead>
+		<tbody class="govuk-table__body" id="people_present">
+			{% for person in case.data.people_present %}
+				<tr class="govuk-table__row">
+					<td class="govuk-table__cell" id="name">
+						<span class="govuk-table__header" aria-hidden="true">
+							{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.PeoplePresent.NAME' %}
+						</span>
+						{{ person.name }}
+					</td>
+					<td class="govuk-table__cell" id="type">
+						<span class="govuk-table__header" aria-hidden="true">
+							{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.PeoplePresent.JOB_TITLE' %}
+						</span>
+						{{ person.job_title }}
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% else %}
+	{% include "includes/notice.html" with text='cases.CasePage.DetailsTab.ComplianceVisitDetails.PeoplePresent.NO_PEOPLE_PRESENT' %}
+{% endif %}
+<div class="app-case-separator"></div>
+
+<h2 class="govuk-heading-m">
+	{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.Overview.TITLE' %}
+	<a class="govuk-link govuk-link--no-visited-state govuk-!-margin-left-6 govuk-!-font-size-19" href="{% url 'cases:overview' queue.id case.id %}" id="edit-overview">
+		{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.Overview.EDIT' %}
+	</a>
+</h2>
+<p class="govuk-body" id="overview">
+	{{ case.data.overview|default:"Not set" }}
+</p>
+<div class="app-case-separator"></div>
+
+<h2 class="govuk-heading-m">
+	{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.Inspection.TITLE' %}
+	<a class="govuk-link govuk-link--no-visited-state govuk-!-margin-left-6 govuk-!-font-size-19" href="{% url 'cases:inspection' queue.id case.id %}" id="edit-inspection">
+		{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.Inspection.EDIT' %}
+	</a>
+</h2>
+<p class="govuk-body" id="inspection">
+	{{ case.data.inspection|default:"Not set" }}
+</p>
+<div class="app-case-separator"></div>
+
+
+<h2 class="govuk-heading-m">
+	{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.ComplianceWithLicences.TITLE' %}
+	<a class="govuk-link govuk-link--no-visited-state govuk-!-margin-left-6 govuk-!-font-size-19" href="{% url 'cases:compliance_with_licences' queue.id case.id %}" id="edit-compliance-with-licences">
+		{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.ComplianceWithLicences.EDIT' %}
+	</a>
+</h2>
+<h3 class="govuk-heading-s">
+	{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.ComplianceWithLicences.OVERVIEW' %}
+</h3>
+<p class="govuk-body" id="compliance_overview">
+	{{ case.data.compliance_overview|default:"Not set" }}
+</p>
+
+<h3 class="govuk-heading-s">
+	{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.ComplianceWithLicences.RISK_VALUE' %}
+</h3>
+<p class="govuk-body" id="compliance_risk_value">
+	{{ case.data.compliance_risk_value.value|default:"Not set" }}
+</p>
+<div class="app-case-separator"></div>
+
+
+<h2 class="govuk-heading-m">
+	{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.KnowledgeOfIndividuals.TITLE' %}
+	<a class="govuk-link govuk-link--no-visited-state govuk-!-margin-left-6 govuk-!-font-size-19" href="{% url 'cases:knowledge_of_people' queue.id case.id %}" id="edit-knowledge-of-individuals">
+		{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.KnowledgeOfIndividuals.EDIT' %}
+	</a>
+</h2>
+<h3 class="govuk-heading-s">
+	{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.KnowledgeOfIndividuals.OVERVIEW' %}
+</h3>
+<p class="govuk-body" id="individuals_overview">
+	{{ case.data.individuals_overview|default:"Not set" }}
+</p>
+
+<h3 class="govuk-heading-s">
+	{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.KnowledgeOfIndividuals.RISK_VALUE' %}
+</h3>
+<p class="govuk-body" id="individuals_risk_value">
+	{{ case.data.individuals_risk_value.value|default:"Not set" }}
+</p>
+<div class="app-case-separator"></div>
+
+
+<h2 class="govuk-heading-m">
+	{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.KnowledgeOfControlledProducts.TITLE' %}
+	<a class="govuk-link govuk-link--no-visited-state govuk-!-margin-left-6 govuk-!-font-size-19" href="{% url 'cases:knowledge_of_products' queue.id case.id %}" id="edit-knowledge-of-products">
+		{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.KnowledgeOfControlledProducts.EDIT' %}
+	</a>
+</h2>
+<h3 class="govuk-heading-s">
+	{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.KnowledgeOfControlledProducts.OVERVIEW' %}
+</h3>
+<p class="govuk-body" id="products_overview">
+	{{ case.data.products_overview|default:"Not set" }}
+</p>
+
+<h3 class="govuk-heading-s">{% lcs 'cases.CasePage.DetailsTab.ComplianceVisitDetails.KnowledgeOfControlledProducts.RISK_VALUE' %}</h3>
+<p class="govuk-body" id="products_risk_value">
+	{{ case.data.products_risk_value.value|default:"Not set" }}
+</p>

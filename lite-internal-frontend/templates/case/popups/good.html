@@ -1,0 +1,155 @@
+{% extends 'layouts/popup.html' %}
+
+{% block body %}
+	<div class="lite-tabs__container">
+		<div class="lite-tabs">
+			<a href="#" id="tab-details" class="lite-tabs__tab lite-tabs__tab--selected">
+				Details
+			</a>
+		</div>
+	</div>
+	<div id="panes">
+		<div id="pane-details">
+			<h2 class="app-popup__heading">{% lcs 'goods.GoodsDetailSummary.CATEGORY' %}</h2>
+			<p class="app-popup__body" data-max-length="200">{{ good.item_category.value }}</p>
+
+			<h2 class="app-popup__heading">{% lcs "goods.GoodsDetailSummary.DESCRIPTION" %}</h2>
+			<p class="app-popup__body" data-max-length="200">{{ good.description }}</p>
+
+			<h2 class="app-popup__heading">{% lcs 'goods.GoodsDetailSummary.PART_NUMBER' %}</h2>
+			<p class="app-popup__body" data-max-length="200">{{ good.part_number|default_na }}</p>
+
+			<h2 class="app-popup__heading">{% lcs 'goods.GoodsDetailSummary.CLC' %}</h2>
+			<p class="app-popup__body" data-max-length="200">
+				{% if good.control_list_entries %}
+					{% for clc in good.control_list_entries  %}
+						{{ clc.rating }} {% if not forloop.last %}, {% endif %}
+					{% endfor %}
+				{% else %}
+					{{ good.control_list_entries|default_na }}
+				{% endif %}
+			</p>
+
+			<h2 class="app-popup__heading">{% lcs 'goods.GoodsDetailSummary.IS_GRADED' %}</h2>
+			<p class="app-popup__body" data-max-length="200">
+				{% if good.pv_grading_details %}
+					{% lcs 'goods.GoodsDetailSummary.PV_GRADING_YES' %}
+				{% else %}
+					{% lcs 'goods.GoodsDetailSummary.PV_GRADING_NO' %}
+				{% endif %}
+			</p>
+
+			{% if good.pv_grading_details %}
+				<h2 class="app-popup__heading">{% lcs "goods.GoodsDetailSummary.GRADING" %}</h2>
+				<p class="app-popup__body" data-max-length="200">
+					{% if good.pv_grading_details.prefix %}
+						{{ good.pv_grading_details.prefix }}
+					{% endif %}
+					{% if good.pv_grading_details.grading %}
+						{{ good.pv_grading_details.grading.value }}
+					{% else %}
+						{{ good.pv_grading_details.custom_grading }}
+					{% endif %}
+					{% if good.pv_grading_details.suffix %}
+						{{ good.pv_grading_details.suffix }}
+					{% endif %}
+				</p>
+
+				{% if not good.query.pv_grading_responded %}
+					<h2 class="app-popup__heading">{% lcs "goods.GoodsDetailSummary.ISSUING_AUTHORITY" %}</h2>
+					<p class="app-popup__body" data-max-length="200">{{ good.pv_grading_details.issuing_authority }}</p>
+
+					<h2 class="app-popup__heading">{% lcs "goods.GoodsDetailSummary.REFERENCE" %}</h2>
+					<p class="app-popup__body" data-max-length="200">{{ good.pv_grading_details.reference }}</p>
+
+					<h2 class="app-popup__heading">{% lcs "goods.GoodsDetailSummary.DATE_OF_ISSUE" %}</h2>
+					<p class="app-popup__body" data-max-length="200">{{ good.pv_grading_details.date_of_issue|str_date_only }}</p>
+				{% endif %}
+			{% endif %}
+
+			{% if good.item_category %}
+				{% if good.item_category.key != 'group2_firearms' %}
+					{% if good.item_category.key in 'group3_software,group3_technology' %}
+						<h2 class="app-popup__heading">{% lcs "goods.GoodsDetailSummary.PURPOSE_SOFTWARE_TECHNOLOGY" %}</h2>
+						<p class="app-popup__body" data-max-length="200">{{ good.software_or_technology_details|default_na }}</p>
+					{% endif %}
+
+					<h2 class="app-popup__heading">{% lcs 'goods.GoodsDetailSummary.MILITARY_USE' %}</h2>
+					<p class="app-popup__body" data-max-length="200">
+						{{ good.is_military_use.value }}
+						{% if good.modified_military_use_details %}
+							<span class="govuk-hint"> {{ good.modified_military_use_details }} </span>
+						{% endif %}
+					</p>
+
+					{% if good.item_category.key not in 'group3_software,group3_technology' %}
+						<h2 class="app-popup__heading">{% lcs 'goods.GoodsDetailSummary.COMPONENT' %}</h2>
+						<p class="app-popup__body" data-max-length="200">
+							{{ good.is_component.value|default_na }}
+							{% if good.component_details %}
+								<span class="govuk-hint"> {{ good.component_details }} </span>
+							{% endif %}
+						</p>
+					{% endif %}
+
+					<h2 class="app-popup__heading">{% lcs 'goods.GoodsDetailSummary.INFORMATION_SECURITY_FEATURES' %}</h2>
+					<p class="app-popup__body" data-max-length="200">
+						{% if good.uses_information_security is not None %}
+							{{ good.uses_information_security|friendly_boolean }}
+						{% else %}
+							{{ good.uses_information_security|default_na }}
+						{% endif %}
+						{% if good.information_security_details %}
+							<span class="govuk-hint"> {{ good.information_security_details }} </span>
+						{% endif %}
+					</p>
+				{% endif %}
+
+				{% if good.item_category.key == 'group2_firearms' %}
+					<h2 class="app-popup__heading">{% lcs "goods.GoodsDetailSummary.FirearmDetails.PRODUCT_TYPE" %}</h2>
+					<p class="app-popup__body" data-max-length="200">{{ good.firearm_details.type.value|default_na }}</p>
+
+					<h2 class="app-popup__heading">{% lcs "goods.GoodsDetailSummary.FirearmDetails.YEAR_OF_MANUFACTURE" %}</h2>
+					<p class="app-popup__body" data-max-length="200">{{ good.firearm_details.year_of_manufacture }}</p>
+
+					<h2 class="app-popup__heading">{% lcs "goods.GoodsDetailSummary.FirearmDetails.CALIBRE" %}</h2>
+					<p class="app-popup__body" data-max-length="200">{{ good.firearm_details.calibre|default_na }}</p>
+
+					<h2 class="app-popup__heading">{% lcs "goods.GoodsDetailSummary.FirearmDetails.COVERED_BY_THE_FIREARMS_ACT_1968" %}</h2>
+					<p class="app-popup__body" data-max-length="200">
+						{% if good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five is not None %}
+							{{ good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five|friendly_boolean}}
+							{% if good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five %}
+								- certificate number {{ good.firearm_details.section_certificate_number|default_na }} expires on
+								{{ good.firearm_details.section_certificate_date_of_expiry|str_date_only }}
+							{% endif %}
+						{% endif %}
+					</p>
+
+					<h2 class="app-popup__heading">{% lcs "goods.GoodsDetailSummary.FirearmDetails.IDENTIFICATION_MARKINGS" %}</h2>
+					<p class="app-popup__body" data-max-length="200">
+						{% if good.firearm_details.has_identification_markings is not None %}
+							{{ good.firearm_details.has_identification_markings|friendly_boolean }}
+							<span class="govuk-hint">
+								{% if good.firearm_details.has_identification_markings %}
+									{{ good.firearm_details.identification_markings_details|default_na }}
+								{% else %}
+									{{ good.firearm_details.no_identification_markings_details|default_na }}
+								{% endif %}
+							</span>
+						{% endif %}
+					</p>
+				{% endif %}
+			{% endif %}
+		</div>
+	</div>
+	<script type="text/javascript">
+		$(".lite-tabs__tab").click(function() {
+			var paneId = "#pane-" + $(this).attr("id").substr(4);
+			$(".lite-tabs__tab--selected").removeClass("lite-tabs__tab--selected");
+			$(this).addClass("lite-tabs__tab--selected");
+			$("#panes > div").hide();
+			$(paneId).show();
+		});
+	</script>
+{% endblock %}

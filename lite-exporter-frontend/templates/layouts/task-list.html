@@ -1,0 +1,54 @@
+{% extends 'layouts/two-pane.html' %}
+
+{% block back_link %}
+	{% if application.status %}
+		<a href="{% url 'applications:applications' %}" id="back-link" class="govuk-back-link">{% lcs 'applications.EditApplicationPage.BACK' %}</a>
+	{% endif %}
+{% endblock %}
+
+{% block full_width %}
+	{% if application.status.key == "submitted" %}
+		<div class="lite-info-bar lite-info-bar--no-animation">
+			{% lcs 'applications.EditApplicationPage.MINOR_EDIT' %}
+		</div>
+	{% endif %}
+	{% if application.status.key == "applicant_editing" %}
+		<div class="lite-info-bar lite-info-bar--warning lite-info-bar--no-animation">
+			{% lcs 'applications.EditApplicationPage.MAJOR_EDIT' %}
+		</div>
+	{% endif %}
+{% endblock %}
+
+{% block two_thirds %}
+	{% if errors %}
+		<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+			<h2 class="govuk-error-summary__title" id="error-summary-title">
+				{% lcs 'applications.EditApplicationPage.ERRORS' %}
+			</h2>
+			<div class="govuk-error-summary__body">
+				<ul class="govuk-list govuk-error-summary__list">
+					{% for key, values in errors.items %}
+						{% for value in values %}
+							<li>
+								<a href="#{{ key }}">
+									{{ value }}
+								</a>
+							</li>
+						{% endfor %}
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
+	{% endif %}
+
+	<h1 class="govuk-heading-l govuk-!-margin-bottom-2">
+		{% block title %}{% endblock %}
+	</h1>
+
+	<p class="govuk-hint govuk-!-margin-bottom-9">
+		{% block subtitle %}{% endblock %}
+	</p>
+
+	{% block tasks %}
+	{% endblock %}
+{% endblock %}

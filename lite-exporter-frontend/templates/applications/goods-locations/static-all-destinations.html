@@ -1,0 +1,39 @@
+{% extends 'layouts/base.html' %}
+
+{% block back_link %}
+	<a href="{% url 'applications:task_list' application_id %}" id="back-link" class="govuk-back-link">Back to application overview</a>
+{% endblock %}
+
+{% block body %}
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">
+				{% block title %} {% lcs 'goods.GoodsTypeAllDestinationsPage.DESTINATIONS_TITLE' %} {% endblock %}
+			</h1>
+		</div>
+	</div>
+
+	<p class="govuk-body">
+		{% lcs 'goods.GoodsTypeAllDestinationsPage.DESTINATIONS_DESCRIPTION' %} {{ goodstype_category_label }} OIEL.
+	</p>
+
+	<ul class="govuk-list">
+		{% for country in countries %}
+			<li>{{ country.name }}</li>
+		{% endfor %}
+	</ul>
+
+	{% if goodstype_category == 'uk_continental_shelf' %}
+		<p class="govuk-hint">{% lcs 'goods.GoodsTypeAllDestinationsPage.UK_CONTINENTAL_SHELF_DESCRIPTION' %}</p>
+
+		<div class="govuk-form-group">
+			<div class="lite-buttons-row">
+				<form action="{% url 'applications:add_contract_type' application_id 'UKCS' %}">
+					<button type="submit" name="_action" value="submit" id="button-save-continue" class="govuk-button">
+						{% lcs 'applications.DestinationsSummaryList.SAVE_AND_CONTINUE' %}
+					</button>
+				</form>
+			</div>
+		</div>
+	{% endif %}
+{% endblock %}

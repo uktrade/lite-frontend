@@ -1,0 +1,40 @@
+<a id="add-visit-report" class="govuk-button govuk-button--secondary govuk-!-margin-bottom-2" href="{% url 'cases:create_visit_report' queue.id case.id %}">
+	{% lcs "cases.CasePage.DetailsTab.VisitReports.ADD" %}
+</a>
+
+
+{% if case.data.visits %}
+	<table id="table-compliance-visits" class="govuk-table">
+		<thead class="govuk-table__head">
+			<tr class="govuk-table__row">
+				<th scope="col" class="govuk-table__header">{% lcs "cases.CasePage.DetailsTab.VisitReports.REPORT_REFERENCE" %}</th>
+				<th scope="col" class="govuk-table__header">{% lcs "cases.CasePage.DetailsTab.VisitReports.VISIT_DATE" %}</th>
+				<th scope="col" class="govuk-table__header">{% lcs "cases.CasePage.DetailsTab.VisitReports.INSPECTOR" %}</th>
+				<th scope="col" class="govuk-table__header">{% lcs "cases.CasePage.DetailsTab.VisitReports.FLAGS" %}</th>
+				<th scope="col" class="govuk-table__header"></th>
+			</tr>
+		</thead>
+		<tbody class="govuk-table__body">
+			{% for visit in case.data.visits %}
+				<tr class="govuk-table__row">
+					<td class="govuk-table__cell">
+						<a href="{% url 'cases:case' queue.id visit.id %}" class="govuk-link govuk-link--no-visited-state">
+							{{ visit.reference_code }}
+						</a>
+					</td>
+					<td class="govuk-table__cell">
+						{{ visit.visit_date|str_date_only|default:'Not set' }}
+					</td>
+					<td class="govuk-table__cell">
+						{{ visit.case_officer|default:'Not assigned' }}
+					</td>
+					<td class="govuk-table__cell">
+						{% include 'includes/flags.html' with flags=visit.flags list=True %}
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% else %}
+	{% include "includes/notice.html" with text="cases.CasePage.DetailsTab.VisitReports.NO_VISIT_REPORTS" %}
+{% endif %}

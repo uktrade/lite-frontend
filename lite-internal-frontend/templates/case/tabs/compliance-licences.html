@@ -1,0 +1,53 @@
+{% include "filters.html" with filters=licences_filters%}
+
+{% load svg %}
+
+{% if data.results %}
+	<table id="table-compliance-licences" class="govuk-table">
+		<thead class="govuk-table__head">
+			<tr class="govuk-table__row">
+				<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.ComplianceLicencesTab.LICENCE_NUMBER' %}</th>
+				<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.ComplianceLicencesTab.LICENCE_STATUS' %}</th>
+				<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.ComplianceLicencesTab.RETURN_COMPLETED' %}</th>
+				<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.ComplianceLicencesTab.LICENCE_FLAGS' %}</th>
+			</tr>
+		</thead>
+		<tbody class="govuk-table__body">
+			{% for licence in data.results %}
+				<tr class="govuk-table__row">
+					<td class="govuk-table__cell govuk-table__cell--tight">
+						<a href="{% url 'cases:case' queue.id licence.id %}" class="govuk-link govuk-link--no-visited-state">
+							{{ licence.reference_code }}
+						</a>
+					</td>
+					<td class="govuk-table__cell govuk-table__cell--tight">
+						{{ licence.status.value }}
+					</td>
+					<td class="govuk-table__cell govuk-table__cell--tight">
+						{% if licence.case_type.sub_type.key == "open" %}
+							{% if licence.has_open_licence_returns %}
+								<span class="lite-tick-cross lite-tick-cross--tick" role="img" aria-label="Completed annual return">
+									{% svg 'tick' %}
+								</span>
+							{% else %}
+								<span class="lite-tick-cross lite-tick-cross--cross" role="img" aria-label="Outstanding annual return">
+									{% svg 'cross' %}
+								</span>
+							{% endif %}
+						{% else %}
+							<span class="govuk-hint govuk-!-margin-0">{% lcs 'cases.CasePage.ComplianceLicencesTab.OLR_NOT_APPLICABLE' %}</span>
+						{% endif %}
+					</td>
+					<td class="govuk-table__cell govuk-table__cell--tight">
+						{% include 'includes/flags.html' with flags=licence.flags list=True %}
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% else %}
+	{% include "includes/notice.html" with text="cases.CasePage.ComplianceLicencesTab.NO_LICENCES_NOTICE" %}
+{% endif %}
+
+
+{% pagination %}

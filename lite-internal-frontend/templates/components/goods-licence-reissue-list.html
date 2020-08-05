@@ -1,0 +1,59 @@
+{% load humanize %}
+
+<table class="govuk-table">
+	<thead class="govuk-table__head">
+		<tr class="govuk-table__row">
+			<th class="govuk-table__header" scope="col">{% lcs 'advice.FinaliseLicenceForm.GoodsTable.CLC_COLUMN' %}</th>
+			<th class="govuk-table__header" scope="col">{% lcs 'advice.FinaliseLicenceForm.GoodsTable.DESCRIPTION_COLUMN' %}</th>
+			<th class="govuk-table__header" scope="col">{% lcs 'advice.FinaliseLicenceForm.GoodsTable.DECISION_COLUMN' %}</th>
+			<th class="govuk-table__header" scope="col">{% lcs 'advice.FinaliseLicenceForm.GoodsTable.LICENCED_QTY_COLUMN' %}</th>
+			<th class="govuk-table__header" scope="col">{% lcs 'advice.FinaliseLicenceForm.GoodsTable.LICENCED_VALUE_COLUMN' %}</th>
+		</tr>
+	</thead>
+	<tbody class="govuk-table__body">
+		{% for good in data %}
+			<tr class="govuk-table__row">
+				<td class="govuk-table__cell">
+					{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}
+				</td>
+				<td class="govuk-table__cell">
+					{{ good.description }}
+				</td>
+				<td class="govuk-table__cell">
+					<p class="govuk-body govuk-!-font-weight-bold">{{ good.advice.type.value }}</p>
+					<p>{{ good.advice.text }}<br></p>
+					{% if good.advice.proviso %}
+						<p>{% lcs 'advice.FinaliseLicenceForm.GoodsTable.PROVISO_TEXT' %}</p>
+						{{ good.advice.proviso }}
+					{% endif %}
+				</td>
+				<td class="govuk-table__cell">
+					<span id="quantity-applied-for-{{ good.good_on_application_id }}" class="govuk-hint govuk-!-margin-0">{% lcs 'advice.FinaliseLicenceForm.GoodsTable.APPLIED_FOR_TEXT' %} {{ good.applied_for_quantity|intcomma }} {{ good.units.value }}</span>
+					<span id="quantity-usage-licenced-{{ good.good_on_application_id }}" class="govuk-hint govuk-!-margin-0">{% lcs 'advice.FinaliseLicenceForm.GoodsTable.PREVIOUSLY_LICENCED' %} {{ good.licenced_quantity|intcomma }} {{ good.units.value }}</span>
+					<span id="quantity-usage-{{ good.good_on_application_id }}" class="govuk-hint govuk-!-margin-0">{% lcs 'advice.FinaliseLicenceForm.GoodsTable.USAGE' %} {{ good.usage|intcomma }} {{ good.units.value }}</span>
+					<input class="govuk-input" id="quantity-{{ good.good_on_application_id }}" type="text" name="quantity-{{ good.good_on_application_id }}" value="{{ good.licenced_quantity|subtract:good.usage }}" onchange="updateValue('{{ good.good_on_application_id }}', '{{ good.licenced_value_per_item }}')"><br>
+				</td>
+				<td class="govuk-table__cell">
+					<span id="value-applied-for-{{ good.good_on_application_id }}" class="govuk-hint govuk-!-margin-0">{% lcs 'advice.FinaliseLicenceForm.GoodsTable.APPLIED_FOR_TEXT' %} £{{ good.applied_for_value|multiply:good.applied_for_quantity|floatformat:2 }}</span>
+					<span id="value-usage-licenced-{{ good.good_on_application_id }}" class="govuk-hint govuk-!-margin-0">{% lcs 'advice.FinaliseLicenceForm.GoodsTable.PREVIOUSLY_LICENCED' %} £{{ good.licenced_value|floatformat:2 }}</span>
+					<span id="value-usage-{{ good.good_on_application_id }}" class="govuk-hint govuk-!-margin-0">{% lcs 'advice.FinaliseLicenceForm.GoodsTable.USAGE' %} £{{ good.licenced_value_per_item|multiply:good.usage|floatformat:2 }}</span>
+					<div class="lite-currency-input">
+						<div class="lite-currency-input__symbol {% if error %}lite-currency--error{% endif %}" aria-hidden="true">£</div>
+						{% with good.licenced_quantity|subtract:good.usage as quantity %}
+							<input class="govuk-input" id="value-{{ good.good_on_application_id }}" type="text" name="value-{{ good.good_on_application_id }}" value="{{ good.licenced_value_per_item|multiply:quantity|floatformat:2 }}"/>
+						{% endwith %}
+					</div>
+				</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>
+
+{% block javascript %}
+	<script>
+		function updateValue(id, value_per_item) {
+			let quantity = document.getElementById("quantity-"+id).value;
+			document.getElementById("value-"+id).value = (quantity * value_per_item).toFixed(2);
+		}
+	</script>
+{% endblock %}

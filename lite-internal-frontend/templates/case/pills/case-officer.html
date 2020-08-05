@@ -1,0 +1,37 @@
+<div class="app-menu__header">
+	{% if case.case_type.reference.key in "comp_c,comp_v" %}
+		{% lcs 'cases.CasePage.Pills.CaseOfficer.INSPECTOR' %}
+	{% else %}
+		{% lcs 'cases.CasePage.Pills.CaseOfficer.CASE_OFFICER' %}
+	{% endif %}
+</div>
+{% if case.case_officer %}
+	<a href="{% url 'users:user' case.case_officer.id %}?return_to={{ CURRENT_PATH }}" class="app-menu__item">
+		{% if case.case_officer.first_name %}
+			{{ case.case_officer.first_name }} {{ case.case_officer.last_name }}
+		{% else %}
+			{{ case.case_officer.email }}
+		{% endif %}
+	</a>
+{% else %}
+	<span class="app-menu__hint">
+		{% if case.case_type.reference.key in "comp_c,comp_v" %}
+			{% lcs 'cases.CasePage.Pills.CaseOfficer.NO_INSPECTOR' %}
+		{% else %}
+			{% lcs 'cases.CasePage.Pills.CaseOfficer.NO_CASE_OFFICER' %}
+		{% endif %}
+	</span>
+{% endif %}
+<div class="app-menu__header">
+	{% lcs 'cases.CasePage.Pills.CaseOfficer.ASSIGNED_USERS' %}
+</div>
+{% for queue_name, users in case.assigned_users.items %}
+	<span class="app-menu__hint">{{ queue_name }}</span>
+	{% for user in users %}
+		<a href="{% url 'users:user' user.id %}?return_to={{ CURRENT_PATH }}" class="app-menu__item">{{ user.first_name }} {{ user.last_name }}</a>
+	{% endfor %}
+{% empty %}
+	<span class="app-menu__hint">
+		{% lcs 'cases.CasePage.Pills.CaseOfficer.NO_USERS_ASSIGNED' %}
+	</span>
+{% endfor %}

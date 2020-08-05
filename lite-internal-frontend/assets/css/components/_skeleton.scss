@@ -1,0 +1,123 @@
+@keyframes skeleton-loader {
+    from {
+        background-position: -100px 0;
+    }
+    to   {
+        background-position: 150px 0;
+    }
+}
+
+@mixin skeleton-loader() {
+	background-color: govuk-shade(govuk-colour("white"), 10%);
+	background-image: linear-gradient(100deg, govuk-shade(govuk-colour("white"), 10%),
+											  govuk-shade(govuk-colour("white"), 30%) 50%,
+											  govuk-shade(govuk-colour("white"), 10%));
+	background-repeat: no-repeat;
+	background-size: 100px 100%;
+	animation: skeleton-loader 1s infinite;
+}
+
+.app-table--skeleton {
+	.app-table__header--skeleton {
+		position: relative;
+		color: transparent;
+		margin: 0;
+		overflow: hidden;
+		white-space: nowrap;
+
+		&::after {
+			content: "";
+			position: absolute;
+			top: calc(50% - 1.5px);
+			left: 0;
+			height: 4px;
+			width: 100px;
+			@include skeleton-loader();
+		}
+	}
+
+	.app-table__row__checkbox--skeleton {
+		position: relative;
+		width: 24px;
+		height: 24px;
+		margin-top: -1px;
+		@include skeleton-loader();
+
+		&::after {
+			content: "";
+			position: absolute;
+			top: 2px;
+			left: 2px;
+			right: 2px;
+			bottom: 2px;
+			background-color: $govuk-body-background-colour;
+		}
+	}
+
+	.app-table__row__sla--skeleton {
+		position: relative;
+		width: 35px;
+		height: 35px;
+		@include skeleton-loader();
+		border-radius: 100%;
+
+		&::after {
+			content: "";
+			position: absolute;
+			top: 2px;
+			left: 2px;
+			right: 2px;
+			bottom: 2px;
+			background-color: $govuk-body-background-colour;
+			border-radius: inherit;
+		}
+	}
+
+	.app-table__row--skeleton {
+		td {
+			vertical-align: top;
+
+			p {
+				display: block;
+				position: relative;
+				color: transparent;
+				margin: 0;
+				overflow: hidden;
+				white-space: nowrap;
+				height: 4px;
+				width: 120px;
+				margin-bottom: govuk-spacing(3);
+
+				&:nth-of-type(1) {
+					margin-top: govuk-spacing(2);
+				}
+
+				&:nth-of-type(2) {
+					width: 80px;
+				}
+
+				&:nth-of-type(3) {
+					width: 40px;
+				}
+
+				&:nth-of-type(4) {
+					width: 60px;
+				}
+
+				&:last-of-type {
+					margin-bottom: govuk-spacing(2);
+				}
+
+				&::after {
+					content: "";
+					position: absolute;
+					top: calc(50% - 1.5px);
+					left: 0;
+					height: 4px;
+					right: 0;
+					@include skeleton-loader();
+				}
+			}
+		}
+	}
+}

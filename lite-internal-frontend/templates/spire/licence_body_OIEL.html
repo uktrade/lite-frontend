@@ -1,0 +1,136 @@
+{% load govuk_css_classes parse_date from spire_tags %}
+
+
+<div class="govuk-!-padding-top-6 govuk-!-padding-bottom-6">
+	<h2 class="govuk-heading-l">Licence details</h2>
+	<table class="govuk-table">
+		<tbody class="govuk-table__body">
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header">Exporter</th>
+				<td class="govuk-table__cell">{{ licence.document_instance.data.exporter_name }} {{ licence.document_instance.data.exporter_address }}</td>
+			</tr>
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header">Licence number</th>
+				<td class="govuk-table__cell">{{ licence.document_instance.document_data.licence_data.licence_ref }}</td>
+			</tr>
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header">Type of licence</th>
+				<td class="govuk-table__cell">{{ licence.document_instance.data.customs_ex_procedure }}</td>
+			</tr>
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header">Application number</th>
+				<td class="govuk-table__cell">{{ licence.document_instance.data.dti_ref }}</td>
+			</tr>
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header">Applicant Reference</th>
+				<td class="govuk-table__cell">{{  licence.document_instance.data.company_ref }}</td>
+			</tr>
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header">Commencement Date</th>
+				<td class="govuk-table__cell">{{ licence.licence.start_date|parse_date|date:"d M Y" }}</td>
+			</tr>
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header">Expiry Date</th>
+				<td class="govuk-table__cell">{{ licence.document_instance.document_data.expiry_date|parse_date|date:"d M Y" }}</td>
+			</tr>
+			<tr class="govuk-table__row">
+				<th class="govuk-table__cell">Exporter contact details</th>
+				<td class="govuk-table__cell">
+					{{ licence.document_instance.data.contact_name }}
+					☎️ {{ licence.document_instance.data.contact_tel }}
+					{% if licence.document_instance.data.contact_fax %}
+						📠 {{ licence.document_instance.data.contact_fax }}
+					{% endif %}
+				</td>
+			</tr>
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header">Consignee(s)/Destinations</th>
+				<td class="govuk-table__cell">See <a href="#schedule">schedule</a></td>
+			</tr>
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header">Country of consignment</th>
+				<td class="govuk-table__cell">See <a href="#schedule">schedule</a></td>
+			</tr>
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header">Country of Destination</th>
+				<td class="govuk-table__cell">
+					{% for item in licence.licence_country_set %}
+						{% if item.type == 'OPEN' %}
+							<a href="#schedule-{{ item.country.country_name }}">{{ item.country.country_name }}</a>
+						{% endif %}
+						{% if not forloop.last %}, {% endif %}
+					{% endfor %}
+				</td>
+			</tr>
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header">End Use</th>
+				<td class="govuk-table__cell">{{ licence.application.application_question.end_use_details|default:'N/A' }}</td>
+			</tr>
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header">Contract date</th>
+				<td class="govuk-table__cell">{{ licence.document_instance.data.letter_date|parse_date|date:"d M Y" }}</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+<div class="govuk-!-padding-top-6 govuk-!-padding-bottom-6">
+	<h2 class="govuk-heading-l" id="conditions">Conditions</h2>
+	{{ licence.document_instance.document_data.conditions|govuk_css_classes }}
+	{{ licence.document_instance.document_data.footnotes|govuk_css_classes }}
+</div>
+
+<div class="govuk-!-padding-top-6 govuk-!-padding-bottom-6">
+	<h2 class="govuk-heading-l" id="schedule">Schedule</h2>
+	<div class="govuk-body">
+		<p>Exports are only permitted from the following company site:</p>
+		{{ licence.document_instance.data.site_address|linebreaks }}
+	</div>
+
+	{% for country in licence.document_instance.document_data.country_list.country %}
+		<div class="govuk-!-padding-top-6" id="schedule-{{ country.country_name }}">
+			<h2 class="govuk-heading-l" id="conditions">Goods permitted to {{ country.country_name }}</h2>
+			<table class="govuk-table">
+				<thead class="govuk-table__head">
+					<tr class="govuk-table__row">
+						<th scope="col" class="govuk-table__header">Item</th>
+						<th scope="col" class="govuk-table__header">Description</th>
+						<th scope="col" class="govuk-table__header">Control list no</th>
+					</tr>
+				</thead>
+				<tbody class="govuk-table__body">
+					{% for line in country.goods_item_list.goods_item %}
+						<tr class="govuk-table__row">
+							<td class="govuk-table__cell">{{ line.licence_line_number}}</td>
+							<td class="govuk-table__cell">{{ line.description}}</td>
+							<td class="govuk-table__cell">
+								{% if line.control_entry %}
+									{{ line.control_entry }}
+								{% else %}
+									{% for line in licence.application.control_list_good_set %} 
+										{% if item.description == line.description %}
+											{{ item.export_control_entry }}
+										{% endif %}
+									{% endfor %}
+								{% endif %}
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+
+			{% if country.condition_list %}
+				<h2 class="govuk-heading-m">Conditions</h2>
+				<div class="govuk-body">
+					{% for line in country.condition_list.condition.condition_content.p %}
+						{% if 'EXPORT_OR_TRADE' in line.mm %}Export or trade{% endif %}
+						{% for child in line.p %}
+							{{ child }}
+						{% endfor %}
+						{% if 'COUNTRY_SECTORS' in line.mm %}{{country.country_sectors }}{% endif %}
+					{% endfor %}
+				</div>
+			{% endif %}
+		</div>
+	{% endfor %}
+</div>

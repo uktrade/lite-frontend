@@ -1,0 +1,17 @@
+{% extends "layouts/base.html" %}
+
+{% block body %}
+	<h1 class="govuk-heading-l">{{ title }}</h1>
+	<p class="govuk-caption-m">{{ description }}</p>
+	<form method="post">
+		<div class="buttons-row">
+			{% csrf_token %}
+			{% if status == 'reactivate' %}
+				<button type="submit" name="status" value="Active" class="govuk-button" id="reactivate-confirm">Reactivate member</button>
+			{% else %}
+				<button type="submit" name="status" value="Deactivated" class="govuk-button govuk-button--warning" id="deactivate-confirm">Deactivate member</button>
+			{% endif %}
+			<a href="{% url "organisation:members:user" user_id %}" role="button" draggable="false" class="govuk-button govuk-button--secondary">Cancel</a>
+		</div>
+	</form>
+{% endblock %}

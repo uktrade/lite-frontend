@@ -1,0 +1,9 @@
+<div class="app-ogl-warning">
+	{% lcs 'applications.OpenGeneralLicenceQuestions.OpenGeneralLicenceDetail.Notice.WARNING_TITLE' %}
+	<ul class="govuk-list govuk-list--bullet">
+		{% lcs 'applications.OpenGeneralLicenceQuestions.OpenGeneralLicenceDetail.Notice.WARNING_POINTS' as points %}
+		{% for point in points %}
+			<li>{{ point }}</li>
+		{% endfor %}
+	</ul>
+</div>

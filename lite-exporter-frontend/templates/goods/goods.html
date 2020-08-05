@@ -1,0 +1,85 @@
+{% extends 'layouts/base.html' %}
+
+{% load svg %}
+
+{% block back_link %}
+	{% include 'includes/breadcrumbs.html' with title='goods.GoodsList.TITLE' %}
+{% endblock %}
+
+{% block body %}
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">
+				{% block title %}
+					{% lcs 'goods.GoodsList.TITLE' %}
+				{% endblock %}
+			</h1>
+		</div>
+		<div class="lite-app-bar__controls">
+			{% govuk_link_button text='goods.GoodsList.CREATE_GOOD' url='goods:add' id='add-a-good' %}
+		</div>
+	</div>
+
+	{% include 'filters.html' %}
+
+	{% if not filtered and not goods.count %}
+		{% include "includes/notice.html" with text='goods.GoodsList.Count.ORGANISATION_ZERO' %}
+	{% elif not goods.count %}
+		{% include "includes/notice.html" with text='goods.GoodsList.Count.FILTERED_ZERO' %}
+	{% else %}
+		<p class="govuk-caption-m govuk-!-margin-top-1">
+			{% if not filtered %}
+				{% include 'includes/pluralise.html' with count=goods.count base_constant='goods.GoodsList.Count.ORGANISATION' %}
+			{% else %}
+				{% include 'includes/pluralise.html' with count=goods.count base_constant='goods.GoodsList.Count.FILTERED' %}
+			{% endif %}
+		</p>
+	{% endif %}
+
+	{% if goods.count %}
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="col">{% lcs 'goods.GoodsList.Table.DESCRIPTION' %}</th>
+					<th class="govuk-table__header" scope="col"></th>
+					<th class="govuk-table__header" scope="col">{% lcs 'goods.GoodsList.Table.CONTROL_LIST_ENTRY' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'goods.GoodsList.Table.PART_NUMBER' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'goods.GoodsList.Table.STATUS' %}</th>
+					<th class="govuk-table__header" scope="col"></th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				{% for good in goods.results %}
+					<tr class="govuk-table__row">
+						<td class="govuk-table__cell">
+							<span class="govuk-table__header" aria-hidden="true">{% lcs 'goods.GoodsList.Table.DESCRIPTION' %}</span>
+							{{ good.description|highlight_text:description }}
+						</td>
+						<td class="govuk-table__cell govuk-table__cell--tight">
+							{% if good.exporter_user_notification_count %}
+								<span class="lite-notification-bubble">{{ good.exporter_user_notification_count }} <span class="govuk-visually-hidden"> {% lcs "goods.GoodsPage.NOTIFICATIONS" %}</span></span>
+							{% endif %}
+						</td>
+						<td class="govuk-table__cell" id="good-control_code">
+							<span class="govuk-table__header" aria-hidden="true">Control list entries</span>
+							{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}
+						</td>
+						<td class="govuk-table__cell" id="good-part-number">
+							<span class="govuk-table__header" aria-hidden="true">{% lcs 'goods.GoodsList.Table.PART_NUMBER' %}</span>
+							{{ good.part_number|highlight_text:part_number|default_na }}
+						</td>
+						<td class="govuk-table__cell">
+							<span class="govuk-table__header" aria-hidden="true">{% lcs 'goods.GoodsList.Table.STATUS' %}</span>
+							{% if good.status.key == 'verified' %}<span class="app-verified__symbol">{% svg "verified" %}</span>{% endif %}
+							{{ good.status.value }}
+						</td>
+						<td class="govuk-table__cell govuk-table__cell--tight">
+							<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:good" good.id %}">View</a>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		{% pagination with data=goods %}
+	{% endif %}
+{% endblock %}

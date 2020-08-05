@@ -1,0 +1,60 @@
+{% extends 'layouts/two-pane.html' %}
+
+{% load variable_highlight %}
+
+{% block back_link %}
+	<a href="{% url 'picklists:picklists' %}?type={{ picklist_item.type.key }}" class="govuk-back-link">Back to picklist</a>
+{% endblock %}
+
+{% block full_width %}
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">
+				{{ picklist_item.name }}
+			</h1>
+		</div>
+		<div class="lite-app-bar__controls">
+			<div class="lite-buttons-row">
+				{% if picklist_item.status.key == 'active' %}
+					{% make_list picklist_item.id 'deactivate' as button_params %}
+					{% govuk_link_button id='deactivate' text='picklists.PicklistItem.DEACTIVATE_BUTTON' url='picklists:change_status' url_param=button_params classes='govuk-button--secondary' %}
+				{% else %}
+					{% make_list picklist_item.id 'reactivate' as button_params %}
+					{% govuk_link_button id='reactivate' text='picklists.PicklistItem.REACTIVATE_BUTTON' url='picklists:change_status' url_param=button_params classes='govuk-button--secondary' %}
+				{% endif %}
+				{% govuk_link_button id='edit' text='picklists.PicklistItem.EDIT_BUTTON' url='picklists:edit' url_param=picklist_item.id classes='govuk-button--secondary' %}
+			</div>
+		</div>
+	</div>
+
+	{% if picklist_item.status.key == 'deactivated' %}
+		<p class="govuk-tag govuk-tag--grey govuk-!-margin-bottom-5">
+			{{ picklist_item.status.key }}
+		</p>
+	{% endif %}
+{% endblock %}
+
+{% block two_thirds %}
+	<p class="govuk-hint govuk-!-margin-top-0 govuk-!-margin-bottom-4">
+		Created by
+		<a class="govuk-link govuk-link--no-visited-state" href="{% url 'teams:team' picklist_item.team.id %}">{{ picklist_item.team.name }}</a>
+		-
+		<a class="govuk-link govuk-link--no-visited-state" href="{% url 'picklists:picklists' %}?type={{ picklist_item.type.key }}">{{ picklist_item.type.value }}</a>
+		- Last updated <span class="govuk-visually-hidden"> on </span> {{ picklist_item.updated_at|str_date }}
+	</p>
+
+	<p class="app-picklist__text govuk-!-margin-bottom-6">
+		{% if picklist_item.type.key == "letter_paragraph" %}
+			{{ picklist_item.text|variable_highlight|linebreaksbr }}
+		{% else %}
+			{{ picklist_item.text|linebreaksbr }}
+		{% endif %}
+	</p>
+{% endblock %}
+
+{% block one_third %}
+	{% if activity %}
+		<h2 class="govuk-heading-m">{% lcs 'generic.ACTIVITY' %}</h2>
+		{% include "includes/audit-trail.html" %}
+	{% endif %}
+{% endblock %}

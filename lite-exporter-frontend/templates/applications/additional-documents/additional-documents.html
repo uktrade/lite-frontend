@@ -1,0 +1,69 @@
+{% extends 'layouts/base.html' %}
+
+{% load svg %}
+
+{% block back_link %}
+	<a href="{% url 'applications:task_list' application_id %}" id="back-link" class="govuk-back-link">{% lcs 'AdditionalDocuments.BACK' %}</a>
+{% endblock %}
+
+{% block body %}
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">{% block title %}{% lcs 'AdditionalDocuments.TITLE'%}{% endblock %}</h1>
+		</div>
+		<div class="lite-app-bar__controls">
+			<a href="{% url 'applications:attach_additional_document' application_id %}" class="govuk-button" draggable="false" role="button">
+				{% lcs 'AdditionalDocuments.ADD' %}
+			</a>
+		</div>
+	</div>
+
+	{% if additional_documents %}
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="col">{% lcs 'AdditionalDocuments.NAME_COLUMN' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'AdditionalDocuments.DESCRIPTION_COLUMN' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'AdditionalDocuments.MESSAGE_COLUMN' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'AdditionalDocuments.ACTIONS_COLUMN' %}</th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				{% for additional_document in additional_documents %}
+				<tr class="govuk-table__row">
+					<td class="govuk-table__cell">{{ additional_document.name }}</td>
+					<td class="govuk-table__cell">
+						{{ additional_document.description|default_na }}
+					</td>
+					<td class="govuk-table__cell govuk-table__cell--numeric">
+						{% if additional_document.safe == True %}
+							<a href="{% url 'applications:download_additional_document' application_id additional_document.id %}" id="document_download" class='govuk-link govuk-link--no-visited-state'>
+								{% lcs 'AdditionalDocuments.Documents.DOWNLOAD_DOCUMENT' %}
+							</a>
+						{% elif additional_document.safe == False %}
+							{% lcs 'AdditionalDocuments.Documents.VIRUS' %}
+						{% else %}
+							{% lcs 'AdditionalDocuments.Documents.PROCESSING' %}
+						{% endif %}
+					</td>
+					<td class="govuk-table__cell govuk-table__cell--numeric">
+						{% if editable %}
+							<a href="{% url 'applications:delete_additional_document' application_id additional_document.id %}" id="document_delete" class='govuk-link govuk-link--no-visited-state'>
+								{% lcs 'AdditionalDocuments.Documents.DELETE_DOCUMENT' %}
+							</a>
+						{% endif %}
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		<div class="lite-information-text">
+			<span class="lite-information-text__icon" aria-hidden="true">!</span>
+			<p class="lite-information-text__text">
+				<span class="govuk-visually-hidden">Information</span>
+				{% lcs 'AdditionalDocuments.NO_RESULTS' %}
+			</p>
+		</div>
+	{% endif %}
+{% endblock %}

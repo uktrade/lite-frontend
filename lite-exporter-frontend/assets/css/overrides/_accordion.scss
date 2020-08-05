@@ -1,0 +1,8 @@
+.govuk-accordion__section-button {
+	@include govuk-font($size: 19);
+	text-decoration: underline;
+}
+
+.govuk-accordion__section-content .govuk-table__body .govuk-table__row:last-of-type > * {
+	border-bottom: none;
+}

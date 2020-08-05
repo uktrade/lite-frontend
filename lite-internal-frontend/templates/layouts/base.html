@@ -1,0 +1,182 @@
+{% load sass_tags static svg %}
+<!DOCTYPE html>
+<html lang="en" class="govuk-template">
+
+<head>
+	<meta charset="utf-8" />
+	<title>
+		{% block title %}
+			{% if title %}
+				{{ title }}
+			{% else %}
+				{% missing_title %}
+			{% endif %}
+		{% endblock %} - {% lcs 'Common.SERVICE_NAME' %}
+	</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+	<meta name="theme-color" content="#0b0c0c" />
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+	<link rel="shortcut icon" sizes="16x16 32x32 48x48" href="/assets/images/favicon.ico" type="image/x-icon" />
+	<link rel="mask-icon" href="/assets/images/govuk-mask-icon.svg" color="#0b0c0c">
+	<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/govuk-apple-touch-icon-180x180.png">
+	<link rel="apple-touch-icon" sizes="167x167" href="/assets/images/govuk-apple-touch-icon-167x167.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="/assets/images/govuk-apple-touch-icon-152x152.png">
+	<link rel="apple-touch-icon" href="/assets/images/govuk-apple-touch-icon.png">
+
+	<link href="{% sass_src 'css/styles.scss' %}" rel="stylesheet" type="text/css" />
+	<script nonce="{{ request.csp_nonce }}">
+		(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+		new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+		j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+		'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+		})(window,document,'script','dataLayer','{{ ENVIRONMENT_VARIABLES.GOOGLE_ANALYTICS_KEY }}');
+	</script>
+
+	<meta property="og:image" content="/assets/images/govuk-opengraph-image.png">
+
+	<script src="{% static 'javascripts/jquery.min.js' %}"></script>
+	<script src="{% static 'javascripts/helpers.js' %}"></script>
+	{% block head %}{% endblock %}
+</head>
+
+<body class="govuk-template__body js-disabled {% block body_classes %}{% endblock %}">
+	<noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ ENVIRONMENT_VARIABLES.GOOGLE_ANALYTICS_KEY }}"
+	height="0" width="0"></iframe></noscript>
+
+	<script nonce="{{ request.csp_nonce }}">
+		document.body.className = (
+			(document.body.className) ?
+			document.body.className + ' js-enabled' :
+			'js-enabled'
+		);
+		document.body.classList.remove("js-disabled");
+	</script>
+
+	<a href="#main-content" class="govuk-skip-link">Skip to main content</a>
+	<header class="app-header" role="banner" data-module="header">
+		<div class="app-header__container govuk-width-container">
+			<a class="app-header__link" href="{% url 'core:index' %}" data-tooltip="Go home">
+				{% svg 'crest' %}
+				<span class="lite-mobile-hide">
+					Licensing for International Trade and Enterprise <span class="govuk-tag lite-tablet-hide govuk-!-margin-left-3">Alpha</span>
+				</span>
+			</a>
+			<span></span>
+			<a id="link-sign-out" class="app-header__link" href="{% url 'auth:logout' %}" data-tooltip="Sign out of LITE">
+				Sign out
+			</a>
+			<span class="app-header__separator"></span>
+			<a id="link-menu" tabindex="0" class="app-header__link" href="{% url 'core:menu' %}" data-tooltip="Show menu">
+				{% svg 'menu' %}
+				{% if MENU_NOTIFICATIONS %}<span class="app-header__link-bubble"></span>{% endif %}
+			</a>
+			<span class="app-header__separator"></span>
+			<a id="link-profile" class="app-header__link" href="{% url 'users:profile' %}" data-tooltip="View profile">
+				{{ request.user.first_name }}
+				{% svg 'user' %}
+			</a>
+		</div>
+	</header>
+
+	{% block messages %}
+		{% include 'includes/messages.html' %}
+	{% endblock %}
+
+	{% block header %}
+		<div class="govuk-width-container app-back-link-container">
+			<section role="banner" data-module="header">
+				{% if request.GET|get:'return_to' %}
+					<a href="{{ request.GET|get:'return_to' }}" id="back-link" class="govuk-back-link">Back {% if request.GET|get:'return_to_text' %}to {{ request.GET|get:'return_to_text' }}{% endif %}</a>
+				{% else %}
+					{% block back_link %}
+						<a href="#" id="back-link" class="govuk-back-link">Back</a>
+					{% endblock %}
+				{% endif %}
+			</section>
+		</div>
+	{% endblock %}
+
+	<div class="govuk-width-container">
+		<main class="govuk-main-wrapper" id="main-content" role="main">
+			{% block body %}{% endblock %}
+		</main>
+	</div>
+
+	<div id="lite-menu" class="app-menu app-hidden">
+		{% for item in LITE_MENU %}
+			<a class="app-menu__item app-menu__item--icon-subtitle {% if item.url == CURRENT_PATH %}app-menu__item--selected{% endif %}" href="{{ item.url }}">
+				<div class="app-menu__icon">
+					{% svg item.icon %}
+				</div>
+				{{ item.title }}
+				{% if item.notifications %}<span class="app-menu__item-notification">{{ item.notifications }}</span>{% endif %}
+			</a>
+		{% endfor %}
+	</div>
+
+	{% block footer %}
+		<footer class="app-footer" role="contentinfo">
+			<div class="govuk-width-container app-footer__container">
+				<div>
+					{% svg 'crest' %}
+					Department for International Trade
+				</div>
+				<div>
+					© Crown copyright
+				</div>
+			</div>
+		</footer>
+	{% endblock %}
+
+	<script src="{% static 'all.js' %}"></script>
+	<script src="{% static 'javascripts/popper.js' %}"></script>
+	<script src="{% static 'javascripts/tippy.js' %}"></script>
+	<script src="{% static 'javascripts/modal.js' %}"></script>
+	<script src="{% static 'javascripts/definitions.js' %}"></script>
+	<script src="{% static 'javascripts/generic.js' %}"></script>
+	<script src="{% static 'javascripts/back-link.js' %}"></script>
+
+	<script nonce="{{ request.csp_nonce }}">
+		window.GOVUKFrontend.initAll()
+	</script>
+
+	{% block javascript %}{% endblock %}
+
+	<script nonce="{{ request.csp_nonce }}" type="text/javascript">
+		$("#link-menu").removeAttr("href");
+		const menu = document.getElementById('lite-menu');
+		menu.style.display = 'block';
+		tippy("#link-menu", {
+			content: menu,
+			allowHTML: true,
+			interactive: true,
+			animation: 'scale-subtle',
+			trigger: 'click',
+			theme: 'light',
+			placement: 'bottom'
+		});
+
+		function setTooltips() {
+			tippy("*[data-tooltip]", {
+				content(reference) {
+					return reference.getAttribute('data-tooltip');
+				},
+				allowHTML: true,
+				animation: 'scale-subtle',
+			});
+
+			tippy('.app-flag--label', {
+				content(reference) {
+					return reference.getAttribute('data-label');
+				},
+			});
+		}
+
+		setTooltips();
+	</script>
+
+</body>
+
+</html>

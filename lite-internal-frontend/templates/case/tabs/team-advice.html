@@ -1,0 +1,45 @@
+{% load static svg %}
+
+<form id="form-team-advice" action="{% url 'cases:team_advice_view' queue.id case.id %}{{ CURRENT_PATH_ONLY_PARAMS }}" method="post">
+	{% csrf_token %}
+</form>
+
+<form id="form-team-advice-container" action="{% url 'cases:give_advice' queue.id case.id 'team-advice' %}" method="get">
+	{% hidden_field 'grouped-advice-view' request.GET|get:'grouped-advice-view' %}
+	<div class="app-advice_app-bar">
+		<div class="lite-buttons-row">
+			{% if not request.GET|get:'grouped-advice-view' == 'True' %}
+				<a href="?grouped-advice-view=True" class="govuk-button govuk-button--secondary app-button--icon">
+					{% svg 'grouped-view' %}
+					Grouped view
+				</a>
+			{% else %}
+				<a href="?grouped-advice-view=False" class="govuk-button govuk-button--secondary app-button--icon">
+					{% svg 'list-view' %}
+					List view
+				</a>
+			{% endif %}
+			<div class="lite-!-display-inline lite-buttons-row {% if current_advice_level != 'team' %}app-advice__disabled-buttons{% endif %}">
+				<div data-enable-on-checkboxes="#form-team-advice-container" class="lite-buttons-row lite-!-display-inline">
+					<button id="button-give-team-advice" name="action" value="give-advice" type="submit" class="govuk-button" data-module="govuk-button">
+						{% lcs 'advice.TeamAdvicePage.GIVE_CHANGE_ADVICE_BUTTON' %}
+					</button>
+				</div>
+				<button form="form-team-advice" id="button-clear-team-advice" name="action" value="delete" type="submit" class="govuk-button" data-module="govuk-button">
+					{% lcs 'advice.TeamAdvicePage.CLEAR_ADVICE_BUTTON' %}
+				</button>
+			</div>
+		</div>
+
+		<div class="{% if current_advice_level != 'team' %}app-advice__disabled-buttons{% endif %}">
+			<a class="govuk-button" href="{% url 'cases:coalesce_team_advice' queue.id case.id %}{{ CURRENT_PATH_ONLY_PARAMS }}" id="button-combine-team-advice">
+				{% lcs 'advice.TeamAdvicePage.CONTINUE_BUTTON' %}
+				<svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="13" height="15" viewBox="0 0 33 43" aria-hidden="true" focusable="false">
+					<path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
+				</svg>
+			</a>
+		</div>
+	</div>
+
+	{% include 'case/includes/advice.html' with level='team' %}
+</form>

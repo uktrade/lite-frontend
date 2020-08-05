@@ -1,0 +1,67 @@
+{% extends 'layouts/base.html' %}
+
+{% load static svg %}
+
+{% block back_link %}
+	<a href="{% url 'applications:goods' draft_id %}" id="back-link" class="govuk-back-link">Back to products</a>
+{% endblock%}
+
+{% block body %}
+	<h1 class="govuk-heading-l">{% block title %}{% lcs 'goods.AddPreexistingGoodToApplicationForm.TITLE' %}{% endblock %}</h1>
+
+	{% if data or description or part_number or control_code %}
+
+		{% include 'filters.html' %}
+
+		{% if data %}
+			<table class="govuk-table">
+				<thead class="govuk-table__head">
+					<tr class="govuk-table__row">
+						<th scope="col" class="govuk-table__header">{% lcs 'goods.AddPreexistingGoodToApplicationForm.Table.DESCRIPTION' %}</th>
+						<th scope="col" class="govuk-table__header">{% lcs 'goods.AddPreexistingGoodToApplicationForm.Table.PART_NUMBER' %}</th>
+						<th scope="col" class="govuk-table__header">{% lcs 'goods.AddPreexistingGoodToApplicationForm.Table.CONTROL_LIST_ENTRIES' %}</th>
+						<th scope="col" class="govuk-table__header"></th>
+					</tr>
+				</thead>
+				<tbody class="govuk-table__body">
+					{% for good in data.results %}
+						<tr class="govuk-table__row">
+							<td class="govuk-table__cell" id="good-description">
+								{{ good.description|highlight_text:description }}
+								{% if good.status.key == 'verified' %}<span class="app-verified__symbol">{% svg 'verified' %}</span><span class="govuk-visually-hidden"> (Verified product)</span>{% endif %}
+							</td>
+							<td class="govuk-table__cell" id="good-part-number">
+								{{ good.part_number|highlight_text:part_number|default_na }}
+							</td>
+							<td class="govuk-table__cell" id="good-control_code">
+								{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}
+							</td>
+							<td class="govuk-table__cell lite-!-text-align-right">
+								<a href="{% url 'applications:add_good_to_application' draft_id good.id %}" id="add-to-application" class="govuk-link govuk-link--no-visited-state" draggable="false">
+									Add <span class="govuk-visually-hidden">{{ good.description }}</span> to application
+								</a>
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			{% pagination %}
+		{% else %}
+			<div class="lite-information-text">
+				<span class="lite-information-text__icon" aria-hidden="true">!</span>
+				<p class="lite-information-text__text">
+					<span class="govuk-visually-hidden">Information</span>
+					There are no products on your product list.
+				</p>
+			</div>
+		{% endif %}
+	{% else %}
+		<div class="lite-information-text">
+			<span class="lite-information-text__icon" aria-hidden="true">!</span>
+			<p class="lite-information-text__text">
+				<span class="govuk-visually-hidden">Information</span>
+				There are no products on your product list.
+			</p>
+		</div>
+	{% endif %}
+{% endblock %}

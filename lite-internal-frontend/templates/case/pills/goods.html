@@ -1,0 +1,16 @@
+<div class="app-menu__header">
+	{{ case.goods|length }} {% lcs 'cases.CasePage.Pills.Goods.GOOD' %}{{ case.goods|pluralize }}
+</div>
+<ol class="govuk-list govuk-list--number govuk-!-margin-left-4 govuk-!-margin-right-4">
+	{% for good in case.goods %}
+		<li class="govuk-!-margin-bottom-3">
+			<span data-max-length="100">
+				{% if good.description %}
+					{{ good.description }}
+				{% else %}
+					{{ good.good.description }}
+				{% endif %}
+			</span>
+		</li>
+	{% endfor %}
+</ol>

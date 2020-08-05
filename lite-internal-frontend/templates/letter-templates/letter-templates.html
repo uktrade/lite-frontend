@@ -1,0 +1,55 @@
+{% extends 'layouts/base.html' %}
+
+{% block back_link %}{% endblock %}
+
+{% block body %}
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">
+				{% block title %}{% lcs "DOCUMENT_TEMPLATES_TITLE" %}{% endblock %}
+			</h1>
+		</div>
+		<div class="lite-app-bar__controls">
+			<a href="{% url 'letter_templates:add' %}" class="govuk-button" draggable="false" role="button" id="button-create-a-template">
+				{% lcs 'LetterTemplates.LetterTemplates.CREATE_BUTTON' %}
+			</a>
+		</div>
+	</div>
+
+	{% include "filters.html" %}
+
+	{% if data.results %}
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="col">{% lcs 'LetterTemplates.LetterTemplates.NAME_COLUMN_TITLE' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'LetterTemplates.LetterTemplates.LAYOUT_COLUMN_TITLE' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'LetterTemplates.LetterTemplates.RESTRICTED_COLUMN_TITLE' %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs 'LetterTemplates.LetterTemplates.UPDATED_COLUMN_TITLE' %}</th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				{% for letter_template in data.results %}
+					<tr class="govuk-table__row">
+						<td class="govuk-table__cell">
+							<a href="{% url 'letter_templates:letter_template' letter_template.id %}" id="{{ letter_template.name }}" class="govuk-link">{{ letter_template.name }}</a>
+						</td>
+						<td class="govuk-table__cell">
+							{{ letter_template.layout.name }}
+						</td>
+						<td class="govuk-table__cell">
+							{% for case_type in letter_template.case_types %}{% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}{{ case_type.reference.key|upper }}{% endfor %}
+						</td>
+						<td class="govuk-table__cell">
+							{{ letter_template.updated_at|str_date }}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+		{% pagination %}
+	{% else %}
+		{% include "includes/notice.html" with text='letter_templates.LetterTemplatesPage.NONE_FOUND'  %}
+	{% endif %}
+{% endblock %}

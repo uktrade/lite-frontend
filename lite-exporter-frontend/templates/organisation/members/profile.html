@@ -1,0 +1,162 @@
+{% extends 'layouts/two-pane.html' %}
+
+{% load static %}
+
+{% block back_link %}
+	<div class="govuk-breadcrumbs">
+		<ol class="govuk-breadcrumbs__list">
+			<li class="govuk-breadcrumbs__list-item">
+				<a class="govuk-breadcrumbs__link" href="/">{% lcs 'hub.ACCOUNT_HOME' %}</a>
+			</li>
+			{% if USER_PERMISSIONS.ADMINISTER_USERS in signed_in_user.role.permissions %}
+			<li class="govuk-breadcrumbs__list-item">
+				<a class="govuk-breadcrumbs__link" href="{% url 'organisation:members:members' %}">{% lcs 'core.HubPage.ORGANISATION' %}</a>
+			</li>
+			<li class="govuk-breadcrumbs__list-item">
+				{% if profile.first_name %}{{ profile.first_name }} {{ profile.last_name }}{% else %}{{ profile.email }}{% endif %}
+			</li>
+			{% endif %}
+		</ol>
+	</div>
+{% endblock %}
+
+{% block full_width %}
+	{% if profile.status == 'Deactivated' %}
+		<div class="lite-info-bar lite-info-bar--error lite-info-bar--no-animation">
+			This member is deactivated
+		</div>
+	{% endif %}
+
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-xl">
+				{% block title %}
+					{% if profile.first_name and profile.last_name %}
+						{{ profile.first_name }} {{ profile.last_name }}
+					{% else %}
+						{{ profile.email }}
+					{% endif %}
+				{% endblock %}
+			</h1>
+		</div>
+		<div class="lite-app-bar__controls">
+			{% if show_change_status or show_change_role or show_assign_sites %}
+				<div class="lite-more-actions__container lite-more-actions__container--secondary">
+					{% if show_change_status %}
+						{% if profile.status == 'Active' %}
+							<a href="{% url 'organisation:members:change_status' profile.id 'deactivate' %}" id="button-deactivate" role="button" draggable="false" class="govuk-button">
+								{% lcs 'users.ProfilePage.USER_DEACTIVATE' %}
+							</a>
+						{% elif profile.status == 'Deactivated' %}
+							<a href="{% url 'organisation:members:change_status' profile.id 'reactivate' %}" id="button-reactivate" role="button" draggable="false" class="govuk-button">
+								{% lcs 'users.ProfilePage.USER_REACTIVATE' %}
+							</a>
+						{% endif %}
+					{% endif %}
+					{% if show_change_role %}
+						<a id="button-edit" href="{% url 'organisation:members:edit' profile.id %}" class="govuk-button">
+							{% lcs 'users.ProfilePage.EDIT_USER_BUTTON' %}
+						</a>
+					{% endif %}
+					{% if show_assign_sites %}
+						<a id="button-assign-sites" href="{% url 'organisation:members:assign_sites' profile.id %}" class="govuk-button">
+							Assign member to sites
+						</a>
+					{% endif %}
+				</div>
+			{% endif %}
+		</div>
+	</div>
+{% endblock %}
+
+{% block two_thirds %}
+	{% if not profile.first_name or not profile.last_name %}
+		<div class="govuk-warning-text">
+			<span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+			<strong class="govuk-warning-text__text">
+				<span class="govuk-warning-text__assistive">Warning</span>
+				{% lcs "users.ProfilePage.USER_NOT_ACTIVATED_YET" %}
+			</strong>
+		</div>
+	{% endif %}
+	<dl class="govuk-summary-list govuk-summary-list--no-border">
+		{% if profile.first_name and profile.last_name %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs "users.ProfilePage.USER_FIRST_NAME" %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ profile.first_name }}
+				</dd>
+			</div>
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs "users.ProfilePage.USER_LAST_NAME" %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ profile.last_name }}
+				</dd>
+			</div>
+		{% endif %}
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs "users.ProfilePage.USER_EMAIL" %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ profile.email }}
+			</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs "users.ProfilePage.USER_ROLE" %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ profile.role.name }}
+			</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs "users.ProfilePage.USER_STATUS" %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ profile.status }}
+			</dd>
+		</div>
+	</dl>
+
+	<hr class="lite-horizontal-separator">
+
+	<h2 class="govuk-heading-m">Sites</h2>
+	<dl class="govuk-summary-list govuk-summary-list--no-border">
+		{% for site in profile.sites %}
+			<div class="govuk-summary-list__row">
+				<dd class="govuk-summary-list__key">
+					{{ site.name }}
+				</dd>
+				<dd class="govuk-summary-list__value govuk-hint">
+					{% if site.address.address_line_1 %}
+						{{ site.address.address_line_1 }}<br/>
+						{% if site.address.address_line_2 %}
+							{{ site.address.address_line_2 }}<br/>
+						{% endif %}
+						{{ site.address.city }}<br/>
+						{{ site.address.postcode }}<br/>
+						{{ site.address.country.name }}
+					{% else %}
+						{{ site.address.address }}<br/>
+						{{ site.address.country.name }}
+					{% endif %}
+				</dd>
+				<dd class="govuk-summary-list__actions">
+					<a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisation:sites:site' site.id %}?return_to={{ request.path }}">
+						{% lcs 'generic.VIEW' %} <span class="govuk-visually-hidden">{{ site.name }} site</span>
+					</a>
+				</dd>
+			</div>
+		{% endfor %}
+	</dl>
+{% endblock %}
+
+{% block javascript %}
+	<script src="{% static 'javascripts/more-actions.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,13 @@
+<div class="lite-information-text">
+	<span class="lite-information-text__icon" aria-hidden="true">!</span>
+	<p class="lite-information-text__text">
+		<span class="govuk-visually-hidden">{% lcs "generic.NoticeComponent.INFORMATION" %}</span>
+		{% lcs text %}
+	</p>
+</div>
+
+{% if help %}
+	<p class="lite-information-text__help">
+		{% lcs help %}
+	</p>
+{% endif %}

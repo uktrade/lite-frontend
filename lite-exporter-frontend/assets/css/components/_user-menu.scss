@@ -1,0 +1,21 @@
+.govuk-header__link--service-name {
+	margin-bottom: 0;
+}
+
+.app-header__link--sign-out {
+	text-align: right;
+	font-weight: bold;
+	margin-top: 2px;
+	white-space: nowrap;
+}
+
+.govuk-header__content {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	min-height: 30px;
+
+	@include govuk-media-query($until: desktop) {
+		margin-bottom: govuk-spacing(2);
+	}
+}

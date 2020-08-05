@@ -1,0 +1,19 @@
+{% extends 'layouts/base.html' %}
+
+{% block back_link %}
+<a href="{% url 'core:home' %}" class="govuk-back-link">
+	{% lcs 'core.SignatureHelp.BACK' %}
+</a>
+{% endblock %}
+
+{% block body %}
+	<h1 class="govuk-heading-l">{% block title %}{% lcs 'core.SignatureHelp.TITLE' %}{% endblock %}</h1>
+
+	<div class="govuk-body-m">
+		{% lcs 'core.SignatureHelp.CONTENT' as help %}
+		{{ help|markdown }}
+		<br><br>
+
+		<a href="{% url 'core:certificate' %}" class="govuk-button">{% lcs 'core.SignatureHelp.DOWNLOAD_BUTTON' %}</a>
+	</div>
+{% endblock %}

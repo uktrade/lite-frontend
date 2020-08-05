@@ -1,0 +1,26 @@
+.app-footer {
+	@include govuk-font($size: 19);
+	background: govuk-colour("light-grey");
+	padding: govuk-spacing(5) 0;
+	color: $govuk-text-colour;
+}
+
+.app-footer__container {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+
+	div {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		svg {
+			margin-right: govuk-spacing(3);
+
+			* {
+				fill: currentColor;
+			}
+		}
+	}
+}

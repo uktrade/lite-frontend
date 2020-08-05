@@ -1,0 +1,115 @@
+{% extends 'layouts/base.html' %}
+
+{% load svg static %}
+
+{% block back_link %}
+	{% include 'includes/breadcrumbs.html' with title='licences.LicencesList.BREADCRUMB' %}
+{% endblock %}
+
+{% block body %}
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">{% block title %}{% lcs "licences.LicencesList.TITLE" %}{% endblock %}</h1>
+		</div>
+	</div>
+
+	{% include 'includes/tabs.html' %}
+
+	{% include "filters.html" %}
+
+	{% if data.results %}
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="col">{% lcs "licences.LicencesList.Table.REFERENCE_COLUMN" %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs "licences.LicencesList.Table.GOODS_COLUMN" %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs "licences.LicencesList.Table.DESTINATION_COLUMN" %}</th>
+					<th class="govuk-table__header" scope="col">{% lcs "licences.LicencesList.Table.DOCUMENTS_COLUMN" %}</th>
+					<th class="govuk-table__header" scope="col"></th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				{% for licence in data.results %}
+					<tr class="govuk-table__row lite-accordian-table__row" id="licence-{{ licence.id }}">
+						<td class="govuk-table__cell">
+							<span class="govuk-table__header" aria-hidden="true">
+								{% lcs "licences.LicencesList.Table.APPLICATION_COLUMN" %}
+							</span>
+							<a href="{% url 'applications:application' licence.case_id %}?return_to={% url 'licences:licences' %}" class="govuk-link govuk-link--no-visited-state">{{ licence.case_reference }}</a>
+						</td>
+						<td class="govuk-table__cell">
+							<span class="govuk-table__header" aria-hidden="true">
+								{% lcs "licences.LicencesList.Table.GOODS_COLUMN" %}
+							</span>
+							{% for good in licence.goods|slice:":3" %}
+								<div class="app-expanded-row__item--invert">
+									{% if good.good %}
+										{{ forloop.counter }}. {% include 'includes/control-list-entries.html' with control_list_entries=good.good.control_list_entries %}: {{ good.good.description|abbreviate_string:30 }}
+									{% else %}
+										{{ forloop.counter }}. {% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}: {{ good.description|abbreviate_string:30 }}
+									{% endif %}
+									{% if licence.goods|length > row_limit and forloop.counter == row_limit %}
+										<br>
+										<span class="govuk-hint govuk-!-margin-0">
+											({{ row_limit }} of {{ licence.goods|length }})
+										</span>
+									{% endif %}
+								</div>
+							{% endfor %}
+							{% for good in licence.goods %}
+								<div class="app-expanded-row__item">
+									{% if good.good %}
+										{{ forloop.counter }}. {% include 'includes/control-list-entries.html' with control_list_entries=good.good.control_list_entries %}: {{ good.good.description }}
+									{% else %}
+										{{ forloop.counter }}. {% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}: {{ good.description }}
+									{% endif %}
+								</div>
+							{% endfor %}
+						</td>
+						<td class="govuk-table__cell">
+							<span class="govuk-table__header" aria-hidden="true">
+								{% lcs "licences.LicencesList.Table.DESTINATION_COLUMN" %}
+							</span>
+							{% for destination in licence.destinations|slice:":3" %}
+								<div class="app-expanded-row__item--invert">
+									{{ destination.country_name }}{% if destination.party_name %} - {{ destination.party_name }}{% endif %}
+									{% if licence.destinations|length > row_limit and forloop.counter == row_limit %}
+										<br>
+										<span class="govuk-hint govuk-!-margin-0">
+											({{ row_limit }} of {{ licence.destinations|length }})
+										</span>
+									{% endif %}
+								</div>
+							{% endfor %}
+							{% for destination in licence.destinations %}
+								<div class="app-expanded-row__item">
+									{{ destination.country_name }}{% if destination.party_name %} - {{ destination.party_name }}{% endif %}
+								</div>
+							{% endfor %}
+						</td>
+						<td class="govuk-table__cell">
+							<span class="govuk-table__header" aria-hidden="true">
+								{% lcs "licences.LicencesList.Table.DOCUMENTS_COLUMN" %}
+							</span>
+							<span class="govuk-visually-hidden">{% lcs "licences.LicencesList.DOWNLOAD_HIDDEN_TEXT" %}</span>
+							<a href="{% url 'applications:download_generated_document' licence.id licence.case_id %}" class="govuk-link govuk-link--no-visited-state" id="document-download">{{ licence.advice_type }}.pdf</a>
+						</td>
+						<td class="govuk-table__cell govuk-table__cell--tight">
+							<a id="expand-{{ licence.id }}" class="lite-accordian-table__chevron">
+								{% svg 'chevron' %}
+							</a>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+		{% pagination %}
+	{% else %}
+		{% include "includes/notice.html" with text="licences.LicencesList.NO_CONTENT_NOTICE" %}
+	{% endif %}
+{% endblock %}
+
+{% block javascript %}
+	<script src="{% static 'shared/lite-frontend/javascripts/accordian.js' %}"></script>
+{% endblock %}

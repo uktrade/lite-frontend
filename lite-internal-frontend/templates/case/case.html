@@ -1,0 +1,46 @@
+{% extends 'layouts/case.html' %}
+
+{% block details %}
+	{% for tab in tabs %}
+		{% if tab.url %}
+			<div id="{{ tab.id }}-content" class="app-case-tab-view {% if tab.url == current_tab %}app-case-tab-view--visible{% endif %}">
+				{% include 'case/tabs/'|add:tab.url|add:'.html' %}
+			</div>
+			{% else %}
+				{% for tab in tab.children %}
+					<div id="{{ tab.id }}-content" class="app-case-tab-view {% if tab.url == current_tab %}app-case-tab-view--visible{% endif %}">
+						{% include 'case/tabs/'|add:tab.url|add:'.html' %}
+					</div>
+				{% endfor %}
+		{% endif %}
+	{% endfor %}
+
+	<script type="text/javascript">
+		$(".app-case-tab-bar .lite-tabs__tab").click(function() {
+			$(".lite-tabs__tab-parent").removeClass("lite-tabs__tab-parent--selected");
+			$(".lite-tabs__tab-group--visible").removeClass("lite-tabs__tab-group--visible");
+			$(".lite-tabs__tab").removeClass("lite-tabs__tab--selected");
+			$(".app-case-tab-view--visible").removeClass("app-case-tab-view--visible");
+			$("#" + $(this).attr("id") + "-content").addClass("app-case-tab-view--visible");
+			$(this).addClass("lite-tabs__tab--selected");
+			$(this).find(".lite-tabs__tab-notification").hide();
+			window.history.pushState({}, null, $(this).attr("href"));
+			$(".lite-tabs__container--fade").removeClass("lite-tabs__container--fade");
+
+			if ($(this).parent().hasClass("lite-tabs__tab-group")) {
+				$(this).parent().prev().addClass("lite-tabs__tab-parent--selected");
+				$(this).parent().show().addClass("lite-tabs__tab-group--visible");
+				$(this).parent().parent().addClass("lite-tabs__container--fade");
+			}
+
+			return false;
+		})
+
+		$(".app-case-tab-bar .lite-tabs__tab-parent").click(function() {
+			$(this).addClass("lite-tabs__tab-parent--selected");
+			$(this).next().addClass("lite-tabs__tab-group--visible");
+			$(this).next().find(".lite-tabs__tab:first-of-type").click();
+			return false;
+		})
+	</script>
+{% endblock %}

@@ -1,0 +1,115 @@
+version: 2.1
+
+orbs:
+  jq: circleci/jq@1.8.0
+
+jobs:
+  tests:
+    docker:
+      - image: circleci/python:3.7
+      - image: circleci/postgres:9.5-alpine-ram
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: postgres
+    environment:
+      DEBUG: 'True'
+      PIPENV_VENV_IN_PROJECT: 'enabled'
+
+    working_directory: ~/lite-internal-frontend
+
+    steps:
+      - checkout
+      - run:
+          name: Git submodule checkout
+          command: |
+            git submodule sync
+            git submodule update --init
+
+      - run:
+          name: repository vulnerability check
+          command: |
+            VULNERABILITY_COUNT=`curl -s -u "lite-cicircle:${CICIRCLE_PERSONAL_ACCESS_TOKEN}" \
+              -X POST -H "Content-Type: application/json" \
+              -H "Accept: application/vnd.github.vixen-preview+json" \
+              -d '{"query": "query { repository(owner:\"uktrade\" name:\"lite-internal-frontend\") { vulnerabilityAlerts(first: 100) { totalCount } } }"}' \
+              https://api.github.com/graphql | jq ".data.repository.vulnerabilityAlerts.totalCount"`
+            if [ "$VULNERABILITY_COUNT" = "0" ]; then
+              echo "No vulnerabilities found"
+            elif [ "$VULNERABILITY_COUNT" = "null" ]; then
+              echo "Vulnerability check query returned unexpected JSON - bad credentials? Check JSON response for details"
+            else
+              echo "Vulnerabilities found: $VULNERABILITY_COUNT. Check GitHub security tab for details (only visible to admin users)"
+            fi
+            exit $VULNERABILITY_COUNT
+
+      - run:
+          name: Create environment file
+          command: cp local.env .env
+
+      # Download and cache dependencies
+      # ensure this step occurs *before* installing dependencies
+      - restore_cache:
+          key: dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+
+      - run:
+          name: Install dependencies
+          command: pipenv sync --dev
+
+      - save_cache:
+          paths:
+            - ./venv
+          key: dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+
+      - run:
+          name: Run pytest
+          command: pipenv run pytest unit_tests/ **/tests.py
+
+      - run:
+          name: Run Bandit
+          command: |
+            pipenv install bandit
+            pipenv run bandit -r .
+
+      - run:
+          name: Run Content String Check
+          command: pipenv run python templates/check_html_strings.py
+
+  linting:
+    docker:
+      - image: circleci/python:3.7
+    steps:
+      - checkout
+
+      - run:
+          name: Git Submodule Checkout
+          command: |
+            git submodule sync
+            git submodule update --init
+
+      - restore_cache:
+          key: dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+
+      - run:
+          name: Install Dependencies
+          command: pipenv sync --dev
+
+      - save_cache:
+          paths:
+            - ./venv
+          key: dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+
+      - run:
+          name: Prospector
+          command: pipenv run prospector
+
+      - run:
+          name: Black
+          command: pipenv run black . --check --diff
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - tests
+      - linting

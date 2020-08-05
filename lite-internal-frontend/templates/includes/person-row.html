@@ -1,0 +1,22 @@
+{% with forloop.counter|slugify as index %}
+	{% with 'name-'|add:index as name %}
+		{% with 'job-title-'|add:index as job_title %}
+			<tr class="govuk-table__row">
+				<td class="govuk-table__cell govuk-table__cell--line-number lite-table__cell--middle-align">
+					{{ index }}.
+				</td>
+				<td class="govuk-table__cell">
+					<label class="govuk-visually-hidden" for="name-{{ index }}">Name</label>
+					<input id="{{ name }}" class="govuk-input {% if errors|get:name %}govuk-input--error{% endif %}" name="name[]" type="text" value="{{ person.name }}">
+				</td>
+				<td class="govuk-table__cell">
+					<label class="govuk-visually-hidden" for="job-title-{{ index }}">Job title</label>
+					<input id="{{ job_title }}" class="govuk-input {% if errors|get:job_title %}govuk-input--error{% endif %}" name="job_title[]" type="text" value="{{ person.job_title }}">
+				</td>
+				<td class="govuk-table__cell govuk-table__cell--tight lite-table__cell--middle-align">
+					<a id="link-remove-row-{{ index }}" href="#" class="govuk-link govuk-link--no-visited-state" onclick="return removeRow(this)">Remove <span class="govuk-visually-hidden">{{ person.name }}</span></a>
+				</td>
+			</tr>
+		{% endwith %}
+	{% endwith %}
+{% endwith %}

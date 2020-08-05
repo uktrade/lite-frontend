@@ -1,0 +1,40 @@
+.govuk-table__caption {
+	@include govuk-font($size: 27, $weight: bold);
+	margin-bottom: govuk-spacing(3);
+}
+
+.govuk-table--middle-vertical-align {
+	.govuk-table__header, .govuk-table__cell {
+		vertical-align: middle;
+	}
+}
+
+.govuk-table__row {
+	.govuk-table__header, .govuk-table__cell {
+		border-bottom: 2px solid govuk-shade(govuk-colour("white"), 10%);
+	}
+}
+
+@for $i from 1 through 10 {
+	.govuk-table__cell--min-width-#{$i * 100} {
+		min-width: #{$i * 100}px;
+	}
+}
+
+@for $i from 1 through 10 {
+	.govuk-table__cell--max-width-#{$i * 100} {
+		max-width: #{$i * 100}px;
+	}
+}
+
+.govuk-table__row:target {
+	animation-name: app-target-animation;
+	animation-duration: 0.3s;
+	animation-fill-mode: both;
+}
+
+@keyframes app-target-animation {
+	100% {
+		background-color: govuk-tint(govuk-colour("yellow"), 80%);
+	}
+}

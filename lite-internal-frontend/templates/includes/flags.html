@@ -1,0 +1,19 @@
+{% if flags %}
+	<ul class="app-flags {% if list %}app-flags--list{% endif %} {{ classes }}">
+		{% for flag in flags %}
+			<li data-label="{{ flag.label }}" class="app-flag {% if flag.label %}app-flag--label{% endif %} app-flag--{{ flag.colour }}"><span class="govuk-visually-hidden">{{ flag.label }}</span> {{ flag.name }}</li>
+		{% endfor %}
+	</ul>
+{% else %}
+	{% if not list %}
+		<div class="govuk-!-margin-bottom-4">
+			{% if no_content %}
+				{% include 'includes/notice.html' with text=no_content small=True %}
+			{% else %}
+				{% include 'includes/notice.html' with text='generic.NO_FLAGS_SET' small=True %}
+			{% endif %}
+		</div>
+	{% else %}
+		<span class="govuk-hint govuk-!-margin-0">{% lcs 'generic.NO_FLAGS_SET' %}</span>
+	{% endif %}
+{% endif %}

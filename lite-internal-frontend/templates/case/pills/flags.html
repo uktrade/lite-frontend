@@ -1,0 +1,6 @@
+<div class="app-menu__header">
+	{{ case.all_flags|length }} {% lcs 'cases.CasePage.Pills.Flags.FLAG' %}{{ case.all_flags|pluralize }}
+</div>
+<div class="govuk-!-margin-left-3 govuk-!-margin-right-3 govuk-!-margin-bottom-3 govuk-!-margin-top-0">
+	{% include 'includes/flags.html' with flags=case.all_flags list=True %}
+</div>
