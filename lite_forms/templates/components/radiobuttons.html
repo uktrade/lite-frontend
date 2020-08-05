@@ -1,0 +1,57 @@
+{% if component.options %}
+    <div class="govuk-radios {% for class in component.classes %}{{ class }} {% endfor %} {% if component.options|has_components %}govuk-radios--conditional{% endif %}" data-module="govuk-radios">
+        {% for item in component.options %}
+            {% if item.show_or %}
+                <div class="govuk-radios__divider">or</div>
+            {% endif %}
+
+            {% if item %}
+				<div class="govuk-radios__item {% for class in item.classes %}{{ class }} {% endfor %}">
+					<input {% if item.disabled %}disabled{% endif %} {% if data|key_in_array:item.key %}checked{% endif %} class="govuk-radios__input" {% if item.show_pane %}show_pane="{{ item.show_pane }}"{% endif %} id="{{ component.name }}-{{ item.key }}" data-presentation-value="{{ item.value }}" name="{{ component.name }}" type="radio" value="{{ item.key }}" data-aria-controls="conditional-{{ component.name }}-{{ item.key }}-conditional">
+					<label class="govuk-label govuk-radios__label" for="{{ component.name }}-{{ item.key }}">
+						<span>{{ item.value }}</span>
+					</label>
+					{% if item.tag %}
+						<div>
+							<span class="govuk-tag govuk-tag--grey govuk-!-margin-left-3 govuk-!-margin-top-1 govuk-!-margin-bottom-2">
+								{{ item.tag }}
+							</span>
+						</div>
+					{% endif %}
+					{% if item.description %}
+						<p class="govuk-hint govuk-radios__hint govuk-!-margin-top-0" style="max-width: 700px;" data-max-length="200">
+							{{ item.description|safe|linebreaksbr }}
+						</p>
+					{% endif %}
+					{% if item.more_information %}
+						<details class="govuk-details govuk-!-margin-left-3" data-module="govuk-details">
+							<summary class="govuk-details__summary">
+								<span class="govuk-details__summary-text">
+									More information <span class="govuk-visually-hidden">about {{ item.value }}</span>
+								</span>
+							</summary>
+							<div class="govuk-details__text">
+								{{ item.more_information }}
+							</div>
+						</details>
+					{% endif %}
+				</div>
+			{% endif %}
+            {% if item.components %}
+                <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-{{ component.name }}-{{ item.key }}-conditional">
+                	{% for component in item.components %}
+                        {% include 'components.html' with question=component data=component_data %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="lite-information-text">
+        <span class="lite-information-text__icon" aria-hidden="true">!</span>
+        <p class="lite-information-text__text">
+            <span class="govuk-visually-hidden">Information</span>
+            {{ component.empty_notice }}
+        </p>
+    </div>
+{% endif %}

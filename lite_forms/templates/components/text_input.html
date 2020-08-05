@@ -1,0 +1,5 @@
+<input class="govuk-input {% if not component.classes %}govuk-input--width-20{% endif %} {% for class in component.classes %}{{ class }} {% endfor %}{% if error %}govuk-input--error{% endif %}"
+       id="{{ name }}"
+       type="text"
+       name="{{ name }}"
+       value="{{ value }}"/>
