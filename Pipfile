@@ -1,0 +1,17 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+bandit = "~=1.6"
+black = "==19.10b0"
+pytest = "~=5.1"
+
+[packages]
+Django = "~=2.2"
+django-environ = "~=0.4"
+psycopg2 = "~=2.8"
+
+[requires]
+python_version = "3.7"
