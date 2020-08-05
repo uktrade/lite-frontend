@@ -1,0 +1,115 @@
+.lite-file-upload {
+	@include govuk-font($size: 19);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	width: 100%;
+	height: 220px;
+	padding: govuk-spacing(6);
+	box-sizing: border-box;
+	border: 2px dashed govuk-colour("mid-grey");
+	cursor: pointer;
+	color: govuk-colour("black");
+
+	&:hover {
+		border-color: govuk-colour("dark-grey");
+
+		.lite-file-upload__link {
+			color: $govuk-link-hover-colour!important;
+		}
+	}
+
+	&:focus {
+		@include govuk-focused-text;
+		border-width: 0;
+
+		.lite-file-upload__link {
+			color: govuk-colour("black")!important;
+		}
+	}
+
+	&--drag-over {
+		border-color: $govuk-focus-colour;
+	}
+
+	input {
+		display: none;
+	}
+
+	span {
+		text-align: center;
+	}
+
+	&__link {
+		text-decoration: underline;
+		color: $govuk-link-colour;
+	}
+
+	&__or-label {
+		@extend .govuk-hint;
+		margin: govuk-spacing(3) 0 0;
+	}
+
+	&__uploaded-file {
+		display: block;
+		width: 100%;
+		background-color: govuk-colour("light-grey");
+		box-sizing: border-box;
+		margin-bottom: govuk-spacing(6);
+		padding: govuk-spacing(4);
+
+		.app-documents__item-preview {
+			background-color: white;
+			box-shadow: 0 2px 0 rgba(black, 0.1);
+			margin-right: govuk-spacing(4);
+
+			svg {
+				border-width: 0;
+			}
+		}
+
+		.app-documents__item-preview::after {
+			top: 13px;
+		}
+	}
+}
+
+.app-documents__item {
+	display: flex;
+
+	a {
+		display: block;
+		margin-bottom: govuk-spacing(2)!important;
+	}
+
+	.govuk-hint {
+		margin: 0;
+	}
+}
+
+.app-documents__item-preview {
+	position: relative;
+	margin-right: govuk-spacing(3);
+
+	span {
+		@include govuk-font($size: 14, $weight: bold);
+		position: absolute;
+		top: 17px;
+		left: 17px;
+		right: 17px;
+		text-transform: uppercase;
+		text-align: center;
+		letter-spacing: 1px;
+		line-height: 22px!important;
+		color: govuk-colour("white");
+	}
+}
+
+.app-documents__item-preview svg {
+	border: 5px solid govuk-colour("light-grey");
+}
+
+.app-documents__item-preview svg * {
+	fill: govuk-colour("mid-grey");
+}

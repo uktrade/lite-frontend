@@ -1,0 +1,44 @@
+.lite-tick-cross-list {
+	margin: 0;
+	list-style: none;
+	margin-block-start: 0;
+	padding: 0;
+	list-style-type: none;
+
+	li {
+		@include govuk-text-colour;
+		@include govuk-font($size: 19);
+	}
+
+	li:last-of-type .lite-tick-cross {
+		margin-bottom: 0;
+	}
+}
+
+.lite-tick-cross {
+	display: block;
+	display: flex;
+	align-items: center;
+	margin-bottom: govuk-spacing(2);
+
+	svg {
+		height: 18px;
+		width: 18px;
+		margin-right: govuk-spacing(2);
+		margin-bottom: 2px;
+	}
+
+	&--tick {
+		svg * {
+			fill: govuk-colour("green");
+		}
+	}
+
+	&--cross {
+		color: govuk-colour("dark-grey");
+
+		svg * {
+			fill: govuk-colour("dark-grey");
+		}
+	}
+}

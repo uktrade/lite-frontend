@@ -1,0 +1,47 @@
+.lite-information-text {
+	$size: 36px;
+	display: flex;
+
+	&__icon {
+		@include govuk-font($size: 24);
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		background: $govuk-text-colour;
+		color: $govuk-body-background-colour;
+		width: $size;
+		height: $size;
+		margin-right: govuk-spacing(3);
+		user-select: none;
+	}
+
+	&__text {
+		@include govuk-font($size: 19);
+		display: inline-block;
+		line-height: $size!important;
+		margin: 0;
+		color: $govuk-text-colour;
+	}
+
+	&__help {
+		@include govuk-font($size: 19, $line-height: 1.66);
+		color: $govuk-secondary-text-colour;
+		margin-left: $size + govuk-spacing(3);
+		margin-top: govuk-spacing(3);
+		max-width: 85%;
+		line-height: 1.66;
+	}
+
+	&--small {
+		.lite-information-text__icon {
+			@include govuk-font($size: 16);
+			width: 22px;
+			height: 22px;
+			margin-right: govuk-spacing(2);
+		}
+
+		.lite-information-text__text {
+			line-height: 22px!important;
+		}
+	}
+}

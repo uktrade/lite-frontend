@@ -1,0 +1,182 @@
+.govuk-table__header--checkbox {
+	display: flex;
+	border-bottom-width: 0;
+}
+
+.govuk-table__cell--checkbox {
+	// Style a table cell so that a checkbox
+	// fits in it correctly
+	@extend .govuk-checkboxes--small;
+	position: relative;
+	width: 24px!important;
+	margin: 0;
+	margin-bottom: govuk-spacing(3);
+
+	@include govuk-media-query($until: tablet) {
+		margin-top: -5px;
+		margin-right: -10px;
+		display: inline-block;
+
+		& + .govuk-table__cell {
+			display: inline-block;
+		}
+	}
+
+	div:hover .govuk-checkboxes__label::before {
+		box-shadow: 0 0 0 8px govuk-colour("mid-grey");
+		background-color: govuk-colour("white");
+	}
+
+	.govuk-checkboxes__label {
+		padding: 0!important;
+		display: block;
+		width: 24px;
+		height: 24px;
+		color: transparent;
+
+		&::before {
+			top: 9px;
+			border-color: $govuk-text-colour;
+			background: white;
+		}
+
+		&::after {
+			top: 16px;
+			border-color: $govuk-text-colour;
+		}
+	}
+}
+
+.govuk-table__cell--radio {
+	// Style a table cell so that a radiobutton
+	// fits in it correctly
+	@extend .govuk-radios--small;
+}
+
+.govuk-table__cell--nowrap {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	word-break: break-all;
+}
+
+.govuk-table__cell--border {
+	position: relative;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	word-break: break-all;
+	padding-right: govuk-spacing(1);
+
+	&::after {
+		content: "";
+		position: absolute;
+		top: 8px;
+		right: 0;
+		width: 1px;
+		height: 25px;
+		background: $govuk-border-colour;
+	}
+}
+
+.govuk-table__cell--border-side {
+	padding-left: govuk-spacing(3);
+}
+
+.govuk-table__cell--tight {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	word-break: break-all;
+	width: 10px;
+
+	@include govuk-media-query($until: tablet) {
+		width: auto;
+	}
+}
+
+.govuk-table__header--tight {
+	width: 10px;
+}
+
+.govuk-table__cell--line-number {
+	padding-right: govuk-spacing(2);
+	color: $govuk-secondary-text-colour;
+	white-space: nowrap;
+	width: 1%;
+	min-width: govuk-spacing(3);
+}
+
+.govuk-table__cell__actions-list {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	width: 100%;
+	margin: 0; // Reset default user agent styles
+	padding: 0; // Reset default user agent styles
+}
+
+.govuk-table__cell__actions-list-item {
+	display: inline;
+
+	&:not(:last-child) {
+		border-right: 1px solid $govuk-border-colour;
+		margin-right: govuk-spacing(2);
+		padding-right: govuk-spacing(2);
+	}
+}
+
+// Responsive table
+td {
+	.govuk-table__header {
+		display: none;
+	}
+}
+
+.lite-table__cell--middle-align {
+	vertical-align: middle;
+}
+
+@include govuk-media-query($until: tablet) {
+	thead {
+		display: none;
+	}
+
+	tbody {
+		tr {
+			display: block;
+			margin-bottom: govuk-spacing(3) + 2px;
+			padding: govuk-spacing(3);
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+
+			background-color: govuk-colour("light-grey");
+			box-shadow: 0 2px 0 0 govuk-colour("mid-grey");
+
+			th, td {
+				display: block;
+				padding-top: 0!important;
+				padding-right: 0;
+				border-bottom: none!important;
+				word-break: break-all;
+
+				.govuk-table__header {
+					display: block;
+					border-bottom: none!important;
+					padding: 0;
+					margin-bottom: govuk-spacing(2);
+				}
+
+				&:last-of-type {
+					padding-bottom: 0;
+				}
+
+				.govuk-tag--grey {
+					background: govuk-colour("white");
+				}
+			}
+		}
+	}
+}

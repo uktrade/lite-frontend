@@ -1,0 +1,58 @@
+.lite-case-note {
+	&__container {
+		display: grid;
+		grid-template-rows: 1fr auto;
+		margin-bottom: govuk-spacing(6);
+
+		&--error {
+			.lite-case-note__textarea {
+				@extend .govuk-textarea--error;
+			}
+
+			.lite-case-note__controls {
+				border: $govuk-border-width-form-element-error solid $govuk-error-colour;
+				border-top-width: 0;
+				padding: govuk-spacing(3) - 2px;
+				padding-top: govuk-spacing(3);
+			}
+
+			.govuk-character-count__message {
+				color: $govuk-error-colour;
+				font-weight: bold;
+			}
+		}
+	}
+
+	&__textarea {
+		@extend .govuk-textarea;
+		padding: govuk-spacing(3);
+		margin: 0;
+		min-height: 140px;
+	}
+
+	&__controls {
+		background: govuk-colour("light-grey");
+		box-sizing: border-box;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		border: $govuk-border-width-form-element solid $govuk-input-border-colour;
+		border-top-width: 0;
+		padding: govuk-spacing(3);
+
+		&-buttons {
+			display: flex;
+			align-items: center;
+
+			a {
+				@include govuk-font($size: 19);
+				margin-bottom: 0;
+				margin-right: govuk-spacing(6);
+			}
+
+			button {
+				margin: 0;
+			}
+		}
+	}
+}

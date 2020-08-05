@@ -1,0 +1,11 @@
+.lite-back-link-button {
+	@extend .govuk-back-link;
+	@include appearance(none);
+	border: none;
+	text-decoration: underline;
+	outline: none;
+	background: none;
+	padding: 0 0 0 14px;
+	margin-left: 0;
+	cursor: pointer;
+}

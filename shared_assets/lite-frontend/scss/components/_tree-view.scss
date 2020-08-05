@@ -1,0 +1,94 @@
+// Size of chevron (excluding border)
+$chevron-size: 8px;
+// Size of chevron border
+$chevron-border-width: 2px;
+// Colour of chevron
+$chevron-border-colour: $govuk-text-colour;
+
+.lite-tree-view {
+	position: relative;
+}
+
+.lite-tree-view__root {
+	padding: 0;
+
+	&[open] {
+		& > .lite-tree-view__summary::after {
+			transform: rotate(315deg);
+			top: calc(50% - 2.5px);
+		}
+	}
+}
+
+.lite-tree-view__summary {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	appearance: none;
+	// Absolutely position the marker against this element
+	position: relative;
+	// Allow for absolutely positioned marker and align with disclosed text
+	padding-left: 0;
+	// Style the summary to look like a link...
+	color: $govuk-link-colour;
+	cursor: pointer;
+	appearance: none;
+
+	.govuk-checkboxes__item {
+		@extend .govuk-checkboxes--small;
+		position: relative;
+		display: block;
+		margin-right: govuk-spacing(4);
+		margin-bottom: 0;
+
+		.govuk-checkboxes__label::before {
+			background-color: $govuk-body-background-colour;
+		}
+	}
+
+	&:focus {
+		@include govuk-focused-text;
+	}
+
+	&:active {
+		color: govuk-colour("black")!important;
+	}
+
+	&::after {
+		content: "";
+		display: block;
+		// Vertically align with the parent element
+		position: absolute;
+		top: calc(50% - 7.5px);
+		right: 0;
+		width: $chevron-size;
+		height: $chevron-size;
+		transform: rotate(135deg);
+		border: solid;
+		border-width: $chevron-border-width $chevron-border-width 0 0;
+		border-color: $chevron-border-colour;
+		clip-path: none;
+	}
+}
+// Remove the default details marker so we can style our own consistently and
+// ensure it displays in Firefox (see implementation.md for details)
+
+.lite-tree-view__summary::-webkit-details-marker {
+	display: none;
+}
+
+.lite-tree-view__children {
+	margin-left: govuk-spacing(2);
+	margin-top: govuk-spacing(2);
+	box-sizing: border-box;
+	border-left: 4px solid $govuk-border-colour;
+	padding-left: govuk-spacing(5);
+
+	.govuk-checkboxes__item {
+		@extend .govuk-checkboxes--small;
+		position: relative;
+		display: block;
+		margin-bottom: 0;
+		min-height: 44px;
+	}
+}

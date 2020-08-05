@@ -1,0 +1,41 @@
+.lite-information-board {
+	display: block;
+	position: relative;
+	margin-bottom: govuk-spacing(6);
+	padding: govuk-spacing(6) 0;
+	z-index: 0;
+
+	&:before {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 50%;
+		bottom: 0;
+		width: 100vw;
+		transform: translateX(-50vw);
+		background-color: govuk-colour("light-grey");
+		border-width: 2px 0;
+		border-style: solid;
+		border-color: darken(govuk-colour("light-grey"), 2%);
+		z-index: -1;
+	}
+
+	& > div > div {
+		h4 {
+			@include govuk-font($size: 16, $weight: bold);
+			margin-bottom: govuk-spacing(2);
+			color: govuk-colour("dark-grey");
+		}
+		p:last-of-type {
+			margin: 0;
+		}
+	}
+
+	.govuk-grid-row {
+		margin-bottom: govuk-spacing(6);
+
+		&:last-of-type {
+			margin-bottom: 0;
+		}
+	}
+}
