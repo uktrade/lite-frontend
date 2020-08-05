@@ -1,0 +1,100 @@
+{% extends 'layouts/two-pane.html' %}
+
+{% block back_link %}{% endblock %}
+
+{% block two_thirds %}
+	<h1 class="govuk-heading-xl {% if forms.forms.0.single_form_element %}govuk-!-margin-bottom-7{% endif %}">
+		{% block title %}
+			{{ title }}
+		{% endblock %}
+	</h1>
+
+	{% for form in forms.forms %}
+		{% if not form.single_form_element and not hide_titles %}
+			<h2 class="govuk-heading-m">{{ form.title }}</h2>
+		{% endif %}
+		<dl class="govuk-summary-list govuk-!-margin-bottom-{% if form.single_form_element or hide_titles %}0{% else %}9{% endif %}">
+			{% for component in form.questions %}
+				{% if component|has_attribute:'name' and component.input_type != 'hidden' and component.name not in hide_components %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							{% if not form.single_form_element %}
+								{% if component|has_attribute:'short_title' and component.short_title %}
+									{{ component.short_title }}
+								{% else %}
+									{{ component.title }}
+								{% endif %}
+							{% else %}
+								{% if form.single_form_element|has_attribute:'short_title' and form.single_form_element.short_title %}
+									{{ form.single_form_element.short_title }}
+								{% elif form.single_form_element.title %}
+									{{ form.single_form_element.title }}
+								{% else %}
+									{{ form.title }}
+								{% endif %}
+							{% endif %}
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{% if component.input_type == "file_upload" %}
+								You uploaded {{ pretty_data|component_name:component }}
+							{% elif pretty_data|component_name:component %}
+								<span style="white-space: pre-line;">{{ pretty_data|component_name:component }}</span>
+							{% else %}
+								{{ data|component_name:component }}
+							{% endif %}
+							{% for option in component.options %}
+								{% for inner_component in option.components %}
+									{% if pretty_data|component_name:component == option.key or data|component_name:component == option.key %}
+										<br>
+										{% if pretty_data|component_name:inner_component %}
+											<span class="govuk-hint" style="white-space: pre-line;">{{ pretty_data|component_name:inner_component }}</span>
+										{% else %}
+											<span class="govuk-hint">{{ data|component_name:inner_component }}</span>
+										{% endif %}
+									{% endif %}
+								{% endfor %}
+							{% endfor %}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<form action="?form_pk={{ form.pk }}#{{ component.name }}" method="post">
+								{% csrf_token %}
+								{% for key, value in data.items %}
+									{% dict_hidden_field key value %}
+								{% endfor %}
+								{% dict_hidden_field '_action' 'change' %}
+								{% dict_hidden_field 'form_pk' form.pk %}
+								<button id="{{ component.name }}" class="lite-button--link" type="submit">
+									Change <span class="govuk-visually-hidden">{{ component.short_title|default:component.title }}</span>
+								</button>
+							</form>
+						</dd>
+					</div>
+				{% endif %}
+			{% endfor %}
+		</dl>
+	{% endfor %}
+
+	{% with forms.forms|last as last %}
+		{% if notice_title %}
+			<h2 class="govuk-heading-m {% if last.single_form_element %}govuk-!-margin-top-4{% endif %}">{{ notice_title }}</h2>
+		{% endif %}
+
+		{% if notice %}
+			<p class="govuk-body">{{ notice }}</p>
+		{% endif %}
+
+		<form method="post" {% if last.single_form_element and not notice_title %}class="govuk-!-margin-top-8"{% endif %}>
+			{% csrf_token %}
+			{% for key, value in data.items %}
+				{% dict_hidden_field key value %}
+			{% endfor %}
+			<button name="_action" value="finish" type="submit" class="govuk-button govuk-!-margin-bottom-3" data-module="govuk-button">
+				{{ button }}
+			</button>
+		</form>
+	{% endwith %}
+
+	{% if cancel_link_text and cancel_link_url %}
+		<p class="govuk-hint">{{ cancel_link_prefix }} <a href="{{ cancel_link_url }}" class="govuk-link govuk-link--no-visited-state">{{ cancel_link_text }}</a>.</p>
+	{% endif %}
+{% endblock %}

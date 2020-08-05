@@ -1,0 +1,103 @@
+<div id="pane_{{ question.name }}" class="govuk-form-group {% if question.input_type == "hidden" %}govuk-visually-hidden{% endif %}
+			{% if errors|key_value:question.name %}
+					govuk-form-group--error
+			{% endif %}
+			{% if question.input_type == 'date' %}
+					{% if question.prefix|add:'day' in errors or question.prefix|add:'month' in errors or question.prefix|add:'year' in errors %}
+						govuk-form-group--error
+					{% endif %}
+			{% endif %}">
+	{% if question.title %}
+		<label class="govuk-label" for="{{ question.name }}">
+			{{ question.title }}
+			{% if question.optional %}
+				<span class="lite-form-optional">
+					<span class="govuk-visually-hidden">This field is </span>(optional)
+				</span>
+			{% endif %}
+		</label>
+	{% endif %}
+	{% if question.description %}
+		<span class="govuk-hint" for="{{ question.name }}">
+			<span>{{ question.description|safe }}</span>
+		</span>
+	{% endif %}
+	{% if question.accessible_description %}
+		<span class="govuk-hint govuk-visually-hidden" for="{{ question.name }}">
+			{{ question.accessible_description }}
+		</span>
+	{% endif %}
+
+	<!-- Error -->
+	{% if errors %}
+		{% if errors|key_value:question.name and question.input_type != "hidden" %}
+			<span id="error-{{ question.name }}" for="{{ question.name }}" class="govuk-error-message">
+				<span class="govuk-visually-hidden">Error:</span>
+				{% for error in errors|key_value:question.name %}
+					{{ error }}
+				{% endfor %}
+			</span>
+		{% endif %}
+	{% endif %}
+
+	<!-- Import component based on input_type -->
+	<div class="govuk-form-group">
+		{% if question.input_type == "hidden" %}
+			{% dict_hidden_field question.name question.value %}
+		{% elif question.input_type == "text_input" %}
+			{% include "components/text_input.html" with component=question name=question.name value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
+		{% elif question.input_type == "email_input" %}
+			{% include "components/email.html" with component=question name=question.name value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
+		{% elif question.input_type == "filter" %}
+			{% include "components/filter.html" with placeholder=question.placeholder %}
+		{% elif question.input_type == "currency_input" %}
+			{% include "components/currency.html" with name=question.name value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
+		{% elif question.input_type == "textarea" %}
+			{% include "components/textarea.html" with component=question name=question.name extras=question.extras value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
+		{% elif question.input_type == "number_input" %}
+			{% include "components/number.html" with component=question name=question.name value=data|key_value:question.name error=errors|key_value:question.name %}
+		{% elif question.input_type == "radiobuttons" %}
+			{% include "components/radiobuttons.html" with component=question data=data|key_value:question.name component_data=data %}
+		{% elif question.input_type == "radiobuttons_image" %}
+			{% include "components/radiobuttons_image.html" with component=question radiobuttons_data=data|key_value:question.name %}
+		{% elif question.input_type == "checkboxes" %}
+			{% include "components/checkboxes.html" with component=question data=data|key_value:question.name %}
+		{% elif question.input_type == "select" %}
+			{% include "components/select.html" with component=question data=data|key_value:question.name error=errors|key_value:question.name %}
+		{% elif question.input_type == "file_upload" %}
+			{% include "components/file_upload.html" with name=question.name value=question.name data=data|key_value:question.name %}
+		{% elif question.input_type == "multi_file_upload" %}
+			{% include "components/multi_file_upload.html" with component=question data=data|key_value:question.name %}
+		{% elif question.input_type == "quantity_input" %}
+			{% include "components/quantity.html" with name=question.name value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
+		{% elif question.input_type == "date" %}
+			{% include "components/date.html" with component=question data=data|date_join:question.prefix|default:'' errors=errors %}
+		{% elif question.input_type == "summary" %}
+			{% include "components/summary.html" with component=question %}
+		{% elif question.input_type == "list" %}
+			{% include "components/list.html" with component=question %}
+		{% elif question.input_type == "label" %}
+			{% include "components/label.html" with component=question %}
+        {% elif question.input_type == "token-bar" %}
+			{% include "components/token-bar.html" with component=question value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
+		{% elif question.input_type == "markdown" %}
+			{% include "components/markdown.html" with variables=question.variables name=question.name value=data|key_value:question.name|default:'' error=errors|key_value:question.name %}
+		{% elif question.input_type == "link" %}
+			{% include "components/link.html" with component=question %}
+		{% elif question.input_type == "warning" %}
+			{% include "components/warning.html" with component=question %}
+		{% elif question.input_type == "tree-view" %}
+			{% include "components/tree-view.html" with component=question %}
+		{% elif question.input_type == "autocomplete" %}
+			{% include "components/autocomplete.html" with component=question value=data|key_value:question.name|default:'' data=question.data %}
+		{% elif question.input_type == "group" %}
+			<div id="pane_{{ question.name }}" class="{% for class in question.classes %}{{ class }} {% endfor %}">
+				{% for question in question.components %}
+					{% include "components.html" with question=question errors=errors %}
+				{% endfor %}
+			</div>
+		{% elif question.input_type == "custom" %}
+			{% include question.template with component=question data=question.data value=data %}
+		{% endif %}
+	</div>
+</div>

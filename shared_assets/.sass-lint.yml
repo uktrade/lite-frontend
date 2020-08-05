@@ -1,0 +1,31 @@
+# Linter Options
+options:
+  # Don't merge default rules
+  merge-default-rules: false
+  # Set the formatter to 'html'
+  formatter: html
+  # Output file instead of logging results
+  output-file: 'linters/sass-lint.html'
+  # Raise an error if more than 50 warnings are generated
+  max-warnings: 50
+# File Options
+files:
+  include:
+    - 'lite-frontend/**/*.s+(a|c)ss'
+  ignore:
+    - 'lite-frontend/scss/all.scss'
+# Rule Configuration
+rules:
+  extends-before-mixins: 2
+  extends-before-declarations: 2
+  no-warn: 1
+  no-debug: 1
+  no-ids: 2
+  hex-notation:
+    - 2
+    -
+      style: uppercase
+  indentation:
+    - 2
+    -
+      size: tab

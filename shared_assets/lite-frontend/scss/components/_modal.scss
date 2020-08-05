@@ -1,0 +1,112 @@
+.lite-has-modal {
+	position: relative;
+	overflow: hidden;
+}
+
+.lite-modal-background {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(mix(govuk-colour("black"), $govuk-brand-colour, 80%), 0.8);
+	z-index: 999;
+	display: none;
+	padding: govuk-spacing(6);
+	overflow-y: scroll;
+	-webkit-overflow-scrolling: touch;
+	@include govuk-media-query($until: tablet) {
+		padding: 0;
+	}
+}
+
+.lite-modal {
+	margin: 6vh auto;
+	width: 600px;
+	max-width: 100%;
+	@include govuk-font($size: 19);
+	background: govuk-colour("white");
+	box-shadow: $lite-drop-shadow;
+
+	.govuk-body-m,
+	.govuk-heading-m {
+		white-space: normal;
+		word-wrap: break-word;
+		overflow: hidden;
+	}
+	@include govuk-media-query($until: tablet) {
+		width: 100%!important;
+		max-width: 100%!important;
+	}
+}
+
+.lite-modal-header {
+	padding: govuk-spacing(6);
+	margin-bottom: govuk-spacing(2);
+}
+
+.govuk-link--arrow {
+	position: relative;
+	display: inline-block;
+	padding-right: 14px;
+	border-bottom: 1px solid currentColor;
+	text-decoration: none;
+
+	&:after {
+		@include govuk-shape-arrow($direction: right, $base: 11px, $height: 6px);
+		content: "";
+		position: absolute;
+		top: 0;
+		bottom: 1px;
+		right: 0;
+		margin: auto;
+	}
+
+	&:visited {
+		color: $govuk-link-visited-colour;
+		border-bottom: 1px solid $govuk-link-visited-colour;
+
+		&:after {
+			border-left-color: $govuk-link-visited-colour;
+		}
+	}
+}
+
+.lite-modal-back-link {
+	@extend .govuk-link;
+	@extend .govuk-link--no-visited-state;
+	position: relative;
+	float: left;
+	display: none;
+	border-bottom: 1px solid currentColor;
+	text-decoration: none;
+	// Allow space for the arrow
+	padding-left: 14px;
+
+	&:before {
+		@include govuk-shape-arrow($direction: left, $base: 10px, $height: 6px);
+		content: "";
+		position: absolute;
+		top: -1px;
+		bottom: 1px;
+		left: 0;
+		margin: auto;
+	}
+}
+
+.lite-modal-close-link {
+	float: right;
+	border-bottom: 1px solid currentColor;
+	text-decoration: none;
+}
+
+.lite-modal__contents {
+	position: relative;
+	padding: 0 govuk-spacing(6) govuk-spacing(6);
+}
+
+.lite-modal-content {
+	.govuk-button {
+		margin-bottom: 0!important;
+	}
+}

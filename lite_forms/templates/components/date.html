@@ -1,0 +1,55 @@
+<div class="govuk-form-group">
+    <div class="govuk-date-input" id="date_of_issue">
+        <div class="govuk-date-input__item">
+            <div class="govuk-form-group">
+                <label class="govuk-label govuk-date-input__label {% if component.inline_title %}govuk-visually-hidden{% endif %}" for="{{ component.prefix }}day">
+                    Day
+                </label>
+                <input class="govuk-input govuk-date-input__input govuk-input--width-2
+							{% if component.prefix in errors or component.prefix|add:component.name in errors%}
+								govuk-input--error
+							{% endif %}"
+					   id="{{ component.prefix }}day"
+					   name="{{ component.prefix }}day"
+					   type="number"
+					   value="{{ data.day }}"
+					   {% if component.inline_title %}placeholder="Day"{% endif %}
+				/>
+            </div>
+        </div>
+        <div class="govuk-date-input__item">
+            <div class="govuk-form-group">
+                <label class="govuk-label govuk-date-input__label {% if component.inline_title %}govuk-visually-hidden{% endif %}" for="{{ component.prefix }}month">
+                    Month
+                </label>
+				<input class="govuk-input govuk-date-input__input govuk-input--width-2
+							{% if component.prefix in errors or component.prefix|add:component.name in errors%}
+								govuk-input--error
+							{% endif %}"
+					   id="{{ component.prefix }}month"
+					   name="{{ component.prefix }}month"
+					   type="number"
+					   value="{{ data.month }}"
+					   {% if component.inline_title %}placeholder="Month"{% endif %}
+				/>
+            </div>
+        </div>
+        <div class="govuk-date-input__item">
+            <div class="govuk-form-group">
+                <label class="govuk-label govuk-date-input__label {% if component.inline_title %}govuk-visually-hidden{% endif %}" for="{{ component.prefix }}year">
+                    Year
+                </label>
+				<input class="govuk-input govuk-date-input__input govuk-input--width-3
+							{% if component.prefix in errors or component.prefix|add:component.name in errors%}
+								govuk-input--error
+							{% endif %}"
+					   id="{{ component.prefix }}year"
+					   name="{{ component.prefix }}year"
+					   type="number"
+					   value="{{ data.year }}"
+					   {% if component.inline_title %}placeholder="Year"{% endif %}
+				/>
+            </div>
+        </div>
+    </div>
+</div>

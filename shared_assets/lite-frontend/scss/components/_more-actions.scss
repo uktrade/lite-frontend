@@ -1,0 +1,69 @@
+.lite-more-actions {
+	&__container {
+		&--float {
+			position: absolute;
+			top: 38px;
+			right: 0;
+			z-index: 2;
+			background: govuk-shade(govuk-colour("light-grey"), 2.5%);
+			border-bottom: 2px solid govuk-shade(govuk-colour("light-grey"), 40%);
+
+			a {
+				@include govuk-font($size: 19);
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				width: 260px;
+				padding: 0 govuk-spacing(4);
+				min-height: 54px;
+				border-bottom: 2px solid govuk-shade(govuk-colour("light-grey"), 10%);
+				color: govuk-colour("black");
+				text-decoration: none;
+
+				svg {
+					width: 21px;
+					height: 21px;
+
+					* {
+						fill: currentColor;
+					}
+				}
+
+				&:hover {
+					background-color: govuk-shade(govuk-colour("light-grey"), 10%);
+				}
+
+				&:active {
+					background-color: govuk-shade(govuk-colour("light-grey"), 20%);
+				}
+
+				&:last-of-type {
+					border-bottom-width: 0;
+				}
+			}
+		}
+		&--hidden {
+			display: none;
+		}
+	}
+	&__button {
+		-webkit-user-select: none;
+		user-select: none;
+		margin: 0;
+
+		&:after {
+			@include govuk-shape-arrow($direction: down, $base: 10px, $height: 6px, $display: inline-block);
+
+			content: "";
+			background: currentColor;
+			margin-left: 8px;
+			transform: translateY(-2px);
+		}
+	}
+}
+
+.lite-more-actions__parent-disabled-buttons {
+	& > .govuk-button:not(.lite-more-actions__button) {
+		opacity: 0.4;
+	}
+}

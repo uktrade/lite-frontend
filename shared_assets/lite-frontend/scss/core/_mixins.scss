@@ -1,0 +1,23 @@
+@mixin appearance($appearance) {
+	-webkit-appearance: $appearance;
+	-moz-appearance: $appearance;
+	appearance: $appearance;
+}
+@mixin user-select($user-select) {
+	-webkit-user-select: $user-select;
+	user-select: $user-select;
+}
+@mixin truncate($truncation-boundary) {
+	max-width: $truncation-boundary;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+@mixin fill-pseudo($all: 0) {
+	content: "";
+	position: absolute;
+	top: $all;
+	left: $all;
+	right: $all;
+	bottom: $all;
+}

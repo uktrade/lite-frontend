@@ -1,0 +1,14 @@
+.lite-related-items {
+	padding-top: govuk-spacing(4);
+	border-top: govuk-spacing(2) solid govuk-colour("light-grey");
+
+	&:first-of-type {
+		border-top: govuk-spacing(2) solid $govuk-brand-colour;
+	}
+}
+
+.lite-related-items--sticky {
+	position: -webkit-sticky;
+	position: sticky;
+	top: govuk-spacing(6);
+}

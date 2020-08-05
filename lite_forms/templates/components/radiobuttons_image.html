@@ -1,0 +1,31 @@
+{% if component.options %}
+    <div class="app-document-templates__list {% for class in component.classes %}{{ class }} {% endfor %}">
+        {% for item in component.options %}
+            {% if item.show_or %}
+                <div class="govuk-radios__divider">or</div>
+            {% endif %}
+            <div class="app-document-templates__item">
+                <input {% if radiobuttons_data|key_in_array:item.key %}checked{% endif %} {% if item.show_pane %}show_pane="{{ item.show_pane }}"{% endif %} id="{{ component.name }}-{{ item.key }}" name="{{ component.name }}" type="radio" value="{{ item.key }}">
+                <label class="govuk-label" for="{{ component.name }}-{{ item.key }}">
+                    <img src="{{ item.img_url }}" alt="{{ item.value }}" id="{{ item.key }}">
+                    {{ item.value }}
+                </label>
+                {% if item.description %}
+                    <label class="govuk-hint govuk-radios__hint" for="{{ component.name }}-{{ item.key }}">
+                        {{ item.description|safe|linebreaksbr }}
+                    </label>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="lite-information-text">
+        <span class="lite-information-text__icon" aria-hidden="true">!</span>
+        <p class="lite-information-text__text">
+            <span class="govuk-visually-hidden">Information</span>
+            {{ component.empty_notice }}
+        </p>
+    </div>
+{% endif %}
+
+{% pagination %}

@@ -1,0 +1,31 @@
+{% if component.options %}
+	{% if component.show_select_links %}
+		<div class="lite-buttons-row govuk-body govuk-!-margin-bottom-6 lite-js-only">
+			<a id="link-select-all" href="#" role="button" draggable="false" class="govuk-link govuk-link--no-visited-state">Select all</a>
+			<a id="link-deselect-all" href="#" role="button" draggable="false" class="govuk-link govuk-link--no-visited-state">Deselect all</a>
+		</div>
+	{% endif %}
+    <div class="govuk-checkboxes {% for class in component.classes %}{{ class }} {% endfor %}">
+        {% for item in component.options %}
+            <div class="govuk-checkboxes__item">
+                <input {% if item.auto_check and data|key_in_array:item.key %}checked{% endif %} class="govuk-checkboxes__input" data-attribute="{{ item.data_attribute }}" id="{% if item.id %}{{ item.id }}{% else %}{{ item.value|replace_spaces }}{% endif %}" name="{{ component.name }}" type="checkbox" value="{{ item.key }}">
+                <label class="govuk-label govuk-checkboxes__label" for="{% if item.id %}{{ item.id }}{% else %}{{ item.value|replace_spaces }}{% endif %}">
+                    <span class="{% for class in item.classes %}{{ class }} {% endfor %}">{{ item.value }}</span>
+                </label>
+                {% if item.description %}
+                    <label class="govuk-hint govuk-checkboxes__hint">
+                        {{ item.description|safe }}
+                    </label>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="lite-information-text">
+        <span class="lite-information-text__icon" aria-hidden="true">!</span>
+        <p class="lite-information-text__text">
+            <span class="govuk-visually-hidden">Information</span>
+            {{ component.empty_notice }}
+        </p>
+    </div>
+{% endif %}

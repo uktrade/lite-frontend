@@ -1,0 +1,15 @@
+{% if component.type.value == 1 or component.type.value == 2 %}
+	<ul class="govuk-list {% if component.type.value == 2 %}govuk-list--bullet{% endif %} {% for class in component.classes %}{{ class }} {% endfor %}">
+{% else %}
+	<ol class="govuk-list govuk-list--number {% for class in component.classes %}{{ class }} {% endfor %}">
+{% endif %}
+{% for item in component.items %}
+	<li>
+		{{ item }}
+	</li>
+{% endfor %}
+{% if component.type.value == 1 or component.type.value == 2 %}
+	</ul>
+{% else %}
+	</ol>
+{% endif %}
