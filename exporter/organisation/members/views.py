@@ -14,7 +14,7 @@ from exporter.organisation.views import OrganisationView
 
 
 class Members(OrganisationView):
-    template_name = "members/index"
+    template_name = "exporter/members/index"
 
     def get_additional_context(self):
         status = self.request.GET.get("status")

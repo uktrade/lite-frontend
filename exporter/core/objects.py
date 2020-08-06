@@ -1,7 +1,7 @@
 from munch import Munch
 
 from exporter.conf.constants import APPLICANT_EDITING
-from exporter.core.builtins.custom_tags import str_date
+from core.builtins.custom_tags import str_date
 
 
 class Tab:

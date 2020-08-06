@@ -46,4 +46,4 @@ class RedirectToMembers(RedirectView):
 
 
 class Details(OrganisationView):
-    template_name = "details/index"
+    template_name = "exporter/details/index"

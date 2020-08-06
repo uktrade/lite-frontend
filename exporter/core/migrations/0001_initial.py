@@ -5,7 +5,7 @@ import uuid
 import django.utils.timezone
 from django.db import migrations, models
 
-import core.models
+import exporter.core.models
 
 
 class Migration(migrations.Migration):
@@ -75,6 +75,6 @@ class Migration(migrations.Migration):
                 ),
             ],
             options={"verbose_name": "user", "verbose_name_plural": "users", "abstract": False,},
-            managers=[("objects", core.models.CustomUserManager()),],
+            managers=[("objects", exporter.core.models.CustomUserManager()),],
         ),
     ]

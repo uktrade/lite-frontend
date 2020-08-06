@@ -2,6 +2,7 @@ from __future__ import division
 
 import datetime
 import json
+from importlib import import_module
 import re
 from collections import Counter, OrderedDict
 from html import escape
@@ -11,17 +12,18 @@ from django.template.defaultfilters import stringfilter, safe, capfirst
 from django.templatetags.tz import do_timezone
 from django.utils.safestring import mark_safe
 
-from conf import settings
-from conf.constants import ISO8601_FMT, DATE_FORMAT
-from conf.constants import SystemTeamsID
-from lite_content.lite_internal_frontend import strings
+from django.conf import settings
+from exporter.conf.constants import ISO8601_FMT, DATE_FORMAT
+from caseworker.conf.constants import SystemTeamsID
+
+
+strings = import_module(settings.LITE_CONTENT_IMPORT_PATH)
 
 register = template.Library()
 STRING_NOT_FOUND_ERROR = "STRING_NOT_FOUND"
 
 
 @register.simple_tag(name="lcs")
-@mark_safe
 def get_const_string(value):
     """
     Template tag for accessing constants from LITE content library (not for Python use - only HTML)
@@ -40,18 +42,25 @@ def get_const_string(value):
         object = getattr(object_to_search, nested_properties_list[0])
         if len(nested_properties_list) == 1:
             # We have reached the end of the path and now have the string
-            return object.replace("<!--", "<span class='govuk-visually-hidden'>").replace("-->", "</span>")
+            if isinstance(object, str):
+                object = mark_safe(  # nosec
+                    object.replace("<!--", "<span class='govuk-visually-hidden'>").replace("-->", "</span>")
+                )
+
+            return object
         else:
             # Search the object for the next property in `nested_properties_list`
             return get(object, nested_properties_list[1:])
 
     path = value.split(".")
+
     try:
         # Get initial object from strings.py (may return AttributeError)
         path_object = getattr(strings, path[0])
         return get(path_object, path[1:]) if len(path) > 1 else path_object
     except AttributeError:
         return STRING_NOT_FOUND_ERROR
+
 
 
 @register.filter(name="lcsp")
@@ -503,3 +512,54 @@ def list_has_property(items, attribute):
         if attribute in item and item.get(attribute):
             return True
     return False
+
+
+@register.filter()
+def pluralise_unit(unit, value):
+    """
+    Modify units given from the API to include an 's' if the
+    value is not singular.
+
+    Units require an (s) at the end of their names to
+    use this functionality.
+    """
+    is_singular = value == "1"
+
+    if "(s)" in unit:
+        if is_singular:
+            return unit.replace("(s)", "")
+        else:
+            return unit.replace("(s)", "s")
+
+    return unit
+
+
+@register.filter()
+def date_display(value):
+    months = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+    ]
+
+    # ensure that the value given exists, and is not none type
+    if not value:
+        return
+
+    # A date without the two '-' delimiters is not a full/valid date
+    if value.count("-") < 2:
+        return
+
+    year, month, day = value.split("-")
+    month = months[(int(month) - 1)]
+
+    return f"{int(day)} {month} {year}"

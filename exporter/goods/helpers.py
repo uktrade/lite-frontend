@@ -1,6 +1,6 @@
 from django.urls import reverse_lazy
 
-from exporter.core.builtins.custom_tags import default_na
+from core.builtins.custom_tags import default_na
 from exporter.core.helpers import convert_control_list_entries
 from lite_forms.components import Summary
 

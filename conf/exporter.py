@@ -31,16 +31,16 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "conf.middleware.LoggingMiddleware",
-    "conf.middleware.ProtectAllViewsMiddleware",
-    "conf.middleware.UploadFailedMiddleware",
+    "exporter.conf.middleware.LoggingMiddleware",
+    "exporter.conf.middleware.ProtectAllViewsMiddleware",
+    "exporter.conf.middleware.UploadFailedMiddleware",
     "django.middleware.gzip.GZipMiddleware",
 ]
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, "templates")],
+        "DIRS": [os.path.join(BASE_DIR, "exporter/templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -48,7 +48,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "conf.context_processors.export_vars",
+                "exporter.conf.context_processors.export_vars",
             ],
             "builtins": ["core.builtins.custom_tags"],
         },
@@ -68,3 +68,27 @@ TOKEN_SESSION_KEY = env.str("TOKEN_SESSION_KEY")
 FEEDBACK_URL = env.str("FEEDBACK_URL")
 INTERNAL_FRONTEND_URL = env.str("INTERNAL_FRONTEND_URL")
 GOOGLE_ANALYTICS_KEY = env.str("GOOGLE_ANALYTICS_KEY")
+
+
+# static files
+SVG_DIRS = [
+    os.path.join(BASE_DIR, "exporter/assets/images"),
+    os.path.join(BASE_DIR, "exporter/assets/shared/lite-frontend/assets/images"),
+]
+
+STATIC_ROOT = os.path.join(DATA_DIR, "exporter/assets")
+SASS_ROOT = os.path.join(BASE_DIR, "exporter/assets")
+SASS_PROCESSOR_ROOT = SASS_ROOT
+
+COMPRESS_PRECOMPILERS = (("text/x-scss", "django_libsass.SassCompiler"),)
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "exporter/assets"),
+    os.path.join(BASE_DIR, "exporter/assets/shared/node_modules/govuk-frontend/govuk/"),
+    os.path.join(BASE_DIR, "exporter/assets/shared/node_modules/govuk-frontend/govuk/assets/"),
+    os.path.join(BASE_DIR, "exporter/assets/shared/lite-frontend/"),
+)
+
+SASS_PROCESSOR_INCLUDE_DIRS = (os.path.join(BASE_DIR, "exporter/assets"), SASS_ROOT)
+
+LITE_CONTENT_IMPORT_PATH = 'lite_content.lite_exporter_frontend.strings'

@@ -18,7 +18,7 @@ from exporter.conf.constants import (
     APPLICATION_TYPE_STRINGS,
     GoodsTypeCategory,
 )
-from exporter.core.builtins.custom_tags import default_na, friendly_boolean, pluralise_unit, date_display, get_address
+from core.builtins.custom_tags import default_na, friendly_boolean, pluralise_unit, date_display, get_address
 from exporter.core.helpers import convert_to_link, convert_control_list_entries
 from lite_content.lite_exporter_frontend import applications
 from lite_content.lite_exporter_frontend.strings import Parties

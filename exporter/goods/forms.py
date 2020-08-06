@@ -1,6 +1,6 @@
 from django.urls import reverse, reverse_lazy
 
-from exporter.core.builtins.custom_tags import linkify
+from core.builtins.custom_tags import linkify
 from exporter.core.services import get_control_list_entries
 from exporter.core.services import get_pv_gradings
 from exporter.goods.helpers import good_summary, get_category_display_string

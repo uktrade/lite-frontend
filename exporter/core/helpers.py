@@ -8,7 +8,7 @@ from django.utils.safestring import mark_safe
 
 from exporter.conf import decorators
 from exporter.conf.constants import ISO8601_FMT
-from exporter.core.builtins.custom_tags import default_na
+from core.builtins.custom_tags import default_na
 from exporter.organisation.roles.services import get_user_permissions
 
 
