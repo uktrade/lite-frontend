@@ -1,7 +1,7 @@
-from shared import functions
+from tests_common import functions
 from pages.BasePage import BasePage
 
-from caseworker.ui_automation_tests.shared.functions import element_with_id_exists
+from tests_common.functions import element_with_id_exists
 
 
 class OpenGeneralLicencesListPage(BasePage):

@@ -5,17 +5,9 @@ from django.urls import reverse_lazy
 from conf.base import *
 
 
-ROOT_URLCONF = 'exporter.urls'
+ROOT_URLCONF = "exporter.urls"
 
-INSTALLED_APPS = [
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-    "sass_processor",
-    "django.contrib.humanize",
+INSTALLED_APPS += [
     "exporter.core",
     "svg",
     "lite_forms",
@@ -92,4 +84,6 @@ STATICFILES_DIRS = (
 
 SASS_PROCESSOR_INCLUDE_DIRS = (os.path.join(BASE_DIR, "exporter/assets"), SASS_ROOT)
 
-LITE_CONTENT_IMPORT_PATH = 'lite_content.lite_exporter_frontend.strings'
+LITE_CONTENT_IMPORT_PATH = "lite_content.lite_exporter_frontend.strings"
+
+LITE_EXPORTER_HAWK_KEY = env.str("LITE_EXPORTER_HAWK_KEY")

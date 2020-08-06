@@ -1,7 +1,10 @@
 from django.shortcuts import render
 
 from exporter.applications.constants import OielLicenceTypes
-from exporter.applications.helpers.check_your_answers import _is_application_export_type_temporary, get_application_type_string
+from exporter.applications.helpers.check_your_answers import (
+    _is_application_export_type_temporary,
+    get_application_type_string,
+)
 from exporter.applications.helpers.task_list_sections import (
     get_reference_number_description,
     get_edit_type,

@@ -5,7 +5,10 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
-from exporter.applications.forms.application_actions import withdraw_application_confirmation, surrender_application_confirmation
+from exporter.applications.forms.application_actions import (
+    withdraw_application_confirmation,
+    surrender_application_confirmation,
+)
 from exporter.applications.forms.common import (
     edit_type_form,
     application_success_page,

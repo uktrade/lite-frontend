@@ -16,7 +16,12 @@ from caseworker.cases.forms.advice import (
     finalise_form,
 )
 from caseworker.cases.forms.finalise_case import deny_licence_form
-from caseworker.cases.helpers.advice import get_param_destinations, get_param_goods, flatten_advice_data, prepare_data_for_advice
+from caseworker.cases.helpers.advice import (
+    get_param_destinations,
+    get_param_goods,
+    flatten_advice_data,
+    prepare_data_for_advice,
+)
 from caseworker.cases.services import (
     post_user_case_advice,
     coalesce_user_advice,

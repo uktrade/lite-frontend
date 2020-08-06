@@ -10,10 +10,10 @@ from pages.open_general_licences_pages import (
     OpenGeneralLicencesDeactivatePage,
     OpenGeneralLicencesCasePage,
 )
-from shared import functions
+from tests_common import functions
 
 from caseworker.ui_automation_tests.pages.case_page import CasePage, CaseTabs
-from caseworker.ui_automation_tests.pages.shared import Shared
+from caseworker.ui_automation_tests.pages.shared import tests_common
 
 scenarios("../features/open_general_licences.feature", strict_gherkin=False)
 

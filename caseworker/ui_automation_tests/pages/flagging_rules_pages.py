@@ -1,7 +1,7 @@
 from selenium.webdriver.support.select import Select
 
 from pages.BasePage import BasePage
-from caseworker.ui_automation_tests.shared import functions
+from tests_common import functions
 
 
 class FlaggingRulePages(BasePage):

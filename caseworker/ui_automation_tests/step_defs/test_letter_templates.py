@@ -4,7 +4,7 @@ from pytest_bdd import scenarios, when, then, given, parsers
 
 from pages.application_page import ApplicationPage
 from pages.letter_templates import LetterTemplates
-from pages.shared import Shared
+from pages.shared import tests_common
 from caseworker.ui_automation_tests.fixtures.add_a_document_template import get_paragraph_text
 
 scenarios("../features/letter_templates.feature", strict_gherkin=False)

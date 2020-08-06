@@ -1,9 +1,9 @@
 from pytest_bdd import when, then, parsers, scenarios, given
-import shared.tools.helpers as utils
+import tests_common.tools.helpers as utils
 from pages.application_page import ApplicationPage
 from pages.case_list_page import CaseListPage
 from pages.queues_pages import QueuesPages
-from pages.shared import Shared
+from pages.shared import tests_common
 
 
 scenarios("../features/queues.feature", strict_gherkin=False)

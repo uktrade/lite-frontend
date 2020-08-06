@@ -2,7 +2,7 @@ from pytest_bdd import when, then, scenarios, given, parsers
 
 from pages.application_page import ApplicationPage
 from pages.goods_queries_pages import GoodsQueriesPages
-from pages.shared import Shared
+from pages.shared import tests_common
 
 scenarios("../features/goods_queries.feature", strict_gherkin=False)
 

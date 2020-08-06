@@ -1,6 +1,6 @@
-from pages.shared import Shared
+from pages.shared import tests_common
 from pages.BasePage import BasePage
-from caseworker.ui_automation_tests.shared.tools.helpers import find_paginated_item_by_id
+from tests_common.tools.helpers import find_paginated_item_by_id
 
 
 class GeneratedDocument(BasePage):

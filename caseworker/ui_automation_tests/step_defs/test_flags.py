@@ -1,13 +1,13 @@
 from pytest_bdd import when, then, scenarios, parsers
 
-import shared.tools.helpers as utils
+import tests_common.tools.helpers as utils
 from pages.add_edit_flag import AddEditFlagPage
 from pages.advice import FinalAdvicePage
 from pages.assign_flags_to_case import CaseFlagsPages
 from pages.case_page import CasePage
 from pages.flags_list_page import FlagsListPage
-from pages.shared import Shared
-from shared import functions
+from pages.shared import tests_common
+from tests_common import functions
 
 scenarios("../features/flags.feature", strict_gherkin=False)
 

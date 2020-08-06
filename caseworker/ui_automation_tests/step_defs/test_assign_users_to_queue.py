@@ -2,11 +2,11 @@ from pytest_bdd import when, then, parsers, scenarios, given
 
 from pages.case_list_page import CaseListPage
 from pages.case_page import CasePage
-from pages.shared import Shared
+from pages.shared import tests_common
 from caseworker.ui_automation_tests.pages.application_page import ApplicationPage
 from caseworker.ui_automation_tests.pages.assign_user_page import AssignUserPage
 from caseworker.ui_automation_tests.pages.unassign_queue_page import UnassignQueuePage
-from caseworker.ui_automation_tests.shared import functions
+from tests_common import functions
 
 scenarios("../features/assign_users_to_queue.feature", strict_gherkin=False)
 

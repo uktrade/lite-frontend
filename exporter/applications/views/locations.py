@@ -5,7 +5,11 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
-from exporter.applications.forms.countries import countries_form, choose_contract_type_form, contract_type_per_country_form
+from exporter.applications.forms.countries import (
+    countries_form,
+    choose_contract_type_form,
+    contract_type_per_country_form,
+)
 from exporter.applications.forms.locations import (
     which_location_form,
     external_locations_form,

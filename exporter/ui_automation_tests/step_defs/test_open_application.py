@@ -2,7 +2,9 @@ from pytest_bdd import scenarios, when, then, parsers
 
 import ui_automation_tests.shared.tools.helpers as utils
 from exporter.ui_automation_tests.pages.generic_application.task_list import TaskListPage
-from exporter.ui_automation_tests.pages.open_application.country_contract_types import OpenApplicationCountryContractTypes
+from exporter.ui_automation_tests.pages.open_application.country_contract_types import (
+    OpenApplicationCountryContractTypes,
+)
 from exporter.ui_automation_tests.pages.open_application.country_contract_types_summary import (
     OpenApplicationCountryContractTypesSummaryPage,
 )

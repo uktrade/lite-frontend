@@ -3,7 +3,7 @@ from pytest_bdd import scenarios, when, then
 
 from pages.additional_contacts import AdditionalContactsPage
 from pages.case_page import CasePage, CaseTabs
-from shared import functions
+from tests_common import functions
 
 fake = Faker()
 

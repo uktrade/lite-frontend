@@ -6,7 +6,7 @@ from pages.advice import UserAdvicePage, FinalAdvicePage, TeamAdvicePage, BaseAd
 from pages.case_page import CasePage, CaseTabs
 from pages.give_advice_pages import GiveAdvicePages
 from pages.record_decision_page import RecordDecision
-from pages.shared import Shared
+from pages.shared import tests_common
 from caseworker.ui_automation_tests.pages.grant_licence_page import GrantLicencePage
 
 scenarios("../features/give_advice.feature", strict_gherkin=False)

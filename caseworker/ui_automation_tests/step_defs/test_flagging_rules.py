@@ -1,7 +1,7 @@
 from pytest_bdd import when, then, scenarios, parsers, given
-import shared.tools.helpers as utils
-from pages.shared import Shared
-from shared import functions
+import tests_common.tools.helpers as utils
+from pages.shared import tests_common
+from tests_common import functions
 
 from caseworker.ui_automation_tests.pages.flagging_rules_pages import FlaggingRulePages
 

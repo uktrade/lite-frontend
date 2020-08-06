@@ -1,9 +1,9 @@
 import time
 
-from pages.shared import Shared
-from shared import selectors
+from pages.shared import tests_common
+from tests_common import selectors
 from pages.BasePage import BasePage
-from shared.tools.helpers import scroll_to_element_by_id
+from tests_common.tools.helpers import scroll_to_element_by_id
 
 
 class CaseTabs:

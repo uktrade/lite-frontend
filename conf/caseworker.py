@@ -1,21 +1,11 @@
 import os
 
-from django.urls import reverse_lazy
-
 from conf.base import *
 
 
-ROOT_URLCONF = 'caseworker.urls'
+ROOT_URLCONF = "caseworker.urls"
 
-INSTALLED_APPS = [
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-    "sass_processor",
-    "django.contrib.humanize",
+INSTALLED_APPS += [
     "caseworker.core",
     "caseworker.spire",
     "svg",
@@ -28,7 +18,7 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "caseworker.conf.middleware.SessionTimeoutMiddleware",
-    # "csp.middleware.CSPMiddleware",
+    "csp.middleware.CSPMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -64,7 +54,7 @@ TEMPLATES = [
 
 
 LOGIN_REDIRECT_URL = "/"
-LOGOUT_URL =  f"{AUTHBROKER_URL}/logout/"
+LOGOUT_URL = f"{AUTHBROKER_URL}/logout/"
 
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
@@ -105,6 +95,6 @@ STATICFILES_DIRS = (
 
 SASS_PROCESSOR_INCLUDE_DIRS = (os.path.join(BASE_DIR, "caseworker/assets"), SASS_ROOT)
 
-LITE_CONTENT_IMPORT_PATH = 'lite_content.lite_internal_frontend.strings'
+LITE_CONTENT_IMPORT_PATH = "lite_content.lite_internal_frontend.strings"
 
 LITE_INTERNAL_HAWK_KEY = env.str("LITE_INTERNAL_HAWK_KEY")

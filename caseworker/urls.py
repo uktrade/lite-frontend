@@ -24,7 +24,7 @@ urlpatterns = [
 
 
 if settings.FEATURE_SPIRE_SEARCH_ON:
-    urlpatterns.append(path("spire/", include("spire.urls")))
+    urlpatterns.append(path("spire/", include("caseworker.spire.urls")))
 
 
 handler403 = views.error_403

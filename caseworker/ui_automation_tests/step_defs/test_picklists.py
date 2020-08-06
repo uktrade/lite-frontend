@@ -1,9 +1,9 @@
 from pytest_bdd import scenarios, when, then, parsers
 
-import shared.tools.helpers as utils
+import tests_common.tools.helpers as utils
 from pages.picklist_pages import PicklistPages
-from pages.shared import Shared
-from shared import functions
+from pages.shared import tests_common
+from tests_common import functions
 
 scenarios("../features/picklists.feature", strict_gherkin=False)
 
