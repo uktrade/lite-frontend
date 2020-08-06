@@ -1,4 +1,4 @@
-from conf.settings import env
+from django.conf import settings
 
 SERVICE_NAME = "LITE"
 
@@ -32,7 +32,7 @@ class Document:
 
 
 # Links
-PERMISSION_FINDER_LINK = "[control list](" + env("PERMISSIONS_FINDER_URL") + ")"
+PERMISSION_FINDER_LINK = "[control list](" + settings.PERMISSIONS_FINDER_URL + ")"
 
 
 class Filters:
