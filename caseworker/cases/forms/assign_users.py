@@ -1,7 +1,7 @@
 from django.http import HttpRequest
 from django.urls import reverse, reverse_lazy
 
-from conf.constants import UserStatuses
+from caseworker.conf.constants import UserStatuses
 from lite_content.lite_internal_frontend import strings
 from lite_content.lite_internal_frontend.strings import cases
 from lite_forms.components import (
@@ -17,8 +17,8 @@ from lite_forms.components import (
 )
 from lite_forms.helpers import conditional
 from lite_forms.styles import ButtonStyle
-from teams.services import get_users_team_queues
-from users.services import get_gov_users
+from caseworker.teams.services import get_users_team_queues
+from caseworker.users.services import get_gov_users
 
 
 def assign_users_form(request: HttpRequest, team_id, queue, multiple: bool):

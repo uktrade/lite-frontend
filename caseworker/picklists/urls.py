@@ -1,8 +1,8 @@
 from django.urls import path
 
-from conf.constants import Permission
-from core.helpers import decorate_patterns_with_permission
-from picklists import views
+from caseworker.conf.constants import Permission
+from caseworker.core.helpers import decorate_patterns_with_permission
+from caseworker.picklists import views
 
 app_name = "picklists"
 

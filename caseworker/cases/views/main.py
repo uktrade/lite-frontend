@@ -10,19 +10,19 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from s3chunkuploader.file_handler import s3_client, S3FileUploadHandler
 
-from cases.constants import CaseType
-from cases.forms.additional_contacts import add_additional_contact_form
-from cases.forms.assign_users import assign_case_officer_form, assign_user_and_work_queue, users_team_queues
-from cases.forms.attach_documents import attach_documents_form
-from cases.forms.change_status import change_status_form
-from cases.forms.done_with_case import done_with_case_form
-from cases.forms.move_case import move_case_form
-from cases.forms.next_review_date import set_next_review_date_form
-from cases.forms.reissue_ogl_form import reissue_ogl_confirmation_form
-from cases.forms.rerun_routing_rules import rerun_routing_rules_confirmation_form
-from cases.helpers.advice import get_advice_additional_context
-from cases.helpers.case import CaseView, Tabs, Slices
-from cases.services import (
+from caseworker.cases.constants import CaseType
+from caseworker.cases.forms.additional_contacts import add_additional_contact_form
+from caseworker.cases.forms.assign_users import assign_case_officer_form, assign_user_and_work_queue, users_team_queues
+from caseworker.cases.forms.attach_documents import attach_documents_form
+from caseworker.cases.forms.change_status import change_status_form
+from caseworker.cases.forms.done_with_case import done_with_case_form
+from caseworker.cases.forms.move_case import move_case_form
+from caseworker.cases.forms.next_review_date import set_next_review_date_form
+from caseworker.cases.forms.reissue_ogl_form import reissue_ogl_confirmation_form
+from caseworker.cases.forms.rerun_routing_rules import rerun_routing_rules_confirmation_form
+from caseworker.cases.helpers.advice import get_advice_additional_context
+from caseworker.cases.helpers.case import CaseView, Tabs, Slices
+from caseworker.cases.services import (
     get_case,
     post_case_notes,
     put_case_queues,
@@ -36,19 +36,18 @@ from cases.services import (
     put_next_review_date,
     reissue_ogl,
 )
-from cases.services import post_case_documents, get_document
-from compliance.services import get_compliance_licences
-from conf import settings
-from conf.settings import AWS_STORAGE_BUCKET_NAME
-from core.services import get_permissible_statuses
+from caseworker.cases.services import post_case_documents, get_document
+from caseworker.compliance.services import get_compliance_licences
+from django.conf import settings
+from caseworker.core.services import get_permissible_statuses
 from lite_content.lite_internal_frontend import cases
 from lite_content.lite_internal_frontend.cases import DoneWithCaseOnQueueForm, Manage
 from lite_forms.components import FiltersBar, TextInput
 from lite_forms.generators import error_page, form_page
 from lite_forms.helpers import conditional
 from lite_forms.views import SingleFormView
-from queues.services import put_queue_single_case_assignment, get_queue
-from users.services import get_gov_user_from_form_selection
+from caseworker.queues.services import put_queue_single_case_assignment, get_queue
+from caseworker.users.services import get_gov_user_from_form_selection
 
 
 class CaseDetail(CaseView):
@@ -311,7 +310,7 @@ class Document(TemplateView):
 
         s3 = s3_client()
         s3_key = document["document"]["s3_key"]
-        s3_response = s3.get_object(Bucket=AWS_STORAGE_BUCKET_NAME, Key=s3_key)
+        s3_response = s3.get_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=s3_key)
         _kwargs = {}
         if s3_response.get("ContentType"):
             _kwargs["content_type"] = s3_response["ContentType"]

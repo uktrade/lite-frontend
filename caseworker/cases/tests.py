@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from cases.helpers.advice import order_grouped_advice, convert_advice_item_to_base64
+from caseworker.cases.helpers.advice import order_grouped_advice, convert_advice_item_to_base64
 
 
 class CaseTests(TestCase):

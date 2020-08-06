@@ -2,15 +2,15 @@ from datetime import datetime, date
 
 from django.urls import reverse
 
-from cases.constants import CaseType
-from cases.forms.finalise_case import approve_licence_form
-from cases.objects import Case
-from cases.services import get_application_default_duration
-from conf.constants import Permission
-from core import helpers
-from core.components import PicklistPicker
-from core.helpers import has_permission
-from core.services import get_pv_gradings
+from caseworker.cases.constants import CaseType
+from caseworker.cases.forms.finalise_case import approve_licence_form
+from caseworker.cases.objects import Case
+from caseworker.cases.services import get_application_default_duration
+from caseworker.conf.constants import Permission
+from caseworker.core import helpers
+from caseworker.core.components import PicklistPicker
+from caseworker.core.helpers import has_permission
+from caseworker.core.services import get_pv_gradings
 from lite_content.lite_internal_frontend import advice
 from lite_content.lite_internal_frontend.advice import GoodsDecisionMatrixPage, GenerateGoodsDecisionForm
 from lite_forms.components import (
@@ -27,7 +27,7 @@ from lite_forms.components import (
     DetailComponent,
 )
 from lite_forms.helpers import conditional
-from picklists.enums import PicklistCategories
+from caseworker.picklists.enums import PicklistCategories
 
 
 def give_advice_form(request, case: Case, tab, queue_pk, denial_reasons):

@@ -2,24 +2,24 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 
-from conf import views
+from caseworker.conf import views
 
 
 urlpatterns = [
-    path("", include("core.urls")),
+    path("", include("caseworker.core.urls")),
     path("admin/", admin.site.urls),
-    path("auth/", include("auth.urls")),
-    path("queues/<uuid:queue_pk>/cases/<uuid:pk>/", include("cases.urls")),
-    path("flags/", include("flags.urls")),
-    path("document-templates/", include("letter_templates.urls")),
-    path("open-general-licences/", include("open_general_licences.urls")),
-    path("organisations/", include("organisations.urls")),
-    path("queues/", include("queues.urls")),
-    path("team/picklists/", include("picklists.urls")),
-    path("team", include("teams.urls")),
-    path("users/", include("users.urls")),
-    path("routing-rules/", include("routing_rules.urls")),
-    path("compliance/", include("compliance.urls")),
+    path("auth/", include("caseworker.auth.urls")),
+    path("queues/<uuid:queue_pk>/cases/<uuid:pk>/", include("caseworker.cases.urls")),
+    path("flags/", include("caseworker.flags.urls")),
+    path("document-templates/", include("caseworker.letter_templates.urls")),
+    path("open-general-licences/", include("caseworker.open_general_licences.urls")),
+    path("organisations/", include("caseworker.organisations.urls")),
+    path("queues/", include("caseworker.queues.urls")),
+    path("team/picklists/", include("caseworker.picklists.urls")),
+    path("team", include("caseworker.teams.urls")),
+    path("users/", include("caseworker.users.urls")),
+    path("routing-rules/", include("caseworker.routing_rules.urls")),
+    path("compliance/", include("caseworker.compliance.urls")),
 ]
 
 

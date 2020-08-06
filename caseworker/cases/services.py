@@ -1,6 +1,6 @@
-from cases.objects import Case
-from conf.client import post, get, put, delete, patch
-from conf.constants import (
+from caseworker.cases.objects import Case
+from caseworker.conf.client import post, get, put, delete, patch
+from caseworker.conf.constants import (
     CASE_URL,
     CASE_NOTES_URL,
     APPLICATIONS_URL,
@@ -40,8 +40,8 @@ from conf.constants import (
     COMPLIANCE_VISIT_URL,
     COMPLIANCE_PEOPLE_PRESENT_URL,
 )
-from core.helpers import convert_parameters_to_query_params, format_date
-from flags.enums import FlagStatus
+from caseworker.core.helpers import convert_parameters_to_query_params, format_date
+from caseworker.flags.enums import FlagStatus
 
 
 # Case types

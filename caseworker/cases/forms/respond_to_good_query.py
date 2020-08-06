@@ -1,8 +1,8 @@
 from django.urls import reverse_lazy
 
 from core.builtins.custom_tags import default_na
-from core.components import PicklistPicker
-from core.services import get_control_list_entries, get_gov_pv_gradings
+from caseworker.core.components import PicklistPicker
+from caseworker.core.services import get_control_list_entries, get_gov_pv_gradings
 from lite_content.lite_internal_frontend.cases import CLCReviewGoods, PVGradingForm
 from lite_forms.common import control_list_entries_question
 from lite_forms.components import (
@@ -19,7 +19,7 @@ from lite_forms.components import (
     DetailComponent,
 )
 from lite_forms.styles import HeadingStyle
-from picklists.enums import PicklistCategories
+from caseworker.picklists.enums import PicklistCategories
 
 
 def respond_to_clc_query_form(request, queue_pk, case):

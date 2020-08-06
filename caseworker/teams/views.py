@@ -3,13 +3,13 @@ from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView, RedirectView
 
-from conf.constants import Permission
-from core.services import get_user_permissions
+from caseworker.conf.constants import Permission
+from caseworker.core.services import get_user_permissions
 from lite_content.lite_internal_frontend.teams import TeamsPage
 from lite_forms.views import SingleFormView
-from teams.forms import add_team_form, edit_team_form
-from teams.services import get_team, get_teams, post_teams, get_users_by_team, put_team
-from users.services import get_gov_user
+from caseworker.teams.forms import add_team_form, edit_team_form
+from caseworker.teams.services import get_team, get_teams, post_teams, get_users_by_team, put_team
+from caseworker.users.services import get_gov_user
 
 
 class TeamsList(TemplateView):

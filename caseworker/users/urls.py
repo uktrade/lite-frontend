@@ -1,6 +1,6 @@
 from django.urls import path
 
-from users.views import users, roles
+from caseworker.users.views import users, roles
 
 app_name = "users"
 

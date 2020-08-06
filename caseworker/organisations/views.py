@@ -2,22 +2,22 @@ from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView
 
-from conf.constants import Permission
-from core.helpers import convert_dict_to_query_params
-from core.objects import Tab
-from core.services import get_user_permissions, get_menu_notifications
+from caseworker.conf.constants import Permission
+from caseworker.core.helpers import convert_dict_to_query_params
+from caseworker.core.objects import Tab
+from caseworker.core.services import get_user_permissions, get_menu_notifications
 from lite_content.lite_internal_frontend import strings
 from lite_content.lite_internal_frontend.organisations import OrganisationsPage, OrganisationPage
 from lite_forms.components import FiltersBar, TextInput, Select, Option, HiddenField
 from lite_forms.views import MultiFormView, SingleFormView
-from organisations.forms import (
+from caseworker.organisations.forms import (
     register_organisation_forms,
     register_hmrc_organisation_forms,
     edit_commercial_form,
     edit_individual_form,
     review_organisation_form,
 )
-from organisations.services import (
+from caseworker.organisations.services import (
     get_organisations,
     get_organisation_sites,
     get_organisation,

@@ -1,6 +1,6 @@
 from django.urls import path
 
-from routing_rules import views
+from caseworker.routing_rules import views
 
 app_name = "routing_rules"
 

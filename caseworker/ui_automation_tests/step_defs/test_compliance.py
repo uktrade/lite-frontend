@@ -6,10 +6,10 @@ from pytest_bdd import when, then, parsers, scenarios
 from pages.case_page import CasePage, CaseTabs
 from pages.shared import Shared
 
-from conf.constants import DATE_FORMAT
-from ui_automation_tests.pages.compliance_pages import CompliancePages
-from ui_automation_tests.pages.ecju_queries_pages import EcjuQueriesPages
-from ui_automation_tests.pages.generate_document_page import GeneratedDocument
+from caseworker.conf.constants import DATE_FORMAT
+from caseworker.ui_automation_tests.pages.compliance_pages import CompliancePages
+from caseworker.ui_automation_tests.pages.ecju_queries_pages import EcjuQueriesPages
+from caseworker.ui_automation_tests.pages.generate_document_page import GeneratedDocument
 
 scenarios("../features/compliance.feature", strict_gherkin=False)
 

@@ -1,8 +1,8 @@
 from collections import defaultdict
 
-from cases.constants import CaseType, CaseStatusEnum
-from conf.client import get
-from conf.constants import (
+from caseworker.cases.constants import CaseType, CaseStatusEnum
+from caseworker.conf.client import get
+from caseworker.conf.constants import (
     DENIAL_REASONS_URL,
     COUNTRIES_URL,
     STATUSES_URL,
@@ -13,7 +13,7 @@ from conf.constants import (
     PV_GRADINGS_URL,
 )
 from lite_forms.components import Option
-from users.services import get_gov_user
+from caseworker.users.services import get_gov_user
 
 
 def get_denial_reasons(request, convert_to_options=False, group=False):
@@ -38,7 +38,7 @@ def get_countries(request, convert_to_options=False, exclude: list = None):
     Returns a list of GOV.UK countries and territories
     param exclude: Takes a list of country codes and excludes them
     """
-    from core.helpers import convert_value_to_query_param
+    from caseworker.core.helpers import convert_value_to_query_param
 
     data = get(request, COUNTRIES_URL + "?" + convert_value_to_query_param("exclude", exclude))
 

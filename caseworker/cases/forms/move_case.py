@@ -3,7 +3,7 @@ from django.urls import reverse
 
 from lite_content.lite_internal_frontend.cases import Manage
 from lite_forms.components import Form, Checkboxes, Filter, BackLink, DetailComponent, TextArea
-from queues.services import get_queues
+from caseworker.queues.services import get_queues
 
 
 def move_case_form(request: HttpRequest, queue, case: dict):

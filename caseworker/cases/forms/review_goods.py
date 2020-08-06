@@ -1,13 +1,13 @@
 from django.urls import reverse
 
-from core.components import PicklistPicker
-from core.services import get_control_list_entries
+from caseworker.core.components import PicklistPicker
+from caseworker.core.services import get_control_list_entries
 from lite_content.lite_internal_frontend import goods
 from lite_content.lite_internal_frontend.strings import cases
 from lite_forms.common import control_list_entries_question
 from lite_forms.components import Form, RadioButtons, Option, TextArea, DetailComponent, HelpSection, BackLink
 from lite_forms.helpers import conditional
-from picklists.enums import PicklistCategories
+from caseworker.picklists.enums import PicklistCategories
 
 
 def review_goods_form(request, is_goods_type, **kwargs):

@@ -1,8 +1,8 @@
 from http import HTTPStatus
 from urllib.parse import urlencode
 
-from conf.client import get, post, put
-from conf.constants import (
+from caseworker.conf.client import get, post, put
+from caseworker.conf.constants import (
     GOV_USERS_URL,
     GOV_USERS_ROLES_URL,
     GOV_USERS_PERMISSIONS_URL,

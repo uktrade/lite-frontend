@@ -3,7 +3,7 @@ import pytest
 from django.urls import reverse
 
 from unit_tests.helpers import reload_urlconf
-from spire import helpers
+from caseworker.spire import helpers
 
 
 @pytest.fixture(autouse=True)

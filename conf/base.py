@@ -32,6 +32,7 @@ WSGI_APPLICATION = "conf.wsgi.application"
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 SESSION_COOKIE_SECURE = env.bool("SESSION_COOKIE_SECURE", True)
 SESSION_COOKIE_NAME = env.str("SESSION_COOKIE_NAME", default="exporter")
+TOKEN_SESSION_KEY = env.str("TOKEN_SESSION_KEY")
 
 # messages
 MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
@@ -72,10 +73,6 @@ AUTHBROKER_URL = env.str("AUTHBROKER_URL")
 AUTHBROKER_CLIENT_ID = env.str("AUTHBROKER_CLIENT_ID")
 AUTHBROKER_CLIENT_SECRET = env.str("AUTHBROKER_CLIENT_SECRET")
 
-AUTHENTICATION_BACKENDS = [
-    "django.contrib.auth.backends.ModelBackend",
-    "auth.backends.AuthbrokerBackend",
-]
 
 HAWK_AUTHENTICATION_ENABLED = env.bool("HAWK_AUTHENTICATION_ENABLED", False)
 HAWK_RECEIVER_NONCE_EXPIRY_SECONDS = 60
@@ -205,3 +202,5 @@ if env.str("SENTRY_DSN", ""):
         integrations=[DjangoIntegration()],
         send_default_pii=True,
     )
+
+LITE_API_URL = env.str("LITE_API_URL")

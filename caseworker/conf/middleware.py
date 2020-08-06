@@ -7,8 +7,8 @@ from django.shortcuts import redirect
 from django.urls import resolve
 from s3chunkuploader.file_handler import UploadFailed
 
-from auth.urls import app_name as auth_app_name
-from conf import settings
+from caseworker.auth.urls import app_name as auth_app_name
+from django.conf import settings
 from lite_content.lite_internal_frontend.strings import cases
 from lite_forms.generators import error_page
 

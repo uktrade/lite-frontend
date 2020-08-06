@@ -2,8 +2,8 @@ import os
 
 from django.urls import reverse_lazy
 
-from conf.constants import Permission
-from core.services import get_user_permissions, get_menu_notifications
+from caseworker.conf.constants import Permission
+from caseworker.core.services import get_user_permissions, get_menu_notifications
 from lite_content.lite_internal_frontend import strings, open_general_licences
 from lite_content.lite_internal_frontend.flags import FlagsList
 from lite_content.lite_internal_frontend.organisations import OrganisationsPage
@@ -11,7 +11,7 @@ from lite_content.lite_internal_frontend.queues import QueuesList
 from lite_content.lite_internal_frontend.teams import TeamsPage
 from lite_content.lite_internal_frontend.users import UsersPage
 from lite_forms.helpers import conditional
-from queues.services import get_queue
+from caseworker.queues.services import get_queue
 
 
 def current_queue(request):

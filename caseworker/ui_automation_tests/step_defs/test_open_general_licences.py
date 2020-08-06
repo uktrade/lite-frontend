@@ -12,8 +12,8 @@ from pages.open_general_licences_pages import (
 )
 from shared import functions
 
-from ui_automation_tests.pages.case_page import CasePage, CaseTabs
-from ui_automation_tests.pages.shared import Shared
+from caseworker.ui_automation_tests.pages.case_page import CasePage, CaseTabs
+from caseworker.ui_automation_tests.pages.shared import Shared
 
 scenarios("../features/open_general_licences.feature", strict_gherkin=False)
 

@@ -1,7 +1,7 @@
 from django.urls import path
 
-from cases.views import main, advice, generate_document, ecju, goods_query, goods, compliance
-from flags.views import AssignFlags
+from caseworker.cases.views import main, advice, generate_document, ecju, goods_query, goods, compliance
+from caseworker.flags.views import AssignFlags
 
 app_name = "cases"
 

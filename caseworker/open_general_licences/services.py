@@ -1,8 +1,8 @@
 from http import HTTPStatus
 
-from conf.client import get, patch, post
-from conf.constants import OPEN_GENERAL_LICENCES_URL, ACTIVITY_URL
-from core.helpers import convert_parameters_to_query_params
+from caseworker.conf.client import get, patch, post
+from caseworker.conf.constants import OPEN_GENERAL_LICENCES_URL, ACTIVITY_URL
+from caseworker.core.helpers import convert_parameters_to_query_params
 from lite_content.lite_internal_frontend import open_general_licences
 
 

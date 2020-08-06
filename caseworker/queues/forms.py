@@ -2,7 +2,7 @@ from django.urls import reverse_lazy
 
 from lite_content.lite_internal_frontend.queues import AddQueueForm, EditQueueForm
 from lite_forms.components import Form, TextInput, BackLink, Select
-from queues.services import get_queues
+from caseworker.queues.services import get_queues
 
 
 def new_queue_form(request):

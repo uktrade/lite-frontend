@@ -1,6 +1,6 @@
 from django.views.generic import TemplateView
 
-from compliance.services import get_open_licence_return_download
+from caseworker.compliance.services import get_open_licence_return_download
 
 
 class AnnualReturnsDownload(TemplateView):

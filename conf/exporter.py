@@ -59,11 +59,12 @@ TEMPLATES = [
 LOGIN_REDIRECT_URL = reverse_lazy("core:home")
 LOGOUT_URL = f"{AUTHBROKER_URL}/sso/accounts/logout/?next="
 
-LITE_API_URL = env.str("LITE_API_URL")
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "exporter.auth.backends.AuthbrokerBackend",
+]
 
 PERMISSIONS_FINDER_URL = env.str("PERMISSIONS_FINDER_URL")
-
-TOKEN_SESSION_KEY = env.str("TOKEN_SESSION_KEY")
 
 FEEDBACK_URL = env.str("FEEDBACK_URL")
 INTERNAL_FRONTEND_URL = env.str("INTERNAL_FRONTEND_URL")
@@ -73,7 +74,7 @@ GOOGLE_ANALYTICS_KEY = env.str("GOOGLE_ANALYTICS_KEY")
 # static files
 SVG_DIRS = [
     os.path.join(BASE_DIR, "exporter/assets/images"),
-    os.path.join(BASE_DIR, "exporter/assets/shared/lite-frontend/assets/images"),
+    os.path.join(BASE_DIR, "shared_assets/lite-frontend/assets/images"),
 ]
 
 STATIC_ROOT = os.path.join(DATA_DIR, "exporter/assets")
@@ -84,9 +85,9 @@ COMPRESS_PRECOMPILERS = (("text/x-scss", "django_libsass.SassCompiler"),)
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "exporter/assets"),
-    os.path.join(BASE_DIR, "exporter/assets/shared/node_modules/govuk-frontend/govuk/"),
-    os.path.join(BASE_DIR, "exporter/assets/shared/node_modules/govuk-frontend/govuk/assets/"),
-    os.path.join(BASE_DIR, "exporter/assets/shared/lite-frontend/"),
+    os.path.join(BASE_DIR, "shared_assets/node_modules/govuk-frontend/govuk/"),
+    os.path.join(BASE_DIR, "shared_assets/node_modules/govuk-frontend/govuk/assets/"),
+    os.path.join(BASE_DIR, "shared_assets/lite-frontend/"),
 )
 
 SASS_PROCESSOR_INCLUDE_DIRS = (os.path.join(BASE_DIR, "exporter/assets"), SASS_ROOT)

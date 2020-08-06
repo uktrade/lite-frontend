@@ -2,7 +2,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic import TemplateView
 
-from cases.forms.compliance import (
+from caseworker.cases.forms.compliance import (
     visit_report_form,
     people_present_form,
     overview_form,
@@ -11,7 +11,7 @@ from cases.forms.compliance import (
     knowledge_of_people_form,
     knowledge_of_products_form,
 )
-from cases.services import (
+from caseworker.cases.services import (
     post_create_compliance_visit,
     patch_compliance_visit_case,
     get_compliance_visit_case,

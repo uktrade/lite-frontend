@@ -1,6 +1,6 @@
 from django.urls import path
 
-from spire import views
+from caseworker.spire import views
 
 
 app_name = "spire"

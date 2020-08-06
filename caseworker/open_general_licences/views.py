@@ -6,16 +6,16 @@ from django.urls import reverse
 from django.views.generic import TemplateView
 
 from core.builtins.custom_tags import friendly_boolean
-from core.helpers import generate_activity_filters
-from core.services import get_countries, get_control_list_entries
+from caseworker.core.helpers import generate_activity_filters
+from caseworker.core.services import get_countries, get_control_list_entries
 from lite_content.lite_internal_frontend import open_general_licences as open_general_licences_strings, generic
 from lite_forms.components import FiltersBar, Select, TextInput, AutocompleteInput, BackLink, HiddenField
 from lite_forms.generators import confirm_form
 from lite_forms.views import SummaryListFormView, SingleFormView
-from open_general_licences import constants
-from open_general_licences.enums import OpenGeneralExportLicences
-from open_general_licences.forms import open_general_licence_forms
-from open_general_licences.services import (
+from caseworker.open_general_licences import constants
+from caseworker.open_general_licences.enums import OpenGeneralExportLicences
+from caseworker.open_general_licences.forms import open_general_licence_forms
+from caseworker.open_general_licences.services import (
     get_open_general_licences,
     post_open_general_licences,
     get_open_general_licence,

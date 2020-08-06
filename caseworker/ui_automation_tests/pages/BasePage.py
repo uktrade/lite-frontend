@@ -3,7 +3,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
-from ui_automation_tests.shared import functions
+from caseworker.ui_automation_tests.shared import functions
 
 
 class BasePage:

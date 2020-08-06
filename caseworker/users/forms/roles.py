@@ -1,10 +1,10 @@
-from core.services import get_statuses
+from caseworker.core.services import get_statuses
 from lite_content.lite_internal_frontend.roles import AddRoleForm, EditRoleForm
 from django.http import HttpRequest
 from django.urls import reverse_lazy
 from lite_forms.components import Form, TextInput, Checkboxes, BackLink
 
-from users.services import get_permissions
+from caseworker.users.services import get_permissions
 
 
 def add_role(request: HttpRequest):

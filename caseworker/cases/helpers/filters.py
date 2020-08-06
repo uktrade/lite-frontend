@@ -1,5 +1,5 @@
-from core.services import get_control_list_entries, get_countries
-from flags.services import get_flags
+from caseworker.core.services import get_control_list_entries, get_countries
+from caseworker.flags.services import get_flags
 from lite_content.lite_internal_frontend.cases import CasesListPage
 from lite_forms.components import (
     FiltersBar,

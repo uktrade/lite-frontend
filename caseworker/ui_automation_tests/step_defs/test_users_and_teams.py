@@ -8,7 +8,7 @@ from pages.shared import Shared
 from pages.teams_pages import TeamsPages
 from pages.users_page import UsersPage
 
-from ui_automation_tests.shared import functions
+from caseworker.ui_automation_tests.shared import functions
 
 scenarios("../features/users_and_teams.feature", strict_gherkin=False)
 

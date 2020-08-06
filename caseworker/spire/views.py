@@ -2,7 +2,7 @@ from django.conf import settings
 from django.shortcuts import redirect
 from django.views.generic import FormView, TemplateView, View
 
-from spire import forms, helpers
+from caseworker.spire import forms, helpers
 
 
 class SpireLicenseSearch(FormView):

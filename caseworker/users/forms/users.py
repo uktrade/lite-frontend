@@ -3,9 +3,9 @@ from django.urls import reverse_lazy
 from lite_content.lite_internal_frontend.users import AddUserForm, EditUserForm
 from lite_forms.components import Form, Select, TextInput, BackLink
 from lite_forms.helpers import conditional
-from queues.services import get_queues
-from teams.services import get_teams
-from users.services import get_roles
+from caseworker.queues.services import get_queues
+from caseworker.teams.services import get_teams
+from caseworker.users.services import get_roles
 
 
 def add_user_form(request):

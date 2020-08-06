@@ -4,9 +4,9 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView
 
 from core.builtins.custom_tags import str_date
-from core.services import get_countries, get_denial_reasons
-from flags.enums import FlagStatus
-from flags.services import get_flags
+from caseworker.core.services import get_countries, get_denial_reasons
+from caseworker.flags.enums import FlagStatus
+from caseworker.flags.services import get_flags
 from lite_content.lite_internal_frontend.picklists import (
     ReactivatePicklistItem,
     DeactivatePicklistItem,
@@ -15,22 +15,22 @@ from lite_content.lite_internal_frontend.picklists import (
 from lite_forms.components import FiltersBar, TextInput, HiddenField
 from lite_forms.generators import confirm_form
 from lite_forms.views import SingleFormView
-from picklists.enums import PicklistCategories
-from picklists.forms import (
+from caseworker.picklists.enums import PicklistCategories
+from caseworker.picklists.forms import (
     add_picklist_item_form,
     add_letter_paragraph_form,
     edit_picklist_item_form,
     edit_letter_paragraph_form,
 )
-from picklists.services import (
+from caseworker.picklists.services import (
     get_picklist_item,
     get_picklists_list,
     set_picklist_item_status,
     post_picklist_item,
     put_picklist_item,
 )
-from teams.services import get_team
-from users.services import get_gov_user
+from caseworker.teams.services import get_team
+from caseworker.users.services import get_gov_user
 
 
 class Picklists(TemplateView):

@@ -3,17 +3,17 @@ from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
 
-from conf.constants import Permission
-from core.helpers import convert_dict_to_query_params, has_permission, get_params_if_exist
-from core.services import get_statuses
+from caseworker.conf.constants import Permission
+from caseworker.core.helpers import convert_dict_to_query_params, has_permission, get_params_if_exist
+from caseworker.core.services import get_statuses
 from lite_content.lite_internal_frontend.routing_rules import Filter, CONFIRM_FORM_ERROR
 from lite_forms.components import FiltersBar, Option, Checkboxes, Select, AutocompleteInput, TextInput
 from lite_forms.generators import form_page
 from lite_forms.helpers import conditional
 from lite_forms.views import MultiFormView, SingleFormView
-from queues.services import get_queues
-from routing_rules.forms import routing_rule_form_group, deactivate_or_activate_routing_rule_form
-from routing_rules.services import (
+from caseworker.queues.services import get_queues
+from caseworker.routing_rules.forms import routing_rule_form_group, deactivate_or_activate_routing_rule_form
+from caseworker.routing_rules.services import (
     get_routing_rules,
     post_routing_rule,
     put_routing_rule_active_status,
@@ -21,8 +21,8 @@ from routing_rules.services import (
     put_routing_rule,
     validate_put_routing_rule,
 )
-from teams.services import get_teams, get_users_team_queues
-from users.services import get_gov_user
+from caseworker.teams.services import get_teams, get_users_team_queues
+from caseworker.users.services import get_gov_user
 
 
 class RoutingRulesList(TemplateView):

@@ -2,12 +2,12 @@ from datetime import datetime, date
 
 from pytest_bdd import scenarios, when, then, parsers
 
-from conf.constants import DATE_FORMAT
-from ui_automation_tests.pages.application_page import ApplicationPage
-from ui_automation_tests.pages.documents_page import DocumentsPage
-from ui_automation_tests.pages.generate_decision_documents_page import GeneratedDecisionDocuments
-from ui_automation_tests.pages.good_country_matrix_page import GoodCountryMatrixPage
-from ui_automation_tests.pages.grant_licence_page import GrantLicencePage
+from caseworker.conf.constants import DATE_FORMAT
+from caseworker.ui_automation_tests.pages.application_page import ApplicationPage
+from caseworker.ui_automation_tests.pages.documents_page import DocumentsPage
+from caseworker.ui_automation_tests.pages.generate_decision_documents_page import GeneratedDecisionDocuments
+from caseworker.ui_automation_tests.pages.good_country_matrix_page import GoodCountryMatrixPage
+from caseworker.ui_automation_tests.pages.grant_licence_page import GrantLicencePage
 
 scenarios("../features/finalise_case.feature", strict_gherkin=False)
 

@@ -3,7 +3,7 @@ import shared.tools.helpers as utils
 from pages.shared import Shared
 from shared import functions
 
-from ui_automation_tests.pages.flagging_rules_pages import FlaggingRulePages
+from caseworker.ui_automation_tests.pages.flagging_rules_pages import FlaggingRulePages
 
 scenarios("../features/flagging_rules.feature", strict_gherkin=False)
 

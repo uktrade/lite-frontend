@@ -1,6 +1,6 @@
 from django.urls import path
 
-from flags import views
+from caseworker.flags import views
 
 app_name = "flags"
 

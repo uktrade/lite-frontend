@@ -1,6 +1,6 @@
 from django.urls import reverse
 
-from core.components import PicklistPicker
+from caseworker.core.components import PicklistPicker
 from lite_content.lite_internal_frontend.cases import EcjuQueries
 from lite_content.lite_internal_frontend.strings import cases
 from lite_forms.components import Form, TextArea, HiddenField, BackLink

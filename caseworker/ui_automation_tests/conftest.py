@@ -9,53 +9,53 @@ from pages.advice import FinalAdvicePage, TeamAdvicePage
 from pages.case_page import CasePage, CaseTabs
 from pages.goods_queries_pages import GoodsQueriesPages
 
-from conf.constants import DATE_FORMAT
-from ui_automation_tests.fixtures.env import environment  # noqa
-from ui_automation_tests.fixtures.add_a_flag import (  # noqa
+from caseworker.conf.constants import DATE_FORMAT
+from caseworker.ui_automation_tests.fixtures.env import environment  # noqa
+from caseworker.ui_automation_tests.fixtures.add_a_flag import (  # noqa
     add_case_flag,
     add_good_flag,
     add_organisation_flag,
     add_destination_flag,
     get_flag_of_level,
 )
-from ui_automation_tests.fixtures.add_queue import add_queue  # noqa
-from ui_automation_tests.fixtures.add_a_document_template import (  # noqa
+from caseworker.ui_automation_tests.fixtures.add_queue import add_queue  # noqa
+from caseworker.ui_automation_tests.fixtures.add_a_document_template import (  # noqa
     add_a_document_template,
     get_template_id,
 )
-from ui_automation_tests.fixtures.add_a_picklist import (  # noqa
+from caseworker.ui_automation_tests.fixtures.add_a_picklist import (  # noqa
     add_a_letter_paragraph_picklist,
     add_an_ecju_query_picklist,
     add_a_proviso_picklist,
     add_a_standard_advice_picklist,
     add_a_report_summary_picklist,
 )
-from ui_automation_tests.pages.advice import UserAdvicePage
-from ui_automation_tests.pages.generate_decision_documents_page import GeneratedDecisionDocuments
-from ui_automation_tests.pages.generate_document_page import GeneratedDocument
-from ui_automation_tests.pages.give_advice_pages import GiveAdvicePages
-from ui_automation_tests.pages.good_country_matrix_page import GoodCountryMatrixPage
-from ui_automation_tests.pages.grant_licence_page import GrantLicencePage
-from ui_automation_tests.pages.letter_templates import LetterTemplates
-from ui_automation_tests.shared import functions
-from ui_automation_tests.shared.fixtures.apply_for_application import *  # noqa
-from ui_automation_tests.shared.fixtures.driver import driver  # noqa
-from ui_automation_tests.shared.fixtures.sso_sign_in import sso_sign_in  # noqa
-from ui_automation_tests.shared.fixtures.core import (  # noqa
+from caseworker.ui_automation_tests.pages.advice import UserAdvicePage
+from caseworker.ui_automation_tests.pages.generate_decision_documents_page import GeneratedDecisionDocuments
+from caseworker.ui_automation_tests.pages.generate_document_page import GeneratedDocument
+from caseworker.ui_automation_tests.pages.give_advice_pages import GiveAdvicePages
+from caseworker.ui_automation_tests.pages.good_country_matrix_page import GoodCountryMatrixPage
+from caseworker.ui_automation_tests.pages.grant_licence_page import GrantLicencePage
+from caseworker.ui_automation_tests.pages.letter_templates import LetterTemplates
+from caseworker.ui_automation_tests.shared import functions
+from caseworker.ui_automation_tests.shared.fixtures.apply_for_application import *  # noqa
+from caseworker.ui_automation_tests.shared.fixtures.driver import driver  # noqa
+from caseworker.ui_automation_tests.shared.fixtures.sso_sign_in import sso_sign_in  # noqa
+from caseworker.ui_automation_tests.shared.fixtures.core import (  # noqa
     context,
     api_test_client,
     exporter_info,
     internal_info,
     api_client,
 )
-from ui_automation_tests.shared.fixtures.urls import internal_url, sso_sign_in_url, api_url  # noqa
+from caseworker.ui_automation_tests.shared.fixtures.urls import internal_url, sso_sign_in_url, api_url  # noqa
 
 import shared.tools.helpers as utils
 from pages.shared import Shared
 from pages.case_list_page import CaseListPage
 from pages.application_page import ApplicationPage
 
-from ui_automation_tests.shared.tools.helpers import get_formatted_date_time_y_m_d_h_s
+from caseworker.ui_automation_tests.shared.tools.helpers import get_formatted_date_time_y_m_d_h_s
 
 
 def pytest_addoption(parser):

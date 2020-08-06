@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 
-from auth.utils import get_client, has_valid_token, get_profile
+from caseworker.auth.utils import get_client, has_valid_token, get_profile
 
 
 class AuthbrokerBackend:

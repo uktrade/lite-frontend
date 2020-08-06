@@ -1,4 +1,4 @@
-from letter_templates.services import get_letter_layout
+from caseworker.letter_templates.services import get_letter_layout
 
 
 def get_template_content(request):

@@ -3,7 +3,7 @@ from pytest_bdd import when, then, parsers, scenarios
 from pages.queues_pages import QueuesPages
 from pages.shared import Shared
 from shared import functions
-from ui_automation_tests.pages.case_list_page import CaseListPage
+from caseworker.ui_automation_tests.pages.case_list_page import CaseListPage
 
 scenarios("../features/filter_cases.feature", strict_gherkin=False)
 

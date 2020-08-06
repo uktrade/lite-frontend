@@ -4,13 +4,13 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView
 
-from conf.constants import SUPER_USER_ROLE_ID, UserStatuses
+from caseworker.conf.constants import SUPER_USER_ROLE_ID, UserStatuses
 from lite_content.lite_internal_frontend import strings
 from lite_content.lite_internal_frontend.users import UsersPage
 from lite_forms.components import FiltersBar, Select, Option, TextInput
 from lite_forms.views import SingleFormView
-from users.forms.users import add_user_form, edit_user_form
-from users.services import (
+from caseworker.users.forms.users import add_user_form, edit_user_form
+from caseworker.users.services import (
     get_gov_users,
     post_gov_users,
     put_gov_user,

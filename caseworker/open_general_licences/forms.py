@@ -1,4 +1,4 @@
-from core.services import get_control_list_entries, get_countries
+from caseworker.core.services import get_control_list_entries, get_countries
 from lite_content.lite_internal_frontend import generic
 from lite_forms.components import (
     Form,
@@ -12,8 +12,8 @@ from lite_forms.components import (
     Filter,
 )
 from lite_forms.helpers import convert_dictionary_to_tree
-from core.helpers import group_control_list_entries_by_category
-from open_general_licences.enums import OpenGeneralExportLicences
+from caseworker.core.helpers import group_control_list_entries_by_category
+from caseworker.open_general_licences.enums import OpenGeneralExportLicences
 
 
 def open_general_licence_forms(request, licence, strings):

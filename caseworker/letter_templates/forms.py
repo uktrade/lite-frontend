@@ -1,5 +1,5 @@
-from cases.constants import CaseType
-from cases.services import get_case_types, get_decisions
+from caseworker.cases.constants import CaseType
+from caseworker.cases.services import get_case_types, get_decisions
 from lite_content.lite_internal_frontend import strings
 from django.urls import reverse_lazy
 from lite_forms.components import (
@@ -13,7 +13,7 @@ from lite_forms.components import (
     RadioButtons,
 )
 
-from letter_templates.services import get_letter_layouts
+from caseworker.letter_templates.services import get_letter_layouts
 from lite_forms.helpers import conditional
 
 

@@ -1,4 +1,4 @@
-from ui_automation_tests.pages.BasePage import BasePage
+from caseworker.ui_automation_tests.pages.BasePage import BasePage
 
 
 class GoodCountryMatrixPage(BasePage):

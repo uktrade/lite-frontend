@@ -2,18 +2,18 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic import TemplateView
 
-from cases.services import get_case_types, get_decisions
+from caseworker.cases.services import get_case_types, get_decisions
 from lite_forms.components import Option
 from lite_forms.generators import form_page
 from lite_forms.submitters import submit_single_form
 
-from letter_templates.forms import edit_letter_template
-from letter_templates.services import (
+from caseworker.letter_templates.forms import edit_letter_template
+from caseworker.letter_templates.services import (
     get_letter_template,
     put_letter_template,
     get_letter_paragraphs,
 )
-from picklists.services import get_picklists_for_input
+from caseworker.picklists.services import get_picklists_for_input
 
 
 class EditTemplate(TemplateView):

@@ -1,7 +1,7 @@
 from django.urls import reverse_lazy
 
-from cases.services import get_case_types, get_flags_for_team_of_level
-from core.services import get_statuses, get_countries
+from caseworker.cases.services import get_case_types, get_flags_for_team_of_level
+from caseworker.core.services import get_statuses, get_countries
 from lite_content.lite_internal_frontend.routing_rules import (
     AdditionalRules,
     DeactivateForm,
@@ -22,7 +22,7 @@ from lite_forms.components import (
 )
 from lite_forms.generators import confirm_form
 from lite_forms.helpers import conditional
-from teams.services import get_users_by_team, get_teams, get_team_queues
+from caseworker.teams.services import get_users_by_team, get_teams, get_team_queues
 
 additional_rules = [
     Option("case_types", AdditionalRules.CASE_TYPES),

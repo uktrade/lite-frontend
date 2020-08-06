@@ -1,7 +1,7 @@
 from pytest_bdd import then, scenarios, given, when
 
-from ui_automation_tests.pages.application_page import ApplicationPage
-from ui_automation_tests.pages.shared import Shared
+from caseworker.ui_automation_tests.pages.application_page import ApplicationPage
+from caseworker.ui_automation_tests.pages.shared import Shared
 
 scenarios("../features/eua_queries.feature", strict_gherkin=False)
 

@@ -31,24 +31,6 @@ def get_strings_package(base_dir):
     return project_name.replace("-", "_", 2)
 
 
-def get_base_dir():
-    """
-    Get's the BASE_DIR from settings.
-    Accounts for this file being called externally
-    :return: str BASE_DIR value
-    """
-    try:
-        from conf.settings import BASE_DIR
-    except ModuleNotFoundError:
-        # Fix for calling python file externally
-        import sys
-
-        parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        sys.path.append(parent_dir)
-        from conf.settings import BASE_DIR
-    return BASE_DIR
-
-
 def get_all_lcs_strings(templates_folder):
     """
     Get all LCS strings from the HTML files in the given folder
@@ -70,7 +52,7 @@ def get_all_lcs_strings(templates_folder):
 if __name__ == "__main__":
     not_found = []
 
-    base_dir = get_base_dir()
+    base_dir = settings.BASE_DIR
     templates_folder = f"{base_dir}/templates"
 
     # Load strings package

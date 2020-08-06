@@ -7,9 +7,9 @@ from pages.organisations_page import OrganisationsPage
 from pages.shared import Shared
 from shared import functions
 from shared.tools.wait import wait_until_page_is_loaded
-from ui_automation_tests.shared.api_client.libraries.request_data import build_organisation
-from ui_automation_tests.shared.functions import click_submit
-from ui_automation_tests.shared.tools.helpers import get_current_date_time
+from caseworker.ui_automation_tests.shared.api_client.libraries.request_data import build_organisation
+from caseworker.ui_automation_tests.shared.functions import click_submit
+from caseworker.ui_automation_tests.shared.tools.helpers import get_current_date_time
 
 scenarios("../features/organisation.feature", strict_gherkin=False)
 

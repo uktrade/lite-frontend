@@ -3,13 +3,13 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import TemplateView
 
-from conf.constants import SUPER_USER_ROLE_ID
-from core.services import get_user_permissions
+from caseworker.conf.constants import SUPER_USER_ROLE_ID
+from caseworker.core.services import get_user_permissions
 from lite_content.lite_internal_frontend import strings
 from lite_content.lite_internal_frontend.roles import ManageRolesPage
 from lite_forms.views import SingleFormView
-from users.forms.roles import add_role, edit_role
-from users.services import get_roles, get_permissions, get_role, put_role, post_role, get_gov_user
+from caseworker.users.forms.roles import add_role, edit_role
+from caseworker.users.services import get_roles, get_permissions, get_role, put_role, post_role, get_gov_user
 
 
 class Roles(TemplateView):

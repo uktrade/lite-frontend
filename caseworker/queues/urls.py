@@ -1,6 +1,6 @@
 from django.urls import path
 
-from queues import views
+from caseworker.queues import views
 
 app_name = "queues"
 

@@ -1,7 +1,7 @@
 from pytest_bdd import scenarios, then, given
 
-from ui_automation_tests.pages.application_page import ApplicationPage
-from ui_automation_tests.shared import functions
+from caseworker.ui_automation_tests.pages.application_page import ApplicationPage
+from caseworker.ui_automation_tests.shared import functions
 
 scenarios("../features/hmrc_query.feature", strict_gherkin=False)
 

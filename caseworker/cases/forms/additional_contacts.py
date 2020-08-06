@@ -1,6 +1,6 @@
 from django.urls import reverse_lazy
 
-from core.services import get_countries
+from caseworker.core.services import get_countries
 from lite_content.lite_internal_frontend.cases import AddAdditionalContact
 from lite_forms.common import foreign_address_questions
 from lite_forms.components import Form, TextInput, BackLink

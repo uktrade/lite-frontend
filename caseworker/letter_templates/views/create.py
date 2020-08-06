@@ -6,10 +6,10 @@ from django.views.generic import TemplateView
 from lite_forms.generators import form_page, error_page
 from lite_forms.submitters import submit_paged_form
 
-from letter_templates.forms import add_letter_template
-from letter_templates.helpers import get_template_content
-from letter_templates.services import post_letter_template
-from letter_templates.views.letter_paragraphs import get_order_paragraphs_page
+from caseworker.letter_templates.forms import add_letter_template
+from caseworker.letter_templates.helpers import get_template_content
+from caseworker.letter_templates.services import post_letter_template
+from caseworker.letter_templates.views.letter_paragraphs import get_order_paragraphs_page
 
 
 class Add(TemplateView):

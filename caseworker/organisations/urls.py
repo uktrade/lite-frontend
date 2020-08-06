@@ -1,7 +1,7 @@
 from django.urls import path
 
-from flags.views import AssignFlags
-from organisations import views
+from caseworker.flags.views import AssignFlags
+from caseworker.organisations import views
 
 app_name = "organisations"
 

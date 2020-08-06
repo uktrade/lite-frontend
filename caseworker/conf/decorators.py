@@ -1,8 +1,8 @@
 from django.utils.functional import wraps
 
-from conf.constants import Permission
-from conf.exceptions import PermissionDeniedError
-from core import helpers
+from caseworker.conf.constants import Permission
+from caseworker.conf.exceptions import PermissionDeniedError
+from caseworker.core import helpers
 
 
 def has_permission(permission: Permission):

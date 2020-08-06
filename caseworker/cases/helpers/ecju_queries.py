@@ -1,4 +1,4 @@
-from cases import services
+from caseworker.cases import services
 
 
 def get_ecju_queries(request, case_id):

@@ -1,7 +1,7 @@
 from django.urls import reverse
 
 from core.builtins.custom_tags import get_address
-from core.services import get_countries
+from caseworker.core.services import get_countries
 from lite_content.lite_internal_frontend import strings
 from lite_content.lite_internal_frontend.organisations import (
     RegisterAnOrganisation,
@@ -26,7 +26,7 @@ from lite_forms.components import (
 )
 from lite_forms.helpers import conditional
 from lite_forms.styles import HeadingStyle
-from organisations.services import get_organisation, get_organisation_matching_details
+from caseworker.organisations.services import get_organisation, get_organisation_matching_details
 
 
 def register_organisation_forms(request):

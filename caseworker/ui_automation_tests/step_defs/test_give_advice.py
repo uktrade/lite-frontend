@@ -7,7 +7,7 @@ from pages.case_page import CasePage, CaseTabs
 from pages.give_advice_pages import GiveAdvicePages
 from pages.record_decision_page import RecordDecision
 from pages.shared import Shared
-from ui_automation_tests.pages.grant_licence_page import GrantLicencePage
+from caseworker.ui_automation_tests.pages.grant_licence_page import GrantLicencePage
 
 scenarios("../features/give_advice.feature", strict_gherkin=False)
 

@@ -8,14 +8,13 @@ from django.core.exceptions import PermissionDenied
 from mohawk import Sender
 from mohawk.exc import AlreadyProcessed
 
-from conf import settings
-from conf.settings import HAWK_AUTHENTICATION_ENABLED, env
+from django.conf import settings
 
 
 def get(request, appended_address):
     url = _build_absolute_uri(appended_address.replace(" ", "%20"))
 
-    if HAWK_AUTHENTICATION_ENABLED:
+    if settings.HAWK_AUTHENTICATION_ENABLED:
         sender = _get_hawk_sender(url, "GET", "application/json", "")
 
         response = requests.get(url=url, headers=_get_headers(request, sender))
@@ -29,7 +28,7 @@ def get(request, appended_address):
 def post(request, appended_address, request_data):
     url = _build_absolute_uri(appended_address)
 
-    if HAWK_AUTHENTICATION_ENABLED:
+    if settings.HAWK_AUTHENTICATION_ENABLED:
         sender = _get_hawk_sender(url, "POST", "application/json", json.dumps(request_data))
 
         response = requests.post(url=url, headers=_get_headers(request, sender), json=request_data)
@@ -46,7 +45,7 @@ def post(request, appended_address, request_data):
 def put(request, appended_address, request_data):
     url = _build_absolute_uri(appended_address)
 
-    if HAWK_AUTHENTICATION_ENABLED:
+    if settings.HAWK_AUTHENTICATION_ENABLED:
         sender = _get_hawk_sender(url, "PUT", "application/json", json.dumps(request_data))
 
         response = requests.put(url=url, headers=_get_headers(request, sender), json=request_data)
@@ -63,7 +62,7 @@ def put(request, appended_address, request_data):
 def patch(request, appended_address, request_data):
     url = _build_absolute_uri(appended_address)
 
-    if HAWK_AUTHENTICATION_ENABLED:
+    if settings.HAWK_AUTHENTICATION_ENABLED:
         sender = _get_hawk_sender(url, "PATCH", "application/json", json.dumps(request_data))
 
         response = requests.patch(url=url, headers=_get_headers(request, sender), json=request_data)
@@ -80,7 +79,7 @@ def patch(request, appended_address, request_data):
 def delete(request, appended_address):
     url = _build_absolute_uri(appended_address)
 
-    if HAWK_AUTHENTICATION_ENABLED:
+    if settings.HAWK_AUTHENTICATION_ENABLED:
         sender = _get_hawk_sender(url, "DELETE", "text/plain", "")
 
         response = requests.delete(url=url, headers=_get_headers(request, sender))
@@ -93,7 +92,7 @@ def delete(request, appended_address):
 
 
 def _build_absolute_uri(appended_address):
-    url = env("LITE_API_URL") + appended_address
+    url = settings.LITE_API_URL + appended_address
 
     if not url.endswith("/") and "?" not in url:
         url = url + "/"
@@ -119,7 +118,7 @@ def _get_headers(request, sender=None, content_type=None):
 
 def _get_hawk_sender(url, method, content_type, content):
     return Sender(
-        {"id": "internal-frontend", "key": env("LITE_INTERNAL_HAWK_KEY"), "algorithm": "sha256"},
+        {"id": "internal-frontend", "key": settings.LITE_INTERNAL_HAWK_KEY, "algorithm": "sha256"},
         url,
         method,
         content_type=content_type,

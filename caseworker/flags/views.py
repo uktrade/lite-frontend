@@ -7,13 +7,13 @@ from django.urls import reverse
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
-from cases.helpers.advice import get_param_goods, get_param_destinations
-from cases.services import put_flag_assignments, get_case
-from conf.constants import Permission
-from core.helpers import convert_dict_to_query_params, get_params_if_exist
-from core.services import get_user_permissions
-from flags.enums import FlagLevel, FlagStatus
-from flags.forms import (
+from caseworker.cases.helpers.advice import get_param_goods, get_param_destinations
+from caseworker.cases.services import put_flag_assignments, get_case
+from caseworker.conf.constants import Permission
+from caseworker.core.helpers import convert_dict_to_query_params, get_params_if_exist
+from caseworker.core.services import get_user_permissions
+from caseworker.flags.enums import FlagLevel, FlagStatus
+from caseworker.flags.forms import (
     add_flag_form,
     edit_flag_form,
     create_flagging_rules_formGroup,
@@ -23,8 +23,8 @@ from flags.forms import (
     level_options,
     set_flags_form,
 )
-from flags.helpers import get_matching_flags
-from flags.services import (
+from caseworker.flags.helpers import get_matching_flags
+from caseworker.flags.services import (
     get_flagging_rules,
     put_flagging_rule,
     get_flagging_rule,
@@ -34,15 +34,15 @@ from flags.services import (
     get_goods_flags,
     get_destination_flags,
 )
-from flags.services import get_flags, post_flags, get_flag, update_flag
+from caseworker.flags.services import get_flags, post_flags, get_flag, update_flag
 from lite_content.lite_internal_frontend import strings, flags
 from lite_content.lite_internal_frontend.flags import UpdateFlag, SetFlagsForm
 from lite_forms.components import Option, FiltersBar, Select, Checkboxes, TextInput, BackLink
 from lite_forms.generators import form_page
 from lite_forms.views import MultiFormView, SingleFormView
-from organisations.services import get_organisation
-from teams.services import get_teams
-from users.services import get_gov_user
+from caseworker.organisations.services import get_organisation
+from caseworker.teams.services import get_teams
+from caseworker.users.services import get_gov_user
 
 
 class FlagsList(TemplateView):

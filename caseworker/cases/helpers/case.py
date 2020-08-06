@@ -4,10 +4,10 @@ from django.shortcuts import render
 from django.utils import timezone
 from django.views.generic import TemplateView
 
-from cases.constants import CaseStatusEnum
-from cases.helpers.ecju_queries import get_ecju_queries
-from cases.objects import Slice, Case
-from cases.services import (
+from caseworker.cases.constants import CaseStatusEnum
+from caseworker.cases.helpers.ecju_queries import get_ecju_queries
+from caseworker.cases.objects import Slice, Case
+from caseworker.cases.services import (
     get_case,
     get_user_case_queues,
     get_case_documents,
@@ -15,13 +15,13 @@ from cases.services import (
     get_activity,
     get_activity_filters,
 )
-from conf.constants import GENERATED_DOCUMENT
-from core.helpers import generate_activity_filters
-from core.objects import Tab, TabCollection
-from core.services import get_user_permissions, get_status_properties, get_permissible_statuses
+from caseworker.conf.constants import GENERATED_DOCUMENT
+from caseworker.core.helpers import generate_activity_filters
+from caseworker.core.objects import Tab, TabCollection
+from caseworker.core.services import get_user_permissions, get_status_properties, get_permissible_statuses
 from lite_content.lite_internal_frontend import cases
 from lite_content.lite_internal_frontend.cases import CasePage, ApplicationPage
-from queues.services import get_queue
+from caseworker.queues.services import get_queue
 
 
 class Tabs:

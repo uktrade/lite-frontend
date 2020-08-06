@@ -1,6 +1,6 @@
 from django.urls import path
 
-from auth import views
+from caseworker.auth import views
 
 app_name = "auth"
 

@@ -16,11 +16,11 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "sass_processor",
     "django.contrib.humanize",
-    "core",
-    "spire",
+    "caseworker.core",
+    "caseworker.spire",
     "svg",
     "lite_forms",
-    "letter_templates",
+    "caseworker.letter_templates",
 ]
 
 MIDDLEWARE = [
@@ -28,7 +28,7 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "caseworker.conf.middleware.SessionTimeoutMiddleware",
-    "csp.middleware.CSPMiddleware",
+    # "csp.middleware.CSPMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -66,6 +66,11 @@ TEMPLATES = [
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_URL =  f"{AUTHBROKER_URL}/logout/"
 
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "caseworker.auth.backends.AuthbrokerBackend",
+]
+
 # The maximum number of parameters that may be received via GET or POST
 # before a SuspiciousOperation (TooManyFields) is raised.
 # Increased due to potential of selecting all control list entries
@@ -82,7 +87,7 @@ LITE_SPIRE_ARCHIVE_EXAMPLE_ORGANISATION_ID = env.int("LITE_SPIRE_ARCHIVE_EXAMPLE
 # static files
 SVG_DIRS = [
     os.path.join(BASE_DIR, "caseworker/assets/images"),
-    os.path.join(BASE_DIR, "caseworker/assets/shared/lite-frontend/assets/images"),
+    os.path.join(BASE_DIR, "shared_assets/lite-frontend/assets/images"),
 ]
 
 STATIC_ROOT = os.path.join(DATA_DIR, "caseworker/assets")
@@ -93,11 +98,13 @@ COMPRESS_PRECOMPILERS = (("text/x-scss", "django_libsass.SassCompiler"),)
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "caseworker/assets"),
-    os.path.join(BASE_DIR, "caseworker/assets/shared/node_modules/govuk-frontend/govuk/"),
-    os.path.join(BASE_DIR, "caseworker/assets/shared/node_modules/govuk-frontend/govuk/assets/"),
-    os.path.join(BASE_DIR, "caseworker/assets/shared/lite-frontend/"),
+    os.path.join(BASE_DIR, "shared_assets/node_modules/govuk-frontend/govuk/"),
+    os.path.join(BASE_DIR, "shared_assets/node_modules/govuk-frontend/govuk/assets/"),
+    os.path.join(BASE_DIR, "shared_assets/lite-frontend/"),
 )
 
 SASS_PROCESSOR_INCLUDE_DIRS = (os.path.join(BASE_DIR, "caseworker/assets"), SASS_ROOT)
 
 LITE_CONTENT_IMPORT_PATH = 'lite_content.lite_internal_frontend.strings'
+
+LITE_INTERNAL_HAWK_KEY = env.str("LITE_INTERNAL_HAWK_KEY")

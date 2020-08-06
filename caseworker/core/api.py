@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.views.generic import TemplateView
 
-from queues.services import get_cases_search_data
+from caseworker.queues.services import get_cases_search_data
 
 
 class Cases(TemplateView):

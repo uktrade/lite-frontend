@@ -1,8 +1,8 @@
 from django.urls import path
 
-from conf.constants import Permission
-from core.helpers import decorate_patterns_with_permission
-from letter_templates.views import edit, letter_paragraphs, view, create
+from caseworker.conf.constants import Permission
+from caseworker.core.helpers import decorate_patterns_with_permission
+from caseworker.letter_templates.views import edit, letter_paragraphs, view, create
 
 app_name = "letter_templates"
 

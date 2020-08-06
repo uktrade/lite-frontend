@@ -6,10 +6,10 @@ from django.shortcuts import redirect
 from django.views.generic.base import RedirectView, View, TemplateView
 from raven.contrib.django.raven_compat.models import client
 
-from auth.services import authenticate_gov_user
-from auth.utils import get_client, AUTHORISATION_URL, TOKEN_SESSION_KEY, TOKEN_URL, get_profile
-from conf import settings
-from core.models import User
+from caseworker.auth.services import authenticate_gov_user
+from caseworker.auth.utils import get_client, AUTHORISATION_URL, TOKEN_SESSION_KEY, TOKEN_URL, get_profile
+from django.conf import settings
+from caseworker.core.models import User
 from lite_content.lite_internal_frontend import strings
 from lite_forms.generators import error_page
 

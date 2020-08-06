@@ -2,11 +2,11 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView
 
-from cases.forms.review_goods import review_goods_form
-from cases.helpers.advice import get_param_goods, flatten_goods_data
-from cases.services import get_case, post_review_goods, get_good
-from conf.constants import Permission
-from core.helpers import has_permission
+from caseworker.cases.forms.review_goods import review_goods_form
+from caseworker.cases.helpers.advice import get_param_goods, flatten_goods_data
+from caseworker.cases.services import get_case, post_review_goods, get_good
+from caseworker.conf.constants import Permission
+from caseworker.core.helpers import has_permission
 from lite_forms.views import SingleFormView
 
 

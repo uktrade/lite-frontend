@@ -7,17 +7,17 @@ from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
 
-from cases.constants import CaseType
-from cases.forms.advice import (
+from caseworker.cases.constants import CaseType
+from caseworker.cases.forms.advice import (
     give_advice_form,
     finalise_goods_countries_form,
     generate_documents_form,
     reissue_finalise_form,
     finalise_form,
 )
-from cases.forms.finalise_case import deny_licence_form
-from cases.helpers.advice import get_param_destinations, get_param_goods, flatten_advice_data, prepare_data_for_advice
-from cases.services import (
+from caseworker.cases.forms.finalise_case import deny_licence_form
+from caseworker.cases.helpers.advice import get_param_destinations, get_param_goods, flatten_advice_data, prepare_data_for_advice
+from caseworker.cases.services import (
     post_user_case_advice,
     coalesce_user_advice,
     coalesce_team_advice,
@@ -36,7 +36,7 @@ from cases.services import (
     get_open_licence_decision,
 )
 from core.builtins.custom_tags import filter_advice_by_level
-from core.services import get_denial_reasons
+from caseworker.core.services import get_denial_reasons
 from lite_content.lite_internal_frontend.advice import FinaliseLicenceForm, GenerateGoodsDecisionForm
 from lite_forms.generators import form_page, error_page
 from lite_forms.views import SingleFormView

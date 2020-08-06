@@ -1,10 +1,10 @@
 from pytest_bdd import when, then, scenarios, parsers
-from conf.constants import SystemTeamsID
+from caseworker.conf.constants import SystemTeamsID
 from pages.case_page import CasePage
 
-from ui_automation_tests.pages.application_page import ApplicationPage
-from ui_automation_tests.pages.routing_rules_pages import RoutingRulesPage
-from ui_automation_tests.shared import functions
+from caseworker.ui_automation_tests.pages.application_page import ApplicationPage
+from caseworker.ui_automation_tests.pages.routing_rules_pages import RoutingRulesPage
+from caseworker.ui_automation_tests.shared import functions
 
 scenarios("../features/routing_rules.feature", strict_gherkin=False)
 

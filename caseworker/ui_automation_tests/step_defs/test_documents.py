@@ -2,9 +2,9 @@ import os
 
 from pytest_bdd import when, then, scenarios, parsers
 
-from ui_automation_tests.pages.application_page import ApplicationPage
-from ui_automation_tests.pages.attach_document_page import AttachDocumentPage
-from ui_automation_tests.pages.documents_page import DocumentsPage
+from caseworker.ui_automation_tests.pages.application_page import ApplicationPage
+from caseworker.ui_automation_tests.pages.attach_document_page import AttachDocumentPage
+from caseworker.ui_automation_tests.pages.documents_page import DocumentsPage
 
 scenarios("../features/documents.feature", strict_gherkin=False)
 

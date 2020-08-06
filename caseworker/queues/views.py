@@ -5,18 +5,18 @@ from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
 
-from cases.forms.assign_users import assign_users_form
-from cases.forms.attach_documents import upload_document_form
-from cases.helpers.filters import case_filters_bar
-from conf.constants import ALL_CASES_QUEUE_ID, Permission, UPDATED_CASES_QUEUE_ID
-from core.helpers import convert_parameters_to_query_params
-from core.services import get_user_permissions
+from caseworker.cases.forms.assign_users import assign_users_form
+from caseworker.cases.forms.attach_documents import upload_document_form
+from caseworker.cases.helpers.filters import case_filters_bar
+from caseworker.conf.constants import ALL_CASES_QUEUE_ID, Permission, UPDATED_CASES_QUEUE_ID
+from caseworker.core.helpers import convert_parameters_to_query_params
+from caseworker.core.services import get_user_permissions
 from lite_content.lite_internal_frontend.cases import CasesListPage, UploadEnforcementXML, Manage
 from lite_forms.components import TextInput, FiltersBar
 from lite_forms.generators import error_page
 from lite_forms.views import SingleFormView
-from queues.forms import new_queue_form, edit_queue_form
-from queues.services import (
+from caseworker.queues.forms import new_queue_form, edit_queue_form
+from caseworker.queues.services import (
     get_queues,
     post_queues,
     get_queue,
@@ -26,7 +26,7 @@ from queues.services import (
     get_enforcement_xml,
     post_enforcement_xml,
 )
-from users.services import get_gov_user
+from caseworker.users.services import get_gov_user
 
 
 class Cases(TemplateView):

@@ -1,11 +1,11 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
 
-from letter_templates.helpers import get_template_content
-from letter_templates.services import get_letter_paragraphs, get_letter_preview
+from caseworker.letter_templates.helpers import get_template_content
+from caseworker.letter_templates.services import get_letter_paragraphs, get_letter_preview
 from lite_content.lite_internal_frontend.letter_templates import LetterTemplatesPage
 from lite_forms.generators import error_page
-from picklists.services import get_picklists_for_input
+from caseworker.picklists.services import get_picklists_for_input
 
 
 def get_order_paragraphs_page(request, template_content):

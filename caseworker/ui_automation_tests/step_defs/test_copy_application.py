@@ -1,6 +1,6 @@
 from pytest_bdd import then, scenarios, given
 
-from ui_automation_tests.pages.application_page import ApplicationPage
+from caseworker.ui_automation_tests.pages.application_page import ApplicationPage
 
 scenarios("../features/copied_application.feature", strict_gherkin=False)
 
