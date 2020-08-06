@@ -1,6 +1,3 @@
-[submodule "lite-internal-frontend/lite-content"]
-	path = lite-internal-frontend/lite_content
-	url = git@github.com:uktrade/lite-content.git
-[submodule "lite-exporter-frontend/lite-content"]
-	path = lite-exporter-frontend/lite_content
+[submodule "lite_content"]
+	path = lite_content
 	url = git@github.com:uktrade/lite-content.git

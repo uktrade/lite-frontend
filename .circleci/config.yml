@@ -1,0 +1,45 @@
+version: 2.1
+
+orbs:
+  jq: circleci/jq@1.8.0
+
+jobs:
+  caseworker_lint:
+    docker:
+      - image: circleci/python:3.7
+    environment:
+      DEBUG: 'True'
+      PIPENV_VENV_IN_PROJECT: 'enabled'
+    steps:
+      - checkout
+      - run: cp local.env .env
+      - run: pipenv sync --dev
+      - run: pipenv run bandit -r .
+      - run: pipenv run python caseworker/templates/check_html_strings.py
+      - run: pipenv run prospector
+      - run: pipenv run black . --check --diff
+
+  caseworker_test:
+    docker:
+      - image: circleci/python:3.7
+      - image: circleci/postgres:9.5-alpine-ram
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: postgres
+    environment:
+      DEBUG: 'True'
+      PIPENV_VENV_IN_PROJECT: 'enabled'
+      DJANGO_SETTINGS_MODULE: conf.caseworker
+    steps:
+      - checkout
+      - run: cp conf/caseworker.env .env
+      - run: pipenv sync --dev
+      - run: pipenv run pytest caseworker/unit_tests/ caseworker/**/tests.py
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - caseworker_lint
+      - caseworker_test
