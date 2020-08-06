@@ -1,12 +1,6 @@
-[submodule "caseworker/lite-content"]
-	path = caseworker/lite_content
-	url = git@github.com:uktrade/lite-content.git
 [submodule "caseworker/ui_automation_tests/shared"]
 	path = caseworker/ui_automation_tests/shared
 	url = git@github.com:uktrade/lite-tests-common.git
-[submodule "exporter/lite-content"]
-	path = exporter/lite_content
-	url = git@github.com:uktrade/lite-content.git
 [submodule "exporter/ui_automation_tests/shared"]
 	path = exporter/ui_automation_tests/shared
 	url = git@github.com:uktrade/lite-tests-common.git
