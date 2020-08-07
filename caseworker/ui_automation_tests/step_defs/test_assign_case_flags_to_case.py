@@ -1,13 +1,15 @@
 from pytest_bdd import when, then, scenarios, given, parsers
 
+from caseworker.ui_automation_tests.pages.shared import Shared
 from fixtures.add_a_flag import get_flag_of_level
 from pages.application_page import ApplicationPage
 from pages.assign_flags_to_case import CaseFlagsPages
 from pages.case_page import CasePage
-import tests_common.tools.helpers as utils
 from pages.organisation_page import OrganisationPage
-from pages.shared import tests_common
+import tests_common.tools.helpers as utils
+
 from tests_common import functions
+
 
 scenarios("../features/assign_case_flags_to_case.feature", strict_gherkin=False)
 

@@ -1,4 +1,4 @@
-from pages.shared import tests_common
+from caseworker.ui_automation_tests.pages.shared import Shared
 from pages.BasePage import BasePage
 from tests_common.tools.helpers import find_paginated_item_by_id
 

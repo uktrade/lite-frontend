@@ -1,7 +1,7 @@
 from pytest import fixture
 import tests_common.tools.helpers as utils
 from pages.queues_pages import QueuesPages
-from pages.shared import tests_common
+from caseworker.ui_automation_tests.pages.shared import Shared
 
 
 @fixture(scope="module")

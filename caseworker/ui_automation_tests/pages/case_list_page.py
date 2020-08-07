@@ -4,7 +4,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.select import Select
 
 from pages.BasePage import BasePage
-from pages.shared import tests_common
+from caseworker.ui_automation_tests.pages.shared import Shared
 from tests_common import functions
 from tests_common.tools.helpers import get_element_index_by_text, scroll_to_element_by_id
 

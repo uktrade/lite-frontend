@@ -1,13 +1,12 @@
 from faker import Faker
 from pytest_bdd import scenarios, when, then, given, parsers
 from selenium.common.exceptions import NoSuchElementException
-import tests_common.tools.helpers as utils
 
+from caseworker.ui_automation_tests.pages.shared import Shared
 from pages.case_list_page import CaseListPage
-from pages.shared import tests_common
 from pages.teams_pages import TeamsPages
 from pages.users_page import UsersPage
-
+import tests_common.tools.helpers as utils
 from tests_common import functions
 
 scenarios("../features/users_and_teams.feature", strict_gherkin=False)

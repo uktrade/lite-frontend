@@ -37,6 +37,7 @@ from caseworker.ui_automation_tests.pages.give_advice_pages import GiveAdvicePag
 from caseworker.ui_automation_tests.pages.good_country_matrix_page import GoodCountryMatrixPage
 from caseworker.ui_automation_tests.pages.grant_licence_page import GrantLicencePage
 from caseworker.ui_automation_tests.pages.letter_templates import LetterTemplates
+from caseworker.ui_automation_tests.pages.shared import Shared
 from tests_common import functions
 from tests_common.fixtures.apply_for_application import *  # noqa
 from tests_common.fixtures.driver import driver  # noqa
@@ -51,7 +52,6 @@ from tests_common.fixtures.core import (  # noqa
 from tests_common.fixtures.urls import internal_url, sso_sign_in_url, api_url  # noqa
 
 import tests_common.tools.helpers as utils
-from pages.shared import tests_common
 from pages.case_list_page import CaseListPage
 from pages.application_page import ApplicationPage
 

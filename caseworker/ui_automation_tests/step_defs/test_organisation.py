@@ -1,15 +1,16 @@
 from faker import Faker
 from pytest_bdd import scenarios, when, then, given, parsers
 
+from caseworker.ui_automation_tests.pages.shared import Shared
 from pages.organisation_page import OrganisationPage
 from pages.organisations_form_page import OrganisationsFormPage
 from pages.organisations_page import OrganisationsPage
-from pages.shared import tests_common
 from tests_common import functions
 from tests_common.tools.wait import wait_until_page_is_loaded
 from tests_common.api_client.libraries.request_data import build_organisation
 from tests_common.functions import click_submit
 from tests_common.tools.helpers import get_current_date_time
+
 
 scenarios("../features/organisation.feature", strict_gherkin=False)
 

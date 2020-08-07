@@ -2,11 +2,12 @@ from uuid import uuid4
 
 from pytest_bdd import when, then, scenarios, given
 
+from caseworker.ui_automation_tests.pages.shared import Shared
 from pages.application_page import ApplicationPage
 from pages.case_page import CasePage, CaseTabs
 from pages.ecju_queries_pages import EcjuQueriesPages
 from tests_common import functions
-from caseworker.ui_automation_tests.pages.shared import tests_common
+
 
 scenarios("../features/ecju_queries.feature", strict_gherkin=False)
 

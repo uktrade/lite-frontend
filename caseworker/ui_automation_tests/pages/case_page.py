@@ -1,8 +1,8 @@
 import time
 
-from pages.shared import tests_common
-from tests_common import selectors
+from caseworker.ui_automation_tests.pages.shared import Shared
 from pages.BasePage import BasePage
+from tests_common import selectors
 from tests_common.tools.helpers import scroll_to_element_by_id
 
 
