@@ -4,8 +4,8 @@ from pytest_bdd import scenarios, when, given, then, parsers
 from caseworker.ui_automation_tests.pages.case_page import CasePage, CaseTabs
 from caseworker.ui_automation_tests.pages.application_page import ApplicationPage
 from caseworker.ui_automation_tests.pages.generate_document_page import GeneratedDocument
-from caseworker.ui_automation_tests.shared import functions
-from caseworker.ui_automation_tests.shared.functions import element_with_id_exists
+from tests_common import functions
+from tests_common.functions import element_with_id_exists
 
 scenarios("../features/generated_documents.feature", strict_gherkin=False)
 

@@ -1,9 +1,10 @@
 from pytest_bdd import scenarios, when, then, parsers
 
-import shared.tools.helpers as utils
+from caseworker.ui_automation_tests.pages.shared import Shared
 from pages.picklist_pages import PicklistPages
-from pages.shared import Shared
-from shared import functions
+import tests_common.tools.helpers as utils
+from tests_common import functions
+
 
 scenarios("../features/picklists.feature", strict_gherkin=False)
 

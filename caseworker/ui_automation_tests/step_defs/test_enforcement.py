@@ -4,6 +4,7 @@ from caseworker.ui_automation_tests.pages.application_page import ApplicationPag
 from caseworker.ui_automation_tests.pages.case_list_page import CaseListPage
 from caseworker.ui_automation_tests.pages.shared import Shared
 
+
 scenarios("../features/enforcement.feature", strict_gherkin=False)
 
 

@@ -1,5 +1,5 @@
 from pages.BasePage import BasePage
-from shared.tools.helpers import scroll_to_element_by_id
+from tests_common.tools.helpers import scroll_to_element_by_id
 
 
 class RecordDecision(BasePage):

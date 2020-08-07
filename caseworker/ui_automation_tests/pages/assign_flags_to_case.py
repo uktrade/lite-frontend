@@ -1,4 +1,4 @@
-from shared import selectors
+from tests_common import selectors
 from pages.BasePage import BasePage
 
 

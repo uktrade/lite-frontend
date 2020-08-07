@@ -3,11 +3,10 @@ import time
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.select import Select
 
-import shared.tools.helpers as utils
 from pages.BasePage import BasePage
-from pages.shared import Shared
-from shared import functions
-from shared.tools.helpers import scroll_to_element_by_id
+from caseworker.ui_automation_tests.pages.shared import Shared
+from tests_common import functions
+from tests_common.tools.helpers import get_element_index_by_text, scroll_to_element_by_id
 
 
 class CaseListPage(BasePage):
@@ -106,12 +105,12 @@ class CaseListPage(BasePage):
 
     def has_assignees(self, driver, case_id):
         elements = Shared(driver).get_rows_in_lite_table()
-        no = utils.get_element_index_by_text(elements, case_id)
+        no = get_element_index_by_text(elements, case_id)
         return len(elements[no].find_elements_by_css_selector(".app-assignments__container")) != 0
 
     def get_text_of_assignees(self, driver, case_id):
         elements = Shared(driver).get_rows_in_lite_table()
-        no = utils.get_element_index_by_text(elements, case_id)
+        no = get_element_index_by_text(elements, case_id)
         return elements[no].find_element_by_css_selector(".app-assignments__container").text
 
     def click_select_all_checkbox(self):
@@ -125,7 +124,7 @@ class CaseListPage(BasePage):
 
     def assert_case_is_present(self, case_id):
         elements = self.driver.find_elements_by_css_selector(self.CASES_TABLE_ROW)
-        no = utils.get_element_index_by_text(elements, case_id, complete_match=False)
+        no = get_element_index_by_text(elements, case_id, complete_match=False)
         return elements[no].is_displayed()
 
     def click_clear_filters_button(self):

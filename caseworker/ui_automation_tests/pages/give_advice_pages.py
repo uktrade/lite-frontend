@@ -1,7 +1,7 @@
 from selenium.webdriver.support.select import Select
 
 from pages.BasePage import BasePage
-from shared.tools.helpers import scroll_to_element_below_header_by_id
+from tests_common.tools.helpers import scroll_to_element_below_header_by_id
 
 
 class GiveAdvicePages(BasePage):

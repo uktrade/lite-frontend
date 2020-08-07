@@ -4,7 +4,7 @@ from django.templatetags.tz import do_timezone
 from pytest_bdd import when, then, parsers, scenarios
 
 from pages.case_page import CasePage, CaseTabs
-from pages.shared import Shared
+from caseworker.ui_automation_tests.pages.shared import Shared
 
 from caseworker.conf.constants import DATE_FORMAT
 from caseworker.ui_automation_tests.pages.compliance_pages import CompliancePages

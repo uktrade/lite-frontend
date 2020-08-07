@@ -37,25 +37,25 @@ from caseworker.ui_automation_tests.pages.give_advice_pages import GiveAdvicePag
 from caseworker.ui_automation_tests.pages.good_country_matrix_page import GoodCountryMatrixPage
 from caseworker.ui_automation_tests.pages.grant_licence_page import GrantLicencePage
 from caseworker.ui_automation_tests.pages.letter_templates import LetterTemplates
-from caseworker.ui_automation_tests.shared import functions
-from caseworker.ui_automation_tests.shared.fixtures.apply_for_application import *  # noqa
-from caseworker.ui_automation_tests.shared.fixtures.driver import driver  # noqa
-from caseworker.ui_automation_tests.shared.fixtures.sso_sign_in import sso_sign_in  # noqa
-from caseworker.ui_automation_tests.shared.fixtures.core import (  # noqa
+from caseworker.ui_automation_tests.pages.shared import Shared
+from tests_common import functions
+from tests_common.fixtures.apply_for_application import *  # noqa
+from tests_common.fixtures.driver import driver  # noqa
+from tests_common.fixtures.sso_sign_in import sso_sign_in  # noqa
+from tests_common.fixtures.core import (  # noqa
     context,
     api_test_client,
     exporter_info,
     internal_info,
     api_client,
 )
-from caseworker.ui_automation_tests.shared.fixtures.urls import internal_url, sso_sign_in_url, api_url  # noqa
+from tests_common.fixtures.urls import internal_url, sso_sign_in_url, api_url  # noqa
 
-import shared.tools.helpers as utils
-from pages.shared import Shared
+import tests_common.tools.helpers as utils
 from pages.case_list_page import CaseListPage
 from pages.application_page import ApplicationPage
 
-from caseworker.ui_automation_tests.shared.tools.helpers import get_formatted_date_time_y_m_d_h_s
+from tests_common.tools.helpers import get_formatted_date_time_y_m_d_h_s
 
 
 def pytest_addoption(parser):

@@ -3,43 +3,74 @@ version: 2.1
 orbs:
   jq: circleci/jq@1.8.0
 
+###############################################################################
+# Images
+###############################################################################
+
+image_python: &image_python
+  image: circleci/python:3.7
+
+image_postgres: &image_postgres
+  image: circleci/postgres:9.5-alpine-ram
+  environment:
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: password
+    POSTGRES_DB: postgres
+
+###############################################################################
+# Steps
+###############################################################################
+
+lint_steps: &lint_steps
+  steps:
+    - checkout
+    - run: git submodule sync
+    - run: git submodule update --init
+    - run: pipenv sync --dev
+    - run: pipenv run bandit -r .
+    - run: pipenv run prospector
+    - run: pipenv run black . --check --diff
+
+pytest_steps: &pytest_steps
+  steps:
+    - checkout
+    - run: git submodule sync
+    - run: git submodule update --init
+    - run: pipenv sync --dev
+    - run: pipenv run pytest
+
+###############################################################################
+# Jobs
+###############################################################################
+
 jobs:
-  caseworker_lint:
+  lint:
     docker:
-      - image: circleci/python:3.7
-    environment:
-      DEBUG: 'True'
-      PIPENV_VENV_IN_PROJECT: 'enabled'
-    steps:
-      - checkout
-      - run: cp local.env .env
-      - run: pipenv sync --dev
-      - run: pipenv run bandit -r .
-      - run: pipenv run python caseworker/templates/check_html_strings.py
-      - run: pipenv run prospector
-      - run: pipenv run black . --check --diff
+      - <<: *image_python
+    <<: *lint_steps
 
   caseworker_test:
     docker:
-      - image: circleci/python:3.7
-      - image: circleci/postgres:9.5-alpine-ram
-        environment:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: postgres
+      - <<: *image_python
+      - <<: *image_postgres
     environment:
-      DEBUG: 'True'
-      PIPENV_VENV_IN_PROJECT: 'enabled'
-      DJANGO_SETTINGS_MODULE: conf.caseworker
-    steps:
-      - checkout
-      - run: cp conf/caseworker.env .env
-      - run: pipenv sync --dev
-      - run: pipenv run pytest caseworker/unit_tests/ caseworker/**/tests.py
+      PIPENV_VENV_IN_PROJECT: enabled
+      PIPENV_DOTENV_LOCATION: example.caseworker.env
+    <<: *pytest_steps
+
+  exporter_test:
+    docker:
+      - <<: *image_python
+      - <<: *image_postgres
+    environment:
+      PIPENV_VENV_IN_PROJECT: enabled
+      PIPENV_DOTENV_LOCATION: example.exporter.env
+    <<: *pytest_steps
 
 workflows:
   version: 2
   test:
     jobs:
-      - caseworker_lint
+      - lint
       - caseworker_test
+      - exporter_test

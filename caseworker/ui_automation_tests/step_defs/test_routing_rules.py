@@ -4,7 +4,7 @@ from pages.case_page import CasePage
 
 from caseworker.ui_automation_tests.pages.application_page import ApplicationPage
 from caseworker.ui_automation_tests.pages.routing_rules_pages import RoutingRulesPage
-from caseworker.ui_automation_tests.shared import functions
+from tests_common import functions
 
 scenarios("../features/routing_rules.feature", strict_gherkin=False)
 

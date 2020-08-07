@@ -62,7 +62,6 @@ def get_const_string(value):
         return STRING_NOT_FOUND_ERROR
 
 
-
 @register.filter(name="lcsp")
 def pluralize_lcs(items, string):
     """
@@ -378,7 +377,7 @@ def filter_advice_by_id(advice, id):
 
 @register.filter()
 def distinct_advice(advice_list, case):
-    from cases.helpers.advice import convert_advice_item_to_base64, order_grouped_advice
+    from caseworker.cases.helpers.advice import convert_advice_item_to_base64, order_grouped_advice
 
     return_value = {}
 

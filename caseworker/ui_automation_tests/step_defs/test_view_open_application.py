@@ -2,11 +2,12 @@ from datetime import datetime
 
 from pytest_bdd import scenarios, when, parsers, then
 
-from pages.application_page import ApplicationPage
-from pages.case_page import CasePage
-from shared import functions
 from caseworker.ui_automation_tests.pages.case_list_page import CaseListPage
 from caseworker.ui_automation_tests.pages.shared import Shared
+from pages.application_page import ApplicationPage
+from pages.case_page import CasePage
+from tests_common import functions
+
 
 scenarios("../features/view_open_application.feature", strict_gherkin=False)
 

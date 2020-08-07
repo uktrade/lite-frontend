@@ -1,8 +1,9 @@
-import json
 import os
 import sys
 
 from environ import Env
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 from django.urls import reverse_lazy
 
@@ -20,16 +21,27 @@ env = Env()
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env.str('DJANGO_SECRET_KEY')
+SECRET_KEY = env.str("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG", False)
 
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 
 WSGI_APPLICATION = "conf.wsgi.application"
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+INSTALLED_APPS = [
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "sass_processor",
+    "django.contrib.humanize",
+]
+
+SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 SESSION_COOKIE_SECURE = env.bool("SESSION_COOKIE_SECURE", True)
 SESSION_COOKIE_NAME = env.str("SESSION_COOKIE_NAME", default="exporter")
 TOKEN_SESSION_KEY = env.str("TOKEN_SESSION_KEY")
@@ -51,9 +63,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-gb'
+LANGUAGE_CODE = "en-gb"
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
@@ -65,14 +77,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"
 
 
 # Authbroker config
 AUTHBROKER_URL = env.str("AUTHBROKER_URL")
 AUTHBROKER_CLIENT_ID = env.str("AUTHBROKER_CLIENT_ID")
 AUTHBROKER_CLIENT_SECRET = env.str("AUTHBROKER_CLIENT_SECRET")
-
 
 HAWK_AUTHENTICATION_ENABLED = env.bool("HAWK_AUTHENTICATION_ENABLED", False)
 HAWK_RECEIVER_NONCE_EXPIRY_SECONDS = 60
@@ -128,9 +139,7 @@ else:
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-DATABASES = {
-    'default': env.db('DATABASE_URL')
-}
+DATABASES = {"default": env.db("DATABASE_URL")}
 
 if "test" in sys.argv:
     DATABASES = {
@@ -151,12 +160,7 @@ LOGGING = {
         },
     },
     "handlers": {"console": {"class": "logging.StreamHandler", "formatter": "json",},},
-    "loggers": {
-        "": {
-            "handlers": ["console"],
-            "level": env.str("LOG_LEVEL", "INFO")
-        },
-    },
+    "loggers": {"": {"handlers": ["console"], "level": env.str("LOG_LEVEL", "INFO")},},
 }
 
 # Enable security features in hosted environments

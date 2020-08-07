@@ -5,7 +5,11 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
-from caseworker.cases.forms.generate_document import select_template_form, edit_document_text_form, select_addressee_form
+from caseworker.cases.forms.generate_document import (
+    select_template_form,
+    edit_document_text_form,
+    select_addressee_form,
+)
 from caseworker.cases.helpers.helpers import generate_document_error_page
 from caseworker.cases.services import (
     post_generated_document,
@@ -15,7 +19,7 @@ from caseworker.cases.services import (
     get_case_additional_contacts,
     get_case_applicant,
 )
-from caseworker.core.helpers import convert_dict_to_query_params
+from caseworker.core.helpers import convert_dict_to_query_params  #
 from caseworker.letter_templates.services import get_letter_template, get_letter_templates
 from lite_content.lite_internal_frontend import letter_templates
 from lite_forms.components import FormGroup
@@ -36,7 +40,7 @@ class GenerateDocument(MultiFormView):
     def _validate(request, pk, json):
         if not json.get(TEMPLATE):
             return (
-                {"errors": {TEMPLATE: [caseworker.letter_templates.LetterTemplatesPage.PickTemplate.NO_TEMPLATE_SELECTED]}},
+                {"errors": {TEMPLATE: [letter_templates.LetterTemplatesPage.PickTemplate.NO_TEMPLATE_SELECTED]}},
                 HTTPStatus.BAD_REQUEST,
             )
         return json, HTTPStatus.OK

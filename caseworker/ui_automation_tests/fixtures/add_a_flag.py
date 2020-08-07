@@ -1,5 +1,5 @@
 from pytest import fixture
-import shared.tools.helpers as utils
+import tests_common.tools.helpers as utils
 
 
 def get_flag_of_level(flags, level):

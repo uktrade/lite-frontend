@@ -2,7 +2,7 @@ from pytest_bdd import then, scenarios, when
 
 from pages.case_page import CasePage
 from caseworker.ui_automation_tests.pages.case_officer_page import CaseOfficerPage
-from caseworker.ui_automation_tests.shared import functions
+from tests_common import functions
 
 scenarios("../features/case_officer.feature", strict_gherkin=False)
 

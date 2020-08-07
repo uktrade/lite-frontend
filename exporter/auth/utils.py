@@ -6,8 +6,6 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from requests_oauthlib import OAuth2Session
 
-from django.conf import settings 
-
 TOKEN_SESSION_KEY = settings.TOKEN_SESSION_KEY
 PROFILE_URL = urljoin(settings.AUTHBROKER_URL, "sso/oauth2/user-profile/v1/")
 INTROSPECT_URL = urljoin(settings.AUTHBROKER_URL, "sso/oauth2/introspect/")

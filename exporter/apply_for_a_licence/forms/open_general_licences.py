@@ -1,7 +1,12 @@
 from django.urls import reverse, reverse_lazy
 
 from exporter.apply_for_a_licence.enums import OpenGeneralExportLicenceTypes
-from exporter.core.services import get_control_list_entries, get_countries, get_open_general_licences, get_open_general_licence
+from exporter.core.services import (
+    get_control_list_entries,
+    get_countries,
+    get_open_general_licences,
+    get_open_general_licence,
+)
 from lite_content.lite_exporter_frontend import generic
 from lite_content.lite_exporter_frontend.applications import OpenGeneralLicenceQuestions, ApplicationSuccessPage
 from lite_content.lite_exporter_frontend.licences import OpenGeneralLicenceRegistration

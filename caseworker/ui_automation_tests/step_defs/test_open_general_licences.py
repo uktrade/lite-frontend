@@ -1,6 +1,8 @@
 from faker import Faker
 from pytest_bdd import scenarios, when, then, given
 
+from caseworker.ui_automation_tests.pages.case_page import CasePage, CaseTabs
+from caseworker.ui_automation_tests.pages.shared import Shared
 from pages.application_page import ApplicationPage
 from pages.case_list_page import CaseListPage
 from pages.open_general_licences_pages import (
@@ -10,10 +12,8 @@ from pages.open_general_licences_pages import (
     OpenGeneralLicencesDeactivatePage,
     OpenGeneralLicencesCasePage,
 )
-from shared import functions
+from tests_common import functions
 
-from caseworker.ui_automation_tests.pages.case_page import CasePage, CaseTabs
-from caseworker.ui_automation_tests.pages.shared import Shared
 
 scenarios("../features/open_general_licences.feature", strict_gherkin=False)
 

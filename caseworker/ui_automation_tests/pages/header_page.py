@@ -1,5 +1,5 @@
 from pages.BasePage import BasePage
-from shared.tools.wait import wait_until_page_is_loaded
+from tests_common.tools.wait import wait_until_page_is_loaded
 
 
 class HeaderPage(BasePage):

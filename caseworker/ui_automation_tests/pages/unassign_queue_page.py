@@ -1,5 +1,5 @@
 from pages.BasePage import BasePage
-from shared import selectors
+from tests_common import selectors
 
 
 class UnassignQueuePage(BasePage):

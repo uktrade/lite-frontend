@@ -1,8 +1,9 @@
 from pytest_bdd import scenarios, when, parsers, then
-import shared.tools.helpers as utils
-from pages.roles_pages import RolesPages
-from pages.shared import Shared
+
+from caseworker.ui_automation_tests.pages.shared import Shared
 from pages.users_page import UsersPage
+from pages.roles_pages import RolesPages
+import tests_common.tools.helpers as utils
 
 
 scenarios("../features/roles.feature", strict_gherkin=False)

@@ -1,6 +1,5 @@
-from pages.BasePage import BasePage
-
 from caseworker.ui_automation_tests.pages.shared import Shared
+from pages.BasePage import BasePage
 
 
 class LetterTemplates(BasePage):

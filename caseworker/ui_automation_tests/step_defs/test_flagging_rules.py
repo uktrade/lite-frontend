@@ -1,9 +1,9 @@
-from pytest_bdd import when, then, scenarios, parsers, given
-import shared.tools.helpers as utils
-from pages.shared import Shared
-from shared import functions
-
 from caseworker.ui_automation_tests.pages.flagging_rules_pages import FlaggingRulePages
+from caseworker.ui_automation_tests.pages.shared import Shared
+from pytest_bdd import when, then, scenarios, parsers, given
+import tests_common.tools.helpers as utils
+from tests_common import functions
+
 
 scenarios("../features/flagging_rules.feature", strict_gherkin=False)
 

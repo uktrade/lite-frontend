@@ -1,8 +1,8 @@
 from selenium.webdriver.support.select import Select
 
-from shared import functions
+from tests_common import functions
 from pages.BasePage import BasePage
-from caseworker.ui_automation_tests.shared.tools.helpers import scroll_to_element_by_id
+from tests_common.tools.helpers import scroll_to_element_by_id
 
 
 class CompliancePages(BasePage):
