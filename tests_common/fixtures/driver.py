@@ -1,6 +1,8 @@
 import os
 
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
+
 from _pytest.fixtures import fixture
 from ..fixtures.cci import enable_browser_stack
 
@@ -33,10 +35,7 @@ def driver(request, api_client):
             chrome_options.add_argument("--proxy-server=%s" % str(os.environ.get("PROXY_IP_PORT")))
 
         if browser == "chrome":
-            if str(os.environ.get("ENVIRONMENT")) == "None":
-                driver = webdriver.Chrome("chromedriver", options=chrome_options)  # noqa
-            else:
-                driver = webdriver.Chrome(options=chrome_options)  # noqa
+            driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
             driver.get("about:blank")
             driver.maximize_window()
 

@@ -19,7 +19,7 @@
     $ git clone https://github.com/uktrade/lite-frontend
     $ cd lite-frontend
     $ git submodule init
-    $ git submodule update`
+    $ git submodule update
     $ pipenv install --dev
 
 ### Configuration
@@ -35,12 +35,9 @@ $ cp example.exporter.env exporter.env
 
 To run code using the correct `caseworker` and `exporter` env var files you need to set the env var PIPENV_DOTENV_LOCATION to the desired location e.g.:
 
-
 ```
 $ PIPENV_DOTENV_LOCATION=caseworker.env pipenv run ./manage.py runserver localhost:8200
-$ PIPENV_DOTENV_LOCATION=caseworker.env pipenv run pytest
 $ PIPENV_DOTENV_LOCATION=exporter.env pipenv run ./manage.py runserver localhost:8300
-$ PIPENV_DOTENV_LOCATION=exporter.env pipenv run pytest
 ```
 
 ## Helpful links

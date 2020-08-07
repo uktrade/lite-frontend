@@ -18,7 +18,7 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "caseworker.conf.middleware.SessionTimeoutMiddleware",
-    "csp.middleware.CSPMiddleware",
+    # "csp.middleware.CSPMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -98,3 +98,8 @@ SASS_PROCESSOR_INCLUDE_DIRS = (os.path.join(BASE_DIR, "caseworker/assets"), SASS
 LITE_CONTENT_IMPORT_PATH = "lite_content.lite_internal_frontend.strings"
 
 LITE_INTERNAL_HAWK_KEY = env.str("LITE_INTERNAL_HAWK_KEY")
+
+DIRECTORY_SSO_API_CLIENT_API_KEY = env("DIRECTORY_SSO_API_CLIENT_API_KEY")
+DIRECTORY_SSO_API_CLIENT_BASE_URL = env("DIRECTORY_SSO_API_CLIENT_BASE_URL")
+DIRECTORY_SSO_API_CLIENT_DEFAULT_TIMEOUT = 30
+DIRECTORY_SSO_API_CLIENT_SENDER_ID = "lite"

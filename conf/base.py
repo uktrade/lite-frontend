@@ -208,3 +208,5 @@ if env.str("SENTRY_DSN", ""):
     )
 
 LITE_API_URL = env.str("LITE_API_URL")
+
+PERMISSIONS_FINDER_URL = env.str("PERMISSIONS_FINDER_URL")
