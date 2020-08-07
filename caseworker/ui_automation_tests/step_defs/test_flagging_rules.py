@@ -5,7 +5,6 @@ import tests_common.tools.helpers as utils
 from tests_common import functions
 
 
-
 scenarios("../features/flagging_rules.feature", strict_gherkin=False)
 
 

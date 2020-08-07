@@ -19,8 +19,7 @@ from caseworker.cases.services import (
     get_case_additional_contacts,
     get_case_applicant,
 )
-from caseworker.core.helpers import convert_dict_to_query_params#
-from caseworker import letter_templates
+from caseworker.core.helpers import convert_dict_to_query_params  #
 from caseworker.letter_templates.services import get_letter_template, get_letter_templates
 from lite_content.lite_internal_frontend import letter_templates
 from lite_forms.components import FormGroup
