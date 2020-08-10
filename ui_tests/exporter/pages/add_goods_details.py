@@ -1,6 +1,6 @@
 from faker import Faker
 
-from exporter.ui_tests.pages.BasePage import BasePage
+from ui_tests.exporter.pages.BasePage import BasePage
 
 fake = Faker()
 

@@ -1,7 +1,7 @@
 from pytest_bdd import scenarios, given, when
 
-from exporter.ui_tests.pages.f680_additional_information_page import F680AdditionalInformationPage
-from exporter.ui_tests.shared import functions
+from ui_tests.exporter.pages.f680_additional_information_page import F680AdditionalInformationPage
+from tests_common import functions
 
 scenarios("../features/edit_mod_application.feature", strict_gherkin=False)
 

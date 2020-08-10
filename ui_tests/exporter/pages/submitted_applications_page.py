@@ -1,6 +1,6 @@
 from typing import List
 
-from exporter.ui_tests.pages.BasePage import BasePage
+from ui_tests.exporter.pages.BasePage import BasePage
 
 
 class SubmittedApplicationsPages(BasePage):

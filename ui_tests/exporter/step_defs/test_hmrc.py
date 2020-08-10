@@ -1,9 +1,9 @@
 from pytest_bdd import when, scenarios, parsers
 
-from exporter.ui_tests.pages.exporter_hub_page import ExporterHubPage
-from exporter.ui_tests.pages.hmrc_query.find_organisation import HMRCQueryFindOrganisationPage
-from exporter.ui_tests.pages.open_application.add_goods_type import OpenApplicationAddGoodsType
-from exporter.ui_tests.shared import functions
+from ui_tests.exporter.pages.exporter_hub_page import ExporterHubPage
+from ui_tests.exporter.pages.hmrc_query.find_organisation import HMRCQueryFindOrganisationPage
+from ui_tests.exporter.pages.open_application.add_goods_type import OpenApplicationAddGoodsType
+from tests_common import functions
 
 scenarios("../features/hmrc.feature", strict_gherkin=False)
 

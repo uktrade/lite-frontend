@@ -1,8 +1,8 @@
 from pytest_bdd import scenarios, given, when, then, parsers
 
-from exporter.ui_tests.pages.hub_page import Hub
-from exporter.ui_tests.pages.shared import Shared
-from exporter.ui_tests.shared.tools import helpers
+from ui_tests.exporter.pages.hub_page import Hub
+from ui_tests.exporter.pages.shared import Shared
+from tests_common.tools import helpers
 
 scenarios("../features/notifications.feature", strict_gherkin=False)
 

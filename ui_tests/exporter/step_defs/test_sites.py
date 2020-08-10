@@ -3,11 +3,11 @@ import datetime
 from faker import Faker
 from pytest_bdd import scenarios, when, then
 
-from exporter.ui_tests.shared import functions
-from exporter.ui_tests.pages.hub_page import Hub
-from exporter.ui_tests.pages.new_site_page import NewSite
-from exporter.ui_tests.pages.site_list_overview_page import SitesListOverview
-from exporter.ui_tests.pages.site_page import SitePage
+from tests_common import functions
+from ui_tests.exporter.pages.hub_page import Hub
+from ui_tests.exporter.pages.new_site_page import NewSite
+from ui_tests.exporter.pages.site_list_overview_page import SitesListOverview
+from ui_tests.exporter.pages.site_page import SitePage
 
 scenarios("../features/sites.feature", strict_gherkin=False)
 faker = Faker()

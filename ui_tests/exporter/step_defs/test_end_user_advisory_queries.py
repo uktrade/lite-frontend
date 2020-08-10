@@ -1,9 +1,9 @@
 from pytest_bdd import when, then, parsers, scenarios, given
 
-import ui_tests.shared.tools.helpers as utils
-from exporter.ui_tests.pages.add_end_user_advisory_pages import AddEndUserAdvisoryPages
-from exporter.ui_tests.pages.end_user_advisory_page import EndUserAdvisoryPage
-from exporter.ui_tests.shared import functions
+import tests_common.tools.helpers as utils
+from ui_tests.exporter.pages.add_end_user_advisory_pages import AddEndUserAdvisoryPages
+from ui_tests.exporter.pages.end_user_advisory_page import EndUserAdvisoryPage
+from tests_common import functions
 
 scenarios("../features/end_user_advisory_queries.feature", strict_gherkin=False)
 

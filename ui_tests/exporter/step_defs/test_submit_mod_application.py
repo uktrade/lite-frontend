@@ -1,14 +1,14 @@
 from pytest_bdd import scenarios, when, parsers, then
 
-import ui_tests.shared.tools.helpers as utils
-from exporter.ui_tests.pages.add_end_user_pages import AddEndUserPages
-from exporter.ui_tests.pages.apply_for_a_licence_page import ApplyForALicencePage
-from exporter.ui_tests.pages.exporter_hub_page import ExporterHubPage
-from exporter.ui_tests.pages.f680_additional_information_page import F680AdditionalInformationPage
-from exporter.ui_tests.pages.mod_clearances.ExhibitionClearanceGood import ExhibitionClearanceGoodPage
-from exporter.ui_tests.pages.shared import Shared
-from exporter.ui_tests.pages.standard_application.goods import StandardApplicationGoodsPage
-from exporter.ui_tests.shared import functions
+import tests_common.tools.helpers as utils
+from ui_tests.exporter.pages.add_end_user_pages import AddEndUserPages
+from ui_tests.exporter.pages.apply_for_a_licence_page import ApplyForALicencePage
+from ui_tests.exporter.pages.exporter_hub_page import ExporterHubPage
+from ui_tests.exporter.pages.f680_additional_information_page import F680AdditionalInformationPage
+from ui_tests.exporter.pages.mod_clearances.ExhibitionClearanceGood import ExhibitionClearanceGoodPage
+from ui_tests.exporter.pages.shared import Shared
+from ui_tests.exporter.pages.standard_application.goods import StandardApplicationGoodsPage
+from tests_common import functions
 
 scenarios("../features/submit_mod_application.feature", strict_gherkin=False)
 

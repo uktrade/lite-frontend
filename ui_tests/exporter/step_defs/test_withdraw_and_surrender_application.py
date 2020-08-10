@@ -1,7 +1,7 @@
 from pytest_bdd import scenarios, then, when, parsers
 
-from exporter.ui_tests.pages.shared import Shared
-from exporter.ui_tests.pages.application_page import ApplicationPage
+from ui_tests.exporter.pages.shared import Shared
+from ui_tests.exporter.pages.application_page import ApplicationPage
 
 scenarios("../features/withdraw_and_surrender_application.feature", strict_gherkin=False)
 

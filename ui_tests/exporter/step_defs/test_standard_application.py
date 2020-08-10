@@ -1,7 +1,7 @@
 from pytest_bdd import scenarios, when, then, parsers, given
 
-from exporter.ui_tests.pages.end_use_details_form_page import EndUseDetailsFormPage
-from exporter.ui_tests.conftest import (
+from ui_tests.exporter.pages.end_use_details_form_page import EndUseDetailsFormPage
+from ui_tests.exporter.conftest import (
     enter_type_of_application,
     enter_application_name,
     enter_permanent_or_temporary,
@@ -10,23 +10,23 @@ from exporter.ui_tests.conftest import (
     click_post_note,
     answer_firearms_question,
 )
-from exporter.ui_tests.pages.add_new_external_location_form_page import AddNewExternalLocationFormPage
-from exporter.ui_tests.pages.apply_for_a_licence_page import ApplyForALicencePage
-from exporter.ui_tests.pages.exporter_hub_page import ExporterHubPage
-from exporter.ui_tests.pages.location_type_page import LocationTypeFormPage
-from exporter.ui_tests.pages.submitted_applications_page import SubmittedApplicationsPages
-from exporter.ui_tests.pages.which_location_form_page import WhichLocationFormPage
-from exporter.ui_tests.pages.add_end_user_pages import AddEndUserPages
-from exporter.ui_tests.pages.attach_document_page import AttachDocumentPage
-from exporter.ui_tests.pages.external_locations_page import ExternalLocationsPage
-from exporter.ui_tests.pages.generic_application.ultimate_end_users import GenericApplicationUltimateEndUsers
-from exporter.ui_tests.pages.preexisting_locations_page import PreexistingLocationsPage
-from exporter.ui_tests.pages.shared import Shared
-from exporter.ui_tests.pages.standard_application.good_details import StandardApplicationGoodDetails
-from exporter.ui_tests.pages.standard_application.goods import StandardApplicationGoodsPage
-from exporter.ui_tests.shared import functions
+from ui_tests.exporter.pages.add_new_external_location_form_page import AddNewExternalLocationFormPage
+from ui_tests.exporter.pages.apply_for_a_licence_page import ApplyForALicencePage
+from ui_tests.exporter.pages.exporter_hub_page import ExporterHubPage
+from ui_tests.exporter.pages.location_type_page import LocationTypeFormPage
+from ui_tests.exporter.pages.submitted_applications_page import SubmittedApplicationsPages
+from ui_tests.exporter.pages.which_location_form_page import WhichLocationFormPage
+from ui_tests.exporter.pages.add_end_user_pages import AddEndUserPages
+from ui_tests.exporter.pages.attach_document_page import AttachDocumentPage
+from ui_tests.exporter.pages.external_locations_page import ExternalLocationsPage
+from ui_tests.exporter.pages.generic_application.ultimate_end_users import GenericApplicationUltimateEndUsers
+from ui_tests.exporter.pages.preexisting_locations_page import PreexistingLocationsPage
+from ui_tests.exporter.pages.shared import Shared
+from ui_tests.exporter.pages.standard_application.good_details import StandardApplicationGoodDetails
+from ui_tests.exporter.pages.standard_application.goods import StandardApplicationGoodsPage
+from tests_common import functions
 
-from exporter.ui_tests.pages.generic_application.task_list import TaskListPage
+from ui_tests.exporter.pages.generic_application.task_list import TaskListPage
 
 from faker import Faker
 

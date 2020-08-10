@@ -1,7 +1,7 @@
 from selenium.webdriver.support.select import Select
 
-from exporter.ui_tests.shared import functions
-from exporter.ui_tests.pages.BasePage import BasePage
+from tests_common import functions
+from ui_tests.exporter.pages.BasePage import BasePage
 
 
 class AddGoodPage(BasePage):

@@ -2,17 +2,17 @@ from faker import Faker
 from pytest_bdd import scenarios, when, then, parsers
 from selenium.webdriver.support.select import Select
 
-from exporter.ui_tests.pages.add_member import AddMemberPage
-from exporter.ui_tests.pages.member_page import MemberPage
-from exporter.ui_tests.pages.members_page import MembersPage
-from exporter.ui_tests.pages.shared import Shared
-from exporter.ui_tests.shared import functions
-from exporter.ui_tests.shared.tools.helpers import (
+from ui_tests.exporter.pages.add_member import AddMemberPage
+from ui_tests.exporter.pages.member_page import MemberPage
+from ui_tests.exporter.pages.members_page import MembersPage
+from ui_tests.exporter.pages.shared import Shared
+from tests_common import functions
+from tests_common.tools.helpers import (
     paginated_item_exists,
     highlight,
     get_text_of_multi_page_table,
 )
-from exporter.ui_tests.shared.tools.helpers import scroll_to_element_by_id
+from tests_common.tools.helpers import scroll_to_element_by_id
 
 scenarios("../features/members.feature", strict_gherkin=False)
 

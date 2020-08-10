@@ -9,7 +9,7 @@ from exporter.organisation.views import OrganisationView
 
 
 class Roles(OrganisationView):
-    template_name = "exporter/roles/index"
+    template_name = "roles/index"
 
     def get_additional_context(self):
         user = get_user(self.request)

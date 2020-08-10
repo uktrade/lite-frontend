@@ -1,7 +1,7 @@
 from pytest_bdd import when, then, scenarios
 
-import ui_tests.shared.tools.helpers as utils
-from exporter.ui_tests.pages.submitted_applications_page import SubmittedApplicationsPages
+import tests_common.tools.helpers as utils
+from ui_tests.exporter.pages.submitted_applications_page import SubmittedApplicationsPages
 
 scenarios("../features/case_notes.feature", strict_gherkin=False)
 

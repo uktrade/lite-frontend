@@ -1,6 +1,6 @@
 from pytest_bdd import when, scenarios, then, given
 
-from exporter.ui_tests.pages.application_page import ApplicationPage
+from ui_tests.exporter.pages.application_page import ApplicationPage
 
 scenarios("../features/generated_documents.feature", strict_gherkin=False)
 

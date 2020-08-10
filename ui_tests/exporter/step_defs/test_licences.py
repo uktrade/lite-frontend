@@ -1,9 +1,9 @@
 from django.contrib.humanize.templatetags.humanize import intcomma
 from pytest_bdd import scenarios, given, when, then
 
-from exporter.ui_tests.pages.shared import Shared
-from exporter.ui_tests.pages.licence_page import LicencePage
-from exporter.ui_tests.pages.licences_page import LicencesPage
+from ui_tests.exporter.pages.shared import Shared
+from ui_tests.exporter.pages.licence_page import LicencePage
+from ui_tests.exporter.pages.licences_page import LicencesPage
 
 scenarios("../features/licences.feature", strict_gherkin=False)
 

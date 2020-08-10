@@ -1,9 +1,9 @@
 from pytest_bdd import when, parsers, then, scenarios
 
-from exporter.ui_tests.pages.application_page import ApplicationPage
-from exporter.ui_tests.pages.apply_for_a_licence_page import ApplyForALicencePage
-from exporter.ui_tests.pages.generic_application.task_list import TaskListPage
-from exporter.ui_tests.shared import functions
+from ui_tests.exporter.pages.application_page import ApplicationPage
+from ui_tests.exporter.pages.apply_for_a_licence_page import ApplyForALicencePage
+from ui_tests.exporter.pages.generic_application.task_list import TaskListPage
+from tests_common import functions
 
 scenarios("../features/copy_application.feature", strict_gherkin=False)
 

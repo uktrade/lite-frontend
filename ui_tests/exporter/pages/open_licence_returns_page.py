@@ -1,7 +1,7 @@
 from selenium.webdriver.support.select import Select
 
-from exporter.ui_tests.pages.BasePage import BasePage
-from exporter.ui_tests.shared.functions import element_with_css_selector_exists
+from ui_tests.exporter.pages.BasePage import BasePage
+from tests_common.functions import element_with_css_selector_exists
 
 
 class OpenLicenceReturnsPage(BasePage):

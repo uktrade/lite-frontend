@@ -2,19 +2,19 @@ import os
 
 from pytest_bdd import scenarios, when, then, parsers
 
-from exporter.ui_tests.shared.tools import helpers
-from exporter.ui_tests.pages.add_goods_details import AddGoodDetails
-from exporter.ui_tests.pages.add_goods_grading_page import AddGoodGradingPage
-from exporter.ui_tests.conftest import get_file_upload_path
-from exporter.ui_tests.pages.add_goods_page import AddGoodPage
-from exporter.ui_tests.pages.attach_document_page import AttachDocumentPage
-from exporter.ui_tests.pages.goods_list import GoodsListPage
-from exporter.ui_tests.pages.goods_page import GoodsPage
-from exporter.ui_tests.pages.shared import Shared
-from exporter.ui_tests.pages.standard_application.goods import StandardApplicationGoodsPage
-from exporter.ui_tests.pages.standard_application.good_details import StandardApplicationGoodDetails
-from exporter.ui_tests.shared import functions
-import ui_tests.shared.tools.helpers as utils
+from tests_common.tools import helpers
+from ui_tests.exporter.pages.add_goods_details import AddGoodDetails
+from ui_tests.exporter.pages.add_goods_grading_page import AddGoodGradingPage
+from ui_tests.exporter.conftest import get_file_upload_path
+from ui_tests.exporter.pages.add_goods_page import AddGoodPage
+from ui_tests.exporter.pages.attach_document_page import AttachDocumentPage
+from ui_tests.exporter.pages.goods_list import GoodsListPage
+from ui_tests.exporter.pages.goods_page import GoodsPage
+from ui_tests.exporter.pages.shared import Shared
+from ui_tests.exporter.pages.standard_application.goods import StandardApplicationGoodsPage
+from ui_tests.exporter.pages.standard_application.good_details import StandardApplicationGoodDetails
+from tests_common import functions
+import tests_common.tools.helpers as utils
 
 scenarios("../features/goods.feature", strict_gherkin=False)
 

@@ -2,13 +2,13 @@ from datetime import datetime
 
 from pytest_bdd import given, when, then, scenarios
 
-from exporter.ui_tests.pages.attach_document_page import AttachDocumentPage
-from exporter.ui_tests.pages.compliance_pages import CompliancePages
-from exporter.ui_tests.pages.exporter_hub_page import ExporterHubPage
-from exporter.ui_tests.pages.open_licence_returns_page import OpenLicenceReturnsPage
-from exporter.ui_tests.pages.shared import Shared
-from exporter.ui_tests.shared import functions
-from exporter.ui_tests.shared.tools.utils import create_temporary_file, get_temporary_file_path
+from ui_tests.exporter.pages.attach_document_page import AttachDocumentPage
+from ui_tests.exporter.pages.compliance_pages import CompliancePages
+from ui_tests.exporter.pages.exporter_hub_page import ExporterHubPage
+from ui_tests.exporter.pages.open_licence_returns_page import OpenLicenceReturnsPage
+from ui_tests.exporter.pages.shared import Shared
+from tests_common import functions
+from tests_common.tools.utils import create_temporary_file, get_temporary_file_path
 
 scenarios("../features/compliance.feature", strict_gherkin=False)
 

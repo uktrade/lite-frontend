@@ -1,28 +1,26 @@
 from pytest_bdd import scenarios, when, then, parsers
 
-import ui_tests.shared.tools.helpers as utils
-from exporter.ui_tests.pages.generic_application.task_list import TaskListPage
-from exporter.ui_tests.pages.open_application.country_contract_types import (
-    OpenApplicationCountryContractTypes,
-)
-from exporter.ui_tests.pages.open_application.country_contract_types_summary import (
+import tests_common.tools.helpers as utils
+from ui_tests.exporter.pages.generic_application.task_list import TaskListPage
+from ui_tests.exporter.pages.open_application.country_contract_types import OpenApplicationCountryContractTypes
+from ui_tests.exporter.pages.open_application.country_contract_types_summary import (
     OpenApplicationCountryContractTypesSummaryPage,
 )
-from exporter.ui_tests.pages.exporter_hub_page import ExporterHubPage
-from exporter.ui_tests.pages.generic_application.ultimate_end_users import GenericApplicationUltimateEndUsers
-from exporter.ui_tests.shared import functions
-from exporter.ui_tests.conftest import (
+from ui_tests.exporter.pages.exporter_hub_page import ExporterHubPage
+from ui_tests.exporter.pages.generic_application.ultimate_end_users import GenericApplicationUltimateEndUsers
+from tests_common import functions
+from ui_tests.exporter.conftest import (
     enter_type_of_application,
     enter_application_name,
     enter_permanent_or_temporary,
     choose_open_licence_category,
     answer_firearms_question,
 )
-from exporter.ui_tests.pages.apply_for_a_licence_page import ApplyForALicencePage
-from exporter.ui_tests.pages.open_application.countries import OpenApplicationCountriesPage
-from exporter.ui_tests.pages.open_application.goods_countries_page import GoodsCountriesPage
-from exporter.ui_tests.pages.open_application.goods_types import OpenApplicationGoodsTypesPage
-from exporter.ui_tests.pages.standard_application.goods import StandardApplicationGoodsPage
+from ui_tests.exporter.pages.apply_for_a_licence_page import ApplyForALicencePage
+from ui_tests.exporter.pages.open_application.countries import OpenApplicationCountriesPage
+from ui_tests.exporter.pages.open_application.goods_countries_page import GoodsCountriesPage
+from ui_tests.exporter.pages.open_application.goods_types import OpenApplicationGoodsTypesPage
+from ui_tests.exporter.pages.standard_application.goods import StandardApplicationGoodsPage
 
 scenarios(
     "../features/submit_open_application.feature", "../features/edit_open_application.feature", strict_gherkin=False

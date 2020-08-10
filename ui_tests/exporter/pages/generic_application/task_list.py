@@ -1,7 +1,7 @@
 from selenium.common.exceptions import NoSuchElementException
 
-from exporter.ui_tests.pages.BasePage import BasePage
-from exporter.ui_tests.shared.tools.helpers import scroll_to_element_by_id
+from ui_tests.exporter.pages.BasePage import BasePage
+from tests_common.tools.helpers import scroll_to_element_by_id
 
 
 class TaskListPage(BasePage):

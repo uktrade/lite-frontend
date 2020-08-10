@@ -1,6 +1,6 @@
 from pytest_bdd import scenarios, given, when, then
 
-from exporter.ui_tests.pages.standard_application.goods import StandardApplicationGoodsPage
+from ui_tests.exporter.pages.standard_application.goods import StandardApplicationGoodsPage
 
 scenarios("../features/edit_trade_control_application.feature", strict_gherkin=False)
 

@@ -1,7 +1,7 @@
 from selenium.common.exceptions import NoSuchElementException
-from exporter.ui_tests.pages.BasePage import BasePage
+from ui_tests.exporter.pages.BasePage import BasePage
 
-from exporter.ui_tests.shared import functions
+from tests_common import functions
 
 
 class StandardApplicationGoodsPage(BasePage):

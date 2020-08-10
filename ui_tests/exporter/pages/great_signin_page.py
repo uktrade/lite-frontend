@@ -1,6 +1,6 @@
 from selenium.common.exceptions import NoSuchElementException
 
-from exporter.ui_tests.pages.BasePage import BasePage
+from ui_tests.exporter.pages.BasePage import BasePage
 
 
 class GreatSigninPage(BasePage):

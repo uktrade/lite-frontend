@@ -6,49 +6,49 @@ from faker import Faker  # noqa
 import logging
 from pytest_bdd import given, when, then, parsers
 
-import ui_tests.shared.tools.helpers as utils
-from exporter.ui_tests.fixtures.add_end_user_advisory import add_end_user_advisory  # noqa
-from exporter.ui_tests.fixtures.add_goods_query import add_goods_clc_query  # noqa
-from exporter.ui_tests.fixtures.add_party import add_end_user_to_application  # noqa
-from exporter.ui_tests.fixtures.env import environment  # noqa
-from exporter.ui_tests.fixtures.manage_case import manage_case_status_to_withdrawn, approve_case  # noqa
-from exporter.ui_tests.fixtures.register_organisation import (  # noqa
+import tests_common.tools.helpers as utils
+from ui_tests.exporter.fixtures.add_end_user_advisory import add_end_user_advisory  # noqa
+from ui_tests.exporter.fixtures.add_goods_query import add_goods_clc_query  # noqa
+from ui_tests.exporter.fixtures.add_party import add_end_user_to_application  # noqa
+from ui_tests.exporter.fixtures.env import environment  # noqa
+from ui_tests.exporter.fixtures.manage_case import manage_case_status_to_withdrawn, approve_case  # noqa
+from ui_tests.exporter.fixtures.register_organisation import (  # noqa
     register_organisation,
     register_organisation_for_switching_organisation,
 )
-from exporter.ui_tests.fixtures.sso_sign_in import sso_sign_in  # noqa
-from exporter.ui_tests.pages.add_end_user_pages import AddEndUserPages
-from exporter.ui_tests.pages.application_edit_type_page import ApplicationEditTypePage
-from exporter.ui_tests.pages.application_page import ApplicationPage
-from exporter.ui_tests.pages.apply_for_a_licence_page import ApplyForALicencePage
-from exporter.ui_tests.pages.attach_document_page import AttachDocumentPage
-from exporter.ui_tests.pages.end_use_details_form_page import EndUseDetailsFormPage
-from exporter.ui_tests.pages.exporter_hub_page import ExporterHubPage
-from exporter.ui_tests.pages.generic_application.additional_documents import AdditionalDocumentsPage
-from exporter.ui_tests.pages.generic_application.declaration import DeclarationPage
-from exporter.ui_tests.pages.generic_application.task_list import TaskListPage
-from exporter.ui_tests.pages.hub_page import Hub
-from exporter.ui_tests.pages.mod_clearances.ExhibitionClearanceDetails import ExhibitionClearanceDetailsPage
-from exporter.ui_tests.pages.open_application.add_goods_type import OpenApplicationAddGoodsType
-from exporter.ui_tests.pages.respond_to_ecju_query_page import RespondToEcjuQueryPage
-from exporter.ui_tests.pages.route_of_goods_form_page import RouteOfGoodsFormPage
-from exporter.ui_tests.pages.shared import Shared
-from exporter.ui_tests.pages.sites_page import SitesPage
-from exporter.ui_tests.pages.standard_application.good_details import StandardApplicationGoodDetails
-from exporter.ui_tests.pages.standard_application.goods import StandardApplicationGoodsPage
-from exporter.ui_tests.pages.submitted_applications_page import SubmittedApplicationsPages
-from exporter.ui_tests.pages.temporary_export_details_form_page import TemporaryExportDetailsFormPage
-from exporter.ui_tests.pages.which_location_form_page import WhichLocationFormPage
-from exporter.ui_tests.shared import functions
-from exporter.ui_tests.shared.fixtures.add_a_document_template import (  # noqa
+from ui_tests.exporter.fixtures.sso_sign_in import sso_sign_in  # noqa
+from ui_tests.exporter.pages.add_end_user_pages import AddEndUserPages
+from ui_tests.exporter.pages.application_edit_type_page import ApplicationEditTypePage
+from ui_tests.exporter.pages.application_page import ApplicationPage
+from ui_tests.exporter.pages.apply_for_a_licence_page import ApplyForALicencePage
+from ui_tests.exporter.pages.attach_document_page import AttachDocumentPage
+from ui_tests.exporter.pages.end_use_details_form_page import EndUseDetailsFormPage
+from ui_tests.exporter.pages.exporter_hub_page import ExporterHubPage
+from ui_tests.exporter.pages.generic_application.additional_documents import AdditionalDocumentsPage
+from ui_tests.exporter.pages.generic_application.declaration import DeclarationPage
+from ui_tests.exporter.pages.generic_application.task_list import TaskListPage
+from ui_tests.exporter.pages.hub_page import Hub
+from ui_tests.exporter.pages.mod_clearances.ExhibitionClearanceDetails import ExhibitionClearanceDetailsPage
+from ui_tests.exporter.pages.open_application.add_goods_type import OpenApplicationAddGoodsType
+from ui_tests.exporter.pages.respond_to_ecju_query_page import RespondToEcjuQueryPage
+from ui_tests.exporter.pages.route_of_goods_form_page import RouteOfGoodsFormPage
+from ui_tests.exporter.pages.shared import Shared
+from ui_tests.exporter.pages.sites_page import SitesPage
+from ui_tests.exporter.pages.standard_application.good_details import StandardApplicationGoodDetails
+from ui_tests.exporter.pages.standard_application.goods import StandardApplicationGoodsPage
+from ui_tests.exporter.pages.submitted_applications_page import SubmittedApplicationsPages
+from ui_tests.exporter.pages.temporary_export_details_form_page import TemporaryExportDetailsFormPage
+from ui_tests.exporter.pages.which_location_form_page import WhichLocationFormPage
+from tests_common import functions
+from tests_common.fixtures.add_a_document_template import (  # noqa
     add_a_document_template,
     get_paragraph_text,
     get_template_id,
     get_licence_template_id,
 )
-from exporter.ui_tests.shared.fixtures.add_a_draft import add_a_draft  # noqa
-from exporter.ui_tests.shared.fixtures.add_a_generated_document import add_a_generated_document  # noqa
-from exporter.ui_tests.shared.fixtures.apply_for_application import (  # noqa
+from tests_common.fixtures.add_a_draft import add_a_draft  # noqa
+from tests_common.fixtures.add_a_generated_document import add_a_generated_document  # noqa
+from tests_common.fixtures.apply_for_application import (  # noqa
     apply_for_standard_application,
     add_an_ecju_query,
     apply_for_open_application,
@@ -58,28 +58,22 @@ from exporter.ui_tests.shared.fixtures.apply_for_application import (  # noqa
     apply_for_standard_trade_control_application,
     apply_for_ogel,
 )
-from exporter.ui_tests.shared.fixtures.core import (  # noqa
+from tests_common.fixtures.core import (  # noqa
     context,
     exporter_info,
     internal_info,
     api_client,
     api_test_client,
 )
-from exporter.ui_tests.shared.fixtures.driver import driver  # noqa
-from exporter.ui_tests.shared.fixtures.urls import exporter_url, api_url  # noqa
-from exporter.ui_tests.shared.tools.wait import wait_for_download_button_on_exporter_main_content
+from tests_common.fixtures.driver import driver  # noqa
+from tests_common.fixtures.urls import exporter_url, api_url  # noqa
+from tests_common.tools.wait import wait_for_download_button_on_exporter_main_content
 
 strict_gherkin = False
 fake = Faker()
 
 
 def pytest_addoption(parser):
-    settings.configure(
-        DIRECTORY_SSO_API_CLIENT_API_KEY=os.environ.get("DIRECTORY_SSO_API_CLIENT_API_KEY"),
-        DIRECTORY_SSO_API_CLIENT_BASE_URL=os.environ.get("DIRECTORY_SSO_API_CLIENT_BASE_URL"),
-        DIRECTORY_SSO_API_CLIENT_DEFAULT_TIMEOUT=30,
-        DIRECTORY_SSO_API_CLIENT_SENDER_ID="directory",
-    )
     env = str(os.environ.get("ENVIRONMENT"))
     if env == "None":
         env = "dev"
@@ -109,9 +103,7 @@ def pytest_addoption(parser):
 
 def pytest_exception_interact(node, report):
     if node and report.failed:
-        class_name = (
-            node._nodeid.replace(".py::", "").replace("ui_tests/step_defs/", "").replace("step_defs", "")
-        )
+        class_name = node._nodeid.replace(".py::", "").replace("ui_tests/step_defs/", "").replace("step_defs", "")
         name = "{0}_{1}".format(class_name, "").replace("/", "").replace("test", "_test")
         logging.info("Test that has failed is file: %s", name)
         try:

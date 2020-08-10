@@ -1,6 +1,6 @@
-from exporter.ui_tests.shared import functions
-from exporter.ui_tests.pages.BasePage import BasePage
-from exporter.ui_tests.shared.functions import element_with_css_selector_exists
+from tests_common import functions
+from ui_tests.exporter.pages.BasePage import BasePage
+from tests_common.functions import element_with_css_selector_exists
 
 
 class AddEndUserAdvisoryPages(BasePage):

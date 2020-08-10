@@ -1,7 +1,7 @@
 from pytest import fixture
 
-from exporter.ui_tests.pages.start_page import StartPage
-from exporter.ui_tests.pages.great_signin_page import GreatSigninPage
+from ui_tests.exporter.pages.start_page import StartPage
+from ui_tests.exporter.pages.great_signin_page import GreatSigninPage
 
 
 @fixture(scope="function")

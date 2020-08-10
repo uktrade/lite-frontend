@@ -1,6 +1,6 @@
 from pytest import fixture
 
-from exporter.ui_tests.shared.tools.utils import Timer
+from tests_common.tools.utils import Timer
 
 
 @fixture(scope="session")

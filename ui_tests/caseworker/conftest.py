@@ -97,9 +97,7 @@ def pytest_addoption(parser):
 # Create driver and url command line adoption
 def pytest_exception_interact(node, report):
     if node and report.failed:
-        class_name = (
-            node._nodeid.replace(".py::", "").replace("ui_tests/step_defs/", "").replace("step_defs", "")
-        )
+        class_name = node._nodeid.replace(".py::", "").replace("ui_tests/step_defs/", "").replace("step_defs", "")
         name = "{0}_{1}".format(class_name, "").replace("/", "").replace("test", "_test")
         logging.info("Test that has failed is file: %s", name)
         try:
