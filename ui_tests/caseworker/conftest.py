@@ -1,8 +1,5 @@
-import logging
-import os
 from datetime import datetime
 
-from django.conf import settings
 from pytest_bdd import given, when, then, parsers
 
 from ui_tests.caseworker.pages.advice import FinalAdvicePage, TeamAdvicePage
@@ -56,54 +53,6 @@ from ui_tests.caseworker.pages.case_list_page import CaseListPage
 from ui_tests.caseworker.pages.application_page import ApplicationPage
 
 from tests_common.tools.helpers import get_formatted_date_time_y_m_d_h_s
-
-
-def pytest_addoption(parser):
-
-    env = str(os.environ.get("ENVIRONMENT"))
-    if env == "None":
-        env = "dev"
-
-    parser.addoption("--driver", action="store", default="chrome", help="Type in browser type")
-    parser.addoption(
-        "--sso_sign_in_url", action="store", default=str(os.environ.get("AUTHBROKER_URL")) + "/login", help="url"
-    )
-
-    if env.lower() == "local":
-        parser.addoption(
-            "--internal_url", action="store", default="http://localhost:" + str(os.environ.get("PORT")), help="url"
-        )
-
-        # Get LITE API URL.
-        lite_api_url = os.environ.get("LOCAL_LITE_API_URL", os.environ.get("LITE_API_URL"),)
-        parser.addoption("--lite_api_url", action="store", default=lite_api_url, help="url")
-    elif env == "demo":
-        raise NotImplementedError("This is the demo environment - Try another environment instead")
-    else:
-        parser.addoption(
-            "--internal_url",
-            action="store",
-            default="https://internal.lite.service." + env + ".uktrade.digital/",
-            help="url",
-        )
-        parser.addoption(
-            "--lite_api_url",
-            action="store",
-            default="https://lite-api-" + env + ".london.cloudapps.digital/",
-            help="url",
-        )
-
-
-# Create driver and url command line adoption
-def pytest_exception_interact(node, report):
-    if node and report.failed:
-        class_name = node._nodeid.replace(".py::", "").replace("ui_tests/step_defs/", "").replace("step_defs", "")
-        name = "{0}_{1}".format(class_name, "").replace("/", "").replace("test", "_test")
-        logging.info("Test that has failed is file: %s", name)
-        try:
-            utils.save_screenshot(node.funcargs.get("driver"), name)
-        except Exception as e:  # noqa
-            logging.error("Screenshot failed to be taken %e", e)
 
 
 @when("I go to the internal homepage")  # noqa

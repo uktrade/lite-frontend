@@ -20,7 +20,6 @@ from exporter.conf.constants import (
     DATE_FORMAT,
     CASE_SECTIONS,
     PAGE_DATE_FORMAT,
-    TIMEZONE,
     STANDARD,
     OPEN,
     NOT_STARTED,

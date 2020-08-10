@@ -1,9 +1,7 @@
 import datetime
 import os
 
-from django.conf import settings
 from faker import Faker  # noqa
-import logging
 from pytest_bdd import given, when, then, parsers
 
 import tests_common.tools.helpers as utils
@@ -71,45 +69,6 @@ from tests_common.tools.wait import wait_for_download_button_on_exporter_main_co
 
 strict_gherkin = False
 fake = Faker()
-
-
-def pytest_addoption(parser):
-    env = str(os.environ.get("ENVIRONMENT"))
-    if env == "None":
-        env = "dev"
-    parser.addoption("--driver", action="store", default="chrome", help="Type in browser type")
-    if env == "local":
-        parser.addoption(
-            "--exporter_url", action="store", default=f"http://localhost:{str(os.environ.get('PORT'))}/", help="url"
-        )
-        lite_api_url = os.environ.get("LOCAL_LITE_API_URL", os.environ.get("LITE_API_URL"),)
-        parser.addoption(
-            "--lite_api_url", action="store", default=lite_api_url, help="url",
-        )
-    elif env == "demo":
-        raise Exception("This is the demo environment - Try another environment instead")
-    else:
-        parser.addoption(
-            "--exporter_url",
-            action="store",
-            default=f"https://exporter.lite.service.{env}.uktrade.digital/",
-            help="url",
-        )
-        parser.addoption(
-            "--lite_api_url", action="store", default=f"https://lite-api-{env}.london.cloudapps.digital/", help="url",
-        )
-    parser.addoption("--sso_sign_in_url", action="store", default="https://sso.trade.uat.uktrade.io/login/", help="url")
-
-
-def pytest_exception_interact(node, report):
-    if node and report.failed:
-        class_name = node._nodeid.replace(".py::", "").replace("ui_tests/step_defs/", "").replace("step_defs", "")
-        name = "{0}_{1}".format(class_name, "").replace("/", "").replace("test", "_test")
-        logging.info("Test that has failed is file: %s", name)
-        try:
-            utils.save_screenshot(node.funcargs.get("driver"), name)
-        except Exception as e:  # noqa
-            logging.error("Screenshot failed to be taken %e", e)
 
 
 @given("I create a standard application via api")  # noqa
