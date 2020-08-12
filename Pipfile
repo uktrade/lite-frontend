@@ -17,12 +17,12 @@ pytest = "~=5.1"
 pytest-django = "~=3.9"
 pytest-env = "~=0.6"
 pytest-html = "~=2.0"
-pytest-rerunfailures = "~=8.0"
 pytest-xdist = "~=1.31"
 pytest_bdd = "~=3.1"
 raven = "<6.11"
 requests-mock = "~=1.8"
 selenium = "~=3.141"
+webdriver-manager = "~=3.2"
 
 [packages]
 beautifulsoup4 = "~=4.8.2"

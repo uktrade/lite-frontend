@@ -1,2 +1,2 @@
 [bandit]
-exclude: /.venv,/exporter/ui_automation_tests,/caseworker/ui_automation_tests,/unit_tests,/tests_common
+exclude: /.venv,/ui_tests,/unit_tests,/tests_common

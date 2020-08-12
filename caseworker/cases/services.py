@@ -53,7 +53,9 @@ def get_case_types(request, type_only=True):
 # Case
 def get_case(request, pk):
     response = get(request, CASE_URL + str(pk))
-    return Case(response.json()["case"])
+    response.raise_for_status()
+    parsed = response.json()
+    return Case(parsed["case"])
 
 
 def patch_case(request, pk, json):

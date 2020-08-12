@@ -37,10 +37,12 @@
 	</tbody>
 </table>
 {% else %}
+
 <p class="govuk-body">{% lcs 'advice.GoodsDecisionMatrixPage.NO_RESULTS' %}</p>
 {% endif %}
 
 <h1 class="govuk-heading-l">{% lcs 'advice.GoodsDecisionMatrixPage.REFUSED_TITLE' %}</h1>
+
 {% if goods_type_country_decisions.refused %}
 <table class="govuk-table">
 	<thead class="govuk-table__head">

@@ -67,24 +67,24 @@ parameters
 
             try {
                 if(env.TESTS_TO_RUN){
-                    sh "py.test -k '${env.TESTS_TO_RUN}' -n '${env.NO_OF_PARALLEL_RUNNERS}' --dist=loadfile --ignore=core --disable-pytest-warnings --alluredir=ui_automation_tests/allure-results"
+                    sh "py.test -k '${env.TESTS_TO_RUN}' -n '${env.NO_OF_PARALLEL_RUNNERS}' --dist=loadfile --ignore=core --disable-pytest-warnings --alluredir=ui_tests/allure-results"
                 } else {
                     sh """
-                    py.test -k 'smoke' --reruns '${env.NO_OF_RERUNS}' --ignore=core --disable-pytest-warnings --alluredir=ui_automation_tests/allure-results
+                    py.test -k 'smoke' --reruns '${env.NO_OF_RERUNS}' --ignore=core --disable-pytest-warnings --alluredir=ui_tests/allure-results
                     if [ \$? -eq 0 ]
                     then
-                         py.test -k 'regression' -n '${env.NO_OF_PARALLEL_RUNNERS}' --dist=loadfile --reruns '${env.NO_OF_RERUNS}' --ignore=core --disable-pytest-warnings --alluredir=ui_automation_tests/allure-results
+                         py.test -k 'regression' -n '${env.NO_OF_PARALLEL_RUNNERS}' --dist=loadfile --reruns '${env.NO_OF_RERUNS}' --ignore=core --disable-pytest-warnings --alluredir=ui_tests/allure-results
                     fi
                     """
                 }
             } catch (error) {
-                    archiveArtifacts artifacts: "ui_automation_tests/allure-results/**.*"
+                    archiveArtifacts artifacts: "ui_tests/allure-results/**.*"
                     error.message
 		    currentBuild.result = "UNSTABLE"
                   }
 
             }
-            archiveArtifacts artifacts: "ui_automation_tests/allure-results/**.*"
+            archiveArtifacts artifacts: "ui_tests/allure-results/**.*"
           }
         }
     }
@@ -93,7 +93,7 @@ parameters
   post {
     always {
       script {
-       //unarchive mapping: ['ui_automation_tests/allure-results/**.*': '.']
+       //unarchive mapping: ['ui_tests/allure-results/**.*': '.']
        generateAllureReport()
       }
     }
@@ -115,7 +115,7 @@ try
     jdk              : '',
     properties       : [[key: 'allure.tests.management.pattern', value: 'http://tms.company.com/%s']],
     reportBuildPolicy: 'ALWAYS',
-    results          : [[path: 'ui_automation_tests/allure-results']]
+    results          : [[path: 'ui_tests/allure-results']]
     ])
   }
   catch (error)

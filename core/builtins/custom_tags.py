@@ -7,13 +7,27 @@ import re
 from collections import Counter, OrderedDict
 from html import escape
 
+from dateutil.relativedelta import relativedelta
+
 from django import template
 from django.template.defaultfilters import stringfilter, safe, capfirst
 from django.templatetags.tz import do_timezone
 from django.utils.safestring import mark_safe
 
 from django.conf import settings
-from exporter.conf.constants import ISO8601_FMT, DATE_FORMAT
+from exporter.conf.constants import (
+    ISO8601_FMT,
+    DATE_FORMAT,
+    CASE_SECTIONS,
+    PAGE_DATE_FORMAT,
+    STANDARD,
+    OPEN,
+    NOT_STARTED,
+    DONE,
+    IN_PROGRESS,
+)
+from exporter.applications.constants import F680
+
 from caseworker.conf.constants import SystemTeamsID
 
 
@@ -141,10 +155,10 @@ def default_na(value):
     """
     Returns N/A if the parameter given is none
     """
-    if value is not None and len(value):
+    if value:
         return value
     else:
-        return mark_safe(f'<span class="govuk-hint govuk-!-margin-0">{strings.NOT_APPLICABLE}</span>')  # nosec
+        return mark_safe(f'<span class="govuk-hint govuk-!-margin-0">N/A</span>')  # nosec
 
 
 @register.filter()
@@ -289,6 +303,12 @@ def missing_title():
 @register.filter()
 def equals(ob1, ob2):
     return ob1 == ob2
+
+
+@register.filter()
+def join_key_value_list(_list, _join=", "):
+    _list = [x["value"] for x in _list]
+    return join_list(_list, _join)
 
 
 @register.filter()
@@ -562,3 +582,210 @@ def date_display(value):
     month = months[(int(month) - 1)]
 
     return f"{int(day)} {month} {year}"
+
+
+@register.filter()
+def add_months(start_date, months):
+    """
+    Return a date with an added desired number of business months
+    Example 31/1/2020 + 1 month = 29/2/2020 (one business month)
+    """
+    start_date = datetime.datetime.strptime(start_date, DATE_FORMAT)
+    new_date = start_date + relativedelta(months=+months)
+    return new_date.strftime(PAGE_DATE_FORMAT)
+
+
+@register.filter()
+def strip_underscores(value):
+    value = value[0:1].upper() + value[1:]
+    return value.replace("_", " ")
+
+
+@register.filter
+@stringfilter
+def units_pluralise(unit: str, quantity: str):
+    """
+    Pluralise goods measurements units
+    """
+    if unit.endswith("(s)"):
+        unit = unit[:-3]
+
+        if not quantity == "1":
+            unit = unit + "s"
+
+    return unit
+
+
+@register.filter(name="times")
+def times(number):
+    """
+    Returns a list of numbers from 1 to the number
+    """
+    return [x + 1 for x in range(number)]
+
+
+@register.filter()
+def idify(string: str):
+    """
+    Converts a string to a format suitable for HTML IDs
+    eg 'Add goods' becomes 'add_goods'
+    """
+    return string.lower().replace(" ", "_")
+
+
+@register.filter
+def classname(obj):
+    """
+    Returns object class name
+    """
+    return obj.__class__.__name__
+
+
+@register.filter
+def task_list_item_status(data):
+    """
+    Returns 'not started' if length of data given is none, else returns 'done'
+    """
+    if not data:
+        return NOT_STARTED
+
+    return DONE
+
+
+@register.filter
+def task_list_additional_information_status(data):
+    """
+    Returns 'not started' if length of data given is none, else returns 'done'
+    """
+    if all([data.get(field) in ["", None] for field in F680.REQUIRED_FIELDS]):
+        return NOT_STARTED
+
+    for field in F680.REQUIRED_FIELDS:
+        if field in data:
+            if data[field] is None or data[field] == "":
+                return IN_PROGRESS
+            if data[field] is True:
+                secondary_field = F680.REQUIRED_SECONDARY_FIELDS.get(field, False)
+                if secondary_field and not data.get(secondary_field):
+                    return IN_PROGRESS
+    return DONE
+
+
+@register.simple_tag(name="tld")
+def task_list_item_list_description(data, singular, plural):
+    """
+    Returns a description for a task list item depending on how many
+    items are in its contents
+    """
+    if len(data) == 0:
+        return None
+    elif len(data) == 1:
+        return f"1 {singular} added"
+    else:
+        return f"{len(data)} {plural} added"
+
+
+@register.filter()
+def set_lcs_variable(value, arg):
+    try:
+        return value % arg
+    except TypeError:
+        return value
+
+
+@register.filter()
+def get(value, arg):
+    return value.get(arg) if value else None
+
+
+@register.filter()
+def application_type_in_list(application_type, application_types):
+    types = CASE_SECTIONS[application_types]
+    if isinstance(types, list):
+        return application_type in types
+    else:
+        return application_type == types
+
+
+@register.filter()
+def get_end_use_details_status(application):
+    fields = ["intended_end_use"]
+    if application.sub_type in [STANDARD, OPEN]:
+        fields += ["is_military_end_use_controls", "is_informed_wmd", "is_suspected_wmd"]
+        if application.sub_type == STANDARD:
+            fields.append("is_eu_military")
+
+    end_use_detail_field_data = [application.get(field) for field in fields]
+
+    if all(end_use_detail_field_data):
+        return DONE
+    elif any(end_use_detail_field_data):
+        return IN_PROGRESS
+    else:
+        return NOT_STARTED
+
+
+@register.filter()
+def get_parties_status_optional_documents(parties):
+    if not parties:
+        return NOT_STARTED
+
+    if isinstance(parties, list):
+        for party in parties:
+            if not party:
+                return NOT_STARTED
+
+    return DONE
+
+
+@register.filter()
+def requires_ultimate_end_users(goods):
+    ultimate_end_users_required = False
+
+    for good in goods:
+        if good["is_good_incorporated"]:
+            ultimate_end_users_required = True
+
+    return ultimate_end_users_required
+
+
+def join_list(_list, _join=", "):
+    return _join.join(_list)
+
+
+@register.filter()
+def abbreviate_string(string, length):
+    if len(str(string)) <= length:
+        return string
+    else:
+        return str(string)[:length] + "..."
+
+
+@register.filter
+def index(string, index):
+    return string[index]
+
+
+@register.filter()
+def display_clc_ratings(control_list_entries):
+    ratings = [item["rating"] for item in control_list_entries]
+    return ", ".join(ratings)
+
+
+@register.filter()
+def get_parties_status(parties):
+    if not parties:
+        return NOT_STARTED
+
+    if isinstance(parties, list):
+        for party in parties:
+            if not party:
+                return NOT_STARTED
+
+            if not party["document"]:
+                return IN_PROGRESS
+    else:
+        if not parties["document"]:
+            return IN_PROGRESS
+
+    return DONE

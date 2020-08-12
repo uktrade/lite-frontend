@@ -56,6 +56,7 @@ jobs:
     environment:
       PIPENV_VENV_IN_PROJECT: enabled
       PIPENV_DOTENV_LOCATION: example.caseworker.env
+      PYTEST_ADDOPTS: unit_tests/caseworker --capture=no --nomigrations
     <<: *pytest_steps
 
   exporter_test:
@@ -65,6 +66,7 @@ jobs:
     environment:
       PIPENV_VENV_IN_PROJECT: enabled
       PIPENV_DOTENV_LOCATION: example.exporter.env
+      PYTEST_ADDOPTS: unit_tests/exporter --capture=no --nomigrations
     <<: *pytest_steps
 
 workflows:
