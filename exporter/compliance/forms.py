@@ -2,11 +2,10 @@ from django.urls import reverse_lazy
 
 from lite_content.lite_exporter_frontend.compliance import OpenReturnsForm, OpenReturnsHelpPage
 from lite_forms.components import FormGroup, Form, Select, Option, FileUpload, Label, DetailComponent, BackLink, Custom
-from datetime import datetime
-
+from django.utils import timezone
 
 def get_years():
-    current_year = datetime.now().year
+    current_year = timezone.localtime().year
     previous_year = current_year - 1
     return [Option(key=current_year, value=current_year), Option(key=previous_year, value=previous_year)]
 

@@ -1,6 +1,6 @@
-import datetime
 import os
 
+from django.utils import timezone
 from faker import Faker  # noqa
 from pytest_bdd import given, when, then, parsers
 
@@ -304,9 +304,9 @@ def application_is_submitted(driver, context):  # noqa
 @when("I submit the application")  # noqa
 def submit_the_application(driver, context):  # noqa
     functions.click_submit(driver)
-    context.time_date_submitted = datetime.datetime.now().strftime("%I:%M%p").lstrip("0").replace(
+    context.time_date_submitted = timezone.localtime().strftime("%I:%M%p").lstrip("0").replace(
         " 0", " "
-    ).lower() + datetime.datetime.now().strftime(" %d %B %Y")
+    ).lower() + timezone.localtime().strftime(" %d %B %Y")
 
 
 @when("I click on the manage my organisation link")  # noqa

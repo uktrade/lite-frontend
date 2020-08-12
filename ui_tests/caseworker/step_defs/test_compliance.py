@@ -1,6 +1,4 @@
-import datetime
-
-from django.templatetags.tz import do_timezone
+from django.utils import timezone
 from pytest_bdd import when, then, parsers, scenarios
 
 from ui_tests.caseworker.pages.case_page import CasePage, CaseTabs
@@ -75,9 +73,7 @@ def add_visit_report_details(driver, context, visit_type, visit_date, overall_ri
 @then("I see the visit report details in details and the banner")
 def see_visit_report_details(driver, context):
     compliance_page = CompliancePages(driver)
-    visit_date = do_timezone(datetime.datetime.strptime(context.visit_date, DATE_FORMAT), "Europe/London").strftime(
-        "%d %B %Y"
-    )
+    visit_date = timezone.localtime().date().strftime(DATE_FORMAT)
     assert context.visit_type in compliance_page.get_visit_type()
     assert visit_date in compliance_page.get_visit_date()
     assert context.overall_risk in compliance_page.get_overall_risk()
