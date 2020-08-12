@@ -15,7 +15,7 @@ spec:
     role: worker
   containers:
   - name: lite-selenium-test
-    image: quay.io/uktrade/lite-selenium-base
+    image: gcr.io/sre-docker-registry/github.com/uktrade/lite-selenium-base
     imagePullPolicy: Always
     command:
     - cat
@@ -24,20 +24,18 @@ spec:
     }
   }
 
-  parameters
-    {
-      // Define DRIVER parameter for running the test
-      choice(name: 'DRIVER', description: 'Choose browser', choices: 'chrome\nfirefox\nheadless')
+parameters
+  {
+    // Define DRIVER parameter for running the test
+    choice(name: 'DRIVER', description: 'Choose browser', choices: 'chrome\nfirefox\nheadless')
 
-      // Define environment to run tests on
-      choice(name: 'ENVIRONMENT', description: 'choose what environment to run in', choices: 'dev\nqa\ndevpopcorn\ndevkoala\nsandbox\nstaging\nuat')
+    // Define environment to run tests on
+    choice(name: 'ENVIRONMENT', description: 'choose what environment to run in', choices: 'dev\nqa\ndevpopcorn\ndevkoala\nsandbox\nstaging\nuat\ndevdata')
 
-      // Define test path to run
-      string(name: 'TESTS_TO_RUN', defaultValue: '', description: 'choose test to run e.g. LT_928_edit')
+    //Define branch to run
+    string(name: 'BRANCH', defaultValue: 'master', description: 'choose branch to run against')
+  }
 
-      //Define branch to run
-      string(name: 'BRANCH', defaultValue: 'master', description: 'choose branch to run against')
-    }
 
   options {
     timestamps()
@@ -61,41 +59,24 @@ spec:
                         reference: '',
                         trackingSubmodules: false]],
                 submoduleCfg: [],
-                userRemoteConfigs: [[credentialsId: env.SCM_CREDENTIAL, url: 'https://github.com/uktrade/lite-exporter-frontend.git']]
+                userRemoteConfigs: [[credentialsId: env.SCM_CREDENTIAL, url: 'https://github.com/uktrade/lite-frontend.git']]
               ])
 
-            try {
-                if(env.TESTS_TO_RUN){
-                    sh "py.test -k '${env.TESTS_TO_RUN}'  --reruns 1 --ignore=core --disable-pytest-warnings --alluredir=ui_tests/allure-results"
-                } else {
-                sh '''
-                    py.test -k 'verify_build' --reruns 1 --ignore=core --disable-pytest-warnings --alluredir=ui_tests/allure-results
-                    if [ $? -eq 0 ]
-                    then
-                        py.test -k 'smoke'  --reruns 1 --ignore=core --disable-pytest-warnings --alluredir=ui_tests/allure-results
-                        if [ $? -eq 0 ]
-                        then
-                             py.test -k 'regression'  --reruns 1 --ignore=core --disable-pytest-warnings --alluredir=ui_tests/allure-results
-                             if [ $? -eq 0 ]
-                             then
-                                    py.test -k 'final'  --reruns 1 --ignore=core --disable-pytest-warnings --alluredir=ui_tests/allure-results
-                             fi
-                        fi
-                    fi
-                '''
-                }
+            try {  
+              sh """
+              PIPENV_DOTENV_LOCATION=example.caseworker.env py.test ui_tests/caseworker --reruns '${env.NO_OF_RERUNS}' --dist=loadfile --disable-pytest-warnings
+              PIPENV_DOTENV_LOCATION=example.exporter.env py.test ui_tests/exporter --reruns '${env.NO_OF_RERUNS}' --dist=loadfile --disable-pytest-warnings
+              """
             } catch (error) {
-                    archiveArtifacts artifacts: "ui_tests/allure-results/**.*"
-                    error.message
-		    currentBuild.result = "UNSTABLE"
-                  }
-
+              archiveArtifacts artifacts: "ui_tests/allure-results/**.*"
+              error.message
+      		    currentBuild.result = "UNSTABLE"
             }
-            archiveArtifacts artifacts: "ui_tests/allure-results/**.*"
           }
+          archiveArtifacts artifacts: "ui_tests/allure-results/**.*"
         }
+      }
     }
-
   }
   post {
     always {
@@ -105,7 +86,7 @@ spec:
       }
     }
     changed {
-       // Send Slack notification
+           // Send Slack notification
        sendSlackNotification()
     }
   }
@@ -144,7 +125,7 @@ def sendSlackNotification()
         emoji = "🔥"
     }
 
-	def message = "${emoji}   UAT ${buildStatus} \n💼   *lite-exporter-frontend* \n🔗   ${env.BUILD_URL}"
+	def message = "${emoji}   UAT ${buildStatus} \n📇   *lite-frontend* \n🔗   ${env.BUILD_URL}"
 
 	// Set notification colour based on build status
 	if ("${params.ENVIRONMENT}" == "uat" && (buildStatus == "SUCCESS" || buildStatus == "UNSTABLE" || buildStatus == "FAILURE")) {
