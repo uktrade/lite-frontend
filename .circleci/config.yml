@@ -1,7 +1,22 @@
 version: 2.1
+parameters:
+  run_ui_tests:
+    type: boolean
+    default: false
+  run_unit_tests:
+    type: boolean
+    default: true
+  environment:
+    type: string
+    default: devdata
 
-orbs:
-  jq: circleci/jq@1.8.0
+###############################################################################
+# Env vars
+###############################################################################
+common_env_vars: &common_env_vars
+  ENVIRONMENT: << pipeline.parameters.environment >>
+  LITE_API_URL: https://lite-api-<< pipeline.parameters.environment >>.london.cloudapps.digital/
+  PIPENV_VENV_IN_PROJECT: enabled
 
 ###############################################################################
 # Images
@@ -9,6 +24,9 @@ orbs:
 
 image_python: &image_python
   image: circleci/python:3.7
+
+image_python_browsers: &image_python_browsers
+  image: circleci/python:3.7-browsers
 
 image_postgres: &image_postgres
   image: circleci/postgres:9.5-alpine-ram
@@ -22,22 +40,27 @@ image_postgres: &image_postgres
 ###############################################################################
 
 lint_steps: &lint_steps
-  steps:
-    - checkout
-    - run: git submodule sync
-    - run: git submodule update --init
-    - run: pipenv sync --dev
-    - run: pipenv run bandit -r .
-    - run: pipenv run prospector
-    - run: pipenv run black . --check --diff
+  - checkout
+  - run: git submodule sync
+  - run: git submodule update --init
+  - run: pipenv sync --dev
+  - run: pipenv run bandit -r .
+  - run: pipenv run prospector
+  - run: pipenv run black . --check --diff
 
-pytest_steps: &pytest_steps
-  steps:
-    - checkout
-    - run: git submodule sync
-    - run: git submodule update --init
-    - run: pipenv sync --dev
-    - run: pipenv run pytest
+unit_test_steps: &unit_test_steps
+  - checkout
+  - run: git submodule sync
+  - run: git submodule update --init
+  - run: pipenv sync --dev
+  - run: pipenv run pytest
+
+ui_test_steps: &ui_test_steps
+  - checkout
+  - run: git submodule sync
+  - run: git submodule update --init
+  - run: pipenv sync --dev
+  - run: pipenv run pytest --reruns 3
 
 ###############################################################################
 # Jobs
@@ -47,32 +70,67 @@ jobs:
   lint:
     docker:
       - <<: *image_python
-    <<: *lint_steps
+    steps:
+      *lint_steps
 
-  caseworker_test:
+  caseworker_unit_test:
     docker:
       - <<: *image_python
       - <<: *image_postgres
     environment:
-      PIPENV_VENV_IN_PROJECT: enabled
+      <<: *common_env_vars
       PIPENV_DOTENV_LOCATION: example.caseworker.env
       PYTEST_ADDOPTS: unit_tests/caseworker --capture=no --nomigrations
-    <<: *pytest_steps
+    steps:
+      *unit_test_steps
 
-  exporter_test:
+  exporter_unit_test:
     docker:
       - <<: *image_python
       - <<: *image_postgres
     environment:
-      PIPENV_VENV_IN_PROJECT: enabled
+      <<: *common_env_vars
       PIPENV_DOTENV_LOCATION: example.exporter.env
       PYTEST_ADDOPTS: unit_tests/exporter --capture=no --nomigrations
-    <<: *pytest_steps
+    steps:
+      *unit_test_steps
+
+  caseworker_ui_test:
+    docker:
+      - <<: *image_python_browsers
+      - <<: *image_postgres
+    environment:
+      <<: *common_env_vars
+      # not set PIPENV_DOTENV_LOCATION - instead set the env vars in circle
+      DJANGO_SETTINGS_MODULE: conf.caseworker
+      DATABASE_URL: postgres://postgres:password@localhost:5430/postgres
+      PYTEST_ADDOPTS: ui_tests/caseworker --capture=no --nomigrations
+    steps:
+      *ui_test_steps
+
+  exporter_ui_test:
+    docker:
+      - <<: *image_python_browsers
+      - <<: *image_postgres
+    environment:
+      <<: *common_env_vars
+      # not set PIPENV_DOTENV_LOCATION - instead set the env vars in circle
+      DJANGO_SETTINGS_MODULE: conf.exporter
+      DATABASE_URL: postgres://postgres:password@localhost:5430/postgres
+      PYTEST_ADDOPTS: ui_tests/exporter --capture=no --nomigrations
+    steps:
+      *ui_test_steps
 
 workflows:
   version: 2
-  test:
+  unit_test:
+    when: << pipeline.parameters.run_unit_tests >>
     jobs:
       - lint
-      - caseworker_test
-      - exporter_test
+      - caseworker_unit_test
+      - exporter_unit_test
+  ui_tests:
+    when: << pipeline.parameters.run_ui_tests >>
+    jobs:
+      - caseworker_ui_test
+      - exporter_ui_test

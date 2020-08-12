@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "6b8611b47e06a0ca390dde3762f6e01fc85ce3674943076eb59a89811e1aa1b5"
+            "sha256": "023fc2fab40bab5e07eb232ae827114e6beed6ba86765a02fc6a6c8b9a4e23e6"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -35,18 +35,17 @@
         },
         "boto3": {
             "hashes": [
-                "sha256:84cd19e531de06577cf8d2cb863fa2e226d0b25ffaa37867e8e3d43256e0ba18",
-                "sha256:aaa1bced4a0fb52368e8035b0a25a553773c80b905d8c404f1b37086d7497b5b"
+                "sha256:26f76c7780470de54dfe816bcbeed57a05f53a0bec7c9ae9e8ad7b61ac4c74cc"
             ],
             "index": "pypi",
-            "version": "==1.14.37"
+            "version": "==1.14.41"
         },
         "botocore": {
             "hashes": [
-                "sha256:7c5c05ce8d785d442c93ee06694d03a9f6c34dca09bf48e6c13f6177261a6d36",
-                "sha256:82ef4a26cbc5a6197af43286b1895d220a8864c98c44f4c2e2f2e9bedecbce89"
+                "sha256:329ca6d6d5e91e97569ecd7f328cd3d627e918ce0703943f93d0b9de6af9aab2",
+                "sha256:519fcccf9c41634d2aba9dc769b0ac6aa14034f20a60882b0e098ae2e07cab55"
             ],
-            "version": "==1.17.37"
+            "version": "==1.17.41"
         },
         "certifi": {
             "hashes": [
@@ -102,11 +101,11 @@
         },
         "django-csp": {
             "hashes": [
-                "sha256:0a38aa9618c675cbf5f5e517e20d5846a3e100ef7b307e32e7fb18c58aa47723",
-                "sha256:d9ee5a8c6442aa54854e8de627c2826786208ed38fb4ea8ced08c42332673eb1"
+                "sha256:01443a07723f9a479d498bd7bb63571aaa771e690f64bde515db6cdb76e8041a",
+                "sha256:01eda02ad3f10261c74131cdc0b5a6a62b7c7ad4fd017fbefb7a14776e0a9727"
             ],
             "index": "pypi",
-            "version": "==3.6"
+            "version": "==3.7"
         },
         "django-environ": {
             "hashes": [
@@ -321,11 +320,13 @@
                 "sha256:94cf49723928eb6070a892cb39d6c156f7b5a2db4e8971cb958f7b6b104fb4c4",
                 "sha256:97f9e7953a77d5a70f49b9a48da7776dc51e9b738151b22dacf101641594a626",
                 "sha256:9ad7f865eebde135d526bb3163d0b23ffff365cf87e767c649550964ad72785d",
+                "sha256:9c87ef410a58dd54b92424ffd7e28fd2ec65d2f7fc02b76f5e9b2067e355ebf6",
                 "sha256:a060cf8aa332052df2158e5a119303965be92c3da6f2d93b6878f0ebca80b2f6",
                 "sha256:c79f9c5fb846285f943aafeafda3358992d64f0ef58566e23484132ecd8d7d63",
                 "sha256:c92302a33138409e8f1ad16731568c55c9053eee71bb05b6b744067e1b62380f",
                 "sha256:d08b23fdb388c0715990cbc06866db554e1822c4bdcf6d4166cf30ac82df8c41",
                 "sha256:d350f0f2c2421e65fbc62690f26b59b0bcda1b614beb318c81e38647e0f673a1",
+                "sha256:e901964262a56d9ea3c2693df68bc9860b8bdda2b04768821e4c44ae797de117",
                 "sha256:ec29604081f10f16a7aea809ad42e27764188fc258b02259a03a8ff7ded3808d",
                 "sha256:edf31f1150778abd4322444c393ab9c7bd2af271dd4dafb4208fb613b1f3cdc9",
                 "sha256:f7e30c27477dffc3e85c2463b3e649f751789e0f6c8456099eea7ddd53be4a8a",
@@ -663,10 +664,10 @@
         },
         "directory-sso-api-client": {
             "hashes": [
-                "sha256:02ae6b15994a4ff6e270b1333025c52abcd080137624b00c40681ac22232e315"
+                "sha256:5094138f16000d02160ce9a67fd1e2aaa6a8f094f207a66d4c6ea17f8991a19c"
             ],
             "index": "pypi",
-            "version": "==6.4.0"
+            "version": "==6.5.1"
         },
         "django": {
             "hashes": [
@@ -1035,6 +1036,14 @@
                 "sha256:fcbcc5781aee450107c620c79c57e50796b6777b82b3c504be9cbc3017201169"
             ],
             "version": "==1.10.0"
+        },
+        "pytest-rerunfailures": {
+            "hashes": [
+                "sha256:895ac2a6486c0da0468ae31768b818d9f3f7fceddef110970c7dbb09e7b4b8e4",
+                "sha256:f215f2b6da866f01df2e0d12c25687d7f6f0182cefed541afc442230d2d94e6b"
+            ],
+            "index": "pypi",
+            "version": "==9.0"
         },
         "pytest-xdist": {
             "hashes": [

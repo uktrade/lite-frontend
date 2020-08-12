@@ -1,5 +1,4 @@
 import os
-import sys
 
 from environ import Env
 import sentry_sdk
@@ -139,16 +138,9 @@ else:
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-DATABASES = {"default": env.db("DATABASE_URL")}
-
-if "test" in sys.argv:
-    DATABASES = {
-        "default": {"ENGINE": "django.db.backends.sqlite3", "NAME": "mydatabase"},
-    }
-else:
-    DATABASES = {
-        "default": env.db(),
-    }
+DATABASES = {
+    "default": env.db(),
+}
 
 LOGGING = {
     "version": 1,
