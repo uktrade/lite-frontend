@@ -4,6 +4,7 @@ from lite_content.lite_exporter_frontend.compliance import OpenReturnsForm, Open
 from lite_forms.components import FormGroup, Form, Select, Option, FileUpload, Label, DetailComponent, BackLink, Custom
 from django.utils import timezone
 
+
 def get_years():
     current_year = timezone.localtime().year
     previous_year = current_year - 1
