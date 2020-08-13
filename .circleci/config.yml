@@ -35,32 +35,39 @@ image_postgres: &image_postgres
     POSTGRES_PASSWORD: password
     POSTGRES_DB: postgres
 
+
 ###############################################################################
-# Steps
+# Commands
 ###############################################################################
 
-lint_steps: &lint_steps
-  - checkout
-  - run: git submodule sync
-  - run: git submodule update --init
-  - run: pipenv sync --dev
-  - run: pipenv run bandit -r .
-  - run: pipenv run prospector
-  - run: pipenv run black . --check --diff
+commands:
+  setup_code:
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+      - run: pipenv sync --dev
+      - save_cache:
+          paths:
+            - ./.venv
+          key: dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+      - run: git submodule update --init
 
-unit_test_steps: &unit_test_steps
-  - checkout
-  - run: git submodule sync
-  - run: git submodule update --init
-  - run: pipenv sync --dev
-  - run: pipenv run pytest
+  unit_tests:
+    steps:
+      - run: pipenv run pytest
 
-ui_test_steps: &ui_test_steps
-  - checkout
-  - run: git submodule sync
-  - run: git submodule update --init
-  - run: pipenv sync --dev
-  - run: pipenv run pytest --reruns 3
+  ui_tests:
+    steps:
+      - run: pipenv run pytest -x
+      - store_artifacts:
+          path: ui_tests/screenshots
+  lint:
+    steps:
+      - run: pipenv run bandit -r .
+      - run: pipenv run prospector
+      - run: pipenv run black . --check --diff
+
 
 ###############################################################################
 # Jobs
@@ -71,7 +78,8 @@ jobs:
     docker:
       - <<: *image_python
     steps:
-      *lint_steps
+      - setup_code
+      - lint
 
   caseworker_unit_test:
     docker:
@@ -82,7 +90,8 @@ jobs:
       PIPENV_DOTENV_LOCATION: example.caseworker.env
       PYTEST_ADDOPTS: unit_tests/caseworker --capture=no --nomigrations
     steps:
-      *unit_test_steps
+      - setup_code
+      - unit_tests
 
   exporter_unit_test:
     docker:
@@ -93,7 +102,8 @@ jobs:
       PIPENV_DOTENV_LOCATION: example.exporter.env
       PYTEST_ADDOPTS: unit_tests/exporter --capture=no --nomigrations
     steps:
-      *unit_test_steps
+      - setup_code
+      - unit_tests
 
   caseworker_ui_test:
     docker:
@@ -106,7 +116,8 @@ jobs:
       DATABASE_URL: postgres://postgres:password@localhost:5430/postgres
       PYTEST_ADDOPTS: ui_tests/caseworker --capture=no --nomigrations
     steps:
-      *ui_test_steps
+      - setup_code
+      - ui_tests
 
   exporter_ui_test:
     docker:
@@ -119,7 +130,9 @@ jobs:
       DATABASE_URL: postgres://postgres:password@localhost:5430/postgres
       PYTEST_ADDOPTS: ui_tests/exporter --capture=no --nomigrations
     steps:
-      *ui_test_steps
+      - setup_code
+      - ui_tests
+
 
 workflows:
   version: 2

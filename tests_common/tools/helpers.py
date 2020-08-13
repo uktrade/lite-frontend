@@ -9,9 +9,13 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
+from django.conf import settings
+
+
 now = datetime.now().isoformat()
-file_path = path.abspath(path.join(path.dirname(path.abspath(__file__)), pardir))
-screen_dir = path.join(file_path, "screenshot", str(now))
+
+screen_dir = path.join(settings.BASE_DIR, "ui_tests/screenshots")
+
 PAGE_LIMIT = 100
 
 
@@ -34,12 +38,12 @@ def repeat_to_length(string_to_expand, length):
 def screen_path():
     if not path.exists(screen_dir):
         makedirs(screen_dir)
-        chmod(screen_dir, 0o644)
     return screen_dir
 
 
 def save_screenshot(driver, name):
-    driver.get_screenshot_as_file(path.join(screen_path(), str(name) + now + ".png"))
+    location = path.join(screen_path(), str(name) + ".png")
+    driver.get_screenshot_as_file(location)
     attach(
         driver.get_screenshot_as_png(), now, attachment_type=attachment_type.PNG,
     )

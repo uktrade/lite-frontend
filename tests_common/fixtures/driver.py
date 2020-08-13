@@ -4,6 +4,7 @@ from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 
 from _pytest.fixtures import fixture
+
 from ..fixtures.cci import enable_browser_stack
 
 
