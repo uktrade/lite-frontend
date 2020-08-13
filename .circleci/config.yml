@@ -41,6 +41,39 @@ image_postgres: &image_postgres
 ###############################################################################
 
 commands:
+
+  vpn_install:
+    description: "Install OpenVPN client"
+    steps:
+      - run:
+          name: Install OpenVPN
+          command: |
+            # There seems to be a bug with the openvpn aptrepo sources
+            sudo apt-get update # for apt-get to recognise openvpn
+            sudo apt-get remove openvpn # remove ubuntu aptrepo source
+            sudo apt-get update
+            sudo apt-get install openvpn -y
+  vpn_connect:
+    parameters:
+      config:
+        description: "ENV var name containing OpenVPN client .ovpn config file content base64 encoded"
+        type: env_var_name
+        default: VPN_CONFIG
+    steps:
+      - run: echo ${<<parameters.config>>:?} | base64 --decode >> config.ovpn
+      - run:
+          name: Connect to VPN
+          command: |
+            sudo openvpn --config config.ovpn > openvpn.log 2>&1 &
+            while [ -n "$(ip addr show tun0 2>&1 > /dev/null)" ]; do
+              sleep 5;
+              cat openvpn.log
+            done
+  vpn_disconnect:
+    steps:
+      - run: sudo killall openvpn || true
+      - run: sudo rm config.ovpn
+
   setup_code:
     steps:
       - checkout
@@ -131,7 +164,10 @@ jobs:
       PYTEST_ADDOPTS: ui_tests/exporter --capture=no --nomigrations
     steps:
       - setup_code
+      - vpn_install
+      - vpn_connect
       - ui_tests
+      - vpn_disconnect
 
 
 workflows:
