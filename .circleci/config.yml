@@ -66,9 +66,10 @@ commands:
           command: |
             sudo openvpn --config config.ovpn > openvpn.log 2>&1 &
             while [ -n "$(ip addr show tun0 2>&1 > /dev/null)" ]; do
-              sleep 5;
-              cat openvpn.log
+              sleep 0.1;
             done
+            cat openvpn.log
+            sleep 10
   vpn_disconnect:
     steps:
       - run: sudo killall openvpn || true
@@ -79,6 +80,7 @@ commands:
       - checkout
       - restore_cache:
           key: dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+      - run: pipenv install --skip-lock psycopg2-binary
       - run: pipenv sync --dev
       - save_cache:
           paths:
@@ -139,30 +141,43 @@ jobs:
       - unit_tests
 
   caseworker_ui_test:
-    docker:
-      - <<: *image_python_browsers
-      - <<: *image_postgres
+    machine:
+      image: ubuntu-1604:201903-01
+      docker_layer_caching: true
     environment:
       <<: *common_env_vars
       # not set PIPENV_DOTENV_LOCATION - instead set the env vars in circle
       DJANGO_SETTINGS_MODULE: conf.caseworker
-      DATABASE_URL: postgres://postgres:password@localhost:5430/postgres
+      DATABASE_URL: postgres://ubuntu:@localhost:5433/circle_test
       PYTEST_ADDOPTS: ui_tests/caseworker --capture=no --nomigrations
     steps:
+      - run: sudo apt-get update
+      - run: sudo apt-get --only-upgrade install google-chrome-stable
+      - run: sudo apt-get install libpq-dev postgresql-client
+      - run: pyenv global 3.7.0
+      - run: pip install pipenv
       - setup_code
+      - vpn_install
+      - vpn_connect
       - ui_tests
+      - vpn_disconnect
 
   exporter_ui_test:
-    docker:
-      - <<: *image_python_browsers
-      - <<: *image_postgres
+    machine:
+      image: ubuntu-1604:201903-01
+      docker_layer_caching: true
     environment:
       <<: *common_env_vars
       # not set PIPENV_DOTENV_LOCATION - instead set the env vars in circle
       DJANGO_SETTINGS_MODULE: conf.exporter
-      DATABASE_URL: postgres://postgres:password@localhost:5430/postgres
+      DATABASE_URL: postgres://ubuntu:@localhost:5433/circle_test
       PYTEST_ADDOPTS: ui_tests/exporter --capture=no --nomigrations
     steps:
+      - run: sudo apt-get update
+      - run: sudo apt-get --only-upgrade install google-chrome-stable
+      - run: sudo apt-get install libpq-dev postgresql-client
+      - run: pyenv global 3.7.0
+      - run: pip install pipenv
       - setup_code
       - vpn_install
       - vpn_connect

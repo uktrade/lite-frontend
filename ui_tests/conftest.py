@@ -41,5 +41,7 @@ def pytest_addoption(parser):
 
 
 def pytest_exception_interact(node, report):
-    driver = node.funcargs.get("driver")
-    utils.save_screenshot(driver=driver, name=node.name)
+     if node and report.failed:
+        driver = node.funcargs.get("driver")
+        if driver:
+            utils.save_screenshot(driver=driver, name=node.name)
