@@ -1,5 +1,4 @@
-from datetime import datetime
-
+from django.utils import timezone
 from pytest_bdd import given, when, then, parsers
 
 from ui_tests.caseworker.pages.advice import FinalAdvicePage, TeamAdvicePage
@@ -508,7 +507,7 @@ def approve_good_country_combination(driver, context):  # noqa
 def approve_licence_page(driver, context):  # noqa
     page = GrantLicencePage(driver)
     context.licence_duration = page.get_duration_in_finalise_view()
-    context.licence_start_date = datetime.now().strftime(DATE_FORMAT)
+    context.licence_start_date = timezone.localtime().strftime(DATE_FORMAT)
     functions.click_submit(driver)
 
 

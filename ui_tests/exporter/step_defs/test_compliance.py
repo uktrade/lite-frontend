@@ -1,5 +1,4 @@
-from datetime import datetime
-
+from django.utils import timezone
 from pytest_bdd import given, when, then, scenarios
 
 from ui_tests.exporter.pages.attach_document_page import AttachDocumentPage
@@ -34,7 +33,7 @@ def go_to_add_open_licence_return(driver, context):
     open_licence_returns_page.click_submit_return()
 
     # Fill out details (skip info page)
-    context.open_licence_return_year = str(datetime.now().year)
+    context.open_licence_return_year = str(timezone.localtime().year)
     functions.click_submit(driver)
     open_licence_returns_page.select_year(context.open_licence_return_year)
     functions.click_submit(driver)

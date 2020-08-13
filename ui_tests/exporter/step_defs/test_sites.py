@@ -1,5 +1,4 @@
-import datetime
-
+from django.utils import timezone
 from faker import Faker
 from pytest_bdd import scenarios, when, then
 
@@ -33,7 +32,7 @@ def click_new_site(driver):
 
 @when("I enter in the site details")
 def new_sites_info(driver, context):
-    context.new_site_name = faker.word() + datetime.datetime.now().strftime("%m%d%H%M")
+    context.new_site_name = faker.word() + timezone.localtime().strftime("%m%d%H%M")
     NewSite(driver).enter_new_site_details(
         context.new_site_name, faker.street_address(), faker.postcode(), faker.city(), faker.state()
     )
@@ -65,6 +64,6 @@ def click_edit_button(driver):
 
 @when("I change the site name")
 def clear_site(driver, context):
-    context.new_site_name = faker.word() + datetime.datetime.now().strftime("%m%d%H%M")
+    context.new_site_name = faker.word() + timezone.localtime().strftime("%m%d%H%M")
     NewSite(driver).change_site_name(context.new_site_name)
     functions.click_submit(driver)
