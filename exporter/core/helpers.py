@@ -1,13 +1,12 @@
-import datetime
+from dateutil.parser import parse
 from html import escape
 from typing import List
 
 from django.template.defaultfilters import safe
-from django.templatetags.tz import do_timezone
+from django.templatetags.tz import localtime
 from django.utils.safestring import mark_safe
 
 from exporter.conf import decorators
-from exporter.conf.constants import ISO8601_FMT
 from core.builtins.custom_tags import default_na
 from exporter.organisation.roles.services import get_user_permissions
 
@@ -34,8 +33,7 @@ def str_to_bool(v, invert_none=False):
 
 
 def str_date_only(value):
-    return_value = do_timezone(datetime.datetime.strptime(value, ISO8601_FMT), "Europe/London")
-    return return_value.strftime("%d %B %Y")
+    return localtime(parse(value)).strftime("%d %B %Y")
 
 
 def generate_notification_string(notifications, case_types):
