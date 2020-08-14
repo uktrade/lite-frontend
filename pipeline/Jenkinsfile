@@ -1,98 +1,79 @@
-pipeline {
+import groovy.json.JsonSlurper
+import groovy.json.JsonOutput
 
-  agent {
-    kubernetes {
-      defaultContainer 'jnlp'
-      yaml """
-apiVersion: v1
-kind: Pod
-metadata:
-  labels:
-    job: ${env.JOB_NAME}
-    job_id: ${env.BUILD_NUMBER}
-spec:
-  nodeSelector:
-    role: worker
-  containers:
-  - name: lite-selenium-test
-    image: gcr.io/sre-docker-registry/github.com/uktrade/lite-selenium-base
-    imagePullPolicy: Always
-    command:
-    - cat
-    tty: true
-"""
+
+def triggerBuild(branch, environment, token) {
+    def body = JsonOutput.toJson([
+        branch: branch,
+        parameters: [run_ui_tests: "true", run_unit_tests: "false", environment: environment]
+    ])
+    def response = httpRequest (
+        consoleLogResponseBody: false,
+        contentType: 'APPLICATION_JSON',
+        circleToken: token,
+        acceptType: 'APPLICATION_JSON',
+        httpMode: 'POST',
+        requestBody: body,
+        url: "https://circleci.com/api/v2/project/gh/uktrade/lite-frontend/pipeline")
+    if (response.status >= 300){
+        throw new Exception("ERROR: triggerBuild() failed")
     }
-  }
-
-parameters
-  {
-    choice(name: 'ENVIRONMENT', description: 'choose what environment to run in', choices: 'dev\nqa\ndevpopcorn\ndevkoala\nsandbox\nstaging\nuat\ndevdata')
-    string(name: 'BRANCH', defaultValue: 'master', description: 'choose branch to run against')
-    string(name: 'CIRCLE_API_TOKEN')
-  }
-
-  options {
-    timestamps()
-    ansiColor('xterm')
-    buildDiscarder(logRotator(daysToKeepStr: '180'))
-  }
-
-  stages {
-
-    stage('Run test') {
-      steps { 
-        script {
-          sh """
-          curl \
-          -H 'Circle-Token: $CCI_API_TOKEN' \
-          -H "Content-Type: application/json" \
-          --data '{"branch":"$BRANCH","parameters":{"run_ui_tests":true,"run_unit_tests":false,"environment":"$ENVIRONMENT"}}}' \
-          https://circleci.com/api/v2/project/gh/uktrade/lite-frontend/pipeline
-
-          """
-        } catch (error) {
-  		    currentBuild.result = "UNSTABLE"
-        }
-      }
-    }
-  }
-  post {
-    changed {
-       sendSlackNotification()
-    }
-  }
+    def json = new JsonSlurper().parseText(response.content)
+    return [json.status, json.number]
 }
 
-
-// Send Slack notification function
-def sendSlackNotification()
+def getBuildStatus( number, token )
 {
-	// build status of null means successful
-	buildStatus =  currentBuild.result
+    def response = httpRequest (
+        consoleLogResponseBody: false,
+        circleToken: token,
+        acceptType: 'APPLICATION_JSON',
+        url: "https://circleci.com/api/v2/project/gh/uktrade/lite-frontend/job/$number")
+    if (response.status >= 300){
+        throw new Exception("ERROR: getBuildStatus() failed")
+    }
+    def json = new JsonSlurper().parseText(response.content)
+    return [json.status, json.number]
+}
 
-    def emoji = ""
-    if (buildStatus == "SUCCESS") {
-        emoji = "🎉"
-    } else {
-        emoji = "🔥"
+def waitForBuildStatusToChange(number, current_status, wait_states, poll_delay, msg, token){
+    println " ... $msg"
+    while(status in wait_states){
+        sleep(poll_delay)
+        (status, number) = getBuildStatus( number, token)
+    }
+    return status
+}
+
+pipeline {
+
+    parameters {
+        choice(name: 'ENVIRONMENT', description: 'choose what environment to run in', choices: 'dev\nqa\ndevpopcorn\ndevkoala\nsandbox\nstaging\nuat\ndevdata')
+        string(name: 'BRANCH', defaultValue: 'master', description: 'choose branch to run against')
+        string(name: 'CIRCLE_API_TOKEN')
     }
 
-	def message = "${emoji}   UAT ${buildStatus} \n📇   *lite-frontend* \n🔗   ${env.BUILD_URL}"
+    agent any
 
-	// Set notification colour based on build status
-	if ("${params.ENVIRONMENT}" == "uat" && (buildStatus == "SUCCESS" || buildStatus == "UNSTABLE" || buildStatus == "FAILURE")) {
-		if (buildStatus == "SUCCESS") {
-		    colourCode = "#00703c"
-		} else if (buildStatus == "UNSTABLE") {
-		    colourCode = "#f47738"
-		} else {
-		    colourCode = "#d4351c"
-		}
+    stages {
+        stage('trigger build') {
+            steps{
+                script{
+                    def token = params.CIRCLE_API_TOKEN
+                    def request_poll_delay = CCI_POLL_DELAY
+                    println "trigger CircleCi tests job for $project/$branch"
 
-		// Set slack channel
-		channel = "lite-merging"
+                    (status, number) = triggerBuild( "run_the_tests", params.BRANCH, params.ENVIRONMENT , token)
+                    println "Kicked off CircleCi build https://circleci.com/gh/uktrade/lite-cci-e2e/$number"
 
-		// Send notifications
-		slackSend (color: colourCode, message: message, channel: "#${channel}")
-	}
+                    status = waitForBuildStatusToChange( number, status, ['queued', 'not_running'], request_poll_delay, "waiting for job to start", token)
+
+                    status = waitForBuildStatusToChange( number, status, ['running'], request_poll_delay, "waiting for job to finish", token)
+
+                    println "Final status = $status"
+                    currentBuild.result = status in ['success','fixed']? 'SUCCESS': 'FAILURE'
+                }
+            }
+        }
+    }
 }

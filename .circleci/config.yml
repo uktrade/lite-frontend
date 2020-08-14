@@ -103,7 +103,7 @@ commands:
 
   ui_tests:
     steps:
-      - run: pipenv run pytest -x
+      - run: pipenv run pytest --reruns 3
       - store_artifacts:
           path: ui_tests/screenshots
       - store_artifacts:
@@ -152,6 +152,7 @@ jobs:
       - unit_tests
 
   caseworker_ui_test:
+    # has to be machine executor as the VPN does not work in docker executor
     machine:
       image: ubuntu-1604:201903-01
       docker_layer_caching: true
@@ -194,7 +195,6 @@ jobs:
       - vpn_connect
       - ui_tests
       - vpn_disconnect
-
 
 workflows:
   version: 2
