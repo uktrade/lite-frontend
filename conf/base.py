@@ -197,6 +197,14 @@ if env.str("ELASTIC_APM_SERVER_URL", ""):
     }
     INSTALLED_APPS.append("elasticapm.contrib.django")
 
+# Django extensions
+if DEBUG:
+    try:
+        import django_extensions  # pylint: disable=unused-import flake8: noqa
+
+        INSTALLED_APPS.append("django_extensions")
+    except ImportError:
+        pass
 
 # Sentry
 if env.str("SENTRY_DSN", ""):
