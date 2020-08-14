@@ -64,12 +64,22 @@ commands:
       - run:
           name: Connect to VPN
           command: |
-            sudo openvpn --config config.ovpn > openvpn.log 2>&1 &
+            sudo openvpn \
+              --config config.ovpn \
+              --script-security 2 \
+              --up /etc/openvpn/update-resolv-conf \
+              --down /etc/openvpn/update-resolv-conf \
+              > openvpn.log 2>&1 &
+            cat openvpn.log
             while [ -n "$(ip addr show tun0 2>&1 > /dev/null)" ]; do
               sleep 0.1;
             done
+            ls /etc/openvpn/
+            ls /usr/share/openvpn/
             cat openvpn.log
-            sleep 10
+            dig great.dev.uktrade.digital +short
+            cat /etc/resolv.conf
+            curl -I https://great.dev.uktrade.digital/
   vpn_disconnect:
     steps:
       - run: sudo killall openvpn || true
@@ -80,7 +90,6 @@ commands:
       - checkout
       - restore_cache:
           key: dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
-      - run: pipenv install --skip-lock psycopg2-binary
       - run: pipenv sync --dev
       - save_cache:
           paths:
@@ -97,6 +106,8 @@ commands:
       - run: pipenv run pytest -x
       - store_artifacts:
           path: ui_tests/screenshots
+      - store_artifacts:
+          path: openvpn.log
   lint:
     steps:
       - run: pipenv run bandit -r .
