@@ -138,7 +138,7 @@ def sendSlackNotification()
 		}
 
 		// Set slack channel
-		channel = "lite-merging"
+		channel = "lite-merging-status"
 
 		// Send notifications
 		slackSend (color: colourCode, message: message, channel: "#${channel}")
