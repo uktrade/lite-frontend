@@ -1,4 +1,3 @@
-import logging
 import os
 
 import tests_common.tools.helpers as utils
@@ -8,8 +7,8 @@ def pytest_addoption(parser):
     env = str(os.environ.get("ENVIRONMENT"))
     if env == "None":
         env = "dev"
-    parser.addoption("--headless", action="store", default=False)
-
+    parser.addoption('--headless', action='store_true', default=True)
+    # parser.set_defaults(headless=True)
     if env == "local":
         parser.addoption(
             "--exporter_url", action="store", default=f"http://localhost:{str(os.environ.get('PORT'))}/", help="url"
@@ -41,7 +40,7 @@ def pytest_addoption(parser):
 
 
 def pytest_exception_interact(node, report):
-     if node and report.failed:
+    if node and report.failed:
         driver = node.funcargs.get("driver")
         if driver:
             utils.save_screenshot(driver=driver, name=node.name)

@@ -15,7 +15,6 @@ class AuthbrokerBackend:
             return
 
         User = get_user_model()
-
         user, created = User.objects.get_or_create(
             email=profile["email"],
             defaults={

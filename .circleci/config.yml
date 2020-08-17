@@ -103,11 +103,15 @@ commands:
 
   ui_tests:
     steps:
-      - run: pipenv run pytest --reruns 3
+      - run: mkdir -p test-results/cucumber
+      - run: pipenv run pytest --reruns 3 --gherkin-terminal-reporter -vv --cucumberjson=test-results/cucumber/results.json
       - store_artifacts:
           path: ui_tests/screenshots
       - store_artifacts:
           path: openvpn.log
+      - store_test_results:
+          path: test-results
+
   lint:
     steps:
       - run: pipenv run bandit -r .
