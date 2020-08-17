@@ -91,7 +91,7 @@ class CaseView(TemplateView):
         future_next_review_date = (
             True
             if self.case.next_review_date
-            and datetime.datetime.strptime(self.case.next_review_date, "%Y-%m-%d").date() > timezone.now().date()
+            and datetime.datetime.strptime(self.case.next_review_date, "%Y-%m-%d").date() > timezone.localtime().date()
             else False
         )
         return {

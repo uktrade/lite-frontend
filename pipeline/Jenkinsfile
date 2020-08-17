@@ -66,6 +66,9 @@ pipeline {
                     (status, number) = triggerBuild( "run_the_tests", params.BRANCH, params.ENVIRONMENT , token)
                     println "Kicked off CircleCi build https://circleci.com/gh/uktrade/lite-cci-e2e/$number"
 
+                    // Set slack channel
+                    channel = "lite-merging-status"
+
                     status = waitForBuildStatusToChange( number, status, ['queued', 'not_running'], request_poll_delay, "waiting for job to start", token)
 
                     status = waitForBuildStatusToChange( number, status, ['running'], request_poll_delay, "waiting for job to finish", token)

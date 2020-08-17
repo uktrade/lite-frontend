@@ -64,7 +64,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-gb"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Europe/London"
 
 USE_I18N = True
 
@@ -189,6 +189,14 @@ if env.str("ELASTIC_APM_SERVER_URL", ""):
     }
     INSTALLED_APPS.append("elasticapm.contrib.django")
 
+# Django extensions
+if DEBUG:
+    try:
+        import django_extensions  # pylint: disable=unused-import flake8: noqa
+
+        INSTALLED_APPS.append("django_extensions")
+    except ImportError:
+        pass
 
 # Sentry
 if env.str("SENTRY_DSN", ""):
@@ -203,8 +211,8 @@ LITE_API_URL = env.str("LITE_API_URL")
 
 PERMISSIONS_FINDER_URL = env.str("PERMISSIONS_FINDER_URL")
 
-
-DIRECTORY_SSO_API_CLIENT_API_KEY = env("DIRECTORY_SSO_API_CLIENT_API_KEY")
-DIRECTORY_SSO_API_CLIENT_BASE_URL = env("DIRECTORY_SSO_API_CLIENT_BASE_URL")
-DIRECTORY_SSO_API_CLIENT_DEFAULT_TIMEOUT = 30
-DIRECTORY_SSO_API_CLIENT_SENDER_ID = "lite"
+if env.str("DIRECTORY_SSO_API_CLIENT_BASE_URL", ""):
+    DIRECTORY_SSO_API_CLIENT_API_KEY = env("DIRECTORY_SSO_API_CLIENT_API_KEY")
+    DIRECTORY_SSO_API_CLIENT_BASE_URL = env("DIRECTORY_SSO_API_CLIENT_BASE_URL")
+    DIRECTORY_SSO_API_CLIENT_DEFAULT_TIMEOUT = 30
+    DIRECTORY_SSO_API_CLIENT_SENDER_ID = "lite"

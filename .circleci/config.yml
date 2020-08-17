@@ -104,7 +104,19 @@ commands:
   ui_tests:
     steps:
       - run: mkdir -p test-results/cucumber
-      - run: pipenv run pytest --reruns 3 --gherkin-terminal-reporter -vv --cucumberjson=test-results/cucumber/results.json
+      - run: |
+          pipenv run pytest \
+            -m smoke \
+            --reruns 1 \
+            --junitxml=test-results/junit.xml \
+            --disable-pytest-warnings
+      - run: |
+          pipenv run pytest \
+            -m regression \
+            --reruns 1 \
+            --junitxml=test-results/junit.xml \
+            -n 3 \
+            --disable-pytest-warnings
       - store_artifacts:
           path: ui_tests/screenshots
       - store_artifacts:

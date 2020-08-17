@@ -1,9 +1,10 @@
+import sentry_sdk
+
 from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponseBadRequest, HttpResponseServerError
 from django.shortcuts import redirect, render
 from django.views.generic.base import RedirectView, View
-from raven.contrib.django.raven_compat.models import client
 
 from caseworker.auth.utils import get_client, AUTHORISATION_URL, TOKEN_URL, TOKEN_SESSION_KEY
 from caseworker.conf.context_processors import lite_menu
@@ -49,8 +50,8 @@ class AuthCallbackView(View):
         # somehow the url with the authcode is being copied, which would cause `fetch_token` to raise
         # an exception. However, looking at the fetch_code method, I'm not entirely sure what exceptions it
         # would raise in this instance.
-        except BaseException:
-            client.captureException()
+        except BaseException as base_exception:
+            sentry_sdk.capture_exception(base_exception)
 
         # create the user
         user = authenticate(request)

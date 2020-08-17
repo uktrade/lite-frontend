@@ -1,12 +1,13 @@
 import logging
 
+import sentry_sdk
+
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseServerError
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic.base import RedirectView, View, TemplateView
-from raven.contrib.django.raven_compat.models import client
 
 from exporter.auth.services import authenticate_exporter_user
 from exporter.auth.utils import get_client, AUTHORISATION_URL, TOKEN_SESSION_KEY, TOKEN_URL, get_profile
@@ -59,8 +60,8 @@ class AuthCallbackView(View):
         # somehow the url with the authcode is being copied, which would cause `fetch_token` to raise
         # an exception. However, looking at the fetch_code method, I'm not entirely sure what exceptions it
         # would raise in this instance.
-        except BaseException:
-            client.captureException()
+        except BaseException as base_exception:
+            sentry_sdk.capture_exception(base_exception)
 
         profile = get_profile(get_client(self.request))
 

@@ -1,4 +1,4 @@
-from datetime import datetime
+from django.utils import timezone
 from os import path, makedirs, chmod, pardir
 from re import search
 from time import sleep
@@ -12,7 +12,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from django.conf import settings
 
 
-now = datetime.now().isoformat()
+now = timezone.localdate().isoformat()
 
 screen_dir = path.join(settings.BASE_DIR, "ui_tests/screenshots")
 
@@ -20,15 +20,15 @@ PAGE_LIMIT = 100
 
 
 def get_current_date_time_string():
-    return datetime.now().strftime("%Y/%m/%d %H:%M:%S:%f")
+    return timezone.localdate().strftime("%Y/%m/%d %H:%M:%S:%f")
 
 
 def get_formatted_date_time_m_d_h_s():
-    return datetime.now().strftime("%m%d%H%M%S")
+    return timezone.localdate().strftime("%m%d%H%M%S")
 
 
 def get_formatted_date_time_y_m_d_h_s():
-    return datetime.now().strftime("%Y%m%d%H%M%S")
+    return timezone.localdate().strftime("%Y%m%d%H%M%S")
 
 
 def repeat_to_length(string_to_expand, length):
@@ -161,18 +161,18 @@ def search_for_correct_date_regex_in_element(element):
 
 
 def get_formatted_date_time_h_m_pm_d_m_y():
-    time = datetime.now().strftime("%I:%M%p %d %B %Y").replace("PM", "pm").replace("AM", "am")
+    time = timezone.localdate().strftime("%I:%M%p %d %B %Y").replace("PM", "pm").replace("AM", "am")
     if time[0] == "0":
         time = time[1:]
     return time
 
 
 def get_unformatted_date_time():
-    return datetime.now()
+    return timezone.localdate()
 
 
 def get_formatted_date_time_d_h_m_s():
-    return str(datetime.now().strftime(" %d%H%M%S"))
+    return str(timezone.localdate().strftime(" %d%H%M%S"))
 
 
 def page_is_ready(driver):
@@ -264,7 +264,7 @@ def strip_special_characters(string):
 
 
 def get_current_date_time(format_date_time=True):
-    date_time = datetime.now()
+    date_time = timezone.localdate()
     if not format_date_time:
         return date_time
     return strip_special_characters(str(date_time))

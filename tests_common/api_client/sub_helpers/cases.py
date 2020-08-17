@@ -1,4 +1,4 @@
-import datetime
+from django.utils import timezone
 
 
 class Cases:
@@ -88,7 +88,7 @@ class Cases:
         return response.status_code
 
     def finalise_case(self, draft_id, action, additional_data=None):
-        date = datetime.datetime.now()
+        date = timezone.localtime()
         data = {"action": action, "day": date.day, "month": date.month, "year": date.year}
         if additional_data:
             data.update(additional_data)

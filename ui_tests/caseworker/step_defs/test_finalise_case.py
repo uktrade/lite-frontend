@@ -1,5 +1,5 @@
-from datetime import datetime, date
-
+from datetime import date
+from django.utils import timezone
 from pytest_bdd import scenarios, when, then, parsers
 
 from caseworker.conf.constants import DATE_FORMAT
@@ -53,7 +53,7 @@ def applied_for_goods_details(driver, context):
     assert today.month == int(date_in_form["month"])
     assert today.year == int(date_in_form["year"])
     context.licence_duration = page.get_duration_in_finalise_view()
-    context.licence_start_date = datetime.now().strftime(DATE_FORMAT)
+    context.licence_start_date = timezone.localtime().strftime(DATE_FORMAT)
 
 
 @when("I go to the team advice page by url")  # noqa

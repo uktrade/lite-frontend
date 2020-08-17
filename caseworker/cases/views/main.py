@@ -193,7 +193,7 @@ class ImDoneView(SingleFormView):
         self.context = {"case": case}
         has_review_date = (
             case.next_review_date
-            and datetime.datetime.strptime(case.next_review_date, "%Y-%m-%d").date() > timezone.now().date()
+            and datetime.datetime.strptime(case.next_review_date, "%Y-%m-%d").date() > timezone.localtime().date()
         )
         self.form = done_with_case_form(request, kwargs["queue_pk"], self.object_pk, has_review_date)
         self.action = put_unassign_queues

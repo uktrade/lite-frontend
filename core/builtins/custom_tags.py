@@ -7,16 +7,16 @@ import re
 from collections import Counter, OrderedDict
 from html import escape
 
+from dateutil.parser import parse
 from dateutil.relativedelta import relativedelta
 
 from django import template
+from django.conf import settings
 from django.template.defaultfilters import stringfilter, safe, capfirst
-from django.templatetags.tz import do_timezone
+from django.templatetags.tz import localtime
 from django.utils.safestring import mark_safe
 
-from django.conf import settings
 from exporter.conf.constants import (
-    ISO8601_FMT,
     DATE_FORMAT,
     CASE_SECTIONS,
     PAGE_DATE_FORMAT,
@@ -97,7 +97,7 @@ def pluralize_lcs(items, string):
 @stringfilter
 def str_date(value):
     try:
-        return_value = do_timezone(datetime.datetime.strptime(value, ISO8601_FMT), "Europe/London")
+        return_value = localtime(parse(value))
         return (
             return_value.strftime("%-I:%M")
             + return_value.strftime("%p").lower()
@@ -112,8 +112,7 @@ def str_date(value):
 @stringfilter
 def str_date_only(value):
     if value != "None":
-        date_str = do_timezone(datetime.datetime.strptime(value, DATE_FORMAT), "Europe/London")
-        return date_str.strftime("%d %B %Y")
+        return localtime(parse(value)).strftime("%d %B %Y")
 
 
 @register.filter
