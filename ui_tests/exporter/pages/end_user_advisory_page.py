@@ -5,7 +5,7 @@ from tests_common import functions
 
 class EndUserAdvisoryPage(BasePage):
     APPLY_FOR_ADVISORY = "apply"  # id
-    TABLE_ROW = ".govuk-table__body .govuk-table__row"  # css
+    TABLE_ROW = ".govuk-table__body .govuk-table__row:last-child"  # css
     CASE_NOTES_TAB = "link-case-notes"  # id
     ADVISORY_DETAILS_LINK = "advisory-details-link"  # id
     CASE_NOTE_CSS_SELECTOR = ".lite-application-note"

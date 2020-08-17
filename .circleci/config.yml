@@ -89,12 +89,12 @@ commands:
     steps:
       - checkout
       - restore_cache:
-          key: dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+          key: deps-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
       - run: pipenv sync --dev
       - save_cache:
           paths:
             - ./.venv
-          key: dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+          key: deps-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
       - run: git submodule update --init
 
   unit_tests:
@@ -103,20 +103,25 @@ commands:
 
   ui_tests:
     steps:
-      - run: mkdir -p test-results/cucumber
+      - run: mkdir -p test-results
       - run: |
           pipenv run pytest \
+            -rP \
             -m smoke \
-            --reruns 1 \
-            --junitxml=test-results/junit.xml \
-            --disable-pytest-warnings
+            --reruns=1 \
+            --reruns-delay=2 \
+            --disable-pytest-warnings \
+            --junitxml=test-results/junit.xml
       - run: |
           pipenv run pytest \
+            -rP \
             -m regression \
-            --reruns 1 \
-            --junitxml=test-results/junit.xml \
-            -n 3 \
-            --disable-pytest-warnings
+            --reruns=1 \
+            --reruns-delay=2 \
+            --numprocesses=auto \
+            --dist=loadfile \
+            --disable-pytest-warnings \
+            --junitxml=test-results/junit.xml
       - store_artifacts:
           path: ui_tests/screenshots
       - store_artifacts:

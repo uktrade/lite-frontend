@@ -10,7 +10,7 @@ from ..fixtures.cci import enable_browser_stack
 
 @fixture(scope="session", autouse=True)
 def driver(request, api_client):
-    is_headless = request.config.getoption('--headless')
+    is_headless = request.config.getoption("--headless")
 
     chrome_options = webdriver.ChromeOptions()
     if is_headless:
@@ -20,6 +20,7 @@ def driver(request, api_client):
     chrome_options.add_argument("--disable-dev-shm-usage")
 
     driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
+    driver.implicitly_wait(10)
     driver.get("about:blank")
     driver.maximize_window()
 
