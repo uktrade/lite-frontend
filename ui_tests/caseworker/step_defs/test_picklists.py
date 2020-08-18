@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from pytest_bdd import scenarios, when, then, parsers
 
 from ui_tests.caseworker.pages.shared import Shared
@@ -36,9 +38,9 @@ def go_to_picklist_list(driver, picklist_type, context):
 
 @when(parsers.parse('I add a new picklist item with "{picklist_name}" and "{picklist_description}"'))
 def add_to_picklist_item(driver, picklist_name, picklist_description, context):
-    time = utils.get_formatted_date_time_y_m_d_h_s()
-    context.picklist_name = picklist_name + time
-    context.picklist_description = picklist_description + time
+    uuid = str(uuid4())
+    context.picklist_name = (picklist_name + uuid)[:24]
+    context.picklist_description = picklist_description + uuid
     PicklistPages(driver).type_into_picklist_name(context.picklist_name)
     PicklistPages(driver).type_into_picklist_description(context.picklist_description)
 

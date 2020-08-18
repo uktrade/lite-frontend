@@ -1,5 +1,5 @@
+from uuid import uuid4
 from pytest import fixture
-import tests_common.tools.helpers as utils
 
 
 def get_flag_of_level(flags, level):
@@ -22,7 +22,7 @@ def get_or_create_flag_of_level(level, api_test_client, context):
     all_flags = api_test_client.flags.get_list_of_flags()
     flag = get_flag_of_level(all_flags, level)
     if not flag:
-        flag = api_test_client.flags.add_flag(level + " " + utils.get_formatted_date_time_y_m_d_h_s(), level)
+        flag = api_test_client.flags.add_flag(f"{level} {uuid4()}"[:25], level)
     context.flag_name = flag["name"]
     context.flag_id = flag["id"]
 

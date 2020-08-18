@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from ui_tests.caseworker.pages.flagging_rules_pages import FlaggingRulePages
 from ui_tests.caseworker.pages.shared import Shared
 from pytest_bdd import when, then, scenarios, parsers, given
@@ -101,6 +103,6 @@ def add_all_flags(api_test_client, context):
     levels = ["Case", "Good", "Destination"]
     flags = {}
     for level in levels:
-        flag = api_test_client.flags.add_flag(level + utils.get_formatted_date_time_y_m_d_h_s(), level)
+        flag = api_test_client.flags.add_flag(f"{level} {uuid4()}"[:25], level)
         flags[level] = {"id": flag["id"], "name": flag["name"]}
     context.flags = flags

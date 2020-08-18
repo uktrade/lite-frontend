@@ -1,3 +1,4 @@
+from uuid import uuid4
 from pytest_bdd import when, then, scenarios, given, parsers
 
 from ui_tests.caseworker.pages.shared import Shared
@@ -55,8 +56,7 @@ def get_all_flags(api_test_client, context):
     for level in levels:
         flag = get_flag_of_level(all_flags, level)
         if not flag:
-            name = level + utils.get_formatted_date_time_y_m_d_h_s()
-            flag = api_test_client.flags.add_flag(name[:25], level)
+            flag = api_test_client.flags.add_flag(f"{level} {uuid4()}"[:25], level)
         flags[level] = {"id": flag["id"], "name": flag["name"]}
     context.flags = flags
 

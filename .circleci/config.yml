@@ -119,6 +119,7 @@ commands:
             --reruns=1 \
             --reruns-delay=2 \
             --numprocesses=auto \
+            --maxprocesses=3 \
             --dist=loadfile \
             --disable-pytest-warnings \
             --junitxml=test-results/junit.xml

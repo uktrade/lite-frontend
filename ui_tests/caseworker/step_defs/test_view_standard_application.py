@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 import tests_common.tools.helpers as utils
 from ui_tests.caseworker.pages.application_page import ApplicationPage
 from ui_tests.caseworker.pages.case_list_page import CaseListPage
@@ -9,7 +11,7 @@ scenarios("../features/view_standard_application.feature", strict_gherkin=False)
 
 @given("I am an assigned user for the case")
 def i_am_an_assigned_user_for_the_case(context, api_test_client):
-    api_test_client.queues.add_queue("User Amendment Queue Testing" + str(utils.get_formatted_date_time_d_h_m_s()))
+    api_test_client.queues.add_queue(f"User Amendment Queue Testing {uuid4()}"[:25])
     api_test_client.cases.assign_case_to_queue(context.app_id, api_test_client.context["queue_id"])
     api_test_client.cases.assign_case_to_user(context.app_id, api_test_client.context["queue_id"], context.gov_user_id)
 

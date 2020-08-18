@@ -1,3 +1,4 @@
+from uuid import uuid4
 from faker import Faker
 from pytest_bdd import scenarios, when, then, given, parsers
 from selenium.common.exceptions import NoSuchElementException
@@ -110,7 +111,7 @@ def add_a_team_blue_ocean(driver, context):
     teams_pages = TeamsPages(driver)
     shared = Shared(driver)
     teams_pages.click_add_a_team_button()
-    context.team_name = "BlueOcean" + str(utils.get_formatted_date_time_y_m_d_h_s())
+    context.team_name = f"BlueOcean {uuid4()}"[:24]
     teams_pages.enter_team_name(context.team_name)
     shared.click_submit()
 

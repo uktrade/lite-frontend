@@ -1,3 +1,4 @@
+from uuid import uuid4
 from pytest_bdd import when, then, parsers, scenarios, given
 
 from ui_tests.caseworker.pages.shared import Shared
@@ -78,6 +79,6 @@ def system_queue_shown_in_dropdown(driver, queue_name):  # noqa
 
 @given("a new countersigning queue has been created")  # noqa
 def create_countersigning_queue(context, api_test_client):  # noqa
-    api_test_client.queues.add_queue("countersigningqueue" + utils.get_formatted_date_time_y_m_d_h_s())
+    api_test_client.queues.add_queue(f"countersigningqueue {uuid4()}"[:25])
     context.countersigning_queue_name = api_test_client.context["queue_name"]
     context.countersigning_queue_id = api_test_client.context["queue_id"]
