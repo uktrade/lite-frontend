@@ -17,7 +17,7 @@ from exporter.applications.services import (
     get_application_countries_and_contract_types,
     get_case_notes,
 )
-from exporter.conf.constants import (
+from exporter.core.constants import (
     HMRC,
     OPEN,
     STANDARD,

@@ -16,7 +16,7 @@ from django.template.defaultfilters import stringfilter, safe, capfirst
 from django.templatetags.tz import localtime
 from django.utils.safestring import mark_safe
 
-from exporter.conf.constants import (
+from exporter.core.constants import (
     DATE_FORMAT,
     CASE_SECTIONS,
     PAGE_DATE_FORMAT,

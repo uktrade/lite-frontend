@@ -1,4 +1,4 @@
-from exporter.conf.constants import APPLICANT_EDITING
+from exporter.core.constants import APPLICANT_EDITING
 
 
 class ApplicationEditTypes:

@@ -4,7 +4,7 @@ from django.contrib.humanize.templatetags.humanize import intcomma
 from django.urls import reverse_lazy
 
 from exporter.applications.helpers.countries import ContractTypes
-from exporter.conf.constants import (
+from exporter.core.constants import (
     NEWLINE,
     STANDARD,
     OPEN,

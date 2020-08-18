@@ -1,8 +1,8 @@
 from http import HTTPStatus
 
 from exporter.applications.helpers.date_fields import format_date
-from exporter.conf.client import get, post, put, delete
-from exporter.conf.constants import (
+from exporter.core.client import get, post, put, delete
+from exporter.core.constants import (
     GOODS_URL,
     DOCUMENTS_URL,
     GOODS_QUERY_URL,

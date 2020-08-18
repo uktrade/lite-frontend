@@ -42,7 +42,7 @@ from exporter.applications.services import (
     copy_application,
     post_exhibition,
 )
-from exporter.conf.constants import HMRC, APPLICANT_EDITING, NotificationType, STANDARD
+from exporter.core.constants import HMRC, APPLICANT_EDITING, NotificationType, STANDARD
 from exporter.core.helpers import str_to_bool, convert_dict_to_query_params
 from exporter.core.services import get_organisation
 from lite_content.lite_exporter_frontend import strings

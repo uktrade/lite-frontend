@@ -1,5 +1,5 @@
-from exporter.conf.client import get, post, put
-from exporter.conf.constants import USERS_URL, SUPER_USER_ROLE_ID
+from exporter.core.client import get, post, put
+from exporter.core.constants import USERS_URL, SUPER_USER_ROLE_ID
 
 
 def get_user(request, pk=None, params=None):

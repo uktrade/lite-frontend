@@ -6,7 +6,7 @@ from exporter.applications.forms.parties import new_party_form_group
 from exporter.applications.helpers.check_your_answers import convert_party, is_application_export_type_permanent
 from exporter.applications.services import get_application, post_party, validate_party, delete_party
 from exporter.applications.views.parties.base import AddParty, SetParty, DeleteParty, CopyParties, CopyAndSetParty
-from exporter.conf.constants import OPEN
+from exporter.core.constants import OPEN
 from lite_content.lite_exporter_frontend.applications import EndUserForm, EndUserPage
 
 

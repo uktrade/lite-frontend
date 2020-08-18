@@ -6,7 +6,7 @@ from django.template.defaultfilters import safe
 from django.templatetags.tz import localtime
 from django.utils.safestring import mark_safe
 
-from exporter.conf import decorators
+from exporter.core import decorators
 from core.builtins.custom_tags import default_na
 from exporter.organisation.roles.services import get_user_permissions
 

@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
-from exporter.conf.client import get, post
-from exporter.conf.constants import END_USER_ADVISORIES_URL
+from exporter.core.client import get, post
+from exporter.core.constants import END_USER_ADVISORIES_URL
 
 
 def get_end_user_advisory(request, pk):

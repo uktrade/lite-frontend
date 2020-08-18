@@ -1,6 +1,6 @@
 from django.urls import path
 
-from exporter.conf.constants import Permissions
+from exporter.core.constants import Permissions
 from exporter.core.helpers import decorate_patterns_with_permission
 from exporter.organisation.roles import views
 

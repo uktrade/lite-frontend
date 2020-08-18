@@ -1,6 +1,6 @@
 from munch import Munch
 
-from exporter.conf.constants import APPLICANT_EDITING
+from exporter.core.constants import APPLICANT_EDITING
 from core.builtins.custom_tags import str_date
 
 

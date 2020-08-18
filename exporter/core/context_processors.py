@@ -1,4 +1,4 @@
-from exporter.conf.constants import Permissions
+from exporter.core.constants import Permissions
 from django.conf import settings
 
 

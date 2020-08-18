@@ -1,5 +1,5 @@
 from exporter.applications.components import back_to_task_list
-from exporter.conf.constants import HMRC, CaseTypes, LocationType
+from exporter.core.constants import HMRC, CaseTypes, LocationType
 from exporter.core.services import get_countries, get_external_locations
 from lite_content.lite_exporter_frontend import goods, strings, generic
 from lite_content.lite_exporter_frontend.goods import NewLocationForm, LocationTypeForm

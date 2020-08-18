@@ -4,8 +4,8 @@ from django.http import StreamingHttpResponse
 from s3chunkuploader.file_handler import s3_client
 
 from exporter.applications.helpers.date_fields import format_date_fields, create_formatted_date_from_components
-from exporter.conf.client import get, post, put, delete
-from exporter.conf.constants import (
+from exporter.core.client import get, post, put, delete
+from exporter.core.constants import (
     ACTIVITY_URL,
     APPLICATIONS_URL,
     DOCUMENT_URL,

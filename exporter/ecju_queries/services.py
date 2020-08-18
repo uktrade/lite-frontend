@@ -1,5 +1,5 @@
-from exporter.conf.client import get, put
-from exporter.conf.constants import ECJU_QUERIES_URL, CASES_URL
+from exporter.core.client import get, put
+from exporter.core.constants import ECJU_QUERIES_URL, CASES_URL
 
 
 def get_ecju_query(request, pk, query_pk):

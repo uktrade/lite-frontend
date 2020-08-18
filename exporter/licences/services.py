@@ -1,5 +1,5 @@
-from exporter.conf.client import get
-from exporter.conf.constants import LICENCES_URL, NLR_URL
+from exporter.core.client import get
+from exporter.core.constants import LICENCES_URL, NLR_URL
 from exporter.core.helpers import convert_parameters_to_query_params
 
 

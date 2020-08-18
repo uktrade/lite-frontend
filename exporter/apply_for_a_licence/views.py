@@ -15,7 +15,7 @@ from exporter.apply_for_a_licence.forms.triage_questions import (
     trade_control_licence_questions,
 )
 from exporter.apply_for_a_licence.validators import validate_opening_question, validate_open_general_licences
-from exporter.conf.constants import PERMANENT, CaseTypes
+from exporter.core.constants import PERMANENT, CaseTypes
 from exporter.core.services import post_open_general_licence_cases
 from lite_forms.views import SingleFormView, MultiFormView
 

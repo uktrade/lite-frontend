@@ -6,7 +6,7 @@ from exporter.apply_for_a_licence.forms.trade_control_licence import (
     activity_form,
     product_category_form,
 )
-from exporter.conf.constants import CaseTypes, GoodsTypeCategory
+from exporter.core.constants import CaseTypes, GoodsTypeCategory
 from lite_content.lite_exporter_frontend import generic, hub
 from lite_content.lite_exporter_frontend.applications import (
     InitialApplicationQuestionsForms,

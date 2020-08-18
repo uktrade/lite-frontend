@@ -1,5 +1,5 @@
-from exporter.conf.client import post
-from exporter.conf.constants import AUTHENTICATION_URL
+from exporter.core.client import post
+from exporter.core.constants import AUTHENTICATION_URL
 
 
 def authenticate_exporter_user(request, json):
