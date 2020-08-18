@@ -8,7 +8,7 @@ from django.views.generic import TemplateView
 from caseworker.cases.forms.assign_users import assign_users_form
 from caseworker.cases.forms.attach_documents import upload_document_form
 from caseworker.cases.helpers.filters import case_filters_bar
-from caseworker.conf.constants import ALL_CASES_QUEUE_ID, Permission, UPDATED_CASES_QUEUE_ID
+from caseworker.core.constants import ALL_CASES_QUEUE_ID, Permission, UPDATED_CASES_QUEUE_ID
 from caseworker.core.helpers import convert_parameters_to_query_params
 from caseworker.core.services import get_user_permissions
 from lite_content.lite_internal_frontend.cases import CasesListPage, UploadEnforcementXML, Manage

@@ -2,7 +2,7 @@ from datetime import date
 from django.utils import timezone
 from pytest_bdd import scenarios, when, then, parsers
 
-from caseworker.conf.constants import DATE_FORMAT
+from caseworker.core.constants import DATE_FORMAT
 from ui_tests.caseworker.pages.application_page import ApplicationPage
 from ui_tests.caseworker.pages.documents_page import DocumentsPage
 from ui_tests.caseworker.pages.generate_decision_documents_page import GeneratedDecisionDocuments

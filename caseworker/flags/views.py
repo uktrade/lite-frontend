@@ -9,7 +9,7 @@ from django.views.generic import TemplateView
 
 from caseworker.cases.helpers.advice import get_param_goods, get_param_destinations
 from caseworker.cases.services import put_flag_assignments, get_case
-from caseworker.conf.constants import Permission
+from caseworker.core.constants import Permission
 from caseworker.core.helpers import convert_dict_to_query_params, get_params_if_exist
 from caseworker.core.services import get_user_permissions
 from caseworker.flags.enums import FlagLevel, FlagStatus

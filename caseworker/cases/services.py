@@ -1,6 +1,6 @@
 from caseworker.cases.objects import Case
-from caseworker.conf.client import post, get, put, delete, patch
-from caseworker.conf.constants import (
+from caseworker.core.client import post, get, put, delete, patch
+from caseworker.core.constants import (
     CASE_URL,
     CASE_NOTES_URL,
     APPLICATIONS_URL,

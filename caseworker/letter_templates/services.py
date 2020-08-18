@@ -1,5 +1,5 @@
-from caseworker.conf.client import get, post, put
-from caseworker.conf.constants import PICKLIST_URL, LETTER_TEMPLATES_URL, LETTER_LAYOUTS_URL, GENERATE_PREVIEW_URL
+from caseworker.core.client import get, post, put
+from caseworker.core.constants import PICKLIST_URL, LETTER_TEMPLATES_URL, LETTER_LAYOUTS_URL, GENERATE_PREVIEW_URL
 from caseworker.core.helpers import convert_dict_to_query_params
 
 

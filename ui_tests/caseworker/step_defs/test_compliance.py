@@ -6,7 +6,7 @@ from pytest_bdd import when, then, parsers, scenarios
 from ui_tests.caseworker.pages.case_page import CasePage, CaseTabs
 from ui_tests.caseworker.pages.shared import Shared
 
-from caseworker.conf.constants import DATE_FORMAT
+from caseworker.core.constants import DATE_FORMAT
 from ui_tests.caseworker.pages.compliance_pages import CompliancePages
 from ui_tests.caseworker.pages.ecju_queries_pages import EcjuQueriesPages
 from ui_tests.caseworker.pages.generate_document_page import GeneratedDocument

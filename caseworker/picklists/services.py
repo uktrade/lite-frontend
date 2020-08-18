@@ -4,8 +4,8 @@ from caseworker.core.helpers import convert_parameters_to_query_params
 from lite_content.lite_internal_frontend.picklists import Picklists
 from lite_forms.components import Option
 
-from caseworker.conf.client import get, post, put
-from caseworker.conf.constants import PICKLIST_URL
+from caseworker.core.client import get, post, put
+from caseworker.core.constants import PICKLIST_URL
 
 
 def get_picklists_list(request, type, page=1, name=None, disable_pagination=False, show_deactivated=True):

@@ -1,7 +1,7 @@
 from django.utils.functional import wraps
 
-from caseworker.conf.constants import Permission
-from caseworker.conf.exceptions import PermissionDeniedError
+from caseworker.core.constants import Permission
+from caseworker.core.exceptions import PermissionDeniedError
 from caseworker.core import helpers
 
 

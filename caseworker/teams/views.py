@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView, RedirectView
 
-from caseworker.conf.constants import Permission
+from caseworker.core.constants import Permission
 from caseworker.core.services import get_user_permissions
 from lite_content.lite_internal_frontend.teams import TeamsPage
 from lite_forms.views import SingleFormView

@@ -1,5 +1,5 @@
-from caseworker.conf.client import get, post, put
-from caseworker.conf.constants import ROUTING_RULES_URL, ROUTING_RULES_STATUS_URL
+from caseworker.core.client import get, post, put
+from caseworker.core.constants import ROUTING_RULES_URL, ROUTING_RULES_STATUS_URL
 
 
 def get_routing_rules(request, params=""):

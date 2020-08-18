@@ -1,5 +1,5 @@
 from pytest_bdd import when, then, scenarios, parsers
-from caseworker.conf.constants import SystemTeamsID
+from caseworker.core.constants import SystemTeamsID
 from ui_tests.caseworker.pages.case_page import CasePage
 
 from ui_tests.caseworker.pages.application_page import ApplicationPage

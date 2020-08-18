@@ -28,7 +28,7 @@ from exporter.conf.constants import (
 )
 from exporter.applications.constants import F680
 
-from caseworker.conf.constants import SystemTeamsID
+from caseworker.core.constants import SystemTeamsID
 
 
 strings = import_module(settings.LITE_CONTENT_IMPORT_PATH)

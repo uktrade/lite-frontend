@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
 
-from caseworker.conf.constants import Permission
+from caseworker.core.constants import Permission
 from caseworker.core.helpers import convert_dict_to_query_params, has_permission, get_params_if_exist
 from caseworker.core.services import get_statuses
 from lite_content.lite_internal_frontend.routing_rules import Filter, CONFIRM_FORM_ERROR

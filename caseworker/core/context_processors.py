@@ -2,7 +2,7 @@ import os
 
 from django.urls import reverse_lazy
 
-from caseworker.conf.constants import Permission
+from caseworker.core.constants import Permission
 from caseworker.core.services import get_user_permissions, get_menu_notifications
 from lite_content.lite_internal_frontend import strings, open_general_licences
 from lite_content.lite_internal_frontend.flags import FlagsList

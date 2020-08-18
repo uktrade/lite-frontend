@@ -6,7 +6,7 @@ from django.shortcuts import redirect, render
 from django.views.generic.base import RedirectView, View
 
 from caseworker.auth.utils import get_client, AUTHORISATION_URL, TOKEN_URL, TOKEN_SESSION_KEY
-from caseworker.conf.context_processors import lite_menu
+from caseworker.core.context_processors import lite_menu
 from lite_content.lite_internal_frontend.core import get_human_readable_exception
 
 

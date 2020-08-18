@@ -5,8 +5,9 @@ from django.conf import settings
 from django.test import Client
 
 from caseworker.auth.utils import TOKEN_SESSION_KEY
-from caseworker.conf import constants
-from caseworker.conf.client import _build_absolute_uri
+
+from caseworker.core import constants
+from caseworker.core.client import _build_absolute_uri
 
 
 application_id = "094eed9a-23cc-478a-92ad-9a05ac17fad0"
