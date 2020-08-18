@@ -9,6 +9,8 @@ from s3chunkuploader.file_handler import UploadFailed
 
 from caseworker.auth.urls import app_name as auth_app_name
 from django.conf import settings
+
+from caseworker.auth.utils import get_client
 from lite_content.lite_internal_frontend.strings import cases
 from lite_forms.generators import error_page
 
@@ -19,7 +21,9 @@ class ProtectAllViewsMiddleware:
 
     def __call__(self, request):
 
-        if resolve(request.path).app_name != auth_app_name and not request.user.is_authenticated:
+        client = get_client(request)
+
+        if resolve(request.path).app_name != auth_app_name and not client.authorized:
             return redirect(settings.LOGIN_URL)
 
         response = self.get_response(request)
@@ -50,7 +54,7 @@ class LoggingMiddleware:
         start = time.time()
         request.correlation = uuid.uuid4().hex
         data = {
-            "user": request.user.lite_api_user_id if hasattr(request.user, "lite_api_user_id") else None,
+            "user": request.session.get("lite_api_user_id"),
             "message": "liteolog internal",
             "corrID": request.correlation,
             "type": "http request",
