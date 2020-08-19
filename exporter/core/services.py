@@ -134,7 +134,7 @@ def post_external_locations_on_draft(request, pk, json):
 
 
 def post_external_locations(request, pk, json):
-    data = post(request, ORGANISATIONS_URL + str(request.user.organisation) + EXTERNAL_LOCATIONS_URL, json)
+    data = post(request, ORGANISATIONS_URL + str(request.session["organisation"]) + EXTERNAL_LOCATIONS_URL, json)
 
     if "errors" in data.json():
         return data.json(), data.status_code
@@ -194,7 +194,7 @@ def get_organisation_user(request, pk, user_pk):
 
 
 def put_organisation_user(request, user_pk, json):
-    organisation_id = str(request.user.organisation)
+    organisation_id = str(request.session["organisation"])
     data = put(request, ORGANISATIONS_URL + organisation_id + "/users/" + str(user_pk) + "/", json)
     return data.json(), data.status_code
 
@@ -273,7 +273,7 @@ def get_document_download_stream(request, url):
 def _register_organisation(request, json, _type):
     data = {
         "type": _type,
-        "user": {"email": request.user.email},
+        "user": {"email": request.session["email"]},
     }
     response = post(request, ORGANISATIONS_URL, {**json, **data})
     return response.json(), response.status_code

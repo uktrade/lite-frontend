@@ -7,6 +7,7 @@ from django.views.generic import TemplateView
 
 from exporter.applications.services import has_existing_applications_and_licences_and_nlrs
 from exporter.auth.services import authenticate_exporter_user
+from exporter.auth.utils import get_client
 from exporter.conf.constants import NEWLINE
 from exporter.core.forms import (
     select_your_organisation_form,
@@ -33,7 +34,8 @@ from exporter.organisation.members.services import get_user
 
 class Home(TemplateView):
     def get(self, request, **kwargs):
-        if not request.user.is_authenticated:
+        oauth2session = get_client(request)
+        if not oauth2session.authorized:
             return render(request, "core/start.html")
 
         try:
@@ -42,7 +44,7 @@ class Home(TemplateView):
         except (JSONDecodeError, TypeError, KeyError):
             return redirect("auth:login")
 
-        organisation = get_organisation(request, str(request.user.organisation))
+        organisation = get_organisation(request, str(request.session["organisation"]))
         notifications, _ = get_notifications(request)
         existing = has_existing_applications_and_licences_and_nlrs(request)
 
@@ -69,7 +71,7 @@ class PickOrganisation(TemplateView):
         return super(PickOrganisation, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, **kwargs):
-        data = {"organisation": str(request.user.organisation)}
+        data = {"organisation": str(request.session.get("organisation"))}
         return form_page(request, self.form, data=data, extra_data={"user_in_limbo": data["organisation"] == "None"})
 
     def post(self, request, **kwargs):
@@ -77,14 +79,13 @@ class PickOrganisation(TemplateView):
         if not request.POST.get("organisation"):
             return form_page(request, self.form, errors={"organisation": ["Select an organisation to use"]})
 
-        request.user.organisation = request.POST["organisation"]
+        request.session["organisation"] = request.POST["organisation"]
         organisation = get_organisation(request, request.POST["organisation"])
 
         if "errors" in organisation:
             return redirect(reverse_lazy("core:register_an_organisation_confirm") + "?show_back_link=True")
 
-        request.user.organisation_name = organisation["name"]
-        request.user.save()
+        request.session["organisation_name"] = organisation["name"]
 
         return redirect("/")
 
@@ -98,11 +99,11 @@ class RegisterAnOrganisationTriage(MultiFormView):
         self.forms = register_triage()
         self.action = validate_register_organisation_triage
         self.additional_context = {"user_in_limbo": True}
-
-        if not request.user.is_authenticated:
+        oauth2session = get_client(request)
+        if not oauth2session.authorized:
             raise Http404
 
-        if request.user.user_token and get_user(request)["organisations"]:
+        if request.session["user_token"] and get_user(request)["organisations"]:
             raise Http404
 
     def get_success_url(self):
@@ -126,10 +127,11 @@ class RegisterAnOrganisation(SummaryListFormView):
         self.hide_components = ["site.address.address_line_2"]
         self.additional_context = {"user_in_limbo": True}
 
-        if not request.user.is_authenticated:
+        oauth2session = get_client(request)
+        if not oauth2session.authorized:
             raise Http404
 
-        if request.user.user_token and get_user(request)["organisations"]:
+        if request.session["user_token"] and get_user(request)["organisations"]:
             raise Http404
 
     def prettify_data(self, data):
@@ -150,13 +152,15 @@ class RegisterAnOrganisation(SummaryListFormView):
         response, _ = authenticate_exporter_user(
             self.request,
             {
-                "email": self.request.user.email,
-                "user_profile": {"first_name": self.request.user.first_name, "last_name": self.request.user.last_name},
+                "email": self.request.session["email"],
+                "user_profile": {
+                    "first_name": self.request.session["first_name"],
+                    "last_name": self.request.session["last_name"],
+                },
             },
         )
-        self.request.user.user_token = response["token"]
-        self.request.user.lite_api_user_id = response["lite_api_user_id"]
-        self.request.user.save()
+        self.request.session["user_token"] = response["token"]
+        self.request.session["lite_api_user_id"] = response["lite_api_user_id"]
         return reverse("core:register_an_organisation_confirm") + "?animate=True"
 
 

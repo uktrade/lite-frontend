@@ -1,9 +1,10 @@
 import re
 
 import pytest
+from django.conf import settings
+from django.test import Client
 
-from django.contrib.auth import get_user_model
-
+from caseworker.auth.utils import TOKEN_SESSION_KEY
 from caseworker.conf import constants
 from caseworker.conf.client import _build_absolute_uri
 
@@ -637,7 +638,30 @@ def mock_case_statuses(requests_mock):
     yield data
 
 
-@pytest.fixture
-def user(mock_gov_user):
-    User = get_user_model()
-    return User.objects.create(email=mock_gov_user["user"]["email"], lite_api_user_id=gov_uk_user_id,)
+@pytest.fixture(autouse=True)
+def authorized_client(client: Client):
+    """
+    returns a factory to make a authorized client for a mock_gov_user,
+
+    the factory only expects the value of "user" inside the object returned by
+    the mock_gov_user fixture
+    """
+
+    def _inner(user):
+        session = client.session
+        session["first_name"] = user["first_name"]
+        session["last_name"] = user["last_name"]
+        session["default_queue"] = user["default_queue"]
+        session["lite_api_user_id"] = user["id"]
+        session[TOKEN_SESSION_KEY] = {
+            "access_token": "mock_access_token",
+            "expires_in": 36000,
+            "token_type": "Bearer",
+            "scope": ["read", "write"],
+            "refresh_token": "mock_refresh_token",
+        }
+        session.save()
+        client.cookies[settings.SESSION_COOKIE_NAME] = session.session_key
+        return client
+
+    yield _inner

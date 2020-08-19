@@ -14,14 +14,14 @@ def add_user_form(request):
             TextInput(title=strings.users.AddUserForm.USER_EMAIL_QUESTION, name="email"),
             Select(
                 name="role",
-                options=get_roles(request, request.user.organisation, True),
+                options=get_roles(request, request.session["organisation"], True),
                 title=strings.users.AddUserForm.USER_ROLE_QUESTION,
                 include_default_select=False,
             ),
             Checkboxes(
                 title=strings.users.AddUserForm.ASSIGN_USER_QUESTION,
                 name="sites[]",
-                options=get_sites(request, request.user.organisation, True),
+                options=get_sites(request, request.session["organisation"], True),
             ),
         ],
         back_link=BackLink(
@@ -38,7 +38,7 @@ def edit_user_form(request, user_id, can_edit_role: bool):
                 can_edit_role,
                 Select(
                     name="role",
-                    options=get_roles(request, request.user.organisation, True),
+                    options=get_roles(request, request.session["organisation"], True),
                     title=strings.users.EditUserForm.USER_ROLE_QUESTION,
                     include_default_select=False,
                 ),
@@ -56,6 +56,6 @@ def assign_sites(request):
     return Form(
         title=strings.users.AssignToSitesForm.ASSIGN_USER_TO_SITES_TITLE,
         description=strings.users.AssignToSitesForm.ASSIGN_USER_TO_SITES_DESCRIPTION,
-        questions=[Checkboxes(name="sites[]", options=get_sites(request, request.user.organisation, True))],
+        questions=[Checkboxes(name="sites[]", options=get_sites(request, request.session["organisation"], True))],
         default_button_name=strings.SAVE,
     )
