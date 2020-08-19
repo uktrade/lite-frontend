@@ -20,7 +20,7 @@ def driver(request, api_client):
     chrome_options.add_argument("--disable-dev-shm-usage")
 
     driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
-    driver.implicitly_wait(10)
+    driver.implicitly_wait(20)
     driver.get("about:blank")
     driver.maximize_window()
 

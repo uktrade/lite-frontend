@@ -1,5 +1,3 @@
-from uuid import uuid4
-
 from django.utils import timezone
 from pytest_bdd import given, when, then, parsers
 
@@ -226,7 +224,7 @@ def my_case_not_in_queue(driver, context):  # noqa
 
 @given("a queue has been created")  # noqa
 def create_queue(context, api_test_client):  # noqa
-    api_test_client.queues.add_queue(f"queue {uuid4()}"[:33])
+    api_test_client.queues.add_queue(f"queue {utils.get_formatted_date_time_y_m_d_h_s()}")
     context.queue_id = api_test_client.context["queue_id"]
     context.queue_name = api_test_client.context["queue_name"]
 
@@ -399,7 +397,7 @@ def create_letter_template(driver, context, get_template_id):  # noqa
     template_page = LetterTemplates(driver)
     template_page.click_create_a_template()
 
-    context.template_name = f"Template {uuid4()}"[:34]
+    context.template_name = f"Template {utils.get_formatted_date_time_y_m_d_h_s()}"
     template_page.enter_template_name(context.template_name)
     functions.click_submit(driver)
 

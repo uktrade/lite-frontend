@@ -1,5 +1,3 @@
-from uuid import uuid4
-
 from pytest_bdd import scenarios, when, parsers, then
 
 from ui_tests.exporter.pages.roles_pages import RolesPages
@@ -20,7 +18,7 @@ def go_to_manage_roles(driver):
 def add_a_role(driver, permissions, context):
     roles_page = RolesPages(driver)
     roles_page.click_add_a_role_button()
-    context.role_name = f"test-{uuid4()}"[:25]
+    context.role_name = f"test {utils.get_unformatted_date_time()}"[:25]
     roles_page.enter_role_name(context.role_name)
     roles_page.select_permissions(permissions)
     functions.click_submit(driver)

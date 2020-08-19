@@ -15,7 +15,7 @@ class DocumentTemplates:
         paragraph = seed_picklist.add_letter_paragraph_picklist()
         template_data["letter_paragraphs"] = [paragraph["id"]]
         # named to ensure it's on the last page of templates
-        template_data["name"] = f"zz{helpers.get_formatted_date_time_y_m_d_h_s()}{uuid4()}"[:34]
+        template_data["name"] = f"z{helpers.get_formatted_date_time_y_m_d_h_s()}"
         template_data["visible_to_exporter"] = True
         template_data["include_digital_signature"] = False
         if case_types:

@@ -1,5 +1,3 @@
-from uuid import uuid4
-
 from pytest_bdd import when, then, parsers, scenarios, given
 
 import tests_common.tools.helpers as utils
@@ -37,7 +35,7 @@ def select_end_user_type(driver, type):
 def add_user_details(driver, context, nature, name, job, email, telephone, address, country):
     end_user_page = AddEndUserAdvisoryPages(driver)
     prefix = "end_user."
-    context.end_user_advisory_name = f"EUA-{uuid4()}"[:24]
+    context.end_user_advisory_name = f"EUA-{utils.get_formatted_date_time_y_m_d_h_s()}"
     end_user_page.enter_name(context.end_user_advisory_name, prefix)
     end_user_page.enter_nature(nature)
     end_user_page.enter_primary_contact_email(email)
