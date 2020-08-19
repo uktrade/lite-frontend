@@ -26,7 +26,7 @@ def add_a_role(driver, role_name, permissions, status, context):
     if role_name == " ":
         context.role_name = role_name
     else:
-        context.role_name = f"{role_name} {utils.get_formatted_date_time_y_m_d_h_s()}"[:20]
+        context.role_name = f"{role_name} {utils.get_formatted_date_time_y_m_d_h_s()}"[:25]
 
     roles_page.enter_role_name(context.role_name)
     roles_page.select_permissions(permissions)

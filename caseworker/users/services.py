@@ -11,10 +11,6 @@ from caseworker.conf.constants import (
 from lite_content.lite_internal_frontend.users import AssignUserPage
 from lite_forms.components import Option
 
-import traceback
-import inspect
-from sentry_sdk import capture_message
-
 
 def get_gov_users(request, params=None, convert_to_options=False):
     if params:
@@ -44,19 +40,8 @@ def get_gov_users(request, params=None, convert_to_options=False):
         return converted
     return data.json(), data.status_code
 
-import sentry_sdk
-import sentry_sdk.utils
-
 
 def get_gov_user(request, pk=None):
-    frame = inspect.currentframe()
-    stack_trace = traceback.format_stack(frame)
-    sentry_sdk.capture_event({
-        'message': "called get_gov_user",
-        "level": "warning",
-        "stacktrace": sentry_sdk.utils.current_stacktrace(with_locals=True),
-    })
-
     if pk:
         response = get(request, GOV_USERS_URL + str(pk))
     else:

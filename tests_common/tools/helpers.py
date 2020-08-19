@@ -172,7 +172,7 @@ def get_unformatted_date_time():
 
 
 def get_formatted_date_time_d_h_m_s():
-    return str(timezone.localtime().strftime(" %d%H%M%S"))
+    return str(timezone.localtime().strftime("%d%H%M%S"))
 
 
 def page_is_ready(driver):

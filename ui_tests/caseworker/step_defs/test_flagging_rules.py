@@ -101,6 +101,6 @@ def add_all_flags(api_test_client, context):
     levels = ["Case", "Good", "Destination"]
     flags = {}
     for level in levels:
-        flag = api_test_client.flags.add_flag(f"{level} {utils.get_formatted_date_time_y_m_d_h_s()}", level)
+        flag = api_test_client.flags.add_flag(f"{level} {utils.get_formatted_date_time_y_m_d_h_s()}"[:24], level)
         flags[level] = {"id": flag["id"], "name": flag["name"]}
     context.flags = flags

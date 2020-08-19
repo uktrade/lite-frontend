@@ -16,7 +16,7 @@ scenarios("../features/flags.feature", strict_gherkin=False)
 @when(parsers.parse('I add a new flag with blocking approval set to "{blocks_approval}"'))
 def add_flag(driver, context, blocks_approval):
     add_edit_flag_page = AddEditFlagPage(driver)
-    context.flag_name = f"UAE {utils.get_formatted_date_time_d_h_m_s()}"
+    context.flag_name = f"UAE {utils.get_formatted_date_time_d_h_m_s()}"[:24]
 
     FlagsListPage(driver).click_add_a_flag_button()
 
