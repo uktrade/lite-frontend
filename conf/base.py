@@ -103,7 +103,7 @@ STATICFILES_FINDERS = (
 STATIC_URL = "/assets/"
 
 # Cache static files
-STATICFILES_STORAGE = env.str("STATICFILES_STORAGE", "django.contrib.staticfiles.storage.ManifestStaticFilesStorage")
+STATICFILES_STORAGE = env.str("STATICFILES_STORAGE", "whitenoise.storage.CompressedManifestStaticFilesStorage")
 
 SASS_PROCESSOR_ENABLED = True
 
