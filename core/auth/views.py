@@ -17,7 +17,6 @@ class AuthView(RedirectView, metaclass=ABCMeta):
 
     permanent = False
 
-    oauth2session_function = None
     AUTHORIZATION_URL = None
     TOKEN_SESSION_KEY = None
 
