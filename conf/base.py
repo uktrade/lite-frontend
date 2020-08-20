@@ -216,3 +216,24 @@ if env.str("DIRECTORY_SSO_API_CLIENT_BASE_URL", ""):
     DIRECTORY_SSO_API_CLIENT_BASE_URL = env("DIRECTORY_SSO_API_CLIENT_BASE_URL")
     DIRECTORY_SSO_API_CLIENT_DEFAULT_TIMEOUT = 30
     DIRECTORY_SSO_API_CLIENT_SENDER_ID = "lite"
+
+
+FEATURE_DEBUG_TOOLBAR_ON = env.bool("FEATURE_DEBUG_TOOLBAR_ON", False)
+
+if FEATURE_DEBUG_TOOLBAR_ON:
+    INSTALLED_APPS += ['debug_toolbar', 'requests_panel']
+    DEBUG_TOOLBAR_PANELS = [
+        'requests_panel.panel.RequestsDebugPanel',
+        'debug_toolbar.panels.request.RequestPanel',
+        'debug_toolbar.panels.timer.TimerPanel',
+        'debug_toolbar.panels.templates.TemplatesPanel',
+        'debug_toolbar.panels.staticfiles.StaticFilesPanel',
+        'debug_toolbar.panels.cache.CachePanel',
+        'debug_toolbar.panels.logging.LoggingPanel',
+        'debug_toolbar.panels.profiling.ProfilingPanel',
+        'debug_toolbar.panels.redirects.RedirectsPanel',
+
+    ]
+    INTERNAL_IPS = [
+        '127.0.0.1',
+    ]

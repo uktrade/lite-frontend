@@ -15,19 +15,23 @@ INSTALLED_APPS += [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "csp.middleware.CSPMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.gzip.GZipMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "csp.middleware.CSPMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "exporter.conf.middleware.LoggingMiddleware",
     "exporter.conf.middleware.ProtectAllViewsMiddleware",
     "exporter.conf.middleware.UploadFailedMiddleware",
-    "django.middleware.gzip.GZipMiddleware",
 ]
+
+if FEATURE_DEBUG_TOOLBAR_ON:
+    index = MIDDLEWARE.index("django.middleware.gzip.GZipMiddleware")
+    MIDDLEWARE.insert(index+1, "debug_toolbar.middleware.DebugToolbarMiddleware")
 
 TEMPLATES = [
     {

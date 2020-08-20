@@ -89,12 +89,12 @@ commands:
     steps:
       - checkout
       - restore_cache:
-          key: deps-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+          key: deps-v3-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
       - run: pipenv sync --dev
       - save_cache:
           paths:
             - ./.venv
-          key: deps-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+          key: deps-v3-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
       - run: git submodule update --init
 
   unit_tests:
@@ -106,11 +106,10 @@ commands:
       - run: mkdir -p test-results
       - run: |
           pipenv run pytest \
-            -rP \
             --reruns=1 \
             --reruns-delay=2 \
-            --disable-pytest-warnings \
-            --junitxml=test-results/junit.xml
+            --junitxml=test-results/junit.xml \
+            -vv
       - store_artifacts:
           path: ui_tests/screenshots
       - store_artifacts:
@@ -123,7 +122,6 @@ commands:
       - run: pipenv run bandit -r .
       - run: pipenv run prospector
       - run: pipenv run black . --check --diff
-
 
 ###############################################################################
 # Jobs

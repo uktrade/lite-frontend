@@ -50,7 +50,7 @@ class GoodsQueriesPages(BasePage):
         self.driver.implicitly_wait(0)
         if self.driver.find_element_by_class_name("govuk-details").get_attribute("open") is None:
             self.driver.find_element_by_class_name("govuk-details__summary-text").click()
-        self.driver.implicitly_wait(10)
+        self.driver.implicitly_wait(20)
         scroll_to_element_by_id(self.driver, self.COMMENT)
         self.driver.find_element_by_id(self.COMMENT).send_keys(comment)
 
