@@ -31,7 +31,7 @@ def click_on_edit_queue(driver, context):
 def edit_queue_with_countersigning(driver, context):
     queues = QueuesPages(driver)
     no = utils.get_element_index_by_text(
-        Shared(driver).get_rows_in_lite_table(), context.queue_name, complete_match=False
+        Shared(driver).get_rows_in_lite_table(), context.queue_name, complete_match=True
     )
     queues.click_queue_edit_button(no)
     QueuesPages(driver).select_countersigning_queue(context.countersigning_queue_name)

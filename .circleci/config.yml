@@ -89,12 +89,12 @@ commands:
     steps:
       - checkout
       - restore_cache:
-          key: deps-v3-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+          key: deps-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
       - run: pipenv sync --dev
       - save_cache:
           paths:
             - ./.venv
-          key: deps-v3-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+          key: deps-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
       - run: git submodule update --init
 
   unit_tests:
@@ -106,10 +106,11 @@ commands:
       - run: mkdir -p test-results
       - run: |
           pipenv run pytest \
+            -rP \
             --reruns=1 \
             --reruns-delay=2 \
-            --junitxml=test-results/junit.xml \
-            -vv
+            --disable-pytest-warnings \
+            --junitxml=test-results/junit.xml
       - store_artifacts:
           path: ui_tests/screenshots
       - store_artifacts:

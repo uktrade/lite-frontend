@@ -1,5 +1,6 @@
 from django.utils import timezone
 from pytest_bdd import given, when, then, parsers
+import time
 
 from ui_tests.caseworker.pages.advice import FinalAdvicePage, TeamAdvicePage
 from ui_tests.caseworker.pages.case_page import CasePage, CaseTabs
@@ -85,6 +86,9 @@ def create_open_app(driver, apply_for_open_application):  # noqa
 @when("I click continue")  # noqa
 def i_click_continue(driver):  # noqa
     Shared(driver).click_submit()
+    # handle case when scenario clicks submit in consecutive steps: there is a race condition resulting in the same
+    # submit button being clicked for each step
+    time.sleep(5)
 
 
 @when("I click change status")  # noqa

@@ -195,7 +195,7 @@ def find_paginated_item_by_id(id, driver):
                 driver.find_element_by_id(f"page-{current_page}").click()
             except NoSuchElementException:
                 pass
-    driver.implicitly_wait(10)
+    driver.implicitly_wait(60)
     assert element_is_found, f"'{id}' couldn't be found across {current_page} pages"
     return element_is_found
 
@@ -218,7 +218,7 @@ def paginated_item_exists(item_id, driver, exists=True):
             except NoSuchElementException:
                 element_is_found = False
                 break
-    driver.implicitly_wait(10)
+    driver.implicitly_wait(60)
     return bool(element_is_found) == exists
 
 
@@ -240,7 +240,7 @@ def paginated_item_exists_by_css(css, driver, exists=True):
             except NoSuchElementException:
                 element_is_found = False
                 break
-    driver.implicitly_wait(10)
+    driver.implicitly_wait(60)
     return bool(element_is_found) == exists
 
 
@@ -255,7 +255,7 @@ def get_text_of_multi_page_table(css_selector, driver):
             driver.find_element_by_id(f"page-{current_page}").click()
         except NoSuchElementException:
             break
-    driver.implicitly_wait(10)
+    driver.implicitly_wait(60)
     return text
 
 

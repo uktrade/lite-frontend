@@ -89,7 +89,7 @@ def clear_advice(driver):
 def check_advice_checkboxes_are_not_present(driver):
     driver.implicitly_wait(0)
     assert GiveAdvicePages(driver).checkbox_present() == 0
-    driver.implicitly_wait(20)
+    driver.implicitly_wait(60)
 
 
 @then("the give or change advice button is not present")
@@ -98,7 +98,7 @@ def check_give_advice_button_is_not_present(driver):
     assert not UserAdvicePage(driver).is_advice_button_enabled()
     assert not TeamAdvicePage(driver).is_advice_button_enabled()
     assert not FinalAdvicePage(driver).is_advice_button_enabled()
-    driver.implicitly_wait(20)
+    driver.implicitly_wait(60)
 
 
 @then("I see total goods value")
@@ -112,7 +112,7 @@ def dont_see_clearance_level(driver):
     assert (
         len(GiveAdvicePages(driver).clearance_grading_present()) == 0
     ), "clearance level is displayed when it shouldn't be"
-    driver.implicitly_wait(20)
+    driver.implicitly_wait(60)
 
 
 @when(parsers.parse('I select "{clearance_level}" clearance level'))

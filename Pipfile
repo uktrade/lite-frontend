@@ -24,8 +24,7 @@ requests-mock = "~=1.8"
 selenium = "~=3.141"
 webdriver-manager = "~=3.2"
 django-extensions = "*"
-django-debug-toolbar = "*"
-django-requests-debug-toolbar = "*"
+django-debug-toolbar = "~=2.2"
 
 [packages]
 beautifulsoup4 = "~=4.8.2"
