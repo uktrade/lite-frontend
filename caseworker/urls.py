@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.contrib import admin
 from django.urls import include, path
 
 from caseworker.conf import views
@@ -7,7 +6,6 @@ from caseworker.conf import views
 
 urlpatterns = [
     path("", include("caseworker.core.urls")),
-    path("admin/", admin.site.urls),
     path("auth/", include("caseworker.auth.urls")),
     path("queues/<uuid:queue_pk>/cases/<uuid:pk>/", include("caseworker.cases.urls")),
     path("flags/", include("caseworker.flags.urls")),

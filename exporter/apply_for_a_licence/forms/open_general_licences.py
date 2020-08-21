@@ -72,7 +72,7 @@ def open_general_licence_forms(request, **kwargs):
         country=request.POST.get("country"),
         status="active",
     )
-    sites = get_sites(request, request.user.organisation, True)
+    sites = get_sites(request, request.session["organisation"], True)
     selected_open_general_licence = {}
     if request.POST.get("open_general_licence"):
         selected_open_general_licence = get_open_general_licence(request, request.POST.get("open_general_licence"))

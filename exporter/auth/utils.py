@@ -28,12 +28,6 @@ def get_client(request, **kwargs):
     )
 
 
-def has_valid_token(client):
-    """Does the session have a valid token?"""
-
-    return client.authorized
-
-
 def get_profile(client):
     return client.get(PROFILE_URL).json()
 
@@ -45,7 +39,7 @@ def authbroker_login_required(func):
 
     @functools.wraps(func)
     def decorated(request):
-        if not has_valid_token(get_client(request)):
+        if not get_client(request).authorized:
             return redirect("auth:login")
 
         return func(request)

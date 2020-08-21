@@ -21,7 +21,7 @@
 		</div>
 		<div class="lite-app-bar__controls">
 			{% if can_deactivate %}
-				{% if request.user.lite_api_user_id|stringformat:"s" != data.user.id|stringformat:"s" %}
+				{% if request.session.lite_api_user_id|stringformat:"s" != data.user.id|stringformat:"s" %}
 					{% if data.user.status == 'Active' %}
 						<a id="button-deactivate-user" href="{% url 'users:change_status' data.user.id 'deactivate' %}" role="button" draggable="false" class="govuk-button govuk-button--secondary">
 							{% lcs 'users.UserProfile.DEACTIVATE_BUTTON' %}

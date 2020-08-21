@@ -74,7 +74,7 @@
 			</a>
 			<span class="app-header__separator"></span>
 			<a id="link-profile" class="app-header__link" href="{% url 'users:profile' %}" data-tooltip="View profile">
-				{{ request.user.first_name }}
+				{{ request.session.first_name }}
 				{% svg 'user' %}
 			</a>
 		</div>

@@ -22,19 +22,19 @@ def get_roles(request, organisation_id, convert_to_options=False, page=1):
 
 
 def get_role(request, pk):
-    organisation_id = str(request.user.organisation)
+    organisation_id = str(request.session["organisation"])
     data = get(request, ORGANISATIONS_URL + str(organisation_id) + ROLES_URL + str(pk))
     return data.json()["role"]
 
 
 def post_role(request, json):
-    organisation_id = str(request.user.organisation)
+    organisation_id = str(request.session["organisation"])
     data = post(request, ORGANISATIONS_URL + str(organisation_id) + ROLES_URL, json)
     return data.json(), data.status_code
 
 
 def put_role(request, pk, json):
-    organisation_id = request.user.organisation
+    organisation_id = request.session["organisation"]
     data = put(request, ORGANISATIONS_URL + str(organisation_id) + ROLES_URL + str(pk) + "/", json)
     return data.json(), data.status_code
 

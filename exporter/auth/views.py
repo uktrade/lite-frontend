@@ -3,29 +3,28 @@ import logging
 import sentry_sdk
 
 from django.conf import settings
-from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseServerError
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic.base import RedirectView, View, TemplateView
+from django.views.generic.base import View
 
+from core.auth import views as auth_views
 from exporter.auth.services import authenticate_exporter_user
 from exporter.auth.utils import get_client, AUTHORISATION_URL, TOKEN_SESSION_KEY, TOKEN_URL, get_profile
 from lite_forms.generators import error_page
 from exporter.organisation.members.services import get_user
 
 
-class AuthView(RedirectView):
+class AuthView(auth_views.AuthView):
     """
     Auth wrapper which connects to api
     """
 
-    def get_redirect_url(self, *args, **kwargs):
-        authorization_url, state = get_client(self.request).authorization_url(AUTHORISATION_URL)
+    AUTHORIZATION_URL = AUTHORISATION_URL
+    TOKEN_SESSION_KEY = TOKEN_SESSION_KEY
 
-        self.request.session[TOKEN_SESSION_KEY + "_oauth_state"] = state
-
-        return authorization_url
+    def get_client(self):
+        return get_client(self.request)
 
 
 class AuthCallbackView(View):
@@ -70,19 +69,13 @@ class AuthCallbackView(View):
         if status_code == 400:
             return error_page(request, response.get("errors")[0])
 
-        user = authenticate(request)
-        login(request, user)
-
         if status_code == 200:
-            user.user_token = response["token"]
-            user.first_name = response["first_name"]
-            user.last_name = response["last_name"]
-            user.lite_api_user_id = response["lite_api_user_id"]
-            user.organisation = None
-            user.save()
+
+            request.session["first_name"] = response["first_name"]
+            request.session["last_name"] = response["last_name"]
+            request.session["user_token"] = response["token"]
+            request.session["lite_api_user_id"] = response["lite_api_user_id"]
         elif status_code == 401:
-            user.organisation = None
-            user.save()
             return redirect("core:register_an_organisation_triage")
 
         user_dict = get_user(request)
@@ -92,18 +85,10 @@ class AuthCallbackView(View):
         elif len(user_dict["organisations"]) == 1:
             organisation = user_dict["organisations"][0]
             if organisation["status"]["key"] != "in_review":
-                user.organisation = user_dict["organisations"][0]["id"]
-                user.save()
+                request.session["organisation"] = user_dict["organisations"][0]["id"]
             else:
                 return redirect("core:register_an_organisation_confirm")
         elif len(user_dict["organisations"]) > 1:
             return redirect("core:pick_organisation")
 
         return redirect(getattr(settings, "LOGIN_REDIRECT_URL", "/"))
-
-
-class AuthLogoutView(TemplateView):
-    def get(self, request, **kwargs):
-        request.user.delete()
-        logout(request)
-        return redirect(settings.LOGOUT_URL + "https://" + request.get_host())

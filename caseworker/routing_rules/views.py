@@ -33,7 +33,7 @@ class RoutingRulesList(TemplateView):
         }
         data, _ = get_routing_rules(request, convert_dict_to_query_params(params))
 
-        user_data, _ = get_gov_user(request, str(request.user.lite_api_user_id))
+        user_data, _ = get_gov_user(request, str(request.session["lite_api_user_id"]))
 
         status = request.GET.get("status", "active")
 
@@ -52,7 +52,7 @@ class RoutingRulesList(TemplateView):
                         AutocompleteInput(
                             title=Filter.QUEUE,
                             name="queue",
-                            options=get_users_team_queues(request, request.user.lite_api_user_id, True),
+                            options=get_users_team_queues(request, request.session["lite_api_user_id"], True),
                         ),
                     ],
                 ),

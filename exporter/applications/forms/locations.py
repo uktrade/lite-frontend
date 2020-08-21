@@ -158,7 +158,7 @@ def external_locations_form(request, application_type):
             Checkboxes(
                 name="external_locations[]",
                 options=get_external_locations(
-                    request, str(request.user.organisation), True, exclude, application_type
+                    request, str(request.session["organisation"]), True, exclude, application_type
                 ),
                 filterable=True,
             ),
@@ -178,7 +178,7 @@ def sites_form(request, application_type):
             Filter(),
             Checkboxes(
                 name="sites[]",
-                options=get_sites(request, request.user.organisation, True, False, exclude),
+                options=get_sites(request, request.session["organisation"], True, False, exclude),
                 filterable=True,
             ),
         ],

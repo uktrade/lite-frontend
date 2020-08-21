@@ -54,7 +54,7 @@ from lite_forms.views import SingleFormView, MultiFormView
 class ApplicationsList(TemplateView):
     def get(self, request, **kwargs):
         params = {"page": int(request.GET.get("page", 1)), "submitted": str_to_bool(request.GET.get("submitted", True))}
-        organisation = get_organisation(request, request.user.organisation)
+        organisation = get_organisation(request, request.session["organisation"])
         applications = get_applications(request, **params)
 
         context = {

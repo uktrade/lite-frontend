@@ -50,7 +50,7 @@ class FlagsList(TemplateView):
         params = request.GET.copy()
         params["status"] = params.get("status", FlagStatus.ACTIVE.value)
         data = get_flags(request, **params)
-        user_data, _ = get_gov_user(request, str(request.user.lite_api_user_id))
+        user_data, _ = get_gov_user(request, str(request.session["lite_api_user_id"]))
 
         filters = FiltersBar(
             [
