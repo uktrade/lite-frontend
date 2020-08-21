@@ -29,9 +29,8 @@ if settings.FEATURE_SPIRE_SEARCH_ON:
 
 if settings.FEATURE_DEBUG_TOOLBAR_ON:
     import debug_toolbar
-    urlpatterns = [
-        path('__debug__/', include(debug_toolbar.urls)),
-    ] + urlpatterns
+
+    urlpatterns = [path("__debug__/", include(debug_toolbar.urls)),] + urlpatterns
 
 
 handler403 = views.error_403

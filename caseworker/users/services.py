@@ -45,7 +45,7 @@ def get_gov_user(request, pk=None):
     if pk:
         response = get(request, GOV_USERS_URL + str(pk))
     else:
-        if not hasattr(request, 'cached_get_gov_user_response'):
+        if not hasattr(request, "cached_get_gov_user_response"):
             request.cached_get_gov_user_response = get(request, GOV_USERS_URL + "me/")
         response = request.cached_get_gov_user_response
 

@@ -75,7 +75,7 @@ def add_visit_report_details(driver, context, visit_type, visit_date, overall_ri
 @then("I see the visit report details in details and the banner")
 def see_visit_report_details(driver, context):
     compliance_page = CompliancePages(driver)
-    visit_date = datetime.strptime(context.visit_date, '%Y-%m-%d').strftime(DATE_FORMAT)
+    visit_date = datetime.strptime(context.visit_date, "%Y-%m-%d").strftime(DATE_FORMAT)
     assert context.visit_type in compliance_page.get_visit_type()
     assert visit_date in compliance_page.get_visit_date()
     assert context.overall_risk in compliance_page.get_overall_risk()

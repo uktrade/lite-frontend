@@ -20,6 +20,5 @@ handler403 = "exporter.conf.views.handler403"
 
 if settings.FEATURE_DEBUG_TOOLBAR_ON:
     import debug_toolbar
-    urlpatterns = [
-        path('__debug__/', include(debug_toolbar.urls)),
-    ] + urlpatterns
+
+    urlpatterns = [path("__debug__/", include(debug_toolbar.urls)),] + urlpatterns

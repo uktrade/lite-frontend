@@ -31,7 +31,7 @@ MIDDLEWARE = [
 
 if FEATURE_DEBUG_TOOLBAR_ON:
     index = MIDDLEWARE.index("django.middleware.gzip.GZipMiddleware")
-    MIDDLEWARE.insert(index+1, "debug_toolbar.middleware.DebugToolbarMiddleware")
+    MIDDLEWARE.insert(index + 1, "debug_toolbar.middleware.DebugToolbarMiddleware")
 
 TEMPLATES = [
     {
