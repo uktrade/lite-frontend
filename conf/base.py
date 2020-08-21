@@ -30,7 +30,6 @@ ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 WSGI_APPLICATION = "conf.wsgi.application"
 
 INSTALLED_APPS = [
-    "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
@@ -133,12 +132,6 @@ else:
     AWS_REGION = env.str("AWS_REGION")
     AWS_STORAGE_BUCKET_NAME = env.str("AWS_STORAGE_BUCKET_NAME")
 
-# Database
-# https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-
-DATABASES = {
-    "default": env.db(),
-}
 
 LOGGING = {
     "version": 1,

@@ -16,7 +16,6 @@ def mock_spire_application_get(requests_mock):
     yield data
 
 
-@pytest.mark.django_db
 def test_feature_flag_on(settings, authorized_client, mock_gov_user):
     client = authorized_client(mock_gov_user["user"])
 
@@ -31,7 +30,6 @@ def test_feature_flag_on(settings, authorized_client, mock_gov_user):
     assert response.status_code == 200
 
 
-@pytest.mark.django_db
 def test_feature_flag_off(settings, authorized_client, mock_gov_user):
     client = authorized_client(mock_gov_user["user"])
 

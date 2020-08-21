@@ -28,14 +28,6 @@ image_python: &image_python
 image_python_browsers: &image_python_browsers
   image: circleci/python:3.7-browsers
 
-image_postgres: &image_postgres
-  image: circleci/postgres:9.5-alpine-ram
-  environment:
-    POSTGRES_USER: postgres
-    POSTGRES_PASSWORD: password
-    POSTGRES_DB: postgres
-
-
 ###############################################################################
 # Commands
 ###############################################################################
@@ -139,7 +131,6 @@ jobs:
   caseworker_unit_test:
     docker:
       - <<: *image_python
-      - <<: *image_postgres
     environment:
       <<: *common_env_vars
       PIPENV_DOTENV_LOCATION: example.caseworker.env
@@ -151,7 +142,6 @@ jobs:
   exporter_unit_test:
     docker:
       - <<: *image_python
-      - <<: *image_postgres
     environment:
       <<: *common_env_vars
       PIPENV_DOTENV_LOCATION: example.exporter.env
@@ -169,12 +159,10 @@ jobs:
       <<: *common_env_vars
       # not set PIPENV_DOTENV_LOCATION - instead set the env vars in circle
       DJANGO_SETTINGS_MODULE: conf.caseworker
-      DATABASE_URL: postgres://ubuntu:@localhost:5433/circle_test
       PYTEST_ADDOPTS: ui_tests/caseworker --capture=no --nomigrations
     steps:
       - run: sudo apt-get update
       - run: sudo apt-get --only-upgrade install google-chrome-stable
-      - run: sudo apt-get install libpq-dev postgresql-client
       - run: pyenv global 3.7.0
       - run: pip install pipenv
       - setup_code
@@ -191,12 +179,10 @@ jobs:
       <<: *common_env_vars
       # not set PIPENV_DOTENV_LOCATION - instead set the env vars in circle
       DJANGO_SETTINGS_MODULE: conf.exporter
-      DATABASE_URL: postgres://ubuntu:@localhost:5433/circle_test
       PYTEST_ADDOPTS: ui_tests/exporter --capture=no --nomigrations
     steps:
       - run: sudo apt-get update
       - run: sudo apt-get --only-upgrade install google-chrome-stable
-      - run: sudo apt-get install libpq-dev postgresql-client
       - run: pyenv global 3.7.0
       - run: pip install pipenv
       - setup_code

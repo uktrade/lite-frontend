@@ -37,7 +37,7 @@ def export_vars(request):
 
 def lite_menu(request):
     has_notifications = False
-    if request.user.is_authenticated:
+    if "lite_api_user_id" in request.session:
         permissions = get_user_permissions(request)
         notifications = get_menu_notifications(request)
         notification_data = notifications["notifications"]
