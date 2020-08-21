@@ -48,7 +48,7 @@ def dont_see_user(driver, context):
         users_page.is_user_email_displayed(context.added_email)
     except NoSuchElementException:
         pass
-    driver.implicitly_wait(10)
+    driver.implicitly_wait(60)
 
 
 @when("I reactivate new user")
@@ -110,7 +110,7 @@ def add_a_team_blue_ocean(driver, context):
     teams_pages = TeamsPages(driver)
     shared = Shared(driver)
     teams_pages.click_add_a_team_button()
-    context.team_name = "BlueOcean" + str(utils.get_formatted_date_time_y_m_d_h_s())
+    context.team_name = f"BlueOcean {utils.get_formatted_date_time_y_m_d_h_s()}"
     teams_pages.enter_team_name(context.team_name)
     shared.click_submit()
 

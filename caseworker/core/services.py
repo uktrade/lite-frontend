@@ -207,4 +207,7 @@ def get_pv_gradings(request, convert_to_options=False):
 
 
 def get_menu_notifications(request):
-    return get(request, NOTIFICATIONS_URL).json()
+    if not hasattr(request, "cached_get_menu_notifications"):
+        request.cached_get_menu_notifications = get(request, NOTIFICATIONS_URL)
+    response = request.cached_get_menu_notifications
+    return response.json()

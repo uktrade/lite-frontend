@@ -37,7 +37,7 @@ def export_vars(request):
 
 def lite_menu(request):
     has_notifications = False
-    try:
+    if "lite_api_user_id" in request.session:
         permissions = get_user_permissions(request)
         notifications = get_menu_notifications(request)
         notification_data = notifications["notifications"]
@@ -81,8 +81,6 @@ def lite_menu(request):
                 {"title": "Routing rules", "url": reverse_lazy("routing_rules:list"), "icon": "menu/routing-rules"},
             ),
         ]
-    except AttributeError:
-        # Tests dont provide a user which causes has_permission to error,
-        # so return an empty pages list so tests work
+    else:
         pages = []
     return {"LITE_MENU": [x for x in pages if x is not None], "MENU_NOTIFICATIONS": has_notifications}

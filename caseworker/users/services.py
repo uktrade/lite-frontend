@@ -43,10 +43,13 @@ def get_gov_users(request, params=None, convert_to_options=False):
 
 def get_gov_user(request, pk=None):
     if pk:
-        data = get(request, GOV_USERS_URL + str(pk))
+        response = get(request, GOV_USERS_URL + str(pk))
     else:
-        data = get(request, GOV_USERS_URL + "me/")
-    return data.json(), data.status_code
+        if not hasattr(request, "cached_get_gov_user_response"):
+            request.cached_get_gov_user_response = get(request, GOV_USERS_URL + "me/")
+        response = request.cached_get_gov_user_response
+
+    return response.json(), response.status_code
 
 
 def get_gov_user_from_form_selection(request, pk, json):

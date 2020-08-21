@@ -142,17 +142,11 @@ def i_click_add_a_new_good(driver):
 
 
 @when(parsers.parse('I attach a document to the good with description "{description}"'))  # noqa
-def i_attach_a_document_to_the_good(driver, description):
+def i_attach_a_document_to_the_good(driver, settings, description):
     file_to_be_deleted_name = "file_for_doc_upload_test_2.txt"
 
     # Path gymnastics to get the absolute path for $PWD/../resources/(file_to_upload_x) that works everywhere
-    file_to_upload_abs_path = os.path.abspath(
-        os.path.join(os.path.dirname(__file__), os.pardir, "resources", file_to_be_deleted_name)
-    )
-    if "ui_tests" not in file_to_upload_abs_path:
-        file_to_upload_abs_path = os.path.abspath(
-            os.path.join(os.path.dirname(__file__), os.pardir, "ui_tests/resources", file_to_be_deleted_name)
-        )
+    file_to_upload_abs_path = os.path.join(settings.BASE_DIR, "ui_tests/resources", file_to_be_deleted_name)
 
     attach_document_page = AttachDocumentPage(driver)
     attach_document_page.choose_file(file_to_upload_abs_path)

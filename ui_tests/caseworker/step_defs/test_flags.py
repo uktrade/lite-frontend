@@ -16,7 +16,7 @@ scenarios("../features/flags.feature", strict_gherkin=False)
 @when(parsers.parse('I add a new flag with blocking approval set to "{blocks_approval}"'))
 def add_flag(driver, context, blocks_approval):
     add_edit_flag_page = AddEditFlagPage(driver)
-    context.flag_name = "UAE" + utils.get_formatted_date_time_d_h_m_s()
+    context.flag_name = f"UAE {utils.get_formatted_date_time_d_h_m_s()}"[:24]
 
     FlagsListPage(driver).click_add_a_flag_button()
 
@@ -36,7 +36,7 @@ def edit_existing_flag(driver, context):
     add_edit_flag_page = AddEditFlagPage(driver)
     flags_list_page.click_edit_link()
 
-    context.flag_name = "Edited flag" + utils.get_formatted_date_time_d_h_m_s()
+    context.flag_name = f"Edited flag {utils.get_formatted_date_time_d_h_m_s()}"
     add_edit_flag_page.enter_name(context.flag_name)
     add_edit_flag_page.select_colour("red")
     add_edit_flag_page.enter_label("Hard to Find")

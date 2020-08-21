@@ -73,7 +73,7 @@
 									{{ SERVICE_NAME }} {% if user.organisation_name  %} - {{ user.organisation_name }}{%  endif %}
 								</a>
 							{% endblock %}
-							{% if user.is_authenticated %}
+							{% if request.session.lite_api_user_id %}
 								<a href="{% url 'auth:logout' %}" class="govuk-header__link app-header__link--sign-out" id="link-sign-out">Sign out</a>
 							{% endif %}
 						</div>
