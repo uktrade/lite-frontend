@@ -5,7 +5,6 @@ from http import HTTPStatus
 import requests
 
 from django.conf import settings
-from django.contrib.auth.models import AnonymousUser
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from mohawk import Sender
@@ -124,9 +123,9 @@ def _get_headers(request, sender=None, content_type=None):
     if content_type:
         headers["content-type"] = content_type
 
-    if not isinstance(request.user, AnonymousUser):
-        headers["EXPORTER-USER-TOKEN"] = str(request.user.user_token)
-        headers["ORGANISATION-ID"] = str(request.user.organisation)
+    if "user_token" in request.session:
+        headers["EXPORTER-USER-TOKEN"] = str(request.session["user_token"])
+        headers["ORGANISATION-ID"] = str(request.session.get("organisation"))
 
     return headers
 

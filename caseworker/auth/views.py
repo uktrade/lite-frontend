@@ -2,29 +2,25 @@ import logging
 
 import sentry_sdk
 
-from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseBadRequest, HttpResponseServerError
 from django.shortcuts import redirect
-from django.views.generic.base import RedirectView, View, TemplateView
+from django.views.generic.base import View
 
 from caseworker.auth.services import authenticate_gov_user
 from caseworker.auth.utils import get_client, AUTHORISATION_URL, TOKEN_SESSION_KEY, TOKEN_URL, get_profile
 from django.conf import settings
-from caseworker.core.models import User
 from lite_content.lite_internal_frontend import strings
 from lite_forms.generators import error_page
+from core.auth import views as auth_views
 
 
-class AuthView(RedirectView):
-    permanent = False
+class AuthView(auth_views.AuthView):
 
-    def get_redirect_url(self, *args, **kwargs):
+    TOKEN_SESSION_KEY = TOKEN_SESSION_KEY
+    AUTHORIZATION_URL = AUTHORISATION_URL
 
-        authorization_url, state = get_client(self.request).authorization_url(AUTHORISATION_URL)
-
-        self.request.session[TOKEN_SESSION_KEY + "_oauth_state"] = state
-
-        return authorization_url
+    def get_client(self):
+        return get_client(self.request)
 
 
 class AuthCallbackView(View):
@@ -69,20 +65,12 @@ class AuthCallbackView(View):
                 show_back_link=False,
             )
 
-        # create the user
-        user = authenticate(request)
-        user.default_queue = response["default_queue"]
-        user.user_token = response["token"]
-        user.lite_api_user_id = response["lite_api_user_id"]
-        user.save()
-        if user is not None:
-            login(request, user)
+        request.session["first_name"] = profile["first_name"]
+        request.session["last_name"] = profile["last_name"]
+
+        request.session["default_queue"] = response["default_queue"]
+        request.session["user_token"] = response["token"]
+        request.session["lite_api_user_id"] = response["lite_api_user_id"]
+        request.session.save()
 
         return redirect(getattr(settings, "LOGIN_REDIRECT_URL", "/"))
-
-
-class AuthLogoutView(TemplateView):
-    def get(self, request, **kwargs):
-        User.objects.get(id=request.user.id).delete()
-        logout(request)
-        return redirect(settings.LOGOUT_URL)

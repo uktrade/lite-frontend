@@ -34,7 +34,7 @@ class Cases(TemplateView):
         """
         Show a list of cases pertaining to the given queue
         """
-        queue_pk = kwargs.get("queue_pk") or request.user.default_queue
+        queue_pk = kwargs.get("queue_pk") or request.session["default_queue"]
         queue = get_queue(request, queue_pk)
 
         context = {
@@ -57,7 +57,7 @@ class QueuesList(TemplateView):
         page = request.GET.get("page", 1)
         name = request.GET.get("name")
         queues = get_queues(request, page=page, disable_pagination=False, name=name)
-        user_data, _ = get_gov_user(request, str(request.user.lite_api_user_id))
+        user_data, _ = get_gov_user(request, str(request.session["lite_api_user_id"]))
 
         filters = FiltersBar([TextInput(name="name", title="name"),])
 
@@ -99,7 +99,7 @@ class CaseAssignments(SingleFormView):
         assigned_users = [
             assignment["user"] for assignment in case_assignments["case_assignments"] if assignment["case"] in case_ids
         ]
-        user_data, _ = get_gov_user(request, str(request.user.lite_api_user_id))
+        user_data, _ = get_gov_user(request, str(request.session["lite_api_user_id"]))
 
         self.data = {"users": assigned_users}
         self.form = assign_users_form(request, user_data["user"]["team"]["id"], queue, len(case_ids) > 1)

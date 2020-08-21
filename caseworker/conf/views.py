@@ -1,7 +1,6 @@
 import sentry_sdk
 
 from django.conf import settings
-from django.contrib.auth import authenticate, login
 from django.http import HttpResponseBadRequest, HttpResponseServerError
 from django.shortcuts import redirect, render
 from django.views.generic.base import RedirectView, View
@@ -52,12 +51,6 @@ class AuthCallbackView(View):
         # would raise in this instance.
         except BaseException as base_exception:
             sentry_sdk.capture_exception(base_exception)
-
-        # create the user
-        user = authenticate(request)
-
-        if user is not None:
-            login(request, user)
 
         return redirect(getattr(settings, "LOGIN_REDIRECT_URL", "/"))
 

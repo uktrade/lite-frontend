@@ -19,7 +19,7 @@ class Sites(OrganisationView):
 
 class NewSite(MultiFormView):
     def init(self, request, **kwargs):
-        self.object_pk = request.user.organisation
+        self.object_pk = request.session["organisation"]
         self.forms = new_site_forms(request)
         self.action = post_sites
 
@@ -36,7 +36,7 @@ class NewSite(MultiFormView):
 
 class ViewSite(TemplateView):
     def get(self, request, *args, **kwargs):
-        organisation_id = str(request.user.organisation)
+        organisation_id = str(request.session["organisation"])
         site = get_site(request, organisation_id, kwargs["pk"])
         organisation = get_organisation(request, organisation_id)
 
@@ -50,7 +50,7 @@ class ViewSite(TemplateView):
 class EditSiteName(SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
-        site = get_site(request, request.user.organisation, self.object_pk)
+        site = get_site(request, request.session["organisation"], self.object_pk)
         self.data = site
         self.form = edit_site_name_form(site)
         self.action = update_site
@@ -60,7 +60,7 @@ class EditSiteName(SingleFormView):
 class EditSiteRecordsLocation(SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
-        site = get_site(request, request.user.organisation, self.object_pk)
+        site = get_site(request, request.session["organisation"], self.object_pk)
         in_uk = site["address"]["country"]["id"] == "GB"
         self.form = site_records_location(request, in_uk=in_uk, is_editing=True)
         self.action = update_site

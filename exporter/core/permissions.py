@@ -10,7 +10,7 @@ def validate_is_in_organisation_type(request, organisation_types):
     organisation_types can be a string or list,
     expected values contain: 'hmrc', 'commercial', 'individual'
     """
-    organisation = get_organisation(request, request.user.organisation)
+    organisation = get_organisation(request, request.session["organisation"])
 
     if not organisation["type"]["key"] in organisation_types:
         raise Http404

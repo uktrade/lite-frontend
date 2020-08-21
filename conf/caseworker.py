@@ -17,7 +17,6 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.gzip.GZipMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -44,7 +43,6 @@ TEMPLATES = [
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
-                "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "caseworker.conf.context_processors.current_queue",
                 "caseworker.conf.context_processors.export_vars",
@@ -57,12 +55,9 @@ TEMPLATES = [
 
 
 LOGIN_REDIRECT_URL = "/"
-LOGOUT_URL = f"{AUTHBROKER_URL}/logout/"
+LOGOUT_URL = f"{AUTHBROKER_URL}/logout/?next="
 
-AUTHENTICATION_BACKENDS = [
-    "django.contrib.auth.backends.ModelBackend",
-    "caseworker.auth.backends.AuthbrokerBackend",
-]
+AUTHENTICATION_BACKENDS = []
 
 # The maximum number of parameters that may be received via GET or POST
 # before a SuspiciousOperation (TooManyFields) is raised.

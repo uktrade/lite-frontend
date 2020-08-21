@@ -17,8 +17,8 @@ def mock_spire_application_get(requests_mock):
 
 
 @pytest.mark.django_db
-def test_feature_flag_on(settings, client, user):
-    client.force_login(user)
+def test_feature_flag_on(settings, authorized_client, mock_gov_user):
+    client = authorized_client(mock_gov_user["user"])
 
     # given the feature flag is enabled
     settings.FEATURE_SPIRE_SEARCH_ON = True
@@ -32,7 +32,9 @@ def test_feature_flag_on(settings, client, user):
 
 
 @pytest.mark.django_db
-def test_feature_flag_off(settings, client, user):
+def test_feature_flag_off(settings, authorized_client, mock_gov_user):
+    client = authorized_client(mock_gov_user["user"])
+
     # enabling the feature to allow generating the url
     settings.FEATURE_SPIRE_SEARCH_ON = True
     reload_urlconf()

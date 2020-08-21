@@ -17,7 +17,6 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.gzip.GZipMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -42,7 +41,6 @@ TEMPLATES = [
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
-                "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "exporter.conf.context_processors.export_vars",
             ],
@@ -55,10 +53,7 @@ TEMPLATES = [
 LOGIN_REDIRECT_URL = reverse_lazy("core:home")
 LOGOUT_URL = f"{AUTHBROKER_URL}/sso/accounts/logout/?next="
 
-AUTHENTICATION_BACKENDS = [
-    "django.contrib.auth.backends.ModelBackend",
-    "exporter.auth.backends.AuthbrokerBackend",
-]
+AUTHENTICATION_BACKENDS = []
 
 FEEDBACK_URL = env.str("FEEDBACK_URL")
 INTERNAL_FRONTEND_URL = env.str("INTERNAL_FRONTEND_URL")

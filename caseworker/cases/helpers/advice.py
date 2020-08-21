@@ -127,7 +127,7 @@ def flatten_advice_data(request, case: Case, items: List[Dict], level):
         level = "final"
 
     pre_filtered_advice = filter_advice_by_user(
-        filter_advice_by_level(case["advice"], level), request.user.lite_api_user_id
+        filter_advice_by_level(case["advice"], level), request.session["lite_api_user_id"]
     )
     filtered_advice = []
 

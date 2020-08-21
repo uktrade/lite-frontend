@@ -6,6 +6,7 @@ from django.shortcuts import redirect
 from django.urls import resolve, reverse_lazy
 from s3chunkuploader.file_handler import UploadFailed
 
+from exporter.auth.utils import get_client
 from lite_content.lite_exporter_frontend import strings
 from lite_forms.generators import error_page
 
@@ -15,7 +16,8 @@ class ProtectAllViewsMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        if not request.user.is_authenticated:
+        client = get_client(request)
+        if not client.authorized:
             name = f"{resolve(request.path).app_name}:{resolve(request.path).url_name}"
             allowed_paths = ["auth:login", "auth:callback", "core:home", "core:register_an_organisation"]
 
@@ -49,7 +51,7 @@ class LoggingMiddleware:
         start = time.time()
         request.correlation = uuid.uuid4().hex
         data = {
-            "user": request.user.lite_api_user_id if hasattr(request.user, "lite_api_user_id") else None,
+            "user": request.session.get("lite_api_user_id"),
             "message": "liteolog exporter",
             "corrID": request.correlation,
             "type": "http request",

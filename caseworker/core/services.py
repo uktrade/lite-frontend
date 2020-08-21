@@ -66,7 +66,7 @@ def get_statuses(request, convert_to_options=False):
 def get_permissible_statuses(request, case):
     """ Get a list of case statuses permissible for the user's role. """
 
-    user, _ = get_gov_user(request, str(request.user.lite_api_user_id))
+    user, _ = get_gov_user(request, str(request.session["lite_api_user_id"]))
     user_permissible_statuses = user["user"]["role"]["statuses"]
     statuses, _ = get_statuses(request)
     case_sub_type = case["case_type"]["sub_type"]["key"]
