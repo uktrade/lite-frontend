@@ -16,11 +16,11 @@ def click_attach_documents(driver):
 
 
 @when(parsers.parse('I upload file "{filename}" with description "{description}"'))
-def upload_a_file(driver, filename, description):
+def upload_a_file(driver, filename, description, settings):
     attach_document_page = AttachDocumentPage(driver)
 
     # Path gymnastics to get the absolute path for $PWD/../resources/(file_to_upload_x) that works everywhere
-    file_to_upload_abs_path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, "resources", filename))
+    file_to_upload_abs_path = os.path.join(settings.BASE_DIR, "ui_tests/resources", filename)
 
     attach_document_page.choose_file(file_to_upload_abs_path)
     attach_document_page.enter_description(description)

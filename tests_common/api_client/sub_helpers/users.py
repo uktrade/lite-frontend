@@ -1,50 +1,36 @@
 import base64
 import os
 
-
-class Users:
-    def __init__(self, api_client, request_data, **kwargs):
-        super().__init__(**kwargs)
-        self.api_client = api_client
-        self.request_data = request_data
-
-    def add_user(self, data, url, token_name, user_type):
-        response = self.api_client.make_request(
-            method="POST", url=url, body=data, headers=self.api_client.gov_headers
-        ).json()
-        self.api_client.add_to_context(token_name, response["token"])
-        self.api_client.add_to_context(user_type + "_id", response["lite_api_user_id"])
+from directory_sso_api_client.client import sso_api_client
 
 
-def post_user_to_great_sso():
-    from directory_sso_api_client.client import sso_api_client
+AUTH_USER_NAME = os.environ.get("AUTH_USER_NAME")
+AUTH_USER_PASSWORD = os.environ.get("AUTH_USER_PASSWORD")
+BASIC_AUTH_ENABLED = os.environ.get("BASIC_AUTH_ENABLED")
 
-    class BasicAuthenticator:
-        def __init__(self, username: str, password: str):
-            credentials = f"{username}:{password}"
-            encoded_credentials = base64.b64encode(credentials.encode("ascii"))
-            self.headers = {"Authorization": f"Basic {encoded_credentials.decode('ascii')}"}
 
-    basic_authenticator = None
-    if os.getenv("TEST_TYPE_BROWSER_STACK", "False") == "True":
-        auth_user_name = os.environ.get("AUTH_USER_NAME")
-        auth_user_password = os.environ.get("AUTH_USER_PASSWORD")
-        basic_authenticator = BasicAuthenticator(auth_user_name, auth_user_password)
+class BasicAuthenticator:
+    def __init__(self, username: str, password: str):
+        credentials = f"{username}:{password}"
+        encoded_credentials = base64.b64encode(credentials.encode("ascii"))
+        self.headers = {"Authorization": f"Basic {encoded_credentials.decode('ascii')}"}
 
-    response = sso_api_client.post("/testapi/test-users/", data={}, authenticator=basic_authenticator).json()
-    exporter_sso_email = response["email"]
-    name = str(response["first_name"]) + " " + str(response["last_name"])
-    first_name, last_name = name.split(" ")
-    exporter_sso_password = response["password"]
-    sso_api_client.patch(
-        url=f"testapi/user-by-email/{exporter_sso_email}/",
-        data={"is_verified": True},
-        authenticator=basic_authenticator,
+
+def create_great_sso_user():
+    if BASIC_AUTH_ENABLED == "True":
+        auth_user_name = AUTH_USER_NAME
+        auth_user_password = AUTH_USER_PASSWORD
+        authenticator = BasicAuthenticator(auth_user_name, auth_user_password)
+    else:
+        authenticator = None
+
+    response_create = sso_api_client.post("/testapi/test-users/", authenticator=authenticator)
+    response_create.raise_for_status()
+    parsed = response_create.json()
+
+    response_update = sso_api_client.patch(
+        url=f"testapi/user-by-email/{parsed['email']}/", data={"is_verified": True}, authenticator=authenticator
     )
+    response_update.raise_for_status()
 
-    return {
-        "email": exporter_sso_email,
-        "password": exporter_sso_password,
-        "first_name": first_name,
-        "last_name": last_name,
-    }
+    return parsed

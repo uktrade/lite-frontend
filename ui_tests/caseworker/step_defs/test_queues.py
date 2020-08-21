@@ -31,7 +31,7 @@ def click_on_edit_queue(driver, context):
 def edit_queue_with_countersigning(driver, context):
     queues = QueuesPages(driver)
     no = utils.get_element_index_by_text(
-        Shared(driver).get_rows_in_lite_table(), context.queue_name, complete_match=False
+        Shared(driver).get_rows_in_lite_table(), context.queue_name, complete_match=True
     )
     queues.click_queue_edit_button(no)
     QueuesPages(driver).select_countersigning_queue(context.countersigning_queue_name)
@@ -78,6 +78,6 @@ def system_queue_shown_in_dropdown(driver, queue_name):  # noqa
 
 @given("a new countersigning queue has been created")  # noqa
 def create_countersigning_queue(context, api_test_client):  # noqa
-    api_test_client.queues.add_queue("countersigningqueue" + utils.get_formatted_date_time_y_m_d_h_s())
+    api_test_client.queues.add_queue(f"countersigningqueue {utils.get_formatted_date_time_y_m_d_h_s()}")
     context.countersigning_queue_name = api_test_client.context["queue_name"]
     context.countersigning_queue_id = api_test_client.context["queue_id"]

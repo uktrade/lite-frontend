@@ -34,7 +34,7 @@ class GoodsQueriesPages(BasePage):
         self.driver.find_element_by_id(self.BUTTON_GRADING_RESPOND_ID).click()
 
     def click_is_good_controlled(self, answer):
-        WebDriverWait(self.driver, 10).until(
+        WebDriverWait(self.driver, 60).until(
             expected_conditions.presence_of_element_located((By.ID, self.CONTROL_RESPONSE + answer))
         ).click()
 
@@ -50,7 +50,7 @@ class GoodsQueriesPages(BasePage):
         self.driver.implicitly_wait(0)
         if self.driver.find_element_by_class_name("govuk-details").get_attribute("open") is None:
             self.driver.find_element_by_class_name("govuk-details__summary-text").click()
-        self.driver.implicitly_wait(10)
+        self.driver.implicitly_wait(60)
         scroll_to_element_by_id(self.driver, self.COMMENT)
         self.driver.find_element_by_id(self.COMMENT).send_keys(comment)
 

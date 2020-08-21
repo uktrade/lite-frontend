@@ -1,4 +1,6 @@
+from django.conf import settings
 from django.urls import include, path
+
 
 urlpatterns = [
     path("", include("exporter.core.urls")),
@@ -15,3 +17,8 @@ urlpatterns = [
 ]
 
 handler403 = "exporter.conf.views.handler403"
+
+if settings.FEATURE_DEBUG_TOOLBAR_ON:
+    import debug_toolbar
+
+    urlpatterns = [path("__debug__/", include(debug_toolbar.urls)),] + urlpatterns

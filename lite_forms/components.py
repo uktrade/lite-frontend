@@ -644,7 +644,7 @@ class Link:
         self.input_type = "link"
 
     def __eq__(self, other):
-        return other.text == self.text and other.address == self.address
+        return getattr(other, "text", None) == self.text and getattr(other, "address", None) == self.address
 
 
 class FiltersBar:

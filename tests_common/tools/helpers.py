@@ -9,22 +9,26 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-now = timezone.localdate().isoformat()
-file_path = path.abspath(path.join(path.dirname(path.abspath(__file__)), pardir))
-screen_dir = path.join(file_path, "screenshot", str(now))
+from django.conf import settings
+
+
+now = timezone.localtime().isoformat()
+
+screen_dir = path.join(settings.BASE_DIR, "ui_tests/screenshots")
+
 PAGE_LIMIT = 100
 
 
 def get_current_date_time_string():
-    return timezone.localdate().strftime("%Y/%m/%d %H:%M:%S:%f")
+    return timezone.localtime().strftime("%Y/%m/%d %H:%M:%S:%f")
 
 
 def get_formatted_date_time_m_d_h_s():
-    return timezone.localdate().strftime("%m%d%H%M%S")
+    return timezone.localtime().strftime("%m%d%H%M%S")
 
 
 def get_formatted_date_time_y_m_d_h_s():
-    return timezone.localdate().strftime("%Y%m%d%H%M%S")
+    return timezone.localtime().strftime("%Y%m%d%H%M%S")
 
 
 def repeat_to_length(string_to_expand, length):
@@ -34,12 +38,12 @@ def repeat_to_length(string_to_expand, length):
 def screen_path():
     if not path.exists(screen_dir):
         makedirs(screen_dir)
-        chmod(screen_dir, 0o644)
     return screen_dir
 
 
 def save_screenshot(driver, name):
-    driver.get_screenshot_as_file(path.join(screen_path(), str(name) + now + ".png"))
+    location = path.join(screen_path(), str(name) + ".png")
+    driver.get_screenshot_as_file(location)
     attach(
         driver.get_screenshot_as_png(), now, attachment_type=attachment_type.PNG,
     )
@@ -157,18 +161,18 @@ def search_for_correct_date_regex_in_element(element):
 
 
 def get_formatted_date_time_h_m_pm_d_m_y():
-    time = timezone.localdate().strftime("%I:%M%p %d %B %Y").replace("PM", "pm").replace("AM", "am")
+    time = timezone.localtime().strftime("%I:%M%p %d %B %Y").replace("PM", "pm").replace("AM", "am")
     if time[0] == "0":
         time = time[1:]
     return time
 
 
 def get_unformatted_date_time():
-    return timezone.localdate()
+    return timezone.localtime()
 
 
 def get_formatted_date_time_d_h_m_s():
-    return str(timezone.localdate().strftime(" %d%H%M%S"))
+    return str(timezone.localtime().strftime("%d%H%M%S"))
 
 
 def page_is_ready(driver):
@@ -191,7 +195,7 @@ def find_paginated_item_by_id(id, driver):
                 driver.find_element_by_id(f"page-{current_page}").click()
             except NoSuchElementException:
                 pass
-    driver.implicitly_wait(10)
+    driver.implicitly_wait(60)
     assert element_is_found, f"'{id}' couldn't be found across {current_page} pages"
     return element_is_found
 
@@ -214,7 +218,7 @@ def paginated_item_exists(item_id, driver, exists=True):
             except NoSuchElementException:
                 element_is_found = False
                 break
-    driver.implicitly_wait(10)
+    driver.implicitly_wait(60)
     return bool(element_is_found) == exists
 
 
@@ -236,7 +240,7 @@ def paginated_item_exists_by_css(css, driver, exists=True):
             except NoSuchElementException:
                 element_is_found = False
                 break
-    driver.implicitly_wait(10)
+    driver.implicitly_wait(60)
     return bool(element_is_found) == exists
 
 
@@ -251,7 +255,7 @@ def get_text_of_multi_page_table(css_selector, driver):
             driver.find_element_by_id(f"page-{current_page}").click()
         except NoSuchElementException:
             break
-    driver.implicitly_wait(10)
+    driver.implicitly_wait(60)
     return text
 
 
@@ -260,7 +264,7 @@ def strip_special_characters(string):
 
 
 def get_current_date_time(format_date_time=True):
-    date_time = timezone.localdate()
+    date_time = timezone.localtime()
     if not format_date_time:
         return date_time
     return strip_special_characters(str(date_time))

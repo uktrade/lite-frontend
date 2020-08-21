@@ -121,7 +121,7 @@ def click_edit(driver, context):
 
 @given("an anonymous user applies for an organisation")
 def in_review_organisation(context, api_test_client):
-    data = build_organisation("Org-" + get_current_date_time(), "commercial", "Address-" + get_current_date_time())
+    data = build_organisation(f"Org-{get_current_date_time()}", "commercial", "Address-" + get_current_date_time())
     response = api_test_client.organisations.anonymous_user_create_org(data)
     context.organisation_id = response["id"]
     context.organisation_name = response["name"]
