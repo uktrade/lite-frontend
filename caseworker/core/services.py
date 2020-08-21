@@ -1,8 +1,8 @@
 from collections import defaultdict
 
 from caseworker.cases.constants import CaseType, CaseStatusEnum
-from caseworker.conf.client import get
-from caseworker.conf.constants import (
+from caseworker.core.client import get
+from caseworker.core.constants import (
     DENIAL_REASONS_URL,
     COUNTRIES_URL,
     STATUSES_URL,

@@ -6,7 +6,7 @@ from ui_tests.caseworker.pages.advice import FinalAdvicePage, TeamAdvicePage
 from ui_tests.caseworker.pages.case_page import CasePage, CaseTabs
 from ui_tests.caseworker.pages.goods_queries_pages import GoodsQueriesPages
 
-from caseworker.conf.constants import DATE_FORMAT
+from caseworker.core.constants import DATE_FORMAT
 from ui_tests.caseworker.fixtures.env import environment  # noqa
 from ui_tests.caseworker.fixtures.add_a_flag import (  # noqa
     add_case_flag,

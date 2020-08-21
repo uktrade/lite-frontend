@@ -1,7 +1,7 @@
 from django.urls import reverse_lazy
 
 from exporter.applications.forms.edit import told_by_an_official_form, reference_name_form
-from exporter.conf.constants import STANDARD
+from exporter.core.constants import STANDARD
 from lite_content.lite_exporter_frontend import strings
 from lite_content.lite_exporter_frontend.applications import ApplicationSuccessPage
 from lite_forms.components import (

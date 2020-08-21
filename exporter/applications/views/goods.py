@@ -16,7 +16,7 @@ from exporter.applications.services import (
     delete_application_preexisting_good,
     add_document_data,
 )
-from exporter.conf.constants import EXHIBITION, APPLICANT_EDITING
+from exporter.core.constants import EXHIBITION, APPLICANT_EDITING
 from exporter.core.helpers import convert_dict_to_query_params
 from exporter.goods.forms import (
     document_grading_form,

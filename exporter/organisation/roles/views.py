@@ -1,6 +1,6 @@
 from django.urls import reverse_lazy
 
-from exporter.conf.constants import SUPER_USER_ROLE_ID, DEFAULT_USER_ROLE_ID
+from exporter.core.constants import SUPER_USER_ROLE_ID, DEFAULT_USER_ROLE_ID
 from lite_forms.views import SingleFormView
 from exporter.organisation.members.services import get_user
 from exporter.organisation.roles.forms import add_role

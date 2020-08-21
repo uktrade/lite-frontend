@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView
 
-from caseworker.conf.constants import Permission
+from caseworker.core.constants import Permission
 from caseworker.core.helpers import convert_dict_to_query_params
 from caseworker.core.objects import Tab
 from caseworker.core.services import get_user_permissions, get_menu_notifications

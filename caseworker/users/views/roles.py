@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import TemplateView
 
-from caseworker.conf.constants import SUPER_USER_ROLE_ID
+from caseworker.core.constants import SUPER_USER_ROLE_ID
 from caseworker.core.services import get_user_permissions
 from lite_content.lite_internal_frontend import strings
 from lite_content.lite_internal_frontend.roles import ManageRolesPage

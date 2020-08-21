@@ -1,4 +1,4 @@
-from exporter.conf.constants import STANDARD, OPEN
+from exporter.core.constants import STANDARD, OPEN
 from lite_content.lite_exporter_frontend import generic
 from lite_content.lite_exporter_frontend.applications import (
     EndUseDetails,

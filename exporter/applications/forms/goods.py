@@ -1,6 +1,6 @@
 from django.urls import reverse_lazy
 
-from exporter.conf.constants import EXHIBITION
+from exporter.core.constants import EXHIBITION
 from exporter.core.services import get_units, get_item_types
 from exporter.goods.helpers import good_summary
 from lite_content.lite_exporter_frontend import strings

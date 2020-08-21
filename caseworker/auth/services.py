@@ -1,5 +1,5 @@
-from caseworker.conf.client import post
-from caseworker.conf.constants import AUTHENTICATION_URL
+from caseworker.core.client import post
+from caseworker.core.constants import AUTHENTICATION_URL
 
 
 def authenticate_gov_user(request, json):

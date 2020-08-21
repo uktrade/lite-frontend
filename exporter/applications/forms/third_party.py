@@ -7,7 +7,7 @@ from exporter.applications.forms.parties import (
     party_type_form,
     clearance_level_forms,
 )
-from exporter.conf.constants import PERMANENT, F680
+from exporter.core.constants import PERMANENT, F680
 from lite_content.lite_exporter_frontend.applications import ThirdPartyForm, PartyForm, PartyTypeForm
 from lite_forms.components import BackLink, RadioButtons, Form, Option, FormGroup, TextInput
 

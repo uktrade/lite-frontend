@@ -1,6 +1,6 @@
 from django.urls import path
 
-from caseworker.conf.constants import Permission
+from caseworker.core.constants import Permission
 from caseworker.core.helpers import decorate_patterns_with_permission
 from caseworker.picklists import views
 

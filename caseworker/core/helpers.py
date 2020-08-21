@@ -1,8 +1,8 @@
 from collections import defaultdict
 from typing import List
 
-from caseworker.conf import decorators
-from caseworker.conf.constants import Permission
+from caseworker.core import decorators
+from caseworker.core.constants import Permission
 from caseworker.core.services import get_user_permissions
 from lite_forms.components import FiltersBar, Option, Select, DateInput
 

@@ -6,7 +6,7 @@ from caseworker.cases.constants import CaseType
 from caseworker.cases.forms.finalise_case import approve_licence_form
 from caseworker.cases.objects import Case
 from caseworker.cases.services import get_application_default_duration
-from caseworker.conf.constants import Permission
+from caseworker.core.constants import Permission
 from caseworker.core import helpers
 from caseworker.core.components import PicklistPicker
 from caseworker.core.helpers import has_permission

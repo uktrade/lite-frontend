@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
-from caseworker.conf.client import get, post, put
-from caseworker.conf.constants import (
+from caseworker.core.client import get, post, put
+from caseworker.core.constants import (
     ORGANISATIONS_URL,
     SITES_URL,
     USERS_URL,

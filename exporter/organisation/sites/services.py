@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
-from exporter.conf.client import get, post, put, patch
-from exporter.conf.constants import SITES_URL, ORGANISATIONS_URL, NEWLINE, USERS_URL
+from exporter.core.client import get, post, put, patch
+from exporter.core.constants import SITES_URL, ORGANISATIONS_URL, NEWLINE, USERS_URL
 from exporter.core.helpers import convert_value_to_query_param
 from lite_content.lite_exporter_frontend import strings
 from lite_content.lite_exporter_frontend.sites import AddSiteForm

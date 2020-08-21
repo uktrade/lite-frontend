@@ -3,8 +3,8 @@ from urllib.parse import urlencode
 
 from django.http import StreamingHttpResponse, HttpResponse
 
-from exporter.conf.client import get, post, put, delete
-from exporter.conf.constants import (
+from exporter.core.client import get, post, put, delete
+from exporter.core.constants import (
     UNITS_URL,
     APPLICATIONS_URL,
     STATIC_COUNTRIES_URL,

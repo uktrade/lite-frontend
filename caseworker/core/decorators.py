@@ -1,10 +1,11 @@
 from django.utils.functional import wraps
 
-from exporter.conf.exceptions import PermissionDeniedError
-from exporter.core import helpers
+from caseworker.core.constants import Permission
+from caseworker.core.exceptions import PermissionDeniedError
+from caseworker.core import helpers
 
 
-def has_permission(permission):
+def has_permission(permission: Permission):
     """
     Decorator for views that checks that the user has a given permission
     """
@@ -12,12 +13,11 @@ def has_permission(permission):
     def decorator(view_func):
         @wraps(view_func)
         def _wrapped_view(request, *args, **kwargs):
-            has_permission_bool, permissions = helpers.has_permission(request, permission)
-            if has_permission_bool:
-                return view_func(request, *args, **kwargs, permissions=permissions)
+            if helpers.has_permission(request, permission):
+                return view_func(request, *args, **kwargs)
 
             raise PermissionDeniedError(
-                f"You don't have the permission '{permission}' to view this, "
+                f"You don't have the permission '{permission.value}' to view this, "
                 "check urlpatterns or the function decorator if you want to change "
                 "this functionality."
             )

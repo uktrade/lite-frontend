@@ -42,7 +42,7 @@ TEMPLATES = [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
                 "django.contrib.messages.context_processors.messages",
-                "exporter.conf.context_processors.export_vars",
+                "exporter.core.context_processors.export_vars",
             ],
             "builtins": ["core.builtins.custom_tags"],
         },

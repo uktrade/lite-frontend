@@ -4,7 +4,7 @@ from django.views.generic import TemplateView
 from exporter.applications.forms.third_party import third_party_forms
 from exporter.applications.services import get_application, post_party, delete_party, validate_party
 from exporter.applications.views.parties.base import AddParty, CopyParties, SetParty, DeleteParty, CopyAndSetParty
-from exporter.conf.constants import F680
+from exporter.core.constants import F680
 from lite_content.lite_exporter_frontend.applications import ThirdPartyForm, ThirdPartyPage
 
 

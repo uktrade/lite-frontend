@@ -1,7 +1,7 @@
 import functools
 
-from caseworker.conf.client import get, post, put, patch
-from caseworker.conf.constants import FLAGS_URL, FLAGGING_RULES
+from caseworker.core.client import get, post, put, patch
+from caseworker.core.constants import FLAGS_URL, FLAGGING_RULES
 from caseworker.core.helpers import convert_parameters_to_query_params
 from caseworker.flags.enums import FlagStatus
 from lite_forms.components import Option

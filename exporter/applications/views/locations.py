@@ -32,7 +32,7 @@ from exporter.applications.services import (
     put_contract_type_for_country,
     get_application_countries_and_contract_types,
 )
-from exporter.conf.constants import CaseTypes, APPLICANT_EDITING
+from exporter.core.constants import CaseTypes, APPLICANT_EDITING
 from exporter.core.services import (
     get_sites_on_draft,
     post_sites_on_draft,

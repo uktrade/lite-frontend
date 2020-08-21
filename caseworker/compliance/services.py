@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 
-from caseworker.conf.client import get
-from caseworker.conf.constants import OPEN_LICENCE_RETURNS_URL, COMPLIANCE_URL, COMPLIANCE_LICENCES_URL
+from caseworker.core.client import get
+from caseworker.core.constants import OPEN_LICENCE_RETURNS_URL, COMPLIANCE_URL, COMPLIANCE_LICENCES_URL
 
 FILENAME = "OpenLicenceReturns.csv"
 

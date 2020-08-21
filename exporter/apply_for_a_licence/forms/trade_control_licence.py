@@ -1,6 +1,6 @@
 from django.urls import reverse_lazy
 
-from exporter.conf.constants import CaseTypes
+from exporter.core.constants import CaseTypes
 from exporter.core.services import get_trade_control_activities, get_trade_control_product_categories
 from lite_content.lite_exporter_frontend import generic
 from lite_content.lite_exporter_frontend.applications import TradeControlLicenceQuestions

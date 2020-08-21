@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, RedirectView
 
-from exporter.conf.constants import Permissions
+from exporter.core.constants import Permissions
 from exporter.core.objects import Tab
 from exporter.core.services import get_organisation
 from lite_content.lite_exporter_frontend.organisation import Tabs

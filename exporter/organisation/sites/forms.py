@@ -1,6 +1,6 @@
 from django.urls import reverse_lazy
 
-from exporter.conf.constants import Permissions
+from exporter.core.constants import Permissions
 from exporter.core.services import get_countries, get_organisation_users
 from lite_content.lite_exporter_frontend import strings, generic
 from lite_content.lite_exporter_frontend.sites import AddSiteForm

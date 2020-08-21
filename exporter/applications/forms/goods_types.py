@@ -1,4 +1,4 @@
-from exporter.conf.constants import HMRC
+from exporter.core.constants import HMRC
 from exporter.core.services import get_control_list_entries
 from lite_content.lite_exporter_frontend.goods_types import CreateGoodsTypeForm
 from lite_forms.common import control_list_entries_question

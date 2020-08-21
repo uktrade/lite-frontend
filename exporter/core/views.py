@@ -8,7 +8,8 @@ from django.views.generic import TemplateView
 from exporter.applications.services import has_existing_applications_and_licences_and_nlrs
 from exporter.auth.services import authenticate_exporter_user
 from exporter.auth.utils import get_client
-from exporter.conf.constants import NEWLINE
+from exporter.core.constants import NEWLINE
+
 from exporter.core.forms import (
     select_your_organisation_form,
     register_a_commercial_organisation_group,

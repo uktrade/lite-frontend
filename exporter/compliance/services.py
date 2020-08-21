@@ -2,8 +2,8 @@ from http import HTTPStatus
 
 from django.http import HttpResponse
 
-from exporter.conf.client import post, get
-from exporter.conf.constants import (
+from exporter.core.client import post, get
+from exporter.core.constants import (
     MAX_OPEN_LICENCE_RETURNS_FILE_SIZE,
     OPEN_LICENCE_RETURNS_URL,
     COMPLIANCE_EXPORTER_URL,

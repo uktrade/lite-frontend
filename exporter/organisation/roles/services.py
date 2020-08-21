@@ -1,7 +1,7 @@
 from lite_forms.components import Option
 
-from exporter.conf.client import get, post, put
-from exporter.conf.constants import ORGANISATIONS_URL, ROLES_URL, EXPORTER_USERS_PERMISSIONS_URL
+from exporter.core.client import get, post, put
+from exporter.core.constants import ORGANISATIONS_URL, ROLES_URL, EXPORTER_USERS_PERMISSIONS_URL
 from exporter.organisation.members.services import get_user
 
 

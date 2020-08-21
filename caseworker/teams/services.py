@@ -1,7 +1,7 @@
 from lite_forms.components import Option
 
-from caseworker.conf.client import get, post, put
-from caseworker.conf.constants import TEAMS_URL
+from caseworker.core.client import get, post, put
+from caseworker.core.constants import TEAMS_URL
 
 
 def get_teams(request, converted_to_options=False):

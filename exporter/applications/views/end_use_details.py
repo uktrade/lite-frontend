@@ -3,7 +3,7 @@ from django.views.generic import TemplateView
 
 from exporter.applications.forms.end_use_details import end_use_details_form, intended_end_use_form
 from exporter.applications.services import put_end_use_details, get_application
-from exporter.conf.constants import F680
+from exporter.core.constants import F680
 from lite_content.lite_exporter_frontend import generic
 from lite_content.lite_exporter_frontend.applications import EndUseDetails as strings, F680ClearanceTaskList
 from lite_forms.views import SummaryListFormView, SingleFormView
