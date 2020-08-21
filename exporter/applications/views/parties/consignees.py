@@ -8,8 +8,10 @@ from exporter.applications.services import get_application, post_party, delete_p
 from exporter.applications.views.parties.base import AddParty, CopyParties, SetParty, DeleteParty, CopyAndSetParty
 from lite_content.lite_exporter_frontend.applications import ConsigneeForm, ConsigneePage
 
+from core.auth.views import LoginRequiredMixin
 
-class Consignee(TemplateView):
+
+class Consignee(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         application_id = str(kwargs["pk"])
         application = get_application(request, application_id)
@@ -31,12 +33,12 @@ class Consignee(TemplateView):
             return redirect(reverse_lazy("applications:add_consignee", kwargs={"pk": application_id}))
 
 
-class AddConsignee(AddParty):
+class AddConsignee(LoginRequiredMixin, AddParty):
     def __init__(self):
         super().__init__(new_url="applications:set_consignee", copy_url="applications:consignees_copy")
 
 
-class SetConsignee(SetParty):
+class SetConsignee(LoginRequiredMixin, SetParty):
     def __init__(self):
         super().__init__(
             url="applications:consignee_attach_document",
@@ -49,19 +51,19 @@ class SetConsignee(SetParty):
         )
 
 
-class RemoveConsignee(DeleteParty):
+class RemoveConsignee(LoginRequiredMixin, DeleteParty):
     def __init__(self, **kwargs):
         super().__init__(
             url="applications:add_consignee", action=delete_party, error=ConsigneePage.DELETE_ERROR, **kwargs,
         )
 
 
-class CopyConsignees(CopyParties):
+class CopyConsignees(LoginRequiredMixin, CopyParties):
     def __init__(self):
         super().__init__(new_party_type="consignee")
 
 
-class CopyConsignee(CopyAndSetParty):
+class CopyConsignee(LoginRequiredMixin, CopyAndSetParty):
     def __init__(self):
         super().__init__(
             url="applications:consignee_attach_document",
@@ -74,7 +76,7 @@ class CopyConsignee(CopyAndSetParty):
         )
 
 
-class EditConsignee(CopyAndSetParty):
+class EditConsignee(LoginRequiredMixin, CopyAndSetParty):
     def __init__(self):
         super().__init__(
             url="applications:consignee_attach_document",

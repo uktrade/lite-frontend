@@ -1,23 +1,13 @@
 from collections import defaultdict
 
-from caseworker.cases.constants import CaseType, CaseStatusEnum
-from caseworker.core.client import get
-from caseworker.core.constants import (
-    DENIAL_REASONS_URL,
-    COUNTRIES_URL,
-    STATUSES_URL,
-    CONTROL_LIST_ENTRIES_URL,
-    NOTIFICATIONS_URL,
-    STATUS_PROPERTIES_URL,
-    GOV_PV_GRADINGS_URL,
-    PV_GRADINGS_URL,
-)
-from lite_forms.components import Option
 from caseworker.users.services import get_gov_user
+from core import client
+from caseworker.cases.constants import CaseType, CaseStatusEnum
+from lite_forms.components import Option
 
 
 def get_denial_reasons(request, convert_to_options=False, group=False):
-    data = get(request, DENIAL_REASONS_URL).json()["denial_reasons"]
+    data = client.get(request, "/static/denial-reasons/").json()["denial_reasons"]
 
     if convert_to_options:
         options = [Option(denial_reason["id"], denial_reason["id"]) for denial_reason in data]
@@ -40,7 +30,7 @@ def get_countries(request, convert_to_options=False, exclude: list = None):
     """
     from caseworker.core.helpers import convert_value_to_query_param
 
-    data = get(request, COUNTRIES_URL + "?" + convert_value_to_query_param("exclude", exclude))
+    data = client.get(request, "/static/countries/?" + convert_value_to_query_param("exclude", exclude))
 
     if convert_to_options:
         converted_units = []
@@ -56,7 +46,7 @@ def get_countries(request, convert_to_options=False, exclude: list = None):
 # CaseStatuesEnum
 def get_statuses(request, convert_to_options=False):
     """ Get static list of case statuses. """
-    data = get(request, STATUSES_URL)
+    data = client.get(request, "/static/statuses/")
     if convert_to_options:
         return [Option(key=item["id"], value=item["value"]) for item in data.json().get("statuses")]
 
@@ -143,7 +133,7 @@ def get_permissible_statuses(request, case):
 
 
 def get_status_properties(request, status):
-    data = get(request, STATUS_PROPERTIES_URL + status)
+    data = client.get(request, f"/static/statuses/properties/{status}")
     return data.json(), data.status_code
 
 
@@ -164,7 +154,7 @@ def get_control_list_entries(request, convert_to_options=False, converted_contro
         if converted_control_list_entries_cache:
             return converted_control_list_entries_cache
         else:
-            data = get(request, CONTROL_LIST_ENTRIES_URL)
+            data = client.get(request, "/static/control-list-entries/")
 
         for control_list_entry in data.json().get("control_list_entries"):
             converted_control_list_entries_cache.append(
@@ -177,12 +167,12 @@ def get_control_list_entries(request, convert_to_options=False, converted_contro
 
         return converted_control_list_entries_cache
 
-    response = get(request, CONTROL_LIST_ENTRIES_URL + "?group=True")
+    response = client.get(request, "/static/control-list-entries/?group=True")
     return response.json()["control_list_entries"]
 
 
 def get_gov_pv_gradings(request, convert_to_options=False):
-    pv_gradings = get(request, GOV_PV_GRADINGS_URL).json().get("pv_gradings")
+    pv_gradings = client.get(request, "/static/private-venture-gradings/gov/").json().get("pv_gradings")
     if convert_to_options:
         converted_units = []
         for pv_grading_entry in pv_gradings:
@@ -194,7 +184,7 @@ def get_gov_pv_gradings(request, convert_to_options=False):
 
 
 def get_pv_gradings(request, convert_to_options=False):
-    pv_gradings = get(request, PV_GRADINGS_URL).json().get("pv_gradings")
+    pv_gradings = client.get(request, "/static/private-venture-gradings/").json().get("pv_gradings")
 
     if convert_to_options:
         converted_units = []
@@ -208,6 +198,6 @@ def get_pv_gradings(request, convert_to_options=False):
 
 def get_menu_notifications(request):
     if not hasattr(request, "cached_get_menu_notifications"):
-        request.cached_get_menu_notifications = get(request, NOTIFICATIONS_URL)
+        request.cached_get_menu_notifications = client.get(request, "/gov-users/notifications/")
     response = request.cached_get_menu_notifications
     return response.json()

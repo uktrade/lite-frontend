@@ -1,6 +1,6 @@
 from django.utils.functional import wraps
 
-from exporter.core.exceptions import PermissionDeniedError
+from core.exceptions import PermissionDeniedError
 from exporter.core import helpers
 
 

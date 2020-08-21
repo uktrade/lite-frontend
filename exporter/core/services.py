@@ -3,25 +3,9 @@ from urllib.parse import urlencode
 
 from django.http import StreamingHttpResponse, HttpResponse
 
-from exporter.core.client import get, post, put, delete
-from exporter.core.constants import (
-    UNITS_URL,
-    APPLICATIONS_URL,
-    STATIC_COUNTRIES_URL,
-    EXTERNAL_LOCATIONS_URL,
-    NOTIFICATIONS_URL,
-    ORGANISATIONS_URL,
-    CONTROL_LIST_ENTRIES_URL,
-    NEWLINE,
-    PV_GRADINGS_URL,
-    ITEM_TYPES_URL,
-    STATIC_F680_CLEARANCE_TYPES_URL,
-    STATIC_TRADE_CONTROL_ACTIVITIES,
-    STATIC_TRADE_CONTROL_PRODUCT_CATEGORIES,
-    OPEN_GENERAL_LICENCES_URL,
-    LICENCES_OPEN_GENERAL_POST_URL,
-)
-from exporter.core.helpers import convert_parameters_to_query_params, convert_value_to_query_param
+from core import client
+
+from core.helpers import convert_parameters_to_query_params, convert_value_to_query_param
 from lite_content.lite_exporter_frontend.applications import OpenGeneralLicenceQuestions
 from lite_content.lite_exporter_frontend.generic import Document
 from lite_forms.components import Option, TextArea
@@ -31,18 +15,18 @@ from lite_forms.generators import error_page
 def get_units(request, units=[]):  # noqa
     if units:
         return units
-    data = get(request, UNITS_URL).json().get("units")
+    data = client.get(request, "/static/units/").json().get("units")
     for key, value in data.items():
         units.append(Option(key, value))
     return units
 
 
 def get_country(request, pk):
-    return get(request, STATIC_COUNTRIES_URL + pk).json()
+    return client.get(request, f"/static/countries/{pk}").json()
 
 
 def get_item_types(request):
-    data = get(request, ITEM_TYPES_URL).json().get("item_types")
+    data = client.get(request, "/static/item-types/").json().get("item_types")
     options = []
     for key, value in data.items():
         if key == "other":
@@ -62,7 +46,7 @@ def get_countries(request, convert_to_options=False, exclude: list = None):
     param exclude: Takes a list of country codes and excludes them
     """
 
-    data = get(request, STATIC_COUNTRIES_URL + "?" + convert_value_to_query_param("exclude", exclude)).json()[
+    data = client.get(request, "/static/countries/?" + convert_value_to_query_param("exclude", exclude)).json()[
         "countries"
     ]
 
@@ -73,26 +57,24 @@ def get_countries(request, convert_to_options=False, exclude: list = None):
 
 
 def get_sites_on_draft(request, pk):
-    data = get(request, APPLICATIONS_URL + str(pk) + "/sites/")
+    data = client.get(request, f"/applications/{pk}/sites/")
     return data.json(), data.status_code
 
 
 def post_sites_on_draft(request, pk, json):
-    data = post(request, APPLICATIONS_URL + str(pk) + "/sites/", json)
+    data = client.post(request, f"/applications/{pk}/sites/", json)
     return data.json(), data.status_code
 
 
 def get_external_locations(request, pk, convert_to_options=False, exclude: list = None, application_type: str = None):
-    data = get(
-        request,
-        ORGANISATIONS_URL
-        + str(pk)
-        + EXTERNAL_LOCATIONS_URL
-        + "?"
-        + convert_value_to_query_param("exclude", exclude)
-        + "&"
-        + convert_value_to_query_param("application_type", application_type),
+    querystring = "&".join(
+        [
+            convert_value_to_query_param("exclude", exclude),
+            convert_value_to_query_param("application_type", application_type),
+        ]
     )
+
+    data = client.get(request, f"/organisations/{pk}/external_locations/?{querystring}")
 
     if convert_to_options:
         external_locations_options = []
@@ -101,7 +83,7 @@ def get_external_locations(request, pk, convert_to_options=False, exclude: list 
             external_location_id = external_location.get("id")
             external_location_name = external_location.get("name")
             external_location_address = (
-                (external_location.get("address") + NEWLINE + external_location.get("country").get("name"))
+                (external_location.get("address") + "\n" + external_location.get("country").get("name"))
                 if external_location.get("country")
                 else external_location.get("address")
             )
@@ -116,12 +98,12 @@ def get_external_locations(request, pk, convert_to_options=False, exclude: list 
 
 
 def get_external_locations_on_draft(request, pk):
-    data = get(request, APPLICATIONS_URL + str(pk) + "/external_locations/")
+    data = client.get(request, f"/applications/{pk}/external_locations/")
     return data.json(), data.status_code
 
 
 def delete_external_locations_from_draft(request, pk, ext_loc_pk):
-    data = delete(request, APPLICATIONS_URL + pk + "/external_locations/" + ext_loc_pk + "/")
+    data = client.delete(request, f"/applications/{pk}/external_locations/{ext_loc_pk}/")
     if data.status_code == HTTPStatus.BAD_REQUEST:
         return data.json(), data.status_code
     else:
@@ -129,12 +111,13 @@ def delete_external_locations_from_draft(request, pk, ext_loc_pk):
 
 
 def post_external_locations_on_draft(request, pk, json):
-    data = post(request, APPLICATIONS_URL + str(pk) + "/external_locations/", json)
+    data = client.post(request, f"/applications/{pk}/external_locations/", json)
     return data.json(), data.status_code
 
 
 def post_external_locations(request, pk, json):
-    data = post(request, ORGANISATIONS_URL + str(request.session["organisation"]) + EXTERNAL_LOCATIONS_URL, json)
+    organisation_id = request.session["organisation"]
+    data = client.post(request, f"/organisations/{organisation_id}/external_locations/", json)
 
     if "errors" in data.json():
         return data.json(), data.status_code
@@ -146,7 +129,7 @@ def post_external_locations(request, pk, json):
 
 
 def get_notifications(request):
-    data = get(request, NOTIFICATIONS_URL)
+    data = client.get(request, "/users/notifications/")
     return data.json(), data.status_code
 
 
@@ -159,7 +142,7 @@ def get_organisations(request, page: int = 1, search_term=None, org_type=None):
     :param search_term: Filter by name
     :param org_type: Filter by org type - 'hmrc', 'commercial', 'individual', or an array of it
     """
-    data = get(request, ORGANISATIONS_URL + convert_parameters_to_query_params(locals()))
+    data = client.get(request, "/organisations/" + convert_parameters_to_query_params(locals()))
     return data.json()
 
 
@@ -167,12 +150,12 @@ def get_organisation(request, pk):
     """
     Returns an organisation
     """
-    data = get(request, ORGANISATIONS_URL + str(pk))
+    data = client.get(request, f"/organisations/{pk}")
     return data.json()
 
 
 def get_organisation_users(request, pk, params, convert_to_options=False):
-    response = get(request, ORGANISATIONS_URL + str(pk) + "/users/?" + urlencode(params))
+    response = client.get(request, f"/organisations/{pk}/users/?{urlencode(params)}")
 
     if convert_to_options:
         options = []
@@ -189,13 +172,13 @@ def get_organisation_users(request, pk, params, convert_to_options=False):
 
 
 def get_organisation_user(request, pk, user_pk):
-    data = get(request, ORGANISATIONS_URL + pk + "/users/" + user_pk)
+    data = client.get(request, f"/organisations/{pk}/users/" + user_pk)
     return data.json()
 
 
 def put_organisation_user(request, user_pk, json):
     organisation_id = str(request.session["organisation"])
-    data = put(request, ORGANISATIONS_URL + organisation_id + "/users/" + str(user_pk) + "/", json)
+    data = client.put(request, f"/organisations/{organisation_id}/users/{user_pk}/", json)
     return data.json(), data.status_code
 
 
@@ -204,7 +187,7 @@ def get_control_list_entries(request, convert_to_options=False, converted_contro
         if converted_control_list_entries_cache:
             return converted_control_list_entries_cache
         else:
-            data = get(request, CONTROL_LIST_ENTRIES_URL + "?flatten=True")
+            data = client.get(request, "/static/control-list-entries/?flatten=True")
 
         for control_list_entry in data.json().get("control_list_entries"):
             converted_control_list_entries_cache.append(
@@ -217,32 +200,32 @@ def get_control_list_entries(request, convert_to_options=False, converted_contro
 
         return converted_control_list_entries_cache
 
-    data = get(request, CONTROL_LIST_ENTRIES_URL)
+    data = client.get(request, "/static/control-list-entries/")
     return data.json().get("control_list_entries")
 
 
 # F680 clearance types
 def get_f680_clearance_types(request):
-    data = get(request, STATIC_F680_CLEARANCE_TYPES_URL)
+    data = client.get(request, "/static/f680-clearance-types/")
     return data.json().get("types")
 
 
 # Trade control activities
 def get_trade_control_activities(request):
-    data = get(request, STATIC_TRADE_CONTROL_ACTIVITIES)
+    data = client.get(request, "/static/trade-control/activities/")
     return data.json().get("activities")
 
 
 # Trade control product categories
 def get_trade_control_product_categories(request):
-    data = get(request, STATIC_TRADE_CONTROL_PRODUCT_CATEGORIES)
+    data = client.get(request, "/static/trade-control/product-categories/")
     return data.json().get("product_categories")
 
 
 # PV gradings
 def get_pv_gradings(request, convert_to_options=False):
     if convert_to_options:
-        data = get(request, PV_GRADINGS_URL)
+        data = client.get(request, "/static/private-venture-gradings/")
 
         converted_units = []
         for pvg in data.json().get("pv_gradings"):
@@ -250,17 +233,17 @@ def get_pv_gradings(request, convert_to_options=False):
                 converted_units.append(Option(key=key, value=pvg[key],))
         return converted_units
 
-    data = get(request, PV_GRADINGS_URL)
+    data = client.get(request, "/static/private-venture-gradings/")
     return data.json().get("pv-gradings")
 
 
 def get_control_list_entry(request, rating):
-    data = get(request, CONTROL_LIST_ENTRIES_URL + rating)
+    data = client.get(request, f"/static/control-list-entries/{rating}")
     return data.json().get("control_list_entry")
 
 
 def get_document_download_stream(request, url):
-    response = get(request, url)
+    response = client.get(request, url)
     if response.status_code == HTTPStatus.OK:
         return StreamingHttpResponse(response, content_type=response.headers._store["content-type"][1])
     elif response.status_code == HTTPStatus.UNAUTHORIZED:
@@ -275,7 +258,7 @@ def _register_organisation(request, json, _type):
         "type": _type,
         "user": {"email": request.session["email"]},
     }
-    response = post(request, ORGANISATIONS_URL, {**json, **data})
+    response = client.post(request, "/organisations/", {**json, **data})
     return response.json(), response.status_code
 
 
@@ -300,7 +283,7 @@ def get_open_general_licences(
     disable_pagination=True,
     active_only=None,
 ):
-    data = get(request, OPEN_GENERAL_LICENCES_URL + convert_parameters_to_query_params(locals())).json()
+    data = client.get(request, "/open-general-licences/" + convert_parameters_to_query_params(locals())).json()
 
     if convert_to_options:
         return [
@@ -320,16 +303,16 @@ def get_open_general_licences(
 
 
 def get_open_general_licence(request, pk):
-    return get(request, OPEN_GENERAL_LICENCES_URL + str(pk)).json()
+    return client.get(request, f"/open-general-licences/{pk}").json()
 
 
 def post_open_general_licence_cases(request, json):
-    data = post(request, LICENCES_OPEN_GENERAL_POST_URL, json)
+    data = client.post(request, "/licences/open-general-licences/", json)
     return data.json(), data.status_code
 
 
 def get_signature_certificate(request):
-    certificate = get(request, "/documents/certificate/")
+    certificate = client.get(request, "/documents/certificate/")
     response = HttpResponse(certificate.content, content_type=certificate.headers["Content-Type"])
     response["Content-Disposition"] = certificate.headers["Content-Disposition"]
     return response

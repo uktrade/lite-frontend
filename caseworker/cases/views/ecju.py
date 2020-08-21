@@ -4,8 +4,10 @@ from caseworker.cases.forms.create_ecju_query import new_ecju_query_form, ECJUQu
 from caseworker.cases.services import get_case, post_ecju_query
 from lite_forms.views import SingleFormView
 
+from core.auth.views import LoginRequiredMixin
 
-class NewECJUQueryView(SingleFormView):
+
+class NewECJUQueryView(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         query_type = request.GET.get("query_type", ECJUQueryTypes.ECJU_QUERY)
         self.object_pk = kwargs["pk"]

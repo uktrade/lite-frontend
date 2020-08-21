@@ -43,15 +43,18 @@ from exporter.applications.services import (
     post_exhibition,
 )
 from exporter.core.constants import HMRC, APPLICANT_EDITING, NotificationType, STANDARD
-from exporter.core.helpers import str_to_bool, convert_dict_to_query_params
+from exporter.core.helpers import str_to_bool
 from exporter.core.services import get_organisation
 from lite_content.lite_exporter_frontend import strings
 from lite_forms.generators import confirm_form
 from lite_forms.generators import form_page
 from lite_forms.views import SingleFormView, MultiFormView
 
+from core.auth.views import LoginRequiredMixin
+from core.helpers import convert_dict_to_query_params
 
-class ApplicationsList(TemplateView):
+
+class ApplicationsList(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         params = {"page": int(request.GET.get("page", 1)), "submitted": str_to_bool(request.GET.get("submitted", True))}
         organisation = get_organisation(request, request.session["organisation"])
@@ -69,7 +72,7 @@ class ApplicationsList(TemplateView):
         )
 
 
-class DeleteApplication(SingleFormView):
+class DeleteApplication(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         application = get_application(request, self.object_pk)
@@ -93,7 +96,7 @@ class DeleteApplication(SingleFormView):
             return self.request.GET.get("return_to")
 
 
-class ApplicationEditType(TemplateView):
+class ApplicationEditType(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         application_id = str(kwargs["pk"])
         data = get_application(request, application_id)
@@ -123,7 +126,7 @@ class ApplicationEditType(TemplateView):
         return redirect(reverse_lazy("applications:task_list", kwargs={"pk": str(kwargs["pk"])}))
 
 
-class ApplicationTaskList(TemplateView):
+class ApplicationTaskList(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         application = get_application(request, kwargs["pk"])
         return get_application_task_list(request, application)
@@ -146,7 +149,7 @@ class ApplicationTaskList(TemplateView):
             return HttpResponseRedirect(reverse_lazy("applications:success_page", kwargs={"pk": application_id}))
 
 
-class ApplicationDetail(TemplateView):
+class ApplicationDetail(LoginRequiredMixin, TemplateView):
     application_id = None
     application = None
     case_id = None
@@ -203,7 +206,7 @@ class ApplicationDetail(TemplateView):
         )
 
 
-class ApplicationSummary(TemplateView):
+class ApplicationSummary(LoginRequiredMixin, TemplateView):
     application_id = None
     application = None
     case_id = None
@@ -246,7 +249,7 @@ class ApplicationSummary(TemplateView):
             return HttpResponseRedirect(reverse_lazy("applications:declaration", kwargs={"pk": self.application_id}))
 
 
-class WithdrawApplication(SingleFormView):
+class WithdrawApplication(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         application = get_application(request, self.object_pk)
@@ -255,7 +258,7 @@ class WithdrawApplication(SingleFormView):
         self.success_url = reverse_lazy("applications:application", kwargs={"pk": self.object_pk})
 
 
-class SurrenderApplication(SingleFormView):
+class SurrenderApplication(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         application = get_application(request, self.object_pk)
@@ -264,7 +267,7 @@ class SurrenderApplication(SingleFormView):
         self.success_url = reverse_lazy("applications:application", kwargs={"pk": self.object_pk})
 
 
-class Notes(TemplateView):
+class Notes(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         application_id = str(kwargs["pk"])
         application = get_application(request, application_id)
@@ -289,7 +292,7 @@ class Notes(TemplateView):
         return redirect(reverse_lazy("applications:notes", kwargs={"pk": application_id}))
 
 
-class CheckYourAnswers(TemplateView):
+class CheckYourAnswers(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         application_id = kwargs["pk"]
         application = get_application(request, application_id)
@@ -298,7 +301,7 @@ class CheckYourAnswers(TemplateView):
         return render(request, "applications/check-your-answers.html", context)
 
 
-class Submit(TemplateView):
+class Submit(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         application_id = kwargs["pk"]
         application = get_application(request, application_id)
@@ -309,7 +312,7 @@ class Submit(TemplateView):
         return render(request, "applications/submit.html", context)
 
 
-class ApplicationSubmitSuccessPage(TemplateView):
+class ApplicationSubmitSuccessPage(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         """
         Display application submit success page
@@ -327,7 +330,7 @@ class ApplicationSubmitSuccessPage(TemplateView):
         return application_success_page(request, application["reference_code"])
 
 
-class ApplicationCopy(MultiFormView):
+class ApplicationCopy(LoginRequiredMixin, MultiFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         application = get_application(request, self.object_pk)
@@ -339,7 +342,7 @@ class ApplicationCopy(MultiFormView):
         return reverse_lazy("applications:task_list", kwargs={"pk": id})
 
 
-class ExhibitionDetail(SingleFormView):
+class ExhibitionDetail(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.data = get_application(request, self.object_pk)
@@ -359,7 +362,7 @@ class ExhibitionDetail(SingleFormView):
         return reverse_lazy("applications:task_list", kwargs={"pk": self.object_pk})
 
 
-class ApplicationDeclaration(SingleFormView):
+class ApplicationDeclaration(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.form = declaration_form(self.object_pk)

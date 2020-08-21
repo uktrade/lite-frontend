@@ -6,26 +6,11 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from requests_oauthlib import OAuth2Session
 
-TOKEN_SESSION_KEY = settings.TOKEN_SESSION_KEY
+from core.auth.utils import get_client
+
 PROFILE_URL = urljoin(settings.AUTHBROKER_URL, "sso/oauth2/user-profile/v1/")
 INTROSPECT_URL = urljoin(settings.AUTHBROKER_URL, "sso/oauth2/introspect/")
-TOKEN_URL = urljoin(settings.AUTHBROKER_URL, "sso/oauth2/token/")
-AUTHORISATION_URL = urljoin(settings.AUTHBROKER_URL, "sso/oauth2/authorize/")
 TOKEN_CHECK_PERIOD_SECONDS = 60
-SCOPE = "profile"
-
-
-def get_client(request, **kwargs):
-    callback_url = reverse("auth:callback")
-    redirect_uri = request.build_absolute_uri(callback_url)
-
-    return OAuth2Session(
-        settings.AUTHBROKER_CLIENT_ID,
-        redirect_uri=redirect_uri,
-        scope=SCOPE,
-        token=request.session.get(TOKEN_SESSION_KEY, None),
-        **kwargs,
-    )
 
 
 def get_profile(client):

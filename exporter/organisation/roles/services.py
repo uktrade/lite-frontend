@@ -1,15 +1,12 @@
 from lite_forms.components import Option
 
-from exporter.core.client import get, post, put
-from exporter.core.constants import ORGANISATIONS_URL, ROLES_URL, EXPORTER_USERS_PERMISSIONS_URL
+from core import client
 from exporter.organisation.members.services import get_user
 
 
 def get_roles(request, organisation_id, convert_to_options=False, page=1):
-    data = get(
-        request,
-        ORGANISATIONS_URL + str(organisation_id) + ROLES_URL + f"?disable_pagination={convert_to_options}&page={page}",
-    ).json()
+    url = f"/organisations/{organisation_id}/roles/?disable_pagination={convert_to_options}&page={page}"
+    data = client.get(request, url).json()
 
     if convert_to_options:
         converted = []
@@ -23,24 +20,24 @@ def get_roles(request, organisation_id, convert_to_options=False, page=1):
 
 def get_role(request, pk):
     organisation_id = str(request.session["organisation"])
-    data = get(request, ORGANISATIONS_URL + str(organisation_id) + ROLES_URL + str(pk))
+    data = client.get(request, f"/organisations/{organisation_id}/roles/{pk}")
     return data.json()["role"]
 
 
 def post_role(request, json):
-    organisation_id = str(request.session["organisation"])
-    data = post(request, ORGANISATIONS_URL + str(organisation_id) + ROLES_URL, json)
+    organisation_id = request.session["organisation"]
+    data = client.post(request, f"/organisations/{organisation_id}/roles/", json)
     return data.json(), data.status_code
 
 
 def put_role(request, pk, json):
     organisation_id = request.session["organisation"]
-    data = put(request, ORGANISATIONS_URL + str(organisation_id) + ROLES_URL + str(pk) + "/", json)
+    data = client.put(request, f"/organisations/{organisation_id}/roles/{pk}/", json)
     return data.json(), data.status_code
 
 
 def get_permissions(request, convert_to_options=False):
-    data = get(request, EXPORTER_USERS_PERMISSIONS_URL).json().get("permissions")
+    data = client.get(request, f"/organisations/permissions/").json().get("permissions")
 
     if convert_to_options:
         converted = []

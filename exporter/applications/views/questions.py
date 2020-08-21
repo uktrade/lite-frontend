@@ -2,6 +2,7 @@ import json
 
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.urls import reverse_lazy
+from django.views.decorators.csrf import csrf_exempt
 
 from exporter.applications.constants import F680
 from exporter.applications.forms.questions import questions_forms
@@ -9,6 +10,8 @@ from exporter.applications.services import put_application, get_application
 from exporter.core.helpers import str_to_bool
 from lite_content.lite_exporter_frontend import applications
 from lite_forms.views import SummaryListFormView
+
+from core.auth.views import LoginRequiredMixin
 
 
 def questions_action(request, pk, data):
@@ -34,7 +37,7 @@ def questions_action(request, pk, data):
     return put_application(request, pk, data)
 
 
-class AdditionalInformationFormView(SummaryListFormView):
+class AdditionalInformationFormView(LoginRequiredMixin, SummaryListFormView):
     def init(self, request, **kwargs):
         self.object_pk = str(kwargs["pk"])
         self.data = self.get_additional_information(request, self.object_pk)
@@ -57,3 +60,7 @@ class AdditionalInformationFormView(SummaryListFormView):
     def get_additional_information(request, application_id):
         application = get_application(request, application_id)
         return {field: application[field] for field in F680.FIELDS if application.get(field) is not None}
+
+    @csrf_exempt
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)

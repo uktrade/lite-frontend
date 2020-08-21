@@ -8,8 +8,10 @@ from lite_content.lite_exporter_frontend import generic
 from lite_content.lite_exporter_frontend.applications import EndUseDetails as strings, F680ClearanceTaskList
 from lite_forms.views import SummaryListFormView, SingleFormView
 
+from core.auth.views import LoginRequiredMixin
 
-class EndUseDetails(TemplateView):
+
+class EndUseDetails(LoginRequiredMixin, TemplateView):
     def dispatch(self, request, *args, **kwargs):
         self.object_pk = kwargs["pk"]
         self.application = get_application(request, self.object_pk)

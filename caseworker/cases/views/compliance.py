@@ -22,8 +22,10 @@ from caseworker.cases.services import (
 from lite_content.lite_internal_frontend.cases import ComplianceForms
 from lite_forms.views import SingleFormView
 
+from core.auth.views import LoginRequiredMixin
 
-class CreateVisitReport(TemplateView):
+
+class CreateVisitReport(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         case_id = str(kwargs["pk"])
         response = post_create_compliance_visit(request, case_id)
@@ -35,7 +37,7 @@ class CreateVisitReport(TemplateView):
         )
 
 
-class PeoplePresent(SingleFormView):
+class PeoplePresent(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.context = {"case": get_case(request, self.object_pk)}
@@ -66,7 +68,7 @@ class ComplianceVisitBaseForm(SingleFormView):
         self.data = get_compliance_visit_case(request, kwargs["pk"])
 
 
-class VisitReportDetails(ComplianceVisitBaseForm):
+class VisitReportDetails(LoginRequiredMixin, ComplianceVisitBaseForm):
     def init(self, request, **kwargs):
         super().init(request, **kwargs)
         self.form = visit_report_form(kwargs["queue_pk"], kwargs["pk"])
@@ -80,31 +82,31 @@ class VisitReportDetails(ComplianceVisitBaseForm):
         return data
 
 
-class Overview(ComplianceVisitBaseForm):
+class Overview(LoginRequiredMixin, ComplianceVisitBaseForm):
     def init(self, request, **kwargs):
         super().init(request, **kwargs)
         self.form = overview_form(kwargs["queue_pk"], kwargs["pk"])
 
 
-class Inspection(ComplianceVisitBaseForm):
+class Inspection(LoginRequiredMixin, ComplianceVisitBaseForm):
     def init(self, request, **kwargs):
         super().init(request, **kwargs)
         self.form = inspection_form(kwargs["queue_pk"], kwargs["pk"])
 
 
-class ComplianceWithLicences(ComplianceVisitBaseForm):
+class ComplianceWithLicences(LoginRequiredMixin, ComplianceVisitBaseForm):
     def init(self, request, **kwargs):
         super().init(request, **kwargs)
         self.form = compliance_with_licence_form(kwargs["queue_pk"], kwargs["pk"])
 
 
-class KnowledgePeople(ComplianceVisitBaseForm):
+class KnowledgePeople(LoginRequiredMixin, ComplianceVisitBaseForm):
     def init(self, request, **kwargs):
         super().init(request, **kwargs)
         self.form = knowledge_of_people_form(kwargs["queue_pk"], kwargs["pk"])
 
 
-class KnowledgeProduct(ComplianceVisitBaseForm):
+class KnowledgeProduct(LoginRequiredMixin, ComplianceVisitBaseForm):
     def init(self, request, **kwargs):
         super().init(request, **kwargs)
         self.form = knowledge_of_products_form(kwargs["queue_pk"], kwargs["pk"])

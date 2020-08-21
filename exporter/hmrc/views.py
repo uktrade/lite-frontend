@@ -7,13 +7,15 @@ from django.views.generic import TemplateView
 from exporter.applications.forms.hmrc import confirm_organisation_form, reference_name_form
 from exporter.applications.services import post_applications
 from exporter.core.constants import CaseTypes
-from exporter.core.helpers import convert_dict_to_query_params
+from core.helpers import convert_dict_to_query_params
 from exporter.core.permissions import validate_is_in_organisation_type
 from exporter.core.services import get_organisations, get_organisation
 from lite_forms.generators import form_page
 
+from core.auth.views import LoginRequiredMixin
 
-class SelectAnOrganisation(TemplateView):
+
+class SelectAnOrganisation(LoginRequiredMixin, TemplateView):
     def dispatch(self, request, *args, **kwargs):
         validate_is_in_organisation_type(request, "hmrc")
         return super(SelectAnOrganisation, self).dispatch(request, *args, **kwargs)
@@ -52,7 +54,7 @@ class SelectAnOrganisation(TemplateView):
             return redirect(reverse_lazy("hmrc:reference_name", kwargs={"org_id": organisation}))
 
 
-class ReferenceName(TemplateView):
+class ReferenceName(LoginRequiredMixin, TemplateView):
     def get(self, request, org_id):
         return form_page(request, reference_name_form())
 

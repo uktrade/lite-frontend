@@ -5,8 +5,10 @@ from exporter.applications.services import get_application, put_application_rout
 from lite_forms.helpers import get_all_form_components
 from lite_forms.views import SingleFormView
 
+from core.auth.views import LoginRequiredMixin
 
-class RouteOfGoods(SingleFormView):
+
+class RouteOfGoods(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.data = self.get_form_data(request)

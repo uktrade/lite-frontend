@@ -19,8 +19,10 @@ from exporter.core.constants import PERMANENT, CaseTypes
 from exporter.core.services import post_open_general_licence_cases
 from lite_forms.views import SingleFormView, MultiFormView
 
+from core.auth.views import LoginRequiredMixin
 
-class LicenceType(SingleFormView):
+
+class LicenceType(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.form = opening_question()
         self.action = validate_opening_question
@@ -30,7 +32,7 @@ class LicenceType(SingleFormView):
         return reverse_lazy(f"apply_for_a_licence:{licence_type}_questions")
 
 
-class ExportLicenceQuestions(MultiFormView):
+class ExportLicenceQuestions(LoginRequiredMixin, MultiFormView):
     def init(self, request, **kwargs):
         self.forms = export_licence_questions(request, None)
 
@@ -54,7 +56,7 @@ class ExportLicenceQuestions(MultiFormView):
             return reverse_lazy("applications:task_list", kwargs={"pk": pk})
 
 
-class TradeControlLicenceQuestions(MultiFormView):
+class TradeControlLicenceQuestions(LoginRequiredMixin, MultiFormView):
     def init(self, request, **kwargs):
         self.forms = trade_control_licence_questions(request)
         self.action = post_applications
@@ -67,7 +69,7 @@ class TradeControlLicenceQuestions(MultiFormView):
             return reverse_lazy("applications:task_list", kwargs={"pk": pk})
 
 
-class TranshipmentQuestions(MultiFormView):
+class TranshipmentQuestions(LoginRequiredMixin, MultiFormView):
     def init(self, request, **kwargs):
         self.forms = transhipment_questions(request)
         self.action = post_applications
@@ -81,7 +83,7 @@ class TranshipmentQuestions(MultiFormView):
             return reverse_lazy("applications:task_list", kwargs={"pk": pk})
 
 
-class MODClearanceQuestions(MultiFormView):
+class MODClearanceQuestions(LoginRequiredMixin, MultiFormView):
     def init(self, request, **kwargs):
         self.forms = MOD_questions(None)
         self.action = post_applications
@@ -94,7 +96,7 @@ class MODClearanceQuestions(MultiFormView):
         return reverse_lazy("applications:task_list", kwargs={"pk": pk})
 
 
-class OpenGeneralLicenceQuestions(MultiFormView):
+class OpenGeneralLicenceQuestions(LoginRequiredMixin, MultiFormView):
     def init(self, request, **kwargs):
         self.forms = open_general_licence_forms(request, **kwargs)
         self.action = validate_open_general_licences
@@ -110,6 +112,6 @@ class OpenGeneralLicenceQuestions(MultiFormView):
         )
 
 
-class OpenGeneralLicenceSubmit(TemplateView):
+class OpenGeneralLicenceSubmit(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         return open_general_licence_submit_success_page(request, **kwargs)

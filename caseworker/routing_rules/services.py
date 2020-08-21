@@ -1,14 +1,13 @@
-from caseworker.core.client import get, post, put
-from caseworker.core.constants import ROUTING_RULES_URL, ROUTING_RULES_STATUS_URL
+from core import client
 
 
 def get_routing_rules(request, params=""):
-    data = get(request, ROUTING_RULES_URL + "?" + params)
+    data = client.get(request, f"/routing-rules/?{params}")
     return data.json(), data.status_code
 
 
 def get_routing_rule(request, id):
-    data = get(request, ROUTING_RULES_URL + str(id))
+    data = client.get(request, f"/routing-rules/{id}")
     return data.json(), data.status_code
 
 
@@ -32,7 +31,7 @@ def _remove_none_from_post_data_additional_rules_list(json):
 
 def post_routing_rule(request, json):
     data = _remove_none_from_post_data_additional_rules_list(json)
-    response = post(request, ROUTING_RULES_URL, data)
+    response = client.post(request, "/routing-rules/", data)
     return response.json(), response.status_code
 
 
@@ -44,7 +43,7 @@ def validate_put_routing_rule(request, id, json):
 
 def put_routing_rule(request, id, json):
     data = _remove_none_from_post_data_additional_rules_list(json)
-    response = put(request, ROUTING_RULES_URL + str(id), data)
+    response = client.put(request, f"/routing-rules/{id}", data)
     return response.json(), response.status_code
 
 
@@ -53,5 +52,5 @@ def put_routing_rule_active_status(request, id, json):
     # the confirm name is the name of the form
     data["status"] = data["form_name"]
 
-    data = put(request, ROUTING_RULES_URL + str(id) + ROUTING_RULES_STATUS_URL, data)
+    data = client.put(request, f"/routing-rules/{id}/status/", data)
     return data.json(), data.status_code

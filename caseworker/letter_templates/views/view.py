@@ -1,15 +1,17 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
 
-from caseworker.core.helpers import convert_dict_to_query_params
+from core.helpers import convert_dict_to_query_params
 from caseworker.letter_templates.services import (
     get_letter_templates,
     get_letter_template,
 )
 from lite_forms.components import FiltersBar, TextInput
 
+from core.auth.views import LoginRequiredMixin
 
-class LetterTemplatesList(TemplateView):
+
+class LetterTemplatesList(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         params = {"page": int(request.GET.get("page", 1)), "name": request.GET.get("name", "")}
 
@@ -22,7 +24,7 @@ class LetterTemplatesList(TemplateView):
         return render(request, "letter-templates/letter-templates.html", context)
 
 
-class LetterTemplateDetail(TemplateView):
+class LetterTemplateDetail(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         letter_template_id = str(kwargs["pk"])
         params = convert_dict_to_query_params({"generate_preview": True, "activity": True})

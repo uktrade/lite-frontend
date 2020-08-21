@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.urls import include, path
 
+import exporter.core.views
+
 
 urlpatterns = [
     path("", include("exporter.core.urls")),
@@ -16,7 +18,7 @@ urlpatterns = [
     path("", include("exporter.hmrc.urls")),
 ]
 
-handler403 = "exporter.conf.views.handler403"
+handler403 = exporter.core.views.handler403
 
 if settings.FEATURE_DEBUG_TOOLBAR_ON:
     import debug_toolbar

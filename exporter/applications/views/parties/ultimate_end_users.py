@@ -12,8 +12,10 @@ from exporter.applications.services import (
 from exporter.applications.views.parties.base import AddParty, CopyParties, SetParty, DeleteParty, CopyAndSetParty
 from lite_content.lite_exporter_frontend.applications import UltimateEndUserForm, UltimateEndUserPage
 
+from core.auth.views import LoginRequiredMixin
 
-class UltimateEndUsers(TemplateView):
+
+class UltimateEndUsers(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         application_id = str(kwargs["pk"])
         application = get_application(request, application_id)
@@ -26,14 +28,14 @@ class UltimateEndUsers(TemplateView):
         return render(request, "applications/parties/ultimate-end-users.html", context)
 
 
-class AddUltimateEndUser(AddParty):
+class AddUltimateEndUser(LoginRequiredMixin, AddParty):
     def __init__(self):
         super().__init__(
             new_url="applications:set_ultimate_end_user", copy_url="applications:ultimate_end_users_copy",
         )
 
 
-class SetUltimateEndUser(SetParty):
+class SetUltimateEndUser(LoginRequiredMixin, SetParty):
     def __init__(self):
         super().__init__(
             url="applications:ultimate_end_user_attach_document",
@@ -47,7 +49,7 @@ class SetUltimateEndUser(SetParty):
         )
 
 
-class RemoveUltimateEndUser(DeleteParty):
+class RemoveUltimateEndUser(LoginRequiredMixin, DeleteParty):
     def __init__(self, **kwargs):
         super().__init__(
             url="applications:ultimate_end_users",
@@ -57,12 +59,12 @@ class RemoveUltimateEndUser(DeleteParty):
         )
 
 
-class CopyUltimateEndUsers(CopyParties):
+class CopyUltimateEndUsers(LoginRequiredMixin, CopyParties):
     def __init__(self):
         super().__init__(new_party_type="ultimate_end_user")
 
 
-class CopyUltimateEndUser(CopyAndSetParty):
+class CopyUltimateEndUser(LoginRequiredMixin, CopyAndSetParty):
     def __init__(self):
         super().__init__(
             url="applications:ultimate_end_user_attach_document",

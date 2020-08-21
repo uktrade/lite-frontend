@@ -26,8 +26,10 @@ from lite_forms.components import (
 )
 from lite_forms.generators import error_page
 
+from core.auth.views import LoginRequiredMixin
 
-class Licences(TemplateView):
+
+class Licences(LoginRequiredMixin, TemplateView):
     type = None
     data = None
     filters = None
@@ -109,7 +111,7 @@ class Licences(TemplateView):
         return render(request, f"licences/{self.template}.html", context)
 
 
-class Licence(TemplateView):
+class Licence(LoginRequiredMixin, TemplateView):
     def get(self, request, pk):
         licence, status_code = get_licence(request, pk)
         if status_code == HTTPStatus.NOT_FOUND:

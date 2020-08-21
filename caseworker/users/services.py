@@ -1,13 +1,7 @@
 from http import HTTPStatus
 from urllib.parse import urlencode
 
-from caseworker.core.client import get, post, put
-from caseworker.core.constants import (
-    GOV_USERS_URL,
-    GOV_USERS_ROLES_URL,
-    GOV_USERS_PERMISSIONS_URL,
-    SUPER_USER_ROLE_ID,
-)
+from core import client
 from lite_content.lite_internal_frontend.users import AssignUserPage
 from lite_forms.components import Option
 
@@ -15,9 +9,9 @@ from lite_forms.components import Option
 def get_gov_users(request, params=None, convert_to_options=False):
     if params:
         query_params = urlencode(params)
-        data = get(request, GOV_USERS_URL + "?" + query_params)
+        data = client.get(request, f"/gov-users/?{query_params}")
     else:
-        data = get(request, GOV_USERS_URL)
+        data = client.get(request, "/gov-users/")
 
     if convert_to_options:
         converted = []
@@ -43,10 +37,10 @@ def get_gov_users(request, params=None, convert_to_options=False):
 
 def get_gov_user(request, pk=None):
     if pk:
-        response = get(request, GOV_USERS_URL + str(pk))
+        response = client.get(request, f"/gov-users/{pk}")
     else:
         if not hasattr(request, "cached_get_gov_user_response"):
-            request.cached_get_gov_user_response = get(request, GOV_USERS_URL + "me/")
+            request.cached_get_gov_user_response = client.get(request, "/gov-users/" + "me/")
         response = request.cached_get_gov_user_response
 
     return response.json(), response.status_code
@@ -55,24 +49,24 @@ def get_gov_user(request, pk=None):
 def get_gov_user_from_form_selection(request, pk, json):
     user = json.get("user")
     if user:
-        data = get(request, GOV_USERS_URL + json.get("user"))
+        data = client.get(request, f"/gov-users/{user}")
         return data.json(), data.status_code
     return {"errors": {"user": [AssignUserPage.USER_ERROR_MESSAGE]}}, HTTPStatus.BAD_REQUEST
 
 
 def post_gov_users(request, json):
-    data = post(request, GOV_USERS_URL, json)
+    data = client.post(request, "/gov-users/", json)
     return data.json(), data.status_code
 
 
 def put_gov_user(request, pk, json):
-    data = put(request, GOV_USERS_URL + str(pk) + "/", json)
+    data = client.put(request, f"/gov-users/{pk}/", json)
     return data.json(), data.status_code
 
 
 # Roles and Permissions
 def get_roles(request, convert_to_options=False):
-    data = get(request, GOV_USERS_ROLES_URL)
+    data = client.get(request, "/gov-users/roles/")
 
     if convert_to_options:
         converted = []
@@ -86,22 +80,22 @@ def get_roles(request, convert_to_options=False):
 
 
 def get_role(request, pk):
-    data = get(request, GOV_USERS_ROLES_URL + pk)
+    data = client.get(request, f"/gov-users/roles/{pk}")
     return data.json(), data.status_code
 
 
 def post_role(request, json):
-    data = post(request, GOV_USERS_ROLES_URL, json)
+    data = client.post(request, "/gov-users/roles/", json)
     return data.json(), data.status_code
 
 
 def put_role(request, pk, json):
-    data = put(request, GOV_USERS_ROLES_URL + pk + "/", json)
+    data = client.put(request, f"/gov-users/roles/{pk}/", json)
     return data.json(), data.status_code
 
 
 def get_permissions(request, convert_to_options=False):
-    data = get(request, GOV_USERS_PERMISSIONS_URL)
+    data = client.get(request, "/gov-users/permissions/")
 
     if convert_to_options:
         converted = []

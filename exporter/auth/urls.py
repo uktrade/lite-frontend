@@ -1,12 +1,12 @@
 from django.urls import path
 
-from core.auth.views import AuthLogoutView
-from exporter.auth import views
+import core.auth.views
+import exporter.auth.views
 
 app_name = "auth"
 
 urlpatterns = [
-    path("login/", views.AuthView.as_view(), name="login"),
-    path("callback/", views.AuthCallbackView.as_view(), name="callback"),
-    path("logout/", AuthLogoutView.as_view(), name="logout"),
+    path("login/", core.auth.views.AuthView.as_view(), name="login"),
+    path("callback/", exporter.auth.views.AuthCallbackView.as_view(), name="callback"),
+    path("logout/", core.auth.views.AuthLogoutView.as_view(), name="logout"),
 ]

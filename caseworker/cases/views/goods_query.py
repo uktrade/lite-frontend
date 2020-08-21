@@ -8,8 +8,10 @@ from caseworker.core.helpers import has_permission
 from lite_content.lite_internal_frontend.cases import CLCReviewGoods, PVGradingForm
 from lite_forms.views import SingleFormView
 
+from core.auth.views import LoginRequiredMixin
 
-class RespondCLCQuery(SingleFormView):
+
+class RespondCLCQuery(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         case = get_case(request, self.object_pk)
@@ -23,7 +25,7 @@ class RespondCLCQuery(SingleFormView):
             return redirect(reverse_lazy("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.object_pk}))
 
 
-class RespondPVGradingQuery(SingleFormView):
+class RespondPVGradingQuery(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         case = get_case(request, self.object_pk)

@@ -4,8 +4,10 @@ from exporter.applications.forms.f680_details import f680_details_form
 from exporter.applications.services import put_application_with_clearance_types, get_application
 from lite_forms.views import SingleFormView
 
+from core.auth.views import LoginRequiredMixin
 
-class F680Details(SingleFormView):
+
+class F680Details(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = str(kwargs["pk"])
         application = get_application(request, self.object_pk)

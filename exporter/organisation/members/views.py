@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
-from exporter.core.helpers import convert_dict_to_query_params
+from core.helpers import convert_dict_to_query_params
 from exporter.core.services import get_organisation_user, put_organisation_user, get_organisation_users
 from lite_forms.components import Option, FiltersBar, Select
 from lite_forms.views import SingleFormView

@@ -19,11 +19,14 @@ from caseworker.cases.services import (
     get_case_additional_contacts,
     get_case_applicant,
 )
-from caseworker.core.helpers import convert_dict_to_query_params  #
+from core.helpers import convert_dict_to_query_params
 from caseworker.letter_templates.services import get_letter_template, get_letter_templates
 from lite_content.lite_internal_frontend import letter_templates
 from lite_forms.components import FormGroup
 from lite_forms.views import SingleFormView, MultiFormView
+
+from core.auth.views import LoginRequiredMixin
+
 
 TEXT = "text"
 TEMPLATE = "template"
@@ -95,7 +98,7 @@ class GenerateDocument(MultiFormView):
         }
 
 
-class GenerateDecisionDocument(GenerateDocument):
+class GenerateDecisionDocument(LoginRequiredMixin, GenerateDocument):
     def get_forms(self):
         self.back_url = reverse_lazy(
             "cases:finalise_documents", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]}
@@ -116,7 +119,7 @@ class GenerateDecisionDocument(GenerateDocument):
         )
 
 
-class RegenerateExistingDocument(SingleFormView):
+class RegenerateExistingDocument(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         document, _ = get_generated_document(request, str(kwargs["pk"]), str(kwargs["dpk"]))
         template = document["template"]
@@ -129,7 +132,7 @@ class RegenerateExistingDocument(SingleFormView):
         self.context = {"case": get_case(request, self.object_pk)}
 
 
-class PreviewDocument(TemplateView):
+class PreviewDocument(LoginRequiredMixin, TemplateView):
     def post(self, request, **kwargs):
         template_id = str(kwargs["tpk"])
         case_id = str(kwargs["pk"])
@@ -149,7 +152,7 @@ class PreviewDocument(TemplateView):
         )
 
 
-class CreateDocument(TemplateView):
+class CreateDocument(LoginRequiredMixin, TemplateView):
     def post(self, request, queue_pk, pk, tpk):
         text = request.POST.get(TEXT)
         status_code = post_generated_document(
@@ -165,7 +168,7 @@ class CreateDocument(TemplateView):
             )
 
 
-class CreateDocumentFinalAdvice(TemplateView):
+class CreateDocumentFinalAdvice(LoginRequiredMixin, TemplateView):
     def post(self, request, queue_pk, pk, decision_key, tpk):
         text = request.POST.get(TEXT)
         status_code = post_generated_document(

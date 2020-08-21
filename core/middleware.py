@@ -2,6 +2,17 @@ import logging
 import time
 import uuid
 
+from django.shortcuts import redirect
+from django.urls import resolve, reverse_lazy
+from s3chunkuploader.file_handler import UploadFailed
+
+from lite_content.lite_exporter_frontend import strings
+from lite_forms.generators import error_page
+
+import logging
+import time
+import uuid
+
 from django.contrib.auth import logout
 from django.shortcuts import redirect
 from django.urls import resolve
@@ -10,25 +21,11 @@ from s3chunkuploader.file_handler import UploadFailed
 from caseworker.auth.urls import app_name as auth_app_name
 from django.conf import settings
 
-from caseworker.auth.utils import get_client
 from lite_content.lite_internal_frontend.strings import cases
 from lite_forms.generators import error_page
 
 
-class ProtectAllViewsMiddleware:
-    def __init__(self, get_response):
-        self.get_response = get_response
-
-    def __call__(self, request):
-
-        client = get_client(request)
-
-        if resolve(request.path).app_name != auth_app_name and not client.authorized:
-            return redirect(settings.LOGIN_URL)
-
-        response = self.get_response(request)
-
-        return response
+SESSION_TIMEOUT_KEY = "_session_timeout_seconds_"
 
 
 class UploadFailedMiddleware:
@@ -44,31 +41,6 @@ class UploadFailedMiddleware:
             return None
 
         return error_page(request, cases.Manage.Documents.AttachDocuments.FILE_TOO_LARGE)
-
-
-class LoggingMiddleware:
-    def __init__(self, get_response=None):
-        self.get_response = get_response
-
-    def __call__(self, request):
-        start = time.time()
-        request.correlation = uuid.uuid4().hex
-        data = {
-            "user": request.session.get("lite_api_user_id"),
-            "message": "liteolog internal",
-            "corrID": request.correlation,
-            "type": "http request",
-            "method": request.method,
-            "url": request.path,
-        }
-        response = self.get_response(request)
-        data["type"] = "http response"
-        data["elapsed_time"] = time.time() - start
-        logging.info(data)
-        return response
-
-
-SESSION_TIMEOUT_KEY = "_session_timeout_seconds_"
 
 
 class SessionTimeoutMiddleware:

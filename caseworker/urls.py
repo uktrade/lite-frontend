@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.urls import include, path
 
-from caseworker.conf import views
+import caseworker.core.views
 
 
 urlpatterns = [
@@ -31,6 +31,6 @@ if settings.FEATURE_DEBUG_TOOLBAR_ON:
     urlpatterns = [path("__debug__/", include(debug_toolbar.urls)),] + urlpatterns
 
 
-handler403 = views.error_403
-handler404 = views.error_404
-handler500 = views.error_500
+handler403 = caseworker.core.views.handle_error(403)
+handler404 = caseworker.core.views.handle_error(404)
+handler500 = caseworker.core.views.handle_error(500)

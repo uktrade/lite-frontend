@@ -23,8 +23,9 @@ pytest-rerunfailures = "~=9.0"
 requests-mock = "~=1.8"
 selenium = "~=3.141"
 webdriver-manager = "~=3.2"
-django-extensions = "*"
+django-extensions = "~=3.0.5" 
 django-debug-toolbar = "~=2.2"
+django-pdb = "~=0.6 "
 
 [packages]
 beautifulsoup4 = "~=4.8.2"

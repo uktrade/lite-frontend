@@ -3,8 +3,10 @@ from django.views.generic import TemplateView
 
 from exporter.applications.services import get_additional_documents
 
+from core.auth.views import LoginRequiredMixin
 
-class AdditionalDocuments(TemplateView):
+
+class AdditionalDocuments(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         application_id = str(kwargs["pk"])
         data, _ = get_additional_documents(request, application_id)
