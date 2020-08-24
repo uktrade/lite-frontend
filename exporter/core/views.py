@@ -35,6 +35,10 @@ from lite_forms.generators import error_page
 from core.auth.views import LoginRequiredMixin
 
 
+def piss():
+    return 1
+
+
 class Home(TemplateView):
     def get(self, request, **kwargs):
         if not request.authbroker_client.authorized:

@@ -1,8 +1,9 @@
 import json
-import os
 
 from mohawk import Sender
 from requests import Session
+
+from django.conf import settings
 
 
 class ApiClient:
@@ -46,7 +47,7 @@ class ApiClient:
 
         content_type = "text/plain" if method == "DELETE" else "application/json"
 
-        if os.environ.get("HAWK_AUTHENTICATION_ENABLED") == "True":
+        if settings.HAWK_AUTHENTICATION_ENABLED:
             sender = self._get_hawk_sender(url, method, content_type, json.dumps(body) if body else "")
             headers["hawk-authentication"] = sender.request_header
             headers["content-type"] = sender.req_resource.content_type
@@ -66,8 +67,9 @@ class ApiClient:
         Returns a sender that, for test purposes, is hardcoded to always say that nonces have not been seen before and
         are fine (i.e. with an anonymous seen_nonce function that always returns False)
         """
+
         return Sender(
-            credentials={"id": "lite-e2e", "key": os.environ.get("LITE_E2E_HAWK_KEY"), "algorithm": "sha256"},
+            credentials={"id": settings.LITE_HAWK_ID, "key": settings.LITE_HAWK_KEY, "algorithm": "sha256"},
             url=url,
             method=method,
             content=content,

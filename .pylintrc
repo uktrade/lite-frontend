@@ -1,10 +1,10 @@
 # Based on Apache 2.0 licensed code from https://github.com/ClusterHQ/flocker
 
 [MASTER]
+init-hook="from pylint.config import find_pylintrc;import os, sys; sys.path.append(os.path.dirname(find_pylintrc()))"
 
 # Specify a configuration file.
 #rcfile=
-
 # Add files or directories to the blacklist. They should be base names, not
 # paths.
 ignore=Pipfile.lock
@@ -14,7 +14,7 @@ persistent=no
 
 # List of plugins (as comma separated values of python modules names) to load,
 # usually to register additional checkers.
-load-plugins=pylint_django
+load-plugins=pylint_django,pylint_checkers.authentication
 
 # Use multiple processes to speed up Pylint.
 # DO NOT CHANGE THIS VALUES >1 HIDE RESULTS!!!!!
@@ -539,3 +539,6 @@ exclude-protected=_asdict,_fields,_replace,_source,_make
 # Exceptions that will emit a warning when being caught. Defaults to
 # "Exception"
 overgeneral-exceptions=Exception
+
+[AUTHENTICATION]
+anonymous-users-allowed=exporter.core.views.Home,exporter.core.views.RegisterAnOrganisationTriage,exporter.core.views.RegisterAnOrganisation,exporter.core.views.RegisterAnOrganisationConfirmation

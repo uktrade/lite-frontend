@@ -1,10 +1,9 @@
 import abc
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlunparse
 
 from django.conf import settings
-from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect, HttpResponseServerError, QueryDict
-from django.shortcuts import redirect
+from django.shortcuts import redirect, resolve_url
 from django.utils.functional import cached_property
 from django.urls import reverse
 from django.views.generic import RedirectView
@@ -63,16 +62,15 @@ class AbstractAuthCallbackView(abc.ABC, View):
 
 
 class LoginRequiredMixin:
-
-    def redirect_to_login(self, url):
+    def redirect_to_login(self):
         resolved_url = resolve_url(settings.LOGIN_URL)
         login_url_parts = list(urlparse(resolved_url))
         querystring = QueryDict(login_url_parts[4], mutable=True)
-        querystring['next'] = url
-        login_url_parts[4] = querystring.urlencode(safe='/')
+        querystring["next"] = self.request.get_full_path()
+        login_url_parts[4] = querystring.urlencode(safe="/")
         return HttpResponseRedirect(urlunparse(login_url_parts))
 
     def dispatch(self, request, *args, **kwargs):
         if not self.request.authbroker_client.authorized:
-            return redirect_to_login(next=self.request.get_full_path())
+            return self.redirect_to_login()
         return super().dispatch(request, *args, **kwargs)

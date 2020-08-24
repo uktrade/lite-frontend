@@ -79,6 +79,8 @@ SASS_PROCESSOR_INCLUDE_DIRS = (os.path.join(BASE_DIR, "caseworker/assets"), SASS
 
 LITE_CONTENT_IMPORT_PATH = "lite_content.lite_internal_frontend.strings"
 
-LITE_INTERNAL_HAWK_KEY = env.str("LITE_INTERNAL_HAWK_KEY")
+LITE_HAWK_ID = env.str("LITE_HAWK_ID", "internal-frontend")
+
+LITE_HAWK_KEY = env.str("LITE_INTERNAL_HAWK_KEY")
 
 LITE_API_AUTH_HEADER_NAME = "GOV-USER-TOKEN"

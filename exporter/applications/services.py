@@ -85,7 +85,7 @@ def delete_application(request, pk):
 
 def submit_application(request, pk, json=None):
     json = json or {}
-    data = client.put(request, f"/applications/{pk}/submit/", request_data=json)
+    data = client.put(request, f"/applications/{pk}/submit/", data=json)
     return data.json(), data.status_code
 
 
@@ -170,7 +170,7 @@ def delete_party_document(request, application_pk, obj_pk):
 
 
 def post_party_document(request, application_pk, obj_pk, json):
-    data = client.post(request, f"/applications/{application_pk}/parties/{obj_pk}/document/", request_data=json)
+    data = client.post(request, f"/applications/{application_pk}/parties/{obj_pk}/document/", data=json)
     return data.json(), data.status_code
 
 
@@ -336,11 +336,11 @@ def get_activity(request, pk):
 
 
 def copy_application(request, pk, data):
-    data = client.post(request, f"/applications/{pk}/copy/", request_data=data)
+    data = client.post(request, f"/applications/{pk}/copy/", data=data)
     return data.json(), data.status_code
 
 
 def post_exhibition(request, pk, data):
     post_data = format_date_fields(data)
-    data = client.post(request, f"/applications/{pk}/exhibition-details/", request_data=post_data)
+    data = client.post(request, f"/applications/{pk}/exhibition-details/", data=post_data)
     return data.json(), data.status_code

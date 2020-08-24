@@ -65,6 +65,8 @@ SASS_PROCESSOR_INCLUDE_DIRS = (os.path.join(BASE_DIR, "exporter/assets"), SASS_R
 
 LITE_CONTENT_IMPORT_PATH = "lite_content.lite_exporter_frontend.strings"
 
-LITE_EXPORTER_HAWK_KEY = env.str("LITE_EXPORTER_HAWK_KEY")
+LITE_HAWK_ID = env.str("LITE_HAWK_ID", "exporter-frontend")
+
+LITE_HAWK_KEY = env.str("LITE_EXPORTER_HAWK_KEY")
 
 LITE_API_AUTH_HEADER_NAME = "EXPORTER-USER-TOKEN"

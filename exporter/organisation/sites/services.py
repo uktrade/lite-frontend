@@ -68,7 +68,7 @@ def get_site(request, organisation_id, pk):
 
 def update_site(request, pk, json):
     organisation_id = request.session["organisation"]
-    response = client.patch(request, f"/organisations/{organisation_id}/sites/{pk}/", request_data=json,)
+    response = client.patch(request, f"/organisations/{organisation_id}/sites/{pk}/", data=json,)
     return response.json(), response.status_code
 
 

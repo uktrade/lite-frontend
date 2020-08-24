@@ -15,7 +15,7 @@ class AuthCallbackView(auth_views.AbstractAuthCallbackView, View):
 
     def handle_failure(self, data, status_code):
         if status_code == 400:
-            return error_page(self.request, data["errors"][0])
+            return error_page(self.request, data["errors"])
         elif status_code == 401:
             return redirect("core:register_an_organisation_triage")
 

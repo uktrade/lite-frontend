@@ -1,3 +1,4 @@
+from functools import partial
 import json
 import logging
 
@@ -7,91 +8,6 @@ from mohawk import Sender
 from mohawk.exc import AlreadyProcessed
 
 from django.conf import settings
-
-
-def get(request, appended_address):
-    session = request.requests_session  # provided by RequestsSessionMiddleware
-    url = _build_absolute_uri(appended_address.replace(" ", "%20"))
-
-    if settings.HAWK_AUTHENTICATION_ENABLED:
-        sender = _get_hawk_sender(url, "GET", "application/json", "")
-
-        response = session.get(url=url, headers=_get_headers(request, sender))
-
-        _verify_api_response(response, sender)
-    else:
-        response = session.get(url=url, headers=_get_headers(request, content_type="application/json"))
-    return response
-
-
-def post(request, appended_address, request_data):
-    session = request.requests_session  # provided by RequestsSessionMiddleware
-    url = _build_absolute_uri(appended_address)
-
-    if settings.HAWK_AUTHENTICATION_ENABLED:
-        sender = _get_hawk_sender(url, "POST", "application/json", json.dumps(request_data))
-
-        response = session.post(url=url, headers=_get_headers(request, sender), json=request_data)
-
-        _verify_api_response(response, sender)
-    else:
-        response = session.post(
-            url=url, headers=_get_headers(request, content_type="application/json"), json=request_data
-        )
-
-    return response
-
-
-def put(request, appended_address, request_data):
-    session = request.requests_session  # provided by RequestsSessionMiddleware
-    url = _build_absolute_uri(appended_address)
-
-    if settings.HAWK_AUTHENTICATION_ENABLED:
-        sender = _get_hawk_sender(url, "PUT", "application/json", json.dumps(request_data))
-
-        response = session.put(url=url, headers=_get_headers(request, sender), json=request_data)
-
-        _verify_api_response(response, sender)
-    else:
-        response = session.put(
-            url=url, headers=_get_headers(request, content_type="application/json"), json=request_data
-        )
-
-    return response
-
-
-def patch(request, appended_address, request_data):
-    session = request.requests_session  # provided by RequestsSessionMiddleware
-    url = _build_absolute_uri(appended_address)
-
-    if settings.HAWK_AUTHENTICATION_ENABLED:
-        sender = _get_hawk_sender(url, "PATCH", "application/json", json.dumps(request_data))
-
-        response = session.patch(url=url, headers=_get_headers(request, sender), json=request_data)
-
-        _verify_api_response(response, sender)
-    else:
-        response = session.patch(
-            url=url, headers=_get_headers(request, content_type="application/json"), json=request_data
-        )
-
-    return response
-
-
-def delete(request, appended_address):
-    session = request.requests_session  # provided by RequestsSessionMiddleware
-    url = _build_absolute_uri(appended_address)
-
-    if settings.HAWK_AUTHENTICATION_ENABLED:
-        sender = _get_hawk_sender(url, "DELETE", "text/plain", "")
-
-        response = session.delete(url=url, headers=_get_headers(request, sender))
-
-        _verify_api_response(response, sender)
-    else:
-        response = session.delete(url=url, headers=_get_headers(request, content_type="text/plain"))
-
-    return response
 
 
 def _build_absolute_uri(appended_address):
@@ -118,7 +34,7 @@ def _get_headers(request, sender=None, content_type=None):
 
 def _get_hawk_sender(url, method, content_type, content):
     return Sender(
-        {"id": "internal-frontend", "key": settings.LITE_INTERNAL_HAWK_KEY, "algorithm": "sha256"},
+        {"id": settings.LITE_HAWK_ID, "key": settings.LITE_HAWK_KEY, "algorithm": "sha256"},
         url,
         method,
         content_type=content_type,
@@ -159,3 +75,29 @@ def _verify_api_response(response, sender):
         else:
             logging.error("Unhandled exception %s: %s" % (type(exc).__name__, exc))
         raise PermissionDenied("We were unable to authenticate your client")
+
+
+def perform_request(method, request, appended_address, data=None):
+    data = data or {}
+    session = request.requests_session  # provided by RequestsSessionMiddleware
+    url = _build_absolute_uri(appended_address.replace(" ", "%20"))
+
+    if settings.HAWK_AUTHENTICATION_ENABLED:
+        sender = _get_hawk_sender(url, method, "application/json", json.dumps(data))
+        headers = _get_headers(request, sender)
+    else:
+        headers = _get_headers(request, content_type="application/json")
+
+    response = session.request(method=method, url=url, headers=headers, json=data)
+
+    if settings.HAWK_AUTHENTICATION_ENABLED:
+        _verify_api_response(response=response, sender=sender)
+
+    return response
+
+
+get = partial(perform_request, "GET")
+patch = partial(perform_request, "PATCH")
+put = partial(perform_request, "PUT")
+post = partial(perform_request, "POST")
+delete = partial(perform_request, "DELETE")
