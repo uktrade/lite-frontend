@@ -1,10 +1,9 @@
 import abc
+from urllib.parse import urlparse
 
 from django.conf import settings
-from django.contrib.auth.mixins import UserPassesTestMixin
-from django.contrib.auth.views import redirect_to_login
 from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseServerError
+from django.http import HttpResponseRedirect, HttpResponseServerError, QueryDict
 from django.shortcuts import redirect
 from django.utils.functional import cached_property
 from django.urls import reverse
@@ -63,12 +62,17 @@ class AbstractAuthCallbackView(abc.ABC, View):
         return self.handle_failure(data=data, status_code=status_code)
 
 
-class LoginRequiredMixin(UserPassesTestMixin):
-    def test_func(self):
-        return self.request.authbroker_client.authorized
+class LoginRequiredMixin:
 
-    def handle_no_permission(self):
-        # overridden to handle absense of request.user
-        if self.raise_exception or self.test_func():
-            raise PermissionDenied(self.get_permission_denied_message())
-        return redirect_to_login(self.request.get_full_path(), self.get_login_url(), self.get_redirect_field_name())
+    def redirect_to_login(self, url):
+        resolved_url = resolve_url(settings.LOGIN_URL)
+        login_url_parts = list(urlparse(resolved_url))
+        querystring = QueryDict(login_url_parts[4], mutable=True)
+        querystring['next'] = url
+        login_url_parts[4] = querystring.urlencode(safe='/')
+        return HttpResponseRedirect(urlunparse(login_url_parts))
+
+    def dispatch(self, request, *args, **kwargs):
+        if not self.request.authbroker_client.authorized:
+            return redirect_to_login(next=self.request.get_full_path())
+        return super().dispatch(request, *args, **kwargs)
