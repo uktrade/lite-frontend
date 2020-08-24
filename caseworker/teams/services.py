@@ -1,11 +1,10 @@
 from lite_forms.components import Option
 
-from caseworker.core.client import get, post, put
-from caseworker.core.constants import TEAMS_URL
+from core import client
 
 
 def get_teams(request, converted_to_options=False):
-    data = get(request, TEAMS_URL)
+    data = client.get(request, "/teams/")
 
     if converted_to_options:
         converted_units = []
@@ -19,29 +18,29 @@ def get_teams(request, converted_to_options=False):
 
 
 def get_users_team_queues(request, user, convert_to_options=True):
-    data = get(request, "/users/" + user + "/team-queues/").json()
+    data = client.get(request, f"/users/{user}/team-queues/").json()
     if convert_to_options:
         return [Option(key=queue[0], value=queue[1], description=None) for queue in data["queues"]]
     return data, data.status_code
 
 
 def post_teams(request, json):
-    data = post(request, TEAMS_URL, json)
+    data = client.post(request, "/teams/", json)
     return data.json(), data.status_code
 
 
 def get_team(request, pk):
-    data = get(request, TEAMS_URL + str(pk))
+    data = client.get(request, f"/teams/{pk}")
     return data.json(), data.status_code
 
 
 def put_team(request, pk, json):
-    data = put(request, TEAMS_URL + str(pk) + "/", json)
+    data = client.put(request, f"/teams/{pk}/", json)
     return data.json(), data.status_code
 
 
 def get_users_by_team(request, pk, convert_to_options=False):
-    data = get(request, TEAMS_URL + pk + "/users")
+    data = client.get(request, f"/teams/{pk}/users")
     if convert_to_options:
         return [Option(user["id"], user["email"]) for user in data.json()["users"] if user["email"]]
     return data.json(), data.status_code
@@ -49,7 +48,7 @@ def get_users_by_team(request, pk, convert_to_options=False):
 
 def get_team_queues(request, pk, convert_to_options=False, ignore_pagination=False):
     post_fix = "?disable_pagination=True" if ignore_pagination else ""
-    data = get(request, TEAMS_URL + pk + "/queues/" + post_fix)
+    data = client.get(request, f"/teams/{pk}/queues/" + post_fix)
     if convert_to_options:
         return [Option(key=queue["id"], value=queue["name"], description=None) for queue in data.json()]
     return data.json()

@@ -1,8 +1,7 @@
 import functools
 
-from caseworker.core.client import get, post, put, patch
-from caseworker.core.constants import FLAGS_URL, FLAGGING_RULES
-from caseworker.core.helpers import convert_parameters_to_query_params
+from core import client
+from core.helpers import convert_parameters_to_query_params
 from caseworker.flags.enums import FlagStatus
 from lite_forms.components import Option
 from caseworker.users.services import get_gov_user
@@ -18,16 +17,16 @@ def get_flags(
     team=None,
     disable_pagination=False,
 ):
-    data = get(request, FLAGS_URL + convert_parameters_to_query_params(locals()))
+    data = client.get(request, "/flags/" + convert_parameters_to_query_params(locals()))
     return data.json()
 
 
 def _get_team_flags(level, request, convert_to_options=False, include_deactivated=False):
     user, _ = get_gov_user(request)
     team_pk = user["user"]["team"]["id"]
-    data = get(
+    data = client.get(
         request,
-        f"{FLAGS_URL}?level={level}&team={team_pk}&include_deactivated={include_deactivated}&disable_pagination=True",
+        f"/flags/?level={level}&team={team_pk}&include_deactivated={include_deactivated}&disable_pagination=True",
     ).json()
 
     if convert_to_options:
@@ -50,32 +49,32 @@ get_destination_flags = functools.partial(_get_team_flags, "Destination", conver
 
 
 def post_flags(request, json):
-    data = post(request, FLAGS_URL, json)
+    data = client.post(request, "/flags/", json)
     return data.json(), data.status_code
 
 
 def get_flag(request, pk):
-    data = get(request, FLAGS_URL + pk)
+    data = client.get(request, f"/flags/{pk}")
     return data.json()
 
 
 def update_flag(request, pk, json):
-    data = patch(request, FLAGS_URL + pk + "/", json)
+    data = client.patch(request, f"/flags/{pk}/", json)
     return data.json(), data.status_code
 
 
 def get_flagging_rules(request, params):
-    data = get(request, FLAGGING_RULES + "?" + params)
+    data = client.get(request, f"/flags/rules/?{params}")
     return data.json(), data.status_code
 
 
 def post_flagging_rules(request, json):
-    data = post(request, FLAGGING_RULES, json)
+    data = client.post(request, "/flags/rules/", json)
     return data.json(), data.status_code
 
 
 def get_flagging_rule(request, pk):
-    data = get(request, FLAGGING_RULES + str(pk))
+    data = client.get(request, f"/flags/rules/{pk}")
     return data.json(), data.status_code
 
 
@@ -83,5 +82,5 @@ def put_flagging_rule(request, pk, json):
     data = json
     if json.get("form_name"):
         data["status"] = json.get("form_name")
-    data = put(request, FLAGGING_RULES + str(pk), json)
+    data = client.put(request, f"/flags/rules/{pk}", json)
     return data.json(), data.status_code

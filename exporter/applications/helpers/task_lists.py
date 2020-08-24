@@ -25,9 +25,9 @@ from exporter.core.constants import (
     F680,
     GIFTING,
     Permissions,
-    GoodsTypeCategory,
     CaseTypes,
 )
+from core.constants import GoodsTypeCategory
 from exporter.core.services import get_sites_on_draft, get_external_locations_on_draft
 from lite_content.lite_exporter_frontend.strings import applications
 from exporter.organisation.roles.services import get_user_permissions

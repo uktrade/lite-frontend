@@ -1,4 +1,4 @@
-from exporter.core.helpers import convert_parameters_to_query_params
+from core.helpers import convert_parameters_to_query_params
 
 
 def test_convert_parameters_to_query_params():

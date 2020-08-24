@@ -11,8 +11,10 @@ from lite_content.lite_exporter_frontend import strings
 from lite_forms.components import HiddenField
 from lite_forms.generators import form_page, error_page
 
+from core.auth.views import LoginRequiredMixin
 
-class RespondToQuery(TemplateView):
+
+class RespondToQuery(LoginRequiredMixin, TemplateView):
     object_type = None
     case_id = None
     ecju_query_id = None

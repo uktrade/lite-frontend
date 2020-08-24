@@ -1,12 +1,11 @@
-from exporter.core.client import get, put
-from exporter.core.constants import ECJU_QUERIES_URL, CASES_URL
+from core import client
 
 
 def get_ecju_query(request, pk, query_pk):
-    data = get(request, CASES_URL + pk + ECJU_QUERIES_URL + query_pk).json()["ecju_query"]
+    data = client.get(request, f"/cases/{pk}/ecju-queries/{query_pk}").json()["ecju_query"]
     return data
 
 
 def put_ecju_query(request, pk, query_pk, json):
-    data = put(request, CASES_URL + pk + ECJU_QUERIES_URL + query_pk + "/", json)
+    data = client.put(request, f"/cases/{pk}/ecju-queries/{query_pk}/", json)
     return data.json(), data.status_code

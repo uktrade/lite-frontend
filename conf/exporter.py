@@ -1,4 +1,5 @@
 import os
+from urllib.parse import urljoin
 
 from django.urls import reverse_lazy
 
@@ -7,30 +8,7 @@ from conf.base import *
 
 ROOT_URLCONF = "exporter.urls"
 
-INSTALLED_APPS += [
-    "exporter.core",
-    "svg",
-    "lite_forms",
-]
-
-MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.gzip.GZipMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
-    "csp.middleware.CSPMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "exporter.conf.middleware.LoggingMiddleware",
-    "exporter.conf.middleware.ProtectAllViewsMiddleware",
-    "exporter.conf.middleware.UploadFailedMiddleware",
-]
-
-if FEATURE_DEBUG_TOOLBAR_ON:
-    index = MIDDLEWARE.index("django.middleware.gzip.GZipMiddleware")
-    MIDDLEWARE.insert(index + 1, "debug_toolbar.middleware.DebugToolbarMiddleware")
+INSTALLED_APPS += ["exporter.core"]
 
 TEMPLATES = [
     {
@@ -51,7 +29,11 @@ TEMPLATES = [
 
 
 LOGIN_REDIRECT_URL = reverse_lazy("core:home")
-LOGOUT_URL = f"{AUTHBROKER_URL}/sso/accounts/logout/?next="
+LOGOUT_URL = f"{AUTHBROKER_URL}sso/accounts/logout/?next="
+AUTHBROKER_SCOPE = "profile"
+AUTHBROKER_AUTHORIZATION_URL = urljoin(AUTHBROKER_URL, "sso/oauth2/authorize/")
+AUTHBROKER_TOKEN_URL = urljoin(AUTHBROKER_URL, "sso/oauth2/token/")
+AUTHBROKER_PROFILE_URL = urljoin(AUTHBROKER_URL, "sso/oauth2/user-profile/v1/")
 
 AUTHENTICATION_BACKENDS = []
 
@@ -83,4 +65,8 @@ SASS_PROCESSOR_INCLUDE_DIRS = (os.path.join(BASE_DIR, "exporter/assets"), SASS_R
 
 LITE_CONTENT_IMPORT_PATH = "lite_content.lite_exporter_frontend.strings"
 
-LITE_EXPORTER_HAWK_KEY = env.str("LITE_EXPORTER_HAWK_KEY")
+LITE_HAWK_ID = env.str("LITE_HAWK_ID", "exporter-frontend")
+
+LITE_HAWK_KEY = env.str("LITE_EXPORTER_HAWK_KEY")
+
+LITE_API_AUTH_HEADER_NAME = "EXPORTER-USER-TOKEN"

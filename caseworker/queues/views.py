@@ -9,7 +9,7 @@ from caseworker.cases.forms.assign_users import assign_users_form
 from caseworker.cases.forms.attach_documents import upload_document_form
 from caseworker.cases.helpers.filters import case_filters_bar
 from caseworker.core.constants import ALL_CASES_QUEUE_ID, Permission, UPDATED_CASES_QUEUE_ID
-from caseworker.core.helpers import convert_parameters_to_query_params
+from core.helpers import convert_parameters_to_query_params
 from caseworker.core.services import get_user_permissions
 from lite_content.lite_internal_frontend.cases import CasesListPage, UploadEnforcementXML, Manage
 from lite_forms.components import TextInput, FiltersBar
@@ -28,8 +28,10 @@ from caseworker.queues.services import (
 )
 from caseworker.users.services import get_gov_user
 
+from core.auth.views import LoginRequiredMixin
 
-class Cases(TemplateView):
+
+class Cases(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         """
         Show a list of cases pertaining to the given queue
@@ -52,7 +54,7 @@ class Cases(TemplateView):
         return render(request, "queues/cases.html", context)
 
 
-class QueuesList(TemplateView):
+class QueuesList(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         page = request.GET.get("page", 1)
         name = request.GET.get("name")
@@ -70,14 +72,14 @@ class QueuesList(TemplateView):
         return render(request, "queues/manage.html", context)
 
 
-class AddQueue(SingleFormView):
+class AddQueue(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.form = new_queue_form(request)
         self.action = post_queues
         self.success_url = reverse_lazy("queues:manage")
 
 
-class EditQueue(SingleFormView):
+class EditQueue(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.data = get_queue(request, self.object_pk)
@@ -86,7 +88,7 @@ class EditQueue(SingleFormView):
         self.success_url = reverse_lazy("queues:manage")
 
 
-class CaseAssignments(SingleFormView):
+class CaseAssignments(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         case_ids = request.GET.getlist("cases")
@@ -110,7 +112,7 @@ class CaseAssignments(SingleFormView):
         )
 
 
-class EnforcementXMLExport(TemplateView):
+class EnforcementXMLExport(LoginRequiredMixin, TemplateView):
     def get(self, request, pk):
         data, status_code = get_enforcement_xml(request, pk)
 
@@ -122,7 +124,7 @@ class EnforcementXMLExport(TemplateView):
             return data
 
 
-class EnforcementXMLImport(SingleFormView):
+class EnforcementXMLImport(LoginRequiredMixin, SingleFormView):
     def init(self, request, pk):
         self.object_pk = str(pk)
         self.form = upload_document_form(self.object_pk)

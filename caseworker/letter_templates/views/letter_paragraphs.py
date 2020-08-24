@@ -7,6 +7,8 @@ from lite_content.lite_internal_frontend.letter_templates import LetterTemplates
 from lite_forms.generators import error_page
 from caseworker.picklists.services import get_picklists_for_input
 
+from core.auth.views import LoginRequiredMixin
+
 
 def get_order_paragraphs_page(request, template_content):
     letter_paragraphs = get_letter_paragraphs(request, template_content["letter_paragraphs"])
@@ -25,7 +27,7 @@ def get_order_paragraphs_page(request, template_content):
     )
 
 
-class LetterParagraphs(TemplateView):
+class LetterParagraphs(LoginRequiredMixin, TemplateView):
     @staticmethod
     def _error_page():
         return error_page(

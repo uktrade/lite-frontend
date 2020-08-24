@@ -35,6 +35,23 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "sass_processor",
     "django.contrib.humanize",
+    "svg",
+    "lite_forms",
+]
+
+MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.gzip.GZipMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "csp.middleware.CSPMiddleware",
+    "core.auth.middleware.AuthbrokerClientMiddleware",
+    "core.middleware.UploadFailedMiddleware",
+    "core.middleware.RequestsSessionMiddleware",
 ]
 
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
@@ -85,7 +102,6 @@ HAWK_AUTHENTICATION_ENABLED = env.bool("HAWK_AUTHENTICATION_ENABLED", False)
 HAWK_RECEIVER_NONCE_EXPIRY_SECONDS = 60
 
 LOGIN_URL = reverse_lazy("auth:login")
-AUTH_USER_MODEL = "core.User"
 
 DATA_DIR = os.path.dirname(BASE_DIR)
 
@@ -180,14 +196,23 @@ if env.str("ELASTIC_APM_SERVER_URL", ""):
     }
     INSTALLED_APPS.append("elasticapm.contrib.django")
 
-# Django extensions
 if DEBUG:
-    try:
-        import django_extensions  # pylint: disable=unused-import flake8: noqa
+    import pkg_resources
 
-        INSTALLED_APPS.append("django_extensions")
-    except ImportError:
+    try:
+        pkg_resources.get_distribution("django_extensions")
+    except pkg_resources.DistributionNotFound:
         pass
+    else:
+        INSTALLED_APPS.append("django_extensions")
+    try:
+        pkg_resources.get_distribution("django_pdb")
+    except pkg_resources.DistributionNotFound:
+        pass
+    else:
+        INSTALLED_APPS.append("django_pdb")
+        POST_MORTEM = True
+        MIDDLEWARE.append("django_pdb.middleware.PdbMiddleware")
 
 # Sentry
 if env.str("SENTRY_DSN", ""):
@@ -227,3 +252,6 @@ if FEATURE_DEBUG_TOOLBAR_ON:
     INTERNAL_IPS = [
         "127.0.0.1",
     ]
+
+    index = MIDDLEWARE.index("django.middleware.gzip.GZipMiddleware")
+    MIDDLEWARE.insert(index + 1, "debug_toolbar.middleware.DebugToolbarMiddleware")

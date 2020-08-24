@@ -46,8 +46,10 @@ from lite_content.lite_internal_frontend.advice import FinaliseLicenceForm, Gene
 from lite_forms.generators import form_page, error_page
 from lite_forms.views import SingleFormView
 
+from core.auth.views import LoginRequiredMixin
 
-class GiveAdvice(SingleFormView):
+
+class GiveAdvice(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.case = get_case(request, self.object_pk)
@@ -98,7 +100,7 @@ class GiveAdvice(SingleFormView):
             return post_final_case_advice
 
 
-class CoalesceUserAdvice(TemplateView):
+class CoalesceUserAdvice(LoginRequiredMixin, TemplateView):
     """
     Group all of a user's team's user level advice in a team advice for the user's team
     """
@@ -114,7 +116,7 @@ class CoalesceUserAdvice(TemplateView):
         )
 
 
-class ClearTeamAdvice(TemplateView):
+class ClearTeamAdvice(LoginRequiredMixin, TemplateView):
     """
     Clear the user's team's team level advice
     """
@@ -134,7 +136,7 @@ class ClearTeamAdvice(TemplateView):
             )
 
 
-class CoalesceTeamAdvice(TemplateView):
+class CoalesceTeamAdvice(LoginRequiredMixin, TemplateView):
     """
     Group all team's advice into final advice
     """
@@ -150,7 +152,7 @@ class CoalesceTeamAdvice(TemplateView):
         )
 
 
-class ClearFinalAdvice(TemplateView):
+class ClearFinalAdvice(LoginRequiredMixin, TemplateView):
     """
     Clear final advice
     """
@@ -180,7 +182,7 @@ def create_mapping(goods):
     return return_dict
 
 
-class FinaliseGoodsCountries(SingleFormView):
+class FinaliseGoodsCountries(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.context = {
@@ -193,7 +195,7 @@ class FinaliseGoodsCountries(SingleFormView):
         self.success_url = reverse_lazy("cases:finalise", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.object_pk})
 
 
-class Finalise(TemplateView):
+class Finalise(LoginRequiredMixin, TemplateView):
     """
     Finalise a case and change the case status to finalised
     """
@@ -269,7 +271,7 @@ class Finalise(TemplateView):
         )
 
 
-class FinaliseGenerateDocuments(SingleFormView):
+class FinaliseGenerateDocuments(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         case = get_case(request, self.object_pk)

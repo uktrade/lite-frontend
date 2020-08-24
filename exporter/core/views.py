@@ -7,8 +7,6 @@ from django.views.generic import TemplateView
 
 from exporter.applications.services import has_existing_applications_and_licences_and_nlrs
 from exporter.auth.services import authenticate_exporter_user
-from exporter.auth.utils import get_client
-from exporter.core.constants import NEWLINE
 
 from exporter.core.forms import (
     select_your_organisation_form,
@@ -25,20 +23,26 @@ from exporter.core.services import (
     get_signature_certificate,
 )
 from exporter.core.validators import validate_register_organisation_triage
+from core.auth.utils import get_profile
 from lite_content.lite_exporter_frontend import generic
 from lite_forms.components import BackLink
 from lite_forms.generators import form_page, success_page
 from lite_forms.helpers import conditional
 from lite_forms.views import SummaryListFormView, MultiFormView
 from exporter.organisation.members.services import get_user
+from lite_forms.generators import error_page
+
+from core.auth.views import LoginRequiredMixin
+
+
+def piss():
+    return 1
 
 
 class Home(TemplateView):
     def get(self, request, **kwargs):
-        oauth2session = get_client(request)
-        if not oauth2session.authorized:
+        if not request.authbroker_client.authorized:
             return render(request, "core/start.html")
-
         try:
             user = get_user(request)
             user_permissions = user["role"]["permissions"]
@@ -60,7 +64,7 @@ class Home(TemplateView):
         return render(request, "core/hub.html", context)
 
 
-class PickOrganisation(TemplateView):
+class PickOrganisation(LoginRequiredMixin, TemplateView):
     form = None
     organisations = None
 
@@ -92,6 +96,8 @@ class PickOrganisation(TemplateView):
 
 
 class RegisterAnOrganisationTriage(MultiFormView):
+    # This view is "odd" - all other views require the user to have a LITE API user. This one does not. Therefore the
+    # view is not using the LoginRequiredMixin. However, this view does require the user to be logged in.
     class Locations:
         UNITED_KINGDOM = "united_kingdom"
         ABROAD = "abroad"
@@ -100,11 +106,14 @@ class RegisterAnOrganisationTriage(MultiFormView):
         self.forms = register_triage()
         self.action = validate_register_organisation_triage
         self.additional_context = {"user_in_limbo": True}
-        oauth2session = get_client(request)
-        if not oauth2session.authorized:
+        if not request.authbroker_client.authorized:
             raise Http404
-
-        if request.session["user_token"] and get_user(request)["organisations"]:
+        else:
+            profile = get_profile(request.authbroker_client)
+            request.session["email"] = profile["email"]
+            request.session["first_name"] = profile.get("user_profile", {}).get("first_name")
+            request.session["last_name"] = profile.get("user_profile", {}).get("last_name")
+        if "user_token" in request.session and get_user(request)["organisations"]:
             raise Http404
 
     def get_success_url(self):
@@ -128,11 +137,9 @@ class RegisterAnOrganisation(SummaryListFormView):
         self.hide_components = ["site.address.address_line_2"]
         self.additional_context = {"user_in_limbo": True}
 
-        oauth2session = get_client(request)
-        if not oauth2session.authorized:
+        if not request.authbroker_client.authorized:
             raise Http404
-
-        if request.session["user_token"] and get_user(request)["organisations"]:
+        if "user_token" in request.session and get_user(request)["organisations"]:
             raise Http404
 
     def prettify_data(self, data):
@@ -144,7 +151,7 @@ class RegisterAnOrganisation(SummaryListFormView):
             ]
         if "site.address.address_line_2" in data and data["site.address.address_line_2"]:
             data["site.address.address_line_1"] = (
-                data["site.address.address_line_1"] + NEWLINE + data["site.address.address_line_2"]
+                data["site.address.address_line_1"] + "\n" + data["site.address.address_line_2"]
             )
         return data
 
@@ -192,11 +199,15 @@ class RegisterAnOrganisationConfirmation(TemplateView):
         )
 
 
-class SignatureHelp(TemplateView):
+class SignatureHelp(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         return render(request, "core/signature-help.html", {})
 
 
-class CertificateDownload(TemplateView):
+class CertificateDownload(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         return get_signature_certificate(request)
+
+
+def handler403(request, exception):
+    return error_page(request, title="Forbidden", description=exception, show_back_link=True)

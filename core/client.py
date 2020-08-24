@@ -1,0 +1,103 @@
+from functools import partial
+import json
+import logging
+
+from django.core.cache import cache
+from django.core.exceptions import PermissionDenied
+from mohawk import Sender
+from mohawk.exc import AlreadyProcessed
+
+from django.conf import settings
+
+
+def _build_absolute_uri(appended_address):
+    url = settings.LITE_API_URL + appended_address
+
+    if not url.endswith("/") and "?" not in url:
+        url = url + "/"
+
+    return url
+
+
+def _get_headers(request, sender=None, content_type=None):
+    headers = {}
+    if sender:
+        headers["content-type"] = sender.req_resource.content_type
+        headers["hawk-authentication"] = sender.request_header
+    if content_type:
+        headers["content-type"] = content_type
+    if "user_token" in request.session:
+        headers[settings.LITE_API_AUTH_HEADER_NAME] = request.session["user_token"]
+    headers["ORGANISATION-ID"] = request.session.get("organisation", "None")
+    return headers
+
+
+def _get_hawk_sender(url, method, content_type, content):
+    return Sender(
+        {"id": settings.LITE_HAWK_ID, "key": settings.LITE_HAWK_KEY, "algorithm": "sha256"},
+        url,
+        method,
+        content_type=content_type,
+        content=content,
+        seen_nonce=_seen_nonce,
+    )
+
+
+def _seen_nonce(access_key_id, nonce, timestamp):
+    """
+    Returns if the passed access_key_id/nonce combination has been
+    used before
+    """
+
+    cache_key = f"hawk:{access_key_id}:{nonce}"
+
+    # cache.add only adds key if it isn't present
+    seen_cache_key = not cache.add(cache_key, True, timeout=settings.HAWK_RECEIVER_NONCE_EXPIRY_SECONDS)
+
+    if seen_cache_key:
+        raise AlreadyProcessed(f"Already seen nonce {nonce}")
+
+    return seen_cache_key
+
+
+def _verify_api_response(response, sender):
+    try:
+        sender.accept_response(
+            response.headers["server-authorization"],
+            content=response.content,
+            content_type=response.headers["Content-Type"],
+        )
+    except Exception as exc:  # noqa
+        if "server-authorization" not in response.headers:
+            logging.error(
+                "No server_authorization header found in response from the LITE API - probable API HAWK auth failure"
+            )
+        else:
+            logging.error("Unhandled exception %s: %s" % (type(exc).__name__, exc))
+        raise PermissionDenied("We were unable to authenticate your client")
+
+
+def perform_request(method, request, appended_address, data=None):
+    data = data or {}
+    session = request.requests_session  # provided by RequestsSessionMiddleware
+    url = _build_absolute_uri(appended_address.replace(" ", "%20"))
+
+    if settings.HAWK_AUTHENTICATION_ENABLED:
+        sender = _get_hawk_sender(url, method, "application/json", json.dumps(data))
+        headers = _get_headers(request, sender)
+    else:
+        headers = _get_headers(request, content_type="application/json")
+
+    response = session.request(method=method, url=url, headers=headers, json=data)
+
+    if settings.HAWK_AUTHENTICATION_ENABLED:
+        _verify_api_response(response=response, sender=sender)
+
+    return response
+
+
+get = partial(perform_request, "GET")
+patch = partial(perform_request, "PATCH")
+put = partial(perform_request, "PUT")
+post = partial(perform_request, "POST")
+delete = partial(perform_request, "DELETE")

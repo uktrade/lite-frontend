@@ -1,36 +1,25 @@
 from http import HTTPStatus
 
 from exporter.applications.helpers.date_fields import format_date
-from exporter.core.client import get, post, put, delete
-from exporter.core.constants import (
-    GOODS_URL,
-    DOCUMENTS_URL,
-    GOODS_QUERY_URL,
-    DOCUMENT_SENSITIVITY_URL,
-    MISSING_DOCUMENT_REASONS_URL,
-    CASES_URL,
-    ADDITIONAL_DOCUMENT_URL,
-    DOWNLOAD_URL,
-    GOODS_DETAILS_URL,
-)
-from exporter.core.helpers import convert_parameters_to_query_params
+from core import client
+from core.helpers import convert_parameters_to_query_params
 from exporter.core.services import get_document_download_stream
 
 
 def get_goods(
     request, page: int = 1, description=None, part_number=None, control_list_entry=None, for_application=None
 ):
-    data = get(request, GOODS_URL + convert_parameters_to_query_params(locals()))
+    data = client.get(request, "/goods/" + convert_parameters_to_query_params(locals()))
     return data.json()
 
 
 def get_good(request, pk, full_detail=False):
-    data = get(request, GOODS_URL + str(pk) + "/" + convert_parameters_to_query_params(locals()))
+    data = client.get(request, f"/goods/{pk}/" + convert_parameters_to_query_params(locals()))
     return data.json().get("good"), data.status_code
 
 
 def get_good_details(request, pk):
-    data = get(request, GOODS_URL + str(pk) + GOODS_DETAILS_URL + convert_parameters_to_query_params(locals()))
+    data = client.get(request, f"/goods/{pk}/details/" + convert_parameters_to_query_params(locals()))
     return data.json().get("good"), data.status_code
 
 
@@ -50,7 +39,7 @@ def post_goods(request, json):
     if "item_category" in json and json["item_category"] == "group2_firearms":
         add_firearm_details_to_data(json)
 
-    data = post(request, GOODS_URL, json)
+    data = client.post(request, "/goods/", json)
 
     if data.status_code == HTTPStatus.OK:
         data.json().get("good"), data.status_code
@@ -103,12 +92,12 @@ def validate_good(request, json):
 
 
 def edit_good(request, pk, json):
-    data = put(request, GOODS_URL + pk + "/", json)
+    data = client.put(request, f"/goods/{pk}/", json)
     return data.json(), data.status_code
 
 
 def edit_good_details(request, pk, json):
-    data = put(request, GOODS_URL + pk + GOODS_DETAILS_URL, json)
+    data = client.put(request, f"/goods/{pk}/details/", json)
     return data.json(), data.status_code
 
 
@@ -133,7 +122,7 @@ def edit_good_pv_grading(request, pk, json):
 
 
 def delete_good(request, pk):
-    data = delete(request, GOODS_URL + pk)
+    data = client.delete(request, "/goods/" + pk)
     return data.json(), data.status_code
 
 
@@ -141,18 +130,18 @@ def raise_goods_query(request, pk, json):
     post_data = json
     post_data["good_id"] = pk
 
-    data = post(request, GOODS_QUERY_URL, post_data)
+    data = client.post(request, "/queries/goods-queries/", post_data)
     return data.json(), data.status_code
 
 
 # Documents
 def get_good_document(request, pk, doc_pk):
-    data = get(request, GOODS_URL + pk + DOCUMENTS_URL + doc_pk)
+    data = client.get(request, f"/goods/{pk}/documents/" + doc_pk)
     return data.json().get("document") if data.status_code == HTTPStatus.OK else None
 
 
 def get_good_documents(request, pk):
-    data = get(request, GOODS_URL + pk + DOCUMENTS_URL)
+    data = client.get(request, f"/goods/{pk}/documents/")
     return data.json().get("documents") if data.status_code == HTTPStatus.OK else None
 
 
@@ -161,27 +150,25 @@ def post_good_documents(request, pk, json):
         json["description"] = ""
     json = [json]
 
-    data = post(request, GOODS_URL + pk + DOCUMENTS_URL, json)
+    data = client.post(request, f"/goods/{pk}/documents/", json)
     return data.json(), data.status_code
 
 
 def delete_good_document(request, pk, doc_pk):
-    data = delete(request, GOODS_URL + pk + DOCUMENTS_URL + doc_pk)
+    data = client.delete(request, f"/goods/{pk}/documents/" + doc_pk)
     return data.json(), data.status_code
 
 
 # Document Sensitivity
 def get_document_missing_reasons(request):
-    data = get(request, MISSING_DOCUMENT_REASONS_URL)
+    data = client.get(request, "/static/missing-document-reasons/")
     return data.json(), data.status_code
 
 
 def post_good_document_sensitivity(request, pk, json):
-    data = post(request, GOODS_URL + str(pk) + DOCUMENT_SENSITIVITY_URL, json)
+    data = client.post(request, f"/goods/{pk}/document-sensitivity/", json)
     return data.json(), data.status_code
 
 
 def get_case_document_download(request, document_pk, case_pk):
-    return get_document_download_stream(
-        request, CASES_URL + str(document_pk) + ADDITIONAL_DOCUMENT_URL + str(case_pk) + DOWNLOAD_URL
-    )
+    return get_document_download_stream(request, f"/cases/{document_pk}/document/documents/{case_pk}/download/")

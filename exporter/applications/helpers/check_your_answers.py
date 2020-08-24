@@ -5,7 +5,6 @@ from django.urls import reverse_lazy
 
 from exporter.applications.helpers.countries import ContractTypes
 from exporter.core.constants import (
-    NEWLINE,
     STANDARD,
     OPEN,
     HMRC,
@@ -16,8 +15,8 @@ from exporter.core.constants import (
     PERMANENT,
     CaseTypes,
     APPLICATION_TYPE_STRINGS,
-    GoodsTypeCategory,
 )
+from core.constants import GoodsTypeCategory
 from core.builtins.custom_tags import default_na, friendly_boolean, pluralise_unit, date_display, get_address
 from exporter.core.helpers import convert_to_link, convert_control_list_entries
 from lite_content.lite_exporter_frontend import applications
@@ -272,7 +271,7 @@ def _convert_countries(countries):
 
 def convert_country_contract_types(country):
     return default_na(
-        NEWLINE.join(
+        "\n".join(
             [
                 ContractTypes.get_str_representation(ContractTypes(contract_type))
                 if contract_type != "other_contract_type"
@@ -288,7 +287,7 @@ def _get_route_of_goods(application):
         {
             "Description": "Shipped air waybill or lading",
             "Answer": friendly_boolean(application.get("is_shipped_waybill_or_lading"))
-            + NEWLINE
+            + "\n"
             + (application.get("non_waybill_or_lading_route_details") or ""),
         }
     ]
@@ -325,7 +324,7 @@ def _get_additional_information(application):
                 {
                     "Description": title,
                     "Answer": (
-                        friendly_boolean(value) + NEWLINE + application.get(f"{field}_description")
+                        friendly_boolean(value) + "\n" + application.get(f"{field}_description")
                         if isinstance(value, bool) and application.get(f"{field}_description") is not None
                         else friendly_boolean(value)
                         if isinstance(value, bool)
@@ -363,9 +362,7 @@ def _get_end_use_details(application):
         if application.get(main_field) is not None:
             ds["Description"] = display_string
             if not isinstance(application.get(main_field), str):
-                ds["Answer"] = (
-                    friendly_boolean(application.get(main_field)) + NEWLINE + (application.get(ref_field) or "")
-                )
+                ds["Answer"] = friendly_boolean(application.get(main_field)) + "\n" + (application.get(ref_field) or "")
             else:
                 ds["Answer"] = application.get(main_field)
         if ds:
@@ -392,7 +389,7 @@ def _get_temporary_export_details(application):
                 display_entry["Description"] = display_string
                 display_entry["Answer"] = (
                     friendly_boolean(application.get(field))
-                    + NEWLINE
+                    + "\n"
                     + (application.get("temp_direct_control_details") or "")
                     if field == "is_temp_direct_control"
                     else application.get(field)

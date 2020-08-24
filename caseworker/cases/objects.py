@@ -1,7 +1,7 @@
 from munch import Munch
 
 from caseworker.cases.constants import CaseType
-from caseworker.core.constants import GoodsTypeCategory
+from core.constants import GoodsTypeCategory
 
 
 class Slice:

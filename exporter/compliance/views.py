@@ -23,14 +23,16 @@ from lite_content.lite_exporter_frontend.compliance import OpenReturnsForm
 from lite_forms.generators import success_page
 from lite_forms.views import MultiFormView
 
+from core.auth.views import LoginRequiredMixin
 
-class ComplianceSiteList(TemplateView):
+
+class ComplianceSiteList(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         data = get_compliance_list(request)
         return render(request, "compliance/compliance/list.html", {"compliance": data})
 
 
-class ComplianceSiteDetails(TemplateView):
+class ComplianceSiteDetails(LoginRequiredMixin, TemplateView):
     def get(self, request, pk, tab, **kwargs):
         data = get_compliance_detail(request, pk)
         data["tab"] = tab
@@ -62,7 +64,7 @@ class ComplianceSiteDetails(TemplateView):
         return redirect(reverse_lazy("compliance:compliance_site_details", kwargs={"pk": pk, "tab": tab}))
 
 
-class ComplianceVisitDetails(TemplateView):
+class ComplianceVisitDetails(LoginRequiredMixin, TemplateView):
     def get(self, request, site_case_id, pk, tab, **kwargs):
         data = get_case_visit_report(request, pk)
         data["tab"] = tab
@@ -76,18 +78,18 @@ class ComplianceVisitDetails(TemplateView):
         return render(request, "compliance/compliance/visit-case.html", data)
 
 
-class AnnualReturnsList(TemplateView):
+class AnnualReturnsList(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         data = get_open_licence_returns(request)
         return render(request, "compliance/open-licence-returns/list.html", {"open_licence_returns": data})
 
 
-class AnnualReturnsDownload(TemplateView):
+class AnnualReturnsDownload(LoginRequiredMixin, TemplateView):
     def get(self, request, pk):
         return get_open_licence_return_download(request, pk)
 
 
-class AddAnnualReturn(MultiFormView):
+class AddAnnualReturn(LoginRequiredMixin, MultiFormView):
     def init(self, request, **kwargs):
         self.additional_context = {
             "columns": [
@@ -117,7 +119,7 @@ class AddAnnualReturn(MultiFormView):
         )
 
 
-class AddAnnualReturnSuccess(TemplateView):
+class AddAnnualReturnSuccess(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         return success_page(
             request=request,

@@ -7,6 +7,8 @@ from lite_content.lite_exporter_frontend.applications import ClearanceLevel
 from lite_forms.components import Form, RadioButtons
 from lite_forms.views import SingleFormView
 
+from core.auth.views import LoginRequiredMixin
+
 
 def clearance_level_form(application_id, options):
     return Form(
@@ -17,7 +19,7 @@ def clearance_level_form(application_id, options):
     )
 
 
-class SetClearanceLevel(SingleFormView):
+class SetClearanceLevel(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         pv_grading_options = get_pv_gradings(request, convert_to_options=True)

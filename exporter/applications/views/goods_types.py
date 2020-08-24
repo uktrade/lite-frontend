@@ -16,8 +16,10 @@ from exporter.applications.services import (
 from lite_forms.generators import error_page
 from lite_forms.views import SingleFormView
 
+from core.auth.views import LoginRequiredMixin
 
-class GoodsTypeList(TemplateView):
+
+class GoodsTypeList(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         application_id = str(kwargs["pk"])
         application = get_application(request, application_id)
@@ -39,7 +41,7 @@ class GoodsTypeList(TemplateView):
         return render(request, "applications/goods-types/index.html", context)
 
 
-class GoodsTypeAdd(SingleFormView):
+class GoodsTypeAdd(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         application = get_application(request, self.object_pk)
@@ -48,7 +50,7 @@ class GoodsTypeAdd(SingleFormView):
         self.success_url = reverse_lazy("applications:goods_types", kwargs={"pk": self.object_pk})
 
 
-class GoodsTypeRemove(TemplateView):
+class GoodsTypeRemove(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         application_id = str(kwargs["pk"])
         good_type_id = str(kwargs["goods_type_pk"])
@@ -61,7 +63,7 @@ class GoodsTypeRemove(TemplateView):
         return redirect(reverse_lazy("applications:goods_types", kwargs={"pk": application_id}))
 
 
-class GoodsTypeCountries(TemplateView):
+class GoodsTypeCountries(LoginRequiredMixin, TemplateView):
     """
     View to control which goods are going to which countries (goods/countries matrix)
     """

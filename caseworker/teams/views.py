@@ -11,8 +11,10 @@ from caseworker.teams.forms import add_team_form, edit_team_form
 from caseworker.teams.services import get_team, get_teams, post_teams, get_users_by_team, put_team
 from caseworker.users.services import get_gov_user
 
+from core.auth.views import LoginRequiredMixin
 
-class TeamsList(TemplateView):
+
+class TeamsList(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         data = get_teams(request)
 
@@ -22,13 +24,13 @@ class TeamsList(TemplateView):
         return render(request, "teams/index.html", context)
 
 
-class Team(RedirectView):
+class Team(LoginRequiredMixin, RedirectView):
     def get_redirect_url(self):
         user, _ = get_gov_user(self.request)
         return reverse_lazy("teams:team", kwargs={"pk": user["user"]["team"]["id"]})
 
 
-class TeamDetail(TemplateView):
+class TeamDetail(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         user, _ = get_gov_user(self.request)
         team, _ = get_team(request, str(kwargs["pk"]))
@@ -43,7 +45,7 @@ class TeamDetail(TemplateView):
         return render(request, "teams/team.html", context)
 
 
-class AddTeam(SingleFormView):
+class AddTeam(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.form = add_team_form()
         self.action = post_teams
@@ -53,7 +55,7 @@ class AddTeam(SingleFormView):
         return reverse("teams:teams")
 
 
-class EditTeam(SingleFormView):
+class EditTeam(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         team, _ = get_team(request, self.object_pk)

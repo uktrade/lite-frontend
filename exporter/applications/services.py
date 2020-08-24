@@ -1,37 +1,14 @@
 from http import HTTPStatus
 
-from django.http import StreamingHttpResponse
 from s3chunkuploader.file_handler import s3_client
 
-from exporter.applications.helpers.date_fields import format_date_fields, create_formatted_date_from_components
-from exporter.core.client import get, post, put, delete
-from exporter.core.constants import (
-    ACTIVITY_URL,
-    APPLICATIONS_URL,
-    DOCUMENT_URL,
-    APPLICATION_SUBMIT_URL,
-    ADDITIONAL_DOCUMENT_URL,
-    CASES_URL,
-    CASE_NOTES_URL,
-    ECJU_QUERIES_URL,
-    MANAGE_STATUS_URL,
-    GOODSTYPE_URL,
-    GOODSTYPES_URL,
-    GOODS_URL,
-    GOODSTYPE_COUNTRY_URL,
-    STATUS_PROPERTIES_URL,
-    GENERATED_DOCUMENTS_URL,
-    EXISTING_PARTIES_URL,
-    COUNTRIES_URL,
-    PARTIES_URL,
-    APPLICATION_COPY_URL,
-    END_USE_DETAILS_URL,
-    TEMPORARY_EXPORT_DETAILS_URL,
-    CONTRACT_TYPES_URL,
-    CONTRACT_TYPES_COUNTRIES,
-)
+from django.http import StreamingHttpResponse
 from django.conf import settings
-from exporter.core.helpers import remove_prefix, convert_parameters_to_query_params, add_validate_only_to_data
+
+from core import client
+from exporter.applications.helpers.date_fields import format_date_fields, create_formatted_date_from_components
+from exporter.core.helpers import remove_prefix, add_validate_only_to_data
+from core.helpers import convert_parameters_to_query_params
 from exporter.core.objects import Application
 
 
@@ -42,7 +19,8 @@ def get_applications(request, page: int = 1, submitted: bool = True):
     :param page: Returns n page of page results
     :param submitted: Returns submitted applications if True, else returns draft applications if False
     """
-    data = get(request, APPLICATIONS_URL + convert_parameters_to_query_params(locals()))
+    querystring = convert_parameters_to_query_params({"page": page, "submitted": submitted})
+    data = client.get(request, f"/applications/{querystring}")
     return data.json()
 
 
@@ -51,32 +29,32 @@ def has_existing_applications_and_licences_and_nlrs(request):
     Returns if an hmrc org has any submitted queries
     Returns if a standard org has any applications & licences
     """
-    data = get(request, APPLICATIONS_URL + "existing/")
+    data = client.get(request, "/applications/existing/")
     return data.json()
 
 
 def get_application(request, pk) -> Application:
-    data = get(request, APPLICATIONS_URL + str(pk))
+    data = client.get(request, f"/applications/{pk}")
     return Application(data.json())
 
 
 def post_applications(request, json):
-    data = post(request, APPLICATIONS_URL, json)
+    data = client.post(request, "/applications/", json)
     return data.json(), data.status_code
 
 
 def put_application(request, pk, json):
-    data = put(request, APPLICATIONS_URL + str(pk), json)
+    data = client.put(request, f"/applications/{pk}", json)
     return data.json(), data.status_code
 
 
 def put_application_route_of_goods(request, pk, json):
-    data = put(request, APPLICATIONS_URL + str(pk) + "/route-of-goods/", json)
+    data = client.put(request, f"/applications/{pk}/route-of-goods/", json)
     return data.json(), data.status_code
 
 
 def put_end_use_details(request, pk, json):
-    data = put(request, APPLICATIONS_URL + str(pk) + END_USE_DETAILS_URL, json)
+    data = client.put(request, f"/applications/{pk}/end-use-details/", json)
     return data.json(), data.status_code
 
 
@@ -89,42 +67,41 @@ def put_temporary_export_details(request, pk, json):
     if "year" in json and "month" in json and "day" in json:
         json["proposed_return_date"] = create_formatted_date_from_components(json)
 
-    data = put(request, APPLICATIONS_URL + str(pk) + TEMPORARY_EXPORT_DETAILS_URL, json)
+    data = client.put(request, f"/applications/{pk}/temporary-export-details/", json)
     return data.json(), data.status_code
 
 
 def put_application_with_clearance_types(request, pk, json):
     # Inject the clearance types as an empty set into JSON if they are not present
     json["types"] = json.get("types", [])
-    data = put(request, APPLICATIONS_URL + str(pk), json)
+    data = client.put(request, f"/applications/{pk}", json)
     return data.json(), data.status_code
 
 
 def delete_application(request, pk):
-    data = delete(request, APPLICATIONS_URL + str(pk))
+    data = client.delete(request, f"/applications/{pk}")
     return data.json(), data.status_code
 
 
 def submit_application(request, pk, json=None):
     json = json or {}
-    data = put(request, APPLICATIONS_URL + str(pk) + APPLICATION_SUBMIT_URL, request_data=json)
+    data = client.put(request, f"/applications/{pk}/submit/", data=json)
     return data.json(), data.status_code
 
 
-# Goods
 def get_application_goods(request, pk):
-    data = get(request, APPLICATIONS_URL + pk + GOODS_URL)
+    data = client.get(request, f"/applications/{pk}/goods/")
     return data.json().get("goods") if data.status_code == HTTPStatus.OK else None
 
 
 def validate_application_good(request, pk, json):
     post_data = get_data_from_post_good_on_app(json)
     post_data["validate_only"] = True
-    return post(request, APPLICATIONS_URL + pk + GOODS_URL, post_data)
+    return client.post(request, f"/applications/{pk}/goods/", post_data)
 
 
 def get_application_goods_types(request, pk):
-    data = get(request, APPLICATIONS_URL + pk + GOODSTYPES_URL)
+    data = client.get(request, f"/applications/{pk}/goodstypes/")
     return data.json().get("goods") if data.status_code == HTTPStatus.OK else None
 
 
@@ -132,7 +109,7 @@ def post_good_on_application(request, pk, json):
     post_data = get_data_from_post_good_on_app(json)
     if "good_id" not in post_data:
         post_data["good_id"] = json["good_id"]
-    data = post(request, APPLICATIONS_URL + str(pk) + GOODS_URL, post_data)
+    data = client.post(request, f"/applications/{pk}/goods/", post_data)
     return data.json(), data.status_code
 
 
@@ -144,127 +121,118 @@ def get_data_from_post_good_on_app(json):
     return post_data
 
 
-# Countries
 def get_application_countries(request, pk):
-    data = get(request, APPLICATIONS_URL + str(pk) + COUNTRIES_URL)
+    data = client.get(request, f"/applications/{pk}/countries/")
     return [country_entry["country"] for country_entry in data.json()["countries"]]
 
 
 def get_application_countries_and_contract_types(request, pk):
-    data = get(request, APPLICATIONS_URL + str(pk) + CONTRACT_TYPES_COUNTRIES)
+    data = client.get(request, f"/applications/{pk}/countries-contract-types/")
     return data.json()
 
 
 def post_application_countries(request, pk, json):
-    data = post(request, APPLICATIONS_URL + str(pk) + COUNTRIES_URL, json)
+    data = client.post(request, f"/applications/{pk}/countries/", json)
     return data.json(), data.status_code
 
 
 def put_contract_type_for_country(request, pk, json):
-    data = put(request, APPLICATIONS_URL + str(pk) + CONTRACT_TYPES_URL, json)
+    data = client.put(request, f"/applications/{pk}/contract-types/", json)
     return data.json(), data.status_code
 
 
-# Parties
 def validate_party(request, pk, json):
     json = add_validate_only_to_data(json)
-    data = post(request, APPLICATIONS_URL + str(pk) + PARTIES_URL, json)
+    data = client.post(request, f"/applications/{pk}/parties/", json)
     return data.json(), data.status_code
 
 
 def post_party(request, pk, json):
-    data = post(request, APPLICATIONS_URL + str(pk) + PARTIES_URL, json)
+    data = client.post(request, f"/applications/{pk}/parties/", json)
     return data.json(), data.status_code
 
 
 def copy_party(request, pk, party_pk):
-    return get(request, f"{APPLICATIONS_URL}{pk}{PARTIES_URL}{party_pk}/copy/").json()["party"]
+    return client.get(request, f"/applications/{pk}/parties/{party_pk}/copy/").json()["party"]
 
 
 def delete_party(request, application_pk, obj_pk=None):
-    return delete(request, f"{APPLICATIONS_URL}{application_pk}{PARTIES_URL}{str(obj_pk)}/").status_code
+    return client.delete(request, f"/applications/{application_pk}/parties/{obj_pk}/").status_code
 
 
 def get_party(request, application_pk, pk):
-    return get(request, f"{APPLICATIONS_URL}{application_pk}{PARTIES_URL}{str(pk)}/").json()
+    return client.get(request, f"/applications/{application_pk}/parties/{pk}/").json()
 
 
 def delete_party_document(request, application_pk, obj_pk):
-    data = delete(request, APPLICATIONS_URL + application_pk + PARTIES_URL + str(obj_pk) + DOCUMENT_URL)
+    data = client.delete(request, f"/applications/{application_pk}/parties/{obj_pk}/document/")
     return data.status_code
 
 
 def post_party_document(request, application_pk, obj_pk, json):
-    data = post(
-        request, APPLICATIONS_URL + application_pk + PARTIES_URL + str(obj_pk) + DOCUMENT_URL, request_data=json
-    )
+    data = client.post(request, f"/applications/{application_pk}/parties/{obj_pk}/document/", data=json)
     return data.json(), data.status_code
 
 
 def get_party_document(request, application_pk, obj_pk):
-    data = get(request, APPLICATIONS_URL + application_pk + PARTIES_URL + str(obj_pk) + DOCUMENT_URL)
+    data = client.get(request, f"/applications/{application_pk}/parties/{obj_pk}/document/")
     return data.json(), data.status_code
 
 
-# Ultimate End Users
 def get_ultimate_end_users(request, pk):
-    data = get(request, APPLICATIONS_URL + pk + PARTIES_URL + "?type=ultimate_end_user")
+    data = client.get(request, f"/applications/{pk}/parties/?type=ultimate_end_user")
     return data.json()["ultimate_end_users"]
 
 
-# Third parties
 def get_third_parties(request, pk):
-    data = get(request, APPLICATIONS_URL + pk + PARTIES_URL + "?type=third_party")
+    data = client.get(request, f"/applications/{pk}/parties/?type=third_party")
     return data.json()["third_parties"]
 
 
-# Existing Parties
 def get_existing_parties(request, pk, name=None, address=None, country=None, party_type=None, page=1):
     params = {"name": name, "address": address, "country": country, "party_type": party_type, "page": page}
     params = convert_parameters_to_query_params(params)
-    data = get(request, APPLICATIONS_URL + str(pk) + EXISTING_PARTIES_URL + params)
+    data = client.get(request, f"/applications/{pk}/existing-parties/{params}")
     return data.json(), data.status_code
 
 
-# Additional Documents
 def post_additional_document(request, pk, json):
-    data = post(request, APPLICATIONS_URL + pk + ADDITIONAL_DOCUMENT_URL, json)
+    data = client.post(request, f"/applications/{pk}/documents/", json)
     return data.json(), data.status_code
 
 
 def get_additional_documents(request, pk):
-    data = get(request, APPLICATIONS_URL + pk + ADDITIONAL_DOCUMENT_URL)
+    data = client.get(request, f"/applications/{pk}/documents/")
     return data.json(), data.status_code
 
 
 def get_additional_document(request, pk, doc_pk):
-    data = get(request, APPLICATIONS_URL + pk + ADDITIONAL_DOCUMENT_URL + str(doc_pk) + "/")
+    data = client.get(request, f"/applications/{pk}/documents/{doc_pk}/")
     return data.json(), data.status_code
 
 
 def delete_additional_party_document(request, pk, doc_pk):
-    data = delete(request, APPLICATIONS_URL + pk + ADDITIONAL_DOCUMENT_URL + str(doc_pk) + "/")
+    data = client.delete(request, f"/applications/{pk}/documents/{doc_pk}/")
     return data.status_code
 
 
 def delete_application_preexisting_good(request, good_on_application_pk):
-    response = delete(request, APPLICATIONS_URL + "good-on-application/" + good_on_application_pk)
+    response = client.delete(request, f"/applications/good-on-application/{good_on_application_pk}")
     return response.status_code
 
 
-# Case related
 def get_case_notes(request, pk):
-    data = get(request, CASES_URL + pk + CASE_NOTES_URL)
+    data = client.get(request, f"/cases/{pk}/case-notes/")
     return data.json()
 
 
 def post_case_notes(request, pk, json):
-    data = post(request, CASES_URL + pk + CASE_NOTES_URL, json)
+    data = client.post(request, f"/cases/{pk}/case-notes/", json)
     return data.json(), data.status_code
 
 
 def get_application_ecju_queries(request, pk):
-    data = get(request, CASES_URL + pk + ECJU_QUERIES_URL).json()["ecju_queries"]
+    data = client.get(request, f"/cases/{pk}/ecju-queries/").json()["ecju_queries"]
 
     open_queries = [x for x in data if not x["response"]]
     closed_queries = [x for x in data if x["response"]]
@@ -273,18 +241,18 @@ def get_application_ecju_queries(request, pk):
 
 
 def get_case_generated_documents(request, pk):
-    data = get(request, CASES_URL + pk + GENERATED_DOCUMENTS_URL)
+    data = client.get(request, f"/cases/{pk}/generated-documents/")
     return data.json(), data.status_code
 
 
 def get_status_properties(request, status):
-    data = get(request, STATUS_PROPERTIES_URL + status)
+    data = client.get(request, "/static/statuses/properties/" + status)
     return data.json(), data.status_code
 
 
 def set_application_status(request, pk, status):
     json = {"status": status}
-    data = put(request, APPLICATIONS_URL + str(pk) + MANAGE_STATUS_URL, json)
+    data = client.put(request, f"/applications/{pk}/status/", json)
     return data.json(), data.status_code
 
 
@@ -311,7 +279,6 @@ def add_document_data(request):
     return data, None
 
 
-# Stream file
 def generate_file(result):
     for chunk in iter(lambda: result["Body"].read(settings.STREAMING_CHUNK_SIZE), b""):
         yield chunk
@@ -328,56 +295,52 @@ def download_document_from_s3(s3_key, original_file_name):
     return response
 
 
-# Goods Types
 def get_goods_type(request, app_pk, good_pk):
-    data = get(request, APPLICATIONS_URL + app_pk + GOODSTYPE_URL + good_pk + "/")
+    data = client.get(request, f"/applications/{app_pk}/goodstype/{good_pk}/")
     return data.json(), data.status_code
 
 
 def post_goods_type(request, app_pk, json):
-    data = post(request, APPLICATIONS_URL + str(app_pk) + GOODSTYPES_URL, json)
+    data = client.post(request, f"/applications/{app_pk}/goodstypes/", json)
     return data.json(), data.status_code
 
 
 def delete_goods_type(request, app_pk, good_pk):
-    data = delete(request, APPLICATIONS_URL + app_pk + GOODSTYPE_URL + good_pk + "/")
+    data = client.delete(request, f"/applications/{app_pk}/goodstype/" + good_pk + "/")
     return data.status_code
 
 
 def put_goods_type_countries(request, app_pk, json):
-    data = put(request, APPLICATIONS_URL + app_pk + GOODSTYPE_URL + GOODSTYPE_COUNTRY_URL, json)
+    data = client.put(request, f"/applications/{app_pk}/goodstype/assign-countries/", json)
     return data.json(), data.status_code
 
 
 def get_goods_type_document(request, pk, good_pk):
-    data = get(request, APPLICATIONS_URL + pk + GOODSTYPE_URL + str(good_pk) + DOCUMENT_URL)
+    data = client.get(request, f"/applications/{pk}/goodstype/{good_pk}/document/")
     return data.json(), data.status_code
 
 
 def post_goods_type_document(request, pk, good_pk, json):
-    data = post(request, APPLICATIONS_URL + pk + GOODSTYPE_URL + str(good_pk) + DOCUMENT_URL, json)
+    data = client.post(request, f"/applications/{pk}/goodstype/{good_pk}/document/", json)
     return data.json(), data.status_code
 
 
 def delete_goods_type_document(request, pk, good_pk):
-    data = delete(request, APPLICATIONS_URL + pk + GOODSTYPE_URL + str(good_pk) + DOCUMENT_URL)
+    data = client.delete(request, f"/applications/{pk}/goodstype/{good_pk}/document/")
     return data.status_code
 
 
-# Activity
 def get_activity(request, pk):
-    data = get(request, APPLICATIONS_URL + pk + ACTIVITY_URL)
+    data = client.get(request, f"/applications/{pk}/activity/")
     return data.json()["activity"]
 
 
 def copy_application(request, pk, data):
-    data = post(request, APPLICATIONS_URL + str(pk) + APPLICATION_COPY_URL, request_data=data)
+    data = client.post(request, f"/applications/{pk}/copy/", data=data)
     return data.json(), data.status_code
 
 
-# Exhibition
 def post_exhibition(request, pk, data):
-    post_data = data
-    post_data = format_date_fields(post_data)
-    data = post(request, APPLICATIONS_URL + str(pk) + "/exhibition-details/", request_data=post_data)
+    post_data = format_date_fields(data)
+    data = client.post(request, f"/applications/{pk}/exhibition-details/", data=post_data)
     return data.json(), data.status_code

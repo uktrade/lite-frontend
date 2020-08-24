@@ -15,8 +15,10 @@ from caseworker.letter_templates.services import (
 )
 from caseworker.picklists.services import get_picklists_for_input
 
+from core.auth.views import LoginRequiredMixin
 
-class EditTemplate(TemplateView):
+
+class EditTemplate(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         letter_template = get_letter_template(request, str(kwargs["pk"]))[0]["template"]
         letter_template_case_types = letter_template.pop("case_types") or []
@@ -64,7 +66,7 @@ class EditTemplate(TemplateView):
         return redirect(reverse("letter_templates:letter_template", kwargs={"pk": letter_template_id}))
 
 
-class EditParagraphs(TemplateView):
+class EditParagraphs(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         letter_template = get_letter_template(request, str(kwargs["pk"]))[0]["template"]
         letter_paragraphs = get_letter_paragraphs(request, letter_template["letter_paragraphs"])

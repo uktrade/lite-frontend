@@ -1,19 +1,11 @@
 from http import HTTPStatus
 
-from caseworker.core.client import get, post, put
-from caseworker.core.constants import (
-    ORGANISATIONS_URL,
-    SITES_URL,
-    USERS_URL,
-    ORGANISATION_STATUS_URL,
-    ACTIVITY_URL,
-    ORGANISATION_SITES_ACTIVITY_URL,
-)
+from core import client
 from lite_content.lite_internal_frontend.organisations import RegisterAnOrganisation
 
 
 def get_organisations(request, params):
-    data = get(request, ORGANISATIONS_URL + "?" + params)
+    data = client.get(request, f"/organisations/?{params}")
     return data.json(), data.status_code
 
 
@@ -29,54 +21,54 @@ def post_organisations(request, json):
     if errors:
         return {"errors": errors}, HTTPStatus.BAD_REQUEST
 
-    data = post(request, ORGANISATIONS_URL, json)
+    data = client.post(request, "/organisations/", json)
     return data.json(), data.status_code
 
 
 def post_hmrc_organisations(request, json):
-    data = post(request, ORGANISATIONS_URL, json)
+    data = client.post(request, "/organisations/", json)
     return data.json(), data.status_code
 
 
 def put_organisation(request, pk, json):
     if "status" in json:
         del json["status"]
-    data = put(request, ORGANISATIONS_URL + str(pk) + "/", json)
+    data = client.put(request, f"/organisations/{pk}/", json)
     return data.json(), data.status_code
 
 
 def put_organisation_status(request, pk, json):
-    data = put(request, ORGANISATIONS_URL + str(pk) + ORGANISATION_STATUS_URL, json)
+    data = client.put(request, f"/organisations/{pk}/status/", json)
     return data.json(), data.status_code
 
 
 def get_organisation(request, pk):
-    data = get(request, ORGANISATIONS_URL + str(pk))
+    data = client.get(request, f"/organisations/{pk}")
     return data.json()
 
 
 def get_organisation_sites(request, pk):
-    data = get(request, ORGANISATIONS_URL + str(pk) + SITES_URL + "?disable_pagination=True")
+    data = client.get(request, f"/organisations/{pk}/sites/?disable_pagination=True")
     return data.json()["sites"]
 
 
 def get_organisation_members(request, pk):
-    data = get(request, ORGANISATIONS_URL + str(pk) + USERS_URL + "?disable_pagination=True")
+    data = client.get(request, f"/organisations/{pk}/users/?disable_pagination=True")
     return data.json()
 
 
 def get_organisation_matching_details(request, pk):
-    data = get(request, ORGANISATIONS_URL + str(pk) + "/matching_details/")
+    data = client.get(request, f"/organisations/{pk}/matching_details/")
     return data.json()["matching_properties"]
 
 
 def get_organisation_activity(request, pk):
-    url = ORGANISATIONS_URL + str(pk) + ACTIVITY_URL
-    data = get(request, url)
+    url = f"/organisations/{pk}/activity/"
+    data = client.get(request, url)
     return data.json()["activity"]
 
 
 def get_site_activity(request, pk):
-    url = ORGANISATIONS_URL + str(pk) + ORGANISATION_SITES_ACTIVITY_URL
-    data = get(request, url)
+    url = f"/organisations/{pk}/sites-activity/"
+    data = client.get(request, url)
     return data.json()["activity"]

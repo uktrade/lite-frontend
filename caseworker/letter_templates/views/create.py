@@ -11,8 +11,10 @@ from caseworker.letter_templates.helpers import get_template_content
 from caseworker.letter_templates.services import post_letter_template
 from caseworker.letter_templates.views.letter_paragraphs import get_order_paragraphs_page
 
+from core.auth.views import LoginRequiredMixin
 
-class Add(TemplateView):
+
+class Add(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         return form_page(request, add_letter_template(request).forms[0])
 
@@ -27,7 +29,7 @@ class Add(TemplateView):
         return get_order_paragraphs_page(request, template_content)
 
 
-class Create(TemplateView):
+class Create(LoginRequiredMixin, TemplateView):
     @staticmethod
     def post(request):
         json = request.POST.copy()
@@ -51,7 +53,7 @@ class Create(TemplateView):
         return redirect("letter_templates:letter_templates")
 
 
-class VariableHelp(TemplateView):
+class VariableHelp(LoginRequiredMixin, TemplateView):
     @staticmethod
     def _get_table_text(text):
         """

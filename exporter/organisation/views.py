@@ -9,6 +9,8 @@ from lite_content.lite_exporter_frontend.organisation import Tabs
 from lite_forms.helpers import conditional
 from exporter.organisation.roles.services import get_user_permissions
 
+from core.auth.views import LoginRequiredMixin
+
 
 class OrganisationView(TemplateView):
     organisation_id = None
@@ -41,9 +43,9 @@ class OrganisationView(TemplateView):
         return render(request, f"organisation/{self.template_name}.html", context)
 
 
-class RedirectToMembers(RedirectView):
+class RedirectToMembers(LoginRequiredMixin, RedirectView):
     url = reverse_lazy("organisation:members:members")
 
 
-class Details(OrganisationView):
+class Details(LoginRequiredMixin, OrganisationView):
     template_name = "details/index"

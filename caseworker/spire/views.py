@@ -4,8 +4,10 @@ from django.views.generic import FormView, TemplateView, View
 
 from caseworker.spire import forms, helpers
 
+from core.auth.views import LoginRequiredMixin
 
-class SpireLicenseSearch(FormView):
+
+class SpireLicenseSearch(LoginRequiredMixin, FormView):
     form_class = forms.SpireLicenseSearchForm
     template_name = "spire/licence-search.html"
 
@@ -31,7 +33,7 @@ class SpireLicenseSearch(FormView):
         return context
 
 
-class SpireApplicationSearch(FormView):
+class SpireApplicationSearch(LoginRequiredMixin, FormView):
     form_class = forms.SpireApplicationSearchForm
     template_name = "spire/application-search.html"
 
@@ -57,7 +59,7 @@ class SpireApplicationSearch(FormView):
         return context
 
 
-class SpireLicenceDetail(TemplateView):
+class SpireLicenceDetail(LoginRequiredMixin, TemplateView):
     template_name = "spire/licence.html"
 
     def get_context_data(self, **kwargs):
@@ -66,7 +68,7 @@ class SpireLicenceDetail(TemplateView):
         return super().get_context_data(licence=response.json(), **kwargs)
 
 
-class SpireApplicationDetail(TemplateView):
+class SpireApplicationDetail(LoginRequiredMixin, TemplateView):
     template_name = "spire/application.html"
 
     def get_context_data(self, **kwargs):
@@ -75,7 +77,7 @@ class SpireApplicationDetail(TemplateView):
         return super().get_context_data(application=response.json(), **kwargs)
 
 
-class SpireApplicationDocumentDetail(View):
+class SpireApplicationDocumentDetail(LoginRequiredMixin, View):
     def get(self, request, **kwargs):
         response = helpers.spire_client.get_file_version(self.kwargs["id"])
         response.raise_for_status()
