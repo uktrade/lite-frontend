@@ -1,4 +1,5 @@
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
 from exporter.applications.forms.temporary_export_details import temporary_export_details_form
@@ -11,6 +12,7 @@ from lite_forms.views import SummaryListFormView
 from core.auth.views import LoginRequiredMixin
 
 
+@method_decorator(csrf_exempt, "dispatch")
 class TemporaryExportDetails(LoginRequiredMixin, SummaryListFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
@@ -60,7 +62,3 @@ class TemporaryExportDetails(LoginRequiredMixin, SummaryListFormView):
             data["year"], data["month"], data["day"] = split_date_into_components(proposed_return_date, "-")
 
         return data
-
-    @csrf_exempt
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)

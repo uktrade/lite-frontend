@@ -647,7 +647,6 @@ def authorized_client(client: Client, settings):
 
     def _inner(user):
         session = client.session
-        session["is_authenticated"] = True
         session["first_name"] = user["first_name"]
         session["last_name"] = user["last_name"]
         session["default_queue"] = user["default_queue"]

@@ -1,25 +1,15 @@
-from urllib.parse import urljoin
-
 from django.conf import settings
-from django.http import HttpResponseServerError
 from django.shortcuts import redirect
 from django.urls import reverse
-from django.utils.functional import cached_property
 from django.views.generic.base import View
 
 from core.auth import views as auth_views
-from core.auth.utils import get_client
 from exporter.auth.services import authenticate_exporter_user
 from lite_forms.generators import error_page
 from exporter.organisation.members.services import get_user
-from exporter.auth.utils import get_profile
 
 
 class AuthCallbackView(auth_views.AbstractAuthCallbackView, View):
-    @cached_property
-    def user_profile(self):
-        return get_profile(get_client(self.request))
-
     def authenticate_user(self):
         return authenticate_exporter_user(self.request, self.user_profile)
 

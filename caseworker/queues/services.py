@@ -3,6 +3,7 @@ from urllib import parse
 
 from django.http import HttpResponse
 
+from caseworker.core.constants import ENFORCEMENT_XML_MAX_FILE_SIZE
 from core import client
 from core.helpers import convert_parameters_to_query_params
 from lite_content.lite_internal_frontend.cases import UploadEnforcementXML

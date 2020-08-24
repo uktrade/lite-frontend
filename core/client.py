@@ -1,7 +1,6 @@
 import json
 import logging
 
-import requests
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from mohawk import Sender
@@ -11,30 +10,32 @@ from django.conf import settings
 
 
 def get(request, appended_address):
+    session = request.requests_session  # provided by RequestsSessionMiddleware
     url = _build_absolute_uri(appended_address.replace(" ", "%20"))
 
     if settings.HAWK_AUTHENTICATION_ENABLED:
         sender = _get_hawk_sender(url, "GET", "application/json", "")
 
-        response = requests.get(url=url, headers=_get_headers(request, sender))
+        response = session.get(url=url, headers=_get_headers(request, sender))
 
         _verify_api_response(response, sender)
     else:
-        response = requests.get(url=url, headers=_get_headers(request, content_type="application/json"))
+        response = session.get(url=url, headers=_get_headers(request, content_type="application/json"))
     return response
 
 
 def post(request, appended_address, request_data):
+    session = request.requests_session  # provided by RequestsSessionMiddleware
     url = _build_absolute_uri(appended_address)
 
     if settings.HAWK_AUTHENTICATION_ENABLED:
         sender = _get_hawk_sender(url, "POST", "application/json", json.dumps(request_data))
 
-        response = requests.post(url=url, headers=_get_headers(request, sender), json=request_data)
+        response = session.post(url=url, headers=_get_headers(request, sender), json=request_data)
 
         _verify_api_response(response, sender)
     else:
-        response = requests.post(
+        response = session.post(
             url=url, headers=_get_headers(request, content_type="application/json"), json=request_data
         )
 
@@ -42,16 +43,17 @@ def post(request, appended_address, request_data):
 
 
 def put(request, appended_address, request_data):
+    session = request.requests_session  # provided by RequestsSessionMiddleware
     url = _build_absolute_uri(appended_address)
 
     if settings.HAWK_AUTHENTICATION_ENABLED:
         sender = _get_hawk_sender(url, "PUT", "application/json", json.dumps(request_data))
 
-        response = requests.put(url=url, headers=_get_headers(request, sender), json=request_data)
+        response = session.put(url=url, headers=_get_headers(request, sender), json=request_data)
 
         _verify_api_response(response, sender)
     else:
-        response = requests.put(
+        response = session.put(
             url=url, headers=_get_headers(request, content_type="application/json"), json=request_data
         )
 
@@ -59,16 +61,17 @@ def put(request, appended_address, request_data):
 
 
 def patch(request, appended_address, request_data):
+    session = request.requests_session  # provided by RequestsSessionMiddleware
     url = _build_absolute_uri(appended_address)
 
     if settings.HAWK_AUTHENTICATION_ENABLED:
         sender = _get_hawk_sender(url, "PATCH", "application/json", json.dumps(request_data))
 
-        response = requests.patch(url=url, headers=_get_headers(request, sender), json=request_data)
+        response = session.patch(url=url, headers=_get_headers(request, sender), json=request_data)
 
         _verify_api_response(response, sender)
     else:
-        response = requests.patch(
+        response = session.patch(
             url=url, headers=_get_headers(request, content_type="application/json"), json=request_data
         )
 
@@ -76,16 +79,17 @@ def patch(request, appended_address, request_data):
 
 
 def delete(request, appended_address):
+    session = request.requests_session  # provided by RequestsSessionMiddleware
     url = _build_absolute_uri(appended_address)
 
     if settings.HAWK_AUTHENTICATION_ENABLED:
         sender = _get_hawk_sender(url, "DELETE", "text/plain", "")
 
-        response = requests.delete(url=url, headers=_get_headers(request, sender))
+        response = session.delete(url=url, headers=_get_headers(request, sender))
 
         _verify_api_response(response, sender)
     else:
-        response = requests.delete(url=url, headers=_get_headers(request, content_type="text/plain"))
+        response = session.delete(url=url, headers=_get_headers(request, content_type="text/plain"))
 
     return response
 

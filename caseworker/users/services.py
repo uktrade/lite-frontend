@@ -5,6 +5,8 @@ from core import client
 from lite_content.lite_internal_frontend.users import AssignUserPage
 from lite_forms.components import Option
 
+from caseworker.core.constants import SUPER_USER_ROLE_ID
+
 
 def get_gov_users(request, params=None, convert_to_options=False):
     if params:

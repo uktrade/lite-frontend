@@ -2,6 +2,7 @@ from collections import defaultdict
 
 from caseworker.users.services import get_gov_user
 from core import client
+from core.helpers import convert_value_to_query_param
 from caseworker.cases.constants import CaseType, CaseStatusEnum
 from lite_forms.components import Option
 
@@ -28,8 +29,6 @@ def get_countries(request, convert_to_options=False, exclude: list = None):
     Returns a list of GOV.UK countries and territories
     param exclude: Takes a list of country codes and excludes them
     """
-    from caseworker.core.helpers import convert_value_to_query_param
-
     data = client.get(request, "/static/countries/?" + convert_value_to_query_param("exclude", exclude))
 
     if convert_to_options:

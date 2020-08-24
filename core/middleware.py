@@ -1,25 +1,11 @@
-import logging
 import time
-import uuid
 
-from django.shortcuts import redirect
-from django.urls import resolve, reverse_lazy
+import requests
 from s3chunkuploader.file_handler import UploadFailed
 
-from lite_content.lite_exporter_frontend import strings
-from lite_forms.generators import error_page
-
-import logging
-import time
-import uuid
-
+from django.conf import settings
 from django.contrib.auth import logout
 from django.shortcuts import redirect
-from django.urls import resolve
-from s3chunkuploader.file_handler import UploadFailed
-
-from caseworker.auth.urls import app_name as auth_app_name
-from django.conf import settings
 
 from lite_content.lite_internal_frontend.strings import cases
 from lite_forms.generators import error_page
@@ -62,4 +48,15 @@ class SessionTimeoutMiddleware:
 
         request.session[SESSION_TIMEOUT_KEY] = end
 
+        return self.get_response(request)
+
+
+class RequestsSessionMiddleware:
+    def __init__(self, get_response=None):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        # when making several requests to the same host, the underlying TCP connection will be reused, which can result
+        # in a significant performance increase
+        request.requests_session = requests.Session()
         return self.get_response(request)

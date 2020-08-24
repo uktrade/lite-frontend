@@ -1,8 +1,12 @@
 from urllib.parse import urlencode
 
 
+def dummy_quote(string, safe="", encoding=None, errors=None):
+    return string
+
+
 def convert_dict_to_query_params(dictionary):
-    return urlencode(dictionary, doseq=True)
+    return urlencode(dictionary, doseq=True, quote_via=dummy_quote)
 
 
 def convert_parameters_to_query_params(dictionary):
@@ -14,4 +18,4 @@ def convert_parameters_to_query_params(dictionary):
 def convert_value_to_query_param(key: str, value):
     if value is None:
         return ""
-    return urlencode({key: value}, doseq=True)
+    return urlencode({key: value}, doseq=True, quote_via=dummy_quote)

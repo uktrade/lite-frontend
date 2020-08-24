@@ -33,6 +33,8 @@ LOGOUT_URL = f"{AUTHBROKER_URL}sso/accounts/logout/?next="
 AUTHBROKER_SCOPE = "profile"
 AUTHBROKER_AUTHORIZATION_URL = urljoin(AUTHBROKER_URL, "sso/oauth2/authorize/")
 AUTHBROKER_TOKEN_URL = urljoin(AUTHBROKER_URL, "sso/oauth2/token/")
+AUTHBROKER_PROFILE_URL = urljoin(AUTHBROKER_URL, "sso/oauth2/user-profile/v1/")
+
 AUTHENTICATION_BACKENDS = []
 
 FEEDBACK_URL = env.str("FEEDBACK_URL")

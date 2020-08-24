@@ -39,6 +39,8 @@ LOGOUT_URL = f"{AUTHBROKER_URL}/logout/?next="
 AUTHBROKER_SCOPE = "read write"
 AUTHBROKER_AUTHORIZATION_URL = urljoin(AUTHBROKER_URL, "/o/authorize/")
 AUTHBROKER_TOKEN_URL = urljoin(AUTHBROKER_URL, "/o/token/")
+AUTHBROKER_PROFILE_URL = urljoin(AUTHBROKER_URL, "/api/v1/user/me/")
+
 AUTHENTICATION_BACKENDS = []
 
 # The maximum number of parameters that may be received via GET or POST

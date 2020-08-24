@@ -82,8 +82,8 @@ class OpenGeneralLicencesDeactivatePage(BasePage):
 class OpenGeneralLicencesCasePage(BasePage):
     HEADING = ".govuk-heading-m"
     SITE_ID = "ogel_site"
-    REISSUE_BUTTON_ID = "button-reissue-ogel"
-    CONFIRMATION_YES_RADIO_ID = "confirm-yes"
+    REISSUE_BUTTON_ID = "button-reissue-ogl"
+    CONFIRMATION_YES_RADIO_ID = "confirm-True"
 
     def get_text_of_first_heading(self):
         return self.driver.find_elements_by_css_selector(self.HEADING)[0].text

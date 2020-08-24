@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
 from core import client
-from caseworker.flags.enums import FlagStatus
+from core.helpers import convert_parameters_to_query_params
 from lite_content.lite_internal_frontend import open_general_licences
 
 

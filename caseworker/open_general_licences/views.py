@@ -3,6 +3,8 @@ import copy
 from django.http import Http404
 from django.shortcuts import render
 from django.urls import reverse
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 
 from core.builtins.custom_tags import friendly_boolean
@@ -65,6 +67,7 @@ class DetailView(LoginRequiredMixin, TemplateView):
         return render(request, "open-general-licences/open-general-licence.html", context)
 
 
+@method_decorator(csrf_exempt, "dispatch")
 class CreateView(LoginRequiredMixin, SummaryListFormView):
     def init(self, request, **kwargs):
         licence = OpenGeneralExportLicences.get_by_id(

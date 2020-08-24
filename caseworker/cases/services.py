@@ -58,7 +58,7 @@ def finalise_application(request, pk, json):
 
 
 def get_application_default_duration(request, pk):
-    return int(get(request, f"/applications/{pk}/duration/").json()["licence_duration"])
+    return int(client.get(request, f"/applications/{pk}/duration/").json()["licence_duration"])
 
 
 # Goods Queries
@@ -269,7 +269,7 @@ def post_generated_document(request, pk, json):
 
 def get_generated_document_preview(request, pk, template, text, addressee):
     params = convert_parameters_to_query_params(locals())
-    data = client.get(request, f"/cases/{pk}/documents/preview/" + params)
+    data = client.get(request, f"/cases/{pk}/generated-documents/preview/" + params)
     return data.json(), data.status_code
 
 

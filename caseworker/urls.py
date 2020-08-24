@@ -31,6 +31,6 @@ if settings.FEATURE_DEBUG_TOOLBAR_ON:
     urlpatterns = [path("__debug__/", include(debug_toolbar.urls)),] + urlpatterns
 
 
-handler403 = caseworker.core.views.handle_error(403)
-handler404 = caseworker.core.views.handle_error(404)
-handler500 = caseworker.core.views.handle_error(500)
+handler403 = caseworker.core.views.handler403
+handler404 = caseworker.core.views.handler404
+handler500 = caseworker.core.views.handler500

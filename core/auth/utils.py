@@ -1,19 +1,10 @@
-import functools
 from urllib.parse import urljoin
 
 from django.conf import settings
-from django.shortcuts import redirect
 from django.urls import reverse
 from requests_oauthlib import OAuth2Session
 
 PROFILE_URL = urljoin(settings.AUTHBROKER_URL, "sso/oauth2/user-profile/v1/")
-INTROSPECT_URL = urljoin(settings.AUTHBROKER_URL, "sso/oauth2/introspect/")
-TOKEN_URL = urljoin(settings.AUTHBROKER_URL, "sso/oauth2/token/")
-AUTHORISATION_URL = urljoin(settings.AUTHBROKER_URL, "sso/oauth2/authorize/")
-TOKEN_CHECK_PERIOD_SECONDS = 60
-
-
-from requests_oauthlib import OAuth2Session
 
 
 def get_client(request, **kwargs):
@@ -24,3 +15,8 @@ def get_client(request, **kwargs):
         token=request.session.get(settings.TOKEN_SESSION_KEY, None),
         **kwargs,
     )
+
+
+def get_profile(client):
+    response = client.get(settings.AUTHBROKER_PROFILE_URL)  # .json()
+    return response.json()

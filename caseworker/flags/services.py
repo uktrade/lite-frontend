@@ -80,7 +80,7 @@ def get_flagging_rule(request, pk):
 
 def put_flagging_rule(request, pk, json):
     data = json
-    if json.client.get("form_name"):
-        data["status"] = json.client.get("form_name")
-    data = put(request, f"/flags/rules/{pk}", json)
+    if json.get("form_name"):
+        data["status"] = json.get("form_name")
+    data = client.put(request, f"/flags/rules/{pk}", json)
     return data.json(), data.status_code

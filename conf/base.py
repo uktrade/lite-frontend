@@ -1,5 +1,4 @@
 import os
-import sys
 
 from environ import Env
 import sentry_sdk
@@ -52,7 +51,9 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "csp.middleware.CSPMiddleware",
+    "core.auth.middleware.AuthbrokerClientMiddleware",
     "core.middleware.UploadFailedMiddleware",
+    "core.middleware.RequestsSessionMiddleware",
 ]
 
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
@@ -212,7 +213,7 @@ if DEBUG:
         pass
     else:
         INSTALLED_APPS.append("django_pdb")
-        # POST_MORTEM = True
+        POST_MORTEM = True
         MIDDLEWARE.append("django_pdb.middleware.PdbMiddleware")
 
 # Sentry

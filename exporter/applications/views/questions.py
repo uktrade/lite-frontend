@@ -2,6 +2,7 @@ import json
 
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
 from exporter.applications.constants import F680
@@ -37,6 +38,7 @@ def questions_action(request, pk, data):
     return put_application(request, pk, data)
 
 
+@method_decorator(csrf_exempt, "dispatch")
 class AdditionalInformationFormView(LoginRequiredMixin, SummaryListFormView):
     def init(self, request, **kwargs):
         self.object_pk = str(kwargs["pk"])
@@ -60,7 +62,3 @@ class AdditionalInformationFormView(LoginRequiredMixin, SummaryListFormView):
     def get_additional_information(request, application_id):
         application = get_application(request, application_id)
         return {field: application[field] for field in F680.FIELDS if application.get(field) is not None}
-
-    @csrf_exempt
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
