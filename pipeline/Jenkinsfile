@@ -2,16 +2,17 @@ import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
 
 
-def triggerBuild(branch, environment, token) {
+def triggerBuild(branch, environment, token)
+{
     def body = JsonOutput.toJson([
         branch: branch,
-        parameters: [run_ui_tests: "true", run_unit_tests: "false", environment: environment]
+        parameters: [run_ui_tests: true, run_unit_tests: false, environment: environment]
     ])
     def response = httpRequest (
         consoleLogResponseBody: false,
         contentType: 'APPLICATION_JSON',
-        circleToken: token,
         acceptType: 'APPLICATION_JSON',
+        customHeaders: [[name: 'Circle-Token', value: token]],
         httpMode: 'POST',
         requestBody: body,
         url: "https://circleci.com/api/v2/project/gh/uktrade/lite-frontend/pipeline")
@@ -26,7 +27,7 @@ def getBuildStatus( number, token )
 {
     def response = httpRequest (
         consoleLogResponseBody: false,
-        circleToken: token,
+        customHeaders: [[name: 'Circle-Token', value: token]],
         acceptType: 'APPLICATION_JSON',
         url: "https://circleci.com/api/v2/project/gh/uktrade/lite-frontend/job/$number")
     if (response.status >= 300){
@@ -36,10 +37,10 @@ def getBuildStatus( number, token )
     return [json.status, json.number]
 }
 
-def waitForBuildStatusToChange(number, current_status, wait_states, poll_delay, msg, token){
+def waitForBuildStatusToChange(number, current_status, wait_states, msg, token){
     println " ... $msg"
     while(status in wait_states){
-        sleep(poll_delay)
+        sleep(45)
         (status, number) = getBuildStatus( number, token)
     }
     return status
@@ -59,19 +60,12 @@ pipeline {
         stage('trigger build') {
             steps{
                 script{
-                    def token = params.CIRCLE_API_TOKEN
-                    def request_poll_delay = CCI_POLL_DELAY
-                    println "trigger CircleCi tests job for $project/$branch"
+                    println "Triggering UI tests"
+                    (status, number) = triggerBuild(params.BRANCH, params.ENVIRONMENT , params.CIRCLE_API_TOKEN)
+                    println "Triggered UI tests"
 
-                    (status, number) = triggerBuild( "run_the_tests", params.BRANCH, params.ENVIRONMENT , token)
-                    println "Kicked off CircleCi build https://circleci.com/gh/uktrade/lite-cci-e2e/$number"
-
-                    // Set slack channel
-                    channel = "lite-merging-status"
-
-                    status = waitForBuildStatusToChange( number, status, ['queued', 'not_running'], request_poll_delay, "waiting for job to start", token)
-
-                    status = waitForBuildStatusToChange( number, status, ['running'], request_poll_delay, "waiting for job to finish", token)
+                    status = waitForBuildStatusToChange( number, status, ['queued', 'not_running'], "waiting for job to start", params.CIRCLE_API_TOKEN)
+                    status = waitForBuildStatusToChange( number, status, ['running'], "waiting for job to finish", params.CIRCLE_API_TOKEN)
 
                     println "Final status = $status"
                     currentBuild.result = status in ['success','fixed']? 'SUCCESS': 'FAILURE'
