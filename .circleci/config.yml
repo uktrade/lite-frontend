@@ -101,6 +101,7 @@ commands:
             -rP \
             --reruns=1 \
             --reruns-delay=60 \
+            --headless \
             --disable-pytest-warnings \
             --junitxml=test-results/junit.xml
       - store_artifacts:
