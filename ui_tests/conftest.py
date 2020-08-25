@@ -7,7 +7,7 @@ def pytest_addoption(parser):
     env = str(os.environ.get("ENVIRONMENT"))
     if env == "None":
         env = "dev"
-    parser.addoption("--headless", action="store_true", default=True)
+    parser.addoption("--headless", action="store_true", default=False)
     if env == "local":
         parser.addoption(
             "--exporter_url", action="store", default=f"http://localhost:{str(os.environ.get('PORT'))}/", help="url"
