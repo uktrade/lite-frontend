@@ -77,6 +77,7 @@ COMPLIANCE_VISIT_URL = "visit/"
 COMPLIANCE_LICENCES_URL = "/licences/"
 COMPLIANCE_PEOPLE_PRESENT_URL = "people-present/"
 OPEN_LICENCE_RETURNS_URL = "/compliance/open-licence-returns/"
+SEARCH_URL = "/search/application/application_search/"
 
 # Static URLs
 STATIC_URL = "/static/"

@@ -5,5 +5,5 @@ from caseworker.search import views
 app_name = "search"
 
 urlpatterns = [
-    path("", views.Search.as_view(), name="index"),
+    path("", views.SearchForm.as_view(), name="index"),
 ]
