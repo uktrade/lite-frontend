@@ -20,6 +20,7 @@ urlpatterns = [
     path("users/", include("caseworker.users.urls")),
     path("routing-rules/", include("caseworker.routing_rules.urls")),
     path("compliance/", include("caseworker.compliance.urls")),
+    path("search/", include("caseworker.search.urls")),
 ]
 
 

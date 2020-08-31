@@ -35,6 +35,7 @@ class Cases(TemplateView):
         Show a list of cases pertaining to the given queue
         """
         queue_pk = kwargs.get("queue_pk") or request.user.default_queue
+        print(f"=====> {queue_pk}")
         queue = get_queue(request, queue_pk)
 
         context = {
