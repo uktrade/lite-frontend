@@ -16,7 +16,7 @@ parameters:
 common_env_vars: &common_env_vars
   ENVIRONMENT: << pipeline.parameters.environment >>
   LITE_API_URL: https://lite-api-<< pipeline.parameters.environment >>.london.cloudapps.digital/
-  PIPENV_VENV_IN_PROJECT: enabled
+  PIPENV_VENV_IN_PROJECT: true
 
 ###############################################################################
 # Images
@@ -80,13 +80,7 @@ commands:
   setup_code:
     steps:
       - checkout
-      - restore_cache:
-          key: deps-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
       - run: pipenv sync --dev
-      - save_cache:
-          paths:
-            - ./.venv
-          key: deps-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
       - run: git submodule update --init
 
   unit_tests:
@@ -101,6 +95,7 @@ commands:
             -rP \
             --reruns=1 \
             --reruns-delay=60 \
+            --headless \
             --disable-pytest-warnings \
             --junitxml=test-results/junit.xml
       - store_artifacts:
