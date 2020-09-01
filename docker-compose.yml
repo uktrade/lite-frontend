@@ -1,0 +1,34 @@
+version: '3.4'
+
+services:
+  caseworker:
+    env_file:
+      - ./caseworker.env
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - 8200:8200
+    expose:
+      - 8200
+    command: ./manage.py runserver 0.0.0.0:${PORT:-8200}
+    networks:
+      - lite
+
+  exporter:
+    env_file:
+      - ./exporter.env
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - 8300:8300
+    expose:
+      - 8300
+    command: ./manage.py runserver 0.0.0.0:${PORT:-8300}
+    networks:
+      - lite
+
+networks:
+  lite:
+    external: true
