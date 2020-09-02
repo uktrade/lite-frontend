@@ -1,6 +1,6 @@
 {% extends 'layouts/base.html' %}
 
-{% load parse_date from spire_tags %}
+{% load parse_date pprint_dict from spire_tags %}
 
 {% block back_link %}{% endblock %}
 
@@ -42,15 +42,23 @@
 			{% for item in results.results %}
 			<tr class="govuk-table__row">
 				<td class="govuk-table__cell govuk-table__cell--tight">
-					<a class="govuk-link govuk-link--no-visited-state" id="case-${item.application.id}"
-						href="/cases/${item.application.id}/">
-						<span class="govuk-visually-hidden">View</span> {{ item.application.reference_code }}
+					<a class="govuk-link govuk-link--no-visited-state" id="case-${item.id}"
+						href="/cases/${item.id}/">
+						<span class="govuk-visually-hidden">View</span> {{ item.reference_code }}
 					</a>
 					<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">
-						{{ item.application.organisation }}
+						{{ item.organisation }}
 					</p>
 					<p class="govuk-tag govuk-tag--grey govuk-!-margin-0 govuk-!-margin-top-2">
-						{{ item.application.status }}</p>
+						{{ item.status }}
+					</p>
+					<p>
+						<details>
+							<summary>View raw details</summary>
+							<pre><code>{{ item|pprint_dict}}</code></pre>
+						</details>
+					</p>
+
 				</td>
 				<td class="govuk-table__cell govuk-table__cell--tight">
 					<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">Part number:
