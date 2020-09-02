@@ -34,39 +34,45 @@
 				<th class="govuk-table__header" scope="col">Case</th>
 				<th class="govuk-table__header" scope="col">Goods Info</th>
 				<th class="govuk-table__header" scope="col">Controlled status</th>
-				<th class="govuk-table__header" scope="col">ARS</th>
-				<th class="govuk-table__header" scope="col">Comment</th>
 			</tr>
 		</thead>
 		<tbody class="govuk-table__body">
 			{% for item in results.results %}
 			<tr class="govuk-table__row">
 				<td class="govuk-table__cell govuk-table__cell--tight">
-					<a class="govuk-link govuk-link--no-visited-state" id="case-${item.application.id}"
-						href="/cases/${item.application.id}/">
-						<span class="govuk-visually-hidden">View</span> {{ item.application.reference_code }}
+					<a class="govuk-link govuk-link--no-visited-state" id="case-{{item.id}}" href="/cases/{{item.id}}/">
+						<span class="govuk-visually-hidden">View</span> {{ item.reference_code }}
 					</a>
 					<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">
-						{{ item.application.organisation }}
+						{{ item.organisation }}
 					</p>
 					<p class="govuk-tag govuk-tag--grey govuk-!-margin-0 govuk-!-margin-top-2">
-						{{ item.application.status }}</p>
+						{{ item.status }}</p>
 				</td>
 				<td class="govuk-table__cell govuk-table__cell--tight">
+					{% if item.goods %}
+					{% for p in item.goods %}
 					<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">Part number:
-						{{ item.good.part_number }}</p>
+						{{ p.good.part_number }}</p>
 					<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">Description:
-						{{ item.good.description }}</p>
-					<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">Quantity: {{ item.quantity }}</p>
-					<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">Value: {{ item.value }}</p>
+						{{ p.good.description }}</p>
+					<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">Quantity: {{ p.quantity }}</p>
+					<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">Value: {{ p.value }}</p>
+					{% endfor %}
+					{% else %}
+					<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">No Products associated with this
+						application</p>
+					{% endif %}
 				</td>
 				<td class="govuk-table__cell govuk-table__cell--tight">
+					{% if item.goods %}
+					{% for p in item.goods %}
 					<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">Controlled:
-						{{ item.good.is_good_controlled }}</p>
-					{% if item.good.clc_entries %}
+						{{ p.good.is_good_controlled }}</p>
+					{% if p.good.control_list_entries %}
 					<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">
 						CLC entries:
-						{% for entry in item.good.clc_entries %}
+						{% for entry in p.good.control_list_entries %}
 						<span class="govuk-hint lite-!-display-inline">{{ entry.rating }}</span>
 						{% if not forloop.last %}
 						,
@@ -74,14 +80,15 @@
 						{% endfor %}
 					</p>
 					{% endif %}
-				</td>
-				<td class="govuk-table__cell govuk-table__cell--tight">
-					<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">{{ item.good.report_summary }}
+					<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">ARS: {{ p.good.report_summary }}
 					</p>
-				</td>
-				<td class="govuk-table__cell govuk-table__cell--tight">
-					<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">{{ item.good.comment }}
+					<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">Comment: {{ p.good.comment }}
 					</p>
+					{% endfor %}
+					{% else %}
+					<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">No Products associated with this
+						application</p>
+					{% endif %}
 				</td>
 			</tr>
 			{% endfor %}
