@@ -53,7 +53,7 @@ class Organisations:
     def add_test_user_to_exporter_org(self, org_id):
         data = self.request_data["export_user"]
         return self.api_client.make_request(
-            method="POST", url="/organisations/" + org_id + "/users/", body=data, headers=self.api_client.gov_headers,
+            method="POST", url=f"/organisations/{org_id}/users/", body=data, headers=self.api_client.gov_headers,
         ).json()
 
     def find_org_by_name(self, org_name):
@@ -66,16 +66,15 @@ class Organisations:
     def find_test_user_in_org(self, org_id):
         users = self.api_client.make_request(
             method="GET",
-            url="/organisations/" + org_id + "/users/?disable_pagination=True",
+            url=f"/organisations/{org_id}/users/?disable_pagination=True",
             headers=self.api_client.gov_headers,
         ).json()
         user = next((item for item in users if item["email"] == self.request_data["export_user"]["email"]), None)
         return user
 
     def add_org(self, key):
-        data = self.request_data[key]
         return self.api_client.make_request(
-            method="POST", url="/organisations/", body=data, headers=self.api_client.gov_headers,
+            method="POST", url="/organisations/", body=self.request_data[key], headers=self.api_client.gov_headers,
         ).json()
 
     def anonymous_user_create_org(self, data):

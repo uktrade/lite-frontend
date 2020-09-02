@@ -1,32 +1,10 @@
 from collections import defaultdict
 from typing import List
 
-from caseworker.conf import decorators
-from caseworker.conf.constants import Permission
+from caseworker.core import decorators
+from caseworker.core.constants import Permission
 from caseworker.core.services import get_user_permissions
 from lite_forms.components import FiltersBar, Option, Select, DateInput
-
-
-def convert_dict_to_query_params(dictionary):
-    items = []
-    for key, value in dictionary.items():
-        if isinstance(value, list):
-            for val in value:
-                items.append(key + "=" + str(val))
-        else:
-            items.append(key + "=" + str(value))
-    return "&".join(items)
-
-
-def convert_parameters_to_query_params(dictionary: dict):
-    """
-    Given a dictionary of parameters, convert to a query param string
-    Removes request object and deletes empty keys
-    """
-    if "request" in dictionary:
-        del dictionary["request"]
-
-    return "?" + convert_dict_to_query_params({key: value for key, value in dictionary.items() if value is not None})
 
 
 def get_params_if_exist(request, keys, json=None):
@@ -72,27 +50,6 @@ def decorate_patterns_with_permission(patterns, permission: Permission):
         pattern._callback = _wrap_with_permission(permission, callback)
         decorated_patterns.append(pattern)
     return decorated_patterns
-
-
-def convert_value_to_query_param(key: str, value):
-    """
-    Convert key/value pairs to a string suitable for query parameters
-    eg {'type': 'organisation'} becomes type=organisation
-    eg {'type': ['organisation', 'organisation']} becomes type=organisation&type=organisation
-    """
-    if value is None:
-        return ""
-
-    if isinstance(value, list):
-        return_value = ""
-        for item in value:
-            if not return_value:
-                return_value = return_value + key + "=" + item
-            else:
-                return_value = return_value + "&" + key + "=" + item
-        return return_value
-
-    return key + "=" + str(value)
 
 
 def group_control_list_entries_by_category(control_list_entries):

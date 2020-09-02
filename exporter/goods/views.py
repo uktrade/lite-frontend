@@ -60,8 +60,10 @@ from lite_forms.components import BackLink, FiltersBar, TextInput
 from lite_forms.generators import error_page, form_page
 from lite_forms.views import SingleFormView, MultiFormView
 
+from core.auth.views import LoginRequiredMixin
 
-class Goods(TemplateView):
+
+class Goods(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         description = request.GET.get("description", "").strip()
         part_number = request.GET.get("part_number", "").strip()
@@ -92,12 +94,12 @@ class Goods(TemplateView):
         return render(request, "goods/goods.html", context)
 
 
-class GoodsDetailEmpty(TemplateView):
+class GoodsDetailEmpty(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         return redirect(reverse_lazy("goods:good_detail", kwargs={"pk": kwargs["pk"], "type": "case-notes"}))
 
 
-class GoodsDetail(TemplateView):
+class GoodsDetail(LoginRequiredMixin, TemplateView):
     good_id = None
     good = None
     view_type = None
@@ -160,7 +162,7 @@ class GoodsDetail(TemplateView):
         return redirect(reverse_lazy("goods:good_detail", kwargs={"pk": good_id, "type": "case-notes"}))
 
 
-class AddGood(MultiFormView):
+class AddGood(LoginRequiredMixin, MultiFormView):
     def init(self, request, **kwargs):
         self.forms = add_good_form_group(request)
         self.action = validate_good
@@ -182,7 +184,7 @@ class AddGood(MultiFormView):
         return reverse_lazy("goods:add_document", kwargs={"pk": self.get_validated_data()["good"]["id"]})
 
 
-class GoodSoftwareTechnology(SingleFormView):
+class GoodSoftwareTechnology(LoginRequiredMixin, SingleFormView):
     application_id = None
 
     def init(self, request, **kwargs):
@@ -216,7 +218,7 @@ class GoodSoftwareTechnology(SingleFormView):
             return return_to_good_summary(self.kwargs, self.application_id, self.object_pk)
 
 
-class GoodMilitaryUse(SingleFormView):
+class GoodMilitaryUse(LoginRequiredMixin, SingleFormView):
     application_id = None
 
     def init(self, request, **kwargs):
@@ -263,7 +265,7 @@ class GoodMilitaryUse(SingleFormView):
             return return_to_good_summary(self.kwargs, self.application_id, self.object_pk)
 
 
-class GoodComponent(SingleFormView):
+class GoodComponent(LoginRequiredMixin, SingleFormView):
     application_id = None
 
     def init(self, request, **kwargs):
@@ -300,7 +302,7 @@ class GoodComponent(SingleFormView):
             return return_to_good_summary(self.kwargs, self.application_id, self.object_pk)
 
 
-class GoodInformationSecurity(SingleFormView):
+class GoodInformationSecurity(LoginRequiredMixin, SingleFormView):
     application_id = None
 
     def init(self, request, **kwargs):
@@ -331,7 +333,7 @@ class GoodInformationSecurity(SingleFormView):
             return reverse_lazy("goods:good", kwargs={"pk": self.object_pk})
 
 
-class RaiseGoodsQuery(SingleFormView):
+class RaiseGoodsQuery(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = str(kwargs["pk"])
         good, _ = get_good(request, self.object_pk)
@@ -344,7 +346,7 @@ class RaiseGoodsQuery(SingleFormView):
         self.success_url = reverse_lazy("goods:good", kwargs={"pk": self.object_pk})
 
 
-class EditGood(SingleFormView):
+class EditGood(LoginRequiredMixin, SingleFormView):
     application_id = None
 
     def init(self, request, **kwargs):
@@ -374,7 +376,7 @@ class EditGood(SingleFormView):
             return reverse_lazy("goods:good", kwargs={"pk": self.object_pk})
 
 
-class EditGrading(SingleFormView):
+class EditGrading(LoginRequiredMixin, SingleFormView):
     application_id = None
 
     def init(self, request, **kwargs):
@@ -418,7 +420,7 @@ class EditGrading(SingleFormView):
             return reverse_lazy("goods:good", kwargs={"pk": self.object_pk})
 
 
-class EditFirearmProductType(SingleFormView):
+class EditFirearmProductType(LoginRequiredMixin, SingleFormView):
     application_id = None
 
     def init(self, request, **kwargs):
@@ -446,7 +448,7 @@ class EditFirearmProductType(SingleFormView):
             return return_to_good_summary(self.kwargs, self.application_id, self.object_pk)
 
 
-class EditAmmunition(SingleFormView):
+class EditAmmunition(LoginRequiredMixin, SingleFormView):
     application_id = None
 
     def init(self, request, **kwargs):
@@ -474,7 +476,7 @@ class EditAmmunition(SingleFormView):
             return return_to_good_summary(self.kwargs, self.application_id, self.object_pk)
 
 
-class EditFirearmActDetails(SingleFormView):
+class EditFirearmActDetails(LoginRequiredMixin, SingleFormView):
     application_id = None
 
     def init(self, request, **kwargs):
@@ -524,7 +526,7 @@ class EditFirearmActDetails(SingleFormView):
             return return_to_good_summary(self.kwargs, self.application_id, self.object_pk)
 
 
-class EditIdentificationMarkings(SingleFormView):
+class EditIdentificationMarkings(LoginRequiredMixin, SingleFormView):
     application_id = None
 
     def init(self, request, **kwargs):
@@ -548,7 +550,7 @@ class EditIdentificationMarkings(SingleFormView):
             return reverse_lazy("goods:good", kwargs={"pk": self.object_pk})
 
 
-class DeleteGood(TemplateView):
+class DeleteGood(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         data, _ = get_good(request, str(kwargs["pk"]))
         return form_page(request, delete_good_form(data))
@@ -558,7 +560,7 @@ class DeleteGood(TemplateView):
         return redirect(reverse_lazy("goods:goods"))
 
 
-class CheckDocumentGrading(SingleFormView):
+class CheckDocumentGrading(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.form = document_grading_form(request, self.object_pk)
@@ -580,7 +582,7 @@ class CheckDocumentGrading(SingleFormView):
 
 
 @method_decorator(csrf_exempt, "dispatch")
-class AttachDocuments(TemplateView):
+class AttachDocuments(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         return_to_good_page = request.GET.get("goodpage", "no")
         good_id = str(kwargs["pk"])
@@ -618,7 +620,7 @@ class AttachDocuments(TemplateView):
             return redirect(reverse("goods:raise_goods_query", kwargs={"pk": good_id}))
 
 
-class Document(TemplateView):
+class Document(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         good_id = str(kwargs["pk"])
         file_pk = str(kwargs["file_pk"])
@@ -627,7 +629,7 @@ class Document(TemplateView):
         return download_document_from_s3(document["s3_key"], document["name"])
 
 
-class DeleteDocument(TemplateView):
+class DeleteDocument(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         good_id = str(kwargs["pk"])
         file_pk = str(kwargs["file_pk"])

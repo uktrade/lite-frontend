@@ -3,9 +3,9 @@ from urllib import parse
 
 from django.http import HttpResponse
 
-from caseworker.conf.client import get, post, put
-from caseworker.conf.constants import QUEUES_URL, CASE_URL, ENFORCEMENT_URL, ENFORCEMENT_XML_MAX_FILE_SIZE
-from caseworker.core.helpers import convert_parameters_to_query_params
+from caseworker.core.constants import ENFORCEMENT_XML_MAX_FILE_SIZE
+from core import client
+from core.helpers import convert_parameters_to_query_params
 from lite_content.lite_internal_frontend.cases import UploadEnforcementXML
 from lite_content.lite_internal_frontend.users import AssignUserPage
 from lite_forms.components import Option
@@ -20,7 +20,17 @@ def get_queues(
     include_system=False,
     name=None,
 ):
-    data = get(request, QUEUES_URL + convert_parameters_to_query_params(locals())).json()
+    querystring = convert_parameters_to_query_params(
+        {
+            "disable_pagination": disable_pagination,
+            "page": page,
+            "convert_to_options": convert_to_options,
+            "users_team_first": users_team_first,
+            "include_system": include_system,
+            "name": name,
+        }
+    )
+    data = client.get(request, f"/queues/{querystring}").json()
 
     if convert_to_options:
         options = []
@@ -41,27 +51,27 @@ def get_queues(
 
 
 def post_queues(request, json):
-    data = post(request, QUEUES_URL, json)
+    data = client.post(request, "/queues/", json)
     return data.json(), data.status_code
 
 
 def get_queue(request, pk):
-    data = get(request, QUEUES_URL + str(pk))
+    data = client.get(request, "/queues/" + str(pk))
     return data.json()
 
 
 def get_cases_search_data(request, queue_pk, params):
-    data = get(request, CASE_URL + "?queue_id=" + str(queue_pk) + "&" + parse.urlencode(params, doseq=True))
+    data = client.get(request, "/cases/" + f"?queue_id={queue_pk}&" + parse.urlencode(params, doseq=True))
     return data.json()
 
 
 def put_queue(request, pk, json):
-    data = put(request, QUEUES_URL + str(pk) + "/", json)
+    data = client.put(request, f"/queues/{pk}/", json)
     return data.json(), data.status_code
 
 
 def get_queue_case_assignments(request, pk):
-    data = get(request, QUEUES_URL + str(pk) + "/case-assignments/")
+    data = client.get(request, f"/queues/{pk}/case-assignments/")
     return data.json(), data.status_code
 
 
@@ -70,7 +80,7 @@ def put_queue_case_assignments(request, pk, _):
     json = {"case_assignments": [], "remove_existing_assignments": True, "note": request.POST.get("note")}
     for case_id in case_ids:
         json["case_assignments"].append({"case_id": case_id, "users": request.POST.getlist("users")})
-    response = put(request, QUEUES_URL + str(pk) + "/case-assignments/", json)
+    response = client.put(request, f"/queues/{pk}/case-assignments/", json)
     return response.json(), response.status_code
 
 
@@ -81,14 +91,14 @@ def put_queue_single_case_assignment(request, pk, json):
             "case_assignments": [{"case_id": json.get("case_pk"), "users": [json.get("user_pk")]}],
             "note": json.get("note"),
         }
-        data = put(request, QUEUES_URL + queue + "/case-assignments/", json)
+        data = client.put(request, f"/queues/{queue}/case-assignments/", json)
         return data.json(), data.status_code
     else:
         return {"errors": {"queue": [AssignUserPage.QUEUE_ERROR_MESSAGE]}}, HTTPStatus.BAD_REQUEST
 
 
 def get_enforcement_xml(request, queue_pk):
-    data = get(request, ENFORCEMENT_URL + str(queue_pk))
+    data = client.get(request, "/cases/enforcement-check/" + str(queue_pk))
 
     # Check if XML
     if data.headers._store["content-type"][1] == "text/xml":
@@ -113,5 +123,5 @@ def post_enforcement_xml(request, queue_pk, json):
     except Exception:  # noqa
         return {"errors": {"file": [UploadEnforcementXML.Errors.FILE_READ]}}, HTTPStatus.BAD_REQUEST
 
-    data = post(request, ENFORCEMENT_URL + str(queue_pk), file_format)
+    data = client.post(request, f"/cases/enforcement-check/{queue_pk}", file_format)
     return data.json(), data.status_code

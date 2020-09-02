@@ -3,6 +3,8 @@ import copy
 from django.http import Http404
 from django.shortcuts import render
 from django.urls import reverse
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 
 from core.builtins.custom_tags import friendly_boolean
@@ -24,8 +26,10 @@ from caseworker.open_general_licences.services import (
     get_ogl_activity,
 )
 
+from core.auth.views import LoginRequiredMixin
 
-class ListView(TemplateView):
+
+class ListView(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         open_general_licences = get_open_general_licences(request, **request.GET)
         control_list_entries = get_control_list_entries(request, True)
@@ -49,7 +53,7 @@ class ListView(TemplateView):
         return render(request, "open-general-licences/index.html", context)
 
 
-class DetailView(TemplateView):
+class DetailView(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         activity_and_filters = get_ogl_activity(request, kwargs["pk"], activity_filters=request.GET)
         context = {
@@ -63,7 +67,8 @@ class DetailView(TemplateView):
         return render(request, "open-general-licences/open-general-licence.html", context)
 
 
-class CreateView(SummaryListFormView):
+@method_decorator(csrf_exempt, "dispatch")
+class CreateView(LoginRequiredMixin, SummaryListFormView):
     def init(self, request, **kwargs):
         licence = OpenGeneralExportLicences.get_by_id(
             request.POST.get("case_type", OpenGeneralExportLicences.open_general_export_licence.id)
@@ -91,7 +96,7 @@ class CreateView(SummaryListFormView):
         return data
 
 
-class UpdateView(SingleFormView):
+class UpdateView(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.object = get_open_general_licence(request, self.object_pk)
@@ -125,7 +130,7 @@ class UpdateView(SingleFormView):
         return form
 
 
-class ChangeStatusView(SingleFormView):
+class ChangeStatusView(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.object = get_open_general_licence(request, self.object_pk)

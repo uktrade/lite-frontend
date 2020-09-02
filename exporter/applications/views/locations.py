@@ -32,7 +32,7 @@ from exporter.applications.services import (
     put_contract_type_for_country,
     get_application_countries_and_contract_types,
 )
-from exporter.conf.constants import CaseTypes, APPLICANT_EDITING
+from exporter.core.constants import CaseTypes, APPLICANT_EDITING
 from exporter.core.services import (
     get_sites_on_draft,
     post_sites_on_draft,
@@ -43,6 +43,8 @@ from exporter.core.services import (
 )
 from lite_content.lite_exporter_frontend.applications import ContractTypes
 from lite_forms.views import SingleFormView, MultiFormView
+
+from core.auth.views import LoginRequiredMixin
 
 
 def get_locations_page(request, application_id, **kwargs):
@@ -62,12 +64,12 @@ def get_locations_page(request, application_id, **kwargs):
     return render(request, "applications/goods-locations/goods-locations.html", context,)
 
 
-class GoodsLocation(TemplateView):
+class GoodsLocation(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         return get_locations_page(request, application_id=kwargs["pk"])
 
 
-class EditGoodsLocation(SingleFormView):
+class EditGoodsLocation(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         application = get_application(request, self.object_pk)
@@ -95,7 +97,7 @@ class EditGoodsLocation(SingleFormView):
             return reverse_lazy("applications:task_list", kwargs={"pk": self.object_pk})
 
 
-class SelectAddExternalLocation(SingleFormView):
+class SelectAddExternalLocation(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.form = add_external_location(request)
@@ -113,7 +115,7 @@ class SelectAddExternalLocation(SingleFormView):
             return reverse_lazy("applications:add_preexisting_external_location", kwargs={"pk": self.object_pk})
 
 
-class ExistingSites(SingleFormView):
+class ExistingSites(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         application = get_application(request, self.object_pk)
@@ -127,7 +129,7 @@ class ExistingSites(SingleFormView):
         self.success_url = reverse_lazy("applications:location", kwargs={"pk": self.object_pk})
 
 
-class AddExternalLocation(MultiFormView):
+class AddExternalLocation(LoginRequiredMixin, MultiFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         application = get_application(request, self.object_pk)
@@ -137,7 +139,7 @@ class AddExternalLocation(MultiFormView):
         self.success_url = reverse_lazy("applications:location", kwargs={"pk": self.object_pk})
 
 
-class RemoveExternalLocation(TemplateView):
+class RemoveExternalLocation(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         draft_id = str(kwargs["pk"])
         ext_loc_id = str(kwargs["ext_loc_pk"])
@@ -154,7 +156,7 @@ class RemoveExternalLocation(TemplateView):
         return get_locations_page(**parameters)
 
 
-class AddExistingExternalLocation(SingleFormView):
+class AddExistingExternalLocation(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         application = get_application(request, self.object_pk)
@@ -164,7 +166,7 @@ class AddExistingExternalLocation(SingleFormView):
         self.success_url = reverse_lazy("applications:location", kwargs={"pk": self.object_pk})
 
 
-class Countries(SingleFormView):
+class Countries(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.data = {
@@ -195,7 +197,7 @@ class Countries(SingleFormView):
             return reverse_lazy("applications:choose_contract_type", kwargs={"pk": self.object_pk})
 
 
-class ChooseContractType(SingleFormView):
+class ChooseContractType(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.form = choose_contract_type_form()
@@ -224,7 +226,7 @@ class ChooseContractType(SingleFormView):
             return reverse_lazy("applications:countries_summary", kwargs={"pk": self.object_pk})
 
 
-class AddContractTypes(SingleFormView):
+class AddContractTypes(LoginRequiredMixin, SingleFormView):
     contract_types_and_countries = None
 
     def init(self, request, **kwargs):
@@ -280,7 +282,7 @@ class AddContractTypes(SingleFormView):
             return reverse_lazy("applications:countries_summary", kwargs={"pk": self.object_pk})
 
 
-class CountriesAndContractTypesSummary(TemplateView):
+class CountriesAndContractTypesSummary(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         object_pk = kwargs["pk"]
         countries_data = get_application_countries_and_contract_types(request, object_pk)
@@ -305,7 +307,7 @@ class CountriesAndContractTypesSummary(TemplateView):
         return render(request, "applications/goods-locations/destinations-summary-list.html", context)
 
 
-class StaticDestinations(TemplateView):
+class StaticDestinations(LoginRequiredMixin, TemplateView):
     # To be used for OIELs where all countries are preselected and non-modifiable by the user
     # The UKCS OIEL is a special case - this is the initial page displayed before prompting the user to select contract types
     def get(self, request, **kwargs):

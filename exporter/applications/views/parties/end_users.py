@@ -6,11 +6,13 @@ from exporter.applications.forms.parties import new_party_form_group
 from exporter.applications.helpers.check_your_answers import convert_party, is_application_export_type_permanent
 from exporter.applications.services import get_application, post_party, validate_party, delete_party
 from exporter.applications.views.parties.base import AddParty, SetParty, DeleteParty, CopyParties, CopyAndSetParty
-from exporter.conf.constants import OPEN
+from exporter.core.constants import OPEN
 from lite_content.lite_exporter_frontend.applications import EndUserForm, EndUserPage
 
+from core.auth.views import LoginRequiredMixin
 
-class EndUser(TemplateView):
+
+class EndUser(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         application_id = str(kwargs["pk"])
         application = get_application(request, application_id)
@@ -37,12 +39,12 @@ class EndUser(TemplateView):
             return redirect(reverse_lazy("applications:add_end_user", kwargs={"pk": application_id}))
 
 
-class AddEndUser(AddParty):
+class AddEndUser(LoginRequiredMixin, AddParty):
     def __init__(self):
         super().__init__(new_url="applications:set_end_user", copy_url="applications:end_users_copy")
 
 
-class SetEndUser(SetParty):
+class SetEndUser(LoginRequiredMixin, SetParty):
     def __init__(self, copy_existing=False):
         super().__init__(
             url="applications:end_user_attach_document",
@@ -64,19 +66,19 @@ class SetEndUser(SetParty):
             )
 
 
-class RemoveEndUser(DeleteParty):
+class RemoveEndUser(LoginRequiredMixin, DeleteParty):
     def __init__(self):
         super().__init__(
             url="applications:add_end_user", action=delete_party, error=EndUserPage.DELETE_ERROR,
         )
 
 
-class CopyEndUsers(CopyParties):
+class CopyEndUsers(LoginRequiredMixin, CopyParties):
     def __init__(self):
         super().__init__(new_party_type="end_user")
 
 
-class CopyEndUser(CopyAndSetParty):
+class CopyEndUser(LoginRequiredMixin, CopyAndSetParty):
     def __init__(self):
         super().__init__(
             url="applications:end_user_attach_document",
@@ -97,7 +99,7 @@ class CopyEndUser(CopyAndSetParty):
             )
 
 
-class EditEndUser(CopyAndSetParty):
+class EditEndUser(LoginRequiredMixin, CopyAndSetParty):
     def __init__(self):
         super().__init__(
             url="applications:end_user_attach_document",

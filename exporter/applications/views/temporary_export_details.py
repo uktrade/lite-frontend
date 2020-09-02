@@ -1,4 +1,6 @@
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 
 from exporter.applications.forms.temporary_export_details import temporary_export_details_form
 from exporter.applications.helpers.date_fields import split_date_into_components, create_formatted_date_from_components
@@ -7,8 +9,11 @@ from lite_content.lite_exporter_frontend import generic
 from lite_content.lite_exporter_frontend.applications import TemporaryExportDetails as strings
 from lite_forms.views import SummaryListFormView
 
+from core.auth.views import LoginRequiredMixin
 
-class TemporaryExportDetails(SummaryListFormView):
+
+@method_decorator(csrf_exempt, "dispatch")
+class TemporaryExportDetails(LoginRequiredMixin, SummaryListFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         application = get_application(request, self.object_pk)

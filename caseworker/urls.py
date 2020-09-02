@@ -1,13 +1,11 @@
 from django.conf import settings
-from django.contrib import admin
 from django.urls import include, path
 
-from caseworker.conf import views
+import caseworker.core.views
 
 
 urlpatterns = [
     path("", include("caseworker.core.urls")),
-    path("admin/", admin.site.urls),
     path("auth/", include("caseworker.auth.urls")),
     path("queues/<uuid:queue_pk>/cases/<uuid:pk>/", include("caseworker.cases.urls")),
     path("flags/", include("caseworker.flags.urls")),
@@ -28,6 +26,12 @@ if settings.FEATURE_SPIRE_SEARCH_ON:
     urlpatterns.append(path("spire/", include("caseworker.spire.urls")))
 
 
-handler403 = views.error_403
-handler404 = views.error_404
-handler500 = views.error_500
+if settings.FEATURE_DEBUG_TOOLBAR_ON:
+    import debug_toolbar
+
+    urlpatterns = [path("__debug__/", include(debug_toolbar.urls)),] + urlpatterns
+
+
+handler403 = caseworker.core.views.handler403
+handler404 = caseworker.core.views.handler404
+handler500 = caseworker.core.views.handler500

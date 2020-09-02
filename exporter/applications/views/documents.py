@@ -17,6 +17,8 @@ from exporter.goods.services import get_case_document_download
 from lite_content.lite_exporter_frontend import strings
 from lite_forms.generators import form_page, error_page
 
+from core.auth.views import LoginRequiredMixin
+
 
 def get_upload_page(path, draft_id, is_permanent_application=False):
     paths = document_switch(path)
@@ -49,7 +51,7 @@ def get_delete_confirmation_page(path, pk):
 
 
 @method_decorator(csrf_exempt, "dispatch")
-class AttachDocuments(TemplateView):
+class AttachDocuments(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         draft_id = str(kwargs["pk"])
         form = get_upload_page(request.path, draft_id)
@@ -96,7 +98,7 @@ class AttachDocuments(TemplateView):
         return get_homepage(request, draft_id)
 
 
-class DownloadDocument(TemplateView):
+class DownloadDocument(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         draft_id = str(kwargs["pk"])
         action = document_switch(request.path)["download"]
@@ -113,12 +115,12 @@ class DownloadDocument(TemplateView):
             return error_page(request, strings.applications.AttachDocumentPage.DOWNLOAD_GENERIC_ERROR)
 
 
-class DownloadGeneratedDocument(TemplateView):
+class DownloadGeneratedDocument(LoginRequiredMixin, TemplateView):
     def get(self, request, case_pk, document_pk):
         return get_case_document_download(request, case_pk=case_pk, document_pk=document_pk)
 
 
-class DeleteDocument(TemplateView):
+class DeleteDocument(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         return form_page(request, get_delete_confirmation_page(request.path, str(kwargs["pk"])))
 

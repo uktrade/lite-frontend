@@ -1,11 +1,12 @@
 from django.utils import timezone
 from pytest_bdd import given, when, then, parsers
+import time
 
 from ui_tests.caseworker.pages.advice import FinalAdvicePage, TeamAdvicePage
 from ui_tests.caseworker.pages.case_page import CasePage, CaseTabs
 from ui_tests.caseworker.pages.goods_queries_pages import GoodsQueriesPages
 
-from caseworker.conf.constants import DATE_FORMAT
+from caseworker.core.constants import DATE_FORMAT
 from ui_tests.caseworker.fixtures.env import environment  # noqa
 from ui_tests.caseworker.fixtures.add_a_flag import (  # noqa
     add_case_flag,
@@ -51,8 +52,6 @@ import tests_common.tools.helpers as utils
 from ui_tests.caseworker.pages.case_list_page import CaseListPage
 from ui_tests.caseworker.pages.application_page import ApplicationPage
 
-from tests_common.tools.helpers import get_formatted_date_time_y_m_d_h_s
-
 
 @when("I go to the internal homepage")  # noqa
 def when_go_to_internal_homepage(driver, internal_url):  # noqa
@@ -87,6 +86,9 @@ def create_open_app(driver, apply_for_open_application):  # noqa
 @when("I click continue")  # noqa
 def i_click_continue(driver):  # noqa
     Shared(driver).click_submit()
+    # handle case when scenario clicks submit in consecutive steps: there is a race condition resulting in the same
+    # submit button being clicked for each step
+    time.sleep(5)
 
 
 @when("I click change status")  # noqa
@@ -226,7 +228,7 @@ def my_case_not_in_queue(driver, context):  # noqa
 
 @given("a queue has been created")  # noqa
 def create_queue(context, api_test_client):  # noqa
-    api_test_client.queues.add_queue("queue " + get_formatted_date_time_y_m_d_h_s())
+    api_test_client.queues.add_queue(f"queue {utils.get_formatted_date_time_y_m_d_h_s()}")
     context.queue_id = api_test_client.context["queue_id"]
     context.queue_name = api_test_client.context["queue_name"]
 
@@ -399,7 +401,7 @@ def create_letter_template(driver, context, get_template_id):  # noqa
     template_page = LetterTemplates(driver)
     template_page.click_create_a_template()
 
-    context.template_name = "Template " + utils.get_formatted_date_time_y_m_d_h_s()
+    context.template_name = f"Template {utils.get_formatted_date_time_y_m_d_h_s()}"
     template_page.enter_template_name(context.template_name)
     functions.click_submit(driver)
 

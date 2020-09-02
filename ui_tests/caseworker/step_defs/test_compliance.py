@@ -1,10 +1,12 @@
+from datetime import datetime
+
 from django.utils import timezone
 from pytest_bdd import when, then, parsers, scenarios
 
 from ui_tests.caseworker.pages.case_page import CasePage, CaseTabs
 from ui_tests.caseworker.pages.shared import Shared
 
-from caseworker.conf.constants import DATE_FORMAT
+from caseworker.core.constants import DATE_FORMAT
 from ui_tests.caseworker.pages.compliance_pages import CompliancePages
 from ui_tests.caseworker.pages.ecju_queries_pages import EcjuQueriesPages
 from ui_tests.caseworker.pages.generate_document_page import GeneratedDocument
@@ -73,7 +75,7 @@ def add_visit_report_details(driver, context, visit_type, visit_date, overall_ri
 @then("I see the visit report details in details and the banner")
 def see_visit_report_details(driver, context):
     compliance_page = CompliancePages(driver)
-    visit_date = timezone.localtime().date().strftime(DATE_FORMAT)
+    visit_date = datetime.strptime(context.visit_date, "%Y-%m-%d").strftime(DATE_FORMAT)
     assert context.visit_type in compliance_page.get_visit_type()
     assert visit_date in compliance_page.get_visit_date()
     assert context.overall_risk in compliance_page.get_overall_risk()

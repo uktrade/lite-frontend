@@ -1,7 +1,6 @@
-from caseworker.conf.client import post
-from caseworker.conf.constants import AUTHENTICATION_URL
+from core import client
 
 
 def authenticate_gov_user(request, json):
-    data = post(request, AUTHENTICATION_URL, json)
+    data = client.post(request, "/gov-users/authenticate/", json)
     return data.json(), data.status_code

@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
-from exporter.core.helpers import convert_dict_to_query_params
+from core.helpers import convert_dict_to_query_params
 from exporter.core.services import get_organisation_user, put_organisation_user, get_organisation_users
 from lite_forms.components import Option, FiltersBar, Select
 from lite_forms.views import SingleFormView
@@ -21,7 +21,7 @@ class Members(OrganisationView):
         params = {"page": int(self.request.GET.get("page", 1))}
         if status:
             params["status"] = status
-        users = get_organisation_users(self.request, str(self.request.user.organisation), params)
+        users = get_organisation_users(self.request, str(self.request.session["organisation"]), params)
         statuses = [
             Option(option["key"], option["value"])
             for option in [
@@ -50,7 +50,7 @@ class AddUser(SingleFormView):
 
 class ViewUser(TemplateView):
     def get(self, request, **kwargs):
-        request_user = get_organisation_user(request, str(request.user.organisation), str(kwargs["pk"]))
+        request_user = get_organisation_user(request, str(request.session["organisation"]), str(kwargs["pk"]))
         user = get_user(request)
 
         is_request_user_super_user = is_super_user(request_user)
@@ -73,15 +73,15 @@ class ViewUser(TemplateView):
 
 class ViewProfile(TemplateView):
     def get(self, request, **kwargs):
-        user = request.user
-        return redirect(reverse_lazy("organisation:members:user", kwargs={"pk": user.lite_api_user_id}))
+        pk = request.session["lite_api_user_id"]
+        return redirect(reverse_lazy("organisation:members:user", kwargs={"pk": pk}))
 
 
 class EditUser(SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
-        user = get_organisation_user(request, str(request.user.organisation), str(self.object_pk))
-        can_edit_role = user["id"] != request.user.lite_api_user_id
+        user = get_organisation_user(request, str(request.session["organisation"]), str(self.object_pk))
+        can_edit_role = user["id"] != request.session["lite_api_user_id"]
         self.form = edit_user_form(request, self.object_pk, can_edit_role)
         self.data = user
         self.action = put_organisation_user

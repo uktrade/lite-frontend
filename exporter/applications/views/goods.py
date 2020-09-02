@@ -16,8 +16,8 @@ from exporter.applications.services import (
     delete_application_preexisting_good,
     add_document_data,
 )
-from exporter.conf.constants import EXHIBITION, APPLICANT_EDITING
-from exporter.core.helpers import convert_dict_to_query_params
+from exporter.core.constants import EXHIBITION, APPLICANT_EDITING
+from core.helpers import convert_dict_to_query_params
 from exporter.goods.forms import (
     document_grading_form,
     attach_documents_form,
@@ -35,8 +35,10 @@ from lite_forms.components import FiltersBar, TextInput
 from lite_forms.generators import error_page, form_page
 from lite_forms.views import SingleFormView, MultiFormView
 
+from core.auth.views import LoginRequiredMixin
 
-class ApplicationGoodsList(TemplateView):
+
+class ApplicationGoodsList(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         """
         List all goods relating to the application
@@ -52,7 +54,7 @@ class ApplicationGoodsList(TemplateView):
         return render(request, "applications/goods/index.html", context)
 
 
-class ExistingGoodsList(TemplateView):
+class ExistingGoodsList(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         """
         List of existing goods (add-preexisting)
@@ -95,7 +97,7 @@ class ExistingGoodsList(TemplateView):
         return render(request, "applications/goods/preexisting.html", context)
 
 
-class AddGood(MultiFormView):
+class AddGood(LoginRequiredMixin, MultiFormView):
     def init(self, request, **kwargs):
         self.draft_pk = str(kwargs["pk"])
         self.forms = add_good_form_group(request, draft_pk=self.draft_pk)
@@ -123,7 +125,7 @@ class AddGood(MultiFormView):
         )
 
 
-class CheckDocumentGrading(SingleFormView):
+class CheckDocumentGrading(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.draft_pk = kwargs["pk"]
         self.object_pk = kwargs["good_pk"]
@@ -140,7 +142,7 @@ class CheckDocumentGrading(SingleFormView):
 
 
 @method_decorator(csrf_exempt, "dispatch")
-class AttachDocument(TemplateView):
+class AttachDocument(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         good_id = str(kwargs["good_pk"])
         draft_id = str(kwargs["pk"])
@@ -167,7 +169,7 @@ class AttachDocument(TemplateView):
         )
 
 
-class AddGoodToApplication(SingleFormView):
+class AddGoodToApplication(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         application = get_application(self.request, self.object_pk)
@@ -177,7 +179,7 @@ class AddGoodToApplication(SingleFormView):
         self.success_url = reverse_lazy("applications:goods", kwargs={"pk": self.object_pk})
 
 
-class RemovePreexistingGood(TemplateView):
+class RemovePreexistingGood(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         application_id = str(kwargs["pk"])
         good_on_application_id = str(kwargs["good_on_application_pk"])
@@ -190,7 +192,7 @@ class RemovePreexistingGood(TemplateView):
         return redirect(reverse_lazy("applications:goods", kwargs={"pk": application_id}))
 
 
-class GoodsDetailSummaryCheckYourAnswers(TemplateView):
+class GoodsDetailSummaryCheckYourAnswers(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         application_id = str(kwargs["pk"])
         application = get_application(request, application_id)
@@ -203,7 +205,7 @@ class GoodsDetailSummaryCheckYourAnswers(TemplateView):
         return render(request, "applications/goods/goods-detail-summary.html", context)
 
 
-class AddGoodsSummary(TemplateView):
+class AddGoodsSummary(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         application_id = str(kwargs["pk"])
         good_id = str(kwargs["good_pk"])

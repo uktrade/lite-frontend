@@ -6,7 +6,7 @@ from django.template.defaultfilters import safe
 from django.templatetags.tz import localtime
 from django.utils.safestring import mark_safe
 
-from exporter.conf import decorators
+from exporter.core import decorators
 from core.builtins.custom_tags import default_na
 from exporter.organisation.roles.services import get_user_permissions
 
@@ -49,42 +49,6 @@ def generate_notification_total_string(notification_count):
         return f"You have {notification_count} new notification"
     else:
         return f"You have {notification_count} new notifications"
-
-
-def convert_value_to_query_param(key: str, value):
-    """
-    Convert key/value pairs to a string suitable for query parameters
-    eg {'type': 'organisation'} becomes type=organisation
-    eg {'type': ['organisation', 'organisation']} becomes type=organisation&type=organisation
-    """
-    if value is None:
-        return ""
-
-    if isinstance(value, list):
-        return_value = ""
-        for item in value:
-            if not return_value:
-                return_value = return_value + key + "=" + item
-            else:
-                return_value = return_value + "&" + key + "=" + item
-        return return_value
-
-    return key + "=" + str(value)
-
-
-def convert_dict_to_query_params(dictionary: dict):
-    return "&".join(([convert_value_to_query_param(key, value) for (key, value) in dictionary.items()]))
-
-
-def convert_parameters_to_query_params(dictionary: dict):
-    """
-    Given a dictionary of parameters, convert to a query param string
-    Removes request object and deletes empty keys
-    """
-    if "request" in dictionary:
-        del dictionary["request"]
-
-    return "?" + convert_dict_to_query_params({key: value for key, value in dictionary.items() if value is not None})
 
 
 def convert_to_link(address, name=None, classes="", include_br=False):

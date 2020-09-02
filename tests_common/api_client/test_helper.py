@@ -11,7 +11,6 @@ from .sub_helpers.ogel import Ogel
 from .sub_helpers.parties import Parties
 from .sub_helpers.picklists import Picklists
 from .sub_helpers.queues import Queues
-from .sub_helpers.users import Users
 
 
 class TestHelper:
@@ -27,7 +26,6 @@ class TestHelper:
         request_data = self.api_client.request_data
 
         self.documents = Documents(api_client=self.api_client, request_data=request_data)
-        self.users = Users(api_client=self.api_client, request_data=request_data)
         self.organisations = Organisations(api_client=self.api_client, request_data=request_data)
         self.goods = Goods(api_client=self.api_client, documents=self.documents, request_data=request_data)
         self.goods_queries = GoodsQueries(api_client=self.api_client, request_data=request_data)

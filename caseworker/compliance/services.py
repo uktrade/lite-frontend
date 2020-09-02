@@ -1,18 +1,19 @@
 from django.http import HttpResponse
 
-from caseworker.conf.client import get
-from caseworker.conf.constants import OPEN_LICENCE_RETURNS_URL, COMPLIANCE_URL, COMPLIANCE_LICENCES_URL
+from core import client
+
 
 FILENAME = "OpenLicenceReturns.csv"
 
 
 def get_compliance_licences(request, case_id, reference, page):
-    data = get(request, COMPLIANCE_URL + case_id + COMPLIANCE_LICENCES_URL + f"?reference={reference}&page={page}",)
+    url = f"/compliance/{case_id}/licences/?reference={reference}&page={page}"
+    data = client.get(request, url)
     return data.json()
 
 
 def get_open_licence_return_download(request, pk):
-    data = get(request, OPEN_LICENCE_RETURNS_URL + str(pk) + "/")
+    data = client.get(request, f"/compliance/open-licence-returns/{pk}/")
     open_licence_returns = data.json()
     response = HttpResponse("\n" + open_licence_returns["returns_data"], content_type="text/csv")
     response["Content-Disposition"] = f'attachment; filename="{open_licence_returns["year"]}{FILENAME}"'

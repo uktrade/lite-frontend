@@ -27,7 +27,7 @@ class GreatSigninPage(BasePage):
         try:
             self.driver.implicitly_wait(0)
             self.driver.find_element_by_link_text(self.ACCEPT_COOKIES_TEXT).click()
-            self.driver.implicitly_wait(10)
+            self.driver.implicitly_wait(60)
         except NoSuchElementException:
             pass
 

@@ -4,11 +4,13 @@ from django.views.generic import TemplateView
 from exporter.applications.forms.third_party import third_party_forms
 from exporter.applications.services import get_application, post_party, delete_party, validate_party
 from exporter.applications.views.parties.base import AddParty, CopyParties, SetParty, DeleteParty, CopyAndSetParty
-from exporter.conf.constants import F680
+from exporter.core.constants import F680
 from lite_content.lite_exporter_frontend.applications import ThirdPartyForm, ThirdPartyPage
 
+from core.auth.views import LoginRequiredMixin
 
-class ThirdParties(TemplateView):
+
+class ThirdParties(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         application_id = str(kwargs["pk"])
         application = get_application(request, application_id)
@@ -21,14 +23,14 @@ class ThirdParties(TemplateView):
         return render(request, "applications/parties/third-parties.html", context)
 
 
-class AddThirdParty(AddParty):
+class AddThirdParty(LoginRequiredMixin, AddParty):
     def __init__(self):
         super().__init__(
             new_url="applications:set_third_party", copy_url="applications:third_parties_copy",
         )
 
 
-class SetThirdParty(SetParty):
+class SetThirdParty(LoginRequiredMixin, SetParty):
     def __init__(self):
         super().__init__(
             url="applications:third_party_attach_document",
@@ -52,19 +54,19 @@ class SetThirdParty(SetParty):
             self.action = self.validate_action
 
 
-class RemoveThirdParty(DeleteParty):
+class RemoveThirdParty(LoginRequiredMixin, DeleteParty):
     def __init__(self, **kwargs):
         super().__init__(
             url="applications:third_parties", action=delete_party, error=ThirdPartyPage.DELETE_ERROR, **kwargs,
         )
 
 
-class CopyThirdParties(CopyParties):
+class CopyThirdParties(LoginRequiredMixin, CopyParties):
     def __init__(self):
         super().__init__(new_party_type="third_party")
 
 
-class CopyThirdParty(CopyAndSetParty):
+class CopyThirdParty(LoginRequiredMixin, CopyAndSetParty):
     def __init__(self):
         super().__init__(
             url="applications:third_party_attach_document",

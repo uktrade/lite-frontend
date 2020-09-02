@@ -5,12 +5,14 @@ from django.views.generic import TemplateView
 from caseworker.cases.forms.review_goods import review_goods_form
 from caseworker.cases.helpers.advice import get_param_goods, flatten_goods_data
 from caseworker.cases.services import get_case, post_review_goods, get_good
-from caseworker.conf.constants import Permission
+from caseworker.core.constants import Permission
 from caseworker.core.helpers import has_permission
 from lite_forms.views import SingleFormView
 
+from core.auth.views import LoginRequiredMixin
 
-class ReviewGoods(SingleFormView):
+
+class ReviewGoods(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         case = get_case(request, self.object_pk)
@@ -24,7 +26,7 @@ class ReviewGoods(SingleFormView):
             return redirect(reverse_lazy("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.object_pk}))
 
 
-class GoodDetails(TemplateView):
+class GoodDetails(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         good_id = str(kwargs["good_pk"])
         good = get_good(request, good_id)[0]["good"]

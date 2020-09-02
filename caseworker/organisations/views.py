@@ -2,8 +2,8 @@ from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView
 
-from caseworker.conf.constants import Permission
-from caseworker.core.helpers import convert_dict_to_query_params
+from caseworker.core.constants import Permission
+from core.helpers import convert_dict_to_query_params
 from caseworker.core.objects import Tab
 from caseworker.core.services import get_user_permissions, get_menu_notifications
 from lite_content.lite_internal_frontend import strings
@@ -30,8 +30,10 @@ from caseworker.organisations.services import (
     get_site_activity,
 )
 
+from core.auth.views import LoginRequiredMixin
 
-class OrganisationList(TemplateView):
+
+class OrganisationList(LoginRequiredMixin, TemplateView):
     """
     Show all organisations.
     """
@@ -113,11 +115,11 @@ class OrganisationView(TemplateView):
         return render(request, f"organisations/organisation/{self.template_name}.html", context)
 
 
-class OrganisationDetails(OrganisationView):
+class OrganisationDetails(LoginRequiredMixin, OrganisationView):
     template_name = "details"
 
 
-class OrganisationReview(SingleFormView):
+class OrganisationReview(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.action = put_organisation_status
@@ -125,14 +127,14 @@ class OrganisationReview(SingleFormView):
         self.success_url = reverse_lazy("organisations:organisation", kwargs={"pk": self.object_pk})
 
 
-class OrganisationMembers(OrganisationView):
+class OrganisationMembers(LoginRequiredMixin, OrganisationView):
     template_name = "members"
 
     def get_additional_context(self):
         return {"members": get_organisation_members(self.request, self.organisation_id)}
 
 
-class OrganisationSites(OrganisationView):
+class OrganisationSites(LoginRequiredMixin, OrganisationView):
     template_name = "sites"
 
     def get_additional_context(self):
@@ -142,7 +144,7 @@ class OrganisationSites(OrganisationView):
         }
 
 
-class RegisterOrganisation(MultiFormView):
+class RegisterOrganisation(LoginRequiredMixin, MultiFormView):
     def init(self, request, **kwargs):
         self.forms = register_organisation_forms(request)
         self.action = post_organisations
@@ -150,7 +152,7 @@ class RegisterOrganisation(MultiFormView):
         self.success_url = reverse("organisations:organisations")
 
 
-class RegisterHMRC(MultiFormView):
+class RegisterHMRC(LoginRequiredMixin, MultiFormView):
     def init(self, request, **kwargs):
         self.forms = register_hmrc_organisation_forms()
         self.action = post_hmrc_organisations
@@ -158,7 +160,7 @@ class RegisterHMRC(MultiFormView):
         self.success_url = reverse("organisations:organisations")
 
 
-class EditOrganisation(SingleFormView):
+class EditOrganisation(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         organisation = get_organisation(request, str(self.object_pk))

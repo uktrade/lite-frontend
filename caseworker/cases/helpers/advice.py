@@ -5,7 +5,7 @@ from typing import List, Dict
 
 from caseworker.cases.objects import Case
 from caseworker.cases.services import get_blocking_flags
-from caseworker.conf.constants import APPLICATION_CASE_TYPES, Permission, CLEARANCE_CASE_TYPES, AdviceType
+from caseworker.core.constants import APPLICATION_CASE_TYPES, Permission, CLEARANCE_CASE_TYPES, AdviceType
 from core.builtins.custom_tags import filter_advice_by_level, filter_advice_by_id, filter_advice_by_user
 from caseworker.core.services import get_status_properties
 from caseworker.teams.services import get_teams
@@ -127,7 +127,7 @@ def flatten_advice_data(request, case: Case, items: List[Dict], level):
         level = "final"
 
     pre_filtered_advice = filter_advice_by_user(
-        filter_advice_by_level(case["advice"], level), request.user.lite_api_user_id
+        filter_advice_by_level(case["advice"], level), request.session["lite_api_user_id"]
     )
     filtered_advice = []
 

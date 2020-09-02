@@ -32,8 +32,10 @@ from caseworker.picklists.services import (
 from caseworker.teams.services import get_team
 from caseworker.users.services import get_gov_user
 
+from core.auth.views import LoginRequiredMixin
 
-class Picklists(TemplateView):
+
+class Picklists(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         """
         Return a list of picklists and show all the relevant items
@@ -63,7 +65,7 @@ class Picklists(TemplateView):
         return render(request, "teams/picklists.html", context)
 
 
-class PicklistsJson(TemplateView):
+class PicklistsJson(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         """
         Return JSON representation of picklists for use in picklist pickers
@@ -81,7 +83,7 @@ class PicklistsJson(TemplateView):
         return JsonResponse(data=picklist_items)
 
 
-class ViewPicklistItem(TemplateView):
+class ViewPicklistItem(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         picklist_item = get_picklist_item(request, str(kwargs["pk"]))
 
@@ -93,7 +95,7 @@ class ViewPicklistItem(TemplateView):
         return render(request, "teams/picklist-item.html", context)
 
 
-class AddPicklistItem(SingleFormView):
+class AddPicklistItem(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.action = post_picklist_item
         countries, _ = get_countries(request)
@@ -110,7 +112,7 @@ class AddPicklistItem(SingleFormView):
             return add_picklist_item_form(self.request.GET.get("type"))
 
 
-class EditPicklistItem(SingleFormView):
+class EditPicklistItem(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.object = get_picklist_item(request, self.object_pk)
@@ -131,7 +133,7 @@ class EditPicklistItem(SingleFormView):
             return edit_picklist_item_form(self.object)
 
 
-class ChangeStatusView(SingleFormView):
+class ChangeStatusView(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.object = get_picklist_item(request, self.object_pk)

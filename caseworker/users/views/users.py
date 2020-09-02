@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView
 
-from caseworker.conf.constants import SUPER_USER_ROLE_ID, UserStatuses
+from caseworker.core.constants import SUPER_USER_ROLE_ID, UserStatuses
 from lite_content.lite_internal_frontend import strings
 from lite_content.lite_internal_frontend.users import UsersPage
 from lite_forms.components import FiltersBar, Select, Option, TextInput
@@ -29,7 +29,7 @@ class UsersList(TemplateView):
 
         data, _ = get_gov_users(request, params)
 
-        user, _ = get_gov_user(request, str(request.user.lite_api_user_id))
+        user, _ = get_gov_user(request, str(request.session["lite_api_user_id"]))
         super_user = is_super_user(user)
 
         statuses = [
@@ -66,10 +66,10 @@ class AddUser(SingleFormView):
 class ViewUser(TemplateView):
     def get(self, request, **kwargs):
         data, _ = get_gov_user(request, str(kwargs["pk"]))
-        request_user, _ = get_gov_user(request, str(request.user.lite_api_user_id))
+        request_user, _ = get_gov_user(request, str(request.session["lite_api_user_id"]))
         super_user = is_super_user(request_user)
         can_deactivate = not is_super_user(data)
-        can_edit_role = data["user"]["id"] != request.user.lite_api_user_id
+        can_edit_role = data["user"]["id"] != request.session["lite_api_user_id"]
 
         context = {
             "data": data,
@@ -83,7 +83,7 @@ class ViewUser(TemplateView):
 
 class ViewProfile(TemplateView):
     def get(self, request, **kwargs):
-        return redirect(reverse_lazy("users:user", kwargs={"pk": request.user.lite_api_user_id}))
+        return redirect(reverse_lazy("users:user", kwargs={"pk": request.session["lite_api_user_id"]}))
 
 
 class EditUser(SingleFormView):
@@ -91,7 +91,7 @@ class EditUser(SingleFormView):
         self.object_pk = kwargs["pk"]
         user, _ = get_gov_user(request, self.object_pk)
         self.user = user["user"]
-        can_edit_role = self.user["id"] != request.user.lite_api_user_id
+        can_edit_role = self.user["id"] != request.session["lite_api_user_id"]
         self.form = edit_user_form(request, self.user, can_edit_role)
         self.data = self.user
         self.action = put_gov_user
@@ -101,9 +101,8 @@ class EditUser(SingleFormView):
         super().post_success_step()
 
         # If user is updating their own default_queue, update the local user instance
-        if self.user["id"] == self.request.user.lite_api_user_id:
-            self.request.user.default_queue = self.get_validated_data().get("gov_user").get("default_queue")
-            self.request.user.save()
+        if self.user["id"] == self.request.session["lite_api_user_id"]:
+            self.request.session["default_queue"] = self.get_validated_data().get("gov_user").get("default_queue")
 
 
 class ChangeUserStatus(TemplateView):

@@ -98,7 +98,7 @@ class Shared(BasePage):
         size = len(self.driver.find_elements_by_css_selector(".lite-pagination__list-item"))
         if size > 0:
             self.driver.find_elements_by_css_selector(".lite-pagination__list-item")[size - 1].click()
-        self.driver.implicitly_wait(10)
+        self.driver.implicitly_wait(60)
 
     def filter_by_name(self, name):
         functions.try_open_filters(self.driver)

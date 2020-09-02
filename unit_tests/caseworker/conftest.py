@@ -1,11 +1,10 @@
 import re
 
 import pytest
+from django.conf import settings
+from django.test import Client
 
-from django.contrib.auth import get_user_model
-
-from caseworker.conf import constants
-from caseworker.conf.client import _build_absolute_uri
+from core import client
 
 
 application_id = "094eed9a-23cc-478a-92ad-9a05ac17fad0"
@@ -21,7 +20,7 @@ def mock_case(
     mock_case_additional_documents,
     mock_case_activity_filters,
 ):
-    url = _build_absolute_uri(f"{constants.CASE_URL}{application_id}/")
+    url = client._build_absolute_uri(f"/cases/{application_id}/")
     data = {
         "case": {
             "id": application_id,
@@ -300,7 +299,7 @@ def mock_case(
 
 @pytest.fixture
 def mock_queue(requests_mock):
-    url = _build_absolute_uri(constants.QUEUES_URL)
+    url = client._build_absolute_uri("/queues/")
     data = {
         "id": "00000000-0000-0000-0000-000000000001",
         "name": "All cases",
@@ -313,7 +312,7 @@ def mock_queue(requests_mock):
 
 @pytest.fixture(autouse=True)
 def mock_status_properties(requests_mock):
-    url = _build_absolute_uri(constants.STATUS_PROPERTIES_URL)
+    url = client._build_absolute_uri("/static/statuses/properties/")
     data = {"is_read_only": False, "is_terminal": False}
     requests_mock.get(url=re.compile(f"{url}.*/"), json=data)
     yield data
@@ -321,7 +320,7 @@ def mock_status_properties(requests_mock):
 
 @pytest.fixture
 def mock_gov_user(requests_mock, mock_notifications, mock_case_statuses):
-    url = _build_absolute_uri(constants.GOV_USERS_URL)
+    url = client._build_absolute_uri("/gov-users/")
     data = {
         "user": {
             "id": gov_uk_user_id,
@@ -368,7 +367,7 @@ def mock_gov_user(requests_mock, mock_notifications, mock_case_statuses):
 
 @pytest.fixture
 def mock_notifications(requests_mock):
-    url = _build_absolute_uri(constants.NOTIFICATIONS_URL)
+    url = client._build_absolute_uri("/gov-users/notifications/")
     data = {"notifications": {"organisations": 8}, "has_notifications": True}
     requests_mock.get(url=url, json=data)
     yield data
@@ -376,7 +375,7 @@ def mock_notifications(requests_mock):
 
 @pytest.fixture
 def mock_case_ecju_queries(requests_mock):
-    url = _build_absolute_uri(f"{constants.CASE_URL}{application_id}/ecju-queries/")
+    url = client._build_absolute_uri(f"/cases/{application_id}/ecju-queries/")
     data = {"ecju_queries": []}
     requests_mock.get(url=url, json=data)
     yield data
@@ -384,7 +383,7 @@ def mock_case_ecju_queries(requests_mock):
 
 @pytest.fixture
 def mock_case_assigned_queues(requests_mock):
-    url = _build_absolute_uri(f"{constants.CASE_URL}{application_id}/assigned-queues/")
+    url = client._build_absolute_uri(f"/cases/{application_id}/assigned-queues/")
     data = {"queues": []}
     requests_mock.get(url=url, json=data)
     yield data
@@ -392,7 +391,7 @@ def mock_case_assigned_queues(requests_mock):
 
 @pytest.fixture
 def mock_case_documents(requests_mock):
-    url = _build_absolute_uri(f"{constants.CASE_URL}{application_id}/documents/")
+    url = client._build_absolute_uri(f"/cases/{application_id}/documents/")
     data = {
         "documents": [
             {
@@ -416,7 +415,7 @@ def mock_case_documents(requests_mock):
 
 @pytest.fixture
 def mock_case_additional_documents(requests_mock):
-    url = _build_absolute_uri(f"{constants.CASE_URL}{application_id}/additional-contacts/")
+    url = client._build_absolute_uri(f"/cases/{application_id}/additional-contacts/")
     data = []
     requests_mock.get(url=url, json=data)
     yield data
@@ -424,7 +423,7 @@ def mock_case_additional_documents(requests_mock):
 
 @pytest.fixture
 def mock_case_activity_system_user(requests_mock):
-    url = _build_absolute_uri(f"{constants.CASE_URL}{application_id}/activity/")
+    url = client._build_absolute_uri(f"/cases/{application_id}/activity/")
     data = {
         "activity": [
             {
@@ -449,7 +448,7 @@ def mock_case_activity_system_user(requests_mock):
 
 @pytest.fixture(autouse=True)
 def mock_teams(requests_mock):
-    url = _build_absolute_uri(constants.TEAMS_URL)
+    url = client._build_absolute_uri("/teams/")
     data = {
         "teams": [
             {"id": "00000000-0000-0000-0000-000000000001", "name": "Admin"},
@@ -462,7 +461,7 @@ def mock_teams(requests_mock):
 
 @pytest.fixture
 def mock_case_activity_filters(requests_mock):
-    url = _build_absolute_uri(f"{constants.CASE_URL}{application_id}/activity/filters/")
+    url = client._build_absolute_uri(f"/cases/{application_id}/activity/filters/")
     data = {
         "filters": {
             "activity_types": [
@@ -483,7 +482,7 @@ def mock_case_activity_filters(requests_mock):
 
 @pytest.fixture(autouse=True)
 def mock_blocking_flags(requests_mock):
-    url = _build_absolute_uri(constants.FLAGS_URL)
+    url = client._build_absolute_uri("/flags/")
     data = [
         {
             "id": "00000000-0000-0000-0000-000000000014",
@@ -503,7 +502,7 @@ def mock_blocking_flags(requests_mock):
 
 @pytest.fixture(autouse=True)
 def mock_case_statuses(requests_mock):
-    url = _build_absolute_uri(constants.STATUSES_URL)
+    url = client._build_absolute_uri("/static/statuses/")
     data = {
         "statuses": [
             {"id": "00000000-0000-0000-0000-000000000001", "key": "submitted", "value": "Submitted", "priority": 1},
@@ -637,7 +636,30 @@ def mock_case_statuses(requests_mock):
     yield data
 
 
-@pytest.fixture
-def user(mock_gov_user):
-    User = get_user_model()
-    return User.objects.create(email=mock_gov_user["user"]["email"], lite_api_user_id=gov_uk_user_id,)
+@pytest.fixture(autouse=True)
+def authorized_client(client: Client, settings):
+    """
+    returns a factory to make a authorized client for a mock_gov_user,
+
+    the factory only expects the value of "user" inside the object returned by
+    the mock_gov_user fixture
+    """
+
+    def _inner(user):
+        session = client.session
+        session["first_name"] = user["first_name"]
+        session["last_name"] = user["last_name"]
+        session["default_queue"] = user["default_queue"]
+        session["lite_api_user_id"] = user["id"]
+        session[settings.TOKEN_SESSION_KEY] = {
+            "access_token": "mock_access_token",
+            "expires_in": 36000,
+            "token_type": "Bearer",
+            "scope": ["read", "write"],
+            "refresh_token": "mock_refresh_token",
+        }
+        session.save()
+        client.cookies[settings.SESSION_COOKIE_NAME] = session.session_key
+        return client
+
+    yield _inner

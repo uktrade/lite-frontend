@@ -1,7 +1,7 @@
 from django.http import HttpRequest
 from django.urls import reverse, reverse_lazy
 
-from caseworker.conf.constants import UserStatuses
+from caseworker.core.constants import UserStatuses
 from lite_content.lite_internal_frontend import strings
 from lite_content.lite_internal_frontend.strings import cases
 from lite_forms.components import (

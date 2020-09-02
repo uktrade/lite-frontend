@@ -1,5 +1,5 @@
 from exporter.applications.components import back_to_task_list
-from exporter.conf.constants import HMRC, CaseTypes, LocationType
+from exporter.core.constants import HMRC, CaseTypes, LocationType
 from exporter.core.services import get_countries, get_external_locations
 from lite_content.lite_exporter_frontend import goods, strings, generic
 from lite_content.lite_exporter_frontend.goods import NewLocationForm, LocationTypeForm
@@ -158,7 +158,7 @@ def external_locations_form(request, application_type):
             Checkboxes(
                 name="external_locations[]",
                 options=get_external_locations(
-                    request, str(request.user.organisation), True, exclude, application_type
+                    request, str(request.session["organisation"]), True, exclude, application_type
                 ),
                 filterable=True,
             ),
@@ -178,7 +178,7 @@ def sites_form(request, application_type):
             Filter(),
             Checkboxes(
                 name="sites[]",
-                options=get_sites(request, request.user.organisation, True, False, exclude),
+                options=get_sites(request, request.session["organisation"], True, False, exclude),
                 filterable=True,
             ),
         ],

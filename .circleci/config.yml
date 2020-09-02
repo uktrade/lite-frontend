@@ -1,7 +1,22 @@
 version: 2.1
+parameters:
+  run_ui_tests:
+    type: boolean
+    default: false
+  run_unit_tests:
+    type: boolean
+    default: true
+  environment:
+    type: string
+    default: devdata
 
-orbs:
-  jq: circleci/jq@1.8.0
+###############################################################################
+# Env vars
+###############################################################################
+common_env_vars: &common_env_vars
+  ENVIRONMENT: << pipeline.parameters.environment >>
+  LITE_API_URL: https://lite-api-<< pipeline.parameters.environment >>.london.cloudapps.digital/
+  PIPENV_VENV_IN_PROJECT: true
 
 ###############################################################################
 # Images
@@ -10,34 +25,91 @@ orbs:
 image_python: &image_python
   image: circleci/python:3.7
 
-image_postgres: &image_postgres
-  image: circleci/postgres:9.5-alpine-ram
-  environment:
-    POSTGRES_USER: postgres
-    POSTGRES_PASSWORD: password
-    POSTGRES_DB: postgres
+image_python_browsers: &image_python_browsers
+  image: circleci/python:3.7-browsers
 
 ###############################################################################
-# Steps
+# Commands
 ###############################################################################
 
-lint_steps: &lint_steps
-  steps:
-    - checkout
-    - run: git submodule sync
-    - run: git submodule update --init
-    - run: pipenv sync --dev
-    - run: pipenv run bandit -r .
-    - run: pipenv run prospector
-    - run: pipenv run black . --check --diff
+commands:
 
-pytest_steps: &pytest_steps
-  steps:
-    - checkout
-    - run: git submodule sync
-    - run: git submodule update --init
-    - run: pipenv sync --dev
-    - run: pipenv run pytest
+  vpn_install:
+    description: "Install OpenVPN client"
+    steps:
+      - run:
+          name: Install OpenVPN
+          command: |
+            # There seems to be a bug with the openvpn aptrepo sources
+            sudo apt-get update # for apt-get to recognise openvpn
+            sudo apt-get remove openvpn # remove ubuntu aptrepo source
+            sudo apt-get update
+            sudo apt-get install openvpn -y
+  vpn_connect:
+    parameters:
+      config:
+        description: "ENV var name containing OpenVPN client .ovpn config file content base64 encoded"
+        type: env_var_name
+        default: VPN_CONFIG
+    steps:
+      - run: echo ${<<parameters.config>>:?} | base64 --decode >> config.ovpn
+      - run:
+          name: Connect to VPN
+          command: |
+            sudo openvpn \
+              --config config.ovpn \
+              --script-security 2 \
+              --up /etc/openvpn/update-resolv-conf \
+              --down /etc/openvpn/update-resolv-conf \
+              > openvpn.log 2>&1 &
+            cat openvpn.log
+            while [ -n "$(ip addr show tun0 2>&1 > /dev/null)" ]; do
+              sleep 0.1;
+            done
+            ls /etc/openvpn/
+            ls /usr/share/openvpn/
+            cat openvpn.log
+            dig great.dev.uktrade.digital +short
+            cat /etc/resolv.conf
+            curl -I https://great.dev.uktrade.digital/
+  vpn_disconnect:
+    steps:
+      - run: sudo killall openvpn || true
+      - run: sudo rm config.ovpn
+
+  setup_code:
+    steps:
+      - checkout
+      - run: pipenv sync --dev
+      - run: git submodule update --init
+
+  unit_tests:
+    steps:
+      - run: pipenv run pytest
+
+  ui_tests:
+    steps:
+      - run: mkdir -p test-results
+      - run: |
+          pipenv run pytest \
+            -rP \
+            --reruns=1 \
+            --reruns-delay=60 \
+            --headless \
+            --disable-pytest-warnings \
+            --junitxml=test-results/junit.xml
+      - store_artifacts:
+          path: ui_tests/screenshots
+      - store_artifacts:
+          path: openvpn.log
+      - store_test_results:
+          path: test-results
+
+  lint:
+    steps:
+      - run: pipenv run bandit -r .
+      - run: pipenv run prospector
+      - run: pipenv run black . --check --diff
 
 ###############################################################################
 # Jobs
@@ -47,32 +119,83 @@ jobs:
   lint:
     docker:
       - <<: *image_python
-    <<: *lint_steps
+    steps:
+      - setup_code
+      - lint
 
-  caseworker_test:
+  caseworker_unit_test:
     docker:
       - <<: *image_python
-      - <<: *image_postgres
     environment:
-      PIPENV_VENV_IN_PROJECT: enabled
+      <<: *common_env_vars
       PIPENV_DOTENV_LOCATION: example.caseworker.env
       PYTEST_ADDOPTS: unit_tests/caseworker --capture=no --nomigrations
-    <<: *pytest_steps
+    steps:
+      - setup_code
+      - unit_tests
 
-  exporter_test:
+  exporter_unit_test:
     docker:
       - <<: *image_python
-      - <<: *image_postgres
     environment:
-      PIPENV_VENV_IN_PROJECT: enabled
+      <<: *common_env_vars
       PIPENV_DOTENV_LOCATION: example.exporter.env
       PYTEST_ADDOPTS: unit_tests/exporter --capture=no --nomigrations
-    <<: *pytest_steps
+    steps:
+      - setup_code
+      - unit_tests
+
+  caseworker_ui_test:
+    # has to be machine executor as the VPN does not work in docker executor
+    machine:
+      image: ubuntu-1604:201903-01
+      docker_layer_caching: true
+    environment:
+      <<: *common_env_vars
+      # not set PIPENV_DOTENV_LOCATION - instead set the env vars in circle
+      DJANGO_SETTINGS_MODULE: conf.caseworker
+      PYTEST_ADDOPTS: ui_tests/caseworker --capture=no --nomigrations
+    steps:
+      - run: sudo apt-get update
+      - run: sudo apt-get --only-upgrade install google-chrome-stable
+      - run: pyenv global 3.7.0
+      - run: pip install pipenv
+      - setup_code
+      - vpn_install
+      - vpn_connect
+      - ui_tests
+      - vpn_disconnect
+
+  exporter_ui_test:
+    machine:
+      image: ubuntu-1604:201903-01
+      docker_layer_caching: true
+    environment:
+      <<: *common_env_vars
+      # not set PIPENV_DOTENV_LOCATION - instead set the env vars in circle
+      DJANGO_SETTINGS_MODULE: conf.exporter
+      PYTEST_ADDOPTS: ui_tests/exporter --capture=no --nomigrations
+    steps:
+      - run: sudo apt-get update
+      - run: sudo apt-get --only-upgrade install google-chrome-stable
+      - run: pyenv global 3.7.0
+      - run: pip install pipenv
+      - setup_code
+      - vpn_install
+      - vpn_connect
+      - ui_tests
+      - vpn_disconnect
 
 workflows:
   version: 2
-  test:
+  unit_test:
+    when: << pipeline.parameters.run_unit_tests >>
     jobs:
       - lint
-      - caseworker_test
-      - exporter_test
+      - caseworker_unit_test
+      - exporter_unit_test
+  ui_tests:
+    when: << pipeline.parameters.run_ui_tests >>
+    jobs:
+      - caseworker_ui_test
+      - exporter_ui_test

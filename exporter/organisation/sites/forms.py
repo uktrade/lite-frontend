@@ -1,6 +1,6 @@
 from django.urls import reverse_lazy
 
-from exporter.conf.constants import Permissions
+from exporter.core.constants import Permissions
 from exporter.core.services import get_countries, get_organisation_users
 from lite_content.lite_exporter_frontend import strings, generic
 from lite_content.lite_exporter_frontend.sites import AddSiteForm
@@ -27,7 +27,7 @@ def new_site_forms(request):
     in_uk = request.POST.get("location", "").lower() == "united_kingdom"
     sites = []
     if request.POST.get("address.postcode"):
-        sites = get_sites(request, request.user.organisation, postcode=request.POST.get("address.postcode"))
+        sites = get_sites(request, request.session["organisation"], postcode=request.POST.get("address.postcode"))
 
     return FormGroup(
         [
@@ -101,7 +101,7 @@ def new_site_forms(request):
                         name="users[]",
                         options=get_organisation_users(
                             request,
-                            request.user.organisation,
+                            request.session["organisation"],
                             {"disable_pagination": True, "exclude_permission": Permissions.ADMINISTER_SITES},
                             True,
                         ),
@@ -150,7 +150,7 @@ def site_records_location(request, in_uk=True, is_editing=False):
                                         options=[
                                             Option(site["id"], site["name"])
                                             for site in filter_sites_in_the_uk(
-                                                get_sites(request, request.user.organisation)
+                                                get_sites(request, request.session["organisation"])
                                             )
                                         ],
                                     ),
@@ -181,7 +181,7 @@ def site_records_location(request, in_uk=True, is_editing=False):
                         name="site_records_located_at",
                         options=[
                             Option(site["id"], site["name"])
-                            for site in filter_sites_in_the_uk(get_sites(request, request.user.organisation))
+                            for site in filter_sites_in_the_uk(get_sites(request, request.session["organisation"]))
                         ],
                     ),
                 ],

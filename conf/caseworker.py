@@ -1,4 +1,5 @@
 import os
+from urllib.parse import urljoin
 
 from conf.base import *
 
@@ -8,29 +9,10 @@ ROOT_URLCONF = "caseworker.urls"
 INSTALLED_APPS += [
     "caseworker.core",
     "caseworker.spire",
-    "svg",
-    "lite_forms",
     "caseworker.letter_templates",
 ]
 
-MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "caseworker.conf.middleware.SessionTimeoutMiddleware",
-    # "csp.middleware.CSPMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "caseworker.conf.middleware.ProtectAllViewsMiddleware",
-    "caseworker.conf.middleware.LoggingMiddleware",
-    "caseworker.conf.middleware.UploadFailedMiddleware",
-    "django.middleware.gzip.GZipMiddleware",
-    "htmlmin.middleware.HtmlMinifyMiddleware",
-    "htmlmin.middleware.MarkRequestMiddleware",
-]
+MIDDLEWARE.append("core.middleware.SessionTimeoutMiddleware")
 
 TEMPLATES = [
     {
@@ -41,11 +23,10 @@ TEMPLATES = [
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
-                "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "caseworker.conf.context_processors.current_queue",
-                "caseworker.conf.context_processors.export_vars",
-                "caseworker.conf.context_processors.lite_menu",
+                "caseworker.core.context_processors.current_queue",
+                "caseworker.core.context_processors.export_vars",
+                "caseworker.core.context_processors.lite_menu",
             ],
             "builtins": ["core.builtins.custom_tags"],
         },
@@ -54,12 +35,13 @@ TEMPLATES = [
 
 
 LOGIN_REDIRECT_URL = "/"
-LOGOUT_URL = f"{AUTHBROKER_URL}/logout/"
+LOGOUT_URL = f"{AUTHBROKER_URL}/logout/?next="
+AUTHBROKER_SCOPE = "read write"
+AUTHBROKER_AUTHORIZATION_URL = urljoin(AUTHBROKER_URL, "/o/authorize/")
+AUTHBROKER_TOKEN_URL = urljoin(AUTHBROKER_URL, "/o/token/")
+AUTHBROKER_PROFILE_URL = urljoin(AUTHBROKER_URL, "/api/v1/user/me/")
 
-AUTHENTICATION_BACKENDS = [
-    "django.contrib.auth.backends.ModelBackend",
-    "caseworker.auth.backends.AuthbrokerBackend",
-]
+AUTHENTICATION_BACKENDS = []
 
 # The maximum number of parameters that may be received via GET or POST
 # before a SuspiciousOperation (TooManyFields) is raised.
@@ -97,4 +79,8 @@ SASS_PROCESSOR_INCLUDE_DIRS = (os.path.join(BASE_DIR, "caseworker/assets"), SASS
 
 LITE_CONTENT_IMPORT_PATH = "lite_content.lite_internal_frontend.strings"
 
-LITE_INTERNAL_HAWK_KEY = env.str("LITE_INTERNAL_HAWK_KEY")
+LITE_HAWK_ID = env.str("LITE_HAWK_ID", "internal-frontend")
+
+LITE_HAWK_KEY = env.str("LITE_INTERNAL_HAWK_KEY")
+
+LITE_API_AUTH_HEADER_NAME = "GOV-USER-TOKEN"

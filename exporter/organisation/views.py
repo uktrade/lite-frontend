@@ -2,12 +2,14 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, RedirectView
 
-from exporter.conf.constants import Permissions
+from exporter.core.constants import Permissions
 from exporter.core.objects import Tab
 from exporter.core.services import get_organisation
 from lite_content.lite_exporter_frontend.organisation import Tabs
 from lite_forms.helpers import conditional
 from exporter.organisation.roles.services import get_user_permissions
+
+from core.auth.views import LoginRequiredMixin
 
 
 class OrganisationView(TemplateView):
@@ -19,7 +21,7 @@ class OrganisationView(TemplateView):
         return self.additional_context
 
     def get(self, request, **kwargs):
-        self.organisation_id = str(request.user.organisation)
+        self.organisation_id = str(request.session["organisation"])
         self.organisation = get_organisation(request, self.organisation_id)
         user_permissions = kwargs.get("permissions", get_user_permissions(request))
         can_administer_sites = Permissions.ADMINISTER_SITES in user_permissions
@@ -41,9 +43,9 @@ class OrganisationView(TemplateView):
         return render(request, f"organisation/{self.template_name}.html", context)
 
 
-class RedirectToMembers(RedirectView):
+class RedirectToMembers(LoginRequiredMixin, RedirectView):
     url = reverse_lazy("organisation:members:members")
 
 
-class Details(OrganisationView):
+class Details(LoginRequiredMixin, OrganisationView):
     template_name = "details/index"

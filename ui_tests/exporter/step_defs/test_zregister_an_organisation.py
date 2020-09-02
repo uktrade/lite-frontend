@@ -4,7 +4,7 @@ from ui_tests.exporter.pages.great_signin_page import GreatSigninPage
 from ui_tests.exporter.pages.register_organisation import RegisterOrganisation
 from ui_tests.exporter.pages.start_page import StartPage
 from tests_common import functions
-from tests_common.api_client.sub_helpers.users import post_user_to_great_sso
+from tests_common.api_client.sub_helpers.users import create_great_sso_user
 
 scenarios("../features/register_an_organisation.feature", strict_gherkin=False)
 
@@ -16,7 +16,7 @@ def success(driver):
 
 @given("I register but I don't belong to an organisation")
 def new_log_in(context):
-    response = post_user_to_great_sso()
+    response = create_great_sso_user()
     context.newly_registered_email = response["email"]
     context.newly_registered_password = response["password"]
 

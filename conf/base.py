@@ -1,5 +1,4 @@
 import os
-import sys
 
 from environ import Env
 import sentry_sdk
@@ -31,14 +30,28 @@ ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 WSGI_APPLICATION = "conf.wsgi.application"
 
 INSTALLED_APPS = [
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "sass_processor",
     "django.contrib.humanize",
+    "svg",
+    "lite_forms",
+]
+
+MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.gzip.GZipMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "csp.middleware.CSPMiddleware",
+    "core.auth.middleware.AuthbrokerClientMiddleware",
+    "core.middleware.UploadFailedMiddleware",
+    "core.middleware.RequestsSessionMiddleware",
 ]
 
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
@@ -89,7 +102,6 @@ HAWK_AUTHENTICATION_ENABLED = env.bool("HAWK_AUTHENTICATION_ENABLED", False)
 HAWK_RECEIVER_NONCE_EXPIRY_SECONDS = 60
 
 LOGIN_URL = reverse_lazy("auth:login")
-AUTH_USER_MODEL = "core.User"
 
 DATA_DIR = os.path.dirname(BASE_DIR)
 
@@ -104,7 +116,7 @@ STATICFILES_FINDERS = (
 STATIC_URL = "/assets/"
 
 # Cache static files
-STATICFILES_STORAGE = env.str("STATICFILES_STORAGE", "django.contrib.staticfiles.storage.ManifestStaticFilesStorage")
+STATICFILES_STORAGE = env.str("STATICFILES_STORAGE", "whitenoise.storage.CompressedManifestStaticFilesStorage")
 
 SASS_PROCESSOR_ENABLED = True
 
@@ -136,19 +148,6 @@ else:
     AWS_REGION = env.str("AWS_REGION")
     AWS_STORAGE_BUCKET_NAME = env.str("AWS_STORAGE_BUCKET_NAME")
 
-# Database
-# https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-
-DATABASES = {"default": env.db("DATABASE_URL")}
-
-if "test" in sys.argv:
-    DATABASES = {
-        "default": {"ENGINE": "django.db.backends.sqlite3", "NAME": "mydatabase"},
-    }
-else:
-    DATABASES = {
-        "default": env.db(),
-    }
 
 LOGGING = {
     "version": 1,
@@ -197,14 +196,23 @@ if env.str("ELASTIC_APM_SERVER_URL", ""):
     }
     INSTALLED_APPS.append("elasticapm.contrib.django")
 
-# Django extensions
 if DEBUG:
-    try:
-        import django_extensions  # pylint: disable=unused-import flake8: noqa
+    import pkg_resources
 
-        INSTALLED_APPS.append("django_extensions")
-    except ImportError:
+    try:
+        pkg_resources.get_distribution("django_extensions")
+    except pkg_resources.DistributionNotFound:
         pass
+    else:
+        INSTALLED_APPS.append("django_extensions")
+    try:
+        pkg_resources.get_distribution("django_pdb")
+    except pkg_resources.DistributionNotFound:
+        pass
+    else:
+        INSTALLED_APPS.append("django_pdb")
+        POST_MORTEM = True
+        MIDDLEWARE.append("django_pdb.middleware.PdbMiddleware")
 
 # Sentry
 if env.str("SENTRY_DSN", ""):
@@ -224,3 +232,26 @@ if env.str("DIRECTORY_SSO_API_CLIENT_BASE_URL", ""):
     DIRECTORY_SSO_API_CLIENT_BASE_URL = env("DIRECTORY_SSO_API_CLIENT_BASE_URL")
     DIRECTORY_SSO_API_CLIENT_DEFAULT_TIMEOUT = 30
     DIRECTORY_SSO_API_CLIENT_SENDER_ID = "lite"
+
+
+FEATURE_DEBUG_TOOLBAR_ON = env.bool("FEATURE_DEBUG_TOOLBAR_ON", False)
+
+if FEATURE_DEBUG_TOOLBAR_ON:
+    INSTALLED_APPS += ["debug_toolbar", "requests_panel"]
+    DEBUG_TOOLBAR_PANELS = [
+        "requests_panel.panel.RequestsDebugPanel",
+        "debug_toolbar.panels.request.RequestPanel",
+        "debug_toolbar.panels.timer.TimerPanel",
+        "debug_toolbar.panels.templates.TemplatesPanel",
+        "debug_toolbar.panels.staticfiles.StaticFilesPanel",
+        "debug_toolbar.panels.cache.CachePanel",
+        "debug_toolbar.panels.logging.LoggingPanel",
+        "debug_toolbar.panels.profiling.ProfilingPanel",
+        "debug_toolbar.panels.redirects.RedirectsPanel",
+    ]
+    INTERNAL_IPS = [
+        "127.0.0.1",
+    ]
+
+    index = MIDDLEWARE.index("django.middleware.gzip.GZipMiddleware")
+    MIDDLEWARE.insert(index + 1, "debug_toolbar.middleware.DebugToolbarMiddleware")

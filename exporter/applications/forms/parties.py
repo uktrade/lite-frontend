@@ -1,6 +1,6 @@
 from django.urls import reverse_lazy
 
-from exporter.conf.constants import CaseTypes
+from exporter.core.constants import CaseTypes
 from exporter.core.services import get_countries
 from lite_content.lite_exporter_frontend import strings
 from lite_content.lite_exporter_frontend.applications import PartyForm, PartyTypeForm

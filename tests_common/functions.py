@@ -25,7 +25,7 @@ def click_back_link(driver: WebDriver):
 def element_with_css_selector_exists(driver: WebDriver, css_selector: str) -> bool:
     driver.implicitly_wait(0)
     return_value = len(driver.find_elements_by_css_selector(css_selector)) != 0
-    driver.implicitly_wait(10)
+    driver.implicitly_wait(60)
     return return_value
 
 

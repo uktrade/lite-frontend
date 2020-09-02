@@ -9,7 +9,7 @@ from exporter.applications.services import (
     post_case_notes,
     get_case_generated_documents,
 )
-from exporter.core.helpers import convert_parameters_to_query_params
+from core.helpers import convert_parameters_to_query_params
 from exporter.end_users.forms import (
     apply_for_an_end_user_advisory_form,
     copy_end_user_advisory_form,
@@ -20,8 +20,10 @@ from lite_forms.components import HiddenField, FiltersBar, TextInput
 from lite_forms.generators import form_page
 from lite_forms.submitters import submit_paged_form
 
+from core.auth.views import LoginRequiredMixin
 
-class EndUsersList(TemplateView):
+
+class EndUsersList(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         params = convert_parameters_to_query_params(
             {"page": request.GET.get("page", 1), "name": request.GET.get("name")}
@@ -37,7 +39,7 @@ class EndUsersList(TemplateView):
         return render(request, "end-users/end-users.html", context)
 
 
-class CopyAdvisory(TemplateView):
+class CopyAdvisory(LoginRequiredMixin, TemplateView):
 
     forms = None
     data = None
@@ -90,7 +92,7 @@ class CopyAdvisory(TemplateView):
         return end_user_advisory_success_page(request, str(data["end_user_advisory"]["reference_code"]))
 
 
-class ApplyForAnAdvisory(TemplateView):
+class ApplyForAnAdvisory(LoginRequiredMixin, TemplateView):
     forms = None
 
     def dispatch(self, request, *args, **kwargs):
@@ -111,12 +113,12 @@ class ApplyForAnAdvisory(TemplateView):
         return end_user_advisory_success_page(request, str(data["end_user_advisory"]["reference_code"]))
 
 
-class EndUserDetailEmpty(RedirectView):
+class EndUserDetailEmpty(LoginRequiredMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         return reverse_lazy("end_users:end_user_detail", kwargs={"pk": self.kwargs["pk"], "type": "case-notes"})
 
 
-class EndUserDetail(TemplateView):
+class EndUserDetail(LoginRequiredMixin, TemplateView):
     end_user_advisory_id = None
     end_user_advisory = None
     view_type = None

@@ -12,7 +12,7 @@ class BasePage:
 
         # Wait for the cases list to load before interacting with the page
         if functions.element_with_id_exists(self.driver, "link-queue"):
-            WebDriverWait(driver, 10).until(
+            WebDriverWait(driver, 60).until(
                 expected_conditions.visibility_of_element_located((By.ID, "text-case-count"))
             )
 
