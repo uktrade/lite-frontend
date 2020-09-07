@@ -1,0 +1,26 @@
+body {
+  #autoComplete_list {
+    margin-left: 26px;
+    width: 100%;
+    background: white;
+    border-collapse: collapse;
+    tr {
+        padding: 0;
+    }
+    td {
+        padding: 10px;
+    }
+    .autoCompleteResultFieldName {
+      border-right: 1px solid #dedede;
+      background: #dedede;
+      font-weight: bold;
+    }
+  }
+  .autoComplete_result {
+    margin: 0;
+    max-width: 100%;
+    width: auto;
+    display: block;
+    border-radius: 0;
+  }
+}

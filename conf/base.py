@@ -211,7 +211,7 @@ if DEBUG:
         pass
     else:
         INSTALLED_APPS.append("django_pdb")
-        # POST_MORTEM = True
+        POST_MORTEM = True
         MIDDLEWARE.append("django_pdb.middleware.PdbMiddleware")
 
 # Sentry
