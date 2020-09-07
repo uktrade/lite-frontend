@@ -4,7 +4,7 @@ from caseworker.spire.forms import StyledCharField
 import re
 
 
-filters_regex_pattern = re.compile('(destination|clc|part|organisation):"(.*?)"')
+filters_regex_pattern = re.compile('(destination|rating|part|organisation):"(.*?)"')
 
 
 class CasesSearchForm(forms.Form):
