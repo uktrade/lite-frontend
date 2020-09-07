@@ -8,94 +8,189 @@
 
 {% block body %}
 <div class="lite-app-bar govuk-!-margin-bottom-0">
-	<div class="lite-app-bar__content">
-		<h1 class="govuk-heading-l">Search Cases</h1>
-	</div>
+    <div class="lite-app-bar__content">
+        <h1 class="govuk-heading-l">Search Cases</h1>
+    </div>
 </div>
-<form method="get">
-	<div class="lite-filter-bar govuk-!-margin-top-0">
-		<div class="lite-filter-bar__components">
-			{{ form.as_p }}
-		</div>
-		<div class="lite-filter-bar__buttons">
-			<button type="submit" class="govuk-button">Search</button>
-			<a href="?" class="govuk-button govuk-button--secondary govuk-button--secondary-white"
-				id="button-clear-filters">
-				Clear
-			</a>
-		</div>
-	</div>
-	<p id="text-case-count" class="lite-filters__hint-text">{{ results.count }} items found</p>
-	{% if results.count %}
+<form method="get" autocomplete="off">
+    <div class="lite-filter-bar govuk-!-margin-top-0">
+        <div class="lite-filter-bar__components">
+            {{ form.as_p }}
+        </div>
+        <div class="lite-filter-bar__buttons">
+            <button type="submit" class="govuk-button">Search</button>
+            <a href="?" class="govuk-button govuk-button--secondary govuk-button--secondary-white"
+                id="button-clear-filters">
+                Clear
+            </a>
+        </div>
+    </div>
+    <div class="results-area">
+        <p id="text-case-count" class="lite-filters__hint-text">{{ results.count }} items found</p>
+        {% if results.count %}
 
-	<table class="govuk-table">
-		<thead class="govuk-table__head">
-			<tr class="govuk-table__row">
-				<th class="govuk-table__header" scope="col">Case</th>
-				<th class="govuk-table__header" scope="col">Goods Info</th>
-				<th class="govuk-table__header" scope="col">Controlled status</th>
-				<th class="govuk-table__header" scope="col">ARS</th>
-				<th class="govuk-table__header" scope="col">Comment</th>
-			</tr>
-		</thead>
-		<tbody class="govuk-table__body">
-			{% for item in results.results %}
-			<tr class="govuk-table__row">
-				<td class="govuk-table__cell govuk-table__cell--tight">
-					<a class="govuk-link govuk-link--no-visited-state" id="case-${item.id}"
-						href="/cases/${item.id}/">
-						<span class="govuk-visually-hidden">View</span> {{ item.reference_code }}
-					</a>
-					<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">
-						{{ item.organisation }}
-					</p>
-					<p class="govuk-tag govuk-tag--grey govuk-!-margin-0 govuk-!-margin-top-2">
-						{{ item.status }}
-					</p>
-					<p>
-						<details>
-							<summary>View raw details</summary>
-							<pre><code>{{ item|pprint_dict}}</code></pre>
-						</details>
-					</p>
+        <table class="govuk-table" id="results-table">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th class="govuk-table__header" scope="col">Case</th>
+                    <th class="govuk-table__header" scope="col">Part number</th>
+                    <th class="govuk-table__header" scope="col">Description</th>
+                    <th class="govuk-table__header" scope="col">Quantity</th>
+                    <th class="govuk-table__header" scope="col">Rating</th>
+                    <th class="govuk-table__header" scope="col">Comment</th>
+                </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+                {% for item in results.results %}
+                    {% for good in item.goods %}
+                    <tr class="govuk-table__row">
+                        {% if forloop.counter0 == 0 %}
+                        <td class="govuk-table__cell govuk-table__cell--tight" rowspan="{{ item.goods|length|default:1 }}">
+                            <a class="govuk-link govuk-link--no-visited-state" id="case-${item.id}"
+                                href="/cases/{{ item.id }}/">
+                                <span class="govuk-visually-hidden">View</span> {{ item.id }}
+                            </a>
+                            <p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">
+                                {{ item.organisation }}
+                            </p>
+                            <p class="govuk-tag govuk-tag--grey govuk-!-margin-0 govuk-!-margin-top-2">
+                                {{ item.status }}
+                            </p>
+                            <p>
+                                <details>
+                                    <summary>View raw details</summary>
+                                    <pre><code>{{ item|pprint_dict}}</code></pre>
+                                </details>
+                            </p>
 
-				</td>
-				<td class="govuk-table__cell govuk-table__cell--tight">
-					<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">Part number:
-						{{ item.good.part_number }}</p>
-					<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">Description:
-						{{ item.good.description }}</p>
-					<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">Quantity: {{ item.quantity }}</p>
-					<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">Value: {{ item.value }}</p>
-				</td>
-				<td class="govuk-table__cell govuk-table__cell--tight">
-					<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">Controlled:
-						{{ item.good.is_good_controlled }}</p>
-					{% if item.good.clc_entries %}
-					<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">
-						CLC entries:
-						{% for entry in item.good.clc_entries %}
-						<span class="govuk-hint lite-!-display-inline">{{ entry.rating }}</span>
-						{% if not forloop.last %}
-						,
-						{% endif %}
-						{% endfor %}
-					</p>
-					{% endif %}
-				</td>
-				<td class="govuk-table__cell govuk-table__cell--tight">
-					<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">{{ item.good.report_summary }}
-					</p>
-				</td>
-				<td class="govuk-table__cell govuk-table__cell--tight">
-					<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">{{ item.good.comment }}
-					</p>
-				</td>
-			</tr>
-			{% endfor %}
-		</tbody>
-	</table>
-	{% pagination %}
-	{% endif %}
+                        </td>
+                        {% endif %}
+                        <td class="govuk-table__cell govuk-table__cell--tight">
+                            {{ good.good.part_number|default:'N/A' }}
+                        </td>
+                        <td class="govuk-table__cell govuk-table__cell--tight">    
+                            {{ good.good.description }}
+                        </td>
+                        <td class="govuk-table__cell govuk-table__cell--tight">
+                            {% if good.quantity %}
+                                {{ good.quantity }} x {{ good.value }} {{good.unit }}
+                            {% endif %}
+                        </td>
+                        <td class="govuk-table__cell govuk-table__cell">
+                            {% if good.good.control_list_entries %}
+                                {% for entry in good.good.control_list_entries %}
+                                    <span>{{ entry.rating }}</span> - <span>{{ entry.text }}</span>
+                                {% if not forloop.last %}
+                                ,
+                                {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </td>
+                        <td class="govuk-table__cell govuk-table__cell--tight">
+                            {{ item.good.comment|default:'N/A' }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+        {% pagination %}
+    </div>
+    {% endif %}
 </form>
+{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tarekraafat-autocomplete.js/7.2.0/css/autoComplete.css" integrity="sha512-eP0uk3AYTRMF+HDgLNFW8cFh0mO73gVsnJdgqXH94Zc//fEgtNzMmdyK+cX8qF/SCs7gKUUkeJhJsiTRJstEKA==" crossorigin="anonymous" /><script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/fetch/3.4.0/fetch.min.js" integrity="sha512-+iXlQLHKQZYoFQZfyWkUuJB6X7aZA2+FvAB5PyiYzxRKbgmSLp6vzwXjTlqdvKV5OJS09HHN4lIekb5OOCKhQw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tarekraafat-autocomplete.js/7.2.0/js/autoComplete.min.js" integrity="sha512-1Fr8m8dxYPgUEwpEKZy1AIUZnGupa1bhl7GbG+ueWxlWVBJvdEnLdgQVQA8pqkrrmkTV0DW7C5ZVmVGdJmMuZg==" crossorigin="anonymous"></script>
+
+<style type="text/css">
+        #autoComplete_list {
+            margin-left: 26px;
+            width: 100%;
+            background: white;
+            border-collapse: collapse;
+        }
+        #autoComplete_list tr {
+            padding: 0;
+        }
+        #autoComplete_list td {
+            padding: 10px;
+        }
+        .autoComplete_result {
+            margin: 0;
+            max-width: 100%;
+            width: auto;
+            display: block;
+            border-radius: 0;
+        }
+        .autoCompleteResultFieldName {
+            border-right: 1px solid #dedede;
+            background: #dedede;
+            font-weight: bold;
+        }
+    </style>
+
+{% endblock %}
+
+
+{% block javascript %}
+
+<script nonce="{{ request.csp_nonce }}" type="text/javascript">
+
+  var lastSearch = ''
+  var currentSearch = ''
+  var element = document.getElementById("id_search_string")
+  var resultsElement = document.getElementById("results-table")
+  new autoComplete({
+    data: {
+      src: function() {
+        query = currentSearch = element.value.replace(lastSearch, '')
+        return fetch('/search/suggest/?format=json&q=' + query).then(function(response) {
+            return response.json()
+        })
+      },
+      key: ["value"],
+      cache: false
+    },
+    selector: "#id_search_string",
+    threshold: 0,
+    debounce: 300,
+    resultsList: {
+      render: true,
+      element: 'table'
+    },
+    resultItem: {
+        content: function(data, source) {
+            if (data.value.field == 'wildcard') {
+                source.innerHTML = '<td>' + data.value.value + '</td>'
+            } else {
+                source.innerHTML = '<td class="autoCompleteResultFieldName">' + data.value.field + '</td><td>' + data.value.value + '<td/>'
+            }
+        },
+        element: "tr"
+    },
+    searchEngine: function(query, record) {
+        return record
+    },
+    maxResults: 5,                         // Max. number of rendered results | (Optional)
+    onSelection: function(feedback) {
+      if (feedback.selection.value.field == 'wildcard') {
+        var appendValue = feedback.selection.value.value 
+      } else {
+        var appendValue = feedback.selection.value.field + ':"' + feedback.selection.value.value + '"'
+      }
+      lastSearch = element.value = element.value.replace(currentSearch, appendValue + ' ')
+      setTimeout(function() { element.focus()})
+
+      fetch('/search/?search_string=' + lastSearch).then(function(response) {
+        var html = response.text().then(function(html) {
+          var div = document.createElement('div');
+          div.innerHTML = html.trim();
+          document.getElementsByClassName('results-area')[0].innerHTML = div.getElementsByClassName('results-area')[0].innerHTML
+        })
+      })
+    }
+});
+</script>
 {% endblock %}
