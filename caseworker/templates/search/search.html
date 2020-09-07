@@ -66,10 +66,10 @@
                         </td>
                         {% endif %}
                         <td class="govuk-table__cell govuk-table__cell--tight">
-                            {{ good.good.part_number|default:'N/A' }}
+                            {{ good.part_number|default:'N/A' }}
                         </td>
                         <td class="govuk-table__cell govuk-table__cell--tight">    
-                            {{ good.good.description }}
+                            {{ good.description }}
                         </td>
                         <td class="govuk-table__cell govuk-table__cell--tight">
                             {% if good.quantity %}
@@ -77,8 +77,8 @@
                             {% endif %}
                         </td>
                         <td class="govuk-table__cell govuk-table__cell">
-                            {% if good.good.control_list_entries %}
-                                {% for entry in good.good.control_list_entries %}
+                            {% if good.control_list_entries %}
+                                {% for entry in good.control_list_entries %}
                                     <span>{{ entry.rating }}</span> - <span>{{ entry.text }}</span>
                                 {% if not forloop.last %}
                                 ,
@@ -89,10 +89,10 @@
                             {% endif %}
                         </td>
                         <td class="govuk-table__cell govuk-table__cell">
-                            {{ item.good.report_summary|default:'N/A' }}
+                            {{ good.report_summary|default:'N/A' }}
                         </td>
                         <td class="govuk-table__cell govuk-table__cell">
-                            {{ item.good.comment|default:'N/A' }}
+                            {{ good.comment|default:'N/A' }}
                         </td>
                     </tr>
                     {% empty %}
