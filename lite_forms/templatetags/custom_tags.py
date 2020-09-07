@@ -265,7 +265,7 @@ def pagination(context, *args, **kwargs):
 
     request = context["request"]
     current_path = request.get_full_path()
-    current_page = int(context["request"].GET.get("page", 1))
+    current_page = int(context["request"].GET.get("page") or 1)
     max_pages = int(data["total_pages"])
     max_range = 5
     pages = []

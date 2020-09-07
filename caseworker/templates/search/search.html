@@ -48,10 +48,14 @@
                     <tr class="govuk-table__row">
                         {% if forloop.counter0 == 0 %}
                         <td class="govuk-table__cell govuk-table__cell--tight" rowspan="{{ item.goods|length }}">
-                            <a class="govuk-link govuk-link--no-visited-state" id="case-${item.id}"
-                                href="/cases/{{ item.id }}/">
-                                <span class="govuk-visually-hidden">View</span> {{ item.id }}
-                            </a>
+                            {% if item.queues %}
+                                <a class="govuk-link govuk-link--no-visited-state" id="case-${item.id}"
+                                    href="/queues/{{ item.queues.0.id }}/cases/{{ item.id }}/">
+                                    <span class="govuk-visually-hidden">View</span> {{ item.reference_code }}
+                                </a>
+                            {% else %}
+                                <span>{{ item.reference_code }}</span>
+                            {% endif %}
                             <p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">
                                 {{ item.organisation }}
                             </p>
@@ -99,10 +103,14 @@
                     {% empty %}
                     <tr class="govuk-table__row">
                         <td class="govuk-table__cell govuk-table__cell--tight">
-                            <a class="govuk-link govuk-link--no-visited-state" id="case-${item.id}"
-                                href="/cases/{{ item.id }}/">
-                                <span class="govuk-visually-hidden">View</span> {{ item.id }}
-                            </a>
+                            {% if item.queues %}
+                                <a class="govuk-link govuk-link--no-visited-state" id="case-${item.id}"
+                                    href="/queues/{{ item.queues.0.id }}/cases/{{ item.id }}/">
+                                    <span class="govuk-visually-hidden">View</span> {{ item.reference_code }}
+                                </a>
+                            {% else %}
+                                <span>{{ item.reference_code }}</span>
+                            {% endif %}
                             <p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">
                                 {{ item.organisation }}
                             </p>
