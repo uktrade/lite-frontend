@@ -1,3 +1,6 @@
+from rest_framework import permissions, views
+from rest_framework.response import Response
+
 from django.views.generic import FormView
 from django.shortcuts import render
 
@@ -30,11 +33,6 @@ class SearchForm(FormView):
         context["data"] = {"total_pages": results["count"] // form.page_size}
         return context
  
-
-from rest_framework import permissions, views
-from rest_framework.response import Response
-
-
 
 class AutocompleteView(views.APIView):
     authentication_classes = []
