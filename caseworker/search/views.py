@@ -1,12 +1,14 @@
-from rest_framework import permissions, views
+from rest_framework import views
 from rest_framework.response import Response
 
 from django.views.generic import FormView
 
+from core.auth.permissions import IsAuthbrokerAuthenticated
+from core.auth.views import LoginRequiredMixin
 from caseworker.search import forms, services
 
 
-class SearchForm(FormView):
+class SearchForm(LoginRequiredMixin, FormView):
     form_class = forms.CasesSearchForm
     template_name = "search/search.html"
 
@@ -35,9 +37,7 @@ class SearchForm(FormView):
 
 class AutocompleteView(views.APIView):
     authentication_classes = []
-    permission_classes = [
-        permissions.AllowAny,
-    ]
+    permission_classes = [IsAuthbrokerAuthenticated]
 
     def perform_authentication(self, request):
         pass

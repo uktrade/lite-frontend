@@ -1,14 +1,15 @@
 body {
   #autoComplete_list {
-    margin-left: 26px;
+    position: relative;
     width: 100%;
     background: white;
     border-collapse: collapse;
     tr {
-        padding: 0;
+      padding: 0;
+      border-radius: 0;
     }
     td {
-        padding: 10px;
+      padding: 10px;
     }
     .autoCompleteResultFieldName {
       border-right: 1px solid #dedede;
@@ -21,6 +22,5 @@ body {
     max-width: 100%;
     width: auto;
     display: block;
-    border-radius: 0;
   }
 }

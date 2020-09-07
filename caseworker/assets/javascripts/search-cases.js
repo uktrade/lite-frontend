@@ -15,11 +15,25 @@
       cache: false
     },
     selector: "#id_search_string",
-    threshold: 0,
+    threshold: 1,
     debounce: 300,
     resultsList: {
       render: true,
-      element: 'table'
+      element: 'table',
+      // when version 8 is released we can remove this: https://github.com/TarekRaafat/autoComplete.js/issues/105
+      container: source => {
+          source.setAttribute('id', 'autoComplete_list');
+          document.getElementById('id_search_string').addEventListener('autoComplete', function (event) {
+              function hideSearchResults() {
+                  const searchResults = document.getElementById('autoComplete_list');
+                  while (searchResults.firstChild) {
+                      searchResults.removeChild(searchResults.firstChild);
+                  }
+                  document.removeEventListener('click', hideSearchResults);
+              }
+              document.addEventListener('click', hideSearchResults);
+          })
+      },
     },
     resultItem: {
         content: function(data, source) {
@@ -51,7 +65,6 @@
           document.getElementsByClassName('results-area')[0].innerHTML = div.getElementsByClassName('results-area')[0].innerHTML
         })
       })
-
       var searchParams = new URLSearchParams(window.location.search);
       searchParams.set("search_string", lastSearch);
       history.pushState(null, '', window.location.pathname + '?' + searchParams.toString());
