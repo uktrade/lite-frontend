@@ -2,7 +2,6 @@ from rest_framework import permissions, views
 from rest_framework.response import Response
 
 from django.views.generic import FormView
-from django.shortcuts import render
 
 from caseworker.search import forms, services
 
@@ -32,7 +31,7 @@ class SearchForm(FormView):
         context["results"] = results
         context["data"] = {"total_pages": results["count"] // form.page_size}
         return context
- 
+
 
 class AutocompleteView(views.APIView):
     authentication_classes = []
@@ -46,8 +45,8 @@ class AutocompleteView(views.APIView):
     def get(self, request):
         form = forms.AutocompleteForm(request.GET)
         if form.is_valid():
-            q = form.cleaned_data['q']
+            q = form.cleaned_data["q"]
         else:
-            q = ''
+            q = ""
         results = services.get_autocomplete(request=request, q=q)
         return Response(results)
