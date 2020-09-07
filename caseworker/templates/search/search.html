@@ -1,0 +1,147 @@
+{% extends 'layouts/base.html' %}
+
+{% load parse_date pprint_dict from spire_tags %}
+{% load static from staticfiles %}
+
+{% block back_link %}{% endblock %}
+
+{% block title %}Search Cases{% endblock %}
+
+{% block body %}
+<div class="lite-app-bar govuk-!-margin-bottom-0">
+    <div class="lite-app-bar__content">
+        <h1 class="govuk-heading-l">Search Cases</h1>
+    </div>
+</div>
+<form method="get" autocomplete="off">
+    <div class="lite-filter-bar govuk-!-margin-top-0">
+        <div class="lite-filter-bar__components">
+            {{ form.as_p }}
+        </div>
+        <div class="lite-filter-bar__buttons">
+            <button type="submit" class="govuk-button">Search</button>
+            <a href="?" class="govuk-button govuk-button--secondary govuk-button--secondary-white"
+                id="button-clear-filters">
+                Clear
+            </a>
+        </div>
+    </div>
+    <div class="results-area">
+        <p id="text-case-count" class="lite-filters__hint-text">{{ results.count }} items found</p>
+        {% if results.count %}
+
+        <table class="govuk-table" id="results-table">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th class="govuk-table__header" scope="col">Case</th>
+                    <th class="govuk-table__header" scope="col">Part number</th>
+                    <th class="govuk-table__header" scope="col">Description</th>
+                    <th class="govuk-table__header" scope="col">Quantity</th>
+                    <th class="govuk-table__header" scope="col">Rating</th>
+                    <th class="govuk-table__header" scope="col">ARS</th>
+                    <th class="govuk-table__header" scope="col">Comment</th>
+                </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+                {% for item in results.results %}
+                    {% for good in item.goods %}
+                    <tr class="govuk-table__row">
+                        {% if forloop.counter0 == 0 %}
+                        <td class="govuk-table__cell govuk-table__cell--tight" rowspan="{{ item.goods|length }}">
+                            {% if item.queues %}
+                                <a class="govuk-link govuk-link--no-visited-state" id="case-${item.id}"
+                                    href="/queues/{{ item.queues.0.id }}/cases/{{ item.id }}/">
+                                    <span class="govuk-visually-hidden">View</span> {{ item.reference_code }}
+                                </a>
+                            {% else %}
+                                <span>{{ item.reference_code }}</span>
+                            {% endif %}
+                            <p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">
+                                {{ item.organisation }}
+                            </p>
+                            <p class="govuk-tag govuk-tag--grey govuk-!-margin-0 govuk-!-margin-top-2">
+                                {{ item.status }}
+                            </p>
+                            <p>
+                                <details>
+                                    <summary>View raw details</summary>
+                                    <pre><code>{{ item|pprint_dict}}</code></pre>
+                                </details>
+                            </p>
+                        </td>
+                        {% endif %}
+                        <td class="govuk-table__cell govuk-table__cell--tight">
+                            {{ good.part_number|default:'N/A' }}
+                        </td>
+                        <td class="govuk-table__cell govuk-table__cell--tight">    
+                            {{ good.description }}
+                        </td>
+                        <td class="govuk-table__cell govuk-table__cell--tight">
+                            {% if good.quantity %}
+                                {{ good.quantity }} x {{ good.value }} {{good.unit }}
+                            {% endif %}
+                        </td>
+                        <td class="govuk-table__cell govuk-table__cell">
+                            {% if good.control_list_entries %}
+                                {% for entry in good.control_list_entries %}
+                                    <span>{{ entry.rating }}</span> - <span>{{ entry.text }}</span>
+                                {% if not forloop.last %}
+                                ,
+                                {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                No Products associated with this application</p>
+                            {% endif %}
+                        </td>
+                        <td class="govuk-table__cell govuk-table__cell">
+                            {{ good.report_summary|default:'N/A' }}
+                        </td>
+                        <td class="govuk-table__cell govuk-table__cell">
+                            {{ good.comment|default:'N/A' }}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell govuk-table__cell--tight">
+                            {% if item.queues %}
+                                <a class="govuk-link govuk-link--no-visited-state" id="case-${item.id}"
+                                    href="/queues/{{ item.queues.0.id }}/cases/{{ item.id }}/">
+                                    <span class="govuk-visually-hidden">View</span> {{ item.reference_code }}
+                                </a>
+                            {% else %}
+                                <span>{{ item.reference_code }}</span>
+                            {% endif %}
+                            <p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">
+                                {{ item.organisation }}
+                            </p>
+                            <p class="govuk-tag govuk-tag--grey govuk-!-margin-0 govuk-!-margin-top-2">
+                                {{ item.status }}
+                            </p>
+							<details class="govuk-!-margin-top-2 govuk-!-margin-bottom-2">
+								<summary>View raw details</summary>
+								<pre><code>{{ item|pprint_dict}}</code></pre>
+							</details>
+                        </td>
+                        <td class="govuk-table__cell govuk-table__cell--tight">N/A</td>
+                        <td class="govuk-table__cell govuk-table__cell--tight">N/A</td>
+                        <td class="govuk-table__cell govuk-table__cell--tight">N/A</td>
+                        <td class="govuk-table__cell govuk-table__cell">N/A</td>
+                        <td class="govuk-table__cell govuk-table__cell">N/A</td>
+                        <td class="govuk-table__cell govuk-table__cell">N/A</td>
+                    </tr>
+                    {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+        {% pagination %}
+    </div>
+    {% endif %}
+</form>
+{% endblock %}
+
+{% block javascript %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tarekraafat-autocomplete.js/7.2.0/css/autoComplete.css" integrity="sha512-eP0uk3AYTRMF+HDgLNFW8cFh0mO73gVsnJdgqXH94Zc//fEgtNzMmdyK+cX8qF/SCs7gKUUkeJhJsiTRJstEKA==" crossorigin="anonymous" /><script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/fetch/3.4.0/fetch.min.js" integrity="sha512-+iXlQLHKQZYoFQZfyWkUuJB6X7aZA2+FvAB5PyiYzxRKbgmSLp6vzwXjTlqdvKV5OJS09HHN4lIekb5OOCKhQw==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tarekraafat-autocomplete.js/7.2.0/js/autoComplete.min.js" integrity="sha512-1Fr8m8dxYPgUEwpEKZy1AIUZnGupa1bhl7GbG+ueWxlWVBJvdEnLdgQVQA8pqkrrmkTV0DW7C5ZVmVGdJmMuZg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/url-search-params/1.1.0/url-search-params.js" integrity="sha512-XITCo00srdVr9XH7ep5JEijPPpLA60TqvvoqLCyQlIdctLUjEsIRCtlgSaoj+RbsF+e/YnkaRTV/7Ei5GvVylg==" crossorigin="anonymous"></script>
+    <script src="{% static 'javascripts/search-cases.js' %}"></script>
+{% endblock %}

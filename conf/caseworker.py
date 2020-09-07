@@ -7,6 +7,7 @@ from conf.base import *
 ROOT_URLCONF = "caseworker.urls"
 
 INSTALLED_APPS += [
+    "rest_framework",
     "caseworker.core",
     "caseworker.spire",
     "caseworker.letter_templates",
