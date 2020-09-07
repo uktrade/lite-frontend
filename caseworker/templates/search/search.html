@@ -37,6 +37,7 @@
                     <th class="govuk-table__header" scope="col">Description</th>
                     <th class="govuk-table__header" scope="col">Quantity</th>
                     <th class="govuk-table__header" scope="col">Rating</th>
+                    <th class="govuk-table__header" scope="col">ARS</th>
                     <th class="govuk-table__header" scope="col">Comment</th>
                 </tr>
             </thead>
@@ -45,7 +46,7 @@
                     {% for good in item.goods %}
                     <tr class="govuk-table__row">
                         {% if forloop.counter0 == 0 %}
-                        <td class="govuk-table__cell govuk-table__cell--tight" rowspan="{{ item.goods|length|default:1 }}">
+                        <td class="govuk-table__cell govuk-table__cell--tight" rowspan="{{ item.goods|length }}">
                             <a class="govuk-link govuk-link--no-visited-state" id="case-${item.id}"
                                 href="/cases/{{ item.id }}/">
                                 <span class="govuk-visually-hidden">View</span> {{ item.id }}
@@ -62,7 +63,6 @@
                                     <pre><code>{{ item|pprint_dict}}</code></pre>
                                 </details>
                             </p>
-
                         </td>
                         {% endif %}
                         <td class="govuk-table__cell govuk-table__cell--tight">
@@ -84,11 +84,43 @@
                                 ,
                                 {% endif %}
                                 {% endfor %}
+                            {% else %}
+                                No Products associated with this application</p>
                             {% endif %}
                         </td>
-                        <td class="govuk-table__cell govuk-table__cell--tight">
+                        <td class="govuk-table__cell govuk-table__cell">
+                            {{ item.good.report_summary|default:'N/A' }}
+                        </td>
+                        <td class="govuk-table__cell govuk-table__cell">
                             {{ item.good.comment|default:'N/A' }}
                         </td>
+                    </tr>
+                    {% empty %}
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell govuk-table__cell--tight">
+                            <a class="govuk-link govuk-link--no-visited-state" id="case-${item.id}"
+                                href="/cases/{{ item.id }}/">
+                                <span class="govuk-visually-hidden">View</span> {{ item.id }}
+                            </a>
+                            <p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">
+                                {{ item.organisation }}
+                            </p>
+                            <p class="govuk-tag govuk-tag--grey govuk-!-margin-0 govuk-!-margin-top-2">
+                                {{ item.status }}
+                            </p>
+                            <p>
+                                <details>
+                                    <summary>View raw details</summary>
+                                    <pre><code>{{ item|pprint_dict}}</code></pre>
+                                </details>
+                            </p>
+                        </td>
+                        <td class="govuk-table__cell govuk-table__cell--tight">N/A</td>
+                        <td class="govuk-table__cell govuk-table__cell--tight">N/A</td>
+                        <td class="govuk-table__cell govuk-table__cell--tight">N/A</td>
+                        <td class="govuk-table__cell govuk-table__cell">N/A</td>
+                        <td class="govuk-table__cell govuk-table__cell">N/A</td>
+                        <td class="govuk-table__cell govuk-table__cell">N/A</td>
                     </tr>
                     {% endfor %}
                 {% endfor %}

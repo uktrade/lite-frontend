@@ -21,8 +21,11 @@ class SearchForm(FormView):
         if form.is_valid():
             if form.cleaned_data["search_string"]:
                 query_params["search"] = form.cleaned_data["search_string"]
+            if form.cleaned_data["page"]:
+                query_params["page"] = form.cleaned_data["page"]
             query_params.update(form.cleaned_data["filters"])
         results = services.get_search_results(self.request, query_params)
+
         context["results"] = results
         context["data"] = {"total_pages": results["count"] // form.page_size}
         return context
