@@ -5,7 +5,7 @@ import re
 
 
 filters_regex_pattern = re.compile(
-    '(destination|clc_rating|clc_category|part|organisation|case_reference|case_status):"(.*?)"'
+    '(clc_rating|clc_category|part|organisation|case_reference|case_status|party_type|party_country):"(.*?)"'
 )
 
 
