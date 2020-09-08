@@ -1,8 +1,9 @@
 (function() {
-  var lastSearch = ''
-  var currentSearch = ''
   var element = document.getElementById("id_search_string")
   var resultsElement = document.getElementById("results-table")
+  var currentSearch = element.value || ''
+  var lastSearch = element.value || ''
+
   new autoComplete({
     data: {
       src: function() {
