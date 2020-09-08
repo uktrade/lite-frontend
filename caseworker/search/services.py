@@ -3,7 +3,8 @@ from urllib import parse
 
 
 def get_search_results(request, query_params):
-    response = client.get(request, f"/search/application/application_search/?{parse.urlencode(query_params)}")
+    querystring = parse.urlencode(query_params, doseq=True)
+    response = client.get(request, f"/search/application/application_search/?{querystring}")
     response.raise_for_status()
     return response.json()
 
