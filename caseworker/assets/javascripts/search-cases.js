@@ -4,8 +4,11 @@
   var currentSearch = element.value || ''
   var lastSearch = element.value || ''
 
-  // focus at end of the field
+  // focus at end of the field and make sure there is a space at the end
   element.focus()
+  if (!/ $/.test(element.value)) {
+    element.value = element.value + ' '
+  }
   element.setSelectionRange(element.value.length,element.value.length)
 
   new autoComplete({
@@ -53,14 +56,14 @@
     searchEngine: function(query, record) {
         return record
     },
-    maxResults: 5,                         // Max. number of rendered results | (Optional)
+    maxResults: 5,
     onSelection: function(feedback) {
       if (feedback.selection.value.field == 'wildcard') {
         var appendValue = feedback.selection.value.value 
       } else {
         var appendValue = feedback.selection.value.field + ':"' + feedback.selection.value.value + '"'
       }
-      lastSearch = element.value = element.value.replace(currentSearch, ' ' + appendValue + ' ').replace('  ', ' ')
+      lastSearch = element.value = element.value.replace(currentSearch, appendValue + ' ')
       setTimeout(function() { element.focus()})
 
       fetch('/search/?search_string=' + lastSearch).then(function(response) {
