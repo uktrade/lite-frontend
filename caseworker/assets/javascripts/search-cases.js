@@ -4,6 +4,10 @@
   var currentSearch = element.value || ''
   var lastSearch = element.value || ''
 
+  // focus at end of the field
+  element.focus()
+  element.setSelectionRange(element.value.length,element.value.length)
+
   new autoComplete({
     data: {
       src: function() {
@@ -56,7 +60,7 @@
       } else {
         var appendValue = feedback.selection.value.field + ':"' + feedback.selection.value.value + '"'
       }
-      lastSearch = element.value = element.value.replace(currentSearch, appendValue + ' ')
+      lastSearch = element.value = element.value.replace(currentSearch, ' ' + appendValue + ' ').replace('  ', ' ')
       setTimeout(function() { element.focus()})
 
       fetch('/search/?search_string=' + lastSearch).then(function(response) {
