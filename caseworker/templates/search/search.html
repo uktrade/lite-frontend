@@ -65,7 +65,7 @@
                             <p>
                                 <details>
                                     <summary>View raw details</summary>
-                                    <pre><code>{{ item|pprint_dict}}</code></pre>
+                                    <code>{{ item|pprint_dict|safe }}</code>
                                 </details>
                             </p>
                         </td>
@@ -73,7 +73,7 @@
                         <td class="govuk-table__cell govuk-table__cell--tight">
                             {{ good.part_number|default:'N/A' }}
                         </td>
-                        <td class="govuk-table__cell govuk-table__cell--tight">    
+                        <td class="govuk-table__cell govuk-table__cell">
                             {{ good.description }}
                         </td>
                         <td class="govuk-table__cell govuk-table__cell--tight">
@@ -119,7 +119,7 @@
                             </p>
 							<details class="govuk-!-margin-top-2 govuk-!-margin-bottom-2">
 								<summary>View raw details</summary>
-								<pre><code>{{ item|pprint_dict}}</code></pre>
+								<code>{{ item|pprint_dict|safe }}</code>
 							</details>
                         </td>
                         <td class="govuk-table__cell govuk-table__cell--tight">N/A</td>
