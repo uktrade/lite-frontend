@@ -48,7 +48,7 @@
             if (data.value.field == 'wildcard') {
                 source.innerHTML = '<td>' + data.value.value + '</td>'
             } else {
-                source.innerHTML = '<td class="autoCompleteResultFieldName">' + data.value.field.replace('_', ' ') + '</td><td>' + data.value.value + '<td/>'
+                source.innerHTML = '<td class="autoCompleteResultFieldName">' + data.value.field.replace(/_/g, ' ') + '</td><td>' + data.value.value + '<td/>'
             }
         },
         element: "tr"
