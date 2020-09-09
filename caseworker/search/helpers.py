@@ -16,9 +16,13 @@ def highlight_results(results):
 
 def keypath_lookup(level, keys):
     for i, key in enumerate(keys):
-        for level in level[key]:
-            yield from keypath_lookup(level, keys[i + 1 :])
+        if isinstance(level[key], list):
+            for level in level[key]:
+                yield from keypath_lookup(level, keys[i + 1 :])
+            else:
+                break
         else:
+            yield from keypath_lookup(level[key], keys[i + 1 :])
             break
     else:
         yield level

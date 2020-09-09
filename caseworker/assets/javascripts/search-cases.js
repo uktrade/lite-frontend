@@ -45,11 +45,12 @@
     },
     resultItem: {
         content: function(data, source) {
-            if (data.value.field == 'wildcard') {
-                source.innerHTML = '<td>' + data.value.value + '</td>'
-            } else {
-                source.innerHTML = '<td class="autoCompleteResultFieldName">' + data.value.field.replace(/_/g, ' ') + '</td><td>' + data.value.value + '<td/>'
-            }
+          var value = data.value.value.replace(/\s/g, " ")
+          if (data.value.field == 'wildcard') {
+              source.innerHTML = '<td>' + value + '</td>'
+          } else {
+              source.innerHTML = '<td class="autoCompleteResultFieldName">' + data.value.field.replace(/_/g, ' ') + '</td><td>' + value + '<td/>'
+          }
         },
         element: "tr"
     },
