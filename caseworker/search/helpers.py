@@ -1,0 +1,22 @@
+from django.utils.html import strip_tags, mark_safe
+
+
+def highlight_results(results):
+    for result in results:
+        for dotted_path, highlights in result["highlight"].items():
+            if dotted_path.endswith(".raw"):
+                dotted_path = dotted_path[:-4]
+            if highlights and dotted_path != "wildcard":
+                *path, target = dotted_path.split(".")
+                for item in keypath_lookup(result, path):
+                    for highlight in highlights:
+                        if item[target] == strip_tags(highlight):
+                            item[target] = mark_safe(highlight)
+
+
+def keypath_lookup(level, keys):
+    for i, key in enumerate(keys):
+        for level in level[key]:
+            yield from keypath_lookup(level, keys[i + 1 :])
+    else:
+        yield level
