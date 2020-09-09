@@ -153,7 +153,7 @@ def test_highlight_results_nested_missing_fields():
     assert result["goods"][0]["control_list_entries"][0]["text"] == "<b>software</b>"
 
 
-def test_highlight_results_nested_missing_fields():
+def test_highlight_results_nested_dicts():
     result = {
         "id": "300636b1-6cbd-4848-ad09-21a778f8a81e",
         "queues": [],
