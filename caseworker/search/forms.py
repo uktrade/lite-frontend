@@ -7,7 +7,8 @@ from caseworker.spire.forms import StyledCharField
 
 
 filters_regex_pattern = re.compile(
-    '(clc_rating|clc_category|part|organisation|case_reference|case_status|party_type|party_country|queue|team|case_officer_username|case_officer_email):"(.*?)"'
+    '(clc_rating|clc_category|part|organisation|case_reference|case_status|party_type|party_country|queue|team|'
+    'case_officer_username|case_officer_email):"(.*?)"'
 )
 
 
