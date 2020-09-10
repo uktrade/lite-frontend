@@ -47,20 +47,30 @@
                     {% for good in item.goods %}
                     <tr class="govuk-table__row">
                         {% if forloop.counter0 == 0 %}
-                        <td class="govuk-table__cell govuk-table__cell--tight" rowspan="{{ item.goods|length }}">
-                            {% if item.queues %}
+                        <td class="govuk-table__cell govuk-table__cell" rowspan="{{ item.goods|length }}">
+                            {% if item.index == 'lite' %}
+                                {% if item.queues %}
+                                    <a class="govuk-link govuk-link--no-visited-state" id="case-${item.id}"
+                                        href="/queues/{{ item.queues.0.id }}/cases/{{ item.id }}/">
+                                        <span class="govuk-visually-hidden">View</span> {{ item.reference_code }}
+                                    </a>
+                                {% else %}
+                                    <span>{{ item.reference_code }}</span>
+                                {% endif %}
+                            {% elif item.index == 'spire' %}
                                 <a class="govuk-link govuk-link--no-visited-state" id="case-${item.id}"
-                                    href="/queues/{{ item.queues.0.id }}/cases/{{ item.id }}/">
+                                    href="{% url 'spire:application-detail' id=item.id %}">
                                     <span class="govuk-visually-hidden">View</span> {{ item.reference_code }}
                                 </a>
-                            {% else %}
-                                <span>{{ item.reference_code }}</span>
                             {% endif %}
                             <p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">
                                 {{ item.organisation }}
                             </p>
                             <p class="govuk-tag govuk-tag--grey govuk-!-margin-0 govuk-!-margin-top-2">
-                                {{ item.status }}
+                                {{ item.status }} 
+                            </p>
+                            <p class="govuk-tag govuk-!-margin-0 govuk-!-margin-top-2 {% if item.index == 'spire' %}autoCompleteSpire{% else %}autoCompleteLite{%endif %}">
+                                {{ item.index|upper }} 
                             </p>
                             <p>
                                 <details>
@@ -70,13 +80,13 @@
                             </p>
                         </td>
                         {% endif %}
-                        <td class="govuk-table__cell govuk-table__cell--tight">
+                        <td class="govuk-table__cell govuk-table__cell">
                             {{ good.part_number|default:'N/A' }}
                         </td>
                         <td class="govuk-table__cell govuk-table__cell">
                             {{ good.description }}
                         </td>
-                        <td class="govuk-table__cell govuk-table__cell--tight">
+                        <td class="govuk-table__cell govuk-table__cell">
                             {% if good.quantity %}
                                 {{ good.quantity }} x {{ good.value }} {{good.unit }}
                             {% endif %}
@@ -102,14 +112,21 @@
                     </tr>
                     {% empty %}
                     <tr class="govuk-table__row">
-                        <td class="govuk-table__cell govuk-table__cell--tight">
-                            {% if item.queues %}
+                        <td class="govuk-table__cell govuk-table__cell">
+                            {% if item.index == 'lite' %}
+                                {% if item.queues %}
+                                    <a class="govuk-link govuk-link--no-visited-state" id="case-${item.id}"
+                                        href="/queues/{{ item.queues.0.id }}/cases/{{ item.id }}/">
+                                        <span class="govuk-visually-hidden">View</span> {{ item.reference_code }}
+                                    </a>
+                                {% else %}
+                                    <span>{{ item.reference_code }}</span>
+                                {% endif %}
+                            {% elif item.index == 'spire' %}
                                 <a class="govuk-link govuk-link--no-visited-state" id="case-${item.id}"
-                                    href="/queues/{{ item.queues.0.id }}/cases/{{ item.id }}/">
+                                    href="{% url 'spire:application-detail' id=item.id %}">
                                     <span class="govuk-visually-hidden">View</span> {{ item.reference_code }}
                                 </a>
-                            {% else %}
-                                <span>{{ item.reference_code }}</span>
                             {% endif %}
                             <p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">
                                 {{ item.organisation }}
@@ -117,14 +134,17 @@
                             <p class="govuk-tag govuk-tag--grey govuk-!-margin-0 govuk-!-margin-top-2">
                                 {{ item.status }}
                             </p>
+                            <p class="govuk-tag govuk-!-margin-0 govuk-!-margin-top-2 {% if item.index == 'spire' %}autoCompleteSpire{% else %}autoCompleteLite{%endif %}">
+                                {{ item.index|upper }} 
+                            </p>
 							<details class="govuk-!-margin-top-2 govuk-!-margin-bottom-2">
 								<summary>View raw details</summary>
 								<code>{{ item|pprint_dict|safe }}</code>
 							</details>
                         </td>
-                        <td class="govuk-table__cell govuk-table__cell--tight">N/A</td>
-                        <td class="govuk-table__cell govuk-table__cell--tight">N/A</td>
-                        <td class="govuk-table__cell govuk-table__cell--tight">N/A</td>
+                        <td class="govuk-table__cell govuk-table__cell">N/A</td>
+                        <td class="govuk-table__cell govuk-table__cell">N/A</td>
+                        <td class="govuk-table__cell govuk-table__cell">N/A</td>
                         <td class="govuk-table__cell govuk-table__cell">N/A</td>
                         <td class="govuk-table__cell govuk-table__cell">N/A</td>
                         <td class="govuk-table__cell govuk-table__cell">N/A</td>

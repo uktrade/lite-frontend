@@ -46,6 +46,11 @@
     resultItem: {
         content: function(data, source) {
           var value = data.value.value.replace(/\s/g, " ")
+          if (data.value.index == 'spire') {
+            var cssClass = "autoCompleteSpire autoCompleteIndex"
+          } else {
+            var cssClass = "autoCompleteLite autoCompleteIndex"
+          }
           if (data.value.field == 'wildcard') {
               source.innerHTML = '<td>' + value + '</td>'
           } else {
@@ -57,7 +62,7 @@
     searchEngine: function(query, record) {
         return record
     },
-    maxResults: 5,
+    maxResults: 15,
     onSelection: function(feedback) {
       if (feedback.selection.value.field == 'wildcard') {
         var appendValue = feedback.selection.value.value 
