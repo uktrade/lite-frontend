@@ -60,21 +60,15 @@ def _seen_nonce(access_key_id, nonce, timestamp):
     return seen_cache_key
 
 
-def _verify_api_response(response, sender):
-    try:
-        sender.accept_response(
-            response.headers["server-authorization"],
-            content=response.content,
-            content_type=response.headers["Content-Type"],
-        )
-    except Exception as exc:  # noqa
-        if "server-authorization" not in response.headers:
-            logging.error(
-                "No server_authorization header found in response from the LITE API - probable API HAWK auth failure"
-            )
-        else:
-            logging.error("Unhandled exception %s: %s" % (type(exc).__name__, exc))
-        raise PermissionDenied("We were unable to authenticate your client")
+def verify_hawk_response(response, sender):
+    if "server-authorization" not in response.headers:
+        raise RuntimeError("Missing server_authorization header. Probable API HAWK auth failure")
+
+    sender.accept_response(
+        response.headers["server-authorization"],
+        content=response.content,
+        content_type=response.headers["Content-Type"],
+    )
 
 
 def perform_request(method, request, appended_address, data=None):
@@ -91,7 +85,7 @@ def perform_request(method, request, appended_address, data=None):
     response = session.request(method=method, url=url, headers=headers, json=data)
 
     if settings.HAWK_AUTHENTICATION_ENABLED:
-        _verify_api_response(response=response, sender=sender)
+        verify_hawk_response(response=response, sender=sender)
 
     return response
 
