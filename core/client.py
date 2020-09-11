@@ -1,9 +1,7 @@
 from functools import partial
 import json
-import logging
 
 from django.core.cache import cache
-from django.core.exceptions import PermissionDenied
 from mohawk import Sender
 from mohawk.exc import AlreadyProcessed
 
