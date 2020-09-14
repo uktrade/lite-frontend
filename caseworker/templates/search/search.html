@@ -51,7 +51,7 @@
                             {% if item.index == 'lite' %}
                                 {% if item.queues %}
                                     <a class="govuk-link govuk-link--no-visited-state" id="case-${item.id}"
-                                        href="/queues/{{ item.queues.0.id }}/cases/{{ item.id }}/">
+                                        href="{% url 'cases:case' queue_pk=item.queues.0.id pk=item.id %}">
                                         <span class="govuk-visually-hidden">View</span> {{ item.reference_code }}
                                     </a>
                                 {% else %}
@@ -116,7 +116,7 @@
                             {% if item.index == 'lite' %}
                                 {% if item.queues %}
                                     <a class="govuk-link govuk-link--no-visited-state" id="case-${item.id}"
-                                        href="/queues/{{ item.queues.0.id }}/cases/{{ item.id }}/">
+                                        href="{% url 'cases:case' queue_pk=item.queues.0.id pk=item.id %}">
                                         <span class="govuk-visually-hidden">View</span> {{ item.reference_code }}
                                     </a>
                                 {% else %}
