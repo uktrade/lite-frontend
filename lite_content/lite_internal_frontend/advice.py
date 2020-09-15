@@ -95,7 +95,7 @@ class FinaliseLicenceForm:
         DESCRIPTION_COLUMN = "Description"
         DECISION_COLUMN = "Decision"
         LICENCED_QTY_COLUMN = "Licensed quantity"
-        LICENCED_VALUE_COLUMN = "Licensed value"
+        LICENCED_VALUE_COLUMN = "Total licensed value"
         APPLIED_FOR_TEXT = "Applied for "
         PREVIOUSLY_LICENCED = "Previously licenced "
         USAGE = "Used "

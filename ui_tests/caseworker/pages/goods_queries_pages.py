@@ -42,6 +42,7 @@ class GoodsQueriesPages(BasePage):
         functions.send_tokens_to_token_bar(self.driver, self.TOKEN_BAR_CONTROL_LIST_ENTRIES_SELECTOR, [code])
 
     def choose_report_summary(self):
+        scroll_to_element_by_id(self.driver, self.LINK_REPORT_SUMMARY_PICKLIST_PICKER_ID)
         self.driver.find_element_by_id(self.LINK_REPORT_SUMMARY_PICKLIST_PICKER_ID).click()
         self.driver.find_elements_by_class_name(self.LINK_PICKLIST_PICKER_ITEM_CLASS)[0].click()
         self.driver.find_element_by_id(self.BUTTON_SUBMIT_REPORT_SUMMARY_ID).click()
