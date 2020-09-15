@@ -26,9 +26,16 @@
     },
     data: {
       src: function() {
-        query = currentSearch = inputElement.value.replace(lastSearch, '').trim()
+        query = currentSearch = inputElement.value.replace(lastSearch, '').toLowerCase().trim()
         return fetch('/search/suggest/?format=json&q=' + query).then(function(response) {
-          return response.json()
+          return response.json().then(function(parsed) {
+            if (query.indexOf('spire') > -1) {
+              parsed = [{'field': 'database', 'value': 'SPIRE'}].concat(parsed)
+            } else if (query.indexOf('lite') > -1 ) {
+              parsed = [{'field': 'database', 'value': 'LITE'}].concat(parsed)
+            }
+            return parsed
+          })
         })
       },
       key: ["value"],
@@ -76,7 +83,7 @@
       } else {
         var appendValue = feedback.selection.value.field + ':"' + feedback.selection.value.value + '"'
       }
-      lastSearch = inputElement.value = inputElement.value.replace(currentSearch, appendValue + ' ')
+      inputElement.value = inputElement.value.replace(currentSearch, appendValue + ' ')
       handleSearch()
     }
   });
@@ -86,7 +93,7 @@
   }
 
   function handleSearch() {
-    var query = inputElement.value
+    var query = lastSearch = inputElement.value
     setTimeout(function() { inputElement.focus()})
     fetch('/search/?search_string=' + query).then(function(response) {
       var html = response.text().then(function(html) {
@@ -114,7 +121,6 @@
             fieldName + ':',
             startField + ':"' + start.format('YYYY-MM-DD') + '" ' + endField + ':"' + end.format('YYYY-MM-DD') + '"'
           )
-          lastSearch = inputElement.value
           handleSearch()
           this.destroy()
           datePicker = null;
