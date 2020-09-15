@@ -788,3 +788,11 @@ def get_parties_status(parties):
             return IN_PROGRESS
 
     return DONE
+
+
+@register.filter
+def divide(value, other):
+    try:
+        return float(value) / float(other)
+    except (ValueError, ZeroDivisionError, TypeError):
+        return None
