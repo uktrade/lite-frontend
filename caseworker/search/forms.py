@@ -6,6 +6,10 @@ from django import forms
 from caseworker.spire.forms import StyledCharField
 
 
+def build_filter_lookups(field_name):
+    return [f"{field_name}__{suffix}" for suffix in ["gte", "lte", "gt", "lt", "range"]]
+
+
 filter_names = "|".join(
     [
         "case_officer_email",
@@ -22,14 +26,12 @@ filter_names = "|".join(
         "party_type",
         "queue",
         "team",
-        "created",
-        "updated",
+        *build_filter_lookups("created"),
+        *build_filter_lookups("updated"),
     ]
 )
 
-filter_lookups = "|".join(["__gte", "__lte", "__gt", "__lt", "__range"])
-
-filters_regex_pattern = re.compile(f'({filter_names}(?:{filter_lookups})?):"(.*?)"')
+filters_regex_pattern = re.compile(f'({filter_names}?):"(.*?)"')
 
 
 class CasesSearchForm(forms.Form):
