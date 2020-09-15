@@ -14,10 +14,37 @@
   new autoComplete({
     data: {
       src: function() {
-        query = currentSearch = element.value.replace(lastSearch, '')
-        return fetch('/search/suggest/?format=json&q=' + query).then(function(response) {
-            return response.json()
-        })
+        query = currentSearch = element.value.replace(lastSearch, '').trim()
+        if (query.indexOf('created:') == 0 || query.indexOf('updated:') == 0) {
+          var dateOne = document.createElement('div')
+          var dateTwo = document.createElement('div')
+
+          element.parentNode.insertBefore(dateOne, element);
+          element.parentNode.insertBefore(dateTwo, element);
+          var picker = new Lightpick({
+            field: dateOne,
+            secondField: dateTwo,
+            inline: true,
+            singleDate: false,
+            onSelect: function(start, end){
+              if (start && end) {
+                element.value = element.value.trim().replace(
+                  'created:',
+                  'created__gte:"' + start.format('YYYY-MM-DD') + '" created__lte:"' + end.format('YYYY-MM-DD') + '"'
+                )
+                element.parentNode.removeChild(dateOne)
+                element.parentNode.removeChild(dateTwo)
+                handleSearch()
+                this.el.remove()
+              }
+            }
+          })
+          return []
+        } else {
+          return fetch('/search/suggest/?format=json&q=' + query).then(function(response) {
+              return response.json()
+          })
+        }
       },
       key: ["value"],
       cache: false
@@ -65,18 +92,27 @@
         var appendValue = feedback.selection.value.field + ':"' + feedback.selection.value.value + '"'
       }
       lastSearch = element.value = element.value.replace(currentSearch, appendValue + ' ')
-      setTimeout(function() { element.focus()})
-
-      fetch('/search/?search_string=' + lastSearch).then(function(response) {
-        var html = response.text().then(function(html) {
-          var div = document.createElement('div');
-          div.innerHTML = html.trim();
-          document.getElementsByClassName('results-area')[0].innerHTML = div.getElementsByClassName('results-area')[0].innerHTML
-        })
-      })
-      var searchParams = new URLSearchParams(window.location.search);
-      searchParams.set("search_string", lastSearch);
-      history.pushState(null, '', window.location.pathname + '?' + searchParams.toString());
+      handleSearch()
     }
   });
+
+  function handleSearch() {
+    var query = element.value
+    setTimeout(function() { element.focus()})
+    fetch('/search/?search_string=' + query).then(function(response) {
+      var html = response.text().then(function(html) {
+        var div = document.createElement('div');
+        div.innerHTML = html.trim();
+        document.getElementsByClassName('results-area')[0].innerHTML = div.getElementsByClassName('results-area')[0].innerHTML
+      })
+    })
+    var searchParams = new URLSearchParams(window.location.search);
+    searchParams.set("search_string", query);
+    history.pushState(null, '', window.location.pathname + '?' + searchParams.toString());
+  }
+
+  document.getElementById('search-button').addEventListener('click', function(event) {
+    event.preventDefault()
+    handleSearch()
+  })
 })()

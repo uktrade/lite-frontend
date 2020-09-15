@@ -6,10 +6,30 @@ from django import forms
 from caseworker.spire.forms import StyledCharField
 
 
-filters_regex_pattern = re.compile(
-    "(clc_rating|clc_category|part|organisation|case_reference|case_status|party_type|party_country|queue|team|"
-    'case_officer_username|case_officer_email):"(.*?)"'
+filter_names = "|".join(
+    [
+        "case_officer_email",
+        "case_officer_username",
+        "case_reference",
+        "case_status",
+        "clc_category",
+        "clc_rating",
+        "created",
+        "created",
+        "organisation",
+        "part",
+        "party_country",
+        "party_type",
+        "queue",
+        "team",
+        "created",
+        "updated",
+    ]
 )
+
+filter_lookups = "|".join(["__gte", "__lte", "__gt", "__lt", "__range"])
+
+filters_regex_pattern = re.compile(f'({filter_names}(?:{filter_lookups})?):"(.*?)"')
 
 
 class CasesSearchForm(forms.Form):

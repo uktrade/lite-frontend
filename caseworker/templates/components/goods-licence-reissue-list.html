@@ -31,7 +31,17 @@
 					<span id="quantity-applied-for-{{ good.good_on_application_id }}" class="govuk-hint govuk-!-margin-0">{% lcs 'advice.FinaliseLicenceForm.GoodsTable.APPLIED_FOR_TEXT' %} {{ good.applied_for_quantity|intcomma }} {{ good.units.value }}</span>
 					<span id="quantity-usage-licenced-{{ good.good_on_application_id }}" class="govuk-hint govuk-!-margin-0">{% lcs 'advice.FinaliseLicenceForm.GoodsTable.PREVIOUSLY_LICENCED' %} {{ good.licenced_quantity|intcomma }} {{ good.units.value }}</span>
 					<span id="quantity-usage-{{ good.good_on_application_id }}" class="govuk-hint govuk-!-margin-0">{% lcs 'advice.FinaliseLicenceForm.GoodsTable.USAGE' %} {{ good.usage|intcomma }} {{ good.units.value }}</span>
-					<input class="govuk-input" id="quantity-{{ good.good_on_application_id }}" type="text" name="quantity-{{ good.good_on_application_id }}" value="{{ good.licenced_quantity|subtract:good.usage }}" onchange="updateValue('{{ good.good_on_application_id }}', '{{ good.licenced_value_per_item }}')"><br>
+					<input
+						class="govuk-input js-update-total-value"
+						id="quantity-{{ good.good_on_application_id }}"
+						type="text"
+						name="quantity-{{ good.good_on_application_id }}"
+						value="{{ good.licenced_quantity|subtract:good.usage }}"
+						data-applied-for-quantity="{{ good.licenced_quantity|subtract:good.usage }}"
+						data-applied-for-value="{{ good.licenced_value_per_item|multiply:good.usage }}"
+						data-output-element-id="value-{{ good.good_on_application_id }}"
+					/>
+					<br>
 				</td>
 				<td class="govuk-table__cell">
 					<span id="value-applied-for-{{ good.good_on_application_id }}" class="govuk-hint govuk-!-margin-0">{% lcs 'advice.FinaliseLicenceForm.GoodsTable.APPLIED_FOR_TEXT' %} £{{ good.applied_for_value|multiply:good.applied_for_quantity|floatformat:2 }}</span>
@@ -40,7 +50,12 @@
 					<div class="lite-currency-input">
 						<div class="lite-currency-input__symbol {% if error %}lite-currency--error{% endif %}" aria-hidden="true">£</div>
 						{% with good.licenced_quantity|subtract:good.usage as quantity %}
-							<input class="govuk-input" id="value-{{ good.good_on_application_id }}" type="text" name="value-{{ good.good_on_application_id }}" value="{{ good.licenced_value_per_item|multiply:quantity|floatformat:2 }}"/>
+							<input
+								class="govuk-input"
+								id="value-{{ good.good_on_application_id }}"
+								type="text"
+								name="value-{{ good.good_on_application_id }}"
+								value="{{ good.licenced_value_per_item|multiply:quantity|floatformat:2 }}"/>
 						{% endwith %}
 					</div>
 				</td>
@@ -50,10 +65,5 @@
 </table>
 
 {% block javascript %}
-	<script>
-		function updateValue(id, value_per_item) {
-			let quantity = document.getElementById("quantity-"+id).value;
-			document.getElementById("value-"+id).value = (quantity * value_per_item).toFixed(2);
-		}
-	</script>
+    <script src="{% static 'javascripts/update-total-value.js' %}"></script>
 {% endblock %}
