@@ -6,6 +6,7 @@ $govuk-brand-colour: #31363F !default;
 
 @import "../../shared_assets/node_modules/govuk-frontend/govuk/all"; // GOV.UK Design System
 @import "../../shared_assets/lite-frontend/scss/all"; // LITE Shared Assets
+@import 'lightpick';
 
 @import "overrides/all";
 @import "components/all";
