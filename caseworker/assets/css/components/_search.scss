@@ -28,4 +28,22 @@ body {
     font-family: monospace;
     white-space: pre;
   }
+
+  .autoCompleteIndex {
+    width: 60px;
+
+  }
+  .autoCompleteSpire {
+    text-align: center;
+    background-color: #2980B9;
+    color: white;
+    font-familyweight: bold;
+  }
+
+  .autoCompleteLite {
+    text-align: center;
+    background-color: #b95c29;
+    color: white;
+    font-weight: bold;
+  }
 }
