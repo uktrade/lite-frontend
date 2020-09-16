@@ -26,7 +26,8 @@
     },
     data: {
       src: function() {
-        query = currentSearch = inputElement.value.replace(lastSearch, '').toLowerCase().trim()
+        currentSearch = inputElement.value.replace(lastSearch, '').trim()
+        var query = currentSearch.toLowerCase()
         return fetch('/search/suggest/?format=json&q=' + query).then(function(response) {
           return response.json().then(function(parsed) {
             if (query.indexOf('spire') > -1) {
@@ -89,6 +90,7 @@
   });
 
   function isCalendarIntent(query) {
+    query = query.toLowerCase()
     return query.indexOf('created:') > -1 || query.indexOf('updated:') > -1
   }
 
