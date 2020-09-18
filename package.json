@@ -1,0 +1,27 @@
+{
+  "name": "lite-frontend",
+  "version": "1.0.0",
+  "description": "Combined repo for LITE exporter and caseworker frontends",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": ">=12.16.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uktrade/lite-frontend.git"
+  },
+  "author": "DIT",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/uktrade/lite-frontend/issues"
+  },
+  "homepage": "https://github.com/uktrade/lite-frontend#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "govuk-frontend": "^3.9.0",
+    "sass-lint": "^1.13.1"
+  }
+}
