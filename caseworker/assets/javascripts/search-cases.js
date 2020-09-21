@@ -30,9 +30,11 @@
         var query = currentSearch.toLowerCase()
         return fetch('/search/suggest/?format=json&q=' + query).then(function(response) {
           return response.json().then(function(parsed) {
-            if (currentSearch.indexOf('spire') > -1) {
+            // cheap prefix match "incor" for "spire"
+            if (currentSearch.indexOf('spi') > -1) {
               parsed = [{'field': 'database', 'value': 'SPIRE'}].concat(parsed)
-            } else if (currentSearch.indexOf('lite') > -1 ) {
+            // cheap prefix match "incor" for "lite"
+            } else if (currentSearch.indexOf('lit') > -1 ) {
               parsed = [{'field': 'database', 'value': 'LITE'}].concat(parsed)
             // cheap prefix match "incor" for "incorporated"
             } else if (currentSearch.indexOf('incor') > -1) {
