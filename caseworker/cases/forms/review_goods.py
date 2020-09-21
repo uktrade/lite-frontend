@@ -18,25 +18,21 @@ def review_goods_form(request, is_goods_type, **kwargs):
                 title=goods.ReviewGoods.IS_GOOD_CONTROLLED,
                 name="is_good_controlled",
                 options=[
-                    Option(
-                        key=conditional(is_goods_type, True, "yes"),
-                        value="Yes",
-                        components=[
-                            control_list_entries_question(
-                                control_list_entries=get_control_list_entries(request, convert_to_options=True),
-                                title=goods.ReviewGoods.ControlListEntries.TITLE,
-                            ),
-                            PicklistPicker(
-                                target="report_summary",
-                                title=goods.ReviewGoods.ReportSummary.TITLE,
-                                description=goods.ReviewGoods.ReportSummary.DESCRIPTION,
-                                type=PicklistCategories.report_summary.key,
-                                set_text=False,
-                            ),
-                        ],
-                    ),
+                    Option(key=conditional(is_goods_type, True, "yes"), value="Yes"),
                     Option(key=conditional(is_goods_type, False, "no"), value="No"),
                 ],
+            ),
+            control_list_entries_question(
+                control_list_entries=get_control_list_entries(request, convert_to_options=True),
+                title=goods.ReviewGoods.ControlListEntries.TITLE,
+            ),
+            PicklistPicker(
+                target="report_summary",
+                title=goods.ReviewGoods.ReportSummary.TITLE,
+                description=goods.ReviewGoods.ReportSummary.DESCRIPTION,
+                type=PicklistCategories.report_summary.key,
+                set_text=False,
+                allow_clear=True,
             ),
             DetailComponent(
                 title=goods.ReviewGoods.Comment.TITLE,

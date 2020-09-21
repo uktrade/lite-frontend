@@ -35,11 +35,26 @@
 	</a>
 	<input type="hidden" id="{{ component.target }}-input" name="{{ component.target }}" value="{% if value|get:component.target %}{{ value|get:component.target }}{% endif %}">
 	<div id="{{ component.target }}-text" class="govuk-inset-text govuk-!-margin-top-0 {% if not value|get:component.target %}app-hidden{% endif %}">
-		{{ value|get:component.target }}
+		<output id="{{ component.target }}-output">{{ value|get:component.target }}</output>
+		{% if component.allow_clear %}
+			<a href="#" class="govuk-link js-remove-picklist-item" data-input-element="{{ component.target }}-input" data-text-element="{{ component.target }}-text">Remove</a>
+		{% endif %}
+
 	</div>
 {% endif %}
 
 <script>
+	var removePicklistItemElements = document.getElementsByClassName('js-remove-picklist-item')
+	for (var i=0; i < removePicklistItemElements.length; i++) {
+		removePicklistItemElements.item(i).addEventListener('click', function(event) {
+			event.preventDefault()
+			var inputElement = document.getElementById(this.getAttribute('data-input-element'));
+			var textElement = document.getElementById(this.getAttribute('data-text-element'));
+			inputElement.value = '';
+			textElement.classList.add('app-hidden')
+		})
+	}
+
 	$('#{{ component.target }}').closest( ".govuk-form-group" ).prepend(`
 		<a data-picklist-target="{{ component.target }}" id="link-{{ component.target }}-picklist-picker" href="#" class="govuk-link govuk-link--no-visited-state app-picklist-picker-heading__link">
 			{% svg 'plus' %}
@@ -137,7 +152,8 @@
 	function setId(itemId) {
 		var item = $("#" + itemId);
 		var target =  item.data("target")
-		$("#" + target + "-text").text(item.data("text")).removeClass("app-hidden");;
+		$("#" + target + "-text").removeClass("app-hidden");;
+		$("#" + target + "-text output")[0].value = item.data("text")
 		$("#" + target + "-input").val(item.data("text"));
 		$("#link-" + target + "-picklist-picker").hide();
 		$("#link-" + target + "-picklist-picker-change").removeClass("app-hidden");
