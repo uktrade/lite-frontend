@@ -1,4 +1,5 @@
 from django.urls import reverse
+from django.utils.html import mark_safe
 
 from caseworker.core.components import PicklistPicker
 from caseworker.core.services import get_control_list_entries
@@ -36,7 +37,20 @@ def review_goods_form(request, is_goods_type, **kwargs):
             ),
             DetailComponent(
                 title=goods.ReviewGoods.Comment.TITLE,
-                components=[TextArea(name="comment", extras={"max_length": 500,}),],
+                components=[
+                    TextArea(
+                        title=mark_safe("Comment about the product <b>in the context of this specific application</b>"),
+                        description="This information will be attached to the application",
+                        name="application_comment",
+                        extras={"max_length": 500},
+                    ),
+                    TextArea(
+                        title=mark_safe("Comment about the product <b>independent of this application</b>"),
+                        description="This information will be attached to the product",
+                        name="comment",
+                        extras={"max_length": 500},
+                    ),
+                ],
             ),
         ],
         default_button_name=cases.ReviewGoodsForm.CONFIRM_BUTTON,
