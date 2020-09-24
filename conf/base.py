@@ -48,11 +48,16 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "csp.middleware.CSPMiddleware",
     "core.auth.middleware.AuthbrokerClientMiddleware",
     "core.middleware.UploadFailedMiddleware",
     "core.middleware.RequestsSessionMiddleware",
 ]
+
+# configuration is difficult so omit this when running locally
+if not DEBUG:
+    MIDDLEWARE += [
+        "csp.middleware.CSPMiddleware",
+    ]
 
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 SESSION_COOKIE_SECURE = env.bool("SESSION_COOKIE_SECURE", True)
