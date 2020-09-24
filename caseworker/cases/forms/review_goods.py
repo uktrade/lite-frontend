@@ -12,6 +12,24 @@ from caseworker.picklists.enums import PicklistCategories
 
 
 def review_goods_form(request, is_goods_type, **kwargs):
+    if is_goods_type:
+        comment_components = [TextArea(name="comment", extras={"max_length": 500})]
+    else:
+        comment_components = [
+            TextArea(
+                title=mark_safe("Comment about the product <b>in the context of this specific application</b>"),
+                description="This information will be attached to the application",
+                name="comment",
+                extras={"max_length": 500},
+            ),
+            TextArea(
+                title=mark_safe("Comment about the product <b>independent of this application</b>"),
+                description="This information will be attached to the product",
+                name="canonical_good_comment",
+                extras={"max_length": 500},
+            ),
+        ]
+
     return Form(
         title=cases.ReviewGoodsForm.HEADING,
         questions=[
@@ -19,8 +37,8 @@ def review_goods_form(request, is_goods_type, **kwargs):
                 title=goods.ReviewGoods.IS_GOOD_CONTROLLED,
                 name="is_good_controlled",
                 options=[
-                    Option(key=conditional(is_goods_type, True, "yes"), value="Yes"),
-                    Option(key=conditional(is_goods_type, False, "no"), value="No"),
+                    Option(key=True, value="Yes"),
+                    Option(key=False, value="No"),
                 ],
             ),
             control_list_entries_question(
@@ -37,20 +55,7 @@ def review_goods_form(request, is_goods_type, **kwargs):
             ),
             DetailComponent(
                 title=goods.ReviewGoods.Comment.TITLE,
-                components=[
-                    TextArea(
-                        title=mark_safe("Comment about the product <b>in the context of this specific application</b>"),
-                        description="This information will be attached to the application",
-                        name="application_comment",
-                        extras={"max_length": 500},
-                    ),
-                    TextArea(
-                        title=mark_safe("Comment about the product <b>independent of this application</b>"),
-                        description="This information will be attached to the product",
-                        name="comment",
-                        extras={"max_length": 500},
-                    ),
-                ],
+                components=comment_components,
             ),
         ],
         default_button_name=cases.ReviewGoodsForm.CONFIRM_BUTTON,
