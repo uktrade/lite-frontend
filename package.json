@@ -2,9 +2,9 @@
   "name": "lite-frontend",
   "version": "1.0.0",
   "description": "Combined repo for LITE exporter and caseworker frontends",
-  "main": "index.js",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "parcel build ./caseworker/caseworker.js && parcel build ./exporter/exporter.js"
   },
   "engines": {
     "node": ">=12.16.1"
@@ -28,7 +28,9 @@
     "jquery": "^3.5.1",
     "lightpick": "^1.6.2",
     "mark.js": "^8.11.1",
+    "parcel-bundler": "^1.12.4",
     "sass-lint": "^1.13.1",
+    "sass-loader": "^10.0.2",
     "sortablejs": "^1.11.2-alpha.3",
     "tippy.js": "^6.2.6",
     "tokenfield": "^1.4.4",
