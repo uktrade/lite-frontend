@@ -200,7 +200,7 @@ def add_goods_questions(request, application_pk=None):
                 name="is_good_controlled",
                 options=[
                     Option(
-                        key="yes",
+                        key=True,
                         value=CreateGoodForm.IsControlled.YES,
                         components=[
                             control_list_entries_question(
@@ -210,8 +210,8 @@ def add_goods_questions(request, application_pk=None):
                             ),
                         ],
                     ),
-                    Option(key="no", value=CreateGoodForm.IsControlled.NO),
-                    conditional(not application_pk, Option(key="unsure", value=CreateGoodForm.IsControlled.UNSURE)),
+                    Option(key=False, value=CreateGoodForm.IsControlled.NO),
+                    conditional(not application_pk, Option(key=None, value=CreateGoodForm.IsControlled.UNSURE)),
                 ],
             ),
             RadioButtons(

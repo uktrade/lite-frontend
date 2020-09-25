@@ -7,7 +7,6 @@ from lite_content.lite_internal_frontend import goods
 from lite_content.lite_internal_frontend.strings import cases
 from lite_forms.common import control_list_entries_question
 from lite_forms.components import Form, RadioButtons, Option, TextArea, DetailComponent, HelpSection, BackLink
-from lite_forms.helpers import conditional
 from caseworker.picklists.enums import PicklistCategories
 
 
@@ -36,10 +35,7 @@ def review_goods_form(request, is_goods_type, **kwargs):
             RadioButtons(
                 title=goods.ReviewGoods.IS_GOOD_CONTROLLED,
                 name="is_good_controlled",
-                options=[
-                    Option(key=True, value="Yes"),
-                    Option(key=False, value="No"),
-                ],
+                options=[Option(key=True, value="Yes"), Option(key=False, value="No"),],
             ),
             control_list_entries_question(
                 control_list_entries=get_control_list_entries(request, convert_to_options=True),
@@ -53,10 +49,7 @@ def review_goods_form(request, is_goods_type, **kwargs):
                 set_text=False,
                 allow_clear=True,
             ),
-            DetailComponent(
-                title=goods.ReviewGoods.Comment.TITLE,
-                components=comment_components,
-            ),
+            DetailComponent(title=goods.ReviewGoods.Comment.TITLE, components=comment_components,),
         ],
         default_button_name=cases.ReviewGoodsForm.CONFIRM_BUTTON,
         container="case",

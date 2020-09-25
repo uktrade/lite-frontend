@@ -104,7 +104,7 @@ def flatten_goods_data(items: List[Dict]):
         goods = items
 
     # fallback to default control details on the good if there is no good-on-application control details
-    if all(x['is_good_controlled'] is not None for x in items):
+    if all(x["is_good_controlled"] is not None for x in items):
         control_review = items
     else:
         control_review = goods
