@@ -15,7 +15,11 @@
 		{% for good in data %}
 			<tr class="govuk-table__row">
 				<td class="govuk-table__cell">
-					{% include 'includes/control-list-entries.html' with control_list_entries=good.good.control_list_entries %}
+					{% if good.is_good_controlled is not None %}
+						{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}
+					{% else %}
+						{% include 'includes/control-list-entries.html' with control_list_entries=good.good.control_list_entries %}
+					{% endif %}
 				</td>
 				<td class="govuk-table__cell">
 					{{ good.good.description }}
