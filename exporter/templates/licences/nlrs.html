@@ -35,7 +35,7 @@
 							<span class="govuk-table__header" aria-hidden="true">
 								{% lcs "licences.LicencesList.Table.APPLICATION_COLUMN" %}
 							</span>
-							<a href="{% url 'applications:application' licence.case_id %}?return_to={% url 'licences:licences' %}" class="govuk-link govuk-link--no-visited-state">{{ licence.case_reference }}</a>
+							<a href="{% url 'applications:application' licence.case_id %}?return_to={% url 'licences:list-open-and-standard-licences' %}" class="govuk-link govuk-link--no-visited-state">{{ licence.case_reference }}</a>
 						</td>
 						<td class="govuk-table__cell">
 							<span class="govuk-table__header" aria-hidden="true">
