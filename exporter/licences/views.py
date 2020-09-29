@@ -2,7 +2,6 @@ from http import HTTPStatus
 
 from django.http import Http404
 from django.shortcuts import render
-from django.template.response import TemplateResponse
 from django.views.generic import TemplateView
 from django.urls import reverse_lazy
 
@@ -15,7 +14,7 @@ from exporter.licences.helpers import (
     get_potential_ogl_sites,
 )
 from exporter.licences.services import get_licences, get_licence, get_nlr_letters
-from lite_content.lite_exporter_frontend.licences import LicencesList, LicencePage, OpenGeneralLicencesList
+from lite_content.lite_exporter_frontend.licences import LicencesList, LicencePage
 
 from lite_forms.generators import error_page
 
