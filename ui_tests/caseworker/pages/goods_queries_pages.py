@@ -35,7 +35,7 @@ class GoodsQueriesPages(BasePage):
 
     def click_is_good_controlled(self, answer):
         WebDriverWait(self.driver, 60).until(
-            expected_conditions.presence_of_element_located((By.ID, self.CONTROL_RESPONSE + answer))
+            expected_conditions.presence_of_element_located((By.ID, f"{self.CONTROL_RESPONSE}{answer}"))
         ).click()
 
     def type_in_to_control_list_entry(self, code):

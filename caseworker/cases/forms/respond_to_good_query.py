@@ -23,6 +23,11 @@ from caseworker.picklists.enums import PicklistCategories
 
 
 def respond_to_clc_query_form(request, queue_pk, case):
+    if case.data["good"]["is_good_controlled"]:
+        is_good_controlled = case.data["good"]["is_good_controlled"]["value"]
+    else:
+        is_good_controlled = None
+
     return Form(
         title=CLCReviewGoods.TITLE,
         description=CLCReviewGoods.DESCRIPTION,
@@ -32,7 +37,7 @@ def respond_to_clc_query_form(request, queue_pk, case):
                 values={
                     CLCReviewGoods.Summary.DESCRIPTION: case.data["good"]["description"],
                     CLCReviewGoods.Summary.PART_NUMBER: default_na(case.data["good"]["part_number"]),
-                    CLCReviewGoods.Summary.IS_THIS_GOOD_CONTROLLED: case.data["good"]["is_good_controlled"]["value"],
+                    CLCReviewGoods.Summary.IS_THIS_GOOD_CONTROLLED: is_good_controlled,
                     CLCReviewGoods.Summary.CONTROL_LIST_ENTRIES: case.data["clc_control_list_entry"],
                     CLCReviewGoods.Summary.EXPLANATION: case.data["clc_raised_reasons"],
                 },
@@ -51,8 +56,8 @@ def respond_to_clc_query_form(request, queue_pk, case):
                 classes=["govuk-radios--small"],
                 options=[
                     Option(
-                        key="yes",
-                        value=CLCReviewGoods.Controlled.YES,
+                        key=True,
+                        value="yes",
                         components=[
                             control_list_entries_question(
                                 control_list_entries=get_control_list_entries(request, convert_to_options=True),
@@ -67,7 +72,7 @@ def respond_to_clc_query_form(request, queue_pk, case):
                             ),
                         ],
                     ),
-                    Option(key="no", value=CLCReviewGoods.Controlled.NO),
+                    Option(key=False, value="no"),
                 ],
             ),
             DetailComponent(
