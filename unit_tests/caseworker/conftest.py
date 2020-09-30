@@ -636,7 +636,7 @@ def mock_case_statuses(requests_mock):
     yield data
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def authorized_client(client: Client, settings):
     """
     returns a factory to make a authorized client for a mock_gov_user,

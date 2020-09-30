@@ -189,7 +189,7 @@ def get_control_list_entries(request, convert_to_options=False, converted_contro
         else:
             data = client.get(request, "/static/control-list-entries/?flatten=True")
 
-        for control_list_entry in data.json().get("control_list_entries"):
+        for control_list_entry in data.json().get("control_list_entries", []):
             converted_control_list_entries_cache.append(
                 Option(
                     key=control_list_entry["rating"],
