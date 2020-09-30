@@ -57,6 +57,8 @@ def get_gov_user_from_form_selection(request, pk, json):
 
 
 def post_gov_users(request, json):
+    json.setdefault("first_name", "")
+    json.setdefault("last_name", "")
     data = client.post(request, "/gov-users/", json)
     return data.json(), data.status_code
 

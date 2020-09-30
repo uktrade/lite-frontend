@@ -21,7 +21,7 @@ def goods_type_form(request, application_type: str):
                         name="is_good_controlled",
                         options=[
                             Option(
-                                key="yes",
+                                key=True,
                                 value=CreateGoodsTypeForm.IsControlled.YES,
                                 components=[
                                     control_list_entries_question(
@@ -29,7 +29,7 @@ def goods_type_form(request, application_type: str):
                                     ),
                                 ],
                             ),
-                            Option(key="no", value=CreateGoodsTypeForm.IsControlled.NO),
+                            Option(key=False, value=CreateGoodsTypeForm.IsControlled.NO),
                         ],
                     ),
                     RadioButtons(
