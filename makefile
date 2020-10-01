@@ -1,3 +1,10 @@
+ARGUMENTS = $(filter-out $@,$(MAKECMDGOALS)) $(filter-out --,$(MAKEFLAGS))
+
+manage_caseworker:
+	PIPENV_DOTENV_LOCATION=caseworker.env pipenv run ./manage.py $(ARGUMENTS)
+
+manage_exporter:
+	PIPENV_DOTENV_LOCATION=exporter.env pipenv run ./manage.py $(ARGUMENTS)
 
 clean:
 	-find . -type f -name "*.pyc" -delete
