@@ -60,23 +60,19 @@ LITE_SPIRE_ARCHIVE_EXAMPLE_ORGANISATION_ID = env.int("LITE_SPIRE_ARCHIVE_EXAMPLE
 # static files
 SVG_DIRS = [
     os.path.join(BASE_DIR, "caseworker/assets/images"),
-    os.path.join(BASE_DIR, "shared_assets/lite-frontend/assets/images"),
+    os.path.join(BASE_DIR, "core/assets/images"),
 ]
 
-STATIC_ROOT = os.path.join(DATA_DIR, "caseworker/assets")
-SASS_ROOT = os.path.join(BASE_DIR, "caseworker/assets")
-SASS_PROCESSOR_ROOT = SASS_ROOT
+STATIC_ROOT = os.path.join(DATA_DIR, "caseworker/staticfiles")
 
-COMPRESS_PRECOMPILERS = (("text/x-scss", "django_libsass.SassCompiler"),)
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "caseworker/assets"),
-    os.path.join(BASE_DIR, "shared_assets/node_modules/govuk-frontend/govuk/"),
-    os.path.join(BASE_DIR, "shared_assets/node_modules/govuk-frontend/govuk/assets/"),
-    os.path.join(BASE_DIR, "shared_assets/lite-frontend/"),
+    os.path.join(BASE_DIR, "caseworker/assets/"),
+    os.path.join(BASE_DIR, "caseworker/assets/built/"),
+    os.path.join(BASE_DIR, "node_modules/govuk-frontend/govuk/"),
+    os.path.join(BASE_DIR, "node_modules/govuk-frontend/govuk/assets/"),
+    os.path.join(BASE_DIR, "core/assets/"),
 )
-
-SASS_PROCESSOR_INCLUDE_DIRS = (os.path.join(BASE_DIR, "caseworker/assets"), SASS_ROOT)
 
 LITE_CONTENT_IMPORT_PATH = "lite_content.lite_internal_frontend.strings"
 

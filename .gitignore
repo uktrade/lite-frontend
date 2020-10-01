@@ -169,3 +169,5 @@ fabric.properties
 
 # Custom
 open_licence_returns.csv
+
+node_modules/

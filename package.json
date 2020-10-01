@@ -1,0 +1,28 @@
+{
+  "name": "lite-frontend",
+  "version": "1.0.0",
+  "description": "Combined repo for LITE exporter and caseworker frontends",
+  "main": "gulpfile.js",
+  "scripts": {
+    "build": "./caseworker/caseworker.js && parcel build ./exporter/exporter.js",
+    "build_exporter_css": "parcel build exporter/assets/scss/styles.scss --out-dir exporter/assets/built --public-url /assets/",
+    "build_caseworker_css": "parcel build caseworker/assets/scss/styles.scss  --out-dir caseworker/assets/built --public-url /assets/"
+  },
+  "dependencies": {
+    "govuk-frontend": "^3.7.0"
+  },
+  "devDependencies": {
+    "sass-lint": "^1.13.1",
+    "parcel-bundler": "^1.12.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uktrade/lite-frontend.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/uktrade/lite-frontend/issues"
+  },
+  "homepage": "https://github.com/uktrade/lite-frontend#readme"
+}

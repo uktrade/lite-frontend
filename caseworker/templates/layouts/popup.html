@@ -1,10 +1,12 @@
-{% load sass_tags static svg %}
+{% load svg from svg %}
+{% lad static from staticfiles %}
+
 <!DOCTYPE html>
 <html lang="en" class="govuk-template">
 	<head>
 		<meta charset="utf-8" />
 		<title>Good</title>
-		<link href="{% sass_src 'css/styles.scss' %}" rel="stylesheet" type="text/css" />
+		<link href="{% static 'built/styles.css' %}" rel="stylesheet" type="text/css" />
 		<script src="{% static 'javascripts/jquery.min.js' %}"></script>
 	</head>
 	<body class="app-popup">
