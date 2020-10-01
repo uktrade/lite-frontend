@@ -1,5 +1,6 @@
 from __future__ import division
 
+import math
 import datetime
 import json
 from importlib import import_module
@@ -28,13 +29,50 @@ from exporter.core.constants import (
 )
 from exporter.applications.constants import F680
 
-from caseworker.core.constants import SystemTeamsID
+from caseworker.core.constants import SystemTeamsID, SLA_CIRCUMFERENCE
 
 
 strings = import_module(settings.LITE_CONTENT_IMPORT_PATH)
 
 register = template.Library()
 STRING_NOT_FOUND_ERROR = "STRING_NOT_FOUND"
+
+
+@register.filter(name="sla_colour")
+def sla_colour(value, arg):
+    """
+    Template tag to calculate the colour of caseworker/templates/includes/sla_display.html
+    """
+    since_raised = int(value)
+
+    if arg == 'hours':
+        if since_raised >= 48:
+            return 'red'
+        else:
+            return 'orange'
+
+    elif arg == 'days':
+        if since_raised >= 5:
+            return 'green'
+        elif since_raised < 5 and since_raised > 0:
+            return 'orange'
+        elif since_raised <= 0:
+            return 'red'
+
+    else:
+        raise ValueError('Please specify whether the time remaining is hours or days eg "value|sla_colour:\'hours\'"')
+
+
+@register.filter(name="sla_ratio")
+def sla_ratio(value, arg):
+    """
+    Template tag to calculate the stroke-dashoffset in caseworker/templates/includes/sla_display.html
+    """
+
+    remaining = int(value)
+    total = int(arg)
+
+    return SLA_CIRCUMFERENCE - (remaining / total * SLA_CIRCUMFERENCE)
 
 
 @register.simple_tag(name="lcs")
