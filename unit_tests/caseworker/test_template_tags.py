@@ -1,5 +1,7 @@
 from core.builtins import custom_tags
 
+from caseworker.core.constants import SLA_CIRCUMFERENCE
+
 import pytest
 
 
@@ -23,3 +25,32 @@ import pytest
 )
 def test_divide(value, other, expected):
     assert custom_tags.divide(value, other) == expected
+
+
+def test_sla_ratio():
+    actual = custom_tags.sla_ratio(1, 10)
+    expected = SLA_CIRCUMFERENCE - (1 / 10 * SLA_CIRCUMFERENCE)
+    assert actual == expected
+
+
+@pytest.mark.parametrize(
+    "remaining, unit, colour",
+    (
+        (50, 'hours', 'red'),
+        (48, 'hours', 'red'),
+        (10, 'hours', 'orange'),
+        (10, 'days', 'green'),
+        (5, 'days', 'green'),
+        (4, 'days', 'orange'),
+        (0, 'days', 'red'),
+        (-1, 'days', 'red'),
+    ),
+)
+def test_sla_colour(remaining, unit, colour):
+    actual = custom_tags.sla_colour(remaining, unit)
+    assert actual == colour
+
+
+def test_sla_colour_missing_unit():
+    with pytest.raises(ValueError):
+        custom_tags.sla_colour(10, '')

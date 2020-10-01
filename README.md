@@ -68,6 +68,14 @@ make run_exporter
     - [http://localhost:8200](http://localhost:8200) for the caseworker frontend
     - [http://localhost:8300](http://localhost:8300) for the exporter frontend
 
+#### Running unit tests
+
+To run unit tests:
+
+```
+make run_unit_tests
+```
+
 ## Helpful links
 
 - [GDS service standards](https://www.gov.uk/service-manual/service-standard)

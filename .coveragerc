@@ -1,0 +1,15 @@
+[run]
+omit =
+  .venv/*
+  conf/*.py
+  manage.py
+  **/tests/*
+  *__init__*
+  */admin.py
+  */migrations/*
+  **/conftest.py
+  ui_tests/*
+  unit_tests/*
+  tests_common/*
+  pipeline/*
+  lite_content/*
