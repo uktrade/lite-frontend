@@ -69,8 +69,6 @@ STATIC_ROOT = os.path.join(DATA_DIR, "caseworker/staticfiles")
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "caseworker/assets/"),
     os.path.join(BASE_DIR, "caseworker/assets/built/"),
-    os.path.join(BASE_DIR, "node_modules/govuk-frontend/govuk/"),
-    os.path.join(BASE_DIR, "node_modules/govuk-frontend/govuk/assets/"),
     os.path.join(BASE_DIR, "core/assets/"),
 )
 

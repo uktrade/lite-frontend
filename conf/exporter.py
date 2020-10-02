@@ -54,8 +54,6 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "core/assets/"),
     os.path.join(BASE_DIR, "exporter/assets"),
     os.path.join(BASE_DIR, "exporter/assets/built/"),
-    os.path.join(BASE_DIR, "node_modules/govuk-frontend/govuk/"),
-    os.path.join(BASE_DIR, "node_modules/govuk-frontend/govuk/assets/"),
 )
 
 LITE_CONTENT_IMPORT_PATH = "lite_content.lite_exporter_frontend.strings"
