@@ -1,0 +1,28 @@
+// Set defaults
+$govuk-page-width: 2000px !default;
+$govuk-root-font-size: 19px !default;
+$govuk-font-family: Segoe UI, -apple-system, BlinkMacSystemFont, Arial, Sans-Serif;
+$govuk-brand-colour: #31363F !default;
+
+
+@function get_govuk_image_asset_url($filename) {
+  @return url("../../../node_modules/govuk-frontend/govuk/assets/images/" + $filename);
+}
+
+@function get_govuk_font_asset_url($filename) {
+  @return url("../../../node_modules/govuk-frontend/govuk/assets/fonts/" + $filename);
+}
+
+$govuk-image-url-function: 'get_govuk_image_asset_url';
+$govuk-font-url-function: 'get_govuk_font_asset_url';
+
+@import "node_modules/govuk-frontend/govuk/all";
+@import "core/assets/scss/all";
+@import 'caseworker/assets/scss/lightpick';
+
+@import "overrides/all";
+@import "components/all";
+
+@import "placeholder";
+// Temporary file for odd bits of SCSS
+// Will be cleaned up every story

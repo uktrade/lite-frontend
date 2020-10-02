@@ -33,7 +33,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "sass_processor",
     "django.contrib.humanize",
     "svg",
     "lite_forms",
@@ -105,20 +104,15 @@ LOGIN_URL = reverse_lazy("auth:login")
 
 DATA_DIR = os.path.dirname(BASE_DIR)
 
-SASS_OUTPUT_STYLE = "compressed"
-
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
-    "sass_processor.finders.CssFinder",
 )
 
 STATIC_URL = "/assets/"
 
 # Cache static files
 STATICFILES_STORAGE = env.str("STATICFILES_STORAGE", "whitenoise.storage.CompressedManifestStaticFilesStorage")
-
-SASS_PROCESSOR_ENABLED = True
 
 # File Upload
 # https://github.com/uktrade/s3chunkuploader
