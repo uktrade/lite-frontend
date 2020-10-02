@@ -1,4 +1,5 @@
 from http import HTTPStatus
+import json
 
 from django.contrib import messages
 from django.shortcuts import render
@@ -72,7 +73,8 @@ class Cases(LoginRequiredMixin, TemplateView):
         context = {
             "sla_radius": SLA_RADIUS,
             "sla_circumference": SLA_CIRCUMFERENCE,
-            "cases": self.cases,
+            "cases2": self.cases,
+            "cases": json.dumps(self.cases),
             "queue": self.queue,  # Used for showing current queue
             "filters": case_filters_bar(self.request, self.queue),
             "params": convert_parameters_to_query_params(self.request.GET),  # Used for passing params to JS

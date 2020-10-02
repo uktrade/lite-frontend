@@ -4,7 +4,8 @@
   "description": "Combined repo for LITE exporter and caseworker frontends",
   "private": true,
   "scripts": {
-    "build": "parcel build ./caseworker/caseworker.js && parcel build ./exporter/exporter.js"
+    "build": "parcel build ./caseworker/bundle.js ./exporter/bundle.js",
+    "watch": "parcel watch ./caseworker/bundle.js ./exporter/bundle.js"
   },
   "engines": {
     "node": ">=12.16.1"

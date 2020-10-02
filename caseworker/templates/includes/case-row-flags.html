@@ -1,0 +1,8 @@
+
+<ol class="app-flags app-flags--list">
+	{% for flag in flags %}
+		<li
+			class="app-flag app-flag--{{ flag.colour }}"
+			{% if flag.label %}data-tooltip="{{ flag.label }}"{% endif %}>{{ flag.name }}</li>
+	{% endfor %}
+</ol>
