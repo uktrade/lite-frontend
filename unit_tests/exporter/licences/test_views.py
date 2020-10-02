@@ -140,8 +140,8 @@ def mock_list_open_general_licences(data_list_open_general_licences, requests_mo
 
 
 @pytest.fixture
-def client(authorized_client, mock_exporter_user, mock_control_list_entries, mock_countries):
-    return authorized_client(mock_exporter_user["user"])
+def client(authorized_client, mock_control_list_entries, mock_countries):
+    return authorized_client
 
 
 def test_open_and_standard_licences(client, data_list_licences):

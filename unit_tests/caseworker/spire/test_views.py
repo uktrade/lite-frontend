@@ -17,22 +17,18 @@ def mock_spire_application_get(requests_mock):
 
 
 def test_feature_flag_on(settings, authorized_client, mock_gov_user):
-    client = authorized_client(mock_gov_user["user"])
-
     # given the feature flag is enabled
     settings.FEATURE_SPIRE_SEARCH_ON = True
     reload_urlconf()
 
     # when the spire page is requested
-    response = client.get(reverse("spire:application-search"))
+    response = authorized_client.get(reverse("spire:application-search"))
 
     # then it will be served
     assert response.status_code == 200
 
 
-def test_feature_flag_off(settings, authorized_client, mock_gov_user):
-    client = authorized_client(mock_gov_user["user"])
-
+def test_feature_flag_off(settings, authorized_client):
     # enabling the feature to allow generating the url
     settings.FEATURE_SPIRE_SEARCH_ON = True
     reload_urlconf()
@@ -43,7 +39,7 @@ def test_feature_flag_off(settings, authorized_client, mock_gov_user):
     reload_urlconf()
 
     # when the spire page is requested
-    response = client.get(url)
+    response = authorized_client.get(url)
 
     # then it will not be served
     assert response.status_code == 404

@@ -230,7 +230,6 @@ def post_review_goods(request, case_id, json):
     json = {
         "objects": request.GET.getlist("goods", request.GET.getlist("goods_types")),
         "comment": request.POST.get("comment"),
-        "canonical_good_comment": request.POST.get("canonical_good_comment"),
         "control_list_entries": request.POST.getlist("control_list_entries[]", []),
         "is_good_controlled": request.POST.get("is_good_controlled") == "True",
         "report_summary": request.POST.get("report_summary"),

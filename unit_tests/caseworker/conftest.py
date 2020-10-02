@@ -637,7 +637,7 @@ def mock_case_statuses(requests_mock):
 
 
 @pytest.fixture
-def authorized_client(client: Client, settings):
+def authorized_client_factory(client: Client, settings):
     """
     returns a factory to make a authorized client for a mock_gov_user,
 
@@ -663,3 +663,8 @@ def authorized_client(client: Client, settings):
         return client
 
     yield _inner
+
+
+@pytest.fixture
+def authorized_client(mock_gov_user, authorized_client_factory):
+    return authorized_client_factory(mock_gov_user["user"])
