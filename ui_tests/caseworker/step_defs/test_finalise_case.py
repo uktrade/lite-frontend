@@ -44,9 +44,7 @@ def applied_for_goods_details(driver, context):
     page = GrantLicencePage(driver)
     good_on_app_id = context.goods[0]["id"]
     assert context.goods[0]["quantity"] == float(page.get_good_quantity(good_on_app_id))
-    assert round(float(context.goods[0]["value"]) * context.goods[0]["quantity"], 2) == float(
-        page.get_good_value(good_on_app_id)
-    )
+    assert float(context.goods[0]["value"]) == float(page.get_good_value(good_on_app_id))
     date_in_form = GrantLicencePage(driver).get_date_in_date_entry()
     today = date.today()
     assert today.day == int(date_in_form["day"])

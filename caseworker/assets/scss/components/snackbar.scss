@@ -1,3 +1,5 @@
+@import "node_modules/govuk-frontend/govuk/all";
+
 .app-snackbar {
 	@include govuk-font($size: 19, $weight: bold);
 	display: block;

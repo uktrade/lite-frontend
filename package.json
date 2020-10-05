@@ -4,6 +4,8 @@
   "description": "Combined repo for LITE exporter and caseworker frontends",
   "private": true,
   "scripts": {
+    "build_exporter_css": "parcel build exporter/assets/scss/styles.scss --out-dir exporter/assets/built --public-url /assets/",
+    "build_caseworker_css": "parcel build caseworker/assets/scss/styles.scss  --out-dir caseworker/assets/built --public-url /assets/",
     "build": "parcel build ./caseworker/bundle.js ./exporter/bundle.js",
     "watch": "parcel watch ./caseworker/bundle.js ./exporter/bundle.js"
   },
@@ -20,7 +22,9 @@
     "url": "https://github.com/uktrade/lite-frontend/issues"
   },
   "homepage": "https://github.com/uktrade/lite-frontend#readme",
-  "dependencies": {},
+  "dependencies": {
+    "govuk-frontend": "^3.7.0"
+  },
   "devDependencies": {
     "@popperjs/core": "^2.4.4",
     "accessible-autocomplete": "^2.0.3",

@@ -751,8 +751,7 @@ def get_end_use_details_status(application):
         fields += ["is_military_end_use_controls", "is_informed_wmd", "is_suspected_wmd"]
         if application.sub_type == STANDARD:
             fields.append("is_eu_military")
-
-    end_use_detail_field_data = [application.get(field) for field in fields]
+    end_use_detail_field_data = [application.get(field) is not None for field in fields]
 
     if all(end_use_detail_field_data):
         return DONE

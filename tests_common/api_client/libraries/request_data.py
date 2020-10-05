@@ -51,7 +51,7 @@ def build_organisation(name, type, address):
 def build_good(description, control_list_entry="ML1a", part_number="1234"):
     return {
         "description": description,
-        "is_good_controlled": "yes",
+        "is_good_controlled": True,
         "control_list_entries": [control_list_entry],
         "part_number": part_number,
         "validate_only": False,
@@ -121,7 +121,7 @@ def build_request_data(exporter_user, gov_user):
         "add_good": {"good_id": "", "quantity": 1234, "unit": "NAR", "value": 123.45, "is_good_incorporated": True},
         "clc_good": {
             "description": fake.bs(),
-            "is_good_controlled": "unsure",
+            "is_good_controlled": None,
             "control_list_entries": [],
             "is_good_incorporated": True,
             "part_number": fake.ean(length=8),
@@ -138,7 +138,7 @@ def build_request_data(exporter_user, gov_user):
         },
         "grading_good": {
             "description": fake.bs(),
-            "is_good_controlled": "yes",
+            "is_good_controlled": True,
             "control_list_entries": ["ML1a"],
             "is_good_incorporated": True,
             "part_number": fake.ean(length=8),

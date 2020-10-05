@@ -25,6 +25,10 @@ filter_names = "|".join(
         "queue",
         "team",
         "database",
+        "report_summary",
+        "incorporated",
+        "case_type",
+        "case_subtype",
         *build_filter_lookups("created"),
         *build_filter_lookups("updated"),
     ]

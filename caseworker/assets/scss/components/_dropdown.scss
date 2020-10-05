@@ -22,7 +22,7 @@
 			text-decoration: none!important;
 			color: govuk-colour("black");
 			&:after {
-				background-image: url("/assets/images/chevron-inverted.svg");
+				background-image: url("../../assets/images/chevron-inverted.svg");
 			}
 		}
 
@@ -31,9 +31,8 @@
 			position: absolute;
 			top: 0;
 			bottom: 0;
-			right: 0;
 			width: 25px;
-			background-image: url("/assets/images/chevron.svg");
+			background-image: url("../../assets/images/chevron.svg");
 			background-position: center;
 			background-repeat: no-repeat;
 			background-size: contain;

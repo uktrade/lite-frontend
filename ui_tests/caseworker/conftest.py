@@ -314,6 +314,7 @@ def generated_document(driver, context):  # noqa
     parsers.parse('I respond "{controlled}", "{control_list_entry}", "{report}", "{comment}" and click submit')
 )  # noqa
 def click_continue(driver, controlled, control_list_entry, report, comment, context):  # noqa
+    controlled = controlled == "yes"
     query_page = GoodsQueriesPages(driver)
     query_page.click_is_good_controlled(controlled)
     query_page.type_in_to_control_list_entry(control_list_entry)

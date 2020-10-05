@@ -140,7 +140,7 @@ jobs:
     environment:
       <<: *common_env_vars
       PIPENV_DOTENV_LOCATION: example.exporter.env
-      PYTEST_ADDOPTS: unit_tests/exporter --capture=no --nomigrations
+      PYTEST_ADDOPTS: unit_tests/exporter unit_tests/core --capture=no --nomigrations
     steps:
       - setup_code
       - unit_tests

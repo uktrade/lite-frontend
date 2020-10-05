@@ -46,24 +46,17 @@ GOOGLE_ANALYTICS_KEY = env.str("GOOGLE_ANALYTICS_KEY")
 SVG_DIRS = [
     os.path.join(BASE_DIR, "dist"),
     os.path.join(BASE_DIR, "exporter/assets/images"),
-    os.path.join(BASE_DIR, "shared_assets/lite-frontend/assets/images"),
+    os.path.join(BASE_DIR, "core/assets/images"),
 ]
 
-STATIC_ROOT = os.path.join(DATA_DIR, "exporter/assets")
-SASS_ROOT = os.path.join(BASE_DIR, "exporter/assets")
-SASS_PROCESSOR_ROOT = SASS_ROOT
-
-COMPRESS_PRECOMPILERS = (("text/x-scss", "django_libsass.SassCompiler"),)
+STATIC_ROOT = os.path.join(DATA_DIR, "exporter/staticfiles")
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "dist"),
+    os.path.join(BASE_DIR, "core/assets/"),
     os.path.join(BASE_DIR, "exporter/assets"),
-    os.path.join(BASE_DIR, "shared_assets/node_modules/govuk-frontend/govuk/"),
-    os.path.join(BASE_DIR, "shared_assets/node_modules/govuk-frontend/govuk/assets/"),
-    os.path.join(BASE_DIR, "shared_assets/lite-frontend/"),
+    os.path.join(BASE_DIR, "exporter/assets/built/"),
 )
-
-SASS_PROCESSOR_INCLUDE_DIRS = (os.path.join(BASE_DIR, "exporter/assets"), SASS_ROOT)
 
 LITE_CONTENT_IMPORT_PATH = "lite_content.lite_exporter_frontend.strings"
 

@@ -78,12 +78,21 @@
 							</td>
 						{% endif %}
 						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+
 							<span class="govuk-table__header" aria-hidden="false">Controlled</span>
-							{{ good.good.is_good_controlled.value }}
+							{% if good.is_good_controlled is not None %}
+								{{ good.is_good_controlled|yesno:'Yes,No' }}
+							{% else %}
+								{{ good.good.is_good_controlled.value }}
+							{% endif %}
 						</td>
 						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
 							<span class="govuk-table__header" aria-hidden="false">Control list entries</span>
-							{% include 'includes/control-list-entries.html' with control_list_entries=good.good.control_list_entries %}
+							{% if good.is_good_controlled is not None %}
+								{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}
+							{% else %}
+								{% include 'includes/control-list-entries.html' with control_list_entries=good.good.control_list_entries %}
+							{% endif %}
 						</td>
 						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
 							<span class="govuk-table__header" aria-hidden="false">Incorporated</span>
@@ -128,7 +137,7 @@
 						{% endif %}
 						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
 							<span class="govuk-table__header" aria-hidden="false">Flags</span>
-							{% include 'includes/flags.html' with flags=good.flags list=True %}
+							{% include 'includes/flags.html' with flags=good.good.flags list=True %}
 						</td>
 						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}" id="view-good-details">
 							<a class="govuk-link govuk-link--no-visited-state" href="#" onclick="return openGoodModal('{{ good.good.id }}', '{{ good.good.description }}')">View</a>

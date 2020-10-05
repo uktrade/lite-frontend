@@ -1,7 +1,21 @@
 $lite-transition-speed: 0s !default;
 $govuk-page-width: 1200px !default;
-@import "../../shared_assets/node_modules/govuk-frontend/govuk/all"; // GOV.UK Design System
-@import "../../shared_assets/lite-frontend/scss/all"; // LITE Design System
+
+@function get_govuk_image_asset_url($filename) {
+  @return url("../../../node_modules/govuk-frontend/govuk/assets/images/" + $filename);
+}
+
+@function get_govuk_font_asset_url($filename) {
+  @return url("../../../node_modules/govuk-frontend/govuk/assets/fonts/" + $filename);
+}
+
+$govuk-image-url-function: 'get_govuk_image_asset_url';
+$govuk-font-url-function: 'get_govuk_font_asset_url';
+
+
+
+@import "node_modules/govuk-frontend/govuk/all"; // GOV.UK Design System
+@import "core/assets/scss/all"; // LITE Design System
 @import "components/all"; // Local assets
 @import "overrides/all";
 

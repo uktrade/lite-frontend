@@ -11,9 +11,7 @@ options:
 # File Options
 files:
   include:
-    - 'lite-frontend/**/*.s+(a|c)ss'
-  ignore:
-    - 'lite-frontend/scss/all.scss'
+    - '**/assets/scss/**/*.s+(a|c)ss'
 # Rule Configuration
 rules:
   extends-before-mixins: 2

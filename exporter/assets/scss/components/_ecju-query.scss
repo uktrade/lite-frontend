@@ -50,7 +50,6 @@ $text-margin: govuk-spacing(3);
 
     &__text {
         @include govuk-font($size: 19);
-
         display: inline-block;
         background-color: govuk-colour("light-grey");
         border: 2px solid darken(govuk-colour("light-grey"), 2%);
