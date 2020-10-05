@@ -26,7 +26,7 @@ def mock_exporter_user(requests_mock):
 
 
 @pytest.fixture
-def authorized_client(client: Client, settings):
+def authorized_client_factory(client: Client, settings):
     """
     returns a factory to make a authorized client for a mock_exporter_user,
 
@@ -55,17 +55,8 @@ def authorized_client(client: Client, settings):
 
 
 @pytest.fixture
-def mock_control_list_entries(requests_mock):
-    url = client._build_absolute_uri("/static/control-list-entries/?flatten=True")
-    # in relity there are around 3000 CLCs
-    data = {
-        "control_list_entries": [
-            {"rating": "ML1", "text": "Smooth-bore weapons with a calibre of less than 20mm, other firearms..."},
-            {"rating": "ML1a", "text": "Rifles and combination guns, handguns, machine, sub-machine and volley guns"},
-        ]
-    }
-    requests_mock.get(url=url, json=data)
-    yield data
+def authorized_client(authorized_client_factory, mock_exporter_user):
+    return authorized_client_factory(mock_exporter_user["user"])
 
 
 @pytest.fixture

@@ -125,7 +125,6 @@ def flatten_goods_data(items: List[Dict]):
         "control_list_entries": control_list_entries,
         "report_summary": report_summary,
         "comment": same_value(control_review, "comment"),
-        "canonical_good_comment": same_value(goods, "comment"),
     }
 
 

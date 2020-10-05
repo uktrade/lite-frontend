@@ -1,8 +1,4 @@
-from django.urls import reverse
-from django.utils.html import mark_safe
-
 from caseworker.core.components import PicklistPicker
-from caseworker.core.services import get_control_list_entries
 from lite_content.lite_internal_frontend import goods
 from lite_content.lite_internal_frontend.strings import cases
 from lite_forms.common import control_list_entries_question
@@ -10,25 +6,7 @@ from lite_forms.components import Form, RadioButtons, Option, TextArea, DetailCo
 from caseworker.picklists.enums import PicklistCategories
 
 
-def review_goods_form(request, is_goods_type, **kwargs):
-    if is_goods_type:
-        comment_components = [TextArea(name="comment", extras={"max_length": 500})]
-    else:
-        comment_components = [
-            TextArea(
-                title=mark_safe("Comment about the product <b>in the context of this specific application</b>"),
-                description="This information will be attached to the application",
-                name="comment",
-                extras={"max_length": 500},
-            ),
-            TextArea(
-                title=mark_safe("Comment about the product <b>independent of this application</b>"),
-                description="This information will be attached to the product",
-                name="canonical_good_comment",
-                extras={"max_length": 500},
-            ),
-        ]
-
+def review_goods_form(control_list_entries, back_url):
     return Form(
         title=cases.ReviewGoodsForm.HEADING,
         questions=[
@@ -38,8 +16,7 @@ def review_goods_form(request, is_goods_type, **kwargs):
                 options=[Option(key=True, value="Yes"), Option(key=False, value="No"),],
             ),
             control_list_entries_question(
-                control_list_entries=get_control_list_entries(request, convert_to_options=True),
-                title=goods.ReviewGoods.ControlListEntries.TITLE,
+                control_list_entries=control_list_entries, title=goods.ReviewGoods.ControlListEntries.TITLE,
             ),
             PicklistPicker(
                 target="report_summary",
@@ -49,10 +26,13 @@ def review_goods_form(request, is_goods_type, **kwargs):
                 set_text=False,
                 allow_clear=True,
             ),
-            DetailComponent(title=goods.ReviewGoods.Comment.TITLE, components=comment_components,),
+            DetailComponent(
+                title=goods.ReviewGoods.Comment.TITLE,
+                components=[TextArea(name="comment", extras={"max_length": 500})],
+            ),
         ],
         default_button_name=cases.ReviewGoodsForm.CONFIRM_BUTTON,
         container="case",
-        back_link=BackLink(url=reverse("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": kwargs["pk"]})),
+        back_link=BackLink(url=back_url),
         helpers=[HelpSection(goods.ReviewGoods.GIVING_ADVICE_ON, "", includes="case/includes/selection-sidebar.html")],
     )
