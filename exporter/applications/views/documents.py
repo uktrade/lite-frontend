@@ -21,7 +21,7 @@ from core.auth.views import LoginRequiredMixin
 
 
 def get_upload_page(path, draft_id, is_permanent_application=False):
-    paths = document_switch(path)
+    paths = document_switch(path=path)
     is_document_optional = paths["optional"]
     # For standard permanent only - upload is mandatory
     if "/end-user" in path and is_permanent_application:
