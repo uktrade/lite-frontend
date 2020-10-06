@@ -4,10 +4,10 @@
   "description": "Combined repo for LITE exporter and caseworker frontends",
   "private": true,
   "scripts": {
-    "build_exporter_css": "parcel build exporter/assets/scss/styles.scss --out-dir exporter/assets/built --public-url /assets/",
-    "build_caseworker_css": "parcel build caseworker/assets/scss/styles.scss  --out-dir caseworker/assets/built --public-url /assets/",
-    "build": "parcel build ./caseworker/bundle.js ./exporter/bundle.js",
-    "watch": "parcel watch ./caseworker/bundle.js ./exporter/bundle.js"
+    "build_exporter": "parcel build ./exporter/assets/javascripts/main.js --out-dir exporter/assets/built --public-url /assets/",
+    "build_caseworker": "parcel build ./caseworker/assets/javascripts/main.js --out-dir caseworker/assets/built --public-url /assets/ --no-content-hash",
+    "watch_exporter": "parcel watch ./exporter/assets/javascripts/main.js --out-dir exporter/assets/built --public-url /assets/",
+    "watch_caseworker": "parcel watch ./caseworker/assets/javascripts/main.js --out-dir caseworker/assets/built --public-url /assets/"
   },
   "engines": {
     "node": ">=12.16.1"
@@ -22,20 +22,19 @@
     "url": "https://github.com/uktrade/lite-frontend/issues"
   },
   "homepage": "https://github.com/uktrade/lite-frontend#readme",
-  "dependencies": {
-    "govuk-frontend": "^3.7.0"
-  },
   "devDependencies": {
     "@popperjs/core": "^2.4.4",
     "accessible-autocomplete": "^2.0.3",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.10.0",
     "govuk-frontend": "^3.9.0",
     "highlight-within-textarea": "^2.0.5",
     "jquery": "^3.5.1",
     "lightpick": "^1.6.2",
     "mark.js": "^8.11.1",
     "parcel-bundler": "^1.12.4",
+    "sass": "^1.26.11",
     "sass-lint": "^1.13.1",
-    "sass-loader": "^10.0.2",
     "sortablejs": "^1.11.2-alpha.3",
     "tippy.js": "^6.2.6",
     "tokenfield": "^1.4.4",
