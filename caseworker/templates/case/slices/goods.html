@@ -140,7 +140,7 @@
 							{% include 'includes/flags.html' with flags=good.good.flags list=True %}
 						</td>
 						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}" id="view-good-details">
-							<a class="govuk-link govuk-link--no-visited-state" href="#" onclick="return openGoodModal('{{ good.good.id }}', '{{ good.good.description }}')">View</a>
+							<a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:good' queue_pk=queue.id pk=case.id good_pk=good.id %}">View full product details</a>
 						</td>
 					</tr>
 					{% if show_advice %}

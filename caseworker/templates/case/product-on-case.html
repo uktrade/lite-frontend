@@ -1,0 +1,184 @@
+{% extends 'layouts/case.html' %}
+
+{% load static from staticfiles %}
+
+{% block details %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <a class="lite-back-link-button" id="back-link" href="{% url 'cases:case' queue_pk=queue.id pk=case.id %}">Back</a>
+            <div class="govuk-!-margin-top-9 govuk-!-margin-bottom-9">
+                <h2 class="govuk-heading-xl govuk-!-margin-bottom-3">Product details</h2>
+                <div class="govuk-caption-l">{{ good_on_application.good.description}}</div>
+            </div>
+
+            <form id="tab-form" class="govuk-body govuk-!-margin-bottom-0" autocomplete="off">
+                <input type="radio" id="radio-full-details" name="tab" value="full-details-tab" checked="checked">
+                <label for="radio-full-details">Full details</label>
+                <input type="radio" id="radio-history" name="tab" value="history-tab">
+                <label for="radio-history">History</label>
+                <input type="radio" id="cases" name="tab" value="related-cases-tab">
+                <label for="cases">Cases</label> 
+            </form>
+
+            <div id="full-details-tab" class="product-on-cases-tab">
+                <h2 class="govuk-heading-l">Full details</h2>
+                <table class="govuk-table app-table">
+                    <tbody class="govuk-table__body" id="tbody-placeholder">
+                        <tr class="govuk-table__row app-table__row">
+                            <th scope="row" class="govuk-table__header">Category</th>
+                            <td class="govuk-table__cell">{{ good_on_application.good.item_category.value }}</td>
+                        </tr>
+                        <tr class="govuk-table__row app-table__row">
+                            <th scope="row" class="govuk-table__header">Description</th>
+                            <td class="govuk-table__cell">{{ good_on_application.good.description }}</td>
+                        </tr>
+                        <tr class="govuk-table__row app-table__row">
+                            <th scope="row" class="govuk-table__header">Part number</th>
+                            <td class="govuk-table__cell">{{ good_on_application.good.part_number }}</td>
+                        </tr>
+                        <tr class="govuk-table__row app-table__row">
+                            <th scope="row" class="govuk-table__header">Value</th>
+                            <td class="govuk-table__cell">{{ good_on_application.value }}</td>
+                        </tr>
+                        <tr class="govuk-table__row app-table__row">
+                            <th scope="row" class="govuk-table__header">Licensable</th>
+                            <td class="govuk-table__cell">{{ good_on_application.is_good_controlled|yesno|title }}</td>
+                        </tr>
+                        <tr class="govuk-table__row app-table__row">
+                            <th scope="row" class="govuk-table__header">Control list entries</th>
+                            <td class="govuk-table__cell">
+                                {% for control_list_entry in good_on_application.control_list_entries %}
+                                    {{ control_list_entry.rating }}
+                                    {% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </td>
+                        </tr>
+                        <tr class="govuk-table__row app-table__row">
+                            <th scope="row" class="govuk-table__header">Security graded</th>
+                            <td class="govuk-table__cell">
+                                {{ good_on_application.good.is_pv_graded|yesno|title }}
+                                {% if good_on_application.good.grading_comment %}
+                                    - {{ good_on_application.good.grading_comment }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr class="govuk-table__row app-table__row">
+                            <th scope="row" class="govuk-table__header">Product type</th>
+                            <td class="govuk-table__cell">
+                                {% if good_on_application.item_type %}
+                                    {{ good_on_application.item_type }}
+                                {% elif good_on_application.other_item_type %}
+                                    {{ good_on_application.other_item_type }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% if good_on_application.good.firearm_details %}
+                            <tr class="govuk-table__row app-table__row">
+                                <th scope="row" class="govuk-table__header">Year of manufacture</th>
+                                <td class="govuk-table__cell">{{ good_on_application.good.firearm_details.year_of_manufacture }}</td>
+                            </tr>
+                            <tr class="govuk-table__row app-table__row">
+                                <th scope="row" class="govuk-table__header">Calibre</th>
+                                <td class="govuk-table__cell">{{ good_on_application.good.firearm_details.calibre }}</td>
+                            </tr>
+                            <tr class="govuk-table__row app-table__row">
+                                <th scope="row" class="govuk-table__header">Covered by Firearms Act 1968</th>
+                                <td class="govuk-table__cell">
+                                    {% if good_on_application.good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five %}
+                                        Yes, section {{ good_on_application.good.firearm_details.section_certificate_number}} 
+                                    {% else %}
+                                        No
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr class="govuk-table__row app-table__row">
+                                <th scope="row" class="govuk-table__header">Identification markings</th>
+                                <td class="govuk-table__cell">
+                                    {% if good_on_application.good.firearm_details.has_identification_markings %}
+                                        Yes, {{ good_on_application.good.firearm_details.identification_markings_details }}
+                                    {% else %}
+                                        No, {{ good_on_application.no_identification_markings_details.identification_markings_details }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endif %}
+                        <tr class="govuk-table__row app-table__row">
+                            <th scope="row" class="govuk-table__header">Incorporated</th>
+                            <td class="govuk-table__cell">{{ good_on_application|yesno|title }}</td>
+                        </tr>
+                        <tr class="govuk-table__row app-table__row">
+                            <th scope="row" class="govuk-table__header">Document</th>
+                            <td class="govuk-table__cell">
+                                {{ good_on_application.good.missing_document_reason.value }}
+                                {% for document in good_on_application.good.documents %}
+                                <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}">{{ document.name }}</a>
+                                    {% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="history-tab" class="product-on-cases-tab">
+                <h2 class="govuk-heading-l">History</h2>
+                {% include "includes/audit-trail.html" with activity=good_on_application.audit_trail %}
+            </div>
+
+            <div id="related-cases-tab" class="product-on-cases-tab">
+                <h2 class="govuk-heading-l">Cases</h2>
+                <p class="govuk-body">Other cases this product's part number and control list entries appear in</p>
+                {% include "search/results_cases.html" with results=other_cases %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+    <script src="{% static 'javascripts/lightpick.js' %}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tarekraafat-autocomplete.js/7.2.0/css/autoComplete.css" integrity="sha512-eP0uk3AYTRMF+HDgLNFW8cFh0mO73gVsnJdgqXH94Zc//fEgtNzMmdyK+cX8qF/SCs7gKUUkeJhJsiTRJstEKA==" crossorigin="anonymous" /><script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/fetch/3.4.0/fetch.min.js" integrity="sha512-+iXlQLHKQZYoFQZfyWkUuJB6X7aZA2+FvAB5PyiYzxRKbgmSLp6vzwXjTlqdvKV5OJS09HHN4lIekb5OOCKhQw==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tarekraafat-autocomplete.js/7.2.0/js/autoComplete.min.js" integrity="sha512-1Fr8m8dxYPgUEwpEKZy1AIUZnGupa1bhl7GbG+ueWxlWVBJvdEnLdgQVQA8pqkrrmkTV0DW7C5ZVmVGdJmMuZg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/url-search-params/1.1.0/url-search-params.js" integrity="sha512-XITCo00srdVr9XH7ep5JEijPPpLA60TqvvoqLCyQlIdctLUjEsIRCtlgSaoj+RbsF+e/YnkaRTV/7Ei5GvVylg==" crossorigin="anonymous"></script>
+    <script src="{% static 'javascripts/search-cases.js' %}"></script>
+    <script type="text/javascript">
+        var form = document.getElementById('tab-form');
+        var tabs = document.getElementsByClassName('product-on-cases-tab');
+        function handleSwitchTab(showThisOnly) {
+            for (var i = 0; i < tabs.length; i++) {
+               var tab = tabs.item(i);
+               tab.style.display = tab.id === showThisOnly ? 'block' : 'none';
+            }
+        }
+        form.addEventListener('change', function(event) { handleSwitchTab(event.target.value) });
+        handleSwitchTab('full-details-tab')
+    </script>
+    <style type="text/css">
+        #tab-form input {
+            display: none;
+        }
+        #tab-form label {
+            background-color: #f3f2f1;
+            display: inline-block;
+            padding-bottom: 15px;
+            padding: 15px 20px;
+            cursor: pointer;
+        }
+        .product-on-cases-tab,
+        #tab-form input:checked + label {
+            border: 1px solid #eeedec;
+            background-color: white;
+            padding: 20px;
+        }
+        #tab-form input:checked + label {
+            bottom: -1px;
+            border-bottom: 0;
+            position: relative;
+        }
+        .product-on-cases-tab {
+            overflow: hidden;
+        }
+    </style>
+{% endblock %}
