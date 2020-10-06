@@ -1,17 +1,18 @@
-$( '.lite-button-checkbox' ).click(function() {
-	$table = $(this).closest('table');
 
-	if ($table.find('input:checkbox:checked').length == $table.find('input:checkbox').length) {
-		$table.find('input:checkbox').prop('checked', false).change();
-	} else {
-		$table.find('input:checkbox').prop('checked', true).change();
-	}
-
-	setSelectButtonsState();
-});
-
-function setCheckboxEvent() {
+export default function initSelectButtons() {
 	$( 'input:checkbox' ).change(function() {
+		setSelectButtonsState();
+	});
+
+	$('.lite-button-checkbox').click(function() {
+		const $table = $(this).closest('table');
+
+		if ($table.find('input:checkbox:checked').length == $table.find('input:checkbox').length) {
+			$table.find('input:checkbox').prop('checked', false).change();
+		} else {
+			$table.find('input:checkbox').prop('checked', true).change();
+		}
+
 		setSelectButtonsState();
 	});
 }
@@ -32,6 +33,3 @@ function setSelectButtonsState() {
 		$(obj).find('.lite-button-checkbox').css('display', 'block');
 	});
 }
-
-setCheckboxEvent();
-setSelectButtonsState();

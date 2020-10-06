@@ -1,6 +1,5 @@
-import 'jquery';
 
-function initExpanders() {
+export default function initFlagListExpanders() {
 
 	const $flagsLists = $('.app-flags--list');
 	const chevronSVG = $('#js-chevron-svg').html();
@@ -50,7 +49,3 @@ function initExpanders() {
 	})
 
 }
-
-$(document).ready(function() {
-	initExpanders();
-});

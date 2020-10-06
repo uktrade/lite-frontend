@@ -70,11 +70,19 @@ class Cases(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, *args, **kwargs):
 
+        try:
+            updated_queue = [
+                queue for queue in self.cases['results']['queues']
+                if queue['id'] == UPDATED_CASES_QUEUE_ID][0]
+            show_updated_cases_banner = updated_queue['case_count']
+        except IndexError:
+            show_updated_cases_banner = False
+
         context = {
             "sla_radius": SLA_RADIUS,
             "sla_circumference": SLA_CIRCUMFERENCE,
-            "cases2": self.cases,
-            "cases": json.dumps(self.cases),
+            "cases": self.cases,
+            "cases_json": json.dumps(self.cases),
             "queue": self.queue,  # Used for showing current queue
             "filters": case_filters_bar(self.request, self.queue),
             "params": convert_parameters_to_query_params(self.request.GET),  # Used for passing params to JS
@@ -85,6 +93,7 @@ class Cases(LoginRequiredMixin, TemplateView):
             "is_all_cases_queue": self.queue_pk == ALL_CASES_QUEUE_ID,
             "enforcement_check": Permission.ENFORCEMENT_CHECK.value in get_user_permissions(self.request),
             "updated_cases_banner_queue_id": UPDATED_CASES_QUEUE_ID,
+            "show_updated_cases_banner": show_updated_cases_banner,
         }
 
         return super().get_context_data(*args, **context, **kwargs)
@@ -97,7 +106,7 @@ class QueuesList(LoginRequiredMixin, TemplateView):
         queues = get_queues(request, page=page, disable_pagination=False, name=name)
         user_data, _ = get_gov_user(request, str(request.session["lite_api_user_id"]))
 
-        filters = FiltersBar([TextInput(name="name", title="name"),])
+        filters = FiltersBar([TextInput(name="name", title="name")])
 
         context = {
             "data": queues,

@@ -1,21 +1,18 @@
-$(".app-snackbar__close-link").click(function()  {
-	$(this).parent().parent().hide();
-	return false;
-});
 
-function enableControls($selector) {
-	$selector.find(".govuk-button").each(function() {
-		enableButton($(this));
-	});
-}
+export default function setEnableOnCheckboxes() {
 
-function disableControls($selector) {
-	$selector.find(".govuk-button").each(function() {
-		disableButton($(this));
-	});
-}
+	function enableControls($selector) {
+		$selector.find(".govuk-button").each(function() {
+			enableButton($(this));
+		});
+	}
 
-function setEnableOnCheckboxes() {
+	function disableControls($selector) {
+		$selector.find(".govuk-button").each(function() {
+			disableButton($(this));
+		});
+	}
+
 	$("[data-enable-on-checkboxes]").each(function() {
 		var $controls = $(this);
 		var $parentSelector = $($(this).data("enable-on-checkboxes"));
@@ -36,5 +33,3 @@ function setEnableOnCheckboxes() {
 		});
 	});
 }
-
-setEnableOnCheckboxes();

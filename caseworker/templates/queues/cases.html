@@ -10,7 +10,7 @@
 
 {% block messages %}
 	{{ block.super }}
-	{% if queue.id != updated_cases_banner_queue_id %}
+	{% if queue.id != updated_cases_banner_queue_id and show_updated_cases_banner %}
 		<a id="banner-exporter-amendments" class="app-hidden govuk-width-container app-snackbar app-snackbar--no-animation" href="{% url 'queues:cases' updated_cases_banner_queue_id %}">
 			<div class="app-snackbar__content">
 				<div class="app-snackbar__icon"></div>
@@ -49,16 +49,20 @@
 			</div>
 			<input type="text" id="filter-queues">
 		</div>
+		{% for item in cases.results.queues %}
+			<a href="{% url 'queues:cases' item.id %}" id="{{ item.id }}" class="app-menu__item app-menu__item--subtitle {% if item.id == queue.id %}app-menu__item--selected{% endif %}">
+				{{ item.name }}
+				<span class="app-menu__item-subtitle">{{ item.case_count }}</span>
+			</a>
+		{% endfor %}
 	</div>
 
-	<p class="lite-filters__hint-text">{{ cases2.count }} case{{ cases2.count|pluralize }}</p>
+	<p class="lite-filters__hint-text">{{ cases.count }} case{{ cases.count|pluralize }}</p>
 
 	{% include 'filters.html' %}
 
-	<pre>{{ cases2.results.cases.0|pprint }}</pre>
-
 	<form id="form-cases" method="get" action="{% url 'queues:case_assignments' queue.id %}">
-		{% if not cases2.results %}
+		{% if not cases.results %}
 			{% include "includes/notice.html" with text='cases.CasesListPage.NO_CASES' %}
 		{% else %}
 		<table id="table-cases" class="govuk-table">
@@ -79,7 +83,7 @@
 			</thead>
 
 			<tbody class="govuk-table__body" id="tbody-main">
-				{% for case in cases2.results.cases %}
+				{% for case in cases.results.cases %}
 					{% include 'includes/case-row.html' with case=case %}
 				{% endfor %}
 			</tbody>
@@ -94,9 +98,7 @@
 	{% svg 'chevron' %}
 </div>
 
-	<script src="{% static 'caseworker/bundle.js' %}"></script>
 	<script src="{% static 'javascripts/cases.js' %}"></script>
-	<script src="{% static 'javascripts/select-buttons.js' %}"></script>
 
 	<script nonce="{{ request.csp_nonce }}">
 		var params = `{{ params }}`;
@@ -105,26 +107,12 @@
 		var chevron = `{% svg 'chevron' %}`;
 		var noCases = `{% include "includes/notice.html" with text='cases.CasesListPage.NO_CASES' %}`;
 
-		var data = {{ cases|safe }};
+		var data = {{ cases_json|safe }};
 
 			if (data.total_pages > 1) {
 				generatePagination({{ request.GET.page|default:1 }}, data.total_pages);
 			}
 
-			$.each(data.results.queues, function(i, item) {
-				if (item.id == "{{ updated_cases_banner_queue_id }}" && item.case_count) {
-					$("#banner-exporter-amendments").removeClass("app-hidden");
-				}
-
-				var html = `
-					<a href="/queues/${item.id}/" id="${item.id}" class="app-menu__item app-menu__item--subtitle ${(item.id == '{{ queue.id }}' ? 'app-menu__item--selected' : '')}">
-						${item.name}
-						<span class="app-menu__item-subtitle">${item.case_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</span>
-					</a>
-				`;
-				$("#queues").append(html);
-			});
-			generateQueuesMenu();
 			$.each(data.results.filters.statuses, function(i, item) {
 				$("#status").append(`<option value="${item.key}" ${(item.key == "{{ case_officer }}" ? "selected" : "")}>${item.value}</option>`)
 			});
@@ -139,49 +127,9 @@
 				$("#team_advice_type").append(`<option value="${item.key}" ${(item.key == "{{ team_advice_type }}" ? "selected" : "")}>${item.value}</option>`)
 				$("#final_advice_type").append(`<option value="${item.key}" ${(item.key == "{{ final_advice_type }}" ? "selected" : "")}>${item.value}</option>`)
 			});
-			setTooltips();
-			setCheckboxEvent();
-			setSelectButtonsState();
+
 			loadAutoCompletes();
 			tryShowFilterBar();
-			setEnableOnCheckboxes();
 
-		$("#filter-queues").on('input', function() {
-			txt = $("#filter-queues").val();
-			anyVisible = false;
-			$('#queues a').hide();
-			$("#queues > span").hide();
-			$('#queues a').each(function(){
-				if ($(this).text().toUpperCase().indexOf(txt.toUpperCase()) != -1){
-					$(this).show();
-					anyVisible = true;
-				}
-			});
-
-			if (!anyVisible) {
-				$("#queues > span").show()
-			}
-		});
-
-		$("#link-queue").removeAttr("href");
-
-		function generateQueuesMenu() {
-			const queuesMenu = document.getElementById('queues');
-			queuesMenu.style.display = 'block';
-			tippy("#link-queue", {
-				content: queuesMenu,
-				allowHTML: true,
-				interactive: true,
-				animation: 'scale-subtle',
-				trigger: 'click',
-				theme: 'light',
-				placement: 'bottom-start',
-				arrow: null,
-				onShown(instance) {
-					$("#filter-queues").val("")
-					$("#filter-queues").focus()
-				},
-			});
-		}
 	</script>
 {% endblock %}

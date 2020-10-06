@@ -26,7 +26,7 @@
 				{% endif %}
 			{% endif %}
 
-			{% if cases2.results.is_work_queue %}
+			{% if cases.results.is_work_queue %}
 				{% if case.has_open_queries %}
 				<div data-tooltip="{% lcs 'cases.CasesListPage.OPEN_TEAM_ECJU' %}" class="app-cases__row__icon">
 					{% svg 'ecju-query' %}
