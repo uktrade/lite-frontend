@@ -24,6 +24,7 @@ urlpatterns = [
 
 if settings.FEATURE_SPIRE_SEARCH_ON:
     urlpatterns.append(path("spire/", include("caseworker.spire.urls")))
+    urlpatterns.append(path("spire-dms/", include("caseworker.spire_dms.urls")))
 
 
 if settings.FEATURE_DEBUG_TOOLBAR_ON:
