@@ -3,7 +3,7 @@
 {% if pages|length > 1 %}
 	<div class="lite-pagination__container">
 		{% if previous_link_url %}
-			<a id="link-previous-page" href="{{ previous_link_url }}" id="link-previous-page" class="lite-pagination__navigation-link">
+			<a id="link-previous-page" href="{{ previous_link_url }}" id="link-previous-page" class="lite-pagination__navigation-link lite-pagination__link" data-number="{{ previous_page_number }}">
 				{% svg 'previous' %}
 				<span>Previous page</span>
 			</a>
@@ -21,7 +21,7 @@
 						{% if item.selected %}
 							{{ item.number }}
 						{% else %}
-							<a href="{{ item.url }}">
+							<a href="{{ item.url }}" class="lite-pagination__link" data-number="{{ item.number }}">
 								{{ item.number }}
 							</a>
 						{% endif %}
@@ -35,7 +35,7 @@
 		</ol>
 
 		{% if next_link_url %}
-			<a id="link-next-page" href="{{ next_link_url }}" id="link-next-page" class="lite-pagination__navigation-link">
+			<a id="link-next-page" href="{{ next_link_url }}" id="link-next-page" class="lite-pagination__navigation-link lite-pagination__link" data-number="{{ next_page_number }}">
 				<span>Next page</span>
 				{% svg 'next' %}
 			</a>
