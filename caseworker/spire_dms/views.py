@@ -31,3 +31,12 @@ class SpireApplicationSearch(LoginRequiredMixin, FormView):
         # the {% paginator %} in the template needs this shaped data exposed
         context["data"] = {"total_pages": parsed["count"] // form.page_size}
         return context
+
+
+class SpireApplicationDetail(LoginRequiredMixin, TemplateView):
+    template_name = "spire-dms/application.html"
+
+    def get_context_data(self, **kwargs):
+        response = helpers.spire_client.get_application(self.kwargs["id"])
+        response.raise_for_status()
+        return super().get_context_data(application=response.json(), **kwargs)
