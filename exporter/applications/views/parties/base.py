@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
 from django.shortcuts import redirect, render
-from django.urls import reverse_lazy
+from django.urls import reverse
 from django.views.generic import TemplateView
 
 from exporter.applications.forms.parties import party_create_new_or_copy_existing_form
@@ -15,25 +15,30 @@ from lite_forms.views import MultiFormView
 
 
 class AddParty(TemplateView):
+    @property
+    def back_url(self):
+        return reverse("applications:task_list", kwargs={"pk": self.kwargs["pk"]})
+
     def __init__(self, copy_url, new_url, **kwargs):
         super().__init__(**kwargs)
         self.copy_url = copy_url
         self.new_url = new_url
 
     def get(self, request, **kwargs):
-        return form_page(request, party_create_new_or_copy_existing_form(kwargs["pk"]))
+        form = party_create_new_or_copy_existing_form(kwargs["pk"], back_url=self.back_url)
+        return form_page(request, form)
 
     def post(self, request, **kwargs):
         response = request.POST.get("copy_existing")
         if response:
             if response == "yes":
-                return redirect(reverse_lazy(self.copy_url, kwargs=kwargs))
+                return redirect(reverse(self.copy_url, kwargs=kwargs))
             else:
-                return redirect(reverse_lazy(self.new_url, kwargs=kwargs))
+                return redirect(reverse(self.new_url, kwargs=kwargs))
         else:
             return form_page(
                 request,
-                party_create_new_or_copy_existing_form(kwargs["pk"]),
+                party_create_new_or_copy_existing_form(kwargs["pk"], back_url=self.back_url),
                 errors={"copy_existing": [AddPartyForm.ERROR]},
             )
 
@@ -77,7 +82,7 @@ class SetParty(MultiFormView):
         self.data = {"type": self.party_type}
 
     def get_success_url(self):
-        return reverse_lazy(
+        return reverse(
             self.url, kwargs={"pk": self.object_pk, "obj_pk": self.get_validated_data()[self.party_type]["id"]}
         )
 
@@ -102,7 +107,7 @@ class DeleteParty(TemplateView):
         if status_code != HTTPStatus.OK:
             return error_page(request, self.error)
 
-        return redirect(reverse_lazy(self.url, kwargs={"pk": application_id}))
+        return redirect(reverse(self.url, kwargs={"pk": application_id}))
 
 
 class CopyParties(TemplateView):

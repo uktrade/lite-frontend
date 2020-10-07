@@ -1,0 +1,5 @@
+{% extends 'applications/end-user.html' %}
+
+{% block back_link %}
+	<a href="{% url 'applications:task_list' application.id %}#consignee" id="back-link" class="govuk-back-link">Back to application overview</a>
+{% endblock %}

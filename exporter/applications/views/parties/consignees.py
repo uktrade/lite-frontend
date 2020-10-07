@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse
 from django.views.generic import TemplateView
 
 from exporter.applications.forms.parties import new_party_form_group
@@ -20,8 +20,8 @@ class Consignee(LoginRequiredMixin, TemplateView):
             context = {
                 "application": application,
                 "title": ConsigneePage.TITLE,
-                "edit_url": reverse_lazy("applications:edit_consignee", kwargs=kwargs),
-                "remove_url": reverse_lazy("applications:remove_consignee", kwargs=kwargs),
+                "edit_url": reverse("applications:edit_consignee", kwargs=kwargs),
+                "remove_url": reverse("applications:remove_consignee", kwargs=kwargs),
                 "answers": convert_party(
                     party=application["consignee"],
                     application=application,
@@ -30,12 +30,16 @@ class Consignee(LoginRequiredMixin, TemplateView):
             }
             return render(request, "applications/end-user.html", context)
         else:
-            return redirect(reverse_lazy("applications:add_consignee", kwargs={"pk": application_id}))
+            return redirect(reverse("applications:add_consignee", kwargs={"pk": application_id}))
 
 
 class AddConsignee(LoginRequiredMixin, AddParty):
     def __init__(self):
         super().__init__(new_url="applications:set_consignee", copy_url="applications:consignees_copy")
+
+    @property
+    def back_url(self):
+        return reverse("applications:task_list", kwargs={"pk": self.kwargs["pk"]}) + "#consignee"
 
 
 class SetConsignee(LoginRequiredMixin, SetParty):

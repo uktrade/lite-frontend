@@ -15,12 +15,12 @@ class EndUseDetails(LoginRequiredMixin, TemplateView):
     def dispatch(self, request, *args, **kwargs):
         self.object_pk = kwargs["pk"]
         self.application = get_application(request, self.object_pk)
-        self.success_url = reverse_lazy("applications:task_list", kwargs={"pk": self.object_pk})
+        self.success_url = reverse_lazy("applications:task_list", kwargs={"pk": self.object_pk}) + "#end_use_details"
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         form_view = self._get_form_view(request, **kwargs)
-        return form_view.get(request, **kwargs)
+        return form_view.get(request, back_link=self.success_url, **kwargs)
 
     def post(self, request, **kwargs):
         form_view = self._get_form_view(request, **kwargs)
@@ -43,7 +43,9 @@ class EndUseDetails(LoginRequiredMixin, TemplateView):
         single_form_view.kwargs = kwargs
 
         single_form_view.object_pk = self.object_pk
-        single_form_view.form = intended_end_use_form(F680ClearanceTaskList.END_USE_DETAILS)
+        single_form_view.form = intended_end_use_form(
+            caption=F680ClearanceTaskList.END_USE_DETAILS, back_link=self.success_url
+        )
         single_form_view.action = put_end_use_details
         single_form_view.success_url = self.success_url
         single_form_view.data = (
@@ -58,6 +60,9 @@ class EndUseDetails(LoginRequiredMixin, TemplateView):
             pass
 
         summary_list_form_view = SummaryListFormView()
+        summary_list_form_view.cancel_link_text = "cancel"
+        summary_list_form_view.cancel_link_url = self.success_url
+
         summary_list_form_view.init = init
         summary_list_form_view.request = request
         summary_list_form_view.kwargs = kwargs
@@ -67,7 +72,9 @@ class EndUseDetails(LoginRequiredMixin, TemplateView):
         summary_list_form_view.summary_list_notice_title = ""
         summary_list_form_view.summary_list_notice_text = ""
         summary_list_form_view.summary_list_button = generic.SAVE_AND_CONTINUE
-        summary_list_form_view.forms = end_use_details_form(self.application, request)
+        summary_list_form_view.forms = end_use_details_form(
+            application=self.application, request=request, back_link=self.success_url
+        )
         summary_list_form_view.action = put_end_use_details
         summary_list_form_view.success_url = self.success_url
         summary_list_form_view.data = self._parse_end_use_details()
