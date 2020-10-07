@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.shortcuts import reverse
 from django.views.generic import TemplateView
 
 from exporter.applications.forms.third_party import third_party_forms
@@ -25,9 +26,11 @@ class ThirdParties(LoginRequiredMixin, TemplateView):
 
 class AddThirdParty(LoginRequiredMixin, AddParty):
     def __init__(self):
-        super().__init__(
-            new_url="applications:set_third_party", copy_url="applications:third_parties_copy",
-        )
+        super().__init__(new_url="applications:set_third_party", copy_url="applications:third_parties_copy")
+
+    @property
+    def back_url(self):
+        return reverse("applications:task_list", kwargs={"pk": self.kwargs["pk"]}) + "#third-parties"
 
 
 class SetThirdParty(LoginRequiredMixin, SetParty):

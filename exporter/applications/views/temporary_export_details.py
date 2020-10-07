@@ -1,4 +1,4 @@
-from django.urls import reverse_lazy
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
@@ -15,17 +15,19 @@ from core.auth.views import LoginRequiredMixin
 @method_decorator(csrf_exempt, "dispatch")
 class TemporaryExportDetails(LoginRequiredMixin, SummaryListFormView):
     def init(self, request, **kwargs):
+        self.success_url = reverse("applications:task_list", kwargs={"pk": kwargs["pk"]}) + "#temporary_export_details"
         self.object_pk = kwargs["pk"]
         application = get_application(request, self.object_pk)
         self.forms = temporary_export_details_form()
         self.action = put_temporary_export_details
         self.data = self._parse_temporary_export_details(application)
-        self.success_url = reverse_lazy("applications:task_list", kwargs={"pk": self.object_pk})
         self.summary_list_title = strings.SummaryList.TITLE
         self.summary_list_notice_title = ""
         self.summary_list_notice_text = ""
         self.summary_list_button = generic.SAVE_AND_RETURN
         self.validate_only_until_final_submission = False
+        self.cancel_link_text = "cancel"
+        self.cancel_link_url = self.success_url
 
     def get_validated_data(self):
         data = super().get_validated_data()

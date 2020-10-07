@@ -17,14 +17,14 @@ from lite_forms.components import (
 from lite_forms.generators import confirm_form
 
 
-def party_create_new_or_copy_existing_form(application_id):
+def party_create_new_or_copy_existing_form(application_id, back_url):
     return confirm_form(
         title=PartyForm.CopyExistingForm.TITLE,
         confirmation_name="copy_existing",
         yes_label=PartyForm.CopyExistingForm.YES,
         no_label=PartyForm.CopyExistingForm.NO,
         back_link_text=PartyForm.CopyExistingForm.BACK_LINK,
-        back_url=reverse_lazy("applications:task_list", kwargs={"pk": application_id}),
+        back_url=back_url,
         submit_button_text=PartyForm.CopyExistingForm.BUTTON,
     )
 

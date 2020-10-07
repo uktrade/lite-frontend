@@ -1,15 +1,15 @@
 from exporter.core.constants import STANDARD, OPEN
-from lite_content.lite_exporter_frontend import generic
+from lite_content.lite_exporter_frontend import generic, strings
 from lite_content.lite_exporter_frontend.applications import (
     EndUseDetails,
     StandardApplicationTaskList,
     OpenApplicationTaskList,
 )
-from lite_forms.components import Form, RadioButtons, FormGroup, Option, TextInput, TextArea
+from lite_forms.components import BackLink, Form, RadioButtons, FormGroup, Option, TextInput, TextArea
 from lite_forms.helpers import conditional
 
 
-def end_use_details_form(application, request):
+def end_use_details_form(application, request, back_link):
     is_eu_military = request.POST.get("is_eu_military", "").lower() == "true" or application.is_eu_military
     caption = ""
 
@@ -20,7 +20,7 @@ def end_use_details_form(application, request):
 
     return FormGroup(
         [
-            intended_end_use_form(caption),
+            intended_end_use_form(caption=caption, back_link=back_link),
             is_military_end_use_controls_form(caption),
             is_informed_wmd_form(caption),
             is_suspected_wmd_form(caption),
@@ -30,9 +30,10 @@ def end_use_details_form(application, request):
     )
 
 
-def intended_end_use_form(caption):
+def intended_end_use_form(caption, back_link):
     return Form(
         caption=caption,
+        back_link=BackLink(strings.BACK_TO_APPLICATION, back_link),
         title=EndUseDetails.INTENDED_END_USE,
         questions=[
             TextArea(

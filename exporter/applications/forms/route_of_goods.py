@@ -1,10 +1,12 @@
+from lite_content.lite_exporter_frontend import strings
 from lite_content.lite_exporter_frontend.applications import RouteOfGoods
-from lite_forms.components import Form, Option, TextArea, RadioButtons
+from lite_forms.components import Form, Option, TextArea, RadioButtons, BackLink
 
 
-def route_of_goods_form():
+def route_of_goods_form(back_link):
     return Form(
         title=RouteOfGoods.TITLE,
+        back_link=BackLink(strings.BACK_TO_APPLICATION, back_link),
         questions=[
             RadioButtons(
                 name="is_shipped_waybill_or_lading",

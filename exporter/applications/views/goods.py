@@ -39,19 +39,20 @@ from core.auth.views import LoginRequiredMixin
 
 
 class ApplicationGoodsList(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
-        """
-        List all goods relating to the application
-        """
-        draft_id = str(kwargs["pk"])
-        application = get_application(request, draft_id)
-        goods = get_application_goods(request, draft_id)
-        exhibition = application["case_type"]["sub_type"]["key"] == EXHIBITION
 
-        context = {"goods": goods, "application": application, "exhibition": exhibition}
-        if not exhibition:
-            context["goods_value"] = get_total_goods_value(goods)
-        return render(request, "applications/goods/index.html", context)
+    template_name = "applications/goods/index.html"
+
+    def get_context_data(self, **kwargs):
+        application = get_application(self.request, kwargs["pk"])
+        goods = get_application_goods(self.request, kwargs["pk"])
+        is_exhibition = application["case_type"]["sub_type"]["key"] == EXHIBITION
+        return super().get_context_data(
+            goods=goods,
+            application=application,
+            exhibition=is_exhibition,
+            goods_value=None if is_exhibition else get_total_goods_value(goods),
+            **kwargs,
+        )
 
 
 class ExistingGoodsList(LoginRequiredMixin, TemplateView):
