@@ -11,16 +11,28 @@
                 <div class="govuk-caption-l">{{ good_on_application.good.description}}</div>
             </div>
 
-            <form id="tab-form" class="govuk-body govuk-!-margin-bottom-0" autocomplete="off">
-                <input type="radio" id="radio-full-details" name="tab" value="full-details-tab" checked="checked">
-                <label for="radio-full-details">Full details</label>
-                <input type="radio" id="radio-history" name="tab" value="history-tab">
-                <label for="radio-history">History</label>
-                <input type="radio" id="cases" name="tab" value="related-cases-tab">
-                <label for="cases">Cases</label> 
-            </form>
+            <div class="govuk-tabs" data-module="govuk-tabs">
 
-            <div id="full-details-tab" class="product-on-cases-tab">
+              <ul class="govuk-tabs__list">
+                <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+                  <a class="govuk-tabs__tab" href="#full-details-tab">
+                    Full details
+                  </a>
+                </li>
+                <li class="govuk-tabs__list-item">
+                  <a class="govuk-tabs__tab" href="#history-tab">
+                    History
+                  </a>
+                </li>
+                <li class="govuk-tabs__list-item">
+                  <a class="govuk-tabs__tab" href="#related-cases-tab">
+                    Cases
+                  </a>
+                </li>
+              </ul>
+
+
+              <div class="govuk-tabs__panel" id="full-details-tab">
                 <h2 class="govuk-heading-l">Full details</h2>
                 <table class="govuk-table app-table">
                     <tbody class="govuk-table__body" id="tbody-placeholder">
@@ -122,17 +134,19 @@
                 </table>
             </div>
 
-            <div id="history-tab" class="product-on-cases-tab">
+            <div id="history-tab" class="govuk-tabs__panel">
                 <h2 class="govuk-heading-l">History</h2>
                 {% include "includes/audit-trail.html" with activity=good_on_application.audit_trail %}
             </div>
 
-            <div id="related-cases-tab" class="product-on-cases-tab">
+            <div id="related-cases-tab" class="govuk-tabs__panel">
                 <h2 class="govuk-heading-l">Cases</h2>
                 <p class="govuk-body">Other cases this product's part number and control list entries appear in</p>
                 {% include "search/results_cases.html" with results=other_cases %}
             </div>
+          </div>
         </div>
+
     </div>
 {% endblock %}
 
@@ -143,5 +157,4 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tarekraafat-autocomplete.js/7.2.0/js/autoComplete.min.js" integrity="sha512-1Fr8m8dxYPgUEwpEKZy1AIUZnGupa1bhl7GbG+ueWxlWVBJvdEnLdgQVQA8pqkrrmkTV0DW7C5ZVmVGdJmMuZg==" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/url-search-params/1.1.0/url-search-params.js" integrity="sha512-XITCo00srdVr9XH7ep5JEijPPpLA60TqvvoqLCyQlIdctLUjEsIRCtlgSaoj+RbsF+e/YnkaRTV/7Ei5GvVylg==" crossorigin="anonymous"></script>
     <script src="{% static 'javascripts/search-cases.js' %}"></script>
-    <script src="{% static 'javascripts/product-details.js' %}"></script>
-{% endblock %}
+    {% endblock %}

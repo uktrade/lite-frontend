@@ -536,31 +536,9 @@ $case-header-text-colour: govuk-colour("white");
 	}
 }
 
-#tab-form input {
-    display: none;
-}
-
-#tab-form label {
-    background-color: govuk-colour("light-grey");
-    display: inline-block;
-    padding-bottom: 15px;
-    padding: 15px 20px;
-    cursor: pointer;
-}
-
-.product-on-cases-tab,
-#tab-form input:checked + label {
-    border: 1px solid govuk-colour("mid-grey");
-    background-color: govuk-colour("white");
-    padding: 20px;
-}
-
-#tab-form input:checked + label {
-    bottom: -1px;
-    border-bottom: 0;
-    position: relative;
-}
-
-.product-on-cases-tab {
-    overflow: hidden;
+.app-template__case-body {
+	#related-cases-tab {
+		overflow: hidden;
+	}
+	
 }
