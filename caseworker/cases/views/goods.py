@@ -52,7 +52,6 @@ class GoodDetails(LoginRequiredMixin, FormView):
 
     def get_context_data(self, **kwargs):
         case = get_case(self.request, self.kwargs["pk"])
-        part_number = self.good_on_application["good"]["part_number"]
         form = self.get_form()
         query_params = form.extract_filters(self.get_initial()["search_string"])
         other_cases = get_search_results(self.request, query_params=query_params)

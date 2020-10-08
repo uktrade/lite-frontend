@@ -96,3 +96,7 @@ $govuk-font-url-function: 'get_govuk_font_asset_url';
 		display: none;
 	}
 }
+
+.strike {
+	text-decoration: line-through;
+}
