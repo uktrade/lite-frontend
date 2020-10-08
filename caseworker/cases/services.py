@@ -214,6 +214,12 @@ def post_ecju_query(request, pk, json):
     return response.json(), response.status_code
 
 
+def get_good_on_application(request, pk):
+    response = client.get(request, f"/applications/good-on-application/{pk}")
+    response.raise_for_status()
+    return response.json()
+
+
 def get_good(request, pk):
     data = client.get(request, f"/goods/{pk}")
     return data.json(), data.status_code

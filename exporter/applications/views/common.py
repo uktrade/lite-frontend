@@ -170,14 +170,13 @@ class ApplicationDetail(LoginRequiredMixin, TemplateView):
             "case_id": self.application_id,
             "application": self.application,
             "type": self.view_type,
-            "answers": {**convert_application_to_check_your_answers(self.application)},
+            "answers": convert_application_to_check_your_answers(self.application),
             "status_is_read_only": status_props["is_read_only"],
             "status_is_terminal": status_props["is_terminal"],
             "errors": kwargs.get("errors"),
             "text": kwargs.get("text", ""),
+            "activity": get_activity(request, self.application_id) or {},
         }
-
-        context["activity"] = get_activity(request, self.application_id) or {}
 
         if self.application.sub_type != HMRC:
             if self.view_type == "case-notes":

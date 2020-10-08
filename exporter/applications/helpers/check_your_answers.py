@@ -1,7 +1,7 @@
 from _decimal import Decimal
 
 from django.contrib.humanize.templatetags.humanize import intcomma
-from django.urls import reverse_lazy
+from django.urls import reverse
 
 from exporter.applications.helpers.countries import ContractTypes
 from exporter.core.constants import (
@@ -48,7 +48,7 @@ def convert_application_to_check_your_answers(application, editable=False, summa
 def _convert_exhibition_clearance(application, editable=False):
     return {
         applications.ApplicationSummaryPage.EXHIBITION_DETAILS: _get_exhibition_details(application),
-        applications.ApplicationSummaryPage.GOODS: _convert_goods(application["goods"], True),
+        applications.ApplicationSummaryPage.GOODS: convert_goods_on_application(application["goods"], True),
         applications.ApplicationSummaryPage.GOODS_LOCATIONS: _convert_goods_locations(application["goods_locations"]),
         applications.ApplicationSummaryPage.SUPPORTING_DOCUMENTATION: _get_supporting_documentation(
             application["additional_documents"], application["id"]
@@ -58,7 +58,7 @@ def _convert_exhibition_clearance(application, editable=False):
 
 def _convert_f680_clearance(application, editable=False):
     return {
-        applications.ApplicationSummaryPage.GOODS: _convert_goods(application["goods"]),
+        applications.ApplicationSummaryPage.GOODS: convert_goods_on_application(application["goods"]),
         applications.ApplicationSummaryPage.ADDITIONAL_INFORMATION: _get_additional_information(application),
         applications.ApplicationSummaryPage.END_USE_DETAILS: _get_end_use_details(application),
         applications.ApplicationSummaryPage.END_USER: convert_party(application["end_user"], application, editable),
@@ -73,7 +73,7 @@ def _convert_f680_clearance(application, editable=False):
 
 def _convert_gifting_clearance(application, editable=False):
     return {
-        applications.ApplicationSummaryPage.GOODS: _convert_goods(application["goods"]),
+        applications.ApplicationSummaryPage.GOODS: convert_goods_on_application(application["goods"]),
         applications.ApplicationSummaryPage.END_USER: convert_party(application["end_user"], application, editable),
         applications.ApplicationSummaryPage.THIRD_PARTIES: [
             convert_party(party, application, editable) for party in application["third_parties"]
@@ -85,39 +85,25 @@ def _convert_gifting_clearance(application, editable=False):
 
 
 def _convert_standard_application(application, editable=False, is_summary=False):
-    converted_app = {
-        convert_to_link(
-            reverse_lazy(f"applications:good_detail_summary", kwargs={"pk": application["id"]}),
-            applications.ApplicationSummaryPage.GOODS,
-        ): _convert_goods(application["goods"]),
-        applications.ApplicationSummaryPage.END_USE_DETAILS: _get_end_use_details(application),
-        applications.ApplicationSummaryPage.ROUTE_OF_GOODS: _get_route_of_goods(application),
-        **(
-            {applications.ApplicationSummaryPage.TEMPORARY_EXPORT_DETAILS: _get_temporary_export_details(application),}
-            if _is_application_export_type_temporary(application)
-            else {}
-        ),
-        applications.ApplicationSummaryPage.GOODS_LOCATIONS: _convert_goods_locations(application["goods_locations"]),
-        applications.ApplicationSummaryPage.END_USER: convert_party(application["end_user"], application, editable),
-        **(
-            {
-                applications.ApplicationSummaryPage.ULTIMATE_END_USERS: [
-                    convert_party(party, application, editable) for party in application["ultimate_end_users"]
-                ],
-            }
-            if has_incorporated_goods(application)
-            else {}
-        ),
-        applications.ApplicationSummaryPage.CONSIGNEE: convert_party(application["consignee"], application, editable),
-        applications.ApplicationSummaryPage.THIRD_PARTIES: [
-            convert_party(party, application, editable) for party in application["third_parties"]
-        ],
-        applications.ApplicationSummaryPage.SUPPORTING_DOCUMENTATION: _get_supporting_documentation(
-            application["additional_documents"], application["id"]
-        ),
+    strings = applications.ApplicationSummaryPage
+    pk = application["id"]
+    url = reverse(f"applications:good_detail_summary", kwargs={"pk": pk})
+    converted = {
+        convert_to_link(url, strings.GOODS): convert_goods_on_application(application["goods"]),
+        strings.END_USE_DETAILS: _get_end_use_details(application),
+        strings.ROUTE_OF_GOODS: _get_route_of_goods(application),
+        strings.GOODS_LOCATIONS: _convert_goods_locations(application["goods_locations"]),
+        strings.END_USER: convert_party(application["end_user"], application, editable),
+        strings.CONSIGNEE: convert_party(application["consignee"], application, editable),
+        strings.THIRD_PARTIES: [convert_party(item, application, editable) for item in application["third_parties"]],
+        strings.SUPPORTING_DOCUMENTATION: _get_supporting_documentation(application["additional_documents"], pk),
     }
-
-    return converted_app
+    if _is_application_export_type_temporary(application):
+        converted[strings.TEMPORARY_EXPORT_DETAILS] = _get_temporary_export_details(application)
+    if has_incorporated_goods(application):
+        ultimate_end_users = [convert_party(item, application, editable) for item in application["ultimate_end_users"]]
+        converted[strings.ULTIMATE_END_USERS] = ultimate_end_users
+    return converted
 
 
 def _convert_open_application(application, editable=False):
@@ -213,28 +199,35 @@ def _convert_hmrc_query(application, editable=False):
     }
 
 
-def _convert_goods(goods, is_exhibition=False):
-    goods_list = []
+from django.utils.safestring import mark_safe
 
-    for good in goods:
-        goods_dict = {
-            "Description": good["good"]["description"],
-            "Part number": default_na(good["good"]["part_number"]),
-            "Controlled": good["good"]["is_good_controlled"]["value"],
-            "Control list entries": convert_control_list_entries(good["good"]["control_list_entries"]),
+
+def convert_goods_on_application(goods_on_application, is_exhibition=False):
+    converted = []
+    for good_on_application in goods_on_application:
+        # TAU's review is saved at "good on application" level, while exporter's answer is at good level.
+        is_good_controlled = good_on_application["good"]["is_good_controlled"]["value"]
+        control_list_entries = convert_control_list_entries(good_on_application["good"]["control_list_entries"])
+        if good_on_application["is_good_controlled"] is not None:
+            is_controlled_application = good_on_application["is_good_controlled"]["value"]
+            control_list_application = convert_control_list_entries(good_on_application["control_list_entries"])
+            is_good_controlled = f"<span class='strike'>{is_good_controlled}</span><br> {is_controlled_application}"
+            control_list_entries = f"<span class='strike'>{control_list_entries}</span> {control_list_application}"
+        item = {
+            "Description": good_on_application["good"]["description"],
+            "Part number": default_na(good_on_application["good"]["part_number"]),
+            "Controlled": mark_safe(is_good_controlled),  # nosec
+            "Control list entries": mark_safe(control_list_entries),  # nosec
         }
         if is_exhibition:
-            goods_dict["Product type"] = good["other_item_type"] if good["other_item_type"] else good["item_type"]
+            item["Product type"] = good_on_application["other_item_type"] or good_on_application["item_type"]
         else:
-            goods_dict["Incorporated"] = friendly_boolean(good["is_good_incorporated"])
-            goods_dict["Quantity"] = (
-                intcomma(good["quantity"]) + " " + pluralise_unit(good["unit"]["value"], good["quantity"])
-            )
-            goods_dict["Value"] = "£" + good["value"]
-
-        goods_list.append(goods_dict)
-
-    return goods_list
+            unit_name = pluralise_unit(good_on_application["unit"]["value"], good_on_application["quantity"])
+            item["Incorporated"] = friendly_boolean(good_on_application["is_good_incorporated"])
+            item["Quantity"] = f"{intcomma(good_on_application['quantity'])} {unit_name}"
+            item["Value"] = f"£{good_on_application['value']}"
+        converted.append(item)
+    return converted
 
 
 def _get_exhibition_details(application):
@@ -424,7 +417,7 @@ def convert_party(party, application, editable):
             document = _convert_document(party, document_type, application["id"], editable)
         else:
             document = convert_to_link(
-                reverse_lazy(
+                reverse(
                     f"applications:{party['type']}_attach_document",
                     kwargs={"pk": application["id"], "obj_pk": party["id"]},
                 ),
@@ -461,7 +454,7 @@ def _get_supporting_documentation(supporting_documentation, application_id):
     return [
         {
             "File name": convert_to_link(
-                reverse_lazy(
+                reverse(
                     "applications:download_additional_document", kwargs={"pk": application_id, "obj_pk": document["id"]}
                 ),
                 document["name"],

@@ -1,5 +1,6 @@
 (function() {
   var inputElement = document.getElementById("id_search_string")
+  var pageInputElement = document.getElementById('id_page')
   var searchButtonElement = document.getElementById('search-button')
   var resultsElement = document.getElementById("results-table")
   var currentSearch = inputElement.value || ''
@@ -94,6 +95,7 @@
         var appendValue = feedback.selection.value.field + ':"' + feedback.selection.value.value + '"'
       }
       inputElement.value = inputElement.value.replace(currentSearch, appendValue + ' ')
+      pageInputElement.value = 1
       handleSearch()
     }
   });
@@ -105,16 +107,19 @@
 
   function handleSearch() {
     var query = lastSearch = inputElement.value
+    var pageNumber = pageInputElement.value
     setTimeout(function() { inputElement.focus()})
-    fetch('/search/?search_string=' + query).then(function(response) {
+    fetch('/search/?search_string=' + query + '&page=' + pageNumber).then(function(response) {
       var html = response.text().then(function(html) {
         var div = document.createElement('div');
         div.innerHTML = html.trim();
         document.getElementsByClassName('results-area')[0].innerHTML = div.getElementsByClassName('results-area')[0].innerHTML
+        listenToPaginationClick()
       })
     })
     var searchParams = new URLSearchParams(window.location.search);
     searchParams.set("search_string", query);
+    searchParams.set("page", pageNumber);
     history.pushState(null, '', window.location.pathname + '?' + searchParams.toString());
   }
 
@@ -132,6 +137,7 @@
             fieldName + ':',
             startField + ':"' + start.format('YYYY-MM-DD') + '" ' + endField + ':"' + end.format('YYYY-MM-DD') + '"'
           )
+          pageInputElement.value = 1
           handleSearch()
           this.destroy()
           datePicker = null;
@@ -140,8 +146,22 @@
     })
   }
 
+  function listenToPaginationClick() {
+    // the pagination element is replaced on search, so need to re-add event listeners when that happens
+    var elements = document.getElementsByClassName('lite-pagination__link')
+    for (var i = 0; i < elements.length; i++) {
+      var element = elements.item(i);
+      element.addEventListener('click', function(event) {
+        event.preventDefault()
+        pageInputElement.value = event.target.getAttribute('data-number')
+        handleSearch()
+      })
+    }
+  }
+
   searchButtonElement.addEventListener('click', function(event) {
     event.preventDefault()
+    pageInputElement.value = 1
     handleSearch()
   })
 
@@ -152,5 +172,7 @@
       handleDateInput(fieldName)
     }
   })
+
+  listenToPaginationClick()
 
 })()
