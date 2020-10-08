@@ -2,6 +2,28 @@ import tippy from 'tippy.js';
 
 
 export default function initQueuesMenu() {
+
+	$("#filter-queues").on('input', function() {
+		let txt = $("#filter-queues").val();
+		let anyVisible = false;
+
+		$('#queues a').hide(); // queue name
+		$("#queues > span").hide();
+
+		$('#queues a').each(function(){
+			if ($(this).text().toUpperCase().indexOf(txt.toUpperCase()) != -1) {
+				$(this).show();
+				anyVisible = true;
+			}
+		});
+
+		if (!anyVisible) {
+			$("#queues > span").show()
+		}
+	});
+
+	$("#link-queue").removeAttr("href");
+
 	// deliberately written in vanilla JS not jquery
 	const queuesMenu = document.getElementById('queues');
 	if (!queuesMenu) {
@@ -22,27 +44,6 @@ export default function initQueuesMenu() {
 			$("#filter-queues").val("")
 			$("#filter-queues").focus()
 		},
-	});
-
-	$("#link-queue").removeAttr("href");
-
-	$("#filter-queues").on('input', function() {
-		let txt = $("#filter-queues").val();
-		let anyVisible = false;
-
-		$('#queues a').hide(); // queue name
-		$("#queues > span").hide();
-
-		$('#queues a').each(function(){
-			if ($(this).text().toUpperCase().indexOf(txt.toUpperCase()) != -1) {
-				$(this).show();
-				anyVisible = true;
-			}
-		});
-
-		if (!anyVisible) {
-			$("#queues > span").show()
-		}
 	});
 
 }
