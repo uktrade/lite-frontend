@@ -1,7 +1,3 @@
-from django.shortcuts import redirect, render
-from django.urls import reverse
-from django.views.generic import TemplateView, FormView
-
 from caseworker.cases.forms.review_goods import review_goods_form
 from caseworker.cases.helpers.advice import get_param_goods, flatten_goods_data
 from caseworker.cases.services import get_case, post_review_goods, get_good_on_application
@@ -11,6 +7,11 @@ from caseworker.core.constants import Permission
 from caseworker.core.helpers import has_permission
 from caseworker.core.services import get_control_list_entries
 from lite_forms.views import SingleFormView
+
+from django.shortcuts import redirect
+from django.urls import reverse
+from django.views.generic import FormView
+from django.utils.functional import cached_property
 
 from core.auth.views import LoginRequiredMixin
 
@@ -33,9 +34,6 @@ class ReviewGoods(LoginRequiredMixin, SingleFormView):
         self.success_url = case_url
 
 
-from django.utils.functional import cached_property
-
-
 class GoodDetails(LoginRequiredMixin, FormView):
     template_name = "case/product-on-case.html"
     form_class = CasesSearchForm
@@ -47,20 +45,21 @@ class GoodDetails(LoginRequiredMixin, FormView):
     def get_initial(self):
         part_number = self.good_on_application["good"]["part_number"]
         search_string = f'part:"{part_number}"'
-
         for item in self.good_on_application["control_list_entries"]:
-            search_string += f' clc_rating: "{item["rating"]}"'
+            search_string += f' clc_rating:"{item["rating"]}"'
 
         return {"search_string": search_string}
 
     def get_context_data(self, **kwargs):
         case = get_case(self.request, self.kwargs["pk"])
         part_number = self.good_on_application["good"]["part_number"]
-        other_cases = get_search_results(self.request, query_params={"part": part_number})
+        form = self.get_form()
+        query_params = form.extract_filters(self.get_initial()["search_string"])
+        other_cases = get_search_results(self.request, query_params=query_params)
         return super().get_context_data(
             good_on_application=self.good_on_application,
             other_cases=other_cases,
             case=case,
-            data={"total_pages": other_cases["count"] // self.get_form().page_size},  # for pagination
+            data={"total_pages": other_cases["count"] // form.page_size},  # for pagination
             **kwargs,
         )

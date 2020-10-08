@@ -305,7 +305,6 @@ def pagination(context, *args, **kwargs):
     context["previous_page_number"] = current_page - 1
     context["next_page_number"] = current_page + 1
 
-
     return context
 
 
