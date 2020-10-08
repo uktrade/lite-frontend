@@ -47,7 +47,6 @@ class GoodDetails(LoginRequiredMixin, FormView):
         search_string = f'part:"{part_number}"'
         for item in self.good_on_application["control_list_entries"]:
             search_string += f' clc_rating:"{item["rating"]}"'
-
         return {"search_string": search_string}
 
     def get_context_data(self, **kwargs):

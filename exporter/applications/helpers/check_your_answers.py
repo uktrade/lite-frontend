@@ -206,18 +206,18 @@ def convert_goods_on_application(goods_on_application, is_exhibition=False):
     converted = []
     for good_on_application in goods_on_application:
         # TAU's review is saved at "good on application" level, while exporter's answer is at good level.
-        is_controlled = good_on_application["good"]["is_good_controlled"]["value"]
-        control_list = convert_control_list_entries(good_on_application["good"]["control_list_entries"])
+        is_good_controlled = good_on_application["good"]["is_good_controlled"]["value"]
+        control_list_entries = convert_control_list_entries(good_on_application["good"]["control_list_entries"])
         if good_on_application["is_good_controlled"] is not None:
             is_controlled_application = good_on_application["is_good_controlled"]["value"]
             control_list_application = convert_control_list_entries(good_on_application["control_list_entries"])
-            is_controlled = mark_safe(f"<span class='strike'>{is_controlled}</span><br> {is_controlled_application}")
-            control_list = mark_safe(f"<span class='strike'>{control_list}</span> {control_list_application}")
+            is_good_controlled = f"<span class='strike'>{is_good_controlled}</span><br> {is_controlled_application}"
+            control_list_entries = f"<span class='strike'>{control_list_entries}</span> {control_list_application}"
         item = {
             "Description": good_on_application["good"]["description"],
             "Part number": default_na(good_on_application["good"]["part_number"]),
-            "Controlled": is_controlled,
-            "Control list entries": control_list,
+            "Controlled": mark_safe(is_good_controlled),  # nosec
+            "Control list entries": mark_safe(control_list_entries),  # nosec
         }
         if is_exhibition:
             item["Product type"] = good_on_application["other_item_type"] or good_on_application["item_type"]
