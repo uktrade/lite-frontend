@@ -1,0 +1,67 @@
+{% load govuk_css_classes parse_date from spire_tags %}
+{% load intcomma from humanize %}
+
+
+<div class="govuk-!-padding-top-6 govuk-!-padding-bottom-6">
+	<h2 class="govuk-heading-l">Licence details</h2>
+	<table class="govuk-table">
+		<tbody class="govuk-table__body">
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header">Exporter</th>
+				<td class="govuk-table__cell">---</td>
+			</tr>
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header">Licence number</th>
+				<td class="govuk-table__cell">{{ licence.licence_ref }}</td>
+			</tr>
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header">Type of licence</th>
+				<td class="govuk-table__cell">{{ licence.customs_ex_procedure }}</td>
+			</tr>
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header">Application number</th>
+				<td class="govuk-table__cell">---</td>
+			</tr>
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header">Applicant Reference</th>
+				<td class="govuk-table__cell">---</td>
+			</tr>
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header">Commencement Date</th>
+				<td class="govuk-table__cell">{{ licence.start_date|parse_date|date:"d M Y" }}</td>
+			</tr>
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header">Expiry Date</th>
+				<td class="govuk-table__cell">{{ licence.expiry_date|parse_date|date:"d M Y" }}</td>
+			</tr>
+			<tr class="govuk-table__row">
+				<th class="govuk-table__cell">Exporter contact details</th>
+				<td class="govuk-table__cell">---</td>
+			</tr>
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header">Consignee(s)/Destinations</th>
+				<td class="govuk-table__cell">---</td>
+			</tr>
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header">Country of consignment</th>
+				<td class="govuk-table__cell">---</td>
+			</tr>
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header">Country of Destination</th>
+				<td class="govuk-table__cell">---</td>
+			</tr>
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header">End User</th>
+				<td class="govuk-table__cell">---</td>
+			</tr>
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header">End Use</th>
+				<td class="govuk-table__cell">---</td>
+			</tr>
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header">Contract date</th>
+				<td class="govuk-table__cell">---</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
