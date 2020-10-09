@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse
 from django.views.generic import TemplateView
 
 from exporter.applications.forms.parties import new_party_form_group
@@ -22,8 +22,8 @@ class EndUser(LoginRequiredMixin, TemplateView):
             context = {
                 "application": application,
                 "title": EndUserPage.TITLE,
-                "edit_url": reverse_lazy("applications:edit_end_user", kwargs=kwargs),
-                "remove_url": reverse_lazy("applications:remove_end_user", kwargs=kwargs),
+                "edit_url": reverse("applications:edit_end_user", kwargs=kwargs),
+                "remove_url": reverse("applications:remove_end_user", kwargs=kwargs),
                 "answers": convert_party(
                     party=application["end_user"],
                     application=application,
@@ -36,12 +36,16 @@ class EndUser(LoginRequiredMixin, TemplateView):
 
             return render(request, "applications/end-user.html", context)
         else:
-            return redirect(reverse_lazy("applications:add_end_user", kwargs={"pk": application_id}))
+            return redirect(reverse("applications:add_end_user", kwargs={"pk": application_id}))
 
 
 class AddEndUser(LoginRequiredMixin, AddParty):
     def __init__(self):
         super().__init__(new_url="applications:set_end_user", copy_url="applications:end_users_copy")
+
+    @property
+    def back_url(self):
+        return reverse("applications:task_list", kwargs={"pk": self.kwargs["pk"]}) + "#end_user"
 
 
 class SetEndUser(LoginRequiredMixin, SetParty):
@@ -59,9 +63,9 @@ class SetEndUser(LoginRequiredMixin, SetParty):
 
     def get_success_url(self):
         if self.application.sub_type == OPEN:
-            return reverse_lazy("applications:end_user", kwargs={"pk": self.object_pk})
+            return reverse("applications:end_user", kwargs={"pk": self.object_pk})
         else:
-            return reverse_lazy(
+            return reverse(
                 self.url, kwargs={"pk": self.object_pk, "obj_pk": self.get_validated_data()[self.party_type]["id"]}
             )
 
@@ -92,9 +96,9 @@ class CopyEndUser(LoginRequiredMixin, CopyAndSetParty):
 
     def get_success_url(self):
         if self.application.sub_type == OPEN:
-            return reverse_lazy("applications:end_user", kwargs={"pk": self.object_pk})
+            return reverse("applications:end_user", kwargs={"pk": self.object_pk})
         else:
-            return reverse_lazy(
+            return reverse(
                 self.url, kwargs={"pk": self.object_pk, "obj_pk": self.get_validated_data()[self.party_type]["id"]}
             )
 

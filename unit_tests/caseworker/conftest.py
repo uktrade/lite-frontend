@@ -12,16 +12,8 @@ gov_uk_user_id = "2a43805b-c082-47e7-9188-c8b3e1a83cb0"
 
 
 @pytest.fixture
-def mock_case(
-    requests_mock,
-    mock_case_ecju_queries,
-    mock_case_assigned_queues,
-    mock_case_documents,
-    mock_case_additional_documents,
-    mock_case_activity_filters,
-):
-    url = client._build_absolute_uri(f"/cases/{application_id}/")
-    data = {
+def data_case():
+    return {
         "case": {
             "id": application_id,
             "case_type": {
@@ -216,7 +208,7 @@ def mock_case(
                     {
                         "id": "3461adb9-0cc1-4097-b663-e06ac06198a2",
                         "description": "tool to assist peasants seize the means of production",
-                        "is_good_controlled": True,
+                        "is_good_controlled": {"key": "False", "value": "No"},
                         "is_good_incorporated": True,
                         "control_list_entries": [{"rating": "ML1a", "text": "Outmoded bourgeois reactionaries",}],
                         "countries": [{"id": "US", "name": "United States", "type": "gov.uk Country", "is_eu": False}],
@@ -293,21 +285,46 @@ def mock_case(
             "licences": [],
         }
     }
-    requests_mock.get(url=url, json=data)
-    yield data
 
 
 @pytest.fixture
-def mock_queue(requests_mock):
-    url = client._build_absolute_uri("/queues/")
-    data = {
+def case_pk(data_case):
+    return data_case["case"]["id"]
+
+
+@pytest.fixture
+def mock_case(
+    requests_mock,
+    mock_case_ecju_queries,
+    mock_case_assigned_queues,
+    mock_case_documents,
+    mock_case_additional_documents,
+    mock_case_activity_filters,
+    data_case,
+):
+    url = client._build_absolute_uri(f"/cases/{application_id}/")
+    yield requests_mock.get(url=url, json=data_case)
+
+
+@pytest.fixture
+def data_queue():
+    return {
         "id": "00000000-0000-0000-0000-000000000001",
         "name": "All cases",
         "is_system_queue": True,
         "countersigning_queue": None,
     }
-    requests_mock.get(url=re.compile(f"{url}.*/"), json=data)
-    yield data
+
+
+@pytest.fixture
+def queue_pk(data_queue):
+    return data_queue["id"]
+
+
+@pytest.fixture
+def mock_queue(requests_mock, data_queue):
+    url = client._build_absolute_uri("/queues/")
+    yield requests_mock.get(url=re.compile(f"{url}.*/"), json=data_queue)
 
 
 @pytest.fixture(autouse=True)
@@ -637,7 +654,141 @@ def mock_case_statuses(requests_mock):
 
 
 @pytest.fixture
-def authorized_client(client: Client, settings):
+def data_good_on_application(data_case):
+    return {
+        "id": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
+        "good": {
+            "id": "8b730c06-ab4e-401c-aeb0-32b3c92e912c",
+            "description": "444",
+            "part_number": "44",
+            "control_list_entries": [],
+            "comment": None,
+            "is_good_controlled": {"key": "False", "value": "No"},
+            "report_summary": "",
+            "flags": [],
+            "documents": [],
+            "is_pv_graded": "no",
+            "grading_comment": None,
+            "pv_grading_details": None,
+            "status": {"key": "verified", "value": "Verified"},
+            "item_category": {"key": "group1_device", "value": "Device, equipment or object"},
+            "is_military_use": {"key": "no", "value": "No"},
+            "is_component": {"key": "no", "value": "No"},
+            "uses_information_security": False,
+            "modified_military_use_details": None,
+            "component_details": None,
+            "information_security_details": None,
+            "missing_document_reason": {"key": "OFFICIAL_SENSITIVE", "value": "Document is above OFFICIAL-SENSITIVE"},
+            "software_or_technology_details": None,
+            "firearm_details": None,
+        },
+        "application": data_case["case"]["id"],
+        "quantity": 444.0,
+        "unit": {"key": "GRM", "value": "Gram(s)"},
+        "value": "444.00",
+        "is_good_incorporated": False,
+        "flags": [],
+        "item_type": None,
+        "other_item_type": None,
+        "is_good_controlled": {"key": "True", "value": "Tes"},
+        "control_list_entries": [
+            {"rating": "ML1", "text": "Smooth-bore weapons with a calibre of less than 20mm, other firearms..."},
+            {"rating": "ML2", "text": "Smooth-bore weapons with a calibre of 20mm or more, other armament..."},
+        ],
+        "comment": "",
+        "report_summary": "",
+        "audit_trail": [
+            {
+                "id": "86f4d159-a282-4a25-b236-7e3d195356be",
+                "created_at": "2020-10-07T15:26:36.976341+01:00",
+                "user": {
+                    "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
+                    "first_name": "Richard",
+                    "last_name": "Tier",
+                    "type": "internal",
+                },
+                "text": 'good was reviewed: 444 control code changed from "ML1" to "ML1, ML2".',
+                "additional_text": "",
+            },
+            {
+                "id": "fcd4f521-18b2-4efc-b011-aac841195a76",
+                "created_at": "2020-10-07T15:22:09.786473+01:00",
+                "user": {
+                    "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
+                    "first_name": "Richard",
+                    "last_name": "Tier",
+                    "type": "internal",
+                },
+                "text": 'good was reviewed: 444 control code changed from "ML1, ML2" to "ML1".',
+                "additional_text": "",
+            },
+        ],
+    }
+
+
+@pytest.fixture
+def good_on_application_pk(data_good_on_application):
+    return data_good_on_application["id"]
+
+
+@pytest.fixture
+def mock_good_on_appplication(requests_mock, mock_case, data_good_on_application):
+    url = client._build_absolute_uri("/applications/good-on-application")
+    yield requests_mock.get(url=re.compile(f"{url}.*"), json=data_good_on_application)
+
+
+@pytest.fixture(autouse=True)
+def data_search():
+    return {
+        "count": 1,
+        "next": None,
+        "previous": None,
+        "facets": {},
+        "results": [
+            {
+                "id": "8fb76bed-fd45-4293-95b8-eda9468aa254",
+                "queues": [{"id": "1b926457-5c9e-4916-8497-51886e51863a", "name": "queue", "team": "Admin"}],
+                "name": "444",
+                "reference_code": "GBSIEL/2020/0002687/T",
+                "organisation": "jim",
+                "status": "submitted",
+                "case_type": "application",
+                "case_subtype": "standard",
+                "submitted_by": {"username": None, "email": "rikatee+wesd@gmail.com"},
+                "created": "16:53 01 October 2020",
+                "updated": "16:57 01 October 2020",
+                "case_officer": {},
+                "goods": [
+                    {
+                        "quantity": 444.0,
+                        "value": 444.0,
+                        "unit": "GRM",
+                        "incorporated": False,
+                        "description": "444",
+                        "comment": None,
+                        "part_number": "44",
+                        "is_good_controlled": {"key": "False", "value": "No"},
+                        "control_list_entries": [],
+                        "report_summary": "",
+                    }
+                ],
+                "parties": [{"name": "44", "address": "44", "type": "end_user", "country": "United Kingdom"}],
+                "highlight": {"goods.part_number.raw": ["<b>44</b>"]},
+                "index": "lite",
+                "score": 1.0,
+            }
+        ],
+    }
+
+
+@pytest.fixture(autouse=True)
+def mock_search(requests_mock, data_search):
+    url = client._build_absolute_uri("/search/application/application_search/")
+    yield requests_mock.get(url=url, json=data_search)
+
+
+@pytest.fixture
+def authorized_client_factory(client: Client, settings):
     """
     returns a factory to make a authorized client for a mock_gov_user,
 
@@ -663,3 +814,8 @@ def authorized_client(client: Client, settings):
         return client
 
     yield _inner
+
+
+@pytest.fixture
+def authorized_client(mock_gov_user, authorized_client_factory):
+    return authorized_client_factory(mock_gov_user["user"])

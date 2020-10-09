@@ -302,6 +302,8 @@ def pagination(context, *args, **kwargs):
     context["previous_link_url"] = pagination_params(current_path, current_page - 1) if current_page != 1 else None
     context["next_link_url"] = pagination_params(current_path, current_page + 1) if current_page != max_pages else None
     context["pages"] = pages
+    context["previous_page_number"] = current_page - 1
+    context["next_page_number"] = current_page + 1
 
     return context
 

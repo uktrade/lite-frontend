@@ -6,8 +6,8 @@ from lite_forms.components import FormGroup, TextArea, Form, RadioButtons, Optio
 def temporary_export_details_form():
     return FormGroup(
         [
-            provide_export_details_form(TemporaryExportDetails.TEMPORARY_EXPORT_DETAILS_CAPTION),
-            is_temp_direct_control_form(TemporaryExportDetails.TEMPORARY_EXPORT_DETAILS_CAPTION),
+            provide_export_details_form(caption=TemporaryExportDetails.TEMPORARY_EXPORT_DETAILS_CAPTION),
+            is_temp_direct_control_form(caption=TemporaryExportDetails.TEMPORARY_EXPORT_DETAILS_CAPTION),
             proposed_product_return_date_form(TemporaryExportDetails.TEMPORARY_EXPORT_DETAILS_CAPTION),
         ]
     )

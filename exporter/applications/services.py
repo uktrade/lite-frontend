@@ -34,8 +34,9 @@ def has_existing_applications_and_licences_and_nlrs(request):
 
 
 def get_application(request, pk) -> Application:
-    data = client.get(request, f"/applications/{pk}")
-    return Application(data.json())
+    response = client.get(request, f"/applications/{pk}")
+    response.raise_for_status()
+    return Application(response.json())
 
 
 def post_applications(request, json):

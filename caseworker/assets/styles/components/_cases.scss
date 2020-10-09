@@ -535,3 +535,10 @@ $case-header-text-colour: govuk-colour("white");
 		margin-bottom: govuk-spacing(7);
 	}
 }
+
+.app-template__case-body {
+	#related-cases-tab {
+		overflow: hidden;
+	}
+	
+}

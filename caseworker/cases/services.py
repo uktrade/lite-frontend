@@ -214,6 +214,12 @@ def post_ecju_query(request, pk, json):
     return response.json(), response.status_code
 
 
+def get_good_on_application(request, pk):
+    response = client.get(request, f"/applications/good-on-application/{pk}")
+    response.raise_for_status()
+    return response.json()
+
+
 def get_good(request, pk):
     data = client.get(request, f"/goods/{pk}")
     return data.json(), data.status_code
@@ -230,7 +236,6 @@ def post_review_goods(request, case_id, json):
     json = {
         "objects": request.GET.getlist("goods", request.GET.getlist("goods_types")),
         "comment": request.POST.get("comment"),
-        "canonical_good_comment": request.POST.get("canonical_good_comment"),
         "control_list_entries": request.POST.getlist("control_list_entries[]", []),
         "is_good_controlled": request.POST.get("is_good_controlled") == "True",
         "report_summary": request.POST.get("report_summary"),

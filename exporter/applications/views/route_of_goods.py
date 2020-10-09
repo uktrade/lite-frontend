@@ -10,11 +10,12 @@ from core.auth.views import LoginRequiredMixin
 
 class RouteOfGoods(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
+        application_url = reverse_lazy("applications:task_list", kwargs={"pk": kwargs["pk"]}) + "#route_of_goods"
         self.object_pk = kwargs["pk"]
         self.data = self.get_form_data(request)
-        self.form = route_of_goods_form()
+        self.form = route_of_goods_form(back_link=application_url)
         self.action = put_application_route_of_goods
-        self.success_url = reverse_lazy("applications:task_list", kwargs={"pk": self.object_pk})
+        self.success_url = application_url
 
     def get_form_data(self, request):
         application = get_application(request, self.object_pk)
