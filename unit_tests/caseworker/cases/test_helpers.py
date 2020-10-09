@@ -1,4 +1,5 @@
-from caseworker.cases.helpers.advice import order_grouped_advice, convert_advice_item_to_base64
+from caseworker.cases.helpers import advice
+from caseworker.cases.objects import Case
 
 
 def test_convert_advice_item_to_base64():
@@ -17,7 +18,7 @@ def test_convert_advice_item_to_base64():
         "type": "I Am Easy to Find",
         "level": "I Am Easy to Find",
     }
-    assert convert_advice_item_to_base64(item_1) == convert_advice_item_to_base64(item_2)
+    assert advice.convert_advice_item_to_base64(item_1) == advice.convert_advice_item_to_base64(item_2)
 
 
 def test_order_grouped_advice():
@@ -35,7 +36,7 @@ def test_order_grouped_advice():
         7: {"type": {"key": "not_applicable"}},
     }
 
-    ordered = list(order_grouped_advice(initial_order).keys())
+    ordered = list(advice.order_grouped_advice(initial_order).keys())
 
     assert ordered[0] == 5
     assert ordered[1] == 2
@@ -44,3 +45,19 @@ def test_order_grouped_advice():
     assert ordered[4] == 1
     assert ordered[5] == 4
     assert ordered[6] == 6
+
+
+def test_flatten_goods_data_open_application(data_case, rf):
+    good_ids = [good["id"] for good in data_case["case"]["data"]["goods_types"]]
+
+    request = rf.get("/", {"goods": good_ids})
+    param_goods = advice.get_param_goods(request, Case(data_case["case"]))
+
+    actual = advice.flatten_goods_data(param_goods)
+
+    assert actual == {
+        "is_good_controlled": "False",
+        "control_list_entries": [{"key": "ML1a", "value": "ML1a"}],
+        "report_summary": None,
+        "comment": None,
+    }
