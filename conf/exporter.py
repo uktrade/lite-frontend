@@ -44,7 +44,6 @@ GOOGLE_ANALYTICS_KEY = env.str("GOOGLE_ANALYTICS_KEY")
 
 # static files
 SVG_DIRS = [
-    os.path.join(BASE_DIR, "dist"),
     os.path.join(BASE_DIR, "exporter/assets/images"),
     os.path.join(BASE_DIR, "core/assets/images"),
 ]
@@ -52,7 +51,6 @@ SVG_DIRS = [
 STATIC_ROOT = os.path.join(DATA_DIR, "exporter/staticfiles")
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "dist"),
     os.path.join(BASE_DIR, "core/assets/"),
     os.path.join(BASE_DIR, "exporter/assets"),
     os.path.join(BASE_DIR, "exporter/assets/built/"),
