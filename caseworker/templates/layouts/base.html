@@ -27,7 +27,10 @@
 	<link rel="apple-touch-icon" sizes="152x152" href="{% static 'images/govuk-apple-touch-icon-152x152.png' %}">
 	<link rel="apple-touch-icon" href="{% static 'images/govuk-apple-touch-icon.png' %}">
 
-	<link href="{% static 'built/styles.css' %}" rel="stylesheet" type="text/css" />
+	<link href="{% static 'main.css' %}" rel="stylesheet" type="text/css" />
+
+	<script src="{% static 'javascripts/jquery.min.js' %}"></script>
+
 	<script nonce="{{ request.csp_nonce }}">
 		(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 		new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -137,47 +140,16 @@
 	<script src="{% static 'javascripts/tippy.js' %}"></script>
 	<script src="{% static 'javascripts/modal.js' %}"></script>
 	<script src="{% static 'javascripts/definitions.js' %}"></script>
-	<script src="{% static 'javascripts/generic.js' %}"></script>
+	<script src="{% static 'javascripts/snackbar-hide.js' %}"></script>
+	<script src="{% static 'javascripts/checkboxes.js' %}"></script>
 	<script src="{% static 'javascripts/back-link.js' %}"></script>
+	<script src="{% static 'javascripts/menu-tooltips.js' %}"></script>
 
 	<script nonce="{{ request.csp_nonce }}">
 		window.GOVUKFrontend.initAll()
 	</script>
 
 	{% block javascript %}{% endblock %}
-
-	<script nonce="{{ request.csp_nonce }}" type="text/javascript">
-		$("#link-menu").removeAttr("href");
-		const menu = document.getElementById('lite-menu');
-		menu.style.display = 'block';
-		tippy("#link-menu", {
-			content: menu,
-			allowHTML: true,
-			interactive: true,
-			animation: 'scale-subtle',
-			trigger: 'click',
-			theme: 'light',
-			placement: 'bottom'
-		});
-
-		function setTooltips() {
-			tippy("*[data-tooltip]", {
-				content(reference) {
-					return reference.getAttribute('data-tooltip');
-				},
-				allowHTML: true,
-				animation: 'scale-subtle',
-			});
-
-			tippy('.app-flag--label', {
-				content(reference) {
-					return reference.getAttribute('data-label');
-				},
-			});
-		}
-
-		setTooltips();
-	</script>
 
 </body>
 
