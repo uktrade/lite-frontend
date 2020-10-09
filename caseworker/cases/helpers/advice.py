@@ -108,7 +108,6 @@ def flatten_goods_data(items: List[Dict]):
         control_review = items
     else:
         control_review = goods
-
     is_good_controlled = same_value(control_review, "is_good_controlled")
     report_summary = same_value(control_review, "report_summary")
     control_list_entries = None
@@ -121,7 +120,7 @@ def flatten_goods_data(items: List[Dict]):
         ]
 
     return {
-        "is_good_controlled": is_good_controlled,
+        "is_good_controlled": is_good_controlled["key"] if is_good_controlled else None,
         "control_list_entries": control_list_entries,
         "report_summary": report_summary,
         "comment": same_value(control_review, "comment"),

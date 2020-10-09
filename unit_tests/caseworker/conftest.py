@@ -208,7 +208,7 @@ def data_case():
                     {
                         "id": "3461adb9-0cc1-4097-b663-e06ac06198a2",
                         "description": "tool to assist peasants seize the means of production",
-                        "is_good_controlled": True,
+                        "is_good_controlled": {"key": "False", "value": "No"},
                         "is_good_incorporated": True,
                         "control_list_entries": [{"rating": "ML1a", "text": "Outmoded bourgeois reactionaries",}],
                         "countries": [{"id": "US", "name": "United States", "type": "gov.uk Country", "is_eu": False}],
@@ -690,7 +690,7 @@ def data_good_on_application(data_case):
         "flags": [],
         "item_type": None,
         "other_item_type": None,
-        "is_good_controlled": True,
+        "is_good_controlled": {"key": "True", "value": "Tes"},
         "control_list_entries": [
             {"rating": "ML1", "text": "Smooth-bore weapons with a calibre of less than 20mm, other firearms..."},
             {"rating": "ML2", "text": "Smooth-bore weapons with a calibre of 20mm or more, other armament..."},
@@ -767,7 +767,7 @@ def data_search():
                         "description": "444",
                         "comment": None,
                         "part_number": "44",
-                        "is_good_controlled": False,
+                        "is_good_controlled": {"key": "False", "value": "No"},
                         "control_list_entries": [],
                         "report_summary": "",
                     }
