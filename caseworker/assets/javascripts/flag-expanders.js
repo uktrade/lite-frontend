@@ -4,7 +4,7 @@ export default function initFlagListExpanders() {
 	const $flagsLists = $('.app-flags--list');
 	const chevronSVG = $('#js-chevron-svg').html();
 
-	$flagsLists.each(function(i) {
+	$flagsLists.each(function() {
 		const $flags = $(this).find('.app-flag');
 
 		$flags.each(function(i) {

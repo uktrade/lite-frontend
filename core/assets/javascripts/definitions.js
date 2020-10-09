@@ -41,7 +41,7 @@ $('[data-definition-title]').click(function() {
     var htmlList = "<ol class='govuk-list govuk-list--number'>";
 
     if (list) {
-        for (i = 0; i < list.length; i++) {
+        for (var i = 0; i < list.length; i++) {
             htmlList += "<li>" + list[i] + "</li>";
         }
     }

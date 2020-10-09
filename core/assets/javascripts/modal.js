@@ -6,7 +6,7 @@ LITECommon.Modal = {
 	container: {},
 	backButton: {},
 	closeButton: {},
-  	focusableElementsString: 'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, *[tabindex], *[contenteditable]',
+		focusableElementsString: 'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, *[tabindex], *[contenteditable]',
 	previouslyFocusedElement: {},
 
 	showModal: function(title, content, hideCloseButton = false, backLinkText = true, options={}) {
