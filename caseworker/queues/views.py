@@ -52,7 +52,7 @@ class Cases(LoginRequiredMixin, TemplateView):
         return self.kwargs.get("queue_pk") or self.request.session.get("default_queue")
 
     @cached_property
-    def cases(self):
+    def data(self):
         hidden = self.request.GET.get('hidden')
 
         params = {'page': int(self.request.GET.get('page', 1))}
@@ -68,28 +68,28 @@ class Cases(LoginRequiredMixin, TemplateView):
         data = get_cases_search_data(self.request, self.queue_pk, params)
         return data
 
+    @property
+    def filters(self):
+        return self.data['results']['filters']
+
     def get_context_data(self, *args, **kwargs):
 
         try:
             updated_queue = [
-                queue for queue in self.cases['results']['queues']
+                queue for queue in self.data['results']['queues']
                 if queue['id'] == UPDATED_CASES_QUEUE_ID][0]
             show_updated_cases_banner = updated_queue['case_count']
         except IndexError:
             show_updated_cases_banner = False
 
+        is_system_queue = self.queue.get('is_system_queue', False)
+
         context = {
             "sla_radius": SLA_RADIUS,
             "sla_circumference": SLA_CIRCUMFERENCE,
-            "cases": self.cases,
-            "cases_json": json.dumps(self.cases),
+            "data": self.data,
             "queue": self.queue,  # Used for showing current queue
-            "filters": case_filters_bar(self.request, self.queue),
-            "params": convert_parameters_to_query_params(self.request.GET),  # Used for passing params to JS
-            "case_officer": self.request.GET.get("case_officer"),  # Used for reading params dynamically
-            "assigned_user": self.request.GET.get("assigned_user"),  # ""
-            "team_advice_type": self.request.GET.get("team_advice_type"),  # ""
-            "final_advice_type": self.request.GET.get("final_advice_type"),  # ""
+            "filters": case_filters_bar(self.request, self.filters, self.request.GET, is_system_queue),
             "is_all_cases_queue": self.queue_pk == ALL_CASES_QUEUE_ID,
             "enforcement_check": Permission.ENFORCEMENT_CHECK.value in get_user_permissions(self.request),
             "updated_cases_banner_queue_id": UPDATED_CASES_QUEUE_ID,

@@ -49,7 +49,7 @@
 			</div>
 			<input type="text" id="filter-queues">
 		</div>
-		{% for item in cases.results.queues %}
+		{% for item in data.results.queues %}
 			<a href="{% url 'queues:cases' item.id %}" id="{{ item.id }}" class="app-menu__item app-menu__item--subtitle {% if item.id == queue.id %}app-menu__item--selected{% endif %}">
 				{{ item.name }}
 				<span class="app-menu__item-subtitle">{{ item.case_count }}</span>
@@ -57,12 +57,12 @@
 		{% endfor %}
 	</div>
 
-	<p class="lite-filters__hint-text">{{ cases.count }} case{{ cases.count|pluralize }}</p>
+	<p class="lite-filters__hint-text">{{ data.count }} case{{ data.count|pluralize }}</p>
 
 	{% include 'filters.html' %}
 
 	<form id="form-cases" method="get" action="{% url 'queues:case_assignments' queue.id %}">
-		{% if not cases.results %}
+		{% if not data.results.cases %}
 			{% include "includes/notice.html" with text='cases.CasesListPage.NO_CASES' %}
 		{% else %}
 		<table id="table-cases" class="govuk-table">
@@ -83,13 +83,15 @@
 			</thead>
 
 			<tbody class="govuk-table__body" id="tbody-main">
-				{% for case in cases.results.cases %}
+				{% for case in data.results.cases %}
 					{% include 'includes/case-row.html' with case=case %}
 				{% endfor %}
 			</tbody>
 		</table>
 		{% endif %}
 	</form>
+
+	{% pagination %}
 
 {% endblock %}
 
@@ -98,38 +100,11 @@
 	{% svg 'chevron' %}
 </div>
 
-	<script src="{% static 'javascripts/cases.js' %}"></script>
+	<script nonce="{{ request.csp_nonce }}" src="{% static 'main.js' %}"></script>
 
+	{# this is tied to inline javascript in lite_forms/templates/components/autocomplete.html and cannot be removed yet #}
 	<script nonce="{{ request.csp_nonce }}">
-		var params = `{{ params }}`;
-		var previousSVG = `{% svg 'previous' %}`;
-		var nextSVG = `{% svg 'next' %}`;
-		var chevron = `{% svg 'chevron' %}`;
-		var noCases = `{% include "includes/notice.html" with text='cases.CasesListPage.NO_CASES' %}`;
-
-		var data = {{ cases_json|safe }};
-
-			if (data.total_pages > 1) {
-				generatePagination({{ request.GET.page|default:1 }}, data.total_pages);
-			}
-
-			$.each(data.results.filters.statuses, function(i, item) {
-				$("#status").append(`<option value="${item.key}" ${(item.key == "{{ case_officer }}" ? "selected" : "")}>${item.value}</option>`)
-			});
-			$.each(data.results.filters.case_types, function(i, item) {
-				$("#case_type").append(`<option value="${item.key}" ${(item.key == "{{ case_type }}" ? "selected" : "")}>${item.value}</option>`)
-			});
-			$.each(data.results.filters.gov_users, function(i, item) {
-				$("#case_officer").append(`<option value="${item.id}" ${(item.id == "{{ case_officer }}" ? "selected" : "")}>${item.full_name}</option>`)
-				$("#assigned_user").append(`<option value="${item.id}" ${(item.id == "{{ assigned_user }}" ? "selected" : "")}>${item.full_name}</option>`)
-			});
-			$.each(data.results.filters.advice_types, function(i, item) {
-				$("#team_advice_type").append(`<option value="${item.key}" ${(item.key == "{{ team_advice_type }}" ? "selected" : "")}>${item.value}</option>`)
-				$("#final_advice_type").append(`<option value="${item.key}" ${(item.key == "{{ final_advice_type }}" ? "selected" : "")}>${item.value}</option>`)
-			});
-
-			loadAutoCompletes();
-			tryShowFilterBar();
-
+		loadAutoCompletes();
 	</script>
+
 {% endblock %}
