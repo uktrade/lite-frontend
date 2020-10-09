@@ -134,7 +134,7 @@ def test_good_on_application_detail(
     data_good_on_application,
     data_case,
 ):
-    # given I access good on application details for a good with control list entries
+    # given I access good on application details for a good with control list entries and a part number
     url = reverse("cases:good", kwargs={"queue_pk": queue_pk, "pk": case_pk, "good_pk": good_on_application_pk})
     response = authorized_client.get(url)
 
@@ -147,3 +147,51 @@ def test_good_on_application_detail(
     assert response.context_data["case"] == data_case["case"]
     # and the form is pre-populated with the part number and control list entries
     assert response.context_data["form"]["search_string"].initial == 'part:"44" clc_rating:"ML1" clc_rating:"ML2"'
+
+
+def test_good_on_application_detail_no_part_number(
+    authorized_client, mock_search, queue_pk, case_pk, good_on_application_pk, data_good_on_application,
+):
+    # given I access good on application details for a good with control list entries but no part number
+    data_good_on_application["good"]["part_number"] = ""
+    url = reverse("cases:good", kwargs={"queue_pk": queue_pk, "pk": case_pk, "good_pk": good_on_application_pk})
+    response = authorized_client.get(url)
+
+    assert response.status_code == 200
+    # then the search endpoint is requested for cases with goods with the same control list entries
+    assert mock_search.request_history[0].qs == {"clc_rating": ["ml1", "ml2"]}
+    # and the form is pre-populated with the part number and control list entries
+    assert response.context_data["form"]["search_string"].initial == 'clc_rating:"ML1" clc_rating:"ML2"'
+
+
+def test_good_on_application_detail_no_part_number_no_control_list_entries(
+    authorized_client, mock_search, queue_pk, case_pk, good_on_application_pk, data_good_on_application,
+):
+    # given I access good on application details for a good with neither part number of control list entries
+    data_good_on_application["good"]["part_number"] = ""
+    data_good_on_application["control_list_entries"] = []
+    url = reverse("cases:good", kwargs={"queue_pk": queue_pk, "pk": case_pk, "good_pk": good_on_application_pk})
+    response = authorized_client.get(url)
+
+    assert response.status_code == 200
+    # then the search endpoint is not requested
+    assert len(mock_search.request_history) == 0
+    # and the form is left blank
+    assert response.context_data["form"]["search_string"].initial == ""
+
+
+def test_good_on_application_detail_not_rated_at_application_level(
+    authorized_client, mock_search, queue_pk, case_pk, good_on_application_pk, data_good_on_application,
+):
+    # given I access good on application details for a good that has not been rated at application level
+    data_good_on_application["control_list_entries"] = []
+    data_good_on_application["good"]["part_number"] = ""
+    data_good_on_application["good"]["control_list_entries"] = ({"rating": "ML1", "text": "Smooth-bore..."},)
+    url = reverse("cases:good", kwargs={"queue_pk": queue_pk, "pk": case_pk, "good_pk": good_on_application_pk})
+    response = authorized_client.get(url)
+
+    assert response.status_code == 200
+    # then the search endpoint is requested for cases with goods with the same control list entries as canonical good
+    assert mock_search.request_history[0].qs == {"clc_rating": ["ml1"]}
+    # and the form is pre-populated with the canonical good control list entries
+    assert response.context_data["form"]["search_string"].initial == 'clc_rating:"ML1"'

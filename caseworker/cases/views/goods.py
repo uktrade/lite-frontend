@@ -39,25 +39,34 @@ class GoodDetails(LoginRequiredMixin, FormView):
     form_class = CasesSearchForm
 
     @cached_property
-    def good_on_application(self):
+    def object(self):
         return get_good_on_application(self.request, pk=self.kwargs["good_pk"])
 
+    @cached_property
+    def other_cases(self):
+        form = self.get_form()
+        search_string = self.get_initial()["search_string"]
+        if search_string:
+            return get_search_results(self.request, query_params=form.extract_filters(search_string))
+        return []
+
     def get_initial(self):
-        part_number = self.good_on_application["good"]["part_number"]
-        search_string = f'part:"{part_number}"'
-        for item in self.good_on_application["control_list_entries"]:
+        search_string = ""
+        part_number = self.object["good"]["part_number"]
+        if part_number:
+            search_string += f'part:"{part_number}"'
+        control_list_entries = self.object["control_list_entries"] or self.object["good"]["control_list_entries"]
+        for item in control_list_entries:
             search_string += f' clc_rating:"{item["rating"]}"'
-        return {"search_string": search_string}
+        return {"search_string": search_string.strip()}
 
     def get_context_data(self, **kwargs):
-        case = get_case(self.request, self.kwargs["pk"])
         form = self.get_form()
-        query_params = form.extract_filters(self.get_initial()["search_string"])
-        other_cases = get_search_results(self.request, query_params=query_params)
         return super().get_context_data(
-            good_on_application=self.good_on_application,
-            other_cases=other_cases,
-            case=case,
-            data={"total_pages": other_cases["count"] // form.page_size},  # for pagination
+            good_on_application=self.object,
+            case=get_case(self.request, self.kwargs["pk"]),
+            other_cases=self.other_cases,
+            # for pagination
+            data={"total_pages": self.other_cases["count"] // form.page_size} if self.other_cases else {},
             **kwargs,
         )
