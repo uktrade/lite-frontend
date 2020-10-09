@@ -16,7 +16,7 @@ from lite_forms.helpers import conditional
 SLA_DAYS_RANGE = 99
 
 
-def case_filters_bar(request, filters, selected_filters, is_system_queue) -> FiltersBar:
+def case_filters_bar(request, filters, is_system_queue) -> FiltersBar:
     """
     Returns a FiltersBar for the case search page.
     """
@@ -25,6 +25,8 @@ def case_filters_bar(request, filters, selected_filters, is_system_queue) -> Fil
         Option("descending", CasesListPage.Filters.SORT_BY_SLA_ELAPSED_DESCDENDING),
     ]
     sla_days = [Option(i, i) for i in range(SLA_DAYS_RANGE)]
+
+    selected_filters = request.GET
 
     return FiltersBar(
         [
