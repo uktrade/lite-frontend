@@ -36,14 +36,14 @@ def test_sla_ratio():
 @pytest.mark.parametrize(
     "remaining, unit, colour",
     (
-        (50, 'hours', 'red'),
-        (48, 'hours', 'red'),
-        (10, 'hours', 'orange'),
-        (10, 'days', 'green'),
-        (5, 'days', 'green'),
-        (4, 'days', 'orange'),
-        (0, 'days', 'red'),
-        (-1, 'days', 'red'),
+        (50, "hours", "red"),
+        (48, "hours", "red"),
+        (10, "hours", "orange"),
+        (10, "days", "green"),
+        (5, "days", "green"),
+        (4, "days", "orange"),
+        (0, "days", "red"),
+        (-1, "days", "red"),
     ),
 )
 def test_sla_colour(remaining, unit, colour):
@@ -53,4 +53,4 @@ def test_sla_colour(remaining, unit, colour):
 
 def test_sla_colour_missing_unit():
     with pytest.raises(ValueError):
-        custom_tags.sla_colour(10, '')
+        custom_tags.sla_colour(10, "")

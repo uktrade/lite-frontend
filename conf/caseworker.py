@@ -59,18 +59,18 @@ LITE_SPIRE_ARCHIVE_EXAMPLE_ORGANISATION_ID = env.int("LITE_SPIRE_ARCHIVE_EXAMPLE
 
 # static files
 SVG_DIRS = [
-    os.path.join(BASE_DIR, 'caseworker/assets/built/'),
-    os.path.join(BASE_DIR, 'caseworker/assets/images'),
-    os.path.join(BASE_DIR, 'core/assets/images'),
+    os.path.join(BASE_DIR, "caseworker/assets/built/"),
+    os.path.join(BASE_DIR, "caseworker/assets/images"),
+    os.path.join(BASE_DIR, "core/assets/images"),
 ]
 
-STATIC_ROOT = os.path.join(DATA_DIR, 'caseworker/staticfiles')
+STATIC_ROOT = os.path.join(DATA_DIR, "caseworker/staticfiles")
 
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'caseworker/assets/built/'),
-    os.path.join(BASE_DIR, 'caseworker/assets/'),
-    os.path.join(BASE_DIR, 'core/assets/'),
+    os.path.join(BASE_DIR, "caseworker/assets/built/"),
+    os.path.join(BASE_DIR, "caseworker/assets/"),
+    os.path.join(BASE_DIR, "core/assets/"),
 )
 
 LITE_CONTENT_IMPORT_PATH = "lite_content.lite_internal_frontend.strings"

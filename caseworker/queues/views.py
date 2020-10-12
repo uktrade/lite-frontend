@@ -1,5 +1,4 @@
 from http import HTTPStatus
-import json
 
 from django.contrib import messages
 from django.shortcuts import render
@@ -12,14 +11,17 @@ from lite_forms.components import TextInput, FiltersBar
 from lite_forms.generators import error_page
 from lite_forms.views import SingleFormView
 
-from core.helpers import convert_parameters_to_query_params
 from core.auth.views import LoginRequiredMixin
 
 from caseworker.cases.forms.assign_users import assign_users_form
 from caseworker.cases.forms.attach_documents import upload_document_form
 from caseworker.cases.helpers.filters import case_filters_bar
 from caseworker.core.constants import (
-    ALL_CASES_QUEUE_ID, Permission, UPDATED_CASES_QUEUE_ID, SLA_CIRCUMFERENCE, SLA_RADIUS
+    ALL_CASES_QUEUE_ID,
+    Permission,
+    UPDATED_CASES_QUEUE_ID,
+    SLA_CIRCUMFERENCE,
+    SLA_RADIUS,
 )
 from caseworker.core.services import get_user_permissions
 from caseworker.queues.forms import new_queue_form, edit_queue_form
@@ -41,6 +43,7 @@ class Cases(LoginRequiredMixin, TemplateView):
     """
     Homepage
     """
+
     template_name = "queues/cases.html"
 
     @cached_property
@@ -53,36 +56,36 @@ class Cases(LoginRequiredMixin, TemplateView):
 
     @cached_property
     def data(self):
-        hidden = self.request.GET.get('hidden')
+        hidden = self.request.GET.get("hidden")
 
-        params = {'page': int(self.request.GET.get('page', 1))}
+        params = {"page": int(self.request.GET.get("page", 1))}
         for key, value in self.request.GET.items():
-            if key != 'flags[]':
+            if key != "flags[]":
                 params[key] = value
 
-        params['flags'] = self.request.GET.getlist('flags[]', [])
+        params["flags"] = self.request.GET.getlist("flags[]", [])
 
         if hidden:
-            params['hidden'] = hidden
+            params["hidden"] = hidden
 
         data = get_cases_search_data(self.request, self.queue_pk, params)
         return data
 
     @property
     def filters(self):
-        return self.data['results']['filters']
+        return self.data["results"]["filters"]
 
     def get_context_data(self, *args, **kwargs):
 
         try:
             updated_queue = [
-                queue for queue in self.data['results']['queues']
-                if queue['id'] == UPDATED_CASES_QUEUE_ID][0]
-            show_updated_cases_banner = updated_queue['case_count']
+                queue for queue in self.data["results"]["queues"] if queue["id"] == UPDATED_CASES_QUEUE_ID
+            ][0]
+            show_updated_cases_banner = updated_queue["case_count"]
         except IndexError:
             show_updated_cases_banner = False
 
-        is_system_queue = self.queue.get('is_system_queue', False)
+        is_system_queue = self.queue.get("is_system_queue", False)
 
         context = {
             "sla_radius": SLA_RADIUS,

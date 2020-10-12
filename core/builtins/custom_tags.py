@@ -45,22 +45,22 @@ def sla_colour(value, arg):
     """
     since_raised = int(value)
 
-    if arg == 'hours':
+    if arg == "hours":
         if since_raised >= 48:
-            return 'red'
+            return "red"
         else:
-            return 'orange'
+            return "orange"
 
-    elif arg == 'days':
+    elif arg == "days":
         if since_raised >= 5:
-            return 'green'
+            return "green"
         elif since_raised < 5 and since_raised > 0:
-            return 'orange'
+            return "orange"
         elif since_raised <= 0:
-            return 'red'
+            return "red"
 
     else:
-        raise ValueError('Please specify whether the time remaining is hours or days eg "value|sla_colour:\'hours\'"')
+        raise ValueError("Please specify whether the time remaining is hours or days eg \"value|sla_colour:'hours'\"")
 
 
 @register.filter(name="sla_ratio")
