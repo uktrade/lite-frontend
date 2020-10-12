@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "build_exporter": "parcel build ./exporter/assets/javascripts/main.js --out-dir exporter/assets/built --public-url /assets/",
-    "build_caseworker": "parcel build ./caseworker/assets/javascripts/main.js --out-dir caseworker/assets/built --public-url /assets/ --no-content-hash",
+    "build_caseworker": "parcel build ./caseworker/assets/javascripts/main.js --out-dir caseworker/assets/built --public-url /assets/",
     "watch_exporter": "parcel watch ./exporter/assets/javascripts/main.js --out-dir exporter/assets/built --public-url /assets/",
     "watch_caseworker": "parcel watch ./caseworker/assets/javascripts/main.js --out-dir caseworker/assets/built --public-url /assets/"
   },
