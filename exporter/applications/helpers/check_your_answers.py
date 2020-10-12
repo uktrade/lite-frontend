@@ -2,6 +2,7 @@ from _decimal import Decimal
 
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.urls import reverse
+from django.utils.safestring import mark_safe
 
 from exporter.applications.helpers.countries import ContractTypes
 from exporter.core.constants import (
@@ -199,24 +200,23 @@ def _convert_hmrc_query(application, editable=False):
     }
 
 
-from django.utils.safestring import mark_safe
-
-
 def convert_goods_on_application(goods_on_application, is_exhibition=False):
     converted = []
     for good_on_application in goods_on_application:
         # TAU's review is saved at "good on application" level, while exporter's answer is at good level.
-        is_good_controlled = good_on_application["good"]["is_good_controlled"]["value"]
+        is_controlled = good_on_application["good"]["is_good_controlled"]["value"]
         control_list_entries = convert_control_list_entries(good_on_application["good"]["control_list_entries"])
         if good_on_application["is_good_controlled"] is not None:
             is_controlled_application = good_on_application["is_good_controlled"]["value"]
+            if is_controlled != is_controlled_application:
+                is_controlled = f"<span class='strike'>{is_controlled}</span><br> {is_controlled_application}"
             control_list_application = convert_control_list_entries(good_on_application["control_list_entries"])
-            is_good_controlled = f"<span class='strike'>{is_good_controlled}</span><br> {is_controlled_application}"
-            control_list_entries = f"<span class='strike'>{control_list_entries}</span> {control_list_application}"
+            if control_list_entries != control_list_application:
+                control_list_entries = f"<span class='strike'>{control_list_entries}</span> {control_list_application}"
         item = {
             "Description": good_on_application["good"]["description"],
             "Part number": default_na(good_on_application["good"]["part_number"]),
-            "Controlled": mark_safe(is_good_controlled),  # nosec
+            "Controlled": mark_safe(is_controlled),  # nosec
             "Control list entries": mark_safe(control_list_entries),  # nosec
         }
         if is_exhibition:
