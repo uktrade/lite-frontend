@@ -17,7 +17,6 @@ import './checkboxes.js';
 import './snackbar-hide.js';
 
 // caseworker
-import './menu-tooltips.js';
 import initQueuesMenu from './queues-menu.js';
 import initFlagListExpanders from './flag-expanders.js';
 
