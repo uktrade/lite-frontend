@@ -52,8 +52,9 @@ MIDDLEWARE = [
     "core.middleware.RequestsSessionMiddleware",
 ]
 
-# configuration is difficult so omit this when running locally
-if not DEBUG:
+FEATURE_CSP_MIDDLEWARE_ENABLED = env.bool('FEATURE_CSP_MIDDLEWARE_ENABLED', True)
+
+if FEATURE_CSP_MIDDLEWARE_ENABLED:
     MIDDLEWARE += [
         "csp.middleware.CSPMiddleware",
     ]
