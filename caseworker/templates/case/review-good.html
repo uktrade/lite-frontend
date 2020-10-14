@@ -1,0 +1,47 @@
+{% extends 'layouts/case.html' %}
+
+{% load static from staticfiles %}
+
+{% load crispy_forms_tags %}
+
+{% block details %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-third">
+            <a class="lite-back-link-button" id="back-link" href="{% url 'cases:case' queue_pk=queue.id pk=case.id %}">Back</a>
+
+            <h2 class="govuk-heading-l govuk-!-margin-top-6 govuk-!-margin-bottom-3">
+                Review product
+                {% if wizard.steps.count > 1 %}
+                    {{ wizard.steps.step1 }} of {{ wizard.steps.count }}
+                {% endif %}
+            </h2>
+            <p class="govuk-!-margin-bottom-6 govuk-caption-m">{{ object.good.description }}</p>
+			<form method="post" enctype="multipart/form-data" novalidate="novalidate">
+                {% csrf_token %}
+                <div class="w-2-3" id="form-container">
+                    {{ wizard.management_form }}
+                    {% if wizard.form.forms %}
+                        {{ wizard.form.management_form }}
+                    {% else %}
+                        {% crispy form %}
+                    {% endif %}
+	                {% if wizard.steps.prev %}
+	                    <button name="wizard_goto_step" class="govuk-button govuk-button--secondary govuk-!-margin-right-1" type="submit" value="{{ wizard.steps.prev }}">Previous product</button>
+	                {% endif %}
+                    {% if wizard.steps.step1 != wizard.steps.count %}
+                        <button type="submit" class="govuk-button">{% block button_submit_label %}Save and continue{% endblock %}</button>
+                    {% else %}
+                        <button class="govuk-button" type="great-mvp-wizard-step-button m-b-s">{% block button_next_label %}Save and return to case details{% endblock %}</button>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tarekraafat-autocomplete.js/7.2.0/css/autoComplete.css" integrity="sha512-eP0uk3AYTRMF+HDgLNFW8cFh0mO73gVsnJdgqXH94Zc//fEgtNzMmdyK+cX8qF/SCs7gKUUkeJhJsiTRJstEKA==" crossorigin="anonymous" /><script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/fetch/3.4.0/fetch.min.js" integrity="sha512-+iXlQLHKQZYoFQZfyWkUuJB6X7aZA2+FvAB5PyiYzxRKbgmSLp6vzwXjTlqdvKV5OJS09HHN4lIekb5OOCKhQw==" crossorigin="anonymous"></script>
+    <script src="{% static 'javascripts/tokenfield.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tarekraafat-autocomplete.js/7.2.0/js/autoComplete.min.js" integrity="sha512-1Fr8m8dxYPgUEwpEKZy1AIUZnGupa1bhl7GbG+ueWxlWVBJvdEnLdgQVQA8pqkrrmkTV0DW7C5ZVmVGdJmMuZg==" crossorigin="anonymous"></script>
+    <script src="{% static 'javascripts/review-good.js' %}"></script>
+{% endblock %}

@@ -7,9 +7,16 @@
 		<form method="get">
 			<div class="lite-buttons-row" data-enable-on-checkboxes="#table-goods">
 				{% if 'REVIEW_GOODS' in permissions and not is_terminal %}
-					<button id="button-review-goods" formaction="{% url 'cases:review_goods' queue.id case.id %}" name="action" value="review-goods" class="govuk-button" data-module="govuk-button">
-						{% lcs 'cases.ApplicationPage.REVIEW_GOODS' %}
-					</button>
+					{% if goods.0.good  %}
+						<button id="button-review-goods" formaction="{% url 'cases:review_standard_application_goods' queue.id case.id %}" class="govuk-button" data-module="govuk-button">
+							{% lcs 'cases.ApplicationPage.REVIEW_GOODS' %}
+						</button>
+					{% else %}
+						<button id="button-review-goods" formaction="{% url 'cases:review_open_application_goods' queue.id case.id %}" class="govuk-button" data-module="govuk-button">
+							{% lcs 'cases.ApplicationPage.REVIEW_GOODS' %}
+						</button>
+					{% endif %}
+
 				{% endif %}
 				<button id="button-edit-goods-flags" formaction="{% url 'cases:assign_flags' queue.id case.id %}" class="govuk-button" data-module="govuk-button">
 					{% lcs 'cases.ApplicationPage.EDIT_FLAGS' %}
@@ -31,18 +38,16 @@
 					{% if case.goods.0.item_type %}
 						<th scope="col" class="govuk-table__header">Type</th>
 					{% endif %}
-					{% if case.goods.0.value %}
-						<th scope="col" class="govuk-table__header">Value</th>
-					{% endif %}
-					<th scope="col" class="govuk-table__header">Controlled</th>
-					<th scope="col" class="govuk-table__header">Control list entries</th>
-					<th scope="col" class="govuk-table__header">Incorporated</th>
-					<th scope="col" class="govuk-table__header">Document</th>
+					<th scope="col" class="govuk-table__header">Licence required</th>
+					<th scope="col" class="govuk-table__header">Rating</th>
 					{% if not hide_status %}
 						<th scope="col" class="govuk-table__header">Status</th>
-						<th scope="col" class="govuk-table__header">ARS</th>
 					{% endif %}
 					<th scope="col" class="govuk-table__header">Flags</th>
+					{% if not hide_status %}
+						<th scope="col" class="govuk-table__header">ARS</th>
+					{% endif %}
+					<th scope="col" class="govuk-table__header">Comments</th>
 					<th scope="col" class="govuk-table__header"></th>
 				</tr>
 			</thead>
@@ -71,15 +76,8 @@
 								{% endif %}
 							</td>
 						{% endif %}
-						{% if case.goods.0.value %}
-							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
-								<span class="govuk-table__header" aria-hidden="false">Value</span>
-								{{ good.quantity }} {{ good.unit.value }}, £{{ good.value|intcomma }}
-							</td>
-						{% endif %}
 						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
-
-							<span class="govuk-table__header" aria-hidden="false">Controlled</span>
+							<span class="govuk-table__header" aria-hidden="false">Licence required</span>
 							{% if good.is_good_controlled is not None %}
 								{{ good.is_good_controlled|yesno:'Yes,No' }}
 							{% else %}
@@ -87,29 +85,11 @@
 							{% endif %}
 						</td>
 						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
-							<span class="govuk-table__header" aria-hidden="false">Control list entries</span>
+							<span class="govuk-table__header" aria-hidden="false">Rating</span>
 							{% if good.is_good_controlled is not None %}
 								{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}
 							{% else %}
 								{% include 'includes/control-list-entries.html' with control_list_entries=good.good.control_list_entries %}
-							{% endif %}
-						</td>
-						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
-							<span class="govuk-table__header" aria-hidden="false">Incorporated</span>
-							{{ good.is_good_incorporated|friendly_boolean }}
-						</td>
-						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
-							<span class="govuk-table__header" aria-hidden="false">Documents</span>
-							{% if good.good.documents %}
-								{% for document in good.good.documents %}
-									{% if document.safe == True %}
-										<a class="govuk-link govuk-link--no-visited-state" id="good_document" href="{% url 'cases:document' queue.id case.id document.id %}">
-											<span class="govuk-visually-hidden">{% lcs 'cases.Manage.Documents.DOWNLOAD_DOCUMENT' %}</span> {{ document.name }}
-										</a>
-									{% endif %}
-								{% endfor %}
-							{% else %}
-								{% lcs 'cases.ApplicationPage.Goods.MISSING_DOCUMENT_REASON_PREFIX' %}{{ good.good.missing_document_reason.value }}
 							{% endif %}
 						</td>
 						{% if not hide_status %}
@@ -124,21 +104,21 @@
 									{{ good.good.status.value }}
 								{% endif %}
 							</td>
+						{% endif %}
 							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
-								<span class="govuk-table__header" aria-hidden="false">Report summary</span>
-								{% if good.good.report_summary %}
-									<span data-definition-title="Report summary" data-definition-text="{{ good.good.report_summary }}{% if good.good.comment %}<br><br><b>Comment</b><br><br>{{ good.good.comment }}{% endif %}">
-										{% lcs 'generic.VIEW' %}
-									</span>
-								{% else %}
-									{{ None|default_na }}
-								{% endif %}
+								<span class="govuk-table__header" aria-hidden="false">Flags</span>
+								{% include 'includes/flags.html' with flags=good.good.flags list=True %}
+							</td>
+						{% if not hide_status %}
+							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+								<span class="govuk-table__header" aria-hidden="false">ARS</span>
+								{{ good.good.report_summary }}
 							</td>
 						{% endif %}
-						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
-							<span class="govuk-table__header" aria-hidden="false">Flags</span>
-							{% include 'includes/flags.html' with flags=good.good.flags list=True %}
-						</td>
+							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+								<span class="govuk-table__header" aria-hidden="false">Comments</span>
+								{{ good.comment }}
+							</td>
 						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}" id="view-good-details">
 							<a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:good' queue_pk=queue.id pk=case.id good_pk=good.id %}">View full product details</a>
 						</td>
