@@ -47,11 +47,11 @@ def test_order_grouped_advice():
     assert ordered[6] == 6
 
 
-def test_flatten_goods_data_open_application(data_case, rf):
-    good_ids = [good["id"] for good in data_case["case"]["data"]["goods_types"]]
+def test_flatten_goods_data_open_application(data_open_case, rf):
+    good_ids = [good["id"] for good in data_open_case["case"]["data"]["goods_types"]]
 
     request = rf.get("/", {"goods": good_ids})
-    param_goods = advice.get_param_goods(request, Case(data_case["case"]))
+    param_goods = advice.get_param_goods(request, Case(data_open_case["case"]))
 
     actual = advice.flatten_goods_data(param_goods)
 

@@ -11,8 +11,8 @@ INSTALLED_APPS += [
     "caseworker.core",
     "caseworker.spire",
     "caseworker.letter_templates",
-    'crispy_forms',
-    'crispy_forms_gds',
+    "crispy_forms",
+    "crispy_forms_gds",
 ]
 
 MIDDLEWARE.append("core.middleware.SessionTimeoutMiddleware")

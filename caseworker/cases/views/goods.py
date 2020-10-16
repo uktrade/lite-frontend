@@ -2,7 +2,7 @@ from collections import OrderedDict
 
 from formtools.wizard.views import SessionWizardView
 
-from caseworker.cases.forms.review_goods import review_goods_form
+from caseworker.cases.forms.review_goods import review_goods_form, ExportControlCharacteristicsForm
 from caseworker.cases.helpers.advice import get_param_goods, flatten_goods_data
 from caseworker.cases.services import get_case, post_review_good, post_review_goods, get_good_on_application
 from caseworker.search.services import get_search_results
@@ -10,7 +10,6 @@ from caseworker.search.forms import CasesSearchForm
 from caseworker.core.constants import Permission
 from caseworker.core.helpers import has_permission
 from caseworker.core.services import get_control_list_entries
-from caseworker.picklists.services import get_picklists_list
 from core.auth.views import LoginRequiredMixin
 from lite_forms.views import SingleFormView
 
@@ -37,67 +36,16 @@ class ReviewGoods(LoginRequiredMixin, SingleFormView):
         self.action = post_review_goods
         self.success_url = case_url
 
-from django import forms
-
-class ExportControlCharacteristicsForm(forms.Form):
-    control_list_entries = forms.MultipleChoiceField(
-        label='What is the correct control list entry for this product?',
-        help_text='Type to get suggestions. For example ML1a',
-        choices=[],  # set in __init__
-        required=False,
-        # setting id for javascript to use
-        widget=forms.SelectMultiple(attrs={'id': 'control_list_entries'})
-    )
-    does_not_have_control_list_entries = forms.BooleanField(
-        label='This product does not have a control list entry',
-        required=False,
-    )
-    is_good_controlled = forms.TypedChoiceField(
-        label='Is a licence required?',
-        coerce=lambda x: x == 'True',
-        choices=[
-            (True, 'Yes'),
-            (False, 'No'),
-        ],
-        widget=forms.RadioSelect,
-        required=False
-
-    )
-    report_summary = forms.CharField(
-        label='Select an annual report summary',
-        help_text='Type to get suggestions. For example, components for body armour.',
-        # setting id for javascript to use
-        widget=forms.TextInput(attrs={'id': 'report_summary'})
-    )
-    comment = forms.CharField(
-        label='Comment (optional)',
-        required=False,
-        widget=forms.Textarea,
-    )
-
-    def __init__(self, control_list_entries_choices, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['control_list_entries'].choices = control_list_entries_choices
-
-    def clean_does_not_have_control_list_entries(self):
-        has_none = self.cleaned_data['does_not_have_control_list_entries']
-        has_some = bool(self.cleaned_data['control_list_entries'])
-        if has_none and has_some:
-            raise forms.ValidationError('This is mutually exclusive with Control list entries')
-        elif not has_none and not has_some:
-            raise forms.ValidationError('Please enter the control list entries or specify it does not have any.')
-        return self.cleaned_data['does_not_have_control_list_entries']
-
 
 class AbstractReviewGoodWizardView(SessionWizardView):
-    template_name = 'case/review-good.html'
+    template_name = "case/review-good.html"
     form_class = ExportControlCharacteristicsForm
     # required by view
     form_list = [form_class]
 
     @cached_property
     def case(self):
-        return get_case(self.request, self.kwargs['pk'])
+        return get_case(self.request, self.kwargs["pk"])
 
     @property
     def object_pks(self):
@@ -130,7 +78,7 @@ class AbstractReviewGoodWizardView(SessionWizardView):
 
     def get_form_kwargs(self, step):
         form_kwargs = super().get_form_kwargs(step)
-        form_kwargs['control_list_entries_choices'] = self.control_list_entries
+        form_kwargs["control_list_entries_choices"] = self.control_list_entries
         return form_kwargs
 
     def get_context_data(self, **kwargs):
@@ -138,7 +86,8 @@ class AbstractReviewGoodWizardView(SessionWizardView):
 
     def process_step(self, form):
         data = {**form.cleaned_data, "objects": [self.object_pk]}
-        response = post_review_good(self.request, case_id=self.kwargs['pk'], data=data)
+        del data["does_not_have_control_list_entries"]
+        post_review_good(self.request, case_id=self.kwargs["pk"], data=data)
         return super().process_step(form)
 
     def done(self, form_list, **kwargs):
@@ -147,17 +96,17 @@ class AbstractReviewGoodWizardView(SessionWizardView):
 
 
 class ReviewStandardApplicationGoodWizardView(AbstractReviewGoodWizardView):
-    object_name = 'goods'
+    object_name = "goods"
 
     @property
     def object(self):
-        return next(item for item in self.case.goods if item['good']['id'] == self.object_pk)
+        return next(item for item in self.case.goods if item["good"]["id"] == self.object_pk)
 
     def get_form_initial(self, step):
         # if the good was reviewed at application level then use that as source of truth, otherwise use the export
         # control characteristics from the canonical good level
-        if self.object['is_good_controlled'] is None:
-            source = self.object['good']
+        if self.object["is_good_controlled"] is None:
+            source = self.object["good"]
         else:
             source = self.object
         is_good_controlled = source["is_good_controlled"]
@@ -165,19 +114,28 @@ class ReviewStandardApplicationGoodWizardView(AbstractReviewGoodWizardView):
             "is_good_controlled": is_good_controlled["key"] if is_good_controlled else None,
             "does_not_have_control_list_entries": not source["control_list_entries"],
             "control_list_entries": [item["rating"] for item in source["control_list_entries"]],
-            "report_summary": self.object['good']["report_summary"],
+            "report_summary": self.object["good"]["report_summary"],
             "comment": source["comment"],
         }
         initial.update(super().get_form_initial(step))
         return initial
 
+    def get_context_data(self, **kwargs):
+        # if the good was reviewed at application level then use that as source of truth, otherwise use the export
+        # control characteristics from the canonical good level
+        if self.object["is_good_controlled"] is not None:
+            control_list_entries = self.object["control_list_entries"]
+        else:
+            control_list_entries = self.object["good"]["control_list_entries"]
+        return super().get_context_data(object_control_list_entries=control_list_entries, **kwargs)
+
 
 class ReviewOpenApplicationGoodWizardView(AbstractReviewGoodWizardView):
-    object_name = 'goods_types'
+    object_name = "goods_types"
 
     @property
     def object(self):
-        return next(item for item in self.case.goods if item['id'] == self.object_pk)
+        return next(item for item in self.case.goods if item["id"] == self.object_pk)
 
     def get_form_initial(self, step):
         # unlike ReviewGoodOnApplicationWizardView, goods_type has no distinction of "good" and "good on application"
@@ -190,6 +148,9 @@ class ReviewOpenApplicationGoodWizardView(AbstractReviewGoodWizardView):
         }
         initial.update(super().get_form_initial(step))
         return initial
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(object_control_list_entries=self.object["control_list_entries"], **kwargs)
 
 
 class GoodDetails(LoginRequiredMixin, FormView):

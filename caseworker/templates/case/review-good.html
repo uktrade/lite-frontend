@@ -6,9 +6,10 @@
 
 {% block details %}
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-third">
+        <div class="govuk-grid-column-full govuk-!-margin-bottom-6">
             <a class="lite-back-link-button" id="back-link" href="{% url 'cases:case' queue_pk=queue.id pk=case.id %}">Back</a>
-
+        </div>
+        <div class="govuk-grid-column-one-third">
             <h2 class="govuk-heading-l govuk-!-margin-top-6 govuk-!-margin-bottom-3">
                 Review product
                 {% if wizard.steps.count > 1 %}
@@ -35,6 +36,97 @@
                     {% endif %}
                 </div>
             </form>
+        </div>
+        <div class="govuk-grid-column-one-third">&nbsp;</div>
+        <div class="govuk-grid-column-one-third">
+            {% if wizard.steps.count > 1 %}
+                <h2 class="govuk-heading-l">Product {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</h2>
+            {% endif %}
+            <table class="govuk-table app-table">
+                <tbody class="govuk-table__body" id="tbody-placeholder">
+                    <tr class="govuk-table__row app-table__row">
+                        <th scope="row" class="govuk-table__header">Category</th>
+                        <td class="govuk-table__cell">{{ object.good.item_category.value }}</td>
+                    </tr>
+                    <tr class="govuk-table__row app-table__row">
+                        <th scope="row" class="govuk-table__header">Description</th>
+                        <td class="govuk-table__cell">{{ object.good.description }}</td>
+                    </tr>
+                    <tr class="govuk-table__row app-table__row">
+                        <th scope="row" class="govuk-table__header">Part number</th>
+                        <td class="govuk-table__cell">{{ object.good.part_number }}</td>
+                    </tr>
+                    <tr class="govuk-table__row app-table__row">
+                        <th scope="row" class="govuk-table__header">Value</th>
+                        <td class="govuk-table__cell">{{ object.value }}</td>
+                    </tr>
+                    <tr class="govuk-table__row app-table__row">
+                        <th scope="row" class="govuk-table__header">Licence required</th>
+                        <td class="govuk-table__cell">{{ object.is_good_controlled|yesno|title }}</td>
+                    </tr>
+                    <tr class="govuk-table__row app-table__row">
+                        <th scope="row" class="govuk-table__header">Control list entries</th>
+                        <td class="govuk-table__cell">
+                            {% for control_list_entry in object_control_list_entries %}
+                                {{ control_list_entry.rating }}
+                                {% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    <tr class="govuk-table__row app-table__row">
+                        <th scope="row" class="govuk-table__header">Security graded</th>
+                        <td class="govuk-table__cell">
+                            {{ object.good.is_pv_graded|yesno|title }}
+                            {% if object.good.grading_comment %}
+                                - {{ object.good.grading_comment }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr class="govuk-table__row app-table__row">
+                        <th scope="row" class="govuk-table__header">Military use</th>
+                        <td class="govuk-table__cell">
+                            {{ object.good.is_military_use.value }}
+                            {% if object.good.modified_military_use_details %}
+                            , {{ object.good.modified_military_use_details }}
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                    <tr class="govuk-table__row app-table__row">
+                        <th scope="row" class="govuk-table__header">Component</th>
+                        <td class="govuk-table__cell">
+                            {{ object.good.is_component.value }}
+                                {{ object.item_type }}
+                            {% if object.good.component_details %}
+                                {{ object.good.component_details }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr class="govuk-table__row app-table__row">
+                        <th scope="row" class="govuk-table__header">Information security features</th>
+                        <td class="govuk-table__cell">
+                            {{ object.good.uses_information_security|yesno|title }}
+                            {% if object.good.information_security_details %}
+                            , {{ object.good.information_security_details }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr class="govuk-table__row app-table__row">
+                        <th scope="row" class="govuk-table__header">Incorporated</th>
+                        <td class="govuk-table__cell">{{ object|yesno|title }}</td>
+                    </tr>
+                    <tr class="govuk-table__row app-table__row">
+                        <th scope="row" class="govuk-table__header">Document</th>
+                        <td class="govuk-table__cell">
+                            {{ object.good.missing_document_reason.value }}
+                            {% for document in object.good.documents %}
+                            <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}">{{ document.name }}</a>
+                                {% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 {% endblock %}
