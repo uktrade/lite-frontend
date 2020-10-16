@@ -79,17 +79,21 @@
 						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
 							<span class="govuk-table__header" aria-hidden="false">Licence required</span>
 							{% if good.is_good_controlled is not None %}
-								{{ good.is_good_controlled|yesno:'Yes,No' }}
-							{% else %}
+								{{ good.is_good_controlled.value }}
+							{% elif good.good.is_good_controlled is not None %}
 								{{ good.good.is_good_controlled.value }}
+							{% else %}
+								Not added
 							{% endif %}
 						</td>
 						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
 							<span class="govuk-table__header" aria-hidden="false">Rating</span>
-							{% if good.is_good_controlled is not None %}
+							{% if good.control_list_entries is not None %}
 								{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}
-							{% else %}
+							{% elif good.good.control_list_entries is not None %}
 								{% include 'includes/control-list-entries.html' with control_list_entries=good.good.control_list_entries %}
+							{% else %}
+								None
 							{% endif %}
 						</td>
 						{% if not hide_status %}
@@ -112,12 +116,12 @@
 						{% if not hide_status %}
 							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
 								<span class="govuk-table__header" aria-hidden="false">ARS</span>
-								{{ good.good.report_summary }}
+								{{ good.good.report_summary|default_if_none:'Not added' }}
 							</td>
 						{% endif %}
 							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
 								<span class="govuk-table__header" aria-hidden="false">Comments</span>
-								{{ good.comment }}
+								{{ good.comment|default_if_none:'Not added' }}
 							</td>
 						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}" id="view-good-details">
 							<a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:good' queue_pk=queue.id pk=case.id good_pk=good.id %}">View full product details</a>
@@ -138,14 +142,13 @@
 					{% endif %}
 					<th scope="col" class="govuk-table__header">#</th>
 					<th scope="col" class="govuk-table__header">Description</th>
-					<th scope="col" class="govuk-table__header">Controlled</th>
-					<th scope="col" class="govuk-table__header">Control list entries</th>
-					<th scope="col" class="govuk-table__header">Incorporated</th>
+					<th scope="col" class="govuk-table__header">Licence required</th>
+					<th scope="col" class="govuk-table__header">Rating</th>
+					<th scope="col" class="govuk-table__header">Flags</th>
 					<th scope="col" class="govuk-table__header">Countries</th>
 					{% if not hide_status %}
 						<th scope="col" class="govuk-table__header">ARS</th>
 					{% endif %}
-					<th scope="col" class="govuk-table__header">Flags</th>
 				</tr>
 			</thead>
 			<tbody class="govuk-table__body">
@@ -167,16 +170,24 @@
 							<span data-max-length="200">{{ good.description }}</span>
 						</td>
 						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
-							<span aria-hidden="true" class="govuk-table__header">Controlled</span>
-							{{ good.is_good_controlled|friendly_boolean }}
+							<span aria-hidden="true" class="govuk-table__header">Licence required</span>
+							{% if good.is_good_controlled is not None %}
+								{{ good.is_good_controlled|yesno|title }}
+							{% else %}
+								Not added
+							{% endif %}
 						</td>
 						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
-							<span aria-hidden="true" class="govuk-table__header">Control list entries</span>
-							{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}
+							<span aria-hidden="true" class="govuk-table__header">Rating</span>
+							{% if good.control_list_entries is not None %}
+								{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}
+							{% else %}
+								None
+							{% endif %}
 						</td>
 						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
-							<span aria-hidden="true" class="govuk-table__header">Incorporated</span>
-							{{ good.is_good_incorporated|friendly_boolean }}
+							<span aria-hidden="true" class="govuk-table__header">Flags</span>
+							{% include 'includes/flags.html' with flags=good.flags list=True %}
 						</td>
 						<td class="govuk-table__cell govuk-table__cell--max-width-300 {% if show_advice %}lite-!-no-border{% endif %}">
 							<span aria-hidden="true" class="govuk-table__header">Countries</span>
@@ -189,19 +200,9 @@
 						{% if not hide_status %}
 							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
 								<span aria-hidden="true" class="govuk-table__header">Report summary</span>
-								{% if good.report_summary %}
-									<span data-definition-title="Report summary" data-definition-text="{{ good.report_summary }}{% if good.comment %}<br><br><b>Comment</b><br><br>{{ good.comment }}{% endif %}">
-										{% lcs 'generic.VIEW' %}
-									</span>
-								{% else %}
-									{{ None|default_na }}
-								{% endif %}
+								{{ good.report_summary|default_if_none:'Not added' }}
 							</td>
 						{% endif %}
-						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
-							<span aria-hidden="true" class="govuk-table__header">Flags</span>
-							{% include 'includes/flags.html' with flags=good.flags list=True %}
-						</td>
 					</tr>
 					{% if show_advice %}
 						{% include 'includes/advice.html' with id=good.id %}

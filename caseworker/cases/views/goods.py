@@ -38,7 +38,6 @@ class ReviewGoods(LoginRequiredMixin, SingleFormView):
 
 
 class AbstractReviewGoodWizardView(SessionWizardView):
-    template_name = "case/review-good.html"
     form_class = ExportControlCharacteristicsForm
     # required by view
     form_list = [form_class]
@@ -76,7 +75,7 @@ class AbstractReviewGoodWizardView(SessionWizardView):
     def get_form_list(self):
         return OrderedDict((pk, self.form_class) for pk in self.object_pks)
 
-    def get_form_kwargs(self, step):
+    def get_form_kwargs(self, step):  # noqa pylint incorrectly flagging this
         form_kwargs = super().get_form_kwargs(step)
         form_kwargs["control_list_entries_choices"] = self.control_list_entries
         return form_kwargs
@@ -97,6 +96,7 @@ class AbstractReviewGoodWizardView(SessionWizardView):
 
 class ReviewStandardApplicationGoodWizardView(AbstractReviewGoodWizardView):
     object_name = "goods"
+    template_name = "case/review-good-standard.html"
 
     @property
     def object(self):
@@ -132,6 +132,7 @@ class ReviewStandardApplicationGoodWizardView(AbstractReviewGoodWizardView):
 
 class ReviewOpenApplicationGoodWizardView(AbstractReviewGoodWizardView):
     object_name = "goods_types"
+    template_name = "case/review-good-open.html"
 
     @property
     def object(self):
