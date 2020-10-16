@@ -41,6 +41,7 @@ class AbstractReviewGoodWizardView(SessionWizardView):
     form_class = ExportControlCharacteristicsForm
     # required by view
     form_list = [form_class]
+    CACHE_KEY_CONTROL_LIST_ENTRIES = 'control_list_entries'
 
     @cached_property
     def case(self):
@@ -56,10 +57,13 @@ class AbstractReviewGoodWizardView(SessionWizardView):
     def object_pk(self):
         return self.object_pks[self.steps.index]
 
-    @cached_property
+    @property
     def control_list_entries(self):
-        control_list_entries = get_control_list_entries(self.request, convert_to_options=True)
-        return [(item.value, item.key) for item in control_list_entries]
+        if self.CACHE_KEY_CONTROL_LIST_ENTRIES not in self.storage.extra_data:
+            data = get_control_list_entries(self.request, convert_to_options=True)
+            control_list_entries = [(item.value, item.key) for item in data]
+            self.storage.extra_data[self.CACHE_KEY_CONTROL_LIST_ENTRIES] = control_list_entries
+        return self.storage.extra_data[self.CACHE_KEY_CONTROL_LIST_ENTRIES]
 
     def get(self, *args, **kwargs):
         # hack to make the form_list as long as the number of selected goods
