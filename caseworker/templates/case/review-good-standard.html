@@ -5,7 +5,7 @@
         <tbody class="govuk-table__body" id="tbody-placeholder">
             <tr class="govuk-table__row app-table__row">
                 <th scope="row" class="govuk-table__header">Category</th>
-                <td class="govuk-table__cell">{{ object.good.item_category.value }}</td>
+                <td class="govuk-table__cell">{{ object.good.item_category.value|default:"Not added" }}</td>
             </tr>
             <tr class="govuk-table__row app-table__row">
                 <th scope="row" class="govuk-table__header">Description</th>
@@ -13,7 +13,7 @@
             </tr>
             <tr class="govuk-table__row app-table__row">
                 <th scope="row" class="govuk-table__header">Part number</th>
-                <td class="govuk-table__cell">{{ object.good.part_number }}</td>
+                <td class="govuk-table__cell">{{ object.good.part_number|default:"Not added" }}</td>
             </tr>
             <tr class="govuk-table__row app-table__row">
                 <th scope="row" class="govuk-table__header">Value</th>
@@ -47,9 +47,13 @@
             <tr class="govuk-table__row app-table__row">
                 <th scope="row" class="govuk-table__header">Military use</th>
                 <td class="govuk-table__cell">
-                    {{ object.good.is_military_use.value }}
-                    {% if object.good.modified_military_use_details %}
-                    , {{ object.good.modified_military_use_details }}
+                    {% if object.good.is_military_use %}
+                        {{ object.good.is_military_use.value }}
+                        {% if object.good.modified_military_use_details %}
+                        , {{ object.good.modified_military_use_details }}
+                        {% endif %}
+                    {% else %}
+                        Not added
                     {% endif %}
                 </td>
             </tr>
@@ -57,16 +61,24 @@
             <tr class="govuk-table__row app-table__row">
                 <th scope="row" class="govuk-table__header">Component</th>
                 <td class="govuk-table__cell">
-                    {{ object.good.is_component.value }}
-                    {{ object.good.component_details|default:'' }}
+                    {% if object.good.is_component %}
+                        {{ object.good.is_component.value }}
+                        {{ object.good.component_details|default:'' }}
+                    {% else %}
+                        Not added
+                    {% endif %}
                 </td>
             </tr>
             <tr class="govuk-table__row app-table__row">
                 <th scope="row" class="govuk-table__header">Information security features</th>
                 <td class="govuk-table__cell">
-                    {{ object.good.uses_information_security|yesno|title }}
-                    {% if object.good.information_security_details %}
-                    , {{ object.good.information_security_details }}
+                    {% if object.good.uses_information_security %}
+                        {{ object.good.uses_information_security|yesno|title }}
+                        {% if object.good.information_security_details %}
+                        , {{ object.good.information_security_details }}
+                        {% endif %}
+                    {% else %}
+                        Not added
                     {% endif %}
                 </td>
             </tr>

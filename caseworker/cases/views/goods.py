@@ -41,7 +41,7 @@ class AbstractReviewGoodWizardView(SessionWizardView):
     form_class = ExportControlCharacteristicsForm
     # required by view
     form_list = [form_class]
-    CACHE_KEY_CONTROL_LIST_ENTRIES = 'control_list_entries'
+    CACHE_KEY_CONTROL_LIST_ENTRIES = "control_list_entries"
 
     @cached_property
     def case(self):

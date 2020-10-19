@@ -9,17 +9,17 @@
 				{% if 'REVIEW_GOODS' in permissions and not is_terminal %}
 					{% if goods.0.good  %}
 						<button id="button-review-goods" formaction="{% url 'cases:review_standard_application_goods' queue.id case.id %}" class="govuk-button" data-module="govuk-button">
-							{% lcs 'cases.ApplicationPage.REVIEW_GOODS' %}
+							Review goods
 						</button>
 					{% else %}
 						<button id="button-review-goods" formaction="{% url 'cases:review_open_application_goods' queue.id case.id %}" class="govuk-button" data-module="govuk-button">
-							{% lcs 'cases.ApplicationPage.REVIEW_GOODS' %}
+							Review goods
 						</button>
 					{% endif %}
 
 				{% endif %}
 				<button id="button-edit-goods-flags" formaction="{% url 'cases:assign_flags' queue.id case.id %}" class="govuk-button" data-module="govuk-button">
-					{% lcs 'cases.ApplicationPage.EDIT_FLAGS' %}
+					Edit goods flags
 				</button>
 			</div>
 	{% endif %}
@@ -30,7 +30,7 @@
 				<tr class="govuk-table__row">
 					{% if not hide_checkboxes %}
 						<th scope="col" class="govuk-table__header govuk-table__cell--checkbox">
-							<button id="link-select-all-goods" type="button" name="button" class="lite-button-checkbox" title="{% lcs 'cases.ApplicationPage.Parties.SELECT_ALL' %}"></button>
+							<button id="link-select-all-goods" type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
 						</th>
 					{% endif %}
 					<th scope="col" class="govuk-table__header">#</th>
@@ -122,6 +122,7 @@
 							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
 								<span class="govuk-table__header" aria-hidden="false">Comments</span>
 								{{ good.comment|default_if_none:'Not added' }}
+								{% if good.comment == '' %}None{% endif %}
 							</td>
 						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}" id="view-good-details">
 							<a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:good' queue_pk=queue.id pk=case.id good_pk=good.id %}">View full product details</a>
@@ -137,7 +138,7 @@
 				<tr class="govuk-table__row">
 					{% if not hide_checkboxes %}
 						<th scope="col" class="govuk-table__header govuk-table__cell--checkbox">
-							<button id="link-select-all-goods" type="button" name="button" class="lite-button-checkbox" title="{% lcs 'cases.ApplicationPage.Parties.SELECT_ALL' %}"></button>
+							<button id="link-select-all-goods" type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
 						</th>
 					{% endif %}
 					<th scope="col" class="govuk-table__header">#</th>
@@ -213,7 +214,7 @@
 	</table>
 
 	{% if case.case_type.sub_type.key != 'exhibition_clearance' and goods|goods_value %}
-		<p class="govuk-body lite-!-margin-top--3 govuk-!-font-weight-bold">{% lcs 'STANDARD_CASE_TOTAL_VALUE' %} £{{ goods|goods_value|intcomma }}</p>
+		<p class="govuk-body lite-!-margin-top--3 govuk-!-font-weight-bold">Total value: £{{ goods|goods_value|intcomma }}</p>
 	{% endif %}
 
 	{% if not hide_controls %}
