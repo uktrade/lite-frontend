@@ -1,6 +1,5 @@
 from __future__ import division
 
-import math
 import datetime
 import json
 from importlib import import_module
