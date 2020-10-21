@@ -1,4 +1,5 @@
-from django.urls import reverse_lazy
+from django.urls import reverse
+from django.conf import settings
 
 from exporter.applications.forms.edit import firearms_form, reference_name_form, told_by_an_official_form
 from exporter.apply_for_a_licence.forms.trade_control_licence import (
@@ -27,118 +28,143 @@ from lite_forms.components import (
 )
 from lite_forms.helpers import conditional
 
+from django.template.loader import render_to_string
+
+
+SIEL_ONLY_HTML = render_to_string('applications/only-siel-enabled.html')
+
 
 def opening_question():
+    options = [
+        Option(
+            key="export_licence",
+            value="Export licence",
+            description=(
+                "Select if you’re sending products from the UK to another country. You need an export licence "
+                "before you provide access to controlled technology, software or data."
+            ),
+        ),
+        Option(
+            key="transhipment",
+            value="Transhipment licence",
+            description=(
+                "Select if you're shipping something from overseas through the UK on to another country. "
+                "If the products will be in the UK for 30 days or more, apply for an export licence."
+            ),
+            disabled=settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
+        ),
+        Option(
+            key="trade_control_licence",
+            value="Trade control licence",
+            description=(
+                "Select if you’re arranging or brokering the sale or movement of controlled military products "
+                "located overseas."
+            ),
+            disabled=settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
+        ),
+        Option(
+            key="mod",
+            value="MOD clearance",
+            description=(
+                "Select if you need to share information (an F680) or to go to an exhibition, or if you're gifting "
+                "surplus products."
+            ),
+            disabled=settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
+        ),
+    ]
     return Form(
-        title=InitialApplicationQuestionsForms.OpeningQuestion.TITLE,
-        description=InitialApplicationQuestionsForms.OpeningQuestion.DESCRIPTION,
+        title="Select what you need",
+        description=SIEL_ONLY_HTML if settings.FEATURE_FLAG_ONLY_ALLOW_SIEL else '' ,
+        questions=[RadioButtons(name="licence_type", options=options)],
+        default_button_name="Continue",
+        back_link=Breadcrumbs([
+            BackLink("Account home", reverse("core:home")),
+            BackLink("Apply for a licence", ""),
+        ]),
+    )
+
+
+def export_permanency_form(application_type):
+    return Form(
+        title="Select an export type",
+        description="",
         questions=[
             RadioButtons(
-                name="licence_type",
+                name="export_type",
                 options=[
-                    Option(
-                        key="export_licence",
-                        value=InitialApplicationQuestionsForms.OpeningQuestion.LicenceTypes.EXPORT_LICENCE_TITLE,
-                        description=InitialApplicationQuestionsForms.OpeningQuestion.LicenceTypes.EXPORT_LICENCE_DESCRIPTION,
-                    ),
-                    Option(
-                        key="transhipment",
-                        value=InitialApplicationQuestionsForms.OpeningQuestion.LicenceTypes.TRANSHIPMENT_LICENCE_TITLE,
-                        description=InitialApplicationQuestionsForms.OpeningQuestion.LicenceTypes.TRANSHIPMENT_LICENCE_DESCRIPTION,
-                    ),
-                    Option(
-                        key="trade_control_licence",
-                        value=InitialApplicationQuestionsForms.OpeningQuestion.LicenceTypes.TRADE_CONTROL_LICENCE_TITLE,
-                        description=InitialApplicationQuestionsForms.OpeningQuestion.LicenceTypes.TRADE_CONTROL_LICENCE_DESCRIPTION,
-                    ),
-                    Option(
-                        key="mod",
-                        value=InitialApplicationQuestionsForms.OpeningQuestion.LicenceTypes.MOD_CLEARANCE_TITLE,
-                        description=InitialApplicationQuestionsForms.OpeningQuestion.LicenceTypes.MOD_CLEARANCE_DESCRIPTION,
-                    ),
+                    Option("temporary", "Temporary"),
+                    Option("permanent", "Permanent"),
                 ],
             ),
         ],
-        default_button_name=generic.CONTINUE,
-        back_link=Breadcrumbs(
-            [
-                BackLink(hub.ACCOUNT_HOME, reverse_lazy("core:home")),
-                BackLink(InitialApplicationQuestionsForms.OpeningQuestion.BREADCRUMB, ""),
-            ]
+        default_button_name="Continue" if application_type == CaseTypes.SIEL else "Save and continue",
+    )
+
+
+def export_type_form():
+    options = [
+        Option(
+            key=CaseTypes.SIEL,
+            value="Standard Individual Export Licence (SIEL)",
+            description=(
+                "Select to apply for a licence to export a set quantity and set value of products to 1 destination."
+            )
         ),
+        Option(
+            key=CaseTypes.OGEL,
+            value="Open General Export Licence (OGEL)",
+            description=(
+                "Select to register a pre-published licence with set terms "
+                "and conditions. Being an OGEL holder can benefit your business "
+                "by saving time and money."
+            ),
+            disabled=settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
+        ),
+        Option(
+            key=CaseTypes.OIEL,
+            value="Open Individual Export Licence (OIEL)",
+            description=(
+                "Select to apply for a licence to export multiple shipments of specific products to specific "
+                "destinations. OIELs cover long term projects and repeat business."
+            ),
+            disabled=settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
+        ),
+    ]
+    help_url = 'https://www.gov.uk/guidance/beginners-guide-to-export-controls#what-licence-do-i-need'
+    return Form(
+        title="Select the type of export licence you need",
+        description=SIEL_ONLY_HTML if settings.FEATURE_FLAG_ONLY_ALLOW_SIEL else '' ,
+        questions=[
+            RadioButtons(name="application_type", options=options),
+            DetailComponent(
+                "What licence do I need?",
+                f"Read about the [different types of export control licences]({help_url})."
+            ),
+        ],
+        default_button_name="Continue",
+        back_link=BackLink("Back", reverse("apply_for_a_licence:start")),
     )
 
 
 def export_licence_questions(request, application_type, goodstype_category=None):
-    should_display_firearms_question = goodstype_category in [
-        GoodsTypeCategory.MILITARY,
-        GoodsTypeCategory.UK_CONTINENTAL_SHELF,
-    ]
+    forms = [export_type_form()]
 
-    return FormGroup(
-        [
-            Form(
-                title=ExportLicenceQuestions.ExportLicenceQuestion.TITLE,
-                description=ExportLicenceQuestions.ExportLicenceQuestion.DESCRIPTION,
-                questions=[
-                    RadioButtons(
-                        name="application_type",
-                        options=[
-                            Option(
-                                key=CaseTypes.OGEL,
-                                value=ExportLicenceQuestions.ExportLicenceQuestion.OPEN_GENERAL_EXPORT_LICENCE,
-                                description=ExportLicenceQuestions.ExportLicenceQuestion.OPEN_GENERAL_EXPORT_LICENCE_DESCRIPTION,
-                            ),
-                            Option(
-                                key=CaseTypes.SIEL,
-                                value=ExportLicenceQuestions.ExportLicenceQuestion.STANDARD_LICENCE,
-                                description=ExportLicenceQuestions.ExportLicenceQuestion.STANDARD_LICENCE_DESCRIPTION,
-                            ),
-                            Option(
-                                key=CaseTypes.OIEL,
-                                value=ExportLicenceQuestions.ExportLicenceQuestion.OPEN_LICENCE,
-                                description=ExportLicenceQuestions.ExportLicenceQuestion.OPEN_LICENCE_DESCRIPTION,
-                            ),
-                        ],
-                    ),
-                    DetailComponent(
-                        InitialApplicationQuestionsForms.OpeningQuestion.HELP_WITH_CHOOSING_A_LICENCE,
-                        InitialApplicationQuestionsForms.OpeningQuestion.HELP_WITH_CHOOSING_A_LICENCE_CONTENT,
-                    ),
-                ],
-                default_button_name=generic.CONTINUE,
-                back_link=BackLink(
-                    ExportLicenceQuestions.ExportLicenceQuestion.BACK, reverse_lazy("apply_for_a_licence:start")
-                ),
-            ),
-            *conditional(application_type == CaseTypes.OIEL, [goodstype_category_form()], []),
-            *conditional(
-                application_type != CaseTypes.OGEL and goodstype_category not in ["media", "cryptographic"],
-                [
-                    Form(
-                        title=ExportLicenceQuestions.ExportType.TITLE,
-                        description=ExportLicenceQuestions.ExportType.DESCRIPTION,
-                        questions=[
-                            RadioButtons(
-                                name="export_type",
-                                options=[
-                                    Option("temporary", ExportLicenceQuestions.ExportType.TEMPORARY),
-                                    Option("permanent", ExportLicenceQuestions.ExportType.PERMANENT),
-                                ],
-                            ),
-                        ],
-                        default_button_name=generic.CONTINUE
-                        if application_type == CaseTypes.SIEL
-                        else generic.SAVE_AND_CONTINUE,
-                    ),
-                ],
-                [],
-            ),
-            *conditional(application_type != CaseTypes.OGEL, [reference_name_form()], []),
-            *conditional(application_type == CaseTypes.SIEL, [told_by_an_official_form()], []),
-            *conditional(should_display_firearms_question, [firearms_form()], []),
-        ]
-    )
+    if application_type == CaseTypes.OIEL:
+        forms.append(goodstype_category_form())
+
+    if application_type != CaseTypes.OGEL and goodstype_category not in ["media", "cryptographic"]:
+        forms.append(export_permanency_form(application_type))
+
+    if application_type != CaseTypes.OGEL:
+        forms.append(reference_name_form())
+
+    if application_type == CaseTypes.SIEL:
+        forms.append(told_by_an_official_form())
+
+    if goodstype_category in [GoodsTypeCategory.MILITARY, GoodsTypeCategory.UK_CONTINENTAL_SHELF]:
+        forms.append(firearms_form())
+
+    return FormGroup(forms)
 
 
 def goodstype_category_form(application_id=None):
@@ -203,7 +229,7 @@ def transhipment_questions(request):
                 ],
                 default_button_name=generic.CONTINUE,
                 back_link=BackLink(
-                    TranshipmentQuestions.TranshipmentLicenceQuestion.BACK, reverse_lazy("apply_for_a_licence:start")
+                    TranshipmentQuestions.TranshipmentLicenceQuestion.BACK, reverse("apply_for_a_licence:start")
                 ),
             ),
             *conditional(
@@ -244,7 +270,7 @@ def MOD_questions(application_type=None):
                     ),
                 ],
                 default_button_name=generic.CONTINUE,
-                back_link=BackLink(MODQuestions.WhatAreYouApplyingFor.BACK, reverse_lazy("apply_for_a_licence:start")),
+                back_link=BackLink(MODQuestions.WhatAreYouApplyingFor.BACK, reverse("apply_for_a_licence:start")),
             ),
             conditional(
                 application_type == CaseTypes.F680,
