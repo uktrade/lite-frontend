@@ -10,7 +10,7 @@
 			{% if case.sla_hours_since_raised and case.case_type.sub_type.key == 'hmrc' %}
 				class="app-sla__circle app-sla__circle--{{ case.sla_hours_since_raised|sla_colour:'hours' }}"
 				stroke-dashoffset="{{ case.sla_hours_since_raised|sla_ratio:48 }}"
-			{% else %}
+			{% elif case.sla_days and case.sla_remaining_days %}
 				{% with case.sla_days|add:case.sla_remaining_days as total_days %}
 				class="app-sla__circle app-sla__circle--{{ case.sla_remaining_days|sla_colour:'days' }}"
 				stroke-dashoffset="{{ case.sla_days|sla_ratio:total_days }}"
