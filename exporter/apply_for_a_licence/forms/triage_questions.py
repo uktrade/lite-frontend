@@ -31,9 +31,6 @@ from lite_forms.helpers import conditional
 from django.template.loader import render_to_string
 
 
-SIEL_ONLY_HTML = render_to_string('applications/only-siel-enabled.html')
-
-
 def opening_question():
     options = [
         Option(
@@ -72,15 +69,17 @@ def opening_question():
             disabled=settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
         ),
     ]
+    if settings.FEATURE_FLAG_ONLY_ALLOW_SIEL:
+        description = render_to_string("applications/use-spire-triage.html")
+    else:
+        description = ""
+
     return Form(
         title="Select what you need",
-        description=SIEL_ONLY_HTML if settings.FEATURE_FLAG_ONLY_ALLOW_SIEL else '' ,
+        description=description,
         questions=[RadioButtons(name="licence_type", options=options)],
         default_button_name="Continue",
-        back_link=Breadcrumbs([
-            BackLink("Account home", reverse("core:home")),
-            BackLink("Apply for a licence", ""),
-        ]),
+        back_link=Breadcrumbs([BackLink("Account home", reverse("core:home")), BackLink("Apply for a licence", ""),]),
     )
 
 
@@ -90,11 +89,7 @@ def export_permanency_form(application_type):
         description="",
         questions=[
             RadioButtons(
-                name="export_type",
-                options=[
-                    Option("temporary", "Temporary"),
-                    Option("permanent", "Permanent"),
-                ],
+                name="export_type", options=[Option("temporary", "Temporary"), Option("permanent", "Permanent"),],
             ),
         ],
         default_button_name="Continue" if application_type == CaseTypes.SIEL else "Save and continue",
@@ -108,7 +103,7 @@ def export_type_form():
             value="Standard Individual Export Licence (SIEL)",
             description=(
                 "Select to apply for a licence to export a set quantity and set value of products to 1 destination."
-            )
+            ),
         ),
         Option(
             key=CaseTypes.OGEL,
@@ -130,15 +125,19 @@ def export_type_form():
             disabled=settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
         ),
     ]
-    help_url = 'https://www.gov.uk/guidance/beginners-guide-to-export-controls#what-licence-do-i-need'
+    help_url = "https://www.gov.uk/guidance/beginners-guide-to-export-controls#what-licence-do-i-need"
+    if settings.FEATURE_FLAG_ONLY_ALLOW_SIEL:
+        description = render_to_string("applications/use-spire-application-type.html")
+    else:
+        description = ""
+
     return Form(
         title="Select the type of export licence you need",
-        description=SIEL_ONLY_HTML if settings.FEATURE_FLAG_ONLY_ALLOW_SIEL else '' ,
+        description=description,
         questions=[
             RadioButtons(name="application_type", options=options),
             DetailComponent(
-                "What licence do I need?",
-                f"Read about the [different types of export control licences]({help_url})."
+                "What licence do I need?", f"Read about the [different types of export control licences]({help_url})."
             ),
         ],
         default_button_name="Continue",

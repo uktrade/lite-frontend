@@ -210,7 +210,6 @@ class ApplicationsSummaryPage:
 
 
 class InitialApplicationQuestionsForms:
-
     class ReferenceNameQuestion:
         TITLE = "Name the application"
         ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference name"
@@ -221,7 +220,6 @@ class InitialApplicationQuestionsForms:
 
 
 class ExportLicenceQuestions:
-
     class HaveYouBeenInformedQuestion:
         TITLE = "Have you received a letter or email from Border Force or HMRC informing you to apply for a licence?"
         DESCRIPTION = "You may know this as an 'end use control'."
