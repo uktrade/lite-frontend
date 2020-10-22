@@ -9,9 +9,8 @@ from exporter.apply_for_a_licence.forms.trade_control_licence import (
 )
 from core.constants import GoodsTypeCategory
 from exporter.core.constants import CaseTypes
-from lite_content.lite_exporter_frontend import generic, hub
+from lite_content.lite_exporter_frontend import generic
 from lite_content.lite_exporter_frontend.applications import (
-    InitialApplicationQuestionsForms,
     ExportLicenceQuestions,
     MODQuestions,
     TranshipmentQuestions,
