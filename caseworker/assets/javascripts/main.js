@@ -9,9 +9,8 @@ import '../../../core/assets/javascripts/back-link.js';
 import '../../../core/assets/javascripts/helpers.js';
 
 // core
-import initSelectButtons from '../../../core/assets/javascripts/select-buttons.js';
-
 // TODO: can't rewrite these as ES6 imports yet as they are used by other templates
+import '../../../core/assets/javascripts/select-buttons.js';
 import '../../../core/assets/javascripts/filter-bar.js';
 import './checkboxes.js';
 import './snackbar-hide.js';
@@ -31,7 +30,6 @@ initAll();
 
 // init our JS
 $(document).ready(function() {
-	initSelectButtons();
 	initQueuesMenu();
 	initFlagListExpanders();
 });

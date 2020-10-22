@@ -1,21 +1,19 @@
 
-export default function initSelectButtons() {
-	$( 'input:checkbox' ).change(function() {
-		setSelectButtonsState();
-	});
+$( 'input:checkbox' ).change(function() {
+	setSelectButtonsState();
+});
 
-	$('.lite-button-checkbox').click(function() {
-		const $table = $(this).closest('table');
+$('.lite-button-checkbox').click(function() {
+	const $table = $(this).closest('table');
 
-		if ($table.find('input:checkbox:checked').length == $table.find('input:checkbox').length) {
-			$table.find('input:checkbox').prop('checked', false).change();
-		} else {
-			$table.find('input:checkbox').prop('checked', true).change();
-		}
+	if ($table.find('input:checkbox:checked').length == $table.find('input:checkbox').length) {
+		$table.find('input:checkbox').prop('checked', false).change();
+	} else {
+		$table.find('input:checkbox').prop('checked', true).change();
+	}
 
-		setSelectButtonsState();
-	});
-}
+	setSelectButtonsState();
+});
 
 function setSelectButtonsState() {
 	$( 'table' ).each(function(i, obj) {
