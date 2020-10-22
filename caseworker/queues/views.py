@@ -52,7 +52,7 @@ class Cases(LoginRequiredMixin, TemplateView):
 
     @property
     def queue_pk(self):
-        return self.kwargs.get("queue_pk") or self.request.session.get("default_queue")
+        return self.kwargs.get("queue_pk") or self.request.session["default_queue"]
 
     @cached_property
     def data(self):

@@ -1,13 +1,18 @@
 import re
 
 import pytest
+
+from urllib import parse
+
 from django.conf import settings
 from django.test import Client
 
 from core import client
+from core.helpers import convert_value_to_query_param
 
 
 application_id = "094eed9a-23cc-478a-92ad-9a05ac17fad0"
+second_application_id = "08e69b60-8fbd-4111-b6ae-096b565fe4ea"
 gov_uk_user_id = "2a43805b-c082-47e7-9188-c8b3e1a83cb0"
 
 
@@ -210,7 +215,7 @@ def data_case():
                         "description": "tool to assist peasants seize the means of production",
                         "is_good_controlled": {"key": "False", "value": "No"},
                         "is_good_incorporated": True,
-                        "control_list_entries": [{"rating": "ML1a", "text": "Outmoded bourgeois reactionaries",}],
+                        "control_list_entries": [{"rating": "ML1a", "text": "Outmoded bourgeois reactionaries"}],
                         "countries": [{"id": "US", "name": "United States", "type": "gov.uk Country", "is_eu": False}],
                         "document": None,
                         "flags": [
@@ -288,6 +293,350 @@ def data_case():
 
 
 @pytest.fixture
+def data_second_case(data_case):
+    case = {**data_case}
+    case["case"]["id"] = second_application_id
+    return case
+
+
+@pytest.fixture
+def data_case_types():
+    return [
+        {"key": "oiel", "value": "Open Individual Export Licence"},
+        {"key": "ogel", "value": "Open General Export Licence"},
+        {"key": "oicl", "value": "Open Individual Trade Control Licence"},
+        {"key": "siel", "value": "Standard Individual Export Licence"},
+        {"key": "sicl", "value": "Standard Individual Trade Control Licence"},
+        {"key": "sitl", "value": "Standard Individual Transhipment Licence"},
+        {"key": "f680", "value": "MOD F680 Clearance"},
+        {"key": "exhc", "value": "MOD Exhibition Clearance"},
+        {"key": "gift", "value": "MOD Gifting Clearance"},
+        {"key": "cre", "value": "HMRC Query"},
+        {"key": "gqy", "value": "Goods Query"},
+        {"key": "eua", "value": "End User Advisory Query"},
+        {"key": "ogtcl", "value": "Open General Trade Control Licence"},
+        {"key": "ogtl", "value": "Open General Transhipment Licence"},
+        {"key": "comp_c", "value": "Compliance Site Case"},
+        {"key": "comp_v", "value": "Compliance Visit Case"},
+    ]
+
+
+@pytest.fixture
+def data_countries():
+    return {'countries': [
+        {'id': 'AE-AZ', 'name': 'Abu Dhabi', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'AF', 'name': 'Afghanistan', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'AE-AJ', 'name': 'Ajman', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'XQZ', 'name': 'Akrotiri', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'AX', 'name': 'Åland Islands', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'AL', 'name': 'Albania', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'DZ', 'name': 'Algeria', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'AS', 'name': 'American Samoa', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'AD', 'name': 'Andorra', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'AO', 'name': 'Angola', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'AI', 'name': 'Anguilla', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'AQ', 'name': 'Antarctica', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'AG', 'name': 'Antigua and Barbuda', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'AR', 'name': 'Argentina', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'AM', 'name': 'Armenia', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'AW', 'name': 'Aruba', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'SH-AC', 'name': 'Ascension', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'AU', 'name': 'Australia', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'AT', 'name': 'Austria', 'type': 'gov.uk Country', 'is_eu': True},
+        {'id': 'AZ', 'name': 'Azerbaijan', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'BH', 'name': 'Bahrain', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'UM-81', 'name': 'Baker Island', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'BD', 'name': 'Bangladesh', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'BB', 'name': 'Barbados', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'BY', 'name': 'Belarus', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'BE', 'name': 'Belgium', 'type': 'gov.uk Country', 'is_eu': True},
+        {'id': 'BZ', 'name': 'Belize', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'BJ', 'name': 'Benin', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'BM', 'name': 'Bermuda', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'BT', 'name': 'Bhutan', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'BO', 'name': 'Bolivia', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'BQ-BO', 'name': 'Bonaire', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'BA', 'name': 'Bosnia and Herzegovina', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'BW', 'name': 'Botswana', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'BV', 'name': 'Bouvet Island', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'BR', 'name': 'Brazil', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'BAT', 'name': 'British Antarctic Territory', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'IO', 'name': 'British Indian Ocean Territory', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'VG', 'name': 'British Virgin Islands', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'BN', 'name': 'Brunei', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'BG', 'name': 'Bulgaria', 'type': 'gov.uk Country', 'is_eu': True},
+        {'id': 'BF', 'name': 'Burkina Faso', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'MM', 'name': 'Burma', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'BI', 'name': 'Burundi', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'KH', 'name': 'Cambodia', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'CM', 'name': 'Cameroon', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'CA', 'name': 'Canada', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'CV', 'name': 'Cape Verde', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'KY', 'name': 'Cayman Islands', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'CF', 'name': 'Central African Republic', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'ES-CE', 'name': 'Ceuta', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'TD', 'name': 'Chad', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'CL', 'name': 'Chile', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'CN', 'name': 'China', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'CX', 'name': 'Christmas Island', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'CC', 'name': 'Cocos (Keeling) Islands', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'CO', 'name': 'Colombia', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'KM', 'name': 'Comoros', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'CG', 'name': 'Congo', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'CD', 'name': 'Congo (Democratic Republic)', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'CK', 'name': 'Cook Islands', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'CR', 'name': 'Costa Rica', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'HR', 'name': 'Croatia', 'type': 'gov.uk Country', 'is_eu': True},
+        {'id': 'CU', 'name': 'Cuba', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'CW', 'name': 'Curaçao', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'CY', 'name': 'Cyprus', 'type': 'gov.uk Country', 'is_eu': True},
+        {'id': 'CZ', 'name': 'Czechia', 'type': 'gov.uk Country', 'is_eu': True},
+        {'id': 'DK', 'name': 'Denmark', 'type': 'gov.uk Country', 'is_eu': True},
+        {'id': 'XXD', 'name': 'Dhekelia', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'DJ', 'name': 'Djibouti', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'DM', 'name': 'Dominica', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'DO', 'name': 'Dominican Republic', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'AE-DU', 'name': 'Dubai', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'TL', 'name': 'East Timor', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'EC', 'name': 'Ecuador', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'EG', 'name': 'Egypt', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'SV', 'name': 'El Salvador', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'GQ', 'name': 'Equatorial Guinea', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'ER', 'name': 'Eritrea', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'EE', 'name': 'Estonia', 'type': 'gov.uk Country', 'is_eu': True},
+        {'id': 'SZ', 'name': 'Eswatini', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'ET', 'name': 'Ethiopia', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'FK', 'name': 'Falkland Islands', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'FO', 'name': 'Faroe Islands', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'FJ', 'name': 'Fiji', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'FI', 'name': 'Finland', 'type': 'gov.uk Country', 'is_eu': True},
+        {'id': 'FR', 'name': 'France', 'type': 'gov.uk Country', 'is_eu': True},
+        {'id': 'GF', 'name': 'French Guiana', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'PF', 'name': 'French Polynesia', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'TF', 'name': 'French Southern Territories', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'AE-FU', 'name': 'Fujairah', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'GA', 'name': 'Gabon', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'GE', 'name': 'Georgia', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'DE', 'name': 'Germany', 'type': 'gov.uk Country', 'is_eu': True},
+        {'id': 'GH', 'name': 'Ghana', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'GI', 'name': 'Gibraltar', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'GR', 'name': 'Greece', 'type': 'gov.uk Country', 'is_eu': True},
+        {'id': 'GL', 'name': 'Greenland', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'GD', 'name': 'Grenada', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'GP', 'name': 'Guadeloupe', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'GU', 'name': 'Guam', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'GT', 'name': 'Guatemala', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'GG', 'name': 'Guernsey', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'GN', 'name': 'Guinea', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'GW', 'name': 'Guinea-Bissau', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'GY', 'name': 'Guyana', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'HT', 'name': 'Haiti', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'HM', 'name': 'Heard Island and McDonald Islands', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'HN', 'name': 'Honduras', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'HK', 'name': 'Hong Kong', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'UM-84', 'name': 'Howland Island', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'HU', 'name': 'Hungary', 'type': 'gov.uk Country', 'is_eu': True},
+        {'id': 'IS', 'name': 'Iceland', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'IN', 'name': 'India', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'ID', 'name': 'Indonesia', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'IR', 'name': 'Iran', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'IQ', 'name': 'Iraq', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'IE', 'name': 'Ireland', 'type': 'gov.uk Country', 'is_eu': True},
+        {'id': 'IM', 'name': 'Isle of Man', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'IL', 'name': 'Israel', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'IT', 'name': 'Italy', 'type': 'gov.uk Country', 'is_eu': True},
+        {'id': 'CI', 'name': 'Ivory Coast', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'JM', 'name': 'Jamaica', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'JP', 'name': 'Japan', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'UM-86', 'name': 'Jarvis Island', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'JE', 'name': 'Jersey', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'UM-67', 'name': 'Johnston Atoll', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'JO', 'name': 'Jordan', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'KZ', 'name': 'Kazakhstan', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'KE', 'name': 'Kenya', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'UM-89', 'name': 'Kingman Reef', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'KI', 'name': 'Kiribati', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'XK', 'name': 'Kosovo', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'KW', 'name': 'Kuwait', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'KG', 'name': 'Kyrgyzstan', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'LA', 'name': 'Laos', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'LV', 'name': 'Latvia', 'type': 'gov.uk Country', 'is_eu': True},
+        {'id': 'LB', 'name': 'Lebanon', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'LS', 'name': 'Lesotho', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'LR', 'name': 'Liberia', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'LY', 'name': 'Libya', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'LI', 'name': 'Liechtenstein', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'LT', 'name': 'Lithuania', 'type': 'gov.uk Country', 'is_eu': True},
+        {'id': 'LU', 'name': 'Luxembourg', 'type': 'gov.uk Country', 'is_eu': True},
+        {'id': 'MO', 'name': 'Macao', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'MG', 'name': 'Madagascar', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'MW', 'name': 'Malawi', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'MY', 'name': 'Malaysia', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'MV', 'name': 'Maldives', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'ML', 'name': 'Mali', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'MT', 'name': 'Malta', 'type': 'gov.uk Country', 'is_eu': True},
+        {'id': 'MH', 'name': 'Marshall Islands', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'MQ', 'name': 'Martinique', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'MR', 'name': 'Mauritania', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'MU', 'name': 'Mauritius', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'YT', 'name': 'Mayotte', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'ES-ML', 'name': 'Melilla', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'MX', 'name': 'Mexico', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'FM', 'name': 'Micronesia', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'UM-71', 'name': 'Midway Islands', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'MD', 'name': 'Moldova', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'MC', 'name': 'Monaco', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'MN', 'name': 'Mongolia', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'ME', 'name': 'Montenegro', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'MS', 'name': 'Montserrat', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'MA', 'name': 'Morocco', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'MZ', 'name': 'Mozambique', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'NA', 'name': 'Namibia', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'NR', 'name': 'Nauru', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'UM-76', 'name': 'Navassa Island', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'NP', 'name': 'Nepal', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'NL', 'name': 'Netherlands', 'type': 'gov.uk Country', 'is_eu': True},
+        {'id': 'NC', 'name': 'New Caledonia', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'NZ', 'name': 'New Zealand', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'NI', 'name': 'Nicaragua', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'NE', 'name': 'Niger', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'NG', 'name': 'Nigeria', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'NU', 'name': 'Niue', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'NF', 'name': 'Norfolk Island', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'KP', 'name': 'North Korea', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'MK', 'name': 'North Macedonia', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'MP', 'name': 'Northern Mariana Islands', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'NO', 'name': 'Norway', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'PS', 'name': 'Occupied Palestinian Territories', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'OM', 'name': 'Oman', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'PK', 'name': 'Pakistan', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'PW', 'name': 'Palau', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'UM-95', 'name': 'Palmyra Atoll', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'PA', 'name': 'Panama', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'PG', 'name': 'Papua New Guinea', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'PY', 'name': 'Paraguay', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'PE', 'name': 'Peru', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'PH', 'name': 'Philippines', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'PN', 'name': 'Pitcairn, Henderson, Ducie and Oeno Islands', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'PL', 'name': 'Poland', 'type': 'gov.uk Country', 'is_eu': True},
+        {'id': 'PT', 'name': 'Portugal', 'type': 'gov.uk Country', 'is_eu': True},
+        {'id': 'PR', 'name': 'Puerto Rico', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'QA', 'name': 'Qatar', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'AE-RK', 'name': 'Ras al-Khaimah', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'RE', 'name': 'Réunion', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'RO', 'name': 'Romania', 'type': 'gov.uk Country', 'is_eu': True},
+        {'id': 'RU', 'name': 'Russia', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'RW', 'name': 'Rwanda', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'BQ-SA', 'name': 'Saba', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'BL', 'name': 'Saint Barthélemy', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'SH-HL', 'name': 'Saint Helena', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'PM', 'name': 'Saint Pierre and Miquelon', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'MF', 'name': 'Saint-Martin (French part)', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'WS', 'name': 'Samoa', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'SM', 'name': 'San Marino', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'ST', 'name': 'Sao Tome and Principe', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'SA', 'name': 'Saudi Arabia', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'SN', 'name': 'Senegal', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'RS', 'name': 'Serbia', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'SC', 'name': 'Seychelles', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'AE-SH', 'name': 'Sharjah', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'SL', 'name': 'Sierra Leone', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'SG', 'name': 'Singapore', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'BQ-SE', 'name': 'Sint Eustatius', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'SX', 'name': 'Sint Maarten (Dutch part)', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'SK', 'name': 'Slovakia', 'type': 'gov.uk Country', 'is_eu': True},
+        {'id': 'SI', 'name': 'Slovenia', 'type': 'gov.uk Country', 'is_eu': True},
+        {'id': 'SB', 'name': 'Solomon Islands', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'SO', 'name': 'Somalia', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'ZA', 'name': 'South Africa', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'GS', 'name': 'South Georgia and South Sandwich Islands', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'KR', 'name': 'South Korea', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'SS', 'name': 'South Sudan', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'ES', 'name': 'Spain', 'type': 'gov.uk Country', 'is_eu': True},
+        {'id': 'LK', 'name': 'Sri Lanka', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'KN', 'name': 'St Kitts and Nevis', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'LC', 'name': 'St Lucia', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'VC', 'name': 'St Vincent', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'SD', 'name': 'Sudan', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'SR', 'name': 'Suriname', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'SJ', 'name': 'Svalbard and Jan Mayen', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'SE', 'name': 'Sweden', 'type': 'gov.uk Country', 'is_eu': True},
+        {'id': 'CH', 'name': 'Switzerland', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'SY', 'name': 'Syria', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'TW', 'name': 'Taiwan', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'TJ', 'name': 'Tajikistan', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'TZ', 'name': 'Tanzania', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'TH', 'name': 'Thailand', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'BS', 'name': 'The Bahamas', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'GM', 'name': 'The Gambia', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'TG', 'name': 'Togo', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'TK', 'name': 'Tokelau', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'TO', 'name': 'Tonga', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'TT', 'name': 'Trinidad and Tobago', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'SH-TA', 'name': 'Tristan da Cunha', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'TN', 'name': 'Tunisia', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'TR', 'name': 'Turkey', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'TM', 'name': 'Turkmenistan', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'TC', 'name': 'Turks and Caicos Islands', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'TV', 'name': 'Tuvalu', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'UG', 'name': 'Uganda', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'UA', 'name': 'Ukraine', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'AE-UQ', 'name': 'Umm al-Quwain', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'AE', 'name': 'United Arab Emirates', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'GB', 'name': 'United Kingdom', 'type': 'gov.uk Country', 'is_eu': True},
+        {'id': 'US', 'name': 'United States', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'VI', 'name': 'United States Virgin Islands', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'UY', 'name': 'Uruguay', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'UZ', 'name': 'Uzbekistan', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'VU', 'name': 'Vanuatu', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'VA', 'name': 'Vatican City', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'VE', 'name': 'Venezuela', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'VN', 'name': 'Vietnam', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'UM-79', 'name': 'Wake Island', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'WF', 'name': 'Wallis and Futuna', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'EH', 'name': 'Western Sahara', 'type': 'gov.uk Territory', 'is_eu': False},
+        {'id': 'YE', 'name': 'Yemen', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'ZM', 'name': 'Zambia', 'type': 'gov.uk Country', 'is_eu': False},
+        {'id': 'ZW', 'name': 'Zimbabwe', 'type': 'gov.uk Country', 'is_eu': False}]
+    }
+
+
+@pytest.fixture
+def data_cases_search(data_case, data_second_case, mock_case_statuses, data_case_types):
+    return {
+        "count": 2,
+        "results": {
+            "cases": [data_case["case"], data_second_case["case"]],
+            "filters": {
+                "advice_types": [
+                    {"key": "approve", "value": "Approve"},
+                    {"key": "proviso", "value": "Proviso"},
+                    {"key": "refuse", "value": "Refuse"},
+                    {"key": "no_licence_required", "value": "No Licence Required"},
+                    {"key": "not_applicable", "value": "Not Applicable"},
+                    {"key": "conflicting", "value": "Conflicting"},
+                ],
+                "case_types": data_case_types,
+                "gov_users": [{"full_name": "John Smith", "id": gov_uk_user_id}],
+                "statuses": mock_case_statuses["statuses"],
+                "is_system_queue": True,
+                "is_work_queue": False,
+                "queue": {"case_count": 2, "id": "00000000-0000-0000-0000-000000000001", "name": "All cases"},
+            },
+            "queues": [
+                {"case_count": 2, "id": "00000000-0000-0000-0000-000000000001", "name": "All cases"},
+                {"case_count": 2, "id": "00000000-0000-0000-0000-000000000002", "name": "Open cases"},
+                {"case_count": 1, "id": "00000000-0000-0000-0000-000000000003", "name": "My team's cases"},
+                {"case_count": 0, "id": "00000000-0000-0000-0000-000000000004", "name": "New exporter amendments"},
+                {"case_count": 1, "id": "00000000-0000-0000-0000-000000000005", "name": "My assigned cases"},
+                {"case_count": 1, "id": "00000000-0000-0000-0000-000000000006", "name": "My caseload"},
+            ],
+        },
+        "total_pages": 1,
+    }
+
+
+@pytest.fixture
 def case_pk(data_case):
     return data_case["case"]["id"]
 
@@ -325,6 +674,19 @@ def queue_pk(data_queue):
 def mock_queue(requests_mock, data_queue):
     url = client._build_absolute_uri("/queues/")
     yield requests_mock.get(url=re.compile(f"{url}.*/"), json=data_queue)
+
+
+@pytest.fixture
+def mock_countries(requests_mock, data_countries):
+    url = client._build_absolute_uri("/static/countries/" + convert_value_to_query_param("exclude", None))
+    yield requests_mock.get(url=url, json=data_countries)
+
+
+@pytest.fixture
+def mock_cases_search(requests_mock, data_cases_search, queue_pk):
+    encoded_params = parse.urlencode({"page": 1, "flags": []}, doseq=True)
+    url = client._build_absolute_uri(f"/cases/?queue_id={queue_pk}&{encoded_params}")
+    yield requests_mock.get(url=url, json=data_cases_search)
 
 
 @pytest.fixture(autouse=True)
@@ -800,7 +1162,7 @@ def authorized_client_factory(client: Client, settings):
         session = client.session
         session["first_name"] = user["first_name"]
         session["last_name"] = user["last_name"]
-        session["default_queue"] = user["default_queue"]
+        session["default_queue"] = user["default_queue"]["id"]
         session["lite_api_user_id"] = user["id"]
         session[settings.TOKEN_SESSION_KEY] = {
             "access_token": "mock_access_token",
