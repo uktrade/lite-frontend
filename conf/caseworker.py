@@ -11,6 +11,8 @@ INSTALLED_APPS += [
     "caseworker.core",
     "caseworker.spire",
     "caseworker.letter_templates",
+    "crispy_forms",
+    "crispy_forms_gds",
 ]
 
 MIDDLEWARE.append("core.middleware.SessionTimeoutMiddleware")
@@ -80,3 +82,6 @@ LITE_HAWK_ID = env.str("LITE_HAWK_ID", "internal-frontend")
 LITE_HAWK_KEY = env.str("LITE_INTERNAL_HAWK_KEY")
 
 LITE_API_AUTH_HEADER_NAME = "GOV-USER-TOKEN"
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = ["gds"]
+CRISPY_TEMPLATE_PACK = "gds"

@@ -1,0 +1,139 @@
+{% extends 'layouts/case.html' %}
+
+{% load static from staticfiles %}
+
+{% load crispy_forms_tags %}
+
+{% block details %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full govuk-!-margin-bottom-6">
+            <a class="lite-back-link-button" id="back-link" href="{% url 'cases:case' queue_pk=queue.id pk=case.id %}">Back</a>
+        </div>
+        <div class="govuk-grid-column-one-third">
+            <h2 class="govuk-heading-l govuk-!-margin-top-6 govuk-!-margin-bottom-3">
+                Review product
+                {% if wizard.steps.count > 1 %}
+                    {{ wizard.steps.step1 }} of {{ wizard.steps.count }}
+                {% endif %}
+            </h2>
+            <p class="govuk-!-margin-bottom-6 govuk-caption-m">{{ object.good.description }}</p>
+			<form method="post" enctype="multipart/form-data" novalidate="novalidate">
+                {% csrf_token %}
+                <div class="w-2-3" id="form-container">
+                    {{ wizard.management_form }}
+                    {% if wizard.form.forms %}
+                        {{ wizard.form.management_form }}
+                    {% else %}
+                        {% crispy form %}
+                    {% endif %}
+	                {% if wizard.steps.prev %}
+	                    <button name="wizard_goto_step" class="govuk-button govuk-button--secondary govuk-!-margin-right-1" type="submit" value="{{ wizard.steps.prev }}">Previous product</button>
+	                {% endif %}
+                    {% if wizard.steps.step1 != wizard.steps.count %}
+                        <button type="submit" class="govuk-button">{% block button_submit_label %}Save and continue{% endblock %}</button>
+                    {% else %}
+                        <button class="govuk-button" type="great-mvp-wizard-step-button m-b-s">{% block button_next_label %}Save and return to case details{% endblock %}</button>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+        <div class="govuk-grid-column-one-third">&nbsp;</div>
+        <div class="govuk-grid-column-one-third">
+            {% if wizard.steps.count > 1 %}
+                <h2 class="govuk-heading-l">Product {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</h2>
+            {% endif %}
+            <table class="govuk-table app-table">
+                <tbody class="govuk-table__body" id="tbody-placeholder">
+                    <tr class="govuk-table__row app-table__row">
+                        <th scope="row" class="govuk-table__header">Category</th>
+                        <td class="govuk-table__cell">{{ object.good.item_category.value }}</td>
+                    </tr>
+                    <tr class="govuk-table__row app-table__row">
+                        <th scope="row" class="govuk-table__header">Description</th>
+                        <td class="govuk-table__cell">{{ object.good.description }}</td>
+                    </tr>
+                    <tr class="govuk-table__row app-table__row">
+                        <th scope="row" class="govuk-table__header">Part number</th>
+                        <td class="govuk-table__cell">{{ object.good.part_number }}</td>
+                    </tr>
+                    <tr class="govuk-table__row app-table__row">
+                        <th scope="row" class="govuk-table__header">Value</th>
+                        <td class="govuk-table__cell">{{ object.value }}</td>
+                    </tr>
+                    <tr class="govuk-table__row app-table__row">
+                        <th scope="row" class="govuk-table__header">Licence required</th>
+                        <td class="govuk-table__cell">{{ object.is_good_controlled|yesno|title }}</td>
+                    </tr>
+                    <tr class="govuk-table__row app-table__row">
+                        <th scope="row" class="govuk-table__header">Control list entries</th>
+                        <td class="govuk-table__cell">
+                            {% for control_list_entry in object_control_list_entries %}
+                                {{ control_list_entry.rating }}
+                                {% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    <tr class="govuk-table__row app-table__row">
+                        <th scope="row" class="govuk-table__header">Security graded</th>
+                        <td class="govuk-table__cell">
+                            {{ object.good.is_pv_graded|yesno|title }}
+                            {% if object.good.grading_comment %}
+                                - {{ object.good.grading_comment }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr class="govuk-table__row app-table__row">
+                        <th scope="row" class="govuk-table__header">Military use</th>
+                        <td class="govuk-table__cell">
+                            {{ object.good.is_military_use.value }}
+                            {% if object.good.modified_military_use_details %}
+                            , {{ object.good.modified_military_use_details }}
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                    <tr class="govuk-table__row app-table__row">
+                        <th scope="row" class="govuk-table__header">Component</th>
+                        <td class="govuk-table__cell">
+                            {{ object.good.is_component.value }}
+                                {{ object.item_type }}
+                            {% if object.good.component_details %}
+                                {{ object.good.component_details }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr class="govuk-table__row app-table__row">
+                        <th scope="row" class="govuk-table__header">Information security features</th>
+                        <td class="govuk-table__cell">
+                            {{ object.good.uses_information_security|yesno|title }}
+                            {% if object.good.information_security_details %}
+                            , {{ object.good.information_security_details }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr class="govuk-table__row app-table__row">
+                        <th scope="row" class="govuk-table__header">Incorporated</th>
+                        <td class="govuk-table__cell">{{ object|yesno|title }}</td>
+                    </tr>
+                    <tr class="govuk-table__row app-table__row">
+                        <th scope="row" class="govuk-table__header">Document</th>
+                        <td class="govuk-table__cell">
+                            {{ object.good.missing_document_reason.value }}
+                            {% for document in object.good.documents %}
+                            <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}">{{ document.name }}</a>
+                                {% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tarekraafat-autocomplete.js/7.2.0/css/autoComplete.css" integrity="sha512-eP0uk3AYTRMF+HDgLNFW8cFh0mO73gVsnJdgqXH94Zc//fEgtNzMmdyK+cX8qF/SCs7gKUUkeJhJsiTRJstEKA==" crossorigin="anonymous" /><script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/fetch/3.4.0/fetch.min.js" integrity="sha512-+iXlQLHKQZYoFQZfyWkUuJB6X7aZA2+FvAB5PyiYzxRKbgmSLp6vzwXjTlqdvKV5OJS09HHN4lIekb5OOCKhQw==" crossorigin="anonymous"></script>
+    <script src="{% static 'javascripts/tokenfield.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tarekraafat-autocomplete.js/7.2.0/js/autoComplete.min.js" integrity="sha512-1Fr8m8dxYPgUEwpEKZy1AIUZnGupa1bhl7GbG+ueWxlWVBJvdEnLdgQVQA8pqkrrmkTV0DW7C5ZVmVGdJmMuZg==" crossorigin="anonymous"></script>
+    <script src="{% static 'javascripts/review-good.js' %}"></script>
+{% endblock %}

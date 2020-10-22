@@ -366,9 +366,7 @@ class ApplicationPage:
     class ThirdParty:
         ROLE = "Role: "
 
-    EDIT_FLAGS = "Edit goods flags"
     EDIT_DESTINATION_FLAGS = "Edit destination flags"
-    REVIEW_GOODS = "Review goods"
     ADVICE = "Give or change advice"
     RESPOND_BUTTON = "Respond to query"
     CLOSED = "This case is closed"

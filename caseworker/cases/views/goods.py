@@ -1,19 +1,22 @@
-from caseworker.cases.forms.review_goods import review_goods_form
+from collections import OrderedDict
+
+from formtools.wizard.views import SessionWizardView
+
+from caseworker.cases.forms.review_goods import review_goods_form, ExportControlCharacteristicsForm
 from caseworker.cases.helpers.advice import get_param_goods, flatten_goods_data
-from caseworker.cases.services import get_case, post_review_goods, get_good_on_application
+from caseworker.cases.services import get_case, post_review_good, post_review_goods, get_good_on_application
 from caseworker.search.services import get_search_results
 from caseworker.search.forms import CasesSearchForm
 from caseworker.core.constants import Permission
 from caseworker.core.helpers import has_permission
 from caseworker.core.services import get_control_list_entries
+from core.auth.views import LoginRequiredMixin
 from lite_forms.views import SingleFormView
 
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic import FormView
 from django.utils.functional import cached_property
-
-from core.auth.views import LoginRequiredMixin
 
 
 class ReviewGoods(LoginRequiredMixin, SingleFormView):
@@ -34,30 +37,160 @@ class ReviewGoods(LoginRequiredMixin, SingleFormView):
         self.success_url = case_url
 
 
+class AbstractReviewGoodWizardView(SessionWizardView):
+    form_class = ExportControlCharacteristicsForm
+    # required by view
+    form_list = [form_class]
+    CACHE_KEY_CONTROL_LIST_ENTRIES = "control_list_entries"
+
+    @cached_property
+    def case(self):
+        return get_case(self.request, self.kwargs["pk"])
+
+    @property
+    def object_pks(self):
+        # when user accesses the firs step, it will contain "goods" in the querystring, and will be
+        # cached in storage. Then later on POSTs and second page the good pks can be retrieved from storage
+        return self.request.GET.getlist(self.object_name) or self.storage.extra_data.get(self.object_name)
+
+    @property
+    def object_pk(self):
+        return self.object_pks[self.steps.index]
+
+    @property
+    def control_list_entries(self):
+        if self.CACHE_KEY_CONTROL_LIST_ENTRIES not in self.storage.extra_data:
+            data = get_control_list_entries(self.request, convert_to_options=True)
+            control_list_entries = [(item.value, item.key) for item in data]
+            self.storage.extra_data[self.CACHE_KEY_CONTROL_LIST_ENTRIES] = control_list_entries
+        return self.storage.extra_data[self.CACHE_KEY_CONTROL_LIST_ENTRIES]
+
+    def get(self, *args, **kwargs):
+        # hack to make the form_list as long as the number of selected goods
+        if self.object_name in self.request.GET:
+            self.storage.extra_data[self.object_name] = self.request.GET.getlist(self.object_name)
+        self.form_list = self.get_form_list()
+        return super().get(*args, **kwargs)
+
+    def post(self, *args, **kwargs):
+        self.form_list = self.get_form_list()
+        return super().post(*args, **kwargs)
+
+    def get_form_list(self):
+        return OrderedDict((pk, self.form_class) for pk in self.object_pks)
+
+    def get_form_kwargs(self, step):  # noqa pylint incorrectly flagging this
+        form_kwargs = super().get_form_kwargs(step)
+        form_kwargs["control_list_entries_choices"] = self.control_list_entries
+        return form_kwargs
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(case=self.case, object=self.object, **kwargs)
+
+    def process_step(self, form):
+        data = {**form.cleaned_data, "objects": [self.object_pk]}
+        del data["does_not_have_control_list_entries"]
+        post_review_good(self.request, case_id=self.kwargs["pk"], data=data)
+        return super().process_step(form)
+
+    def done(self, form_list, **kwargs):
+        url = reverse("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
+        return redirect(url)
+
+
+class ReviewStandardApplicationGoodWizardView(AbstractReviewGoodWizardView):
+    object_name = "goods"
+    template_name = "case/review-good-standard.html"
+
+    @property
+    def object(self):
+        return next(item for item in self.case.goods if item["good"]["id"] == self.object_pk)
+
+    def get_form_initial(self, step):
+        # if the good was reviewed at application level then use that as source of truth, otherwise use the export
+        # control characteristics from the canonical good level
+        if self.object["is_good_controlled"] is None:
+            source = self.object["good"]
+        else:
+            source = self.object
+        is_good_controlled = source["is_good_controlled"]
+        initial = {
+            "is_good_controlled": is_good_controlled["key"] if is_good_controlled else None,
+            "does_not_have_control_list_entries": not source["control_list_entries"],
+            "control_list_entries": [item["rating"] for item in source["control_list_entries"]],
+            "report_summary": self.object["good"]["report_summary"],
+            "comment": source["comment"],
+        }
+        initial.update(super().get_form_initial(step))
+        return initial
+
+    def get_context_data(self, **kwargs):
+        # if the good was reviewed at application level then use that as source of truth, otherwise use the export
+        # control characteristics from the canonical good level
+        if self.object["is_good_controlled"] is not None:
+            control_list_entries = self.object["control_list_entries"]
+        else:
+            control_list_entries = self.object["good"]["control_list_entries"]
+        return super().get_context_data(object_control_list_entries=control_list_entries, **kwargs)
+
+
+class ReviewOpenApplicationGoodWizardView(AbstractReviewGoodWizardView):
+    object_name = "goods_types"
+    template_name = "case/review-good-open.html"
+
+    @property
+    def object(self):
+        return next(item for item in self.case.goods if item["id"] == self.object_pk)
+
+    def get_form_initial(self, step):
+        # unlike ReviewGoodOnApplicationWizardView, goods_type has no distinction of "good" and "good on application"
+        initial = {
+            "is_good_controlled": self.object["is_good_controlled"],
+            "does_not_have_control_list_entries": not self.object["control_list_entries"],
+            "control_list_entries": [item["rating"] for item in self.object["control_list_entries"]],
+            "report_summary": self.object["report_summary"],
+            "comment": self.object["comment"],
+        }
+        initial.update(super().get_form_initial(step))
+        return initial
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(object_control_list_entries=self.object["control_list_entries"], **kwargs)
+
+
 class GoodDetails(LoginRequiredMixin, FormView):
     template_name = "case/product-on-case.html"
     form_class = CasesSearchForm
 
     @cached_property
-    def good_on_application(self):
+    def object(self):
         return get_good_on_application(self.request, pk=self.kwargs["good_pk"])
 
+    @cached_property
+    def other_cases(self):
+        form = self.get_form()
+        search_string = self.get_initial()["search_string"]
+        if search_string:
+            return get_search_results(self.request, query_params=form.extract_filters(search_string))
+        return []
+
     def get_initial(self):
-        part_number = self.good_on_application["good"]["part_number"]
-        search_string = f'part:"{part_number}"'
-        for item in self.good_on_application["control_list_entries"]:
+        search_string = ""
+        part_number = self.object["good"]["part_number"]
+        if part_number:
+            search_string += f'part:"{part_number}"'
+        control_list_entries = self.object["control_list_entries"] or self.object["good"]["control_list_entries"]
+        for item in control_list_entries:
             search_string += f' clc_rating:"{item["rating"]}"'
-        return {"search_string": search_string}
+        return {"search_string": search_string.strip()}
 
     def get_context_data(self, **kwargs):
-        case = get_case(self.request, self.kwargs["pk"])
         form = self.get_form()
-        query_params = form.extract_filters(self.get_initial()["search_string"])
-        other_cases = get_search_results(self.request, query_params=query_params)
         return super().get_context_data(
-            good_on_application=self.good_on_application,
-            other_cases=other_cases,
-            case=case,
-            data={"total_pages": other_cases["count"] // form.page_size},  # for pagination
+            good_on_application=self.object,
+            case=get_case(self.request, self.kwargs["pk"]),
+            other_cases=self.other_cases,
+            # for pagination
+            data={"total_pages": self.other_cases["count"] // form.page_size} if self.other_cases else {},
             **kwargs,
         )

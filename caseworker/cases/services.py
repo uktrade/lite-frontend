@@ -244,6 +244,12 @@ def post_review_goods(request, case_id, json):
     return response.json(), response.status_code
 
 
+def post_review_good(request, case_id, data):
+    response = client.post(request, f"/goods/control-list-entries/{case_id}/", data)
+    response.raise_for_status()
+    return response.json()
+
+
 # Good Flags
 def get_flags_for_team_of_level(request, level, team_id, include_system_flags=False):
     """
