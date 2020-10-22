@@ -12,22 +12,38 @@ gov_uk_user_id = "2a43805b-c082-47e7-9188-c8b3e1a83cb0"
 
 
 @pytest.fixture
-def case_pk(data_case):
-    return data_case["case"]["id"]
+def open_case_pk(data_open_case):
+    return data_open_case["case"]["id"]
+
+
+@pytest.fixture
+def standard_case_pk(data_standard_case):
+    return data_standard_case["case"]["id"]
+
+
+@pytest.fixture
+def mock_open_case(requests_mock, data_open_case):
+    url = client._build_absolute_uri(f"/cases/{data_open_case['case']['id']}/")
+    yield requests_mock.get(url=url, json=data_open_case)
+
+
+@pytest.fixture
+def mock_standard_case(requests_mock, data_standard_case):
+    url = client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/")
+    yield requests_mock.get(url=url, json=data_standard_case)
 
 
 @pytest.fixture
 def mock_case(
-    requests_mock,
     mock_case_ecju_queries,
     mock_case_assigned_queues,
     mock_case_documents,
     mock_case_additional_documents,
     mock_case_activity_filters,
-    data_case,
+    mock_open_case,
+    mock_standard_case,
 ):
-    url = client._build_absolute_uri(f"/cases/{application_id}/")
-    yield requests_mock.get(url=url, json=data_case)
+    yield
 
 
 @pytest.fixture

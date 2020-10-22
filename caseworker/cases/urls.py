@@ -42,7 +42,16 @@ urlpatterns = [
     path(
         "respond-to-pv-grading-query/", goods_query.RespondPVGradingQuery.as_view(), name="respond_to_pv_grading_query",
     ),
-    path("review-goods/", goods.ReviewGoods.as_view(), name="review_goods"),
+    path(
+        "review-standard-application-goods/",
+        goods.ReviewStandardApplicationGoodWizardView.as_view(),
+        name="review_standard_application_goods",
+    ),
+    path(
+        "review-open-application-goods/",
+        goods.ReviewOpenApplicationGoodWizardView.as_view(),
+        name="review_open_application_goods",
+    ),
     path("generate-document/", generate_document.GenerateDocument.as_view(), name="generate_document"),
     path(
         "generate-document/<uuid:dpk>/",

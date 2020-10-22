@@ -38,8 +38,6 @@ GOOD_INCORPORATED = "Incorporated"
 GOOD_CONTROLLED = "Controlled"
 GOOD_FLAGS = "Flags"
 
-STANDARD_CASE_TOTAL_VALUE = "Total value:"
-
 # Supporting documentation
 SUPPORTING_DOCUMENTATION_TITLE = "Supporting documents"
 SUPPORTING_DOCUMENTATION_NAME = "Name"

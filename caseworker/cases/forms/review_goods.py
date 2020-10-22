@@ -1,3 +1,5 @@
+from django import forms
+
 from caseworker.core.components import PicklistPicker
 from lite_content.lite_internal_frontend import goods
 from lite_content.lite_internal_frontend.strings import cases
@@ -36,3 +38,44 @@ def review_goods_form(control_list_entries, back_url):
         back_link=BackLink(url=back_url),
         helpers=[HelpSection(goods.ReviewGoods.GIVING_ADVICE_ON, "", includes="case/includes/selection-sidebar.html")],
     )
+
+
+class ExportControlCharacteristicsForm(forms.Form):
+    control_list_entries = forms.MultipleChoiceField(
+        label="What is the correct control list entry for this product?",
+        help_text="Type to get suggestions. For example ML1a",
+        choices=[],  # set in __init__
+        required=False,
+        # setting id for javascript to use
+        widget=forms.SelectMultiple(attrs={"id": "control_list_entries"}),
+    )
+    does_not_have_control_list_entries = forms.BooleanField(
+        label="This product does not have a control list entry", required=False,
+    )
+    is_good_controlled = forms.TypedChoiceField(
+        label="Is a licence required?",
+        coerce=lambda x: x == "True",
+        choices=[(True, "Yes"), (False, "No"),],
+        widget=forms.RadioSelect,
+        required=False,
+    )
+    report_summary = forms.CharField(
+        label="Select an annual report summary",
+        help_text="Type to get suggestions. For example, components for body armour.",
+        # setting id for javascript to use
+        widget=forms.TextInput(attrs={"id": "report_summary"}),
+    )
+    comment = forms.CharField(label="Comment (optional)", required=False, widget=forms.Textarea,)
+
+    def __init__(self, control_list_entries_choices, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["control_list_entries"].choices = control_list_entries_choices
+
+    def clean_does_not_have_control_list_entries(self):
+        has_none = self.cleaned_data["does_not_have_control_list_entries"]
+        has_some = bool(self.cleaned_data["control_list_entries"])
+        if has_none and has_some:
+            raise forms.ValidationError("This is mutually exclusive with Control list entries")
+        elif not has_none and not has_some:
+            raise forms.ValidationError("Please enter the control list entries or specify it does not have any.")
+        return self.cleaned_data["does_not_have_control_list_entries"]
