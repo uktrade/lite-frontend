@@ -40,6 +40,21 @@
 		padding: 0 govuk-spacing(1);
 	}
 
+	&__disabled {
+		opacity: 0.5;
+		cursor: default;
+		user-select: none;
+
+		&:focus, &:hover {
+			border-bottom: none;
+		}
+
+		.app-tile__heading, 
+		.govuk-link--no-visited-state {
+			color: $govuk-link-colour;
+		}
+	}
+
 	.app-tile__heading {
 		@extend .govuk-link;
 		@extend .govuk-link--no-visited-state;
