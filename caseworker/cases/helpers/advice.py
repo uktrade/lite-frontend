@@ -40,7 +40,9 @@ def get_param_destinations(request, case: Case):
 
 
 def get_param_goods(request, case: Case):
-    selected_goods_ids = request.GET.getlist("goods", request.GET.getlist("goods_types"))
+    selected_goods_ids = request.GET.getlist(
+        "goods", request.GET.getlist("goods_types", request.GET.getlist("good_ids"))
+    )
     goods = case.data.get("goods", case.data.get("goods_types"))
     return_values = []
 
