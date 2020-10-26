@@ -114,7 +114,6 @@ class ReviewStandardApplicationGoodWizardView(AbstractReviewGoodWizardView):
         else:
             source = self.object
         is_good_controlled = source["is_good_controlled"]
-        # import pdb; pdb.set_trace()
         initial = {
             "is_good_controlled": is_good_controlled["key"] if is_good_controlled else None,
             "does_not_have_control_list_entries": not source["control_list_entries"],

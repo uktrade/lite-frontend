@@ -62,7 +62,7 @@
   var controlRationgField = document.getElementById('control_rating')
 
   controlRationgField.style.display = 'none';
-  debugger
+
   progressivelyEnhanceMultipleSelectField(controlListEntriesField)
   progressivelyEnhanceMultipleSelectField(controlRationgField)
 
