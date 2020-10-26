@@ -499,6 +499,7 @@ def data_standard_case():
                         "flags": [],
                         "item_type": None,
                         "other_item_type": None,
+                        "end_use_control": ["MEND"],
                         "is_good_controlled": {"key": "False", "value": "No"},
                         "control_list_entries": [
                             {"rating": "ML8a", "text": '"Explosives" and mixtures of explosive substances'},
@@ -604,6 +605,7 @@ def data_good_on_application(data_standard_case):
             {"rating": "ML1", "text": "Smooth-bore weapons..."},
             {"rating": "ML2", "text": "Smooth-bore weapons..."},
         ],
+        "end_use_control": ["MEND"],
         "comment": "",
         "report_summary": "",
         "audit_trail": [
