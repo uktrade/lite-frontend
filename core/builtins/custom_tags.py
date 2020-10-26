@@ -68,10 +68,15 @@ def sla_ratio(value, arg):
     Template tag to calculate the stroke-dashoffset in caseworker/templates/includes/sla_display.html
     """
 
-    remaining = int(value)
+    elapsed = int(value)
     total = int(arg)
 
-    return SLA_CIRCUMFERENCE - (remaining / total * SLA_CIRCUMFERENCE)
+    amount = SLA_CIRCUMFERENCE - (elapsed / total * SLA_CIRCUMFERENCE)
+
+    if amount < 0:
+        return 0
+
+    return amount
 
 
 @register.simple_tag(name="lcs")
