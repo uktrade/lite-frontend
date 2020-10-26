@@ -74,7 +74,7 @@ def sla_ratio(value, arg):
     amount = SLA_CIRCUMFERENCE - (elapsed / total * SLA_CIRCUMFERENCE)
 
     if amount < 0:
-        return 0
+        return SLA_CIRCUMFERENCE
 
     return amount
 

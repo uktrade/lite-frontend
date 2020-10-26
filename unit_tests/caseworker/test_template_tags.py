@@ -28,7 +28,7 @@ def test_divide(value, other, expected):
 
 
 @pytest.mark.parametrize(
-    "elapsed, total, expected", ((50, 25, 0), (1, 25, SLA_CIRCUMFERENCE - (1 / 25 * SLA_CIRCUMFERENCE)),),
+    "elapsed, total, expected", ((50, 25, SLA_CIRCUMFERENCE), (1, 25, SLA_CIRCUMFERENCE - (1 / 25 * SLA_CIRCUMFERENCE)),),
 )
 def test_sla_ratio(elapsed, total, expected):
     actual = custom_tags.sla_ratio(elapsed, total)
