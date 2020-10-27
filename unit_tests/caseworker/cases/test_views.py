@@ -34,12 +34,14 @@ good_review_parametrize_data = (
             "control_list_entries": ["ML1a"],
             "is_good_controlled": True,
             "report_summary": "some-report-summary-id",
+            "end_use_control": ["MEND", "MEND1"],
         },
         {
             "comment": "Some comment",
             "control_list_entries": ["ML1a"],
             "is_good_controlled": True,
             "report_summary": "some-report-summary-id",
+            "end_use_control": ["MEND", "MEND1"],
         },
     ),
     # multiple control list entries
@@ -49,12 +51,14 @@ good_review_parametrize_data = (
             "control_list_entries": ["ML1a", "ML1"],
             "is_good_controlled": True,
             "report_summary": "some-report-summary-id",
+            "end_use_control": [],
         },
         {
             "comment": "Some comment",
             "control_list_entries": ["ML1a", "ML1"],
             "is_good_controlled": True,
             "report_summary": "some-report-summary-id",
+            "end_use_control": [],
         },
     ),
     # no comment
@@ -64,12 +68,14 @@ good_review_parametrize_data = (
             "control_list_entries": ["ML1a"],
             "is_good_controlled": True,
             "report_summary": "some-report-summary-id",
+            "end_use_control": [],
         },
         {
             "comment": "",
             "control_list_entries": ["ML1a"],
             "is_good_controlled": True,
             "report_summary": "some-report-summary-id",
+            "end_use_control": [],
         },
     ),
     # not controlled and no control list entries
@@ -80,12 +86,14 @@ good_review_parametrize_data = (
             "does_not_have_control_list_entries": True,
             "is_good_controlled": False,
             "report_summary": "some-report-summary-id",
+            "end_use_control": [],
         },
         {
             "comment": "Some comment",
             "control_list_entries": [],
             "is_good_controlled": False,
             "report_summary": "some-report-summary-id",
+            "end_use_control": [],
         },
     ),
     # is controlled but no control list entries
@@ -96,12 +104,14 @@ good_review_parametrize_data = (
             "does_not_have_control_list_entries": True,
             "is_good_controlled": True,
             "report_summary": "some-report-summary-id",
+            "end_use_control": [],
         },
         {
             "comment": "Some comment",
             "control_list_entries": [],
             "is_good_controlled": True,
             "report_summary": "some-report-summary-id",
+            "end_use_control": [],
         },
     ),
 )

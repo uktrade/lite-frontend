@@ -1,5 +1,6 @@
 from json import JSONDecodeError
 
+from django.conf import settings
 from django.http import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
@@ -59,6 +60,7 @@ class Home(TemplateView):
             "notifications": notifications,
             "existing": existing,
             "user_permissions": user_permissions,
+            "FEATURE_FLAG_ONLY_ALLOW_SIEL": settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
         }
 
         return render(request, "core/hub.html", context)

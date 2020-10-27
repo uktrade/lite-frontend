@@ -120,6 +120,7 @@ class ReviewStandardApplicationGoodWizardView(AbstractReviewGoodWizardView):
             "control_list_entries": [item["rating"] for item in source["control_list_entries"]],
             "report_summary": self.object["good"]["report_summary"],
             "comment": source["comment"],
+            "end_use_control": self.object["end_use_control"],
         }
         initial.update(super().get_form_initial(step))
         return initial

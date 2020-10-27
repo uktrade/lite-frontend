@@ -1,5 +1,6 @@
 from http import HTTPStatus
 
+from django.conf import settings
 from django.http import Http404
 from django.shortcuts import render
 from django.views.generic import TemplateView
@@ -51,6 +52,7 @@ class AbstractListView(LoginRequiredMixin, TemplateView):
             name=self.request.GET.get("name", ""),
             row_limit=3,
             tabs=tabs,
+            FEATURE_FLAG_ONLY_ALLOW_SIEL=settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
             **kwargs,
         )
 
@@ -76,7 +78,7 @@ class ListOpenAndStandardLicences(AbstractListView):
 
 
 class ListClearances(AbstractListView):
-    template_name = "licences/licences.html"
+    template_name = "licences/clearances.html"
     object_name = "clearances"
 
     def get_context_data(self, **kwargs):

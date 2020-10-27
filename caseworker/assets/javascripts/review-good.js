@@ -59,35 +59,44 @@
   });
 
   var controlListEntriesField = document.getElementById('control_list_entries')
-  controlListEntriesField.parentElement.classList.add('tokenfield-container')
-  var items = []
-  var selected = []
-  for (var i = 0; i < controlListEntriesField.options.length; i++) {
-    var option = controlListEntriesField.options.item(i)
-    var item = {'id': option.value, 'name': option.value, 'classes': []}
-    if (option.selected) {
-        selected.push(item)
-    }
-    items.push(item)
-  }
-  var tokenField = new Tokenfield({
-    el: controlListEntriesField,
-    items: items,
-    newItems: false,
-    addItemOnBlur: true,
-    filterSetItems: false,
-    addItemsOnPaste: true,
-    minChars: 1,
-    itemName: controlListEntriesField.name,
-    setItems: selected
-  });
+  var controlRationgField = document.getElementById('control_rating')
 
-  tokenField._renderItem = function() {
-    // the library appends '[]' to the end, django does not like that, so remove it here
-    var itemHtml = Tokenfield.prototype._renderItem.apply(this, arguments)
-    const input = itemHtml.querySelector('.item-input');
-    input.setAttribute('name', input.name.replace('[]', ''));
-    return itemHtml
+  controlRationgField.style.display = 'none';
+
+  progressivelyEnhanceMultipleSelectField(controlListEntriesField)
+  progressivelyEnhanceMultipleSelectField(controlRationgField)
+
+  function progressivelyEnhanceMultipleSelectField(element) {
+    element.parentElement.classList.add('tokenfield-container')
+    var items = []
+    var selected = []
+    for (var i = 0; i < element.options.length; i++) {
+      var option = element.options.item(i)
+      var item = {'id': option.value, 'name': option.value, 'classes': []}
+      if (option.selected) {
+          selected.push(item)
+      }
+      items.push(item)
+    }
+    var tokenField = new Tokenfield({
+      el: element,
+      items: items,
+      newItems: false,
+      addItemOnBlur: true,
+      filterSetItems: false,
+      addItemsOnPaste: true,
+      minChars: 1,
+      itemName: element.name,
+      setItems: selected
+    });
+
+    tokenField._renderItem = function() {
+      // the library appends '[]' to the end, django does not like that, so remove it here
+      var itemHtml = Tokenfield.prototype._renderItem.apply(this, arguments)
+      const input = itemHtml.querySelector('.item-input');
+      input.setAttribute('name', input.name.replace('[]', ''));
+      return itemHtml
+    }
+    element.remove()
   }
-  controlListEntriesField.remove()
 })()
