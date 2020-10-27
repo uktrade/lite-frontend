@@ -36,6 +36,9 @@ INSTALLED_APPS = [
     "django.contrib.humanize",
     "svg",
     "lite_forms",
+    "health_check",
+    "health_check.cache",
+    "health_check.storage",
 ]
 
 MIDDLEWARE = [

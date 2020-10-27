@@ -5,6 +5,7 @@ import exporter.core.views
 
 
 urlpatterns = [
+    path("healthcheck/", include("health_check.urls")),
     path("", include("exporter.core.urls")),
     path("applications/", include("exporter.applications.urls")),
     path("apply-for-a-licence/", include("exporter.apply_for_a_licence.urls")),

@@ -2,3 +2,5 @@
 applications:
   - buildpacks: 
       - python_buildpack
+    health-check-type: http
+    health-check-http-endpoint: /healthcheck/
