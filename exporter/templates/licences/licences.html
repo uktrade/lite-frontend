@@ -15,6 +15,13 @@
 
 	{% include 'includes/tabs.html' %}
 
+	{% if FEATURE_FLAG_ONLY_ALLOW_SIEL %}
+		{% block feture_flag_notice %}
+			<div class="govuk-inset-text govuk-!-margin-top-0">
+				Use <a href="https://www.spire.trade.gov.uk">SPIRE</a> to view and manage your OIELs.
+			</div>
+		{% endblock %}
+	{% endif %}
 	{% include 'filters.html' %}
 
 	{% if data.results %}
