@@ -118,11 +118,11 @@ def test_standard_review_goods(
     )
     url = reverse("cases:review_standard_application_goods", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk})
 
-    response = authorized_client.get(f"{url}?goods={good_pk}")
+    response = authorized_client.get(f"{url}?good_ids={good_pk}")
 
     assert response.status_code == 200
 
-    response = authorized_client.post(f"{url}?goods={good_pk}", step_data)
+    response = authorized_client.post(f"{url}?good_ids={good_pk}", step_data)
 
     assert response.status_code == 302
     assert requests_mock_instance.call_count == 1

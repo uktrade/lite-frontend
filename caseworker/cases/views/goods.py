@@ -99,7 +99,7 @@ class AbstractReviewGoodWizardView(SessionWizardView):
 
 
 class ReviewStandardApplicationGoodWizardView(AbstractReviewGoodWizardView):
-    object_name = "goods"
+    object_name = "good_ids"
     template_name = "case/review-good-standard.html"
 
     @property
