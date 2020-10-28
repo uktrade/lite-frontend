@@ -1,6 +1,6 @@
-$linkSelectAll = $( '#link-select-all' );
-$linkDeselectAll = $( '#link-deselect-all' );
-$checkboxes = $( 'input:checkbox' );
+var $linkSelectAll = $( '#link-select-all' );
+var $linkDeselectAll = $( '#link-deselect-all' );
+var $checkboxes = $( 'input:checkbox' );
 
 $linkSelectAll.click(function(e) {
 	e.preventDefault();
@@ -17,7 +17,7 @@ $linkDeselectAll.click(function(e) {
 	$checkboxes.prop('checked', false);
 	try {
 		addCheckedCheckboxesToList();
-    } catch(e) {}
+		} catch(e) {}
 	setSelectLinksState();
 	return false;
 });

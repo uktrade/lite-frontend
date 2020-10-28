@@ -26,17 +26,16 @@
 Secrets such as API keys and environment specific configurations are placed in `caseworker.env` and `exporter.env` - a file that is not added to version control. To create a template secrets file with dummy values run:
 
 ```
-$ cp example.caseworker.env caseworker.env
-$ cp example.exporter.env exporter.env
+make secrets
 ```
 
 ### Commands
 
-To run code using the correct `caseworker` and `exporter` env var files you need to set the env var PIPENV_DOTENV_LOCATION to the desired location e.g.:
+To run the webserver for caseworker and exporter use these commands:
 
 ```
-$ PIPENV_DOTENV_LOCATION=caseworker.env pipenv run ./manage.py runserver localhost:8200
-$ PIPENV_DOTENV_LOCATION=exporter.env pipenv run ./manage.py runserver localhost:8300
+make run_caseworker
+make run_exporter
 ```
 
 ### Running with Docker
@@ -68,6 +67,14 @@ $ PIPENV_DOTENV_LOCATION=exporter.env pipenv run ./manage.py runserver localhost
 - Visit:
     - [http://localhost:8200](http://localhost:8200) for the caseworker frontend
     - [http://localhost:8300](http://localhost:8300) for the exporter frontend
+
+#### Running unit tests
+
+To run unit tests:
+
+```
+make run_unit_tests
+```
 
 ## Helpful links
 

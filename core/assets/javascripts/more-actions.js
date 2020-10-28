@@ -1,7 +1,7 @@
 var moreActionsContainer = $( '.lite-more-actions__container' )
 
 moreActionsContainer.addClass( 'lite-more-actions__container--float' ).addClass( 'lite-more-actions__container--hidden' )
-secondaryText = moreActionsContainer.hasClass( 'lite-more-actions__container--secondary' ) ? 'govuk-button--secondary' : ''
+var secondaryText = moreActionsContainer.hasClass( 'lite-more-actions__container--secondary' ) ? 'govuk-button--secondary' : ''
 
 // Add
 moreActionsContainer.parent().css({'position': 'relative'})

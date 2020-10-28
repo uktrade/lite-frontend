@@ -3,5 +3,5 @@
 # top-most EditorConfig file
 root = true
 
-[*.html]
+[*.{js,html}]
 indent_style = tab

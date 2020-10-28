@@ -1,5 +1,10 @@
-$( '.lite-button-checkbox' ).click(function() {
-	$table = $(this).closest('table');
+
+$( 'input:checkbox' ).change(function() {
+	setSelectButtonsState();
+});
+
+$('.lite-button-checkbox').click(function() {
+	const $table = $(this).closest('table');
 
 	if ($table.find('input:checkbox:checked').length == $table.find('input:checkbox').length) {
 		$table.find('input:checkbox').prop('checked', false).change();
@@ -9,12 +14,6 @@ $( '.lite-button-checkbox' ).click(function() {
 
 	setSelectButtonsState();
 });
-
-function setCheckboxEvent() {
-	$( 'input:checkbox' ).change(function() {
-		setSelectButtonsState();
-	});
-}
 
 function setSelectButtonsState() {
 	$( 'table' ).each(function(i, obj) {
@@ -32,6 +31,3 @@ function setSelectButtonsState() {
 		$(obj).find('.lite-button-checkbox').css('display', 'block');
 	});
 }
-
-setCheckboxEvent();
-setSelectButtonsState();

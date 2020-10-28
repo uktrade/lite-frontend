@@ -4,17 +4,26 @@ from django.contrib import messages
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
+from django.utils.functional import cached_property
 
-from caseworker.cases.forms.assign_users import assign_users_form
-from caseworker.cases.forms.attach_documents import upload_document_form
-from caseworker.cases.helpers.filters import case_filters_bar
-from caseworker.core.constants import ALL_CASES_QUEUE_ID, Permission, UPDATED_CASES_QUEUE_ID
-from core.helpers import convert_parameters_to_query_params
-from caseworker.core.services import get_user_permissions
 from lite_content.lite_internal_frontend.cases import CasesListPage, UploadEnforcementXML, Manage
 from lite_forms.components import TextInput, FiltersBar
 from lite_forms.generators import error_page
 from lite_forms.views import SingleFormView
+
+from core.auth.views import LoginRequiredMixin
+
+from caseworker.cases.forms.assign_users import assign_users_form
+from caseworker.cases.forms.attach_documents import upload_document_form
+from caseworker.cases.helpers.filters import case_filters_bar
+from caseworker.core.constants import (
+    ALL_CASES_QUEUE_ID,
+    Permission,
+    UPDATED_CASES_QUEUE_ID,
+    SLA_CIRCUMFERENCE,
+    SLA_RADIUS,
+)
+from caseworker.core.services import get_user_permissions
 from caseworker.queues.forms import new_queue_form, edit_queue_form
 from caseworker.queues.services import (
     get_queues,
@@ -27,31 +36,70 @@ from caseworker.queues.services import (
     post_enforcement_xml,
 )
 from caseworker.users.services import get_gov_user
-
-from core.auth.views import LoginRequiredMixin
+from caseworker.queues.services import get_cases_search_data
 
 
 class Cases(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
-        """
-        Show a list of cases pertaining to the given queue
-        """
-        queue_pk = kwargs.get("queue_pk") or request.session["default_queue"]
-        queue = get_queue(request, queue_pk)
+    """
+    Homepage
+    """
+
+    template_name = "queues/cases.html"
+
+    @cached_property
+    def queue(self):
+        return get_queue(self.request, self.queue_pk)
+
+    @property
+    def queue_pk(self):
+        return self.kwargs.get("queue_pk") or self.request.session["default_queue"]
+
+    @cached_property
+    def data(self):
+        hidden = self.request.GET.get("hidden")
+
+        params = {"page": int(self.request.GET.get("page", 1))}
+        for key, value in self.request.GET.items():
+            if key != "flags[]":
+                params[key] = value
+
+        params["flags"] = self.request.GET.getlist("flags[]", [])
+
+        if hidden:
+            params["hidden"] = hidden
+
+        data = get_cases_search_data(self.request, self.queue_pk, params)
+        return data
+
+    @property
+    def filters(self):
+        return self.data["results"]["filters"]
+
+    def get_context_data(self, *args, **kwargs):
+
+        try:
+            updated_queue = [
+                queue for queue in self.data["results"]["queues"] if queue["id"] == UPDATED_CASES_QUEUE_ID
+            ][0]
+            show_updated_cases_banner = updated_queue["case_count"]
+        except IndexError:
+            show_updated_cases_banner = False
+
+        is_system_queue = self.queue.get("is_system_queue", False)
 
         context = {
-            "queue": queue,  # Used for showing current queue
-            "filters": case_filters_bar(request, queue),
-            "params": convert_parameters_to_query_params(request.GET),  # Used for passing params to JS
-            "case_officer": request.GET.get("case_officer"),  # Used for reading params dynamically
-            "assigned_user": request.GET.get("assigned_user"),  # ""
-            "team_advice_type": request.GET.get("team_advice_type"),  # ""
-            "final_advice_type": request.GET.get("final_advice_type"),  # ""
-            "is_all_cases_queue": queue_pk == ALL_CASES_QUEUE_ID,
-            "enforcement_check": Permission.ENFORCEMENT_CHECK.value in get_user_permissions(request),
+            "sla_radius": SLA_RADIUS,
+            "sla_circumference": SLA_CIRCUMFERENCE,
+            "data": self.data,
+            "queue": self.queue,  # Used for showing current queue
+            "filters": case_filters_bar(self.request, self.filters, is_system_queue),
+            "is_all_cases_queue": self.queue_pk == ALL_CASES_QUEUE_ID,
+            "enforcement_check": Permission.ENFORCEMENT_CHECK.value in get_user_permissions(self.request),
             "updated_cases_banner_queue_id": UPDATED_CASES_QUEUE_ID,
+            "show_updated_cases_banner": show_updated_cases_banner,
         }
-        return render(request, "queues/cases.html", context)
+
+        return super().get_context_data(*args, **context, **kwargs)
 
 
 class QueuesList(LoginRequiredMixin, TemplateView):
@@ -61,7 +109,7 @@ class QueuesList(LoginRequiredMixin, TemplateView):
         queues = get_queues(request, page=page, disable_pagination=False, name=name)
         user_data, _ = get_gov_user(request, str(request.session["lite_api_user_id"]))
 
-        filters = FiltersBar([TextInput(name="name", title="name"),])
+        filters = FiltersBar([TextInput(name="name", title="name")])
 
         context = {
             "data": queues,

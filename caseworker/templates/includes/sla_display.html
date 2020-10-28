@@ -1,0 +1,35 @@
+
+{% if case.sla_hours_since_raised and case.case_type.sub_type.key == 'hmrc' %}
+<div class="app-sla__container" data-tooltip="{{ case.sla_hours_since_raised }} hour{{ case.sla_hours_since_raised|pluralize }} have elapsed on this case">
+	{% else %}
+<div class="app-sla__container" data-tooltip="{{ case.sla_days }} day{{ case.sla_days|pluralize }} have elapsed on this case">
+{% endif %}
+
+	<svg class="app-sla" width="36" height="36">
+		<circle
+			{% if case.sla_hours_since_raised and case.case_type.sub_type.key == 'hmrc' %}
+				class="app-sla__circle app-sla__circle--{{ case.sla_hours_since_raised|sla_colour:'hours' }}"
+				stroke-dashoffset="{{ case.sla_hours_since_raised|sla_ratio:48 }}"
+			{% elif case.sla_days and case.sla_remaining_days %}
+				{% with case.sla_days|add:case.sla_remaining_days as total_days %}
+				class="app-sla__circle app-sla__circle--{{ case.sla_remaining_days|sla_colour:'days' }}"
+				stroke-dashoffset="{{ case.sla_days|sla_ratio:total_days }}"
+				{% endwith %}
+			{% endif %}
+			stroke="black"
+			stroke-width="3"
+			fill="transparent"
+			r="{{ sla_radius }}"
+			cx="18"
+			cy="18"
+			stroke-dasharray="{{ sla_circumference }} {{ sla_circumference }}"
+		/>
+	</svg>
+
+	{% if case.sla_hours_since_raised and case.case_type.sub_type.key == 'hmrc' %}
+		<span class="app-sla__text">{{ case.sla_hours_since_raised }}</span>
+	{% else %}
+		<span class="app-sla__text">{{ case.sla_days }}</span>
+	{% endif %}
+
+</div>

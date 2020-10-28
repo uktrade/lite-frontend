@@ -49,6 +49,7 @@ var/
 *.egg
 venv/
 .venv/
+node_modules/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

@@ -1,5 +1,5 @@
 $(".govuk-back-link").on("click", function() {
-	address = $(this).attr("href");
+	var address = $(this).attr("href");
 	if (address != "#") {
 		window.location.href = address;
 	} else {

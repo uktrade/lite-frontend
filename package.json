@@ -2,27 +2,42 @@
   "name": "lite-frontend",
   "version": "1.0.0",
   "description": "Combined repo for LITE exporter and caseworker frontends",
-  "main": "gulpfile.js",
+  "private": true,
   "scripts": {
-    "build": "./caseworker/caseworker.js && parcel build ./exporter/exporter.js",
-    "build_exporter_css": "parcel build exporter/assets/scss/styles.scss --out-dir exporter/assets/built --public-url /assets/",
-    "build_caseworker_css": "parcel build caseworker/assets/scss/styles.scss  --out-dir caseworker/assets/built --public-url /assets/"
+    "build_exporter": "parcel build ./exporter/assets/javascripts/main.js --out-dir exporter/assets/built --public-url /assets/",
+    "build_caseworker": "parcel build ./caseworker/assets/javascripts/main.js --out-dir caseworker/assets/built --public-url /assets/",
+    "watch_exporter": "parcel watch ./exporter/assets/javascripts/main.js --out-dir exporter/assets/built --public-url /assets/",
+    "watch_caseworker": "parcel watch ./caseworker/assets/javascripts/main.js --out-dir caseworker/assets/built --public-url /assets/"
   },
-  "dependencies": {
-    "govuk-frontend": "^3.7.0"
-  },
-  "devDependencies": {
-    "sass-lint": "^1.13.1",
-    "parcel-bundler": "^1.12.4"
+  "engines": {
+    "node": ">=12.16.1"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/uktrade/lite-frontend.git"
   },
-  "author": "",
+  "author": "DIT",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/uktrade/lite-frontend/issues"
   },
-  "homepage": "https://github.com/uktrade/lite-frontend#readme"
+  "homepage": "https://github.com/uktrade/lite-frontend#readme",
+  "devDependencies": {
+    "@popperjs/core": "^2.4.4",
+    "accessible-autocomplete": "^2.0.3",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.10.0",
+    "govuk-frontend": "^3.9.0",
+    "highlight-within-textarea": "^2.0.5",
+    "jquery": "^3.5.1",
+    "lightpick": "^1.6.2",
+    "mark.js": "^8.11.1",
+    "parcel-bundler": "^1.12.4",
+    "sass": "^1.26.11",
+    "sass-lint": "^1.13.1",
+    "sortablejs": "^1.11.2-alpha.3",
+    "tippy.js": "^6.2.6",
+    "tokenfield": "^1.4.4",
+    "tributejs": "^5.1.3"
+  }
 }

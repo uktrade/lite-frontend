@@ -355,6 +355,7 @@ class Select(_Component):
         name: str,
         options: List,
         title: str = "",
+        initial: str = "",
         description: str = "",
         accessible_description: str = None,
         optional: bool = False,
@@ -363,6 +364,7 @@ class Select(_Component):
     ):
         super().__init__(name, title, description, accessible_description, optional, classes)
         self.options = options
+        self.initial = initial
         self.input_type = "select"
         self.include_default_select = include_default_select
 
@@ -618,12 +620,14 @@ class AutocompleteInput:
         name: str,
         options: List,
         title: str = "",
+        initial: str = "",
         description: str = "",
         classes: Optional[List] = None,
         deferred: bool = False,
     ):
         self.name = name
         self.title = title
+        self.initial = initial
         self.description = description
         self.options = options
         self.classes = classes

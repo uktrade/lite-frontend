@@ -1,0 +1,123 @@
+{% load svg %}
+
+<tr class="govuk-table__row" id="{{ case.id }}">
+
+	{% if not queue.is_system_queue %}
+		<td class="govuk-table__cell govuk-table__cell--checkbox">
+			<div>
+				<input class="govuk-checkboxes__input" type="checkbox" name="cases" value="{{ case.id }}">
+				<label class="govuk-label govuk-checkboxes__label" for="{{ case.id }}">
+					<span class="govuk-visually-hidden"></span>
+				</label>
+			</div>
+		</td>
+	{% endif %}
+
+	<td class="govuk-table__cell govuk-table__cell--tight">
+		<div class="app-cases__row__vertical-column">
+
+			{% include "includes/sla_display.html" with case=case %}
+
+			{% if not is_all_cases_queue %}
+				{% if case.is_recently_updated %}
+					<span
+						data-tooltip="{% lcs 'cases.CasesListPage.NOT_UPDATED_RECENTLY' %}"
+						class="app-cases__row__icon app-cases__row__attention-needed">!</span>
+				{% endif %}
+			{% endif %}
+
+			{% if cases.results.is_work_queue %}
+				{% if case.has_open_queries %}
+				<div data-tooltip="{% lcs 'cases.CasesListPage.OPEN_TEAM_ECJU' %}" class="app-cases__row__icon">
+					{% svg 'ecju-query' %}
+				</div>
+				{% endif %}
+
+				{% if case.next_review_date %}
+				<div data-tooltip="The next review is on {{ case.next_review_date }}" class="app-cases__row__icon">
+					{% svg 'eye' %}
+				</div>
+				{% endif %}
+			{% endif %}
+
+		</div>
+	</td>
+
+	{# case info #}
+	<td class="govuk-table__cell">
+		<a class="govuk-link govuk-link--no-visited-state" id="case-{{ case.id }}" href="{% url 'cases:case' queue.id case.id %}">
+			<span class="govuk-visually-hidden">View</span> {{ case.reference_code }}
+		</a>
+		<address>
+			<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">
+				{{ case.organisation.name }} <span class="govuk-hint lite-!-display-inline">/ {{ case.organisation.primary_site.address.city }}</span>
+			</p>
+			<p class="govuk-hint govuk-!-margin-0 govuk-!-margin-top-2">{{ case.organisation.primary_site.address.postcode }}</p>
+		</address>
+		<p class="govuk-tag govuk-tag--grey govuk-!-margin-0 govuk-!-margin-top-2">{{ case.status.value }}</p>
+	</td>
+
+	{# assignees #}
+	<td class="govuk-table__cell lite-mobile-hide">
+
+		{% if case.assignments %}
+			<div class="app-assignments__container"><ul class="app-assignments__list">
+				{% for id, user in case.assignments.items %}
+					<li
+						class="app-assignments__item"
+						{% if user.first_name and user.last_name %}
+							aria-label="{{ user.first_name }} {{ user.last_name }}"
+							data-tooltip="<b>{{ user.first_name }} {{ user.last_name }}</b>
+						{% else %}
+							aria-label="{{ user.email }}"
+							data-tooltip="<b>{{ user.email }}</b>
+						{% endif %}
+							{% for queue in user.queues %}
+								<br>{{ queue }}
+							{% endfor %}
+							">
+						<a
+							class="app-assignments__item-link"
+							href="{% url 'users:user' id %}">
+							{% if user.first_name and user.last_name %}
+								{{ user.first_name.0 }}{{ user.last_name.0 }}
+							{% else %}
+								@
+							{% endif %}
+						</a>
+					</li>
+				{% endfor %}
+			</div>
+		{% else %}
+			<p class="app-information-bar">{% lcs 'cases.CasesListPage.NoContent.NO_GOODS_FLAGS' %}</p>
+		{% endif %}
+	</td>
+
+	{# application flags #}
+	<td class="govuk-table__cell lite-tablet-hide">
+		{% if case.flags %}
+			{% include 'includes/case-row-flags.html' with flags=case.flags %}
+		{% else %}
+			<p class="app-information-bar">No flags set</p>
+		{% endif %}
+	</td>
+
+	{# goods flags #}
+	<td class="govuk-table__cell lite-tablet-hide">
+		{% if case.goods_flags %}
+			{% include 'includes/case-row-flags.html' with flags=case.goods_flags %}
+		{% else %}
+			<p class="app-information-bar">No flags set</p>
+		{% endif %}
+	</td>
+
+	{# destination flags #}
+	<td class="govuk-table__cell lite-tablet-hide">
+		{% if case.destinations_flags %}
+			{% include 'includes/case-row-flags.html' with flags=case.destinations_flags %}
+		{% else %}
+			<p class="app-information-bar">No flags set</p>
+		{% endif %}
+	</td>
+
+</tr>
