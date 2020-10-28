@@ -59,6 +59,14 @@ class ExportControlCharacteristicsForm(forms.Form):
         widget=forms.RadioSelect,
         required=False,
     )
+    end_use_control = forms.MultipleChoiceField(
+        label="What is the end use control rating for this product? (optional)",
+        help_text="Type to get suggestions. For example MEND",
+        choices=[("MEND", "MEND"), ("END", "END"), ("ENDTA", "ENDTA"), ("MEND1", "MEND1"),],
+        required=False,
+        # setting id for javascript to use
+        widget=forms.SelectMultiple(attrs={"id": "control_rating"}),
+    )
     report_summary = forms.CharField(
         label="Select an annual report summary",
         help_text="Type to get suggestions. For example, components for body armour.",

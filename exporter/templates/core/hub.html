@@ -67,7 +67,12 @@
 				<a href="{% url 'licences:list-open-and-standard-licences' %}" class="app-tile__heading" id="link-licences">
 					{% lcs 'hub.Tiles.VIEW_AND_MANAGE_LICENCES' %}
 				</a>
-				<p class="app-tile__body">{% lcs 'hub.Tiles.Licences.DESCRIPTION' %}</p>
+				{% if FEATURE_FLAG_ONLY_ALLOW_SIEL %}
+					<p class="app-tile__body">View and manage your SIELs, including NLRs and unsuccessful applications.</p>
+					<p class="app-tile__body">Use <a href="https://www.spire.trade.gov.uk">SPIRE</a> to view and manage all other licences and clearances.</p>
+				{% else %}
+					<p class="app-tile__body">"View and manage your licences and clearances, including NLRs and unsuccessful applications."</p>
+				{% endif %}
 			</div>
 		</section>
 
@@ -128,30 +133,42 @@
 	{% endif %}
 
 	{% if organisation.type.key != 'hmrc' %}
+
 		<h2 class="govuk-heading-m govuk-!-margin-top-6 govuk-!-margin-bottom-3">{% lcs 'hub.Tiles.COMPLIANCE_HEADING' %}</h2>
+		{% if FEATURE_FLAG_ONLY_ALLOW_SIEL %}
+			<div class="govuk-!-margin-bottom-8 govuk-inset-text">
+			    <span class="govuk-body">Use <a href="https://www.spire.trade.gov.uk">SPIRE</a> to apply for:</span>
+			    <ul class="govuk-list govuk-list--bullet govuk-!-margin-top-2">
+			        <li>compliance visits</li>
+			        <li>open licence returns</li>
+			    </ul>
+			</div>
+		{% endif %}
+
 		<section class="app-tiles">
 			{# Compliance licence tile #}
-			<div class="app-tile">
-				<a href="{% url 'compliance:compliance_list' %}" class="app-tile__heading" id="link-compliance">
+			<div class="app-tile{% if FEATURE_FLAG_ONLY_ALLOW_SIEL %} app-tile__disabled{% endif %}">
+				<a href="{% if FEATURE_FLAG_ONLY_ALLOW_SIEL %}#{% else %}{% url 'compliance:compliance_list' %}{% endif %}" class="app-tile__heading" id="link-compliance">
 					{% lcs 'hub.Tiles.Compliance.TITLE' %}
 					{% if notifications.notifications.compliance %}<span class="lite-notification-bubble" id="eua-notifications"><span class="govuk-visually-hidden"> (</span>{{ notifications.notifications.compliance }}<span class="govuk-visually-hidden"> notifications)</span></span>{% endif %}
 				</a>
+
 				<p class="app-tile__body">{% lcs 'hub.Tiles.Compliance.DESCRIPTION' %}</p>
 			</div>
 			{# Open licence returns tile #}
-			<div class="app-tile">
-				<a href="{% url 'compliance:open_licence_returns_list' %}" class="app-tile__heading" id="link-open-licence-returns">
+			<div class="app-tile app-tile{% if FEATURE_FLAG_ONLY_ALLOW_SIEL %} app-tile__disabled{% endif %}">
+				<a href="{% if FEATURE_FLAG_ONLY_ALLOW_SIEL %}#{% else %}{% url 'compliance:open_licence_returns_list' %}{% endif %}" class="app-tile__heading" id="link-open-licence-returns">
 					{% lcs 'hub.Tiles.OPEN_LICENCE_RETURNS' %}
 				</a>
 				<p class="app-tile__body">{% lcs 'hub.Tiles.OpenLicenceReturns.DESCRIPTION' %}</p>
 				<ol class="govuk-list govuk-!-font-size-16">
 					<li>
-						<a href="{% url 'compliance:add_open_licence_return' %}" class="govuk-link govuk-link--no-visited-state">
+						<a href="{% if FEATURE_FLAG_ONLY_ALLOW_SIEL %}#{% else %}{% url 'compliance:add_open_licence_return' %}{% endif %}" class="govuk-link govuk-link--no-visited-state">
 							{% lcs 'hub.Tiles.OpenLicenceReturns.ADD_LINK' %}
 						</a>
 					</li>
 					<li>
-						<a href="{% url 'compliance:open_licence_returns_list' %}" class="govuk-link govuk-link--no-visited-state">
+						<a href="{% if FEATURE_FLAG_ONLY_ALLOW_SIEL %}#{% else %}{% url 'compliance:open_licence_returns_list' %}{% endif %}" class="govuk-link govuk-link--no-visited-state">
 							{% lcs 'hub.Tiles.OpenLicenceReturns.VIEW_LINK' %}
 						</a>
 					</li>

@@ -5,6 +5,7 @@ import caseworker.core.views
 
 
 urlpatterns = [
+    path("healthcheck/", include("health_check.urls")),
     path("", include("caseworker.core.urls")),
     path("auth/", include("caseworker.auth.urls")),
     path("queues/<uuid:queue_pk>/cases/<uuid:pk>/", include("caseworker.cases.urls")),

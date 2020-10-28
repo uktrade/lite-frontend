@@ -12,14 +12,19 @@
 	</div>
 
 	{% include 'includes/tabs.html' %}
+		{% if FEATURE_FLAG_ONLY_ALLOW_SIEL %}
+		<div class="govuk-inset-text govuk-!-margin-top-0">
+			Use <a href="https://www.spire.trade.gov.uk">SPIRE</a> to view and manage your OGLs.
+		</div>
+	{% endif %}
+	<div>
+		<p class="lite-filters__hint-text lite-filters__hint-text--warning">
+			{% lcs 'licences.OpenGeneralLicencesList.WARNING_LINK' as link %}
+			{{ link|markdown }}
+		</p>
 
-	<p class="lite-filters__hint-text lite-filters__hint-text--warning">
-		{% lcs 'licences.OpenGeneralLicencesList.WARNING_LINK' as link %}
-		{{ link|markdown }}
-	</p>
-
-	{% include 'filters.html' %}
-
+		{% include 'filters.html' %}
+	</div>
 	{% if data %}
 		<div class="govuk-accordion" data-module="govuk-accordion" id="accordion">
 			{% for licence in data %}

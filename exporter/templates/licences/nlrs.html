@@ -15,6 +15,12 @@
 
 	{% include 'includes/tabs.html' %}
 
+	{% if FEATURE_FLAG_ONLY_ALLOW_SIEL %}
+		<div class="govuk-inset-text govuk-!-margin-top-0">
+			Use <a href="https://www.spire.trade.gov.uk">SPIRE</a> to view your OIEL, SIEL and MOD clearance NLRs.
+		</div>
+	{% endif %}
+
 	{% include "filters.html" %}
 
 	{% if data.results %}

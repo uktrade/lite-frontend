@@ -31,9 +31,6 @@ class Tiles:
         CHECK_PROGRESS = "View the status of submitted applications and registrations."
         EDIT_APPLICATIONS = "Edit, withdraw or copy applications."
 
-    class Licences:
-        DESCRIPTION = "View and manage your licences and clearances, including NLRs and unsuccessful applications."
-
     class ProductList:
         MANAGE_PRODUCTS = "View and manage your organisation's product database."
         PRODUCTS_INCLUDE = "Products include goods, items, technology, data and services."

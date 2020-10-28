@@ -210,42 +210,6 @@ class ApplicationsSummaryPage:
 
 
 class InitialApplicationQuestionsForms:
-    class OpeningQuestion:
-        TITLE = "Select what you need"
-        LABEL = ""
-        DESCRIPTION = ""
-        BREADCRUMB = "Apply for a licence"
-        HELP_WITH_CHOOSING_A_LICENCE = "What licence do I need?"
-        HELP_WITH_CHOOSING_A_LICENCE_CONTENT = (
-            "Read about the [different types of export control licences]"
-            "(https://www.gov.uk/guidance/beginners-guide-to-export-controls#what-licence-do-i-need)."
-        )
-
-        class LicenceTypes:
-            EXPORT_LICENCE_TITLE = "Export licence"
-            EXPORT_LICENCE_DESCRIPTION = (
-                "Select if you’re sending products from the UK to another country. You need an export licence "
-                "before you provide access to controlled technology, software or data."
-            )
-
-            TRANSHIPMENT_LICENCE_TITLE = "Transhipment licence"
-            TRANSHIPMENT_LICENCE_DESCRIPTION = (
-                "Select if you're shipping something from overseas through the UK on to another country."
-                " If the products will be in the UK for 30 days or more, apply for an export licence."
-            )
-
-            TRADE_CONTROL_LICENCE_TITLE = "Trade control licence"
-            TRADE_CONTROL_LICENCE_DESCRIPTION = (
-                "Select if you’re arranging or brokering the sale or movement of controlled military products "
-                "located overseas."
-            )
-
-            MOD_CLEARANCE_TITLE = "MOD clearance"
-            MOD_CLEARANCE_DESCRIPTION = (
-                "Select if you need to share information (an F680) or to go to an exhibition, or if you're gifting "
-                "surplus products."
-            )
-
     class ReferenceNameQuestion:
         TITLE = "Name the application"
         ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference name"
@@ -256,32 +220,6 @@ class InitialApplicationQuestionsForms:
 
 
 class ExportLicenceQuestions:
-    class ExportLicenceQuestion:
-        TITLE = "Select the type of export licence you need"
-        DESCRIPTION = ""
-        BACK = "Back"
-        OPEN_GENERAL_EXPORT_LICENCE = "Open General Export Licence (OGEL)"
-        OPEN_GENERAL_EXPORT_LICENCE_DESCRIPTION = (
-            "Select to register a pre-published licence with set terms "
-            "and conditions. Being an OGEL holder can benefit your business "
-            "by saving time and money."
-        )
-        STANDARD_LICENCE = "Standard Individual Export Licence (SIEL)"
-        STANDARD_LICENCE_DESCRIPTION = (
-            "Select to apply for a licence to export a set quantity and set value of products to 1 destination."
-        )
-        OPEN_LICENCE = "Open Individual Export Licence (OIEL)"
-        OPEN_LICENCE_DESCRIPTION = (
-            "Select to apply for a licence to export multiple shipments of specific products to specific destinations. "
-            "OIELs cover long term projects and repeat business."
-        )
-
-    class ExportType:
-        TITLE = "Select an export type"
-        DESCRIPTION = ""
-        TEMPORARY = "Temporary"
-        PERMANENT = "Permanent"
-
     class HaveYouBeenInformedQuestion:
         TITLE = "Have you received a letter or email from Border Force or HMRC informing you to apply for a licence?"
         DESCRIPTION = "You may know this as an 'end use control'."

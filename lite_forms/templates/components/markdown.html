@@ -4,6 +4,7 @@
 	<div id="format-bar-{{ name }}" class="app-markdown__format-bar">
 		<button id="button-format-bold" type="button" name="button" class="app-markdown__format-bar__button">B<span class="govuk-visually-hidden">old</span></button>
 		<button id="button-format-italic" type="button" name="button" class="app-markdown__format-bar__button">I<span class="govuk-visually-hidden">talic</span></button>
+		<button id="button-format-underline" type="button" name="button" class="app-markdown__format-bar__button">U<span class="govuk-visually-hidden">talic</span></button>
 	</div>
 	<div data-module="character-count" data-maxlength="{{ extras.max_length }}">
 		<textarea class="app-markdown__textarea js-character-count {% if error %}govuk-textarea--error{% endif %}"
@@ -104,12 +105,27 @@
 			}
 		}
 
+		function underlineSelectedText() {
+			var element = document.getElementById("{{ name }}")
+		    var selectedIndex = getInputSelection(element);
+			var selectedText = element.value.substring(selectedIndex.start, selectedIndex.end);
+			var val = element.value;
+
+			newText = "<u>" + selectedText + "</u>";
+			element.value = val.slice(0, selectedIndex.start) + newText + val.slice(selectedIndex.end);
+			element.setSelectionRange(selectedIndex.start, selectedIndex.end);
+		}
+
 		$("#button-format-bold").click(function() {
 			replaceSelectedText("**");
 		});
 
 		$("#button-format-italic").click(function() {
 			replaceSelectedText("_");
+		});
+
+		$("#button-format-underline").click(function() {
+			underlineSelectedText();
 		});
 
 		$('#{{ name }}').highlightWithinTextarea('update');

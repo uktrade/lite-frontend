@@ -5,11 +5,10 @@ from django.conf import settings
 from django.urls import clear_url_caches
 
 
-def reload_urlconf(urlconf=None):
+def reload_urlconf(urlconfs=[settings.ROOT_URLCONF]):
     clear_url_caches()
-    if urlconf is None:
-        urlconf = settings.ROOT_URLCONF
-    if urlconf in sys.modules:
-        reload(sys.modules[urlconf])
-    else:
-        import_module(urlconf)
+    for urlconf in urlconfs:
+        if urlconf in sys.modules:
+            reload(sys.modules[urlconf])
+        else:
+            import_module(urlconf)
