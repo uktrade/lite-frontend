@@ -263,7 +263,6 @@ class AssignFlags(LoginRequiredMixin, SingleFormView):
         self.success_message = getattr(SetFlagsForm, self.level).SUCCESS_MESSAGE
 
         if self.level == FlagLevel.ORGANISATIONS:
-            self.context = {"organisation": "123"}
             self.form = set_flags_form(flags, self.level)
             self.form.back_link = BackLink(url=reverse("organisations:organisation", kwargs={"pk": self.object_pk}))
         else:
@@ -288,7 +287,7 @@ class AssignFlags(LoginRequiredMixin, SingleFormView):
             return FlagLevel.CASES
         elif self.request.GET.get("organisation"):
             return FlagLevel.ORGANISATIONS
-        elif self.request.GET.get("goods") or self.request.GET.get("goods_types"):
+        elif self.request.GET.get("good_ids") or self.request.GET.get("goods_types"):
             return FlagLevel.GOODS
         else:
             return FlagLevel.DESTINATIONS
@@ -323,5 +322,15 @@ class AssignFlags(LoginRequiredMixin, SingleFormView):
             return self.request.GET.get("return_to")
         elif self.level == FlagLevel.ORGANISATIONS:
             return reverse("organisations:organisation", kwargs={"pk": self.object_pk})
+        elif self.level == FlagLevel.GOODS:
+            return (
+                reverse("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk})
+                + "#slice-goods"
+            )
+        elif self.level == FlagLevel.DESTINATIONS:
+            return (
+                reverse("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk})
+                + "#slice-destinations"
+            )
         else:
             return reverse("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk})
