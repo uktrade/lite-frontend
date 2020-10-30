@@ -411,6 +411,78 @@ def data_queue():
 
 
 @pytest.fixture
+def stub_response():
+    return {}
+
+
+@pytest.fixture
+def stub_case_activity():
+    return {"activity": {}}
+
+
+@pytest.fixture
+def data_organisation():
+    return {
+        "id": "f65fbf49-c14b-482b-833f-fe39bb26a51d",
+        "primary_site": {
+            "id": "40f1315e-1283-424a-9295-decf69716379",
+            "name": "Headquarters",
+            "address": {
+                "id": "4966212d-5b52-4a6d-9e06-e589ab9dc221",
+                "address_line_1": "42 Question Road",
+                "address_line_2": "",
+                "city": "London",
+                "region": "Greater London",
+                "postcode": "SW1A 0AA",
+                "country": {"id": "GB", "name": "United Kingdom", "type": "gov.uk Country", "is_eu": True},
+            },
+            "records_located_at": {
+                "id": "40f1315e-1283-424a-9295-decf69716379",
+                "name": "Headquarters",
+                "address": {
+                    "address_line_1": "42 Question Road",
+                    "address_line_2": "",
+                    "region": "Greater London",
+                    "postcode": "SW1A 0AA",
+                    "city": "London",
+                    "country": {"name": "United Kingdom"},
+                },
+            },
+        },
+        "type": {"key": "commercial", "value": "Commercial Organisation"},
+        "flags": [
+            {
+                "id": "6bdbee80-1560-42f8-baca-05bea6f175f4",
+                "name": "Org flag",
+                "colour": "yellow",
+                "label": "Yellow",
+                "priority": 0,
+            },
+            {
+                "id": "739be3dd-eecc-4303-b4c5-5eadf2476b8c",
+                "name": "Org flag 2",
+                "colour": "red",
+                "label": "Label",
+                "priority": 0,
+            },
+        ],
+        "status": {"key": "active", "value": "Active"},
+        "created_at": "2020-09-29T15:51:03.043852+01:00",
+        "updated_at": "2020-09-29T15:51:03.048352+01:00",
+        "name": "Archway Communications",
+        "eori_number": "1234567890AAA",
+        "sic_number": "2345",
+        "vat_number": "GB123456789",
+        "registration_number": "09876543",
+    }
+
+
+@pytest.fixture
+def organisation_pk(data_organisation):
+    return data_organisation["id"]
+
+
+@pytest.fixture
 def queue_pk(data_queue):
     return data_queue["id"]
 
@@ -819,6 +891,25 @@ def data_search():
 def mock_search(requests_mock, data_search):
     url = client._build_absolute_uri("/search/application/application_search/")
     yield requests_mock.get(url=url, json=data_search)
+
+
+@pytest.fixture(autouse=True)
+def mock_put_flags(requests_mock, stub_response):
+    url = client._build_absolute_uri("/flags/assign/")
+    yield requests_mock.put(url=url, json=stub_response), 200
+
+
+@pytest.fixture(autouse=True)
+def mock_get_organisation(requests_mock, data_organisation, organisation_pk):
+    url = client._build_absolute_uri(f"/organisations/{organisation_pk}/")
+    yield requests_mock.get(url=url, json=data_organisation)
+
+
+@pytest.fixture(autouse=True)
+def mock_get_activity(requests_mock, open_case_pk, stub_case_activity):
+    url = f"/cases/{open_case_pk}/activity/"
+    url = client._build_absolute_uri(url)
+    yield requests_mock.get(url=url, json=stub_case_activity)
 
 
 @pytest.fixture
