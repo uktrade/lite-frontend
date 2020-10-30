@@ -362,7 +362,7 @@ def edit_good_detail_form(request, good_id):
     )
 
 
-def document_grading_form(request, good_id):
+def document_grading_form(request, back_link):
     select_options = get_document_missing_reasons(request)[0]["reasons"]
 
     return Form(
@@ -388,7 +388,7 @@ def document_grading_form(request, good_id):
                 ],
             ),
         ],
-        back_link=BackLink(DocumentSensitivityForm.BACK_BUTTON, reverse_lazy("goods:good", kwargs={"pk": good_id})),
+        back_link=BackLink(DocumentSensitivityForm.BACK_BUTTON, back_link),
         default_button_name=DocumentSensitivityForm.SUBMIT_BUTTON,
     )
 

@@ -563,7 +563,7 @@ class DeleteGood(LoginRequiredMixin, TemplateView):
 class CheckDocumentGrading(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
-        self.form = document_grading_form(request, self.object_pk)
+        self.form = document_grading_form(request, reverse_lazy("goods:good", kwargs={"pk": self.object_pk}))
         self.action = post_good_document_sensitivity
 
     def get_success_url(self):
