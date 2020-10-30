@@ -21,4 +21,14 @@ urlpatterns = [
         views.UploadDocuments.as_view(),
         name="upload_document",
     ),
+    path(
+        "<uuid:query_pk>/<str:object_type>/<uuid:case_pk>/document/<uuid:doc_pk>",
+        views.QueryDocument.as_view(),
+        name="query-document",
+    ),
+    path(
+        "<uuid:query_pk>/<str:object_type>/<uuid:case_pk>/document/<uuid:doc_pk>/delete/",
+        views.QueryDocumentDelete.as_view(),
+        name="query-document-delete",
+    ),
 ]

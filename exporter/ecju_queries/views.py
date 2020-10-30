@@ -7,7 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from s3chunkuploader.file_handler import S3FileUploadHandler
 
-from exporter.applications.services import add_document_data
+from exporter.applications.services import add_document_data, download_document_from_s3
 from exporter.ecju_queries.forms import (
     respond_to_query_form,
     ecju_query_respond_confirmation_form,
@@ -19,6 +19,8 @@ from exporter.ecju_queries.services import (
     put_ecju_query,
     post_ecju_query_document_sensitivity,
     post_ecju_query_document,
+    get_ecju_query_document,
+    get_ecju_query_documents,
 )
 from exporter.goods.services import get_good
 from lite_content.lite_exporter_frontend import strings, ecju_queries
@@ -79,11 +81,13 @@ class RespondToQuery(LoginRequiredMixin, TemplateView):
         """
         Will get a text area form for the user to respond to the ecju_query
         """
+        documents = get_ecju_query_documents(request, self.case_id, self.ecju_query_id)
         context = {
             "case_id": self.case_id,
             "ecju_query": self.ecju_query,
             "object_type": self.object_type,
             "back_link": self.back_link,
+            "documents": documents,
         }
 
         return render(request, "ecju-queries/respond_to_query.html", context)
@@ -204,3 +208,18 @@ class UploadDocuments(LoginRequiredMixin, TemplateView):
             return error_page(request, data["errors"]["file"])
 
         return redirect(reverse("applications:application", kwargs={"pk": self.case_pk, "type": "ecju-queries"}))
+
+
+class QueryDocument(LoginRequiredMixin, TemplateView):
+    def get(self, request, **kwargs):
+        self.object_type = kwargs["object_type"]
+        self.case_pk = str(kwargs["case_pk"])
+        self.query_pk = str(kwargs["query_pk"])
+        self.doc_pk = str(kwargs["doc_pk"])
+
+        document = get_ecju_query_document(request, self.case_pk, self.query_pk, self.doc_pk)
+        return download_document_from_s3(document["s3_key"], document["name"])
+
+
+class QueryDocumentDelete(LoginRequiredMixin, TemplateView):
+    pass

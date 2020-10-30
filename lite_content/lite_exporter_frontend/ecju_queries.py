@@ -1,3 +1,5 @@
+from lite_content.lite_exporter_frontend import generic
+
 class Forms:
     class RespondForm:
         BACK_LINK = "Back to ecju queries"
@@ -19,6 +21,7 @@ class DocumentsList:
     class Documents:
         TITLE = "Documents"
         NO_DOCUMENT_ATTACHED = "There are no documents."
+        DELETE = generic.Document.DELETE
 
 
 class SupportingDocumentSensitivityForm:
