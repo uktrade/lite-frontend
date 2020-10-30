@@ -96,7 +96,10 @@ def test_assign_flags_destination_form_submit(
         "flags[]": "",
     }
 
-    url = reverse("cases:assign_flags", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk}) + f"?destinations={destination_pk}"
+    url = (
+        reverse("cases:assign_flags", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk})
+        + f"?destinations={destination_pk}"
+    )
     response = authorized_client.get(url)
     assert response.status_code == 200
 
@@ -116,7 +119,10 @@ def test_assign_flags_form_return_to(
         "flags[]": "",
     }
 
-    url = reverse("cases:assign_flags", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk}) + f"?destinations={destination_pk}&return_to=/foo"
+    url = (
+        reverse("cases:assign_flags", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk})
+        + f"?destinations={destination_pk}&return_to=/foo"
+    )
     response = authorized_client.get(url)
     assert response.status_code == 200
 

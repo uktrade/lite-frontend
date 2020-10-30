@@ -536,7 +536,7 @@ def data_standard_case():
                             "clearance_level": None,
                             "descriptors": None,
                         },
-                    ]
+                    ],
                 },
                 "additional_documents": [],
                 "is_military_end_use_controls": False,
