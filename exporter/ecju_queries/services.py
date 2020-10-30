@@ -20,5 +20,13 @@ def get_ecju_query_document_missing_reasons(request):
 
 def post_ecju_query_document_sensitivity(request, pk, query_pk, json):
     response = client.post(request, f"/cases/{pk}/ecju-queries/{query_pk}/document-sensitivity/", json)
-    response.raise_for_status()
     return response.json(), response.status_code
+
+
+def post_ecju_query_document(request, pk, query_pk, json):
+    if "description" not in json:
+        json["description"] = ""
+    json = [json]
+
+    data = client.post(request, f"/cases/{pk}/ecju-queries/{query_pk}/document/", json)
+    return data.json(), data.status_code

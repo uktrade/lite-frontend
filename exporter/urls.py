@@ -22,7 +22,7 @@ urlpatterns += [
     path("goods/", include("exporter.goods.urls")),
     path("licences/", include("exporter.licences.urls")),
     path("organisation/", include("exporter.organisation.urls")),
-    path("ecju-queries/", include("exporter.ecju_queries.urls")),
+    path("ecju-queries/", include("exporter.ecju_queries.urls"), name="ecju-queries"),
     path("", include("exporter.hmrc.urls")),
 ]
 

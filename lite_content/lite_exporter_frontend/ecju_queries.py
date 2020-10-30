@@ -34,7 +34,7 @@ class SupportingDocumentSensitivityForm:
         "[Find out about call charges](https://www.gov.uk/call-charges)"
     )
     SUBMIT_BUTTON = "Continue"
-    BACK_BUTTON = "Back to ecju queries"
+    BACK_BUTTON = "Back to respond to query"
     LABEL = "Missing document reason"
 
     class Options:
@@ -51,7 +51,7 @@ class UploadDocumentForm:
         "\n\nThe file must be smaller than 50MB."
     )
     BUTTON = "Save"
-    BACK_FORM_LINK = "Back to ecju queries"
+    BACK_FORM_LINK = "Back"
 
     class Description:
         TITLE = "Description"

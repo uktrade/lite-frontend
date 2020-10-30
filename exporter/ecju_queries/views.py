@@ -1,15 +1,30 @@
 from http import HTTPStatus
 
-from django.shortcuts import redirect
-from django.urls import reverse_lazy
+from django.shortcuts import redirect, render
+from django.urls import reverse_lazy, reverse
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
+from s3chunkuploader.file_handler import S3FileUploadHandler
 
-from exporter.ecju_queries.forms import respond_to_query_form, ecju_query_respond_confirmation_form
-from exporter.ecju_queries.services import get_ecju_query, put_ecju_query
+from exporter.applications.services import add_document_data
+from exporter.ecju_queries.forms import (
+    respond_to_query_form,
+    ecju_query_respond_confirmation_form,
+    document_grading_form,
+    upload_documents_form,
+)
+from exporter.ecju_queries.services import (
+    get_ecju_query,
+    put_ecju_query,
+    post_ecju_query_document_sensitivity,
+    post_ecju_query_document,
+)
 from exporter.goods.services import get_good
-from lite_content.lite_exporter_frontend import strings
-from lite_forms.components import HiddenField
+from lite_content.lite_exporter_frontend import strings, ecju_queries
+from lite_forms.components import HiddenField, BackLink
 from lite_forms.generators import form_page, error_page
+from lite_forms.views import SingleFormView
 
 from core.auth.views import LoginRequiredMixin
 
@@ -64,7 +79,14 @@ class RespondToQuery(LoginRequiredMixin, TemplateView):
         """
         Will get a text area form for the user to respond to the ecju_query
         """
-        return form_page(request, respond_to_query_form(self.back_link, self.ecju_query))
+        context = {
+            "case_id": self.case_id,
+            "ecju_query": self.ecju_query,
+            "object_type": self.object_type,
+            "back_link": self.back_link,
+        }
+
+        return render(request, "ecju-queries/respond_to_query.html", context)
 
     def post(self, request, **kwargs):
         """
@@ -112,3 +134,73 @@ class RespondToQuery(LoginRequiredMixin, TemplateView):
         else:
             # Submitted data does not contain an expected form field - return an error
             return error_page(request, strings.applications.AttachDocumentPage.UPLOAD_GENERIC_ERROR)
+
+
+class CheckDocumentGrading(LoginRequiredMixin, TemplateView):
+    case_pk = None
+    query_pk = None
+    back_link = None
+
+    def dispatch(self, request, *args, **kwargs):
+        self.case_pk = kwargs["case_pk"]
+        self.query_pk = kwargs["query_pk"]
+        self.back_link = reverse_lazy(
+            "ecju_queries:respond_to_query",
+            kwargs={"query_pk": self.query_pk, "object_type": "application", "case_pk": self.case_pk},
+        )
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, **kwargs):
+        form = document_grading_form(request, self.back_link)
+        return form_page(request, form, extra_data={"case_pk": self.case_pk, "query_pk": self.query_pk})
+
+    def post(self, request, **kwargs):
+        request_data = request.POST
+        document_available = request_data.get("has_document_to_upload") == "yes"
+        response, status_code = post_ecju_query_document_sensitivity(request, self.case_pk, self.query_pk, request_data)
+        upload_doc_link = reverse_lazy(
+            "ecju_queries:upload_document",
+            kwargs={"case_pk": self.case_pk, "query_pk": self.query_pk, "object_type": "application"},
+        )
+
+        if status_code == HTTPStatus.OK:
+            return redirect(upload_doc_link) if document_available else redirect(self.back_link)
+        else:
+            form = document_grading_form(request, self.back_link)
+            return form_page(request, form, data=request_data, errors=response["errors"])
+
+
+@method_decorator(csrf_exempt, "dispatch")
+class UploadDocuments(LoginRequiredMixin, TemplateView):
+    def get(self, request, **kwargs):
+        self.case_pk = str(kwargs["case_pk"])
+        self.object_type = kwargs["object_type"]
+        self.query_pk = str(kwargs["query_pk"])
+
+        self.back_link = BackLink(
+            ecju_queries.UploadDocumentForm.BACK_FORM_LINK,
+            reverse_lazy(
+                "ecju_queries:add_supporting_document",
+                kwargs={"query_pk": self.query_pk, "object_type": "application", "case_pk": self.case_pk},
+            ),
+        )
+        form = upload_documents_form(self.back_link)
+        return form_page(request, form, extra_data={"case_id": self.case_pk, "ecju_query_id": self.query_pk})
+
+    @csrf_exempt
+    def post(self, request, **kwargs):
+        self.request.upload_handlers.insert(0, S3FileUploadHandler(request))
+
+        self.case_pk = str(kwargs["case_pk"])
+        self.object_type = kwargs["object_type"]
+        self.query_pk = str(kwargs["query_pk"])
+
+        data, error = add_document_data(request)
+        if error:
+            return error_page(request, error)
+
+        data, status_code = post_ecju_query_document(request, self.case_pk, self.query_pk, data)
+        if status_code != HTTPStatus.CREATED:
+            return error_page(request, data["errors"]["file"])
+
+        return redirect(reverse("applications:application", kwargs={"pk": self.case_pk, "type": "ecju-queries"}))

@@ -1,0 +1,34 @@
+{% extends 'layouts/base.html' %}
+
+{% load svg %}
+
+{% block back_link %}
+<a href="{{back_link}}" id="back-link" class="govuk-back-link">
+    back to ecju queries
+</a>
+{% endblock %}
+
+{% block body %}
+<h1 class="govuk-heading-xl">Respond to query</h1>
+<div class="app-ecju-query__text">
+    {{ ecju_query.question }}
+</div><br><br>
+<p>Your response</p>
+<textarea id="ecju-query-response-text" name="response" cols="80"
+    class="govuk-textarea govuk-js-character-count"></textarea>
+<p class="govuk-caption-m">You can enter upto 2200 characters</p>
+
+<div class="lite-app-bar">
+    <div class="lite-app-bar__content">
+        <h2 class="govuk-heading-m">{% lcs "ecju_queries.DocumentsList.Documents.TITLE" %}</h2>
+    </div>
+    <div class="lite-app-bar__controls">
+        {% url 'ecju_queries:add_supporting_document' ecju_query.id object_type case_id as url %}
+        <a role="button" draggable="false" class="govuk-button govuk-button--secondary"
+            href={{ url }}>
+            {% lcs "ecju_queries.DocumentsList.AttachDocuments.BUTTON" %}
+        </a>
+    </div>
+</div>
+
+{% endblock %}
