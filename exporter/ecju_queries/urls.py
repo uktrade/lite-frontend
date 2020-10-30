@@ -11,4 +11,14 @@ urlpatterns = [
         views.RespondToQuery.as_view(),
         name="respond_to_query_extra",
     ),
+    path(
+        "<uuid:query_pk>/<str:object_type>/<uuid:case_pk>/add-document/",
+        views.CheckDocumentGrading.as_view(),
+        name="add_supporting_document",
+    ),
+    path(
+        "<uuid:query_pk>/<str:object_type>/<uuid:case_pk>/upload-document/",
+        views.UploadDocuments.as_view(),
+        name="upload_document",
+    ),
 ]
