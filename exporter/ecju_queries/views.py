@@ -21,6 +21,7 @@ from exporter.ecju_queries.services import (
     post_ecju_query_document,
     get_ecju_query_document,
     get_ecju_query_documents,
+    delete_ecju_query_document,
 )
 from exporter.goods.services import get_good
 from lite_content.lite_exporter_frontend import strings, ecju_queries
@@ -207,7 +208,12 @@ class UploadDocuments(LoginRequiredMixin, TemplateView):
         if status_code != HTTPStatus.CREATED:
             return error_page(request, data["errors"]["file"])
 
-        return redirect(reverse("applications:application", kwargs={"pk": self.case_pk, "type": "ecju-queries"}))
+        return redirect(
+            reverse(
+                "ecju_queries:respond_to_query",
+                kwargs={"query_pk": self.query_pk, "object_type": "application", "case_pk": self.case_pk},
+            )
+        )
 
 
 class QueryDocument(LoginRequiredMixin, TemplateView):
@@ -222,4 +228,31 @@ class QueryDocument(LoginRequiredMixin, TemplateView):
 
 
 class QueryDocumentDelete(LoginRequiredMixin, TemplateView):
-    pass
+    def dispatch(self, request, *args, **kwargs):
+        self.object_type = kwargs["object_type"]
+        self.case_pk = str(kwargs["case_pk"])
+        self.query_pk = str(kwargs["query_pk"])
+        self.doc_pk = str(kwargs["doc_pk"])
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, **kwargs):
+        document = get_ecju_query_document(request, self.case_pk, self.query_pk, self.doc_pk)
+        context = {
+            "object_type": self.object_type,
+            "case_pk": self.case_pk,
+            "query_pk": self.query_pk,
+            "doc_pk": self.doc_pk,
+            "title": ecju_queries.SupportingDocumentDeletePage.TITLE,
+            "document": document,
+        }
+        return render(request, "ecju-queries/query-document-delete.html", context)
+
+    def post(self, request, **kwargs):
+        delete_ecju_query_document(request, self.case_pk, self.query_pk, self.doc_pk)
+
+        return redirect(
+            reverse(
+                "ecju_queries:respond_to_query",
+                kwargs={"query_pk": self.query_pk, "object_type": "application", "case_pk": self.case_pk},
+            )
+        )

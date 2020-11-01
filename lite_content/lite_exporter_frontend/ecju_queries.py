@@ -58,3 +58,13 @@ class UploadDocumentForm:
 
     class Description:
         TITLE = "Description"
+
+
+class SupportingDocumentDeletePage:
+    TITLE = "Confirm you want to delete this document"
+    BACK = "Back to respond to query"
+    DOCUMENT_NAME = "Name"
+    DOCUMENT_CREATED_AT = "Created at"
+    DOCUMENT_CREATED_BY = "Created by"
+    DOCUMENT_DESCRIPTION = "Description"
+    BUTTON = "Delete document"
