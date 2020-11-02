@@ -99,19 +99,25 @@ class RespondToQuery(LoginRequiredMixin, TemplateView):
         if the user is on the input form will then will determine if data is valid, and move user to confirmation form
         else will allow the user to confirm they wish to respond and post data if accepted.
         """
+        documents = get_ecju_query_documents(request, self.case_id, self.ecju_query_id)
+        context = {
+            "case_id": self.case_id,
+            "ecju_query": self.ecju_query,
+            "object_type": self.object_type,
+            "back_link": self.back_link,
+            "documents": documents,
+        }
         form_name = request.POST.get("form_name")
 
-        if form_name == "respond_to_query":
+        if "respond_to_query" in request.POST:
             # Post the form data to API for validation only
             data = {"response": request.POST.get("response"), "validate_only": True}
             response, status_code = put_ecju_query(request, self.case_id, self.ecju_query_id, data)
 
             if status_code != HTTPStatus.OK:
                 errors = response.get("errors")
-                errors = {error: message for error, message in errors.items()}
-                form = respond_to_query_form(self.back_link, self.ecju_query)
-                data = {"response": request.POST.get("response")}
-                return form_page(request, form, data=data, errors=errors)
+                context["errors"] = {error: message[0] for error, message in errors.items()}
+                return render(request, "ecju-queries/respond_to_query.html", context)
             else:
                 form = ecju_query_respond_confirmation_form(self.request.path_info)
                 form.questions.append(HiddenField("response", request.POST.get("response")))
@@ -130,7 +136,8 @@ class RespondToQuery(LoginRequiredMixin, TemplateView):
 
                 return redirect(self.back_link)
             elif request.POST.get("confirm_response") == "no":
-                return form_page(request, respond_to_query_form(self.back_link, self.ecju_query), data=request.POST)
+                context["response"] = request.POST.get("response")
+                return render(request, "ecju-queries/respond_to_query.html", context)
             else:
                 error = {"required": ["This field is required"]}
                 form = ecju_query_respond_confirmation_form(self.request.path_info)
@@ -149,7 +156,7 @@ class CheckDocumentGrading(LoginRequiredMixin, TemplateView):
     def dispatch(self, request, *args, **kwargs):
         self.case_pk = kwargs["case_pk"]
         self.query_pk = kwargs["query_pk"]
-        self.back_link = reverse_lazy(
+        self.back_link = reverse(
             "ecju_queries:respond_to_query",
             kwargs={"query_pk": self.query_pk, "object_type": "application", "case_pk": self.case_pk},
         )

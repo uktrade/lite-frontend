@@ -8,63 +8,106 @@
 </a>
 {% endblock %}
 
+
 {% block body %}
-<h1 class="govuk-heading-xl">Respond to query</h1>
-<div class="app-ecju-query__text">
-    {{ ecju_query.question }}
-</div><br><br>
-<p>Your response</p>
-<textarea id="ecju-query-response-text" name="response" cols="80"
-    class="govuk-textarea govuk-js-character-count"></textarea>
-<p class="govuk-caption-m">You can enter upto 2200 characters</p>
-
-<div class="lite-app-bar">
-    <div class="lite-app-bar__content">
-        <h2 class="govuk-heading-m">{% lcs "ecju_queries.DocumentsList.Documents.TITLE" %}</h2>
+{% if errors %}
+<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1">
+    <h2 class="govuk-error-summary__title" id="error-summary-title">
+        There is a problem
+    </h2>
+    {% for field,error_msg in errors.items %}
+    <div class="govuk-error-summary__body">
+        <ul class="govuk-list govuk-error-summary__list">
+            <li>
+                <a href="#{{ field }}">{{ error_msg }}</a>
+            </li>
+        </ul>
     </div>
-    <div class="lite-app-bar__controls">
-        {% url 'ecju_queries:add_supporting_document' ecju_query.id object_type case_id as url %}
-        <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href={{ url }}>
-            {% lcs "ecju_queries.DocumentsList.AttachDocuments.BUTTON" %}
-        </a>
-    </div>
-</div>
-
-{% if documents %}
-<ol class="app-documents__list">
-    {% for document in documents %}
-    <li class="app-documents__item">
-        <div class="app-documents__item-preview">
-            {% svg 'document' %}
-            <span>
-                {{ document.name|file_type }}
-            </span>
-        </div>
-        <div class="app-documents__item-details">
-            <a {% if document.safe == True %}href="{% url 'ecju_queries:query-document' query_pk=ecju_query.id object_type=object_type case_pk=case_id doc_pk=document.id %}"
-                {% endif %} class="govuk-link--no-visited-state">{{ document.name }}</a>
-            <p class="govuk-hint">Uploaded by {{ document.user.first_name }} {{ document.user.last_name }} at
-                {{ document.created_at|str_date }}</p>
-            {% if document.description %}
-            <p class="govuk-body">
-                {{ document.description }}
-            </p>
-            {% endif %}
-            {% if document.safe == False %}
-            <p class="govuk-label">{% lcs 'Goods.Documents.VIRUS_INFECTED' %}</p>
-            {% elif not document.safe %}
-            <p class="govuk-label">{% lcs 'Goods.Documents.PROCESSING' %}</p>
-            {% endif %}
-            {% if not ecju_query.response %}
-            <a href="{% url 'ecju_queries:query-document-delete' query_pk=ecju_query.id object_type=object_type case_pk=case_id doc_pk=document.id %}"
-                class="govuk-link govuk-!-font-size-16 govuk-!-margin-top-2">
-                {% lcs "ecju_queries.DocumentsList.Documents.DELETE" %}
-            </a>
-            {% endif %}
-        </div>
-    </li>
     {% endfor %}
-</ol>
+</div>
 {% endif %}
+<form method="post" name="respond_to_query"
+    action="{% url 'ecju_queries:respond_to_query' query_pk=ecju_query.id object_type=object_type case_pk=case_id %}">
+    {% csrf_token %}
+    <h1 class="govuk-heading-xl">Respond to query</h1>
+    <div class="app-ecju-query__text">
+        {{ ecju_query.question }}
+    </div><br><br>
+
+    <div class="govuk-form-group {% if errors %} govuk-form-group--error {% endif %}">
+        <label class="govuk-label" for="response">Your response</label>
+        {% if errors %}
+        <span id="error-response" class="govuk-error-message">
+            <span class="govuk-visually-hidden">Error:</span> {{ errors.response }}
+        </span>
+        {% endif %}
+        <textarea id="ecju-query-response-text" name="response" cols="80"
+            class="govuk-textarea govuk-js-character-count">{{ response }}</textarea>
+        <p class="govuk-caption-m">You can enter upto 2200 characters</p>
+    </div>
+
+    <div class="lite-app-bar">
+        <div class="lite-app-bar__content">
+            <h2 class="govuk-heading-m">{% lcs "ecju_queries.DocumentsList.Documents.TITLE" %}</h2>
+        </div>
+        <div class="lite-app-bar__controls">
+            {% url 'ecju_queries:add_supporting_document' ecju_query.id object_type case_id as url %}
+            <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href={{ url }}>
+                {% lcs "ecju_queries.DocumentsList.AttachDocuments.BUTTON" %}
+            </a>
+        </div>
+    </div>
+
+    {% if documents %}
+    <ol class="app-documents__list">
+        {% for document in documents %}
+        <li class="app-documents__item">
+            <div class="app-documents__item-preview">
+                {% svg 'document' %}
+                <span>
+                    {{ document.name|file_type }}
+                </span>
+            </div>
+            <div class="app-documents__item-details">
+                <a {% if document.safe == True %}href="{% url 'ecju_queries:query-document' query_pk=ecju_query.id object_type=object_type case_pk=case_id doc_pk=document.id %}"
+                    {% endif %} class="govuk-link--no-visited-state">{{ document.name }}</a>
+                <p class="govuk-hint">Uploaded by {{ document.user.first_name }} {{ document.user.last_name }} at
+                    {{ document.created_at|str_date }}</p>
+                {% if document.description %}
+                <p class="govuk-body">
+                    {{ document.description }}
+                </p>
+                {% endif %}
+                {% if document.safe == False %}
+                <p class="govuk-label">{% lcs 'Goods.Documents.VIRUS_INFECTED' %}</p>
+                {% elif not document.safe %}
+                <p class="govuk-label">{% lcs 'Goods.Documents.PROCESSING' %}</p>
+                {% endif %}
+                {% if not ecju_query.response %}
+                <a href="{% url 'ecju_queries:query-document-delete' query_pk=ecju_query.id object_type=object_type case_pk=case_id doc_pk=document.id %}"
+                    class="govuk-link govuk-!-font-size-16 govuk-!-margin-top-2">
+                    {% lcs "ecju_queries.DocumentsList.Documents.DELETE" %}
+                </a>
+                {% endif %}
+            </div>
+        </li>
+        {% endfor %}
+    </ol>
+    {% elif ecju_query.missing_document_reason.key %}
+    <div class="lite-information-text">
+        <span class="lite-information-text__icon" aria-hidden="true">!</span>
+        <p class="lite-information-text__text">
+            <span class="govuk-visually-hidden">{% lcs "generic.NoticeComponent.INFORMATION" %}</span>
+            No document attached: {{ ecju_query.missing_document_reason.value }}
+        </p>
+    </div>
+    {% else %}
+    {% include "includes/notice.html" with text="ecju_queries.DocumentsList.Documents.NO_DOCUMENT_ATTACHED" %}
+    {% endif %}
+    <div class="buttons-row govuk-!-margin-top-8">
+        <button type="submit" name="respond_to_query"
+            class="govuk-button govuk-!-margin-right-2">{% lcs "ecju_queries.Forms.RespondForm.SAVE" %}</button>
+    </div>
+</form>
 
 {% endblock %}

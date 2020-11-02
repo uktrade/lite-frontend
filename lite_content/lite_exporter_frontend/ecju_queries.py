@@ -5,6 +5,7 @@ class Forms:
         BACK_LINK = "Back to ecju queries"
         TITLE = "Respond to query"
         RESPONSE = "Your response"
+        SAVE = "Save"
 
     class ConfirmResponseForm:
         TITLE = "Confirm you want to send this response"
