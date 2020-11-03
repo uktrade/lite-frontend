@@ -97,6 +97,7 @@
       input.setAttribute('name', input.name.replace('[]', ''));
       return itemHtml
     }
+    tokenField._renderItems()
     element.remove()
   }
 })()
