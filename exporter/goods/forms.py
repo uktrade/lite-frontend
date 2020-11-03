@@ -1,10 +1,13 @@
+from django.conf import settings
 from django.urls import reverse, reverse_lazy
+from django.utils.safestring import mark_safe
 
 from core.builtins.custom_tags import linkify
 from exporter.core.services import get_control_list_entries
 from exporter.core.services import get_pv_gradings
 from exporter.goods.helpers import good_summary, get_category_display_string
 from exporter.goods.services import get_document_missing_reasons
+from lite_content.lite_exporter_frontend.generic import PERMISSION_FINDER_LINK
 from lite_content.lite_exporter_frontend import generic
 from lite_content.lite_exporter_frontend.goods import (
     CreateGoodForm,
@@ -33,6 +36,7 @@ from lite_forms.components import (
     Breadcrumbs,
     FormGroup,
     Heading,
+    HelpSection,
 )
 from lite_forms.helpers import conditional
 from lite_forms.styles import ButtonStyle, HeadingStyle
@@ -181,55 +185,97 @@ def product_uses_information_security(request):
     )
 
 
-def add_goods_questions(request, application_pk=None):
+def add_goods_questions(control_list_entries, application_pk=None):
+
+    is_good_controlled_description = (
+        f"Products that aren't on the {PERMISSION_FINDER_LINK} may be affected by [military end use controls]"
+        "(https://www.gov.uk/guidance/export-controls-military-goods-software-and-technology), "
+        "[current trade sanctions and embargoes]"
+        "(https://www.gov.uk/guidance/current-arms-embargoes-and-other-restrictions) or "
+        "[weapons of mass destruction controls](https://www.gov.uk/guidance/supplementary-wmd-end-use-controls). "
+        "If the product isn't subject to any controls, you'll get a no licence required (NLR) document from ECJU."
+    )
+
+    is_pv_graded_description = (
+        "For example, UK OFFICIAL or NATO UNCLASSIFIED. The security grading of the product doesn't affect "
+        "if an export licence is needed."
+    )
+
+    is_good_controlled_options = [
+        Option(
+            key=True,
+            value="Yes",
+            components=[
+                control_list_entries_question(
+                    control_list_entries=control_list_entries,
+                    title="Control list entries",
+                    description="Type to get suggestions. For example, ML1a.",
+                ),
+            ],
+        ),
+        Option(key=False, value="No"),
+    ]
+
+    is_pv_graded_options = [
+        Option(key="yes", value="Yes"),
+        Option(key="no", value="No, it doesn't need one"),
+    ]
+
+    if settings.FEATURE_FLAG_ONLY_ALLOW_SIEL:
+        if not application_pk:
+            controlled_spire = HelpSection(
+                description=mark_safe(  # nosec
+                    f"Use <a href='{settings.SPIRE_URL}'>SPIRE</a> to raise a control list classification (CLC) query"
+                ),
+                title="",
+            )
+            pv_graded_spire = HelpSection(
+                description=mark_safe(  # nosec
+                    f"Use <a href='{settings.SPIRE_URL}'>SPIRE</a> to apply for a private venture (PV) grading",
+                ),
+                title="",
+            )
+            is_good_controlled_options.append(Option(key=None, value="I don't know", components=[controlled_spire]))
+            is_pv_graded_options.append(
+                Option(key="grading_required", value="No, but it needs one", components=[pv_graded_spire])
+            )
+    else:
+        if not application_pk:
+            is_good_controlled_options.append(
+                Option(key=None, value="I don't know, raise a control list classification (CLC) query")
+            )
+            is_pv_graded_options.append(
+                Option(key="grading_required", value="No, it needs one, apply for a private venture (PV) grading")
+            )
     return Form(
-        title=conditional(application_pk, CreateGoodForm.TITLE_APPLICATION, CreateGoodForm.TITLE_GOODS_LIST),
+        title=conditional(application_pk, "Add a product to your application", "Add a product to your product list"),
         questions=[
             TextArea(
-                title=CreateGoodForm.Description.TITLE,
-                description=CreateGoodForm.Description.DESCRIPTION,
+                title="Description",
+                description=(
+                    "Start with the product name to make it easier to find the product when needed. Include the "
+                    "commodity code if you know it."
+                ),
                 name="description",
                 extras={"max_length": 280},
             ),
-            TextInput(title=CreateGoodForm.PartNumber.TITLE, name="part_number", optional=True),
+            TextInput(title="Part number", name="part_number", optional=True),
             RadioButtons(
-                title=CreateGoodForm.IsControlled.TITLE,
-                description=conditional(
-                    application_pk, CreateGoodForm.IsControlled.DESCRIPTION, CreateGoodForm.IsControlled.CLC_REQUIRED,
-                ),
+                title="Is the product on the control list?",
+                description=is_good_controlled_description,
                 name="is_good_controlled",
-                options=[
-                    Option(
-                        key=True,
-                        value=CreateGoodForm.IsControlled.YES,
-                        components=[
-                            control_list_entries_question(
-                                control_list_entries=get_control_list_entries(request, convert_to_options=True),
-                                title=CreateGoodForm.ControlListEntry.TITLE,
-                                description=CreateGoodForm.ControlListEntry.DESCRIPTION,
-                            ),
-                        ],
-                    ),
-                    Option(key=False, value=CreateGoodForm.IsControlled.NO),
-                    conditional(not application_pk, Option(key=None, value=CreateGoodForm.IsControlled.UNSURE)),
-                ],
+                options=is_good_controlled_options,
             ),
             RadioButtons(
-                title=CreateGoodForm.IsGraded.TITLE,
-                description=CreateGoodForm.IsGraded.DESCRIPTION,
+                title="Does the product have a security grading?",
+                description=is_pv_graded_description,
                 name="is_pv_graded",
-                options=[
-                    Option(key="yes", value=CreateGoodForm.IsGraded.YES),
-                    Option(key="no", value=CreateGoodForm.IsGraded.NO),
-                    conditional(
-                        not application_pk, Option(key="grading_required", value=CreateGoodForm.IsGraded.RAISE_QUERY)
-                    ),
-                ],
+                options=is_pv_graded_options,
             ),
         ],
         back_link=conditional(
             application_pk,
-            BackLink(generic.BACK, reverse_lazy("applications:goods", kwargs={"pk": application_pk})),
+            BackLink("Back", reverse_lazy("applications:goods", kwargs={"pk": application_pk})),
             Breadcrumbs(
                 [
                     BackLink(generic.SERVICE_NAME, reverse_lazy("core:home")),
@@ -238,7 +284,7 @@ def add_goods_questions(request, application_pk=None):
                 ]
             ),
         ),
-        default_button_name=CreateGoodForm.SUBMIT_BUTTON,
+        default_button_name="Continue",
     )
 
 
@@ -296,10 +342,11 @@ def add_good_form_group(
     is_firearms: bool = None,
     draft_pk: str = None,
 ):
+    control_list_entries = get_control_list_entries(request, convert_to_options=True)
     return FormGroup(
         [
             product_category_form(request),
-            add_goods_questions(request, draft_pk),
+            add_goods_questions(control_list_entries, draft_pk),
             conditional(is_pv_graded, pv_details_form(request)),
             conditional(is_software_technology, software_technology_details_form(request)),
             conditional(not is_firearms, product_military_use_form(request)),
@@ -314,9 +361,10 @@ def add_good_form_group(
 
 
 def add_firearm_good_form_group(request, is_pv_graded: bool = None, draft_pk: str = None):
+    control_list_entries = get_control_list_entries(request, convert_to_options=True)
     return FormGroup(
         [
-            add_goods_questions(request, draft_pk),
+            add_goods_questions(control_list_entries, draft_pk),
             conditional(is_pv_graded, pv_details_form(request)),
             group_two_product_type_form(),
             firearm_ammunition_details_form(),
