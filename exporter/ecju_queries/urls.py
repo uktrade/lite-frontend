@@ -12,7 +12,7 @@ urlpatterns = [
         name="respond_to_query_extra",
     ),
     path(
-        "<uuid:query_pk>/<str:object_type>/<uuid:case_pk>/add-document/",
+        "<uuid:query_pk>/<str:object_type>/<uuid:extra_pk>/case/<uuid:case_pk>/add-document/",
         views.CheckDocumentGrading.as_view(),
         name="add_supporting_document",
     ),
