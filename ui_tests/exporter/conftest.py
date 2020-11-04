@@ -375,6 +375,17 @@ def respond_to_ecju_click(driver):  # noqa
     application_page.respond_to_ecju_query(0)
 
 
+@when(parsers.parse('I enter my response as "{response}"'))  # noqa
+def enter_query_response(driver, response):  # noqa
+    response_page = RespondToEcjuQueryPage(driver)
+    response_page.enter_form_response(response)
+
+
+@when(parsers.parse('I click "{button_value}"'))  # noqa
+def click_button(driver, button_value):  # noqa
+    functions.click_submit(driver, button_value=button_value)
+
+
 @when(parsers.parse('I enter "{response}" for ecju query and click submit'))  # noqa
 def respond_to_query(driver, response):  # noqa
     response_page = RespondToEcjuQueryPage(driver)
@@ -387,6 +398,21 @@ def determine_that_there_is_a_closed_query(driver):  # noqa
     application_page = ApplicationPage(driver)
     closed_queries = application_page.get_count_of_closed_ecju_queries()
     assert closed_queries > 0
+
+
+@when(parsers.parse('I upload file "{filename}" with description "{description}"'))  # noqa
+def upload_a_file_with_description(driver, filename, description):  # noqa
+    attach_document_page = AttachDocumentPage(driver)
+    file_path = get_file_upload_path(filename)
+    attach_document_page.choose_file(file_path)
+    attach_document_page.enter_description(description)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I see the missing document reason text "{reason}"'))
+def get_missing_document_reason_text(driver, reason):
+    response_page = RespondToEcjuQueryPage(driver)
+    assert response_page.get_missing_document_reason_text() == reason
 
 
 @when(parsers.parse('I select "{value}" for submitting response and click submit'))  # noqa

@@ -52,7 +52,7 @@
 <div class="buttons-row">
     <form method="post" action="{% url 'ecju_queries:query-document-delete' query_pk object_type case_pk doc_pk %}">
         {% csrf_token %}
-        <button type="submit"
+        <button type="submit" value="submit"
             class="govuk-button govuk-button--warning govuk-!-margin-right-2">{% lcs "ecju_queries.SupportingDocumentDeletePage.BUTTON" %}</button>
     </form>
 </div>
