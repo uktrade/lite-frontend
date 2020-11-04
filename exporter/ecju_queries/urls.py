@@ -17,7 +17,7 @@ urlpatterns = [
         name="add_supporting_document",
     ),
     path(
-        "<uuid:query_pk>/<str:object_type>/<uuid:case_pk>/upload-document/",
+        "<uuid:query_pk>/<str:object_type>/<uuid:extra_pk>/case/<uuid:case_pk>/upload-document/",
         views.UploadDocuments.as_view(),
         name="upload_document",
     ),

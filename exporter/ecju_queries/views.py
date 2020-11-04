@@ -39,12 +39,14 @@ class RespondToQuery(LoginRequiredMixin, TemplateView):
     ecju_query = None
     extra_id = None
     back_link = None
+    response = ""
 
     def dispatch(self, request, *args, **kwargs):
         self.case_id = str(kwargs["case_pk"])
         self.object_type = kwargs["object_type"]
         self.ecju_query_id = str(kwargs["query_pk"])
         self.ecju_query = get_ecju_query(request, self.case_id, self.ecju_query_id)
+        self.extra_pk = kwargs.get("extra_pk")
 
         if self.object_type == "good":
             self.extra_id = kwargs["extra_pk"]
@@ -82,6 +84,9 @@ class RespondToQuery(LoginRequiredMixin, TemplateView):
         """
         Will get a text area form for the user to respond to the ecju_query
         """
+        if "response" in request.session.keys():
+            self.response = request.session["response"]
+
         documents = get_ecju_query_documents(request, self.case_id, self.ecju_query_id)
         context = {
             "case_id": self.case_id,
@@ -89,6 +94,7 @@ class RespondToQuery(LoginRequiredMixin, TemplateView):
             "object_type": self.object_type,
             "extra_id": self.extra_id,
             "back_link": self.back_link,
+            "response": self.response,
             "documents": documents,
         }
 
@@ -100,6 +106,25 @@ class RespondToQuery(LoginRequiredMixin, TemplateView):
         if the user is on the input form will then will determine if data is valid, and move user to confirmation form
         else will allow the user to confirm they wish to respond and post data if accepted.
         """
+
+        request_data = request.POST
+        self.response = request_data.get("response")
+
+        # if Attach document is clicked
+        if request_data.get("respond_to_query") == "add_document":
+            request.session["response"] = self.response
+            return redirect(
+                reverse(
+                    "ecju_queries:add_supporting_document",
+                    kwargs={
+                        "query_pk": self.ecju_query_id,
+                        "object_type": self.object_type,
+                        "case_pk": self.case_id,
+                        "extra_pk": self.case_id,
+                    },
+                )
+            )
+
         documents = get_ecju_query_documents(request, self.case_id, self.ecju_query_id)
         context = {
             "case_id": self.case_id,
@@ -135,6 +160,9 @@ class RespondToQuery(LoginRequiredMixin, TemplateView):
                         data=request.POST,
                         errors=data["errors"],
                     )
+
+                if "response" in request.session.keys():
+                    del request.session["response"]
 
                 return redirect(self.back_link)
             elif request.POST.get("confirm_response") == "no":
@@ -186,9 +214,18 @@ class CheckDocumentGrading(LoginRequiredMixin, TemplateView):
         request_data = request.POST
         document_available = request_data.get("has_document_to_upload") == "yes"
         response, status_code = post_ecju_query_document_sensitivity(request, self.case_pk, self.query_pk, request_data)
-        upload_doc_link = reverse_lazy(
+        if self.object_type == "compliance-visit":
+            extra_pk = self.extra_pk
+        else:
+            extra_pk = self.case_pk
+        upload_doc_link = reverse(
             "ecju_queries:upload_document",
-            kwargs={"case_pk": self.case_pk, "query_pk": self.query_pk, "object_type": self.object_type},
+            kwargs={
+                "case_pk": self.case_pk,
+                "query_pk": self.query_pk,
+                "object_type": self.object_type,
+                "extra_pk": extra_pk,
+            },
         )
 
         if status_code == HTTPStatus.OK:
@@ -200,11 +237,14 @@ class CheckDocumentGrading(LoginRequiredMixin, TemplateView):
 
 @method_decorator(csrf_exempt, "dispatch")
 class UploadDocuments(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
-        self.case_pk = str(kwargs["case_pk"])
+    def dispatch(self, request, *args, **kwargs):
+        self.case_pk = kwargs["case_pk"]
+        self.query_pk = kwargs["query_pk"]
         self.object_type = kwargs["object_type"]
-        self.query_pk = str(kwargs["query_pk"])
+        self.extra_pk = kwargs["extra_pk"]
+        return super().dispatch(request, *args, **kwargs)
 
+    def get(self, request, **kwargs):
         self.back_link = BackLink(
             ecju_queries.UploadDocumentForm.BACK_FORM_LINK,
             reverse_lazy(
@@ -223,10 +263,6 @@ class UploadDocuments(LoginRequiredMixin, TemplateView):
     def post(self, request, **kwargs):
         self.request.upload_handlers.insert(0, S3FileUploadHandler(request))
 
-        self.case_pk = str(kwargs["case_pk"])
-        self.object_type = kwargs["object_type"]
-        self.query_pk = str(kwargs["query_pk"])
-
         data, error = add_document_data(request)
         if error:
             return error_page(request, error)
@@ -235,12 +271,25 @@ class UploadDocuments(LoginRequiredMixin, TemplateView):
         if status_code != HTTPStatus.CREATED:
             return error_page(request, data["errors"]["file"])
 
-        return redirect(
-            reverse(
-                "ecju_queries:respond_to_query",
-                kwargs={"query_pk": self.query_pk, "object_type": self.object_type, "case_pk": self.case_pk},
+        if self.object_type == "compliance-visit":
+            return redirect(
+                reverse(
+                    "ecju_queries:respond_to_query_extra",
+                    kwargs={
+                        "query_pk": self.query_pk,
+                        "object_type": self.object_type,
+                        "case_pk": self.case_pk,
+                        "extra_pk": self.extra_pk,
+                    },
+                )
             )
-        )
+        else:
+            return redirect(
+                reverse(
+                    "ecju_queries:respond_to_query",
+                    kwargs={"query_pk": self.query_pk, "object_type": self.object_type, "case_pk": self.case_pk},
+                )
+            )
 
 
 class QueryDocument(LoginRequiredMixin, TemplateView):

@@ -27,7 +27,7 @@
     {% endfor %}
 </div>
 {% endif %}
-<form method="post" name="respond_to_query" {% if object_type == "compliance-visit" %}
+<form method="post" name="respond_to_query" {% if object_type == "compliance-visit" or object_type == "good" %}
     action="{% url 'ecju_queries:respond_to_query_extra' query_pk=ecju_query.id object_type=object_type extra_pk=extra_id case_pk=case_id %}"
     {% else %}
     action="{% url 'ecju_queries:respond_to_query' query_pk=ecju_query.id object_type=object_type case_pk=case_id %}"
@@ -55,15 +55,8 @@
             <h2 class="govuk-heading-m">{% lcs "ecju_queries.DocumentsList.Documents.TITLE" %}</h2>
         </div>
         <div class="lite-app-bar__controls">
-            {% if object_type == "compliance-visit" %}
-            {% url 'ecju_queries:add_supporting_document' ecju_query.id object_type extra_id case_id as url %}
-            {% else %}
-            {% url 'ecju_queries:add_supporting_document' ecju_query.id object_type case_id case_id as url %}
-            {% endif %}
-            <a role="button" type="submit" draggable="false" class="govuk-button govuk-button--secondary"
-                href={{ url }}>
-                {% lcs "ecju_queries.DocumentsList.AttachDocuments.BUTTON" %}
-            </a>
+            <button type="submit" value="add_document" name="respond_to_query"
+            class="govuk-button govuk-!-margin-right-2">{% lcs "ecju_queries.DocumentsList.AttachDocuments.BUTTON" %}</button>
         </div>
     </div>
 
