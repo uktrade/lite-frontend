@@ -66,7 +66,6 @@ if FEATURE_CSP_MIDDLEWARE_ENABLED:
         "csp.middleware.CSPMiddleware",
     ]
 
-SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 SESSION_COOKIE_SECURE = env.bool("SESSION_COOKIE_SECURE", True)
 SESSION_COOKIE_NAME = env.str("SESSION_COOKIE_NAME", default="exporter")
 TOKEN_SESSION_KEY = env.str("TOKEN_SESSION_KEY")

@@ -66,4 +66,6 @@ LITE_API_AUTH_HEADER_NAME = "EXPORTER-USER-TOKEN"
 
 FEATURE_FLAG_ONLY_ALLOW_SIEL = env.bool("FEATURE_FLAG_ONLY_ALLOW_SIEL", True)
 
+SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
+
 SPIRE_URL = "https://www.spire.trade.gov.uk/spire/fox/espire/LOGIN/login"
