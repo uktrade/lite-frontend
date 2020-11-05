@@ -410,7 +410,7 @@ def upload_a_file_with_description(driver, filename, description):  # noqa
 
 
 @when(parsers.parse('I see the missing document reason text "{reason}"'))
-def get_missing_document_reason_text(driver, reason):
+def get_missing_document_reason(driver, reason): # noqa
     response_page = RespondToEcjuQueryPage(driver)
     assert response_page.get_missing_document_reason_text() == reason
 

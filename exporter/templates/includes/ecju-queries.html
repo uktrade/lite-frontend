@@ -65,6 +65,9 @@
 							<div class="app-documents__item-details">
 								<a {% if document.safe == True %}href="{% url 'ecju_queries:query-document' query_pk=ecju_query.id object_type=object_type case_pk=case_id doc_pk=document.id %}"
 									{% endif %} class="govuk-link--no-visited-state">{{ document.name }}</a>
+								{% if document.description %}
+								<p class="govuk-body">{{ document.description }}</p>
+								{% endif %}
 							</div>
 						</li>
 					{% endfor %}

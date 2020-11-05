@@ -1,5 +1,4 @@
 from core import client
-from http import HTTPStatus
 
 
 def get_ecju_query(request, pk, query_pk):
@@ -43,9 +42,6 @@ def post_ecju_query_document_sensitivity(request, pk, query_pk, json):
 
 
 def post_ecju_query_document(request, pk, query_pk, json):
-    if "description" not in json:
-        json["description"] = ""
-    json = [json]
-
-    data = client.post(request, f"/cases/{pk}/ecju-queries/{query_pk}/document/", json)
-    return data.json(), data.status_code
+    response = client.post(request, f"/cases/{pk}/ecju-queries/{query_pk}/document/", json)
+    response.raise_for_status()
+    return response.json(), response.status_code

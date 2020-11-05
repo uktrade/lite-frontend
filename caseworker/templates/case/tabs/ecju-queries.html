@@ -67,6 +67,9 @@
 								<div class="app-documents__item-details">
 									<a {% if document.safe == True %}href="{% url 'cases:document' queue_pk=queue.id  pk=case.id file_pk=document.id %}"
 										{% endif %} class="govuk-link--no-visited-state">{{ document.name }}</a>
+									{% if document.description %}
+									<p class="govuk-body">{{ document.description }}</p>
+									{% endif %}
 								</div>
 							</li>
 						{% endfor %}

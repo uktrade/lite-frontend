@@ -26,10 +26,10 @@ class DocumentsList:
 
 
 class SupportingDocumentSensitivityForm:
-    TITLE = "Do you have a document for the product and is the document rated OFFICIAL-SENSITIVE or below?"
+    TITLE = "Do you have a document for the query and is the document rated OFFICIAL-SENSITIVE or below?"
     DESCRIPTION = (
         "Documentation should be specifications, datasheets, sales brochures, drawings or anything else that fully "
-        "details what the product is and what it's designed to do."
+        "details what the query is and what it's designed to do."
     )
     ECJU_HELPLINE = (
         "**<noscript>If the answer is No;</noscript>**\n\nContact ECJU to arrange a more secure way to send "
@@ -50,7 +50,7 @@ class UploadDocumentForm:
     TITLE = "Upload a document"
     DESCRIPTION = (
         "Documentation could be specifications, datasheets, sales brochures, drawings "
-        "or anything else that fully details what the product is and what it's designed to do."
+        "or anything else that fully details what the query is and what it's designed to do."
         "\n\nDo not attach a document that’s above OFFICIAL-SENSITIVE. "
         "\n\nThe file must be smaller than 50MB."
     )
