@@ -10,6 +10,9 @@
             <a class="lite-back-link-button" id="back-link" href="{% url 'cases:case' queue_pk=queue.id pk=case.id %}">Back</a>
         </div>
         <div class="govuk-grid-column-one-third">
+            {% if form.errors %}
+                {% include "forms-errors.html" with errors=errors %}
+            {% endif %}
             <h2 class="govuk-heading-l govuk-!-margin-top-0 govuk-!-margin-bottom-3">
                 Review product
                 {% if wizard.steps.count > 1 %}

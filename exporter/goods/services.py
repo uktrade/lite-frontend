@@ -171,4 +171,4 @@ def post_good_document_sensitivity(request, pk, json):
 
 
 def get_case_document_download(request, document_pk, case_pk):
-    return get_document_download_stream(request, f"/cases/{document_pk}/document/documents/{case_pk}/download/")
+    return get_document_download_stream(request, f"/cases/{case_pk}/documents/{document_pk}/download/")

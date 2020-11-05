@@ -89,9 +89,9 @@
 						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
 							<span class="govuk-table__header" aria-hidden="false">Rating</span>
 							{% if good.control_list_entries is not None %}
-								{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}
+								{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries end_use_control=good.end_use_control %}
 							{% elif good.good.control_list_entries is not None %}
-								{% include 'includes/control-list-entries.html' with control_list_entries=good.good.control_list_entries %}
+								{% include 'includes/control-list-entries.html' with control_list_entries=good.good.control_list_entries end_use_control=good.end_use_control %}
 							{% else %}
 								None
 							{% endif %}
@@ -181,7 +181,7 @@
 						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
 							<span aria-hidden="true" class="govuk-table__header">Rating</span>
 							{% if good.control_list_entries is not None %}
-								{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}
+								{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries end_use_control=good.end_use_control %}
 							{% else %}
 								None
 							{% endif %}
