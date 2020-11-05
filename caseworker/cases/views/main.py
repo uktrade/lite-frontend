@@ -298,25 +298,14 @@ class AttachDocuments(TemplateView):
 
 class Document(TemplateView):
     def get(self, request, **kwargs):
-        file_pk = str(kwargs["file_pk"])
-
-        document, _ = get_document(request, file_pk)
-        original_file_name = document["document"]["name"]
-
-        # Stream file
-        def generate_file(result):
-            for chunk in iter(lambda: result["Body"].read(settings.STREAMING_CHUNK_SIZE), b""):
-                yield chunk
-
-        s3 = s3_client()
-        s3_key = document["document"]["s3_key"]
-        s3_response = s3.get_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=s3_key)
-        _kwargs = {}
-        if s3_response.get("ContentType"):
-            _kwargs["content_type"] = s3_response["ContentType"]
-        response = StreamingHttpResponse(generate_file(s3_response), **_kwargs)
-        response["Content-Disposition"] = f'attachment; filename="{original_file_name}"'
-        return response
+        document, _ = get_document(request, pk=kwargs["file_pk"])
+        client = s3_client()
+        signed_url = client.generate_presigned_url(
+            "get_object",
+            Params={"Bucket": settings.AWS_STORAGE_BUCKET_NAME, "Key": document["document"]["s3_key"],},
+            ExpiresIn=15,
+        )
+        return redirect(signed_url)
 
 
 class CaseOfficer(SingleFormView):

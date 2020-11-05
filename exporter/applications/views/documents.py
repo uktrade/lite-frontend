@@ -2,13 +2,15 @@ import logging
 from http import HTTPStatus
 from inspect import signature
 
+from django.conf import settings
 from django.shortcuts import redirect
 from django.urls import reverse, NoReverseMatch
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
-from s3chunkuploader.file_handler import S3FileUploadHandler
+from s3chunkuploader.file_handler import s3_client, S3FileUploadHandler
 
+from caseworker.cases.services import get_document
 from exporter.applications.forms.documents import attach_document_form, delete_document_confirmation_form
 from exporter.applications.helpers.check_your_answers import is_application_export_type_permanent
 from exporter.applications.helpers.reverse_documents import document_switch
@@ -117,7 +119,14 @@ class DownloadDocument(LoginRequiredMixin, TemplateView):
 
 class DownloadGeneratedDocument(LoginRequiredMixin, TemplateView):
     def get(self, request, case_pk, document_pk):
-        return get_case_document_download(request, case_pk=case_pk, document_pk=document_pk)
+        document, _ = get_document(request, pk=document_pk)
+        client = s3_client()
+        signed_url = client.generate_presigned_url(
+            "get_object",
+            Params={"Bucket": settings.AWS_STORAGE_BUCKET_NAME, "Key": document["document"]["s3_key"],},
+            ExpiresIn=15,
+        )
+        return redirect(signed_url)
 
 
 class DeleteDocument(LoginRequiredMixin, TemplateView):
