@@ -137,21 +137,10 @@ MAX_UPLOAD_SIZE = 50 * 1024 * 1024
 # AWS
 VCAP_SERVICES = env.json("VCAP_SERVICES", {})
 
-if VCAP_SERVICES:
-    if "aws-s3-bucket" not in VCAP_SERVICES:
-        raise Exception("S3 Bucket not bound to environment")
-
-    aws_credentials = VCAP_SERVICES["aws-s3-bucket"][0]["credentials"]
-    AWS_ACCESS_KEY_ID = aws_credentials["aws_access_key_id"]
-    AWS_SECRET_ACCESS_KEY = aws_credentials["aws_secret_access_key"]
-    AWS_REGION = aws_credentials["aws_region"]
-    AWS_STORAGE_BUCKET_NAME = aws_credentials["bucket_name"]
-else:
-    AWS_ACCESS_KEY_ID = env.str("AWS_ACCESS_KEY_ID")
-    AWS_SECRET_ACCESS_KEY = env.str("AWS_SECRET_ACCESS_KEY")
-    AWS_REGION = env.str("AWS_REGION")
-    AWS_STORAGE_BUCKET_NAME = env.str("AWS_STORAGE_BUCKET_NAME")
-
+AWS_ACCESS_KEY_ID = env.str("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = env.str("AWS_SECRET_ACCESS_KEY")
+AWS_REGION = env.str("AWS_REGION")
+AWS_STORAGE_BUCKET_NAME = env.str("AWS_STORAGE_BUCKET_NAME")
 
 LOGGING = {
     "version": 1,

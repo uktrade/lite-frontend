@@ -3,7 +3,6 @@ from http import HTTPStatus
 from exporter.applications.helpers.date_fields import format_date
 from core import client
 from core.helpers import convert_parameters_to_query_params
-from exporter.core.services import get_document_download_stream
 
 
 def get_goods(
@@ -168,7 +167,3 @@ def get_document_missing_reasons(request):
 def post_good_document_sensitivity(request, pk, json):
     data = client.post(request, f"/goods/{pk}/document-sensitivity/", json)
     return data.json(), data.status_code
-
-
-def get_case_document_download(request, document_pk, case_pk):
-    return get_document_download_stream(request, f"/cases/{case_pk}/documents/{document_pk}/download/")

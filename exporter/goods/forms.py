@@ -237,7 +237,7 @@ def add_goods_questions(control_list_entries, application_pk=None):
             )
             is_good_controlled_options.append(Option(key=None, value="I don't know", components=[controlled_spire]))
             is_pv_graded_options.append(
-                Option(key="grading_required", value="No, but it needs one", components=[pv_graded_spire])
+                Option(key="grading_required", value="No, it needs one", components=[pv_graded_spire])
             )
     else:
         if not application_pk:

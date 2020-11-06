@@ -1,7 +1,6 @@
 import datetime
 
 from django.contrib import messages
-from django.http import StreamingHttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone

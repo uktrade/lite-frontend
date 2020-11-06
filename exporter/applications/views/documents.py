@@ -15,7 +15,6 @@ from exporter.applications.forms.documents import attach_document_form, delete_d
 from exporter.applications.helpers.check_your_answers import is_application_export_type_permanent
 from exporter.applications.helpers.reverse_documents import document_switch
 from exporter.applications.services import add_document_data, download_document_from_s3, get_application
-from exporter.goods.services import get_case_document_download
 from lite_content.lite_exporter_frontend import strings
 from lite_forms.generators import form_page, error_page
 
