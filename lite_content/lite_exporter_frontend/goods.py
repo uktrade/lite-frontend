@@ -45,6 +45,7 @@ class GoodsList:
 
 class GoodPage:
     TITLE = "Product"
+    ADD_TO_APPLICATION = "Add to application"
     DELETE_GOOD = "Delete product"
     YOUR_QUERY_HEADING = "Your query"
     VERIFIED = "ECJU has verified this product based on the information provided"

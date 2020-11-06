@@ -39,6 +39,12 @@
 			</h1>
 		</div>
 		{% if good.status.key == 'draft' %}
+			{% if draft_pk %}
+				<div class="lite-app-bar__controls">
+					{% make_list draft_pk good.id as url_params %}
+					{% govuk_link_button id='add-good-to-application' text='goods.GoodPage.ADD_TO_APPLICATION' url='applications:add_good_to_application' url_param=url_params classes='govuk-button--secondary' %}
+				</div>
+			{% endif %}
 			<div class="lite-app-bar__controls">
 				{% govuk_link_button id='delete-good' text='goods.GoodPage.DELETE_GOOD' url='goods:delete' url_param=good.id classes='govuk-button--secondary' %}
 			</div>

@@ -109,7 +109,7 @@ class GoodsDetail(LoginRequiredMixin, TemplateView):
         self.good = get_good(request, self.good_id, full_detail=True)[0]
         self.view_type = kwargs["type"]
 
-        if self.view_type not in ["case-notes", "ecju-queries", "ecju-generated-documents"]:
+        if self.view_type not in ["application", "case-notes", "ecju-queries", "ecju-generated-documents"]:
             return Http404
 
         return super(GoodsDetail, self).dispatch(request, *args, **kwargs)
@@ -134,6 +134,9 @@ class GoodsDetail(LoginRequiredMixin, TemplateView):
             if self.view_type == "ecju-generated-documents":
                 generated_documents, _ = get_case_generated_documents(request, self.good["query"]["id"])
                 context["generated_documents"] = generated_documents["results"]
+
+        if self.view_type == "application":
+            context["draft_pk"] = str(kwargs.get("draft_pk"))
 
         if self.view_type == "case-notes":
             if self.good.get("case_id"):

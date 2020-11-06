@@ -55,6 +55,16 @@ class ApplicationGoodsList(LoginRequiredMixin, TemplateView):
         )
 
 
+class ViewGoodAddToApplication(LoginRequiredMixin, TemplateView):
+    def get(self, request, **kwargs):
+        return redirect(
+            reverse_lazy(
+                "goods:good_detail_application",
+                kwargs={"pk": kwargs["good_pk"], "type": "application", "draft_pk": kwargs["pk"]},
+            ),
+        )
+
+
 class ExistingGoodsList(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         """
