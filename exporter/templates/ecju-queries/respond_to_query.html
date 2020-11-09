@@ -47,7 +47,8 @@
         {% endif %}
         <textarea id="response" name="response" rows="10"
             class="govuk-textarea govuk-js-character-count">{{ response }}</textarea>
-        <p class="govuk-caption-m" id="response-length-warning" class="govuk-hint govuk-character-count__message" aria-live="polite">You can enter upto 2200 characters</p>
+        <p class="govuk-caption-m" id="response-length-warning" class="govuk-hint govuk-character-count__message"
+            aria-live="polite">You can enter upto 2200 characters</p>
     </div>
 
     <div class="lite-app-bar">
@@ -56,7 +57,7 @@
         </div>
         <div class="lite-app-bar__controls">
             <button type="submit" value="add_document" name="respond_to_query"
-            class="govuk-button govuk-!-margin-right-2">{% lcs "ecju_queries.DocumentsList.AttachDocuments.BUTTON" %}</button>
+                class="govuk-button govuk-!-margin-right-2">{% lcs "ecju_queries.DocumentsList.AttachDocuments.BUTTON" %}</button>
         </div>
     </div>
 
@@ -86,29 +87,28 @@
                 <p class="govuk-label">{% lcs 'Goods.Documents.PROCESSING' %}</p>
                 {% endif %}
                 {% if not ecju_query.response %}
-                <a href="{% url 'ecju_queries:query-document-delete' query_pk=ecju_query.id object_type=object_type case_pk=case_id doc_pk=document.id %}"
-                    class="govuk-link govuk-!-font-size-16 govuk-!-margin-top-2">
-                    {% lcs "ecju_queries.DocumentsList.Documents.DELETE" %}
-                </a>
+                    {% if object_type == "compliance-visit" or object_type == "good" %}
+                        <a href="{% url 'ecju_queries:query-document-delete' query_pk=ecju_query.id object_type=object_type extra_pk=extra_id case_pk=case_id doc_pk=document.id %}"
+                            class="govuk-link govuk-!-font-size-16 govuk-!-margin-top-2">
+                            {% lcs "ecju_queries.DocumentsList.Documents.DELETE" %}
+                        </a>
+                    {% else %}
+                        <a href="{% url 'ecju_queries:query-document-delete' query_pk=ecju_query.id object_type=object_type extra_pk=case_id case_pk=case_id doc_pk=document.id %}"
+                        class="govuk-link govuk-!-font-size-16 govuk-!-margin-top-2">
+                        {% lcs "ecju_queries.DocumentsList.Documents.DELETE" %}
+                        </a>
+                    {% endif %}
                 {% endif %}
             </div>
         </li>
         {% endfor %}
     </ol>
-    {% elif ecju_query.missing_document_reason.key %}
-    <div class="lite-information-text">
-        <span class="lite-information-text__icon" aria-hidden="true">!</span>
-        <p class="lite-information-text__text">
-            <span class="govuk-visually-hidden">{% lcs "generic.NoticeComponent.INFORMATION" %}</span>
-            No document attached: {{ ecju_query.missing_document_reason.value }}
-        </p>
-    </div>
     {% else %}
     {% include "includes/notice.html" with text="ecju_queries.DocumentsList.Documents.NO_DOCUMENT_ATTACHED" %}
     {% endif %}
     <div class="buttons-row govuk-!-margin-top-8">
         <button type="submit" value="submit" name="respond_to_query"
-            class="govuk-button govuk-!-margin-right-2">{% lcs "ecju_queries.Forms.RespondForm.SAVE" %}</button>
+            class="govuk-button govuk-!-margin-right-2">{% lcs "ecju_queries.Forms.RespondForm.SEND" %}</button>
     </div>
 </form>
 

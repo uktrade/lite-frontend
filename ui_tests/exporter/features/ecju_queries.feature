@@ -35,10 +35,8 @@ So that I can quickly identify where action is required by me and respond to any
     And I click to respond to the ecju query
     And I enter my response as "Uploading requested documents"
     And I click "add_document"
-    And I select that I cannot attach a document
-    And I see ECJU helpline details
-    And I select a valid missing document reason
-    And I see the missing document reason text "No document attached: Document is above OFFICIAL-SENSITIVE"
+    And I click the back link
+    And I see the missing document reason text "There are no documents."
     And I click "submit"
     And I select "yes" for submitting response and click submit
     Then I see my ecju query is closed
@@ -51,11 +49,9 @@ So that I can quickly identify where action is required by me and respond to any
     And I click to respond to the ecju query
     And I enter my response as "Uploading requested documents"
     And I click "add_document"
-    And I confirm I can upload a document
     And I upload file "file_for_doc_upload_test_1.txt" with description "Supporting document for the query"
     And I see "1" documents ready to be included in the response
     And I click "add_document"
-    And I confirm I can upload a document
     And I upload file "file_for_doc_upload_test_1.txt" with description "Supporting document for the query"
     And I see "2" documents ready to be included in the response
     And I click "submit"
@@ -70,7 +66,6 @@ So that I can quickly identify where action is required by me and respond to any
     And I click to respond to the ecju query
     And I enter my response as "Uploading requested documents"
     And I click "add_document"
-    And I confirm I can upload a document
     And I upload file "file_for_doc_upload_test_1.txt" with description "Supporting document for the query"
     And I see "1" documents ready to be included in the response
     And I delete document "1" from the response

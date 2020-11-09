@@ -1,11 +1,13 @@
 from lite_content.lite_exporter_frontend import generic
 
+
 class Forms:
     class RespondForm:
         BACK_LINK = "Back to ecju queries"
         TITLE = "Respond to query"
         RESPONSE = "Your response"
         SAVE = "Save"
+        SEND = "Send"
 
     class ConfirmResponseForm:
         TITLE = "Confirm you want to send this response"
@@ -17,7 +19,7 @@ class Forms:
 
 class DocumentsList:
     class AttachDocuments:
-        BUTTON = "Add a document"
+        BUTTON = "Attach a document"
 
     class Documents:
         TITLE = "Documents"
@@ -47,13 +49,8 @@ class SupportingDocumentSensitivityForm:
 
 
 class UploadDocumentForm:
-    TITLE = "Upload a document"
-    DESCRIPTION = (
-        "Documentation could be specifications, datasheets, sales brochures, drawings "
-        "or anything else that fully details what the query is and what it's designed to do."
-        "\n\nDo not attach a document that’s above OFFICIAL-SENSITIVE. "
-        "\n\nThe file must be smaller than 50MB."
-    )
+    TITLE = "Attach a document"
+    DESCRIPTION = "Do not attach a document that's above OFFICIAL-SENSITIVE.\n\nThe file must be smaller than 50MB."
     BUTTON = "Save"
     BACK_FORM_LINK = "Back"
 

@@ -11,13 +11,11 @@ from exporter.applications.services import add_document_data, download_document_
 from exporter.ecju_queries.forms import (
     respond_to_query_form,
     ecju_query_respond_confirmation_form,
-    document_grading_form,
     upload_documents_form,
 )
 from exporter.ecju_queries.services import (
     get_ecju_query,
     put_ecju_query,
-    post_ecju_query_document_sensitivity,
     post_ecju_query_document,
     get_ecju_query_document,
     get_ecju_query_documents,
@@ -45,7 +43,7 @@ class RespondToQuery(LoginRequiredMixin, TemplateView):
         self.object_type = kwargs["object_type"]
         self.ecju_query_id = str(kwargs["query_pk"])
         self.ecju_query = get_ecju_query(request, self.case_id, self.ecju_query_id)
-        self.extra_pk = kwargs.get("extra_pk")
+        self.extra_id = kwargs.get("extra_pk")
 
         if self.object_type == "good":
             self.extra_id = kwargs["extra_pk"]
@@ -119,7 +117,7 @@ class RespondToQuery(LoginRequiredMixin, TemplateView):
                         "query_pk": self.ecju_query_id,
                         "object_type": self.object_type,
                         "case_pk": self.case_id,
-                        "extra_pk": self.case_id,
+                        "extra_pk": self.extra_id if self.extra_id else self.case_id,
                     },
                 )
             )
@@ -177,11 +175,8 @@ class RespondToQuery(LoginRequiredMixin, TemplateView):
             return error_page(request, strings.applications.AttachDocumentPage.UPLOAD_GENERIC_ERROR)
 
 
-class CheckDocumentGrading(LoginRequiredMixin, TemplateView):
-    case_pk = None
-    query_pk = None
-    back_link = None
-
+@method_decorator(csrf_exempt, "dispatch")
+class UploadDocuments(LoginRequiredMixin, TemplateView):
     def dispatch(self, request, *args, **kwargs):
         self.case_pk = kwargs["case_pk"]
         self.query_pk = kwargs["query_pk"]
@@ -189,7 +184,7 @@ class CheckDocumentGrading(LoginRequiredMixin, TemplateView):
         self.extra_pk = kwargs["extra_pk"]
 
         if self.object_type == "compliance-visit":
-            self.back_link = reverse(
+            self.success_url = reverse(
                 "ecju_queries:respond_to_query_extra",
                 kwargs={
                     "query_pk": self.query_pk,
@@ -199,58 +194,15 @@ class CheckDocumentGrading(LoginRequiredMixin, TemplateView):
                 },
             )
         else:
-            self.back_link = reverse(
+            self.success_url = reverse(
                 "ecju_queries:respond_to_query",
                 kwargs={"query_pk": self.query_pk, "object_type": self.object_type, "case_pk": self.case_pk},
             )
+
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, **kwargs):
-        form = document_grading_form(request, self.back_link)
-        return form_page(request, form, extra_data={"case_pk": self.case_pk, "query_pk": self.query_pk})
-
-    def post(self, request, **kwargs):
-        request_data = request.POST
-        document_available = request_data.get("has_document_to_upload") == "yes"
-        response, status_code = post_ecju_query_document_sensitivity(request, self.case_pk, self.query_pk, request_data)
-        if self.object_type == "compliance-visit":
-            extra_pk = self.extra_pk
-        else:
-            extra_pk = self.case_pk
-        upload_doc_link = reverse(
-            "ecju_queries:upload_document",
-            kwargs={
-                "case_pk": self.case_pk,
-                "query_pk": self.query_pk,
-                "object_type": self.object_type,
-                "extra_pk": extra_pk,
-            },
-        )
-
-        if status_code == HTTPStatus.OK:
-            return redirect(upload_doc_link) if document_available else redirect(self.back_link)
-        else:
-            form = document_grading_form(request, self.back_link)
-            return form_page(request, form, data=request_data, errors=response["errors"])
-
-
-@method_decorator(csrf_exempt, "dispatch")
-class UploadDocuments(LoginRequiredMixin, TemplateView):
-    def dispatch(self, request, *args, **kwargs):
-        self.case_pk = kwargs["case_pk"]
-        self.query_pk = kwargs["query_pk"]
-        self.object_type = kwargs["object_type"]
-        self.extra_pk = kwargs["extra_pk"]
-        return super().dispatch(request, *args, **kwargs)
-
-    def get(self, request, **kwargs):
-        self.back_link = BackLink(
-            ecju_queries.UploadDocumentForm.BACK_FORM_LINK,
-            reverse_lazy(
-                "ecju_queries:add_supporting_document",
-                kwargs={"query_pk": self.query_pk, "object_type": self.object_type, "case_pk": self.case_pk},
-            ),
-        )
+        self.back_link = BackLink(ecju_queries.UploadDocumentForm.BACK_FORM_LINK, self.success_url)
         form = upload_documents_form(self.back_link)
         return form_page(
             request,
@@ -270,25 +222,7 @@ class UploadDocuments(LoginRequiredMixin, TemplateView):
         if status_code != HTTPStatus.CREATED:
             return error_page(request, data["errors"]["file"])
 
-        if self.object_type == "compliance-visit":
-            return redirect(
-                reverse(
-                    "ecju_queries:respond_to_query_extra",
-                    kwargs={
-                        "query_pk": self.query_pk,
-                        "object_type": self.object_type,
-                        "case_pk": self.case_pk,
-                        "extra_pk": self.extra_pk,
-                    },
-                )
-            )
-        else:
-            return redirect(
-                reverse(
-                    "ecju_queries:respond_to_query",
-                    kwargs={"query_pk": self.query_pk, "object_type": self.object_type, "case_pk": self.case_pk},
-                )
-            )
+        return redirect(self.success_url)
 
 
 class QueryDocument(LoginRequiredMixin, TemplateView):
@@ -307,7 +241,25 @@ class QueryDocumentDelete(LoginRequiredMixin, TemplateView):
         self.object_type = kwargs["object_type"]
         self.case_pk = str(kwargs["case_pk"])
         self.query_pk = str(kwargs["query_pk"])
+        self.extra_pk = str(kwargs["extra_pk"])
         self.doc_pk = str(kwargs["doc_pk"])
+
+        if self.object_type == "compliance-visit":
+            self.success_url = reverse(
+                "ecju_queries:respond_to_query_extra",
+                kwargs={
+                    "query_pk": self.query_pk,
+                    "object_type": self.object_type,
+                    "case_pk": self.case_pk,
+                    "extra_pk": self.extra_pk,
+                },
+            )
+        else:
+            self.success_url = reverse(
+                "ecju_queries:respond_to_query",
+                kwargs={"query_pk": self.query_pk, "object_type": self.object_type, "case_pk": self.case_pk},
+            )
+
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, **kwargs):
@@ -317,6 +269,7 @@ class QueryDocumentDelete(LoginRequiredMixin, TemplateView):
             "case_pk": self.case_pk,
             "query_pk": self.query_pk,
             "doc_pk": self.doc_pk,
+            "extra_pk": self.extra_pk,
             "title": ecju_queries.SupportingDocumentDeletePage.TITLE,
             "document": document,
         }
@@ -325,9 +278,4 @@ class QueryDocumentDelete(LoginRequiredMixin, TemplateView):
     def post(self, request, **kwargs):
         delete_ecju_query_document(request, self.case_pk, self.query_pk, self.doc_pk)
 
-        return redirect(
-            reverse(
-                "ecju_queries:respond_to_query",
-                kwargs={"query_pk": self.query_pk, "object_type": "application", "case_pk": self.case_pk},
-            )
-        )
+        return redirect(self.success_url)

@@ -13,13 +13,8 @@ urlpatterns = [
     ),
     path(
         "<uuid:query_pk>/<str:object_type>/<uuid:extra_pk>/case/<uuid:case_pk>/add-document/",
-        views.CheckDocumentGrading.as_view(),
-        name="add_supporting_document",
-    ),
-    path(
-        "<uuid:query_pk>/<str:object_type>/<uuid:extra_pk>/case/<uuid:case_pk>/upload-document/",
         views.UploadDocuments.as_view(),
-        name="upload_document",
+        name="add_supporting_document",
     ),
     path(
         "<uuid:query_pk>/<str:object_type>/<uuid:case_pk>/document/<uuid:doc_pk>",
@@ -27,7 +22,7 @@ urlpatterns = [
         name="query-document",
     ),
     path(
-        "<uuid:query_pk>/<str:object_type>/<uuid:case_pk>/document/<uuid:doc_pk>/delete/",
+        "<uuid:query_pk>/<str:object_type>/<uuid:extra_pk>/case/<uuid:case_pk>/document/<uuid:doc_pk>/delete/",
         views.QueryDocumentDelete.as_view(),
         name="query-document-delete",
     ),

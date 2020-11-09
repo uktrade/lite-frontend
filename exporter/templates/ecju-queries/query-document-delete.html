@@ -3,8 +3,15 @@
 {% load svg %}
 
 {% block back_link %}
-<a href="{% url 'ecju_queries:respond_to_query' query_pk object_type case_pk %}" id="back-link"
-    class="govuk-back-link">{% lcs "ecju_queries.SupportingDocumentDeletePage.BACK" %}</a>
+
+{% if object_type == "compliance-visit" or object_type == "good" %}
+<a href="{% url 'ecju_queries:respond_to_query_extra' query_pk=query_pk object_type=object_type extra_pk=extra_pk case_pk=case_pk %}"
+    id="back-link" class="govuk-back-link">{% lcs "ecju_queries.SupportingDocumentDeletePage.BACK" %}</a>
+{% else %}
+<a href="{% url 'ecju_queries:respond_to_query' query_pk=query_pk object_type=object_type case_pk=case_pk %}"
+    id="back-link" class="govuk-back-link">{% lcs "ecju_queries.SupportingDocumentDeletePage.BACK" %}</a>
+{% endif %}
+
 {% endblock %}
 
 {% block body %}
@@ -50,7 +57,8 @@
 </div>
 
 <div class="buttons-row">
-    <form method="post" action="{% url 'ecju_queries:query-document-delete' query_pk object_type case_pk doc_pk %}">
+    <form method="post"
+        action="{% url 'ecju_queries:query-document-delete' query_pk object_type extra_pk case_pk doc_pk %}">
         {% csrf_token %}
         <button type="submit" value="submit"
             class="govuk-button govuk-button--warning govuk-!-margin-right-2">{% lcs "ecju_queries.SupportingDocumentDeletePage.BUTTON" %}</button>
