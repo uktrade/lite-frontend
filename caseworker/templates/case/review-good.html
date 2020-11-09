@@ -9,7 +9,7 @@
         <div class="govuk-grid-column-full govuk-!-margin-bottom-6">
             <a class="lite-back-link-button" id="back-link" href="{% url 'cases:case' queue_pk=queue.id pk=case.id %}">Back</a>
         </div>
-        <div class="govuk-grid-column-one-third">
+        <div class="govuk-grid-column-one-third">   
             <h2 class="govuk-heading-l govuk-!-margin-top-6 govuk-!-margin-bottom-3">
                 Review product
                 {% if wizard.steps.count > 1 %}
@@ -17,6 +17,7 @@
                 {% endif %}
             </h2>
             <p class="govuk-!-margin-bottom-6 govuk-caption-m">{{ object.good.description }}</p>
+
 			<form method="post" enctype="multipart/form-data" novalidate="novalidate">
                 {% csrf_token %}
                 <div class="w-2-3" id="form-container">

@@ -110,17 +110,16 @@
 
 			<h3 class="govuk-heading-m">{% lcs 'goods.GoodPage.YOUR_GOOD' %}</h3>
 		{% endif %}
-
 		{% if good.status.key == 'draft' %}
 			{% if good.is_good_controlled.key == "unsure" or good.is_pv_graded.key == "grading_required" %}
 				{%if documents or good.missing_document_reason.key  %}
 					<div class="govuk-inset-text">
-						{% lcs 'goods.GoodPage.RaiseQuery.PREFIX' %}
-						<a href="{% url 'goods:raise_goods_query' good.id %}" class="govuk-link govuk-link--no-visited-state">
-							{% lcs 'goods.GoodPage.RaiseQuery.LINK' %}
-						</a>
-						{% lcs 'goods.GoodPage.RaiseQuery.SUFFIX' %}
-					</div>
+					{% if FEATURE_FLAG_ONLY_ALLOW_SIEL %}
+						Use <a href="https://www.spire.trade.gov.uk">SPIRE</a> to raise a control list classification (CLC) query if you're not sure whether your product is on the control list.
+					{% else %}
+							If you're not sure it's a controlled product, <a href="{% url 'goods:raise_goods_query' good.id %}" class="govuk-link govuk-link--no-visited-state">raise a control list classification query</a>.
+					{% endif %}
+						</div>
 					<br>
 				{% endif %}
 			{% endif %}

@@ -100,10 +100,22 @@
 
 			{# End user query tile #}
 			<div class="app-tile">
-				<a href="{% url 'end_users:end_users' %}" class="app-tile__heading" id="link-eua">
-					{% lcs 'hub.Tiles.END_USER_ADVISORIES' %}{% if notifications.notifications.end_user_advisory %}<span class="lite-notification-bubble" id="eua-notifications"><span class="govuk-visually-hidden"> (</span>{{ notifications.notifications.end_user_advisory }}<span class="govuk-visually-hidden"> notifications)</span></span>{% endif %}
-				</a>
-				<p class="app-tile__body">{% lcs 'hub.Tiles.EUA.ASK_FOR_ADVICE' %}</p>
+
+				{% if FEATURE_FLAG_ONLY_ALLOW_SIEL %}
+					<span class="govuk-heading-s" id="link-eua">
+						{% lcs 'hub.Tiles.END_USER_ADVISORIES' %}{% if notifications.notifications.end_user_advisory %}<span class="lite-notification-bubble" id="eua-notifications"><span class="govuk-visually-hidden"> (</span>{{ notifications.notifications.end_user_advisory }}<span class="govuk-visually-hidden"> notifications)</span></span>{% endif %}
+					</span>
+					<p class="app-tile__body">
+						Use <a href="https://www.spire.trade.gov.uk">SPIRE</a> to ask for advice about an overseas organisation, government or individual in your export of products that are not controlled.
+					</p>
+				{% else %}
+					<a href="{% url 'end_users:end_users' %}" class="app-tile__heading" id="link-eua">
+						{% lcs 'hub.Tiles.END_USER_ADVISORIES' %}{% if notifications.notifications.end_user_advisory %}<span class="lite-notification-bubble" id="eua-notifications"><span class="govuk-visually-hidden"> (</span>{{ notifications.notifications.end_user_advisory }}<span class="govuk-visually-hidden"> notifications)</span></span>{% endif %}
+					</a>
+					<p class="app-tile__body">{% lcs 'hub.Tiles.EUA.ASK_FOR_ADVICE' %}</p>
+				{% endif %}
+
+
 			</div>
 		</section>
 	{% else %}

@@ -222,6 +222,7 @@ def data_open_case():
                         "control_list_entries": [{"rating": "ML1a", "text": "Outmoded bourgeois reactionaries",}],
                         "countries": [{"id": "US", "name": "United States", "type": "gov.uk Country", "is_eu": False}],
                         "document": None,
+                        "end_use_control": ["MEND"],
                         "flags": [
                             {
                                 "id": "00000000-0000-0000-0000-000000000004",

@@ -73,11 +73,6 @@ class GoodPage:
         ATTACH = generic.Document.ATTACH
         REMOVE = generic.Document.REMOVE
 
-    class RaiseQuery:
-        PREFIX = "If you're not sure it's a controlled product, "
-        LINK = "raise a control list classification query"
-        SUFFIX = "."
-
     class Table:
         DESCRIPTION = "Description"
         IS_GOOD_CONTROLLED = "Controlled"
