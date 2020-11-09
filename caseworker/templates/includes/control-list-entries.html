@@ -2,12 +2,16 @@
 	<ol class="lite-inline-list">
 		{% for item in control_list_entries %}
 			{% if 'rating' in item %}
-				<li><span data-definition-title="{{ item.rating }}" data-definition-text="{{ item.text }}">{{ item.rating|highlight_text:control_list_entry|default:"" }}</span>{% if not forloop.last %}, {% endif %}</li>
+				<li><span data-definition-title="{{ item.rating }}" data-definition-text="{{ item.text }}">{{ item.rating|highlight_text:control_list_entry|default:"" }}</span>{% if not forloop.last or end_use_control %}, {% endif %}</li>
 			{% else %}
-				<li class="govuk-body">{{ item }}{% if not forloop.last %}, {% endif %}</li>
+				<li class="govuk-body">{{ item }}{% if not forloop.last or end_use_control %}, {% endif %}</li>
 			{% endif %}
-		{% empty %}
-			{{ None|default_na }}
 		{% endfor %}
+		{% for item in end_use_control %}
+			<li class="govuk-body">{{ item }}{% if not forloop.last %}, {% endif %}</li>
+		{% endfor %}
+		{% if not control_list_entries and not end_use_control %}
+			{{ None|default_na }}
+		{% endif %}
 	</ol>
 {% endwith %}

@@ -1,15 +1,13 @@
 from http import HTTPStatus
 from urllib.parse import urlencode
 
-from django.http import StreamingHttpResponse, HttpResponse
+from django.http import HttpResponse
 
 from core import client
 
 from core.helpers import convert_parameters_to_query_params, convert_value_to_query_param
 from lite_content.lite_exporter_frontend.applications import OpenGeneralLicenceQuestions
-from lite_content.lite_exporter_frontend.generic import Document
 from lite_forms.components import Option, TextArea
-from lite_forms.generators import error_page
 
 
 def get_units(request, units=[]):  # noqa
@@ -240,17 +238,6 @@ def get_pv_gradings(request, convert_to_options=False):
 def get_control_list_entry(request, rating):
     data = client.get(request, f"/static/control-list-entries/{rating}")
     return data.json().get("control_list_entry")
-
-
-def get_document_download_stream(request, url):
-    response = client.get(request, url)
-    if response.status_code == HTTPStatus.OK:
-        return StreamingHttpResponse(response, content_type=response.headers._store["content-type"][1])
-    elif response.status_code == HTTPStatus.UNAUTHORIZED:
-        error = Document.ACCESS_DENIED
-    else:
-        error = Document.DOWNLOAD_ERROR
-    return error_page(request, error)
 
 
 def _register_organisation(request, json, _type):

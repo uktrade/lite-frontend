@@ -85,3 +85,20 @@ LITE_API_AUTH_HEADER_NAME = "GOV-USER-TOKEN"
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = ["gds"]
 CRISPY_TEMPLATE_PACK = "gds"
+
+if "redis" in VCAP_SERVICES:
+    REDIS_URL = VCAP_SERVICES["redis"][0]["credentials"]["uri"]
+else:
+    REDIS_URL = env.str("REDIS_URL", "")
+
+# session
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+
+# Caches
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": REDIS_URL,
+        "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient",},
+    }
+}
