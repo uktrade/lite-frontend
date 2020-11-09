@@ -287,7 +287,7 @@ class AssignFlags(LoginRequiredMixin, SingleFormView):
             return FlagLevel.CASES
         elif self.request.GET.get("organisation"):
             return FlagLevel.ORGANISATIONS
-        elif self.request.GET.get("good_ids") or self.request.GET.get("goods_types"):
+        elif self.request.GET.get("goods") or self.request.GET.get("goods_types"):
             return FlagLevel.GOODS
         else:
             return FlagLevel.DESTINATIONS

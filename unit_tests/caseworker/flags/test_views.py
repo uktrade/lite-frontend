@@ -28,7 +28,7 @@ def test_assign_flags_form_goods(authorized_client, data_standard_case, queue_pk
 
     good_pk = data_standard_case["case"]["data"]["goods"][0]["good"]["id"]
 
-    url = reverse("cases:assign_flags", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk}) + f"?good_ids={good_pk}"
+    url = reverse("cases:assign_flags", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk}) + f"?goods={good_pk}"
     response = authorized_client.get(url)
     assert response.status_code == 200
 
@@ -76,7 +76,7 @@ def test_assign_flags_goods_form_submit(
         "flags[]": "",
     }
 
-    url = reverse("cases:assign_flags", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk}) + f"?good_ids={good_pk}"
+    url = reverse("cases:assign_flags", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk}) + f"?goods={good_pk}"
     response = authorized_client.get(url)
     assert response.status_code == 200
 
