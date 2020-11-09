@@ -197,6 +197,7 @@ class GoodSoftwareTechnology(LoginRequiredMixin, SingleFormView):
             self.application_id = str(kwargs["pk"])
         else:
             self.object_pk = str(kwargs["pk"])
+        self.draft_pk = kwargs.get("draft_pk")
         self.data = get_good_details(request, self.object_pk)[0]
         self.form = software_technology_details_form(request, self.data.get("item_category"))
         self.action = edit_good_details
@@ -216,6 +217,8 @@ class GoodSoftwareTechnology(LoginRequiredMixin, SingleFormView):
                 )
             else:
                 return reverse_lazy("goods:good_military_use", kwargs={"pk": self.object_pk})
+        elif self.draft_pk:
+            return reverse("applications:view_good_and_add", kwargs={"pk": self.draft_pk, "good_pk": self.object_pk})
         # Edit
         else:
             return return_to_good_summary(self.kwargs, self.application_id, self.object_pk)
@@ -231,6 +234,7 @@ class GoodMilitaryUse(LoginRequiredMixin, SingleFormView):
             self.application_id = str(kwargs["pk"])
         else:
             self.object_pk = str(kwargs["pk"])
+        self.draft_pk = kwargs.get("draft_pk")
         self.data = get_good_details(request, self.object_pk)[0]
         self.form = product_military_use_form(request)
         self.action = edit_good_details
@@ -253,6 +257,8 @@ class GoodMilitaryUse(LoginRequiredMixin, SingleFormView):
                         "applications:good_information_security",
                         kwargs={"pk": self.application_id, "good_pk": self.object_pk},
                     )
+                elif self.draft_pk:
+                    return reverse("applications:view_good_and_add", kwargs={"pk": self.draft_pk, "good_pk": self.object_pk})
                 else:
                     return reverse_lazy("goods:good_information_security", kwargs={"pk": self.object_pk})
         # Next question good component if good is in category 1
@@ -263,6 +269,8 @@ class GoodMilitaryUse(LoginRequiredMixin, SingleFormView):
                 )
             else:
                 return reverse_lazy("goods:good_component", kwargs={"pk": self.object_pk})
+        elif self.draft_pk:
+            return reverse("applications:view_good_and_add", kwargs={"pk": self.draft_pk, "good_pk": self.object_pk})
         # Edit
         else:
             return return_to_good_summary(self.kwargs, self.application_id, self.object_pk)
@@ -278,6 +286,7 @@ class GoodComponent(LoginRequiredMixin, SingleFormView):
             self.application_id = str(kwargs["pk"])
         else:
             self.object_pk = str(kwargs["pk"])
+        self.draft_pk = kwargs.get("draft_pk")
         self.data = get_good_details(request, self.object_pk)[0]
         self.form = product_component_form(request)
         self.action = edit_good_details
@@ -300,6 +309,8 @@ class GoodComponent(LoginRequiredMixin, SingleFormView):
                 )
             else:
                 return reverse_lazy("goods:good_information_security", kwargs={"pk": self.object_pk})
+        elif self.draft_pk:
+            return reverse("applications:view_good_and_add", kwargs={"pk": self.draft_pk, "good_pk": self.object_pk})
         # Edit
         else:
             return return_to_good_summary(self.kwargs, self.application_id, self.object_pk)
@@ -315,6 +326,7 @@ class GoodInformationSecurity(LoginRequiredMixin, SingleFormView):
             self.application_id = str(kwargs["pk"])
         else:
             self.object_pk = str(kwargs["pk"])
+        self.draft_pk = kwargs.get("draft_pk")
         self.data = get_good_details(request, self.object_pk)[0]
         self.form = product_uses_information_security(request)
         self.action = edit_good_details
@@ -332,6 +344,8 @@ class GoodInformationSecurity(LoginRequiredMixin, SingleFormView):
             return reverse_lazy(
                 "applications:add_good_summary", kwargs={"pk": self.application_id, "good_pk": self.object_pk}
             )
+        elif self.draft_pk:
+            return reverse("applications:view_good_and_add", kwargs={"pk": self.draft_pk, "good_pk": self.object_pk})
         else:
             return reverse_lazy("goods:good", kwargs={"pk": self.object_pk})
 
@@ -359,6 +373,7 @@ class EditGood(LoginRequiredMixin, SingleFormView):
             self.application_id = str(kwargs["pk"])
         else:
             self.object_pk = str(kwargs["pk"])
+        self.draft_pk = kwargs.get("draft_pk")
         self.data = get_good(request, self.object_pk)[0]
         self.form = edit_good_detail_form(request, self.object_pk)
         self.action = edit_good
@@ -375,6 +390,8 @@ class EditGood(LoginRequiredMixin, SingleFormView):
             return reverse_lazy(
                 "applications:add_good_summary", kwargs={"pk": self.application_id, "good_pk": self.object_pk}
             )
+        elif self.draft_pk:
+            return reverse("applications:view_good_and_add", kwargs={"pk": self.draft_pk, "good_pk": self.object_pk})
         else:
             return reverse_lazy("goods:good", kwargs={"pk": self.object_pk})
 
@@ -389,6 +406,7 @@ class EditGrading(LoginRequiredMixin, SingleFormView):
             self.application_id = str(kwargs["pk"])
         else:
             self.object_pk = str(kwargs["pk"])
+        self.draft_pk = kwargs.get("draft_pk")
         self.data = get_good(request, self.object_pk)[0]
         self.form = edit_grading_form(request, self.object_pk)
         self.action = edit_good_pv_grading
@@ -415,7 +433,9 @@ class EditGrading(LoginRequiredMixin, SingleFormView):
         raise_a_clc_query = "unsure" == good["is_good_controlled"]["key"]
         raise_a_pv_query = "grading_required" == good["is_pv_graded"]["key"]
 
-        if not good.get("documents") and not good.get("missing_document_reason"):
+        if self.draft_pk:
+            return reverse("applications:view_good_and_add", kwargs={"pk": self.draft_pk, "good_pk": self.object_pk})
+        elif not good.get("documents") and not good.get("missing_document_reason"):
             return reverse_lazy("goods:add_document", kwargs={"pk": self.object_pk})
         elif raise_a_clc_query or raise_a_pv_query:
             return reverse_lazy("goods:raise_goods_query", kwargs={"pk": self.object_pk})
@@ -433,6 +453,7 @@ class EditFirearmProductType(LoginRequiredMixin, SingleFormView):
             self.application_id = str(kwargs["pk"])
         else:
             self.object_pk = str(kwargs["pk"])
+        self.draft_pk = kwargs.get("draft_pk")
         self.data = get_good_details(request, self.object_pk)[0]["firearm_details"]
         self.form = group_two_product_type_form()
         self.action = edit_good_firearm_details
@@ -446,6 +467,8 @@ class EditFirearmProductType(LoginRequiredMixin, SingleFormView):
                 )
             else:
                 return reverse_lazy("goods:ammunition", kwargs={"pk": self.object_pk})
+        elif self.draft_pk:
+            return reverse("applications:view_good_and_add", kwargs={"pk": self.draft_pk, "good_pk": self.object_pk})
         # Edit
         else:
             return return_to_good_summary(self.kwargs, self.application_id, self.object_pk)
@@ -461,6 +484,7 @@ class EditAmmunition(LoginRequiredMixin, SingleFormView):
             self.application_id = str(kwargs["pk"])
         else:
             self.object_pk = str(kwargs["pk"])
+        self.draft_pk = kwargs.get("draft_pk")
         self.data = get_good_details(request, self.object_pk)[0]["firearm_details"]
         self.form = firearm_ammunition_details_form()
         self.action = edit_good_firearm_details
@@ -474,6 +498,8 @@ class EditAmmunition(LoginRequiredMixin, SingleFormView):
                 )
             else:
                 return reverse_lazy("goods:firearms_act", kwargs={"pk": self.object_pk})
+        elif self.draft_pk:
+            return reverse("applications:view_good_and_add", kwargs={"pk": self.draft_pk, "good_pk": self.object_pk})
         # Edit
         else:
             return return_to_good_summary(self.kwargs, self.application_id, self.object_pk)
@@ -489,6 +515,7 @@ class EditFirearmActDetails(LoginRequiredMixin, SingleFormView):
             self.application_id = str(kwargs["pk"])
         else:
             self.object_pk = str(kwargs["pk"])
+        self.draft_pk = kwargs.get("draft_pk")
         self.data = get_good_details(request, self.object_pk)[0]["firearm_details"]
         self.form = firearms_act_confirmation_form()
         self.action = edit_good_firearm_details
@@ -524,6 +551,8 @@ class EditFirearmActDetails(LoginRequiredMixin, SingleFormView):
                 )
             else:
                 return reverse_lazy("goods:identification_markings", kwargs={"pk": self.object_pk})
+        elif self.draft_pk:
+            return reverse("applications:view_good_and_add", kwargs={"pk": self.draft_pk, "good_pk": self.object_pk})
         # Edit
         else:
             return return_to_good_summary(self.kwargs, self.application_id, self.object_pk)
@@ -539,6 +568,7 @@ class EditIdentificationMarkings(LoginRequiredMixin, SingleFormView):
             self.application_id = str(kwargs["pk"])
         else:
             self.object_pk = str(kwargs["pk"])
+        self.draft_pk = kwargs.get("draft_pk")
         self.data = get_good_details(request, self.object_pk)[0]["firearm_details"]
         self.form = identification_markings_form()
         self.action = edit_good_firearm_details
@@ -549,6 +579,8 @@ class EditIdentificationMarkings(LoginRequiredMixin, SingleFormView):
             return reverse_lazy(
                 "applications:add_good_summary", kwargs={"pk": self.application_id, "good_pk": self.object_pk}
             )
+        elif self.draft_pk:
+            return reverse("applications:view_good_and_add", kwargs={"pk": self.draft_pk, "good_pk": self.object_pk})
         else:
             return reverse_lazy("goods:good", kwargs={"pk": self.object_pk})
 
