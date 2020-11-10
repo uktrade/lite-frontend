@@ -235,3 +235,16 @@ Feature: I want to indicate the standard licence I want
     And I select a location type of "land_based"
     And I fill in new external location form with name: "32 Lime Street", address: "London" and country: "Ukraine" and continue
     Then I see "2" locations
+
+
+  @LTD_361_Review_when_importing_existing_product @regression
+  Scenario: Review product details when importing existing product, update description and add it to the application
+    Given I go to exporter homepage and choose Test Org
+    When I create a standard application of a "permanent" export type
+    When I click on the "goods" section
+    And I choose to add a product from product list
+    And I choose to review the product details of product "1"
+    And I see option to add product to application on details page
+    And I append "updated" to description and submit
+    And I see option to add product to application on details page    # to ensure that we are back on the same page
+    And I add product to application

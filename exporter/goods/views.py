@@ -260,7 +260,9 @@ class GoodMilitaryUse(LoginRequiredMixin, SingleFormView):
                         kwargs={"pk": self.application_id, "good_pk": self.object_pk},
                     )
                 elif self.draft_pk:
-                    return reverse("applications:view_good_and_add", kwargs={"pk": self.draft_pk, "good_pk": self.object_pk})
+                    return reverse(
+                        "applications:view_good_and_add", kwargs={"pk": self.draft_pk, "good_pk": self.object_pk}
+                    )
                 else:
                     return reverse_lazy("goods:good_information_security", kwargs={"pk": self.object_pk})
         # Next question good component if good is in category 1

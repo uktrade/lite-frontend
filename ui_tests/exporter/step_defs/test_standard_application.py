@@ -110,6 +110,51 @@ def i_add_a_non_incorporated_good_to_the_application(driver, context):  # noqa
     functions.click_submit(driver)
 
 
+@when("I choose to add a product from product list")  # noqa
+def i_choose_to_add_product_from_product_list(driver, context):  # noqa
+    StandardApplicationGoodsPage(driver).click_add_preexisting_good_button()
+
+
+@when(parsers.parse('I choose to review the product details of product "{index:d}"'))  # noqa
+def i_choose_to_review_product_details(driver, index):  # noqa
+    # Click the "View" link on the given good index
+    detail_link = driver.find_element_by_id("import-product-view-product")
+    detail_link.click()
+
+
+@when("I see option to add product to application on details page")
+def i_see_option_to_add_product_to_application(driver):
+    add_to_application_btn = driver.find_element_by_id("button-add-good-to-application")
+
+
+@when(parsers.parse('I append "{text}" to description and submit'))  # noqa
+def i_update_description(driver, text):  # noqa
+    change_description = driver.find_elements_by_id("link-edit-description")[0]
+    change_description.click()
+
+    desc_element = driver.find_element_by_id("description")
+    updated_description = f"{desc_element.text} {text}"
+    desc_element.clear()
+    desc_element.send_keys(updated_description)
+
+    functions.click_submit(driver)
+
+
+@when("I add product to application")
+def i_add_product_to_application(driver, context):
+    add_to_application_btn = driver.find_element_by_id("button-add-good-to-application")
+    add_to_application_btn.click()
+
+    # Enter good details
+    StandardApplicationGoodDetails(driver).enter_value("1")
+    StandardApplicationGoodDetails(driver).enter_quantity("2")
+    StandardApplicationGoodDetails(driver).select_unit("Number of articles")
+    StandardApplicationGoodDetails(driver).check_is_good_incorporated_true()
+    context.is_good_incorporated = "Yes"
+
+    functions.click_submit(driver)
+
+
 @given("I seed an end user for the draft")
 def seed_end_user(add_end_user_to_application):
     pass

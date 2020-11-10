@@ -143,9 +143,9 @@
 				<dd class="govuk-summary-list__actions">
 					{% if good.status.key == 'draft' %}
 						{% if draft_pk %}
-						<a id="link-edit" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:edit-add-application' good.id draft_pk %}#description">Change</a>
+						<a id="link-edit-description" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:edit-add-application' good.id draft_pk %}#description">Change</a>
 						{% else %}
-						<a id="link-edit" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:edit' good.id %}#description">Change</a>
+						<a id="link-edit-description" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:edit' good.id %}#description">Change</a>
 						{% endif %}
 					{% endif %}
 				</dd>
