@@ -392,7 +392,7 @@ def edit_good_detail_form(request, good_id):
                 name="is_good_controlled",
                 options=[
                     Option(
-                        key="yes",
+                        key=True,
                         value=EditGoodForm.IsControlled.YES,
                         components=[
                             control_list_entries_question(
@@ -402,7 +402,7 @@ def edit_good_detail_form(request, good_id):
                             ),
                         ],
                     ),
-                    Option(key="no", value=EditGoodForm.IsControlled.NO),
+                    Option(key=False, value=EditGoodForm.IsControlled.NO),
                 ],
             ),
         ],
