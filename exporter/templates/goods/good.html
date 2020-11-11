@@ -38,13 +38,13 @@
 				{% endblock %}
 			</h1>
 		</div>
+		{% if draft_pk %}
+			<div class="lite-app-bar__controls">
+				{% make_list draft_pk good.id as url_params %}
+				{% govuk_link_button id='add-good-to-application' text='goods.GoodPage.ADD_TO_APPLICATION' url='applications:add_good_to_application' url_param=url_params classes='govuk-button--secondary' %}
+			</div>
+		{% endif %}
 		{% if good.status.key == 'draft' %}
-			{% if draft_pk %}
-				<div class="lite-app-bar__controls">
-					{% make_list draft_pk good.id as url_params %}
-					{% govuk_link_button id='add-good-to-application' text='goods.GoodPage.ADD_TO_APPLICATION' url='applications:add_good_to_application' url_param=url_params classes='govuk-button--secondary' %}
-				</div>
-			{% endif %}
 			<div class="lite-app-bar__controls">
 				{% govuk_link_button id='delete-good' text='goods.GoodPage.DELETE_GOOD' url='goods:delete' url_param=good.id classes='govuk-button--secondary' %}
 			</div>
@@ -490,14 +490,26 @@
 		</div>
 		<div class="lite-app-bar__controls">
 			{% if good.status.key == 'draft' %}
-				{% if documents %}
-					<a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'goods:attach_documents' good.id %}?goodpage=yes">
-						{% lcs 'Goods.Documents.AttachDocuments.BUTTON' %}
-					</a>
+				{% if draft_pk %}
+					{% if documents %}
+						<a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'goods:attach_documents_add_application' good.id draft_pk %}?goodpage=yes">
+							{% lcs 'Goods.Documents.AttachDocuments.BUTTON' %}
+						</a>
+					{% else %}
+						<a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'goods:add_document_add_application' good.id draft_pk %}">
+							{% lcs 'Goods.Documents.AttachDocuments.BUTTON' %}
+						</a>
+					{% endif %}
 				{% else %}
-					<a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'goods:add_document' good.id %}">
-						{% lcs 'Goods.Documents.AttachDocuments.BUTTON' %}
-					</a>
+					{% if documents %}
+						<a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'goods:attach_documents' good.id %}?goodpage=yes">
+							{% lcs 'Goods.Documents.AttachDocuments.BUTTON' %}
+						</a>
+					{% else %}
+						<a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'goods:add_document' good.id %}">
+							{% lcs 'Goods.Documents.AttachDocuments.BUTTON' %}
+						</a>
+					{% endif %}
 				{% endif %}
 			{% endif %}
 		</div>
@@ -527,9 +539,15 @@
 							<p class="govuk-label">{% lcs 'Goods.Documents.PROCESSING' %}</p>
 						{% endif %}
 						{% if good.status.key == 'draft' %}
-							<a href="{% url 'goods:delete_document' good.id document.id %}" class="govuk-link govuk-!-font-size-16 govuk-!-margin-top-2">
-								{% lcs "goods.GoodPage.Document.DELETE" %}
-							</a>
+							{% if draft_pk %}
+								<a href="{% url 'goods:delete_document_add_application' good.id draft_pk document.id %}" class="govuk-link govuk-!-font-size-16 govuk-!-margin-top-2">
+									{% lcs "goods.GoodPage.Document.DELETE" %}
+								</a>
+							{% else %}
+								<a href="{% url 'goods:delete_document' good.id document.id %}" class="govuk-link govuk-!-font-size-16 govuk-!-margin-top-2">
+									{% lcs "goods.GoodPage.Document.DELETE" %}
+								</a>
+						{% endif %}
 						{% endif %}
 					</div>
 				</li>

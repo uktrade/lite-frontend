@@ -1,5 +1,6 @@
 from http import HTTPStatus
 
+from django.conf import settings
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
@@ -55,16 +56,6 @@ class ApplicationGoodsList(LoginRequiredMixin, TemplateView):
         )
 
 
-class ViewGoodAddToApplication(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
-        return redirect(
-            reverse_lazy(
-                "goods:good_detail_application",
-                kwargs={"pk": kwargs["good_pk"], "type": "application", "draft_pk": kwargs["pk"]},
-            ),
-        )
-
-
 class ExistingGoodsList(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         """
@@ -104,6 +95,7 @@ class ExistingGoodsList(LoginRequiredMixin, TemplateView):
             "page": params.pop("page"),
             "params_str": convert_dict_to_query_params(params),
             "filters": filters,
+            "feature_flag_firearms_enabled": settings.FEATURE_FLAG_FIREARMS_ENABLED,
         }
         return render(request, "applications/goods/preexisting.html", context)
 

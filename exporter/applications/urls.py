@@ -99,7 +99,6 @@ urlpatterns = [
         name="add_document",
     ),
     path("<uuid:pk>/goods/add-new/<uuid:good_pk>/attach/", goods.AttachDocument.as_view(), name="attach_documents"),
-    path("<uuid:pk>/goods/<uuid:good_pk>/view/", goods.ViewGoodAddToApplication.as_view(), name="view_good_and_add"),
     path("<uuid:pk>/goods/add-preexisting/", goods.ExistingGoodsList.as_view(), name="preexisting_good"),
     path("<uuid:pk>/goods/<uuid:good_pk>/add/", goods.AddGoodToApplication.as_view(), name="add_good_to_application",),
     path(
