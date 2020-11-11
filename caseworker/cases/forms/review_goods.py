@@ -43,7 +43,7 @@ def review_goods_form(control_list_entries, back_url):
 class ExportControlCharacteristicsForm(forms.Form):
 
     MESSAGE_NO_CLC_MUTEX = "This is mutually exclusive with Control list entries"
-    MESSAGE_NO_CLC_REQUIRED = "Please enter the control list entries or specify it does not have any."
+    MESSAGE_NO_CLC_REQUIRED = "Select a control list entry or select 'This product does not have a control list entry'"
 
     control_list_entries = forms.MultipleChoiceField(
         label="What is the correct control list entry for this product?",
