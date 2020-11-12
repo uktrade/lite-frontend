@@ -57,7 +57,7 @@
 						{% if not hide_checkboxes %}
 							<td class="govuk-table__cell govuk-table__cell--checkbox {% if show_advice %}lite-!-no-border{% endif %}">
 								<div>
-									<input class="govuk-checkboxes__input" type="checkbox" name="good_ids" value="{{ good.good.id }}" id="{{ good.id }}">
+									<input class="govuk-checkboxes__input" type="checkbox" name="goods" value="{{ good.good.id }}" id="{{ good.id }}">
 									<label class="govuk-label govuk-checkboxes__label" for="{{ good.good.id }}">{{ forloop.counter }}</label>
 								</div>
 							</td>
@@ -89,9 +89,9 @@
 						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
 							<span class="govuk-table__header" aria-hidden="false">Rating</span>
 							{% if good.control_list_entries is not None %}
-								{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}
+								{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries end_use_control=good.end_use_control %}
 							{% elif good.good.control_list_entries is not None %}
-								{% include 'includes/control-list-entries.html' with control_list_entries=good.good.control_list_entries %}
+								{% include 'includes/control-list-entries.html' with control_list_entries=good.good.control_list_entries end_use_control=good.end_use_control %}
 							{% else %}
 								None
 							{% endif %}
@@ -181,7 +181,7 @@
 						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
 							<span aria-hidden="true" class="govuk-table__header">Rating</span>
 							{% if good.control_list_entries is not None %}
-								{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}
+								{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries end_use_control=good.end_use_control %}
 							{% else %}
 								None
 							{% endif %}

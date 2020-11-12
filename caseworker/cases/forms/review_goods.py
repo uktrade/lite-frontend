@@ -41,9 +41,13 @@ def review_goods_form(control_list_entries, back_url):
 
 
 class ExportControlCharacteristicsForm(forms.Form):
+
+    MESSAGE_NO_CLC_MUTEX = "This is mutually exclusive with Control list entries"
+    MESSAGE_NO_CLC_REQUIRED = "Select a control list entry or select 'This product does not have a control list entry'"
+
     control_list_entries = forms.MultipleChoiceField(
         label="What is the correct control list entry for this product?",
-        help_text="Type to get suggestions. For example ML1a",
+        help_text="Type to get suggestions. For example ML1a.",
         choices=[],  # set in __init__
         required=False,
         # setting id for javascript to use
@@ -60,8 +64,8 @@ class ExportControlCharacteristicsForm(forms.Form):
         required=False,
     )
     end_use_control = forms.MultipleChoiceField(
-        label="What is the end use control rating for this product? (optional)",
-        help_text="Type to get suggestions. For example MEND",
+        label="What is the end use control rating for this product?",
+        help_text="Type to get suggestions. For example MEND.",
         choices=[("MEND", "MEND"), ("END", "END"), ("ENDTA", "ENDTA"), ("MEND1", "MEND1"),],
         required=False,
         # setting id for javascript to use
@@ -79,11 +83,12 @@ class ExportControlCharacteristicsForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.fields["control_list_entries"].choices = control_list_entries_choices
 
-    def clean_does_not_have_control_list_entries(self):
-        has_none = self.cleaned_data["does_not_have_control_list_entries"]
-        has_some = bool(self.cleaned_data["control_list_entries"])
+    def clean(self):
+        cleaned_data = super().clean()
+        has_none = cleaned_data["does_not_have_control_list_entries"]
+        has_some = bool(cleaned_data["control_list_entries"])
         if has_none and has_some:
-            raise forms.ValidationError("This is mutually exclusive with Control list entries")
+            raise forms.ValidationError({"does_not_have_control_list_entries": self.MESSAGE_NO_CLC_MUTEX})
         elif not has_none and not has_some:
-            raise forms.ValidationError("Please enter the control list entries or specify it does not have any.")
-        return self.cleaned_data["does_not_have_control_list_entries"]
+            raise forms.ValidationError({"does_not_have_control_list_entries": self.MESSAGE_NO_CLC_REQUIRED})
+        return cleaned_data

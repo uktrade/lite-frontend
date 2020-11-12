@@ -6,7 +6,7 @@
 				<p class="app-ecju-query__date">
 					<span class="govuk-visually-hidden">{% lcs 'core.ECJUDocumentsTab.CREATED_AT' %}</span>{{ generated_document.created_at|str_date }}
 				</p>
-				<a href="{% url 'applications:download_generated_document' generated_document.id case_id %}" class="govuk-link govuk-link--no-visited-state" id="generated-document-download">{% lcs 'core.ECJUDocumentsTab.DOWNLOAD_LINK' %}</a>
+				<a href="{% url 'applications:download_generated_document' case_pk=case_id document_pk=generated_document.id %}" class="govuk-link govuk-link--no-visited-state" id="generated-document-download">{% lcs 'core.ECJUDocumentsTab.DOWNLOAD_LINK' %}</a>
 			</div>
 		</div>
 		<hr class="lite-horizontal-separator">

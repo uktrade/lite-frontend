@@ -85,7 +85,12 @@ class AbstractReviewGoodWizardView(SessionWizardView):
         return form_kwargs
 
     def get_context_data(self, **kwargs):
-        return super().get_context_data(case=self.case, object=self.object, **kwargs)
+        form = kwargs["form"]
+        if form.is_bound and not form.is_valid():
+            errors = {bound_field.id_for_label: bound_field.errors for bound_field in form}
+        else:
+            errors = {}
+        return super().get_context_data(case=self.case, object=self.object, errors=errors, **kwargs)
 
     def process_step(self, form):
         data = {**form.cleaned_data, "objects": [self.object_pk]}
@@ -99,7 +104,7 @@ class AbstractReviewGoodWizardView(SessionWizardView):
 
 
 class ReviewStandardApplicationGoodWizardView(AbstractReviewGoodWizardView):
-    object_name = "good_ids"
+    object_name = "goods"
     template_name = "case/review-good-standard.html"
 
     @property
@@ -151,6 +156,7 @@ class ReviewOpenApplicationGoodWizardView(AbstractReviewGoodWizardView):
             "control_list_entries": [item["rating"] for item in self.object["control_list_entries"]],
             "report_summary": self.object["report_summary"],
             "comment": self.object["comment"],
+            "end_use_control": self.object["end_use_control"],
         }
         initial.update(super().get_form_initial(step))
         return initial

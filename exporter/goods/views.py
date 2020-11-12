@@ -1,5 +1,6 @@
 from http import HTTPStatus
 
+from django.conf import settings
 from django.http import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
@@ -123,6 +124,7 @@ class GoodsDetail(LoginRequiredMixin, TemplateView):
             "type": self.view_type,
             "error": kwargs.get("error"),
             "text": kwargs.get("text", ""),
+            "FEATURE_FLAG_ONLY_ALLOW_SIEL": settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
         }
 
         if self.good["query"]:
