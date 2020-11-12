@@ -1,0 +1,67 @@
+{% extends 'layouts/base.html' %}
+
+{% load svg %}
+
+{% block back_link %}
+
+{% if object_type == "compliance-visit" or object_type == "good" %}
+<a href="{% url 'ecju_queries:respond_to_query_extra' query_pk=query_pk object_type=object_type extra_pk=extra_pk case_pk=case_pk %}"
+    id="back-link" class="govuk-back-link">{% lcs "ecju_queries.SupportingDocumentDeletePage.BACK" %}</a>
+{% else %}
+<a href="{% url 'ecju_queries:respond_to_query' query_pk=query_pk object_type=object_type case_pk=case_pk %}"
+    id="back-link" class="govuk-back-link">{% lcs "ecju_queries.SupportingDocumentDeletePage.BACK" %}</a>
+{% endif %}
+
+{% endblock %}
+
+{% block body %}
+<div class="lite-app-bar">
+    <div class="lite-app-bar__content">
+        <h1 class="govuk-heading-l">{% block title %}{{ title }}{% endblock %}</h1>
+        <dl class="govuk-summary-list" id="good-details">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    {% lcs "ecju_queries.SupportingDocumentDeletePage.DOCUMENT_NAME" %}
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ document.name }}
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    {% lcs "ecju_queries.SupportingDocumentDeletePage.DOCUMENT_CREATED_AT" %}
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ document.created_at|str_date }}
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    {% lcs "ecju_queries.SupportingDocumentDeletePage.DOCUMENT_CREATED_BY" %}
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ document.user.first_name }} {{ document.user.last_name }}
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    {% lcs "ecju_queries.SupportingDocumentDeletePage.DOCUMENT_DESCRIPTION" %}
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ document.description|default_na|slice:"0:40" }}
+                    {% if document.description|length > 40 %}...{% endif %}
+                </dd>
+            </div>
+        </dl>
+    </div>
+</div>
+
+<div class="buttons-row">
+    <form method="post"
+        action="{% url 'ecju_queries:query-document-delete' query_pk object_type extra_pk case_pk doc_pk %}">
+        {% csrf_token %}
+        <button type="submit" value="submit"
+            class="govuk-button govuk-button--warning govuk-!-margin-right-2">{% lcs "ecju_queries.SupportingDocumentDeletePage.BUTTON" %}</button>
+    </form>
+</div>
+{% endblock %}

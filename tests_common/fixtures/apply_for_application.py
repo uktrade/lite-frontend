@@ -94,7 +94,7 @@ def apply_for_standard_application(api_test_client, context):
     timer.print_time("apply_for_standard_application")
 
 
-@fixture(scope="module")
+@fixture(scope="function")
 def add_an_ecju_query(api_test_client, context):
     api_test_client.api_client.auth_exporter_user(api_test_client.context["org_id"])
     api_test_client.ecju_queries.add_ecju_query(context.case_id)
