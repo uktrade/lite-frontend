@@ -11,107 +11,113 @@
 
 
 {% block body %}
-{% if errors %}
-<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1">
-    <h2 class="govuk-error-summary__title" id="error-summary-title">
-        There is a problem
-    </h2>
-    {% for field,error_msg in errors.items %}
-    <div class="govuk-error-summary__body">
-        <ul class="govuk-list govuk-error-summary__list">
-            <li>
-                <a href="#{{ field }}">{{ error_msg }}</a>
-            </li>
-        </ul>
-    </div>
-    {% endfor %}
-</div>
-{% endif %}
-<form method="post" name="respond_to_query" {% if object_type == "compliance-visit" or object_type == "good" %}
-    action="{% url 'ecju_queries:respond_to_query_extra' query_pk=ecju_query.id object_type=object_type extra_pk=extra_id case_pk=case_id %}"
-    {% else %}
-    action="{% url 'ecju_queries:respond_to_query' query_pk=ecju_query.id object_type=object_type case_pk=case_id %}"
-    {% endif %}>
-    {% csrf_token %}
-    <h1 class="govuk-heading-xl">Respond to query</h1>
-    <div class="app-ecju-query__text">
-        {{ ecju_query.question }}
-    </div><br><br>
-
-    <div id="response-text-container" class="govuk-form-group {% if errors %} govuk-form-group--error {% endif %}">
-        <label class="govuk-label" for="response">Your response</label>
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
         {% if errors %}
-        <span id="error-response" class="govuk-error-message">
-            <span class="govuk-visually-hidden">Error:</span> {{ errors.response }}
-        </span>
-        {% endif %}
-        <textarea id="response" name="response" rows="10"
-            class="govuk-textarea govuk-js-character-count">{{ response }}</textarea>
-        <p class="govuk-caption-m" id="response-length-warning" class="govuk-hint govuk-character-count__message"
-            aria-live="polite">You can enter upto 2200 characters</p>
-    </div>
-
-    <div class="lite-app-bar">
-        <div class="lite-app-bar__content">
-            <h2 class="govuk-heading-m">{% lcs "ecju_queries.DocumentsList.Documents.TITLE" %}</h2>
-        </div>
-        <div class="lite-app-bar__controls">
-            <button type="submit" value="add_document" name="respond_to_query"
-                class="govuk-button govuk-!-margin-right-2">{% lcs "ecju_queries.DocumentsList.AttachDocuments.BUTTON" %}</button>
-        </div>
-    </div>
-
-    {% if documents %}
-    <ol class="app-documents__list">
-        {% for document in documents %}
-        <li class="app-documents__item">
-            <div class="app-documents__item-preview">
-                {% svg 'document' %}
-                <span>
-                    {{ document.name|file_type }}
-                </span>
+        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                There is a problem
+            </h2>
+            {% for field,error_msg in errors.items %}
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list">
+                    <li>
+                        <a href="#{{ field }}">{{ error_msg }}</a>
+                    </li>
+                </ul>
             </div>
-            <div class="app-documents__item-details">
-                <a {% if document.safe == True %}href="{% url 'ecju_queries:query-document' query_pk=ecju_query.id object_type=object_type case_pk=case_id doc_pk=document.id %}"
-                    {% endif %} class="govuk-link--no-visited-state">{{ document.name }}</a>
-                <p class="govuk-hint">Uploaded by {{ document.user.first_name }} {{ document.user.last_name }} at
-                    {{ document.created_at|str_date }}</p>
-                {% if document.description %}
-                <p class="govuk-body">
-                    {{ document.description }}
-                </p>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <form method="post" name="respond_to_query" {% if object_type == "compliance-visit" or object_type == "good" %}
+            action="{% url 'ecju_queries:respond_to_query_extra' query_pk=ecju_query.id object_type=object_type extra_pk=extra_id case_pk=case_id %}"
+            {% else %}
+            action="{% url 'ecju_queries:respond_to_query' query_pk=ecju_query.id object_type=object_type case_pk=case_id %}"
+            {% endif %}>
+            {% csrf_token %}
+            <h1 class="govuk-heading-xl">Respond to query</h1>
+            <div class="app-ecju-query__text">
+                {{ ecju_query.question }}
+            </div><br><br>
+
+            <div id="response-text-container"
+                class="govuk-form-group {% if errors %} govuk-form-group--error {% endif %}">
+                <label class="govuk-label" for="response">Your response</label>
+                {% if errors %}
+                <span id="error-response" class="govuk-error-message">
+                    <span class="govuk-visually-hidden">Error:</span> {{ errors.response }}
+                </span>
                 {% endif %}
-                {% if document.safe == False %}
-                <p class="govuk-label">{% lcs 'Goods.Documents.VIRUS_INFECTED' %}</p>
-                {% elif not document.safe %}
-                <p class="govuk-label">{% lcs 'Goods.Documents.PROCESSING' %}</p>
-                {% endif %}
-                {% if not ecju_query.response %}
-                    {% if object_type == "compliance-visit" or object_type == "good" %}
+                <textarea id="response" name="response" rows="10"
+                    class="govuk-textarea govuk-js-character-count">{{ response }}</textarea>
+                <p class="govuk-caption-m" id="response-length-warning"
+                    class="govuk-hint govuk-character-count__message" aria-live="polite">You can enter upto 2200
+                    characters</p>
+            </div>
+
+            <div class="lite-app-bar">
+                <div class="lite-app-bar__content">
+                    <h2 class="govuk-heading-m">{% lcs "ecju_queries.DocumentsList.Documents.TITLE" %}</h2>
+                </div>
+                <div class="lite-app-bar__controls">
+                    <button type="submit" value="add_document" name="respond_to_query"
+                        class="govuk-button govuk-!-margin-right-2">{% lcs "ecju_queries.DocumentsList.AttachDocuments.BUTTON" %}</button>
+                </div>
+            </div>
+
+            {% if documents %}
+            <ol class="app-documents__list">
+                {% for document in documents %}
+                <li class="app-documents__item">
+                    <div class="app-documents__item-preview">
+                        {% svg 'document' %}
+                        <span>
+                            {{ document.name|file_type }}
+                        </span>
+                    </div>
+                    <div class="app-documents__item-details">
+                        <a {% if document.safe == True %}href="{% url 'ecju_queries:query-document' query_pk=ecju_query.id object_type=object_type case_pk=case_id doc_pk=document.id %}"
+                            {% endif %} class="govuk-link--no-visited-state">{{ document.name }}</a>
+                        <p class="govuk-hint">Uploaded by {{ document.user.first_name }} {{ document.user.last_name }}
+                            at
+                            {{ document.created_at|str_date }}</p>
+                        {% if document.description %}
+                        <p class="govuk-body">
+                            {{ document.description }}
+                        </p>
+                        {% endif %}
+                        {% if document.safe == False %}
+                        <p class="govuk-label">{% lcs 'Goods.Documents.VIRUS_INFECTED' %}</p>
+                        {% elif not document.safe %}
+                        <p class="govuk-label">{% lcs 'Goods.Documents.PROCESSING' %}</p>
+                        {% endif %}
+                        {% if not ecju_query.response %}
+                        {% if object_type == "compliance-visit" or object_type == "good" %}
                         <a href="{% url 'ecju_queries:query-document-delete' query_pk=ecju_query.id object_type=object_type extra_pk=extra_id case_pk=case_id doc_pk=document.id %}"
                             class="govuk-link govuk-!-font-size-16 govuk-!-margin-top-2">
                             {% lcs "ecju_queries.DocumentsList.Documents.DELETE" %}
                         </a>
-                    {% else %}
+                        {% else %}
                         <a href="{% url 'ecju_queries:query-document-delete' query_pk=ecju_query.id object_type=object_type extra_pk=case_id case_pk=case_id doc_pk=document.id %}"
-                        class="govuk-link govuk-!-font-size-16 govuk-!-margin-top-2">
-                        {% lcs "ecju_queries.DocumentsList.Documents.DELETE" %}
+                            class="govuk-link govuk-!-font-size-16 govuk-!-margin-top-2">
+                            {% lcs "ecju_queries.DocumentsList.Documents.DELETE" %}
                         </a>
-                    {% endif %}
-                {% endif %}
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                </li>
+                {% endfor %}
+            </ol>
+            {% else %}
+            {% include "includes/notice.html" with text="ecju_queries.DocumentsList.Documents.NO_DOCUMENT_ATTACHED" %}
+            {% endif %}
+            <div class="buttons-row govuk-!-margin-top-8">
+                <button type="submit" value="submit" name="respond_to_query"
+                    class="govuk-button govuk-!-margin-right-2">{% lcs "ecju_queries.Forms.RespondForm.SEND" %}</button>
             </div>
-        </li>
-        {% endfor %}
-    </ol>
-    {% else %}
-    {% include "includes/notice.html" with text="ecju_queries.DocumentsList.Documents.NO_DOCUMENT_ATTACHED" %}
-    {% endif %}
-    <div class="buttons-row govuk-!-margin-top-8">
-        <button type="submit" value="submit" name="respond_to_query"
-            class="govuk-button govuk-!-margin-right-2">{% lcs "ecju_queries.Forms.RespondForm.SEND" %}</button>
+        </form>
     </div>
-</form>
-
+</div>
 <script src="{% static 'javascripts/helpers.js' %}"></script>
 <script src="{% static 'javascripts/pluralize.js' %}"></script>
 <script src="{% static 'javascripts/query-response.js' %}"></script>
