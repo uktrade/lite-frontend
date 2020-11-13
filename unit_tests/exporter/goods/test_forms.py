@@ -38,9 +38,11 @@ def test_serialize_good_on_app_data(value, serialized):
     data = {
         "good_id": "some-uuid",
         "value": value,
+        "quantity": value,
     }
     expected = {
         "good_id": "some-uuid",
         "value": serialized,
+        "quantity": serialized,
     }
     assert serialize_good_on_app_data(data) == expected
