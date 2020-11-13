@@ -1,3 +1,5 @@
+{% load svg %}
+
 <div class="lite-buttons-row">
 	{% make_list queue.id case.id as button_params %}
 	{% govuk_link_button id='new-query' text='cases.EcjuQueries.AddQuery.ADD_BUTTON_LABEL' url='cases:new_ecju_query' url_param=button_params query_params="?query_type=ecju_query"%}
@@ -52,6 +54,27 @@
 					<div class="app-ecju-query__text" data-max-length="300">
 						{{ ecju_query.response }}
 					</div>
+					{% if ecju_query.documents %}
+						{% for document in ecju_query.documents %}
+							<br>
+							<li class="app-documents__item govuk-!-margin-top-2">
+								<div class="app-documents__item-preview">
+									{% svg 'document' %}
+									<span>
+										{{ document.name|file_type }}
+									</span>
+								</div>
+								<div class="app-documents__item-details">
+									<a {% if document.safe == True %}href="{% url 'cases:document' queue_pk=queue.id  pk=case.id file_pk=document.id %}"
+										{% endif %} class="govuk-link--no-visited-state">{{ document.name }}</a>
+									{% if document.description %}
+									<p class="govuk-body">{{ document.description }}</p>
+									{% endif %}
+								</div>
+							</li>
+						{% endfor %}
+					{% endif %}
+
 					<p class="app-ecju-query__date">
 						<span class="govuk-visually-hidden">{% lcs 'cases.EcjuQueries.CREATED_AT' %} </span>{{ ecju_query.responded_at|str_date }}
 					</p>

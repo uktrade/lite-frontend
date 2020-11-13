@@ -1,3 +1,5 @@
+{% load svg %}
+
 {% if open_queries %}
 	<h3 class="govuk-heading-m">Open queries</h3>
 	{% for ecju_query in open_queries %}
@@ -50,6 +52,26 @@
 				<div class="app-ecju-query__text">
 					{{ ecju_query.response }}
 				</div>
+				{% if ecju_query.documents %}
+					{% for document in ecju_query.documents %}
+						<br>
+						<li class="app-documents__item govuk-!-margin-top-2">
+							<div class="app-documents__item-preview">
+								{% svg 'document' %}
+								<span>
+									{{ document.name|file_type }}
+								</span>
+							</div>
+							<div class="app-documents__item-details">
+								<a {% if document.safe == True %}href="{% url 'ecju_queries:query-document' query_pk=ecju_query.id object_type=object_type case_pk=case_id doc_pk=document.id %}"
+									{% endif %} class="govuk-link--no-visited-state">{{ document.name }}</a>
+								{% if document.description %}
+								<p class="govuk-body">{{ document.description }}</p>
+								{% endif %}
+							</div>
+						</li>
+					{% endfor %}
+				{% endif %}
 				<p class="app-ecju-query__date">
 					<span class="govuk-visually-hidden">Responded at </span>{{ ecju_query.responded_at|str_date }}
 				</p>
