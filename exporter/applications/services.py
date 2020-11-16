@@ -96,7 +96,7 @@ def get_application_goods(request, pk):
 
 
 def validate_application_good(request, pk, json):
-    post_data = get_data_from_post_good_on_app(json)
+    post_data = serialize_good_on_app_data(json)
     post_data["validate_only"] = True
     return client.post(request, f"/applications/{pk}/goods/", post_data)
 
@@ -107,18 +107,21 @@ def get_application_goods_types(request, pk):
 
 
 def post_good_on_application(request, pk, json):
-    post_data = get_data_from_post_good_on_app(json)
-    if "good_id" not in post_data:
-        post_data["good_id"] = json["good_id"]
-    data = client.post(request, f"/applications/{pk}/goods/", post_data)
-    return data.json(), data.status_code
+    post_data = serialize_good_on_app_data(json)
+    response = client.post(request, f"/applications/{pk}/goods/", post_data)
+    return response.json(), response.status_code
 
 
-def get_data_from_post_good_on_app(json):
+def serialize_good_on_app_data(json):
     if json.get("good_on_app_value") or json.get("good_on_app_value") == "":
         post_data = remove_prefix(json, "good_on_app_")
     else:
         post_data = json
+    if "good_id" not in post_data:
+        post_data["good_id"] = json["good_id"]
+    for key in ["value", "quantity"]:
+        if "," in post_data[key]:
+            post_data[key] = post_data[key].replace(",", "")
     return post_data
 
 
