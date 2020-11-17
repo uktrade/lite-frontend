@@ -1,5 +1,6 @@
 from http import HTTPStatus
 
+from django.conf import settings
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
@@ -94,6 +95,7 @@ class ExistingGoodsList(LoginRequiredMixin, TemplateView):
             "page": params.pop("page"),
             "params_str": convert_dict_to_query_params(params),
             "filters": filters,
+            "feature_flag_firearms_enabled": settings.FEATURE_FLAG_FIREARMS_ENABLED,
         }
         return render(request, "applications/goods/preexisting.html", context)
 

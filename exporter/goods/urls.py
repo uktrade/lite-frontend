@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.urls import path
 
 from exporter.goods import views
@@ -29,3 +30,74 @@ urlpatterns = [
     path("<uuid:pk>/", views.GoodsDetailEmpty.as_view(), name="good"),
     path("<uuid:pk>/<str:type>/", views.GoodsDetail.as_view(), name="good_detail"),
 ]
+
+if settings.FEATURE_FLAG_FIREARMS_ENABLED:
+    urlpatterns += [
+        path("<uuid:pk>/<str:type>/<uuid:draft_pk>/", views.GoodsDetail.as_view(), name="good_detail_application"),
+        path("<uuid:pk>/edit/application/<uuid:draft_pk>/", views.EditGood.as_view(), name="edit-add-application"),
+        path(
+            "<uuid:pk>/edit-firearm-details/ammunition/application/<uuid:draft_pk>/",
+            views.EditAmmunition.as_view(),
+            name="ammunition-add-application",
+        ),
+        path(
+            "<uuid:pk>/software-technology/application/<uuid:draft_pk>/",
+            views.GoodSoftwareTechnology.as_view(),
+            name="good_software_technology_add_application",
+        ),
+        path(
+            "<uuid:pk>/military-use/application/<uuid:draft_pk>/",
+            views.GoodMilitaryUse.as_view(),
+            name="good_military_use_add_application",
+        ),
+        path(
+            "<uuid:pk>/good-component/application/<uuid:draft_pk>/",
+            views.GoodComponent.as_view(),
+            name="good_component_add_application",
+        ),
+        path(
+            "<uuid:pk>/information-security/application/<uuid:draft_pk>/",
+            views.GoodInformationSecurity.as_view(),
+            name="good_information_security_add_application",
+        ),
+        path(
+            "<uuid:pk>/edit-firearm-details/type/application/<uuid:draft_pk>/",
+            views.EditFirearmProductType.as_view(),
+            name="firearm_type_add_application",
+        ),
+        path(
+            "<uuid:pk>/edit-firearm-details/firearms-act/application/<uuid:draft_pk>/",
+            views.EditFirearmActDetails.as_view(),
+            name="firearms_act_add_application",
+        ),
+        path(
+            "<uuid:pk>/edit-firearm-details/identification_markings/application/<uuid:draft_pk>/",
+            views.EditIdentificationMarkings.as_view(),
+            name="identification_markings_add_application",
+        ),
+        path(
+            "<uuid:pk>/edit-grading/application/<uuid:draft_pk>/",
+            views.EditGrading.as_view(),
+            name="edit_grading_add_application",
+        ),
+        path(
+            "<uuid:pk>/add-document/application/<uuid:draft_pk>/",
+            views.CheckDocumentGrading.as_view(),
+            name="add_document_add_application",
+        ),
+        path(
+            "<uuid:pk>/raise-good-query/application/<uuid:draft_pk>/",
+            views.RaiseGoodsQuery.as_view(),
+            name="raise_goods_query_add_application",
+        ),
+        path(
+            "<uuid:pk>/attach/application/<uuid:draft_pk>/",
+            views.AttachDocuments.as_view(),
+            name="attach_documents_add_application",
+        ),
+        path(
+            "<uuid:pk>/application/<uuid:draft_pk>/documents/<uuid:file_pk>/delete/",
+            views.DeleteDocument.as_view(),
+            name="delete_document_add_application",
+        ),
+    ]

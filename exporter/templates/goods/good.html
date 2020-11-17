@@ -38,6 +38,12 @@
 				{% endblock %}
 			</h1>
 		</div>
+		{% if draft_pk %}
+			<div class="lite-app-bar__controls">
+				{% make_list draft_pk good.id as url_params %}
+				{% govuk_link_button id='add-good-to-application' text='goods.GoodPage.ADD_TO_APPLICATION' url='applications:add_good_to_application' url_param=url_params classes='govuk-button--secondary' %}
+			</div>
+		{% endif %}
 		{% if good.status.key == 'draft' %}
 			<div class="lite-app-bar__controls">
 				{% govuk_link_button id='delete-good' text='goods.GoodPage.DELETE_GOOD' url='goods:delete' url_param=good.id classes='govuk-button--secondary' %}
@@ -136,7 +142,11 @@
 				</dd>
 				<dd class="govuk-summary-list__actions">
 					{% if good.status.key == 'draft' %}
-						<a id="link-edit" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:edit' good.id %}#description">Change</a>
+						{% if draft_pk %}
+						<a id="link-edit-description" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:edit-add-application' good.id draft_pk %}#description">Change</a>
+						{% else %}
+						<a id="link-edit-description" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:edit' good.id %}#description">Change</a>
+						{% endif %}
 					{% endif %}
 				</dd>
 			</div>
@@ -158,7 +168,11 @@
 				</dd>
 				<dd class="govuk-summary-list__actions">
 					{% if good.status.key == 'draft' %}
+						{% if draft_pk %}
+						<a class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:edit-add-application' good.id draft_pk %}#part_number">Change</a>
+						{% else %}
 						<a class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:edit' good.id %}#part_number">Change</a>
+						{% endif %}
 					{% endif %}
 				</dd>
 			</div>
@@ -172,7 +186,11 @@
 					</dd>
 					<dd class="govuk-summary-list__actions">
 						{% if good.status.key == 'draft' %}
+							{% if draft_pk %}
+							<a class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:edit-add-application' good.id draft_pk %}#pane_is_good_controlled">Change</a>
+							{% else %}
 							<a class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:edit' good.id %}#pane_is_good_controlled">Change</a>
+							{% endif %}
 						{% endif %}
 					</dd>
 				</div>
@@ -189,7 +207,11 @@
 						</dd>
 						<dd class="govuk-summary-list__actions">
 							{% if good.status.key == 'draft' %}
+								{% if draft_pk %}
+								<a id="change-good-technology-software" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:good_software_technology_add_application' good.id draft_pk %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.PURPOSE_SOFTWARE_TECHNOLOGY" %}</span></a>
+								{% else %}
 								<a id="change-good-technology-software" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:good_software_technology' good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.PURPOSE_SOFTWARE_TECHNOLOGY" %}</span></a>
+								{% endif %}
 							{% endif %}
 						</dd>
 					</div>
@@ -207,7 +229,11 @@
 					</dd>
 					<dd class="govuk-summary-list__actions">
 						{% if good.status.key == 'draft' %}
+							{% if draft_pk %}
+							<a id="change-good-military-use" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:good_military_use_add_application' good.id draft_pk %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.MILITARY_USE" %}</span></a>
+							{% else %}
 							<a id="change-good-military-use" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:good_military_use' good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.MILITARY_USE" %}</span></a>
+							{% endif %}
 						{% endif %}
 					</dd>
 				</div>
@@ -225,7 +251,11 @@
 						</dd>
 						<dd class="govuk-summary-list__actions">
 							{% if good.status.key == 'draft' %}
+								{% if draft_pk %}
+								<a id="change-good-is-component" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:good_component_add_application' good.id draft_pk %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.COMPONENT" %}</span></a>
+								{% else %}
 								<a id="change-good-is-component" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:good_component' good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.COMPONENT" %}</span></a>
+								{% endif %}
 							{% endif %}
 						</dd>
 					</div>
@@ -247,7 +277,11 @@
 					</dd>
 					<dd class="govuk-summary-list__actions">
 						{% if good.status.key == 'draft' %}
+							{% if draft_pk %}
+							<a id="change-good-information-security" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:good_information_security_add_application' good.id draft_pk %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.INFORMATION_SECURITY_FEATURES" %}</span></a>
+							{% else %}
 							<a id="change-good-information-security" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:good_information_security' good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.INFORMATION_SECURITY_FEATURES" %}</span></a>
+							{% endif %}
 						{% endif %}
 					</dd>
 				</div>
@@ -263,7 +297,11 @@
 					</dd>
 					<dd class="govuk-summary-list__actions">
 						{% if good.status.key == 'draft' %}
+							{% if draft_pk %}
+							<a id="change-product-type" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:firearm_type_add_application' good.id draft_pk %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.PRODUCT_TYPE" %}</span></a>
+							{% else %}
 							<a id="change-product-type" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:firearm_type' good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.PRODUCT_TYPE" %}</span></a>
+							{% endif %}
 						{% endif %}
 					</dd>
 				</div>
@@ -277,7 +315,11 @@
 					</dd>
 					<dd class="govuk-summary-list__actions">
 						{% if good.status.key == 'draft' %}
+							{% if draft_pk %}
+							<a id="change-year-of-manufacture" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:ammunition-add-application' good.id draft_pk %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.YEAR_OF_MANUFACTURE" %}</span></a>
+							{% else %}
 							<a id="change-year-of-manufacture" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:ammunition' good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.YEAR_OF_MANUFACTURE" %}</span></a>
+							{% endif %}
 						{% endif %}
 					</dd>
 				</div>
@@ -291,7 +333,11 @@
 					</dd>
 					<dd class="govuk-summary-list__actions">
 						{% if good.status.key == 'draft' %}
+							{% if draft_pk %}
+							<a id="change-calibre" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:ammunition-add-application' good.id draft_pk %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.CALIBRE" %}</span></a>
+							{% else %}
 							<a id="change-calibre" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:ammunition' good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.CALIBRE" %}</span></a>
+							{% endif %}
 						{% endif %}
 					</dd>
 				</div>
@@ -311,7 +357,11 @@
 					</dd>
 					<dd class="govuk-summary-list__actions">
 						{% if good.status.key == 'draft' %}
+							{% if draft_pk %}
+							<a id="change-firearms-act-details" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:firearms_act_add_application' good.id draft_pk %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.COVERED_BY_THE_FIREARMS_ACT_1968" %}</span></a>
+							{% else %}
 							<a id="change-firearms-act-details" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:firearms_act' good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.COVERED_BY_THE_FIREARMS_ACT_1968" %}</span></a>
+							{% endif %}
 						{% endif %}
 					</dd>
 				</div>
@@ -334,7 +384,11 @@
 					</dd>
 					<dd class="govuk-summary-list__actions">
 						{% if good.status.key == 'draft' %}
+							{% if draft_pk %}
+							<a id="change-identification-markings" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:identification_markings_add_application' good.id draft_pk %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.IDENTIFICATION_MARKINGS" %}</span></a>
+							{% else %}
 							<a id="change-identification-markings" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:identification_markings' good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.IDENTIFICATION_MARKINGS" %}</span></a>
+							{% endif %}
 						{% endif %}
 					</dd>
 				</div>
@@ -349,7 +403,11 @@
 				</dd>
 				<dd class="govuk-summary-list__actions">
 					{% if good.status.key == 'draft' %}
+						{% if draft_pk %}
+						<a class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:edit-add-application' good.id draft_pk %}#pane_is_good_controlled">Change</a>
+						{% else %}
 						<a class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:edit' good.id %}#pane_is_good_controlled">Change</a>
+						{% endif %}
 					{% endif %}
 				</dd>
 			</div>
@@ -363,7 +421,11 @@
 				</dd>
 				<dd class="govuk-summary-list__actions">
 					{% if good.status.key == 'draft' %}
+						{% if draft_pk %}
+						<a id="edit-good-grading" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:edit_grading_add_application' good.id draft_pk %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.Grading.IS_GRADED" %}</span></a>
+						{% else %}
 						<a id="edit-good-grading" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:edit_grading' good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.Grading.IS_GRADED" %}</span></a>
+						{% endif %}
 					{% endif %}
 				</dd>
 			</div>
@@ -428,14 +490,26 @@
 		</div>
 		<div class="lite-app-bar__controls">
 			{% if good.status.key == 'draft' %}
-				{% if documents %}
-					<a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'goods:attach_documents' good.id %}?goodpage=yes">
-						{% lcs 'Goods.Documents.AttachDocuments.BUTTON' %}
-					</a>
+				{% if draft_pk %}
+					{% if documents %}
+						<a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'goods:attach_documents_add_application' good.id draft_pk %}?goodpage=yes">
+							{% lcs 'Goods.Documents.AttachDocuments.BUTTON' %}
+						</a>
+					{% else %}
+						<a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'goods:add_document_add_application' good.id draft_pk %}">
+							{% lcs 'Goods.Documents.AttachDocuments.BUTTON' %}
+						</a>
+					{% endif %}
 				{% else %}
-					<a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'goods:add_document' good.id %}">
-						{% lcs 'Goods.Documents.AttachDocuments.BUTTON' %}
-					</a>
+					{% if documents %}
+						<a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'goods:attach_documents' good.id %}?goodpage=yes">
+							{% lcs 'Goods.Documents.AttachDocuments.BUTTON' %}
+						</a>
+					{% else %}
+						<a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'goods:add_document' good.id %}">
+							{% lcs 'Goods.Documents.AttachDocuments.BUTTON' %}
+						</a>
+					{% endif %}
 				{% endif %}
 			{% endif %}
 		</div>
@@ -465,9 +539,15 @@
 							<p class="govuk-label">{% lcs 'Goods.Documents.PROCESSING' %}</p>
 						{% endif %}
 						{% if good.status.key == 'draft' %}
-							<a href="{% url 'goods:delete_document' good.id document.id %}" class="govuk-link govuk-!-font-size-16 govuk-!-margin-top-2">
-								{% lcs "goods.GoodPage.Document.DELETE" %}
-							</a>
+							{% if draft_pk %}
+								<a href="{% url 'goods:delete_document_add_application' good.id draft_pk document.id %}" class="govuk-link govuk-!-font-size-16 govuk-!-margin-top-2">
+									{% lcs "goods.GoodPage.Document.DELETE" %}
+								</a>
+							{% else %}
+								<a href="{% url 'goods:delete_document' good.id document.id %}" class="govuk-link govuk-!-font-size-16 govuk-!-margin-top-2">
+									{% lcs "goods.GoodPage.Document.DELETE" %}
+								</a>
+						{% endif %}
 						{% endif %}
 					</div>
 				</li>

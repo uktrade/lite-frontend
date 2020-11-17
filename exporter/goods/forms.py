@@ -392,7 +392,7 @@ def edit_good_detail_form(request, good_id):
                 name="is_good_controlled",
                 options=[
                     Option(
-                        key="yes",
+                        key=True,
                         value=EditGoodForm.IsControlled.YES,
                         components=[
                             control_list_entries_question(
@@ -402,7 +402,7 @@ def edit_good_detail_form(request, good_id):
                             ),
                         ],
                     ),
-                    Option(key="no", value=EditGoodForm.IsControlled.NO),
+                    Option(key=False, value=EditGoodForm.IsControlled.NO),
                 ],
             ),
         ],
@@ -410,8 +410,13 @@ def edit_good_detail_form(request, good_id):
     )
 
 
-def document_grading_form(request, back_link):
+def document_grading_form(request, good_id, back_url=None):
     select_options = get_document_missing_reasons(request)[0]["reasons"]
+
+    if back_url:
+        link = back_url
+    else:
+        link = reverse_lazy("goods:good", kwargs={"pk": good_id})
 
     return Form(
         title=DocumentSensitivityForm.TITLE,
@@ -436,7 +441,7 @@ def document_grading_form(request, back_link):
                 ],
             ),
         ],
-        back_link=BackLink(DocumentSensitivityForm.BACK_BUTTON, back_link),
+        back_link=BackLink(DocumentSensitivityForm.BACK_BUTTON, link),
         default_button_name=DocumentSensitivityForm.SUBMIT_BUTTON,
     )
 
