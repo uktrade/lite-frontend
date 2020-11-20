@@ -189,19 +189,12 @@ def declaration_form(application_id):
                 name="agreed_to_foi",
                 title=strings.declaration.FOI.TITLE,
                 options=[
-                    Option(
-                        key=True,
-                        value=strings.declaration.FOI.AGREE_TO_FOI,
-                    ),
+                    Option(key=True, value=strings.declaration.FOI.AGREE_TO_FOI,),
                     Option(
                         key=False,
                         value=strings.declaration.FOI.DISAGREE_TO_FOI,
                         components=[
-                            TextArea(
-                                title=strings.declaration.FOI.FOI_REASON,
-                                name="foi_reason",
-                                optional=False,
-                            ),
+                            TextArea(title=strings.declaration.FOI.FOI_REASON, name="foi_reason", optional=False,),
                         ],
                     ),
                 ],
