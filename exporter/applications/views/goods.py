@@ -108,6 +108,10 @@ class AddGood(LoginRequiredMixin, MultiFormView):
 
     def on_submission(self, request, **kwargs):
         copied_request = request.POST.copy()
+
+        # We are only allowing firearms categories temporarily
+        copied_request["item_category"] = "group2_firearms"
+
         is_pv_graded = copied_request.get("is_pv_graded", "") == "yes"
         is_software_technology = copied_request.get("item_category") in ["group3_software", "group3_technology"]
         is_firearms = copied_request.get("item_category") == "group2_firearms"

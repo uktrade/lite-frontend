@@ -345,14 +345,13 @@ def add_good_form_group(
     control_list_entries = get_control_list_entries(request, convert_to_options=True)
     return FormGroup(
         [
-            product_category_form(request),
+            group_two_product_type_form(),
             add_goods_questions(control_list_entries, draft_pk),
             conditional(is_pv_graded, pv_details_form(request)),
             conditional(is_software_technology, software_technology_details_form(request)),
             conditional(not is_firearms, product_military_use_form(request)),
             conditional(not is_software_technology and not is_firearms, product_component_form(request)),
             conditional(not is_firearms, product_uses_information_security(request)),
-            conditional(is_firearms, group_two_product_type_form()),
             conditional(is_firearms, firearm_ammunition_details_form()),
             conditional(is_firearms, firearms_act_confirmation_form()),
             conditional(is_firearms, identification_markings_form()),
@@ -526,11 +525,11 @@ def group_two_product_type_form():
                 name="type",
                 options=[
                     Option(key="firearms", value=CreateGoodForm.FirearmGood.ProductType.FIREARM),
+                    Option(key="ammunition", value=CreateGoodForm.FirearmGood.ProductType.AMMUNITION),
                     Option(
                         key="components_for_firearms",
                         value=CreateGoodForm.FirearmGood.ProductType.COMPONENTS_FOR_FIREARM,
                     ),
-                    Option(key="ammunition", value=CreateGoodForm.FirearmGood.ProductType.AMMUNITION),
                     Option(
                         key="components_for_ammunition",
                         value=CreateGoodForm.FirearmGood.ProductType.COMPONENTS_FOR_AMMUNITION,

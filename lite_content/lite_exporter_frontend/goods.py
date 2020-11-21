@@ -211,9 +211,9 @@ class CreateGoodForm:
         class ProductType:
             TITLE = "Select the type of product"
             FIREARM = "Firearm"
-            COMPONENTS_FOR_FIREARM = "Component for a firearm"
+            COMPONENTS_FOR_FIREARM = "Component of a firearm"
             AMMUNITION = "Ammunition"
-            COMPONENTS_FOR_AMMUNITION = "Component for ammunition"
+            COMPONENTS_FOR_AMMUNITION = "Component of firearm ammunition"
 
         class FirearmsAmmunitionDetails:
             TITLE = "Firearms and ammunition details"
