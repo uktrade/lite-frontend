@@ -30,8 +30,8 @@ class AddGoodPage(BasePage):
         self.driver.find_element_by_id(self.DESCRIPTION).send_keys(description)
 
     def select_is_your_good_controlled(self, option):
-        # The only options accepted here are 'yes', 'no' and 'unsure'
-        self.driver.find_element_by_id(self.IS_CONTROLLED + option.lower()).click()
+        # The options accepted here are 'True', 'False' and 'None'
+        self.driver.find_element_by_id(self.IS_CONTROLLED + option).click()
 
     def select_is_your_good_graded(self, option):
         # The only options accepted here are 'yes', 'no' and 'grading_required'

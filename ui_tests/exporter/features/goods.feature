@@ -10,16 +10,17 @@ Feature: I want to edit and remove goods on the goods list
     When I click on goods link
     And I click add a good button
     And I select product category "one" for a good
-    And I add a good with description "123 pistol" part number "321" controlled "Yes" control code "ML1a" and graded "yes"
+    And I add a good with description "123 pistol" part number "321" controlled "True" control code "ML1a" and graded "yes"
     And I add the goods grading with prefix "abc" grading "nato_restricted" suffix "def" issuing authority "NATO" reference "12345" Date of issue "10-05-2015"
     And I specify the "category 1" good details military use "yes_modified" component "yes_general" and information security "Yes"
     And I confirm I can upload a document
     And I upload file "file_for_doc_upload_test_1.txt" with description "This is a file I want to upload to show."
     And I get the goods ID
     Then I see good in goods list
-    When I edit the good to description "edited" part number "321" controlled "Yes" and control list entry "ML1a"
+    When I edit the good to description "edited" part number "321" controlled "True" and control list entry "ML1a"
     And I edit the "category 1" good details to military use "yes_designed" component "yes_designed" information security "No"
     Then I see my edited good details in the good page
+    And I delete document "1" from the good
     When I delete my good
     Then my good is no longer in the goods list
 
@@ -29,7 +30,7 @@ Feature: I want to edit and remove goods on the goods list
     When I click on goods link
     And I click add a good button
     And I select product category "one" for a good
-    And I add a good with description "Hand pistol" part number "321" controlled "Unsure" control code " " and graded "grading_required"
+    And I add a good with description "Hand pistol" part number "321" controlled "None" control code " " and graded "grading_required"
     And I specify the "category 1" good details military use "yes_designed" component "yes_modified" and information security "No"
     And I confirm I can upload a document
     And I upload file "file_for_doc_upload_test_1.txt" with description "This is a file I want to upload to show."
@@ -43,7 +44,7 @@ Feature: I want to edit and remove goods on the goods list
     When I click on goods link
     And I click add a good button
     And I select product category "one" for a good
-    And I add a good with description "Hand pistol" part number "321" controlled "Unsure" control code " " and graded "no"
+    And I add a good with description "Hand pistol" part number "321" controlled "None" control code " " and graded "no"
     And I specify the "category 1" good details military use "no" component "no" and information security "No"
     And I select that I cannot attach a document
     Then I see ECJU helpline details

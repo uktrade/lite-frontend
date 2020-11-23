@@ -138,7 +138,7 @@ class GoodsDetail(LoginRequiredMixin, TemplateView):
                 context["generated_documents"] = generated_documents["results"]
 
         if self.view_type == "application":
-            context["draft_pk"] = str(kwargs.get("draft_pk"))
+            context["draft_pk"] = str(kwargs.get("draft_pk", ""))
 
         if self.view_type == "case-notes":
             if self.good.get("case_id"):
@@ -199,7 +199,7 @@ class GoodSoftwareTechnology(LoginRequiredMixin, SingleFormView):
             self.application_id = str(kwargs["pk"])
         else:
             self.object_pk = str(kwargs["pk"])
-        self.draft_pk = kwargs.get("draft_pk")
+        self.draft_pk = str(kwargs.get("draft_pk", ""))
         self.data = get_good_details(request, self.object_pk)[0]
         self.form = software_technology_details_form(request, self.data.get("item_category"))
         self.action = edit_good_details
@@ -239,7 +239,7 @@ class GoodMilitaryUse(LoginRequiredMixin, SingleFormView):
             self.application_id = str(kwargs["pk"])
         else:
             self.object_pk = str(kwargs["pk"])
-        self.draft_pk = kwargs.get("draft_pk")
+        self.draft_pk = str(kwargs.get("draft_pk", ""))
         self.data = get_good_details(request, self.object_pk)[0]
         self.form = product_military_use_form(request)
         self.action = edit_good_details
@@ -297,7 +297,7 @@ class GoodComponent(LoginRequiredMixin, SingleFormView):
             self.application_id = str(kwargs["pk"])
         else:
             self.object_pk = str(kwargs["pk"])
-        self.draft_pk = kwargs.get("draft_pk")
+        self.draft_pk = str(kwargs.get("draft_pk", ""))
         self.data = get_good_details(request, self.object_pk)[0]
         self.form = product_component_form(request)
         self.action = edit_good_details
@@ -340,7 +340,7 @@ class GoodInformationSecurity(LoginRequiredMixin, SingleFormView):
             self.application_id = str(kwargs["pk"])
         else:
             self.object_pk = str(kwargs["pk"])
-        self.draft_pk = kwargs.get("draft_pk")
+        self.draft_pk = str(kwargs.get("draft_pk", ""))
         self.data = get_good_details(request, self.object_pk)[0]
         self.form = product_uses_information_security(request)
         self.action = edit_good_details
@@ -370,10 +370,10 @@ class GoodInformationSecurity(LoginRequiredMixin, SingleFormView):
 class RaiseGoodsQuery(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = str(kwargs["pk"])
-        self.draft_pk = kwargs.get("draft_pk")
+        self.draft_pk = str(kwargs.get("draft_pk", ""))
         good, _ = get_good(request, self.object_pk)
 
-        raise_a_clc_query = "unsure" == good["is_good_controlled"]["key"]
+        raise_a_clc_query = good["is_good_controlled"] is None
         raise_a_pv_query = "grading_required" == good["is_pv_graded"]["key"]
 
         self.form = raise_a_goods_query(self.object_pk, raise_a_clc_query, raise_a_pv_query)
@@ -398,7 +398,7 @@ class EditGood(LoginRequiredMixin, SingleFormView):
             self.application_id = str(kwargs["pk"])
         else:
             self.object_pk = str(kwargs["pk"])
-        self.draft_pk = kwargs.get("draft_pk")
+        self.draft_pk = str(kwargs.get("draft_pk", ""))
         self.data = get_good(request, self.object_pk)[0]
         self.form = edit_good_detail_form(request, self.object_pk)
         self.action = edit_good
@@ -434,7 +434,7 @@ class EditGrading(LoginRequiredMixin, SingleFormView):
             self.application_id = str(kwargs["pk"])
         else:
             self.object_pk = str(kwargs["pk"])
-        self.draft_pk = kwargs.get("draft_pk")
+        self.draft_pk = str(kwargs.get("draft_pk", ""))
         self.data = get_good(request, self.object_pk)[0]
         self.form = edit_grading_form(request, self.object_pk)
         self.action = edit_good_pv_grading
@@ -458,7 +458,7 @@ class EditGrading(LoginRequiredMixin, SingleFormView):
             )
         good = get_good(self.request, self.object_pk, full_detail=True)[0]
 
-        raise_a_clc_query = "unsure" == good["is_good_controlled"]["key"]
+        raise_a_clc_query = good["is_good_controlled"] is None
         raise_a_pv_query = "grading_required" == good["is_pv_graded"]["key"]
 
         if self.draft_pk:
@@ -484,7 +484,7 @@ class EditFirearmProductType(LoginRequiredMixin, SingleFormView):
             self.application_id = str(kwargs["pk"])
         else:
             self.object_pk = str(kwargs["pk"])
-        self.draft_pk = kwargs.get("draft_pk")
+        self.draft_pk = str(kwargs.get("draft_pk", ""))
         self.data = get_good_details(request, self.object_pk)[0]["firearm_details"]
         self.form = group_two_product_type_form()
         self.action = edit_good_firearm_details
@@ -518,7 +518,7 @@ class EditAmmunition(LoginRequiredMixin, SingleFormView):
             self.application_id = str(kwargs["pk"])
         else:
             self.object_pk = str(kwargs["pk"])
-        self.draft_pk = kwargs.get("draft_pk")
+        self.draft_pk = str(kwargs.get("draft_pk", ""))
         self.data = get_good_details(request, self.object_pk)[0]["firearm_details"]
         self.form = firearm_ammunition_details_form()
         self.action = edit_good_firearm_details
@@ -552,7 +552,7 @@ class EditFirearmActDetails(LoginRequiredMixin, SingleFormView):
             self.application_id = str(kwargs["pk"])
         else:
             self.object_pk = str(kwargs["pk"])
-        self.draft_pk = kwargs.get("draft_pk")
+        self.draft_pk = str(kwargs.get("draft_pk", ""))
         self.data = get_good_details(request, self.object_pk)[0]["firearm_details"]
         self.form = firearms_act_confirmation_form()
         self.action = edit_good_firearm_details
@@ -608,7 +608,7 @@ class EditIdentificationMarkings(LoginRequiredMixin, SingleFormView):
             self.application_id = str(kwargs["pk"])
         else:
             self.object_pk = str(kwargs["pk"])
-        self.draft_pk = kwargs.get("draft_pk")
+        self.draft_pk = str(kwargs.get("draft_pk", ""))
         self.data = get_good_details(request, self.object_pk)[0]["firearm_details"]
         self.form = identification_markings_form()
         self.action = edit_good_firearm_details
@@ -658,7 +658,7 @@ class CheckDocumentGrading(LoginRequiredMixin, SingleFormView):
 
         if self.request.POST.get("has_document_to_upload") == "no":
             good = self.get_validated_data()["good"]
-            raise_a_clc_query = "unsure" == good["is_good_controlled"]["key"]
+            raise_a_clc_query = good["is_good_controlled"] is None
             raise_a_pv_query = "grading_required" == good["is_pv_graded"]["key"]
 
             if self.draft_pk:
@@ -687,7 +687,7 @@ class AttachDocuments(LoginRequiredMixin, TemplateView):
         return_to_good_page = request.GET.get("goodpage", "no")
         good_id = str(kwargs["pk"])
         extra_data = {"good_id": good_id}
-        draft_pk = str(kwargs.get("draft_pk"))
+        draft_pk = str(kwargs.get("draft_pk", ""))
         if draft_pk:
             extra_data["draft_pk"] = draft_pk
         if return_to_good_page == "yes":
@@ -719,7 +719,7 @@ class AttachDocuments(LoginRequiredMixin, TemplateView):
         self.request.upload_handlers.insert(0, S3FileUploadHandler(request))
 
         good_id = str(kwargs["pk"])
-        draft_pk = str(kwargs.get("draft_pk"))
+        draft_pk = str(kwargs.get("draft_pk", ""))
         good, _ = get_good(request, good_id)
 
         data, error = add_document_data(request)
@@ -731,7 +731,7 @@ class AttachDocuments(LoginRequiredMixin, TemplateView):
         if status_code != HTTPStatus.CREATED:
             return error_page(request, data["errors"]["file"])
 
-        raise_a_clc_query = "unsure" == good["is_good_controlled"]["key"]
+        raise_a_clc_query = good["is_good_controlled"] is None
         raise_a_pv_query = "grading_required" == good["is_pv_graded"]["key"]
 
         if draft_pk:
@@ -765,7 +765,7 @@ class Document(LoginRequiredMixin, TemplateView):
 class DeleteDocument(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         good_id = str(kwargs["pk"])
-        draft_pk = str(kwargs.get("draft_pk"))
+        draft_pk = str(kwargs.get("draft_pk", ""))
         file_pk = str(kwargs["file_pk"])
 
         document = get_good_document(request, good_id, file_pk)
@@ -780,7 +780,7 @@ class DeleteDocument(LoginRequiredMixin, TemplateView):
 
     def post(self, request, **kwargs):
         good_id = str(kwargs["pk"])
-        draft_pk = str(kwargs.get("draft_pk"))
+        draft_pk = str(kwargs.get("draft_pk", ""))
         file_pk = str(kwargs["file_pk"])
 
         # Delete the file on the API

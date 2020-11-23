@@ -58,7 +58,7 @@
 		<form method="post" action="{% url 'goods:delete_document' good_id document.id %}">
 	{% endif %}
 		{% csrf_token %}
-		<button type="submit" class="govuk-button govuk-button--warning govuk-!-margin-right-2">{% lcs "goods.DeleteGoodDocumentPage.BUTTON" %}</button>
+		<button type="submit" value="submit" class="govuk-button govuk-button--warning govuk-!-margin-right-2">{% lcs "goods.DeleteGoodDocumentPage.BUTTON" %}</button>
 	</form>
 </div>
 {% endblock %}

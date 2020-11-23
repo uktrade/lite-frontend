@@ -92,6 +92,14 @@ def delete_my_good_in_list(driver, context):
     functions.click_submit(driver)
 
 
+@then(parsers.parse('I delete document "{item_index:d}" from the good'))
+def delete_uploaded_document_from_good_and_submit(driver, item_index):
+    document = GoodsPage(driver).get_uploaded_documents_delete_links()[item_index - 1]
+    driver.execute_script("arguments[0].scrollIntoView();", document)
+    driver.execute_script("arguments[0].click();", document)
+    functions.click_submit(driver)
+
+
 @then("my good is no longer in the goods list")
 def good_is_no_longer_in_list(driver, context):
     assert context.good_description not in Shared(driver).get_text_of_gov_table()
