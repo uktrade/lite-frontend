@@ -214,6 +214,9 @@ class CreateGoodForm:
             COMPONENTS_FOR_FIREARM = "Component of a firearm"
             AMMUNITION = "Ammunition"
             COMPONENTS_FOR_AMMUNITION = "Component of firearm ammunition"
+            FIREARMS_ACCESSORY = "Accessory of a firearm"
+            SOFTWARE_RELATED_TO_FIREARM = "Software relating to a firearm"
+            TECHNOLOGY_RELATED_TO_FIREARM = "Technology relating to a firearm"
 
         class FirearmsAmmunitionDetails:
             TITLE = "Firearms and ammunition details"

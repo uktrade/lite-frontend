@@ -57,6 +57,19 @@ def add_firearm_details_to_data(json):
     if "product_type_step" in json:
         # parent component doesnt get sent when empty unlike the remaining form fields
         firearm_details["type"] = json.get("type")
+
+        # set default values as they are not applicable in these cases
+        if firearm_details["type"] in [
+            "firearms_accessory",
+            "software_related_to_firearms",
+            "technology_related_to_firearms",
+        ]:
+            firearm_details["is_covered_by_firearm_act_section_one_two_or_five"] = "no"
+            firearm_details["section_certificate_number"] = ""
+            firearm_details["section_certificate_date_of_expiry"] = ""
+            firearm_details["has_identification_markings"] = "False"
+            firearm_details["identification_markings_details"] = ""
+            firearm_details["no_identification_markings_details"] = ""
     if "firearm_ammunition_step" in json:
         firearm_details["year_of_manufacture"] = json.get("year_of_manufacture")
         firearm_details["calibre"] = json.get("calibre")

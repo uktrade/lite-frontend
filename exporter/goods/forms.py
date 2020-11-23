@@ -64,14 +64,22 @@ def product_category_form(request):
 
 
 def software_technology_details_form(request, item_category=None):
-    category = get_category_display_string(
-        request.POST.get("item_category", "") if not item_category else item_category
-    )
+    category_type = request.POST.get("item_category", "") if not item_category else item_category
+    if request.POST.get("type") in ["software_related_to_firearms", "technology_related_to_firearms"]:
+        category_type = request.POST.get("type")
+
+    category = get_category_display_string(category_type)
+
     return Form(
         title=CreateGoodForm.TechnologySoftware.TITLE + category,
         questions=[
             HiddenField("is_software_or_technology_step", True),
-            TextArea(title="", description="", name="software_or_technology_details", optional=False,),
+            TextArea(
+                title="",
+                description="",
+                name="software_or_technology_details",
+                optional=False,
+            ),
         ],
     )
 
@@ -339,7 +347,9 @@ def add_good_form_group(
     request,
     is_pv_graded: bool = None,
     is_software_technology: bool = None,
-    is_firearms: bool = None,
+    is_firearms_core: bool = None,
+    is_firearms_accessory: bool = None,
+    is_firearms_software_tech: bool = None,
     draft_pk: str = None,
 ):
     control_list_entries = get_control_list_entries(request, convert_to_options=True)
@@ -348,13 +358,13 @@ def add_good_form_group(
             group_two_product_type_form(),
             add_goods_questions(control_list_entries, draft_pk),
             conditional(is_pv_graded, pv_details_form(request)),
-            conditional(is_software_technology, software_technology_details_form(request)),
-            conditional(not is_firearms, product_military_use_form(request)),
-            conditional(not is_software_technology and not is_firearms, product_component_form(request)),
-            conditional(not is_firearms, product_uses_information_security(request)),
-            conditional(is_firearms, firearm_ammunition_details_form()),
-            conditional(is_firearms, firearms_act_confirmation_form()),
-            conditional(is_firearms, identification_markings_form()),
+            conditional(is_firearms_core, firearm_ammunition_details_form()),
+            conditional(is_firearms_core, firearms_act_confirmation_form()),
+            conditional(is_firearms_core, identification_markings_form()),
+            conditional(is_firearms_software_tech, software_technology_details_form(request)),
+            conditional(is_firearms_accessory or is_firearms_software_tech, product_military_use_form(request)),
+            conditional(is_firearms_accessory, product_component_form(request)),
+            conditional(is_firearms_accessory or is_firearms_software_tech, product_uses_information_security(request)),
         ]
     )
 
@@ -478,7 +488,11 @@ def raise_a_goods_query(good_id, raise_a_clc: bool, raise_a_pv: bool):
                 name="clc_control_code",
                 optional=True,
             ),
-            TextArea(title=GoodsQueryForm.CLCQuery.Details.TITLE, name="clc_raised_reasons", optional=True,),
+            TextArea(
+                title=GoodsQueryForm.CLCQuery.Details.TITLE,
+                name="clc_raised_reasons",
+                optional=True,
+            ),
         ]
 
     if raise_a_pv:
@@ -487,7 +501,11 @@ def raise_a_goods_query(good_id, raise_a_clc: bool, raise_a_pv: bool):
                 Heading(GoodsQueryForm.PVGrading.TITLE, HeadingStyle.M),
             ]
         questions += [
-            TextArea(title=GoodsQueryForm.PVGrading.Details.TITLE, name="pv_grading_raised_reasons", optional=True,),
+            TextArea(
+                title=GoodsQueryForm.PVGrading.Details.TITLE,
+                name="pv_grading_raised_reasons",
+                optional=True,
+            ),
         ]
 
     return Form(
@@ -533,6 +551,15 @@ def group_two_product_type_form():
                     Option(
                         key="components_for_ammunition",
                         value=CreateGoodForm.FirearmGood.ProductType.COMPONENTS_FOR_AMMUNITION,
+                    ),
+                    Option(key="firearms_accessory", value=CreateGoodForm.FirearmGood.ProductType.FIREARMS_ACCESSORY),
+                    Option(
+                        key="software_related_to_firearms",
+                        value=CreateGoodForm.FirearmGood.ProductType.SOFTWARE_RELATED_TO_FIREARM,
+                    ),
+                    Option(
+                        key="technology_related_to_firearms",
+                        value=CreateGoodForm.FirearmGood.ProductType.TECHNOLOGY_RELATED_TO_FIREARM,
                     ),
                 ],
             ),

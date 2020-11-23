@@ -176,8 +176,25 @@ class AddGood(LoginRequiredMixin, MultiFormView):
         copied_request = request.POST.copy()
         is_pv_graded = copied_request.get("is_pv_graded", "").lower() == "yes"
         is_software_technology = copied_request.get("item_category") in ["group3_software", "group3_technology"]
-        is_firearms = copied_request.get("item_category") == "group2_firearms"
-        self.forms = add_good_form_group(request, is_pv_graded, is_software_technology, is_firearms)
+        is_firearms_core = copied_request.get("type") in [
+            "firearms",
+            "ammunition",
+            "components_for_firearms",
+            "components_for_ammunition",
+        ]
+        is_firearms_accessory = copied_request.get("type") == "firearms_accessory"
+        is_firearms_software_tech = copied_request.get("type") in [
+            "software_related_to_firearms",
+            "technology_related_to_firearms",
+        ]
+        self.forms = add_good_form_group(
+            request,
+            is_pv_graded,
+            is_software_technology,
+            is_firearms_core,
+            is_firearms_accessory,
+            is_firearms_software_tech,
+        )
 
         # we require the form index of the last form in the group, not the total number
         number_of_forms = len(self.forms.get_forms()) - 1
