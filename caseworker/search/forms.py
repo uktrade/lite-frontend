@@ -29,6 +29,7 @@ filter_names = "|".join(
         "incorporated",
         "case_type",
         "case_subtype",
+        "destination",  # for products
         *build_filter_lookups("created"),
         *build_filter_lookups("updated"),
     ]
@@ -37,7 +38,7 @@ filter_names = "|".join(
 filters_regex_pattern = re.compile(f'({filter_names}?):"(.*?)"')
 
 
-class CasesSearchForm(forms.Form):
+class SearchForm(forms.Form):
     input_css_classname = "govuk-input"
     label_css_classname = "lite-filter-bar__label"
 

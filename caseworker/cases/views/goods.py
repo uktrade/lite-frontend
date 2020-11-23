@@ -5,8 +5,8 @@ from formtools.wizard.views import SessionWizardView
 from caseworker.cases.forms.review_goods import review_goods_form, ExportControlCharacteristicsForm
 from caseworker.cases.helpers.advice import get_param_goods, flatten_goods_data
 from caseworker.cases.services import get_case, post_review_good, post_review_goods, get_good_on_application
-from caseworker.search.services import get_search_results
-from caseworker.search.forms import CasesSearchForm
+from caseworker.search.services import get_application_search_results
+from caseworker.search.forms import SearchForm
 from caseworker.core.constants import Permission
 from caseworker.core.helpers import has_permission
 from caseworker.core.services import get_control_list_entries
@@ -167,7 +167,7 @@ class ReviewOpenApplicationGoodWizardView(AbstractReviewGoodWizardView):
 
 class GoodDetails(LoginRequiredMixin, FormView):
     template_name = "case/product-on-case.html"
-    form_class = CasesSearchForm
+    form_class = SearchForm
 
     @cached_property
     def object(self):
@@ -178,7 +178,7 @@ class GoodDetails(LoginRequiredMixin, FormView):
         form = self.get_form()
         search_string = self.get_initial()["search_string"]
         if search_string:
-            return get_search_results(self.request, query_params=form.extract_filters(search_string))
+            return get_application_search_results(self.request, query_params=form.extract_filters(search_string))
         return []
 
     def get_initial(self):

@@ -3,9 +3,9 @@
 {% if pages|length > 1 %}
 	<div class="lite-pagination__container">
 		{% if previous_link_url %}
-			<a id="link-previous-page" href="{{ previous_link_url }}" id="link-previous-page" class="lite-pagination__navigation-link lite-pagination__link" data-number="{{ previous_page_number }}">
+			<a id="link-previous-page" href="{{ previous_link_url }}" id="link-previous-page" class="lite-pagination__navigation-link lite-pagination__link">
 				{% svg 'previous' %}
-				<span>Previous page</span>
+				<span data-number="{{ previous_page_number }}">Previous page!</span>
 			</a>
 		{% else %}
 			<p id="link-previous-page" class="lite-pagination__navigation-link lite-pagination__navigation-link--disabled">
@@ -14,6 +14,7 @@
 			</p>
 		{% endif %}
 
+		{% if not hide_page_numbers %}
 		<ol class="lite-pagination__list">
 			{% for item in pages %}
 				{% if item.type == 'page_item' %}
@@ -33,10 +34,11 @@
 				{% endif %}
 			{% endfor %}
 		</ol>
+		{% endif %}
 
 		{% if next_link_url %}
-			<a id="link-next-page" href="{{ next_link_url }}" id="link-next-page" class="lite-pagination__navigation-link lite-pagination__link" data-number="{{ next_page_number }}">
-				<span>Next page</span>
+			<a id="link-next-page" href="{{ next_link_url }}" id="link-next-page" class="lite-pagination__navigation-link lite-pagination__link" >
+				<span data-number="{{ next_page_number }}">Next page</span>
 				{% svg 'next' %}
 			</a>
 		{% else %}

@@ -5,7 +5,6 @@
   var resultsElement = document.getElementById("results-table")
   var currentSearch = inputElement.value || ''
   var lastSearch = inputElement.value || ''
-  var datePicker = null
 
   // focus at end of the field and make sure there is a space at the end
   inputElement.focus()
@@ -18,18 +17,14 @@
     trigger: {
       event: ['input'],
       condition: function(query) {
-        if (isCalendarIntent(query)) {
-          return false
-        } else {
-          return query.length > autocomplete.threshold && query !== " "
-        }
+        return query.length > autocomplete.threshold && query !== " "
       }
     },
     data: {
       src: function() {
         currentSearch = inputElement.value.replace(lastSearch, '').trim()
         var query = currentSearch.toLowerCase()
-        return fetch('/search/applications/suggest/?format=json&q=' + query).then(function(response) {
+        return fetch('/search/products/suggest/?format=json&q=' + escape(query)).then(function(response) {
           return response.json().then(function(parsed) {
             // cheap prefix match "incor" for "spire"
             if (currentSearch.indexOf('spi') > -1) {
@@ -100,16 +95,11 @@
     }
   });
 
-  function isCalendarIntent(query) {
-    query = query.toLowerCase()
-    return query.indexOf('created:') > -1 || query.indexOf('updated:') > -1
-  }
-
   function handleSearch() {
     var query = lastSearch = inputElement.value
     var pageNumber = pageInputElement.value
     setTimeout(function() { inputElement.focus()})
-    fetch('/search/applications/?search_string=' + query + '&page=' + pageNumber).then(function(response) {
+    fetch('/search/products/?search_string=' + escape(query) + '&page=' + pageNumber).then(function(response) {
       var html = response.text().then(function(html) {
         var div = document.createElement('div');
         div.innerHTML = html.trim();
@@ -121,29 +111,6 @@
     searchParams.set("search_string", query);
     searchParams.set("page", pageNumber);
     history.pushState(null, '', window.location.pathname + '?' + searchParams.toString());
-  }
-
-  function handleDateInput(fieldName) {
-    datePicker = new Lightpick({
-      field: document.createElement('input'),
-      inline: true,
-      parentEl: inputElement.parentNode,
-      singleDate: false,
-      onSelect: function(start, end){
-        var startField = fieldName + '__gte'
-        var endField = fieldName + '__lte'
-        if (start && end) {
-          inputElement.value = inputElement.value.trim().replace(
-            fieldName + ':',
-            startField + ':"' + start.format('YYYY-MM-DD') + '" ' + endField + ':"' + end.format('YYYY-MM-DD') + '"'
-          )
-          pageInputElement.value = 1
-          handleSearch()
-          this.destroy()
-          datePicker = null;
-        }
-      }
-    })
   }
 
   function listenToPaginationClick() {
@@ -163,14 +130,6 @@
     event.preventDefault()
     pageInputElement.value = 1
     handleSearch()
-  })
-
-  inputElement.addEventListener('keyup', function() {
-    // only open date picker if not already open
-    if (!datePicker && isCalendarIntent(this.value)) {
-      var fieldName = this.value.indexOf('created:') > -1 ? 'created' : 'updated'
-      handleDateInput(fieldName)
-    }
   })
 
   listenToPaginationClick()

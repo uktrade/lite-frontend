@@ -45,7 +45,7 @@
                                     <span>{{ item.reference_code }}</span>
                                 {% endif %}
                             {% elif item.index == 'spire' %}
-                                <a class="govuk-link govuk-link--no-visited-state" id="case-${item.id}"
+                                <a class="govuk-link govuk-link--no-visited-state" id="case-{{ item.id }}"
                                     href="{% url 'spire:application-detail' id=item.id %}">
                                     <span class="govuk-visually-hidden">View</span> {{ item.reference_code }}
                                 </a>
