@@ -15,6 +15,8 @@ from ui_tests.exporter.fixtures.register_organisation import (  # noqa
     register_organisation_for_switching_organisation,
 )
 from ui_tests.exporter.fixtures.sso_sign_in import sso_sign_in  # noqa
+from ui_tests.exporter.pages.add_goods_page import AddGoodPage
+from ui_tests.exporter.pages.add_goods_details import AddGoodDetails
 from ui_tests.exporter.pages.add_end_user_pages import AddEndUserPages
 from ui_tests.exporter.pages.application_edit_type_page import ApplicationEditTypePage
 from ui_tests.exporter.pages.application_page import ApplicationPage
@@ -28,6 +30,7 @@ from ui_tests.exporter.pages.generic_application.task_list import TaskListPage
 from ui_tests.exporter.pages.hub_page import Hub
 from ui_tests.exporter.pages.mod_clearances.ExhibitionClearanceDetails import ExhibitionClearanceDetailsPage
 from ui_tests.exporter.pages.open_application.add_goods_type import OpenApplicationAddGoodsType
+from ui_tests.exporter.pages.product_summary import ProductSummary
 from ui_tests.exporter.pages.respond_to_ecju_query_page import RespondToEcjuQueryPage
 from ui_tests.exporter.pages.route_of_goods_form_page import RouteOfGoodsFormPage
 from ui_tests.exporter.pages.shared import Shared
@@ -400,6 +403,13 @@ def determine_that_there_is_a_closed_query(driver):  # noqa
     assert closed_queries > 0
 
 
+@when("I confirm I can upload a document")
+def confirm_can_upload_document(driver):
+    # Confirm you have a document that is not sensitive
+    AddGoodPage(driver).confirm_can_upload_good_document()
+    functions.click_submit(driver)
+
+
 @when(parsers.parse('I upload file "{filename}" with description "{description}"'))  # noqa
 def upload_a_file_with_description(driver, filename, description):  # noqa
     attach_document_page = AttachDocumentPage(driver)
@@ -719,3 +729,127 @@ def final_advice_open(context, decision, api_test_client):  # noqa
             {"type": decision, "text": "abc", "note": "", "country": context.country["code"]},
         ],
     )
+
+
+@when(parsers.parse('I select product type "{product_type}"'))  # noqa
+def select_product_type(driver, product_type):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.select_firearm_product_type(product_type)
+    functions.click_submit(driver)
+
+
+@when(
+    parsers.parse(
+        'I enter good description as "{description}" part number "{part_number}" controlled "{controlled}" control code "{control_code}" and graded "{graded}"'
+    )
+)  # noqa
+def create_a_new_good_in_application(driver, description, part_number, controlled, control_code, graded):
+    add_goods_page = AddGoodPage(driver)
+    add_goods_page.enter_description_of_goods(description)
+    add_goods_page.select_is_your_good_controlled(controlled)
+    add_goods_page.enter_control_list_entries(control_code)
+    add_goods_page.select_is_your_good_graded(graded)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I enter firearm year of manufacture as "{year}" and calibre as "{calibre}"'))
+def enter_firearm_year_of_manufacture_and_calibre(driver, year, calibre):
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.enter_year_of_manufacture(year)
+    good_details_page.enter_calibre(calibre)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I specify firearms act sections apply as "{sections_choice}"'))
+def specify_firearms_act_sections_choice(driver, sections_choice):
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.select_do_firearms_act_sections_apply(sections_choice)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I specify firearms identification markings as "{has_markings}" with details "{details}"'))
+def specify_firearms_identification_markings(driver, has_markings, details):
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.does_firearm_have_identification_markings(has_markings, details)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I specify military use details as "{military_use}"'))  # noqa
+def specify_product_military_details(driver, military_use):  # noqa
+    page = AddGoodDetails(driver)
+    page.select_is_product_for_military_use(military_use)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I specify component details as "{component}"'))  # noqa
+def specify_product_component_details(driver, component):  # noqa
+    page = AddGoodDetails(driver)
+    page.select_is_product_a_component(component)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I specify the "{product_type}" product purpose as "{purpose}"'))  # noqa
+def specify_product_purpose_details(driver, product_type, purpose):  # noqa
+    page = AddGoodDetails(driver)
+    heading = driver.find_element_by_class_name("govuk-fieldset__heading").text
+    assert f"Describe the purpose of the {product_type}" == heading
+    page.enter_software_technology_purpose_details(purpose)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I specify product employs information security features as "{supports_infosec}"'))  # noqa
+def specify_product_infosec_details(driver, supports_infosec):  # noqa
+    page = AddGoodDetails(driver)
+    page.does_product_employ_information_security(supports_infosec)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I see summary screen for "{product_type_value}" product with description "{description}"'))
+def summary_screen_for_product_type(driver, product_type_value, description):
+    summary_page = ProductSummary(driver)
+    assert summary_page.get_page_heading() == "Product summary"
+    summary = summary_page.get_summary_details()
+    assert summary["Product type"] == product_type_value
+    assert summary["Description"] == description
+    expected_fields = [
+        "Part number",
+        "CLC",
+        "Security grading",
+    ]
+
+    if product_type_value == "Firearms":
+        expected_fields += [
+            "Year of manufacture",
+            "Calibre",
+            "Identification markings",
+        ]
+    elif product_type_value == "Accessory of a firearm":
+        expected_fields += [
+            "Military use",
+            "Component",
+            "Information security features",
+        ]
+
+    assert all(key in summary.keys() for key in expected_fields)
+    driver.find_element_by_link_text("Save and continue").click()
+
+
+@when(
+    parsers.parse(
+        'I enter product details with unit of measurement "{unit}", quantity "{quantity}" and value "{value}" and Save'
+    )
+)  # noqa
+def i_enter_product_details_unit_quantity_and_value(driver, unit, quantity, value):
+    details_page = StandardApplicationGoodDetails(driver)
+    details_page.select_unit(unit)
+    details_page.enter_quantity(quantity)
+    details_page.enter_value(value)
+    details_page.check_is_good_incorporated_false()
+
+    functions.click_submit(driver)
+
+
+@then(parsers.parse('the product "{description}" is added to the application'))
+def product_with_description_is_added_to_application(driver, description):
+    products_page = StandardApplicationGoodsPage(driver)
+    assert products_page.good_with_description_exists(description)

@@ -110,6 +110,11 @@ def i_add_a_non_incorporated_good_to_the_application(driver, context):  # noqa
     functions.click_submit(driver)
 
 
+@when("I choose to add a new product")  # noqa
+def i_choose_to_add_a_new_product(driver, context):  # noqa
+    StandardApplicationGoodsPage(driver).click_add_new_good_button()
+
+
 @when("I choose to add a product from product list")  # noqa
 def i_choose_to_add_product_from_product_list(driver, context):  # noqa
     StandardApplicationGoodsPage(driver).click_add_preexisting_good_button()
