@@ -27,7 +27,7 @@ Feature: I want to indicate the open licence I want
     When I click the back link
     Then I cannot see the sections "ultimate-end-users"
     When I click on the "goods" section
-    And I add a goods type with description "Sniper" controlled "Yes" control code "ML1a" incorporated "Yes"
+    And I add a goods type with description "Sniper" controlled "True" control code "ML1a" incorporated "Yes"
     When I click the back link
     When I click on the "countries" section
     Then I should see a list of countries
@@ -76,7 +76,7 @@ Feature: I want to indicate the open licence I want
     And I answer "Yes" for shipping air waybill or lading
     And I click continue
     And I click on the "goods" section
-    And I add a goods type with description "Sniper" controlled "Yes" control code "ML1a" incorporated "No"
+    And I add a goods type with description "Sniper" controlled "True" control code "ML1a" incorporated "No"
     Then I see my goods type added at position "1" with a description and a control code
     When I click the back link
     When I click on the "countries" section
@@ -179,7 +179,7 @@ Feature: I want to indicate the open licence I want
     And I answer "Yes" for shipping air waybill or lading
     And I click continue
     And I click on the "goods" section
-    And I add a goods type with description "Sniper" controlled "Yes" control code "ML1a" incorporated "Yes"
+    And I add a goods type with description "Sniper" controlled "True" control code "ML1a" incorporated "Yes"
     Then I see my goods type added at position "1" with a description and a control code
     When I click the back link
     And I click on the "countries" section

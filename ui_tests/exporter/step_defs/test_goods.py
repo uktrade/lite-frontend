@@ -267,11 +267,11 @@ def add_new_good(driver, description, part, controlled, control_code, graded, co
     context.part = good_part
     context.control_code = control_code
     add_goods_page.enter_description_of_goods(good_description)
-    add_goods_page.select_is_your_good_controlled(controlled)
     if "not needed" in good_part:
         good_part_needed = False
     elif "empty" not in good_part:
         add_goods_page.enter_part_number(good_part)
+    add_goods_page.select_is_your_good_controlled(controlled)
     if controlled.lower() == "yes":
         add_goods_page.enter_control_list_entries(control_code)
     add_goods_page.select_is_your_good_graded(graded)
