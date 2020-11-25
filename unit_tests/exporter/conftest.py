@@ -73,3 +73,23 @@ def mock_countries(requests_mock):
 
     requests_mock.get(url=url, json=data)
     yield data
+
+
+@pytest.fixture
+def mock_units(requests_mock):
+    url = client._build_absolute_uri("/static/units/")
+    data = {
+        "units": {
+            "GRM": "Gram(s)",
+            "KGM": "Kilogram(s)",
+            "NAR": "Number of articles",
+            "MTK": "Square metre(s)",
+            "MTR": "Metre(s)",
+            "LTR": "Litre(s)",
+            "MTQ": "Cubic metre(s)",
+            "ITG": "Intangible",
+        }
+    }
+
+    requests_mock.get(url=url, json=data)
+    yield data
