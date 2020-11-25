@@ -508,13 +508,13 @@ class EditFirearmProductType(LoginRequiredMixin, SingleFormView):
 
     def get_success_url(self):
         # Next question firearm and ammunition details
-        if not self.data.get("year_of_manufacture") or not self.data.get("calibre"):
+        if self.data.get("type"):
             if "good_pk" in self.kwargs:
                 return reverse_lazy(
-                    "applications:ammunition", kwargs={"pk": self.application_id, "good_pk": self.object_pk}
+                    "applications:edit_good", kwargs={"pk": self.application_id, "good_pk": self.object_pk}
                 )
             else:
-                return reverse_lazy("goods:ammunition", kwargs={"pk": self.object_pk})
+                return reverse_lazy("goods:edit", kwargs={"pk": self.object_pk})
         elif self.draft_pk:
             return reverse(
                 "goods:good_detail_application",

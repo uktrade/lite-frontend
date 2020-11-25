@@ -64,6 +64,8 @@ def add_firearm_details_to_data(json):
             "software_related_to_firearms",
             "technology_related_to_firearms",
         ]:
+            firearm_details["year_of_manufacture"] = None
+            firearm_details["calibre"] = ""
             firearm_details["is_covered_by_firearm_act_section_one_two_or_five"] = "no"
             firearm_details["section_certificate_number"] = ""
             firearm_details["section_certificate_date_of_expiry"] = ""

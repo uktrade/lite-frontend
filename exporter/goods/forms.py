@@ -63,23 +63,14 @@ def product_category_form(request):
     )
 
 
-def software_technology_details_form(request, item_category=None):
-    category_type = request.POST.get("item_category", "") if not item_category else item_category
-    if request.POST.get("type") in ["software_related_to_firearms", "technology_related_to_firearms"]:
-        category_type = request.POST.get("type")
-
-    category = get_category_display_string(category_type)
+def software_technology_details_form(request, category_type):
+    category_text = get_category_display_string(category_type)
 
     return Form(
-        title=CreateGoodForm.TechnologySoftware.TITLE + category,
+        title=CreateGoodForm.TechnologySoftware.TITLE + category_text,
         questions=[
             HiddenField("is_software_or_technology_step", True),
-            TextArea(
-                title="",
-                description="",
-                name="software_or_technology_details",
-                optional=False,
-            ),
+            TextArea(title="", description="", name="software_or_technology_details", optional=False,),
         ],
     )
 
@@ -361,7 +352,7 @@ def add_good_form_group(
             conditional(is_firearms_core, firearm_ammunition_details_form()),
             conditional(is_firearms_core, firearms_act_confirmation_form()),
             conditional(is_firearms_core, identification_markings_form()),
-            conditional(is_firearms_software_tech, software_technology_details_form(request)),
+            conditional(is_firearms_software_tech, software_technology_details_form(request, request.POST.get("type"))),
             conditional(is_firearms_accessory or is_firearms_software_tech, product_military_use_form(request)),
             conditional(is_firearms_accessory, product_component_form(request)),
             conditional(is_firearms_accessory or is_firearms_software_tech, product_uses_information_security(request)),
@@ -488,11 +479,7 @@ def raise_a_goods_query(good_id, raise_a_clc: bool, raise_a_pv: bool):
                 name="clc_control_code",
                 optional=True,
             ),
-            TextArea(
-                title=GoodsQueryForm.CLCQuery.Details.TITLE,
-                name="clc_raised_reasons",
-                optional=True,
-            ),
+            TextArea(title=GoodsQueryForm.CLCQuery.Details.TITLE, name="clc_raised_reasons", optional=True,),
         ]
 
     if raise_a_pv:
@@ -501,11 +488,7 @@ def raise_a_goods_query(good_id, raise_a_clc: bool, raise_a_pv: bool):
                 Heading(GoodsQueryForm.PVGrading.TITLE, HeadingStyle.M),
             ]
         questions += [
-            TextArea(
-                title=GoodsQueryForm.PVGrading.Details.TITLE,
-                name="pv_grading_raised_reasons",
-                optional=True,
-            ),
+            TextArea(title=GoodsQueryForm.PVGrading.Details.TITLE, name="pv_grading_raised_reasons", optional=True,),
         ]
 
     return Form(
@@ -564,6 +547,7 @@ def group_two_product_type_form():
                 ],
             ),
         ],
+        default_button_name="Save and continue",
     )
 
 
