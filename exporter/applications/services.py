@@ -119,7 +119,7 @@ def serialize_good_on_app_data(json):
         post_data = json
     if "good_id" not in post_data:
         post_data["good_id"] = json["good_id"]
-    for key in ["value", "quantity"]:
+    for key in {"value", "quantity"} & set(post_data.keys()):
         if "," in post_data[key]:
             post_data[key] = post_data[key].replace(",", "")
     return post_data

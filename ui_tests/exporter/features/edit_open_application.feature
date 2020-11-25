@@ -16,7 +16,7 @@ Feature: I want to be able to edit and update an active application
     And I click on the "goods" section
     And I remove a good type from the application
     Then no goods types are left on the application
-    When I add a goods type with description "Sniper" controlled "Yes" control code "ML1a" incorporated "Yes"
+    When I add a goods type with description "Sniper" controlled "True" control code "ML1a" incorporated "Yes"
     And I click the back link
     And I submit the application
     And I click continue
