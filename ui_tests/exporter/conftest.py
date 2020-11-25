@@ -404,7 +404,7 @@ def determine_that_there_is_a_closed_query(driver):  # noqa
 
 
 @when("I confirm I can upload a document")
-def confirm_can_upload_document(driver):
+def confirm_can_upload_document(driver):  # noqa
     # Confirm you have a document that is not sensitive
     AddGoodPage(driver).confirm_can_upload_good_document()
     functions.click_submit(driver)
@@ -743,9 +743,10 @@ def select_product_type(driver, product_type):  # noqa
         'I enter good description as "{description}" part number "{part_number}" controlled "{controlled}" control code "{control_code}" and graded "{graded}"'
     )
 )  # noqa
-def create_a_new_good_in_application(driver, description, part_number, controlled, control_code, graded):
+def create_a_new_good_in_application(driver, description, part_number, controlled, control_code, graded):  # noqa
     add_goods_page = AddGoodPage(driver)
     add_goods_page.enter_description_of_goods(description)
+    add_goods_page.enter_part_number(part_number)
     add_goods_page.select_is_your_good_controlled(controlled)
     add_goods_page.enter_control_list_entries(control_code)
     add_goods_page.select_is_your_good_graded(graded)
@@ -753,7 +754,7 @@ def create_a_new_good_in_application(driver, description, part_number, controlle
 
 
 @when(parsers.parse('I enter firearm year of manufacture as "{year}" and calibre as "{calibre}"'))
-def enter_firearm_year_of_manufacture_and_calibre(driver, year, calibre):
+def enter_firearm_year_of_manufacture_and_calibre(driver, year, calibre):  # noqa
     good_details_page = AddGoodDetails(driver)
     good_details_page.enter_year_of_manufacture(year)
     good_details_page.enter_calibre(calibre)
@@ -761,14 +762,14 @@ def enter_firearm_year_of_manufacture_and_calibre(driver, year, calibre):
 
 
 @when(parsers.parse('I specify firearms act sections apply as "{sections_choice}"'))
-def specify_firearms_act_sections_choice(driver, sections_choice):
+def specify_firearms_act_sections_choice(driver, sections_choice):  # noqa
     good_details_page = AddGoodDetails(driver)
     good_details_page.select_do_firearms_act_sections_apply(sections_choice)
     functions.click_submit(driver)
 
 
 @when(parsers.parse('I specify firearms identification markings as "{has_markings}" with details "{details}"'))
-def specify_firearms_identification_markings(driver, has_markings, details):
+def specify_firearms_identification_markings(driver, has_markings, details):  # noqa
     good_details_page = AddGoodDetails(driver)
     good_details_page.does_firearm_have_identification_markings(has_markings, details)
     functions.click_submit(driver)
@@ -805,7 +806,7 @@ def specify_product_infosec_details(driver, supports_infosec):  # noqa
 
 
 @when(parsers.parse('I see summary screen for "{product_type_value}" product with description "{description}"'))
-def summary_screen_for_product_type(driver, product_type_value, description):
+def summary_screen_for_product_type(driver, product_type_value, description):  # noqa
     summary_page = ProductSummary(driver)
     assert summary_page.get_page_heading() == "Product summary"
     summary = summary_page.get_summary_details()
@@ -839,7 +840,7 @@ def summary_screen_for_product_type(driver, product_type_value, description):
         'I enter product details with unit of measurement "{unit}", quantity "{quantity}" and value "{value}" and Save'
     )
 )  # noqa
-def i_enter_product_details_unit_quantity_and_value(driver, unit, quantity, value):
+def i_enter_product_details_unit_quantity_and_value(driver, unit, quantity, value):  # noqa
     details_page = StandardApplicationGoodDetails(driver)
     details_page.select_unit(unit)
     details_page.enter_quantity(quantity)
@@ -850,6 +851,6 @@ def i_enter_product_details_unit_quantity_and_value(driver, unit, quantity, valu
 
 
 @then(parsers.parse('the product "{description}" is added to the application'))
-def product_with_description_is_added_to_application(driver, description):
+def product_with_description_is_added_to_application(driver, description):  # noqa
     products_page = StandardApplicationGoodsPage(driver)
     assert products_page.good_with_description_exists(description)

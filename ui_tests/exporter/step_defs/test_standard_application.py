@@ -33,6 +33,7 @@ from faker import Faker
 fake = Faker()
 
 scenarios(
+    "../features/goods.feature",
     "../features/submit_standard_application.feature",
     "../features/edit_standard_application.feature",
     strict_gherkin=False,

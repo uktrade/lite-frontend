@@ -1,6 +1,3 @@
-from selenium.webdriver.support.select import Select
-
-from tests_common import functions
 from ui_tests.exporter.pages.BasePage import BasePage
 
 
