@@ -199,7 +199,7 @@
 					</dd>
 					<dd class="govuk-summary-list__actions">
 						{% if good.status.key == 'draft' %}
-							<a id="change-year-of-manufacture" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:ammunition' application_id good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "Goods.AddGoodSummary.FirearmDetails.YEAR_OF_MANUFACTURE" %}</span></a>
+							<a id="change-year-of-manufacture" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:calibre' application_id good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "Goods.AddGoodSummary.FirearmDetails.YEAR_OF_MANUFACTURE" %}</span></a>
 						{% endif %}
 					</dd>
 				</div>
@@ -213,7 +213,7 @@
 					</dd>
 					<dd class="govuk-summary-list__actions">
 						{% if good.status.key == 'draft' %}
-							<a id="change-calibre" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:ammunition' application_id good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "Goods.AddGoodSummary.FirearmDetails.CALIBRE" %}</span></a>
+							<a id="change-calibre" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:calibre' application_id good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "Goods.AddGoodSummary.FirearmDetails.CALIBRE" %}</span></a>
 						{% endif %}
 					</dd>
 				</div>
