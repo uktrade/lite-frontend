@@ -261,7 +261,7 @@ Feature: I want to indicate the standard licence I want
     And I enter firearm year of manufacture as "2020" and calibre as "0.22"
     And I specify firearms act sections apply as "Yes"
     And I specify firearms identification markings as "Yes" with details "laser engraving"
-    And I see summary screen for "Firearms" product with description "new firearm"
+    And I see summary screen for "Firearms" product with description "new firearm" and "continue"
     And I confirm I can upload a document
     And I upload file "file_for_doc_upload_test_1.txt" with description "File uploaded for firearms product."
     And I enter product details with unit of measurement "Number of articles", quantity "5" and value "20,000" and Save
@@ -279,7 +279,7 @@ Feature: I want to indicate the standard licence I want
     And I specify military use details as "yes_designed"
     And I specify component details as "yes_designed"
     And I specify product employs information security features as "Yes"
-    And I see summary screen for "Accessory of a firearm" product with description "firearm accessory"
+    And I see summary screen for "Accessory of a firearm" product with description "firearm accessory" and "continue"
     And I confirm I can upload a document
     And I upload file "file_for_doc_upload_test_1.txt" with description "File uploaded for firearms product."
     And I enter product details with unit of measurement "Number of articles", quantity "9" and value "25,000" and Save
@@ -297,8 +297,44 @@ Feature: I want to indicate the standard licence I want
     And I specify the "software" product purpose as "For product diagnostics"
     And I specify military use details as "yes_designed"
     And I specify product employs information security features as "Yes"
-    And I see summary screen for "Software relating to a firearm" product with description "Test software for firearms"
+    And I see summary screen for "Software relating to a firearm" product with description "Test software for firearms" and "continue"
     And I confirm I can upload a document
     And I upload file "file_for_doc_upload_test_1.txt" with description "File uploaded for firearms product."
     And I enter product details with unit of measurement "Number of articles", quantity "25" and value "50,000" and Save
     Then the product "Test software for firearms" is added to the application
+
+
+  @LTD_389_Add_a_new_firearm_product_and_check_edit @regression
+  Scenario: Add a new Firearm product and check if we can edit fields from summary screen
+    Given I go to exporter homepage and choose Test Org
+    When I create a standard application of a "permanent" export type
+    When I click on the "goods" section
+    And I choose to add a new product
+    And I select product type "firearm"
+    And I enter good description as "new firearm" part number "FR-123-M" controlled "True" control code "ML1a" and graded "no"
+    And I enter firearm year of manufacture as "2020" and calibre as "0.22"
+    And I specify firearms act sections apply as "Yes"
+    And I specify firearms identification markings as "Yes" with details "laser engraving"
+    And I see summary screen for "Firearms" product with description "new firearm" and "review"
+    And I can edit good "Description" as "updated firearm description"
+    And I can edit good "Part number" as "PN-ABC/123"
+    And I can edit good "Year of manufacture" as "2020"
+    And I can edit good "Calibre" as "0.45"
+
+
+  @LTD_389_Add_a_new_firearm_accessory_and_check_edit @regression
+  Scenario: Add a new Firearm accessory and check if we can edit fields from summary screen
+    Given I go to exporter homepage and choose Test Org
+    When I create a standard application of a "permanent" export type
+    When I click on the "goods" section
+    And I choose to add a new product
+    And I select product type "firearm_accessory"
+    And I enter good description as "firearm accessory" part number "FR-123-ACC" controlled "True" control code "ML1a" and graded "no"
+    And I specify military use details as "yes_designed"
+    And I specify component details as "yes_designed"
+    And I specify product employs information security features as "Yes"
+    And I see summary screen for "Accessory of a firearm" product with description "firearm accessory" and "review"
+    And I can edit good "Description" as "updated firearm accessory description"
+    And I can edit good "Part number" as "ACC-123/Y"
+    And I can edit good "Military use" as "yes_modified"
+    And I can edit good "Information security features" as "No"

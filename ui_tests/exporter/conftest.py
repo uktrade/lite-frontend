@@ -805,8 +805,12 @@ def specify_product_infosec_details(driver, supports_infosec):  # noqa
     functions.click_submit(driver)
 
 
-@when(parsers.parse('I see summary screen for "{product_type_value}" product with description "{description}"'))
-def summary_screen_for_product_type(driver, product_type_value, description):  # noqa
+@when(
+    parsers.parse(
+        'I see summary screen for "{product_type_value}" product with description "{description}" and "{proceed}"'
+    )
+)
+def summary_screen_for_product_type(driver, product_type_value, description, proceed):  # noqa
     summary_page = ProductSummary(driver)
     assert summary_page.get_page_heading() == "Product summary"
     summary = summary_page.get_summary_details()
@@ -832,7 +836,9 @@ def summary_screen_for_product_type(driver, product_type_value, description):  #
         ]
 
     assert all(key in summary.keys() for key in expected_fields)
-    driver.find_element_by_link_text("Save and continue").click()
+
+    if proceed == "continue":
+        driver.find_element_by_link_text("Save and continue").click()
 
 
 @when(
@@ -854,3 +860,36 @@ def i_enter_product_details_unit_quantity_and_value(driver, unit, quantity, valu
 def product_with_description_is_added_to_application(driver, description):  # noqa
     products_page = StandardApplicationGoodsPage(driver)
     assert products_page.good_with_description_exists(description)
+
+
+@when(parsers.parse('I can edit good "{field_name}" as "{updated_value}"'))  # noqa
+def edit_good_details_in_application(driver, field_name, updated_value):  # noqa
+    summary_page = ProductSummary(driver)
+    _, link = summary_page.get_field_details(field_name)
+    driver.execute_script("arguments[0].scrollIntoView();", link)
+    driver.execute_script("arguments[0].click();", link)
+
+    pages_map = {
+        "Description": AddGoodPage(driver).enter_description_of_goods,
+        "Part number": AddGoodPage(driver).enter_part_number,
+        "Year of manufacture": AddGoodDetails(driver).enter_year_of_manufacture,
+        "Calibre": AddGoodDetails(driver).enter_calibre,
+        "Military use": AddGoodDetails(driver).select_is_product_for_military_use,
+        "Information security features": AddGoodDetails(driver).does_product_employ_information_security,
+    }
+
+    func = pages_map[field_name]
+    assert func is not None
+    func(updated_value)
+    functions.click_submit(driver)
+
+    if field_name == "Military use":
+        if updated_value == "yes_designed":
+            updated_value = "Yes, specially designed for military use"
+        elif updated_value == "yes_modified":
+            updated_value = "Yes, modified for military use"
+        elif updated_value == "no":
+            updated_value = "No"
+
+    updated_field_value, _ = summary_page.get_field_details(field_name)
+    assert updated_field_value == updated_value
