@@ -63,12 +63,11 @@ def product_category_form(request):
     )
 
 
-def software_technology_details_form(request, item_category=None):
-    category = get_category_display_string(
-        request.POST.get("item_category", "") if not item_category else item_category
-    )
+def software_technology_details_form(request, category_type):
+    category_text = get_category_display_string(category_type)
+
     return Form(
-        title=CreateGoodForm.TechnologySoftware.TITLE + category,
+        title=CreateGoodForm.TechnologySoftware.TITLE + category_text,
         questions=[
             HiddenField("is_software_or_technology_step", True),
             TextArea(title="", description="", name="software_or_technology_details", optional=False,),
@@ -339,23 +338,24 @@ def add_good_form_group(
     request,
     is_pv_graded: bool = None,
     is_software_technology: bool = None,
-    is_firearms: bool = None,
+    is_firearms_core: bool = None,
+    is_firearms_accessory: bool = None,
+    is_firearms_software_tech: bool = None,
     draft_pk: str = None,
 ):
     control_list_entries = get_control_list_entries(request, convert_to_options=True)
     return FormGroup(
         [
-            product_category_form(request),
+            group_two_product_type_form(),
             add_goods_questions(control_list_entries, draft_pk),
             conditional(is_pv_graded, pv_details_form(request)),
-            conditional(is_software_technology, software_technology_details_form(request)),
-            conditional(not is_firearms, product_military_use_form(request)),
-            conditional(not is_software_technology and not is_firearms, product_component_form(request)),
-            conditional(not is_firearms, product_uses_information_security(request)),
-            conditional(is_firearms, group_two_product_type_form()),
-            conditional(is_firearms, firearm_ammunition_details_form()),
-            conditional(is_firearms, firearms_act_confirmation_form()),
-            conditional(is_firearms, identification_markings_form()),
+            conditional(is_firearms_core, firearm_ammunition_details_form()),
+            conditional(is_firearms_core, firearms_act_confirmation_form()),
+            conditional(is_firearms_core, identification_markings_form()),
+            conditional(is_firearms_software_tech, software_technology_details_form(request, request.POST.get("type"))),
+            conditional(is_firearms_accessory or is_firearms_software_tech, product_military_use_form(request)),
+            conditional(is_firearms_accessory, product_component_form(request)),
+            conditional(is_firearms_accessory or is_firearms_software_tech, product_uses_information_security(request)),
         ]
     )
 
@@ -526,18 +526,28 @@ def group_two_product_type_form():
                 name="type",
                 options=[
                     Option(key="firearms", value=CreateGoodForm.FirearmGood.ProductType.FIREARM),
+                    Option(key="ammunition", value=CreateGoodForm.FirearmGood.ProductType.AMMUNITION),
                     Option(
                         key="components_for_firearms",
                         value=CreateGoodForm.FirearmGood.ProductType.COMPONENTS_FOR_FIREARM,
                     ),
-                    Option(key="ammunition", value=CreateGoodForm.FirearmGood.ProductType.AMMUNITION),
                     Option(
                         key="components_for_ammunition",
                         value=CreateGoodForm.FirearmGood.ProductType.COMPONENTS_FOR_AMMUNITION,
                     ),
+                    Option(key="firearms_accessory", value=CreateGoodForm.FirearmGood.ProductType.FIREARMS_ACCESSORY),
+                    Option(
+                        key="software_related_to_firearms",
+                        value=CreateGoodForm.FirearmGood.ProductType.SOFTWARE_RELATED_TO_FIREARM,
+                    ),
+                    Option(
+                        key="technology_related_to_firearms",
+                        value=CreateGoodForm.FirearmGood.ProductType.TECHNOLOGY_RELATED_TO_FIREARM,
+                    ),
                 ],
             ),
         ],
+        default_button_name="Save and continue",
     )
 
 

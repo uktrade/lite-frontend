@@ -28,7 +28,9 @@ class AddGoodPage(BasePage):
     UNSURE_PV_GRADING_DETAILS = "pv_grading_raised_reasons"  # ID
 
     def enter_description_of_goods(self, description):
-        self.driver.find_element_by_id(self.DESCRIPTION).send_keys(description)
+        element = self.driver.find_element_by_id(self.DESCRIPTION)
+        element.clear()
+        element.send_keys(description)
 
     def select_is_your_good_controlled(self, option):
         # The options accepted here are 'True', 'False' and 'None'

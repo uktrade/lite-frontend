@@ -48,6 +48,9 @@ class AddGoodDetails(BasePage):
     FIREARM_TYPE_FIREARM_COMPONENT_ID = FIREARM_TYPE_PREFIX + "components_for_firearms"
     FIREARM_TYPE_AMMUNITION_ID = FIREARM_TYPE_PREFIX + "ammunition"
     FIREARM_TYPE_AMMUNITION_COMPONENT_ID = FIREARM_TYPE_PREFIX + "components_for_ammunition"
+    FIREARM_TYPE_FIREARM_ACCESSORY_ID = FIREARM_TYPE_PREFIX + "firearms_accessory"
+    FIREARM_TYPE_FIREARM_SOFTWARE_ID = FIREARM_TYPE_PREFIX + "software_related_to_firearms"
+    FIREARM_TYPE_FIREARM_TECHNOLOGY_ID = FIREARM_TYPE_PREFIX + "technology_related_to_firearms"
 
     # Firearms - Firearms and ammunition details
     FIREARM_YEAR_OF_MANUFACTURE_TEXTFIELD_ID = "year_of_manufacture"
@@ -140,12 +143,18 @@ class AddGoodDetails(BasePage):
             self.driver.find_element_by_id(self.FIREARM_TYPE_AMMUNITION_ID).click()
         if option == "component_for_ammunition":
             self.driver.find_element_by_id(self.FIREARM_TYPE_AMMUNITION_COMPONENT_ID).click()
+        if option == "firearm_accessory":
+            self.driver.find_element_by_id(self.FIREARM_TYPE_FIREARM_ACCESSORY_ID).click()
+        if option == "software_for_firearm":
+            self.driver.find_element_by_id(self.FIREARM_TYPE_FIREARM_SOFTWARE_ID).click()
+        if option == "technology_for_firearm":
+            self.driver.find_element_by_id(self.FIREARM_TYPE_FIREARM_TECHNOLOGY_ID).click()
 
-    def enter_year_of_manufacture(self):
-        self.enter_related_field_details(self.FIREARM_YEAR_OF_MANUFACTURE_TEXTFIELD_ID, text="2004")
+    def enter_year_of_manufacture(self, year):
+        self.enter_related_field_details(self.FIREARM_YEAR_OF_MANUFACTURE_TEXTFIELD_ID, text=year)
 
-    def enter_calibre(self):
-        self.enter_related_field_details(self.FIREARM_CALIBRE_TEXTFIELD_ID, text=".99mm")
+    def enter_calibre(self, calibre):
+        self.enter_related_field_details(self.FIREARM_CALIBRE_TEXTFIELD_ID, text=calibre)
 
     def select_do_firearms_act_sections_apply(self, option):
         if option == "Yes":
@@ -160,10 +169,10 @@ class AddGoodDetails(BasePage):
         self.driver.find_element_by_id(self.CERTIFICATE_EXPIRY_DATE_MONTH_ID).send_keys(month)
         self.driver.find_element_by_id(self.CERTIFICATE_EXPIRY_DATE_YEAR_ID).send_keys(year)
 
-    def does_firearm_have_identification_markings(self, has_markings):
+    def does_firearm_have_identification_markings(self, has_markings, details="details"):
         if has_markings == "Yes":
             self.driver.find_element_by_id(self.FIREARMS_IDENTIFICATION_MARKINGS_YES_ID).click()
-            self.enter_related_field_details(self.FIREARMS_IDENTIFICATION_MARKINGS_DETAILS_TEXTAREA_ID)
+            self.enter_related_field_details(self.FIREARMS_IDENTIFICATION_MARKINGS_DETAILS_TEXTAREA_ID, text=details)
         if has_markings == "No":
             self.driver.find_element_by_id(self.FIREARMS_IDENTIFICATION_MARKINGS_NO_ID).click()
-            self.enter_related_field_details(self.FIREARMS_NO_IDENTIFICATION_MARKINGS_DETAILS_TEXTAREA_ID)
+            self.enter_related_field_details(self.FIREARMS_NO_IDENTIFICATION_MARKINGS_DETAILS_TEXTAREA_ID, text=details)

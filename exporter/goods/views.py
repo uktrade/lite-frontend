@@ -176,8 +176,25 @@ class AddGood(LoginRequiredMixin, MultiFormView):
         copied_request = request.POST.copy()
         is_pv_graded = copied_request.get("is_pv_graded", "").lower() == "yes"
         is_software_technology = copied_request.get("item_category") in ["group3_software", "group3_technology"]
-        is_firearms = copied_request.get("item_category") == "group2_firearms"
-        self.forms = add_good_form_group(request, is_pv_graded, is_software_technology, is_firearms)
+        is_firearms_core = copied_request.get("type") in [
+            "firearms",
+            "ammunition",
+            "components_for_firearms",
+            "components_for_ammunition",
+        ]
+        is_firearms_accessory = copied_request.get("type") == "firearms_accessory"
+        is_firearms_software_tech = copied_request.get("type") in [
+            "software_related_to_firearms",
+            "technology_related_to_firearms",
+        ]
+        self.forms = add_good_form_group(
+            request,
+            is_pv_graded,
+            is_software_technology,
+            is_firearms_core,
+            is_firearms_accessory,
+            is_firearms_software_tech,
+        )
 
         # we require the form index of the last form in the group, not the total number
         number_of_forms = len(self.forms.get_forms()) - 1
@@ -491,13 +508,13 @@ class EditFirearmProductType(LoginRequiredMixin, SingleFormView):
 
     def get_success_url(self):
         # Next question firearm and ammunition details
-        if not self.data.get("year_of_manufacture") or not self.data.get("calibre"):
+        if self.data.get("type"):
             if "good_pk" in self.kwargs:
                 return reverse_lazy(
-                    "applications:ammunition", kwargs={"pk": self.application_id, "good_pk": self.object_pk}
+                    "applications:edit_good", kwargs={"pk": self.application_id, "good_pk": self.object_pk}
                 )
             else:
-                return reverse_lazy("goods:ammunition", kwargs={"pk": self.object_pk})
+                return reverse_lazy("goods:edit", kwargs={"pk": self.object_pk})
         elif self.draft_pk:
             return reverse(
                 "goods:good_detail_application",
