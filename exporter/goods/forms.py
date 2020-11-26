@@ -5,7 +5,7 @@ from django.utils.safestring import mark_safe
 from core.builtins.custom_tags import linkify
 from exporter.core.services import get_control_list_entries
 from exporter.core.services import get_pv_gradings
-from exporter.goods.helpers import good_summary, get_category_display_string
+from exporter.goods.helpers import good_summary, get_category_display_string, get_sporting_shotgun_form_title
 from exporter.goods.services import get_document_missing_reasons
 from lite_content.lite_exporter_frontend.generic import PERMISSION_FINDER_LINK
 from lite_content.lite_exporter_frontend import generic
@@ -347,6 +347,7 @@ def add_good_form_group(
     return FormGroup(
         [
             group_two_product_type_form(),
+            conditional(is_firearms_core, firearms_sporting_shotgun_form(request.POST.get("type"))),
             add_goods_questions(control_list_entries, draft_pk),
             conditional(is_pv_graded, pv_details_form(request)),
             conditional(is_firearms_core, firearm_ammunition_details_form()),
@@ -548,6 +549,23 @@ def group_two_product_type_form():
             ),
         ],
         default_button_name="Save and continue",
+    )
+
+
+def firearms_sporting_shotgun_form(firearm_type):
+    title = get_sporting_shotgun_form_title(firearm_type)
+
+    return Form(
+        title=title,
+        questions=[
+            HiddenField("firearm_type", firearm_type),
+            HiddenField("sporting_shotgun_step", True),
+            RadioButtons(
+                title="",
+                name="is_sporting_shotgun",
+                options=[Option(key=True, value="Yes"), Option(key=False, value="No"),],
+            ),
+        ],
     )
 
 
