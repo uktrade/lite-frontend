@@ -111,10 +111,23 @@
                                     {% if good_on_application.good.firearm_details.has_identification_markings %}
                                         Yes, {{ good_on_application.good.firearm_details.identification_markings_details }}
                                     {% else %}
-                                        No, {{ good_on_application.no_identification_markings_details.identification_markings_details }}
+                                        No, {{ good_on_application.no_identification_markings_details.no_identification_markings_details }}
                                     {% endif %}
                                 </td>
                             </tr>
+                            {% if good_on_application.firearm_details.has_proof_mark is not None %}
+                                <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">Has valid proof marks</th>
+                                    <td class="govuk-table__cell">
+                                        {% if good_on_application.firearm_details.has_proof_mark %}
+                                            Yes
+                                        {% else %}
+                                            No, {{ good_on_application.firearm_details.no_proof_mark_details }}
+                                        
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endif %}
                         {% endif %}
                         <tr class="govuk-table__row app-table__row">
                             <th scope="row" class="govuk-table__header">Incorporated</th>
