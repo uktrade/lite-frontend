@@ -558,7 +558,7 @@ def firearms_sporting_shotgun_form(firearm_type):
     return Form(
         title=title,
         questions=[
-            HiddenField("firearm_type", firearm_type),
+            HiddenField("type", firearm_type),
             HiddenField("sporting_shotgun_step", True),
             RadioButtons(
                 title="",

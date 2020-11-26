@@ -306,7 +306,29 @@
 					</dd>
 				</div>
 
-				{% if good.firearm_details.type.key in 'firearms,ammunition,components_for_firearms,components_for_ammunition' %}
+				{% with firearm_core_types="firearms ammunition components_for_firearms components_for_ammunition" %}
+				{% if good.firearm_details.type.key in firearm_core_types.split %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							{% lcs "goods.GoodPage.Table.FirearmDetails.SPORTING_SHOTGUN" %}
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{% if good.firearm_details.is_sporting_shotgun is not None %}
+								{{ good.firearm_details.is_sporting_shotgun|friendly_boolean }}
+							{% else %}
+								N/A
+							{% endif %}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							{% if good.status.key == 'draft' %}
+								{% if draft_pk %}
+								<a id="change-is-sporting-shotgun" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:sporting-shotgun-add-application' good.id draft_pk %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.SPORTING_SHOTGUN" %}</span></a>
+								{% else %}
+								<a id="change-is-sporting-shotgun" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:sporting-shotgun' good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.SPORTING_SHOTGUN" %}</span></a>
+								{% endif %}
+							{% endif %}
+						</dd>
+					</div>
 					<div class="govuk-summary-list__row">
 						<dt class="govuk-summary-list__key">
 							{% lcs "goods.GoodPage.Table.FirearmDetails.YEAR_OF_MANUFACTURE" %}
@@ -354,6 +376,8 @@
 									- certificate number {{ good.firearm_details.section_certificate_number|default_na }} expires on
 									{{ good.firearm_details.section_certificate_date_of_expiry|date_display }}
 								{% endif %}
+							{% else %}
+								{{ good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five|default_na }}
 							{% endif %}
 						</dd>
 						<dd class="govuk-summary-list__actions">
@@ -381,6 +405,8 @@
 										{{ good.firearm_details.no_identification_markings_details|default_na }}
 									{% endif %}
 								</span>
+							{% else %}
+								{{ good.firearm_details.has_identification_markings|default_na }}
 							{% endif %}
 						</dd>
 						<dd class="govuk-summary-list__actions">
@@ -394,6 +420,7 @@
 						</dd>
 					</div>
 				{% endif %}
+				{% endwith %}
 
 				{% if good.firearm_details.type.key == "firearms_accessory" %}
 					<div class="govuk-summary-list__row">
@@ -463,7 +490,8 @@
 					</div>
 				{% endif %}
 
-				{% if good.firearm_details.type.key in "software_related_to_firearms,technology_related_to_firearms" %}
+				{% with firearm_types="software_related_to_firearms technology_related_to_firearms" %}
+				{% if good.firearm_details.type.key in firearm_types.split %}
 					<div class="govuk-summary-list__row">
 						<dt class="govuk-summary-list__key">
 							{% lcs "goods.GoodPage.Table.PURPOSE_SOFTWARE_TECHNOLOGY" %}
@@ -526,6 +554,7 @@
 						</dd>
 					</div>
 				{% endif %}
+				{% endwith %}
 			{% endif %}
 
 			<div class="govuk-summary-list__row">

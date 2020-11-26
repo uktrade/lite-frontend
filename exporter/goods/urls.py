@@ -14,6 +14,11 @@ urlpatterns = [
     path("<uuid:pk>/information-security/", views.GoodInformationSecurity.as_view(), name="good_information_security"),
     path("<uuid:pk>/edit-grading/", views.EditGrading.as_view(), name="edit_grading"),
     path("<uuid:pk>/edit-firearm-details/type/", views.EditFirearmProductType.as_view(), name="firearm_type"),
+    path(
+        "<uuid:pk>/edit-firearm-details/sporting-shotgun/",
+        views.EditFirearmSportingShotgunStatus.as_view(),
+        name="sporting-shotgun",
+    ),
     path("<uuid:pk>/edit-firearm-details/ammunition/", views.EditAmmunition.as_view(), name="ammunition"),
     path("<uuid:pk>/edit-firearm-details/firearms-act/", views.EditFirearmActDetails.as_view(), name="firearms_act"),
     path(
@@ -35,6 +40,11 @@ if settings.FEATURE_FLAG_FIREARMS_ENABLED:
     urlpatterns += [
         path("<uuid:pk>/<str:type>/<uuid:draft_pk>/", views.GoodsDetail.as_view(), name="good_detail_application"),
         path("<uuid:pk>/edit/application/<uuid:draft_pk>/", views.EditGood.as_view(), name="edit-add-application"),
+        path(
+            "<uuid:pk>/edit-firearm-details/sporting-shotgun/application/<uuid:draft_pk>/",
+            views.EditFirearmSportingShotgunStatus.as_view(),
+            name="sporting-shotgun-add-application",
+        ),
         path(
             "<uuid:pk>/edit-firearm-details/ammunition/application/<uuid:draft_pk>/",
             views.EditAmmunition.as_view(),
