@@ -36,6 +36,9 @@
 						<th scope="col" class="govuk-table__header">{% lcs 'goods.GoodsList.Table.VALUE' %}</th>
 						<th scope="col" class="govuk-table__header">{% lcs 'goods.GoodsList.Table.INCORPORATED' %}</th>
 					{% endif %}
+					{% if includes_firearms %}
+						<th scope="col" class="govuk-table__header">Year of Manufacture</th>
+					{% endif %}
 					<th scope="col" class="govuk-table__header"></th>
 				</tr>
 			</thead>
@@ -72,6 +75,11 @@
 							</td>
 							<td class="govuk-table__cell">
 								{{ good_on_application.is_good_incorporated|friendly_boolean }}
+							</td>
+						{% endif %}
+						{% if includes_firearms %}
+							<td class="govuk-table__cell">
+								{{ good_on_application.firearm_details.year_of_manufacture|default_na }}
 							</td>
 						{% endif %}
 						<td class="govuk-table__cell govuk-table__cell--numeric">

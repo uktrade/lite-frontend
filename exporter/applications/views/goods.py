@@ -50,12 +50,14 @@ class ApplicationGoodsList(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         application = get_application(self.request, kwargs["pk"])
         goods = get_application_goods(self.request, kwargs["pk"])
+        includes_firearms = any(["firearm_details" in good.keys() for good in goods])
         is_exhibition = application["case_type"]["sub_type"]["key"] == EXHIBITION
         return super().get_context_data(
             goods=goods,
             application=application,
             exhibition=is_exhibition,
             goods_value=None if is_exhibition else get_total_goods_value(goods),
+            includes_firearms=includes_firearms,
             **kwargs,
         )
 
