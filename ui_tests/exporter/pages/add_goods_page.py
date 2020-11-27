@@ -1,6 +1,7 @@
 from selenium.webdriver.support.select import Select
 
 from tests_common import functions
+from tests_common.tools.helpers import scroll_to_element_by_id
 from ui_tests.exporter.pages.BasePage import BasePage
 
 
@@ -27,10 +28,13 @@ class AddGoodPage(BasePage):
     UNSURE_PV_GRADING_DETAILS = "pv_grading_raised_reasons"  # ID
 
     def enter_description_of_goods(self, description):
-        self.driver.find_element_by_id(self.DESCRIPTION).send_keys(description)
+        element = self.driver.find_element_by_id(self.DESCRIPTION)
+        element.clear()
+        element.send_keys(description)
 
     def select_is_your_good_controlled(self, option):
         # The options accepted here are 'True', 'False' and 'None'
+        scroll_to_element_by_id(self.driver, self.IS_CONTROLLED + option)
         self.driver.find_element_by_id(self.IS_CONTROLLED + option).click()
 
     def select_is_your_good_graded(self, option):

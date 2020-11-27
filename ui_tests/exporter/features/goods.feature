@@ -58,7 +58,7 @@ Feature: I want to edit and remove goods on the goods list
     When I click on goods link
     And I click add a good button
     And I select product category "three-software" for a good
-    And I add a good with description "123 pistol" part number "321" controlled "Yes" control code "ML1a" and graded "yes"
+    And I add a good with description "123 software" part number "321" controlled "True" control code "ML1a" and graded "yes"
     And I add the goods grading with prefix "abc" grading "nato_restricted" suffix "def" issuing authority "NATO" reference "12345" Date of issue "10-05-2015"
     And I specify software and technology purpose details for a good that is in those categories
     And I specify the "category 3" good details military use "yes_modified" component "yes_general" and information security "Yes"
@@ -66,7 +66,7 @@ Feature: I want to edit and remove goods on the goods list
     And I upload file "file_for_doc_upload_test_1.txt" with description "This is a file I want to upload to show."
     And I get the goods ID
     Then I see good in goods list
-    When I edit the good to description "edited" part number "321" controlled "Yes" and control list entry "ML1a"
+    When I edit the good to description "edited" part number "321" controlled "True" and control list entry "ML1a"
     And I edit the "category 3" good details to military use "yes_designed" component "yes_designed" information security "No"
     And I edit the software and technology purpose details for a good to "edited software purpose"
     Then I see my edited good details in the good page
@@ -79,14 +79,14 @@ Feature: I want to edit and remove goods on the goods list
     When I click on goods link
     And I click add a good button
     And I select product category "two" for a good
-    And I add a good with description "9mm barrel" part number "321" controlled "Yes" control code "ML1a" and graded "yes"
+    And I add a good with description "9mm barrel" part number "321" controlled "True" control code "ML1a" and graded "yes"
     And I add the goods grading with prefix "abc" grading "uk_official" suffix "def" issuing authority "MoD" reference "12345" Date of issue "10-05-2015"
     And I specify the firearm good details type "firearm" year of manufacture, calibre, firearms act applicable "No" and identification markings "No"
     And I confirm I can upload a document
     And I upload file "file_for_doc_upload_test_1.txt" with description "This is a file I want to upload to show."
     And I get the goods ID
     Then I see good in goods list
-    When I edit the good to description "edited" part number "321" controlled "Yes" and control list entry "ML1a"
+    When I edit the good to description "edited" part number "321" controlled "True" and control list entry "ML1a"
     And I edit the firearm good details to type "components_for_firearm" firearms act applicable "Yes" and identification markings "Yes"
     Then I see my edited good details in the good page
     When I delete my good

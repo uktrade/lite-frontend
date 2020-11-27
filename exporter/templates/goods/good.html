@@ -306,92 +306,226 @@
 					</dd>
 				</div>
 
-				<div class="govuk-summary-list__row">
-					<dt class="govuk-summary-list__key">
-						{% lcs "goods.GoodPage.Table.FirearmDetails.YEAR_OF_MANUFACTURE" %}
-					</dt>
-					<dd class="govuk-summary-list__value">
-						{{ good.firearm_details.year_of_manufacture|default_na }}
-					</dd>
-					<dd class="govuk-summary-list__actions">
-						{% if good.status.key == 'draft' %}
-							{% if draft_pk %}
-							<a id="change-year-of-manufacture" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:ammunition-add-application' good.id draft_pk %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.YEAR_OF_MANUFACTURE" %}</span></a>
-							{% else %}
-							<a id="change-year-of-manufacture" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:ammunition' good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.YEAR_OF_MANUFACTURE" %}</span></a>
-							{% endif %}
-						{% endif %}
-					</dd>
-				</div>
-
-				<div class="govuk-summary-list__row">
-					<dt class="govuk-summary-list__key">
-						{% lcs "goods.GoodPage.Table.FirearmDetails.CALIBRE" %}
-					</dt>
-					<dd class="govuk-summary-list__value">
-						{{ good.firearm_details.calibre|default_na }}
-					</dd>
-					<dd class="govuk-summary-list__actions">
-						{% if good.status.key == 'draft' %}
-							{% if draft_pk %}
-							<a id="change-calibre" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:ammunition-add-application' good.id draft_pk %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.CALIBRE" %}</span></a>
-							{% else %}
-							<a id="change-calibre" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:ammunition' good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.CALIBRE" %}</span></a>
-							{% endif %}
-						{% endif %}
-					</dd>
-				</div>
-
-				<div class="govuk-summary-list__row">
-					<dt class="govuk-summary-list__key">
-						{% lcs "goods.GoodPage.Table.FirearmDetails.COVERED_BY_THE_FIREARMS_ACT_1968" %}
-					</dt>
-					<dd class="govuk-summary-list__value">
-						{% if good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five is not None %}
-							{{ good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five|friendly_boolean}}
-							{% if good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five %}
-								- certificate number {{ good.firearm_details.section_certificate_number|default_na }} expires on
-								{{ good.firearm_details.section_certificate_date_of_expiry|date_display }}
-							{% endif %}
-						{% endif %}
-					</dd>
-					<dd class="govuk-summary-list__actions">
-						{% if good.status.key == 'draft' %}
-							{% if draft_pk %}
-							<a id="change-firearms-act-details" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:firearms_act_add_application' good.id draft_pk %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.COVERED_BY_THE_FIREARMS_ACT_1968" %}</span></a>
-							{% else %}
-							<a id="change-firearms-act-details" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:firearms_act' good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.COVERED_BY_THE_FIREARMS_ACT_1968" %}</span></a>
-							{% endif %}
-						{% endif %}
-					</dd>
-				</div>
-
-				<div class="govuk-summary-list__row">
-					<dt class="govuk-summary-list__key">
-						{% lcs "goods.GoodPage.Table.FirearmDetails.IDENTIFICATION_MARKINGS" %}
-					</dt>
-					<dd class="govuk-summary-list__value">
-						{% if good.firearm_details.has_identification_markings is not None %}
-							{{ good.firearm_details.has_identification_markings|friendly_boolean }}
-							<span class="govuk-hint">
-								{% if good.firearm_details.has_identification_markings %}
-									{{ good.firearm_details.identification_markings_details|default_na }}
+				{% if good.firearm_details.type.key in 'firearms,ammunition,components_for_firearms,components_for_ammunition' %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							{% lcs "goods.GoodPage.Table.FirearmDetails.YEAR_OF_MANUFACTURE" %}
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ good.firearm_details.year_of_manufacture|default_na }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							{% if good.status.key == 'draft' %}
+								{% if draft_pk %}
+								<a id="change-year-of-manufacture" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:ammunition-add-application' good.id draft_pk %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.YEAR_OF_MANUFACTURE" %}</span></a>
 								{% else %}
-									{{ good.firearm_details.no_identification_markings_details|default_na }}
+								<a id="change-year-of-manufacture" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:ammunition' good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.YEAR_OF_MANUFACTURE" %}</span></a>
 								{% endif %}
-							</span>
-						{% endif %}
-					</dd>
-					<dd class="govuk-summary-list__actions">
-						{% if good.status.key == 'draft' %}
-							{% if draft_pk %}
-							<a id="change-identification-markings" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:identification_markings_add_application' good.id draft_pk %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.IDENTIFICATION_MARKINGS" %}</span></a>
-							{% else %}
-							<a id="change-identification-markings" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:identification_markings' good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.IDENTIFICATION_MARKINGS" %}</span></a>
 							{% endif %}
-						{% endif %}
-					</dd>
-				</div>
+						</dd>
+					</div>
+
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							{% lcs "goods.GoodPage.Table.FirearmDetails.CALIBRE" %}
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ good.firearm_details.calibre|default_na }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							{% if good.status.key == 'draft' %}
+								{% if draft_pk %}
+								<a id="change-calibre" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:ammunition-add-application' good.id draft_pk %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.CALIBRE" %}</span></a>
+								{% else %}
+								<a id="change-calibre" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:ammunition' good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.CALIBRE" %}</span></a>
+								{% endif %}
+							{% endif %}
+						</dd>
+					</div>
+
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							{% lcs "goods.GoodPage.Table.FirearmDetails.COVERED_BY_THE_FIREARMS_ACT_1968" %}
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{% if good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five is not None %}
+								{{ good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five|friendly_boolean}}
+								{% if good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five %}
+									- certificate number {{ good.firearm_details.section_certificate_number|default_na }} expires on
+									{{ good.firearm_details.section_certificate_date_of_expiry|date_display }}
+								{% endif %}
+							{% endif %}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							{% if good.status.key == 'draft' %}
+								{% if draft_pk %}
+								<a id="change-firearms-act-details" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:firearms_act_add_application' good.id draft_pk %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.COVERED_BY_THE_FIREARMS_ACT_1968" %}</span></a>
+								{% else %}
+								<a id="change-firearms-act-details" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:firearms_act' good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.COVERED_BY_THE_FIREARMS_ACT_1968" %}</span></a>
+								{% endif %}
+							{% endif %}
+						</dd>
+					</div>
+
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							{% lcs "goods.GoodPage.Table.FirearmDetails.IDENTIFICATION_MARKINGS" %}
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{% if good.firearm_details.has_identification_markings is not None %}
+								{{ good.firearm_details.has_identification_markings|friendly_boolean }}
+								<span class="govuk-hint">
+									{% if good.firearm_details.has_identification_markings %}
+										{{ good.firearm_details.identification_markings_details|default_na }}
+									{% else %}
+										{{ good.firearm_details.no_identification_markings_details|default_na }}
+									{% endif %}
+								</span>
+							{% endif %}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							{% if good.status.key == 'draft' %}
+								{% if draft_pk %}
+								<a id="change-identification-markings" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:identification_markings_add_application' good.id draft_pk %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.IDENTIFICATION_MARKINGS" %}</span></a>
+								{% else %}
+								<a id="change-identification-markings" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:identification_markings' good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.IDENTIFICATION_MARKINGS" %}</span></a>
+								{% endif %}
+							{% endif %}
+						</dd>
+					</div>
+				{% endif %}
+
+				{% if good.firearm_details.type.key == "firearms_accessory" %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							{% lcs "goods.GoodPage.Table.MILITARY_USE" %}
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ good.is_military_use.value|default_na }}
+							{% if good.modified_military_use_details %}
+								<span class="govuk-hint"> {{ good.modified_military_use_details }} </span>
+							{% endif %}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							{% if good.status.key == 'draft' %}
+								{% if draft_pk %}
+								<a id="change-good-military-use" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:good_military_use_add_application' good.id draft_pk %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.MILITARY_USE" %}</span></a>
+								{% else %}
+								<a id="change-good-military-use" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:good_military_use' good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.MILITARY_USE" %}</span></a>
+								{% endif %}
+							{% endif %}
+						</dd>
+					</div>
+
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							{% lcs "goods.GoodPage.Table.COMPONENT" %}
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ good.is_component.value|default_na }}
+							{% if good.component_details %}
+								<span class="govuk-hint"> {{ good.component_details }} </span>
+							{% endif %}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							{% if good.status.key == 'draft' %}
+								{% if draft_pk %}
+								<a id="change-good-is-component" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:good_component_add_application' good.id draft_pk %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.COMPONENT" %}</span></a>
+								{% else %}
+								<a id="change-good-is-component" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:good_component' good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.COMPONENT" %}</span></a>
+								{% endif %}
+							{% endif %}
+						</dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							{% lcs "goods.GoodPage.Table.INFORMATION_SECURITY_FEATURES" %}
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{% if good.uses_information_security is not None %}
+								{{ good.uses_information_security|friendly_boolean }}
+							{% else %}
+								{{ good.uses_information_security|default_na }}
+							{% endif %}
+							{% if good.information_security_details %}
+								<span class="govuk-hint"> {{ good.information_security_details }} </span>
+							{% endif %}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							{% if good.status.key == 'draft' %}
+								{% if draft_pk %}
+								<a id="change-good-information-security" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:good_information_security_add_application' good.id draft_pk %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.INFORMATION_SECURITY_FEATURES" %}</span></a>
+								{% else %}
+								<a id="change-good-information-security" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:good_information_security' good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.INFORMATION_SECURITY_FEATURES" %}</span></a>
+								{% endif %}
+							{% endif %}
+						</dd>
+					</div>
+				{% endif %}
+
+				{% if good.firearm_details.type.key in "software_related_to_firearms,technology_related_to_firearms" %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							{% lcs "goods.GoodPage.Table.PURPOSE_SOFTWARE_TECHNOLOGY" %}
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ good.software_or_technology_details|default_na }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							{% if good.status.key == 'draft' %}
+								{% if draft_pk %}
+								<a id="change-good-technology-software" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:good_software_technology_add_application' good.id draft_pk %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.PURPOSE_SOFTWARE_TECHNOLOGY" %}</span></a>
+								{% else %}
+								<a id="change-good-technology-software" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:good_software_technology' good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.PURPOSE_SOFTWARE_TECHNOLOGY" %}</span></a>
+								{% endif %}
+							{% endif %}
+						</dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							{% lcs "goods.GoodPage.Table.MILITARY_USE" %}
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ good.is_military_use.value|default_na }}
+							{% if good.modified_military_use_details %}
+								<span class="govuk-hint"> {{ good.modified_military_use_details }} </span>
+							{% endif %}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							{% if good.status.key == 'draft' %}
+								{% if draft_pk %}
+								<a id="change-good-military-use" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:good_military_use_add_application' good.id draft_pk %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.MILITARY_USE" %}</span></a>
+								{% else %}
+								<a id="change-good-military-use" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:good_military_use' good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.MILITARY_USE" %}</span></a>
+								{% endif %}
+							{% endif %}
+						</dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							{% lcs "goods.GoodPage.Table.INFORMATION_SECURITY_FEATURES" %}
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{% if good.uses_information_security is not None %}
+								{{ good.uses_information_security|friendly_boolean }}
+							{% else %}
+								{{ good.uses_information_security|default_na }}
+							{% endif %}
+							{% if good.information_security_details %}
+								<span class="govuk-hint"> {{ good.information_security_details }} </span>
+							{% endif %}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							{% if good.status.key == 'draft' %}
+								{% if draft_pk %}
+								<a id="change-good-information-security" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:good_information_security_add_application' good.id draft_pk %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.INFORMATION_SECURITY_FEATURES" %}</span></a>
+								{% else %}
+								<a id="change-good-information-security" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:good_information_security' good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.INFORMATION_SECURITY_FEATURES" %}</span></a>
+								{% endif %}
+							{% endif %}
+						</dd>
+					</div>
+				{% endif %}
 			{% endif %}
 
 			<div class="govuk-summary-list__row">

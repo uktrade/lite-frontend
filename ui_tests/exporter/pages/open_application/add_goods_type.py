@@ -13,7 +13,7 @@ class OpenApplicationAddGoodsType(BasePage):
         self.driver.find_element_by_id(self.INPUT_DESCRIPTION_ID).send_keys(value)
 
     def select_is_your_good_controlled(self, value):
-        self.driver.find_element_by_id(self.RADIO_IS_GOOD_CONTROLLED_ID + value.lower()).click()
+        self.driver.find_element_by_id(self.RADIO_IS_GOOD_CONTROLLED_ID + value).click()
 
     def enter_control_list_entry(self, control_list_entry):
         functions.send_tokens_to_token_bar(
