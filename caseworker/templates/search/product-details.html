@@ -78,7 +78,7 @@
         </ul>
 
         {# also show cases that use the same canonical name #}
-        <div id="audit-trail" class="app-activity__list">
+        <div id="audit-trail" class="app-activity__list govuk-!-margin-top-8">
           {% for case in product.cases %}
             <div id="case-activity-{{ audit.id }}" class="app-activity__item">
               <p class="govuk-body">
@@ -91,15 +91,50 @@
 
         <h2 class="govuk-heading-l">Discuss</h2>
         <div id="audit-trail" class="app-activity__list">
-          {% for comment in product.comments %}
             <div id="case-activity-{{ audit.id }}" class="app-activity__item">
               <p class="govuk-body">
-                <span class="app-activity__item__user">{{ comment.name}}</span>
-                <span data-max-length="400">{{ comment.message }}</span>
+                <span class="app-activity__item__user" style="display: block;">You</span>
+                <textarea style="width: 100%; min-height: 100px"></textarea>
+                <button onclick="confirm('This will move the precedent flag to this product. Do you want to continue?')">📌</button>
+                <input type="file"></input>
+                <button style="float: right;">Submit</button>
               </p>
-              <p class="govuk-hint govuk-!-font-size-16">{{ comment.date }}</p>
             </div>
-          {% endfor %}
+
+
+            <div id="case-activity-{{ audit.id }}" class="app-activity__item">
+              <p class="govuk-body">
+                <span class="app-activity__item__user">Marcus Aurelius</span>
+                <span data-max-length="400">{% lorem 3 %}</span>
+              </p>
+              <p class="govuk-hint govuk-!-font-size-16">10 Jan 2019</p>
+            </div>
+
+            <div id="case-activity-{{ audit.id }}" class="app-activity__item">
+              <p class="govuk-body">
+                <span class="app-activity__item__user">Diogenes</span>
+                <span data-max-length="400">{% lorem 3 %}</span>
+              </p>
+              <p class="govuk-hint govuk-!-font-size-16">01 Jan 2019</p>
+            </div>
+
+            <div id="case-activity-{{ audit.id }}" class="app-activity__item">
+              <p class="govuk-body">
+                <span class="app-activity__item__user">Seneca</span>
+                <span data-max-length="400">{% lorem 3 %}</span>
+              </p>
+              <p class="govuk-hint govuk-!-font-size-16">01 Jan 2018</p>
+            </div>
+
+            <div id="case-activity-{{ audit.id }}" class="app-activity__item">
+              <p class="govuk-body">
+                <span class="app-activity__item__user">Epictetus</span>
+                <span data-max-length="400">{% lorem 3 %}</span>
+              </p>
+              <p class="govuk-hint govuk-!-font-size-16">01 Jan 2017</p>
+            </div>
+
+
         </div>
 
     </div>
