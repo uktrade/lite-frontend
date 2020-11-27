@@ -373,5 +373,5 @@
 
 		{% endif %}
 	</dl>
-	<a class="govuk-button" id="button-attach-document" href="{% url 'applications:add_document' application_id good_id %}">{% lcs "Goods.AddGoodSummary.SAVE_AND_CONTINUE_BUTTON" %}</a>
+	<a class="govuk-button" id="button-attach-document" href="{% url 'applications:add_document' application_id good_id %}?preexisting=False">{% lcs "Goods.AddGoodSummary.SAVE_AND_CONTINUE_BUTTON" %}</a>
 {% endblock %}

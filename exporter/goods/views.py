@@ -182,6 +182,7 @@ class AddGood(LoginRequiredMixin, MultiFormView):
         copied_request = request.POST.copy()
         is_pv_graded = copied_request.get("is_pv_graded", "").lower() == "yes"
         is_software_technology = copied_request.get("item_category") in ["group3_software", "group3_technology"]
+        is_firearm = copied_request.get("type") == "firearms"
         is_firearms_core = copied_request.get("type") in FIREARM_AMMUNITION_COMPONENT_TYPES
         is_firearms_accessory = copied_request.get("type") == "firearms_accessory"
         is_firearms_software_tech = copied_request.get("type") in [
@@ -192,6 +193,7 @@ class AddGood(LoginRequiredMixin, MultiFormView):
             request,
             is_pv_graded,
             is_software_technology,
+            is_firearm,
             is_firearms_core,
             is_firearms_accessory,
             is_firearms_software_tech,

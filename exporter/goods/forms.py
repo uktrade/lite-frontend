@@ -338,6 +338,7 @@ def add_good_form_group(
     request,
     is_pv_graded: bool = None,
     is_software_technology: bool = None,
+    is_firearm: bool = None,
     is_firearms_core: bool = None,
     is_firearms_accessory: bool = None,
     is_firearms_software_tech: bool = None,
@@ -350,7 +351,8 @@ def add_good_form_group(
             conditional(is_firearms_core, firearms_sporting_shotgun_form(request.POST.get("type"))),
             add_goods_questions(control_list_entries, draft_pk),
             conditional(is_pv_graded, pv_details_form(request)),
-            conditional(is_firearms_core, firearm_year_of_manufacture_details_form()),
+            # only ask if adding to a draft application
+            conditional(is_firearm and bool(draft_pk), firearm_year_of_manufacture_details_form()),
             conditional(is_firearms_core, firearm_calibre_details_form()),
             conditional(is_firearms_core, firearms_act_confirmation_form()),
             conditional(is_firearms_core, identification_markings_form()),
@@ -572,14 +574,20 @@ def firearms_sporting_shotgun_form(firearm_type):
     )
 
 
-def firearm_year_of_manufacture_details_form():
+def firearm_year_of_manufacture_details_form(good_id=None):
     return Form(
         title="What is the year of manufacture of the firearm?",
         default_button_name="Save and continue",
-        questions=[
-            HiddenField("firearm_year_of_manufacture_step", True),
-            TextInput(description="", name="year_of_manufacture", optional=False,),
-        ],
+        questions=list(
+            filter(
+                bool,
+                [
+                    HiddenField("good_id", good_id) if good_id else None,
+                    HiddenField("firearm_year_of_manufacture_step", True),
+                    TextInput(description="", name="year_of_manufacture", optional=False,),
+                ],
+            )
+        ),
     )
 
 

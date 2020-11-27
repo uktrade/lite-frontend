@@ -45,7 +45,7 @@
 							</td>
 							{% endif %}
 							<td class="govuk-table__cell lite-!-text-align-right">
-								<a href="{% url 'applications:add_good_to_application' draft_id good.id %}" id="add-to-application" class="govuk-link govuk-link--no-visited-state" draggable="false">
+								<a href="{% url 'applications:add_good_to_application' draft_id good.id %}?preexisting=True" id="add-to-application" class="govuk-link govuk-link--no-visited-state" draggable="false">
 									Add <span class="govuk-visually-hidden">{{ good.description }}</span> to application
 								</a>
 							</td>
