@@ -9,6 +9,7 @@ from exporter.goods.helpers import good_summary, get_category_display_string
 from exporter.goods.services import get_document_missing_reasons
 from lite_content.lite_exporter_frontend.generic import PERMISSION_FINDER_LINK
 from lite_content.lite_exporter_frontend import generic
+from lite_content.lite_exporter_frontend import strings
 from lite_content.lite_exporter_frontend.goods import (
     CreateGoodForm,
     GoodsQueryForm,
@@ -344,14 +345,18 @@ def add_good_form_group(
     draft_pk: str = None,
 ):
     control_list_entries = get_control_list_entries(request, convert_to_options=True)
+    back_to_application_link = BackLink(
+        strings.BACK_TO_APPLICATION,
+        reverse_lazy("applications:goods", kwargs={"pk": draft_pk}),
+    )
     return FormGroup(
         [
-            group_two_product_type_form(),
+            group_two_product_type_form(back_to_application_link),
+            conditional(is_firearms_core, identification_markings_form()),
             add_goods_questions(control_list_entries, draft_pk),
             conditional(is_pv_graded, pv_details_form(request)),
             conditional(is_firearms_core, firearm_ammunition_details_form()),
             conditional(is_firearms_core, firearms_act_confirmation_form()),
-            conditional(is_firearms_core, identification_markings_form()),
             conditional(is_firearms_software_tech, software_technology_details_form(request, request.POST.get("type"))),
             conditional(is_firearms_accessory or is_firearms_software_tech, product_military_use_form(request)),
             conditional(is_firearms_accessory, product_component_form(request)),
@@ -516,7 +521,7 @@ def delete_good_form(good):
     )
 
 
-def group_two_product_type_form():
+def group_two_product_type_form(back_link):
     return Form(
         title=CreateGoodForm.FirearmGood.ProductType.TITLE,
         questions=[
@@ -547,6 +552,7 @@ def group_two_product_type_form():
                 ],
             ),
         ],
+        back_link=back_link,
         default_button_name="Save and continue",
     )
 
@@ -643,7 +649,7 @@ def identification_markings_form():
                         components=[
                             TextArea(
                                 title=CreateGoodForm.FirearmGood.IdentificationMarkings.MARKINGS_DETAILS,
-                                description="",
+                                description=CreateGoodForm.FirearmGood.IdentificationMarkings.MARKINGS_HELP_TEXT,
                                 name="identification_markings_details",
                                 optional=False,
                             ),
