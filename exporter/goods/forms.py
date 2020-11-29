@@ -566,6 +566,7 @@ def firearms_sporting_shotgun_form(firearm_type):
                 options=[Option(key=True, value="Yes"), Option(key=False, value="No"),],
             ),
         ],
+        default_button_name="Save and continue",
     )
 
 

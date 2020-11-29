@@ -52,9 +52,9 @@ def get_sporting_shotgun_form_title(product_type):
     if product_type == "firearms":
         return "Is the product a sporting shotgun?"
     elif product_type == "ammunition":
-        return "Is the product a sporting shotgun ammunition?"
+        return "Is the product sporting shotgun ammunition?"
     elif product_type == "components_for_firearms":
-        return "Is the product a component of sporting shotgun?"
+        return "Is the product a component of a sporting shotgun?"
     elif product_type == "components_for_ammunition":
         return "Is the product a component of sporting shotgun ammunition?"
 
