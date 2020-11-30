@@ -110,6 +110,19 @@
                                     <th scope="row" class="govuk-table__header">Year of manufacture</th>
                                     <td class="govuk-table__cell">{{ good_on_application.good.firearm_details.year_of_manufacture }}</td>
                                 </tr>
+                                {% if good_on_application.good.firearm_details.type.key == "firearms" %}
+                                    <tr class="govuk-table__row app-table__row">
+                                        <th scope="row" class="govuk-table__header">Replica firearm</th>
+                                        <td class="govuk-table__cell">
+                                            {% if good_on_application.good.firearm_details.is_replica is not None %}
+                                                {{ good_on_application.good.firearm_details.is_replica|friendly_boolean }}, {{ good_on_application.good.firearm_details.replica_description }}
+                                            {% else %}
+                                                N/A
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endif %}
+
                                 <tr class="govuk-table__row app-table__row">
                                     <th scope="row" class="govuk-table__header">Calibre</th>
                                     <td class="govuk-table__cell">{{ good_on_application.good.firearm_details.calibre }}</td>

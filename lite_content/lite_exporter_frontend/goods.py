@@ -1,5 +1,5 @@
 from lite_content.lite_exporter_frontend import generic
-from lite_content.lite_exporter_frontend.generic import DESCRIPTION, PERMISSION_FINDER_LINK
+from lite_content.lite_exporter_frontend.generic import PERMISSION_FINDER_LINK
 
 
 class GoodsList:

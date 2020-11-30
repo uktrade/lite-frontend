@@ -24,11 +24,7 @@ urlpatterns = [
         views.EditYearOfManufacture.as_view(),
         name="year-of-manufacture",
     ),
-    path(
-        "<uuid:pk>/edit-firearm-details/replica/",
-        views.EditFirearmReplica.as_view(),
-        name="replica",
-    ),
+    path("<uuid:pk>/edit-firearm-details/replica/", views.EditFirearmReplica.as_view(), name="replica",),
     path("<uuid:pk>/edit-firearm-details/calibre/", views.EditCalibre.as_view(), name="calibre"),
     path("<uuid:pk>/edit-firearm-details/firearms-act/", views.EditFirearmActDetails.as_view(), name="firearms_act"),
     path(

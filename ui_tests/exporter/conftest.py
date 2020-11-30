@@ -760,10 +760,23 @@ def create_a_new_good_in_application(driver, description, part_number, controlle
     functions.click_submit(driver)
 
 
-@when(parsers.parse('I enter firearm year of manufacture as "{year}" and calibre as "{calibre}"'))
-def enter_firearm_year_of_manufacture_and_calibre(driver, year, calibre):  # noqa
+@when(parsers.parse('I enter firearm year of manufacture as "{year}"'))
+def enter_firearm_year_of_manufacture(driver, year):  # noqa
     good_details_page = AddGoodDetails(driver)
     good_details_page.enter_year_of_manufacture(year)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I select firearm replica status as "{status}" with description "{description}"'))
+def enter_firearm_replica_status_with_description(driver, status, description):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.select_replica_status(status, description)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I enter firearm calibre as "{calibre}"'))
+def enter_firearm_calibre(driver, calibre):  # noqa
+    good_details_page = AddGoodDetails(driver)
     good_details_page.enter_calibre(calibre)
     functions.click_submit(driver)
 
@@ -833,6 +846,7 @@ def summary_screen_for_product_type(driver, product_type_value, description, pro
         expected_fields += [
             "Sporting shotgun",
             "Year of manufacture",
+            "Replica firearm",
             "Calibre",
             "Identification markings",
         ]
