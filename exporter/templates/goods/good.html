@@ -367,9 +367,9 @@
 							<dd class="govuk-summary-list__actions">
 								{% if good.status.key == 'draft' %}
 									{% if draft_pk %}
-									<a id="change-is-sporting-shotgun" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:sporting-shotgun-add-application' good.id draft_pk %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.SPORTING_SHOTGUN" %}</span></a>
+									<a id="change-is-replica" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:replica-add-application' good.id draft_pk %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.REPLICA_FIREARM" %}</span></a>
 									{% else %}
-									<a id="change-is-sporting-shotgun" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:sporting-shotgun' good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.SPORTING_SHOTGUN" %}</span></a>
+									<a id="change-is-replica" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:replica' good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.REPLICA_FIREARM" %}</span></a>
 									{% endif %}
 								{% endif %}
 							</dd>

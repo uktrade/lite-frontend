@@ -222,7 +222,7 @@
 						</dd>
 						<dd class="govuk-summary-list__actions">
 							{% if good.status.key == 'draft' %}
-								<a id="change-is-firearm-replica" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:calibre' application_id good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "Goods.AddGoodSummary.FirearmDetails.REPLICA_FIREARM" %}</span></a>
+								<a id="change-is-firearm-replica" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:replica' application_id good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "Goods.AddGoodSummary.FirearmDetails.REPLICA_FIREARM" %}</span></a>
 							{% endif %}
 						</dd>
 					</div>
