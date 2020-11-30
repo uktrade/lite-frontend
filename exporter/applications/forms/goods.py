@@ -15,6 +15,7 @@ from lite_forms.components import (
     Option,
     BackLink,
     TextArea,
+    DateInput,
 )
 
 
@@ -71,9 +72,11 @@ def good_on_application_form(request, good, sub_case_type, application_id):
         if good["item_category"]["key"] == PRODUCT_CATEGORY_FIREARM:
             firearm_type = good["firearm_details"]["type"]["key"]
             if firearm_type in ["ammunition", "firearms"]:
-                questions.append(firearm_proof_mark_question())
+                questions.append(firearm_proof_mark_field())
             elif firearm_type == "components_for_firearms":
-                questions.append(firearm_is_barrel_question())
+                questions.append(does_firearm_component_require_proof_marks_field())
+            if firearm_type == "firearms":
+                questions.append(firearm_is_deactivated_field())
 
         return Form(
             title=AddGoodToApplicationForm.TITLE,
@@ -87,18 +90,18 @@ def good_on_application_form(request, good, sub_case_type, application_id):
         )
 
 
-def firearm_is_barrel_question():
+def does_firearm_component_require_proof_marks_field():
     return RadioButtons(
         title="Is the product a gun barrel or the action of a gun?",
         name="is_gun_barrel",
         options=[
-            Option(key=True, value="Yes", components=[firearm_proof_mark_question()],),
+            Option(key=True, value="Yes", components=[firearm_proof_mark_field()],),
             Option(key=False, value="No"),
         ],
     )
 
 
-def firearm_proof_mark_question():
+def firearm_proof_mark_field():
     return RadioButtons(
         title="Does the product have valid UK proof marks?",
         name="has_proof_mark",
@@ -116,5 +119,55 @@ def firearm_proof_mark_question():
                     ),
                 ],
             ),
+        ],
+    )
+
+
+def firearm_is_deactivated_field():
+    return RadioButtons(
+        title="Has the product been deactivated?",
+        name="is_deactivated",
+        options=[
+            Option(
+                key=True,
+                value="Yes",
+                components=[
+                    DateInput(
+                        title='Date of deactivation',
+                        name="date_of_deactivation",
+                        prefix='',
+                    ),
+                    RadioButtons(
+                        title="Has the product been deactivated to UK/EU proof house standards?",
+                        name="is_deactivated_to_proof_house_standard",
+                        options=[
+                            Option(
+                                key=True,
+                                value="Yes",
+                                components=[
+                                    Select(
+                                        title='Proof house standard',
+                                        name="unit",
+                                        options=[Option(key='UK', value="UK"), Option(key='EU', value="EU"),],
+                                    ),
+                                ]
+                            ),
+                            Option(
+                                key=False,
+                                value="No",
+                                components=[
+                                    TextArea(
+                                        title="Describe who deactivated the product and to what standard it was done",
+                                        description="",
+                                        name="deactivation_standard_other_details",
+                                        optional=False,
+                                    ),
+                                ],
+                            ),
+                        ],
+                    )
+                ],
+            ),
+            Option(key=False, value="No"),
         ],
     )
