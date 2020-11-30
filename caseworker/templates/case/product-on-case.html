@@ -45,6 +45,16 @@
                                 <th scope="row" class="govuk-table__header">Product type</th>
                                 <td class="govuk-table__cell">{{ good_on_application.good.firearm_details.type.value }}</td>
                             </tr>
+                            <tr class="govuk-table__row app-table__row">
+                                <th scope="row" class="govuk-table__header">Sporting shotgun</th>
+                                <td class="govuk-table__cell">
+                                    {% if good_on_application.good.firearm_details.is_sporting_shotgun is not None %}
+                                    {{ good_on_application.good.firearm_details.is_sporting_shotgun|friendly_boolean }}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </td>
+                            </tr>
                         {% else %}
                             <tr class="govuk-table__row app-table__row">
                                     <th scope="row" class="govuk-table__header">Product type</th>
@@ -94,7 +104,8 @@
                             </td>
                         </tr>
                         {% if good_on_application.good.firearm_details %}
-                            {% if good_on_application.good.firearm_details.type.key in "firearms,ammunition,components_for_firearms,components_for_ammunition" %}
+                            {% with firearm_types="firearms ammunition components_for_firearms components_for_ammunition" %}
+                            {% if good_on_application.good.firearm_details.type.key in firearm_types.split %}
                                 <tr class="govuk-table__row app-table__row">
                                     <th scope="row" class="govuk-table__header">Year of manufacture</th>
                                     <td class="govuk-table__cell">{{ good_on_application.good.firearm_details.year_of_manufacture }}</td>
@@ -124,6 +135,7 @@
                                     </td>
                                 </tr>
                             {% endif %}
+                            {% endwith %}
 
                             {% if good_on_application.good.firearm_details.type.key == "firearms_accessory" %}
                                 <tr class="govuk-table__row app-table__row">
@@ -152,7 +164,8 @@
                                 </tr>
                             {% endif %}
 
-                            {% if good_on_application.good.firearm_details.type.key in "software_related_to_firearms,technology_related_to_firearms" %}
+                            {% with firearm_types="software_related_to_firearms technology_related_to_firearms" %}
+                            {% if good_on_application.good.firearm_details.type.key in firearm_types.split %}
                                 <tr class="govuk-table__row app-table__row">
                                     <th scope="row" class="govuk-table__header">Purpose</th>
                                     <td class="govuk-table__cell">{{ good_on_application.good.software_or_technology_details|default_na }}</td>
@@ -174,6 +187,7 @@
                                     </td>
                                 </tr>
                             {% endif %}
+                            {% endwith %}
                         {% endif %}
                         <tr class="govuk-table__row app-table__row">
                             <th scope="row" class="govuk-table__header">Incorporated</th>

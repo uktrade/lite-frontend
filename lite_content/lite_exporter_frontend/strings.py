@@ -289,6 +289,7 @@ class Goods:
 
         class FirearmDetails:
             PRODUCT_TYPE = "Product type"
+            SPORTING_SHOTGUN = "Sporting shotgun"
             YEAR_OF_MANUFACTURE = "Year of manufacture"
             CALIBRE = "Calibre"
             COVERED_BY_THE_FIREARMS_ACT_1968 = "Covered by the Firearms Act 1968"

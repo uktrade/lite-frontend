@@ -1,9 +1,25 @@
 import pytest
+import requests
 
 from lite_forms.components import HelpSection
 
+from exporter.core.services import get_pv_gradings
 from exporter.applications.services import serialize_good_on_app_data
 from exporter.goods import forms
+
+
+@pytest.fixture(autouse=True)
+def setup(
+    mock_control_list_entries, mock_pv_gradings,
+):
+    yield
+
+
+def post_request(rf, client, data=None):
+    request = rf.post("/", data if data else {})
+    request.session = client.session
+    request.requests_session = requests.Session()
+    return request
 
 
 def test_add_goods_questions_feature_flag_on(settings):
@@ -69,3 +85,64 @@ def test_serialize_good_on_app_data_no_value_key(value, serialized):
         "quantity": serialized,
     }
     assert serialize_good_on_app_data(data) == expected
+
+
+@pytest.fixture
+def pv_gradings(mock_pv_gradings, rf, client):
+    request = rf.get("/")
+    request.session = client.session
+    request.requests_session = requests.Session()
+    data = get_pv_gradings(request, convert_to_options=True)
+    return data
+
+
+@pytest.mark.parametrize(
+    "params, num_forms, question_checks",
+    [
+        (
+            {"is_firearms_core": True},
+            6,
+            [
+                {"findex": 0, "qindex": 1, "name": "type"},
+                {"findex": 1, "qindex": 2, "name": "is_sporting_shotgun"},
+                {"findex": 2, "qindex": 0, "name": "description"},
+                {"findex": 3, "qindex": 1, "name": "year_of_manufacture"},
+                {"findex": 3, "qindex": 2, "name": "calibre"},
+                {"findex": 4, "qindex": 5, "name": "is_covered_by_firearm_act_section_one_two_or_five"},
+                {"findex": 5, "qindex": 1, "name": "has_identification_markings"},
+            ],
+        ),
+        (
+            {"is_firearms_accessory": True},
+            5,
+            [
+                {"findex": 0, "qindex": 1, "name": "type"},
+                {"findex": 1, "qindex": 0, "name": "description"},
+                {"findex": 2, "qindex": 1, "name": "is_military_use"},
+                {"findex": 3, "qindex": 1, "name": "is_component"},
+                {"findex": 4, "qindex": 1, "name": "uses_information_security"},
+            ],
+        ),
+        (
+            {"is_firearms_software_tech": True},
+            5,
+            [
+                {"findex": 0, "qindex": 1, "name": "type"},
+                {"findex": 1, "qindex": 0, "name": "description"},
+                {"findex": 2, "qindex": 1, "name": "software_or_technology_details"},
+                {"findex": 3, "qindex": 1, "name": "is_military_use"},
+                {"findex": 4, "qindex": 1, "name": "uses_information_security"},
+            ],
+        ),
+    ],
+)
+def test_core_firearm_product_form_group(rf, client, params, num_forms, question_checks):
+    """ Test to ensure correct set of questions are asked in adding a firearm product journey depending on the firearm_type."""
+    data = {"product_type_step": True, "type": "firearms"}
+    kwargs = {"is_pv_graded": False, **params}
+    request = post_request(rf, client, data=data)
+    form = forms.add_good_form_group(request, **kwargs)
+    assert len(form.forms) == int(num_forms)
+
+    for q in question_checks:
+        assert form.forms[q["findex"]].questions[q["qindex"]].name == q["name"]

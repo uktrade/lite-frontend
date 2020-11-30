@@ -32,6 +32,7 @@ from exporter.goods.services import (
     post_good_document_sensitivity,
     validate_good,
 )
+from exporter.goods.helpers import FIREARM_AMMUNITION_COMPONENT_TYPES
 from lite_forms.components import FiltersBar, TextInput
 from lite_forms.generators import error_page, form_page
 from lite_forms.views import SingleFormView, MultiFormView
@@ -110,12 +111,7 @@ class AddGood(LoginRequiredMixin, MultiFormView):
         copied_request = request.POST.copy()
         is_pv_graded = copied_request.get("is_pv_graded", "") == "yes"
         is_software_technology = copied_request.get("item_category") in ["group3_software", "group3_technology"]
-        is_firearms_core = copied_request.get("type") in [
-            "firearms",
-            "ammunition",
-            "components_for_firearms",
-            "components_for_ammunition",
-        ]
+        is_firearms_core = copied_request.get("type") in FIREARM_AMMUNITION_COMPONENT_TYPES
         is_firearms_accessory = copied_request.get("type") == "firearms_accessory"
         is_firearms_software_tech = copied_request.get("type") in [
             "software_related_to_firearms",
