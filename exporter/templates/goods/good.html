@@ -347,6 +347,35 @@
 						</dd>
 					</div>
 
+					{% if good.firearm_details.type.key == "firearms" %}
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								{% lcs "goods.GoodPage.Table.FirearmDetails.REPLICA_FIREARM" %}
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{% if good.firearm_details.is_replica is not None %}
+									{{ good.firearm_details.is_replica|friendly_boolean }}
+									<span class="govuk-hint">
+										{% if good.firearm_details.replica_description %}
+											{{ good.firearm_details.replica_description }}
+										{% endif %}
+									</span>
+								{% else %}
+									N/A
+								{% endif %}
+							</dd>
+							<dd class="govuk-summary-list__actions">
+								{% if good.status.key == 'draft' %}
+									{% if draft_pk %}
+									<a id="change-is-sporting-shotgun" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:sporting-shotgun-add-application' good.id draft_pk %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.SPORTING_SHOTGUN" %}</span></a>
+									{% else %}
+									<a id="change-is-sporting-shotgun" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:sporting-shotgun' good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.SPORTING_SHOTGUN" %}</span></a>
+									{% endif %}
+								{% endif %}
+							</dd>
+						</div>
+					{% endif %}
+
 					<div class="govuk-summary-list__row">
 						<dt class="govuk-summary-list__key">
 							{% lcs "goods.GoodPage.Table.FirearmDetails.CALIBRE" %}

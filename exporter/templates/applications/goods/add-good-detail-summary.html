@@ -199,10 +199,35 @@
 					</dd>
 					<dd class="govuk-summary-list__actions">
 						{% if good.status.key == 'draft' %}
-							<a id="change-year-of-manufacture" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:calibre' application_id good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "Goods.AddGoodSummary.FirearmDetails.YEAR_OF_MANUFACTURE" %}</span></a>
+							<a id="change-year-of-manufacture" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:year-of-manufacture' application_id good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "Goods.AddGoodSummary.FirearmDetails.YEAR_OF_MANUFACTURE" %}</span></a>
 						{% endif %}
 					</dd>
 				</div>
+				{% if good.firearm_details.type.key == "firearms" %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							{% lcs "Goods.AddGoodSummary.FirearmDetails.REPLICA_FIREARM" %}
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{% if good.firearm_details.is_replica is not None %}
+								{{ good.firearm_details.is_replica|friendly_boolean }}
+								<span class="govuk-hint">
+									{% if good.firearm_details.replica_description %}
+										{{ good.firearm_details.replica_description|default_na }}
+									{% endif %}
+								</span>
+							{% else %}
+								N/A
+							{% endif %}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							{% if good.status.key == 'draft' %}
+								<a id="change-is-firearm-replica" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:calibre' application_id good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "Goods.AddGoodSummary.FirearmDetails.REPLICA_FIREARM" %}</span></a>
+							{% endif %}
+						</dd>
+					</div>
+				{% endif %}
+
 
 				<div class="govuk-summary-list__row">
 					<dt class="govuk-summary-list__key">

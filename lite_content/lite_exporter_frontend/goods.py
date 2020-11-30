@@ -1,5 +1,5 @@
 from lite_content.lite_exporter_frontend import generic
-from lite_content.lite_exporter_frontend.generic import PERMISSION_FINDER_LINK
+from lite_content.lite_exporter_frontend.generic import DESCRIPTION, PERMISSION_FINDER_LINK
 
 
 class GoodsList:
@@ -95,6 +95,7 @@ class GoodPage:
             PRODUCT_TYPE = "Product type"
             SPORTING_SHOTGUN = "Sporting shotgun"
             YEAR_OF_MANUFACTURE = "Year of manufacture"
+            REPLICA_FIREARM = "Replica firearm"
             CALIBRE = "Calibre"
             COVERED_BY_THE_FIREARMS_ACT_1968 = "Covered by the Firearms Act 1968"
             IDENTIFICATION_MARKINGS = "Identification markings"
@@ -223,6 +224,10 @@ class CreateGoodForm:
             TITLE = "Firearms and ammunition details"
             YEAR_OF_MANUFACTURE = "Year of manufacture"
             CALIBRE = "Enter the calibre"
+
+        class FirearmsReplica:
+            TITLE = "Is the product a replica firearm?"
+            DESCRIPTION = "Describe the firearm the product is a replica of"
 
         class FirearmsActCertificate:
             TITLE = "Is the product covered by Section 1, Section 2 or Section 5 of the Firearms Act 1968?"
