@@ -98,7 +98,8 @@ def get_application_goods(request, pk):
 def validate_application_good(request, pk, json):
     post_data = serialize_good_on_app_data(json)
     post_data["validate_only"] = True
-    return client.post(request, f"/applications/{pk}/goods/", post_data)
+    response = client.post(request, f"/applications/{pk}/goods/", post_data)
+    return response.json(), response.status_code
 
 
 def get_application_goods_types(request, pk):

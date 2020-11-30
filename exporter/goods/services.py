@@ -62,10 +62,11 @@ def add_firearm_details_to_data(json):
         firearm_details["type"] = json.get("type")
         firearm_details["is_sporting_shotgun"] = json.get("is_sporting_shotgun")
 
-    if "firearm_ammunition_step" in json:
+    if "firearm_year_of_manufacture_step" in json:
         firearm_details["year_of_manufacture"] = json.get("year_of_manufacture")
-        firearm_details["calibre"] = json.get("calibre")
         del json["year_of_manufacture"]
+    if "firearm_calibre_step" in json:
+        firearm_details["calibre"] = json.get("calibre")
         del json["calibre"]
     if "section_certificate_step" in json:
         # parent component doesnt get sent when empty unlike the remaining form fields
