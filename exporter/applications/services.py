@@ -116,15 +116,7 @@ def validate_good_on_application(request, pk, json):
 def post_good_on_application(request, pk, json):
     post_data = serialize_good_on_app_data(json)
     response = client.post(request, f"/applications/{pk}/goods/", post_data)
-    response_data = response.json()
-    if "errors" in response_data:
-        # firearm_details field errors need moving to top level of dict for MultiFormView pick them up and display them
-        response_data["errors"] = {
-            **response_data["errors"],
-            **response_data["errors"]["firearm_details"],
-        }
-        del response_data["errors"]["firearm_details"]
-    return response_data, response.status_code
+    return response.json(), response.status_code
 
 
 def serialize_good_on_app_data(json):
