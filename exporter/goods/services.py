@@ -72,6 +72,11 @@ def add_firearm_details_to_data(json):
             firearm_details["has_identification_markings"] = "False"
             firearm_details["identification_markings_details"] = ""
             firearm_details["no_identification_markings_details"] = ""
+
+    for fields in ['date_of_deactivation', 'has_proof_mark', 'no_proof_mark_details', 'is_deactivated', 'date_of_deactivation', 'deactivation_standard', 'deactivation_standard_other', 'is_deactivated_to_standard']:
+        if fields in json:
+            firearm_details[fields] = json.pop(fields)
+
     if "firearm_ammunition_step" in json:
         firearm_details["year_of_manufacture"] = json.get("year_of_manufacture")
         firearm_details["calibre"] = json.get("calibre")

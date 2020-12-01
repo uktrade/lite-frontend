@@ -40,6 +40,35 @@
                             <th scope="row" class="govuk-table__header">Category</th>
                             <td class="govuk-table__cell">{{ good_on_application.good.item_category.value }}</td>
                         </tr>
+                        {% if good_on_application.good.firearm_details %}
+                            <tr class="govuk-table__row app-table__row">
+                                <th scope="row" class="govuk-table__header">Product type</th>
+                                <td class="govuk-table__cell">{{ good_on_application.good.firearm_details.type.value }}</td>
+                            </tr>
+                            <tr class="govuk-table__row app-table__row">
+                                <th scope="row" class="govuk-table__header">Sporting shotgun</th>
+                                <td class="govuk-table__cell">
+                                    {% if good_on_application.good.firearm_details.is_sporting_shotgun is not None %}
+                                    {{ good_on_application.good.firearm_details.is_sporting_shotgun|friendly_boolean }}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">Product type</th>
+                                    <td class="govuk-table__cell">
+                                        {% if good_on_application.item_type %}
+                                            {{ good_on_application.item_type }}
+                                        {% elif good_on_application.other_item_type %}
+                                            {{ good_on_application.other_item_type }}
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                        {% endif %}
                         <tr class="govuk-table__row app-table__row">
                             <th scope="row" class="govuk-table__header">Description</th>
                             <td class="govuk-table__cell">{{ good_on_application.good.description }}</td>
@@ -74,47 +103,92 @@
                                 {% endif %}
                             </td>
                         </tr>
-                        <tr class="govuk-table__row app-table__row">
-                            <th scope="row" class="govuk-table__header">Product type</th>
-                            <td class="govuk-table__cell">
-                                {% if good_on_application.item_type %}
-                                    {{ good_on_application.item_type }}
-                                {% elif good_on_application.other_item_type %}
-                                    {{ good_on_application.other_item_type }}
-                                {% else %}
-                                    N/A
-                                {% endif %}
-                            </td>
-                        </tr>
                         {% if good_on_application.good.firearm_details %}
-                            <tr class="govuk-table__row app-table__row">
-                                <th scope="row" class="govuk-table__header">Year of manufacture</th>
-                                <td class="govuk-table__cell">{{ good_on_application.good.firearm_details.year_of_manufacture }}</td>
-                            </tr>
-                            <tr class="govuk-table__row app-table__row">
-                                <th scope="row" class="govuk-table__header">Calibre</th>
-                                <td class="govuk-table__cell">{{ good_on_application.good.firearm_details.calibre }}</td>
-                            </tr>
-                            <tr class="govuk-table__row app-table__row">
-                                <th scope="row" class="govuk-table__header">Covered by Firearms Act 1968</th>
-                                <td class="govuk-table__cell">
-                                    {% if good_on_application.good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five %}
-                                        Yes, section {{ good_on_application.good.firearm_details.section_certificate_number}} 
-                                    {% else %}
-                                        No
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            <tr class="govuk-table__row app-table__row">
-                                <th scope="row" class="govuk-table__header">Identification markings</th>
-                                <td class="govuk-table__cell">
-                                    {% if good_on_application.good.firearm_details.has_identification_markings %}
-                                        Yes, {{ good_on_application.good.firearm_details.identification_markings_details }}
-                                    {% else %}
-                                        No, {{ good_on_application.no_identification_markings_details.no_identification_markings_details }}
-                                    {% endif %}
-                                </td>
-                            </tr>
+                            {% with firearm_types="firearms ammunition components_for_firearms components_for_ammunition" %}
+                            {% if good_on_application.good.firearm_details.type.key in firearm_types.split %}
+                                <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">Year of manufacture</th>
+                                    <td class="govuk-table__cell">{{ good_on_application.good.firearm_details.year_of_manufacture }}</td>
+                                </tr>
+                                <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">Calibre</th>
+                                    <td class="govuk-table__cell">{{ good_on_application.good.firearm_details.calibre }}</td>
+                                </tr>
+                                <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">Covered by Firearms Act 1968</th>
+                                    <td class="govuk-table__cell">
+                                        {% if good_on_application.good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five %}
+                                            Yes, section {{ good_on_application.good.firearm_details.section_certificate_number}} 
+                                        {% else %}
+                                            No
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">Identification markings</th>
+                                    <td class="govuk-table__cell">
+                                        {% if good_on_application.good.firearm_details.has_identification_markings %}
+                                            Yes, {{ good_on_application.good.firearm_details.identification_markings_details }}
+                                        {% else %}
+                                            No, {{ good_on_application.no_identification_markings_details.identification_markings_details }}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endif %}
+                            {% endwith %}
+
+                            {% if good_on_application.good.firearm_details.type.key == "firearms_accessory" %}
+                                <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">Military use</th>
+                                    <td class="govuk-table__cell">{{ good_on_application.good.is_military_use.value|default_na }}
+                                        {% if good_on_application.good.modified_military_use_details %}
+                                        <span class="govuk-hint"> {{ good_on_application.good.modified_military_use_details }} </span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">Component</th>
+                                    <td class="govuk-table__cell">{{ good_on_application.good.is_component.value|default_na }}
+                                        {% if good_on_application.good.modified_military_use_details %}
+                                        <span class="govuk-hint"> {{ good_on_application.good.component_details }} </span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">Information security features</th>
+                                    <td class="govuk-table__cell">{{ good_on_application.good.uses_information_security|friendly_boolean }}
+                                        {% if good_on_application.good.information_security_details %}
+                                        <span class="govuk-hint"> {{ good_on_application.good.information_security_details }} </span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endif %}
+
+                            {% with firearm_types="software_related_to_firearms technology_related_to_firearms" %}
+                            {% if good_on_application.good.firearm_details.type.key in firearm_types.split %}
+                                <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">Purpose</th>
+                                    <td class="govuk-table__cell">{{ good_on_application.good.software_or_technology_details|default_na }}</td>
+                                </tr>
+                                <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">Military use</th>
+                                    <td class="govuk-table__cell">{{ good_on_application.good.is_military_use.value|default_na }}
+                                        {% if good_on_application.good.modified_military_use_details %}
+                                        <span class="govuk-hint"> {{ good_on_application.good.modified_military_use_details }} </span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">Information security features</th>
+                                    <td class="govuk-table__cell">{{ good_on_application.good.uses_information_security|friendly_boolean }}
+                                        {% if good_on_application.good.information_security_details %}
+                                        <span class="govuk-hint"> {{ good_on_application.good.information_security_details }} </span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endif %}
+                            {% endwith %}
+
                             {% if good_on_application.firearm_details.has_proof_mark is not None %}
                                 <tr class="govuk-table__row app-table__row">
                                     <th scope="row" class="govuk-table__header">Has valid proof marks</th>
@@ -123,11 +197,32 @@
                                             Yes
                                         {% else %}
                                             No, {{ good_on_application.firearm_details.no_proof_mark_details }}
-                                        
                                         {% endif %}
                                     </td>
                                 </tr>
                             {% endif %}
+
+                            {% if good_on_application.firearm_details.has_proof_mark is not None %}
+                                <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">Deactivated</th>
+                                    <td class="govuk-table__cell">
+                                        {% if good_on_application.firearm_details.is_deactivated %}
+                                            Yes, {{ good_on_application.firearm_details.date_of_deactivation }}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">Proof house standard</th>
+                                    <td class="govuk-table__cell">
+                                        {% if good_on_application.firearm_details.deactivation_standard %}
+                                            Yes, {{ good_on_application.firearm_details.deactivation_standard }}
+                                        {% else %}
+                                            No, {{ good_on_application.firearm_details.deactivation_standard_other }}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endif %}
+
                         {% endif %}
                         <tr class="govuk-table__row app-table__row">
                             <th scope="row" class="govuk-table__header">Incorporated</th>
@@ -170,4 +265,4 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tarekraafat-autocomplete.js/7.2.0/js/autoComplete.min.js" integrity="sha512-1Fr8m8dxYPgUEwpEKZy1AIUZnGupa1bhl7GbG+ueWxlWVBJvdEnLdgQVQA8pqkrrmkTV0DW7C5ZVmVGdJmMuZg==" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/url-search-params/1.1.0/url-search-params.js" integrity="sha512-XITCo00srdVr9XH7ep5JEijPPpLA60TqvvoqLCyQlIdctLUjEsIRCtlgSaoj+RbsF+e/YnkaRTV/7Ei5GvVylg==" crossorigin="anonymous"></script>
     <script src="{% static 'javascripts/search-cases.js' %}"></script>
-    {% endblock %}
+{% endblock %}
