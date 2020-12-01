@@ -774,7 +774,7 @@ def enter_firearm_replica_status_with_description(driver, status, description): 
     functions.click_submit(driver)
 
 
-@when(parsers.parse('I enter firearm calibre as "{calibre}"'))
+@when(parsers.parse('I enter calibre as "{calibre}"'))
 def enter_firearm_calibre(driver, calibre):  # noqa
     good_details_page = AddGoodDetails(driver)
     good_details_page.enter_calibre(calibre)

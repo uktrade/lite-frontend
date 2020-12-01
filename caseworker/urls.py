@@ -19,8 +19,10 @@ urlpatterns = [
     path("users/", include("caseworker.users.urls")),
     path("routing-rules/", include("caseworker.routing_rules.urls")),
     path("compliance/", include("caseworker.compliance.urls")),
-    path("search/", include("caseworker.search.urls")),
 ]
+
+if settings.LITE_API_SEARCH_ENABLED:
+    urlpatterns.append(path("search/", include("caseworker.search.urls")))
 
 
 if settings.FEATURE_SPIRE_SEARCH_ON:

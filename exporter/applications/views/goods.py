@@ -201,11 +201,13 @@ class AddGoodToApplication(LoginRequiredMixin, MultiFormView):
         application = get_application(self.request, self.object_pk)
         good, _ = get_good(request, kwargs["good_pk"])
 
+        is_firearm = good["item_category"] == "group2_firearms"
+
         # These are only asked if user is adding a preexisting good, but not
         # if the good being added to the application has been created as
         # part of this same flow
         preexisting_good_forms = (
-            [firearm_year_of_manufacture_details_form(good.get("id")),]
+            [firearm_year_of_manufacture_details_form(good.get("id")) if is_firearm else None,]
             if str_to_bool(request.GET.get("preexisting", True))
             else []
         )

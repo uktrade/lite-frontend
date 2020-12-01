@@ -6,7 +6,14 @@ from django.http import StreamingHttpResponse
 from django.conf import settings
 
 from core import client
-from exporter.applications.helpers.date_fields import format_date_fields, create_formatted_date_from_components
+from exporter.core.constants import PRODUCT_CATEGORY_FIREARM
+from exporter.applications.helpers.date_fields import (
+    format_date_fields,
+    format_date,
+    create_formatted_date_from_components,
+)
+from exporter.goods.services import add_firearm_details_to_data
+
 from exporter.core.helpers import remove_prefix, add_validate_only_to_data
 from core.helpers import convert_parameters_to_query_params
 from exporter.core.objects import Application
@@ -118,11 +125,17 @@ def serialize_good_on_app_data(json):
         post_data = remove_prefix(json, "good_on_app_")
     else:
         post_data = json
+
     if "good_id" not in post_data:
         post_data["good_id"] = json["good_id"]
     for key in {"value", "quantity"} & set(post_data.keys()):
         if "," in post_data[key]:
             post_data[key] = post_data[key].replace(",", "")
+
+    if "item_category" in post_data and post_data["item_category"] == PRODUCT_CATEGORY_FIREARM:
+        if json.get("date_of_deactivationday"):
+            post_data["date_of_deactivation"] = format_date(post_data, "date_of_deactivation")
+        post_data = add_firearm_details_to_data(post_data)
     return post_data
 
 
