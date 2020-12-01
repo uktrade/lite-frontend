@@ -18,7 +18,7 @@ from exporter.applications.services import (
     add_document_data,
     validate_application_good,
 )
-from exporter.core.constants import EXHIBITION, APPLICANT_EDITING
+from exporter.core.constants import EXHIBITION, APPLICANT_EDITING, PRODUCT_CATEGORY_FIREARM
 from core.helpers import convert_dict_to_query_params
 from exporter.core.helpers import str_to_bool
 from exporter.goods.forms import (
@@ -201,7 +201,7 @@ class AddGoodToApplication(LoginRequiredMixin, MultiFormView):
         application = get_application(self.request, self.object_pk)
         good, _ = get_good(request, kwargs["good_pk"])
 
-        is_firearm = good["item_category"] == "group2_firearms"
+        is_firearm = good["item_category"]["key"] == PRODUCT_CATEGORY_FIREARM
 
         # These are only asked if user is adding a preexisting good, but not
         # if the good being added to the application has been created as
