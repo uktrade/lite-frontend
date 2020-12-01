@@ -32,11 +32,17 @@ from exporter.goods.forms import (
     product_uses_information_security,
     software_technology_details_form,
     group_two_product_type_form,
-    firearm_ammunition_details_form,
+    firearm_calibre_details_form,
     firearms_act_confirmation_form,
     identification_markings_form,
+    firearms_sporting_shotgun_form,
+    firearm_year_of_manufacture_details_form,
 )
-from exporter.goods.helpers import COMPONENT_SELECTION_TO_DETAIL_FIELD_MAP, return_to_good_summary
+from exporter.goods.helpers import (
+    COMPONENT_SELECTION_TO_DETAIL_FIELD_MAP,
+    return_to_good_summary,
+    FIREARM_AMMUNITION_COMPONENT_TYPES,
+)
 from exporter.goods.services import (
     get_goods,
     post_goods,
@@ -176,12 +182,8 @@ class AddGood(LoginRequiredMixin, MultiFormView):
         copied_request = request.POST.copy()
         is_pv_graded = copied_request.get("is_pv_graded", "").lower() == "yes"
         is_software_technology = copied_request.get("item_category") in ["group3_software", "group3_technology"]
-        is_firearms_core = copied_request.get("type") in [
-            "firearms",
-            "ammunition",
-            "components_for_firearms",
-            "components_for_ammunition",
-        ]
+        is_firearm = copied_request.get("type") == "firearms"
+        is_firearms_core = copied_request.get("type") in FIREARM_AMMUNITION_COMPONENT_TYPES
         is_firearms_accessory = copied_request.get("type") == "firearms_accessory"
         is_firearms_software_tech = copied_request.get("type") in [
             "software_related_to_firearms",
@@ -191,6 +193,7 @@ class AddGood(LoginRequiredMixin, MultiFormView):
             request,
             is_pv_graded,
             is_software_technology,
+            is_firearm,
             is_firearms_core,
             is_firearms_accessory,
             is_firearms_software_tech,
@@ -218,7 +221,10 @@ class GoodSoftwareTechnology(LoginRequiredMixin, SingleFormView):
             self.object_pk = str(kwargs["pk"])
         self.draft_pk = str(kwargs.get("draft_pk", ""))
         self.data = get_good_details(request, self.object_pk)[0]
-        self.form = software_technology_details_form(request, self.data.get("item_category"))
+        category_type = self.data.get("item_category")
+        if category_type == "group2_firearms":
+            category_type = self.data["firearm_details"]["type"]["key"]
+        self.form = software_technology_details_form(request, category_type)
         self.action = edit_good_details
 
     def get_data(self):
@@ -507,7 +513,42 @@ class EditFirearmProductType(LoginRequiredMixin, SingleFormView):
         self.action = edit_good_firearm_details
 
     def get_success_url(self):
-        # Next question firearm and ammunition details
+        firearm_type = self.request.POST.get("type")
+        if firearm_type:
+            capture_sporting_shotgun = firearm_type in FIREARM_AMMUNITION_COMPONENT_TYPES
+            if "good_pk" in self.kwargs:
+                url = "applications:sporting-shotgun" if capture_sporting_shotgun else "applications:edit_good"
+                return reverse_lazy(url, kwargs={"pk": self.application_id, "good_pk": self.object_pk})
+            else:
+                url = "goods:sporting-shotgun" if capture_sporting_shotgun else "goods:edit"
+                return reverse_lazy(url, kwargs={"pk": self.object_pk})
+        elif self.draft_pk:
+            return reverse(
+                "goods:good_detail_application",
+                kwargs={"pk": self.object_pk, "type": "application", "draft_pk": self.draft_pk},
+            )
+        # Edit
+        else:
+            return return_to_good_summary(self.kwargs, self.application_id, self.object_pk)
+
+
+class EditFirearmSportingShotgunStatus(LoginRequiredMixin, SingleFormView):
+    application_id = None
+
+    def init(self, request, **kwargs):
+        if "good_pk" in kwargs:
+            # coming from the application
+            self.object_pk = str(kwargs["good_pk"])
+            self.application_id = str(kwargs["pk"])
+        else:
+            self.object_pk = str(kwargs["pk"])
+        self.draft_pk = str(kwargs.get("draft_pk", ""))
+        self.data = get_good_details(request, self.object_pk)[0]["firearm_details"]
+        self.form = firearms_sporting_shotgun_form(self.data["type"]["key"])
+        self.action = edit_good_firearm_details
+
+    def get_success_url(self):
+        # Next question product details
         if self.data.get("type"):
             if "good_pk" in self.kwargs:
                 return reverse_lazy(
@@ -525,7 +566,7 @@ class EditFirearmProductType(LoginRequiredMixin, SingleFormView):
             return return_to_good_summary(self.kwargs, self.application_id, self.object_pk)
 
 
-class EditAmmunition(LoginRequiredMixin, SingleFormView):
+class EditYearOfManufacture(LoginRequiredMixin, SingleFormView):
     application_id = None
 
     def init(self, request, **kwargs):
@@ -537,7 +578,41 @@ class EditAmmunition(LoginRequiredMixin, SingleFormView):
             self.object_pk = str(kwargs["pk"])
         self.draft_pk = str(kwargs.get("draft_pk", ""))
         self.data = get_good_details(request, self.object_pk)[0]["firearm_details"]
-        self.form = firearm_ammunition_details_form()
+        self.form = firearm_year_of_manufacture_details_form()
+        self.action = edit_good_firearm_details
+
+    def get_success_url(self):
+        # Next question is_covered_by_firearm_act_section_one_two_or_five - boolean
+        if self.data.get("is_covered_by_firearm_act_section_one_two_or_five") is None:
+            if "good_pk" in self.kwargs:
+                return reverse_lazy(
+                    "applications:calibre", kwargs={"pk": self.application_id, "good_pk": self.object_pk}
+                )
+            else:
+                return reverse_lazy("goods:calibre", kwargs={"pk": self.object_pk})
+        elif self.draft_pk:
+            return reverse(
+                "goods:good_detail_application",
+                kwargs={"pk": self.object_pk, "type": "application", "draft_pk": self.draft_pk},
+            )
+        # Edit
+        else:
+            return return_to_good_summary(self.kwargs, self.application_id, self.object_pk)
+
+
+class EditCalibre(LoginRequiredMixin, SingleFormView):
+    application_id = None
+
+    def init(self, request, **kwargs):
+        if "good_pk" in kwargs:
+            # coming from the application
+            self.object_pk = str(kwargs["good_pk"])
+            self.application_id = str(kwargs["pk"])
+        else:
+            self.object_pk = str(kwargs["pk"])
+        self.draft_pk = str(kwargs.get("draft_pk", ""))
+        self.data = get_good_details(request, self.object_pk)[0]["firearm_details"]
+        self.form = firearm_calibre_details_form()
         self.action = edit_good_firearm_details
 
     def get_success_url(self):

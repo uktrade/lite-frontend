@@ -26,7 +26,29 @@
 				{% endif %}
 			</dd>
 		</div>
-
+		{% if good.item_category.key == 'group2_firearms' %}
+			{% with firearm_core_types="firearms ammunition components_for_firearms components_for_ammunition" %}
+			{% if good.firearm_details and good.firearm_details.type.key in firearm_core_types.split %}
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs "Goods.AddGoodSummary.FirearmDetails.SPORTING_SHOTGUN" %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{% if good.firearm_details.is_sporting_shotgun is not None %}
+							{{ good.firearm_details.is_sporting_shotgun|friendly_boolean }}
+						{% else %}
+							N/A
+						{% endif %}
+					</dd>
+					<dd class="govuk-summary-list__actions">
+						{% if good.status.key == 'draft' %}
+							<a id="change-is-sporting-shotgun" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:sporting-shotgun' application_id good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "Goods.AddGoodSummary.FirearmDetails.SPORTING_SHOTGUN" %}</span></a>
+						{% endif %}
+					</dd>
+				</div>
+			{% endif %}
+			{% endwith %}
+		{% endif %}
 		<div class="govuk-summary-list__row">
 			<dt class="govuk-summary-list__key">
 				{% lcs "Goods.AddGoodSummary.DESCRIPTION" %}
@@ -89,7 +111,8 @@
 		</div>
 
 		{% if good.item_category.key != 'group2_firearms' %}
-			{% if good.item_category.key in 'group3_software,group3_technology' %}
+			{% with firearm_types='group3_software group3_technology' %}
+			{% if good.item_category.key in firearm_types.split %}
 				<div class="govuk-summary-list__row">
 					<dt class="govuk-summary-list__key">
 						{% lcs 'Goods.AddGoodSummary.PURPOSE_SOFTWARE_TECHNOLOGY' %}
@@ -104,6 +127,7 @@
 					</dd>
 				</div>
 			{% endif %}
+			{% endwith %}
 
 			<div class="govuk-summary-list__row">
 				<dt class="govuk-summary-list__key">
@@ -175,7 +199,7 @@
 					</dd>
 					<dd class="govuk-summary-list__actions">
 						{% if good.status.key == 'draft' %}
-							<a id="change-year-of-manufacture" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:ammunition' application_id good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "Goods.AddGoodSummary.FirearmDetails.YEAR_OF_MANUFACTURE" %}</span></a>
+							<a id="change-year-of-manufacture" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:calibre' application_id good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "Goods.AddGoodSummary.FirearmDetails.YEAR_OF_MANUFACTURE" %}</span></a>
 						{% endif %}
 					</dd>
 				</div>
@@ -189,7 +213,7 @@
 					</dd>
 					<dd class="govuk-summary-list__actions">
 						{% if good.status.key == 'draft' %}
-							<a id="change-calibre" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:ammunition' application_id good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "Goods.AddGoodSummary.FirearmDetails.CALIBRE" %}</span></a>
+							<a id="change-calibre" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:calibre' application_id good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "Goods.AddGoodSummary.FirearmDetails.CALIBRE" %}</span></a>
 						{% endif %}
 					</dd>
 				</div>
@@ -349,5 +373,5 @@
 
 		{% endif %}
 	</dl>
-	<a class="govuk-button" id="button-attach-document" href="{% url 'applications:add_document' application_id good_id %}">{% lcs "Goods.AddGoodSummary.SAVE_AND_CONTINUE_BUTTON" %}</a>
+	<a class="govuk-button" id="button-attach-document" href="{% url 'applications:add_document' application_id good_id %}?preexisting=False">{% lcs "Goods.AddGoodSummary.SAVE_AND_CONTINUE_BUTTON" %}</a>
 {% endblock %}

@@ -33,6 +33,7 @@ class FOI:
     TITLE = "Do you agree to FOI?"
     AGREE_TO_FOI = "Yes"
     DISAGREE_TO_FOI = "No"
+    FOI_REASON = "Please explain why you do not agree to FOI"
 
 
 class TermsAndConditions:

@@ -738,6 +738,13 @@ def select_product_type(driver, product_type):  # noqa
     functions.click_submit(driver)
 
 
+@when(parsers.parse('I select sporting shotgun status as "{status}"'))  # noqa
+def select_sporting_gun_status(driver, status):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.select_sporting_gun_status(status)
+    functions.click_submit(driver)
+
+
 @when(
     parsers.parse(
         'I enter good description as "{description}" part number "{part_number}" controlled "{controlled}" control code "{control_code}" and graded "{graded}"'
@@ -824,6 +831,7 @@ def summary_screen_for_product_type(driver, product_type_value, description, pro
 
     if product_type_value == "Firearms":
         expected_fields += [
+            "Sporting shotgun",
             "Year of manufacture",
             "Calibre",
             "Identification markings",

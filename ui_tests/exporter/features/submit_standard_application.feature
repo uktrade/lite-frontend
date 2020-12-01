@@ -257,6 +257,7 @@ Feature: I want to indicate the standard licence I want
     When I click on the "goods" section
     And I choose to add a new product
     And I select product type "firearm"
+    And I select sporting shotgun status as "Yes"
     And I enter good description as "new firearm" part number "FR-123-M" controlled "True" control code "ML1a" and graded "no"
     And I enter firearm year of manufacture as "2020" and calibre as "0.22"
     And I specify firearms act sections apply as "Yes"
@@ -311,6 +312,7 @@ Feature: I want to indicate the standard licence I want
     When I click on the "goods" section
     And I choose to add a new product
     And I select product type "firearm"
+    And I select sporting shotgun status as "No"
     And I enter good description as "new firearm" part number "FR-123-M" controlled "True" control code "ML1a" and graded "no"
     And I enter firearm year of manufacture as "2020" and calibre as "0.22"
     And I specify firearms act sections apply as "Yes"

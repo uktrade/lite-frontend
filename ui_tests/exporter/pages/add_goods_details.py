@@ -85,6 +85,10 @@ class AddGoodDetails(BasePage):
         if category == "one":
             self.driver.find_element_by_id(self.GROUP1_DEVICE_ID).click()
 
+    def select_sporting_gun_status(self, status):
+        status = "True" if status == "Yes" else "False"
+        self.driver.find_element_by_id(f"is_sporting_shotgun-{status}").click()
+
     def select_is_product_for_military_use(self, option):
         # yes_designed, yes_modified and no
         if option == "yes_designed":
