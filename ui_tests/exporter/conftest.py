@@ -760,10 +760,16 @@ def create_a_new_good_in_application(driver, description, part_number, controlle
     functions.click_submit(driver)
 
 
-@when(parsers.parse('I enter firearm year of manufacture as "{year}" and calibre as "{calibre}"'))
-def enter_firearm_year_of_manufacture_and_calibre(driver, year, calibre):  # noqa
+@when(parsers.parse('I enter firearm year of manufacture as "{year}"'))
+def enter_firearm_year_of_manufacture(driver, year):  # noqa
     good_details_page = AddGoodDetails(driver)
     good_details_page.enter_year_of_manufacture(year)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I enter calibre as "{calibre}"'))
+def enter_firearm_calibre(driver, calibre):  # noqa
+    good_details_page = AddGoodDetails(driver)
     good_details_page.enter_calibre(calibre)
     functions.click_submit(driver)
 
