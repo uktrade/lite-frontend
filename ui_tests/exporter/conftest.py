@@ -767,6 +767,13 @@ def enter_firearm_year_of_manufacture(driver, year):  # noqa
     functions.click_submit(driver)
 
 
+@when(parsers.parse('I select firearm replica status as "{status}" with description "{description}"'))
+def enter_firearm_replica_status_with_description(driver, status, description):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.select_replica_status(status, description)
+    functions.click_submit(driver)
+
+
 @when(parsers.parse('I enter calibre as "{calibre}"'))
 def enter_firearm_calibre(driver, calibre):  # noqa
     good_details_page = AddGoodDetails(driver)
@@ -839,6 +846,7 @@ def summary_screen_for_product_type(driver, product_type_value, description, pro
         expected_fields += [
             "Sporting shotgun",
             "Year of manufacture",
+            "Replica firearm",
             "Calibre",
             "Identification markings",
         ]

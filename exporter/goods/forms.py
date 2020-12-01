@@ -354,6 +354,7 @@ def add_good_form_group(
             conditional(is_pv_graded, pv_details_form(request)),
             # only ask if adding to a draft application
             conditional(is_firearm and bool(draft_pk), firearm_year_of_manufacture_details_form()),
+            conditional(is_firearm, firearm_replica_form(request.POST.get("type"))),
             conditional(is_firearms_core, firearm_calibre_details_form()),
             conditional(is_firearms_core, firearms_act_confirmation_form()),
             conditional(is_firearms_core, identification_markings_form()),
@@ -589,6 +590,36 @@ def firearm_year_of_manufacture_details_form(good_id=None):
                 ],
             )
         ),
+    )
+
+
+def firearm_replica_form(firearm_type):
+    return Form(
+        title=CreateGoodForm.FirearmGood.FirearmsReplica.TITLE,
+        default_button_name="Save and continue",
+        questions=[
+            HiddenField("type", firearm_type),
+            HiddenField("is_replica_step", True),
+            RadioButtons(
+                title="",
+                name="is_replica",
+                options=[
+                    Option(
+                        key=True,
+                        value="Yes",
+                        components=[
+                            TextArea(
+                                title=CreateGoodForm.FirearmGood.FirearmsReplica.DESCRIPTION,
+                                description="",
+                                name="replica_description",
+                                optional=False,
+                            ),
+                        ],
+                    ),
+                    Option(key=False, value="No",),
+                ],
+            ),
+        ],
     )
 
 

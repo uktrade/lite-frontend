@@ -113,15 +113,16 @@ def pv_gradings(mock_pv_gradings, rf, client):
         ),
         (
             {"is_firearms_core": True, "draft_pk": "123", "is_firearm": True},
-            7,
+            8,
             [
                 {"findex": 0, "qindex": 1, "name": "type"},
                 {"findex": 1, "qindex": 2, "name": "is_sporting_shotgun"},
                 {"findex": 2, "qindex": 0, "name": "description"},
                 {"findex": 3, "qindex": 1, "name": "year_of_manufacture"},
-                {"findex": 4, "qindex": 1, "name": "calibre"},
-                {"findex": 5, "qindex": 5, "name": "is_covered_by_firearm_act_section_one_two_or_five"},
-                {"findex": 6, "qindex": 1, "name": "has_identification_markings"},
+                {"findex": 4, "qindex": 2, "name": "is_replica"},
+                {"findex": 5, "qindex": 1, "name": "calibre"},
+                {"findex": 6, "qindex": 5, "name": "is_covered_by_firearm_act_section_one_two_or_five"},
+                {"findex": 7, "qindex": 1, "name": "has_identification_markings"},
             ],
         ),
         (
