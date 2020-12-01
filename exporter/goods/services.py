@@ -1,11 +1,8 @@
 from http import HTTPStatus
 
+from exporter.applications.helpers.date_fields import format_date
 from core import client
 from core.helpers import convert_parameters_to_query_params
-from exporter.applications.helpers.date_fields import (
-    format_date_fields, format_date, create_formatted_date_from_components
-)
-from exporter.goods.services import add_firearm_details_to_data
 
 
 def get_goods(
@@ -41,8 +38,6 @@ def post_goods(request, json):
             }
 
     if "item_category" in json and json["item_category"] == "group2_firearms":
-        if json.get('date_of_deactivationday'):
-            json['date_of_deactivation'] = format_date(json, 'date_of_deactivation')
         add_firearm_details_to_data(json)
 
     data = client.post(request, "/goods/", json)
@@ -51,6 +46,62 @@ def post_goods(request, json):
         data.json().get("good"), data.status_code
 
     return data.json(), data.status_code
+
+
+def add_firearm_details_to_data(json):
+    """
+    Return a firearm_details dictionary to be used when creating/editing a group 2 firearm good
+    Mutable - items in firearm_details are removed from the original json (duplicates)
+    """
+    firearm_details = {}
+    if "product_type_step" in json:
+        # parent component doesnt get sent when empty unlike the remaining form fields
+        firearm_details["type"] = json.get("type")
+
+    if "sporting_shotgun_step" in json:
+        firearm_details["type"] = json.get("type")
+        firearm_details["is_sporting_shotgun"] = json.get("is_sporting_shotgun")
+
+    if "firearm_year_of_manufacture_step" in json:
+        firearm_details["year_of_manufacture"] = json.get("year_of_manufacture")
+        del json["year_of_manufacture"]
+    if "firearm_calibre_step" in json:
+        firearm_details["calibre"] = json.get("calibre")
+        del json["calibre"]
+    if "section_certificate_step" in json:
+        # parent component doesnt get sent when empty unlike the remaining form fields
+        firearm_details["is_covered_by_firearm_act_section_one_two_or_five"] = json.get(
+            "is_covered_by_firearm_act_section_one_two_or_five", ""
+        )
+        firearm_details["section_certificate_number"] = json.get("section_certificate_number")
+        formatted_section_certificate_date = format_date(json, "section_certificate_date_of_expiry")
+        firearm_details["section_certificate_date_of_expiry"] = (
+            formatted_section_certificate_date if formatted_section_certificate_date != "--" else None
+        )
+        del json["section_certificate_number"]
+    if "identification_markings_step" in json:
+        # parent component doesnt get sent when empty unlike the remaining form fields
+        firearm_details["has_identification_markings"] = json.get("has_identification_markings", "")
+        firearm_details["identification_markings_details"] = json.get("identification_markings_details")
+        firearm_details["no_identification_markings_details"] = json.get("no_identification_markings_details")
+        del json["identification_markings_details"]
+        del json["no_identification_markings_details"]
+
+    for name in [
+        "date_of_deactivation",
+        "has_proof_mark",
+        "no_proof_mark_details",
+        "is_deactivated",
+        "date_of_deactivation",
+        "deactivation_standard",
+        "deactivation_standard_other",
+        "is_deactivated_to_standard",
+    ]:
+        if name in json:
+            firearm_details[name] = json.pop(name)
+
+    json["firearm_details"] = firearm_details
+    return json
 
 
 def validate_good(request, json):

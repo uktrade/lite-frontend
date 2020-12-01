@@ -133,9 +133,7 @@ def firearm_is_deactivated_field():
                 value="Yes",
                 components=[
                     DateInput(
-                        title='Date of deactivation',
-                        name="date_of_deactivation",
-                        prefix='date_of_deactivation',
+                        title="Date of deactivation", name="date_of_deactivation", prefix="date_of_deactivation",
                     ),
                     RadioButtons(
                         title="Has the product been deactivated to UK/EU proof house standards?",
@@ -146,11 +144,11 @@ def firearm_is_deactivated_field():
                                 value="Yes",
                                 components=[
                                     Select(
-                                        title='Proof house standard',
+                                        title="Proof house standard",
                                         name="deactivation_standard",
-                                        options=[Option(key='UK', value="UK"), Option(key='EU', value="EU"),],
+                                        options=[Option(key="UK", value="UK"), Option(key="EU", value="EU"),],
                                     ),
-                                ]
+                                ],
                             ),
                             Option(
                                 key=False,
@@ -165,7 +163,7 @@ def firearm_is_deactivated_field():
                                 ],
                             ),
                         ],
-                    )
+                    ),
                 ],
             ),
             Option(key=False, value="No"),

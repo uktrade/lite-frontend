@@ -117,9 +117,9 @@ def default_request(rf, client):
     return request
 
 
-def test_good_on_application_form_ammunition(default_request, good_shotgun, mock_units):
+def test_good_on_application_form_ammunition(default_request, good_ammo, mock_units):
     form = goods.good_on_application_form(
-        request=default_request, good=good_shotgun, sub_case_type=sub_case_type_siel, application_id=application_id,
+        request=default_request, good=good_ammo, sub_case_type=sub_case_type_siel, application_id=application_id,
     )
 
     assert len(form.questions) == 7
