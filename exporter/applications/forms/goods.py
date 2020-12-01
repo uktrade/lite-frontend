@@ -3,10 +3,12 @@ from django.urls import reverse_lazy
 from exporter.core.constants import EXHIBITION
 from exporter.core.services import get_units, get_item_types
 from exporter.goods.helpers import good_summary
+from exporter.goods.forms import identification_markings_form
 from lite_content.lite_exporter_frontend import strings
 from lite_content.lite_exporter_frontend.goods import AddGoodToApplicationForm
 from lite_forms.components import (
     Form,
+    FormGroup,
     HiddenField,
     Select,
     QuantityInput,
@@ -17,7 +19,7 @@ from lite_forms.components import (
 )
 
 
-def exhibition_good_on_application_form(request, good_id, application_id):
+def exhibition_item_type(request, good_id, application_id):
     return Form(
         title=AddGoodToApplicationForm.Exhibition.TITLE,
         description=AddGoodToApplicationForm.Exhibition.DESCRIPTION,
@@ -32,9 +34,9 @@ def exhibition_good_on_application_form(request, good_id, application_id):
     )
 
 
-def good_on_application_form(request, good, sub_case_type, application_id):
+def good_unit_value_and_quantity(request, good, sub_case_type, application_id):
     if sub_case_type["key"] == EXHIBITION:
-        return exhibition_good_on_application_form(request, good.get("id"), application_id)
+        return exhibition_item_type(request, good.get("id"), application_id)
     else:
         return Form(
             title=AddGoodToApplicationForm.TITLE,
@@ -75,3 +77,9 @@ def good_on_application_form(request, good, sub_case_type, application_id):
             ),
             javascript_imports={"/javascripts/add-good.js"},
         )
+
+
+def good_on_application_form_group(request, good, sub_case_type, draft_pk):
+    return FormGroup(
+        [identification_markings_form(draft_pk), good_unit_value_and_quantity(request, good, sub_case_type, draft_pk),]
+    )

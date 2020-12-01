@@ -7,6 +7,7 @@ from django.conf import settings
 
 from core import client
 from exporter.applications.helpers.date_fields import format_date_fields, create_formatted_date_from_components
+from exporter.goods.services import add_firearm_details_to_data
 from exporter.core.helpers import remove_prefix, add_validate_only_to_data
 from core.helpers import convert_parameters_to_query_params
 from exporter.core.objects import Application
@@ -106,10 +107,24 @@ def get_application_goods_types(request, pk):
     return data.json().get("goods") if data.status_code == HTTPStatus.OK else None
 
 
+def validate_good_on_application(request, pk, json):
+    post_data = json
+    post_data["validate_only"] = True
+    return post_good_on_application(request, pk, post_data)
+
+
 def post_good_on_application(request, pk, json):
     post_data = serialize_good_on_app_data(json)
     response = client.post(request, f"/applications/{pk}/goods/", post_data)
-    return response.json(), response.status_code
+    response_data = response.json()
+    if "errors" in response_data:
+        # firearm_details field errors need moving to top level of dict for MultiFormView pick them up and display them
+        response_data["errors"] = {
+            **response_data["errors"],
+            **response_data["errors"]["firearm_details"],
+        }
+        del response_data["errors"]["firearm_details"]
+    return response_data, response.status_code
 
 
 def serialize_good_on_app_data(json):
@@ -117,11 +132,10 @@ def serialize_good_on_app_data(json):
         post_data = remove_prefix(json, "good_on_app_")
     else:
         post_data = json
-    if "good_id" not in post_data:
-        post_data["good_id"] = json["good_id"]
     for key in {"value", "quantity"} & set(post_data.keys()):
         if "," in post_data[key]:
             post_data[key] = post_data[key].replace(",", "")
+    post_data = add_firearm_details_to_data(post_data)
     return post_data
 
 

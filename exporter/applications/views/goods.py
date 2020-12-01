@@ -8,12 +8,12 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from s3chunkuploader.file_handler import S3FileUploadHandler
 
-from exporter.applications.forms.goods import good_on_application_form
+from exporter.applications.forms.goods import good_on_application_form_group
 from exporter.applications.helpers.check_your_answers import get_total_goods_value
 from exporter.applications.services import (
     get_application,
     get_application_goods,
-    post_good_on_application,
+    validate_good_on_application,
     delete_application_preexisting_good,
     add_document_data,
 )
@@ -188,14 +188,23 @@ class AttachDocument(LoginRequiredMixin, TemplateView):
         )
 
 
-class AddGoodToApplication(LoginRequiredMixin, SingleFormView):
+class AddGoodToApplication(LoginRequiredMixin, MultiFormView):
     def init(self, request, **kwargs):
-        self.object_pk = kwargs["pk"]
+        self.object_pk = str(kwargs["pk"])
+        good_pk = str(kwargs["good_pk"])
+
         application = get_application(self.request, self.object_pk)
-        good, _ = get_good(request, kwargs["good_pk"])
-        self.form = good_on_application_form(request, good, application["case_type"]["sub_type"], self.object_pk)
-        self.action = post_good_on_application
-        self.success_url = reverse_lazy("applications:goods", kwargs={"pk": self.object_pk})
+        good, _ = get_good(request, good_pk)
+
+        sub_case_type = application["case_type"]["sub_type"]
+
+        self.forms = good_on_application_form_group(
+            request, good=good, sub_case_type=sub_case_type, draft_pk=self.object_pk
+        )
+        self.action = validate_good_on_application
+
+    def get_success_url(self):
+        return reverse_lazy("applications:goods", kwargs={"pk": self.draft_pk})
 
 
 class RemovePreexistingGood(LoginRequiredMixin, TemplateView):

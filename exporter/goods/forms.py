@@ -18,6 +18,7 @@ from lite_content.lite_exporter_frontend.goods import (
     AttachDocumentForm,
     GoodsList,
     GoodGradingForm,
+    AddGoodToApplicationForm,
 )
 from lite_forms.common import control_list_entries_question
 from lite_forms.components import (
@@ -345,14 +346,10 @@ def add_good_form_group(
     draft_pk: str = None,
 ):
     control_list_entries = get_control_list_entries(request, convert_to_options=True)
-    back_to_application_link = BackLink(
-        strings.BACK_TO_APPLICATION,
-        reverse_lazy("applications:goods", kwargs={"pk": draft_pk}),
-    )
     return FormGroup(
         [
-            group_two_product_type_form(back_to_application_link),
-            conditional(is_firearms_core, identification_markings_form()),
+            group_two_product_type_form(draft_pk),
+            conditional(is_firearms_core and draft_pk, identification_markings_form()),
             add_goods_questions(control_list_entries, draft_pk),
             conditional(is_pv_graded, pv_details_form(request)),
             conditional(is_firearms_core, firearm_ammunition_details_form()),
@@ -521,7 +518,7 @@ def delete_good_form(good):
     )
 
 
-def group_two_product_type_form(back_link):
+def group_two_product_type_form(draft_pk):
     return Form(
         title=CreateGoodForm.FirearmGood.ProductType.TITLE,
         questions=[
@@ -552,7 +549,11 @@ def group_two_product_type_form(back_link):
                 ],
             ),
         ],
-        back_link=back_link,
+        back_link=conditional(
+            draft_pk,
+            BackLink(strings.BACK_TO_APPLICATION, reverse_lazy("applications:goods", kwargs={"pk": draft_pk})),
+            BackLink(AddGoodToApplicationForm.BACK_LINK, reverse_lazy("goods:goods"),),
+        ),
         default_button_name="Save and continue",
     )
 
@@ -634,40 +635,45 @@ def firearms_act_confirmation_form():
     )
 
 
-def identification_markings_form():
-    return Form(
-        title=CreateGoodForm.FirearmGood.IdentificationMarkings.TITLE,
-        questions=[
-            HiddenField("identification_markings_step", True),
-            RadioButtons(
-                title="",
-                name="has_identification_markings",
-                options=[
-                    Option(
-                        key=True,
-                        value=CreateGoodForm.FirearmGood.IdentificationMarkings.YES,
-                        components=[
-                            TextArea(
-                                title=CreateGoodForm.FirearmGood.IdentificationMarkings.MARKINGS_DETAILS,
-                                description=CreateGoodForm.FirearmGood.IdentificationMarkings.MARKINGS_HELP_TEXT,
-                                name="identification_markings_details",
-                                optional=False,
-                            ),
-                        ],
-                    ),
-                    Option(
-                        key=False,
-                        value=CreateGoodForm.FirearmGood.IdentificationMarkings.NO,
-                        components=[
-                            TextArea(
-                                title=CreateGoodForm.FirearmGood.IdentificationMarkings.NO_MARKINGS_DETAILS,
-                                description="",
-                                name="no_identification_markings_details",
-                                optional=False,
-                            )
-                        ],
-                    ),
-                ],
-            ),
-        ],
-    )
+def identification_markings_form(draft_pk=None, good_id=None):
+    questions = [
+        HiddenField("identification_markings_step", True),
+        RadioButtons(
+            title="",
+            name="has_identification_markings",
+            options=[
+                Option(
+                    key=True,
+                    value=CreateGoodForm.FirearmGood.IdentificationMarkings.YES,
+                    components=[
+                        TextArea(
+                            title=CreateGoodForm.FirearmGood.IdentificationMarkings.MARKINGS_DETAILS,
+                            description=CreateGoodForm.FirearmGood.IdentificationMarkings.MARKINGS_HELP_TEXT,
+                            name="identification_markings_details",
+                            optional=False,
+                        ),
+                    ],
+                ),
+                Option(
+                    key=False,
+                    value=CreateGoodForm.FirearmGood.IdentificationMarkings.NO,
+                    components=[
+                        TextArea(
+                            title=CreateGoodForm.FirearmGood.IdentificationMarkings.NO_MARKINGS_DETAILS,
+                            description="",
+                            name="no_identification_markings_details",
+                            optional=False,
+                        )
+                    ],
+                ),
+            ],
+        ),
+    ]
+
+    if draft_pk:
+        questions += [HiddenField("pk", draft_pk)]
+
+    if good_id:
+        questions += [HiddenField("good_id", good_id)]
+
+    return Form(title=CreateGoodForm.FirearmGood.IdentificationMarkings.TITLE, questions=questions,)
