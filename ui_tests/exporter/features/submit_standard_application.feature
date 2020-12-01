@@ -246,7 +246,8 @@ Feature: I want to indicate the standard licence I want
     And I choose to review the product details of product "1"
     And I see option to add product to application on details page
     And I append "updated" to description and submit
-    And I see option to add product to application on details page    # to ensure that we are back on the same page
+    And I see option to add product to application on details page
+    # to ensure that we are back on the same page
     And I add product to application
 
 
@@ -314,7 +315,8 @@ Feature: I want to indicate the standard licence I want
     And I select product type "firearm"
     And I select sporting shotgun status as "No"
     And I enter good description as "new firearm" part number "FR-123-M" controlled "True" control code "ML1a" and graded "no"
-    And I enter firearm year of manufacture as "2020" and calibre as "0.22"
+    And I enter firearm year of manufacture as "2020"
+    And I enter calibre as "0.22"
     And I specify firearms act sections apply as "Yes"
     And I specify firearms identification markings as "Yes" with details "laser engraving"
     And I see summary screen for "Firearms" product with description "new firearm" and "review"
